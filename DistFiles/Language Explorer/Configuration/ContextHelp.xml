@@ -98,7 +98,6 @@
 	<item id="CmdInsertAllomorphACP">Create a rule to prevent allomorphs from co-occurring.</item>
 	<item id="CmdInsertACPGroup">Create a group of ad hoc rules.</item>
 	<item id="CmdImportWordSet">Import a set of words in a file and give the set a name.</item>
-	<item id="CmdInsertLinkToFile">Insert a link to an external file.</item>
 	<item id="CmdAddNote">Insert a note.</item>
 	<item id="CmdChooseTexts" a10status="DONE" >Choose texts to display and use.</item>
 	<item id="CmdInsertStemAllomorph">Add an allomorph of a stem.</item>
@@ -128,7 +127,6 @@
 	<item id="CmdConfigureColumns">Configure current browse pane.</item>
 	<item id="CmdLexiconLookup">Show dictionary entry for root/stem of current word, or open a search dialog box.</item>
 	<item id="CmdAddToLexicon">Add the current word to the lexicon (if it is a vernacular word).</item>
-	<item id="CmdShowCharMap">Start the Character Map utility.</item>
 	<item id="CmdAddWordsToSpellDict">Add words marked as correctly spelled to the active spelling dictionary.</item>
 	<item id="CmdEditSpellingStatus">Bulk Edit Spelling Status.</item>
 	<item id="CmdViewIncorrectWords">View incorrectly spelled words in use.</item>

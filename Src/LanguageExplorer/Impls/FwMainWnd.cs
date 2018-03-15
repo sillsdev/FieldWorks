@@ -710,6 +710,10 @@ namespace LanguageExplorer.Impls
 			fileExportMenu.Enabled = false;
 			deleteToolStripButton.Click += Edit_Delete_Click;
 
+			// Linux: Always enable the menu. If it's not installed we display an error message when the user tries to launch it. See FWNX-567 for more info.
+			// Windows: Enable the menu if we can find the CharMap program.
+			specialCharacterToolStripMenuItem.Enabled = MiscUtils.IsUnix || File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "charmap.exe"));
+
 			_parserMenuManager.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 
 			IdleQueue = new IdleQueue();
@@ -1193,6 +1197,8 @@ namespace LanguageExplorer.Impls
 		{
 			return "\"" + str + "\"";
 		}
+
+		private EditingHelper EditingHelper => ActiveView?.EditingHelper;
 
 		private void Help_Technical_Notes_on_FieldWorks_Send_Receive(object sender, EventArgs e)
 		{
@@ -1822,6 +1828,11 @@ very simple minor adjustments. ;)"
 
 			// Enable/disable Edit->Delete menu item (including changing the text) and the Delete toolbar item.
 			SetupEditDeleteMenus();
+
+			if (linkToFileToolStripMenuItem.Visible)
+			{
+				linkToFileToolStripMenuItem.Enabled = EditingHelper is RootSiteEditingHelper && ((RootSiteEditingHelper)EditingHelper).CanInsertLinkToFile();
+			}
 		}
 
 		private bool CanApplyStyle
@@ -2063,6 +2074,43 @@ very simple minor adjustments. ;)"
 				// Let the record list do it.
 				activeRecordList.DeleteRecord(deleteToolStripMenuItem.Text.Replace("&", null), StatusBarPanelServices.GetStatusBarProgressPanel(_statusbar));
 			}
+		}
+
+		private void LinkToFileToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			var helper = EditingHelper as RootSiteEditingHelper;
+			if (helper == null || !helper.CanInsertLinkToFile())
+			{
+				return;
+			}
+			string pathname;
+			using (var fileDialog = new OpenFileDialogAdapter())
+			{
+				fileDialog.Filter = ResourceHelper.FileFilter(FileFilterType.AllFiles);
+				fileDialog.RestoreDirectory = true;
+				if (fileDialog.ShowDialog() != DialogResult.OK)
+				{
+					return;
+				}
+				pathname = fileDialog.FileName;
+			}
+
+			if (string.IsNullOrEmpty(pathname))
+			{
+				return;
+			}
+			pathname = MoveOrCopyFilesController.MoveCopyOrLeaveExternalFile(pathname, Cache.LangProject.LinkedFilesRootDir, _flexApp);
+			if (string.IsNullOrEmpty(pathname))
+			{
+				return;
+			}
+			helper.ConvertSelToLink(pathname, _stylesheet);
+		}
+
+		private void SpecialCharacterToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			var program = MiscUtils.IsUnix ? "gucharmap" :  "charmap.exe";
+			MiscUtils.RunProcess(program, null, MiscUtils.IsUnix ? exception => { MessageBox.Show(string.Format(DictionaryConfigurationStrings.ksUnableToStartGnomeCharMap, program)); } : (Action<Exception>)null);
 		}
 	}
 }

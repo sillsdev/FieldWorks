@@ -33,11 +33,9 @@
 		<command id="CmdViewIncorrectWords" label="View Incorrect Words in Use" message="ViewIncorrectWords"/>
 		<command id="CmdChangeSpelling" label="Change Spelling..." message="LaunchRespellerDlg"/>
 		<command id="CmdUseVernSpellingDictionary" label="Show Vernacular Spelling _Errors" message="UseVernSpellingDictionary"/>
-		<command id="CmdShowCharMap" label="Special _character..." message="ShowCharMap" icon="SpecialCharacter"/>
 		<command id="CmdCopy" label="_Copy" message="EditCopy" icon="Copy" shortcut="Ctrl+C" a10status="PARTIALLY_DONE" />
 		<command id="CmdCut" label="Cu_t" message="EditCut" icon="Cut" shortcut="Ctrl+X" a10status="PARTIALLY_DONE" />
 		<command id="CmdPaste" label="_Paste" message="EditPaste" icon="Paste" shortcut="Ctrl+V" a10status="PARTIALLY_DONE" />
-		<command id="CmdInsertLinkToFile" label="L_ink to File..." message="InsertLinkToFile" icon="ExternalLink"/>
 		<command id="CmdHelpMorphologyInto" label="Introduction to _Parsing..." message="HelpMorphologyIntro"/>
 		<command id="CmdHelpLexicographyIntro" label="Introduction to _Lexicography..." message="HelpLexicographyIntro" a10status="LEXICONAREAONLY" >
 			<parameters file="Lexicography Introduction/Introduction to Lexicography.htm"/>
@@ -365,9 +363,6 @@
 <!-- START include: "Grammar/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*" -->
 			<include path="Grammar/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*"/>
 <!-- END include: "Grammar/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*" -->
-			<item label="-" translate="do not translate"/>
-			<item command="CmdShowCharMap"/>
-			<item command="CmdInsertLinkToFile"/>
 		</menu>
 		<menu id="Tools" label="_Tools" a10status="DONE" >
 		<!-- Reworked Tools menu [LT-9852] June '09	-->
