@@ -20,9 +20,6 @@
 		<command id="CmdDeleteMediaFile" label="Delete this Media Link" message="DeleteMediaFile" icon="Delete">
 			<parameters className="CmMedia"/>
 		</command>
-		<command id="CmdInsertVariant" label="_Variant" message="InsertItemViaBackrefVector">
-			<parameters className="LexEntry" fieldName="VariantFormEntryBackRefs" restrictToTool="lexiconEdit"/>
-		</command>
 		<command id="CmdChangeToComplexForm" label="Lexeme Form has components" message="ConvertEntryIntoComplexForm">
 			<parameters className="LexEntry" restrictToTool="lexiconEdit"/>
 		</command>

@@ -3888,47 +3888,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 #if RANDYTODO
 		/// <summary>
-		/// Influence the display of a particular command by giving an opinion on whether we
-		/// are prepared to handle the corresponding "InsertItemViaBackrefVector" message.
-		/// </summary>
-		public bool OnDisplayInsertItemViaBackrefVector(object commandObject, ref UIItemDisplayProperties display)
-		{
-			// We may be in transition: if so, disable without crashing.  See LT-9698.
-			if (m_cache == null || m_root == null)
-				return display.Enabled = false;
-			var command = (Command)commandObject;
-			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
-			if (className != m_root.ClassName)
-				return display.Enabled = false;
-			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
-			if (restrictToTool != null && restrictToTool != m_propertyTable.GetValue<string>(AreaServices.ToolChoice))
-				return display.Enabled = false;
-			return display.Enabled = true;
-		}
-
-		/// <summary>
-		/// This is triggered by any command whose message attribute is "InsertItemViaBackrefVector"
-		/// </summary>
-		/// <returns>true if successful (the class is known)</returns>
-		public bool OnInsertItemViaBackrefVector(object argument)
-		{
-			var command = (Command)argument;
-			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
-			if (className != m_root.ClassName)
-				return false;
-			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
-			if (restrictToTool != null && restrictToTool != m_propertyTable.GetValue<string>(AreaServices.ToolChoice))
-				return false;
-			string fieldName = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "fieldName");
-			if (String.IsNullOrEmpty(fieldName))
-				return false;
-			int flid = m_mdc.GetFieldId(className, fieldName, true);
-			int insertPos = Slice.InsertObjectIntoVirtualBackref(m_cache, m_mediator, m_propertyTable,
-				m_root.Hvo, m_root.ClassID, flid);
-			return insertPos >= 0;
-		}
-
-		/// <summary>
 		/// See if it makes sense to provide the "Demote..." command.
 		/// </summary>
 		public bool OnDisplayDemoteItemInVector(object commandObject, ref UIItemDisplayProperties display)

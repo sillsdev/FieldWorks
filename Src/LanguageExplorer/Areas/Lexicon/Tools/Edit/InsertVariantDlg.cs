@@ -6,10 +6,11 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using LanguageExplorer.Controls.LexText;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 
-namespace LanguageExplorer.Controls.LexText
+namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
 	/// <summary>
 	/// (LT-9283)

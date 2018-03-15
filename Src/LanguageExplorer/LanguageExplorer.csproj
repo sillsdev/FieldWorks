@@ -261,10 +261,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\SIL.Archiving.dll</HintPath>
     </Reference>
-	<Reference Include="SIL.Windows.Forms.Keyboarding" Condition="'$(OS)'=='Unix'">
+    <Reference Include="SIL.Windows.Forms.Keyboarding" Condition="'$(OS)'=='Unix'">
       <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\Output\Release\SIL.Windows.Forms.Keyboarding.dll</HintPath>
-	</Reference>
+      <HintPath>..\..\Output\Release\SIL.Windows.Forms.Keyboarding.dll</HintPath>
+    </Reference>
     <Reference Include="SIL.WritingSystems">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\SIL.WritingSystems.dll</HintPath>
@@ -656,7 +656,7 @@
     <Compile Include="Controls\LexText\FlexConverter.cs" />
     <Compile Include="Controls\LexText\ICmLiftObject.cs" />
     <Compile Include="Controls\LexText\IFMReader.cs" />
-    <Compile Include="Controls\LexText\InsertVariantDlg.cs">
+    <Compile Include="Areas\Lexicon\Tools\Edit\InsertVariantDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Controls\LexText\InterlinearMapping.cs" />

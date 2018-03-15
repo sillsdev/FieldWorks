@@ -1653,12 +1653,8 @@ namespace LanguageExplorer.Controls.DetailControls
 				return false;
 			}
 			// Found a suitable slice. Do the insertion.
-			int insertionPosition;		// causes return false if not changed.
-			if (Cache.IsReferenceProperty(flid))
-			{
-				insertionPosition = InsertObjectIntoVirtualBackref(Cache, slice.Object.Hvo, newObjectClassId, flid);
-			}
-			else
+			var insertionPosition = -2;
+			if (!Cache.IsReferenceProperty(flid))
 			{
 				insertionPosition = slice.InsertObject(flid, newObjectClassId);
 			}
@@ -1668,38 +1664,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 
 			return true;
-		}
-
-		internal int InsertObjectIntoVirtualBackref(LcmCache cache, int hvoSlice, int clidNewObj, int flid)
-		{
-			var metadata = cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
-			if (!metadata.get_IsVirtual(flid))
-			{
-				return -1;
-			}
-			var sliceObj = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoSlice);
-			var clidSlice = sliceObj.ClassID;
-			if (clidNewObj != LexEntryTags.kClassId || clidSlice != LexEntryTags.kClassId)
-			{
-				return -1;
-			}
-			if (metadata.GetFieldName(flid) != "VariantFormEntryBackRefs")
-			{
-				return -1;
-			}
-			using (var dlg = new InsertVariantDlg())
-			{
-				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-				var entOld = (ILexEntry) sliceObj;
-				dlg.SetHelpTopic("khtpInsertVariantDlg");
-				dlg.SetDlgInfo(cache, entOld);
-				if (dlg.ShowDialog() == DialogResult.OK && dlg.NewlyCreatedVariantEntryRefResult)
-				{
-					return entOld.VariantFormEntryBackRefs.Count();
-				}
-				// say we've handled this.
-				return -2;
-			}
 		}
 
 		/// <summary>

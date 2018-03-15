@@ -558,7 +558,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void Insert_Variant_Clicked(object sender, EventArgs e)
 		{
-			MessageBox.Show((Form)_majorFlexComponentParameters.MainWindow, "Inserting Variant...");
+			using (var dlg = new InsertVariantDlg())
+			{
+				dlg.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
+				var entOld = (ILexEntry)MyDataTree.Root;
+				dlg.SetHelpTopic("khtpInsertVariantDlg");
+				dlg.SetDlgInfo(_majorFlexComponentParameters.LcmCache, entOld);
+				dlg.ShowDialog();
+			}
 		}
 
 		private void Insert_Subsense_Clicked(object sender, EventArgs e)
@@ -655,14 +662,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// <item command="CmdInsertLexEntry" defaultVisible="false" />
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_Entry_Clicked, LexiconResources.Entry, LexiconResources.Entry_Tooltip, Keys.Control | Keys.E, LexiconResources.Major_Entry.ToBitmap(), insertIndex);
 			// <item command="CmdInsertSense" defaultVisible="false" />
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_Sense_Clicked, LexiconResources.Sense, LexiconResources.InsertSenseToolTip, Keys.None, null, ++insertIndex);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_Sense_Clicked, LexiconResources.Sense, LexiconResources.InsertSenseToolTip, insertIndex: ++insertIndex);
+			// < command id = "CmdInsertVariant" label = "_Variant" message = "InsertItemViaBackrefVector" >
+			// < parameters className = "LexEntry" fieldName = "VariantFormEntryBackRefs" restrictToTool = "lexiconEdit" />
+			// </ command >
+			// <item command="CmdInsertVariant" defaultVisible="false" />
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_Variant_Clicked, LexiconResources.Insert_Variant, LexiconResources.Insert_Variant_Tooltip, insertIndex: ++insertIndex);
 #if RANDYTODO
 			// TODO: Add these to the main Insert menu.
 /*
-<command id="CmdInsertVariant" label="_Variant" message="InsertItemViaBackrefVector">
-	<parameters className="LexEntry" fieldName="VariantFormEntryBackRefs" restrictToTool="lexiconEdit" />
-</command>
-			<item command="CmdInsertVariant" defaultVisible="false" />
 <command id="CmdDataTree-Insert-AlternateForm" label="Insert Allomorph" message="DataTreeInsert">
 	<parameters field="AlternateForms" className="MoForm" />
 </command>

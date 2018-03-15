@@ -140,6 +140,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		/// -------------------------------------------------------------------------------------
 		[Test]
+		[Platform(Exclude = "Linux", Reason = "Test is Windows specific")]
 		public void TestGetAdjustedTsString()
 		{
 			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
