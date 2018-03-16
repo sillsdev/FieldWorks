@@ -12,11 +12,9 @@
 		<NuGetExePath>$(NuGetToolsPath)NuGet.exe</NuGetExePath>
 		<NuGetCommand Condition="'$(OS)' == 'Windows_NT'">"$(NuGetExePath)"</NuGetCommand>
 		<!--
-		NuGet has trouble when Ubuntu 16.04 pbuilder sets the home directory to /nonexistent, and
-		just setting -ConfigFile is not enough to make nuget not work with config files in the home directory.
-		Setting XDG_CONFIG_HOME prevents nuget from working with config files in the home directory.
+		NuGet has trouble when Ubuntu 16.04 pbuilder sets the home directory to /nonexistent. Set a HOME for NuGet to use.
 		-->
-		<NuGetCommand Condition=" '$(OS)' != 'Windows_NT' ">[ -d $HOME ] || export XDG_CONFIG_HOME=`mktemp -d`; mono --runtime=v4.0.30319 $(NuGetExePath)</NuGetCommand>
+		<NuGetCommand Condition=" '$(OS)' != 'Windows_NT' ">[ -d $HOME ] || export HOME=`mktemp -d --tmpdir nuget_home.XXXXX`; mono --runtime=v4.0.30319 $(NuGetExePath)</NuGetCommand>
 
 		<!-- Command to download packages -->
 		<RestoreCommandCommon>$(NuGetCommand) restore "$(CommonPackagesConfig)" -NonInteractive -PackagesDirectory "$(fwrt)/packages"</RestoreCommandCommon>
