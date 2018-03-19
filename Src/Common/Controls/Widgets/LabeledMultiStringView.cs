@@ -259,6 +259,8 @@ namespace SIL.FieldWorks.Common.Widgets
 				dpiX = (int)graphics.DpiX;
 			}
 			int indent = m_innerView.VC.m_mDxmpLabelWidth * dpiX / 72000 + 5; // 72000 millipoints/inch
+			if (m_soundControls.Count == 0)
+				SetupSoundControls();
 			foreach (var control in m_soundControls)
 			{
 				int wsIndex;
