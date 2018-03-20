@@ -15,7 +15,6 @@ using System.Xml.Linq;
 using LanguageExplorer.Areas;
 using SIL.LCModel.Core.Cellar;
 using LanguageExplorer.Controls.DetailControls.Resources;
-using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;
@@ -40,7 +39,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	///</remarks>
 	internal class Slice : UserControl, IFlexComponent
 	{
-#region Constants
+		#region Constants
 
 		/// <summary>
 		/// If label width is made wider than this, switch to full labels.
@@ -70,7 +69,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		private Dictionary<string, ToolStripMenuItem> m_visibilityMenus = new Dictionary<string, ToolStripMenuItem>();
 		#endregion Data members
 
-#region Properties
+		#region Properties
 
 		/// <summary>
 		/// The weight of object that starts at the beginning of this slice.
@@ -178,7 +177,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected internal SplitContainer SplitCont { get; }
 
 		/// <summary />
-		public SliceTreeNode TreeNode => SplitCont.Panel1.Controls[0] as SliceTreeNode;
+		public SliceTreeNode TreeNode => (SliceTreeNode)SplitCont.Panel1.Controls[0];
 
 		/// <summary />
 		public LcmCache Cache { get; set; }
@@ -411,18 +410,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		#region events, clicking, etc.
 
-		/// <summary />
-		public void OnTreeNodeClick(object sender, EventArgs args)
-		{
-			TakeFocus();
-		}
-
-		/// <summary />
-		public void TakeFocus()
-		{
-			TakeFocus(true);
-		}
-
 		/// <summary>
 		/// The slice should become the focus slice (and return true).
 		/// If the fOkToFocusTreeNode argument is false, this should happen iff it has a control which
@@ -482,9 +469,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-#endregion events, clicking, etc.
+		#endregion events, clicking, etc.
 
-#region Tree management
+		#region Tree management
 
 		/// <summary>
 		/// In some contexts we insert into the slice array a 'dummy' slice
@@ -739,7 +726,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				scrollChanged = true;
 			}
-			int verticalAdjustment = Size.Height - SplitCont.Size.Height;
+			var verticalAdjustment = Size.Height - SplitCont.Size.Height;
 			// This should be done by setting DockStyle to Fill but that somehow doesn't always fix the
 			// height of the splitter's panels.
 			SplitCont.Size = Size;
@@ -890,8 +877,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		/// <summary />
-		public virtual void GenerateChildren(XElement node, XElement caller, ICmObject obj, int indent,
-			ref int insPos, ArrayList path, ObjSeqHashMap reuseMap, bool fUsePersistentExpansion)
+		public virtual void GenerateChildren(XElement node, XElement caller, ICmObject obj, int indent, ref int insPos, ArrayList path, ObjSeqHashMap reuseMap, bool fUsePersistentExpansion)
 		{
 			// If node has children, figure what to do with them...
 			// XmlNodeList children = node.ChildNodes; // unused variable
@@ -1415,7 +1401,7 @@ namespace LanguageExplorer.Controls.DetailControls
 									Object != ContainingDataTree.Root;
 		#endregion Tree Display
 
-#region Miscellaneous data methods
+		#region Miscellaneous data methods
 
 		/// <summary>
 		/// Get the context for this slice considered as a member of a sequence.
@@ -1543,9 +1529,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			return Cache.DomainDataByFlid.MetaDataCache.GetFieldType(flid);
 		}
 
-#endregion Miscellaneous data methods
+		#endregion Miscellaneous data methods
 
-#region Menu Command Handlers
+		#region Menu Command Handlers
 
 		/// <summary>
 		/// Answer whether clidTest is, or is a subclass of, clidSig.
@@ -2306,7 +2292,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			return true;
 		}
 
-#endregion Menu Command Handlers
+		#endregion Menu Command Handlers
 
 		/// <summary>
 		/// Updates the display of a slice, if an hvo and tag it cares about has changed in some way.
@@ -2487,25 +2473,25 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		private bool BeingDiscarded { get; set; }
 
-#region Implementation of IPropertyTableProvider
+		#region Implementation of IPropertyTableProvider
 
 		/// <summary>
 		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
 		/// </summary>
 		public IPropertyTable PropertyTable { get; private set; }
 
-#endregion
+		#endregion
 
-#region Implementation of IPublisherProvider
+		#region Implementation of IPublisherProvider
 
 		/// <summary>
 		/// Get the IPublisher.
 		/// </summary>
 		public IPublisher Publisher { get; private set; }
 
-#endregion
+		#endregion
 
-#region Implementation of ISubscriberProvider
+		#region Implementation of ISubscriberProvider
 
 		/// <summary>
 		/// Get the ISubscriber.

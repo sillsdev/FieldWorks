@@ -104,8 +104,7 @@
 				   header="true" helpTopicID="khtpField-LexEntry-PublicationSection" />
 		</part>
 		<part id="LexEntry-Detail-AlternateFormsSection" type="Detail" paramType="LiteralString">
-			<slice editor="summary" layout="default" editable="no" weight="heavy"
-				   header="true" helpTopicID="khtpField-LexEntry-AlternateFormsSection"/>
+			<slice editor="summary" layout="default" editable="no" weight="heavy" header="true" helpTopicID="khtpField-LexEntry-AlternateFormsSection"/>
 		</part>
 		<part id="LexEntry-Detail-AlternateForms" type="Detail">
 			<seq field="AlternateForms" menu="mnuDataTree-AlternateForm" />

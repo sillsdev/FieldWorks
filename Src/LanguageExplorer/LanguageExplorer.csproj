@@ -504,6 +504,7 @@
     </Compile>
     <Compile Include="Controls\DetailControls\ContextInfo.cs" />
     <Compile Include="Controls\DetailControls\ContextVc.cs" />
+    <Compile Include="Controls\DetailControls\CurrentSliceChangedEventHandler.cs" />
     <Compile Include="Controls\DetailControls\CustomAtomicReferenceSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>

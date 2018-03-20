@@ -53,12 +53,12 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// System.Windows.Forms.UserControl
 	internal class DataTree : UserControl, IVwNotifyChange, IFlexComponent, IRefreshableRoot
 	{
-		internal SliceContextMenuFactory SliceContextMenuFactory { get; private set; }
-
 		/// <summary>
 		/// Occurs when the current slice changes
 		/// </summary>
-		public event EventHandler CurrentSliceChanged;
+		internal event CurrentSliceChangedEventHandler CurrentSliceChanged;
+
+		internal SliceContextMenuFactory SliceContextMenuFactory { get; private set; }
 
 		#region Data members
 
@@ -273,7 +273,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			// This can affect the lines between the slices. We need to redraw them but not the
 			// slices themselves.
 			Invalidate(false);
-			movedSlice.TakeFocus();
+			movedSlice.TakeFocus(true);
 		}
 
 		private void AdjustSliceSplitPosition(Slice otherSlice)
@@ -537,6 +537,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					m_currentSliceNew = value;
 					return;
 				}
+				Slice oldSlice = null;
 				// Tell the old geezer it isn't current anymore.
 				if (m_currentSlice != null)
 				{
@@ -546,6 +547,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						((ContainerControl)m_currentSlice.Control).Validate();
 					}
 					m_currentSlice.SetCurrentState(false);
+					oldSlice = m_currentSlice;
 				}
 
 				m_currentSlice = value;
@@ -574,12 +576,12 @@ namespace LanguageExplorer.Controls.DetailControls
 						break;
 					}
 				}
-				Invalidate();	// .Refresh();
+				Invalidate();
 
 				// update the current descendant
 				Descendant = DescendantForSlice(m_currentSlice);
 
-				CurrentSliceChanged?.Invoke(this, new EventArgs());
+				CurrentSliceChanged?.Invoke(this, new CurrentSliceChangedEventArgs(oldSlice, m_currentSlice));
 			}
 		}
 

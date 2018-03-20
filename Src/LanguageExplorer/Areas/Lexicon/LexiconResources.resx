@@ -345,4 +345,10 @@
     <value>No views match the current publication.</value>
     <comment>If a user selects a publication, but has deselected that publication from all their configured views, this will be the content of the dictionary preview pane.</comment>
   </data>
+  <data name="Allomorph" xml:space="preserve">
+    <value>A_llomorph</value>
+  </data>
+  <data name="Variant" xml:space="preserve">
+    <value>_Variant</value>
+  </data>
 </root>

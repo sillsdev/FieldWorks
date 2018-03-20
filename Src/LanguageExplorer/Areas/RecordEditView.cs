@@ -204,7 +204,7 @@ namespace LanguageExplorer.Areas
 			return base.PrepareToGoAway();
 		}
 
-		private void DataTreeCurrentSliceChanged(object sender, EventArgs e)
+		private void DataTreeCurrentSliceChanged(object sender, CurrentSliceChangedEventArgs e)
 		{
 			if (!m_showDescendantInRoot)
 			{

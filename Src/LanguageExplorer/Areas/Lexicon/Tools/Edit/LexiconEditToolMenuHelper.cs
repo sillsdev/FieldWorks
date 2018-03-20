@@ -34,6 +34,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private const string mnuDataTree_Sense = "mnuDataTree-Sense";
 		private const string mnuDataTree_Etymology = "mnuDataTree-Etymology";
 		private const string mnuDataTree_Etymology_Hotlinks = "mnuDataTree-Etymology-Hotlinks";
+		private const string mnuDataTree_AlternateForms = "mnuDataTree-AlternateForms";
+		private const string mnuDataTree_AlternateForms_Hotlinks = "mnuDataTree-AlternateForms-Hotlinks";
 		private string _extendedPropertyName;
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private ToolStripMenuItem _editMenu;
@@ -61,6 +63,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
 			MyDataTree = dataTree;
+			MyDataTree.CurrentSliceChanged += MyDataTree_CurrentSliceChanged;
 			MyRecordList = recordList;
 			SliceContextMenuFactory = MyDataTree.SliceContextMenuFactory;
 			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(_majorFlexComponentParameters, MyRecordList);
@@ -88,12 +91,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			SliceContextMenuFactory.RegisterHotlinksMenuCreatorMethod(mnuDataTree_Sense_Hotlinks, Create_mnuDataTree_Sense_Hotlinks);
 			SliceContextMenuFactory.RegisterHotlinksMenuCreatorMethod(mnuDataTree_Etymology_Hotlinks, Create_mnuDataTree_Etymology_Hotlinks);
+			SliceContextMenuFactory.RegisterHotlinksMenuCreatorMethod(mnuDataTree_AlternateForms_Hotlinks, Create_mnuDataTree_AlternateForms_Hotlinks);
 		}
 
 		private void RegisterOrdinaryContextMenus()
 		{
 			SliceContextMenuFactory.RegisterOrdinaryMenuCreatorMethod(mnuDataTree_Sense, Create_mnuDataTree_Sense);
 			SliceContextMenuFactory.RegisterOrdinaryMenuCreatorMethod(mnuDataTree_Etymology, Create_mnuDataTree_Etymology);
+			SliceContextMenuFactory.RegisterOrdinaryMenuCreatorMethod(mnuDataTree_AlternateForms, Create_mnuDataTree_AlternateForms);
 		}
 
 		#region Implementation of IPropertyTableProvider
@@ -147,6 +152,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_showHiddenFieldsMenu.Checked = (bool)obj;
 		}
 
+		private void MyDataTree_CurrentSliceChanged(object sender, CurrentSliceChangedEventArgs currentSliceChangedEventArgs)
+		{
+			// This will make select menus visible/enabled.
+		}
+
 		#region IDisposable
 		private bool _isDisposed;
 
@@ -178,6 +188,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			if (disposing)
 			{
+				MyDataTree.CurrentSliceChanged -= MyDataTree_CurrentSliceChanged;
 				Subscriber.Subscribe("ShowHiddenFields", ShowHiddenFields_Handler);
 				_lexiconAreaMenuHelper.Dispose();
 				foreach (var menuTuple in _newEditMenusAndHandlers)
@@ -224,6 +235,20 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		}
 		#endregion
 
+		private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_AlternateForms_Hotlinks(Slice slice, string hotlinksMenuId)
+		{
+			if (hotlinksMenuId != mnuDataTree_AlternateForms_Hotlinks)
+			{
+				throw new ArgumentException($"Expected argmuent value of '{mnuDataTree_AlternateForms_Hotlinks}', but got '{nameof(hotlinksMenuId)}' instead.");
+			}
+			var hotlinksMenuItemList = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+
+			// <item command="CmdDataTree-Insert-AlternateForm"/>
+			ToolStripMenuItemFactory.CreateHotLinkToolStripMenuItem(hotlinksMenuItemList, Insert_Allomorph_Clicked, LexiconResources.Insert_Allomorph);
+
+			return hotlinksMenuItemList;
+		}
+
 		private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_Sense_Hotlinks(Slice slice, string hotlinksMenuId)
 		{
 			if (hotlinksMenuId != mnuDataTree_Sense_Hotlinks)
@@ -252,6 +277,35 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			ToolStripMenuItemFactory.CreateHotLinkToolStripMenuItem(hotlinksMenuItemList, Insert_Etymology_Clicked, LexiconResources.Insert_Etymology, LexiconResources.Insert_Etymology_Tooltip);
 
 			return hotlinksMenuItemList;
+		}
+
+		private Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_AlternateForms(Slice slice, string contextMenuId)
+		{
+			// Start: <menu id="mnuDataTree-AlternateForms">
+			var contextMenuStrip = new ContextMenuStrip
+			{
+				Name = mnuDataTree_AlternateForms
+			};
+			contextMenuStrip.Opening += MenuDataTree_AlternateFormsContextMenuStrip_Opening;
+			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(2);
+			// <item command="CmdDataTree-Insert-AlternateForm"/>
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Allomorph_Clicked, LexiconResources.Insert_Allomorph, LexiconResources.Insert_Allomorph_Tooltip);
+			/*
+			<item command="CmdDataTree-Insert-AffixProcess"/>
+			<command id="CmdDataTree-Insert-AffixProcess" label="Insert Affix Process" message="DataTreeInsert">
+				<parameters field="AlternateForms" className="MoAffixProcess"/>
+			</command>
+			*/
+			// End: <menu id="mnuDataTree-AlternateForms">
+
+			return new Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, MenuDataTree_AlternateFormsContextMenuStrip_Opening, menuItems);
+		}
+
+		private void MenuDataTree_AlternateFormsContextMenuStrip_Opening(object sender, CancelEventArgs e)
+		{
+#if RANDYTODO
+// TODO: Enable/disable menu items, based on selected slice in DataTree.
+#endif
 		}
 
 		private Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Etymology(Slice slice, string contextMenuId)
@@ -553,7 +607,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void Insert_Allomorph_Clicked(object sender, EventArgs e)
 		{
-			MessageBox.Show((Form)_majorFlexComponentParameters.MainWindow, "Inserting Allomorph...");
+			var lexEntry = (ILexEntry)MyRecordList.CurrentObject;
+			UndoableUnitOfWorkHelper.Do(LcmUiStrings.ksUndoInsert, LcmUiStrings.ksRedoInsert, _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+			{
+				_majorFlexComponentParameters.LcmCache.DomainDataByFlid.MakeNewObject(lexEntry.GetDefaultClassForNewAllomorph(), lexEntry.Hvo, LexEntryTags.kflidAlternateForms, lexEntry.AlternateFormsOS.Count);
+			});
 		}
 
 		private void Insert_Variant_Clicked(object sender, EventArgs e)
@@ -663,30 +721,28 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_Entry_Clicked, LexiconResources.Entry, LexiconResources.Entry_Tooltip, Keys.Control | Keys.E, LexiconResources.Major_Entry.ToBitmap(), insertIndex);
 			// <item command="CmdInsertSense" defaultVisible="false" />
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_Sense_Clicked, LexiconResources.Sense, LexiconResources.InsertSenseToolTip, insertIndex: ++insertIndex);
-			// < command id = "CmdInsertVariant" label = "_Variant" message = "InsertItemViaBackrefVector" >
-			// < parameters className = "LexEntry" fieldName = "VariantFormEntryBackRefs" restrictToTool = "lexiconEdit" />
-			// </ command >
 			// <item command="CmdInsertVariant" defaultVisible="false" />
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_Variant_Clicked, LexiconResources.Insert_Variant, LexiconResources.Insert_Variant_Tooltip, insertIndex: ++insertIndex);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_Variant_Clicked, LexiconResources.Variant, LexiconResources.Insert_Variant_Tooltip, insertIndex: ++insertIndex);
+			// <item command="CmdDataTree-Insert-AlternateForm" label="A_llomorph" defaultVisible="false" />
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_Allomorph_Clicked, LexiconResources.Allomorph, LexiconResources.Insert_Allomorph_Tooltip, insertIndex: ++insertIndex);
+
 #if RANDYTODO
 			// TODO: Add these to the main Insert menu.
 /*
-<command id="CmdDataTree-Insert-AlternateForm" label="Insert Allomorph" message="DataTreeInsert">
-	<parameters field="AlternateForms" className="MoForm" />
-</command>
-			<item command="CmdDataTree-Insert-AlternateForm" label="A_llomorph" defaultVisible="false" />
 <command id="CmdInsertReversalEntry" label="Reversal Entry" message="InsertItemInVector" icon="reversalEntry">
 	<parameters className="ReversalIndexEntry" />
-	</command>
-			<item command="CmdInsertReversalEntry" defaultVisible="false" />
+</command>
+<item command="CmdInsertReversalEntry" defaultVisible="false" />
+
 <command id="CmdDataTree-Insert-Pronunciation" label="_Pronunciation" message="DataTreeInsert">
 	<parameters field="Pronunciations" className="LexPronunciation" ownerClass="LexEntry" />
-	</command>
-			<item command="CmdDataTree-Insert-Pronunciation" defaultVisible="false" />
+</command>
+<item command="CmdDataTree-Insert-Pronunciation" defaultVisible="false" />
+
 <command id="CmdInsertMediaFile" label="_Sound or Movie" message="InsertMediaFile">
 	<parameters field="MediaFiles" className="LexPronunciation" />
 </command>
-			<item command="CmdInsertMediaFile" defaultVisible="false" />
+<item command="CmdInsertMediaFile" defaultVisible="false" />
 */
 #endif
 			//<item command="CmdDataTree-Insert-Etymology" defaultVisible="false" />

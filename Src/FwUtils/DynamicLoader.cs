@@ -205,7 +205,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		public static List<T> GetPlugins<T>(string pattern) where T: class
 		{
-			var codeBasePath = FileLocator.DirectoryOfTheApplicationExecutable;
+			var codeBasePath = FileLocationUtilities.DirectoryOfTheApplicationExecutable;
 			return GetPlugins<T>(codeBasePath, pattern);
 		}
 		/// <summary>

@@ -61,6 +61,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A_llomorph.
+        /// </summary>
+        internal static string Allomorph {
+            get {
+                return ResourceManager.GetString("Allomorph", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;root&gt;
         ///	&lt;parameters toolId=&quot;bulkEditEntriesOrSenses&quot; filterBar=&quot;true&quot; bulkEdit=&quot;true&quot; selectColumn=&quot;true&quot; bulkEditListItemsClasses=&quot;LexEntry,LexSense,LexEntryRef,LexPronunciation,MoForm,LexExampleSentence,CmTranslation&quot; bulkEditListItemsGhostFields=&quot;LexDb.AllPossiblePronunciations,LexDb.AllPossibleAllomorphs,LexDb.AllExampleSentenceTargets,LexDb.AllExampleTranslationTargets,LexDb.AllComplexEntryRefPropertyTargets&quot;&gt;
@@ -756,6 +765,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string Undo_Insert_Etymology {
             get {
                 return ResourceManager.GetString("Undo_Insert_Etymology", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Variant.
+        /// </summary>
+        internal static string Variant {
+            get {
+                return ResourceManager.GetString("Variant", resourceCulture);
             }
         }
     }

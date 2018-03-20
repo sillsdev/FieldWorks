@@ -406,7 +406,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			//in light of what JT says below, we need to explicitly tell the slice that
 			//we were clicked on, because we cannot count on a normal Click event
 			//which we would normally just subscribe to, as we do with the slice editor controls.
-			m_myParentSlice.OnTreeNodeClick(this, meArgs);
+			m_myParentSlice.TakeFocus(true);
 
 			// The documentation says we should call the base class. Not doing so means that
 			// mouse down handlers can't be attached to this class by delegation.

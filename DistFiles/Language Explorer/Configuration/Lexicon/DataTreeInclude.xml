@@ -71,9 +71,6 @@
 		<command id="CmdDataTree-MoveDown-AlternateForm" label="Move Form _Down" message="MoveDownObjectInSequence" icon="MoveDown">
 			<parameters field="AlternateForms" className="MoForm"/>
 		</command>
-		<command id="CmdDataTree-Insert-AlternateForm" label="Insert Allomorph" message="DataTreeInsert">
-			<parameters field="AlternateForms" className="MoForm"/>
-		</command>
 		<command id="CmdDataTree-Delete-AlternateForm" label="Delete AlternateForm" message="DataTreeDelete" icon="Delete">
 			<parameters field="AlternateForms" className="MoForm"/>
 		</command>
@@ -339,16 +336,9 @@
 			<item command="CmdDataTree-Insert-StemAllomorph"/>
 			<item command="CmdDataTree-Insert-AffixAllomorph"/>
 		</menu>
-		<menu id="mnuDataTree-AlternateForms">
-			<item command="CmdDataTree-Insert-AlternateForm"/>
-			<item command="CmdDataTree-Insert-AffixProcess"/>
-		</menu>
 		<menu id="mnuDataTree-Allomorphs-Hotlinks">
 			<item command="CmdDataTree-Insert-StemAllomorph"/>
 			<item command="CmdDataTree-Insert-AffixAllomorph"/>
-		</menu>
-		<menu id="mnuDataTree-AlternateForms-Hotlinks">
-			<item command="CmdDataTree-Insert-AlternateForm"/>
 		</menu>
 		<menu id="mnuDataTree-VariantForms">
 			<item command="CmdDataTree-Insert-VariantForm"/>

@@ -21,41 +21,19 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		private const string SilDir = "SIL";
 		private const string FieldWorksDir = "FieldWorks";
 
-		public static string ProjectsDirectory
-		{
-			get { return GetDirectory(ProjectsDir, Path.Combine(DataDirectory, Projects)); }
-		}
+		public static string ProjectsDirectory => GetDirectory(ProjectsDir, Path.Combine(DataDirectory, Projects));
 
-		public static string ProjectsDirectoryLocalMachine
-		{
-			get { return GetDirectoryLocalMachine(ProjectsDir, Path.Combine(DataDirectoryLocalMachine, Projects)); }
-		}
+		public static string ProjectsDirectoryLocalMachine => GetDirectoryLocalMachine(ProjectsDir, Path.Combine(DataDirectoryLocalMachine, Projects));
 
-		public static string TemplateDirectory
-		{
-			get { return Path.Combine(CodeDirectory, Templates); }
-		}
+		public static string TemplateDirectory => Path.Combine(CodeDirectory, Templates);
 
 		public static ILcmDirectories LcmDirectories { get; } = new ParatextLexiconPluginLcmDirectories();
 
-		public static string DataDirectory
-		{
-			get { return GetDirectory(RootDataDir, Path.Combine(LcmFileHelper.CommonApplicationData, SilDir, FieldWorksDir)); }
-		}
+		public static string DataDirectory => GetDirectory(RootDataDir, Path.Combine(LcmFileHelper.CommonApplicationData, SilDir, FieldWorksDir));
 
-		public static string DataDirectoryLocalMachine
-		{
-			get { return GetDirectoryLocalMachine(RootDataDir, Path.Combine(LcmFileHelper.CommonApplicationData, SilDir, FieldWorksDir)); }
-		}
+		public static string DataDirectoryLocalMachine => GetDirectoryLocalMachine(RootDataDir, Path.Combine(LcmFileHelper.CommonApplicationData, SilDir, FieldWorksDir));
 
-		public static string CodeDirectory
-		{
-			get
-			{
-				return GetDirectory(RootCodeDir, MiscUtils.IsUnix ? "/usr/share/fieldworks"
-					: FileLocator.DirectoryOfTheApplicationExecutable);
-			}
-		}
+		public static string CodeDirectory => GetDirectory(RootCodeDir, MiscUtils.IsUnix ? "/usr/share/fieldworks" : FileLocationUtilities.DirectoryOfTheApplicationExecutable);
 
 		private static string GetDirectory(string registryValue, string defaultDir)
 		{
@@ -97,17 +75,11 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			}
 		}
 
-		private class ParatextLexiconPluginLcmDirectories : ILcmDirectories
+		private sealed class ParatextLexiconPluginLcmDirectories : ILcmDirectories
 		{
-			string ILcmDirectories.ProjectsDirectory
-			{
-				get { return ProjectsDirectory; }
-			}
+			string ILcmDirectories.ProjectsDirectory => ProjectsDirectory;
 
-			string ILcmDirectories.TemplateDirectory
-			{
-				get { return TemplateDirectory; }
-			}
+			string ILcmDirectories.TemplateDirectory => TemplateDirectory;
 		}
 	}
 }

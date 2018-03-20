@@ -203,7 +203,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			// Add two paths: to FW projDir & FW apps folder. Then, FB won't have to look in a zillion registry entries
 			AddArg(ref args, "-projDir", FwDirectoryFinder.ProjectsDirectory);
-			AddArg(ref args, "-fwAppsDir", FileLocator.DirectoryOfTheApplicationExecutable);
+			AddArg(ref args, "-fwAppsDir", FileLocationUtilities.DirectoryOfTheApplicationExecutable);
 			// Tell Flex Bridge which model version of data are expected by FLEx.
 			AddArg(ref args, "-fwmodel", fwmodelVersionNumber.ToString());
 			AddArg(ref args, "-liftmodel", liftModelVersionNumber);
@@ -413,7 +413,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-				return Path.Combine(FileLocator.DirectoryOfTheApplicationExecutable, "FixFwData.exe");
+				return Path.Combine(FileLocationUtilities.DirectoryOfTheApplicationExecutable, "FixFwData.exe");
 			}
 		}
 
