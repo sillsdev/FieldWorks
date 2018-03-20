@@ -41,6 +41,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 
 		public override void FixtureTeardown()
 		{
+			RobustIO.DeleteDirectoryAndContents(Cache.ProjectId.Path);
 			base.FixtureTeardown();
 
 			if (Sldr.IsInitialized)

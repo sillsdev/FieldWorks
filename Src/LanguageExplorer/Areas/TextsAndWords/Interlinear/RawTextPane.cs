@@ -29,6 +29,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		XmlNode m_configurationParameters;
 		private ShowSpaceDecorator m_showSpaceDa;
 		private bool m_fClickInsertsZws; // true for the special mode where click inserts a zero-width space
+		private int m_lastWidth;
 
 		private IVwStylesheet m_flexStylesheet;
 		private IVwStylesheet m_teStylesheet;
@@ -113,13 +114,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-			if (InterlinMaster.HasParagraphNeedingParse(RootObject))
-			{
-				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
-					() =>
-					{ InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(RootObject, false); });
+				if (InterlinMaster.HasParagraphNeedingParse(RootObject))
+				{
+					NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
+												   () =>
+													   { InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(RootObject, false); });
+				}
 			}
-		}
 
 		/// <summary>
 		/// We can't set the style for Scripture...that has to follow some very specific rules implemented in TE.
@@ -151,7 +152,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-			m_styleSheet = wantedStylesheet;
+				m_styleSheet = wantedStylesheet;
 			if (m_styleSheet == m_flexStylesheet)
 			{
 				// Only do it for Flex styles, since Scripture text styles cannot be used in Flex (cf. "CanApplyStyle" property, above).
@@ -190,7 +191,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (InsertInvisibleSpace(e))
 				{
 					return;
-				}
+			}
 			}
 			base.OnMouseDown(e);
 		}
@@ -260,12 +261,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return;
 			}
 
-			if (m_invisibleSpaceCursor == null)
+				if (m_invisibleSpaceCursor == null)
 			{
-				m_invisibleSpaceCursor = new Cursor(GetType(), "InvisibleSpaceCursor.cur");
+					m_invisibleSpaceCursor = new Cursor(GetType(), "InvisibleSpaceCursor.cur");
 			}
-			Cursor = m_invisibleSpaceCursor;
-		}
+				Cursor = m_invisibleSpaceCursor;
+			}
 
 		protected override void OnLostFocus(EventArgs e)
 		{
@@ -321,7 +322,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// Receives the broadcast message "PropertyChanged"
 		/// </summary>
 		public void OnPropertyChanged(string name)
-		{
+			{
 			bool newVal; // used in two cases below
 			switch (name)
 			{
@@ -361,15 +362,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			var wsBefore = 0;
 			if (RootObject != null && m_rootb != null && m_rootb.Selection.IsValid)
-			{
+		{
 				// We want to know below whether a base class changed the ws or not.
 				wsBefore = SelectionHelper.GetWsOfEntireSelection(m_rootb.Selection);
-			}
+		}
 
 			base.ReallyHandleWritingSystemHvo_Changed(newValue);
 
 			if (RootObject == null || m_rootb == null || !m_rootb.Selection.IsValid)
-			{
+		{
 				return;
 			}
 			var ws = SelectionHelper.GetWsOfEntireSelection(m_rootb.Selection);
@@ -385,12 +386,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (!GetSelectedWordPos(m_rootb.Selection, out hvo, out tag, out ws, out ichMin, out ichLim) || tag != StTxtParaTags.kflidContents)
 			{
 				return;
-			}
+		}
 
 			// Force this paragraph to recognize it might need reparsing.
 			var para = m_cache.ServiceLocator.GetInstance<IStTxtParaRepository>().GetObject(hvo);
 			if (Cache.ActionHandlerAccessor.CurrentDepth > 0)
-			{
+		{
 				para.ParseIsCurrent = false;
 			}
 			else
@@ -509,9 +510,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected override void OnLayout(LayoutEventArgs levent)
 		{
-			if (Parent == null)
+			if (string.IsNullOrEmpty(Parent?.Text) || m_lastWidth == Parent.Width)
 			{
-				return; // width is meaningless, no point in doing extra work
+				// width is meaningless or has already been calculated; no point in doing extra work
+				return;
 			}
 			// In a tab page this panel occupies the whole thing, so layout is wasted until
 			// our size is adjusted to match.
@@ -519,7 +521,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-			base.OnLayout (levent);
+			//Save width avoid extra layout calls
+			m_lastWidth = Parent.Width;
+			base.OnLayout(levent);
 		}
 
 		/// <summary>
@@ -530,15 +534,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			switch (dpt)
 			{
-				case VwDelProbType.kdptBsAtStartPara:
-				case VwDelProbType.kdptDelAtEndPara:
-				case VwDelProbType.kdptNone:
-					return VwDelProbResponse.kdprDone;
-				case VwDelProbType.kdptBsReadOnly:
-				case VwDelProbType.kdptComplexRange:
-				case VwDelProbType.kdptDelReadOnly:
-				case VwDelProbType.kdptReadOnly:
-					return VwDelProbResponse.kdprFail;
+			case VwDelProbType.kdptBsAtStartPara:
+			case VwDelProbType.kdptDelAtEndPara:
+			case VwDelProbType.kdptNone:
+				return VwDelProbResponse.kdprDone;
+			case VwDelProbType.kdptBsReadOnly:
+			case VwDelProbType.kdptComplexRange:
+			case VwDelProbType.kdptDelReadOnly:
+			case VwDelProbType.kdptReadOnly:
+				return VwDelProbResponse.kdprFail;
 			}
 			return VwDelProbResponse.kdprAbort;
 		}
@@ -572,7 +576,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (key != Keys.Delete)
 			{
 				OnKeyPress(new KeyPressEventArgs((char)kea.KeyValue));
-			}
+		}
 		}
 
 		/// <summary>
@@ -775,7 +779,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			else
 			{
 				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () => ReparseParagraph(para));
-			}
+		}
 		}
 
 		private void ReparseParagraph(IStTxtPara para)

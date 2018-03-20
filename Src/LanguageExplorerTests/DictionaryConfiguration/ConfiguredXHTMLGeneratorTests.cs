@@ -123,9 +123,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			base.FixtureTeardown();
 
 			if (Sldr.IsInitialized)
-			{
+		{
 				Sldr.Cleanup();
-			}
+		}
 		}
 
 		[SetUp]
@@ -1266,7 +1266,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				Options = new List<DictionaryNodeOption>
 				{
 					new DictionaryNodeOption { Id = "73266a3a-48e8-4bd7-8c84-91c730340b7d" }
-			}
+				}
 			};
 
 			var revAbbrevNode = new ConfigurableDictionaryNode
@@ -1467,7 +1467,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			// SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
 			var headwordMatch = string.Format("//span[@class='{0}']//span[@class='{1}']/span[text()='{2}']",
-														 nters, headWord, entryThreeForm);
+				nters, headWord, entryThreeForm);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(headwordMatch, 1);
 		}
 
@@ -3532,9 +3532,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
 			const string xPathThruAllomorph = "/div[@class='lexentry']/span[@class='alternateformsos']/span[@class='alternateformso']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
-					xPathThruAllomorph + "/span[@class='form']/span[@lang='fr' and text()='Allomorph']", 1);
+				xPathThruAllomorph + "/span[@class='form']/span[@lang='fr' and text()='Allomorph']", 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xPathThruAllomorph +
-					"/span[@class='allomorphenvironments']/span[@class='allomorphenvironment']/span[@class='stringrepresentation']/span[@lang='en' and text()='phoneyEnv']", 1);
+				"/span[@class='allomorphenvironments']/span[@class='allomorphenvironment']/span[@class='stringrepresentation']/span[@lang='en' and text()='phoneyEnv']", 1);
 		}
 
 		[Test]
@@ -3868,7 +3868,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			//SUT-
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(
-					"//span[@class='minimallexreferences']/span[@class='minimallexreference']/span[@class='configtargets']");
+				"//span[@class='minimallexreferences']/span[@class='minimallexreference']/span[@class='configtargets']");
 		}
 
 		[Test]
@@ -4860,7 +4860,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
-					"/div[@class='lexentry']/span[@class='variantformentrybackrefs']/span[@class='variantformentrybackref']/span[@lang='fr']", 0);
+				"/div[@class='lexentry']/span[@class='variantformentrybackrefs']/span[@class='variantformentrybackref']/span[@lang='fr']", 0);
 		}
 
 		[Test]
@@ -6103,7 +6103,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			const string referencedEntries =
 				"//span[@class='visiblevariantentryrefs']/span[@class='visiblevariantentryref']/span[@class='referencedentries']/span[@class='referencedentry']/span[@class='headword']/span[@lang='fr']/span[@lang='fr']";
 			AssertThatXmlIn.String(result)
-					.HasSpecifiedNumberOfMatchesForXpath(referencedEntries, 2);
+				.HasSpecifiedNumberOfMatchesForXpath(referencedEntries, 2);
 		}
 
 		[Test]
@@ -6542,7 +6542,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var complexRefAbbr = subentryRef.ComplexEntryTypesRS[0].Abbreviation.BestAnalysisAlternative.Text;
 			var complexRefRevAbbr = subentryRef.ComplexEntryTypesRS[0].ReverseAbbr.BestAnalysisAlternative.Text;
 
-			var revAbbrevNode = new ConfigurableDictionaryNode
+			var revAbbrevNode  = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReverseAbbr",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
@@ -6624,10 +6624,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
 			var fwdNameXpath = string.Format(
 				"//span[@class='subentries']/span[@class='subentry']/span[@class='complexformtypes']/span[@class='complexformtype']/span/span[@lang='en' and text()='{0}']",
-				complexRefAbbr);
+					complexRefAbbr);
 			var revNameXpath = string.Format(
 				"//span[@class='subentries']/span[@class='subentry']/span[@class='complexformtypes']/span[@class='complexformtype']/span[@class='reverseabbr']/span[@lang='en' and text()='{0}']",
-				complexRefRevAbbr);
+					complexRefRevAbbr);
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(fwdNameXpath);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(revNameXpath, 1);
 		}
@@ -7413,7 +7413,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchPictureCaption, 1);
 
 			//SUT
-			output = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryCorps, mainEntryNode, pubMain, settings);
+			output =  ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryCorps, mainEntryNode, pubMain, settings);
 			Assert.IsNotNullOrEmpty(output);
 			// Verify that the main publication output displays what it should.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
@@ -7824,7 +7824,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, DefaultSettings);
 			const string senseXpath = "div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='gloss']/span[@lang='en' and text()='gloss']";
 			var paracontinuationxpath = string.Format(
-			"div[@class='lexentry']//span[@class='subentries']/span[@class='subentry']/span[@class='complexformtypes']/span[@class='complexformtype']/span[@class='reverseabbr']/span[@lang='en' and text()='{0}']",
+				"div[@class='lexentry']//span[@class='subentries']/span[@class='subentry']/span[@class='complexformtypes']/span[@class='complexformtype']/span[@class='reverseabbr']/span[@lang='en' and text()='{0}']",
 				complexRefRevAbbr);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseXpath, 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(paracontinuationxpath, 1);
@@ -8080,7 +8080,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				var secondHeadwordLoc = xhtml.IndexOf(secondAHeadword, StringComparison.Ordinal);
 				var thirdHeadwordLoc = xhtml.IndexOf(bHeadword, StringComparison.Ordinal);
 				// The headwords should show up in the xhtml in the given order (firstA, secondA, b)
-				Assert.True(firstHeadwordLoc != -1 && firstHeadwordLoc < secondHeadwordLoc && secondHeadwordLoc < thirdHeadwordLoc,
+				Assert.True(firstHeadwordLoc != -1 && firstHeadwordLoc < secondHeadwordLoc  && secondHeadwordLoc < thirdHeadwordLoc,
 					"Entries generated out of order: first at {0}, second at {1}, third at {2}", firstHeadwordLoc, secondHeadwordLoc, thirdHeadwordLoc);
 			}
 			finally

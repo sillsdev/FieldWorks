@@ -51,7 +51,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 		public override void FixtureSetup()
 		{
 			if (!Sldr.IsInitialized)
-			{
+		{
 				// initialize the SLDR
 				Sldr.Initialize();
 			}
@@ -91,7 +91,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			if (_migrator != null)
 			{
 				_migrator.SetTestLogger = null;
-			}
+		}
 			_flexComponentParameters.PropertyTable.Dispose();
 
 			_cf1 = null;
@@ -1574,7 +1574,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 
 		}
 
-	#region Minor Entry Componenents Referenced Entries Tests
+		#region Minor Entry Componenents Referenced Entries Tests
 		private const string HwBefore = "H.before";
 		private const string GlsBefore = "G.before";
 		private const string HwAfter = "H.after";
@@ -1809,7 +1809,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			}
 		}
 
-	#endregion
+		#endregion
 
 		private static DictionaryConfigurationModel BuildConvertedComplexEntryTypeNodes()
 		{
@@ -2591,7 +2591,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.AreEqual("Single Sense", newTypeNode1.Label, "A custom field copies its label properly during conversion");
 		}
 
-	#region Helper
+		#region Helper
 		private void DeleteStyleSheet(string styleName)
 		{
 			var style = _lcmStyleSheet.FindStyle(styleName);
@@ -2607,6 +2607,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 
 			public override string PartName => m_partName;
 		}
-	#endregion Helper
+		#endregion Helper
 	}
 }
