@@ -105,6 +105,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="WxsToWxi.cs" />
     <Compile Include="Clouseau.cs" />
     <Compile Include="CodeReader\ILReader.cs" />
     <Compile Include="FwBuildTasksTests\ClouseauTests.cs" />

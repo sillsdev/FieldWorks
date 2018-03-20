@@ -101,6 +101,7 @@ DistFiles/Projects/
 DistFiles/Editorial\ Checks/ScrChecks.dll*
 DistFiles/Editorial\ Checks/ScrChecks.pdb
 DistFiles/Language\ Explorer/Configuration/Available\ Plugins/
+DistFiles/Language\ Explorer/Configuration/strings-*.xml
 Src/AppCore/libAppCore
 Src/DebugProcs/libDebugProcs
 Src/Generic/libGeneric

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+	<DirectoryRef Id="APPFOLDER">
+		<Directory Id="LangEx" Name="Language Explorer">
+			<Directory Id="MOVIEFOLDER" Name="Movies"/> <!-- Harvested movies are installed in this directory -->
+		</Directory>
+		<!-- Harvested localizations are installed in the following directories -->
+		<Directory Id="AZL10NFOLDER" Name="az"/>
+		<Directory Id="ESL10NFOLDER" Name="es"/>
+		<Directory Id="FAL10NFOLDER" Name="fa"/>
+		<Directory Id="FRL10NFOLDER" Name="fr"/>
+		<Directory Id="HIL10NFOLDER" Name="hi"/>
+		<Directory Id="HUL10NFOLDER" Name="hu"/>
+		<Directory Id="IDL10NFOLDER" Name="id"/>
+		<Directory Id="KOL10NFOLDER" Name="ko"/>
+		<Directory Id="MSL10NFOLDER" Name="ms"/>
+		<Directory Id="PTL10NFOLDER" Name="pt"/>
+		<Directory Id="ROL10NFOLDER" Name="ro"/>
+		<Directory Id="RUL10NFOLDER" Name="ru"/>
+		<Directory Id="TEL10NFOLDER" Name="te"/>
+		<Directory Id="TRL10NFOLDER" Name="tr"/>
+		<Directory Id="VIL10NFOLDER" Name="vi"/>
+		<Directory Id="ZHL10NFOLDER" Name="zh-CN"/>
+	</DirectoryRef>
+
+	<WixVariable Id="MOVIEDIR" Value="$(var.APPBUILDDIR)_Movies"/>
+	<?include MovieHarvest.wxi?>
+
+	<WixVariable Id="AZL10NDIR" Value="$(var.APPBUILDDIR)_L10n\az"/>
+	<WixVariable Id="ESL10NDIR" Value="$(var.APPBUILDDIR)_L10n\es"/>
+	<WixVariable Id="FAL10NDIR" Value="$(var.APPBUILDDIR)_L10n\fa"/>
+	<WixVariable Id="FRL10NDIR" Value="$(var.APPBUILDDIR)_L10n\fr"/>
+	<WixVariable Id="HIL10NDIR" Value="$(var.APPBUILDDIR)_L10n\hi"/>
+	<WixVariable Id="HUL10NDIR" Value="$(var.APPBUILDDIR)_L10n\hu"/>
+	<WixVariable Id="IDL10NDIR" Value="$(var.APPBUILDDIR)_L10n\id"/>
+	<WixVariable Id="KOL10NDIR" Value="$(var.APPBUILDDIR)_L10n\ko"/>
+	<WixVariable Id="MSL10NDIR" Value="$(var.APPBUILDDIR)_L10n\ms"/>
+	<WixVariable Id="PTL10NDIR" Value="$(var.APPBUILDDIR)_L10n\pt"/>
+	<WixVariable Id="ROL10NDIR" Value="$(var.APPBUILDDIR)_L10n\ro"/>
+	<WixVariable Id="RUL10NDIR" Value="$(var.APPBUILDDIR)_L10n\ru"/>
+	<WixVariable Id="TEL10NDIR" Value="$(var.APPBUILDDIR)_L10n\te"/>
+	<WixVariable Id="TRL10NDIR" Value="$(var.APPBUILDDIR)_L10n\tr"/>
+	<WixVariable Id="VIL10NDIR" Value="$(var.APPBUILDDIR)_L10n\vi"/>
+	<WixVariable Id="ZHL10NDIR" Value="$(var.APPBUILDDIR)_L10n\zh-CN"/>
+	<?include azHarvest.wxi?>
+	<?include esHarvest.wxi?>
+	<?include faHarvest.wxi?>
+	<?include frHarvest.wxi?>
+	<?include hiHarvest.wxi?>
+	<?include huHarvest.wxi?>
+	<?include idHarvest.wxi?>
+	<?include koHarvest.wxi?>
+	<?include msHarvest.wxi?>
+	<?include ptHarvest.wxi?>
+	<?include roHarvest.wxi?>
+	<?include ruHarvest.wxi?>
+	<?include teHarvest.wxi?>
+	<?include trHarvest.wxi?>
+	<?include viHarvest.wxi?>
+	<?include zhHarvest.wxi?>
+</Include>

@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="BuildRelease" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
-	<UsingTask TaskName="DownloadFile" AssemblyFile="FwBuildTasks.dll"/>
-	<UsingTask TaskName="ForceDelete" AssemblyFile="FwBuildTasks.dll"/>
-	<UsingTask TaskName="ParseVersionNumbers" AssemblyFile="FwBuildTasks.dll"/>
-	<UsingTask TaskName="Split" AssemblyFile="$(fwrt)/Downloads/SIL.BuildTasks.dll" Condition="Exists('$(fwrt)/Downloads/SIL.BuildTasks.dll')"/>
-
 	<!-- ########################################################################################################## -->
 	<!-- ### Configuration properties - Review and edit these values as needed.                                 ### -->
 	<!-- ########################################################################################################## -->
@@ -86,6 +81,8 @@
 		<InstallersBaseDir>$(fwrt)/Output/</InstallersBaseDir>
 		<AppBuildMasterDir>$(InstallersBaseDir)/$(SafeApplicationName)_Build_Master_$(Platform)</AppBuildMasterDir>
 		<BinDirSuffix>objects/$(SafeApplicationName)</BinDirSuffix>
+		<MovieDirSuffix>$(BinDirSuffix)_Movies</MovieDirSuffix>
+		<L10nDirSuffix>$(BinDirSuffix)_L10n</L10nDirSuffix>
 		<DataDirSuffix>$(BinDirSuffix)_Data</DataDirSuffix>
 	</PropertyGroup>
 
@@ -102,7 +99,7 @@
 	<!-- ### Build Targets                                                                                      ### -->
 	<!-- ########################################################################################################## -->
 
-	<Target Name="BuildProductMain" DependsOnTargets="BuildProduct;MakeInstallBuildFolders;CopyFilesToInstall"/>
+	<Target Name="BuildProductMain" DependsOnTargets="MakeInstallBuildFolders;BuildProduct;Localize;CopyFilesToInstall"/>
 
 	<Target Name="BuildProduct" DependsOnTargets="CleanInstaller;ProductCompile"/>
 
@@ -143,22 +140,97 @@
 
 	<Target Name="CopyFilesToInstall" DependsOnTargets="InstallerVersionNumbers">
 		<!-- copy in new stuff -->
+		<PropertyGroup>
+			<MoviesRoot>$(fwrt)\DistFiles\Language Explorer\Movies</MoviesRoot>
+			<OutputDirForConfig>$(fwrt)\Output\$(Configuration)</OutputDirForConfig>
+		</PropertyGroup>
 		<ItemGroup>
-			<!-- TODO (Hasso) 2018.02: verify proper data is installed -->
-			<IcuFiles Include="$(fwrt)\DistFiles\Icu$(IcuVersion)\**\*"/>
-			<DeveloperFiles Include="$(fwrt)\DistFiles\Projects\**\*"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\.git\**\*"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\Translation Editor\**\*"/>
-			<BinFiles Include="$(fwrt)\Output\$(Configuration)\**\*"/>
-			<BinFiles Include="$(fwrt)\DistFiles\**\*" Exclude="@(DeveloperFiles);@(IcuFiles)"/>
+			<DeveloperFiles Include="$(fwrt)\DistFiles\Projects\**\*"/>
+			<DeveloperFiles Include="$(fwrt)\DistFiles\ReleaseData\**\*"/>
+			<IcuFiles Include="$(fwrt)\DistFiles\Icu$(IcuVersion)\**\*"/>
+			<!-- If you change this list, you must also update those listed at $(fwrt)\Localizations\ReadMe.md -->
+			<L10nFiles Include="$(OutputDirForConfig)\az\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\es\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\fa\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\fr\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\hi\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\hu\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\id\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\ko\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\ms\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\pt\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\ro\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\ru\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\te\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\tr\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\vi\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\zh-CN\**\*"/>
+			<Movies Include="$(MoviesRoot)\**\*" Exclude="$(MoviesRoot)\.git\**\*;$(MoviesRoot)\.git*;$(MoviesRoot)\notfound.html"/>
+			<BinFiles Include="$(fwrt)\DistFiles\**\*" Exclude="@(DeveloperFiles);@(IcuFiles);$(MoviesRoot)\**\*"/>
+			<BinFiles Include="$(OutputDirForConfig)\**\*" Exclude="@(L10nFiles)"/>
+			<!-- %(RecursiveDir) is only the "**\" portion. This hack recollects L10nFiles with the code as the recursive directory. -->
+			<L10nFilesWithRecursiveDirs Include="$(OutputDirForConfig)\**\*" Exclude="@(BinFiles)"/>
+			<!-- TODO (Hasso or Samdoss, depending on who merges our changes) 2018.04: <BinFiles Remove="@(MergeModules)"/>
+						*after* L10nFilesWithRecursiveDirs have been collected (so Exclude=@(BinFiles) does what it needs to) -->
 			<OverrideFiles Include="$(fwrt)\FLExInstaller\*.wxi"/>
 		</ItemGroup>
 		<Copy SourceFiles="@(IcuFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(DataDirSuffix)/Icu$(IcuVersion)/%(RecursiveDir)"/>
+		<Copy SourceFiles="@(L10nFilesWithRecursiveDirs)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(L10nDirSuffix)/%(RecursiveDir)"/>
+		<Copy SourceFiles="@(Movies)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(MovieDirSuffix)/%(RecursiveDir)"/>
+		<!-- a webpage telling the user how to download the movies -->
+		<Copy SourceFiles="$(MoviesRoot)\notfound.html" DestinationFolder="$(AppBuildDir)\$(BinDirSuffix)\Language Explorer\Movies"/>
 		<Copy SourceFiles="@(BinFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/%(RecursiveDir)"/>
 		<Copy SourceFiles="@(OverrideFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(fwrt)/PatchableInstaller/Common"/>
+		<CallTarget Targets="HarvestMoviesAndL10n"/>
 	</Target>
 
-	<Target Name="CopyBuildToMaster" >
+	<Target Name="HarvestMoviesAndL10n" DependsOnTargets="InstallerVersionNumbers">
+		<PropertyGroup>
+			<CommonHeatArgs>-gg -scom -sreg -sfrag -srd -sw5150 -sw5151 -t $(fwrt)/PatchableInstaller/BaseInstallerBuild/KeyPathFix.xsl</CommonHeatArgs>
+		</PropertyGroup>
+
+		<!-- Harvest movies -->
+		<Exec Command="heat.exe dir $(AppBuildDir)/$(MovieDirSuffix) $(CommonHeatArgs) -cg HarvestedMovieFiles -dr MOVIEFOLDER -var wix.MOVIEDIR -out $(fwrt)/PatchableInstaller/Common/MovieHarvest.wxs" />
+		<WxsToWxi SourceFile="$(fwrt)/PatchableInstaller/Common/MovieHarvest.wxs"/>
+
+		<!-- Harvest Localizations. If you change this list, you must also update those listed at $(fwrt)\Localizations\ReadMe.md -->
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\az $(CommonHeatArgs) -cg azLocalization -dr AZL10NFOLDER -var wix.AZL10NDIR -out $(fwrt)/PatchableInstaller/Common/azHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\es $(CommonHeatArgs) -cg esLocalization -dr ESL10NFOLDER -var wix.ESL10NDIR -out $(fwrt)/PatchableInstaller/Common/esHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\fa $(CommonHeatArgs) -cg faLocalization -dr FAL10NFOLDER -var wix.FAL10NDIR -out $(fwrt)/PatchableInstaller/Common/faHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\fr $(CommonHeatArgs) -cg frLocalization -dr FRL10NFOLDER -var wix.FRL10NDIR -out $(fwrt)/PatchableInstaller/Common/frHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\hi $(CommonHeatArgs) -cg hiLocalization -dr HIL10NFOLDER -var wix.HIL10NDIR -out $(fwrt)/PatchableInstaller/Common/hiHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\hu $(CommonHeatArgs) -cg huLocalization -dr HUL10NFOLDER -var wix.HUL10NDIR -out $(fwrt)/PatchableInstaller/Common/huHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\id $(CommonHeatArgs) -cg idLocalization -dr IDL10NFOLDER -var wix.IDL10NDIR -out $(fwrt)/PatchableInstaller/Common/idHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\ko $(CommonHeatArgs) -cg koLocalization -dr KOL10NFOLDER -var wix.KOL10NDIR -out $(fwrt)/PatchableInstaller/Common/koHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\ms $(CommonHeatArgs) -cg msLocalization -dr MSL10NFOLDER -var wix.MSL10NDIR -out $(fwrt)/PatchableInstaller/Common/msHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\pt $(CommonHeatArgs) -cg ptLocalization -dr PTL10NFOLDER -var wix.PTL10NDIR -out $(fwrt)/PatchableInstaller/Common/ptHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\ro $(CommonHeatArgs) -cg roLocalization -dr ROL10NFOLDER -var wix.ROL10NDIR -out $(fwrt)/PatchableInstaller/Common/roHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\ru $(CommonHeatArgs) -cg ruLocalization -dr RUL10NFOLDER -var wix.RUL10NDIR -out $(fwrt)/PatchableInstaller/Common/ruHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\te $(CommonHeatArgs) -cg teLocalization -dr TEL10NFOLDER -var wix.TEL10NDIR -out $(fwrt)/PatchableInstaller/Common/teHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\tr $(CommonHeatArgs) -cg trLocalization -dr TRL10NFOLDER -var wix.TRL10NDIR -out $(fwrt)/PatchableInstaller/Common/trHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\vi $(CommonHeatArgs) -cg viLocalization -dr VIL10NFOLDER -var wix.VIL10NDIR -out $(fwrt)/PatchableInstaller/Common/viHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\zh-CN $(CommonHeatArgs) -cg zhLocalization -dr ZHL10NFOLDER -var wix.ZHL10NDIR -out $(fwrt)/PatchableInstaller/Common/zhHarvest.wxs" />
+		<WxsToWxi SourceFile="$(fwrt)/PatchableInstaller/Common/azHarvest.wxs"/>
+		<WxsToWxi SourceFile="$(fwrt)/PatchableInstaller/Common/esHarvest.wxs"/>
+		<WxsToWxi SourceFile="$(fwrt)/PatchableInstaller/Common/faHarvest.wxs"/>
+		<WxsToWxi SourceFile="$(fwrt)/PatchableInstaller/Common/frHarvest.wxs"/>
+		<WxsToWxi SourceFile="$(fwrt)/PatchableInstaller/Common/hiHarvest.wxs"/>
+		<WxsToWxi SourceFile="$(fwrt)/PatchableInstaller/Common/huHarvest.wxs"/>
+		<WxsToWxi SourceFile="$(fwrt)/PatchableInstaller/Common/idHarvest.wxs"/>
+		<WxsToWxi SourceFile="$(fwrt)/PatchableInstaller/Common/koHarvest.wxs"/>
+		<WxsToWxi SourceFile="$(fwrt)/PatchableInstaller/Common/msHarvest.wxs"/>
+		<WxsToWxi SourceFile="$(fwrt)/PatchableInstaller/Common/ptHarvest.wxs"/>
+		<WxsToWxi SourceFile="$(fwrt)/PatchableInstaller/Common/roHarvest.wxs"/>
+		<WxsToWxi SourceFile="$(fwrt)/PatchableInstaller/Common/ruHarvest.wxs"/>
+		<WxsToWxi SourceFile="$(fwrt)/PatchableInstaller/Common/teHarvest.wxs"/>
+		<WxsToWxi SourceFile="$(fwrt)/PatchableInstaller/Common/trHarvest.wxs"/>
+		<WxsToWxi SourceFile="$(fwrt)/PatchableInstaller/Common/viHarvest.wxs"/>
+		<WxsToWxi SourceFile="$(fwrt)/PatchableInstaller/Common/zhHarvest.wxs"/>
+	</Target>
+
+	<Target Name="CopyBuildToMaster">
 		<ItemGroup>
 			<ObjectFiles Include="$(AppBuildDir)/objects/**/*"/>
 		</ItemGroup>
@@ -166,8 +238,9 @@
 	</Target>
 
 	<Target Name="GetDotNetFiles" >
+		<!-- REVIEW (Hasso) 2018.03: how many of these do we really need? -->
 		<PropertyGroup>
-		<WixLibsDir>PatchableInstaller/libs/</WixLibsDir>
+			<WixLibsDir>PatchableInstaller/libs/</WixLibsDir>
 		</PropertyGroup>
 		<DownloadFile Address="http://go.microsoft.com/fwlink/?LinkId=322115"
 			LocalFilename="$(fwrt)/$(WixLibsDir)/NDP451-KB2858728-x86-x64-AllOS-ENU.exe"
@@ -219,8 +292,8 @@
 	<!-- ### Build Wix Product Targets                                                                          ### -->
 	<!-- ########################################################################################################## -->
 	<PropertyGroup>
-		<Arch Condition="$(Platform) != 'x64'">x86</Arch> <!-- Handle x86 and WIN32 -->
-		<Arch Condition="$(Platform) == 'x64'">x64</Arch>
+		<Arch Condition="'$(Platform)' != 'x64'">x86</Arch> <!-- Handle x86 and WIN32 -->
+		<Arch Condition="'$(Platform)' == 'x64'">x64</Arch>
 	</PropertyGroup>
 
 	<Target Name="BuildProductBaseMsi" DependsOnTargets="InstallerVersionNumbers">
