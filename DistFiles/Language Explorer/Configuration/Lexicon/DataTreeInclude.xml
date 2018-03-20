@@ -226,9 +226,6 @@
 		<!--
 	Pronunciations
 	-->
-		<command id="CmdDataTree-Insert-Pronunciation" label="_Pronunciation" message="DataTreeInsert">
-			<parameters field="Pronunciations" className="LexPronunciation" ownerClass="LexEntry"/>
-		</command>
 		<command id="CmdDataTree-Delete-Pronunciation" label="Delete this Pronunciation" message="DataTreeDelete" icon="Delete">
 			<parameters field="Pronunciations" className="LexPronunciation"/>
 		</command>
@@ -461,16 +458,6 @@
 			<item label="-" translate="do not translate"/>
 			<item command="CmdDataTree-MoveUp-ExampleInNote"/>
 			<item command="CmdDataTree-MoveDown-ExampleInNote"/>
-		</menu>
-		<menu id="mnuDataTree-Pronunciation">
-			<item command="CmdDataTree-Insert-Pronunciation" label="Insert _Pronunciation"/>
-			<item command="CmdInsertMediaFile" label="Insert _Sound or Movie" defaultVisible="false"/>
-			<item label="-" translate="do not translate"/>
-			<item command="CmdDataTree-MoveUp-Pronunciation"/>
-			<item command="CmdDataTree-MoveDown-Pronunciation"/>
-			<item label="-" translate="do not translate"/>
-			<item command="CmdDataTree-Delete-Pronunciation"/>
-			<item label="-" translate="do not translate"/>
 		</menu>
 		<menu id="mnuDataTree-DeletePronunciation">
 			<item command="CmdDataTree-Delete-Pronunciation"/>

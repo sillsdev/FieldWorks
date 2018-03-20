@@ -663,6 +663,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Pronunciation.
+        /// </summary>
+        internal static string Pronunciation {
+            get {
+                return ResourceManager.GetString("Pronunciation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;root&gt;
         ///	&lt;recordeditview&gt;

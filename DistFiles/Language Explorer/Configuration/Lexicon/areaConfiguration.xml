@@ -26,7 +26,7 @@
 		<command id="CmdChangeToVariant" label="Lexeme Form is a variant" message="ConvertEntryIntoVariant">
 			<parameters className="LexEntry" restrictToTool="lexiconEdit"/>
 		</command>
-		<command id="CmdInsertReversalEntry" label="Reversal Entry" message="InsertItemInVector" icon="reversalEntry">
+		<command id="CmdInsertReversalEntry" label="Reversal Entry" message="InsertItemInVector" icon="reversalEntry" a10status="Only used in two reversal tools in Lex area" >
 			<parameters className="ReversalIndexEntry"/>
 		</command>
 		<command id="CmdGoToReversalEntry" label="_Find reversal entry..." message="GotoReversalEntry" icon="gotoReversalEntry" shortcut="Ctrl+F">
@@ -139,7 +139,6 @@
 	<menuAddOn>
 		<menu id="Insert">
 			<item command="CmdInsertReversalEntry" defaultVisible="false"/>
-			<item command="CmdDataTree-Insert-Pronunciation" defaultVisible="false"/>
 			<item command="CmdInsertMediaFile" defaultVisible="false"/>
 			<item label="-" translate="do not translate"/>
 			<item command="CmdInsertPicture" defaultVisible="false"/>

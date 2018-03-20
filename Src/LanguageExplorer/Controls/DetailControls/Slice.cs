@@ -586,7 +586,19 @@ namespace LanguageExplorer.Controls.DetailControls
 			else
 			{
 				// Make a standard SliceTreeNode now.
-				treeNode = new SliceTreeNode(this, SliceContextMenuFactory, XmlUtils.GetOptionalAttributeValue(CallerNode ?? ConfigurationNode, "menu", string.Empty));
+				string menuId = null;
+				if (CallerNode != null)
+				{
+					menuId = XmlUtils.GetOptionalAttributeValue(CallerNode, "menu", string.Empty);
+				}
+				if (string.IsNullOrEmpty(menuId))
+				{
+					if (ConfigurationNode != null)
+					{
+						menuId = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "menu", string.Empty);
+					}
+				}
+				treeNode = new SliceTreeNode(this, SliceContextMenuFactory, menuId);
 				treeNode.SuspendLayout();
 				treeNode.Dock = DockStyle.Fill;
 				SplitCont.Panel1.Controls.Add(treeNode);

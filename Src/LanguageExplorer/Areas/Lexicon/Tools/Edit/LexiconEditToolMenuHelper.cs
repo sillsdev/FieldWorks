@@ -36,6 +36,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private const string mnuDataTree_Etymology_Hotlinks = "mnuDataTree-Etymology-Hotlinks";
 		private const string mnuDataTree_AlternateForms = "mnuDataTree-AlternateForms";
 		private const string mnuDataTree_AlternateForms_Hotlinks = "mnuDataTree-AlternateForms-Hotlinks";
+		private const string mnuDataTree_Pronunciation = "mnuDataTree-Pronunciation";
 		private string _extendedPropertyName;
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private ToolStripMenuItem _editMenu;
@@ -99,6 +100,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			SliceContextMenuFactory.RegisterOrdinaryMenuCreatorMethod(mnuDataTree_Sense, Create_mnuDataTree_Sense);
 			SliceContextMenuFactory.RegisterOrdinaryMenuCreatorMethod(mnuDataTree_Etymology, Create_mnuDataTree_Etymology);
 			SliceContextMenuFactory.RegisterOrdinaryMenuCreatorMethod(mnuDataTree_AlternateForms, Create_mnuDataTree_AlternateForms);
+			SliceContextMenuFactory.RegisterOrdinaryMenuCreatorMethod(mnuDataTree_Pronunciation, Create_mnuDataTree_Pronunciation);
 		}
 
 		#region Implementation of IPropertyTableProvider
@@ -277,6 +279,38 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			ToolStripMenuItemFactory.CreateHotLinkToolStripMenuItem(hotlinksMenuItemList, Insert_Etymology_Clicked, LexiconResources.Insert_Etymology, LexiconResources.Insert_Etymology_Tooltip);
 
 			return hotlinksMenuItemList;
+		}
+
+		private Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Pronunciation(Slice slice, string contextMenuId)
+		{
+			// Start: <menu id="mnuDataTree-Pronunciation">
+			var contextMenuStrip = new ContextMenuStrip
+			{
+				Name = mnuDataTree_AlternateForms
+			};
+			contextMenuStrip.Opening += MenuDataTree_PronunciationContextMenuStrip_Opening;
+			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(2);
+			// <item command="CmdDataTree-Insert-Pronunciation"/>
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Pronunciation_Clicked, LexiconResources.Insert_Pronunciation, LexiconResources.Insert_Pronunciation_Tooltip);
+			/*
+			<item command="CmdInsertMediaFile" label="Insert _Sound or Movie" defaultVisible="false"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdDataTree-MoveUp-Pronunciation"/>
+			<item command="CmdDataTree-MoveDown-Pronunciation"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdDataTree-Delete-Pronunciation"/>
+			<item label="-" translate="do not translate"/>
+			*/
+			// End: <menu id="mnuDataTree-Pronunciation>
+
+			return new Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, MenuDataTree_PronunciationContextMenuStrip_Opening, menuItems);
+		}
+
+		private void MenuDataTree_PronunciationContextMenuStrip_Opening(object sender, CancelEventArgs e)
+		{
+#if RANDYTODO
+// TODO: Enable/disable menu items, based on selected slice in DataTree.
+#endif
 		}
 
 		private Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_AlternateForms(Slice slice, string contextMenuId)
@@ -602,7 +636,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void Insert_Pronunciation_Clicked(object sender, EventArgs e)
 		{
-			MessageBox.Show((Form)_majorFlexComponentParameters.MainWindow, "Inserting Pronunciation...");
+			var lexEntry = (ILexEntry)MyRecordList.CurrentObject;
+			UndoableUnitOfWorkHelper.Do(LcmUiStrings.ksUndoInsert, LcmUiStrings.ksRedoInsert, _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+			{
+				_majorFlexComponentParameters.LcmCache.DomainDataByFlid.MakeNewObject(LexPronunciationTags.kClassId, lexEntry.Hvo, LexEntryTags.kflidPronunciations, lexEntry.PronunciationsOS.Count);
+				// Forces them to be created (lest it try to happen while displaying the new object in PropChanged).
+				var dummy = _majorFlexComponentParameters.LcmCache.LangProject.DefaultPronunciationWritingSystem;
+			});
 		}
 
 		private void Insert_Allomorph_Clicked(object sender, EventArgs e)
@@ -725,19 +765,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_Variant_Clicked, LexiconResources.Variant, LexiconResources.Insert_Variant_Tooltip, insertIndex: ++insertIndex);
 			// <item command="CmdDataTree-Insert-AlternateForm" label="A_llomorph" defaultVisible="false" />
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_Allomorph_Clicked, LexiconResources.Allomorph, LexiconResources.Insert_Allomorph_Tooltip, insertIndex: ++insertIndex);
+			// <item command="CmdDataTree-Insert-Pronunciation" defaultVisible="false" />
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_Pronunciation_Clicked, LexiconResources.Pronunciation, LexiconResources.Insert_Pronunciation_Tooltip, insertIndex: ++insertIndex);
 
 #if RANDYTODO
 			// TODO: Add these to the main Insert menu.
 /*
-<command id="CmdInsertReversalEntry" label="Reversal Entry" message="InsertItemInVector" icon="reversalEntry">
-	<parameters className="ReversalIndexEntry" />
-</command>
-<item command="CmdInsertReversalEntry" defaultVisible="false" />
-
-<command id="CmdDataTree-Insert-Pronunciation" label="_Pronunciation" message="DataTreeInsert">
-	<parameters field="Pronunciations" className="LexPronunciation" ownerClass="LexEntry" />
-</command>
-<item command="CmdDataTree-Insert-Pronunciation" defaultVisible="false" />
 
 <command id="CmdInsertMediaFile" label="_Sound or Movie" message="InsertMediaFile">
 	<parameters field="MediaFiles" className="LexPronunciation" />

@@ -42,7 +42,7 @@ namespace LanguageExplorer.Controls
 			DataTree dataTree,
 			ToolStripMenuItem printMenu)
 		{
-			var panelButton = new PanelButton(flexComponentParameters, null, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(toolMachineName), LanguageExplorerResources.ksHideFields, LanguageExplorerResources.ksShowHiddenFields)
+			var panelButton = new PanelButton(flexComponentParameters, null, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(toolMachineName), LanguageExplorerResources.ksShowHiddenFields, LanguageExplorerResources.ksShowHiddenFields)
 			{
 				Dock = DockStyle.Right
 			};

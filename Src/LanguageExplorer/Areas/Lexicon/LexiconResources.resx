@@ -351,4 +351,7 @@
   <data name="Variant" xml:space="preserve">
     <value>_Variant</value>
   </data>
+  <data name="Pronunciation" xml:space="preserve">
+    <value>_Pronunciation</value>
+  </data>
 </root>
