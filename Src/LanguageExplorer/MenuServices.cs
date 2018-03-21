@@ -30,17 +30,17 @@ namespace LanguageExplorer
 
 		internal static ToolStripMenuItem GetFilePrintMenu(MenuStrip menustrip)
 		{
-			return GetMenu(GetMenu(menustrip, LanguageExplorerConstants.FileToolStripMenuItem).DropDownItems, "printToolStripMenuItem");
+			return GetMenu(GetFileMenu(menustrip).DropDownItems, "printToolStripMenuItem");
 		}
 
 		internal static ToolStripMenuItem GetFileExportMenu(MenuStrip menustrip)
 		{
-			return GetMenu(GetMenu(menustrip, LanguageExplorerConstants.FileToolStripMenuItem).DropDownItems, "exportToolStripMenuItem");
+			return GetMenu(GetFileMenu(menustrip).DropDownItems, "exportToolStripMenuItem");
 		}
 
 		internal static ToolStripMenuItem GetFileImportMenu(MenuStrip menustrip)
 		{
-			return GetMenu(GetMenu(menustrip, LanguageExplorerConstants.FileToolStripMenuItem).DropDownItems, "importToolStripMenuItem");
+			return GetMenu(GetFileMenu(menustrip).DropDownItems, "importToolStripMenuItem");
 		}
 
 		#endregion File menu
@@ -54,17 +54,17 @@ namespace LanguageExplorer
 
 		internal static ToolStripMenuItem GetEditDeleteMenu(MenuStrip menustrip)
 		{
-			return GetMenu(GetMenu(menustrip, LanguageExplorerConstants.EditToolStripMenuItem).DropDownItems, "deleteToolStripMenuItem");
+			return GetMenu(GetEditMenu(menustrip).DropDownItems, "deleteToolStripMenuItem");
 		}
 
 		internal static ToolStripMenuItem GetEditFindMenu(MenuStrip menustrip)
 		{
-			return GetMenu(GetMenu(menustrip, LanguageExplorerConstants.EditToolStripMenuItem).DropDownItems, "findToolStripMenuItem");
+			return GetMenu(GetEditMenu(menustrip).DropDownItems, "findToolStripMenuItem");
 		}
 
 		internal static ToolStripMenuItem GetEditFindAndReplaceMenu(MenuStrip menustrip)
 		{
-			return GetMenu(GetMenu(menustrip, LanguageExplorerConstants.EditToolStripMenuItem).DropDownItems, "replaceToolStripMenuItem");
+			return GetMenu(GetEditMenu(menustrip).DropDownItems, "replaceToolStripMenuItem");
 		}
 
 		#endregion Edit menu
@@ -78,12 +78,12 @@ namespace LanguageExplorer
 
 		internal static ToolStripMenuItem GetViewRefreshMenu(MenuStrip menustrip)
 		{
-			return GetMenu(GetMenu(menustrip, LanguageExplorerConstants.ViewToolStripMenuItem).DropDownItems, "refreshToolStripMenuItem");
+			return GetMenu(GetViewMenu(menustrip).DropDownItems, "refreshToolStripMenuItem");
 		}
 
 		internal static ToolStripMenuItem GetViewFilterMenu(MenuStrip menustrip)
 		{
-			return GetMenu(GetMenu(menustrip, LanguageExplorerConstants.ViewToolStripMenuItem).DropDownItems, "filtersToolStripMenuItem");
+			return GetMenu(GetViewMenu(menustrip).DropDownItems, "filtersToolStripMenuItem");
 		}
 
 		#endregion View menu
@@ -124,7 +124,17 @@ namespace LanguageExplorer
 
 		internal static ToolStripMenuItem GetToolsConfigureMenu(MenuStrip menustrip)
 		{
-			return GetMenu(GetMenu(menustrip, LanguageExplorerConstants.ToolsToolStripMenuItem).DropDownItems, "configureToolStripMenuItem");
+			return GetMenu(GetToolsMenu(menustrip).DropDownItems, "configureToolStripMenuItem");
+		}
+
+		internal static ToolStripMenuItem GetToolsSpellingMenu(MenuStrip menustrip)
+		{
+			return GetMenu(GetToolsMenu(menustrip).DropDownItems, "spellingToolStripMenuItem");
+		}
+
+		internal static ToolStripMenuItem GetToolsSpellingShowVernacularSpellingErrorsMenu(MenuStrip menustrip)
+		{
+			return GetMenu(GetToolsSpellingMenu(menustrip).DropDownItems, "showVernacularSpellingErrorsToolStripMenuItem");
 		}
 
 		#endregion Tools menu

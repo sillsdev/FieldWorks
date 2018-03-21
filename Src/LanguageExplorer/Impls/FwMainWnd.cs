@@ -36,6 +36,7 @@ using SIL.FieldWorks.Resources;
 using SIL.IO;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.SpellChecking;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
@@ -416,6 +417,8 @@ namespace LanguageExplorer.Impls
 		/// <remarks>NB: default properties of interest to areas/tools are handled by them.</remarks>
 		private void SetDefaultProperties()
 		{
+			// "UseVernSpellingDictionary" Controls checking the global Tools->Spelling->Show Vernacular Spelling Errors menu.
+			PropertyTable.SetDefault("UseVernSpellingDictionary", true, SettingsGroup.GlobalSettings, true, false);
 			// This "PropertyTableVersion" property will control the beahvior of the "ConvertOldPropertiesToNewIfPresent" method.
 			PropertyTable.SetDefault("PropertyTableVersion", int.MinValue, SettingsGroup.GlobalSettings, true, false);
 			// This is the splitter distance for the sidebar/secondary splitter pair of controls.
@@ -721,6 +724,13 @@ namespace LanguageExplorer.Impls
 			_sendReceiveMenuManager = new SendReceiveMenuManager(IdleQueue, this, _flexApp, Cache, _sendReceiveToolStripMenuItem, toolStripButtonFlexLiftBridge);
 			_sendReceiveMenuManager.InitializeFlexComponent(flexComponentParameters);
 
+			Cache.DomainDataByFlid.AddNotification(this);
+			showVernacularSpellingErrorsToolStripMenuItem.Checked = _propertyTable.GetValue<bool>("UseVernSpellingDictionary");
+			if (showVernacularSpellingErrorsToolStripMenuItem.Checked)
+			{
+				EnableVernacularSpelling();
+			}
+
 			SetupOutlookBar();
 
 			SetWindowTitle();
@@ -987,6 +997,7 @@ namespace LanguageExplorer.Impls
 			if (disposing)
 			{
 				Application.Idle -= Application_Idle;
+				Cache.DomainDataByFlid.RemoveNotification(this);
 				foreach (var helper in _idleProcessingHelpers)
 				{
 					foreach (var handler in helper)
@@ -1073,6 +1084,26 @@ namespace LanguageExplorer.Impls
 			GC.SuppressFinalize(this);
 		}
 
+		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
+		{
+			if (tag != WfiWordformTags.kflidSpellingStatus)
+			{
+				// We are only interested in one tag.
+				return;
+			}
+			RestartSpellChecking();
+			// This keeps the spelling dictionary in sync with the WFI.
+			// Arguably this should be done in FDO. However the spelling dictionary is used to
+			// keep the UI showing squiggles, so it's also arguable that it is a UI function.
+			// In any case it's easier to do it in PropChanged (which also fires in Undo/Redo)
+			// than in a data-change method which does not.
+			var wf = Cache.ServiceLocator.GetInstance<IWfiWordformRepository>().GetObject(hvo);
+			var text = wf.Form.VernacularDefaultWritingSystem.Text;
+			if (!string.IsNullOrEmpty(text))
+			{
+				SpellingHelper.SetSpellingStatus(text, Cache.DefaultVernWs, Cache.LanguageWritingSystemFactoryAccessor, wf.SpellingStatus == (int)SpellingStatusStates.correct);
+			}
+		}
 		#endregion
 
 		private void File_CloseWindow(object sender, EventArgs e)
@@ -2111,6 +2142,47 @@ very simple minor adjustments. ;)"
 		{
 			var program = MiscUtils.IsUnix ? "gucharmap" :  "charmap.exe";
 			MiscUtils.RunProcess(program, null, MiscUtils.IsUnix ? exception => { MessageBox.Show(string.Format(DictionaryConfigurationStrings.ksUnableToStartGnomeCharMap, program)); } : (Action<Exception>)null);
+		}
+
+		private void showVernacularSpellingErrorsToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			var checking = !_propertyTable.GetValue<bool>("UseVernSpellingDictionary");
+			if (checking)
+			{
+				EnableVernacularSpelling();
+			}
+			else
+			{
+				WfiWordformServices.DisableVernacularSpellingDictionary(Cache);
+			}
+			showVernacularSpellingErrorsToolStripMenuItem.Checked = checking;
+			_propertyTable.SetProperty("UseVernSpellingDictionary", checking, true, false);
+			RestartSpellChecking();
+		}
+
+		/// <summary>
+		/// Enable vernacular spelling.
+		/// </summary>
+		private void EnableVernacularSpelling()
+		{
+			// Enable all vernacular spelling dictionaries by changing those that are set to <None>
+			// to point to the appropriate Locale ID. Do this BEFORE updating the spelling dictionaries,
+			// otherwise, the update won't see that there is any dictionary set to update.
+			foreach (var wsObj in Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
+			{
+				// This allows it to try to find a dictionary, but doesn't force one to exist.
+				if (string.IsNullOrEmpty(wsObj.SpellCheckingId) || wsObj.SpellCheckingId == "<None>") // LT-13556 new langs were null here
+				{
+					wsObj.SpellCheckingId = wsObj.Id.Replace('-', '_');
+				}
+			}
+			// This forces the default vernacular WS spelling dictionary to exist, and updates all existing ones.
+			WfiWordformServices.ConformSpellingDictToWordforms(Cache);
+		}
+
+		private void RestartSpellChecking()
+		{
+			_flexApp.RestartSpellChecking();
 		}
 	}
 }

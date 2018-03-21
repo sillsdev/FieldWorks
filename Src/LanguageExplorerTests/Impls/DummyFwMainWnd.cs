@@ -248,5 +248,11 @@ namespace LanguageExplorerTests.Impls
 		ListView IFwMainWnd.ListStyleRecordList => null;
 
 		#endregion
+
+		#region Implementation of IVwNotifyChange
+		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
+		{
+		}
+		#endregion
 	}
 }

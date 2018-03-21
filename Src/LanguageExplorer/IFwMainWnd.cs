@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer
 {
@@ -16,7 +17,7 @@ namespace LanguageExplorer
 	/// and to allow different apps to implement their main windows totally differently.
 	/// </summary>
 	/// <remarks>In normal operations, an IFwMainWnd implementation expects to be cast to Form.</remarks>
-	internal interface IFwMainWnd : IDisposable, IApplicationIdleEventHandler, IPropertyTableProvider, IPublisherProvider, ISubscriberProvider, IRecordListOwner, IIdleQueueProvider
+	internal interface IFwMainWnd : IDisposable, IApplicationIdleEventHandler, IPropertyTableProvider, IPublisherProvider, ISubscriberProvider, IRecordListOwner, IIdleQueueProvider, IVwNotifyChange
 	{
 		/// <summary>
 		/// Gets the active view of the window

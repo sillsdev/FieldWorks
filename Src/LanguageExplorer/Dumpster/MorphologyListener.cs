@@ -11,9 +11,6 @@ using LanguageExplorer.Areas.TextsAndWords;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel.Core.SpellChecking;
-using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Dumpster
 {
@@ -25,7 +22,7 @@ namespace LanguageExplorer.Dumpster
 	/// JohnT: rather contrary to its name, appears to be a place to put handlers for commands common
 	/// to tools in the Words area.
 	/// </summary>
-	internal sealed class MorphologyListener : IFlexComponent, IVwNotifyChange, IDisposable
+	internal sealed class MorphologyListener : IFlexComponent
 	{
 		#region Data members
 
@@ -72,121 +69,9 @@ namespace LanguageExplorer.Dumpster
 
 			Cache = PropertyTable.GetValue<LcmCache>("cache");
 			m_wordformRepos = Cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
-			Cache.DomainDataByFlid.AddNotification(this);
-			if (IsVernacularSpellingEnabled())
-			{
-				OnEnableVernacularSpelling();
-			}
 		}
 
 		#endregion
-
-		#region IDisposable & Co. implementation
-
-		/// <summary>
-		/// See if the object has been disposed.
-		/// </summary>
-		public bool IsDisposed { get; private set; }
-
-		/// <summary>
-		/// Finalizer, in case client doesn't dispose it.
-		/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
-		/// </summary>
-		/// <remarks>
-		/// In case some clients forget to dispose it directly.
-		/// </remarks>
-		~MorphologyListener()
-		{
-			Dispose(false);
-			// The base class finalizer is called automatically.
-		}
-
-		/// <summary>
-		/// Implemented to reset spell-checking everywhere when the spelling status of a wordform changes.
-		/// </summary>
-		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
-		{
-			if (tag != WfiWordformTags.kflidSpellingStatus)
-			{
-				return;
-			}
-			RestartSpellChecking();
-			// This keeps the spelling dictionary in sync with the WFI.
-			// Arguably this should be done in LCM. However the spelling dictionary is used to
-			// keep the UI showing squiggles, so it's also arguable that it is a UI function.
-			// In any case it's easier to do it in PropChanged (which also fires in Undo/Redo)
-			// than in a data-change method which does not.
-			var wf = m_wordformRepos.GetObject(hvo);
-			var text = wf.Form.VernacularDefaultWritingSystem.Text;
-			if (!string.IsNullOrEmpty(text))
-			{
-				SpellingHelper.SetSpellingStatus(text, Cache.DefaultVernWs, Cache.LanguageWritingSystemFactoryAccessor, wf.SpellingStatus == (int)SpellingStatusStates.correct);
-			}
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <remarks>Must not be virtual.</remarks>
-		public void Dispose()
-		{
-			Dispose(true);
-			// This object will be cleaned up by the Dispose method.
-			// Therefore, you should call GC.SupressFinalize to
-			// take this object off the finalization queue
-			// and prevent finalization code for this object
-			// from executing a second time.
-			GC.SuppressFinalize(this);
-		}
-
-		/// <summary>
-		/// Executes in two distinct scenarios.
-		///
-		/// 1. If disposing is true, the method has been called directly
-		/// or indirectly by a user's code via the Dispose method.
-		/// Both managed and unmanaged resources can be disposed.
-		///
-		/// 2. If disposing is false, the method has been called by the
-		/// runtime from inside the finalizer and you should not reference (access)
-		/// other managed objects, as they already have been garbage collected.
-		/// Only unmanaged resources can be disposed.
-		/// </summary>
-		/// <param name="disposing"></param>
-		/// <remarks>
-		/// If any exceptions are thrown, that is fine.
-		/// If the method is being done in a finalizer, it will be ignored.
-		/// If it is thrown by client code calling Dispose,
-		/// it needs to be handled by fixing the bug.
-		///
-		/// If subclasses override this method, they should call the base implementation.
-		/// </remarks>
-		private void Dispose(bool disposing)
-		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
-			if (IsDisposed)
-			{
-				return;
-			}
-
-			if (disposing)
-			{
-				// Dispose managed resources here.
-				if (Cache != null && !Cache.IsDisposed)
-				{
-					Cache.DomainDataByFlid?.RemoveNotification(this);
-				}
-			}
-
-			// Dispose unmanaged resources here, whether disposing is true or false.
-			PropertyTable = null;
-			Publisher = null;
-			Subscriber = null;
-
-			IsDisposed = true;
-		}
-
-		#endregion IDisposable & Co. implementation
 
 		#region XCore Message handlers
 
@@ -197,8 +82,7 @@ namespace LanguageExplorer.Dumpster
 		/// <param name="commandObject"></param>
 		/// <param name="display"></param>
 		/// <returns></returns>
-		public virtual bool OnDisplayMergeWordform(object commandObject,
-			ref UIItemDisplayProperties display)
+		public virtual bool OnDisplayMergeWordform(object commandObject, ref UIItemDisplayProperties display)
 		{
 			display.Enabled = display.Visible = InFriendlyArea;
 			return true; //we've handled this
@@ -213,86 +97,7 @@ namespace LanguageExplorer.Dumpster
 			return true;
 		}
 
-#if RANDYTODO
-		/// <summary>
-		/// Enable the spelling tool always. Correct the property value if need be to match whether
-		/// we are actually showing vernacular spelling.
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public virtual bool OnDisplayUseVernSpellingDictionary(object commandObject,
-			ref UIItemDisplayProperties display)
-		{
-			display.Enabled = display.Visible = Cache != null;
-			if (Cache == null)
-				return true;
-			display.Checked = IsVernacularSpellingEnabled();
-			return true; //we've handled this
-		}
-#endif
-
-		public bool OnUseVernSpellingDictionary(object argument)
-		{
-			var checking = !IsVernacularSpellingEnabled();
-			if (checking)
-			{
-				OnEnableVernacularSpelling();
-			}
-			else
-			{
-				WfiWordformServices.DisableVernacularSpellingDictionary(Cache);
-			}
-			PropertyTable.SetProperty("UseVernSpellingDictionary", checking, true, true);
-			RestartSpellChecking();
-			return true;
-		}
-
-		private bool IsVernacularSpellingEnabled()
-		{
-			return PropertyTable.GetValue("UseVernSpellingDictionary", true);
-		}
-
-		private void RestartSpellChecking()
-		{
-			var app = PropertyTable.GetValue<IApp>("App");
-			app?.RestartSpellChecking();
-		}
-
-		/// <summary>
-		/// Implement the add words to spelling dictionary command. (May be called by reflection,
-		/// though I don't think there is a current explicit menu item.)
-		/// </summary>
-		public bool OnAddWordsToSpellDict(object argument)
-		{
-			if (Cache == null)
-			{
-				return false; // impossible?
-			}
-			WfiWordformServices.ConformSpellingDictToWordforms(Cache);
-			return true; // handled
-		}
-
 		private LcmCache Cache { get; set; }
-
-		/// <summary>
-		/// Enable vernacular spelling.
-		/// </summary>
-		private void OnEnableVernacularSpelling()
-		{
-			// Enable all vernacular spelling dictionaries by changing those that are set to <None>
-			// to point to the appropriate Locale ID. Do this BEFORE updating the spelling dictionaries,
-			// otherwise, the update won't see that there is any dictionary set to update.
-			foreach (var wsObj in Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
-			{
-				// This allows it to try to find a dictionary, but doesn't force one to exist.
-				if (string.IsNullOrEmpty(wsObj.SpellCheckingId) || wsObj.SpellCheckingId == "<None>") // LT-13556 new langs were null here
-					wsObj.SpellCheckingId = wsObj.Id.Replace('-', '_');
-			}
-			// This forces the default vernacular WS spelling dictionary to exist, and updates
-			// all existing ones.
-			OnAddWordsToSpellDict(null);
-		}
 
 		/// <summary>
 		/// Try to find a WfiWordform object corresponding the the focus selection.
@@ -324,8 +129,7 @@ namespace LanguageExplorer.Dumpster
 		}
 
 #if RANDYTODO
-		public bool OnDisplayEditSpellingStatus(object commandObject,
-			ref UIItemDisplayProperties display)
+		public bool OnDisplayEditSpellingStatus(object commandObject, ref UIItemDisplayProperties display)
 		{
 			display.Enabled = display.Visible = InFriendlyArea;
 			return true; //we've handled this
@@ -359,8 +163,7 @@ namespace LanguageExplorer.Dumpster
 		}
 
 #if RANDYTODO
-		public bool OnDisplayViewIncorrectWords(object commandObject,
-			ref UIItemDisplayProperties display)
+		public bool OnDisplayViewIncorrectWords(object commandObject, ref UIItemDisplayProperties display)
 		{
 			display.Enabled = display.Visible = InFriendlyArea;
 			return true; //we've handled this
@@ -388,8 +191,7 @@ namespace LanguageExplorer.Dumpster
 		}
 
 #if RANDYTODO
-		public virtual bool OnDisplayGotoWfiWordform(object commandObject,
-			ref UIItemDisplayProperties display)
+		public virtual bool OnDisplayGotoWfiWordform(object commandObject, ref UIItemDisplayProperties display)
 		{
 			if (InFriendlyArea && m_mediator != null)
 			{
@@ -455,15 +257,15 @@ namespace LanguageExplorer.Dumpster
 			{
 				var tool = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool");
 				var commands = new List<string>
-											{
-												"AboutToFollowLink",
-												"FollowLink"
-											};
+				{
+					"AboutToFollowLink",
+					"FollowLink"
+				};
 				var parms = new List<object>
-											{
-												null,
-												new FwLinkArgs(tool, command.TargetId)
-											};
+				{
+					null,
+					new FwLinkArgs(tool, command.TargetId)
+				};
 				Publisher.Publish(commands, parms);
 				command.TargetId = Guid.Empty;	// clear the target for future use.
 				return true;
