@@ -55,6 +55,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private ToolStripMenuItem _showHiddenFieldsMenu;
 		private ToolStripButton _insertEntryToolStripButton;
 		private ToolStripButton _insertGoToEntryToolStripButton;
+		private readonly List<ToolStripItem> _senseMenuItems = new List<ToolStripItem>();
 		private DataTree MyDataTree { get; set; }
 		private IRecordList MyRecordList { get; set; }
 		internal MultiPane InnerMultiPane { get; set; }
@@ -159,9 +160,40 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_showHiddenFieldsMenu.Checked = (bool)obj;
 		}
 
-		private void MyDataTree_CurrentSliceChanged(object sender, CurrentSliceChangedEventArgs currentSliceChangedEventArgs)
+		private void MyDataTree_CurrentSliceChanged(object sender, CurrentSliceChangedEventArgs e)
 		{
-			// This will make select menus visible/enabled.
+			var currentSlice = e.CurrentSlice;
+			if (currentSlice.Object == null)
+			{
+				SenseMenusVisibility(false);
+				return;
+			}
+			var sliceObject = currentSlice.Object;
+			if (sliceObject is ILexSense)
+			{
+				SenseMenusVisibility(true);
+				return;
+			}
+			// "owningSense" will be null, if 'sliceObject' is owned by the entry, but not a sense.
+			var owningSense = sliceObject.OwnerOfClass<ILexSense>();
+			if (owningSense == null)
+			{
+				SenseMenusVisibility(false);
+				return;
+			}
+
+			// We now know that the current slice is a sense or is 'owned' by a sense,
+			// so enable the Insert menus that are related to a sense.
+			SenseMenusVisibility(true);
+		}
+
+		private void SenseMenusVisibility(bool visible)
+		{
+			// This will make select Insert menus visible.
+			foreach (var menuItem in _senseMenuItems)
+			{
+				menuItem.Visible = visible;
+			}
 		}
 
 		#region IDisposable
@@ -195,6 +227,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			if (disposing)
 			{
+				_senseMenuItems.Clear();
 				MyDataTree.CurrentSliceChanged -= MyDataTree_CurrentSliceChanged;
 				Subscriber.Subscribe("ShowHiddenFields", ShowHiddenFields_Handler);
 				_lexiconAreaMenuHelper.Dispose();
@@ -732,7 +765,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void Insert_Subsense_Clicked(object sender, EventArgs e)
 		{
-			MessageBox.Show((Form)_majorFlexComponentParameters.MainWindow, "Inserting Subsense...");
+			var owningSense = MyDataTree.CurrentSlice.Object as ILexSense ?? MyDataTree.CurrentSlice.Object.OwnerOfClass<ILexSense>();
+			LexSenseUi.CreateNewLexSense(_majorFlexComponentParameters.LcmCache, owningSense);
 		}
 
 		private void Insert_Sense_Clicked(object sender, EventArgs e)
@@ -835,21 +869,28 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_Sound_Or_Movie_File_Clicked, LexiconResources.Sound_or_Movie, LexiconResources.Insert_Sound_Or_Movie_File_Tooltip, insertIndex: ++insertIndex);
 			//<item command="CmdDataTree-Insert-Etymology" defaultVisible="false" />
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_Etymology_Clicked, LexiconResources.Etymology, LexiconResources.Insert_Etymology_Tooltip, Keys.None, null, ++insertIndex);
+
+			// <item label="-" translate="do not translate" />
+			ToolStripItem senseMenuItem = ToolStripMenuItemFactory.CreateToolStripSeparatorForToolStripMenuItem(_insertMenu, ++insertIndex);
+			senseMenuItem.Visible = false;
+			_senseMenuItems.Add(senseMenuItem);
+
+			// <item command="CmdInsertSubsense" defaultVisible="false" />
+			senseMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_Subsense_Clicked, LexiconResources.SubsenseInSense, LexiconResources.Insert_Subsense_Tooltip, insertIndex: ++insertIndex);
+			senseMenuItem.Visible = false;
+			_senseMenuItems.Add(senseMenuItem);
+
 #if RANDYTODO
 /*
-			<item label="-" translate="do not translate" />
-<command id="CmdInsertSubsense" label="Subsense (in sense)" message="DataTreeInsert">
-	<parameters field="Senses" className="LexSense" ownerClass="LexSense" />
-</command>
-			<item command="CmdInsertSubsense" defaultVisible="false" />
 <command id="CmdInsertPicture" label="_Picture" message="InsertPicture">
 	<parameters field="Pictures" className="LexSense" />
 </command>
-			<item command="CmdInsertPicture" defaultVisible="false" />
+<item command="CmdInsertPicture" defaultVisible="false" />
+
 <command id="CmdInsertExtNote" label="_Extended Note" message="DataTreeInsert">
 	<parameters field="ExtendedNote" className="LexExtendedNote" ownerClass="LexSense" />
 </command>
-			<item command="CmdInsertExtNote" defaultVisible="false" />
+<item command="CmdInsertExtNote" defaultVisible="false" />
 			*/
 #endif
 		}

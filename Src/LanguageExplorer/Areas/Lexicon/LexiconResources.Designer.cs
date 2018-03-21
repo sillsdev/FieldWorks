@@ -814,6 +814,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Subsense (in sense).
+        /// </summary>
+        internal static string SubsenseInSense {
+            get {
+                return ResourceManager.GetString("SubsenseInSense", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Undo Create Pronunciation.
         /// </summary>
         internal static string Undo_Create_Pronunciation {

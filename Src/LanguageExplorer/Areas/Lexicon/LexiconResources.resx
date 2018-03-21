@@ -372,4 +372,7 @@
   <data name="Undo_Create_Pronunciation" xml:space="preserve">
     <value>Undo Create Pronunciation</value>
   </data>
+  <data name="SubsenseInSense" xml:space="preserve">
+    <value>Subsense (in sense)</value>
+  </data>
 </root>
