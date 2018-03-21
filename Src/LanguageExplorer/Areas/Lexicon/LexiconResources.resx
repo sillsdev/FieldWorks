@@ -390,4 +390,16 @@
   <data name="Picture" xml:space="preserve">
     <value>_Picture</value>
   </data>
+  <data name="ExtendedNote" xml:space="preserve">
+    <value>_Extended Note</value>
+  </data>
+  <data name="Insert_Extended_Note" xml:space="preserve">
+    <value>Insert Extended Note</value>
+  </data>
+  <data name="Redo_Create_Extended_Note" xml:space="preserve">
+    <value>Redo Create Extended Note</value>
+  </data>
+  <data name="Undo_Create_Extended_Note" xml:space="preserve">
+    <value>Undo Create Extended Note</value>
+  </data>
 </root>

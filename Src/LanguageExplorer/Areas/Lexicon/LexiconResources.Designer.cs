@@ -153,6 +153,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Extended Note.
+        /// </summary>
+        internal static string ExtendedNote {
+            get {
+                return ResourceManager.GetString("ExtendedNote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Find lexical entry....
         /// </summary>
         internal static string Find_Entry {
@@ -282,6 +291,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string Insert_Example {
             get {
                 return ResourceManager.GetString("Insert_Example", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Extended Note.
+        /// </summary>
+        internal static string Insert_Extended_Note {
+            get {
+                return ResourceManager.GetString("Insert_Extended_Note", resourceCulture);
             }
         }
         
@@ -759,6 +777,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Redo Create Extended Note.
+        /// </summary>
+        internal static string Redo_Create_Extended_Note {
+            get {
+                return ResourceManager.GetString("Redo_Create_Extended_Note", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Redo Create Pronunciation.
         /// </summary>
         internal static string Redo_Create_Pronunciation {
@@ -864,6 +891,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string SubsenseInSense {
             get {
                 return ResourceManager.GetString("SubsenseInSense", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo Create Extended Note.
+        /// </summary>
+        internal static string Undo_Create_Extended_Note {
+            get {
+                return ResourceManager.GetString("Undo_Create_Extended_Note", resourceCulture);
             }
         }
         

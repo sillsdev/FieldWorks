@@ -166,9 +166,6 @@
 		<command id="CmdDataTree-MoveDown-ExtNote" label="Move Extended Note _Down" message="MoveDownObjectInSequence" icon="MoveDown">
 			<parameters field="ExtendedNote" className="LexExtendedNote"/>
 		</command>
-		<command id="CmdDataTree-Insert-ExtNote" label="Insert Extended Note" message="DataTreeInsert">
-			<parameters field="ExtendedNote" className="LexExtendedNote"/>
-		</command>
 		<command id="CmdDataTree-Delete-ExtNote" label="Delete Extended Note" message="DataTreeDelete" icon="Delete">
 			<parameters field="ExtendedNote" className="LexExtendedNote"/>
 		</command>

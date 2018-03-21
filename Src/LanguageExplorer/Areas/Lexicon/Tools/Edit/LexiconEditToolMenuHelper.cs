@@ -229,7 +229,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				_senseMenuItems.Clear();
 				MyDataTree.CurrentSliceChanged -= MyDataTree_CurrentSliceChanged;
-				Subscriber.Subscribe("ShowHiddenFields", ShowHiddenFields_Handler);
+				Subscriber.Unsubscribe("ShowHiddenFields", ShowHiddenFields_Handler);
 				_lexiconAreaMenuHelper.Dispose();
 				foreach (var menuTuple in _newEditMenusAndHandlers)
 				{
@@ -440,13 +440,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				<parameters field="Example" ownerClass="LexExampleSentence" guicontrol="findExampleSentences" />
 			</command>
 			<item command="CmdFindExampleSentence"/>
-
-			<command id="CmdDataTree-Insert-ExtNote" label="Insert Extended Note" message="DataTreeInsert">
-				<parameters field="ExtendedNote" className="LexExtendedNote" />
-			</command>
-			<item command="CmdDataTree-Insert-ExtNote"/>
 			*/
 			// TODO: Add above menus.
+
+			// <item command="CmdDataTree-Insert-ExtNote"/>
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_ExtendedNote_Clicked, LexiconResources.Insert_Extended_Note);
 
 			// <item command="CmdDataTree-Insert-SenseBelow"/>
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Sense_Clicked, LexiconResources.Insert_Sense, LexiconResources.InsertSenseToolTip);
@@ -475,14 +473,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var toolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Delete_Sense_Clicked, LexiconResources.DeleteSenseAndSubsenses);
 			toolStripMenuItem.Image = LanguageExplorerResources.Delete;
 			toolStripMenuItem.ImageTransparentColor = Color.Magenta;
-
-			// TODO: Add below menus.
-			/*
-				// Plus it gets these more general menus added to it, which should be commmon to all (almost all?) slices:
-				<item label="-" translate="do not translate"/>
-				Field Visibility
-				Help
-			*/
 			// End: <menu id="mnuDataTree-Sense">
 
 			return new Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, MenuDataTree_SenseContextMenuStrip_Opening, menuItems);
@@ -510,6 +500,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					}
 				}
 			}
+		}
+
+		private void Insert_ExtendedNote_Clicked(object sender, EventArgs e)
+		{
+			var owningSense = MyDataTree.CurrentSlice.Object as ILexSense ?? MyDataTree.CurrentSlice.Object.OwnerOfClass<ILexSense>();
+			UndoableUnitOfWorkHelper.Do(LexiconResources.Undo_Create_Extended_Note, LexiconResources.Redo_Create_Extended_Note, owningSense, () =>
+			{
+				var extendedNote = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ILexExtendedNoteFactory>().Create();
+				owningSense.ExtendedNoteOS.Add(extendedNote);
+			});
 		}
 
 		private void MenuDataTree_SenseContextMenuStrip_Opening(object sender, CancelEventArgs e)
@@ -911,14 +911,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			senseMenuItem.Visible = false;
 			_senseMenuItems.Add(senseMenuItem);
 
-#if RANDYTODO
-/*
-<command id="CmdInsertExtNote" label="_Extended Note" message="DataTreeInsert">
-	<parameters field="ExtendedNote" className="LexExtendedNote" ownerClass="LexSense" />
-</command>
-<item command="CmdInsertExtNote" defaultVisible="false" />
-			*/
-#endif
+			// <item command="CmdInsertExtNote" defaultVisible="false" />
+			senseMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_ExtendedNote_Clicked, LexiconResources.ExtendedNote, insertIndex: ++insertIndex);
+			senseMenuItem.Visible = false;
+			_senseMenuItems.Add(senseMenuItem);
 		}
 
 		private void AddViewMenuItems()
