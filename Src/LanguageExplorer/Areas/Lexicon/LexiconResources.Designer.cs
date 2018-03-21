@@ -84,6 +84,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Choose Sound or Movie File.
+        /// </summary>
+        internal static string ChooseSoundOrMovieFile {
+            get {
+                return ResourceManager.GetString("ChooseSoundOrMovieFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Configure {0}.
         /// </summary>
         internal static string ConfigureTitle {
@@ -457,11 +466,29 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Redo Insert Media.
+        /// </summary>
+        internal static string ksRedoInsertMedia {
+            get {
+                return ResourceManager.GetString("ksRedoInsertMedia", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Redo Merge Entry.
         /// </summary>
         internal static string ksRedoMergeEntry {
             get {
                 return ResourceManager.GetString("ksRedoMergeEntry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo Insert Media.
+        /// </summary>
+        internal static string ksUndoInsertMedia {
+            get {
+                return ResourceManager.GetString("ksUndoInsertMedia", resourceCulture);
             }
         }
         
@@ -687,6 +714,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Redo Create Pronunciation.
+        /// </summary>
+        internal static string Redo_Create_Pronunciation {
+            get {
+                return ResourceManager.GetString("Redo_Create_Pronunciation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Redo Insert Etymology.
         /// </summary>
         internal static string Redo_Insert_Etymology {
@@ -765,6 +801,24 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string Show_Unused_Items {
             get {
                 return ResourceManager.GetString("Show_Unused_Items", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Sound or Movie.
+        /// </summary>
+        internal static string Sound_or_Movie {
+            get {
+                return ResourceManager.GetString("Sound_or_Movie", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo Create Pronunciation.
+        /// </summary>
+        internal static string Undo_Create_Pronunciation {
+            get {
+                return ResourceManager.GetString("Undo_Create_Pronunciation", resourceCulture);
             }
         }
         

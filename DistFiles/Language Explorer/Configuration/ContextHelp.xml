@@ -101,7 +101,6 @@
 	<item id="CmdChooseTexts" a10status="DONE" >Choose texts to display and use.</item>
 	<item id="CmdInsertStemAllomorph">Add an allomorph of a stem.</item>
 	<item id="CmdInsertAffixAllomorph">Add an allomorph of an affix.</item>
-	<item id="CmdInsertMediaFile" a10status="DONE" >Add a sound or movie file to the pronunciation, creating the pronunciation if necessary.</item>
 	<item id="CmdInsertText">Add a new text to the corpus.</item>
 	<item id="CmdInsertFeatureType">Create a new feature type.</item>
 	<item id="CmdInsertPhonologicalClosedFeature">Add a phonological feature.</item>

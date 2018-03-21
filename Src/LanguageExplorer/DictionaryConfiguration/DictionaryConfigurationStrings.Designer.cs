@@ -70,15 +70,6 @@ namespace LanguageExplorer.DictionaryConfiguration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Choose Sound or Movie File.
-        /// </summary>
-        internal static string ChooseSoundOrMovieFile {
-            get {
-                return ResourceManager.GetString("ChooseSoundOrMovieFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Click to jump to {0}..
         /// </summary>
         internal static string ClickToJumpTo {
@@ -691,15 +682,6 @@ namespace LanguageExplorer.DictionaryConfiguration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Redo Insert Media.
-        /// </summary>
-        internal static string ksRedoInsertMedia {
-            get {
-                return ResourceManager.GetString("ksRedoInsertMedia", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Redo Insert Picture.
         /// </summary>
         internal static string ksRedoInsertPicture {
@@ -921,15 +903,6 @@ namespace LanguageExplorer.DictionaryConfiguration {
         internal static string ksUndoDeleteMediaLink {
             get {
                 return ResourceManager.GetString("ksUndoDeleteMediaLink", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo Insert Media.
-        /// </summary>
-        internal static string ksUndoInsertMedia {
-            get {
-                return ResourceManager.GetString("ksUndoInsertMedia", resourceCulture);
             }
         }
         

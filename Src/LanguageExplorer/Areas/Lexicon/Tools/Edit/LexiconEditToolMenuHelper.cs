@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -15,9 +16,13 @@ using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.LcmUi;
 using SIL.Code;
+using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FwCoreDlgs;
+using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
@@ -631,7 +636,66 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void Insert_Sound_Or_Movie_File_Clicked(object sender, EventArgs e)
 		{
-			MessageBox.Show((Form)_majorFlexComponentParameters.MainWindow, "Inserting Sound or Movie File...");
+			const string insertMediaFileLastDirectory = "InsertMediaFile-LastDirectory";
+			var cache = _majorFlexComponentParameters.LcmCache;
+			var lexEntry = (ILexEntry)MyRecordList.CurrentObject;
+			var createdMediaFile = false;
+			using (var unitOfWorkHelper = new UndoableUnitOfWorkHelper(_majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, LexiconResources.ksUndoInsertMedia, LexiconResources.ksRedoInsertMedia))
+			{
+				if (!lexEntry.PronunciationsOS.Any())
+				{
+					// Ensure that the pronunciation writing systems have been initialized.
+					// Otherwise, the crash reported in FWR-2086 can happen!
+					lexEntry.PronunciationsOS.Add(cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create());
+				}
+				var firstPronunciation = lexEntry.PronunciationsOS[0];
+				using (var dlg = new OpenFileDialogAdapter())
+				{
+					dlg.InitialDirectory = PropertyTable.GetValue(insertMediaFileLastDirectory, cache.LangProject.LinkedFilesRootDir);
+					dlg.Filter = ResourceHelper.BuildFileFilter(FileFilterType.AllAudio, FileFilterType.AllVideo, FileFilterType.AllFiles);
+					dlg.FilterIndex = 1;
+					if (string.IsNullOrEmpty(dlg.Title) || dlg.Title == "*kstidInsertMediaChooseFileCaption*")
+					{
+						dlg.Title = LexiconResources.ChooseSoundOrMovieFile;
+					}
+					dlg.RestoreDirectory = true;
+					dlg.CheckFileExists = true;
+					dlg.CheckPathExists = true;
+					dlg.Multiselect = true;
+
+					var dialogResult = DialogResult.None;
+					var helpProvider = PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+					var linkedFilesRootDir = cache.LangProject.LinkedFilesRootDir;
+					var mediaFactory = cache.ServiceLocator.GetInstance<ICmMediaFactory>();
+					while (dialogResult != DialogResult.OK && dialogResult != DialogResult.Cancel)
+					{
+						dialogResult = dlg.ShowDialog();
+						if (dialogResult == DialogResult.OK)
+						{
+							var fileNames = MoveOrCopyFilesController.MoveCopyOrLeaveMediaFiles(dlg.FileNames, linkedFilesRootDir, helpProvider);
+							var mediaFolderName = StringTable.Table.GetString("kstidMediaFolder");
+							if (string.IsNullOrEmpty(mediaFolderName) || mediaFolderName == "*kstidMediaFolder*")
+							{
+								mediaFolderName = CmFolderTags.LocalMedia;
+							}
+							foreach (var fileName in fileNames.Where(f => !string.IsNullOrEmpty(f)))
+							{
+								var media = mediaFactory.Create();
+								firstPronunciation.MediaFilesOS.Add(media);
+								media.MediaFileRA = DomainObjectServices.FindOrCreateFile(DomainObjectServices.FindOrCreateFolder(cache, LangProjectTags.kflidMedia, mediaFolderName), fileName);
+							}
+							createdMediaFile = true;
+							var selectedFileName = dlg.FileNames.FirstOrDefault(f => !string.IsNullOrEmpty(f));
+							if (selectedFileName != null)
+							{
+								PropertyTable.SetProperty(insertMediaFileLastDirectory, Path.GetDirectoryName(selectedFileName), true, false);
+							}
+						}
+					}
+					// If we didn't create any ICmMedia instances, then roll back the UOW, even if it created a new ILexPronunciation.
+					unitOfWorkHelper.RollBack = !createdMediaFile;
+				}
+			}
 		}
 
 		private void Insert_Pronunciation_Clicked(object sender, EventArgs e)
@@ -767,17 +831,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_Allomorph_Clicked, LexiconResources.Allomorph, LexiconResources.Insert_Allomorph_Tooltip, insertIndex: ++insertIndex);
 			// <item command="CmdDataTree-Insert-Pronunciation" defaultVisible="false" />
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_Pronunciation_Clicked, LexiconResources.Pronunciation, LexiconResources.Insert_Pronunciation_Tooltip, insertIndex: ++insertIndex);
-
-#if RANDYTODO
-			// TODO: Add these to the main Insert menu.
-/*
-
-<command id="CmdInsertMediaFile" label="_Sound or Movie" message="InsertMediaFile">
-	<parameters field="MediaFiles" className="LexPronunciation" />
-</command>
-<item command="CmdInsertMediaFile" defaultVisible="false" />
-*/
-#endif
+			// <item command="CmdInsertMediaFile" defaultVisible="false" />
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_Sound_Or_Movie_File_Clicked, LexiconResources.Sound_or_Movie, LexiconResources.Insert_Sound_Or_Movie_File_Tooltip, insertIndex: ++insertIndex);
 			//<item command="CmdDataTree-Insert-Etymology" defaultVisible="false" />
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_Etymology_Clicked, LexiconResources.Etymology, LexiconResources.Insert_Etymology_Tooltip, Keys.None, null, ++insertIndex);
 #if RANDYTODO

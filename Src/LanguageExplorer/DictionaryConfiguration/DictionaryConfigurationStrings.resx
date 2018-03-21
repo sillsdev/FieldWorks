@@ -126,9 +126,6 @@
   <data name="InvalidWritingSystem" xml:space="preserve">
     <value>Invalid writing system</value>
   </data>
-  <data name="ChooseSoundOrMovieFile" xml:space="preserve">
-    <value>Choose Sound or Movie File</value>
-  </data>
   <data name="ThankYouForCheckingOutFlex" xml:space="preserve">
     <value>Thank you for checking out this version of FieldWorks Language Explorer.</value>
   </data>
@@ -301,12 +298,6 @@
   </data>
   <data name="ksRedoVisibleComplexForm" xml:space="preserve">
     <value>Redo Referenced Complex Forms</value>
-  </data>
-  <data name="ksUndoInsertMedia" xml:space="preserve">
-    <value>Undo Insert Media</value>
-  </data>
-  <data name="ksRedoInsertMedia" xml:space="preserve">
-    <value>Redo Insert Media</value>
   </data>
   <data name="ksUndoDeleteMediaLink" xml:space="preserve">
     <value>Undo Delete Media Link</value>

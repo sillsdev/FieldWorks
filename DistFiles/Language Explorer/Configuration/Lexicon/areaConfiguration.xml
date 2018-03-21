@@ -14,9 +14,6 @@
 		<command id="CmdInsertExtNote" label="_Extended Note" message="DataTreeInsert">
 			<parameters field="ExtendedNote" className="LexExtendedNote" ownerClass="LexSense"/>
 		</command>
-		<command id="CmdInsertMediaFile" label="_Sound or Movie" message="InsertMediaFile">
-			<parameters field="MediaFiles" className="LexPronunciation"/>
-		</command>
 		<command id="CmdDeleteMediaFile" label="Delete this Media Link" message="DeleteMediaFile" icon="Delete">
 			<parameters className="CmMedia"/>
 		</command>
@@ -139,7 +136,6 @@
 	<menuAddOn>
 		<menu id="Insert">
 			<item command="CmdInsertReversalEntry" defaultVisible="false"/>
-			<item command="CmdInsertMediaFile" defaultVisible="false"/>
 			<item label="-" translate="do not translate"/>
 			<item command="CmdInsertPicture" defaultVisible="false"/>
 			<item command="CmdInsertExtNote" defaultVisible="false"/>
