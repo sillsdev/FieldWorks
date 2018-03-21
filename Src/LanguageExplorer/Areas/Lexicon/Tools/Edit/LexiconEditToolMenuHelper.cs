@@ -454,9 +454,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// <item command="CmdDataTree-Insert-SubSense"/>
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Subsense_Clicked, LexiconResources.Insert_Subsense, LexiconResources.Insert_Subsense_Tooltip);
 
+			// <item command="CmdInsertPicture" label="Insert _Picture" defaultVisible="false"/>
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Picture_Clicked, LexiconResources.Insert_Picture, LexiconResources.Insert_Picture_Tooltip);
+
 			// TODO: Add below menus.
 			/*
-			<item command="CmdInsertPicture" label="Insert _Picture" defaultVisible="false"/>
 			<item label="-" translate="do not translate"/>
 			<item command="CmdSenseJumpToConcordance"/>
 			<item label="-" translate="do not translate"/>
@@ -484,6 +486,30 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// End: <menu id="mnuDataTree-Sense">
 
 			return new Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, MenuDataTree_SenseContextMenuStrip_Opening, menuItems);
+		}
+
+		private void Insert_Picture_Clicked(object sender, EventArgs e)
+		{
+			var owningSense = MyDataTree.CurrentSlice.Object as ILexSense ?? MyDataTree.CurrentSlice.Object.OwnerOfClass<ILexSense>();
+			var app = PropertyTable.GetValue<IFlexApp>("App");
+			using (var dlg = new PicturePropertiesDialog(_majorFlexComponentParameters.LcmCache, null, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, true))
+			{
+				if (dlg.Initialize())
+				{
+					dlg.UseMultiStringCaption(_majorFlexComponentParameters.LcmCache, WritingSystemServices.kwsVernAnals, PropertyTable.GetValue<LcmStyleSheet>("FlexStyleSheet"));
+					if (dlg.ShowDialog() == DialogResult.OK)
+					{
+						UndoableUnitOfWorkHelper.Do(LexiconResources.ksUndoInsertPicture, LexiconResources.ksRedoInsertPicture, owningSense, () =>
+						{
+							const string defaultPictureFolder = CmFolderTags.DefaultPictureFolder;
+							var picture = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
+							owningSense.PicturesOS.Add(picture);
+							dlg.GetMultilingualCaptionValues(picture.Caption);
+							picture.UpdatePicture(dlg.CurrentFile, null, defaultPictureFolder, 0);
+						});
+					}
+				}
+			}
 		}
 
 		private void MenuDataTree_SenseContextMenuStrip_Opening(object sender, CancelEventArgs e)
@@ -880,13 +906,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			senseMenuItem.Visible = false;
 			_senseMenuItems.Add(senseMenuItem);
 
+			// <item command="CmdInsertPicture" defaultVisible="false" />
+			senseMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_Picture_Clicked, LexiconResources.Picture, LexiconResources.Insert_Picture_Tooltip, insertIndex: ++insertIndex);
+			senseMenuItem.Visible = false;
+			_senseMenuItems.Add(senseMenuItem);
+
 #if RANDYTODO
 /*
-<command id="CmdInsertPicture" label="_Picture" message="InsertPicture">
-	<parameters field="Pictures" className="LexSense" />
-</command>
-<item command="CmdInsertPicture" defaultVisible="false" />
-
 <command id="CmdInsertExtNote" label="_Extended Note" message="DataTreeInsert">
 	<parameters field="ExtendedNote" className="LexExtendedNote" ownerClass="LexSense" />
 </command>

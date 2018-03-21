@@ -275,12 +275,6 @@
   <data name="ksFwDummyWndTitleRestoring" xml:space="preserve">
     <value>Restoring...</value>
   </data>
-  <data name="ksRedoInsertPicture" xml:space="preserve">
-    <value>Redo Insert Picture</value>
-  </data>
-  <data name="ksUndoInsertPicture" xml:space="preserve">
-    <value>Undo Insert Picture</value>
-  </data>
   <data name="ksReversalIndexView" xml:space="preserve">
     <value>Choose the reversal index to configure:</value>
   </data>

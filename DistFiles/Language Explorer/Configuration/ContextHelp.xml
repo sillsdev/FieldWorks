@@ -83,7 +83,6 @@
 	<item id="CmdInsertAnthroCategory">Create a new anthropology category.</item>
 	<item id="CmdInsertLocation">Create a new location.</item>
 	<item id="CmdInsertPerson">Add a new person.</item>
-	<item id="CmdInsertPicture">Add a picture to this entry.</item>
 	<item id="CmdInsertLexRefType">Create a new lexical relation.</item>
 	<item id="CmdInsertEndocentricCompound">Create a new headed compound.</item>
 	<item id="CmdInsertExocentricCompound">Create a new non-headed compound.</item>

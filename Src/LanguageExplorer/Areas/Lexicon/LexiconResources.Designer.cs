@@ -286,6 +286,24 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Insert _Picture.
+        /// </summary>
+        internal static string Insert_Picture {
+            get {
+                return ResourceManager.GetString("Insert_Picture", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add a picture to this entry..
+        /// </summary>
+        internal static string Insert_Picture_Tooltip {
+            get {
+                return ResourceManager.GetString("Insert_Picture_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Insert _Pronunciation.
         /// </summary>
         internal static string Insert_Pronunciation {
@@ -475,6 +493,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Redo Insert Picture.
+        /// </summary>
+        internal static string ksRedoInsertPicture {
+            get {
+                return ResourceManager.GetString("ksRedoInsertPicture", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Redo Merge Entry.
         /// </summary>
         internal static string ksRedoMergeEntry {
@@ -489,6 +516,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string ksUndoInsertMedia {
             get {
                 return ResourceManager.GetString("ksUndoInsertMedia", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo Insert Picture.
+        /// </summary>
+        internal static string ksUndoInsertPicture {
+            get {
+                return ResourceManager.GetString("ksUndoInsertPicture", resourceCulture);
             }
         }
         
@@ -686,6 +722,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string NoConfigsMatchPub {
             get {
                 return ResourceManager.GetString("NoConfigsMatchPub", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Picture.
+        /// </summary>
+        internal static string Picture {
+            get {
+                return ResourceManager.GetString("Picture", resourceCulture);
             }
         }
         

@@ -682,15 +682,6 @@ namespace LanguageExplorer.DictionaryConfiguration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Redo Insert Picture.
-        /// </summary>
-        internal static string ksRedoInsertPicture {
-            get {
-                return ResourceManager.GetString("ksRedoInsertPicture", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Redo {0}.
         /// </summary>
         internal static string ksRedoMacro {
@@ -903,15 +894,6 @@ namespace LanguageExplorer.DictionaryConfiguration {
         internal static string ksUndoDeleteMediaLink {
             get {
                 return ResourceManager.GetString("ksUndoDeleteMediaLink", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo Insert Picture.
-        /// </summary>
-        internal static string ksUndoInsertPicture {
-            get {
-                return ResourceManager.GetString("ksUndoInsertPicture", resourceCulture);
             }
         }
         

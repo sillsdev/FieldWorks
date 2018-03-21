@@ -8,9 +8,6 @@
 		<include path="DataTreeInclude.xml" query="window/commands/*"/>
 <!-- END include (Lexicon_Area): "DataTreeInclude.xml" query="window/commands/*" -->
 		<command id="CmdShowAllPublications" label="All Entries" message="ShowAllEntries"/>
-		<command id="CmdInsertPicture" label="_Picture" message="InsertPicture">
-			<parameters field="Pictures" className="LexSense"/>
-		</command>
 		<command id="CmdInsertExtNote" label="_Extended Note" message="DataTreeInsert">
 			<parameters field="ExtendedNote" className="LexExtendedNote" ownerClass="LexSense"/>
 		</command>
@@ -136,8 +133,6 @@
 	<menuAddOn>
 		<menu id="Insert">
 			<item command="CmdInsertReversalEntry" defaultVisible="false"/>
-			<item label="-" translate="do not translate"/>
-			<item command="CmdInsertPicture" defaultVisible="false"/>
 			<item command="CmdInsertExtNote" defaultVisible="false"/>
 		</menu>
 		<menu id="Edit">
