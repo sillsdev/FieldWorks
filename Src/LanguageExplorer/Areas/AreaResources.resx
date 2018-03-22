@@ -601,4 +601,13 @@ If you are not the one designated user who adds fields, or you are making some o
   <data name="ksWarning" xml:space="preserve">
     <value>Warning</value>
   </data>
+  <data name="ConfigureColumns" xml:space="preserve">
+    <value>_Columns...</value>
+  </data>
+  <data name="ConfigureColumnsTooltip" xml:space="preserve">
+    <value>Configure current browse pane.</value>
+  </data>
+  <data name="ConfigureDictionary" xml:space="preserve">
+    <value>Dictionary...</value>
+  </data>
 </root>

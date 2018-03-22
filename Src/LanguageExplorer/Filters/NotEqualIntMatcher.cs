@@ -37,7 +37,7 @@ namespace LanguageExplorer.Filters
 		#region IMatcher Members
 
 		/// <summary>
-		/// Matcheses the specified stringval.
+		/// Matches the specified stringval.
 		/// </summary>
 		public override bool Matches(ITsString stringval)
 		{

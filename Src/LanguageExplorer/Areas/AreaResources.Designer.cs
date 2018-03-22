@@ -115,6 +115,33 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Columns....
+        /// </summary>
+        internal static string ConfigureColumns {
+            get {
+                return ResourceManager.GetString("ConfigureColumns", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Configure current browse pane..
+        /// </summary>
+        internal static string ConfigureColumnsTooltip {
+            get {
+                return ResourceManager.GetString("ConfigureColumnsTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dictionary....
+        /// </summary>
+        internal static string ConfigureDictionary {
+            get {
+                return ResourceManager.GetString("ConfigureDictionary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Custom _Fields....
         /// </summary>
         internal static string CustomFields {

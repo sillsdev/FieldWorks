@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using LanguageExplorer.Areas.Lexicon.DictionaryConfiguration;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.LexText;
@@ -55,13 +56,19 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private ToolStripMenuItem _showHiddenFieldsMenu;
 		private ToolStripButton _insertEntryToolStripButton;
 		private ToolStripButton _insertGoToEntryToolStripButton;
+		private ToolStripMenuItem _toolsConfigureMenu;
+		private List<Tuple<ToolStripMenuItem, EventHandler>> _newToolsConfigurationMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>();
+		private ToolStripMenuItem _toolsMenu;
+		private List<Tuple<ToolStripMenuItem, EventHandler>> _newToolsMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>();
+		private ToolStripSeparator _toolMenuToolStripSeparator;
 		private readonly List<ToolStripItem> _senseMenuItems = new List<ToolStripItem>();
 		private DataTree MyDataTree { get; set; }
+		private RecordBrowseView RecordBrowseView { get; }
 		private IRecordList MyRecordList { get; set; }
 		internal MultiPane InnerMultiPane { get; set; }
 		internal SliceContextMenuFactory SliceContextMenuFactory { get; set; }
 
-		internal LexiconEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, DataTree dataTree, IRecordList recordList, string extendedPropertyName)
+		internal LexiconEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, DataTree dataTree, RecordBrowseView recordBrowseView, IRecordList recordList, string extendedPropertyName)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(dataTree, nameof(dataTree));
@@ -70,6 +77,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
 			MyDataTree = dataTree;
+			RecordBrowseView = recordBrowseView;
 			MyDataTree.CurrentSliceChanged += MyDataTree_CurrentSliceChanged;
 			MyRecordList = recordList;
 			SliceContextMenuFactory = MyDataTree.SliceContextMenuFactory;
@@ -85,8 +93,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_lexiconAreaMenuHelper.MyAreaWideMenuHelper.SetupToolsCustomFieldsMenu();
 
 			AddEditMenuItems();
-			AddInsertMenuItems();
 			AddViewMenuItems();
+			AddInsertMenuItems();
+			AddToolsMenuItems();
+
 			AddToolbarItems();
 
 			RegisterHotLinkMenus();
@@ -231,6 +241,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				MyDataTree.CurrentSliceChanged -= MyDataTree_CurrentSliceChanged;
 				Subscriber.Unsubscribe("ShowHiddenFields", ShowHiddenFields_Handler);
 				_lexiconAreaMenuHelper.Dispose();
+
+				foreach (var menuTuple in _newToolsConfigurationMenusAndHandlers)
+				{
+					menuTuple.Item1.Click -= menuTuple.Item2;
+					_toolsConfigureMenu.DropDownItems.Remove(menuTuple.Item1);
+					menuTuple.Item1.Dispose();
+				}
+				_newToolsConfigurationMenusAndHandlers.Clear();
+
 				foreach (var menuTuple in _newEditMenusAndHandlers)
 				{
 					menuTuple.Item1.Click -= menuTuple.Item2;
@@ -255,6 +274,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				}
 				_newViewMenusAndHandlers.Clear();
 
+				foreach (var menuTuple in _newToolsMenusAndHandlers)
+				{
+					menuTuple.Item1.Click -= menuTuple.Item2;
+					_toolsMenu.DropDownItems.Remove(menuTuple.Item1);
+					menuTuple.Item1.Dispose();
+				}
+				_newToolsMenusAndHandlers.Clear();
+				_toolsMenu.DropDownItems.Remove(_toolMenuToolStripSeparator);
+				_toolMenuToolStripSeparator.Dispose();
+
 				_insertEntryToolStripButton.Click -= Insert_Entry_Clicked;
 				InsertToolbarManager.ResetInsertToolbar(_majorFlexComponentParameters);
 				_insertEntryToolStripButton.Dispose();
@@ -266,6 +295,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_newEditMenusAndHandlers = null;
 			_newInsertMenusAndHandlers = null;
 			_newViewMenusAndHandlers = null;
+			_newToolsConfigurationMenusAndHandlers = null;
+			_toolsMenu = null;
+			_toolMenuToolStripSeparator = null;
+			_newToolsMenusAndHandlers = null;
 			SliceContextMenuFactory = null;
 			MyDataTree = null;
 			MyRecordList = null;
@@ -569,7 +602,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			// _Merge with entry... menu item. (CmdMergeEntry->msg: MergeEntry, also on Tool menu)
 			var contextMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Merge_With_Entry_Clicked, LexiconResources.Merge_With_Entry, LexiconResources.Merge_With_Entry_Tooltip);
-			// NB: defaultVisible="false"
 			// Original code that controlled: display.Enabled = display.Visible = InFriendlyArea;
 			// It is now only in a friendly area, so should always be visible and enabled, per the old code.
 			// Trouble is it makes no sense to enable it if the lexicon only has one entry in it, so I'll alter the behavior to be more sensible. ;-)
@@ -876,6 +908,17 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newEditMenusAndHandlers, _editMenu, GoToEntry_Clicked, LexiconResources.Find_Entry, LexiconResources.GoToEntryToolTip, Keys.Control | Keys.F, LexiconResources.Find_Lexical_Entry.ToBitmap(), 10);
 		}
 
+		private void AddViewMenuItems()
+		{
+			_viewMenu = MenuServices.GetViewMenu(_majorFlexComponentParameters.MenuStrip);
+			// <item label="Show _Dictionary Preview" boolProperty="Show_DictionaryPubPreview" defaultVisible="false"/>
+			_show_DictionaryPubPreviewMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newViewMenusAndHandlers, _viewMenu, Show_Dictionary_Preview_Clicked, LexiconResources.Show_DictionaryPubPreview, insertIndex: _viewMenu.DropDownItems.Count - 2);
+			_show_DictionaryPubPreviewMenu.Checked = PropertyTable.GetValue<bool>(Show_DictionaryPubPreview);
+			// <item label="_Show Hidden Fields" boolProperty="ShowHiddenFields" defaultVisible="false"/>
+			_showHiddenFieldsMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newViewMenusAndHandlers, _viewMenu, Show_Hidden_Fields_Clicked, LanguageExplorerResources.ksShowHiddenFields, insertIndex: _viewMenu.DropDownItems.Count - 2);
+			_showHiddenFieldsMenu.Checked = PropertyTable.GetValue(_extendedPropertyName, false);
+		}
+
 		private void AddInsertMenuItems()
 		{
 			_insertMenu = MenuServices.GetInsertMenu(_majorFlexComponentParameters.MenuStrip);
@@ -917,15 +960,33 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_senseMenuItems.Add(senseMenuItem);
 		}
 
-		private void AddViewMenuItems()
+		private void AddToolsMenuItems()
 		{
-			_viewMenu = MenuServices.GetViewMenu(_majorFlexComponentParameters.MenuStrip);
-			// <item label="Show _Dictionary Preview" boolProperty="Show_DictionaryPubPreview" defaultVisible="false"/>
-			_show_DictionaryPubPreviewMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newViewMenusAndHandlers, _viewMenu, Show_Dictionary_Preview_Clicked, LexiconResources.Show_DictionaryPubPreview, insertIndex: _viewMenu.DropDownItems.Count - 2);
-			_show_DictionaryPubPreviewMenu.Checked = PropertyTable.GetValue<bool>(Show_DictionaryPubPreview);
-			// <item label="_Show Hidden Fields" boolProperty="ShowHiddenFields" defaultVisible="false"/>
-			_showHiddenFieldsMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newViewMenusAndHandlers, _viewMenu, Show_Hidden_Fields_Clicked, LanguageExplorerResources.ksShowHiddenFields, insertIndex: _viewMenu.DropDownItems.Count - 2);
-			_showHiddenFieldsMenu.Checked = PropertyTable.GetValue(_extendedPropertyName, false);
+			var insertIndex = -1;
+
+			// <command id="CmdConfigureDictionary" label="Configure {0}" message="ConfigureDictionary"/>
+			// <item label="{0}" command="CmdConfigureDictionary" defaultVisible="false"/>
+			_toolsConfigureMenu = MenuServices.GetToolsConfigureMenu(_majorFlexComponentParameters.MenuStrip);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newToolsConfigurationMenusAndHandlers, _toolsConfigureMenu, Tools_Configure_Dictionary_Clicked, AreaResources.ConfigureDictionary, insertIndex: ++insertIndex);
+
+			// <item command="CmdConfigureColumns" defaultVisible="false" />
+			_lexiconAreaMenuHelper.MyAreaWideMenuHelper.SetupToolsConfigureColumnsMenu(RecordBrowseView.BrowseViewer, ++insertIndex);
+
+			// <item command="CmdMergeEntry" defaultVisible="false"/>
+			// First add separator.
+			insertIndex = 0;
+			_toolsMenu = MenuServices.GetToolsMenu(_majorFlexComponentParameters.MenuStrip);
+			_toolMenuToolStripSeparator = ToolStripMenuItemFactory.CreateToolStripSeparatorForToolStripMenuItem(_toolsMenu, ++insertIndex);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newToolsMenusAndHandlers, _toolsMenu, Merge_With_Entry_Clicked, LexiconResources.MergeWithEntry, LexiconResources.Merge_With_Entry_Tooltip, insertIndex: ++insertIndex);
+		}
+
+		private void Tools_Configure_Dictionary_Clicked(object sender, EventArgs e)
+		{
+			var mainWindow = PropertyTable.GetValue<IFwMainWnd>("window");
+			if (DictionaryConfigurationDlg.RunDlg(_majorFlexComponentParameters.FlexComponentParameters, (Form)mainWindow, MyRecordList.CurrentObject, "khtpConfigureDictionary", LanguageExplorerResources.Dictionary))
+			{
+				mainWindow.RefreshAllViews();
+			}
 		}
 	}
 }

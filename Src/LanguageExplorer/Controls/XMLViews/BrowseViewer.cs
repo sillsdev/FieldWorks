@@ -3243,33 +3243,12 @@ namespace LanguageExplorer.Controls.XMLViews
 			FilterBar?.RemoveAllFilters();
 		}
 
-#if RANDYTODO
-		/// <summary>
-		/// Decide whether to display the Configure menu command for changing browse view column choices.
-		/// </summary>
-		/// <param name="commandObject"> </param>
-		/// <param name="display"> </param>
-		/// <returns></returns>
-		public bool OnDisplayConfigureColumns(object commandObject,
-			ref UIItemDisplayProperties display)
-		{
-			// Anytime we have a BrowseViewer or one of its subclasses,
-			// we ought to have this menu command available. LT-12752
-			var result = true;
-			display.Enabled = result;
-			display.Visible = result;
-
-			return result;
-		}
-#endif
-
 		/// <summary>
 		/// Launch dialog for configuring browse view column choices.
 		/// </summary>
-		public bool OnConfigureColumns(object sender)
+		internal void OnConfigureColumns(object sender)
 		{
 			ConfigMoreChoicesItemClicked(sender, new EventArgs());
-			return true;
 		}
 
 		#region IMainContentControl Members

@@ -134,13 +134,6 @@
 		<menu id="Edit">
 			<item command="CmdGoToReversalEntry" defaultVisible="false"/>
 		</menu>
-		<!-- This is really the Tools-Configure submenu.-->
-		<menu id="Configure">
-			<item label="{0}" command="CmdConfigureDictionary" defaultVisible="false"/>
-		</menu>
-		<menu id="Tools">
-			<item command="CmdMergeEntry" defaultVisible="false"/>
-		</menu>
 	</menuAddOn>
 	<!-- ********************************************************** -->
 	<!-- ************************ contextMenus *********************** -->

@@ -402,4 +402,7 @@
   <data name="Undo_Create_Extended_Note" xml:space="preserve">
     <value>Undo Create Extended Note</value>
   </data>
+  <data name="MergeWithEntry" xml:space="preserve">
+    <value>_Merge with entry...</value>
+  </data>
 </root>

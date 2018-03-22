@@ -553,28 +553,17 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			// 4 is used further down
 			var cache = (LcmCache)tagObjects[5];
 			var activeRecordList = (RecordList)tagObjects[6];
-			bool refreshNeeded;
 			var mainWindow = propertyTable.GetValue<IFwMainWnd>("window");
-			using (var dlg = new DictionaryConfigurationDlg(propertyTable))
+			ICmObject current = null;
+			if (guid != Guid.Empty && cache != null && cache.ServiceLocator.ObjectRepository.IsValidObjectId(guid))
 			{
-				ICmObject current = null;
-				if (guid != Guid.Empty && cache != null && cache.ServiceLocator.ObjectRepository.IsValidObjectId(guid))
-				{
-					current = cache.ServiceLocator.GetObject(guid);
-				}
-				else if (activeRecordList != null)
-				{
-					current = activeRecordList.CurrentObject;
-				}
-				var controller = new DictionaryConfigurationController(dlg, current);
-				controller.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, (ISubscriber)tagObjects[4]));
-				controller.SetStartingNode(classList);
-				dlg.Text = string.Format(LexiconResources.ConfigureTitle, DictionaryConfigurationServices.GetDictionaryConfigurationType(propertyTable));
-				dlg.HelpTopic = DictionaryConfigurationServices.GetConfigDialogHelpTopic(propertyTable);
-				dlg.ShowDialog((IWin32Window)mainWindow);
-				refreshNeeded = controller.MasterRefreshRequired;
+				current = cache.ServiceLocator.GetObject(guid);
 			}
-			if (refreshNeeded)
+			else if (activeRecordList != null)
+			{
+				current = activeRecordList.CurrentObject;
+			}
+			if (DictionaryConfigurationDlg.RunDlg(new FlexComponentParameters(propertyTable, publisher, (ISubscriber)tagObjects[4]), (Form)mainWindow, current, DictionaryConfigurationServices.GetConfigDialogHelpTopic(propertyTable), DictionaryConfigurationServices.GetDictionaryConfigurationType(propertyTable), classList))
 			{
 				mainWindow.RefreshAllViews();
 			}

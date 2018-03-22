@@ -5,9 +5,14 @@
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
+using LanguageExplorer.Areas.Lexicon;
+using LanguageExplorer.Areas.Lexicon.DictionaryConfiguration;
 using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.DictionaryConfiguration;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 
@@ -28,6 +33,8 @@ namespace LanguageExplorer.Areas
 		private ToolStripMenuItem _toolsConfigureMenu;
 		private ToolStripSeparator _toolsCustomFieldsSeparatorMenu;
 		private ToolStripMenuItem _toolsCustomFieldsMenu;
+		private ToolStripMenuItem _toolsConfigureColumnsMenu;
+		private BrowseViewer _browseViewer;
 
 		internal AreaWideMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
@@ -82,14 +89,38 @@ namespace LanguageExplorer.Areas
 		}
 
 		/// <summary>
-		/// Setup the File->Export menu.
+		/// Setup the Tools->Configure->CustomFields menu.
 		/// </summary>
 		internal void SetupToolsCustomFieldsMenu()
 		{
-			// Tools->CustomFields menu is visible and enabled in this tool.
-			_toolsConfigureMenu = MenuServices.GetToolsConfigureMenu(_majorFlexComponentParameters.MenuStrip);
+			// Tools->Configure->CustomFields menu is visible and enabled in this tool.
+			EnsureWeHaveToolsConfigureMenu();
 			_toolsCustomFieldsSeparatorMenu = ToolStripMenuItemFactory.CreateToolStripSeparatorForToolStripMenuItem(_toolsConfigureMenu);
 			_toolsCustomFieldsMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_toolsConfigureMenu, AddCustomField_Click, AreaResources.CustomFields, AreaResources.CustomFieldsTooltip);
+		}
+
+		/// <summary>
+		/// Setup the Tools->Configure->Columns menu.
+		/// </summary>
+		internal void SetupToolsConfigureColumnsMenu(BrowseViewer browseViewer, int insertIndex = 0)
+		{
+			// Tools->Configure->Columns menu is visible and enabled in this tool.
+			EnsureWeHaveToolsConfigureMenu();
+			_browseViewer = browseViewer;
+			_toolsConfigureColumnsMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_toolsConfigureMenu, ConfigureColumns_Click, AreaResources.ConfigureColumns, AreaResources.ConfigureColumnsTooltip, image: ResourceHelper.ColumnChooser, insertIndex: insertIndex);
+		}
+
+		private void ConfigureColumns_Click(object sender, EventArgs e)
+		{
+			_browseViewer.OnConfigureColumns(this);
+		}
+
+		private void EnsureWeHaveToolsConfigureMenu()
+		{
+			if (_toolsConfigureMenu == null)
+			{
+				_toolsConfigureMenu = MenuServices.GetToolsConfigureMenu(_majorFlexComponentParameters.MenuStrip);
+			}
 		}
 
 		private void AddCustomField_Click(object sender, EventArgs e)
@@ -217,8 +248,14 @@ namespace LanguageExplorer.Areas
 					_toolsCustomFieldsMenu.Click -= AddCustomField_Click;
 					_toolsConfigureMenu.DropDownItems.Remove(_toolsCustomFieldsMenu);
 					_toolsConfigureMenu.DropDownItems.Remove(_toolsCustomFieldsSeparatorMenu);
+					_toolsConfigureMenu.DropDownItems.Remove(_toolsCustomFieldsMenu);
 					_toolsCustomFieldsMenu.Dispose();
 					_toolsCustomFieldsSeparatorMenu.Dispose();
+					_toolsCustomFieldsMenu.Dispose();
+				}
+				if (_toolsConfigureColumnsMenu != null)
+				{
+					_toolsConfigureColumnsMenu.Click -= ConfigureColumns_Click;
 				}
 			}
 			_majorFlexComponentParameters = null;
@@ -227,6 +264,7 @@ namespace LanguageExplorer.Areas
 			_foreignFileExportHandler = null;
 			_toolsConfigureMenu = null;
 			_toolsCustomFieldsSeparatorMenu = null;
+			_toolsCustomFieldsMenu = null;
 			_toolsCustomFieldsMenu = null;
 
 			_isDisposed = true;

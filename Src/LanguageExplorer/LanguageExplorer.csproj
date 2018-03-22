@@ -1276,7 +1276,6 @@
     <Compile Include="Controls\LexText\DataNotebook\TextFieldOptions.Designer.cs">
       <DependentUpon>TextFieldOptions.cs</DependentUpon>
     </Compile>
-    <Compile Include="Dumpster\EntryDlgListener.cs" />
     <Compile Include="Controls\LexText\EntryGoDlg.cs">
       <SubType>Form</SubType>
     </Compile>

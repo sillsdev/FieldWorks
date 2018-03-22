@@ -79,7 +79,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_recordBrowseView = new RecordBrowseView(root, majorFlexComponentParameters.LcmCache, _recordList);
 
 			 var dataTree = new DataTree();
-			_lexiconEditToolMenuHelper = new LexiconEditToolMenuHelper(majorFlexComponentParameters, dataTree, _recordList, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName));
+			_lexiconEditToolMenuHelper = new LexiconEditToolMenuHelper(majorFlexComponentParameters, dataTree, _recordBrowseView, _recordList, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName));
 
 			var recordEditView = new RecordEditView(XElement.Parse(LexiconResources.LexiconEditRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordList, dataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 			var nestedMultiPaneParameters = new MultiPaneParameters

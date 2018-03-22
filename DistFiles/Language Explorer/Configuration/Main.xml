@@ -32,7 +32,6 @@
 		<command id="CmdEditSpellingStatus" label="Edit Spelling Status" message="EditSpellingStatus" a10status="Used in Words area" />
 		<command id="CmdViewIncorrectWords" label="View Incorrect Words in Use" message="ViewIncorrectWords"/>
 		<command id="CmdChangeSpelling" label="Change Spelling..." message="LaunchRespellerDlg"/>
-		<command id="CmdUseVernSpellingDictionary" label="Show Vernacular Spelling _Errors" message="UseVernSpellingDictionary"/>
 		<command id="CmdCopy" label="_Copy" message="EditCopy" icon="Copy" shortcut="Ctrl+C" a10status="PARTIALLY_DONE" />
 		<command id="CmdCut" label="Cu_t" message="EditCut" icon="Cut" shortcut="Ctrl+X" a10status="PARTIALLY_DONE" />
 		<command id="CmdPaste" label="_Paste" message="EditPaste" icon="Paste" shortcut="Ctrl+V" a10status="PARTIALLY_DONE" />
@@ -368,32 +367,21 @@
 		<!-- Reworked Tools menu [LT-9852] June '09	-->
 			<menu label="Configure" a10status="DONE" >
 				<!-- This is the insertion point for Area-specific Configure menu items.	-->
-<!-- START include: "Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*" -->
-				<include path="Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*"/>
-<!-- END include: "Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*" -->
 <!-- START include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*" -->
 				<include path="Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*"/>
 <!-- END include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*" -->
 <!-- START include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*" -->
 				<include path="Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*"/>
 <!-- END include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*" -->
-				<item command="CmdConfigureColumns" defaultVisible="false"/>
 			</menu>
 			<!-- Area-specific Tools (other than Configure menu) go here. -->
-			<item label="-" translate="do not translate"/>
-			<item command="CmdMergeEntry" defaultVisible="false" a10status="Defined in Lex Area, used here." />
-<!-- START include: "Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Tools']/*" -->
-			<include path="Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Tools']/*"/>
-<!-- END include: "Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Tools']/*" -->
 <!-- START include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Tools']/*" -->
 			<include path="Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Tools']/*"/>
 <!-- END include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Tools']/*" -->
 			<!-- Non-area-specific Tools go here. -->
-			<item label="-" translate="do not translate" a10status="DONE" />
 			<menu label="Spelling">
 				<item command="CmdEditSpellingStatus" defaultVisible="false" a10status="Used in Words area" />
 				<item command="CmdViewIncorrectWords" defaultVisible="false" a10status="Used in Words area" />
-				<item command="CmdUseVernSpellingDictionary" defaultVisible="false" a10status="Used in Words area" />
 				<item label="-" translate="do not translate"/>
 				<item command="CmdChangeSpelling" defaultVisible="false" a10status="Used in Words area" />
 			</menu>

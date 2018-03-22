@@ -74,7 +74,7 @@ namespace LanguageExplorer
 
 		internal static void SetWritingSystemForReversalModel(DictionaryConfigurationModel convertedModel, LcmCache cache)
 		{
-			if (!convertedModel.IsReversal || !String.IsNullOrEmpty(convertedModel.WritingSystem)) // don't change existing WS's
+			if (!convertedModel.IsReversal || !string.IsNullOrEmpty(convertedModel.WritingSystem)) // don't change existing WS's
 			{
 				return;
 			}
@@ -117,7 +117,7 @@ namespace LanguageExplorer
 						var customCssPath = Path.Combine(configDir, $"Project{(innerDir == "ReversalIndex" ? "Reversal" : innerDir)}Overrides.css");
 						if (!File.Exists(customCssPath))
 						{
-							File.WriteAllText(customCssPath, @"/* This file can be used to add custom css rules that will be applied to the xhtml export */");
+							File.WriteAllText(customCssPath, "/* This file can be used to add custom css rules that will be applied to the xhtml export */");
 						}
 					}
 				}

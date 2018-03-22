@@ -120,7 +120,6 @@
 		 -->
 	<item id="Entries">Show the entries and edit them.</item>
 	<item id="Problems">See a list of entries with problems.</item>
-	<item id="CmdConfigureColumns">Configure current browse pane.</item>
 	<item id="CmdLexiconLookup">Show dictionary entry for root/stem of current word, or open a search dialog box.</item>
 	<item id="CmdAddToLexicon">Add the current word to the lexicon (if it is a vernacular word).</item>
 	<item id="CmdAddWordsToSpellDict">Add words marked as correctly spelled to the active spelling dictionary.</item>

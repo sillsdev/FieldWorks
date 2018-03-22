@@ -11,6 +11,7 @@ using Gecko;
 using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.Windows.Forms;
 
@@ -35,7 +36,26 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 		/// </summary>
 		public event EventHandler SaveModel;
 
-		public DictionaryConfigurationDlg(IPropertyTable propertyTable)
+		internal static bool RunDlg(FlexComponentParameters flexComponentParameters, Form mainWindow, ICmObject currentObject, string helpTopic, string titleCore, List<string> classList = null)
+		{
+			bool refreshNeeded;
+			using (var dlg = new DictionaryConfigurationDlg(flexComponentParameters.PropertyTable))
+			{
+				var controller = new DictionaryConfigurationController(dlg, currentObject);
+				controller.InitializeFlexComponent(flexComponentParameters);
+				if (classList != null)
+				{
+					controller.SetStartingNode(classList);
+				}
+				dlg.Text = string.Format(LexiconResources.ConfigureTitle, titleCore);
+				dlg.HelpTopic = helpTopic;
+				dlg.ShowDialog(mainWindow);
+				refreshNeeded = controller.MasterRefreshRequired;
+			}
+			return refreshNeeded;
+		}
+
+		private DictionaryConfigurationDlg(IPropertyTable propertyTable)
 		{
 			m_propertyTable = propertyTable;
 			InitializeComponent();

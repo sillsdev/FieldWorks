@@ -735,6 +735,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Merge with entry....
+        /// </summary>
+        internal static string MergeWithEntry {
+            get {
+                return ResourceManager.GetString("MergeWithEntry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No views match the current publication..
         /// </summary>
         internal static string NoConfigsMatchPub {
