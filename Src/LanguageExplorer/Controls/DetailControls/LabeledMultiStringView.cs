@@ -247,6 +247,8 @@ namespace LanguageExplorer.Controls.DetailControls
 				dpiX = (int)graphics.DpiX;
 			}
 			var indent = InnerView.VC.m_mDxmpLabelWidth * dpiX / 72000 + 5; // 72000 millipoints/inch
+			if (m_soundControls.Count == 0)
+				SetupSoundControls();
 			foreach (var control in m_soundControls)
 			{
 				int wsIndex;

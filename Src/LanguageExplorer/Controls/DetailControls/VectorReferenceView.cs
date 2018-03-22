@@ -104,15 +104,15 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			var textStyle = configurationNode.Attribute("textStyle");
 			if (textStyle == null)
-			{
+				{
 				return;
 			}
-			TextStyle = textStyle.Value;
-			if (m_VectorReferenceVc != null)
-			{
-				m_VectorReferenceVc.TextStyle = textStyle.Value;
-			}
-		}
+					TextStyle = textStyle.Value;
+					if (m_VectorReferenceVc != null)
+					{
+						m_VectorReferenceVc.TextStyle = textStyle.Value;
+					}
+				}
 
 		#endregion // Construction, initialization, and disposal
 
@@ -198,19 +198,19 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-			ITsString tssWhole;
-			int ichAnchorWhole;
-			int ichEndWhole;
-			int hvoObjWhole;
-			int hvoObjEndWhole;
-			bool fAssocPrevWhole;
-			int tagWhole;
-			int wsWhole;
+				ITsString tssWhole;
+				int ichAnchorWhole;
+				int ichEndWhole;
+				int hvoObjWhole;
+				int hvoObjEndWhole;
+				bool fAssocPrevWhole;
+				int tagWhole;
+				int wsWhole;
 			vwselWhole.TextSelInfo(false, out tssWhole, out ichAnchorWhole, out fAssocPrevWhole, out hvoObjWhole, out tagWhole, out wsWhole);
 			vwselWhole.TextSelInfo(true, out tssWhole, out ichEndWhole, out fAssocPrevWhole, out hvoObjEndWhole, out tagWhole, out wsWhole);
 			if (hvoObj == hvoObjWhole && hvoObjEnd == hvoObjEndWhole && (ichAnchor != ichAnchorWhole || ichEnd != ichEndWhole))
-			{
-				// Install it this time!
+				{
+					// Install it this time!
 				m_rootb.MakeTextSelInObj(ihvoRoot, cvsli, rgvsli, 0, null, false, false, false, true, true);
 			}
 		}
@@ -221,10 +221,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
 			HandleKeyDown(e);
-			if (!IsDisposed) // Delete() can cause the view to be removed.
+			if (!IsDisposed)		// Delete() can cause the view to be removed.
 			{
 				base.OnKeyDown(e);
-			}
+		}
 		}
 
 		protected virtual void HandleKeyDown(KeyEventArgs e)
@@ -232,16 +232,16 @@ namespace LanguageExplorer.Controls.DetailControls
 			switch (e.KeyCode)
 			{
 				case Keys.Delete:
-					Delete();
-					e.Handled = true;
+				Delete();
+				e.Handled = true;
 					break;
 				case Keys.Left:
-					MoveItem(false);
-					e.Handled = true;
+				MoveItem(false);
+				e.Handled = true;
 					break;
 				case Keys.Right:
-					MoveItem(true);
-					e.Handled = true;
+				MoveItem(true);
+				e.Handled = true;
 					break;
 			}
 		}
@@ -252,7 +252,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (!IsDisposed)
 			{
 				base.OnKeyPress(e);
-			}
+		}
 		}
 
 		protected virtual void HandleKeyPress(KeyPressEventArgs e)
@@ -261,9 +261,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-			Delete();
-			e.Handled = true;
-		}
+				Delete();
+				e.Handled = true;
+			}
 
 		internal bool CanMoveItem(bool forward, out bool visible)
 		{
@@ -328,7 +328,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			visible = false;
 			// Fundamentally, we can handle either reference sequence properties or ones we are explicitly told
 			// to create VirtualPropOrderings for.
-			if (!RootPropertyIsRealRefSequence() && !RootPropertySupportsVirtualOrdering())
+			// Some slices disabled LT-18266
+			var rootFieldNameCandidates = new HashSet<string> {"Complex Forms", "Compare", "Synonyms" };
+			if (!RootPropertyIsRealRefSequence() && !RootPropertySupportsVirtualOrdering() || rootFieldNameCandidates.Contains(m_rootFieldName))
 			{
 				return false;
 			}
@@ -431,7 +433,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (CheckForValidDelete(sel, out cvsli, out hvoObj))
 			{
 				DeleteObjectFromVector(sel, cvsli, hvoObj, undoText, redoText);
-			}
+		}
 		}
 
 		protected void DeleteObjectFromVector(IVwSelection sel, int cvsli, int hvoObj, string undoText, string redoText)
@@ -457,32 +459,32 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-			ITsString tssWhole;
-			int ichAnchorWhole;
-			int ichEndWhole;
-			int hvoObjWhole;
-			int hvoObjEndWhole;
-			bool fAssocPrevWhole;
-			int tagWhole;
-			int wsWhole;
+				ITsString tssWhole;
+				int ichAnchorWhole;
+				int ichEndWhole;
+				int hvoObjWhole;
+				int hvoObjEndWhole;
+				bool fAssocPrevWhole;
+				int tagWhole;
+				int wsWhole;
 			vwselWhole.TextSelInfo(false, out tssWhole, out ichAnchorWhole, out fAssocPrevWhole, out hvoObjWhole, out tagWhole, out wsWhole);
 			vwselWhole.TextSelInfo(true, out tssWhole, out ichEndWhole, out fAssocPrevWhole, out hvoObjEndWhole, out tagWhole, out wsWhole);
 			if (hvoObj != hvoObjWhole || hvoObjEnd != hvoObjEndWhole || ichAnchor != ichAnchorWhole || ichEnd != ichEndWhole)
-			{
+				{
 				return;
 			}
 			// We've selected the whole string for it, so remove the object from the vector.
 			var hvosOld = m_cache.GetManagedSilDataAccess().VecProp(m_rootObj.Hvo, m_rootFlid);
-			UpdateTimeStampsIfNeeded(hvosOld);
+					UpdateTimeStampsIfNeeded(hvosOld);
 			for (var i = 0; i < hvosOld.Length; ++i)
-			{
-				if (hvosOld[i] == hvoObj)
-				{
-					RemoveObjectFromList(hvosOld, i, undoText, redoText);
-					break;
+					{
+						if (hvosOld[i] == hvoObj)
+						{
+							RemoveObjectFromList(hvosOld, i, undoText, redoText);
+							break;
+						}
+					}
 				}
-			}
-		}
 
 		/// <summary>
 		/// When deleting from a LexReference, all the affected LexEntry objects need to
@@ -531,10 +533,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				// debug run to see what context variable content is available for the following:
 				// which virtual property is this? (like PublishIn)
-				// get real_prop_name (like DoNotPublishIn) from  part/slice/@visField
+				//    get real_prop_name (like DoNotPublishIn) from  part/slice/@visField
 				var field = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "field");
 				var visField = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "visField");
-				// get its real property object via its name (like DoNotPublishIn)
+				//    get its real property object via its name (like DoNotPublishIn)
 				if (visField != null)
 				{
 					// remove the item from the virtual list property - thus adding it to the real property
@@ -644,7 +646,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						if (hvo == value.Hvo)
 						{
 							break;
-						}
+					}
 					}
 					var levels = new SelLevInfo[1];
 					levels[0].ihvo = i;
