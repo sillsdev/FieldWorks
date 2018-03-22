@@ -1,9 +1,9 @@
 [submodule "Lib/src/SharpZipLib"]
 	path = Lib/src/SharpZipLib
-	url = git://github.com/icsharpcode/SharpZipLib.git
+	url = https://github.com/icsharpcode/SharpZipLib.git
 [submodule "Build/Src/msbuildtasks"]
 	path = Build/Src/msbuildtasks
-	url = git://github.com/ermshiperete/msbuildtasks.git
+	url = https://github.com/ermshiperete/msbuildtasks.git
 [submodule "PatchableInstaller"]
 	path = PatchableInstaller
-	url = git://github.com/sillsdev/genericinstaller.git
+	url = https://github.com/sillsdev/genericinstaller.git
