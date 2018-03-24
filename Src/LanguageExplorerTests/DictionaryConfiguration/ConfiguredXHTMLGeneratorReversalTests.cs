@@ -15,7 +15,6 @@ using SIL.TestUtilities;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.DictionaryConfiguration
 {
@@ -33,26 +32,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[TestFixtureSetUp]
 		public override void FixtureSetup()
 		{
-			if (!Sldr.IsInitialized)
-			{
-				// initialize the SLDR
-				Sldr.Initialize();
-			}
-
 			base.FixtureSetup();
 
 			m_wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			m_wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
-		}
-
-		public override void FixtureTeardown()
-		{
-			base.FixtureTeardown();
-
-			if (Sldr.IsInitialized)
-			{
-				Sldr.Cleanup();
-			}
 		}
 
 		public override void TestSetup()

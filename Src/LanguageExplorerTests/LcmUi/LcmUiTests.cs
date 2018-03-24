@@ -19,27 +19,6 @@ namespace LanguageExplorerTests.LcmUi
 	[TestFixture]
 	public class LcmUiTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		public override void FixtureSetup()
-		{
-			if (!Sldr.IsInitialized)
-			{
-				// initialize the SLDR
-				Sldr.Initialize();
-			}
-
-			base.FixtureSetup();
-		}
-
-		public override void FixtureTeardown()
-		{
-			base.FixtureTeardown();
-
-			if (Sldr.IsInitialized)
-			{
-				Sldr.Cleanup();
-			}
-		}
-
 		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests FindEntryForWordform with empty string (related to TE-5916)

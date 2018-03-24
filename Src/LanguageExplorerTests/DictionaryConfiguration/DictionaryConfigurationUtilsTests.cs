@@ -11,7 +11,6 @@ using NUnit.Framework;
 using SIL.IO;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.DictionaryConfiguration
 {
@@ -21,12 +20,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		#region Overrides of LcmTestBase
 		public override void FixtureSetup()
 		{
-			if (!Sldr.IsInitialized)
-			{
-				// initialize the SLDR
-				Sldr.Initialize();
-			}
-
 			base.FixtureSetup();
 
 			var testProjPath = Path.Combine(Path.GetTempPath(), "DictionaryConfigurationUtilsTestsProj");
@@ -38,15 +31,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Cache.ProjectId.Path = testProjPath;
 		}
 
-		public override void FixtureTeardown()
-		{
-			base.FixtureTeardown();
-
-			if (Sldr.IsInitialized)
-			{
-				Sldr.Cleanup();
-			}
-		}
 		#endregion
 
 		[Test]

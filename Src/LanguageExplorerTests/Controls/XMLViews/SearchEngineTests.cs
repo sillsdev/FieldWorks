@@ -11,36 +11,12 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
-using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Controls.XMLViews
 {
 	[TestFixture]
 	public class SearchEngineTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		#region Overrides of LcmTestBase
-		public override void FixtureSetup()
-		{
-			if (!Sldr.IsInitialized)
-			{
-				// initialize the SLDR
-				Sldr.Initialize();
-			}
-
-			base.FixtureSetup();
-		}
-
-		public override void FixtureTeardown()
-		{
-			base.FixtureTeardown();
-
-			if (Sldr.IsInitialized)
-			{
-				Sldr.Cleanup();
-			}
-		}
-		#endregion
-
 		[Test]
 		public void Search()
 		{

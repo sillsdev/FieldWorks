@@ -983,7 +983,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private void Tools_Configure_Dictionary_Clicked(object sender, EventArgs e)
 		{
 			var mainWindow = PropertyTable.GetValue<IFwMainWnd>("window");
-			if (DictionaryConfigurationDlg.RunDlg(_majorFlexComponentParameters.FlexComponentParameters, (Form)mainWindow, MyRecordList.CurrentObject, "khtpConfigureDictionary", LanguageExplorerResources.Dictionary))
+			if (DictionaryConfigurationDlg.ShowDialog(_majorFlexComponentParameters.FlexComponentParameters, (Form)mainWindow, MyRecordList.CurrentObject, "khtpConfigureDictionary", LanguageExplorerResources.Dictionary))
 			{
 				mainWindow.RefreshAllViews();
 			}

@@ -13,7 +13,6 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.ObjectModel;
-using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 {
@@ -34,24 +33,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		[TestFixtureSetUp]
 		public override void FixtureSetup()
 		{
-			if (!Sldr.IsInitialized)
-			{
-				// initialize the SLDR
-				Sldr.Initialize();
-			}
-
 			base.FixtureSetup();
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, DoSetupFixture);
-		}
-
-		public override void FixtureTeardown()
-		{
-			base.FixtureTeardown();
-
-			if (Sldr.IsInitialized)
-			{
-				Sldr.Cleanup();
-			}
 		}
 
 		/// <summary>

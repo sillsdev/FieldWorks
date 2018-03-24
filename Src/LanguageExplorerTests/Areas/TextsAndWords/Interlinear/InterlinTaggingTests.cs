@@ -31,7 +31,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		private TestTaggingChild m_tagChild;
 		private IStTxtPara m_para1;
 		private ITextTagRepository m_tagRepo;
-		private bool _didIInitSLDR;
 
 		// Store parsed test Occurrences in this array
 		private AnalysisOccurrence[] m_occurrences;
@@ -45,12 +44,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		[TestFixtureSetUp]
 		public override void FixtureSetup()
 		{
-			if (!Sldr.IsInitialized)
-			{
-				_didIInitSLDR = true;
-				Sldr.Initialize();
-			}
-
 			base.FixtureSetup();
 
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
@@ -69,11 +62,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				m_tagChild.Dispose();
 			m_tagChild = null;
 
-			if (_didIInitSLDR && Sldr.IsInitialized)
-			{
-				_didIInitSLDR = false;
-				Sldr.Cleanup();
-			}
 			base.FixtureTeardown();
 		}
 

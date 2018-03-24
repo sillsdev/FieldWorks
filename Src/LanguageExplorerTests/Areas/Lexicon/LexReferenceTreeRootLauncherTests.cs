@@ -7,7 +7,6 @@ using NUnit.Framework;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
-using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Areas.Lexicon
 {
@@ -17,30 +16,6 @@ namespace LanguageExplorerTests.Areas.Lexicon
 	[TestFixture]
 	public class LexReferenceTreeRootLauncherTests : MemoryOnlyBackendProviderTestBase
 	{
-		private bool _didIInitSLDR;
-
-		[TestFixtureSetUp]
-		public override void FixtureSetup()
-		{
-			if (!Sldr.IsInitialized)
-			{
-				_didIInitSLDR = true;
-				Sldr.Initialize();
-			}
-
-			base.FixtureSetup();
-		}
-
-		public override void FixtureTeardown()
-		{
-			if (_didIInitSLDR && Sldr.IsInitialized)
-			{
-				_didIInitSLDR = false;
-				Sldr.Cleanup();
-			}
-			base.FixtureTeardown();
-		}
-
 		/// <summary>
 		/// This is a regression test (LT-14926) to make sure we don't reintroduce a problem where replacing a 'whole' that has only one part
 		/// failed because it began by deleting the 'whole' from the relation, which left only one item and caused the entire relation to

@@ -6,7 +6,6 @@ using System.ComponentModel.Composition.Hosting;
 using LanguageExplorer;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Repository
 {
@@ -22,12 +21,6 @@ namespace LanguageExplorerTests.Repository
 		/// </summary>
 		public override void FixtureSetup()
 		{
-			if (!Sldr.IsInitialized)
-			{
-				// initialize the SLDR
-				Sldr.Initialize();
-			}
-
 			base.FixtureSetup();
 
 			// It is fine to have "LanguageExplorerCompositionServices.GetWindowScopedTypes()" be globally available for these tests.
@@ -47,11 +40,6 @@ namespace LanguageExplorerTests.Repository
 		public override void FixtureTeardown()
 		{
 			base.FixtureTeardown();
-
-			if (Sldr.IsInitialized)
-			{
-				Sldr.Cleanup();
-			}
 
 			_compositionContainer.Dispose();
 			_propertyTable.Dispose();

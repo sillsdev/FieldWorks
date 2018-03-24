@@ -13,7 +13,6 @@ using NUnit.Framework;
 using Sfm2Xml;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Controls.LexText
 {
@@ -23,29 +22,6 @@ namespace LanguageExplorerTests.Controls.LexText
 	[TestFixture]
 	public class LexImportTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		#region Overrides of LcmTestBase
-		public override void FixtureSetup()
-		{
-			if (!Sldr.IsInitialized)
-			{
-				// initialize the SLDR
-				Sldr.Initialize();
-			}
-
-			base.FixtureSetup();
-		}
-
-		public override void FixtureTeardown()
-		{
-			base.FixtureTeardown();
-
-			if (Sldr.IsInitialized)
-			{
-				Sldr.Cleanup();
-			}
-		}
-		#endregion
-
 		private string allNumbered_OutOfOrder =
 @"\lx aha
 \hm 2

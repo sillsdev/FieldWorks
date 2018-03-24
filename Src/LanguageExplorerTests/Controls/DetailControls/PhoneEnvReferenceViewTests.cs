@@ -8,7 +8,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.Text;
-using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Controls.DetailControls
 {
@@ -18,29 +17,6 @@ namespace LanguageExplorerTests.Controls.DetailControls
 	[TestFixture]
 	public class PhoneEnvReferenceViewTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		#region Overrides of LcmTestBase
-		public override void FixtureSetup()
-		{
-			if (!Sldr.IsInitialized)
-			{
-				// initialize the SLDR
-				Sldr.Initialize();
-			}
-
-			base.FixtureSetup();
-		}
-
-		public override void FixtureTeardown()
-		{
-			base.FixtureTeardown();
-
-			if (Sldr.IsInitialized)
-			{
-				Sldr.Cleanup();
-			}
-		}
-		#endregion
-
 		/// <summary>
 		/// There's a lot more we could verify about the end results of this test, as well as more we could
 		/// test about EnvsBeingRequestedForThisEntry. This test was intended to cover a particular bug fix.

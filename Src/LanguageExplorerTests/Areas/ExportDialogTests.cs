@@ -12,12 +12,9 @@ using System.Collections.Generic;
 using LanguageExplorer.Areas;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Areas
 {
-#if RANDYTODO
-// TODO: These started failing when some new Palaso code came into being. The setup failure message was: "The writing system en was not found in this manager."
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Test exporting.
@@ -466,12 +463,6 @@ namespace LanguageExplorerTests.Areas
 		[SetUp]
 		public void CreateMockCache()
 		{
-			if (!Sldr.IsInitialized)
-			{
-				// initialize the SLDR
-				Sldr.Initialize();
-			}
-
 			m_cache = LcmCache.CreateCacheWithNewBlankLangProj(
 				new TestProjectId(BackendProviderType.kMemoryOnly, null), "en", "fr", "en", new DummyLcmUI(),
 				FwDirectoryFinder.LcmDirectories, new LcmSettings());
@@ -488,11 +479,6 @@ namespace LanguageExplorerTests.Areas
 		{
 			m_cache.Dispose();
 			m_cache = null;
-
-			if (Sldr.IsInitialized)
-			{
-				Sldr.Cleanup();
-			}
 		}
 
 	#endregion
@@ -1369,5 +1355,4 @@ namespace LanguageExplorerTests.Areas
 			}
 		}
 	}
-#endif
 }

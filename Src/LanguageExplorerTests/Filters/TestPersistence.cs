@@ -14,7 +14,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
-using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Filters
 {
@@ -29,12 +28,6 @@ namespace LanguageExplorerTests.Filters
 
 		public override void FixtureSetup()
 		{
-			if (!Sldr.IsInitialized)
-			{
-				// initialize the SLDR
-				Sldr.Initialize();
-			}
-
 			base.FixtureSetup();
 
 			m_sda = Cache.DomainDataByFlid;
@@ -46,11 +39,6 @@ namespace LanguageExplorerTests.Filters
 			m_objectsToDispose.Dispose();
 
 			base.FixtureTeardown();
-
-			if (Sldr.IsInitialized)
-			{
-				Sldr.Cleanup();
-			}
 		}
 
 		// Checklist of classes we need to test
@@ -402,27 +390,6 @@ namespace LanguageExplorerTests.Filters
 		private ArrayList m_list;
 		private ILexEntry m_le1;
 		private ILexEntry m_le2;
-
-		public override void FixtureSetup()
-		{
-			if (!Sldr.IsInitialized)
-			{
-				// initialize the SLDR
-				Sldr.Initialize();
-			}
-
-			base.FixtureSetup();
-		}
-
-		public override void FixtureTeardown()
-		{
-			base.FixtureTeardown();
-
-			if (Sldr.IsInitialized)
-			{
-				Sldr.Cleanup();
-			}
-		}
 
 		public override void TestSetup()
 		{

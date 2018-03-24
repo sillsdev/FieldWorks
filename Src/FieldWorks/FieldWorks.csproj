@@ -277,7 +277,6 @@
     <Compile Include="RealSplashScreen.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ReversalIndexServices.cs" />
     <Compile Include="WelcomeToFieldWorksDlg.Designer.cs">
       <DependentUpon>WelcomeToFieldWorksDlg.cs</DependentUpon>
     </Compile>

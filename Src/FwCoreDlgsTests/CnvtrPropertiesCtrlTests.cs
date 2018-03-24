@@ -153,10 +153,6 @@ namespace AddConverterDlgTests
 	}
 	#endregion
 
-#if RANDYTODO
-// TODO: I added the Linux block section, since they were all failing on Linux.
-#endif
-#if !__MonoCS__
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Class for testing the CnvtrPropertiesCtrl
@@ -615,5 +611,4 @@ namespace AddConverterDlgTests
 			return filename;
 		}
 	}
-#endif
 }

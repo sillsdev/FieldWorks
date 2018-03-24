@@ -12,7 +12,6 @@ using NUnit.Framework;
 using SIL.IO;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 {
@@ -21,26 +20,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 		private FlexComponentParameters _flexComponentParameters;
 
 		#region Overrides of LcmTestBase
-		public override void FixtureSetup()
-		{
-			if (!Sldr.IsInitialized)
-			{
-				// initialize the SLDR
-				Sldr.Initialize();
-			}
-
-			base.FixtureSetup();
-		}
 
 		public override void FixtureTeardown()
 		{
 			RobustIO.DeleteDirectoryAndContents(Cache.ProjectId.Path);
 			base.FixtureTeardown();
-
-			if (Sldr.IsInitialized)
-			{
-				Sldr.Cleanup();
-		}
 		}
 
 		public override void TestSetup()

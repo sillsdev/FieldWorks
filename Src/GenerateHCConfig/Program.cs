@@ -27,41 +27,48 @@ namespace GenerateHCConfig
 			}
 
 			Icu.InitIcuDataDir();
-			Sldr.Initialize();
-			var synchronizeInvoke = new SingleThreadedSynchronizeInvoke();
-			var spanFactory = new ShapeSpanFactory();
-
-			var projectId = new ProjectIdentifier(args[0]);
-			var logger = new ConsoleLogger(synchronizeInvoke);
-			var dirs = new NullLcmDirectories();
-			var settings = new LcmSettings {DisableDataMigration = true};
-			var progress = new NullThreadedProgress(synchronizeInvoke);
-			Console.WriteLine("Loading FieldWorks project...");
 			try
 			{
-				using (LcmCache cache = LcmCache.CreateCacheFromExistingData(projectId, "en", logger, dirs, settings, progress))
+				Sldr.Initialize();
+				var synchronizeInvoke = new SingleThreadedSynchronizeInvoke();
+				var spanFactory = new ShapeSpanFactory();
+
+				var projectId = new ProjectIdentifier(args[0]);
+				var logger = new ConsoleLogger(synchronizeInvoke);
+				var dirs = new NullLcmDirectories();
+				var settings = new LcmSettings { DisableDataMigration = true };
+				var progress = new NullThreadedProgress(synchronizeInvoke);
+				Console.WriteLine("Loading FieldWorks project...");
+				try
 				{
-					Language language = HCLoader.Load(spanFactory, cache, logger);
-					Console.WriteLine("Loading completed.");
-					Console.WriteLine("Writing HC configuration file...");
-					XmlLanguageWriter.Save(language, args[1]);
-					Console.WriteLine("Writing completed.");
+					using (LcmCache cache = LcmCache.CreateCacheFromExistingData(projectId, "en", logger, dirs, settings, progress))
+					{
+						Language language = HCLoader.Load(spanFactory, cache, logger);
+						Console.WriteLine("Loading completed.");
+						Console.WriteLine("Writing HC configuration file...");
+						XmlLanguageWriter.Save(language, args[1]);
+						Console.WriteLine("Writing completed.");
+					}
+					return 0;
 				}
-				return 0;
+				catch (LcmFileLockedException)
+				{
+					Console.WriteLine("Loading failed.");
+					Console.WriteLine("The FieldWorks project is currently open in another application.");
+					Console.WriteLine("Close the application and try to run this command again.");
+					return 1;
+				}
+				catch (LcmDataMigrationForbiddenException)
+				{
+					Console.WriteLine("Loading failed.");
+					Console.WriteLine("The FieldWorks project was created with an older version of FLEx.");
+					Console.WriteLine("Migrate the project to the latest version by opening it in FLEx.");
+					return 1;
+				}
 			}
-			catch (LcmFileLockedException)
+			finally
 			{
-				Console.WriteLine("Loading failed.");
-				Console.WriteLine("The FieldWorks project is currently open in another application.");
-				Console.WriteLine("Close the application and try to run this command again.");
-				return 1;
-			}
-			catch (LcmDataMigrationForbiddenException)
-			{
-				Console.WriteLine("Loading failed.");
-				Console.WriteLine("The FieldWorks project was created with an older version of FLEx.");
-				Console.WriteLine("Migrate the project to the latest version by opening it in FLEx.");
-				return 1;
+				Sldr.Cleanup();
 			}
 		}
 

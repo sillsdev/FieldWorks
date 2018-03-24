@@ -36,7 +36,11 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 		/// </summary>
 		public event EventHandler SaveModel;
 
-		internal static bool RunDlg(FlexComponentParameters flexComponentParameters, Form mainWindow, ICmObject currentObject, string helpTopic, string titleCore, List<string> classList = null)
+		/// <summary>
+		/// Create the dlg and show it.
+		/// </summary>
+		/// <returns>'true', if caller needs to refesh the main window, otherwise 'false'.</returns>
+		internal static bool ShowDialog(FlexComponentParameters flexComponentParameters, Form mainWindow, ICmObject currentObject, string helpTopic, string titleCore, List<string> classList = null)
 		{
 			bool refreshNeeded;
 			using (var dlg = new DictionaryConfigurationDlg(flexComponentParameters.PropertyTable))

@@ -11,7 +11,6 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
-using SIL.WritingSystems;
 using FS = System.Collections.Generic.Dictionary<SIL.LCModel.IFsFeatDefn, object>;
 
 namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
@@ -28,26 +27,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		private IFsFeatStrucType m_inflType;
 
 		#region Overrides of LcmTestBase
-		public override void FixtureSetup()
-		{
-			if (!Sldr.IsInitialized)
-			{
-				// initialize the SLDR
-				Sldr.Initialize();
-			}
-
-			base.FixtureSetup();
-		}
-
-		public override void FixtureTeardown()
-		{
-			base.FixtureTeardown();
-
-			if (Sldr.IsInitialized)
-			{
-				Sldr.Cleanup();
-			}
-		}
 
 		protected override void CreateTestData()
 		{

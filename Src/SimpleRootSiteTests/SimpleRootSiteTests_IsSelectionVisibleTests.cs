@@ -190,10 +190,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 	}
 	#endregion
 
-#if RANDYTODO
-	// TODO: I added the Linux block section, since they were all failing on Linux.
-#endif
-#if !__MonoCS__
 	#region IsSelectionVisibleTests
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -525,5 +521,4 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		}
 	}
 #endregion IsSelectionVisibleTests
-#endif
 }

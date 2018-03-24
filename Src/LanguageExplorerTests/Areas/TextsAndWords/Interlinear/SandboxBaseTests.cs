@@ -14,7 +14,6 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.ObjectModel;
-using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 {
@@ -27,29 +26,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		private IPropertyTable _propertyTable;
 		private IPublisher _publisher;
 		private ISubscriber _subscriber;
-		private bool _didIInitSLDR;
-
-		[TestFixtureSetUp]
-		public override void FixtureSetup()
-		{
-			if (!Sldr.IsInitialized)
-			{
-				_didIInitSLDR = true;
-				Sldr.Initialize();
-			}
-
-			base.FixtureSetup();
-		}
-
-		public override void FixtureTeardown()
-		{
-			if (_didIInitSLDR && Sldr.IsInitialized)
-			{
-				_didIInitSLDR = false;
-				Sldr.Cleanup();
-			}
-			base.FixtureTeardown();
-		}
 
 		#region Overrides of MemoryOnlyBackendProviderRestoredForEachTestTestBase
 

@@ -8,7 +8,6 @@ using NUnit.Framework;
 using SIL.LCModel;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
-using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 {
@@ -18,18 +17,11 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		private int kwsVernInPara;
 		private int kwsAnalysis;
 		private ILangProject m_lp;
-		private bool _didIInitSLDR;
 
 		#region Overrides of LcmTestBase
 
 		public override void FixtureSetup()
 		{
-			if (!Sldr.IsInitialized)
-			{
-				_didIInitSLDR = true;
-				Sldr.Initialize();
-			}
-
 			base.FixtureSetup();
 
 			kwsVernInPara = WritingSystemServices.kwsVernInParagraph;
@@ -39,11 +31,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 		public override void FixtureTeardown()
 		{
-			if (_didIInitSLDR && Sldr.IsInitialized)
-			{
-				_didIInitSLDR = false;
-				Sldr.Cleanup();
-			}
 			base.FixtureTeardown();
 		}
 		#endregion

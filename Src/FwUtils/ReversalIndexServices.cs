@@ -11,12 +11,12 @@ using SIL.LCModel;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Infrastructure;
 
-namespace SIL.FieldWorks
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// <summary>
 	/// Utility services relating to Reversal Indexes
 	/// </summary>
-	internal static class ReversalIndexServices
+	public static class ReversalIndexServices
 	{
 		internal const string ConfigFileExtension = ".fwdictconfig";
 		internal const string RevIndexDir = "ReversalIndex";

@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using LanguageExplorer.Areas.TextsAndWords.Discourse;
 using NUnit.Framework;
 using SIL.LCModel;
-using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 {
@@ -31,26 +30,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		private AdvancedMTDialogLogic m_dlgLogicPostpose;
 
 		#region Overrides of LcmTestBase
-		public override void FixtureSetup()
-		{
-			if (!Sldr.IsInitialized)
-			{
-				// initialize the SLDR
-				Sldr.Initialize();
-			}
-
-			base.FixtureSetup();
-		}
-
-		public override void FixtureTeardown()
-		{
-			base.FixtureTeardown();
-
-			if (Sldr.IsInitialized)
-			{
-				Sldr.Cleanup();
-			}
-		}
 
 		protected override void CreateTestData()
 		{

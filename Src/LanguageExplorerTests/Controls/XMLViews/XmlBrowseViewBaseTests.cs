@@ -12,7 +12,6 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Utils;
-using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Controls.XMLViews
 {
@@ -518,23 +517,12 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		#region Overrides of LcmTestBase
 		public override void FixtureSetup()
 		{
-			if (!Sldr.IsInitialized)
-			{
-				// initialize the SLDR
-				Sldr.Initialize();
-			}
-
 			base.FixtureSetup();
 		}
 
 		public override void FixtureTeardown()
 		{
 			base.FixtureTeardown();
-
-			if (Sldr.IsInitialized)
-			{
-				Sldr.Cleanup();
-			}
 		}
 
 		public override void TestSetup()

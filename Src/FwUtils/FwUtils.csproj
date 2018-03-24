@@ -297,6 +297,7 @@
     <Compile Include="ReadOnlyPropertyTable.cs" />
     <Compile Include="RecordErrorEventArgs.cs" />
     <Compile Include="RecordFilterListProvider.cs" />
+    <Compile Include="ReversalIndexServices.cs" />
     <Compile Include="SelectionEvents.cs" />
     <Compile Include="Properties\Settings.cs" />
     <Compile Include="SettingsGroup.cs" />

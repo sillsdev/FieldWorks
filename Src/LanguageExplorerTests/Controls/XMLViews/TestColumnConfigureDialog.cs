@@ -8,12 +8,9 @@ using LanguageExplorer.Controls.XMLViews;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Controls.XMLViews
 {
-#if RANDYTODO
-	// TODO: These started failing when some new Palaso code came into being. The setup failure message was: "The writing system en was not found in this manager."
 	/// <summary></summary>
 	[TestFixture]
 	public class TestColumnConfigureDialog
@@ -26,12 +23,6 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		[SetUp]
 		public void SetUp()
 		{
-			if (!Sldr.IsInitialized)
-			{
-				// initialize the SLDR
-				Sldr.Initialize();
-			}
-
 			m_propertyTable = TestSetupServices.SetupTestTriumvirate(out m_publisher, out m_subscriber);
 			var st = StringTable.Table; // Make sure it is loaded.
 			m_cache = LcmCache.CreateCacheWithNewBlankLangProj(new TestProjectId(BackendProviderType.kMemoryOnly, null), "en", "en", "en", new DummyLcmUI(), FwDirectoryFinder.LcmDirectories, new LcmSettings());
@@ -47,11 +38,6 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			m_subscriber = null;
 			m_cache.Dispose();
 			m_cache = null;
-
-			if (Sldr.IsInitialized)
-			{
-				Sldr.Cleanup();
-			}
 		}
 
 	#region AfterMovingItemArrowsAreNotImproperlyDisabled
@@ -129,5 +115,4 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			return window;
 		}
 	}
-#endif
 }

@@ -17,7 +17,6 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.TestUtilities;
-using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 {
@@ -30,29 +29,12 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		internal InterlinLineChoices m_choices;
 		private XmlDocument m_textsDefn;
 		private const string QaaXKal = "qaa-x-kal";
-		private bool _didIInitSLDR;
 
 		[TestFixtureSetUp]
 		public override void FixtureSetup()
 		{
-			if (!Sldr.IsInitialized)
-			{
-				_didIInitSLDR = true;
-				Sldr.Initialize();
-			}
-
 			base.FixtureSetup();
 			m_textsDefn = new XmlDocument();
-		}
-
-		public override void FixtureTeardown()
-		{
-			if (_didIInitSLDR && Sldr.IsInitialized)
-			{
-				_didIInitSLDR = false;
-				Sldr.Cleanup();
-			}
-			base.FixtureTeardown();
 		}
 
 		protected virtual IText SetupDataForText1()

@@ -17,10 +17,6 @@ using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 {
-#if RANDYTODO
-// TODO: I added the Linux block section, since they were all failing on Linux.
-#endif
-#if !__MonoCS__
 	/// <summary>
 	/// Tests for the Constituent chart.
 	/// </summary>
@@ -222,5 +218,4 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			base.OnLoad(eventArgs);
 		}
 	}
-#endif
 }

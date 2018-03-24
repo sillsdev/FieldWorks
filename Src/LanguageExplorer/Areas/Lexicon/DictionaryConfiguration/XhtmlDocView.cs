@@ -563,7 +563,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			{
 				current = activeRecordList.CurrentObject;
 			}
-			if (DictionaryConfigurationDlg.RunDlg(new FlexComponentParameters(propertyTable, publisher, (ISubscriber)tagObjects[4]), (Form)mainWindow, current, DictionaryConfigurationServices.GetConfigDialogHelpTopic(propertyTable), DictionaryConfigurationServices.GetDictionaryConfigurationType(propertyTable), classList))
+			if (DictionaryConfigurationDlg.ShowDialog(new FlexComponentParameters(propertyTable, publisher, (ISubscriber)tagObjects[4]), (Form)mainWindow, current, DictionaryConfigurationServices.GetConfigDialogHelpTopic(propertyTable), DictionaryConfigurationServices.GetDictionaryConfigurationType(propertyTable), classList))
 			{
 				mainWindow.RefreshAllViews();
 			}

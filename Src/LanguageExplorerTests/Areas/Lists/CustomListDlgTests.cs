@@ -12,7 +12,6 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Areas.Lists
 {
@@ -29,26 +28,6 @@ namespace LanguageExplorerTests.Areas.Lists
 		private ISubscriber m_subscriber;
 
 		#region Overrides of LcmTestBase
-		public override void FixtureSetup()
-		{
-			if (!Sldr.IsInitialized)
-			{
-				// initialize the SLDR
-				Sldr.Initialize();
-			}
-
-			base.FixtureSetup();
-		}
-
-		public override void FixtureTeardown()
-		{
-			base.FixtureTeardown();
-
-			if (Sldr.IsInitialized)
-			{
-				Sldr.Cleanup();
-			}
-		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

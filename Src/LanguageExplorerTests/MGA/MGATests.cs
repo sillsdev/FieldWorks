@@ -8,7 +8,6 @@ using LanguageExplorer.MGA;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.WritingSystems;
 using SIL.Xml;
 
 namespace LanguageExplorerTests.MGA
@@ -21,27 +20,6 @@ namespace LanguageExplorerTests.MGA
 	{
 		private GlossListBox m_LabelGlosses;
 		private XmlDocument m_doc;
-
-		public override void FixtureSetup()
-		{
-			if (!Sldr.IsInitialized)
-			{
-				// initialize the SLDR
-				Sldr.Initialize();
-			}
-
-			base.FixtureSetup();
-		}
-
-		public override void FixtureTeardown()
-		{
-			base.FixtureTeardown();
-
-			if (Sldr.IsInitialized)
-			{
-				Sldr.Cleanup();
-			}
-		}
 
 		/// <summary>
 		/// This method is called before each test

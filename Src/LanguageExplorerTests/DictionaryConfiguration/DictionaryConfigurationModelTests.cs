@@ -19,7 +19,6 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
-using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.DictionaryConfiguration
 {
@@ -47,28 +46,14 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		private const string m_field = "LexEntry";
 
 		#region Overrides of LcmTestBase
+
 		public override void FixtureSetup()
 		{
-			if (!Sldr.IsInitialized)
-			{
-				// initialize the SLDR
-				Sldr.Initialize();
-			}
-
 			base.FixtureSetup();
 
 			CreateStandardStyles();
 		}
 
-		public override void FixtureTeardown()
-		{
-			base.FixtureTeardown();
-
-			if (Sldr.IsInitialized)
-			{
-				Sldr.Cleanup();
-			}
-		}
 		#endregion
 
 		private void CreateStandardStyles()

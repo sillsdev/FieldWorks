@@ -19,7 +19,6 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Utils;
-using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Controls.XMLViews
 {
@@ -56,12 +55,6 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		[TestFixtureSetUp]
 		public override void FixtureSetup()
 		{
-			if (!Sldr.IsInitialized)
-			{
-				// initialize the SLDR
-				Sldr.Initialize();
-			}
-
 			base.FixtureSetup();
 
 			SetupTestModel(XmlViewsResources.TextCacheModel_xml);
@@ -129,11 +122,6 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			m_sda = null;
 
 			base.FixtureTeardown();
-
-			if (Sldr.IsInitialized)
-			{
-				Sldr.Cleanup();
-			}
 		}
 
 		public static void SetupTestModel(string cacheModelfile)

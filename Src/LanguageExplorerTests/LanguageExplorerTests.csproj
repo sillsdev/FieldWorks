@@ -137,6 +137,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.Lift.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.TestUtilities, Version=4.2.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Downloads\SIL.TestUtilities.dll</HintPath>
+    </Reference>
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="ViewsInterfaces">
       <Name>ViewsInterfaces</Name>
@@ -179,10 +183,6 @@
     <Reference Include="SIL.Core">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\SIL.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.TestUtilities">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\SIL.TestUtilities.dll</HintPath>
     </Reference>
     <Reference Include="SIL.WritingSystems">
       <SpecificVersion>False</SpecificVersion>
@@ -446,7 +446,6 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="BuildInclude.targets" />
 </Project>

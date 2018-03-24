@@ -38,7 +38,7 @@ namespace LanguageExplorerTests.Controls.LexText
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public partial class LiftMergerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
+	public class LiftMergerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private static readonly string[] sequenceLiftData = {
 				"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
@@ -464,26 +464,6 @@ namespace LanguageExplorerTests.Controls.LexText
 		private Dictionary<String, int> m_customFieldExampleSentencesIds = new Dictionary<String, int>();
 
 		#region Overrides of LcmTestBase
-		public override void FixtureSetup()
-		{
-			if (!Sldr.IsInitialized)
-			{
-				// initialize the SLDR
-				Sldr.Initialize();
-			}
-
-			base.FixtureSetup();
-		}
-
-		public override void FixtureTeardown()
-		{
-			base.FixtureTeardown();
-
-			if (Sldr.IsInitialized)
-			{
-				Sldr.Cleanup();
-			}
-		}
 
 		public override void TestSetup()
 		{

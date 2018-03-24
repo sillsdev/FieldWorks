@@ -1345,6 +1345,7 @@ namespace LanguageExplorer.Impls
 			if (dlg.WritingSystemsChanged())
 			{
 				View_Refresh(sender, eventArgs);
+				ReversalIndexServices.CreateOrRemoveReversalIndexConfigurationFiles(Cache.ServiceLocator.WritingSystemManager, Cache, FwDirectoryFinder.DefaultConfigurations, FwDirectoryFinder.ProjectsDirectory, dlg.OriginalProjectName);
 			}
 		}
 

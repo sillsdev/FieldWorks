@@ -18,7 +18,6 @@ using LanguageExplorer.Filters;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.WritingSystems;
 using SIL.Xml;
 
 namespace LanguageExplorerTests.Controls.XMLViews
@@ -47,12 +46,6 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		[TestFixtureSetUp]
 		public void Setup()
 		{
-			if (!Sldr.IsInitialized)
-			{
-				// initialize the SLDR
-				Sldr.Initialize();
-			}
-
 			// Create the following:
 			// - part and layout inventories
 			// - metadata cache
@@ -149,11 +142,6 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			m_layouts = null;
 			m_partInventory = null;
 			m_wsManager = null;
-
-			if (Sldr.IsInitialized)
-			{
-				Sldr.Cleanup();
-			}
 		}
 
 		/// <summary>

@@ -475,10 +475,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	}
 	#endregion // Dummy WritingSystemPropertiesDlg
 
-#if RANDYTODO
-// TODO: I added the Linux block section, since they were all failing on Linux.
-#endif
-#if !__MonoCS__
 	/// <summary>
 	/// Summary description for TestFwProjPropertiesDlg.
 	/// </summary>
@@ -929,5 +925,4 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 	#endregion
 	}
-#endif
 }

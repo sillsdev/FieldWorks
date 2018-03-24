@@ -260,7 +260,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		private void ConfigureDictionary_Clicked(object sender, EventArgs e)
 		{
 			bool refreshNeeded;
-			if (DictionaryConfigurationDlg.RunDlg(new FlexComponentParameters(_propertyTable, _publisher, _subscriber), (Form)_fwMainWnd, _recordList?.CurrentObject, "khtpConfigureDictionary", LanguageExplorerResources.Dictionary))
+			if (DictionaryConfigurationDlg.ShowDialog(new FlexComponentParameters(_propertyTable, _publisher, _subscriber), (Form)_fwMainWnd, _recordList?.CurrentObject, "khtpConfigureDictionary", LanguageExplorerResources.Dictionary))
 			{
 				_fwMainWnd.RefreshAllViews();
 			}

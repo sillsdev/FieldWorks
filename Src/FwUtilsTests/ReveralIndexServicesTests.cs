@@ -6,14 +6,13 @@ using System.IO;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 using SIL.TestUtilities;
 
-namespace SIL.FieldWorks
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// <summary/>
 	[TestFixture]

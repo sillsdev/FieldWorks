@@ -7,7 +7,6 @@ using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
-using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 {
@@ -20,29 +19,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		private IPropertyTable _propertyTable;
 		private IPublisher _publisher;
 		private ISubscriber _subscriber;
-		private bool _didIInitSLDR;
 
-		[TestFixtureSetUp]
-		public override void FixtureSetup()
-		{
-			if (!Sldr.IsInitialized)
-			{
-				_didIInitSLDR = true;
-				Sldr.Initialize();
-			}
-
-			base.FixtureSetup();
-		}
-
-		public override void FixtureTeardown()
-		{
-			if (_didIInitSLDR && Sldr.IsInitialized)
-			{
-				_didIInitSLDR = false;
-				Sldr.Cleanup();
-			}
-			base.FixtureTeardown();
-		}
 		public override void TestSetup()
 		{
 			base.TestSetup();

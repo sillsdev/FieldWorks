@@ -19,7 +19,6 @@ using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Utils;
-using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Areas.TextsAndWords
 {
@@ -30,18 +29,11 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 		private IPropertyTable m_propertyTable;
 		private IPublisher m_publisher;
 		private ISubscriber m_subscriber;
-		private bool _didIInitSLDR;
 
 	#region Overrides of FdoTestBase
 
 		public override void FixtureSetup()
 		{
-			if (!Sldr.IsInitialized)
-			{
-				_didIInitSLDR = true;
-				Sldr.Initialize();
-			}
-
 			base.FixtureSetup();
 			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
 			{
@@ -50,16 +42,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 #endif
 				Cache.LanguageProject.TranslatedScriptureOA = Cache.ServiceLocator.GetInstance<IScriptureFactory>().Create();
 			});
-		}
-
-		public override void FixtureTeardown()
-		{
-			if (_didIInitSLDR && Sldr.IsInitialized)
-			{
-				_didIInitSLDR = false;
-				Sldr.Cleanup();
-			}
-			base.FixtureTeardown();
 		}
 
 		/// ------------------------------------------------------------------------------------

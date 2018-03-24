@@ -11,36 +11,12 @@ using SIL.LCModel;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainImpl;
-using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.DictionaryConfiguration
 {
 	[TestFixture]
 	public class HeadwordNumbersControllerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		#region Overrides of MemoryOnlyBackendProviderRestoredForEachTestTestBase
-		public override void FixtureSetup()
-		{
-			if (!Sldr.IsInitialized)
-			{
-				// initialize the SLDR
-				Sldr.Initialize();
-			}
-
-			base.FixtureSetup();
-		}
-
-		public override void FixtureTeardown()
-		{
-			base.FixtureTeardown();
-
-			if (Sldr.IsInitialized)
-			{
-				Sldr.Cleanup();
-			}
-		}
-		#endregion
-
 		[Test]
 		public void ConstructorRejectsNulls()
 		{

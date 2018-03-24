@@ -6,7 +6,6 @@ using LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes;
 using NUnit.Framework;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
-using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Areas.Lexicon
 {
@@ -14,29 +13,6 @@ namespace LanguageExplorerTests.Areas.Lexicon
 	{
 		private IReversalIndexRepository m_revIndexRepo;
 		private IReversalIndexEntryFactory m_revIndexEntryFactory;
-		private bool _didIInitSLDR;
-
-		[TestFixtureSetUp]
-		public override void FixtureSetup()
-		{
-			if (!Sldr.IsInitialized)
-			{
-				_didIInitSLDR = true;
-				Sldr.Initialize();
-			}
-
-			base.FixtureSetup();
-		}
-
-		public override void FixtureTeardown()
-		{
-			if (_didIInitSLDR && Sldr.IsInitialized)
-			{
-				_didIInitSLDR = false;
-				Sldr.Cleanup();
-			}
-			base.FixtureTeardown();
-		}
 
 		[SetUp]
 		public void Setup()

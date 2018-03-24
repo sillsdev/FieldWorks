@@ -10,12 +10,9 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application.ApplicationServices;
 using SIL.LCModel.Core.Text;
-using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Areas.Grammar
 {
-#if RANDYTODO
-	// TODO: These started failing when some new Palaso code came into being. The setup failure message was: "The writing system en was not found in this manager."
 	public class GoldEticGuidFixerTests
 	{
 		protected LcmCache Cache { get; set; }
@@ -23,12 +20,6 @@ namespace LanguageExplorerTests.Areas.Grammar
 		[SetUp]
 		public void TestSetup()
 		{
-			if (!Sldr.IsInitialized)
-			{
-				// initialize the SLDR
-				Sldr.Initialize();
-			}
-
 			Cache = LcmCache.CreateCacheWithNewBlankLangProj(new TestProjectId(BackendProviderType.kMemoryOnly, null),
 				"en", "fr", "en", new DummyLcmUI(), FwDirectoryFinder.LcmDirectories, new LcmSettings());
 			var loader = new XmlList();
@@ -47,11 +38,6 @@ namespace LanguageExplorerTests.Areas.Grammar
 			Cache.ActionHandlerAccessor.EndUndoTask();
 			Cache.Dispose();
 			Cache = null;
-
-			if (Sldr.IsInitialized)
-			{
-				Sldr.Cleanup();
-			}
 		}
 
 		[Test]
@@ -145,5 +131,4 @@ namespace LanguageExplorerTests.Areas.Grammar
 			Assert.That(GoldEticGuidFixer.ReplacePOSGuidsWithGoldEticGuids(Cache), Is.False);
 		}
 	}
-#endif
 }
