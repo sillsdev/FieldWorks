@@ -13,10 +13,12 @@ Last reviewed:
 #ifndef Mutex_H
 #define Mutex_H 1
 
+#define NOEXCEPTFALSE
 #ifndef WIN32
 #include <pthread.h>
 #include <errno.h>
 #include <stdexcept>
+#define NOEXCEPTFALSE noexcept(false)
 #endif
 
 // Use a synchronization primitive that pumps the message queue while waiting, since the
@@ -56,7 +58,7 @@ public:
 #endif // !WIN32
 	}
 
-	~Mutex() noexcept(false)
+	~Mutex() NOEXCEPTFALSE
 	{
 #ifdef WIN32
 #ifdef MSG_PUMP_MUTEX
