@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2016 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -772,9 +772,10 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			}
 			catch (Exception e)
 			{
-				// If anything unexpected goes wrong give BEP change to release any resources.
+				// If anything unexpected goes wrong, give BEP a chance to release any resources.
 				ShutdownInternal();
-				throw;
+				throw new StartupException(string.Format("Error loading existing project. ProjectId: {0}; Cache State: {1}",
+					ProjectId == null ? "null" : ProjectId.Name + " at " + ProjectId.Path, m_cache == null ? "Not valid" : "Ready"), e);
 			}
 		}
 

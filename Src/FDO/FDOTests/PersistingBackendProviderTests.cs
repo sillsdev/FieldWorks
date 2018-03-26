@@ -667,10 +667,9 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		/// </summary>
 		[Test]
 		[Platform(Include = "Linux", Reason = "Linux specific")]
-		[ExpectedException(typeof(UnauthorizedAccessException))]
 		public void StartupExtantTest()
 		{
-			string testFileName = String.Empty;
+			string testFileName = string.Empty;
 			try
 			{
 				var testDataPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "FDO/FDOTests/BackupRestore/BackupTestProject");
@@ -686,7 +685,8 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 				using (var xmlBep = new MockXMLBackendProvider(Cache, testFileName))
 				{
 					// Should throw an UnauthorizedAccessException.
-					xmlBep.StartupExtant();
+					var exception = Assert.Throws<StartupException>(() => xmlBep.StartupExtant());
+					Assert.IsTrue(exception.InnerException is UnauthorizedAccessException, "UnauthorizedAccess should have been thrown.");
 				}
 			}
 			finally
