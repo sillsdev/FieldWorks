@@ -13,12 +13,13 @@ Last reviewed:
 #ifndef Mutex_H
 #define Mutex_H 1
 
-#define NOEXCEPTFALSE
 #ifndef WIN32
 #include <pthread.h>
 #include <errno.h>
 #include <stdexcept>
 #define NOEXCEPTFALSE noexcept(false)
+#else
+#define NOEXCEPTFALSE
 #endif
 
 // Use a synchronization primitive that pumps the message queue while waiting, since the
