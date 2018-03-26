@@ -1615,7 +1615,8 @@ namespace SIL.FieldWorks.Common.Controls
 					}
 					break;
 				case kfragListItemInner:
-					AddTableRow(vwenv, hvo, frag);
+					if (m_cache.ServiceLocator.ObjectRepository.IsValidObjectId(hvo))
+						AddTableRow(vwenv, hvo, frag);
 					break;
 				case kfragListItem:
 					vwenv.AddObjProp(m_tagMe, this, kfragListItemInner);
