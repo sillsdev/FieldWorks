@@ -1,6 +1,7 @@
 # Generated or Downloaded (as part of the build process)
 GeneratedAssemblyInfo.cs
 Collection.cpp
+.vs/
 Build/FieldWorks.targets
 Build/GlobalInclude.properties
 Build/LibraryDevelopment.properties
