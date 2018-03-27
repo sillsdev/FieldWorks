@@ -92,6 +92,7 @@ namespace FwBuildTasks
 		private void CheckToolPath()
 		{
 			string path = Environment.GetEnvironmentVariable("PATH");
+			string vcInstallDir = Environment.GetEnvironmentVariable("VCINSTALLDIR");
 			//Console.WriteLine("DEBUG Make Task: PATH='{0}'", path);
 			string makePath = ToolPath == null ? String.Empty : ToolPath.Trim();
 			if (!String.IsNullOrEmpty(makePath) && File.Exists(Path.Combine(makePath, ToolName)))
@@ -114,8 +115,8 @@ namespace FwBuildTasks
 					return;
 				}
 			}
-			// Blind guess since we can't figure it out.
-			ToolPath = "C:\\Program Files\\Microsoft Visual Studio 10.0\\VC\\bin";
+			// Fall Back to the install directory
+			ToolPath = Path.Combine(vcInstallDir, "bin");
 		}
 
 		protected override string GenerateFullPathToTool()

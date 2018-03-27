@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
-	<UsingTask TaskName="RegFree" AssemblyFile="FwBuildTasks.dll"/>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
+	<UsingTask TaskName="RegFree" AssemblyFile="FwBuildTasks.dll" />
 
 	<PropertyGroup>
 		<DistFilesDir Condition="'$(OutDir)' != ''">$(OutDir)../../DistFiles</DistFilesDir>
@@ -20,7 +20,7 @@
 		<Fragments Include="$(DistFilesDir)/*.fragment.manifest"/>
 	</ItemGroup>
 	<Target Name="CreateManifest" Condition="'$(OS)'=='Windows_NT'" Inputs="@(DependentAssemblies)" Outputs="$(Executable).manifest">
-		<RegFree Executable="$(Executable)" DependentAssemblies="@(DependentAssemblies)" Fragments="@(Fragments)" Platform="$(Platform)" />
+		<RegFree Executable="$(Executable)" DependentAssemblies="@(DependentAssemblies)" Fragments="@(Fragments)" Platform="$(Platform)" MSBuildArchitecture="$(Platform)"/>
 	</Target>
 	<Target Name="AttachManifest" Condition="'$(OS)'=='Windows_NT'" DependsOnTargets="CreateManifest">
 		<Exec Command="mt.exe -outputresource:$(Executable) -manifest $(Executable).manifest"/>

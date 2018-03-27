@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="BuildRelease" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
+<Project DefaultTargets="BuildRelease" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
 	<UsingTask TaskName="DownloadFile" AssemblyFile="FwBuildTasks.dll"/>
 	<UsingTask TaskName="ForceDelete" AssemblyFile="FwBuildTasks.dll"/>
 	<UsingTask TaskName="ParseVersionNumbers" AssemblyFile="FwBuildTasks.dll"/>
