@@ -12,6 +12,7 @@ include $(BUILD_ROOT)/Bld/_names.mak
 BUILD_PRODUCT = FieldWorks
 include $(BUILD_ROOT)/Bld/_init.mak.lnx
 SHELL=/bin/bash
+BITS := $(shell test `arch` = x86_64 && echo 64 || echo 32)
 
 all: tlbs-copy teckit alltargets
 
@@ -225,7 +226,7 @@ install-tree: fieldworks-flex.1.gz fieldworks-te.1.gz unicodechareditor.1.gz
 	install -d $(DESTDIR)/usr/bin
 	install -d $(DESTDIR)/usr/lib/fieldworks
 	install -d $(DESTDIR)/usr/lib/fieldworks/icu-bin
-	install -d $(DESTDIR)/usr/lib/fieldworks/Firefox
+	install -d $(DESTDIR)/usr/lib/fieldworks/Firefox-Linux$(BITS)
 	install -d $(DESTDIR)/usr/share/fieldworks
 	install -d $(DESTDIR)/usr/share/man/man1
 	install -d $(DESTDIR)/var/lib/fieldworks
@@ -233,7 +234,7 @@ install-tree: fieldworks-flex.1.gz fieldworks-te.1.gz unicodechareditor.1.gz
 	install -m 644 DistFiles/*.{dll*,so} $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 DistFiles/Linux/*.{dll*,so} $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 $(OUT_DIR)/*.{dll*,so} $(DESTDIR)/usr/lib/fieldworks
-	install -m 644 $(OUT_DIR)/Firefox/*.* $(DESTDIR)/usr/lib/fieldworks/Firefox
+	install -m 644 $(OUT_DIR)/Firefox-Linux$(BITS)/*.* $(DESTDIR)/usr/lib/fieldworks/Firefox-Linux$(BITS)
 	install -m 644 $(OUT_DIR)/{*.compmap,components.map} $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 Lib/src/icu/install$(ARCH)/lib/lib* $(DESTDIR)/usr/lib/fieldworks
 	# Create temporary symlinks for shared Icu libs on Dictionary branch
