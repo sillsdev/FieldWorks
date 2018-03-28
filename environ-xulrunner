@@ -16,3 +16,5 @@ if [ "$RUNMODE" != "PACKAGE" ]
 then
 	LD_PRELOAD=libgeckofix.so
 fi
+
+export XULRUNNER
