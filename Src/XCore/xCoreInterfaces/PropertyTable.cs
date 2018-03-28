@@ -747,7 +747,6 @@ namespace XCore
 			GetBestSettingsGroupAndKey(name, settingsGroup, out key);
 			// Will properly throw if not in Dictionary.
 			var property = m_properties[key];
-
 			property.doPersist = doPersist;
 		}
 

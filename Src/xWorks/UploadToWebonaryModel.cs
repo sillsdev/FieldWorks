@@ -125,13 +125,13 @@ namespace SIL.FieldWorks.XWorks
 			PropertyTable.SetPropertyPersistence(WebonaryReversals, true);
 			if(m_selectedConfiguration != null)
 			{
-				PropertyTable.SetProperty(WebonaryConfiguration, m_selectedConfiguration, false);
-				PropertyTable.SetPropertyPersistence(WebonaryConfiguration, true);
+				PropertyTable.SetProperty(WebonaryConfiguration, m_selectedConfiguration, PropertyTable.SettingsGroup.LocalSettings, false);
+				PropertyTable.SetPropertyPersistence(WebonaryConfiguration, true, PropertyTable.SettingsGroup.LocalSettings);
 			}
 			if (m_selectedPublication != null)
 			{
-				PropertyTable.SetProperty(WebonaryPublication, m_selectedPublication, false);
-				PropertyTable.SetPropertyPersistence(WebonaryPublication, true);
+				PropertyTable.SetProperty(WebonaryPublication, m_selectedPublication, PropertyTable.SettingsGroup.LocalSettings, false);
+				PropertyTable.SetPropertyPersistence(WebonaryPublication, true, PropertyTable.SettingsGroup.LocalSettings);
 			}
 			PropertyTable.SaveGlobalSettings();
 			appSettings.Save();

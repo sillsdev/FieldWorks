@@ -192,7 +192,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				webonaryUsernameTextbox.Text = Model.UserName;
 				webonarySiteNameTextbox.Text = Model.SiteName;
-				if (!String.IsNullOrEmpty(Model.SelectedPublication))
+				if (!String.IsNullOrEmpty(Model.SelectedPublication) && publicationBox.Items.Contains(Model.SelectedPublication))
 				{
 					publicationBox.SelectedItem = Model.SelectedPublication;
 				}
