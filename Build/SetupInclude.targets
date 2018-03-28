@@ -221,7 +221,7 @@
 	  <Output TaskParameter="Value" PropertyName="dir-nunitreport"/>
 	</CreateProperty>
 
-	<CreateProperty Value="Configuration=$(config-capital);ReferencePath=$(dir-outputBase)">
+	<CreateProperty Value="Configuration=$(config-capital);ReferencePath=$(dir-outputBase);ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch=None">
 	  <Output TaskParameter="Value" PropertyName="msbuild-props"/>
 	</CreateProperty>
 
