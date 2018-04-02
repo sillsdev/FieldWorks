@@ -545,7 +545,7 @@
 			<Architecture Condition="'$(arch)'=='x86_64'">64</Architecture>
 			<Architecture Condition="'$(arch)'!='x86_64'">32</Architecture>
 			<GeckoDir Condition="'$(OS)'=='Windows_NT'">$(fwrt)/packages/Geckofx45.45.0.20</GeckoDir>
-			<GeckoDir Condition="'$(OS)'!='Windows_NT'">$(fwrt)/packages/Geckofx45.$(Architecture).Linux.45.0.35</GeckoDir>
+			<GeckoDir Condition="'$(OS)'!='Windows_NT'">$(fwrt)/packages/Geckofx45.$(Architecture).Linux.45.0.36</GeckoDir>
 		</PropertyGroup>
 		<ItemGroup>
 			<NuGottenFiles Include="$(GeckoDir)/lib/net40/Geckofx-Core.dll"/>
