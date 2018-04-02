@@ -273,7 +273,7 @@ namespace SIL.FieldWorks.XWorks
 					return;
 				}
 				// Handle button clicks or select the entry represented by the current element.
-				HandleDomLeftClick(Clerk, e, element);
+				HandleDomLeftClick(Clerk, m_propertyTable, e, element);
 			}
 			else if (e.Button == GeckoMouseButton.Right)
 			{
@@ -300,7 +300,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Handle the user left clicking on the document view by jumping to an entry, playing a media element, or adjusting the view
 		/// </summary>
 		/// <remarks>internal so that it can be re-used by the XhtmlRecordDocView</remarks>
-		internal static void HandleDomLeftClick(RecordClerk clerk, DomMouseEventArgs e, GeckoElement element)
+		internal static void HandleDomLeftClick(RecordClerk clerk, PropertyTable propertyTable, DomMouseEventArgs e, GeckoElement element)
 		{
 			GeckoElement dummy;
 			var topLevelGuid = GetHrefFromGeckoDomElement(element);
@@ -318,7 +318,12 @@ namespace SIL.FieldWorks.XWorks
 				}
 				else
 				{
-					clerk.JumpToRecord(topLevelGuid);
+					ICmObject obj;
+					var cache = propertyTable.GetValue<LcmCache>("cache");
+					if (cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(topLevelGuid, out obj))
+					{
+						clerk.OnJumpToRecord(obj.Hvo);
+					}
 				}
 			}
 			e.Handled = true;

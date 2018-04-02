@@ -68,7 +68,7 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			if (e.Button == GeckoMouseButton.Left)
 			{
-				XhtmlDocView.HandleDomLeftClick(Clerk, e, element);
+				XhtmlDocView.HandleDomLeftClick(Clerk, m_propertyTable,e, element);
 			}
 			else if (e.Button == GeckoMouseButton.Right)
 			{
