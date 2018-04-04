@@ -556,8 +556,9 @@
 			<!-- Yes, the Windows version is missing the the OS and the 32-bit architecture. This package must be updated in encoding-converters-core also -->
 			<GeckoDir Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'">$(fwrt)/packages/Geckofx45.45.0.33</GeckoDir>
 			<GeckoDir Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'">$(fwrt)/packages/Geckofx45.64.45.0.33</GeckoDir>
-			<GeckoDir Condition="'$(OS)'!='Windows_NT' AND '$(arch)'!='x86_64'">$(fwrt)/packages/Geckofx45.32.Linux.45.0.21.0</GeckoDir>
-			<GeckoDir Condition="'$(OS)'!='Windows_NT' AND '$(arch)'=='x86_64'">$(fwrt)/packages/Geckofx45.64.Linux.45.0.21.0</GeckoDir>
+			<Architecture Condition="'$(arch)'=='x86_64'">64</Architecture>
+			<Architecture Condition="'$(arch)'!='x86_64'">32</Architecture>
+			<GeckoDir Condition="'$(OS)'!='Windows_NT'">$(fwrt)/packages/Geckofx45.$(Architecture).Linux.45.0.36</GeckoDir>
 		</PropertyGroup>
 		<ItemGroup>
 			<!-- The geckofx .dll files are actually pulled from the encoding converters package -->
