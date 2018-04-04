@@ -1189,7 +1189,7 @@ namespace SIL.FieldWorks.IText
 			m_case = cf.StringCase(RawWordform.Text);
 			// empty it in case we're redoing after choose from combo.
 			cda.CacheVecProp(hvoSbWord, ktagSbWordMorphs, new int[0], 0);
-			if (gloss == null || analysis == null) // If gloss is null, analysis will be, too, but it doesn't hurt to check.
+			if (gloss == null || analysis == null)
 			{
 				if (fLookForDefaults)
 				{

@@ -143,9 +143,7 @@ namespace SIL.Ethnologue
 		{
 			List<string[]> rgCountryCodes = new List<string[]>();
 			string sFile = Path.Combine(InstallFolder, "CountryCodes.tab");
-			// Bizarrely, while the other two files we get from the Ethnologue are UTF8, this one is not.
-			// See e.g. Cote d'Ivoire -- the first o has an accent that doesn't come out right read as UTF8
-			using (TextReader rdr = new StreamReader(sFile, Encoding.GetEncoding(1252)))
+			using (TextReader rdr = new StreamReader(sFile, Encoding.UTF8))
 			{
 				string sLine = rdr.ReadLine();
 				if (sLine == "CountryID	Name	Area")
@@ -220,7 +218,7 @@ namespace SIL.Ethnologue
 		private List<string[]> LoadISO_639_3()
 		{
 			List<string[]> rgIsoData = new List<string[]>();
-			string sFile = Path.Combine(InstallFolder, "iso-639-3_20090210.tab");
+			string sFile = Path.Combine(InstallFolder, "iso-639-3_20180123.tab");
 			using (TextReader rdr = new StreamReader(sFile, Encoding.UTF8))
 			{
 				string sLine = rdr.ReadLine();

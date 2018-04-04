@@ -442,7 +442,7 @@
 		<Message Text="Downloading artifacts for HermitCrab." />
 		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(HermitCrabBuildType)" Tag="$(HermitCrabBuildTag)" VersionInfo="$(MasterVersionInfo)" Artifacts="QuickGraph.dll;SIL.Machine.dll;SIL.Collections.dll;SIL.HermitCrab.dll" DownloadsDir="$(DownloadsDir)"/>
 
-		<Message Text="Downloading ParaTExt DLLs." />
+		<Message Text="Downloading Paratext DLLs." />
 		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)/Paratext.LexicalContracts.dll" DownloadsDir="$(DownloadsDir)"/>
 		<DownloadFile Address="$(DownloadsSilOrgOSDownloadUrl)/FormattedEditor.dll" DownloadsDir="$(DownloadsDir)"/>
 		<DownloadFile Address="$(DownloadsSilOrgOSDownloadUrl)/HelpSystem.dll" DownloadsDir="$(DownloadsDir)"/>
