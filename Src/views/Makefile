@@ -20,7 +20,7 @@ ifeq ($(BUILD_CONFIG),Debug)
 	DEFINES  := $(DEFINES) -D_DEBUG -DDEBUG
 	OPTIMIZATIONS = -O0
 else
-	OPTIMIZATIONS = -O3
+	OPTIMIZATIONS = -O0
 endif
 
 INCLUDES := \
@@ -46,7 +46,7 @@ LDLIBS := \
 
 
 CPPFLAGS = $(DEFINES) $(INCLUDES) -MMD
-CXXFLAGS = -g $(OPTIMIZATIONS) -fPIC -fvisibility=hidden -Werror -Waddress -Warray-bounds -Wmissing-field-initializers -Wclobbered -Wreturn-type -fstack-protector-all -Wshadow -rdynamic
+CXXFLAGS = -g $(OPTIMIZATIONS) -fPIC -fvisibility=hidden -Werror -Waddress -Warray-bounds -Wmissing-field-initializers -Wclobbered -Wreturn-type -fstack-protector-all -Wshadow -rdynamic -std=c++11
 
 ARFLAGS  = -crs
 
