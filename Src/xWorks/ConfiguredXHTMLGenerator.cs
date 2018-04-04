@@ -1412,7 +1412,10 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal static PropertyType GetPropertyTypeForConfigurationNode(ConfigurableDictionaryNode config, LcmCache cache)
 		{
-			return GetPropertyTypeForConfigurationNode(config, null, cache);
+			var propertyType = GetPropertyTypeForConfigurationNode(config, null, cache);
+			if (config.FieldDescription == "DefinitionOrGloss")
+				propertyType = PropertyType.PrimitiveType;
+			return propertyType;
 		}
 
 		/// <summary>
