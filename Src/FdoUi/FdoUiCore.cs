@@ -266,7 +266,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <summary>
 		/// This should only be used by MakeUi.
 		/// </summary>
-		internal CmObjectUi()
+		protected CmObjectUi()
 		{
 		}
 
@@ -1038,7 +1038,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// Do any cleanup that involves interacting with the user, after the user has confirmed that our object should be
 		/// deleted.
 		/// </summary>
-		protected virtual bool DoRelatedCleanupForDeleteObject()
+		protected virtual void DoRelatedCleanupForDeleteObject()
 		{
 			// For media and pictures: should we delete the file also?
 			// arguably this should be on a subclass, but it's easier to share behavior for both here.
@@ -1057,9 +1057,9 @@ namespace SIL.FieldWorks.FdoUi
 			else if (m_obj != null)
 			{
 				// No cleanup needed
-				return true;
+				return;
 			}
-			return ConsiderDeletingRelatedFile(file, m_mediator, m_propertyTable);
+			ConsiderDeletingRelatedFile(file, m_mediator, m_propertyTable);
 		}
 
 		/// <returns>true if and only if the file was deleted</returns>
@@ -1116,10 +1116,8 @@ namespace SIL.FieldWorks.FdoUi
 			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(FdoUiStrings.ksUndoDelete, FdoUiStrings.ksRedoDelete,
 				m_cache.ActionHandlerAccessor, () =>
 				{
-					if (DoRelatedCleanupForDeleteObject())
-					{
-						Object.Cache.DomainDataByFlid.DeleteObj(Object.Hvo);
-					}
+					DoRelatedCleanupForDeleteObject();
+					Object.Cache.DomainDataByFlid.DeleteObj(Object.Hvo);
 				});
 			Logger.WriteEvent("Done Deleting.");
 			m_obj = null;

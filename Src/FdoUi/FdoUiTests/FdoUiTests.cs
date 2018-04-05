@@ -13,6 +13,43 @@ using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.FdoUi
 {
+	/// <summary>
+	/// Dummy class used from testing CmObjectUi
+	/// </summary>
+	public class DummyCmObjectUi : CmObjectUi
+	{
+
+		/// <summary>
+		///
+		/// </summary>
+		public DummyCmObjectUi(ICmObject obj) : base(obj)
+		{
+		}
+
+		/// <summary>
+		/// Dummy method to create a DummyCmObjectUi object
+		/// </summary>
+		public static DummyCmObjectUi MakeDummyUi(ICmObject obj)
+		{
+			var objectUi = new DummyCmObjectUi(obj);
+			objectUi.m_hvo = obj.Hvo;
+			return objectUi;
+		}
+
+		/// <summary>
+		/// Ignores the related clean up for testing purposes
+		/// </summary>
+		protected override void DoRelatedCleanupForDeleteObject()
+		{
+			// skip this method in CmObjectUi class because it invokes message boxes
+		}
+
+		internal void SimulateReallyDeleteUnderlyingObject()
+		{
+			ReallyDeleteUnderlyingObject();
+		}
+	}
+
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	///
@@ -87,6 +124,21 @@ namespace SIL.FieldWorks.FdoUi
 			{
 				Assert.IsNotNull(lexEntryUi);
 				Assert.AreEqual(entry2.Hvo, lexEntryUi.Object.Hvo, "Found wrong object");
+			}
+		}
+
+		/// <summary>
+		/// Tests that the DeleteUnderlyingObjectMethod actually deletes the object, regardless of what happens in related clean up
+		/// </summary>
+		[Test]
+		public void DeleteCmPictureObject_RelatedCleanUpDoesNotNegateDeletion()
+		{
+			var obj = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
+			using (DummyCmObjectUi objectUi = DummyCmObjectUi.MakeDummyUi(obj))
+			{
+				Assert.IsTrue(obj.IsValidObject);
+				objectUi.SimulateReallyDeleteUnderlyingObject(); // Call ReallyDeleteUnderlyingObject() in CmObjectUi
+				Assert.IsFalse(obj.IsValidObject);
 			}
 		}
 	}
