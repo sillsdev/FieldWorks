@@ -347,7 +347,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// Fundamentally, we can handle either reference sequence properties or ones we are explicitly told
 			// to create VirtualPropOrderings for.
 			// Some slices disabled LT-18266
-			if (!RootPropertyIsRealRefSequence() && !RootPropertySupportsVirtualOrdering() || m_rootFieldName == "Complex Forms" || m_rootFieldName == "Compare" || this.GetType().Name == "LexReferenceCollectionView" || this.GetType().Name == "LexReferenceTreeBranchesView")
+			if (!RootPropertyIsRealRefSequence() && !RootPropertySupportsVirtualOrdering() || m_rootFieldName == "Complex Forms" || m_rootFieldName == "Compare" || this.GetType().Name == "LexReferenceCollectionView" || this.GetType().Name == "LexReferenceTreeBranchesView" || this.GetType().Name == "LexReferenceSequenceView")
 				return false;
 			visible = true; // Command makes sense even if we can't actually do it now.
 			if (m_rootb.Selection == null)
