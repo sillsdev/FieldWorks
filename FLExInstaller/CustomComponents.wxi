@@ -1,6 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
+<?if $(sys.BUILDARCH) = x64 ?>
+<?define CFDir = CommonFiles64Folder?>
+<?else?>
+<?define CFDir = CommonFilesFolder?>
+<?endif?>
+<?define EncodingConvertersPath = "..\..\packages\Encoding-Converters-Core.0.0.6\MergeModules" ?>
 <Include>
-	<DirectoryRef Id="APPFOLDER">
+	<DirectoryRef Id="$(var.PFDir)">
+		<Directory Id="$(var.CFDir)">
+			<Directory Id="SIL">
+				<?if $(sys.BUILDARCH) = x64 ?>
+				<Merge Id="TECkit_DLLs" Language="1033" SourceFile="$(var.EncodingConvertersPath)\TECkit64bitDLLsMM.msm" DiskId="1"/>
+				<?else?>
+				<Merge Id="TECkit_DLLs" Language="1033" SourceFile="$(var.EncodingConvertersPath)\TECkitDLLsMM.msm" DiskId="1"/>
+				<?endif?>
+			</Directory>
+		</Directory>
+	</DirectoryRef>
+
+	<DirectoryRef  Id='APPFOLDER'>
+		<?if $(sys.BUILDARCH) = x64 ?>
+		<Merge Id="CC_DLL" Language="1033" SourceFile="$(var.EncodingConvertersPath)\CcDLLs64bitMM.msm" DiskId="1"/>
+		<Merge Id="EncConverters_Common" Language="1033" SourceFile="$(var.EncodingConvertersPath)\EC_40_64bit_MM.msm" DiskId="1"/>
+		<Merge Id="PerlEC" Language="1033" SourceFile="$(var.EncodingConvertersPath)\PerlEc64bitMM.msm" DiskId="1"/>
+		<Merge Id="PythonEC" Language="1033" SourceFile="$(var.EncodingConvertersPath)\PythonEc64bitMM.msm" DiskId="1"/>
+		<?else?>
+		<Merge Id="CC_DLL" Language="1033" SourceFile="$(var.EncodingConvertersPath)\CcDLLsMM.msm" DiskId="1"/>
+		<Merge Id="EncConverters_Common" Language="1033" SourceFile="$(var.EncodingConvertersPath)\EC_40_MM.msm" DiskId="1"/>
+		<Merge Id="PerlEC" Language="1033" SourceFile="$(var.EncodingConvertersPath)\PerlEcMM.msm" DiskId="1"/>
+		<Merge Id="PythonEC" Language="1033" SourceFile="$(var.EncodingConvertersPath)\PythonEcMM.msm" DiskId="1"/>
+		<?endif?>
+
 		<Directory Id="LangEx" Name="Language Explorer">
 			<Directory Id="MOVIEFOLDER" Name="Movies"/> <!-- Harvested movies are installed in this directory -->
 		</Directory>

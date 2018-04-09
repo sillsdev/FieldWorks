@@ -143,12 +143,27 @@
 		<PropertyGroup>
 			<MoviesRoot>$(fwrt)\DistFiles\Language Explorer\Movies</MoviesRoot>
 			<OutputDirForConfig>$(fwrt)\Output\$(Configuration)</OutputDirForConfig>
+			<OverridesDestDir>$(fwrt)\PatchableInstaller\Common</OverridesDestDir>
 		</PropertyGroup>
 		<ItemGroup>
+			<DeveloperFiles Include="$(fwrt)\DistFiles\DropTEC.exe"/>
+			<DeveloperFiles Include="$(fwrt)\DistFiles\Fonts\Raw\**\*"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\.git\**\*"/>
+			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\OcmFrame\**\*"/> <!-- directory used only on Linux -->
+			<!-- No longer want TE helps, but they are not yet removed from the Helps repo. -->
+			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\FieldWorks_Translation_Editor_Help.chm\"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\Translation Editor\**\*"/>
+			<!-- End: No longer want TE helps, but they are not yet removed from the Helps repo. -->
+			<DeveloperFiles Include="$(fwrt)\DistFiles\Icu54.zip"/>
+			<DeveloperFiles Include="$(fwrt)\DistFiles\libxample32.so"/> <!-- Linux file -->
+			<DeveloperFiles Include="$(fwrt)\DistFiles\libxample64.so"/> <!-- Linux file -->
+			<DeveloperFiles Include="$(fwrt)\DistFiles\Linux\**\*"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Projects\**\*"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\ReleaseData\**\*"/>
+			<DeveloperFiles Include="$(fwrt)\DistFiles\SFconv.exe"/>
+			<DeveloperFiles Include="$(fwrt)\DistFiles\TECkit\**\*"/>
+			<DeveloperFiles Include="$(fwrt)\DistFiles\TxtConv.exe"/>
+			<DeveloperFiles Include="$(fwrt)\DistFiles\Windows\**\*"/>
 			<IcuFiles Include="$(fwrt)\DistFiles\Icu$(IcuVersion)\**\*"/>
 			<!-- If you change this list, you must also update those listed at $(fwrt)\Localizations\ReadMe.md -->
 			<L10nFiles Include="$(OutputDirForConfig)\az\**\*"/>
@@ -167,13 +182,59 @@
 			<L10nFiles Include="$(OutputDirForConfig)\tr\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\vi\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\zh-CN\**\*"/>
+			<!-- no need to install the following; most are installed by merge modules -->
+			<MergeModules Include="$(OutputDirForConfig)\asserts.log"/>
+			<MergeModules Include="$(OutputDirForConfig)\basicTest.xml"/>
+			<MergeModules Include="$(OutputDirForConfig)\CacheLight.*"/>
+			<MergeModules Include="$(OutputDirForConfig)\CC\**\*"/>
+			<MergeModules Include="$(OutputDirForConfig)\CC32.dll"/>
+			<MergeModules Include="$(OutputDirForConfig)\CcEC.dll"/>
+			<MergeModules Include="$(OutputDirForConfig)\DebugProcs.*"/>
+			<MergeModules Include="$(OutputDirForConfig)\DefaultIcon.ico"/>
+			<MergeModules Include="$(OutputDirForConfig)\EC\**\*"/>
+			<MergeModules Include="$(OutputDirForConfig)\ECInterfaces.dll"/>
+			<MergeModules Include="$(OutputDirForConfig)\ECInterfaces.tlb"/>
+			<MergeModules Include="$(OutputDirForConfig)\EncConvertersAppDataMover40*"/>
+			<MergeModules Include="$(OutputDirForConfig)\FieldWorks.vshost.*"/>
+			<MergeModules Include="$(OutputDirForConfig)\FormsTester.*"/>
+			<MergeModules Include="$(OutputDirForConfig)\Geckofx-Core.dll"/> <!-- Installed by EC merge modules-->
+			<MergeModules Include="$(OutputDirForConfig)\Geckofx-Winforms.dll"/> <!-- Installed by EC merge modules-->
+			<MergeModules Include="$(OutputDirForConfig)\Good.xml"/>
+			<MergeModules Include="$(OutputDirForConfig)\IcuConvEC.dll"/> <!-- Installed by EC merge modules-->
+			<MergeModules Include="$(OutputDirForConfig)\IcuEC.dll"/> <!-- Installed by EC merge modules-->
+			<MergeModules Include="$(OutputDirForConfig)\IcuRegexEC.dll"/> <!-- Installed by EC merge modules-->
+			<MergeModules Include="$(OutputDirForConfig)\IcuTranslitEC.dll"/> <!-- Installed by EC merge modules-->
+			<MergeModules Include="$(OutputDirForConfig)\includeTest.xml"/>
+			<MergeModules Include="$(OutputDirForConfig)\listitems.bmp"/>
+			<MergeModules Include="$(OutputDirForConfig)\MigrateSqlDbs.pdb"/>
+			<MergeModules Include="$(OutputDirForConfig)\Perl*"/>
+			<MergeModules Include="$(OutputDirForConfig)\PerlExpressionEC.dll"/>
+			<MergeModules Include="$(OutputDirForConfig)\PhonEnvValidatorTest"/>
+			<MergeModules Include="$(OutputDirForConfig)\ProjectUnpacker.*"/>
+			<MergeModules Include="$(OutputDirForConfig)\PyScript*"/>
+			<MergeModules Include="$(OutputDirForConfig)\Python*"/>     <!-- REVIEW (Hasso) 2018.04: not sure if this is files or a folder -->
+			<MergeModules Include="$(OutputDirForConfig)\Python\**\*"/> <!-- REVIEW (Hasso) 2018.04: not sure if this is files or a folder -->
+			<MergeModules Include="$(OutputDirForConfig)\ScrChecks.dll"/> <!-- this will be taken from DistFiles\Editorial Checks -->
+			<MergeModules Include="$(OutputDirForConfig)\ScrChecks.pdb"/> <!-- this will be taken from DistFiles\Editorial Checks -->
+			<MergeModules Include="$(OutputDirForConfig)\SilEncConverters40.dll"/>
+			<MergeModules Include="$(OutputDirForConfig)\SilEncConverters40.tlb"/>
+			<MergeModules Include="$(OutputDirForConfig)\Temp\**\*"/>
+			<MergeModules Include="$(OutputDirForConfig)\TLP*"/>
+			<MergeModules Include="$(OutputDirForConfig)\UIAutomationProvider.dll"/>
+			<MergeModules Include="$(OutputDirForConfig)\UIAutomationTypes.dll"/>
+			<MergeModules Include="$(OutputDirForConfig)\whitepixel.bmp"/>
+			<MergeModules Include="$(OutputDirForConfig)\xCoreInterfaces.XmlSerializers.*"/>
+			<!-- FieldWorks Demo Movies -->
 			<Movies Include="$(MoviesRoot)\**\*" Exclude="$(MoviesRoot)\.git\**\*;$(MoviesRoot)\.git*;$(MoviesRoot)\notfound.html"/>
-			<BinFiles Include="$(fwrt)\DistFiles\**\*" Exclude="@(DeveloperFiles);@(IcuFiles);$(MoviesRoot)\**\*"/>
+			<!-- Binary files (and other files installed in the ProgramFiles\SIL\FieldWorks # directory -->
 			<BinFiles Include="$(OutputDirForConfig)\**\*" Exclude="@(L10nFiles)"/>
 			<!-- %(RecursiveDir) is only the "**\" portion. This hack recollects L10nFiles with the code as the recursive directory. -->
 			<L10nFilesWithRecursiveDirs Include="$(OutputDirForConfig)\**\*" Exclude="@(BinFiles)"/>
-			<!-- TODO (Hasso or Samdoss, depending on who merges our changes) 2018.04: <BinFiles Remove="@(MergeModules)"/>
-						*after* L10nFilesWithRecursiveDirs have been collected (so Exclude=@(BinFiles) does what it needs to) -->
+			<!-- Now that we've used BinFiles to exclude all non-l10n files from L10nFilesWithRecursiveDirs,
+				we can remove MergeModules from BinFiles (MergeModules belong in neither ItemGroup). -->
+			<BinFiles Remove="@(MergeModules)"/>
+			<BinFiles Include="$(fwrt)\DistFiles\**\*" Exclude="@(DeveloperFiles);@(IcuFiles);$(MoviesRoot)\**\*"/>
+			<!-- Files used to customize the generic patchable installer -->
 			<OverrideFiles Include="$(fwrt)\FLExInstaller\*.wxi"/>
 		</ItemGroup>
 		<Copy SourceFiles="@(IcuFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(DataDirSuffix)/Icu$(IcuVersion)/%(RecursiveDir)"/>
@@ -182,7 +243,7 @@
 		<!-- a webpage telling the user how to download the movies -->
 		<Copy SourceFiles="$(MoviesRoot)\notfound.html" DestinationFolder="$(AppBuildDir)\$(BinDirSuffix)\Language Explorer\Movies"/>
 		<Copy SourceFiles="@(BinFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/%(RecursiveDir)"/>
-		<Copy SourceFiles="@(OverrideFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(fwrt)/PatchableInstaller/Common"/>
+		<Copy SourceFiles="@(OverrideFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(OverridesDestDir)"/>
 		<CallTarget Targets="HarvestMoviesAndL10n"/>
 	</Target>
 
@@ -192,42 +253,43 @@
 		</PropertyGroup>
 
 		<!-- Harvest movies -->
-		<Exec Command="heat.exe dir $(AppBuildDir)/$(MovieDirSuffix) $(CommonHeatArgs) -cg HarvestedMovieFiles -dr MOVIEFOLDER -var wix.MOVIEDIR -out $(fwrt)/PatchableInstaller/Common/MovieHarvest.wxs" />
-		<WxsToWxi SourceFile="$(fwrt)/PatchableInstaller/Common/MovieHarvest.wxs"/>
+		<Exec Command="heat.exe dir $(AppBuildDir)/$(MovieDirSuffix) $(CommonHeatArgs) -cg HarvestedMovieFiles -dr MOVIEFOLDER -var wix.MOVIEDIR -out $(OverridesDestDir)/MovieHarvest.wxs" />
+		<WxsToWxi SourceFile="$(OverridesDestDir)/MovieHarvest.wxs"/>
 
 		<!-- Harvest Localizations. If you change this list, you must also update those listed at $(fwrt)\Localizations\ReadMe.md -->
-		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\az $(CommonHeatArgs) -cg azLocalization -dr AZL10NFOLDER -var wix.AZL10NDIR -out $(fwrt)/PatchableInstaller/Common/azHarvest.wxs" />
-		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\es $(CommonHeatArgs) -cg esLocalization -dr ESL10NFOLDER -var wix.ESL10NDIR -out $(fwrt)/PatchableInstaller/Common/esHarvest.wxs" />
-		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\fa $(CommonHeatArgs) -cg faLocalization -dr FAL10NFOLDER -var wix.FAL10NDIR -out $(fwrt)/PatchableInstaller/Common/faHarvest.wxs" />
-		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\fr $(CommonHeatArgs) -cg frLocalization -dr FRL10NFOLDER -var wix.FRL10NDIR -out $(fwrt)/PatchableInstaller/Common/frHarvest.wxs" />
-		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\hi $(CommonHeatArgs) -cg hiLocalization -dr HIL10NFOLDER -var wix.HIL10NDIR -out $(fwrt)/PatchableInstaller/Common/hiHarvest.wxs" />
-		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\hu $(CommonHeatArgs) -cg huLocalization -dr HUL10NFOLDER -var wix.HUL10NDIR -out $(fwrt)/PatchableInstaller/Common/huHarvest.wxs" />
-		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\id $(CommonHeatArgs) -cg idLocalization -dr IDL10NFOLDER -var wix.IDL10NDIR -out $(fwrt)/PatchableInstaller/Common/idHarvest.wxs" />
-		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\ko $(CommonHeatArgs) -cg koLocalization -dr KOL10NFOLDER -var wix.KOL10NDIR -out $(fwrt)/PatchableInstaller/Common/koHarvest.wxs" />
-		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\ms $(CommonHeatArgs) -cg msLocalization -dr MSL10NFOLDER -var wix.MSL10NDIR -out $(fwrt)/PatchableInstaller/Common/msHarvest.wxs" />
-		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\pt $(CommonHeatArgs) -cg ptLocalization -dr PTL10NFOLDER -var wix.PTL10NDIR -out $(fwrt)/PatchableInstaller/Common/ptHarvest.wxs" />
-		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\ro $(CommonHeatArgs) -cg roLocalization -dr ROL10NFOLDER -var wix.ROL10NDIR -out $(fwrt)/PatchableInstaller/Common/roHarvest.wxs" />
-		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\ru $(CommonHeatArgs) -cg ruLocalization -dr RUL10NFOLDER -var wix.RUL10NDIR -out $(fwrt)/PatchableInstaller/Common/ruHarvest.wxs" />
-		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\te $(CommonHeatArgs) -cg teLocalization -dr TEL10NFOLDER -var wix.TEL10NDIR -out $(fwrt)/PatchableInstaller/Common/teHarvest.wxs" />
-		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\tr $(CommonHeatArgs) -cg trLocalization -dr TRL10NFOLDER -var wix.TRL10NDIR -out $(fwrt)/PatchableInstaller/Common/trHarvest.wxs" />
-		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\vi $(CommonHeatArgs) -cg viLocalization -dr VIL10NFOLDER -var wix.VIL10NDIR -out $(fwrt)/PatchableInstaller/Common/viHarvest.wxs" />
-		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\zh-CN $(CommonHeatArgs) -cg zhLocalization -dr ZHL10NFOLDER -var wix.ZHL10NDIR -out $(fwrt)/PatchableInstaller/Common/zhHarvest.wxs" />
-		<WxsToWxi SourceFile="$(fwrt)/PatchableInstaller/Common/azHarvest.wxs"/>
-		<WxsToWxi SourceFile="$(fwrt)/PatchableInstaller/Common/esHarvest.wxs"/>
-		<WxsToWxi SourceFile="$(fwrt)/PatchableInstaller/Common/faHarvest.wxs"/>
-		<WxsToWxi SourceFile="$(fwrt)/PatchableInstaller/Common/frHarvest.wxs"/>
-		<WxsToWxi SourceFile="$(fwrt)/PatchableInstaller/Common/hiHarvest.wxs"/>
-		<WxsToWxi SourceFile="$(fwrt)/PatchableInstaller/Common/huHarvest.wxs"/>
-		<WxsToWxi SourceFile="$(fwrt)/PatchableInstaller/Common/idHarvest.wxs"/>
-		<WxsToWxi SourceFile="$(fwrt)/PatchableInstaller/Common/koHarvest.wxs"/>
-		<WxsToWxi SourceFile="$(fwrt)/PatchableInstaller/Common/msHarvest.wxs"/>
-		<WxsToWxi SourceFile="$(fwrt)/PatchableInstaller/Common/ptHarvest.wxs"/>
-		<WxsToWxi SourceFile="$(fwrt)/PatchableInstaller/Common/roHarvest.wxs"/>
-		<WxsToWxi SourceFile="$(fwrt)/PatchableInstaller/Common/ruHarvest.wxs"/>
-		<WxsToWxi SourceFile="$(fwrt)/PatchableInstaller/Common/teHarvest.wxs"/>
-		<WxsToWxi SourceFile="$(fwrt)/PatchableInstaller/Common/trHarvest.wxs"/>
-		<WxsToWxi SourceFile="$(fwrt)/PatchableInstaller/Common/viHarvest.wxs"/>
-		<WxsToWxi SourceFile="$(fwrt)/PatchableInstaller/Common/zhHarvest.wxs"/>
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\az $(CommonHeatArgs) -cg azLocalization -dr AZL10NFOLDER -var wix.AZL10NDIR -out $(OverridesDestDir)/azHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\es $(CommonHeatArgs) -cg esLocalization -dr ESL10NFOLDER -var wix.ESL10NDIR -out $(OverridesDestDir)/esHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\fa $(CommonHeatArgs) -cg faLocalization -dr FAL10NFOLDER -var wix.FAL10NDIR -out $(OverridesDestDir)/faHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\fr $(CommonHeatArgs) -cg frLocalization -dr FRL10NFOLDER -var wix.FRL10NDIR -out $(OverridesDestDir)/frHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\hi $(CommonHeatArgs) -cg hiLocalization -dr HIL10NFOLDER -var wix.HIL10NDIR -out $(OverridesDestDir)/hiHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\hu $(CommonHeatArgs) -cg huLocalization -dr HUL10NFOLDER -var wix.HUL10NDIR -out $(OverridesDestDir)/huHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\id $(CommonHeatArgs) -cg idLocalization -dr IDL10NFOLDER -var wix.IDL10NDIR -out $(OverridesDestDir)/idHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\ko $(CommonHeatArgs) -cg koLocalization -dr KOL10NFOLDER -var wix.KOL10NDIR -out $(OverridesDestDir)/koHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\ms $(CommonHeatArgs) -cg msLocalization -dr MSL10NFOLDER -var wix.MSL10NDIR -out $(OverridesDestDir)/msHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\pt $(CommonHeatArgs) -cg ptLocalization -dr PTL10NFOLDER -var wix.PTL10NDIR -out $(OverridesDestDir)/ptHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\ro $(CommonHeatArgs) -cg roLocalization -dr ROL10NFOLDER -var wix.ROL10NDIR -out $(OverridesDestDir)/roHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\ru $(CommonHeatArgs) -cg ruLocalization -dr RUL10NFOLDER -var wix.RUL10NDIR -out $(OverridesDestDir)/ruHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\te $(CommonHeatArgs) -cg teLocalization -dr TEL10NFOLDER -var wix.TEL10NDIR -out $(OverridesDestDir)/teHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\tr $(CommonHeatArgs) -cg trLocalization -dr TRL10NFOLDER -var wix.TRL10NDIR -out $(OverridesDestDir)/trHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\vi $(CommonHeatArgs) -cg viLocalization -dr VIL10NFOLDER -var wix.VIL10NDIR -out $(OverridesDestDir)/viHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\zh-CN $(CommonHeatArgs) -cg zhLocalization -dr ZHL10NFOLDER -var wix.ZHL10NDIR -out $(OverridesDestDir)/zhHarvest.wxs" />
+		<!-- REVIEW (Hasso) 2018.04: we could probably use an itemgroup here, since we want  to convert them all -->
+		<WxsToWxi SourceFile="$(OverridesDestDir)/azHarvest.wxs"/>
+		<WxsToWxi SourceFile="$(OverridesDestDir)/esHarvest.wxs"/>
+		<WxsToWxi SourceFile="$(OverridesDestDir)/faHarvest.wxs"/>
+		<WxsToWxi SourceFile="$(OverridesDestDir)/frHarvest.wxs"/>
+		<WxsToWxi SourceFile="$(OverridesDestDir)/hiHarvest.wxs"/>
+		<WxsToWxi SourceFile="$(OverridesDestDir)/huHarvest.wxs"/>
+		<WxsToWxi SourceFile="$(OverridesDestDir)/idHarvest.wxs"/>
+		<WxsToWxi SourceFile="$(OverridesDestDir)/koHarvest.wxs"/>
+		<WxsToWxi SourceFile="$(OverridesDestDir)/msHarvest.wxs"/>
+		<WxsToWxi SourceFile="$(OverridesDestDir)/ptHarvest.wxs"/>
+		<WxsToWxi SourceFile="$(OverridesDestDir)/roHarvest.wxs"/>
+		<WxsToWxi SourceFile="$(OverridesDestDir)/ruHarvest.wxs"/>
+		<WxsToWxi SourceFile="$(OverridesDestDir)/teHarvest.wxs"/>
+		<WxsToWxi SourceFile="$(OverridesDestDir)/trHarvest.wxs"/>
+		<WxsToWxi SourceFile="$(OverridesDestDir)/viHarvest.wxs"/>
+		<WxsToWxi SourceFile="$(OverridesDestDir)/zhHarvest.wxs"/>
 	</Target>
 
 	<Target Name="CopyBuildToMaster">
