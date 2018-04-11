@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using SIL.Keyboarding;
 using SIL.ObjectModel;
 using SIL.Windows.Forms.Keyboarding;
@@ -60,10 +61,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary/>
-		public string GetKeyboardSetupApplication(out string arguments)
+		public Action GetKeyboardSetupAction()
 		{
-			arguments = null;
-			return null;
+			return ()=>
+			{
+				throw new NotImplementedException();
+			};
 		}
 
 		/// <summary/>
