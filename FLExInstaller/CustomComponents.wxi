@@ -53,9 +53,11 @@
 		<Directory Id="ZHL10NFOLDER" Name="zh-CN"/>
 	</DirectoryRef>
 
+	<!-- This WixVariable inserts the source directory into the harvest file -->
 	<WixVariable Id="MOVIEDIR" Value="$(var.APPBUILDDIR)_Movies"/>
 	<?include MovieHarvest.wxi?>
 
+	<!-- These WixVariables insert the source directory into the harvest files (because Heat apparently can't) -->
 	<WixVariable Id="AZL10NDIR" Value="$(var.APPBUILDDIR)_L10n\az"/>
 	<WixVariable Id="ESL10NDIR" Value="$(var.APPBUILDDIR)_L10n\es"/>
 	<WixVariable Id="FAL10NDIR" Value="$(var.APPBUILDDIR)_L10n\fa"/>

@@ -84,6 +84,7 @@
 		<MovieDirSuffix>$(BinDirSuffix)_Movies</MovieDirSuffix>
 		<L10nDirSuffix>$(BinDirSuffix)_L10n</L10nDirSuffix>
 		<DataDirSuffix>$(BinDirSuffix)_Data</DataDirSuffix>
+		<OverridesDestDir>$(fwrt)\PatchableInstaller\Common</OverridesDestDir>
 	</PropertyGroup>
 
 	<!-- ########################################################################################################## -->
@@ -114,14 +115,15 @@
 		<MSBuild Projects="$(fwrt)/PatchableInstaller/CustomActions/CustomActions.sln" Targets="CustomActions" Properties="Configuration=Release;Platform=x86"/>
 	</Target>
 
-	<!-- As new compile Targets are added, include the relative file path below so they can be cleaned -->
+	<!-- Remove residue from the PatchableInstaller repository -->
 	<Target Name="CleanInstaller">
 		<ItemGroup>
-			<ProjectsToClean Include="$(SafeApplicationName)"/>
-			<ProjectsToClean Include="$(SafeApplicationName)/WixInstaller/CustomActions/CustomActions"/>
+			<DirsToClean Include="bin;obj"/>
 		</ItemGroup>
-		<ForceDelete Files="@(ProjectsToClean -> '%(Identity)/bin')" />
-		<ForceDelete Files="@(ProjectsToClean -> '%(Identity)/obj')" />
+		<ForceDelete Files="@(DirsToClean -> '$(fwrt)/PatchableInstaller/CustomActions/CustomActions/%(Identity)')" />
+		<!-- git clean removes only files in the working directory and its subdirectories -->
+		<Exec WorkingDirectory="$(OverridesDestDir)" Command="git clean -xdf"/>
+		<Exec WorkingDirectory="$(OverridesDestDir)" Command="git checkout ."/>
 	</Target>
 
 	<!-- ########################################################################################################## -->
@@ -143,7 +145,6 @@
 		<PropertyGroup>
 			<MoviesRoot>$(fwrt)\DistFiles\Language Explorer\Movies</MoviesRoot>
 			<OutputDirForConfig>$(fwrt)\Output\$(Configuration)</OutputDirForConfig>
-			<OverridesDestDir>$(fwrt)\PatchableInstaller\Common</OverridesDestDir>
 		</PropertyGroup>
 		<ItemGroup>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\DropTEC.exe"/>
@@ -254,7 +255,6 @@
 
 		<!-- Harvest movies -->
 		<Exec Command="heat.exe dir $(AppBuildDir)/$(MovieDirSuffix) $(CommonHeatArgs) -cg HarvestedMovieFiles -dr MOVIEFOLDER -var wix.MOVIEDIR -out $(OverridesDestDir)/MovieHarvest.wxs" />
-		<WxsToWxi SourceFile="$(OverridesDestDir)/MovieHarvest.wxs"/>
 
 		<!-- Harvest Localizations. If you change this list, you must also update those listed at $(fwrt)\Localizations\ReadMe.md -->
 		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\az $(CommonHeatArgs) -cg azLocalization -dr AZL10NFOLDER -var wix.AZL10NDIR -out $(OverridesDestDir)/azHarvest.wxs" />
@@ -273,23 +273,11 @@
 		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\tr $(CommonHeatArgs) -cg trLocalization -dr TRL10NFOLDER -var wix.TRL10NDIR -out $(OverridesDestDir)/trHarvest.wxs" />
 		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\vi $(CommonHeatArgs) -cg viLocalization -dr VIL10NFOLDER -var wix.VIL10NDIR -out $(OverridesDestDir)/viHarvest.wxs" />
 		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\zh-CN $(CommonHeatArgs) -cg zhLocalization -dr ZHL10NFOLDER -var wix.ZHL10NDIR -out $(OverridesDestDir)/zhHarvest.wxs" />
-		<!-- REVIEW (Hasso) 2018.04: we could probably use an itemgroup here, since we want  to convert them all -->
-		<WxsToWxi SourceFile="$(OverridesDestDir)/azHarvest.wxs"/>
-		<WxsToWxi SourceFile="$(OverridesDestDir)/esHarvest.wxs"/>
-		<WxsToWxi SourceFile="$(OverridesDestDir)/faHarvest.wxs"/>
-		<WxsToWxi SourceFile="$(OverridesDestDir)/frHarvest.wxs"/>
-		<WxsToWxi SourceFile="$(OverridesDestDir)/hiHarvest.wxs"/>
-		<WxsToWxi SourceFile="$(OverridesDestDir)/huHarvest.wxs"/>
-		<WxsToWxi SourceFile="$(OverridesDestDir)/idHarvest.wxs"/>
-		<WxsToWxi SourceFile="$(OverridesDestDir)/koHarvest.wxs"/>
-		<WxsToWxi SourceFile="$(OverridesDestDir)/msHarvest.wxs"/>
-		<WxsToWxi SourceFile="$(OverridesDestDir)/ptHarvest.wxs"/>
-		<WxsToWxi SourceFile="$(OverridesDestDir)/roHarvest.wxs"/>
-		<WxsToWxi SourceFile="$(OverridesDestDir)/ruHarvest.wxs"/>
-		<WxsToWxi SourceFile="$(OverridesDestDir)/teHarvest.wxs"/>
-		<WxsToWxi SourceFile="$(OverridesDestDir)/trHarvest.wxs"/>
-		<WxsToWxi SourceFile="$(OverridesDestDir)/viHarvest.wxs"/>
-		<WxsToWxi SourceFile="$(OverridesDestDir)/zhHarvest.wxs"/>
+
+		<ItemGroup>
+			<HarvestedWxsFiles Include="$(OverridesDestDir)\*.wxs"/>
+		</ItemGroup>
+		<WxsToWxi SourceFile="%(HarvestedWxsFiles)"/>
 	</Target>
 
 	<Target Name="CopyBuildToMaster">

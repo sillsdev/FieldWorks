@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.Build.Tasks
 		public string SourceFile { get; set; }
 
 		[SuppressMessage("ReSharper", "AssignNullToNotNullAttribute", Justification = "cannot recover from null source or dest file paths")]
-		public override bool Execute()
+		public override bool Execute() // TODO: Unit test
 		{
 			var sourceDoc = XDocument.Load(SourceFile);
 
