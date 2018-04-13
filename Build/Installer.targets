@@ -84,7 +84,9 @@
 		<MovieDirSuffix>$(BinDirSuffix)_Movies</MovieDirSuffix>
 		<L10nDirSuffix>$(BinDirSuffix)_L10n</L10nDirSuffix>
 		<DataDirSuffix>$(BinDirSuffix)_Data</DataDirSuffix>
-		<OverridesDestDir>$(fwrt)\PatchableInstaller\Common</OverridesDestDir>
+		<InstallerDir>$(fwrt)\PatchableInstaller</InstallerDir>
+		<OverridesDestDir>$(InstallerDir)\Common</OverridesDestDir>
+		<InstallerResourcesDir>$(InstallerDir)\resources</InstallerResourcesDir>
 	</PropertyGroup>
 
 	<!-- ########################################################################################################## -->
@@ -118,12 +120,14 @@
 	<!-- Remove residue from the PatchableInstaller repository -->
 	<Target Name="CleanInstaller">
 		<ItemGroup>
-			<DirsToClean Include="bin;obj"/>
+			<OutputSubdirs Include="bin;obj"/>
+			<CustomizableDirs Include="$(OverridesDestDir)"/>
+			<CustomizableDirs Include="$(InstallerResourcesDir)"/>
 		</ItemGroup>
-		<ForceDelete Files="@(DirsToClean -> '$(fwrt)/PatchableInstaller/CustomActions/CustomActions/%(Identity)')" />
+		<ForceDelete Files="@(OutputSubdirs -> '$(fwrt)/PatchableInstaller/CustomActions/CustomActions/%(Identity)')" />
 		<!-- git clean removes only files in the working directory and its subdirectories -->
-		<Exec WorkingDirectory="$(OverridesDestDir)" Command="git clean -xdf"/>
-		<Exec WorkingDirectory="$(OverridesDestDir)" Command="git checkout ."/>
+		<Exec WorkingDirectory="%(CustomizableDirs.Identity)" Command="git clean -xdf"/>
+		<Exec WorkingDirectory="%(CustomizableDirs.Identity)" Command="git checkout ."/>
 	</Target>
 
 	<!-- ########################################################################################################## -->
@@ -166,6 +170,7 @@
 			<DeveloperFiles Include="$(fwrt)\DistFiles\TxtConv.exe"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Windows\**\*"/>
 			<IcuFiles Include="$(fwrt)\DistFiles\Icu$(IcuVersion)\**\*"/>
+			<InstallerResources Include="$(fwrt)\License.htm"/>
 			<!-- If you change this list, you must also update those listed at $(fwrt)\Localizations\ReadMe.md -->
 			<L10nFiles Include="$(OutputDirForConfig)\az\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\es\**\*"/>
@@ -239,6 +244,7 @@
 			<OverrideFiles Include="$(fwrt)\FLExInstaller\*.wxi"/>
 		</ItemGroup>
 		<Copy SourceFiles="@(IcuFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(DataDirSuffix)/Icu$(IcuVersion)/%(RecursiveDir)"/>
+		<Copy SourceFiles="@(InstallerResources)" OverwriteReadonlyFiles="true" DestinationFolder="$(InstallerResourcesDir)"/>
 		<Copy SourceFiles="@(L10nFilesWithRecursiveDirs)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(L10nDirSuffix)/%(RecursiveDir)"/>
 		<Copy SourceFiles="@(Movies)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(MovieDirSuffix)/%(RecursiveDir)"/>
 		<!-- a webpage telling the user how to download the movies -->
