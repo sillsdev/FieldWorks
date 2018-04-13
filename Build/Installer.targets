@@ -277,7 +277,7 @@
 		<ItemGroup>
 			<HarvestedWxsFiles Include="$(OverridesDestDir)\*.wxs"/>
 		</ItemGroup>
-		<WxsToWxi SourceFile="%(HarvestedWxsFiles)"/>
+		<WxsToWxi SourceFile="%(HarvestedWxsFiles.Identity)"/>
 	</Target>
 
 	<Target Name="CopyBuildToMaster">
