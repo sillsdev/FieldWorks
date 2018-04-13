@@ -122,15 +122,15 @@
 	<comment>Button "Cancel" on Open/SaveFileDialog</comment>
   </data>
   <data name="CreateFile" xml:space="preserve">
-	<value>File '{0}' does not exist.\nDo you want to create it?</value>
+	<value>File '{0}' does not exist.{1}Do you want to create it?</value>
 	<comment>SaveFileDialog: Displayed in a message box if the file doesn't exist.</comment>
   </data>
   <data name="FileNotFoundOpen" xml:space="preserve">
-	<value>'{0}'\n\nFile not found.\nCheck the file name and try again.</value>
+	<value>'{0}'{1}{1}File not found.{1}Check the file name and try again.</value>
 	<comment>OpenFileDialog: Displayed in a message box if the entered file is not found.</comment>
   </data>
   <data name="FileNotFoundSave" xml:space="preserve">
-	<value>File '{0}' does not exist.\nVerify that the correct file name was given.</value>
+	<value>File '{0}' does not exist.{1}Verify that the correct file name was given.</value>
 	<comment>SaveFileDialog: Displayed in a message box if the entered file is not found.</comment>
   </data>
   <data name="Help" xml:space="preserve">

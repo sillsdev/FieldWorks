@@ -46,13 +46,13 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Linux
 
 		protected override void ReportFileNotFound(string fileName)
 		{
-			ShowMessageBox(FileDialogStrings.FileNotFoundSave, ButtonsType.Ok, MessageType.Warning,
+			ShowMessageBox(string.Format(FileDialogStrings.FileNotFoundSave, Environment.NewLine), ButtonsType.Ok, MessageType.Warning,
 				fileName);
 		}
 
 		private bool OkToCreateFile()
 		{
-			return ShowMessageBox(FileDialogStrings.CreateFile,
+			return ShowMessageBox(string.Format(FileDialogStrings.CreateFile, Environment.NewLine),
 				ButtonsType.YesNo, MessageType.Question, InternalFileName) == ResponseType.Yes;
 		}
 
