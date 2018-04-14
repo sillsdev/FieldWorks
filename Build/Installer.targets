@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="BuildRelease" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
-	<UsingTask TaskName="DownloadFile" AssemblyFile="FwBuildTasks.dll"/>
-	<UsingTask TaskName="ForceDelete" AssemblyFile="FwBuildTasks.dll"/>
-	<UsingTask TaskName="ParseVersionNumbers" AssemblyFile="FwBuildTasks.dll"/>
-	<UsingTask TaskName="Split" AssemblyFile="$(fwrt)/Downloads/SIL.BuildTasks.dll" Condition="Exists('$(fwrt)/Downloads/SIL.BuildTasks.dll')"/>
-
+<Project DefaultTargets="BuildRelease" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
 	<!-- ########################################################################################################## -->
 	<!-- ### Configuration properties - Review and edit these values as needed.                                 ### -->
 	<!-- ########################################################################################################## -->
@@ -86,7 +81,10 @@
 		<InstallersBaseDir>$(fwrt)/Output/</InstallersBaseDir>
 		<AppBuildMasterDir>$(InstallersBaseDir)/$(SafeApplicationName)_Build_Master_$(Platform)</AppBuildMasterDir>
 		<BinDirSuffix>objects/$(SafeApplicationName)</BinDirSuffix>
+		<MovieDirSuffix>$(BinDirSuffix)_Movies</MovieDirSuffix>
+		<L10nDirSuffix>$(BinDirSuffix)_L10n</L10nDirSuffix>
 		<DataDirSuffix>$(BinDirSuffix)_Data</DataDirSuffix>
+		<OverridesDestDir>$(fwrt)\PatchableInstaller\Common</OverridesDestDir>
 	</PropertyGroup>
 
 	<!-- ########################################################################################################## -->
@@ -102,7 +100,7 @@
 	<!-- ### Build Targets                                                                                      ### -->
 	<!-- ########################################################################################################## -->
 
-	<Target Name="BuildProductMain" DependsOnTargets="BuildProduct;MakeInstallBuildFolders;CopyFilesToInstall"/>
+	<Target Name="BuildProductMain" DependsOnTargets="MakeInstallBuildFolders;BuildProduct;Localize;CopyFilesToInstall"/>
 
 	<Target Name="BuildProduct" DependsOnTargets="CleanInstaller;ProductCompile"/>
 
@@ -117,14 +115,15 @@
 		<MSBuild Projects="$(fwrt)/PatchableInstaller/CustomActions/CustomActions.sln" Targets="CustomActions" Properties="Configuration=Release;Platform=x86"/>
 	</Target>
 
-	<!-- As new compile Targets are added, include the relative file path below so they can be cleaned -->
+	<!-- Remove residue from the PatchableInstaller repository -->
 	<Target Name="CleanInstaller">
 		<ItemGroup>
-			<ProjectsToClean Include="$(SafeApplicationName)"/>
-			<ProjectsToClean Include="$(SafeApplicationName)/WixInstaller/CustomActions/CustomActions"/>
+			<DirsToClean Include="bin;obj"/>
 		</ItemGroup>
-		<ForceDelete Files="@(ProjectsToClean -> '%(Identity)/bin')" />
-		<ForceDelete Files="@(ProjectsToClean -> '%(Identity)/obj')" />
+		<ForceDelete Files="@(DirsToClean -> '$(fwrt)/PatchableInstaller/CustomActions/CustomActions/%(Identity)')" />
+		<!-- git clean removes only files in the working directory and its subdirectories -->
+		<Exec WorkingDirectory="$(OverridesDestDir)" Command="git clean -xdf"/>
+		<Exec WorkingDirectory="$(OverridesDestDir)" Command="git checkout ."/>
 	</Target>
 
 	<!-- ########################################################################################################## -->
@@ -143,22 +142,145 @@
 
 	<Target Name="CopyFilesToInstall" DependsOnTargets="InstallerVersionNumbers">
 		<!-- copy in new stuff -->
+		<PropertyGroup>
+			<MoviesRoot>$(fwrt)\DistFiles\Language Explorer\Movies</MoviesRoot>
+			<OutputDirForConfig>$(fwrt)\Output\$(Configuration)</OutputDirForConfig>
+		</PropertyGroup>
 		<ItemGroup>
-			<!-- TODO (Hasso) 2018.02: verify proper data is installed -->
-			<IcuFiles Include="$(fwrt)\DistFiles\Icu$(IcuVersion)\**\*"/>
-			<DeveloperFiles Include="$(fwrt)\DistFiles\Projects\**\*"/>
+			<DeveloperFiles Include="$(fwrt)\DistFiles\DropTEC.exe"/>
+			<DeveloperFiles Include="$(fwrt)\DistFiles\Fonts\Raw\**\*"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\.git\**\*"/>
+			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\OcmFrame\**\*"/> <!-- directory used only on Linux -->
+			<!-- No longer want TE helps, but they are not yet removed from the Helps repo. -->
+			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\FieldWorks_Translation_Editor_Help.chm\"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\Translation Editor\**\*"/>
-			<BinFiles Include="$(fwrt)\Output\$(Configuration)\**\*"/>
-			<BinFiles Include="$(fwrt)\DistFiles\**\*" Exclude="@(DeveloperFiles);@(IcuFiles)"/>
+			<!-- End: No longer want TE helps, but they are not yet removed from the Helps repo. -->
+			<DeveloperFiles Include="$(fwrt)\DistFiles\Icu54.zip"/>
+			<DeveloperFiles Include="$(fwrt)\DistFiles\libxample32.so"/> <!-- Linux file -->
+			<DeveloperFiles Include="$(fwrt)\DistFiles\libxample64.so"/> <!-- Linux file -->
+			<DeveloperFiles Include="$(fwrt)\DistFiles\Linux\**\*"/>
+			<DeveloperFiles Include="$(fwrt)\DistFiles\Projects\**\*"/>
+			<DeveloperFiles Include="$(fwrt)\DistFiles\ReleaseData\**\*"/>
+			<DeveloperFiles Include="$(fwrt)\DistFiles\SFconv.exe"/>
+			<DeveloperFiles Include="$(fwrt)\DistFiles\TECkit\**\*"/>
+			<DeveloperFiles Include="$(fwrt)\DistFiles\TxtConv.exe"/>
+			<DeveloperFiles Include="$(fwrt)\DistFiles\Windows\**\*"/>
+			<IcuFiles Include="$(fwrt)\DistFiles\Icu$(IcuVersion)\**\*"/>
+			<!-- If you change this list, you must also update those listed at $(fwrt)\Localizations\ReadMe.md -->
+			<L10nFiles Include="$(OutputDirForConfig)\az\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\es\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\fa\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\fr\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\hi\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\hu\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\id\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\ko\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\ms\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\pt\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\ro\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\ru\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\te\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\tr\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\vi\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\zh-CN\**\*"/>
+			<!-- no need to install the following; most are installed by merge modules -->
+			<MergeModules Include="$(OutputDirForConfig)\asserts.log"/>
+			<MergeModules Include="$(OutputDirForConfig)\basicTest.xml"/>
+			<MergeModules Include="$(OutputDirForConfig)\CacheLight.*"/>
+			<MergeModules Include="$(OutputDirForConfig)\CC\**\*"/>
+			<MergeModules Include="$(OutputDirForConfig)\CC32.dll"/>
+			<MergeModules Include="$(OutputDirForConfig)\CcEC.dll"/>
+			<MergeModules Include="$(OutputDirForConfig)\DebugProcs.*"/>
+			<MergeModules Include="$(OutputDirForConfig)\DefaultIcon.ico"/>
+			<MergeModules Include="$(OutputDirForConfig)\EC\**\*"/>
+			<MergeModules Include="$(OutputDirForConfig)\ECInterfaces.dll"/>
+			<MergeModules Include="$(OutputDirForConfig)\ECInterfaces.tlb"/>
+			<MergeModules Include="$(OutputDirForConfig)\EncConvertersAppDataMover40*"/>
+			<MergeModules Include="$(OutputDirForConfig)\FieldWorks.vshost.*"/>
+			<MergeModules Include="$(OutputDirForConfig)\FormsTester.*"/>
+			<MergeModules Include="$(OutputDirForConfig)\Geckofx-Core.dll"/> <!-- Installed by EC merge modules-->
+			<MergeModules Include="$(OutputDirForConfig)\Geckofx-Winforms.dll"/> <!-- Installed by EC merge modules-->
+			<MergeModules Include="$(OutputDirForConfig)\Good.xml"/>
+			<MergeModules Include="$(OutputDirForConfig)\IcuConvEC.dll"/> <!-- Installed by EC merge modules-->
+			<MergeModules Include="$(OutputDirForConfig)\IcuEC.dll"/> <!-- Installed by EC merge modules-->
+			<MergeModules Include="$(OutputDirForConfig)\IcuRegexEC.dll"/> <!-- Installed by EC merge modules-->
+			<MergeModules Include="$(OutputDirForConfig)\IcuTranslitEC.dll"/> <!-- Installed by EC merge modules-->
+			<MergeModules Include="$(OutputDirForConfig)\includeTest.xml"/>
+			<MergeModules Include="$(OutputDirForConfig)\listitems.bmp"/>
+			<MergeModules Include="$(OutputDirForConfig)\MigrateSqlDbs.pdb"/>
+			<MergeModules Include="$(OutputDirForConfig)\Perl*"/>
+			<MergeModules Include="$(OutputDirForConfig)\PerlExpressionEC.dll"/>
+			<MergeModules Include="$(OutputDirForConfig)\PhonEnvValidatorTest"/>
+			<MergeModules Include="$(OutputDirForConfig)\ProjectUnpacker.*"/>
+			<MergeModules Include="$(OutputDirForConfig)\PyScript*"/>
+			<MergeModules Include="$(OutputDirForConfig)\Python*"/>     <!-- REVIEW (Hasso) 2018.04: not sure if this is files or a folder -->
+			<MergeModules Include="$(OutputDirForConfig)\Python\**\*"/> <!-- REVIEW (Hasso) 2018.04: not sure if this is files or a folder -->
+			<MergeModules Include="$(OutputDirForConfig)\ScrChecks.dll"/> <!-- this will be taken from DistFiles\Editorial Checks -->
+			<MergeModules Include="$(OutputDirForConfig)\ScrChecks.pdb"/> <!-- this will be taken from DistFiles\Editorial Checks -->
+			<MergeModules Include="$(OutputDirForConfig)\SilEncConverters40.dll"/>
+			<MergeModules Include="$(OutputDirForConfig)\SilEncConverters40.tlb"/>
+			<MergeModules Include="$(OutputDirForConfig)\Temp\**\*"/>
+			<MergeModules Include="$(OutputDirForConfig)\TLP*"/>
+			<MergeModules Include="$(OutputDirForConfig)\UIAutomationProvider.dll"/>
+			<MergeModules Include="$(OutputDirForConfig)\UIAutomationTypes.dll"/>
+			<MergeModules Include="$(OutputDirForConfig)\whitepixel.bmp"/>
+			<MergeModules Include="$(OutputDirForConfig)\xCoreInterfaces.XmlSerializers.*"/>
+			<!-- FieldWorks Demo Movies -->
+			<Movies Include="$(MoviesRoot)\**\*" Exclude="$(MoviesRoot)\.git\**\*;$(MoviesRoot)\.git*;$(MoviesRoot)\notfound.html"/>
+			<!-- Binary files (and other files installed in the ProgramFiles\SIL\FieldWorks # directory -->
+			<BinFiles Include="$(OutputDirForConfig)\**\*" Exclude="@(L10nFiles)"/>
+			<!-- %(RecursiveDir) is only the "**\" portion. This hack recollects L10nFiles with the code as the recursive directory. -->
+			<L10nFilesWithRecursiveDirs Include="$(OutputDirForConfig)\**\*" Exclude="@(BinFiles)"/>
+			<!-- Now that we've used BinFiles to exclude all non-l10n files from L10nFilesWithRecursiveDirs,
+				we can remove MergeModules from BinFiles (MergeModules belong in neither ItemGroup). -->
+			<BinFiles Remove="@(MergeModules)"/>
+			<BinFiles Include="$(fwrt)\DistFiles\**\*" Exclude="@(DeveloperFiles);@(IcuFiles);$(MoviesRoot)\**\*"/>
+			<!-- Files used to customize the generic patchable installer -->
 			<OverrideFiles Include="$(fwrt)\FLExInstaller\*.wxi"/>
 		</ItemGroup>
 		<Copy SourceFiles="@(IcuFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(DataDirSuffix)/Icu$(IcuVersion)/%(RecursiveDir)"/>
+		<Copy SourceFiles="@(L10nFilesWithRecursiveDirs)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(L10nDirSuffix)/%(RecursiveDir)"/>
+		<Copy SourceFiles="@(Movies)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(MovieDirSuffix)/%(RecursiveDir)"/>
+		<!-- a webpage telling the user how to download the movies -->
+		<Copy SourceFiles="$(MoviesRoot)\notfound.html" DestinationFolder="$(AppBuildDir)\$(BinDirSuffix)\Language Explorer\Movies"/>
 		<Copy SourceFiles="@(BinFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/%(RecursiveDir)"/>
-		<Copy SourceFiles="@(OverrideFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(fwrt)/PatchableInstaller/Common"/>
+		<Copy SourceFiles="@(OverrideFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(OverridesDestDir)"/>
+		<CallTarget Targets="HarvestMoviesAndL10n"/>
 	</Target>
 
-	<Target Name="CopyBuildToMaster" >
+	<Target Name="HarvestMoviesAndL10n" DependsOnTargets="InstallerVersionNumbers">
+		<PropertyGroup>
+			<CommonHeatArgs>-gg -scom -sreg -sfrag -srd -sw5150 -sw5151 -t $(fwrt)/PatchableInstaller/BaseInstallerBuild/KeyPathFix.xsl</CommonHeatArgs>
+		</PropertyGroup>
+
+		<!-- Harvest movies -->
+		<Exec Command="heat.exe dir $(AppBuildDir)/$(MovieDirSuffix) $(CommonHeatArgs) -cg HarvestedMovieFiles -dr MOVIEFOLDER -var wix.MOVIEDIR -out $(OverridesDestDir)/MovieHarvest.wxs" />
+
+		<!-- Harvest Localizations. If you change this list, you must also update those listed at $(fwrt)\Localizations\ReadMe.md -->
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\az $(CommonHeatArgs) -cg azLocalization -dr AZL10NFOLDER -var wix.AZL10NDIR -out $(OverridesDestDir)/azHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\es $(CommonHeatArgs) -cg esLocalization -dr ESL10NFOLDER -var wix.ESL10NDIR -out $(OverridesDestDir)/esHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\fa $(CommonHeatArgs) -cg faLocalization -dr FAL10NFOLDER -var wix.FAL10NDIR -out $(OverridesDestDir)/faHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\fr $(CommonHeatArgs) -cg frLocalization -dr FRL10NFOLDER -var wix.FRL10NDIR -out $(OverridesDestDir)/frHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\hi $(CommonHeatArgs) -cg hiLocalization -dr HIL10NFOLDER -var wix.HIL10NDIR -out $(OverridesDestDir)/hiHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\hu $(CommonHeatArgs) -cg huLocalization -dr HUL10NFOLDER -var wix.HUL10NDIR -out $(OverridesDestDir)/huHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\id $(CommonHeatArgs) -cg idLocalization -dr IDL10NFOLDER -var wix.IDL10NDIR -out $(OverridesDestDir)/idHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\ko $(CommonHeatArgs) -cg koLocalization -dr KOL10NFOLDER -var wix.KOL10NDIR -out $(OverridesDestDir)/koHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\ms $(CommonHeatArgs) -cg msLocalization -dr MSL10NFOLDER -var wix.MSL10NDIR -out $(OverridesDestDir)/msHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\pt $(CommonHeatArgs) -cg ptLocalization -dr PTL10NFOLDER -var wix.PTL10NDIR -out $(OverridesDestDir)/ptHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\ro $(CommonHeatArgs) -cg roLocalization -dr ROL10NFOLDER -var wix.ROL10NDIR -out $(OverridesDestDir)/roHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\ru $(CommonHeatArgs) -cg ruLocalization -dr RUL10NFOLDER -var wix.RUL10NDIR -out $(OverridesDestDir)/ruHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\te $(CommonHeatArgs) -cg teLocalization -dr TEL10NFOLDER -var wix.TEL10NDIR -out $(OverridesDestDir)/teHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\tr $(CommonHeatArgs) -cg trLocalization -dr TRL10NFOLDER -var wix.TRL10NDIR -out $(OverridesDestDir)/trHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\vi $(CommonHeatArgs) -cg viLocalization -dr VIL10NFOLDER -var wix.VIL10NDIR -out $(OverridesDestDir)/viHarvest.wxs" />
+		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\zh-CN $(CommonHeatArgs) -cg zhLocalization -dr ZHL10NFOLDER -var wix.ZHL10NDIR -out $(OverridesDestDir)/zhHarvest.wxs" />
+
+		<ItemGroup>
+			<HarvestedWxsFiles Include="$(OverridesDestDir)\*.wxs"/>
+		</ItemGroup>
+		<WxsToWxi SourceFile="%(HarvestedWxsFiles.Identity)"/>
+	</Target>
+
+	<Target Name="CopyBuildToMaster">
 		<ItemGroup>
 			<ObjectFiles Include="$(AppBuildDir)/objects/**/*"/>
 		</ItemGroup>
@@ -166,8 +288,9 @@
 	</Target>
 
 	<Target Name="GetDotNetFiles" >
+		<!-- REVIEW (Hasso) 2018.03: how many of these do we really need? -->
 		<PropertyGroup>
-		<WixLibsDir>PatchableInstaller/libs/</WixLibsDir>
+			<WixLibsDir>PatchableInstaller/libs/</WixLibsDir>
 		</PropertyGroup>
 		<DownloadFile Address="http://go.microsoft.com/fwlink/?LinkId=322115"
 			LocalFilename="$(fwrt)/$(WixLibsDir)/NDP451-KB2858728-x86-x64-AllOS-ENU.exe"
@@ -219,8 +342,8 @@
 	<!-- ### Build Wix Product Targets                                                                          ### -->
 	<!-- ########################################################################################################## -->
 	<PropertyGroup>
-		<Arch Condition="$(Platform) != 'x64'">x86</Arch> <!-- Handle x86 and WIN32 -->
-		<Arch Condition="$(Platform) == 'x64'">x64</Arch>
+		<Arch Condition="'$(Platform)' != 'x64'">x86</Arch> <!-- Handle x86 and WIN32 -->
+		<Arch Condition="'$(Platform)' == 'x64'">x64</Arch>
 	</PropertyGroup>
 
 	<Target Name="BuildProductBaseMsi" DependsOnTargets="InstallerVersionNumbers">

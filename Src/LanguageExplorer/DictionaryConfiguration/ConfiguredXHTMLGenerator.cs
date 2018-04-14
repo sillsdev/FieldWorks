@@ -624,7 +624,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 					var x = new Thread(new ThreadStart(threadActionArray[i]));
 					x.SetApartmentState(ApartmentState.STA);
 					x.Start();
-					threads.Add(x);		// ensure thread doesn't get garbage collected prematurely.
+					threads.Add(x);     // ensure thread doesn't get garbage collected prematurely.
 				}
 				countDown.Wait();
 				threads.Clear();
@@ -719,8 +719,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 		public static string GenerateXHTMLForMainEntry(ICmObject entry, ConfigurableDictionaryNode configuration,
 			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
 		{
-			if (configuration.DictionaryNodeOptions != null && ((ILexEntry) entry).ComplexFormEntryRefs.Any() &&
-			    !IsListItemSelectedForExport(configuration, entry))
+			if (configuration.DictionaryNodeOptions != null && ((ILexEntry)entry).ComplexFormEntryRefs.Any() &&
+				!IsListItemSelectedForExport(configuration, entry))
 			{
 				return string.Empty;
 			}
@@ -815,6 +815,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 			writer.WriteAttributeString("class", classAtt);
 		}
 
+		/// <summary>
+		/// This method will use reflection to pull data out of the given object based on the given configuration and
+		/// write out appropriate XHTML.
+		/// </summary>
+		/// <remarks>We use a significant amount of boilerplate code for fields and subfields. Make sure you update both.</remarks>
 		internal static string GenerateXHTMLForFieldByReflection(object field, ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
 		{
 			return ReallyGenerateXHTMLForFieldByReflection(field, config, publicationDecorator, settings);
@@ -837,6 +842,10 @@ namespace LanguageExplorer.DictionaryConfiguration
 			if (config.DictionaryNodeOptions is DictionaryNodeGroupingOptions)
 			{
 				return GenerateXHTMLForGroupingNode(field, config, publicationDecorator, settings);
+			}
+			if (config.FieldDescription == "DefinitionOrGloss")
+			{
+				return GenerateXHTMLForDefinitionOrGloss(field as ILexSense, config, settings);
 			}
 			if (config.IsCustomField && config.SubField == null)
 			{
@@ -901,7 +910,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			ICmFile fileProperty;
 			ICmObject fileOwner;
 			var typeForNode = config.IsCustomField
-				? GetPropertyTypeFromReflectedTypes(propertyValue.GetType(), null)
+										? GetPropertyTypeFromReflectedTypes(propertyValue.GetType(), null)
 				: GetPropertyTypeForConfigurationNode(config, propertyValue.GetType(), cache.GetManagedMetaDataCache());
 			switch (typeForNode)
 			{
@@ -1033,56 +1042,56 @@ namespace LanguageExplorer.DictionaryConfiguration
 				// Collections are stored essentially the same as sequences.
 				case (int)CellarPropertyType.ReferenceSequence:
 				case (int)CellarPropertyType.OwningSequence:
-				{
-					var sda = cache.MainCacheAccessor;
-					// This method returns the hvo of the object pointed to
-					var chvo = sda.get_VecSize(specificObject.Hvo, customFieldFlid);
-					int[] contents;
-					using (var arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
 					{
-						sda.VecProp(specificObject.Hvo, customFieldFlid, chvo, out chvo, arrayPtr);
-						contents = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
+						var sda = cache.MainCacheAccessor;
+						// This method returns the hvo of the object pointed to
+						var chvo = sda.get_VecSize(specificObject.Hvo, customFieldFlid);
+						int[] contents;
+						using (var arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
+						{
+							sda.VecProp(specificObject.Hvo, customFieldFlid, chvo, out chvo, arrayPtr);
+							contents = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
+						}
+						// if the hvo is invalid set propertyValue to null otherwise get the object
+						propertyValue = contents.Select(id => cache.LangProject.Services.GetObject(id));
+						break;
 					}
-					// if the hvo is invalid set propertyValue to null otherwise get the object
-					propertyValue = contents.Select(id => cache.LangProject.Services.GetObject(id));
-					break;
-				}
 				case (int)CellarPropertyType.ReferenceAtomic:
 				case (int)CellarPropertyType.OwningAtomic:
-				{
-					// This method returns the hvo of the object pointed to
-					propertyValue = cache.MainCacheAccessor.get_ObjectProp(specificObject.Hvo, customFieldFlid);
-					// if the hvo is invalid set propertyValue to null otherwise get the object
-					propertyValue = (int)propertyValue > 0 ? cache.LangProject.Services.GetObject((int)propertyValue) : null;
-					break;
-				}
+					{
+						// This method returns the hvo of the object pointed to
+						propertyValue = cache.MainCacheAccessor.get_ObjectProp(specificObject.Hvo, customFieldFlid);
+						// if the hvo is invalid set propertyValue to null otherwise get the object
+						propertyValue = (int)propertyValue > 0 ? cache.LangProject.Services.GetObject((int)propertyValue) : null;
+						break;
+					}
 				case (int)CellarPropertyType.GenDate:
-				{
-					propertyValue = new GenDate(cache.MainCacheAccessor.get_IntProp(specificObject.Hvo, customFieldFlid));
-					break;
-				}
+					{
+						propertyValue = new GenDate(cache.MainCacheAccessor.get_IntProp(specificObject.Hvo, customFieldFlid));
+						break;
+					}
 
 				case (int)CellarPropertyType.Time:
-				{
-					propertyValue = SilTime.ConvertFromSilTime(cache.MainCacheAccessor.get_TimeProp(specificObject.Hvo, customFieldFlid));
-					break;
-				}
+					{
+						propertyValue = SilTime.ConvertFromSilTime(cache.MainCacheAccessor.get_TimeProp(specificObject.Hvo, customFieldFlid));
+						break;
+					}
 				case (int)CellarPropertyType.MultiUnicode:
 				case (int)CellarPropertyType.MultiString:
-				{
-					propertyValue = cache.MainCacheAccessor.get_MultiStringProp(specificObject.Hvo, customFieldFlid);
-					break;
-				}
+					{
+						propertyValue = cache.MainCacheAccessor.get_MultiStringProp(specificObject.Hvo, customFieldFlid);
+						break;
+					}
 				case (int)CellarPropertyType.String:
-				{
-					propertyValue = cache.MainCacheAccessor.get_StringProp(specificObject.Hvo, customFieldFlid);
-					break;
-				}
+					{
+						propertyValue = cache.MainCacheAccessor.get_StringProp(specificObject.Hvo, customFieldFlid);
+						break;
+					}
 				case (int)CellarPropertyType.Integer:
-				{
-					propertyValue = cache.MainCacheAccessor.get_IntProp(specificObject.Hvo, customFieldFlid);
-					break;
-				}
+					{
+						propertyValue = cache.MainCacheAccessor.get_IntProp(specificObject.Hvo, customFieldFlid);
+						break;
+					}
 			}
 			return true;
 		}
@@ -1168,7 +1177,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			foreach (var reference in unsortedReferences)
 			{
 				var id = reference.OwnerType.Guid.ToString();
-				if (LexRefTypeTags.IsAsymmetric((LexRefTypeTags.MappingTypes) reference.OwnerType.MappingType))
+				if (LexRefTypeTags.IsAsymmetric((LexRefTypeTags.MappingTypes)reference.OwnerType.MappingType))
 				{
 					id = id + LexRefDirection(reference, parent);
 				}
@@ -1314,6 +1323,30 @@ namespace LanguageExplorer.DictionaryConfiguration
 			return settings.UseRelativePaths ? filePath : new Uri(filePath).ToString();
 		}
 
+		private static string GenerateXHTMLForDefinitionOrGloss(ILexSense sense, ConfigurableDictionaryNode config, GeneratorSettings settings)
+		{
+			var wsOption = config.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
+			if (wsOption == null)
+			{
+				throw new ArgumentException("Configuration nodes for MultiString fields whould have WritingSystemOptions", nameof(config));
+			}
+			var bldr = new StringBuilder();
+			foreach (var option in wsOption.Options)
+			{
+				if (option.IsEnabled)
+				{
+					int wsId;
+					var bestString = sense.GetDefinitionOrGloss(option.Id, out wsId);
+					if (bestString != null)
+					{
+						var contentItem = GenerateWsPrefixAndString(config, settings, wsOption, wsId, bestString, Guid.Empty);
+						bldr.Append(contentItem);
+					}
+				}
+			}
+			return bldr.Length > 0 ? WriteRawElementContents("span", bldr.ToString(), config) : string.Empty;
+		}
+
 		private static string GenerateSrcAttributeForMediaFromFilePath(string filename, string subFolder, GeneratorSettings settings)
 		{
 			string filePath;
@@ -1431,7 +1464,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		internal static PropertyType GetPropertyTypeForConfigurationNode(ConfigurableDictionaryNode config, IFwMetaDataCacheManaged metaDataCacheAccessor)
 		{
-			return GetPropertyTypeForConfigurationNode(config, null, metaDataCacheAccessor);
+			var propertyType = GetPropertyTypeForConfigurationNode(config, null, metaDataCacheAccessor);
+			if (config.FieldDescription == "DefinitionOrGloss")
+			{
+				propertyType = PropertyType.PrimitiveType;
+			}
+			return propertyType;
 		}
 
 		/// <summary>
@@ -1575,35 +1613,35 @@ namespace LanguageExplorer.DictionaryConfiguration
 				case (int)CellarPropertyType.ReferenceSequence:
 				case (int)CellarPropertyType.OwningSequence:
 				case (int)CellarPropertyType.ReferenceCollection:
-				{
-					return typeof(ILcmVector);
-				}
+					{
+						return typeof(ILcmVector);
+					}
 				case (int)CellarPropertyType.ReferenceAtomic:
 				case (int)CellarPropertyType.OwningAtomic:
-				{
-					var destClassId = metaDataCacheAccessor.GetDstClsId(customFieldFlid);
-					if (destClassId == StTextTags.kClassId)
 					{
-						return typeof(IStText);
+						var destClassId = metaDataCacheAccessor.GetDstClsId(customFieldFlid);
+						if (destClassId == StTextTags.kClassId)
+						{
+							return typeof(IStText);
+						}
+						return typeof(ICmObject);
 					}
-					return typeof(ICmObject);
-				}
 				case (int)CellarPropertyType.Time:
-				{
-					return typeof(DateTime);
-				}
+					{
+						return typeof(DateTime);
+					}
 				case (int)CellarPropertyType.MultiUnicode:
-				{
-					return typeof(IMultiUnicode);
-				}
+					{
+						return typeof(IMultiUnicode);
+					}
 				case (int)CellarPropertyType.MultiString:
-				{
-					return typeof(IMultiString);
-				}
+					{
+						return typeof(IMultiString);
+					}
 				case (int)CellarPropertyType.String:
-				{
-					return typeof(string);
-				}
+					{
+						return typeof(string);
+					}
 				default:
 					return null;
 			}
@@ -2237,8 +2275,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 				WriteCollectionItemClassAttribute(config, xw);
 				xw.WriteAttributeString("entryguid", "g" + ((ICmObject)item).Owner.Guid.ToString());
 				xw.WriteRaw(senseContent);
-				xw.WriteEndElement();	// element name for property
-				xw.WriteEndElement();	// </span>
+				xw.WriteEndElement();   // element name for property
+				xw.WriteEndElement();   // </span>
 				xw.Flush();
 				return bldr.ToString();
 			}
@@ -2271,14 +2309,14 @@ namespace LanguageExplorer.DictionaryConfiguration
 				}
 			}
 			if (captionBldr.Length == 0)
-			return;
+				return;
 			//Adding div tag before Sense Number and Caption
 			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
 			{
-				  xw.WriteStartElement("div");
-				  xw.WriteAttributeString("class", "captionContent");
-				  xw.WriteRaw(captionBldr.ToString());
-				  xw.WriteEndElement();
+				xw.WriteStartElement("div");
+				xw.WriteAttributeString("class", "captionContent");
+				xw.WriteRaw(captionBldr.ToString());
+				xw.WriteEndElement();
 			}
 		}
 
@@ -2399,7 +2437,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				bucketList.RemoveAll(t => IsOwner(t.Item1, cmOwner));
 				// "Unidirectional" relations, like Sequences, are user-orderable (but only sequences include their owner)
-				if (!LexRefTypeTags.IsUnidirectional((LexRefTypeTags.MappingTypes) curType.MappingType))
+				if (!LexRefTypeTags.IsUnidirectional((LexRefTypeTags.MappingTypes)curType.MappingType))
 				{
 					bucketList.Sort(CompareLexRefTargets);
 				}
@@ -2829,7 +2867,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				}
 				else if (field is ILexSense)
 				{
-					guid = ((ILexSense) field).OwnerOfClass(LexEntryTags.kClassId).Guid;
+					guid = ((ILexSense)field).OwnerOfClass(LexEntryTags.kClassId).Guid;
 				}
 				else
 				{
@@ -2839,7 +2877,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 			if (propertyValue is ITsString)
 			{
-				if (TsStringUtils.IsNullOrEmpty((ITsString) propertyValue))
+				if (TsStringUtils.IsNullOrEmpty((ITsString)propertyValue))
 				{
 					return string.Empty;
 				}

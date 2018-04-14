@@ -12,6 +12,7 @@ include $(BUILD_ROOT)/Bld/_names.mak
 BUILD_PRODUCT = FieldWorks
 include $(BUILD_ROOT)/Bld/_init.mak.lnx
 SHELL=/bin/bash
+BITS := $(shell test `arch` = x86_64 && echo 64 || echo 32)
 
 all:
 
@@ -83,12 +84,12 @@ manpage-clean:
 install-tree-fdo:
 	# Create directories
 	install -d $(DESTDIR)/usr/lib/fieldworks
-	install -d $(DESTDIR)/usr/lib/fieldworks/Firefox
+	install -d $(DESTDIR)/usr/lib/fieldworks/Firefox-Linux$(BITS)
 	install -d $(DESTDIR)/usr/share/fieldworks
 	install -d $(DESTDIR)/var/lib/fieldworks
 	# Install libraries and their support files
 	install -m 644 $(OUT_DIR)/*.{dll*,so} $(DESTDIR)/usr/lib/fieldworks
-	install -m 644 $(OUT_DIR)/Firefox/*.* $(DESTDIR)/usr/lib/fieldworks/Firefox
+	install -m 644 $(OUT_DIR)/Firefox-Linux$(BITS)/*.* $(DESTDIR)/usr/lib/fieldworks/Firefox-Linux$(BITS)
 	install -m 644 $(OUT_DIR)/{*.compmap,components.map} $(DESTDIR)/usr/lib/fieldworks
 	# Install executables and scripts
 	install Lib/linux/setup-user $(DESTDIR)/usr/share/fieldworks/

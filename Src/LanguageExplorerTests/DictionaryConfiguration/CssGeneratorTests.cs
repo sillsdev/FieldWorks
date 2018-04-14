@@ -451,8 +451,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			}
 		}
 
-#if RANDYTODO
-		// TODO: Yet more new test wreckage.
 		[Test]
 		public void GenerateCssForConfiguration_DefinitionOrGlossBeforeAfterConfigGeneratesBeforeAfterCss()
 		{
@@ -496,7 +494,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .senses .sense> .definitionorgloss> span:last-child:after{.*content:'>';.*}",
 				RegexOptions.Singleline).Success, "After not generated.");
 		}
-#endif
 
 		[Test]
 		public void GenerateCssForStyleName_CharacterStyleWorks()

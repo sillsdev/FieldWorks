@@ -162,7 +162,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 				}
 				case DOWN:
 				{
-						if (browser.Window.ScrollY >= browser.Window.ScrollMaxY)
+					if (browser.Window.ScrollY >= browser.Window.ScrollMaxY)
 					{
 						AddMoreEntriesToPage(false, (GeckoWebBrowser)m_mainView.NativeBrowser);
 					}
@@ -213,10 +213,10 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 				return false;
 			}
 			ExclusionReasonCode xrc;
-			// Make sure we explain to the user in case hvoTarget is not visible due to
-			// the current Publication layout or Configuration view.
-			if (!IsObjectVisible(hvoTarget, out xrc))
-			{
+				// Make sure we explain to the user in case hvoTarget is not visible due to
+				// the current Publication layout or Configuration view.
+				if (!IsObjectVisible(hvoTarget, out xrc))
+				{
 				AreaServices.GiveSimpleWarning(PropertyTable.GetValue<Form>("window"), PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").HelpFile, xrc);
 			}
 			return false;
@@ -286,11 +286,11 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			{
 				case GeckoMouseButton.Left:
 					if (HandleClickOnPageButton(MyRecordList, Cache.ServiceLocator.ObjectRepository, element))
-					{
-						return;
-					}
-					// Handle button clicks or select the entry represented by the current element.
-					HandleDomLeftClick(MyRecordList, Cache.ServiceLocator.ObjectRepository, e, element);
+				{
+					return;
+				}
+				// Handle button clicks or select the entry represented by the current element.
+				HandleDomLeftClick(MyRecordList, Cache.ServiceLocator.ObjectRepository, e, element);
 					break;
 				case GeckoMouseButton.Right:
 					HandleDomRightClick(browser, e, element, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), m_configObjectName, Cache, MyRecordList);
@@ -308,9 +308,9 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			{
 				return;
 			}
-			CloseContextMenuIfOpen();
-			SetActiveSelectedEntryOnView(browser);
-			// Without this we show the entry count in the status bar the first time we open the Dictionary or Rev. Index.
+				CloseContextMenuIfOpen();
+				SetActiveSelectedEntryOnView(browser);
+				// Without this we show the entry count in the status bar the first time we open the Dictionary or Rev. Index.
 			MyRecordList.SelectedRecordChanged(true, true);
 		}
 
@@ -340,8 +340,11 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 				}
 				else
 				{
-					var obj = objectRepository.GetObject(topLevelGuid);
-					recordList.JumpToRecord(obj.Hvo);
+					ICmObject obj;
+					if (objectRepository.TryGetObject(topLevelGuid, out obj))
+					{
+						recordList.JumpToRecord(obj.Hvo);
+					}
 				}
 			}
 			e.Handled = true;
@@ -470,11 +473,11 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			{
 				throw new ArgumentException(@"The element passed to this method should have a firstEntryGuid.", nameof(element));
 			}
-			var firstEntryOnPage = element.Attributes["firstEntryGuid"].NodeValue;
+				var firstEntryOnPage = element.Attributes["firstEntryGuid"].NodeValue;
 			var obj = objectRepository.GetObject(new Guid(firstEntryOnPage));
 			recordList.JumpToRecord(obj.Hvo);
-			return true;
-		}
+				return true;
+			}
 
 		/// <summary>
 		/// Pop up a menu to allow the user to start the document configuration dialog, and
@@ -519,9 +522,9 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			{
 				return;
 			}
-			s_contextMenu.Close();
-			DisposeContextMenu(null, null);
-		}
+				s_contextMenu.Close();
+				DisposeContextMenu(null, null);
+			}
 
 		private static void m_contextMenu_Closed(object sender, ToolStripDropDownClosedEventArgs e)
 		{
@@ -535,9 +538,9 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			{
 				return;
 			}
-			s_contextMenu.Dispose();
-			s_contextMenu = null;
-		}
+				s_contextMenu.Dispose();
+				s_contextMenu = null;
+			}
 
 		// Context menu exists just for one invocation (until idle).
 		private static ContextMenuStrip s_contextMenu;
@@ -554,10 +557,10 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			var cache = (LcmCache)tagObjects[5];
 			var activeRecordList = (RecordList)tagObjects[6];
 			var mainWindow = propertyTable.GetValue<IFwMainWnd>("window");
-			ICmObject current = null;
-			if (guid != Guid.Empty && cache != null && cache.ServiceLocator.ObjectRepository.IsValidObjectId(guid))
+				ICmObject current = null;
+				if (guid != Guid.Empty && cache != null && cache.ServiceLocator.ObjectRepository.IsValidObjectId(guid))
 			{
-				current = cache.ServiceLocator.GetObject(guid);
+					current = cache.ServiceLocator.GetObject(guid);
 			}
 			else if (activeRecordList != null)
 			{
@@ -603,7 +606,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			if (string.IsNullOrEmpty(PropertyTable.GetValue<string>("SuspendLoadingRecordUntilOnJumpToRecord", null)))
 			{
 				UpdateContent(PublicationDecorator, validConfiguration);
-			}
+		}
 		}
 
 		private string SetCurrentDictionaryPublicationLayout()
@@ -1171,7 +1174,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			else
 			{
 				((IPaneBar)m_informationBar).Text = curViewName;
-		}
+			}
 		}
 
 		/// <summary>

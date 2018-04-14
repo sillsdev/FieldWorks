@@ -21,7 +21,7 @@ ifeq ($(BUILD_CONFIG),Debug)
 	DEBUG_INCLUDES = -I$(DEBUGPROCS_SRC)
 	OPTIMIZATIONS = -O0
 else
-	OPTIMIZATIONS = -O3
+	OPTIMIZATIONS = -O0
 endif
 
 GR2_INC = $(BUILD_ROOT)/Lib/src/graphite2/include

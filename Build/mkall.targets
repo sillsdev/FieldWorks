@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
 	<!-- Make all of FieldWorks. -->
 	<Target Name="mkall" DependsOnTargets="initLinux;initWindows;LinuxRegistry;allCpp;allCsharp;ensureTLBsUpToDate">
 		<Message Text="Finished mkall Target."/>
@@ -29,7 +29,7 @@
 		AfterTargets="FwKernel;Views" Condition="'$(OS)'=='Windows_NT'">
 		<RegFree Executable="$(dir-outputBase)/FwKernel.dll" Output="$(dir-outputBase)/FieldWorks.Tests.manifest"
 			Dlls="$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Views.dll"
-			Fragments="@(Fragments)" Platform="$(Platform)"/>
+			Fragments="@(Fragments)" Platform="$(Platform)" MSBuildArchitecture="$(Platform)"/>
 	</Target>
 
 	<Target Name="DebugProcs" DependsOnTargets="initLinux;initWindows">
@@ -76,8 +76,8 @@
 				WorkingDirectory="$(fwrt)/Src/Generic/Test" ContinueOnError="true"/>
 		<RegFree Executable="$(dir-outputBase)\testGenericLib.exe"
 				DependentAssemblies="$(dir-outputBase)\FwKernel.X.manifest;$(dir-outputBase)\Views.X.manifest"
-				Condition="'$(OS)'=='Windows_NT'" Platform="$(Platform)"/>
-		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testGenericLib.exe -manifest $(dir-outputBase)\testGenericLib.exe.manifest"
+				Condition="'$(OS)'=='Windows_NT'" Platform="$(Platform)" MSBuildArchitecture="$(Platform)"/>
+		<Exec Command="set PATH=$(PATH) mt.exe -outputresource:$(dir-outputBase)\testGenericLib.exe -manifest $(dir-outputBase)\testGenericLib.exe.manifest"
 				Condition="'$(OS)'=='Windows_NT'"/>
 		<Unitpp Condition="'$(action)'=='test'"
 				FixturePath="$(dir-outputBase)/testGenericLib"
@@ -102,7 +102,7 @@
 			Configuration="$(config-capital)" Target="$(make-target)"
 			BuildRoot="$(fwrt)"
 			WorkingDirectory="$(fwrt)/Src/Kernel"/>
-		<RegFree Executable="$(dir-outputBase)\FwKernel.dll" Output="$(dir-outputBase)\FwKernel.X.manifest" Condition="'$(OS)'=='Windows_NT'" Platform="$(Platform)"/>
+		<RegFree Executable="$(dir-outputBase)\FwKernel.dll" Output="$(dir-outputBase)\FwKernel.X.manifest" Condition="'$(OS)'=='Windows_NT'" Platform="$(Platform)"  MSBuildArchitecture="$(Platform)"/>
 		<Message Text="Finished building FwKernel."/>
 	</Target>
 
@@ -128,7 +128,7 @@
 			Configuration="$(config-capital)" Target="$(make-target)"
 			BuildRoot="$(fwrt)"
 			WorkingDirectory="$(fwrt)/Src/views"/>
-		<RegFree Executable="$(dir-outputBase)\Views.dll" Output="$(dir-outputBase)\Views.X.manifest" Condition="'$(OS)'=='Windows_NT'" Platform="$(Platform)" />
+		<RegFree Executable="$(dir-outputBase)\Views.dll" Output="$(dir-outputBase)\Views.X.manifest" Condition="'$(OS)'=='Windows_NT'" Platform="$(Platform)" MSBuildArchitecture="$(Platform)"/>
 		<Message Text="Finished building Views."/>
 	</Target>
 
@@ -146,7 +146,7 @@
 				WorkingDirectory="$(fwrt)/Src/views/Test" ContinueOnError="true"/>
 		<RegFree Executable="$(dir-outputBase)\testViews.exe"
 				DependentAssemblies="$(dir-outputBase)\FwKernel.X.manifest;$(dir-outputBase)\Views.X.manifest"
-				Condition="'$(OS)'=='Windows_NT'" Platform="$(Platform)"/>
+				Condition="'$(OS)'=='Windows_NT'" Platform="$(Platform)" MSBuildArchitecture="$(Platform)"/>
 		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testViews.exe -manifest $(dir-outputBase)\testViews.exe.manifest"
 				Condition="'$(OS)'=='Windows_NT'"/>
 		<CreateItem Include="$(dir-outputBase)/*.compmap">
@@ -442,7 +442,7 @@
 		<Message Text="Downloading artifacts for HermitCrab." />
 		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(HermitCrabBuildType)" Tag="$(HermitCrabBuildTag)" VersionInfo="$(MasterVersionInfo)" Artifacts="QuickGraph.dll;SIL.Machine.dll;SIL.Collections.dll;SIL.HermitCrab.dll" DownloadsDir="$(DownloadsDir)"/>
 
-		<Message Text="Downloading ParaTExt DLLs." />
+		<Message Text="Downloading Paratext DLLs." />
 		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)/Paratext.LexicalContracts.dll" DownloadsDir="$(DownloadsDir)"/>
 		<DownloadFile Address="$(DownloadsSilOrgOSDownloadUrl)/FormattedEditor.dll" DownloadsDir="$(DownloadsDir)"/>
 		<DownloadFile Address="$(DownloadsSilOrgOSDownloadUrl)/HelpSystem.dll" DownloadsDir="$(DownloadsDir)"/>
@@ -556,8 +556,9 @@
 			<!-- Yes, the Windows version is missing the the OS and the 32-bit architecture. This package must be updated in encoding-converters-core also -->
 			<GeckoDir Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'">$(fwrt)/packages/Geckofx45.45.0.33</GeckoDir>
 			<GeckoDir Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'">$(fwrt)/packages/Geckofx45.64.45.0.33</GeckoDir>
-			<GeckoDir Condition="'$(OS)'!='Windows_NT' AND '$(arch)'!='x86_64'">$(fwrt)/packages/Geckofx45.32.Linux.45.0.21.0</GeckoDir>
-			<GeckoDir Condition="'$(OS)'!='Windows_NT' AND '$(arch)'=='x86_64'">$(fwrt)/packages/Geckofx45.64.Linux.45.0.21.0</GeckoDir>
+			<Architecture Condition="'$(arch)'=='x86_64'">64</Architecture>
+			<Architecture Condition="'$(arch)'!='x86_64'">32</Architecture>
+			<GeckoDir Condition="'$(OS)'!='Windows_NT'">$(fwrt)/packages/Geckofx45.$(Architecture).Linux.45.0.36</GeckoDir>
 		</PropertyGroup>
 		<ItemGroup>
 			<!-- The geckofx .dll files are actually pulled from the encoding converters package -->

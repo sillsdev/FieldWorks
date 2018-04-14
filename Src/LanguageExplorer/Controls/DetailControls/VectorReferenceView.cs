@@ -329,8 +329,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			// Fundamentally, we can handle either reference sequence properties or ones we are explicitly told
 			// to create VirtualPropOrderings for.
 			// Some slices disabled LT-18266
-			var rootFieldNameCandidates = new HashSet<string> {"Complex Forms", "Compare", "Synonyms" };
-			if (!RootPropertyIsRealRefSequence() && !RootPropertySupportsVirtualOrdering() || rootFieldNameCandidates.Contains(m_rootFieldName))
+			var rootFieldNameCandidates = new HashSet<string> {"Complex Forms", "Compare" };
+			var typeCandidates = new HashSet<string> {"LexReferenceTreeBranchesView", "LexReferenceSequenceView" };
+			if (!RootPropertyIsRealRefSequence() && !RootPropertySupportsVirtualOrdering() || rootFieldNameCandidates.Contains(m_rootFieldName) || typeCandidates.Contains(GetType().Name))
 			{
 				return false;
 			}

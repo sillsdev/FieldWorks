@@ -1188,8 +1188,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(gramName2, 1);
 		}
 
-#if RANDYTODO
-		// TODO: Yet more new test wreckage.
 		[Test]
 		public void GenerateXHTMLForEntry_DefinitionOrGlossWorks()
 		{
@@ -1247,7 +1245,34 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				"//span[@class='sense']/span[@class='definitionorgloss']/span[@class='writingsystemprefix' and normalize-space(text())='Eng']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseWithdefinitionOrGloss, 1);
 		}
-#endif
+
+		[Test]
+		public void GenerateXHTMLForEntry_DefinitionOrGloss_HandlePerWS()
+		{
+			var wsOpts = GetWsOptionsForLanguages(new[] { "en", "es" });
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+				Children = new List<ConfigurableDictionaryNode>
+				{
+					new ConfigurableDictionaryNode { FieldDescription = "DefinitionOrGloss", DictionaryNodeOptions = wsOpts }
+				}
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { senses },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var entryOne = CreateInterestingLexEntry(Cache);
+			var wsEs = EnsureWritingSystemSetup(Cache, "es", false);
+			entryOne.SensesOS.First().Definition.set_String(wsEs, "definition");
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
+			const string senseWithdefinitionOrGlossTwoWs = "//span[@class='sense']/span[@class='definitionorgloss' and span[1]='gloss' and span[2]='definition']";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseWithdefinitionOrGlossTwoWs, 1);
+		}
 
 		[Test]
 		public void GenerateXHTMLForEntry_OtherReferencedComplexForms()
@@ -1309,8 +1334,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(revNameXpath, 1);
 		}
 
-#if RANDYTODO
-		// TODO: Yet more new test wreckage.
 		[Test]
 		public void GenerateXHTMLForEntry_DuplicateConfigNodeWithSpaceWorks()
 		{
@@ -1403,7 +1426,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			const string senseWithHyphenSuffix = "//span[@class='senses_-test-']/span[@class='sense_-test-']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseWithHyphenSuffix, 1);
 		}
-#endif
 
 		[Test]
 		public void GenerateXHTMLForEntry_HeadWordRefVirtualPropWorks()
@@ -7189,8 +7211,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Assert.False(ConfiguredXHTMLGenerator.IsCollectionType(assembly.GetType("SIL.LCModel.DomainImpl.VirtualStringAccessor")));
 		}
 
-#if RANDYTODO
-		// TODO: Yet more new test wreckage.
 		[Test]
 		public void GenerateXHTMLForEntry_FilterByPublication()
 		{
@@ -7521,7 +7541,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchTestsubentry, 1);
 			AssertThatXmlIn.String(output).HasNoMatchForXpath(matchVariantRef);
 		}
-#endif
 
 		[Test]
 		public void GenerateXHTMLForEntry_GeneratesVariantEntryTypesLabelWithNoRepetition()

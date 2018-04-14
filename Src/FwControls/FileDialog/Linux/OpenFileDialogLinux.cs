@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Linux
 
 		protected override void ReportFileNotFound(string fileName)
 		{
-			ShowMessageBox(FileDialogStrings.FileNotFoundOpen, ButtonsType.Ok, MessageType.Warning,
+			ShowMessageBox(string.Format(FileDialogStrings.FileNotFoundOpen, Environment.NewLine), ButtonsType.Ok, MessageType.Warning,
 				fileName);
 		}
 

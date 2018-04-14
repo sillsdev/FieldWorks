@@ -733,8 +733,17 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			m_sdaRev.CacheStringAlt(m_dummyId, ReversalIndexEntryTags.kflidReversalForm, ws, tssEmpty);
 			// This updates the real data with the createdRevHvo. Reversal index entries in this sense will be reordered alphabetically.
 			var createdRevHvo = ConvertDummiesToReal(hvoObj);
+			if (createdRevHvo <= 0)
+			{
+				return;
+			}
 			// Refresh
 			RootBox.PropChanged(hvoIndex, kFlidEntries, count, 1, 0);
+
+			if (!m_sense.ReferringReversalIndexEntries.Any())
+			{
+				return;
+			}
 
 			// Reset selection. Handle the reordering of reversal index entries.
 			var currentEntry = m_sense.ReferringReversalIndexEntries.First(entry => entry.Hvo == createdRevHvo);

@@ -84,13 +84,13 @@ namespace LanguageExplorer.Impls
 
 		private void LoadFromSettings()
 		{
-			var appSettings = PropertyTable.GetValue<FwApplicationSettingsBase>("AppSettings");
-			if (!string.IsNullOrEmpty(appSettings.WebonaryPass))
-			{
-				RememberPassword = true;
-				Password = DecryptPassword(appSettings.WebonaryPass);
-			}
-			UserName = appSettings.WebonaryUser;
+				var appSettings = PropertyTable.GetValue<FwApplicationSettingsBase>("AppSettings");
+				if (!string.IsNullOrEmpty(appSettings.WebonaryPass))
+				{
+					RememberPassword = true;
+					Password = DecryptPassword(appSettings.WebonaryPass);
+				}
+				UserName = appSettings.WebonaryUser;
 
 			SiteName = PropertyTable.GetValue<string>(WebonarySite, null);
 			SelectedPublication = PropertyTable.GetValue<string>(WebonaryPublication, null);
@@ -109,11 +109,11 @@ namespace LanguageExplorer.Impls
 			PropertyTable.SetProperty(WebonaryReversals, CombineReversalSettingStrings(SelectedReversals), true, false);
 			if(m_selectedConfiguration != null)
 			{
-				PropertyTable.SetProperty(WebonaryConfiguration, m_selectedConfiguration, true, false);
+				PropertyTable.SetProperty(WebonaryConfiguration, m_selectedConfiguration, SettingsGroup.LocalSettings, true, false);
 			}
 			if (SelectedPublication != null)
 			{
-				PropertyTable.SetProperty(WebonaryPublication, SelectedPublication, true, false);
+				PropertyTable.SetProperty(WebonaryPublication, SelectedPublication, SettingsGroup.LocalSettings, true, false);
 			}
 			PropertyTable.SaveGlobalSettings();
 			appSettings.Save();

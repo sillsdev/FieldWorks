@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project InitialTargets="Setup" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
+<Project InitialTargets="Setup" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
 	<UsingTask TaskName="Substitute" AssemblyFile="FwBuildTasks.dll"/>
 	<UsingTask TaskName="GetSpecialFolderPath" AssemblyFile="FwBuildTasks.dll"/>
 
@@ -221,7 +221,7 @@
 	  <Output TaskParameter="Value" PropertyName="dir-nunitreport"/>
 	</CreateProperty>
 
-	<CreateProperty Value="Configuration=$(config-capital);ReferencePath=$(dir-outputBase)">
+	<CreateProperty Value="Configuration=$(config-capital);ReferencePath=$(dir-outputBase);ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch=None">
 	  <Output TaskParameter="Value" PropertyName="msbuild-props"/>
 	</CreateProperty>
 

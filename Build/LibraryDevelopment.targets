@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
 	<UsingTask TaskName="MSBuild.ExtensionPack.UI.Console" AssemblyFile="../packages/MSBuild.Extension.Pack.1.9.0/tools/net40/MSBuild.ExtensionPack.dll"/>
 	<Import Project="LibraryDevelopment.properties" Condition="Exists('LibraryDevelopment.properties')"/>
 	<Target Name="UpdateDevelopmentPropertiesFile">

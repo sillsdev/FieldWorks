@@ -171,7 +171,7 @@ namespace LanguageExplorer.Impls
 			else if (availableConfigurations.Any())
 			{
 				configurationBox.SelectedIndex = 0;
-			}
+		}
 		}
 
 		private void PopulateReversalsCheckboxListByPublication(string publication)
@@ -179,7 +179,7 @@ namespace LanguageExplorer.Impls
 			var selectedReversals = GetSelectedReversals();
 			var availableReversals = Model.Reversals.Where(prop => prop.Value.Publications.Contains(publication)
 				&& prop.Value.Label != LanguageExplorerConstants.AllReversalIndexes
-				&& !string.IsNullOrEmpty(prop.Value.WritingSystem)).Select(prop => prop.Value.Label).ToList();
+			  && !string.IsNullOrEmpty(prop.Value.WritingSystem)).Select(prop => prop.Value.Label).ToList();
 			reversalsCheckedListBox.Items.Clear();
 			foreach (var reversal in availableReversals)
 			{
@@ -196,35 +196,35 @@ namespace LanguageExplorer.Impls
 			{
 				return;
 			}
-			// Load the contents of the drop down and checkbox list controls
-			PopulatePublicationsList();
-			if(Model.RememberPassword)
-			{
-				rememberPasswordCheckbox.Checked = true;
-				webonaryPasswordTextbox.Text = Model.Password;
-			}
-			webonaryUsernameTextbox.Text = Model.UserName;
-			webonarySiteNameTextbox.Text = Model.SiteName;
-			if (!string.IsNullOrEmpty(Model.SelectedPublication))
-			{
-				publicationBox.SelectedItem = Model.SelectedPublication;
-			}
-			else
-			{
-				publicationBox.SelectedIndex = 0;
-			}
-			PopulateReversalsCheckboxListByPublication(publicationBox.SelectedItem.ToString());
-			SetSelectedReversals(Model.SelectedReversals);
+				// Load the contents of the drop down and checkbox list controls
+				PopulatePublicationsList();
+				if(Model.RememberPassword)
+				{
+					rememberPasswordCheckbox.Checked = true;
+					webonaryPasswordTextbox.Text = Model.Password;
+				}
+				webonaryUsernameTextbox.Text = Model.UserName;
+				webonarySiteNameTextbox.Text = Model.SiteName;
+				if (!string.IsNullOrEmpty(Model.SelectedPublication) && publicationBox.Items.Contains(Model.SelectedPublication))
+				{
+					publicationBox.SelectedItem = Model.SelectedPublication;
+				}
+				else
+				{
+					publicationBox.SelectedIndex = 0;
+				}
+				PopulateReversalsCheckboxListByPublication(publicationBox.SelectedItem.ToString());
+				SetSelectedReversals(Model.SelectedReversals);
 			if(!string.IsNullOrEmpty(Model.SelectedConfiguration))
-			{
-				configurationBox.SelectedItem = Model.SelectedConfiguration;
+				{
+					configurationBox.SelectedItem = Model.SelectedConfiguration;
+				}
+				else
+				{
+					configurationBox.SelectedIndex = 0;
+				}
+				UpdateEntriesToBePublishedLabel();
 			}
-			else
-			{
-				configurationBox.SelectedIndex = 0;
-			}
-			UpdateEntriesToBePublishedLabel();
-		}
 
 		private void SaveToModel()
 		{
@@ -359,7 +359,7 @@ namespace LanguageExplorer.Impls
 			if (MiscUtils.IsUnix)
 			{
 				outputLogTextbox.Size = new Size(outputLogTextbox.Size.Width, outputLogTextbox.MinimumSize.Height);
-			}
 		}
+	}
 	}
 }

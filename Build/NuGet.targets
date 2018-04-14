@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<UsingTask TaskName="DownloadFile" AssemblyFile="FwBuildTasks.dll"/> <!-- needed because DownloadNuGet is called in a separate process -->
 
 	<PropertyGroup>
@@ -61,6 +61,8 @@
 		<ForceDelete Files="$(NuGetExePath)"/>
 		<ForceDelete Files="$(fwrt)/packages/"/>
 		<ForceDelete Files="$(dir-outputBase)/Firefox/"/>
+		<ForceDelete Files="$(dir-outputBase)/Firefox-Linux64/"/>
+		<ForceDelete Files="$(dir-outputBase)/Firefox-Linux32/"/>
 		<ForceDelete Files="$(dir-outputBase)/Geckofx-*.*"/>
 		<Message Text="cleaned $(NuGetExePath) et al."/>
 	</Target>

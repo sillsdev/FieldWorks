@@ -181,7 +181,12 @@ namespace SIL.FieldWorks
 
 				#region Initialize XULRunner - required to use the geckofx WebBrowser Control (GeckoWebBrowser).
 				var exePath = Path.GetDirectoryName(Application.ExecutablePath);
-				Xpcom.Initialize(Path.Combine(exePath, "Firefox"));
+				var firefoxPath = Environment.GetEnvironmentVariable("XULRUNNER");
+				if (string.IsNullOrEmpty(firefoxPath))
+				{
+					firefoxPath = Path.Combine(exePath, "Firefox");
+				}
+				Xpcom.Initialize(firefoxPath);
 				GeckoPreferences.User["gfx.font_rendering.graphite.enabled"] = true;
 				// Set default browser for XWebBrowser to use GeckoFX.
 				// This can still be changed per instance by passing a parameter to the constructor.
@@ -2827,9 +2832,9 @@ namespace SIL.FieldWorks
 					return true;
 				}
 			}
-			catch (UnauthorizedAccessException uae)
+			catch (StartupException sue)
 			{
-				if (MiscUtils.IsUnix)
+				if (MiscUtils.IsUnix && sue.InnerException is UnauthorizedAccessException)
 				{
 					// Tell Mono user he/she needs to logout and log back in
 					MessageBox.Show(ResourceHelper.GetResourceString("ksNeedToJoinFwGroup"));

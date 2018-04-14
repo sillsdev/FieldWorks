@@ -70,7 +70,7 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to File &apos;{0}&apos; does not exist.\nDo you want to create it?.
+        ///   Looks up a localized string similar to File &apos;{0}&apos; does not exist.{1}Do you want to create it?.
         /// </summary>
         internal static string CreateFile {
             get {
@@ -79,7 +79,7 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &apos;{0}&apos;\n\nFile not found.\nCheck the file name and try again..
+        ///   Looks up a localized string similar to &apos;{0}&apos;{1}{1}File not found.{1}Check the file name and try again..
         /// </summary>
         internal static string FileNotFoundOpen {
             get {
@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to File &apos;{0}&apos; does not exist.\nVerify that the correct file name was given..
+        ///   Looks up a localized string similar to File &apos;{0}&apos; does not exist.{1}Verify that the correct file name was given..
         /// </summary>
         internal static string FileNotFoundSave {
             get {

@@ -4,6 +4,7 @@ NDependOut/
 FWXml.xpr
 GeneratedAssemblyInfo.cs
 Collection.cpp
+.vs/
 Build/FieldWorks.targets
 Build/GlobalInclude.properties
 Build/LibraryDevelopment.properties
@@ -105,6 +106,7 @@ DistFiles/Projects/
 DistFiles/Editorial\ Checks/ScrChecks.dll*
 DistFiles/Editorial\ Checks/ScrChecks.pdb
 DistFiles/Language\ Explorer/Configuration/Available\ Plugins/
+DistFiles/Language\ Explorer/Configuration/strings-*.xml
 Src/AppCore/libAppCore
 Src/DebugProcs/libDebugProcs
 Src/Generic/libGeneric

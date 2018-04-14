@@ -1469,7 +1469,8 @@ namespace LanguageExplorer.Controls.XMLViews
 					}
 					break;
 				case kfragListItemInner:
-					AddTableRow(vwenv, hvo, frag);
+					if (m_cache.ServiceLocator.ObjectRepository.IsValidObjectId(hvo))
+						AddTableRow(vwenv, hvo, frag);
 					break;
 				case kfragListItem:
 					vwenv.AddObjProp(TagMe, this, kfragListItemInner);
