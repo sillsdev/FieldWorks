@@ -1488,6 +1488,8 @@ namespace XCore
 		/// <returns></returns>
 		public XmlNode GetUnified(XmlNode main, XmlNode alteration)
 		{
+			if (main.SelectNodes("part[@ref='AsLexemeForm' and @shouldNotMerge='true']").Count > 0)
+				return main;
 			XmlNode result;
 			var key = new Tuple<XmlNode, XmlNode>(main, alteration);
 			if (!m_unifiedNodes.TryGetValue(key, out result))

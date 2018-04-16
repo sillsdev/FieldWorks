@@ -229,6 +229,19 @@ namespace XCore
 			XmlNode repeat = m_inventory.GetUnified(baseNode, alteration);
 			Assert.AreSame(unified, repeat); // ensure not generating repeatedly.
 		}
+
+		[Test]
+		public void GetUnified_SkipsShouldNotMerge()
+		{
+			XmlNode baseNode = m_inventory.GetElement("layout",
+				new string[] { "MoAffixProcess", "detail", null, "TestGetUnify3" }); // TestGetUnify3 data has shouldNotMerge="true" on its child.
+			XmlNode alteration = m_inventory.GetElement("layout",
+				new string[] { "MoAffixProcess", "detail", null, "TestGetUnify4" });
+			XmlNode unified = m_inventory.GetUnified(baseNode, alteration);
+			Assert.AreEqual(1, unified.ChildNodes.Count);
+			XmlNode repeat = m_inventory.GetUnified(baseNode, alteration);
+			Assert.AreSame(unified, repeat); // ensure not generating repeatedly.
+		}
 	}
 
 	[TestFixture]
