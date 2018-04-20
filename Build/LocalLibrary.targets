@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
+	<PropertyGroup>
+		<Icu4cBuildType Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'!='x64'">Libraries_Icu4cWin32FieldWorksContinuous</Icu4cBuildType>
+		<Icu4cBuildType Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'=='x64'">Libraries_Icu4cWin64FieldWorksContinuous</Icu4cBuildType>
+		<TeamCityUrl>https://build.palaso.org/</TeamCityUrl>
+		<LibpalasoPlatform Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'!='x64'">x86</LibpalasoPlatform>
+		<LibpalasoPlatform Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'=='x64'">x64</LibpalasoPlatform>
+		<LibpalasoPlatform Condition="'$(OS)'!='Windows_NT'">Any CPU</LibpalasoPlatform>
+		<LiblcmPlatform Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'!='x64'">x86</LiblcmPlatform>
+		<LiblcmPlatform Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'=='x64'">x64</LiblcmPlatform>
+		<LiblcmPlatform Condition="'$(OS)'!='Windows_NT'">x86</LiblcmPlatform>
+		<ChorusPlatform>Any CPU</ChorusPlatform>
+		<ConfigName Condition="'$(OS)'=='Windows_NT'">Debug</ConfigName>
+		<ConfigName Condition="'$(OS)'!='Windows_NT'">DebugMono</ConfigName>
+	</PropertyGroup>
+	<ItemGroup>
+		<!--Files needed from the Palaso library to build liblcm and chorus-->
+		<PalasoFiles Include="SIL.Core.dll" />
+		<PalasoFiles Include="SIL.Core.pdb" />
+		<PalasoFiles Include="SIL.Core.Desktop.dll" />
+		<PalasoFiles Include="SIL.Core.Desktop.pdb" />
+		<PalasoFiles Include="SIL.Lexicon.dll" />
+		<PalasoFiles Include="SIL.Lexicon.pdb" />
+		<PalasoFiles Include="SIL.WritingSystems.dll" />
+		<PalasoFiles Include="SIL.WritingSystems.pdb" />
+		<PalasoFiles Include="SIL.TestUtilities.dll" />
+		<PalasoFiles Include="Newtonsoft.Json.dll" />
+		<PalasoFiles Include="icu.net.dll" />
+		<PalasoFiles Include="Spart.dll" />
+		<IcuFiles Include="gennorm2.exe" />
+		<IcuFiles Include="icudt54.dll" />
+		<IcuFiles Include="icuin54.dll" />
+		<IcuFiles Include="icutu54.dll" />
+		<IcuFiles Include="icuuc54.dll" />
+		<!--The Chorus Library uses these-->
+		<ChorusDeps Include="SIL.Windows.Forms.dll" />
+		<ChorusDeps Include="SIL.Windows.Forms.pdb" />
+		<ChorusDeps Include="SIL.Windows.Forms.GeckoBrowserAdapter.dll" />
+		<ChorusDeps Include="SIL.Windows.Forms.GeckoBrowserAdapter.pdb" />
+		<ChorusDeps Include="SIL.Lift.dll" />
+		<ChorusDeps Include="SIL.Lift.pdb" />
+		<ChorusDeps Include="SIL.WritingSystems.Tests.dll" />
+		<ChorusDeps Include="SIL.WritingSystems.Tests.pdb" />
+	</ItemGroup>
+	<Target Name="LocalLibrary">
+		<!--Build the Palaso library-->
+		<Message Text="Building libpalaso. Artifacts will be put into: $(PalasoArtifactsDir)" />
+		<MSBuild Projects="$(PalasoArtifactsDir)/../../build/Palaso.proj"
+			Targets="Build"
+			Properties="Configuration=$(ConfigName);Platform=$(LibpalasoPlatform)"
+			ToolsVersion="15.0" />
+		<MakeDir Directories="$(LcmArtifactsDir)" />
+		<MakeDir Directories="$(LcmArtifactsDir)/../../lib/downloads/$(Platform)" Condition="'$(OS)'=='Windows_NT' "/>
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(Icu4cBuildType)" Artifacts="@(IcuFiles)" DownloadsDir="$(LcmArtifactsDir)/../../lib/downloads/$(Platform)" Condition="'$(OS)'=='Windows_NT'"/>
+		<Copy SourceFiles="@(PalasoFiles -> '$(PalasoArtifactsDir)/%(Identity)')" DestinationFolder="$(LcmArtifactsDir)/../../lib/downloads" />
+		<Message Text="Building liblcm. Artifacts will be put into: $(LcmArtifactsDir)" />
+		<MSBuild Projects="$(LcmArtifactsDir)/../../LCM.sln"
+			Targets="Rebuild"
+			Properties="Configuration=Debug;Platform=$(LiblcmPlatform);UseLocalFiles=True"
+			ToolsVersion="14.0" Condition="'$(OS)'=='Windows_NT'" />
+		<Exec Command="$(LcmArtifactsDir)/../../build.sh Debug Rebuild True" Condition="'$(OS)'!='Windows_NT'"/>
+		<Copy SourceFiles="@(PalasoFiles -> '$(PalasoArtifactsDir)/%(Identity)')" DestinationFolder="$(ChorusArtifactsDir)/../../lib/$(ConfigName)" />
+		<Copy SourceFiles="@(ChorusDeps -> '$(PalasoArtifactsDir)/%(Identity)')" DestinationFolder="$(ChorusArtifactsDir)/../../lib/$(ConfigName)" />
+		<!--Build the Chorus library-->
+		<Message Text="Building chorus. Artifacts will be put into: $(ChorusArtifactsDir)" />
+		<MSBuild Projects="$(ChorusArtifactsDir)/../../build/Chorus.proj"
+			Targets="Compile"
+			Properties="Configuration=$(ConfigName);Platform=$(ChorusPlatform)"
+			ToolsVersion="15.0" />
+	</Target>
+</Project>

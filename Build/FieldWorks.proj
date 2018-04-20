@@ -59,4 +59,5 @@
   <Import Project="Installer.targets"/>
   <Import Project="Localize.targets"/>
   <Import Project="NuGet.targets"/>
+  <Import Project="LocalLibrary.targets"/>
 </Project>
