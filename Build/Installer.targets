@@ -336,6 +336,10 @@
 			LocalFilename="$(fwrt)/$(WixLibsDir)/vcredist_2015_x64.exe"
 			Condition="!Exists('$(fwrt)/$(WixLibsDir)/vcredist_2015_x64.exe') And $(Platform)=='x64'"
 			DownloadsDir="$(fwrt)/$(WixLibsDir)"/>	<!-- VisualC++ 14 runtime -->
+		<DownloadFile Address="https://build.palaso.org/guestAuth/repository/download/FLExBridgeDevelopWin32InstallerSansPublish/.lastSuccessful/FLExBridge_Offline.exe"
+			LocalFilename="$(fwrt)/$(WixLibsDir)/FLExBridge_Offline.exe"
+			Condition="!Exists('$(fwrt)/$(WixLibsDir)/FLExBridge_Offline.exe')"
+			DownloadsDir="$(fwrt)/$(WixLibsDir)"/>	<!-- FlexBridge Installer download -->
 	</Target>
 
 	<!-- ########################################################################################################## -->
