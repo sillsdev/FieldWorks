@@ -58,7 +58,7 @@
 		<MSBuild Projects="$(LcmArtifactsDir)/../../LCM.sln"
 			Targets="Rebuild"
 			Properties="Configuration=Debug;Platform=$(LiblcmPlatform);UseLocalFiles=True"
-			ToolsVersion="14.0" Condition="'$(OS)'=='Windows_NT'" />
+			ToolsVersion="15.0" Condition="'$(OS)'=='Windows_NT'" />
 		<Exec Command="$(LcmArtifactsDir)/../../build.sh Debug Rebuild True" Condition="'$(OS)'!='Windows_NT'"/>
 		<Copy SourceFiles="@(PalasoFiles -> '$(PalasoArtifactsDir)/%(Identity)')" DestinationFolder="$(ChorusArtifactsDir)/../../lib/$(ConfigName)" />
 		<Copy SourceFiles="@(ChorusDeps -> '$(PalasoArtifactsDir)/%(Identity)')" DestinationFolder="$(ChorusArtifactsDir)/../../lib/$(ConfigName)" />
