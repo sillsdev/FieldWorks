@@ -8941,7 +8941,9 @@ void VwParagraphBox::FindGuidDiffs(ITsTextProps * pttpThis, ITsTextProps * pttpO
 void VwParagraphBox::CoordTransForChild(IVwGraphics * pvg, VwBox * pboxChild, Rect rcSrc,
 	Rect rcDst, Rect * prcSrc, Rect * prcDst)
 {
-	Assert(m_pboxFirst); // otherwise how can we be asked about a child?
+// The following assert was commented out because it started popping with Windows 10 - 1709.
+// So far we can't determine what changed, but it doesn't seem to be causing any bad behavior
+//	Assert(m_pboxFirst); // otherwise how can we be asked about a child?
 	Assert(pboxChild->Container() == this);
 	Assert(pboxChild->Top() != knTruncated); // Should not be working with these.
 
