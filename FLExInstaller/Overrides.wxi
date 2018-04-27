@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Include>
-	<Property Id="REGISTRYKEY" Value="SIL\$(var.ApplicationName)\$(var.MajorVersion)"/>
+	<Property Id="REGISTRYKEY" Value="SIL\$(var.SafeApplicationName)\$(var.MajorVersion)"/>
 	<Property Id="APPFOLDERREGSZNAME" Value="RootCodeDir"/>
+	<Property Id="DATAFOLDERREGSZNAME" Value="ProjectsDir"/>
 	<SetProperty Id="OVRAPPFOLDER" Value="[$(var.PFDir)]\SIL\$(var.SafeApplicationName) $(var.MajorVersion)\" Before="AppSearch"/>
 	<SetProperty Id="OVRHARVESTDATAFOLDER" Value="[CommonAppDataFolder]\SIL" Before="AppSearch"/>
 	<SetProperty Id="OVRDATAFOLDER" Value="[CommonAppDataFolder]\SIL\FieldWorks\Projects" Before="AppSearch"/>
