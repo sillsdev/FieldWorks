@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2017 SIL International
+﻿// Copyright (c) 2016-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -194,6 +194,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					goto case 19;
 				case 19:
 					ChangeReferringsensesToSenses(oldConfigPart);
+					goto case 20;
+				case 20:
+					UseConfigReferencedEntriesAsPrimary(oldConfigPart);
 					break;
 				default:
 					logger.WriteLine(string.Format(
@@ -212,6 +215,21 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					if (node.FieldDescription == "ReferringSenses")
 					{
 						node.FieldDescription = "SensesRS";
+					}
+				});
+			}
+		}
+
+		private static void UseConfigReferencedEntriesAsPrimary(ConfigurableDictionaryNode part)
+		{
+			if (part.FieldDescription == "ReversalIndexEntry" || part.FieldDescription == "SubentriesOS")
+			{
+				DCM.PerformActionOnNodes(part.Children, node =>
+				{
+					if (node.DisplayLabel == "Primary Entry(s)" && node.FieldDescription == "PrimarySensesOrEntries")
+					{
+						node.FieldDescription = "ConfigReferencedEntries";
+						node.CSSClassNameOverride = "referencedentries";
 					}
 				});
 			}

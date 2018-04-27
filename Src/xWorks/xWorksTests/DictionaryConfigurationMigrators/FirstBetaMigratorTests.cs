@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2017 SIL International
+﻿// Copyright (c) 2016-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -1231,6 +1231,46 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, betaModel); // SUT
 			Assert.AreNotEqual("MLHeadWord", betaModel.SharedItems[0].Children[2].Children[0].SubField);
 			Assert.Null(betaModel.SharedItems[0].Children[2].Children[0].SubField);
+		}
+
+		[Test]
+		public void MigrateFrom83AlphaToBeta10_ConfigReferencedEntriesUseAsPrimary()
+		{
+			var primaryEntries = new ConfigurableDictionaryNode
+			{
+				Label = "Primary Entry(s)",
+				FieldDescription = "PrimarySensesOrEntries",
+				CSSClassNameOverride = "primarylexemes"
+			};
+			var referencedEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Primary Entry References",
+				FieldDescription = "MainEntryRefs",
+				Children = new List<ConfigurableDictionaryNode> { primaryEntries }
+			};
+			var referencedSenses = new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Senses",
+				FieldDescription = "SensesRS",
+				Children = new List<ConfigurableDictionaryNode> { referencedEntryNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Entry",
+				FieldDescription = "ReversalIndexEntry",
+				Children = new List<ConfigurableDictionaryNode> {referencedSenses}
+			};
+			var alphaModel = new DictionaryConfigurationModel
+			{
+				Version = 20,
+				WritingSystem = "en",
+				FilePath = string.Empty,
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+			var betaModel = m_migrator.LoadBetaDefaultForAlphaConfig(alphaModel);
+			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, betaModel);
+			Assert.AreEqual("ConfigReferencedEntries", primaryEntries.FieldDescription, "Should have updated the field from 'PrimarySensesOrEntries' to 'ConfigReferencedEntries'");
+			Assert.AreEqual("referencedentries", primaryEntries.CSSClassNameOverride, "Should have changed the CSSClassNameOverride from 'primarylexemes' to 'referencedentries'");
 		}
 
 		[Test]
