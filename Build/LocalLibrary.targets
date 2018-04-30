@@ -16,23 +16,23 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<!--Files needed from the Palaso library to build liblcm and chorus-->
-		<PalasoFiles Include="SIL.Core.dll" />
-		<PalasoFiles Include="SIL.Core.pdb" />
-		<PalasoFiles Include="SIL.Core.Desktop.dll" />
-		<PalasoFiles Include="SIL.Core.Desktop.pdb" />
-		<PalasoFiles Include="SIL.Lexicon.dll" />
-		<PalasoFiles Include="SIL.Lexicon.pdb" />
-		<PalasoFiles Include="SIL.WritingSystems.dll" />
-		<PalasoFiles Include="SIL.WritingSystems.pdb" />
-		<PalasoFiles Include="SIL.TestUtilities.dll" />
-		<PalasoFiles Include="Newtonsoft.Json.dll" />
-		<PalasoFiles Include="icu.net.dll" />
-		<PalasoFiles Include="Spart.dll" />
-		<IcuFiles Include="gennorm2.exe" />
-		<IcuFiles Include="icudt54.dll" />
-		<IcuFiles Include="icuin54.dll" />
-		<IcuFiles Include="icutu54.dll" />
-		<IcuFiles Include="icuuc54.dll" />
+		<PalasoFileNamesForLL Include="SIL.Core.dll" />
+		<PalasoFileNamesForLL Include="SIL.Core.pdb" />
+		<PalasoFileNamesForLL Include="SIL.Core.Desktop.dll" />
+		<PalasoFileNamesForLL Include="SIL.Core.Desktop.pdb" />
+		<PalasoFileNamesForLL Include="SIL.Lexicon.dll" />
+		<PalasoFileNamesForLL Include="SIL.Lexicon.pdb" />
+		<PalasoFileNamesForLL Include="SIL.WritingSystems.dll" />
+		<PalasoFileNamesForLL Include="SIL.WritingSystems.pdb" />
+		<PalasoFileNamesForLL Include="SIL.TestUtilities.dll" />
+		<PalasoFileNamesForLL Include="Newtonsoft.Json.dll" />
+		<PalasoFileNamesForLL Include="icu.net.dll" />
+		<PalasoFileNamesForLL Include="Spart.dll" />
+		<IcuFileNamesForLL Include="gennorm2.exe" />
+		<IcuFileNamesForLL Include="icudt54.dll" />
+		<IcuFileNamesForLL Include="icuin54.dll" />
+		<IcuFileNamesForLL Include="icutu54.dll" />
+		<IcuFileNamesForLL Include="icuuc54.dll" />
 		<!--The Chorus Library uses these-->
 		<ChorusDeps Include="SIL.Windows.Forms.dll" />
 		<ChorusDeps Include="SIL.Windows.Forms.pdb" />
@@ -52,15 +52,15 @@
 			ToolsVersion="15.0" />
 		<MakeDir Directories="$(LcmArtifactsDir)" />
 		<MakeDir Directories="$(LcmArtifactsDir)/../../lib/downloads/$(Platform)" Condition="'$(OS)'=='Windows_NT' "/>
-		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(Icu4cBuildType)" Artifacts="@(IcuFiles)" DownloadsDir="$(LcmArtifactsDir)/../../lib/downloads/$(Platform)" Condition="'$(OS)'=='Windows_NT'"/>
-		<Copy SourceFiles="@(PalasoFiles -> '$(PalasoArtifactsDir)/%(Identity)')" DestinationFolder="$(LcmArtifactsDir)/../../lib/downloads" />
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(Icu4cBuildType)" Artifacts="@(IcuFileNamesForLL)" DownloadsDir="$(LcmArtifactsDir)/../../lib/downloads/$(Platform)" Condition="'$(OS)'=='Windows_NT'"/>
+		<Copy SourceFiles="@(PalasoFileNamesForLL -> '$(PalasoArtifactsDir)/%(Identity)')" DestinationFolder="$(LcmArtifactsDir)/../../lib/downloads" />
 		<Message Text="Building liblcm. Artifacts will be put into: $(LcmArtifactsDir)" />
 		<MSBuild Projects="$(LcmArtifactsDir)/../../LCM.sln"
 			Targets="Rebuild"
 			Properties="Configuration=Debug;Platform=$(LiblcmPlatform);UseLocalFiles=True"
 			ToolsVersion="15.0" Condition="'$(OS)'=='Windows_NT'" />
 		<Exec Command="$(LcmArtifactsDir)/../../build.sh Debug Rebuild True" Condition="'$(OS)'!='Windows_NT'"/>
-		<Copy SourceFiles="@(PalasoFiles -> '$(PalasoArtifactsDir)/%(Identity)')" DestinationFolder="$(ChorusArtifactsDir)/../../lib/$(ConfigName)" />
+		<Copy SourceFiles="@(PalasoFileNamesForLL -> '$(PalasoArtifactsDir)/%(Identity)')" DestinationFolder="$(ChorusArtifactsDir)/../../lib/$(ConfigName)" />
 		<Copy SourceFiles="@(ChorusDeps -> '$(PalasoArtifactsDir)/%(Identity)')" DestinationFolder="$(ChorusArtifactsDir)/../../lib/$(ConfigName)" />
 		<!--Build the Chorus library-->
 		<Message Text="Building chorus. Artifacts will be put into: $(ChorusArtifactsDir)" />
