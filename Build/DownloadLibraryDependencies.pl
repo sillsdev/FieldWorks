@@ -23,21 +23,28 @@ if ($osName eq "linux") {
 }
 my $xml = new XML::Simple;
 my $data = $xml->XMLin("LibraryDevelopment.properties");
-
 my $palasoArtifactsDir = "$data->{PropertyGroup}->{'PalasoArtifactsDir'}->{content}";
 my $chorusArtifactsDir = "$data->{PropertyGroup}->{'ChorusArtifactsDir'}->{content}";
+my $useLocal = "$data->{PropertyGroup}->{'UseLocalLibraries'}";
 print "Downloading libpalaso dependencies...\n";
 
 # Look for "output" in the path and take everything before it
-$palasoArtifactsDir =~ m/output/;
+if (not $palasoArtifactsDir =~ m/output/) {
+	die "Error: Expected to find 'output' in the libpalaso artifacts path. Check the LibraryDevelopment.properties file.\n";
+}
 my $palasoBase = "$`";
 # Replace backslashes with forward slashes
 $palasoBase =~ s/\\/\//g;
 system($palasoBase . "build/buildupdate.$extension");
 print "Finished downloading libpalaso dependencies.\n";
 print "Downloading chorus dependencies...\n";
-$chorusArtifactsDir =~ m/output/;
+if (not $chorusArtifactsDir =~ m/output/) {
+	die "Error: Expected to find 'output' in the chorus artifacts path. Check the LibraryDevelopment.properties file.\n";
+}
 my $chorusBase = "$`";
 $chorusBase =~ s/\\/\//g;
 system($chorusBase . "build/buildupdate.$extension");
 print "Finished downloading chorus dependencies.\n";
+if ($useLocal ne "Y") {
+	print "\nWARNING: FieldWorks is not set to build using local libraries. Edit the LibraryDevelopment.properties file to change this.\n";
+}
