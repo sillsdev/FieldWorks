@@ -1,0 +1,8 @@
+Verified+1: Jenkins CI <jenkins@sil.org>
+Code-Review+2: Jason Naylor <jason_naylor@sil.org>
+Verified-Linux+1: Jenkins CI <jenkins@sil.org>
+Submitted-by: Automatic Submission <gerrit@sil.org>
+Submitted-at: Mon, 30 Apr 2018 16:57:55 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/6148
+Project: FieldWorks
+Branch: refs/heads/develop
