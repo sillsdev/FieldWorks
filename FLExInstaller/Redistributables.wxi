@@ -11,7 +11,7 @@
 					 Value="Installed"
 					 Result="value"/>
 		<PackageGroup Id="FlexBridgeInstaller">
-			<ExePackage Id="FBInstaller" Cache="no" PerMachine="yes" Vital="yes" Compressed="no" Permanent="yes"
+			<ExePackage Id="FBInstaller" Cache="no" PerMachine="yes" Vital="yes" Compressed="yes" Permanent="yes"
 				  Name="FLExBridge_Offline.exe"
 				  SourceFile="..\libs\FLExBridge_Offline.exe"
 				  InstallCommand="/Q /norestart"
