@@ -13,6 +13,7 @@ BUILD_PRODUCT = FieldWorks
 include $(BUILD_ROOT)/Bld/_init.mak.lnx
 SHELL=/bin/bash
 BITS := $(shell test `arch` = x86_64 && echo 64 || echo 32)
+PLATFORM := $(shell test `arch` = x86_64 && echo x64 || echo x86)
 
 all:
 
@@ -359,7 +360,7 @@ Fw-build-package:
 	. environ && \
 	cd $(BUILD_ROOT)/Build \
 		&& xbuild /t:refreshTargets \
-		&& xbuild '/t:remakefw' /property:config=release /property:packaging=yes \
+		&& xbuild '/t:remakefw' /property:config=release /property:Platform=$(PLATFORM) /p:property:packaging=yes \
 		&& ./multitry xbuild '/t:localize-binaries' /property:config=release /property:packaging=yes
 
 Fw-build-package-fdo:
