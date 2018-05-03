@@ -171,6 +171,8 @@
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Windows\**\*"/>
 			<IcuFiles Include="$(fwrt)\DistFiles\Icu$(IcuVersion)\**\*"/>
 			<InstallerResources Include="$(fwrt)\License.htm"/>
+			<InstallerResources Include="$(fwrt)\resources\App.ico"/>
+			<InstallerResources Include="$(fwrt)\resources\Installer.ico"/>
 			<!-- If you change this list, you must also update those listed at $(fwrt)\Localizations\ReadMe.md -->
 			<L10nFiles Include="$(OutputDirForConfig)\az\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\es\**\*"/>
