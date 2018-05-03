@@ -323,6 +323,10 @@
 			LocalFilename="$(fwrt)/$(WixLibsDir)/vcredist_2015_x86.exe"
 			Condition="!Exists('$(fwrt)/$(WixLibsDir)/vcredist_2015_x86.exe') And $(Platform)!='x64'"
 			DownloadsDir="$(fwrt)/$(WixLibsDir)"/>	<!-- VisualC++ 14 runtime -->
+		<DownloadFile Address="https://download.visualstudio.microsoft.com/download/pr/11687613/88b50ce70017bf10f2d56d60fcba6ab1/VC_redist.x86.exe"
+			LocalFilename="$(fwrt)/$(WixLibsDir)/vcredist_2017_x86.exe"
+			Condition="!Exists('$(fwrt)/$(WixLibsDir)/vcredist_2017_x86.exe') And $(Platform)!='x64'"
+			DownloadsDir="$(fwrt)/$(WixLibsDir)"/>	<!-- VisualC++ 14.1 runtime -->
 		<!-- 64bit redistributables -->
 		<DownloadFile Address="https://download.microsoft.com/download/d/2/4/d242c3fb-da5a-4542-ad66-f9661d0a8d19/vcredist_x64.exe	"
 			LocalFilename="$(fwrt)/$(WixLibsDir)/vcredist_2008_x64.exe"
@@ -344,6 +348,10 @@
 			LocalFilename="$(fwrt)/$(WixLibsDir)/vcredist_2015_x64.exe"
 			Condition="!Exists('$(fwrt)/$(WixLibsDir)/vcredist_2015_x64.exe') And $(Platform)=='x64'"
 			DownloadsDir="$(fwrt)/$(WixLibsDir)"/>	<!-- VisualC++ 14 runtime -->
+		<DownloadFile Address="https://download.visualstudio.microsoft.com/download/pr/11687625/2cd2dba5748dc95950a5c42c2d2d78e4/VC_redist.x64.exe"
+			LocalFilename="$(fwrt)/$(WixLibsDir)/vcredist_2017_x64.exe"
+			Condition="!Exists('$(fwrt)/$(WixLibsDir)/vcredist_2017_x64.exe') And $(Platform)=='x64'"
+			DownloadsDir="$(fwrt)/$(WixLibsDir)"/>	<!-- VisualC++ 14.1 runtime -->
 		<DownloadFile Address="https://build.palaso.org/guestAuth/repository/download/FLExBridgeDevelopWin32InstallerSansPublish/.lastSuccessful/FLExBridge_Offline.exe"
 			LocalFilename="$(fwrt)/$(WixLibsDir)/FLExBridge_Offline.exe"
 			Condition="!Exists('$(fwrt)/$(WixLibsDir)/FLExBridge_Offline.exe')"

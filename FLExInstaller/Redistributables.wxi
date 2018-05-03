@@ -26,7 +26,7 @@
 			<PackageGroupRef Id="redist_vc10" />
 			<PackageGroupRef Id="redist_vc11" />
 			<PackageGroupRef Id="redist_vc12" />
-			<PackageGroupRef Id="redist_vc15" />
+			<PackageGroupRef Id="redist_vc17" />
 			<PackageGroupRef Id="FlexBridgeInstaller" />
 		</PackageGroup>
 	</Fragment>
