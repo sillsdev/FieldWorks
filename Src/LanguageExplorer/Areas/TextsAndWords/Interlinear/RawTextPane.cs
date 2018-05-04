@@ -29,7 +29,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		XmlNode m_configurationParameters;
 		private ShowSpaceDecorator m_showSpaceDa;
 		private bool m_fClickInsertsZws; // true for the special mode where click inserts a zero-width space
-		private int m_lastWidth;
 
 		private IVwStylesheet m_flexStylesheet;
 		private IVwStylesheet m_teStylesheet;
@@ -322,7 +321,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// Receives the broadcast message "PropertyChanged"
 		/// </summary>
 		public void OnPropertyChanged(string name)
-			{
+		{
 			bool newVal; // used in two cases below
 			switch (name)
 			{
@@ -510,9 +509,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected override void OnLayout(LayoutEventArgs levent)
 		{
-			if (string.IsNullOrEmpty(Parent?.Text) || m_lastWidth == Parent.Width)
+			if (Parent == null && string.IsNullOrEmpty(levent.AffectedProperty))
 			{
-				// width is meaningless or has already been calculated; no point in doing extra work
+				// width is meaningless, no point in doing extra work
 				return;
 			}
 			// In a tab page this panel occupies the whole thing, so layout is wasted until
@@ -521,8 +520,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-			//Save width avoid extra layout calls
-			m_lastWidth = Parent.Width;
 			base.OnLayout(levent);
 		}
 

@@ -2003,6 +2003,11 @@ namespace LanguageExplorer.Controls.DetailControls
 						// probably not needed, but safe...
 						if (ler.PrimaryLexemesRS.Contains(ContainingDataTree.Root))
 							ler.PrimaryLexemesRS.Remove(ContainingDataTree.Root);
+
+						ILexEntry entry;
+						entry = (ILexEntry)m_cache.ServiceLocator.GetObject(ler.OwningEntry.Hvo);
+						if (entry.EntryRefsOS.Contains(ler))
+							entry.EntryRefsOS.Remove(ler);
 					});
 				}
 			}

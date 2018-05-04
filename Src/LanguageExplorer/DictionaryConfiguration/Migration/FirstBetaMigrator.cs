@@ -142,7 +142,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 				if (IsComplexFormsNode(config.Parts[i]))
 				{
 					config.Parts.RemoveAt(i);
-				}
+		}
 			}
 		}
 
@@ -190,6 +190,9 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 					goto case 19;
 				case 19:
 					ChangeReferringsensesToSenses(oldConfigPart);
+					goto case 20;
+				case 20:
+					UseConfigReferencedEntriesAsPrimary(oldConfigPart);
 					break;
 				default:
 					logger.WriteLine($"Unable to migrate {oldConfigPart.Label}: no migration instructions for version {oldVersion}");
@@ -212,6 +215,20 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			}
 		}
 
+		private static void UseConfigReferencedEntriesAsPrimary(ConfigurableDictionaryNode part)
+		{
+			if (part.FieldDescription == "ReversalIndexEntry" || part.FieldDescription == "SubentriesOS")
+			{
+				DictionaryConfigurationServices.PerformActionOnNodes(part.Children, node =>
+				{
+					if (node.DisplayLabel == "Primary Entry(s)" && node.FieldDescription == "PrimarySensesOrEntries")
+					{
+						node.FieldDescription = "ConfigReferencedEntries";
+						node.CSSClassNameOverride = "referencedentries";
+					}
+				});
+			}
+		}
 
 		/// <summary>
 		/// Case FirstAlphaMigrator.VersionAlpha3 above will pull in all the new nodes in the Etymology cluster by Label.
@@ -329,36 +346,36 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 					continue;
 				}
 				var newFName = Path.Combine(Path.GetDirectoryName(fName), wsValue + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
-				if (wsValue == Path.GetFileNameWithoutExtension(fName))
+					if (wsValue == Path.GetFileNameWithoutExtension(fName))
 				{
-					continue;
+						continue;
 				}
-				if (!File.Exists(newFName))
-				{
-					File.Move(fName, newFName);
-				}
-				else
-				{
+					if (!File.Exists(newFName))
+					{
+						File.Move(fName, newFName);
+					}
+					else
+					{
 					var files = Directory.GetFiles(Path.GetDirectoryName(fName));
 					var count = 0;
 					for (var i = 0; i < files.Length; i++)
-					{
-						if (Path.GetFileNameWithoutExtension(files[i]).StartsWith(wsValue))
 						{
-							var m = Regex.Match(Path.GetFileName(files[i]), wsValue + @"\d*\.");
-							if (m.Success)
+							if (Path.GetFileNameWithoutExtension(files[i]).StartsWith(wsValue))
 							{
-								count++;
+							var m = Regex.Match(Path.GetFileName(files[i]), wsValue + @"\d*\.");
+								if (m.Success)
+								{
+									count++;
+								}
 							}
 						}
-					}
 
 					newFName = $"{wsValue}{count}{LanguageExplorerConstants.DictionaryConfigurationFileExtension}";
-					newFName = Path.Combine(Path.GetDirectoryName(fName), newFName);
-					File.Move(fName, newFName);
+						newFName = Path.Combine(Path.GetDirectoryName(fName), newFName);
+						File.Move(fName, newFName);
+					}
 				}
 			}
-		}
 
 		/// <summary>
 		/// Reads the .fwdictconfig config file and gets the writing system name and version
@@ -400,7 +417,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			// REVIEW (Hasso) 2017.03: If this is a NoteInParaStyles node: Rather than overwriting the user's Options, copy their Options into a new WS&ParaOptions
 			if ((destinationNode.DictionaryNodeOptions == null ||
 			    DictionaryConfigurationModel.NoteInParaStyles.Contains(sourceNode.FieldDescription)) &&
-			    sourceNode.DictionaryNodeOptions != null)
+				sourceNode.DictionaryNodeOptions != null)
 			{
 				destinationNode.DictionaryNodeOptions = sourceNode.DictionaryNodeOptions;
 			}
@@ -502,7 +519,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 				if (child.Children != null)
 				{
 					possibleMatches.AddRange(child.Children);
-				}
+			}
 			}
 			return possibleMatches.FirstOrDefault(n => n.Label == label);
 		}
@@ -523,8 +540,8 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 				else
 				{
 					destinationParentNode.Children.Add(newChildNode);
-				}
 			}
+		}
 		}
 
 		/// <summary>LT-18286: One Sharing Parent in Hybrid erroneously got direct children (from a migration step). Remove them.</summary>

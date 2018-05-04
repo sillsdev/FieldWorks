@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include xmlns="http://schemas.microsoft.com/wix/2006/wi"
+		xmlns:bal="http://schemas.microsoft.com/wix/BalExtension"
+		xmlns:util="http://schemas.microsoft.com/wix/UtilExtension"
+		xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension"
+		xmlns:dep="http://schemas.microsoft.com/wix/DependencyExtension">
+	<Fragment>
+		<util:RegistrySearch Root="HKLM"
+					 Key="SOFTWARE\WOW6432Node\SIL\FLEx Bridge\9"
+					 Variable="FLExBridge"
+					 Value="Installed"
+					 Result="value"/>
+		<PackageGroup Id="FlexBridgeInstaller">
+			<ExePackage Id="FBInstaller" Cache="no" PerMachine="yes" Vital="yes" Compressed="yes" Permanent="yes"
+				  Name="FLExBridge_Offline.exe"
+				  SourceFile="..\libs\FLExBridge_Offline.exe"
+				  InstallCommand="/Q /norestart"
+				  DetectCondition="FLExBridge">
+			</ExePackage>
+		</PackageGroup>
+	</Fragment>
+
+	<Fragment>
+		<PackageGroup Id="vcredists">
+			<PackageGroupRef Id="redist_vc8" />
+			<PackageGroupRef Id="redist_vc10" />
+			<PackageGroupRef Id="redist_vc11" />
+			<PackageGroupRef Id="redist_vc12" />
+			<PackageGroupRef Id="redist_vc17" />
+			<PackageGroupRef Id="FlexBridgeInstaller" />
+		</PackageGroup>
+	</Fragment>
+</Include>
+<!--
+ATL x86 https://download.microsoft.com/download/A/5/3/A53B40CA-F75C-4678-852A-3C15EA82F186/vcredist_x86.exe
+ATL x64 https://download.microsoft.com/download/A/5/3/A53B40CA-F75C-4678-852A-3C15EA82F186/vcredist_x64.exe
+-->

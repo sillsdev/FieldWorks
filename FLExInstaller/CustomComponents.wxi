@@ -18,6 +18,19 @@
 		</Directory>
 	</DirectoryRef>
 
+	<DirectoryRef Id="TARGETDIR">
+		<Component Id="FwPath" Guid="53E0A9D8-9477-423a-89A9-F6BC3FAC4F40">
+			<Environment Id="FwPath" Name="PATH" Action="set" System="yes" Part="first" Value="[INSTALLDIR]" />
+		</Component>
+		<Component Id="FwInstallDir" Guid="A7FB26F2-4219-4C79-A16A-811DEAB111FE">
+			<Environment Id="FwInstallDir" Name="FIELDWORKSDIR" Action="set" System="yes" Value="[INSTALLDIR]" />
+		</Component>
+	</DirectoryRef>
+	<ComponentGroup Id="FwEnvironmentVars">
+		<ComponentRef Id="FwPath"/>
+		<ComponentRef Id="FwInstallDir"/>
+	</ComponentGroup>
+
 	<DirectoryRef  Id='APPFOLDER'>
 		<?if $(sys.BUILDARCH) = x64 ?>
 		<Merge Id="CC_DLL" Language="1033" SourceFile="$(var.EncodingConvertersPath)\CcDLLs64bitMM.msm" DiskId="1"/>

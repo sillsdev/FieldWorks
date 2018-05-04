@@ -19,7 +19,7 @@ namespace LanguageExplorerTests {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class LanguageExplorerTestsResources {
@@ -61,24 +61,110 @@ namespace LanguageExplorerTests {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+        ///&lt;Pieces&gt;
+        ///  &lt;layout class=&quot;LexEntry&quot; type=&quot;Detail&quot; name=&quot;Test1&quot;&gt;
+        ///	&lt;part ref=&quot;CitationForm&quot; label=&quot;Test2&quot;/&gt;
+        ///	&lt;part ref=&quot;Senses&quot;&gt;
+        ///		&lt;part ref=&quot;Synonyms&quot; param=&quot;TestingParam&quot;/&gt;
+        ///		&lt;indent&gt;
+        ///			&lt;part ref=&quot;Antonymns&quot;/&gt;
+        ///		&lt;/indent&gt;
+        ///	&lt;/part&gt;
+        ///
+        ///  &lt;/layout&gt;
+        ///  &lt;part ref=&quot;Gloss&quot;/&gt;
+        ///  &lt;part id=&quot;blah&quot;/&gt;
+        ///  &lt;layout name=&quot;nonsense&quot;/&gt;
+        ///  &lt;part ref=&quot;Synonyms&quot;/&gt;
+        ///&lt;/Pieces&gt;
+        ///.
+        /// </summary>
+        internal static string CreateOverrideTestData__CreateOverrideTestData_xml {
+            get {
+                return ResourceManager.GetString("CreateOverrideTestData__CreateOverrideTestData_xml", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
         ///&lt;ArrayOfProperty xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
         ///	&lt;Property&gt;
         ///		&lt;name&gt;db$TestLocal$BooleanPropertyA&lt;/name&gt;
         ///		&lt;value xsi:type=&quot;xsd:boolean&quot;&gt;true&lt;/value&gt;
-        ///		&lt;doPersist&gt;true&lt;/doPersist&gt;
-        ///		&lt;doDispose&gt;false&lt;/doDispose&gt;
         ///	&lt;/Property&gt;
         ///	&lt;Property&gt;
         ///		&lt;name&gt;db$TestLocal$BooleanPropertyB&lt;/name&gt;
         ///		&lt;value xsi:type=&quot;xsd:boolean&quot;&gt;false&lt;/value&gt;
-        ///		&lt;doPersist&gt;true&lt;/doPersist&gt;
-        ///		&lt;doDispose&gt;false&lt;/doDispose&gt;
-        ///	&lt;/ [rest of string was truncated]&quot;;.
+        ///	&lt;/Property&gt;
+        ///	&lt;Property&gt;
+        ///		&lt;name&gt;db$TestLocal$BestBooleanPropertyB&lt;/name&gt;
+        ///		&lt;value xsi:type=&quot;xsd:boolean&quot;&gt;false&lt;/value&gt;
+        ///	&lt;/Pr [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string db_TestLocal_Settings_xml {
             get {
                 return ResourceManager.GetString("db_TestLocal_Settings_xml", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;layoutInventory&gt;
+        ///	&lt;layout class=&quot;LexSense&quot; type=&quot;jtview&quot; name=&quot;Test1&quot; match=&quot;test1&quot;&gt;
+        ///		&lt;group label=&quot;main&quot; ws=&quot;vernacular&quot; rubbish=&quot;nonsense&quot; dummy=&quot;base&quot;&gt;
+        ///		&lt;/group&gt;
+        ///	&lt;/layout&gt;
+        ///	&lt;layout class=&quot;LexSense&quot; type=&quot;jtview&quot; name=&quot;Test2&quot; match=&quot;test2&quot;&gt;
+        ///	&lt;/layout&gt;
+        ///	&lt;layout class=&quot;LexEntry&quot; type=&quot;jtview&quot; name=&quot;Test1&quot; match=&quot;test3&quot; visible=&quot;always&quot; ws=&quot;vernacular&quot;&gt;
+        ///		&lt;group label=&quot;main&quot;&gt;
+        ///			&lt;part ref=&quot;LexEntry-Jt-Citationform&quot; visible=&quot;always&quot; ws=&quot;vernacular&quot;/&gt;
+        ///			&lt; [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string InventoryBaseTestFiles__Base1Layouts_xml {
+            get {
+                return ResourceManager.GetString("InventoryBaseTestFiles__Base1Layouts_xml", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;layoutInventory&gt;
+        ///	&lt;layout class=&quot;LexSense&quot; type=&quot;jtview&quot; name=&quot;Test3&quot; match=&quot;test6&quot;&gt;
+        ///	&lt;/layout&gt;
+        ///	&lt;layout class=&quot;LexSense&quot; type=&quot;jtview&quot; name=&quot;Test4&quot; match=&quot;test7&quot;&gt;
+        ///	&lt;/layout&gt;
+        ///	&lt;layout class=&quot;LexEntry&quot; type=&quot;jtview&quot; name=&quot;Test3&quot; match=&quot;test8&quot;&gt;
+        ///	&lt;/layout&gt;
+        ///	&lt;layout class=&quot;LexSense&quot; type=&quot;detail&quot; name=&quot;Test4&quot; match=&quot;test9&quot;&gt;
+        ///	&lt;/layout&gt;
+        ///	&lt;part class=&quot;LexSense&quot; type=&quot;jtview&quot; name=&quot;Test3&quot; match=&quot;test10&quot;&gt;
+        ///	&lt;/part&gt;
+        ///&lt;/layoutInventory&gt;.
+        /// </summary>
+        internal static string InventoryBaseTestFiles__Base2Layouts_xml {
+            get {
+                return ResourceManager.GetString("InventoryBaseTestFiles__Base2Layouts_xml", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;layoutInventory&gt;
+        ///	&lt;layout class=&quot;LexSense&quot; type=&quot;jtview&quot; name=&quot;Test2&quot; match=&quot;test2D&quot;&gt;
+        ///	&lt;/layout&gt;
+        ///	&lt;layout class=&quot;LexEntry&quot; type=&quot;jtview&quot; name=&quot;Test3D&quot; match=&quot;test3D&quot;&gt;
+        ///	&lt;/layout&gt;
+        ///	&lt;layout class=&quot;LexEntry&quot; type=&quot;jtview&quot; name=&quot;Test1D&quot; match=&quot;test1D&quot; base=&quot;Test1&quot; visible=&quot;never&quot; dummy=&quot;true&quot;&gt;
+        ///		&lt;group label=&quot;main&quot;&gt;
+        ///			&lt;part ref=&quot;LexEntry-Jt-Citationform&quot; ws=&quot;technical&quot; part=&quot;default&quot;/&gt;
+        ///			&lt;part ref=&quot;LexEntry-Jt-Forms&quot; visible=&quot;always&quot; part=&quot;default&quot;/&gt;
+        ///		&lt;/group [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string InventoryLaterTestFiles__Override1Layouts_xml {
+            get {
+                return ResourceManager.GetString("InventoryLaterTestFiles__Override1Layouts_xml", resourceCulture);
             }
         }
         
@@ -88,17 +174,17 @@ namespace LanguageExplorerTests {
         ///  &lt;Property&gt;
         ///	&lt;name&gt;BooleanPropertyA&lt;/name&gt;
         ///	&lt;value xsi:type=&quot;xsd:boolean&quot;&gt;false&lt;/value&gt;
-        ///	&lt;doPersist&gt;true&lt;/doPersist&gt;
-        ///	&lt;doDispose&gt;false&lt;/doDispose&gt;
         ///  &lt;/Property&gt;
         ///  &lt;Property&gt;
         ///	&lt;name&gt;BooleanPropertyB&lt;/name&gt;
         ///	&lt;value xsi:type=&quot;xsd:boolean&quot;&gt;true&lt;/value&gt;
-        ///	&lt;doPersist&gt;true&lt;/doPersist&gt;
-        ///	&lt;doDispose&gt;false&lt;/doDispose&gt;
         ///  &lt;/Property&gt;
         ///  &lt;Property&gt;
-        ///	&lt;nam [rest of string was truncated]&quot;;.
+        ///	&lt;name&gt;BestBooleanPropertyA&lt;/name&gt;
+        ///	&lt;value xsi:type=&quot;xsd:boolean&quot;&gt;true&lt;/value&gt;
+        ///  &lt;/Property&gt;
+        ///  &lt;Property&gt;
+        ///	&lt;name&gt;IntegerPro [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Settings_xml {
             get {

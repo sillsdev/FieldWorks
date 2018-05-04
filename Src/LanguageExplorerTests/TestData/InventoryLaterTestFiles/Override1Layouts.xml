@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<layoutInventory>
+	<layout class="LexSense" type="jtview" name="Test2" match="test2D">
+	</layout>
+	<layout class="LexEntry" type="jtview" name="Test3D" match="test3D">
+	</layout>
+	<layout class="LexEntry" type="jtview" name="Test1D" match="test1D" base="Test1" visible="never" dummy="true">
+		<group label="main">
+			<part ref="LexEntry-Jt-Citationform" ws="technical" part="default"/>
+			<part ref="LexEntry-Jt-Forms" visible="always" part="default"/>
+		</group>
+		<group label="second" reorder="true">
+			<part ref="LexEntry-Jt-Forms" visible="always" part="default"/>
+			<part ref="LexEntry-Jt-Citationform" ws="technical" part="default"/>
+		</group>
+		<group label="third" reorder="false">
+			<part ref="LexEntry-Jt-Senses" visible="never"/>
+		</group>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="Test5D" match="test5D" base="Test1D" visible="never" dummy="true">
+		<group label="main">
+			<part ref="LexEntry-Jt-Forms" visible="ifdata"/>
+		</group>
+	</layout>
+	<layout class="LexSense" type="jtview" name="Test8D" match="test8D" base="Test1">
+		<group label="main" rubbish="goodstuff">
+		</group>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="DerivedForOverride" base="DerivedForOverride" match="DO3">
+		<group label="second" rubbish="nonsense">
+		</group>
+	</layout>
+
+	<layout class="LexSense" type="jtview" name="Test1" match="test7D" base="Test1" visible="never" dummy="true">
+		<group label="main" ws="analysis">
+		</group>
+	</layout>
+</layoutInventory>

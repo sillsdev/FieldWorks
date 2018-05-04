@@ -141,7 +141,7 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// This should only be used by MakeUi.
 		/// </summary>
-		internal CmObjectUi()
+		protected CmObjectUi()
 		{
 		}
 
@@ -824,7 +824,7 @@ namespace LanguageExplorer.LcmUi
 		/// Do any cleanup that involves interacting with the user, after the user has confirmed that our object should be
 		/// deleted.
 		/// </summary>
-		protected virtual bool DoRelatedCleanupForDeleteObject()
+		protected virtual void DoRelatedCleanupForDeleteObject()
 		{
 			// For media and pictures: should we delete the file also?
 			// arguably this should be on a subclass, but it's easier to share behavior for both here.
@@ -842,9 +842,9 @@ namespace LanguageExplorer.LcmUi
 			else if (m_obj != null)
 			{
 				// No cleanup needed
-				return true;
+				return;
 			}
-			return ConsiderDeletingRelatedFile(file, PropertyTable);
+			ConsiderDeletingRelatedFile(file, PropertyTable);
 		}
 
 		public static bool ConsiderDeletingRelatedFile(ICmFile file, IPropertyTable propertyTable)
@@ -900,10 +900,8 @@ namespace LanguageExplorer.LcmUi
 			Logger.WriteEvent("Deleting '" + Object.ShortName + "'...");
 			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(LcmUiStrings.ksUndoDelete, LcmUiStrings.ksRedoDelete, m_cache.ActionHandlerAccessor, () =>
 			{
-				if (DoRelatedCleanupForDeleteObject())
-				{
-					Object.Cache.DomainDataByFlid.DeleteObj(Object.Hvo);
-				}
+				DoRelatedCleanupForDeleteObject();
+				Object.Cache.DomainDataByFlid.DeleteObj(Object.Hvo);
 			});
 			Logger.WriteEvent("Done Deleting.");
 			m_obj = null;

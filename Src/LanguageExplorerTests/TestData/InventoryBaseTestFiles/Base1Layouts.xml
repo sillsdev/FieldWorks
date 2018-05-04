@@ -37,14 +37,5 @@
 		<group label="main" visibility="always"/>
 		<group label="third"/>
 	</layout>
-  <layout class="MoAffixProcess" type="detail" name="TestGetUnify3">
-    <part ref="AsLexemeForm" shouldNotMerge="true" label="Lexeme Form" expansion="expanded">
-      <part ref="IsAbstractBasic" visibility="always" />
-    </part>
-  </layout>
-  <layout class="MoAffixProcess" type="detail" name="TestGetUnify4">
-    <part ref="AsLexemeForm">
-      <part ref="PhoneEnvBasic" visibility="always" />
-    </part>
-  </layout>
+
 </layoutInventory>

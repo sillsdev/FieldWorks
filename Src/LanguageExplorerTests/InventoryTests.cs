@@ -1,24 +1,18 @@
-// Copyright (c) 2003-2015 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: InventoryTests.cs
-// Responsibility: John Thomson
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
-// --------------------------------------------------------------------------------------------
+
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
-using SIL.Utils;
-using System.Resources;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using LanguageExplorer;
+using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.Xml;
 
-namespace SIL.FieldWorks.Common.FwUtils
+namespace LanguageExplorerTests
 {
 	/// <summary>
 	/// Summary description for XmlUtilsTest.
@@ -26,60 +20,57 @@ namespace SIL.FieldWorks.Common.FwUtils
 	[TestFixture]
 	public class InventoryTests : TestBaseForTestsThatCreateTempFilesBasedOnResources
 	{
-		Inventory m_inventory;
+		Inventory _inventory;
 
 		/// <summary>
 		/// Initialize everything...individual tests check what we got.
 		/// </summary>
 		[TestFixtureSetUp]
-		public void Setup()
+		public override void FixtureSetup()
 		{
-			Dictionary<string, string[]> keyAttrs = new Dictionary<string, string[]>();
-			keyAttrs["layout"] = new[] {"class", "type", "mode", "name" };
-			keyAttrs["group"] = new[] {"label"};
-			keyAttrs["part"] = new[] {"ref"};
-
-			string testPathBase = CreateTempTestFiles(typeof(Properties.Resources), "InventoryBaseTestFiles");
-			string testPathLater = CreateTempTestFiles(typeof(Properties.Resources), "InventoryLaterTestFiles");
-
-			m_inventory = new Inventory(new[] {testPathBase, testPathLater},
-				"*Layouts.xml", "/layoutInventory/*", keyAttrs, "InventoryTests", "projectPath");
-		}
-
-		/// <summary />
-		protected override ResourceManager ResourceMgr
-		{
-			get
+			var keyAttrs = new Dictionary<string, string[]>
 			{
-				return Properties.Resources.ResourceManager;
-			}
+				["layout"] = new[] { "class", "type", "mode", "name" },
+				["group"] = new[] { "label" },
+				["part"] = new[] { "ref" }
+			};
+
+			var testPathBase = CreateTempTestFiles(typeof(LanguageExplorerTestsResources), "InventoryBaseTestFiles");
+			var testPathLater = CreateTempTestFiles(typeof(LanguageExplorerTestsResources), "InventoryLaterTestFiles");
+			_inventory = new Inventory(new[] {testPathBase, testPathLater}, "*Layouts.xml", "/layoutInventory/*", keyAttrs, "InventoryTests", "projectPath");
+
+			base.FixtureSetup();
 		}
 
-		XElement CheckNode(string name, string[] keyvals, string target)
+		private XElement CheckNode(string name, string[] keyvals, string target)
 		{
-			var node = m_inventory.GetElement(name, keyvals);
+			var node = _inventory.GetElement(name, keyvals);
 			Check(node, target);
 			return node;
 		}
 
-		static void Check(XElement node, string target)
+		private static void Check(XElement element, string target)
 		{
-			if (node == null)
-				Assert.IsNotNull(node, "expected node not found: " + target);
-			var match = node.Attribute("match");
+			if (element == null)
+			{
+				Assert.IsNotNull(element, "expected node not found: " + target);
+			}
+			var match = element.Attribute("match");
 			if (match == null)
+			{
 				Assert.IsNotNull(match, "expected node lacks match attr: " + target);
-			Assert.AreEqual(target, node.Attribute("match").Value);
+			}
+			Assert.AreEqual(target, element.Attribute("match").Value);
 		}
-		void CheckBaseNode(string name, string[] keyvals, string target)
+
+		private void CheckBaseNode(string name, string[] keyvals, string target)
 		{
-			var node = m_inventory.GetBase(name, keyvals);
-			Check(node, target);
+			Check(_inventory.GetBase(name, keyvals), target);
 		}
-		void CheckAlterationNode(string name, string[] keyvals, string target)
+
+		private void CheckAlterationNode(string name, string[] keyvals, string target)
 		{
-			var node = m_inventory.GetAlteration(name, keyvals);
-			Check(node, target);
+			Check(_inventory.GetAlteration(name, keyvals), target);
 		}
 
 		/// <summary>
@@ -103,14 +94,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 			CheckNode("layout", new[] {"LexSense", "jtview", null, "Test2"}, "test2D");
 		}
 
-		static void VerifyAttr(XElement node, string attr, string val)
+		private static void VerifyAttr(XElement element, string attr, string val)
 		{
-			Assert.AreEqual(val, XmlUtils.GetOptionalAttributeValue(node, attr));
+			Assert.AreEqual(val, XmlUtils.GetOptionalAttributeValue(element, attr));
 		}
 
 		// Verifies that parent's index'th child has the specified value for the specified attribute.
 		// Returns the child.
-		static XElement VerifyChild(XContainer parent, int index, string attr, string val)
+		private static XElement VerifyChild(XElement parent, int index, string attr, string val)
 		{
 			Assert.IsTrue(parent.Elements().Count() > index);
 			var child = parent.Elements().ToList()[index];
@@ -118,7 +109,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return child;
 		}
 
-		/// <summary />
 		[Test]
 		public void DerivedElements()
 		{
@@ -130,16 +120,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var unified = CheckNode("layout", new[] {"LexEntry", "jtview", null, "Test1D"}, "test1D"); // unified
 			CheckBaseNode("layout", new[] {"LexEntry", "jtview", null, "Test1D"}, "test3"); // baseNode
 			CheckAlterationNode("layout", new[] {"LexEntry", "jtview", null, "Test1D"}, "test1D"); // derived
-			Assert.IsNull(m_inventory.GetAlteration("layout", new[] {"LexEntry", "jtview", null, "Test1"}),
-				"GetAlteration should be null for non-derived node.");
+			Assert.IsNull(_inventory.GetAlteration("layout", new[] {"LexEntry", "jtview", null, "Test1"}), "GetAlteration should be null for non-derived node.");
 
 			// Check correct working of unification:
 			// - first main child is present as expected
 			var groupMain = unified.Elements().ToList()[0];
-			Assert.IsTrue("group" == groupMain.Name, "first child of unified should be a group");
+			Assert.AreEqual("group", groupMain.Name.LocalName, "first child of unified should be a group");
 			Assert.AreEqual(3, groupMain.Elements().Count(), "main group should have three chidren");
-			Assert.AreEqual("main", XmlUtils.GetOptionalAttributeValue(groupMain, "label"),
-				"first child should be group 'main'");
+			Assert.AreEqual("main", XmlUtils.GetOptionalAttributeValue(groupMain, "label"), "first child should be group 'main'");
 			// - added elements are added. (Also checks default order: original plus extras.)
 			// - unmatched original elements are left alone.
 			var part0M = VerifyChild(groupMain, 0, "ref", "LexEntry-Jt-Citationform"); // part0M
@@ -148,20 +136,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			// - child elements are correctly ordered when 'reorder' is true.
 			var groupSecond = unified.Elements().ToList()[1];
-			Assert.IsTrue("group" == groupSecond.Name, "second child of unified should be a group");
+			Assert.AreEqual("group", groupSecond.Name.LocalName, "second child of unified should be a group");
 			Assert.AreEqual(3, groupSecond.Elements().Count(), "main group should have three chidren");
-			Assert.AreEqual("second", XmlUtils.GetOptionalAttributeValue(groupSecond, "label"),
-				"second child should be group 'second'");
+			Assert.AreEqual("second", XmlUtils.GetOptionalAttributeValue(groupSecond, "label"), "second child should be group 'second'");
 			VerifyChild(groupSecond, 0, "ref", "LexEntry-Jt-Forms"); // part0S
 			var part1S = VerifyChild(groupSecond, 1, "ref", "LexEntry-Jt-Citationform"); // part1S
 			VerifyChild(groupSecond, 2, "ref", "LexEntry-Jt-Senses"); // part2S
 
 			// - check no reordering when no element added, and reorder is false
 			var groupThird = unified.Elements().ToList()[2];
-			Assert.IsTrue("group" == groupThird.Name, "Third child of unified should be a group");
+			Assert.AreEqual("group", groupThird.Name.LocalName, "Third child of unified should be a group");
 			Assert.AreEqual(3, groupThird.Elements().Count(), "main group should have three chidren");
-			Assert.AreEqual("third", XmlUtils.GetOptionalAttributeValue(groupThird, "label"),
-				"third child should be group 'Third'");
+			Assert.AreEqual("third", XmlUtils.GetOptionalAttributeValue(groupThird, "label"), "third child should be group 'Third'");
 			VerifyChild(groupThird, 0, "ref", "LexEntry-Jt-Citationform");
 			VerifyChild(groupThird, 1, "ref", "LexEntry-Jt-Senses");
 			VerifyChild(groupThird, 2, "ref", "LexEntry-Jt-Forms");
@@ -181,6 +167,21 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
+		/// Original base:
+		/// 	<layout class="LexSense" type="jtview" name="Test1" match="test1">
+		///			<group label="main" ws="vernacular" rubbish="nonsense" dummy="base">
+		///			</group>
+		///		</layout>
+		/// Override:
+		/// 	<layout class="LexSense" type="jtview" name="Test1" match="test7D" base="Test1" visible="never" dummy="true">
+		///			<group label="main" ws="analysis">
+		///			</group>
+		///		</layout>
+		/// Derived from override:
+		/// 	<layout class="LexSense" type="jtview" name="Test8D" match="test8D" base="Test1">
+		/// 		<group label="main" rubbish="goodstuff">
+		/// 		</group>
+		/// 	</layout>
 		/// </summary>
 		[Test]
 		public void Overrides()
@@ -190,17 +191,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 			CheckAlterationNode("layout", new[] {"LexSense", "jtview", null, "Test8D"}, "test8D");
 			var unified = CheckNode("layout", new[] {"LexSense", "jtview", null, "Test8D"}, "test8D");
 			var groupMain = unified.Elements().ToList()[0];
-			Assert.IsTrue("group" == groupMain.Name, "first child of unified should be a group");
+			Assert.AreEqual("group", groupMain.Name.LocalName, "first child of unified should be a group");
 			Assert.AreEqual(0, groupMain.Elements().Count(), "main group should have no chidren");
-			Assert.AreEqual("main", XmlUtils.GetOptionalAttributeValue(groupMain, "label"),
-				"first child should be group 'main'");
+			Assert.AreEqual("main", XmlUtils.GetOptionalAttributeValue(groupMain, "label"), "first child should be group 'main'");
 
 			VerifyAttr(groupMain, "ws", "analysis"); // inherited from override.
 			VerifyAttr(groupMain, "rubbish", "goodstuff"); // overridden.
 			VerifyAttr(groupMain, "dummy", "base"); // inherited from original base.
 		}
 
-		/// <summary />
 		[Test]
 		public void OverrideDerived()
 		{
@@ -209,34 +208,40 @@ namespace SIL.FieldWorks.Common.FwUtils
 			CheckAlterationNode("layout", new[] {"LexEntry", "jtview", null, "DerivedForOverride"}, "DO3");
 			var unified = CheckNode("layout", new[] {"LexEntry", "jtview", null, "DerivedForOverride"}, "DO3");
 			var groupSecond = unified.Elements().ToList()[1];
-			Assert.IsTrue("group" == groupSecond.Name, "first child of unified should be a group");
+			Assert.AreEqual("group", groupSecond.Name.LocalName, "first child of unified should be a group");
 			Assert.AreEqual(2, groupSecond.Elements().Count(), "main group should have two chidren");
-			Assert.AreEqual("second", XmlUtils.GetOptionalAttributeValue(groupSecond, "label"),
-				"second child should be group 'second'");
+			Assert.AreEqual("second", XmlUtils.GetOptionalAttributeValue(groupSecond, "label"), "second child should be group 'second'");
 
 			VerifyAttr(groupSecond, "ws", "vernacular"); // inherited from derived element.
 			VerifyAttr(groupSecond, "rubbish", "nonsense"); // from override.
 		}
 
-		/// <summary />
 		[Test]
 		public void GetUnified()
 		{
-			var baseNode = m_inventory.GetElement("layout",
-				new[] {"LexEntry", "detail", null, "TestGetUnify1"});
-			var alteration = m_inventory.GetElement("layout",
-				new[] {"LexEntry", "detail", null, "TestGetUnify2"});
-			var unified = m_inventory.GetUnified(baseNode, alteration);
+			var baseNode = _inventory.GetElement("layout", new[] {"LexEntry", "detail", null, "TestGetUnify1"});
+			var alteration = _inventory.GetElement("layout", new[] {"LexEntry", "detail", null, "TestGetUnify2"});
+			var unified = _inventory.GetUnified(baseNode, alteration);
 			Assert.AreEqual(3, unified.Elements().Count());
 			Assert.AreEqual("main", unified.Elements().ToList()[0].Attribute("label").Value);
 			Assert.AreEqual("second", unified.Elements().ToList()[1].Attribute("label").Value);
 			Assert.AreEqual("third", unified.Elements().ToList()[2].Attribute("label").Value);
-			var repeat = m_inventory.GetUnified(baseNode, alteration);
+			var repeat = _inventory.GetUnified(baseNode, alteration);
+			Assert.AreSame(unified, repeat); // ensure not generating repeatedly.
+		}
+
+		[Test]
+		public void GetUnified_SkipsShouldNotMerge()
+		{
+			var baseNode = _inventory.GetElement("layout", new[] { "MoAffixProcess", "detail", null, "TestGetUnify3" }); // TestGetUnify3 data has shouldNotMerge="true" on its child.
+			var alteration = _inventory.GetElement("layout", new[] { "MoAffixProcess", "detail", null, "TestGetUnify4" });
+			var unified = _inventory.GetUnified(baseNode, alteration);
+			Assert.AreEqual(1, unified.Elements().Count());
+			var repeat = _inventory.GetUnified(baseNode, alteration);
 			Assert.AreSame(unified, repeat); // ensure not generating repeatedly.
 		}
 	}
 
-	/// <summary />
 	[TestFixture]
 	public class CreateOverrideTests : TestBaseForTestsThatCreateTempFilesBasedOnResources
 	{
@@ -245,14 +250,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Initialize everything...load a set of fragments from a file.
 		/// </summary>
 		[TestFixtureSetUp]
-		public void Setup()
+		public override void FixtureSetup()
 		{
-			var folder = CreateTempTestFiles(typeof(Properties.Resources), "CreateOverrideTestData");
+			var folder = CreateTempTestFiles(typeof(LanguageExplorerTestsResources), "CreateOverrideTestData");
 			var doc = XDocument.Load(Path.Combine(folder, "CreateOverrideTestData.xml"));
 			_root = doc.Root;
+
+			base.FixtureSetup();
 		}
 
-		/// <summary />
 		[Test]
 		public void SimpleOverride()
 		{
@@ -263,12 +269,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 			XElement finalPartref;
 			var result = Inventory.MakeOverride(path, "visibility", "ifdata", 7, out finalPartref);
 			Assert.AreEqual(rootLayout.Elements().Count(), result.Elements().Count());
-			var cfNewPartRef = result.XPathSelectElement("part[@ref=\"CitationForm\"]");
+			var cfNewPartRef =  result.XPathSelectElement("part[@ref=\"CitationForm\"]");
 			Assert.AreEqual("ifdata", XmlUtils.GetOptionalAttributeValue(cfNewPartRef, "visibility"));
 			Assert.AreEqual("7", XmlUtils.GetOptionalAttributeValue(result, "version"));
 		}
 
-		/// <summary />
 		[Test]
 		public void LevelTwoOverride()
 		{
@@ -280,17 +285,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 			XElement finalPartref;
 			var result = Inventory.MakeOverride(path, "visibility", "ifdata", 1, out finalPartref);
 			Assert.AreEqual(rootLayout.Elements().Count(), result.Elements().Count());
-			var glossNewPartRef = result.XPathSelectElement("//part[@ref=\"Gloss\"]");
+			var glossNewPartRef =  result.XPathSelectElement("//part[@ref=\"Gloss\"]");
 			Assert.AreEqual("ifdata", XmlUtils.GetOptionalAttributeValue(glossNewPartRef, "visibility"));
 			var sensesNewPartRef = glossNewPartRef.Parent;
-			Assert.IsTrue("part" == sensesNewPartRef.Name);
+			Assert.AreEqual("part", sensesNewPartRef.Name.LocalName);
 			Assert.AreEqual("Senses", XmlUtils.GetOptionalAttributeValue(sensesNewPartRef, "ref"));
 			var rootNewLayout = sensesNewPartRef.Parent;
-			Assert.IsTrue("layout" == rootNewLayout.Name);
+			Assert.AreEqual("layout", rootNewLayout.Name.LocalName);
 			Assert.AreEqual(result, rootNewLayout);
 		}
 
-		/// <summary />
 		[Test]
 		public void LevelThreeOverride()
 		{
@@ -305,22 +309,21 @@ namespace SIL.FieldWorks.Common.FwUtils
 			XElement finalPartref;
 			var result = Inventory.MakeOverride(path, "visibility", "ifdata", 1, out finalPartref);
 			Assert.AreEqual(rootLayout.Elements().Count(), result.Elements().Count());
-			var glossNewPartRef = result.XPathSelectElement("//part[@ref=\"Gloss\"]");
+			var glossNewPartRef =  result.XPathSelectElement("//part[@ref=\"Gloss\"]");
 			Assert.AreEqual("ifdata", XmlUtils.GetOptionalAttributeValue(glossNewPartRef, "visibility"));
 			var synNewPartRef = glossNewPartRef.Parent;
-			Assert.IsTrue("part" == synNewPartRef.Name);
+			Assert.AreEqual("part", synNewPartRef.Name.LocalName);
 			Assert.AreEqual("Synonyms", XmlUtils.GetOptionalAttributeValue(synNewPartRef, "ref"));
 			// Should have kept unmodified attributes of this element.
 			Assert.AreEqual("TestingParam", XmlUtils.GetOptionalAttributeValue(synNewPartRef, "param"));
 			var sensesNewPartRef = synNewPartRef.Parent;
-			Assert.IsTrue("part" == sensesNewPartRef.Name);
+			Assert.AreEqual("part", sensesNewPartRef.Name.LocalName);
 			Assert.AreEqual("Senses", XmlUtils.GetOptionalAttributeValue(sensesNewPartRef, "ref"));
 			var rootNewLayout = sensesNewPartRef.Parent;
-			Assert.IsTrue("layout" == rootNewLayout.Name);
+			Assert.AreEqual("layout", rootNewLayout.Name.LocalName);
 			Assert.AreEqual(result, rootNewLayout);
 		}
 
-		/// <summary />
 		[Test]
 		public void IndentedOverride()
 		{
@@ -332,15 +335,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 			XElement finalPartref;
 			var result = Inventory.MakeOverride(path, "visibility", "ifdata", 1, out finalPartref);
 			Assert.AreEqual(rootLayout.Elements().Count(), result.Elements().Count());
-			var antonymNewPartRef = result.XPathSelectElement("//part[@ref=\"Antonymns\"]");
+			var antonymNewPartRef =  result.XPathSelectElement("//part[@ref=\"Antonymns\"]");
 			Assert.AreEqual("ifdata", XmlUtils.GetOptionalAttributeValue(antonymNewPartRef, "visibility"));
 			var indentNewPartRef = antonymNewPartRef.Parent;
-			Assert.IsTrue("indent" == indentNewPartRef.Name);
+			Assert.AreEqual("indent", indentNewPartRef.Name.LocalName);
 			var sensesNewPartRef = indentNewPartRef.Parent;
-			Assert.IsTrue("part" == sensesNewPartRef.Name);
+			Assert.AreEqual("part", sensesNewPartRef.Name.LocalName);
 			Assert.AreEqual("Senses", XmlUtils.GetOptionalAttributeValue(sensesNewPartRef, "ref"));
 			var rootNewLayout = sensesNewPartRef.Parent;
-			Assert.IsTrue("layout" == rootNewLayout.Name);
+			Assert.AreEqual("layout", rootNewLayout.Name.LocalName);
 			Assert.AreEqual(result, rootNewLayout);
 		}
 	}

@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Include>
-	<!-- TODO (Hasso) 2018.02: integrate CreateProjectsFolder with generic data folder? No. - ->
-	<ComponentRef Id="CreateProjectsFolder"/>
-	<ComponentRef Id="CreateIcuFolder"/>
-	<ComponentRef Id="CopyLicenseTechReadme"/>-->
+<!--	<ComponentRef Id="CreateIcuFolder"/> -->
+<!--	<ComponentRef Id="CopyLicenseTechReadme"/>-->
+	<ComponentGroupRef Id="FwEnvironmentVars" />
 	<ComponentGroupRef Id="HarvestedDataFiles" />
 	<MergeRef Id="CC_DLL"/>
 	<MergeRef Id="EncConverters_Common"/>

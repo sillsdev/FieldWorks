@@ -1212,6 +1212,46 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 		}
 
 		[Test]
+		public void MigrateFrom83AlphaToBeta10_ConfigReferencedEntriesUseAsPrimary()
+		{
+			var primaryEntries = new ConfigurableDictionaryNode
+			{
+				Label = "Primary Entry(s)",
+				FieldDescription = "PrimarySensesOrEntries",
+				CSSClassNameOverride = "primarylexemes"
+			};
+			var referencedEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Primary Entry References",
+				FieldDescription = "MainEntryRefs",
+				Children = new List<ConfigurableDictionaryNode> { primaryEntries }
+			};
+			var referencedSenses = new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Senses",
+				FieldDescription = "SensesRS",
+				Children = new List<ConfigurableDictionaryNode> { referencedEntryNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Entry",
+				FieldDescription = "ReversalIndexEntry",
+				Children = new List<ConfigurableDictionaryNode> {referencedSenses}
+			};
+			var alphaModel = new DictionaryConfigurationModel
+			{
+				Version = 20,
+				WritingSystem = "en",
+				FilePath = string.Empty,
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+			var betaModel = _migrator.LoadBetaDefaultForAlphaConfig(alphaModel);
+			_migrator.MigrateFrom83Alpha(_logger, alphaModel, betaModel);
+			Assert.AreEqual("ConfigReferencedEntries", primaryEntries.FieldDescription, "Should have updated the field from 'PrimarySensesOrEntries' to 'ConfigReferencedEntries'");
+			Assert.AreEqual("referencedentries", primaryEntries.CSSClassNameOverride, "Should have changed the CSSClassNameOverride from 'primarylexemes' to 'referencedentries'");
+		}
+
+		[Test]
 		public void MigrateFrom83Alpha_AddsOptionsToRefdComplexForms()
 		{
 			var userModel = new DictionaryConfigurationModel

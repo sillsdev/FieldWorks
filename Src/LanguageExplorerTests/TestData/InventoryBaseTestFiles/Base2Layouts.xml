@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<layoutInventory>
+	<layout class="LexSense" type="jtview" name="Test3" match="test6">
+	</layout>
+	<layout class="LexSense" type="jtview" name="Test4" match="test7">
+	</layout>
+	<layout class="LexEntry" type="jtview" name="Test3" match="test8">
+	</layout>
+	<layout class="LexSense" type="detail" name="Test4" match="test9">
+	</layout>
+	<part class="LexSense" type="jtview" name="Test3" match="test10">
+	</part>
+</layoutInventory>

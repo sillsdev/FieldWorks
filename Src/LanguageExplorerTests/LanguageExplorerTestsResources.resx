@@ -124,4 +124,16 @@
   <data name="Settings_xml" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>SettingsBackup\Settings.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="InventoryBaseTestFiles__Base1Layouts_xml" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>TestData\InventoryBaseTestFiles\Base1Layouts.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="InventoryBaseTestFiles__Base2Layouts_xml" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>TestData\InventoryBaseTestFiles\Base2Layouts.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="InventoryLaterTestFiles__Override1Layouts_xml" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>TestData\InventoryLaterTestFiles\Override1Layouts.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="CreateOverrideTestData__CreateOverrideTestData_xml" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>TestData\CreateOverrideTestData.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
 </root>

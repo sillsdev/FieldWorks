@@ -243,6 +243,7 @@
     <Compile Include="Impls\FindCollectorEnvTests.cs" />
     <Compile Include="Impls\FwFindReplaceDlgTests.cs" />
     <Compile Include="Impls\FwHelpAboutTests.cs" />
+    <Compile Include="InventoryTests.cs" />
     <Compile Include="Repository\AreaRepositoryTests.cs" />
     <Compile Include="Repository\AreaTestBase.cs" />
     <Compile Include="Controls\DetailControls\AtomicReferenceLauncherTests.cs" />
@@ -405,6 +406,10 @@
     <Content Include="Controls\DetailControls\TestParts.xml" />
     <Content Include="Controls\LexText\FeatureSystem2.xml" />
     <Content Include="Controls\LexText\FeatureSystem3.xml" />
+    <None Include="TestData\CreateOverrideTestData.xml" />
+    <Content Include="TestData\InventoryBaseTestFiles\Base1Layouts.xml" />
+    <Content Include="TestData\InventoryBaseTestFiles\Base2Layouts.xml" />
+    <Content Include="TestData\InventoryLaterTestFiles\Override1Layouts.xml" />
     <None Include="SettingsBackup\db_TestLocal_Settings.xml" />
     <None Include="SettingsBackup\Settings.xml" />
     <Content Include="DictionaryConfiguration\strings-en.xml" />
@@ -449,6 +454,7 @@
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="BuildInclude.targets" />
 </Project>

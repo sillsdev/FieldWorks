@@ -164,7 +164,7 @@ namespace LanguageExplorer
 				foreach (var customInventoryPath in customInventoryPaths)
 				{
 					m_inventoryPaths.Add(FwDirectoryFinder.GetCodeSubDirectory(customInventoryPath));
-				}
+			}
 			}
 			LoadElements();
 			if (xmlInventorySwitch.TraceInfo)
@@ -234,17 +234,17 @@ namespace LanguageExplorer
 			var sPattern = string.IsNullOrEmpty(sDatabase) ? $"default$${m_filePattern}" : m_filePattern;
 			var rgsFiles = DirectoryUtils.GetOrderedFiles(path, sPattern);
 			foreach (var sFilename in rgsFiles)
-			{
-				// LT-11193 Don't delete user overrides if they are new dictionary views
-				// (from the Manage Views dialog)
+				{
+					// LT-11193 Don't delete user overrides if they are new dictionary views
+					// (from the Manage Views dialog)
 				if (sFilename.Split(new[] {ksUnderscore}, StringSplitOptions.RemoveEmptyEntries).Length > 1)
 				{
-					continue;
+						continue;
 				}
 
-				File.Delete(sFilename);
+					File.Delete(sFilename);
+				}
 			}
-		}
 
 		/// <summary>
 		/// Get/set the name of the database associated with this Inventory.
@@ -423,7 +423,7 @@ namespace LanguageExplorer
 			if (!Directory.Exists(directory))
 			{
 				Directory.CreateDirectory(directory);
-			}
+		}
 		}
 
 		/// <summary>
@@ -438,14 +438,14 @@ namespace LanguageExplorer
 			var layoutName = XmlUtils.GetMandatoryAttributeValue(layoutType, "layout");
 			var nodes = root.Elements("layoutType");
 			foreach (var xn in nodes)
-			{
-				var layoutOld = XmlUtils.GetMandatoryAttributeValue(xn, "layout");
-				if (layoutOld == layoutName)
 				{
+					var layoutOld = XmlUtils.GetMandatoryAttributeValue(xn, "layout");
+					if (layoutOld == layoutName)
+					{
 					xn.ReplaceWith(layoutType);
-					return;
+						return;
+					}
 				}
-			}
 			root.Add(layoutType);
 		}
 
@@ -668,7 +668,7 @@ namespace LanguageExplorer
 			foreach (var attr in source.Attributes())
 			{
 				if (fIfNotPresent && dest.Attribute(attr.Name) != null)
-				{
+			{
 					continue;
 				}
 				dest.Add(attr);
@@ -706,7 +706,7 @@ namespace LanguageExplorer
 					if (XmlUtils.GetOptionalAttributeValue(item, keyAttrs[cMatchingAttrs]) != keyVals[cMatchingAttrs])
 					{
 						break;
-					}
+				}
 				}
 				if (cMatchingAttrs == ckeys)
 				{
@@ -752,31 +752,31 @@ namespace LanguageExplorer
 			{
 				return m_mainDoc.Root.XPathSelectElements(pathBldr.ToString());
 			}
-			pathBldr.Append("[");
+				pathBldr.Append("[");
 			for (var i = 0; i < numAttrs; i++)
-			{
-				var attr = keyAttrs[i];
-				if (i != 0)
 				{
-					pathBldr.Append(" and ");
+				var attr = keyAttrs[i];
+					if (i != 0)
+				{
+						pathBldr.Append(" and ");
 				}
 				var val = attrvals[i];
-				if (val == null)
-				{
-					pathBldr.Append("not(@");
-					pathBldr.Append(attr);
-					pathBldr.Append(")");
+					if (val == null)
+					{
+						pathBldr.Append("not(@");
+						pathBldr.Append(attr);
+						pathBldr.Append(")");
+					}
+					else
+					{
+						pathBldr.Append("@");
+						pathBldr.Append(attr);
+						pathBldr.Append("='");
+						pathBldr.Append(val);
+						pathBldr.Append("'");
+					}
 				}
-				else
-				{
-					pathBldr.Append("@");
-					pathBldr.Append(attr);
-					pathBldr.Append("='");
-					pathBldr.Append(val);
-					pathBldr.Append("'");
-				}
-			}
-			pathBldr.Append("]");
+				pathBldr.Append("]");
 
 			return m_mainDoc.Root.XPathSelectElements(pathBldr.ToString());
 		}
@@ -820,40 +820,40 @@ namespace LanguageExplorer
 			{
 				return doc.Root.XPathSelectElement(pathBldr.ToString());
 			}
-			pathBldr.Append("[");
+				pathBldr.Append("[");
 			for (var i = 0; i < keyAttrs.Length; i++)
-			{
-				var attr = keyAttrs[i];
-				if (i != 0)
 				{
-					pathBldr.Append(" and ");
+				var attr = keyAttrs[i];
+					if (i != 0)
+				{
+						pathBldr.Append(" and ");
 				}
 				var val = attrvals[i];
-				if (val == null)
-				{
-					pathBldr.Append("not(@");
-					pathBldr.Append(attr);
-					pathBldr.Append(")");
-				}
-				else
-				{
-					pathBldr.Append("@");
-					pathBldr.Append(attr);
-					if (val.Contains("'"))
+					if (val == null)
 					{
-						pathBldr.Append("=\"");
-						pathBldr.Append(val);
-						pathBldr.Append("\"");
+						pathBldr.Append("not(@");
+						pathBldr.Append(attr);
+						pathBldr.Append(")");
 					}
 					else
 					{
-						pathBldr.Append("='");
-						pathBldr.Append(val);
-						pathBldr.Append("'");
+						pathBldr.Append("@");
+						pathBldr.Append(attr);
+						if (val.Contains("'"))
+						{
+							pathBldr.Append("=\"");
+							pathBldr.Append(val);
+							pathBldr.Append("\"");
+						}
+						else
+						{
+							pathBldr.Append("='");
+							pathBldr.Append(val);
+							pathBldr.Append("'");
+						}
 					}
 				}
-			}
-			pathBldr.Append("]");
+				pathBldr.Append("]");
 
 			return doc.Root.XPathSelectElement(pathBldr.ToString());
 		}
@@ -901,11 +901,11 @@ namespace LanguageExplorer
 				// An override, the base should already be saved in m_baseDoc
 				return GetEltFromDoc(elementName, keyBase, m_baseDoc);
 			}
-			// not an override, just an ordinary derived node.
-			// Possibly the base is another derived node, not yet computed, so we need
-			// to use the full GetElement to ensure that it gets created if needed.
-			return GetElement(elementName, keyBase);
-		}
+				// not an override, just an ordinary derived node.
+				// Possibly the base is another derived node, not yet computed, so we need
+				// to use the full GetElement to ensure that it gets created if needed.
+				return GetElement(elementName, keyBase);
+			}
 
 		/// <summary>
 		/// Load the templates again. Useful when you are working on template writing,
@@ -971,23 +971,23 @@ namespace LanguageExplorer
 			{
 				return;
 			}
-			//get the parent of the nodes in the path
+				//get the parent of the nodes in the path
 			var root = oldAndBusted[0].Parent;
-			// In Mono, changing the root element invalidates the XmlNodeList iterator
-			// so that it quits the loop immediately after the first node is removed.
-			// See FWNX-1057.  This results in evergrowing fwlayout files stored with
-			// the project!  So we copy the list first into a form that won't be
-			// invalidated.
+				// In Mono, changing the root element invalidates the XmlNodeList iterator
+				// so that it quits the loop immediately after the first node is removed.
+				// See FWNX-1057.  This results in evergrowing fwlayout files stored with
+				// the project!  So we copy the list first into a form that won't be
+				// invalidated.
 			foreach (var match in new List<XElement>(oldAndBusted))
-			{
+				{
 				match.Remove();
-			}
+				}
 			foreach (var newItem in newData)
-			{
+				{
 				root.Add(newItem);
+				}
+				xdoc.Save(inventoryFilePath);
 			}
-			xdoc.Save(inventoryFilePath);
-		}
 
 		/// <summary>
 		/// Add custom files after the main loading.
@@ -1190,17 +1190,17 @@ namespace LanguageExplorer
 								continue;
 							}
 							var merged = Merger.Merge(current, node, m_mainDoc, oldLayoutSuffix);
-							// We'll do the below and a bunch of other mods inside of LayoutMerger from now on.
-							//XmlUtils.SetAttribute(merged, "name", originalKey[2]); // give it the name from before
-							if (loadUserOverRides)
+									// We'll do the below and a bunch of other mods inside of LayoutMerger from now on.
+									//XmlUtils.SetAttribute(merged, "name", originalKey[2]); // give it the name from before
+									if (loadUserOverRides)
 							{
-								XmlUtils.SetAttribute(merged, "version", version.ToString(CultureInfo.InvariantCulture));
+										XmlUtils.SetAttribute(merged, "version", version.ToString(CultureInfo.InvariantCulture));
 							}
-							survivors.Add(merged);
-							wasMerged = true;
+									survivors.Add(merged);
+									wasMerged = true;
+								}
+							}
 						}
-					}
-				}
 				else if (fileVersion == version)
 				{
 					survivors.Add(node);
@@ -1310,7 +1310,7 @@ namespace LanguageExplorer
 				else
 				{
 					// it is a normal alteration node
-					// derived node displaces non-derived one.
+						// derived node displaces non-derived one.
 					extantNode?.Remove();
 				}
 				// alteration node goes into alterations doc (displacing any previous alteration
@@ -1374,7 +1374,7 @@ namespace LanguageExplorer
 			if (newNode.Name != "layoutType")
 			{
 				m_getElementTable[key] = newNode;
-			}
+		}
 		}
 
 		/// <summary>
@@ -1392,8 +1392,8 @@ namespace LanguageExplorer
 				if (Directory.Exists(p))
 				{
 					AddElementsFromFiles(DirectoryUtils.GetOrderedFiles(p, m_filePattern));
-				}
 			}
+		}
 		}
 
 		/// <summary>
@@ -1458,6 +1458,10 @@ namespace LanguageExplorer
 		/// </summary>
 		internal XElement GetUnified(XElement main, XElement alteration)
 		{
+			if (main.XPathSelectElements("part[@ref='AsLexemeForm' and @shouldNotMerge='true']").Any())
+			{
+				return main;
+			}
 			XElement result;
 			var key = new Tuple<XElement, XElement>(main, alteration);
 			if (m_unifiedNodes.TryGetValue(key, out result))
@@ -1508,7 +1512,7 @@ namespace LanguageExplorer
 				if (other.KeyVals.Length != KeyVals.Length)
 				{
 					return false;
-				}
+			}
 
 				return !KeyVals.Where((t, i) => other.KeyVals[i] != t).Any();
 			}

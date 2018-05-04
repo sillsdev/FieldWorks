@@ -23,13 +23,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 	{
 		private static List<string> s_foldersToDelete = new List<string>();
 
+		/// <summary />
+		public virtual void FixtureSetup()
+		{ /* Do nothing here. */ }
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[TestFixtureTearDown]
-		public void FixtureTearDown()
+		public virtual void FixtureTearDown()
 		{
 			CleanUpTempFolders();
 		}
