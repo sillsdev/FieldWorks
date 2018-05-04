@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -444,6 +444,198 @@ namespace SIL.FieldWorks.IText
 					var imported = firstEntry.Current;
 					//The empty ugly text imported as its empty ugly self
 					Assert.AreEqual(imported.Guid.ToString(), textGuid);
+				}
+			}
+		}
+
+		[Test]
+		public void TestImportMergeFlexTextWithSegnumItem()
+		{
+			string phraseGuid = "b405f3c0-58e1-4492-8a40-e955774a6911";
+			string firstXml = "<document version=\"2\">" +
+									"<interlinear-text guid=\"bcabf849-473c-4902-957b-8de378248b7f\">" +
+									"<item type=\"title\" lang=\"en\">My Green Mat</item>" +
+									"<item type=\"comment\" lang=\"en\">This is a story about a green mat as told by my language assistant.</item>" +
+									"<paragraphs><paragraph guid=\"a122d9bb-2d43-4e4c-b74f-6fe44d1c6cb2\">" +
+									"<phrases><phrase guid=\" " + phraseGuid + "\">" +
+									"<item type=\"segnum\" lang =\"en\">1.1</item>" +
+									"<words><word guid=\"45e6f056-98ac-45d6-858e-59450993f268\">" +
+									"<item type =\"txt\" lang=\"qaa-x-kal\">pus</item>" +
+									"</word></words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+
+			// The same with one extra word
+			string secondXml = "<document version=\"2\">" +
+									"<interlinear-text guid=\"bcabf849-473c-4902-957b-8de378248b7f\">" +
+									"<item type=\"title\" lang=\"en\">My Green Mat</item>" +
+									"<item type=\"comment\" lang=\"en\">This is a story about a green mat as told by my language assistant.</item>" +
+									"<paragraphs><paragraph guid=\"a122d9bb-2d43-4e4c-b74f-6fe44d1c6cb2\">" +
+									"<phrases><phrase guid=\"" + phraseGuid + "\">" +
+									"<item type=\"segnum\" lang =\"en\">1.1</item>" +
+									"<words><word guid=\"45e6f056-98ac-45d6-858e-59450993f268\">" +
+									"<item type =\"txt\" lang=\"qaa-x-kal\">pus</item></word>" +
+									"<word guid=\"936b326e-a83d-4c08-94cc-449d0a3380d0\">" +
+									"<item type= \"txt\" lang=\"qaa-x-kal\">yalola</item>" +
+									"</word></words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+
+			LLIMergeExtension li = new LLIMergeExtension(Cache, null, null);
+			LCModel.IText text = null;
+			using (var firstStream = new MemoryStream(Encoding.ASCII.GetBytes(firstXml.ToCharArray())))
+			{
+				bool result = li.ImportInterlinear(new DummyProgressDlg(), firstStream, 0, ref text);
+				Assert.AreEqual(0, li.NumTimesDlgShown, "The user should not have been prompted to merge on the initial import.");
+				Assert.True(result);
+				var contentGuid = text.ContentsOA.Guid;
+				var para = text.ContentsOA.ParagraphsOS[0] as IStTxtPara;
+				var paraGuid = para.Guid;
+				var wordGuid = para.SegmentsOS[0].AnalysesRS[0].Guid;
+				using (var secondStream = new MemoryStream(Encoding.ASCII.GetBytes(secondXml.ToCharArray())))
+				{
+					bool mergeResult = li.ImportInterlinear(new DummyProgressDlg(), secondStream, 0, ref text);
+					Assert.AreEqual(1, li.NumTimesDlgShown, "The user should have been prompted to merge the text with the same Guid.");
+					Assert.True(mergeResult);
+					Assert.True(text.ContentsOA.Guid.Equals(contentGuid), "The merge should not have changed the content objects.");
+					Assert.True(text.ContentsOA.ParagraphsOS.Count.Equals(1));
+					var mergedPara = text.ContentsOA.ParagraphsOS[0] as IStTxtPara;
+					Assert.True(mergedPara.Guid.Equals(paraGuid));
+					Assert.True(mergedPara.SegmentsOS.Count.Equals(1));
+					Assert.True(mergedPara.SegmentsOS[0].Guid.Equals(new Guid(phraseGuid)));
+					var analyses = mergedPara.SegmentsOS[0].AnalysesRS;
+					// There should be two analyses, the first should match the guid created on the original import
+					Assert.True(analyses.Count.Equals(2));
+					Assert.True(analyses[0].Guid.Equals(wordGuid));
+					Assert.AreEqual("pus yalola", mergedPara.Contents.Text, "The contents of the paragraph do not match the words.");
+				}
+			}
+		}
+
+		[Test]
+		public void TestMergeFlexTextPhraseWithoutGuidMergesIntoParagraphOfSibling()
+		{
+			string phraseGuid = "b405f3c0-58e1-4492-8a40-e955774a6911";
+			string firstXml = "<document version=\"2\">" +
+								"<interlinear-text guid=\"bcabf849-473c-4902-957b-8de378248b7f\">" +
+								"<item type=\"title\" lang=\"en\">My Green Mat</item>" +
+								"<item type=\"comment\" lang=\"en\">This is a story about a green mat as told by my language assistant.</item>" +
+								"<paragraphs><paragraph guid=\"a122d9bb-2d43-4e4c-b74f-6fe44d1c6cb2\">" +
+								"<phrases><phrase><words><word><item type=\"txt\" lang=\"qaa-x-kal\">hesyla</item></word></words></phrase>" +
+								"<phrase guid=\"" + phraseGuid + "\">" +
+								"<words><word guid=\"45e6f056-98ac-45d6-858e-59450993f268\">" +
+								"<item type=\"txt\" lang=\"qaa-x-kal\">pus</item>" +
+								"</word></words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+
+			// The same with an additional phrase with no guid
+			string secondXml = "<document version=\"2\">" +
+								"<interlinear-text guid=\"bcabf849-473c-4902-957b-8de378248b7f\">" +
+								"<item type=\"title\" lang=\"en\">My Green Mat</item>" +
+								"<item type=\"comment\" lang=\"en\">This is a story about a green mat as told by my language assistant.</item>" +
+								"<paragraphs><paragraph guid=\"a122d9bb-2d43-4e4c-b74f-6fe44d1c6cb2\">" +
+								"<phrases><phrase><words><word><item type=\"txt\" lang=\"qaa-x-kal\">hesyla</item></word></words></phrase>" +
+								"<phrase guid=\"" + phraseGuid + "\">" +
+								"<words><word guid=\"45e6f056-98ac-45d6-858e-59450993f268\">" +
+								"<item type=\"txt\" lang=\"qaa-x-kal\">pus</item>" +
+								"</word></words></phrase>" +
+								"<phrase><words><word guid=\"d14460dc-75b3-466c-9818-8c31b99d8662\">" +
+								"<item type=\"txt\" lang=\"qaa-x-kal\">nihimbilira</item>" +
+								"</word></words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+
+			LLIMergeExtension li = new LLIMergeExtension(Cache, null, null);
+			LCModel.IText text = null;
+			using (var firstStream = new MemoryStream(Encoding.ASCII.GetBytes(firstXml.ToCharArray())))
+			{
+				bool result = li.ImportInterlinear(new DummyProgressDlg(), firstStream, 0, ref text);
+				Assert.AreEqual(0, li.NumTimesDlgShown, "The user should not have been prompted to merge on the initial import.");
+				Assert.True(result);
+				var contentGuid = text.ContentsOA.Guid;
+				var para = text.ContentsOA.ParagraphsOS[0] as IStTxtPara;
+				Assert.AreEqual("hesyla\x00a7 pus", para.Contents.Text, "The contents of the paragraph does not match the words.");
+				var paraGuid = para.Guid;
+				Assert.True(para.SegmentsOS.Count.Equals(2));
+				var createdSegmentGuid = para.SegmentsOS[0].Guid;
+				var segGuid = para.SegmentsOS[1].Guid;
+				var wordGuid = para.SegmentsOS[0].AnalysesRS[0].Guid;
+				using (var secondStream = new MemoryStream(Encoding.ASCII.GetBytes(secondXml.ToCharArray())))
+				{
+					bool mergeResult = li.ImportInterlinear(new DummyProgressDlg(), secondStream, 0, ref text);
+					Assert.AreEqual(1, li.NumTimesDlgShown, "The user should have been prompted to merge the text with the same Guid.");
+					Assert.True(mergeResult);
+					Assert.True(text.ContentsOA.Guid.Equals(contentGuid), "The merge should not have changed the content objects.");
+					Assert.True(text.ContentsOA.ParagraphsOS.Count.Equals(1));
+					var mergedPara = text.ContentsOA.ParagraphsOS[0] as IStTxtPara;
+					Assert.True(mergedPara.Guid.Equals(paraGuid));
+					Assert.True(mergedPara.SegmentsOS.Count.Equals(3));
+					Assert.True(mergedPara.SegmentsOS[0].Guid.Equals(createdSegmentGuid));
+					Assert.True(mergedPara.SegmentsOS[1].Guid.Equals(segGuid));
+					Assert.False(mergedPara.SegmentsOS[2].Guid.Equals(segGuid));
+					var analyses = mergedPara.SegmentsOS[0].AnalysesRS;
+					Assert.True(analyses.Count.Equals(1));
+					Assert.True(analyses[0].Guid.Equals(wordGuid));
+					Assert.AreEqual("hesyla\x00a7 pus\x00A7 nihimbilira", para.Contents.Text, "The contents of the paragraph does not match the words.");
+				}
+			}
+		}
+
+		[Test]
+		public void TestMergeFlexTextNewParagraphCreatesNewParagraph_OriginalIsUnchanged()
+		{
+			string firstPhraseGuid = "b405f3c0-58e1-4492-8a40-e955774a6911";
+			string firstXml = "<document version=\"2\">" +
+								"<interlinear-text guid=\"bcabf849-473c-4902-957b-8de378248b7f\">" +
+								"<item type=\"title\" lang=\"en\">My Green Mat</item>" +
+								"<item type=\"comment\" lang=\"en\">This is a story about a green mat as told by my language assistant.</item>" +
+								"<paragraphs><paragraph guid=\"a122d9bb-2d43-4e4c-b74f-6fe44d1c6cb2\">" +
+								"<phrases><phrase guid=\"" + firstPhraseGuid + "\">" +
+								"<words><word guid=\"45e6f056-98ac-45d6-858e-59450993f268\">" +
+								"<item type =\"txt\" lang=\"qaa-x-kal\">pus</item>" +
+								"</word></words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+
+			// The same interlinear text, but a brand new paragraph, phrase and word.
+			string secondPhraseGuid = "f1fe4d4a-58e1-4492-8a40-e955774a6911";
+			string secondXml = "<document version=\"2\">" +
+								"<interlinear-text guid=\"bcabf849-473c-4902-957b-8de378248b7f\">" +
+								"<item type=\"title\" lang=\"en\">My Green Mat</item>" +
+								"<item type=\"comment\" lang=\"en\">This is a story about a green mat as told by my language assistant.</item>" +
+								"<paragraphs><paragraph guid=\"a0734bac-a9fc-489f-9beb-6563fb2f53f6\">" +
+								"<phrases><phrase guid=\"" + secondPhraseGuid + "\">" +
+								"<words><word guid=\"d14460dc-75b3-466c-9818-8c31b99d8662\">" +
+								"<item type=\"txt\" lang=\"qaa-x-kal\">nihimbilira</item>" +
+								"</word></words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+
+			LLIMergeExtension li = new LLIMergeExtension(Cache, null, null);
+			LCModel.IText text = null;
+			using (var firstStream = new MemoryStream(Encoding.ASCII.GetBytes(firstXml.ToCharArray())))
+			{
+				bool result = li.ImportInterlinear(new DummyProgressDlg(), firstStream, 0, ref text);
+				Assert.AreEqual(0, li.NumTimesDlgShown, "The user should not have been prompted to merge on the initial import.");
+				Assert.True(result);
+				var contentGuid = text.ContentsOA.Guid;
+				var originalPara = text.ContentsOA.ParagraphsOS[0] as IStTxtPara;
+				var originalParaGuid = originalPara.Guid;
+				var originalWordGuid = originalPara.SegmentsOS[0].AnalysesRS[0].Guid;
+				using (var secondStream = new MemoryStream(Encoding.ASCII.GetBytes(secondXml.ToCharArray())))
+				{
+					bool mergeResult = li.ImportInterlinear(new DummyProgressDlg(), secondStream, 0, ref text);
+					Assert.AreEqual(1, li.NumTimesDlgShown, "The user should have been prompted to merge the text with the same Guid.");
+					Assert.True(mergeResult);
+					Assert.True(text.ContentsOA.Guid.Equals(contentGuid), "The merge should not have changed the content objects.");
+					Assert.True(text.ContentsOA.ParagraphsOS.Count.Equals(2));
+					// Check that the first paragraph remains unchanged
+					var firstPara = text.ContentsOA.ParagraphsOS[0] as IStTxtPara;
+					Assert.True(firstPara.Guid.Equals(originalParaGuid));
+					Assert.True(firstPara.SegmentsOS.Count.Equals(1));
+					Assert.True(firstPara.SegmentsOS[0].Guid.Equals(new Guid(firstPhraseGuid)));
+					var firstAnalyses = firstPara.SegmentsOS[0].AnalysesRS;
+					Assert.True(firstAnalyses.Count.Equals(1));
+					Assert.True(firstAnalyses[0].Guid.Equals(originalWordGuid));
+					Assert.AreEqual("pus", firstPara.Contents.Text, "The contents of the first paragraph do not match the words.");
+					// Check that the second paragraph was merged correctly
+					var secondPara = text.ContentsOA.ParagraphsOS[1] as IStTxtPara;
+					Assert.False(secondPara.Guid.Equals(originalParaGuid));
+					Assert.True(secondPara.SegmentsOS.Count.Equals(1));
+					Assert.True(secondPara.SegmentsOS[0].Guid.Equals(new Guid(secondPhraseGuid)));
+					var secondAnalyses = secondPara.SegmentsOS[0].AnalysesRS;
+					Assert.True(secondAnalyses.Count.Equals(1));
+					Assert.False(secondAnalyses[0].Guid.Equals(originalWordGuid));
+					Assert.AreEqual("nihimbilira", secondPara.Contents.Text, "The contents of the second paragraph do not match the words.");
 				}
 			}
 		}

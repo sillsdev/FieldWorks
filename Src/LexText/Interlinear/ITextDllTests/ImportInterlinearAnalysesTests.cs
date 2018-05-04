@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -248,30 +248,31 @@ namespace SIL.FieldWorks.IText
 			var wsf = Cache.WritingSystemFactory;
 
 			LCModel.IText text;
-
+			IStTxtPara para = null;
 			IWfiWordform word = null;
 			ITsString paraContents = null;
+			Guid segGuid = new Guid();
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 				text = sl.GetInstance<ITextFactory>().Create(Cache, new Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"));
 				//Cache.LangProject.TextsOC.Add(text);
 				var sttext = sl.GetInstance<IStTextFactory>().Create();
 				text.ContentsOA = sttext;
-				IStTxtPara para = sl.GetInstance<IStTxtParaFactory>().Create();
+				para = sl.GetInstance<IStTxtParaFactory>().Create();
 				sttext.ParagraphsOS.Add(para);
-				para.Contents = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
-				paraContents = para.Contents;
+				paraContents = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
 				ISegment segment = sl.GetInstance<ISegmentFactory>().Create();
 				para.SegmentsOS.Add(segment);
 				ITsString wform = TsStringUtils.MakeString("supercalifragilisticexpialidocious",
 					wsf.get_Engine("en").Handle);
+				segGuid = segment.Guid;
 				word = sl.GetInstance<IWfiWordformFactory>().Create(wform);
 				segment.AnalysesRS.Add(word);
 			});
 
 			// import an analysis with word gloss
-			const string xml = "<document><interlinear-text guid='AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA'>" +
-				"<paragraphs><paragraph><phrases><phrase><words>" +
+			string xml = "<document><interlinear-text guid='AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA'>" +
+				"<paragraphs><paragraph><phrases><phrase guid='" + segGuid + "'><words>" +
 					"<word>" +
 						"<item type='txt' lang='en'>supercalifragilisticexpialidocious</item>" +
 						"<item type='gls' lang='pt'>absurdo</item>" +
@@ -299,14 +300,11 @@ namespace SIL.FieldWorks.IText
 				var importedGloss = at.Gloss;
 				Assert.That(importedGloss.Form.get_String(wsf.get_Engine("pt").Handle).Text, Is.EqualTo("absurdo"));
 
-				/* NOTE: currently paragraphs are getting recreated, so we can't depend upon that ownership tree persisting after the import
-				 *
-				Assert.That(importedPara.Guid, Is.SameAs(para.Guid));
-				var at = new AnalysisTree(para.Analyses.First());
+				Assert.That(importedPara.Guid.Equals(para.Guid));
+				at = new AnalysisTree(para.Analyses.First());
 				Assert.IsNotNull(at.Gloss, "IAnalysis should be WfiGloss");
 				var gloss = at.Gloss;
 				Assert.That(gloss.Form.get_String(wsf.get_Engine("pt").Handle).Text, Is.EqualTo("absurdo"));
-				 */
 
 				// make sure nothing has changed:
 				Assert.That(Cache.LanguageProject.Texts.Count, Is.EqualTo(1));
@@ -331,30 +329,31 @@ namespace SIL.FieldWorks.IText
 			var wsf = Cache.WritingSystemFactory;
 
 			LCModel.IText text;
-
+			IStTxtPara para = null;
 			IWfiWordform word = null;
 			ITsString paraContents = null;
+			Guid segGuid = new Guid();
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 				text = sl.GetInstance<ITextFactory>().Create(Cache, new Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"));
 				//Cache.LangProject.TextsOC.Add(text);
 				var sttext = sl.GetInstance<IStTextFactory>().Create();
 				text.ContentsOA = sttext;
-				IStTxtPara para = sl.GetInstance<IStTxtParaFactory>().Create();
+				para = sl.GetInstance<IStTxtParaFactory>().Create();
 				sttext.ParagraphsOS.Add(para);
-				para.Contents = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
-				paraContents = para.Contents;
+				paraContents = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
 				ISegment segment = sl.GetInstance<ISegmentFactory>().Create();
 				para.SegmentsOS.Add(segment);
 				ITsString wform = TsStringUtils.MakeString("supercalifragilisticexpialidocious",
 					wsf.get_Engine("en").Handle);
+				segGuid = segment.Guid;
 				word = sl.GetInstance<IWfiWordformFactory>().Create(wform);
 				segment.AnalysesRS.Add(word);
 			});
 
 			// import an analysis with word gloss
 			string xml = "<document><interlinear-text guid='AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA'>" +
-				"<paragraphs><paragraph><phrases><phrase><words>" +
+				"<paragraphs><paragraph><phrases><phrase guid='" + segGuid + "'><words>" +
 					"<word guid='" + word.Guid + "'>" +
 						"<item type='txt' lang='en'>supercalifragilisticexpialidocious</item>" +
 						"<item type='gls' lang='pt'>absurdo</item>" +
@@ -383,14 +382,11 @@ namespace SIL.FieldWorks.IText
 				var importedGloss = at.Gloss;
 				Assert.That(importedGloss.Form.get_String(wsf.get_Engine("pt").Handle).Text, Is.EqualTo("absurdo"));
 
-				/* NOTE: currently paragraphs are getting recreated, so we can't depend upon that ownership tree persisting after the import
-				 *
-				Assert.That(importedPara.Guid, Is.SameAs(para.Guid));
-				var at = new AnalysisTree(para.Analyses.First());
+				Assert.That(importedPara.Guid.Equals(para.Guid));
+				at = new AnalysisTree(para.Analyses.First());
 				Assert.IsNotNull(at.Gloss, "IAnalysis should be WfiGloss");
 				var gloss = at.Gloss;
 				Assert.That(gloss.Form.get_String(wsf.get_Engine("pt").Handle).Text, Is.EqualTo("absurdo"));
-				 */
 
 				// make sure nothing has changed:
 				Assert.That(Cache.LanguageProject.Texts.Count, Is.EqualTo(1));
@@ -506,8 +502,7 @@ namespace SIL.FieldWorks.IText
 				text.ContentsOA = sttext;
 				IStTxtPara para = sl.GetInstance<IStTxtParaFactory>().Create();
 				sttext.ParagraphsOS.Add(para);
-				para.Contents = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
-				paraContents = para.Contents;
+				paraContents = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
 				ISegment segment = sl.GetInstance<ISegmentFactory>().Create();
 				para.SegmentsOS.Add(segment);
 				ITsString wform = TsStringUtils.MakeString("supercalifragilisticexpialidocious",
@@ -586,8 +581,7 @@ namespace SIL.FieldWorks.IText
 				text.ContentsOA = sttext;
 				IStTxtPara para = sl.GetInstance<IStTxtParaFactory>().Create();
 				sttext.ParagraphsOS.Add(para);
-				para.Contents = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
-				paraContents = para.Contents;
+				paraContents = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
 				ISegment segment = sl.GetInstance<ISegmentFactory>().Create();
 				para.SegmentsOS.Add(segment);
 				ITsString wform = TsStringUtils.MakeString("supercalifragilisticexpialidocious",

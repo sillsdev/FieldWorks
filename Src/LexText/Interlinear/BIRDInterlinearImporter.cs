@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -205,16 +205,17 @@ namespace SIL.FieldWorks.IText
 			//handle the header(info or meta) information as well as any media-files sections
 			SetTextMetaAndMergeMedia(cache, interlinText, wsFactory, newText, true);
 
-			IStText newContents = null;
-			//create all the paragraphs NOTE: Currently the paragraph guids are being ignored, this might be wrong.
+			IStText newContents = newText.ContentsOA;
+			//create or reuse the paragraphs available. NOTE: Currently the paragraph guids are being ignored, this might be wrong.
 			foreach (var paragraph in interlinText.paragraphs)
 			{
+				IStTxtPara newTextPara = null;
 				if (newContents == null)
 				{
 					newContents = cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 					newText.ContentsOA = newContents;
+					newTextPara = newContents.AddNewTextPara("");
 				}
-				IStTxtPara newTextPara = newContents.AddNewTextPara("");
 				int offset = 0;
 				if (paragraph.phrases == null)
 				{
@@ -223,23 +224,60 @@ namespace SIL.FieldWorks.IText
 				foreach (var phrase in paragraph.phrases)
 				{
 					ICmObject oldSegment = null;
-					//Try and locate a segment with this Guid.
+					//Try and locate a segment with this Guid. Assign newTextPara to the paragraph we're working on if we haven't already
 					if(!String.IsNullOrEmpty(phrase.guid))
 					{
 						if (cache.ServiceLocator.ObjectRepository.TryGetObject(new Guid(phrase.guid), out oldSegment))
 						{
 							if (oldSegment as ISegment != null) //The segment matches, add it into our paragraph.
-								newTextPara.SegmentsOS.Add(oldSegment as ISegment);
-							else if(oldSegment == null) //The segment is identified by a Guid, but apparently we don't have it in our current document, so make one
+							{
+								IStTxtPara segmentOwner = newContents.ParagraphsOS.FirstOrDefault(para =>
+									para.Guid.Equals((oldSegment as ISegment).Owner.Guid)) as IStTxtPara;
+								if (segmentOwner != null && newTextPara == null) //We found the StTxtPara that correspond to this paragraph
+									newTextPara = segmentOwner;
+							}
+							else if (oldSegment == null) //The segment is identified by a Guid, but apparently we don't have it in our current document, so make one
+							{
+								if (newTextPara == null)
+									newTextPara = newContents.AddNewTextPara("");
 								oldSegment = cache.ServiceLocator.GetInstance<ISegmentFactory>().Create(newTextPara, offset, cache, new Guid(phrase.guid));
+							}
 							else //The Guid is in use, but not by a segment. This is bad.
 							{
 								return false;
 							}
 						}
 					}
+					//If newTextPara is null, try to use a paragraph that a sibling phrase belongs to.
+					//Note: newTextPara is only assigned once, and won't be reassigned until we iterate through a new paragraph.
+					if (newTextPara == null)
+					{
+						var phraseGuids = paragraph.phrases.Select(p => p.guid);
+						foreach (IStTxtPara para in newContents.ParagraphsOS)
+						{
+							if (para.SegmentsOS.Any(seg => phraseGuids.Contains(seg.Guid.ToString())))
+							{
+								newTextPara = para;
+								break;
+							}
+						}
+					}
+					//Can't find any paragraph for our phrase, create a brand new paragraph
+					if (newTextPara == null)
+						newTextPara = newContents.AddNewTextPara("");
+
 					//set newSegment to the old, or create a brand new one.
-					ISegment newSegment = oldSegment as ISegment ?? cache.ServiceLocator.GetInstance<ISegmentFactory>().Create(newTextPara, offset);
+					ISegment newSegment = oldSegment as ISegment;
+					if (newSegment == null)
+					{
+						if (!string.IsNullOrEmpty(phrase.guid))
+						{
+							//The segment is identified by a Guid, but apparently we don't have it in our current document, so make one with the guid
+							newSegment = cache.ServiceLocator.GetInstance<ISegmentFactory>().Create(newTextPara, offset, cache, new Guid(phrase.guid));
+						}
+						else
+							newSegment = cache.ServiceLocator.GetInstance<ISegmentFactory>().Create(newTextPara, offset);
+					}
 					//Fill in the ELAN time information if it is present.
 					AddELANInfoToSegment(cache, phrase, newSegment);
 
@@ -251,6 +289,8 @@ namespace SIL.FieldWorks.IText
 					bool lastWasWord = false;
 					if (phrase.WordsContent != null && phrase.WordsContent.Words != null)
 					{
+						//Rewrite our analyses
+						newSegment.AnalysesRS.Clear();
 						foreach (var word in phrase.WordsContent.Words)
 						{
 							//If the text of the phrase was not found in a "txt" item for this segment then build it from the words.
@@ -270,7 +310,7 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// This method will update the newTextPara param appending the phraseText and possibly modifying the segment ending
 		/// to add an end of segment character. The offset parameter will be set to the value where a following segment would start
-		/// from.
+		/// from. The paragraph text will be replaced if the offset is 0.
 		/// </summary>
 		/// <param name="newTextPara"></param>
 		/// <param name="offset"></param>
@@ -279,8 +319,12 @@ namespace SIL.FieldWorks.IText
 		{
 			if (phraseText != null && phraseText.Length > 0)
 			{
-				offset += phraseText.Length;
 				var bldr = newTextPara.Contents.GetBldr();
+				if (offset == 0)
+				{
+					bldr.Replace(0, bldr.Length, "", null);
+				}
+				offset += phraseText.Length;
 				var oldText = (bldr.Text ?? "").Trim();
 				if (oldText.Length > 0 && !TsStringUtils.IsEndOfSentenceChar(oldText[oldText.Length - 1], Icu.UCharCategory.U_OTHER_PUNCTUATION))
 				{
@@ -382,6 +426,8 @@ namespace SIL.FieldWorks.IText
 							phraseText = TsStringUtils.MakeString(item.Value, GetWsEngine(wsFactory, item.lang).Handle);
 							textInFile = true;
 							break;
+						case "segnum":
+							break; // The segnum item is not associated to a property, and also not a custom field. Skip merging it.
 						default:
 							var classId = cache.MetaDataCacheAccessor.GetClassId("Segment");
 							var mdc = (IFwMetaDataCacheManaged) cache.MetaDataCacheAccessor;
