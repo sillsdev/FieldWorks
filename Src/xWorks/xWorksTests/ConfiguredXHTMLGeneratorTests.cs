@@ -1311,6 +1311,83 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_ReferencedComplexFormDefinitionOrGloss_HandlePerWS()
+		{
+			// LT-19073: Definition and gloss display behaviour for LT-7445 should apply to "Definition (or Gloss)" field in Referenced Complex Froms.
+			// Check that different combinations of present or missing definition have successful fallback to gloss, and independently of other senses.
+
+			var typeMain = CreatePublicationType("main");
+
+			var entryEntry = CreateInterestingLexEntry(Cache, "entry");
+
+			// Add analysis ws German
+			var wsDe = EnsureWritingSystemSetup(Cache, "de", false);
+
+			// Both senses have gloss and definition
+			var firstComplexForm = CreateInterestingLexEntry(Cache, "entry1", "glossA1", "definitionA1");
+			AddSenseToEntry(firstComplexForm, "glossA2", wsDe, Cache, "definitionA2");
+			CreateComplexForm(Cache, entryEntry, firstComplexForm, false);
+
+			// both senses have gloss, not definition
+			var secondComplexForm = CreateInterestingLexEntry(Cache, "entry2", "glossB1");
+			AddSenseToEntry(secondComplexForm, "glossB2", wsDe, Cache);
+			CreateComplexForm(Cache, entryEntry, secondComplexForm, false);
+
+			// second sense has gloss, not definition
+			var thirdComplexForm = CreateInterestingLexEntry(Cache, "entry3", "glossC1", "definitionC1");
+			AddSenseToEntry(thirdComplexForm, "glossC2", wsDe, Cache);
+			CreateComplexForm(Cache, entryEntry, thirdComplexForm, false);
+
+			// first sense has gloss, not definition
+			var fourthComplexForm = CreateInterestingLexEntry(Cache, "entry4", "glossD1");
+			AddSenseToEntry(fourthComplexForm, "glossD2", wsDe, Cache, "definitionD2");
+			CreateComplexForm(Cache, entryEntry, fourthComplexForm, false);
+
+			var flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
+			var pubMain = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual, typeMain);
+
+			var definitionOrGlossNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "DefinitionOrGloss",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en", "de" }),
+			};
+			var complexFormNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VisibleComplexFormBackRefs",
+				Children = new List<ConfigurableDictionaryNode> { definitionOrGlossNode },
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { complexFormNode },
+				FieldDescription = "LexEntry"
+			};
+
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			// SUT
+			var output = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryEntry, mainEntryNode, pubMain, DefaultSettings);
+
+			// set of xpaths and required number of matches.
+			var checkthis = new Dictionary<string, int>()
+			{
+				{ "/div/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@class='definitionorgloss']/span[.='definitionA1']", 1 },
+				{ "/div/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@class='definitionorgloss']/span[.='definitionA2']", 1 },
+
+				{ "/div/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@class='definitionorgloss']/span[.='glossB1']", 1 },
+				{ "/div/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@class='definitionorgloss']/span[.='glossB2']", 1 },
+
+				{ "/div/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@class='definitionorgloss']/span[.='definitionC1']", 1 },
+				{ "/div/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@class='definitionorgloss']/span[.='glossC2']", 1 },
+
+				{ "/div/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@class='definitionorgloss']/span[.='glossD1']", 1 },
+				{ "/div/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@class='definitionorgloss']/span[.='definitionD2']", 1 },
+			};
+			foreach (var thing in checkthis)
+			{
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(thing.Key, thing.Value);
+			}
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_OtherReferencedComplexForms()
 		{
 			var complexformoptions = new DictionaryNodeListAndParaOptions

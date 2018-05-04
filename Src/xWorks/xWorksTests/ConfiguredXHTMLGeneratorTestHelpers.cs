@@ -118,7 +118,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="headword">Optional: defaults to 'Citation'</param>
 		/// <param name="gloss">Optional: defaults to 'gloss'</param>
 		/// <returns></returns>
-		internal static ILexEntry CreateInterestingLexEntry(LcmCache cache, string headword = "Citation", string gloss = "gloss")
+		internal static ILexEntry CreateInterestingLexEntry(LcmCache cache, string headword = "Citation", string gloss = "gloss", string definition = null)
 		{
 			var entryFactory = cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			var entry = entryFactory.Create();
@@ -126,7 +126,7 @@ namespace SIL.FieldWorks.XWorks
 			var wsFr = EnsureWritingSystemSetup(cache, "fr", true);
 			AddHeadwordToEntry(entry, headword, wsFr);
 			entry.Comment.set_String(wsEn, TsStringUtils.MakeString("Comment", wsEn));
-			AddSenseToEntry(entry, gloss, wsEn, cache);
+			AddSenseToEntry(entry, gloss, wsEn, cache, definition);
 			return entry;
 		}
 
@@ -355,13 +355,20 @@ namespace SIL.FieldWorks.XWorks
 			return pronunciation;
 		}
 
-		private static void AddSenseToEntry(ILexEntry entry, string gloss, int wsId, LcmCache cache)
+		private static void AddSenseToEntry(ILexEntry entry, string gloss, int wsId, LcmCache cache, string definition = null)
 		{
 			var senseFactory = cache.ServiceLocator.GetInstance<ILexSenseFactory>();
 			var sense = senseFactory.Create();
 			entry.SensesOS.Add(sense);
 			if (!string.IsNullOrEmpty(gloss))
+			{
 				sense.Gloss.set_String(wsId, TsStringUtils.MakeString(gloss, wsId));
+			}
+
+			if (!string.IsNullOrEmpty(definition))
+			{
+				sense.Definition.set_String(wsId, TsStringUtils.MakeString(definition, wsId));
+			}
 		}
 
 		private void AddSenseAndTwoSubsensesToEntry(ICmObject entryOrSense, string gloss)
