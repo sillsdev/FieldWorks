@@ -1,17 +1,7 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: PersistenceDesigner.cs
-// Responsibility: EberhardB
-// Last reviewed:
-//
-// <remarks>
-// Implementation of PersistenceDesigner. This allows to set the parent property when the
-// psersistence component is inserted in design view.
-// </remarks>
-//
-// -------------------------------------------------------------------------------------------
+
 using System;
 using System.Windows.Forms;
 using System.ComponentModel;

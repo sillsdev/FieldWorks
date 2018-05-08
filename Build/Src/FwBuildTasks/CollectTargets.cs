@@ -307,13 +307,6 @@ namespace FwBuildTasks
 							// We don't discover that dependency because it's not a reference (LT-13777).
 							bldr.Append(";ScrChecks");
 						}
-						if (project == "FwControls")
-						{
-							// The FwControls project requires that Design be built first,
-							// since FwControls uses it in some of its Designer views of controls at runtime.
-							// We don't discover that dependency because it's not a reference.
-							bldr.Append(";Design");
-						}
 						var dependencies = m_mapProjDepends[project];
 						dependencies.Sort();
 						foreach (var dep in dependencies)

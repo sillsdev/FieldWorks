@@ -5,8 +5,8 @@
 using System;
 using System.Text;
 using System.Xml.Linq;
-using SIL.FieldWorks.Common.RootSites;
 using LanguageExplorer.Filters;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Controls.XMLViews

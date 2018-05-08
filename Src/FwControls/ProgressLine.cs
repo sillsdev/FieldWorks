@@ -1,17 +1,12 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ProgressLine.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.Controls.Design;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -20,7 +15,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// A line that can be used as progress bar. Progress is painted in foreground color.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	[Designer("SIL.FieldWorks.Common.Controls.Design.ProgressLineDesigner")]
+	[Designer(typeof(ProgressLineDesigner))]
 	public partial class ProgressLine : LineControl
 	{
 		private int m_MinValue = 0;

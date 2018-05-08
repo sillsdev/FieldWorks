@@ -1,21 +1,13 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: IApp.cs
-// Responsibility: TE Team
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 
-namespace SIL.FieldWorks.Common.RootSites
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// <summary>
 	/// Interface for application.
@@ -121,9 +113,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// <param name="fReplace"><c>true</c> to make the replace tab active</param>
 		/// <param name="rootsite">The view where the find will be conducted</param>
+		/// <param name="cache"></param>
+		/// <param name="mainForm"></param>
 		/// <returns><c>true</c> if the dialog is successfully displayed</returns>
 		/// ------------------------------------------------------------------------------------
-		bool ShowFindReplaceDialog(bool fReplace, RootSite rootsite);
+		bool ShowFindReplaceDialog(bool fReplace, IVwRootSite rootsite, LcmCache cache, Form mainForm);
 
 		/// <summary>
 		/// Handle incoming links.

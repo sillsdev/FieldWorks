@@ -131,6 +131,7 @@
     <Reference Include="Accessibility">
       <Name>Accessibility</Name>
     </Reference>
+    <Reference Include="System.Design" />
     <Reference Include="ViewsInterfaces">
       <Name>ViewsInterfaces</Name>
       <HintPath>..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
@@ -228,6 +229,10 @@
     <Compile Include="DataUpDown.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Design\FwButtonDesigner.cs" />
+    <Compile Include="Design\FwHelpButtonDesigner.cs" />
+    <Compile Include="Design\PersistenceDesigner.cs" />
+    <Compile Include="Design\ProgressLineDesigner.cs" />
     <Compile Include="DockExtender\DockExtender.cs" />
     <Compile Include="DockExtender\Floaty.cs">
       <SubType>Form</SubType>
@@ -296,15 +301,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="IFwMainWndSettings.cs" />
-    <Compile Include="InformationBar.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="InformationBarButton.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="InformationBarButtonCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="LineControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -423,14 +419,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FwPopup.resx">
       <DependentUpon>FwPopup.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="InformationBar.resx">
-      <DependentUpon>InformationBar.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="InformationBarButton.resx">
-      <DependentUpon>InformationBarButton.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="LineControl.resx">

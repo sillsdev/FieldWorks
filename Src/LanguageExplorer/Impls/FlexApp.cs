@@ -14,7 +14,6 @@ using System.Threading;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.XMLViews;
 using Microsoft.Win32;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -654,8 +653,10 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		/// <param name="fReplace"><c>true</c> to make the replace tab active</param>
 		/// <param name="rootsite">The view where the find will be conducted</param>
+		/// <param name="cache"></param>
+		/// <param name="mainForm"></param>
 		/// <returns><c>true</c> if the dialog is successfully displayed</returns>
-		public bool ShowFindReplaceDialog(bool fReplace, RootSite rootsite)
+		public bool ShowFindReplaceDialog(bool fReplace, IVwRootSite rootsite, LcmCache cache, Form mainForm)
 		{
 			if (rootsite?.RootBox == null)
 			{
@@ -678,7 +679,7 @@ namespace LanguageExplorer.Impls
 
 			var fOverlay = (rootsite.RootBox.Overlay != null);
 
-			if (m_findReplaceDlg.SetDialogValues(rootsite.Cache, FindPattern, rootsite, fReplace, fOverlay, rootsite.FindForm(), this, this))
+			if (m_findReplaceDlg.SetDialogValues(cache, FindPattern, rootsite, fReplace, fOverlay, mainForm, this, this))
 			{
 				m_findReplaceDlg.Show();
 				return true;

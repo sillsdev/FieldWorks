@@ -149,14 +149,6 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FwControls, Version=9.0.0.17559, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\FwControls.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.Core.Desktop, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SIL.Core.Desktop.dll</HintPath>
-    </Reference>
     <Reference Include="SIL.Core.Desktop, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\SIL.Core.Desktop.dll</HintPath>
@@ -224,9 +216,6 @@
     <Compile Include="CollectorEnv.cs" />
     <Compile Include="PictureWrapper.cs" />
     <Compile Include="FwBaseVc.cs" />
-    <Compile Include="IApp.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="IHeightEstimator.cs">
       <SubType>Code</SubType>
     </Compile>

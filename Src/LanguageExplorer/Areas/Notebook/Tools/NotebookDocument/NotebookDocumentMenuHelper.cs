@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 {
@@ -30,7 +30,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 
 		private void EditFindMenu_Click(object sender, EventArgs e)
 		{
-			PropertyTable.GetValue<IApp>("App").ShowFindReplaceDialog(false, PropertyTable.GetValue<IFwMainWnd>("window").ActiveView as RootSite);
+			PropertyTable.GetValue<IApp>("App").ShowFindReplaceDialog(false, _majorFlexComponentParameters.MainWindow.ActiveView as IVwRootSite, _majorFlexComponentParameters.LcmCache, _majorFlexComponentParameters.MainWindow as Form);
 		}
 
 		internal void Initialize()

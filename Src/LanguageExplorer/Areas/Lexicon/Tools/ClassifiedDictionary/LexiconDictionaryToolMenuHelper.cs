@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 {
@@ -47,7 +47,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 
 		private void EditFindMenu_Click(object sender, EventArgs e)
 		{
-			PropertyTable.GetValue<IApp>("App").ShowFindReplaceDialog(sender == _editFindMenu, PropertyTable.GetValue<IFwMainWnd>("window").ActiveView as RootSite);
+			PropertyTable.GetValue<IApp>("App").ShowFindReplaceDialog(sender == _editFindMenu, _majorFlexComponentParameters.MainWindow.ActiveView as IVwRootSite, _majorFlexComponentParameters.LcmCache, _majorFlexComponentParameters.MainWindow as Form);
 		}
 
 		#region Implementation of IPropertyTableProvider

@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2017 SIL International
+// Copyright (c) 2007-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,6 +6,7 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.Controls.Design;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -16,7 +17,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[ToolboxBitmap(typeof(FwHelpButton), "resources.HelpButton.ICO")]
-	[Designer("SIL.FieldWorks.Common.Controls.Design.FwHelpButtonDesigner")]
+	[Designer(typeof(FwHelpButtonDesigner))]
 	public partial class FwHelpButton : UserControl
 	{
 		/// ------------------------------------------------------------------------------------

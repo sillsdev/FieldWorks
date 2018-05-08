@@ -11,49 +11,12 @@ using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using SIL.FieldWorks.Common.Controls.Design;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Windows.Forms;
 
 namespace SIL.FieldWorks.Common.Controls
 {
-	#region ISettings
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// The ISettings interface should be implemented by forms, controls, and apps that wish to
-	/// participate in the FW standard way of saving settings in the registry. Forms can have
-	/// their size, position, and window state information persisted merely by instantiating the
-	/// <see cref="Persistence"/> class, and calling m_persistence.LoadWindowPosition from
-	/// an override of OnLayout(). However, forms which have controls that must be
-	/// persisted (which is probably almost any persisted form) must implement ISettings as
-	/// well. ISettings should also be implemented by each application, which should at least
-	/// override SettingsKey to return the base key for the appliation. (An app's implementation
-	/// of <see cref="SaveSettingsNow"/> will normally be a no-op.)
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	public interface ISettings
-	{
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Returns a key in the registry where <see cref="Persistence"/> should store settings.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		RegistryKey SettingsKey { get; }
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Implement this method to save the persistent settings for your class. Normally, this
-		/// should also result in recursively calling SaveSettingsNow for all children which
-		/// also implement ISettings.
-		/// </summary>
-		/// <remarks>Note: A form's implementation of <see cref="SaveSettingsNow"/> normally
-		/// calls <see cref="Persistence.SaveSettingsNow"/> (after optionally saving any
-		/// class-specific properties).</remarks>
-		/// ------------------------------------------------------------------------------------
-		void SaveSettingsNow();
-	}
-	#endregion
-
-	#region Persistence class
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// The Persistence class is a control designed to be dropped onto forms to persist certain
@@ -77,7 +40,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </remarks>
 	/// ----------------------------------------------------------------------------------------
 	[ToolboxBitmap(typeof(Persistence), "resources.Persistence.bmp")]
-	[Designer("SIL.FieldWorks.Common.Controls.Design.PersistenceDesigner")]
+	[Designer(typeof(PersistenceDesigner))]
 	public class Persistence : Component, ISupportInitialize
 	{
 		#region Variables and declarations
@@ -605,5 +568,4 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 		#endregion
 	}
-	#endregion
 }

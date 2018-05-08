@@ -1191,7 +1191,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 
 		internal void HandleFindAndReplace(bool doReplace)
 		{
-			PropertyTable.GetValue<IApp>("App")?.ShowFindReplaceDialog(doReplace, m_rtPane);
+			PropertyTable.GetValue<IApp>("App")?.ShowFindReplaceDialog(doReplace, m_rtPane, Cache, PropertyTable.GetValue<Form>("window"));
 		}
 
 #if RANDYTODO

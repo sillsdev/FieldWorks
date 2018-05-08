@@ -6,6 +6,7 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.Controls.Design;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -56,7 +57,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	/// ENHANCE EberhardB: Show Tooltip if text is to long to fit in button
 	[Serializable]
-	[Designer("SIL.FieldWorks.Common.Controls.Design.FwButtonDesigner")]
+	[Designer(typeof(FwButtonDesigner))]
 	public class FwButton : Button
 	{
 		/// <summary>

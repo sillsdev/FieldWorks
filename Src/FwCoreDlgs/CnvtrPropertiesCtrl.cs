@@ -9,9 +9,9 @@ using System.Windows.Forms;
 using ECInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Resources;
 using SilEncConverters40;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Text;
 
 namespace SIL.FieldWorks.FwCoreDlgs
