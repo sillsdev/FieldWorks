@@ -217,7 +217,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="folder"></param>
 		/// <param name="pattern">Pattern for interesting DLLs in folder. Should end in .dll </param>
 		/// <returns></returns>
-		public static List<T> GetPlugins<T>(string folder, string pattern) where T : class
+		private static List<T> GetPlugins<T>(string folder, string pattern) where T : class
 		{
 			string[] files = Directory.GetFiles(folder, pattern);
 

@@ -205,38 +205,6 @@
 		</command>
 		<command id="CmdAddToLexicon" label="Add to Dictionary..." message="AddToLexicon" icon="majorEntry"/>
 		<command id="CmdConfigureXmlDocView" label="{0}" message="ConfigureXmlDocView"/>
-		<!-- F1 is omitted because used for Help-->
-		<command id="CmdMacroF2" label="F2" message="Macro" shortcut="F2">
-			<parameters key="2"/>
-		</command>
-		<command id="CmdMacroF3" label="F3" message="Macro" shortcut="F3">
-			<parameters key="3"/>
-		</command>
-		<command id="CmdMacroF4" label="F4" message="Macro" shortcut="F4">
-			<parameters key="4"/>
-		</command>
-		<!-- F5 is omitted because used for Refresh-->
-		<command id="CmdMacroF6" label="F6" message="Macro" shortcut="F6">
-			<parameters key="6"/>
-		</command>
-		<command id="CmdMacroF7" label="F7" message="Macro" shortcut="F7">
-			<parameters key="7"/>
-		</command>
-		<command id="CmdMacroF8" label="F8" message="Macro" shortcut="F8">
-			<parameters key="8"/>
-		</command>
-		<command id="CmdMacroF9" label="F9" message="Macro" shortcut="F9">
-			<parameters key="9"/>
-		</command>
-		<command id="CmdMacroF10" label="F10" message="Macro" shortcut="F10">
-			<parameters key="10"/>
-		</command>
-		<command id="CmdMacroF11" label="F11" message="Macro" shortcut="F11">
-			<parameters key="11"/>
-		</command>
-		<command id="CmdMacroF12" label="F12" message="Macro" shortcut="F12">
-			<parameters key="12"/>
-		</command>
 	</commands>
 	<!-- ********************************************************** -->
 	<!-- ************************ lists *********************** -->
@@ -385,16 +353,6 @@
 				<item label="-" translate="do not translate"/>
 				<item command="CmdChangeSpelling" defaultVisible="false" a10status="Used in Words area" />
 			</menu>
-			<item command="CmdMacroF2" defaultVisible="false"/>
-			<item command="CmdMacroF3" defaultVisible="false"/>
-			<item command="CmdMacroF4" defaultVisible="false"/>
-			<item command="CmdMacroF6" defaultVisible="false"/>
-			<item command="CmdMacroF7" defaultVisible="false"/>
-			<item command="CmdMacroF8" defaultVisible="false"/>
-			<item command="CmdMacroF9" defaultVisible="false"/>
-			<item command="CmdMacroF10" defaultVisible="false"/>
-			<item command="CmdMacroF11" defaultVisible="false"/>
-			<item command="CmdMacroF12" defaultVisible="false"/>
 		</menu>
 		<menu id="Help" label="_Help" a10status="PARTIALLY_DONE" >
 			<menu id="Resources" label="_Resources" a10status="PARTIALLY_DONE" >

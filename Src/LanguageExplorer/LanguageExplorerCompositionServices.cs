@@ -104,6 +104,7 @@ namespace LanguageExplorer
 				typeof(Publisher),
 				typeof(Subscriber),
 				typeof(PropertyTable),
+				typeof(MacroMenuHandler),
 				// Areas & their respective tools.
 				typeof(AreaRepository),
 				typeof(LexiconArea),

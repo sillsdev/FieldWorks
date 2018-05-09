@@ -1766,7 +1766,7 @@
     <Compile Include="DictionaryConfiguration\IDictionaryGroupingOptionsView.cs" />
     <Compile Include="DictionaryConfiguration\IDictionaryListOptionsView.cs" />
     <Compile Include="DictionaryConfiguration\IDictionarySenseOptionsView.cs" />
-    <Compile Include="DictionaryConfiguration\IFlexMacro.cs" />
+    <Compile Include="IFlexMacro.cs" />
     <Compile Include="DictionaryConfiguration\IHeadwordNumbersView.cs" />
     <Compile Include="DictionaryConfiguration\ILayoutConverter.cs" />
     <Compile Include="DictionaryConfiguration\ImageHolder.cs">
@@ -1798,7 +1798,7 @@
     <Compile Include="ListUpdateHelper.cs" />
     <Compile Include="ListUpdateHelperParameterObject.cs" />
     <Compile Include="Areas\LocalDragItem.cs" />
-    <Compile Include="DictionaryConfiguration\MacroListener.cs" />
+    <Compile Include="Impls\MacroMenuHandler.cs" />
     <Compile Include="Areas\TextsAndWords\MatchingItemsRecordList.cs" />
     <Compile Include="Navigation.cs" />
     <Compile Include="Areas\Notebook\NotebookExportDialog.cs">

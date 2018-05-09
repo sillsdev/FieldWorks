@@ -71,6 +71,8 @@ namespace LanguageExplorer.Impls
 		private ISubscriber _subscriber;
 		[Import]
 		private IFlexApp _flexApp;
+		[Import]
+		private MacroMenuHandler _macroMenuHandler;
 		static bool _inUndoRedo; // true while executing an Undo/Redo command.
 		private bool _windowIsCopy;
 		private FwLinkArgs _startupLink;
@@ -731,6 +733,8 @@ namespace LanguageExplorer.Impls
 				EnableVernacularSpelling();
 			}
 
+			_macroMenuHandler.Initialize(_majorFlexComponentParameters);
+
 			SetupOutlookBar();
 
 			SetWindowTitle();
@@ -1016,6 +1020,7 @@ namespace LanguageExplorer.Impls
 				_sendReceiveMenuManager?.Dispose();
 				_parserMenuManager?.Dispose();
 				_dataNavigationManager?.Dispose();
+				_macroMenuHandler?.Dispose();
 				IdleQueue?.Dispose();
 				_writingSystemListHandler?.Dispose();
 				_combinedStylesListHandler?.Dispose();
@@ -1053,6 +1058,7 @@ namespace LanguageExplorer.Impls
 			_writingSystemListHandler = null;
 			_combinedStylesListHandler = null;
 			_linkHandler = null;
+			_macroMenuHandler = null;
 
 			base.Dispose(disposing);
 

@@ -1414,4 +1414,12 @@ Do you want to continue with the export?</value>
   <data name="FWFilterBasic_Small" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>images\FWFilterBasic-Small.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="ksRedoMacro" xml:space="preserve">
+    <value>Redo {0}</value>
+    <comment>{0} will be the name of a macro</comment>
+  </data>
+  <data name="ksUndoMacro" xml:space="preserve">
+    <value>Undo {0}</value>
+    <comment>{0} will be the name of a macro</comment>
+  </data>
 </root>

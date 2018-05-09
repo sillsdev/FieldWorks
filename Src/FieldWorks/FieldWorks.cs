@@ -178,6 +178,7 @@ namespace SIL.FieldWorks
 				globalPartsAggregateCatalog.Catalogs.Add(new TypeCatalog(globalTypes));
 				// Add parts to windows level scoped catalog
 				scopedChildAggregateCatalog.Catalogs.Add(new TypeCatalog(LanguageExplorerCompositionServices.GetWindowScopedTypes()));
+				scopedChildAggregateCatalog.Catalogs.Add(new DirectoryCatalog(".", "Macro*.dll"));
 
 				#region Initialize XULRunner - required to use the geckofx WebBrowser Control (GeckoWebBrowser).
 				var exePath = Path.GetDirectoryName(Application.ExecutablePath);

@@ -349,14 +349,6 @@
     <value>Copy of {0} ({1})</value>
     <comment>{1} is a number to distinguish an earlier copy.  {0} is the name of a stored dictionary configuration that is being copied.</comment>
   </data>
-  <data name="ksRedoMacro" xml:space="preserve">
-    <value>Redo {0}</value>
-    <comment>{0} will be the name of a macro</comment>
-  </data>
-  <data name="ksUndoMacro" xml:space="preserve">
-    <value>Undo {0}</value>
-    <comment>{0} will be the name of a macro</comment>
-  </data>
   <data name="FailedToRename" xml:space="preserve">
     <value>Failed to rename. Use a name that is not already in use.</value>
     <comment>String similar 'Failed to rename. Use a name that is not already in use'

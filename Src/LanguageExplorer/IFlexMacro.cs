@@ -5,7 +5,7 @@
 using System.Windows.Forms;
 using SIL.LCModel;
 
-namespace LanguageExplorer.DictionaryConfiguration
+namespace LanguageExplorer
 {
 	/// <summary>
 	/// Implement this interface to create a Macro that can be run from anywhere in Flex (that a View selection can be made).
@@ -15,6 +15,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 	/// Your implementing class must have a no-argument constructor (or none). One instance will be created for each main window.
 	/// You will need to reference at least Language Explorer and very likely LCM and ViewsInterfaces.
 	/// </summary>
+	/// <remarks>
+	/// NB: Implementors must export the IFlexMacro interface, as in: [Export(typeof(IFlexMacro))].
+	/// </remarks>
 	public interface IFlexMacro
 	{
 		/// <summary>

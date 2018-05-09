@@ -357,7 +357,7 @@
     <Compile Include="DictionaryConfiguration\HeadwordNumbersControllerTests.cs" />
     <Compile Include="DictionaryConfiguration\InterestingTextsTests.cs" />
     <Compile Include="DictionaryConfiguration\ItemClickedTests.cs" />
-    <Compile Include="DictionaryConfiguration\MacroListenerTests.cs" />
+    <Compile Include="Impls\MacroMenuHandlerTests.cs" />
     <Compile Include="Impls\RecordListRepositoryTests.cs" />
     <Compile Include="DictionaryConfiguration\TempGuidOn.cs" />
     <Compile Include="DictionaryConfiguration\UnicodeCharacterEditingHelperTests.cs" />

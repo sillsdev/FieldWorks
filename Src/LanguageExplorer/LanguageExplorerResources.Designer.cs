@@ -19,7 +19,7 @@ namespace LanguageExplorer {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class LanguageExplorerResources {
@@ -2215,6 +2215,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Redo {0}.
+        /// </summary>
+        internal static string ksRedoMacro {
+            get {
+                return ResourceManager.GetString("ksRedoMacro", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Redo Make Dependent Clause.
         /// </summary>
         internal static string ksRedoMakeDepClause {
@@ -2938,6 +2947,15 @@ namespace LanguageExplorer {
         internal static string ksUndoLastRowInSent {
             get {
                 return ResourceManager.GetString("ksUndoLastRowInSent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo {0}.
+        /// </summary>
+        internal static string ksUndoMacro {
+            get {
+                return ResourceManager.GetString("ksUndoMacro", resourceCulture);
             }
         }
         
