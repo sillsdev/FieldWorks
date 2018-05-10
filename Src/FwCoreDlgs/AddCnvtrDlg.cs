@@ -9,7 +9,6 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Common.FwUtils;
 using ECInterfaces;

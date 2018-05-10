@@ -10,7 +10,6 @@ using System.Windows.Forms;
 using Sfm2Xml;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.FwCoreDlgs;

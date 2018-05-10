@@ -9,7 +9,6 @@ using System.Linq;
 using System.Windows.Forms;
 using ParatextImport;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;

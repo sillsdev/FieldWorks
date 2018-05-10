@@ -9,7 +9,6 @@ using LanguageExplorer;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks

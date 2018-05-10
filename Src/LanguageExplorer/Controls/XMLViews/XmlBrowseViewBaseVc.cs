@@ -18,8 +18,7 @@ using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using LanguageExplorer.Filters;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Resources; // for check-box icons.
-using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Resources;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.Xml;

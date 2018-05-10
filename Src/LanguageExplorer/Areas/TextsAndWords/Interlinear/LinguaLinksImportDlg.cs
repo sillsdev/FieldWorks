@@ -12,7 +12,6 @@ using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.Utils;

@@ -5,7 +5,6 @@
 using System.Collections.Generic;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Controls.XMLViews

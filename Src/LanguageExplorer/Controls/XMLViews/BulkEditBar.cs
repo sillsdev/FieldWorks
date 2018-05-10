@@ -20,7 +20,6 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FwCoreDlgs;
 using LanguageExplorer.Filters;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.RootSites;
 using SilEncConverters40;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FwCoreDlgs.Controls;

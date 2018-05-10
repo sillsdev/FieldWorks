@@ -12,7 +12,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.DomainServices;
-using SIL.FieldWorks.Common.RootSites;
 
 namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {

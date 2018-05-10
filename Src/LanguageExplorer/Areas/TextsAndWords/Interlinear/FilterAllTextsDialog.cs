@@ -9,7 +9,6 @@ using SIL.Code;
 using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Resources;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear

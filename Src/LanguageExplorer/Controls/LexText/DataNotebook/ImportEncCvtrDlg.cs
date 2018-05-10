@@ -4,7 +4,6 @@
 
 using System;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FwCoreDlgs;
 using SilEncConverters40;
 using SIL.FieldWorks.Common.FwUtils;

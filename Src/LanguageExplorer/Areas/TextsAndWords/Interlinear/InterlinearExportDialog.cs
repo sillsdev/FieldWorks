@@ -15,7 +15,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.Xml;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 

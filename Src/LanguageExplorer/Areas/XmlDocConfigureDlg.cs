@@ -25,7 +25,6 @@ using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.DictionaryConfiguration;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel;

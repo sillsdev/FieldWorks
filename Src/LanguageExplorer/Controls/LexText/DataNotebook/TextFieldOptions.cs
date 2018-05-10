@@ -7,7 +7,6 @@ using System.Windows.Forms;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Controls.LexText.DataNotebook

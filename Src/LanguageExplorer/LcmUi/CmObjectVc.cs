@@ -5,7 +5,6 @@
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 
 namespace LanguageExplorer.LcmUi

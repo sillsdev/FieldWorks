@@ -13,7 +13,6 @@ using System.Xml.XPath;
 using LanguageExplorer.Controls.DetailControls;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.Utils;

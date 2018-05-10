@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.WordWorks.Parser;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -164,6 +163,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			var currentObject = recordNavigationEventArgs.CurrentObject;
 			if (currentObject is IStText)
 			{
+#if RANDYTODO
+				// TODO: This is not used. Fix bug from text land, so it is called, which will then make "parseWordsInText" menu visible and enabled.
+#endif
 				_currentStText = (IStText)currentObject;
 				return;
 			}
@@ -180,9 +182,13 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private void ParserMenuManager_DropDownOpening(object sender, EventArgs e)
 		{
 			// Enable/Disable menus that are context sensitive.
+			_parserToolStripMenuItems["clearCurrentParserAnalyses"].Visible = (CurrentWordform != null);
 			_parserToolStripMenuItems["clearCurrentParserAnalyses"].Enabled = (CurrentWordform != null);
+
+			_parserToolStripMenuItems["parseCurrentWord"].Visible = (CurrentWordform != null);
 			_parserToolStripMenuItems["parseCurrentWord"].Enabled = (CurrentWordform != null);
 
+			_parserToolStripMenuItems["parseWordsInText"].Visible = (CurrentText != null);
 			_parserToolStripMenuItems["parseWordsInText"].Enabled = (CurrentText != null);
 
 			_parserToolStripMenuItems["parseAllWords"].Enabled = (Connection == null);
@@ -198,7 +204,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		internal ParserConnection Connection { get; set; }
 
-		#region IVwNotifyChange Members
+#region IVwNotifyChange Members
 
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
@@ -210,9 +216,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			}
 		}
 
-		#endregion
+#endregion
 
-		#region Timer Related
+#region Timer Related
 
 		private const int TIMER_INTERVAL = 250; // every 1/4 second
 
@@ -239,7 +245,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			UpdateStatusPanelProgress();
 		}
 
-		#endregion
+#endregion
 
 		public bool ConnectToParser()
 		{
@@ -338,7 +344,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			}
 		}
 
-		#region IDisposable & Co. implementation
+#region IDisposable & Co. implementation
 
 		/// <summary>
 		/// See if the object has been disposed.
@@ -457,7 +463,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			IsDisposed = true;
 		}
 
-		#endregion IDisposable & Co. implementation
+#endregion IDisposable & Co. implementation
 
 		private IStText CurrentText => InInterlinearText ? _currentStText : null;
 
@@ -643,7 +649,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			}
 		}
 
-		#region TraceSwitch methods
+#region TraceSwitch methods
 
 		private void TraceVerbose(string s)
 		{
@@ -665,6 +671,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			}
 		}
 
-		#endregion TraceSwitch methods
+#endregion TraceSwitch methods
 	}
 }
