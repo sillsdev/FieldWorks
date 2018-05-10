@@ -117,6 +117,7 @@ namespace LanguageExplorer.Impls
 
 			if (disposing)
 			{
+				Application.Idle -= ApplicationOnIdle;
 				// Dispose managed resources here.
 				_subscriber.Unsubscribe("ResetStyleSheet", ResetStyleSheet);
 				_characterStyleInformation.Clear();

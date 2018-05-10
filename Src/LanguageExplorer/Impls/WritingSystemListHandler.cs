@@ -120,6 +120,7 @@ namespace LanguageExplorer.Impls
 
 			if (disposing)
 			{
+				Application.Idle -= ApplicationOnIdle;
 				// Dispose any combobox items or menu items that remain.
 				_subscriber.Unsubscribe("WritingSystemHvo", UpdateComboboxSelectedItem);
 				_formatToolStripComboBox.SelectedIndexChanged -= FormatToolStripComboBoxOnSelectedIndexChanged;
