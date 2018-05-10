@@ -1195,6 +1195,18 @@ namespace LanguageExplorer.Impls
 		/// Uses Process.Start to run path. If running in Linux and path ends in .html or .htm,
 		/// surrounds the path in double quotes and opens it with a web browser.
 		/// </summary>
+		private void OpenDocument(string path)
+		{
+			OpenDocument(path, err =>
+			{
+				MessageBox.Show(this, string.Format(LanguageExplorerResources.ksCannotLaunchX, path), LanguageExplorerResources.ksError);
+			});
+		}
+
+		/// <summary>
+		/// Uses Process.Start to run path. If running in Linux and path ends in .html or .htm,
+		/// surrounds the path in double quotes and opens it with a web browser.
+		/// </summary>
 		/// <param name="path"></param>
 		/// <param name="exceptionHandler">
 		/// Delegate to run if an exception is thrown. Takes the exception as an argument.
@@ -1237,16 +1249,34 @@ namespace LanguageExplorer.Impls
 
 		private EditingHelper EditingHelper => ActiveView?.EditingHelper;
 
+		private void Help_Introduction_To_Lexicography_Clicked(object sender, EventArgs e)
+		{
+			OpenDocument(Path.Combine(FwDirectoryFinder.CodeDirectory, "Lexicography Introduction", "Introduction to Lexicography.htm"));
+		}
+
+		private void Help_Introduction_To_Parsing_Click(object sender, EventArgs e)
+		{
+			OpenDocument(Path.Combine(FwDirectoryFinder.CodeDirectory, "Helps", "WW-ConceptualIntro", "ConceptualIntroduction.htm"));
+		}
+
 		private void Help_Technical_Notes_on_FieldWorks_Send_Receive(object sender, EventArgs e)
 		{
-			var path = string.Format(FwDirectoryFinder.CodeDirectory +
-				"{0}Helps{0}Language Explorer{0}Training{0}Technical Notes on FieldWorks Send-Receive.pdf",
-				Path.DirectorySeparatorChar);
+			OpenDocument(Path.Combine(FwDirectoryFinder.CodeDirectory, "Helps", "Language Explorer", "Training", "Technical Notes on FieldWorks Send-Receive.pdf"));
+		}
 
-			OpenDocument(path, err =>
-			{
-				MessageBox.Show(null, string.Format(LanguageExplorerResources.ksCannotLaunchX, path), LanguageExplorerResources.ksError);
-			});
+		private void Help_Techinical_Notes_On_SFM_Database_Import_Click(object sender, EventArgs e)
+		{
+			OpenDocument(Path.Combine(FwDirectoryFinder.CodeDirectory, "Helps", "Language Explorer", "Training", "Technical Notes on SFM Database Import.pdf"));
+		}
+
+		private void Help_Technical_Notes_On_LinguaLinks_Import_Click(object sender, EventArgs e)
+		{
+			OpenDocument(Path.Combine(FwDirectoryFinder.CodeDirectory, "Helps", "Language Explorer", "Training", "Technical Notes on LinguaLinks Database Import.pdf"));
+		}
+
+		private void Help_Technical_Notes_On_Interlinear_Import_Click(object sender, EventArgs e)
+		{
+			OpenDocument(Path.Combine(FwDirectoryFinder.CodeDirectory, "Helps", "Language Explorer", "Training", "Technical Notes on Interlinear Import.pdf"));
 		}
 
 		private void Help_ReportProblem(object sender, EventArgs e)

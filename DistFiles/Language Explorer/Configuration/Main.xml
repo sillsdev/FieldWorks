@@ -35,14 +35,6 @@
 		<command id="CmdCopy" label="_Copy" message="EditCopy" icon="Copy" shortcut="Ctrl+C" a10status="PARTIALLY_DONE" />
 		<command id="CmdCut" label="Cu_t" message="EditCut" icon="Cut" shortcut="Ctrl+X" a10status="PARTIALLY_DONE" />
 		<command id="CmdPaste" label="_Paste" message="EditPaste" icon="Paste" shortcut="Ctrl+V" a10status="PARTIALLY_DONE" />
-		<command id="CmdHelpMorphologyInto" label="Introduction to _Parsing..." message="HelpMorphologyIntro"/>
-		<command id="CmdHelpLexicographyIntro" label="Introduction to _Lexicography..." message="HelpLexicographyIntro" a10status="LEXICONAREAONLY" >
-			<parameters file="Lexicography Introduction/Introduction to Lexicography.htm"/>
-		</command>
-		<command id="CmdHelpNotesSFMDatabaseImport" label="Technical Notes on _SFM Database Import..." message="HelpNotesSFMDatabaseImport" a10status="LEXICONAREAONLY" />
-		<command id="CmdHelpNotesLinguaLinksDatabaseImport" label="Technical Notes on Lin_guaLinks Import..." message="HelpNotesLinguaLinksDatabaseImport" a10status="LEXICONAREAONLY" />
-		<!-- Help/Resources/Technical Notes on LinguaLinks Import... -->
-		<command id="CmdHelpNotesInterlinearImport" label="Technical Notes on _Interlinear Import..." message="HelpNotesInterlinearImport"/>
 		<command id="CmdStartLogging" label="Start Logging" message="StartLogging"/>
 		<command id="CmdRequestDebugInfo" label="Request Debug Info" message="RequestDebugInfo" shortcut="Ctrl+Shift+I"/>
 		<command id="CmdExportText" label="Export Text of browse view" message="ExportText" shortcut="Ctrl+Shift+E"/>
@@ -352,15 +344,6 @@
 				<item command="CmdViewIncorrectWords" defaultVisible="false" a10status="Used in Words area" />
 				<item label="-" translate="do not translate"/>
 				<item command="CmdChangeSpelling" defaultVisible="false" a10status="Used in Words area" />
-			</menu>
-		</menu>
-		<menu id="Help" label="_Help" a10status="PARTIALLY_DONE" >
-			<menu id="Resources" label="_Resources" a10status="PARTIALLY_DONE" >
-				<item command="CmdHelpLexicographyIntro"/>
-				<item command="CmdHelpMorphologyInto"/>
-				<item command="CmdHelpNotesSFMDatabaseImport" a10status="LEXICONAREAONLY" />
-				<item command="CmdHelpNotesLinguaLinksDatabaseImport"/>
-				<item command="CmdHelpNotesInterlinearImport" a10status="Used in Words area" />
 			</menu>
 		</menu>
 	</menubar>

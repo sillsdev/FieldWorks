@@ -1794,65 +1794,6 @@ namespace LanguageExplorer.Impls
 					return true;
 				}
 
-		public bool OnHelpNotesLinguaLinksDatabaseImport(object sender)
-		{
-			string path = String.Format(FwDirectoryFinder.CodeDirectory +
-				"{0}Helps{0}Language Explorer{0}Training{0}Technical Notes on LinguaLinks Database Import.pdf",
-				Path.DirectorySeparatorChar);
-
-			OpenDocument(path, (e) => {
-				MessageBox.Show(null, String.Format(LanguageExplorerResources.ksCannotLaunchX, path),
-					LanguageExplorerResources.ksError);
-			});
-			return true;
-		}
-
-		public bool OnHelpNotesInterlinearImport(object sender)
-		{
-			string path = String.Format(FwDirectoryFinder.CodeDirectory +
-				"{0}Helps{0}Language Explorer{0}Training{0}Technical Notes on Interlinear Import.pdf",
-				Path.DirectorySeparatorChar);
-
-			OpenDocument(path, (e) => {
-				MessageBox.Show(null, String.Format(LanguageExplorerResources.ksCannotLaunchX, path),
-					LanguageExplorerResources.ksError);
-			});
-			return true;
-						}
-
-		public bool OnHelpNotesSFMDatabaseImport(object sender)
-		{
-			string path = String.Format(FwDirectoryFinder.CodeDirectory +
-				"{0}Helps{0}Language Explorer{0}Training{0}Technical Notes on SFM Database Import.pdf",
-				Path.DirectorySeparatorChar);
-
-			OpenDocument(path, (e) => {
-				MessageBox.Show(null, String.Format(LanguageExplorerResources.ksCannotLaunchX, path),
-					LanguageExplorerResources.ksError);
-			});
-			return true;
-		}
-
-		/// <summary>
-		/// Display a file given a path relative to the FieldWorks/Helps directory.
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <returns></returns>
-		public bool OnHelpLexicographyIntro(object commandObject)
-		{
-			XCore.Command command = (XCore.Command)commandObject;
-			string fileName = SIL.Utils.XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "file");
-			fileName = fileName.Replace('\\', Path.DirectorySeparatorChar);
-			string path = String.Format(FwDirectoryFinder.CodeDirectory +
-				"{0}Helps{0}Language Explorer{0}Training{0}" + fileName, Path.DirectorySeparatorChar);
-
-			OpenDocument(path, (e) => {
-				MessageBox.Show(null, String.Format(FrameworkStrings.ksCannotShowX, path),
-					LexTextStrings.ksError);
-			});
-			return true;
-				}
-
 		/// <summary>
 		/// Display a file given a path relative to the FieldWorks/Helps directory.
 		/// </summary>
@@ -1869,19 +1810,6 @@ namespace LanguageExplorer.Impls
 			OpenDocument(path, (e) => {
 				MessageBox.Show(null, String.Format(FrameworkStrings.ksCannotShowX, path),
 					LexTextStrings.ksError);
-			});
-			return true;
-		}
-
-		public bool OnHelpMorphologyIntro(object sender)
-		{
-			string path = String.Format(FwDirectoryFinder.CodeDirectory +
-				"{0}Helps{0}WW-ConceptualIntro{0}ConceptualIntroduction.htm",
-				Path.DirectorySeparatorChar);
-
-			OpenDocument(path, (e) => {
-				MessageBox.Show(null, String.Format(LanguageExplorerResources.ksCannotLaunchX, path),
-					LanguageExplorerResources.ksError);
 			});
 			return true;
 		}

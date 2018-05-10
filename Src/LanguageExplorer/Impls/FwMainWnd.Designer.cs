@@ -118,7 +118,11 @@ namespace LanguageExplorer.Impls
 			this.trainingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.demoMoviesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.resourcesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.introductionToLexicographyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.introductionToParsingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.technicalNotesOnFieldWorksSendReceiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.technicalNotesOnSFMDatabaseImportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.technicalNotesOnLinguaLinksImportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.technicalNotesOnWritingSystemsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.editingLinguisticsPapersUsingXLingPaperToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripHelpMenuSparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -154,6 +158,7 @@ namespace LanguageExplorer.Impls
 			this.toolStripFormat = new System.Windows.Forms.ToolStrip();
 			this.toolStripComboBoxWritingSystem = new System.Windows.Forms.ToolStripComboBox();
 			this.toolStripComboBoxStyles = new System.Windows.Forms.ToolStripComboBox();
+			this.technicalNotesOnInterlinearImportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.mainContainer = new LanguageExplorer.Controls.CollapsingSplitContainer();
 			this._sidePane = new LanguageExplorer.Controls.SilSidePane.SidePane();
 			this._rightPanel = new System.Windows.Forms.Panel();
@@ -980,12 +985,31 @@ namespace LanguageExplorer.Impls
 			// resourcesToolStripMenuItem
 			// 
 			this.resourcesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.introductionToLexicographyToolStripMenuItem,
+            this.introductionToParsingToolStripMenuItem,
             this.technicalNotesOnFieldWorksSendReceiveToolStripMenuItem,
+            this.technicalNotesOnSFMDatabaseImportToolStripMenuItem,
+            this.technicalNotesOnLinguaLinksImportToolStripMenuItem,
+            this.technicalNotesOnInterlinearImportToolStripMenuItem,
             this.technicalNotesOnWritingSystemsToolStripMenuItem,
             this.editingLinguisticsPapersUsingXLingPaperToolStripMenuItem});
 			this.resourcesToolStripMenuItem.Name = "resourcesToolStripMenuItem";
 			this.resourcesToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
 			this.resourcesToolStripMenuItem.Text = "&Resources";
+			// 
+			// introductionToLexicographyToolStripMenuItem
+			// 
+			this.introductionToLexicographyToolStripMenuItem.Name = "introductionToLexicographyToolStripMenuItem";
+			this.introductionToLexicographyToolStripMenuItem.Size = new System.Drawing.Size(319, 22);
+			this.introductionToLexicographyToolStripMenuItem.Text = "Introduction to &Lexicography...";
+			this.introductionToLexicographyToolStripMenuItem.Click += new System.EventHandler(this.Help_Introduction_To_Lexicography_Clicked);
+			// 
+			// introductionToParsingToolStripMenuItem
+			// 
+			this.introductionToParsingToolStripMenuItem.Name = "introductionToParsingToolStripMenuItem";
+			this.introductionToParsingToolStripMenuItem.Size = new System.Drawing.Size(319, 22);
+			this.introductionToParsingToolStripMenuItem.Text = "Introduction to &Parsing...";
+			this.introductionToParsingToolStripMenuItem.Click += new System.EventHandler(this.Help_Introduction_To_Parsing_Click);
 			// 
 			// technicalNotesOnFieldWorksSendReceiveToolStripMenuItem
 			// 
@@ -994,6 +1018,20 @@ namespace LanguageExplorer.Impls
 			this.technicalNotesOnFieldWorksSendReceiveToolStripMenuItem.Text = "Technical Notes on FieldWorks Send-&Receive...";
 			this.technicalNotesOnFieldWorksSendReceiveToolStripMenuItem.ToolTipText = "Display technical notes on FieldWorks Send/Receive (only available in English).";
 			this.technicalNotesOnFieldWorksSendReceiveToolStripMenuItem.Click += new System.EventHandler(this.Help_Technical_Notes_on_FieldWorks_Send_Receive);
+			// 
+			// technicalNotesOnSFMDatabaseImportToolStripMenuItem
+			// 
+			this.technicalNotesOnSFMDatabaseImportToolStripMenuItem.Name = "technicalNotesOnSFMDatabaseImportToolStripMenuItem";
+			this.technicalNotesOnSFMDatabaseImportToolStripMenuItem.Size = new System.Drawing.Size(319, 22);
+			this.technicalNotesOnSFMDatabaseImportToolStripMenuItem.Text = "Technical Notes on &SFM Database Import...";
+			this.technicalNotesOnSFMDatabaseImportToolStripMenuItem.Click += new System.EventHandler(this.Help_Techinical_Notes_On_SFM_Database_Import_Click);
+			// 
+			// technicalNotesOnLinguaLinksImportToolStripMenuItem
+			// 
+			this.technicalNotesOnLinguaLinksImportToolStripMenuItem.Name = "technicalNotesOnLinguaLinksImportToolStripMenuItem";
+			this.technicalNotesOnLinguaLinksImportToolStripMenuItem.Size = new System.Drawing.Size(319, 22);
+			this.technicalNotesOnLinguaLinksImportToolStripMenuItem.Text = "Technical Notes on Lin&guaLinks Import...";
+			this.technicalNotesOnLinguaLinksImportToolStripMenuItem.Click += new System.EventHandler(this.Help_Technical_Notes_On_LinguaLinks_Import_Click);
 			// 
 			// technicalNotesOnWritingSystemsToolStripMenuItem
 			// 
@@ -1351,6 +1389,13 @@ namespace LanguageExplorer.Impls
 			this.mainContainer.Location = new System.Drawing.Point(0, 0);
 			this.mainContainer.Name = "mainContainer";
 			// 
+			// technicalNotesOnInterlinearImportToolStripMenuItem
+			// 
+			this.technicalNotesOnInterlinearImportToolStripMenuItem.Name = "technicalNotesOnInterlinearImportToolStripMenuItem";
+			this.technicalNotesOnInterlinearImportToolStripMenuItem.Size = new System.Drawing.Size(319, 22);
+			this.technicalNotesOnInterlinearImportToolStripMenuItem.Text = "Technical Notes on &Interlinear Import...";
+			this.technicalNotesOnInterlinearImportToolStripMenuItem.Click += new System.EventHandler(this.Help_Technical_Notes_On_Interlinear_Import_Click);
+			// 
 			// mainContainer.Panel1
 			// 
 			this.mainContainer.Panel1.Controls.Add(this._sidePane);
@@ -1557,5 +1602,10 @@ namespace LanguageExplorer.Impls
 		private ToolStripSeparator toolStripViewMenuSparator2;
 		private ToolStripMenuItem spellingToolStripMenuItem;
 		private ToolStripMenuItem showVernacularSpellingErrorsToolStripMenuItem;
+		private ToolStripMenuItem introductionToLexicographyToolStripMenuItem;
+		private ToolStripMenuItem introductionToParsingToolStripMenuItem;
+		private ToolStripMenuItem technicalNotesOnSFMDatabaseImportToolStripMenuItem;
+		private ToolStripMenuItem technicalNotesOnLinguaLinksImportToolStripMenuItem;
+		private ToolStripMenuItem technicalNotesOnInterlinearImportToolStripMenuItem;
 	}
 }
