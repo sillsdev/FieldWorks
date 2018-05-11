@@ -860,7 +860,9 @@ namespace SIL.FieldWorks.XWorks
 			if (cache.LangProject.LexDbOA.ReferencesOA != null)
 			{
 				foreach (var pos in cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS)
+				{
 					referenceTypes.Add(pos.Guid);
+				}
 			}
 			var noteTypes = new HashSet<Guid>();
 			if (cache.LangProject.LexDbOA.ExtendedNoteTypesOA != null)
@@ -965,8 +967,44 @@ namespace SIL.FieldWorks.XWorks
 			else
 			{
 				// add types that do not exist already
-				options.AddRange(possibilities.Where(type => !currentGuids.Contains(type))
-					.Select(type => new DictionaryNodeListOptions.DictionaryNodeOption { Id = type.ToString(), IsEnabled = !isDuplicate }));
+				foreach (var pos in possibilities)
+				{
+					if (!currentGuids.Contains(pos))
+					{
+						if (cache.LangProject.LexDbOA.ReferencesOA != null && cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Any(x => x.Guid == pos))
+						{
+							var result = cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(x => x.Guid == pos);
+							var lexRelType = (ILexRefType)result;
+
+							if (options.Any(x =>
+								x.Id == pos.ToString() || x.Id == pos.ToString() + ":f" ||
+								x.Id == pos.ToString() + ":r")) continue;
+
+							if (lexRelType.MappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseTree)
+							{
+								options.Add(new DictionaryNodeListOptions.DictionaryNodeOption
+								{
+									Id = pos.ToString() + ":f",
+									IsEnabled = !isDuplicate
+								});
+
+								options.Add(new DictionaryNodeListOptions.DictionaryNodeOption
+								{
+									Id = pos.ToString() + ":r",
+									IsEnabled = !isDuplicate
+								});
+							}
+							else
+							{
+								options.Add(new DictionaryNodeListOptions.DictionaryNodeOption { Id = pos.ToString(), IsEnabled = !isDuplicate });
+							}
+						}
+						else
+						{
+							options.Add(new DictionaryNodeListOptions.DictionaryNodeOption { Id = pos.ToString(), IsEnabled = !isDuplicate });
+						}
+					}
+				}
 			}
 
 			// remove options that no longer exist
