@@ -6,6 +6,7 @@
 				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.MultiPane"/>
 				<parameters area="textsWords" id="WordsAndAnalysesMultiPane" splitterBarOrientation="vertical" firstLabel="WordList" secondLabel="SingleWord">
 					<!-- Control 1: Left, browse view of (filtered) wordforms. -->
+<!-- START include (Analyses tool: Words_Area): "../reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='WordformPaneBarControl']" -->
 					<include path="../reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='WordformPaneBarControl']">
 						<!-- NOTE Overrides syntax: childless override nodes just modify specified attributes, or create them in the included node -->
 						<overrides>
@@ -15,6 +16,7 @@
 							<column label="User Analyses" visibility="always" width="15%"/>
 						</overrides>
 					</include>
+<!-- END include (Analyses tool: Words_Area): "../reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='WordformPaneBarControl']" -->
 					<!-- Control 2: Right, Detail view of wordform selected in Control 1.  PaneBarGroupId="PaneBar-WordsDetail" -->
 					<control>
 						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>

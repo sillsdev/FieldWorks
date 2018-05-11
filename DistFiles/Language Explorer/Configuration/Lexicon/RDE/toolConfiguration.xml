@@ -219,6 +219,7 @@
 							bulkEditListItemsGhostFields="LexDb.AllPossiblePronunciations,LexDb.AllPossibleEtymologies,LexDb.AllPossibleAllomorphs,LexDb.AllExampleSentenceTargets,LexDb.AllExampleTranslationTargets,LexDb.AllComplexEntryRefPropertyTargets,LexDb.AllExtendedNoteTargets">
 			  <!--include browse view columns-->
 			  <columns generate="childPartsForParentLayouts">
+<!-- START include (RDE tool: Lexicon_Area): "../browseDialogColumns.xml" query="doc/browseColumns/column" -->
 				<include path="../browseDialogColumns.xml" query="doc/browseColumns/column">
 				  <overrides>
 					<column layout="EntryHeadwordForEntry" visibility="menu"/>
@@ -233,8 +234,11 @@
 					<column layout="ReversalEntriesForSense" visibility="menu"/>
 				  </overrides>
 				</include>
+<!-- END include (RDE tool: Lexicon_Area): "../browseDialogColumns.xml" query="doc/browseColumns/column" -->
+<!-- START include (RDE tool: Lexicon_Area): "../browseDialogColumns.xml" query="doc/browseColumns/generate" -->
 				<!-- include common custom field definitions -->
 				<include path="../browseDialogColumns.xml" query="doc/browseColumns/generate"/>
+<!-- END include (RDE tool: Lexicon_Area): "../browseDialogColumns.xml" query="doc/browseColumns/generate" -->
 			  </columns>
 			</parameters>
 			<!--of Browse view-->

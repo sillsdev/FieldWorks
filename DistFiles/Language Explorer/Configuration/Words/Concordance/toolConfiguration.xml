@@ -26,7 +26,9 @@
 									<control>
 										<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordBrowseView"/>
 										<parameters id="wordOccurrenceList" editable="false" clerk="OccurrencesOfSelectedUnit" filterBar="true" altTitleId="Concordance-Matches">
+<!-- START include (Concordance tool: Words_Area): "../reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns" -->
 											<include path="../reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns"/>
+<!-- END include (Concordance tool: Words_Area): "../reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns" -->
 										</parameters>
 									</control>
 								</parameters>
@@ -71,9 +73,9 @@
 									<control>
 										<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordBrowseView"/>
 										<parameters id="wordOccurrenceList" editable="false" clerk="complexConcOccurrencesOfSelectedUnit" filterBar="true" altTitleId="Concordance-Matches">
-<!-- START include (Words_Area): "./reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns"" -->
+<!-- START include (Concordance tool: Words_Area): "./reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns"" -->
 											<include path="../reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns"/>
-<!-- END include (Words_Area): "./reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns"" -->
+<!-- END include (Concordance tool: Words_Area): "./reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns"" -->
 										</parameters>
 									</control>
 								</parameters>
@@ -98,7 +100,9 @@
 				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.MultiPane"/>
 				<parameters area="textsWords" id="WordsAndOccurrencesMultiPane" splitterBarOrientation="vertical" defaultPrintPane="wordOccurrenceList">
 					<!--this will fill the pane on the left -->
+<!-- START include (Concordance tool: Words_Area): "../reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='WordformPaneBarControl']" -->
 					<include path="../reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='WordformPaneBarControl']"/>
+<!-- END include (Concordance tool: Words_Area): "../reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='WordformPaneBarControl']" -->
 					<!-- this will fill the pane on the right -->
 					<control>
 						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
@@ -110,7 +114,9 @@
 									<control>
 										<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordBrowseView"/>
 										<parameters id="wordOccurrenceList" editable="false" clerk="OccurrencesOfSelectedWordform" convertDummiesInView="false" convertDummiesSelected="true" filterBar="true" ShowOwnerShortname="true" altTitleId="WordListConcordance-Matches">
+<!-- START include (Concordance tool: Words_Area): "../reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns" -->
 											<include path="../reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns"/>
+<!-- END include (Concordance tool: Words_Area): "../reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns" -->
 										</parameters>
 									</control>
 									<!-- this will fill the bottom of the right side -->

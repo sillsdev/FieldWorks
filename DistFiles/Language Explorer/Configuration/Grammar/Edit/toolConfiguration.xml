@@ -151,7 +151,6 @@
 						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes.AssignFeaturesToPhonemes"/>
 						<parameters area="grammar" id="PhonemesBulkEdit" clerk="phonemes" convertDummiesSelected="true" treeBarAvailability="NotAllowed" filterBar="true" bulkEdit="true" bulkEditListItemsClasses="PhPhoneme" selectColumn="true" altTitleId="PhPhoneme-Plural">
 							<enableBulkEditTabs enableBEListChoice="true" enableBEBulkCopy="false" enableBEClickCopy="false" enableBEProcess="false" enableBEFindReplace="false" enableBEOther="false" bulkEditListItemsGhostFields="PhonFeats" bulkEditListItemsClasses="PhPhoneme"/>
-							<!--<include path="../reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='wordListColumns']/columns">-->
 							<!-- NOTE Overrides syntax: override nodes that have children replace entire target (included) node -->
 							<!--								<overrides>-->
 							<columns generate="objectValuePartsForParentLayouts">
@@ -166,16 +165,6 @@
 										</dynamicloaderinfo>
 									</column>
 								</generate>
-<!--								<column label="Phonological Features" multipara="true" width="67%" bulkEdit="external" editable="false" visibility="dialog" displayWs="best analysis" layout="PhonologicalFeaturesForPhonemes">
-									<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.LcmUi.PhonologicalFeatureEditor">
-										<args>
-											<arg name="xpathToConfigurationNode" value="ancestor::column"/>
-										</args>
-									</dynamicloaderinfo>
-									<!-\-<span>
-										<obj field="Features" layout="PhonFeats"/>
-									</span>-\->
-								</column>-->
 								<column label="Description" width="33%" layout="Description" ws="$ws=best analysis" field="Description" visibility="menu"/>
 								<column label="Graphemes" width="34%" multipara="true" layout="Codes" visibility="menu"/>
 								<column label="IPA Symbol" width="33%" layout="BasicIPASymbol" visibility="menu"/>

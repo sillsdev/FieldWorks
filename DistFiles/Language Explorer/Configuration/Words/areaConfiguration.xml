@@ -399,7 +399,9 @@
 							allowInsertDeleteRecord="false" editable="false"
 							clerk="SrcWfiWordformConc" filterBar="false" ShowOwnerShortname="true"
 							selectionStyle="none">
+<!-- START include (Text tool: Words_Area): "reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns" -->
 							<include path="reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns"/>
+<!-- END include (Text tool: Words_Area): "reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns" -->
 						</parameters>
 					</control>
 				</controls>
@@ -412,18 +414,18 @@
 	<item label="Texts &amp; Words" value="textsWords" icon="folder-words">
 		<parameters id="textsWords">
 			<tools>
-			  <!-- START include (Words_Area): "Texts/toolConfiguration.xml" query="root/tools/*" -->
+<!-- START include (Words_Area): "Texts/toolConfiguration.xml" query="root/tools/*" -->
 				<include path="Texts/toolConfiguration.xml" query="root/tools/*"/>
-			  <!-- END include (Words_Area): "Texts/toolConfiguration.xml" query="root/tools/*" -->
-			  <!-- START include (Words_Area): "Concordance/toolConfiguration.xml" query="root/tools/*" -->
+<!-- END include (Words_Area): "Texts/toolConfiguration.xml" query="root/tools/*" -->
+<!-- START include (Words_Area): "Concordance/toolConfiguration.xml" query="root/tools/*" -->
 				<include path="Concordance/toolConfiguration.xml" query="root/tools/*"/>
-			  <!-- END include (Words_Area): "Concordance/toolConfiguration.xml" query="root/tools/*" -->
-			  <!-- START include (Words_Area): "Analyses/toolConfiguration.xml" query="root/tools/*" -->
+<!-- END include (Words_Area): "Concordance/toolConfiguration.xml" query="root/tools/*" -->
+<!-- START include (Words_Area): "Analyses/toolConfiguration.xml" query="root/tools/*" -->
 				<include path="Analyses/toolConfiguration.xml" query="root/tools/*"/>
-			  <!-- END include (Words_Area): "Analyses/toolConfiguration.xml" query="root/tools/*" -->
-			  <!-- START include (Words_Area): "BulkEdit/toolConfiguration.xml" query="root/tools/*" -->
+<!-- END include (Words_Area): "Analyses/toolConfiguration.xml" query="root/tools/*" -->
+<!-- START include (Words_Area): "BulkEdit/toolConfiguration.xml" query="root/tools/*" -->
 				<include path="BulkEdit/toolConfiguration.xml" query="root/tools/*"/>
-			  <!-- END include (Words_Area): "BulkEdit/toolConfiguration.xml" query="root/tools/*" -->
+<!-- END include (Words_Area): "BulkEdit/toolConfiguration.xml" query="root/tools/*" -->
 			</tools>
 		</parameters>
 	</item>

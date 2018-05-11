@@ -7,7 +7,9 @@
 				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordBrowseView"/>
 				<parameters id="wordList" clerk="concordanceWords" convertDummiesSelected="true" filterBar="true" editable="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" altTitleId="WfiWordform-Plural">
 					<columns>
+<!-- START include (Words_Area): "reusableControls/control[@id='wordListColumns']/columns/column" -->
 						<include path="$this" query="reusableControls/control[@id='wordListColumns']/columns/column"/>
+<!-- END include (Words_Area): "reusableControls/control[@id='wordListColumns']/columns/column" -->
 					</columns>
 				</parameters>
 			</control>

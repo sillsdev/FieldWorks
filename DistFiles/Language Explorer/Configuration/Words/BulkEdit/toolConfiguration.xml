@@ -11,6 +11,7 @@
 									bulkEditListItemsClasses="WfiWordform" selectColumn="true" altTitleId="WfiWordform-Plural" bulkDeleteIfZero="FullConcordanceCount">
 							<enableBulkEditTabs enableBEListChoice="true" enableBEBulkCopy="true" enableBEClickCopy="true" enableBEProcess="true" enableBEFindReplace="true"
 												enableBEOther="true"/>
+<!-- START include (Bulk Edit tool: Words_Area): "../reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='wordListColumns']/columns" -->
 							<include path="../reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='wordListColumns']/columns">
 								<!-- NOTE Overrides syntax: override nodes that have children replace entire target (included) node -->
 								<overrides>
@@ -21,6 +22,7 @@
 									<column label="Spelling Status" width="65000"/>
 								</overrides>
 							</include>
+<!-- END include (Bulk Edit tool: Words_Area): "../reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='wordListColumns']/columns" -->
 						</parameters>
 					</control>
 				</parameters>

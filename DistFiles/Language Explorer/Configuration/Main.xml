@@ -201,21 +201,21 @@
 	<!-- ************************ lists *********************** -->
 	<!-- ********************************************************** -->
 	<areas>
-	  <!-- START include: "Lexicon/areaConfiguration.xml" query="root/item" -->
+<!-- START include: "Lexicon/areaConfiguration.xml" query="root/item" -->
 	  <include path="Lexicon/areaConfiguration.xml" query="root/item"/>
-	  <!-- END include: "Lexicon/areaConfiguration.xml" query="root/item" -->
-	  <!-- START include: "Words/areaConfiguration.xml" query="root/item" -->
+<!-- END include: "Lexicon/areaConfiguration.xml" query="root/item" -->
+<!-- START include: "Words/areaConfiguration.xml" query="root/item" -->
 	  <include path="Words/areaConfiguration.xml" query="root/item"/>
-	  <!-- END include: "Words/areaConfiguration.xml" query="root/item" -->
-	  <!-- START include: "Grammar/areaConfiguration.xml" query="root/item" -->
+<!-- END include: "Words/areaConfiguration.xml" query="root/item" -->
+<!-- START include: "Grammar/areaConfiguration.xml" query="root/item" -->
 	  <include path="Grammar/areaConfiguration.xml" query="root/item"/>
-	  <!-- END include: "Grammar/areaConfiguration.xml" query="root/item" -->
-	  <!-- START include: "Notebook/areaConfiguration.xml" query="root/item" -->
+<!-- END include: "Grammar/areaConfiguration.xml" query="root/item" -->
+<!-- START include: "Notebook/areaConfiguration.xml" query="root/item" -->
 	  <include path="Notebook/areaConfiguration.xml" query="root/item"/>
-	  <!-- END include: "Notebook/areaConfiguration.xml" query="root/item" -->
-	  <!-- START include: "Lists/areaConfiguration.xml" query="root/item" -->
+<!-- END include: "Notebook/areaConfiguration.xml" query="root/item" -->
+<!-- START include: "Lists/areaConfiguration.xml" query="root/item" -->
 	  <include path="Lists/areaConfiguration.xml" query="root/item"/>
-	  <!-- END include: "Lists/areaConfiguration.xml" query="root/item" -->
+<!-- END include: "Lists/areaConfiguration.xml" query="root/item" -->
 	</areas>
 	<!-- ********************************************************** -->
 	<!-- ******** controls (dialog or embedded browse view) ******* -->
@@ -282,9 +282,9 @@
 	-->
 	<menubar>
 		<menu id="Edit" label="_Edit" b4InsertMenu="true" a10status="PARTIALLY_DONE" >
-		  <!-- START include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->
+<!-- START include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->
 		  <include path="Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*"/>
-		  <!-- END include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->
+<!-- END include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->
 <!-- START include: "Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->
 			<include path="Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*"/>
 <!-- END include: "Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->

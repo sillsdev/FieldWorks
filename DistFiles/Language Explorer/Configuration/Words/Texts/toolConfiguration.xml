@@ -8,7 +8,9 @@
 					dontCollapseFillPane="true" defaultFocusControl="InterlinMaster" defaultFixedPaneSizePoints="145"
 						defaultPrintPane="ITextContent">
 					<!--this will fill the pane on the left. We get the solid blue background because textsChooser_readOnlySelect defaultProperty is true in area-->
+<!-- START include (Text tool: Words_Area): "./toolConfigInclude.xml" query="reusableControls/control[@id='TextPaneBarList']" -->
 					<include path="./toolConfigInclude.xml" query="reusableControls/control[@id='TextPaneBarList']"/>
+<!-- END include (Text tool: Words_Area): "./toolConfigInclude.xml" query="reusableControls/control[@id='TextPaneBarList']" -->
 					<!--this will fill the pane on the right -->
 					<control>
 						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>

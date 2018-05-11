@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <window>
-<!--<include path="../CommonDataTreeInclude.xml"/>-->
 <!--
   ===========================================================
   Commands
@@ -47,7 +46,6 @@
   ===========================================================
   -->
 	<contextMenus>
-		<!--<include query="window/contextMenus/*"/>-->
 		<menu id="mnuInflAffixTemplate-Help">
 			<item command="CmdInflAffixTemplate-Help"/>
 		</menu>
@@ -66,23 +64,5 @@
 			<item command="CmdEntryJumpToDefault"/>
 			<item command="CmdInflAffixTemplate-Help"/>
 		</menu>
-<!--
-	<menu id="mnuInflAffixTemplate-POS-AffixTemplates">
-	  <item command="CmdInflAffixTemplate-Insert-POS-AffixTemplate"/>
-	  <item command="CmdInflAffixTemplate-Help"/>
-	</menu>
-	<menu id="mnuInflAffixTemplate-POS-InflectionClass-Subclasses">
-	  <item command="CmdInflAffixTemplate-Insert-POS-InflectionClass-Subclasses"/>
-	  <item command="CmdInflAffixTemplate-Help"/>
-	</menu>
-	<menu id="mnuInflAffixTemplate-POS-InflectionClasses">
-	  <item command="CmdInflAffixTemplate-Insert-POS-InflectionClasses"/>
-	  <item command="CmdInflAffixTemplate-Help"/>
-	</menu>
-	<menu id="mnuInflAffixTemplate-POS-SubPossibilities">
-	  <item command="CmdInflAffixTemplate-Insert-POS-SubPossibilities"/>
-	  <item command="CmdInflAffixTemplate-Help"/>
-	</menu>
-	-->
 	</contextMenus>
 </window>

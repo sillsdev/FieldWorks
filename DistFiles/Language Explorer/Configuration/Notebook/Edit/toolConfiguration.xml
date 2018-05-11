@@ -14,9 +14,13 @@
 								<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordBrowseView"/>
 								<parameters id="recordList" clerk="records" filterBar="true" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" altTitleId="RnGenericRec-Plural">
 									<columns>
+<!-- START include (Edit tool: Notebook_Area): "../browseDialogColumns.xml" query="doc/browseColumns/column" -->
 										<include path="../browseDialogColumns.xml" query="doc/browseColumns/column"/>
+<!-- END include (Edit tool: Notebook_Area): "../browseDialogColumns.xml" query="doc/browseColumns/column" -->
+<!-- START include (Edit tool: Notebook_Area): "../browseDialogColumns.xml" query="doc/browseColumns/generate" -->
 										<!-- include common custom field definitions -->
 										<include path="../browseDialogColumns.xml" query="doc/browseColumns/generate"/>
+<!-- END include (Edit tool: Notebook_Area): "../browseDialogColumns.xml" query="doc/browseColumns/generate" -->
 									</columns>
 								</parameters>
 							</control>
