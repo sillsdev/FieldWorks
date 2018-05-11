@@ -357,7 +357,7 @@ namespace LanguageExplorer.Dumpster
 				var areaChoice = PropertyTable.GetValue<string>(AreaServices.AreaChoice);
 				var toolFor = PropertyTable.GetValue<string>($"{AreaServices.ToolForAreaNamed_}{AreaServices.LexiconAreaMachineName}");
 
-				return areaChoice == AreaServices.InitialAreaMachineName && toolFor.StartsWith("reversalTool");
+				return areaChoice == AreaServices.LexiconAreaMachineName && toolFor.StartsWith("reversal");
 			}
 		}
 

@@ -123,6 +123,7 @@ namespace LanguageExplorer.Impls
 			this.technicalNotesOnFieldWorksSendReceiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.technicalNotesOnSFMDatabaseImportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.technicalNotesOnLinguaLinksImportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.technicalNotesOnInterlinearImportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.technicalNotesOnWritingSystemsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.editingLinguisticsPapersUsingXLingPaperToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripHelpMenuSparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -1327,6 +1328,7 @@ namespace LanguageExplorer.Impls
 			this.toolStripButtonChangeFilterClearAll.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButtonChangeFilterClearAll.Text = "toolStripButtonChangeFilterClearAll";
 			this.toolStripButtonChangeFilterClearAll.ToolTipText = "Turn off all filters";
+			this.toolStripButtonChangeFilterClearAll.Click += new System.EventHandler(this.toolStripButtonChangeFilterClearAll_Click);
 			// 
 			// toolStripInsert
 			// 

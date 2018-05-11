@@ -1890,6 +1890,7 @@ very simple minor adjustments. ;)"
 			applyStyleToolStripMenuItem.Enabled = hasActiveView && CanApplyStyle;
 			pasteHyperlinkToolStripMenuItem.Enabled = hasActiveView && _viewHelper.ActiveView.EditingHelper is RootSiteEditingHelper && ((RootSiteEditingHelper)_viewHelper.ActiveView.EditingHelper).CanPasteUrl();
 			selectAllToolStripMenuItem.Enabled = hasActiveView && !DataUpdateMonitor.IsUpdateInProgress();
+			toolStripButtonChangeFilterClearAll.Enabled = _recordListRepositoryForTools.ActiveRecordList.CanChangeFilterClearAll;
 
 			// Enable/disable toolbar buttons.
 			SetupEditUndoAndRedoMenus();
@@ -2195,6 +2196,11 @@ very simple minor adjustments. ;)"
 			showVernacularSpellingErrorsToolStripMenuItem.Checked = checking;
 			_propertyTable.SetProperty("UseVernSpellingDictionary", checking, true, false);
 			RestartSpellChecking();
+		}
+
+		private void toolStripButtonChangeFilterClearAll_Click(object sender, EventArgs e)
+		{
+			_recordListRepositoryForTools.ActiveRecordList.OnChangeFilterClearAll();
 		}
 
 		/// <summary>

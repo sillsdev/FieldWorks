@@ -2748,7 +2748,12 @@ namespace LanguageExplorer
 			}
 		}
 
-		private void OnChangeFilterClearAll()
+		/// <summary>
+		/// Get whether the Clear filter toolbar button can be enabled, or not.
+		/// </summary>
+		public bool CanChangeFilterClearAll => IsPrimaryRecordList && Filter != null && Filter.IsUserVisible;
+
+		public void OnChangeFilterClearAll()
 		{
 			_activeMenuBarFilter = null; // there won't be a menu bar filter after this.
 			if (Filter is AndFilter)

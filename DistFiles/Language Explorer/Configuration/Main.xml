@@ -38,7 +38,6 @@
 		<command id="CmdStartLogging" label="Start Logging" message="StartLogging"/>
 		<command id="CmdRequestDebugInfo" label="Request Debug Info" message="RequestDebugInfo" shortcut="Ctrl+Shift+I"/>
 		<command id="CmdExportText" label="Export Text of browse view" message="ExportText" shortcut="Ctrl+Shift+E"/>
-		<command id="CmdChangeFilterClearAll" label="Turn off all filters" message="ChangeFilterClearAll" icon="NoFilter"/>
 		<command id="CmdMoveTargetToPreviousInSequence" label="Move Left" message="MoveTargetDownInSequence"/>
 		<command id="CmdMoveTargetToNextInSequence" label="Move Right" message="MoveTargetUpInSequence"/>
 		<command id="CmdAlphabeticalOrder" label="Alphabetical Order" message="AlphabeticalOrder"/>
@@ -548,7 +547,6 @@
 <!-- START include: "Words/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='View']/item" -->
 			<include path="Words/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='View']/item"/>
 <!-- END include: "Words/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='View']/item" -->
-			<item command="CmdChangeFilterClearAll" a10status="PARTIALLY_DONE" />
 		</toolbar>
 	</toolbars>
 	<!-- ********************************************************** -->

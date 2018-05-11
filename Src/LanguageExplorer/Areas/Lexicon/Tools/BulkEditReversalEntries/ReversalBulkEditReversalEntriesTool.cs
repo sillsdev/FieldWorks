@@ -14,7 +14,6 @@ using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
 using LanguageExplorer.LcmUi;
-using LanguageExplorer.DictionaryConfiguration;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;

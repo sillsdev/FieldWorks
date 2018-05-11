@@ -47,7 +47,6 @@
 	<item id="Sidebar">Show the sidebar.</item>
 	<item id="Record List">Show the list of records.</item>
 	<item id="ShowHiddenFields">Display all possible fields.</item>
-	<item id="CmdChangeFilterClearAll">Turn off all filters.</item>
 	<item id="ShowInvisibleSpaces">View the invisible, zero-width spaces in this text.</item>
 	<!-- Data menu -->
 	<item id="CmdApproveAndMoveNext">Approve the suggested analysis and move to the next word.</item>

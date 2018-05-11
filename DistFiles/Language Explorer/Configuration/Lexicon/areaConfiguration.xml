@@ -20,7 +20,7 @@
 		<command id="CmdInsertReversalEntry" label="Reversal Entry" message="InsertItemInVector" icon="reversalEntry" a10status="Only used in two reversal tools in Lex area" >
 			<parameters className="ReversalIndexEntry"/>
 		</command>
-		<command id="CmdGoToReversalEntry" label="_Find reversal entry..." message="GotoReversalEntry" icon="gotoReversalEntry" shortcut="Ctrl+F">
+		<command id="CmdGoToReversalEntry" label="_Find reversal entry..." message="GotoReversalEntry" icon="gotoReversalEntry" shortcut="Ctrl+F" a10status="Only used in two reversal tools in Lex area" >
 			<parameters title="Go To Entry" formlabel="Go _To..." okbuttonlabel="_Go"/>
 		</command>
 		<command id="CmdConfigureDictionary" label="Configure {0}" message="ConfigureDictionary"/>
