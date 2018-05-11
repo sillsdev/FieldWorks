@@ -1376,9 +1376,10 @@ bool RegistrySuppressClumping()
 		return false;
 	return wcscmp(L"True", rgch) == 0 || wcscmp(L"true", rgch) == 0 || wcscmp(L"TRUE", rgch) == 0;
 #else
-	// TODO-Linux
-	// TODO Review do we need a unix equivialent.
-	return false;
+	char * arrowByCharacter = getenv("FW_ARROWBYCHARACTER");
+	if (arrowByCharacter == NULL)
+		return false;
+	return strcasecmp(arrowByCharacter, "true") == 0;
 #endif
 }
 
