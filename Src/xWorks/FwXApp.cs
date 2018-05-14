@@ -146,6 +146,11 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		/// <summary>
+		/// Gets the classname used for setting the WM_CLASS on Linux
+		/// </summary>
+		public abstract string WindowClassName { get; }
+
 		#endregion // Properties
 
 		#region Construction and Initializing

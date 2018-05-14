@@ -495,6 +495,12 @@ namespace SIL.FieldWorks.XWorks
 				return FwSubKey.LexText;
 			}
 		}
+
+		public override string WindowClassName
+		{
+			// doesn't really matter what we return when running tests
+			get { return "fieldworks-tests"; }
+		}
 	}
 
 	[TestFixture]

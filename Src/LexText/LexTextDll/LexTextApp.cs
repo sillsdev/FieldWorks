@@ -219,6 +219,11 @@ namespace SIL.FieldWorks.XWorks.LexText
 			}
 		}
 
+		public override string WindowClassName
+		{
+			get { return "fieldworks-flex"; }
+		}
+
 		private static bool m_fResourceFailed = false;
 
 		/// -----------------------------------------------------------------------------------

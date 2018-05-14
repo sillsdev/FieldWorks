@@ -32,6 +32,7 @@ using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks.Archiving;
 using SIL.IO;
+using SIL.PlatformUtilities;
 using SIL.Reporting;
 using SIL.LCModel.Utils;
 using SIL.Utils;
@@ -459,6 +460,12 @@ namespace SIL.FieldWorks.XWorks
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			base.OnHandleCreated(e);
+
+			// Set WM_CLASS on Linux (LT-19085)
+			var xapp = m_app as FwXApp;
+			if (Platform.IsLinux && xapp != null)
+				SIL.Windows.Forms.Miscellaneous.X11.SetWmClass(xapp.WindowClassName, Handle);
+
 			Logger.WriteEvent(WindowHandleInfo("Created new window"));
 		}
 
