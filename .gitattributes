@@ -10,6 +10,7 @@
 *.designer.cs -whitespace
 *.fwdictconfig -whitespace
 *.patch -whitespace
+*.proj -whitespace
 *.ReSharper -whitespace
 *.resx -whitespace
 *.settings -whitespace
