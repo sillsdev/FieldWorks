@@ -110,7 +110,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var img = LanguageExplorerResources.MenuWidget;
 			img.MakeTransparent(Color.Magenta);
 
-			var panelMenu = new PanelMenu(_lexiconEditToolMenuHelper.SliceContextMenuFactory, LexiconEditToolMenuHelper.panelMenuId)
+			var panelMenu = new PanelMenu(_lexiconEditToolMenuHelper.SliceContextMenuFactory, LexiconEditToolConstants.PanelMenuId)
 			{
 				Dock = DockStyle.Left,
 				BackgroundImage = img,
@@ -126,7 +126,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				mainMultiPaneParameters,
 				_recordBrowseView, "Browse", new PaneBar(),
 				_innerMultiPane = MultiPaneFactory.CreateNestedMultiPane(majorFlexComponentParameters.FlexComponentParameters, nestedMultiPaneParameters), "Dictionary & Details", paneBar);
-			_innerMultiPane.Panel1Collapsed = !_propertyTable.GetValue<bool>(LexiconEditToolMenuHelper.Show_DictionaryPubPreview);
+			_innerMultiPane.Panel1Collapsed = !_propertyTable.GetValue<bool>(LexiconEditToolConstants.Show_DictionaryPubPreview);
 			_lexiconEditToolMenuHelper.InnerMultiPane = _innerMultiPane;
 			panelButton.MyDataTree = recordEditView.MyDataTree;
 

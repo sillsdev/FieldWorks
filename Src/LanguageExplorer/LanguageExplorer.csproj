@@ -318,11 +318,19 @@
     <Compile Include="Areas\IFwGuiControl.cs" />
     <Compile Include="Areas\InsertOption.cs" />
     <Compile Include="Areas\IPreferedTargetAdjuster.cs" />
+    <Compile Include="Areas\IToolUiWidgetManager.cs" />
+    <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolDataTreeStackManager.cs" />
+    <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolToolbarManager.cs" />
     <Compile Include="Areas\Lexicon\ISemanticDomainTreeBarHandler.cs" />
     <Compile Include="Areas\Lexicon\LexiconAreaMenuHelper.cs" />
     <Compile Include="Areas\Lexicon\LexReferenceUnidirectionalVc.cs" />
     <Compile Include="Areas\Lexicon\Tools\ClassifiedDictionary\LexiconDictionaryToolMenuHelper.cs" />
     <Compile Include="Areas\Lexicon\Tools\Dictionary\LexiconDictionaryToolMenuHelper.cs" />
+    <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolConstants.cs" />
+    <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolEditMenuManager.cs" />
+    <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolInsertMenuManager.cs" />
+    <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolToolsMenuManager.cs" />
+    <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolViewMenuManager.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\ReversalEntryDataAccess.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\ReversalIndexEntrySliceView.cs">
       <SubType>UserControl</SubType>
