@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -146,12 +146,20 @@ namespace SIL.FieldWorks.XWorks
 			PopulateWritingSystemsList();
 
 			m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.SingleLineText, xWorksStrings.ksSingleLineText));
-			m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.MultiparagraphText, xWorksStrings.kMultiparagraphText));
-			m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.ListRefCollection, xWorksStrings.ksListRefCollection));
-			m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.ListRefAtomic, xWorksStrings.ksListRefAtomic));
-			// If you add additional value types here, a change is also needed in BasicCustomPropertyFixer (FixFwDataDll).
-			m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.Date, xWorksStrings.ksDate));
-			m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.Number, xWorksStrings.ksNumber));
+			// Additional custom field types are valid if we are not in the text and words area
+			if (locationType != LocationType.Interlinear)
+			{
+				m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.MultiparagraphText,
+					xWorksStrings.kMultiparagraphText));
+				m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.ListRefCollection,
+					xWorksStrings.ksListRefCollection));
+				m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.ListRefAtomic,
+					xWorksStrings.ksListRefAtomic));
+				// If you add additional value types here, a change is also needed in BasicCustomPropertyFixer (FixFwDataDll).
+				m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.Date, xWorksStrings.ksDate));
+				m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.Number, xWorksStrings.ksNumber));
+			}
+
 			m_typeComboBox.SelectedIndex = 0;
 
 			m_listComboBox.Items.AddRange(GetListsComboItems(m_cache, m_propertyTable.GetValue<XmlNode>("WindowConfiguration")).ToArray());
