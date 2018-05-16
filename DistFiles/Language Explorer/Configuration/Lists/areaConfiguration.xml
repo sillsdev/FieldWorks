@@ -16,7 +16,7 @@
 			<params className="CmAnnotationDefn"/>
 		</command>
 		<command id="CmdInsertPossibility" label="_Item" message="InsertItemInVector" icon="AddItem">
-			<params className="CmPossibility" restrictFromClerkID="ProdRestrict DiscChartTemplateList"/>
+			<params className="CmPossibility" restrictFromClerkID="ProdRestrict"/>
 		</command>
 		<command id="CmdInsertCustomItem" label="_Item" message="InsertItemInVector" icon="AddItem">
 			<params className="CmCustomItem"/>
