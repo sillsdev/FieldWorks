@@ -19,6 +19,23 @@ FW_SHARE=$prefix/share/fieldworks
 WRITEKEY="${FW_LIB}/WriteKey.exe"
 READKEY="${FW_LIB}/ReadKey.exe"
 
+WriteKey()
+{
+	mono "${WRITEKEY}" "$@"
+}
+
+
+ReadKey()
+{
+	# MONO_DEBUG seems to trigger warnings being printed to stdout for
+	# bad values in MONO_PATH. While correcting the occasional bad value
+	# that creeps into MONO_PATH is good, just unsetting MONO_DEBUG here
+	# will prevent surprise registry corruption when migrating registry
+	# keys from old to new FW versions. This is LT-18815.
+	(unset MONO_DEBUG
+	mono "${READKEY}" "$@")
+}
+
 # For example: CopyRegistryKey LM "Software/SIL/FieldWorks/7.0" "ProjectsDir" LM "Software/SIL/FieldWorks/8" "ProjectsDir"
 CopyRegistryKey()
 {
@@ -30,8 +47,8 @@ CopyRegistryKey()
 	DESTINATION_LOCATION="$5"
 	DESTINATION_KEY="$6"
 
-	mono "${WRITEKEY}" "$DESTINATION_ROOT" "$DESTINATION_LOCATION" "$DESTINATION_KEY" \
-		"$(mono "${READKEY}" "$SOURCE_ROOT" "$SOURCE_LOCATION" "$SOURCE_KEY")"
+	WriteKey "$DESTINATION_ROOT" "$DESTINATION_LOCATION" "$DESTINATION_KEY" \
+		"$(ReadKey "$SOURCE_ROOT" "$SOURCE_LOCATION" "$SOURCE_KEY")"
 }
 
 (
@@ -60,12 +77,12 @@ CopyRegistryKey()
 	cd "$FW_LIB"; RUNMODE="INSTALLED" . environ; cd "$OLDPWD"
 
 	# Are there FW 9 registry settings?
-	if mono "${READKEY}" LM "Software/SIL/FieldWorks/9" "ProjectsDir" 2>/dev/null; then
+	if ReadKey LM "Software/SIL/FieldWorks/9" "ProjectsDir" 2>/dev/null; then
 		# All done!
 		:
 	else
 		# Are there FW 8 registry settings?
-		if mono "${READKEY}" LM "Software/SIL/FieldWorks/8" "ProjectsDir" 2>/dev/null; then
+		if ReadKey LM "Software/SIL/FieldWorks/8" "ProjectsDir" 2>/dev/null; then
 			# Migrate them to FW 9.
 
 			echo "# Migrating from FW 8 registry settings."
@@ -79,7 +96,7 @@ CopyRegistryKey()
 			CopyRegistryKey LM "Software/SIL/FieldWorks/8" "ProjectsDir" LM "Software/SIL/FieldWorks/9" "ProjectsDir"
 		else
 			# Are there FW 7 registry settings?
-			if mono "${READKEY}" LM "Software/SIL/FieldWorks/7.0" "ProjectsDir" 2>/dev/null; then
+			if ReadKey LM "Software/SIL/FieldWorks/7.0" "ProjectsDir" 2>/dev/null; then
 				# Migrate them to FW 9.
 
 				echo "# Migrating from FW 7 registry settings."
@@ -97,16 +114,16 @@ CopyRegistryKey()
 
 				# REVIEW these were taken from nant setup registry may not be correct for an install.
 				if [ ! -d "${FW_CONFIG}/registry/LocalMachine/software/sil/encodingconverterrepository" ]; then
-					mono "${WRITEKEY}" LM "Software/SIL/EncodingConverterRepository" "Registry" "${FW_CONFIG}/SIL/Repository/mappingRegistry.xml"
-					mono "${WRITEKEY}" LM "Software/SIL/EncodingConverterRepository" "MoveRepositoryTo" "${FW_CONFIG}/MoveRepositoryTo"
+					WriteKey LM "Software/SIL/EncodingConverterRepository" "Registry" "${FW_CONFIG}/SIL/Repository/mappingRegistry.xml"
+					WriteKey LM "Software/SIL/EncodingConverterRepository" "MoveRepositoryTo" "${FW_CONFIG}/MoveRepositoryTo"
 				fi
-				mono "${WRITEKEY}" LM "Software/Microsoft/.NETFramework/AssemblyFolders" "Primary Interop Assemblies" "$FW_LIB"
-				mono "${WRITEKEY}" LM "Software/SIL" "InitIcu" "1"
-				mono "${WRITEKEY}" LM "Software/SIL/FieldWorks" "InstallLanguageUseLog" "False"
+				WriteKey LM "Software/Microsoft/.NETFramework/AssemblyFolders" "Primary Interop Assemblies" "$FW_LIB"
+				WriteKey LM "Software/SIL" "InitIcu" "1"
+				WriteKey LM "Software/SIL/FieldWorks" "InstallLanguageUseLog" "False"
 
-				mono "${WRITEKEY}" LM "Software/SIL/FieldWorks/9" "RootDataDir" "${FW_CONFIG}/"
-				mono "${WRITEKEY}" LM "Software/SIL/FieldWorks/9" "RootCodeDir" "${FW_SHARE}"
-				mono "${WRITEKEY}" LM "Software/SIL/FieldWorks/9" "ProjectsDir" "${FW_DATA}/Projects"
+				WriteKey LM "Software/SIL/FieldWorks/9" "RootDataDir" "${FW_CONFIG}/"
+				WriteKey LM "Software/SIL/FieldWorks/9" "RootCodeDir" "${FW_SHARE}"
+				WriteKey LM "Software/SIL/FieldWorks/9" "ProjectsDir" "${FW_DATA}/Projects"
 			fi
 		fi
 	fi
@@ -117,11 +134,11 @@ CopyRegistryKey()
 
 	echo "# Writing required registry settings."
 
-	mono "${WRITEKEY}" LM "Software/SIL" "Icu54DataDir" "${FW_CONFIG}/Icu54"
-	mono "${WRITEKEY}" LM "Software/SIL" "Icu54Dir" "${FW_CONFIG}/Icu54"
+	WriteKey LM "Software/SIL" "Icu54DataDir" "${FW_CONFIG}/Icu54"
+	WriteKey LM "Software/SIL" "Icu54Dir" "${FW_CONFIG}/Icu54"
 
-	mono "${WRITEKEY}" LM "Software/SIL/SilEncConverters40" "PluginDir" "${FW_LIB}/EC/Plugins"
-	mono "${WRITEKEY}" LM "Software/SIL/SilEncConverters40" "RootDir" "${FW_LIB}"
+	WriteKey LM "Software/SIL/SilEncConverters40" "PluginDir" "${FW_LIB}/EC/Plugins"
+	WriteKey LM "Software/SIL/SilEncConverters40" "RootDir" "${FW_LIB}"
 
 ) | zenity --progress \
 	--title="User specific setup" \

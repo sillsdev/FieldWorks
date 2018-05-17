@@ -31,8 +31,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 		public override void TestTearDown()
 		{
-			if (m_Stream != null)
-				m_Stream.Dispose();
+			m_Stream?.Dispose();
 			m_Stream = null;
 			base.TestTearDown();
 		}
@@ -78,9 +77,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				Assert.IsNotNull(para);
 				Assert.That(para.Analyses.Count(), Is.EqualTo(1));
 				var wfiWord = para.Analyses.First().Wordform;
-				int wsWordform = wsf.get_Engine("en").Handle;
-				Assert.That(wfiWord.Form.get_String(wsf.get_Engine("en").Handle).Text,
-					Is.EqualTo("supercalifragilisticexpialidocious"));
+				var wsWordform = wsf.get_Engine("en").Handle;
+				Assert.That(wfiWord.Form.get_String(wsf.get_Engine("en").Handle).Text, Is.EqualTo("supercalifragilisticexpialidocious"));
 
 				Assert.That(wfiWord.AnalysesOC.Count, Is.GreaterThan(0));
 
@@ -105,14 +103,13 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		{
 			var morphBundle = wfiAnalysis.MorphBundlesOS.FirstOrDefault();
 			Assert.NotNull(morphBundle, "expected a morphbundle");
-			Assert.That(morphBundle.Form.get_String(wsWordform).Text,
-				Is.EqualTo(wfiWord.Form.get_String(wsWordform).Text));
+			Assert.That(morphBundle.Form.get_String(wsWordform).Text, Is.EqualTo(wfiWord.Form.get_String(wsWordform).Text));
 		}
 
 		private void AssertHumanApprovedOpinion(IWfiWordform wfiWord, IWfiAnalysis wfiAnalysis)
 		{
 			Assert.That(wfiWord.HumanApprovedAnalyses.Count(), Is.EqualTo(1));
-			ICmAgent humanAgent = Cache.LangProject.DefaultUserAgent;
+			var humanAgent = Cache.LangProject.DefaultUserAgent;
 			Assert.That(wfiAnalysis.GetAgentOpinion(humanAgent), Is.EqualTo(Opinions.approves));
 		}
 
@@ -141,9 +138,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				var para = imported.ContentsOA.ParagraphsOS[0] as IStTxtPara;
 				Assert.IsNotNull(para);
 				Assert.That(para.Analyses.Count(), Is.EqualTo(1));
-				int wsWordform = wsf.get_Engine("en").Handle;
-				Assert.That(para.Analyses.First().Wordform.Form.get_String(wsWordform).Text,
-					Is.EqualTo("supercalifragilisticexpialidocious"));
+				var wsWordform = wsf.get_Engine("en").Handle;
+				Assert.That(para.Analyses.First().Wordform.Form.get_String(wsWordform).Text, Is.EqualTo("supercalifragilisticexpialidocious"));
 				var at = new AnalysisTree(para.Analyses.First());
 				Assert.IsNotNull(at.Gloss, "IAnalysis should be WfiGloss");
 				Assert.That(at.Gloss.Form.get_String(wsf.get_Engine("pt").Handle).Text, Is.EqualTo("absurdo"));
@@ -253,30 +249,31 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			var wsf = Cache.WritingSystemFactory;
 
 			IText text;
-
+			IStTxtPara para = null;
 			IWfiWordform word = null;
 			ITsString paraContents = null;
+			Guid segGuid = new Guid();
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 				text = sl.GetInstance<ITextFactory>().Create(Cache, new Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"));
 				//Cache.LangProject.TextsOC.Add(text);
 				var sttext = sl.GetInstance<IStTextFactory>().Create();
 				text.ContentsOA = sttext;
-				IStTxtPara para = sl.GetInstance<IStTxtParaFactory>().Create();
+				para = sl.GetInstance<IStTxtParaFactory>().Create();
 				sttext.ParagraphsOS.Add(para);
-				para.Contents = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
-				paraContents = para.Contents;
+				paraContents = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
 				ISegment segment = sl.GetInstance<ISegmentFactory>().Create();
 				para.SegmentsOS.Add(segment);
 				ITsString wform = TsStringUtils.MakeString("supercalifragilisticexpialidocious",
 					wsf.get_Engine("en").Handle);
+				segGuid = segment.Guid;
 				word = sl.GetInstance<IWfiWordformFactory>().Create(wform);
 				segment.AnalysesRS.Add(word);
 			});
 
 			// import an analysis with word gloss
-			const string xml = "<document><interlinear-text guid='AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA'>" +
-				"<paragraphs><paragraph><phrases><phrase><words>" +
+			var xml = "<document><interlinear-text guid='AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA'>" +
+				"<paragraphs><paragraph><phrases><phrase guid='" + segGuid + "'><words>" +
 					"<word>" +
 						"<item type='txt' lang='en'>supercalifragilisticexpialidocious</item>" +
 						"<item type='gls' lang='pt'>absurdo</item>" +
@@ -304,14 +301,11 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				var importedGloss = at.Gloss;
 				Assert.That(importedGloss.Form.get_String(wsf.get_Engine("pt").Handle).Text, Is.EqualTo("absurdo"));
 
-				/* NOTE: currently paragraphs are getting recreated, so we can't depend upon that ownership tree persisting after the import
-				 *
-				Assert.That(importedPara.Guid, Is.SameAs(para.Guid));
-				var at = new AnalysisTree(para.Analyses.First());
+				Assert.That(importedPara.Guid.Equals(para.Guid));
+				at = new AnalysisTree(para.Analyses.First());
 				Assert.IsNotNull(at.Gloss, "IAnalysis should be WfiGloss");
 				var gloss = at.Gloss;
 				Assert.That(gloss.Form.get_String(wsf.get_Engine("pt").Handle).Text, Is.EqualTo("absurdo"));
-				 */
 
 				// make sure nothing has changed:
 				Assert.That(Cache.LanguageProject.Texts.Count, Is.EqualTo(1));
@@ -336,30 +330,31 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			var wsf = Cache.WritingSystemFactory;
 
 			IText text;
-
+			IStTxtPara para = null;
 			IWfiWordform word = null;
 			ITsString paraContents = null;
+			Guid segGuid = new Guid();
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 				text = sl.GetInstance<ITextFactory>().Create(Cache, new Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"));
 				//Cache.LangProject.TextsOC.Add(text);
 				var sttext = sl.GetInstance<IStTextFactory>().Create();
 				text.ContentsOA = sttext;
-				IStTxtPara para = sl.GetInstance<IStTxtParaFactory>().Create();
+				para = sl.GetInstance<IStTxtParaFactory>().Create();
 				sttext.ParagraphsOS.Add(para);
-				para.Contents = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
-				paraContents = para.Contents;
+				paraContents = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
 				ISegment segment = sl.GetInstance<ISegmentFactory>().Create();
 				para.SegmentsOS.Add(segment);
 				ITsString wform = TsStringUtils.MakeString("supercalifragilisticexpialidocious",
 					wsf.get_Engine("en").Handle);
+				segGuid = segment.Guid;
 				word = sl.GetInstance<IWfiWordformFactory>().Create(wform);
 				segment.AnalysesRS.Add(word);
 			});
 
 			// import an analysis with word gloss
 			string xml = "<document><interlinear-text guid='AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA'>" +
-				"<paragraphs><paragraph><phrases><phrase><words>" +
+				"<paragraphs><paragraph><phrases><phrase guid='" + segGuid + "'><words>" +
 					"<word guid='" + word.Guid + "'>" +
 						"<item type='txt' lang='en'>supercalifragilisticexpialidocious</item>" +
 						"<item type='gls' lang='pt'>absurdo</item>" +
@@ -388,14 +383,11 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				var importedGloss = at.Gloss;
 				Assert.That(importedGloss.Form.get_String(wsf.get_Engine("pt").Handle).Text, Is.EqualTo("absurdo"));
 
-				/* NOTE: currently paragraphs are getting recreated, so we can't depend upon that ownership tree persisting after the import
-				 *
-				Assert.That(importedPara.Guid, Is.SameAs(para.Guid));
-				var at = new AnalysisTree(para.Analyses.First());
+				Assert.That(importedPara.Guid.Equals(para.Guid));
+				at = new AnalysisTree(para.Analyses.First());
 				Assert.IsNotNull(at.Gloss, "IAnalysis should be WfiGloss");
 				var gloss = at.Gloss;
 				Assert.That(gloss.Form.get_String(wsf.get_Engine("pt").Handle).Text, Is.EqualTo("absurdo"));
-				 */
 
 				// make sure nothing has changed:
 				Assert.That(Cache.LanguageProject.Texts.Count, Is.EqualTo(1));
@@ -511,8 +503,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				text.ContentsOA = sttext;
 				IStTxtPara para = sl.GetInstance<IStTxtParaFactory>().Create();
 				sttext.ParagraphsOS.Add(para);
-				para.Contents = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
-				paraContents = para.Contents;
+				paraContents = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
 				ISegment segment = sl.GetInstance<ISegmentFactory>().Create();
 				para.SegmentsOS.Add(segment);
 				ITsString wform = TsStringUtils.MakeString("supercalifragilisticexpialidocious",
@@ -591,8 +582,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				text.ContentsOA = sttext;
 				IStTxtPara para = sl.GetInstance<IStTxtParaFactory>().Create();
 				sttext.ParagraphsOS.Add(para);
-				para.Contents = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
-				paraContents = para.Contents;
+				paraContents = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
 				ISegment segment = sl.GetInstance<ISegmentFactory>().Create();
 				para.SegmentsOS.Add(segment);
 				ITsString wform = TsStringUtils.MakeString("supercalifragilisticexpialidocious",

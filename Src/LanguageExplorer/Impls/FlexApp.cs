@@ -1175,7 +1175,12 @@ namespace LanguageExplorer.Impls
 
 		public FwAppArgs FwAppArgs { set; private get; }
 
-#endregion IFlexApp interface implementation
+		/// <summary>
+		/// Gets the classname used for setting the WM_CLASS on Linux
+		/// </summary>
+		public string WindowClassName => "fieldworks-flex";
+
+		#endregion IFlexApp interface implementation
 
 		private static void RestartSpellChecking(Control root)
 		{

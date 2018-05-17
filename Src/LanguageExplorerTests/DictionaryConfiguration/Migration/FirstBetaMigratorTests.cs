@@ -1223,7 +1223,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			var referencedEntryNode = new ConfigurableDictionaryNode
 			{
 				Label = "Primary Entry References",
-				FieldDescription = "MainEntryRefs",
+				FieldDescription = "EntryRefsWithThisMainSense",
 				Children = new List<ConfigurableDictionaryNode> { primaryEntries }
 			};
 			var referencedSenses = new ConfigurableDictionaryNode
@@ -1247,6 +1247,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			};
 			var betaModel = _migrator.LoadBetaDefaultForAlphaConfig(alphaModel);
 			_migrator.MigrateFrom83Alpha(_logger, alphaModel, betaModel);
+			Assert.AreEqual("MainEntryRefs", referencedEntryNode.FieldDescription, "Should have updated the field from 'EntryRefsWithThisMainSense' to 'MainEntryRefs'");
 			Assert.AreEqual("ConfigReferencedEntries", primaryEntries.FieldDescription, "Should have updated the field from 'PrimarySensesOrEntries' to 'ConfigReferencedEntries'");
 			Assert.AreEqual("referencedentries", primaryEntries.CSSClassNameOverride, "Should have changed the CSSClassNameOverride from 'primarylexemes' to 'referencedentries'");
 		}

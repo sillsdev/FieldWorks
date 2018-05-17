@@ -114,5 +114,10 @@ namespace LanguageExplorer
 		/// Command line arguments.
 		/// </summary>
 		FwAppArgs FwAppArgs { set; }
+
+		/// <summary>
+		/// Gets the classname used for setting the WM_CLASS on Linux
+		/// </summary>
+		string WindowClassName { get; }
 	}
 }

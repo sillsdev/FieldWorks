@@ -35,11 +35,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		private static DialogResult ShowDialogAboveProgressbar(IThreadedProgress progress, string text, string title, MessageBoxButtons buttons)
 		{
-			return MessageBox.Show(
-				text,
-				title,
-				buttons,
-				MessageBoxIcon.Warning);
+			return MessageBox.Show(text, title, buttons, MessageBoxIcon.Warning);
 		}
 
 		/// <summary>
@@ -91,16 +87,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					//Try and locate a segment with this Guid.
 					if (!string.IsNullOrEmpty(phrase.guid))
 					{
-						if (cache.ServiceLocator.ObjectRepository.TryGetObject(new Guid(phrase.guid), out oldSegment))
-						{
-							//We aren't merging, but we have this guid in our system; ignore the file Guid
-							oldSegment = cache.ServiceLocator.GetInstance<ISegmentFactory>().Create(newTextPara, offset);
-						}
-						else
-						{
-							//The segment is identified by a Guid, but apparently we don't have it in our current document, so make one with the guid
-							oldSegment = cache.ServiceLocator.GetInstance<ISegmentFactory>().Create(newTextPara, offset, cache, new Guid(phrase.guid));
-						}
+						oldSegment = cache.ServiceLocator.ObjectRepository.TryGetObject(new Guid(phrase.guid), out oldSegment)
+							// We aren't merging, but we have this guid in our system; ignore the file Guid
+							? cache.ServiceLocator.GetInstance<ISegmentFactory>().Create(newTextPara, offset)
+							// The segment is identified by a Guid, but apparently we don't have it in our current document, so make one with the guid
+							: cache.ServiceLocator.GetInstance<ISegmentFactory>().Create(newTextPara, offset, cache, new Guid(phrase.guid));
 					}
 					//set newSegment to the old, or create a brand new one.
 					var newSegment = oldSegment as ISegment ?? cache.ServiceLocator.GetInstance<ISegmentFactory>().Create(newTextPara, offset);
@@ -148,8 +139,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		private static bool PhraseHasExactlyOneTxtItemNotAKnownWordform(LcmCache lcmCache, Phrase phrase)
 		{
-			if (phrase.WordsContent.Words.Length != 1 || phrase.WordsContent.Words[0].Items.Length != 1 ||
-			    phrase.WordsContent.Words[0].Items[0].type != "txt")
+			if (phrase.WordsContent.Words.Length != 1 || phrase.WordsContent.Words[0].Items.Length != 1 || phrase.WordsContent.Words[0].Items[0].type != "txt")
 			{
 				return false;
 			}
@@ -191,16 +181,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			//handle the header(info or meta) information as well as any media-files sections
 			SetTextMetaAndMergeMedia(cache, interlinText, wsFactory, newText, true);
 
-			IStText newContents = null;
-			//create all the paragraphs NOTE: Currently the paragraph guids are being ignored, this might be wrong.
+			var newContents = newText.ContentsOA;
+			//create or reuse the paragraphs available. NOTE: Currently the paragraph guids are being ignored, this might be wrong.
 			foreach (var paragraph in interlinText.paragraphs)
 			{
+				IStTxtPara newTextPara = null;
 				if (newContents == null)
 				{
 					newContents = cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 					newText.ContentsOA = newContents;
+					newTextPara = newContents.AddNewTextPara("");
 				}
-				var newTextPara = newContents.AddNewTextPara("");
 				var offset = 0;
 				if (paragraph.phrases == null)
 				{
@@ -209,17 +200,25 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				foreach (var phrase in paragraph.phrases)
 				{
 					ICmObject oldSegment = null;
-					//Try and locate a segment with this Guid.
+					// Try and locate a segment with this Guid. Assign newTextPara to the paragraph we're working on if we haven't already
 					if(!string.IsNullOrEmpty(phrase.guid))
 					{
 						if (cache.ServiceLocator.ObjectRepository.TryGetObject(new Guid(phrase.guid), out oldSegment))
 						{
 							if (oldSegment as ISegment != null) //The segment matches, add it into our paragraph.
 							{
-								newTextPara.SegmentsOS.Add(oldSegment as ISegment);
+								var segmentOwner = newContents.ParagraphsOS.FirstOrDefault(para => para.Guid.Equals((oldSegment as ISegment).Owner.Guid)) as IStTxtPara;
+								if (segmentOwner != null && newTextPara == null) //We found the StTxtPara that correspond to this paragraph
+								{
+									newTextPara = segmentOwner;
+								}
 							}
 							else if (oldSegment == null) //The segment is identified by a Guid, but apparently we don't have it in our current document, so make one
 							{
+								if (newTextPara == null)
+								{
+									newTextPara = newContents.AddNewTextPara("");
+								}
 								oldSegment = cache.ServiceLocator.GetInstance<ISegmentFactory>().Create(newTextPara, offset, cache, new Guid(phrase.guid));
 							}
 							else //The Guid is in use, but not by a segment. This is bad.
@@ -228,8 +227,31 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							}
 						}
 					}
+					//If newTextPara is null, try to use a paragraph that a sibling phrase belongs to.
+					//Note: newTextPara is only assigned once, and won't be reassigned until we iterate through a new paragraph.
+					if (newTextPara == null)
+					{
+						var phraseGuids = paragraph.phrases.Select(p => p.guid);
+						foreach (IStTxtPara para in newContents.ParagraphsOS)
+						{
+							if (para.SegmentsOS.Any(seg => phraseGuids.Contains(seg.Guid.ToString())))
+							{
+								newTextPara = para;
+								break;
+							}
+						}
+					}
+					// Can't find any paragraph for our phrase, create a brand new paragraph
+					if (newTextPara == null)
+					{
+						newTextPara = newContents.AddNewTextPara("");
+					}
+
 					//set newSegment to the old, or create a brand new one.
-					var newSegment = oldSegment as ISegment ?? cache.ServiceLocator.GetInstance<ISegmentFactory>().Create(newTextPara, offset);
+					var newSegment = oldSegment as ISegment ?? (!string.IsNullOrEmpty(phrase.guid)
+										 // The segment is identified by a Guid, but apparently we don't have it in our current document, so make one with the guid
+										 ? cache.ServiceLocator.GetInstance<ISegmentFactory>().Create(newTextPara, offset, cache, new Guid(phrase.guid))
+										 : cache.ServiceLocator.GetInstance<ISegmentFactory>().Create(newTextPara, offset));
 					//Fill in the ELAN time information if it is present.
 					AddELANInfoToSegment(cache, phrase, newSegment);
 
@@ -239,8 +261,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					AddSegmentItemData(cache, wsFactory, phrase, newSegment, ref textInFile, ref phraseText);
 
 					var lastWasWord = false;
-					if (phrase.WordsContent != null && phrase.WordsContent.Words != null)
+					if (phrase.WordsContent?.Words != null)
 					{
+						//Rewrite our analyses
+						newSegment.AnalysesRS.Clear();
 						foreach (var word in phrase.WordsContent.Words)
 						{
 							//If the text of the phrase was not found in a "txt" item for this segment then build it from the words.
@@ -260,7 +284,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// This method will update the newTextPara param appending the phraseText and possibly modifying the segment ending
 		/// to add an end of segment character. The offset parameter will be set to the value where a following segment would start
-		/// from.
+		/// from. The paragraph text will be replaced if the offset is 0.
 		/// </summary>
 		private static void UpdateParagraphTextForPhrase(IStTxtPara newTextPara, ref int offset, ITsString phraseText)
 		{
@@ -268,8 +292,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-			offset += phraseText.Length;
 			var bldr = newTextPara.Contents.GetBldr();
+			if (offset == 0)
+			{
+				bldr.Replace(0, bldr.Length, "", null);
+			}
+			offset += phraseText.Length;
 			var oldText = (bldr.Text ?? "").Trim();
 			if (oldText.Length > 0 && !TsStringUtils.IsEndOfSentenceChar(oldText[oldText.Length - 1], Icu.UCharCategory.U_OTHER_PUNCTUATION))
 			{
@@ -279,7 +307,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// Insert a space between phrases unless there is already one
 			if (bldr.Length > 0 && phraseText.Text[0] != ' ' && bldr.Text[bldr.Length - 1] != ' ')
 			{
-				bldr.Replace(bldr.Length, bldr.Length, " ", null);
+					bldr.Replace(bldr.Length, bldr.Length, " ", null);
 			}
 			bldr.ReplaceTsString(bldr.Length, bldr.Length, phraseText);
 			newTextPara.Contents = bldr.GetString();
@@ -296,7 +324,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		private static void UpdatePhraseTextForWordItems(ILgWritingSystemFactory wsFactory, ref ITsString phraseText, Word word, ref bool lastWasWord, char space)
 		{
-			bool isWord = false;
+			var isWord = false;
 			foreach (var item in word.Items)
 			{
 				switch (item.type)
@@ -345,48 +373,50 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-			foreach (var item in phrase.Items)
-			{
-				switch (item.type)
+				foreach (var item in phrase.Items)
 				{
-					case "reference-label":
+					switch (item.type)
+					{
+						case "reference-label":
 						newSegment.Reference = TsStringUtils.MakeString(item.Value, GetWsEngine(wsFactory, item.lang).Handle);
-						break;
-					case "gls":
-						newSegment.FreeTranslation.set_String(GetWsEngine(wsFactory, item.lang).Handle, item.Value);
-						break;
-					case "lit":
-						newSegment.LiteralTranslation.set_String(GetWsEngine(wsFactory, item.lang).Handle, item.Value);
-						break;
-					case "note":
+							break;
+						case "gls":
+							newSegment.FreeTranslation.set_String(GetWsEngine(wsFactory, item.lang).Handle, item.Value);
+							break;
+						case "lit":
+							newSegment.LiteralTranslation.set_String(GetWsEngine(wsFactory, item.lang).Handle, item.Value);
+							break;
+						case "note":
 						var note = cache.ServiceLocator.GetInstance<INoteFactory>().Create();
-						newSegment.NotesOS.Add(note);
-						note.Content.set_String(GetWsEngine(wsFactory, item.lang).Handle, item.Value);
-						break;
-					case "txt":
-						phraseText = TsStringUtils.MakeString(item.Value, GetWsEngine(wsFactory, item.lang).Handle);
-						textInFile = true;
-						break;
-					default:
-						var classId = cache.MetaDataCacheAccessor.GetClassId("Segment");
-						var mdc = cache.GetManagedMetaDataCache();
-						foreach (var flid in mdc.GetFields(classId, false, (int)CellarPropertyTypeFilter.All))
-						{
-							if (!mdc.IsCustom(flid))
+							newSegment.NotesOS.Add(note);
+							note.Content.set_String(GetWsEngine(wsFactory, item.lang).Handle, item.Value);
+							break;
+						case "txt":
+							phraseText = TsStringUtils.MakeString(item.Value, GetWsEngine(wsFactory, item.lang).Handle);
+							textInFile = true;
+							break;
+						case "segnum":
+							break; // The segnum item is not associated to a property, and also not a custom field. Skip merging it.
+						default:
+							var classId = cache.MetaDataCacheAccessor.GetClassId("Segment");
+							var mdc = cache.GetManagedMetaDataCache();
+							foreach (var flid in mdc.GetFields(classId, false, (int)CellarPropertyTypeFilter.All))
 							{
-								continue;
+								if (!mdc.IsCustom(flid))
+								{
+										continue;
+								}
+								var customId = mdc.GetFieldId2(classId, item.type, true);
+								if (customId != 0)
+								{
+									var customWs = GetWsEngine(wsFactory, item.lang).Handle;
+									var customTierText = TsStringUtils.MakeString(item.Value, customWs);
+									cache.MainCacheAccessor.SetString(newSegment.Hvo, customId, customTierText);
+								}
 							}
-							var customId = mdc.GetFieldId2(classId, item.type, true);
-							if (customId != 0)
-							{
-								var customWs = GetWsEngine(wsFactory, item.lang).Handle;
-								var customTierText = TsStringUtils.MakeString(item.Value, customWs);
-								cache.MainCacheAccessor.SetString(newSegment.Hvo, customId, customTierText);
-							}
-						}
-						break;
+							break;
+					}
 				}
-			}
 		}
 
 		private static void AddELANInfoToSegment(LcmCache cache, Phrase phrase, ISegment newSegment)
@@ -431,7 +461,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private static void MergeWordToSegment(ISegment newSegment, Word word)
 		{
-			if(!string.IsNullOrEmpty(word.guid))
+			if (!string.IsNullOrEmpty(word.guid))
 			{
 				ICmObject repoObj;
 				newSegment.Cache.ServiceLocator.ObjectRepository.TryGetObject(new Guid(word.guid), out repoObj);
@@ -484,21 +514,21 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							//otherwise the message box can be displayed behind everything
 							var instructions = GetInstructions(interlinText, writingSystem.LanguageName, ITextStrings.ksImportVernacLangMissing);
 							var asyncResult = progress.SynchronizeInvoke.BeginInvoke(new ShowDialogAboveProgressbarDelegate(ShowDialogAboveProgressbar),
-																		 new object[]
-																			{
-																				progress,
-																				instructions,
-																				ITextStrings.ksImportVernacLangMissingTitle,
-																				MessageBoxButtons.OKCancel
-																			});
+								new object[]
+								{
+									progress,
+									instructions,
+									ITextStrings.ksImportVernacLangMissingTitle,
+									MessageBoxButtons.OKCancel
+								});
 							result = (DialogResult)progress.SynchronizeInvoke.EndInvoke(asyncResult);
 							switch (result)
 							{
 								case DialogResult.OK:
-									cache.LanguageProject.AddToCurrentVernacularWritingSystems((CoreWritingSystemDefinition) writingSystem);
+								cache.LanguageProject.AddToCurrentVernacularWritingSystems((CoreWritingSystemDefinition) writingSystem);
 									break;
 								case DialogResult.Cancel:
-									return false;
+								return false;
 							}
 						}
 					}
@@ -518,9 +548,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 								MessageBoxButtons.OKCancel
 							});
 						result = (DialogResult)progress.SynchronizeInvoke.EndInvoke(asyncResult);
-						//alert the user
+							//alert the user
 						switch (result)
-						{
+							{
 							case DialogResult.OK:
 								//alert the user
 								cache.LanguageProject.AddToCurrentAnalysisWritingSystems((CoreWritingSystemDefinition) writingSystem);
@@ -529,10 +559,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 								break;
 							case DialogResult.Cancel:
 								return false;
+							}
 						}
 					}
 				}
-			}
 			return true;
 		}
 
@@ -582,7 +612,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					foreach (var item in phrase.Items)
 					{
 						if (item.type == "txt")
+						{
 							EnsureVernacularLanguage(interlinText, item.lang);
+						}
 					}
 					if(phrase.WordsContent.Words != null)
 					{
@@ -591,7 +623,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							foreach (var item in word.Items)
 							{
 								if (item.type == "txt")
+								{
 									EnsureVernacularLanguage(interlinText, item.lang);
+								}
 							}
 							// We could dig into the morphemes, but any client generating morphemes probably
 							// does things right, and anyway we don't import that yet.
@@ -617,7 +651,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private static ILgWritingSystem SafelyGetWritingSystem(LcmCache cache, ILgWritingSystemFactory wsFactory, Language lang, out bool fIsVernacular)
 		{
 			fIsVernacular = lang.vernacularSpecified && lang.vernacular;
-			ILgWritingSystem writingSystem = null;
+			ILgWritingSystem writingSystem;
 			try
 			{
 				writingSystem = wsFactory.get_Engine(lang.lang);
@@ -699,7 +733,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				    foreach(item item in morpheme.items)
 				    {
 				        //fill in morpheme's stuff
-				    }
+					}
 				}
 			}*/
 			return analysis;
@@ -753,7 +787,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						dictMapLangToGloss.Add(wordGlossItem.lang, wordGlossItem.Value);
 						continue;
 					}
-					if (wordGlossItem.Value == gloss) continue;
+
+					if (wordGlossItem.Value == gloss)
+					{
+						continue;
+					}
 					fHasMultipleGlossesInSameLanguage = true;
 					break;
 				}

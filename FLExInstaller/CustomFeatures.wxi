@@ -16,70 +16,70 @@
 	<Feature Id='MenuShortcut' Title='Start Menu Shortcut' Description='Creates a shortcut in the Start menu.' Level='3' ConfigurableDirectory='APPFOLDER' AllowAdvertise="no" InstallDefault="source" Absent='allow' TypicalDefault="install" >
 		<ComponentRef Id='ApplicationShortcutMenu' />
 	</Feature>
-	<Feature Id="FlexMovies" Title="Demo Movies" Description="Language Explorer demonstration movies" Display="expand" Level="3" AllowAdvertise="no">
+	<Feature Id="FlexMovies" Title="Demo Movies" Description="Language Explorer demonstration movies" Display="expand" Level="4" AllowAdvertise="no">
 		<ComponentGroupRef Id="HarvestedMovieFiles" />
 	</Feature>
 	<Feature Id="LOC" Title="Language Packs" Description="Additional languages for the user interface." Display="expand" Level="3" AllowAdvertise="no">
-		<Feature Id="Indonesian" Title="Indonesian" Description="Allows the software to have an Indonesian user interface." Display="expand" Level="4" AllowAdvertise="no">
-			<Condition Level="3">UserLanguageID = 1057</Condition>
+		<Feature Id="Indonesian" Title="Indonesian" Description="Allows the software to have an Indonesian user interface." Display="expand" Level="3" AllowAdvertise="no">
+			<Condition Level="1">UserLanguageID = 1057</Condition>
 			<ComponentGroupRef Id="idLocalization" />
 		</Feature>
-		<Feature Id="Malay" Title="Malay" Description="Allows the software to have a Malay user interface." Display="expand" Level="4" AllowAdvertise="no">
-			<Condition Level="3">UserLanguageID = 1086</Condition>
+		<Feature Id="Malay" Title="Malay" Description="Allows the software to have a Malay user interface." Display="expand" Level="3" AllowAdvertise="no">
+			<Condition Level="1">UserLanguageID = 1086</Condition>
 			<ComponentGroupRef Id="msLocalization" />
 		</Feature>
-		<Feature Id="Azerbaijani" Title="Azerbaijani" Description="Allows the software to have an Azerbaijani user interface." Display="expand" Level="4" AllowAdvertise="no">
+		<Feature Id="Azerbaijani" Title="Azerbaijani" Description="Allows the software to have an Azerbaijani user interface." Display="expand" Level="3" AllowAdvertise="no">
 			<ComponentGroupRef Id="azLocalization" />
 		</Feature>
-		<Feature Id="Chinese" Title="Chinese" Description="Allows the software to have a Chinese user interface." Display="expand" Level="4" AllowAdvertise="no">
-			<Condition Level="3">UserLanguageID = 3076 OR UserLanguageID = 5124 OR UserLanguageID = 2052 OR UserLanguageID = 1028</Condition>
+		<Feature Id="Chinese" Title="Chinese" Description="Allows the software to have a Chinese user interface." Display="expand" Level="3" AllowAdvertise="no">
+			<Condition Level="1">UserLanguageID = 3076 OR UserLanguageID = 5124 OR UserLanguageID = 2052 OR UserLanguageID = 1028</Condition>
 			<ComponentGroupRef Id="zhLocalization" />
 		</Feature>
-		<Feature Id="French" Title="French" Description="Allows the software to have a French user interface." Display="expand" Level="4" AllowAdvertise="no">
-			<Condition Level="3">UserLanguageID = 1036</Condition>
+		<Feature Id="French" Title="French" Description="Allows the software to have a French user interface." Display="expand" Level="3" AllowAdvertise="no">
+			<Condition Level="1">UserLanguageID = 1036</Condition>
 			<ComponentGroupRef Id="frLocalization" />
 		</Feature>
-		<Feature Id="Hindi" Title="Hindi" Description="Allows the software to have a Hindi user interface." Display="expand" Level="4" AllowAdvertise="no">
-			<Condition Level="3">UserLanguageID = 1081</Condition>
+		<Feature Id="Hindi" Title="Hindi" Description="Allows the software to have a Hindi user interface." Display="expand" Level="3" AllowAdvertise="no">
+			<Condition Level="1">UserLanguageID = 1081</Condition>
 			<ComponentGroupRef Id="hiLocalization" />
 		</Feature>
-		<Feature Id="Hungarian" Title="Hungarian" Description="Allows the software to have a Hungarian user interface." Display="expand" Level="4" AllowAdvertise="no">
-			<Condition Level="3">UserLanguageID = 1038</Condition>
+		<Feature Id="Hungarian" Title="Hungarian" Description="Allows the software to have a Hungarian user interface." Display="expand" Level="3" AllowAdvertise="no">
+			<Condition Level="1">UserLanguageID = 1038</Condition>
 			<ComponentGroupRef Id="huLocalization" />
 		</Feature>
-		<Feature Id="Kinyarwanda" Title="Kinyarwanda" Description="Allows the software to have a Kinyarwanda user interface." Display="expand" Level="4" AllowAdvertise="no">
-			<Condition Level="3">UserLanguageID = 1048</Condition>
+		<Feature Id="Kinyarwanda" Title="Kinyarwanda" Description="Allows the software to have a Kinyarwanda user interface." Display="expand" Level="3" AllowAdvertise="no">
+			<Condition Level="1">UserLanguageID = 1048</Condition>
 			<ComponentGroupRef Id="roLocalization" />
 		</Feature>
-		<Feature Id="Korean" Title="Korean" Description="Allows the software to have a Korean user interface." Display="expand" Level="4" AllowAdvertise="no">
-			<Condition Level="3">UserLanguageID = 1042</Condition>
+		<Feature Id="Korean" Title="Korean" Description="Allows the software to have a Korean user interface." Display="expand" Level="3" AllowAdvertise="no">
+			<Condition Level="1">UserLanguageID = 1042</Condition>
 			<ComponentGroupRef Id="koLocalization" />
 		</Feature>
-		<Feature Id="Persian" Title="Persian" Description="Allows the software to have a Persian user interface." Display="expand" Level="4" AllowAdvertise="no">
-			<Condition Level="3">UserLanguageID = 1065</Condition>
+		<Feature Id="Persian" Title="Persian" Description="Allows the software to have a Persian user interface." Display="expand" Level="3" AllowAdvertise="no">
+			<Condition Level="1">UserLanguageID = 1065</Condition>
 			<ComponentGroupRef Id="faLocalization" />
 		</Feature>
-		<Feature Id="Portuguese" Title="Portuguese" Description="Allows the software to have a Portuguese user interface." Display="expand" Level="4" AllowAdvertise="no">
-			<Condition Level="3">UserLanguageID = 1046 OR UserLanguageID = 2070</Condition>
+		<Feature Id="Portuguese" Title="Portuguese" Description="Allows the software to have a Portuguese user interface." Display="expand" Level="3" AllowAdvertise="no">
+			<Condition Level="1">UserLanguageID = 1046 OR UserLanguageID = 2070</Condition>
 			<ComponentGroupRef Id="ptLocalization" />
 		</Feature>
-		<Feature Id="Russian" Title="Russian" Description="Allows the software to have a Russian user interface." Display="expand" Level="4" AllowAdvertise="no">
-			<Condition Level="3">UserLanguageID = 1049</Condition>
+		<Feature Id="Russian" Title="Russian" Description="Allows the software to have a Russian user interface." Display="expand" Level="3" AllowAdvertise="no">
+			<Condition Level="1">UserLanguageID = 1049</Condition>
 			<ComponentGroupRef Id="ruLocalization" />
 		</Feature>
-		<Feature Id="Spanish" Title="Spanish" Description="Allows the software to have a Spanish user interface." Display="expand" Level="4" AllowAdvertise="no">
-			<Condition Level="3">UserLanguageID = 1034 OR UserLanguageID = 11274 OR UserLanguageID = 16394 OR UserLanguageID = 13322 OR UserLanguageID = 9226 OR UserLanguageID = 5130 OR UserLanguageID = 7178 OR UserLanguageID = 12298 OR UserLanguageID = 17418 OR UserLanguageID = 4106 OR UserLanguageID = 18442 OR UserLanguageID = 19466 OR UserLanguageID = 6154 OR UserLanguageID = 15370 OR UserLanguageID = 10250 OR UserLanguageID = 20490 OR UserLanguageID = 3082 OR UserLanguageID = 14346 OR UserLanguageID = 8202</Condition>
+		<Feature Id="Spanish" Title="Spanish" Description="Allows the software to have a Spanish user interface." Display="expand" Level="3" AllowAdvertise="no">
+			<Condition Level="1">UserLanguageID = 1034 OR UserLanguageID = 11274 OR UserLanguageID = 16394 OR UserLanguageID = 13322 OR UserLanguageID = 9226 OR UserLanguageID = 5130 OR UserLanguageID = 7178 OR UserLanguageID = 12298 OR UserLanguageID = 17418 OR UserLanguageID = 4106 OR UserLanguageID = 18442 OR UserLanguageID = 19466 OR UserLanguageID = 6154 OR UserLanguageID = 15370 OR UserLanguageID = 10250 OR UserLanguageID = 20490 OR UserLanguageID = 3082 OR UserLanguageID = 14346 OR UserLanguageID = 8202</Condition>
 			<ComponentGroupRef Id="esLocalization" />
 		</Feature>
-		<Feature Id="Telugu" Title="Telugu" Description="Allows the software to have a Telugu user interface." Display="expand" Level="4" AllowAdvertise="no">
+		<Feature Id="Telugu" Title="Telugu" Description="Allows the software to have a Telugu user interface." Display="expand" Level="3" AllowAdvertise="no">
 			<ComponentGroupRef Id="teLocalization" />
 		</Feature>
-		<Feature Id="Turkish" Title="Turkish" Description="Allows the software to have a Turkish user interface." Display="expand" Level="4" AllowAdvertise="no">
-			<Condition Level="3">UserLanguageID = 1055</Condition>
+		<Feature Id="Turkish" Title="Turkish" Description="Allows the software to have a Turkish user interface." Display="expand" Level="3" AllowAdvertise="no">
+			<Condition Level="1">UserLanguageID = 1055</Condition>
 			<ComponentGroupRef Id="trLocalization" />
 		</Feature>
-		<Feature Id="Vietnamese" Title="Vietnamese" Description="Allows the software to have a Vietnamese user interface." Display="expand" Level="4" AllowAdvertise="no">
-			<Condition Level="3">UserLanguageID = 1066</Condition>
+		<Feature Id="Vietnamese" Title="Vietnamese" Description="Allows the software to have a Vietnamese user interface." Display="expand" Level="3" AllowAdvertise="no">
+			<Condition Level="1">UserLanguageID = 1066</Condition>
 			<ComponentGroupRef Id="viLocalization" />
 		</Feature>
 	</Feature>

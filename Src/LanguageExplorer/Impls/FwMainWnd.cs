@@ -42,6 +42,7 @@ using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 using SIL.Reporting;
 using SIL.Utils;
 using File = System.IO.File;
@@ -1778,6 +1779,18 @@ very simple minor adjustments. ;)"
 			_sidePane.ItemClicked += Tool_Clicked;
 			// This call fires Area_Clicked and then Tool_Clicked to make sure the provided tab and item are both selected in the end.
 			_sidePane.SelectItem(_sidePane.GetTabByName(currentArea.MachineName), currentTool.MachineName);
+		}
+
+		/// <inheritdoc />
+		protected override void OnHandleCreated(EventArgs e)
+		{
+			base.OnHandleCreated(e);
+
+			// Set WM_CLASS on Linux (LT-19085)
+			if (Platform.IsLinux && _flexApp != null)
+			{
+				SIL.Windows.Forms.Miscellaneous.X11.SetWmClass(_flexApp.WindowClassName, Handle);
+			}
 		}
 
 		#endregion

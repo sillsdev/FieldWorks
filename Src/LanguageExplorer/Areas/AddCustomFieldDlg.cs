@@ -22,7 +22,7 @@ namespace LanguageExplorer.Areas
 	/// Summary description for AddCustomFieldDlg.
 	/// </summary>
 	internal class AddCustomFieldDlg : Form
-	{
+		{
 		private Label m_locationLabel;
 		private ComboBox m_locationComboBox;
 		private Label m_fieldsLabel;
@@ -117,12 +117,17 @@ namespace LanguageExplorer.Areas
 			PopulateWritingSystemsList();
 
 			m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.SingleLineText, AreaResources.ksSingleLineText));
-			m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.MultiparagraphText, AreaResources.kMultiparagraphText));
-			m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.ListRefCollection, AreaResources.ksListRefCollection));
-			m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.ListRefAtomic, AreaResources.ksListRefAtomic));
+			// Additional custom field types are valid if we are not in the text and words area
+			if (customFieldLocationType != CustomFieldLocationType.Interlinear)
+			{
+				m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.MultiparagraphText, AreaResources.kMultiparagraphText));
+				m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.ListRefCollection, AreaResources.ksListRefCollection));
+				m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.ListRefAtomic, AreaResources.ksListRefAtomic));
 			// If you add additional value types here, a change is also needed in BasicCustomPropertyFixer (FixFwDataDll).
-			m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.Date, AreaResources.ksDate));
-			m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.Number, AreaResources.ksNumber));
+				m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.Date, AreaResources.ksDate));
+				m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.Number, AreaResources.ksNumber));
+			}
+
 			m_typeComboBox.SelectedIndex = 0;
 
 			m_listComboBox.Items.AddRange(GetListsComboItems(m_cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>()));
@@ -184,13 +189,13 @@ namespace LanguageExplorer.Areas
 		}
 
 		internal static IdAndString<Guid>[] GetListsComboItems(ICmPossibilityListRepository possibilityListRepository)
-		{
+			{
 			var result = new SortedList<string, IdAndString<Guid>>();
 			foreach (var possibilityList in possibilityListRepository.AllInstances())
-			{
+				{
 				var newValue = new IdAndString<Guid>(possibilityList.Guid, possibilityList.ChooserNameTS.Text);
 				result.Add(newValue.Name, newValue);
-			}
+				}
 			return result.Values.ToArray();
 		}
 
@@ -221,31 +226,31 @@ namespace LanguageExplorer.Areas
 			var xnlResults = new List<XElement>();
 			var xnlLayouts = m_layouts.GetElements("layout", new[] {sClassName});
 			foreach (var xnLayout in xnlLayouts)
-			{
+				{
 				var xnl = xnLayout.XPathSelectElements("descendant::part[@ref=\"$child\" or @ref=\"Custom\"]");
 				foreach (var xn in xnl)
-				{
+					{
 					var sRef = XmlUtils.GetOptionalAttributeValue(xn, "ref");
-					if (sRef == "$child")
-					{
+						if (sRef == "$child")
+						{
 						var sLabel = XmlUtils.GetOptionalAttributeValue(xn, "label");
-						if (sLabel == sFieldLabel)
-						{
-							xnlResults.Add(xnLayout);
-							break;
+							if (sLabel == sFieldLabel)
+							{
+								xnlResults.Add(xnLayout);
+								break;
+							}
 						}
-					}
-					else if (sRef == "Custom")
-					{
-						var sParam = XmlUtils.GetOptionalAttributeValue(xn, "param");
-						if (sParam == sName)
+						else if (sRef == "Custom")
 						{
-							xnlResults.Add(xnLayout);
-							break;
+						var sParam = XmlUtils.GetOptionalAttributeValue(xn, "param");
+							if (sParam == sName)
+							{
+								xnlResults.Add(xnLayout);
+								break;
+							}
 						}
 					}
 				}
-			}
 
 			return xnlResults;
 		}
@@ -462,18 +467,18 @@ namespace LanguageExplorer.Areas
 				{
 					case "$child":
 						var sLabel = XmlUtils.GetOptionalAttributeValue(xn, "label");
-						if (sLabel == fd.Userlabel)
-							rgxn.Add(xn);
-						else
-							DeleteMatchingDescendants(xn, fd);		// recurse!
+					if (sLabel == fd.Userlabel)
+						rgxn.Add(xn);
+					else
+						DeleteMatchingDescendants(xn, fd);		// recurse!
 						break;
 					case "Custom":
 						var sParam = XmlUtils.GetOptionalAttributeValue(xn, "param");
-						if (sParam == fd.Name)
-							rgxn.Add(xn);
+					if (sParam == fd.Name)
+						rgxn.Add(xn);
 						break;
 					default:
-						DeleteMatchingDescendants(xn, fd);		// recurse!
+					DeleteMatchingDescendants(xn, fd);		// recurse!
 						break;
 				}
 			}
@@ -661,7 +666,7 @@ namespace LanguageExplorer.Areas
 			if (m_wsComboBox.Enabled && m_wsComboBox.SelectedItem == null)
 			{
 				m_wsComboBox.SelectedIndex = 0;
-			}
+		}
 		}
 
 		private void SetControlsForField(FDWrapper field)
@@ -698,7 +703,7 @@ namespace LanguageExplorer.Areas
 				changed |= UpdateCacheAndLayoutsForDeletions();
 				changed |= SaveCustomFieldsToDB();
 			}
-			if (changed) // only fire the 'big gun' if something has actually changed
+			if (changed)	// only fire the 'big gun' if something has actually changed
 			{
 				m_propertyTable.GetValue<IFwMainWnd>("window").RefreshAllViews();
 			}
@@ -715,7 +720,7 @@ namespace LanguageExplorer.Areas
 				if (fdw.IsNew && CheckInvalidCustomField(fdw))
 				{
 					return;
-				}
+			}
 			}
 			m_fieldsListView.Enabled = true;
 			m_deleteButton.Enabled = true;
@@ -804,7 +809,7 @@ namespace LanguageExplorer.Areas
 			else
 			{
 				SetStateNoCustomFields();
-			}
+		}
 		}
 
 		private void m_fieldsListView_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
@@ -813,10 +818,10 @@ namespace LanguageExplorer.Areas
 			{
 				return;
 			}
-			var selectedField = (FDWrapper) m_fieldsListView.SelectedItems[0].Tag;
-			if (m_fdwCurrentField != null && m_fdwCurrentField != selectedField)
+				var selectedField = (FDWrapper) m_fieldsListView.SelectedItems[0].Tag;
+				if (m_fdwCurrentField != null && m_fdwCurrentField != selectedField)
 			{
-				SetControlsForField(selectedField);
+					SetControlsForField(selectedField);
 			}
 		}
 
@@ -826,14 +831,14 @@ namespace LanguageExplorer.Areas
 			{
 				return;
 			}
-			if (!m_fdwCurrentField.IsNew)
+				if (!m_fdwCurrentField.IsNew)
 			{
-				SaveModifiedLabelIfNeeded(m_fdwCurrentField.Fd);
+					SaveModifiedLabelIfNeeded(m_fdwCurrentField.Fd);
 			}
 
-			m_fdwCurrentField.Fd.Userlabel = m_nameTextBox.Text;
-			CurrentFieldListViewItem.Text = m_nameTextBox.Text;
-		}
+				m_fdwCurrentField.Fd.Userlabel = m_nameTextBox.Text;
+				CurrentFieldListViewItem.Text = m_nameTextBox.Text;
+			}
 
 		private void m_locationComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
@@ -842,9 +847,9 @@ namespace LanguageExplorer.Areas
 				return;
 			}
 			var classItem = (IdAndString<int>)m_locationComboBox.SelectedItem;
-			m_fdwCurrentField.Fd.Class = classItem.Id;
-			CurrentFieldListViewItem.SubItems[1].Text = classItem.Name;
-		}
+				m_fdwCurrentField.Fd.Class = classItem.Id;
+				CurrentFieldListViewItem.SubItems[1].Text = classItem.Name;
+			}
 
 		private void m_descTextBox_TextChanged(object sender, EventArgs e)
 		{
@@ -852,16 +857,16 @@ namespace LanguageExplorer.Areas
 			{
 				return;
 			}
-			if (m_descTextBox.Text.Length > 100)
-			{
+				if (m_descTextBox.Text.Length > 100)
+				{
 				var message1 = "The description is limited to 100 characters.";
 				MessageBox.Show(this, message1, @"Limit on Description", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				m_descTextBox.Text = m_descTextBox.Text.Substring(0, 100);
-			}
+					m_descTextBox.Text = m_descTextBox.Text.Substring(0, 100);
+				}
 
-			//let's save the changes as we go along
-			m_fdwCurrentField.Fd.HelpString = m_descTextBox.Text;
-		}
+				//let's save the changes as we go along
+				m_fdwCurrentField.Fd.HelpString = m_descTextBox.Text;
+			}
 
 		private void m_typeComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
@@ -869,11 +874,11 @@ namespace LanguageExplorer.Areas
 			{
 				return;
 			}
-			EnableTypeControls();
-			SetFieldType(m_fdwCurrentField.Fd);
-			PopulateWritingSystemsList();
-			CurrentFieldListViewItem.SubItems[2].Text = ((IdAndString<CustomFieldType>) m_typeComboBox.SelectedItem).Name;
-		}
+				EnableTypeControls();
+				SetFieldType(m_fdwCurrentField.Fd);
+				PopulateWritingSystemsList();
+				CurrentFieldListViewItem.SubItems[2].Text = ((IdAndString<CustomFieldType>) m_typeComboBox.SelectedItem).Name;
+			}
 
 		private void m_listComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
@@ -881,23 +886,23 @@ namespace LanguageExplorer.Areas
 			{
 				return;
 			}
-			var rootId = ((IdAndString<Guid>)m_listComboBox.SelectedItem).Id;
-			ICmPossibilityList list;
+				var rootId = ((IdAndString<Guid>)m_listComboBox.SelectedItem).Id;
+				ICmPossibilityList list;
 			if (!m_cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>().TryGetObject(rootId, out list))
-			{
-				// Shouldn't happen, but... just being safe.
-				// OTOH, what ought to happen if the list doesn't exist?!
-				// Delete the offender!
-				m_listComboBox.Items.Remove(m_listComboBox.SelectedItem);
-				return;
-			}
+				{
+					// Shouldn't happen, but... just being safe.
+					// OTOH, what ought to happen if the list doesn't exist?!
+					// Delete the offender!
+					m_listComboBox.Items.Remove(m_listComboBox.SelectedItem);
+					return;
+				}
 
-			if (list != null)
-			{
-				m_fdwCurrentField.Fd.ListRootId = rootId;
-				m_fdwCurrentField.Fd.DstCls = list.ItemClsid;
+				if (list != null)
+				{
+					m_fdwCurrentField.Fd.ListRootId = rootId;
+					m_fdwCurrentField.Fd.DstCls = list.ItemClsid;
+				}
 			}
-		}
 
 		private void m_wsComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
@@ -909,17 +914,17 @@ namespace LanguageExplorer.Areas
 				return;
 			}
 			var ws = ((IdAndString<int>) m_wsComboBox.SelectedItem).Id;
-			//If the type is String we may want to change it to MultiUnicode depending on the writing system.
-			//however in other cases (e.g. when MultiParagraph is the type and OwningAtomic is the Fd.Type)
-			//we should leave this alone.
-			if (m_fdwCurrentField.Fd.Type == CellarPropertyType.String)
-			{
-				m_fdwCurrentField.Fd.Type = (ws == WritingSystemServices.kwsAnal || ws == WritingSystemServices.kwsVern)
-					? CellarPropertyType.String
-					: CellarPropertyType.MultiUnicode;
+				//If the type is String we may want to change it to MultiUnicode depending on the writing system.
+				//however in other cases (e.g. when MultiParagraph is the type and OwningAtomic is the Fd.Type)
+				//we should leave this alone.
+				if (m_fdwCurrentField.Fd.Type == CellarPropertyType.String)
+				{
+					m_fdwCurrentField.Fd.Type = (ws == WritingSystemServices.kwsAnal || ws == WritingSystemServices.kwsVern)
+													? CellarPropertyType.String
+													: CellarPropertyType.MultiUnicode;
+				}
+				m_fdwCurrentField.Fd.WsSelector = ws;
 			}
-			m_fdwCurrentField.Fd.WsSelector = ws;
-		}
 
 		private void m_helpButton_Click(object sender, EventArgs e)
 		{

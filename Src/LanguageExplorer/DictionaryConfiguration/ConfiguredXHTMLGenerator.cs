@@ -845,7 +845,19 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}
 			if (config.FieldDescription == "DefinitionOrGloss")
 			{
-				return GenerateXHTMLForDefinitionOrGloss(field as ILexSense, config, settings);
+				if (field is ILexSense)
+				{
+					return GenerateXHTMLForDefinitionOrGloss(field as ILexSense, config, settings);
+				}
+				if (field is ILexEntryRef)
+				{
+					var ret = new StringBuilder();
+					foreach (var sense in (((field as ILexEntryRef).Owner as ILexEntry).AllSenses))
+					{
+						ret.Append(GenerateXHTMLForDefinitionOrGloss(sense, config, settings));
+					}
+					return ret.ToString();
+				}
 			}
 			if (config.IsCustomField && config.SubField == null)
 			{

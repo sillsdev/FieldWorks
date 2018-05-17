@@ -221,6 +221,13 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			{
 				DictionaryConfigurationServices.PerformActionOnNodes(part.Children, node =>
 				{
+					if (node.DisplayLabel == "Primary Entry References" && node.FieldDescription == "EntryRefsWithThisMainSense")
+					{
+						node.FieldDescription = "MainEntryRefs";
+						node.HideCustomFields = true;
+						node.Before = "  (";
+						node.After = ")";
+					}
 					if (node.DisplayLabel == "Primary Entry(s)" && node.FieldDescription == "PrimarySensesOrEntries")
 					{
 						node.FieldDescription = "ConfigReferencedEntries";

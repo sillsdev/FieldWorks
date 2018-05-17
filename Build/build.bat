@@ -49,3 +49,6 @@ REM Run the next target only if the previous target succeeded
 ) && (
 	"%MsBuild%" %*
 )
+FOR /F "tokens=*" %%g IN ('date /t') do (SET DATE=%%g)
+FOR /F "tokens=*" %%g IN ('time /t') do (SET TIME=%%g)
+echo Build completed at %TIME% on %DATE%
