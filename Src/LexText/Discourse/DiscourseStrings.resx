@@ -143,7 +143,10 @@
   <data name="ksMarkMissingItem" xml:space="preserve">
 	<value>Mark as Missing</value>
   </data>
-  <data name="ksInsertRowMenuItem" xml:space="preserve">
+  <data name="ksInsertRowMenuItemAbove" xml:space="preserve">
+	<value>Insert Row Above</value>
+  </data>
+  <data name="ksInsertRowMenuItemBelow" xml:space="preserve">
 	<value>Insert Row Below</value>
   </data>
   <data name="ksMakeDepClauseMenuItem" xml:space="preserve">

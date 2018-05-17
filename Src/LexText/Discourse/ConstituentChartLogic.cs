@@ -1422,20 +1422,26 @@ namespace SIL.FieldWorks.Discourse
 		internal const int kMaxRibbonContext = 20;
 
 		/// <summary>
-		/// Insert another row below the argument row.
-		/// Takes over any compDetails of the previous row.
-		/// Line label is calculated based on the previous row's label.
+		/// Insert another row.
+		/// If inserting below, takes over any compDetails of the previous row.
+		/// Line label is calculated based on the original row's label.
 		/// Caller deals with UOW.
 		/// </summary>
-		/// <param name="previousRow"></param>
-		public void InsertRow(IConstChartRow previousRow)
+		/// <param name="originalRow">The row one clicks to insert another row above or below</param>
+		/// <param name="insertAbove">True = insert above; False = insert below</param>
+		public void InsertRow(IConstChartRow originalRow, bool insertAbove)
 		{
-			var index = previousRow.IndexInOwner;
-
+			var index = originalRow.IndexInOwner;
 			var newRow = m_rowFact.Create();
-			m_chart.RowsOS.Insert(index + 1, newRow);
-			SetupCompDetailsForInsertRow(previousRow, newRow);
-			// It's easiest to just renumber starting with the row above the inserted one.
+			if(insertAbove)
+			{
+				m_chart.RowsOS.Insert(index, newRow);
+			}
+			else
+			{
+				m_chart.RowsOS.Insert(index + 1, newRow);
+				SetupCompDetailsForInsertRow(originalRow, newRow);
+			}
 			// foneSentOnly = true, because we are only adding a letter to the current sentence.
 			RenumberRows(index, true);
 		}
@@ -2356,9 +2362,13 @@ namespace SIL.FieldWorks.Discourse
 				}
 			}
 
-			var itemNewRow = new RowColMenuItem(DiscourseStrings.ksInsertRowMenuItem, clickedCell);
-			menu.Items.Add(itemNewRow);
-			itemNewRow.Click += new EventHandler(itemNewRow_Click);
+			var itemNewRowAbove = new RowColMenuItem(DiscourseStrings.ksInsertRowMenuItemAbove, clickedCell);
+			menu.Items.Add(itemNewRowAbove);
+			itemNewRowAbove.Click += new EventHandler(itemNewRowAbove_Click);
+
+			var itemNewRowBelow = new RowColMenuItem(DiscourseStrings.ksInsertRowMenuItemBelow, clickedCell);
+			menu.Items.Add(itemNewRowBelow);
+			itemNewRowBelow.Click += new EventHandler(itemNewRowBelow_Click);
 
 			var itemCFH = new RowColMenuItem(DiscourseStrings.ksClearFromHereOnMenuItem, clickedCell);
 			menu.Items.Add(itemCFH);
@@ -2543,16 +2553,28 @@ namespace SIL.FieldWorks.Discourse
 			}
 		}
 
-		void itemNewRow_Click(object sender, EventArgs e)
+		void itemNewRowAbove_Click(object sender, EventArgs e)
 		{
 			var item = sender as RowColMenuItem;
-			InsertRowInUOW(item.SrcRow);
+			InsertRowAboveInUOW(item.SrcRow);
 		}
 
-		private void InsertRowInUOW(IConstChartRow prevRow)
+		void itemNewRowBelow_Click(object sender, EventArgs e)
+		{
+			var item = sender as RowColMenuItem;
+			InsertRowBelowInUOW(item.SrcRow);
+		}
+
+		private void InsertRowAboveInUOW(IConstChartRow nextRow)
 		{
 			UndoableUnitOfWorkHelper.Do(DiscourseStrings.ksUndoInsertRow, DiscourseStrings.ksRedoInsertRow,
-							Cache.ActionHandlerAccessor, () => InsertRow(prevRow));
+							Cache.ActionHandlerAccessor, () => InsertRow(nextRow, true));
+		}
+
+		private void InsertRowBelowInUOW(IConstChartRow prevRow)
+		{
+			UndoableUnitOfWorkHelper.Do(DiscourseStrings.ksUndoInsertRow, DiscourseStrings.ksRedoInsertRow,
+							Cache.ActionHandlerAccessor, () => InsertRow(prevRow, false));
 		}
 
 		private bool CellContainsWordforms(ChartLocation cell)
@@ -3968,9 +3990,13 @@ namespace SIL.FieldWorks.Discourse
 		{
 			get { return DiscourseStrings.ksMoveWordMenuItem; }
 		}
-		static public string FTO_InsertRowMenuItem
+		static public string FTO_InsertRowMenuItemAbove
 		{
-			get { return DiscourseStrings.ksInsertRowMenuItem; }
+			get { return DiscourseStrings.ksInsertRowMenuItemAbove; }
+		}
+		static public string FTO_InsertRowMenuItemBelow
+		{
+			get { return DiscourseStrings.ksInsertRowMenuItemBelow; }
 		}
 		static public string FTO_UndoInsertRow
 		{

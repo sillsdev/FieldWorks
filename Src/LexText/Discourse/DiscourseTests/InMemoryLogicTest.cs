@@ -472,14 +472,25 @@ namespace SIL.FieldWorks.Discourse
 		}
 
 		[Test]
-		public void InsertRowMenuItem()
+		public void InsertRowMenuItemAbove()
 		{
 			var allParaOccurrences = m_helper.MakeAnalysesUsedN(1);
 			var row0 = m_helper.MakeFirstRow();
 			m_helper.MakeWordGroup(row0, 0, allParaOccurrences[0], allParaOccurrences[0]);
 			// Test a cell with words.
 			using (var strip = m_logic.MakeCellContextMenu(MakeLocObj(row0, 1)))
-				AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_InsertRowMenuItem, 0);
+				AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_InsertRowMenuItemAbove, 0);
+		}
+
+		[Test]
+		public void InsertRowMenuItemBelow()
+		{
+			var allParaOccurrences = m_helper.MakeAnalysesUsedN(1);
+			var row0 = m_helper.MakeFirstRow();
+			m_helper.MakeWordGroup(row0, 0, allParaOccurrences[0], allParaOccurrences[0]);
+			// Test a cell with words.
+			using (var strip = m_logic.MakeCellContextMenu(MakeLocObj(row0, 1)))
+				AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_InsertRowMenuItemBelow, 0);
 		}
 
 		/// <summary>

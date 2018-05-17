@@ -1138,7 +1138,26 @@ namespace SIL.FieldWorks.Discourse
 		}
 
 		[Test]
-		public void InsertRow()
+		public void InsertRowAbove()
+		{
+			var allParaOccurrences = m_helper.MakeAnalysesUsedN(1);
+			var row0 = m_helper.MakeFirstRow(); // because of SentFeature this is "1"
+			var row1 = m_helper.MakeRow(m_chart, "2"); // and this should be "2"
+			var cellPart0_1 = m_helper.MakeWordGroup(row0, 1, allParaOccurrences[0], allParaOccurrences[0]);
+			var nextHvo = cellPart0_1.Hvo + 1;
+
+			// SUT
+			m_logic.InsertRow(row0, true);
+
+			// Verify
+			var newRow = VerifyCreatedRow(nextHvo, "Should create one new row");
+			VerifyChartRows(m_chart, new[] { newRow, row0, row1 }); // Should have inserted new row
+			VerifyRowNumber("1a", newRow, "Should have modified row number");
+			VerifyRowNumber("1b", row0, "Should have set row number");
+		}
+
+		[Test]
+		public void InsertRowBelow()
 		{
 			var allParaOccurrences = m_helper.MakeAnalysesUsedN(1);
 			var row0 = m_helper.MakeFirstRow(); // because of SentFeature this is "1"
@@ -1149,12 +1168,11 @@ namespace SIL.FieldWorks.Discourse
 			var nextHvo = cellPart0_1.Hvo + 1;
 
 			// SUT
-			m_logic.InsertRow(row0);
+			m_logic.InsertRow(row0, false);
 
 			// Verify
 			var newRow = VerifyCreatedRow(nextHvo, "Should create one new row");
 			VerifyChartRows(m_chart, new [] { row0, newRow, row1 }); // Should have inserted new row
-			// With smarter row numbering row0's comment changes too! (1 ->1a)
 			VerifyRowNumber("1a", row0, "Should have modified row number");
 			VerifyRowNumber("1b", newRow, "Should have set row number");
 			Assert.IsFalse(row0.EndSentence, "should have transferred end sent and end para features to new row");
@@ -1164,7 +1182,34 @@ namespace SIL.FieldWorks.Discourse
 		}
 
 		[Test]
-		public void InsertRow_PrevHasClauseFeature()
+		public void InsertRowAbove_PrevHasClauseFeature()
+		{
+			var allParaOccurrences = m_helper.MakeAnalysesUsedN(3);
+			var row0 = m_helper.MakeRow1a();// This won't be changed by InsertRow()
+			var row1 = m_helper.MakeRow(m_chart, "1b");// This WILL be changed by InsertRow()!
+			var row2 = m_helper.MakeRow(m_chart, "1c");
+			m_helper.MakeWordGroup(row0, 1, allParaOccurrences[0], allParaOccurrences[0]);
+			m_helper.MakeWordGroup(row1, 1, allParaOccurrences[1], allParaOccurrences[1]);
+			m_helper.MakeWordGroup(row1, 2, allParaOccurrences[2], allParaOccurrences[2]);
+			var cellPart3_0 = m_helper.MakeDependentClauseMarker(row0, 3, new[] { row1 }, ClauseTypes.Dependent);
+			var nextHvo = cellPart3_0.Hvo + 1;
+
+			// SUT
+			m_logic.InsertRow(row1, true);
+
+			// Verify
+			var newRow = VerifyCreatedRow(nextHvo, "Should create one new row");
+			VerifyChartRows(m_chart, new[] { row0, newRow, row1, row2 }); // Should have inserted new row
+			VerifyRowNumber("1c", row1, "Should have modified row number");
+			VerifyRowNumber("1b", newRow, "Should have set row number");
+			// Inserted row should not inherit dependent clause feature from old row
+			VerifyRowDetails(1, ClauseTypes.Normal, false, false, false, false);
+			// Original row should still be marked as dependent
+			VerifyRowDetails(2, ClauseTypes.Dependent, false, false, true, true);
+		}
+
+		[Test]
+		public void InsertRowBelow_PrevHasClauseFeature()
 		{
 			var allParaOccurrences = m_helper.MakeAnalysesUsedN(3);
 			var row0 = m_helper.MakeRow1a();
@@ -1177,12 +1222,11 @@ namespace SIL.FieldWorks.Discourse
 			var nextHvo = cellPart3_0.Hvo + 1;
 
 			// SUT
-			m_logic.InsertRow(row1);
+			m_logic.InsertRow(row1, false);
 
 			// Verify
 			var newRow = VerifyCreatedRow(nextHvo, "Should create one new row");
 			VerifyChartRows(m_chart, new[] { row0, row1, newRow, row2 }); // Should have inserted new row
-			// With smarter row numbering row0's comment changes too! (1 ->1a)
 			VerifyRowNumber("1d", row2, "Should have modified row number");
 			VerifyRowNumber("1c", newRow, "Should have set row number");
 			// Inserted row should not inherit dependent clause feature from old row

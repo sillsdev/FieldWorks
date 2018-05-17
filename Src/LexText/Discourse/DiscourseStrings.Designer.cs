@@ -237,13 +237,22 @@ namespace SIL.FieldWorks.Discourse {
 		}
 
 		/// <summary>
-		///   Looks up a localized string similar to Insert Row Below.
+		///   Looks up a localized string similar to Insert Row Above.
 		/// </summary>
-		internal static string ksInsertRowMenuItem {
-			get {
-				return ResourceManager.GetString("ksInsertRowMenuItem", resourceCulture);
-			}
-		}
+		internal static string ksInsertRowMenuItemAbove {
+            get {
+                return ResourceManager.GetString("ksInsertRowMenuItemAbove", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Row Below.
+        /// </summary>
+        internal static string ksInsertRowMenuItemBelow {
+            get {
+                return ResourceManager.GetString("ksInsertRowMenuItemBelow", resourceCulture);
+            }
+        }
 
 		/// <summary>
 		///   Looks up a localized string similar to Invalid Internal Constituent Chart Data.
