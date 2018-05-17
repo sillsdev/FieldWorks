@@ -980,7 +980,7 @@ namespace SIL.FieldWorks.XWorks
 								x.Id == pos.ToString() || x.Id == pos.ToString() + ":f" ||
 								x.Id == pos.ToString() + ":r")) continue;
 
-							if (lexRelType.MappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseTree)
+							if (LexRefTypeTags.IsAsymmetric((LexRefTypeTags.MappingTypes)lexRelType.MappingType))
 							{
 								options.Add(new DictionaryNodeListOptions.DictionaryNodeOption
 								{
