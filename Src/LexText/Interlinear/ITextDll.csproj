@@ -473,6 +473,7 @@
     <Compile Include="InterlinTaggingChild.Designer.cs">
       <DependentUpon>InterlinTaggingChild.cs</DependentUpon>
     </Compile>
+	<Compile Include="InterlinTaggingVc.cs" />
     <Compile Include="InterlinVc.cs">
       <SubType>Code</SubType>
     </Compile>

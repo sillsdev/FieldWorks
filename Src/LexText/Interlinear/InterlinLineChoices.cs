@@ -876,7 +876,7 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
-		/// Returnt the index of the (first) spec with the specified flid
+		/// Return the index of the (first) spec with the specified flid
 		/// </summary>
 		/// <param name="flid"></param>
 		/// <param name="ws"></param>
