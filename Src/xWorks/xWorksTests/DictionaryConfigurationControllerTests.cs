@@ -1972,7 +1972,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void CheckAsymetricReferenceTypes()
+		public void CheckNewAndDeletedReferenceTypes()
 		{
 			var lexicalRelationNode = new ConfigurableDictionaryNode
 			{
@@ -2025,8 +2025,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				DictionaryConfigurationController.MergeTypesIntoDictionaryModel(model, Cache);
 				var opts1 = ((DictionaryNodeListOptions)lexicalRelationNode.DictionaryNodeOptions).Options;
-				Assert.AreEqual(1, opts1.Count, "Properly merged reference types to options list in lexical relation node");
-				Assert.AreEqual(newType.Guid.ToString(), opts1[0].Id, "New type appears in the list in lexical relation node");
+				Assert.AreEqual(1, opts1.Count, "Improper number of reference types on lexical relation node");
+				Assert.AreEqual(newType.Guid.ToString(), opts1[0].Id, "New type should appear in the list in lexical relation node");
 			}
 			finally
 			{
@@ -2036,7 +2036,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void CheckLexicalRelationsReferenceType()
+		public void CheckAsymmetricReferenceType()
 		{
 			var lexicalRelationNode = new ConfigurableDictionaryNode
 			{

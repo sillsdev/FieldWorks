@@ -18,9 +18,7 @@ using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
-	/// <summary>
-	/// Summary description for MsaCreatorDlg.
-	/// </summary>
+	/// <inheritdoc />
 	public class MsaCreatorDlg : Form
 	{
 		#region Data Members
