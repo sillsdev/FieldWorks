@@ -1,0 +1,12 @@
+Verified+1: Jenkins CI <jenkins@sil.org>
+Code-Review+1: Raymond Luong <raymond_luong@sil.org>
+Code-Review+1: Anonymous Coward #148
+Code-Review+1: Chris Carrillo
+Code-Review+1: Sam Delaney <samuel_delaney@sil.org>
+Code-Review+2: Jason Naylor <jason_naylor@sil.org>
+Verified-Linux+1: Jenkins CI <jenkins@sil.org>
+Submitted-by: Katherine Jensen <katherine_jensen@sil.org>
+Submitted-at: Mon, 21 May 2018 18:01:44 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/6207
+Project: FieldWorks
+Branch: refs/heads/develop
