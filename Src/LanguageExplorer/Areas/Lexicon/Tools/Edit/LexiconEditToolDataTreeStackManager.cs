@@ -115,8 +115,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			if (disposing)
 			{
-				_show_DictionaryPubPreviewContextMenu.Click -= _sharedWithMeEventHandlers[LexiconEditToolConstants.Show_Dictionary_Preview_Clicked];
-				_show_DictionaryPubPreviewContextMenu.Dispose();
+				if (_show_DictionaryPubPreviewContextMenu != null)
+				{
+					_show_DictionaryPubPreviewContextMenu.Click -= _sharedWithMeEventHandlers[LexiconEditToolConstants.Show_Dictionary_Preview_Clicked];
+					_show_DictionaryPubPreviewContextMenu.Dispose();
+				}
 				_sharedEventHandlers.Clear();
 				_sharedWithMeEventHandlers.Clear();
 			}
@@ -143,10 +146,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// <menu id="LexEntryPaneMenu" icon="MenuWidget">
 			// Handled elsewhere: <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-lexiconEdit" defaultVisible="true" settingsGroup="local"/>
 			var contextMenuStrip = new ContextMenuStrip();
-			contextMenuStrip.Opening += MainPanelContextMenuStrip_Opening;
 
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>();
-			var retVal = new Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, MainPanelContextMenuStrip_Opening, menuItems);
+			var retVal = new Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, null, menuItems);
 
 			// Show_Dictionary_Preview menu item.
 			_show_DictionaryPubPreviewContextMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedWithMeEventHandlers[LexiconEditToolConstants.Show_Dictionary_Preview_Clicked], LexiconResources.Show_DictionaryPubPreview, LexiconResources.Show_DictionaryPubPreview_ToolTip);
@@ -195,31 +197,27 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// Separator
 			contextMenuStrip.Items.Add(new ToolStripSeparator());
 
-			// Show Entry in Concordance menu item. (CmdRootEntryJumpToConcordance->msg: JumpToTool, also on Insert menu)
+			// Show Entry in Concordance menu item. (CmdRootEntryJumpToConcordance->msg: JumpToTool)
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Show_Entry_In_Concordance_Clicked, LexiconResources.Show_Entry_In_Concordance);
 
 			return retVal;
 		}
 
-		private void MainPanelContextMenuStrip_Opening(object sender, CancelEventArgs e)
-		{
-#if RANDYTODO
-			// TODO: Enable/disable menu items, based on selected slice in DataTree.
-#endif
-		}
-
 		private void Show_Entry_In_Concordance_Clicked(object sender, EventArgs e)
 		{
+			// Show Entry in Concordance menu item. (CmdRootEntryJumpToConcordance->msg: JumpToTool)
 			MessageBox.Show((Form)_mainWnd, "Show Entry In Concordance...");
 		}
 
 		private void Lexeme_Form_Is_A_Variant_Clicked(object sender, EventArgs e)
 		{
+			// Lexeme Form is a variant menu item. (CmdChangeToVariant->msg: ConvertEntryIntoComplexForm)
 			MessageBox.Show((Form)_mainWnd, "Lexeme Form Is A Variant...");
 		}
 
 		private void Lexeme_Form_Has_Components_Clicked(object sender, EventArgs e)
 		{
+			// Lexeme Form has components. (CmdChangeToComplexForm->msg: ConvertEntryIntoVariant)
 			MessageBox.Show((Form)_mainWnd, "Lexeme Form Has Components...");
 		}
 
@@ -488,6 +486,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 #endif
 		}
 
-#endregion
+		#endregion
 	}
 }

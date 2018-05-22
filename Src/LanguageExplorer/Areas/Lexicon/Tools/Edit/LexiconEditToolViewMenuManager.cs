@@ -49,6 +49,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_subscriber.Subscribe("ShowHiddenFields", ShowHiddenFields_Handler);
 
 			_viewMenu = MenuServices.GetViewMenu(majorFlexComponentParameters.MenuStrip);
+			_viewMenu.DropDownOpening += ViewMenu_DropDown_Opening;
 			// <item label="Show _Dictionary Preview" boolProperty="Show_DictionaryPubPreview" defaultVisible="false"/>
 			_show_DictionaryPubPreviewMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newViewMenusAndHandlers, _viewMenu, Show_Dictionary_Preview_Clicked, LexiconResources.Show_DictionaryPubPreview, insertIndex: _viewMenu.DropDownItems.Count - 2);
 			_show_DictionaryPubPreviewMenu.Checked = _propertyTable.GetValue<bool>(LexiconEditToolConstants.Show_DictionaryPubPreview);
@@ -100,6 +101,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			if (disposing)
 			{
 				_subscriber.Unsubscribe("ShowHiddenFields", ShowHiddenFields_Handler);
+				_viewMenu.DropDownOpening -= ViewMenu_DropDown_Opening;
 				foreach (var menuTuple in _newViewMenusAndHandlers)
 				{
 					menuTuple.Item1.Click -= menuTuple.Item2;
@@ -129,11 +131,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private void Show_Dictionary_Preview_Clicked(object sender, EventArgs e)
 		{
 			var menuItem = (ToolStripMenuItem)sender;
-			_show_DictionaryPubPreviewMenu.Checked = !menuItem.Checked;
-#if RANDYTODO
-			// TODO: Figure out a new way to do this, since we have no access to _show_DictionaryPubPreviewContextMenu in this class.
-			_show_DictionaryPubPreviewContextMenu.Checked = !menuItem.Checked;
-#endif
+			menuItem.Checked = !menuItem.Checked;
 			_propertyTable.SetProperty(LexiconEditToolConstants.Show_DictionaryPubPreview, menuItem.Checked, SettingsGroup.LocalSettings, true, false);
 			_innerMultiPane.Panel1Collapsed = !menuItem.Checked;
 		}
@@ -150,6 +148,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private void ShowHiddenFields_Handler(object obj)
 		{
 			_showHiddenFieldsMenu.Checked = (bool)obj;
+		}
+
+		private void ViewMenu_DropDown_Opening(object sender, EventArgs e)
+		{
+			var storedCheckedValue = _propertyTable.GetValue<bool>(LexiconEditToolConstants.Show_DictionaryPubPreview);
+			if (_show_DictionaryPubPreviewMenu.Checked != storedCheckedValue)
+			{
+				_show_DictionaryPubPreviewMenu.Checked = storedCheckedValue;
+			}
 		}
 	}
 }

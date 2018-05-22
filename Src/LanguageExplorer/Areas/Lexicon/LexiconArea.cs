@@ -8,6 +8,7 @@ using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using LanguageExplorer.Areas.Lexicon.Tools.Edit;
 using LanguageExplorer.LcmUi;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
@@ -82,7 +83,7 @@ namespace LanguageExplorer.Areas.Lexicon
 				}
 				_hasBeenActivated = true;
 			}
-			_propertyTable.SetDefault("Show_DictionaryPubPreview", true, SettingsGroup.LocalSettings, true, false);
+			_propertyTable.SetDefault(LexiconEditToolConstants.Show_DictionaryPubPreview, true, SettingsGroup.LocalSettings, true, false);
 			_propertyTable.SetDefault("Show_reversalIndexEntryList", true, SettingsGroup.LocalSettings, false, false);
 		}
 

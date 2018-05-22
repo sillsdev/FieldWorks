@@ -129,7 +129,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				menuItemTuple.Item1.Click -= menuItemTuple.Item2;
 			}
-			contextMenuTuple.Item1.Opening -= contextMenuTuple.Item2;
+			if (contextMenuTuple.Item2 != null)
+			{
+				contextMenuTuple.Item1.Opening -= contextMenuTuple.Item2;
+			}
 
 			// Dispose menu and its items.
 			// It needs to do it on that "ToList", since simply disposing it will remove it from the "Items" collection,
