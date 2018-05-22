@@ -255,7 +255,7 @@ namespace LanguageExplorer.Controls.XMLViews
 							doc = null;
 							// Forget the old settings, so we don't keep complaining every time the program runs.
 							// There doesn't seem to be any way to remove the property altogether, so at least, make it empty.
-							propertyTable.SetProperty(colListId, "", SettingsGroup.LocalSettings, true, true);
+							propertyTable.SetProperty(colListId, "", true, true, SettingsGroup.LocalSettings);
 							break;
 					}
 				}

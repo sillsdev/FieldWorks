@@ -229,7 +229,7 @@ namespace LanguageExplorer.SendReceive
 
 		private IBridge GetLastBridge()
 		{
-			return _bridges[PropertyTable.GetValue(CommonBridgeServices.LastBridgeUsed, SettingsGroup.LocalSettings, CommonBridgeServices.NoBridgeUsedYet)];
+			return _bridges[PropertyTable.GetValue(CommonBridgeServices.LastBridgeUsed, CommonBridgeServices.NoBridgeUsedYet, SettingsGroup.LocalSettings)];
 		}
 
 		private void Flex_Or_Lift_Bridge_Clicked(object sender, EventArgs e)

@@ -39,49 +39,49 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GetProjectConfigurationDirectory_ReportsCorrectlyForDictionaryAndReversal()
 		{
-			m_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconEditMachineName, false, false);
+			m_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconEditMachineName);
 			var projectConfigDir = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "Dictionary");
 			Assert.That(DictionaryConfigurationServices.GetProjectConfigurationDirectory(m_propertyTable), Is.EqualTo(projectConfigDir), "did not return expected directory");
 
-			m_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.ReversalEditCompleteMachineName, false, false);
+			m_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.ReversalEditCompleteMachineName);
 			projectConfigDir = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "ReversalIndex");
 			Assert.That(DictionaryConfigurationServices.GetProjectConfigurationDirectory(m_propertyTable), Is.EqualTo(projectConfigDir), "did not return expected directory");
 
-			m_propertyTable.SetProperty(AreaServices.ToolChoice, "somethingElse", false, false);
+			m_propertyTable.SetProperty(AreaServices.ToolChoice, "somethingElse");
 			Assert.IsNull(DictionaryConfigurationServices.GetProjectConfigurationDirectory(m_propertyTable), "Other areas should cause null return");
 		}
 
 		[Test]
 		public void GetDictionaryConfigurationBaseType_ReportsCorrectlyForDictionaryAndReversal()
 		{
-			m_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconEditMachineName, false, false);
+			m_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconEditMachineName);
 			Assert.AreEqual("Dictionary", DictionaryConfigurationServices.GetDictionaryConfigurationBaseType(m_propertyTable), "did not return expected type");
-			m_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconBrowseMachineName, false, false);
+			m_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconBrowseMachineName);
 			Assert.AreEqual("Dictionary", DictionaryConfigurationServices.GetDictionaryConfigurationBaseType(m_propertyTable), "did not return expected type");
-			m_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconDictionaryMachineName, false, false);
+			m_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconDictionaryMachineName);
 			Assert.AreEqual("Dictionary", DictionaryConfigurationServices.GetDictionaryConfigurationBaseType(m_propertyTable), "did not return expected type");
 
-			m_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.ReversalEditCompleteMachineName, false, false);
+			m_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.ReversalEditCompleteMachineName);
 			Assert.AreEqual("Reversal Index", DictionaryConfigurationServices.GetDictionaryConfigurationBaseType(m_propertyTable), "did not return expected type");
-			m_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.ReversalBulkEditReversalEntriesMachineName, false, false);
+			m_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.ReversalBulkEditReversalEntriesMachineName);
 			Assert.AreEqual("Reversal Index", DictionaryConfigurationServices.GetDictionaryConfigurationBaseType(m_propertyTable), "did not return expected type");
 
-			m_propertyTable.SetProperty(AreaServices.ToolChoice, "somethingElse", false, false);
+			m_propertyTable.SetProperty(AreaServices.ToolChoice, "somethingElse");
 			Assert.IsNull(DictionaryConfigurationServices.GetDictionaryConfigurationBaseType(m_propertyTable), "Other areas should return null");
 		}
 
 		[Test]
 		public void GetDefaultConfigurationDirectory_ReportsCorrectlyForDictionaryAndReversal()
 		{
-			m_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconEditMachineName, false, false);
+			m_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconEditMachineName);
 			var configDir = Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary");
 			Assert.That(DictionaryConfigurationServices.GetDefaultConfigurationDirectory(m_propertyTable), Is.EqualTo(configDir), "did not return expected directory");
 
-			m_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.ReversalEditCompleteMachineName, false, false);
+			m_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.ReversalEditCompleteMachineName);
 			configDir = Path.Combine(FwDirectoryFinder.DefaultConfigurations, "ReversalIndex");
 			Assert.That(DictionaryConfigurationServices.GetDefaultConfigurationDirectory(m_propertyTable), Is.EqualTo(configDir), "did not return expected directory");
 
-			m_propertyTable.SetProperty(AreaServices.ToolChoice, "somethingElse", false, false);
+			m_propertyTable.SetProperty(AreaServices.ToolChoice, "somethingElse");
 			Assert.IsNull(DictionaryConfigurationServices.GetDefaultConfigurationDirectory(m_propertyTable), "Other areas should cause null return");
 		}
 	}

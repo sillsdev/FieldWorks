@@ -104,16 +104,16 @@ namespace LanguageExplorer.Impls
 			appSettings.WebonaryPass = RememberPassword ? EncryptPassword(Password) : null;
 			appSettings.WebonaryUser = UserName;
 
-			PropertyTable.SetProperty(WebonarySite, SiteName, true, false);
-			PropertyTable.SetProperty(WebonaryReversals, CombineReversalSettingStrings(Reversals.Keys), true, false);
-			PropertyTable.SetProperty(WebonaryReversals, CombineReversalSettingStrings(SelectedReversals), true, false);
+			PropertyTable.SetProperty(WebonarySite, SiteName, true);
+			PropertyTable.SetProperty(WebonaryReversals, CombineReversalSettingStrings(Reversals.Keys), true);
+			PropertyTable.SetProperty(WebonaryReversals, CombineReversalSettingStrings(SelectedReversals), true);
 			if(m_selectedConfiguration != null)
 			{
-				PropertyTable.SetProperty(WebonaryConfiguration, m_selectedConfiguration, SettingsGroup.LocalSettings, true, false);
+				PropertyTable.SetProperty(WebonaryConfiguration, m_selectedConfiguration, true, settingsGroup: SettingsGroup.LocalSettings);
 			}
 			if (SelectedPublication != null)
 			{
-				PropertyTable.SetProperty(WebonaryPublication, SelectedPublication, SettingsGroup.LocalSettings, true, false);
+				PropertyTable.SetProperty(WebonaryPublication, SelectedPublication, true, settingsGroup: SettingsGroup.LocalSettings);
 			}
 			PropertyTable.SaveGlobalSettings();
 			appSettings.Save();

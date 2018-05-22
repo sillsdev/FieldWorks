@@ -137,7 +137,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void LoadSettings()
 		{
-			var sLine = PropertyTable.GetValue("ConcordanceLine", SettingsGroup.LocalSettings, "kBaseline");
+			var sLine = PropertyTable.GetValue("ConcordanceLine", "kBaseline", SettingsGroup.LocalSettings);
 			ConcordanceLines line;
 			try
 			{
@@ -168,10 +168,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				m_tbSearchText.Text = sText;
 			}
 
-			var fMatchCase = PropertyTable.GetValue("ConcordanceMatchCase", SettingsGroup.LocalSettings, m_chkMatchCase.Checked);
+			var fMatchCase = PropertyTable.GetValue("ConcordanceMatchCase", m_chkMatchCase.Checked, SettingsGroup.LocalSettings);
 			m_chkMatchCase.Checked = fMatchCase;
 
-			var fMatchDiacritics = PropertyTable.GetValue("ConcordanceMatchDiacritics", SettingsGroup.LocalSettings, m_chkMatchDiacritics.Checked);
+			var fMatchDiacritics = PropertyTable.GetValue("ConcordanceMatchDiacritics", m_chkMatchDiacritics.Checked, SettingsGroup.LocalSettings);
 			m_chkMatchDiacritics.Checked = fMatchDiacritics;
 
 			var sConcordanceOption = PropertyTable.GetValue<string>("ConcordanceOption", SettingsGroup.LocalSettings);
@@ -291,12 +291,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void SaveSettings()
 		{
 			// Save our settings for later.
-			PropertyTable.SetProperty("ConcordanceLine", ((ConcordLine) m_cbLine.SelectedItem).Line.ToString(), SettingsGroup.LocalSettings, true, false);
-			PropertyTable.SetProperty("ConcordanceWs", ((CoreWritingSystemDefinition) m_cbWritingSystem.SelectedItem).Id, SettingsGroup.LocalSettings, true, false);
-			PropertyTable.SetProperty("ConcordanceText", m_tbSearchText.Text.Trim(), SettingsGroup.LocalSettings, true, false);
-			PropertyTable.SetProperty("ConcordanceMatchCase", m_chkMatchCase.Checked, SettingsGroup.LocalSettings, true, false);
-			PropertyTable.SetProperty("ConcordanceMatchDiacritics", m_chkMatchDiacritics.Checked, SettingsGroup.LocalSettings, true, false);
-			PropertyTable.SetProperty("ConcordanceOption", GetConcordanceOption(), SettingsGroup.LocalSettings, true, false);
+			PropertyTable.SetProperty("ConcordanceLine", ((ConcordLine) m_cbLine.SelectedItem).Line.ToString(), true, settingsGroup: SettingsGroup.LocalSettings);
+			PropertyTable.SetProperty("ConcordanceWs", ((CoreWritingSystemDefinition) m_cbWritingSystem.SelectedItem).Id, true, settingsGroup: SettingsGroup.LocalSettings);
+			PropertyTable.SetProperty("ConcordanceText", m_tbSearchText.Text.Trim(), true, settingsGroup: SettingsGroup.LocalSettings);
+			PropertyTable.SetProperty("ConcordanceMatchCase", m_chkMatchCase.Checked, true, settingsGroup: SettingsGroup.LocalSettings);
+			PropertyTable.SetProperty("ConcordanceMatchDiacritics", m_chkMatchDiacritics.Checked, true, settingsGroup: SettingsGroup.LocalSettings);
+			PropertyTable.SetProperty("ConcordanceOption", GetConcordanceOption(), true, settingsGroup: SettingsGroup.LocalSettings);
 		}
 
 		#endregion

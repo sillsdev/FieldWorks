@@ -60,7 +60,7 @@ namespace LanguageExplorer.Areas.Notebook
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_propertyTable.SetDefault(PropertyNameForToolName, AreaServices.NotebookAreaDefaultToolMachineName, SettingsGroup.LocalSettings, true, false);
+			_propertyTable.SetDefault(PropertyNameForToolName, AreaServices.NotebookAreaDefaultToolMachineName, true);
 			_notebookAreaMenuHelper = new NotebookAreaMenuHelper(majorFlexComponentParameters);
 			_notebookAreaMenuHelper.Initialize();
 		}
@@ -87,7 +87,7 @@ namespace LanguageExplorer.Areas.Notebook
 		/// </summary>
 		public void EnsurePropertiesAreCurrent()
 		{
-			_propertyTable.SetProperty(AreaServices.InitialArea, MachineName, SettingsGroup.LocalSettings, true, false);
+			_propertyTable.SetProperty(AreaServices.InitialArea, MachineName, true, settingsGroup: SettingsGroup.LocalSettings);
 
 			PersistedOrDefaultTool.EnsurePropertiesAreCurrent();
 		}

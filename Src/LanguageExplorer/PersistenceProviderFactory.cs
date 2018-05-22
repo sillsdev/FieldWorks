@@ -129,7 +129,7 @@ namespace LanguageExplorer
 			}
 			void IPersistenceProvider.SetInfoObject(string id, object info)
 			{
-				m_propertyTable.SetProperty(GetPrefix(id), info, true, false);
+				m_propertyTable.SetProperty(GetPrefix(id), info, true);
 			}
 		}
 	}

@@ -548,7 +548,7 @@ namespace LanguageExplorer.Areas
 				return;
 			}
 			var currentIndex = MyRecordList.CurrentIndex;
-			var storedIndex = PropertyTable.GetValue(MyRecordList.PersistedIndexProperty, SettingsGroup.LocalSettings, currentIndex);
+			var storedIndex = PropertyTable.GetValue(MyRecordList.PersistedIndexProperty, currentIndex, SettingsGroup.LocalSettings);
 			if (storedIndex != currentIndex && storedIndex >= 0 && !MyRecordList.HasEmptyList)
 			{
 				try
@@ -724,7 +724,7 @@ namespace LanguageExplorer.Areas
 
 		private void m_browseViewer_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			PropertyTable.SetProperty(MyRecordList.PersistedIndexProperty, MyRecordList.CurrentIndex, SettingsGroup.LocalSettings, true, true);
+			PropertyTable.SetProperty(MyRecordList.PersistedIndexProperty, MyRecordList.CurrentIndex, true, true, SettingsGroup.LocalSettings);
 		}
 
 		/// <summary>

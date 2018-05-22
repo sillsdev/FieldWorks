@@ -108,7 +108,7 @@ namespace LanguageExplorer.Areas.Lists
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_propertyTable.SetDefault(PropertyNameForToolName, AreaServices.ListsAreaDefaultToolMachineName, SettingsGroup.LocalSettings, true, false);
+			_propertyTable.SetDefault(PropertyNameForToolName, AreaServices.ListsAreaDefaultToolMachineName, true);
 			_sidePane = majorFlexComponentParameters.SidePane;
 		}
 
@@ -134,7 +134,7 @@ namespace LanguageExplorer.Areas.Lists
 		/// </summary>
 		public void EnsurePropertiesAreCurrent()
 		{
-			_propertyTable.SetProperty(AreaServices.InitialArea, MachineName, SettingsGroup.LocalSettings, true, false);
+			_propertyTable.SetProperty(AreaServices.InitialArea, MachineName, true, settingsGroup: SettingsGroup.LocalSettings);
 
 			PersistedOrDefaultTool.EnsurePropertiesAreCurrent();
 		}

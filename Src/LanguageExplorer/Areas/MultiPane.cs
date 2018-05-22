@@ -274,7 +274,7 @@ namespace LanguageExplorer.Areas
 			// Persist new position.
 			if (m_fOkToPersistSplit)
 			{
-				PropertyTable.SetProperty(SplitterDistancePropertyName, SplitterDistance, true, false);
+				PropertyTable.SetProperty(SplitterDistancePropertyName, SplitterDistance, true);
 			}
 		}
 

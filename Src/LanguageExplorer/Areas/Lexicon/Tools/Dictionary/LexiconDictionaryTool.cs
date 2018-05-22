@@ -253,7 +253,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 				return; // No change.
 			}
 			var newValue = (string)clickedToolStripMenuItem.Tag;
-			_propertyTable.SetProperty("DictionaryPublicationLayout", newValue, SettingsGroup.LocalSettings, true, false);
+			_propertyTable.SetProperty("DictionaryPublicationLayout", newValue, true, settingsGroup: SettingsGroup.LocalSettings);
 			_xhtmlDocView.OnPropertyChanged("DictionaryPublicationLayout");
 		}
 
@@ -339,13 +339,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 				return; // No change.
 			}
 			var newValue = (string)clickedToolStripMenuItem.Tag;
-			_propertyTable.SetProperty("SelectedPublication", newValue, SettingsGroup.LocalSettings, true, false);
+			_propertyTable.SetProperty("SelectedPublication", newValue, true, settingsGroup: SettingsGroup.LocalSettings);
 			_xhtmlDocView.OnPropertyChanged("SelectedPublication");
 		}
 
 		private void ShowAllPublications_Clicked(object sender, EventArgs e)
 		{
-			_propertyTable.SetProperty("SelectedPublication", LanguageExplorerResources.AllEntriesPublication, true, false);
+			_propertyTable.SetProperty("SelectedPublication", LanguageExplorerResources.AllEntriesPublication, true);
 			_xhtmlDocView.OnPropertyChanged("SelectedPublication");
 		}
 	}

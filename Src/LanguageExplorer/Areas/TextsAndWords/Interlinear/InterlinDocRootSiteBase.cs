@@ -896,7 +896,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal void PersistAndDisplayChangedLineChoices()
 		{
-			PropertyTable.SetProperty(ConfigPropName, m_vc.LineChoices.Persist(m_cache.LanguageWritingSystemFactoryAccessor), SettingsGroup.LocalSettings, true, true);
+			PropertyTable.SetProperty(ConfigPropName, m_vc.LineChoices.Persist(m_cache.LanguageWritingSystemFactoryAccessor), true, true, SettingsGroup.LocalSettings);
 			UpdateDisplayForNewLineChoices();
 		}
 

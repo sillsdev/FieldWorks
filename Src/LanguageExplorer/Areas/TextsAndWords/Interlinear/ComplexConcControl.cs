@@ -93,7 +93,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (pattern == null)
 			{
 				pattern = new ComplexConcGroupNode();
-				PropertyTable.SetProperty("ComplexConcPattern", pattern, false, true);
+				PropertyTable.SetProperty("ComplexConcPattern", pattern, doBroadcastIfChanged: true);
 			}
 			PatternModel = new ComplexConcPatternModel(m_cache, pattern);
 

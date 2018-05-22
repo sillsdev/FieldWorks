@@ -1264,7 +1264,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 
 			set
 			{
-				PropertyTable.SetProperty("InterlinearTab", value.ToString(), true, false);
+				PropertyTable.SetProperty("InterlinearTab", value.ToString(), true);
 				if (m_tabCtrl.SelectedIndex != (int) InterlinearTab)
 				{
 					ShowTabView();

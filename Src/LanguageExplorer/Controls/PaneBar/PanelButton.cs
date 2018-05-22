@@ -176,7 +176,7 @@ namespace LanguageExplorer.Controls.PaneBar
 			{
 				var cb = (CheckBox)Controls.Find("CheckBox", false)[0];
 				_isChecked = cb.Checked;
-				_propertyTable.SetProperty(_property, _isChecked, SettingsGroup.LocalSettings, true, false);
+				_propertyTable.SetProperty(_property, _isChecked, true, settingsGroup: SettingsGroup.LocalSettings);
 				_publisher.Publish("ShowHiddenFields", _isChecked);
 			}
 		}
@@ -207,7 +207,7 @@ namespace LanguageExplorer.Controls.PaneBar
 			using (new WaitCursor(Form.ActiveForm))
 			{
 				_isChecked = !_isChecked;
-				_propertyTable.SetProperty(_property, _isChecked, SettingsGroup.LocalSettings, true, false);
+				_propertyTable.SetProperty(_property, _isChecked, true, settingsGroup: SettingsGroup.LocalSettings);
 				_publisher.Publish("ShowHiddenFields", _isChecked);
 			}
 		}

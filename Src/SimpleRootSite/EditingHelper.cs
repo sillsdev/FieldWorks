@@ -2740,7 +2740,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			//	and RawTextPane a subclass of SimpleRootSite, which has SimpleRootSite
 			//	do its thing, and then may do more. So, broadcast the change.
 			//	The third one is WritingSystemListHandler, which updates the toolbar combobox to the newly selected WS.
-			rs.PropertyTable.SetProperty("WritingSystemHvo", ws.ToString(), false, true);
+			rs.PropertyTable.SetProperty("WritingSystemHvo", ws.ToString(), doBroadcastIfChanged: true);
 			m_fSuppressNextWritingSystemHvoChanged = true;
 		}
 		internal void WritingSystemHvoChanged(int writingSystemHvo)

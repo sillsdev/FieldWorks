@@ -56,7 +56,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.SetDefault($"{AreaServices.ToolForAreaNamed_}{_area.MachineName}", MachineName, SettingsGroup.LocalSettings, true, false);
+			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.SetDefault($"{AreaServices.ToolForAreaNamed_}{_area.MachineName}", MachineName, true);
 			if (_recordList == null)
 			{
 				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(DomainTypeList, majorFlexComponentParameters.Statusbar, FactoryMethod);

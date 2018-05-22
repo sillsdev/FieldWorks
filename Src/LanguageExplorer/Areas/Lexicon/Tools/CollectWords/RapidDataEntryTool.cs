@@ -46,7 +46,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			_lexiconAreaMenuHelper.Dispose();
-			_propertyTable.SetProperty("RecordListWidthGlobal", _collapsingSplitContainer.SplitterDistance, SettingsGroup.GlobalSettings, true, false);
+			_propertyTable.SetProperty("RecordListWidthGlobal", _collapsingSplitContainer.SplitterDistance, true, settingsGroup: SettingsGroup.GlobalSettings);
 
 #if RANDYTODO
 			// If these removals are more permanent, then move up to the "RemoveObsoleteProperties" method on the main window.
@@ -176,7 +176,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		/// </summary>
 		public void EnsurePropertiesAreCurrent()
 		{
-			_propertyTable.SetProperty("RecordListWidthGlobal", _collapsingSplitContainer.SplitterDistance, SettingsGroup.GlobalSettings, true, false);
+			_propertyTable.SetProperty("RecordListWidthGlobal", _collapsingSplitContainer.SplitterDistance, true, settingsGroup: SettingsGroup.GlobalSettings);
 		}
 
 #endregion

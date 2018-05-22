@@ -615,8 +615,8 @@ namespace LanguageExplorer.Areas
 		{
 			if (m_propertyTable != null)
 			{
-				m_propertyTable.SetProperty("XmlDocConfigureDlg_Location", Location, true, false);
-				m_propertyTable.SetProperty("XmlDocConfigureDlg_Size", Size, true, false);
+				m_propertyTable.SetProperty("XmlDocConfigureDlg_Location", Location, true);
+				m_propertyTable.SetProperty("XmlDocConfigureDlg_Size", Size, true);
 			}
 			base.OnClosing(e);
 		}
@@ -1173,7 +1173,7 @@ namespace LanguageExplorer.Areas
 		{
 			if (IsDirty())
 			{
-				m_propertyTable.SetProperty(m_sLayoutPropertyName, ((LayoutTypeComboItem)m_cbDictType.SelectedItem).LayoutName, SettingsGroup.LocalSettings, true, true);
+				m_propertyTable.SetProperty(m_sLayoutPropertyName, ((LayoutTypeComboItem)m_cbDictType.SelectedItem).LayoutName, true, true, SettingsGroup.LocalSettings);
 				SaveModifiedLayouts();
 				DialogResult = DialogResult.OK;
 			}

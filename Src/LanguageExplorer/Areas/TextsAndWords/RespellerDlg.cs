@@ -535,22 +535,22 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		private void m_cbUpdateLexicon_Click(object sender, EventArgs e)
 		{
-			PropertyTable.SetProperty("UpdateLexiconIfPossible", m_cbUpdateLexicon.Checked, SettingsGroup.GlobalSettings, true, false);
+			PropertyTable.SetProperty("UpdateLexiconIfPossible", m_cbUpdateLexicon.Checked, true, settingsGroup: SettingsGroup.GlobalSettings);
 		}
 
 		void m_rbDiscardAnalyses_Click(object sender, EventArgs e)
 		{
-			PropertyTable.SetProperty("RemoveAnalyses", m_rbDiscardAnalyses.Checked, SettingsGroup.GlobalSettings, true, false);
+			PropertyTable.SetProperty("RemoveAnalyses", m_rbDiscardAnalyses.Checked, true, settingsGroup: SettingsGroup.GlobalSettings);
 		}
 
 		void m_cbCopyAnalyses_Click(object sender, EventArgs e)
 		{
-			PropertyTable.SetProperty("CopyAnalysesToNewSpelling", m_cbCopyAnalyses.Checked, SettingsGroup.GlobalSettings, true, false);
+			PropertyTable.SetProperty("CopyAnalysesToNewSpelling", m_cbCopyAnalyses.Checked, true, settingsGroup: SettingsGroup.GlobalSettings);
 		}
 
 		void m_cbMaintainCase_Click(object sender, EventArgs e)
 		{
-			PropertyTable.SetProperty("MaintainCaseOnChangeSpelling", m_cbMaintainCase.Checked, SettingsGroup.GlobalSettings, true, false);
+			PropertyTable.SetProperty("MaintainCaseOnChangeSpelling", m_cbMaintainCase.Checked, true, settingsGroup: SettingsGroup.GlobalSettings);
 		}
 
 		protected override void OnClosed(EventArgs e)

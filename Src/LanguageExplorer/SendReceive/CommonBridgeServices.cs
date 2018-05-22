@@ -60,7 +60,7 @@ namespace LanguageExplorer.SendReceive
 			//Commit all the data in the cache and save to disk
 			ProjectLockingService.UnlockCurrentProject(cache);
 
-			propertyTable.SetProperty(LastBridgeUsed, lastBridgeUsed.Name, SettingsGroup.LocalSettings, true, false);
+			propertyTable.SetProperty(LastBridgeUsed, lastBridgeUsed.Name, true, settingsGroup: SettingsGroup.LocalSettings);
 		}
 
 		internal static void StopParser(IPublisher publisher)

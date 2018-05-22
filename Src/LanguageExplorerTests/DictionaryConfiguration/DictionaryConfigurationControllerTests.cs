@@ -873,7 +873,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			internal MockWindowSetup(LcmCache cache)
 			{
 				FlexParams = TestSetupServices.SetupEverything(cache);
-				FlexParams.PropertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconDictionaryMachineName, false, false);
+				FlexParams.PropertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconDictionaryMachineName);
 			}
 
 			public void Dispose()
@@ -1587,7 +1587,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				var entryWithHeadword = CreateLexEntryWithHeadword();
 
-				_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconDictionaryMachineName, false, false);
+				_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconDictionaryMachineName);
 				Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "DictionaryConfiguration", "TestData");
 
 				var dcc = new DictionaryConfigurationController(testView, entryWithHeadword);
@@ -1610,7 +1610,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				var entryWithHeadword = CreateLexEntryWithHeadword();
 
-				_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconDictionaryMachineName, false, false);
+				_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconDictionaryMachineName);
 				Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "DictionaryConfiguration", "TestData");
 
 				var dcc = new DictionaryConfigurationController(testView, entryWithHeadword);
@@ -1632,7 +1632,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				var entryWithHeadword = CreateLexEntryWithHeadword();
 
-				_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconDictionaryMachineName, false, false);
+				_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconDictionaryMachineName);
 				Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "DictionaryConfiguration", "TestData");
 
 				var dcc = new DictionaryConfigurationController(testView, entryWithHeadword);

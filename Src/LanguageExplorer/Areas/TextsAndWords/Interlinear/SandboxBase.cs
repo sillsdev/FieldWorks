@@ -772,7 +772,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			base.InitializeFlexComponent(flexComponentParameters);
 
-			PropertyTable.SetProperty("FirstControlToHandleMessages", this, SettingsGroup.LocalSettings, false, false);
+			PropertyTable.SetProperty("FirstControlToHandleMessages", this, settingsGroup: SettingsGroup.LocalSettings);
 		}
 
 		#endregion

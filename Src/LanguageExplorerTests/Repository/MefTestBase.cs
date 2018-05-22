@@ -31,7 +31,7 @@ namespace LanguageExplorerTests.Repository
 			_areaRepository = _compositionContainer.GetExportedValue<IAreaRepository>();
 			_publisher = _compositionContainer.GetExportedValue<IPublisher>();
 			_propertyTable = _compositionContainer.GetExportedValue<IPropertyTable>();
-			_propertyTable.SetProperty("cache", Cache, SettingsGroup.LocalSettings, false, false);
+			_propertyTable.SetProperty("cache", Cache, settingsGroup: SettingsGroup.LocalSettings);
 		}
 
 		/// <summary>

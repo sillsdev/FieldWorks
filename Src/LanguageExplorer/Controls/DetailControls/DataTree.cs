@@ -782,9 +782,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			// Initialize our internal state with the state of the PropertyTable
 			SetCurrentSlicePropertyNames();
 			m_currentSlicePartName = PropertyTable.GetValue<string>(m_sPartNameProperty, SettingsGroup.LocalSettings);
-			m_currentSliceObjGuid = PropertyTable.GetValue(m_sObjGuidProperty, SettingsGroup.LocalSettings, Guid.Empty);
-			PropertyTable.SetProperty(m_sPartNameProperty, null, SettingsGroup.LocalSettings, true, false);
-			PropertyTable.SetProperty(m_sObjGuidProperty, Guid.Empty, SettingsGroup.LocalSettings, true, false);
+			m_currentSliceObjGuid = PropertyTable.GetValue(m_sObjGuidProperty, Guid.Empty, SettingsGroup.LocalSettings);
+			PropertyTable.SetProperty(m_sPartNameProperty, null, true, settingsGroup: SettingsGroup.LocalSettings);
+			PropertyTable.SetProperty(m_sObjGuidProperty, Guid.Empty, true, settingsGroup: SettingsGroup.LocalSettings);
 			m_currentSliceNew = null;
 			m_fSetCurrentSliceNew = false;
 
@@ -2799,8 +2799,8 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 			}
 			SetCurrentSlicePropertyNames();
-			PropertyTable.SetProperty(m_sPartNameProperty, sCurrentPartName, SettingsGroup.LocalSettings, true, false);
-			PropertyTable.SetProperty(m_sObjGuidProperty, guidCurrentObj, SettingsGroup.LocalSettings, true, false);
+			PropertyTable.SetProperty(m_sPartNameProperty, sCurrentPartName, true, settingsGroup: SettingsGroup.LocalSettings);
+			PropertyTable.SetProperty(m_sObjGuidProperty, guidCurrentObj, true, settingsGroup: SettingsGroup.LocalSettings);
 			return true;
 		}
 

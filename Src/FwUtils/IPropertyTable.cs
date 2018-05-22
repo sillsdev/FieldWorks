@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -23,29 +22,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		/// <param name="name">Property name</param>
 		/// <param name="newValue">New value of the property. (It may never have been set before.)</param>
+		/// <param name="persistProperty">
+		/// "true" if the property is to be persisted, otherwise "false".</param>
+		/// <param name="doBroadcastIfChanged">
+		/// "true" if the property should be broadcast, and then, only if it has changed.
+		/// "false" to not broadcast it at all.
+		/// </param>
 		/// <param name="settingsGroup">The group to store the property in.</param>
-		/// <param name="persistProperty">
-		/// "true" if the property is to be persisted, otherwise "false".</param>
-		/// <param name="doBroadcastIfChanged">
-		/// "true" if the property should be broadcast, and then, only if it has changed.
-		/// "false" to not broadcast it at all.
-		/// </param>
-		void SetProperty(string name, object newValue, SettingsGroup settingsGroup, bool persistProperty, bool doBroadcastIfChanged);
-
-		/// <summary>
-		/// Set the value of the best property setting (try finding local first, then global)
-		/// and broadcast the change if so instructed.
-		/// Caller must also declare if the property is to be persisted, or not.
-		/// </summary>
-		/// <param name="name">Property name</param>
-		/// <param name="newValue">New value of the property. (It may never have been set before.)</param>
-		/// <param name="persistProperty">
-		/// "true" if the property is to be persisted, otherwise "false".</param>
-		/// <param name="doBroadcastIfChanged">
-		/// "true" if the property should be broadcast, and then, only if it has changed.
-		/// "false" to not broadcast it at all.
-		/// </param>
-		void SetProperty(string name, object newValue, bool persistProperty, bool doBroadcastIfChanged);
+		void SetProperty(string name, object newValue, bool persistProperty = false, bool doBroadcastIfChanged = false, SettingsGroup settingsGroup = SettingsGroup.BestSettings);
 
 		/// <summary>
 		/// Set the default value of a property, but *only* if property is not in the table.
@@ -53,14 +37,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		/// <param name="name">Name of the property to set</param>
 		/// <param name="defaultValue">Default value of the new property</param>
-		/// <param name="settingsGroup">Group the property is expected to be in.</param>
 		/// <param name="persistProperty">
 		/// "true" if the property is to be persisted, otherwise "false".</param>
 		/// <param name="doBroadcastIfChanged">
 		/// "true" if the property should be broadcast, and then, only if it has changed.
 		/// "false" to not broadcast it at all.
 		/// </param>
-		void SetDefault(string name, object defaultValue, SettingsGroup settingsGroup, bool persistProperty, bool doBroadcastIfChanged);
+		/// <param name="settingsGroup">Group the property is expected to be in.</param>
+		void SetDefault(string name, object defaultValue, bool persistProperty = false, bool doBroadcastIfChanged = false, SettingsGroup settingsGroup = SettingsGroup.LocalSettings);
 
 		#endregion Set property values
 
@@ -71,13 +55,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		/// <param name="name">Name of the property to remove.</param>
 		/// <param name="settingsGroup">The group to remove the property from.</param>
-		void RemoveProperty(string name, SettingsGroup settingsGroup);
-
-		/// <summary>
-		/// Remove a property from the table.
-		/// </summary>
-		/// <param name="name">Name of the property to remove.</param>
-		void RemoveProperty(string name);
+		void RemoveProperty(string name, SettingsGroup settingsGroup = SettingsGroup.BestSettings);
 
 		#endregion  Remove properties
 
@@ -93,15 +71,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		/// <param name="name">Property name.</param>
 		/// <param name="doDispose">"True" if table is to dispose the property, otherwise "false"</param>
-		void SetPropertyDispose(string name, bool doDispose);
-
-		/// <summary>
-		/// Declare if the property is to be disposed by the table.
-		/// </summary>
-		/// <param name="name">Property name.</param>
-		/// <param name="doDispose">"True" if table is to dispose the property, otherwise "false"</param>
 		/// <param name="settingsGroup">The settings group the property is in.</param>
-		void SetPropertyDispose(string name, bool doDispose, SettingsGroup settingsGroup);
+		void SetPropertyDispose(string name, bool doDispose = true, SettingsGroup settingsGroup = SettingsGroup.BestSettings);
 
 		/// <summary>
 		/// Gets/sets folder where user settings are saved

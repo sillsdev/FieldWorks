@@ -9,7 +9,6 @@ using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
-using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Impls
 {
@@ -28,8 +27,8 @@ namespace LanguageExplorerTests.Impls
 			using (IRecordListRepository recordListRepository = new RecordListRepository(Cache, new FlexComponentParameters(propertyTable, publisher, subscriber)))
 			{
 				RecordList.ActiveRecordListRepository = recordListRepository;
-				propertyTable.SetProperty("cache", Cache, SettingsGroup.BestSettings, false, false);
-				propertyTable.SetProperty("window", dummyWindow, SettingsGroup.BestSettings, false, false);
+				propertyTable.SetProperty("cache", Cache);
+				propertyTable.SetProperty("window", dummyWindow);
 
 				// Test 1. Make sure a bogus record list isn't in the repository.
 				Assert.IsNull(recordListRepository.GetRecordList("bogusRecordListId"));

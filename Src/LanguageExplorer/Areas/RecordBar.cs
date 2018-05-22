@@ -123,12 +123,12 @@ namespace LanguageExplorer.Areas
 
 		private void OnListBarSelect(object sender, EventArgs e)
 		{
-			m_propertyTable.SetProperty("SelectedListBarNode", ListView.SelectedItems.Count == 0 ? null : ListView.SelectedItems[0], false, true);
+			m_propertyTable.SetProperty("SelectedListBarNode", ListView.SelectedItems.Count == 0 ? null : ListView.SelectedItems[0], doBroadcastIfChanged: true);
 		}
 
 		private void OnTreeBarAfterSelect(object sender, TreeViewEventArgs e)
 		{
-			m_propertyTable.SetProperty("SelectedTreeBarNode", e.Node, false, true);
+			m_propertyTable.SetProperty("SelectedTreeBarNode", e.Node, doBroadcastIfChanged: true);
 		}
 
 		/// <summary>

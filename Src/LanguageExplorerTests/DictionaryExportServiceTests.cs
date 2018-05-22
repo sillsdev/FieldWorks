@@ -29,7 +29,7 @@ namespace LanguageExplorerTests
 			base.FixtureSetup();
 
 			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, false);
-			_flexComponentParameters.PropertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconDictionaryMachineName, false, false);
+			_flexComponentParameters.PropertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconDictionaryMachineName);
 		}
 
 		public override void FixtureTeardown()

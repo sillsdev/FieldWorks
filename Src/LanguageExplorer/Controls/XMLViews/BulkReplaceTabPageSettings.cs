@@ -27,7 +27,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_bulkEditBar.Pattern.ReplaceWith = m_bulkEditBar.TssReplace;
 			var patternSettings = new VwPatternSerializableSettings(m_bulkEditBar.Pattern);
 			var patternAsXml = XmlSerializationHelper.SerializeToString(patternSettings);
-			bulkEditBar.PropertyTable.SetProperty(keyFindPattern, patternAsXml, true, false);
+			bulkEditBar.PropertyTable.SetProperty(keyFindPattern, patternAsXml, true);
 		}
 
 		/// <summary>

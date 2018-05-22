@@ -277,10 +277,10 @@ namespace LanguageExplorer.Controls.XMLViews
 			var settingsXml = SerializeSettings();
 			// first store current tab settings in the property table.
 			var currentTabSettingsKey = BuildCurrentTabSettingsKey(bulkEditBar);
-			bulkEditBar.PropertyTable.SetProperty(currentTabSettingsKey, settingsXml, SettingsGroup.LocalSettings, true, false);
+			bulkEditBar.PropertyTable.SetProperty(currentTabSettingsKey, settingsXml, true, settingsGroup: SettingsGroup.LocalSettings);
 			// next store the *key* to the current tab settings in the property table.
 			var lastTabSettingsKey = BuildLastTabSettingsKey(bulkEditBar);
-			bulkEditBar.PropertyTable.SetProperty(lastTabSettingsKey, currentTabSettingsKey, SettingsGroup.LocalSettings, true, false);
+			bulkEditBar.PropertyTable.SetProperty(lastTabSettingsKey, currentTabSettingsKey, true, settingsGroup: SettingsGroup.LocalSettings);
 		}
 
 		private string SerializeSettings()
@@ -295,7 +295,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			var lastTabSettingsKey = BuildLastTabSettingsKey(bulkEditBar);
 			// the value of LastTabSettings is the key to the tab settings in the property table.
-			var tabSettingsKey = bulkEditBar.PropertyTable.GetValue(lastTabSettingsKey, SettingsGroup.LocalSettings, string.Empty);
+			var tabSettingsKey = bulkEditBar.PropertyTable.GetValue(lastTabSettingsKey, string.Empty, SettingsGroup.LocalSettings);
 			return DeserializeTabPageSettings(bulkEditBar, tabSettingsKey);
 		}
 
@@ -304,7 +304,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			var settingsXml = string.Empty;
 			if (tabSettingsKey.Length > 0)
 			{
-				settingsXml = bulkEditBar.PropertyTable.GetValue(tabSettingsKey, SettingsGroup.LocalSettings, "");
+				settingsXml = bulkEditBar.PropertyTable.GetValue(tabSettingsKey, string.Empty, SettingsGroup.LocalSettings);
 			}
 			BulkEditTabPageSettings restoredTabPageSettings = null;
 			if (settingsXml.Length > 0)

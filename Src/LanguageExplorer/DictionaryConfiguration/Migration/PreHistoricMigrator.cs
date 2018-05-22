@@ -1049,13 +1049,13 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 
 		private void MigratePublicationLayoutSelection(string oldLayout, string newPath)
 		{
-			if (oldLayout.Equals(m_propertyTable.GetValue("DictionaryPublicationLayout", String.Empty)))
+			if (oldLayout.Equals(m_propertyTable.GetValue("DictionaryPublicationLayout", string.Empty)))
 			{
-				m_propertyTable.SetProperty("DictionaryPublicationLayout", newPath, true, false);
+				m_propertyTable.SetProperty("DictionaryPublicationLayout", newPath, true);
 			}
-			else if (oldLayout.Equals(m_propertyTable.GetValue("ReversalIndexPublicationLayout", String.Empty)))
+			else if (oldLayout.Equals(m_propertyTable.GetValue("ReversalIndexPublicationLayout", string.Empty)))
 			{
-				m_propertyTable.SetProperty("ReversalIndexPublicationLayout", newPath, true, false);
+				m_propertyTable.SetProperty("ReversalIndexPublicationLayout", newPath, true);
 			}
 		}
 

@@ -29,7 +29,7 @@ namespace LanguageExplorer.Impls
 		/// the persisted one is no longer available.
 		/// </summary>
 		/// <returns>The last persisted area or the default area.</returns>
-		public IArea PersistedOrDefaultArea => GetArea(_propertyTable.GetValue(AreaServices.InitialArea, SettingsGroup.LocalSettings, DefaultAreaMachineName));
+		public IArea PersistedOrDefaultArea => GetArea(_propertyTable.GetValue(AreaServices.InitialArea, DefaultAreaMachineName, SettingsGroup.LocalSettings));
 
 		/// <summary>
 		/// Get the IArea that has the machine friendly "Name" for <paramref name="machineName"/>.

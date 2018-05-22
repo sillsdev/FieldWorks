@@ -400,10 +400,7 @@ namespace LanguageExplorer
 					// allow tools to skip loading a record if we're planning to jump to one.
 					// interested tools will need to reset this "JumpToRecord" property after handling OnJumpToRecord.
 					PropertyTable.SetProperty("SuspendLoadingRecordUntilOnJumpToRecord",
-						$"{_linkActive.ToolName},{_linkActive.TargetGuid}",
-						SettingsGroup.LocalSettings,
-						false,
-						false); // Nobody is watching this property change in develop. so don't bother publishing it.
+						$"{_linkActive.ToolName},{_linkActive.TargetGuid}", settingsGroup: SettingsGroup.LocalSettings);
 				}
 
 				var messages = new List<string>();
@@ -430,7 +427,7 @@ namespace LanguageExplorer
 						var guid = ReversalIndexEntryUi.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
 						if (!guid.Equals(cmObject.Owner.Guid))
 						{
-							PropertyTable.SetProperty("ReversalIndexGuid", cmObject.Owner.Guid.ToString(), true, false);
+							PropertyTable.SetProperty("ReversalIndexGuid", cmObject.Owner.Guid.ToString(), true);
 							messages.Add("ReversalIndexGuid");
 							newValues.Add(cmObject.Owner.Guid.ToString());
 						}
@@ -510,7 +507,7 @@ namespace LanguageExplorer
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			PropertyTable.SetProperty("LinkHandler", this, false, false);
+			PropertyTable.SetProperty("LinkHandler", this);
 			Subscriber.Subscribe("FollowLink", FollowLink_Handler);
 		}
 

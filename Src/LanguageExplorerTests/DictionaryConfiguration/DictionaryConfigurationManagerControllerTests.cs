@@ -123,7 +123,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			};
 
 			_controller = new DictionaryConfigurationManagerController(_configurations, publications, _projectConfigPath, _defaultConfigPath);
-			_flexComponentParameters.PropertyTable.SetProperty("SkipSomeTestInitialization", true, false, false);
+			_flexComponentParameters.PropertyTable.SetProperty("SkipSomeTestInitialization", true);
 			_controller.InitializeFlexComponent(_flexComponentParameters);
 		}
 

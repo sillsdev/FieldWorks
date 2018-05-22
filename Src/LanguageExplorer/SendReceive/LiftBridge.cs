@@ -348,7 +348,7 @@ namespace LanguageExplorer.SendReceive
 			}
 			// Do merciful import.
 			ImportLiftCommon(MergeStyle.MsKeepBoth);
-			PropertyTable.SetProperty(CommonBridgeServices.LastBridgeUsed, CommonBridgeServices.LiftBridge, SettingsGroup.LocalSettings, true, false);
+			PropertyTable.SetProperty(CommonBridgeServices.LastBridgeUsed, CommonBridgeServices.LiftBridge, true, settingsGroup: SettingsGroup.LocalSettings);
 			Publisher.Publish("MasterRefresh", null);
 		}
 

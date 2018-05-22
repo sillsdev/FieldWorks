@@ -35,7 +35,7 @@ namespace LanguageExplorerTests.Impls
 
 			_propertyTable = TestSetupServices.SetupTestPropertyTable();
 			_macroMenuHandler = new MacroMenuHandler();
-			_propertyTable.SetProperty("cache", Cache, false, false);
+			_propertyTable.SetProperty("cache", Cache);
 			_macroMenuHandler.InitializeForTests(Cache);
 		}
 

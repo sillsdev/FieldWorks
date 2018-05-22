@@ -41,13 +41,13 @@ namespace LanguageExplorerTests
 			ISubscriber subscriber;
 			IPublisher publisher;
 			var propertyTable = SetupTestTriumvirate(out publisher, out subscriber);
-			propertyTable.SetProperty("cache", cache, SettingsGroup.BestSettings, false, false);
+			propertyTable.SetProperty("cache", cache);
 			var flexComponentParameters = new FlexComponentParameters(propertyTable, publisher, subscriber);
 			if (includeStylesheet)
 			{
 				var styleSheet = new LcmStyleSheet();
 				styleSheet.Init(cache, cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
-				flexComponentParameters.PropertyTable.SetProperty("FlexStyleSheet", styleSheet, SettingsGroup.BestSettings, false, false);
+				flexComponentParameters.PropertyTable.SetProperty("FlexStyleSheet", styleSheet);
 			}
 			return flexComponentParameters;
 		}

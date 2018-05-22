@@ -104,7 +104,7 @@ namespace LanguageExplorer.Areas
 			m_showDescendantInRoot = XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParametersElement, "showDescendantInRoot", false);
 
 			// retrieve persisted record list index and set it.
-			var idx = PropertyTable.GetValue(MyRecordList.PersistedIndexProperty, SettingsGroup.LocalSettings, -1);
+			var idx = PropertyTable.GetValue(MyRecordList.PersistedIndexProperty, -1, SettingsGroup.LocalSettings);
 			var lim = MyRecordList.ListSize;
 			if (idx >= 0 && idx < lim)
 			{
@@ -178,7 +178,7 @@ namespace LanguageExplorer.Areas
 #endif
 			// persist record lists's CurrentIndex in a db specific way
 			var propName = MyRecordList.PersistedIndexProperty;
-			PropertyTable.SetProperty(propName, MyRecordList.CurrentIndex, SettingsGroup.LocalSettings, true, false);
+			PropertyTable.SetProperty(propName, MyRecordList.CurrentIndex, true, settingsGroup: SettingsGroup.LocalSettings);
 			var window = PropertyTable.GetValue<IFwMainWnd>("window");
 
 			using (new IdleProcessingHelper(window))

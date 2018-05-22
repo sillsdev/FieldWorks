@@ -54,18 +54,18 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_propertyTable.SetDefault(PropertyNameForToolName, AreaServices.TextAndWordsAreaDefaultToolMachineName, SettingsGroup.LocalSettings, true, false);
+			_propertyTable.SetDefault(PropertyNameForToolName, AreaServices.TextAndWordsAreaDefaultToolMachineName, true);
 			if (!_hasBeenActivated)
 			{
 				// Respeller dlg uses these.
-				_propertyTable.SetDefault("RemoveAnalyses", true, SettingsGroup.GlobalSettings, true, false);
-				_propertyTable.SetDefault("UpdateLexiconIfPossible", true, SettingsGroup.GlobalSettings, true, false);
-				_propertyTable.SetDefault("CopyAnalysesToNewSpelling", true, SettingsGroup.GlobalSettings, true, false);
-				_propertyTable.SetDefault("MaintainCaseOnChangeSpelling", true, SettingsGroup.GlobalSettings, true, false);
+				_propertyTable.SetDefault("RemoveAnalyses", true, true, settingsGroup: SettingsGroup.GlobalSettings);
+				_propertyTable.SetDefault("UpdateLexiconIfPossible", true, true, settingsGroup: SettingsGroup.GlobalSettings);
+				_propertyTable.SetDefault("CopyAnalysesToNewSpelling", true, true, settingsGroup: SettingsGroup.GlobalSettings);
+				_propertyTable.SetDefault("MaintainCaseOnChangeSpelling", true, true, settingsGroup: SettingsGroup.GlobalSettings);
 
-				_propertyTable.SetDefault("ITexts_AddWordsToLexicon", false, SettingsGroup.LocalSettings, true, false);
-				_propertyTable.SetDefault("ITexts_ShowAddWordsToLexiconDlg", true, SettingsGroup.LocalSettings, true, false);
-				_propertyTable.SetDefault("ITexts-ScriptureIds", string.Empty, SettingsGroup.LocalSettings, true, false);
+				_propertyTable.SetDefault("ITexts_AddWordsToLexicon", false, true);
+				_propertyTable.SetDefault("ITexts_ShowAddWordsToLexiconDlg", true, true);
+				_propertyTable.SetDefault("ITexts-ScriptureIds", string.Empty, true);
 				_hasBeenActivated = true;
 			}
 
@@ -96,7 +96,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public void EnsurePropertiesAreCurrent()
 		{
-			_propertyTable.SetProperty(AreaServices.InitialArea, MachineName, SettingsGroup.LocalSettings, true, false);
+			_propertyTable.SetProperty(AreaServices.InitialArea, MachineName, true, settingsGroup: SettingsGroup.LocalSettings);
 
 			PersistedOrDefaultTool.EnsurePropertiesAreCurrent();
 		}

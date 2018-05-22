@@ -32,7 +32,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 
 			m_propertyTable = TestSetupServices.SetupTestTriumvirate(out m_publisher, out m_subscriber);
 			_dummyWindow = new DummyFwMainWnd();
-			m_propertyTable.SetProperty("window", _dummyWindow, false, false);
+			m_propertyTable.SetProperty("window", _dummyWindow);
 		}
 		#endregion
 
@@ -147,7 +147,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			m_Slice.Key = GeneratePath().ToArray();
 			m_Slice.Object = obj;
 			m_Slice.InitializeFlexComponent(flexComponentParameters);
-			m_propertyTable.SetProperty("cache", Cache, true, false);
+			m_propertyTable.SetProperty("cache", Cache);
 
 			m_Slice.Expand();
 		}
@@ -168,7 +168,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			m_Slice.Key = GeneratePath().ToArray();
 			m_Slice.Object = obj;
 			m_Slice.InitializeFlexComponent(flexComponentParameters);
-			m_propertyTable.SetProperty("cache", Cache, true, false);
+			m_propertyTable.SetProperty("cache", Cache);
 
 			m_Slice.Collapse();
 		}

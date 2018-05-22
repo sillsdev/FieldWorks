@@ -70,7 +70,7 @@ namespace LanguageExplorer.Areas
 			interestingTextList = new InterestingTextList(propertyTable, services.GetInstance<ITextRepository>(),
 				services.GetInstance<IStTextRepository>(), services.GetInstance<IScrBookRepository>().AllInstances().Any());
 			// Make this list available for other tools in this window, but don't try to persist it.
-			propertyTable.SetProperty(InterestingTextKey, interestingTextList, false, false);
+			propertyTable.SetProperty(InterestingTextKey, interestingTextList);
 			// Since the list hangs around indefinitely, it indefinitely monitors prop changes.
 			// I can't find any way to make sure it eventually gets removed from the notification list.
 			services.GetInstance<ISilDataAccessManaged>().AddNotification(interestingTextList);

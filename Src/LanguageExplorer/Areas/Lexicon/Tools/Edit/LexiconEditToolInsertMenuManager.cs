@@ -327,7 +327,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 							var selectedFileName = dlg.FileNames.FirstOrDefault(f => !string.IsNullOrEmpty(f));
 							if (selectedFileName != null)
 							{
-								_propertyTable.SetProperty(insertMediaFileLastDirectory, Path.GetDirectoryName(selectedFileName), true, false);
+								_propertyTable.SetProperty(insertMediaFileLastDirectory, Path.GetDirectoryName(selectedFileName), true);
 							}
 						}
 					}

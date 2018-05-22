@@ -132,7 +132,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			var menuItem = (ToolStripMenuItem)sender;
 			menuItem.Checked = !menuItem.Checked;
-			_propertyTable.SetProperty(LexiconEditToolConstants.Show_DictionaryPubPreview, menuItem.Checked, SettingsGroup.LocalSettings, true, false);
+			_propertyTable.SetProperty(LexiconEditToolConstants.Show_DictionaryPubPreview, menuItem.Checked, true, settingsGroup: SettingsGroup.LocalSettings);
 			_innerMultiPane.Panel1Collapsed = !menuItem.Checked;
 		}
 
@@ -140,7 +140,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			var menuItem = (ToolStripMenuItem)sender;
 			menuItem.Checked = !menuItem.Checked;
-			_propertyTable.SetProperty(_extendedPropertyName, menuItem.Checked, SettingsGroup.LocalSettings, true, false);
+			_propertyTable.SetProperty(_extendedPropertyName, menuItem.Checked, true, settingsGroup: SettingsGroup.LocalSettings);
 			_publisher.Publish("ShowHiddenFields", menuItem.Checked);
 			_innerMultiPane.Panel1Collapsed = !menuItem.Checked;
 		}

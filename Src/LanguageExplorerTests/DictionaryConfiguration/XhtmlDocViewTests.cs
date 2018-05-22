@@ -41,7 +41,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				var revIdx = Cache.ServiceLocator.GetInstance<IReversalIndexFactory>().Create();
 				Cache.LanguageProject.LexDbOA.ReversalIndexesOC.Add(revIdx);
 				revIdx.WritingSystem = "en";
-				_flexComponentParameters.PropertyTable.SetProperty("ReversalIndexGuid", revIdx.Guid.ToString(), false, false);
+				_flexComponentParameters.PropertyTable.SetProperty("ReversalIndexGuid", revIdx.Guid.ToString());
 			});
 			_recordList = LexiconArea.AllReversalEntriesFactoryMethod(Cache, _flexComponentParameters, LexiconArea.AllReversalEntries, _statusBar);
 		}
@@ -326,8 +326,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 					{
 						docView.SetConfigObjectName("Dictionary");
 						docView.InitializeFlexComponent(_flexComponentParameters);
-						_flexComponentParameters.PropertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconDictionaryMachineName, false, false);
-						_flexComponentParameters.PropertyTable.SetProperty("DictionaryPublicationLayout", tempConfigFile.Path, false, false);
+						_flexComponentParameters.PropertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconDictionaryMachineName);
+						_flexComponentParameters.PropertyTable.SetProperty("DictionaryPublicationLayout", tempConfigFile.Path);
 						File.WriteAllText(tempConfigFile.Path, configWithTestPub);
 						// SUT
 						Assert.That(docView.GetValidConfigurationForPublication("TestPub"), Is.StringContaining(tempConfigFile.Path));
@@ -356,8 +356,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				{
 					docView.SetConfigObjectName("Dictionary");
 					docView.InitializeFlexComponent(_flexComponentParameters);
-					_flexComponentParameters.PropertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconDictionaryMachineName, false, false);
-					_flexComponentParameters.PropertyTable.SetProperty("DictionaryPublicationLayout", tempConfigFile.Path, false, false);
+					_flexComponentParameters.PropertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconDictionaryMachineName);
+					_flexComponentParameters.PropertyTable.SetProperty("DictionaryPublicationLayout", tempConfigFile.Path);
 					// DictionaryConfigurationListener.GetCurrentConfiguration() needs to know the currentContentControl.
 					File.WriteAllText(tempConfigFile.Path, configWithTestPub);
 					// SUT
@@ -445,8 +445,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 					File.WriteAllText(matchedConfigFile.Path, matchingConfig);
 					docView.SetConfigObjectName("Dictionary");
 					docView.InitializeFlexComponent(_flexComponentParameters);
-					_flexComponentParameters.PropertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconDictionaryMachineName, false, false);
-					_flexComponentParameters.PropertyTable.SetProperty("DictionaryPublicationLayout", nonMatchedConfigFile.Path, false, false);
+					_flexComponentParameters.PropertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconDictionaryMachineName);
+					_flexComponentParameters.PropertyTable.SetProperty("DictionaryPublicationLayout", nonMatchedConfigFile.Path);
 					// SUT
 					var validConfig = docView.GetValidConfigurationForPublication("TestPub");
 					Assert.That(validConfig, Is.Not.StringContaining(nonMatchedConfigFile.Path));

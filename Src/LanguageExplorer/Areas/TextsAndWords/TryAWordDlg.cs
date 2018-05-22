@@ -406,7 +406,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			base.OnClosed(ea);
 			// remember last word used, if possible
-			PropertyTable.SetProperty("TryAWordDlg-lastWordToTry", m_wordformTextBox.Text.Trim(), SettingsGroup.LocalSettings, true, false);
+			PropertyTable.SetProperty("TryAWordDlg-lastWordToTry", m_wordformTextBox.Text.Trim(), true, settingsGroup: SettingsGroup.LocalSettings);
 			m_persistProvider.PersistWindowSettings(PersistProviderID, this);
 			if (m_parserMenuManager.Connection == null)
 			{

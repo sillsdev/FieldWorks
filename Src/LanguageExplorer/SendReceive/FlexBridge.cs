@@ -245,7 +245,7 @@ namespace LanguageExplorer.SendReceive
 				return; // We dealt with it.
 			}
 
-			PropertyTable.SetProperty(CommonBridgeServices.LastBridgeUsed, obtainedProjectType == ObtainedProjectType.Lift ? CommonBridgeServices.LiftBridge : CommonBridgeServices.FLExBridge, SettingsGroup.LocalSettings, true, false);
+			PropertyTable.SetProperty(CommonBridgeServices.LastBridgeUsed, obtainedProjectType == ObtainedProjectType.Lift ? CommonBridgeServices.LiftBridge : CommonBridgeServices.FLExBridge, true, settingsGroup: SettingsGroup.LocalSettings);
 
 			var fieldWorksAssembly = Assembly.Load("FieldWorks.exe");
 			var fieldWorksType = fieldWorksAssembly.GetType("SIL.FieldWorks.FieldWorks");

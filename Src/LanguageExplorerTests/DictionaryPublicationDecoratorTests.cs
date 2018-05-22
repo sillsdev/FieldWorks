@@ -276,7 +276,7 @@ namespace LanguageExplorerTests
 		[Test]
 		public void GetEntriesToPublish_WorksWithFrenchUI()
 		{
-			PropertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconEditMachineName, false, false);
+			PropertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconEditMachineName);
 
 			var englishEntries = m_decorator.GetEntriesToPublish(PropertyTable, ObjectListPublisher.OwningFlid);
 			Assert.That(englishEntries.Length, Is.GreaterThan(0));
@@ -294,8 +294,8 @@ namespace LanguageExplorerTests
 		public void GetSortedAndFilteredReversalEntries_ExcludesSubentriesAndUnpublishable()
 		{
 			// This test relies on the objects set up during the test FixtureSetup
-			PropertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.ReversalEditCompleteMachineName, false, false);
-			PropertyTable.SetProperty("ReversalIndexGuid", m_revIndex.Guid.ToString(), false, false);
+			PropertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.ReversalEditCompleteMachineName);
+			PropertyTable.SetProperty("ReversalIndexGuid", m_revIndex.Guid.ToString());
 
 			Assert.AreEqual(6, m_revDecorator.VecProp(m_revIndex.Hvo, ObjectListPublisher.OwningFlid).Length, "there should be 6 Reversal Entries and Sub[sub]entries");
 			var entries = m_revDecorator.GetEntriesToPublish(PropertyTable, ObjectListPublisher.OwningFlid, "Reversal Index");
@@ -318,8 +318,8 @@ namespace LanguageExplorerTests
 		public void GetSortedAndFilteredReversalEntries_IncludesSenselessReversalEntries()
 		{
 			// This test relies on the objects set up during the test FixtureSetup
-			PropertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.ReversalEditCompleteMachineName, false, false);
-			PropertyTable.SetProperty("ReversalIndexGuid", m_revIndex.Guid.ToString(), false, false);
+			PropertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.ReversalEditCompleteMachineName);
+			PropertyTable.SetProperty("ReversalIndexGuid", m_revIndex.Guid.ToString());
 
 			Assert.AreEqual(6, m_revDecorator.VecProp(m_revIndex.Hvo, ObjectListPublisher.OwningFlid).Length, "there should be 6 Reversal Entries and Sub[sub]entries");
 			var entries = m_revDecorator.GetEntriesToPublish(PropertyTable, ObjectListPublisher.OwningFlid, "Reversal Index");

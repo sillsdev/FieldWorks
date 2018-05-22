@@ -94,10 +94,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void SavePersisted(int recordIndex)
 		{
-			m_propertyTable.SetProperty(RecordIndexBookmarkName, recordIndex, SettingsGroup.LocalSettings, true, false);
-			m_propertyTable.SetProperty(BookmarkPropertyName("IndexOfParagraph"), IndexOfParagraph, SettingsGroup.LocalSettings, true, false);
-			m_propertyTable.SetProperty(BookmarkPropertyName("CharBeginOffset"), BeginCharOffset, SettingsGroup.LocalSettings, true, false);
-			m_propertyTable.SetProperty(BookmarkPropertyName("CharEndOffset"), EndCharOffset, SettingsGroup.LocalSettings, true, false);
+			m_propertyTable.SetProperty(RecordIndexBookmarkName, recordIndex, true, settingsGroup: SettingsGroup.LocalSettings);
+			m_propertyTable.SetProperty(BookmarkPropertyName("IndexOfParagraph"), IndexOfParagraph, true, settingsGroup: SettingsGroup.LocalSettings);
+			m_propertyTable.SetProperty(BookmarkPropertyName("CharBeginOffset"), BeginCharOffset, true, settingsGroup: SettingsGroup.LocalSettings);
+			m_propertyTable.SetProperty(BookmarkPropertyName("CharEndOffset"), EndCharOffset, true, settingsGroup: SettingsGroup.LocalSettings);
 		}
 
 		/// <summary>
@@ -106,14 +106,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public void Restore(int index)
 		{
 			// verify we're restoring to the right text. Is there a better way to verify this?
-			var restoredRecordIndex = m_propertyTable.GetValue(RecordIndexBookmarkName, SettingsGroup.LocalSettings, -1);
+			var restoredRecordIndex = m_propertyTable.GetValue(RecordIndexBookmarkName, -1, SettingsGroup.LocalSettings);
 			if (index != restoredRecordIndex)
 			{
 				return;
 			}
-			IndexOfParagraph = m_propertyTable.GetValue(BookmarkPropertyName("IndexOfParagraph"), SettingsGroup.LocalSettings, 0);
-			BeginCharOffset = m_propertyTable.GetValue(BookmarkPropertyName("CharBeginOffset"), SettingsGroup.LocalSettings, 0);
-			EndCharOffset = m_propertyTable.GetValue(BookmarkPropertyName("CharEndOffset"), SettingsGroup.LocalSettings, 0);
+			IndexOfParagraph = m_propertyTable.GetValue(BookmarkPropertyName("IndexOfParagraph"), 0, SettingsGroup.LocalSettings);
+			BeginCharOffset = m_propertyTable.GetValue(BookmarkPropertyName("CharBeginOffset"), 0, SettingsGroup.LocalSettings);
+			EndCharOffset = m_propertyTable.GetValue(BookmarkPropertyName("CharEndOffset"), 0, SettingsGroup.LocalSettings);
 		}
 
 		/// <summary>

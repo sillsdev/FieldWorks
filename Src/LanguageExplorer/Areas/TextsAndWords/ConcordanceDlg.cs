@@ -646,7 +646,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				_currentBrowseView.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				// Ensure that the list gets updated whenever it's reloaded.  See LT-8661.
 				var sPropName = recordList.Id + "_AlwaysRecomputeVirtualOnReloadList";
-				PropertyTable.SetProperty(sPropName, true, false, false);
+				PropertyTable.SetProperty(sPropName, true);
 				_currentBrowseView.Dock = DockStyle.Fill;
 				_pnlConcBrowseHolder.Controls.Add(_currentBrowseView);
 				_currentBrowseView.CheckBoxChanged += CurrentBrowseView_CheckBoxChanged;

@@ -33,9 +33,11 @@ namespace LanguageExplorer.Impls
 		private string m_localSettingsId;
 		private string m_userSettingDirectory = string.Empty;
 		/// <summary>
-		/// When this number changes, be sure to add more code to <see cref="ConvertOldPropertiesToNewIfPresent"/>.
+		/// When this number changes, be sure to add more code to <see cref="IPropertyTable.ConvertOldPropertiesToNewIfPresent"/>.
 		/// </summary>
 		private const int CurrentPropertyTableVersion = 1;
+		private IPropertyRetriever AsIPropertyRetriever => this;
+		private IPropertyTable AsIPropertyTable => this;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="PropertyTable"/> class.
@@ -147,94 +149,20 @@ namespace LanguageExplorer.Impls
 
 		#endregion IDisposable & Co. implementation
 
-		#region Removing
+		#region IPropertyTable implementationvalues
 
-		/// <summary>
-		/// Remove a property from the table.
-		/// </summary>
-		/// <param name="name">Name of the property to remove.</param>
-		/// <param name="settingsGroup">The group to remove the property from.</param>
-		public void RemoveProperty(string name, SettingsGroup settingsGroup)
+		#region IPropertyRetriever implementation
+
+		#region Get property values
+
+		/// <inheritdoc />
+		bool IPropertyRetriever.PropertyExists(string propertyName, SettingsGroup settingsGroup)
 		{
-			var key = GetPropertyKeyFromSettingsGroup(name, settingsGroup);
-			Property goner;
-			if (m_properties.TryRemove(key, out goner))
-			{
-				goner.value = null;
-			}
+			return GetProperty(GetPropertyKeyFromSettingsGroup(propertyName, settingsGroup)) != null;
 		}
 
-		/// <summary>
-		/// Remove a property from the table.
-		/// </summary>
-		/// <param name="name">Name of the property to remove.</param>
-		public void RemoveProperty(string name)
-		{
-			RemoveProperty(name, SettingsGroup.BestSettings);
-		}
-
-		#endregion Removing
-
-		#region getting and setting
-
-		/// <summary>
-		/// Get the property key/name, based on 'settingsGroup'.
-		/// It may be the original property name or one adjusted for local settings.
-		/// Caller then uses the returned value as the property dictionary key.
-		///
-		/// For SettingsGroup.BestSettings:
-		/// Prefer local over global, if both exist.
-		///	Prefer global if neither exists.
-		/// </summary>
-		/// <returns>The original property name or one adjusted for local settings</returns>
-		private string GetPropertyKeyFromSettingsGroup(string name, SettingsGroup settingsGroup)
-		{
-			switch (settingsGroup)
-			{
-				default:
-					throw new NotSupportedException($"{settingsGroup} is not yet supported. Developers need to add support for it.");
-				case SettingsGroup.BestSettings:
-				{
-					var key = FormatPropertyNameForLocalSettings(name);
-					return GetProperty(key) != null ?
-						key // local exists. We don't care if global exists, or not, since we prefer local over global.
-						: name; // Whether a global property exists, or not, go with the global internal property name.
-				}
-				case SettingsGroup.LocalSettings:
-					return FormatPropertyNameForLocalSettings(name);
-				case SettingsGroup.GlobalSettings:
-					return name;
-			}
-		}
-
-		/// <summary>
-		/// Test whether a property exists, tries local first and then global.
-		/// </summary>
-		public bool PropertyExists(string name)
-		{
-			return PropertyExists(name, SettingsGroup.BestSettings);
-		}
-
-		/// <summary>
-		/// Test whether a property exist in the specified group.
-		/// </summary>
-		public bool PropertyExists(string name, SettingsGroup settingsGroup)
-		{
-			return GetProperty(GetPropertyKeyFromSettingsGroup(name, settingsGroup)) != null;
-		}
-
-		/// <summary>
-		/// Test whether a property exists in the specified group. Gives any value found.
-		/// </summary>
-		public bool TryGetValue<T>(string name, out T propertyValue)
-		{
-			return TryGetValue(name, SettingsGroup.BestSettings, out propertyValue);
-		}
-
-		/// <summary>
-		/// Test whether a property exists in the specified group. Gives any value found.
-		/// </summary>
-		public bool TryGetValue<T>(string name, SettingsGroup settingsGroup, out T propertyValue)
+		/// <inheritdoc />
+		bool IPropertyRetriever.TryGetValue<T>(string name, out T propertyValue, SettingsGroup settingsGroup)
 		{
 			propertyValue = default(T);
 			var prop = GetProperty(GetPropertyKeyFromSettingsGroup(name, settingsGroup));
@@ -251,235 +179,57 @@ namespace LanguageExplorer.Impls
 			return true;
 		}
 
-		private Property GetProperty(string key)
+		/// <inheritdoc />
+		T IPropertyRetriever.GetValue<T>(string propertyName, SettingsGroup settingsGroup)
 		{
-			Property result;
-			m_properties.TryGetValue(key, out result);
-
-			return result;
+			return GetValueInternal<T>(GetPropertyKeyFromSettingsGroup(propertyName, settingsGroup));
 		}
 
-		/// <summary>
-		/// get the value of the best property (i.e. tries local first, then global).
-		/// </summary>
-		/// <returns>returns null if the property is not found</returns>
-		public T GetValue<T>(string name)
+		/// <inheritdoc />
+		T IPropertyRetriever.GetValue<T>(string propertyName, T defaultValue, SettingsGroup settingsGroup)
 		{
-			return GetValue<T>(name, SettingsGroup.BestSettings);
+			return GetValueInternal(GetPropertyKeyFromSettingsGroup(propertyName, settingsGroup), defaultValue);
 		}
 
-		/// <summary>
-		/// Get the value of the property of the specified settingsGroup.
-		/// </summary>
-		public T GetValue<T>(string name, SettingsGroup settingsGroup)
-		{
-			return GetValueInternal<T>(GetPropertyKeyFromSettingsGroup(name, settingsGroup));
-		}
+		#endregion Get property values
 
-		/// <summary>
-		/// Get the property of type "T"
-		/// </summary>
-		/// <typeparam name="T">Type of property to return</typeparam>
-		/// <param name="name">Name of property to return</param>
-		/// <param name="defaultValue">Default value of property, if it isn't in the table.</param>
-		/// <returns>The stored property of type "T", or the defualt value, if not stored.</returns>
-		public T GetValue<T>(string name, T defaultValue)
-		{
-			return GetValue(name, SettingsGroup.BestSettings, defaultValue);
-		}
+		#endregion IPropertyRetriever implementation
 
-		/// <summary>
-		/// Get the value of the property in the specified settingsGroup.
-		/// Sets the defaultValue if the property doesn't exist.
-		/// </summary>
-		public T GetValue<T>(string name, SettingsGroup settingsGroup, T defaultValue)
-		{
-			return GetValueInternal(GetPropertyKeyFromSettingsGroup(name, settingsGroup), defaultValue);
-		}
+		#region Set property values
 
-		/// <summary>
-		/// get the value of a property
-		/// </summary>
-		/// <param name="key">Encoded name for local or global lookup</param>
-		/// <returns>Returns the property value, or null if property does not exist.</returns>
-		/// <exception cref="ArgumentException">Thrown if the property value is not type "T".</exception>
-		private T GetValueInternal<T>(string key)
-		{
-			var defaultValue = default(T);
-			Property prop;
-			if (!m_properties.TryGetValue(key, out prop))
-			{
-				return defaultValue;
-			}
-			var basicValue = prop.value;
-			if (basicValue == null)
-			{
-				return defaultValue;
-			}
-			if (basicValue is T)
-			{
-				return (T)basicValue;
-			}
-			throw new ArgumentException("Mismatched data type.");
-		}
-
-		/// <summary>
-		/// Get the value of the property of the specified settingsGroup.
-		/// </summary>
-		/// <param name="key">Encoded name for local or global lookup</param>
-		/// <param name="defaultValue"></param>
-		private T GetValueInternal<T>(string key, T defaultValue)
-		{
-			T result;
-			var prop = GetProperty(key);
-			if (prop == null)
-			{
-				SetPropertyInternal(key, defaultValue, false, false);
-				return defaultValue;
-			}
-			if (prop.value == null)
-			{
-				// Gutless wonder (prop exists, but has no value).
-				prop.value = defaultValue;
-				return defaultValue;
-			}
-			if (prop.value is T)
-			{
-				return (T)prop.value;
-			}
-			throw new ArgumentException("Mismatched data type.");
-		}
-
-		/// <summary>
-		/// Set the default value of a property, but *only* if property is not in the table.
-		/// Do nothing, if the property is alreeady in the table.
-		/// </summary>
-		/// <param name="name">Name of the property to set</param>
-		/// <param name="defaultValue">Default value of the new property</param>
-		/// <param name="settingsGroup">Group the property is expected to be in.</param>
-		/// <param name="persistProperty">
-		/// "true" if the property is to be persisted, otherwise "false".</param>
-		/// <param name="doBroadcastIfChanged">
-		/// "true" if the property should be broadcast, and then, only if it has changed.
-		/// "false" to not broadcast it at all.
-		/// </param>
-		public void SetDefault(string name, object defaultValue, SettingsGroup settingsGroup, bool persistProperty, bool doBroadcastIfChanged)
-		{
-			SetDefaultInternal(GetPropertyKeyFromSettingsGroup(name, settingsGroup), defaultValue, persistProperty, doBroadcastIfChanged);
-		}
-
-		/// <summary>
-		/// set a default; does nothing if this value is already in the PropertyTable.
-		/// </summary>
-		/// <param name="key"></param>
-		/// <param name="defaultValue"></param>
-		/// <param name="persistProperty"></param>
-		/// <param name="doBroadcastIfChanged">
-		/// "true" if the property should be broadcast, and then, only if it has changed.
-		/// "false" to not broadcast it at all.
-		/// </param>
-		private void SetDefaultInternal(string key, object defaultValue, bool persistProperty, bool doBroadcastIfChanged)
-		{
-			if (!m_properties.ContainsKey(key))
-			{
-				SetPropertyInternal(key, defaultValue, persistProperty, doBroadcastIfChanged);
-			}
-		}
-
-		/// <summary>
-		/// Set the property value for the specified settingsGroup, and allow user to broadcast the change, or not.
-		/// Caller must also declare if the property is to be persisted, or not.
-		/// </summary>
-		/// <param name="name">Property name</param>
-		/// <param name="newValue">New value of the property. (It may never have been set before.)</param>
-		/// <param name="settingsGroup">The group to store the property in.</param>
-		/// <param name="persistProperty">
-		/// "true" if the property is to be persisted, otherwise "false".</param>
-		/// <param name="doBroadcastIfChanged">
-		/// "true" if the property should be broadcast, and then, only if it has changed.
-		/// "false" to not broadcast it at all.
-		/// </param>
-		public void SetProperty(string name, object newValue, SettingsGroup settingsGroup, bool persistProperty, bool doBroadcastIfChanged)
+		/// <inheritdoc />
+		void IPropertyTable.SetProperty(string name, object newValue, bool persistProperty, bool doBroadcastIfChanged, SettingsGroup settingsGroup)
 		{
 			SetPropertyInternal(GetPropertyKeyFromSettingsGroup(name, settingsGroup), newValue, persistProperty, doBroadcastIfChanged);
 		}
 
-		/// <summary>
-		/// set the value of the best property (try finding local first, then global)
-		/// and broadcast the change if so instructed
-		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="newValue"></param>
-		/// <param name="persistProperty"></param>
-		/// <param name="doBroadcastIfChanged">
-		/// "true" if the property should be broadcast, and then, only if it has changed.
-		/// "false" to not broadcast it at all.
-		/// </param>
-		public void SetProperty(string name, object newValue, bool persistProperty, bool doBroadcastIfChanged)
+		/// <inheritdoc />
+		void IPropertyTable.SetDefault(string name, object defaultValue, bool persistProperty, bool doBroadcastIfChanged, SettingsGroup settingsGroup)
 		{
-			SetProperty(name, newValue, SettingsGroup.BestSettings, persistProperty, doBroadcastIfChanged);
+			SetDefaultInternal(GetPropertyKeyFromSettingsGroup(name, settingsGroup), defaultValue, persistProperty, doBroadcastIfChanged);
 		}
 
-		/// <summary>
-		/// set the value and broadcast the change if so instructed
-		/// </summary>
-		/// <param name="key"></param>
-		/// <param name="newValue"></param>
-		/// <param name="persistProperty"></param>
-		/// <param name="doBroadcastIfChanged">
-		/// "true" if the property should be broadcast, and then, only if it has changed.
-		/// "false" to not broadcast it at all.
-		/// </param>
-		private void SetPropertyInternal(string key, object newValue, bool persistProperty, bool doBroadcastIfChanged)
-		{
-			var didChange = true;
-			if (m_properties.ContainsKey(key))
-			{
-				var property = m_properties[key];
-				// May update the persistance, as in when a default was created which persists, but now we want to not persist it.
-				property.doPersist = persistProperty;
-				var oldValue = property.value;
-				var bothNull = (oldValue == null && newValue == null);
-				var oldExists = (oldValue != null);
-				didChange = !( bothNull
-								|| (oldExists
-									&&
-									(	ReferenceEquals(oldValue, newValue) // Referencing the very same object?
-										|| oldValue.Equals(newValue)) // Same content (e.g.: The color Red is Red, no matter if it is the same instance)?
-#if RANDYTODO
-										|| oldValue?.ToString() == newValue?.ToString() // Close enough for government work.
-#endif
-									)
-								);
-				if (didChange)
-				{
-					if (property.value != null && property.doDispose)
-					{
-						(property.value as IDisposable).Dispose(); // Get rid of the old value.
-					}
-					property.value = newValue;
-				}
-			}
-			else
-			{
-				m_properties[key] = new Property(key, newValue)
-				{
-					doPersist = persistProperty
-				};
-			}
+		#endregion Set property values
 
-			if (didChange && doBroadcastIfChanged && Publisher != null)
+		#region Remove properties
+
+		/// <inheritdoc />
+		void IPropertyTable.RemoveProperty(string name, SettingsGroup settingsGroup)
+		{
+			var key = GetPropertyKeyFromSettingsGroup(name, settingsGroup);
+			Property goner;
+			if (m_properties.TryRemove(key, out goner))
 			{
-				var localSettingsPrefix = GetPathPrefixForSettingsId(LocalSettingsId);
-				var propertyName = key.StartsWith(localSettingsPrefix) ? key.Remove(0, localSettingsPrefix.Length) : key;
-				Publisher.Publish(propertyName, newValue);
+				goner.value = null;
 			}
 		}
 
-		/// <summary>
-		/// Convert any old properties to latest version, if needed.
-		/// </summary>
-		public void ConvertOldPropertiesToNewIfPresent()
+		#endregion  Remove properties
+
+		#region Persistence
+
+		/// <inheritdoc />
+		void IPropertyTable.ConvertOldPropertiesToNewIfPresent()
 		{
 			const string propertyTableVersion = "PropertyTableVersion";
 			if (GetValueInternal(propertyTableVersion, 0) == CurrentPropertyTableVersion)
@@ -489,10 +239,10 @@ namespace LanguageExplorer.Impls
 			// TODO: At some point in the future one should introduce a new interface, such as "IPropertyTableMigrator"
 			// TODO: and let each impl update stuff from 'n - 1' up to its 'n'.
 			string oldStringValue;
-			if (TryGetValue("currentContentControl", out oldStringValue))
+			if (AsIPropertyRetriever.TryGetValue("currentContentControl", out oldStringValue))
 			{
-				RemoveProperty("currentContentControl");
-				SetProperty(AreaServices.ToolChoice, oldStringValue, SettingsGroup.LocalSettings, true, false);
+				AsIPropertyTable.RemoveProperty("currentContentControl");
+				AsIPropertyTable.SetProperty(AreaServices.ToolChoice, oldStringValue, true, settingsGroup: SettingsGroup.LocalSettings);
 			}
 			var assimilatedAssemblies = new HashSet<string>
 			{
@@ -557,24 +307,275 @@ namespace LanguageExplorer.Impls
 			}
 			SetPropertyInternal(propertyTableVersion, CurrentPropertyTableVersion, true, false);
 
-			SaveGlobalSettings();
-			SaveLocalSettings();
+			AsIPropertyTable.SaveGlobalSettings();
+			AsIPropertyTable.SaveLocalSettings();
 		}
 
-		/// <summary>
-		/// Declare if the property is to be disposed by the table.
-		/// </summary>
-		public void SetPropertyDispose(string name, bool doDispose)
-		{
-			SetPropertyDispose(name, doDispose, SettingsGroup.BestSettings);
-		}
-
-		/// <summary>
-		/// Declare if the property is to be disposed by the table.
-		/// </summary>
-		public void SetPropertyDispose(string name, bool doDispose, SettingsGroup settingsGroup)
+		/// <inheritdoc />
+		void IPropertyTable.SetPropertyDispose(string name, bool doDispose, SettingsGroup settingsGroup)
 		{
 			SetPropertyDisposeInternal(GetPropertyKeyFromSettingsGroup(name, settingsGroup), doDispose);
+		}
+
+		/// <inheritdoc />
+		string IPropertyTable.UserSettingDirectory
+		{
+			get
+			{
+				Debug.Assert(!string.IsNullOrEmpty(m_userSettingDirectory));
+				return m_userSettingDirectory;
+			}
+			set
+			{
+				if (string.IsNullOrEmpty(value))
+				{
+					throw new ArgumentNullException(nameof(value), @"Cannot set 'UserSettingDirectory' to null or empty string.");
+				}
+
+				m_userSettingDirectory = value;
+			}
+		}
+
+		/// <inheritdoc />
+		string IPropertyTable.GlobalSettingsId => string.Empty;
+
+		/// <inheritdoc />
+		string IPropertyTable.LocalSettingsId
+		{
+			get
+			{
+				return m_localSettingsId ?? AsIPropertyTable.GlobalSettingsId;
+			}
+			set
+			{
+				m_localSettingsId = value;
+			}
+		}
+
+		/// <inheritdoc />
+		void IPropertyTable.RestoreFromFile(string settingsId)
+		{
+			var path = SettingsPath(settingsId);
+
+			if (!File.Exists(path))
+			{
+				return;
+			}
+
+			try
+			{
+				var szr = new XmlSerializer(typeof(Property[]));
+				using (var reader = new StreamReader(path))
+				{
+					var list = (Property[])szr.Deserialize(reader);
+					ReadPropertyArrayForDeserializing(list);
+				}
+			}
+			catch (FileNotFoundException)
+			{
+				//don't do anything
+			}
+			catch (Exception e)
+			{
+				var activeForm = Form.ActiveForm;
+				if (activeForm == null)
+				{
+					MessageBox.Show(LanguageExplorerResources.ProblemRestoringSettings);
+				}
+				else
+				{
+					// Make sure as far as possible it comes up in front of any active window, including the splash screen.
+					activeForm.Invoke((Func<DialogResult>)(() => MessageBox.Show(activeForm, LanguageExplorerResources.ProblemRestoringSettings)));
+				}
+			}
+		}
+
+		/// <inheritdoc />
+		void IPropertyTable.SaveGlobalSettings()
+		{
+			// first save global settings, ignoring database specific ones.
+			// The empty string '""' in the first parameter means the global settings.
+			// The array in the second parameter means to 'exclude me'.
+			// In this case, local settings won't be saved.
+			Save(string.Empty, new[] { AsIPropertyTable.LocalSettingsId });
+		}
+
+		/// <inheritdoc />
+		void IPropertyTable.SaveLocalSettings()
+		{
+			// now save database specific settings.
+			Save(AsIPropertyTable.LocalSettingsId, new string[0]);
+		}
+
+		#endregion Persistence
+
+		#endregion  IPropertyTable implementation
+
+		#region Private code
+
+		/// <summary>
+		/// Get the property key/name, based on 'settingsGroup'.
+		/// It may be the original property name or one adjusted for local settings.
+		/// Caller then uses the returned value as the property dictionary key.
+		///
+		/// For SettingsGroup.BestSettings:
+		/// Prefer local over global, if both exist.
+		///	Prefer global if neither exists.
+		/// </summary>
+		/// <returns>The original property name or one adjusted for local settings</returns>
+		private string GetPropertyKeyFromSettingsGroup(string name, SettingsGroup settingsGroup)
+		{
+			switch (settingsGroup)
+			{
+				default:
+					throw new NotSupportedException($"{settingsGroup} is not yet supported. Developers need to add support for it.");
+				case SettingsGroup.BestSettings:
+				{
+					var key = FormatPropertyNameForLocalSettings(name);
+					return GetProperty(key) != null ?
+						key // local exists. We don't care if global exists, or not, since we prefer local over global.
+						: name; // Whether a global property exists, or not, go with the global internal property name.
+				}
+				case SettingsGroup.LocalSettings:
+					return FormatPropertyNameForLocalSettings(name);
+				case SettingsGroup.GlobalSettings:
+					return name;
+			}
+		}
+
+		private Property GetProperty(string key)
+		{
+			Property result;
+			m_properties.TryGetValue(key, out result);
+
+			return result;
+		}
+
+		/// <summary>
+		/// get the value of a property
+		/// </summary>
+		/// <param name="key">Encoded name for local or global lookup</param>
+		/// <returns>Returns the property value, or null if property does not exist.</returns>
+		/// <exception cref="ArgumentException">Thrown if the property value is not type "T".</exception>
+		private T GetValueInternal<T>(string key)
+		{
+			var defaultValue = default(T);
+			Property prop;
+			if (!m_properties.TryGetValue(key, out prop))
+			{
+				return defaultValue;
+			}
+			var basicValue = prop.value;
+			if (basicValue == null)
+			{
+				return defaultValue;
+			}
+			if (basicValue is T)
+			{
+				return (T)basicValue;
+			}
+			throw new ArgumentException("Mismatched data type.");
+		}
+
+		/// <summary>
+		/// Get the value of the property of the specified settingsGroup.
+		/// </summary>
+		/// <param name="key">Encoded name for local or global lookup</param>
+		/// <param name="defaultValue"></param>
+		private T GetValueInternal<T>(string key, T defaultValue)
+		{
+			T result;
+			var prop = GetProperty(key);
+			if (prop == null)
+			{
+				SetPropertyInternal(key, defaultValue, false, false);
+				return defaultValue;
+			}
+			if (prop.value == null)
+			{
+				// Gutless wonder (prop exists, but has no value).
+				prop.value = defaultValue;
+				return defaultValue;
+			}
+			if (prop.value is T)
+			{
+				return (T)prop.value;
+			}
+			throw new ArgumentException("Mismatched data type.");
+		}
+
+		/// <summary>
+		/// set a default; does nothing if this value is already in the PropertyTable.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="defaultValue"></param>
+		/// <param name="persistProperty"></param>
+		/// <param name="doBroadcastIfChanged">
+		/// "true" if the property should be broadcast, and then, only if it has changed.
+		/// "false" to not broadcast it at all.
+		/// </param>
+		private void SetDefaultInternal(string key, object defaultValue, bool persistProperty, bool doBroadcastIfChanged)
+		{
+			if (!m_properties.ContainsKey(key))
+			{
+				SetPropertyInternal(key, defaultValue, persistProperty, doBroadcastIfChanged);
+			}
+		}
+
+		/// <summary>
+		/// set the value and broadcast the change if so instructed
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="newValue"></param>
+		/// <param name="persistProperty"></param>
+		/// <param name="doBroadcastIfChanged">
+		/// "true" if the property should be broadcast, and then, only if it has changed.
+		/// "false" to not broadcast it at all.
+		/// </param>
+		private void SetPropertyInternal(string key, object newValue, bool persistProperty, bool doBroadcastIfChanged)
+		{
+			var didChange = true;
+			if (m_properties.ContainsKey(key))
+			{
+				var property = m_properties[key];
+				// May update the persistance, as in when a default was created which persists, but now we want to not persist it.
+				property.doPersist = persistProperty;
+				var oldValue = property.value;
+				var bothNull = (oldValue == null && newValue == null);
+				var oldExists = (oldValue != null);
+				didChange = !( bothNull
+								|| (oldExists
+									&&
+									(	ReferenceEquals(oldValue, newValue) // Referencing the very same object?
+										|| oldValue.Equals(newValue)) // Same content (e.g.: The color Red is Red, no matter if it is the same instance)?
+#if RANDYTODO
+										|| oldValue?.ToString() == newValue?.ToString() // Close enough for government work.
+#endif
+									)
+								);
+				if (didChange)
+				{
+					if (property.value != null && property.doDispose)
+					{
+						(property.value as IDisposable).Dispose(); // Get rid of the old value.
+					}
+					property.value = newValue;
+				}
+			}
+			else
+			{
+				m_properties[key] = new Property(key, newValue)
+				{
+					doPersist = persistProperty
+				};
+			}
+
+			if (didChange && doBroadcastIfChanged && Publisher != null)
+			{
+				var localSettingsPrefix = GetPathPrefixForSettingsId(AsIPropertyTable.LocalSettingsId);
+				var propertyName = key.StartsWith(localSettingsPrefix) ? key.Remove(0, localSettingsPrefix.Length) : key;
+				Publisher.Publish(propertyName, newValue);
+			}
 		}
 
 		private void SetPropertyDisposeInternal(string key, bool doDispose)
@@ -585,30 +586,6 @@ namespace LanguageExplorer.Impls
 				throw new ArgumentException($"The property named: {key} is not valid for disposing.");
 			}
 			property.doDispose = doDispose;
-		}
-		#endregion
-
-		#region persistence stuff
-
-		/// <summary>
-		/// Save general application settings
-		/// </summary>
-		public void SaveGlobalSettings()
-		{
-			// first save global settings, ignoring database specific ones.
-			// The empty string '""' in the first parameter means the global settings.
-			// The array in the second parameter means to 'exclude me'.
-			// In this case, local settings won't be saved.
-			Save(string.Empty, new[] { LocalSettingsId });
-		}
-
-		/// <summary>
-		/// Save database specific settings.
-		/// </summary>
-		public void SaveLocalSettings()
-		{
-			// now save database specific settings.
-			Save(LocalSettingsId, new string[0]);
 		}
 
 		/// <summary>
@@ -657,7 +634,7 @@ namespace LanguageExplorer.Impls
 		private string SettingsPath(string settingsId)
 		{
 			var pathPrefix = GetPathPrefixForSettingsId(settingsId);
-			return Path.Combine(UserSettingDirectory, pathPrefix + "Settings.xml");
+			return Path.Combine(AsIPropertyTable.UserSettingDirectory, pathPrefix + "Settings.xml");
 		}
 
 		private static string FormatPropertyNameForLocalSettings(string name, string settingsId)
@@ -667,92 +644,7 @@ namespace LanguageExplorer.Impls
 
 		private string FormatPropertyNameForLocalSettings(string name)
 		{
-			return FormatPropertyNameForLocalSettings(name, LocalSettingsId);
-		}
-
-		/// <summary>
-		/// Establishes a current group id for saving to property tables/files with SettingsGroup.LocalSettings.
-		/// By default, this is the same as GlobalSettingsId.
-		/// </summary>
-		public string LocalSettingsId
-		{
-			get
-			{
-				return m_localSettingsId ?? GlobalSettingsId;
-			}
-			set
-			{
-				m_localSettingsId = value;
-			}
-		}
-
-		/// <summary>
-		/// Establishes a current group id for saving to property tables/files with SettingsGroup.GlobalSettings.
-		/// </summary>
-		public string GlobalSettingsId => string.Empty;
-
-		/// <summary>
-		/// Gets/sets folder where user settings are saved
-		/// </summary>
-		public string UserSettingDirectory
-		{
-			get
-			{
-				Debug.Assert(!string.IsNullOrEmpty(m_userSettingDirectory));
-				return m_userSettingDirectory;
-			}
-			set
-			{
-				if (string.IsNullOrEmpty(value))
-				{
-					throw new ArgumentNullException(nameof(value), @"Cannot set 'UserSettingDirectory' to null or empty string.");
-				}
-
-				m_userSettingDirectory = value;
-			}
-		}
-
-		/// <summary>
-		/// load with properties stored
-		/// in the settings file, if that file is found.
-		/// </summary>
-		/// <param name="settingsId">e.g. "itinerary"</param>
-		/// <returns></returns>
-		public void RestoreFromFile(string settingsId)
-		{
-			var path = SettingsPath(settingsId);
-
-			if (!File.Exists(path))
-			{
-				return;
-			}
-
-			try
-			{
-				var szr = new XmlSerializer(typeof(Property[]));
-				using (var reader = new StreamReader(path))
-				{
-					var list = (Property[])szr.Deserialize(reader);
-					ReadPropertyArrayForDeserializing(list);
-				}
-			}
-			catch(FileNotFoundException)
-			{
-				//don't do anything
-			}
-			catch(Exception e)
-			{
-				var activeForm = Form.ActiveForm;
-				if (activeForm == null)
-				{
-					MessageBox.Show(LanguageExplorerResources.ProblemRestoringSettings);
-				}
-				else
-				{
-					// Make sure as far as possible it comes up in front of any active window, including the splash screen.
-					activeForm.Invoke((Func<DialogResult>)(() => MessageBox.Show(activeForm, LanguageExplorerResources.ProblemRestoringSettings)));
-				}
-			}
+			return FormatPropertyNameForLocalSettings(name, AsIPropertyTable.LocalSettingsId);
 		}
 
 		private void ReadPropertyArrayForDeserializing(Property[] list)
@@ -797,6 +689,7 @@ namespace LanguageExplorer.Impls
 
 			return list.ToArray();
 		}
-		#endregion
+
+		#endregion Private code
 	}
 }

@@ -7,7 +7,6 @@ using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel;
-using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Filters
 {
@@ -29,7 +28,7 @@ namespace LanguageExplorerTests.Filters
 			ISubscriber subscriber;
 			using (var propertyTable = TestSetupServices.SetupTestTriumvirate(out publisher, out subscriber))
 			{
-				propertyTable.SetProperty("cache", Cache, true, true);
+				propertyTable.SetProperty("cache", Cache);
 				flp.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, subscriber));
 				wsf.Cache = Cache;
 				andFilter.Add(wsf);

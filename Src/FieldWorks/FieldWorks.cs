@@ -1654,9 +1654,7 @@ namespace SIL.FieldWorks
 									var activeWindowInterface = (IFwMainWnd)activeWindow;
 									activeWindowInterface.PropertyTable.SetProperty(CommonBridgeServices.LastBridgeUsed,
 										obtainedProjectType == ObtainedProjectType.Lift ? CommonBridgeServices.LiftBridge : CommonBridgeServices.FLExBridge,
-										SettingsGroup.LocalSettings,
-										true,
-										false);
+										true, settingsGroup: SettingsGroup.LocalSettings);
 								}
 							}
 							break;
@@ -1729,8 +1727,7 @@ namespace SIL.FieldWorks
 					var activeWindowInterface = (IFwMainWnd)activeWindow;
 					activeWindowInterface.PropertyTable.SetProperty(CommonBridgeServices.LastBridgeUsed,
 						dlg.ObtainedProjectType == ObtainedProjectType.Lift ? CommonBridgeServices.LiftBridge : CommonBridgeServices.FLExBridge,
-						SettingsGroup.LocalSettings,
-						true, false);
+						true, settingsGroup: SettingsGroup.LocalSettings);
 				}
 
 				if (dlg.DialogResult != DialogResult.OK)
@@ -2673,7 +2670,7 @@ namespace SIL.FieldWorks
 					s_activeMainWnd.Publisher.Publish("MigrateOldConfigurations", null);
 				}
 				EnsureValidReversalIndexConfigFile(s_flexApp.Cache);
-				s_activeMainWnd.PropertyTable.SetProperty("AppSettings", s_appSettings, false, false);
+				s_activeMainWnd.PropertyTable.SetProperty("AppSettings", s_appSettings);
 			}
 			catch (StartupException ex)
 			{

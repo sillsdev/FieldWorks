@@ -199,7 +199,7 @@ namespace LanguageExplorer.Areas
 		{
 			if (m_cache.ServiceLocator.GetObject(reversalIndexGuid) is IReversalIndex)
 			{
-				PropertyTable.SetProperty("ReversalIndexGuid", reversalIndexGuid.ToString(), SettingsGroup.LocalSettings, true, false);
+				PropertyTable.SetProperty("ReversalIndexGuid", reversalIndexGuid.ToString(), true, settingsGroup: SettingsGroup.LocalSettings);
 			}
 		}
 
@@ -361,7 +361,7 @@ namespace LanguageExplorer.Areas
 			UpdateFiltersAndSortersIfNeeded(); // Load the index-specific sorter
 			OnChangeSorter(); // Update the column headers with sort arrows
 			OwningObject = newOwningObj; // This automatically reloads (and sorts) the list
-			PropertyTable.SetProperty("ActiveListOwningObject", newOwningObj, false, true);
+			PropertyTable.SetProperty("ActiveListOwningObject", newOwningObj, doBroadcastIfChanged: true);
 			Publisher.Publish("RecordListOwningObjChanged", this);
 			Publisher.Publish("MasterRefresh", null);
 		}

@@ -337,8 +337,8 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 		{
 			if (m_propertyTable != null)
 			{
-				m_propertyTable.SetProperty("DictionaryConfigurationDlg_Location", Location, false, true);
-				m_propertyTable.SetProperty("DictionaryConfigurationDlg_Size", Size, false, true);
+				m_propertyTable.SetProperty("DictionaryConfigurationDlg_Location", Location, doBroadcastIfChanged: true);
+				m_propertyTable.SetProperty("DictionaryConfigurationDlg_Size", Size, doBroadcastIfChanged: true);
 			}
 			base.OnClosing(e);
 		}

@@ -344,8 +344,8 @@ namespace LanguageExplorer.Impls
 		{
 			if (PropertyTable != null)
 			{
-				PropertyTable.SetProperty("UploadToWebonaryDlg_Location", Location, true, false);
-				PropertyTable.SetProperty("UploadToWebonaryDlg_Size", Size, true, false);
+				PropertyTable.SetProperty("UploadToWebonaryDlg_Location", Location, true);
+				PropertyTable.SetProperty("UploadToWebonaryDlg_Size", Size, true);
 			}
 			base.OnClosing(e);
 		}

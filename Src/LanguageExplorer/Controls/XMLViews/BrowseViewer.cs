@@ -705,10 +705,10 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			// set default property, IFF it does not exist, so it doesn't accidentally get set
 			// in OnPropertyChanged() when user right clicks for the first time (cf. LT-2789).
-			PropertyTable.SetDefault("SortedFromEnd", false, SettingsGroup.LocalSettings, true, false);
+			PropertyTable.SetDefault("SortedFromEnd", false, true);
 			// set default property, IFF it does not exist, so it doesn't accidentally get set
 			// in OnPropertyChanged() when user right clicks for the first time (cf. LT-2789).
-			PropertyTable.SetDefault("SortedByLength", false, SettingsGroup.LocalSettings, true, false);
+			PropertyTable.SetDefault("SortedByLength", false, true);
 
 			//
 			// FilterBar
@@ -1552,7 +1552,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (PropertyTable != null)
 			{
 				var propName = FormatColumnWidthPropertyName(iCol);
-				width = PropertyTable.GetValue(propName, SettingsGroup.LocalSettings, -1);
+				width = PropertyTable.GetValue(propName, -1, SettingsGroup.LocalSettings);
 			}
 			return width;
 		}
@@ -1848,7 +1848,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				var nNewWidth = m_lvHeader.ColumnsInDisplayOrder[ColumnHeaderIndex(iCol)].Width;
 				var propName = FormatColumnWidthPropertyName(iCol);
-				PropertyTable.SetProperty(propName, nNewWidth, SettingsGroup.LocalSettings, true, true);
+				PropertyTable.SetProperty(propName, nNewWidth, true, true, SettingsGroup.LocalSettings);
 			}
 		}
 
@@ -2735,7 +2735,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 			}
 			colList.Append("</root>");
-			PropertyTable.SetProperty(BrowseView.Vc.ColListId, colList.ToString(), SettingsGroup.LocalSettings, true, true);
+			PropertyTable.SetProperty(BrowseView.Vc.ColListId, colList.ToString(), true, true, SettingsGroup.LocalSettings);
 		}
 
 		/// <summary>

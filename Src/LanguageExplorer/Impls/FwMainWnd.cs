@@ -212,13 +212,13 @@ namespace LanguageExplorer.Impls
 			}
 
 			FormWindowState state;
-			if (PropertyTable.TryGetValue("windowState", SettingsGroup.GlobalSettings, out state) && state != FormWindowState.Minimized)
+			if (PropertyTable.TryGetValue("windowState", out state, SettingsGroup.GlobalSettings) && state != FormWindowState.Minimized)
 			{
 				WindowState = state;
 			}
 
 			Point persistedLocation;
-			if (PropertyTable.TryGetValue("windowLocation", SettingsGroup.GlobalSettings, out persistedLocation))
+			if (PropertyTable.TryGetValue("windowLocation", out persistedLocation, SettingsGroup.GlobalSettings))
 			{
 				Location = persistedLocation;
 				//the location restoration only works if the window startposition is set to "manual"
@@ -228,7 +228,7 @@ namespace LanguageExplorer.Impls
 			}
 
 			Size persistedSize;
-			if (!PropertyTable.TryGetValue("windowSize", SettingsGroup.GlobalSettings, out persistedSize))
+			if (!PropertyTable.TryGetValue("windowSize", out persistedSize, SettingsGroup.GlobalSettings))
 			{
 				return;
 			}
@@ -257,9 +257,9 @@ namespace LanguageExplorer.Impls
 				return;
 			}
 
-			PropertyTable.SetProperty("windowState", WindowState, SettingsGroup.GlobalSettings, true, false);
-			PropertyTable.SetProperty("windowLocation", Location, SettingsGroup.GlobalSettings, true, false);
-			PropertyTable.SetProperty("windowSize", Size, SettingsGroup.GlobalSettings, true, false);
+			PropertyTable.SetProperty("windowState", WindowState, true, settingsGroup: SettingsGroup.GlobalSettings);
+			PropertyTable.SetProperty("windowLocation", Location, true, settingsGroup: SettingsGroup.GlobalSettings);
+			PropertyTable.SetProperty("windowSize", Size, true, settingsGroup: SettingsGroup.GlobalSettings);
 		}
 
 		/// <summary>
@@ -338,8 +338,8 @@ namespace LanguageExplorer.Impls
 				_currentArea.ActiveTool = clickedTool;
 				var areaName = _currentArea.MachineName;
 				var toolName = _currentTool.MachineName;
-				PropertyTable.SetProperty($"{AreaServices.ToolForAreaNamed_}{areaName}", toolName, SettingsGroup.LocalSettings, true, false);
-				PropertyTable.SetProperty(AreaServices.ToolChoice, _currentTool.MachineName, SettingsGroup.LocalSettings, true, false);
+				PropertyTable.SetProperty($"{AreaServices.ToolForAreaNamed_}{areaName}", toolName, true, settingsGroup: SettingsGroup.LocalSettings);
+				PropertyTable.SetProperty(AreaServices.ToolChoice, _currentTool.MachineName, true, settingsGroup: SettingsGroup.LocalSettings);
 
 				// Do some logging.
 				Logger.WriteEvent("Switched to " + _currentTool.MachineName);
@@ -379,7 +379,7 @@ namespace LanguageExplorer.Impls
 					_currentArea.ActiveTool = null;
 				}
 				_currentArea = clickedArea;
-				PropertyTable.SetProperty(AreaServices.AreaChoice, _currentArea.MachineName, SettingsGroup.LocalSettings, true, false);
+				PropertyTable.SetProperty(AreaServices.AreaChoice, _currentArea.MachineName, true, settingsGroup: SettingsGroup.LocalSettings);
 				_currentArea.Activate(_majorFlexComponentParameters);
 			}
 		}
@@ -421,25 +421,25 @@ namespace LanguageExplorer.Impls
 		private void SetDefaultProperties()
 		{
 			// "UseVernSpellingDictionary" Controls checking the global Tools->Spelling->Show Vernacular Spelling Errors menu.
-			PropertyTable.SetDefault("UseVernSpellingDictionary", true, SettingsGroup.GlobalSettings, true, false);
+			PropertyTable.SetDefault("UseVernSpellingDictionary", true, true, settingsGroup: SettingsGroup.GlobalSettings);
 			// This "PropertyTableVersion" property will control the beahvior of the "ConvertOldPropertiesToNewIfPresent" method.
-			PropertyTable.SetDefault("PropertyTableVersion", int.MinValue, SettingsGroup.GlobalSettings, true, false);
+			PropertyTable.SetDefault("PropertyTableVersion", int.MinValue, true, settingsGroup: SettingsGroup.GlobalSettings);
 			// This is the splitter distance for the sidebar/secondary splitter pair of controls.
-			PropertyTable.SetDefault("SidebarWidthGlobal", 140, SettingsGroup.GlobalSettings, true, false);
+			PropertyTable.SetDefault("SidebarWidthGlobal", 140, true, settingsGroup: SettingsGroup.GlobalSettings);
 			// This is the splitter distance for the record list/main content pair of controls.
-			PropertyTable.SetDefault("RecordListWidthGlobal", 200, SettingsGroup.GlobalSettings, true, false);
+			PropertyTable.SetDefault("RecordListWidthGlobal", 200, true, settingsGroup: SettingsGroup.GlobalSettings);
 
-			PropertyTable.SetDefault(AreaServices.InitialArea, AreaServices.InitialAreaMachineName, SettingsGroup.LocalSettings, true, false);
+			PropertyTable.SetDefault(AreaServices.InitialArea, AreaServices.InitialAreaMachineName, true);
 			// Set these properties so they don't get set the first time they're accessed in a browse view menu. (cf. LT-2789)
-			PropertyTable.SetDefault("SortedFromEnd", false, SettingsGroup.LocalSettings, true, false);
-			PropertyTable.SetDefault("SortedByLength", false, SettingsGroup.LocalSettings, true, false);
-			PropertyTable.SetDefault("CurrentToolbarVersion", 1, SettingsGroup.GlobalSettings, true, false);
-			PropertyTable.SetDefault("SuspendLoadingRecordUntilOnJumpToRecord", string.Empty, SettingsGroup.LocalSettings, false, false);
+			PropertyTable.SetDefault("SortedFromEnd", false, true);
+			PropertyTable.SetDefault("SortedByLength", false, true);
+			PropertyTable.SetDefault("CurrentToolbarVersion", 1, true, settingsGroup: SettingsGroup.GlobalSettings);
+			PropertyTable.SetDefault("SuspendLoadingRecordUntilOnJumpToRecord", string.Empty);
 			// This property can be used to set the settingsGroup for context dependent properties. No need to persist it.
-			PropertyTable.SetDefault("SliceSplitterBaseDistance", -1, SettingsGroup.LocalSettings, false, false);
+			PropertyTable.SetDefault("SliceSplitterBaseDistance", -1);
 			// Common to several tools in various areas, so set them here.
-			PropertyTable.SetDefault("AllowInsertLinkToFile", false, SettingsGroup.LocalSettings, false, false);
-			PropertyTable.SetDefault("AllowShowNormalFields", false, SettingsGroup.LocalSettings, false, false);
+			PropertyTable.SetDefault("AllowInsertLinkToFile", false);
+			PropertyTable.SetDefault("AllowShowNormalFields", false);
 		}
 
 		private void RemoveObsoleteProperties()
@@ -470,12 +470,12 @@ namespace LanguageExplorer.Impls
 		{
 			_temporaryPropertyNames.Clear();
 			// Not persisted, but needed at runtime.
-			PropertyTable.SetProperty("window", this, SettingsGroup.BestSettings, false, false);
-			PropertyTable.SetProperty("App", _flexApp, SettingsGroup.BestSettings, false, false);
-			PropertyTable.SetProperty("cache", Cache, SettingsGroup.BestSettings, false, false);
-			PropertyTable.SetProperty("HelpTopicProvider", _flexApp, SettingsGroup.BestSettings, false, false);
-			PropertyTable.SetProperty("FlexStyleSheet", _stylesheet, SettingsGroup.BestSettings, false, false);
-			PropertyTable.SetProperty("LinkHandler", _linkHandler, SettingsGroup.BestSettings, false, false);
+			PropertyTable.SetProperty("window", this);
+			PropertyTable.SetProperty("App", _flexApp);
+			PropertyTable.SetProperty("cache", Cache);
+			PropertyTable.SetProperty("HelpTopicProvider", _flexApp);
+			PropertyTable.SetProperty("FlexStyleSheet", _stylesheet);
+			PropertyTable.SetProperty("LinkHandler", _linkHandler);
 			_temporaryPropertyNames.AddRange(new[] { "window", "App", "cache", "HelpTopicProvider", "FlexStyleSheet", "LinkHandler" });
 		}
 		private readonly HashSet<string> _temporaryPropertyNames = new HashSet<string>();
@@ -552,7 +552,7 @@ namespace LanguageExplorer.Impls
 			//then switches to the normal state, we would be switching to a bizarre size.
 			if (WindowState == FormWindowState.Normal)
 			{
-				PropertyTable.SetProperty("windowSize", Size, SettingsGroup.GlobalSettings, true, false);
+				PropertyTable.SetProperty("windowSize", Size, true, settingsGroup: SettingsGroup.GlobalSettings);
 			}
 		}
 
@@ -569,7 +569,7 @@ namespace LanguageExplorer.Impls
 			//then switches to the normal state, we would be switching to 0,0 or something.
 			if (WindowState == FormWindowState.Normal)
 			{
-				PropertyTable.SetProperty("windowLocation", Location, SettingsGroup.GlobalSettings, true, false);
+				PropertyTable.SetProperty("windowLocation", Location, true, settingsGroup: SettingsGroup.GlobalSettings);
 			}
 		}
 
@@ -706,7 +706,7 @@ namespace LanguageExplorer.Impls
 			_majorFlexComponentParameters = new MajorFlexComponentParameters(mainContainer, _menuStrip, toolStripContainer, _statusbar,
 				_parserMenuManager, _dataNavigationManager, _recordListRepositoryForTools, flexComponentParameters,
 				Cache, _flexApp, this, _sidePane);
-			_propertyTable.SetProperty("MajorFlexComponentParameters", _majorFlexComponentParameters, SettingsGroup.GlobalSettings, false, false);
+			_propertyTable.SetProperty("MajorFlexComponentParameters", _majorFlexComponentParameters, settingsGroup: SettingsGroup.GlobalSettings);
 
 			RecordListServices.Setup(_majorFlexComponentParameters);
 
@@ -2207,7 +2207,7 @@ very simple minor adjustments. ;)"
 				WfiWordformServices.DisableVernacularSpellingDictionary(Cache);
 			}
 			showVernacularSpellingErrorsToolStripMenuItem.Checked = checking;
-			_propertyTable.SetProperty("UseVernSpellingDictionary", checking, true, false);
+			_propertyTable.SetProperty("UseVernSpellingDictionary", checking, true);
 			RestartSpellChecking();
 		}
 

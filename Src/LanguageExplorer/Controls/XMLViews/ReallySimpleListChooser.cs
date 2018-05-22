@@ -150,6 +150,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		/// <param name="persistProvider">The persist provider.</param>
 		/// <param name="labels">The labels.</param>
+		/// <param name="currentObj"></param>
 		/// <param name="fieldName">the user-readable name of the field that is being edited</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		public ReallySimpleListChooser(IPersistenceProvider persistProvider, IHelpTopicProvider helpTopicProvider, IEnumerable<ObjectLabel> labels, ICmObject currentObj, string fieldName)
@@ -282,9 +283,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// constructor for use with adding a new value
 		/// </summary>
-		/// <param name="persistProvider">The persist provider.</param
+		/// <param name="persistProvider">The persist provider.</param>
 		/// <param name="labels">The labels.</param>
-		/// <param name="fieldName">the user-readable name of the field that is being edited</param
+		/// <param name="fieldName">the user-readable name of the field that is being edited</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		public ReallySimpleListChooser(IPersistenceProvider persistProvider, IEnumerable<ObjectLabel> labels, string fieldName, IHelpTopicProvider helpTopicProvider)
 			: this(persistProvider, labels, fieldName, null, helpTopicProvider)

@@ -360,7 +360,7 @@ namespace LanguageExplorer
 						}
 						_activeMenuBarFilter = menuBarFilterOption;
 						_filterProvider.OnAdjustFilterSelection(_activeMenuBarFilter);
-						PropertyTable.SetDefault(CurrentFilterPropertyTableId, _activeMenuBarFilter.id, SettingsGroup.LocalSettings, false, false);
+						PropertyTable.SetDefault(CurrentFilterPropertyTableId, _activeMenuBarFilter.id);
 						setFilterMenu = true;
 						break;
 					}
@@ -941,7 +941,7 @@ namespace LanguageExplorer
 				// if our record list is in the state of suspending loading the list, reset it now.
 				if (SuspendLoadListUntilOnChangeFilter)
 				{
-					PropertyTable.SetProperty("SuspendLoadListUntilOnChangeFilter", string.Empty, SettingsGroup.LocalSettings, false, false);
+					PropertyTable.SetProperty("SuspendLoadListUntilOnChangeFilter", string.Empty, settingsGroup: SettingsGroup.LocalSettings);
 				}
 
 				if (m_filter == null)
@@ -998,7 +998,7 @@ namespace LanguageExplorer
 
 				// Remember the active filter for this list.
 				var persistFilter = DynamicLoader.PersistObject(Filter, "filter");
-				PropertyTable.SetProperty(FilterPropertyTableId, persistFilter, SettingsGroup.LocalSettings, true, true);
+				PropertyTable.SetProperty(FilterPropertyTableId, persistFilter, true, true, SettingsGroup.LocalSettings);
 				// adjust menu bar items according to current state of Filter, where needed.
 				Publisher.Publish("AdjustFilterSelection", Filter);
 				UpdateFilterStatusBarPanel();
@@ -1318,12 +1318,12 @@ namespace LanguageExplorer
 			_isDefaultSort = isDefaultSort;
 
 			SortName = sortName;
-			PropertyTable.SetProperty(SortNamePropertyTableId, SortName, SettingsGroup.LocalSettings, true, true);
+			PropertyTable.SetProperty(SortNamePropertyTableId, SortName, true, true, SettingsGroup.LocalSettings);
 
 			ChangeSorter(sorter);
 			// Remember how we're sorted.
 			var persistSorter = DynamicLoader.PersistObject(Sorter, "sorter");
-			PropertyTable.SetProperty(SorterPropertyTableId, persistSorter, SettingsGroup.LocalSettings, true, true);
+			PropertyTable.SetProperty(SorterPropertyTableId, persistSorter, true, true, SettingsGroup.LocalSettings);
 
 			UpdateSortStatusBarPanel();
 		}
@@ -1501,7 +1501,7 @@ namespace LanguageExplorer
 			var rni = new RecordNavigationInfo(this, _suppressSaveOnChangeRecord/* || FwXWindow.InUndoRedo*/, SkipShowRecord, suppressFocusChange);
 
 			// As of 21JUL17 nobody cares about that 'propName' changing, so skip the broadcast.
-			PropertyTable.SetProperty(PersistedIndexProperty, CurrentIndex, SettingsGroup.LocalSettings, true, false);
+			PropertyTable.SetProperty(PersistedIndexProperty, CurrentIndex, true, settingsGroup: SettingsGroup.LocalSettings);
 
 			UpdateSelectionForRecordBar();
 
@@ -2294,7 +2294,7 @@ namespace LanguageExplorer
 		/// </summary>
 		private int GetPersistedCurrentIndex(int numberOfObjectsInList)
 		{
-			var persistedCurrentIndex = PropertyTable.GetValue(PersistedIndexProperty, SettingsGroup.LocalSettings, 0);
+			var persistedCurrentIndex = PropertyTable.GetValue(PersistedIndexProperty, 0, SettingsGroup.LocalSettings);
 			if (persistedCurrentIndex >= numberOfObjectsInList)
 			{
 				persistedCurrentIndex = numberOfObjectsInList - 1;
@@ -2516,7 +2516,7 @@ namespace LanguageExplorer
 		/// </summary>
 		private void OnChangeFilterToCheckedListPropertyChoice()
 		{
-			var filterName = PropertyTable.GetValue(CurrentFilterPropertyTableId, SettingsGroup.LocalSettings, string.Empty);
+			var filterName = PropertyTable.GetValue(CurrentFilterPropertyTableId, string.Empty, SettingsGroup.LocalSettings);
 			RecordFilter addf = null;
 			RecordFilter remf = null;
 			var nof = new NoFilters();
@@ -2738,13 +2738,13 @@ namespace LanguageExplorer
 			if (_activeMenuBarFilter == null && Filter != null)
 			{
 				// Resetting the table property value to "Uncheck all" will effectively uncheck this item.
-				PropertyTable.SetProperty(CurrentFilterPropertyTableId, FiltersStrings.ksUncheckAll, SettingsGroup.LocalSettings, true, false);
+				PropertyTable.SetProperty(CurrentFilterPropertyTableId, FiltersStrings.ksUncheckAll, true, settingsGroup: SettingsGroup.LocalSettings);
 			}
 			// if no filter is set, then we always want the "No Filter" item selected.
 			else if (Filter == null)
 			{
 				// Resetting the table property value to "No Filter" checks this item.
-				PropertyTable.SetProperty(CurrentFilterPropertyTableId, FiltersStrings.ksNoFilter, SettingsGroup.LocalSettings, true, false);
+				PropertyTable.SetProperty(CurrentFilterPropertyTableId, FiltersStrings.ksNoFilter, true, settingsGroup: SettingsGroup.LocalSettings);
 			}
 		}
 
@@ -2819,7 +2819,7 @@ namespace LanguageExplorer
 		{
 			get
 			{
-				var toolNameThatExpectsTheSuspend = PropertyTable.GetValue("SuspendLoadListUntilOnChangeFilter", SettingsGroup.LocalSettings, string.Empty);
+				var toolNameThatExpectsTheSuspend = PropertyTable.GetValue("SuspendLoadListUntilOnChangeFilter", string.Empty, SettingsGroup.LocalSettings);
 				return !string.IsNullOrEmpty(toolNameThatExpectsTheSuspend) && toolNameThatExpectsTheSuspend == PropertyTable.GetValue<string>(AreaServices.ToolChoice);
 			}
 		}
@@ -2914,7 +2914,7 @@ namespace LanguageExplorer
 		{
 			SortName = PropertyTable.GetValue<string>(SortNamePropertyTableId, SettingsGroup.LocalSettings);
 
-			var persistSorter = PropertyTable.GetValue<string>(SorterPropertyTableId, SettingsGroup.LocalSettings, null);
+			var persistSorter = PropertyTable.GetValue<string>(SorterPropertyTableId, null, SettingsGroup.LocalSettings);
 			if (Sorter != null)
 			{
 				// if the persisted object string of the existing sorter matches the one in the property table
@@ -3481,7 +3481,7 @@ namespace LanguageExplorer
 			// if we haven't already set an index, see if we can restore one from the property table.
 			if (SortedObjects.Count > 0 && (newCurrentIndex == -1 || m_hvoCurrent == 0))
 			{
-				newCurrentIndex = PropertyTable.GetValue(PersistedIndexProperty, SettingsGroup.LocalSettings, 0);
+				newCurrentIndex = PropertyTable.GetValue(PersistedIndexProperty, 0, SettingsGroup.LocalSettings);
 			}
 			// Ensure the index is in bounds.  See LT-10349.
 			if (SortedObjects.Count > 0)
@@ -3631,7 +3631,7 @@ namespace LanguageExplorer
 #if RANDYTODO
 // As of 21JUL17 nobody cares about that 'PersistedIndexProperty' changing, so skip the broadcast.
 #endif
-						PropertyTable.SetProperty(PersistedIndexProperty, m_indexToRestoreDuringReload, SettingsGroup.LocalSettings, true, false);
+						PropertyTable.SetProperty(PersistedIndexProperty, m_indexToRestoreDuringReload, true, settingsGroup: SettingsGroup.LocalSettings);
 						m_indexToRestoreDuringReload = -1;
 					}
 					UpdateHelper.ClearBrowseListUntilReload = false;
@@ -4081,7 +4081,7 @@ namespace LanguageExplorer
 
 			private void FilterMenuClickedCommon(string newPropertyValue)
 			{
-				_recordList.PropertyTable.SetProperty(_recordList.CurrentFilterPropertyTableId, newPropertyValue, SettingsGroup.LocalSettings, true, false);
+				_recordList.PropertyTable.SetProperty(_recordList.CurrentFilterPropertyTableId, newPropertyValue, true, settingsGroup: SettingsGroup.LocalSettings);
 				_recordList.OnChangeFilterToCheckedListPropertyChoice();
 			}
 

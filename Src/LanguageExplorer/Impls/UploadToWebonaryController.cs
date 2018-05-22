@@ -364,7 +364,7 @@ namespace LanguageExplorer.Impls
 				{
 					if (!string.IsNullOrEmpty(m_currentPublication))
 					{
-						m_propertyTable.SetProperty("SelectedPublication", m_currentPublication, false, true);
+						m_propertyTable.SetProperty("SelectedPublication", m_currentPublication, doBroadcastIfChanged: true);
 					}
 				}
 			}
@@ -379,7 +379,7 @@ namespace LanguageExplorer.Impls
 			{
 				// Don't publish the property change: doing so may refresh the Dictionary (or Reversal) preview in the main window;
 				// we want to activate the Publication for export purposes only.
-				m_propertyTable.SetProperty("SelectedPublication", publication, false, true);
+				m_propertyTable.SetProperty("SelectedPublication", publication, doBroadcastIfChanged: true);
 			}
 		}
 	}

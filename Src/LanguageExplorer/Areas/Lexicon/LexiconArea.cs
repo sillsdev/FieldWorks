@@ -69,7 +69,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_propertyTable.SetDefault(PropertyNameForToolName, AreaServices.LexiconAreaDefaultToolMachineName, SettingsGroup.LocalSettings, true, false);
+			_propertyTable.SetDefault(PropertyNameForToolName, AreaServices.LexiconAreaDefaultToolMachineName, true);
 			if (!_hasBeenActivated)
 			{
 				// Restore HomographConfiguration settings.
@@ -79,12 +79,12 @@ namespace LanguageExplorer.Areas.Lexicon
 					var serviceLocator = majorFlexComponentParameters.LcmCache.ServiceLocator;
 					var hc = serviceLocator.GetInstance<HomographConfiguration>();
 					hc.PersistData = hcSettings;
-					_propertyTable.SetDefault("SelectedPublication", "Main Dictionary", SettingsGroup.LocalSettings, true, true);
+					_propertyTable.SetDefault("SelectedPublication", "Main Dictionary", true, true);
 				}
 				_hasBeenActivated = true;
 			}
-			_propertyTable.SetDefault(LexiconEditToolConstants.Show_DictionaryPubPreview, true, SettingsGroup.LocalSettings, true, false);
-			_propertyTable.SetDefault("Show_reversalIndexEntryList", true, SettingsGroup.LocalSettings, false, false);
+			_propertyTable.SetDefault(LexiconEditToolConstants.Show_DictionaryPubPreview, true, true);
+			_propertyTable.SetDefault("Show_reversalIndexEntryList", true);
 		}
 
 		/// <summary>
@@ -109,11 +109,11 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// </summary>
 		public void EnsurePropertiesAreCurrent()
 		{
-			_propertyTable.SetProperty(AreaServices.InitialArea, MachineName, SettingsGroup.LocalSettings, true, false);
+			_propertyTable.SetProperty(AreaServices.InitialArea, MachineName, true, settingsGroup: SettingsGroup.LocalSettings);
 
 			var serviceLocator = _propertyTable.GetValue<LcmCache>("cache").ServiceLocator;
 			var hc = serviceLocator.GetInstance<HomographConfiguration>();
-			_propertyTable.SetProperty(khomographconfiguration, hc.PersistData, true, false);
+			_propertyTable.SetProperty(khomographconfiguration, hc.PersistData, true);
 
 			PersistedOrDefaultTool.EnsurePropertiesAreCurrent();
 		}
