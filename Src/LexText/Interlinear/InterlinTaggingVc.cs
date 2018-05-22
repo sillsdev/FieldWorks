@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using SIL.Collections;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -22,7 +23,7 @@ namespace SIL.FieldWorks.IText
 		private ITsString m_emptyAnalysisStr;
 		private ITextTagRepository m_tagRepo;
 
-		private Dictionary<Tuple<ISegment, int>, ITsString> m_tagStrings; // Cache tag strings by ISegment and index
+		private Dictionary<Tuple<ISegment, int>, ITsString[]> m_tagStrings; // Cache tag strings by ISegment and index
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="InterlinTaggingVc"/> class.
@@ -37,7 +38,7 @@ namespace SIL.FieldWorks.IText
 			SetAnalysisRightToLeft();
 			m_emptyAnalysisStr = TsStringUtils.EmptyString(m_cache.DefaultAnalWs);
 			m_tagRepo = m_cache.ServiceLocator.GetInstance<ITextTagRepository>();
-			m_tagStrings = new Dictionary<Tuple<ISegment, int>, ITsString>();
+			m_tagStrings = new Dictionary<Tuple<ISegment, int>, ITsString[]>();
 		}
 
 		private static Tuple<ISegment, int> GetDictKey(AnalysisOccurrence point)
@@ -136,9 +137,33 @@ namespace SIL.FieldWorks.IText
 				if (i == cwordArray - 1) // Last occurrence for this tag.
 					EndTagSetup(strBldr);
 				var key = GetDictKey(current);
+				var markupTags = (ICmPossibilityList) tagPossibility.Owner.Owner;
+				int possibilityCount = markupTags.PossibilitiesOS.Count;
+				int row = tagPossibility.Owner.IndexInOwner;
+				ITsString[] myList;
 				if (m_tagStrings.ContainsKey(key))
+				{
+					int currentLength = m_tagStrings[key].Length;
+					if (currentLength < possibilityCount)
+					{
+						myList = new ITsString[row >= currentLength ? row + 1 : currentLength];
+						for (int j = 0; j < currentLength; j++)
+						{
+							myList[j] = m_tagStrings[key][j];
+						}
+					}
+					else
+					{
+						myList = m_tagStrings[key];
+					}
 					m_tagStrings.Remove(key);
-				m_tagStrings[key] = strBldr.GetString();
+				}
+				else
+				{
+					myList = new ITsString[row + 1];
+				}
+				myList[row] = strBldr.GetString();
+				m_tagStrings.Add(key, myList);
 			}
 		}
 
@@ -209,7 +234,6 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// Caches an empty label for each occurrence that a tag appliesTo in preparation for deletion.
 		/// </summary>
-		/// <param name="occurrencesToApply"></param>
 		internal void CacheNullTagString(IEnumerable<AnalysisOccurrence> occurrencesToApply)
 		{
 			if (occurrencesToApply == null)
@@ -218,15 +242,47 @@ namespace SIL.FieldWorks.IText
 			{
 				var key = GetDictKey(occurrence);
 				if (m_tagStrings.ContainsKey(key))
+				{
 					m_tagStrings.Remove(key);
-				m_tagStrings[key] = m_emptyAnalysisStr;
+				}
+				ITsString[] tagList = new ITsString[0];
+				m_tagStrings.Add(key, tagList);
+
+			}
+		}
+
+		/// <summary>
+		/// Clears a specific row's Tag String Data for the given occurrences
+		/// </summary>
+		internal void ClearTagStringForRow(IEnumerable<AnalysisOccurrence> occurrencesToApply, int row)
+		{
+			if (occurrencesToApply == null)
+				return;
+			foreach (var occurrence in occurrencesToApply)
+			{
+				var key = GetDictKey(occurrence);
+				m_tagStrings[key][row] = m_emptyAnalysisStr;
+				if (m_tagStrings[key].Length == row + 1)
+				{
+					ITsString[] tagList = new ITsString[row];
+					for (int i = 0; i < tagList.Length; i++)
+					{
+						tagList[i] = m_tagStrings[key][i];
+					}
+
+					m_tagStrings[key] = tagList;
+				}
 			}
 		}
 
 		internal override void LoadDataForSegments(int[] rghvo, int hvoPara)
 		{
 			base.LoadDataForSegments(rghvo, hvoPara);
-			LoadDataForTextTags(rghvo[0]); // seems to only ever have one element anyway!
+			foreach (int hvo in rghvo)
+			{
+				LoadDataForTextTags(hvo);
+			}
+			//LoadDataForTextTags(rghvo[0]); // seems to only ever have one element anyway!
 		}
 
 		/// <summary>
@@ -234,7 +290,7 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		internal override void AddExtraBundleRows(IVwEnv vwenv, AnalysisOccurrence analysis)
 		{
-			ITsString tss;
+			ITsString[] tss;
 			var key = GetDictKey(analysis);
 			if (m_tagStrings.TryGetValue(key, out tss))
 			{
@@ -242,8 +298,15 @@ namespace SIL.FieldWorks.IText
 				// If either the Segment's analyses sequence or the tags on the text change, we want to redraw this
 				vwenv.NoteDependency(new [] { analysis.Segment.Hvo, stText.Hvo },
 					new [] { SegmentTags.kflidAnalyses, StTextTags.kflidTags }, 2);
-				SetTrailingAlignmentIfNeeded(vwenv, tss);
-				vwenv.AddString(tss);
+				for (int i = 0; i < tss.Length; i++)
+				{
+					if (tss[i] == null)
+					{
+						tss[i] = m_emptyAnalysisStr;
+					}
+					SetTrailingAlignmentIfNeeded(vwenv, tss[i]);
+					vwenv.AddString(tss[i]);
+				}
 			}
 		}
 

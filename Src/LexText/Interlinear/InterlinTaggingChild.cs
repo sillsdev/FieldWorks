@@ -537,7 +537,17 @@ namespace SIL.FieldWorks.IText
 			// Just get it from SelectedWordforms.
 			// Delete ones that point at selected ones already
 			// (before we add the new one or it gets deleted too!)
-			ISet<ITextTag> objsToDelete = FindAllTagsReferencingOccurrenceList(SelectedWordforms);
+			ISet<ITextTag> overlappingTags = FindAllTagsReferencingOccurrenceList(SelectedWordforms);
+			ISet<ITextTag> objsToDelete = new HashSet<ITextTag>();
+			int tagRow = tagPoss.Owner.IndexInOwner;
+			foreach (ITextTag overlappingTag in overlappingTags)
+			{
+				int overlappingTagRow = overlappingTag.TagRA.Owner.IndexInOwner;
+				if (tagRow == overlappingTagRow)
+				{
+					objsToDelete.Add(overlappingTag);
+				}
+			}
 
 			// Create and add the new one
 			var ttag = m_tagFact.Create();
@@ -592,7 +602,9 @@ namespace SIL.FieldWorks.IText
 		protected virtual void CacheNullTagString(ITextTag textTag)
 		{
 			// Cache a string for each occurrence this tag references. (PropChanged?)
-			(m_vc as InterlinTaggingVc).CacheNullTagString(textTag.GetOccurrences());
+
+			int row = textTag.TagRA.Owner.IndexInOwner;
+			(m_vc as InterlinTaggingVc).ClearTagStringForRow(textTag.GetOccurrences(), row);
 		}
 
 		/// <summary>
