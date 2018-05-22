@@ -86,6 +86,7 @@ namespace SIL.FieldWorks.IText
 		internal const int kfragSegFfChoices = 1005000;
 		// Constants used to identify 'fake' properties to DisplayVariant.
 		internal const int ktagGlossAppend = -50;
+		internal const int ktagGlossPrepend = -49;
 		//internal const int ktagAnalysisMissing = -51;
 		//internal const int ktagSummary = -52;
 		internal const int ktagBundleMissingSense = -53;
@@ -125,6 +126,7 @@ namespace SIL.FieldWorks.IText
 		private ITsString m_tssMissingVernacular; // A string in a Vernacular WS is missing
 		private ITsString m_tssMissingAnalysis; // A string in an Analysis WS is missing
 		private ITsString m_tssMissingGlossAppend;
+		private ITsString m_tssMissingGlossPrepend;
 		private ITsString m_tssEmptyAnalysis;  // Shown on analysis language lines when we want nothing at all to appear.
 		private ITsString m_tssEmptyVern;
 		private ITsString m_tssEmptyPara;
@@ -174,6 +176,7 @@ namespace SIL.FieldWorks.IText
 			m_selfFlid = m_cache.MetaDataCacheAccessor.GetFieldId2(CmObjectTags.kClassId, "Self", false);
 			m_tssMissingAnalysis = TsStringUtils.MakeString(ITextStrings.ksStars, m_wsAnalysis);
 			m_tssMissingGlossAppend = TsStringUtils.MakeString(MorphServices.kDefaultSeparatorLexEntryInflTypeGlossAffix + ITextStrings.ksStars, m_wsAnalysis);
+			m_tssMissingGlossPrepend = TsStringUtils.MakeString("", m_wsAnalysis);
 			m_tssEmptyAnalysis = TsStringUtils.EmptyString(m_wsAnalysis);
 			m_tssMissingVernacular = TsStringUtils.MakeString(ITextStrings.ksStars, cache.DefaultVernWs);
 			m_WsList = new WsListManager(m_cache);
@@ -286,6 +289,7 @@ namespace SIL.FieldWorks.IText
 			m_tssMissingVernacular = null;
 			m_tssMissingAnalysis = null;
 			m_tssMissingGlossAppend = null;
+			m_tssMissingGlossPrepend = null;
 			m_tssEmptyAnalysis = null;
 			m_tssEmptyVern = null;
 			m_tssEmptyPara = null;
@@ -1506,8 +1510,24 @@ namespace SIL.FieldWorks.IText
 							if (sbPrepend.Text != null)
 								tssPrepend = sbPrepend.GetString();
 						}
-						if (tssPrepend != null)
-							vwenv.AddString(tssPrepend);
+						{
+							// Use AddProp/DisplayVariant to store GlossAppend with m_tssPendingGlossAffix
+							// this allows InterlinearExporter to know to export a glsAppend item
+							try
+							{
+								if (tssPrepend != null)
+								{
+									m_tssPendingGlossAffix = tssPrepend;
+									vwenv.AddProp(ktagGlossPrepend, this, 0);
+								}
+								else
+									m_tssPendingGlossAffix = m_tssMissingGlossPrepend;
+							}
+							finally
+							{
+								m_tssPendingGlossAffix = null;
+							}
+						}
 						vwenv.CloseParagraph();
 						vwenv.CloseInnerPile();
 					}
@@ -1545,11 +1565,12 @@ namespace SIL.FieldWorks.IText
 							try
 							{
 								if (tssAppend != null)
+								{
 									m_tssPendingGlossAffix = tssAppend;
+									vwenv.AddProp(ktagGlossAppend, this, 0);
+								}
 								else
 									m_tssPendingGlossAffix = m_tssMissingGlossAppend;
-
-								vwenv.AddProp(ktagGlossAppend, this, 0);
 							}
 							finally
 							{
@@ -2070,7 +2091,7 @@ namespace SIL.FieldWorks.IText
 				bldr.SetIntPropValues(0, 1, (int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, frag);
 				return bldr.GetString();
 			}
-			if (tag == ktagGlossAppend)
+			if (tag == ktagGlossAppend || tag == ktagGlossPrepend)
 			{
 				// not really a variant, per se. rather a kludge so InterlinearExport will export glsAppend item.
 				return m_tssPendingGlossAffix;
