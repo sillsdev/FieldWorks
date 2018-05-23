@@ -25,6 +25,7 @@
     <WarningLevel>4</WarningLevel>
     <NoWarn>67</NoWarn>
     <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>6</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -36,7 +37,8 @@
     <WarningLevel>4</WarningLevel>
     <NoWarn>67</NoWarn>
     <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>  
+    <LangVersion>6</LangVersion>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
@@ -48,6 +50,7 @@
     <WarningLevel>4</WarningLevel>
     <NoWarn>67</NoWarn>
     <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>6</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -59,6 +62,7 @@
     <WarningLevel>4</WarningLevel>
     <NoWarn>67</NoWarn>
     <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>6</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <NoWin32Manifest>true</NoWin32Manifest>
