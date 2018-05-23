@@ -181,47 +181,42 @@ namespace LanguageExplorer.Areas
 			return cellId;
 		}
 
-		public object GetContext(SelectionHelper sel)
-		{
-			return ToContextObject(GetCell(sel));
-		}
-
-		public object GetContext(SelectionHelper sel, SelectionHelper.SelLimitType limit)
+		object IPatternControl.GetContext(SelectionHelper sel, SelectionHelper.SelLimitType limit)
 		{
 			return ToContextObject(GetCell(sel, limit));
 		}
 
-		public object GetItem(SelectionHelper sel, SelectionHelper.SelLimitType limit)
+		object IPatternControl.GetItem(SelectionHelper sel, SelectionHelper.SelLimitType limit)
 		{
 			return GetCmObject(sel, limit);
 		}
 
-		public int GetItemContextIndex(object ctxt, object obj)
+		int IPatternControl.GetItemContextIndex(object ctxt, object obj)
 		{
 			return GetItemCellIndex(ToCellId(ctxt), (ICmObject) obj);
 		}
 
-		public SelLevInfo[] GetLevelInfo(object ctxt, int index)
+		SelLevInfo[] IPatternControl.GetLevelInfo(object ctxt, int index)
 		{
 			return GetLevelInfo(ToCellId(ctxt), index);
 		}
 
-		public int GetContextCount(object ctxt)
+		int IPatternControl.GetContextCount(object ctxt)
 		{
 			return GetCellCount(ToCellId(ctxt));
 		}
 
-		public object GetNextContext(object ctxt)
+		object IPatternControl.GetNextContext(object ctxt)
 		{
 			return ToContextObject(GetNextCell(ToCellId(ctxt)));
 		}
 
-		public object GetPrevContext(object ctxt)
+		object IPatternControl.GetPrevContext(object ctxt)
 		{
 			return ToContextObject(GetPrevCell(ToCellId(ctxt)));
 		}
 
-		public int GetFlid(object ctxt)
+		int IPatternControl.GetFlid(object ctxt)
 		{
 			return GetFlid(ToCellId(ctxt));
 		}

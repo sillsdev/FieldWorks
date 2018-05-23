@@ -12,12 +12,7 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Gets the currently selected context.
 		/// </summary>
-		object GetContext(SelectionHelper sel);
-
-		/// <summary>
-		/// Gets the currently selected context.
-		/// </summary>
-		object GetContext(SelectionHelper sel, SelectionHelper.SelLimitType limit);
+		object GetContext(SelectionHelper sel, SelectionHelper.SelLimitType limit = SelectionHelper.SelLimitType.Anchor);
 
 		/// <summary>
 		/// Gets the currently selected item.

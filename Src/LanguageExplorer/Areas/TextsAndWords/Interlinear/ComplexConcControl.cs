@@ -816,28 +816,23 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public bool IsFocusedPane { get; set; }
 
-		public object GetContext(SelectionHelper sel)
-		{
-			return GetContext(sel, SelectionHelper.SelLimitType.Anchor);
-		}
-
-		public object GetContext(SelectionHelper sel, SelectionHelper.SelLimitType limit)
+		object IPatternControl.GetContext(SelectionHelper sel, SelectionHelper.SelLimitType limit)
 		{
 			var node = GetNode(sel, limit);
 			return node?.Parent;
 		}
 
-		public object GetItem(SelectionHelper sel, SelectionHelper.SelLimitType limit)
+		object IPatternControl.GetItem(SelectionHelper sel, SelectionHelper.SelLimitType limit)
 		{
 			return GetNode(sel, limit);
 		}
 
-		public int GetItemContextIndex(object ctxt, object obj)
+		int IPatternControl.GetItemContextIndex(object ctxt, object obj)
 		{
 			return GetNodeIndex((ComplexConcPatternNode) obj);
 		}
 
-		public SelLevInfo[] GetLevelInfo(object ctxt, int cellIndex)
+		SelLevInfo[] IPatternControl.GetLevelInfo(object ctxt, int cellIndex)
 		{
 			if (PatternModel.Root.IsLeaf)
 			{
@@ -855,22 +850,22 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return levels.ToArray();
 		}
 
-		public int GetContextCount(object ctxt)
+		int IPatternControl.GetContextCount(object ctxt)
 		{
 			return ((ComplexConcPatternNode) ctxt).Children.Count;
 		}
 
-		public object GetNextContext(object ctxt)
+		object IPatternControl.GetNextContext(object ctxt)
 		{
 			return null;
 		}
 
-		public object GetPrevContext(object ctxt)
+		object IPatternControl.GetPrevContext(object ctxt)
 		{
 			return null;
 		}
 
-		public int GetFlid(object ctxt)
+		int IPatternControl.GetFlid(object ctxt)
 		{
 			return -1;
 		}
