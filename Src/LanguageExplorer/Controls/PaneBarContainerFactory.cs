@@ -18,11 +18,12 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
 		/// <param name="mainCollapsingSplitContainer">Put the new PaneBarContainer into SecondControl.</param>
+		/// <param name="paneBar"></param>
 		/// <param name="mainChildControl">Main child control for the new PaneBarContainer</param>
 		/// <returns>The new PaneBarContainer instance.</returns>
-		internal static PaneBarContainer Create(FlexComponentParameters flexComponentParameters, ICollapsingSplitContainer mainCollapsingSplitContainer, Control mainChildControl)
+		internal static PaneBarContainer Create(FlexComponentParameters flexComponentParameters, ICollapsingSplitContainer mainCollapsingSplitContainer, Control mainChildControl, PaneBar.PaneBar paneBar = null)
 		{
-			var newPaneBarContainer = new PaneBarContainer(mainChildControl);
+			var newPaneBarContainer = new PaneBarContainer(mainChildControl, paneBar);
 			mainCollapsingSplitContainer.SecondControl = newPaneBarContainer;
 			newPaneBarContainer.InitializeFlexComponent(flexComponentParameters);
 			if (mainChildControl is IFlexComponent)
@@ -39,65 +40,12 @@ namespace LanguageExplorer.Controls
 		/// Create a new PaneBarContainer
 		/// </summary>
 		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		/// <param name="mainCollapsingSplitContainer">Put the new PaneBarContainer into SecondControl.</param>
 		/// <param name="paneBar"></param>
 		/// <param name="mainChildControl">Main child control for the new PaneBarContainer</param>
 		/// <returns>The new PaneBarContainer instance.</returns>
-		internal static PaneBarContainer Create(FlexComponentParameters flexComponentParameters, ICollapsingSplitContainer mainCollapsingSplitContainer, PaneBar.PaneBar paneBar, Control mainChildControl)
+		internal static PaneBarContainer Create(FlexComponentParameters flexComponentParameters, Control mainChildControl, PaneBar.PaneBar paneBar = null)
 		{
-			var newPaneBarContainer = new PaneBarContainer(paneBar, mainChildControl);
-			mainCollapsingSplitContainer.SecondControl = newPaneBarContainer;
-			newPaneBarContainer.InitializeFlexComponent(flexComponentParameters);
-			if (mainChildControl is IFlexComponent)
-			{
-				var asFlexComponent = (IFlexComponent)mainChildControl;
-				asFlexComponent.InitializeFlexComponent(flexComponentParameters);
-			}
-			mainChildControl.BringToFront();
-
-			return newPaneBarContainer;
-		}
-
-		/// <summary>
-		/// Create a new PaneBarContainer, but not one that is the 'SecondControl' of an ICollapsingSplitContainer instance
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		/// <param name="mainChildControl">Main child control for the new PaneBarContainer</param>
-		/// <returns>The new PaneBarContainer instance.</returns>
-		internal static PaneBarContainer Create(FlexComponentParameters flexComponentParameters, Control mainChildControl)
-		{
-			var newPaneBarContainer = new PaneBarContainer(mainChildControl)
-			{
-				Dock = DockStyle.Fill
-			};
-			if (mainChildControl is IFlexComponent)
-			{
-				((IFlexComponent)mainChildControl).InitializeFlexComponent(flexComponentParameters);
-			}
-			if (mainChildControl is MultiPane)
-			{
-				var mainChildControlAsMultiPane = (MultiPane)mainChildControl;
-				// Set first control of MultiPane for PaneBar, if it is IPaneBarUser.
-				if (mainChildControlAsMultiPane.FirstControl is IPaneBarUser)
-				{
-					((IPaneBarUser)mainChildControlAsMultiPane.FirstControl).MainPaneBar = newPaneBarContainer.PaneBar;
-				}
-			}
-			mainChildControl.BringToFront();
-
-			return newPaneBarContainer;
-		}
-
-		/// <summary>
-		/// Create a new PaneBarContainer
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		/// <param name="paneBar"></param>
-		/// <param name="mainChildControl">Main child control for the new PaneBarContainer</param>
-		/// <returns>The new PaneBarContainer instance.</returns>
-		internal static PaneBarContainer Create(FlexComponentParameters flexComponentParameters, PaneBar.PaneBar paneBar, Control mainChildControl)
-		{
-			var newPaneBarContainer = new PaneBarContainer(paneBar, mainChildControl)
+			var newPaneBarContainer = new PaneBarContainer(mainChildControl, paneBar)
 			{
 				Dock = DockStyle.Fill
 			};

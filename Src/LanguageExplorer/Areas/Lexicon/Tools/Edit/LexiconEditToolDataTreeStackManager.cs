@@ -373,8 +373,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			*/
 
 			//<item command="CmdDataTree-Delete-Sense"/>
-			var toolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Delete_Sense_Clicked, LexiconResources.DeleteSenseAndSubsenses);
-			toolStripMenuItem.Image = LanguageExplorerResources.Delete;
+			var toolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Delete_Sense_Clicked, LexiconResources.DeleteSenseAndSubsenses, image: LanguageExplorerResources.Delete);
 			toolStripMenuItem.ImageTransparentColor = Color.Magenta;
 			// End: <menu id="mnuDataTree-Sense">
 

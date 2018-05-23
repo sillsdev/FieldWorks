@@ -47,7 +47,7 @@ namespace LanguageExplorer.Areas.Notebook
 			// Add one notebook area-wide import option.
 			_fileImportMenu = MenuServices.GetFileImportMenu(_majorFlexComponentParameters.MenuStrip);
 			// <item command="CmdImportSFMNotebook" />
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newFileMenusAndHandlers, _fileImportMenu, ImportSFMNotebook_Clicked, NotebookResources.Import_Standard_Format_Notebook_data, string.Empty, Keys.None, null, 1);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newFileMenusAndHandlers, _fileImportMenu, ImportSFMNotebook_Clicked, NotebookResources.Import_Standard_Format_Notebook_data, insertIndex: 1);
 		}
 
 		void FileExportMenu_Click(object sender, EventArgs e)

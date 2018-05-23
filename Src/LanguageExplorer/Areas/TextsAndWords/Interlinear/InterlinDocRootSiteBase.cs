@@ -108,7 +108,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				_fileMenu = value;
 				// Add ExportInterlinear menu to File menu
-				_exportMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_fileMenu, ExportInterlinear_Click, ITextStrings.ExportInterlinear, string.Empty, Keys.None, null, _fileMenu.DropDownItems.Count - 3);
+				_exportMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_fileMenu, ExportInterlinear_Click, ITextStrings.ExportInterlinear, insertIndex: _fileMenu.DropDownItems.Count - 3);
 			}
 		}
 

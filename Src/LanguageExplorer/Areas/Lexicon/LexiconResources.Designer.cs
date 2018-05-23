@@ -19,7 +19,7 @@ namespace LanguageExplorer.Areas.Lexicon {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class LexiconResources {
@@ -61,6 +61,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to All Entries.
+        /// </summary>
+        internal static string AllEntries {
+            get {
+                return ResourceManager.GetString("AllEntries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A_llomorph.
         /// </summary>
         internal static string Allomorph {
@@ -93,6 +102,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Configure Dictionary.
+        /// </summary>
+        internal static string ConfigureDictionary {
+            get {
+                return ResourceManager.GetString("ConfigureDictionary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Configure {0}.
         /// </summary>
         internal static string ConfigureTitle {
@@ -107,6 +125,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string DeleteSenseAndSubsenses {
             get {
                 return ResourceManager.GetString("DeleteSenseAndSubsenses", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit Publications.
+        /// </summary>
+        internal static string EditPublications {
+            get {
+                return ResourceManager.GetString("EditPublications", resourceCulture);
             }
         }
         

@@ -64,8 +64,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				xmlDocViewPaneBar,
-				xmlDocView);
+				xmlDocView,
+				xmlDocViewPaneBar);
 			_lexicoClassifiedDictionaryMenuHelper = new LexiconClassifiedDictionaryToolMenuHelper(majorFlexComponentParameters, xmlDocView, _recordList);
 
 			// Too early before now.

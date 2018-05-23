@@ -45,10 +45,13 @@ namespace LanguageExplorer.Controls
 		}
 
 		/// <summary />
-		internal PaneBarContainer(PaneBar.PaneBar paneBar, Control mainControl)
+		internal PaneBarContainer(Control mainControl, PaneBar.PaneBar paneBar = null)
 			: this()
 		{
-			//SuspendLayout();
+			if (paneBar == null)
+			{
+				paneBar = new PaneBar.PaneBar();
+			}
 			MainControl = mainControl;
 			PaneBar = paneBar;
 			paneBar.Dock = DockStyle.Top;
@@ -62,12 +65,6 @@ namespace LanguageExplorer.Controls
 			mainControl.Dock = DockStyle.Fill;
 			Controls.Add(paneBar);
 			Controls.Add(MainControl);
-		}
-
-		/// <summary />
-		internal PaneBarContainer(Control mainControl)
-			: this(new PaneBar.PaneBar(), mainControl)
-		{
 		}
 
 #if __MonoCS__ // FWNX-425

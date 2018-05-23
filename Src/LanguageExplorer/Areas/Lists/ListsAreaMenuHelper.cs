@@ -84,7 +84,7 @@ namespace LanguageExplorer.Areas.Lists
 				Tools->Configure: <command id = "CmdConfigureList" label="List..." message="ConfigureList" />
 			*/
 			_toolConfigureMenu = MenuServices.GetToolsConfigureMenu(_majorFlexComponentParameters.MenuStrip);
-			_configureListMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_toolConfigureMenu, ConfigureList_Click, ListResources.ConfigureList, ListResources.ConfigureListTooltip, Keys.None, null, 0);
+			_configureListMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_toolConfigureMenu, ConfigureList_Click, ListResources.ConfigureList, ListResources.ConfigureListTooltip, insertIndex: 0);
 
 			Application.Idle += Application_Idle;
 		}
@@ -244,7 +244,7 @@ These all go on the "Insert" menu, but they are tool-specific. Start at 0.
 			// <item label="-" translate="do not translate" />
 			ToolStripMenuItemFactory.CreateToolStripSeparatorForToolStripMenuItem(_insertMenu, insertIndex++);
 			// <item command="CmdAddCustomList" defaultVisible="false" />
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, AddCustomList_Click, ListResources.AddCustomList, ListResources.AddCustomListTooltip, Keys.None, null, insertIndex);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, AddCustomList_Click, ListResources.AddCustomList, ListResources.AddCustomListTooltip, insertIndex: insertIndex);
 		}
 
 		private void AddCustomList_Click(object sender, EventArgs e)

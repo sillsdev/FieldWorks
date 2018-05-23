@@ -143,10 +143,10 @@ namespace LanguageExplorer.Areas.Lexicon
 			_fileImportMenu = MenuServices.GetFileImportMenu(_majorFlexComponentParameters.MenuStrip);
 
 			// <item command="CmdImportLinguaLinksData" />
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newFileMenusAndHandlers, _fileImportMenu, ImportLinguaLinksData_Clicked, LexiconResources.ImportLinguaLinksData, string.Empty, Keys.None, null, 1);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newFileMenusAndHandlers, _fileImportMenu, ImportLinguaLinksData_Clicked, LexiconResources.ImportLinguaLinksData, insertIndex: 1);
 
 			// <item command="CmdImportLiftData" />
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newFileMenusAndHandlers, _fileImportMenu, ImportLiftData_Clicked, LexiconResources.ImportLIFTLexicon, string.Empty, Keys.None, null, 2);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newFileMenusAndHandlers, _fileImportMenu, ImportLiftData_Clicked, LexiconResources.ImportLIFTLexicon, insertIndex: 2);
 		}
 
 		private void ImportLinguaLinksData_Clicked(object sender, EventArgs e)

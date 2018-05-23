@@ -94,7 +94,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				_fileMenu = value;
 				// Add ExportInterlinear menu to File menu
-				_exportMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_fileMenu, ExportDiscourseChart_Click, ITextStrings.Export_Discourse_Chart, string.Empty, Keys.None, null, _fileMenu.DropDownItems.Count - 3);
+				_exportMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_fileMenu, ExportDiscourseChart_Click, ITextStrings.Export_Discourse_Chart, insertIndex: _fileMenu.DropDownItems.Count - 3);
 			}
 		}
 

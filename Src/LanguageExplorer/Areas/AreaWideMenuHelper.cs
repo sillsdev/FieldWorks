@@ -5,11 +5,8 @@
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
-using LanguageExplorer.Areas.Lexicon;
-using LanguageExplorer.Areas.Lexicon.DictionaryConfiguration;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.XMLViews;
-using LanguageExplorer.DictionaryConfiguration;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;

@@ -405,4 +405,13 @@
   <data name="MergeWithEntry" xml:space="preserve">
     <value>_Merge with entry...</value>
   </data>
+  <data name="ConfigureDictionary" xml:space="preserve">
+    <value>Configure Dictionary</value>
+  </data>
+  <data name="AllEntries" xml:space="preserve">
+    <value>All Entries</value>
+  </data>
+  <data name="EditPublications" xml:space="preserve">
+    <value>Edit Publications</value>
+  </data>
 </root>

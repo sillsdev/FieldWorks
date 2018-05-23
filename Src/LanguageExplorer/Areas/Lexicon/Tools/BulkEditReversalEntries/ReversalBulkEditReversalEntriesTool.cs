@@ -103,8 +103,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				browseViewPaneBar,
-				_recordBrowseView);
+				_recordBrowseView,
+				browseViewPaneBar);
 			_lexiconAreaMenuHelper.Initialize();
 		}
 
@@ -187,7 +187,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 			}
 
 			contextMenuStrip.Items.Add(new ToolStripSeparator());
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, ConfigureDictionary_Clicked, "Configure Dictionary");
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, ConfigureDictionary_Clicked, LexiconResources.ConfigureDictionary);
 
 			return retVal;
 		}

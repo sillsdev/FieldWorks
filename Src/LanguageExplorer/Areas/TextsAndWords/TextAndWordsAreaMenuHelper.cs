@@ -57,9 +57,9 @@ DONE:					<item command="CmdImportWordSet" defaultVisible="false"/>
 			_insertMenuItem = MenuServices.GetInsertMenu(_majorFlexComponentParameters.MenuStrip);
 
 			// Add Approved Analysis...
-			_addApprovedAnalysisToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_insertMenuItem, InsertHumanApprovedAnalysis_Click, "PH: " + TextAndWordsResources.ksAddApprovedAnalysis, string.Empty, Keys.None, LanguageExplorerResources.Add_New_Analysis.ToBitmap(), 0);
+			_addApprovedAnalysisToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_insertMenuItem, InsertHumanApprovedAnalysis_Click, "PH: " + TextAndWordsResources.ksAddApprovedAnalysis, image: LanguageExplorerResources.Add_New_Analysis.ToBitmap(), insertIndex: 0);
 			_addApprovedAnalysisToolStripMenuItem.Enabled = false;
-			_importWordSetToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_insertMenuItem, ImportWordSetToolStripMenuItemOnClick, TextAndWordsResources.ksImportWordSet, string.Empty, Keys.None, null, 0);
+			_importWordSetToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_insertMenuItem, ImportWordSetToolStripMenuItemOnClick, TextAndWordsResources.ksImportWordSet, insertIndex: 0);
 			_separator2ToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripSeparatorForToolStripMenuItem(_insertMenuItem, 0);
 		}
 
@@ -83,13 +83,13 @@ DONE:					<item command="CmdImportWordSet" defaultVisible="false"/>
 		{
 			_importMenuItem = MenuServices.GetFileImportMenu(_majorFlexComponentParameters.MenuStrip);
 			// "CmdImportInterlinearSfm"
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_importMenuItems, _importMenuItem, ImportInterlinearSfm_Click, TextAndWordsResources.Import_Standard_Format_Interlinear, string.Empty, Keys.None, null, _importMenuItem.DropDownItems.Count - 1);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_importMenuItems, _importMenuItem, ImportInterlinearSfm_Click, TextAndWordsResources.Import_Standard_Format_Interlinear, insertIndex: _importMenuItem.DropDownItems.Count - 1);
 
 			// "CmdImportWordsAndGlossesSfm"
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_importMenuItems, _importMenuItem, ImportWordsAndGlossesSfm_Click, TextAndWordsResources.Import_Standard_Format_Words_and_Glosses, string.Empty, Keys.None, null, _importMenuItem.DropDownItems.Count - 1);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_importMenuItems, _importMenuItem, ImportWordsAndGlossesSfm_Click, TextAndWordsResources.Import_Standard_Format_Words_and_Glosses, insertIndex: _importMenuItem.DropDownItems.Count - 1);
 
 			// "CmdImportInterlinearData"
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_importMenuItems, _importMenuItem, ImportInterlinearData_Click, TextAndWordsResources.Import_FLExText_Interlinear_Data, string.Empty, Keys.None, null, _importMenuItem.DropDownItems.Count - 1);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_importMenuItems, _importMenuItem, ImportInterlinearData_Click, TextAndWordsResources.Import_FLExText_Interlinear_Data, insertIndex: _importMenuItem.DropDownItems.Count - 1);
 		}
 
 		private void ImportInterlinearSfm_Click(object sender, EventArgs e)

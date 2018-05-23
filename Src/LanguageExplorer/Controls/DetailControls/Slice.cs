@@ -120,7 +120,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			AddSpecialContextMenus(contextMenuStrip, menuItems);
 
 			// 4. 'Help...'
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Help_Clicked, LanguageExplorerResources.ksHelp, string.Empty, Keys.None, ResourceHelper.ButtonMenuHelpIcon);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Help_Clicked, LanguageExplorerResources.ksHelp, image: ResourceHelper.ButtonMenuHelpIcon);
 		}
 
 		private void Help_Clicked(object sender, EventArgs eventArgs)

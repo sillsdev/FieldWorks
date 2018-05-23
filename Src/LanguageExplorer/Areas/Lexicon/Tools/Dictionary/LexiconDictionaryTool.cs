@@ -120,8 +120,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				docViewPaneBar,
-				_xhtmlDocView);
+				_xhtmlDocView,
+				docViewPaneBar);
 
 			_paneBarContainer.ResumeLayout(true);
 			_xhtmlDocView.FinishInitialization();
@@ -229,7 +229,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			}
 
 			contextMenuStrip.Items.Add(new ToolStripSeparator());
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, ConfigureDictionary_Clicked, "Configure Dictionary");
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, ConfigureDictionary_Clicked, LexiconResources.ConfigureDictionary);
 
 			return retVal;
 		}
@@ -275,7 +275,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>();
 			var retVal = new Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, LeftContextMenuStrip_Opening, menuItems);
 
-			var currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, ShowAllPublications_Clicked, "All Entries");
+			var currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, ShowAllPublications_Clicked, LexiconResources.AllEntries);
 			currentToolStripMenuItem.Tag = "All Entries";
 			currentToolStripMenuItem.Checked = (currentPublication == "All Entries");
 			var pubName = _xhtmlDocView.GetCurrentPublication();
@@ -305,7 +305,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			}
 
 			contextMenuStrip.Items.Add(new ToolStripSeparator());
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, EditPublications_Clicked, "Edit Publications");
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, EditPublications_Clicked, LexiconResources.EditPublications);
 
 			return retVal;
 		}

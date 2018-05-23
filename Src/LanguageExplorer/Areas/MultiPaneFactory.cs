@@ -144,12 +144,12 @@ namespace LanguageExplorer.Areas
 
 			multiPaneParameters.FirstControlParameters = new SplitterChildControlParameters
 			{
-				Control = PaneBarContainerFactory.Create(flexComponentParameters, firstPaneBar, firstControl),
+				Control = PaneBarContainerFactory.Create(flexComponentParameters, firstControl, firstPaneBar),
 				Label = firstlabel
 			};
 			multiPaneParameters.SecondControlParameters = new SplitterChildControlParameters
 			{
-				Control = PaneBarContainerFactory.Create(flexComponentParameters, secondPaneBar, secondControl),
+				Control = PaneBarContainerFactory.Create(flexComponentParameters, secondControl, secondPaneBar),
 				Label = secondlabel
 			};
 

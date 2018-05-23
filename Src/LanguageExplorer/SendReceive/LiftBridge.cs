@@ -171,14 +171,14 @@ namespace LanguageExplorer.SendReceive
 			switch (currentInstallRound)
 			{
 				case BridgeMenuInstallRound.One:
-					_mainSendReceiveMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(mainSendReceiveToolStripMenuItem, S_R_LiftBridge_Click, SendReceiveResources.LiftBridge, SendReceiveResources.LiftBridgeToolTip, Keys.None, SendReceiveResources.sendReceive16x16);
+					_mainSendReceiveMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(mainSendReceiveToolStripMenuItem, S_R_LiftBridge_Click, SendReceiveResources.LiftBridge, SendReceiveResources.LiftBridgeToolTip, image: SendReceiveResources.sendReceive16x16);
 					_viewMessagesMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(mainSendReceiveToolStripMenuItem, ViewMessages_LiftBridge_Click, SendReceiveResources.ViewLiftMessagesLiftBridge, SendReceiveResources.ViewLiftMessagesLiftBridgeToolTip);
 					break;
 				case BridgeMenuInstallRound.Two:
-					_obtainLiftBridgeProjectMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(mainSendReceiveToolStripMenuItem, ObtainLiftBridgeProject_Click, SendReceiveResources.ObtainLiftProject, SendReceiveResources.ObtainLiftProjectTooltip, Keys.None, SendReceiveResources.SendReceiveGetArrow16x16);
+					_obtainLiftBridgeProjectMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(mainSendReceiveToolStripMenuItem, ObtainLiftBridgeProject_Click, SendReceiveResources.ObtainLiftProject, SendReceiveResources.ObtainLiftProjectTooltip, image: SendReceiveResources.SendReceiveGetArrow16x16);
 					break;
 				case BridgeMenuInstallRound.Three:
-					_sendLiftBridgeFirstTimeProjectMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(mainSendReceiveToolStripMenuItem, SendLiftBridgeFirstTime_Click, SendReceiveResources.FirstLiftBridge, SendReceiveResources.FirstLiftBridgeTooltip, Keys.None, SendReceiveResources.sendReceiveFirst16x16);
+					_sendLiftBridgeFirstTimeProjectMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(mainSendReceiveToolStripMenuItem, SendLiftBridgeFirstTime_Click, SendReceiveResources.FirstLiftBridge, SendReceiveResources.FirstLiftBridgeTooltip, image: SendReceiveResources.sendReceiveFirst16x16);
 					break;
 			}
 		}

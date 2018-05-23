@@ -64,7 +64,7 @@ namespace LanguageExplorer.Controls
 			var paneBar = new PaneBar.PaneBar();
 			paneBar.AddControls(new List<Control> { panelButton });
 
-			var paneBarContainer = new PaneBarContainer(paneBar, recordEditView);
+			var paneBarContainer = new PaneBarContainer(recordEditView, paneBar);
 			var panel2ChildControlAsControl = (Control)paneBarContainer;
 
 			var newCollapsingSplitContainer = new CollapsingSplitContainer
