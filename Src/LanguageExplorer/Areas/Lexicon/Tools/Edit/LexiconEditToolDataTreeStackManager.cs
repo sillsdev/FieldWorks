@@ -7,37 +7,34 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.LcmUi;
 using SIL.Code;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
 #if RANDYTODO
-	// TODO: Consider breaking this one up into three more manager impls: 1) slice hotlinks, 2) slice context menus, and 3) main pane bar context menus.
-	// TODO: Maybe it would be only two: 1) slice hotlinks/context menus, and 2) main pane bar context menus
+	// DONE: Spun off "main pane bar context menus".
+	// TODO: Split up slice hotlinks/context menus into hotlinks vs context menus, or a manger instance for each slice?
 #endif
 	/// <summary>
-	/// Implementation that supports the addition(s) to FLEx's main View menu for the Lexicon Edit tool.
+	/// Implementation that supports the addition(s) to the DataTree's context menus and hotlinks for the Lexicon Edit tool.
 	/// </summary>
 	internal sealed class LexiconEditToolDataTreeStackManager : IToolUiWidgetManager
 	{
+		private const string MainPanelManager = "MainPanelManager";
 		private IRecordList MyRecordList { get; set; }
 		private Dictionary<string, EventHandler> _sharedEventHandlers;
 		private Dictionary<string, EventHandler> _sharedWithMeEventHandlers;
 		private SliceContextMenuFactory SliceContextMenuFactory { get; set; }
 		private DataTree MyDataTree { get; set; }
-		private IPropertyTable _propertyTable;
 		private LcmCache _cache;
-		private IFwMainWnd _mainWnd;
-		private ToolStripMenuItem _show_DictionaryPubPreviewContextMenu;
+		private Dictionary<string, IToolUiWidgetManager> _dataTreeWidgetManagers;
 
-#region IToolUiWidgetManager
+		#region IToolUiWidgetManager
 
 		/// <inheritdoc />
 		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList, IReadOnlyDictionary<string, EventHandler> sharedEventHandlers, IReadOnlyList<object> randomParameters)
@@ -48,18 +45,19 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			Guard.AgainstNull(randomParameters, nameof(randomParameters));
 			Guard.AssertThat(randomParameters.Count == 2, "Wrong number of random parameters.");
 
+			_dataTreeWidgetManagers = new Dictionary<string, IToolUiWidgetManager>
+			{
+				{ MainPanelManager, new LexiconEditToolDataTreeMainPanelContextMenuStripManager() }
+			};
 			MyRecordList = recordList;
-			_sharedWithMeEventHandlers = new Dictionary<string, EventHandler>(2)
+			_sharedWithMeEventHandlers = new Dictionary<string, EventHandler>(8)
 			{
 				{ LexiconEditToolConstants.CmdInsertSense, sharedEventHandlers[LexiconEditToolConstants.CmdInsertSense] },
-				{ LexiconEditToolConstants.Show_Dictionary_Preview_Clicked, sharedEventHandlers[LexiconEditToolConstants.Show_Dictionary_Preview_Clicked] },
 				{ LexiconEditToolConstants.CmdInsertSubsense, sharedEventHandlers[LexiconEditToolConstants.CmdInsertSubsense] },
-				{ LexiconEditToolConstants.CmdInsertVariant, sharedEventHandlers[LexiconEditToolConstants.CmdInsertVariant] },
 				{ LexiconEditToolConstants.CmdDataTree_Insert_AlternateForm, sharedEventHandlers[LexiconEditToolConstants.CmdDataTree_Insert_AlternateForm] },
 				{ LexiconEditToolConstants.CmdDataTree_Insert_Pronunciation, sharedEventHandlers[LexiconEditToolConstants.CmdDataTree_Insert_Pronunciation] },
 				{ LexiconEditToolConstants.CmdInsertMediaFile, sharedEventHandlers[LexiconEditToolConstants.CmdInsertMediaFile] },
 				{ LexiconEditToolConstants.CmdDataTree_Insert_Etymology, sharedEventHandlers[LexiconEditToolConstants.CmdDataTree_Insert_Etymology] },
-				{ LexiconEditToolConstants.CmdMergeEntry, sharedEventHandlers[LexiconEditToolConstants.CmdMergeEntry] },
 				{ LexiconEditToolConstants.CmdInsertExtNote, sharedEventHandlers[LexiconEditToolConstants.CmdInsertExtNote] },
 				{ LexiconEditToolConstants.CmdInsertPicture, sharedEventHandlers[LexiconEditToolConstants.CmdInsertPicture] }
 			};
@@ -67,21 +65,19 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			SliceContextMenuFactory = (SliceContextMenuFactory)randomParameters[0];
 			MyDataTree = (DataTree)randomParameters[1];
 
-			_propertyTable = majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
 			_cache = majorFlexComponentParameters.LcmCache;
-			_mainWnd = majorFlexComponentParameters.MainWindow;
 
 			RegisterHotLinkMenus();
 			RegisterOrdinaryContextMenus();
-			SliceContextMenuFactory.RegisterPanelMenuCreatorMethod(LexiconEditToolConstants.PanelMenuId, CreateMainPanelContextMenuStrip);
+			_dataTreeWidgetManagers[MainPanelManager].Initialize(majorFlexComponentParameters, recordList, sharedEventHandlers, new[] { randomParameters[0] });
 		}
 
 		/// <inheritdoc />
 		IReadOnlyDictionary<string, EventHandler> IToolUiWidgetManager.SharedEventHandlers => _sharedEventHandlers ?? (_sharedEventHandlers = new Dictionary<string, EventHandler>());
 
-#endregion
+		#endregion
 
-#region IDisposable
+		#region IDisposable
 
 		private bool _isDisposed;
 
@@ -115,11 +111,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			if (disposing)
 			{
-				if (_show_DictionaryPubPreviewContextMenu != null)
+				foreach (var manager in _dataTreeWidgetManagers.Values)
 				{
-					_show_DictionaryPubPreviewContextMenu.Click -= _sharedWithMeEventHandlers[LexiconEditToolConstants.Show_Dictionary_Preview_Clicked];
-					_show_DictionaryPubPreviewContextMenu.Dispose();
+					manager.Dispose();
 				}
+				_dataTreeWidgetManagers.Clear();
 				_sharedEventHandlers.Clear();
 				_sharedWithMeEventHandlers.Clear();
 			}
@@ -128,102 +124,19 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_sharedWithMeEventHandlers = null;
 			SliceContextMenuFactory = null;
 			MyDataTree = null;
-			_propertyTable = null;
 			_cache = null;
-			_mainWnd = null;
-			_show_DictionaryPubPreviewContextMenu = null;
+			_dataTreeWidgetManagers = null;
 
 			_isDisposed = true;
 		}
 
-#endregion
+		#endregion
 
-#region main panel handling
+		#region main panel handling
 
-		private Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>> CreateMainPanelContextMenuStrip(string panelMenuId)
-		{
-			// <menu id="PaneBar-LexicalDetail" label="">
-			// <menu id="LexEntryPaneMenu" icon="MenuWidget">
-			// Handled elsewhere: <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-lexiconEdit" defaultVisible="true" settingsGroup="local"/>
-			var contextMenuStrip = new ContextMenuStrip();
+		#endregion
 
-			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>();
-			var retVal = new Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, null, menuItems);
-
-			// Show_Dictionary_Preview menu item.
-			_show_DictionaryPubPreviewContextMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedWithMeEventHandlers[LexiconEditToolConstants.Show_Dictionary_Preview_Clicked], LexiconResources.Show_DictionaryPubPreview, LexiconResources.Show_DictionaryPubPreview_ToolTip);
-			_show_DictionaryPubPreviewContextMenu.Checked = _propertyTable.GetValue<bool>(LexiconEditToolConstants.Show_DictionaryPubPreview);
-
-			// Separator
-			contextMenuStrip.Items.Add(new ToolStripSeparator());
-
-			// Insert_Sense menu item. (CmdInsertSense->msg: DataTreeInsert, also on Insert menu)
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedWithMeEventHandlers[LexiconEditToolConstants.CmdInsertSense], LexiconResources.Insert_Sense, LexiconResources.InsertSenseToolTip);
-
-			// Insert Subsense (in sense) menu item. (CmdInsertSubsense->msg: DataTreeInsert, also on Insert menu)
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedWithMeEventHandlers[LexiconEditToolConstants.CmdInsertSubsense], LexiconResources.Insert_Subsense, LexiconResources.Insert_Subsense_Tooltip);
-
-			// Insert _Variant menu item. (CmdInsertVariant->msg: InsertItemViaBackrefVector, also on Insert menu)
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedWithMeEventHandlers[LexiconEditToolConstants.CmdInsertVariant], LexiconResources.Insert_Variant, LexiconResources.Insert_Variant_Tooltip);
-
-			// Insert A_llomorph menu item. (CmdDataTree-Insert-AlternateForm->msg: DataTreeInsert, also on Insert menu)
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedWithMeEventHandlers[LexiconEditToolConstants.CmdDataTree_Insert_AlternateForm], LexiconResources.Insert_Allomorph, LexiconResources.Insert_Allomorph_Tooltip);
-
-			// Insert _Pronunciation menu item. (CmdDataTree-Insert-Pronunciation->msg: DataTreeInsert, also on Insert menu)
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedWithMeEventHandlers[LexiconEditToolConstants.CmdDataTree_Insert_Pronunciation], LexiconResources.Insert_Pronunciation, LexiconResources.Insert_Pronunciation_Tooltip);
-
-			// Insert Sound or Movie _File menu item. (CmdInsertMediaFile->msg: InsertMediaFile, also on Insert menu)
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedWithMeEventHandlers[LexiconEditToolConstants.CmdInsertMediaFile], LexiconResources.Insert_Sound_Or_Movie_File, LexiconResources.Insert_Sound_Or_Movie_File_Tooltip);
-
-			// Insert _Etymology menu item. (CmdDataTree-Insert-Etymology->msg: DataTreeInsert, also on Insert menu and a hotlionks and another context menu.)
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedWithMeEventHandlers[LexiconEditToolConstants.CmdDataTree_Insert_Etymology], LexiconResources.Insert_Etymology, LexiconResources.Insert_Etymology_Tooltip);
-
-			// Separator
-			contextMenuStrip.Items.Add(new ToolStripSeparator());
-
-			// Lexeme Form has components. (CmdChangeToComplexForm->msg: ConvertEntryIntoVariant)
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Lexeme_Form_Has_Components_Clicked, LexiconResources.Lexeme_Form_Has_Components, LexiconResources.Lexeme_Form_Has_Components_Tooltip);
-
-			// Lexeme Form is a variant menu item. (CmdChangeToVariant->msg: ConvertEntryIntoComplexForm)
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Lexeme_Form_Is_A_Variant_Clicked, LexiconResources.Lexeme_Form_Is_A_Variant, LexiconResources.Lexeme_Form_Is_A_Variant_Tooltip);
-
-			// _Merge with entry... menu item. (CmdMergeEntry->msg: MergeEntry, also on Tool menu)
-			var contextMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedWithMeEventHandlers[LexiconEditToolConstants.CmdMergeEntry], LexiconResources.Merge_With_Entry, LexiconResources.Merge_With_Entry_Tooltip);
-			// Original code that controlled: display.Enabled = display.Visible = InFriendlyArea;
-			// It is now only in a friendly area, so should always be visible and enabled, per the old code.
-			// Trouble is it makes no sense to enable it if the lexicon only has one entry in it, so I'll alter the behavior to be more sensible. ;-)
-			contextMenuItem.Enabled = _cache.LanguageProject.LexDbOA.Entries.Any();
-
-			// Separator
-			contextMenuStrip.Items.Add(new ToolStripSeparator());
-
-			// Show Entry in Concordance menu item. (CmdRootEntryJumpToConcordance->msg: JumpToTool)
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Show_Entry_In_Concordance_Clicked, LexiconResources.Show_Entry_In_Concordance);
-
-			return retVal;
-		}
-
-		private void Show_Entry_In_Concordance_Clicked(object sender, EventArgs e)
-		{
-			// Show Entry in Concordance menu item. (CmdRootEntryJumpToConcordance->msg: JumpToTool)
-			MessageBox.Show((Form)_mainWnd, "Show Entry In Concordance...");
-		}
-
-		private void Lexeme_Form_Is_A_Variant_Clicked(object sender, EventArgs e)
-		{
-			// Lexeme Form is a variant menu item. (CmdChangeToVariant->msg: ConvertEntryIntoComplexForm)
-			MessageBox.Show((Form)_mainWnd, "Lexeme Form Is A Variant...");
-		}
-
-		private void Lexeme_Form_Has_Components_Clicked(object sender, EventArgs e)
-		{
-			// Lexeme Form has components. (CmdChangeToComplexForm->msg: ConvertEntryIntoVariant)
-			MessageBox.Show((Form)_mainWnd, "Lexeme Form Has Components...");
-		}
-
-#endregion
-
-#region hotlinks
+		#region hotlinks
 
 		private void RegisterHotLinkMenus()
 		{
@@ -311,9 +224,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			return hotlinksMenuItemList;
 		}
 
-#endregion
+		#endregion
 
-#region slice context menus
+		#region slice context menus
 
 		private void RegisterOrdinaryContextMenus()
 		{

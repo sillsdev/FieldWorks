@@ -116,7 +116,7 @@ namespace LanguageExplorer.Impls
 			var commandName = macro.CommandName;
 			// We normally let undo and redo be localized independently, but we compromise in the interests of making macros
 			// easier to create.
-			UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerResources.ksUndoMacro, commandName), string.Format(LanguageExplorerResources.ksRedoMacro, commandName), obj.Cache.ActionHandlerAccessor,
+			UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerResources.Undo_0, commandName), string.Format(LanguageExplorerResources.Redo_0, commandName), obj.Cache.ActionHandlerAccessor,
 				() => macro.RunMacro(obj, flid, ws, start, length));
 		}
 

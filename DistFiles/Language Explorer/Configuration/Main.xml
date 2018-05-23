@@ -82,9 +82,6 @@
 		<command id="CmdEntryJumpToConcordance" label="Show Entry in Concordance" message="JumpToTool">
 			<parameters tool="concordance" className="LexEntry"/>
 		</command>
-		<command id="CmdRootEntryJumpToConcordance" label="Show Entry in Concordance" message="JumpToTool">
-			<parameters tool="concordance" className="LexEntry"/>
-		</command>
 		<command id="CmdSenseJumpToConcordance" label="Show Sense in Concordance" message="JumpToTool">
 			<parameters tool="concordance" className="LexSense"/>
 		</command>

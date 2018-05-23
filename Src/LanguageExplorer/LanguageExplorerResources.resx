@@ -804,9 +804,6 @@ you expect.</value>
   <data name="ksRedoInsertLexRefType" xml:space="preserve">
     <value>Redo Insert Lexical Reference Type</value>
   </data>
-  <data name="ksRedoInsertRelation" xml:space="preserve">
-    <value>Redo {0}</value>
-  </data>
   <data name="ksRedoMergeRevCategory" xml:space="preserve">
     <value>Redo Merge Reversal Category</value>
   </data>
@@ -919,9 +916,6 @@ you expect.</value>
   </data>
   <data name="ksUndoInsertLexRefType" xml:space="preserve">
     <value>Undo Insert Lexical Reference Type</value>
-  </data>
-  <data name="ksUndoInsertRelation" xml:space="preserve">
-    <value>Undo {0}</value>
   </data>
   <data name="ksUndoMergeRevCategory" xml:space="preserve">
     <value>Undo Merge Reversal Category</value>
@@ -1414,12 +1408,10 @@ Do you want to continue with the export?</value>
   <data name="FWFilterBasic_Small" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>images\FWFilterBasic-Small.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="ksRedoMacro" xml:space="preserve">
+  <data name="Redo_0" xml:space="preserve">
     <value>Redo {0}</value>
-    <comment>{0} will be the name of a macro</comment>
   </data>
-  <data name="ksUndoMacro" xml:space="preserve">
+  <data name="Undo_0" xml:space="preserve">
     <value>Undo {0}</value>
-    <comment>{0} will be the name of a macro</comment>
   </data>
 </root>

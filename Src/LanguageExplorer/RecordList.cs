@@ -1086,7 +1086,7 @@ namespace LanguageExplorer
 						SuppressSaveOnChangeRecord = true;
 						try
 						{
-							UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerResources.ksUndoInsertRelation, uowBaseText), string.Format(LanguageExplorerResources.ksRedoInsertRelation, uowBaseText), m_cache.ActionHandlerAccessor, () => DeleteCurrentObject(thingToDelete));
+							UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerResources.Undo_0, uowBaseText), string.Format(LanguageExplorerResources.Redo_0, uowBaseText), m_cache.ActionHandlerAccessor, () => DeleteCurrentObject(thingToDelete));
 						}
 						finally
 						{

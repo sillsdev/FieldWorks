@@ -2179,15 +2179,6 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Redo {0}.
-        /// </summary>
-        internal static string ksRedoInsertRelation {
-            get {
-                return ResourceManager.GetString("ksRedoInsertRelation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Redo Insert Row.
         /// </summary>
         internal static string ksRedoInsertRow {
@@ -2211,15 +2202,6 @@ namespace LanguageExplorer {
         internal static string ksRedoLastRowInSent {
             get {
                 return ResourceManager.GetString("ksRedoLastRowInSent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Redo {0}.
-        /// </summary>
-        internal static string ksRedoMacro {
-            get {
-                return ResourceManager.GetString("ksRedoMacro", resourceCulture);
             }
         }
         
@@ -2915,15 +2897,6 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Undo {0}.
-        /// </summary>
-        internal static string ksUndoInsertRelation {
-            get {
-                return ResourceManager.GetString("ksUndoInsertRelation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Undo Insert Row.
         /// </summary>
         internal static string ksUndoInsertRow {
@@ -2947,15 +2920,6 @@ namespace LanguageExplorer {
         internal static string ksUndoLastRowInSent {
             get {
                 return ResourceManager.GetString("ksUndoLastRowInSent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo {0}.
-        /// </summary>
-        internal static string ksUndoMacro {
-            get {
-                return ResourceManager.GetString("ksUndoMacro", resourceCulture);
             }
         }
         
@@ -3498,6 +3462,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Redo {0}.
+        /// </summary>
+        internal static string Redo_0 {
+            get {
+                return ResourceManager.GetString("Redo_0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to , {0} {1} reversal entries.
         /// </summary>
         internal static string ReversalEntries {
@@ -3668,6 +3641,15 @@ namespace LanguageExplorer {
         internal static string Undo {
             get {
                 return ResourceManager.GetString("Undo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo {0}.
+        /// </summary>
+        internal static string Undo_0 {
+            get {
+                return ResourceManager.GetString("Undo_0", resourceCulture);
             }
         }
         

@@ -107,7 +107,7 @@ namespace LanguageExplorerTests.Impls
 			ILexEntry entry = null;
 			// We normally let undo and redo be localized independently, but we compromise in the interests of making macros
 			// easier to create.
-			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(string.Format(LanguageExplorerResources.ksUndoMacro, commandName), string.Format(LanguageExplorerResources.ksRedoMacro, commandName), Cache.ActionHandlerAccessor,
+			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(string.Format(LanguageExplorerResources.Undo_0, commandName), string.Format(LanguageExplorerResources.Redo_0, commandName), Cache.ActionHandlerAccessor,
 				() =>
 				{
 					entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
