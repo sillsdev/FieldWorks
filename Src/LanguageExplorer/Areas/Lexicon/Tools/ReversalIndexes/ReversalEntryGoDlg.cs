@@ -44,6 +44,40 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		/// <summary />
 		protected override void InitializeMatchingObjects()
 		{
+#if RANDYTODO
+			// TODO: Make a resource from this xml (discarding junk from it) and feed it where needed.
+/*
+			<guicontrol id="matchingReversalEntries">
+				<parameters id="reventryMatchList" listItemsClass="ReversalIndexEntry" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" altTitleId="ReversalIndexEntry-Plural" editable="false" disableConfigButton="true">
+					<columns>
+						<column label="Form" sortmethod="FullSortKey" ws="$ws=reversal" editable="false" width="96000">
+							<span>
+								<properties>
+									<editable value="false"/>
+								</properties>
+								<string field="ReversalForm" ws="reversal"/>
+							</span>
+						</column>
+						<column label="Category" width="96000">
+							<span>
+								<properties>
+									<editable value="false"/>
+								</properties>
+								<obj field="PartOfSpeech" layout="empty">
+									<span>
+										<properties>
+											<editable value="false"/>
+										</properties>
+										<string field="Name" ws="best analysis"/>
+									</span>
+								</obj>
+							</span>
+						</column>
+					</columns>
+				</parameters>
+			</guicontrol>
+*/
+#endif
 			var xnWindow = PropertyTable.GetValue<XElement>("WindowConfiguration");
 			var configNode = xnWindow.XPathSelectElement("controls/parameters/guicontrol[@id=\"matchingReversalEntries\"]/parameters");
 
@@ -109,7 +143,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			m_matchingObjectsBrowser.SearchAsync(new[] { field });
 		}
 
-		#region Windows Form Designer generated code
+#region Windows Form Designer generated code
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
@@ -151,7 +185,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			this.PerformLayout();
 
 		}
-		#endregion
+#endregion
 
 		private sealed class ReversalEntrySearchEngine : SearchEngine
 		{

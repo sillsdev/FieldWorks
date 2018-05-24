@@ -6,8 +6,7 @@
 		<column label="Phoneme" width="5%" layout="Name" ws="$ws=best vernacular" field="Name"/>
 		<!-- Phonological Feature Defns (generated)-->
 		<generate class="FsFeatureSystem" fieldType="vector" restrictions="featureDefns" objectPath="PhFeatureSystem.Features">
-			<column layout="CustomMultiStringForFeatureDefn_$fieldName" label="$label" bulkEdit="external" common="true" ws="$ws=best analysis"
-				cansortbylength="true" visibility="always" width="4%">
+			<column layout="CustomMultiStringForFeatureDefn_$fieldName" label="$label" bulkEdit="external" common="true" ws="$ws=best analysis" cansortbylength="true" visibility="always" width="4%">
 				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.LcmUi.PhonologicalFeatureEditor">
 					<args>
 						<arg name="xpathToConfigurationNode" value="ancestor::column"/>

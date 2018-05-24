@@ -19,7 +19,7 @@ namespace LanguageExplorer.Areas.Grammar {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class GrammarResources {
@@ -158,7 +158,24 @@ namespace LanguageExplorer.Areas.Grammar {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-        ///&lt;parameters persistContext=&quot;problems&quot; layout=&quot;Edit&quot; emptyTitleId=&quot;No-Problems&quot;/&gt;.
+        ///&lt;transforms&gt;
+        ///	&lt;transform progressPrompt=&quot;Processing data, step 1 of 2&quot; stylesheetName=&quot;FxtM3MorphologySketch&quot; stylesheetAssembly=&quot;ApplicationTransforms&quot; ext=&quot;xml&quot; saveResult=&quot;true&quot; saveResultPrompt=&quot;Also save as an XLingPaper file&quot; replaceDOCTYPE=&quot;lingPaper PUBLIC &amp;quot;-//XMLmind//DTD XLingPap//EN&amp;quot; &amp;quot;XLingPap.dtd&amp;quot;&quot;&gt;
+        ///		&lt;xsltParameters&gt;
+        ///			&lt;!-- the value of &quot;TransformDirectory&quot; is a special key the FxtViewer.dll knows about --&gt;
+        ///			&lt;param name=&quot;sWordW [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string GrammarSketchTransforms {
+            get {
+                return ResourceManager.GetString("GrammarSketchTransforms", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;root&gt;
+        ///	&lt;parameters persistContext=&quot;problems&quot; layout=&quot;Edit&quot; emptyTitleId=&quot;No-Problems&quot;/&gt;
+        ///	&lt;filterElement targetClasses=&quot;LexEntry, LexSense, PhEnvironment&quot; /&gt;
+        ///&lt;/root&gt;.
         /// </summary>
         internal static string LexiconProblemsParameters {
             get {

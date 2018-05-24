@@ -165,6 +165,19 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			_progAdvInd = new ProgressReporting(_toolStripProgressBar);
 
 #if RANDYTODO
+			// TODO: Use this xml
+/*
+			<guicontrol id="WordformConcordanceBrowseView">
+				<parameters id="WordformInSegmentsOccurrenceList" selectColumn="true"
+					defaultChecked="true" omitFromHistory="true" allowInsertDeleteRecord="false"
+					editable="false" clerk="segmentOccurrencesOfWfiWordform" filterBar="true"
+					ShowOwnerShortname="true">
+<!-- START include (Words_Area): "reusableControls/control[@id='concordanceColumns']/columns" -->
+					<include path="reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns" a10status="PARTIALLY_DONE" />
+<!-- END include (Words_Area): "reusableControls/control[@id='concordanceColumns']/columns" -->
+				</parameters>
+			</guicontrol>
+*/
 			// Gather up the nodes.
 			const string xpathBase = "/window/controls/parameters[@id='guicontrols']/guicontrol[@id='{0}']/parameters[@id='{1}']";
 			var xpath = String.Format(xpathBase, "WordformConcordanceBrowseView", "WordformInSegmentsOccurrenceList");
@@ -185,6 +198,18 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			_recordLists[WfiWordformTags.kClassId] = recordList;
 			m_configurationNodes[WfiWordformTags.kClassId] = configNode;
 
+/*
+			<guicontrol id="AnalysisConcordanceBrowseView">
+				<parameters id="AnalysisInSegmentsOccurrenceList" selectColumn="true"
+					defaultChecked="true" omitFromHistory="true" allowInsertDeleteRecord="false"
+					editable="false" clerk="segmentOccurrencesOfWfiAnalysis" filterBar="true"
+					ShowOwnerShortname="true">
+<!-- START include (Words_Area): "reusableControls/control[@id='concordanceColumns']/columns" -->
+					<include path="reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns" a10status="PARTIALLY_DONE" />
+<!-- END include (Words_Area): "reusableControls/control[@id='concordanceColumns']/columns" -->
+				</parameters>
+			</guicontrol>
+*/
 			xpath = String.Format(xpathBase, "AnalysisConcordanceBrowseView", "AnalysisInSegmentsOccurrenceList");
 			configNode = m_configurationNode.SelectSingleNode(xpath);
 <clerk id="segmentOccurrencesOfWfiAnalysis" shouldHandleDeletion="false">
@@ -202,6 +227,18 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			_recordLists[WfiAnalysisTags.kClassId] = recordList;
 			m_configurationNodes[WfiAnalysisTags.kClassId] = configNode;
 
+/*
+			<guicontrol id="GlossConcordanceBrowseView">
+				<parameters id="GlossInSegmentsOccurrenceList" selectColumn="true"
+					defaultChecked="true" omitFromHistory="true" allowInsertDeleteRecord="false"
+					editable="false" clerk="segmentOccurrencesOfWfiGloss" filterBar="true"
+					ShowOwnerShortname="true">
+<!-- START include (Words_Area): "reusableControls/control[@id='concordanceColumns']/columns" -->
+					<include path="reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns" a10status="PARTIALLY_DONE" />
+<!-- END include (Words_Area): "reusableControls/control[@id='concordanceColumns']/columns" -->
+				</parameters>
+			</guicontrol>
+*/
 			xpath = String.Format(xpathBase, "GlossConcordanceBrowseView", "GlossInSegmentsOccurrenceList");
 			configNode = m_configurationNode.SelectSingleNode(xpath);
 <clerk id="segmentOccurrencesOfWfiGloss" shouldHandleDeletion="false">

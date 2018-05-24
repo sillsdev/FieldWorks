@@ -1898,6 +1898,7 @@
     <None Include="images\password-reveal-eye-16x16.png" />
     <Content Include="Resources\DialectsListEditParameters.xml" />
     <Content Include="Resources\ExtNoteTypeEditParameters.xml" />
+    <Content Include="Resources\GrammarSketchTransforms.xml" />
     <Content Include="Resources\LanguagesListEditParameters.xml" />
     <EmbeddedResource Include="Areas\ConfigParentNode.resx">
       <DependentUpon>ConfigParentNode.cs</DependentUpon>
@@ -3773,31 +3774,8 @@
       <Link>XML\CombinedConfig_Master.xml</Link>
       <SubType>Designer</SubType>
     </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Grammar\Edit\DataEntryFilters\basicFilter.xml">
-      <Link>XML\Grammar\Edit\DataEntryFilters\basicFilter.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Grammar\Edit\toolConfiguration.xml">
-      <Link>XML\Grammar\Edit\toolConfiguration.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\DataTreeInclude.xml">
       <Link>XML\Lexicon\DataTreeInclude.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\Dictionary\toolConfiguration.xml">
-      <Link>XML\Lexicon\Dictionary\toolConfiguration.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\RDE\toolConfiguration.xml">
-      <Link>XML\Lexicon\RDE\toolConfiguration.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\ReversalEntriesBulkEdit\toolConfiguration.xml">
-      <Link>XML\Lexicon\ReversalEntriesBulkEdit\toolConfiguration.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\ReversalIndices\toolConfiguration.xml">
-      <Link>XML\Lexicon\ReversalIndices\toolConfiguration.xml</Link>
       <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Lists\areaConfiguration.xml">
@@ -3807,20 +3785,8 @@
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Lists\DataTreeInclude.xml">
       <Link>XML\Lists\DataTreeInclude.xml</Link>
     </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lists\Edit\toolConfiguration.xml">
-      <Link>XML\Lists\Edit\toolConfiguration.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lists\ReversalPOSEdit\toolConfiguration.xml">
-      <Link>XML\Lists\ReversalPOSEdit\toolConfiguration.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Notebook\areaConfiguration.xml">
       <Link>XML\Notebook\areaConfiguration.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Notebook\Edit\toolConfiguration.xml">
-      <Link>XML\Notebook\Edit\toolConfiguration.xml</Link>
       <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\CommonDataTreeInclude.xml">
@@ -3859,9 +3825,6 @@
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\WFIParts.xml">
       <Link>XML\Parts\WFIParts.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Words\reusableBrowseControlConfiguration.xml">
-      <Link>XML\Word\reusableBrowseControlConfiguration.xml</Link>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\Cellar.fwlayout">
       <Link>XML\Parts\Cellar.fwlayout</Link>
@@ -3904,27 +3867,12 @@
       <Link>XML\Main.xml</Link>
       <SubType>Designer</SubType>
     </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Words\Analyses\toolConfiguration.xml">
-      <Link>XML\Word\Analyses\toolConfiguration.xml</Link>
-    </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Words\areaConfiguration.xml">
       <Link>XML\Word\areaConfiguration.xml</Link>
       <SubType>Designer</SubType>
     </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Words\BulkEdit\toolConfiguration.xml">
-      <Link>XML\Word\BulkEdit\toolConfiguration.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Words\Concordance\toolConfiguration.xml">
-      <Link>XML\Word\Concordance\toolConfiguration.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Words\Texts\toolConfigInclude.xml">
-      <Link>XML\Word\Text\toolConfigInclude.xml</Link>
-    </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\strings-en.xml">
       <Link>XML\strings-en.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Words\Texts\toolConfiguration.xml">
-      <Link>XML\Word\Text\toolConfiguration.xml</Link>
     </None>
   </ItemGroup>
   <ItemGroup />

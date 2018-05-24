@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <root>
-	<parameters toolId="bulkEditEntriesOrSenses" filterBar="true" bulkEdit="true" selectColumn="true" bulkEditListItemsClasses="LexEntry,LexSense,LexEntryRef,LexPronunciation,MoForm,LexExampleSentence,CmTranslation" bulkEditListItemsGhostFields="LexDb.AllPossiblePronunciations,LexDb.AllPossibleAllomorphs,LexDb.AllExampleSentenceTargets,LexDb.AllExampleTranslationTargets,LexDb.AllComplexEntryRefPropertyTargets">
+	<parameters toolId="bulkEditEntriesOrSenses" filterBar="true" bulkEdit="true" selectColumn="true" bulkEditListItemsClasses="LexEntry,LexSense,LexEntryRef,LexPronunciation,LexEtymology,MoForm,LexExampleSentence,CmTranslation,LexExtendedNote" bulkEditListItemsGhostFields="LexDb.AllPossiblePronunciations,LexDb.AllPossibleEtymologies,LexDb.AllPossibleAllomorphs,LexDb.AllExampleSentenceTargets,LexDb.AllExampleTranslationTargets,LexDb.AllComplexEntryRefPropertyTargets,LexDb.AllExtendedNoteTargets">
 		<includeColumns />
 	</parameters>
 	<overrides>

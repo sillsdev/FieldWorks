@@ -11,13 +11,10 @@
 	   where the default tool is defined for each 'Area' of FLEX-->
 	<!-- The main sections of this file are the following
 	commands
-	areas
 	controls (dialog or embedded browse view)
 	menubar
 	contextMenus
 	toolbars
-	resources
-	listeners
 	contexthelpstrings
   -->
 
@@ -195,38 +192,12 @@
 		<command id="CmdConfigureXmlDocView" label="{0}" message="ConfigureXmlDocView"/>
 	</commands>
 	<!-- ********************************************************** -->
-	<!-- ************************ lists *********************** -->
-	<!-- ********************************************************** -->
-	<areas>
-<!-- START include: "Lexicon/areaConfiguration.xml" query="root/item" -->
-	  <include path="Lexicon/areaConfiguration.xml" query="root/item"/>
-<!-- END include: "Lexicon/areaConfiguration.xml" query="root/item" -->
-<!-- START include: "Words/areaConfiguration.xml" query="root/item" -->
-	  <include path="Words/areaConfiguration.xml" query="root/item"/>
-<!-- END include: "Words/areaConfiguration.xml" query="root/item" -->
-<!-- START include: "Grammar/areaConfiguration.xml" query="root/item" -->
-	  <include path="Grammar/areaConfiguration.xml" query="root/item"/>
-<!-- END include: "Grammar/areaConfiguration.xml" query="root/item" -->
-<!-- START include: "Notebook/areaConfiguration.xml" query="root/item" -->
-	  <include path="Notebook/areaConfiguration.xml" query="root/item"/>
-<!-- END include: "Notebook/areaConfiguration.xml" query="root/item" -->
-<!-- START include: "Lists/areaConfiguration.xml" query="root/item" -->
-	  <include path="Lists/areaConfiguration.xml" query="root/item"/>
-<!-- END include: "Lists/areaConfiguration.xml" query="root/item" -->
-	</areas>
-	<!-- ********************************************************** -->
 	<!-- ******** controls (dialog or embedded browse view) ******* -->
 	<!-- ********************************************************** -->
 	<controls>
-<!-- START include: "Lexicon/areaConfiguration.xml" query="root/controls/*" -->
-		<include path="Lexicon/areaConfiguration.xml" query="root/controls/*"/>
-<!-- END include: "Lexicon/areaConfiguration.xml" query="root/controls/*" -->
-<!-- START include: "Words/areaConfiguration.xml" query="root/controls/*" -->
-		<include path="Words/areaConfiguration.xml" query="root/controls/*"/>
-<!-- END include: "Words/areaConfiguration.xml" query="root/controls/*" -->
-<!-- START include: "Notebook/areaConfiguration.xml" query="root/controls/*" -->
-		<include path="Notebook/areaConfiguration.xml" query="root/controls/*"/>
-<!-- END include: "Notebook/areaConfiguration.xml" query="root/controls/*" -->
+		<!-- All remaining "guicontrol" elements are used in some simle list chooser dlg.
+			They are used by Part xml.
+			The 'plan' is to turn those into resources and then trick the parts into looking at resources, not the old xml config system. -->
 <!-- START include: "Lists/areaConfiguration.xml" query="root/controls/*" -->
 		<include path="Lists/areaConfiguration.xml" query="root/controls/*"/>
 <!-- END include: "Lists/areaConfiguration.xml" query="root/controls/*" -->
@@ -546,55 +517,6 @@
 <!-- END include: "Words/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='View']/item" -->
 		</toolbar>
 	</toolbars>
-	<!-- ********************************************************** -->
-	<!-- ************************ resources *********************** -->
-	<!-- ********************************************************** -->
-	<!--One thing this section does is tell the system where to find the images mentioned in various commands using the icon attribute.
-	Each group of icons is added as an image list control to some resx project. Open it in designer mode and look
-	at the bottom at the controls not actually on the 'window'. Edit the properties of the image list and you can add
-	or remove or reorder images. The names given here in the labels list correspond to the images in the list, in order.
-	This is the only place a particular image is associated with a particular name.-->
-	<resources>
-		<imageList assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.LexEntryImages" field="buttonImages" size="small" labels="majorEntry, minorEntry, subentry, goToEntry, reversalEntry, gotoReversalEntry" a10status="DONE" />
-		<imageList assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordClerkImages" field="buttonImages" size="small" labels="firstRecord, lastRecord, previousRecord, nextRecord, syncSendReceive, syncObtain, chorus, syncSendReceiveFirst" a10status="MOVE_TO-LanguageExplorer.Works.RecordClerkImages" />
-		<imageList assemblyPath="LexTextDll.dll" class="LanguageExplorer.Works.LexText.ImageHolder" field="smallImages" size="small" labels="Pie, Circle, TwoHalfs, Help, Delete, Remove, Left, Right" a10status="MOVE_TO-LanguageExplorer.Works.LexText.ImageHolder" />
-		<imageList assemblyPath="LexTextDll.dll" class="LanguageExplorer.Works.LexText.ImageHolder" field="smallCommandImages" size="small" labels="findWordform, addNewAnalysis" a10status="MOVE_TO-LanguageExplorer.Works.LexText.ImageHolder" />
-<!-- START include: "Words/areaConfiguration.xml" query="root/resources/*" -->
-		<include path="Words/areaConfiguration.xml" query="root/resources/*"/>
-<!-- END include: "Words/areaConfiguration.xml" query="root/resources/*" -->
-<!-- START include: "Grammar/areaConfiguration.xml" query="root/resources/*" -->
-		<include path="Grammar/areaConfiguration.xml" query="root/resources/*"/>
-<!-- END include: "Grammar/areaConfiguration.xml" query="root/resources/*" -->
-<!-- START include: "Notebook/areaConfiguration.xml" query="root/resources/*" -->
-		<include path="Notebook/areaConfiguration.xml" query="root/resources/*"/>
-<!-- END include: "Notebook/areaConfiguration.xml" query="root/resources/*" -->
-	</resources>
-	<!-- ********************************************************** -->
-	<!-- ************************ listeners *********************** -->
-	<!-- ********************************************************** -->
-	<!--Listeners are classes that are instantiated and added to the mediator's list of colleagues (message handlers)
-  to handle messages that are not specific to one particular tool.-->
-	<listeners>
-<!-- NB: By the end of the brain transplant, there will be no listeners. -->
-<!-- START include: "Lexicon/areaConfiguration.xml" query="root/listeners/*" -->
-		<include path="Lexicon/areaConfiguration.xml" query="root/listeners/*"/>
-<!-- END include: "Lexicon/areaConfiguration.xml" query="root/listeners/*" -->
-<!-- START include: "Notebook/areaConfiguration.xml" query="root/listeners/*" -->
-		<include path="Notebook/areaConfiguration.xml" query="root/listeners/*"/>
-<!-- END include: "Notebook/areaConfiguration.xml" query="root/listeners/*" -->
-<!-- START include: "Words/areaConfiguration.xml" query="root/listeners/*" -->
-		<include path="Words/areaConfiguration.xml" query="root/listeners/*"/>
-<!-- END include: "Words/areaConfiguration.xml" query="root/listeners/*" -->
-		<!-- this guy watches what the 'areas' list puts in the 'areaChoice' property and
-			populates the "tools" list appropriately. -->
-		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.AreaListener"/>
-		<!-- take care of the writing system combo box -->
-		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.WritingSystemListHandler"/>
-		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.CombinedStylesListHandler"/>
-		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.LinkHandler"/>
-		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.MacroListener"/>
-		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.DictionaryConfigurationListener"/>
-	</listeners>
 	<contexthelpstrings>
 		<!-- Just include them to make it easier to find them when looking for tool tips. The original code didn't do this. -->
 <!-- START include: "ContextHelp.xml" query="strings" -->

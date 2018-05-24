@@ -72,7 +72,19 @@ namespace LanguageExplorer.LcmUi
 				// Add the lexeme form.
 				mergeCandidates.Add(new DummyCmObject(le.LexemeFormOA.Hvo, le.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, defVernWs));
 			}
-
+#if RANDYTODO
+			// TODO: Use this xml, instead of 'guiControl'.
+/*
+			<guicontrol id="MergeAllomorphList">
+				<parameters id="mergeAllomorphList" listItemsClass="MoForm" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" editable="false" selectColumn="false">
+					<columns>
+						<column label="Form" width="80%" layout="Allomorph" ws="$ws=vernacular"/>
+						<column label="Type" width="20%" layout="MorphTypeName"/>
+					</columns>
+				</parameters>
+			</guicontrol>
+*/
+#endif
 			guiControl = "MergeAllomorphList";
 			helpTopic = "khtpMergeAllomorph";
 			return new DummyCmObject(m_hvo, ((IMoForm) Object).Form.VernacularDefaultWritingSystem.Text, defVernWs);

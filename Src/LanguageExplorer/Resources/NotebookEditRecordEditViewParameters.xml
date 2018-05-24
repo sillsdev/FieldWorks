@@ -1,2 +1,2 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<parameters persistContext="normalEdit" layout="Normal" layoutChoiceField="Type" treeBarAvailability="NotAllowed" showDescendantInRoot="true" emptyTitleId="No-RnGenericRecs" printLayout="publishRecord" />
+<parameters persistContext="normalEdit" suppressInfoBar="ifNotFirst" layout="Normal" layoutChoiceField="Type" treeBarAvailability="NotAllowed" showDescendantInRoot="true" emptyTitleId="No-RnGenericRecs" printLayout="publishRecord" />

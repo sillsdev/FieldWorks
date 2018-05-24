@@ -354,23 +354,4 @@
 			<item command="CmdInsertACPGroup" defaultVisible="false"/>
 		</toolbar>
 	</toolbarsAddOn>
-	<!--  **********************************************************   -->
-	<!--  ************************ resources ***********************   -->
-	<!--  **********************************************************   -->
-	<resources>
-		<imageList assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.images.Morphology.ImageHolder" field="smallImages" size="small" labels="Pie, Circle, TwoHalfs, Help, Delete, Remove, Left, Right, AddSubItem"/>
-		<imageList assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.images.Morphology.MEImages" field="buttonImages" size="small" labels="pos, endocompoundRule, exocompoundRule, phoneme, boundaryMarker, naturalClass, environment, morphCoprohib, alloCoprohib, coprohibGroup, AddItem, addFeature, addComplexFeature, addExceptionFeature, metathesis"/>
-	</resources>
-	<!--  **********************************************************   -->
-	<!--  ************************ Area Item ***********************   -->
-	<!--  **********************************************************   -->
-	<item label="Grammar" value="grammar" icon="folder-grammar">
-		<parameters id="grammar">
-			<tools>
-<!-- START include Grammar Area: "Edit/toolConfiguration.xml" query="root/tools/*" -->
-				<include path="Edit/toolConfiguration.xml" query="root/tools/*"/>
-<!-- END include Grammar Area: "Edit/toolConfiguration.xml" query="root/tools/*" -->
-			</tools>
-		</parameters>
-	</item>
 </root>

@@ -43,25 +43,6 @@
 		</command>
 	</commands>
 	<!-- ********************************************************** -->
-	<!-- ******** controls (dialog or embedded browse view) ******* -->
-	<!-- ********************************************************** -->
-	<controls>
-	<parameters id="guicontrols">
-			<guicontrol id="matchingRecords">
-				<parameters id="recordMatchList" listItemsClass="RnGenericRec" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" altTitleId="RnGenericRec-Plural" editable="false">
-					<columns>
-						<column label="Record Type" editable="false" width="72000">
-							<obj field="Type" layout="Name"/>
-						</column>
-						<column label="Title" editable="false" width="196000">
-							<string field="Title"/>
-						</column>
-					</columns>
-				</parameters>
-			</guicontrol>
-		</parameters>
-	</controls>
-	<!-- ********************************************************** -->
 	<!-- ************************ menuAddOn *********************** -->
 	<!-- ********************************************************** -->
 		<menuAddOn>
@@ -124,29 +105,4 @@
 			<item command="CmdLexiconLookup" defaultVisible="false"/>
 		</toolbar>
 	</toolbarsAddOn>
-	<!-- ********************************************************** -->
-	<!-- ************************ resources ********************* -->
-	<!-- ********************************************************** -->
-	<resources>
-		<imageList assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Notebook.NotebookImageHolder" field="buttonImages" size="small" labels="nbkRecord, goToRecord" a10status="DONE" />
-	</resources>
-	<!-- ********************************************************** -->
-	<!-- ************************ listeners *********************** -->
-	<!-- ********************************************************** -->
-	<listeners>
-		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.LexText.GoLinkRecordDlgListener"/>
-		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.LexText.InsertRecordDlgListener"/>
-	</listeners>
-	<!-- ********************************************************** -->
-	<!-- ************************ Area Item *********************** -->
-	<!-- ********************************************************** -->
-	<item label="Notebook" value="notebook" icon="folder-texts">
-		<parameters id="notebook">
-			<tools>
-<!-- START include (Notebook_Area): "Edit/toolConfiguration.xml" query="root/tools/*" -->
-				<include path="Edit/toolConfiguration.xml" query="root/tools/*"/>
-<!-- END include (Notebook_Area): "Edit/toolConfiguration.xml" query="root/tools/*" -->
-			</tools>
-		</parameters>
-	</item>
 </root>

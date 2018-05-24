@@ -36,12 +36,12 @@
 	<column label="Conflicting Opinions" visibility="menu" sortType="integer" blankPossible="false">
 		<int field="ConflictCount"/>
 	</column>
-	<column label="Needs Work" visibility="menu" blankPossible="false" sortType="YesNo">
+	<column label="Incomplete Analyses" visibility="menu" blankPossible="false" sortType="YesNo">
 		<choice>
 			<where field="IsComplete" boolequals="true">
 				<span>
 					<properties>
-						<forecolor value="Green"/>
+						<forecolor value="Black"/>
 					</properties>
 					<lit>No</lit>
 				</span>
@@ -52,26 +52,6 @@
 						<forecolor value="Red"/>
 					</properties>
 					<lit>Yes</lit>
-				</span>
-			</otherwise>
-		</choice>
-	</column>
-	<column label="Certified" visibility="menu" blankPossible="false" sortType="YesNo">
-		<choice>
-			<where field="Certified" boolequals="true">
-				<span>
-					<properties>
-						<forecolor value="Green"/>
-					</properties>
-					<lit>Yes</lit>
-				</span>
-			</where>
-			<otherwise>
-				<span>
-					<properties>
-						<forecolor value="Red"/>
-					</properties>
-					<lit>No</lit>
 				</span>
 			</otherwise>
 		</choice>

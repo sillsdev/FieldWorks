@@ -36,6 +36,23 @@ namespace LanguageExplorer.Controls.LexText
 
 		protected override void InitializeMatchingObjects()
 		{
+#if RANDYTODO
+			// TODO: Use this xml, instead of 'guiControl'.
+/*
+			<guicontrol id="matchingRecords">
+				<parameters id="recordMatchList" listItemsClass="RnGenericRec" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" altTitleId="RnGenericRec-Plural" editable="false">
+					<columns>
+						<column label="Record Type" editable="false" width="72000">
+							<obj field="Type" layout="Name"/>
+						</column>
+						<column label="Title" editable="false" width="196000">
+							<string field="Title"/>
+						</column>
+					</columns>
+				</parameters>
+			</guicontrol>
+*/
+#endif
 			var xnWindow = PropertyTable.GetValue<XElement>("WindowConfiguration");
 			var configNode = xnWindow.XPathSelectElement("controls/parameters/guicontrol[@id=\"matchingRecords\"]/parameters");
 			var searchEngine = SearchEngine.Get(PropertyTable, "RecordGoSearchEngine", () => new RecordGoSearchEngine(m_cache));

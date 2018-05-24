@@ -51,7 +51,20 @@ namespace LanguageExplorer.LcmUi
 				ws = tss.get_PropertiesAt(0).GetIntPropValues((int)FwTextPropType.ktptWs, out nVar);
 				mergeCandidates.Add(new DummyCmObject(gloss.Hvo, tss.Text, ws));
 			}
-
+#if RANDYTODO
+// TODO: Use this xml, instead of 'guiControl'.
+/*
+			<guicontrol id="MergeWordGlossList">
+				<parameters id="mergeWordGlossList" listItemsClass="WfiGloss" filterBar="false"
+					treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true"
+					editable="false" selectColumn="false">
+					<columns>
+						<column label="Gloss" width="100%" layout="Form" ws="$ws=best analysis" field="Form"/>
+					</columns>
+				</parameters>
+			</guicontrol>
+*/
+#endif
 			guiControl = "MergeWordGlossList";
 			helpTopic = "khtpMergeWordGloss";
 			var me = (IWfiGloss) Object;

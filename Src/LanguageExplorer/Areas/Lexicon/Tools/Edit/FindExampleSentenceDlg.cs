@@ -20,22 +20,23 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 #if RANDYTODO
 // TODO: Used by this:
 /*
-<guicontrol id="findExampleSentences">
-	<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.FindExampleSentenceDlg"/>
-	<parameters id="senseConcordanceControls">
-		<control id="ConcOccurrenceList">
-			<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.ConcOccurrenceBrowseView"/>
-			<parameters id="ConcOccurrenceList" selectColumn="true" defaultChecked="false" forceReloadListOnInitOrChangeRoot="true" editable="false"
-					clerk="OccurrencesOfSense" filterBar="true" ShowOwnerShortname="true">
-				<include path="../Words/reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns"/>
-			</parameters>
-		</control>
-		<control id="SegmentPreviewControl">
-			<dynamicloaderinfo assemblyPath="xWorks.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.RecordDocXmlView"/>
-			<parameters id="SegmentPreviewControl" clerk="OccurrencesOfSense" treeBarAvailability="NotMyBusiness" layout="publicationNew" editable="false"/>
-		</control>
-	</parameters>
-	</guicontrol>
+			<guicontrol id="findExampleSentences">
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.FindExampleSentenceDlg"/>
+				<parameters id="senseConcordanceControls">
+					<control id="ConcOccurrenceList">
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.ConcOccurrenceBrowseView"/>
+						<parameters id="ConcOccurrenceList" selectColumn="true" defaultChecked="false" forceReloadListOnInitOrChangeRoot="true" editable="false" clerk="OccurrencesOfSense" filterBar="true" ShowOwnerShortname="true">
+<!-- START include Lexicon Area (a10status="Fork has this in resources now"): "./Words/reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns" -->
+<!-- Look for it in TextAndWordsResources.ConcordanceColumns -->
+<!-- END include Lexicon Area (a10status="Fork has this in resources now"): "./Words/reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns" -->
+						</parameters>
+					</control>
+					<control id="SegmentPreviewControl">
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.RecordDocXmlView" />
+						<parameters id="SegmentPreviewControl" clerk="OccurrencesOfSense" treeBarAvailability="NotMyBusiness" layout="publicationNew" editable="false"/>
+					</control>
+				</parameters>
+			</guicontrol>
 */
 #endif
 	/// <summary />

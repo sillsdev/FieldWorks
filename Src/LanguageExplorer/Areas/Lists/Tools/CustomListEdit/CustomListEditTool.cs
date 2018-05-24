@@ -68,6 +68,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.CustomListEdit
 
 #if RANDYTODO
 // TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
+// TODO: See if custom lists really use ListResources.PositionsEditParameters.
 #endif
 			var dataTree = new DataTree();
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(

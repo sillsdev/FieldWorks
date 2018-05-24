@@ -59,6 +59,23 @@ namespace LanguageExplorer.Areas.TextsAndWords
           <filters />
           <sortMethods />
         </clerk>
+			<guicontrol id="WordformsBrowseView">
+				<parameters id="simpleWordList" listItemsClass="WfiWordform" clerk="matchingWords"
+					filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow"
+					hscroll="true" editable="false">
+					<columns>
+						<column label="Wordform" ws="$ws=best vernacular" editable="false"
+							width="100%" field="Form">
+							<span>
+								<properties>
+									<editable value="false"/>
+								</properties>
+								<string field="Form" ws="$ws=best vernacular"/>
+							</span>
+						</column>
+					</columns>
+				</parameters>
+			</guicontrol>
 			*/
 			var xnWindow = PropertyTable.GetValue<XElement>("WindowConfiguration");
 			var configNode = xnWindow.XPathSelectElement("controls/parameters/guicontrol[@id=\"WordformsBrowseView\"]/parameters");

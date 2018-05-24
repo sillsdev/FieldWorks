@@ -38,6 +38,19 @@ namespace LanguageExplorer.LcmUi
 			var filteredHvos = new HashSet<int>(rie.AllOwnedObjects.Select(obj => obj.Hvo)) { rie.Hvo }; // exclude `rie` and all of its subentries
 			var wsIndex = m_cache.ServiceLocator.WritingSystemManager.GetWsFromStr(rie.ReversalIndex.WritingSystem);
 			mergeCandidates.AddRange(rie.ReversalIndex.AllEntries.Where(rieInner => !filteredHvos.Contains(rieInner.Hvo)).Select(rieInner => new DummyCmObject(rieInner.Hvo, rieInner.ShortName, wsIndex)));
+#if RANDYTODO
+			// TODO: Use this xml, instead of 'guiControl'.
+/*
+			<guicontrol id="MergeReversalEntryList">
+				<parameters id="mergeReversalEntryList" listItemsClass="ReversalIndexEntry" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow"
+					hscroll="true" editable="false" selectColumn="false">
+					<columns>
+						<column label="Entry" width="100%" layout="ReversalForm" ws="$ws=reversal"/>
+					</columns>
+				</parameters>
+			</guicontrol>
+*/
+#endif
 			guiControl = "MergeReversalEntryList";
 			helpTopic = "khtpMergeReversalEntry";
 			return new DummyCmObject(m_hvo, rie.ShortName, wsIndex);

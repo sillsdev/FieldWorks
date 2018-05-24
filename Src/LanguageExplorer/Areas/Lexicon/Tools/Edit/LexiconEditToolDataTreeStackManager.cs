@@ -18,7 +18,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
 #if RANDYTODO
 	// DONE: Spun off "main pane bar context menus".
-	// TODO: Split up slice hotlinks/context menus into hotlinks vs context menus, or a manger instance for each slice?
+	// TODO: Split up slice hotlinks/context menus into hotlinks vs context menus, or a manager instance for each slice?
 #endif
 	/// <summary>
 	/// Implementation that supports the addition(s) to the DataTree's context menus and hotlinks for the Lexicon Edit tool.
@@ -129,10 +129,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			_isDisposed = true;
 		}
-
-		#endregion
-
-		#region main panel handling
 
 		#endregion
 

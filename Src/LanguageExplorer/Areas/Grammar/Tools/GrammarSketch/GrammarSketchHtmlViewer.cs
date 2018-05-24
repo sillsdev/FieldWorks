@@ -215,8 +215,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			// The name of "prmSDateTime" is a special key the FxtViewer.dll knows about; it gets the current date and time and then passes it to the transform as a parameter.
 			// The name of "prmVernacularFontSize" is a special key the FxtViewer.dll knows about; it gets the font size of the normal style of the vernacular font.
 			// The name of "prmGlossFontSize" is a special key the FxtViewer.dll knows about; it gets the font size of the normal style of the analysis (gloss) font.
-			m_step1MainTransformElement = XElement.Parse(@"<transform progressPrompt='Processing data, step 1 of 2' stylesheetName='FxtM3MorphologySketch' stylesheetAssembly='ApplicationTransforms' ext='xml' ><xsltParameters><param name='sWordWorksTransformPath' value='TransformDirectory'/><param name='prmIMaxMorphsInAppendices' value='10'/><param name='prmSMaxMorphsInAppendices' value='ten'/><param name='prmSDateTime' value='fake'/><param name='prmVernacularFontSize' value='fake'/><param name='prmGlossFontSize' value='fake'/></xsltParameters></transform>");
-			m_step2XLingPaperTransformElement = XElement.Parse(@"<transform progressPrompt='Processing data, step 2 of 2' stylesheetName='XLingPap1' stylesheetAssembly='PresentationTransforms' ext='htm' />");
+			var doc = XDocument.Parse(GrammarResources.GrammarSketchTransforms);
+			var transformsElements = doc.Root.Elements("transform").ToList();
+			m_step1MainTransformElement = transformsElements[0];
+			m_step2XLingPaperTransformElement = transformsElements[1];
 			m_transformsCount = 2;
 			m_promptsCount = 1;
 

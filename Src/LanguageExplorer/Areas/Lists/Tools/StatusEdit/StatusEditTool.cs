@@ -70,7 +70,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.StatusEdit
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				true,
-				XDocument.Parse(ListResources.DomainTypeEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters),
+				XDocument.Parse(ListResources.StatusEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters),
 				MachineName,
 				majorFlexComponentParameters.LcmCache,
 				_recordList,
