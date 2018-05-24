@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Reflection;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using LanguageExplorer.Controls.XMLViews;
@@ -58,7 +59,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			ISubscriber subscriber;
 			using (var propertyTable = TestSetupServices.SetupTestTriumvirate(out publisher, out subscriber))
 			{
-				var output = XmlBrowseViewBaseVc.GetSavedColumns(input, propertyTable, "myKey");
+				var output = XmlBrowseViewBaseVc.MigrateSavedColumnsIfNeeded(input, propertyTable, "myKey");
 				Assert.That(XmlUtils.GetOptionalAttributeValue(output.Root, "version"), Is.EqualTo(BrowseViewer.kBrowseViewVersion.ToString()));
 				var headwordNode = output.XPathSelectElement("//column[@label='Headword']");
 				Assert.That(headwordNode, Is.Not.Null);
@@ -116,7 +117,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 				"<column layout=\"Unknown Test\"/>" +
 				"<column layout=\"IsAHeadwordForEntry\" label=\"Is a Headword\" visibility=\"dialog\"/>" +
 				"</root>";
-				output = XmlBrowseViewBaseVc.GetSavedColumns(input, propertyTable, "myKey");
+				output = XmlBrowseViewBaseVc.MigrateSavedColumnsIfNeeded(input, propertyTable, "myKey");
 				Assert.That(XmlUtils.GetOptionalAttributeValue(output.Root, "version"), Is.EqualTo(BrowseViewer.kBrowseViewVersion.ToString()));
 				isAHeadwordNode = output.XPathSelectElement("//column[@layout='IsAHeadwordForEntry']");
 				Assert.That(isAHeadwordNode, Is.Null);

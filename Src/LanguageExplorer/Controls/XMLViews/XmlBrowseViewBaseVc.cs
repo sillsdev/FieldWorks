@@ -157,7 +157,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			string target = null;
 			if (!string.IsNullOrEmpty(savedCols))
 			{
-				doc = GetSavedColumns(savedCols, m_xbv.m_bv.PropertyTable, ColListId);
+				doc = MigrateSavedColumnsIfNeeded(savedCols, m_xbv.m_bv.PropertyTable, ColListId);
 			}
 			if (doc == null) // nothing saved, or saved info won't parse
 			{
@@ -182,7 +182,10 @@ namespace LanguageExplorer.Controls.XMLViews
 			SetupSelectColumn();
 		}
 
-		internal static XDocument GetSavedColumns(string savedCols, IPropertyTable propertyTable, string colListId)
+		/// <summary>
+		/// Don't even 'think' of using this method outside of this class. It would be private, except for some tests that want to call it directly.
+		/// </summary>
+		internal static XDocument MigrateSavedColumnsIfNeeded(string savedCols, IPropertyTable propertyTable, string colListId)
 		{
 			XDocument doc;
 			try
@@ -243,7 +246,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						case 17:
 							savedCols = FixVersion18Columns(savedCols);
 							savedCols = savedCols.Replace("root version=\"17\"", "root version=\"18\"");
-							propertyTable.SetProperty(colListId, savedCols, true, true);
+							propertyTable.SetProperty(colListId, savedCols, true, true, SettingsGroup.LocalSettings);
 							doc = XDocument.Parse(savedCols);
 							break;
 						default:
@@ -254,8 +257,10 @@ namespace LanguageExplorer.Controls.XMLViews
 							}
 							doc = null;
 							// Forget the old settings, so we don't keep complaining every time the program runs.
-							// There doesn't seem to be any way to remove the property altogether, so at least, make it empty.
-							propertyTable.SetProperty(colListId, "", true, true, SettingsGroup.LocalSettings);
+							// Do both, since the above code was confused about the property being global or local.
+							// The confusion has been resolved in favor of local.
+							propertyTable.RemoveProperty(colListId, SettingsGroup.LocalSettings);
+							propertyTable.RemoveProperty(colListId, SettingsGroup.GlobalSettings);
 							break;
 					}
 				}
