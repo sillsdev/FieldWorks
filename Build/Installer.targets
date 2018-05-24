@@ -63,12 +63,12 @@
 		<!-- parse the version number into segments -->
 		<PropertyGroup>
 			<!-- set default values for trailing version numbers -->
-			<VersionSeg4 Condition="'$(VersionSeg4)'==''">1</VersionSeg4> <!-- 1 is the base build number. It may be a NAnt thing... -->
+			<BuildVersionSegment Condition="'$(BuildVersionSegment)'==''">1</BuildVersionSegment> <!-- 1 is the base build number. It may be a NAnt thing... -->
 
 			<MajorVersion>$(MajorVersionSegment)</MajorVersion>
 			<MinorVersion>$(MajorVersion).$(MinorVersionSegment)</MinorVersion>
 			<PatchVersion>$(MinorVersion).$(PatchVersionSegment)</PatchVersion>
-			<BuildVersion>$(PatchVersion).$(VersionSeg4)</BuildVersion>
+			<BuildVersion>$(PatchVersion).$(BuildVersionSegment)</BuildVersion>
 
 			<!-- Build Directories -->
 			<AppBuildDir>$(InstallersBaseDir)/$(SafeApplicationName)_$(MinorVersion)_Build_$(Platform)</AppBuildDir>
@@ -78,7 +78,7 @@
 
 	<!-- Build Directories -->
 	<PropertyGroup>
-		<InstallersBaseDir>$(fwrt)/Output/</InstallersBaseDir>
+		<InstallersBaseDir>$(fwrt)/BuildDir/</InstallersBaseDir>
 		<AppBuildMasterDir>$(InstallersBaseDir)/$(SafeApplicationName)_Build_Master_$(Platform)</AppBuildMasterDir>
 		<BinDirSuffix>objects/$(SafeApplicationName)</BinDirSuffix>
 		<MovieDirSuffix>$(BinDirSuffix)_Movies</MovieDirSuffix>

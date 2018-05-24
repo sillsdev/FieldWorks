@@ -10,6 +10,7 @@ Build/nunit.framework.dll
 Build/nunit.framework.xml
 Build/packages.config
 Build/*.pdb
+BuildDir/
 Src/Common/ViewsInterfaces/Views.cs
 DistFiles/Data/
 DistFiles/Languages/
