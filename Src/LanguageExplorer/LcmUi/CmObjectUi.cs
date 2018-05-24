@@ -545,25 +545,9 @@ namespace LanguageExplorer.LcmUi
 		public virtual string ContextMenuId => "mnuObjectChoices";
 
 		/// <summary>
-		/// Handle a right click by popping up the implied context menu.
-		/// </summary>
-		public bool HandleRightClick(Control hostControl, bool shouldDisposeThisWhenClosed)
-		{
-			return HandleRightClick(hostControl, shouldDisposeThisWhenClosed, ContextMenuId);
-		}
-
-		/// <summary>
-		/// Handle a right click by popping up the implied context menu.
-		/// </summary>
-		public bool HandleRightClick(Control hostControl, bool shouldDisposeThisWhenClosed, Action<ContextMenuStrip> adjustMenu)
-		{
-			return HandleRightClick(hostControl, shouldDisposeThisWhenClosed, ContextMenuId, adjustMenu);
-		}
-
-		/// <summary>
 		/// Given a populated choice group, mark the one that will be invoked by a ctrl-click.
 		/// This method is typically used as the menuAdjuster argument in calling HandleRightClick.
-		/// It's important that it marks the same menu item as selected by HandlCtrlClick.
+		/// It's important that it marks the same menu item as selected by HandleCtrlClick.
 		/// </summary>
 		public static void MarkCtrlClickItem(ContextMenuStrip menu)
 		{
@@ -626,16 +610,16 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Handle the right click by popping up an explicit context menu id.
 		/// </summary>
-		public bool HandleRightClick(Control hostControl, bool shouldDisposeThisWhenClosed, string sMenuId)
+		public bool HandleRightClick(Control hostControl, bool shouldDisposeThisWhenClosed, string sMenuId = null, Action<ContextMenuStrip> adjustMenu = null)
 		{
-			return HandleRightClick(hostControl, shouldDisposeThisWhenClosed, sMenuId, null);
-		}
-
-		/// <summary>
-		/// Handle the right click by popping up an explicit context menu id.
-		/// </summary>
-		public bool HandleRightClick(Control hostControl, bool shouldDisposeThisWhenClosed, string sMenuId, Action<ContextMenuStrip> adjustMenu)
-		{
+			if (string.IsNullOrWhiteSpace(sMenuId))
+			{
+				// Callers outside of the FooUi classes (e.g.: RuleFormulaControl) supply the menu id,
+				// or they are happy with the FooUi ContextMenuId virtual property value (e.g.: SandboxBase).
+				// In any case, only "hostControl" is of interest to this class, where all other parameters are passed
+				// on to somthing that handles the context menu.
+				sMenuId = ContextMenuId;
+			}
 			m_hostControl = hostControl;
 
 			var sHostType = m_hostControl.GetType().Name;
@@ -655,13 +639,10 @@ namespace LanguageExplorer.LcmUi
 				}
 			}
 
-			// TODO: The context menu needs to be filtered to remove inappropriate menu items.
 #if RANDYTODO
+			// TODO: The context menu needs to be filtered to remove inappropriate menu items.
 			var window = PropertyTable.GetValue<IFwMainWnd>("window");
-			window.ShowContextMenu(sMenuId,
-				new Point(Cursor.Position.X, Cursor.Position.Y),
-				new TemporaryColleagueParameter(m_mediator, this, shouldDisposeThisWhenClosed),
-				null, adjustMenu);
+			window.ShowContextMenu(sMenuId, new Point(Cursor.Position.X, Cursor.Position.Y), new TemporaryColleagueParameter(m_mediator, this, shouldDisposeThisWhenClosed), null, adjustMenu);
 			// Using the sequencer here now causes problems with slices that allow
 			// keyboard activity (cf. PhoneEnvReferenceView).
 			// If a safe blocking mechanism can be found for the context menu, we can restore the original behavior

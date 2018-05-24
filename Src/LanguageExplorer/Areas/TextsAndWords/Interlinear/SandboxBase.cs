@@ -2504,7 +2504,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				m_fHandlingRightClickMenu = true;
 				try
 				{
-					return rightClickUiObj.HandleRightClick(this, true, CmObjectUi.MarkCtrlClickItem);
+					return rightClickUiObj.HandleRightClick(this, true, adjustMenu: CmObjectUi.MarkCtrlClickItem);
 				}
 				finally
 				{

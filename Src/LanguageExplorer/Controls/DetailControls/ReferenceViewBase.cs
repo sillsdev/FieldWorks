@@ -139,7 +139,7 @@ Debug.WriteLine("hvo=" + hvo.ToString()+" "+ui.Object.ShortName+"  "+ ui.Object.
 #if TESTMS
 Debug.WriteLine("ui.HandleRightClick: and returning true.");
 #endif
-					return ui.HandleRightClick(this, true, CmObjectUi.MarkCtrlClickItem);
+					return ui.HandleRightClick(this, true, adjustMenu: CmObjectUi.MarkCtrlClickItem);
 				}
 #if TESTMS
 Debug.WriteLine("No ui: returning false");
