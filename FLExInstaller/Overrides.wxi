@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- PFDir is predefined by the genericinstaller for Base builds but not for Patch builds. -->
+<?ifndef PFDir?>
+<?if $(sys.BUILDARCH) = x64?>
+<?define PFDir = ProgramFiles64Folder?>
+<?else?>
+<?define PFDir = ProgramFilesFolder?>
+<?endif?>
+<?endif?>
+
 <Include>
 	<Property Id="REGISTRYKEY" Value="SIL\$(var.SafeApplicationName)\$(var.MajorVersion)"/>
 	<Property Id="APPFOLDERREGSZNAME" Value="RootCodeDir"/>

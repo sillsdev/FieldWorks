@@ -164,7 +164,7 @@
 			<DeveloperFiles Include="$(fwrt)\DistFiles\libxample64.so"/> <!-- Linux file -->
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Linux\**\*"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Projects\**\*"/>
-			<DeveloperFiles Include="$(fwrt)\DistFiles\ReleaseData\**\*"/>
+			<DeveloperFiles Include="$(fwrt)\DistFiles\ReleaseData\**\*"/> <!-- Sample Projects -->
 			<DeveloperFiles Include="$(fwrt)\DistFiles\SFconv.exe"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\TECkit\**\*"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\TxtConv.exe"/>
@@ -293,6 +293,7 @@
 			<ObjectFiles Include="$(AppBuildDir)/objects/**/*"/>
 		</ItemGroup>
 		<Copy SourceFiles="@(ObjectFiles)" DestinationFolder="$(AppBuildMasterDir)/objects/%(RecursiveDir)"/>
+		<Copy SourceFiles="$(AppBuildDir)/version" DestinationFolder="$(AppBuildMasterDir)"/>
 	</Target>
 
 	<Target Name="GetDotNetFiles" >
@@ -380,6 +381,8 @@
 			<InstallerFiles Include="$(BaseBuildDir)/**/$(SafeApplicationName)_*.msi"/>
 		</ItemGroup>
 		<Move SourceFiles="@(InstallerFiles)" DestinationFolder="$(InstallersBaseDir)"/>
+
+		<WriteLinesToFile File="$(AppBuildDir)/version" Overwrite="true" Lines="$(BuildVersion)" />
 	</Target>
 
 	<Target Name="BuildProductPatchMsp" DependsOnTargets="InstallerVersionNumbers">
