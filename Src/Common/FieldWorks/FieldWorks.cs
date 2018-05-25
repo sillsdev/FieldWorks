@@ -823,9 +823,16 @@ namespace SIL.FieldWorks
 				LcmCache cache = LcmCache.CreateCacheFromExistingData(projectId, s_sWsUser, s_ui, FwDirectoryFinder.LcmDirectories,
 					CreateLcmSettings(), progressDlg);
 				EnsureValidLinkedFilesFolder(cache);
+				string oldPronWss = cache.LangProject.CurPronunWss ?? string.Empty;
 				// Make sure every project has one of these. (Getting it has a side effect if it does not exist.)
 				// Crashes have been caused by trying to create it at an unsafe time (LT-15695).
 				var dummy = cache.LangProject.DefaultPronunciationWritingSystem;
+				string badWss = CheckForDeletedWss(oldPronWss, cache.LangProject.CurPronunWss);
+				if (!string.IsNullOrEmpty(badWss))
+				{
+					string message = string.Format(Properties.Resources.ksNotifyWsRemoved, Environment.NewLine, badWss);
+					MessageBox.Show(message, Properties.Resources.kstidFoundInvalidWs, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				}
 				cache.ProjectNameChanged += ProjectNameChanged;
 				cache.ServiceLocator.GetInstance<IUndoStackManager>().OnSave += FieldWorks_OnSave;
 
@@ -833,6 +840,18 @@ namespace SIL.FieldWorks
 				EnsureDefaultCollationsPresent(cache);
 				return cache;
 			}
+		}
+
+		private static string CheckForDeletedWss(string oldWssS, string currentWss)
+		{
+			StringBuilder deletedWss = new StringBuilder();
+			var oldWss = oldWssS.Split(' ');
+			foreach (var ws in oldWss)
+			{
+				if (!currentWss.Contains(ws))
+					deletedWss.Append(ws + ", ");
+			}
+			return deletedWss.ToString().TrimEnd(',',' ');
 		}
 
 		private static void EnsureDefaultCollationsPresent(LcmCache cache)
