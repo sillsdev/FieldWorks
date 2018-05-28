@@ -115,7 +115,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		public void SetDlgInfo(CmObjectUi obj, LcmCache cache, IPropertyTable propertyTable)
 		{
 			Debug.Assert(obj != null);
-			Debug.Assert(obj.Object != null);
+			Debug.Assert(obj.MyCmObject != null);
 
 			SetDlgInfo(obj, cache, propertyTable, TsStringUtils.MakeString(" ", cache.DefaultUserWs));
 		}
@@ -131,7 +131,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			IVwStylesheet stylesheet = FwUtils.StyleSheetFromPropertyTable(propertyTable);
 
 			Debug.Assert(obj != null);
-			Debug.Assert(obj.Object != null);
+			Debug.Assert(obj.MyCmObject != null);
 
 			Text = string.Format(LcmUiStrings.ksDeleteX, obj.DisplayNameOfClass);
 
@@ -163,7 +163,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			m_descriptionBox3.WritingSystemCode = defUserWs;
 			m_descriptionBox3.StyleSheet = stylesheet;
 			var tisb3 = TsStringUtils.MakeIncStrBldr();
-			tisb3.AppendTsString(obj.Object.DeletionTextTSS);
+			tisb3.AppendTsString(obj.MyCmObject.DeletionTextTSS);
 			m_descriptionBox3.Tss = tisb3.GetString();
 			// Adjust the dialog size if needed to display the message (FWNX-857).
 			var deltaY = GrowTextBox(panel1, m_descriptionBox3);
@@ -177,7 +177,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			m_descriptionBox4.Tss = tisb4.GetString();
 			GrowTextBox(panel2, m_descriptionBox4);
 
-			m_deleteButton.Enabled = obj.Object.CanDelete;
+			m_deleteButton.Enabled = obj.MyCmObject.CanDelete;
 			label2.Visible = m_deleteButton.Enabled;
 		}
 

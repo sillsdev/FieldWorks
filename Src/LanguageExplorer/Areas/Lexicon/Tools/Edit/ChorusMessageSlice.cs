@@ -50,7 +50,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var additionalPaths = GetAdditionalLexiconFilePaths(Cache);
 			const string idAttrForOtherFiles = "guid"; // .lexdb chorus notes files identify FLEx object with a url attr of "guid".
 			m_notesBar = m_chorusSystem.WinForms.CreateNotesBar(dataFilePath, additionalPaths, idAttrForOtherFiles, notesToRecordMapping, new NullProgress());
-			m_notesBar.SetTargetObject(Object);
+			m_notesBar.SetTargetObject(MyCmObject);
 			// Set the writing systems for the NoteDetailDialog.  (See FWNX-1239.)
 			var vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			var labelWs = new ChorusWritingSystem(vernWs.LanguageName, vernWs.Id, vernWs.DefaultFontName, 12);
@@ -112,7 +112,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// In this URI, the stuff up to tag=& is the part that allows FLEx to switch to the right object from the notes browser.
 			// the ID is the thing that allows the NotesBar to select the right notes to display for a particular entry.
 			// the Label is the title under which the note is shown in the Note creation window and notes browser.
-			return string.Format("silfw://localhost/link?app=flex&database=current&server=&tool=default&guid={0}&tag=&id={0}&label={1}", Object.Guid, Object.ShortName);
+			return string.Format("silfw://localhost/link?app=flex&database=current&server=&tool=default&guid={0}&tag=&id={0}&label={1}", MyCmObject.Guid, MyCmObject.ShortName);
 		}
 
 		private static string GetIdForObject(object targetOfNote)

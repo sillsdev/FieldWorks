@@ -119,7 +119,7 @@ namespace LanguageExplorer.LcmUi
 		{
 			get
 			{
-				var poss = (ICmPossibility)Object;
+				var poss = (ICmPossibility)MyCmObject;
 				var owningList = poss.OwningList;
 				if (owningList.OwningFlid == 0)
 				{
@@ -239,7 +239,7 @@ namespace LanguageExplorer.LcmUi
 
 		private bool CanModifyChartColumn(out string msg)
 		{
-			var poss = (ICmPossibility) Object;
+			var poss = (ICmPossibility) MyCmObject;
 			if (poss.IsDefaultDiscourseTemplate)
 			{
 				msg = LcmUiStrings.ksCantDeleteDefaultDiscourseTemplate;
@@ -248,7 +248,7 @@ namespace LanguageExplorer.LcmUi
 
 			if (poss.IsThisOrDescendantInUseAsChartColumn)
 			{
-				var rootPossibility = (ICmPossibility) Object;
+				var rootPossibility = (ICmPossibility) MyCmObject;
 				while (rootPossibility.Owner is ICmPossibility)
 				{
 					rootPossibility = (ICmPossibility) rootPossibility.Owner;
@@ -266,7 +266,7 @@ namespace LanguageExplorer.LcmUi
 
 		private bool CanDeleteTextMarkupTag(out string msg)
 		{
-			var poss = (ICmPossibility) Object;
+			var poss = (ICmPossibility) MyCmObject;
 			if (poss.IsOnlyTextMarkupTag)
 			{
 				msg = LcmUiStrings.ksCantDeleteLastTagList;

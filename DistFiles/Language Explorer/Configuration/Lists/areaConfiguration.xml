@@ -144,27 +144,6 @@
 		</command>
 	</commands>
 	<!-- ********************************************************** -->
-	<!-- ************* controls (embedded browse view) ************ -->
-	<!-- ********************************************************** -->
-	<controls>
-	<parameters id="guicontrols">
-			<guicontrol id="PeopleFlatList">
-				<parameters id="peopleList" listItemsClass="CmPerson" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" editable="false" selectColumn="true">
-					<columns>
-						<column label="Name" sortmethod="Name" ws="$ws=best vernoranal" editable="false" width="100%" field="Name">
-							<span>
-								<properties>
-									<editable value="false"/>
-								</properties>
-								<string field="Name" ws="best vernoranal"/>
-							</span>
-						</column>
-					</columns>
-				</parameters>
-			</guicontrol>
-		</parameters>
-	</controls>
-	<!-- ********************************************************** -->
 	<!-- ************************ menuAddOn *********************** -->
 	<!-- ********************************************************** -->
 	<menuAddOn>

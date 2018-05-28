@@ -34,7 +34,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			base.FinishInit();
 
-			var objPropHvo = Cache.DomainDataByFlid.get_ObjectProp(Object.Hvo, FieldId);
+			var objPropHvo = Cache.DomainDataByFlid.get_ObjectProp(MyCmObject.Hvo, FieldId);
 			if (objPropHvo == 0)
 			{
 				CreateText();
@@ -237,7 +237,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			NonUndoableUnitOfWorkHelper.Do(Cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 			{
 				var sda = Cache.DomainDataByFlid;
-				textHvo = sda.MakeNewObject(StTextTags.kClassId, Object.Hvo, FieldId, -2);
+				textHvo = sda.MakeNewObject(StTextTags.kClassId, MyCmObject.Hvo, FieldId, -2);
 				var hvoStTxtPara = sda.MakeNewObject(StTxtParaTags.kClassId, textHvo, StTextTags.kflidParagraphs, 0);
 				sda.SetString(hvoStTxtPara, StTxtParaTags.kflidContents, TsStringUtils.EmptyString(m_ws == 0 ? Cache.DefaultAnalWs : m_ws));
 			});

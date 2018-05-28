@@ -34,7 +34,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 				var parentSlice = Slice;
 				if (originalFs == null)
 				{
-					var leit = parentSlice.Object as ILexEntryInflType;
+					var leit = parentSlice.MyCmObject as ILexEntryInflType;
 					var owningFlid = (parentSlice as FeatureSystemInflectionFeatureListDlgLauncherSlice).Flid;
 					dlg.SetDlgInfo(m_cache, PropertyTable, leit, owningFlid);
 				}

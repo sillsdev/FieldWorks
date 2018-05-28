@@ -70,7 +70,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// </summary>
 		public override void FinishInit()
 		{
-			var ctrl = new AnalysisInterlinearRs(Cache, (IWfiAnalysis) Object, ConfigurationNode);
+			var ctrl = new AnalysisInterlinearRs(Cache, (IWfiAnalysis) MyCmObject, ConfigurationNode);
 			ctrl.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			Control = ctrl;
 		}

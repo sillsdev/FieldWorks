@@ -31,7 +31,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			Indent = indent;
 			m_node = node;
 			m_path = path;
-			Object = obj;
+			MyCmObject = obj;
 			m_flid = flid;
 			m_ihvoMin = ihvoMin;
 			m_layoutName = layoutName;
@@ -105,7 +105,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				ihvo++;
 			}
-			var hvo = Cache.DomainDataByFlid.get_VecItem(Object.Hvo, m_flid, ihvo);
+			var hvo = Cache.DomainDataByFlid.get_VecItem(MyCmObject.Hvo, m_flid, ihvo);
 			// In the course of becoming real, we may get disposed. That clears m_path, which
 			// has various bad effects on called objects that are trying to use it, as well as
 			// causing failure here when we try to remove the thing we added temporarily.
@@ -122,7 +122,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				// Any occurrences after index get replaced by a new one with suitable ihvoMin.
 				// Note this must be done before we insert an unknown number of extra slices
 				// by calling CreateSlicesFor.
-				var dosRep = new DummyObjectSlice(Indent, m_node, path, Object, m_flid, ihvo + 1, m_layoutName, m_layoutChoiceField, m_caller) {Cache = Cache, ParentSlice = ParentSlice};
+				var dosRep = new DummyObjectSlice(Indent, m_node, path, MyCmObject, m_flid, ihvo + 1, m_layoutName, m_layoutChoiceField, m_caller) {Cache = Cache, ParentSlice = ParentSlice};
 				for (var islice = index + 1;
 					islice < ContainingDataTree.Slices.Count && ContainingDataTree.Slices[islice] == this;
 					islice++)

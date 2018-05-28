@@ -76,9 +76,6 @@
 		<command id="CmdWordformJumpToConcordance" label="Show Wordform in Concordance" message="JumpToTool">
 			<parameters tool="concordance" className="WfiWordform"/>
 		</command>
-		<command id="CmdEntryJumpToConcordance" label="Show Entry in Concordance" message="JumpToTool">
-			<parameters tool="concordance" className="LexEntry"/>
-		</command>
 		<command id="CmdSenseJumpToConcordance" label="Show Sense in Concordance" message="JumpToTool">
 			<parameters tool="concordance" className="LexSense"/>
 		</command>
@@ -93,12 +90,6 @@
 		</command>
 		<command id="CmdWordPOSJumpToConcordance" label="Show Word Category in Concordance" message="JumpToTool">
 			<parameters tool="concordance" concordOn="WordPartOfSpeech" className="WordPartOfSpeech" ownerClass="LangProject" ownerField="PartsOfSpeech"/>
-		</command>
-		<command id="CmdMorphJumpToConcordance" label="Show Morph in Concordance" message="JumpToTool">
-			<parameters tool="concordance" className="MoForm"/>
-		</command>
-		<command id="CmdLexemeFormJumpToConcordance" label="Show Lexeme Form in Concordance" message="JumpToTool">
-			<parameters tool="concordance" className="MoForm"/>
 		</command>
 		<command id="CmdWordGlossJumpToConcordance" label="Show Word Gloss in Concordance" message="JumpToTool">
 			<parameters tool="concordance" className="WfiGloss"/>
@@ -191,20 +182,6 @@
 		<command id="CmdAddToLexicon" label="Add to Dictionary..." message="AddToLexicon" icon="majorEntry"/>
 		<command id="CmdConfigureXmlDocView" label="{0}" message="ConfigureXmlDocView"/>
 	</commands>
-	<!-- ********************************************************** -->
-	<!-- ******** controls (dialog or embedded browse view) ******* -->
-	<!-- ********************************************************** -->
-	<controls>
-		<!-- All remaining "guicontrol" elements are used in some simle list chooser dlg.
-			They are used by Part xml.
-			The 'plan' is to turn those into resources and then trick the parts into looking at resources, not the old xml config system. -->
-<!-- START include: "Lists/areaConfiguration.xml" query="root/controls/*" -->
-		<include path="Lists/areaConfiguration.xml" query="root/controls/*"/>
-<!-- END include: "Lists/areaConfiguration.xml" query="root/controls/*" -->
-<!-- START include: "Grammar/areaConfiguration.xml" query="root/controls/*" -->
-		<include path="Grammar/areaConfiguration.xml" query="root/controls/*"/>
-<!-- END include: "Grammar/areaConfiguration.xml" query="root/controls/*" -->
-	</controls>
 	<!-- ********************************************************** -->
 	<!-- ************************ menus *********************** -->
 	<!-- ********************************************************** -->
@@ -325,7 +302,7 @@
 			<menu label="Show Concordance of">
 				<item command="CmdWordformJumpToConcordance" label="Wordform"/>
 				<item command="CmdAnalysisJumpToConcordance" label="Analysis"/>
-				<item command="CmdMorphJumpToConcordance" label="Morph"/>
+				<item command="CmdMorphJumpToConcordance" label="Morph" a10status="See LexiconEditToolDataTreeStackLexEntryManager:Register_LexemeForm_Bundle for 'CmdMorphJumpToConcordance' defn." />
 				<item command="CmdEntryJumpToConcordance" label="Entry"/>
 				<item command="CmdSenseJumpToConcordance" label="Sense"/>
 				<item command="CmdLexGramInfoJumpToConcordance"/>
@@ -377,7 +354,7 @@
 			<item command="CmdRecordJumpToDefault"/>
 			<item command="CmdAnalysisJumpToConcordance"/>
 			<item label="-" translate="do not translate"/>
-			<item command="CmdLexemeFormJumpToConcordance"/>
+			<item command="CmdLexemeFormJumpToConcordance" a10status="See LexiconEditToolDataTreeStackLexEntryManager:Register_LexemeForm_Bundle for 'CmdLexemeFormJumpToConcordance' defn." />
 			<item command="CmdEntryJumpToConcordance"/>
 			<item command="CmdSenseJumpToConcordance"/>
 			<item command="CmdJumpToAcademicDomainList"/>

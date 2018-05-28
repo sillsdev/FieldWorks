@@ -83,7 +83,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 		#endregion IDisposable override
 
-		public ICmMedia Media => (ICmMedia)Object;
+		public ICmMedia Media => (ICmMedia)MyCmObject;
 
 		/// <summary>
 		/// This method, called once we have a cache and object, is our first chance to

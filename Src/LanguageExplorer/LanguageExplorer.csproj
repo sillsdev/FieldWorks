@@ -320,6 +320,8 @@
     <Compile Include="Areas\IPreferedTargetAdjuster.cs" />
     <Compile Include="Areas\IToolUiWidgetManager.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolDataTreeMainPanelContextMenuStripManager.cs" />
+    <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolDataTreeStackLexEntryManager.cs" />
+    <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolDataTreeStackLexSenseManager.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolDataTreeStackManager.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolToolbarManager.cs" />
     <Compile Include="Areas\Lexicon\ISemanticDomainTreeBarHandler.cs" />
@@ -573,6 +575,7 @@
     <Compile Include="Controls\DetailControls\NodeTestResult.cs" />
     <Compile Include="Controls\DetailControls\ObjectDragInfo.cs" />
     <Compile Include="Controls\DetailControls\ObjectWeight.cs" />
+    <Compile Include="Controls\DetailControls\PanelMenuContextMenuFactory.cs" />
     <Compile Include="Controls\DetailControls\ParaNodeInfo.cs" />
     <Compile Include="Controls\DetailControls\PhoneEnvReferenceDataCacheDecorator.cs" />
     <Compile Include="Controls\DetailControls\PhoneEnvReferenceSda.cs" />
@@ -590,6 +593,9 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\SemanticDomainSelectionServices.cs" />
+    <Compile Include="Controls\DetailControls\SliceHotlinksMenuFactory.cs" />
+    <Compile Include="Controls\DetailControls\SliceLeftEdgeContextMenuFactory.cs" />
+    <Compile Include="Controls\DetailControls\SliceRightClickPopupMenuFactory.cs" />
     <Compile Include="Controls\DetailControls\StringListConcPolicy.cs" />
     <Compile Include="Controls\DetailControls\StringSliceVc.cs" />
     <Compile Include="Controls\DetailControls\StringSliceView.cs">
@@ -952,7 +958,7 @@
     <Compile Include="ISimpleLogger.cs" />
     <Compile Include="IUndoRedoHandler.cs" />
     <Compile Include="LanguageExplorerCompositionServices.cs" />
-    <Compile Include="Controls\DetailControls\SliceContextMenuFactory.cs" />
+    <Compile Include="Controls\DetailControls\DataTreeStackContextMenuFactory.cs" />
     <Compile Include="Controls\ToolStripButtonFactory.cs" />
     <Compile Include="Impls\RefreshInterest.cs" />
     <Compile Include="InsertToolbarManager.cs" />
@@ -1895,6 +1901,7 @@
     <Compile Include="Areas\ViewBase.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Content Include="Resources\SimpleChooserParameters.xml" />
     <None Include="images\password-reveal-eye-16x16.png" />
     <Content Include="Resources\DialectsListEditParameters.xml" />
     <Content Include="Resources\ExtNoteTypeEditParameters.xml" />
@@ -3816,6 +3823,7 @@
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\MorphologyParts.xml">
       <Link>XML\Parts\MorphologyParts.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\NotebookParts.xml">
       <Link>XML\Parts\NotebookParts.xml</Link>
@@ -3834,12 +3842,14 @@
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\LexEntry.fwlayout">
       <Link>XML\Parts\LexEntry.fwlayout</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\LexSense.fwlayout">
       <Link>XML\Parts\LexSense.fwlayout</Link>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\Morphology.fwlayout">
       <Link>XML\Parts\Morphology.fwlayout</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\Notebook.fwlayout">
       <Link>XML\Parts\Notebook.fwlayout</Link>

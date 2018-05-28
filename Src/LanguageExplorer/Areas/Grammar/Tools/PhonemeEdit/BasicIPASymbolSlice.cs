@@ -31,7 +31,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		public BasicIPASymbolSlice(LcmCache cache, string editor, int flid, XElement node, ICmObject obj, IPersistenceProvider persistenceProvider, int ws)
 			: base(obj, flid, ws)
 		{
-			var phoneme = (IPhPhoneme)Object;
+			var phoneme = (IPhPhoneme)MyCmObject;
 			phoneme.BasicIPASymbolChanged += UpdatePhoneme;
 		}
 
@@ -39,7 +39,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		{
 			if (disposing)
 			{
-				var phoneme = (IPhPhoneme)Object;
+				var phoneme = (IPhPhoneme)MyCmObject;
 				phoneme.BasicIPASymbolChanged -= UpdatePhoneme;
 			}
 
@@ -57,7 +57,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		/// </summary>
 		private void SetDescriptionBasedOnIPA()
 		{
-			var phoneme = (IPhPhoneme) Object;
+			var phoneme = (IPhPhoneme) MyCmObject;
 			if (!m_justChangedDescription && phoneme.BasicIPASymbol.Length == 0)
 			{
 				return;
@@ -102,7 +102,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		/// </summary>
 		public void SetFeaturesBasedOnIPA()
 		{
-			var phoneme = (IPhPhoneme)Object;
+			var phoneme = (IPhPhoneme)MyCmObject;
 
 			if (phoneme.BasicIPASymbol.Length > 0 && (m_justChangedFeatures || phoneme.FeaturesOA == null || phoneme.FeaturesOA.FeatureSpecsOC.Count == 0))
 			{

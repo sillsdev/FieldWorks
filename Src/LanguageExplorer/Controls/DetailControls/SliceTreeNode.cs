@@ -42,9 +42,9 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected bool m_inMenuButton = false;
 		private Slice m_myParentSlice;
-		private SliceContextMenuFactory _sliceContextMenuFactory;
-		private string _ordinaryMenuId;
-		private Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>> _ordinaryMenuStuff;
+		private SliceLeftEdgeContextMenuFactory _sliceLeftEdgeContextMenuFactory;
+		private string _leftEdgeContextMenuId;
+		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> _leftEdgeContextMenu;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -54,7 +54,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		public bool ShowPlusMinus { get; set; }
 
 		/// <summary />
-		internal SliceTreeNode(Slice myParentSlice, SliceContextMenuFactory sliceContextMenuFactory, string ordinaryMenuId)
+		internal SliceTreeNode(Slice myParentSlice, SliceLeftEdgeContextMenuFactory sliceLeftEdgeContextMenuFactory, string leftEdgeContextMenuId)
 		{
 			if (myParentSlice == null)
 			{
@@ -66,9 +66,8 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			m_myParentSlice = myParentSlice;
 
-			_sliceContextMenuFactory = sliceContextMenuFactory;
-			_ordinaryMenuId = ordinaryMenuId;
-			_ordinaryMenuStuff = _sliceContextMenuFactory.GetOrdinaryMenu(myParentSlice, _ordinaryMenuId);
+			_sliceLeftEdgeContextMenuFactory = sliceLeftEdgeContextMenuFactory;
+			_leftEdgeContextMenuId = leftEdgeContextMenuId;
 
 			SuspendLayout();
 			Paint += HandlePaint;
@@ -174,8 +173,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return odi;
 			}
-			hvoDstOwner = m_myParentSlice.Object.Hvo;
-			flidDst = m_myParentSlice.ContainingDataTree.Cache.DomainDataByFlid.MetaDataCache.GetFieldId2(m_myParentSlice.Object.ClassID, firstChild.Attribute("field").Value, true);
+			hvoDstOwner = m_myParentSlice.MyCmObject.Hvo;
+			flidDst = m_myParentSlice.ContainingDataTree.Cache.DomainDataByFlid.MetaDataCache.GetFieldId2(m_myParentSlice.MyCmObject.ClassID, firstChild.Attribute("field").Value, true);
 			ihvoDstStart = 0;
 			if (OkToMove(hvoDstOwner, flidDst, ihvoDstStart, odi))
 			{
@@ -269,7 +268,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			if( disposing )
 			{
-				_sliceContextMenuFactory.DisposeContextMenu(_ordinaryMenuStuff);
+				_sliceLeftEdgeContextMenuFactory.DisposeLeftEdgeContextMenu(_leftEdgeContextMenu);
 				Paint -= HandlePaint;
 				SizeChanged -= HandleSizeChanged;
 				KeyPress -= SliceTreeNode_KeyPress;
@@ -277,9 +276,9 @@ namespace LanguageExplorer.Controls.DetailControls
 				components?.Dispose();
 			}
 			m_myParentSlice = null;
-			_sliceContextMenuFactory = null;
-			_ordinaryMenuId = null;
-			_ordinaryMenuStuff = null;
+			_sliceLeftEdgeContextMenuFactory = null;
+			_leftEdgeContextMenuId = null;
+			_leftEdgeContextMenu = null;
 
 			base.Dispose( disposing );
 		}
@@ -414,13 +413,21 @@ namespace LanguageExplorer.Controls.DetailControls
 			// this control to be selected, in a sense that causes it to be scrolled into
 			// view every time a lazy slice is expanded into a real one. This is the first
 			// successful way I (JT) found to defeat this behavior, and I tried many.
-			//base.OnMouseDown(meArgs);
 			if (meArgs.Button.Equals(MouseButtons.Right) || (ShowingContextIcon && meArgs.X < 20))
 			{
-				var p = new Point(meArgs.X,meArgs.Y);
-				if (m_myParentSlice.HandleMouseDown(p) && _ordinaryMenuStuff != null)
+				var mouseLocation = new Point(meArgs.X,meArgs.Y);
+				if (m_myParentSlice.HandleMouseDown(mouseLocation))
 				{
-					_ordinaryMenuStuff.Item1.Show(m_myParentSlice, p);
+					if (_leftEdgeContextMenu != null)
+					{
+						m_myParentSlice.RemoveOldVisibilityMenus();
+						// Get rid of the old ones, since some slices (e.g., MultiStringSlice) need to rebuild parts of the menu times each time it is shown.
+						_sliceLeftEdgeContextMenuFactory.DisposeLeftEdgeContextMenu(_leftEdgeContextMenu);
+						_leftEdgeContextMenu = null;
+					}
+					_leftEdgeContextMenu = _sliceLeftEdgeContextMenuFactory.GetLeftEdgeContextMenu(m_myParentSlice, _leftEdgeContextMenuId);
+					m_myParentSlice.PrepareToShowContextMenu();
+					_leftEdgeContextMenu?.Item1.Show(m_myParentSlice, mouseLocation);
 					return;
 				}
 			}

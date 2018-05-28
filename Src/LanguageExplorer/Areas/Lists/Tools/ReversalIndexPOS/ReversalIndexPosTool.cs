@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
@@ -84,8 +83,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif
+			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
 			var dataTree = new DataTree();
-			dataTree.SliceContextMenuFactory.RegisterPanelMenuCreatorMethod(panelMenuId, CreateMainPanelContextMenuStrip);
+			dataTree.DataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(panelMenuId, CreateMainPanelContextMenuStrip);
 			var recordEditView = new RecordEditView(XDocument.Parse(ListResources.ReversalToolReversalIndexPOSRecordEditViewParameters).Root, XDocument.Parse(AreaResources.HideAdvancedListItemFields), majorFlexComponentParameters.LcmCache, _recordList, dataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
@@ -97,7 +97,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			var browseViewPaneBar = new PaneBar();
 			var img = LanguageExplorerResources.MenuWidget;
 			img.MakeTransparent(Color.Magenta);
-			var panelMenu = new PanelMenu(dataTree.SliceContextMenuFactory, panelMenuId)
+			var panelMenu = new PanelMenu(dataTree.DataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory, panelMenuId)
 			{
 				Dock = DockStyle.Left,
 				BackgroundImage = img,
@@ -106,7 +106,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			browseViewPaneBar.AddControls(new List<Control> { panelMenu });
 
 			var recordEditViewPaneBar = new PaneBar();
-			var panelButton = new PanelButton(majorFlexComponentParameters.FlexComponentParameters, null, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), LanguageExplorerResources.ksShowHiddenFields, LanguageExplorerResources.ksShowHiddenFields)
+			var panelButton = new PanelButton(majorFlexComponentParameters.FlexComponentParameters, null, showHiddenFieldsPropertyName, LanguageExplorerResources.ksShowHiddenFields, LanguageExplorerResources.ksShowHiddenFields)
 			{
 				Dock = DockStyle.Right
 			};
@@ -122,6 +122,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			panelButton.MyDataTree = recordEditView.MyDataTree;
 			// Too early before now.
 			recordEditView.FinishInitialization();
+			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false, SettingsGroup.LocalSettings))
+			{
+				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish("ShowHiddenFields", true);
+			}
 		}
 
 		/// <summary>
@@ -185,12 +189,11 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 
 		#endregion
 
-		private Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>> CreateMainPanelContextMenuStrip(string panelMenuId)
+		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> CreateMainPanelContextMenuStrip(string panelMenuId)
 		{
 			var contextMenuStrip = new ContextMenuStrip();
-			contextMenuStrip.Opening += MainPanelContextMenuStrip_Opening;
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>();
-			var retVal = new Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, MainPanelContextMenuStrip_Opening, menuItems);
+			var retVal = new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 
 			if (_reversalIndexRepository == null)
 			{
@@ -204,10 +207,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			}
 
 			return retVal;
-		}
-
-		private void MainPanelContextMenuStrip_Opening(object sender, CancelEventArgs e)
-		{
 		}
 
 		private void ReversalIndex_Menu_Clicked(object sender, EventArgs e)

@@ -104,7 +104,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected virtual void InitLauncher()
 		{
 			var vrl = (VectorReferenceLauncher)Control;
-			vrl.Initialize(Cache, Object, m_flid, m_fieldName, PersistenceProvider, DisplayNameProperty, BestWsName); // TODO: Get better default 'best ws'.
+			vrl.Initialize(Cache, MyCmObject, m_flid, m_fieldName, PersistenceProvider, DisplayNameProperty, BestWsName); // TODO: Get better default 'best ws'.
 			vrl.ConfigurationNode = ConfigurationNode;
 			vrl.ViewSizeChanged += OnViewSizeChanged;
 			var view = (VectorReferenceView)vrl.MainControl;

@@ -127,8 +127,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_processSelectionEvent = false;
 			m_currentSelectedIndex = 0;
 			m_combo.Items.Clear();
-			var labels = ObjectLabel.CreateObjectLabels(Cache, Object.ReferenceTargetCandidates(m_flid), displayNameProperty);
-			var currentValue = Cache.DomainDataByFlid.get_ObjectProp(Object.Hvo, m_flid);
+			var labels = ObjectLabel.CreateObjectLabels(Cache, MyCmObject.ReferenceTargetCandidates(m_flid), displayNameProperty);
+			var currentValue = Cache.DomainDataByFlid.get_ObjectProp(MyCmObject.Hvo, m_flid);
 			var idx = 0;
 			foreach (var ol in labels)
 			{
@@ -168,9 +168,9 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			var newValue = m_combo.SelectedItem.ToString() == NullItemLabel ? 0 : (m_combo.SelectedItem as ObjectLabel).Object.Hvo;
 
-			UndoableUnitOfWorkHelper.Do(string.Format(DetailControlsStrings.ksUndoSet, m_fieldName), string.Format(DetailControlsStrings.ksRedoSet, m_fieldName), Object, () =>
+			UndoableUnitOfWorkHelper.Do(string.Format(DetailControlsStrings.ksUndoSet, m_fieldName), string.Format(DetailControlsStrings.ksRedoSet, m_fieldName), MyCmObject, () =>
 			{
-				Cache.DomainDataByFlid.SetObjProp(Object.Hvo, m_flid, newValue);
+				Cache.DomainDataByFlid.SetObjProp(MyCmObject.Hvo, m_flid, newValue);
 			});
 		}
 

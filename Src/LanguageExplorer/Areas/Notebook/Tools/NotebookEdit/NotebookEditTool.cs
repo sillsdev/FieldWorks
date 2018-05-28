@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Windows.Forms;
@@ -12,6 +11,7 @@ using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.Application;
 using SIL.LCModel.Utils;
@@ -63,8 +63,9 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif
+			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
 			var dataTree = new DataTree();
-			dataTree.SliceContextMenuFactory.RegisterPanelMenuCreatorMethod(panelMenuId, CreateMainPanelContextMenuStrip);
+			dataTree.DataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(panelMenuId, CreateMainPanelContextMenuStrip);
 			var recordEditView = new RecordEditView(XElement.Parse(NotebookResources.NotebookEditRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordList, dataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
@@ -77,13 +78,13 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			var paneBar = new PaneBar();
 			var img = LanguageExplorerResources.MenuWidget;
 			img.MakeTransparent(Color.Magenta);
-			var panelMenu = new PanelMenu(dataTree.SliceContextMenuFactory, panelMenuId)
+			var panelMenu = new PanelMenu(dataTree.DataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory, panelMenuId)
 			{
 				Dock = DockStyle.Left,
 				BackgroundImage = img,
 				BackgroundImageLayout = ImageLayout.Center
 			};
-			var panelButton = new PanelButton(majorFlexComponentParameters.FlexComponentParameters, null, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), LanguageExplorerResources.ksShowHiddenFields, LanguageExplorerResources.ksShowHiddenFields)
+			var panelButton = new PanelButton(majorFlexComponentParameters.FlexComponentParameters, null, showHiddenFieldsPropertyName, LanguageExplorerResources.ksShowHiddenFields, LanguageExplorerResources.ksShowHiddenFields)
 			{
 				Dock = DockStyle.Right
 			};
@@ -105,6 +106,10 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			// Too early before now.
 			recordEditView.FinishInitialization();
 			((NotebookArea)_area).MyNotebookAreaMenuHelper.MyAreaWideMenuHelper.SetupToolsCustomFieldsMenu();
+			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false, SettingsGroup.LocalSettings))
+			{
+				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish("ShowHiddenFields", true);
+			}
 		}
 
 		/// <summary>
@@ -162,12 +167,11 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 
 		#endregion
 
-		private Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>> CreateMainPanelContextMenuStrip(string panelMenuId)
+		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> CreateMainPanelContextMenuStrip(string panelMenuId)
 		{
 			var contextMenuStrip = new ContextMenuStrip();
-			contextMenuStrip.Opening += PanelContextMenuStrip_Opening;
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>();
-			var retVal = new Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, PanelContextMenuStrip_Opening, menuItems);
+			var retVal = new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 
 			// Insert_Subrecord menu item.
 			/*
@@ -208,10 +212,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 #endif
 
 			return retVal;
-		}
-
-		private void PanelContextMenuStrip_Opening(object sender, CancelEventArgs e)
-		{
 		}
 
 		private void Demote_Record_Clicked(object sender, EventArgs e)

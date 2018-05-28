@@ -36,7 +36,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public void CreateView()
 		{
-			var ssv = new StringSliceView(Object.Hvo, FieldId, WritingSystemId)
+			var ssv = new StringSliceView(MyCmObject.Hvo, FieldId, WritingSystemId)
 			{
 				Cache = Cache
 			};

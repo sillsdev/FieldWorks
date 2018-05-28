@@ -24,7 +24,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			// have chooser title use the same text as the label
 			m_fieldName = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "label", m_fieldName));
 
-			((GenDateLauncher)Control).Initialize(Cache, Object, m_flid, m_fieldName, PersistenceProvider, "", "analysis");
+			((GenDateLauncher)Control).Initialize(Cache, MyCmObject, m_flid, m_fieldName, PersistenceProvider, "", "analysis");
 		}
 
 		protected override void UpdateDisplayFromDatabase()

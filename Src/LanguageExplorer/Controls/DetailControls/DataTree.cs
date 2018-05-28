@@ -58,7 +58,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		internal event CurrentSliceChangedEventHandler CurrentSliceChanged;
 
-		internal SliceContextMenuFactory SliceContextMenuFactory { get; private set; }
+		internal DataTreeStackContextMenuFactory DataTreeStackContextMenuFactory { get; private set; }
 
 		#region Data members
 
@@ -423,7 +423,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		internal DataTree()
 		{
-			SliceContextMenuFactory = new SliceContextMenuFactory();
+			DataTreeStackContextMenuFactory = new DataTreeStackContextMenuFactory();
 			Slices = new List<Slice>();
 		}
 
@@ -603,7 +603,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				// if we are on a header slice, the slice's object is the descendant
 				if (loopSlice.IsHeaderNode)
 				{
-					return loopSlice.Object.IsValidObject ? loopSlice.Object : null;
+					return loopSlice.MyCmObject.IsValidObject ? loopSlice.MyCmObject : null;
 				}
 				loopSlice = loopSlice.ParentSlice;
 			}
@@ -811,7 +811,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						}
 						Invalidate(); // clears any lines left over behind slices.
 						CreateSlices(true);
-						if (root != descendant && (m_currentSliceNew == null || m_currentSliceNew.IsDisposed || m_currentSliceNew.Object != descendant))
+						if (root != descendant && (m_currentSliceNew == null || m_currentSliceNew.IsDisposed || m_currentSliceNew.MyCmObject != descendant))
 						{
 							// if there is no saved current slice, or it is for the wrong object, set the current slice to be the first non-header
 							// slice of the descendant object
@@ -874,7 +874,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			foreach (var slice in Slices)
 			{
-				if (slice.Object == obj)
+				if (slice.MyCmObject == obj)
 				{
 					m_fSetCurrentSliceNew = true;
 				}
@@ -1015,8 +1015,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				Subscriber.Unsubscribe("ShowHiddenFields", ShowHiddenFields_Handler);
 
-				SliceContextMenuFactory?.Dispose();
-
 				// Do this first, before setting m_fDisposing to true.
 				m_sda?.RemoveNotification(this);
 
@@ -1050,7 +1048,6 @@ namespace LanguageExplorer.Controls.DetailControls
 					m_tooltip.Dispose();
 				}
 			}
-			SliceContextMenuFactory = null;
 			m_sda = null;
 			m_currentSlice = null;
 			Root = null;
@@ -1071,6 +1068,13 @@ namespace LanguageExplorer.Controls.DetailControls
 			Subscriber = null;
 
 			base.Dispose(disposing); // This will call Dispose on each Slice.
+
+			if (disposing)
+			{
+				// Do after base dispose, since SliceTreeNode needs _dataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory to not be null.
+				DataTreeStackContextMenuFactory?.Dispose();
+			}
+			DataTreeStackContextMenuFactory = null;
 		}
 
 		/// <summary>
@@ -1180,9 +1184,9 @@ namespace LanguageExplorer.Controls.DetailControls
 								m_currentSlicePartName = XmlUtils.GetOptionalAttributeValue(m_currentSlice.ConfigurationNode.Parent, "id", String.Empty);
 							}
 
-							if (m_currentSlice.Object != null)
+							if (m_currentSlice.MyCmObject != null)
 							{
-								m_currentSliceObjGuid = m_currentSlice.Object.Guid;
+								m_currentSliceObjGuid = m_currentSlice.MyCmObject.Guid;
 							}
 							xnConfig = m_currentSlice.ConfigurationNode;
 							xnCaller = m_currentSlice.CallerNode;
@@ -1213,9 +1217,9 @@ namespace LanguageExplorer.Controls.DetailControls
 							foreach (var slice in Slices)
 							{
 								var guidSlice = Guid.Empty;
-								if (slice.Object != null)
+								if (slice.MyCmObject != null)
 								{
-									guidSlice = slice.Object.Guid;
+									guidSlice = slice.MyCmObject.Guid;
 								}
 								if (slice.GetType() == oldType &&
 									slice.CallerNode == xnCaller &&
@@ -1355,7 +1359,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		private static bool SameSourceObject(Slice first, Slice second)
 		{
-			return first.Object.Hvo == second.Object.Hvo;
+			return first.MyCmObject.Hvo == second.MyCmObject.Hvo;
 		}
 
 		/// <summary>
@@ -2138,7 +2142,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 				// Install new item at appropriate position and level.
 				slice.Indent = indent;
-				slice.Object = obj;
+				slice.MyCmObject = obj;
 				slice.Cache = Cache;
 
 				// We need a copy since we continue to modify path, so make it as compact as possible.
@@ -2577,7 +2581,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 				// Install new item at appropriate position and level.
 				slice.Indent = indent;
-				slice.Object = obj;
+				slice.MyCmObject = obj;
 				slice.Cache = Cache;
 				slice.PersistenceProvider = PersistenceProvder;
 
@@ -2793,9 +2797,9 @@ namespace LanguageExplorer.Controls.DetailControls
 					sCurrentPartName = XmlUtils.GetOptionalAttributeValue(m_currentSlice.ConfigurationNode.Parent, "id", string.Empty);
 				}
 
-				if (m_currentSlice.Object != null)
+				if (m_currentSlice.MyCmObject != null)
 				{
-					guidCurrentObj = m_currentSlice.Object.Guid;
+					guidCurrentObj = m_currentSlice.MyCmObject.Guid;
 				}
 			}
 			SetCurrentSlicePropertyNames();
@@ -3580,15 +3584,15 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private IRnGenericRec CreateAndAssociateNotebookRecord()
 		{
-			if (!(CurrentSlice.Object is IText))
+			if (!(CurrentSlice.MyCmObject is IText))
 			{
 				throw new ArgumentException("CurrentSlice.Object ought to be a Text object.");
 			}
 
 			// Create new Notebook record
-			((IText)CurrentSlice.Object).AssociateWithNotebook(true);
+			((IText)CurrentSlice.MyCmObject).AssociateWithNotebook(true);
 			IRnGenericRec referringRecord;
-			NotebookRecordRefersToThisText(CurrentSlice.Object as IText, out referringRecord);
+			NotebookRecordRefersToThisText(CurrentSlice.MyCmObject as IText, out referringRecord);
 			return referringRecord;
 		}
 
@@ -3643,31 +3647,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				FocusFirstPossibleSlice();
 			}
 			return true;
-		}
-
-		private void HandleShowHiddenFields(bool newShowValue)
-		{
-			if (newShowValue == ShowingAllFields)
-			{
-				return;
-			}
-			MonoIgnoreUpdates();
-
-			try
-			{
-				var closeSlices = CurrentSlice?.GetNearbySlices();
-				ShowingAllFields = newShowValue;
-				RefreshList(false);
-				if (closeSlices != null)
-				{
-					SelectFirstPossibleSlice(closeSlices);
-				}
-				ScrollCurrentAndIfPossibleSectionIntoView();
-			}
-			finally
-			{
-				MonoResumeUpdates();
-			}
 		}
 
 		/// <summary>
@@ -3856,7 +3835,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				for (var islice = 0; islice < cslice; ++islice)
 				{
 					var slice = FieldOrDummyAt(islice);
-					if (slice is DummyObjectSlice && owners.Contains(slice.Object))
+					if (slice is DummyObjectSlice && owners.Contains(slice.MyCmObject))
 					{
 						// This is what we want! Expand it!
 						slice = FieldAt(islice); // makes a real slice (and may create children, altering the total number).
@@ -4108,7 +4087,28 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void ShowHiddenFields_Handler(object obj)
 		{
-			HandleShowHiddenFields((bool)obj);
+			var newShowValue = (bool)obj;
+			if (newShowValue == ShowingAllFields)
+			{
+				return;
+			}
+			MonoIgnoreUpdates();
+
+			try
+			{
+				var closeSlices = CurrentSlice?.GetNearbySlices();
+				ShowingAllFields = newShowValue;
+				RefreshList(false);
+				if (closeSlices != null)
+				{
+					SelectFirstPossibleSlice(closeSlices);
+				}
+				ScrollCurrentAndIfPossibleSectionIntoView();
+			}
+			finally
+			{
+				MonoResumeUpdates();
+			}
 		}
 	}
 }

@@ -14,8 +14,8 @@ using System.Text;
 using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
-using System.Xml.XPath;
 using LanguageExplorer.Areas;
+using SIL.Code;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -767,10 +767,16 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Initialize the behavior from an XML configuration node.
 		/// </summary>
-		public void InitializeExtras(XElement configNode, IPropertyTable propertyTable)
+		public void InitializeExtras(XElement configNode, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
+			Guard.AgainstNull(propertyTable, nameof(propertyTable));
+			Guard.AgainstNull(publisher, nameof(publisher));
+			Guard.AgainstNull(subscriber, nameof(subscriber));
+
 			Debug.Assert(Cache != null);
 			m_propertyTable = propertyTable;
+			m_publisher = publisher;
+			m_subscriber = subscriber;
 			var ws = Cache.DefaultAnalWs;
 			SetFontFromWritingSystem(ws);
 
@@ -1399,16 +1405,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-#if RANDYTODO
-			// TODO: "WindowConfiguration" won't be available, so some other way of getting the guicontrol node will be needed.
-#endif
-			var xnWindow = m_propertyTable.GetValue<XElement>("WindowConfiguration");
-			if (xnWindow == null)
-			{
-				return;
-			}
-			var sXPath = $"controls/parameters/guicontrol[@id=\"{sGuiControl}\"]/parameters";
-			var configNode = xnWindow.XPathSelectElement(sXPath);
+			var doc = XDocument.Parse(XMLViewsStrings.SimpleChooserParameters);
+			var guiControlElement = doc.Root.Elements("guicontrol").First(cg => cg.Attribute("id").Value == sGuiControl);
+			var configNode = guiControlElement?.Element("parameters");
 			if (configNode == null)
 			{
 				return;
@@ -1421,7 +1420,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			};
 			m_flvLabels.SelectionChanged += m_flvLabels_SelectionChanged;
 			IVwStylesheet stylesheet = FwUtils.StyleSheetFromPropertyTable(m_propertyTable);
-			m_flvLabels.Initialize(Cache, stylesheet, m_propertyTable, configNode, m_objs);
+			m_flvLabels.Initialize(Cache, stylesheet, m_propertyTable, m_publisher, m_subscriber, configNode, m_objs);
 			if (m_chosenObjs != null)
 			{
 				m_flvLabels.SetCheckedItems(m_chosenObjs);
@@ -1511,11 +1510,16 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Initializes the raw.
 		/// </summary>
-		public void InitializeRaw(IPropertyTable propertyTable, IPublisher publisher, string sTitle, string sText, string sGotoLabel, string sTool, string sWs)
+		public void InitializeRaw(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, string sTitle, string sText, string sGotoLabel, string sTool, string sWs)
 		{
+			Guard.AgainstNull(propertyTable, nameof(propertyTable));
+			Guard.AgainstNull(publisher, nameof(publisher));
+			Guard.AgainstNull(subscriber, nameof(subscriber));
+
 			Debug.Assert(Cache != null);
 			m_propertyTable = propertyTable;
 			m_publisher = publisher;
+			m_subscriber = subscriber;
 			if (sTitle != null)
 			{
 				Title = sTitle;
@@ -2411,7 +2415,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// LanguageExplorer.Controls.DetailControls.PhoneEnvReferenceSlice and
 		/// LanguageExplorer.Areas.PhEnvStrRepresentationSlice.
 		/// </summary>
-		public static bool ChooseNaturalClass(IVwRootBox rootb, LcmCache cache, IPersistenceProvider persistenceProvider, IPropertyTable propertyTable, IPublisher publisher)
+		public static bool ChooseNaturalClass(IVwRootBox rootb, LcmCache cache, IPersistenceProvider persistenceProvider, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
 			var labels = ObjectLabel.CreateObjectLabels(cache,
 				cache.LanguageProject.PhonologicalDataOA.NaturalClassesOS, "",
@@ -2439,7 +2443,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				chooser.Cache = cache;
 				chooser.SetObjectAndFlid(0, 0);
 				chooser.SetHelpTopic("khtpChooseNaturalClass");
-				chooser.InitializeRaw(propertyTable, publisher, sTitle, sDescription, sJumpLabel, AreaServices.NaturalClassEditMachineName, "analysis vernacular");
+				chooser.InitializeRaw(propertyTable, publisher, subscriber, sTitle, sDescription, sJumpLabel, AreaServices.NaturalClassEditMachineName, "analysis vernacular");
 
 				var res = chooser.ShowDialog();
 				if (DialogResult.Cancel == res)

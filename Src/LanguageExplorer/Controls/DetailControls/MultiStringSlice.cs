@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -43,7 +44,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		#region Overrides of Slice
-		protected override void PrepareToShowContextMenu()
+		internal override void PrepareToShowContextMenu()
 		{
 			base.PrepareToShowContextMenu();
 
@@ -154,7 +155,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-			ReflectionHelper.CallMethod(Object, sideEffectMethod, null);
+			ReflectionHelper.CallMethod(MyCmObject, sideEffectMethod, null);
 		}
 
 		private void View_Display(object sender, VwEnvEventArgs e)
@@ -164,17 +165,18 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void HandleRightMouseClickedEvent(SimpleRootSite sender, FwRightMouseClickEventArgs e)
 		{
-			var sMenu = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "contextMenu");
-			if (string.IsNullOrEmpty(sMenu))
+			var contextMenuId = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "contextMenu");
+			if (string.IsNullOrEmpty(contextMenuId))
 			{
 				return;
 			}
 			e.EventHandled = true;
 			e.Selection.Install();
-#if RANDYTODO
-			var fwMainWnd = PropertyTable.GetValue<IFwMainWnd>("window");
-			fwMainWnd.ShowContextMenu(sMenu, new Point(Cursor.Position.X, Cursor.Position.Y), null, null);
-#endif
+			var contextMenuTuple = MyDataTreeStackContextMenuFactory.RightClickPopupMenuFactory.GetPopupContextMenu(this, contextMenuId);
+			if (contextMenuTuple != null)
+			{
+				contextMenuTuple.Item1.Show(Control, e.MouseLocation);
+			}
 		}
 
 		/// <summary>
@@ -319,25 +321,28 @@ namespace LanguageExplorer.Controls.DetailControls
 				view.InnerView.Display -= View_Display;
 				view.InnerView.RightMouseClickedEvent -= HandleRightMouseClickedEvent;
 				view.InnerView.LostFocus -= View_LostFocus;
-				foreach (var wsMenu in _writingSystemMenuItems)
+				if (_writingSystemMenuItems != null)
 				{
-					if (wsMenu.Text == LanguageExplorerResources.ShowAllRightNow)
+					foreach (var wsMenu in _writingSystemMenuItems)
 					{
-						wsMenu.Click -= ShowAllWritingSystemsNow_Click;
+						if (wsMenu.Text == LanguageExplorerResources.ShowAllRightNow)
+						{
+							wsMenu.Click -= ShowAllWritingSystemsNow_Click;
+						}
+						else if (wsMenu.Text == LanguageExplorerResources.Configure)
+						{
+							wsMenu.Click -= ConfigureWritingSystems_Clicked;
+						}
+						else
+						{
+							wsMenu.Click -= IndividualWritingSystemMenu_Clicked;
+							wsMenu.Tag = null;
+						}
+						wsMenu.Dispose();
 					}
-					else if (wsMenu.Text == LanguageExplorerResources.Configure)
-					{
-						wsMenu.Click -= ConfigureWritingSystems_Clicked;
-					}
-					else
-					{
-						wsMenu.Click -= IndividualWritingSystemMenu_Clicked;
-						wsMenu.Tag = null;
-					}
-					wsMenu.Dispose();
+					_writingSystemMenuItems.Clear();
+					_writingSystemsMenu.Dispose();
 				}
-				_writingSystemMenuItems.Clear();
-				_writingSystemsMenu.Dispose();
 			}
 			_writingSystemsMenu = null;
 			_writingSystemMenuItems = null;

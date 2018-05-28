@@ -89,6 +89,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif
+			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
 			var dataTree = new DataTree();
 			var recordEditView = new RecordEditView(root.Element("recordview").Element("parameters"), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordList, dataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 			var mainMultiPaneParameters = new MultiPaneParameters
@@ -100,7 +101,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 			};
 
 			var recordEditViewPaneBar = new PaneBar();
-			var panelButton = new PanelButton(majorFlexComponentParameters.FlexComponentParameters, null, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), LanguageExplorerResources.ksShowHiddenFields, LanguageExplorerResources.ksShowHiddenFields)
+			var panelButton = new PanelButton(majorFlexComponentParameters.FlexComponentParameters, null, showHiddenFieldsPropertyName, LanguageExplorerResources.ksShowHiddenFields, LanguageExplorerResources.ksShowHiddenFields)
 			{
 				Dock = DockStyle.Right
 			};
@@ -116,6 +117,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 			panelButton.MyDataTree = recordEditView.MyDataTree;
 			// Too early before now.
 			recordEditView.FinishInitialization();
+			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false, SettingsGroup.LocalSettings))
+			{
+				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish("ShowHiddenFields", true);
+			}
 		}
 
 		/// <summary>

@@ -86,7 +86,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			Debug.Assert(sender is AtomicReferenceLauncher);
 			var source = (AtomicReferenceLauncher)sender;
 			Debug.Assert(Control == source);
-			Debug.Assert(Object is IMoDerivAffMsa);
+			Debug.Assert(MyCmObject is IMoDerivAffMsa);
 
 			AtomicReferenceLauncher otherControl = null;
 			var idxSender = ContainingDataTree.Slices.IndexOf(this);
@@ -107,7 +107,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (idxSender > 0)
 			{
 				idxOther = idxSender - 1;
-				while (otherSlice == null || (otherSlice.Indent == Indent && idxOther > 0 && otherSlice.Object == Object))
+				while (otherSlice == null || (otherSlice.Indent == Indent && idxOther > 0 && otherSlice.MyCmObject == MyCmObject))
 				{
 					otherSlice = ContainingDataTree.Slices[idxOther--];
 					if (otherSlice is AtomicReferenceSlice && (otherSlice as AtomicReferenceSlice).Flid == otherFlid)
@@ -128,7 +128,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (otherControl == null && idxSender < ContainingDataTree.Slices.Count)
 			{
 				idxOther = idxSender + 1;
-				while (otherSlice == null || (otherSlice.Indent == Indent && idxOther > 0 && otherSlice.Object == Object))
+				while (otherSlice == null || (otherSlice.Indent == Indent && idxOther > 0 && otherSlice.MyCmObject == MyCmObject))
 				{
 					otherSlice = ContainingDataTree.Slices[idxOther++];
 					if (otherSlice is AtomicReferenceSlice && ((AtomicReferenceSlice)otherSlice).Flid == otherFlid)
@@ -143,7 +143,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 			}
 
-			var msa = Object as IMoDerivAffMsa;
+			var msa = MyCmObject as IMoDerivAffMsa;
 			if (e.Hvo == 0 && otherHvo != 0)
 			{
 				if (otherControl != null)
@@ -189,10 +189,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 
 				var otherControl = otherSlice.Control as AtomicReferenceLauncher;
-				if (otherSlice.Object == Object && (otherSlice.Flid == otherFlid))
+				if (otherSlice.MyCmObject == MyCmObject && (otherSlice.Flid == otherFlid))
 				{
 					otherOne = otherControl;
-					otherHvo = myIsFromPOS ? ((IMoDerivAffMsa)Object).ToPartOfSpeechRA.Hvo : ((IMoDerivAffMsa)Object).FromPartOfSpeechRA.Hvo;
+					otherHvo = myIsFromPOS ? ((IMoDerivAffMsa)MyCmObject).ToPartOfSpeechRA.Hvo : ((IMoDerivAffMsa)MyCmObject).FromPartOfSpeechRA.Hvo;
 				}
 			}
 			return otherHvo;

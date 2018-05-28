@@ -170,7 +170,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public void showProperties()
 		{
-			var pic = (ICmPicture)Object;
+			var pic = (ICmPicture)MyCmObject;
 			var app = PropertyTable.GetValue<IApp>("App");
 			using (var dlg = new PicturePropertiesDialog(Cache, pic, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, true))
 			{
@@ -183,7 +183,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				dlg.SetMultilingualCaptionValues(pic.Caption);
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
-					UndoableUnitOfWorkHelper.Do(DetailControlsStrings.ksUndoUpdatePicture, DetailControlsStrings.ksRedoUpdatePicture, Object, () =>
+					UndoableUnitOfWorkHelper.Do(DetailControlsStrings.ksUndoUpdatePicture, DetailControlsStrings.ksRedoUpdatePicture, MyCmObject, () =>
 					{
 						const string strLocalPictures = CmFolderTags.DefaultPictureFolder;
 						dlg.GetMultilingualCaptionValues(pic.Caption);

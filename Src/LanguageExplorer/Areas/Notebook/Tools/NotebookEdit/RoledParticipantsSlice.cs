@@ -45,7 +45,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			base.Dispose(disposing);
 		}
 
-		private IRnGenericRec Record => (IRnGenericRec)Object;
+		private IRnGenericRec Record => (IRnGenericRec)MyCmObject;
 
 		/// <summary />
 		protected override void InitLauncher()
@@ -224,7 +224,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				chooser.SetHelpTopic(GetChooserHelpTopicID());
 				if (ConfigurationNode != null)
 				{
-					chooser.InitializeExtras(ConfigurationNode, PropertyTable);
+					chooser.InitializeExtras(ConfigurationNode, PropertyTable, Publisher, Subscriber);
 				}
 
 				if (DialogResult.Cancel == chooser.ShowDialog())
@@ -294,7 +294,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		public bool OnDeleteParticipants(object args)
 		{
 			var slice = ContainingDataTree.CurrentSlice;
-			var roledPartic = slice.Object as IRnRoledPartic;
+			var roledPartic = slice.MyCmObject as IRnRoledPartic;
 			if (roledPartic != null)
 			{
 				UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoDeleteParticipants, LanguageExplorerResources.ksRedoDeleteParticipants, roledPartic,
@@ -350,7 +350,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 					caller = Key[Key.Length - 2] as XElement;
 				}
 				var insPos = iSlice + 1;
-				GenerateChildren(ConfigurationNode, caller, Object, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap(), false);
+				GenerateChildren(ConfigurationNode, caller, MyCmObject, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap(), false);
 				Expansion = TreeItemState.ktisExpanded;
 			}
 		}

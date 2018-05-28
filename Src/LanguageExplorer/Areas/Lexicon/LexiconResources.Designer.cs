@@ -81,10 +81,7 @@ namespace LanguageExplorer.Areas.Lexicon {
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;root&gt;
-        ///	&lt;parameters toolId=&quot;bulkEditEntriesOrSenses&quot; filterBar=&quot;true&quot; bulkEdit=&quot;true&quot; selectColumn=&quot;true&quot; bulkEditListItemsClasses=&quot;LexEntry,LexSense,LexEntryRef,LexPronunciation,MoForm,LexExampleSentence,CmTranslation&quot; bulkEditListItemsGhostFields=&quot;LexDb.AllPossiblePronunciations,LexDb.AllPossibleAllomorphs,LexDb.AllExampleSentenceTargets,LexDb.AllExampleTranslationTargets,LexDb.AllComplexEntryRefPropertyTargets&quot;&gt;
-        ///		&lt;includeColumns /&gt;
-        ///	&lt;/parameters&gt;
-        ///	&lt;overrides&gt; [rest of string was truncated]&quot;;.
+        ///	&lt;parameters toolId=&quot;bulkEditEntriesOrSenses&quot; filterBar=&quot;true&quot; bulkEdit=&quot;true&quot; selectColumn=&quot;true&quot; bulkEditListItemsClasses=&quot;LexEntry,LexSense,LexEntryRef,LexPronunciation,LexEtymology,MoForm,LexExampleSentence,CmTranslation,LexExtendedNote&quot; bulkEditListItemsGhostFields=&quot;LexDb.AllPossiblePronunciations,LexDb.AllPossibleEtymologies,LexDb.AllPossibleAllomorphs,LexDb.AllExampleSentenceTargets,LexDb.AllExampleTranslationTargets,LexDb.AllComplexEntryRefPropertyTar [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BulkEditEntriesOrSensesToolParameters {
             get {
@@ -116,6 +113,24 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string ConfigureTitle {
             get {
                 return ResourceManager.GetString("ConfigureTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Convert to Affix Form.
+        /// </summary>
+        internal static string Convert_to_Affix_Form {
+            get {
+                return ResourceManager.GetString("Convert_to_Affix_Form", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Convert to Affix Process.
+        /// </summary>
+        internal static string Convert_to_Affix_Process {
+            get {
+                return ResourceManager.GetString("Convert_to_Affix_Process", resourceCulture);
             }
         }
         
@@ -295,6 +310,24 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Insert Environment bar.
+        /// </summary>
+        internal static string Insert_Environment_bar {
+            get {
+                return ResourceManager.GetString("Insert_Environment_bar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Environment slash.
+        /// </summary>
+        internal static string Insert_Environment_slash {
+            get {
+                return ResourceManager.GetString("Insert_Environment_slash", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Insert _Etymology.
         /// </summary>
         internal static string Insert_Etymology {
@@ -327,6 +360,24 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string Insert_Extended_Note {
             get {
                 return ResourceManager.GetString("Insert_Extended_Note", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Natural Class.
+        /// </summary>
+        internal static string Insert_Natural_Class {
+            get {
+                return ResourceManager.GetString("Insert_Natural_Class", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Optional Item.
+        /// </summary>
+        internal static string Insert_Optional_Item {
+            get {
+                return ResourceManager.GetString("Insert_Optional_Item", resourceCulture);
             }
         }
         
@@ -426,6 +477,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string Insert_Variant_Tooltip {
             get {
                 return ResourceManager.GetString("Insert_Variant_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Word Boundary.
+        /// </summary>
+        internal static string Insert_Word_Boundary {
+            get {
+                return ResourceManager.GetString("Insert_Word_Boundary", resourceCulture);
             }
         }
         
@@ -673,11 +733,11 @@ namespace LanguageExplorer.Areas.Lexicon {
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;!-- The following configureLayouts node is only required to help migrate old configurations to the new format --&gt;
         ///&lt;configureLayouts&gt;
-        ///	&lt;layoutType label=&quot;Stem-based (complex forms as main entries)&quot; layout=&quot;publishStem&quot;&gt;
+        ///	&lt;layoutType label=&quot;Lexeme-based (complex forms as main entries)&quot; layout=&quot;publishStem&quot;&gt;
         ///		&lt;configure class=&quot;LexEntry&quot; label=&quot;Main Entry&quot; layout=&quot;publishStemEntry&quot;/&gt;
         ///		&lt;configure class=&quot;LexEntry&quot; label=&quot;Minor Entry&quot; layout=&quot;publishStemMinorEntry&quot; hideConfig=&quot;true&quot;/&gt;
         ///	&lt;/layoutType&gt;
-        ///	&lt;layoutType label=&quot;Root-based (complex forms as sub [rest of string was truncated]&quot;;.
+        ///	&lt;layoutType label=&quot;Root-based (complex forms as s [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string LexiconDictionaryConfigureLayouts {
             get {
@@ -699,9 +759,9 @@ namespace LanguageExplorer.Areas.Lexicon {
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;parameters id=&quot;DictionaryPubPreview&quot; layout=&quot;publishStem&quot; layoutProperty=&quot;DictionaryPublicationLayout&quot; layoutSuffix=&quot;Preview&quot; editable=&quot;false&quot; configureObjectName=&quot;Dictionary&quot; viewTypeLabelKey=&quot;ksDictionaryView&quot; emptyTitleId=&quot;No-LexEntries&quot;&gt;
         ///	&lt;configureLayouts&gt;
-        ///	  &lt;layoutType label=&quot;Lexeme-based (complex forms as main entries)&quot; layout=&quot;publishStem&quot;&gt;
-        ///	    &lt;configure class=&quot;LexEntry&quot; label=&quot;Main Entry&quot; layout=&quot;publishStemEntry&quot;/&gt;
-        ///	    &lt;configure class=&quot;LexEntry&quot; l [rest of string was truncated]&quot;;.
+        ///		&lt;layoutType label=&quot;Lexeme-based (complex forms as main entries)&quot; layout=&quot;publishStem&quot;&gt;
+        ///			&lt;configure class=&quot;LexEntry&quot; label=&quot;Main Entry&quot; layout=&quot;publishStemEntry&quot;/&gt;
+        ///			&lt;configure class=&quot;LexEntry&quot; label= [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string LexiconEditRecordDocViewParameters {
             get {
@@ -844,7 +904,7 @@ namespace LanguageExplorer.Areas.Lexicon {
         ///&lt;parameters toolId=&quot;reversalBulkEditReversalEntries&quot; clerk=&quot;AllReversalEntries&quot; filterBar=&quot;true&quot; bulkEdit=&quot;true&quot; bulkEditListItemsClasses=&quot;ReversalIndexEntry&quot; selectColumn=&quot;true&quot; altTitleId=&quot;ReversalIndexEntry-Plural&quot; ShowOwnerShortname=&quot;true&quot; &gt;
         ///	&lt;enableBulkEditTabs enableBEListChoice=&quot;true&quot; enableBEBulkCopy=&quot;true&quot; enableBEClickCopy=&quot;true&quot; enableBEProcess=&quot;true&quot; enableBEFindReplace=&quot;true&quot; enableBEOther=&quot;true&quot; /&gt;
         ///	&lt;columns&gt;
-        ///		&lt;!-- NB: If you add a new column and it [rest of string was truncated]&quot;;.
+        ///		&lt;!-- If you add a new column and it is  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ReversalBulkEditReversalEntriesToolParameters {
             get {
@@ -904,6 +964,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show Lexeme Form in Concordance.
+        /// </summary>
+        internal static string Show_Lexeme_Form_in_Concordance {
+            get {
+                return ResourceManager.GetString("Show_Lexeme_Form_in_Concordance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show Unused Items.
         /// </summary>
         internal static string Show_Unused_Items {
@@ -922,11 +991,29 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Insert Variant.
+        /// </summary>
+        internal static string String1 {
+            get {
+                return ResourceManager.GetString("String1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Subsense (in sense).
         /// </summary>
         internal static string SubsenseInSense {
             get {
                 return ResourceManager.GetString("SubsenseInSense", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Swap Lexeme Form with Allomorph....
+        /// </summary>
+        internal static string Swap_Lexeme_Form_with_Allomorph {
+            get {
+                return ResourceManager.GetString("Swap_Lexeme_Form_with_Allomorph", resourceCulture);
             }
         }
         

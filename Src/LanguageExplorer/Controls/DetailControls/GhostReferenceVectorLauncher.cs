@@ -37,7 +37,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			chooser.SetObjectAndFlid(0, m_flid);
 			if (Slice.ConfigurationNode != null)
 			{
-				chooser.InitializeExtras(Slice.ConfigurationNode, PropertyTable);
+				chooser.InitializeExtras(Slice.ConfigurationNode, PropertyTable, Publisher, Subscriber);
 			}
 			var res = chooser.ShowDialog(FindForm());
 			if (DialogResult.Cancel == res)

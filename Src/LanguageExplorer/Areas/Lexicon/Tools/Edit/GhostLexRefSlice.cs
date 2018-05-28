@@ -24,7 +24,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary />
 		public override void FinishInit()
 		{
-			var btnLauncher = new GhostLexRefLauncher(Object, ConfigurationNode);
+			var btnLauncher = new GhostLexRefLauncher(MyCmObject, ConfigurationNode);
 			btnLauncher.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			Control = btnLauncher;
 
@@ -39,7 +39,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// asks to Create a new lex entry from inside the first dialog (LT-9679).
 			// We'd pass 0 and null for flid and fieldname, but there are Asserts to prevent this.
 			var btnLauncher = (ButtonLauncher)Control;
-			btnLauncher.Initialize(Cache, Object, 1, "nonsence", null, null, null);
+			btnLauncher.Initialize(Cache, MyCmObject, 1, "nonsence", null, null, null);
 			base.Install(parentDataTree);
 		}
 	}

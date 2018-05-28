@@ -99,7 +99,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		void SetRefs()
 		{
 			var fieldName = XmlUtils.GetMandatoryAttributeValue(ConfigurationNode, "field");
-			var refs = ReflectionHelper.GetProperty(Object, fieldName);
+			var refs = ReflectionHelper.GetProperty(MyCmObject, fieldName);
 			var refsInts = refs as IEnumerable<int>;
 			if (refsInts != null)
 			{
@@ -118,8 +118,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					Debug.Fail("LexReferenceSlice could not interpret results from " + fieldName);
 				}
 			}
-			var flid = Cache.MetaDataCacheAccessor.GetFieldId2(Object.ClassID, fieldName, true);
-			ContainingDataTree.MonitorProp(Object.Hvo, flid);
+			var flid = Cache.MetaDataCacheAccessor.GetFieldId2(MyCmObject.ClassID, fieldName, true);
+			ContainingDataTree.MonitorProp(MyCmObject.Hvo, flid);
 		}
 
 		/// <summary />
@@ -170,7 +170,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					if (chvoTargets > 0)
 					{
 						var hvoFirst = sda.get_VecItem(lr.Hvo, LexReferenceTags.kflidTargets, 0);
-						if (hvoFirst != Object.Hvo)
+						if (hvoFirst != MyCmObject.Hvo)
 						{
 							return;
 						}
@@ -186,7 +186,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					if (chvoTargets > 0)
 					{
 						var hvoFirst = sda.get_VecItem(lr.Hvo, LexReferenceTags.kflidTargets, 0);
-						if (hvoFirst != Object.Hvo)
+						if (hvoFirst != MyCmObject.Hvo)
 						{
 							sLabel = lrt.ReverseName.BestAnalysisAlternative.Text;
 							if (string.IsNullOrEmpty(sLabel))
@@ -266,18 +266,18 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					break;
 				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseCollection:
 					sXml += " class=\"LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceCollectionSlice\"";
-					if (Object is ILexEntry)
+					if (MyCmObject is ILexEntry)
 					{
 						sMenu = "mnuDataTree-DeleteAddLexReference";
 					}
 					break;
 				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional:
 					sXml += " class=\"LanguageExplorer.Areas.Lexicon.LexReferenceUnidirectionalSlice\"";
-					if (Object is ILexEntry)
+					if (MyCmObject is ILexEntry)
 						sMenu = "mnuDataTree-DeleteAddLexReference";
 					break;
 				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
-					if (Object is ILexEntry)
+					if (MyCmObject is ILexEntry)
 					{
 						sMenu = "mnuDataTree-DeleteAddLexReference";
 					}
@@ -294,7 +294,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			}
 
-			sXml += $" mappingType=\"{lrt.MappingType}\" hvoDisplayParent=\"{Object.Hvo}\" menu=\"{sMenu}\"><deParams displayProperty=\"HeadWord\"/></slice>";
+			sXml += $" mappingType=\"{lrt.MappingType}\" hvoDisplayParent=\"{MyCmObject.Hvo}\" menu=\"{sMenu}\"><deParams displayProperty=\"HeadWord\"/></slice>";
 			node.ReplaceNodes(XElement.Parse(sXml));
 			var firstNewSliceIndex = insPos;
 			CreateIndentedNodes(caller, lr, indent, ref insPos, path, reuseMap, node);
@@ -351,7 +351,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var formatNameWithReverse = StringTable.Table.GetString("InsertAsymmetricReference", "LexiconTools");
 			foreach (var lrt in Cache.LanguageProject.LexDbOA.ReferencesOA.PossibilitiesOS.Cast<ILexRefType>())
 			{
-				if (Object is ILexEntry)
+				if (MyCmObject is ILexEntry)
 				{
 					switch ((LexRefTypeTags.MappingTypes)lrt.MappingType)
 					{
@@ -568,11 +568,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			}
 
 			UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerResources.Undo_0, tsItem.Text),
-				string.Format(LanguageExplorerResources.Redo_0, tsItem.Text), Object, () =>
+				string.Format(LanguageExplorerResources.Redo_0, tsItem.Text), MyCmObject, () =>
 			{
 				if (newRef != null)
 				{
-					newRef.TargetsRS.Add(Object);
+					newRef.TargetsRS.Add(MyCmObject);
 				}
 				else
 				{
@@ -581,13 +581,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					if (fReverseRef)
 					{
 						newRef.TargetsRS.Insert(0, first);
-						newRef.TargetsRS.Insert(1, Object);
+						newRef.TargetsRS.Insert(1, MyCmObject);
 					}
 					else
 					{
 						//When creating a lexical relation slice,
 						//add the current lexical entry to the lexical relation as the first item
-						newRef.TargetsRS.Insert(0, Object);
+						newRef.TargetsRS.Insert(0, MyCmObject);
 						//then also add the lexical entry that the user selected in the chooser dialog.
 						newRef.TargetsRS.Insert(1, first);
 					}
@@ -713,7 +713,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				};
 
 				// Don't display the current entry in the list of matching entries.  See LT-2611.
-				var objEntry = Object;
+				var objEntry = MyCmObject;
 				while (objEntry.ClassID == LexSenseTags.kClassId)
 				{
 					objEntry = objEntry.Owner;
@@ -789,7 +789,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					caller = Key[Key.Length - 2] as XElement;
 				}
 				var insPos = iSlice + 1;
-				GenerateChildren(ConfigurationNode, caller, Object, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap(), false);
+				GenerateChildren(ConfigurationNode, caller, MyCmObject, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap(), false);
 				Expansion = TreeItemState.ktisExpanded;
 			}
 		}
@@ -852,10 +852,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 					if (DialogResult.Yes == dlg.ShowDialog(mainWindow))
 					{
-						UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoDeleteRelation, LanguageExplorerResources.ksRedoDeleteRelation, Object, () =>
+						UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoDeleteRelation, LanguageExplorerResources.ksRedoDeleteRelation, MyCmObject, () =>
 						{
 							//If the user selected Yes, then we need to delete 'this' sense or entry
-							lr.TargetsRS.Remove(Object);
+							lr.TargetsRS.Remove(MyCmObject);
 						});
 						//Update the display because we have removed this slice from the Lexical entry.
 						UpdateForDelete(lr);
@@ -907,7 +907,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				if (DialogResult.Yes == dlg.ShowDialog(mainWindow))
 				{
-					UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoDeleteRelation, LanguageExplorerResources.ksRedoDeleteRelation, Object, () =>
+					UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoDeleteRelation, LanguageExplorerResources.ksRedoDeleteRelation, MyCmObject, () =>
 					{
 						Cache.DomainDataByFlid.DeleteObj(lr.Hvo);
 					});

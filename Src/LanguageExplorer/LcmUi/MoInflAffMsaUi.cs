@@ -31,7 +31,7 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public override Guid GuidForJumping(object commandObject)
 		{
-			var msa = (IMoInflAffMsa)Object;
+			var msa = (IMoInflAffMsa)MyCmObject;
 			return msa.PartOfSpeechRA?.Guid ?? Guid.Empty;
 		}
 	}

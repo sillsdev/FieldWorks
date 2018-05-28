@@ -49,7 +49,7 @@ namespace LanguageExplorer.LcmUi
 		protected bool OnFindInDictionary(object args)
 		{
 			LexEntryUi.DisplayEntries(m_cache, Form.ActiveForm, PropertyTable, Publisher, Subscriber, null, null,
-				((IWfiWordform)Object).Form.get_String(m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle), null);
+				((IWfiWordform)MyCmObject).Form.get_String(m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle), null);
 			return true;
 		}
 

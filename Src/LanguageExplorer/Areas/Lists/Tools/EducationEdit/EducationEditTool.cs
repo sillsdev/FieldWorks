@@ -76,6 +76,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.EducationEdit
 				_recordList,
 				dataTree,
 				MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
+			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), false, SettingsGroup.LocalSettings))
+			{
+				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish("ShowHiddenFields", true);
+			}
 		}
 
 		/// <summary>

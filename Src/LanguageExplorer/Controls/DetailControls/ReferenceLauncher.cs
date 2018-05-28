@@ -129,7 +129,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						chooser.TextParamHvo = referenceTargetOwner.Hvo;
 					}
 					chooser.SetHelpTopic(Slice.GetChooserHelpTopicID());
-					chooser.InitializeExtras(m_configurationNode, PropertyTable);
+					chooser.InitializeExtras(m_configurationNode, PropertyTable, Publisher, Subscriber);
 				}
 
 				var res = chooser.ShowDialog(MainControl.FindForm());

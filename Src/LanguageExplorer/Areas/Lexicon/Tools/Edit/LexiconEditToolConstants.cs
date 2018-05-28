@@ -11,13 +11,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	{
 		internal const string PanelMenuId = "left";
 		internal const string Show_DictionaryPubPreview = "Show_DictionaryPubPreview";
-		internal const string mnuDataTree_Sense_Hotlinks = "mnuDataTree-Sense-Hotlinks";
 		internal const string mnuDataTree_Sense = "mnuDataTree-Sense";
 		internal const string mnuDataTree_Etymology = "mnuDataTree-Etymology";
-		internal const string mnuDataTree_Etymology_Hotlinks = "mnuDataTree-Etymology-Hotlinks";
 		internal const string mnuDataTree_AlternateForms = "mnuDataTree-AlternateForms";
-		internal const string mnuDataTree_AlternateForms_Hotlinks = "mnuDataTree-AlternateForms-Hotlinks";
 		internal const string mnuDataTree_Pronunciation = "mnuDataTree-Pronunciation";
+		internal const string mnuDataTree_Environments_Insert = "mnuDataTree-Environments-Insert";
+		internal const string mnuDataTree_LexemeForm = "mnuDataTree-LexemeForm";
 
 		internal const string CmdGoToEntry = "GoToEntry_Clicked";
 		internal const string Show_Dictionary_Preview_Clicked = "Show_Dictionary_Preview_Clicked";

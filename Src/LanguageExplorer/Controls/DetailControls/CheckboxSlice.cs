@@ -167,7 +167,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_cb.CheckedChanged -= OnChanged;
 			m_cb.GotFocus -= m_cb_GotFocus;
 
-			m_cb.Checked = IntBoolPropertyConverter.GetBoolean(Cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), Object.Hvo, m_flid);
+			m_cb.Checked = IntBoolPropertyConverter.GetBoolean(Cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), MyCmObject.Hvo, m_flid);
 			if (m_fToggleValue)
 			{
 				m_cb.Checked = !m_cb.Checked;
@@ -188,19 +188,19 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public void OnChanged(object obj, EventArgs args)
 		{
-			if (!Object.IsValidObject)
+			if (!MyCmObject.IsValidObject)
 			{
 				return;
 			}
 
-			UndoableUnitOfWorkHelper.Do(string.Format(DetailControlsStrings.ksUndoChange, m_fieldName), string.Format(DetailControlsStrings.ksRedoChange, m_fieldName), Object, () =>
+			UndoableUnitOfWorkHelper.Do(string.Format(DetailControlsStrings.ksUndoChange, m_fieldName), string.Format(DetailControlsStrings.ksRedoChange, m_fieldName), MyCmObject, () =>
 			{
 				var fValue = ((CheckBox)obj).Checked;
 				if (m_fToggleValue)
 				{
 					fValue = !fValue;
 				}
-				IntBoolPropertyConverter.SetValueFromBoolean(Cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), Object.Hvo, m_flid, fValue);
+				IntBoolPropertyConverter.SetValueFromBoolean(Cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), MyCmObject.Hvo, m_flid, fValue);
 			});
 		}
 

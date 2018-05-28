@@ -92,7 +92,7 @@ namespace LanguageExplorer.LcmUi
 
 		public void OnMoveTargetUpInSequence(object commandObject)
 		{
-			if (m_obj == null || m_iCurrent < 0)
+			if (m_cmObject == null || m_iCurrent < 0)
 			{
 				return;
 			}
@@ -109,7 +109,7 @@ namespace LanguageExplorer.LcmUi
 
 		public void OnMoveTargetDownInSequence(object commandObject)
 		{
-			if (m_obj == null || m_iCurrent < 0)
+			if (m_cmObject == null || m_iCurrent < 0)
 			{
 				return;
 			}

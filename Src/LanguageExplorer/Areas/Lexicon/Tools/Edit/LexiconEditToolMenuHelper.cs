@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using LanguageExplorer.Controls.DetailControls;
 using SIL.Code;
-using SIL.Collections;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
@@ -24,7 +23,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private RecordBrowseView RecordBrowseView { get; set; }
 		private IRecordList MyRecordList { get; set; }
 		internal MultiPane InnerMultiPane { get; set; }
-		internal SliceContextMenuFactory SliceContextMenuFactory { get; set; }
+		internal DataTreeStackContextMenuFactory MyDataTreeStackContextMenuFactory { get; set; }
 		private Dictionary<string, EventHandler> _sharedEventHandlers;
 		private const string editMenu = "editMenu";
 		private const string viewMenu = "viewMenu";
@@ -44,7 +43,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			MyDataTree = dataTree;
 			RecordBrowseView = recordBrowseView;
 			MyRecordList = recordList;
-			SliceContextMenuFactory = MyDataTree.SliceContextMenuFactory;
+			MyDataTreeStackContextMenuFactory = MyDataTree.DataTreeStackContextMenuFactory;
 			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(_majorFlexComponentParameters, MyRecordList);
 			_extendedPropertyName = extendedPropertyName;
 		}
@@ -58,20 +57,18 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// That way, they can each have access to everyone's shared event handlers.
 			// Otherwise, there is significant risk of them looking for a shared handler, but not finding it.
 			_sharedEventHandlers = new Dictionary<string, EventHandler>();
-			InitialManagerSetup(new LexiconEditToolEditMenuManager(), editMenu);
-			InitialManagerSetup(new LexiconEditToolViewMenuManager(), viewMenu);
-			InitialManagerSetup(new LexiconEditToolInsertMenuManager(), insertMenu);
-			InitialManagerSetup(new LexiconEditToolToolsMenuManager(), toolsMenu);
-			InitialManagerSetup(new LexiconEditToolToolbarManager(), insertToolbar);
-			InitialManagerSetup(new LexiconEditToolDataTreeStackManager(), dataTreeStack);
+			_lexiconEditToolUiWidgetManagers.Add(editMenu, new LexiconEditToolEditMenuManager());
+			_lexiconEditToolUiWidgetManagers.Add(viewMenu, new LexiconEditToolViewMenuManager(_extendedPropertyName, InnerMultiPane));
+			_lexiconEditToolUiWidgetManagers.Add(insertMenu, new LexiconEditToolInsertMenuManager(MyDataTree));
+			_lexiconEditToolUiWidgetManagers.Add(toolsMenu, new LexiconEditToolToolsMenuManager(_lexiconAreaMenuHelper, RecordBrowseView.BrowseViewer));
+			_lexiconEditToolUiWidgetManagers.Add(insertToolbar, new LexiconEditToolToolbarManager());
+			_lexiconEditToolUiWidgetManagers.Add(dataTreeStack, new LexiconEditToolDataTreeStackManager(MyDataTree));
 
 			// Now, it is fine to finish up the initialization of the managers, since all shared event handlers are in '_sharedEventHandlers'.
-			FinalManagerSetup(_lexiconEditToolUiWidgetManagers[editMenu]);
-			FinalManagerSetup(_lexiconEditToolUiWidgetManagers[dataTreeStack], new List<object> { SliceContextMenuFactory, MyDataTree }, _sharedEventHandlers);
-			FinalManagerSetup(_lexiconEditToolUiWidgetManagers[insertMenu], new List<object> { MyDataTree });
-			FinalManagerSetup(_lexiconEditToolUiWidgetManagers[toolsMenu], new List<object> { _lexiconAreaMenuHelper, RecordBrowseView.BrowseViewer });
-			FinalManagerSetup(_lexiconEditToolUiWidgetManagers[insertToolbar], sharedEventHandlers: _sharedEventHandlers);
-			FinalManagerSetup(_lexiconEditToolUiWidgetManagers[viewMenu], new List<object> { _extendedPropertyName, InnerMultiPane });
+			foreach (var manager in _lexiconEditToolUiWidgetManagers.Values)
+			{
+				manager.Initialize(_majorFlexComponentParameters, _sharedEventHandlers, MyRecordList);
+			}
 		}
 
 		#region IDisposable
@@ -105,20 +102,19 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			if (disposing)
 			{
-				_lexiconAreaMenuHelper.Dispose();
-
 				foreach (var handler in _lexiconEditToolUiWidgetManagers.Values)
 				{
 					handler.Dispose();
 				}
 				_lexiconEditToolUiWidgetManagers.Clear();
 				_sharedEventHandlers.Clear();
+				_lexiconAreaMenuHelper.Dispose();
 			}
 			_lexiconAreaMenuHelper = null;
 			_extendedPropertyName = null;
 			_majorFlexComponentParameters = null;
 			_lexiconEditToolUiWidgetManagers = null;
-			SliceContextMenuFactory = null;
+			MyDataTreeStackContextMenuFactory = null;
 			MyDataTree = null;
 			MyRecordList = null;
 			InnerMultiPane = null;
@@ -128,16 +124,5 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_isDisposed = true;
 		}
 		#endregion
-
-		private void InitialManagerSetup(IToolUiWidgetManager manager, string key)
-		{
-			_lexiconEditToolUiWidgetManagers.Add(key, manager);
-			_sharedEventHandlers.AddRange(manager.SharedEventHandlers);
-		}
-
-		private void FinalManagerSetup(IToolUiWidgetManager menuManager, System.Collections.Generic.IReadOnlyList<object> randomParameters = null, Dictionary<string, EventHandler> sharedEventHandlers = null)
-		{
-			menuManager.Initialize(_majorFlexComponentParameters, MyRecordList, sharedEventHandlers, randomParameters);
-		}
 	}
 }

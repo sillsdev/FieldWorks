@@ -64,6 +64,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.FeaturesAdvancedEdit
 
 			var root = XDocument.Parse(GrammarResources.FeaturesAdvancedEditToolParameters).Root;
 			_recordBrowseView = new RecordBrowseView(root.Element("browseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList);
+			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
 			var dataTree = new DataTree();
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
@@ -77,7 +78,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.FeaturesAdvancedEdit
 				ToolMachineName = MachineName
 			};
 			var recordEditViewPaneBar = new PaneBar();
-			var panelButton = new PanelButton(majorFlexComponentParameters.FlexComponentParameters, null, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), LanguageExplorerResources.ksShowHiddenFields, LanguageExplorerResources.ksShowHiddenFields)
+			var panelButton = new PanelButton(majorFlexComponentParameters.FlexComponentParameters, null, showHiddenFieldsPropertyName, LanguageExplorerResources.ksShowHiddenFields, LanguageExplorerResources.ksShowHiddenFields)
 			{
 				Dock = DockStyle.Right
 			};
@@ -93,6 +94,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.FeaturesAdvancedEdit
 			panelButton.MyDataTree = recordEditView.MyDataTree;
 			// Too early before now.
 			recordEditView.FinishInitialization();
+			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false, SettingsGroup.LocalSettings))
+			{
+				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish("ShowHiddenFields", true);
+			}
 		}
 
 		/// <summary>

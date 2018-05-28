@@ -29,22 +29,31 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private string _extendedPropertyName;
 		private MultiPane _innerMultiPane;
 
+		internal LexiconEditToolViewMenuManager(string extendedPropertyName, MultiPane innerMultiPane)
+		{
+			Guard.AgainstNullOrEmptyString(extendedPropertyName, nameof(extendedPropertyName));
+			Guard.AgainstNull(innerMultiPane, nameof(innerMultiPane));
+
+			_extendedPropertyName = extendedPropertyName;
+			_innerMultiPane = innerMultiPane;
+		}
+
 		#region IToolUiWidgetManager
 
 		/// <inheritdoc />
-		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList, IReadOnlyDictionary<string, EventHandler> sharedEventHandlers, IReadOnlyList<object> randomParameters)
+		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, Dictionary<string, EventHandler> sharedEventHandlers, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+			Guard.AgainstNull(sharedEventHandlers, nameof(sharedEventHandlers));
 			Guard.AgainstNull(recordList, nameof(recordList));
-			Guard.AgainstNull(randomParameters, nameof(randomParameters));
-			Guard.AssertThat(randomParameters.Count == 2, "Wrong number of random parameters.");
 
 			_propertyTable = majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
 			_subscriber = majorFlexComponentParameters.FlexComponentParameters.Subscriber;
 			_publisher = majorFlexComponentParameters.FlexComponentParameters.Publisher;
+			_sharedEventHandlers = sharedEventHandlers;
+			_sharedEventHandlers.Add(LexiconEditToolConstants.Show_Dictionary_Preview_Clicked, Show_Dictionary_Preview_Clicked);
+
 			MyRecordList = recordList;
-			_extendedPropertyName = (string)randomParameters[0];
-			_innerMultiPane = (MultiPane)randomParameters[1];
 
 			_subscriber.Subscribe("ShowHiddenFields", ShowHiddenFields_Handler);
 
@@ -57,12 +66,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_showHiddenFieldsMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newViewMenusAndHandlers, _viewMenu, Show_Hidden_Fields_Clicked, LanguageExplorerResources.ksShowHiddenFields, insertIndex: _viewMenu.DropDownItems.Count - 2);
 			_showHiddenFieldsMenu.Checked = _propertyTable.GetValue(_extendedPropertyName, false);
 		}
-
-		/// <inheritdoc />
-		IReadOnlyDictionary<string, EventHandler> IToolUiWidgetManager.SharedEventHandlers => _sharedEventHandlers ?? (_sharedEventHandlers = new Dictionary<string, EventHandler>(1)
-		{
-			{ LexiconEditToolConstants.Show_Dictionary_Preview_Clicked, Show_Dictionary_Preview_Clicked }
-		});
 
 		#endregion
 
@@ -109,7 +112,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					menuTuple.Item1.Dispose();
 				}
 				_newViewMenusAndHandlers.Clear();
-				_sharedEventHandlers.Clear();
 			}
 			MyRecordList = null;
 			_sharedEventHandlers = null;

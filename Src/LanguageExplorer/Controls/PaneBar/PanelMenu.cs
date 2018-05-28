@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.DetailControls;
@@ -16,11 +15,11 @@ namespace LanguageExplorer.Controls.PaneBar
 	/// </summary>
 	internal class PanelMenu : PanelExtension
 	{
-		private SliceContextMenuFactory _sliceContextMenuFactory;
+		private PanelMenuContextMenuFactory _dataTreeMainPanelContextMenuFactory;
 		private string _panelMenuId;
-		private Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>> _contextMenuAndItems;
+		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> _panelMenuContextMenuAndItems;
 
-		public PanelMenu(SliceContextMenuFactory sliceContextMenuFactory, string panelMenuId)
+		public PanelMenu(PanelMenuContextMenuFactory dataTreeMainPanelContextMenuFactory, string panelMenuId)
 		{
 			Dock = DockStyle.Right;
 			Font = new Font("Microsoft Sans Serif", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -31,22 +30,25 @@ namespace LanguageExplorer.Controls.PaneBar
 
 			Click += PanelMenu_Click;
 			TabIndex = 0;
-			_sliceContextMenuFactory = sliceContextMenuFactory;
+			_dataTreeMainPanelContextMenuFactory = dataTreeMainPanelContextMenuFactory;
 			_panelMenuId = panelMenuId;
 		}
 
-		internal SliceContextMenuFactory ContextMenuFactory { get; set; }
-
 		private void PanelMenu_Click(object sender, EventArgs e)
 		{
-			if (_contextMenuAndItems != null)
+			if (_panelMenuContextMenuAndItems != null)
 			{
 				// Get rid of the old ones, since some tools (e.g., ReversalBulkEditReversalEntriesTool) need to rebuild the menu times each time it is shown.
-				_sliceContextMenuFactory.DisposeContextMenu(_contextMenuAndItems);
+				_dataTreeMainPanelContextMenuFactory.DisposePanelMenuContextMenu(_panelMenuId);
+				_panelMenuContextMenuAndItems = null;
+				ContextMenuStrip = null;
 			}
-			_contextMenuAndItems = _sliceContextMenuFactory.GetPanelMenu(_panelMenuId);
-			ContextMenuStrip = _contextMenuAndItems.Item1;
-			ContextMenuStrip.Show(this, new Point(Location.X, Location.Y + Height));
+			_panelMenuContextMenuAndItems = _dataTreeMainPanelContextMenuFactory.GetPanelMenu(_panelMenuId);
+			if (_panelMenuContextMenuAndItems != null)
+			{
+				ContextMenuStrip = _panelMenuContextMenuAndItems.Item1;
+				ContextMenuStrip.Show(this, new Point(Location.X, Location.Y + Height));
+			}
 		}
 
 		protected override void Dispose(bool disposing)
@@ -54,16 +56,17 @@ namespace LanguageExplorer.Controls.PaneBar
 			if (disposing)
 			{
 				Click -= PanelMenu_Click;
-				if (_contextMenuAndItems != null)
+				if (_panelMenuContextMenuAndItems != null)
 				{
-					_sliceContextMenuFactory.DisposeContextMenu(_contextMenuAndItems);
+					_dataTreeMainPanelContextMenuFactory.DisposePanelMenuContextMenu(_panelMenuId);
 				}
 			}
 
 			base.Dispose(disposing);
 
-			_sliceContextMenuFactory = null;
-			_contextMenuAndItems = null;
+			_dataTreeMainPanelContextMenuFactory = null;
+			_panelMenuContextMenuAndItems = null;
+			_panelMenuId = null;
 		}
 	}
 }

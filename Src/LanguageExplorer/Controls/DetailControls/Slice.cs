@@ -5,7 +5,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
@@ -45,8 +44,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// If label width is made wider than this, switch to full labels.
 		/// </summary>
 		const int MaxAbbrevWidth = 60;
-		private const string Hotlinks = "hotlinks";
-		private const string Menu = "menu";
+		private const string HotlinksAttributeName = "hotlinks";
+		private const string MenuAttributeName = "menu";
+		private const string ContextMenuAttributeName = "contextMenu";
 		private const string always = "always";
 		private const string ifdata = "ifdata";
 		private const string never = "never";
@@ -76,9 +76,32 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public ObjectWeight Weight { get; set; } = ObjectWeight.field;
 
-		internal string HotlinksMenuId => XmlUtils.GetOptionalAttributeValue(CallerNode ?? ConfigurationNode, Hotlinks, string.Empty);
+		internal string HotlinksMenuId => XmlUtils.GetOptionalAttributeValue(CallerNode ?? ConfigurationNode, HotlinksAttributeName, string.Empty);
 
-		internal string OrdinaryMenuId => XmlUtils.GetOptionalAttributeValue(CallerNode ?? ConfigurationNode, Menu, string.Empty);
+		internal string LeftEdgeMenuId => XmlUtils.GetOptionalAttributeValue(CallerNode ?? ConfigurationNode, MenuAttributeName, string.Empty);
+
+		internal string ContextMenuMenuId => XmlUtils.GetOptionalAttributeValue(CallerNode ?? ConfigurationNode, ContextMenuAttributeName, string.Empty);
+
+		internal void RemoveOldVisibilityMenus()
+		{
+			foreach (var vmKvp in m_visibilityMenus)
+			{
+				switch (vmKvp.Key)
+				{
+					case always:
+						vmKvp.Value.Click -= AlwaysVisible_Clicked;
+						break;
+					case ifdata:
+						vmKvp.Value.Click -= IfDataVisibility_Click;
+						break;
+					case never:
+						vmKvp.Value.Click -= NeverVisibility_Click;
+						break;
+				}
+				vmKvp.Value.Dispose();
+			}
+			m_visibilityMenus.Clear();
+		}
 
 		/// <summary>
 		/// Add these menus:
@@ -87,7 +110,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// 3. Have Slice subclasses to add ones they need (e.g., Writing Systems and its sub-menus).
 		/// 4. 'Help...'
 		/// </summary>
-		internal void AddCoreContextMenus(ref Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>> sliceTreeNodeContextMenuStripTuple)
+		internal void AddCoreContextMenus(ref Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> sliceTreeNodeContextMenuStripTuple)
 		{
 			ContextMenuStrip contextMenuStrip;
 			List<Tuple<ToolStripMenuItem, EventHandler>> menuItems;
@@ -95,14 +118,13 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				// Nobody added a context menu, we we have to do it.
 				contextMenuStrip = new ContextMenuStrip();
-				contextMenuStrip.Opening += TopLevelContextmenuOnOpening;
 				menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>();
-				sliceTreeNodeContextMenuStripTuple = new Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, TopLevelContextmenuOnOpening, menuItems);
+				sliceTreeNodeContextMenuStripTuple = new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 			else
 			{
 				contextMenuStrip = sliceTreeNodeContextMenuStripTuple.Item1;
-				menuItems = sliceTreeNodeContextMenuStripTuple.Item3;
+				menuItems = sliceTreeNodeContextMenuStripTuple.Item2;
 			}
 			if (contextMenuStrip.Items.Count > 0)
 			{
@@ -144,22 +166,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			SetFieldVisibility(never);
 		}
 
-		private void TopLevelContextmenuOnOpening(object sender, CancelEventArgs cancelEventArgs)
-		{
-			// Set checked state of the three visibility menus.
-			foreach (var kvp in m_visibilityMenus)
-			{
-				kvp.Value.Checked = IsVisibilityItemChecked(kvp.Key);
-				if (kvp.Value.Checked)
-				{
-					// Only one of the three is checked.
-					break;
-				}
-			}
-			PrepareToShowContextMenu();
-		}
-
-		protected virtual void PrepareToShowContextMenu()
+		internal virtual void PrepareToShowContextMenu()
 		{ /* Nothing to do here. Suclasses can override and do more, if desired. */ }
 
 		protected virtual void AddSpecialContextMenus(ContextMenuStrip topLevelContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems)
@@ -183,15 +190,15 @@ namespace LanguageExplorer.Controls.DetailControls
 		public LcmCache Cache { get; set; }
 
 		/// <summary />
-		public ICmObject Object { get; set; }
+		public ICmObject MyCmObject { get; set; }
 
 		/// <summary>
-		/// the XmlNode that was used to construct this slice
+		/// the XElement that was used to construct this slice
 		/// </summary>
 		public XElement ConfigurationNode { get; set; }
 
 		/// <summary>
-		/// This node stores the caller for future processing
+		/// This element stores the caller for future processing
 		/// </summary>
 		public XElement CallerNode { get; set; }
 
@@ -250,7 +257,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					return false;
 				}
 
-				Debug.Assert(Object != null, "JH Made a false assumption!");
+				Debug.Assert(MyCmObject != null, "JH Made a false assumption!");
 				var flid = GetFlid(field);
 				Debug.Assert(flid != 0); // current field should have ID!
 				//at this point we are not even thinking about showing reference sequences in the DataTree
@@ -553,7 +560,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				slice = slice.ParentSlice;
 			}
 		}
-		protected SliceContextMenuFactory SliceContextMenuFactory { get; private set; }
+		protected DataTreeStackContextMenuFactory MyDataTreeStackContextMenuFactory { get; private set; }
 
 		/// <summary />
 		public virtual void Install(DataTree parentDataTree)
@@ -563,7 +570,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				throw new InvalidOperationException("The slice '" + GetType().Name + "' must be placed in the Parent.Controls property before installing it.");
 			}
 
-			SliceContextMenuFactory = parentDataTree.SliceContextMenuFactory;
+			MyDataTreeStackContextMenuFactory = parentDataTree.DataTreeStackContextMenuFactory;
 
 			SplitCont.SuspendLayout();
 			// prevents the controls of the new 'SplitContainer' being NAMELESS
@@ -586,19 +593,19 @@ namespace LanguageExplorer.Controls.DetailControls
 			else
 			{
 				// Make a standard SliceTreeNode now.
-				string menuId = null;
+				string leftEdgeContextMenuId = null;
 				if (CallerNode != null)
 				{
-					menuId = XmlUtils.GetOptionalAttributeValue(CallerNode, "menu", string.Empty);
+					leftEdgeContextMenuId = XmlUtils.GetOptionalAttributeValue(CallerNode, "menu", string.Empty);
 				}
-				if (string.IsNullOrEmpty(menuId))
+				if (string.IsNullOrEmpty(leftEdgeContextMenuId))
 				{
 					if (ConfigurationNode != null)
 					{
-						menuId = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "menu", string.Empty);
+						leftEdgeContextMenuId = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "menu", string.Empty);
 					}
 				}
-				treeNode = new SliceTreeNode(this, SliceContextMenuFactory, menuId);
+				treeNode = new SliceTreeNode(this, MyDataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory, leftEdgeContextMenuId);
 				treeNode.SuspendLayout();
 				treeNode.Dock = DockStyle.Fill;
 				SplitCont.Panel1.Controls.Add(treeNode);
@@ -860,7 +867,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_fontLabel = null;
 			Cache = null;
 			Key = null;
-			Object = null;
+			MyCmObject = null;
 			CallerNode = null;
 			ConfigurationNode = null;
 			m_configurationParameters = null;
@@ -1147,12 +1154,12 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private string GetGeneratedHelpTopicId(string helpTopicPrefix, string fieldName)
 		{
-			var ownerClassName = Object.Owner?.ClassName;
-			var className = Cache.DomainDataByFlid.MetaDataCache.GetClassName(Object.ClassID);
+			var ownerClassName = MyCmObject.Owner?.ClassName;
+			var className = Cache.DomainDataByFlid.MetaDataCache.GetClassName(MyCmObject.ClassID);
 			// Distinguish the Example (sense) field and the expanded example (LexExtendedNote) field
 			className = (fieldName == "Example" && ownerClassName == "LexExtendedNote") ? "LexExtendedNote" : className;
 			// Distinguish the Translation (sense) field and the expanded example (LexExtendedNote) field
-			className = fieldName.StartsWith("Translation")&& (ownerClassName == "LexExtendedNote" || (Object.Owner != null && Object.Owner.ClassName == "LexExtendedNote")) ? "LexExtendedNote" : className;
+			className = fieldName.StartsWith("Translation")&& (ownerClassName == "LexExtendedNote" || (MyCmObject.Owner != null && MyCmObject.Owner.ClassName == "LexExtendedNote")) ? "LexExtendedNote" : className;
 			var toolChoice = PropertyTable.GetValue<string>(AreaServices.ToolChoice);
 
 			var generatedHelpTopicID = helpTopicPrefix + "-" + toolChoice + "-" + className + "-" + fieldName;
@@ -1163,7 +1170,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			if (string.Equals(className, "CmPossibility"))
 			{
-				generatedHelpTopicID = helpTopicPrefix + "-" + toolChoice + "-" + Object.SortKey + "-" + fieldName;
+				generatedHelpTopicID = helpTopicPrefix + "-" + toolChoice + "-" + MyCmObject.SortKey + "-" + fieldName;
 			}
 			if (helpTopicIsValid(generatedHelpTopicID))
 			{
@@ -1296,11 +1303,11 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					return null; // nothing useful to remember
 				}
-				if (Object == null)
+				if (MyCmObject == null)
 				{
 					return null; // not sure this can happen, but without a key we can't do anything useful.
 				}
-				return "expand" + Convert.ToBase64String(Object.Guid.ToByteArray());
+				return "expand" + Convert.ToBase64String(MyCmObject.Guid.ToByteArray());
 			}
 		}
 
@@ -1323,7 +1330,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						caller = Key[Key.Length - 2] as XElement;
 					}
 					var insPos = iSlice + 1;
-					CreateIndentedNodes(caller, Object, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap(), ConfigurationNode);
+					CreateIndentedNodes(caller, MyCmObject, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap(), ConfigurationNode);
 
 					Expansion = TreeItemState.ktisExpanded;
 					PropertyTable.SetProperty(ExpansionStateKey, true, true, true);
@@ -1407,10 +1414,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			DrawLabel(LabelIndent(), y, gr, clipWidth);
 		}
 
-		public bool IsObjectNode => (ConfigurationNode.Element("node") != null || ("PhCode" == Object.ClassName))	// todo: this should tell if the attr (not the nested one) is to a basic type or a cmobject
+		public bool IsObjectNode => (ConfigurationNode.Element("node") != null || ("PhCode" == MyCmObject.ClassName))	// todo: this should tell if the attr (not the nested one) is to a basic type or a cmobject
 									&& ConfigurationNode.Element("seq") == null &&
 									//MoAlloAdhocProhib.adjacency is the top-level node, but it's not really an object that you should be able to delete
-									Object != ContainingDataTree.Root;
+									MyCmObject != ContainingDataTree.Root;
 		#endregion Tree Display
 
 		#region Miscellaneous data methods
@@ -1455,17 +1462,17 @@ namespace LanguageExplorer.Controls.DetailControls
 				// But it may be ghost slice that we can use.  (See FWR-556.)
 				if (inode == Key.Length - 1)
 				{
-					if (Object == null || element.Attribute("ghost") == null)
+					if (MyCmObject == null || element.Attribute("ghost") == null)
 					{
 						return false;
 					}
-					clsid = Object.ClassID;
+					clsid = MyCmObject.ClassID;
 					flid = ContainingDataTree.GetFlidIfPossible(clsid, attrName, mdc);
 					if (flid == 0)
 					{
 						return false;
 					}
-					hvoOwner = Object.Hvo;
+					hvoOwner = MyCmObject.Hvo;
 					ihvoPosition = -1;		// 1 before actual location.
 					return true;
 				}
@@ -1533,7 +1540,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		protected int GetFlid(string fieldName)
 		{
-			return ContainingDataTree.GetFlidIfPossible(Object.ClassID, fieldName, Cache.DomainDataByFlid.MetaDataCache as IFwMetaDataCacheManaged);
+			return ContainingDataTree.GetFlidIfPossible(MyCmObject.ClassID, fieldName, Cache.DomainDataByFlid.MetaDataCache as IFwMetaDataCacheManaged);
 		}
 
 		protected int GetFieldType(int flid)
@@ -1632,7 +1639,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </returns>
 		private bool InsertObjectIfPossible(int newObjectClassId, int ownerClassId, string fieldName, Slice slice)
 		{
-			if ((ownerClassId <= 0 || !IsOrInheritsFrom((slice.Object.ClassID), ownerClassId)) && slice.Object != Object && !slice.Object.Equals(ContainingDataTree.Root))
+			if ((ownerClassId <= 0 || !IsOrInheritsFrom((slice.MyCmObject.ClassID), ownerClassId)) && slice.MyCmObject != MyCmObject && !slice.MyCmObject.Equals(ContainingDataTree.Root))
 			{
 				return false;
 			}
@@ -1676,9 +1683,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				// We've been handed an abstract class to insert.  Try to determine the desired
 				// concrete from the context.
-				if (newObjectClassId == MoFormTags.kClassId && Object is ILexEntry)
+				if (newObjectClassId == MoFormTags.kClassId && MyCmObject is ILexEntry)
 				{
-					var entry = ((ILexEntry)Object);
+					var entry = ((ILexEntry)MyCmObject);
 					newObjectClassId = entry.GetDefaultClassForNewAllomorph();
 				}
 				else
@@ -1688,18 +1695,18 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			// OK, we can add to property flid of the object of slice slice.
 			var insertionPosition = 0;//leave it at 0 if it does not matter
-			var hvoOwner = Object.Hvo;
-			var clidOwner = Object.ClassID;
+			var hvoOwner = MyCmObject.Hvo;
+			var clidOwner = MyCmObject.ClassID;
 			var clidOfFlid = flid / 1000;
-			if (clidOwner != clidOfFlid && clidOfFlid == Object.Owner.ClassID)
+			if (clidOwner != clidOfFlid && clidOfFlid == MyCmObject.Owner.ClassID)
 			{
-				hvoOwner = Object.Owner.Hvo;
+				hvoOwner = MyCmObject.Owner.Hvo;
 			}
 #if RANDYTODO
 			// TODO: Can't Flex create a new object in a collection property?
 #endif
 			var mdcManaged = Cache.GetManagedMetaDataCache();
-			var owningSeqFields = mdcManaged.GetFields(Object.ClassID, true, (int)CellarPropertyType.OwningSequence).ToList();
+			var owningSeqFields = mdcManaged.GetFields(MyCmObject.ClassID, true, (int)CellarPropertyType.OwningSequence).ToList();
 			if (!owningSeqFields.Contains(flid))
 			{
 				return -1;
@@ -1775,21 +1782,21 @@ namespace LanguageExplorer.Controls.DetailControls
 					{
 						case CellarPropertyType.OwningCollection:
 							// order is not fully predicatable, figure where it DID show up.
-							insertionPosition = Cache.DomainDataByFlid.GetObjIndex(hvoOwner, flid, uiObj.Object.Hvo);
+							insertionPosition = Cache.DomainDataByFlid.GetObjIndex(hvoOwner, flid, uiObj.MyCmObject.Hvo);
 							break;
 
 						case CellarPropertyType.OwningAtomic:
 							insertionPosition = 0;
 							break;
 					}
-					if (hvoOwner == Object.Hvo && Expansion == TreeItemState.ktisCollapsed)
+					if (hvoOwner == MyCmObject.Hvo && Expansion == TreeItemState.ktisCollapsed)
 					{
 						// We added something to the object of the current slice...almost certainly it
 						// will be something that will display under this node...if it is still collapsed,
 						// expand it to show the thing inserted.
 						TreeNode.ToggleExpansion(IndexInContainer);
 					}
-					var child = ExpandSubItem(uiObj.Object.Hvo);
+					var child = ExpandSubItem(uiObj.MyCmObject.Hvo);
 					child?.FocusSliceOrChild();
 				}
 			}
@@ -1810,7 +1817,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			for (var islice = IndexInContainer + 1; islice < cslice; ++islice)
 			{
 				var slice = ContainingDataTree.Slices[islice];
-				if (slice.Object.Hvo == hvo)
+				if (slice.MyCmObject.Hvo == hvo)
 				{
 					if (slice.Expansion == TreeItemState.ktisCollapsed)
 					{
@@ -2030,10 +2037,10 @@ namespace LanguageExplorer.Controls.DetailControls
 				var field = XmlUtils.GetMandatoryAttributeValue(nodes[0], "field");
 				var flid = GetFlid(field);
 				Debug.Assert(flid != 0);
-				var hvo = Cache.DomainDataByFlid.get_ObjectProp(Object.Hvo, flid);
+				var hvo = Cache.DomainDataByFlid.get_ObjectProp(MyCmObject.Hvo, flid);
 				return hvo != 0 ? Cache.ServiceLocator.GetObject(hvo) : null;
 			}
-			return FromVariantBackRefField ? BackRefObject : Object;
+			return FromVariantBackRefField ? BackRefObject : MyCmObject;
 		}
 
 		/// <summary>
@@ -2043,7 +2050,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			get
 			{
-				if (ConfigurationNode == null || Object == null)
+				if (ConfigurationNode == null || MyCmObject == null)
 				{
 					return 0;
 				}
@@ -2059,9 +2066,9 @@ namespace LanguageExplorer.Controls.DetailControls
 				var rootObj = ContainingDataTree.Root;
 				var clidRoot = rootObj.ClassID;
 				return clidRoot == LexEntryTags.kClassId &&
-					Object != null && Object != rootObj &&
-					Object.Owner != null && Object.Owner != rootObj &&
-					(Object.ClassID == clidRoot || Object.Owner.ClassID == clidRoot);
+					MyCmObject != null && MyCmObject != rootObj &&
+					MyCmObject.Owner != null && MyCmObject.Owner != rootObj &&
+					(MyCmObject.ClassID == clidRoot || MyCmObject.Owner.ClassID == clidRoot);
 			}
 		}
 
@@ -2072,17 +2079,17 @@ namespace LanguageExplorer.Controls.DetailControls
 				var rootObj = ContainingDataTree.Root;
 				var clidRoot = rootObj.ClassID;
 				if (clidRoot == LexEntryTags.kClassId &&
-					Object != null && Object != rootObj &&
-					Object.Owner != null && Object.Owner != rootObj)
+					MyCmObject != null && MyCmObject != rootObj &&
+					MyCmObject.Owner != null && MyCmObject.Owner != rootObj)
 				{
-					if (Object.ClassID == clidRoot)
+					if (MyCmObject.ClassID == clidRoot)
 					{
-						return Object;
+						return MyCmObject;
 					}
 
-					if (Object.Owner.ClassID == clidRoot)
+					if (MyCmObject.Owner.ClassID == clidRoot)
 					{
-						return Object.Owner;
+						return MyCmObject.Owner;
 					}
 				}
 				return null;

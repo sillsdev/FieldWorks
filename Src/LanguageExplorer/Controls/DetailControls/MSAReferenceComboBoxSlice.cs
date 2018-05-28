@@ -71,7 +71,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			m_MSAPopupTreeManager = new MSAPopupTreeManager(m_tree, Cache, list, m_tree.WritingSystemCode, true, PropertyTable, Publisher, PropertyTable.GetValue<Form>("window"));
 			m_MSAPopupTreeManager.AfterSelect += m_MSAPopupTreeManager_AfterSelect;
-			m_MSAPopupTreeManager.Sense = Object as ILexSense;
+			m_MSAPopupTreeManager.Sense = MyCmObject as ILexSense;
 			m_MSAPopupTreeManager.PersistenceProvider = m_persistProvider;
 
 			try
@@ -171,7 +171,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_handlingMessage = true;
 			try
 			{
-				var sense = Object as ILexSense;
+				var sense = MyCmObject as ILexSense;
 				if (sense.MorphoSyntaxAnalysisRA != null)
 				{
 					m_MSAPopupTreeManager.LoadPopupTree(sense.MorphoSyntaxAnalysisRA.Hvo);
@@ -205,7 +205,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 
 			// Don't try changing values on a deleted object!  See LT-8656 and LT-9119.
-			if (!Object.IsValidObject)
+			if (!MyCmObject.IsValidObject)
 			{
 				return;
 			}
@@ -218,7 +218,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				ContainingDataTree.RefreshList(false);
 				return;
 			}
-			var sense = Object as ILexSense;
+			var sense = MyCmObject as ILexSense;
 			// Setting sense.DummyMSA can cause the DataTree to want to refresh.  Don't
 			// let this happen until after we're through!  See LT-9713 and LT-9714.
 			var fOldDoNotRefresh = ContainingDataTree.DoNotRefresh;
@@ -275,7 +275,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			var sense = Object as ILexSense;
+			var sense = MyCmObject as ILexSense;
 			if (sense.MorphoSyntaxAnalysisRA != null)
 			{
 				if (sense.MorphoSyntaxAnalysisRA.Hvo == hvo)

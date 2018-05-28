@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Windows.Forms;
@@ -33,7 +32,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 		private IRecordList _recordList;
 		private IReversalIndexRepository _reversalIndexRepository;
 		private IReversalIndex _currentReversalIndex;
-		private SliceContextMenuFactory _sliceContextMenuFactory;
+		private PanelMenuContextMenuFactory _mainPanelMenuContextMenuFactory;
 		private LcmCache _cache;
 		private const string panelMenuId = "left";
 		[Import(AreaServices.LexiconAreaMachineName)]
@@ -56,13 +55,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			_lexiconAreaMenuHelper.Dispose();
-			_sliceContextMenuFactory.Dispose(); // No Data Tree in this tool to dispose of it for us.
+			_mainPanelMenuContextMenuFactory.Dispose(); // No Data Tree in this tool to dispose of it for us.
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 			_reversalIndexRepository = null;
 			_currentReversalIndex = null;
 			_recordBrowseView = null;
 			_cache = null;
-			_sliceContextMenuFactory = null;
+			_mainPanelMenuContextMenuFactory = null;
 			_lexiconAreaMenuHelper = null;
 		}
 
@@ -74,7 +73,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_sliceContextMenuFactory = new SliceContextMenuFactory(); // Make our own, since the tool has no data tree.
+			_mainPanelMenuContextMenuFactory = new PanelMenuContextMenuFactory(); // Make our own, since the tool has no data tree.
 			_cache = majorFlexComponentParameters.LcmCache;
 			var currentGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(_propertyTable, "ReversalIndexGuid");
 			if (currentGuid != Guid.Empty)
@@ -87,12 +86,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 			}
 			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, _recordList);
 
-			_sliceContextMenuFactory.RegisterPanelMenuCreatorMethod(panelMenuId, CreatePanelContextMenuStrip);
+			_mainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(panelMenuId, CreatePanelContextMenuStrip);
 			_recordBrowseView = new RecordBrowseView(XDocument.Parse(LexiconResources.ReversalBulkEditReversalEntriesToolParameters).Root, majorFlexComponentParameters.LcmCache, _recordList);
 			var browseViewPaneBar = new PaneBar();
 			var img = LanguageExplorerResources.MenuWidget;
 			img.MakeTransparent(Color.Magenta);
-			var panelMenu = new PanelMenu(_sliceContextMenuFactory, panelMenuId)
+			var panelMenu = new PanelMenu(_mainPanelMenuContextMenuFactory, panelMenuId)
 			{
 				Dock = DockStyle.Left,
 				BackgroundImage = img,
@@ -163,7 +162,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 
 		#endregion
 
-		private Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>> CreatePanelContextMenuStrip(string panelMenuId)
+		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> CreatePanelContextMenuStrip(string panelMenuId)
 		{
 			if (_reversalIndexRepository == null)
 			{
@@ -173,7 +172,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 			var contextMenuStrip = new ContextMenuStrip();
 
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>();
-			var retVal = new Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, MainPanelContextMenuStrip_Opening, menuItems);
+			var retVal = new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 
 			// If allInstancesinRepository has any remaining instances, then they are not in the menu. Add them.
 			foreach (var rei in _reversalIndexRepository.AllInstances())
@@ -190,10 +189,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, ConfigureDictionary_Clicked, LexiconResources.ConfigureDictionary);
 
 			return retVal;
-		}
-
-		private void MainPanelContextMenuStrip_Opening(object sender, CancelEventArgs e)
-		{
 		}
 
 		private void ConfigureDictionary_Clicked(object sender, EventArgs e)

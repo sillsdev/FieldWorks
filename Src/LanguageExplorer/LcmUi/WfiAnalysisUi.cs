@@ -33,7 +33,7 @@ namespace LanguageExplorer.LcmUi
 		protected override void ReallyDeleteUnderlyingObject()
 		{
 			// Gather original counts.
-			var wf = (IWfiWordform) Object.Owner;
+			var wf = (IWfiWordform) MyCmObject.Owner;
 			var prePACount = wf.ParserCount;
 			var preUACount = wf.UserCount;
 			// we need to include resetting the wordform's checksum as part of the undo action

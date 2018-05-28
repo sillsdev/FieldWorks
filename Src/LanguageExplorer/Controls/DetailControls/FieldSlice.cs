@@ -42,7 +42,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			Debug.Assert(cache != null);
 			Debug.Assert(obj != null);
 			Cache = cache;
-			Object = obj;
+			MyCmObject = obj;
 			m_flid = flid;
 			m_fieldName = Cache.DomainDataByFlid.MetaDataCache.GetFieldName(m_flid);
 		}
@@ -53,7 +53,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public virtual void Reuse(ICmObject obj, int flid)
 		{
-			Object = obj;
+			MyCmObject = obj;
 			m_flid = flid;
 			Label = null; // new slice normally has this
 		}
@@ -87,7 +87,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			Debug.Assert(Cache != null);
 			Debug.Assert(ConfigurationNode != null);
 
-			var className = Cache.DomainDataByFlid.MetaDataCache.GetClassName(Object.ClassID);
+			var className = Cache.DomainDataByFlid.MetaDataCache.GetClassName(MyCmObject.ClassID);
 			m_fieldName = XmlUtils.GetMandatoryAttributeValue(ConfigurationNode, "field");
 			var mdc = Cache.DomainDataByFlid.MetaDataCache;
 			m_flid = mdc.GetFieldId2(mdc.GetClassId(className), m_fieldName, true);

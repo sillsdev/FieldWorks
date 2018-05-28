@@ -8,6 +8,6 @@ namespace LanguageExplorer.LcmUi
 {
 	public class CmCustomItemUi : CmPossibilityUi
 	{
-		public override string DisplayNameOfClass => StringTable.Table.GetString(Object.GetType().Name, "ClassNames");
+		public override string DisplayNameOfClass => StringTable.Table.GetString(MyCmObject.GetType().Name, "ClassNames");
 	}
 }

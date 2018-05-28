@@ -30,14 +30,17 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		#region IToolUiWidgetManager
 
 		/// <inheritdoc />
-		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList, IReadOnlyDictionary<string, EventHandler> sharedEventHandlers, IReadOnlyList<object> randomParameter)
+		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, Dictionary<string, EventHandler> sharedEventHandlers, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+			Guard.AgainstNull(sharedEventHandlers, nameof(sharedEventHandlers));
 			Guard.AgainstNull(recordList, nameof(recordList));
 
 			_flexComponentParameters = majorFlexComponentParameters.FlexComponentParameters;
 			_cache = majorFlexComponentParameters.LcmCache;
 			_mainWnd = majorFlexComponentParameters.MainWindow;
+			_sharedEventHandlers = sharedEventHandlers;
+			_sharedEventHandlers.Add(LexiconEditToolConstants.CmdGoToEntry, GoToEntry_Clicked);
 			MyRecordList = recordList;
 
 			_editMenu = MenuServices.GetEditMenu(majorFlexComponentParameters.MenuStrip);
@@ -45,12 +48,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// <item command="CmdGoToEntry" />
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newEditMenusAndHandlers, _editMenu, GoToEntry_Clicked, LexiconResources.Find_Entry, LexiconResources.GoToEntryToolTip, Keys.Control | Keys.F, LexiconResources.Find_Lexical_Entry.ToBitmap(), 10);
 		}
-
-		/// <inheritdoc />
-		IReadOnlyDictionary<string, EventHandler> IToolUiWidgetManager.SharedEventHandlers => _sharedEventHandlers ?? (_sharedEventHandlers = new Dictionary<string, EventHandler>(1)
-		{
-			{ LexiconEditToolConstants.CmdGoToEntry, GoToEntry_Clicked }
-		});
 
 		#endregion
 
@@ -95,7 +92,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					menuTuple.Item1.Dispose();
 				}
 				_newEditMenusAndHandlers.Clear();
-				_sharedEventHandlers.Clear();
 			}
 			MyRecordList = null;
 			_sharedEventHandlers = null;

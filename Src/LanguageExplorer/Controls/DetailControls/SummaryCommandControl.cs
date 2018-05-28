@@ -30,21 +30,21 @@ namespace LanguageExplorer.Controls.DetailControls
 		// x coord of left of first button.
 		int m_firstButtonOffset;
 		int m_lastWidth;
-		List<Tuple<ToolStripMenuItem, EventHandler>> m_menuItems; // Menu last created by OnLayout. Need consistent one for OnClick.
+		List<Tuple<ToolStripMenuItem, EventHandler>> m_hotlinksMenuItems; // Menu last created by OnLayout. Need consistent one for OnClick.
 		Timer m_timer;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.Container components = null;
-		private SliceContextMenuFactory SliceContextMenuFactory { get; }
+		private SliceHotlinksMenuFactory MySliceHotlinksMenuFactory { get; set; }
 
-		internal SummaryCommandControl(SummarySlice slice, SliceContextMenuFactory sliceContextMenuFactory)
+		internal SummaryCommandControl(SummarySlice slice, SliceHotlinksMenuFactory sliceHotlinksMenuFactory)
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
 
 			m_slice = slice;
-			SliceContextMenuFactory = sliceContextMenuFactory;
+			MySliceHotlinksMenuFactory = sliceHotlinksMenuFactory;
 			m_hotLinkFont = new Font(MiscUtils.StandardSansSerif, (float)10.0, FontStyle.Underline);
 			m_timer = new Timer
 			{
@@ -68,7 +68,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			if( disposing )
 			{
-				SliceContextMenuFactory.DisposeHotLinksMenus(m_menuItems);
+				MySliceHotlinksMenuFactory.DisposeHotLinksMenus(m_hotlinksMenuItems);
 				if (m_timer != null)
 				{
 					m_timer.Stop();
@@ -78,13 +78,14 @@ namespace LanguageExplorer.Controls.DetailControls
 				components?.Dispose();
 				m_hotLinkFont?.Dispose();
 			}
-			m_menuItems = null;
+			m_hotlinksMenuItems = null;
 			m_hotLinkFont = null;
 			m_timer = null;
 			m_slice = null; // Client is responsible for this.
 			m_buttonDrawnEnabled = null;
 			m_buttonMenuItems.Clear();
 			m_buttonMenuItems = null;
+			MySliceHotlinksMenuFactory = null;
 
 			base.Dispose( disposing );
 		}
@@ -131,21 +132,21 @@ namespace LanguageExplorer.Controls.DetailControls
 				// Clear out old collection of menu items,
 				// since we are fixin to reset the menu.
 				m_buttonMenuItems.Clear();
-				if (m_menuItems != null)
+				if (m_hotlinksMenuItems != null)
 				{
 					// Dispose the old ones, since this class 'owns' them, so must dispose them, even if they are created elsewhere.
-					SliceContextMenuFactory.DisposeHotLinksMenus(m_menuItems);
-					m_menuItems = null;
+					MySliceHotlinksMenuFactory.DisposeHotLinksMenus(m_hotlinksMenuItems);
+					m_hotlinksMenuItems = null;
 				}
 				var hotlinksMenuId = m_slice.HotlinksMenuId;
-				m_menuItems = string.IsNullOrWhiteSpace(hotlinksMenuId) ? null : SliceContextMenuFactory.GetHotlinksMenuItems(m_slice, hotlinksMenuId);
-				if (m_menuItems == null || !m_menuItems.Any())
+				m_hotlinksMenuItems = string.IsNullOrWhiteSpace(hotlinksMenuId) ? null : MySliceHotlinksMenuFactory.GetHotlinksMenuItems(m_slice, hotlinksMenuId);
+				if (m_hotlinksMenuItems == null || !m_hotlinksMenuItems.Any())
 				{
 					return;
 				}
 
 				var availButtonWidth = Width - 2;
-				foreach (var menuItemTuple in m_menuItems)
+				foreach (var menuItemTuple in m_hotlinksMenuItems)
 				{
 					var item = menuItemTuple.Item1;
 					var label = item.Text;
@@ -219,7 +220,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			base.OnMouseUp(e); // invoke any delegates.
 			using (var graphics = CreateGraphics())
 			{
-				if (m_menuItems == null)
+				if (m_hotlinksMenuItems == null)
 				{
 					return;
 				}

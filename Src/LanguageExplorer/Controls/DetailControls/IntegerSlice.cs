@@ -85,7 +85,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected override void UpdateDisplayFromDatabase()
 		{
-			m_previousValue = Cache.DomainDataByFlid.get_IntProp(Object.Hvo, m_flid);
+			m_previousValue = Cache.DomainDataByFlid.get_IntProp(MyCmObject.Hvo, m_flid);
 			m_tb.Text = m_previousValue.ToString();
 		}
 
@@ -103,7 +103,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					string.Format(DetailControlsStrings.ksUndoChangeTo, m_fieldName),
 					string.Format(DetailControlsStrings.ksRedoChangeTo, m_fieldName),
 					Cache.ActionHandlerAccessor,
-					() =>Cache.DomainDataByFlid.SetInt(Object.Hvo, m_flid, i));
+					() =>Cache.DomainDataByFlid.SetInt(MyCmObject.Hvo, m_flid, i));
 			}
 			catch (FormatException error)
 			{
@@ -116,7 +116,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				MessageBox.Show(DetailControlsStrings.ksInvalidNumber);
 			}
 			// In case the update failed, make sure the box is consistent.
-			m_tb.Text = Cache.DomainDataByFlid.get_IntProp(Object.Hvo, m_flid).ToString();
+			m_tb.Text = Cache.DomainDataByFlid.get_IntProp(MyCmObject.Hvo, m_flid).ToString();
 		}
 
 		private void m_tb_GotFocus(object sender, EventArgs e)

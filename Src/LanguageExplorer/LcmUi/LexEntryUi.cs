@@ -317,7 +317,7 @@ namespace LanguageExplorer.LcmUi
 					RelatedWords.ShowNotInDictMessage(owner);
 					return;
 				}
-				var hvoEntry = leui.Object.Hvo;
+				var hvoEntry = leui.MyCmObject.Hvo;
 				int[] domains;
 				int[] lexrels;
 				IVwCacheDa cdaTemp;
@@ -421,7 +421,7 @@ namespace LanguageExplorer.LcmUi
 			}
 			if (otherButtonClicked)
 			{
-				var entry = ShowFindEntryDialog(Object.Cache, PropertyTable, Publisher, Subscriber, tssWf, owner);
+				var entry = ShowFindEntryDialog(MyCmObject.Cache, PropertyTable, Publisher, Subscriber, tssWf, owner);
 				if (entry != null)
 				{
 					using (var leuiNew = new LexEntryUi(entry))

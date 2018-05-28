@@ -23,7 +23,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			get
 			{
-				var list = (ICmPossibilityList) Object.ReferenceTargetOwner(m_flid);
+				var list = (ICmPossibilityList) MyCmObject.ReferenceTargetOwner(m_flid);
 				var parameters = ConfigurationNode.Element("deParams");
 				if (parameters == null)
 				{

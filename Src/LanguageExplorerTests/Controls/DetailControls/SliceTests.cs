@@ -145,7 +145,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			m_DataTree.InitializeFlexComponent(flexComponentParameters);
 			m_Slice = GenerateSlice(Cache, m_DataTree);
 			m_Slice.Key = GeneratePath().ToArray();
-			m_Slice.Object = obj;
+			m_Slice.MyCmObject = obj;
 			m_Slice.InitializeFlexComponent(flexComponentParameters);
 			m_propertyTable.SetProperty("cache", Cache);
 
@@ -166,7 +166,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			m_DataTree.InitializeFlexComponent(flexComponentParameters);
 			m_Slice = GenerateSlice(Cache, m_DataTree);
 			m_Slice.Key = GeneratePath().ToArray();
-			m_Slice.Object = obj;
+			m_Slice.MyCmObject = obj;
 			m_Slice.InitializeFlexComponent(flexComponentParameters);
 			m_propertyTable.SetProperty("cache", Cache);
 

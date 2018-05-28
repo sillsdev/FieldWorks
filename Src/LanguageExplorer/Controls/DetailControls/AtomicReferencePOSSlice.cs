@@ -36,7 +36,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			get
 			{
-				var posHvo = Cache.DomainDataByFlid.get_ObjectProp(Object.Hvo, m_flid);
+				var posHvo = Cache.DomainDataByFlid.get_ObjectProp(MyCmObject.Hvo, m_flid);
 				if (posHvo == 0)
 				{
 					m_pos = null;
@@ -116,7 +116,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				return;
 			}
 
-			if (hvo == Object.Hvo && tag == m_flid)
+			if (hvo == MyCmObject.Hvo && tag == m_flid)
 			{
 				try
 				{
@@ -232,14 +232,14 @@ namespace LanguageExplorer.Controls.DetailControls
 			try
 			{
 				m_handlingMessage = true;
-				UndoableUnitOfWorkHelper.Do(DetailControlsStrings.ksUndoSetCat, DetailControlsStrings.ksRedoSetCat, Object, () =>
+				UndoableUnitOfWorkHelper.Do(DetailControlsStrings.ksUndoSetCat, DetailControlsStrings.ksRedoSetCat, MyCmObject, () =>
 				{
-					Cache.DomainDataByFlid.SetObjProp(Object.Hvo, m_flid, hvoPos);
+					Cache.DomainDataByFlid.SetObjProp(MyCmObject.Hvo, m_flid, hvoPos);
 
 					// Do some side effects for a couple of MSA classes.
-					if (Object is IMoInflAffMsa)
+					if (MyCmObject is IMoInflAffMsa)
 					{
-						var msa = (IMoInflAffMsa)Object;
+						var msa = (IMoInflAffMsa)MyCmObject;
 						if (hvoPos == 0)
 						{
 							msa.SlotsRC.Clear();
@@ -253,9 +253,9 @@ namespace LanguageExplorer.Controls.DetailControls
 							}
 						}
 					}
-					else if (Object is IMoDerivAffMsa)
+					else if (MyCmObject is IMoDerivAffMsa)
 					{
-						var msa = (IMoDerivAffMsa)Object;
+						var msa = (IMoDerivAffMsa)MyCmObject;
 						if (hvoPos > 0 && m_flid == MoDerivAffMsaTags.kflidFromPartOfSpeech && msa.ToPartOfSpeechRA == null)
 						{
 							msa.ToPartOfSpeechRA = Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(hvoPos);

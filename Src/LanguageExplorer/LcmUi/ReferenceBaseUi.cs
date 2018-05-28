@@ -25,7 +25,7 @@ namespace LanguageExplorer.LcmUi
 
 			m_cache = cache;
 			m_hvo = rootObj.Hvo;
-			m_obj = rootObj;
+			m_cmObject = rootObj;
 			m_flid = referenceFlid;
 			m_hvoTarget = targetHvo;
 			m_targetUi = MakeUi(m_cache, m_hvoTarget);

@@ -121,7 +121,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						chooser.SetObjectAndFlid(m_obj.Hvo, m_flid);	// may set TextParamHvo
 						chooser.Text = LanguageExplorerResources.ksChooseWhereToShowSubentry;
 						chooser.SetHelpTopic(Slice.GetChooserHelpTopicID());
-						chooser.InitializeExtras(null, PropertyTable);
+						chooser.InitializeExtras(null, PropertyTable, Publisher, Subscriber);
 						chooser.AddLink(LanguageExplorerResources.ksAddAComponent, LinkType.kDialogLink, new AddPrimaryLexemeChooserCommand(m_cache, false, null, PropertyTable, Publisher, Subscriber, m_obj, FindForm()));
 						var res = chooser.ShowDialog();
 						if (DialogResult.Cancel == res)
@@ -202,7 +202,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				chooser.SetObjectAndFlid(m_obj.Hvo, m_flid);	// may set TextParamHvo
 				chooser.Text = fieldName == "Subentries" ? LanguageExplorerResources.ksChooseSubentries : LanguageExplorerResources.ksChooseVisibleComplexForms;
 				chooser.SetHelpTopic(Slice.GetChooserHelpTopicID() + "-CFChooser");
-				chooser.InitializeExtras(null, PropertyTable);
+				chooser.InitializeExtras(null, PropertyTable, Publisher, Subscriber);
 				// Step 3 of LT-11155:
 				chooser.AddLink(LanguageExplorerResources.ksAddAComplexForm, LinkType.kDialogLink, new AddComplexFormChooserCommand(m_cache, false, null, PropertyTable, Publisher, Subscriber, m_obj, FindForm()));
 				var res = chooser.ShowDialog();

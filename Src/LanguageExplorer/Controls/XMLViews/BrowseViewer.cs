@@ -3420,7 +3420,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				BrowseView = new XmlBrowseView();
 			}
-			BrowseView.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+			BrowseView.InitializeFlexComponent(flexComponentParameters);
 			BrowseView.AccessibleName = "BrowseViewer";
 
 			Subscriber.Subscribe("LinkFollowed", LinkFollowed_Handler);

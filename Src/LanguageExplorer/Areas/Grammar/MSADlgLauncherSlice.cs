@@ -69,7 +69,7 @@ namespace LanguageExplorer.Areas.Grammar
 			}
 			Size = new Size(208, 32);
 			ctrl.Initialize(PropertyTable.GetValue<LcmCache>("cache"),
-				Object,
+				MyCmObject,
 				1, // Maybe need a real flid?
 				"InterlinearName",
 				ContainingDataTree.PersistenceProvder,

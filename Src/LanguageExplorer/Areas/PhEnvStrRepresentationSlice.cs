@@ -75,137 +75,102 @@ namespace LanguageExplorer.Areas
 			return true;
 		}
 
-#if RANDYTODO
 		/// <summary>
 		/// This menu item is turned off if a slash already exists in the environment string.
 		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public virtual bool OnDisplayInsertSlash(object commandObject,
-			ref UIItemDisplayProperties display)
+		public bool CanInsertSlash
 		{
-			StringRepSliceView view = Control as StringRepSliceView;
-			if (view == null)
-				return false;
-			display.Enabled = view.CanInsertSlash();
-			return true;
+			get
+			{
+				var view = Control as StringRepSliceView;
+				return view != null && view.CanInsertSlash;
+			}
 		}
-#endif
 
-		public bool OnInsertSlash(object args)
+		public void InsertSlash()
 		{
 			Cache.DomainDataByFlid.BeginUndoTask(AreaResources.ksInsertEnvironmentSlash, AreaResources.ksInsertEnvironmentSlash);
-			MyStringRepSliceView.RootBox.OnChar((int)'/');
+			MyStringRepSliceView.RootBox.OnChar('/');
 			Cache.DomainDataByFlid.EndUndoTask();
-			return true;
 		}
 
-#if RANDYTODO
 		/// <summary>
 		/// This menu item is turned off if an underscore already exists in the environment
 		/// string.
 		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public virtual bool OnDisplayInsertEnvironmentBar(object commandObject,
-			ref UIItemDisplayProperties display)
+		public bool CanInsertEnvironmentBar
 		{
-			StringRepSliceView view = Control as StringRepSliceView;
-			if (view == null)
-				return false;
-			display.Enabled = view.CanInsertEnvBar();
-			return true;
+			get
+			{
+				var view = Control as StringRepSliceView;
+				return view != null && view.CanInsertEnvBar;
+			}
 		}
-#endif
 
-		public bool OnInsertEnvironmentBar(object args)
+		public void InsertEnvironmentBar()
 		{
 			Cache.DomainDataByFlid.BeginUndoTask(AreaResources.ksInsertEnvironmentBar, AreaResources.ksInsertEnvironmentBar);
 			MyStringRepSliceView.RootBox.OnChar('_');
 			Cache.DomainDataByFlid.EndUndoTask();
-			return true;
 		}
 
 		private StringRepSliceView MyStringRepSliceView => (StringRepSliceView)Control;
 
-#if RANDYTODO
 		/// <summary>
 		/// This menu item is on if a slash already exists in the environment.
 		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public virtual bool OnDisplayInsertNaturalClass(object commandObject,
-			ref UIItemDisplayProperties display)
+		public bool CanInsertNaturalClass
 		{
-			StringRepSliceView view = Control as StringRepSliceView;
-			if (view == null)
-				return false;
-			display.Enabled = view.CanInsertItem();
-			return true;
+			get
+			{
+				var view = Control as StringRepSliceView;
+				return view != null && view.CanInsertItem;
+			}
 		}
-#endif
 
-		public bool OnInsertNaturalClass(object args)
+		public void InsertNaturalClass()
 		{
 			Cache.DomainDataByFlid.BeginUndoTask(AreaResources.ksInsertNaturalClass, AreaResources.ksInsertNaturalClass);
-			var fOk = ReallySimpleListChooser.ChooseNaturalClass(MyStringRepSliceView.RootBox, Cache, PersistenceProvider, PropertyTable, Publisher);
+			var fOk = ReallySimpleListChooser.ChooseNaturalClass(MyStringRepSliceView.RootBox, Cache, PersistenceProvider, PropertyTable, Publisher, Subscriber);
 			Cache.DomainDataByFlid.EndUndoTask();
-			return fOk;
 		}
 
-#if RANDYTODO
 		/// <summary>
 		/// This menu item is on if a slash already exists in the environment.
 		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public virtual bool OnDisplayInsertOptionalItem(object commandObject,
-			ref UIItemDisplayProperties display)
+		public bool CanInsertOptionalItem
 		{
-			StringRepSliceView view = Control as StringRepSliceView;
-			if (view == null)
-				return false;
-			display.Enabled = view.CanInsertItem();
-			return true;
+			get
+			{
+				var view = Control as StringRepSliceView;
+				return view != null && view.CanInsertItem;
+			}
 		}
-#endif
 
-		public bool OnInsertOptionalItem(object args)
+		public void InsertOptionalItem()
 		{
 			Cache.DomainDataByFlid.BeginUndoTask(AreaResources.ksInsertOptionalItem, AreaResources.ksInsertOptionalItem);
 			PhoneEnvReferenceSlice.InsertOptionalItem(MyStringRepSliceView.RootBox);
 			Cache.DomainDataByFlid.EndUndoTask();
-			return true;
 		}
 
-#if RANDYTODO
 		/// <summary>
 		/// This menu item is on if a slash already exists in the environment.
 		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public virtual bool OnDisplayInsertHashMark(object commandObject,
-			ref UIItemDisplayProperties display)
+		public bool CanInsertHashMark
 		{
-			StringRepSliceView view = Control as StringRepSliceView;
-			if (view == null)
-				return false;
-			display.Enabled = view.CanInsertHashMark();
-			return true;
+			get
+			{
+				var view = Control as StringRepSliceView;
+				return view != null && view.CanInsertHashMark;
+			}
 		}
-#endif
 
-		public bool OnInsertHashMark(object args)
+		public void InsertHashMark()
 		{
 			Cache.DomainDataByFlid.BeginUndoTask(AreaResources.ksInsertWordBoundary, AreaResources.ksInsertWordBoundary);
 			MyStringRepSliceView.RootBox.OnChar('#');
 			Cache.DomainDataByFlid.EndUndoTask();
-			return true;
 		}
 		#endregion
 	}

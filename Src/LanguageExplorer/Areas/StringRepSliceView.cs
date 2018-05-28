@@ -169,14 +169,13 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
-		internal bool CanInsertSlash()
+		internal bool CanInsertSlash
 		{
-			var s = m_env.StringRepresentation.Text;
-			if (string.IsNullOrEmpty(s))
+			get
 			{
-				return true;
+				var s = m_env.StringRepresentation.Text;
+				return string.IsNullOrEmpty(s) || s.IndexOf('/') < 0;
 			}
-			return s.IndexOf('/') < 0;
 		}
 
 		private int GetSelectionEndPoint(bool fEnd)
@@ -198,53 +197,62 @@ namespace LanguageExplorer.Areas
 			return ichEnd;
 		}
 
-		internal bool CanInsertEnvBar()
+		internal bool CanInsertEnvBar
 		{
-			var s = m_env.StringRepresentation.Text;
-			if (string.IsNullOrEmpty(s))
+			get
 			{
-				return false;
+				var s = m_env.StringRepresentation.Text;
+				if (string.IsNullOrEmpty(s))
+				{
+					return false;
+				}
+				var ichSlash = s.IndexOf('/');
+				if (ichSlash < 0)
+				{
+					return false;
+				}
+				var ichEnd = GetSelectionEndPoint(true);
+				if (ichEnd < 0)
+				{
+					return false;
+				}
+				var ichAnchor = GetSelectionEndPoint(false);
+				if (ichAnchor < 0)
+				{
+					return false;
+				}
+				return (ichEnd > ichSlash) && (ichAnchor > ichSlash) && (s.IndexOf('_') < 0);
 			}
-			var ichSlash = s.IndexOf('/');
-			if (ichSlash < 0)
-			{
-				return false;
-			}
-			var ichEnd = GetSelectionEndPoint(true);
-			if (ichEnd < 0)
-			{
-				return false;
-			}
-			var ichAnchor = GetSelectionEndPoint(false);
-			if (ichAnchor < 0)
-			{
-				return false;
-			}
-			return (ichEnd > ichSlash) && (ichAnchor > ichSlash) && (s.IndexOf('_') < 0);
 		}
 
-		internal bool CanInsertItem()
+		internal bool CanInsertItem
 		{
-			var s = m_env.StringRepresentation.Text;
-			if (string.IsNullOrEmpty(s))
+			get
 			{
-				return false;
+				var s = m_env.StringRepresentation.Text;
+				if (string.IsNullOrEmpty(s))
+				{
+					return false;
+				}
+				var ichEnd = GetSelectionEndPoint(true);
+				var ichAnchor = GetSelectionEndPoint(false);
+				return PhonEnvRecognizer.CanInsertItem(s, ichEnd, ichAnchor);
 			}
-			var ichEnd = GetSelectionEndPoint(true);
-			var ichAnchor = GetSelectionEndPoint(false);
-			return PhonEnvRecognizer.CanInsertItem(s, ichEnd, ichAnchor);
 		}
 
-		internal bool CanInsertHashMark()
+		internal bool CanInsertHashMark
 		{
-			var s = m_env.StringRepresentation.Text;
-			if (string.IsNullOrEmpty(s))
+			get
 			{
-				return false;
+				var s = m_env.StringRepresentation.Text;
+				if (string.IsNullOrEmpty(s))
+				{
+					return false;
+				}
+				var ichEnd = GetSelectionEndPoint(true);
+				var ichAnchor = GetSelectionEndPoint(false);
+				return PhonEnvRecognizer.CanInsertHashMark(s, ichEnd, ichAnchor);
 			}
-			var ichEnd = GetSelectionEndPoint(true);
-			var ichAnchor = GetSelectionEndPoint(false);
-			return PhonEnvRecognizer.CanInsertHashMark(s, ichEnd, ichAnchor);
 		}
 
 		#region Handle right click menu

@@ -27,7 +27,7 @@ namespace LanguageExplorer.LcmUi
 	{
 		#region Data members
 
-		protected ICmObject m_obj;
+		protected ICmObject m_cmObject;
 		protected int m_hvo;
 		protected LcmCache m_cache;
 		// Map from uint to uint, specifically, from clsid to clsid.
@@ -37,7 +37,7 @@ namespace LanguageExplorer.LcmUi
 		// and use reflection to make an instance?
 		static readonly Dictionary<int, int> m_subclasses = new Dictionary<int, int>();
 		protected Control m_hostControl;
-		protected IVwViewConstructor m_vc = null;
+		protected IVwViewConstructor m_vc;
 
 		#endregion Data members
 
@@ -46,9 +46,9 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Retrieve the CmObject we are providing UI functions for.
 		/// </summary>
-		public ICmObject Object => m_obj ?? (m_obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_hvo));
+		public ICmObject MyCmObject => m_cmObject ?? (m_cmObject = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_hvo));
 
-		public string ClassName => Object.ClassName;
+		public string ClassName => MyCmObject.ClassName;
 
 		/// <summary>
 		/// Returns a View Constructor that can be used to produce various displays of the
@@ -134,7 +134,7 @@ namespace LanguageExplorer.LcmUi
 		/// <param name="obj"></param>
 		public CmObjectUi(ICmObject obj)
 		{
-			m_obj = obj;
+			m_cmObject = obj;
 			m_cache = obj.Cache;
 		}
 
@@ -152,7 +152,7 @@ namespace LanguageExplorer.LcmUi
 		public static CmObjectUi MakeUi(ICmObject obj)
 		{
 			var result = MakeUi(obj.Cache, obj.Hvo, obj.ClassID);
-			result.m_obj = obj;
+			result.m_cmObject = obj;
 			return result;
 		}
 
@@ -358,7 +358,7 @@ namespace LanguageExplorer.LcmUi
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
-			m_obj = null;
+			m_cmObject = null;
 			m_cache = null;
 			m_vc = null;
 			// Leave this static alone.
@@ -422,7 +422,7 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public virtual Guid GuidForJumping(object commandObject)
 		{
-			return Object.Guid;
+			return MyCmObject.Guid;
 		}
 
 #if RANDYTODO
@@ -532,15 +532,15 @@ namespace LanguageExplorer.LcmUi
 			{
 				return false; // a special magic class id, only enabled explicitly.
 			}
-			if (Object.ClassID == specifiedClsid)
+			if (MyCmObject.ClassID == specifiedClsid)
 			{
 				return true;
 			}
-			return m_cache.DomainDataByFlid.MetaDataCache.GetBaseClsId(Object.ClassID) == specifiedClsid;
+			return m_cache.DomainDataByFlid.MetaDataCache.GetBaseClsId(MyCmObject.ClassID) == specifiedClsid;
 		}
 
 		/// <summary>
-		/// Get the id of the XCore Context menu that should be shown for our object
+		/// Get the id of the context menu that should be shown for our object
 		/// </summary>
 		public virtual string ContextMenuId => "mnuObjectChoices";
 
@@ -623,7 +623,7 @@ namespace LanguageExplorer.LcmUi
 			m_hostControl = hostControl;
 
 			var sHostType = m_hostControl.GetType().Name;
-			var sType = Object.GetType().Name;
+			var sType = MyCmObject.GetType().Name;
 
 			if (sHostType == "XmlBrowseView" && sType == "CmBaseAnnotation")
 			{
@@ -683,12 +683,12 @@ namespace LanguageExplorer.LcmUi
 		{
 			get
 			{
-				var poss = Object as ICmPossibility;
+				var poss = MyCmObject as ICmPossibility;
 				if (poss != null)
 				{
 					return poss.ItemTypeName();
 				}
-				var typeName = Object.GetType().Name;
+				var typeName = MyCmObject.GetType().Name;
 				var className = StringTable.Table.GetString(typeName, "ClassNames");
 				if (className == "*" + typeName + "*")
 				{
@@ -696,7 +696,7 @@ namespace LanguageExplorer.LcmUi
 				}
 
 				string altName;
-				var featsys = Object.OwnerOfClass(FsFeatureSystemTags.kClassId) as IFsFeatureSystem;
+				var featsys = MyCmObject.OwnerOfClass(FsFeatureSystemTags.kClassId) as IFsFeatureSystem;
 				if (featsys?.OwningFlid == LangProjectTags.kflidPhFeatureSystem)
 				{
 					altName = StringTable.Table.GetString(className + "-Phonological", "AlternativeTypeNames");
@@ -705,7 +705,7 @@ namespace LanguageExplorer.LcmUi
 						return altName;
 					}
 				}
-				switch (Object.OwningFlid)
+				switch (MyCmObject.OwningFlid)
 				{
 					case MoStemNameTags.kflidRegions:
 						altName = StringTable.Table.GetString(className + "-MoStemName", "AlternativeTypeNames");
@@ -753,7 +753,7 @@ namespace LanguageExplorer.LcmUi
 
 		public virtual bool CanDelete(out string cannotDeleteMsg)
 		{
-			if (Object.CanDelete)
+			if (MyCmObject.CanDelete)
 			{
 				cannotDeleteMsg = null;
 				return true;
@@ -770,7 +770,7 @@ namespace LanguageExplorer.LcmUi
 		public bool DeleteUnderlyingObject()
 		{
 			var cmo = GetCurrentCmObject();
-			if (cmo != null && m_obj != null && cmo.Hvo == m_obj.Hvo)
+			if (cmo != null && m_cmObject != null && cmo.Hvo == m_cmObject.Hvo)
 			{
 				Publisher.Publish("DeleteRecord", this);
 			}
@@ -810,17 +810,17 @@ namespace LanguageExplorer.LcmUi
 			// For media and pictures: should we delete the file also?
 			// arguably this should be on a subclass, but it's easier to share behavior for both here.
 			ICmFile file = null;
-			var pict = m_obj as ICmPicture;
+			var pict = m_cmObject as ICmPicture;
 			if (pict != null)
 			{
 				file = pict.PictureFileRA;
 			}
-			else if (m_obj is ICmMedia)
+			else if (m_cmObject is ICmMedia)
 			{
-				var media = (ICmMedia)m_obj;
+				var media = (ICmMedia)m_cmObject;
 				file = media.MediaFileRA;
 			}
-			else if (m_obj != null)
+			else if (m_cmObject != null)
 			{
 				// No cleanup needed
 				return;
@@ -878,14 +878,14 @@ namespace LanguageExplorer.LcmUi
 
 		protected virtual void ReallyDeleteUnderlyingObject()
 		{
-			Logger.WriteEvent("Deleting '" + Object.ShortName + "'...");
+			Logger.WriteEvent("Deleting '" + MyCmObject.ShortName + "'...");
 			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(LcmUiStrings.ksUndoDelete, LcmUiStrings.ksRedoDelete, m_cache.ActionHandlerAccessor, () =>
 			{
 				DoRelatedCleanupForDeleteObject();
-				Object.Cache.DomainDataByFlid.DeleteObj(Object.Hvo);
+				MyCmObject.Cache.DomainDataByFlid.DeleteObj(MyCmObject.Hvo);
 			});
 			Logger.WriteEvent("Done Deleting.");
-			m_obj = null;
+			m_cmObject = null;
 		}
 
 		/// <summary>
@@ -925,11 +925,11 @@ namespace LanguageExplorer.LcmUi
 		protected virtual void ReallyMergeUnderlyingObject(int survivorHvo, bool fLoseNoTextData)
 		{
 			var survivor = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(survivorHvo);
-			Logger.WriteEvent("Merging '" + Object.ShortName + "' into '" + survivor.ShortName + "'.");
+			Logger.WriteEvent("Merging '" + MyCmObject.ShortName + "' into '" + survivor.ShortName + "'.");
 			var ah = m_cache.ServiceLocator.GetInstance<IActionHandler>();
-			UndoableUnitOfWorkHelper.Do(LcmUiStrings.ksUndoMerge, LcmUiStrings.ksRedoMerge, ah, () => survivor.MergeObject(Object, fLoseNoTextData));
+			UndoableUnitOfWorkHelper.Do(LcmUiStrings.ksUndoMerge, LcmUiStrings.ksRedoMerge, ah, () => survivor.MergeObject(MyCmObject, fLoseNoTextData));
 			Logger.WriteEvent("Done Merging.");
-			m_obj = null;
+			m_cmObject = null;
 		}
 
 		protected virtual DummyCmObject GetMergeinfo(WindowParams wp, List<DummyCmObject> mergeCandidates, out string guiControl, out string helpTopic)
@@ -952,23 +952,23 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public string ToStatusBar()
 		{
-			if (!Object.IsValidObject)
+			if (!MyCmObject.IsValidObject)
 			{
 				return LcmUiStrings.ksDeletedObject;
 			}
 			DateTime dt;
 			var created = string.Empty;
 			var modified = string.Empty;
-			var pi = Object.GetType().GetProperty("DateCreated");
+			var pi = MyCmObject.GetType().GetProperty("DateCreated");
 			if (pi != null)
 			{
-				dt = (DateTime)pi.GetValue(Object, null);
+				dt = (DateTime)pi.GetValue(MyCmObject, null);
 				created = dt.ToString("dd/MMM/yyyy", System.Globalization.DateTimeFormatInfo.InvariantInfo);
 			}
-			pi = Object.GetType().GetProperty("DateModified");
+			pi = MyCmObject.GetType().GetProperty("DateModified");
 			if (pi != null)
 			{
-				dt = (DateTime)pi.GetValue(Object, null);
+				dt = (DateTime)pi.GetValue(MyCmObject, null);
 				modified = dt.ToString("dd/MMM/yyyy", System.Globalization.DateTimeFormatInfo.InvariantInfo);
 			}
 			return $"{created} {modified}";

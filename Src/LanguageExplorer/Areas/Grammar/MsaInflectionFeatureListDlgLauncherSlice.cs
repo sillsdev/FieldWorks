@@ -78,14 +78,14 @@ namespace LanguageExplorer.Areas.Grammar
 
 			var ctrl = (MsaInflectionFeatureListDlgLauncher)Control;
 
-			m_flid = GetFlid(ConfigurationNode, Object);
+			m_flid = GetFlid(ConfigurationNode, MyCmObject);
 			if (m_flid != 0)
 			{
-				m_fs = GetFeatureStructureFromMSA(Object, m_flid);
+				m_fs = GetFeatureStructureFromMSA(MyCmObject, m_flid);
 			}
 			else
 			{
-				m_fs = Object as IFsFeatStruc;
+				m_fs = MyCmObject as IFsFeatStruc;
 				m_flid = FsFeatStrucTags.kflidFeatureSpecs;
 			}
 
@@ -101,22 +101,22 @@ namespace LanguageExplorer.Areas.Grammar
 
 		private void RemoveFeatureStructureFromMSA()
 		{
-			if (Object != null)
+			if (MyCmObject != null)
 			{
 				NonUndoableUnitOfWorkHelper.Do(Cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 				{
-					switch (Object.ClassID)
+					switch (MyCmObject.ClassID)
 					{
 						case MoStemMsaTags.kClassId:
-							var stem = (IMoStemMsa)Object;
+							var stem = (IMoStemMsa)MyCmObject;
 							stem.MsFeaturesOA = null;
 							break;
 						case MoInflAffMsaTags.kClassId:
-							var infl = (IMoInflAffMsa)Object;
+							var infl = (IMoInflAffMsa)MyCmObject;
 							infl.InflFeatsOA = null;
 							break;
 						case MoDerivAffMsaTags.kClassId:
-							var derv = (IMoDerivAffMsa) Object;
+							var derv = (IMoDerivAffMsa) MyCmObject;
 							if (m_flid == MoDerivAffMsaTags.kflidFromMsFeatures)
 							{
 								derv.FromMsFeaturesOA = null;

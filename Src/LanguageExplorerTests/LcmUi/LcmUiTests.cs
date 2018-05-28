@@ -99,26 +99,26 @@ namespace LanguageExplorerTests.LcmUi
 				TsStringUtils.MakeString("Uppercaseword", Cache.DefaultVernWs)))
 			{
 				Assert.IsNotNull(lexEntryUi);
-				Assert.AreEqual(entry1.Hvo, lexEntryUi.Object.Hvo, "Found wrong object");
+				Assert.AreEqual(entry1.Hvo, lexEntryUi.MyCmObject.Hvo, "Found wrong object");
 			}
 			using (var lexEntryUi = LexEntryUi.FindEntryForWordform(Cache,
 				TsStringUtils.MakeString("lowercaseword", Cache.DefaultVernWs)))
 			{
 				Assert.IsNotNull(lexEntryUi);
-				Assert.AreEqual(entry2.Hvo, lexEntryUi.Object.Hvo, "Found wrong object");
+				Assert.AreEqual(entry2.Hvo, lexEntryUi.MyCmObject.Hvo, "Found wrong object");
 			}
 			// Now make sure it works with the wrong case
 			using (var lexEntryUi = LexEntryUi.FindEntryForWordform(Cache,
 				TsStringUtils.MakeString("uppercaseword", Cache.DefaultVernWs)))
 			{
 				Assert.IsNotNull(lexEntryUi);
-				Assert.AreEqual(entry1.Hvo, lexEntryUi.Object.Hvo, "Found wrong object");
+				Assert.AreEqual(entry1.Hvo, lexEntryUi.MyCmObject.Hvo, "Found wrong object");
 			}
 			using (var lexEntryUi = LexEntryUi.FindEntryForWordform(Cache,
 				TsStringUtils.MakeString("LowerCASEword", Cache.DefaultVernWs)))
 			{
 				Assert.IsNotNull(lexEntryUi);
-				Assert.AreEqual(entry2.Hvo, lexEntryUi.Object.Hvo, "Found wrong object");
+				Assert.AreEqual(entry2.Hvo, lexEntryUi.MyCmObject.Hvo, "Found wrong object");
 			}
 		}
 

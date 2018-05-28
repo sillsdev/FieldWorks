@@ -35,7 +35,7 @@ namespace LanguageExplorer.LcmUi
 			//	we could get at the "to" part of speech using a separate menu command
 			//	or else, if this ends up being drawn by a view constructor rather than a string which combines both are from and the to,
 			// then we will know which item of the user clicked on and can open the appropriate one.
-			var msa = (IMoDerivAffMsa)Object;
+			var msa = (IMoDerivAffMsa)MyCmObject;
 			return msa.FromPartOfSpeechRA?.Guid ?? Guid.Empty;
 		}
 	}

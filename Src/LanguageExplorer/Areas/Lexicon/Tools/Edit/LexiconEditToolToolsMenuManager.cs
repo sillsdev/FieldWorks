@@ -36,23 +36,28 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private ToolStripMenuItem _toolsConfigureMenu;
 		private List<Tuple<ToolStripMenuItem, EventHandler>> _newToolsConfigurationMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>();
 
+		public LexiconEditToolToolsMenuManager(LexiconAreaMenuHelper lexiconAreaMenuHelper, BrowseViewer browseViewer)
+		{
+			_lexiconAreaMenuHelper = lexiconAreaMenuHelper;
+			_browseViewer = browseViewer;
+		}
+
 		#region IToolUiWidgetManager
 
 		/// <inheritdoc />
-		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList, IReadOnlyDictionary<string, EventHandler> sharedEventHandlers, IReadOnlyList<object> randomParameters)
+		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, Dictionary<string, EventHandler> sharedEventHandlers, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+			Guard.AgainstNull(sharedEventHandlers, nameof(sharedEventHandlers));
 			Guard.AgainstNull(recordList, nameof(recordList));
-			Guard.AgainstNull(randomParameters, nameof(randomParameters));
-			Guard.AssertThat(randomParameters.Count == 2, "Wrong number of random parameters.");
 
 			_flexComponentParameters = majorFlexComponentParameters.FlexComponentParameters;
 			_publisher = majorFlexComponentParameters.FlexComponentParameters.Publisher;
 			_cache = majorFlexComponentParameters.LcmCache;
 			_mainWnd = majorFlexComponentParameters.MainWindow;
+			_sharedEventHandlers = sharedEventHandlers;
+			_sharedEventHandlers.Add(LexiconEditToolConstants.CmdMergeEntry, Merge_With_Entry_Clicked);
 			MyRecordList = recordList;
-			_lexiconAreaMenuHelper = (LexiconAreaMenuHelper)randomParameters[0];
-			_browseViewer = (BrowseViewer)randomParameters[1];
 
 			var insertIndex = -1;
 
@@ -71,12 +76,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_toolMenuToolStripSeparator = ToolStripMenuItemFactory.CreateToolStripSeparatorForToolStripMenuItem(_toolsMenu, ++insertIndex);
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newToolsMenusAndHandlers, _toolsMenu, Merge_With_Entry_Clicked, LexiconResources.MergeWithEntry, LexiconResources.Merge_With_Entry_Tooltip, insertIndex: ++insertIndex);
 		}
-
-		/// <inheritdoc />
-		IReadOnlyDictionary<string, EventHandler> IToolUiWidgetManager.SharedEventHandlers => _sharedEventHandlers ?? (_sharedEventHandlers = new Dictionary<string, EventHandler>(1)
-		{
-			{ LexiconEditToolConstants.CmdMergeEntry, Merge_With_Entry_Clicked }
-		});
 
 		#endregion
 
@@ -131,7 +130,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				_newToolsMenusAndHandlers.Clear();
 				_toolsMenu.DropDownItems.Remove(_toolMenuToolStripSeparator);
 				_toolMenuToolStripSeparator.Dispose();
-				_sharedEventHandlers.Clear();
 			}
 			MyRecordList = null;
 			_sharedEventHandlers = null;

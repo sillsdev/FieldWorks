@@ -40,7 +40,7 @@ namespace LanguageExplorer.LcmUi
 				return (cmo == null) ? Guid.Empty : cmo.Guid;
 			}
 #endif
-			return Object.Guid;
+			return MyCmObject.Guid;
 		}
 
 #if RANDYTODO
@@ -58,16 +58,16 @@ namespace LanguageExplorer.LcmUi
 			wp.m_label = LcmUiStrings.ksAlternateForms;
 			var defVernWs = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
 
-			var le = (ILexEntry) Object.Owner;
+			var le = (ILexEntry) MyCmObject.Owner;
 			foreach (var allo in le.AlternateFormsOS)
 			{
-				if (allo.Hvo != Object.Hvo && allo.ClassID == Object.ClassID)
+				if (allo.Hvo != MyCmObject.Hvo && allo.ClassID == MyCmObject.ClassID)
 				{
 					mergeCandidates.Add(new DummyCmObject(allo.Hvo, allo.Form.VernacularDefaultWritingSystem.Text, defVernWs));
 				}
 			}
 
-			if (le.LexemeFormOA.ClassID == Object.ClassID)
+			if (le.LexemeFormOA.ClassID == MyCmObject.ClassID)
 			{
 				// Add the lexeme form.
 				mergeCandidates.Add(new DummyCmObject(le.LexemeFormOA.Hvo, le.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, defVernWs));
@@ -87,7 +87,7 @@ namespace LanguageExplorer.LcmUi
 #endif
 			guiControl = "MergeAllomorphList";
 			helpTopic = "khtpMergeAllomorph";
-			return new DummyCmObject(m_hvo, ((IMoForm) Object).Form.VernacularDefaultWritingSystem.Text, defVernWs);
+			return new DummyCmObject(m_hvo, ((IMoForm) MyCmObject).Form.VernacularDefaultWritingSystem.Text, defVernWs);
 		}
 	}
 }

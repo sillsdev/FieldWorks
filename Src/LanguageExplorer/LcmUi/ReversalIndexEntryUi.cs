@@ -34,7 +34,7 @@ namespace LanguageExplorer.LcmUi
 			wp.m_title = LcmUiStrings.ksMergeReversalEntry;
 			wp.m_label = LcmUiStrings.ksEntries;
 
-			var rie = (IReversalIndexEntry) Object;
+			var rie = (IReversalIndexEntry) MyCmObject;
 			var filteredHvos = new HashSet<int>(rie.AllOwnedObjects.Select(obj => obj.Hvo)) { rie.Hvo }; // exclude `rie` and all of its subentries
 			var wsIndex = m_cache.ServiceLocator.WritingSystemManager.GetWsFromStr(rie.ReversalIndex.WritingSystem);
 			mergeCandidates.AddRange(rie.ReversalIndex.AllEntries.Where(rieInner => !filteredHvos.Contains(rieInner.Hvo)).Select(rieInner => new DummyCmObject(rieInner.Hvo, rieInner.ShortName, wsIndex)));

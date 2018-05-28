@@ -110,8 +110,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			_collapsingSplitContainer.SecondLabel = AreaResources.ksMainContentLabel;
 			_collapsingSplitContainer.SplitterDistance = _propertyTable.GetValue<int>("RecordListWidthGlobal", SettingsGroup.GlobalSettings);
 
+			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
 			var recordEditViewPaneBar = new PaneBar();
-			var panelButton = new PanelButton(majorFlexComponentParameters.FlexComponentParameters, null, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), LanguageExplorerResources.ksShowHiddenFields, LanguageExplorerResources.ksShowHiddenFields)
+			var panelButton = new PanelButton(majorFlexComponentParameters.FlexComponentParameters, null, showHiddenFieldsPropertyName, LanguageExplorerResources.ksShowHiddenFields, LanguageExplorerResources.ksShowHiddenFields)
 			{
 				Dock = DockStyle.Right
 			};
@@ -151,6 +152,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			((ISemanticDomainTreeBarHandler)_recordList.MyTreeBarHandler).FinishInitialization(new PaneBar());
 			recordEditView.FinishInitialization();
 			_lexiconAreaMenuHelper.Initialize();
+			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false, SettingsGroup.LocalSettings))
+			{
+				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish("ShowHiddenFields", true);
+			}
 		}
 
 		/// <summary>

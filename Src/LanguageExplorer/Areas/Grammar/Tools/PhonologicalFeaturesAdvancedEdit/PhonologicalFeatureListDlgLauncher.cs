@@ -30,9 +30,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 		{
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
 			m_PhonologicalFeatureListDlgLauncherView.Init(PropertyTable.GetValue<LcmCache>("cache"), obj as IFsFeatStruc);
-			if (Slice.Object.ClassID == PhPhonemeTags.kClassId)
+			if (Slice.MyCmObject.ClassID == PhPhonemeTags.kClassId)
 			{
-				m_PhonologicalFeatureListDlgLauncherView.Phoneme = Slice.Object as IPhPhoneme;
+				m_PhonologicalFeatureListDlgLauncherView.Phoneme = Slice.MyCmObject as IPhPhoneme;
 			}
 		}
 
@@ -46,19 +46,19 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 			{
 				IFsFeatStruc originalFs = null;
 				var parentSlice = Slice;
-				var parentSliceClass = parentSlice.Object.ClassID;
+				var parentSliceClass = parentSlice.MyCmObject.ClassID;
 				var owningFlid = (parentSlice as PhonologicalFeatureListDlgLauncherSlice).Flid;
 				switch (parentSliceClass)
 				{
 					case PhPhonemeTags.kClassId:
-						var phoneme = parentSlice.Object as IPhPhoneme;
+						var phoneme = parentSlice.MyCmObject as IPhPhoneme;
 						if (phoneme.FeaturesOA != null)
 						{
 							originalFs = phoneme.FeaturesOA;
 						}
 						break;
 					case PhNCFeaturesTags.kClassId:
-						var features = parentSlice.Object as IPhNCFeatures;
+						var features = parentSlice.MyCmObject as IPhNCFeatures;
 						if (features.FeaturesOA != null)
 						{
 							originalFs = features.FeaturesOA;
@@ -68,7 +68,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 
 				if (originalFs == null)
 				{
-					dlg.SetDlgInfo(m_cache, PropertyTable, Publisher, parentSlice.Object, owningFlid);
+					dlg.SetDlgInfo(m_cache, PropertyTable, Publisher, parentSlice.MyCmObject, owningFlid);
 				}
 				else
 				{

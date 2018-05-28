@@ -78,14 +78,14 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 
 			var ctrl = (PhonologicalFeatureListDlgLauncher)Control;
 
-			m_flid = GetFlid(ConfigurationNode, Object);
+			m_flid = GetFlid(ConfigurationNode, MyCmObject);
 			if (m_flid != 0)
 			{
-				m_fs = GetFeatureStructureFromOwner(Object, m_flid);
+				m_fs = GetFeatureStructureFromOwner(MyCmObject, m_flid);
 			}
 			else
 			{
-				m_fs = Object as IFsFeatStruc;
+				m_fs = MyCmObject as IFsFeatStruc;
 				m_flid = FsFeatStrucTags.kflidFeatureSpecs;
 			}
 
@@ -107,18 +107,18 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 
 		private void RemoveFeatureStructureFromOwner()
 		{
-			if (Object != null)
+			if (MyCmObject != null)
 			{
 				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 				{
-					switch (Object.ClassID)
+					switch (MyCmObject.ClassID)
 					{
 						case PhPhonemeTags.kClassId:
-							var phoneme = (IPhPhoneme)Object;
+							var phoneme = (IPhPhoneme)MyCmObject;
 							phoneme.FeaturesOA = null;
 							break;
 						case PhNCFeaturesTags.kClassId:
-							var features = (IPhNCFeatures)Object;
+							var features = (IPhNCFeatures)MyCmObject;
 							features.FeaturesOA = null;
 							break;
 					}

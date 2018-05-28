@@ -78,8 +78,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			_recordBrowseView = new RecordBrowseView(root, majorFlexComponentParameters.LcmCache, _recordList);
 
+			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
 			 var dataTree = new DataTree();
-			_lexiconEditToolMenuHelper = new LexiconEditToolMenuHelper(majorFlexComponentParameters, dataTree, _recordBrowseView, _recordList, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName));
+			_lexiconEditToolMenuHelper = new LexiconEditToolMenuHelper(majorFlexComponentParameters, dataTree, _recordBrowseView, _recordList, showHiddenFieldsPropertyName);
 
 			var recordEditView = new RecordEditView(XElement.Parse(LexiconResources.LexiconEditRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordList, dataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 			var nestedMultiPaneParameters = new MultiPaneParameters
@@ -110,13 +111,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var img = LanguageExplorerResources.MenuWidget;
 			img.MakeTransparent(Color.Magenta);
 
-			var panelMenu = new PanelMenu(_lexiconEditToolMenuHelper.SliceContextMenuFactory, LexiconEditToolConstants.PanelMenuId)
+			var panelMenu = new PanelMenu(_lexiconEditToolMenuHelper.MyDataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory, LexiconEditToolConstants.PanelMenuId)
 			{
 				Dock = DockStyle.Left,
 				BackgroundImage = img,
 				BackgroundImageLayout = ImageLayout.Center
 			};
-			var panelButton = new PanelButton(majorFlexComponentParameters.FlexComponentParameters, null, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), LanguageExplorerResources.ksShowHiddenFields, LanguageExplorerResources.ksShowHiddenFields)
+			var panelButton = new PanelButton(majorFlexComponentParameters.FlexComponentParameters, null, showHiddenFieldsPropertyName, LanguageExplorerResources.ksShowHiddenFields, LanguageExplorerResources.ksShowHiddenFields)
 			{
 				Dock = DockStyle.Right
 			};
@@ -133,6 +134,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// Too early before now.
 			_lexiconEditToolMenuHelper.Initialize();
 			recordEditView.FinishInitialization();
+			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false, SettingsGroup.LocalSettings))
+			{
+				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish("ShowHiddenFields", true);
+			}
 		}
 
 		/// <summary>

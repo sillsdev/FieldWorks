@@ -42,7 +42,7 @@ namespace LanguageExplorer.LcmUi
 			if (className == "LexSense")
 				return Object.Guid;
 #endif
-			var cmo = GetSelfOrParentOfClass(Object, LexEntryTags.kClassId);
+			var cmo = GetSelfOrParentOfClass(MyCmObject, LexEntryTags.kClassId);
 			return cmo?.Guid ?? Guid.Empty;
 		}
 
@@ -72,7 +72,7 @@ namespace LanguageExplorer.LcmUi
 		{
 			wp.m_title = LcmUiStrings.ksMergeSense;
 			wp.m_label = LcmUiStrings.ksSenses;
-			var sense = (ILexSense) Object;
+			var sense = (ILexSense) MyCmObject;
 			var le = sense.Entry;
 			// Exclude subsenses of the chosen sense.  See LT-6107.
 			var rghvoExclude = new List<int>();
@@ -82,7 +82,7 @@ namespace LanguageExplorer.LcmUi
 			}
 			foreach (var senseInner in le.AllSenses)
 			{
-				if (senseInner == Object || rghvoExclude.Contains(senseInner.Hvo))
+				if (senseInner == MyCmObject || rghvoExclude.Contains(senseInner.Hvo))
 				{
 					continue;
 				}
@@ -108,13 +108,13 @@ namespace LanguageExplorer.LcmUi
 #endif
 			guiControl = "MergeSenseList";
 			helpTopic = "khtpMergeSense";
-			var tss = Object.ShortNameTSS;
+			var tss = MyCmObject.ShortNameTSS;
 			return new DummyCmObject(m_hvo, tss.Text, TsStringUtils.GetWsAtOffset(tss, 0));
 		}
 
 		public override void MoveUnderlyingObjectToCopyOfOwner()
 		{
-			var obj = Object.Owner;
+			var obj = MyCmObject.Owner;
 			var clid = obj.ClassID;
 			while (clid != LexEntryTags.kClassId)
 			{
@@ -122,7 +122,7 @@ namespace LanguageExplorer.LcmUi
 				clid = obj.ClassID;
 			}
 			var le = (ILexEntry) obj;
-			le.MoveSenseToCopy((ILexSense) Object);
+			le.MoveSenseToCopy((ILexSense) MyCmObject);
 		}
 
 		/// <summary>

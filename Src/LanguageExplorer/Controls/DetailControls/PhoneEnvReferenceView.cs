@@ -876,89 +876,101 @@ namespace LanguageExplorer.Controls.DetailControls
 			return !string.IsNullOrEmpty(s);
 		}
 
-		internal bool CanInsertSlash()
+		internal bool CanInsertSlash
 		{
-			int hvoDummyObj;
-			int ichAnchor;
-			int ichEnd;
-			ITsString tss;
-			IVwSelection vwsel;
-			if (!GetSelectedStringRep(out tss, out vwsel, out hvoDummyObj, out ichAnchor, out ichEnd))
+			get
 			{
-				return false;
-			}
+				int hvoDummyObj;
+				int ichAnchor;
+				int ichEnd;
+				ITsString tss;
+				IVwSelection vwsel;
+				if (!GetSelectedStringRep(out tss, out vwsel, out hvoDummyObj, out ichAnchor, out ichEnd))
+				{
+					return false;
+				}
 
-			if (tss == null || hvoDummyObj == 0)
-			{
-				return true;
+				if (tss == null || hvoDummyObj == 0)
+				{
+					return true;
+				}
+				var s = tss.Text;
+				return string.IsNullOrEmpty(s) || s.IndexOf('/') < 0;
 			}
-			var s = tss.Text;
-			return string.IsNullOrEmpty(s) || s.IndexOf('/') < 0;
 		}
 
-		internal bool CanInsertEnvBar()
+		internal bool CanInsertEnvBar
 		{
-			int hvoDummyObj;
-			int ichAnchor;
-			int ichEnd;
-			ITsString tss;
-			IVwSelection vwsel;
-			if (!GetSelectedStringRep(out tss, out vwsel, out hvoDummyObj, out ichAnchor, out ichEnd))
+			get
 			{
-				return false;
-			}
+				int hvoDummyObj;
+				int ichAnchor;
+				int ichEnd;
+				ITsString tss;
+				IVwSelection vwsel;
+				if (!GetSelectedStringRep(out tss, out vwsel, out hvoDummyObj, out ichAnchor, out ichEnd))
+				{
+					return false;
+				}
 
-			if (tss == null || hvoDummyObj == 0)
-			{
-				return false;
+				if (tss == null || hvoDummyObj == 0)
+				{
+					return false;
+				}
+				var s = tss.Text;
+				if (string.IsNullOrEmpty(s))
+				{
+					return false;
+				}
+				var ichSlash = s.IndexOf('/');
+				return (ichSlash >= 0) && (ichEnd > ichSlash) && (ichAnchor > ichSlash) && (s.IndexOf('_') < 0);
 			}
-			var s = tss.Text;
-			if (string.IsNullOrEmpty(s))
-			{
-				return false;
-			}
-			var ichSlash = s.IndexOf('/');
-			return (ichSlash >= 0) && (ichEnd > ichSlash) && (ichAnchor > ichSlash) && (s.IndexOf('_') < 0);
 		}
 
-		internal bool CanInsertItem()
+		internal bool CanInsertItem
 		{
-			int hvoDummyObj;
-			int ichAnchor;
-			int ichEnd;
-			ITsString tss;
-			IVwSelection vwsel;
-			if (!GetSelectedStringRep(out tss, out vwsel, out hvoDummyObj, out ichAnchor, out ichEnd))
+			get
 			{
-				return false;
-			}
+				int hvoDummyObj;
+				int ichAnchor;
+				int ichEnd;
+				ITsString tss;
+				IVwSelection vwsel;
+				if (!GetSelectedStringRep(out tss, out vwsel, out hvoDummyObj, out ichAnchor, out ichEnd))
+				{
+					return false;
+				}
 
-			if (tss == null || hvoDummyObj == 0)
-			{
-				return false;
+				if (tss == null || hvoDummyObj == 0)
+				{
+					return false;
+				}
+				var s = tss.Text;
+				return !string.IsNullOrEmpty(s) && PhonEnvRecognizer.CanInsertItem(s, ichEnd, ichAnchor);
 			}
-			var s = tss.Text;
-			return !string.IsNullOrEmpty(s) && PhonEnvRecognizer.CanInsertItem(s, ichEnd, ichAnchor);
 		}
 
-		internal bool CanInsertHashMark()
+		internal bool CanInsertHashMark
 		{
-			int hvoDummyObj;
-			int ichAnchor;
-			int ichEnd;
-			ITsString tss;
-			IVwSelection vwsel;
-			if (!GetSelectedStringRep(out tss, out vwsel, out hvoDummyObj, out ichAnchor, out ichEnd))
+			get
 			{
-				return false;
-			}
+				int hvoDummyObj;
+				int ichAnchor;
+				int ichEnd;
+				ITsString tss;
+				IVwSelection vwsel;
+				if (!GetSelectedStringRep(out tss, out vwsel, out hvoDummyObj, out ichAnchor, out ichEnd))
+				{
+					return false;
+				}
 
-			if (tss == null || hvoDummyObj == 0)
-			{
-				return false;
+				if (tss == null || hvoDummyObj == 0)
+				{
+					return false;
+				}
+				var s = tss.Text;
+				return !string.IsNullOrEmpty(s) && PhonEnvRecognizer.CanInsertHashMark(s, ichEnd, ichAnchor);
 			}
-			var s = tss.Text;
-			return !string.IsNullOrEmpty(s) && PhonEnvRecognizer.CanInsertHashMark(s, ichEnd, ichAnchor);
 		}
 		#endregion
 

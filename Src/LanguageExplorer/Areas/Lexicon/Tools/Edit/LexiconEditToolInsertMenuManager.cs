@@ -40,22 +40,39 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private List<ToolStripItem> _senseMenuItems = new List<ToolStripItem>();
 		private DataTree MyDataTree { get; set; }
 
+		internal LexiconEditToolInsertMenuManager(DataTree dataTree)
+		{
+			Guard.AgainstNull(dataTree, nameof(dataTree));
+
+			MyDataTree = dataTree;
+		}
+
 		#region IToolUiWidgetManager
 
 		/// <inheritdoc />
-		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList, IReadOnlyDictionary<string, EventHandler> sharedEventHandlers, IReadOnlyList<object> randomParameters)
+		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, Dictionary<string, EventHandler> sharedEventHandlers, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+			Guard.AgainstNull(sharedEventHandlers, nameof(sharedEventHandlers));
 			Guard.AgainstNull(recordList, nameof(recordList));
-			Guard.AgainstNull(randomParameters, nameof(randomParameters));
-			Guard.AssertThat(randomParameters.Count == 1, "Wrong number of random parameters.");
 
 			_flexComponentParameters = majorFlexComponentParameters.FlexComponentParameters;
 			_propertyTable = majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
 			_cache = majorFlexComponentParameters.LcmCache;
 			_mainWnd = majorFlexComponentParameters.MainWindow;
 			MyRecordList = recordList;
-			MyDataTree = (DataTree)randomParameters[0];
+			_sharedEventHandlers = sharedEventHandlers;
+			_sharedEventHandlers.Add(LexiconEditToolConstants.CmdInsertLexEntry, Insert_Entry_Clicked);
+			_sharedEventHandlers.Add(LexiconEditToolConstants.CmdInsertSense, Insert_Sense_Clicked);
+			_sharedEventHandlers.Add(LexiconEditToolConstants.CmdInsertSubsense, Insert_Subsense_Clicked);
+			_sharedEventHandlers.Add(LexiconEditToolConstants.CmdDataTree_Insert_AlternateForm, Insert_Allomorph_Clicked);
+			_sharedEventHandlers.Add(LexiconEditToolConstants.CmdDataTree_Insert_Etymology, Insert_Etymology_Clicked);
+			_sharedEventHandlers.Add(LexiconEditToolConstants.CmdDataTree_Insert_Pronunciation, Insert_Pronunciation_Clicked);
+			_sharedEventHandlers.Add(LexiconEditToolConstants.CmdInsertExtNote, Insert_ExtendedNote_Clicked);
+			_sharedEventHandlers.Add(LexiconEditToolConstants.CmdInsertPicture, Insert_Picture_Clicked);
+			_sharedEventHandlers.Add(LexiconEditToolConstants.CmdInsertVariant, Insert_Variant_Clicked);
+			_sharedEventHandlers.Add(LexiconEditToolConstants.CmdInsertMediaFile, Insert_Sound_Or_Movie_File_Clicked);
+
 			MyDataTree.CurrentSliceChanged += MyDataTree_CurrentSliceChanged;
 
 			_insertMenu = MenuServices.GetInsertMenu(majorFlexComponentParameters.MenuStrip);
@@ -96,21 +113,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			senseMenuItem.Visible = false;
 			_senseMenuItems.Add(senseMenuItem);
 		}
-
-		/// <inheritdoc />
-		IReadOnlyDictionary<string, EventHandler> IToolUiWidgetManager.SharedEventHandlers => _sharedEventHandlers ?? (_sharedEventHandlers = new Dictionary<string, EventHandler>(10)
-		{
-			{ LexiconEditToolConstants.CmdInsertLexEntry, Insert_Entry_Clicked },
-			{ LexiconEditToolConstants.CmdInsertSense, Insert_Sense_Clicked },
-			{ LexiconEditToolConstants.CmdInsertSubsense, Insert_Subsense_Clicked },
-			{ LexiconEditToolConstants.CmdDataTree_Insert_AlternateForm, Insert_Allomorph_Clicked },
-			{ LexiconEditToolConstants.CmdDataTree_Insert_Etymology, Insert_Etymology_Clicked },
-			{ LexiconEditToolConstants.CmdDataTree_Insert_Pronunciation, Insert_Pronunciation_Clicked },
-			{ LexiconEditToolConstants.CmdInsertExtNote, Insert_ExtendedNote_Clicked },
-			{ LexiconEditToolConstants.CmdInsertPicture, Insert_Picture_Clicked },
-			{ LexiconEditToolConstants.CmdInsertVariant, Insert_Variant_Clicked },
-			{ LexiconEditToolConstants.CmdInsertMediaFile, Insert_Sound_Or_Movie_File_Clicked }
-		});
 
 		#endregion
 
@@ -158,7 +160,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					menuTuple.Item1.Dispose();
 				}
 				_newInsertMenusAndHandlers.Clear();
-				_sharedEventHandlers.Clear();
 			}
 			MyRecordList = null;
 			_sharedEventHandlers = null;
@@ -179,12 +180,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private void MyDataTree_CurrentSliceChanged(object sender, CurrentSliceChangedEventArgs e)
 		{
 			var currentSlice = e.CurrentSlice;
-			if (currentSlice.Object == null)
+			if (currentSlice.MyCmObject == null)
 			{
 				SenseMenusVisibility(false);
 				return;
 			}
-			var sliceObject = currentSlice.Object;
+			var sliceObject = currentSlice.MyCmObject;
 			if (sliceObject is ILexSense)
 			{
 				SenseMenusVisibility(true);
@@ -238,7 +239,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void Insert_Subsense_Clicked(object sender, EventArgs e)
 		{
-			var owningSense = MyDataTree.CurrentSlice.Object as ILexSense ?? MyDataTree.CurrentSlice.Object.OwnerOfClass<ILexSense>();
+			var owningSense = MyDataTree.CurrentSlice.MyCmObject as ILexSense ?? MyDataTree.CurrentSlice.MyCmObject.OwnerOfClass<ILexSense>();
 			LexSenseUi.CreateNewLexSense(_cache, owningSense);
 		}
 
@@ -347,7 +348,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void Insert_Picture_Clicked(object sender, EventArgs e)
 		{
-			var owningSense = MyDataTree.CurrentSlice.Object as ILexSense ?? MyDataTree.CurrentSlice.Object.OwnerOfClass<ILexSense>();
+			var owningSense = MyDataTree.CurrentSlice.MyCmObject as ILexSense ?? MyDataTree.CurrentSlice.MyCmObject.OwnerOfClass<ILexSense>();
 			var app = _propertyTable.GetValue<IFlexApp>("App");
 			using (var dlg = new PicturePropertiesDialog(_cache, null, _propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, true))
 			{
@@ -371,7 +372,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void Insert_ExtendedNote_Clicked(object sender, EventArgs e)
 		{
-			var owningSense = MyDataTree.CurrentSlice.Object as ILexSense ?? MyDataTree.CurrentSlice.Object.OwnerOfClass<ILexSense>();
+			var owningSense = MyDataTree.CurrentSlice.MyCmObject as ILexSense ?? MyDataTree.CurrentSlice.MyCmObject.OwnerOfClass<ILexSense>();
 			UndoableUnitOfWorkHelper.Do(LexiconResources.Undo_Create_Extended_Note, LexiconResources.Redo_Create_Extended_Note, owningSense, () =>
 			{
 				var extendedNote = _cache.ServiceLocator.GetInstance<ILexExtendedNoteFactory>().Create();

@@ -58,7 +58,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// Constructor for a single LexEntry object.
 		/// </summary>
 		internal SummaryDialogForm(LexEntryUi leui, IHelpTopicProvider helpProvider, string helpFileKey, IVwStylesheet styleSheet)
-			: this(new List<int>(leui.Object.Hvo), helpProvider, helpFileKey, styleSheet, leui.Object.Cache, leui.PropertyTable)
+			: this(new List<int>(leui.MyCmObject.Hvo), helpProvider, helpFileKey, styleSheet, leui.MyCmObject.Cache, leui.PropertyTable)
 		{
 		}
 

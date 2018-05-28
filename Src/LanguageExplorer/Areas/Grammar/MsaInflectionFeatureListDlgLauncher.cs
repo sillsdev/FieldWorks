@@ -49,16 +49,16 @@ namespace LanguageExplorer.Areas.Grammar
 				if (originalFs == null)
 				{
 					int owningFlid;
-					var parentSliceClass = (int)parentSlice.Object.ClassID;
+					var parentSliceClass = (int)parentSlice.MyCmObject.ClassID;
 					switch (parentSliceClass)
 					{
 						case MoAffixAllomorphTags.kClassId:
-							var allo = parentSlice.Object as IMoAffixAllomorph;
+							var allo = parentSlice.MyCmObject as IMoAffixAllomorph;
 							owningFlid = (parentSlice as MsaInflectionFeatureListDlgLauncherSlice).Flid;
 							dlg.SetDlgInfo(m_cache, PropertyTable, allo, owningFlid);
 							break;
 						default:
-							var msa = parentSlice.Object as IMoMorphSynAnalysis;
+							var msa = parentSlice.MyCmObject as IMoMorphSynAnalysis;
 							owningFlid = (parentSlice as MsaInflectionFeatureListDlgLauncherSlice).Flid;
 							dlg.SetDlgInfo(m_cache, PropertyTable, msa, owningFlid);
 							break;

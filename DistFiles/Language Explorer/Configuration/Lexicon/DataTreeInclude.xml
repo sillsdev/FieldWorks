@@ -15,18 +15,6 @@
 		<command id="CmdDataTree-Create-LexemeForm-AffixAllomorph" label="Create Affix Form" message="DataTreeInsert">
 			<parameters field="LexemeForm" className="MoAffixAllomorph"/>
 		</command>
-		<command id="CmdDataTree-Swap-LexemeForm" label="Swap Lexeme Form with Allomorph..." message="SwapLexemeWithAllomorph">
-			<parameters field="LexemeForm" className="MoForm"/>
-		</command>
-		<command id="CmdDataTree-Insert-VariantForm" label="Insert Variant" message="DataTreeInsert">
-			<parameters field="VariantFormEntryBackRefs" className="LexEntry" />
-		</command>
-		<command id="CmdDataTree-Convert-LexemeForm-AffixProcess" label="Convert to Affix Process" message="ConvertLexemeForm">
-			<parameters fromClassName="MoAffixAllomorph" toClassName="MoAffixProcess"/>
-		</command>
-		<command id="CmdDataTree-Convert-LexemeForm-AffixAllomorph" label="Convert to Affix Form" message="ConvertLexemeForm">
-			<parameters fromClassName="MoAffixProcess" toClassName="MoAffixAllomorph"/>
-		</command>
 		<!--
 	  Alternate Forms
 	   -->
@@ -285,14 +273,6 @@
 			<parameters field="Subentries" className="ReversalindexEntry"/>
 		</command>
 		<!--
-			Environments
-		-->
-		<command id="CmdDataTree-Insert-Slash" label="Insert Environment slash" message="InsertSlash"/>
-		<command id="CmdDataTree-Insert-Underscore" label="Insert Environment bar" message="InsertEnvironmentBar"/>
-		<command id="CmdDataTree-Insert-NaturalClass" label="Insert Natural Class" message="InsertNaturalClass"/>
-		<command id="CmdDataTree-Insert-OptionalItem" label="Insert Optional Item" message="InsertOptionalItem"/>
-		<command id="CmdDataTree-Insert-HashMark" label="Insert Word Boundary" message="InsertHashMark"/>
-		<!--
 			LexEntryRefs
 		-->
 		<command id="CmdDataTree-MoveUp-VariantSpec" label="Move Variant Info Up" message="MoveUpObjectInSequence" icon="MoveUp"/>
@@ -301,8 +281,6 @@
 			<parameters field="EntryRefs" className="LexEntryRef" ownerClass="LexEntry" />
 		</command>
 		<command id="CmdDataTree-Delete-VariantSpec" label="Delete Variant Info" message="DataTreeDelete" icon="Delete"/>
-		<!--command id="CmdDataTree-MoveUp-ComplexFormSpec" label="Move Complex Form Info Up" message="MoveUpObjectInSequence" icon="MoveUp"/-->
-		<!--command id="CmdDataTree-MoveDown-ComplexFormSpec" label="Move Complex Form Info Down" message="MoveDownObjectInSequence" icon="MoveDown"/-->
 		<command id="CmdDataTree-Delete-ComplexFormSpec" label="Delete Complex Form Info" message="DataTreeDelete" icon="Delete"/>
 	</commands>
 	<!--
@@ -311,20 +289,6 @@
   ===========================================================
   -->
 	<contextMenus>
-		<menu id="mnuDataTree-LexemeForm">
-			<item command="CmdMorphJumpToConcordance" label="Show Lexeme Form in Concordance"/>
-			<item command="CmdDataTree-Swap-LexemeForm"/>
-			<item command="CmdDataTree-Convert-LexemeForm-AffixProcess"/>
-			<item command="CmdDataTree-Convert-LexemeForm-AffixAllomorph"/>
-		</menu>
-		<menu id="mnuDataTree-LexemeFormContext">
-			<item command="CmdEntryJumpToConcordance"/>		<!-- Show Entry in Concordance -->
-			<item command="CmdLexemeFormJumpToConcordance"/>
-			<item command="CmdDataTree-Swap-LexemeForm"/>
-		</menu>
-		<menu id="mnuDataTree-CitationFormContext">
-			<item command="CmdEntryJumpToConcordance"/>
-		</menu>
 		<menu id="mnuDataTree-Allomorphs">
 			<item command="CmdDataTree-Insert-StemAllomorph"/>
 			<item command="CmdDataTree-Insert-AffixAllomorph"/>
@@ -336,19 +300,11 @@
 		<menu id="mnuDataTree-VariantForms">
 			<item command="CmdDataTree-Insert-VariantForm"/>
 		</menu>
-		<menu id="mnuDataTree-VariantForms-Hotlinks">
-			<item command="CmdDataTree-Insert-VariantForm"/>
-		</menu>
 		<menu id="mnuDataTree-VariantForm">
 			<item command="CmdEntryJumpToDefault"/>
 			<item command="CmdEntryJumpToConcordance"/>
 			<item command="CmdDataTree-Delete-VariantReference"/>
 			<item command="CmdDataTree-Delete-Variant"/>
-		</menu>
-		<menu id="mnuDataTree-VariantFormContext">
-			<item command="CmdEntryJumpToDefault"/>
-			<item label="-" translate="do not translate"/>
-			<item command="CmdEntryJumpToConcordance"/>
 		</menu>
 		<menu id="mnuDataTree-Allomorph">
 			<item command="CmdDataTree-MoveUp-Allomorph"/>
@@ -359,7 +315,7 @@
 			<item command="CmdDataTree-Swap-Allomorph"/>
 			<item command="CmdDataTree-Convert-Allomorph-AffixProcess"/>
 			<item label="-" translate="do not translate"/>
-			<item command="CmdMorphJumpToConcordance" label="Show Allomorph in Concordance"/>
+			<item command="CmdMorphJumpToConcordance" label="Show Allomorph in Concordance" a10status="See LexiconEditToolDataTreeStackLexEntryManager: This overrides base label." />
 		</menu>
 		<menu id="mnuDataTree-AffixProcess">
 			<item command="CmdDataTree-MoveUp-Allomorph"/>
@@ -369,7 +325,7 @@
 			<item command="CmdDataTree-Swap-Allomorph"/>
 			<item command="CmdDataTree-Convert-Allomorph-AffixAllomorph"/>
 			<item label="-" translate="do not translate"/>
-			<item command="CmdMorphJumpToConcordance" label="Show Allomorph in Concordance"/>
+			<item command="CmdMorphJumpToConcordance" label="Show Allomorph in Concordance" a10status="See LexiconEditToolDataTreeStackLexEntryManager: This overrides base label." />
 		</menu>
 		<menu id="mnuDataTree-Picture">
 			<item command="CmdDataTree-Properties-Picture" />
@@ -489,13 +445,6 @@
 			<item label="-" translate="do not translate"/>
 			<item command="CmdDataTree-Merge-Subentry"/>
 			<item command="CmdDataTree-Delete-Subentry"/>
-		</menu>
-		<menu id="mnuDataTree-Environments-Insert">
-			<item command="CmdDataTree-Insert-Slash"/>
-			<item command="CmdDataTree-Insert-Underscore"/>
-			<item command="CmdDataTree-Insert-NaturalClass"/>
-			<item command="CmdDataTree-Insert-OptionalItem"/>
-			<item command="CmdDataTree-Insert-HashMark"/>
 		</menu>
 		<menu id="mnuDataTree-CmMedia">
 			<item command="CmdDeleteMediaFile"/>

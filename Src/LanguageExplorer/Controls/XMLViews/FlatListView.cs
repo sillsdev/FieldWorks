@@ -31,6 +31,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		private LcmCache m_cache;
 		private IVwStylesheet m_stylesheet; // used to figure font heights.
 		private IPropertyTable m_propertyTable;
+		private IPublisher m_publisher;
+		private ISubscriber m_subscriber;
 		private XElement m_configNode;
 		private BrowseViewer m_bvList;
 		private ObjectListPublisher m_listPublisher;
@@ -51,20 +53,18 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Create and initialize the browse view, storing the data it will display.
 		/// </summary>
-		public void Initialize(LcmCache cache, IVwStylesheet stylesheet, IPropertyTable propertyTable, XElement xnConfig, IEnumerable<ICmObject> objs)
+		public void Initialize(LcmCache cache, IVwStylesheet stylesheet, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, XElement xnConfig, IEnumerable<ICmObject> objs)
 		{
 			m_cache = cache;
 			m_stylesheet = stylesheet;
 			m_propertyTable = propertyTable;
+			m_publisher = publisher;
+			m_subscriber = subscriber;
 			m_configNode = xnConfig;
 			SuspendLayout();
 			m_listPublisher = new ObjectListPublisher(cache.DomainDataByFlid as ISilDataAccessManaged, ObjectListFlid);
 
 			StoreData(objs);
-#if RANDYTODO
-			// TODO: Call InitializeFlexComponent on m_bvList.
-			// TODO: Call FinishInitialization on m_bvList and feed it ObjectListFlid for the 'madeUpFieldIdentifier' parameter.
-#endif
 			m_bvList = new BrowseViewer(m_configNode, m_cache.LanguageProject.Hvo, m_cache, null, m_listPublisher)
 			{
 				Location = new Point(0, 0),
@@ -72,9 +72,11 @@ namespace LanguageExplorer.Controls.XMLViews
 				Name = "m_bvList",
 				Sorter = null,
 				TabStop = true,
-				StyleSheet = m_stylesheet,
 				Dock = DockStyle.Fill
 			};
+			m_bvList.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
+			m_bvList.StyleSheet = m_stylesheet;
+			m_bvList.FinishInitialization(m_cache.LanguageProject.Hvo, ObjectListFlid);
 			m_bvList.SelectionChanged += m_bvList_SelectionChanged;
 			Controls.Add(m_bvList);
 			ResumeLayout(false);

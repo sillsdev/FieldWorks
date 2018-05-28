@@ -409,7 +409,7 @@ namespace LanguageExplorer.Areas
 				chooser.Cache = m_cache;
 				chooser.TextParamHvo = m_cache.LangProject.PhonologicalDataOA.Hvo;
 				chooser.SetHelpTopic(Slice.GetChooserHelpTopicID(Slice.HelpTopicID));
-				chooser.InitializeExtras(m_configurationNode, PropertyTable);
+				chooser.InitializeExtras(m_configurationNode, PropertyTable, Publisher, Subscriber);
 
 				var res = chooser.ShowDialog();
 				if (res != DialogResult.Cancel)

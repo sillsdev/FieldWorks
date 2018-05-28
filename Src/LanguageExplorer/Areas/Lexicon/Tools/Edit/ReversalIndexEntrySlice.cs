@@ -87,7 +87,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		public override void FinishInit()
 		{
-			var ctrl = new ReversalIndexEntrySliceView(Object.Hvo)
+			var ctrl = new ReversalIndexEntrySliceView(MyCmObject.Hvo)
 			{
 				Cache = PropertyTable.GetValue<LcmCache>("cache")
 			};
@@ -111,7 +111,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			if (hvo == Object.Hvo && tag == Cache.ServiceLocator.GetInstance<Virtuals>().LexSenseReversalIndexEntryBackRefs)
+			if (hvo == MyCmObject.Hvo && tag == Cache.ServiceLocator.GetInstance<Virtuals>().LexSenseReversalIndexEntryBackRefs)
 			{
 				((ReversalIndexEntrySliceView)Control).ResetEntries();
 			}

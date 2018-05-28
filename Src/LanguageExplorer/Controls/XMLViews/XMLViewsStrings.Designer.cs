@@ -19,7 +19,7 @@ namespace LanguageExplorer.Controls.XMLViews {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class XMLViewsStrings {
@@ -1309,6 +1309,25 @@ namespace LanguageExplorer.Controls.XMLViews {
         internal static string ksZero {
             get {
                 return ResourceManager.GetString("ksZero", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+        ///&lt;guicontrols&gt;
+        ///	&lt;guicontrol id=&quot;PeopleFlatList&quot;&gt;
+        ///		&lt;parameters id=&quot;peopleList&quot; listItemsClass=&quot;CmPerson&quot; filterBar=&quot;false&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; editable=&quot;false&quot; selectColumn=&quot;true&quot;&gt;
+        ///			&lt;columns&gt;
+        ///				&lt;column label=&quot;Name&quot; sortmethod=&quot;Name&quot; ws=&quot;$ws=best vernoranal&quot; editable=&quot;false&quot; width=&quot;100%&quot; field=&quot;Name&quot;&gt;
+        ///					&lt;span&gt;
+        ///						&lt;properties&gt;
+        ///							&lt;editable value=&quot;false&quot;/&gt;
+        ///						&lt;/properties&gt;
+        ///						&lt;string field=&quot;Nam [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string SimpleChooserParameters {
+            get {
+                return ResourceManager.GetString("SimpleChooserParameters", resourceCulture);
             }
         }
     }

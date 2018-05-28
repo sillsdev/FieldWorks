@@ -158,11 +158,11 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected override void UpdateDisplayFromDatabase()
 		{
-			if (!Object.IsValidObject)
+			if (!MyCmObject.IsValidObject)
 			{
 				return; // If the object is not valid our data needs to be refreshed, skip until data is valid again
 			}
-			var currentValue = Cache.DomainDataByFlid.get_IntProp(Object.Hvo, m_flid);
+			var currentValue = Cache.DomainDataByFlid.get_IntProp(MyCmObject.Hvo, m_flid);
 
 			//nb: we are assuming that an enumerations start with 0
 			m_combo.SelectedIndex = currentValue;
@@ -178,11 +178,11 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return; // don't want to update things while the user is manipulating the list. (See FWR-1728.)
 			}
-			if (!Object.IsValidObject)
+			if (!MyCmObject.IsValidObject)
 			{
 				return; // If the object is not valid our data needs to be refreshed, skip until data is valid again
 			}
-			var oldValue = Cache.DomainDataByFlid.get_IntProp(Object.Hvo, m_flid);
+			var oldValue = Cache.DomainDataByFlid.get_IntProp(MyCmObject.Hvo, m_flid);
 			var newValue = m_combo.SelectedIndex;
 			if (oldValue == newValue)
 			{
@@ -190,14 +190,14 @@ namespace LanguageExplorer.Controls.DetailControls
 				return;
 			}
 			Cache.DomainDataByFlid.BeginUndoTask(string.Format(DetailControlsStrings.ksUndoSet, m_fieldName), string.Format(DetailControlsStrings.ksRedoSet, m_fieldName));
-			Cache.DomainDataByFlid.SetInt(Object.Hvo, m_flid, newValue);
+			Cache.DomainDataByFlid.SetInt(MyCmObject.Hvo, m_flid, newValue);
 			var sideEffectMethod = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "sideEffect", null);
 			if (!string.IsNullOrEmpty(sideEffectMethod))
 			{
-				var info = Object.GetType().GetMethod(sideEffectMethod);
+				var info = MyCmObject.GetType().GetMethod(sideEffectMethod);
 				if (info != null)
 				{
-					info.Invoke(Object, new object[] { oldValue, newValue });
+					info.Invoke(MyCmObject, new object[] { oldValue, newValue });
 				}
 			}
 			Cache.DomainDataByFlid.EndUndoTask();
@@ -225,7 +225,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			if (hvo == Object.Hvo && tag == m_flid)
+			if (hvo == MyCmObject.Hvo && tag == m_flid)
 			{
 				UpdateDisplayFromDatabase();
 			}

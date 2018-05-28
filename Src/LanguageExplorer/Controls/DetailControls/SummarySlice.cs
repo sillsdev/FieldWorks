@@ -39,7 +39,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			base.Install(parentDataTree);
 
-			m_commandControl = new SummaryCommandControl(this, SliceContextMenuFactory)
+			m_commandControl = new SummaryCommandControl(this, MyDataTreeStackContextMenuFactory.HotlinksMenuFactory)
 			{
 				Dock = DockStyle.Fill,
 				Visible = XmlUtils.GetOptionalBooleanAttributeValue(CallerNode, "commandVisible", false)
@@ -65,7 +65,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				m_layout = XmlUtils.GetOptionalAttributeValue(CallerNode, "param") ?? XmlUtils.GetMandatoryAttributeValue(ConfigurationNode, "layout");
 				m_collapsedLayout = XmlUtils.GetOptionalAttributeValue(CallerNode, "collapsedLayout") ?? XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "collapsedLayout");
-				m_view = new SummaryXmlView(Object.Hvo, m_layout, this);
+				m_view = new SummaryXmlView(MyCmObject.Hvo, m_layout, this);
 			}
 
 			var panel = new Panel
@@ -315,7 +315,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public bool OnMoveItemUpInVector(object argument)
 		{
-			var rec = Object as IRnGenericRec;
+			var rec = MyCmObject as IRnGenericRec;
 			var recOwner = rec?.Owner as IRnGenericRec;
 			if (recOwner == null)
 			{
@@ -366,7 +366,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public bool OnMoveItemDownInVector(object argument)
 		{
-			var rec = Object as IRnGenericRec;
+			var rec = MyCmObject as IRnGenericRec;
 			var recOwner = rec?.Owner as IRnGenericRec;
 			if (recOwner == null)
 			{
@@ -411,7 +411,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public bool OnPromoteSubitemInVector(object argument)
 		{
-			var rec = Object as IRnGenericRec;
+			var rec = MyCmObject as IRnGenericRec;
 			var recOwner = rec?.Owner as IRnGenericRec;
 			if (recOwner == null)
 			{
@@ -469,18 +469,18 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public bool OnDemoteSubitemInVector(object argument)
 		{
-			var rec = Object as IRnGenericRec;
+			var rec = MyCmObject as IRnGenericRec;
 			if (rec == null)
 			{
 				return false;		// shouldn't get here
 			}
 			IRnGenericRec newOwner;
-			var recOwner = Object.Owner as IRnGenericRec;
+			var recOwner = MyCmObject.Owner as IRnGenericRec;
 			if (recOwner != null)
 			{
 				if (recOwner.SubRecordsOS.Count == 2)
 				{
-					newOwner = Object.OwnOrd == 0 ? recOwner.SubRecordsOS[1] : recOwner.SubRecordsOS[0];
+					newOwner = MyCmObject.OwnOrd == 0 ? recOwner.SubRecordsOS[1] : recOwner.SubRecordsOS[0];
 				}
 				else
 				{

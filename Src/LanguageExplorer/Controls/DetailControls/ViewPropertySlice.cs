@@ -26,7 +26,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public void Reuse(ICmObject obj, int flid)
 		{
-			Object = obj;
+			MyCmObject = obj;
 			FieldId = flid;
 
 		}

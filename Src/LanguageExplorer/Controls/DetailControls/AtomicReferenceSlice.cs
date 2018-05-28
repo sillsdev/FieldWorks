@@ -108,7 +108,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			base.FinishInit();
 
 			var arl = (AtomicReferenceLauncher)Control;
-			arl.Initialize(Cache, Object, m_flid, m_fieldName, PersistenceProvider, DisplayNameProperty, BestWsName); // TODO: Get better default 'best ws'.
+			arl.Initialize(Cache, MyCmObject, m_flid, m_fieldName, PersistenceProvider, DisplayNameProperty, BestWsName); // TODO: Get better default 'best ws'.
 			arl.ConfigurationNode = ConfigurationNode;
 			var deParams = ConfigurationNode.Element("deParams");
 			if (XmlUtils.GetOptionalBooleanAttributeValue(deParams, "changeRequiresRefresh", false))
@@ -216,7 +216,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			if (m_flid != PartOfSpeechTags.kflidDefaultInflectionClass || cvIns != 0 || cvDel <= 0 ||
 			    (tag != PartOfSpeechTags.kflidInflectionClasses && tag != MoInflClassTags.kflidSubclasses) ||
-			    ((IPartOfSpeech) Object).DefaultInflectionClassRA != null)
+			    ((IPartOfSpeech) MyCmObject).DefaultInflectionClassRA != null)
 			{
 				return;
 			}

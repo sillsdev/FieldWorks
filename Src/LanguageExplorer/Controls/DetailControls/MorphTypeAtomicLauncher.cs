@@ -67,7 +67,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				var fMadeMorphTypeChange = false;
 				var entry = (ILexEntry)m_obj.Owner;
-				chooser.InitializeExtras(m_configurationNode, PropertyTable);
+				chooser.InitializeExtras(m_configurationNode, PropertyTable, Publisher, Subscriber);
 				chooser.SetObjectAndFlid(m_obj.Hvo, m_flid);
 				chooser.SetHelpTopic(Slice.GetChooserHelpTopicID());
 
@@ -377,7 +377,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					continue;
 				}
 
-				if (slice.Object is IMoMorphSynAnalysis && rgmsaOld.Contains(slice.Object as IMoMorphSynAnalysis))
+				if (slice.MyCmObject is IMoMorphSynAnalysis && rgmsaOld.Contains(slice.MyCmObject as IMoMorphSynAnalysis))
 				{
 					slice.Dispose();
 				}

@@ -81,7 +81,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected override void UpdateDisplayFromDatabase()
 		{
 			var rtb = (RichTextBox)Control;
-			var dt = SilTime.GetTimeProperty(Cache.DomainDataByFlid, Object.Hvo, m_flid);
+			var dt = SilTime.GetTimeProperty(Cache.DomainDataByFlid, MyCmObject.Hvo, m_flid);
 			rtb.Text = dt == DateTime.MinValue ? "Date/Time not set" : string.Format(DetailControlsStrings.ksDateAndTime, dt.ToLongDateString(), dt.ToShortTimeString());
 		}
 
@@ -98,7 +98,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			if (hvo == Object.Hvo && tag == m_flid)
+			if (hvo == MyCmObject.Hvo && tag == m_flid)
 			{
 				UpdateDisplayFromDatabase();
 			}

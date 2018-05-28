@@ -14,39 +14,31 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	internal class LexiconEditToolToolbarManager : IToolUiWidgetManager
 	{
 		private IRecordList MyRecordList { get; set; }
-		private Dictionary<string, EventHandler> _sharedEventHandlers;
-		private Dictionary<string, EventHandler> _sharedWithMeEventHandlers;
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
+		private Dictionary<string, EventHandler> _sharedEventHandlers;
 		private ToolStripButton _insertEntryToolStripButton;
 		private ToolStripButton _insertGoToEntryToolStripButton;
 
 		#region IToolUiWidgetManager
 
 		/// <inheritdoc />
-		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList, IReadOnlyDictionary<string, EventHandler> sharedEventHandlers, IReadOnlyList<object> randomParameters)
+		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, Dictionary<string, EventHandler> sharedEventHandlers, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
-			Guard.AgainstNull(recordList, nameof(recordList));
 			Guard.AgainstNull(sharedEventHandlers, nameof(sharedEventHandlers));
+			Guard.AgainstNull(recordList, nameof(recordList));
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
+			_sharedEventHandlers = sharedEventHandlers;
 			MyRecordList = recordList;
-			_sharedWithMeEventHandlers = new Dictionary<string, EventHandler>(2)
-			{
-				{ LexiconEditToolConstants.CmdInsertLexEntry, sharedEventHandlers[LexiconEditToolConstants.CmdInsertLexEntry] },
-				{ LexiconEditToolConstants.CmdGoToEntry, sharedEventHandlers[LexiconEditToolConstants.CmdGoToEntry] }
-			};
 
 			// <item command="CmdInsertLexEntry" defaultVisible="false" />
-			_insertEntryToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_sharedWithMeEventHandlers[LexiconEditToolConstants.CmdInsertLexEntry], "toolStripButtonInsertEntry", LexiconResources.Major_Entry.ToBitmap(), LexiconResources.Entry_Tooltip);
+			_insertEntryToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_sharedEventHandlers[LexiconEditToolConstants.CmdInsertLexEntry], "toolStripButtonInsertEntry", LexiconResources.Major_Entry.ToBitmap(), LexiconResources.Entry_Tooltip);
 			// <item command="CmdGoToEntry" defaultVisible="false" />
-			_insertGoToEntryToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_sharedWithMeEventHandlers[LexiconEditToolConstants.CmdGoToEntry], "toolStripButtonGoToEntry", LexiconResources.Find_Lexical_Entry.ToBitmap(), LexiconResources.GoToEntryToolTip);
+			_insertGoToEntryToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_sharedEventHandlers[LexiconEditToolConstants.CmdGoToEntry], "toolStripButtonGoToEntry", LexiconResources.Find_Lexical_Entry.ToBitmap(), LexiconResources.GoToEntryToolTip);
 
 			InsertToolbarManager.AddInsertToolbarItems(_majorFlexComponentParameters, new List<ToolStripButton> { _insertEntryToolStripButton, _insertGoToEntryToolStripButton });
 		}
-
-		/// <inheritdoc />
-		IReadOnlyDictionary<string, EventHandler> IToolUiWidgetManager.SharedEventHandlers => _sharedEventHandlers ?? (_sharedEventHandlers = new Dictionary<string, EventHandler>());
 
 		#endregion
 
@@ -84,18 +76,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			if (disposing)
 			{
-				_insertEntryToolStripButton.Click -= _sharedWithMeEventHandlers[LexiconEditToolConstants.CmdInsertLexEntry];
-				_insertGoToEntryToolStripButton.Click -= _sharedWithMeEventHandlers[LexiconEditToolConstants.CmdGoToEntry];
+				_insertEntryToolStripButton.Click -= _sharedEventHandlers[LexiconEditToolConstants.CmdInsertLexEntry];
+				_insertGoToEntryToolStripButton.Click -= _sharedEventHandlers[LexiconEditToolConstants.CmdGoToEntry];
 				InsertToolbarManager.ResetInsertToolbar(_majorFlexComponentParameters);
 				_insertEntryToolStripButton.Dispose();
 				_insertGoToEntryToolStripButton.Dispose();
-				_sharedEventHandlers.Clear();
-				_sharedWithMeEventHandlers.Clear();
 			}
 			MyRecordList = null;
-			_sharedEventHandlers = null;
-			 _sharedWithMeEventHandlers = null;
 			_majorFlexComponentParameters = null;
+			_sharedEventHandlers = null;
 			_insertEntryToolStripButton = null;
 			_insertGoToEntryToolStripButton = null;
 

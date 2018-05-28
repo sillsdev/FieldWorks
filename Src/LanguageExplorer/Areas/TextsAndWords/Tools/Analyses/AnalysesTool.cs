@@ -11,6 +11,7 @@ using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.Application;
 using SIL.LCModel.Utils;
@@ -104,6 +105,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 
 			// Too early before now.
 			recordEditView.FinishInitialization();
+			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), false, SettingsGroup.LocalSettings))
+			{
+				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish("ShowHiddenFields", true);
+			}
 		}
 
 		/// <summary>

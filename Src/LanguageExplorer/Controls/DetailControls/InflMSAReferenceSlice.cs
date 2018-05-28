@@ -90,7 +90,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			Debug.Assert(sender is AtomicReferenceLauncher);
 			var source = (AtomicReferenceLauncher)sender;
 			Debug.Assert(Control == source);
-			Debug.Assert(Object is IMoInflAffMsa);
+			Debug.Assert(MyCmObject is IMoInflAffMsa);
 
 			var idxSender = ContainingDataTree.Slices.IndexOf(this);
 			const int otherFlid = MoInflAffMsaTags.kflidSlots;
@@ -102,7 +102,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (idxSender > 0)
 			{
 				idxOther = idxSender - 1;
-				while (idxOther >= 0 && (otherSlice == null || (otherSlice.Indent == Indent && idxOther > 0 && otherSlice.Object == Object)))
+				while (idxOther >= 0 && (otherSlice == null || (otherSlice.Indent == Indent && idxOther > 0 && otherSlice.MyCmObject == MyCmObject)))
 				{
 					otherSlice = ContainingDataTree.Slices[idxOther--];
 					if (otherSlice is ReferenceVectorSlice && (otherSlice as ReferenceVectorSlice).Flid == otherFlid)
@@ -117,7 +117,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (otherSlice == null && idxSender < ContainingDataTree.Slices.Count)
 			{
 				idxOther = idxSender + 1;
-				while (idxOther < ContainingDataTree.Slices.Count && (otherSlice == null || (otherSlice.Indent == Indent && idxOther > 0 && otherSlice.Object == Object)))
+				while (idxOther < ContainingDataTree.Slices.Count && (otherSlice == null || (otherSlice.Indent == Indent && idxOther > 0 && otherSlice.MyCmObject == MyCmObject)))
 				{
 					otherSlice = ContainingDataTree.Slices[idxOther++];
 					if (otherSlice is ReferenceVectorSlice && (otherSlice as ReferenceVectorSlice).Flid == otherFlid)
@@ -132,12 +132,12 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (otherSlice != null)
 			{
 				Debug.Assert(otherSlice.Flid == otherFlid);
-				Debug.Assert(otherSlice.Object == Object);
+				Debug.Assert(otherSlice.MyCmObject == MyCmObject);
 				otherControl = otherSlice.Control as VectorReferenceLauncher;
 				Debug.Assert(otherControl != null);
 			}
 
-			var msa = (IMoInflAffMsa)Object;
+			var msa = (IMoInflAffMsa)MyCmObject;
 			IMoInflAffixSlot slot = null;
 			if (msa.SlotsRC.Count > 0)
 			{

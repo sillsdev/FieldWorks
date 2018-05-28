@@ -442,7 +442,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 				int[] domains;
 				int[] lexrels;
 				IVwCacheDa cdaTemp;
-				if (!LoadDomainAndRelationInfo(m_cache, leui.Object.Hvo, out domains, out lexrels, out cdaTemp, this))
+				if (!LoadDomainAndRelationInfo(m_cache, leui.MyCmObject.Hvo, out domains, out lexrels, out cdaTemp, this))
 				{
 					return;
 				}
@@ -457,7 +457,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 				{
 					m_cdaTemp.CacheStringProp(hvoLexRel, RelatedWordsVc.ktagName, (cdaTemp as ISilDataAccess).get_StringProp(hvoLexRel, RelatedWordsVc.ktagName));
 				}
-				m_hvoEntry = leui.Object.Hvo;
+				m_hvoEntry = leui.MyCmObject.Hvo;
 				SetupForEntry(domains, lexrels);
 				m_view.SetEntry(m_hvoEntry);
 			}
@@ -488,7 +488,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 					SuspendLayout();
 					var totalHeight = m_view.Height;
 					m_view.Height = totalHeight * 2 / 3;
-					m_detailView = MakeSummaryView(leui.Object.Hvo, m_cache, m_styleSheet);
+					m_detailView = MakeSummaryView(leui.MyCmObject.Hvo, m_cache, m_styleSheet);
 					m_detailView.Left = m_view.Left;
 					m_detailView.Width = m_view.Width;
 					m_detailView.Top = m_view.Bottom + 5;
@@ -505,7 +505,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 				}
 				else
 				{
-					m_detailView.RootObjectHvo = leui.Object.Hvo;
+					m_detailView.RootObjectHvo = leui.MyCmObject.Hvo;
 				}
 			}
 		}
