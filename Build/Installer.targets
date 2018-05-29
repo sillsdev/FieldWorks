@@ -81,7 +81,6 @@
 		<InstallersBaseDir>$(fwrt)/BuildDir/</InstallersBaseDir>
 		<AppBuildMasterDir>$(InstallersBaseDir)/$(SafeApplicationName)_Build_Master_$(Platform)</AppBuildMasterDir>
 		<BinDirSuffix>objects/$(SafeApplicationName)</BinDirSuffix>
-		<MovieDirSuffix>$(BinDirSuffix)_Movies</MovieDirSuffix>
 		<L10nDirSuffix>$(BinDirSuffix)_L10n</L10nDirSuffix>
 		<DataDirSuffix>$(BinDirSuffix)_Data</DataDirSuffix>
 		<InstallerDir>$(fwrt)\PatchableInstaller</InstallerDir>
@@ -147,7 +146,6 @@
 	<Target Name="CopyFilesToInstall" DependsOnTargets="InstallerVersionNumbers">
 		<!-- copy in new stuff -->
 		<PropertyGroup>
-			<MoviesRoot>$(fwrt)\DistFiles\Language Explorer\Movies</MoviesRoot>
 			<OutputDirForConfig>$(fwrt)\Output\$(Configuration)</OutputDirForConfig>
 		</PropertyGroup>
 		<ItemGroup>
@@ -160,6 +158,9 @@
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\Translation Editor\**\*"/>
 			<!-- End: No longer want TE helps, but they are not yet removed from the Helps repo. -->
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Icu54.zip"/>
+			<!-- Exclude demo movies to save bandwidth. Do package notfound.html, a webpage telling the user how to download movies. -->
+			<DeveloperFiles Include="$(fwrt)\DistFiles\Language Explorer\Movies\**\*"
+				Exclude="$(fwrt)\DistFiles\Language Explorer\Movies\notfound.html"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\libxample32.so"/> <!-- Linux file -->
 			<DeveloperFiles Include="$(fwrt)\DistFiles\libxample64.so"/> <!-- Linux file -->
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Linux\**\*"/>
@@ -232,8 +233,6 @@
 			<MergeModules Include="$(OutputDirForConfig)\UIAutomationTypes.dll"/>
 			<MergeModules Include="$(OutputDirForConfig)\whitepixel.bmp"/>
 			<MergeModules Include="$(OutputDirForConfig)\xCoreInterfaces.XmlSerializers.*"/>
-			<!-- FieldWorks Demo Movies -->
-			<Movies Include="$(MoviesRoot)\**\*" Exclude="$(MoviesRoot)\.git\**\*;$(MoviesRoot)\.git*;$(MoviesRoot)\notfound.html"/>
 			<!-- Binary files (and other files installed in the ProgramFiles\SIL\FieldWorks # directory -->
 			<BinFiles Include="$(OutputDirForConfig)\**\*" Exclude="@(L10nFiles)"/>
 			<!-- %(RecursiveDir) is only the "**\" portion. This hack recollects L10nFiles with the code as the recursive directory. -->
@@ -241,28 +240,22 @@
 			<!-- Now that we've used BinFiles to exclude all non-l10n files from L10nFilesWithRecursiveDirs,
 				we can remove MergeModules from BinFiles (MergeModules belong in neither ItemGroup). -->
 			<BinFiles Remove="@(MergeModules)"/>
-			<BinFiles Include="$(fwrt)\DistFiles\**\*" Exclude="@(DeveloperFiles);@(IcuFiles);$(MoviesRoot)\**\*"/>
+			<BinFiles Include="$(fwrt)\DistFiles\**\*" Exclude="@(DeveloperFiles);@(IcuFiles)"/>
 			<!-- Files used to customize the generic patchable installer -->
 			<OverrideFiles Include="$(fwrt)\FLExInstaller\*.wxi"/>
 		</ItemGroup>
 		<Copy SourceFiles="@(IcuFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(DataDirSuffix)/Icu$(IcuVersion)/%(RecursiveDir)"/>
 		<Copy SourceFiles="@(InstallerResources)" OverwriteReadonlyFiles="true" DestinationFolder="$(InstallerResourcesDir)"/>
 		<Copy SourceFiles="@(L10nFilesWithRecursiveDirs)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(L10nDirSuffix)/%(RecursiveDir)"/>
-		<Copy SourceFiles="@(Movies)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(MovieDirSuffix)/%(RecursiveDir)"/>
-		<!-- a webpage telling the user how to download the movies -->
-		<Copy SourceFiles="$(MoviesRoot)\notfound.html" DestinationFolder="$(AppBuildDir)\$(BinDirSuffix)\Language Explorer\Movies"/>
 		<Copy SourceFiles="@(BinFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/%(RecursiveDir)"/>
 		<Copy SourceFiles="@(OverrideFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(OverridesDestDir)"/>
-		<CallTarget Targets="HarvestMoviesAndL10n"/>
+		<CallTarget Targets="HarvestL10n"/>
 	</Target>
 
-	<Target Name="HarvestMoviesAndL10n" DependsOnTargets="InstallerVersionNumbers">
+	<Target Name="HarvestL10n" DependsOnTargets="InstallerVersionNumbers">
 		<PropertyGroup>
 			<CommonHeatArgs>-gg -scom -sreg -sfrag -srd -sw5150 -sw5151 -t $(fwrt)/PatchableInstaller/BaseInstallerBuild/KeyPathFix.xsl</CommonHeatArgs>
 		</PropertyGroup>
-
-		<!-- Harvest movies -->
-		<Exec Command="heat.exe dir $(AppBuildDir)/$(MovieDirSuffix) $(CommonHeatArgs) -cg HarvestedMovieFiles -dr MOVIEFOLDER -var wix.MOVIEDIR -out $(OverridesDestDir)/MovieHarvest.wxs" />
 
 		<!-- Harvest Localizations. If you change this list, you must also update those listed at $(fwrt)\Localizations\ReadMe.md -->
 		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\az $(CommonHeatArgs) -cg azLocalization -dr AZL10NFOLDER -var wix.AZL10NDIR -out $(OverridesDestDir)/azHarvest.wxs" />

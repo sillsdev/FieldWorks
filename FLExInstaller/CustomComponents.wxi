@@ -44,9 +44,6 @@
 		<Merge Id="PythonEC" Language="1033" SourceFile="$(var.EncodingConvertersPath)\PythonEcMM.msm" DiskId="1"/>
 		<?endif?>
 
-		<Directory Id="LangEx" Name="Language Explorer">
-			<Directory Id="MOVIEFOLDER" Name="Movies"/> <!-- Harvested movies are installed in this directory -->
-		</Directory>
 		<!-- Harvested localizations are installed in the following directories -->
 		<Directory Id="AZL10NFOLDER" Name="az"/>
 		<Directory Id="ESL10NFOLDER" Name="es"/>
@@ -65,10 +62,6 @@
 		<Directory Id="VIL10NFOLDER" Name="vi"/>
 		<Directory Id="ZHL10NFOLDER" Name="zh-CN"/>
 	</DirectoryRef>
-
-	<!-- This WixVariable inserts the source directory into the harvest file -->
-	<WixVariable Id="MOVIEDIR" Value="$(var.APPBUILDDIR)_Movies"/>
-	<?include MovieHarvest.wxi?>
 
 	<!-- These WixVariables insert the source directory into the harvest files (because Heat apparently can't) -->
 	<WixVariable Id="AZL10NDIR" Value="$(var.APPBUILDDIR)_L10n\az"/>
