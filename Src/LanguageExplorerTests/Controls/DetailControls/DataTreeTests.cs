@@ -122,20 +122,31 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		/// </summary>
 		public override void TestTearDown()
 		{
-			if (m_parent != null)
+			try
 			{
-				m_parent.Close();
-				m_parent.Dispose();
+				if (m_parent != null)
+				{
+					m_parent.Close();
+					m_parent.Dispose();
+				}
+				_dummyWindow.Dispose();
+				m_propertyTable?.Dispose();
+
+				_dummyWindow = null;
+				m_propertyTable = null;
+				m_publisher = null;
+				m_subscriber = null;
 			}
-			_dummyWindow.Dispose();
-			m_propertyTable?.Dispose();
-
-			_dummyWindow = null;
-			m_propertyTable = null;
-			m_publisher = null;
-			m_subscriber = null;
-
-			base.TestTearDown();
+			catch (Exception err)
+			{
+				throw new Exception("Error in running DataTreeTests TestTearDown method.", err);
+			}
+			finally
+			{
+				// The reason for the try/catch/finally is that if some dumb null ref exception is thrown in the try space,
+				// then "base.TestTearDown()" is NOT called, which then makes a 1,000 other LE tests fail thinking the SLDR is screwy.
+				base.TestTearDown();
+			}
 		}
 		#endregion
 
