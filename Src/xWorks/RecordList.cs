@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2017 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -591,7 +591,6 @@ namespace SIL.FieldWorks.XWorks
 			string owner = XmlUtils.GetOptionalAttributeValue(recordListNode, "owner");
 			// by default we'll setup for Entries
 			GetTargetFieldInfo(LexEntryTags.kClassId, owner, 0, out m_owningObject, out m_flid, out m_propertyName);
-
 		}
 
 		protected override void DisposeManagedResources()
@@ -3139,7 +3138,7 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 
 			ClassAndPropInfo cpi = GetMatchingClass(className);
-			Debug.Assert(cpi != null, "This object should not have been asked to insert an object of the class "+ className +".");
+			Debug.Assert(cpi != null, "This object should not have been asked to insert an object of the class " + className + ".");
 			if (cpi != null)
 			{
 				List<ClassAndPropInfo> cpiPath;
@@ -3217,7 +3216,6 @@ namespace SIL.FieldWorks.XWorks
 			{
 				return List.CreateNewObject(HvoOwner, CpiPath);
 			}
-
 			#endregion
 		}
 

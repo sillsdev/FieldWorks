@@ -255,6 +255,12 @@ Are you SURE you want to delete the field {0}?</value>
   <data name="ksRedoInsert" xml:space="preserve">
     <value>Redo Insert {0}</value>
   </data>
+  <data name="ksUndoDuplicate" xml:space="preserve">
+    <value>Undo Duplicate {0}</value>
+  </data>
+  <data name="ksRedoDuplicate" xml:space="preserve">
+    <value>Redo Duplicate {0}</value>
+  </data>
   <data name="UndoDelete0" xml:space="preserve">
     <value>Undo Delete {0}</value>
   </data>

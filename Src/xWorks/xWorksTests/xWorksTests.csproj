@@ -304,6 +304,7 @@
     <Compile Include="ItemClickedTests.cs" />
     <Compile Include="MacroListenerTests.cs" />
     <Compile Include="ReveralIndexServicesTests.cs" />
+    <Compile Include="TreeBarHandlerUtilsTests.cs" />
     <Compile Include="UploadToWebonaryControllerTests.cs" />
     <Compile Include="UploadToWebonaryModelTests.cs" />
     <Compile Include="UnicodeCharacterEditingHelperTests.cs" />

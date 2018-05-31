@@ -9,6 +9,40 @@
 		<command id="CmdConfigureList" label="List..." message="ConfigureList"/>
 		<command id="CmdAddCustomList" label="Custom _List..." message="AddCustomList"/>
 		<command id="CmdDeleteCustomList" label="Delete Custom _List" message="DeleteCustomList"/>
+		<command id="CmdDuplicateSemDom" label="_Semantic Domain" message="DuplicateItemInVector" icon="Copy">
+			<params className="CmSemanticDomain" noCopy="SemanticDomainList"/>
+		</command>
+		<command id="CmdDuplicateAnnotationDef" label="_Annotation Definition" message="DuplicateItemInVector" icon="Copy">
+			<params className="CmAnnotationDefn"/>
+		</command>
+		<command id="CmdDuplicatePossibility" label="_Item" message="DuplicateItemInVector" icon="Copy">
+			<params className="CmPossibility" restrictFromClerkID="ProdRestrict"
+			noCopy="ConfidenceList DialectsList ExtNoteTypeList GenreList LanguagesList PositionList
+			PublicationList RestrictionsList RoleList SenseTypeList StatusList TranslationTypeList
+			EducationList RecTypeList TimeOfDayList UsageTypeList"/>
+		</command>
+		<command id="CmdDuplicateCustomItem" label="_Item" message="DuplicateItemInVector" icon="Copy">
+			<params className="CmCustomItem"/>
+		</command>
+		<command id="CmdDuplicateMorphType" label="_Morph Type" message="DuplicateItemInVector" icon="Copy">
+			<params className="MoMorphType"/>
+		</command>
+		<command id="CmdDuplicateAnthroCategory" label="Anthropology _Category" message="DuplicateItemInVector" icon="Copy">
+			<params className="CmAnthroItem" noCopy="AnthropologyList"/>
+		</command>
+		<command id="CmdDuplicatePerson" label="_Person" message="DuplicateItemInVector" icon="Copy">
+			<params className="CmPerson" noCopy="PeopleList"/>
+		</command>
+		<command id="CmdDuplicateLocation" label="_Location" message="DuplicateItemInVector" icon="Copy">
+			<params className="CmLocation" noCopy="LocationList"/>
+		</command>
+		<command id="CmdDuplicateLexRefType" label="_Lexical Reference Type" message="DuplicateItemInVector" icon="Copy">
+			<params className="LexRefType" noCopy="LexRefTypeList"/>
+		</command>
+		<command id="CmdDuplicateFeatureType" label="_Feature Type" message="DuplicateItemInVector" icon="Copy">
+			<params className="FsFeatStrucType" noCopy="featureTypes"/>
+		</command>
+
 		<command id="CmdInsertSemDom" label="_Semantic Domain" message="InsertItemInVector" icon="AddItem">
 			<params className="CmSemanticDomain"/>
 		</command>
@@ -39,20 +73,19 @@
 		<command id="CmdInsertFeatureType" label="_Feature Type" message="InsertItemInVector" icon="AddItem">
 			<params className="FsFeatStrucType"/>
 		</command>
+
 		<command id="CmdJumpToAcademicDomainList" label="Show in {0} list" message="JumpToTool">
 			<parameters tool="domainTypeEdit" className="CmPossibility" ownerClass="LexDb" ownerField="DomainTypes"/>
 		</command>
 		<command id="CmdJumpToAnthroList" label="Show in {0} list" message="JumpToTool">
 			<parameters tool="anthroEdit" className="CmAnthroItem" ownerClass="LangProject" ownerField="AnthroList"/>
 		</command>
-
 		<command id="CmdJumpToLexiconEditWithFilter" label="Filter for Lexical Entries with this category" message="JumpToLexiconEditFilterAnthroItems">
 			<parameters tool="lexiconEdit" className="CmAnthroItem" ownerClass="LangProject" ownerField="AnthroList"/>
 		</command>
 		<command id="CmdJumpToNotebookEditWithFilter" label="Filter for Notebook Records with this category" message="JumpToNotebookEditFilterAnthroItems">
 			<parameters tool="notebookEdit" className="CmAnthroItem" ownerClass="LangProject" ownerField="AnthroList"/>
 		</command>
-
 		<command id="CmdJumpToConfidenceList" label="Show in {0} list" message="JumpToTool">
 			<parameters tool="confidenceEdit" className="CmPossibility" ownerClass="LangProject" ownerField="ConfidenceLevels"/>
 		</command>
@@ -267,6 +300,16 @@
 			<item command="CmdInsertFeatureType" defaultVisible="false"/>
 			<item command="CmdDataTree-Insert-Possibility" defaultVisible="false" label="Subitem"/>
 			<item command="CmdDataTree-Insert-CustomItem" defaultVisible="false" label="Subitem"/>
+			<item command="CmdDuplicateSemDom" defaultVisible="false"/>
+			<item command="CmdDuplicateAnnotationDef" defaultVisible="false"/>
+			<item command="CmdDuplicatePossibility" defaultVisible="false"/>
+			<item command="CmdDuplicateCustomItem" defaultVisible="false"/>
+			<item command="CmdDuplicateMorphType" defaultVisible="false"/>
+			<item command="CmdDuplicateAnthroCategory" defaultVisible="false"/>
+			<item command="CmdDuplicatePerson" defaultVisible="false"/>
+			<item command="CmdDuplicateLocation" defaultVisible="false"/>
+			<item command="CmdDuplicateLexRefType" defaultVisible="false"/>
+			<item command="CmdDuplicateFeatureType" defaultVisible="false"/>
 		</toolbar>
 		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/toolbarsAddOn/*"/>
 	</toolbarsAddOn>

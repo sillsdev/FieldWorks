@@ -101,7 +101,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>  
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <OutputPath>..\..\Output\Debug\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
@@ -160,7 +160,7 @@
     </Reference>
     <Reference Include="SIL.Core.Desktop, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Downloads\SIL.Core.Desktop.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.Core.Desktop.dll</HintPath>
     </Reference>
     <Reference Include="ViewsInterfaces, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
@@ -172,7 +172,7 @@
     </Reference>
     <Reference Include="ExCss, Version=2.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Downloads\ExCSS.dll</HintPath>
+      <HintPath>..\..\Output\Debug\ExCSS.dll</HintPath>
     </Reference>
     <Reference Include="SIL.LCModel, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <HintPath>..\..\Output\Debug\SIL.LCModel.dll</HintPath>
@@ -239,23 +239,23 @@
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="SIL.Archiving">
-      <HintPath>..\..\Downloads\SIL.Archiving.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.Archiving.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Downloads\SIL.Core.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.Core.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Lift, Version=3.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Downloads\SIL.Lift.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.Lift.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Windows.Forms, Version=2.6.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Downloads\SIL.Windows.Forms.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.Windows.Forms.dll</HintPath>
     </Reference>
     <Reference Include="SIL.WritingSystems, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Downloads\SIL.WritingSystems.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.WritingSystems.dll</HintPath>
     </Reference>
     <Reference Include="SimpleRootSite, Version=6.1.1.30383, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\Output\Debug\SimpleRootSite.dll</HintPath>
@@ -492,6 +492,7 @@
     <Compile Include="NotebookExportDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="TreeBarHandlerUtils.cs" />
     <Compile Include="UploadToWebonaryController.cs" />
     <Compile Include="UploadToWebonaryDlg.cs">
       <SubType>Form</SubType>
@@ -597,6 +598,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DictionaryConfigurationTreeControl.resx">
       <DependentUpon>DictionaryConfigurationTreeControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="DictionaryDetailsView\GroupingOptionsView.resx">
       <DependentUpon>GroupingOptionsView.cs</DependentUpon>

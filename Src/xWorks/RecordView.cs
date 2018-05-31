@@ -13,10 +13,10 @@ using System;
 using System.IO;
 using System.Diagnostics;
 using System.Xml;
+using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using XCore;
 using SIL.LCModel;
-using SIL.FieldWorks.Common.Framework;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks
@@ -234,8 +234,8 @@ namespace SIL.FieldWorks.XWorks
 				SetTreebarAvailability();
 				AddPaneBar();
 
-				//Historical comments here indicated that the Clerk should be processed by the mediator before the
-				//view. This is handled by Priority now, RecordView is by default just after RecordClerk in the processing.
+				// Historical comments here indicated that the Clerk should be processed by the mediator before the
+				// view. This is handled by Priority now, RecordView is by default just after RecordClerk in the processing.
 				mediator.AddColleague(this);
 				SetupDataContext();
 				// Only if it was just now created should we try to restore from what we persisted.
@@ -373,7 +373,6 @@ namespace SIL.FieldWorks.XWorks
 			//
 			this.Name = "RecordView";
 			this.Size = new System.Drawing.Size(752, 150);
-
 		}
 		#endregion
 	}

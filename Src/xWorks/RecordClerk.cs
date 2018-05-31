@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -1395,7 +1395,7 @@ namespace SIL.FieldWorks.XWorks
 			// Don't handle this message if you're not the primary clerk.  This allows, for
 			// example, XmlBrowseRDEView.cs to handle the message instead.
 
-			// Note from RandyR: One of these days we should probably subclass this obejct, and perhaps the record list more.
+			// Note from RandyR: One of these days we should probably subclass this object, and perhaps the record list more.
 			// The "reversalEntries" clerk wants to handle the message, even though it isn't the primary clerk.
 			// The m_shouldHandleDeletion member was also added, so the "reversalEntries" clerk's primary clerk
 			// would not handle the message, and delete an entire reversal index.
@@ -2468,7 +2468,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// this is triggered by any command whose message attribute is "InsertItemInVector"
+		/// This is triggered by any command whose message attribute is "InsertItemInVector"
 		/// </summary>
 		/// <param name="argument"></param>
 		/// <returns>true if successful (the class is known)</returns>
@@ -2534,6 +2534,66 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			m_mediator.BroadcastMessage("FocusFirstPossibleSlice", null);
+			return result;
+		}
+
+		#endregion
+
+		#region Duplication
+
+		/// <summary>
+		/// Influence the display of a particular *command* (which we don't know the name of)
+		/// by giving an opinion on whether we are prepared to handle its corresponding "DuplicateItemInVector"
+		/// *message*.
+		/// </summary>
+		/// <param name="commandObject"></param>
+		/// <param name="display"></param>
+		/// <returns></returns>
+		public bool OnDisplayDuplicateItemInVector(object commandObject, ref UIItemDisplayProperties display)
+		{
+			var command = (Command)commandObject;
+
+			// Can't copy an item if items can't be inserted
+			bool canInsert = OnDisplayInsertItemInVector(commandObject, ref display);
+			if (!canInsert)
+				return display.Enabled = false;
+
+			// "noCopy" gets an xml value a group of list id's from lists that should not display the button
+			string noCopy = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "noCopy") ?? "";
+			return display.Enabled = !noCopy.Contains(Id);
+		}
+
+		/// <summary>
+		/// This is triggered by any command whose message attribute is "DuplicateItemInVector"
+		/// </summary>
+		/// <param name="argument"></param>
+		/// <returns></returns>
+		public bool OnDuplicateItemInVector(object argument)
+		{
+			CheckDisposed();
+
+			if (!Editable)
+				return false;
+
+			var command = (Command) argument;
+			bool result = false;
+			m_suppressSaveOnChangeRecord = true;
+			try
+			{
+				const int subitemFlid = 7004;
+				ICmPossibility original = (ICmPossibility) m_list.CurrentObject;
+				if(original.OwningFlid != subitemFlid && !original.ShortNameTSS.Text.Equals("???")) // Don't duplicate subitems or unnamed items
+					TreeBarHandlerUtils.Tree_Duplicate(original, 0, Cache);
+			}
+			catch (ApplicationException ae)
+			{
+				throw new ApplicationException("Could not duplicate the item requested by the command " + command.ConfigurationNode, ae);
+			}
+			finally
+			{
+				m_suppressSaveOnChangeRecord = false;
+			}
+
 			return result;
 		}
 
