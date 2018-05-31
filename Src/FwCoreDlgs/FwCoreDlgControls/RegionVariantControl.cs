@@ -406,7 +406,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				{
 					string code = m_variantAbbrev.Text.Trim();
 					IEnumerable<VariantSubtag> variantSubtags;
-					if (IetfLanguageTag.TryGetVariantSubtags(code, out variantSubtags))
+					if (IetfLanguageTag.TryGetVariantSubtags(code, out variantSubtags, m_variantNameString))
 					{
 						foreach (VariantSubtag variantSubtag in variantSubtags)
 							yield return variantSubtag;
@@ -645,29 +645,31 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 			VariantSubtag[] variantSubtags = VariantSubtags.ToArray();
 			// Can't allow a variant name without an abbreviation.
-			if (variantSubtags.Length == 0 && !string.IsNullOrEmpty(m_variantName.Text.Trim()))
+			if (string.IsNullOrEmpty(m_variantAbbrev.Text.Trim()) && !string.IsNullOrEmpty(m_variantName.Text.Trim()))
 			{
 				MessageBox.Show(FindForm(), FwCoreDlgControls.kstidMissingVarAbbr, caption);
 				return false;
 			}
-			foreach (VariantSubtag variantSubtag in variantSubtags)
-			{
-				if (variantSubtag.IsPrivateUse)
-				{
-					if (StandardSubtags.RegisteredVariants.Contains(variantSubtag.Code))
-					{
-						MessageBox.Show(FindForm(), FwCoreDlgControls.kstidDupVarAbbr, caption);
-						return false;
-					}
-					if (!IetfLanguageTag.IsValidPrivateUseCode(variantSubtag.Code))
-					{
-						MessageBox.Show(FindForm(), FwCoreDlgControls.kstidInvalidVarAbbr, caption);
-						return false;
-					}
-				}
-			}
+
 			if (variantSubtags.Length > 0)
 			{
+				foreach (VariantSubtag variantSubtag in variantSubtags)
+				{
+					if (variantSubtag.IsPrivateUse)
+					{
+						if (StandardSubtags.RegisteredVariants.Contains(variantSubtag.Code))
+						{
+							MessageBox.Show(FindForm(), FwCoreDlgControls.kstidDupVarAbbr, caption);
+							return false;
+						}
+						if (!IetfLanguageTag.IsValidPrivateUseCode(variantSubtag.Code))
+						{
+							MessageBox.Show(FindForm(), FwCoreDlgControls.kstidInvalidVarAbbr, caption);
+							return false;
+						}
+					}
+				}
+
 				List<string> parts = variantSubtags.Select(v => v.Code).ToList();
 				// If these subtags are private use, the first element of each must also be distinct.
 				if (m_ws.Language.IsPrivateUse)
@@ -833,7 +835,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				if (variantSubtag == WellKnownSubtags.IpaPhonemicPrivateUse || variantSubtag == WellKnownSubtags.IpaPhoneticPrivateUse)
 					m_variantAbbrev.Text = WellKnownSubtags.IpaVariant + "-x-" + variantSubtag.Code;
 				else
-					m_variantAbbrev.Text = variantSubtag.IsPrivateUse ? "x-" : variantSubtag.Code;
+					m_variantAbbrev.Text = variantSubtag.IsPrivateUse ? "x-" + variantSubtag.Code : variantSubtag.Code;
 				m_variantAbbrev.Enabled = variantSubtag.IsPrivateUse && !StandardSubtags.CommonPrivateUseVariants.Contains(variantSubtag);
 			}
 			else if (string.IsNullOrEmpty(variantName))
