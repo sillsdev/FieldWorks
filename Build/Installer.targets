@@ -92,7 +92,7 @@
 	<!-- ### Top Level Targets                                                                                  ### -->
 	<!-- ########################################################################################################## -->
 	<Target Name="BuildBaseInstaller" DependsOnTargets="RequirePlatform;GetDotNetFiles;CleanMasterOutputDir">
-		<CallTarget Targets="BuildProductMain;BuildProductBaseMsi;CopyBuildToMaster"/>
+		<MSBuild Projects="$(MSBuildProjectFullPath)" Properties="BuildingBaseInstaller=true" Targets="BuildProductMain;BuildProductBaseMsi;CopyBuildToMaster"/>
 	</Target>
 
 	<Target Name="BuildPatchInstaller" DependsOnTargets="RequirePlatform;BuildProductMain;BuildProductPatchMsp"/>
@@ -113,7 +113,7 @@
 	<!-- ### Compile Targets                                                                                    ### -->
 	<!-- ########################################################################################################## -->
 	<Target Name="ProductCompile" DependsOnTargets="remakefw">
-		<MSBuild Projects="$(fwrt)/PatchableInstaller/CustomActions/CustomActions.sln" Targets="CustomActions" Properties="Configuration=Release;Platform=x86"/>
+		<MSBuild Projects="$(InstallerDir)/CustomActions/CustomActions.sln" Targets="CustomActions" Properties="Configuration=Release;Platform=x86"/>
 	</Target>
 
 	<!-- Remove residue from the PatchableInstaller repository -->
@@ -123,7 +123,7 @@
 			<CustomizableDirs Include="$(OverridesDestDir)"/>
 			<CustomizableDirs Include="$(InstallerResourcesDir)"/>
 		</ItemGroup>
-		<ForceDelete Files="@(OutputSubdirs -> '$(fwrt)/PatchableInstaller/CustomActions/CustomActions/%(Identity)')" />
+		<ForceDelete Files="@(OutputSubdirs -> '$(InstallerDir)/CustomActions/CustomActions/%(Identity)')" />
 		<!-- git clean removes only files in the working directory and its subdirectories -->
 		<Exec WorkingDirectory="%(CustomizableDirs.Identity)" Command="git clean -xdf"/>
 		<Exec WorkingDirectory="%(CustomizableDirs.Identity)" Command="git checkout ."/>
@@ -235,7 +235,7 @@
 			<MergeModules Include="$(OutputDirForConfig)\xCoreInterfaces.XmlSerializers.*"/>
 			<!-- Binary files (and other files installed in the ProgramFiles\SIL\FieldWorks # directory -->
 			<BinFiles Include="$(OutputDirForConfig)\**\*" Exclude="@(L10nFiles)"/>
-			<!-- %(RecursiveDir) is only the "**\" portion. This hack recollects L10nFiles with the code as the recursive directory. -->
+			<!-- %(RecursiveDir) is only the "**\" portion. This hack recollects L10nFiles with the 2-letter language code as the recursive directory. -->
 			<L10nFilesWithRecursiveDirs Include="$(OutputDirForConfig)\**\*" Exclude="@(BinFiles)"/>
 			<!-- Now that we've used BinFiles to exclude all non-l10n files from L10nFilesWithRecursiveDirs,
 				we can remove MergeModules from BinFiles (MergeModules belong in neither ItemGroup). -->
@@ -252,104 +252,111 @@
 		<CallTarget Targets="HarvestL10n"/>
 	</Target>
 
-	<Target Name="HarvestL10n" DependsOnTargets="InstallerVersionNumbers">
-		<PropertyGroup>
-			<CommonHeatArgs>-gg -scom -sreg -sfrag -srd -sw5150 -sw5151 -t $(fwrt)/PatchableInstaller/BaseInstallerBuild/KeyPathFix.xsl</CommonHeatArgs>
-		</PropertyGroup>
+	<Target Name="HarvestL10n">
+		<!-- If this is the BASE installer, harvest once and generate component GUID's early because they don't meet the critera for late generation -->
+		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="HarvestAllL10ns" Condition="'$(BuildingBaseInstaller)'=='true'"
+			Properties="PatchPrefix=MASTER;GuidGenArg=-gg;L10nSrcDir=$(AppBuildDir)\$(L10nDirSuffix);L10nWxiDir=$(OverridesDestDir)/Master;FixKeyPath=true"/>
+		<!-- If this is the PATCH installer, harvest Master and Update sets and generate component GUID's late so they don't mismatch -->
+		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="HarvestAllL10ns" Condition="'$(BuildingBaseInstaller)'!='true'"
+			Properties="PatchPrefix=MASTER;GuidGenArg=-ag;L10nSrcDir=$(AppBuildMasterDir)\$(L10nDirSuffix);L10nWxiDir=$(OverridesDestDir)/Master;FixKeyPath=false"/>
+		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="HarvestAllL10ns" Condition="'$(BuildingBaseInstaller)'!='true'"
+			Properties="PatchPrefix=UPDATE;GuidGenArg=-ag;L10nSrcDir=$(AppBuildDir)\$(L10nDirSuffix);L10nWxiDir=$(OverridesDestDir)/Update;FixKeyPath=false"/>
+	</Target>
 
-		<!-- Harvest Localizations. If you change this list, you must also update those listed at $(fwrt)\Localizations\ReadMe.md -->
-		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\az $(CommonHeatArgs) -cg azLocalization -dr AZL10NFOLDER -var wix.AZL10NDIR -out $(OverridesDestDir)/azHarvest.wxs" />
-		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\es $(CommonHeatArgs) -cg esLocalization -dr ESL10NFOLDER -var wix.ESL10NDIR -out $(OverridesDestDir)/esHarvest.wxs" />
-		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\fa $(CommonHeatArgs) -cg faLocalization -dr FAL10NFOLDER -var wix.FAL10NDIR -out $(OverridesDestDir)/faHarvest.wxs" />
-		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\fr $(CommonHeatArgs) -cg frLocalization -dr FRL10NFOLDER -var wix.FRL10NDIR -out $(OverridesDestDir)/frHarvest.wxs" />
-		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\hi $(CommonHeatArgs) -cg hiLocalization -dr HIL10NFOLDER -var wix.HIL10NDIR -out $(OverridesDestDir)/hiHarvest.wxs" />
-		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\hu $(CommonHeatArgs) -cg huLocalization -dr HUL10NFOLDER -var wix.HUL10NDIR -out $(OverridesDestDir)/huHarvest.wxs" />
-		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\id $(CommonHeatArgs) -cg idLocalization -dr IDL10NFOLDER -var wix.IDL10NDIR -out $(OverridesDestDir)/idHarvest.wxs" />
-		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\ko $(CommonHeatArgs) -cg koLocalization -dr KOL10NFOLDER -var wix.KOL10NDIR -out $(OverridesDestDir)/koHarvest.wxs" />
-		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\ms $(CommonHeatArgs) -cg msLocalization -dr MSL10NFOLDER -var wix.MSL10NDIR -out $(OverridesDestDir)/msHarvest.wxs" />
-		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\pt $(CommonHeatArgs) -cg ptLocalization -dr PTL10NFOLDER -var wix.PTL10NDIR -out $(OverridesDestDir)/ptHarvest.wxs" />
-		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\ro $(CommonHeatArgs) -cg roLocalization -dr ROL10NFOLDER -var wix.ROL10NDIR -out $(OverridesDestDir)/roHarvest.wxs" />
-		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\ru $(CommonHeatArgs) -cg ruLocalization -dr RUL10NFOLDER -var wix.RUL10NDIR -out $(OverridesDestDir)/ruHarvest.wxs" />
-		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\te $(CommonHeatArgs) -cg teLocalization -dr TEL10NFOLDER -var wix.TEL10NDIR -out $(OverridesDestDir)/teHarvest.wxs" />
-		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\tr $(CommonHeatArgs) -cg trLocalization -dr TRL10NFOLDER -var wix.TRL10NDIR -out $(OverridesDestDir)/trHarvest.wxs" />
-		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\vi $(CommonHeatArgs) -cg viLocalization -dr VIL10NFOLDER -var wix.VIL10NDIR -out $(OverridesDestDir)/viHarvest.wxs" />
-		<Exec Command="heat.exe dir $(AppBuildDir)\$(L10nDirSuffix)\zh-CN $(CommonHeatArgs) -cg zhLocalization -dr ZHL10NFOLDER -var wix.ZHL10NDIR -out $(OverridesDestDir)/zhHarvest.wxs" />
-
+	<Target Name="HarvestAllL10ns">
+		<Message Text="Harvesting $(PatchPrefix) L10n"/>
+		<MakeDir Directories="$(L10nWxiDir)" Condition="!Exists('$(L10nWxiDir)')"/>
 		<ItemGroup>
-			<HarvestedWxsFiles Include="$(OverridesDestDir)\*.wxs"/>
+			<!-- If you change this list, you must also update those listed at $(fwrt)\Localizations\ReadMe.md -->
+			<TargetLocales Include="az;es;fa;fr;hi;hu;id;ko;ms;pt;ro;ru;te;tr;vi;zh-CN"/>
+		</ItemGroup>
+		<MSBuild Projects="$(MSBuildProjectFullPath)" Properties="TargetLocale=%(TargetLocales.Identity)" Targets="HarvestOneL10n"/>
+		<ItemGroup>
+			<HarvestedWxsFiles Include="$(L10nWxiDir)\*.wxs"/>
 		</ItemGroup>
 		<WxsToWxi SourceFile="%(HarvestedWxsFiles.Identity)"/>
+		<ForceDelete Files="@(HarvestedWxsFiles)"/>
+	</Target>
+
+	<Target Name="HarvestOneL10n">
+		<PropertyGroup>
+			<!-- Substring keeps Chinese the same length as everyone else -->
+			<TargetLocaleUpper>$(TargetLocale.Substring(0,2).ToUpperInvariant())</TargetLocaleUpper>
+			<TargetLocaleLower>$(TargetLocale.Substring(0,2).ToLowerInvariant())</TargetLocaleLower>
+			<KeyPathFixArg Condition="'$(FixKeyPath)'=='true'">-t $(InstallerDir)/BaseInstallerBuild/KeyPathFix.xsl</KeyPathFixArg>
+			<CommonHeatArgs>$(GuidGenArg) -scom -sreg -sfrag -srd -sw5150 -sw5151 $(KeyPathFixArg)</CommonHeatArgs>
+		</PropertyGroup>
+		<Exec Command="heat.exe dir $(L10nSrcDir)\$(TargetLocale) $(CommonHeatArgs) -cg $(TargetLocaleLower)Localization -dr $(TargetLocaleUpper)L10NFOLDER -var wix.$(TargetLocaleUpper)_$(PatchPrefix)L10NDIR -out $(L10nWxiDir)\$(TargetLocaleLower)Harvest.wxs" />
 	</Target>
 
 	<Target Name="CopyBuildToMaster">
 		<ItemGroup>
-			<ObjectFiles Include="$(AppBuildDir)/objects/**/*"/>
+			<ObjectFiles Include="$(AppBuildDir)/**/*"/>
 		</ItemGroup>
-		<Copy SourceFiles="@(ObjectFiles)" DestinationFolder="$(AppBuildMasterDir)/objects/%(RecursiveDir)"/>
-		<Copy SourceFiles="$(AppBuildDir)/version" DestinationFolder="$(AppBuildMasterDir)"/>
+		<Copy SourceFiles="@(ObjectFiles)" DestinationFolder="$(AppBuildMasterDir)/%(RecursiveDir)"/>
 	</Target>
 
 	<Target Name="GetDotNetFiles" >
 		<!-- REVIEW (Hasso) 2018.03: how many of these do we really need? -->
 		<PropertyGroup>
-			<WixLibsDir>PatchableInstaller/libs/</WixLibsDir>
+			<WixLibsDir>$(InstallerDir)/libs/</WixLibsDir>
 		</PropertyGroup>
 		<DownloadFile Address="http://go.microsoft.com/fwlink/?LinkId=322115"
-			LocalFilename="$(fwrt)/$(WixLibsDir)/NDP451-KB2858728-x86-x64-AllOS-ENU.exe"
-			Condition="!Exists('$(fwrt)/$(WixLibsDir)/NDP451-KB2858728-x86-x64-AllOS-ENU.exe')" DownloadsDir="$(fwrt)/Downloads" /> <!-- .net 4.5.1 -->
+			LocalFilename="$(WixLibsDir)/NDP451-KB2858728-x86-x64-AllOS-ENU.exe"
+			Condition="!Exists('$(WixLibsDir)/NDP451-KB2858728-x86-x64-AllOS-ENU.exe')" DownloadsDir="$(fwrt)/Downloads" /> <!-- .net 4.5.1 -->
 		<DownloadFile Address="https://download.microsoft.com/download/1/1/1/1116b75a-9ec3-481a-a3c8-1777b5381140/vcredist_x86.exe "
-			LocalFilename="$(fwrt)/$(WixLibsDir)/vcredist_2008_x86.exe"
-			Condition="!Exists('$(fwrt)/$(WixLibsDir)/vcredist_2008_x86.exe') And $(Platform)!='x64'"
-			DownloadsDir="$(fwrt)/$(WixLibsDir)"/>			<!-- VisualC++ 8 runtime -->
+			LocalFilename="$(WixLibsDir)/vcredist_2008_x86.exe"
+			Condition="!Exists('$(WixLibsDir)/vcredist_2008_x86.exe') And $(Platform)!='x64'"
+			DownloadsDir="$(WixLibsDir)"/>			<!-- VisualC++ 8 runtime -->
 		<DownloadFile Address="https://download.microsoft.com/download/5/B/C/5BC5DBB3-652D-4DCE-B14A-475AB85EEF6E/vcredist_x86.exe"
-			LocalFilename="$(fwrt)/$(WixLibsDir)/vcredist_x86.exe"
-			Condition="!Exists('$(fwrt)/$(WixLibsDir)/vcredist_x86.exe') And $(Platform)!='x64'"
-			DownloadsDir="$(fwrt)/$(WixLibsDir)"/>			<!-- VisualC++ 10 runtime -->
+			LocalFilename="$(WixLibsDir)/vcredist_x86.exe"
+			Condition="!Exists('$(WixLibsDir)/vcredist_x86.exe') And $(Platform)!='x64'"
+			DownloadsDir="$(WixLibsDir)"/>			<!-- VisualC++ 10 runtime -->
 		<DownloadFile Address="https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x86.exe"
-			LocalFilename="$(fwrt)/$(WixLibsDir)/vcredist_2012_x86.exe"
-			Condition="!Exists('$(fwrt)/$(WixLibsDir)/vcredist_2012_x86.exe') And $(Platform)!='x64'"
-			DownloadsDir="$(fwrt)/$(WixLibsDir)"/>	<!-- VisualC++ 11 runtime -->
+			LocalFilename="$(WixLibsDir)/vcredist_2012_x86.exe"
+			Condition="!Exists('$(WixLibsDir)/vcredist_2012_x86.exe') And $(Platform)!='x64'"
+			DownloadsDir="$(WixLibsDir)"/>	<!-- VisualC++ 11 runtime -->
 		<DownloadFile Address="http://download.microsoft.com/download/0/5/6/056dcda9-d667-4e27-8001-8a0c6971d6b1/vcredist_x86.exe"
-			LocalFilename="$(fwrt)/$(WixLibsDir)/vcredist_2013_x86.exe"
-			Condition="!Exists('$(fwrt)/$(WixLibsDir)/vcredist_2013_x86.exe') And $(Platform)!='x64'"
-			DownloadsDir="$(fwrt)/$(WixLibsDir)"/>	<!-- VisualC++ 12 runtime -->
+			LocalFilename="$(WixLibsDir)/vcredist_2013_x86.exe"
+			Condition="!Exists('$(WixLibsDir)/vcredist_2013_x86.exe') And $(Platform)!='x64'"
+			DownloadsDir="$(WixLibsDir)"/>	<!-- VisualC++ 12 runtime -->
 		<DownloadFile Address="https://download.microsoft.com/download/9/3/F/93FCF1E7-E6A4-478B-96E7-D4B285925B00/vc_redist.x86.exe"
-			LocalFilename="$(fwrt)/$(WixLibsDir)/vcredist_2015_x86.exe"
-			Condition="!Exists('$(fwrt)/$(WixLibsDir)/vcredist_2015_x86.exe') And $(Platform)!='x64'"
-			DownloadsDir="$(fwrt)/$(WixLibsDir)"/>	<!-- VisualC++ 14 runtime -->
+			LocalFilename="$(WixLibsDir)/vcredist_2015_x86.exe"
+			Condition="!Exists('$(WixLibsDir)/vcredist_2015_x86.exe') And $(Platform)!='x64'"
+			DownloadsDir="$(WixLibsDir)"/>	<!-- VisualC++ 14 runtime -->
 		<DownloadFile Address="https://download.visualstudio.microsoft.com/download/pr/11687613/88b50ce70017bf10f2d56d60fcba6ab1/VC_redist.x86.exe"
-			LocalFilename="$(fwrt)/$(WixLibsDir)/vcredist_2017_x86.exe"
-			Condition="!Exists('$(fwrt)/$(WixLibsDir)/vcredist_2017_x86.exe') And $(Platform)!='x64'"
-			DownloadsDir="$(fwrt)/$(WixLibsDir)"/>	<!-- VisualC++ 14.1 runtime -->
+			LocalFilename="$(WixLibsDir)/vcredist_2017_x86.exe"
+			Condition="!Exists('$(WixLibsDir)/vcredist_2017_x86.exe') And $(Platform)!='x64'"
+			DownloadsDir="$(WixLibsDir)"/>	<!-- VisualC++ 14.1 runtime -->
 		<!-- 64bit redistributables -->
 		<DownloadFile Address="https://download.microsoft.com/download/d/2/4/d242c3fb-da5a-4542-ad66-f9661d0a8d19/vcredist_x64.exe	"
-			LocalFilename="$(fwrt)/$(WixLibsDir)/vcredist_2008_x64.exe"
-			Condition="!Exists('$(fwrt)/$(WixLibsDir)/vcredist_2008_x64.exe') And $(Platform)=='x64'"
-			DownloadsDir="$(fwrt)/$(WixLibsDir)"/>
+			LocalFilename="$(WixLibsDir)/vcredist_2008_x64.exe"
+			Condition="!Exists('$(WixLibsDir)/vcredist_2008_x64.exe') And $(Platform)=='x64'"
+			DownloadsDir="$(WixLibsDir)"/>
 		<DownloadFile Address="https://download.microsoft.com/download/3/2/2/3224B87F-CFA0-4E70-BDA3-3DE650EFEBA5/vcredist_x64.exe"
-			LocalFilename="$(fwrt)/$(WixLibsDir)/vcredist_x64.exe"
-			Condition="!Exists('$(fwrt)/$(WixLibsDir)/vcredist_x64.exe') And $(Platform)=='x64'"
-			DownloadsDir="$(fwrt)/$(WixLibsDir)"/>			<!-- VisualC++ 10 runtime -->
+			LocalFilename="$(WixLibsDir)/vcredist_x64.exe"
+			Condition="!Exists('$(WixLibsDir)/vcredist_x64.exe') And $(Platform)=='x64'"
+			DownloadsDir="$(WixLibsDir)"/>			<!-- VisualC++ 10 runtime -->
 		<DownloadFile Address="https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x64.exe"
-			LocalFilename="$(fwrt)/$(WixLibsDir)/vcredist_2012_x64.exe"
-			Condition="!Exists('$(fwrt)/$(WixLibsDir)/vcredist_2012_x64.exe') And $(Platform)=='x64'"
-			DownloadsDir="$(fwrt)/$(WixLibsDir)"/>	<!-- VisualC++ 11 runtime -->
+			LocalFilename="$(WixLibsDir)/vcredist_2012_x64.exe"
+			Condition="!Exists('$(WixLibsDir)/vcredist_2012_x64.exe') And $(Platform)=='x64'"
+			DownloadsDir="$(WixLibsDir)"/>	<!-- VisualC++ 11 runtime -->
 		<DownloadFile Address="https://download.microsoft.com/download/2/E/6/2E61CFA4-993B-4DD4-91DA-3737CD5CD6E3/vcredist_x64.exe"
-			LocalFilename="$(fwrt)/$(WixLibsDir)/vcredist_2013_x64.exe"
-			Condition="!Exists('$(fwrt)/$(WixLibsDir)/vcredist_2013_x64.exe') And $(Platform)=='x64'"
-			DownloadsDir="$(fwrt)/$(WixLibsDir)"/>	<!-- VisualC++ 12 runtime -->
+			LocalFilename="$(WixLibsDir)/vcredist_2013_x64.exe"
+			Condition="!Exists('$(WixLibsDir)/vcredist_2013_x64.exe') And $(Platform)=='x64'"
+			DownloadsDir="$(WixLibsDir)"/>	<!-- VisualC++ 12 runtime -->
 		<DownloadFile Address="https://download.microsoft.com/download/9/3/F/93FCF1E7-E6A4-478B-96E7-D4B285925B00/vc_redist.x64.exe"
-			LocalFilename="$(fwrt)/$(WixLibsDir)/vcredist_2015_x64.exe"
-			Condition="!Exists('$(fwrt)/$(WixLibsDir)/vcredist_2015_x64.exe') And $(Platform)=='x64'"
-			DownloadsDir="$(fwrt)/$(WixLibsDir)"/>	<!-- VisualC++ 14 runtime -->
+			LocalFilename="$(WixLibsDir)/vcredist_2015_x64.exe"
+			Condition="!Exists('$(WixLibsDir)/vcredist_2015_x64.exe') And $(Platform)=='x64'"
+			DownloadsDir="$(WixLibsDir)"/>	<!-- VisualC++ 14 runtime -->
 		<DownloadFile Address="https://download.visualstudio.microsoft.com/download/pr/11687625/2cd2dba5748dc95950a5c42c2d2d78e4/VC_redist.x64.exe"
-			LocalFilename="$(fwrt)/$(WixLibsDir)/vcredist_2017_x64.exe"
-			Condition="!Exists('$(fwrt)/$(WixLibsDir)/vcredist_2017_x64.exe') And $(Platform)=='x64'"
-			DownloadsDir="$(fwrt)/$(WixLibsDir)"/>	<!-- VisualC++ 14.1 runtime -->
+			LocalFilename="$(WixLibsDir)/vcredist_2017_x64.exe"
+			Condition="!Exists('$(WixLibsDir)/vcredist_2017_x64.exe') And $(Platform)=='x64'"
+			DownloadsDir="$(WixLibsDir)"/>	<!-- VisualC++ 14.1 runtime -->
 		<DownloadFile Address="https://build.palaso.org/guestAuth/repository/download/FLExBridgeDevelopWin32InstallerSansPublish/.lastSuccessful/FLExBridge_Offline.exe"
-			LocalFilename="$(fwrt)/$(WixLibsDir)/FLExBridge_Offline.exe"
-			Condition="!Exists('$(fwrt)/$(WixLibsDir)/FLExBridge_Offline.exe')"
-			DownloadsDir="$(fwrt)/$(WixLibsDir)"/>	<!-- FlexBridge Installer download -->
+			LocalFilename="$(WixLibsDir)/FLExBridge_Offline.exe"
+			Condition="!Exists('$(WixLibsDir)/FLExBridge_Offline.exe')"
+			DownloadsDir="$(WixLibsDir)"/>	<!-- FlexBridge Installer download -->
 	</Target>
 
 	<!-- ########################################################################################################## -->
@@ -364,7 +371,7 @@
 		<Message Text="Building FieldWorks Base Msi for $(Arch)" Condition="'$(action)'!='test'"/>
 		<PropertyGroup>
 			<MsiFile>$(SafeApplicationName)_$(Revision).msi</MsiFile>
-			<BaseBuildDir>$(fwrt)/PatchableInstaller/BaseInstallerBuild</BaseBuildDir>
+			<BaseBuildDir>$(InstallerDir)/BaseInstallerBuild</BaseBuildDir>
 			<BaseBuildArgs>"$(ApplicationName)" $(SafeApplicationName) $(BuildVersion) $(ProductIdGuid) $(UpgradeCodeGuid) "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(CopyrightYear) "$(Manufacturer)" $(Arch)</BaseBuildArgs>
 		</PropertyGroup>
 		<Exec WorkingDirectory="$(BaseBuildDir)" Command="buildBaseInstaller.bat $(BaseBuildArgs)" />
@@ -385,7 +392,7 @@
 		</ReadLinesFromFile>
 		<PropertyGroup>
 			<MspFile>$(SafeApplicationName)_$(BuildVersion).msp</MspFile>
-			<PatchDir>$(fwrt)/PatchableInstaller/CreateUpdatePatch</PatchDir>
+			<PatchDir>$(InstallerDir)/CreateUpdatePatch</PatchDir>
 			<PatchArgs>"$(ApplicationName)" $(SafeApplicationName) $(BaseVersion) $(BuildVersion) "$(AppBuildMasterDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildMasterDir)/$(DataDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(ProductIdGuid) $(UpgradeCodeGuid) $(CompGGS) "$(Manufacturer)" $(Arch)</PatchArgs>
 		</PropertyGroup>
 
