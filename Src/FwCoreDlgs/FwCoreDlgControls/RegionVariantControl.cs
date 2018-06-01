@@ -283,6 +283,9 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			get
 			{
+				if (DesignMode)
+					return null;
+
 				CheckDisposed();
 
 				ScriptSubtag subtag = null;
