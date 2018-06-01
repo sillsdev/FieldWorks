@@ -117,56 +117,34 @@ namespace LanguageExplorer.Controls.DetailControls
 			vrl.Visible = false;
 		}
 
-		public bool OnMoveTargetDownInSequence(object args)
+		public void MoveTargetDownInSequence()
 		{
-			GetView().MoveItem(false);
-			return true;
+			MyView.MoveItem(false);
 		}
 
-#if RANDYTODO
-		public virtual bool OnDisplayMoveTargetDownInSequence(object commandObject, ref UIItemDisplayProperties display)
+		public bool CanDisplayMoveTargetDownInSequence(out bool visible)
 		{
-			bool visible;
-			display.Enabled = GetView().CanMoveItem(false, out visible);
-			display.Visible = visible;
-			return true;
-		}
-#endif
-
-		public bool OnMoveTargetUpInSequence(object args)
-		{
-			GetView().MoveItem(true);
-			return true;
+			return MyView.CanMoveItem(false, out visible);
 		}
 
-#if RANDYTODO
-		public virtual bool OnDisplayMoveTargetUpInSequence(object commandObject, ref UIItemDisplayProperties display)
+		public void MoveTargetUpInSequence()
 		{
-			bool visible;
-			display.Enabled = GetView().CanMoveItem(true, out visible);
-			display.Visible = visible;
-			return true;
-		}
-#endif
-
-		public bool OnAlphabeticalOrder(object args)
-		{
-			GetView().RemoveOrdering();
-			return true;
+			MyView.MoveItem(true);
 		}
 
-#if RANDYTODO
-		public virtual bool OnDisplayAlphabeticalOrder(object commandObject, ref UIItemDisplayProperties display)
+		public bool CanDisplayMoveTargetUpInSequence(out bool visible)
 		{
-			display.Enabled = display.Visible = GetView().RootPropertySupportsVirtualOrdering();
-			return true;
+			return MyView.CanMoveItem(true, out visible);
 		}
-#endif
 
-		private VectorReferenceView GetView()
+		public void AlphabeticalOrder()
 		{
-			return ((VectorReferenceLauncher)Control).MainControl as VectorReferenceView;
+			MyView.RemoveOrdering();
 		}
+
+		public bool CanAlphabeticalOrder => MyView.RootPropertySupportsVirtualOrdering();
+
+		private VectorReferenceView MyView => (VectorReferenceView)((VectorReferenceLauncher)Control).MainControl;
 
 		protected override void OnSizeChanged(EventArgs e)
 		{

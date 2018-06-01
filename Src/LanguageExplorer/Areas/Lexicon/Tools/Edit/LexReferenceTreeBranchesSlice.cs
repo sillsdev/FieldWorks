@@ -20,13 +20,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		#region ILexReferenceSlice Members
 
-#if RANDYTODO
-		public override bool HandleDeleteCommand(Command cmd)
+		public override bool HandleDeleteCommand()
 		{
-			((LexReferenceMultiSlice)m_parentSlice).DeleteReference(GetObjectForMenusToOperateOn() as ILexReference);
+			((LexReferenceMultiSlice)ParentSlice).DeleteReference(GetObjectForMenusToOperateOn() as ILexReference);
 			return true; // delete was done
 		}
-#endif
 
 		/// <summary />
 		public override void HandleLaunchChooser()

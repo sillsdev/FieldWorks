@@ -2241,7 +2241,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				MakeMoveItems(clickedCell, menu, itemMoveWordForward_Click, itemMoveWordBack_Click, LanguageExplorerResources.ksMoveWordMenuItem);
 			}
 
-			menu.Items.Add(new ToolStripSeparator());
+			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(menu);
 
 			// Menu items allowing the user to toggle whether the line ends a paragraph.
 			var itemREP = new OneValMenuItem(LanguageExplorerResources.ksRowEndsParaMenuItem, clickedCell.HvoRow)
@@ -2295,7 +2295,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			menu.Items.Add(itemCFH);
 			itemCFH.Click += itemCFH_Click;
 
-			menu.Items.Add(new ToolStripSeparator());
+			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(menu);
 
 			// Menu items for inserting arbitrary markers from the ChartMarkers list.
 			var chartMarkerList = Cache.LangProject.DiscourseDataOA.ChartMarkersOA;

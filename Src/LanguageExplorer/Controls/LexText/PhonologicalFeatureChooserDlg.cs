@@ -290,14 +290,14 @@ namespace LanguageExplorer.Controls.LexText
 			if (m_link != null)
 			{
 				var commands = new List<string>
-									{
-										"AboutToFollowLink",
-										"FollowLink"
-									};
-				var parms = new List<object>
 				{
 					"AboutToFollowLink",
 					"FollowLink"
+				};
+				var parms = new List<object>
+				{
+					null,
+					m_link
 				};
 				m_publisher.Publish(commands, parms);
 			}

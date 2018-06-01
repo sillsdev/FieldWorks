@@ -319,6 +319,7 @@
     <Compile Include="Areas\InsertOption.cs" />
     <Compile Include="Areas\IPreferedTargetAdjuster.cs" />
     <Compile Include="Areas\IToolUiWidgetManager.cs" />
+    <Compile Include="Areas\Lexicon\LexiconAreaConstants.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolDataTreeMainPanelContextMenuStripManager.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolDataTreeStackLexEntryManager.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolDataTreeStackLexSenseManager.cs" />

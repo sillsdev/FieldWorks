@@ -1165,7 +1165,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 
 			if (btnCount > 0)
 			{
-				contextMenuStrip.Items.Add(new ToolStripSeparator());
+				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 			}
 
 			foreach (OutlookBarButton btn in Buttons)

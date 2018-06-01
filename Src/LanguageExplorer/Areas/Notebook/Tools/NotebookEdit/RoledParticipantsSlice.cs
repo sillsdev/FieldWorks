@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
@@ -194,7 +195,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			tsdropdown.Items.Add(itemHidden);
 			var fieldVis = new ToolStripMenuItem(LanguageExplorerResources.ksFieldVisibility) { DropDown = tsdropdown };
 
-			contextMenuStrip.Items.Add(new ToolStripSeparator());
+			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 			contextMenuStrip.Items.Add(fieldVis);
 #if RANDYTODO
 			Image imgHelp = ContainingDataTree.SmallImages.GetImage("Help");

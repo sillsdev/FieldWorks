@@ -570,7 +570,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 
 				// Add menu separator here
-				menu.Items.Add(new ToolStripSeparator());
+				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(menu);
 
 				// 5) Add Line > (submenu of currently hidden lines)
 				var addLineSubMenu = new ToolStripMenuItem(ITextStrings.ksAddLine);

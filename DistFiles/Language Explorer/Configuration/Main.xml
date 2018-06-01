@@ -11,7 +11,6 @@
 	   where the default tool is defined for each 'Area' of FLEX-->
 	<!-- The main sections of this file are the following
 	commands
-	controls (dialog or embedded browse view)
 	menubar
 	contextMenus
 	toolbars
@@ -35,9 +34,6 @@
 		<command id="CmdStartLogging" label="Start Logging" message="StartLogging"/>
 		<command id="CmdRequestDebugInfo" label="Request Debug Info" message="RequestDebugInfo" shortcut="Ctrl+Shift+I"/>
 		<command id="CmdExportText" label="Export Text of browse view" message="ExportText" shortcut="Ctrl+Shift+E"/>
-		<command id="CmdMoveTargetToPreviousInSequence" label="Move Left" message="MoveTargetDownInSequence"/>
-		<command id="CmdMoveTargetToNextInSequence" label="Move Right" message="MoveTargetUpInSequence"/>
-		<command id="CmdAlphabeticalOrder" label="Alphabetical Order" message="AlphabeticalOrder"/>
 		<!-- These are all here for now, rather than down in some area, because we have at the moment in a single
 			 "jump to" menu, which just gets items hidden or displayed based on the context. -->
 		<command id="CmdVisibleComplexForm" label="Referenced Complex Form" message="VisibleComplexForm">
@@ -395,11 +391,6 @@
 			<item command="CmdVisibleComplexForm"/>
 			<item command="CmdMoveTargetToPreviousInSequence"/>
 			<item command="CmdMoveTargetToNextInSequence"/>
-		</menu>
-		<menu id="mnuReorderVector">
-			<item command= "CmdMoveTargetToPreviousInSequence"/>
-			<item command ="CmdMoveTargetToNextInSequence"/>
-			<item command="CmdAlphabeticalOrder"/>
 		</menu>
 		<menu id="mnuBrowseHeader">
 			<item label="Sorted From End" boolProperty="SortedFromEnd"/>

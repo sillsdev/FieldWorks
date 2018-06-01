@@ -10,6 +10,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using LanguageExplorer.Controls;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
@@ -442,7 +443,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void AddFinalContextMenuStripOptions(ContextMenuStrip contextMenuStrip)
 		{
-			contextMenuStrip.Items.Add(new ToolStripSeparator());
+			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 			contextMenuStrip.Items.Add(new ToolStripMenuItem(LanguageExplorerResources.ksCreateLexRefType_, null, new EventHandler(this.HandleMoreMenuItem)));
 
 			ToolStripDropDownMenu tsdropdown = new ToolStripDropDownMenu();
@@ -464,7 +465,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				DropDown = tsdropdown
 			};
 
-			contextMenuStrip.Items.Add(new ToolStripSeparator());
+			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 			contextMenuStrip.Items.Add(fieldVis);
 #if RANDYTODO
 			Image imgHelp = ContainingDataTree.SmallImages.GetImage("Help");

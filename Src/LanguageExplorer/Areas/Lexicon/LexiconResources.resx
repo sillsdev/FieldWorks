@@ -444,4 +444,28 @@
   <data name="Swap_Lexeme_Form_with_Allomorph" xml:space="preserve">
     <value>Swap Lexeme Form with Allomorph...</value>
   </data>
+  <data name="Add_another_Variant_Info_section" xml:space="preserve">
+    <value>Add another Variant Info section</value>
+  </data>
+  <data name="Add_another_Variant_Info_section_Tooltip" xml:space="preserve">
+    <value>This Lexeme Form is also another kind of variant. Add the fields for me to specify the related form(s) and the variant type(s).</value>
+  </data>
+  <data name="Alphabetical_Order" xml:space="preserve">
+    <value>Alphabetical Order</value>
+  </data>
+  <data name="Move_Left" xml:space="preserve">
+    <value>Move Left</value>
+  </data>
+  <data name="Move_Right" xml:space="preserve">
+    <value>Move Right</value>
+  </data>
+  <data name="Move_Variant_Info_Down" xml:space="preserve">
+    <value>Move Variant Info Down</value>
+  </data>
+  <data name="Move_Variant_Info_Up" xml:space="preserve">
+    <value>Move Variant Info Up</value>
+  </data>
+  <data name="Delete_Complex_Form_Info" xml:space="preserve">
+    <value>Delete Complex Form Info</value>
+  </data>
 </root>

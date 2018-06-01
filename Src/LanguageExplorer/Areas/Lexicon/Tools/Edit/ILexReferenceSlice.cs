@@ -10,9 +10,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	internal interface ILexReferenceSlice
 	{
 		Slice ParentSlice { get; set; }
-#if RANDYTODO
-		bool HandleDeleteCommand(Command cmd);
-#endif
+		bool HandleDeleteCommand();
 		void HandleLaunchChooser();
 		void HandleEditCommand();
 	}

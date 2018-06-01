@@ -123,7 +123,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_show_DictionaryPubPreviewContextMenu.Checked = _propertyTable.GetValue<bool>(LexiconEditToolConstants.Show_DictionaryPubPreview);
 
 			// Separator
-			contextMenuStrip.Items.Add(new ToolStripSeparator());
+			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
 			// Insert_Sense menu item. (CmdInsertSense->msg: DataTreeInsert, also on Insert menu)
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconEditToolConstants.CmdInsertSense], LexiconResources.Insert_Sense, LexiconResources.InsertSenseToolTip);
@@ -147,7 +147,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconEditToolConstants.CmdDataTree_Insert_Etymology], LexiconResources.Insert_Etymology, LexiconResources.Insert_Etymology_Tooltip);
 
 			// Separator
-			contextMenuStrip.Items.Add(new ToolStripSeparator());
+			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
 			// Lexeme Form has components. (CmdChangeToComplexForm->msg: ConvertEntryIntoComplexForm)
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdChangeToComplexForm_Clicked, LexiconResources.Lexeme_Form_Has_Components, LexiconResources.Lexeme_Form_Has_Components_Tooltip);
@@ -163,7 +163,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			contextMenuItem.Enabled = _cache.LanguageProject.LexDbOA.Entries.Any();
 
 			// Separator
-			contextMenuStrip.Items.Add(new ToolStripSeparator());
+			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
 			// Show Entry in Concordance menu item. (CmdRootEntryJumpToConcordance->msg: JumpToTool)
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdRootEntryJumpToConcordance_Clicked, LexiconResources.Show_Entry_In_Concordance);

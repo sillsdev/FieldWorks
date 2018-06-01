@@ -141,5 +141,14 @@ namespace LanguageExplorer.Controls
 
 			return newToolStripSeparator;
 		}
+
+		internal static ToolStripSeparator CreateToolStripSeparatorForContextMenuStrip(ContextMenuStrip mainMenuStrip, int insertIndex = int.MaxValue)
+		{
+			var newToolStripSeparator = new ToolStripSeparator();
+
+			InsertToolStripMenuItem(mainMenuStrip.Items, newToolStripSeparator, insertIndex);
+
+			return newToolStripSeparator;
+		}
 	}
 }

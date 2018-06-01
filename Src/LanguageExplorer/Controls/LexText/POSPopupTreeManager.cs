@@ -116,7 +116,7 @@ namespace LanguageExplorer.Controls.LexText
 						{
 							// Post a message so that we jump to Grammar(area)/Categories tool.
 							// Do this before we close any parent dialog in case
-							// the parent wants to check to see if such a Jump is pending.
+							// the parent wants to check to see if such a Jump is pending (via "AboutToFollowLink").
 							// NOTE: We use PostMessage here, rather than SendMessage which
 							// disposes of the PopupTree before we and/or our parents might
 							// be finished using it (cf. LT-2563).

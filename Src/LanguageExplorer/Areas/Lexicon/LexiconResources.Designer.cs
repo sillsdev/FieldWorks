@@ -61,6 +61,24 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add another Variant Info section.
+        /// </summary>
+        internal static string Add_another_Variant_Info_section {
+            get {
+                return ResourceManager.GetString("Add_another_Variant_Info_section", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This Lexeme Form is also another kind of variant. Add the fields for me to specify the related form(s) and the variant type(s)..
+        /// </summary>
+        internal static string Add_another_Variant_Info_section_Tooltip {
+            get {
+                return ResourceManager.GetString("Add_another_Variant_Info_section_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to All Entries.
         /// </summary>
         internal static string AllEntries {
@@ -75,6 +93,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string Allomorph {
             get {
                 return ResourceManager.GetString("Allomorph", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alphabetical Order.
+        /// </summary>
+        internal static string Alphabetical_Order {
+            get {
+                return ResourceManager.GetString("Alphabetical_Order", resourceCulture);
             }
         }
         
@@ -131,6 +158,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string Convert_to_Affix_Process {
             get {
                 return ResourceManager.GetString("Convert_to_Affix_Process", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Complex Form Info.
+        /// </summary>
+        internal static string Delete_Complex_Form_Info {
+            get {
+                return ResourceManager.GetString("Delete_Complex_Form_Info", resourceCulture);
             }
         }
         
@@ -827,6 +863,42 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string MergeWithEntry {
             get {
                 return ResourceManager.GetString("MergeWithEntry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move Left.
+        /// </summary>
+        internal static string Move_Left {
+            get {
+                return ResourceManager.GetString("Move_Left", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move Right.
+        /// </summary>
+        internal static string Move_Right {
+            get {
+                return ResourceManager.GetString("Move_Right", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move Variant Info Down.
+        /// </summary>
+        internal static string Move_Variant_Info_Down {
+            get {
+                return ResourceManager.GetString("Move_Variant_Info_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move Variant Info Up.
+        /// </summary>
+        internal static string Move_Variant_Info_Up {
+            get {
+                return ResourceManager.GetString("Move_Variant_Info_Up", resourceCulture);
             }
         }
         

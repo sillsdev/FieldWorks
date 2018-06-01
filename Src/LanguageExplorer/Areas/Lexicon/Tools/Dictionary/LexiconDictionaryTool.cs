@@ -217,7 +217,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			}
 			if (doesNotHavePub.Any())
 			{
-				contextMenuStrip.Items.Add(new ToolStripSeparator());
+				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 				foreach (var config in doesNotHavePub)
 				{
 					currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Configuration_Clicked, config.Key);
@@ -226,7 +226,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 				}
 			}
 
-			contextMenuStrip.Items.Add(new ToolStripSeparator());
+			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, ConfigureDictionary_Clicked, LexiconResources.ConfigureDictionary);
 
 			return retVal;
@@ -267,7 +267,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			var pubName = _xhtmlDocView.GetCurrentPublication();
 			currentToolStripMenuItem.Checked = (LanguageExplorerResources.AllEntriesPublication == pubName);
 
-			contextMenuStrip.Items.Add(new ToolStripSeparator());
+			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
 			List<string> inConfig;
 			List<string> notInConfig;
@@ -281,7 +281,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			}
 			if (notInConfig.Any())
 			{
-				contextMenuStrip.Items.Add(new ToolStripSeparator());
+				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 				foreach (var pub in notInConfig)
 				{
 					currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Publication_Clicked, pub);
@@ -290,7 +290,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 				}
 			}
 
-			contextMenuStrip.Items.Add(new ToolStripSeparator());
+			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, EditPublications_Clicked, LexiconResources.EditPublications);
 
 			return retVal;

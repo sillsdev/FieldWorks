@@ -76,7 +76,6 @@
 	<item id="CmdInsertLexEntryType">Create a new {0}.</item>
 	<item id="CmdDataTree-Insert-LexEntryType">Insert a new subtype in this type.</item>
 	<item id="CmdInsertVariant" a10status="DONE" >Add a Variant Form to this entry</item>
-	<item id="CmdDataTree-Insert-VariantSpec">This Lexeme Form is also another kind of variant. Add the fields for me to specify the related form(s) and the variant type(s).</item>
 	<item id="CmdInsertAnthroCategory">Create a new anthropology category.</item>
 	<item id="CmdInsertLocation">Create a new location.</item>
 	<item id="CmdInsertPerson">Add a new person.</item>

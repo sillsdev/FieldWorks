@@ -1567,7 +1567,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary>
-		/// If the user clicked on a link label, post a message via the mediator to jump to that
+		/// If the user clicked on a link label, publish a message to jump to that
 		/// location in the program.
 		/// </summary>
 		public bool HandleAnyJump()
@@ -1591,7 +1591,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary>
-		/// If the user clicked on a link label, post a message via the mediator to jump to that
+		/// If the user clicked on a link label, publish a message to jump to that
 		/// location in the program.
 		/// </summary>
 		public bool HandleAnyJump(IPublisher publisher)

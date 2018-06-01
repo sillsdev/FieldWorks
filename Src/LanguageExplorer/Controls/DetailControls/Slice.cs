@@ -129,7 +129,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (contextMenuStrip.Items.Count > 0)
 			{
 				// 1. Add separator (since there are already items in the context menu).
-				contextMenuStrip.Items.Add(new ToolStripSeparator());
+				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 			}
 			// 2. 'Field Visbility', and its three sub-menus.
 			var contextmenu = new ToolStripMenuItem(LanguageExplorerResources.ksFieldVisibility);
@@ -1921,7 +1921,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Main work of deleting an object; answer true if it was actually deleted.
 		/// </summary>
-		internal bool HandleDeleteCommand()
+		public virtual bool HandleDeleteCommand()
 		{
 			var obj = GetObjectForMenusToOperateOn();
 			// Build a list of neighboring slices, ordered by proximity (max of 40 either way...don't want to build too much

@@ -272,16 +272,6 @@
 		<command id="CmdDataTree-Merge-Subentry" label="Merge Entry into..." message="DataTreeMerge">
 			<parameters field="Subentries" className="ReversalindexEntry"/>
 		</command>
-		<!--
-			LexEntryRefs
-		-->
-		<command id="CmdDataTree-MoveUp-VariantSpec" label="Move Variant Info Up" message="MoveUpObjectInSequence" icon="MoveUp"/>
-		<command id="CmdDataTree-MoveDown-VariantSpec" label="Move Variant Info Down" message="MoveDownObjectInSequence" icon="MoveDown"/>
-		<command id="CmdDataTree-Insert-VariantSpec" label="Add another Variant Info section" message="DataTreeInsert">
-			<parameters field="EntryRefs" className="LexEntryRef" ownerClass="LexEntry" />
-		</command>
-		<command id="CmdDataTree-Delete-VariantSpec" label="Delete Variant Info" message="DataTreeDelete" icon="Delete"/>
-		<command id="CmdDataTree-Delete-ComplexFormSpec" label="Delete Complex Form Info" message="DataTreeDelete" icon="Delete"/>
 	</commands>
 	<!--
   ===========================================================
@@ -448,16 +438,6 @@
 		</menu>
 		<menu id="mnuDataTree-CmMedia">
 			<item command="CmdDeleteMediaFile"/>
-		</menu>
-		<menu id="mnuDataTree-VariantSpec">
-			<item command="CmdDataTree-MoveUp-VariantSpec"/>
-			<item command="CmdDataTree-MoveDown-VariantSpec"/>
-			<item label="-" translate="do not translate"/>
-			<item command="CmdDataTree-Insert-VariantSpec"/>
-			<item command="CmdDataTree-Delete-VariantSpec"/>
-		</menu>
-		<menu id="mnuDataTree-ComplexFormSpec">
-			<item command="CmdDataTree-Delete-ComplexFormSpec"/>
 		</menu>
 	</contextMenus>
 </window>

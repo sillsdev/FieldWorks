@@ -10,6 +10,7 @@ using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using LanguageExplorer.Controls;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -105,7 +106,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					{
 						if (menu.Items.Count > 0)
 						{
-							menu.Items.Add(new ToolStripSeparator());
+							ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(menu);
 						}
 						// Add the delete item.
 						var sMenuText = ITextStrings.ksDeleteNote;
