@@ -46,6 +46,7 @@ namespace SIL.FieldWorks.Discourse
 		private ICmPossibility m_template;
 		private ICmPossibility[] m_allColumns;
 		private ConstituentChartLogic m_logic;
+		private Panel m_templateSelectionPanel;
 		private Panel m_buttonRow;
 		private Panel m_bottomStuff;
 		// m_buttonRow above m_ribbon
@@ -108,6 +109,15 @@ namespace SIL.FieldWorks.Discourse
 			m_headerMainCols.ColumnWidthChanging += m_headerMainCols_ColumnWidthChanging;
 		}
 
+		/// <summary>
+		/// Method called by Mediator to refresh view after Undoable UOW is completed
+		/// Method name is defined by a mediator message posted in ConstituentChartLogic.changeTemplate_Click
+		/// </summary>
+		public virtual void OnTemplateChanged(string name)
+		{
+			SetRoot(m_hvoRoot);
+		}
+
 		private void BuildTopStuffUI()
 		{
 			m_body = new ConstChartBody(m_logic, this) { Cache = m_cache, Dock = DockStyle.Fill };
@@ -116,11 +126,28 @@ namespace SIL.FieldWorks.Discourse
 			m_headerMainCols = new ChartHeaderView(this) { Dock = DockStyle.Top,
 				View = View.Details, Height = 22, Scrollable = false,
 				AllowColumnReorder = false };
+
 			m_headerMainCols.Layout += m_headerMainCols_Layout;
 			m_headerMainCols.SizeChanged += m_headerMainCols_SizeChanged;
 
+			m_templateSelectionPanel = new Panel() { Height = new Button().Height, Dock = DockStyle.Top, Width = 0};
+			m_templateSelectionPanel.Layout += new LayoutEventHandler(TemplateSelectionPanel_Layout);
+
 			m_topStuff = new Panel { Dock = DockStyle.Fill };
-			m_topStuff.Controls.AddRange(new Control[] { m_body, m_headerMainCols });
+			m_topStuff.Controls.AddRange(new Control[] { m_body, m_headerMainCols, m_templateSelectionPanel });
+		}
+
+		private void TemplateSelectionPanel_Layout(object sender, EventArgs e)
+		{
+			var panel = sender as Panel;
+			if (panel.Controls.Count != 0)
+			{
+				var templateButton = panel.Controls[0];
+				templateButton.SuspendLayout();
+				templateButton.Width = new Button().Width * 2;
+				templateButton.Left = panel.Width - templateButton.Width;
+				templateButton.ResumeLayout();
+			}
 		}
 
 		private void BuildBottomStuffUI()
@@ -349,7 +376,9 @@ namespace SIL.FieldWorks.Discourse
 		/// <summary/>
 		protected virtual void SetHeaderColAndButtonWidths()
 		{
-			if (m_columnPositions != null)
+			//Do not change column widths until positions have been updated to represent template change
+			//m_columnPositions should be one longer due to fenceposting
+			if (m_columnPositions != null && m_columnPositions.Length == m_headerMainCols.Columns.Count + 1)
 			{
 				m_fInColWidthChanged = true;
 				try
@@ -558,11 +587,6 @@ namespace SIL.FieldWorks.Discourse
 				oldTemplateHvo = m_template.Hvo;
 			// does it already have a chart? If not make one.
 			m_chart = null;
-			// in case of previous call.
-			if (m_cache.LangProject.DiscourseDataOA == null)
-			{
-				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () => { m_template = m_cache.LangProject.GetDefaultChartTemplate(); });
-			}
 			m_hvoRoot = hvo;
 			if (m_hvoRoot == 0)
 				RootStText = null;
@@ -654,6 +678,73 @@ namespace SIL.FieldWorks.Discourse
 				SetupMoveHereButtonsToMatchTemplate();
 			}
 			SetHeaderColAndButtonWidths();
+
+			ComboBox templateButton = new ComboBox();
+			templateButton.Layout += new LayoutEventHandler(TemplateDropDownMenu_Layout);
+			m_templateSelectionPanel.Controls.Add(templateButton);
+			templateButton.Left = m_templateSelectionPanel.Width - templateButton.Width;
+			templateButton.DropDownStyle = ComboBoxStyle.DropDownList;
+			templateButton.SelectedIndexChanged += new EventHandler(TemplateSelectionChanged);
+
+			foreach (var chartTemplate in ((ICmPossibilityList)m_template.Owner).PossibilitiesOS)
+			{
+				templateButton.Items.Add(chartTemplate);
+			}
+
+			templateButton.SelectedItem = m_template;
+			templateButton.Items.Add(DiscourseStrings.ksCreateNewTemplate);
+
+		}
+
+		private void TemplateSelectionChanged(object sender, EventArgs e)
+		{
+			var selection = sender as ComboBox;
+			var template = selection.SelectedItem as ICmPossibility;
+
+			//If user chooses to add a new template then navigate them to the Text Constituent Chart Template list view
+			if (selection.SelectedItem as string == DiscourseStrings.ksCreateNewTemplate)
+			{
+				m_mediator.PostMessage("FollowLink", new FwLinkArgs(DiscourseStrings.ksNewTemplateLink, new Guid()));
+				selection.SelectedItem = m_template;
+				return;
+			}
+
+			//Return if user selects current template
+			if (template == m_template)
+			{
+				return;
+			}
+
+			//If there is currently data in the chart, then warn the user that it will have to be deleted to change the template
+			if (m_chart.RowsOS.Count > 0 && MessageBox.Show(DiscourseStrings.ksDelChartWarning, DiscourseStrings.ksWarning,
+				MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
+			{
+				return;
+			}
+
+			UndoableUnitOfWorkHelper.Do(DiscourseStrings.ksUndoChangeTemplate, DiscourseStrings.ksRedoChangeTemplate,
+					m_cache.ActionHandlerAccessor, () =>
+					{
+						//Delete all current data from the chart
+						while (m_chart.RowsOS.Count > 0)
+						{
+							m_chart.RowsOS.RemoveAt(0);
+						}
+
+						//Replace the current template with the new selected one
+						m_chart.TemplateRA = template;
+
+						//Post to the mediator to refresh the root after this action is done or undone
+						m_cache.ActionHandlerAccessor.AddAction(new GenericUndoAction(
+							() => m_mediator.BroadcastString("OnTemplateChanged", "do"),
+							() => m_mediator.BroadcastString("OnTemplateChanged", "undo")));
+					});
+		}
+
+		private void TemplateDropDownMenu_Layout(object sender, EventArgs e)
+		{
+			var button = sender as ComboBox;
+			button.Left = m_templateSelectionPanel.Width - button.Width;
 		}
 
 		/// <summary>
@@ -753,10 +844,6 @@ namespace SIL.FieldWorks.Discourse
 			if (templates.Count == 0 || templates[0].SubPossibilitiesOS.Count == 0)
 			{
 				MessageBox.Show(this, DiscourseStrings.ksNoColumns, DiscourseStrings.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-			}
-			if (templates.Count != 1)
-			{
-				MessageBox.Show(this, DiscourseStrings.ksOnlyOneTemplateAllowed, DiscourseStrings.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
 		}
 
@@ -1065,7 +1152,7 @@ namespace SIL.FieldWorks.Discourse
 			Button btn = sender as Button;
 			int icol = GetColumnOfButton(btn);
 			DisposeContextMenu(this, new EventArgs());
-			m_contextMenuStrip = m_logic.MakeContextMenu(icol);
+			m_contextMenuStrip = m_logic.InsertIntoChartContextMenu(icol);
 			m_contextMenuStrip.Closed += contextMenuStrip_Closed; // dispose when no longer needed (but not sooner! needed after this returns)
 			m_contextMenuStrip.Show(btn, new Point(0, btn.Height));
 		}

@@ -124,8 +124,12 @@
   <data name="ksClearFromHereOnMenuItem" xml:space="preserve">
 	<value>Clear Chart from here on</value>
   </data>
-  <data name="ksDelRowWarning" xml:space="preserve">
+	<data name="ksDelRowWarning" xml:space="preserve">
 	<value>This will delete {0} rows of data from your chart! Are you sure?</value>
+	<comment>Dialog warning. Responses are Yes/No.</comment>
+  </data>
+	<data name="ksDelChartWarning" xml:space="preserve">
+	<value>This will delete all of the data from your chart! Are you sure?</value>
 	<comment>Dialog warning. Responses are Yes/No.</comment>
   </data>
   <data name="ksDepClauseFormat" xml:space="preserve">
@@ -289,7 +293,13 @@
 	<value>Undo Add Marker</value>
   </data>
   <data name="ksUndoClearChart" xml:space="preserve">
-	<value>Undo clear chart</value>
+	<value>Undo Clear Chart</value>
+  </data>
+  <data name="ksUndoChangeTemplate" xml:space="preserve">
+	<value>Undo Change Template</value>
+  </data>
+  <data name="ksRedoChangeTemplate" xml:space="preserve">
+	<value>Redo Change Template</value>
   </data>
   <data name="ksUndoInsertRow" xml:space="preserve">
 	<value>Undo Insert Row</value>
@@ -418,6 +428,12 @@ you expect.</value>
   <data name="ksOnlyOneTemplateAllowed" xml:space="preserve">
 	<value>The text charting mechanism can only handle one template at this point. Only the first template will be used.</value>
 	<comment>Warning message that appears when the text chart is displayed and there are more than one template defined.</comment>
+  </data>
+  <data name="ksCreateNewTemplate" xml:space="preserve">
+	<value>Add a New Template</value>
+  </data>
+  <data name = "ksNewTemplateLink" xml:space ="preserve">
+	<value>charttempEdit</value>
   </data>
   <data name="ksRedoLastRowInPara" xml:space="preserve">
 	<value>Redo Last Row in Paragraph</value>

@@ -220,8 +220,7 @@ namespace SIL.FieldWorks.Discourse
 		{
 			get
 			{
-				if (m_allMyColumns == null)
-					m_allMyColumns = AllColumns(m_chart.TemplateRA).ToArray();
+				m_allMyColumns = AllColumns(m_chart.TemplateRA).ToArray();
 				return m_allMyColumns;
 			}
 		}
@@ -3381,7 +3380,7 @@ namespace SIL.FieldWorks.Discourse
 		/// </summary>
 		/// <param name="icol">The icol.</param>
 		/// <returns></returns>
-		public ContextMenuStrip MakeContextMenu(int icol)
+		public ContextMenuStrip InsertIntoChartContextMenu(int icol)
 		{
 			var menu = new ContextMenuStrip();
 
