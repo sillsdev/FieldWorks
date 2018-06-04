@@ -50,6 +50,7 @@
 	</PropertyGroup>
 
 	<Target Name="VersionNumbers" DependsOnTargets="GenerateVersionFiles">
+		<!-- REVIEW (Hasso) 2018.06: nobody uses the Version property -->
 		<Message Text="Version Property: $(Version)" Importance="high"/>
 		<ParseVersionNumbers VersionInfo="@(VersionSymbols)" Condition="'$(Version)' == ''">
 			<Output TaskParameter="Major" PropertyName="MajorVersionSegment" />
@@ -238,8 +239,10 @@
 			<!-- %(RecursiveDir) is only the "**\" portion. This hack recollects L10nFiles with the 2-letter language code as the recursive directory. -->
 			<L10nFilesWithRecursiveDirs Include="$(OutputDirForConfig)\**\*" Exclude="@(BinFiles)"/>
 			<!-- Now that we've used BinFiles to exclude all non-l10n files from L10nFilesWithRecursiveDirs,
-				we can remove MergeModules from BinFiles (MergeModules belong in neither ItemGroup). -->
+				we can remove MergeModules, etc., from BinFiles (MergeModules belong in neither ItemGroup). -->
 			<BinFiles Remove="@(MergeModules)"/>
+			<BinFiles Remove="$(OutputDirForConfig)\*Tests.*"/>
+			<BinFiles Remove="$(OutputDirForConfig)\test*"/>
 			<BinFiles Include="$(fwrt)\DistFiles\**\*" Exclude="@(DeveloperFiles);@(IcuFiles)"/>
 			<!-- Files used to customize the generic patchable installer -->
 			<OverrideFiles Include="$(fwrt)\FLExInstaller\*.wxi"/>
