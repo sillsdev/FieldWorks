@@ -383,7 +383,7 @@
 			<InstallerFiles Include="$(BaseBuildDir)/**/$(SafeApplicationName)_*.exe"/>
 			<InstallerFiles Include="$(BaseBuildDir)/**/$(SafeApplicationName)_*.msi"/>
 		</ItemGroup>
-		<Move SourceFiles="@(InstallerFiles)" DestinationFolder="$(InstallersBaseDir)"/>
+		<Move SourceFiles="@(InstallerFiles)" DestinationFiles="@(InstallerFiles -> '$(InstallersBaseDir)\%(Filename)_$(Arch)%(Extension)')"/>
 
 		<WriteLinesToFile File="$(AppBuildDir)/version" Overwrite="true" Lines="$(BuildVersion)" />
 	</Target>
@@ -404,6 +404,6 @@
 		<ItemGroup>
 			<PatchFiles Include="$(PatchDir)/**/*.msp"/>
 		</ItemGroup>
-		<Move SourceFiles="@(PatchFiles)" DestinationFolder="$(InstallersBaseDir)"/>
+		<Move SourceFiles="@(PatchFiles)" DestinationFiles="@(PatchFiles -> '$(InstallersBaseDir)\%(Filename)_$(Arch)%(Extension)')"/>
 	</Target>
 </Project>
