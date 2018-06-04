@@ -1,3 +1,0 @@
-[submodule "PatchableInstaller"]
-	path = PatchableInstaller
-	url = https://github.com/sillsdev/genericinstaller.git
