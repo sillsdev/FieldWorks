@@ -41,13 +41,22 @@ namespace LanguageExplorerTests.Impls
 
 		public override void TestTearDown()
 		{
-			_macroMenuHandler?.Dispose();
-			_propertyTable?.Dispose();
+			try
+			{
+				_macroMenuHandler?.Dispose();
+				_propertyTable?.Dispose();
 
-			_macroMenuHandler = null;
-			_propertyTable = null;
-
-			base.TestTearDown();
+				_macroMenuHandler = null;
+				_propertyTable = null;
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} TestTearDown method.", err);
+			}
+			finally
+			{
+				base.TestTearDown();
+			}
 		}
 		#endregion
 

@@ -1067,12 +1067,23 @@ namespace LanguageExplorerTests.Controls.LexText
 		/// Teardown method: destroy the memory-only mock cache.
 		/// </summary>
 		[TearDown]
-		public void DestroyMockCache()
+		public override void TestTearDown()
 		{
-			Directory.Delete(MockLinkedFilesFolder, true);
-			m_cache.Dispose();
-			m_cache = null;
-			DestroyTestDirectory();
+			try
+			{
+				Directory.Delete(MockLinkedFilesFolder, true);
+				m_cache.Dispose();
+				m_cache = null;
+				DestroyTestDirectory();
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} TestTearDown method.", err);
+			}
+			finally
+			{
+				base.TestTearDown();
+			}
 		}
 
 	#endregion

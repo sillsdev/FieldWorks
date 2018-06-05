@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using LanguageExplorer.Areas.TextsAndWords.Discourse;
 using NUnit.Framework;
@@ -54,9 +55,19 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 
 		public override void TestTearDown()
 		{
-			base.TestTearDown();
-			m_dlgLogicPrepose.Dispose();
-			m_dlgLogicPostpose.Dispose();
+			try
+			{
+				m_dlgLogicPrepose.Dispose();
+				m_dlgLogicPostpose.Dispose();
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} TestTearDown method.", err);
+			}
+			finally
+			{
+				base.TestTearDown();
+			}
 		}
 		#endregion
 

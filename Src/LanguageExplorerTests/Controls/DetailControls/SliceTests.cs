@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -39,17 +40,26 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		/// <summary />
 		public override void TestTearDown()
 		{
-			_dummyWindow?.Dispose();
-			m_Slice?.Dispose();
-			m_DataTree?.Dispose();
-			m_propertyTable?.Dispose();
+			try
+			{
+				_dummyWindow?.Dispose();
+				m_Slice?.Dispose();
+				m_DataTree?.Dispose();
+				m_propertyTable?.Dispose();
 
-			_dummyWindow = null;
-			m_Slice = null;
-			m_DataTree = null;
-			m_propertyTable = null;
-
-			base.TestTearDown();
+				_dummyWindow = null;
+				m_Slice = null;
+				m_DataTree = null;
+				m_propertyTable = null;
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} TestTearDown method.", err);
+			}
+			finally
+			{
+				base.TestTearDown();
+			}
 		}
 
 		/// <summary />

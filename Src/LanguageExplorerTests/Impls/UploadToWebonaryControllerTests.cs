@@ -106,9 +106,19 @@ namespace LanguageExplorerTests.Impls
 		[TestFixtureTearDown]
 		public override void FixtureTeardown()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "SIL.LCModel";
-			base.FixtureTeardown();
-			Dispose();
+			try
+			{
+				ConfiguredXHTMLGenerator.AssemblyFile = "SIL.LCModel";
+				Dispose();
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} FixtureTeardown method.", err);
+			}
+			finally
+			{
+				base.FixtureTeardown();
+			}
 		}
 
 	#region disposal

@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using LanguageExplorer;
@@ -23,8 +24,18 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 
 		public override void FixtureTeardown()
 		{
-			RobustIO.DeleteDirectoryAndContents(Cache.ProjectId.Path);
-			base.FixtureTeardown();
+			try
+			{
+				RobustIO.DeleteDirectoryAndContents(Cache.ProjectId.Path);
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} FixtureTeardown method.", err);
+			}
+			finally
+			{
+				base.FixtureTeardown();
+			}
 		}
 
 		public override void TestSetup()
@@ -38,11 +49,20 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 
 		public override void TestTearDown()
 		{
-			RobustIO.DeleteDirectoryAndContents(Cache.ProjectId.ProjectFolder);
-			_flexComponentParameters.PropertyTable.Dispose();
-			_flexComponentParameters = null;
-
-			base.TestTearDown();
+			try
+			{
+				RobustIO.DeleteDirectoryAndContents(Cache.ProjectId.ProjectFolder);
+				_flexComponentParameters.PropertyTable.Dispose();
+				_flexComponentParameters = null;
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} TestTearDown method.", err);
+			}
+			finally
+			{
+				base.TestTearDown();
+			}
 		}
 
 		#endregion

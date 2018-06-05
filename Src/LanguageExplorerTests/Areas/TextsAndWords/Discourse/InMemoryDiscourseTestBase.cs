@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using LanguageExplorer.Areas.TextsAndWords.Discourse;
 using SIL.LCModel;
 
@@ -35,8 +36,18 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 
 		public override void TestTearDown()
 		{
-			m_helper = null;
-			base.TestTearDown();
+			try
+			{
+				m_helper = null;
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} TestTearDown method.", err);
+			}
+			finally
+			{
+				base.TestTearDown();
+			}
 		}
 		#endregion
 

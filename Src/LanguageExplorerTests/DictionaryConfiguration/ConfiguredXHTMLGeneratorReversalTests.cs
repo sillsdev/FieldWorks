@@ -49,11 +49,20 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 		public override void TestTearDown()
 		{
-			_flexComponentParameters.PropertyTable.Dispose();
-			_flexComponentParameters = null;
-			XHTMLStringBuilder = null;
-
-			base.TestTearDown();
+			try
+			{
+				_flexComponentParameters.PropertyTable.Dispose();
+				_flexComponentParameters = null;
+				XHTMLStringBuilder = null;
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} TestTearDown method.", err);
+			}
+			finally
+			{
+				base.TestTearDown();
+			}
 		}
 
 		[Test]

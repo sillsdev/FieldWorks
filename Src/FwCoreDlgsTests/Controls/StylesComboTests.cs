@@ -10,6 +10,7 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 
+using System;
 using System.Collections;
 using System.Diagnostics;
 using System.Windows.Forms;
@@ -83,14 +84,23 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public override void TestTearDown()
 		{
-			m_lp = null;
-			m_styleSheet = null;
-			m_stylesComboBox.Dispose();
-			m_stylesComboBox = null;
-			m_styleListHelper.Dispose();
-			m_styleListHelper = null;
-
-			base.TestTearDown();
+			try
+			{
+				m_lp = null;
+				m_styleSheet = null;
+				m_stylesComboBox.Dispose();
+				m_stylesComboBox = null;
+				m_styleListHelper.Dispose();
+				m_styleListHelper = null;
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} TestTearDown method.", err);
+			}
+			finally
+			{
+				base.TestTearDown();
+			}
 		}
 
 

@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -28,11 +29,21 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		}
 		public override void TestTearDown()
 		{
-			_propertyTable?.Dispose();
-			_propertyTable = null;
-			_publisher = null;
-			_subscriber = null;
-			base.TestTearDown();
+			try
+			{
+				_propertyTable?.Dispose();
+				_propertyTable = null;
+				_publisher = null;
+				_subscriber = null;
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} TestTearDown method.", err);
+			}
+			finally
+			{
+				base.TestTearDown();
+			}
 		}
 
 		[Test]

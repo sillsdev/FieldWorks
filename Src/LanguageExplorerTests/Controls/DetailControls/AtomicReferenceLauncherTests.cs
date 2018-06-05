@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Linq;
 using LanguageExplorer.Controls.DetailControls;
 using NUnit.Framework;
@@ -48,8 +49,18 @@ namespace LanguageExplorerTests.Controls.DetailControls
 
 		public override void TestTearDown()
 		{
-			MockLauncher.Dispose();
-			base.TestTearDown();
+			try
+			{
+				MockLauncher.Dispose();
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} TestTearDown method.", err);
+			}
+			finally
+			{
+				base.TestTearDown();
+			}
 		}
 
 		private IPartOfSpeech GetNounPOS()

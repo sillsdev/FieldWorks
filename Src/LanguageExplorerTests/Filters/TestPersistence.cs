@@ -36,9 +36,18 @@ namespace LanguageExplorerTests.Filters
 
 		public override void FixtureTeardown()
 		{
-			m_objectsToDispose.Dispose();
-
-			base.FixtureTeardown();
+			try
+			{
+				m_objectsToDispose.Dispose();
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} FixtureTeardown method.", err);
+			}
+			finally
+			{
+				base.FixtureTeardown();
+			}
 		}
 
 		// Checklist of classes we need to test

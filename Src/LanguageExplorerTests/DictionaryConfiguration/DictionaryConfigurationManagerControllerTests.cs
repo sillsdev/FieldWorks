@@ -99,10 +99,19 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[TestFixtureTearDown]
 		public override void FixtureTeardown()
 		{
-			FileUtils.Manager.Reset();
-			_mockFilesystem = null;
-
-			base.FixtureTeardown();
+			try
+			{
+				FileUtils.Manager.Reset();
+				_mockFilesystem = null;
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} FixtureTeardown method.", err);
+			}
+			finally
+			{
+				base.FixtureTeardown();
+			}
 		}
 
 		public override void TestSetup()
@@ -129,13 +138,22 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 		public override void TestTearDown()
 		{
-			_configurations.Clear();
-			_flexComponentParameters.PropertyTable.Dispose();
-			_flexComponentParameters = null;
-			_controller = null;
-			_configurations = null;
-
-			base.TestTearDown();
+			try
+			{
+				_configurations.Clear();
+				_flexComponentParameters.PropertyTable.Dispose();
+				_flexComponentParameters = null;
+				_controller = null;
+				_configurations = null;
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} TestTearDown method.", err);
+			}
+			finally
+			{
+				base.TestTearDown();
+			}
 		}
 
 		#endregion

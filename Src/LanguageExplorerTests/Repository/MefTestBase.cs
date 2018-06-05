@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.ComponentModel.Composition.Hosting;
 using LanguageExplorer;
 using SIL.FieldWorks.Common.FwUtils;
@@ -39,14 +40,23 @@ namespace LanguageExplorerTests.Repository
 		/// </summary>
 		public override void FixtureTeardown()
 		{
-			base.FixtureTeardown();
-
-			_compositionContainer.Dispose();
-			_propertyTable.Dispose();
-			_compositionContainer = null;
-			_areaRepository = null;
-			_publisher = null;
-			_propertyTable = null;
+			try
+			{
+				_compositionContainer.Dispose();
+				_propertyTable.Dispose();
+				_compositionContainer = null;
+				_areaRepository = null;
+				_publisher = null;
+				_propertyTable = null;
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} FixtureTeardown method.", err);
+			}
+			finally
+			{
+				base.FixtureTeardown();
+			}
 		}
 	}
 }

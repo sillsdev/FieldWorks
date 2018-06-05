@@ -32,9 +32,18 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 
 		public override void TestTearDown()
 		{
-			_logger.Dispose();
-
-			base.TestTearDown();
+			try
+			{
+				_logger.Dispose();
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} TestTearDown method.", err);
+			}
+			finally
+			{
+				base.TestTearDown();
+			}
 		}
 
 		[Test]

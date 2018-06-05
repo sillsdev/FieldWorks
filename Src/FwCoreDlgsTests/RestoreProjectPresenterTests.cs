@@ -26,17 +26,30 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#region Setup and Teardown
 		/// <summary/>
 		[SetUp]
-		public void Setup()
+		public override void TestSetup()
 		{
+			base.TestSetup();
+
 			m_fileOs = new MockFileOS();
 			FileUtils.Manager.SetFileAdapter(m_fileOs);
 		}
 
 		/// <summary/>
 		[TearDown]
-		public void TearDown()
+		public override void TestTearDown()
 		{
-			FileUtils.Manager.Reset();
+			try
+			{
+				FileUtils.Manager.Reset();
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} TestTearDown method.", err);
+			}
+			finally
+			{
+				base.TestTearDown();
+			}
 		}
 		#endregion
 

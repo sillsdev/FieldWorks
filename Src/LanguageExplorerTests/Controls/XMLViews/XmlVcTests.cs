@@ -114,14 +114,23 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		[TestFixtureTearDown]
 		public override void FixtureTeardown()
 		{
-			FileUtils.Manager.Reset();
+			try
+			{
+				FileUtils.Manager.Reset();
 
-			// GrowToWord causes a Char Property Engine to be created, and the test runner
-			// fails if we don't shut the factory down.
-			m_sda.Dispose();
-			m_sda = null;
-
-			base.FixtureTeardown();
+				// GrowToWord causes a Char Property Engine to be created, and the test runner
+				// fails if we don't shut the factory down.
+				m_sda.Dispose();
+				m_sda = null;
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} FixtureTeardown method.", err);
+			}
+			finally
+			{
+				base.FixtureTeardown();
+			}
 		}
 
 		public static void SetupTestModel(string cacheModelfile)

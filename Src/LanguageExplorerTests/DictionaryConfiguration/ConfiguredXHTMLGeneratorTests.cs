@@ -105,31 +105,51 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[TestFixtureTearDown]
 		public override void FixtureTeardown()
 		{
-			RecordList.ActiveRecordListRepository = null;
-			_statusBar?.Dispose();
-			_recordListRepositoryForTools?.Dispose();
-			_flexComponentParameters.PropertyTable.Dispose();
-			_recordListRepositoryForTools = null;
-			_statusBar = null;
-			_recordList = null;
-			_flexComponentParameters = null;
-
-			base.FixtureTeardown();
+			try
+			{
+				RecordList.ActiveRecordListRepository = null;
+				_statusBar?.Dispose();
+				_recordListRepositoryForTools?.Dispose();
+				_flexComponentParameters.PropertyTable.Dispose();
+				_recordListRepositoryForTools = null;
+				_statusBar = null;
+				_recordList = null;
+				_flexComponentParameters = null;
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} FixtureTeardown method.", err);
+			}
+			finally
+			{
+				base.FixtureTeardown();
+			}
 		}
 
-		[SetUp]
-		public void SetupExportVariables()
+		public override void TestSetup()
 		{
+			base.TestSetup();
+
 			XHTMLStringBuilder = new StringBuilder();
 		}
 
-		[TearDown]
-		public void ResetModelAssembly()
+		public override void TestTearDown()
 		{
-			XHTMLStringBuilder = null;
+			try
+			{
+				XHTMLStringBuilder = null;
 
-			// Specific tests override this, reset to SIL.LCModel.dll needed by most tests in the file
-			ConfiguredXHTMLGenerator.AssemblyFile = "SIL.LCModel";
+				// Specific tests override this, reset to SIL.LCModel.dll needed by most tests in the file
+				ConfiguredXHTMLGenerator.AssemblyFile = "SIL.LCModel";
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} TestTearDown method.", err);
+			}
+			finally
+			{
+				base.TestTearDown();
+			}
 		}
 
 		[Test]

@@ -21,9 +21,10 @@ namespace SIL.FieldWorks.Common.FXT
 		/// </summary>
 		protected string m_testDir;
 
-		public override void Init()
+		public override void FixtureSetup()
 		{
-			base.Init();
+			base.FixtureSetup();
+
 			m_testDir = Path.Combine(FwDirectoryFinder.FlexFolder, "Export Templates");
 		}
 

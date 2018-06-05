@@ -64,8 +64,10 @@ namespace SIL.FieldWorks.Common.FXT
 		}
 
 		[TestFixtureSetUp]
-		public virtual void Init()
+		public override void FixtureSetup()
 		{
+			base.FixtureSetup();
+
 			m_sExpectedResultsPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "FxtDllTests", "ExpectedResults");
 		}
 

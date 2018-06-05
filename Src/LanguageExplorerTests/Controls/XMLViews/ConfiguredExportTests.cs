@@ -44,12 +44,21 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		/// ------------------------------------------------------------------------------------
 		public override void TestTearDown()
 		{
-			m_propertyTable.Dispose();
-			m_propertyTable = null;
-			m_publisher = null;
-			m_subscriber = null;
-
-			base.TestTearDown();
+			try
+			{
+				m_propertyTable.Dispose();
+				m_propertyTable = null;
+				m_publisher = null;
+				m_subscriber = null;
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} TestTearDown method.", err);
+			}
+			finally
+			{
+				base.TestTearDown();
+			}
 		}
 		#endregion
 

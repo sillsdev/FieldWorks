@@ -129,26 +129,45 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		public override void FixtureTeardown()
 		{
-			m_vernacularWS = null;
-			m_filer = null;
-			m_idleQueue.Dispose();
-			m_idleQueue = null;
-			m_entryFactory = null;
-			m_senseFactory = null;
-			m_stemAlloFactory = null;
-			m_afxAlloFactory = null;
-			m_stemMsaFactory = null;
-			m_inflAffMsaFactory = null;
-			m_lexEntryRefFactory = null;
-			m_lexEntryInflTypeFactory = null;
-
-			base.FixtureTeardown();
+			try
+			{
+				m_vernacularWS = null;
+				m_filer = null;
+				m_idleQueue.Dispose();
+				m_idleQueue = null;
+				m_entryFactory = null;
+				m_senseFactory = null;
+				m_stemAlloFactory = null;
+				m_afxAlloFactory = null;
+				m_stemMsaFactory = null;
+				m_inflAffMsaFactory = null;
+				m_lexEntryRefFactory = null;
+				m_lexEntryInflTypeFactory = null;
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} FixtureTeardown method.", err);
+			}
+			finally
+			{
+				base.FixtureTeardown();
+			}
 		}
 
 		public override void TestTearDown()
 		{
-			UndoAll();
-			base.TestTearDown();
+			try
+			{
+				UndoAll();
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} TestTearDown method.", err);
+			}
+			finally
+			{
+				base.TestTearDown();
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------

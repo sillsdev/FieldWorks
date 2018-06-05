@@ -28,11 +28,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			kwsAnalysis = WritingSystemServices.kwsAnal;
 			m_lp = Cache.LangProject;
 		}
-
-		public override void FixtureTeardown()
-		{
-			base.FixtureTeardown();
-		}
 		#endregion
 
 		[Test]

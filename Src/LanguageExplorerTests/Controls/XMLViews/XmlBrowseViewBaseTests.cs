@@ -515,15 +515,6 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		private ISubscriber m_subscriber;
 		private IPropertyTable m_propertyTable;
 		#region Overrides of LcmTestBase
-		public override void FixtureSetup()
-		{
-			base.FixtureSetup();
-		}
-
-		public override void FixtureTeardown()
-		{
-			base.FixtureTeardown();
-		}
 
 		public override void TestSetup()
 		{
@@ -540,17 +531,26 @@ namespace LanguageExplorerTests.Controls.XMLViews
 
 		public override void TestTearDown()
 		{
-			m_view.m_bv.Dispose();
-
-			if (m_propertyTable != null)
+			try
 			{
-				m_propertyTable.Dispose();
-				m_propertyTable = null;
-			}
-			m_publisher = null;
-			m_subscriber = null;
+				m_view.m_bv.Dispose();
 
-			base.TestTearDown();
+				if (m_propertyTable != null)
+				{
+					m_propertyTable.Dispose();
+					m_propertyTable = null;
+				}
+				m_publisher = null;
+				m_subscriber = null;
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} TestTearDown method.", err);
+			}
+			finally
+			{
+				base.TestTearDown();
+			}
 		}
 		#endregion
 

@@ -28,13 +28,25 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 		public override void TestTearDown()
 		{
-			base.TestTearDown();
-			var repo = Cache.ServiceLocator.GetInstance<ITextRepository>();
-			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			try
+			{
+				var repo = Cache.ServiceLocator.GetInstance<ITextRepository>();
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 				{
 					foreach (var text in repo.AllInstances())
+					{
 						text.Delete();
+					}
 				});
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} TestTearDown method.", err);
+			}
+			finally
+			{
+				base.TestTearDown();
+			}
 		}
 		#endregion
 

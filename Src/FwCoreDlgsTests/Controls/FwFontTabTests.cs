@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.LCModel;
@@ -41,10 +42,19 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// ----------------------------------------------------------------------------------------
 		public override void TestTearDown()
 		{
-			base.TestTearDown();
-
-			m_fontTab.Dispose();
-			m_fontTab = null;
+			try
+			{
+				m_fontTab.Dispose();
+				m_fontTab = null;
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} TestTearDown method.", err);
+			}
+			finally
+			{
+				base.TestTearDown();
+			}
 		}
 
 		/// ----------------------------------------------------------------------------------------

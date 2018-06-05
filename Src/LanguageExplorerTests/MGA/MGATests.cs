@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.IO;
 using System.Xml;
 using LanguageExplorer.MGA;
@@ -46,9 +47,18 @@ namespace LanguageExplorerTests.MGA
 		[TearDown]
 		public override void TestTearDown()
 		{
-			m_LabelGlosses.Dispose();
-
-			base.TestTearDown();
+			try
+			{
+				m_LabelGlosses.Dispose();
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} TestTearDown method.", err);
+			}
+			finally
+			{
+				base.TestTearDown();
+			}
 		}
 
 		[Test]

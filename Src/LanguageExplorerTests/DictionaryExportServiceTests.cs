@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Linq;
 using LanguageExplorer;
 using LanguageExplorer.Areas;
@@ -34,10 +35,19 @@ namespace LanguageExplorerTests
 
 		public override void FixtureTeardown()
 		{
-			_flexComponentParameters.PropertyTable.Dispose();
-			_flexComponentParameters = null;
-
-			base.FixtureTeardown();
+			try
+			{
+				_flexComponentParameters.PropertyTable.Dispose();
+				_flexComponentParameters = null;
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} FixtureTeardown method.", err);
+			}
+			finally
+			{
+				base.FixtureTeardown();
+			}
 		}
 
 		#endregion

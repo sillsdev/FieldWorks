@@ -14,12 +14,16 @@ namespace LanguageExplorerTests.Areas.Lexicon
 		private IReversalIndexRepository m_revIndexRepo;
 		private IReversalIndexEntryFactory m_revIndexEntryFactory;
 
-		[SetUp]
-		public void Setup()
+		#region Overrides of MemoryOnlyBackendProviderRestoredForEachTestTestBase
+		/// <inheritdoc />
+		public override void TestSetup()
 		{
+			base.TestSetup();
+
 			m_revIndexRepo = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
 			m_revIndexEntryFactory = Cache.ServiceLocator.GetInstance<IReversalIndexEntryFactory>();
 		}
+		#endregion
 
 		[Test]
 		public void SortReversalSubEntries_NoReversalIndexesDoesNotThrow()

@@ -50,12 +50,21 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 		public override void TestTearDown()
 		{
-			_propertyTable = null;
-			_flexComponentParameters.PropertyTable.Dispose();
-			_flexComponentParameters = null;
-			_model = null;
-
-			base.TestTearDown();
+			try
+			{
+				_propertyTable = null;
+				_flexComponentParameters.PropertyTable.Dispose();
+				_flexComponentParameters = null;
+				_model = null;
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} TestTearDown method.", err);
+			}
+			finally
+			{
+				base.TestTearDown();
+			}
 		}
 
 		#endregion Setup and Teardown

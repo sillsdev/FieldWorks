@@ -49,11 +49,21 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		/// ------------------------------------------------------------------------------------
 		public override void TestTearDown()
 		{
-			_propertyTable?.Dispose();
-			_propertyTable = null;
-			_publisher = null;
-			_subscriber = null;
-			base.TestTearDown();
+			try
+			{
+				_propertyTable?.Dispose();
+				_propertyTable = null;
+				_publisher = null;
+				_subscriber = null;
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} TestTearDown method.", err);
+			}
+			finally
+			{
+				base.TestTearDown();
+			}
 		}
 
 		#endregion

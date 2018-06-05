@@ -88,8 +88,10 @@ namespace LanguageExplorerTests.Controls.DetailControls
 
 		public override void FixtureTeardown()
 		{
+			// NB: The base call has to be done out of normal order, or the rest throws an exception.
 			base.FixtureTeardown();
-			if (Cache != null && Cache.MainCacheAccessor.MetaDataCache != null)
+
+			if (Cache?.MainCacheAccessor.MetaDataCache != null)
 			{
 				m_customField.Dispose();
 			}

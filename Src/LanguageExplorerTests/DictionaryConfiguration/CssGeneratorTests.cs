@@ -65,14 +65,23 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[TestFixtureTearDown]
 		public override void FixtureTeardown()
 		{
-			_owningTable.Clear();
-			_flexComponentParameters.PropertyTable.Dispose();
-			_flexComponentParameters = null;
-			_lcmStyleSheet = null;
-			_writingSystemManager = null;
-			_owningTable = null;
-
-			base.FixtureTeardown();
+			try
+			{
+				_owningTable.Clear();
+				_flexComponentParameters.PropertyTable.Dispose();
+				_flexComponentParameters = null;
+				_lcmStyleSheet = null;
+				_writingSystemManager = null;
+				_owningTable = null;
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} FixtureTeardown method.", err);
+			}
+			finally
+			{
+				base.FixtureTeardown();
+			}
 		}
 
 		[SetUp]

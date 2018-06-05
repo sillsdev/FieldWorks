@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -45,8 +46,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[TearDown]
 		public override void TestTearDown()
 		{
-			base.TestTearDown();
-			m_dialog.Dispose();
+			try
+			{
+				m_dialog.Dispose();
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} TestTearDown method.", err);
+			}
+			finally
+			{
+				base.TestTearDown();
+			}
 		}
 		#endregion
 

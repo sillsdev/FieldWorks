@@ -60,26 +60,36 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			_lcmStyleSheet = _flexComponentParameters.PropertyTable.GetValue<LcmStyleSheet>("FlexStyleSheet");
 			_migrator = new PreHistoricMigrator(string.Empty, Cache, null, _flexComponentParameters.PropertyTable);
 		}
+
 		public override void TestTearDown()
 		{
-			_cf1.Dispose();
-			_cf2.Dispose();
-			_cf3.Dispose();
-			_cf4.Dispose();
-			if (_migrator != null)
+			try
 			{
-				_migrator.SetTestLogger = null;
-		}
-			_flexComponentParameters.PropertyTable.Dispose();
+				_cf1.Dispose();
+				_cf2.Dispose();
+				_cf3.Dispose();
+				_cf4.Dispose();
+				if (_migrator != null)
+				{
+					_migrator.SetTestLogger = null;
+				}
+				_flexComponentParameters.PropertyTable.Dispose();
 
-			_cf1 = null;
-			_cf2 = null;
-			_cf3 = null;
-			_cf4 = null;
-			_migrator = null;
-			_flexComponentParameters = null;
-
-			base.TestTearDown();
+				_cf1 = null;
+				_cf2 = null;
+				_cf3 = null;
+				_cf4 = null;
+				_migrator = null;
+				_flexComponentParameters = null;
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} TestTearDown method.", err);
+			}
+			finally
+			{
+				base.TestTearDown();
+			}
 		}
 
 		#endregion

@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using LanguageExplorer.Areas.Lists;
@@ -49,12 +50,21 @@ namespace LanguageExplorerTests.Areas.Lists
 		/// ------------------------------------------------------------------------------------
 		public override void TestTearDown()
 		{
-			m_propertyTable?.Dispose();
-			m_propertyTable = null;
-			m_publisher = null;
-			m_subscriber = null;
-
-			base.TestTearDown();
+			try
+			{
+				m_propertyTable?.Dispose();
+				m_propertyTable = null;
+				m_publisher = null;
+				m_subscriber = null;
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} TestTearDown method.", err);
+			}
+			finally
+			{
+				base.TestTearDown();
+			}
 		}
 		#endregion
 

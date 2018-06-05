@@ -88,17 +88,27 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 		public override void TestTearDown()
 		{
-			while (Cache.ActionHandlerAccessor.CanUndo())
-				Cache.ActionHandlerAccessor.Undo();
+			try
+			{
+				while (Cache.ActionHandlerAccessor.CanUndo())
+				{
+					Cache.ActionHandlerAccessor.Undo();
+				}
 
-			m_propertyTable?.Dispose();
-			m_interlinDoc.Dispose();
-
-			base.TestTearDown();
-
-			m_propertyTable = null;
-			m_publisher = null;
-			m_subscriber = null;
+				m_propertyTable?.Dispose();
+				m_interlinDoc.Dispose();
+				m_propertyTable = null;
+				m_publisher = null;
+				m_subscriber = null;
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} TestTearDown method.", err);
+			}
+			finally
+			{
+				base.TestTearDown();
+			}
 		}
 
 		/// <summary>

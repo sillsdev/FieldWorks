@@ -65,26 +65,37 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 		/// ------------------------------------------------------------------------------------
 		public override void TestTearDown()
 		{
-			while (m_actionHandler.CanUndo())
-				Assert.AreEqual(UndoResult.kuresSuccess, m_actionHandler.Undo());
-			Assert.AreEqual(0, m_actionHandler.UndoableSequenceCount);
-
-			if (m_propertyTable != null)
+			try
 			{
-				var interestingTextlist = m_propertyTable.GetValue<InterestingTextList>("InterestingTexts");
-				if (interestingTextlist != null)
+				while (m_actionHandler.CanUndo())
 				{
-					Cache.ServiceLocator.GetInstance<ISilDataAccessManaged>().RemoveNotification(interestingTextlist);
-					m_propertyTable.RemoveProperty("InterestingTexts");
+					Assert.AreEqual(UndoResult.kuresSuccess, m_actionHandler.Undo());
 				}
-				m_propertyTable.RemoveProperty("cache");
-				m_propertyTable.Dispose();
-			}
-			m_propertyTable = null;
-			m_publisher = null;
-			m_subscriber = null;
+				Assert.AreEqual(0, m_actionHandler.UndoableSequenceCount);
 
-			base.TestTearDown();
+				if (m_propertyTable != null)
+				{
+					var interestingTextlist = m_propertyTable.GetValue<InterestingTextList>("InterestingTexts");
+					if (interestingTextlist != null)
+					{
+						Cache.ServiceLocator.GetInstance<ISilDataAccessManaged>().RemoveNotification(interestingTextlist);
+						m_propertyTable.RemoveProperty("InterestingTexts");
+					}
+					m_propertyTable.RemoveProperty("cache");
+					m_propertyTable.Dispose();
+				}
+				m_propertyTable = null;
+				m_publisher = null;
+				m_subscriber = null;
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} TestTearDown method.", err);
+			}
+			finally
+			{
+				base.TestTearDown();
+			}
 		}
 
 	#endregion

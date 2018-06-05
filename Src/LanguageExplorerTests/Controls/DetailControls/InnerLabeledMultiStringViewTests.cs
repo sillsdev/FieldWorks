@@ -31,8 +31,10 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		}
 
 		[SetUp]
-		public void Setup()
+		public override void TestSetup()
 		{
+			base.TestSetup();
+
 			m_tss = TsStringSerializer.DeserializeTsStringFromXml("<AStr ws='en-US'><Run ws='en-US'>English</Run><Run ws='fr'>french</Run><Run ws='en-US'>English</Run></AStr>",
 				Cache.ServiceLocator.GetInstance<WritingSystemManager>());
 		}

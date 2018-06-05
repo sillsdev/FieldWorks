@@ -5,6 +5,7 @@
 // File: TestFwProjPropertiesDlg.cs
 // Responsibility:
 
+using System;
 using System.Linq;
 using System.Windows.Forms;
 using NUnit.Framework;
@@ -321,13 +322,23 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("fr", out ws);
 		}
 
-		/// <summary/>
+		/// <summary></summary>
 		[TearDown]
-		public void TearDown()
+		public override void TestTearDown()
 		{
-			if (m_dlg != null)
-				m_dlg.Dispose();
-			m_dlg = null;
+			try
+			{
+				m_dlg?.Dispose();
+				m_dlg = null;
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} TestTearDown method.", err);
+			}
+			finally
+			{
+				base.TestTearDown();
+			}
 		}
 
 		#region Setup Helpers
