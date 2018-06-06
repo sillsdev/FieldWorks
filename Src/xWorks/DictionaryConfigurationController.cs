@@ -969,41 +969,32 @@ namespace SIL.FieldWorks.XWorks
 				// add types that do not exist already
 				foreach (var pos in possibilities)
 				{
-					if (!currentGuids.Contains(pos))
+					if (options.Any(x => x.Id == pos.ToString() + ":f" || x.Id == pos.ToString() + ":r"))
+						continue;
+					var lexRelType =
+						(ILexRefType) cache.LangProject.LexDbOA.ReferencesOA?.ReallyReallyAllPossibilities.FirstOrDefault(x =>
+							x.Guid == pos);
+					if (lexRelType != null)
 					{
-						if (cache.LangProject.LexDbOA.ReferencesOA != null && cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Any(x => x.Guid == pos))
+						if (LexRefTypeTags.IsAsymmetric((LexRefTypeTags.MappingTypes)lexRelType.MappingType))
 						{
-							var result = cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(x => x.Guid == pos);
-							var lexRelType = (ILexRefType)result;
-
-							if (options.Any(x =>
-								x.Id == pos.ToString() || x.Id == pos.ToString() + ":f" ||
-								x.Id == pos.ToString() + ":r")) continue;
-
-							if (LexRefTypeTags.IsAsymmetric((LexRefTypeTags.MappingTypes)lexRelType.MappingType))
+							options.Add(new DictionaryNodeListOptions.DictionaryNodeOption
 							{
-								options.Add(new DictionaryNodeListOptions.DictionaryNodeOption
-								{
-									Id = pos.ToString() + ":f",
-									IsEnabled = !isDuplicate
-								});
+								Id = pos.ToString() + ":f",
+								IsEnabled = !isDuplicate
+							});
 
-								options.Add(new DictionaryNodeListOptions.DictionaryNodeOption
-								{
-									Id = pos.ToString() + ":r",
-									IsEnabled = !isDuplicate
-								});
-							}
-							else
+							options.Add(new DictionaryNodeListOptions.DictionaryNodeOption
 							{
-								options.Add(new DictionaryNodeListOptions.DictionaryNodeOption { Id = pos.ToString(), IsEnabled = !isDuplicate });
-							}
+								Id = pos.ToString() + ":r",
+								IsEnabled = !isDuplicate
+							});
 						}
-						else
-						{
+						else if (!currentGuids.Contains(pos))
 							options.Add(new DictionaryNodeListOptions.DictionaryNodeOption { Id = pos.ToString(), IsEnabled = !isDuplicate });
-						}
 					}
+					else if (!currentGuids.Contains(pos))
+						options.Add(new DictionaryNodeListOptions.DictionaryNodeOption { Id = pos.ToString(), IsEnabled = !isDuplicate });
 				}
 			}
 

@@ -2133,6 +2133,55 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void CheckCrossReferenceType()
+		{
+			var crossReferencesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MinimalLexReferences",
+				DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Entry,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					{
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id="0b5b04c8-3900-4537-9eec-1346d10507d7", IsEnabled = true },
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id="1ac9f08e-ed72-4775-a18e-3b1330da8618", IsEnabled = true },
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id="854fc2a8-c0e0-4b72-8611-314a21467fe4", IsEnabled = true }
+					}
+				}
+			};
+			var entryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Style = "Dictionary-Normal",
+				Children = new List<ConfigurableDictionaryNode> { crossReferencesNode }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				FilePath = "/no/such/file",
+				Version = 0,
+				Label = "Root",
+				Parts = new List<ConfigurableDictionaryNode> { entryNode },
+			};
+			var entryAsymmetricPairType = MakeRefType("Compare", null, (int)LexRefTypeTags.MappingTypes.kmtEntryUnidirectional);
+			// SUT
+			try
+			{
+				DictionaryConfigurationController.MergeTypesIntoDictionaryModel(model, Cache);
+				var opts1 = ((DictionaryNodeListOptions)crossReferencesNode.DictionaryNodeOptions).Options;
+				Assert.AreEqual(2, opts1.Count, "The new tree reftype should have added 2 options.");
+				Assert.AreEqual(entryAsymmetricPairType.Guid.ToString() + ":f", opts1[0].Id, "The entry asymmetric pair type should have added the first option with :f appended to the guid.");
+				Assert.AreEqual(entryAsymmetricPairType.Guid.ToString() + ":r", opts1[1].Id, "The entry asymmetric pair type should have added the second option with :r appended to the guid.");
+			}
+			finally
+			{
+				// Don't mess up other unit tests with an extra reference type.
+				RemoveNewReferenceType(entryAsymmetricPairType);
+			}
+		}
+
+		[Test]
 		public void CheckNewAndDeletedNoteTypes()
 		{
 			const string disabledButValid = "7ad06e7d-15d1-42b0-ae19-9c05b7c0b181";
