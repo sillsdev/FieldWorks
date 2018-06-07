@@ -1165,22 +1165,26 @@ namespace TestViews
 				return;
 			MakeStringList2();
 			TS_RUNINFO tri;
-			const ULONG kcch1 = 30;
-			OLECHAR rgch1[kcch1 + 1];
-			ULONG cch;
+			const ULONG kcch1RequestedChars = 24;
+			OLECHAR rgch1Buffer[kcch1RequestedChars + 1];
+			ULONG cchExpectedReturnLength;
 
 			// Need some selection to start with as it determines which paragraph.
 			IVwSelectionPtr qselTemp;
 			CheckHr(m_qrootb->MakeSimpleSel(true, true, false, true, &qselTemp));
-			cch = min( kcch1, (ULONG)wcslen(s_rgpsz1[0]));
-			LockGetText lgt1(m_qtxs, 0, -1, rgch1, kcch1 + 1, &tri, 1);
+			cchExpectedReturnLength = min(kcch1RequestedChars, (ULONG)wcslen(s_rgpsz2[0]));
+			unitpp::assert_true("Unit test not set up correctly, buffer should be smaller than the data.", wcslen(s_rgpsz2[0]) > wcslen(rgch1Buffer));
+
+			// SUT
+			LockGetText lgt1(m_qtxs, 0, -1, rgch1Buffer, kcch1RequestedChars + 1, &tri, 1);
+
 			unitpp::assert_eq("Should succeed", S_OK, lgt1.m_hrLock);
-			unitpp::assert_eq("GetText(0,-1) lim ichNext", (LONG)cch, lgt1.m_ichNext);
-			unitpp::assert_true("GetText(0,-1) lim rgch1",
-				wcsncmp(rgch1, s_rgpsz1[0], cch) == 0);
-			unitpp::assert_eq("GetText(0,-1) lim cchOut", cch, lgt1.m_cchOut);
+			unitpp::assert_eq("GetText(0,-1) lim ichNext", (LONG)cchExpectedReturnLength, lgt1.m_ichNext);
+			unitpp::assert_true("GetText(0,-1) lim rgch1Buffer",
+				wcsncmp(rgch1Buffer, s_rgpsz2[0], cchExpectedReturnLength) == 0);
+			unitpp::assert_eq("GetText(0,-1) lim cchOut", cchExpectedReturnLength, lgt1.m_cchOut);
 			unitpp::assert_eq("GetText(0,-1) lim ctriOut", (ULONG)1, lgt1.m_ctriOut);
-			unitpp::assert_eq("GetText(0,-1) lim  run count", cch, tri.uCount);
+			unitpp::assert_eq("GetText(0,-1) lim run count", cchExpectedReturnLength, tri.uCount);
 			unitpp::assert_eq("GetText(0,-1) lim run type", TS_RT_PLAIN, tri.type);
 		}
 
@@ -1223,7 +1227,6 @@ namespace TestViews
 				return;
 			MakeStringList2();
 			TS_RUNINFO tri;
-			ULONG cch;
 			const int kcch2 = 1000;
 			OLECHAR rgch2[kcch2];
 
@@ -1231,15 +1234,19 @@ namespace TestViews
 			IVwSelectionPtr qselTemp;
 			CheckHr(m_qrootb->MakeSimpleSel(true, true, false, true, &qselTemp));
 
-			cch = 10 - 2;
-			LockGetText lgt3(m_qtxs, 2, 10, rgch2, kcch2, &tri, 1);
+			int firstChar = 2;
+			int lastChar = 10;
+			ULONG lengthOfCharsToFetch = lastChar - firstChar;
+			int expectedNext = 10;
+
+			LockGetText lgt3(m_qtxs, firstChar, lastChar, rgch2, kcch2, &tri, 1);
 			unitpp::assert_eq("Should succeed", S_OK, lgt3.m_hrLock);
-			unitpp::assert_eq("GetText(2,10) ichNext", (LONG)10, lgt3.m_ichNext);
+			unitpp::assert_eq("GetText(2,10) ichNext", (LONG)expectedNext, lgt3.m_ichNext);
 			unitpp::assert_true("GetText(2,10) rgch2",
-				wcsncmp(rgch2, s_rgpsz1[0] + 2, cch) == 0);
-			unitpp::assert_eq("GetText(2,10) cchOut", cch, lgt3.m_cchOut);
+				wcsncmp(rgch2, s_rgpsz1[0] + 2, lengthOfCharsToFetch) == 0);
+			unitpp::assert_eq("GetText(2,10) cchOut", lengthOfCharsToFetch, lgt3.m_cchOut);
 			unitpp::assert_eq("GetText(2,10) ctriOut", (ULONG)1, lgt3.m_ctriOut);
-			unitpp::assert_eq("GetText(2,10) run count", cch, tri.uCount);
+			unitpp::assert_eq("GetText(2,10) run count", lengthOfCharsToFetch, tri.uCount);
 			unitpp::assert_eq("GetText(2,10) run type", TS_RT_PLAIN, tri.type);
 		}
 
@@ -1253,20 +1260,24 @@ namespace TestViews
 				return;
 			MakeStringList2();
 			TS_RUNINFO tri;
-			ULONG cch;
 			const int kcch2 = 1000;
 			OLECHAR rgch2[kcch2];
 
 			// Need some selection to start with as it determines which paragraph.
 			IVwSelectionPtr qselTemp;
 			CheckHr(m_qrootb->MakeSimpleSel(true, true, false, true, &qselTemp));
-			cch = 0;
-			LockGetText lgt4(m_qtxs, 3, 3, rgch2, kcch2, &tri, 1);
+
+			int firstChar = 3;
+			int lastChar = 3;
+			ULONG lengthOfCharactersToFetch = lastChar - firstChar;
+			int expectedNext = lastChar;
+
+			LockGetText lgt4(m_qtxs, firstChar, lastChar, rgch2, kcch2, &tri, 1);
 			unitpp::assert_eq("Should succeed", S_OK, lgt4.m_hrLock);
-			unitpp::assert_eq("GetText(3,3) ichNext", (LONG)3, lgt4.m_ichNext);
-			unitpp::assert_eq("GetText(3,3) cchOut", cch, lgt4.m_cchOut);
+			unitpp::assert_eq("GetText(3,3) ichNext", (LONG)expectedNext, lgt4.m_ichNext);
+			unitpp::assert_eq("GetText(3,3) cchOut", lengthOfCharactersToFetch, lgt4.m_cchOut);
 			unitpp::assert_eq("GetText(3,3) ctriOut", (ULONG)1, lgt4.m_ctriOut);
-			unitpp::assert_eq("GetText(3,3) run count", cch, tri.uCount);
+			unitpp::assert_eq("GetText(3,3) run count", lengthOfCharactersToFetch, tri.uCount);
 			unitpp::assert_eq("GetText(3,3) run type", TS_RT_PLAIN, tri.type);
 		}
 
@@ -1363,7 +1374,11 @@ namespace TestViews
 			stu.Format(L"%s%n", s_rgpsz2[0]);
 			stu.Append(s_rgpsz2[4], 10);
 			cch = stu.Length();
-			LockGetText lgt8(m_qtxs, 0, s_cchPara1 + s_cchParaBreak + 10, rgch2, kcch2, &tri,
+			int firstChar = 0;
+			int lastChar = s_cchPara1 + s_cchParaBreak + 10;
+			unitpp::assert_eq("Unit test error", cch, (ULONG)(lastChar - firstChar));
+			// SUT
+			LockGetText lgt8(m_qtxs, firstChar, lastChar, rgch2, kcch2, &tri,
 				1);
 			unitpp::assert_eq("Should succeed", S_OK, lgt8.m_hrLock);
 			unitpp::assert_eq("GetText(MakeSelLong) ichNext", (LONG)cch, lgt8.m_ichNext);
@@ -1441,25 +1456,28 @@ namespace TestViews
 				return;
 			MakeStringList2();
 			TS_RUNINFO tri;
-			ULONG cch;
 			const int kcch2 = 1000;
 			OLECHAR rgch2[kcch2];
 
 			StrUni stu;
 			MakeSelLong();
-			stu.Assign(s_rgpsz2[4] + 1, 9);
-			cch = stu.Length();
+			int firstChar = s_cchPara1 + s_cchParaBreak + 1;
+			int lastChar = s_cchPara1 + s_cchParaBreak + 10;
+			ULONG lengthOfCharactersToFetch = lastChar - firstChar;
+			stu.Assign(s_rgpsz2[4] + 1, lengthOfCharactersToFetch);
+			ULONG expectedNext = lastChar;
+			// SUT
 			LockGetText lgt11(m_qtxs,
-				s_cchPara1 + s_cchParaBreak + 1, s_cchPara1 + s_cchParaBreak + 10,
+				firstChar, lastChar,
 				rgch2, kcch2, &tri, 1);
 			unitpp::assert_eq("Should succeed", S_OK, lgt11.m_hrLock);
 			unitpp::assert_eq("GetText(MakeSelLong) ichNext",
-				(LONG)(s_cchPara1 + s_cchParaBreak + 10), lgt11.m_ichNext);
+				(LONG)expectedNext, lgt11.m_ichNext);
 			unitpp::assert_true("GetText(MakeSelLong) text",
-				wcsncmp(rgch2, stu.Chars(), cch) == 0);
-			unitpp::assert_eq("GetText(MakeSelLong) cchOut", cch, lgt11.m_cchOut);
+				wcsncmp(rgch2, stu.Chars(), lengthOfCharactersToFetch) == 0);
+			unitpp::assert_eq("GetText(MakeSelLong) cchOut", lengthOfCharactersToFetch, lgt11.m_cchOut);
 			unitpp::assert_eq("GetText(MakeSelLong) ctriOut", (ULONG)1, lgt11.m_ctriOut);
-			unitpp::assert_eq("GetText(MakeSelLong) run count", cch, tri.uCount);
+			unitpp::assert_eq("GetText(MakeSelLong) run count", lengthOfCharactersToFetch, tri.uCount);
 			unitpp::assert_eq("GetText(MakeSelLong) run type", TS_RT_PLAIN, tri.type);
 		}
 

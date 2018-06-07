@@ -680,8 +680,17 @@ STDMETHODIMP VwTextStore::SetSelection(ULONG ulCount, const TS_SELECTION_ACP * p
 }
 
 /*----------------------------------------------------------------------------------------------
-	Return information about the text at a specified character position.
+	Return information about the text at a specified 'application character position', which can
+	mean its position among the characters as NFC or NFD depending on the situation.
+	pacpNext and pcchPlainOut may be based on an NFC or NFD interpretation of the text,
+	depending on the situation.
 	See MSDN for details (ITextStoreACP::GetText).
+	@param acpFrist the position of the first character to get, inclusive.
+	@param acpLast the position one past the last character to get
+	@param pchPlain is a character buffer to receive output.
+	@param cchPlainReq is the number of characters that can be written into pchPlain, including a null terminator.
+	@param pcchPlainOut is the number of characters written to pchPlain, not includung any null terminator.
+	@param pacpNext is the next character position after the last character included in the current request.
 ----------------------------------------------------------------------------------------------*/
 STDMETHODIMP VwTextStore::GetText(LONG acpFirst, LONG acpLast, WCHAR * pchPlain,
 	ULONG cchPlainReq, ULONG * pcchPlainOut, TS_RUNINFO * prgRunInfo, ULONG ulRunInfoReq,
@@ -817,7 +826,7 @@ STDMETHODIMP VwTextStore::GetText(LONG acpFirst, LONG acpLast, WCHAR * pchPlain,
 }
 
 /*----------------------------------------------------------------------------------------------
-	Retrieve the text from the text source
+	Retrieve the text from the text source. Retrieves characters starting from ichFirst to but not including ichLast. The pchPlainNfd output will have a null terminator.
 	Returns length of text.
 ----------------------------------------------------------------------------------------------*/
 int VwTextStore::RetrieveText(int ichFirst, int ichLast, int cbufPlainReq,
@@ -872,9 +881,12 @@ int VwTextStore::RetrieveText(int ichFirst, int ichLast, int cbufPlainReq,
 
 /*----------------------------------------------------------------------------------------------
 	Normalize the text to NFC. For parameters see VwTextStore::GetText.
-	@param pchTextNfd - The text in NFD
+	@param stuText - The text in NFD
+	@param pchPlain will hold the output. It will be null terminated.
+	@param cchPlainReq is the number of characters that can be written into pchPlain, including the null terminator.
+	@param pcchPlainOut [out] is the number of characters copied into pchPlain. It excludes the null terminator.
 ----------------------------------------------------------------------------------------------*/
-void VwTextStore::NormalizeText(StrUni & stuText, WCHAR* pchPlain, ULONG cchPlainReq,
+void VwTextStore::NormalizeText(StrUni & stuText, WCHAR * pchPlain, ULONG cchPlainReq,
 	ULONG * pcchPlainOut, TS_RUNINFO * prgRunInfo, ULONG ulRunInfoReq, ULONG * pulRunInfoOut)
 {
 	StrUtil::NormalizeStrUni(stuText, UNORM_NFC);
