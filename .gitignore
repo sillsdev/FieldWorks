@@ -23,6 +23,7 @@ Downloads/
 Installer/
 Localizations/
 packages/
+PatchableInstaller/
 Bin/_setLatestBuildConfig.bat
 Bin/_setroot.bat
 Lib/debug/DebugProcs.lib
