@@ -12,7 +12,7 @@ namespace LanguageExplorer.Areas
 	/// <summary>
 	/// Summary description for PhEnvStrRepresentationSlice.
 	/// </summary>
-	internal sealed class PhEnvStrRepresentationSlice : ViewPropertySlice
+	internal sealed class PhEnvStrRepresentationSlice : ViewPropertySlice, IPhEnvSliceCommon
 	{
 		public PhEnvStrRepresentationSlice(ICmObject obj)
 			: base(new StringRepSliceView(obj.Hvo), obj, StringRepSliceVc.Flid)

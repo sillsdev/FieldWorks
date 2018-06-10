@@ -317,6 +317,7 @@
     <Compile Include="Areas\IdAndString.cs" />
     <Compile Include="Areas\IFwGuiControl.cs" />
     <Compile Include="Areas\InsertOption.cs" />
+    <Compile Include="Areas\IPhEnvSliceCommon.cs" />
     <Compile Include="Areas\IPreferedTargetAdjuster.cs" />
     <Compile Include="Areas\IToolUiWidgetManager.cs" />
     <Compile Include="Areas\Lexicon\LexiconAreaConstants.cs" />

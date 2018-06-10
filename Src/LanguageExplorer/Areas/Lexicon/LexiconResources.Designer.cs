@@ -535,6 +535,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Insert Variant.
+        /// </summary>
+        internal static string InsertVariant {
+            get {
+                return ResourceManager.GetString("InsertVariant", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Find.
         /// </summary>
         internal static string ks_Find {
@@ -1059,15 +1068,6 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string Sound_or_Movie {
             get {
                 return ResourceManager.GetString("Sound_or_Movie", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Insert Variant.
-        /// </summary>
-        internal static string String1 {
-            get {
-                return ResourceManager.GetString("String1", resourceCulture);
             }
         }
         

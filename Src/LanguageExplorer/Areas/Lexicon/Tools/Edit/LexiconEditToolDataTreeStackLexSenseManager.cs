@@ -105,7 +105,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			if (hotlinksMenuId != mnuDataTree_Sense_Hotlinks)
 			{
-				throw new ArgumentException($"Expected argument value of '{mnuDataTree_Sense_Hotlinks}', but got '{nameof(hotlinksMenuId)}' instead.");
+				throw new ArgumentException($"Expected argument value of '{mnuDataTree_Sense_Hotlinks}', but got '{hotlinksMenuId}' instead.");
 			}
 			var hotlinksMenuItemList = new List<Tuple<ToolStripMenuItem, EventHandler>>(2);
 

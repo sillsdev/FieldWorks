@@ -2008,8 +2008,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				DictionaryConfigurationController.MergeTypesIntoDictionaryModel(model, Cache);
 				var opts1 = ((DictionaryNodeListOptions)lexicalRelationNode.DictionaryNodeOptions).Options;
-				Assert.AreEqual(1, opts1.Count, "Properly merged reference types to options list in lexical relation node");
-				Assert.AreEqual(newType.Guid.ToString(), opts1[0].Id, "New type appears in the list in lexical relation node");
+				Assert.AreEqual(1, opts1.Count, "Improper number of reference types on lexical relation node");
+				Assert.AreEqual(newType.Guid.ToString(), opts1[0].Id, "New type should appear in the list in lexical relation node");
 			}
 			finally
 			{
@@ -2019,7 +2019,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		}
 
 		[Test]
-		public void CheckSenseTreeReferenceType()
+		public void CheckAsymmetricReferenceType()
 		{
 			var lexicalRelationNode = new ConfigurableDictionaryNode
 			{
@@ -2066,20 +2066,52 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				Label = "Root",
 				Parts = new List<ConfigurableDictionaryNode> { entryNode },
 			};
-			var newType = MakeRefType("Part", null, (int)LexRefTypeTags.MappingTypes.kmtSenseTree);
+			var senseTreeType = MakeRefType("Part", null, (int)LexRefTypeTags.MappingTypes.kmtSenseTree);
+			var senseUnidirectionalType = MakeRefType("Part", null, (int)LexRefTypeTags.MappingTypes.kmtSenseUnidirectional);
+			var entryUnidirectionalType = MakeRefType("Part", null, (int)LexRefTypeTags.MappingTypes.kmtEntryUnidirectional);
+			var senseAsymmetricPairType = MakeRefType("Part", null, (int)LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair);
+			var entryAsymmetricPairType = MakeRefType("Part", null, (int)LexRefTypeTags.MappingTypes.kmtEntryAsymmetricPair);
+			var entryOrSenseAsymmetricPairType = MakeRefType("Part", null, (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseAsymmetricPair);
+			var entryOrSenseTreeType = MakeRefType("Part", null, (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree);
+			var entryOrSenseUnidirectionalType = MakeRefType("Part", null, (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional);
+			var entryTreeType = MakeRefType("Part", null, (int)LexRefTypeTags.MappingTypes.kmtEntryTree);
 			// SUT
 			try
 			{
 				DictionaryConfigurationController.MergeTypesIntoDictionaryModel(model, Cache);
 				var opts1 = ((DictionaryNodeListOptions)lexicalRelationNode.DictionaryNodeOptions).Options;
-				Assert.AreEqual(2, opts1.Count, "The new tree reftype should have added 2 options, the rest should have been removed.");
-				Assert.AreEqual(newType.Guid.ToString() + ":f", opts1[0].Id, "The sense tree type should have added the first option with :f appended to the guid.");
-				Assert.AreEqual(newType.Guid.ToString() + ":r", opts1[1].Id, "The sense tree type should have added the second option with :r appended to the guid.");
+				Assert.AreEqual(18, opts1.Count, "The new tree reftype should have added 2 options, the rest should have been removed.");
+				Assert.AreEqual(senseTreeType.Guid.ToString() + ":f", opts1[0].Id, "The sense tree type should have added the first option with :f appended to the guid.");
+				Assert.AreEqual(senseTreeType.Guid.ToString() + ":r", opts1[1].Id, "The sense tree type should have added the second option with :r appended to the guid.");
+				Assert.AreEqual(senseUnidirectionalType.Guid.ToString() + ":f", opts1[2].Id, "The sense unidirectional type should have added the first option with :f appended to the guid.");
+				Assert.AreEqual(senseUnidirectionalType.Guid.ToString() + ":r", opts1[3].Id, "The sense unidirectional type should have added the second option with :r appended to the guid.");
+				Assert.AreEqual(entryUnidirectionalType.Guid.ToString() + ":f", opts1[4].Id, "The entry unidirectional type should have added the first option with :f appended to the guid.");
+				Assert.AreEqual(entryUnidirectionalType.Guid.ToString() + ":r", opts1[5].Id, "The entry unidirectional type should have added the second option with :r appended to the guid.");
+				Assert.AreEqual(senseAsymmetricPairType.Guid.ToString() + ":f", opts1[6].Id, "The sense asymmetric pair type should have added the first option with :f appended to the guid.");
+				Assert.AreEqual(senseAsymmetricPairType.Guid.ToString() + ":r", opts1[7].Id, "The sense asymmetric pair type should have added the second option with :r appended to the guid.");
+				Assert.AreEqual(entryAsymmetricPairType.Guid.ToString() + ":f", opts1[8].Id, "The entry asymmetric pair type should have added the first option with :f appended to the guid.");
+				Assert.AreEqual(entryAsymmetricPairType.Guid.ToString() + ":r", opts1[9].Id, "The entry asymmetric pair type should have added the second option with :r appended to the guid.");
+				Assert.AreEqual(entryOrSenseAsymmetricPairType.Guid.ToString() + ":f", opts1[10].Id, "The entry or sense asymmetric pair type should have added the first option with :f appended to the guid.");
+				Assert.AreEqual(entryOrSenseAsymmetricPairType.Guid.ToString() + ":r", opts1[11].Id, "The entry or sense asymmetric pair type should have added the second option with :r appended to the guid.");
+				Assert.AreEqual(entryOrSenseTreeType.Guid.ToString() + ":f", opts1[12].Id, "The entry or sense tree type should have added the first option with :f appended to the guid.");
+				Assert.AreEqual(entryOrSenseTreeType.Guid.ToString() + ":r", opts1[13].Id, "The entry or sense tree type should have added the second option with :r appended to the guid.");
+				Assert.AreEqual(entryOrSenseUnidirectionalType.Guid.ToString() + ":f", opts1[14].Id, "The entry or sense unidirectional type should have added the first option with :f appended to the guid.");
+				Assert.AreEqual(entryOrSenseUnidirectionalType.Guid.ToString() + ":r", opts1[15].Id, "The entry or sense unidirectional type should have added the second option with :r appended to the guid.");
+				Assert.AreEqual(entryTreeType.Guid.ToString() + ":f", opts1[16].Id, "The entry tree type should have added the first option with :f appended to the guid.");
+				Assert.AreEqual(entryTreeType.Guid.ToString() + ":r", opts1[17].Id, "The entry tree type should have added the second option with :r appended to the guid.");
 			}
 			finally
 			{
 				// Don't mess up other unit tests with an extra reference type.
-				RemoveNewReferenceType(newType);
+				RemoveNewReferenceType(senseTreeType);
+				RemoveNewReferenceType(senseUnidirectionalType);
+				RemoveNewReferenceType(entryUnidirectionalType);
+				RemoveNewReferenceType(senseAsymmetricPairType);
+				RemoveNewReferenceType(entryAsymmetricPairType);
+				RemoveNewReferenceType(entryOrSenseAsymmetricPairType);
+				RemoveNewReferenceType(entryOrSenseTreeType);
+				RemoveNewReferenceType(entryOrSenseUnidirectionalType);
+				RemoveNewReferenceType(entryTreeType);
 			}
 		}
 

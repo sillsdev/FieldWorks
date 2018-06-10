@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{53524D8D-BD24-4E42-89EF-E59DC00BF5A4}</ProjectGuid>
+    <ProjectGuid>{8D8BBA9D-A360-445E-8F76-81288D970961}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ParatextImport</RootNamespace>

@@ -815,7 +815,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 								continue;
 							}
 
-							if (lexRelType.MappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseTree)
+							if (LexRefTypeTags.IsAsymmetric((LexRefTypeTags.MappingTypes)lexRelType.MappingType))
 							{
 								options.Add(new DictionaryNodeOption
 								{

@@ -306,52 +306,6 @@ namespace ParatextImport.ImportTests
 	}
 	#endregion
 
-	#region class DummyImportedBooks
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	public class DummyImportedBooks : ImportedBooks
-	{
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="DummyImportedBooks"/> class.
-		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="booksImported">The books that have been imported.</param>
-		/// <param name="backupVersion">where to store stuff overwritten or merged.</param>
-		/// ------------------------------------------------------------------------------------
-		public DummyImportedBooks(LcmCache cache, IScrDraft booksImported,
-			IScrDraft backupVersion) : base(cache, booksImported, backupVersion, null, null)
-		{
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Overwrites the current version of all books with the imported versions.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void AcceptAllImportedBooks()
-		{
-			using (UndoableUnitOfWorkHelper undoHelper = new UndoableUnitOfWorkHelper(
-				m_cache.ServiceLocator.GetInstance<IActionHandler>(), "Accept import"))
-			{
-				Assert.IsNotNull(m_importVersion);
-				foreach (IScrBook importedBook in m_importVersion.BooksOS)
-				{
-					IScrBook currBook = m_scr.FindBook(importedBook.CanonicalNum);
-					if (currBook == null)
-						m_scr.CopyBookToCurrent(importedBook);
-					else
-						OverwriteBook(currBook, importedBook);
-				}
-				undoHelper.RollBack = false;
-			}
-		}
-	}
-	#endregion
-
 	#region class DummyParatextImportManager
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -407,13 +361,12 @@ namespace ParatextImport.ImportTests
 		/// <param name="backupSavedVersion">The saved version for backups of any overwritten
 		/// books.</param>
 		/// ------------------------------------------------------------------------------------
-		protected override void DisplayImportedBooksDlg(IScrDraft backupSavedVersion)
+		protected override void SaveImportedBooks(IScrDraft backupSavedVersion)
 		{
 			m_cDisplayImportedBooksDlgCalled++;
 			if (m_fSimulateAcceptAllBooks)
 			{
-				using (DummyImportedBooks dlg = new DummyImportedBooks(Cache, ImportedVersion, backupSavedVersion))
-					dlg.AcceptAllImportedBooks();
+				ImportedBooks.SaveImportedBooks(Cache, ImportedVersion, backupSavedVersion, UndoManager.ImportedBooks.Keys, null);
 			}
 		}
 
@@ -451,20 +404,6 @@ namespace ParatextImport.ImportTests
 			}
 		}
 
-		///// ------------------------------------------------------------------------------------
-		///// <summary>
-		///// Sets a value indicating whether to simulate deleting all books.
-		///// </summary>
-		///// ------------------------------------------------------------------------------------
-		//internal bool SimulateDeleteAllBooks
-		//{
-		//    set
-		//    {
-		//        if (value && m_fSimulateAcceptAllBooks)
-		//            throw new Exception("SimulateAcceptAllBooks and SimulateDeleteAllBooks cannot both be set to true.");
-		//        m_fSimulateDeleteAllBooks = value;
-		//    }
-		//}
 		#endregion
 
 		#region Overridden methods
@@ -698,13 +637,10 @@ namespace ParatextImport.ImportTests
 			Assert.AreEqual(origActCount + 1, Cache.ActionHandlerAccessor.UndoableSequenceCount, "Should have 1 extra undo sequence (import of JUD) after Undo cancels incomplete book");
 			Assert.AreEqual(cBooksOrig, m_scr.ScriptureBooksOS.Count);
 			var curJude = m_scr.FindBook(65);
-			Assert.AreNotEqual(hvoJudeOrig, curJude.Hvo, "The original Jude should have been overwritten.");
+			Assert.AreEqual(hvoJudeOrig, curJude.Hvo, "Content should have been merged into Jude.");
 			Assert.AreEqual(curJude.Hvo, m_scr.ScriptureBooksOS.ToHvoArray()[1]);
 			Assert.IsNull(m_scr.FindBook(66), "Partially-imported Revelation should have been discarded.");
-			Assert.AreEqual(1, m_importMgr.NewSavedVersions.Count, "We should have an imported version.");
 			Assert.IsNull(m_importMgr.UndoManager.ImportedVersion);
-			Assert.IsNotNull(m_importMgr.UndoManager.BackupVersion);
-			Assert.AreEqual(1, m_importMgr.UndoManager.BackupVersion.BooksOS.Count);
 			Assert.AreEqual(1, m_importMgr.m_cDisplayImportedBooksDlgCalled);
 		}
 		#endregion
@@ -742,9 +678,7 @@ namespace ParatextImport.ImportTests
 			Assert.AreEqual(origActCount + 1, Cache.ActionHandlerAccessor.UndoableSequenceCount, "Should have 1 extra undo action after Undo cancels incomplete book");
 
 			Assert.AreEqual(cBooksOrig, m_scr.ScriptureBooksOS.Count);
-			Assert.AreEqual(1, m_importMgr.NewSavedVersions.Count, "We should have an imported version.");
-			Assert.AreEqual(1, m_importMgr.UndoManager.BackupVersion.BooksOS.Count);
-			Assert.AreEqual(57, m_importMgr.UndoManager.BackupVersion.BooksOS[0].CanonicalNum);
+			Assert.AreEqual(0, m_importMgr.NewSavedVersions.Count, "Import should have merged with existing book");
 			IScrBook restoredJude = m_scr.FindBook(65);
 			Assert.AreEqual(hvoJudeOrig, restoredJude.Hvo);
 			Assert.AreEqual(restoredJude.Hvo, m_scr.ScriptureBooksOS.ToHvoArray()[1]);
@@ -988,10 +922,6 @@ namespace ParatextImport.ImportTests
 
 			Assert.IsNull(m_importMgr.UndoManager.ImportedVersion);
 			Assert.IsFalse(draftNewBooks.IsValidObject);
-			IScrDraft backupSv = m_importMgr.UndoManager.BackupVersion;
-			Assert.AreEqual(draftReplacedBooks, backupSv);
-			Assert.AreEqual(1, backupSv.BooksOS.Count);
-			Assert.AreEqual(65, backupSv.BooksOS[0].CanonicalNum);
 
 			Assert.AreEqual(1, m_importMgr.m_cDisplayImportedBooksDlgCalled);
 		}
@@ -1046,12 +976,6 @@ namespace ParatextImport.ImportTests
 			Assert.AreEqual(0, m_importMgr.NewSavedVersions.Count, "No new versions should have been created");
 
 			Assert.IsNull(m_importMgr.UndoManager.ImportedVersion);
-			IScrDraft backupSv = m_importMgr.UndoManager.BackupVersion;
-			Assert.AreEqual(draftReplacedBooks, backupSv);
-			Assert.AreEqual(2, backupSv.BooksOS.Count);
-			Assert.AreEqual(replacedBook, backupSv.BooksOS[0]);
-			Assert.AreEqual(65, backupSv.BooksOS[1].CanonicalNum);
-
 			Assert.AreEqual(1, m_importMgr.m_cDisplayImportedBooksDlgCalled);
 		}
 
@@ -1117,9 +1041,8 @@ namespace ParatextImport.ImportTests
 			Assert.AreEqual(replacedBook1, backupSv.BooksOS[0], "No original book in scripture, so backup should not change");
 
 			Assert.AreEqual(65, backupSv.BooksOS[1].CanonicalNum);
-			Assert.AreNotEqual(replacedBook2, backupSv.BooksOS[1], "Imported book should have replaced original");
-			Assert.AreEqual(jude, backupSv.BooksOS[1], "Backed up book should be moved scripture book");
-			Assert.AreNotEqual(jude, m_scr.FindBook(65), "Scripture should contain a new book");
+			Assert.AreEqual(replacedBook2, backupSv.BooksOS[1], "Imported book should have merged with original");
+			Assert.AreEqual(jude, m_scr.FindBook(65), "Scripture should contain the merged book");
 
 			Assert.AreEqual(1, m_importMgr.m_cDisplayImportedBooksDlgCalled);
 		}

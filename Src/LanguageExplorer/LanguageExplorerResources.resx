@@ -1414,4 +1414,26 @@ Do you want to continue with the export?</value>
   <data name="Undo_0" xml:space="preserve">
     <value>Undo {0}</value>
   </data>
+  <data name="ksCreateNewTemplate" xml:space="preserve">
+    <value>Add a New Template</value>
+  </data>
+  <data name="ksDelChartWarning" xml:space="preserve">
+    <value>This will delete all of the data from your chart! Are you sure?</value>
+    <comment>Dialog warning. Responses are Yes/No.</comment>
+  </data>
+  <data name="ksInsertRowMenuItemAbove" xml:space="preserve">
+    <value>Insert Row Above</value>
+  </data>
+  <data name="ksInsertRowMenuItemBelow" xml:space="preserve">
+    <value>Insert Row Below</value>
+  </data>
+  <data name="ksNewTemplateLink" xml:space="preserve">
+    <value>charttempEdit</value>
+  </data>
+  <data name="ksRedoChangeTemplate" xml:space="preserve">
+    <value>Redo Change Template</value>
+  </data>
+  <data name="ksUndoChangeTemplate" xml:space="preserve">
+    <value>Undo Change Template</value>
+  </data>
 </root>

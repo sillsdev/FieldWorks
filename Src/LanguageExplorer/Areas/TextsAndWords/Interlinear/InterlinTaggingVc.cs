@@ -26,7 +26,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private ITsString m_emptyAnalysisStr;
 		private ITextTagRepository m_tagRepo;
 
-		private Dictionary<Tuple<ISegment, int>, ITsString> m_tagStrings; // Cache tag strings by ISegment and index
+		private Dictionary<Tuple<ISegment, int>, ITsString[]> m_tagStrings; // Cache tag strings by ISegment and index
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="InterlinTaggingVc"/> class.
@@ -40,7 +40,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			SetAnalysisRightToLeft();
 			m_emptyAnalysisStr = TsStringUtils.EmptyString(m_cache.DefaultAnalWs);
 			m_tagRepo = m_cache.ServiceLocator.GetInstance<ITextTagRepository>();
-			m_tagStrings = new Dictionary<Tuple<ISegment, int>, ITsString>();
+			m_tagStrings = new Dictionary<Tuple<ISegment, int>, ITsString[]>();
 		}
 
 		private static Tuple<ISegment, int> GetDictKey(AnalysisOccurrence point)
@@ -137,17 +137,38 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					label = m_emptyAnalysisStr;
 					strBldr = label.GetBldr();
 				}
-
 				if (i == cwordArray - 1) // Last occurrence for this tag.
 				{
 					EndTagSetup(strBldr);
 				}
 				var key = GetDictKey(current);
+				var markupTags = (ICmPossibilityList) tagPossibility.Owner.Owner;
+				var possibilityCount = markupTags.PossibilitiesOS.Count;
+				var row = tagPossibility.Owner.IndexInOwner;
+				ITsString[] myList;
 				if (m_tagStrings.ContainsKey(key))
 				{
+					var currentLength = m_tagStrings[key].Length;
+					if (currentLength < possibilityCount)
+					{
+						myList = new ITsString[row >= currentLength ? row + 1 : currentLength];
+						for (int j = 0; j < currentLength; j++)
+						{
+							myList[j] = m_tagStrings[key][j];
+						}
+					}
+					else
+					{
+						myList = m_tagStrings[key];
+					}
 					m_tagStrings.Remove(key);
 				}
-				m_tagStrings[key] = strBldr.GetString();
+				else
+				{
+					myList = new ITsString[row + 1];
+				}
+				myList[row] = strBldr.GetString();
+				m_tagStrings.Add(key, myList);
 			}
 		}
 
@@ -242,14 +263,43 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					m_tagStrings.Remove(key);
 				}
-				m_tagStrings[key] = m_emptyAnalysisStr;
+				var tagList = new ITsString[0];
+				m_tagStrings.Add(key, tagList);
+			}
+		}
+
+		/// <summary>
+		/// Clears a specific row's Tag String Data for the given occurrences
+		/// </summary>
+		internal void ClearTagStringForRow(IEnumerable<AnalysisOccurrence> occurrencesToApply, int row)
+		{
+			if (occurrencesToApply == null)
+				return;
+			foreach (var occurrence in occurrencesToApply)
+			{
+				var key = GetDictKey(occurrence);
+				m_tagStrings[key][row] = m_emptyAnalysisStr;
+				if (m_tagStrings[key].Length == row + 1)
+				{
+					var tagList = new ITsString[row];
+					for (var i = 0; i < tagList.Length; i++)
+					{
+						tagList[i] = m_tagStrings[key][i];
+					}
+
+					m_tagStrings[key] = tagList;
+				}
 			}
 		}
 
 		internal override void LoadDataForSegments(int[] rghvo, int hvoPara)
 		{
 			base.LoadDataForSegments(rghvo, hvoPara);
-			LoadDataForTextTags(rghvo[0]); // seems to only ever have one element anyway!
+			foreach (int hvo in rghvo)
+			{
+				LoadDataForTextTags(hvo);
+			}
+			//LoadDataForTextTags(rghvo[0]); // seems to only ever have one element anyway!
 		}
 
 		/// <summary>
@@ -257,7 +307,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		internal override void AddExtraBundleRows(IVwEnv vwenv, AnalysisOccurrence analysis)
 		{
-			ITsString tss;
+			ITsString[] tss;
 			var key = GetDictKey(analysis);
 			if (!m_tagStrings.TryGetValue(key, out tss))
 			{
@@ -266,8 +316,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var stText = analysis.Segment.Owner.Owner;
 			// If either the Segment's analyses sequence or the tags on the text change, we want to redraw this
 			vwenv.NoteDependency(new [] { analysis.Segment.Hvo, stText.Hvo }, new [] { SegmentTags.kflidAnalyses, StTextTags.kflidTags }, 2);
-			SetTrailingAlignmentIfNeeded(vwenv, tss);
-			vwenv.AddString(tss);
+			for (int i = 0; i < tss.Length; i++)
+			{
+				if (tss[i] == null)
+				{
+					tss[i] = m_emptyAnalysisStr;
+				}
+				SetTrailingAlignmentIfNeeded(vwenv, tss[i]);
+				vwenv.AddString(tss[i]);
+			}
 		}
 
 		private void SetTrailingAlignmentIfNeeded(IVwEnv vwenv, ITsString tss)

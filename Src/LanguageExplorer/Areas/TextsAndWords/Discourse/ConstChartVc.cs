@@ -64,6 +64,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		private void LoadFormatProps()
 		{
+#if RANDYTODO
+			// TODO: Move ConstituentChartStyleInfo.xml into the Resources folder, and make it a resource.
+			// TODO: Then, change this code to: 1) use the resource, and 2) use XDocument.
+#endif
 			var doc = new XmlDocument();
 			var path = Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer/Configuration/ConstituentChartStyleInfo.xml");
 			if (!File.Exists(path))

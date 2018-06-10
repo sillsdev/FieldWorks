@@ -4,6 +4,7 @@
 
 using System;
 using System.Diagnostics;
+using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -17,7 +18,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary>
 	/// Summary description for PhoneEnvReferenceSlice.
 	/// </summary>
-	internal class PhoneEnvReferenceSlice : ReferenceSlice
+	internal class PhoneEnvReferenceSlice : ReferenceSlice, IPhEnvSliceCommon
 	{
 		private int m_dxLastWidth; // width last time OnSizeChanged was called.
 

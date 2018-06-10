@@ -15,9 +15,7 @@ using SIL.Windows.Forms;
 
 namespace LanguageExplorer.Controls.LexText
 {
-	/// <summary>
-	/// Summary description for MsaCreatorDlg.
-	/// </summary>
+	/// <inheritdoc />
 	public class MsaCreatorDlg : Form
 	{
 		#region Data Members

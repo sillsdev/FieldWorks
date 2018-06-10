@@ -293,23 +293,23 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			// <command id="CmdDataTree-Insert-Slash" label="Insert Environment slash" message="InsertSlash"/>
 			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Insert_Slash_Clicked, LexiconResources.Insert_Environment_slash);
-			menu.Enabled = slice is PhoneEnvReferenceSlice ? ((PhoneEnvReferenceSlice)slice).CanInsertSlash : ((PhEnvStrRepresentationSlice)slice).CanInsertSlash;
+			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanInsertSlash;
 
 			// <command id="CmdDataTree-Insert-Underscore" label="Insert Environment bar" message="InsertEnvironmentBar"/>
 			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Insert_Underscore_Clicked, LexiconResources.Insert_Environment_bar);
-			menu.Enabled = slice is PhoneEnvReferenceSlice ? ((PhoneEnvReferenceSlice)slice).CanInsertEnvironmentBar : ((PhEnvStrRepresentationSlice)slice).CanInsertEnvironmentBar;
+			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanInsertEnvironmentBar;
 
 			// <command id="CmdDataTree-Insert-NaturalClass" label="Insert Natural Class" message="InsertNaturalClass"/>
 			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Insert_NaturalClass_Clicked, LexiconResources.Insert_Natural_Class);
-			menu.Enabled = slice is PhoneEnvReferenceSlice ? ((PhoneEnvReferenceSlice)slice).CanInsertNaturalClass : ((PhEnvStrRepresentationSlice)slice).CanInsertNaturalClass;
+			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanInsertNaturalClass;
 
 			// <command id="CmdDataTree-Insert-OptionalItem" label="Insert Optional Item" message="InsertOptionalItem"/>
 			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Insert_OptionalItem_Clicked, LexiconResources.Insert_Optional_Item);
-			menu.Enabled = slice is PhoneEnvReferenceSlice ? ((PhoneEnvReferenceSlice)slice).CanInsertOptionalItem : ((PhEnvStrRepresentationSlice)slice).CanInsertOptionalItem;
+			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanInsertOptionalItem;
 
 			// <command id="CmdDataTree-Insert-HashMark" label="Insert Word Boundary" message="InsertHashMark"/>
 			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Insert_HashMark_Clicked, LexiconResources.Insert_Word_Boundary);
-			menu.Enabled = slice is PhoneEnvReferenceSlice ? ((PhoneEnvReferenceSlice)slice).CanInsertHashMark : ((PhEnvStrRepresentationSlice)slice).CanInsertHashMark;
+			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanInsertHashMark;
 
 			// End: <menu id="mnuDataTree-Environments-Insert">
 
@@ -680,7 +680,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			if (hotlinksMenuId != mnuDataTree_VariantForms_Hotlinks)
 			{
-				throw new ArgumentException($"Expected argument value of '{mnuDataTree_VariantForms_Hotlinks}', but got '{nameof(hotlinksMenuId)}' instead.");
+				throw new ArgumentException($"Expected argument value of '{mnuDataTree_VariantForms_Hotlinks}', but got '{hotlinksMenuId}' instead.");
 			}
 
 			var hotlinksMenuItemList = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
@@ -696,7 +696,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			if (hotlinksMenuId != mnuDataTree_Etymology_Hotlinks)
 			{
-				throw new ArgumentException($"Expected argument value of '{mnuDataTree_Etymology_Hotlinks}', but got '{nameof(hotlinksMenuId)}' instead.");
+				throw new ArgumentException($"Expected argument value of '{mnuDataTree_Etymology_Hotlinks}', but got '{hotlinksMenuId}' instead.");
 			}
 			var hotlinksMenuItemList = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 			// <item command="CmdDataTree-Insert-Etymology"/>
@@ -709,7 +709,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			if (hotlinksMenuId != mnuDataTree_AlternateForms_Hotlinks)
 			{
-				throw new ArgumentException($"Expected argument value of '{mnuDataTree_AlternateForms_Hotlinks}', but got '{nameof(hotlinksMenuId)}' instead.");
+				throw new ArgumentException($"Expected argument value of '{mnuDataTree_AlternateForms_Hotlinks}', but got '{hotlinksMenuId}' instead.");
 			}
 			var hotlinksMenuItemList = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
@@ -872,69 +872,39 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			Convert_LexemeForm(MoAffixAllomorphTags.kClassId);
 		}
 
+		private IPhEnvSliceCommon SliceAsIPhEnvSliceCommon(Slice slice)
+		{
+			return (IPhEnvSliceCommon)slice;
+		}
+
+		private IPhEnvSliceCommon SenderTagAsIPhEnvSliceCommon(object sender)
+		{
+			return (IPhEnvSliceCommon)((ToolStripMenuItem)sender).Tag;
+		}
+
 		private void CmdDataTree_Insert_HashMark_Clicked(object sender, EventArgs e)
 		{
-			var tag = (Slice)((ToolStripMenuItem)sender).Tag;
-			if (tag is PhoneEnvReferenceSlice)
-			{
-				((PhoneEnvReferenceSlice)tag).InsertHashMark();
-			}
-			else
-			{
-				((PhEnvStrRepresentationSlice)tag).InsertHashMark();
-			}
+			SenderTagAsIPhEnvSliceCommon(sender).InsertHashMark();
 		}
 
 		private void CmdDataTree_Insert_OptionalItem_Clicked(object sender, EventArgs e)
 		{
-			var tag = (Slice)((ToolStripMenuItem)sender).Tag;
-			if (tag is PhoneEnvReferenceSlice)
-			{
-				((PhoneEnvReferenceSlice)tag).InsertOptionalItem();
-			}
-			else
-			{
-				((PhEnvStrRepresentationSlice)tag).InsertOptionalItem();
-			}
+			SenderTagAsIPhEnvSliceCommon(sender).InsertOptionalItem();
 		}
 
 		private void CmdDataTree_Insert_NaturalClass_Clicked(object sender, EventArgs e)
 		{
-			var tag = (Slice)((ToolStripMenuItem)sender).Tag;
-			if (tag is PhoneEnvReferenceSlice)
-			{
-				((PhoneEnvReferenceSlice)tag).InsertNaturalClass();
-			}
-			else
-			{
-				((PhEnvStrRepresentationSlice)tag).InsertNaturalClass();
-			}
+			SenderTagAsIPhEnvSliceCommon(sender).InsertNaturalClass();
 		}
 
 		private void CmdDataTree_Insert_Underscore_Clicked(object sender, EventArgs e)
 		{
-			var tag = (Slice)((ToolStripMenuItem)sender).Tag;
-			if (tag is PhoneEnvReferenceSlice)
-			{
-				((PhoneEnvReferenceSlice)tag).InsertEnvironmentBar();
-			}
-			else
-			{
-				((PhEnvStrRepresentationSlice)tag).InsertEnvironmentBar();
-			}
+			SenderTagAsIPhEnvSliceCommon(sender).InsertEnvironmentBar();
 		}
 
 		private void CmdDataTree_Insert_Slash_Clicked(object sender, EventArgs e)
 		{
-			var tag = (Slice)((ToolStripMenuItem)sender).Tag;
-			if (tag is PhoneEnvReferenceSlice)
-			{
-				((PhoneEnvReferenceSlice)tag).InsertSlash();
-			}
-			else
-			{
-				((PhEnvStrRepresentationSlice)tag).InsertSlash();
-			}
+			SenderTagAsIPhEnvSliceCommon(sender).InsertSlash();
 		}
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Etymology(Slice slice, string contextMenuId)

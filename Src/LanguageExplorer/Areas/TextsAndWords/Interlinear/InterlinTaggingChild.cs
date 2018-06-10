@@ -105,7 +105,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				else
 				{
 					RootBox.DestroySelection();
-				}
+			}
 			}
 			finally
 			{
@@ -196,7 +196,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (point.IsValid && point.HasWordform)
 				{
 					selectedWordforms.Add(point);
-				}
+			}
 			}
 
 			m_hvoCurSegment = hvoSegment;
@@ -251,7 +251,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (rgvsli[i].tag == SegmentTags.kflidAnalyses)
 				{
 					return i;
-				}
+			}
 			}
 			// Either the user didn't anchor the selection on a word or its not yet analyzed.
 			// TODO: How to handle the latter situation?!
@@ -280,7 +280,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (rgvsliEnd[iend].ihvo != analysisLevels[ianchor].ihvo)
 				{
 					return false;
-				}
+			}
 			}
 			if (iend < 0)
 			{
@@ -322,7 +322,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (!(lastSegment.AnalysesRS[i] is IPunctuationForm))
 				{
 					break;
-				}
+			}
 			}
 			levels[0].tag = SegmentTags.kflidAnalyses;
 			levels[0].ihvo = i;
@@ -394,8 +394,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					// make a new occurrence selection. (Otherwise, just make the context
 					// menu based on the current selected occurrences).
 					if (newSelectedOccurrences == null ||
-					    newSelectedOccurrences.Count == 0 ||
-					    !SelectedWordforms.Contains(newSelectedOccurrences[0]))
+						newSelectedOccurrences.Count == 0 ||
+						!SelectedWordforms.Contains(newSelectedOccurrences[0]))
 					{
 						// make a new (occurrence) selection (via our SelectionChanged override)
 						// before making the context menu.
@@ -440,8 +440,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (tagList.SubPossibilitiesOS.Count > 0)
 				{
 					AddListToMenu(menu, tagList);
-				}
 			}
+		}
 		}
 
 		private void AddListToMenu(ToolStrip menu, ICmPossibility tagList)
@@ -489,9 +489,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return result;
 			}
-			// Create the containing object and lists.
-			result = langProj.GetDefaultTextTagList();
-			langProj.TextMarkupTagsOA = result;
+				// Create the containing object and lists.
+				result = langProj.GetDefaultTextTagList();
+				langProj.TextMarkupTagsOA = result;
 			return result;
 		}
 
@@ -558,7 +558,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// Just get it from SelectedWordforms.
 			// Delete ones that point at selected ones already
 			// (before we add the new one or it gets deleted too!)
-			var objsToDelete = FindAllTagsReferencingOccurrenceList(SelectedWordforms);
+			var overlappingTags = FindAllTagsReferencingOccurrenceList(SelectedWordforms);
+			var objsToDelete = new HashSet<ITextTag>();
+			var tagRow = tagPoss.Owner.IndexInOwner;
+			foreach (var overlappingTag in overlappingTags)
+			{
+				int overlappingTagRow = overlappingTag.TagRA.Owner.IndexInOwner;
+				if (tagRow == overlappingTagRow)
+				{
+					objsToDelete.Add(overlappingTag);
+				}
+			}
 
 			// Create and add the new one
 			var ttag = m_tagFact.Create();
@@ -613,7 +623,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected virtual void CacheNullTagString(ITextTag textTag)
 		{
 			// Cache a string for each occurrence this tag references. (PropChanged?)
-			((InterlinTaggingVc)m_vc).CacheNullTagString(textTag.GetOccurrences());
+
+			var row = textTag.TagRA.Owner.IndexInOwner;
+			((InterlinTaggingVc)m_vc).ClearTagStringForRow(textTag.GetOccurrences(), row);
 		}
 
 		/// <summary>
@@ -667,7 +679,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (occurenceSet.Intersect(ttag.GetOccurrences()).Any())
 				{
 					results.Add(ttag);
-				}
+			}
 			}
 
 			return results;

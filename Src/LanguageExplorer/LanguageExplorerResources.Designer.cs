@@ -1022,6 +1022,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add a New Template.
+        /// </summary>
+        internal static string ksCreateNewTemplate {
+            get {
+                return ResourceManager.GetString("ksCreateNewTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Create Reversal.
         /// </summary>
         internal static string ksCreateReversal {
@@ -1090,6 +1099,15 @@ namespace LanguageExplorer {
         internal static string ksDefaultVernacular {
             get {
                 return ResourceManager.GetString("ksDefaultVernacular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This will delete all of the data from your chart! Are you sure?.
+        /// </summary>
+        internal static string ksDelChartWarning {
+            get {
+                return ResourceManager.GetString("ksDelChartWarning", resourceCulture);
             }
         }
         
@@ -1522,6 +1540,24 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Insert Row Above.
+        /// </summary>
+        internal static string ksInsertRowMenuItemAbove {
+            get {
+                return ResourceManager.GetString("ksInsertRowMenuItemAbove", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Row Below.
+        /// </summary>
+        internal static string ksInsertRowMenuItemBelow {
+            get {
+                return ResourceManager.GetString("ksInsertRowMenuItemBelow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to FieldWorks has detected that an unknown field (possibly a custom field you have just deleted) is being used to filter or sort this view. Filtering and sorting will be disabled until you select a new filter or sort sequence..
         /// </summary>
         internal static string ksInvalidFieldInFilterOrSorter {
@@ -1743,6 +1779,15 @@ namespace LanguageExplorer {
         internal static string ksMustSelectOne {
             get {
                 return ResourceManager.GetString("ksMustSelectOne", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to charttempEdit.
+        /// </summary>
+        internal static string ksNewTemplateLink {
+            get {
+                return ResourceManager.GetString("ksNewTemplateLink", resourceCulture);
             }
         }
         
@@ -2031,6 +2076,15 @@ namespace LanguageExplorer {
         internal static string ksRedoBulkEditRevPOS {
             get {
                 return ResourceManager.GetString("ksRedoBulkEditRevPOS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Redo Change Template.
+        /// </summary>
+        internal static string ksRedoChangeTemplate {
+            get {
+                return ResourceManager.GetString("ksRedoChangeTemplate", resourceCulture);
             }
         }
         
@@ -2749,6 +2803,15 @@ namespace LanguageExplorer {
         internal static string ksUndoBulkEditRevPOS {
             get {
                 return ResourceManager.GetString("ksUndoBulkEditRevPOS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo Change Template.
+        /// </summary>
+        internal static string ksUndoChangeTemplate {
+            get {
+                return ResourceManager.GetString("ksUndoChangeTemplate", resourceCulture);
             }
         }
         

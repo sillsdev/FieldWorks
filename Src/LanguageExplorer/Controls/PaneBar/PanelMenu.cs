@@ -38,7 +38,7 @@ namespace LanguageExplorer.Controls.PaneBar
 		{
 			if (_panelMenuContextMenuAndItems != null)
 			{
-				// Get rid of the old ones, since some tools (e.g., ReversalBulkEditReversalEntriesTool) need to rebuild the menu times each time it is shown.
+				// Get rid of the old ones, since some tools (e.g., ReversalBulkEditReversalEntriesTool) need to rebuild the menu items each time it is shown.
 				_dataTreeMainPanelContextMenuFactory.DisposePanelMenuContextMenu(_panelMenuId);
 				_panelMenuContextMenuAndItems = null;
 				ContextMenuStrip = null;

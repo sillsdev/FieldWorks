@@ -414,7 +414,7 @@
   <data name="EditPublications" xml:space="preserve">
     <value>Edit Publications</value>
   </data>
-  <data name="String1" xml:space="preserve">
+  <data name="InsertVariant" xml:space="preserve">
     <value>Insert Variant</value>
   </data>
   <data name="Insert_Environment_slash" xml:space="preserve">

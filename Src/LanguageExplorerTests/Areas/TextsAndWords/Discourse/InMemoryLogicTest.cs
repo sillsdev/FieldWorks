@@ -142,7 +142,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		public void MakeContextMenuCol0()
 		{
 			m_helper.MakeDefaultChartMarkers();
-			using (var strip = m_logic.MakeContextMenu(0))
+			using (var strip = m_logic.InsertIntoChartContextMenu(0))
 			{
 				// Expecting something like
 				//	"Insert as moved from..."
@@ -167,7 +167,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		public void MakeContextMenuCol3()
 		{
 			m_helper.MakeDefaultChartMarkers();
-			using (var strip = m_logic.MakeContextMenu(2))
+			using (var strip = m_logic.InsertIntoChartContextMenu(2))
 			{
 				// Expecting something like
 				//	"Insert as moved from..."
@@ -471,14 +471,25 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		}
 
 		[Test]
-		public void InsertRowMenuItem()
+		public void InsertRowMenuItemAbove()
 		{
 			var allParaOccurrences = m_helper.MakeAnalysesUsedN(1);
 			var row0 = m_helper.MakeFirstRow();
 			m_helper.MakeWordGroup(row0, 0, allParaOccurrences[0], allParaOccurrences[0]);
 			// Test a cell with words.
 			using (var strip = m_logic.MakeCellContextMenu(MakeLocObj(row0, 1)))
-				AssertHasMenuWithText(strip.Items, LanguageExplorerResources.ksInsertRowMenuItem, 0);
+				AssertHasMenuWithText(strip.Items, LanguageExplorerResources.ksInsertRowMenuItemAbove, 0);
+		}
+
+		[Test]
+		public void InsertRowMenuItemBelow()
+		{
+			var allParaOccurrences = m_helper.MakeAnalysesUsedN(1);
+			var row0 = m_helper.MakeFirstRow();
+			m_helper.MakeWordGroup(row0, 0, allParaOccurrences[0], allParaOccurrences[0]);
+			// Test a cell with words.
+			using (var strip = m_logic.MakeCellContextMenu(MakeLocObj(row0, 1)))
+				AssertHasMenuWithText(strip.Items, LanguageExplorerResources.ksInsertRowMenuItemBelow, 0);
 		}
 
 		/// <summary>
@@ -951,7 +962,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		{
 			m_logic.SetScriptRtL();
 			m_helper.MakeDefaultChartMarkers();
-			using (var strip = m_logic.MakeContextMenu(0))
+			using (var strip = m_logic.InsertIntoChartContextMenu(0))
 			{
 				// Expecting something like
 				//	"Insert as moved from..."

@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{1C23DE94-04CC-470A-9D1E-E236E23B9C8A}</ProjectGuid>
+    <ProjectGuid>{ACE0B5C2-39E8-4247-B5E8-18BBD15A52DA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ParatextImport</RootNamespace>
@@ -178,12 +178,7 @@
     <Compile Include="Difference.cs" />
     <Compile Include="DiffLocation.cs" />
     <Compile Include="IBookVersionAgent.cs" />
-    <Compile Include="ImportedBooks.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ImportedBooks.Designer.cs">
-      <DependentUpon>ImportedBooks.cs</DependentUpon>
-    </Compile>
+    <Compile Include="ImportedBooks.cs" />
     <Compile Include="ImportStyleProxy.cs" />
     <Compile Include="ISCScriptureText.cs" />
     <Compile Include="ISCTextEnum.cs" />
@@ -210,10 +205,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Difference.resx">
       <DependentUpon>Difference.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ImportedBooks.resx">
-      <DependentUpon>ImportedBooks.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">

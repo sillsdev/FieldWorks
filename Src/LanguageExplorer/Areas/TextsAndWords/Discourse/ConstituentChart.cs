@@ -46,6 +46,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private ICmPossibility m_template;
 		private ICmPossibility[] m_allColumns;
 		private ConstituentChartLogic m_logic;
+		private Panel m_templateSelectionPanel;
 		private Panel m_buttonRow;
 		private Panel m_bottomStuff;
 		// m_buttonRow above m_ribbon
@@ -195,6 +196,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			m_headerMainCols.ColumnWidthChanging += m_headerMainCols_ColumnWidthChanging;
 		}
 
+		/// <summary>
+		/// Method called by Mediator to refresh view after Undoable UOW is completed
+		/// Method name is defined by a mediator message posted in ConstituentChartLogic.changeTemplate_Click
+		/// </summary>
+		public virtual void OnTemplateChanged(string name)
+		{
+			SetRoot(m_hvoRoot);
+		}
+
 		private void BuildTopStuffUI()
 		{
 			Body = new ConstChartBody(m_logic, this) { Cache = m_cache, Dock = DockStyle.Fill };
@@ -209,8 +219,24 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			m_headerMainCols.Layout += m_headerMainCols_Layout;
 			m_headerMainCols.SizeChanged += m_headerMainCols_SizeChanged;
 
+			m_templateSelectionPanel = new Panel() { Height = new Button().Height, Dock = DockStyle.Top, Width = 0};
+			m_templateSelectionPanel.Layout += TemplateSelectionPanel_Layout;
+
 			m_topStuff = new Panel { Dock = DockStyle.Fill };
 			m_topStuff.Controls.AddRange(new Control[] { Body, m_headerMainCols });
+		}
+
+		private void TemplateSelectionPanel_Layout(object sender, EventArgs e)
+		{
+			var panel = sender as Panel;
+			if (panel.Controls.Count != 0)
+			{
+				var templateButton = panel.Controls[0];
+				templateButton.SuspendLayout();
+				templateButton.Width = new Button().Width * 2;
+				templateButton.Left = panel.Width - templateButton.Width;
+				templateButton.ResumeLayout();
+			}
 		}
 
 		private void BuildBottomStuffUI()
@@ -414,7 +440,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				if (m_columnWidths == null)
 				{
 					m_columnWidths = new int[m_allColumns.Length + 1];
-				}
+			}
 			}
 			finally
 			{
@@ -448,7 +474,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <summary/>
 		protected virtual void SetHeaderColAndButtonWidths()
 		{
-			if (ColumnPositions != null)
+			// Do not change column widths until positions have been updated to represent template change
+			// ColumnPositions should be one longer due to fenceposting
+			if (ColumnPositions != null && ColumnPositions.Length == m_headerMainCols.Columns.Count + 1)
 			{
 				m_fInColWidthChanged = true;
 				try
@@ -586,7 +614,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			}
 
 			if (m_headerMainCols == null || m_headerMainCols.Columns.Count !=
-			    m_allColumns.Length + ConstituentChartLogic.NumberOfExtraColumns)
+				m_allColumns.Length + ConstituentChartLogic.NumberOfExtraColumns)
 			{
 				return;
 			}
@@ -667,11 +695,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			}
 			// does it already have a chart? If not make one.
 			m_chart = null;
-			// in case of previous call.
-			if (m_cache.LangProject.DiscourseDataOA == null)
-			{
-				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () => { m_template = m_cache.LangProject.GetDefaultChartTemplate(); });
-			}
 			m_hvoRoot = hvo;
 			if (m_hvoRoot == 0)
 			{
@@ -688,8 +711,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				// Make sure text is parsed!
 				if (InterlinMaster.HasParagraphNeedingParse(RootStText))
 				{
-					NonUndoableUnitOfWorkHelper.Do(
-						RootStText.Cache.ActionHandlerAccessor,
+					NonUndoableUnitOfWorkHelper.Do(RootStText.Cache.ActionHandlerAccessor,
 						() => InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(RootStText, false));
 				}
 
@@ -761,9 +783,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 				GetAndScrollToBookmark();
 			}
-
 			else
+			{
 				Body.SetRoot(0, null, false);
+			}
 
 			// If necessary adjust number of buttons
 			if (m_MoveHereButtons.Count != m_allColumns.Length && hvo > 0)
@@ -771,6 +794,83 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				SetupMoveHereButtonsToMatchTemplate();
 			}
 			SetHeaderColAndButtonWidths();
+
+			var templateButton = new ComboBox();
+			templateButton.Layout += TemplateDropDownMenu_Layout;
+			m_templateSelectionPanel.Controls.Add(templateButton);
+			templateButton.Left = m_templateSelectionPanel.Width - templateButton.Width;
+			templateButton.DropDownStyle = ComboBoxStyle.DropDownList;
+			templateButton.SelectedIndexChanged += TemplateSelectionChanged;
+
+			foreach (var chartTemplate in ((ICmPossibilityList)m_template.Owner).PossibilitiesOS)
+			{
+				templateButton.Items.Add(chartTemplate);
+			}
+
+			templateButton.SelectedItem = m_template;
+			templateButton.Items.Add(LanguageExplorerResources.ksCreateNewTemplate);
+
+		}
+
+		private void TemplateSelectionChanged(object sender, EventArgs e)
+		{
+			var selection = sender as ComboBox;
+			var template = selection.SelectedItem as ICmPossibility;
+
+			// If user chooses to add a new template then navigate them to the Text Constituent Chart Template list view
+			if (selection.SelectedItem as string == LanguageExplorerResources.ksCreateNewTemplate)
+			{
+				var commands = new List<string>
+				{
+					"AboutToFollowLink",
+					"FollowLink"
+				};
+				var parms = new List<object>
+				{
+					null,
+					new FwLinkArgs(LanguageExplorerResources.ksNewTemplateLink, new Guid())
+				};
+				Publisher.Publish(commands, parms);
+				selection.SelectedItem = m_template;
+				return;
+			}
+
+			//Return if user selects current template
+			if (template == m_template)
+			{
+				return;
+			}
+
+			//If there is currently data in the chart, then warn the user that it will have to be deleted to change the template
+			if (m_chart.RowsOS.Count > 0 && MessageBox.Show(LanguageExplorerResources.ksDelChartWarning, LanguageExplorerResources.ksWarning,
+				MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
+			{
+				return;
+			}
+
+			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoChangeTemplate, LanguageExplorerResources.ksRedoChangeTemplate,
+					m_cache.ActionHandlerAccessor, () =>
+					{
+						//Delete all current data from the chart
+						while (m_chart.RowsOS.Count > 0)
+						{
+							m_chart.RowsOS.RemoveAt(0);
+						}
+
+						//Replace the current template with the new selected one
+						m_chart.TemplateRA = template;
+
+						//Post to the mediator to refresh the root after this action is done or undone
+						m_cache.ActionHandlerAccessor.AddAction(new GenericUndoAction(
+							() => Publisher.Publish("OnTemplateChanged", "do"),
+							() => Publisher.Publish("OnTemplateChanged", "undo")));
+					});
+		}
+
+		private void TemplateDropDownMenu_Layout(object sender, EventArgs e)
+		{
+			var button = sender as ComboBox;
+			button.Left = m_templateSelectionPanel.Width - button.Width;
 		}
 
 		/// <summary>
@@ -1204,7 +1304,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			var btn = (Button)sender;
 			var icol = GetColumnOfButton(btn);
 			DisposeContextMenu(this, new EventArgs());
-			m_contextMenuStrip = m_logic.MakeContextMenu(icol);
+			m_contextMenuStrip = m_logic.InsertIntoChartContextMenu(icol);
 			m_contextMenuStrip.Closed += contextMenuStrip_Closed; // dispose when no longer needed (but not sooner! needed after this returns)
 			m_contextMenuStrip.Show(btn, new Point(0, btn.Height));
 		}
@@ -1255,8 +1355,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Implement export of discourse material.
 		/// </summary>
-		/// <param name="argument"></param>
-		/// <returns></returns>
 		public bool OnExportDiscourse(object argument)
 		{
 			using (var dlg = new DiscourseExportDialog(m_chart.Hvo, Body.Vc, m_logic.WsLineNumber))
@@ -1333,5 +1431,5 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			// Last resort.
 			dest.Add(flid);
 		}
-	} // End Constituent Chart class
+	}
 }
