@@ -255,6 +255,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		{
 			get
 			{
+				if (DesignMode)
+				{
+					return null;
+				}
 				ScriptSubtag subtag = null;
 				if (m_scriptAbbrev.Enabled)
 				{
@@ -270,7 +274,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				}
 				else
 				{
-					subtag = (ScriptSubtag) m_scriptName.SelectedItem;
+					subtag = (ScriptSubtag)m_scriptName.SelectedItem;
 				}
 				return subtag;
 			}
@@ -319,7 +323,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				}
 				else
 				{
-					subtag = (RegionSubtag) m_regionName.SelectedItem;
+					subtag = (RegionSubtag)m_regionName.SelectedItem;
 				}
 				return subtag;
 			}
@@ -366,7 +370,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				{
 					var code = m_variantAbbrev.Text.Trim();
 					IEnumerable<VariantSubtag> variantSubtags;
-					if (IetfLanguageTag.TryGetVariantSubtags(code, out variantSubtags))
+					if (IetfLanguageTag.TryGetVariantSubtags(code, out variantSubtags, m_variantNameString))
 					{
 						foreach (var variantSubtag in variantSubtags)
 						{
@@ -378,7 +382,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				{
 					if (m_variantName.SelectedItem != null)
 					{
-						var variantSubtag = (VariantSubtag) m_variantName.SelectedItem;
+						var variantSubtag = (VariantSubtag)m_variantName.SelectedItem;
 						if (variantSubtag == WellKnownSubtags.IpaPhonemicPrivateUse || variantSubtag == WellKnownSubtags.IpaPhoneticPrivateUse)
 						{
 							yield return WellKnownSubtags.IpaVariant;
@@ -604,29 +608,31 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 
 			var variantSubtags = VariantSubtags.ToArray();
 			// Can't allow a variant name without an abbreviation.
-			if (variantSubtags.Length == 0 && !string.IsNullOrEmpty(m_variantName.Text.Trim()))
+			if (string.IsNullOrEmpty(m_variantAbbrev.Text.Trim()) && !string.IsNullOrEmpty(m_variantName.Text.Trim()))
 			{
 				MessageBox.Show(FindForm(), Strings.kstidMissingVarAbbr, caption);
 				return false;
 			}
-			foreach (var variantSubtag in variantSubtags)
-			{
-				if (variantSubtag.IsPrivateUse)
-				{
-					if (StandardSubtags.RegisteredVariants.Contains(variantSubtag.Code))
-					{
-						MessageBox.Show(FindForm(), Strings.kstidDupVarAbbr, caption);
-						return false;
-					}
-					if (!IetfLanguageTag.IsValidPrivateUseCode(variantSubtag.Code))
-					{
-						MessageBox.Show(FindForm(), Strings.kstidInvalidVarAbbr, caption);
-						return false;
-					}
-				}
-			}
+
 			if (variantSubtags.Length > 0)
 			{
+				foreach (var variantSubtag in variantSubtags)
+				{
+					if (variantSubtag.IsPrivateUse)
+					{
+						if (StandardSubtags.RegisteredVariants.Contains(variantSubtag.Code))
+						{
+							MessageBox.Show(FindForm(), Strings.kstidDupVarAbbr, caption);
+							return false;
+						}
+						if (!IetfLanguageTag.IsValidPrivateUseCode(variantSubtag.Code))
+						{
+							MessageBox.Show(FindForm(), Strings.kstidInvalidVarAbbr, caption);
+							return false;
+						}
+					}
+				}
+
 				var parts = variantSubtags.Select(v => v.Code).ToList();
 				// If these subtags are private use, the first element of each must also be distinct.
 				if (m_ws.Language.IsPrivateUse)
@@ -791,14 +797,14 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			{
 				m_variantName.SelectedIndex = selIndex;
 				m_variantAbbrev.Enabled = true;
-				var variantSubtag = (VariantSubtag) m_variantName.Items[selIndex];
+				var variantSubtag = (VariantSubtag)m_variantName.Items[selIndex];
 				if (variantSubtag == WellKnownSubtags.IpaPhonemicPrivateUse || variantSubtag == WellKnownSubtags.IpaPhoneticPrivateUse)
 				{
 					m_variantAbbrev.Text = WellKnownSubtags.IpaVariant + "-x-" + variantSubtag.Code;
 				}
 				else
 				{
-					m_variantAbbrev.Text = variantSubtag.IsPrivateUse ? "x-" : variantSubtag.Code;
+					m_variantAbbrev.Text = variantSubtag.IsPrivateUse ? "x-" + variantSubtag.Code : variantSubtag.Code;
 				}
 				m_variantAbbrev.Enabled = variantSubtag.IsPrivateUse && !StandardSubtags.CommonPrivateUseVariants.Contains(variantSubtag);
 			}

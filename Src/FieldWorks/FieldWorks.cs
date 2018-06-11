@@ -143,8 +143,8 @@ namespace SIL.FieldWorks
 				if (!string.IsNullOrEmpty(dir))
 				{
 					Environment.SetEnvironmentVariable("ICU_DATA", dir);
+				}
 			}
-		}
 		}
 
 		/// <summary>
@@ -715,7 +715,7 @@ namespace SIL.FieldWorks
 				if (fAddQuotes)
 				{
 					bldr.Append("\"");
-			}
+				}
 			}
 			try
 			{
@@ -766,17 +766,17 @@ namespace SIL.FieldWorks
 			get
 			{
 				var projects = new List<string>
-		{
+				{
 					Cache.ProjectId.UiName // be sure to include myself!
 				};
-			RunOnRemoteClients(kFwRemoteRequest, requestor =>
-			{
-				projects.Add(requestor.ProjectName);
-				return false;
-			});
+				RunOnRemoteClients(kFwRemoteRequest, requestor =>
+				{
+					projects.Add(requestor.ProjectName);
+					return false;
+				});
 
-			return projects;
-		}
+				return projects;
+			}
 		}
 
 		#region Cache Creation and Handling
@@ -798,9 +798,16 @@ namespace SIL.FieldWorks
 			{
 				var cache = LcmCache.CreateCacheFromExistingData(projectId, s_sWsUser, s_ui, FwDirectoryFinder.LcmDirectories, CreateLcmSettings(), progressDlg);
 				EnsureValidLinkedFilesFolder(cache);
+				var oldPronWss = cache.LangProject.CurPronunWss ?? string.Empty;
 				// Make sure every project has one of these. (Getting it has a side effect if it does not exist.)
 				// Crashes have been caused by trying to create it at an unsafe time (LT-15695).
 				var dummy = cache.LangProject.DefaultPronunciationWritingSystem;
+				var badWss = CheckForDeletedWss(oldPronWss, cache.LangProject.CurPronunWss);
+				if (!string.IsNullOrEmpty(badWss))
+				{
+					var message = string.Format(Properties.Resources.ksNotifyWsRemoved, Environment.NewLine, badWss);
+					MessageBox.Show(message, Properties.Resources.kstidFoundInvalidWs, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				}
 				cache.ProjectNameChanged += ProjectNameChanged;
 				cache.ServiceLocator.GetInstance<IUndoStackManager>().OnSave += FieldWorks_OnSave;
 
@@ -808,6 +815,20 @@ namespace SIL.FieldWorks
 				EnsureDefaultCollationsPresent(cache);
 				return cache;
 			}
+		}
+
+		private static string CheckForDeletedWss(string oldWssS, string currentWss)
+		{
+			var deletedWss = new StringBuilder();
+			var oldWss = oldWssS.Split(' ');
+			foreach (var ws in oldWss)
+			{
+				if (!currentWss.Contains(ws))
+				{
+					deletedWss.Append(ws + ", ");
+				}
+			}
+			return deletedWss.ToString().TrimEnd(',',' ');
 		}
 
 		private static void EnsureDefaultCollationsPresent(LcmCache cache)
@@ -819,9 +840,9 @@ namespace SIL.FieldWorks
 				{
 					continue;
 				}
-					ws.DefaultCollation = new IcuRulesCollationDefinition("standard");
-					nullCollationWs.Append(ws.DisplayLabel + ",");
-				}
+				ws.DefaultCollation = new IcuRulesCollationDefinition("standard");
+				nullCollationWs.Append(ws.DisplayLabel + ",");
+			}
 			if (nullCollationWs.Length > 0)
 			{
 				nullCollationWs = nullCollationWs.Remove(nullCollationWs.Length - 1, 1);
@@ -860,21 +881,21 @@ namespace SIL.FieldWorks
 				return;
 			}
 			MessageBox.Show(string.Format(Properties.Resources.ksInvalidLinkedFilesFolder, linkedFilesFolder), Properties.Resources.ksErrorCaption);
-				using (var folderBrowserDlg = new FolderBrowserDialogAdapter())
+			using (var folderBrowserDlg = new FolderBrowserDialogAdapter())
+			{
+				folderBrowserDlg.Description = Properties.Resources.ksLinkedFilesFolder;
+				folderBrowserDlg.RootFolder = Environment.SpecialFolder.Desktop;
+				folderBrowserDlg.SelectedPath = Directory.Exists(defaultFolder) ? defaultFolder : cache.ProjectId.ProjectFolder;
+				if (folderBrowserDlg.ShowDialog() == DialogResult.OK)
 				{
-					folderBrowserDlg.Description = Properties.Resources.ksLinkedFilesFolder;
-					folderBrowserDlg.RootFolder = Environment.SpecialFolder.Desktop;
-					folderBrowserDlg.SelectedPath = Directory.Exists(defaultFolder) ? defaultFolder : cache.ProjectId.ProjectFolder;
-					if (folderBrowserDlg.ShowDialog() == DialogResult.OK)
+					linkedFilesFolder = folderBrowserDlg.SelectedPath;
+				}
+				else
 				{
-						linkedFilesFolder = folderBrowserDlg.SelectedPath;
+					FileUtils.EnsureDirectoryExists(defaultFolder);
+					linkedFilesFolder = defaultFolder;
 				}
-					else
-					{
-						FileUtils.EnsureDirectoryExists(defaultFolder);
-						linkedFilesFolder = defaultFolder;
-					}
-				}
+			}
 			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(cache.ActionHandlerAccessor, () => { cache.LangProject.LinkedFilesRootDir = linkedFilesFolder; });
 		}
 
@@ -887,7 +908,7 @@ namespace SIL.FieldWorks
 			if (linkedFilesFolder == defaultLinkedFilesFolder)
 			{
 				FileUtils.EnsureDirectoryExists(defaultLinkedFilesFolder);
-		}
+			}
 		}
 
 		/// <summary>

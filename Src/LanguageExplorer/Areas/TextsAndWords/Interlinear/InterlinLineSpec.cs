@@ -92,7 +92,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			int wsActual;
 			ITsString dummy;
-			WritingSystemServices.TryWs(cache, WritingSystem, wsFallback, hvo, StringFlid, out wsActual, out dummy);
+			// While displaying the morph bundle, we need the ws used by the Form. If we can't get the Form from the MoForm, we
+			// substitute with the Form stored in the WfiMorphBundle. But our system incorrectly assumes that this object
+			// is a MoForm, so we specify that if our object is a WfiMorphBundle, use the relevant flid.
+			int flid = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo) is IWfiMorphBundle ? WfiMorphBundleTags.kflidForm : StringFlid;
+			WritingSystemServices.TryWs(cache, WritingSystem, wsFallback, hvo, flid, out wsActual, out dummy);
 			return wsActual;
 		}
 

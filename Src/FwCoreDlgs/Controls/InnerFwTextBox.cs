@@ -41,11 +41,11 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		internal bool m_fUsingTempWsFactory;
 		// This stores a value analogous to AutoScrollPosition,
 		// but unlike that, it isn't disabled by AutoScroll false.
-		Point m_ScrollPosition = new Point(0,0); // our own scroll position
+		Point m_ScrollPosition = new Point(0, 0); // our own scroll position
 		internal string m_controlID;
 		// true to adjust font height to fix box. When set false, client will normally
 		// call PreferredHeight and adjust control size to suit.
-		internal bool NotificationsDisabled { get; private set;}
+		internal bool NotificationsDisabled { get; private set; }
 
 		// Maximum characters allowed.
 		// true while we are in Dispose(bool) method
@@ -63,15 +63,15 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			m_DataAccess = new TextBoxDataAccess();
 			// Check for the availability of the FwKernel COM DLL.  Too bad we have to catch an
 			// exception to make this check...
-			if(LicenseManager.UsageMode != LicenseUsageMode.Designtime)
+			if (LicenseManager.UsageMode != LicenseUsageMode.Designtime)
 			{
 				m_vc = new TextBoxVc(this);
+				// So many things blow up so badly if we don't have one of these that I finally decided to just
+				// make one, even though it won't always, perhaps not often, be the one we want.
+				CreateTempWritingSystemFactory();
+				m_DataAccess.WritingSystemFactory = WritingSystemFactory;
 			}
-			// So many things blow up so badly if we don't have one of these that I finally decided to just
-			// make one, even though it won't always, perhaps not often, be the one we want.
-			CreateTempWritingSystemFactory();
-			m_DataAccess.WritingSystemFactory = WritingSystemFactory;
-			IsTextBox = true;	// range selection not shown when not in focus
+			IsTextBox = true;   // range selection not shown when not in focus
 		}
 
 		internal bool Rtl => m_vc.m_rtl;
@@ -849,7 +849,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				{
 					IVwCacheDa cda = VwCacheDaClass.Create();
 					cda.TsStrFactory = TsStringUtils.TsStrFactory;
-					var sda = (ISilDataAccess) cda;
+					var sda = (ISilDataAccess)cda;
 					sda.WritingSystemFactory = WritingSystemFactory;
 					sda.SetString(khvoRoot, ktagText, FontHeightAdjuster.GetUnadjustedTsString(Tss));
 					IVwRootBox rootb = VwRootBoxClass.Create();
@@ -935,7 +935,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// Gets a value indicating whether to attempt to adjust the height of the string
 		/// in the textbox to fit the height of the textbox.
 		/// </summary>
-		protected bool DoAdjustHeight => AdjustStringHeight && WritingSystemFactory != null && !AutoScroll;
+		protected bool DoAdjustHeight => LicenseManager.UsageMode != LicenseUsageMode.Designtime && AdjustStringHeight && WritingSystemFactory != null && !AutoScroll;
 
 		/// <summary>
 		/// Adjusts text height after a style change.

@@ -96,7 +96,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				m_transformer.MakeAmpleFiles(model);
 
 				int maxAnalCount = 20;
-				XElement maxAnalCountElem = model.Elements("M3Dump").Elements("ParserParameters").Elements("XAmple").Elements("MaxAnalysesToReturn").FirstOrDefault();
+				XElement maxAnalCountElem = model.Elements("M3Dump").Elements("ParserParameters").Elements("ParserParameters").Elements("XAmple").Elements("MaxAnalysesToReturn").FirstOrDefault();
 				if (maxAnalCountElem != null)
 				{
 					maxAnalCount = (int) maxAnalCountElem;

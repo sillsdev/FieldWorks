@@ -16,9 +16,6 @@
 	<Feature Id='MenuShortcut' Title='Start Menu Shortcut' Description='Creates a shortcut in the Start menu.' Level='3' ConfigurableDirectory='APPFOLDER' AllowAdvertise="no" InstallDefault="source" Absent='allow' TypicalDefault="install" >
 		<ComponentRef Id='ApplicationShortcutMenu' />
 	</Feature>
-	<Feature Id="FlexMovies" Title="Demo Movies" Description="Language Explorer demonstration movies" Display="expand" Level="4" AllowAdvertise="no">
-		<ComponentGroupRef Id="HarvestedMovieFiles" />
-	</Feature>
 	<Feature Id="LOC" Title="Language Packs" Description="Additional languages for the user interface." Display="expand" Level="3" AllowAdvertise="no">
 		<Feature Id="Indonesian" Title="Indonesian" Description="Allows the software to have an Indonesian user interface." Display="expand" Level="3" AllowAdvertise="no">
 			<Condition Level="1">UserLanguageID = 1057</Condition>

@@ -5,9 +5,12 @@
 using System.Collections.Generic;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using NUnit.Framework;
-using SIL.LCModel;
 using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 {
@@ -564,6 +567,49 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			Assert.AreEqual(InterlinLineChoices.kflidLitTrans, choices[9].Flid);
 
 			Assert.AreEqual(wsGer, choices[4].WritingSystem);
+		}
+
+		[Test]
+		public void GetActualWs_MorphBundleBehavesLikeMoForm()
+		{
+			var wsManager = new WritingSystemManager();
+			CoreWritingSystemDefinition enWs;
+			wsManager.GetOrSet("en", out enWs);
+			int wsEng = enWs.Handle;
+
+			CoreWritingSystemDefinition frWs;
+			wsManager.GetOrSet("fr", out frWs);
+			int wsFrn = frWs.Handle;
+
+			var choices = new InterlinLineChoices(m_lp, wsFrn, wsEng);
+			MakeStandardState(choices);
+			InterlinLineSpec spec = choices[1];
+			Assert.AreEqual(InterlinLineChoices.kflidMorphemes, spec.Flid);
+			// The StringFlid for this line spec always corresponds to a MoForm
+			Assert.AreEqual(MoFormTags.kflidForm, spec.StringFlid);
+
+			IWfiWordform wf;
+			IWfiAnalysis wag;
+			ITsString str = TsStringUtils.MakeString("WordForm", spec.WritingSystem);
+			IWfiMorphBundle wmb = Cache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>().Create();
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				wf = Cache.ServiceLocator.GetInstance<IWfiWordformFactory>().Create(str);
+				wag = WordAnalysisOrGlossServices.CreateNewAnalysisWAG(wf);
+				wag.MorphBundlesOS.Add(wmb);
+				ILexEntry entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+				IMoForm moForm = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
+				entry.AlternateFormsOS.Add(moForm);
+				moForm.Form.set_String(spec.WritingSystem, "Morph");
+				wmb.MorphRA = moForm;
+			});
+			// The line spec for displaying the Morpheme must be able to handle getting the ws from both
+			// MorphBundles or MoForms
+			Assert.True(spec.Flid == InterlinLineChoices.kflidMorphemes);
+			int wmbWs = spec.GetActualWs(Cache, wmb.Hvo, spec.WritingSystem);
+			int mfWs = spec.GetActualWs(Cache, wmb.MorphRA.Hvo, spec.WritingSystem);
+			Assert.True(wmbWs == spec.WritingSystem);
+			Assert.True(mfWs == spec.WritingSystem);
 		}
 	}
 }

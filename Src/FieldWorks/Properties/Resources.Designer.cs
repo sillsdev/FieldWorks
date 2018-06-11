@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -302,6 +302,15 @@ namespace SIL.FieldWorks.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to FieldWorks found one or more invalid writing systems while loading the project. FieldWorks has safely removed the writing system(s) from the list.{0}{0}Writing systems removed:{0}{1}.
+        /// </summary>
+        internal static string ksNotifyWsRemoved {
+            get {
+                return ResourceManager.GetString("ksNotifyWsRemoved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open the last project, .
         /// </summary>
         internal static string ksOpenLastEditedProject {
@@ -445,6 +454,15 @@ namespace SIL.FieldWorks.Properties {
         internal static string kstidFLEx {
             get {
                 return ResourceManager.GetString("kstidFLEx", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid Writing System Found.
+        /// </summary>
+        internal static string kstidFoundInvalidWs {
+            get {
+                return ResourceManager.GetString("kstidFoundInvalidWs", resourceCulture);
             }
         }
         

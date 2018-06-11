@@ -44,10 +44,8 @@
 		<Merge Id="PythonEC" Language="1033" SourceFile="$(var.EncodingConvertersPath)\PythonEcMM.msm" DiskId="1"/>
 		<?endif?>
 
-		<Directory Id="LangEx" Name="Language Explorer">
-			<Directory Id="MOVIEFOLDER" Name="Movies"/> <!-- Harvested movies are installed in this directory -->
-		</Directory>
 		<!-- Harvested localizations are installed in the following directories -->
+		<!-- If you change this list, you must also update those listed at $(fwrt)\Localizations\ReadMe.md -->
 		<Directory Id="AZL10NFOLDER" Name="az"/>
 		<Directory Id="ESL10NFOLDER" Name="es"/>
 		<Directory Id="FAL10NFOLDER" Name="fa"/>
@@ -66,41 +64,59 @@
 		<Directory Id="ZHL10NFOLDER" Name="zh-CN"/>
 	</DirectoryRef>
 
-	<!-- This WixVariable inserts the source directory into the harvest file -->
-	<WixVariable Id="MOVIEDIR" Value="$(var.APPBUILDDIR)_Movies"/>
-	<?include MovieHarvest.wxi?>
-
 	<!-- These WixVariables insert the source directory into the harvest files (because Heat apparently can't) -->
-	<WixVariable Id="AZL10NDIR" Value="$(var.APPBUILDDIR)_L10n\az"/>
-	<WixVariable Id="ESL10NDIR" Value="$(var.APPBUILDDIR)_L10n\es"/>
-	<WixVariable Id="FAL10NDIR" Value="$(var.APPBUILDDIR)_L10n\fa"/>
-	<WixVariable Id="FRL10NDIR" Value="$(var.APPBUILDDIR)_L10n\fr"/>
-	<WixVariable Id="HIL10NDIR" Value="$(var.APPBUILDDIR)_L10n\hi"/>
-	<WixVariable Id="HUL10NDIR" Value="$(var.APPBUILDDIR)_L10n\hu"/>
-	<WixVariable Id="IDL10NDIR" Value="$(var.APPBUILDDIR)_L10n\id"/>
-	<WixVariable Id="KOL10NDIR" Value="$(var.APPBUILDDIR)_L10n\ko"/>
-	<WixVariable Id="MSL10NDIR" Value="$(var.APPBUILDDIR)_L10n\ms"/>
-	<WixVariable Id="PTL10NDIR" Value="$(var.APPBUILDDIR)_L10n\pt"/>
-	<WixVariable Id="ROL10NDIR" Value="$(var.APPBUILDDIR)_L10n\ro"/>
-	<WixVariable Id="RUL10NDIR" Value="$(var.APPBUILDDIR)_L10n\ru"/>
-	<WixVariable Id="TEL10NDIR" Value="$(var.APPBUILDDIR)_L10n\te"/>
-	<WixVariable Id="TRL10NDIR" Value="$(var.APPBUILDDIR)_L10n\tr"/>
-	<WixVariable Id="VIL10NDIR" Value="$(var.APPBUILDDIR)_L10n\vi"/>
-	<WixVariable Id="ZHL10NDIR" Value="$(var.APPBUILDDIR)_L10n\zh-CN"/>
-	<?include azHarvest.wxi?>
-	<?include esHarvest.wxi?>
-	<?include faHarvest.wxi?>
-	<?include frHarvest.wxi?>
-	<?include hiHarvest.wxi?>
-	<?include huHarvest.wxi?>
-	<?include idHarvest.wxi?>
-	<?include koHarvest.wxi?>
-	<?include msHarvest.wxi?>
-	<?include ptHarvest.wxi?>
-	<?include roHarvest.wxi?>
-	<?include ruHarvest.wxi?>
-	<?include teHarvest.wxi?>
-	<?include trHarvest.wxi?>
-	<?include viHarvest.wxi?>
-	<?include zhHarvest.wxi?>
+	<?ifdef MASTERBUILDDIR?>
+	<WixVariable Id="AZ_MASTERL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\az"/>
+	<WixVariable Id="ES_MASTERL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\es"/>
+	<WixVariable Id="FA_MASTERL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\fa"/>
+	<WixVariable Id="FR_MASTERL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\fr"/>
+	<WixVariable Id="HI_MASTERL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\hi"/>
+	<WixVariable Id="HU_MASTERL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\hu"/>
+	<WixVariable Id="ID_MASTERL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\id"/>
+	<WixVariable Id="KO_MASTERL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\ko"/>
+	<WixVariable Id="MS_MASTERL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\ms"/>
+	<WixVariable Id="PT_MASTERL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\pt"/>
+	<WixVariable Id="RO_MASTERL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\ro"/>
+	<WixVariable Id="RU_MASTERL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\ru"/>
+	<WixVariable Id="TE_MASTERL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\te"/>
+	<WixVariable Id="TR_MASTERL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\tr"/>
+	<WixVariable Id="VI_MASTERL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\vi"/>
+	<WixVariable Id="ZH_MASTERL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\zh-CN"/>
+	<?define L10nWxiDir = .\master?>
+	<?else?>
+	<WixVariable Id="AZ_UPDATEL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\az"/>
+	<WixVariable Id="ES_UPDATEL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\es"/>
+	<WixVariable Id="FA_UPDATEL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\fa"/>
+	<WixVariable Id="FR_UPDATEL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\fr"/>
+	<WixVariable Id="HI_UPDATEL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\hi"/>
+	<WixVariable Id="HU_UPDATEL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\hu"/>
+	<WixVariable Id="ID_UPDATEL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\id"/>
+	<WixVariable Id="KO_UPDATEL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\ko"/>
+	<WixVariable Id="MS_UPDATEL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\ms"/>
+	<WixVariable Id="PT_UPDATEL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\pt"/>
+	<WixVariable Id="RO_UPDATEL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\ro"/>
+	<WixVariable Id="RU_UPDATEL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\ru"/>
+	<WixVariable Id="TE_UPDATEL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\te"/>
+	<WixVariable Id="TR_UPDATEL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\tr"/>
+	<WixVariable Id="VI_UPDATEL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\vi"/>
+	<WixVariable Id="ZH_UPDATEL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\zh-CN"/>
+	<?define L10nWxiDir = .\update?>
+	<?endif?>
+
+	<?include $(var.L10nWxiDir)\azHarvest.wxi?>
+	<?include $(var.L10nWxiDir)\esHarvest.wxi?>
+	<?include $(var.L10nWxiDir)\faHarvest.wxi?>
+	<?include $(var.L10nWxiDir)\frHarvest.wxi?>
+	<?include $(var.L10nWxiDir)\hiHarvest.wxi?>
+	<?include $(var.L10nWxiDir)\huHarvest.wxi?>
+	<?include $(var.L10nWxiDir)\idHarvest.wxi?>
+	<?include $(var.L10nWxiDir)\koHarvest.wxi?>
+	<?include $(var.L10nWxiDir)\msHarvest.wxi?>
+	<?include $(var.L10nWxiDir)\ptHarvest.wxi?>
+	<?include $(var.L10nWxiDir)\roHarvest.wxi?>
+	<?include $(var.L10nWxiDir)\ruHarvest.wxi?>
+	<?include $(var.L10nWxiDir)\teHarvest.wxi?>
+	<?include $(var.L10nWxiDir)\trHarvest.wxi?>
+	<?include $(var.L10nWxiDir)\viHarvest.wxi?>
+	<?include $(var.L10nWxiDir)\zhHarvest.wxi?>
 </Include>

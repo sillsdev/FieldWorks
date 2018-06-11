@@ -31,6 +31,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		bool m_fAwaitingHeadwordForm; // true after start of headword until we get a string alt.
 		bool m_fDoingMorphType; // true during display of MorphType of MoForm.
 		bool m_fDoingInterlinName; // true during MSA
+		bool m_fDoingGlossPrepend; // true after special AddProp
 		bool m_fDoingGlossAppend; // true after special AddProp
 		string m_sPendingPrefix; // got a prefix, need the ws from the form itself before we write it.
 		string m_sFreeAnnotationType;
@@ -224,7 +225,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				m_writer.WriteAttributeString("guid", guid.ToString());
 				return guid;
 			}
-			return Guid.Empty;
+				return Guid.Empty;
 		}
 
 		/// <summary>
@@ -253,12 +254,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var tsb = tss.GetBldr();
 			if (!string.IsNullOrEmpty(sPrefix))
 			{
-				tsb.Replace(0, 0, sPrefix, null);
+					tsb.Replace(0, 0, sPrefix, null);
 			}
 
 			if (!string.IsNullOrEmpty(sPostfix))
 			{
-				tsb.Replace(tsb.Length, tsb.Length, sPostfix, null);
+					tsb.Replace(tsb.Length, tsb.Length, sPostfix, null);
 			}
 			tss = tsb.GetString();
 			return tss;
@@ -384,16 +385,23 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public override void AddProp(int tag, IVwViewConstructor vc, int frag)
 		{
+			if (tag == InterlinVc.ktagGlossPrepend)
+			{
+				m_fDoingGlossPrepend = true;
+			}
 			if (tag == InterlinVc.ktagGlossAppend)
 			{
 				m_fDoingGlossAppend = true;
 			}
 			base.AddProp(tag, vc, frag);
+			if (tag == InterlinVc.ktagGlossPrepend)
+			{
+				m_fDoingGlossPrepend = false;
+			}
 			if (tag == InterlinVc.ktagGlossAppend)
 			{
 				m_fDoingGlossAppend = false;
 			}
-
 		}
 
 		public override void AddTsString(ITsString tss)
@@ -401,6 +409,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (m_fDoingGlossAppend)
 			{
 				WriteItem("glsAppend", tss);
+			}
+			else if (m_fDoingGlossPrepend)
+			{
+				WriteItem("glsPrepend", tss);
 			}
 			base.AddTsString(tss);
 		}
@@ -460,25 +472,25 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					m_fDoingMorphType = true;
 					break;
 				default:
-				switch(tag)
-				{
-					case WfiAnalysisTags.kflidCategory:
-						// <item type="pos"...AddStringAltMember will add the content...
-						OpenItem("pos");
-						break;
-					case WfiMorphBundleTags.kflidMorph:
-						OpenItem("txt");
-						break;
-					case WfiMorphBundleTags.kflidSense:
-						OpenItem("gls");
-						break;
-					case WfiMorphBundleTags.kflidMsa:
-						OpenItem("msa");
-						m_fDoingInterlinName = true;
-						break;
-					default:
-						break;
-				}
+					switch(tag)
+					{
+						case WfiAnalysisTags.kflidCategory:
+							// <item type="pos"...AddStringAltMember will add the content...
+							OpenItem("pos");
+							break;
+						case WfiMorphBundleTags.kflidMorph:
+							OpenItem("txt");
+							break;
+						case WfiMorphBundleTags.kflidSense:
+							OpenItem("gls");
+							break;
+						case WfiMorphBundleTags.kflidMsa:
+							OpenItem("msa");
+							m_fDoingInterlinName = true;
+							break;
+						default:
+							break;
+					}
 					break;
 			}
 			base.AddObjProp (tag, vc, frag);
@@ -492,20 +504,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					m_fDoingMorphType = false;
 					break;
 				default:
-				switch(tag)
-				{
-					case WfiAnalysisTags.kflidCategory:
-					case WfiMorphBundleTags.kflidMorph:
-					case WfiMorphBundleTags.kflidSense:
-						CloseItem();
-						break;
-					case WfiMorphBundleTags.kflidMsa:
-						CloseItem();
-						m_fDoingInterlinName = false;
-						break;
-					default:
-						break;
-				}
+					switch(tag)
+					{
+						case WfiAnalysisTags.kflidCategory:
+						case WfiMorphBundleTags.kflidMorph:
+						case WfiMorphBundleTags.kflidSense:
+							CloseItem();
+							break;
+						case WfiMorphBundleTags.kflidMsa:
+							CloseItem();
+							m_fDoingInterlinName = false;
+							break;
+						default:
+							break;
+					}
 					break;
 			}
 		}

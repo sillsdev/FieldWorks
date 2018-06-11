@@ -174,10 +174,8 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		{
 			m_helpTopicProvider = helpTopicProvider;
 
-			if (Text == Properties.Resources.kstidAddPuaTitle)
-				m_sHelpTopic = "khtpWsAddPUAChar";
-			else if (Text == Properties.Resources.kstidModifyPuaTitle)
-				m_sHelpTopic = "khtpWsModifyPUAChar";
+			if (Text == Properties.Resources.kstidAddPuaTitle || Text == Properties.Resources.kstidModifyPuaTitle)
+				m_sHelpTopic = "khtpUnicodeEditorCharTab";
 			else
 				Debug.Assert(false, "Dialog must be set to Add or Modify (using the Modify property) before SetDialogProperties is called");
 
