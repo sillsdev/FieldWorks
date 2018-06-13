@@ -51,7 +51,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			internal EventHandler CharacterGridSelectionChanged;
 
 			private CharacterGrid m_gridWordForming;
-			private CharacterGrid m_gridNumbers;
 			private CharacterGrid m_gridOther;
 			private CharacterGrid m_currGrid;
 
@@ -92,45 +91,36 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// Initializes the valid characters explorer bar with three valid character grids.
 			/// </summary>
 			/// ---------------------------------------------------------------------------------
-			internal void Init(CharacterGrid gridWf, CharacterGrid gridOther, CharacterGrid gridNum,
-				CoreWritingSystemDefinition ws, IApp app)
+			internal void Init(CharacterGrid gridWf, CharacterGrid gridOther, CoreWritingSystemDefinition ws, IApp app)
 			{
 				m_ws = ws;
 				m_app = app;
 
 				gridWf.Font = new Font(ws.DefaultFontName, gridWf.Font.Size);
-				gridNum.Font = new Font(ws.DefaultFontName, gridNum.Font.Size);
 				gridOther.Font = new Font(ws.DefaultFontName, gridOther.Font.Size);
 
 				gridWf.BackgroundColor = SystemColors.Window;
-				gridNum.BackgroundColor = SystemColors.Window;
 				gridOther.BackgroundColor = SystemColors.Window;
 
 				gridWf.MultiSelect = true;
-				gridNum.MultiSelect = true;
 				gridOther.MultiSelect = true;
 
 				gridWf.CellPainting += HandleGridCellPainting;
-				gridNum.CellPainting += HandleGridCellPainting;
 				gridOther.CellPainting += HandleGridCellPainting;
 
 				gridWf.Enter += HandleGridEnter;
-				gridNum.Enter += HandleGridEnter;
 				gridOther.Enter += HandleGridEnter;
 
 				gridWf.CellFormatting += HandleCellFormatting;
-				gridNum.CellFormatting += HandleCellFormatting;
 				gridOther.CellFormatting += HandleCellFormatting;
 
 				gridWf.CellMouseClick += HandleCharGridCellMouseClick;
-				gridNum.CellMouseClick += HandleCharGridCellMouseClick;
 				gridOther.CellMouseClick += HandleCharGridCellMouseClick;
 
 				gridWf.SelectionChanged += HandleCharGridSelectionChanged;
 				gridOther.SelectionChanged += HandleCharGridSelectionChanged;
 
 				m_gridWordForming = gridWf;
-				m_gridNumbers = gridNum;
 				m_gridOther = gridOther;
 				m_validChars = ValidCharacters.Load(ws, LoadException);
 
@@ -179,15 +169,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					m_gridWordForming.Dispose();
 				}
 
-				if (m_gridNumbers != null)
-				{
-					m_gridNumbers.CellPainting -= HandleGridCellPainting;
-					m_gridNumbers.Enter -= HandleGridEnter;
-					m_gridNumbers.CellFormatting -= HandleCellFormatting;
-					m_gridNumbers.CellMouseClick -= HandleCharGridCellMouseClick;
-					m_gridNumbers.Dispose();
-				}
-
 				if (m_gridOther != null)
 				{
 					m_gridOther.CellPainting -= HandleGridCellPainting;
@@ -205,7 +186,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						m_cmnu.Dispose();
 				}
 				m_gridWordForming = null;
-				m_gridNumbers = null;
 				m_gridOther = null;
 					m_currGrid = null;
 				IsDisposed = true;
@@ -223,7 +203,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				get { return m_currGrid; }
 				set
 				{
-					if ((value == m_gridWordForming || value == m_gridNumbers ||
+					if ((value == m_gridWordForming ||
 						value == m_gridOther) && value != m_currGrid)
 					{
 						m_currGrid = value;
@@ -251,8 +231,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				get
 				{
-					return (m_gridWordForming.RowCount == 0 && m_gridNumbers.RowCount == 0 &&
-						m_gridOther.RowCount == 0);
+					return (m_gridWordForming.RowCount == 0 && m_gridOther.RowCount == 0);
 				}
 			}
 
@@ -295,7 +274,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// ---------------------------------------------------------------------------------
 			private bool AreSelectedCharsOther(CharacterGrid grid)
 			{
-				if (grid == null || grid == m_gridNumbers || grid.SelectedCells.Count == 0)
+				if (grid == null || grid.SelectedCells.Count == 0)
 					return false;
 
 				foreach (DataGridViewCell cell in grid.SelectedCells)
@@ -347,7 +326,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					switch (retType)
 					{
 						case ValidCharacterType.WordForming: CurrentGrid = m_gridWordForming; break;
-						case ValidCharacterType.Numeric: CurrentGrid = m_gridNumbers; break;
 						case ValidCharacterType.Other: CurrentGrid = m_gridOther; break;
 						default: return;
 					}
@@ -369,8 +347,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					if (m_gridWordForming.RowCount > 0)
 						CurrentGrid = m_gridWordForming;
-					else if (m_gridNumbers.RowCount > 0)
-						CurrentGrid = m_gridNumbers;
 					else if (m_gridOther.RowCount > 0)
 						CurrentGrid = m_gridOther;
 				}
@@ -399,12 +375,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					m_gridWordForming.RemoveAllCharacters();
 					m_gridWordForming.AddCharacters(m_validChars.WordFormingCharacters);
-				}
-
-				if ((type & ValidCharacterType.Numeric) != 0)
-				{
-					m_gridNumbers.RemoveAllCharacters();
-					m_gridNumbers.AddCharacters(m_validChars.NumericCharacters);
 				}
 
 				if ((type & ValidCharacterType.Other) != 0)
@@ -727,7 +697,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// to be executed which is an expensive operation as it pinvokes GetGlyphIndices
 			// repeatedly.
 			chrGridWordForming.Font = fnt;
-			chrGridNumbers.Font = fnt;
 			chrGridOther.Font = fnt;
 			txtManualCharEntry.Font = fnt;
 			txtFirstChar.Font = fnt;
@@ -758,7 +727,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			colStatus.HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleRight;
 
-			m_validCharsGridMngr.Init(chrGridWordForming, chrGridOther, chrGridNumbers, m_ws, m_app);
+			m_validCharsGridMngr.Init(chrGridWordForming, chrGridOther, m_ws, m_app);
 			m_validCharsGridMngr.CharacterGridGotFocus += HandleCharGridGotFocus;
 			m_validCharsGridMngr.CharacterGridSelectionChanged += HandleCharGridSelChange;
 		}
@@ -886,7 +855,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			// Unsubs
 			chrGridWordForming.CharacterChanged -= HandleCharGridCharacterChanged;
-			chrGridNumbers.CharacterChanged -= HandleCharGridCharacterChanged;
 			chrGridOther.CharacterChanged -= HandleCharGridCharacterChanged;
 			base.OnClosing(e);
 		}
