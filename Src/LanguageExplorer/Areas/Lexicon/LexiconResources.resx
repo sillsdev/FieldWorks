@@ -468,4 +468,13 @@
   <data name="Delete_Complex_Form_Info" xml:space="preserve">
     <value>Delete Complex Form Info</value>
   </data>
+  <data name="Move_Pronunciation_Up" xml:space="preserve">
+    <value>Move Pronunciation _Up</value>
+  </data>
+  <data name="Delete_this_Pronunciation" xml:space="preserve">
+    <value>Delete this Pronunciation</value>
+  </data>
+  <data name="Move_Pronunciation_Down" xml:space="preserve">
+    <value>Move Pronunciation _Down</value>
+  </data>
 </root>

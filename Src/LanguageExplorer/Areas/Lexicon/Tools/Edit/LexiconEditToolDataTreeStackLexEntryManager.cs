@@ -137,13 +137,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// Slice stack from LexEntry.fwlayout (less senses, which are handled in another manager class).
 			Register_LexemeForm_Bundle();
 			Register_CitationForm_Bundle();
+			Register_Pronunciation_Bundle();
 
 			// TODO: This method will get revised/removed, as I get to the remaining bundle(s) of slices.
 			RegisterHotLinkMenus();
-			/*
-			<part ref="Pronunciations" param="Normal" visibility="ifdata"/>
-			*/
-			MyDataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(LexiconEditToolConstants.mnuDataTree_Pronunciation, Create_mnuDataTree_Pronunciation);
 			/*
 			<part ref="Etymologies" param="Normal" visibility="ifdata" />
 			*/
@@ -528,13 +525,82 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		#endregion CitationForm_Bundle
 
+		#region Pronunciation_Bundle
+
+		private void Register_Pronunciation_Bundle()
+		{
+			// Only one slice has menus, but several have chooser dlgs.
+			// <part ref="Pronunciations" param="Normal" visibility="ifdata"/>
+			MyDataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(LexiconEditToolConstants.mnuDataTree_Pronunciation, Create_mnuDataTree_Pronunciation);
+		}
+
+		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Pronunciation(Slice slice, string contextMenuId)
+		{
+			// Start: <menu id="mnuDataTree-Pronunciation">
+			var contextMenuStrip = new ContextMenuStrip
+			{
+				Name = LexiconEditToolConstants.mnuDataTree_AlternateForms
+			};
+			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(2);
+			// <item command="CmdDataTree-Insert-Pronunciation"/>
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconEditToolConstants.CmdDataTree_Insert_Pronunciation], LexiconResources.Insert_Pronunciation, LexiconResources.Insert_Pronunciation_Tooltip);
+			// <item command="CmdInsertMediaFile" label="Insert _Sound or Movie" defaultVisible="false"/>
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconEditToolConstants.CmdInsertMediaFile], LexiconResources.Sound_or_Movie, LexiconResources.Insert_Sound_Or_Movie_File_Tooltip);
+			// <item label="-" translate="do not translate"/>
+			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
+			using (var imageHolder = new LanguageExplorer.DictionaryConfiguration.ImageHolder())
+			{
+				// <item command="CmdDataTree-MoveUp-Pronunciation"/>
+				/*
+					<command id="CmdDataTree-MoveUp-Pronunciation" label="Move Pronunciation _Up" message="MoveUpObjectInSequence" icon="MoveUp">
+						<parameters field="Pronunciations" className="LexPronunciation"/>
+					</command>
+				*/
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInSequence_Clicked, LexiconResources.Move_Pronunciation_Up, image: imageHolder.smallCommandImages.Images[12]);
+				bool visible;
+				var enabled = CanMoveUpObjectInSequence(out visible);
+				menu.Visible = true;
+				menu.Enabled = enabled;
+				// <item command="CmdDataTree-MoveDown-Pronunciation"/>
+				/*
+					<command id="CmdDataTree-MoveDown-Pronunciation" label="Move Pronunciation _Down" message="MoveDownObjectInSequence" icon="MoveDown">
+						<parameters field="Pronunciations" className="LexPronunciation"/>
+					</command>
+				*/
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveDownObjectInSequence_Clicked, LexiconResources.Move_Pronunciation_Down, image: imageHolder.smallCommandImages.Images[14]);
+				enabled = CanMoveDownObjectInSequence(out visible);
+				menu.Visible = true;
+				menu.Enabled = enabled;
+			}
+			// <item label="-" translate="do not translate"/>
+			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
+			// <item command="CmdDataTree-Delete-Pronunciation"/>
+			/*
+				<command id="CmdDataTree-Delete-Pronunciation" label="Delete this Pronunciation" message="DataTreeDelete" icon="Delete">
+					<parameters field="Pronunciations" className="LexPronunciation"/>
+				</command>
+				Delete_this_Pronunciation
+			*/
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Delete_this_Pronunciation_Clicked, LexiconResources.Delete_this_Pronunciation);
+			menu.Enabled = !slice.IsGhostSlice;
+			// Not added here. It is added by the slice, along with the generic slice menus.
+			// <item label="-" translate="do not translate"/>
+
+			// End: <menu id="mnuDataTree-Pronunciation>
+
+			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+		}
+
+		private void Delete_this_Pronunciation_Clicked(object sender, EventArgs e)
+		{
+			DeleteSliceObject();
+		}
+
+		#endregion Pronunciation_Bundle
+
 		private void Delete_ComplexFormSpec_Clicked(object sender, EventArgs e)
 		{
-			var currentSlice = MyDataTree.CurrentSlice;
-			if (currentSlice.MyCmObject.IsValidObject)
-			{
-				currentSlice.HandleDeleteCommand();
-			}
+			DeleteSliceObject();
 		}
 
 		private void MoveTargetDownInSequence_Clicked(object sender, EventArgs e)
@@ -961,30 +1027,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 		}
 
-		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Pronunciation(Slice slice, string contextMenuId)
-		{
-			// Start: <menu id="mnuDataTree-Pronunciation">
-			var contextMenuStrip = new ContextMenuStrip
-			{
-				Name = LexiconEditToolConstants.mnuDataTree_AlternateForms
-			};
-			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(2);
-			// <item command="CmdDataTree-Insert-Pronunciation"/>
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconEditToolConstants.CmdDataTree_Insert_Pronunciation], LexiconResources.Insert_Pronunciation, LexiconResources.Insert_Pronunciation_Tooltip);
-			/*
-			<item command="CmdInsertMediaFile" label="Insert _Sound or Movie" defaultVisible="false"/>
-			<item label="-" translate="do not translate"/>
-			<item command="CmdDataTree-MoveUp-Pronunciation"/>
-			<item command="CmdDataTree-MoveDown-Pronunciation"/>
-			<item label="-" translate="do not translate"/>
-			<item command="CmdDataTree-Delete-Pronunciation"/>
-			<item label="-" translate="do not translate"/>
-			*/
-			// End: <menu id="mnuDataTree-Pronunciation>
-
-			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
-		}
-
 		#endregion ordinary slice menus
 
 		#region popup slice menus
@@ -1021,5 +1063,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_publisher.Publish(commands, parms);
 		}
 		#endregion popup slice menus
+
+		private void DeleteSliceObject()
+		{
+			var currentSlice = MyDataTree.CurrentSlice;
+			if (currentSlice.MyCmObject.IsValidObject)
+			{
+				currentSlice.HandleDeleteCommand();
+			}
+		}
 	}
 }

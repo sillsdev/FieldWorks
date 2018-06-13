@@ -171,6 +171,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete this Pronunciation.
+        /// </summary>
+        internal static string Delete_this_Pronunciation {
+            get {
+                return ResourceManager.GetString("Delete_this_Pronunciation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete this Sense and any Subsenses.
         /// </summary>
         internal static string DeleteSenseAndSubsenses {
@@ -881,6 +890,24 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string Move_Left {
             get {
                 return ResourceManager.GetString("Move_Left", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move Pronunciation _Down.
+        /// </summary>
+        internal static string Move_Pronunciation_Down {
+            get {
+                return ResourceManager.GetString("Move_Pronunciation_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move Pronunciation _Up.
+        /// </summary>
+        internal static string Move_Pronunciation_Up {
+            get {
+                return ResourceManager.GetString("Move_Pronunciation_Up", resourceCulture);
             }
         }
         

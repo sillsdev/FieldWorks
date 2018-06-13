@@ -208,22 +208,6 @@
 			<parameters className="LexEntry" field="VariantFormEntryBackRefs"/>
 		</command>
 		<!--
-	Pronunciations
-	-->
-		<command id="CmdDataTree-Delete-Pronunciation" label="Delete this Pronunciation" message="DataTreeDelete" icon="Delete">
-			<parameters field="Pronunciations" className="LexPronunciation"/>
-		</command>
-		<command id="CmdDataTree-MoveUp-Pronunciation" label="Move Pronunciation _Up" message="MoveUpObjectInSequence" icon="MoveUp">
-			<parameters field="Pronunciations" className="LexPronunciation"/>
-		</command>
-		<command id="CmdDataTree-MoveDown-Pronunciation" label="Move Pronunciation _Down" message="MoveDownObjectInSequence" icon="MoveDown">
-			<parameters field="Pronunciations" className="LexPronunciation"/>
-		</command>
-		<command id="CmdDataTree-Pronunciation-WritingSystems" label="Writing Systems" message="PronunciationWritingSystems">
-			<parameters field="Pronunciations" className="LexPronunciation"/>
-		</command>
-
-		<!--
 			Etymology
 		-->
 		<command id="CmdDataTree-Delete-Etymology" label="Delete this Etymology" message="DataTreeDelete" icon="Delete">
@@ -400,9 +384,6 @@
 			<item label="-" translate="do not translate"/>
 			<item command="CmdDataTree-MoveUp-ExampleInNote"/>
 			<item command="CmdDataTree-MoveDown-ExampleInNote"/>
-		</menu>
-		<menu id="mnuDataTree-DeletePronunciation">
-			<item command="CmdDataTree-Delete-Pronunciation"/>
 		</menu>
 		<menu id="mnuDataTree-SubEntryLink">
 			<item command="CmdDataTree-Insert-SubEntryLink"/>
