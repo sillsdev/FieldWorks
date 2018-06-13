@@ -361,7 +361,6 @@
 		<PalasoFiles Include="taglib-sharp.dll"/>
 		<PalasoFiles Include="Spart.dll"/>
 		<PalasoFiles Include="icu.net.dll"/>
-		<PalasoFiles Include="SIL.BuildTasks.dll" Condition="'$(OS)'=='Windows_NT'"/>
 
 		<ChorusFiles Include="Autofac.dll"/>
 		<ChorusFiles Include="Chorus.exe"/>
