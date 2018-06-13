@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
@@ -36,7 +35,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			Guard.AgainstNullOrEmptyString(leftEdgeContextMenuId, nameof(leftEdgeContextMenuId));
 			Guard.AgainstNull(leftEdgeContextMenuCreatorMethod, nameof(leftEdgeContextMenuCreatorMethod));
-			Guard.AssertThat(!_leftEdgeMenuCreatorMethods.ContainsKey(leftEdgeContextMenuId), $"The method to create '{nameof(leftEdgeContextMenuId)}' has already been registered.");
+			Guard.AssertThat(!_leftEdgeMenuCreatorMethods.ContainsKey(leftEdgeContextMenuId), $"The method to create '{leftEdgeContextMenuId}' has already been registered.");
 
 			_leftEdgeMenuCreatorMethods.Add(leftEdgeContextMenuId, leftEdgeContextMenuCreatorMethod);
 		}

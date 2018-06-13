@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
@@ -10,6 +11,7 @@ using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
+using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.Application;
@@ -23,6 +25,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	internal sealed class LexiconEditTool : ITool
 	{
 		private LexiconEditToolMenuHelper _lexiconEditToolMenuHelper;
+		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
 		private MultiPane _innerMultiPane;
@@ -31,6 +34,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private IArea _area;
 		[Import]
 		private IPropertyTable _propertyTable;
+		[Import]
+		private IPublisher _publisher;
+		[Import]
+		private ISubscriber _subscriber;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -42,12 +49,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_browseViewContextMenuFactory.Dispose();
 			_lexiconEditToolMenuHelper.Dispose();
 
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 			_recordBrowseView = null;
 			_innerMultiPane = null;
 			_lexiconEditToolMenuHelper = null;
+			_browseViewContextMenuFactory = null;
 		}
 
 		/// <summary>
@@ -63,6 +72,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(LexiconArea.Entries, majorFlexComponentParameters.Statusbar, LexiconArea.EntriesFactoryMethod);
 			}
+			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
+			_browseViewContextMenuFactory.RegisterBrowseViewContextMenuCreatorMethod(AreaServices.mnuBrowseView, BrowseViewContextMenuCreatorMethod);
 
 			var root = XDocument.Parse(LexiconResources.LexiconBrowseParameters).Root;
 			// Modify the basic parameters for this tool.
@@ -76,7 +87,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			OverrideServices.OverrideVisibiltyAttributes(columnsElement, overrides);
 			root.Add(columnsElement);
 
-			_recordBrowseView = new RecordBrowseView(root, majorFlexComponentParameters.LcmCache, _recordList);
+			_recordBrowseView = new RecordBrowseView(root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
 
 			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
 			 var dataTree = new DataTree();
@@ -195,5 +206,36 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
+
+		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> BrowseViewContextMenuCreatorMethod(IRecordList recordList, string browseViewMenuId)
+		{
+			// The actual menu declaration has a gazillion menu items, but only two of them are seen in this tool (plus the seperator).
+			// Start: <menu id="mnuBrowseView" (partial) >
+			var contextMenuStrip = new ContextMenuStrip
+			{
+				Name = AreaServices.mnuBrowseView
+			};
+			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(3);
+
+			// <item command="CmdEntryJumpToConcordance"/>
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _lexiconEditToolMenuHelper.GetHandler(AreaServices.CmdEntryJumpToConcordance), LexiconResources.Show_Entry_In_Concordance);
+			// <item label="-" translate="do not translate"/>
+			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
+			// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("LexEntry", "ClassNames")));
+
+			// End: <menu id="mnuBrowseView" (partial) >
+
+			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+		}
+
+		private void CmdDeleteSelectedObject_Clicked(object sender, EventArgs e)
+		{
+			using (var cmObjectUi = CmObjectUi.MakeUi(_recordList.CurrentObject))
+			{
+				cmObjectUi.InitializeFlexComponent(new FlexComponentParameters(_propertyTable, _publisher, _subscriber));
+				cmObjectUi.DeleteUnderlyingObject();
+			}
+		}
 	}
 }

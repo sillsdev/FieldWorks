@@ -25,6 +25,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 	internal sealed class PhonemeEditTool : ITool
 	{
 		private GrammarAreaMenuHelper _grammarAreaWideMenuHelper;
+		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
 		private IRecordList _recordList;
@@ -41,10 +42,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_browseViewContextMenuFactory.Dispose();
 			_grammarAreaWideMenuHelper.Dispose();
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 			_recordBrowseView = null;
 			_grammarAreaWideMenuHelper = null;
+			_browseViewContextMenuFactory = null;
 		}
 
 		/// <summary>
@@ -68,9 +71,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(GrammarArea.Phonemes, majorFlexComponentParameters.Statusbar, GrammarArea.PhonemesFactoryMethod);
 			}
 			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper(majorFlexComponentParameters, _recordList); // Use generic export event handler.
+			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
+#if RANDYTODO
+			// TODO: Set up factory method for the browse view.
+#endif
 
 			var root = XDocument.Parse(GrammarResources.PhonemeEditToolParameters).Root;
-			_recordBrowseView = new RecordBrowseView(root.Element("browseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList);
+			_recordBrowseView = new RecordBrowseView(root.Element("browseview").Element("parameters"), _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
 			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
 			var dataTree = new DataTree();
 #if RANDYTODO

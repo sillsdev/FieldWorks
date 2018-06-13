@@ -27,6 +27,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 	internal sealed class ReversalBulkEditReversalEntriesTool : ITool
 	{
 		private LexiconAreaMenuHelper _lexiconAreaMenuHelper;
+		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private PaneBarContainer _paneBarContainer;
 		private RecordBrowseView _recordBrowseView;
 		private IRecordList _recordList;
@@ -54,6 +55,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_browseViewContextMenuFactory.Dispose();
 			_lexiconAreaMenuHelper.Dispose();
 			_mainPanelMenuContextMenuFactory.Dispose(); // No Data Tree in this tool to dispose of it for us.
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
@@ -63,6 +65,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 			_cache = null;
 			_mainPanelMenuContextMenuFactory = null;
 			_lexiconAreaMenuHelper = null;
+			_browseViewContextMenuFactory = null;
 		}
 
 		/// <summary>
@@ -85,9 +88,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(LexiconArea.AllReversalEntries, majorFlexComponentParameters.Statusbar, LexiconArea.AllReversalEntriesFactoryMethod);
 			}
 			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, _recordList);
+			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
+#if RANDYTODO
+			// TODO: Set up factory method for the browse view.
+#endif
 
 			_mainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(panelMenuId, CreatePanelContextMenuStrip);
-			_recordBrowseView = new RecordBrowseView(XDocument.Parse(LexiconResources.ReversalBulkEditReversalEntriesToolParameters).Root, majorFlexComponentParameters.LcmCache, _recordList);
+			_recordBrowseView = new RecordBrowseView(XDocument.Parse(LexiconResources.ReversalBulkEditReversalEntriesToolParameters).Root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
 			var browseViewPaneBar = new PaneBar();
 			var img = LanguageExplorerResources.MenuWidget;
 			img.MakeTransparent(Color.Magenta);

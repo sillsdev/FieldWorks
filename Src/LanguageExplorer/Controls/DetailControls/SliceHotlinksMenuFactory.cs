@@ -29,7 +29,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			Guard.AgainstNullOrEmptyString(hotlinksMenuId, nameof(hotlinksMenuId));
 			Guard.AgainstNull(hotlinksMenuCreatorMethod, nameof(hotlinksMenuCreatorMethod));
-			Guard.AssertThat(!_hotLinksCreatorMethods.ContainsKey(hotlinksMenuId), $"The method to create '{nameof(hotlinksMenuId)}' has already been registered.");
+			Guard.AssertThat(!_hotLinksCreatorMethods.ContainsKey(hotlinksMenuId), $"The method to create '{hotlinksMenuId}' has already been registered.");
 
 			_hotLinksCreatorMethods.Add(hotlinksMenuId, hotlinksMenuCreatorMethod);
 		}

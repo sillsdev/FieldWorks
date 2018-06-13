@@ -25,6 +25,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 	internal sealed class CompoundRuleAdvancedEditTool : ITool
 	{
 		private GrammarAreaMenuHelper _grammarAreaWideMenuHelper;
+		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private const string CompoundRules = "compoundRules";
 		private MultiPane _multiPane;
 		private RecordBrowseActiveView _recordBrowseActiveView;
@@ -42,9 +43,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_browseViewContextMenuFactory.Dispose();
 			_grammarAreaWideMenuHelper.Dispose();
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 			_grammarAreaWideMenuHelper = null;
+			_browseViewContextMenuFactory = null;
 		}
 
 		/// <summary>
@@ -60,9 +63,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(CompoundRules, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
 			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper(majorFlexComponentParameters, _recordList); // Use generic export event handler.
+			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
+#if RANDYTODO
+			// TODO: Set up factory method for the browse view.
+#endif
 
 			var root = XDocument.Parse(GrammarResources.CompoundRuleAdvancedEditToolParameters).Root;
-			_recordBrowseActiveView = new RecordBrowseActiveView(root.Element("browseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList);
+			_recordBrowseActiveView = new RecordBrowseActiveView(root.Element("browseview").Element("parameters"), _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif

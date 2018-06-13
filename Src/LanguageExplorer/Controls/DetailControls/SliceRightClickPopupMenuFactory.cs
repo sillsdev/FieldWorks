@@ -30,7 +30,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			Guard.AgainstNullOrEmptyString(popupContextMenuId, nameof(popupContextMenuId));
 			Guard.AgainstNull(popupContextMenuCreatorMethod, nameof(popupContextMenuCreatorMethod));
-			Guard.AssertThat(!_popupContextMenuCreatorMethods.ContainsKey(popupContextMenuId), $"The method to create '{nameof(popupContextMenuId)}' has already been registered.");
+			Guard.AssertThat(!_popupContextMenuCreatorMethods.ContainsKey(popupContextMenuId), $"The method to create '{popupContextMenuId}' has already been registered.");
 
 			_popupContextMenuCreatorMethods.Add(popupContextMenuId, popupContextMenuCreatorMethod);
 		}

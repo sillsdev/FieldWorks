@@ -37,7 +37,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			Guard.AgainstNullOrEmptyString(panelMenuId, nameof(panelMenuId));
 			Guard.AgainstNull(panelMenuCreatorMethod, nameof(panelMenuCreatorMethod));
-			Guard.AssertThat(!_panelMenuCreatorMethods.ContainsKey(panelMenuId), $"The method to create '{nameof(panelMenuId)}' has already been registered.");
+			Guard.AssertThat(!_panelMenuCreatorMethods.ContainsKey(panelMenuId), $"The method to create '{panelMenuId}' has already been registered.");
 
 			// The client can decide to provide the "Opening" CancelEventHandler, or not, in the function.
 			// If provided, the client wires up the handler to the menu, and we unwire it, when we dispose the menu.

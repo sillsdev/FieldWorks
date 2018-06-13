@@ -18,6 +18,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 	internal sealed class LexiconBrowseTool : ITool
 	{
 		private LexiconAreaMenuHelper _lexiconAreaMenuHelper;
+		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private PaneBarContainer _paneBarContainer;
 		private RecordBrowseView _recordBrowseView;
 		private IRecordList _recordList;
@@ -34,10 +35,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_browseViewContextMenuFactory.Dispose();
 			_lexiconAreaMenuHelper.Dispose();
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 			_recordBrowseView = null;
 			_lexiconAreaMenuHelper = null;
+			_browseViewContextMenuFactory = null;
 		}
 
 		/// <summary>
@@ -53,12 +56,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(LexiconArea.Entries, majorFlexComponentParameters.Statusbar, LexiconArea.EntriesFactoryMethod);
 			}
 			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, _recordList);
+			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
+#if RANDYTODO
+			// TODO: Set up factory method for the browse view.
+#endif
 
 			var root = XDocument.Parse(LexiconResources.LexiconBrowseParameters).Root;
 			var columnsElement = XElement.Parse(LexiconResources.LexiconBrowseDialogColumnDefinitions);
 			OverrideServices.OverrideVisibiltyAttributes(columnsElement, XElement.Parse(LexiconResources.LexiconBrowseOverrides));
 			root.Add(columnsElement);
-			_recordBrowseView = new RecordBrowseView(root, majorFlexComponentParameters.LcmCache, _recordList);
+			_recordBrowseView = new RecordBrowseView(root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,

@@ -20,6 +20,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 	{
 		private AreaWideMenuHelper _areaWideMenuHelper;
 		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;
+		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private PaneBarContainer _paneBarContainer;
 		private RecordBrowseView _recordBrowseView;
 		private IRecordList _recordList;
@@ -36,12 +37,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_browseViewContextMenuFactory.Dispose();
 			_areaWideMenuHelper.Dispose();
 			_textAndWordsAreaMenuHelper.Dispose();
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 			_recordBrowseView = null;
 			_areaWideMenuHelper = null;
 			_textAndWordsAreaMenuHelper = null;
+			_browseViewContextMenuFactory = null;
 		}
 
 		/// <summary>
@@ -60,6 +63,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 			_areaWideMenuHelper.SetupFileExportMenu();
 			_textAndWordsAreaMenuHelper = new TextAndWordsAreaMenuHelper(majorFlexComponentParameters);
 			_textAndWordsAreaMenuHelper.AddMenusForAllButConcordanceTool();
+			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
+#if RANDYTODO
+			// TODO: Set up factory method for the browse view.
+#endif
 
 			var root = XDocument.Parse(TextAndWordsResources.BulkEditWordformsToolParameters).Root;
 			root.Element("includeColumns").ReplaceWith(XElement.Parse(TextAndWordsResources.WordListColumns));
@@ -75,7 +82,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 			currentColumn.Attribute("width").Value = "80000";
 			currentColumn = columns.Elements("column").First(col => col.Attribute("label").Value == "Spelling Status");
 			currentColumn.Add(new XAttribute("width", "65000"));
-			_recordBrowseView = new RecordBrowseView(root, majorFlexComponentParameters.LcmCache, _recordList);
+			_recordBrowseView = new RecordBrowseView(root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
 
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,

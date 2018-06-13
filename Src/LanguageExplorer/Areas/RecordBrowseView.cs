@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls.XMLViews;
-using LanguageExplorer.LcmUi;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
@@ -33,6 +32,8 @@ namespace LanguageExplorer.Areas
 		private bool m_suppressRecordNavigation;
 		protected bool m_suppressShowRecord;
 		private bool m_fHandlingFilterChangedByRecordList;
+		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
+		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> _browseViewContextMenuTuple;
 
 		/// <summary>
 		/// Required designer variable.
@@ -47,10 +48,12 @@ namespace LanguageExplorer.Areas
 			Init();
 		}
 
-		public RecordBrowseView(XElement browseViewDefinitions, LcmCache cache, IRecordList recordList)
+		public RecordBrowseView(XElement browseViewDefinitions, BrowseViewContextMenuFactory browseViewContextMenuFactory, LcmCache cache, IRecordList recordList)
 			: base(browseViewDefinitions, cache, recordList)
 		{
 			Init();
+
+			_browseViewContextMenuFactory = browseViewContextMenuFactory;
 		}
 
 		private void Init()
@@ -310,6 +313,11 @@ namespace LanguageExplorer.Areas
 			{
 				return;
 			}
+			if (_browseViewContextMenuTuple != null)
+			{
+				_browseViewContextMenuFactory.DisposeBrowseViewContextMenu(_browseViewContextMenuTuple);
+				_browseViewContextMenuTuple = null;
+			}
 			var sel = e.Selection;
 			var clev = sel.CLevels(false); // anchor
 			int hvoRoot, tag, ihvo, cpropPrevious;
@@ -325,13 +333,9 @@ namespace LanguageExplorer.Areas
 			{
 				return;
 			}
-			var ui = CmObjectUi.MakeUi(Cache, hvo); // Disposes of itself when menu closes since true passed in lext line.
-			if (ui == null)
-			{
-				return;
-			}
-			ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-			e.EventHandled = ui.HandleRightClick(sender, true, "mnuBrowseView");
+			var browseViewContextMenuTuple = _browseViewContextMenuFactory.GetBrowseViewContextMenu(MyRecordList, AreaServices.mnuBrowseView);
+			browseViewContextMenuTuple.Item1.Show(browseView, e.MouseLocation);
+			e.EventHandled = true;
 		}
 
 		#endregion // Message Handlers

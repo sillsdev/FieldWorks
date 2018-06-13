@@ -25,6 +25,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 	internal sealed class RapidDataEntryTool : ITool
 	{
 		private LexiconAreaMenuHelper _lexiconAreaMenuHelper;
+		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		internal const string RDEwords = "RDEwords";
 		private CollapsingSplitContainer _collapsingSplitContainer;
 		private RecordBrowseView _recordBrowseView;
@@ -45,6 +46,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_browseViewContextMenuFactory.Dispose();
 			_lexiconAreaMenuHelper.Dispose();
 			_propertyTable.SetProperty("RecordListWidthGlobal", _collapsingSplitContainer.SplitterDistance, true, settingsGroup: SettingsGroup.GlobalSettings);
 
@@ -75,6 +77,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			_recordBrowseView = null;
 			_nestedRecordList = null;
 			_lexiconAreaMenuHelper = null;
+			_browseViewContextMenuFactory = null;
 		}
 
 		/// <summary>
@@ -94,6 +97,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(LexiconArea.SemanticDomainList_LexiconArea, majorFlexComponentParameters.Statusbar, LexiconArea.SemanticDomainList_LexiconAreaFactoryMethod);
 			}
 			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, _recordList);
+			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
+#if RANDYTODO
+			// TODO: Set up factory method for the browse view.
+#endif
 
 			var recordBar = new RecordBar(_propertyTable)
 			{
@@ -126,7 +133,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			{
 				_nestedRecordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(RDEwords, majorFlexComponentParameters.Statusbar, RDEwordsFactoryMethod);
 			}
-			_recordBrowseView = new RecordBrowseView(root.Element("recordbrowseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _nestedRecordList);
+			_recordBrowseView = new RecordBrowseView(root.Element("recordbrowseview").Element("parameters"), _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _nestedRecordList);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Horizontal,

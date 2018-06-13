@@ -30,7 +30,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private const string mnuDataTree_VariantSpec = "mnuDataTree-VariantSpec";
 		private const string mnuDataTree_ComplexFormSpec = "mnuDataTree-ComplexFormSpec";
 		private const string mnuDataTree_CitationFormContext = "mnuDataTree-CitationFormContext";
-		private const string CmdEntryJumpToConcordance = "CmdEntryJumpToConcordance";
 		private Dictionary<string, EventHandler> _sharedEventHandlers;
 		private IRecordList MyRecordList { get; set; }
 		private DataTree MyDataTree { get; set; }
@@ -71,7 +70,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_sharedEventHandlers.Add(LexiconAreaConstants.CmdMoveTargetToPreviousInSequence, MoveTargetDownInSequence_Clicked);
 			_sharedEventHandlers.Add(LexiconAreaConstants.CmdMoveTargetToNextInSequence, MoveTargetUpInSequence_Clicked);
 			_sharedEventHandlers.Add(LexiconAreaConstants.CmdAlphabeticalOrder, AlphabeticalOrder_Clicked);
-			_sharedEventHandlers.Add(CmdEntryJumpToConcordance, CmdEntryJumpToConcordance_Clicked);
+			_sharedEventHandlers.Add(AreaServices.CmdEntryJumpToConcordance, CmdEntryJumpToConcordance_Clicked);
 
 			RegisterSliceMenus();
 
@@ -335,7 +334,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					<parameters tool="concordance" className="LexEntry"/>
 				</command>
 			*/
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[CmdEntryJumpToConcordance], LexiconResources.Show_Entry_In_Concordance);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[AreaServices.CmdEntryJumpToConcordance], LexiconResources.Show_Entry_In_Concordance);
 			/* <item command="CmdLexemeFormJumpToConcordance"/>
 				<command id="CmdLexemeFormJumpToConcordance" label="Show Lexeme Form in Concordance" message="JumpToTool"> // NB: Also used in: <menu id="mnuReferenceChoices">
 					<parameters tool="concordance" className="MoForm"/>
@@ -520,7 +519,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					<parameters tool="concordance" className="LexEntry"/>
 				</command>
 			*/
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[CmdEntryJumpToConcordance], LexiconResources.Show_Entry_In_Concordance);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[AreaServices.CmdEntryJumpToConcordance], LexiconResources.Show_Entry_In_Concordance);
 
 			// End: <menu id="mnuDataTree-CitationFormContext">
 

@@ -120,6 +120,19 @@ namespace LanguageExplorer.Areas
 			internal const string ReversalToolReversalIndexPOSMachineName = "reversalToolReversalIndexPOS";
 		#endregion
 
+		#region views
+
+		internal const string mnuBrowseView = "mnuBrowseView";
+
+		#endregion
+
+
+		#region commands
+
+		internal const string CmdEntryJumpToConcordance = "CmdEntryJumpToConcordance";
+
+		#endregion
+
 		/// <summary>
 		/// Handle the provided import dialog.
 		/// </summary>
@@ -255,7 +268,7 @@ namespace LanguageExplorer.Areas
 				default:
 					throw new ArgumentException("Unknown ExclusionReasonCode");
 			}
-			msg = string.Format(msg, reason);
+			msg = String.Format(msg, reason);
 			// TODO-Linux: Help is not implemented on Mono
 			MessageBox.Show(form, msg, caption, MessageBoxButtons.OK,
 				MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, 0,

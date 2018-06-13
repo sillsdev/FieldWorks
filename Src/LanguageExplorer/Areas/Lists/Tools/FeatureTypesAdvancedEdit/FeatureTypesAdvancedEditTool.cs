@@ -25,6 +25,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 	internal sealed class FeatureTypesAdvancedEditTool : ITool
 	{
 		private ListsAreaMenuHelper _listsAreaMenuHelper;
+		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private const string FeatureTypes = "featureTypes";
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
@@ -42,11 +43,13 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_browseViewContextMenuFactory.Dispose();
 			_listsAreaMenuHelper.Dispose();
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 
 			_recordBrowseView = null;
 			_listsAreaMenuHelper = null;
+			_browseViewContextMenuFactory = null;
 		}
 
 		/// <summary>
@@ -62,7 +65,11 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(FeatureTypes, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
 			_listsAreaMenuHelper = new ListsAreaMenuHelper(majorFlexComponentParameters, (IListArea)_area, _recordList);
-			_recordBrowseView = new RecordBrowseView(XDocument.Parse(ListResources.FeatureTypesAdvancedEditBrowseViewParameters).Root, majorFlexComponentParameters.LcmCache, _recordList);
+			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
+#if RANDYTODO
+			// TODO: Set up factory method for the browse view.
+#endif
+			_recordBrowseView = new RecordBrowseView(XDocument.Parse(ListResources.FeatureTypesAdvancedEditBrowseViewParameters).Root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
 
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.

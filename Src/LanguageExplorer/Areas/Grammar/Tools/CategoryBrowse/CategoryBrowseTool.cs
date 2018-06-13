@@ -22,6 +22,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 	internal sealed class CategoryBrowseTool : ITool
 	{
 		private GrammarAreaMenuHelper _grammarAreaWideMenuHelper;
+		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private const string CategoriesWithoutTreeBarHandler = "categories_withoutTreeBarHandler";
 		private PaneBarContainer _paneBarContainer;
 		private IRecordList _recordList;
@@ -38,9 +39,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_browseViewContextMenuFactory.Dispose();
 			_grammarAreaWideMenuHelper.Dispose();
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 			_grammarAreaWideMenuHelper = null;
+			_browseViewContextMenuFactory = null;
 		}
 
 		/// <summary>
@@ -56,11 +59,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(CategoriesWithoutTreeBarHandler, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
 			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper(majorFlexComponentParameters, _recordList); // Use generic export event handler.
+			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
+#if RANDYTODO
+			// TODO: Set up factory method for the browse view.
+#endif
 
-			_paneBarContainer = PaneBarContainerFactory.Create(
-				majorFlexComponentParameters.FlexComponentParameters,
-				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				new RecordBrowseView(XDocument.Parse(GrammarResources.GrammarCategoryBrowserParameters).Root, majorFlexComponentParameters.LcmCache, _recordList));
+			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, new RecordBrowseView(XDocument.Parse(GrammarResources.GrammarCategoryBrowserParameters).Root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList));
 		}
 
 		/// <summary>

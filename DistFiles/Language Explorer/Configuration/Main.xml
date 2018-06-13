@@ -321,7 +321,7 @@
 			<item command="CmdWordformJumpToAnalyses"/>
 			<item command="CmdPOSJumpToDefault"/>
 			<item command="CmdWordformJumpToConcordance"/>
-			<item command="CmdEntryJumpToConcordance"/>
+			<!-- <item command="CmdEntryJumpToConcordance"/> Done for Lex Edit tool, but odds are it is used elsewhere, as well. -->
 			<item command="CmdSenseJumpToConcordance"/>
 			<item command="CmdPOSJumpToConcordance"/>
 			<item command="CmdWordGlossJumpToConcordance"/>
@@ -333,7 +333,7 @@
 			<item command="CmdNaturalClassJumpToDefault"/>
 			<item command="CmdEnvironmentsJumpToDefault"/>
 			<item label="-" translate="do not translate"/>
-			<item command="CmdDeleteSelectedObject"/>
+			<!-- <item command="CmdDeleteSelectedObject"/> Done for Lex Edit tool, but odds are it is used elsewhere, as well. -->
 		</menu>
 		<!-- The following commands are involked/displayed on a right click on a slice on at Possibility list item.
 

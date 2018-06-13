@@ -22,6 +22,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 	internal sealed class BulkEditEntriesOrSensesTool : ITool
 	{
 		private LexiconAreaMenuHelper _lexiconAreaMenuHelper;
+		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private const string EntriesOrChildren = "entriesOrChildren";
 		private PaneBarContainer _paneBarContainer;
 		private RecordBrowseView _recordBrowseView;
@@ -39,9 +40,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_browseViewContextMenuFactory.Dispose();
 			_lexiconAreaMenuHelper.Dispose();
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 			_lexiconAreaMenuHelper = null;
+			_browseViewContextMenuFactory = null;
 		}
 
 		/// <summary>
@@ -60,12 +63,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(EntriesOrChildren, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
 			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, _recordList);
+			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
+#if RANDYTODO
+			// TODO: Set up factory method for the browse view.
+#endif
 
 			var root = XDocument.Parse(LexiconResources.BulkEditEntriesOrSensesToolParameters).Root;
 			var parametersElement = root.Element("parameters");
 			parametersElement.Element("includeColumns").ReplaceWith(XElement.Parse(LexiconResources.LexiconBrowseDialogColumnDefinitions));
 			OverrideServices.OverrideVisibiltyAttributes(parametersElement.Element("columns"), root.Element("overrides"));
-			_recordBrowseView = new RecordBrowseView(parametersElement, majorFlexComponentParameters.LcmCache, _recordList);
+			_recordBrowseView = new RecordBrowseView(parametersElement, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
 
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,

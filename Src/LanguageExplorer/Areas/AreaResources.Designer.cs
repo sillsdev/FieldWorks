@@ -19,7 +19,7 @@ namespace LanguageExplorer.Areas {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class AreaResources {
@@ -160,6 +160,15 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete selected {0}.
+        /// </summary>
+        internal static string Delete_selected_0 {
+            get {
+                return ResourceManager.GetString("Delete_selected_0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Warning: deleting a field cannot be undone.
         ///Are you SURE you want to delete the field {0}?.
         /// </summary>
@@ -291,7 +300,7 @@ namespace LanguageExplorer.Areas {
         ///node that would otherwise produce a slice which you want to hide. Note that most XDE nodes
         ///do not otherwise have an ID; you usually have to add 1 before you can reference it in this kind of document.--&gt;
         ///&lt;SliceFilter&gt;
-        ///  &lt;node id=&quot;PartOfSpeechBearableFeatures&quot;/&gt; [rest of string was truncated]&quot;;.
+        ///	&lt;node id=&quot;PartOfSpeechBearableFeatures&quot;/&gt;        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string HideAdvancedListItemFields {
             get {

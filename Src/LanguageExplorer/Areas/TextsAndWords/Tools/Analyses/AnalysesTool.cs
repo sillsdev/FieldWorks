@@ -26,6 +26,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 	{
 		private AreaWideMenuHelper _areaWideMenuHelper;
 		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;
+		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
 		private IRecordList _recordList;
@@ -42,12 +43,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_browseViewContextMenuFactory.Dispose();
 			_areaWideMenuHelper.Dispose();
 			_textAndWordsAreaMenuHelper.Dispose();
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 			_recordBrowseView = null;
 			_areaWideMenuHelper = null;
 			_textAndWordsAreaMenuHelper = null;
+			_browseViewContextMenuFactory = null;
 		}
 
 		/// <summary>
@@ -66,6 +69,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			_areaWideMenuHelper.SetupFileExportMenu();
 			_textAndWordsAreaMenuHelper = new TextAndWordsAreaMenuHelper(majorFlexComponentParameters);
 			_textAndWordsAreaMenuHelper.AddMenusForAllButConcordanceTool();
+			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
+#if RANDYTODO
+			// TODO: Set up factory method for the browse view.
+#endif
 
 			var root = XDocument.Parse(TextAndWordsResources.WordListParameters).Root;
 			var columnsElement = XElement.Parse(TextAndWordsResources.WordListColumns);
@@ -78,7 +85,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			overriddenColumnElement.Attribute("visibility").Value = "always";
 			overriddenColumnElement.Add(new XAttribute("width", "15%"));
 			root.Add(columnsElement);
-			_recordBrowseView = new RecordBrowseView(root, majorFlexComponentParameters.LcmCache, _recordList);
+			_recordBrowseView = new RecordBrowseView(root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif

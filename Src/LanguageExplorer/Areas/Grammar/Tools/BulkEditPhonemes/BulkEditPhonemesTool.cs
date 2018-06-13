@@ -20,6 +20,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 	internal sealed class BulkEditPhonemesTool : ITool
 	{
 		private GrammarAreaMenuHelper _grammarAreaWideMenuHelper;
+		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private PaneBarContainer _paneBarContainer;
 		private AssignFeaturesToPhonemes _assignFeaturesToPhonemesView;
 		private IRecordList _recordList;
@@ -36,10 +37,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_browseViewContextMenuFactory.Dispose();
 			_grammarAreaWideMenuHelper.Dispose();
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 			_assignFeaturesToPhonemesView = null;
 			_grammarAreaWideMenuHelper = null;
+			_browseViewContextMenuFactory = null;
 		}
 
 		/// <summary>
@@ -63,8 +66,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(GrammarArea.Phonemes, majorFlexComponentParameters.Statusbar, GrammarArea.PhonemesFactoryMethod);
 			}
 			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper(majorFlexComponentParameters, _recordList); // Use generic export event handler.
+			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
+#if RANDYTODO
+			// TODO: Set up factory method for the browse view.
+#endif
 
-			_assignFeaturesToPhonemesView = new AssignFeaturesToPhonemes(XDocument.Parse(GrammarResources.BulkEditPhonemesToolParameters).Root, majorFlexComponentParameters.LcmCache, _recordList);
+			_assignFeaturesToPhonemesView = new AssignFeaturesToPhonemes(XDocument.Parse(GrammarResources.BulkEditPhonemesToolParameters).Root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
 
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,

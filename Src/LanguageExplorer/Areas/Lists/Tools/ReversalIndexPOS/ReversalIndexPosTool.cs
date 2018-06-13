@@ -28,6 +28,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 	internal sealed class ReversalIndexPosTool : ITool
 	{
 		private ListsAreaMenuHelper _listsAreaMenuHelper;
+		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private const string panelMenuId = "left";
 		private LcmCache _cache;
 		private MultiPane _multiPane;
@@ -50,6 +51,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_browseViewContextMenuFactory.Dispose();
 			_listsAreaMenuHelper.Dispose();
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 			_cache = null;
@@ -57,6 +59,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			_reversalIndexRepository = null;
 			_currentReversalIndex = null;
 			_listsAreaMenuHelper = null;
+			_browseViewContextMenuFactory = null;
 		}
 
 		/// <summary>
@@ -78,8 +81,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(ReversalIndexPOSRecordList.ReversalEntriesPOS, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
 			_listsAreaMenuHelper = new ListsAreaMenuHelper(majorFlexComponentParameters, (IListArea)_area, _recordList);
+			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
+#if RANDYTODO
+			// TODO: Set up factory method for the browse view.
+#endif
 
-			_recordBrowseView = new RecordBrowseView(XDocument.Parse(ListResources.ReversalToolReversalIndexPOSBrowseViewParameters).Root, majorFlexComponentParameters.LcmCache, _recordList);
+			_recordBrowseView = new RecordBrowseView(XDocument.Parse(ListResources.ReversalToolReversalIndexPOSBrowseViewParameters).Root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif

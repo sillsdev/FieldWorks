@@ -289,6 +289,7 @@
     <Compile Include="AccessibleNameCreator.cs" />
     <Compile Include="Areas\AreaServices.cs" />
     <Compile Include="Areas\AreaWideMenuHelper.cs" />
+    <Compile Include="Areas\BrowseViewContextMenuFactory.cs" />
     <Compile Include="Areas\ConcMdc.cs" />
     <Compile Include="Areas\ConfigParentNode.cs">
       <SubType>UserControl</SubType>

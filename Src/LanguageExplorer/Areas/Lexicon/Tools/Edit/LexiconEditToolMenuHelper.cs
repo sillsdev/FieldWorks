@@ -71,6 +71,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			}
 		}
 
+		/// <summary>
+		/// Get the event handler for the given <paramref name="key"/>.
+		/// </summary>
+		/// <exception cref="KeyNotFoundException">Thrown if <paramref name="key"/> is not in the shared event handler dictionary.</exception>
+		internal EventHandler GetHandler(string key)
+		{
+			return _sharedEventHandlers[key];
+		}
+
 		#region IDisposable
 		private bool _isDisposed;
 

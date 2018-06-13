@@ -23,6 +23,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 	internal sealed class ConcordanceTool : ITool
 	{
 		private PartiallySharedMenuHelper _partiallySharedMenuHelper;
+		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		internal const string OccurrencesOfSelectedUnit = "OccurrencesOfSelectedUnit";
 		private MultiPane _concordanceContainer;
 		private ConcordanceControl _concordanceControl;
@@ -42,6 +43,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_browseViewContextMenuFactory.Dispose();
 			_partiallySharedMenuHelper.Dispose();
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _concordanceContainer);
 
@@ -49,6 +51,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 			_recordBrowseView = null;
 			_interlinMasterNoTitleBar = null;
 			_partiallySharedMenuHelper = null;
+			_browseViewContextMenuFactory = null;
 		}
 
 		/// <summary>
@@ -81,6 +84,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 			_interlinMasterNoTitleBar = new InterlinMasterNoTitleBar(root.Element("ITextControl").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList, MenuServices.GetFileMenu(majorFlexComponentParameters.MenuStrip), MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 			mainConcordanceContainerParameters.SecondControlParameters.Control = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, _interlinMasterNoTitleBar);
 			_partiallySharedMenuHelper = new PartiallySharedMenuHelper(majorFlexComponentParameters, _interlinMasterNoTitleBar, _recordList);
+			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
+#if RANDYTODO
+			// TODO: Set up factory method for the browse view.
+#endif
 
 			// This will be the nested MultiPane that goes into mainConcordanceContainerParameters.FirstControlParameters.Control
 			var nestedMultiPaneParameters = new MultiPaneParameters
@@ -97,7 +104,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 			};
 			_concordanceControl = new ConcordanceControl((MatchingConcordanceItems)_recordList);
 			nestedMultiPaneParameters.FirstControlParameters.Control = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, _concordanceControl);
-			_recordBrowseView = new RecordBrowseView(root.Element("wordOccurrenceList").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList);
+			_recordBrowseView = new RecordBrowseView(root.Element("wordOccurrenceList").Element("parameters"), _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
 			nestedMultiPaneParameters.SecondControlParameters.Control = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, _recordBrowseView);
 			// Nested MP is created by call to MultiPaneFactory.CreateConcordanceContainer
 			_concordanceContainer = MultiPaneFactory.CreateConcordanceContainer(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, mainConcordanceContainerParameters, nestedMultiPaneParameters);

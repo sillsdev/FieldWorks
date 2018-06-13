@@ -719,38 +719,6 @@ namespace LanguageExplorer.LcmUi
 			}
 		}
 
-
-#if RANDYTODO
-		public void OnDeleteSelectedItem(object commandObject)
-		{
-			m_command = commandObject as Command;
-
-			try
-			{
-				// Instead of deleting a single WfiMorphBundle (which is what would normally happen
-				// in our automated handling, delete the owning WfiAnalysis.  (See LT-6217.)
-				if (m_obj is IWfiMorphBundle)
-				{
-					// we want to delete the owner, not just this object itself.
-					using (CmObjectUi owner = MakeUi(m_cache, m_obj.Owner.Hvo))
-					{
-						owner.Mediator = m_mediator;
-						owner.PropTable = m_propertyTable;
-						owner.DeleteUnderlyingObject();
-					}
-				}
-				else
-				{
-					DeleteUnderlyingObject();
-				}
-			}
-			finally
-			{
-				m_command = null;
-			}
-		}
-#endif
-
 		public virtual bool CanDelete(out string cannotDeleteMsg)
 		{
 			if (MyCmObject.CanDelete)

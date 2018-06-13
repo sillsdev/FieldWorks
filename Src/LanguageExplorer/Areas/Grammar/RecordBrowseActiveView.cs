@@ -18,8 +18,8 @@ namespace LanguageExplorer.Areas.Grammar
 	/// </summary>
 	internal class RecordBrowseActiveView : RecordBrowseView
 	{
-		internal RecordBrowseActiveView(XElement browseViewDefinitions, LcmCache cache, IRecordList recordList)
-			: base(browseViewDefinitions, cache, recordList)
+		internal RecordBrowseActiveView(XElement browseViewDefinitions, BrowseViewContextMenuFactory browseViewContextMenuFactory, LcmCache cache, IRecordList recordList)
+			: base(browseViewDefinitions, browseViewContextMenuFactory, cache, recordList)
 		{
 		}
 

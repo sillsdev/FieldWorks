@@ -24,6 +24,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 	[Export(AreaServices.NotebookAreaMachineName, typeof(ITool))]
 	internal sealed class NotebookEditTool : ITool
 	{
+		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private const string panelMenuId = "left";
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
@@ -41,8 +42,10 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_browseViewContextMenuFactory.Dispose();
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 			_recordBrowseView = null;
+			_browseViewContextMenuFactory = null;
 		}
 
 		/// <summary>
@@ -58,8 +61,12 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			{
 				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(NotebookArea.Records, majorFlexComponentParameters.Statusbar, NotebookArea.NotebookFactoryMethod);
 			}
+			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
+#if RANDYTODO
+			// TODO: Set up factory method for the browse view.
+#endif
 
-			_recordBrowseView = new RecordBrowseView(NotebookArea.LoadDocument(NotebookResources.NotebookEditBrowseParameters).Root, majorFlexComponentParameters.LcmCache, _recordList);
+			_recordBrowseView = new RecordBrowseView(NotebookArea.LoadDocument(NotebookResources.NotebookEditBrowseParameters).Root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif

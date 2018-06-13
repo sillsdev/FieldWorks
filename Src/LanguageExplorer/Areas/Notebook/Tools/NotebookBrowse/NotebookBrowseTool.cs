@@ -16,6 +16,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 	[Export(AreaServices.NotebookAreaMachineName, typeof(ITool))]
 	internal sealed class NotebookBrowseTool : ITool
 	{
+		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private PaneBarContainer _paneBarContainer;
 		private RecordBrowseView _recordBrowseView;
 		private IRecordList _recordList;
@@ -32,8 +33,10 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_browseViewContextMenuFactory.Dispose();
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 			_recordBrowseView = null;
+			_browseViewContextMenuFactory = null;
 		}
 
 		/// <summary>
@@ -49,7 +52,11 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 				// Try getting it from the notebook area.
 				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(NotebookArea.Records, majorFlexComponentParameters.Statusbar, NotebookArea.NotebookFactoryMethod);
 			}
-			_recordBrowseView = new RecordBrowseView(NotebookArea.LoadDocument(NotebookResources.NotebookBrowseParameters).Root, majorFlexComponentParameters.LcmCache, _recordList);
+			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
+#if RANDYTODO
+			// TODO: Set up factory method for the browse view.
+#endif
+			_recordBrowseView = new RecordBrowseView(NotebookArea.LoadDocument(NotebookResources.NotebookBrowseParameters).Root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
