@@ -35,9 +35,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
+
+			// Dispose these after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
 			_lexiconAreaMenuHelper.Dispose();
-			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
+
 			_recordBrowseView = null;
 			_lexiconAreaMenuHelper = null;
 			_browseViewContextMenuFactory = null;

@@ -38,9 +38,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
+
+			// Dispose after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
 			_interlinearEditToolMenuHelper.Dispose();
-			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
+
 			_recordBrowseView = null;
 			_interlinMaster = null;
 			_interlinearEditToolMenuHelper = null;

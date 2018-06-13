@@ -171,6 +171,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete this Etymology.
+        /// </summary>
+        internal static string Delete_this_Etymology {
+            get {
+                return ResourceManager.GetString("Delete_this_Etymology", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete this Pronunciation.
         /// </summary>
         internal static string Delete_this_Pronunciation {
@@ -881,6 +890,24 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string MergeWithEntry {
             get {
                 return ResourceManager.GetString("MergeWithEntry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move Etymology _Down.
+        /// </summary>
+        internal static string Move_Etymology_Down {
+            get {
+                return ResourceManager.GetString("Move_Etymology_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move Etymology _Up.
+        /// </summary>
+        internal static string Move_Etymology_Up {
+            get {
+                return ResourceManager.GetString("Move_Etymology_Up", resourceCulture);
             }
         }
         

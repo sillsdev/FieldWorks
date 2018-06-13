@@ -55,10 +55,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
+
+			// Dispose these after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
 			_lexiconAreaMenuHelper.Dispose();
 			_mainPanelMenuContextMenuFactory.Dispose(); // No Data Tree in this tool to dispose of it for us.
-			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
+
 			_reversalIndexRepository = null;
 			_currentReversalIndex = null;
 			_recordBrowseView = null;

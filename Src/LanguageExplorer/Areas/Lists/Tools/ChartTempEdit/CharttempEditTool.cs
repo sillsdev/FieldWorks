@@ -44,8 +44,11 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_listsAreaMenuHelper.Dispose();
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _collapsingSplitContainer);
+
+			// Dispose after the main UI stuff.
+			_listsAreaMenuHelper.Dispose();
+
 			_listsAreaMenuHelper = null;
 		}
 

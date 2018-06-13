@@ -208,18 +208,6 @@
 			<parameters className="LexEntry" field="VariantFormEntryBackRefs"/>
 		</command>
 		<!--
-			Etymology
-		-->
-		<command id="CmdDataTree-Delete-Etymology" label="Delete this Etymology" message="DataTreeDelete" icon="Delete">
-			<parameters field="Etymology" className="LexEtymology"/>
-		</command>
-		<command id="CmdDataTree-MoveUp-Etymology" label="Move Etymology _Up" message="MoveUpObjectInSequence" icon="MoveUp">
-			<parameters field="Etymology" className="LexEtymology"/>
-		</command>
-		<command id="CmdDataTree-MoveDown-Etymology" label="Move Etymology _Down" message="MoveDownObjectInSequence" icon="MoveDown">
-			<parameters field="Etymology" className="LexEtymology"/>
-		</command>
-		<!--
 			Subentry Link
 		-->
 		<command id="CmdDataTree-Insert-SubEntryLink" label="Insert Main Entry" message="DataTreeInsert">

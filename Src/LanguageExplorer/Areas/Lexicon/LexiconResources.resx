@@ -477,4 +477,13 @@
   <data name="Move_Pronunciation_Down" xml:space="preserve">
     <value>Move Pronunciation _Down</value>
   </data>
+  <data name="Delete_this_Etymology" xml:space="preserve">
+    <value>Delete this Etymology</value>
+  </data>
+  <data name="Move_Etymology_Down" xml:space="preserve">
+    <value>Move Etymology _Down</value>
+  </data>
+  <data name="Move_Etymology_Up" xml:space="preserve">
+    <value>Move Etymology _Up</value>
+  </data>
 </root>

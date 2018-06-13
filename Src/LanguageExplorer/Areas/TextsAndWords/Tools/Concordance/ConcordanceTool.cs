@@ -43,9 +43,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _concordanceContainer);
+
+			// Dispose after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
 			_partiallySharedMenuHelper.Dispose();
-			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _concordanceContainer);
 
 			_concordanceControl = null;
 			_recordBrowseView = null;

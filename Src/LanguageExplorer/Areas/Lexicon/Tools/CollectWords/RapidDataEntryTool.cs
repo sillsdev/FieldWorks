@@ -46,8 +46,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_browseViewContextMenuFactory.Dispose();
-			_lexiconAreaMenuHelper.Dispose();
 			_propertyTable.SetProperty("RecordListWidthGlobal", _collapsingSplitContainer.SplitterDistance, true, settingsGroup: SettingsGroup.GlobalSettings);
 
 #if RANDYTODO
@@ -73,6 +71,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			_propertyTable.RemoveProperty("ActiveListSelectedObject");
 
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _collapsingSplitContainer);
+
+			// Dispose after the main UI stuff.
+			_browseViewContextMenuFactory.Dispose();
+			_lexiconAreaMenuHelper.Dispose();
 
 			_recordBrowseView = null;
 			_nestedRecordList = null;

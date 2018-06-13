@@ -43,10 +43,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
+
+			// Dispose after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
 			_areaWideMenuHelper.Dispose();
 			_textAndWordsAreaMenuHelper.Dispose();
-			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
+
 			_recordBrowseView = null;
 			_areaWideMenuHelper = null;
 			_textAndWordsAreaMenuHelper = null;

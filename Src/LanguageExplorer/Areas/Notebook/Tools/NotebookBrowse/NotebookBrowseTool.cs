@@ -33,8 +33,11 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_browseViewContextMenuFactory.Dispose();
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
+
+			// Dispose after the main UI stuff.
+			_browseViewContextMenuFactory.Dispose();
+
 			_recordBrowseView = null;
 			_browseViewContextMenuFactory = null;
 		}

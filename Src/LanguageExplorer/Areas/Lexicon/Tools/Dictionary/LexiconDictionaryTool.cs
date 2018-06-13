@@ -56,9 +56,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
+
+			// Dispose after the main UI stuff.
 			_dictionaryToolMenuHelper.Dispose();
 			_dataTreeStackContextMenuFactory.Dispose(); // No Data Tree in this tool to dispose of it for us.
-			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
+
 			_xhtmlDocView = null;
 			_fwMainWnd = null;
 			_cache = null;

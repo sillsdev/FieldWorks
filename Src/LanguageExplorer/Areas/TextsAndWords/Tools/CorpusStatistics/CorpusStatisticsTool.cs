@@ -29,11 +29,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_textAndWordsAreaMenuHelper.Dispose();
-
 			// Remove StatisticsView (right panel of 'mainCollapsingSplitContainer').
 			// Setting "SecondControl" to null will dispose "_statisticsView", so no need to do it here.
 			majorFlexComponentParameters.MainCollapsingSplitContainer.SecondControl = null;
+
+			// Dispose after the main UI stuff.
+			_textAndWordsAreaMenuHelper.Dispose();
+
 			_statisticsView = null;
 			_textAndWordsAreaMenuHelper = null;
 		}

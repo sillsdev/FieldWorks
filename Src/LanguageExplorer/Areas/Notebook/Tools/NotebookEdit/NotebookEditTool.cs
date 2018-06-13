@@ -42,8 +42,11 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_browseViewContextMenuFactory.Dispose();
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
+
+			// Dispose after the main UI stuff.
+			_browseViewContextMenuFactory.Dispose();
+
 			_recordBrowseView = null;
 			_browseViewContextMenuFactory = null;
 		}

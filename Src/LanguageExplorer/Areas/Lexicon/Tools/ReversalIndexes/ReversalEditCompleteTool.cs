@@ -52,8 +52,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			_propertyTable = majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
-			_reversalEditCompleteToolMenuHelper.Dispose();
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
+
+			// Dispose after the main UI stuff.
+			_reversalEditCompleteToolMenuHelper.Dispose();
 
 			_cache = null;
 			_reversalIndexRepository = null;

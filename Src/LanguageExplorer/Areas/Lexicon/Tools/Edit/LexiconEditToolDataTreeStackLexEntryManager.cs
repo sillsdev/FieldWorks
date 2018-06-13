@@ -138,13 +138,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			Register_LexemeForm_Bundle();
 			Register_CitationForm_Bundle();
 			Register_Pronunciation_Bundle();
+			Register_Etymologies_Bundle();
 
 			// TODO: This method will get revised/removed, as I get to the remaining bundle(s) of slices.
 			RegisterHotLinkMenus();
-			/*
-			<part ref="Etymologies" param="Normal" visibility="ifdata" />
-			*/
-			MyDataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(LexiconEditToolConstants.mnuDataTree_Etymology, Create_mnuDataTree_Etymology);
 			/*
 		   <part ref="CommentAllA"/>
 		   <part ref="LiteralMeaningAllA"  visibility="ifdata"/>
@@ -485,7 +482,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
 			// <command id="CmdDataTree-Delete-ComplexFormSpec" label="Delete Complex Form Info" message="DataTreeDelete" icon="Delete"/>
-			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Delete_ComplexFormSpec_Clicked, LexiconResources.Delete_Complex_Form_Info, image: LanguageExplorerResources.Delete);
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Delete_this_Foo_Clicked, LexiconResources.Delete_Complex_Form_Info, image: LanguageExplorerResources.Delete);
 			menu.Enabled = slice.GetCanDeleteNow();
 			if (!menu.Enabled)
 			{
@@ -550,7 +547,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 			using (var imageHolder = new LanguageExplorer.DictionaryConfiguration.ImageHolder())
 			{
-				// <item command="CmdDataTree-MoveUp-Pronunciation"/>
 				/*
 					<command id="CmdDataTree-MoveUp-Pronunciation" label="Move Pronunciation _Up" message="MoveUpObjectInSequence" icon="MoveUp">
 						<parameters field="Pronunciations" className="LexPronunciation"/>
@@ -561,7 +557,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				var enabled = CanMoveUpObjectInSequence(out visible);
 				menu.Visible = true;
 				menu.Enabled = enabled;
-				// <item command="CmdDataTree-MoveDown-Pronunciation"/>
+
 				/*
 					<command id="CmdDataTree-MoveDown-Pronunciation" label="Move Pronunciation _Down" message="MoveDownObjectInSequence" icon="MoveDown">
 						<parameters field="Pronunciations" className="LexPronunciation"/>
@@ -572,17 +568,19 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				menu.Visible = true;
 				menu.Enabled = enabled;
 			}
+
 			// <item label="-" translate="do not translate"/>
 			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
-			// <item command="CmdDataTree-Delete-Pronunciation"/>
+
 			/*
 				<command id="CmdDataTree-Delete-Pronunciation" label="Delete this Pronunciation" message="DataTreeDelete" icon="Delete">
 					<parameters field="Pronunciations" className="LexPronunciation"/>
 				</command>
 				Delete_this_Pronunciation
 			*/
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Delete_this_Pronunciation_Clicked, LexiconResources.Delete_this_Pronunciation);
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Delete_this_Foo_Clicked, LexiconResources.Delete_this_Pronunciation);
 			menu.Enabled = !slice.IsGhostSlice;
+
 			// Not added here. It is added by the slice, along with the generic slice menus.
 			// <item label="-" translate="do not translate"/>
 
@@ -591,17 +589,99 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 		}
 
-		private void Delete_this_Pronunciation_Clicked(object sender, EventArgs e)
+		private void Delete_this_Foo_Clicked(object sender, EventArgs e)
 		{
 			DeleteSliceObject();
 		}
 
 		#endregion Pronunciation_Bundle
 
-		private void Delete_ComplexFormSpec_Clicked(object sender, EventArgs e)
+		#region Etymologies_Bundle
+
+		private void Register_Etymologies_Bundle()
 		{
-			DeleteSliceObject();
+			// Register the etymology hotlinks.
+			MyDataTree.DataTreeStackContextMenuFactory.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(mnuDataTree_Etymology_Hotlinks, Create_mnuDataTree_Etymology_Hotlinks);
+
+			/*
+			<part ref="Etymologies" param="Normal" visibility="ifdata" />
+			*/
+			MyDataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(LexiconEditToolConstants.mnuDataTree_Etymology, Create_mnuDataTree_Etymology);
 		}
+
+		private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_Etymology_Hotlinks(Slice slice, string hotlinksMenuId)
+		{
+			if (hotlinksMenuId != mnuDataTree_Etymology_Hotlinks)
+			{
+				throw new ArgumentException($"Expected argument value of '{mnuDataTree_Etymology_Hotlinks}', but got '{hotlinksMenuId}' instead.");
+			}
+			var hotlinksMenuItemList = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+			// <item command="CmdDataTree-Insert-Etymology"/>
+			ToolStripMenuItemFactory.CreateHotLinkToolStripMenuItem(hotlinksMenuItemList, _sharedEventHandlers[LexiconEditToolConstants.CmdDataTree_Insert_Etymology], LexiconResources.Insert_Etymology, LexiconResources.Insert_Etymology_Tooltip);
+
+			return hotlinksMenuItemList;
+		}
+
+		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Etymology(Slice slice, string contextMenuId)
+		{
+			if (contextMenuId != LexiconEditToolConstants.mnuDataTree_Etymology)
+			{
+				throw new ArgumentException($"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_Etymology}', but got '{nameof(contextMenuId)}' instead.");
+			}
+
+			// Start: <menu id="mnuDataTree-Etymology">
+			var contextMenuStrip = new ContextMenuStrip
+			{
+				Name = LexiconEditToolConstants.mnuDataTree_Etymology
+			};
+			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(6);
+
+			// <item command="CmdDataTree-Insert-Etymology" label="Insert _Etymology"/>
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconEditToolConstants.CmdDataTree_Insert_Etymology], LexiconResources.Insert_Etymology, LexiconResources.Insert_Etymology_Tooltip);
+
+			// <item label="-" translate="do not translate"/>
+			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
+
+			using (var imageHolder = new LanguageExplorer.DictionaryConfiguration.ImageHolder())
+			{
+				/*
+					<command id="CmdDataTree-MoveUp-Etymology" label="Move Etymology _Up" message="MoveUpObjectInSequence" icon="MoveUp">
+						<parameters field="Etymology" className="LexEtymology"/>
+					</command>
+				*/
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInSequence_Clicked, LexiconResources.Move_Etymology_Up, image: imageHolder.smallCommandImages.Images[12]);
+				bool visible;
+				var enabled = CanMoveUpObjectInSequence(out visible);
+				menu.Visible = true;
+				menu.Enabled = enabled;
+				/*
+					<command id="CmdDataTree-MoveDown-Etymology" label="Move Etymology _Down" message="MoveDownObjectInSequence" icon="MoveDown">
+						<parameters field="Etymology" className="LexEtymology"/>
+					</command>
+				*/
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveDownObjectInSequence_Clicked, LexiconResources.Move_Etymology_Down, image: imageHolder.smallCommandImages.Images[14]);
+				enabled = CanMoveDownObjectInSequence(out visible);
+				menu.Visible = true;
+				menu.Enabled = enabled;
+			}
+
+			// <item label="-" translate="do not translate"/>
+			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
+
+			/*
+				<command id="CmdDataTree-Delete-Etymology" label="Delete this Etymology" message="DataTreeDelete" icon="Delete">
+					<parameters field="Etymology" className="LexEtymology"/>
+				</command>
+			 */
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Delete_this_Foo_Clicked, LexiconResources.Delete_this_Etymology);
+			menu.Enabled = !slice.IsGhostSlice;
+
+			// End: <menu id="mnuDataTree-Etymology">
+
+			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+		}
+
+		#endregion Etymologies_Bundle
 
 		private void MoveTargetDownInSequence_Clicked(object sender, EventArgs e)
 		{
@@ -657,14 +737,19 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			}
 			else
 			{
-				var hvo = _cache.DomainDataByFlid.get_VecItem(owningObject.Hvo, owningObject.OwningFlid, 0);
+				var hvo = _cache.DomainDataByFlid.get_VecItem(owningObject.Hvo, owningFlid, 0);
 				enabled = sliceObject.Hvo != hvo;
-				// if the first LexEntryRef in LexEntry.EntryRefs is a complex form, and the
-				// slice displays the second LexEntryRef in the sequence, then we can't move it
-				// up, since the first slot is reserved for the complex form.
 				if (enabled && owningFlid == LexEntryTags.kflidEntryRefs && _cache.DomainDataByFlid.get_VecSize(hvo, LexEntryRefTags.kflidComplexEntryTypes) > 0)
 				{
+					// if the first LexEntryRef in LexEntry.EntryRefs is a complex form, and the
+					// slice displays the second LexEntryRef in the sequence, then we can't move it
+					// up, since the first slot is reserved for the complex form.
 					enabled = sliceObject.Hvo != _cache.DomainDataByFlid.get_VecItem(owningObject.Hvo, owningFlid, 1);
+				}
+				else
+				{
+					var sliceObjIdx = _cache.DomainDataByFlid.GetObjIndex(owningObject.Hvo, owningFlid, sliceObject.Hvo);
+					enabled = sliceObjIdx > 0;
 				}
 			}
 			visible = true;
@@ -725,6 +810,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				{
 					enabled = sliceObject.Hvo != _cache.DomainDataByFlid.get_VecItem(owningObject.Hvo, owningFlid, 1);
 				}
+				else
+				{
+					var sliceObjIdx = _cache.DomainDataByFlid.GetObjIndex(owningObject.Hvo, owningFlid, sliceObject.Hvo);
+					enabled = sliceObjIdx < chvo - 1;
+				}
 			}
 			visible = true;
 			return enabled;
@@ -737,7 +827,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// mnuDataTree-VariantForms-Hotlinks (mnuDataTree_VariantForms_Hotlinks)
 			MyDataTree.DataTreeStackContextMenuFactory.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(mnuDataTree_VariantForms_Hotlinks, Create_mnuDataTree_VariantForms_Hotlinks);
 			// mnuDataTree-Help (x2) // Note: I don't see any help hotlinks on those two slices.
-			MyDataTree.DataTreeStackContextMenuFactory.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(mnuDataTree_Etymology_Hotlinks, Create_mnuDataTree_Etymology_Hotlinks);
 			MyDataTree.DataTreeStackContextMenuFactory.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(mnuDataTree_AlternateForms_Hotlinks, Create_mnuDataTree_AlternateForms_Hotlinks);
 		}
 
@@ -753,19 +842,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// Real work is the same as the Insert Variant Insert menu item.
 			// <item command="CmdDataTree-Insert-VariantForm"/>
 			ToolStripMenuItemFactory.CreateHotLinkToolStripMenuItem(hotlinksMenuItemList, _sharedEventHandlers[LexiconEditToolConstants.CmdInsertVariant], LexiconResources.Insert_Variant);
-
-			return hotlinksMenuItemList;
-		}
-
-		private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_Etymology_Hotlinks(Slice slice, string hotlinksMenuId)
-		{
-			if (hotlinksMenuId != mnuDataTree_Etymology_Hotlinks)
-			{
-				throw new ArgumentException($"Expected argument value of '{mnuDataTree_Etymology_Hotlinks}', but got '{hotlinksMenuId}' instead.");
-			}
-			var hotlinksMenuItemList = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
-			// <item command="CmdDataTree-Insert-Etymology"/>
-			ToolStripMenuItemFactory.CreateHotLinkToolStripMenuItem(hotlinksMenuItemList, _sharedEventHandlers[LexiconEditToolConstants.CmdDataTree_Insert_Etymology], LexiconResources.Insert_Etymology, LexiconResources.Insert_Etymology_Tooltip);
 
 			return hotlinksMenuItemList;
 		}
@@ -970,35 +1046,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private void CmdDataTree_Insert_Slash_Clicked(object sender, EventArgs e)
 		{
 			SenderTagAsIPhEnvSliceCommon(sender).InsertSlash();
-		}
-
-		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Etymology(Slice slice, string contextMenuId)
-		{
-			if (contextMenuId != LexiconEditToolConstants.mnuDataTree_Etymology)
-			{
-				throw new ArgumentException($"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_Etymology}', but got '{nameof(contextMenuId)}' instead.");
-			}
-
-			// Start: <menu id="mnuDataTree-Etymology">
-			var contextMenuStrip = new ContextMenuStrip
-			{
-				Name = LexiconEditToolConstants.mnuDataTree_Etymology
-			};
-			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(6);
-
-			// <item command="CmdDataTree-Insert-Etymology" label="Insert _Etymology"/>
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconEditToolConstants.CmdDataTree_Insert_Etymology], LexiconResources.Insert_Etymology, LexiconResources.Insert_Etymology_Tooltip);
-			/*
-			<item label="-" translate="do not translate"/>
-			<item command="CmdDataTree-MoveUp-Etymology"/>
-			<item command="CmdDataTree-MoveDown-Etymology"/>
-			<item label="-" translate="do not translate"/>
-			<item command="CmdDataTree-Delete-Etymology"/>
-			 */
-
-			// End: <menu id="mnuDataTree-Etymology">
-
-			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 		}
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_AlternateForms(Slice slice, string contextMenuId)

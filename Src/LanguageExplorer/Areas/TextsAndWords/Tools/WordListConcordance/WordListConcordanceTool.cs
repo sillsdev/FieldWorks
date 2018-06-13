@@ -47,11 +47,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _outerMultiPane);
+
+			// Dispose after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
 			_partiallySharedMenuHelper.Dispose();
 			_areaWideMenuHelper.Dispose();
 			_textAndWordsAreaMenuHelper.Dispose();
-			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _outerMultiPane);
+
 			_mainRecordBrowseView = null;
 			_nestedMultiPane = null;
 			_nestedRecordBrowseView = null;

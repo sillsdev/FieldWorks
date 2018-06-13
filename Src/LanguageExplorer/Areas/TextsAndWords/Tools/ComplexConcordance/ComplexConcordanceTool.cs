@@ -44,10 +44,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _concordanceContainer);
+
+			// Dispose after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
 			_partiallySharedMenuHelper.Dispose();
 			_textAndWordsAreaMenuHelper.Dispose();
-			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _concordanceContainer);
 
 			_complexConcControl = null;
 			_recordBrowseView = null;

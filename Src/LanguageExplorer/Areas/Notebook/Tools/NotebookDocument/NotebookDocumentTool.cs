@@ -33,8 +33,11 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_notebookDocumentMenuHelper.Dispose();
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
+
+			// Dispose after the main UI stuff.
+			_notebookDocumentMenuHelper.Dispose();
+
 			_notebookDocumentMenuHelper = null;
 		}
 

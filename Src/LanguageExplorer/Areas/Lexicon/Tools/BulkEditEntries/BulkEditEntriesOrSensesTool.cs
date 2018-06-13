@@ -40,9 +40,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
+
+			// Dispose these after the main UI stuff.
 			_browseViewContextMenuFactory.Dispose();
 			_lexiconAreaMenuHelper.Dispose();
-			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
+
 			_lexiconAreaMenuHelper = null;
 			_browseViewContextMenuFactory = null;
 		}

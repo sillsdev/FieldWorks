@@ -36,8 +36,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_lexicoClassifiedDictionaryMenuHelper.Dispose();
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
+
+			// Dispose after the main UI stuff.
+			_lexicoClassifiedDictionaryMenuHelper.Dispose();
+
 			_lexicoClassifiedDictionaryMenuHelper = null;
 		}
 
