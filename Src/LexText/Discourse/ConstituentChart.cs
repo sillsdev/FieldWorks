@@ -719,6 +719,7 @@ namespace SIL.FieldWorks.Discourse
 			if (m_chart.RowsOS.Count > 0 && MessageBox.Show(DiscourseStrings.ksDelChartWarning, DiscourseStrings.ksWarning,
 				MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
 			{
+				selection.SelectedItem = m_template;
 				return;
 			}
 
@@ -1135,8 +1136,7 @@ namespace SIL.FieldWorks.Discourse
 		{
 			if (m_chart != null && m_MoveHereButtons.Count > 0)
 			{
-				Debug.Assert(m_MoveHereButtons.Count == m_logic.AllMyColumns.Length);
-				for (int icol = 0; icol < m_logic.AllMyColumns.Length; icol++)
+				for (int icol = 0; icol < m_MoveHereButtons.Count; icol++)
 					m_MoveHereButtons[icol].Enabled = true;
 			}
 		}
