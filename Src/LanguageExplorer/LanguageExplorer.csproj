@@ -323,6 +323,7 @@
     <Compile Include="Areas\IToolUiWidgetManager.cs" />
     <Compile Include="Areas\Lexicon\LexiconAreaConstants.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolDataTreeMainPanelContextMenuStripManager.cs" />
+    <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolDataTreeStackLexEntryFormsManager.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolDataTreeStackLexEntryManager.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolDataTreeStackLexSenseManager.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolDataTreeStackManager.cs" />
@@ -1904,6 +1905,30 @@
     <Compile Include="Areas\ViewBase.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\HierarchicalLCModel.xml">
+      <Link>XML\HierarchicalLCModel.xml</Link>
+    </None>
+    <None Include="..\..\Downloads\LCM\MasterLCModel.xml">
+      <Link>XML\MasterLCModel.xml</Link>
+    </None>
+    <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\Fully_Merged_useful.xml">
+      <Link>XML\Combined\Fully_Merged_useful.xml</Link>
+    </None>
+    <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\Merged_Parts_into_Layouts.xml">
+      <Link>XML\Combined\Merged_Parts_into_Layouts.xml</Link>
+    </None>
+    <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\MergedLayout_detail.xml">
+      <Link>XML\Combined\MergedLayout_detail.xml</Link>
+    </None>
+    <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\MergedParts_detail.xml">
+      <Link>XML\Combined\MergedParts_detail.xml</Link>
+    </None>
+    <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\Merged_Combined_details.xml">
+      <Link>XML\Combined\Merged_Combined_details.xml</Link>
+    </None>
+    <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\Merged_LCModel.xml">
+      <Link>XML\Combined\Merged_LCModel.xml</Link>
+    </None>
     <Content Include="Resources\SimpleChooserParameters.xml" />
     <None Include="images\password-reveal-eye-16x16.png" />
     <Content Include="Resources\DialectsListEditParameters.xml" />
@@ -3773,42 +3798,34 @@
     <None Include="Resources\NotebookDocumentParameters.xml" />
     <None Include="Resources\NotebookBrowseColumnDefinitions.xml" />
     <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\CombinedConfig_BleedingEdge.xml">
-      <Link>XML\CombinedConfig_BleedingEdge.xml</Link>
-      <SubType>Designer</SubType>
+      <Link>XML\Combined\CombinedConfig_BleedingEdge.xml</Link>
     </None>
     <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\CombinedConfig_Develop.xml">
-      <Link>XML\CombinedConfig_Develop.xml</Link>
-      <SubType>Designer</SubType>
+      <Link>XML\Combined\CombinedConfig_Develop.xml</Link>
     </None>
     <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\CombinedConfig_Master.xml">
-      <Link>XML\CombinedConfig_Master.xml</Link>
-      <SubType>Designer</SubType>
+      <Link>XML\Combined\CombinedConfig_Master.xml</Link>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\DataTreeInclude.xml">
       <Link>XML\Lexicon\DataTreeInclude.xml</Link>
-      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Lists\areaConfiguration.xml">
       <Link>XML\Lists\areaConfiguration.xml</Link>
-      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Lists\DataTreeInclude.xml">
       <Link>XML\Lists\DataTreeInclude.xml</Link>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Notebook\areaConfiguration.xml">
       <Link>XML\Notebook\areaConfiguration.xml</Link>
-      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\CommonDataTreeInclude.xml">
       <Link>XML\CommonDataTreeInclude.xml</Link>
-      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\ConstituentChartStyleInfo.xml">
       <Link>XML\ConstituentChartStyleInfo.xml</Link>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\ContextHelp.xml">
       <Link>XML\ContextHelp.xml</Link>
-      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\CellarParts.xml">
       <Link>XML\Parts\CellarParts.xml</Link>
@@ -3822,11 +3839,9 @@
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\LexSenseParts.xml">
       <Link>XML\Parts\LexSenseParts.xml</Link>
-      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\MorphologyParts.xml">
       <Link>XML\Parts\MorphologyParts.xml</Link>
-      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\NotebookParts.xml">
       <Link>XML\Parts\NotebookParts.xml</Link>
@@ -3878,11 +3893,9 @@
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Main.xml">
       <Link>XML\Main.xml</Link>
-      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Words\areaConfiguration.xml">
       <Link>XML\Word\areaConfiguration.xml</Link>
-      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\strings-en.xml">
       <Link>XML\strings-en.xml</Link>

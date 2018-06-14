@@ -24,12 +24,6 @@
 		<command id="CmdDataTree-MoveDown-Allomorph" label="Move Form _Down" message="MoveDownObjectInSequence" icon="MoveDown">
 			<parameters field="AlternateForms" className="MoForm"/>
 		</command>
-		<command id="CmdDataTree-Insert-StemAllomorph" label="Insert Stem Allomorph" message="DataTreeInsert">
-			<parameters field="AlternateForms" className="MoStemAllomorph"/>
-		</command>
-		<command id="CmdDataTree-Insert-AffixAllomorph" label="Insert Affix Allomorph" message="DataTreeInsert">
-			<parameters field="AlternateForms" className="MoAffixAllomorph"/>
-		</command>
 		<command id="CmdDataTree-Delete-Allomorph" label="Delete Allomorph" message="DataTreeDelete" icon="Delete">
 			<parameters field="AlternateForms" className="MoForm"/>
 		</command>
@@ -66,9 +60,6 @@
 		</command>
 		<command id="CmdDataTree-Swap-Allomorph" label="Swap Allomorph with Lexeme Form" message="SwapAllomorphWithLexeme">
 			<parameters field="AlternateForms" className="MoForm"/>
-		</command>
-		<command id="CmdDataTree-Insert-AffixProcess" label="Insert Affix Process" message="DataTreeInsert">
-			<parameters field="AlternateForms" className="MoAffixProcess"/>
 		</command>
 		<command id="CmdDataTree-Convert-Allomorph-AffixProcess" label="Convert to Affix Process" message="ConvertAllomorph">
 			<parameters fromClassName="MoAffixAllomorph" toClassName="MoAffixProcess"/>
@@ -198,9 +189,6 @@
 		<!--
 	Variants
 	-->
-		<command id="CmdDataTree-Insert-Variant" label="Insert Variant" message="DataTreeInsert">
-			<parameters className="LexEntry" field="VariantFormEntryBackRefs"/>
-		</command>
 		<command id="CmdDataTree-Delete-Variant" label="Delete Variant" message="DataTreeDelete" icon="Delete">
 			<parameters className="LexEntry" field="VariantFormEntryBackRefs"/>
 		</command>
@@ -251,17 +239,6 @@
   ===========================================================
   -->
 	<contextMenus>
-		<menu id="mnuDataTree-Allomorphs">
-			<item command="CmdDataTree-Insert-StemAllomorph"/>
-			<item command="CmdDataTree-Insert-AffixAllomorph"/>
-		</menu>
-		<menu id="mnuDataTree-Allomorphs-Hotlinks">
-			<item command="CmdDataTree-Insert-StemAllomorph"/>
-			<item command="CmdDataTree-Insert-AffixAllomorph"/>
-		</menu>
-		<menu id="mnuDataTree-VariantForms">
-			<item command="CmdDataTree-Insert-VariantForm"/>
-		</menu>
 		<menu id="mnuDataTree-VariantForm">
 			<item command="CmdEntryJumpToDefault"/>
 			<item command="CmdEntryJumpToConcordance"/>
@@ -313,12 +290,6 @@
 		<menu id="mnuDataTree-MSA">
 			<item command="CmdDataTree-Merge-MSA"/>
 			<item command="CmdDataTree-Delete-MSA"/>
-		</menu>
-		<menu id="mnuDataTree-Variants">
-			<item command="CmdDataTree-Insert-Variant"/>
-		</menu>
-		<menu id="mnuDataTree-Variant">
-			<item command="CmdDataTree-Delete-Variant"/>
 		</menu>
 		<menu id="mnuDataTree-Senses">
 			<item command="CmdDataTree-Insert-SubSense"/>

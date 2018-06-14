@@ -486,4 +486,7 @@
   <data name="Move_Etymology_Up" xml:space="preserve">
     <value>Move Etymology _Up</value>
   </data>
+  <data name="Insert_Affix_Process" xml:space="preserve">
+    <value>Insert Affix Process</value>
+  </data>
 </root>

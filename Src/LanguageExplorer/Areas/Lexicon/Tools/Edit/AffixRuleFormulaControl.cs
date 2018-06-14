@@ -80,7 +80,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
 
-			m_view.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+			// Don't even 'think' of calling: m_view.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+			// I know, I did but it crashed, since it has been done already.
 			m_view.Init(obj.Hvo, this, new AffixRuleFormulaVc(cache, PropertyTable), AffixRuleFormulaVc.kfragRule, cache.MainCacheAccessor);
 
 			m_view.SelectionChanged += SelectionChanged;

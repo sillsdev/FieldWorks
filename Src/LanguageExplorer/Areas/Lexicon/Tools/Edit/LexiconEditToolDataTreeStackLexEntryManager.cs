@@ -9,7 +9,6 @@ using SIL.LCModel;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Cellar;
@@ -23,19 +22,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	internal sealed class LexiconEditToolDataTreeStackLexEntryManager : IToolUiWidgetManager
 	{
 		private const string LexSenseManager = "LexSenseManager";
+		private const string LexEntryFormsManager = "LexEntryFormsManager";
 		internal const string mnuDataTree_Etymology_Hotlinks = "mnuDataTree-Etymology-Hotlinks";
-		private const string mnuDataTree_AlternateForms_Hotlinks = "mnuDataTree-AlternateForms-Hotlinks";
-		private const string mnuDataTree_VariantForms_Hotlinks = "mnuDataTree-VariantForms-Hotlinks";
-		private const string mnuDataTree_LexemeFormContext = "mnuDataTree-LexemeFormContext";
 		private const string mnuDataTree_VariantSpec = "mnuDataTree-VariantSpec";
 		private const string mnuDataTree_ComplexFormSpec = "mnuDataTree-ComplexFormSpec";
-		private const string mnuDataTree_CitationFormContext = "mnuDataTree-CitationFormContext";
 		private Dictionary<string, EventHandler> _sharedEventHandlers;
 		private IRecordList MyRecordList { get; set; }
 		private DataTree MyDataTree { get; set; }
-		private IPropertyTable _propertyTable;
 		private IPublisher _publisher;
-		private IFwMainWnd _mainWindow;
 		private LcmCache _cache;
 		private Dictionary<string, IToolUiWidgetManager> _dataTreeWidgetManagers;
 
@@ -47,7 +41,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			_dataTreeWidgetManagers = new Dictionary<string, IToolUiWidgetManager>
 			{
-				{ LexSenseManager, new LexiconEditToolDataTreeStackLexSenseManager(dataTree) }
+				{ LexSenseManager, new LexiconEditToolDataTreeStackLexSenseManager(dataTree) },
+				{ LexEntryFormsManager, new LexiconEditToolDataTreeStackLexEntryFormsManager(dataTree) }
 			};
 		}
 
@@ -60,8 +55,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			Guard.AgainstNull(sharedEventHandlers, nameof(sharedEventHandlers));
 			Guard.AgainstNull(recordList, nameof(recordList));
 
-			_mainWindow = majorFlexComponentParameters.MainWindow;
-			_propertyTable = majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
 			_publisher = majorFlexComponentParameters.FlexComponentParameters.Publisher;
 			_cache = majorFlexComponentParameters.LcmCache;
 			_sharedEventHandlers = sharedEventHandlers;
@@ -135,45 +128,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private void RegisterSliceMenus()
 		{
 			// Slice stack from LexEntry.fwlayout (less senses, which are handled in another manager class).
-			Register_LexemeForm_Bundle();
-			Register_CitationForm_Bundle();
+			Register_After_CitationForm_Bundle();
 			Register_Pronunciation_Bundle();
 			Register_Etymologies_Bundle();
+			Register_Comment_To_Messages_Bundle();
 
-			// TODO: This method will get revised/removed, as I get to the remaining bundle(s) of slices.
-			RegisterHotLinkMenus();
-			/*
-		   <part ref="CommentAllA"/>
-		   <part ref="LiteralMeaningAllA"  visibility="ifdata"/>
-		   <!-- Only for Subentries. -->
-		   <part ref="BibliographyAllA"   visibility="ifdata" />
-		   <part ref="RestrictionsAllA"   visibility="ifdata" />
-		   <part ref="SummaryDefinitionAllA" visibility="ifdata"/>
+			// NB: Senses go here. But, another manager worries about them.
+			// <part ref="Senses" param="Normal" expansion="expanded"/>
 
-		   <part ref="CurrentLexReferences"   visibility="ifdata" />
-
-		   <!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
-		   <part ref="_CustomFieldPlaceholder" customFields="here" />
-
-		   <part ref="ImportResidue" label="Import Residue" visibility="ifdata"/>
-		   <part ref="DateCreatedAllA"  visibility="never"/>
-		   <part ref="DateModifiedAllA"  visibility="never"/>
-		   <part ref="Messages" visibility="always"/>
-
-		   // NB: Senses go here. But, another manager worries about them.
-
-		   <part ref="VariantFormsSection" expansion="expanded" label="Variants" menu="mnuDataTree-VariantForms" hotlinks="mnuDataTree-VariantForms-Hotlinks">
-			   <indent>
-				   <part ref="VariantForms"/>
-			   </indent>
-		   </part>
-		   <part ref="AlternateFormsSection" expansion="expanded" label="Allomorphs" menu="mnuDataTree-AlternateForms" hotlinks="mnuDataTree-AlternateForms-Hotlinks">
-			   <indent>
-				   <part ref="AlternateForms" param="Normal"/>
-			   </indent>
-		   </part>
-		   */
-			MyDataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(LexiconEditToolConstants.mnuDataTree_AlternateForms, Create_mnuDataTree_AlternateForms);
 			/*
 			<part ref="GrammaticalFunctionsSection" label="Grammatical Info. Details" menu="mnuDataTree-Help" hotlinks="mnuDataTree-Help">
 				<indent>
@@ -193,168 +155,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				*/
 		}
 
-		#region LexemeForm_Bundle
+		#region After_CitationForm_Bundle
 
 		/// <summary>
-		/// Register the various alternatives for the "Lexeme Form" bundle of slices.
+		/// Starts after the Citation Form slice and goes to (but not including) the Pronunciation bundle.
 		/// </summary>
-		/// <remarks>
-		/// This covers the first "Lexeme Form" slice up to, but not including, the "Citation Form" slice.
-		/// </remarks>
-		private void Register_LexemeForm_Bundle()
-		{
-			#region left edge menus
-			// 1. <part id="MoForm-Detail-AsLexemeForm" type="Detail">
-			//		Needs: menu="mnuDataTree-LexemeForm".
-			MyDataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(LexiconEditToolConstants.mnuDataTree_LexemeForm, Create_mnuDataTree_LexemeForm);
-			// 2. <part ref="PhoneEnvBasic" visibility="ifdata"/>
-			//		Needs: menu="mnuDataTree-Environments-Insert".
-			MyDataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(LexiconEditToolConstants.mnuDataTree_Environments_Insert, Create_mnuDataTree_Environments_Insert);
-
-			#endregion left edge menus
-
-			#region hotlinks
-			// No hotlinks in this bundle of slices.
-			#endregion hotlinks
-
-			#region right click popups
-
-			// "mnuDataTree-LexemeFormContext" (right click menu)
-			MyDataTree.DataTreeStackContextMenuFactory.RightClickPopupMenuFactory.RegisterPopupContextCreatorMethod(mnuDataTree_LexemeFormContext, Create_mnuDataTree_LexemeFormContext_RightClick);
-
-			#endregion right click popups
-		}
-
-		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_LexemeForm(Slice slice, string contextMenuId)
-		{
-			if (contextMenuId != LexiconEditToolConstants.mnuDataTree_LexemeForm)
-			{
-				throw new ArgumentException($"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_LexemeForm}', but got '{nameof(contextMenuId)}' instead.");
-			}
-
-			// Start: <menu id="mnuDataTree-LexemeForm">
-			var contextMenuStrip = new ContextMenuStrip
-			{
-				Name = LexiconEditToolConstants.mnuDataTree_LexemeForm
-			};
-			var entry = (ILexEntry)MyRecordList.CurrentObject;
-			var hasAllomorphs = entry.AlternateFormsOS.Any();
-			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(4);
-
-			// <item command="CmdMorphJumpToConcordance" label="Show Lexeme Form in Concordance"/> // NB: Overrides command's label here.
-			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdMorphJumpToConcordance_Clicked, LexiconResources.Show_Lexeme_Form_in_Concordance);
-			menu.Visible = true;
-			menu.Enabled = true;
-
-			// <command id="CmdDataTree-Swap-LexemeForm" label="Swap Lexeme Form with Allomorph..." message="SwapLexemeWithAllomorph">
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Swap_LexemeForm_Clicked, LexiconResources.Swap_Lexeme_Form_with_Allomorph);
-			menu.Visible = hasAllomorphs;
-			menu.Enabled = hasAllomorphs;
-
-			// <command id="CmdDataTree-Convert-LexemeForm-AffixProcess" label="Convert to Affix Process" message="ConvertLexemeForm"><parameters fromClassName="MoAffixAllomorph" toClassName="MoAffixProcess"/>
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Convert_LexemeForm_AffixProcess_Clicked, LexiconResources.Convert_to_Affix_Process);
-			var mmt = entry.PrimaryMorphType;
-			var enabled = hasAllomorphs && mmt != null && mmt.IsAffixType;
-			menu.Visible = enabled;
-			menu.Enabled = enabled;
-
-			// <command id="CmdDataTree-Convert-LexemeForm-AffixAllomorph" label="Convert to Affix Form" message="ConvertLexemeForm"><parameters fromClassName="MoAffixProcess" toClassName="MoAffixAllomorph"/>
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Convert_LexemeForm_AffixAllomorph_Clicked, LexiconResources.Convert_to_Affix_Form);
-			enabled = hasAllomorphs && entry.AlternateFormsOS[0] is IMoAffixAllomorph;
-			menu.Visible = enabled;
-			menu.Enabled = enabled;
-
-			// End: <menu id="mnuDataTree-LexemeForm">
-
-			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
-		}
-
-		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Environments_Insert(Slice slice, string contextMenuId)
-		{
-			if (contextMenuId != LexiconEditToolConstants.mnuDataTree_Environments_Insert)
-			{
-				throw new ArgumentException($"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_Environments_Insert}', but got '{nameof(contextMenuId)}' instead.");
-			}
-
-			// Start: <menu id="mnuDataTree-Environments-Insert">
-			// This "mnuDataTree-Environments-Insert" menu is used in four places.
-			var contextMenuStrip = new ContextMenuStrip
-			{
-				Name = LexiconEditToolConstants.mnuDataTree_Environments_Insert
-			};
-			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(5);
-
-			// <command id="CmdDataTree-Insert-Slash" label="Insert Environment slash" message="InsertSlash"/>
-			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Insert_Slash_Clicked, LexiconResources.Insert_Environment_slash);
-			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanInsertSlash;
-
-			// <command id="CmdDataTree-Insert-Underscore" label="Insert Environment bar" message="InsertEnvironmentBar"/>
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Insert_Underscore_Clicked, LexiconResources.Insert_Environment_bar);
-			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanInsertEnvironmentBar;
-
-			// <command id="CmdDataTree-Insert-NaturalClass" label="Insert Natural Class" message="InsertNaturalClass"/>
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Insert_NaturalClass_Clicked, LexiconResources.Insert_Natural_Class);
-			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanInsertNaturalClass;
-
-			// <command id="CmdDataTree-Insert-OptionalItem" label="Insert Optional Item" message="InsertOptionalItem"/>
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Insert_OptionalItem_Clicked, LexiconResources.Insert_Optional_Item);
-			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanInsertOptionalItem;
-
-			// <command id="CmdDataTree-Insert-HashMark" label="Insert Word Boundary" message="InsertHashMark"/>
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Insert_HashMark_Clicked, LexiconResources.Insert_Word_Boundary);
-			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanInsertHashMark;
-
-			// End: <menu id="mnuDataTree-Environments-Insert">
-
-			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
-		}
-
-		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_LexemeFormContext_RightClick(Slice slice, string contextMenuId)
-		{
-			if (contextMenuId != mnuDataTree_LexemeFormContext)
-			{
-				throw new ArgumentException($"Expected argument value of '{mnuDataTree_LexemeFormContext}', but got '{nameof(contextMenuId)}' instead.");
-			}
-
-			// Start: <menu id="mnuDataTree-LexemeFormContext">
-			var contextMenuStrip = new ContextMenuStrip
-			{
-				Name = mnuDataTree_LexemeFormContext
-			};
-			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(3);
-
-			/* <item command="CmdEntryJumpToConcordance"/>		<!-- Show Entry in Concordance -->
-				<command id="CmdEntryJumpToConcordance" label="Show Entry in Concordance" message="JumpToTool">
-					<parameters tool="concordance" className="LexEntry"/>
-				</command>
-			*/
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[AreaServices.CmdEntryJumpToConcordance], LexiconResources.Show_Entry_In_Concordance);
-			/* <item command="CmdLexemeFormJumpToConcordance"/>
-				<command id="CmdLexemeFormJumpToConcordance" label="Show Lexeme Form in Concordance" message="JumpToTool"> // NB: Also used in: <menu id="mnuReferenceChoices">
-					<parameters tool="concordance" className="MoForm"/>
-				</command>
-			*/
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdLexemeFormJumpToConcordance_Clicked, LexiconResources.Show_Lexeme_Form_in_Concordance);
-			/* <item command="CmdDataTree-Swap-LexemeForm"/>
-				<command id="CmdDataTree-Swap-LexemeForm" label="Swap Lexeme Form with Allomorph..." message="SwapLexemeWithAllomorph">
-					<parameters field="LexemeForm" className="MoForm"/>
-				</command>
-			*/
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Swap_LexemeForm_Clicked, LexiconResources.Swap_Lexeme_Form_with_Allomorph);
-
-			// End: <menu id="mnuDataTree-LexemeFormContext">
-
-			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
-		}
-
-		#endregion LexemeForm_Bundle
-
-		#region CitationForm_Bundle
-
-		/// <summary>
-		/// Starts with the Citation Form slice and goes to (but not including) the Pronunciation bundle.
-		/// </summary>
-		private void Register_CitationForm_Bundle()
+		private void Register_After_CitationForm_Bundle()
 		{
 			#region left edge menus
 
@@ -374,20 +180,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			#region hotlinks
 			// No hotlinks
 			#endregion hotlinks
-
-			#region right click popups
-
-			// <part label="Citation Form" ref="CitationFormAllV"/>
-			MyDataTree.DataTreeStackContextMenuFactory.RightClickPopupMenuFactory.RegisterPopupContextCreatorMethod(mnuDataTree_CitationFormContext, Create_mnuDataTree_CitationFormContext);
-
-			#endregion right click popups
 		}
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuReorderVector(Slice slice, string contextMenuId)
 		{
 			if (contextMenuId != LexiconAreaConstants.mnuReorderVector)
 			{
-				throw new ArgumentException($"Expected argument value of '{LexiconAreaConstants.mnuReorderVector}', but got '{nameof(contextMenuId)}' instead.");
+				throw new ArgumentException($"Expected argument value of '{LexiconAreaConstants.mnuReorderVector}', but got '{contextMenuId}' instead.");
 			}
 
 			// Start: <menu id="mnuReorderVector">
@@ -423,7 +222,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			if (contextMenuId != mnuDataTree_VariantSpec)
 			{
-				throw new ArgumentException($"Expected argument value of '{mnuDataTree_VariantSpec}', but got '{nameof(contextMenuId)}' instead.");
+				throw new ArgumentException($"Expected argument value of '{mnuDataTree_VariantSpec}', but got '{contextMenuId}' instead.");
 			}
 
 			// Start: <menu id="mnuDataTree-VariantSpec">
@@ -471,7 +270,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			if (contextMenuId != mnuDataTree_ComplexFormSpec)
 			{
-				throw new ArgumentException($"Expected argument value of '{mnuDataTree_ComplexFormSpec}', but got '{nameof(contextMenuId)}' instead.");
+				throw new ArgumentException($"Expected argument value of '{mnuDataTree_ComplexFormSpec}', but got '{contextMenuId}' instead.");
 			}
 
 			// Start: <menu id="mnuDataTree-ComplexFormSpec">
@@ -494,33 +293,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 		}
 
-		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_CitationFormContext(Slice slice, string contextMenuId)
-		{
-			if (contextMenuId != mnuDataTree_CitationFormContext)
-			{
-				throw new ArgumentException($"Expected argument value of '{mnuDataTree_CitationFormContext}', but got '{nameof(contextMenuId)}' instead.");
-			}
-
-			// Start: <menu id="mnuDataTree-CitationFormContext">
-			var contextMenuStrip = new ContextMenuStrip
-			{
-				Name = mnuDataTree_CitationFormContext
-			};
-			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
-
-			/* <item command="CmdEntryJumpToConcordance"/>		<!-- Show Entry in Concordance -->
-				<command id="CmdEntryJumpToConcordance" label="Show Entry in Concordance" message="JumpToTool">
-					<parameters tool="concordance" className="LexEntry"/>
-				</command>
-			*/
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[AreaServices.CmdEntryJumpToConcordance], LexiconResources.Show_Entry_In_Concordance);
-
-			// End: <menu id="mnuDataTree-CitationFormContext">
-
-			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
-		}
-
-		#endregion CitationForm_Bundle
+		#endregion After_CitationForm_Bundle
 
 		#region Pronunciation_Bundle
 
@@ -603,9 +376,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// Register the etymology hotlinks.
 			MyDataTree.DataTreeStackContextMenuFactory.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(mnuDataTree_Etymology_Hotlinks, Create_mnuDataTree_Etymology_Hotlinks);
 
-			/*
-			<part ref="Etymologies" param="Normal" visibility="ifdata" />
-			*/
+			// <part ref="Etymologies" param="Normal" visibility="ifdata" />
 			MyDataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(LexiconEditToolConstants.mnuDataTree_Etymology, Create_mnuDataTree_Etymology);
 		}
 
@@ -626,7 +397,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			if (contextMenuId != LexiconEditToolConstants.mnuDataTree_Etymology)
 			{
-				throw new ArgumentException($"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_Etymology}', but got '{nameof(contextMenuId)}' instead.");
+				throw new ArgumentException($"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_Etymology}', but got '{contextMenuId}' instead.");
 			}
 
 			// Start: <menu id="mnuDataTree-Etymology">
@@ -682,6 +453,59 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		}
 
 		#endregion Etymologies_Bundle
+
+		#region Comment_To_Messages_Bundle
+
+		private void Register_Comment_To_Messages_Bundle()
+		{
+			/*
+		   <part ref="CommentAllA"/>
+				<part id="LexEntry-Detail-CommentAllA" type="Detail">
+					<slice field="Comment" label="Note" editor="multistring" ws="all analysis" />
+				</part>
+		   <part ref="LiteralMeaningAllA"  visibility="ifdata"/>
+				<part id="LexEntry-Detail-LiteralMeaningAllA" type="detail">
+					<slice field="LiteralMeaning" label="Literal Meaning" editor="multistring" ws="all analysis" />
+				</part>
+		   <!-- Only for Subentries. -->
+		   <part ref="BibliographyAllA"   visibility="ifdata" />
+				<part id="LexEntry-Detail-BibliographyAllA" type="Detail">
+					<slice field="Bibliography" label="Bibliography" editor="multistring" ws="all analysis" />
+				</part>
+		   <part ref="RestrictionsAllA"   visibility="ifdata" />
+				<part id="LexEntry-Detail-RestrictionsAllA" type="Detail">
+					<slice field="Restrictions" label="Restrictions" editor="multistring" ws="all analysis" />
+				</part>
+		   <part ref="SummaryDefinitionAllA" visibility="ifdata"/>
+				<part id="LexEntry-Detail-SummaryDefinitionAllA" type="Detail">
+					<slice field="SummaryDefinition" label="Summary Definition" editor="multistring" ws="all analysis" />
+				</part>
+		   <part ref="CurrentLexReferences"   visibility="ifdata" />
+				<part id="LexEntry-Detail-CurrentLexReferences" type="detail">
+					<slice label="Cross References" field="LexEntryReferences" editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceMultiSlice" />
+				</part>
+		   <!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
+		   <part ref="_CustomFieldPlaceholder" customFields="here" /> // Nothing special for custom fields and menus.
+		   <part ref="ImportResidue" label="Import Residue" visibility="ifdata"/>
+				<part id="LexEntry-Detail-ImportResidue" type="Detail">
+					<slice field="ImportResidue" label="ImportResidue" editor="String" />
+				</part>
+		   <part ref="DateCreatedAllA"  visibility="never"/>
+				<part id="LexEntry-Detail-DateCreatedAllA" type="Detail">
+					<slice field="DateCreated" label="Date Created" editor="Time" />
+				</part>
+		   <part ref="DateModifiedAllA"  visibility="never"/>
+				<part id="LexEntry-Detail-DateModifiedAllA" type="Detail">
+					<slice field="DateModified" label="Date Modified" editor="Time" />
+				</part>
+		   <part ref="Messages" visibility="always"/>
+				<part id="LexEntry-Detail-Messages" type="detail">
+					<slice field="Self" label="Messages" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.ChorusMessageSlice" helpTopicID="khtpField-LexEntry-Messages"  />
+				</part>
+			*/
+		}
+
+		#endregion Comment_To_Messages_Bundle
 
 		private void MoveTargetDownInSequence_Clicked(object sender, EventArgs e)
 		{
@@ -820,259 +644,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			return enabled;
 		}
 
-		#region hotlinks
-
-		private void RegisterHotLinkMenus()
-		{
-			// mnuDataTree-VariantForms-Hotlinks (mnuDataTree_VariantForms_Hotlinks)
-			MyDataTree.DataTreeStackContextMenuFactory.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(mnuDataTree_VariantForms_Hotlinks, Create_mnuDataTree_VariantForms_Hotlinks);
-			// mnuDataTree-Help (x2) // Note: I don't see any help hotlinks on those two slices.
-			MyDataTree.DataTreeStackContextMenuFactory.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(mnuDataTree_AlternateForms_Hotlinks, Create_mnuDataTree_AlternateForms_Hotlinks);
-		}
-
-		private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_VariantForms_Hotlinks(Slice slice, string hotlinksMenuId)
-		{
-			if (hotlinksMenuId != mnuDataTree_VariantForms_Hotlinks)
-			{
-				throw new ArgumentException($"Expected argument value of '{mnuDataTree_VariantForms_Hotlinks}', but got '{hotlinksMenuId}' instead.");
-			}
-
-			var hotlinksMenuItemList = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
-			// NB: "CmdDataTree-Insert-VariantForm" is also used in two ordinary slice menus, which are defined in this class, so no need to add to shares.
-			// Real work is the same as the Insert Variant Insert menu item.
-			// <item command="CmdDataTree-Insert-VariantForm"/>
-			ToolStripMenuItemFactory.CreateHotLinkToolStripMenuItem(hotlinksMenuItemList, _sharedEventHandlers[LexiconEditToolConstants.CmdInsertVariant], LexiconResources.Insert_Variant);
-
-			return hotlinksMenuItemList;
-		}
-
-		private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_AlternateForms_Hotlinks(Slice slice, string hotlinksMenuId)
-		{
-			if (hotlinksMenuId != mnuDataTree_AlternateForms_Hotlinks)
-			{
-				throw new ArgumentException($"Expected argument value of '{mnuDataTree_AlternateForms_Hotlinks}', but got '{hotlinksMenuId}' instead.");
-			}
-			var hotlinksMenuItemList = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
-
-			// <item command="CmdDataTree-Insert-AlternateForm"/>
-			ToolStripMenuItemFactory.CreateHotLinkToolStripMenuItem(hotlinksMenuItemList, _sharedEventHandlers[LexiconEditToolConstants.CmdDataTree_Insert_AlternateForm], LexiconResources.Insert_Allomorph);
-
-			return hotlinksMenuItemList;
-		}
-
-		#endregion
-
 		#region ordinary slice menus
-
-		private void CmdMorphJumpToConcordance_Clicked(object sender, EventArgs e)
-		{
-			var commands = new List<string>
-			{
-				"AboutToFollowLink",
-				"FollowLink"
-			};
-			var parms = new List<object>
-			{
-				null,
-				new FwLinkArgs("concordance", MyDataTree.CurrentSlice.MyCmObject.Guid)
-			};
-			_publisher.Publish(commands, parms);
-		}
-
-		private void CmdDataTree_Swap_LexemeForm_Clicked(object sender, EventArgs e)
-		{
-			var entry = (ILexEntry)MyRecordList.CurrentObject;
-			using (new WaitCursor((Form)_mainWindow))
-			{
-				using (var dlg = new SwapLexemeWithAllomorphDlg())
-				{
-					dlg.SetDlgInfo(_cache, _propertyTable, entry);
-					if (DialogResult.OK == dlg.ShowDialog((Form)_mainWindow))
-					{
-						SwapAllomorphWithLexeme(entry, dlg.SelectedAllomorph, LexiconResources.Swap_Lexeme_Form_with_Allomorph);
-					}
-				}
-			}
-		}
-
-		private void SwapAllomorphWithLexeme(ILexEntry entry, IMoForm allomorph, string uowBase)
-		{
-			UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerResources.Undo_0, uowBase), string.Format(LanguageExplorerResources.Redo_0, uowBase), entry, () =>
-			{
-				entry.AlternateFormsOS.Insert(allomorph.IndexInOwner, entry.LexemeFormOA);
-				entry.LexemeFormOA = allomorph;
-			});
-		}
-
-		private void CmdDataTree_Convert_LexemeForm_AffixProcess_Clicked(object sender, EventArgs e)
-		{
-			Convert_LexemeForm(MoAffixProcessTags.kClassId);
-		}
-
-		private void Convert_LexemeForm(int toClsid)
-		{
-			var entry = (ILexEntry)MyRecordList.CurrentObject;
-			if (CheckForFormDataLoss(entry.LexemeFormOA))
-			{
-				IMoForm newForm = null;
-				using (new WaitCursor((Form)_mainWindow))
-				{
-					UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerResources.Undo_0, LexiconResources.Convert_to_Affix_Process), string.Format(LanguageExplorerResources.Redo_0, LexiconResources.Convert_to_Affix_Process), entry, () =>
-					{
-						switch (toClsid)
-						{
-							case MoAffixProcessTags.kClassId:
-								newForm = _cache.ServiceLocator.GetInstance<IMoAffixProcessFactory>().Create();
-								break;
-							case MoAffixAllomorphTags.kClassId:
-								newForm = _cache.ServiceLocator.GetInstance<IMoAffixAllomorphFactory>().Create();
-								break;
-							case MoStemAllomorphTags.kClassId:
-								newForm = _cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
-								break;
-						}
-						entry.ReplaceMoForm(entry.LexemeFormOA, newForm);
-					});
-					MyDataTree.RefreshList(false);
-				}
-
-				SelectNewFormSlice(newForm);
-			}
-		}
-
-		private void SelectNewFormSlice(IMoForm newForm)
-		{
-			foreach (var slice in MyDataTree.Slices)
-			{
-				if (slice.MyCmObject.Hvo == newForm.Hvo)
-				{
-					MyDataTree.ActiveControl = slice;
-					break;
-				}
-			}
-		}
-
-		private static bool CheckForFormDataLoss(IMoForm origForm)
-		{
-			string msg = null;
-			switch (origForm.ClassID)
-			{
-				case MoAffixAllomorphTags.kClassId:
-					var affAllo = (IMoAffixAllomorph)origForm;
-					var loseEnv = affAllo.PhoneEnvRC.Count > 0;
-					var losePos = affAllo.PositionRS.Count > 0;
-					var loseGram = affAllo.MsEnvFeaturesOA != null || affAllo.MsEnvPartOfSpeechRA != null;
-					if (loseEnv && losePos && loseGram)
-					{
-						msg = LanguageExplorerResources.ksConvertFormLoseEnvInfixLocGramInfo;
-					}
-					else if (loseEnv && losePos)
-					{
-						msg = LanguageExplorerResources.ksConvertFormLoseEnvInfixLoc;
-					}
-					else if (loseEnv && loseGram)
-					{
-						msg = LanguageExplorerResources.ksConvertFormLoseEnvGramInfo;
-					}
-					else if (losePos && loseGram)
-					{
-						msg = LanguageExplorerResources.ksConvertFormLoseInfixLocGramInfo;
-					}
-					else if (loseEnv)
-					{
-						msg = LanguageExplorerResources.ksConvertFormLoseEnv;
-					}
-					else if (losePos)
-					{
-						msg = LanguageExplorerResources.ksConvertFormLoseInfixLoc;
-					}
-					else if (loseGram)
-					{
-						msg = LanguageExplorerResources.ksConvertFormLoseGramInfo;
-					}
-					break;
-
-				case MoAffixProcessTags.kClassId:
-					msg = LanguageExplorerResources.ksConvertFormLoseRule;
-					break;
-				case MoStemAllomorphTags.kClassId:
-					// not implemented
-					break;
-			}
-
-			if (msg != null)
-			{
-				return MessageBox.Show(msg, LanguageExplorerResources.ksConvertFormLoseCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes;
-			}
-
-			return true;
-		}
-
-		private void CmdDataTree_Convert_LexemeForm_AffixAllomorph_Clicked(object sender, EventArgs e)
-		{
-			Convert_LexemeForm(MoAffixAllomorphTags.kClassId);
-		}
-
-		private IPhEnvSliceCommon SliceAsIPhEnvSliceCommon(Slice slice)
-		{
-			return (IPhEnvSliceCommon)slice;
-		}
-
-		private IPhEnvSliceCommon SenderTagAsIPhEnvSliceCommon(object sender)
-		{
-			return (IPhEnvSliceCommon)((ToolStripMenuItem)sender).Tag;
-		}
-
-		private void CmdDataTree_Insert_HashMark_Clicked(object sender, EventArgs e)
-		{
-			SenderTagAsIPhEnvSliceCommon(sender).InsertHashMark();
-		}
-
-		private void CmdDataTree_Insert_OptionalItem_Clicked(object sender, EventArgs e)
-		{
-			SenderTagAsIPhEnvSliceCommon(sender).InsertOptionalItem();
-		}
-
-		private void CmdDataTree_Insert_NaturalClass_Clicked(object sender, EventArgs e)
-		{
-			SenderTagAsIPhEnvSliceCommon(sender).InsertNaturalClass();
-		}
-
-		private void CmdDataTree_Insert_Underscore_Clicked(object sender, EventArgs e)
-		{
-			SenderTagAsIPhEnvSliceCommon(sender).InsertEnvironmentBar();
-		}
-
-		private void CmdDataTree_Insert_Slash_Clicked(object sender, EventArgs e)
-		{
-			SenderTagAsIPhEnvSliceCommon(sender).InsertSlash();
-		}
-
-		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_AlternateForms(Slice slice, string contextMenuId)
-		{
-			if (contextMenuId != LexiconEditToolConstants.mnuDataTree_AlternateForms)
-			{
-				throw new ArgumentException($"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_AlternateForms}', but got '{nameof(contextMenuId)}' instead.");
-			}
-
-			// Start: <menu id="mnuDataTree-AlternateForms">
-			var contextMenuStrip = new ContextMenuStrip
-			{
-				Name = LexiconEditToolConstants.mnuDataTree_AlternateForms
-			};
-			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(2);
-			// <item command="CmdDataTree-Insert-AlternateForm"/>
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconEditToolConstants.CmdDataTree_Insert_AlternateForm], LexiconResources.Insert_Allomorph, LexiconResources.Insert_Allomorph_Tooltip);
-			/*
-			<item command="CmdDataTree-Insert-AffixProcess"/>
-			<command id="CmdDataTree-Insert-AffixProcess" label="Insert Affix Process" message="DataTreeInsert">
-				<parameters field="AlternateForms" className="MoAffixProcess"/>
-			</command>
-			*/
-			// End: <menu id="mnuDataTree-AlternateForms">
-
-			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
-		}
 
 		#endregion ordinary slice menus
 
@@ -1090,22 +662,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				null,
 				new FwLinkArgs("concordance", MyRecordList.CurrentObject.Guid)
-			};
-			_publisher.Publish(commands, parms);
-		}
-
-		private void CmdLexemeFormJumpToConcordance_Clicked(object sender, EventArgs e)
-		{
-			// Should be a MoForm
-			var commands = new List<string>
-			{
-				"AboutToFollowLink",
-				"FollowLink"
-			};
-			var parms = new List<object>
-			{
-				null,
-				new FwLinkArgs("concordance", MyDataTree.CurrentSlice.MyCmObject.Guid)
 			};
 			_publisher.Publish(commands, parms);
 		}

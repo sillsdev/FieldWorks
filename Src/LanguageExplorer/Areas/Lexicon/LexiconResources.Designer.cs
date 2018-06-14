@@ -346,6 +346,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Insert Affix Process.
+        /// </summary>
+        internal static string Insert_Affix_Process {
+            get {
+                return ResourceManager.GetString("Insert_Affix_Process", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Insert A_llomorph.
         /// </summary>
         internal static string Insert_Allomorph {

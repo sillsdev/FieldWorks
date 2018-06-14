@@ -92,10 +92,10 @@ namespace LanguageExplorer.Controls.DetailControls
 						vmKvp.Value.Click -= AlwaysVisible_Clicked;
 						break;
 					case ifdata:
-						vmKvp.Value.Click -= IfDataVisibility_Click;
+						vmKvp.Value.Click -= HiddenUnlessData_Click;
 						break;
 					case never:
-						vmKvp.Value.Click -= NeverVisibility_Click;
+						vmKvp.Value.Click -= NormallyHidden_Click;
 						break;
 				}
 				vmKvp.Value.Dispose();
@@ -135,8 +135,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			var contextmenu = new ToolStripMenuItem(LanguageExplorerResources.ksFieldVisibility);
 			contextMenuStrip.Items.Add(contextmenu);
 			m_visibilityMenus.Add(always, ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, contextmenu, AlwaysVisible_Clicked, LanguageExplorerResources.ksAlwaysVisible));
-			m_visibilityMenus.Add(ifdata, ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, contextmenu, IfDataVisibility_Click, LanguageExplorerResources.ksHiddenUnlessData));
-			m_visibilityMenus.Add(never, ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, contextmenu, NeverVisibility_Click, LanguageExplorerResources.ksNormallyHidden));
+			m_visibilityMenus.Add(ifdata, ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, contextmenu, HiddenUnlessData_Click, LanguageExplorerResources.ksHiddenUnlessData));
+			m_visibilityMenus.Add(never, ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, contextmenu, NormallyHidden_Click, LanguageExplorerResources.ksNormallyHidden));
 
 			// 3. Have Slice subclasses to add ones they need (e.g., Writing Systems and its sub-menus).
 			AddSpecialContextMenus(contextMenuStrip, menuItems);
@@ -155,13 +155,13 @@ namespace LanguageExplorer.Controls.DetailControls
 			SetFieldVisibility(always);
 		}
 
-		private void IfDataVisibility_Click(object sender, EventArgs eventArgs)
+		private void HiddenUnlessData_Click(object sender, EventArgs eventArgs)
 		{
 			SetFieldVisibility(ifdata);
 		}
 
 		/// <summary />
-		private void NeverVisibility_Click(object sender, EventArgs eventArgs)
+		private void NormallyHidden_Click(object sender, EventArgs eventArgs)
 		{
 			SetFieldVisibility(never);
 		}
@@ -1694,7 +1694,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 			}
 			// OK, we can add to property flid of the object of slice slice.
-			var insertionPosition = 0;//leave it at 0 if it does not matter
+			var insertionPosition = 0; // Leave it at 0 if it does not matter. (Sequences will matter, unless nobody is home at all.)
 			var hvoOwner = MyCmObject.Hvo;
 			var clidOwner = MyCmObject.ClassID;
 			var clidOfFlid = flid / 1000;
@@ -1702,44 +1702,48 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				hvoOwner = MyCmObject.Owner.Hvo;
 			}
-#if RANDYTODO
-			// TODO: Can't Flex create a new object in a collection property?
-#endif
-			var mdcManaged = Cache.GetManagedMetaDataCache();
-			var owningSeqFields = mdcManaged.GetFields(MyCmObject.ClassID, true, (int)CellarPropertyType.OwningSequence).ToList();
-			if (!owningSeqFields.Contains(flid))
+			if (GetFieldType(flid) == (int)CellarPropertyType.OwningSequence)
 			{
-				return -1;
-			}
-			insertionPosition = Cache.DomainDataByFlid.get_VecSize(hvoOwner, flid);
-
-			if (ContainingDataTree.CurrentSlice != null)
-			{
-				var sda = Cache.DomainDataByFlid;
-				var chvo = insertionPosition;
-				// See if the current slice in any way indicates a position in that property.
-				var key = ContainingDataTree.CurrentSlice.Key;
-				var fGotIt = false;
-				for (var ikey = key.Length - 1; ikey >= 0 && !fGotIt; ikey--)
+				// Find out where to insert it, for an owning sequence property,
+				// 'insertionPosition' will be set to that location (or left at 0)
+				// We might not be on the right slice to insert this item.  See FWR-898.
+				var mdcManaged = Cache.GetManagedMetaDataCache();
+				var owningSeqFields = mdcManaged.GetFields(clidOwner, true, (int)CellarPropertyTypeFilter.OwningSequence).ToList();
+				if (!owningSeqFields.Contains(flid))
 				{
-					if (!(key[ikey] is int))
+					return -1;
+				}
+				insertionPosition = Cache.DomainDataByFlid.get_VecSize(hvoOwner, flid);
+
+				if (ContainingDataTree.CurrentSlice != null)
+				{
+					var sda = Cache.DomainDataByFlid;
+					var chvo = insertionPosition;
+					// See if the current slice in any way indicates a position in that property.
+					var key = ContainingDataTree.CurrentSlice.Key;
+					var fGotIt = false;
+					for (var ikey = key.Length - 1; ikey >= 0 && !fGotIt; ikey--)
 					{
-						continue;
-					}
-					var hvoTarget = (int)key[ikey];
-					for (var i = 0; i < chvo; i++)
-					{
-						if (hvoTarget == sda.get_VecItem(hvoOwner, flid, i))
+						if (!(key[ikey] is int))
 						{
-							insertionPosition = i + 1; // insert after current object.
-							fGotIt = true; // break outer loop
-							break;
+							continue;
+						}
+						var hvoTarget = (int)key[ikey];
+						for (var i = 0; i < chvo; i++)
+						{
+							if (hvoTarget == sda.get_VecItem(hvoOwner, flid, i))
+							{
+								insertionPosition = i + 1; // insert after current object.
+								fGotIt = true; // break outer loop
+								break;
+							}
 						}
 					}
 				}
 			}
 			// Save DataTree for the finally block.  Note premature return below due to IsDisposed.  See LT-9005.
 			var dtContainer = ContainingDataTree;
+			dtContainer.DoNotRefresh = true;
 			try
 			{
 				dtContainer.SetCurrentObjectFlids(hvoOwner, flid);
@@ -1802,6 +1806,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			finally
 			{
+				dtContainer.DoNotRefresh = false;
 				dtContainer.ClearCurrentObjectFlids();
 			}
 			return insertionPosition;

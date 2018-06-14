@@ -862,7 +862,7 @@ namespace LanguageExplorer.Areas
 		{
 			base.InitializeFlexComponent(flexComponentParameters);
 
-			((IFlexComponent)m_view).InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+			((IFlexComponent)m_view).InitializeFlexComponent(flexComponentParameters);
 		}
 
 		/// <summary>
