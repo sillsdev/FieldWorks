@@ -43,6 +43,7 @@ namespace SIL.FieldWorks.Discourse
 		// Popups associated with each 'MoveHere' button
 		private bool m_fContextMenuButtonsEnabled;
 		private IDsConstChart m_chart;
+		private int m_chartHvo = 0;
 		private ICmPossibility m_template;
 		private ICmPossibility[] m_allColumns;
 		private ConstituentChartLogic m_logic;
@@ -679,21 +680,29 @@ namespace SIL.FieldWorks.Discourse
 			}
 			SetHeaderColAndButtonWidths();
 
+			BuildTemplatePanel();
+
+		}
+
+		private void BuildTemplatePanel()
+		{
+			if (m_templateSelectionPanel.Controls.Count > 0)
+			{
+				((ComboBox) m_templateSelectionPanel.Controls[0]).SelectedItem = m_template;
+				return;
+			}
 			ComboBox templateButton = new ComboBox();
-			templateButton.Layout += new LayoutEventHandler(TemplateDropDownMenu_Layout);
 			m_templateSelectionPanel.Controls.Add(templateButton);
+			templateButton.Layout += TemplateDropDownMenu_Layout;
 			templateButton.Left = m_templateSelectionPanel.Width - templateButton.Width;
 			templateButton.DropDownStyle = ComboBoxStyle.DropDownList;
-			templateButton.SelectedIndexChanged += new EventHandler(TemplateSelectionChanged);
-
-			foreach (var chartTemplate in ((ICmPossibilityList)m_template.Owner).PossibilitiesOS)
+			templateButton.SelectionChangeCommitted += TemplateSelectionChanged;
+			foreach (var chartTemplate in ((ICmPossibilityList) m_template.Owner).PossibilitiesOS)
 			{
 				templateButton.Items.Add(chartTemplate);
 			}
-
 			templateButton.SelectedItem = m_template;
 			templateButton.Items.Add(DiscourseStrings.ksCreateNewTemplate);
-
 		}
 
 		private void TemplateSelectionChanged(object sender, EventArgs e)
@@ -715,31 +724,27 @@ namespace SIL.FieldWorks.Discourse
 				return;
 			}
 
-			//If there is currently data in the chart, then warn the user that it will have to be deleted to change the template
-			if (m_chart.RowsOS.Count > 0 && MessageBox.Show(DiscourseStrings.ksDelChartWarning, DiscourseStrings.ksWarning,
-				MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
+			//Detect if there is already a chart created for the given text and template
+			IDsConstChart selectedChart = null;
+			foreach (var chart in m_cache.LangProject.DiscourseDataOA.ChartsOC.Cast<IDsConstChart>().Where(chart => chart.BasedOnRA != null && chart.BasedOnRA == RootStText && chart.TemplateRA == template))
 			{
-				selection.SelectedItem = m_template;
-				return;
+				selectedChart = chart;
 			}
 
-			UndoableUnitOfWorkHelper.Do(DiscourseStrings.ksUndoChangeTemplate, DiscourseStrings.ksRedoChangeTemplate,
-					m_cache.ActionHandlerAccessor, () =>
+			//If there is no such chart, then create one
+			if (selectedChart == null)
+			{
+				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 					{
-						//Delete all current data from the chart
-						while (m_chart.RowsOS.Count > 0)
-						{
-							m_chart.RowsOS.RemoveAt(0);
-						}
+						selectedChart = m_serviceLocator.GetInstance<IDsConstChartFactory>().Create(
+							m_cache.LangProject.DiscourseDataOA, RootStText, selection.SelectedItem as ICmPossibility);
+					}
+				);
+			}
 
-						//Replace the current template with the new selected one
-						m_chart.TemplateRA = template;
 
-						//Post to the mediator to refresh the root after this action is done or undone
-						m_cache.ActionHandlerAccessor.AddAction(new GenericUndoAction(
-							() => m_mediator.BroadcastString("OnTemplateChanged", "do"),
-							() => m_mediator.BroadcastString("OnTemplateChanged", "undo")));
-					});
+			m_chartHvo = selectedChart.Hvo;
+			SetRoot(m_hvoRoot);
 		}
 
 		private void TemplateDropDownMenu_Layout(object sender, EventArgs e)
@@ -837,6 +842,7 @@ namespace SIL.FieldWorks.Discourse
 		private void CreateChartInNonUndoableUOW()
 		{
 			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () => { m_chart = m_serviceLocator.GetInstance<IDsConstChartFactory>().Create(m_cache.LangProject.DiscourseDataOA, RootStText, m_cache.LangProject.GetDefaultChartTemplate()); });
+			m_chartHvo = m_chart.Hvo;
 		}
 
 		private void DetectAndReportTemplateProblem()
@@ -883,7 +889,10 @@ namespace SIL.FieldWorks.Discourse
 		{
 			if (m_MoveHereButtons.Count <= 0)
 				return;
-			Debug.Assert(m_MoveHereButtons.Count == goodColumns.Length);
+			//This method is called multiple times and sometimes on the early calls the data does not agree
+			//if so, wait until a later call to enable buttons
+			if (m_MoveHereButtons.Count != goodColumns.Length)
+				return;
 			for (var icol = 0; icol < goodColumns.Length; icol++)
 				m_MoveHereButtons[icol].Enabled = goodColumns[icol];
 		}
@@ -950,9 +959,9 @@ namespace SIL.FieldWorks.Discourse
 				m_chart = chart;
 				m_logic.Chart = m_chart;
 				m_logic.CleanupInvalidChartCells();
-				// Enhance GordonM: Eventually we may have to allow > 1 chart per text
-				// Then we'll need to take out this break.
-				break;
+				//If a template change requests a specific chart, then use that one, otherwise use the last active chart
+				if (m_chart.Hvo == m_chartHvo)
+					break;
 			}
 		}
 
