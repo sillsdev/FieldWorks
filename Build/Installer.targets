@@ -92,7 +92,7 @@
 	<!-- ########################################################################################################## -->
 	<!-- ### Top Level Targets                                                                                  ### -->
 	<!-- ########################################################################################################## -->
-	<Target Name="BuildBaseInstaller" DependsOnTargets="RequirePlatform;GetDotNetFiles;CleanMasterOutputDir">
+	<Target Name="BuildBaseInstaller" DependsOnTargets="RequirePlatform;GetDotNetFiles;GetFieldWorksPatchFile;CleanMasterOutputDir">
 		<MSBuild Projects="$(MSBuildProjectFullPath)" Properties="BuildingBaseInstaller=true" Targets="BuildProductMain;BuildProductBaseMsi;CopyBuildToMaster"/>
 	</Target>
 
@@ -283,13 +283,13 @@
 
 	<Target Name="HarvestOneL10n">
 		<PropertyGroup>
-			<!-- Substring keeps Chinese the same length as everyone else -->
-			<TargetLocaleUpper>$(TargetLocale.Substring(0,2).ToUpperInvariant())</TargetLocaleUpper>
-			<TargetLocaleLower>$(TargetLocale.Substring(0,2).ToLowerInvariant())</TargetLocaleLower>
+			<!-- Substring keeps Chinese the same length as everyone else (and '-' is an illegal character in some places) -->
+			<!-- "The nail that sticks up gets hammered down" (Japanese proverb) -->
+			<SafeTargetLocale>$(TargetLocale.Substring(0,2))</SafeTargetLocale>
 			<KeyPathFixArg Condition="'$(FixKeyPath)'=='true'">-t $(InstallerDir)/BaseInstallerBuild/KeyPathFix.xsl</KeyPathFixArg>
 			<CommonHeatArgs>$(GuidGenArg) -scom -sreg -sfrag -srd -sw5150 -sw5151 $(KeyPathFixArg)</CommonHeatArgs>
 		</PropertyGroup>
-		<Exec Command="heat.exe dir $(L10nSrcDir)\$(TargetLocale) $(CommonHeatArgs) -cg $(TargetLocaleLower)Localization -dr $(TargetLocaleUpper)L10NFOLDER -var wix.$(TargetLocaleUpper)_$(PatchPrefix)L10NDIR -out $(L10nWxiDir)\$(TargetLocaleLower)Harvest.wxs" />
+		<Exec Command="heat.exe dir $(L10nSrcDir)\$(TargetLocale) $(CommonHeatArgs) -cg $(SafeTargetLocale)Localization -dr $(SafeTargetLocale)L10NFOLDER -var wix.$(PatchPrefix)$(SafeTargetLocale)L10NDIR -out $(L10nWxiDir)\$(SafeTargetLocale)Harvest.wxs" />
 	</Target>
 
 	<Target Name="CopyBuildToMaster">
@@ -360,6 +360,21 @@
 			LocalFilename="$(WixLibsDir)/FLExBridge_Offline.exe"
 			Condition="!Exists('$(WixLibsDir)/FLExBridge_Offline.exe')"
 			DownloadsDir="$(WixLibsDir)"/>	<!-- FlexBridge Installer download -->
+	</Target>
+
+	<Target Name="GetFieldWorksPatchFile" >
+		<!-- FieldWorks Patch Msp Installer download -->
+		<PropertyGroup>
+			<WixPatchDir>$(InstallerDir)/libs/</WixPatchDir>
+		</PropertyGroup>
+		<DownloadFile Address="http://downloads.sil.org/FieldWorks/9.0/FieldWorks_9.0_latest_x64.msp"
+			LocalFilename="$(WixPatchDir)/FieldWorks_9.0_latest_x64.msp"
+			Condition="!Exists('$(WixPatchDir)/FieldWorks_9.0_latest_x64.msp') And $(Platform)=='x64'"
+			DownloadsDir="$(WixPatchDir)"/>	<!-- FieldWorks Patchable Installer download -->
+		<DownloadFile Address="http://downloads.sil.org/FieldWorks/9.0/FieldWorks_9.0_latest_x86.msp"
+			LocalFilename="$(WixPatchDir)/FieldWorks_9.0_latest_x86.msp"
+			Condition="!Exists('$(WixPatchDir)/FieldWorks_9.0_latest_x86.msp') And $(Platform)!='x64'"
+			DownloadsDir="$(WixPatchDir)"/>	<!-- FieldWorks Patch Msp Installer download -->
 	</Target>
 
 	<!-- ########################################################################################################## -->

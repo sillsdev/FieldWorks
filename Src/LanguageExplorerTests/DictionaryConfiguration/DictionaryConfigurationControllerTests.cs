@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -2112,6 +2112,55 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				RemoveNewReferenceType(entryOrSenseTreeType);
 				RemoveNewReferenceType(entryOrSenseUnidirectionalType);
 				RemoveNewReferenceType(entryTreeType);
+			}
+		}
+
+		[Test]
+		public void CheckCrossReferenceType()
+		{
+			var crossReferencesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MinimalLexReferences",
+				DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = ListIds.Entry,
+					Options = new List<DictionaryNodeOption>
+					{
+						new DictionaryNodeOption { Id="0b5b04c8-3900-4537-9eec-1346d10507d7", IsEnabled = true },
+						new DictionaryNodeOption { Id="1ac9f08e-ed72-4775-a18e-3b1330da8618", IsEnabled = true },
+						new DictionaryNodeOption { Id="854fc2a8-c0e0-4b72-8611-314a21467fe4", IsEnabled = true }
+					}
+				}
+			};
+			var entryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Style = "Dictionary-Normal",
+				Children = new List<ConfigurableDictionaryNode> { crossReferencesNode }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				FilePath = "/no/such/file",
+				Version = 0,
+				Label = "Root",
+				Parts = new List<ConfigurableDictionaryNode> { entryNode },
+			};
+			var entryAsymmetricPairType = MakeRefType("Compare", null, (int)LexRefTypeTags.MappingTypes.kmtEntryUnidirectional);
+			// SUT
+			try
+			{
+				DictionaryConfigurationController.MergeTypesIntoDictionaryModel(model, Cache);
+				var opts1 = ((DictionaryNodeListOptions)crossReferencesNode.DictionaryNodeOptions).Options;
+				Assert.AreEqual(2, opts1.Count, "The new tree reftype should have added 2 options.");
+				Assert.AreEqual(entryAsymmetricPairType.Guid.ToString() + ":f", opts1[0].Id, "The entry asymmetric pair type should have added the first option with :f appended to the guid.");
+				Assert.AreEqual(entryAsymmetricPairType.Guid.ToString() + ":r", opts1[1].Id, "The entry asymmetric pair type should have added the second option with :r appended to the guid.");
+			}
+			finally
+			{
+				// Don't mess up other unit tests with an extra reference type.
+				RemoveNewReferenceType(entryAsymmetricPairType);
 			}
 		}
 
