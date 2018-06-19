@@ -92,7 +92,7 @@
 	<!-- ########################################################################################################## -->
 	<!-- ### Top Level Targets                                                                                  ### -->
 	<!-- ########################################################################################################## -->
-	<Target Name="BuildBaseInstaller" DependsOnTargets="RequirePlatform;GetDotNetFiles;GetFieldWorksPatchFile;CleanMasterOutputDir">
+	<Target Name="BuildBaseInstaller" DependsOnTargets="RequirePlatform;GetDotNetFiles;CleanMasterOutputDir">
 		<MSBuild Projects="$(MSBuildProjectFullPath)" Properties="BuildingBaseInstaller=true" Targets="BuildProductMain;BuildProductBaseMsi;CopyBuildToMaster"/>
 	</Target>
 
@@ -360,21 +360,6 @@
 			LocalFilename="$(WixLibsDir)/FLExBridge_Offline.exe"
 			Condition="!Exists('$(WixLibsDir)/FLExBridge_Offline.exe')"
 			DownloadsDir="$(WixLibsDir)"/>	<!-- FlexBridge Installer download -->
-	</Target>
-
-	<Target Name="GetFieldWorksPatchFile" >
-		<!-- FieldWorks Patch Msp Installer download -->
-		<PropertyGroup>
-			<WixPatchDir>$(InstallerDir)/libs/</WixPatchDir>
-		</PropertyGroup>
-		<DownloadFile Address="http://downloads.sil.org/FieldWorks/9.0/FieldWorks_9.0_latest_x64.msp"
-			LocalFilename="$(WixPatchDir)/FieldWorks_9.0_latest_x64.msp"
-			Condition="!Exists('$(WixPatchDir)/FieldWorks_9.0_latest_x64.msp') And $(Platform)=='x64'"
-			DownloadsDir="$(WixPatchDir)"/>	<!-- FieldWorks Patchable Installer download -->
-		<DownloadFile Address="http://downloads.sil.org/FieldWorks/9.0/FieldWorks_9.0_latest_x86.msp"
-			LocalFilename="$(WixPatchDir)/FieldWorks_9.0_latest_x86.msp"
-			Condition="!Exists('$(WixPatchDir)/FieldWorks_9.0_latest_x86.msp') And $(Platform)!='x64'"
-			DownloadsDir="$(WixPatchDir)"/>	<!-- FieldWorks Patch Msp Installer download -->
 	</Target>
 
 	<!-- ########################################################################################################## -->
