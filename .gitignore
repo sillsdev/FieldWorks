@@ -9,6 +9,7 @@ Build/NuGet.exe
 Build/nunit.framework.dll
 Build/nunit.framework.xml
 Build/packages.config
+Build/*.dll
 Build/*.pdb
 BuildDir/
 Src/Common/ViewsInterfaces/Views.cs
