@@ -180,7 +180,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 */
 			// Gather up the nodes.
 			const string xpathBase = "/window/controls/parameters[@id='guicontrols']/guicontrol[@id='{0}']/parameters[@id='{1}']";
-			var xpath = String.Format(xpathBase, "WordformConcordanceBrowseView", "WordformInSegmentsOccurrenceList");
+			var xpath = string.Format(xpathBase, "WordformConcordanceBrowseView", "WordformInSegmentsOccurrenceList");
 			var configNode = m_configurationNode.SelectSingleNode(xpath);
 			// And create the RecordLists.
 <clerk id="segmentOccurrencesOfWfiWordform" shouldHandleDeletion="false">
@@ -210,7 +210,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				</parameters>
 			</guicontrol>
 */
-			xpath = String.Format(xpathBase, "AnalysisConcordanceBrowseView", "AnalysisInSegmentsOccurrenceList");
+			xpath = string.Format(xpathBase, "AnalysisConcordanceBrowseView", "AnalysisInSegmentsOccurrenceList");
 			configNode = m_configurationNode.SelectSingleNode(xpath);
 <clerk id="segmentOccurrencesOfWfiAnalysis" shouldHandleDeletion="false">
     <dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.TemporaryRecordClerk" />
@@ -239,7 +239,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				</parameters>
 			</guicontrol>
 */
-			xpath = String.Format(xpathBase, "GlossConcordanceBrowseView", "GlossInSegmentsOccurrenceList");
+			xpath = string.Format(xpathBase, "GlossConcordanceBrowseView", "GlossInSegmentsOccurrenceList");
 			configNode = m_configurationNode.SelectSingleNode(xpath);
 <clerk id="segmentOccurrencesOfWfiGloss" shouldHandleDeletion="false">
     <dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.TemporaryRecordClerk" />

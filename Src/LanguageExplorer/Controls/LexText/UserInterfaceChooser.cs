@@ -273,7 +273,7 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			// For some reason, Mono requires both FwUtils in the next line.
 			string fontName = FwUtils.GetFontNameForLanguage(lang);
-			if (String.IsNullOrEmpty(fontName))
+			if (string.IsNullOrEmpty(fontName))
 			{
 				return new Font(FontFamily.GenericSansSerif, 8.25F);
 			}

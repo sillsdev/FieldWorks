@@ -209,7 +209,7 @@ namespace LanguageExplorer.Controls.LexText
 			}
 
 			var wss = new HashSet<CoreWritingSystemDefinition>(m_cache.ServiceLocator.WritingSystems.AllWritingSystems);
-			wss.UnionWith(m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances().Where(index => !String.IsNullOrEmpty(index.WritingSystem)).Select(index => m_cache.ServiceLocator.WritingSystemManager.Get(index.WritingSystem)));
+			wss.UnionWith(m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances().Where(index => !string.IsNullOrEmpty(index.WritingSystem)).Select(index => m_cache.ServiceLocator.WritingSystemManager.Get(index.WritingSystem)));
 
 			var writerSettings = new XmlWriterSettings
 			{
@@ -972,7 +972,7 @@ namespace LanguageExplorer.Controls.LexText
 			var safeWritePath = Icu.Normalize(writePath, Icu.UNormalizationMode.UNORM_NFC);
 			// Use as source any similar file that exists.
 			var safeSourcePath = FileUtils.ActualFilePath(actualPath);
-			if (ExportPicturesAndMedia && !String.IsNullOrEmpty(FolderPath) && FileUtils.FileExists(safeSourcePath))
+			if (ExportPicturesAndMedia && !string.IsNullOrEmpty(FolderPath) && FileUtils.FileExists(safeSourcePath))
 			{
 				var destFolder = Path.Combine(FolderPath, liftFolderName);
 				Directory.CreateDirectory(destFolder);

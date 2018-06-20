@@ -310,7 +310,7 @@ namespace LanguageExplorer.Controls.LexText
 				}
 				case DialogResult.OK:
 				{
-					if (m_fwtbGloss.Text == String.Empty)
+					if (m_fwtbGloss.Text == string.Empty)
 					{
 						e.Cancel = true;
 						MessageBox.Show(this, LexTextControls.ksFillInGloss, LexTextControls.ksMissingInformation, MessageBoxButtons.OK, MessageBoxIcon.Information);

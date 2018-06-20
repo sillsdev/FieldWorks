@@ -269,7 +269,7 @@ namespace LanguageExplorer.Areas
 				default:
 					throw new ArgumentException("Unknown ExclusionReasonCode");
 			}
-			msg = String.Format(msg, reason);
+			msg = string.Format(msg, reason);
 			// TODO-Linux: Help is not implemented on Mono
 			MessageBox.Show(form, msg, caption, MessageBoxButtons.OK,
 				MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, 0,

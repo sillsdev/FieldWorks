@@ -1743,7 +1743,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						break;
 					case "MatchReplaceChoice":
 						sfm.m_tlo.m_rgsMatch.Add(XmlUtils.GetMandatoryAttributeValue(xn, "match"));
-						sfm.m_tlo.m_rgsReplace.Add(XmlUtils.GetOptionalAttributeValue(xn, "replace", String.Empty));
+						sfm.m_tlo.m_rgsReplace.Add(XmlUtils.GetOptionalAttributeValue(xn, "replace", string.Empty));
 						break;
 					case "ItemWrtSys":
 						sfm.m_tlo.m_wsId = XmlUtils.GetMandatoryAttributeValue(xn, "ws");
@@ -1768,8 +1768,8 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						sfm.m_txo.m_fStartParaShortLine = XmlUtils.GetOptionalBooleanAttributeValue(xn, "afterShortLine", false);
 						sfm.m_txo.m_cchShortLim = 0;
 						string sLim = XmlUtils.GetOptionalAttributeValue(xn, "shortLineLim");
-						if (!String.IsNullOrEmpty(sLim))
-							Int32.TryParse(sLim, out sfm.m_txo.m_cchShortLim);
+						if (!string.IsNullOrEmpty(sLim))
+							int.TryParse(sLim, out sfm.m_txo.m_cchShortLim);
 						break;
 					case "DefaultParaWrtSys":
 						sfm.m_txo.m_wsId = XmlUtils.GetMandatoryAttributeValue(xn, "ws");
@@ -1944,9 +1944,9 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					progressDlg.Maximum = 100;
 					progressDlg.AllowCancel = true;
 					progressDlg.Restartable = true;
-					progressDlg.Title = String.Format(LexTextControls.ksImportingFrom0, m_sSfmDataFile);
+					progressDlg.Title = string.Format(LexTextControls.ksImportingFrom0, m_sSfmDataFile);
 					m_sLogFile = (string)progressDlg.RunTask(true, ImportStdFmtFile, m_sSfmDataFile);
-					if (m_chkDisplayImportReport.Checked && !String.IsNullOrEmpty(m_sLogFile))
+					if (m_chkDisplayImportReport.Checked && !string.IsNullOrEmpty(m_sLogFile))
 					{
 						using (Process.Start(m_sLogFile))
 						{

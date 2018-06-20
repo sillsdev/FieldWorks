@@ -96,7 +96,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private void FillInContentsPane(RnSfMarker rsf, Sfm2Xml.SfmFile sfmFile)
 		{
-			m_groupContents.Text = String.Format(m_sContentsGroupFmt, rsf.m_sMkr);
+			m_groupContents.Text = string.Format(m_sContentsGroupFmt, rsf.m_sMkr);
 			m_lvContents.Items.Clear();
 			var setContents = new HashSet<string>();
 			foreach (var field in m_sfmFile.Lines)
@@ -111,7 +111,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					}
 				}
 			}
-			m_lblContents.Text = String.Format(m_sContentsLabelFmt, rsf.m_sMkr,
+			m_lblContents.Text = string.Format(m_sContentsLabelFmt, rsf.m_sMkr,
 				sfmFile.GetSFMCount(rsf.m_sMkr), m_lvContents.Items.Count);
 		}
 

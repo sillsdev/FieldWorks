@@ -2513,7 +2513,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				return;
 			}
 
-			if (!m_listChoiceControl.Text.Equals(String.Empty))
+			if (!m_listChoiceControl.Text.Equals(string.Empty))
 			{
 				m_ApplyButton.Enabled = true;
 				m_previewButton.Enabled = true;
@@ -2718,7 +2718,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			bldr.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, 16000);
 			bldr.SetIntPropValues((int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
 
-			// Simulate String.Format(XMLViewsStrings.ksReplaceXWithY, <pattern>, <replace>) to build a TsString that
+			// Simulate string.Format(XMLViewsStrings.ksReplaceXWithY, <pattern>, <replace>) to build a TsString that
 			// properly displays everything.
 			foreach (var piece in ExtractFormattingPieces(XMLViewsStrings.ksReplaceXWithY))
 			{
@@ -2738,7 +2738,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		/// <summary>
 		/// Split the string into pieces separated by the embedded "format items".  The input string is
-		/// a format specifier like those used by String.Format().  Since TsString doesn't have a compatible
+		/// a format specifier like those used by string.Format().  Since TsString doesn't have a compatible
 		/// Format method, and since the provided arguments that match the "format items" may need a different
 		/// writing system than the literal characters in the string, we return a list of pieces of the input
 		/// string.  These pieces include all of the characters of the original string in order, including a
@@ -2923,7 +2923,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					InitConverterCombo();
 
 					// Either select the new one or select the old one
-					if (dlg.DialogResult == DialogResult.OK && !String.IsNullOrEmpty(dlg.SelectedConverter))
+					if (dlg.DialogResult == DialogResult.OK && !string.IsNullOrEmpty(dlg.SelectedConverter))
 					{
 						m_transduceProcessorCombo.SelectedItem = dlg.SelectedConverter;
 					}

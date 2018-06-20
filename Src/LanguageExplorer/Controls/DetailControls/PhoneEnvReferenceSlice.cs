@@ -135,7 +135,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public override void RegisterWithContextHelper()
 		{
-			var caption = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "label", String.Empty));
+			var caption = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "label", string.Empty));
 
 			var launcher = (PhoneEnvReferenceLauncher)Control;
 #if RANDYTODO

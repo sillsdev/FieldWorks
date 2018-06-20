@@ -691,7 +691,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			if (!IsFolderInLinkedFilesFolder(proposedDestFolder))
 			{
-				MessageBoxUtils.Show(this, String.Format(FwCoreDlgs.kstidDestFolderMustBeInLinkedFiles, s_defaultPicturesFolder), m_app.ApplicationName, MessageBoxButtons.OK);
+				MessageBoxUtils.Show(this, string.Format(FwCoreDlgs.kstidDestFolderMustBeInLinkedFiles, s_defaultPicturesFolder), m_app.ApplicationName, MessageBoxButtons.OK);
 				return false;
 			}
 			return true;

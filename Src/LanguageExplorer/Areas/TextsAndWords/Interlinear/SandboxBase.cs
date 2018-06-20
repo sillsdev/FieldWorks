@@ -4094,7 +4094,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					ICmObject co = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
 					var fwLink = new FwLinkArgs(tool, co.Guid);
 					List<Property> additionalProps = fwLink.LinkProperties;
-					if (!String.IsNullOrEmpty(concordOn))
+					if (!string.IsNullOrEmpty(concordOn))
 					{
 						additionalProps.Add(new Property("ConcordOn", concordOn));
 					}

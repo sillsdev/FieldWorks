@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -81,7 +80,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 				m_sWsLabel = StringServices.GetWsSpecWithoutPrefix(XmlUtils.GetOptionalAttributeValue(config, "ws"));
 				WsType = XmlUtils.GetOptionalAttributeValue(config, "wsType");
-				if (m_sWsLabel != null && String.IsNullOrEmpty(WsType))
+				if (m_sWsLabel != null && string.IsNullOrEmpty(WsType))
 				{
 					// Try to calculate a WS type from the WS label.
 					var ichVern = m_sWsLabel.ToLowerInvariant().IndexOf("vern");
@@ -137,12 +136,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 				string sSep = null;
 				// By default, if we have a ws type or ws label we should be able to show multiple wss,
 				// and thus need a separator between them.
-				if (!string.IsNullOrEmpty(m_sWsLabel) || !String.IsNullOrEmpty(WsType))
+				if (!string.IsNullOrEmpty(m_sWsLabel) || !string.IsNullOrEmpty(WsType))
 				{
 					sSep = " ";
 				}
 				BeforeStyleName = XmlUtils.GetOptionalAttributeValue(config, "beforeStyle");
-				AllowBeforeStyle = !String.IsNullOrEmpty(BeforeStyleName);
+				AllowBeforeStyle = !string.IsNullOrEmpty(BeforeStyleName);
 				Before = XmlUtils.GetOptionalAttributeValue(config, "before", "");
 				Between = XmlUtils.GetOptionalAttributeValue(config, "sep", sSep);
 				After = XmlUtils.GetOptionalAttributeValue(config, "after", " ");

@@ -58,7 +58,7 @@ namespace LanguageExplorer.LcmUi
 		{
 			display.Visible = false;
 			display.Enabled = false;
-			display.Text = String.Format(display.Text, DisplayNameOfClass);
+			display.Text = string.Format(display.Text, DisplayNameOfClass);
 			return true;
 		}
 #endif

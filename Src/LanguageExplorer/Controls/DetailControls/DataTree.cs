@@ -1181,7 +1181,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						{
 							if (m_currentSlice.ConfigurationNode?.Parent != null)
 							{
-								m_currentSlicePartName = XmlUtils.GetOptionalAttributeValue(m_currentSlice.ConfigurationNode.Parent, "id", String.Empty);
+								m_currentSlicePartName = XmlUtils.GetOptionalAttributeValue(m_currentSlice.ConfigurationNode.Parent, "id", string.Empty);
 							}
 
 							if (m_currentSlice.MyCmObject != null)
@@ -3345,14 +3345,14 @@ namespace LanguageExplorer.Controls.DetailControls
 		private bool DisplayJumpToToolAndFilterAnthroItem(UIItemDisplayProperties display, object commandObject, string cmd)
 		{
 			if (display.Group != null && display.Group.IsContextMenu &&
-				!String.IsNullOrEmpty(display.Group.Id) &&
+				!string.IsNullOrEmpty(display.Group.Id) &&
 				!display.Group.Id.StartsWith("mnuReferenceChoices"))
 			{
 				return false;
 			}
 
 			var fieldName = XmlUtils.GetOptionalAttributeValue(CurrentSlice.ConfigurationNode, "field");
-			if (String.IsNullOrEmpty(fieldName) || !fieldName.Equals("AnthroCodes"))
+			if (string.IsNullOrEmpty(fieldName) || !fieldName.Equals("AnthroCodes"))
 			{
 				display.Enabled = display.Visible = false;
 				return true;
@@ -3360,7 +3360,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			var xmlNode = (commandObject as XCore.Command).ConfigurationNode;
 			var command = XmlUtils.GetOptionalAttributeValue(xmlNode, "id");
-			if (String.IsNullOrEmpty(command))
+			if (string.IsNullOrEmpty(command))
 				return false;
 			if (command.Equals(cmd))
 				display.Enabled = display.Visible = true;
@@ -3379,7 +3379,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			string tool;
 			if (display.Group != null && display.Group.IsContextMenu &&
-				!String.IsNullOrEmpty(display.Group.Id) &&
+				!string.IsNullOrEmpty(display.Group.Id) &&
 				!display.Group.Id.StartsWith("mnuDataTree"))
 			{
 				return false;

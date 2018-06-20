@@ -309,7 +309,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				{
 					//The existence of the attribute is important for this setting, not its value!
 					var sShowAsIndentedPara = XmlUtils.GetOptionalAttributeValue(ltn.Configuration, "showasindentedpara");
-					ltn.ShowComplexFormParaConfig = !String.IsNullOrEmpty(sShowAsIndentedPara);
+					ltn.ShowComplexFormParaConfig = !string.IsNullOrEmpty(sShowAsIndentedPara);
 				}
 			}
 			var fRecurse = XmlUtils.GetOptionalBooleanAttributeValue(ltn.Configuration, "recurseConfig", true);
@@ -362,7 +362,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				return;	// ignore the layouts used by the LexEntry-Jt-Headword part.
 			}
 
-			if (string.IsNullOrEmpty(sLayout) || String.IsNullOrEmpty(sClass))
+			if (string.IsNullOrEmpty(sLayout) || string.IsNullOrEmpty(sClass))
 			{
 				return;
 			}

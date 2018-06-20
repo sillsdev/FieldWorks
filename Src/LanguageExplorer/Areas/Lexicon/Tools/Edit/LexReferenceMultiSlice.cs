@@ -898,7 +898,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					case LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
 					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional:
 						tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
-						tisb.Append(String.Format(LanguageExplorerResources.ksDeleteLexTree, StringUtils.kChHardLB));
+						tisb.Append(string.Format(LanguageExplorerResources.ksDeleteLexTree, StringUtils.kChHardLB));
 						dlg.SetDlgInfo(ui, Cache, PropertyTable, tisb.GetString());
 						break;
 					default:

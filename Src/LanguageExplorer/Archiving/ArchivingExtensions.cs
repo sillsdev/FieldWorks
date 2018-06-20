@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2013-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -47,7 +47,7 @@ namespace LanguageExplorer.Archiving
 			iso3Code = segments[0];
 
 			// if the code is "Local" return uncoded code
-			if ((String.Compare(iso3Code, "q", StringComparison.OrdinalIgnoreCase) > 0) && (String.Compare(iso3Code, "qu", StringComparison.OrdinalIgnoreCase) < 0))
+			if ((string.Compare(iso3Code, "q", StringComparison.OrdinalIgnoreCase) > 0) && (string.Compare(iso3Code, "qu", StringComparison.OrdinalIgnoreCase) < 0))
 				return "mis";
 
 			// return "mis" for uncoded languages

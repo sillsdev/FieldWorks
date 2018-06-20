@@ -569,7 +569,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				var fieldName = XmlUtils.GetOptionalAttributeValue(columnForCustomField, "field");
 				var className = XmlUtils.GetOptionalAttributeValue(columnForCustomField, "class");
-				if (string.IsNullOrEmpty(fieldName) || String.IsNullOrEmpty(className))
+				if (string.IsNullOrEmpty(fieldName) || string.IsNullOrEmpty(className))
 				{
 					return true;
 				}

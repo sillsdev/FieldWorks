@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2012-2018 SIL International
+// Copyright (c) 2012-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -53,7 +53,7 @@ namespace LanguageExplorer.Controls.LexText
 			m_destinationsToDisplay = destinationsToDisplay;
 			SuspendLayout();
 			// Update the label to show what marker we are modifying
-			m_destinationLabel.Text = String.Format(m_orginalLabel, mappingToModify.Marker);
+			m_destinationLabel.Text = string.Format(m_orginalLabel, mappingToModify.Marker);
 			// Replace the Add button with a specialized add writing system button
 			var loc = m_addWritingSystemButton.Location;
 			var tabIndex = m_addWritingSystemButton.TabIndex;
@@ -198,7 +198,7 @@ namespace LanguageExplorer.Controls.LexText
 					LoadEncodingConverters();
 
 					// Either select the new one or select the old one
-					if (dlg.DialogResult == DialogResult.OK && !String.IsNullOrEmpty(dlg.SelectedConverter))
+					if (dlg.DialogResult == DialogResult.OK && !string.IsNullOrEmpty(dlg.SelectedConverter))
 					{
 						m_converterCombo.SelectedItem = dlg.SelectedConverter;
 					}

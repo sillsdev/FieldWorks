@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -84,7 +84,7 @@ namespace LanguageExplorer
 			{
 				// old copies looked like this 'my name-French-#frenc343.extension'
 				var fileParts = convertedModel.FilePath.Split('-');
-				writingSystem = fileParts.Length == 3 ? cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Where(x => x.DisplayLabel == fileParts[1]).Select(x => x.IcuLocale).FirstOrDefault() : String.Empty;
+				writingSystem = fileParts.Length == 3 ? cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Where(x => x.DisplayLabel == fileParts[1]).Select(x => x.IcuLocale).FirstOrDefault() : string.Empty;
 			}
 			convertedModel.WritingSystem = writingSystem;
 		}
@@ -253,7 +253,7 @@ namespace LanguageExplorer
 			}
 			var isDictionary = innerConfigDir == DictionaryConfigurationDirectoryName;
 			var pubLayoutPropName = isDictionary ? "DictionaryPublicationLayout" : "ReversalIndexPublicationLayout";
-			var currentConfig = propertyTable.GetValue(pubLayoutPropName, String.Empty);
+			var currentConfig = propertyTable.GetValue(pubLayoutPropName, string.Empty);
 			var cache = propertyTable.GetValue<LcmCache>("cache");
 			if (!string.IsNullOrEmpty(currentConfig) && File.Exists(currentConfig))
 			{
@@ -267,10 +267,10 @@ namespace LanguageExplorer
 			// and the value is "publishSomething", try to use the new "Something" config
 			if (currentConfig != null && currentConfig.StartsWith("publish", StringComparison.Ordinal))
 			{
-				var selectedPublication = currentConfig.Replace("publish", String.Empty);
+				var selectedPublication = currentConfig.Replace("publish", string.Empty);
 				if (!isDictionary)
 				{
-					var languageCode = selectedPublication.Replace("Reversal-", String.Empty);
+					var languageCode = selectedPublication.Replace("Reversal-", string.Empty);
 					selectedPublication = cache.ServiceLocator.WritingSystemManager.Get(languageCode).DisplayLabel;
 				}
 				// ENHANCE (Hasso) 2016.01: handle copied configs? Naww, the selected configs really should have been updated on migration

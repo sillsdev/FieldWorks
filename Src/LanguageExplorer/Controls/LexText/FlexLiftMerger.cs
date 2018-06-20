@@ -4131,7 +4131,7 @@ namespace LanguageExplorer.Controls.LexText
 			// Due to possible forward references, wait until the end to process relations.
 			foreach (var rel in entry.Relations)
 			{
-				if (rel.Type != "_component-lexeme" && String.IsNullOrEmpty(rel.Ref))
+				if (rel.Type != "_component-lexeme" && string.IsNullOrEmpty(rel.Ref))
 				{
 					var xdResidue = FindOrCreateResidue(le);
 					InsertResidueContent(xdResidue, CreateXmlForRelation(rel));
@@ -4307,7 +4307,7 @@ namespace LanguageExplorer.Controls.LexText
 				MergeInMultiString(les.Example, LexExampleSentenceTags.kflidExample, expl.Content, les.Guid);
 				CreateExampleTranslations(les, expl);
 				ProcessExampleNotes(les, expl);
-				if (TsStringIsNullOrEmpty(les.Reference) && !String.IsNullOrEmpty(expl.Source))
+				if (TsStringIsNullOrEmpty(les.Reference) && !string.IsNullOrEmpty(expl.Source))
 				{
 					les.Reference = TsStringUtils.MakeString(expl.Source, m_cache.DefaultAnalWs);
 				}
@@ -4360,7 +4360,7 @@ namespace LanguageExplorer.Controls.LexText
 				ProcessExampleNotes(les, expl);
 				ProcessExampleFields(les, expl);
 				ProcessExampleTraits(les, expl);
-				if (TsStringIsNullOrEmpty(les.Reference) && !String.IsNullOrEmpty(expl.Source))
+				if (TsStringIsNullOrEmpty(les.Reference) && !string.IsNullOrEmpty(expl.Source))
 				{
 					les.Reference = TsStringUtils.MakeString(expl.Source, m_cache.DefaultAnalWs);
 				}

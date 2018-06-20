@@ -128,22 +128,22 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_lblBreakPrefixExample.Text = string.Format(sAffixExample,
 				mmtPrefix.Prefix == null ? "" : " " + mmtPrefix.Prefix,
 				mmtPrefix.Postfix == null ? "" : mmtPrefix.Postfix + " ");
-			m_lblBreakSuffixExample.Text = String.Format(sAffixExample,
+			m_lblBreakSuffixExample.Text = string.Format(sAffixExample,
 				mmtSuffix.Prefix == null ? "" : " " + mmtSuffix.Prefix,
 				mmtSuffix.Postfix == null ? "" : mmtSuffix.Postfix + " ");
-			m_lblBreakInfixExample.Text = String.Format(sAffixExample,
+			m_lblBreakInfixExample.Text = string.Format(sAffixExample,
 				mmtInfix.Prefix == null ? "" : " " + mmtInfix.Prefix,
 				mmtInfix.Postfix == null ? "" : mmtInfix.Postfix + " ");
-			m_lblBreakProcliticExample.Text = String.Format(sAffixExample,
+			m_lblBreakProcliticExample.Text = string.Format(sAffixExample,
 				mmtProclitic.Prefix == null ? "" : " " + mmtProclitic.Prefix,
 				mmtProclitic.Postfix == null ? "" : mmtProclitic.Postfix + " ");
-			m_lblBreakEncliticExample.Text = String.Format(sAffixExample,
+			m_lblBreakEncliticExample.Text = string.Format(sAffixExample,
 				mmtEnclitic.Prefix == null ? "" : " " + mmtEnclitic.Prefix,
 				mmtEnclitic.Postfix == null ? "" : mmtEnclitic.Postfix + " ");
-			m_lblBreakSimulfixExample.Text = String.Format(sAffixExample,
+			m_lblBreakSimulfixExample.Text = string.Format(sAffixExample,
 				mmtSimulfix.Prefix == null ? "" : " " + mmtSimulfix.Prefix,
 				mmtSimulfix.Postfix == null ? "" : mmtSimulfix.Postfix + " ");
-			m_lblBreakSuprafixExample.Text = String.Format(sAffixExample,
+			m_lblBreakSuprafixExample.Text = string.Format(sAffixExample,
 				mmtSuprafix.Prefix == null ? "" : " " + mmtSuprafix.Prefix,
 				mmtSuprafix.Postfix == null ? "" : mmtSuprafix.Postfix + " ");
 

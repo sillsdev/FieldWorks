@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2018 SIL International
+// Copyright (c) 2016-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -54,7 +54,7 @@ namespace LanguageExplorer.Areas
 					string elementKey = overrideNode.Name;
 					string firstAttributeKey = overrideNode.Attributes[0].Name;
 					string firstAttributeValue = overrideNode.Attributes[0].Value;
-					string xPathToModifyElement = String.Format(".//{0}[@{1}='{2}']", elementKey, firstAttributeKey, firstAttributeValue);
+					string xPathToModifyElement = string.Format(".//{0}[@{1}='{2}']", elementKey, firstAttributeKey, firstAttributeValue);
 					XmlNode elementToModify = parentNode.SelectSingleNode(xPathToModifyElement);
 					if (elementToModify != null && elementToModify != overrideNode)
 					{

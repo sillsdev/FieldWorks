@@ -2499,7 +2499,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		{
 			var item = sender as RowColMenuItem;
 			var crowDel = m_chart.RowsOS.Count - item.SrcRow.IndexInOwner;
-			if (MessageBox.Show(String.Format(LanguageExplorerResources.ksDelRowWarning, crowDel), LanguageExplorerResources.ksWarning, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+			if (MessageBox.Show(string.Format(LanguageExplorerResources.ksDelRowWarning, crowDel), LanguageExplorerResources.ksWarning, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
 			{
 				ClearChartFromHereOn(item.SrcCell);
 			}

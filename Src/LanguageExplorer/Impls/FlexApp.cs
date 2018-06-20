@@ -1809,16 +1809,16 @@ namespace LanguageExplorer.Impls
 			XCore.Command command = (XCore.Command)commandObject;
 			string fileName = SIL.Utils.XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "file");
 			fileName = fileName.Replace('\\', Path.DirectorySeparatorChar);
-			string path = String.Format(FwDirectoryFinder.CodeDirectory + "{0}Helps{0}" + fileName,
+			string path = string.Format(FwDirectoryFinder.CodeDirectory + "{0}Helps{0}" + fileName,
 				Path.DirectorySeparatorChar);
 
 			OpenDocument(path, (e) => {
-				MessageBox.Show(null, String.Format(FrameworkStrings.ksCannotShowX, path),
+				MessageBox.Show(null, string.Format(FrameworkStrings.ksCannotShowX, path),
 					LexTextStrings.ksError);
 			});
 			return true;
 		}
-		#endif
+#endif
 
 		#region SuppressedCacheInfo class
 

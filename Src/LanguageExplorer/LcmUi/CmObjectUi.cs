@@ -404,7 +404,7 @@ namespace LanguageExplorer.LcmUi
 		public virtual void LaunchGuiControl(Command command)
 		{
 			string guicontrol = command.GetParameter("guicontrol");
-			string xpathToControl = String.Format("/window/controls/parameters/guicontrol[@id=\"{0}\"]", guicontrol);
+			string xpathToControl = string.Format("/window/controls/parameters/guicontrol[@id=\"{0}\"]", guicontrol);
 			XmlNode xnControl = command.ConfigurationNode.SelectSingleNode(xpathToControl);
 			if (xnControl != null)
 			{

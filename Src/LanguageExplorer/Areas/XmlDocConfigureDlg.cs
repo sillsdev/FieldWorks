@@ -1834,7 +1834,7 @@ namespace LanguageExplorer.Areas
 			if (m_cbBeforeStyle.Visible && m_cbBeforeStyle.Enabled)
 			{
 				var sci = m_cbBeforeStyle.SelectedItem as StyleComboItem;
-				ltn.BeforeStyleName = sci?.Style != null ? sci.Style.Name : String.Empty;
+				ltn.BeforeStyleName = sci?.Style != null ? sci.Style.Name : string.Empty;
 			}
 
 			if (m_lvItems.Visible && m_lvItems.Enabled)
@@ -2651,7 +2651,7 @@ namespace LanguageExplorer.Areas
 		private void SetItemListLocations()
 		{
 			int y;
-			if (!string.IsNullOrEmpty(m_current.WsLabel) || !String.IsNullOrEmpty(m_current.WsType))
+			if (!string.IsNullOrEmpty(m_current.WsLabel) || !string.IsNullOrEmpty(m_current.WsType))
 			{
 				y = m_chkDisplayData.Location.Y + m_chkDisplayData.Size.Height + 7;
 			}

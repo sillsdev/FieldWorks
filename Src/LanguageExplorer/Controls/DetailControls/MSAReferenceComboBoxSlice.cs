@@ -243,7 +243,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					{
 						sandoxMSA.FromPartsOfSpeech = stemMsa.FromPartsOfSpeechRC;
 					}
-					UndoableUnitOfWorkHelper.Do(String.Format(DetailControlsStrings.ksUndoSet, m_fieldName),
+					UndoableUnitOfWorkHelper.Do(string.Format(DetailControlsStrings.ksUndoSet, m_fieldName),
 						string.Format(DetailControlsStrings.ksRedoSet, m_fieldName), sense, () =>
 						{
 							sense.SandboxMSA = sandoxMSA;

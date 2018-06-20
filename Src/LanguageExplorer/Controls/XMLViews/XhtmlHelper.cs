@@ -2170,7 +2170,7 @@ namespace LanguageExplorer.Controls.XMLViews
 							{
 								var before = ExtractText(sLine, idxLim, " before", "\"");
 								var after = ExtractText(sLine, idxLim, " after", "\"");
-								if (!string.IsNullOrEmpty(before) || !String.IsNullOrEmpty(after))
+								if (!string.IsNullOrEmpty(before) || !string.IsNullOrEmpty(after))
 								{
 									if (!string.IsNullOrEmpty(before))
 									{

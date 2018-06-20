@@ -67,7 +67,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			m_tbSearchText.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
 			m_tbSearchText.AdjustForStyleSheet(FwUtils.StyleSheetFromPropertyTable(PropertyTable));
-			m_tbSearchText.Text = String.Empty;
+			m_tbSearchText.Text = string.Empty;
 			m_tbSearchText.TextChanged += m_tbSearchText_TextChanged;
 			m_tbSearchText.KeyDown += m_tbSearchText_KeyDown;
 			FillLineComboList();
@@ -75,7 +75,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_fwtbItem.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
 			m_fwtbItem.StyleSheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable);
 			m_fwtbItem.WritingSystemCode = m_cache.DefaultVernWs;
-			m_fwtbItem.Text = String.Empty;
+			m_fwtbItem.Text = string.Empty;
 			m_fwtbItem.Visible = false; // Needed to prevent LT-12162 unneeded text box.
 
 			// Set some default values.
@@ -806,7 +806,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					ws = m_cache.DefaultVernWs;
 					tss = TsStringUtils.EmptyString(ws);
 				}
-				SetDefaultVisibilityOfItems(true, String.Empty);
+				SetDefaultVisibilityOfItems(true, string.Empty);
 				m_fObjectConcorded = false;
 				SetConcordanceLine(ConcordanceLines.kWord);
 				SetWritingSystem(ws);
@@ -1496,7 +1496,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private bool InitializeConcordanceSearch(string sMatch, int ws, ConcordanceLines line)
 		{
-			SetDefaultVisibilityOfItems(true, String.Empty);
+			SetDefaultVisibilityOfItems(true, string.Empty);
 			m_fObjectConcorded = false;
 			if (string.IsNullOrEmpty(sMatch))
 			{
@@ -1526,7 +1526,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			else
 			{
-				m_lblTop.Text = String.Format(ITextStrings.ksConcordedOn0, sConcordedOn);
+				m_lblTop.Text = string.Format(ITextStrings.ksConcordedOn0, sConcordedOn);
 				m_lnkSpecify.Text = ITextStrings.ksSpecifyConcordanceCriteria_;
 				m_lnkSpecify.Enabled = m_lnkSpecify.Visible = true;
 				m_fwtbItem.Location = new Point(m_lblTop.Location.X + m_lblTop.Width + 10, m_lblTop.Location.Y);

@@ -365,7 +365,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			foreach (var xnItem in xnMenu.Elements())
 			{
 				var sCmd = XmlUtils.GetOptionalAttributeValue(xnItem, "command");
-				Debug.Assert(!String.IsNullOrEmpty(sCmd));
+				Debug.Assert(!string.IsNullOrEmpty(sCmd));
 				if (string.IsNullOrEmpty(sCmd))
 				{
 					continue;
@@ -378,8 +378,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				}
 				var sMsg = XmlUtils.GetOptionalAttributeValue(xn, "message");
 				var sLabel = XmlUtils.GetOptionalAttributeValue(xn, "label");
-				Debug.Assert(!string.IsNullOrEmpty(sMsg) && !String.IsNullOrEmpty(sLabel));
-				if (string.IsNullOrEmpty(sMsg) || String.IsNullOrEmpty(sLabel))
+				Debug.Assert(!string.IsNullOrEmpty(sMsg) && !string.IsNullOrEmpty(sLabel));
+				if (string.IsNullOrEmpty(sMsg) || string.IsNullOrEmpty(sLabel))
 				{
 					continue;
 				}

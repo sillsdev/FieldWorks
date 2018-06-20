@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -177,7 +177,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				xhtmlWriter.WriteStartElement("meta");
 				xhtmlWriter.WriteAttributeString("name", "DC.language");
-				xhtmlWriter.WriteAttributeString("content", String.Format("{0}:{1}", ws.LanguageTag, ws.LanguageName));
+				xhtmlWriter.WriteAttributeString("content", $"{ws.LanguageTag}:{ws.LanguageName}");
 				xhtmlWriter.WriteAttributeString("scheme", "DCTERMS.RFC5646");
 				xhtmlWriter.WriteEndElement();
 				xhtmlWriter.WriteStartElement("meta");

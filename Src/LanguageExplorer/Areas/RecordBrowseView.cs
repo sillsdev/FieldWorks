@@ -494,7 +494,7 @@ namespace LanguageExplorer.Areas
 					titleStr = MyRecordList.OwningObject.ShortName;
 				}
 			}
-			if (String.IsNullOrEmpty(titleStr))
+			if (string.IsNullOrEmpty(titleStr))
 			{
 				XmlViewsUtils.TryFindPluralFormFromFlid(MyRecordList.VirtualListPublisher.MetaDataCache, MyRecordList.OwningFlid, out titleStr);
 			}

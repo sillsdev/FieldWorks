@@ -1116,7 +1116,7 @@ namespace LanguageExplorer.Areas
 			// element, but we don't have it, only the two-level-down 'parameters' element
 			// so use "configureObjectName" parameter for now.
 			// REVIEW: FOR LOCALIZABILITY, SHOULDN'T THE "..." BE PART OF THE SOURCE FOR display.Text?
-			display.Text = String.Format(display.Text, m_configObjectName + "...");
+			display.Text = string.Format(display.Text, m_configObjectName + "...");
 			return true; //we've handled this
 		}
 #endif

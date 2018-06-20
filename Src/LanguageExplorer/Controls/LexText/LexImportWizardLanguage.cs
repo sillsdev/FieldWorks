@@ -421,7 +421,7 @@ namespace LanguageExplorer.Controls.LexText
 					LoadEncodingConverters();
 
 					// Either select the new one or select the old one
-					if (dlg.DialogResult == DialogResult.OK && !String.IsNullOrEmpty(dlg.SelectedConverter))
+					if (dlg.DialogResult == DialogResult.OK && !string.IsNullOrEmpty(dlg.SelectedConverter))
 					{
 						cbEC.SelectedItem = dlg.SelectedConverter;
 					}

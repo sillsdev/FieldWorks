@@ -75,7 +75,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(this, String.Format(LexTextControls.ksErrorAccessingEncodingConverters, ex.Message));
+				MessageBox.Show(this, string.Format(LexTextControls.ksErrorAccessingEncodingConverters, ex.Message));
 				return;
 			}
 		}

@@ -246,8 +246,8 @@ namespace LanguageExplorer.Areas.Notebook
 				writer.WriteLine("<StStyle>");
 				writer.WriteLine("<Name><Uni>{0}</Uni></Name>", XmlUtils.MakeSafeXml(style.Name));
 				writer.WriteLine("<Type><Integer val=\"{0}\"/></Type>", (int)style.Type);
-				writer.WriteLine("<BasedOn><Uni>{0}</Uni></BasedOn>", style.BasedOnRA == null ? String.Empty : XmlUtils.MakeSafeXml(style.BasedOnRA.Name));
-				writer.WriteLine("<Next><Uni>{0}</Uni></Next>", style.NextRA == null ? String.Empty : XmlUtils.MakeSafeXml(style.NextRA.Name));
+				writer.WriteLine("<BasedOn><Uni>{0}</Uni></BasedOn>", style.BasedOnRA == null ? string.Empty : XmlUtils.MakeSafeXml(style.BasedOnRA.Name));
+				writer.WriteLine("<Next><Uni>{0}</Uni></Next>", style.NextRA == null ? string.Empty : XmlUtils.MakeSafeXml(style.NextRA.Name));
 				writer.WriteLine("<Rules>");
 				writer.Write(TsStringUtils.GetXmlRep(style.Rules, m_cache.WritingSystemFactory));
 				writer.WriteLine("</Rules>");

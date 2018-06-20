@@ -867,7 +867,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			var styles = cache.LangProject.StylesOC.ToDictionary(style => style.Name);
 			foreach (var part in model.PartsAndSharedItems)
 			{
-				if (part.IsMainEntry && String.IsNullOrEmpty(part.Style))
+				if (part.IsMainEntry && string.IsNullOrEmpty(part.Style))
 				{
 					part.Style = "Dictionary-Normal";
 				}

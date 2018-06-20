@@ -374,7 +374,7 @@ namespace LanguageExplorer.Controls
 					var cStr = str?.Length ?? 0;
 					bldr.Replace(0, cStr, string.Empty, props);
 					// Can't do this since string might be null.
-					// bldr.Replace(0, bldr.GetString().Text.Length, String.Empty, props);
+					// bldr.Replace(0, bldr.GetString().Text.Length, string.Empty, props);
 					TextBox.Tss = bldr.GetString();
 				}
 			}

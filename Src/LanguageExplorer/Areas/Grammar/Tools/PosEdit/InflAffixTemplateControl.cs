@@ -262,8 +262,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				return true; //we handled this.
 			}
 			var sName = slot.Name.BestAnalysisVernacularAlternative.Text;
-			var sUndo = String.Format(AreaResources.ksUndoChangeOptionalityOfSlot, sName);
-			var sRedo = String.Format(AreaResources.ksRedoChangeOptionalityOfSlot, sName);
+			var sUndo = string.Format(AreaResources.ksUndoChangeOptionalityOfSlot, sName);
+			var sRedo = string.Format(AreaResources.ksRedoChangeOptionalityOfSlot, sName);
 			using (UndoableUnitOfWorkHelper helper = new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, sUndo, sRedo))
 			{
 				slot.Optional = !slot.Optional;
@@ -518,7 +518,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				new MakeInflAffixEntryChooserCommand(Cache, true, m_sInflAffix, fIsPrefixSlot, slot, m_mediator, m_propertyTable));
 			chooser.SetObjectAndFlid(slot.Hvo, slot.OwningFlid);
 			string sGuiControl = XmlUtils.GetOptionalAttributeValue(cmd.ConfigurationNode, "guicontrol");
-			if (!String.IsNullOrEmpty(sGuiControl))
+			if (!string.IsNullOrEmpty(sGuiControl))
 			{
 				chooser.ReplaceTreeView(m_mediator, m_propertyTable, sGuiControl);
 			}

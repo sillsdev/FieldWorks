@@ -348,7 +348,7 @@ namespace LanguageExplorer.UtilityTools
 			using (new WaitCursor(this))
 			{
 				// Note: Resetting the steps text doesn't work.
-				//m_lSteps.Text = String.Empty;
+				//m_lSteps.Text = string.Empty;
 				//int totalSteps = m_clbUtilities.CheckedItems.Count;
 				//int currentStep = 0;
 				var checkedItems = new HashSet<IUtility>();

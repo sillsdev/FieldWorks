@@ -56,7 +56,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		{
 			using (var dlg = new ImportMatchReplaceDlg())
 			{
-				dlg.Initialize(m_helpTopicProvider, String.Empty, String.Empty);
+				dlg.Initialize(m_helpTopicProvider, string.Empty, string.Empty);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					var lvi = new ListViewItem(new[] {dlg.Match, dlg.Replace});

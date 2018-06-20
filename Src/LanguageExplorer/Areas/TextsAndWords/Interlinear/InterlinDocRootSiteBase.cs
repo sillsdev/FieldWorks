@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -592,7 +592,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void AddHideLineMenuItem(ContextMenuStrip menu, InterlinLineChoices curLineChoices, int ilineChoice)
 		{
 			var lineLabel = GetAppropriateLineLabel(curLineChoices, ilineChoice);
-			var hideItem = new ToolStripMenuItem(String.Format(ITextStrings.ksHideLine, lineLabel));
+			var hideItem = new ToolStripMenuItem(string.Format(ITextStrings.ksHideLine, lineLabel));
 			hideItem.Click += hideItem_Click;
 			hideItem.Tag = ilineChoice;
 			menu.Items.Add(hideItem);
