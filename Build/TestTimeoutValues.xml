@@ -5,15 +5,12 @@
 	</TimeoutGroup>
 	<TimeoutGroup timeLimit="90">
 		<Project name="CacheLightTests"/>
-		<Project name="FiltersTests"/>
 		<Project name="FieldWorksTests"/>
 		<Project name="FrameworkTests"/>
 		<Project name="FwControlsTests"/>
-		<Project name="FwCoreDlgControlsTests"/>
 		<Project name="FwUtilsTests"/>
 		<Project name="ParserCoreTests"/>
 		<Project name="RootSiteTests"/>
 		<Project name="SimpleRootSiteTests"/>
-		<Project name="WidgetsTests"/>
 	</TimeoutGroup>
 </TestTimeoutValues>	

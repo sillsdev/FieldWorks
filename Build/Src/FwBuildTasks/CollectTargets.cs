@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2012-2018 SIL International
+// Copyright (c) 2012-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -453,7 +453,12 @@ namespace FwBuildTasks
 					}
 				}
 			}
-			return (m_timeoutMap.ContainsKey(project) ? m_timeoutMap[project] : m_timeoutMap["default"])*1000;
+			var timeoutTime = (m_timeoutMap.ContainsKey(project) ? m_timeoutMap[project] : m_timeoutMap["default"]) * 1000;
+			if (Environment.OSVersion.Platform == PlatformID.Unix)
+			{
+				timeoutTime = timeoutTime * 2;
+			}
+			return timeoutTime;
 		}
 	}
 }
