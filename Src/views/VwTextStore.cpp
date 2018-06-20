@@ -748,6 +748,7 @@ STDMETHODIMP VwTextStore::GetText(LONG acpFirst, LONG acpLast, WCHAR * pchPlain,
 
 	ULONG cchPlainNfc = acpLast - acpFirst;
 	int cchReq = ichLast - ichFirst;
+	int outputLength = 0;
 	if (fDoText && cchReq)
 	{
 		// determine if the current IME requires NFD or NFC and return the text in the
@@ -757,6 +758,7 @@ STDMETHODIMP VwTextStore::GetText(LONG acpFirst, LONG acpLast, WCHAR * pchPlain,
 			cchReq = RetrieveText(ichFirst, ichLast, cchPlainReq, pchPlain);
 			if (ulRunInfoReq > 0)
 				*pulRunInfoOut = SetOrAppendRunInfo(prgRunInfo, ulRunInfoReq, 0, TS_RT_PLAIN, cchReq);
+			outputLength = cchReq;
 		}
 		else
 		{
@@ -772,6 +774,7 @@ STDMETHODIMP VwTextStore::GetText(LONG acpFirst, LONG acpLast, WCHAR * pchPlain,
 			stuPlain.SetSize(cchReq, &pchPlainNfd);
 			NormalizeText(stuPlain, pchPlain, cchPlainReq, &cchPlainNfc, prgRunInfo,
 				ulRunInfoReq, pulRunInfoOut);
+			outputLength = cchPlainNfc;
 		}
 	}
 	else // empty text or we're not interested in the text
@@ -795,10 +798,10 @@ STDMETHODIMP VwTextStore::GetText(LONG acpFirst, LONG acpLast, WCHAR * pchPlain,
 	}
 	// Set the number of characters returned.
 	if (pcchPlainOut)
-		*pcchPlainOut = cchPlainNfc;
-	// Set the index of the next character to fetch.
+		*pcchPlainOut = outputLength;
+	// Set the acp location of the next character to fetch.
 	if (pacpNext)
-		*pacpNext = acpFirst + cchPlainNfc;
+		*pacpNext = acpFirst + outputLength;
 
 #ifdef TRACING_TSF
 	StrUni stu;

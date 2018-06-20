@@ -1521,6 +1521,103 @@ namespace TestViews
 		}
 
 		/*--------------------------------------------------------------------------------------
+		Test VwTextStore::GetText(): Should return correct Out and Next information even if
+		using NFC and the buffer is smaller than the NFD data. See LT-19134.
+		--------------------------------------------------------------------------------------*/
+		void testGetText_SmallBufferNfc()
+		{
+			if (!m_fTestable)
+				return;
+
+			static const OLECHAR * data[] = {
+				L"\x1112\x1161\x11ab \x1112\x1161\x11ab \x1112\x1161\x11ab \x1112\x1161\x11ab \x1112\x1161\x11ab \x1112\x1161\x11ab",
+				NULL
+			};
+			static const OLECHAR dataInNFC[] = L"\xd55c \xd55c \xd55c \xd55c \xd55c \xd55c";
+
+			MakeStringList(data);
+			TS_RUNINFO tri[10];
+			// Buffer is smaller than the NFD data. Choosing buffer length 15 so it includes the
+			// first 4 clumps of characters in data, but is not identical to the size of an NFC
+			// version of the data (to make values clear when debugging).
+			const int kcch2BufferLength = 15;
+			OLECHAR rgch2Buffer[kcch2BufferLength];
+			// The expected output would be implementation dependent, but our implementation
+			// will give this.
+			static const OLECHAR expected[] = L"\xd55c \xd55c \xd55c \xd55c \xd55c \xd55c";
+
+			// Need some selection to start with as it determines which paragraph.
+			IVwSelectionPtr qselTemp;
+			CheckHr(m_qrootb->MakeSimpleSel(true, true, false, true, &qselTemp));
+
+			// The doc at https://msdn.microsoft.com/en-us/library/windows/desktop/ms538433(v=vs.85).aspx
+			// doesn't explicitly discuss NFD and NFC. It may be implementation dependent whether
+			// a GetText method considers all of its NFD data or just the first 'Buffer.Length'
+			// bytes of its NFD data, when providing NFC output.
+			// In our case, we will use the following.
+			ULONG cchLengthOfExpectedNfc = 11;
+
+			unitpp::assert_true("Unit test not set up correctly, buffer should be smaller than the data.", kcch2BufferLength < wcslen(data[0]));
+
+			// SUT
+			LockGetText lgt(m_qtxs, 0, -1, rgch2Buffer, kcch2BufferLength, tri, 10);
+
+			unitpp::assert_eq("Should succeed", S_OK, lgt.m_hrLock);
+			// This could be GetText implementation dependent.
+			unitpp::assert_eq("GetText(0,-1) ichNext", (LONG)cchLengthOfExpectedNfc,  lgt.m_ichNext);
+			// This will not only be implementation dependent, but unpredictable.
+			unitpp::assert_eq("GetText(0,-1) cchOut", cchLengthOfExpectedNfc, lgt.m_cchOut);
+			unitpp::assert_true("GetText(0,-1) rgch2Buffer",
+				wcsncmp(rgch2Buffer, expected, cchLengthOfExpectedNfc) == 0);
+		}
+
+		/*--------------------------------------------------------------------------------------
+		Test VwTextStore::GetText(): Should return correct Out and Next information even if
+		using NFC and the buffer is smaller than the data in NFC. See LT-19134.
+		--------------------------------------------------------------------------------------*/
+		void testGetText_SmallerBufferNfc()
+		{
+			if (!m_fTestable)
+				return;
+
+			static const OLECHAR * data[] = {
+				L"\x1112\x1161\x11ab \x1112\x1161\x11ab \x1112\x1161\x11ab \x1112\x1161\x11ab \x1112\x1161\x11ab \x1112\x1161\x11ab",
+				NULL
+			};
+			static const OLECHAR dataInNFC[] = L"\xd55c \xd55c \xd55c \xd55c \xd55c \xd55c";
+
+			MakeStringList(data);
+			TS_RUNINFO tri[10];
+			// Buffer is smaller than the NFD data, and smaller than an NFC representation of
+			// that data.
+			const int kcch2BufferLength = 7;
+			OLECHAR rgch2Buffer[kcch2BufferLength];
+			// The expected output would be implementation dependent, but our implementation
+			// will give this.
+			static const OLECHAR expected[] = L"\xd55c \xd55c \xd55c ";
+			// Only 6 characters because of a null terminator in the buffer.
+			ULONG cchLengthOfExpectedNfc = 6;
+
+			// Need some selection to start with as it determines which paragraph.
+			IVwSelectionPtr qselTemp;
+			CheckHr(m_qrootb->MakeSimpleSel(true, true, false, true, &qselTemp));
+
+			unitpp::assert_true("Unit test not set up correctly to test what it is intending to, buffer should be smaller than the data.",
+				kcch2BufferLength < wcslen(data[0]));
+			unitpp::assert_true("Unit test not set up correctly to test what it is intending to, buffer should be smaller than the data in NFC.",
+				kcch2BufferLength < wcslen(dataInNFC));
+
+			// SUT
+			LockGetText lgt(m_qtxs, 0, -1, rgch2Buffer, kcch2BufferLength, tri, 10);
+
+			unitpp::assert_eq("Should succeed", S_OK, lgt.m_hrLock);
+			unitpp::assert_eq("GetText(0,-1) ichNext", (LONG)cchLengthOfExpectedNfc, lgt.m_ichNext);
+			unitpp::assert_eq("GetText(0,-1) cchOut", cchLengthOfExpectedNfc, lgt.m_cchOut);
+			unitpp::assert_true("GetText(0,-1) rgch2Buffer",
+				wcsncmp(rgch2Buffer, expected, cchLengthOfExpectedNfc) == 0);
+		}
+
+		/*--------------------------------------------------------------------------------------
 		Test VwTextStore::GetText(): Should return good values even if
 		using NFC and the buffer is a length that would break up a set of combining NFD
 		characters, if it were holding the original data.
