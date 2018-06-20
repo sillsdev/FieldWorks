@@ -55,7 +55,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		#region Data members
 
-		XElement m_configurationParameters;
 		protected string m_strLabel;
 		protected string m_strAbbr;
 		protected bool m_isHighlighted = false;
@@ -870,7 +869,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			MyCmObject = null;
 			CallerNode = null;
 			ConfigurationNode = null;
-			m_configurationParameters = null;
 			m_strLabel = null;
 			m_strAbbr = null;
 			ParentSlice = null;
@@ -2104,98 +2102,104 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// is it possible to do a deletion menu command on this slice right now?
 		/// </summary>
-		public bool GetCanDeleteNow()
+		public bool CanDeleteNow
 		{
-			var obj = GetObjectForMenusToOperateOn();
-			if (obj == null)
+			get
 			{
-				return false;
-			}
+				var obj = GetObjectForMenusToOperateOn();
+				if (obj == null)
+				{
+					return false;
+				}
 
-			var owner = obj.Owner;
-			if (owner == null) // We can allow unowned objects to be deleted.
-			{
-				return true;
-			}
-			var flid = obj.OwningFlid;
-			if (!owner.IsFieldRequired(flid))
-			{
-				return true;
-			}
+				var owner = obj.Owner;
+				if (owner == null) // We can allow unowned objects to be deleted.
+				{
+					return true;
+				}
+				var flid = obj.OwningFlid;
+				if (!owner.IsFieldRequired(flid))
+				{
+					return true;
+				}
 
-			//now, if the field is required, then we do not allow this to be deleted if it is atomic
-			//futureTodo: this prevents the user from the deleting something in order to create something
-			//of a different class, or to paste in other object in this field.
-			if (!Cache.IsVectorProperty(flid))
-			{
-				return false;
-			}
+				//now, if the field is required, then we do not allow this to be deleted if it is atomic
+				//futureTodo: this prevents the user from the deleting something in order to create something
+				//of a different class, or to paste in other object in this field.
+				if (!Cache.IsVectorProperty(flid))
+				{
+					return false;
+				}
 
-			// still OK to delete so long as it is not the last item.
-			return Cache.DomainDataByFlid.get_VecSize(owner.Hvo, flid) > 1;
+				// still OK to delete so long as it is not the last item.
+				return Cache.DomainDataByFlid.get_VecSize(owner.Hvo, flid) > 1;
+			}
 		}
 
 		/// <summary>
 		/// Is it possible to do a merge menu command on this slice right now?
 		/// </summary>
-		public bool GetCanMergeNow()
+		internal bool CanMergeNow
 		{
-			var obj = GetObjectForMenusToOperateOn();
-			if (obj == null)
+			get
 			{
-				return false;
-			}
+				var obj = GetObjectForMenusToOperateOn();
+				if (obj == null)
+				{
+					return false;
+				}
 
-			var owner = obj.Owner;
-			var flid = obj.OwningFlid;
-			// No support yet for atomic properties.
-			if (!Cache.IsVectorProperty(flid))
-			{
-				return false;
-			}
+				var owner = obj.Owner;
+				var flid = obj.OwningFlid;
+				// No support yet for atomic properties.
+				if (!Cache.IsVectorProperty(flid))
+				{
+					return false;
+				}
 
-			// Special handling for allomorphs, as they can be merged into the lexeme form.
-			var clsid = obj.ClassID;
-			switch (flid)
-			{
-				case LexEntryTags.kflidAlternateForms:
-					// We can merge an alternate with the lexeme form,
-					// if it is the same class.
-					if (clsid == ((ILexEntry) owner).LexemeFormOA.ClassID)
+				// Special handling for allomorphs, as they can be merged into the lexeme form.
+				var clsid = obj.ClassID;
+				switch (flid)
+				{
+					case LexEntryTags.kflidAlternateForms:
+						// We can merge an alternate with the lexeme form,
+						// if it is the same class.
+						if (clsid == ((ILexEntry)owner).LexemeFormOA.ClassID)
+						{
+							return true;
+						}
+
+						break;
+					case LexSenseTags.kflidSenses:
+						return true;
+				}
+				// A subsense can always merge into its owning sense.
+				var vectorSize = Cache.DomainDataByFlid.get_VecSize(owner.Hvo, flid);
+				if (owner.IsFieldRequired(flid) && vectorSize < 2)
+				{
+					return false;
+				}
+
+				// Check now to see if there are any other objects of the same class in the flid,
+				// since only objects of the same class can be merged.
+				int[] contents;
+				var chvoMax = Cache.DomainDataByFlid.get_VecSize(owner.Hvo, flid);
+				using (var arrayPtr = MarshalEx.ArrayToNative<int>(chvoMax))
+				{
+					Cache.DomainDataByFlid.VecProp(owner.Hvo, flid, chvoMax, out chvoMax, arrayPtr);
+					contents = MarshalEx.NativeToArray<int>(arrayPtr, chvoMax);
+				}
+				foreach (var hvoInner in contents)
+				{
+					var innerObj = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoInner);
+					if (innerObj != obj && clsid == innerObj.ClassID)
 					{
 						return true;
 					}
+				}
 
-					break;
-				case LexSenseTags.kflidSenses:
-					return true;
-			}
-			// A subsense can always merge into its owning sense.
-			var vectorSize = Cache.DomainDataByFlid.get_VecSize(owner.Hvo, flid);
-			if (owner.IsFieldRequired(flid) && vectorSize < 2)
-			{
 				return false;
 			}
-
-			// Check now to see if there are any other objects of the same class in the flid,
-			// since only objects of the same class can be merged.
-			int[] contents;
-			var chvoMax = Cache.DomainDataByFlid.get_VecSize(owner.Hvo, flid);
-			using (var arrayPtr = MarshalEx.ArrayToNative<int>(chvoMax))
-			{
-				Cache.DomainDataByFlid.VecProp(owner.Hvo, flid, chvoMax, out chvoMax, arrayPtr);
-				contents = MarshalEx.NativeToArray<int>(arrayPtr, chvoMax);
-			}
-			foreach (var hvoInner in contents)
-			{
-				var innerObj = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoInner);
-				if (innerObj != obj && clsid == innerObj.ClassID)
-				{
-					return true;
-				}
-			}
-
-			return false;
 		}
 
 		/// <summary />

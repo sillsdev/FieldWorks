@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
+using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.LexText.DataNotebook;
 using LanguageExplorer.DictionaryConfiguration;
@@ -274,6 +275,98 @@ namespace LanguageExplorer.Areas
 				MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, 0,
 				helpFile,
 				HelpNavigator.Topic, shlpTopic);
+		}
+
+		/// <summary>
+		/// See if a menu is visible/enabled that moves items down in an owning property.
+		/// </summary>
+		internal static bool CanMoveDownObjectInOwningSequence(DataTree dataTree, LcmCache cache, out bool visible)
+		{
+			visible = false;
+			bool enabled;
+			var type = CellarPropertyType.ReferenceAtomic;
+			var sliceObject = dataTree.CurrentSlice.MyCmObject;
+			var owningFlid = sliceObject.OwningFlid;
+			if (owningFlid > 0)
+			{
+				type = (CellarPropertyType)cache.DomainDataByFlid.MetaDataCache.GetFieldType(owningFlid);
+			}
+			if (type != CellarPropertyType.OwningSequence && type != CellarPropertyType.ReferenceSequence)
+			{
+				visible = false;
+				return false;
+			}
+			var owningObject = sliceObject.Owner;
+			var chvo = cache.DomainDataByFlid.get_VecSize(owningObject.Hvo, owningFlid);
+			if (chvo < 2)
+			{
+				enabled = false;
+			}
+			else
+			{
+				var hvo = cache.DomainDataByFlid.get_VecItem(owningObject.Hvo, owningFlid, 0);
+				enabled = sliceObject.Hvo != hvo;
+				// if the first LexEntryRef in LexEntry.EntryRefs is a complex form, and the
+				// slice displays the second LexEntryRef in the sequence, then we can't move it
+				// up, since the first slot is reserved for the complex form.
+				if (enabled && owningFlid == LexEntryTags.kflidEntryRefs && cache.DomainDataByFlid.get_VecSize(hvo, LexEntryRefTags.kflidComplexEntryTypes) > 0)
+				{
+					enabled = sliceObject.Hvo != cache.DomainDataByFlid.get_VecItem(owningObject.Hvo, owningFlid, 1);
+				}
+				else
+				{
+					var sliceObjIdx = cache.DomainDataByFlid.GetObjIndex(owningObject.Hvo, owningFlid, sliceObject.Hvo);
+					enabled = sliceObjIdx < chvo - 1;
+				}
+			}
+			visible = true;
+			return enabled;
+		}
+
+		/// <summary>
+		/// See if a menu is visible/enabled that moves items up in an owning property.
+		/// </summary>
+		internal static bool CanMoveUpObjectInOwningSequence(DataTree dataTree, LcmCache cache, out bool visible)
+		{
+			visible = false;
+			bool enabled;
+			var type = CellarPropertyType.ReferenceAtomic;
+			var sliceObject = dataTree.CurrentSlice.MyCmObject;
+			var owningFlid = sliceObject.OwningFlid;
+			if (owningFlid > 0)
+			{
+				type = (CellarPropertyType)cache.DomainDataByFlid.MetaDataCache.GetFieldType(owningFlid);
+			}
+			if (type != CellarPropertyType.OwningSequence && type != CellarPropertyType.ReferenceSequence)
+			{
+				return false;
+			}
+			var owningObject = sliceObject.Owner;
+			var chvo = cache.DomainDataByFlid.get_VecSize(owningObject.Hvo, owningFlid);
+			if (chvo < 2)
+			{
+				enabled = false;
+			}
+			else
+			{
+				var hvo = cache.DomainDataByFlid.get_VecItem(owningObject.Hvo, owningFlid, 0);
+				enabled = sliceObject.Hvo != hvo;
+				if (enabled && owningFlid == LexEntryTags.kflidEntryRefs && cache.DomainDataByFlid.get_VecSize(hvo, LexEntryRefTags.kflidComplexEntryTypes) > 0)
+				{
+					// if the first LexEntryRef in LexEntry.EntryRefs is a complex form, and the
+					// slice displays the second LexEntryRef in the sequence, then we can't move it
+					// up, since the first slot is reserved for the complex form.
+					enabled = sliceObject.Hvo != cache.DomainDataByFlid.get_VecItem(owningObject.Hvo, owningFlid, 1);
+				}
+				else
+				{
+					var sliceObjIdx = cache.DomainDataByFlid.GetObjIndex(owningObject.Hvo, owningFlid, sliceObject.Hvo);
+					enabled = sliceObjIdx > 0;
+				}
+			}
+			visible = true;
+
+			return enabled;
 		}
 	}
 }

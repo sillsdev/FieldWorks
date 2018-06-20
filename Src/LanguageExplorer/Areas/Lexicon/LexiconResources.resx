@@ -489,4 +489,22 @@
   <data name="Insert_Affix_Process" xml:space="preserve">
     <value>Insert Affix Process</value>
   </data>
+  <data name="Delete_Allomorph" xml:space="preserve">
+    <value>Delete Allomorph</value>
+  </data>
+  <data name="Merge_Allomorph_into" xml:space="preserve">
+    <value>Merge Allomorph into...</value>
+  </data>
+  <data name="Move_Form_Down" xml:space="preserve">
+    <value>Move Form _Down</value>
+  </data>
+  <data name="Move_Form_Up" xml:space="preserve">
+    <value>Move Form _Up</value>
+  </data>
+  <data name="Show_Allomorph_in_Concordance" xml:space="preserve">
+    <value>Show Allomorph in Concordance</value>
+  </data>
+  <data name="Swap_Allomorph_with_Lexeme_Form" xml:space="preserve">
+    <value>Swap Allomorph with Lexeme Form</value>
+  </data>
 </root>

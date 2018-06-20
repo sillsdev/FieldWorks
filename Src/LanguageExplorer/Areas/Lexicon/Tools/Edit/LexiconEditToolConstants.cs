@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 SIL International
+// Copyright (c) 2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,6 +18,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		internal const string mnuDataTree_Environments_Insert = "mnuDataTree-Environments-Insert";
 		internal const string mnuDataTree_LexemeForm = "mnuDataTree-LexemeForm";
 		internal const string mnuDataTree_VariantForms = "mnuDataTree-VariantForms";
+		internal const string mnuDataTree_Allomorph = "mnuDataTree-Allomorph";
 
 		internal const string CmdGoToEntry = "GoToEntry_Clicked";
 		internal const string Show_Dictionary_Preview_Clicked = "Show_Dictionary_Preview_Clicked";

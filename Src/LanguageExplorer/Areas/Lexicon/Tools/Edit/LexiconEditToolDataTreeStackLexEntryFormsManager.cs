@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 SIL International
+// Copyright (c) 2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -165,12 +165,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(4);
 
 			// <item command="CmdMorphJumpToConcordance" label="Show Lexeme Form in Concordance"/> // NB: Overrides command's label here.
-			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdMorphJumpToConcordance_Clicked, LexiconResources.Show_Lexeme_Form_in_Concordance);
-			menu.Visible = true;
-			menu.Enabled = true;
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdMorphJumpToConcordance_Clicked, LexiconResources.Show_Lexeme_Form_in_Concordance);
 
 			// <command id="CmdDataTree-Swap-LexemeForm" label="Swap Lexeme Form with Allomorph..." message="SwapLexemeWithAllomorph">
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Swap_LexemeForm_Clicked, LexiconResources.Swap_Lexeme_Form_with_Allomorph);
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Swap_LexemeForm_Clicked, LexiconResources.Swap_Lexeme_Form_with_Allomorph);
 			menu.Visible = hasAllomorphs;
 			menu.Enabled = hasAllomorphs;
 
@@ -500,10 +498,67 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void Register_Forms_Sections_Bundle()
 		{
-			// TODO: mnuDataTree-Allomorph (MoStemAllomorph & MoAffixAllomorph)
+			// mnuDataTree-Allomorph (shared: MoStemAllomorph & MoAffixAllomorph)
+			MyDataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(LexiconEditToolConstants.mnuDataTree_Allomorph, Create_mnuDataTree_Allomorph);
+
 			// TODO: mnuDataTree-AffixProcess (MoAffixProcess)
+			/*
+				<menu id="mnuDataTree-AffixProcess">
+					<item command="CmdDataTree-MoveUp-Allomorph"/>
+					<!-- CmdDataTree-MoveUp-Allomorph used elsewhere -->
+					<item command="CmdDataTree-MoveDown-Allomorph"/>
+					<!-- CmdDataTree-MoveDown-Allomorph used elsewhere -->
+					<item label="-" translate="do not translate"/>
+					<item command="CmdDataTree-Delete-Allomorph"/>
+					<!-- CmdDataTree-Delete-Allomorph used elsewhere -->
+					<item command="CmdDataTree-Swap-Allomorph"/>
+					<!-- CmdDataTree-Swap-Allomorph used elsewhere -->
+					<item command="CmdDataTree-Convert-Allomorph-AffixAllomorph"/>
+						<command id="CmdDataTree-Convert-Allomorph-AffixAllomorph" label="Convert to Affix Allomorph" message="ConvertAllomorph">
+							<parameters fromClassName="MoAffixProcess" toClassName="MoAffixAllomorph"/>
+						</command>
+					<item label="-" translate="do not translate"/>
+					<item command="CmdMorphJumpToConcordance" label="Show Allomorph in Concordance" a10status="See LexiconEditToolDataTreeStackLexEntryManager: This overrides base label." />
+					<!-- CmdMorphJumpToConcordance used elsewhere -->
+				</menu>
+			*/
 			// TODO: mnuDataTree-VariantForm
+			/*
+				<menu id="mnuDataTree-VariantForm">
+					<item command="CmdEntryJumpToDefault"/>
+					<item command="CmdEntryJumpToConcordance"/>
+					<item command="CmdDataTree-Delete-VariantReference"/>
+						<command id="CmdDataTree-Delete-VariantReference" label="Delete Reference" message="DataTreeDeleteReference" icon="Delete">
+							<parameters className="LexEntry" field="VariantFormEntryBackRefs"/>
+						</command>
+					<item command="CmdDataTree-Delete-Variant"/>
+						<command id="CmdDataTree-Delete-Variant" label="Delete Variant" message="DataTreeDelete" icon="Delete">
+							<parameters className="LexEntry" field="VariantFormEntryBackRefs"/>
+						</command>
+				</menu>
+			*/
 			// TODO: mnuDataTree-AlternateForm
+			/*
+				<menu id="mnuDataTree-AlternateForm">
+					<item command="CmdDataTree-MoveUp-AlternateForm"/>
+						<command id="CmdDataTree-MoveUp-AlternateForm" label="Move Form _Up" message="MoveUpObjectInSequence" icon="MoveUp">
+							<parameters field="AlternateForms" className="MoForm"/>
+						</command>
+					<item command="CmdDataTree-MoveDown-AlternateForm"/>
+						<command id="CmdDataTree-MoveDown-AlternateForm" label="Move Form _Down" message="MoveDownObjectInSequence" icon="MoveDown">
+							<parameters field="AlternateForms" className="MoForm"/>
+						</command>
+					<item label="-" translate="do not translate"/>
+					<item command="CmdDataTree-Merge-AlternateForm"/>
+						<command id="CmdDataTree-Merge-AlternateForm" label="Merge AlternateForm into..." message="DataTreeMerge">
+							<parameters field="AlternateForms" className="MoForm"/>
+						</command>
+					<item command="CmdDataTree-Delete-AlternateForm"/>
+						<command id="CmdDataTree-Delete-AlternateForm" label="Delete AlternateForm" message="DataTreeDelete" icon="Delete">
+							<parameters field="AlternateForms" className="MoForm"/>
+						</command>
+				</menu>
+			*/
 
 			// mnuDataTree-VariantForms
 			MyDataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(LexiconEditToolConstants.mnuDataTree_VariantForms, Create_mnuDataTree_VariantForms);
@@ -514,6 +569,109 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			MyDataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(LexiconEditToolConstants.mnuDataTree_AlternateForms, Create_mnuDataTree_AlternateForms);
 			// mnuDataTree-AlternateForms-Hotlinks
 			MyDataTree.DataTreeStackContextMenuFactory.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(mnuDataTree_AlternateForms_Hotlinks, Create_mnuDataTree_AlternateForms_Hotlinks);
+		}
+
+		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Allomorph(Slice slice, string contextMenuId)
+		{
+			if (contextMenuId != LexiconEditToolConstants.mnuDataTree_Allomorph)
+			{
+				throw new ArgumentException($"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_Allomorph}', but got '{contextMenuId}' instead.");
+			}
+
+			// Start: <menu id="mnuDataTree-Allomorph">
+			var contextMenuStrip = new ContextMenuStrip
+			{
+				Name = LexiconEditToolConstants.mnuDataTree_VariantForms
+			};
+			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(10);
+
+			ToolStripMenuItem menu;
+			using (var imageHolder = new LanguageExplorer.DictionaryConfiguration.ImageHolder())
+			{
+				// <item command="CmdDataTree-MoveUp-Allomorph"/>
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconAreaConstants.MoveUpObjectInOwningSequence], LexiconResources.Move_Form_Up, image: imageHolder.smallCommandImages.Images[12]);
+				bool visible;
+				var enabled = AreaServices.CanMoveUpObjectInOwningSequence(MyDataTree, _cache, out visible);
+				menu.Visible = true;
+				menu.Enabled = enabled;
+
+				// <item command="CmdDataTree-MoveDown-Allomorph"/>
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconAreaConstants.MoveDownObjectInOwningSequence], LexiconResources.Move_Form_Down, image: imageHolder.smallCommandImages.Images[14]);
+				enabled = AreaServices.CanMoveDownObjectInOwningSequence(MyDataTree, _cache, out visible);
+				menu.Visible = true;
+				menu.Enabled = enabled;
+			}
+
+			// <item label="-" translate="do not translate"/>
+			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
+
+			// <command id="CmdDataTree-Merge-Allomorph" label="Merge Allomorph into..." message="DataTreeMerge">
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, DataTreeMerge_Clicked, LexiconResources.Merge_Allomorph_into);
+			menu.Enabled = slice.CanMergeNow;
+
+			// <command id="CmdDataTree-Delete-Allomorph" label="Delete Allomorph" message="DataTreeDelete" icon="Delete">
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, DataTreeDelete_Clicked, LexiconResources.Delete_Allomorph);
+			menu.Enabled = slice.CanDeleteNow;
+
+			// <command id="CmdDataTree-Swap-Allomorph" label="Swap Allomorph with Lexeme Form" message="SwapAllomorphWithLexeme">
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, SwapAllomorphWithLexeme_Clicked, LexiconResources.Swap_Allomorph_with_Lexeme_Form);
+
+			// <command id="CmdDataTree-Convert-Allomorph-AffixProcess" label="Convert to Affix Process" message="ConvertAllomorph">
+			// <parameters fromClassName="MoAffixAllomorph" toClassName="MoAffixProcess"/>
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Convert_MoAffixAllomorph_To_MoAffixProcess_Clicked, LexiconResources.Convert_to_Affix_Process);
+			menu.Enabled = menu.Visible = slice.MyCmObject.ClassID == MoAffixAllomorphTags.kClassId;
+
+			// <item label="-" translate="do not translate"/>
+			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
+
+			// <item command="CmdMorphJumpToConcordance" label="Show Allomorph in Concordance" a10status="See LexiconEditToolDataTreeStackLexEntryManager: This overrides base label." />
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdMorphJumpToConcordance_Clicked, LexiconResources.Show_Allomorph_in_Concordance);
+
+			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+		}
+
+		private void Convert_MoAffixAllomorph_To_MoAffixProcess_Clicked(object sender, EventArgs e)
+		{
+			var allomorph = (IMoForm)MyDataTree.CurrentSlice.MyCmObject;
+			if (CheckForFormDataLoss(allomorph))
+			{
+				var mainWindow = _propertyTable.GetValue<Form>("window");
+				IMoForm newForm = null;
+				using (new WaitCursor(mainWindow))
+				{
+					var entry = (ILexEntry)MyRecordList.CurrentObject;
+					UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerResources.Undo_0, LexiconResources.Convert_to_Affix_Process), string.Format(LanguageExplorerResources.Redo_0, LexiconResources.Convert_to_Affix_Process), entry, () =>
+					{
+						newForm = entry.Services.GetInstance<IMoAffixProcessFactory>().Create();
+						entry.ReplaceMoForm(allomorph, newForm);
+					});
+					MyDataTree.RefreshList(false);
+				}
+				SelectNewFormSlice(newForm);
+			}
+		}
+
+		private void SwapAllomorphWithLexeme_Clicked(object sender, EventArgs e)
+		{
+			var entry = (ILexEntry)MyDataTree.Root;
+			UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerResources.Undo_0, LexiconResources.Swap_Allomorph_with_Lexeme_Form), string.Format(LanguageExplorerResources.Redo_0, LexiconResources.Swap_Allomorph_with_Lexeme_Form), entry, () =>
+			{
+				var allomorph = (IMoForm)MyDataTree.CurrentSlice.MyCmObject;
+				entry.AlternateFormsOS.Insert(allomorph.IndexInOwner, entry.LexemeFormOA);
+				entry.LexemeFormOA = allomorph;
+			});
+		}
+
+		private void DataTreeDelete_Clicked(object sender, EventArgs e)
+		{
+			var currentSlice = MyDataTree.CurrentSlice;
+			currentSlice.HandleDeleteCommand();
+		}
+
+		private void DataTreeMerge_Clicked(object sender, EventArgs e)
+		{
+			var currentSlice = MyDataTree.CurrentSlice;
+			currentSlice.HandleMergeCommand(true);
 		}
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_VariantForms(Slice slice, string contextMenuId)
@@ -532,6 +690,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			// <item command="CmdDataTree-Insert-VariantForm"/>
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconEditToolConstants.CmdInsertVariant], LexiconResources.Insert_Variant);
+
+			// End: <menu id="mnuDataTree-VariantForms">
 
 			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 		}

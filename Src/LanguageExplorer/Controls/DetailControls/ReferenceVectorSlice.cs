@@ -137,12 +137,12 @@ namespace LanguageExplorer.Controls.DetailControls
 			return MyView.CanMoveItem(true, out visible);
 		}
 
-		public void AlphabeticalOrder()
+		public void Alphabetize()
 		{
 			MyView.RemoveOrdering();
 		}
 
-		public bool CanAlphabeticalOrder => MyView.RootPropertySupportsVirtualOrdering();
+		public bool CanAlphabetize => MyView.RootPropertySupportsVirtualOrdering();
 
 		private VectorReferenceView MyView => (VectorReferenceView)((VectorReferenceLauncher)Control).MainControl;
 

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 SIL International
+// Copyright (c) 2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
@@ -60,10 +59,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_sharedEventHandlers = sharedEventHandlers;
 			MyRecordList = recordList;
 
-			_sharedEventHandlers.Add(LexiconAreaConstants.CmdMoveTargetToPreviousInSequence, MoveTargetDownInSequence_Clicked);
-			_sharedEventHandlers.Add(LexiconAreaConstants.CmdMoveTargetToNextInSequence, MoveTargetUpInSequence_Clicked);
-			_sharedEventHandlers.Add(LexiconAreaConstants.CmdAlphabeticalOrder, AlphabeticalOrder_Clicked);
+			_sharedEventHandlers.Add(LexiconAreaConstants.CmdMoveTargetToPreviousInSequence, MoveReferencedTargetDownInSequence_Clicked);
+			_sharedEventHandlers.Add(LexiconAreaConstants.CmdMoveTargetToNextInSequence, MoveReferencedTargetUpInSequence_Clicked);
+			_sharedEventHandlers.Add(LexiconAreaConstants.CmdAlphabeticalOrder, Referenced_AlphabeticalOrder_Clicked);
 			_sharedEventHandlers.Add(AreaServices.CmdEntryJumpToConcordance, CmdEntryJumpToConcordance_Clicked);
+			_sharedEventHandlers.Add(LexiconAreaConstants.MoveUpObjectInOwningSequence, MoveUpObjectInOwningSequence_Clicked);
+			_sharedEventHandlers.Add(LexiconAreaConstants.MoveDownObjectInOwningSequence, MoveDownObjectInOwningSequence_Clicked);
 
 			RegisterSliceMenus();
 
@@ -199,19 +200,19 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			var referenceVectorSlice = (ReferenceVectorSlice)slice;
 			// <command id="CmdMoveTargetToPreviousInSequence" label="Move Left" message="MoveTargetDownInSequence"/>
-			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveTargetDownInSequence_Clicked, LexiconResources.Move_Left);
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveReferencedTargetDownInSequence_Clicked, LexiconResources.Move_Left);
 			bool visible;
 			menu.Enabled = referenceVectorSlice.CanDisplayMoveTargetDownInSequence(out visible);
 			menu.Visible = visible;
 
 			// <command id="CmdMoveTargetToNextInSequence" label="Move Right" message="MoveTargetUpInSequence"/>
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveTargetUpInSequence_Clicked, LexiconResources.Move_Right);
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveReferencedTargetUpInSequence_Clicked, LexiconResources.Move_Right);
 			menu.Enabled = referenceVectorSlice.CanDisplayMoveTargetUpInSequence(out visible);
 			menu.Visible = visible;
 
 			// <command id="CmdAlphabeticalOrder" label="Alphabetical Order" message="AlphabeticalOrder"/>
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, AlphabeticalOrder_Clicked, LexiconResources.Alphabetical_Order);
-			menu.Visible = menu.Enabled = referenceVectorSlice.CanAlphabeticalOrder;
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Referenced_AlphabeticalOrder_Clicked, LexiconResources.Alphabetical_Order);
+			menu.Visible = menu.Enabled = referenceVectorSlice.CanAlphabetize;
 
 			// End: <menu id="mnuReorderVector">
 
@@ -235,15 +236,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			using (var imageHolder = new LanguageExplorer.DictionaryConfiguration.ImageHolder())
 			{
 				// <command id="CmdDataTree-MoveUp-VariantSpec" label="Move Variant Info Up" message="MoveUpObjectInSequence" icon="MoveUp"/>
-				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInSequence_Clicked, LexiconResources.Move_Variant_Info_Up, image: imageHolder.smallCommandImages.Images[12]);
+				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInOwningSequence_Clicked, LexiconResources.Move_Variant_Info_Up, image: imageHolder.smallCommandImages.Images[12]);
 				bool visible;
-				var enabled = CanMoveUpObjectInSequence(out visible);
+				var enabled = AreaServices.CanMoveUpObjectInOwningSequence(MyDataTree, _cache, out visible);
 				menu.Visible = visible;
 				menu.Enabled = enabled;
 
 				// <command id="CmdDataTree-MoveDown-VariantSpec" label="Move Variant Info Down" message="MoveDownObjectInSequence" icon="MoveDown"/>
-				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveDownObjectInSequence_Clicked, LexiconResources.Move_Variant_Info_Down, image: imageHolder.smallCommandImages.Images[14]);
-				enabled = CanMoveDownObjectInSequence(out visible);
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveDownObjectInOwningSequence_Clicked, LexiconResources.Move_Variant_Info_Down, image: imageHolder.smallCommandImages.Images[14]);
+				enabled = AreaServices.CanMoveDownObjectInOwningSequence(MyDataTree, _cache, out visible);
 				menu.Visible = visible;
 				menu.Enabled = enabled;
 
@@ -282,7 +283,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			// <command id="CmdDataTree-Delete-ComplexFormSpec" label="Delete Complex Form Info" message="DataTreeDelete" icon="Delete"/>
 			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Delete_this_Foo_Clicked, LexiconResources.Delete_Complex_Form_Info, image: LanguageExplorerResources.Delete);
-			menu.Enabled = slice.GetCanDeleteNow();
+			menu.Enabled = slice.CanDeleteNow;
 			if (!menu.Enabled)
 			{
 				menu.Text = $"{LexiconResources.Delete_Complex_Form_Info} {StringTable.Table.GetString("(cannot delete this)")}";
@@ -325,9 +326,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						<parameters field="Pronunciations" className="LexPronunciation"/>
 					</command>
 				*/
-				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInSequence_Clicked, LexiconResources.Move_Pronunciation_Up, image: imageHolder.smallCommandImages.Images[12]);
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInOwningSequence_Clicked, LexiconResources.Move_Pronunciation_Up, image: imageHolder.smallCommandImages.Images[12]);
 				bool visible;
-				var enabled = CanMoveUpObjectInSequence(out visible);
+				var enabled = AreaServices.CanMoveUpObjectInOwningSequence(MyDataTree, _cache, out visible);
 				menu.Visible = true;
 				menu.Enabled = enabled;
 
@@ -336,8 +337,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						<parameters field="Pronunciations" className="LexPronunciation"/>
 					</command>
 				*/
-				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveDownObjectInSequence_Clicked, LexiconResources.Move_Pronunciation_Down, image: imageHolder.smallCommandImages.Images[14]);
-				enabled = CanMoveDownObjectInSequence(out visible);
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveDownObjectInOwningSequence_Clicked, LexiconResources.Move_Pronunciation_Down, image: imageHolder.smallCommandImages.Images[14]);
+				enabled = AreaServices.CanMoveDownObjectInOwningSequence(MyDataTree, _cache, out visible);
 				menu.Visible = true;
 				menu.Enabled = enabled;
 			}
@@ -420,9 +421,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						<parameters field="Etymology" className="LexEtymology"/>
 					</command>
 				*/
-				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInSequence_Clicked, LexiconResources.Move_Etymology_Up, image: imageHolder.smallCommandImages.Images[12]);
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInOwningSequence_Clicked, LexiconResources.Move_Etymology_Up, image: imageHolder.smallCommandImages.Images[12]);
 				bool visible;
-				var enabled = CanMoveUpObjectInSequence(out visible);
+				var enabled = AreaServices.CanMoveUpObjectInOwningSequence(MyDataTree, _cache, out visible);
 				menu.Visible = true;
 				menu.Enabled = enabled;
 				/*
@@ -430,8 +431,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						<parameters field="Etymology" className="LexEtymology"/>
 					</command>
 				*/
-				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveDownObjectInSequence_Clicked, LexiconResources.Move_Etymology_Down, image: imageHolder.smallCommandImages.Images[14]);
-				enabled = CanMoveDownObjectInSequence(out visible);
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveDownObjectInOwningSequence_Clicked, LexiconResources.Move_Etymology_Down, image: imageHolder.smallCommandImages.Images[14]);
+				enabled = AreaServices.CanMoveDownObjectInOwningSequence(MyDataTree, _cache, out visible);
 				menu.Visible = true;
 				menu.Enabled = enabled;
 			}
@@ -507,22 +508,22 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		#endregion Comment_To_Messages_Bundle
 
-		private void MoveTargetDownInSequence_Clicked(object sender, EventArgs e)
+		private void MoveReferencedTargetDownInSequence_Clicked(object sender, EventArgs e)
 		{
 			((ReferenceVectorSlice)MyDataTree.CurrentSlice).MoveTargetDownInSequence();
 		}
 
-		private void MoveTargetUpInSequence_Clicked(object sender, EventArgs e)
+		private void MoveReferencedTargetUpInSequence_Clicked(object sender, EventArgs e)
 		{
 			((ReferenceVectorSlice)MyDataTree.CurrentSlice).MoveTargetUpInSequence();
 		}
 
-		private void AlphabeticalOrder_Clicked(object sender, EventArgs e)
+		private void Referenced_AlphabeticalOrder_Clicked(object sender, EventArgs e)
 		{
-			((ReferenceVectorSlice)MyDataTree.CurrentSlice).AlphabeticalOrder();
+			((ReferenceVectorSlice)MyDataTree.CurrentSlice).Alphabetize();
 		}
 
-		private void MoveUpObjectInSequence_Clicked(object sender, EventArgs e)
+		private void MoveUpObjectInOwningSequence_Clicked(object sender, EventArgs e)
 		{
 			var slice = MyDataTree.CurrentSlice;
 			var owningObject = slice.MyCmObject.Owner;
@@ -538,50 +539,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			}
 		}
 
-		private bool CanMoveUpObjectInSequence(out bool visible)
-		{
-			visible = false;
-			bool enabled;
-			var type = CellarPropertyType.ReferenceAtomic;
-			var sliceObject = MyDataTree.CurrentSlice.MyCmObject;
-			var owningFlid = sliceObject.OwningFlid;
-			if (owningFlid > 0)
-			{
-				type = (CellarPropertyType)_cache.DomainDataByFlid.MetaDataCache.GetFieldType(owningFlid);
-			}
-			if (type != CellarPropertyType.OwningSequence && type != CellarPropertyType.ReferenceSequence)
-			{
-				return false;
-			}
-			var owningObject = sliceObject.Owner;
-			var chvo = _cache.DomainDataByFlid.get_VecSize(owningObject.Hvo, owningFlid);
-			if (chvo < 2)
-			{
-				enabled = false;
-			}
-			else
-			{
-				var hvo = _cache.DomainDataByFlid.get_VecItem(owningObject.Hvo, owningFlid, 0);
-				enabled = sliceObject.Hvo != hvo;
-				if (enabled && owningFlid == LexEntryTags.kflidEntryRefs && _cache.DomainDataByFlid.get_VecSize(hvo, LexEntryRefTags.kflidComplexEntryTypes) > 0)
-				{
-					// if the first LexEntryRef in LexEntry.EntryRefs is a complex form, and the
-					// slice displays the second LexEntryRef in the sequence, then we can't move it
-					// up, since the first slot is reserved for the complex form.
-					enabled = sliceObject.Hvo != _cache.DomainDataByFlid.get_VecItem(owningObject.Hvo, owningFlid, 1);
-				}
-				else
-				{
-					var sliceObjIdx = _cache.DomainDataByFlid.GetObjIndex(owningObject.Hvo, owningFlid, sliceObject.Hvo);
-					enabled = sliceObjIdx > 0;
-				}
-			}
-			visible = true;
-
-			return enabled;
-		}
-
-		private void MoveDownObjectInSequence_Clicked(object sender, EventArgs e)
+		private void MoveDownObjectInOwningSequence_Clicked(object sender, EventArgs e)
 		{
 			var slice = MyDataTree.CurrentSlice;
 			var owningObject = slice.MyCmObject.Owner;
@@ -599,49 +557,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				UndoableUnitOfWorkHelper.Do(AreaResources.UndoMoveItem, AreaResources.RedoMoveItem, _cache.ActionHandlerAccessor,
 					() => _cache.DomainDataByFlid.MoveOwnSeq(owningObject.Hvo, owningFlid, indexInOwningProperty, indexInOwningProperty, owningObject.Hvo, owningFlid, indexInOwningProperty + 2));
 			}
-		}
-
-		private bool CanMoveDownObjectInSequence(out bool visible)
-		{
-			visible = false;
-			bool enabled;
-			var type = CellarPropertyType.ReferenceAtomic;
-			var sliceObject = MyDataTree.CurrentSlice.MyCmObject;
-			var owningFlid = sliceObject.OwningFlid;
-			if (owningFlid > 0)
-			{
-				type = (CellarPropertyType)_cache.DomainDataByFlid.MetaDataCache.GetFieldType(owningFlid);
-			}
-			if (type != CellarPropertyType.OwningSequence && type != CellarPropertyType.ReferenceSequence)
-			{
-				visible = false;
-				return false;
-			}
-			var owningObject = sliceObject.Owner;
-			var chvo = _cache.DomainDataByFlid.get_VecSize(owningObject.Hvo, owningFlid);
-			if (chvo < 2)
-			{
-				enabled = false;
-			}
-			else
-			{
-				var hvo = _cache.DomainDataByFlid.get_VecItem(owningObject.Hvo, owningFlid, 0);
-				enabled = sliceObject.Hvo != hvo;
-				// if the first LexEntryRef in LexEntry.EntryRefs is a complex form, and the
-				// slice displays the second LexEntryRef in the sequence, then we can't move it
-				// up, since the first slot is reserved for the complex form.
-				if (enabled && owningFlid == LexEntryTags.kflidEntryRefs && _cache.DomainDataByFlid.get_VecSize(hvo, LexEntryRefTags.kflidComplexEntryTypes) > 0)
-				{
-					enabled = sliceObject.Hvo != _cache.DomainDataByFlid.get_VecItem(owningObject.Hvo, owningFlid, 1);
-				}
-				else
-				{
-					var sliceObjIdx = _cache.DomainDataByFlid.GetObjIndex(owningObject.Hvo, owningFlid, sliceObject.Hvo);
-					enabled = sliceObjIdx < chvo - 1;
-				}
-			}
-			visible = true;
-			return enabled;
 		}
 
 		#region ordinary slice menus

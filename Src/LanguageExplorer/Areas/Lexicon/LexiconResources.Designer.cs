@@ -162,6 +162,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete Allomorph.
+        /// </summary>
+        internal static string Delete_Allomorph {
+            get {
+                return ResourceManager.GetString("Delete_Allomorph", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete Complex Form Info.
         /// </summary>
         internal static string Delete_Complex_Form_Info {
@@ -876,6 +885,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Merge Allomorph into....
+        /// </summary>
+        internal static string Merge_Allomorph_into {
+            get {
+                return ResourceManager.GetString("Merge_Allomorph_into", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Merge with entry....
         /// </summary>
         internal static string Merge_With_Entry {
@@ -917,6 +935,24 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string Move_Etymology_Up {
             get {
                 return ResourceManager.GetString("Move_Etymology_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move Form _Down.
+        /// </summary>
+        internal static string Move_Form_Down {
+            get {
+                return ResourceManager.GetString("Move_Form_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move Form _Up.
+        /// </summary>
+        internal static string Move_Form_Up {
+            get {
+                return ResourceManager.GetString("Move_Form_Up", resourceCulture);
             }
         }
         
@@ -1081,6 +1117,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show Allomorph in Concordance.
+        /// </summary>
+        internal static string Show_Allomorph_in_Concordance {
+            get {
+                return ResourceManager.GetString("Show_Allomorph_in_Concordance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show Dictionary Preview.
         /// </summary>
         internal static string Show_DictionaryPubPreview {
@@ -1140,6 +1185,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string SubsenseInSense {
             get {
                 return ResourceManager.GetString("SubsenseInSense", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Swap Allomorph with Lexeme Form.
+        /// </summary>
+        internal static string Swap_Allomorph_with_Lexeme_Form {
+            get {
+                return ResourceManager.GetString("Swap_Allomorph_with_Lexeme_Form", resourceCulture);
             }
         }
         

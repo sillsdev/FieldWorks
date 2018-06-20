@@ -15,21 +15,6 @@
 		<command id="CmdDataTree-Create-LexemeForm-AffixAllomorph" label="Create Affix Form" message="DataTreeInsert">
 			<parameters field="LexemeForm" className="MoAffixAllomorph"/>
 		</command>
-		<!--
-	  Alternate Forms
-	   -->
-		<command id="CmdDataTree-MoveUp-Allomorph" label="Move Form _Up" message="MoveUpObjectInSequence" icon="MoveUp">
-			<parameters field="AlternateForms" className="MoForm"/>
-		</command>
-		<command id="CmdDataTree-MoveDown-Allomorph" label="Move Form _Down" message="MoveDownObjectInSequence" icon="MoveDown">
-			<parameters field="AlternateForms" className="MoForm"/>
-		</command>
-		<command id="CmdDataTree-Delete-Allomorph" label="Delete Allomorph" message="DataTreeDelete" icon="Delete">
-			<parameters field="AlternateForms" className="MoForm"/>
-		</command>
-		<command id="CmdDataTree-Merge-Allomorph" label="Merge Allomorph into..." message="DataTreeMerge">
-			<parameters field="AlternateForms" className="MoForm"/>
-		</command>
 		<!--CmPicture-->
 		<command id="CmdDataTree-Delete-Picture" label="Delete Picture" message="DataTreeDelete" icon="Delete">
 			<parameters field="Pictures" className="LexSense"/>
@@ -42,30 +27,6 @@
 		</command>
 		<command id="CmdDataTree-Properties-Picture" label="Picture Properties" message="PictureProperties">
 			<parameters field="Pictures" className="LexSense" />
-		</command>
-		<!--
-	  AlternateForms
-	   -->
-		<command id="CmdDataTree-MoveUp-AlternateForm" label="Move Form _Up" message="MoveUpObjectInSequence" icon="MoveUp">
-			<parameters field="AlternateForms" className="MoForm"/>
-		</command>
-		<command id="CmdDataTree-MoveDown-AlternateForm" label="Move Form _Down" message="MoveDownObjectInSequence" icon="MoveDown">
-			<parameters field="AlternateForms" className="MoForm"/>
-		</command>
-		<command id="CmdDataTree-Delete-AlternateForm" label="Delete AlternateForm" message="DataTreeDelete" icon="Delete">
-			<parameters field="AlternateForms" className="MoForm"/>
-		</command>
-		<command id="CmdDataTree-Merge-AlternateForm" label="Merge AlternateForm into..." message="DataTreeMerge">
-			<parameters field="AlternateForms" className="MoForm"/>
-		</command>
-		<command id="CmdDataTree-Swap-Allomorph" label="Swap Allomorph with Lexeme Form" message="SwapAllomorphWithLexeme">
-			<parameters field="AlternateForms" className="MoForm"/>
-		</command>
-		<command id="CmdDataTree-Convert-Allomorph-AffixProcess" label="Convert to Affix Process" message="ConvertAllomorph">
-			<parameters fromClassName="MoAffixAllomorph" toClassName="MoAffixProcess"/>
-		</command>
-		<command id="CmdDataTree-Convert-Allomorph-AffixAllomorph" label="Convert to Affix Allomorph" message="ConvertAllomorph">
-			<parameters fromClassName="MoAffixProcess" toClassName="MoAffixAllomorph"/>
 		</command>
 		<!--
 	MSAs
@@ -88,14 +49,6 @@
 		<command id="CmdDataTree-Merge-MSA" label="Merge Grammatical Info. into..." message="DataTreeMerge">
 			<parameters field="MorphoSyntaxAnalyses" className="MoMorphSynAnalysis"/>
 		</command>
-		<!-- these don't work. Maybe 'cause it's not a sequence?
-	 <command id="CmdDataTree-MoveUp-MSA" label="↑ Move Grammatical Info. _Up" message="MoveUpObjectInSequence">
-	  <parameters field="MorphoSyntaxAnalyses" className="MoMorphSynAnalysis"/>
-	</command>
-	<command id="CmdDataTree-MoveDown-MSA" label="↓ Move Grammatical Info. _Down" message="MoveDownObjectInSequence">
-	  <parameters field="MorphoSyntaxAnalyses" className="MoMorphSynAnalysis"/>
-	</command>
- -->
 		<!--
 	Senses
 	-->
@@ -187,15 +140,6 @@
 			<parameters field="Translations" className="CmTranslation"/>
 		</command>
 		<!--
-	Variants
-	-->
-		<command id="CmdDataTree-Delete-Variant" label="Delete Variant" message="DataTreeDelete" icon="Delete">
-			<parameters className="LexEntry" field="VariantFormEntryBackRefs"/>
-		</command>
-		<command id="CmdDataTree-Delete-VariantReference" label="Delete Reference" message="DataTreeDeleteReference" icon="Delete">
-			<parameters className="LexEntry" field="VariantFormEntryBackRefs"/>
-		</command>
-		<!--
 			Subentry Link
 		-->
 		<command id="CmdDataTree-Insert-SubEntryLink" label="Insert Main Entry" message="DataTreeInsert">
@@ -239,33 +183,6 @@
   ===========================================================
   -->
 	<contextMenus>
-		<menu id="mnuDataTree-VariantForm">
-			<item command="CmdEntryJumpToDefault"/>
-			<item command="CmdEntryJumpToConcordance"/>
-			<item command="CmdDataTree-Delete-VariantReference"/>
-			<item command="CmdDataTree-Delete-Variant"/>
-		</menu>
-		<menu id="mnuDataTree-Allomorph">
-			<item command="CmdDataTree-MoveUp-Allomorph"/>
-			<item command="CmdDataTree-MoveDown-Allomorph"/>
-			<item label="-" translate="do not translate"/>
-			<item command="CmdDataTree-Merge-Allomorph"/>
-			<item command="CmdDataTree-Delete-Allomorph"/>
-			<item command="CmdDataTree-Swap-Allomorph"/>
-			<item command="CmdDataTree-Convert-Allomorph-AffixProcess"/>
-			<item label="-" translate="do not translate"/>
-			<item command="CmdMorphJumpToConcordance" label="Show Allomorph in Concordance" a10status="See LexiconEditToolDataTreeStackLexEntryManager: This overrides base label." />
-		</menu>
-		<menu id="mnuDataTree-AffixProcess">
-			<item command="CmdDataTree-MoveUp-Allomorph"/>
-			<item command="CmdDataTree-MoveDown-Allomorph"/>
-			<item label="-" translate="do not translate"/>
-			<item command="CmdDataTree-Delete-Allomorph"/>
-			<item command="CmdDataTree-Swap-Allomorph"/>
-			<item command="CmdDataTree-Convert-Allomorph-AffixAllomorph"/>
-			<item label="-" translate="do not translate"/>
-			<item command="CmdMorphJumpToConcordance" label="Show Allomorph in Concordance" a10status="See LexiconEditToolDataTreeStackLexEntryManager: This overrides base label." />
-		</menu>
 		<menu id="mnuDataTree-Picture">
 			<item command="CmdDataTree-Properties-Picture" />
 			<item label="-" translate="do not translate"/>
@@ -273,13 +190,6 @@
 			<item command="CmdDataTree-MoveDown-Picture"/>
 			<item label="-" translate="do not translate"/>
 			<item command="CmdDataTree-Delete-Picture"/>
-		</menu>
-		<menu id="mnuDataTree-AlternateForm">
-			<item command="CmdDataTree-MoveUp-AlternateForm"/>
-			<item command="CmdDataTree-MoveDown-AlternateForm"/>
-			<item label="-" translate="do not translate"/>
-			<item command="CmdDataTree-Merge-AlternateForm"/>
-			<item command="CmdDataTree-Delete-AlternateForm"/>
 		</menu>
 		<menu id="mnuDataTree-MSAs">
 			<item command="CmdDataTree-Insert-DerivationAffixMsa"/>
