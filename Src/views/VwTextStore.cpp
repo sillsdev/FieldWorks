@@ -722,7 +722,7 @@ STDMETHODIMP VwTextStore::GetText(LONG acpFirst, LONG acpLast, WCHAR * pchPlain,
 	if (acpLast == -1)
 	{
 		acpLast = LogToAcp(cchTotalNfd);
-		ichLast = min(ichFirst + (int)cchPlainReq, cchTotalNfd);
+		ichLast = cchTotalNfd;
 	}
 	else if (acpLast - acpFirst > (LONG)cchPlainReq)
 	{

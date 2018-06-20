@@ -1521,6 +1521,47 @@ namespace TestViews
 		}
 
 		/*--------------------------------------------------------------------------------------
+		Test VwTextStore::GetText(): Should return good values even if
+		using NFC and the buffer is a length that would break up a set of combining NFD
+		characters, if it were holding the original data.
+		--------------------------------------------------------------------------------------*/
+		void testGetText_SplitNFD()
+		{
+			if (!m_fTestable)
+				return;
+
+			static const OLECHAR * data[] = {
+				L"\x0073\x0323\x0307 \x0073\x0323\x0307 \x0073\x0323\x0307 \x0073\x0323\x0307 \x0073\x0323\x0307",
+				NULL
+			};
+			static const OLECHAR dataInNFC[] = L"\x1e69 \x1e69 \x1e69 \x1e69 \x1e69";
+
+			MakeStringList(data);
+			TS_RUNINFO tri[10];
+			// This needn't mean anything. But 6 is part-way into the second group of combining
+			// characters, if we look 6 characters into 'data'. Let's not have this mess up our
+			// output.
+			const int kcch2BufferLength = 6;
+			OLECHAR rgch2Buffer[kcch2BufferLength];
+			static const OLECHAR expected[] = L"\x1e69 \x1e69 \x1e69";
+			// Only 5 characters because of a null terminator in the buffer.
+			ULONG cchLengthOfExpectedNfc = 5;
+
+			// Need some selection to start with as it determines which paragraph.
+			IVwSelectionPtr qselTemp;
+			CheckHr(m_qrootb->MakeSimpleSel(true, true, false, true, &qselTemp));
+
+			// SUT
+			LockGetText lgt(m_qtxs, 0, -1, rgch2Buffer, kcch2BufferLength, tri, 10);
+
+			unitpp::assert_eq("Should succeed", S_OK, lgt.m_hrLock);
+			unitpp::assert_eq("GetText(0,-1) ichNext", (LONG)cchLengthOfExpectedNfc, lgt.m_ichNext);
+			unitpp::assert_eq("GetText(0,-1) cchOut", cchLengthOfExpectedNfc, lgt.m_cchOut);
+			unitpp::assert_true("GetText(0,-1) rgch2Buffer",
+				wcsncmp(rgch2Buffer, expected, cchLengthOfExpectedNfc) == 0);
+		}
+
+		/*--------------------------------------------------------------------------------------
 			Test VwTextStore::GetText(): should return NFC with proper run info.
 			This tests the case where we don't want to get any run info.
 		--------------------------------------------------------------------------------------*/
