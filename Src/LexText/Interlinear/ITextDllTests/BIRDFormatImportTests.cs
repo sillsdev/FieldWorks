@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -636,6 +636,65 @@ namespace SIL.FieldWorks.IText
 					Assert.True(secondAnalyses.Count.Equals(1));
 					Assert.False(secondAnalyses[0].Guid.Equals(originalWordGuid));
 					Assert.AreEqual("nihimbilira", secondPara.Contents.Text, "The contents of the second paragraph do not match the words.");
+				}
+			}
+		}
+
+		[Test]
+		public void TestMergeFlexText_NotesWithMatchingContentMerges()
+		{
+			const string commonNote = "Note in both xml.";
+			const string commonXml = "<document version=\"2\">" +
+								"<interlinear-text guid=\"bcabf849-473c-4902-957b-8de378248b7f\">" +
+								"<item type=\"title\" lang=\"en\">My Green Mat</item>" +
+								"<item type=\"comment\" lang=\"en\">This is a story about a green mat as told by my language assistant.</item>" +
+								"<paragraphs><paragraph guid=\"a122d9bb-2d43-4e4c-b74f-6fe44d1c6cb2\">" +
+								"<phrases><phrase guid=\"b405f3c0-58e1-4492-8a40-e955774a6911\">" +
+								"<words><word guid=\"45e6f056-98ac-45d6-858e-59450993f268\">" +
+								"<item type=\"txt\" lang=\"qaa-x-kal\">pus</item>" +
+								"</word></words><item type=\"note\" lang=\"en\">" + commonNote + "</item>";
+			string firstXml = commonXml + "<item type=\"note\" lang=\"en\">Note in first xml.</item>" +
+								"<item type=\"note\" lang=\"fr\">Une note pour le premier xml.</item>" +
+								"</phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+			// Missing the second and third note and adds a fourth note."
+			string secondXml = commonXml + "<item type=\"note\" lang=\"fr\">Une note pour les deux xml.</item>" +
+								"<item type=\"note\" lang=\"en\">Note in second xml.</item>" +
+								"</phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+
+			int wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
+			int wsEng = Cache.WritingSystemFactory.GetWsFromStr("en");
+			LLIMergeExtension li = new LLIMergeExtension(Cache, null, null);
+			LCModel.IText text = null;
+			using (var firstStream = new MemoryStream(Encoding.ASCII.GetBytes(firstXml.ToCharArray())))
+			{
+				bool result = li.ImportInterlinear(new DummyProgressDlg(), firstStream, 0, ref text);
+				Assert.AreEqual(0, li.NumTimesDlgShown, "The user should not have been prompted to merge on the initial import.");
+				Assert.True(result);
+				IStTxtPara para = text.ContentsOA.ParagraphsOS[0] as IStTxtPara;
+				Assert.AreEqual(3, para.SegmentsOS[0].NotesOS.Count);
+				Assert.AreEqual(commonNote, para.SegmentsOS[0].NotesOS[0].Content.get_String(wsEng).Text);
+				Assert.AreEqual("Note in first xml.", para.SegmentsOS[0].NotesOS[1].Content.get_String(wsEng).Text);
+				Assert.AreEqual("Une note pour le premier xml.", para.SegmentsOS[0].NotesOS[2].Content.get_String(wsFr).Text);
+
+				// Put some French content into the first note. Doing it here instead of in the above xml will update
+				// the first note to have both languages, rather than creating a new note with French content.
+				ITsString tss = TsStringUtils.MakeString("Une note pour les deux xml.", wsFr);
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
+					() => { para.SegmentsOS[0].NotesOS[0].Content.set_String(wsFr, tss); });
+				Assert.AreEqual("Une note pour les deux xml.", para.SegmentsOS[0].NotesOS[0].Content.get_String(wsFr).Text);
+				using (var secondStream = new MemoryStream(Encoding.ASCII.GetBytes(secondXml.ToCharArray())))
+				{
+					bool mergeResult = li.ImportInterlinear(new DummyProgressDlg(), secondStream, 0, ref text);
+					Assert.AreEqual(1, li.NumTimesDlgShown, "User should have been prompted to merge the text.");
+					Assert.True(mergeResult);
+					Assert.AreEqual(4, para.SegmentsOS[0].NotesOS.Count);
+					// The first three notes should remain unchanged.
+					Assert.AreEqual(commonNote, para.SegmentsOS[0].NotesOS[0].Content.get_String(wsEng).Text, "The first note's Eng content should not have changed.");
+					Assert.AreEqual("Une note pour les deux xml.", para.SegmentsOS[0].NotesOS[0].Content.get_String(wsFr).Text, "The first note's Fr content should not have changed.");
+					Assert.AreEqual("Note in first xml.", para.SegmentsOS[0].NotesOS[1].Content.get_String(wsEng).Text, "The second note should not have changed.");
+					Assert.AreEqual("Une note pour le premier xml.", para.SegmentsOS[0].NotesOS[2].Content.get_String(wsFr).Text, "The third note should note have changed.");
+					// The addition of a fourth note should be the only change.
+					Assert.AreEqual("Note in second xml.", para.SegmentsOS[0].NotesOS[3].Content.get_String(wsEng).Text, "A new note should have been added.");
 				}
 			}
 		}
