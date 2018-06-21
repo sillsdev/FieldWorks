@@ -922,6 +922,15 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Redo Delete Reference.
+        /// </summary>
+        internal static string ksRedoDeleteRef {
+            get {
+                return ResourceManager.GetString("ksRedoDeleteRef", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Redo Removing Affix.
         /// </summary>
         internal static string ksRedoRemovingAffix {
@@ -1257,6 +1266,15 @@ namespace LanguageExplorer.Areas {
         internal static string ksUndoChangeSlotName {
             get {
                 return ResourceManager.GetString("ksUndoChangeSlotName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo Delete Reference.
+        /// </summary>
+        internal static string ksUndoDeleteRef {
+            get {
+                return ResourceManager.GetString("ksUndoDeleteRef", resourceCulture);
             }
         }
         

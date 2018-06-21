@@ -137,6 +137,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// NB: Senses go here. But, another manager worries about them.
 			// <part ref="Senses" param="Normal" expansion="expanded"/>
 
+#if RANDYTODO
+			// TODO: Finish up the ending of LexEntry
+#endif
 			/*
 			<part ref="GrammaticalFunctionsSection" label="Grammatical Info. Details" menu="mnuDataTree-Help" hotlinks="mnuDataTree-Help">
 				<indent>
@@ -250,15 +253,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
+#if RANDYTODO
+				// TODO: Add these two menus.
+#endif
 				/*
 				 Add_another_Variant_Info_section
 				 Add_another_Variant_Info_section_Tooltip
-					<menu id="mnuDataTree-VariantSpec">
 						<command id="CmdDataTree-Insert-VariantSpec" label="Add another Variant Info section" message="DataTreeInsert">
 							<parameters field="EntryRefs" className="LexEntryRef" ownerClass="LexEntry" />
 						</command>
-						<command id="CmdDataTree-Delete-VariantSpec" label="Delete Variant Info" message="DataTreeDelete" icon="Delete"/>
-					</menu>
+						<command id="CmdDataTree-Delete-VariantSpec" label="Delete Variant Info" message="DataTreeDelete" icon="Delete"/> , image: LanguageExplorerResources.Delete
 				*/
 			}
 
@@ -321,22 +325,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 			using (var imageHolder = new LanguageExplorer.DictionaryConfiguration.ImageHolder())
 			{
-				/*
-					<command id="CmdDataTree-MoveUp-Pronunciation" label="Move Pronunciation _Up" message="MoveUpObjectInSequence" icon="MoveUp">
-						<parameters field="Pronunciations" className="LexPronunciation"/>
-					</command>
-				*/
+				// <command id="CmdDataTree-MoveUp-Pronunciation" label="Move Pronunciation _Up" message="MoveUpObjectInSequence" icon="MoveUp">
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInOwningSequence_Clicked, LexiconResources.Move_Pronunciation_Up, image: imageHolder.smallCommandImages.Images[12]);
 				bool visible;
 				var enabled = AreaServices.CanMoveUpObjectInOwningSequence(MyDataTree, _cache, out visible);
 				menu.Visible = true;
 				menu.Enabled = enabled;
 
-				/*
-					<command id="CmdDataTree-MoveDown-Pronunciation" label="Move Pronunciation _Down" message="MoveDownObjectInSequence" icon="MoveDown">
-						<parameters field="Pronunciations" className="LexPronunciation"/>
-					</command>
-				*/
+				// <command id="CmdDataTree-MoveDown-Pronunciation" label="Move Pronunciation _Down" message="MoveDownObjectInSequence" icon="MoveDown">
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveDownObjectInOwningSequence_Clicked, LexiconResources.Move_Pronunciation_Down, image: imageHolder.smallCommandImages.Images[14]);
 				enabled = AreaServices.CanMoveDownObjectInOwningSequence(MyDataTree, _cache, out visible);
 				menu.Visible = true;
@@ -346,13 +342,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// <item label="-" translate="do not translate"/>
 			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
-			/*
-				<command id="CmdDataTree-Delete-Pronunciation" label="Delete this Pronunciation" message="DataTreeDelete" icon="Delete">
-					<parameters field="Pronunciations" className="LexPronunciation"/>
-				</command>
-				Delete_this_Pronunciation
-			*/
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Delete_this_Foo_Clicked, LexiconResources.Delete_this_Pronunciation);
+			// <command id="CmdDataTree-Delete-Pronunciation" label="Delete this Pronunciation" message="DataTreeDelete" icon="Delete">
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Delete_this_Foo_Clicked, LexiconResources.Delete_this_Pronunciation, image: LanguageExplorerResources.Delete);
 			menu.Enabled = !slice.IsGhostSlice;
 
 			// Not added here. It is added by the slice, along with the generic slice menus.
@@ -440,12 +431,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// <item label="-" translate="do not translate"/>
 			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
-			/*
-				<command id="CmdDataTree-Delete-Etymology" label="Delete this Etymology" message="DataTreeDelete" icon="Delete">
-					<parameters field="Etymology" className="LexEtymology"/>
-				</command>
-			 */
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Delete_this_Foo_Clicked, LexiconResources.Delete_this_Etymology);
+			// <command id="CmdDataTree-Delete-Etymology" label="Delete this Etymology" message="DataTreeDelete" icon="Delete">
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Delete_this_Foo_Clicked, LexiconResources.Delete_this_Etymology, image: LanguageExplorerResources.Delete);
 			menu.Enabled = !slice.IsGhostSlice;
 
 			// End: <menu id="mnuDataTree-Etymology">
@@ -459,6 +446,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void Register_Comment_To_Messages_Bundle()
 		{
+#if RANDYTODO
+			// TODO: Add these.
+#endif
 			/*
 		   <part ref="CommentAllA"/>
 				<part id="LexEntry-Detail-CommentAllA" type="Detail">
@@ -558,10 +548,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					() => _cache.DomainDataByFlid.MoveOwnSeq(owningObject.Hvo, owningFlid, indexInOwningProperty, indexInOwningProperty, owningObject.Hvo, owningFlid, indexInOwningProperty + 2));
 			}
 		}
-
-		#region ordinary slice menus
-
-		#endregion ordinary slice menus
 
 		#region popup slice menus
 

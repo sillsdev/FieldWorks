@@ -19,6 +19,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		internal const string mnuDataTree_LexemeForm = "mnuDataTree-LexemeForm";
 		internal const string mnuDataTree_VariantForms = "mnuDataTree-VariantForms";
 		internal const string mnuDataTree_Allomorph = "mnuDataTree-Allomorph";
+		internal const string mnuDataTree_AffixProcess = "mnuDataTree-AffixProcess";
+		internal const string mnuDataTree_VariantForm = "mnuDataTree-VariantForm";
+		internal const string mnuDataTree_AlternateForm = "mnuDataTree-AlternateForm";
 
 		internal const string CmdGoToEntry = "GoToEntry_Clicked";
 		internal const string Show_Dictionary_Preview_Clicked = "Show_Dictionary_Preview_Clicked";

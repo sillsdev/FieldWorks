@@ -144,6 +144,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Convert to Affix Allomorph.
+        /// </summary>
+        internal static string Convert_to_Affix_Allomorph {
+            get {
+                return ResourceManager.GetString("Convert_to_Affix_Allomorph", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Convert to Affix Form.
         /// </summary>
         internal static string Convert_to_Affix_Form {
@@ -171,11 +180,29 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete AlternateForm.
+        /// </summary>
+        internal static string Delete_AlternateForm {
+            get {
+                return ResourceManager.GetString("Delete_AlternateForm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete Complex Form Info.
         /// </summary>
         internal static string Delete_Complex_Form_Info {
             get {
                 return ResourceManager.GetString("Delete_Complex_Form_Info", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Reference.
+        /// </summary>
+        internal static string Delete_Reference {
+            get {
+                return ResourceManager.GetString("Delete_Reference", resourceCulture);
             }
         }
         
@@ -194,6 +221,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string Delete_this_Pronunciation {
             get {
                 return ResourceManager.GetString("Delete_this_Pronunciation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Variant.
+        /// </summary>
+        internal static string Delete_Variant {
+            get {
+                return ResourceManager.GetString("Delete_Variant", resourceCulture);
             }
         }
         
@@ -890,6 +926,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string Merge_Allomorph_into {
             get {
                 return ResourceManager.GetString("Merge_Allomorph_into", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Merge AlternateForm into....
+        /// </summary>
+        internal static string Merge_AlternateForm_into {
+            get {
+                return ResourceManager.GetString("Merge_AlternateForm_into", resourceCulture);
             }
         }
         

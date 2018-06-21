@@ -2152,15 +2152,6 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Redo Delete Reference.
-        /// </summary>
-        internal static string ksRedoDeleteRef {
-            get {
-                return ResourceManager.GetString("ksRedoDeleteRef", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Redo Delete Relation.
         /// </summary>
         internal static string ksRedoDeleteRelation {
@@ -2875,15 +2866,6 @@ namespace LanguageExplorer {
         internal static string ksUndoDeleteParticipants {
             get {
                 return ResourceManager.GetString("ksUndoDeleteParticipants", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo Delete Reference.
-        /// </summary>
-        internal static string ksUndoDeleteRef {
-            get {
-                return ResourceManager.GetString("ksUndoDeleteRef", resourceCulture);
             }
         }
         

@@ -42,9 +42,6 @@
 		<command id="CmdShowSubentryUnderComponent" label="Show Subentry under this Component" message="AddComponentToPrimary">
 			<parameters tool="lexiconEdit" className="LexEntryRef"/>
 		</command>
-		<command id="CmdEntryJumpToDefault" label="Show Entry in Lexicon" message="JumpToTool">
-			<parameters tool="lexiconEdit" className="LexEntry"/>
-		</command>
 		<command id="CmdPOSJumpToDefault" label="Show in Category Edit" message="JumpToTool">
 			<parameters tool="posEdit" className="PartOfSpeech" ownerClass="LangProject" ownerField="PartsOfSpeech" />
 		</command>

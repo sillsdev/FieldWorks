@@ -26,7 +26,7 @@ namespace LanguageExplorer.Areas.Lexicon
 
 		protected override void Delete()
 		{
-			Delete(LanguageExplorerResources.ksUndoDeleteRef, LanguageExplorerResources.ksRedoDeleteRef);
+			Delete(AreaResources.ksUndoDeleteRef, AreaResources.ksRedoDeleteRef);
 		}
 
 		protected override void UpdateTimeStampsIfNeeded(int[] hvos)

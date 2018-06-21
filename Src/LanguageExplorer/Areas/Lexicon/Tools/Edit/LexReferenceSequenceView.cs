@@ -91,7 +91,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			}
 			else
 			{
-				DeleteObjectFromVector(sel, cvsli, hvoObj, LanguageExplorerResources.ksUndoDeleteRef, LanguageExplorerResources.ksRedoDeleteRef);
+				DeleteObjectFromVector(sel, cvsli, hvoObj, AreaResources.ksUndoDeleteRef, AreaResources.ksRedoDeleteRef);
 			}
 		}
 

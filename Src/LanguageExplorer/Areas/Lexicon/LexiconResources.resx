@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -506,5 +506,20 @@
   </data>
   <data name="Swap_Allomorph_with_Lexeme_Form" xml:space="preserve">
     <value>Swap Allomorph with Lexeme Form</value>
+  </data>
+  <data name="Delete_AlternateForm" xml:space="preserve">
+    <value>Delete AlternateForm</value>
+  </data>
+  <data name="Delete_Reference" xml:space="preserve">
+    <value>Delete Reference</value>
+  </data>
+  <data name="Delete_Variant" xml:space="preserve">
+    <value>Delete Variant</value>
+  </data>
+  <data name="Merge_AlternateForm_into" xml:space="preserve">
+    <value>Merge AlternateForm into...</value>
+  </data>
+  <data name="Convert_to_Affix_Allomorph" xml:space="preserve">
+    <value>Convert to Affix Allomorph</value>
   </data>
 </root>

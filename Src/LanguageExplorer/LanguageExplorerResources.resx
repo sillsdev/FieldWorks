@@ -780,9 +780,6 @@ you expect.</value>
   <data name="ksRedoDeleteParticipants" xml:space="preserve">
     <value>Redo Delete Participants</value>
   </data>
-  <data name="ksRedoDeleteRef" xml:space="preserve">
-    <value>Redo Delete Reference</value>
-  </data>
   <data name="ksRedoDeleteRelation" xml:space="preserve">
     <value>Redo Delete Relation</value>
   </data>
@@ -892,9 +889,6 @@ you expect.</value>
   </data>
   <data name="ksUndoDeleteParticipants" xml:space="preserve">
     <value>Undo Delete Participants</value>
-  </data>
-  <data name="ksUndoDeleteRef" xml:space="preserve">
-    <value>Undo Delete Reference</value>
   </data>
   <data name="ksUndoDeleteRelation" xml:space="preserve">
     <value>Undo Delete Relation</value>

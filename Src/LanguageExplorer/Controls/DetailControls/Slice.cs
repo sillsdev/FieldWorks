@@ -57,7 +57,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected string m_strLabel;
 		protected string m_strAbbr;
-		protected bool m_isHighlighted = false;
+		protected bool m_isHighlighted;
 		protected Font m_fontLabel = new Font(MiscUtils.StandardSansSerif, 10);
 		protected Point m_location;
 
@@ -69,6 +69,15 @@ namespace LanguageExplorer.Controls.DetailControls
 		#endregion Data members
 
 		#region Properties
+
+		internal Slice NextSlice
+		{
+			get
+			{
+				var indexOfThis = IndexInContainer;
+				return indexOfThis < ContainingDataTree.Slices.Count - 1 ? ContainingDataTree.Slices[indexOfThis + 1] : null;
+			}
+		}
 
 		/// <summary>
 		/// The weight of object that starts at the beginning of this slice.
@@ -1985,44 +1994,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			return closeSlices;
 		}
-
-#if RANDYTODO
-		/// <summary>
-		/// Check whether a "Delete Reference" command can be executed.  Currently implemented
-		/// only for the VariantEntryBackRefs / LexEntry/EntryRefs/ComponentLexemes references.
-		/// </summary>
-		public virtual bool CanDeleteReferenceNow(Command cmd)
-		{
-			return FromVariantBackRefField;
-		}
-
-		/// <summary>
-		/// Handle a "Delete Reference" command.  Currently implemented only for the
-		/// VariantEntryBackRefs / LexEntry/EntryRefs/ComponentLexemes references.
-		/// </summary>
-		public virtual void HandleDeleteReferenceCommand(Command cmd)
-		{
-			if (NextSlice != null && NextSlice.Object != null)
-			{
-				var ler = NextSlice.Object as ILexEntryRef;
-				if (ler != null)
-				{
-					UndoableUnitOfWorkHelper.Do(DetailControlsStrings.ksUndoDeleteRef, DetailControlsStrings.ksRedoDeleteRef, ler, () =>
-					{
-						ler.ComponentLexemesRS.Remove(ContainingDataTree.Root);
-						// probably not needed, but safe...
-						if (ler.PrimaryLexemesRS.Contains(ContainingDataTree.Root))
-							ler.PrimaryLexemesRS.Remove(ContainingDataTree.Root);
-
-						ILexEntry entry;
-						entry = (ILexEntry)m_cache.ServiceLocator.GetObject(ler.OwningEntry.Hvo);
-						if (entry.EntryRefsOS.Contains(ler))
-							entry.EntryRefsOS.Remove(ler);
-					});
-				}
-			}
-		}
-#endif
 
 		/// <summary>
 		/// Gives the object that should be the target of Delete, copy, etc. for menus operating on this slice label.

@@ -29,7 +29,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary />
 		protected override void Delete()
 		{
-			Delete(LanguageExplorerResources.ksUndoDeleteRef, LanguageExplorerResources.ksRedoDeleteRef);
+			Delete(AreaResources.ksUndoDeleteRef, AreaResources.ksRedoDeleteRef);
 		}
 
 		/// <summary />
