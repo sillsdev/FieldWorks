@@ -423,9 +423,7 @@
 			</slice>
 		</part>
 		<part id="LexSense-Detail-ReversalEntries" type="detail">
-			<slice field="ReferringReversalIndexEntries" label="Reversal Entries" editor="Custom" assemblyPath="LanguageExplorer.dll"
-				class="LanguageExplorer.Areas.Lexicon.Tools.Edit.ReversalIndexEntrySlice"
-				tooltip="Translation equivalent used in the finder list (Reversal Index)."/>
+			<slice field="ReferringReversalIndexEntries" label="Reversal Entries" editor="reversalindexentry" tooltip="Translation equivalent used in the finder list (Reversal Index)."/>
 		</part>
 		<part id="LexSense-Detail-SenseType" type="Detail">
 			<slice field="SenseType" label="Sense Type" editor="possAtomicReference" >
@@ -536,8 +534,7 @@
 			<slice field="GrammarNote" label="Grammar Note" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="LexSense-Detail-ComplexFormEntries" type="Detail">
-			<slice field="ComplexFormEntries" label="Complex Forms"
-				   editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.EntrySequenceReferenceSlice">
+			<slice field="ComplexFormEntries" label="Complex Forms" editor="entrysequencereference">
 				<deParams displayProperty="HeadWord"/>
 			</slice>
 		</part>
@@ -545,20 +542,17 @@
 			<seq field="ComplexFormsNotSubentries" inheritSeps="true" targetclass="LexEntryRef" sort="ascending"/>
 		</part>
 		<part id="LexSense-Detail-VisibleComplexFormEntries" type="Detail">
-			<slice field="VisibleComplexFormBackRefs" label="Referenced Complex Forms" tooltip="Complex forms shown in this field are shown as references in this component entry in Dictionary." menu="mnuReorderVector" reorder="true"
-				   editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.EntrySequenceReferenceSlice" helpTopicID="khtpField-ReferencedComplexForms-EntryLevel">
+			<slice field="VisibleComplexFormBackRefs" label="Referenced Complex Forms" tooltip="Complex forms shown in this field are shown as references in this component entry in Dictionary." menu="mnuReorderVector" reorder="true" editor="entrysequencereference" helpTopicID="khtpField-ReferencedComplexForms-EntryLevel">
 				<deParams displayProperty="HeadWord"/>
 			</slice>
 		</part>
 		<part id="LexSense-Detail-Subentries" type="Detail">
-			<slice field="Subentries" label="Subentries" tooltip="Show these subentries below this sense in root-based dictionary views."
-				   editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.EntrySequenceReferenceSlice">
+			<slice field="Subentries" label="Subentries" tooltip="Show these subentries below this sense in root-based dictionary views." editor="entrysequencereference">
 				<deParams displayProperty="HeadWord"/>
 			</slice>
 		</part>
 		<part id="LexSense-Detail-VariantForms" type="Detail">
-			<slice field="VariantFormEntries" label="Variants of Sense" editable="no"
-				   editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.EntrySequenceReferenceSlice">
+			<slice field="VariantFormEntries" label="Variants of Sense" editable="no" editor="entrysequencereference">
 				<deParams displayProperty="HeadWord"/>
 			</slice>
 		</part>
@@ -575,12 +569,10 @@
 			<slice field="SocioLinguisticsNote" label="Sociolinguistics Note" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="LexSense-Detail-Examples" type="detail">
-			<seq field="Examples" ghost="Example" ghostWs="vernacular" ghostLabel="Example" ghostAbbe="ex"
-				menu="mnuDataTree-Examples"/>
+			<seq field="Examples" ghost="Example" ghostWs="vernacular" ghostLabel="Example" ghostAbbe="ex" menu="mnuDataTree-Examples"/>
 		</part>
 		<part id="LexSense-Detail-ExtendedNotes" type="detail">
-			<seq field="ExtendedNote" ghost="Discussion" ghostWs="analysis" ghostLabel="Extended Note" ghostAbbe="ext"
-				menu="mnuDataTree-ExtendedNotes"/>
+			<seq field="ExtendedNote" ghost="Discussion" ghostWs="analysis" ghostLabel="Extended Note" ghostAbbe="ext" menu="mnuDataTree-ExtendedNotes"/>
 		</part>
 		<part id="LexSense-Jt-HeadWord" type="jtview">
 			<string field="HeadWord"/>
@@ -697,8 +689,7 @@
 			<configureMlString field="MLOwnerOutlineName" />
 		</part>
 		<part id="LexSense-Detail-CurrentLexReferences" type="detail">
-			<slice label="Lexical Relations" field="LexSenseReferences" editor="custom" assemblyPath="LanguageExplorer.dll"
-				class="LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceMultiSlice" />
+			<slice label="Lexical Relations" field="LexSenseReferences" editor="lexreferencemulti" />
 		</part>
 		<part id="LexSense-Jt-StemComplexFormsConfig">
 			<seq field="VisibleComplexFormBackRefs" layout="publishStemSenseComplexFormRef" inheritSeps="true" targetclass="LexEntryRef"/>

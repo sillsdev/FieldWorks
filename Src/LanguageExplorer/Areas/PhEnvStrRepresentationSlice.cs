@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Xml.Linq;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.LCModel;
@@ -14,25 +13,14 @@ namespace LanguageExplorer.Areas
 	/// </summary>
 	internal sealed class PhEnvStrRepresentationSlice : ViewPropertySlice, IPhEnvSliceCommon
 	{
-		public PhEnvStrRepresentationSlice(ICmObject obj)
-			: base(new StringRepSliceView(obj.Hvo), obj, StringRepSliceVc.Flid)
-		{
-		}
-
 		/// <summary>
 		/// We want the persistence provider, and the easiest way to get it is to get all
 		/// this other stuff we don't need or use.
 		/// </summary>
-		public PhEnvStrRepresentationSlice(LcmCache cache, string editor, int flid,
-			XElement element, ICmObject obj,
-			IPersistenceProvider persistenceProvider, int ws)
+		public PhEnvStrRepresentationSlice(ICmObject obj, IPersistenceProvider persistenceProvider)
 			: base(new StringRepSliceView(obj.Hvo), obj, StringRepSliceVc.Flid)
 		{
 			PersistenceProvider = persistenceProvider;
-		}
-
-		public PhEnvStrRepresentationSlice()
-		{
 		}
 
 		/// <summary>

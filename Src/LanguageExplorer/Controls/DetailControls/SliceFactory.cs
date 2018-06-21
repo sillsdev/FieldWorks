@@ -5,6 +5,17 @@
 using System;
 using System.IO;
 using System.Xml.Linq;
+using LanguageExplorer.Areas;
+using LanguageExplorer.Areas.Grammar;
+using LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit;
+using LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit;
+using LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit;
+using LanguageExplorer.Areas.Grammar.Tools.PosEdit;
+using LanguageExplorer.Areas.Lexicon.Tools.Edit;
+using LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes;
+using LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit;
+using LanguageExplorer.Areas.Notebook.Tools.NotebookEdit;
+using LanguageExplorer.Areas.TextsAndWords.Tools.Analyses;
 using LanguageExplorer.Controls.DetailControls.Resources;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.LcmUi;
@@ -71,6 +82,12 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			var sliceWasRecyled = false;
 			Slice slice;
+
+			// Theoretically, 'editor' can be null, as that is one of the switch options, below.
+			if (!string.IsNullOrWhiteSpace(editor))
+			{
+				editor = editor.ToLowerInvariant();
+			}
 			switch(editor)
 			{
 				case "multistring": // first, these are the most common slices.
@@ -317,17 +334,150 @@ namespace LanguageExplorer.Controls.DetailControls
 					break;
 				}
 
-				case "custom":
+				case "featuresysteminflectionfeaturelistdlglauncher":
 				{
-					slice = (Slice)DynamicLoader.CreateObject(node);
+					slice = new FeatureSystemInflectionFeatureListDlgLauncherSlice();
 					break;
 				}
 
-				case "customwithparams":
+				case "reventrysensescollectionreference":
 				{
-					slice = (Slice)DynamicLoader.CreateObject(node, cache, editor, flid, node, obj, persistenceProvider, GetWs(cache, flexComponentParameters.PropertyTable, node));
+					slice = new RevEntrySensesCollectionReferenceSlice();
 					break;
 				}
+
+				case "recordreferencevector":
+				{
+					slice = new RecordReferenceVectorSlice();
+					break;
+				}
+
+				case "roledparticipants":
+				{
+					slice = new RoledParticipantsSlice();
+					break;
+				}
+
+				case "phonologicalfeaturelistdlglauncher":
+				{
+					slice = new PhonologicalFeatureListDlgLauncherSlice();
+					break;
+				}
+
+				case "msainflectionfeaturelistdlglauncher":
+				{
+					slice = new MsaInflectionFeatureListDlgLauncherSlice();
+					break;
+				}
+
+				case "msadlglauncher":
+				{
+					slice = new MSADlgLauncherSlice();
+					break;
+				}
+
+				case "lexreferencemulti":
+				{
+					slice = new LexReferenceMultiSlice();
+					break;
+				}
+
+				case "entrysequencereference":
+				{
+					slice = new EntrySequenceReferenceSlice();
+					break;
+				}
+
+				case "audiovisual":
+				{
+					slice = new AudioVisualSlice();
+					break;
+				}
+
+				case "interlinear":
+				{
+					slice = new InterlinearSlice();
+					break;
+				}
+
+				case "metaruleformula":
+				{
+					slice = new MetaRuleFormulaSlice();
+					break;
+				}
+
+				case "regruleformula":
+				{
+					slice = new RegRuleFormulaSlice();
+					break;
+				}
+
+				case "adhoccoprohibvectorreference":
+				{
+					slice = new AdhocCoProhibVectorReferenceSlice();
+					break;
+				}
+
+				case "adhoccoorohibvectorreferencedisabled":
+				{
+					slice = new AdhocCoProhibVectorReferenceDisabledSlice();
+					break;
+				}
+
+				case "adhoccoprohibatomicreference":
+				{
+					slice = new AdhocCoProhibAtomicReferenceSlice();
+					break;
+				}
+
+				case "adhoccoprohibatomicreferencedisabled":
+				{
+					slice = new AdhocCoProhibAtomicReferenceDisabledSlice();
+					break;
+				}
+
+				case "inflaffixtemplate":
+				{
+					slice = new InflAffixTemplateSlice();
+					break;
+				}
+
+				case "affixruleformula":
+				{
+					slice = new AffixRuleFormulaSlice();
+					break;
+				}
+
+				case "reversalindexentry":
+				{
+					slice = new ReversalIndexEntrySlice();
+					break;
+				}
+
+				case "ghostlexref":
+				{
+					slice = new GhostLexRefSlice();
+					break;
+				}
+
+				case "chorusmessage":
+				{
+					slice = new ChorusMessageSlice();
+					break;
+				}
+
+				case "reversalindexentryform":
+				{
+					slice = new ReversalIndexEntryFormSlice(flid, obj);
+					break;
+				}
+
+				case "phenvstrrepresentation":
+				{
+					slice = new PhEnvStrRepresentationSlice(obj, persistenceProvider);
+					break;
+				}
+
 				case "ghostvector":
 				{
 					slice = new GhostReferenceVectorSlice(cache, obj, node);

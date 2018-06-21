@@ -30,11 +30,11 @@
 			<slice field="Restrictions" label="Restrictions" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="LexEntry-Detail-Messages" type="detail">
-			<slice field="Self" label="Messages" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.ChorusMessageSlice" helpTopicID="khtpField-LexEntry-Messages"  />
+			<slice field="Self" label="Messages" editor="chorusmessage" helpTopicID="khtpField-LexEntry-Messages"  />
 		</part>
 	<part id ="LexEntry-Detail-EntryRefsGhostComponents" type="detail">
 	  <if field="ComplexFormEntryRefs" lengthatmost="0">
-		<slice field="EntryRefs" label="Components" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.GhostLexRefSlice" >
+		<slice field="EntryRefs" label="Components" editor="ghostlexref" >
 		  <deParams displayProperty='HeadWord' />
 		</slice>
 	  </if>
@@ -57,7 +57,7 @@
 	</part>
 	<part id ="LexEntry-Detail-EntryRefsGhostVariantOf" type="detail">
 	  <if field="VariantEntryRefs" lengthatmost="0">
-		<slice field="EntryRefs" label="Variant of" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.GhostLexRefSlice" forVariant='true' helpTopicID="khtpField-LexEntryRef-VariantOf">
+		<slice field="EntryRefs" label="Variant of" editor="ghostlexref" forVariant='true' helpTopicID="khtpField-LexEntryRef-VariantOf">
 		  <deParams displayProperty='HeadWord'/>
 		</slice>
 	  </if>
@@ -799,11 +799,10 @@
 			</slice>
 		</part>
 		<part id="LexEntry-Detail-CurrentLexReferences" type="detail">
-			<slice label="Cross References" field="LexEntryReferences" editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceMultiSlice" />
+			<slice label="Cross References" field="LexEntryReferences" editor="lexreferencemulti" />
 		</part>
 		<part id="LexEntry-Detail-ComplexFormEntries" type="Detail">
-			<slice field="ComplexFormEntries" label="Complex Forms" menu="mnuReorderVector" reorder="true"
-				   editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.EntrySequenceReferenceSlice">
+			<slice field="ComplexFormEntries" label="Complex Forms" menu="mnuReorderVector" reorder="true" editor="entrysequencereference">
 				<deParams displayProperty="HeadWord"/>
 			</slice>
 		</part>
@@ -816,14 +815,12 @@
 			</slice>
 		</part>
 		<part id="LexEntry-Detail-VisibleComplexFormEntries" type="Detail">
-			<slice field="VisibleComplexFormBackRefs" label="Referenced Complex Forms" tooltip="Complex forms shown in this field are shown as references in this component entry in Dictionary." menu="mnuReorderVector" reorder="true"
-				   editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.EntrySequenceReferenceSlice" helpTopicID="khtpField-ReferencedComplexForms-PubLevel">
+			<slice field="VisibleComplexFormBackRefs" label="Referenced Complex Forms" tooltip="Complex forms shown in this field are shown as references in this component entry in Dictionary." menu="mnuReorderVector" reorder="true" editor="entrysequencereference" helpTopicID="khtpField-ReferencedComplexForms-PubLevel">
 				<deParams displayProperty="HeadWord"/>
 			</slice>
 		</part>
 		<part id="LexEntry-Detail-Subentries" type="Detail">
-			<slice field="Subentries" label="Subentries" tooltip="Show these subentries below this entry in root-based dictionary views." menu="mnuReorderVector" reorder="true"
-				   editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.EntrySequenceReferenceSlice">
+			<slice field="Subentries" label="Subentries" tooltip="Show these subentries below this entry in root-based dictionary views." menu="mnuReorderVector" reorder="true" editor="entrysequencereference">
 				<deParams displayProperty="HeadWord"/>
 			</slice>
 		</part>
@@ -1134,22 +1131,19 @@
 		</part>
 		<part id="LexEntryRef-Detail-ComponentLexemes" type="Detail">
 			<if field="RefType" intequals="1">
-				<slice field="ComponentLexemes" label="Components" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.EntrySequenceReferenceSlice"
-					   menu="mnuReorderVector">
+				<slice field="ComponentLexemes" label="Components" editor="entrysequencereference" menu="mnuReorderVector">
 					<deParams displayProperty='HeadWord' />
 				</slice>
 			</if>
 			<if field="RefType" intequals="0">
-				<slice field="ComponentLexemes" label="Variant of" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.EntrySequenceReferenceSlice"
-					   helpTopicID="khtpField-LexEntryRef-VariantOf">
+				<slice field="ComponentLexemes" label="Variant of" editor="entrysequencereference" helpTopicID="khtpField-LexEntryRef-VariantOf">
 					<deParams displayProperty='HeadWordPlusDialect' />
 				</slice>
 			</if>
 		</part>
 		<part id="LexEntryRef-Detail-PrimaryLexemes" type="Detail">
 			<if field="RefType" intequals="1">
-				<slice field="PrimaryLexemes" label="Show Subentry under" tooltip="The current entry is shown as a subentry under the component entries shown in this field in Dictionary." editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.EntrySequenceReferenceSlice"
-					   chooserDlgHelpTopicID="khtpChoose-lexiconEdit-ShowSubentryUnder">
+				<slice field="PrimaryLexemes" label="Show Subentry under" tooltip="The current entry is shown as a subentry under the component entries shown in this field in Dictionary." editor="entrysequencereference" chooserDlgHelpTopicID="khtpChoose-lexiconEdit-ShowSubentryUnder">
 					<deParams displayProperty='HeadWord' />
 				</slice>
 			</if>
@@ -1329,7 +1323,7 @@
 
 	<bin class="CmMedia">
 		<part id="CmMedia-Detail-MediaFile" type="Detail">
-			<slice label="Media File" field="MediaFile" editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.DetailControls.AudioVisualSlice" menu="mnuDataTree-CmMedia" sameObject="true"/><!-- assume same object as preceding field for formatting lines on display -->
+			<slice label="Media File" field="MediaFile" editor="audiovisual" menu="mnuDataTree-CmMedia" sameObject="true"/><!-- assume same object as preceding field for formatting lines on display -->
 		</part>
 		<part id="CmMedia-Detail-Label" type="Detail">
 			<slice label="Label" field="Label" editor="multistring" ws="all analysis" menu="mnuDataTree-CmMedia" sameObject="true"/><!-- assume same object as preceding field for formatting lines on display -->

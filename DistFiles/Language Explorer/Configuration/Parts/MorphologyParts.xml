@@ -167,10 +167,10 @@
 			</slice>
 		</part>
 		<part id="MoDerivAffMsa-Detail-FromMsFeatures" type="Detail">
-			<slice label="From Inflection Features" field="FromMsFeatures" weight="light" editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.MsaInflectionFeatureListDlgLauncherSlice"/>
+			<slice label="From Inflection Features" field="FromMsFeatures" weight="light" editor="msainflectionfeaturelistdlglauncher"/>
 		</part>
 		<part id="MoDerivAffMsa-Detail-ToMsFeatures" type="Detail">
-			<slice label="To Inflection Features" field="ToMsFeatures" weight="light" editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.MsaInflectionFeatureListDlgLauncherSlice"/>
+			<slice label="To Inflection Features" field="ToMsFeatures" weight="light" editor="msainflectionfeaturelistdlglauncher"/>
 		</part>
 		<part id="MoDerivAffMsa-Detail-FromProdRestrict" type="Detail">
 			<slice field="FromProdRestrict" label='From Exception "Features"' editor="possVectorReference" >
@@ -413,13 +413,12 @@
 		</part>
 	<part id="MoAffixAllomorph-Detail-MsEnvFeatures" type="Detail">
 	  <if target="owner" field="MorphoSyntaxAnalyses" lengthatleast="1">
-		<slice label="Required Features" field="MsEnvFeatures" weight="light" editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.MsaInflectionFeatureListDlgLauncherSlice"
-			   helpTopicID="khtpField-lexiconEdit-AlternateFormsSection-MoAffixAllomorph-MsEnvFeatures"/>
+		<slice label="Required Features" field="MsEnvFeatures" weight="light" editor="msainflectionfeaturelistdlglauncher" helpTopicID="khtpField-lexiconEdit-AlternateFormsSection-MoAffixAllomorph-MsEnvFeatures"/>
 	  </if>
 	</part>
 	<part id="MoAffixAllomorph-Detail-MsEnvFeaturesForLexemeForm" type="Detail">
 	  <if target="owner" field="MorphoSyntaxAnalyses" lengthatleast="1">
-		<slice label="Required Features" field="MsEnvFeatures" weight="light" editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.MsaInflectionFeatureListDlgLauncherSlice"/>
+		<slice label="Required Features" field="MsEnvFeatures" weight="light" editor="msainflectionfeaturelistdlglauncher"/>
 	  </if>
 	</part>
   </bin>
@@ -476,10 +475,10 @@
 	</bin>
 	<bin class="MoAffixProcess">
 		<part id="MoAffixProcess-Detail-RuleFormula" type="detail">
-			<slice id="RuleFormula" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.AffixRuleFormulaSlice"/>
+			<slice id="RuleFormula" editor="affixruleformula"/>
 		</part>
 		<part id="MoAffixProcess-Detail-RuleFormulaBasic" type="detail">
-			<slice id="RuleFormula" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.AffixRuleFormulaSlice" helpTopicID="khtpField-LexemeForm-RuleFormula"/>
+			<slice id="RuleFormula" editor="affixruleformula" helpTopicID="khtpField-LexemeForm-RuleFormula"/>
 		</part>
 	</bin>
 	<bin class="MoUnclassifiedAffixMsa">
@@ -513,7 +512,7 @@
 			</slice>
 		</part>
 		<part id="MoInflAffMsa-Detail-InflFeats" type="Detail">
-			<slice label="Inflection Features" field="InflFeats" weight="light" editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.MsaInflectionFeatureListDlgLauncherSlice"/>
+			<slice label="Inflection Features" field="InflFeats" weight="light" editor="msainflectionfeaturelistdlglauncher"/>
 		</part>
 		<part id="MoInflAffMsa-Detail-FromProdRestrict" type="Detail">
 			<slice field="FromProdRestrict" label='From Exception "Features"' editor="possVectorReference" >
@@ -640,7 +639,7 @@
 			</slice>
 		</part>
 		<part id="MoStemMsa-Detail-MsFeatures" type="Detail">
-			<slice label="Inflection Features" field="MsFeatures" weight="light" editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.MsaInflectionFeatureListDlgLauncherSlice"/>
+			<slice label="Inflection Features" field="MsFeatures" weight="light" editor="msainflectionfeaturelistdlglauncher"/>
 		</part>
 		<part id="MoStemMsa-Detail-ProdRestrict" type="Detail">
 			<slice field="ProdRestrict" label='Exception "Features"' editor="possVectorReference" >
@@ -724,7 +723,7 @@
 		<part id="MoMorphSynAnalysis-Detail-MainEdit" type="Detail">
 			<!-- Implements what should be the first thing shown for all MSA classes,
 			which allows editing of an MSA in a dlg. -->
-			<slice label="Category Info." editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.MSADlgLauncherSlice"/>
+			<slice label="Category Info." editor="msadlglauncher"/>
 		</part>
 		<part id="MoMorphSynAnalysis-Jt-Unknown" type="jtview">
 			<!-- Implements the default layout which all classes should override -->
@@ -1369,7 +1368,7 @@
 			</if>
 		</part>
 		<part id="MoInflAffixTemplate-Detail-TemplateTable" type="Detail">
-			<slice id="TemplateTable" label="Table" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.PosEdit.InflAffixTemplateSlice" layout="TemplateTablex" helpTopicID="khtpField-MoInflAffixTemplate-Table">
+			<slice id="TemplateTable" label="Table" editor="inflaffixtemplate" layout="TemplateTablex" helpTopicID="khtpField-MoInflAffixTemplate-Table">
 				<deParams menu="mnuInflAffixTemplate-TemplateTable"/>
 			</slice>
 		</part>
@@ -1716,10 +1715,10 @@
 	</bin>
 	<bin class="FsFeatStruc">
 		<part id="FsFeatStruc-Detail-FeatureSpecs" type="Detail">
-			<slice label="Features" weight="light" editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.MsaInflectionFeatureListDlgLauncherSlice"/>
+			<slice label="Features" weight="light" editor="msainflectionfeaturelistdlglauncher"/>
 		</part>
 		<part id="FsFeatStruc-Detail-RegionFeatureSpecs" type="Detail">
-			<slice label="Region Features" weight="light" editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.MsaInflectionFeatureListDlgLauncherSlice"/>
+			<slice label="Region Features" weight="light" editor="msainflectionfeaturelistdlglauncher"/>
 		</part>
 		<part id="FsFeatStruc-Detail-Type" type="Detail">
 			<slice field="Type" label="Feature Type" editor="defaultAtomicReference" >
@@ -2135,24 +2134,24 @@
 		</part>
 		<part id="MoAlloAdhocProhib-Detail-FirstAllomorph" type="Detail">
 			<if field="Disabled" boolequals="true">
-				<slice field="FirstAllomorph" label="Key Allomorph" textStyle="Disabled Text" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibAtomicReferenceDisabledSlice" >
+				<slice field="FirstAllomorph" label="Key Allomorph" textStyle="Disabled Text" editor="adhoccoprohibatomicreferencedisabled" >
 					<deParams displayProperty="LongName" ws="vernacular"/>
 				</slice>
 			</if>
 			<if field="Disabled" boolequals="false">
-				<slice field="FirstAllomorph" label="Key Allomorph" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibAtomicReferenceSlice" >
+				<slice field="FirstAllomorph" label="Key Allomorph" editor="adhoccoprohibatomicreference" >
 					<deParams displayProperty="LongName" ws="vernacular"/>
 				</slice>
 			</if>
 		</part>
 		<part id="MoAlloAdhocProhib-Detail-RestOfAllos">
 			<if field="Disabled" boolequals="true">
-				<slice field="RestOfAllos" label="Other Allomorph(s)" textStyle="Disabled Text" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibVectorReferenceDisabledSlice" >
+				<slice field="RestOfAllos" label="Other Allomorph(s)" textStyle="Disabled Text" editor="adhoccoorohibvectorreferencedisabled" >
 					<deParams displayProperty="LongName" ws="vernacular"/>
 				</slice>
 			</if>
 			<if field="Disabled" boolequals="false">
-				<slice field="RestOfAllos" label="Other Allomorph(s)" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibVectorReferenceSlice" >
+				<slice field="RestOfAllos" label="Other Allomorph(s)" editor="adhoccoprohibvectorreference" >
 					<deParams displayProperty="LongName" ws="vernacular"/>
 				</slice>
 			</if>
@@ -2327,24 +2326,24 @@
 		</part>
 		<part id="MoMorphAdhocProhib-Detail-FirstMorpheme" type="Detail">
 			<if field="Disabled" boolequals="true">
-				<slice field="FirstMorpheme" label="Key Morpheme" textStyle="Disabled Text" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibAtomicReferenceDisabledSlice" >
+				<slice field="FirstMorpheme" label="Key Morpheme" textStyle="Disabled Text" editor="adhoccoprohibatomicreferencedisabled" >
 					<deParams displayProperty="LongNameAdHocTs" ws="vernacular"/>
 				</slice>
 			</if>
 			<if field="Disabled" boolequals="false">
-				<slice field="FirstMorpheme" label="Key Morpheme" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibAtomicReferenceSlice" >
+				<slice field="FirstMorpheme" label="Key Morpheme" editor="adhoccoprohibatomicreference" >
 					<deParams displayProperty="LongNameAdHocTs" ws="vernacular"/>
 				</slice>
 			</if>
 		</part>
 		<part id="MoMorphAdhocProhib-Detail-RestOfMorphs">
 			<if field="Disabled" boolequals="true">
-				<slice field="RestOfMorphs" label="Other Morpheme(s)" textStyle="Disabled Text" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibVectorReferenceDisabledSlice" >
+				<slice field="RestOfMorphs" label="Other Morpheme(s)" textStyle="Disabled Text" editor="adhoccoorohibvectorreferencedisabled" >
 					<deParams displayProperty="LongNameAdHocTs" ws="vernacular"/>
 				</slice>
 			</if>
 			<if field="Disabled" boolequals="false">
-				<slice field="RestOfMorphs" label="Other Morpheme(s)" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibVectorReferenceSlice" >
+				<slice field="RestOfMorphs" label="Other Morpheme(s)" editor="adhoccoprohibvectorreference" >
 					<deParams displayProperty="LongNameAdHocTs" ws="vernacular"/>
 				</slice>
 			</if>
@@ -2495,7 +2494,7 @@
 	  </span>
 	</part>
 	<part id="PhPhoneme-Detail-Features" type="Detail">
-	  <slice field="Features" label="Phonological Features" editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit.PhonologicalFeatureListDlgLauncherSlice">
+	  <slice field="Features" label="Phonological Features" editor="phonologicalfeaturelistdlglauncher">
 		  <deParams ws="best vernacular" displayProperty="LongName"/>
 		<chooserInfo text="The following phonological features have been defined for {0}." textparam="VernWs" guicontrol="PhonologicalFeaturesFlatList">
 		  <chooserLink type="goto" label="Edit the Phonological Features" tool="phonologicalFeaturesAdvancedEdit"/>
@@ -2542,7 +2541,7 @@
 
   <bin class="PhNCFeatures">
 	<part id="PhNCFeatures-Detail-Features" type="Detail">
-	<slice field="Features" label="Phonological Features" editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit.PhonologicalFeatureListDlgLauncherSlice">
+	<slice field="Features" label="Phonological Features" editor="phonologicalfeaturelistdlglauncher">
 	  <deParams ws="best vernacular"/>
 	  <chooserInfo text="The following phonological features have been defined for {0}." textparam="VernWs" guicontrol="PhonologicalFeaturesFlatList">
 		<chooserLink type="goto" label="Edit the Phonological Features" tool="phonologicalFeaturesAdvancedEdit"/>
@@ -2564,7 +2563,7 @@
 			<slice field="Description" label="Description" editor="multistring" ws="all analysis"/>
 		</part>
 		<part id="PhEnvironment-Detail-StringRepresentation" type="detail">
-			<slice field="StringRepresentation" label="String Representation" editor="CustomWithParams" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.PhEnvStrRepresentationSlice" menu="mnuDataTree-StringRepresentation-Insert">
+			<slice field="StringRepresentation" label="String Representation" editor="phenvstrrepresentation" menu="mnuDataTree-StringRepresentation-Insert">
 				<deParams ws="vernacular"/>
 			</slice>
 		</part>
@@ -2749,7 +2748,7 @@
 			</slice>
 		</part>
 		<part id="PhSegRuleRHS-Detail-RuleFormula" type="detail">
-			<slice id="RuleFormula" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit.RegRuleFormulaSlice" helpTopicID="khtpField-PhRegularRule-RuleFormula">
+			<slice id="RuleFormula" editor="regruleformula" helpTopicID="khtpField-PhRegularRule-RuleFormula">
 				<chooserInfo text="The following well-formed environments have been specified in the grammar area." guicontrol="RuleEnvironmentFlatList">
 					<chooserLink type="goto" label="Edit the Environments" tool="EnvironmentEdit"/>
 				</chooserInfo>
@@ -2762,7 +2761,7 @@
 			<slice editor="summary" layout="Edit" editable="no" weight="heavy" header="true"/>
 		</part>
 		<part id="PhMetathesisRule-Detail-RuleFormula" type="detail">
-			<slice id="RuleFormula" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.PosEdit.MetaRuleFormulaSlice" helpTopicID="khtpField-PhMetathesisRule-RuleFormula"/>
+			<slice id="RuleFormula" editor="metaruleformula" helpTopicID="khtpField-PhMetathesisRule-RuleFormula"/>
 		</part>
 	</bin>
 

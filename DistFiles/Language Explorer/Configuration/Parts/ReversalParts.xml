@@ -7,7 +7,7 @@
 				class="LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes.ReversalIndexEntryChangeHandler"/>
 		</part>
 		<part id="ReversalIndexEntry-Detail-ReversalForm" type="Detail">
-			<slice attr="ReversalForm" field="ReversalForm" label="Reversal Form" editor="CustomWithParams" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes.ReversalIndexEntryFormSlice" />
+			<slice attr="ReversalForm" field="ReversalForm" label="Reversal Form" editor="reversalindexentryform" />
 		</part>
 		<part id="ReversalIndexEntry-Jt-ReversalForm" type="JtView">
 			<string field="ReversalForm" ws="reversal"/>
@@ -18,8 +18,7 @@
 			</slice>
 		</part>
     <part id="ReversalIndexEntry-Detail-CurrentSenses" type="detail">
-			<slice field="Senses" label="Referenced Senses" menu="mnuReorderVector" reorder="true"
-				editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes.RevEntrySensesCollectionReferenceSlice" >
+			<slice field="Senses" label="Referenced Senses" menu="mnuReorderVector" reorder="true" editor="reventrysensescollectionreference">
 				<deParams displayProperty="FullReferenceName" ws="vernacular"/>
 			</slice>
 		</part>

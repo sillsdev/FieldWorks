@@ -47,7 +47,7 @@
 		</part>
 
 		<part id="RnGenericRec-Detail-Participants" type="Detail">
-			<slice field="Participants" label="Participants" editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Notebook.Tools.NotebookEdit.RoledParticipantsSlice">
+			<slice field="Participants" label="Participants" editor="roledparticipants">
 				<chooserInfo>
 					<!-- Duplicates info in Text-Detail-NotebookFields-->
 					<chooserLink type="goto" label="Edit the list of People" tool="peopleEdit" />
@@ -137,23 +137,19 @@
 		</part>
 
 		<part id="RnGenericRec-Detail-SeeAlso" type="Detail">
-			<slice field="SeeAlso" label="See Also" editor="custom" assemblyPath="LanguageExplorer.dll"
-			 class="LanguageExplorer.Areas.Notebook.Tools.NotebookEdit.RecordReferenceVectorSlice" />
+			<slice field="SeeAlso" label="See Also" editor="recordreferencevector" />
 		</part>
 
 		<part id="RnGenericRec-Detail-SupportingEvidence" type="Detail">
-			<slice field="SupportingEvidence" label="Supporting Evidence" editor="custom" assemblyPath="LanguageExplorer.dll"
-			 class="LanguageExplorer.Areas.Notebook.Tools.NotebookEdit.RecordReferenceVectorSlice" />
+			<slice field="SupportingEvidence" label="Supporting Evidence" editor="recordreferencevector" />
 		</part>
 
 		<part id="RnGenericRec-Detail-CounterEvidence" type="Detail">
-			<slice field="CounterEvidence" label="Counter Evidence" editor="custom" assemblyPath="LanguageExplorer.dll"
-			 class="LanguageExplorer.Areas.Notebook.Tools.NotebookEdit.RecordReferenceVectorSlice" />
+			<slice field="CounterEvidence" label="Counter Evidence" editor="recordreferencevector" />
 		</part>
 
 		<part id="RnGenericRec-Detail-SupersededBy" type="Detail">
-			<slice field="SupersededBy" label="Superseded By" editor="custom" assemblyPath="LanguageExplorer.dll"
-			 class="LanguageExplorer.Areas.Notebook.Tools.NotebookEdit.RecordReferenceVectorSlice" />
+			<slice field="SupersededBy" label="Superseded By" editor="recordreferencevector" />
 		</part>
 
 		<part id="RnGenericRec-Jt-Title" type="jtview">

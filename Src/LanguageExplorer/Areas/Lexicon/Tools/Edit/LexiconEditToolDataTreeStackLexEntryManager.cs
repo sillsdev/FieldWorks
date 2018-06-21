@@ -473,7 +473,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				</part>
 		   <part ref="CurrentLexReferences"   visibility="ifdata" />
 				<part id="LexEntry-Detail-CurrentLexReferences" type="detail">
-					<slice label="Cross References" field="LexEntryReferences" editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceMultiSlice" />
+					<slice label="Cross References" field="LexEntryReferences" editor="lexreferencemulti" />
 				</part>
 		   <!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
 		   <part ref="_CustomFieldPlaceholder" customFields="here" /> // Nothing special for custom fields and menus.
@@ -491,7 +491,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				</part>
 		   <part ref="Messages" visibility="always"/>
 				<part id="LexEntry-Detail-Messages" type="detail">
-					<slice field="Self" label="Messages" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.ChorusMessageSlice" helpTopicID="khtpField-LexEntry-Messages"  />
+					<slice field="Self" label="Messages" editor="chorusmessage" helpTopicID="khtpField-LexEntry-Messages"  />
 				</part>
 			*/
 		}
