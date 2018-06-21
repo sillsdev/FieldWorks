@@ -727,7 +727,7 @@ STDMETHODIMP VwTextStore::GetText(LONG acpStart, LONG acpEnd, WCHAR * pchPlain,
 	else if (acpEnd - acpStart > (LONG)cchPlainReq)
 	{
 		acpEnd = acpStart + cchPlainReq;
-		ichEnd = AcpToLog(acpStart + cchPlainReq);
+		ichEnd = AcpToLog(acpEnd);
 	}
 	else
 		ichEnd = AcpToLog(acpEnd);

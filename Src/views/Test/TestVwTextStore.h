@@ -1656,6 +1656,15 @@ namespace TestViews
 			unitpp::assert_eq("GetText(0,-1) cchOut", cchLengthOfExpectedNfc, lgt.m_cchOut);
 			unitpp::assert_true("GetText(0,-1) rgch2Buffer",
 				wcsncmp(rgch2Buffer, expected, cchLengthOfExpectedNfc) == 0);
+
+			// Test when setting a specific ending value, rather than -1.
+			// SUT 2
+			LockGetText lgt2(m_qtxs, 0, 19, rgch2Buffer, kcch2BufferLength, tri, 10);
+			unitpp::assert_eq("Should succeed", S_OK, lgt2.m_hrLock);
+			unitpp::assert_eq("GetText ichNext", (LONG)cchLengthOfExpectedNfc, lgt2.m_ichNext);
+			unitpp::assert_eq("GetText cchOut", cchLengthOfExpectedNfc, lgt2.m_cchOut);
+			unitpp::assert_true("GetText rgch2Buffer",
+				wcsncmp(rgch2Buffer, expected, cchLengthOfExpectedNfc) == 0);
 		}
 
 		/*--------------------------------------------------------------------------------------
