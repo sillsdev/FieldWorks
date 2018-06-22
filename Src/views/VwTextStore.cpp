@@ -680,10 +680,19 @@ STDMETHODIMP VwTextStore::SetSelection(ULONG ulCount, const TS_SELECTION_ACP * p
 }
 
 /*----------------------------------------------------------------------------------------------
-	Return information about the text at a specified character position.
+	Return information about the text at a specified 'application character position', which can
+	mean its position among the characters as NFC or NFD depending on the situation.
+	pacpNext and pcchPlainOut may be based on an NFC or NFD interpretation of the text,
+	depending on the situation.
 	See MSDN for details (ITextStoreACP::GetText).
+	@param acpStart the position of the first character to get.
+	@param acpEnd ending character position. the position just past the last character to get.
+	@param pchPlain is a character buffer to receive output.
+	@param cchPlainReq is the number of characters that can be written into pchPlain, including a null terminator.
+	@param pcchPlainOut is the number of characters written to pchPlain, not includung any null terminator.
+	@param pacpNext is the next character position after the last character included in the current request.
 ----------------------------------------------------------------------------------------------*/
-STDMETHODIMP VwTextStore::GetText(LONG acpFirst, LONG acpLast, WCHAR * pchPlain,
+STDMETHODIMP VwTextStore::GetText(LONG acpStart, LONG acpEnd, WCHAR * pchPlain,
 	ULONG cchPlainReq, ULONG * pcchPlainOut, TS_RUNINFO * prgRunInfo, ULONG ulRunInfoReq,
 	ULONG * pulRunInfoOut, LONG * pacpNext)
 {
@@ -697,7 +706,7 @@ STDMETHODIMP VwTextStore::GetText(LONG acpFirst, LONG acpLast, WCHAR * pchPlain,
 #ifdef TRACING_TSF
 	StrAnsi sta;
 	sta.Format("VwTextStore::GetText(%d, %d, %d, ..., %d, ...)%n",
-		acpFirst, acpLast, cchPlainReq, ulRunInfoReq);
+		acpStart, acpEnd, cchPlainReq, ulRunInfoReq);
 	TraceTSF(sta.Chars());
 #endif
 	// Caller must have a lock.
@@ -708,46 +717,48 @@ STDMETHODIMP VwTextStore::GetText(LONG acpFirst, LONG acpLast, WCHAR * pchPlain,
 	bool fDoRunInfo = ulRunInfoReq > 0;
 
 	int cchTotalNfd = TextLength();
-	int ichFirst = AcpToLog(acpFirst);
-	int ichLast;
-	if (acpLast == -1)
+	int ichStart = AcpToLog(acpStart);
+	int ichEnd;
+	if (acpEnd == -1)
 	{
-		acpLast = LogToAcp(cchTotalNfd);
-		ichLast = min(ichFirst + (int)cchPlainReq, cchTotalNfd);
+		acpEnd = LogToAcp(cchTotalNfd);
+		ichEnd = cchTotalNfd;
 	}
-	else if (acpLast - acpFirst > (LONG)cchPlainReq)
+	else if (acpEnd - acpStart > (LONG)cchPlainReq)
 	{
-		acpLast = acpFirst + cchPlainReq;
-		ichLast = AcpToLog(acpFirst + cchPlainReq);
+		acpEnd = acpStart + cchPlainReq;
+		ichEnd = AcpToLog(acpEnd);
 	}
 	else
-		ichLast = AcpToLog(acpLast);
+		ichEnd = AcpToLog(acpEnd);
 
 	// validate the start and end positions.
-	if (ichFirst < 0 || ichFirst > cchTotalNfd)
+	if (ichStart < 0 || ichStart > cchTotalNfd)
 		ThrowHr(WarnHr(TS_E_INVALIDPOS));
-	if (ichLast < ichFirst || ichLast > cchTotalNfd)
+	if (ichEnd < ichStart || ichEnd > cchTotalNfd)
 		ThrowHr(WarnHr(TS_E_INVALIDPOS));
 
 	// are we at the end of the document?
-	if (ichFirst == cchTotalNfd && cchTotalNfd > 0)
+	if (ichStart == cchTotalNfd && cchTotalNfd > 0)
 	{
 		// *pcchPlainOut and *pulRunInfoOut are already set to 0
 		*pacpNext = LogToAcp(cchTotalNfd);
 		return S_OK;
 	}
 
-	ULONG cchPlainNfc = acpLast - acpFirst;
-	int cchReq = ichLast - ichFirst;
+	ULONG cchPlainNfc = acpEnd - acpStart;
+	int cchReq = ichEnd - ichStart;
+	int outputLength = 0;
 	if (fDoText && cchReq)
 	{
 		// determine if the current IME requires NFD or NFC and return the text in the
 		// appropriate form
 		if (IsNfdIMEActive())
 		{
-			cchReq = RetrieveText(ichFirst, ichLast, cchPlainReq, pchPlain);
+			cchReq = RetrieveText(ichStart, ichEnd, cchPlainReq, pchPlain);
 			if (ulRunInfoReq > 0)
 				*pulRunInfoOut = SetOrAppendRunInfo(prgRunInfo, ulRunInfoReq, 0, TS_RT_PLAIN, cchReq);
+			outputLength = cchReq;
 		}
 		else
 		{
@@ -755,14 +766,15 @@ STDMETHODIMP VwTextStore::GetText(LONG acpFirst, LONG acpLast, WCHAR * pchPlain,
 			// decomposed form (NFD), Korean IME doesn't work properly (LT-8829).
 			wchar* pchPlainNfd;
 			StrUni stuPlain;
-			int cchPlainNfdReq = ichLast - ichFirst;
+			int cchPlainNfdReq = ichEnd - ichStart;
 			// We need a buffer large enough for cchPlainNfdReq characters plus NULL
 			stuPlain.SetSize(cchPlainNfdReq + 1, &pchPlainNfd);
-			cchReq = RetrieveText(ichFirst, ichLast, cchPlainNfdReq + 1, pchPlainNfd);
+			cchReq = RetrieveText(ichStart, ichEnd, cchPlainNfdReq + 1, pchPlainNfd);
 			// If we leave the buffer size, stuPlain.Length() reports a wrong length
 			stuPlain.SetSize(cchReq, &pchPlainNfd);
 			NormalizeText(stuPlain, pchPlain, cchPlainReq, &cchPlainNfc, prgRunInfo,
 				ulRunInfoReq, pulRunInfoOut);
+			outputLength = cchPlainNfc;
 		}
 	}
 	else // empty text or we're not interested in the text
@@ -786,10 +798,10 @@ STDMETHODIMP VwTextStore::GetText(LONG acpFirst, LONG acpLast, WCHAR * pchPlain,
 	}
 	// Set the number of characters returned.
 	if (pcchPlainOut)
-		*pcchPlainOut = cchPlainNfc;
-	// Set the index of the next character to fetch.
+		*pcchPlainOut = outputLength;
+	// Set the acp location of the next character to fetch.
 	if (pacpNext)
-		*pacpNext = acpFirst + cchPlainNfc;
+		*pacpNext = acpStart + outputLength;
 
 #ifdef TRACING_TSF
 	StrUni stu;
@@ -817,7 +829,7 @@ STDMETHODIMP VwTextStore::GetText(LONG acpFirst, LONG acpLast, WCHAR * pchPlain,
 }
 
 /*----------------------------------------------------------------------------------------------
-	Retrieve the text from the text source
+	Retrieve the text from the text source. Retrieves characters starting from ichFirst to but not including ichLast. The pchPlainNfd output will have a null terminator.
 	Returns length of text.
 ----------------------------------------------------------------------------------------------*/
 int VwTextStore::RetrieveText(int ichFirst, int ichLast, int cbufPlainReq,
@@ -872,9 +884,12 @@ int VwTextStore::RetrieveText(int ichFirst, int ichLast, int cbufPlainReq,
 
 /*----------------------------------------------------------------------------------------------
 	Normalize the text to NFC. For parameters see VwTextStore::GetText.
-	@param pchTextNfd - The text in NFD
+	@param stuText - The text in NFD
+	@param pchPlain will hold the output. It will be null terminated.
+	@param cchPlainReq is the number of characters that can be written into pchPlain, including the null terminator.
+	@param pcchPlainOut [out] is the number of characters copied into pchPlain. It excludes the null terminator.
 ----------------------------------------------------------------------------------------------*/
-void VwTextStore::NormalizeText(StrUni & stuText, WCHAR* pchPlain, ULONG cchPlainReq,
+void VwTextStore::NormalizeText(StrUni & stuText, WCHAR * pchPlain, ULONG cchPlainReq,
 	ULONG * pcchPlainOut, TS_RUNINFO * prgRunInfo, ULONG ulRunInfoReq, ULONG * pulRunInfoOut)
 {
 	StrUtil::NormalizeStrUni(stuText, UNORM_NFC);

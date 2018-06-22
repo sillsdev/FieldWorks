@@ -241,6 +241,7 @@
 		<GeneratedFiles Include="$(fwrt)/Src/**/asserts.log"/>
 		<GeneratedFiles Include="$(fwrt)/Src/Common/ViewsInterfaces/Views.cs"/>
 		<GeneratedFiles Include="$(fwrt)/Lib/debug/unit++.lib"/>
+		<GeneratedFiles Include="$(fwrt)/Lib/release/unit++.lib"/>
 		<GeneratedFiles Include="$(fwrt)/DistFiles/Parts/GeneratedParts.xml"/>
 		<GeneratedFiles Include="$(fwrt)/DistFiles/Parts/Generated.fwlayout"/>
 	</ItemGroup>
@@ -360,7 +361,6 @@
 		<PalasoFiles Include="taglib-sharp.dll"/>
 		<PalasoFiles Include="Spart.dll"/>
 		<PalasoFiles Include="icu.net.dll"/>
-		<PalasoFiles Include="SIL.BuildTasks.dll" Condition="'$(OS)'=='Windows_NT'"/>
 
 		<ChorusFiles Include="Autofac.dll"/>
 		<ChorusFiles Include="Chorus.exe"/>

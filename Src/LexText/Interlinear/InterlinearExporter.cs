@@ -31,6 +31,7 @@ namespace SIL.FieldWorks.IText
 		bool m_fAwaitingHeadwordForm = false; // true after start of headword until we get a string alt.
 		bool m_fDoingMorphType = false; // true during display of MorphType of MoForm.
 		bool m_fDoingInterlinName = false; // true during MSA
+		bool m_fDoingGlossPrepend = false; // true after special AddProp
 		bool m_fDoingGlossAppend = false; // true after special AddProp
 		string m_sPendingPrefix; // got a prefix, need the ws from the form itself before we write it.
 		string m_sFreeAnnotationType;
@@ -387,22 +388,31 @@ namespace SIL.FieldWorks.IText
 
 		public override void AddProp(int tag, IVwViewConstructor vc, int frag)
 		{
+			if (tag == InterlinVc.ktagGlossPrepend)
+			{
+				m_fDoingGlossPrepend = true;
+			}
 			if (tag == InterlinVc.ktagGlossAppend)
 			{
 				m_fDoingGlossAppend = true;
 			}
 			base.AddProp(tag, vc, frag);
+			if (tag == InterlinVc.ktagGlossPrepend)
+			{
+				m_fDoingGlossPrepend = false;
+			}
 			if (tag == InterlinVc.ktagGlossAppend)
 			{
 				m_fDoingGlossAppend = false;
 			}
-
 		}
 
 		public override void AddTsString(ITsString tss)
 		{
 			if (m_fDoingGlossAppend)
 				WriteItem("glsAppend", tss);
+			else if (m_fDoingGlossPrepend)
+				WriteItem("glsPrepend", tss);
 			base.AddTsString(tss);
 		}
 

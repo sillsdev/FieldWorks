@@ -189,6 +189,9 @@ Ensure that this folder is shared and that you have permission to access it.</va
     <value>Startup Problem</value>
     <comment>Caption that goes with kstidFieldWorksDidNotRespond.</comment>
   </data>
+  <data name="kstidFoundInvalidWs" xml:space="preserve">
+    <value>Invalid Writing System Found</value>
+  </data>
   <data name="ksInsufficientPrivilegesToUpdateProjectLocationText" xml:space="preserve">
     <value>Administrator privileges are required to modify project locations. </value>
   </data>
@@ -224,6 +227,9 @@ Ensure that this folder is shared and that you have permission to access it.</va
   <data name="kstidFieldWorksDidNotRespond" xml:space="preserve">
     <value>Another instance of FieldWorks appears to be running, but did not respond properly to a request from this one. This is a bug; please report it to FlexErrors@sil.org. We recommend that you shut down all FieldWorks applications and try again. If you still get this message, restart your computer. (Experts may also try to recover by killing any FieldWorks processes using TaskManager.) Do you want to Retry now?</value>
     <comment>Message reporting a bug when a second instance of FieldWorks tries to check whether another one is open on the same project.</comment>
+  </data>
+  <data name="ksNotifyWsRemoved" xml:space="preserve">
+    <value>FieldWorks found one or more invalid writing systems while loading the project. FieldWorks has safely removed the writing system(s) from the list.{0}{0}Writing systems removed:{0}{1}</value>
   </data>
   <data name="ksFailed" xml:space="preserve">
     <value>Failed</value>

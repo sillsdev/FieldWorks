@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -74,7 +74,10 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 					Environment.SetEnvironmentVariable("FW_ROOTCODE", ParatextLexiconPluginDirectoryFinder.CodeDirectory);
 			}
 			Icu.InitIcuDataDir();
-			Sldr.Initialize();
+			if (!Sldr.IsInitialized)
+			{
+				Sldr.Initialize();
+			}
 
 			m_syncRoot = new object();
 			m_lexiconCache = new FdoLexiconCollection();

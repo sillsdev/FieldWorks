@@ -1700,11 +1700,11 @@ namespace SIL.FieldWorks.Common.Widgets
 			if(LicenseManager.UsageMode != LicenseUsageMode.Designtime)
 			{
 				m_vc = new TextBoxVc(this);
+				// So many things blow up so badly if we don't have one of these that I finally decided to just
+				// make one, even though it won't always, perhaps not often, be the one we want.
+				CreateTempWritingSystemFactory();
+				m_DataAccess.WritingSystemFactory = WritingSystemFactory;
 			}
-			// So many things blow up so badly if we don't have one of these that I finally decided to just
-			// make one, even though it won't always, perhaps not often, be the one we want.
-			CreateTempWritingSystemFactory();
-			m_DataAccess.WritingSystemFactory = WritingSystemFactory;
 			IsTextBox = true;	// range selection not shown when not in focus
 		}
 
@@ -2749,7 +2749,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			get
 			{
 				CheckDisposed();
-				return m_fAdjustStringHeight && WritingSystemFactory != null && !AutoScroll;
+				return LicenseManager.UsageMode != LicenseUsageMode.Designtime && m_fAdjustStringHeight && WritingSystemFactory != null && !AutoScroll;
 			}
 		}
 

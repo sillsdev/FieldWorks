@@ -56,7 +56,7 @@ namespace SIL.FieldWorks.IText
 		{
 			m_cache = cache;
 			this.Mode = mode;
-			InitFieldNames(mode);
+			UpdateFieldNamesFromLines(mode);
 			m_wsDefVern = defaultVernacularWs;
 			if (defaultAnalysisWs == WritingSystemServices.kwsAnal)
 				m_wsDefAnal = m_cache.DefaultAnalWs;
@@ -83,7 +83,7 @@ namespace SIL.FieldWorks.IText
 					return;
 				m_mode = value;
 				// recompute labels for flids
-				InitFieldNames(m_mode);
+				UpdateFieldNamesFromLines(m_mode);
 			}
 		}
 
@@ -349,22 +349,21 @@ namespace SIL.FieldWorks.IText
 		public const int kflidLitTrans = InterlinVc.ktagSegmentLit;
 		public const int kflidNote = InterlinVc.ktagSegmentNote;
 
-		private void InitFieldNames(InterlinMode mode)
+		private LineOption[] UpdateFieldNamesFromLines(InterlinMode mode)
 		{
 			LineOption[] options = LineOptions(mode);
 			m_fieldNames.Clear();
 			foreach (LineOption opt in options)
 				m_fieldNames[opt.Flid] = opt.ToString();
+			return options;
 		}
 
 		/// <summary>
-		/// Get the standard list of lines.
-		/// Note: could be static, but maybe better not in case we add custom fields or something?
-		/// Besides it is only guaranteed to exist once an instance exists.
+		/// Get the standard list of lines. Also updates the member variable storing the line names.
 		/// </summary>
 		internal LineOption[] LineOptions()
 		{
-			return LineOptions(m_mode);
+			return UpdateFieldNamesFromLines(m_mode);
 		}
 
 		private LineOption[] LineOptions(InterlinMode mode)
@@ -1277,7 +1276,11 @@ namespace SIL.FieldWorks.IText
 			}
 			int wsActual;
 			ITsString dummy;
-			WritingSystemServices.TryWs(cache, WritingSystem, wsFallback, hvo, StringFlid, out wsActual, out dummy);
+			// While displaying the morph bundle, we need the ws used by the Form. If we can't get the Form from the MoForm, we
+			// substitute with the Form stored in the WfiMorphBundle. But our system incorrectly assumes that this object
+			// is a MoForm, so we specify that if our object is a WfiMorphBundle, use the relevant flid.
+			int flid = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo) is IWfiMorphBundle ? WfiMorphBundleTags.kflidForm : StringFlid;
+			WritingSystemServices.TryWs(cache, WritingSystem, wsFallback, hvo, flid, out wsActual, out dummy);
 			return wsActual;
 		}
 

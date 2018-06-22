@@ -606,9 +606,42 @@ namespace SIL.FieldWorks.IText
 			}
 
 			[Test]
-			[Ignore("TODO")]
 			public void ExportIrrInflVariantTypeInformation_LT7581_glsPrepend()
 			{
+				m_choices.Add(InterlinLineChoices.kflidWord);
+				m_choices.Add(InterlinLineChoices.kflidMorphemes);
+				m_choices.Add(InterlinLineChoices.kflidLexEntries);
+				m_choices.Add(InterlinLineChoices.kflidLexGloss, Cache.DefaultAnalWs);
+				m_choices.Add(InterlinLineChoices.kflidLexPos);
+
+				IStTxtPara para1 = m_text1.ContentsOA.ParagraphsOS[1] as IStTxtPara;
+				ParagraphAnnotator pa = new ParagraphAnnotator(para1);
+				pa.ReparseParagraph();
+				var exportedDoc = ExportToXml();
+
+				string formLexEntry = "go";
+
+				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get(QaaXKal);
+				ITsString tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, wsXkal.Handle);
+				int clsidForm;
+				ILexEntry leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
+					MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "glossgo", null);
+				var pastVar =
+					Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPastVar);
+				pastVar.GlossPrepend.SetAnalysisDefaultWritingSystem("Prepend.");
+
+				pa.SetVariantOf(0, 1, leGo, pastVar);
+				pa.ReparseParagraph();
+				exportedDoc = ExportToXml();
+
+				//validate export xml against schema
+				ValidateInterlinearXml(exportedDoc);
+				var transformedDoc = TransformDocXml2Html(exportedDoc);
+
+				AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td", 1);
+				Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td").InnerText, Is.EqualTo("Prepend.glossgo\u00A0"));
+				AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td/span[1][@class='itx_VariantTypes']", 1);
+				Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td/span[1][@class='itx_VariantTypes']").InnerText, Is.EqualTo("Prepend."));
 			}
 
 			[Test]

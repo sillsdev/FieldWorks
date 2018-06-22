@@ -24,3 +24,4 @@ FwHelpAbout.cs -whitespace
 LICENSE -whitespace
 RealSplashScreen.cs -whitespace
 run-app -whitespace
+*.json -whitespace
