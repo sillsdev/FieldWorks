@@ -1,0 +1,2041 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.4 U (http://www.xmlspy.com) by Randy Regnier (SIL International) -->
+<window label="FieldWorks Language Explorer" settingsId="Language Explorer">
+  <!-- The main sections of this file are the following
+	commands
+	menubar
+	contextMenus
+	toolbars
+	contexthelpstrings
+  -->
+  <!-- ************************ commands *********************** -->
+  <commands>
+    <command id="CmdListColleagues" label="List _Colleagues" message="ListColleagues" />
+    <command id="CmdSynch" label="S_ynchronize with LiftShare..." message="Synchronize" translate="This command tries to update from an external source of lexical data." />
+    <command id="CmdConfigureColumns" label="_Columns..." icon="columnChooser" message="ConfigureColumns" />
+    <command id="CmdEditSpellingStatus" label="Edit Spelling Status" message="EditSpellingStatus" a10status="Used in Words area" />
+    <command id="CmdViewIncorrectWords" label="View Incorrect Words in Use" message="ViewIncorrectWords" />
+    <command id="CmdChangeSpelling" label="Change Spelling..." message="LaunchRespellerDlg" />
+    <command id="CmdCopy" label="_Copy" message="EditCopy" icon="Copy" shortcut="Ctrl+C" a10status="PARTIALLY_DONE" />
+    <command id="CmdCut" label="Cu_t" message="EditCut" icon="Cut" shortcut="Ctrl+X" a10status="PARTIALLY_DONE" />
+    <command id="CmdPaste" label="_Paste" message="EditPaste" icon="Paste" shortcut="Ctrl+V" a10status="PARTIALLY_DONE" />
+    <command id="CmdStartLogging" label="Start Logging" message="StartLogging" />
+    <command id="CmdRequestDebugInfo" label="Request Debug Info" message="RequestDebugInfo" shortcut="Ctrl+Shift+I" />
+    <command id="CmdExportText" label="Export Text of browse view" message="ExportText" shortcut="Ctrl+Shift+E" />
+    <command id="CmdVisibleComplexForm" label="Referenced Complex Form" message="VisibleComplexForm">
+      <parameters tool="lexiconEdit" className="LexEntryOrLexSense" />
+    </command>
+    <command id="CmdShowSubentryUnderComponent" label="Show Subentry under this Component" message="AddComponentToPrimary">
+      <parameters tool="lexiconEdit" className="LexEntryRef" />
+    </command>
+    <command id="CmdPOSJumpToDefault" label="Show in Category Edit" message="JumpToTool">
+      <parameters tool="posEdit" className="PartOfSpeech" ownerClass="LangProject" ownerField="PartsOfSpeech" />
+    </command>
+    <command id="CmdPublicationsJumpToDefault" label="Edit Publications" message="JumpToTool">
+      <parameters tool="publicationsEdit" className="ICmPossibility" ownerClass="LangProject" ownerField="PublicationTypes" />
+    </command>
+    <command id="CmdWordPOSJumpToDefault" label="Show Word Category in Category Edit" message="JumpToTool">
+      <parameters tool="posEdit" className="WordPartOfSpeech" ownerClass="LangProject" ownerField="PartsOfSpeech" />
+    </command>
+    <command id="CmdEndoCompoundRuleJumpToDefault" label="Show in Compound Rules Editor" message="JumpToTool">
+      <parameters tool="compoundRuleAdvancedEdit" className="MoEndoCompound" />
+    </command>
+    <command id="CmdExoCompoundRuleJumpToDefault" label="Show in Compound Rules Editor" message="JumpToTool">
+      <parameters tool="compoundRuleAdvancedEdit" className="MoExoCompound" />
+    </command>
+    <command id="CmdPhonemeJumpToDefault" label="Show in Phonemes Editor" message="JumpToTool">
+      <parameters tool="phonemeEdit" className="PhPhoneme" />
+    </command>
+    <command id="CmdNaturalClassJumpToDefault" label="Show in Natural Classes Editor" message="JumpToTool">
+      <parameters tool="naturalClassEdit" className="PhNCSegments" />
+    </command>
+    <command id="CmdEnvironmentsJumpToDefault" label="Show in Environments Editor" message="JumpToTool">
+      <parameters tool="EnvironmentEdit" className="PhEnvironment" />
+    </command>
+    <command id="CmdWordformJumpToConcordance" label="Show Wordform in Concordance" message="JumpToTool">
+      <parameters tool="concordance" className="WfiWordform" />
+    </command>
+    <command id="CmdSenseJumpToConcordance" label="Show Sense in Concordance" message="JumpToTool">
+      <parameters tool="concordance" className="LexSense" />
+    </command>
+    <command id="CmdAnalysisJumpToConcordance" label="Show Analysis in Concordance" message="JumpToTool">
+      <parameters tool="concordance" className="WfiAnalysis" />
+    </command>
+    <command id="CmdPOSJumpToConcordance" label="Show Category in Concordance" message="JumpToTool">
+      <parameters tool="concordance" className="PartOfSpeech" ownerClass="LangProject" ownerField="PartsOfSpeech" />
+    </command>
+    <command id="CmdLexGramInfoJumpToConcordance" label="Lex. Gram. Info." message="JumpToTool">
+      <parameters tool="concordance" concordOn="PartOfSpeechGramInfo" className="PartOfSpeechGramInfo" ownerClass="LangProject" ownerField="PartsOfSpeech" />
+    </command>
+    <command id="CmdWordPOSJumpToConcordance" label="Show Word Category in Concordance" message="JumpToTool">
+      <parameters tool="concordance" concordOn="WordPartOfSpeech" className="WordPartOfSpeech" ownerClass="LangProject" ownerField="PartsOfSpeech" />
+    </command>
+    <command id="CmdWordGlossJumpToConcordance" label="Show Word Gloss in Concordance" message="JumpToTool">
+      <parameters tool="concordance" className="WfiGloss" />
+    </command>
+    <command id="CmdWordformJumpToAnalyses" label="Show in Word Analyses" message="JumpToTool">
+      <parameters tool="Analyses" className="WfiWordform" />
+    </command>
+    <!-- This is on the popup menu, and is for non-record level objects. -->
+    <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem" />
+    <!-- Add commands from included files to the main application. -->
+    <!-- START include: "CommonDataTreeInclude.xml" query="root/commands/*" -->
+    <command id="CmdDataTree-Delete" label="Delete {0}" message="DataTreeDelete" icon="Delete" />
+    <!-- END include: "CommonDataTreeInclude.xml" query="root/commands/*" -->
+    <!-- START include: "Lexicon/areaConfiguration.xml" query="root/commands/*" -->
+    <!-- START include (Lexicon_Area): "DataTreeInclude.xml" query="window/commands/*" -->
+    <command id="CmdDataTree-Create-LexemeForm-StemAllomorph" label="Create Stem Form" message="DataTreeInsert">
+      <parameters field="LexemeForm" className="MoStemAllomorph" />
+    </command>
+    <command id="CmdDataTree-Create-LexemeForm-AffixAllomorph" label="Create Affix Form" message="DataTreeInsert">
+      <parameters field="LexemeForm" className="MoAffixAllomorph" />
+    </command>
+    <command id="CmdDataTree-Delete-Picture" label="Delete Picture" message="DataTreeDelete" icon="Delete">
+      <parameters field="Pictures" className="LexSense" />
+    </command>
+    <command id="CmdDataTree-MoveUp-Picture" label="Move Picture _Up" message="MoveUpObjectInSequence" icon="MoveUp">
+      <parameters field="Pictures" className="LexSense" />
+    </command>
+    <command id="CmdDataTree-MoveDown-Picture" label="Move Picture _Down" message="MoveDownObjectInSequence" icon="MoveDown">
+      <parameters field="Pictures" className="LexSense" />
+    </command>
+    <command id="CmdDataTree-Properties-Picture" label="Picture Properties" message="PictureProperties">
+      <parameters field="Pictures" className="LexSense" />
+    </command>
+    <command id="CmdDataTree-Insert-StemMsa" label="Insert Grammatical Info. for Stem" message="DataTreeInsert">
+      <parameters field="MorphoSyntaxAnalyses" className="MoStemMsa" />
+    </command>
+    <command id="CmdDataTree-Insert-InflectionAffixMsa" label="Insert Grammatical Info. for Inflectional Affix" message="DataTreeInsert">
+      <parameters field="MorphoSyntaxAnalyses" className="MoInflAffMsa" />
+    </command>
+    <command id="CmdDataTree-Insert-DerivationAffixMsa" label="Insert Grammatical Info. for Derivational Affix" message="DataTreeInsert">
+      <parameters field="MorphoSyntaxAnalyses" className="MoDerivAffMsa" />
+    </command>
+    <command id="CmdDataTree-Insert-UnclassifiedAffixMsa" label="Insert Grammatical Info. for Affix" message="DataTreeInsert">
+      <parameters field="MorphoSyntaxAnalyses" className="MoUnclassifiedAffixMsa" />
+    </command>
+    <command id="CmdDataTree-Delete-MSA" label="Delete Grammatical Info." message="DataTreeDelete" icon="Delete">
+      <parameters field="MorphoSyntaxAnalyses" className="MoMorphSynAnalysis" />
+    </command>
+    <command id="CmdDataTree-Merge-MSA" label="Merge Grammatical Info. into..." message="DataTreeMerge">
+      <parameters field="MorphoSyntaxAnalyses" className="MoMorphSynAnalysis" />
+    </command>
+    <command id="CmdDataTree-Insert-SubSense" label="Insert Su_bsense" message="DataTreeInsert">
+      <parameters field="Senses" className="LexSense" ownerClass="LexSense" />
+    </command>
+    <command id="CmdDataTree-Insert-SenseBelow" label="Insert _Sense" message="DataTreeInsert">
+      <parameters field="Senses" className="LexSense" slice="owner" />
+    </command>
+    <command id="CmdDataTree-Insert-Entry-Sense" label="Insert _Top-Level Sense" message="DataTreeInsert">
+      <parameters field="Senses" className="LexSense" ownerClass="LexEntry" />
+    </command>
+    <command id="CmdDataTree-Delete-Sense" label="Delete this Sense and any Subsenses" message="DataTreeDeleteSense" icon="Delete">
+      <parameters field="Senses" className="LexSense" />
+    </command>
+    <command id="CmdDataTree-Merge-Sense" label="Merge Sense into..." message="DataTreeMerge">
+      <parameters field="Senses" className="LexSense" />
+    </command>
+    <command id="CmdDataTree-MoveUp-Sense" label="Move Sense _Up" message="MoveUpObjectInSequence" icon="MoveUp">
+      <parameters field="Senses" className="LexSense" />
+    </command>
+    <command id="CmdDataTree-MoveDown-Sense-Symbol" label="↓" message="MoveDownObjectInSequence">
+      <parameters field="Senses" className="LexSense" />
+    </command>
+    <command id="CmdDataTree-MoveUp-Sense-Symbol" label="↑" message="MoveUpObjectInSequence">
+      <parameters field="Senses" className="LexSense" />
+    </command>
+    <command id="CmdDataTree-MoveDown-Sense" label="Move Sense Down" message="MoveDownObjectInSequence" icon="MoveDown">
+      <parameters field="Senses" className="LexSense" />
+    </command>
+    <command id="CmdDataTree-MakeSub-Sense" label="Demote" message="DemoteSense" icon="MoveRight">
+      <parameters field="Senses" className="LexSense" />
+    </command>
+    <command id="CmdDataTree-Promote-Sense" label="Promote" message="PromoteSense" icon="MoveLeft">
+      <parameters field="Senses" className="LexSense" />
+    </command>
+    <command id="CmdDataTree-Split-Sense" label="Move Sense to a New Entry" message="DataTreeSplit">
+      <parameters field="Senses" className="LexSense" />
+    </command>
+    <command id="CmdDataTree-MoveUp-ExtNote" label="Move Extended Note _Up" message="MoveUpObjectInSequence" icon="MoveUp">
+      <parameters field="ExtendedNote" className="LexExtendedNote" />
+    </command>
+    <command id="CmdDataTree-MoveDown-ExtNote" label="Move Extended Note _Down" message="MoveDownObjectInSequence" icon="MoveDown">
+      <parameters field="ExtendedNote" className="LexExtendedNote" />
+    </command>
+    <command id="CmdDataTree-Delete-ExtNote" label="Delete Extended Note" message="DataTreeDelete" icon="Delete">
+      <parameters field="ExtendedNote" className="LexExtendedNote" />
+    </command>
+    <command id="CmdDataTree-Insert-ExampleInNote" label="Insert Example in Note" message="DataTreeInsert">
+      <parameters field="Examples" className="LexExampleSentence" ownerClass="LexExtendedNote" />
+    </command>
+    <command id="CmdDataTree-Delete-ExampleInNote" label="Delete Example from Note" message="DataTreeDelete" icon="Delete">
+      <parameters field="Examples" className="LexExampleSentence" ownerClass="LexExtendedNote" />
+    </command>
+    <command id="CmdDataTree-MoveUp-ExampleInNote" label="Move Example _Up" message="MoveUpObjectInSequence" icon="MoveUp">
+      <parameters field="Examples" className="LexExampleSentence" ownerClass="LexExtendedNote" />
+    </command>
+    <command id="CmdDataTree-MoveDown-ExampleInNote" label="Move Example _Down" message="MoveDownObjectInSequence" icon="MoveDown">
+      <parameters field="Examples" className="LexExampleSentence" ownerClass="LexExtendedNote" />
+    </command>
+    <command id="CmdDataTree-MoveUp-Example" label="Move Example _Up" message="MoveUpObjectInSequence" icon="MoveUp">
+      <parameters field="Examples" className="LexExampleSentence" />
+    </command>
+    <command id="CmdDataTree-MoveDown-Example" label="Move Example _Down" message="MoveDownObjectInSequence" icon="MoveDown">
+      <parameters field="Examples" className="LexExampleSentence" />
+    </command>
+    <command id="CmdDataTree-Insert-Example" label="Insert _Example" message="DataTreeInsert">
+      <parameters field="Examples" className="LexExampleSentence" />
+    </command>
+    <command id="CmdDataTree-Delete-Example" label="Delete Example" message="DataTreeDelete" icon="Delete">
+      <parameters field="Examples" className="LexExampleSentence" />
+    </command>
+    <command id="CmdFindExampleSentence" label="Find example sentence..." message="LaunchGuiControl">
+      <parameters field="Example" ownerClass="LexExampleSentence" guicontrol="findExampleSentences" />
+    </command>
+    <command id="CmdDataTree-Insert-Translation" label="Insert Translation" message="DataTreeInsert">
+      <parameters field="Translations" className="CmTranslation" />
+    </command>
+    <command id="CmdDataTree-Delete-Translation" label="Delete Translation" message="DataTreeDelete" icon="Delete">
+      <parameters field="Translations" className="CmTranslation" />
+    </command>
+    <command id="CmdDataTree-Insert-SubEntryLink" label="Insert Main Entry" message="DataTreeInsert">
+      <parameters field="MainEntriesOrSenses" className="LexRefEntryOrSense" />
+    </command>
+    <command id="CmdDataTree-Delete-LexReference" label="Delete Relation" message="DataTreeDelete" icon="Delete" />
+    <command id="CmdDataTree-Add-ToLexReference" label="Add Reference" message="DataTreeAddReference" />
+    <command id="CmdDataTree-Replace-LexReference" label="Replace Reference" message="DataTreeAddReference" />
+    <command id="CmdDataTree-EditDetails-LexReference" label="Edit Reference Set Details" message="DataTreeEdit" />
+    <command id="CmdDataTree-Insert-ReversalSubentry" label="Insert Reversal Subentry" message="DataTreeInsert">
+      <parameters field="Subentries" className="ReversalIndexEntry" />
+    </command>
+    <command id="CmdDataTree-MoveUp-ReversalSubentry" label="Move Subentry _Up" message="MoveUpObjectInSequence" icon="MoveUp">
+      <parameters field="Subentries" className="ReversalindexEntry" />
+    </command>
+    <command id="CmdDataTree-MoveDown-ReversalSubentry" label="Move Subentry Down" message="MoveDownObjectInSequence" icon="MoveDown">
+      <parameters field="Subentries" className="ReversalindexEntry" />
+    </command>
+    <command id="CmdDataTree-Move-MoveReversalIndexEntry" label="Move Entry..." message="MoveReversalindexEntry">
+      <parameters field="Subentries" className="ReversalindexEntry" />
+    </command>
+    <command id="CmdDataTree-Promote-ProReversalIndexEntry" label="Promote" message="PromoteReversalindexEntry" icon="MoveLeft">
+      <parameters field="Subentries" className="ReversalindexEntry" />
+    </command>
+    <command id="CmdDataTree-Delete-Subentry" label="Delete this Entry and any Subentries" message="DataTreeDelete" icon="Delete">
+      <parameters field="Subentries" className="ReversalindexEntry" />
+    </command>
+    <command id="CmdDataTree-Merge-Subentry" label="Merge Entry into..." message="DataTreeMerge">
+      <parameters field="Subentries" className="ReversalindexEntry" />
+    </command>
+    <!-- END include (Lexicon_Area): "DataTreeInclude.xml" query="window/commands/*" -->
+    <command id="CmdShowAllPublications" label="All Entries" message="ShowAllEntries" />
+    <command id="CmdDeleteMediaFile" label="Delete this Media Link" message="DeleteMediaFile" icon="Delete">
+      <parameters className="CmMedia" />
+    </command>
+    <command id="CmdInsertReversalEntry" label="Reversal Entry" message="InsertItemInVector" icon="reversalEntry" a10status="Only used in two reversal tools in Lex area">
+      <parameters className="ReversalIndexEntry" />
+    </command>
+    <command id="CmdGoToReversalEntry" label="_Find reversal entry..." message="GotoReversalEntry" icon="gotoReversalEntry" shortcut="Ctrl+F" a10status="Only used in two reversal tools in Lex area">
+      <parameters title="Go To Entry" formlabel="Go _To..." okbuttonlabel="_Go" />
+    </command>
+    <command id="CmdConfigureDictionary" label="Configure {0}" message="ConfigureDictionary" />
+    <!-- END include: "Lexicon/areaConfiguration.xml" query="root/commands/*" -->
+    <!-- START include: "Words/areaConfiguration.xml" query="root/commands/*" -->
+    <command id="CmdImportWordSet" label="_Import Word Set..." message="ImportWordSet" a10status="DONE" />
+    <command id="CmdInsertText" label="New _Text" message="InsertInterlinText" shortcut="Ctrl+T" icon="addNewText">
+      <parameters className="StText" />
+    </command>
+    <command id="CmdChooseTexts" label="Choose Texts..." message="AddTexts" icon="addScripture" />
+    <command id="CmdLexiconLookup" label="Find in _Dictionary..." message="LexiconLookup" icon="findInDictionary" />
+    <command id="CmdAddNote" label="_Note" message="AddNote" shortcut="Ctrl+N" icon="insertNote" />
+    <command id="CmdAddWordGlossesToFreeTrans" label="_Word Glosses" message="AddWordGlossesToFreeTrans" shortcut="Enter" />
+    <command id="CmdGuessWordBreaks" label="_Guess Word Breaks" message="GuessWordBreaks" />
+    <command id="CmdParse" label="_Parse" message="ReParse" a10status="NOT USED/IMPLEMENTED" />
+    <command id="CmdApproveAll" label="Approve All" message="ApproveAll" icon="approveAll" />
+    <command id="CmdApprove" label="Approve and _Stay" message="ApproveAndStayPut" shortcut="Ctrl+S" />
+    <command id="CmdApproveAndMoveNext" label="_Approve and Move Next" message="ApproveAndMoveNext" shortcut="Enter" icon="approveAndMoveNext" />
+    <command id="CmdBrowseMoveNext" label="Move _Next" message="BrowseMoveNext" shortcut="Shift+Enter" />
+    <command id="CmdApproveAndMoveNextSameLine" label="Move Next, _Same Line" message="ApproveAndMoveNextSameLine" shortcut="Ctrl+Enter" />
+    <command id="CmdApproveForWholeTextAndMoveNext" label="Approve _Throughout this Text" message="ApproveForWholeTextAndMoveNext" shortcut="Ctrl+E" icon="browseAndMoveNext" />
+    <command id="CmdBrowseMoveNextSameLine" label="Move Next, _Same Line" message="BrowseMoveNextSameLine" shortcut="Shift+Ctrl+Enter" />
+    <command id="CmdMoveFocusBoxRight" label="Move _Right" message="MoveFocusBoxRight" shortcut="Ctrl+Right" />
+    <command id="CmdMoveFocusBoxLeft" label="Move _Left" message="MoveFocusBoxLeft" shortcut="Ctrl+Left" />
+    <command id="CmdBundleDown" label="Move _Down" message="BundleDown" shortcut="Ctrl+Down" a10status="NOT USED/IMPLEMENTED" />
+    <command id="CmdBundleUp" label="Move _Up" message="BundleUp" shortcut="Ctrl+Up" a10status="NOT USED/IMPLEMENTED" />
+    <command id="CmdMoveFocusBoxRightNc" label="Move _Right" message="MoveFocusBoxRightNc" shortcut="Shift+Ctrl+Right" />
+    <command id="CmdMoveFocusBoxLeftNc" label="Move _Left" message="MoveFocusBoxLeftNc" shortcut="Shift+Ctrl+Left" />
+    <command id="CmdBundleDownNc" label="Move _Down" message="BundleDownNc" shortcut="Ctrl+Shift+Down" a10status="NOT USED/IMPLEMENTED" />
+    <command id="CmdBundleUpNc" label="Move _Up" message="BundleUpNc" shortcut="Ctrl+Shift+Up" a10status="NOT USED/IMPLEMENTED" />
+    <command id="CmdLastBundle" label="Last Word" message="LastBundle" shortcut="Ctrl+End" />
+    <command id="CmdFirstBundle" label="First Word" message="FirstBundle" shortcut="Ctrl+Home" />
+    <command id="CmdOpenCombo" label="Open Combo" message="OpenCombo" shortcut="Alt+Down" />
+    <command id="CmdNextIncompleteBundle" label="Approve and _Jump to Next Incomplete" message="NextIncompleteBundle" shortcut="Ctrl+J" />
+    <command id="CmdNextIncompleteBundleNc" label="_Jump to Next" message="NextIncompleteBundleNc" shortcut="Shift+Ctrl+J" />
+    <command id="CmdPrevIncompleteBundle" label="Previous Incomplete Word" message="PrevIncompleteBundle" />
+    <command id="CmdShowMorphology" label="Show _Morphology" message="ShowMorphology" shortcut="Ctrl+M" />
+    <command id="CmdBreakPhrase" label="_Break phrase into words" message="BreakPhrase" icon="breakPhrase" shortcut="Ctrl+W" />
+    <command id="CmdMakePhrase" label="_Make phrase with next word" message="JoinWords" icon="linkWords" shortcut="Ctrl+M" />
+    <command id="CmdDeleteFreeTrans" label="Delete Free Translation" message="DeleteFreeform" />
+    <command id="CmdDeleteLitTrans" label="Delete Literal Translation" message="DeleteFreeform" />
+    <command id="CmdDeleteNote" label="Delete Note" message="DeleteFreeform" />
+    <command id="CmdConfigureInterlinear" label="Interlinear..." message="ConfigureInterlinear" />
+    <command id="CmdRepeatLastMoveLeft" label="Move _Left (last thing moved)" message="RepeatLastMoveLeft" shortcut="Ctrl+Left" />
+    <command id="CmdRepeatLastMoveRight" label="Move _Right (last thing moved)" message="RepeatLastMoveRight" shortcut="Ctrl+Right" />
+    <command id="CmdGoToWfiWordform" label="_Find Wordform..." message="GotoWfiWordform" icon="findWordform" shortcut="Ctrl+F">
+      <parameters title="Go To Wordform" formlabel="Go _To..." okbuttonlabel="_Go" />
+    </command>
+    <command id="CmdShowWordformConc" label="Assign Analysis..." message="ShowWordformConc" />
+    <command id="CmdDataTree-Merge-MainWordform" label="Merge Wordform..." message="MergeWordform" />
+    <command id="CmdDataTree-Delete-MainWordform" label="Delete Wordform..." message="DeleteRecord" icon="Delete" />
+    <command id="CmdWordformEditForm" label="Edit..." message="WordformEditForm" />
+    <command id="CmdWordformChangeCase" label="Change Case..." message="WordformChangeCase" />
+    <command id="CmdShowHumanApprovedAnalysisConc" label="Assign Analysis..." message="ShowHumanApprovedAnalysisConc" />
+    <command id="CmdDataTree-Delete-HumanApprovedAnalysis" label="Delete Analysis..." message="DataTreeDelete" icon="Delete">
+      <parameters field="Analyses" className="WfiAnalysis" />
+    </command>
+    <command id="CmdDataTree-Delete-ParserProducedAnalysis" label="Delete Candidate..." message="DataTreeDelete" icon="Delete">
+      <parameters field="Analyses" className="WfiAnalysis" />
+    </command>
+    <command id="CmdDataTree-Delete-HumanDisapprovedAnalysis" label="Delete Disapproved Analysis..." message="DataTreeDelete" icon="Delete">
+      <parameters field="Analyses" className="WfiAnalysis" />
+    </command>
+    <command id="CmdAnalysisApprove" label="Approve" message="AnalysisApprove" />
+    <command id="CmdAnalysisUnknown" label="Unknown" message="AnalysisUnknown" />
+    <command id="CmdAnalysisDisapprove" label="Disapprove" message="AnalysisDisapprove" />
+    <command id="CmdShowWordGlossConc" label="Assign Analysis..." message="ShowWordGlossConc" />
+    <command id="CmdDataTree-Merge-WordGloss" label="Merge Gloss..." message="DataTreeMerge">
+      <parameters field="Meanings" className="WfiGloss" />
+    </command>
+    <command id="CmdDataTree-Delete-WordGloss" label="Delete Gloss..." message="DataTreeDelete" icon="Delete">
+      <parameters field="Meanings" className="WfiGloss" />
+    </command>
+    <command id="CmdDataTree-Insert-WordGloss" label="Add Word Gloss" message="DataTreeInsert">
+      <parameters field="Meanings" className="WfiGloss" />
+    </command>
+    <command id="CmdInsertHumanApprovedAnalysis" label="Add Approved Analysis..." message="AddApprovedAnalysis" icon="addNewAnalysis" a10status="PLACEHOLDER">
+      <parameters field="Analyses" className="WfiAnalysis" />
+    </command>
+    <command id="CmdRespeller" label="Change Spelling..." message="LaunchRespellerDlg" />
+    <command id="CmdPatternNodeOccurOnce" label="Occurs exactly once" message="PatternNodeSetOccurrence">
+      <parameters min="1" max="1" />
+    </command>
+    <command id="CmdPatternNodeOccurZeroMore" label="Occurs zero or more times" message="PatternNodeSetOccurrence">
+      <parameters min="0" max="-1" />
+    </command>
+    <command id="CmdPatternNodeOccurOneMore" label="Occurs one or more times" message="PatternNodeSetOccurrence">
+      <parameters min="1" max="-1" />
+    </command>
+    <command id="CmdPatternNodeSetOccur" label="Set occurrence (min. and max.)..." message="PatternNodeSetOccurrence" />
+    <command id="CmdPatternNodeSetCriteria" label="Set criteria..." message="PatternNodeSetCriteria" />
+    <command id="CmdPatternNodeGroup" label="Group" message="PatternNodeGroup" />
+    <!-- END include: "Words/areaConfiguration.xml" query="root/commands/*" -->
+    <!-- START include: "Grammar/areaConfiguration.xml" query="root/commands/*" -->
+    <!-- START include (Grammar_Area): "DataTreeInclude.xml" query="window/commands/*" -->
+    <command id="CmdJumpToText" label="Show in Interlinear Texts view" message="JumpToTool">
+      <parameters tool="interlinearEdit" className="Text" />
+    </command>
+    <command id="CmdJumpToNotebook" label="Show Record in Notebook" message="JumpToTool">
+      <parameters tool="notebookEdit" className="RnGenericRecord" />
+    </command>
+    <command id="CmdDataTree-Insert-Adhoc-Group-Members-Allomorph" label="Insert Allomorph Rule" message="DataTreeInsert">
+      <parameters field="Members" className="MoAlloAdhocProhib" />
+    </command>
+    <command id="CmdDataTree-Insert-Adhoc-Group-Members-Morpheme" label="Insert Morpheme Rule" message="DataTreeInsert">
+      <parameters field="Members" className="MoMorphAdhocProhib" />
+    </command>
+    <command id="CmdDataTree-Insert-Adhoc-Group-Members-Group" label="Insert Nested Group" message="DataTreeInsert">
+      <parameters field="Members" className="MoAdhocProhibGr" />
+    </command>
+    <command id="CmdDataTree-Delete-Adhoc-Group-Members-Allomorph" label="Delete Allomorph Rule" message="DataTreeDelete" icon="Delete">
+      <parameters field="Members" className="MoAlloAdhocProhib" />
+    </command>
+    <command id="CmdDataTree-Delete-Adhoc-Group-Members-Morpheme" label="Delete Morpheme Rule" message="DataTreeDelete" icon="Delete">
+      <parameters field="Members" className="MoMorphAdhocProhib" />
+    </command>
+    <command id="CmdDataTree-Delete-Adhoc-Group-Members-Group" label="Delete Nested Group" message="DataTreeDelete" icon="Delete">
+      <parameters field="Members" className="MoAdhocProhibGr" />
+    </command>
+    <command id="CmdDataTree-Create-CompoundRule-LinkerAffixAllomorph" label="Create Linker Form" message="DataTreeInsert">
+      <parameters field="Linker" className="MoAffixAllomorph" />
+    </command>
+    <command id="CmdDataTree-Delete-CompoundRule-LinkerAffixAllomorph" label="Delete Linker Form" message="DataTreeDelete" icon="Delete">
+      <parameters field="Linker" className="MoAffixAllomorph" />
+    </command>
+    <command id="CmdDataTree-Insert-ClosedFeature-Value" label="Insert Feature Value" message="DataTreeInsert">
+      <parameters field="Values" className="FsSymFeatVal" />
+    </command>
+    <command id="CmdDataTree-Delete-ClosedFeature-Value" label="Delete Feature Value" message="DataTreeDelete" icon="Delete">
+      <parameters field="Values" className="FsSymFeatVal" />
+    </command>
+    <command id="CmdDataTree-Insert-POS-AffixSlot" label="Insert Affix Slot" message="DataTreeInsert">
+      <parameters field="AffixSlots" className="MoInflAffixSlot" />
+    </command>
+    <command id="CmdDataTree-Delete-POS-AffixSlot" label="Delete Affix Slot" message="DataTreeDelete" icon="Delete">
+      <parameters field="AffixSlots" className="MoInflAffixSlot" />
+    </command>
+    <command id="CmdDataTree-Insert-POS-AffixTemplate" label="Insert Affix Template" message="DataTreeInsert">
+      <parameters field="AffixTemplates" className="MoInflAffixTemplate" />
+    </command>
+    <command id="CmdDataTree-Copy-POS-AffixTemplate" label="Duplicate Affix Template" message="DataTreeCopy">
+      <parameters field="AffixTemplates" className="MoInflAffixTemplate" />
+    </command>
+    <command id="CmdDataTree-Delete-POS-AffixTemplate" label="Delete Affix Template" message="DataTreeDelete" icon="Delete">
+      <parameters field="AffixTemplates" className="MoInflAffixTemplate" />
+    </command>
+    <command id="CmdDataTree-Insert-POS-InflectionClass-Subclasses" label="Insert Inflection Class" message="DataTreeInsert">
+      <parameters field="Subclasses" className="MoInflClass" />
+    </command>
+    <command id="CmdDataTree-Insert-POS-InflectionClass" label="Insert Inflection Class" message="DataTreeInsert">
+      <parameters field="InflectionClasses" className="MoInflClass" />
+    </command>
+    <command id="CmdDataTree-Delete-POS-InflectionClass" label="Delete Inflection Class" message="DataTreeDelete" icon="Delete">
+      <parameters field="InflectionClasses" className="MoInflClass" />
+    </command>
+    <command id="CmdDataTree-Insert-POS-StemName" label="Insert Stem Name" message="DataTreeInsert">
+      <parameters field="StemNames" className="MoStemName" />
+    </command>
+    <command id="CmdDataTree-Delete-POS-StemName" label="Delete Stem Name" message="DataTreeDelete" icon="Delete">
+      <parameters field="StemNames" className="MoStemName" />
+    </command>
+    <command id="CmdDataTree-Insert-MoStemName-Region" label="Insert Feature Set" message="DataTreeInsert">
+      <parameters field="Regions" className="FsFeatStruc" />
+    </command>
+    <command id="CmdDataTree-Delete-MoStemName-Region" label="Delete Feature Set" message="DataTreeDelete" icon="Delete">
+      <parameters field="Regions" className="FsFeatStruc" />
+    </command>
+    <command id="CmdDataTree-Insert-POS-SubPossibilities" label="Insert Subcategory..." message="DataTreeInsert" icon="AddSubItem">
+      <parameters field="SubPossibilities" className="PartOfSpeech" slice="owner" />
+    </command>
+    <command id="CmdDataTree-Insert-Phoneme-Code" label="Grapheme" message="DataTreeInsert">
+      <parameters field="Codes" className="PhCode" />
+    </command>
+    <command id="CmdDataTree-Delete-Phoneme-Code" label="Delete Grapheme" message="DataTreeDelete" icon="Delete">
+      <parameters field="Codes" className="PhCode" />
+    </command>
+    <command id="CmdDataTree-Insert-Env-Slash" label="Insert Environment slash" message="InsertSlash" />
+    <command id="CmdDataTree-Insert-Env-Underscore" label="Insert Environment bar" message="InsertEnvironmentBar" />
+    <command id="CmdDataTree-Insert-Env-NaturalClass" label="Insert Natural Class" message="InsertNaturalClass" />
+    <command id="CmdDataTree-Insert-Env-OptionalItem" label="Insert Optional Item" message="InsertOptionalItem" />
+    <command id="CmdDataTree-Insert-Env-HashMark" label="Insert Word Boundary" message="InsertHashMark" />
+    <!-- END include (Grammar_Area): "DataTreeInclude.xml" query="window/commands/*" -->
+    <!-- START include (Grammar_Area): "InflAffixTemplateInclude.xml" query="window/commands/*" -->
+    <command id="CmdInflAffixTemplate-Help" label="Help..." icon="Help" message="InflAffixTemplateHelp" />
+    <command id="CmdInflAffixTemplate-Insert-Slot-Before" label="Insert Slot before XXX" message="InflTemplateInsertSlotBefore">
+      <parameters field="Slots" className="MoInflAffixTemplate" />
+    </command>
+    <command id="CmdInflAffixTemplate-Insert-Slot-After" label="Insert Slot after XXX" message="InflTemplateInsertSlotAfter">
+      <parameters field="Slots" className="MoInflAffixTemplate" />
+    </command>
+    <command id="CmdInflAffixTemplate-Move-Slot-Left" label="Move XXX back one Slot" message="InflTemplateMoveSlotLeft" icon="Left">
+      <parameters field="Slots" className="MoInflAffixTemplate" />
+    </command>
+    <command id="CmdInflAffixTemplate-Move-Slot-Right" label="Move XXX forward one Slot" message="InflTemplateMoveSlotRight" icon="Right">
+      <parameters field="Slots" className="MoInflAffixTemplate" />
+    </command>
+    <command id="CmdInflAffixTemplate-Remove-Slot" label="Remove XXX Slot" message="InflTemplateRemoveSlot" icon="Remove">
+      <parameters field="Slots" className="MoInflAffixTemplate" />
+    </command>
+    <command id="CmdInflAffixTemplate-Toggle-Slot-Optionality" label="Change Optionality of XXX Slot" message="InflTemplateToggleSlotOptionality">
+      <parameters field="Slots" className="MoInflAffixTemplate" />
+    </command>
+    <command id="CmdInflAffixTemplate-Add-InflAffixMsa" label="Add inflectional affix(es) to XXX" message="InflTemplateAddInflAffixMsa" guicontrol="InflAffixMsaFlatList">
+      <parameters field="Slots" className="MoInflAffixTemplate" />
+    </command>
+    <command id="CmdInflAffixTemplate-Remove-InflAffixMsa" label="Remove YYY from XXX" message="InflTemplateRemoveInflAffixMsa" icon="Remove">
+      <parameters field="AffixCategory" className="MoInflAffMsa" />
+    </command>
+    <!-- END include (Grammar_Area): "InflAffixTemplateInclude.xml" query="window/commands/*" -->
+    <command id="CmdInsertPOS" label="Category" message="InsertItemInVector" shortcut="Ctrl+I" icon="AddItem">
+      <params className="PartOfSpeech" />
+    </command>
+    <command id="CmdInsertEndocentricCompound" label="Headed Compound" message="InsertItemInVector" icon="endocompoundRule">
+      <params className="MoEndoCompound" />
+    </command>
+    <command id="CmdInsertExocentricCompound" label="Non-headed Compound" message="InsertItemInVector" icon="exocompoundRule">
+      <params className="MoExoCompound" />
+    </command>
+    <command id="CmdInsertExceptionFeature" label="_Exception Feature..." message="InsertItemInVector" icon="addExceptionFeature">
+      <params className="CmPossibility" restrictToClerkID="ProdRestrict" />
+    </command>
+    <command id="CmdInsertPhonologicalClosedFeature" label="_Phonological Feature..." message="InsertItemInVector" icon="addFeature">
+      <params className="FsClosedFeature" restrictToClerkID="phonologicalfeatures" />
+    </command>
+    <command id="CmdInsertClosedFeature" label="_Feature..." message="InsertItemInVector" icon="addFeature">
+      <params className="FsClosedFeature" restrictToClerkID="features" />
+    </command>
+    <command id="CmdInsertComplexFeature" label="_Complex Feature..." message="InsertItemInVector" icon="addComplexFeature">
+      <params className="FsComplexFeature" restrictToClerkID="features" />
+    </command>
+    <command id="CmdInsertPhoneme" label="Phoneme" message="InsertItemInVector" icon="phoneme" shortcut="Ctrl+I">
+      <params className="PhPhoneme" />
+    </command>
+    <command id="CmdInsertPhEnvironment" label="Environment" message="InsertItemInVector" icon="environment" shortcut="Ctrl+I">
+      <params className="PhEnvironment" />
+    </command>
+    <command id="CmdInsertSegmentNaturalClasses" label="Natural Class (Phonemes)" message="InsertItemInVector" icon="naturalClass" shortcut="Ctrl+I">
+      <params className="PhNCSegments" />
+    </command>
+    <command id="CmdInsertFeatureNaturalClasses" label="Natural Class (Features)" message="InsertItemInVector" icon="addFeature">
+      <params className="PhNCFeatures" />
+    </command>
+    <command id="CmdInsertPhRegularRule" label="Phonological Rule" message="InsertItemInVector" icon="environment">
+      <params className="PhRegularRule" />
+    </command>
+    <command id="CmdInsertPhMetathesisRule" label="Metathesis Rule" message="InsertItemInVector" icon="metathesis">
+      <params className="PhMetathesisRule" />
+    </command>
+    <command id="CmdInsertMorphemeACP" label="Rule to prevent morpheme co-occurrence" message="InsertItemInVector" icon="morphCoprohib">
+      <params className="MoMorphAdhocProhib" />
+    </command>
+    <command id="CmdInsertAllomorphACP" label="Rule to prevent allomorph co-occurrence" message="InsertItemInVector" icon="alloCoprohib">
+      <params className="MoAlloAdhocProhib" />
+    </command>
+    <command id="CmdInsertACPGroup" label="Group of ad hoc rules" message="InsertItemInVector" icon="coprohibGroup">
+      <params className="MoAdhocProhibGr" />
+    </command>
+    <command id="CmdJumpToEnvironmentList" label="Show in Environments list" message="JumpToTool">
+      <parameters tool="EnvironmentEdit" className="PhEnvironment" ownerClass="PhPhonData" ownerField="Environments" />
+    </command>
+    <command id="CmdShowEnvironmentErrorMessage" label="_Describe Error in Environment" message="ShowEnvironmentError" />
+    <command id="CmdInsertEnvSlash" label="Insert Environment _slash" message="InsertSlash" />
+    <command id="CmdInsertEnvUnderscore" label="Insert Environment _bar" message="InsertEnvironmentBar" />
+    <command id="CmdInsertEnvNaturalClass" label="Insert _Natural Class" message="InsertNaturalClass" />
+    <command id="CmdInsertEnvOptionalItem" label="Insert _Optional Item" message="InsertOptionalItem" />
+    <command id="CmdInsertEnvHashMark" label="Insert _Word Boundary" message="InsertHashMark" />
+    <command id="CmdCtxtOccurOnce" label="Occurs exactly once" message="ContextSetOccurrence">
+      <parameters min="1" max="1" />
+    </command>
+    <command id="CmdCtxtOccurZeroMore" label="Occurs zero or more times" message="ContextSetOccurrence">
+      <parameters min="0" max="-1" />
+    </command>
+    <command id="CmdCtxtOccurOneMore" label="Occurs one or more times" message="ContextSetOccurrence">
+      <parameters min="1" max="-1" />
+    </command>
+    <command id="CmdCtxtSetOccur" label="Set occurrence (min. and max.)..." message="ContextSetOccurrence" />
+    <command id="CmdCtxtSetFeatures" label="Set Phonological Features..." message="ContextSetFeatures" />
+    <command id="CmdCtxtJumpToNC" label="Show in Natural Classes list" message="ContextJumpToNaturalClass" />
+    <command id="CmdCtxtJumpToPhoneme" label="Show in Phonemes list" message="ContextJumpToPhoneme" />
+    <command id="CmdMappingSetFeatures" label="Set Phonological Features..." message="MappingSetFeatures" />
+    <command id="CmdMappingSetNC" label="Set Natural Class..." message="MappingSetNaturalClass" />
+    <command id="CmdMappingJumpToNC" label="Show in Natural Classes list" message="MappingJumpToNaturalClass" />
+    <command id="CmdMappingJumpToPhoneme" label="Show in Phonemes list" message="MappingJumpToPhoneme" />
+    <!-- END include: "Grammar/areaConfiguration.xml" query="root/commands/*" -->
+    <!-- START include: "Notebook/areaConfiguration.xml" query="root/commands/*" -->
+    <command id="CmdInsertRecord" label="Record" message="InsertItemInVector" icon="nbkRecord" shortcut="Ctrl+I">
+      <params className="RnGenericRec" />
+    </command>
+    <command id="CmdInsertSubrecord" label="Subrecord" message="InsertItemInVector" icon="nbkRecord">
+      <params className="RnGenericRec" subrecord="true" />
+    </command>
+    <command id="CmdInsertSubsubrecord" label="Subrecord of subrecord" message="InsertItemInVector" icon="nbkRecord">
+      <params className="RnGenericRec" subrecord="true" subsubrecord="true" />
+    </command>
+    <command id="CmdGoToRecord" label="_Find Record..." message="GotoRecord" icon="goToRecord" shortcut="Ctrl+F" a10status="Defined here, but used in Main.xml">
+      <parameters title="Go To Record" formlabel="Go _To..." okbuttonlabel="_Go" />
+    </command>
+    <command id="CmdDataTree-Insert-Subrecord" label="Insert _Subrecord" message="InsertItemInVector">
+      <parameters className="RnGenericRec" subrecord="true" />
+    </command>
+    <command id="CmdDataTree-Insert-Subsubrecord" label="Insert S_ubrecord of Subrecord" message="InsertItemInVector">
+      <parameters className="RnGenericRec" subrecord="true" subsubrecord="true" />
+    </command>
+    <command id="CmdDataTree-Delete-Participants" label="Delete Participants" message="DeleteParticipants" />
+    <command id="CmdRecordJumpToDefault" label="Show Record in Notebook" message="JumpToTool">
+      <parameters tool="notebookEdit" className="RnGenericRec" />
+    </command>
+    <command id="CmdMoveRecordUp" label="Move Up" message="MoveItemUpInVector">
+      <parameters className="RnGenericRec" />
+    </command>
+    <command id="CmdMoveRecordDown" label="Move Down" message="MoveItemDownInVector">
+      <parameters className="RnGenericRec" />
+    </command>
+    <command id="CmdPromoteSubrecord" label="Promote" message="PromoteSubitemInVector">
+      <parameters className="RnGenericRec" />
+    </command>
+    <command id="CmdDemoteRecord" label="Demote Record..." message="DemoteItemInVector">
+      <parameters className="RnGenericRec" />
+    </command>
+    <command id="CmdDemoteSubrecord" label="Demote..." message="DemoteSubitemInVector">
+      <parameters className="RnGenericRec" />
+    </command>
+    <!-- END include: "Notebook/areaConfiguration.xml" query="root/commands/*" -->
+    <!-- START include: "Lists/areaConfiguration.xml" query="root/commands/*" -->
+    <!-- START include (Lists_Area): "DataTreeInclude.xml" query="window/commands/*" -->
+    <command id="CmdDataTree-Insert-Question" label="Insert Question" message="DataTreeInsert" icon="AddSubItem">
+      <parameters field="Questions" className="CmDomainQ" />
+    </command>
+    <command id="CmdDataTree-Delete-Question" label="Delete Question" message="DataTreeDelete" icon="Delete">
+      <parameters field="Questions" className="CmDomainQ" />
+    </command>
+    <command id="CmdDataTree-Insert-Possibility" label="Insert subitem" message="DataTreeInsert" icon="AddSubItem">
+      <parameters field="SubPossibilities" className="CmPossibility" />
+    </command>
+    <command id="CmdDataTree-Delete-Possibility" label="Delete subitem and its subitems" message="DataTreeDelete" icon="Delete">
+      <parameters field="SubPossibilities" className="CmPossibility" />
+    </command>
+    <command id="CmdDataTree-Insert-CustomItem" label="Insert subitem" message="DataTreeInsert" icon="AddSubItem">
+      <parameters field="SubPossibilities" className="CmCustomItem" />
+    </command>
+    <command id="CmdDataTree-Delete-CustomItem" label="Delete subitem and its subitems" message="DataTreeDelete" icon="Delete">
+      <parameters field="SubPossibilities" className="CmCustomItem" />
+    </command>
+    <command id="CmdDataTree-Insert-SemanticDomain" label="Insert subdomain" message="DataTreeInsert" icon="AddSubItem">
+      <parameters field="SubPossibilities" className="CmSemanticDomain" />
+    </command>
+    <command id="CmdDataTree-Insert-AnnotationDefn" label="Insert Annotation Definition" message="DataTreeInsert" icon="AddSubItem">
+      <parameters field="SubPossibilities" className="CmAnnotationDefn" />
+    </command>
+    <command id="CmdDataTree-Insert-MorphType" label="Insert Morpheme Type" message="DataTreeInsert" icon="AddSubItem">
+      <parameters field="SubPossibilities" className="MoMorphType" />
+    </command>
+    <command id="CmdDataTree-Insert-LexEntryInflType" label="Insert Subtype" message="DataTreeInsert" icon="AddSubItem">
+      <parameters field="SubPossibilities" className="LexEntryInflType" />
+    </command>
+    <command id="CmdDataTree-Insert-LexEntryType" label="Insert Subtype" message="DataTreeInsert" icon="AddSubItem">
+      <parameters field="SubPossibilities" className="LexEntryType" />
+    </command>
+    <command id="CmdDataTree-Insert-AnthroCategory" label="Insert subcategory" message="DataTreeInsert" icon="AddSubItem">
+      <parameters field="SubPossibilities" className="CmAnthroItem" />
+    </command>
+    <command id="CmdDataTree-Insert-Location" label="Insert subitem" message="DataTreeInsert" icon="AddSubItem">
+      <parameters field="SubPossibilities" className="CmLocation" />
+    </command>
+    <command id="CmdDataTree-Insert-ReversalSubPOS" label="Insert Reversal Subcategory" message="DataTreeInsert">
+      <parameters field="SubPossibilities" className="PartOfSpeech" />
+    </command>
+    <command id="CmdDataTree-Move-MoveReversalPOS" label="Move Category..." message="MoveReversalPOS">
+      <!--<parameters field="SubPossibilities" className="PartOfSpeech"/>-->
+    </command>
+    <command id="CmdDataTree-Promote-ProReversalSubPOS" label="Promote" message="PromoteReversalSubPOS" icon="MoveLeft">
+      <parameters field="SubPossibilities" className="PartOfSpeech" />
+    </command>
+    <command id="CmdDataTree-Delete-ReversalSubPOS" label="Delete this Category and any Subcategories" message="DataTreeDelete" icon="Delete">
+      <parameters field="SubPossibilities" className="PartOfSpeech" />
+    </command>
+    <command id="CmdDataTree-Merge-MergeReversalPOS" label="Merge Category into..." message="MergeReversalPOS" />
+    <!-- END include (Lists_Area): "DataTreeInclude.xml" query="window/commands/*" -->
+    <command id="CmdInsertSemDom" label="_Semantic Domain" message="InsertItemInVector" icon="AddItem">
+      <params className="CmSemanticDomain" />
+    </command>
+    <command id="CmdInsertAnnotationDef" label="_Annotation Definition" message="InsertItemInVector" icon="AddItem">
+      <params className="CmAnnotationDefn" />
+    </command>
+    <command id="CmdInsertPossibility" label="_Item" message="InsertItemInVector" icon="AddItem">
+      <params className="CmPossibility" restrictFromClerkID="ProdRestrict" />
+    </command>
+    <command id="CmdInsertCustomItem" label="_Item" message="InsertItemInVector" icon="AddItem">
+      <params className="CmCustomItem" />
+    </command>
+    <command id="CmdInsertMorphType" label="_Morph Type" message="InsertItemInVector" icon="AddItem">
+      <params className="MoMorphType" />
+    </command>
+    <command id="CmdInsertAnthroCategory" label="Anthropology _Category" message="InsertItemInVector" icon="AddItem">
+      <params className="CmAnthroItem" />
+    </command>
+    <command id="CmdInsertPerson" label="_Person" message="InsertItemInVector" icon="AddItem">
+      <params className="CmPerson" />
+    </command>
+    <command id="CmdInsertLocation" label="_Location" message="InsertItemInVector" icon="AddItem">
+      <params className="CmLocation" />
+    </command>
+    <command id="CmdInsertLexRefType" label="_Lexical Reference Type" message="InsertItemInVector" icon="AddItem">
+      <params className="LexRefType" />
+    </command>
+    <command id="CmdInsertFeatureType" label="_Feature Type" message="InsertItemInVector" icon="AddItem">
+      <params className="FsFeatStrucType" />
+    </command>
+    <command id="CmdJumpToAcademicDomainList" label="Show in {0} list" message="JumpToTool">
+      <parameters tool="domainTypeEdit" className="CmPossibility" ownerClass="LexDb" ownerField="DomainTypes" />
+    </command>
+    <command id="CmdJumpToAnthroList" label="Show in {0} list" message="JumpToTool">
+      <parameters tool="anthroEdit" className="CmAnthroItem" ownerClass="LangProject" ownerField="AnthroList" />
+    </command>
+    <command id="CmdJumpToLexiconEditWithFilter" label="Filter for Lexical Entries with this category" message="JumpToLexiconEditFilterAnthroItems">
+      <parameters tool="lexiconEdit" className="CmAnthroItem" ownerClass="LangProject" ownerField="AnthroList" />
+    </command>
+    <command id="CmdJumpToNotebookEditWithFilter" label="Filter for Notebook Records with this category" message="JumpToNotebookEditFilterAnthroItems">
+      <parameters tool="notebookEdit" className="CmAnthroItem" ownerClass="LangProject" ownerField="AnthroList" />
+    </command>
+    <command id="CmdJumpToConfidenceList" label="Show in {0} list" message="JumpToTool">
+      <parameters tool="confidenceEdit" className="CmPossibility" ownerClass="LangProject" ownerField="ConfidenceLevels" />
+    </command>
+    <command id="CmdJumpToDialectLabelsList" label="Show in {0} list" message="JumpToTool">
+      <parameters tool="dialectsListEdit" className="CmPossibility" ownerClass="LexDb" ownerField="DialectLabels" />
+    </command>
+    <command id="CmdJumpToDiscChartMarkerList" label="Show in {0} list" message="JumpToTool">
+      <parameters tool="chartmarkEdit" className="CmPossibility" ownerClass="DsDiscourseData" ownerField="ChartMarkers" />
+    </command>
+    <command id="CmdJumpToDiscChartTemplateList" label="Show in {0} list" message="JumpToTool">
+      <parameters tool="charttempEdit" className="CmPossibility" ownerClass="DsDiscourseData" ownerField="ConstChartTempl" />
+    </command>
+    <command id="CmdJumpToEducationList" label="Show in {0} list" message="JumpToTool">
+      <parameters tool="educationEdit" className="CmPossibility" ownerClass="LangProject" ownerField="Education" />
+    </command>
+    <command id="CmdJumpToExtNoteTypeList" label="Show in {0} list" message="JumpToTool">
+      <parameters tool="extNoteTypeEdit" className="CmPossibility" ownerClass="LexDb" ownerField="ExtendedNoteTypes" />
+    </command>
+    <command id="CmdJumpToLanguagesList" label="Show in {0} list" message="JumpToTool">
+      <parameters tool="languagesListEdit" className="CmPossibility" ownerClass="LexDb" ownerField="Languages" />
+    </command>
+    <command id="CmdJumpToRoleList" label="Show in {0} list" message="JumpToTool">
+      <parameters tool="roleEdit" className="CmPossibility" ownerClass="LangProject" ownerField="Roles" />
+    </command>
+    <command id="CmdJumpToGenreList" label="Show in {0} list" message="JumpToTool">
+      <parameters tool="genresEdit" className="CmPossibility" ownerClass="LangProject" ownerField="GenreList" />
+    </command>
+    <command id="CmdJumpToLexRefTypeList" label="Show in {0} list" message="JumpToTool">
+      <parameters tool="lexRefEdit" className="LexRefType" ownerClass="LexDb" ownerField="References" />
+    </command>
+    <command id="CmdJumpToLocationList" label="Show in {0} list" message="JumpToTool">
+      <parameters tool="locationsEdit" className="CmLocation" ownerClass="LangProject" ownerField="Locations" />
+    </command>
+    <command id="CmdJumpToPublicationList" label="Show in {0} list" message="JumpToTool">
+      <parameters tool="publicationsEdit" className="CmPossibility" ownerClass="LexDb" ownerField="PublicationTypes" />
+    </command>
+    <command id="CmdInsertLexEntryInflType" label="_Type" message="InsertItemInVector" icon="AddItem">
+      <params className="LexEntryInflType" />
+    </command>
+    <command id="CmdInsertLexEntryType" label="_Type" message="InsertItemInVector" icon="AddItem">
+      <params className="LexEntryType" />
+    </command>
+    <command id="CmdJumpToComplexEntryTypeList" label="Show in Complex Form Types list" message="JumpToTool">
+      <parameters tool="complexEntryTypeEdit" className="LexEntryType" ownerClass="LexDb" ownerField="ComplexEntryTypes" />
+    </command>
+    <command id="CmdJumpToVariantEntryTypeList" label="Show in Variant Types list" message="JumpToTool">
+      <parameters tool="variantEntryTypeEdit" className="LexEntryType" ownerClass="LexDb" ownerField="VariantEntryTypes" />
+    </command>
+    <command id="CmdJumpToTextMarkupTagsList" label="Show in {0} list" message="JumpToTool">
+      <parameters tool="textMarkupTagsEdit" className="CmPossibility" ownerClass="LangProject" ownerField="TextMarkupTags" />
+    </command>
+    <command id="CmdJumpToMorphTypeList" label="Show in Morpheme Types list" message="JumpToTool">
+      <parameters tool="morphTypeEdit" className="MoMorphType" ownerClass="LexDb" ownerField="MorphTypes" />
+    </command>
+    <command id="CmdJumpToPeopleList" label="Show in {0} list" message="JumpToTool">
+      <parameters tool="peopleEdit" className="CmPerson" ownerClass="LangProject" ownerField="People" />
+    </command>
+    <command id="CmdJumpToPositionList" label="Show in {0} list" message="JumpToTool">
+      <parameters tool="positionsEdit" className="CmPossibility" ownerClass="LangProject" ownerField="Positions" />
+    </command>
+    <command id="CmdJumpToRestrictionsList" label="Show in {0} list" message="JumpToTool">
+      <parameters tool="restrictionsEdit" className="CmPossibility" ownerClass="LangProject" ownerField="Restrictions" />
+    </command>
+    <command id="CmdJumpToSemanticDomainList" label="Show in {0} list" message="JumpToTool">
+      <parameters tool="semanticDomainEdit" className="CmSemanticDomain" ownerClass="LangProject" ownerField="SemanticDomainList" />
+    </command>
+    <command id="CmdJumpToSenseTypeList" label="Show in {0} list" message="JumpToTool">
+      <parameters tool="senseTypeEdit" className="CmPossibility" ownerClass="LexDb" ownerField="SenseTypes" />
+    </command>
+    <command id="CmdJumpToStatusList" label="Show in {0} list" message="JumpToTool">
+      <parameters tool="statusEdit" className="CmPossibility" ownerClass="LangProject" ownerField="Status" />
+    </command>
+    <command id="CmdJumpToTranslationTypeList" label="Show in {0} list" message="JumpToTool">
+      <parameters tool="translationTypeEdit" className="CmPossibility" ownerClass="LangProject" ownerField="TranslationTags" />
+    </command>
+    <command id="CmdJumpToUsageTypeList" label="Show in {0} list" message="JumpToTool">
+      <parameters tool="usageTypeEdit" className="CmPossibility" ownerClass="LexDb" ownerField="UsageTypes" />
+    </command>
+    <command id="CmdJumpToRecordTypeList" label="Show in {0} list" message="JumpToTool">
+      <parameters tool="recTypeEdit" className="CmPossibility" ownerClass="RnResearchNbk" ownerField="RecTypes" />
+    </command>
+    <command id="CmdJumpToTimeOfDayList" label="Show in {0} list" message="JumpToTool">
+      <parameters tool="timeOfDayEdit" className="CmPossibility" ownerClass="LangProject" ownerField="TimeOfDay" />
+    </command>
+    <!-- END include: "Lists/areaConfiguration.xml" query="root/commands/*" -->
+    <command id="CmdHelpDemoWelcome" label="_Welcome" message="HelpDemoMovies">
+      <parameters file="1-welcome" />
+    </command>
+    <command id="CmdHelpDemoOverview" label="_Overview" message="HelpDemoMovies">
+      <parameters file="2-overview" />
+    </command>
+    <command id="CmdHelpDemoConfigColumns" label="_Configuring columns" message="HelpDemoMovies">
+      <parameters file="3-configcolumns" />
+    </command>
+    <command id="CmdHelpDemoFilter" label="_Filtering" message="HelpDemoMovies">
+      <parameters file="4-filter" />
+    </command>
+    <command id="CmdHelpDemoSort" label="_Sorting" message="HelpDemoMovies">
+      <parameters file="5-sort" />
+    </command>
+    <command id="CmdHelpDemoFields" label="Fi_elds" message="HelpDemoMovies">
+      <parameters file="6-fields" />
+    </command>
+    <command id="CmdHelpDemoNewEntry" label="_New entry" message="HelpDemoMovies">
+      <parameters file="7-newentry" />
+    </command>
+    <command id="CmdHelpDemoFindEntry" label="_Find entry" message="HelpDemoMovies">
+      <parameters file="8-findentry" />
+    </command>
+    <command id="CmdHelpDemoGramInfo" label="_Grammatical info. (POS)" message="HelpDemoMovies">
+      <parameters file="9-graminfo" />
+    </command>
+    <command id="CmdHelpDemoLexRel" label="_Lexical relations" message="HelpDemoMovies">
+      <parameters file="10-lexrel" />
+    </command>
+    <command id="CmdHelpDemoSubentry" label="_Subentry (derivative)" message="HelpDemoMovies">
+      <parameters file="11-subentry" />
+    </command>
+    <command id="CmdHelpDemoMinor" label="_Minor entry (variant)" message="HelpDemoMovies">
+      <parameters file="12-minor" />
+    </command>
+    <command id="CmdHelpDemoCategorized" label="_Collect Words" message="HelpDemoMovies">
+      <parameters file="13-categorized" />
+    </command>
+    <command id="CmdHelpDemoBulkList" label="_Bulk Edit (list choice)" message="HelpDemoMovies">
+      <parameters file="14-bulklist" />
+    </command>
+    <command id="CmdHelpDemoBulkCopy" label="Bulk _Edit (copy)" message="HelpDemoMovies">
+      <parameters file="15-bulkcopy" />
+    </command>
+    <command id="CmdHelpDemoBulkClick" label="Bulk Edit (c_lick copy)" message="HelpDemoMovies">
+      <parameters file="16-bulkclick" />
+    </command>
+    <command id="CmdHelpDemoText" label="_Interlinearizing" message="HelpDemoMovies">
+      <parameters file="17-Text" />
+    </command>
+    <command id="CmdHelpDemoWords" label="Words (_assign analysis)" message="HelpDemoMovies">
+      <parameters file="18-words" />
+    </command>
+    <command id="CmdHelpDemoGrammar" label="_Grammar (new template)" message="HelpDemoMovies">
+      <parameters file="19-grammar" />
+    </command>
+    <command id="CmdHelpDemoPlayAll" label="_Play all (32 minutes)" message="HelpDemoMovies">
+      <parameters file="Play_all" />
+    </command>
+    <command id="CmdAddToLexicon" label="Add to Dictionary..." message="AddToLexicon" icon="majorEntry" />
+    <command id="CmdConfigureXmlDocView" label="{0}" message="ConfigureXmlDocView" />
+  </commands>
+  <!-- ************************ menus *********************** -->
+  <menubar>
+    <menu id="Edit" label="_Edit" b4InsertMenu="true" a10status="PARTIALLY_DONE">
+      <!-- START include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->
+      <item command="CmdGoToRecord" />
+      <!-- END include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->
+      <!-- START include: "Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->
+      <item command="CmdGoToReversalEntry" defaultVisible="false" />
+      <!-- END include: "Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->
+      <!-- START include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->
+      <item command="CmdGoToWfiWordform" defaultVisible="false" />
+      <!-- END include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->
+    </menu>
+    <menu id="View" label="_View" b4InsertMenu="true" a10status="PARTIALLY_DONE">
+      <item label="Invisible Spaces" boolProperty="ShowInvisibleSpaces" defaultVisible="false" settingsGroup="local" />
+      <item label="-" translate="do not translate" />
+      <menu id="FilterChoices" label="_Filters" list="FiltersList" behavior="singlePropertyAtomicValue" property="currentFilterForRecordClerk_THISCHANGES" settingsGroup="local" />
+      <!-- START include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*" -->
+      <item command="CmdChooseTexts" defaultVisible="false" />
+      <!-- END include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*" -->
+    </menu>
+    <menu id="Data" label="_Data" a10status="PARTIALLY_DONE">
+      <!-- START include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Data']/*" -->
+      <item command="CmdParse" defaultVisible="false" a10status="NOT USED/IMPLEMENTED" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdApproveAndMoveNext" defaultVisible="false" />
+      <item command="CmdApproveForWholeTextAndMoveNext" defaultVisible="false" />
+      <item command="CmdNextIncompleteBundle" defaultVisible="false" />
+      <item command="CmdApprove" defaultVisible="false" />
+      <menu id="ApproveAnalysisMovementMenu" label="_Approve suggestion and" defaultVisible="false">
+        <item command="CmdApproveAndMoveNextSameLine" />
+        <item command="CmdMoveFocusBoxRight" />
+        <item command="CmdMoveFocusBoxLeft" />
+      </menu>
+      <menu id="BrowseMovementMenu" label="Leave _suggestion and" defaultVisible="false">
+        <item command="CmdBrowseMoveNext" />
+        <item command="CmdNextIncompleteBundleNc" />
+        <item command="CmdBrowseMoveNextSameLine" />
+        <item command="CmdMoveFocusBoxRightNc" />
+        <item command="CmdMoveFocusBoxLeftNc" />
+      </menu>
+      <item command="CmdMakePhrase" defaultVisible="false" />
+      <item command="CmdBreakPhrase" defaultVisible="false" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdRepeatLastMoveLeft" defaultVisible="false" />
+      <item command="CmdRepeatLastMoveRight" defaultVisible="false" />
+      <item command="CmdApproveAll" defaultVisible="false" />
+      <!-- END include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Data']/*" -->
+    </menu>
+    <menu id="Insert" label="_Insert" a10status="DONE">
+      <!-- START include: "Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*" -->
+      <item command="CmdInsertReversalEntry" defaultVisible="false" />
+      <!-- END include: "Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*" -->
+      <!-- START include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*" -->
+      <item command="CmdInsertText" defaultVisible="false" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdAddNote" defaultVisible="false" />
+      <item command="CmdAddWordGlossesToFreeTrans" defaultVisible="false" />
+      <item label="Click Inserts Invisible Space" boolProperty="ClickInvisibleSpace" defaultVisible="false" settingsGroup="local" icon="zeroWidth" />
+      <item command="CmdGuessWordBreaks" defaultVisible="false" />
+      <item label="-" translate="do not translate" a10status="DONE" />
+      <item command="CmdImportWordSet" defaultVisible="false" a10status="DONE" />
+      <item command="CmdInsertHumanApprovedAnalysis" defaultVisible="false" a10status="PLACEHOLDER" />
+      <!-- END include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*" -->
+      <!-- START include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*" -->
+      <item command="CmdInsertRecord" defaultVisible="false" />
+      <item command="CmdInsertSubrecord" defaultVisible="false" />
+      <item command="CmdInsertSubsubrecord" defaultVisible="false" />
+      <item command="CmdAddToLexicon" label="Entry..." defaultVisible="false" />
+      <!-- END include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*" -->
+      <!-- START include: "Lists/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*" -->
+      <item command="CmdInsertSemDom" defaultVisible="false" />
+      <item command="CmdDataTree-Insert-SemanticDomain" defaultVisible="false" label="Subdomain" />
+      <item command="CmdInsertAnnotationDef" defaultVisible="false" />
+      <item command="CmdInsertPossibility" defaultVisible="false" />
+      <item command="CmdInsertCustomItem" defaultVisible="false" />
+      <item command="CmdInsertMorphType" defaultVisible="false" />
+      <item command="CmdInsertLexEntryInflType" defaultVisible="false" />
+      <item command="CmdInsertLexEntryType" defaultVisible="false" />
+      <item command="CmdDataTree-Insert-LexEntryInflType" defaultVisible="false" label="Subtype" />
+      <item command="CmdDataTree-Insert-LexEntryType" defaultVisible="false" label="Subtype" />
+      <item command="CmdInsertAnthroCategory" defaultVisible="false" />
+      <item command="CmdDataTree-Insert-AnthroCategory" defaultVisible="false" label="Subcategory" />
+      <item command="CmdInsertPerson" defaultVisible="false" />
+      <item command="CmdInsertLocation" defaultVisible="false" />
+      <item command="CmdDataTree-Insert-Location" defaultVisible="false" label="Subitem" />
+      <item command="CmdInsertLexRefType" defaultVisible="false" />
+      <item command="CmdInsertFeatureType" defaultVisible="false" />
+      <item command="CmdDataTree-Insert-Possibility" defaultVisible="false" label="Subitem" />
+      <item command="CmdDataTree-Insert-CustomItem" defaultVisible="false" label="Subitem" />
+      <!-- END include: "Lists/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*" -->
+      <!-- START include: "Grammar/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*" -->
+      <item command="CmdInsertPOS" defaultVisible="false" />
+      <item command="CmdDataTree-Insert-POS-SubPossibilities" defaultVisible="false" label="Subcategory..." />
+      <item command="CmdDataTree-Insert-POS-AffixTemplate" label="Affix Template" defaultVisible="false" />
+      <item command="CmdDataTree-Insert-POS-AffixSlot" label="Affix Slot" defaultVisible="false" />
+      <item command="CmdDataTree-Insert-POS-InflectionClass" label="Inflection Class" defaultVisible="false" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdInsertEndocentricCompound" defaultVisible="false" />
+      <item command="CmdInsertExocentricCompound" defaultVisible="false" />
+      <item command="CmdInsertExceptionFeature" defaultVisible="false" />
+      <item command="CmdInsertPhonologicalClosedFeature" defaultVisible="false" />
+      <item command="CmdInsertClosedFeature" defaultVisible="false" />
+      <item command="CmdInsertComplexFeature" defaultVisible="false" />
+      <item command="CmdDataTree-Insert-ClosedFeature-Value" label="Feature Value" defaultVisible="false" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdInsertPhoneme" defaultVisible="false" />
+      <item command="CmdDataTree-Insert-Phoneme-Code" defaultVisible="false" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdInsertSegmentNaturalClasses" defaultVisible="false" />
+      <item command="CmdInsertFeatureNaturalClasses" defaultVisible="false" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdInsertPhEnvironment" defaultVisible="false" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdInsertPhRegularRule" defaultVisible="false" />
+      <item command="CmdInsertPhMetathesisRule" defaultVisible="false" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdInsertMorphemeACP" defaultVisible="false" />
+      <item command="CmdInsertAllomorphACP" defaultVisible="false" />
+      <item command="CmdInsertACPGroup" defaultVisible="false" />
+      <!-- END include: "Grammar/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*" -->
+    </menu>
+    <menu id="Tools" label="_Tools" a10status="DONE">
+      <menu label="Configure" a10status="DONE">
+        <!-- START include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*" -->
+        <item command="CmdConfigureInterlinear" defaultVisible="false" />
+        <!-- END include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*" -->
+        <!-- START include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*" -->
+        <item label="{0}" command="CmdConfigureXmlDocView" defaultVisible="false" />
+        <!-- END include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*" -->
+      </menu>
+      <!-- START include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Tools']/*" -->
+      <!-- These two are mutually exclusive.-->
+      <item command="CmdLexiconLookup" defaultVisible="false" />
+      <item label="Add Words to Lexicon" defaultVisible="false" boolProperty="ITexts_AddWordsToLexicon" />
+      <!-- END include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Tools']/*" -->
+      <!-- Non-area-specific Tools go here. -->
+      <menu label="Spelling">
+        <item command="CmdEditSpellingStatus" defaultVisible="false" a10status="Used in Words area" />
+        <item command="CmdViewIncorrectWords" defaultVisible="false" a10status="Used in Words area" />
+        <item label="-" translate="do not translate" />
+        <item command="CmdChangeSpelling" defaultVisible="false" a10status="Used in Words area" />
+      </menu>
+    </menu>
+  </menubar>
+  <!-- ************************ contextMenus *********************** -->
+  <contextMenus>
+    <menu id="mnuObjectChoices">
+      <item command="CmdEntryJumpToDefault" />
+      <item command="CmdWordformJumpToAnalyses" />
+      <menu label="Show Concordance of">
+        <item command="CmdWordformJumpToConcordance" label="Wordform" />
+        <item command="CmdAnalysisJumpToConcordance" label="Analysis" />
+        <item command="CmdMorphJumpToConcordance" label="Morph" a10status="See LexiconEditToolDataTreeStackLexEntryManager:Register_LexemeForm_Bundle for 'CmdMorphJumpToConcordance' defn." />
+        <item command="CmdEntryJumpToConcordance" label="Entry" />
+        <item command="CmdSenseJumpToConcordance" label="Sense" />
+        <item command="CmdLexGramInfoJumpToConcordance" />
+        <item command="CmdWordGlossJumpToConcordance" label="Word Gloss" />
+        <item command="CmdWordPOSJumpToConcordance" label="Word Category" />
+      </menu>
+      <item command="CmdPOSJumpToDefault" />
+      <item command="CmdWordPOSJumpToDefault" />
+      <item command="CmdEndoCompoundRuleJumpToDefault" />
+      <item command="CmdExoCompoundRuleJumpToDefault" />
+      <item command="CmdPhonemeJumpToDefault" />
+      <item command="CmdNaturalClassJumpToDefault" />
+      <item command="CmdEnvironmentsJumpToDefault" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdDeleteSelectedObject" />
+    </menu>
+    <menu id="mnuBrowseView">
+      <item command="CmdEntryJumpToDefault" />
+      <item command="CmdWordformJumpToAnalyses" />
+      <item command="CmdPOSJumpToDefault" />
+      <item command="CmdWordformJumpToConcordance" />
+      <!-- <item command="CmdEntryJumpToConcordance"/> Done for Lex Edit tool, but odds are it is used elsewhere, as well. -->
+      <item command="CmdSenseJumpToConcordance" />
+      <item command="CmdPOSJumpToConcordance" />
+      <item command="CmdWordGlossJumpToConcordance" />
+      <item command="CmdWordPOSJumpToConcordance" />
+      <item command="CmdWordPOSJumpToDefault" />
+      <item command="CmdEndoCompoundRuleJumpToDefault" />
+      <item command="CmdExoCompoundRuleJumpToDefault" />
+      <item command="CmdPhonemeJumpToDefault" />
+      <item command="CmdNaturalClassJumpToDefault" />
+      <item command="CmdEnvironmentsJumpToDefault" />
+      <item label="-" translate="do not translate" />
+      <!-- <item command="CmdDeleteSelectedObject"/> Done for Lex Edit tool, but odds are it is used elsewhere, as well. -->
+    </menu>
+    <!-- The following commands are involked/displayed on a right click on a slice on a Possibility list item.
+
+			 In the C# code see the following  class ReferenceViewBase and class ReferenceBaseUi
+			 where ContextMenuId returns  "mnuReferenceChoices".
+
+			 Search in the xml files for the particular command (for example CmdJumpToAnthroList and CmdJumpToAnthroList2)
+			 See how the command has the following parameters
+				 className="CmAnthroItem" ownerClass="LangProject" ownerField="AnthroList"
+			 These parameters must be used to determine that this command is only shown on slices which contain
+			 Anthropology Categories.  The messsage is the command that is executed.-->
+    <menu id="mnuReferenceChoices">
+      <item command="CmdEntryJumpToDefault" />
+      <item command="CmdRecordJumpToDefault" />
+      <item command="CmdAnalysisJumpToConcordance" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdLexemeFormJumpToConcordance" a10status="See LexiconEditToolDataTreeStackLexEntryManager:Register_LexemeForm_Bundle for 'CmdLexemeFormJumpToConcordance' defn." />
+      <item command="CmdEntryJumpToConcordance" />
+      <item command="CmdSenseJumpToConcordance" />
+      <item command="CmdJumpToAcademicDomainList" />
+      <item command="CmdJumpToAnthroList" />
+      <item command="CmdJumpToLexiconEditWithFilter" />
+      <item command="CmdJumpToNotebookEditWithFilter" />
+      <item command="CmdJumpToConfidenceList" />
+      <item command="CmdJumpToDialectLabelsList" />
+      <item command="CmdJumpToDiscChartMarkerList" />
+      <item command="CmdJumpToDiscChartTemplateList" />
+      <item command="CmdJumpToEducationList" />
+      <item command="CmdJumpToRoleList" />
+      <item command="CmdJumpToExtNoteTypeList" />
+      <item command="CmdJumpToComplexEntryTypeList" />
+      <item command="CmdJumpToVariantEntryTypeList" />
+      <item command="CmdJumpToTextMarkupTagsList" />
+      <item command="CmdJumpToLexRefTypeList" />
+      <item command="CmdJumpToLanguagesList" />
+      <item command="CmdJumpToLocationList" />
+      <item command="CmdJumpToPublicationList" />
+      <item command="CmdJumpToMorphTypeList" />
+      <item command="CmdJumpToPeopleList" />
+      <item command="CmdJumpToPositionList" />
+      <item command="CmdJumpToRestrictionsList" />
+      <item command="CmdJumpToSemanticDomainList" />
+      <item command="CmdJumpToGenreList" />
+      <!--<item command="CmdJumpToSenseStatusList"/>-->
+      <item command="CmdJumpToSenseTypeList" />
+      <item command="CmdJumpToStatusList" />
+      <item command="CmdJumpToTranslationTypeList" />
+      <item command="CmdJumpToUsageTypeList" />
+      <item command="CmdJumpToRecordTypeList" />
+      <item command="CmdJumpToTimeOfDayList" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdShowSubentryUnderComponent" />
+      <item command="CmdVisibleComplexForm" />
+      <item command="CmdMoveTargetToPreviousInSequence" />
+      <item command="CmdMoveTargetToNextInSequence" />
+    </menu>
+    <menu id="mnuBrowseHeader">
+      <item label="Sorted From End" boolProperty="SortedFromEnd" />
+      <item label="Sorted By Length" boolProperty="SortedByLength" />
+    </menu>
+    <menu id="PaneBar-ReversalIndicesMenu">
+      <menu id="ReversalIndexPaneMenu" icon="MenuWidget" alignment="right">
+        <item command="CmdShowAllPublications" />
+        <menu list="Publications" inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" property="SelectedPublication" />
+        <item label="-" translate="do not translate" />
+        <item command="CmdPublicationsJumpToDefault" />
+      </menu>
+      <menu id="ReversalIndexPaneMenu" icon="MenuWidget" alignment="left">
+        <menu inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" list="ReversalIndexList" property="ReversalIndexPublicationLayout" />
+        <item label="-" translate="do not translate" />
+        <item command="CmdConfigureDictionary" />
+      </menu>
+    </menu>
+    <menu id="mnuEnvReferenceChoices">
+      <item command="CmdJumpToEnvironmentList" />
+      <item command="CmdShowEnvironmentErrorMessage" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdInsertEnvSlash" />
+      <item command="CmdInsertEnvUnderscore" />
+      <item command="CmdInsertEnvNaturalClass" />
+      <item command="CmdInsertEnvOptionalItem" />
+      <item command="CmdInsertEnvHashMark" />
+    </menu>
+    <menu id="mnuEnvChoices">
+      <item command="CmdShowEnvironmentErrorMessage" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdInsertEnvSlash" />
+      <item command="CmdInsertEnvUnderscore" />
+      <item command="CmdInsertEnvNaturalClass" />
+      <item command="CmdInsertEnvOptionalItem" />
+      <item command="CmdInsertEnvHashMark" />
+    </menu>
+    <menu id="mnuStTextChoices">
+      <item command="CmdCut" />
+      <item command="CmdCopy" />
+      <item command="CmdPaste" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdLexiconLookup" />
+      <item command="CmdAddToLexicon" />
+    </menu>
+    <!-- START include: "CommonDataTreeInclude.xml" query="root/contextMenus/*" -->
+    <menu id="PaneBar-ShowHiddenFields-posEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-posEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-compoundRuleAdvancedEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-compoundRuleAdvancedEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-phonemeEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-phonemeEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-naturalClassEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-naturalClassEdit" defaultVisible="true" settingsGroup="local" a10status="CASECHG" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-EnvironmentEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-EnvironmentEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-PhonologicalRuleEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-PhonologicalRuleEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-AdhocCoprohibitionRuleEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-AdhocCoprohibitionRuleEdit" defaultVisible="true" settingsGroup="local" a10status="AUGEMNTSPELLING" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-phonologicalFeaturesAdvancedEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-phonologicalFeaturesAdvancedEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-featuresAdvancedEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-featuresAdvancedEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-ProdRestrictEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-ProdRestrictEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-lexiconProblems" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-lexiconProblems" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-rapidDataEntry" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-rapidDataEntry" defaultVisible="true" settingsGroup="local" a10status="RemovedInFork" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-domainTypeEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-domainTypeEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-anthroEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-anthroEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-confidenceEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-confidenceEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-chartmarkEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-chartmarkEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-charttempEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-charttempEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-dialectsListEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-dialectsListEdit" defaultVisible="true" settingsGroup="local" a10status="RemovedInFork" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-educationEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-educationEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-extNoteTypeEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-extNoteTypeEdit" defaultVisible="true" settingsGroup="local" a10status="RemovedInFork" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-roleEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-roleEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-genresEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-genresEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-featureTypesAdvancedEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-featureTypesAdvancedEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-languagesListEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-languagesListEdit" defaultVisible="true" settingsGroup="local" a10status="RemovedInFork" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-lexRefEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-lexRefEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-locationsEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-locationsEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-publicationsEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-publicationsEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-complexEntryTypeEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-complexEntryTypeEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-variantEntryTypeEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-variantEntryTypeEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-morphTypeEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-morphTypeEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-peopleEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-peopleEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-positionsEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-positionsEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-restrictionsEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-restrictionsEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-semanticDomainEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-semanticDomainEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-senseTypeEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-senseTypeEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-statusEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-statusEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-translationTypeEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-translationTypeEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-recTypeEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-recTypeEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-scrNoteTypesEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-scrNoteTypesEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-timeOfDayEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-timeOfDayEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-weatherConditionEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-weatherConditionEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-textMarkupTagsEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-textMarkupTagsEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-usageTypeEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-usageTypeEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-reversalToolReversalIndexPOS" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-reversalToolReversalIndexPOS" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="PaneBar-WordformDetail" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-WordsEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <!-- END include: "CommonDataTreeInclude.xml" query="root/contextMenus/*" -->
+    <!-- START include: "Lexicon/areaConfiguration.xml" query="root/contextMenus/*" -->
+    <menu id="PaneBar-Dictionary" label="">
+      <!-- *** Put any alignment="right" menus in first. *** -->
+      <menu id="LexEntryPaneMenu" icon="MenuWidget" alignment="right">
+        <menu list="Configurations" inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" property="DictionaryPublicationLayout" />
+        <item label="-" translate="do not translate" />
+        <item command="CmdConfigureDictionary" />
+      </menu>
+      <menu id="LexEntryPaneMenu" icon="MenuWidget" alignment="left">
+        <item command="CmdShowAllPublications" />
+        <menu list="Publications" inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" property="SelectedPublication" />
+        <item label="-" translate="do not translate" />
+        <item command="CmdPublicationsJumpToDefault" />
+      </menu>
+    </menu>
+    <menu id="PaneBar-ReversalEntryDetail" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-reversalEditComplete" defaultVisible="true" settingsGroup="local" a10status="Prop renamed from ShowHiddenFields-reversalToolEditComplete" />
+    </menu>
+    <menu id="PaneBar-ShowFailingItems-Classified" label="">
+      <item label="Show Unused Items" boolProperty="ShowFailingItems-lexiconClassifiedDictionary" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <!-- START include (Lexicon_Area): "DataTreeInclude.xml" query="window/contextMenus/*" -->
+    <menu id="mnuDataTree-Picture">
+      <item command="CmdDataTree-Properties-Picture" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdDataTree-MoveUp-Picture" />
+      <item command="CmdDataTree-MoveDown-Picture" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdDataTree-Delete-Picture" />
+    </menu>
+    <menu id="mnuDataTree-MSAs">
+      <item command="CmdDataTree-Insert-DerivationAffixMsa" />
+      <item command="CmdDataTree-Insert-InflectionAffixMsa" />
+      <item command="CmdDataTree-Insert-UnclassifiedAffixMsa" />
+      <item command="CmdDataTree-Insert-StemMsa" />
+    </menu>
+    <menu id="mnuDataTree-MSA">
+      <item command="CmdDataTree-Merge-MSA" />
+      <item command="CmdDataTree-Delete-MSA" />
+    </menu>
+    <menu id="mnuDataTree-Senses">
+      <item command="CmdDataTree-Insert-SubSense" />
+    </menu>
+    <menu id="mnuDataTree-Examples">
+      <item command="CmdDataTree-Insert-Example" />
+      <item command="CmdFindExampleSentence" />
+    </menu>
+    <menu id="mnuDataTree-Example">
+      <item command="CmdDataTree-Insert-Translation" />
+      <item command="CmdDataTree-Delete-Example" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdDataTree-MoveUp-Example" />
+      <item command="CmdDataTree-MoveDown-Example" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdFindExampleSentence" />
+    </menu>
+    <menu id="mnuDataTree-Example-ForNotes">
+      <item command="CmdDataTree-Insert-Example" label="Insert new Example in Note" />
+      <item command="CmdDataTree-Insert-Translation" />
+      <item command="CmdDataTree-Delete-Example" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdDataTree-MoveUp-Example" />
+      <item command="CmdDataTree-MoveDown-Example" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdFindExampleSentence" />
+    </menu>
+    <menu id="mnuDataTree-Translations">
+      <item command="CmdDataTree-Insert-Translation" />
+    </menu>
+    <menu id="mnuDataTree-Translation">
+      <item command="CmdDataTree-Delete-Translation" />
+    </menu>
+    <menu id="mnuDataTree-ExtendedNotes">
+      <item command="CmdDataTree-Insert-ExtNote" />
+    </menu>
+    <menu id="mnuDataTree-ExtendedNote">
+      <item command="CmdDataTree-Delete-ExtNote" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdDataTree-MoveUp-ExtNote" />
+      <item command="CmdDataTree-MoveDown-ExtNote" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdDataTree-Insert-ExampleInNote" />
+    </menu>
+    <menu id="mnuDataTree-ExtendedNote-Hotlinks">
+      <item command="CmdDataTree-Insert-ExtNote" label="Insert Extended Note" />
+    </menu>
+    <menu id="mnuDataTree-ExtendedNote-Examples">
+      <item command="CmdDataTree-Insert-ExampleInNote" />
+      <item command="CmdDataTree-Delete-ExampleInNote" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdDataTree-MoveUp-ExampleInNote" />
+      <item command="CmdDataTree-MoveDown-ExampleInNote" />
+    </menu>
+    <menu id="mnuDataTree-SubEntryLink">
+      <item command="CmdDataTree-Insert-SubEntryLink" />
+    </menu>
+    <menu id="mnuDataTree-Subsenses">
+      <item command="CmdDataTree-Insert-SubSense" />
+    </menu>
+    <menu id="mnuDataTree-DeleteAddLexReference">
+      <item command="CmdDataTree-Delete-LexReference" />
+      <item command="CmdDataTree-Add-ToLexReference" />
+      <item command="CmdDataTree-EditDetails-LexReference" />
+    </menu>
+    <menu id="mnuDataTree-DeleteReplaceLexReference">
+      <item command="CmdDataTree-Delete-LexReference" />
+      <item command="CmdDataTree-Replace-LexReference" />
+      <item command="CmdDataTree-EditDetails-LexReference" />
+    </menu>
+    <menu id="mnuDataTree-InsertReversalSubentry">
+      <item command="CmdDataTree-Insert-ReversalSubentry" />
+    </menu>
+    <menu id="mnuDataTree-InsertReversalSubentry-Hotlinks">
+      <item command="CmdDataTree-Insert-ReversalSubentry" />
+    </menu>
+    <menu id="mnuDataTree-MoveReversalIndexEntry">
+      <item command="CmdDataTree-MoveUp-ReversalSubentry" />
+      <item command="CmdDataTree-MoveDown-ReversalSubentry" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdDataTree-Move-MoveReversalIndexEntry" />
+      <item command="CmdDataTree-Promote-ProReversalIndexEntry" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdDataTree-Merge-Subentry" />
+      <item command="CmdDataTree-Delete-Subentry" />
+    </menu>
+    <menu id="mnuDataTree-CmMedia">
+      <item command="CmdDeleteMediaFile" />
+    </menu>
+    <!-- END include (Lexicon_Area): "DataTreeInclude.xml" query="window/contextMenus/*" -->
+    <!-- END include: "Lexicon/areaConfiguration.xml" query="root/contextMenus/*" -->
+    <!-- START include: "Words/areaConfiguration.xml" query="root/contextMenus/*" -->
+    <menu id="PaneBar-ITextContent" label="">
+      <item label="Add Words to Lexicon" boolProperty="ITexts_AddWordsToLexicon" defaultVisible="false" settingsGroup="local" />
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-interlinearEdit" defaultVisible="false" settingsGroup="local" />
+    </menu>
+    <menu id="mnuIText-FreeTrans">
+      <item command="CmdDeleteFreeTrans" />
+    </menu>
+    <menu id="mnuIText-LitTrans">
+      <item command="CmdDeleteLitTrans" />
+    </menu>
+    <menu id="mnuIText-Note">
+      <item command="CmdDeleteNote" />
+    </menu>
+    <menu id="mnuIText-RawText">
+      <item command="CmdCut" />
+      <item command="CmdCopy" />
+      <item command="CmdPaste" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdLexiconLookup" />
+      <item command="CmdWordformJumpToAnalyses" defaultVisible="false" />
+      <item command="CmdWordformJumpToConcordance" defaultVisible="false" />
+    </menu>
+    <menu id="mnuFocusBox">
+      <item command="CmdApproveAndMoveNext" />
+      <item command="CmdApproveForWholeTextAndMoveNext" />
+      <item command="CmdNextIncompleteBundle" />
+      <item command="CmdApprove">Approve the suggested analysis and stay on this word</item>
+      <menu id="ApproveAnalysisMovementMenu" label="_Approve suggestion and" defaultVisible="false">
+        <item command="CmdApproveAndMoveNextSameLine" />
+        <item command="CmdMoveFocusBoxRight" />
+        <item command="CmdMoveFocusBoxLeft" />
+      </menu>
+      <menu id="BrowseMovementMenu" label="Leave _suggestion and" defaultVisible="false">
+        <item command="CmdBrowseMoveNext" />
+        <item command="CmdNextIncompleteBundleNc" />
+        <item command="CmdBrowseMoveNextSameLine" />
+        <item command="CmdMoveFocusBoxRightNc" />
+        <item command="CmdMoveFocusBoxLeftNc" />
+      </menu>
+      <item command="CmdMakePhrase" defaultVisible="false" />
+      <item command="CmdBreakPhrase" defaultVisible="false" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdRepeatLastMoveLeft" defaultVisible="false" />
+      <item command="CmdRepeatLastMoveRight" defaultVisible="false" />
+      <item command="CmdApproveAll">Approve all the suggested analyses and stay on this word</item>
+    </menu>
+    <menu id="mnuDataTree-MainWordform">
+      <item command="CmdShowWordformConc" />
+      <item command="CmdRespeller" />
+      <item command="CmdDataTree-Delete-MainWordform" />
+    </menu>
+    <menu id="mnuDataTree-WordformSpelling">
+      <item command="CmdRespeller" />
+    </menu>
+    <menu id="mnuDataTree-MainWordform-Hotlinks">
+      <item command="CmdShowWordformConc" />
+    </menu>
+    <menu id="mnuDataTree-HumanApprovedAnalysisSummary">
+      <item command="CmdInsertHumanApprovedAnalysis" />
+    </menu>
+    <menu id="mnuDataTree-HumanApprovedAnalysisSummary-Hotlinks">
+      <item command="CmdInsertHumanApprovedAnalysis" />
+    </menu>
+    <menu id="mnuDataTree-HumanApprovedAnalysis">
+      <item command="CmdShowHumanApprovedAnalysisConc" />
+      <item command="CmdAnalysisJumpToConcordance" />
+      <menu id="mnuDataTree-HumanApprovedStatus" label="User Opinion">
+        <item command="CmdAnalysisApprove" />
+        <item command="CmdAnalysisUnknown" />
+        <item command="CmdAnalysisDisapprove" />
+      </menu>
+      <item command="CmdDataTree-Insert-WordGloss" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdDataTree-Delete-HumanApprovedAnalysis" />
+    </menu>
+    <menu id="mnuDataTree-HumanApprovedAnalysis-Hotlinks">
+      <item command="CmdShowHumanApprovedAnalysisConc" />
+    </menu>
+    <menu id="mnuDataTree-ParserProducedAnalysis">
+      <menu id="mnuDataTree-ParserProducedStatus" label="User Opinion">
+        <item command="CmdAnalysisApprove" />
+        <item command="CmdAnalysisUnknown" />
+        <item command="CmdAnalysisDisapprove" />
+      </menu>
+      <item label="-" translate="do not translate" />
+      <item command="CmdDataTree-Delete-ParserProducedAnalysis" />
+    </menu>
+    <menu id="mnuDataTree-HumanDisapprovedAnalysis">
+      <menu id="mnuDataTree-HumanDisapprovedStatus" label="User Opinion">
+        <item command="CmdAnalysisApprove" />
+        <item command="CmdAnalysisUnknown" />
+        <item command="CmdAnalysisDisapprove" />
+      </menu>
+      <item label="-" translate="do not translate" />
+      <item command="CmdDataTree-Delete-HumanDisapprovedAnalysis" />
+    </menu>
+    <menu id="mnuDataTree-WordGlossForm">
+      <item command="CmdShowWordGlossConc" />
+      <item command="CmdWordGlossJumpToConcordance" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdDataTree-Merge-WordGloss" />
+      <item command="CmdDataTree-Delete-WordGloss" />
+    </menu>
+    <menu id="mnuComplexConcordance">
+      <item command="CmdPatternNodeOccurOnce" />
+      <item command="CmdPatternNodeOccurZeroMore" />
+      <item command="CmdPatternNodeOccurOneMore" />
+      <item command="CmdPatternNodeSetOccur" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdPatternNodeSetCriteria" />
+      <item command="CmdPatternNodeGroup" />
+    </menu>
+    <!-- END include: "Words/areaConfiguration.xml" query="root/contextMenus/*" -->
+    <!-- START include: "Notebook/areaConfiguration.xml" query="root/contextMenus/*" -->
+    <menu id="PaneBar-RecordDetail" label="">
+      <menu id="RecordPaneMenu" icon="MenuWidget">
+        <item label="Insert _Subrecord" command="CmdDataTree-Insert-Subrecord" />
+        <item label="Insert S_ubrecord of Subrecord" command="CmdDataTree-Insert-Subsubrecord" defaultVisible="false" />
+        <item command="CmdDemoteRecord" />
+      </menu>
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-notebookEdit" defaultVisible="true" settingsGroup="local" />
+    </menu>
+    <menu id="mnuDataTree-Subrecord-Hotlinks">
+      <item command="CmdDataTree-Insert-Subrecord" />
+    </menu>
+    <menu id="mnuDataTree-Participants">
+      <item command="CmdDataTree-Delete-Participants" />
+    </menu>
+    <menu id="mnuDataTree-SubRecords">
+      <item command="CmdDataTree-Insert-Subrecord" />
+    </menu>
+    <menu id="mnuDataTree-SubRecords-Hotlinks">
+      <item command="CmdDataTree-Insert-Subrecord" />
+    </menu>
+    <menu id="mnuDataTree-SubRecordSummary">
+      <item command="CmdDataTree-Insert-Subrecord" />
+      <item command="CmdDataTree-Insert-Subsubrecord" />
+      <item command="CmdMoveRecordUp" />
+      <item command="CmdMoveRecordDown" />
+      <item command="CmdPromoteSubrecord" />
+      <item command="CmdDemoteSubrecord" />
+    </menu>
+    <!-- END include: "Notebook/areaConfiguration.xml" query="root/contextMenus/*" -->
+    <!-- START include: "Lists/areaConfiguration.xml" query="root/contextMenus/*" -->
+    <!-- START include (Lists_Area): "DataTreeInclude.xml" query="window/contextMenus/*" -->
+    <menu id="mnuDataTree-InsertQuestion">
+      <item command="CmdDataTree-Insert-Question" />
+    </menu>
+    <menu id="mnuDataTree-DeleteQuestion">
+      <item command="CmdDataTree-Delete-Question" />
+    </menu>
+    <menu id="mnuDataTree-SubPossibilities">
+      <item command="CmdDataTree-Insert-Possibility" />
+    </menu>
+    <menu id="mnuDataTree-SubSemanticDomain">
+      <item command="CmdDataTree-Insert-SemanticDomain" />
+    </menu>
+    <menu id="mnuDataTree-SubCustomItem">
+      <item command="CmdDataTree-Insert-CustomItem" />
+    </menu>
+    <menu id="mnuDataTree-SubAnnotationDefn">
+      <item command="CmdDataTree-Insert-AnnotationDefn" />
+    </menu>
+    <menu id="mnuDataTree-SubMorphType">
+      <item command="CmdDataTree-Insert-MorphType" />
+    </menu>
+    <menu id="mnuDataTree-SubComplexEntryType">
+      <item command="CmdDataTree-Insert-LexEntryType" />
+    </menu>
+    <menu id="mnuDataTree-SubVariantEntryType">
+      <item command="CmdDataTree-Insert-LexEntryType" />
+    </menu>
+    <menu id="mnuDataTree-SubAnthroCategory">
+      <item command="CmdDataTree-Insert-AnthroCategory" />
+    </menu>
+    <menu id="mnuDataTree-DeletePossibility">
+      <item command="CmdDataTree-Delete-Possibility" />
+    </menu>
+    <menu id="mnuDataTree-DeleteCustomItem">
+      <item command="CmdDataTree-Delete-CustomItem" />
+    </menu>
+    <menu id="mnuDataTree-SubLocation">
+      <item command="CmdDataTree-Insert-Location" />
+    </menu>
+    <menu id="mnuDataTree-MoveMainReversalPOS">
+      <item command="CmdDataTree-Move-MoveReversalPOS" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdDataTree-Merge-MergeReversalPOS" />
+      <item command="CmdDataTree-Delete-ReversalSubPOS" />
+    </menu>
+    <menu id="mnuDataTree-MoveReversalPOS">
+      <item command="CmdDataTree-Move-MoveReversalPOS" />
+      <item command="CmdDataTree-Promote-ProReversalSubPOS" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdDataTree-Merge-MergeReversalPOS" />
+      <item command="CmdDataTree-Delete-ReversalSubPOS" />
+    </menu>
+    <!-- END include (Lists_Area): "DataTreeInclude.xml" query="window/contextMenus/*" -->
+    <!-- END include: "Lists/areaConfiguration.xml" query="root/contextMenus/*" -->
+    <!-- START include: "Grammar/areaConfiguration.xml" query="root/contextMenus/*" -->
+    <!-- START include (Grammar_Area): "DataTreeInclude.xml" query="window/contextMenus/*" -->
+    <menu id="mnuDataTree-Text">
+      <item command="CmdJumpToText" />
+    </menu>
+    <menu id="mnuTextInfo-Notebook">
+      <item command="CmdJumpToNotebook" />
+    </menu>
+    <menu id="mnuDataTree-Adhoc-Group-Members">
+      <item command="CmdDataTree-Insert-Adhoc-Group-Members-Morpheme" />
+      <item command="CmdDataTree-Insert-Adhoc-Group-Members-Allomorph" />
+      <item command="CmdDataTree-Insert-Adhoc-Group-Members-Group" />
+    </menu>
+    <menu id="mnuDataTree-Delete-Adhoc-Morpheme">
+      <item command="CmdDataTree-Delete-Adhoc-Group-Members-Morpheme" />
+    </menu>
+    <menu id="mnuDataTree-Delete-Adhoc-Allomorph">
+      <item command="CmdDataTree-Delete-Adhoc-Group-Members-Allomorph" />
+    </menu>
+    <menu id="mnuDataTree-Delete-Adhoc-Group">
+      <item command="CmdDataTree-Delete-Adhoc-Group-Members-Group" />
+    </menu>
+    <menu id="mnuDataTree-CompoundRule-LinkerAffixAllomorph">
+      <item command="CmdDataTree-Create-CompoundRule-LinkerAffixAllomorph" />
+      <item command="CmdDataTree-Delete-CompoundRule-LinkerAffixAllomorph" />
+    </menu>
+    <menu id="mnuDataTree-FeatureStructure-Feature">
+      <item command="CmdDataTree-Delete-FeatureStructure-Feature" />
+    </menu>
+    <menu id="mnuDataTree-ClosedFeature-Values">
+      <item command="CmdDataTree-Insert-ClosedFeature-Value" />
+    </menu>
+    <menu id="mnuDataTree-ClosedFeature-Value">
+      <item command="CmdDataTree-Delete-ClosedFeature-Value" />
+    </menu>
+    <menu id="mnuDataTree-POS-AffixSlots">
+      <item command="CmdDataTree-Insert-POS-AffixSlot" />
+    </menu>
+    <menu id="mnuDataTree-POS-AffixSlot">
+      <item command="CmdDataTree-Delete-POS-AffixSlot" />
+    </menu>
+    <menu id="mnuDataTree-POS-AffixTemplates">
+      <item command="CmdDataTree-Insert-POS-AffixTemplate" />
+    </menu>
+    <menu id="mnuDataTree-POS-AffixTemplate">
+      <item command="CmdDataTree-Delete-POS-AffixTemplate" />
+      <item command="CmdDataTree-Copy-POS-AffixTemplate" />
+    </menu>
+    <menu id="mnuDataTree-POS-InflectionClass-Subclasses">
+      <item command="CmdDataTree-Insert-POS-InflectionClass-Subclasses" />
+    </menu>
+    <menu id="mnuDataTree-POS-InflectionClasses">
+      <item command="CmdDataTree-Insert-POS-InflectionClass" />
+    </menu>
+    <menu id="mnuDataTree-POS-InflectionClass">
+      <item command="CmdDataTree-Delete-POS-InflectionClass" />
+    </menu>
+    <menu id="mnuDataTree-POS-StemNames">
+      <item command="CmdDataTree-Insert-POS-StemName" />
+    </menu>
+    <menu id="mnuDataTree-POS-StemName">
+      <item command="CmdDataTree-Delete-POS-StemName" />
+    </menu>
+    <menu id="mnuDataTree-MoStemName-Regions">
+      <item command="CmdDataTree-Insert-MoStemName-Region" />
+    </menu>
+    <menu id="mnuDataTree-MoStemName-Region">
+      <item command="CmdDataTree-Delete-MoStemName-Region" />
+    </menu>
+    <menu id="mnuDataTree-POS-SubPossibilities">
+      <item command="CmdDataTree-Insert-POS-SubPossibilities" />
+    </menu>
+    <menu id="mnuDataTree-Phoneme-Codes">
+      <item command="CmdDataTree-Insert-Phoneme-Code" label="Insert Grapheme" />
+    </menu>
+    <menu id="mnuDataTree-Phoneme-Code">
+      <item command="CmdDataTree-Delete-Phoneme-Code" />
+    </menu>
+    <menu id="mnuDataTree-StringRepresentation-Insert">
+      <item command="CmdDataTree-Insert-Env-Slash" />
+      <item command="CmdDataTree-Insert-Env-Underscore" />
+      <item command="CmdDataTree-Insert-Env-NaturalClass" />
+      <item command="CmdDataTree-Insert-Env-OptionalItem" />
+      <item command="CmdDataTree-Insert-Env-HashMark" />
+    </menu>
+    <!-- END include (Grammar_Area): "DataTreeInclude.xml" query="window/contextMenus/*" -->
+    <!-- START include (Grammar_Area): "InflAffixTemplateInclude.xml" query="window/contextMenus/*" -->
+    <menu id="mnuInflAffixTemplate-Help">
+      <item command="CmdInflAffixTemplate-Help" />
+    </menu>
+    <menu id="mnuInflAffixTemplate-TemplateTable">
+      <item command="CmdInflAffixTemplate-Add-InflAffixMsa" />
+      <item command="CmdInflAffixTemplate-Insert-Slot-Before" />
+      <item command="CmdInflAffixTemplate-Insert-Slot-After" />
+      <item command="CmdInflAffixTemplate-Move-Slot-Left" />
+      <item command="CmdInflAffixTemplate-Move-Slot-Right" />
+      <item command="CmdInflAffixTemplate-Toggle-Slot-Optionality" />
+      <item command="CmdInflAffixTemplate-Remove-Slot" />
+      <item command="CmdInflAffixTemplate-Remove-InflAffixMsa" />
+      <item command="CmdEntryJumpToDefault" />
+      <item command="CmdInflAffixTemplate-Help" />
+    </menu>
+    <!-- END include (Grammar_Area): "InflAffixTemplateInclude.xml" query="window/contextMenus/*" -->
+    <menu id="mnuPhRegularRule">
+      <item command="CmdCtxtOccurOnce" />
+      <item command="CmdCtxtOccurZeroMore" />
+      <item command="CmdCtxtOccurOneMore" />
+      <item command="CmdCtxtSetOccur" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdCtxtSetFeatures" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdCtxtJumpToNC" />
+      <item command="CmdCtxtJumpToPhoneme" />
+    </menu>
+    <menu id="mnuPhMetathesisRule">
+      <item command="CmdCtxtSetFeatures" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdCtxtJumpToNC" />
+      <item command="CmdCtxtJumpToPhoneme" />
+    </menu>
+    <menu id="mnuMoAffixProcess">
+      <item command="CmdCtxtSetFeatures" />
+      <item command="CmdMappingSetFeatures" />
+      <item command="CmdMappingSetNC" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdCtxtJumpToNC" />
+      <item command="CmdCtxtJumpToPhoneme" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdMappingJumpToNC" />
+      <item command="CmdMappingJumpToPhoneme" />
+    </menu>
+    <!-- END include: "Grammar/areaConfiguration.xml" query="root/contextMenus/*" -->
+  </contextMenus>
+  <!-- ************************ toolbars *********************** -->
+  <toolbars>
+    <toolbar id="Insert" a10status="PARTIALLY_DONE">
+      <!-- START include: "Lexicon/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item" -->
+      <item command="CmdInsertReversalEntry" defaultVisible="false" />
+      <item command="CmdGoToReversalEntry" defaultVisible="false" />
+      <!-- END include: "Lexicon/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item" -->
+      <!-- START include: "Words/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item" -->
+      <item command="CmdInsertText" defaultVisible="false" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdAddNote" defaultVisible="false" />
+      <item command="CmdApproveAll" defaultVisible="false" />
+      <item command="CmdInsertHumanApprovedAnalysis" defaultVisible="false" />
+      <item command="CmdGoToWfiWordform" defaultVisible="false" />
+      <item command="CmdBreakPhrase" defaultVisible="false" />
+      <!-- END include: "Words/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item" -->
+      <!-- START include: "Notebook/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item" -->
+      <item command="CmdInsertRecord" defaultVisible="false" />
+      <item command="CmdGoToRecord" defaultVisible="false" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdAddToLexicon" defaultVisible="false" />
+      <item command="CmdLexiconLookup" defaultVisible="false" />
+      <!-- END include: "Notebook/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item" -->
+      <!-- START include: "Lists/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item" -->
+      <item command="CmdInsertSemDom" defaultVisible="false" />
+      <item command="CmdDataTree-Insert-SemanticDomain" defaultVisible="false" label="Subdomain" />
+      <item command="CmdInsertAnnotationDef" defaultVisible="false" />
+      <item command="CmdInsertPossibility" defaultVisible="false" />
+      <item command="CmdInsertCustomItem" defaultVisible="false" />
+      <item command="CmdInsertMorphType" defaultVisible="false" />
+      <item command="CmdInsertLexEntryInflType" defaultVisible="false" />
+      <item command="CmdInsertLexEntryType" defaultVisible="false" />
+      <item command="CmdDataTree-Insert-LexEntryInflType" defaultVisible="false" label="Subtype" />
+      <item command="CmdDataTree-Insert-LexEntryType" defaultVisible="false" label="Subtype" />
+      <item command="CmdInsertAnthroCategory" defaultVisible="false" />
+      <item command="CmdDataTree-Insert-AnthroCategory" defaultVisible="false" label="Subcategory" />
+      <item command="CmdInsertPerson" defaultVisible="false" />
+      <item command="CmdInsertLocation" defaultVisible="false" />
+      <item command="CmdDataTree-Insert-Location" defaultVisible="false" label="Subitem" />
+      <item command="CmdInsertLexRefType" defaultVisible="false" />
+      <item command="CmdInsertFeatureType" defaultVisible="false" />
+      <item command="CmdDataTree-Insert-Possibility" defaultVisible="false" label="Subitem" />
+      <item command="CmdDataTree-Insert-CustomItem" defaultVisible="false" label="Subitem" />
+      <!-- END include: "Lists/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item" -->
+      <!-- START include: "Grammar/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item" -->
+      <item command="CmdInsertPOS" defaultVisible="false" />
+      <item command="CmdDataTree-Insert-POS-SubPossibilities" label="Subcategory..." defaultVisible="false" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdInsertEndocentricCompound" defaultVisible="false" />
+      <item command="CmdInsertExocentricCompound" defaultVisible="false" />
+      <item command="CmdInsertExceptionFeature" defaultVisible="false" />
+      <item command="CmdInsertPhonologicalClosedFeature" defaultVisible="false" />
+      <item command="CmdInsertClosedFeature" defaultVisible="false" />
+      <item command="CmdInsertComplexFeature" defaultVisible="false" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdInsertPhoneme" defaultVisible="false" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdInsertSegmentNaturalClasses" defaultVisible="false" />
+      <item command="CmdInsertFeatureNaturalClasses" defaultVisible="false" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdInsertPhEnvironment" defaultVisible="false" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdInsertPhRegularRule" defaultVisible="false" />
+      <item command="CmdInsertPhMetathesisRule" defaultVisible="false" />
+      <item label="-" translate="do not translate" />
+      <item command="CmdInsertMorphemeACP" defaultVisible="false" />
+      <item command="CmdInsertAllomorphACP" defaultVisible="false" />
+      <item command="CmdInsertACPGroup" defaultVisible="false" />
+      <!-- END include: "Grammar/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item" -->
+    </toolbar>
+    <toolbar id="View" a10status="PARTIALLY_DONE">
+      <!-- START include: "Words/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='View']/item" -->
+      <item command="CmdChooseTexts" defaultVisible="false" />
+      <!-- END include: "Words/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='View']/item" -->
+    </toolbar>
+  </toolbars>
+  <contexthelpstrings>
+    <!-- START include: "ContextHelp.xml" query="strings" -->
+    <strings>
+      <item id="NoHelp" caption="No Help" />
+      <item id="MissingHelpId" caption="No Help">Sorry, there's no help available for this item (missing id).</item>
+      <!-- LexText menus -->
+      <!-- Words items -->
+      <item id="CmdInsertHumanApprovedAnalysis">Create new approved analysis</item>
+      <item id="CmdGoToWfiWordform">Find a wordform.</item>
+      <!--
+		  Reversal items
+		  -->
+      <item id="CmdInsertReversalEntry">Create a new reversal entry.</item>
+      <item id="CmdGoToReversalEntry">Find a reversal entry.</item>
+      <!-- File menu -->
+      <item id="CmdImport">Import an existing lexicon.</item>
+      <!-- Edit menu -->
+      <item id="CmdBreakPhrase">Break selected phrase into words.</item>
+      <item id="CmdGoToRecord">Find a Record in your Notebook.</item>
+      <!-- View menu -->
+      <item id="CmdHistoryBack">Back</item>
+      <item id="CmdHistoryForward">Forward</item>
+      <!-- not sure how to hook these up -->
+      <item id="BasicEditView">Shows only the basic set of fields.</item>
+      <item id="Sidebar">Show the sidebar.</item>
+      <item id="Record List">Show the list of records.</item>
+      <item id="ShowHiddenFields">Display all possible fields.</item>
+      <item id="ShowInvisibleSpaces">View the invisible, zero-width spaces in this text.</item>
+      <!-- Data menu -->
+      <item id="CmdApproveAndMoveNext">Approve the suggested analysis and move to the next word.</item>
+      <item id="CmdApproveForWholeTextAndMoveNext">Approve the suggested analysis throughout this text, and move to the next word.</item>
+      <item id="CmdNextIncompleteBundle">Approve the suggested analysis, and jump to the next word with a suggested or incomplete analysis.</item>
+      <item id="CmdApprove">Approve the suggested analysis and stay on this word</item>
+      <!-- Approve submenu items -->
+      <item id="CmdApproveAndMoveNextSameLine">Approve the suggested analysis and move to the next word, to the same interlinear line.</item>
+      <item id="CmdMoveFocusBoxRight">Approve the suggested analysis and move to the word on the right.</item>
+      <item id="CmdMoveFocusBoxLeft">Approve the suggested analysis and move to the word on the left,</item>
+      <!-- Leave submenu items -->
+      <item id="CmdBrowseMoveNext">Leave the suggested analysis as a suggestion, and move to the next word.</item>
+      <item id="CmdNextIncompleteBundleNc">Leave the suggested analysis as a suggestion, and jump to the next word with a suggested or incomplete analysis.</item>
+      <item id="CmdBrowseMoveNextSameLine">Leave the suggested analysis and move to the next word, to the same interlinear line.</item>
+      <item id="CmdMoveFocusBoxRightNc">Leave the suggested analysis as a suggestion, and move to the word on the right.</item>
+      <item id="CmdMoveFocusBoxLeftNc">Leave the suggested analysis as a suggestion, and move to the word on the left.</item>
+      <item id="CmdApproveAll">Approve all the suggested analyses in this text.</item>
+      <!-- Insert menu -->
+      <item id="CmdInsertGenericMajorEntry">Create a new entry and add it to the lexicon.</item>
+      <item id="CmdInsertPOS">Add a new category.</item>
+      <item id="CmdInsertAnnotationDef">Create a new annotation definition.</item>
+      <item id="CmdInsertSemDom">Create a new semantic domain.</item>
+      <item id="CmdInsertPossibility">Create a new {0}.</item>
+      <item id="CmdInsertCustomItem">Create a new {0}.</item>
+      <item id="CmdInsertExceptionFeature">Create a new {0}.</item>
+      <item id="CmdInsertMorphType">Create a new morpheme type.</item>
+      <item id="CmdInsertLexEntryType">Create a new {0}.</item>
+      <item id="CmdDataTree-Insert-LexEntryType">Insert a new subtype in this type.</item>
+      <item id="CmdInsertVariant" a10status="DONE">Add a Variant Form to this entry</item>
+      <item id="CmdInsertAnthroCategory">Create a new anthropology category.</item>
+      <item id="CmdInsertLocation">Create a new location.</item>
+      <item id="CmdInsertPerson">Add a new person.</item>
+      <item id="CmdInsertLexRefType">Create a new lexical relation.</item>
+      <item id="CmdInsertEndocentricCompound">Create a new headed compound.</item>
+      <item id="CmdInsertExocentricCompound">Create a new non-headed compound.</item>
+      <item id="CmdInsertPhoneme">Create a new phoneme.</item>
+      <item id="CmdInsertSegmentNaturalClasses">Create a new natural class, defined by listing phonemes.</item>
+      <item id="CmdInsertFeatureNaturalClasses">Create a new natural class, defined by features.</item>
+      <item id="CmdInsertPhEnvironment">Create a new environment.</item>
+      <item id="CmdInsertPhRegularRule">Create a new phonological rule.</item>
+      <item id="CmdInsertPhMetathesisRule">Create a new metathesis rule.</item>
+      <item id="CmdInsertMorphemeACP">Create a rule to prevent morphemes from co-occurring.</item>
+      <item id="CmdInsertAllomorphACP">Create a rule to prevent allomorphs from co-occurring.</item>
+      <item id="CmdInsertACPGroup">Create a group of ad hoc rules.</item>
+      <item id="CmdImportWordSet">Import a set of words in a file and give the set a name.</item>
+      <item id="CmdAddNote">Insert a note.</item>
+      <item id="CmdChooseTexts" a10status="DONE">Choose texts to display and use.</item>
+      <item id="CmdInsertStemAllomorph">Add an allomorph of a stem.</item>
+      <item id="CmdInsertAffixAllomorph">Add an allomorph of an affix.</item>
+      <item id="CmdInsertText">Add a new text to the corpus.</item>
+      <item id="CmdInsertFeatureType">Create a new feature type.</item>
+      <item id="CmdInsertPhonologicalClosedFeature">Add a phonological feature.</item>
+      <item id="CmdInsertClosedFeature">Add a feature.</item>
+      <item id="CmdInsertComplexFeature">Add a complex feature.</item>
+      <item id="CmdDataTree-Insert-POS-SubPossibilities">Add a subcategory...</item>
+      <item id="CmdDataTree-Insert-AnthroCategory">Insert a subcategory in this anthropology category.</item>
+      <item id="CmdDataTree-Insert-SemanticDomain">Insert a subdomain in this semantic domain.</item>
+      <item id="CmdDataTree-Insert-Location">Insert a subitem in this location.</item>
+      <item id="CmdDataTree-Insert-Possibility">Insert a subitem in this item.</item>
+      <item id="CmdDataTree-Insert-CustomItem">Insert a subitem in this item.</item>
+      <item id="CmdInsertRecord">Create a new Record in your Notebook.</item>
+      <item id="CmdInsertSubrecord">Create a Subrecord in your Notebook.</item>
+      <item id="ClickInvisibleSpace">Turn on mode in which a click inserts an invisible, zero-width space.</item>
+      <item id="CmdGuessWordBreaks">Have Language Explorer insert invisible, zero-width spaces as word breaks according to the word list and lexical entries.</item>
+      <!-- Tools menu -->
+      <item id="Entries">Show the entries and edit them.</item>
+      <item id="Problems">See a list of entries with problems.</item>
+      <item id="CmdLexiconLookup">Show dictionary entry for root/stem of current word, or open a search dialog box.</item>
+      <item id="CmdAddToLexicon">Add the current word to the lexicon (if it is a vernacular word).</item>
+      <item id="CmdAddWordsToSpellDict">Add words marked as correctly spelled to the active spelling dictionary.</item>
+      <item id="CmdEditSpellingStatus">Bulk Edit Spelling Status.</item>
+      <item id="CmdViewIncorrectWords">View incorrectly spelled words in use.</item>
+      <item id="CmdChangeSpelling">Change spelling of multiple occurrences.</item>
+      <item id="ITexts_AddWordsToLexicon">As I add new word glosses, create lexical entries.</item>
+      <!-- Help menu -->
+      <item id="CmdShowHelpBalloons">If checked, this will show balloon pop-up help for items.</item>
+      <item id="CmdHelpMorphologyInto">Display a document describing how FieldWorks handles morphology (only available in English).</item>
+      <item id="CmdHelpDemoWelcome">Purpose of movies and where else to find help.</item>
+      <item id="CmdHelpDemoOverview">Tour of Language Explorer.</item>
+      <item id="CmdHelpDemoConfigColumns">Examples of configuring columns.</item>
+      <item id="CmdHelpDemoFilter">Examples of filtering.</item>
+      <item id="CmdHelpDemoSort">Examples of using sorting features.</item>
+      <item id="CmdHelpDemoFields">Configuring fields displayed in an Edit pane.</item>
+      <item id="CmdHelpDemoNewEntry">Example of creating a new entry.</item>
+      <item id="CmdHelpDemoFindEntry">Example of finding an entry.</item>
+      <item id="CmdHelpDemoGramInfo">Explanation of Grammatical info.</item>
+      <item id="CmdHelpDemoLexRel">Example of specifying a lexical relation.</item>
+      <item id="CmdHelpDemoSubentry">Example of specifying a derivative.</item>
+      <item id="CmdHelpDemoMinor">Example of specifying a variant.</item>
+      <item id="CmdHelpDemoCategorized">Example of using Collect Words.</item>
+      <item id="CmdHelpDemoBulkList">Example of using Bulk Edit List Choice.</item>
+      <item id="CmdHelpDemoBulkCopy">Example of using Bulk Edit Bulk Copy.</item>
+      <item id="CmdHelpDemoBulkClick">Example of using Bulk Edit Click Copy.</item>
+      <item id="CmdHelpDemoText">Example of adding a text and interlinearizing some words.</item>
+      <item id="CmdHelpDemoWords">Example of changing analysis usage.</item>
+      <item id="CmdHelpDemoGrammar">Example of adding an affix template.</item>
+      <item id="CmdHelpDemoPlayAll">Play all the movies (length 84 minutes).</item>
+      <item id="CmdHelpLexicographyIntro">Display Introduction to Lexicography (only available in English).</item>
+      <item id="CmdHelpNotesSFMDatabaseImport">Display technical notes on SFM database import (only available in English).</item>
+      <item id="CmdHelpNotesLinguaLinksDatabaseImport">Display technical notes on LinguaLinks database import (only available in English).</item>
+      <item id="CmdHelpNotesInterlinearImport">Display technical notes on interlinear import (only available in English).</item>
+      <!-- LexText Slices -->
+      <!-- POS slices -->
+      <item id="CategoryName">A short name for this category.</item>
+      <item id="CategoryAbbreviation">The abbreviation to be used for this category.</item>
+      <item id="CategoryDescription">A fuller description of this category.</item>
+      <!-- Inflectional Template Info -->
+      <item id="InflectionalTemplateInfo">Information about any inflectional templates of this category.</item>
+      <item id="AffixSlots">The set of inflectional affix slots which can appear in any inflectional affix template for this category.</item>
+      <item id="AffixSlot">An inflectional affix slot which can appear in at least one inflectional affix template for this category.</item>
+      <item id="SlotName">A short name for this inflectional affix slot.</item>
+      <item id="SlotDescription">A fuller description for this inflectional affix slot.</item>
+      <item id="SlotOptional" captionformat="Choose {0}">Check the box if this inflectional affix slot is optional in all of the templates it appears in.</item>
+      <item id="AffixTemplates">The set of inflectional affix templates which are required in order for a word of this category to be well-formed.</item>
+      <item id="AffixTemplate">An inflectional affix template of this category.</item>
+      <item id="TemplateName">A short name for this inflectional affix template.</item>
+      <item id="TemplateDescription">A fuller descripton for this inflectional affix template.</item>
+      <item id="TemplateTable">A table representation of the inflectional affix template.  Right-click in it to edit it.</item>
+      <item id="TemplateTableSpecialNote">A special note on how to edit the template table above.</item>
+      <item id="TemplateFinal" captionformat="Choose {0}">Check the box if this template completes a well-formed word.  Uncheck it if there must be some category-changing derivational affix that applies to the template (and possibly another template of the new category) to finish the word.</item>
+      <!-- Inflection Class Info -->
+      <item id="PartOfSpeechInflectionClasses">Information about any inflectional classes for this category.  Inflection classes are sometimes referred to as conjugation or declension classes.</item>
+      <item id="InflectionClasses">The set of inflection classes this category has.</item>
+      <item id="InflectionClass">An inflection class (sometimes called conjugation or declension classes).</item>
+      <item id="InflClassName">A short name for this inflection class.</item>
+      <item id="InflClassAbbreviation">The abbreviation for this inflection class.</item>
+      <item id="InflClassDescription">A fuller description for this inflection class.</item>
+      <item id="InflClassSubclasses">The set of inflection classes which are specializations of this inflection class.</item>
+      <item id="DefaultInflectionClass">The Inflection Class to which newly coined lexemes are usually assigned, to which lexemes from other classes 'drift' in the process of historical change, and the class to which children tend to assign lexemes before they learn the correct class.</item>
+      <item id="DefaultInflectionClassButton" captionformat="Choose {0}">Click here to select the default inflection class.</item>
+      <!-- SubCategories -->
+      <item id="SubCategories">Categories which are subclasses of this category.</item>
+      <item id="SubCategory">A category which is a subtype of the main category. (These are also listed in the Record List view.)</item>
+      <!-- Compound Rules slices -->
+      <item id="LeftMsa">What the category of the left-hand member of the compound must be.</item>
+      <item id="RightMsa">What the category of the right-hand member of the compound must be.</item>
+      <item id="MoStemMsaPOS">The category of this part of the compound.</item>
+      <item id="MoStemMsaPOSButton" captionformat="Choose {0}">Click here to select the category of this part of the compound.</item>
+      <item id="MoStemMsaInflectionClass">The inflection class of this part of the compound.</item>
+      <item id="MoStemMsaInflectionClassButton" captionformat="Choose {0}">Click here to select the inflection class of this part of the compound.</item>
+      <item id="Linker">Any phonemes that are inserted between the two parts of the compound.  These phonemes do not carry any meaning.</item>
+      <item id="LinkerForm">The phonemes of the linker.</item>
+      <item id="LinkerEnv">Any environments which constrain when the linker may appear.</item>
+      <item id="LinkerEnvButton" captionformat="Choose {0}">Click here to select any environments which constrain when the linker may appear.</item>
+      <!-- Endocentric -->
+      <item id="EndocentricCompoundName">A short name for this headed compound.</item>
+      <item id="EndocentricCompoundDescription">A fuller description of this headed compound.</item>
+      <item id="HeadLast" captionformat="Choose {0}">Check the box if the right member of the compound is the "head" of the compound; that is, if the resulting stem has the category, etc. of the right member.  If the box is not checked, the left member will be used as the "head."</item>
+      <!-- Exocentric -->
+      <item id="ExocentricCompoundName">A short name for this non-headed compound.</item>
+      <item id="ExocentricCompoundDescription">A fuller description of this non-headed compound.</item>
+      <item id="ToMsa">The category, etc. that the resulting stem of the compound is.</item>
+      <!-- Phonemes slices -->
+      <item id="PhonemeName">A short name for this phoneme.</item>
+      <item id="PhonemeDescription">A fuller description of this phoneme.</item>
+      <item id="Representations">The set of ways this phoneme surfaces.</item>
+      <item id="Representation">One way this phoneme surfaces.</item>
+      <!-- Natural Class slices -->
+      <item id="NaturalClassName">A short name for this natural class.</item>
+      <item id="NaturalClassDescription">A fuller description of this natural class.</item>
+      <item id="NaturalClassAbbreviation">The abbreviation for this natural class.</item>
+      <item id="Segments">The set of segments which belong to this natural class.</item>
+      <item id="SegmentsButton" captionformat="Choose {0}">Click here to select a segment which belongs to this natural class.</item>
+      <!-- Environment slices-->
+      <item id="EnvironmentName">A short name for this phonological environment.</item>
+      <item id="EnvironmentDescription">A fuller description of this phonological environment.</item>
+      <item id="StringRepresentation">The representation for this environment.  See the help file for more information. [For now: Please see section 3.1.3 of the Conceptual Introduction document for how to key an environment.]</item>
+      <item id="EnvStrRepSpecialNote">A special note on where to get information on how to key an environment.</item>
+      <!--Adhoc CoProhibition slices-->
+      <!-- Allomorph -->
+      <item id="FirstAllomorph">The primary allomorph that the constraint is about.</item>
+      <item id="FirstAllomorphButton" captionformat="Choose {0}">Click here to select the primary allomorph that the constraint is about.</item>
+      <item id="AllomorphAdjacency" captionformat="Choose {0}">Click on the button to select the relative position of the other allomorph(s) with respect to the key allomorph.</item>
+      <item id="RestOfAllos">The other allomorph(s) which cannot occur with the key allomorph.</item>
+      <item id="RestOfAllosButton" captionformat="Choose {0}">Click here to select the other allomorph(s) which cannot occur with the key allomorph.</item>
+      <!-- Morpheme -->
+      <item id="FirstMorpheme">The primary morpheme that the constraint is about.</item>
+      <item id="FirstMorphemeButton" captionformat="Choose {0}">Click here to select the primary morpheme that the constraint is about.</item>
+      <item id="MorphemeAdjacency" captionformat="Choose {0}">Click on the button to select the relative position of the other morpheme(s) with respect to the key morpheme.</item>
+      <item id="RestOfMorphs">The other morpheme(s) which cannot occur with the key morpheme.</item>
+      <item id="RestOfMorphsButton" captionformat="Choose {0}">Click here to select the other morpheme(s) which cannot occur with the key morpheme.</item>
+      <!-- Group -->
+      <item id="AdhocGroupName">A short name for this group of ad hoc rules.</item>
+      <item id="AdhocGroupDescription">A fuller description for this group of ad hoc rules; e.g. explaining what they have in common.</item>
+      <item id="AdhocGroupMembers">The set of ad hoc rules belonging to this group.</item>
+      <item id="AllomorphAdhocCoprohibition">A rule which prevents allomorphs from co-occurring that is in this group of ad hoc rules.</item>
+      <item id="MorphemeAdhocCoprohibition">A rule which prevents morphemes from co-occurring that is in this group of ad hoc rules.</item>
+      <!-- Lexicon Slices -->
+      <item id="CitationForm">The form which introduces an entry in a printed dictionary. It is the form by which a dictionary is sorted.</item>
+      <!-- Form -->
+      <item id="FormGroup">Information about the form(s) of the entry.</item>
+      <item id="UnderlyingForm">The base or underlying form of the lexical entry.</item>
+      <item id="AllomorphsGroup">This shows all of the allomorphs of this entry.</item>
+      <item id="AffixForm">An allomorph of the affix.</item>
+      <item id="StemAllomorph">An allomorph of the stem or root.</item>
+      <item id="PhoneEnv">The environments in which this allomorph occurs. Testers: Please see section 3.1.3 of the Conceptual Introduction document for how to key an environment.</item>
+      <item id="PhoneEnvButton" captionformat="Choose {0}">Click here to select from phonetic environments you have used in the past.</item>
+      <item id="MorphType">The type of morpheme this is: root, prefix, suffix, etc.</item>
+      <item id="MorphTypeButton" captionformat="Choose {0}">Click here to select from a list of morpheme types.</item>
+      <item id="MoAffixAllomorphInflectionClasses">This allomorph can attach to stems whose inflection classes are listed here.</item>
+      <item id="MoAffixAllomorphInflectionClassesButton" captionformat="Choose {0}">Click here to select from a list of inflection classes.</item>
+      <item id="InfixPosition">The environments describing where the infix may occur with respect to the stem.  Testers: Please see section 3.3 of the Conceptual Introduction document for how to key an infix position environment.  (A review of section 3.1.3 might also prove helpful.)</item>
+      <item id="LexMajorEntryFunction">Groups the possible functions of the lexical entry.</item>
+      <!-- Function -->
+      <item id="LexMajorEntryFunction">Information about the function(s) of the entry (how it can be used).</item>
+      <!-- Stem -->
+      <item id="MoStemMsa">Information about this entry when it functions as a stem or root.</item>
+      <item id="PartOfSpeech">The category of this stem or root.</item>
+      <item id="PartOfSpeechButton" captionformat="Choose {0}">Click here to select the category of this stem or root.</item>
+      <item id="MoStemMsaInflectionClass">The inflection (conjugation or declension) class of this stem or root.  Leave it blank if the inflection class does not matter for this stem or root.</item>
+      <item id="MoStemMsaInflectionClassButton" captionformat="Choose {0}">Click here to select the inflection (conjugation or declension) class of this stem or root.</item>
+      <!-- Derivational affix -->
+      <item id="MoDerivAffMsa">Information about this affix when it functions as a derivational affix.</item>
+      <item id="FromPartOfSpeech">The category of the stem to which this affix attaches.</item>
+      <item id="FromPartOfSpeechButton" captionformat="Choose {0}">Click here to select the category of the stem to which this affix attaches.</item>
+      <item id="MoDerivAffMsaFromInflectionClass">The inflection (conjugation or declension) class which the stem to which this affix attaches must belong.  Leave it blank if the inflection class does not matter for this affix.</item>
+      <item id="MoDerivAffMsaFromInflectionClassButton" captionformat="Choose {0}">Click here to select the inflection (conjugation or declension) class which the stem to which this affix attaches must belong.</item>
+      <item id="ToPartOfSpeech">The category of the stem resulting from the attachment of this affix.</item>
+      <item id="ToPartOfSpeechButton" captionformat="Choose {0}">Click here to select the category of the stem resulting from the attachment of this affix.</item>
+      <item id="MoDerivAffMsaToInflectionClass">The inflection (conjugation or declension) class of the stem resulting from the attachment of this affix.  Leave it blank if the inflection class does not matter for this affix.</item>
+      <item id="MoDerivAffMsaToInflectionClassButton" captionformat="Choose {0}">Click here to select the inflection (conjugation or declension) class of the stem which results after this affix attaches.</item>
+      <!-- Inflectional affix -->
+      <item id="MoInflAffMsa">Information about this affix when it functions as an inflectional affix.</item>
+      <item id="AffixCategory">This is the label or "category" this affix had when the lexical item was imported from some other lexicon (such as ShoeBox or ToolBox or LinguaLinks).</item>
+      <item id="PartOfSpeechOrSlot">An inflectional affix slot to which this affix belongs.  It can also refer to a category, if you do not yet know what slot the affix belongs in.</item>
+      <item id="PartOfSpeechOrSlotButton" captionformat="Choose {0}">Click here to set the template slot (or category, if you don't know which slot yet).</item>
+      <!-- Meaning -->
+      <item id="MeaningGroup">Information about the meaning(s) of the entry.</item>
+      <item id="LexSenseId">One sense of this lexical entry.</item>
+      <item id="Gloss">The gloss for this sense to use in interlinearization.</item>
+      <item id="Definition">The definition for this sense.</item>
+      <item id="MorphoSyntaxAnalysis">The way this sense functions.</item>
+      <item id="MorphoSyntaxAnalysisButton" captionformat="Choose {0}">Click here to select the way this sense functions.</item>
+      <item id="ExamplesGroup">Vernacular example sentences for this entry.</item>
+      <item id="Example">A vernacular example sentence for this entry.</item>
+      <item id="TranslationsGroup">Translations of the vernacular example sentence.</item>
+      <item id="Translation">A translation of the vernacular example sentence.</item>
+      <item id="SubSensesGroup">Other senses which are related to this sense of the entry.</item>
+      <!-- Dates -->
+      <item id="DateCreated" caption="Creation Date">This is the date on which this item was first created.</item>
+      <item id="DateModified" caption="Modification Date">This is the date on which this item was last modified.</item>
+    </strings>
+    <!-- END include: "ContextHelp.xml" query="strings" -->
+  </contexthelpstrings>
+</window>

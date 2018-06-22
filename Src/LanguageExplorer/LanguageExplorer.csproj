@@ -1909,7 +1909,7 @@
       <Link>XML\HierarchicalLCModel.xml</Link>
     </None>
     <None Include="..\..\Downloads\LCM\MasterLCModel.xml">
-      <Link>XML\MasterLCModel.xml</Link>
+      <Link>XML\Combined\MasterLCModel.xml</Link>
     </None>
     <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\Fully_Merged_useful.xml">
       <Link>XML\Combined\Fully_Merged_useful.xml</Link>
@@ -1929,6 +1929,9 @@
     <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\Merged_LCModel.xml">
       <Link>XML\Combined\Merged_LCModel.xml</Link>
     </None>
+    <Content Include="..\..\DistFiles\Language Explorer\Configuration\CombinedConfig_BleedingEdge.xml">
+      <Link>XML\CombinedConfig_BleedingEdge.xml</Link>
+    </Content>
     <Content Include="Resources\SimpleChooserParameters.xml" />
     <None Include="images\password-reveal-eye-16x16.png" />
     <Content Include="Resources\DialectsListEditParameters.xml" />
@@ -3797,35 +3800,14 @@
     <None Include="Resources\NotebookBrowseParameters.xml" />
     <None Include="Resources\NotebookDocumentParameters.xml" />
     <None Include="Resources\NotebookBrowseColumnDefinitions.xml" />
-    <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\CombinedConfig_BleedingEdge.xml">
-      <Link>XML\Combined\CombinedConfig_BleedingEdge.xml</Link>
-    </None>
     <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\CombinedConfig_Develop.xml">
       <Link>XML\Combined\CombinedConfig_Develop.xml</Link>
     </None>
     <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\CombinedConfig_Master.xml">
       <Link>XML\Combined\CombinedConfig_Master.xml</Link>
     </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\DataTreeInclude.xml">
-      <Link>XML\Lexicon\DataTreeInclude.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lists\areaConfiguration.xml">
-      <Link>XML\Lists\areaConfiguration.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lists\DataTreeInclude.xml">
-      <Link>XML\Lists\DataTreeInclude.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Notebook\areaConfiguration.xml">
-      <Link>XML\Notebook\areaConfiguration.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\CommonDataTreeInclude.xml">
-      <Link>XML\CommonDataTreeInclude.xml</Link>
-    </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\ConstituentChartStyleInfo.xml">
       <Link>XML\ConstituentChartStyleInfo.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\ContextHelp.xml">
-      <Link>XML\ContextHelp.xml</Link>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\CellarParts.xml">
       <Link>XML\Parts\CellarParts.xml</Link>
@@ -3877,25 +3859,6 @@
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\WFI.fwlayout">
       <Link>XML\Parts\WFI.fwlayout</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Grammar\areaConfiguration.xml">
-      <Link>XML\Grammar\areaConfiguration.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Grammar\DataTreeInclude.xml">
-      <Link>XML\Grammar\DataTreeInclude.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Grammar\InflAffixTemplateInclude.xml">
-      <Link>XML\Grammar\InflAffixTemplateInclude.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\areaConfiguration.xml">
-      <Link>XML\Lexicon\areaConfiguration.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Main.xml">
-      <Link>XML\Main.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Words\areaConfiguration.xml">
-      <Link>XML\Word\areaConfiguration.xml</Link>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\strings-en.xml">
       <Link>XML\strings-en.xml</Link>
