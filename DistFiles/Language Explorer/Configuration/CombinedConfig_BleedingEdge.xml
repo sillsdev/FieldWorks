@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XML Spy v4.4 U (http://www.xmlspy.com) by Randy Regnier (SIL International) -->
 <window label="FieldWorks Language Explorer" settingsId="Language Explorer">
   <!-- The main sections of this file are the following
@@ -7,6 +7,14 @@
 	contextMenus
 	toolbars
 	contexthelpstrings
+
+NB: When this file  only has the root (window) element in it,
+then theory has it that all of the old xml configuration (less layouts and parts)
+behavior has been ported to the new world order.
+
+The "START include:/END include:" pair of comments tell me where in the old files the content came from,
+so I can look at that in the develop branch.
+
   -->
   <!-- ************************ commands *********************** -->
   <commands>
@@ -78,7 +86,6 @@
     </command>
     <!-- This is on the popup menu, and is for non-record level objects. -->
     <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem" />
-    <!-- Add commands from included files to the main application. -->
     <!-- START include: "CommonDataTreeInclude.xml" query="root/commands/*" -->
     <command id="CmdDataTree-Delete" label="Delete {0}" message="DataTreeDelete" icon="Delete" />
     <!-- END include: "CommonDataTreeInclude.xml" query="root/commands/*" -->

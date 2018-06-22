@@ -1906,7 +1906,7 @@
       <SubType>UserControl</SubType>
     </Compile>
     <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\HierarchicalLCModel.xml">
-      <Link>XML\HierarchicalLCModel.xml</Link>
+      <Link>XML\Combined\HierarchicalLCModel.xml</Link>
     </None>
     <None Include="..\..\Downloads\LCM\MasterLCModel.xml">
       <Link>XML\Combined\MasterLCModel.xml</Link>
@@ -1929,9 +1929,9 @@
     <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\Merged_LCModel.xml">
       <Link>XML\Combined\Merged_LCModel.xml</Link>
     </None>
-    <Content Include="..\..\DistFiles\Language Explorer\Configuration\CombinedConfig_BleedingEdge.xml">
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\CombinedConfig_BleedingEdge.xml">
       <Link>XML\CombinedConfig_BleedingEdge.xml</Link>
-    </Content>
+    </None>
     <Content Include="Resources\SimpleChooserParameters.xml" />
     <None Include="images\password-reveal-eye-16x16.png" />
     <Content Include="Resources\DialectsListEditParameters.xml" />

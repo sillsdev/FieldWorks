@@ -66,7 +66,17 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_sharedEventHandlers.Add(LexiconAreaConstants.MoveUpObjectInOwningSequence, MoveUpObjectInOwningSequence_Clicked);
 			_sharedEventHandlers.Add(LexiconAreaConstants.MoveDownObjectInOwningSequence, MoveDownObjectInOwningSequence_Clicked);
 
-			RegisterSliceMenus();
+			// Slice stack from LexEntry.fwlayout (less senses, which are handled in another manager class).
+			Register_After_CitationForm_Bundle();
+			Register_Pronunciation_Bundle();
+			Register_Etymologies_Bundle();
+
+			// NB: Senses go here. But, another manager worries about them.
+			// <part ref="Senses" param="Normal" expansion="expanded"/>
+
+			// The "Grammatical Info. Details" had no special menus, as most slices are references, and choosers sort it all out.
+			// The publication section shares the "LexiconAreaConstants.mnuReorderVector" menu factory method for two slices.
+			// So nothing additional needs to be done.
 
 			foreach (var manager in _dataTreeWidgetManagers.Values)
 			{
@@ -125,39 +135,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_isDisposed = true;
 		}
 		#endregion
-
-		private void RegisterSliceMenus()
-		{
-			// Slice stack from LexEntry.fwlayout (less senses, which are handled in another manager class).
-			Register_After_CitationForm_Bundle();
-			Register_Pronunciation_Bundle();
-			Register_Etymologies_Bundle();
-			Register_Comment_To_Messages_Bundle();
-
-			// NB: Senses go here. But, another manager worries about them.
-			// <part ref="Senses" param="Normal" expansion="expanded"/>
-
-#if RANDYTODO
-			// TODO: Finish up the ending of LexEntry
-#endif
-			/*
-			<part ref="GrammaticalFunctionsSection" label="Grammatical Info. Details" menu="mnuDataTree-Help" hotlinks="mnuDataTree-Help">
-				<indent>
-					<part ref="MorphoSyntaxAnalyses" param="Normal"/>
-				</indent>
-			</part>
-			<part ref="PublicationSection" label="Publication Settings" menu="mnuDataTree-Help" hotlinks="mnuDataTree-Help">
-				<indent>
-					<part ref="PublishIn"   visibility="always" />
-					<part ref="ShowMainEntryIn" label="Show As Headword In" visibility="always" />
-					<part ref="EntryRefs" param="Publication" visibility="ifdata"/>
-					<part ref="ShowMinorEntry"/>
-					<part ref="Subentries" visibility="ifdata"/>
-					<part ref="VisibleComplexFormEntries" visibility="ifdata"/>
-				</indent>
-			</part>
-				*/
-		}
 
 		#region After_CitationForm_Bundle
 
@@ -407,21 +384,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			using (var imageHolder = new LanguageExplorer.DictionaryConfiguration.ImageHolder())
 			{
-				/*
-					<command id="CmdDataTree-MoveUp-Etymology" label="Move Etymology _Up" message="MoveUpObjectInSequence" icon="MoveUp">
-						<parameters field="Etymology" className="LexEtymology"/>
-					</command>
-				*/
+				// <command id="CmdDataTree-MoveUp-Etymology" label="Move Etymology _Up" message="MoveUpObjectInSequence" icon="MoveUp">
+				//	<parameters field="Etymology" className="LexEtymology"/>
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInOwningSequence_Clicked, LexiconResources.Move_Etymology_Up, image: imageHolder.smallCommandImages.Images[12]);
 				bool visible;
 				var enabled = AreaServices.CanMoveUpObjectInOwningSequence(MyDataTree, _cache, out visible);
 				menu.Visible = true;
 				menu.Enabled = enabled;
-				/*
-					<command id="CmdDataTree-MoveDown-Etymology" label="Move Etymology _Down" message="MoveDownObjectInSequence" icon="MoveDown">
-						<parameters field="Etymology" className="LexEtymology"/>
-					</command>
-				*/
+				// <command id="CmdDataTree-MoveDown-Etymology" label="Move Etymology _Down" message="MoveDownObjectInSequence" icon="MoveDown">
+				//	<parameters field="Etymology" className="LexEtymology"/>
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveDownObjectInOwningSequence_Clicked, LexiconResources.Move_Etymology_Down, image: imageHolder.smallCommandImages.Images[14]);
 				enabled = AreaServices.CanMoveDownObjectInOwningSequence(MyDataTree, _cache, out visible);
 				menu.Visible = true;
@@ -441,62 +412,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		}
 
 		#endregion Etymologies_Bundle
-
-		#region Comment_To_Messages_Bundle
-
-		private void Register_Comment_To_Messages_Bundle()
-		{
-#if RANDYTODO
-			// TODO: Add these.
-#endif
-			/*
-		   <part ref="CommentAllA"/>
-				<part id="LexEntry-Detail-CommentAllA" type="Detail">
-					<slice field="Comment" label="Note" editor="multistring" ws="all analysis" />
-				</part>
-		   <part ref="LiteralMeaningAllA"  visibility="ifdata"/>
-				<part id="LexEntry-Detail-LiteralMeaningAllA" type="detail">
-					<slice field="LiteralMeaning" label="Literal Meaning" editor="multistring" ws="all analysis" />
-				</part>
-		   <!-- Only for Subentries. -->
-		   <part ref="BibliographyAllA"   visibility="ifdata" />
-				<part id="LexEntry-Detail-BibliographyAllA" type="Detail">
-					<slice field="Bibliography" label="Bibliography" editor="multistring" ws="all analysis" />
-				</part>
-		   <part ref="RestrictionsAllA"   visibility="ifdata" />
-				<part id="LexEntry-Detail-RestrictionsAllA" type="Detail">
-					<slice field="Restrictions" label="Restrictions" editor="multistring" ws="all analysis" />
-				</part>
-		   <part ref="SummaryDefinitionAllA" visibility="ifdata"/>
-				<part id="LexEntry-Detail-SummaryDefinitionAllA" type="Detail">
-					<slice field="SummaryDefinition" label="Summary Definition" editor="multistring" ws="all analysis" />
-				</part>
-		   <part ref="CurrentLexReferences"   visibility="ifdata" />
-				<part id="LexEntry-Detail-CurrentLexReferences" type="detail">
-					<slice label="Cross References" field="LexEntryReferences" editor="lexreferencemulti" />
-				</part>
-		   <!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
-		   <part ref="_CustomFieldPlaceholder" customFields="here" /> // Nothing special for custom fields and menus.
-		   <part ref="ImportResidue" label="Import Residue" visibility="ifdata"/>
-				<part id="LexEntry-Detail-ImportResidue" type="Detail">
-					<slice field="ImportResidue" label="ImportResidue" editor="String" />
-				</part>
-		   <part ref="DateCreatedAllA"  visibility="never"/>
-				<part id="LexEntry-Detail-DateCreatedAllA" type="Detail">
-					<slice field="DateCreated" label="Date Created" editor="Time" />
-				</part>
-		   <part ref="DateModifiedAllA"  visibility="never"/>
-				<part id="LexEntry-Detail-DateModifiedAllA" type="Detail">
-					<slice field="DateModified" label="Date Modified" editor="Time" />
-				</part>
-		   <part ref="Messages" visibility="always"/>
-				<part id="LexEntry-Detail-Messages" type="detail">
-					<slice field="Self" label="Messages" editor="chorusmessage" helpTopicID="khtpField-LexEntry-Messages"  />
-				</part>
-			*/
-		}
-
-		#endregion Comment_To_Messages_Bundle
 
 		private void MoveReferencedTargetDownInSequence_Clicked(object sender, EventArgs e)
 		{
