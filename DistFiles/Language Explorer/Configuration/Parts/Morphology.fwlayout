@@ -165,9 +165,9 @@
 				<part ref="DefaultInflectionClass" label="Default Inflection Class"/>
 			</indent>
 		</part>
-		<part ref="InflectableFeatsSection" label="Features" menu="mnuDataTree-Help">
+		<part ref="InflectableFeatsSection" label="Features">
 			<indent>
-				<part ref="InflectableFeats" label="Inflectable Features" menu="mnuDataTree-Help"/>
+				<part ref="InflectableFeats" label="Inflectable Features"/>
 			</indent>
 		</part>
 
@@ -192,7 +192,7 @@
 	<layout class="MoInflAffixSlot" type="detail" name="EditSlot">
 		<part ref="NameAllA" label="Slot Name" menu="mnuDataTree-POS-AffixSlot"/>
 		<part ref="DescriptionAllA"/>
-		<part ref="Optional" label = "Optional" menu="mnuDataTree-Help"/>
+		<part ref="Optional" label = "Optional"/>
 	</layout>
 
 	<layout class="MoInflAffixTemplate" type="detail" name="default">
@@ -240,7 +240,7 @@
 </layout>
 
 	<layout class="FsFeatStruc" type="detail" name="NestedInflFeats">
-		<part ref="Blank" label="Nested Inflection Features"  menu="mnuDataTree-Help">
+		<part ref="Blank" label="Nested Inflection Features">
 			<indent>
 				<part ref="FeatureSpecs" expansion="expanded" label="Features" menu="mnuDataTree-FeatureStructure-Features"/>
 			</indent>
@@ -263,7 +263,7 @@
 		</part>
 		<part ref="DescriptionAllA">
 		</part>
-		<part ref="Features" label="Features" menu="mnuDataTree-Help"/>
+		<part ref="Features" label="Features"/>
 	</layout>
 
 	<layout class="FsFeatDefn" type="detail" name="Edit">
@@ -480,21 +480,21 @@
    </layout>
 
 	<layout class="MoEndoCompound" type="detail" name="Edit">
-	 <part ref="NameAllA" label="Name" menu="mnuDataTree-Help"/>
-		<part ref="DescriptionAllA" label="Description" menu="mnuDataTree-Help"/>
+	 <part ref="NameAllA" label="Name"/>
+		<part ref="DescriptionAllA" label="Description"/>
 		<part ref="Active"/>
-		<part ref="BlankLeftMember" label="Left Member" expansion="expanded" menu="mnuDataTree-Help">
+		<part ref="BlankLeftMember" label="Left Member" expansion="expanded">
 			<indent>
 				<part ref="LeftMember"/>
 			</indent>
 		</part>
-		<part ref="BlankRightMember" label="Right Member" expansion="expanded" menu="mnuDataTree-Help">
+		<part ref="BlankRightMember" label="Right Member" expansion="expanded">
 			<indent>
 				<part ref="RightMember"/>
 			</indent>
 		</part>
-		<part ref="HeadLast" label="Right Headed" menu="mnuDataTree-Help"/>
-		<part ref="BlankOverrideHead" label="Override Head with:" expansion="expanded" menu="mnuDataTree-Help">
+		<part ref="HeadLast" label="Right Headed"/>
+		<part ref="BlankOverrideHead" label="Override Head with:" expansion="expanded">
 			<indent>
 				<part ref="OverridingMember"/>
 			</indent>
@@ -502,20 +502,20 @@
 	</layout>
 
 	<layout class="MoExoCompound" type="detail" name="Edit">
-		<part ref="NameAllA" label="Name" menu="mnuDataTree-Help"/>
-		<part ref="DescriptionAllA" label="Description" menu="mnuDataTree-Help"/>
+		<part ref="NameAllA" label="Name"/>
+		<part ref="DescriptionAllA" label="Description"/>
 		<part ref="Active"/>
-		<part ref="BlankLeftMember" label="Left Member" expansion="expanded" menu="mnuDataTree-Help">
+		<part ref="BlankLeftMember" label="Left Member" expansion="expanded">
 			<indent>
 				<part ref="LeftMember"/>
 			</indent>
 		</part>
-		<part ref="BlankRightMember" label="Right Member" expansion="expanded" menu="mnuDataTree-Help">
+		<part ref="BlankRightMember" label="Right Member" expansion="expanded">
 			<indent>
 				<part ref="RightMember"/>
 			</indent>
 		</part>
-		<part ref="BlankResult" label="Result" expansion="expanded" menu="mnuDataTree-Help">
+		<part ref="BlankResult" label="Result" expansion="expanded">
 			<indent>
 				<part ref="Result"/>
 			</indent>
@@ -524,8 +524,8 @@
 	<layout class="PhPhoneme" type="detail" name="Edit">
 		<part ref="NameAllV"/>
 	<part ref="BasicIPASymbol"/>
-		<part ref="DescriptionAllA" menu="mnuDataTree-Help"/>
-	<part ref="Features" label="Phonological Features" menu="mnuDataTree-Help"/>
+		<part ref="DescriptionAllA"/>
+	<part ref="Features" label="Phonological Features"/>
 		<part ref="RepresentationsSection" expansion="expanded" label="In Orthography as" menu="mnuDataTree-Phoneme-Codes" >
 			<indent>
 						<part ref="Codes" expansion="expanded" menu="mnuDataTree-Phoneme-Code"/>
@@ -534,33 +534,33 @@
 	</layout>
 
 	<layout class="PhNCSegments" type="detail" name="Edit">
-		<part ref="NameAllA" menu="mnuDataTree-Help"/>
-		<part ref="DescriptionAllA" menu="mnuDataTree-Help"/>
-		<part ref="AbbreviationAllA" menu="mnuDataTree-Help"/>
-		<part ref="Segments" label="Phonemes" menu="mnuDataTree-Help"/>
+		<part ref="NameAllA"/>
+		<part ref="DescriptionAllA"/>
+		<part ref="AbbreviationAllA"/>
+		<part ref="Segments" label="Phonemes"/>
 	</layout>
 
   <layout class="PhNCFeatures" type="detail" name="Edit">
-	<part ref="NameAllA" menu="mnuDataTree-Help"/>
-	<part ref="DescriptionAllA" menu="mnuDataTree-Help"/>
-	<part ref="AbbreviationAllA" menu="mnuDataTree-Help"/>
-	<part ref="Features" label="Phonological Features" menu="mnuDataTree-Help"/>
+	<part ref="NameAllA"/>
+	<part ref="DescriptionAllA"/>
+	<part ref="AbbreviationAllA"/>
+	<part ref="Features" label="Phonological Features"/>
   </layout>
 
   <layout class="PhEnvironment" type="detail" name="Edit">
-		<part ref="NameAllA" menu="mnuDataTree-Help"/>
-		<part ref="DescriptionAllA" menu="mnuDataTree-Help"/>
+		<part ref="NameAllA"/>
+		<part ref="DescriptionAllA"/>
 		<part ref="StringRepresentation"/>
 	</layout>
 
 	<layout class="PhRegularRule" type="detail" name="Edit">
-		<part ref="NameAllA" menu="mnuDataTree-Help"/>
-		<part ref="DescriptionAllA" menu="mnuDataTree-Help"/>
-		<part ref="OrderNumber" menu="mnuDataTree-Help"/>
-		<part ref="Direction" menu="mnuDataTree-Help"/>
-		<part ref="RequiredPOSes" menu="mnuDataTree-Help"/>
-		<part ref="RequiredRuleFeats" menu="mnuDataTree-Help"/>
-		<part ref="ExcludedRuleFeats" menu="mnuDataTree-Help"/>
+		<part ref="NameAllA"/>
+		<part ref="DescriptionAllA"/>
+		<part ref="OrderNumber"/>
+		<part ref="Direction"/>
+		<part ref="RequiredPOSes"/>
+		<part ref="RequiredRuleFeats"/>
+		<part ref="ExcludedRuleFeats"/>
 		<part ref="Active"/>
 		<part ref="RuleFormulaSection" expansion="expanded" label="Rule Formula">
 			<indent>
@@ -593,10 +593,10 @@
 	</layout>
 
 	<layout class="PhMetathesisRule" type="detail" name="Edit">
-		<part ref="NameAllA" menu="mnuDataTree-Help"/>
-		<part ref="DescriptionAllA" menu="mnuDataTree-Help"/>
-		<part ref="OrderNumber" menu="mnuDataTree-Help"/>
-		<part ref="Direction" menu="mnuDataTree-Help"/>
+		<part ref="NameAllA"/>
+		<part ref="DescriptionAllA"/>
+		<part ref="OrderNumber"/>
+		<part ref="Direction"/>
 		<part ref="Active"/>
 		<part ref="RuleFormulaSection" expansion="expanded" label="Rule Formula">
 			<indent>

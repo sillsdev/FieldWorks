@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <PartInventory>
 	<bin>
 		<part id="LexEntry-Detail-Nested-Collapsed">
@@ -14,7 +14,7 @@
 			</slice>
 		</part>
 		<part id="LexEtymology-Detail-LanguageNotes" type="Detail">
-			<slice field="LanguageNotes" label="Source Language Notes" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" />
+			<slice field="LanguageNotes" label="Source Language Notes" editor="multistring" ws="all analysis" />
 		</part>
 	</bin>
 </PartInventory>

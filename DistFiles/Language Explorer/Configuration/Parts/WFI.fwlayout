@@ -37,7 +37,7 @@
 		</part>
 	</layout>
 	<layout class="WfiAnalysis" type="detail" name="AsParse">
-		<part ref="HeavySummary" param="HumanNoOpinionSummary" expansion="expanded" menu="mnuDataTree-ParserProducedAnalysis" hotlinks="mnuDataTree-Help">
+		<part ref="HeavySummary" param="HumanNoOpinionSummary" expansion="expanded" menu="mnuDataTree-ParserProducedAnalysis">
 			<indent>
 				<part ref="InterlinearParse"/>
 				<part ref="ParserOpinion"/>
