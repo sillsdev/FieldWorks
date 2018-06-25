@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -702,9 +702,6 @@ you expect.</value>
   <data name="ksIdentifySense" xml:space="preserve">
     <value>Identify sense</value>
   </data>
-  <data name="ksIdentifyXEntry" xml:space="preserve">
-    <value>Add Reference ({0})</value>
-  </data>
   <data name="ksIdentifyXLexEntry" xml:space="preserve">
     <value>Add Reference ({0})</value>
   </data>
@@ -780,9 +777,6 @@ you expect.</value>
   <data name="ksRedoDeleteParticipants" xml:space="preserve">
     <value>Redo Delete Participants</value>
   </data>
-  <data name="ksRedoDeleteRelation" xml:space="preserve">
-    <value>Redo Delete Relation</value>
-  </data>
   <data name="ksRedoDeleteRevFromSense" xml:space="preserve">
     <value>Redo Delete Reversal Entry from Sense</value>
   </data>
@@ -791,9 +785,6 @@ you expect.</value>
   </data>
   <data name="ksRedoEditFunction" xml:space="preserve">
     <value>Redo Edit Function</value>
-  </data>
-  <data name="ksRedoEditRefSetDetails" xml:space="preserve">
-    <value>Redo Edit Reference Set Details</value>
   </data>
   <data name="ksRedoHomographWs" xml:space="preserve">
     <value>Redo Reassign Homographs</value>
@@ -813,17 +804,11 @@ you expect.</value>
   <data name="ksRedoPromote" xml:space="preserve">
     <value>Redo Promote</value>
   </data>
-  <data name="ksRedoReplaceRef" xml:space="preserve">
-    <value>Redo Replace Reference</value>
-  </data>
   <data name="ksRedoSetRevEntries" xml:space="preserve">
     <value>Redo Set Reversal Entries</value>
   </data>
   <data name="ksRedoVariantOf" xml:space="preserve">
     <value>Redo Variant Of</value>
-  </data>
-  <data name="ksReplaceXEntry" xml:space="preserve">
-    <value>Replace Reference</value>
   </data>
   <data name="ksSendReceiveNotPermittedMultipleAppsCaption" xml:space="preserve">
     <value>Send/Receive not permitted</value>
@@ -890,9 +875,6 @@ you expect.</value>
   <data name="ksUndoDeleteParticipants" xml:space="preserve">
     <value>Undo Delete Participants</value>
   </data>
-  <data name="ksUndoDeleteRelation" xml:space="preserve">
-    <value>Undo Delete Relation</value>
-  </data>
   <data name="ksUndoDeleteRevFromSense" xml:space="preserve">
     <value>Undo Delete Reversal Entry from Sense</value>
   </data>
@@ -901,9 +883,6 @@ you expect.</value>
   </data>
   <data name="ksUndoEditFunction" xml:space="preserve">
     <value>Undo Edit Function</value>
-  </data>
-  <data name="ksUndoEditRefSetDetails" xml:space="preserve">
-    <value>Undo Edit Reference Set Details</value>
   </data>
   <data name="ksUndoHomographWs" xml:space="preserve">
     <value>Undo Reassign Homographs</value>
@@ -922,9 +901,6 @@ you expect.</value>
   </data>
   <data name="ksUndoPromote" xml:space="preserve">
     <value>Undo Promote</value>
-  </data>
-  <data name="ksUndoReplaceRef" xml:space="preserve">
-    <value>Undo Replace Reference</value>
   </data>
   <data name="ksUndoSetRevEntries" xml:space="preserve">
     <value>Undo Set Reversal Entries</value>
@@ -962,9 +938,6 @@ you expect.</value>
   </data>
   <data name="ks_MoveEntry" xml:space="preserve">
     <value>&amp;Move Entry</value>
-  </data>
-  <data name="ks_Replace" xml:space="preserve">
-    <value>&amp;Replace</value>
   </data>
   <data name="LiftSRFailureDetectedOnStartupMessage" xml:space="preserve">
     <value>Your last Send/Receive Lexicon did not complete successfully. Any work you do before a successful S/R Lexicon will be lost. You should immediately retry S/R Lexicon. If it completes successfully, you can continue your work. If the S/R Lexicon continues to fail, contact flex_errors@sil.org for help before doing further work.</value>

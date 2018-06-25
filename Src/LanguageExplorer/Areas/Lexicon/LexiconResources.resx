@@ -522,4 +522,37 @@
   <data name="Convert_to_Affix_Allomorph" xml:space="preserve">
     <value>Convert to Affix Allomorph</value>
   </data>
+  <data name="Delete_Relation" xml:space="preserve">
+    <value>Delete Relation</value>
+  </data>
+  <data name="Delete_Variant_Info" xml:space="preserve">
+    <value>Delete Variant Info</value>
+  </data>
+  <data name="ksIdentifyXEntry" xml:space="preserve">
+    <value>Add Reference ({0})</value>
+  </data>
+  <data name="ksRedoDeleteRelation" xml:space="preserve">
+    <value>Redo Delete Relation</value>
+  </data>
+  <data name="ksRedoEditRefSetDetails" xml:space="preserve">
+    <value>Redo Edit Reference Set Details</value>
+  </data>
+  <data name="ksRedoReplaceRef" xml:space="preserve">
+    <value>Redo Replace Reference</value>
+  </data>
+  <data name="ksReplaceXEntry" xml:space="preserve">
+    <value>Replace Reference</value>
+  </data>
+  <data name="ksUndoDeleteRelation" xml:space="preserve">
+    <value>Undo Delete Relation</value>
+  </data>
+  <data name="ksUndoEditRefSetDetails" xml:space="preserve">
+    <value>Undo Edit Reference Set Details</value>
+  </data>
+  <data name="ksUndoReplaceRef" xml:space="preserve">
+    <value>Undo Replace Reference</value>
+  </data>
+  <data name="ks_Replace" xml:space="preserve">
+    <value>&amp;Replace</value>
+  </data>
 </root>

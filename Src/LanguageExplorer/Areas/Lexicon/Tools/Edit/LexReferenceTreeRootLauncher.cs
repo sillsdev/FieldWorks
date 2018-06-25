@@ -153,8 +153,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				var wp = new WindowParams
 				{
-					m_title = string.Format(LanguageExplorerResources.ksReplaceXEntry),
-					m_btnText = LanguageExplorerResources.ks_Replace
+					m_title = string.Format(LexiconResources.ksReplaceXEntry),
+					m_btnText = LexiconResources.ks_Replace
 				};
 				//This method is only called when we are Replacing the
 				//tree root of a Whole/Part lexical relation
@@ -185,8 +185,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			}
 			else
 			{
-				undoStr = LanguageExplorerResources.ksUndoReplaceRef;
-				redoStr = LanguageExplorerResources.ksRedoReplaceRef;
+				undoStr = LexiconResources.ksUndoReplaceRef;
+				redoStr = LexiconResources.ksRedoReplaceRef;
 			}
 			AddItem(obj, undoStr, redoStr);
 		}

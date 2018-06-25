@@ -63,7 +63,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				Debug.Assert(dlg != null);
 				var wp = new WindowParams
 				{
-					m_title = string.Format(LanguageExplorerResources.ksIdentifyXEntry,
+					m_title = string.Format(LexiconResources.ksIdentifyXEntry,
 					lrt.Name.BestAnalysisAlternative.Text),
 					m_btnText = LanguageExplorerResources.ks_Add
 				};

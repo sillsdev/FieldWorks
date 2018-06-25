@@ -11,6 +11,7 @@ using LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit;
 using LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit;
 using LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit;
 using LanguageExplorer.Areas.Grammar.Tools.PosEdit;
+using LanguageExplorer.Areas.Lexicon;
 using LanguageExplorer.Areas.Lexicon.Tools.Edit;
 using LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes;
 using LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit;
@@ -475,6 +476,42 @@ namespace LanguageExplorer.Controls.DetailControls
 				case "phenvstrrepresentation":
 				{
 					slice = new PhEnvStrRepresentationSlice(obj, persistenceProvider);
+					break;
+				}
+
+				case "lexreferencecollection":
+				{
+					slice = new LexReferenceCollectionSlice();
+					break;
+				}
+
+				case "lexreferenceunidirectional":
+				{
+					slice = new LexReferenceUnidirectionalSlice();
+					break;
+				}
+
+				case "lexreferencepair":
+				{
+					slice = new LexReferencePairSlice();
+					break;
+				}
+
+				case "lexreferencetreebranches":
+				{
+					slice = new LexReferenceTreeBranchesSlice();
+					break;
+				}
+
+				case "lexreferencetreeroot":
+				{
+					slice = new LexReferenceTreeRootSlice();
+					break;
+				}
+
+				case "lexreferencesequence":
+				{
+					slice = new LexReferenceSequenceSlice();
 					break;
 				}
 

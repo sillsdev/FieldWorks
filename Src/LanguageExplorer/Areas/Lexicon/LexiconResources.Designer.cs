@@ -207,6 +207,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete Relation.
+        /// </summary>
+        internal static string Delete_Relation {
+            get {
+                return ResourceManager.GetString("Delete_Relation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete this Etymology.
         /// </summary>
         internal static string Delete_this_Etymology {
@@ -230,6 +239,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string Delete_Variant {
             get {
                 return ResourceManager.GetString("Delete_Variant", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Variant Info.
+        /// </summary>
+        internal static string Delete_Variant_Info {
+            get {
+                return ResourceManager.GetString("Delete_Variant_Info", resourceCulture);
             }
         }
         
@@ -634,6 +652,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &amp;Replace.
+        /// </summary>
+        internal static string ks_Replace {
+            get {
+                return ResourceManager.GetString("ks_Replace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Click Cancel to stop loading the Dictionary view and move to Lexicon Edit..
         /// </summary>
         internal static string ksCancelingPublicationLabel {
@@ -657,6 +684,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string ksErrorDisplayingPublication {
             get {
                 return ResourceManager.GetString("ksErrorDisplayingPublication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Reference ({0}).
+        /// </summary>
+        internal static string ksIdentifyXEntry {
+            get {
+                return ResourceManager.GetString("ksIdentifyXEntry", resourceCulture);
             }
         }
         
@@ -706,6 +742,24 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Redo Delete Relation.
+        /// </summary>
+        internal static string ksRedoDeleteRelation {
+            get {
+                return ResourceManager.GetString("ksRedoDeleteRelation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Redo Edit Reference Set Details.
+        /// </summary>
+        internal static string ksRedoEditRefSetDetails {
+            get {
+                return ResourceManager.GetString("ksRedoEditRefSetDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Redo Insert Media.
         /// </summary>
         internal static string ksRedoInsertMedia {
@@ -733,6 +787,42 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Redo Replace Reference.
+        /// </summary>
+        internal static string ksRedoReplaceRef {
+            get {
+                return ResourceManager.GetString("ksRedoReplaceRef", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Replace Reference.
+        /// </summary>
+        internal static string ksReplaceXEntry {
+            get {
+                return ResourceManager.GetString("ksReplaceXEntry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo Delete Relation.
+        /// </summary>
+        internal static string ksUndoDeleteRelation {
+            get {
+                return ResourceManager.GetString("ksUndoDeleteRelation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo Edit Reference Set Details.
+        /// </summary>
+        internal static string ksUndoEditRefSetDetails {
+            get {
+                return ResourceManager.GetString("ksUndoEditRefSetDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Undo Insert Media.
         /// </summary>
         internal static string ksUndoInsertMedia {
@@ -756,6 +846,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string ksUndoMergeEntry {
             get {
                 return ResourceManager.GetString("ksUndoMergeEntry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo Replace Reference.
+        /// </summary>
+        internal static string ksUndoReplaceRef {
+            get {
+                return ResourceManager.GetString("ksUndoReplaceRef", resourceCulture);
             }
         }
         

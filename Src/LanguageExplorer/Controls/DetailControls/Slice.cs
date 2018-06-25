@@ -2291,10 +2291,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		/// <summary />
-		public virtual bool GetCanEditNow()
-		{
-			return true;
-		}
+		public bool CanEditNow => true;
 
 		#endregion Menu Command Handlers
 

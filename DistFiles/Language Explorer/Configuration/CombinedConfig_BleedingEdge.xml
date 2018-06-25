@@ -208,10 +208,6 @@ so I can look at that in the develop branch.
     <command id="CmdDataTree-Insert-SubEntryLink" label="Insert Main Entry" message="DataTreeInsert">
       <parameters field="MainEntriesOrSenses" className="LexRefEntryOrSense" />
     </command>
-    <command id="CmdDataTree-Delete-LexReference" label="Delete Relation" message="DataTreeDelete" icon="Delete" />
-    <command id="CmdDataTree-Add-ToLexReference" label="Add Reference" message="DataTreeAddReference" />
-    <command id="CmdDataTree-Replace-LexReference" label="Replace Reference" message="DataTreeAddReference" />
-    <command id="CmdDataTree-EditDetails-LexReference" label="Edit Reference Set Details" message="DataTreeEdit" />
     <command id="CmdDataTree-Insert-ReversalSubentry" label="Insert Reversal Subentry" message="DataTreeInsert">
       <parameters field="Subentries" className="ReversalIndexEntry" />
     </command>
@@ -1333,16 +1329,6 @@ so I can look at that in the develop branch.
     </menu>
     <menu id="mnuDataTree-Subsenses">
       <item command="CmdDataTree-Insert-SubSense" />
-    </menu>
-    <menu id="mnuDataTree-DeleteAddLexReference">
-      <item command="CmdDataTree-Delete-LexReference" />
-      <item command="CmdDataTree-Add-ToLexReference" />
-      <item command="CmdDataTree-EditDetails-LexReference" />
-    </menu>
-    <menu id="mnuDataTree-DeleteReplaceLexReference">
-      <item command="CmdDataTree-Delete-LexReference" />
-      <item command="CmdDataTree-Replace-LexReference" />
-      <item command="CmdDataTree-EditDetails-LexReference" />
     </menu>
     <menu id="mnuDataTree-InsertReversalSubentry">
       <item command="CmdDataTree-Insert-ReversalSubentry" />

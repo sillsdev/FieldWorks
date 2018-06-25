@@ -563,15 +563,6 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &amp;Replace.
-        /// </summary>
-        internal static string ks_Replace {
-            get {
-                return ResourceManager.GetString("ks_Replace", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Add a Complex Form....
         /// </summary>
         internal static string ksAddAComplexForm {
@@ -1470,15 +1461,6 @@ namespace LanguageExplorer {
         /// <summary>
         ///   Looks up a localized string similar to Add Reference ({0}).
         /// </summary>
-        internal static string ksIdentifyXEntry {
-            get {
-                return ResourceManager.GetString("ksIdentifyXEntry", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Add Reference ({0}).
-        /// </summary>
         internal static string ksIdentifyXLexEntry {
             get {
                 return ResourceManager.GetString("ksIdentifyXLexEntry", resourceCulture);
@@ -2152,15 +2134,6 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Redo Delete Relation.
-        /// </summary>
-        internal static string ksRedoDeleteRelation {
-            get {
-                return ResourceManager.GetString("ksRedoDeleteRelation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Redo Delete Reversal Entry from Sense.
         /// </summary>
         internal static string ksRedoDeleteRevFromSense {
@@ -2184,15 +2157,6 @@ namespace LanguageExplorer {
         internal static string ksRedoEditFunction {
             get {
                 return ResourceManager.GetString("ksRedoEditFunction", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Redo Edit Reference Set Details.
-        /// </summary>
-        internal static string ksRedoEditRefSetDetails {
-            get {
-                return ResourceManager.GetString("ksRedoEditRefSetDetails", resourceCulture);
             }
         }
         
@@ -2404,15 +2368,6 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Redo Replace Reference.
-        /// </summary>
-        internal static string ksRedoReplaceRef {
-            get {
-                return ResourceManager.GetString("ksRedoReplaceRef", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Redo Set Reversal Entries.
         /// </summary>
         internal static string ksRedoSetRevEntries {
@@ -2445,15 +2400,6 @@ namespace LanguageExplorer {
         internal static string ksRemovingCircularComponentLexeme {
             get {
                 return ResourceManager.GetString("ksRemovingCircularComponentLexeme", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Replace Reference.
-        /// </summary>
-        internal static string ksReplaceXEntry {
-            get {
-                return ResourceManager.GetString("ksReplaceXEntry", resourceCulture);
             }
         }
         
@@ -2870,15 +2816,6 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Undo Delete Relation.
-        /// </summary>
-        internal static string ksUndoDeleteRelation {
-            get {
-                return ResourceManager.GetString("ksUndoDeleteRelation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Undo Delete Reversal Entry from Sense.
         /// </summary>
         internal static string ksUndoDeleteRevFromSense {
@@ -2902,15 +2839,6 @@ namespace LanguageExplorer {
         internal static string ksUndoEditFunction {
             get {
                 return ResourceManager.GetString("ksUndoEditFunction", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo Edit Reference Set Details.
-        /// </summary>
-        internal static string ksUndoEditRefSetDetails {
-            get {
-                return ResourceManager.GetString("ksUndoEditRefSetDetails", resourceCulture);
             }
         }
         
@@ -3118,15 +3046,6 @@ namespace LanguageExplorer {
         internal static string ksUndoRemoveMarker {
             get {
                 return ResourceManager.GetString("ksUndoRemoveMarker", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo Replace Reference.
-        /// </summary>
-        internal static string ksUndoReplaceRef {
-            get {
-                return ResourceManager.GetString("ksUndoReplaceRef", resourceCulture);
             }
         }
         

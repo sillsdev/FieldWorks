@@ -204,17 +204,17 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				sLabel = LanguageExplorerResources.ksStars;
 			}
-			var sXml = $"<slice label=\"{sLabel}\" field=\"Targets\" editor=\"Custom\" assemblyPath=\"LanguageExplorer.dll\"";
+			var sXml = $"<slice label=\"{sLabel}\" field=\"Targets\" editor=\"REPLACE_ME\"";
 			var sMenu = "mnuDataTree-DeleteAddLexReference";
 
 			// generate Xml for a specific slice matching this reference
 			switch ((LexRefTypeTags.MappingTypes)lrt.MappingType)
 			{
 				case LexRefTypeTags.MappingTypes.kmtSenseCollection:
-					sXml += " class=\"LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceCollectionSlice\"";
+					sXml = sXml.Replace("REPLACE_ME", "lexreferencecollection");
 					break;
 				case LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
-					sXml += " class=\"LanguageExplorer.Areas.Lexicon.LexReferenceUnidirectionalSlice\"";
+					sXml = sXml.Replace("REPLACE_ME", "lexreferenceunidirectional");
 					break;
 				case LexRefTypeTags.MappingTypes.kmtSensePair:
 				case LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair: // Sense Pair with different Forward/Reverse names
@@ -222,60 +222,59 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				case LexRefTypeTags.MappingTypes.kmtEntryAsymmetricPair: // Entry Pair with different Forward/Reverse names
 				case LexRefTypeTags.MappingTypes.kmtEntryOrSensePair:
 				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseAsymmetricPair: // Entry or sense Pair with different forward/Reverse names
-					sXml += " class=\"LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferencePairSlice\"";
+					sXml = sXml.Replace("REPLACE_ME", "lexreferencepair");
 					sMenu = "mnuDataTree-DeleteReplaceLexReference";
 					break;
 				case LexRefTypeTags.MappingTypes.kmtSenseTree:
 					if (fTreeRoot)
 					{
-						sXml += " class=\"LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceTreeBranchesSlice\"";
+						sXml = sXml.Replace("REPLACE_ME", "lexreferencetreebranches");
 						sMenu = "mnuDataTree-DeleteAddLexReference";
 					}
 					else
 					{
-						sXml += " class=\"LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceTreeRootSlice\"";
+						sXml = sXml.Replace("REPLACE_ME", "lexreferencetreeroot");
 						sMenu = "mnuDataTree-DeleteReplaceLexReference";
 					}
 					break;
 				case LexRefTypeTags.MappingTypes.kmtSenseSequence:
 				case LexRefTypeTags.MappingTypes.kmtEntrySequence:
 				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseSequence:
-					sXml += " class=\"LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceSequenceSlice\"";
+					sXml = sXml.Replace("REPLACE_ME", "lexreferencesequence");
 					break;
 				case LexRefTypeTags.MappingTypes.kmtEntryCollection:
-					sXml += " class=\"LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceCollectionSlice\"";
-					//sMenu = "mnuDataTree-DeleteFromLexEntryReference"; we used to have distinct strings in the menu
+					sXml = sXml.Replace("REPLACE_ME", "lexreferencecollection");
 					sMenu = "mnuDataTree-DeleteAddLexReference";
 					break;
 				case LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
-					sXml += " class=\"LanguageExplorer.Areas.Lexicon.LexReferenceUnidirectionalSlice\"";
-					//sMenu = "mnuDataTree-DeleteFromLexEntryReference"; we used to have distinct strings in the menu
+					sXml = sXml.Replace("REPLACE_ME", "lexreferenceunidirectional");
 					sMenu = "mnuDataTree-DeleteAddLexReference";
 					break;
 				case LexRefTypeTags.MappingTypes.kmtEntryTree:
-					sMenu = "mnuDataTree-DeleteAddLexReference";
 					if (fTreeRoot)
 					{
-						sXml += " class=\"LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceTreeBranchesSlice\"";
+						sXml = sXml.Replace("REPLACE_ME", "lexreferencetreebranches");
 						sMenu = "mnuDataTree-DeleteAddLexReference";
 					}
 					else
 					{
-						sXml += " class=\"LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceTreeRootSlice\"";
+						sXml = sXml.Replace("REPLACE_ME", "lexreferencetreeroot");
 						sMenu = "mnuDataTree-DeleteReplaceLexReference";
 					}
 					break;
 				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseCollection:
-					sXml += " class=\"LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceCollectionSlice\"";
+					sXml = sXml.Replace("REPLACE_ME", "lexreferencecollection");
 					if (MyCmObject is ILexEntry)
 					{
 						sMenu = "mnuDataTree-DeleteAddLexReference";
 					}
 					break;
 				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional:
-					sXml += " class=\"LanguageExplorer.Areas.Lexicon.LexReferenceUnidirectionalSlice\"";
+					sXml = sXml.Replace("REPLACE_ME", "lexreferenceunidirectional");
 					if (MyCmObject is ILexEntry)
+					{
 						sMenu = "mnuDataTree-DeleteAddLexReference";
+					}
 					break;
 				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
 					if (MyCmObject is ILexEntry)
@@ -284,12 +283,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					}
 					if (fTreeRoot)
 					{
-						sXml += " class=\"LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceTreeBranchesSlice\"";
+						sXml = sXml.Replace("REPLACE_ME", "lexreferencetreebranches");
 						sMenu = "mnuDataTree-DeleteAddLexReference";
 					}
 					else
 					{
-						sXml += " class=\"LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceTreeRootSlice\"";
+						sXml = sXml.Replace("REPLACE_ME", "lexreferencetreeroot");
 					}
 					break;
 
@@ -631,7 +630,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				Debug.Assert(dlg != null);
 				var wp = new WindowParams
 				{
-					m_title = string.Format(LanguageExplorerResources.ksIdentifyXEntry,
+					m_title = string.Format(LexiconResources.ksIdentifyXEntry,
 					lrt.ReverseName.BestAnalysisAlternative.Text),
 					m_btnText = LanguageExplorerResources.ks_Add
 				};
@@ -853,7 +852,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 					if (DialogResult.Yes == dlg.ShowDialog(mainWindow))
 					{
-						UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoDeleteRelation, LanguageExplorerResources.ksRedoDeleteRelation, MyCmObject, () =>
+						UndoableUnitOfWorkHelper.Do(LexiconResources.ksUndoDeleteRelation, LexiconResources.ksRedoDeleteRelation, MyCmObject, () =>
 						{
 							//If the user selected Yes, then we need to delete 'this' sense or entry
 							lr.TargetsRS.Remove(MyCmObject);
@@ -908,7 +907,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				if (DialogResult.Yes == dlg.ShowDialog(mainWindow))
 				{
-					UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoDeleteRelation, LanguageExplorerResources.ksRedoDeleteRelation, MyCmObject, () =>
+					UndoableUnitOfWorkHelper.Do(LexiconResources.ksUndoDeleteRelation, LexiconResources.ksRedoDeleteRelation, MyCmObject, () =>
 					{
 						Cache.DomainDataByFlid.DeleteObj(lr.Hvo);
 					});
@@ -948,7 +947,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				{
 					return;
 				}
-				using (var helper = new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, LanguageExplorerResources.ksUndoEditRefSetDetails, LanguageExplorerResources.ksRedoEditRefSetDetails))
+				using (var helper = new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, LexiconResources.ksUndoEditRefSetDetails, LexiconResources.ksRedoEditRefSetDetails))
 				{
 					lr.Name.SetAnalysisDefaultWritingSystem(dlg.ReferenceName);
 					lr.Comment.SetAnalysisDefaultWritingSystem(dlg.ReferenceComment);
@@ -961,7 +960,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		public static SimpleListChooser MakeSenseChooser(LcmCache cache, IHelpTopicProvider helpTopicProvider)
 		{
 			var senses = cache.ServiceLocator.GetInstance<ILexSenseRepository>().AllInstances();
-			var labels = ObjectLabel.CreateObjectLabels(cache, senses.Cast<ICmObject>(), "LongNameTSS");
+			var labels = ObjectLabel.CreateObjectLabels(cache, senses, "LongNameTSS");
 			var chooser = new SimpleListChooser(null, labels, LanguageExplorerResources.ksSenses, helpTopicProvider)
 			{
 				Cache = cache

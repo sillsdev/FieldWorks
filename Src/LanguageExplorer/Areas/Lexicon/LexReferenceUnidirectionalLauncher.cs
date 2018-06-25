@@ -57,7 +57,7 @@ namespace LanguageExplorer.Areas.Lexicon
 				Debug.Assert(dlg != null);
 				var wp = new WindowParams
 				{
-					m_title = string.Format(LanguageExplorerResources.ksIdentifyXEntry, lrt.Name.BestAnalysisAlternative.Text), m_btnText = LanguageExplorerResources.ks_Add
+					m_title = string.Format(LexiconResources.ksIdentifyXEntry, lrt.Name.BestAnalysisAlternative.Text), m_btnText = LanguageExplorerResources.ks_Add
 				};
 				dlg.SetDlgInfo(m_cache, wp);
 				dlg.SetHelpTopic("khtpChooseLexicalRelationAdd");

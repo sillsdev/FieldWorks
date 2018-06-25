@@ -105,13 +105,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				//on creating Pair Lexical Relation have an Add button and Add in the title bar
 				if (Target == null)
 				{
-					wp.m_title = string.Format(LanguageExplorerResources.ksIdentifyXEntry, lrt.Name.BestAnalysisAlternative.Text);
+					wp.m_title = string.Format(LexiconResources.ksIdentifyXEntry, lrt.Name.BestAnalysisAlternative.Text);
 					wp.m_btnText = LanguageExplorerResources.ks_Add;
 				}
 				else //Otherwise we are Replacing the item
 				{
-					wp.m_title = string.Format(LanguageExplorerResources.ksReplaceXEntry);
-					wp.m_btnText = LanguageExplorerResources.ks_Replace;
+					wp.m_title = string.Format(LexiconResources.ksReplaceXEntry);
+					wp.m_btnText = LexiconResources.ks_Replace;
 				}
 
 				dlg.SetDlgInfo(m_cache, wp);
@@ -147,8 +147,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			}
 			else
 			{
-				undoStr = LanguageExplorerResources.ksUndoReplaceRef;
-				redoStr = LanguageExplorerResources.ksRedoReplaceRef;
+				undoStr = LexiconResources.ksUndoReplaceRef;
+				redoStr = LexiconResources.ksRedoReplaceRef;
 			}
 			AddItem(obj, undoStr, redoStr);
 		}

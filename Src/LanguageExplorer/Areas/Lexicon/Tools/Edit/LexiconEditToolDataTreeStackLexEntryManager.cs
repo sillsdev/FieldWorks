@@ -25,6 +25,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		internal const string mnuDataTree_Etymology_Hotlinks = "mnuDataTree-Etymology-Hotlinks";
 		private const string mnuDataTree_VariantSpec = "mnuDataTree-VariantSpec";
 		private const string mnuDataTree_ComplexFormSpec = "mnuDataTree-ComplexFormSpec";
+		private const string mnuDataTree_DeleteAddLexReference = "mnuDataTree-DeleteAddLexReference";
+		private const string mnuDataTree_DeleteReplaceLexReference = "mnuDataTree-DeleteReplaceLexReference";
 		private Dictionary<string, EventHandler> _sharedEventHandlers;
 		private IRecordList MyRecordList { get; set; }
 		private DataTree MyDataTree { get; set; }
@@ -70,6 +72,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			Register_After_CitationForm_Bundle();
 			Register_Pronunciation_Bundle();
 			Register_Etymologies_Bundle();
+			Register_CurrentLexReferences_Bundle();
 
 			// NB: Senses go here. But, another manager worries about them.
 			// <part ref="Senses" param="Normal" expansion="expanded"/>
@@ -227,25 +230,29 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				enabled = AreaServices.CanMoveDownObjectInOwningSequence(MyDataTree, _cache, out visible);
 				menu.Visible = visible;
 				menu.Enabled = enabled;
-
-				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
-
-#if RANDYTODO
-				// TODO: Add these two menus.
-#endif
-				/*
-				 Add_another_Variant_Info_section
-				 Add_another_Variant_Info_section_Tooltip
-						<command id="CmdDataTree-Insert-VariantSpec" label="Add another Variant Info section" message="DataTreeInsert">
-							<parameters field="EntryRefs" className="LexEntryRef" ownerClass="LexEntry" />
-						</command>
-						<command id="CmdDataTree-Delete-VariantSpec" label="Delete Variant Info" message="DataTreeDelete" icon="Delete"/> , image: LanguageExplorerResources.Delete
-				*/
 			}
+
+			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
+
+			// <command id="CmdDataTree-Insert-VariantSpec" label="Add another Variant Info section" message="DataTreeInsert">
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_VariantSpec_Clicked, LexiconResources.Add_another_Variant_Info_section, LexiconResources.Add_another_Variant_Info_section_Tooltip);
+
+			// <command id="CmdDataTree-Delete-VariantSpec" label="Delete Variant Info" message="DataTreeDelete" icon="Delete"/>
+			CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Variant_Info);
 
 			// End: <menu id="mnuDataTree-VariantSpec">
 
 			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+		}
+
+		private void Insert_VariantSpec_Clicked(object sender, EventArgs e)
+		{
+			/*
+			<command id="CmdDataTree-Insert-VariantSpec" label="Add another Variant Info section" message="DataTreeInsert">
+				<parameters field="EntryRefs" className="LexEntryRef" ownerClass="LexEntry" />
+			</command>
+			*/
+			MyDataTree.CurrentSlice.HandleInsertCommand("EntryRefs", "LexEntryRef", "LexEntry");
 		}
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_ComplexFormSpec(Slice slice, string contextMenuId)
@@ -263,16 +270,26 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
 			// <command id="CmdDataTree-Delete-ComplexFormSpec" label="Delete Complex Form Info" message="DataTreeDelete" icon="Delete"/>
-			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Delete_this_Foo_Clicked, LexiconResources.Delete_Complex_Form_Info, image: LanguageExplorerResources.Delete);
-			menu.Enabled = slice.CanDeleteNow;
-			if (!menu.Enabled)
-			{
-				menu.Text = $"{LexiconResources.Delete_Complex_Form_Info} {StringTable.Table.GetString("(cannot delete this)")}";
-			}
+			CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Complex_Form_Info);
 
 			// End: <menu id="mnuDataTree-ComplexFormSpec">
 
 			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+		}
+
+		private void CreateDeleteMenuItem(List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, ContextMenuStrip contextMenuStrip, Slice slice, string menuText)
+		{
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Delete_this_Foo_Clicked, menuText, image: LanguageExplorerResources.Delete);
+			menu.Enabled = !slice.IsGhostSlice && slice.CanDeleteNow;
+			if (!menu.Enabled)
+			{
+				menu.Text = $"{menuText} {StringTable.Table.GetString("(cannot delete this)")}";
+			}
+		}
+
+		private void Delete_this_Foo_Clicked(object sender, EventArgs e)
+		{
+			DeleteSliceObject();
 		}
 
 		#endregion After_CitationForm_Bundle
@@ -320,8 +337,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
 			// <command id="CmdDataTree-Delete-Pronunciation" label="Delete this Pronunciation" message="DataTreeDelete" icon="Delete">
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Delete_this_Foo_Clicked, LexiconResources.Delete_this_Pronunciation, image: LanguageExplorerResources.Delete);
-			menu.Enabled = !slice.IsGhostSlice;
+			CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_this_Pronunciation);
 
 			// Not added here. It is added by the slice, along with the generic slice menus.
 			// <item label="-" translate="do not translate"/>
@@ -329,11 +345,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// End: <menu id="mnuDataTree-Pronunciation>
 
 			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
-		}
-
-		private void Delete_this_Foo_Clicked(object sender, EventArgs e)
-		{
-			DeleteSliceObject();
 		}
 
 		#endregion Pronunciation_Bundle
@@ -403,8 +414,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
 			// <command id="CmdDataTree-Delete-Etymology" label="Delete this Etymology" message="DataTreeDelete" icon="Delete">
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Delete_this_Foo_Clicked, LexiconResources.Delete_this_Etymology, image: LanguageExplorerResources.Delete);
-			menu.Enabled = !slice.IsGhostSlice;
+			CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_this_Etymology);
 
 			// End: <menu id="mnuDataTree-Etymology">
 
@@ -412,6 +422,121 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		}
 
 		#endregion Etymologies_Bundle
+
+		#region CurrentLexReferences_Bundle
+
+		private void Register_CurrentLexReferences_Bundle()
+		{
+			// The LexReferenceMultiSlice class potentially generates new slice xml information, including a couple left-edge menus.
+			// Those two menu factory methods are registered here.
+
+			// "mnuDataTree-DeleteAddLexReference"
+			MyDataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(mnuDataTree_DeleteAddLexReference, Create_mnuDataTree_DeleteAddLexReference);
+
+			// "mnuDataTree-DeleteReplaceLexReference"
+			MyDataTree.DataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(mnuDataTree_DeleteReplaceLexReference, Create_mnuDataTree_DeleteReplaceLexReference);
+		}
+
+		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_DeleteAddLexReference(Slice slice, string contextMenuId)
+		{
+			if (contextMenuId != mnuDataTree_DeleteAddLexReference)
+			{
+				throw new ArgumentException($"Expected argument value of '{mnuDataTree_DeleteAddLexReference}', but got '{contextMenuId}' instead.");
+			}
+
+			// Start: <menu id="mnuDataTree-DeleteAddLexReference">
+			// This menu and its commands are shared
+			var contextMenuStrip = new ContextMenuStrip
+			{
+				Name = mnuDataTree_DeleteAddLexReference
+			};
+			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(3);
+
+			// <command id="CmdDataTree-Delete-LexReference" label="Delete Relation" message="DataTreeDelete" icon="Delete" />
+			CreateDeleteLexReferenceMenu(menuItems, contextMenuStrip, slice);
+
+			// <command id="CmdDataTree-Add-ToLexReference" label="Add Reference" message="DataTreeAddReference" />
+			CreateAdd_Replace_LexReferenceMenu(menuItems, contextMenuStrip, slice, LanguageExplorerResources.ksIdentifyRecord);
+
+			// <command id="CmdDataTree-EditDetails-LexReference" label="Edit Reference Set Details" message="DataTreeEdit" />
+			Create_Edit_LexReferenceMenu(menuItems, contextMenuStrip, slice);
+
+			// End: <menu id="mnuDataTree-DeleteAddLexReference">
+
+			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+		}
+
+		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_DeleteReplaceLexReference(Slice slice, string contextMenuId)
+		{
+			if (contextMenuId != mnuDataTree_DeleteReplaceLexReference)
+			{
+				throw new ArgumentException($"Expected argument value of '{mnuDataTree_DeleteReplaceLexReference}', but got '{contextMenuId}' instead.");
+			}
+
+			// Start: <menu id="mnuDataTree-DeleteReplaceLexReference">
+			// This menu and its commands are shared
+			var contextMenuStrip = new ContextMenuStrip
+			{
+				Name = mnuDataTree_DeleteReplaceLexReference
+			};
+			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(3);
+
+			// <command id="CmdDataTree-Delete-LexReference" label="Delete Relation" message="DataTreeDelete" icon="Delete" />
+			CreateDeleteLexReferenceMenu(menuItems, contextMenuStrip, slice);
+
+			// <command id="CmdDataTree-Replace-LexReference" label="Replace Reference" message="DataTreeAddReference" />
+			CreateAdd_Replace_LexReferenceMenu(menuItems, contextMenuStrip, slice, LexiconResources.ksReplaceXEntry);
+
+			// <command id="CmdDataTree-EditDetails-LexReference" label="Edit Reference Set Details" message="DataTreeEdit" />
+			Create_Edit_LexReferenceMenu(menuItems, contextMenuStrip, slice);
+
+			// End: <menu id="mnuDataTree-DeleteReplaceLexReference">
+
+			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+		}
+
+		private void DataTreeDelete_LexReference_Clicked(object sender, EventArgs e)
+		{
+			MyDataTree.CurrentSlice.HandleDeleteCommand();
+		}
+
+		private void DataTreeAddReference_LexReference_Clicked(object sender, EventArgs e)
+		{
+			MyDataTree.CurrentSlice.HandleLaunchChooser();
+		}
+
+		private void DataTree_Edit_LexReference_Clicked(object sender, EventArgs e)
+		{
+			MyDataTree.CurrentSlice.HandleEditCommand();
+		}
+
+		private void CreateDeleteLexReferenceMenu(List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, ContextMenuStrip contextMenuStrip, Slice slice)
+		{
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, DataTreeDelete_LexReference_Clicked, LexiconResources.Delete_Relation, image: LanguageExplorerResources.Delete);
+			if (slice.IsGhostSlice)
+			{
+				menu.Visible = menu.Enabled = false;
+			}
+			else
+			{
+				menu.Visible = true;
+				menu.Enabled = slice.CanDeleteNow;
+			}
+		}
+
+		private void CreateAdd_Replace_LexReferenceMenu(List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, ContextMenuStrip contextMenuStrip, Slice slice, string menuText)
+		{
+			// Always visible and enabled.
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, DataTreeAddReference_LexReference_Clicked, menuText);
+		}
+
+		private void Create_Edit_LexReferenceMenu(List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, ContextMenuStrip contextMenuStrip, Slice slice)
+		{
+			var menu =ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, DataTree_Edit_LexReference_Clicked, LexiconResources.ksRedoEditRefSetDetails);
+			menu.Enabled = slice.CanEditNow;
+		}
+
+		#endregion CurrentLexReferences_Bundle
 
 		private void MoveReferencedTargetDownInSequence_Clicked(object sender, EventArgs e)
 		{
