@@ -4098,17 +4098,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					{
 						additionalProps.Add(new Property("ConcordOn", concordOn));
 					}
-					var commands = new List<string>
-						{
-							"AboutToFollowLink",
-							"FollowLink"
-						};
-					var parms = new List<object>
-						{
-							null,
-							fwLink
-						};
-					Publisher.Publish(commands, parms);
+					LinkHandler.JumpToTool(Publisher, fwLink);
 					return true;
 				}
 			}

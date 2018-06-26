@@ -6,6 +6,7 @@ using System;
 using System.Drawing;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using LanguageExplorer.Controls.XMLViews;
@@ -36,7 +37,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	/// the displayed text instances will not include those that have been assigned to
 	/// an analysis or to a word gloss.
 	/// </summary>
-	internal sealed class ConcordanceDlg : Form, IFwGuiControl
+	internal sealed class ConcordanceDlg : Form, IFlexComponent
 	{
 		#region Data Members
 
@@ -466,18 +467,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		private ProgressReporting _progAdvInd = null;
 
-		#region IFwGuiControl implementation
-
-		/// <summary>
-		/// launch the dlg.
-		/// </summary>
-		public void Launch()
-		{
-			ShowDialog(PropertyTable.GetValue<Form>("window"));
-		}
-
-		#endregion IFwGuiControl implementation
-
 		#region Windows Form Designer generated code
 		/// <summary>
 		/// Required method for Designer support - do not modify
@@ -640,7 +629,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			btnAssign.Enabled = (tvSource.SelectedNode != null && tvTarget.SelectedNode != null
 				&& (tvSource.SelectedNode.Tag != tvTarget.SelectedNode.Tag)
-				&& _currentBrowseView.CheckedItems.Count > 0);
+				&& _currentBrowseView.CheckedItems.Any());
 		}
 
 		#endregion Other methods
@@ -767,7 +756,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				var newTarget = (IAnalysis)(tvTarget.SelectedNode.Tag);
 				var checkedItems = _currentBrowseView.CheckedItems;
 				var src = (IAnalysis)tvSource.SelectedNode.Tag;
-				if (checkedItems.Count > 0)
+				if (checkedItems.Any())
 				{
 					_toolStripProgressBar.Minimum = 0;
 					_toolStripProgressBar.Maximum = checkedItems.Count;

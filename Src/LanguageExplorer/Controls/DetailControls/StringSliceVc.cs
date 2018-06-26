@@ -217,17 +217,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					if (url.StartsWith(FwLinkArgs.kFwUrlPrefix))
 					{
-						var commands = new List<string>
-						{
-							"AboutToFollowLink",
-							"FollowLink"
-						};
-						var parms = new List<object>
-						{
-							null,
-							new FwLinkArgs(url)
-						};
-						m_publisher.Publish(commands, parms);
+						LinkHandler.JumpToTool(m_publisher, new FwLinkArgs(url));
 						return;
 					}
 				}

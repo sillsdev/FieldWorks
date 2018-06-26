@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -152,17 +152,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				return; // do nothing
 			}
-			var commands = new List<string>
-			{
-				"AboutToFollowLink",
-				"FollowLink"
-			};
-			var parms = new List<object>
-			{
-				null,
-				new FwLinkArgs(sTool, cmo.Guid)
-			};
-			m_publisher.Publish(commands, parms);
+			LinkHandler.JumpToTool(m_publisher, new FwLinkArgs(sTool, cmo.Guid));
 		}
 
 		/// <summary>

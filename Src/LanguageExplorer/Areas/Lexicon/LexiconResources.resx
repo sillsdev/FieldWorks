@@ -555,4 +555,28 @@
   <data name="ks_Replace" xml:space="preserve">
     <value>&amp;Replace</value>
   </data>
+  <data name="ksFindExampleSentenceDlgBrowseViewPaneTitle" xml:space="preserve">
+    <value>Concordance</value>
+  </data>
+  <data name="ksFindExampleSentenceDlgPreviewPaneTitle" xml:space="preserve">
+    <value>Sentence with Translations</value>
+  </data>
+  <data name="Find_example_sentence" xml:space="preserve">
+    <value>Find example sentence...</value>
+  </data>
+  <data name="Merge_Sense_into" xml:space="preserve">
+    <value>Merge Sense into...</value>
+  </data>
+  <data name="Move_Sense_Down" xml:space="preserve">
+    <value>Move Sense Down</value>
+  </data>
+  <data name="Move_Sense_to_a_New_Entry" xml:space="preserve">
+    <value>Move Sense to a New Entry</value>
+  </data>
+  <data name="Move_Sense_Up" xml:space="preserve">
+    <value>Move Sense Up</value>
+  </data>
+  <data name="Show_Sense_in_Concordance" xml:space="preserve">
+    <value>Show Sense in Concordance</value>
+  </data>
 </root>

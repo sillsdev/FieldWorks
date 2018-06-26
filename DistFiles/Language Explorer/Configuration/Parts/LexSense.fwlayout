@@ -3,7 +3,7 @@
 <LayoutInventory xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation='ViewsLayout.xsd'>
   <layout class="LexSense" type="detail" name="Normal">
-	<part ref="HeavySummary" param="Summary" collapsedLayout="SummaryCollapsed" expansion="expanded" menu="mnuDataTree-Sense" hotlinks="mnuDataTree-Sense-Hotlinks" a10status="mnuDataTree-Sense-Hotlinks: DONE" >
+	<part ref="HeavySummary" param="Summary" collapsedLayout="SummaryCollapsed" expansion="expanded" menu="mnuDataTree-Sense" hotlinks="mnuDataTree-Sense-Hotlinks" >
 		<indent>
 			<part ref="GlossAllA"/>
 			<part ref="ReversalEntries"   visibility="ifdata" />
@@ -31,14 +31,11 @@
 			<part ref="UsageTypes"   visibility="ifdata" />
 			<part ref="SenseType"   visibility="ifdata" />
 			<part ref="DomainTypes"   visibility="ifdata" />
-			<!-- part ref="ThesaurusItems" label="Thesaurus Items"/ -->
-
 			<part ref="SemanticDomains"   visibility="always" />
 			<part ref="AnthroCodes"   visibility="ifdata" />
-	  <!-- part ref="Appendixes"/ -->
 			<part ref="Status"   visibility="ifdata" />
 			<part ref="CurrentLexReferences"/>
-	  <!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
+			<!-- Special part to indicate where custom fields should be inserted at.  Handled in LanguageExplorer.Controls.DetailControls.DataTree -->
 			<part ref="_CustomFieldPlaceholder" customFields="here" />
 			<part ref="ImportResidue" label="Import Residue" visibility="ifdata"/>
 			<part ref="PublishIn"   visibility="ifdata" />

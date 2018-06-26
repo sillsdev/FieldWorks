@@ -213,6 +213,15 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Demote.
+        /// </summary>
+        internal static string Demote {
+            get {
+                return ResourceManager.GetString("Demote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Empty Field Name.
         /// </summary>
         internal static string EmptyFieldName {

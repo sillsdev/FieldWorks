@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -180,17 +180,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return false;
 			}
-			var commands = new List<string>
-			{
-				"AboutToFollowLink",
-				"FollowLink"
-			};
-			var parms = new List<object>
-			{
-				null,
-				new FwLinkArgs(AreaServices.InterlinearEditMachineName, CurrentObject.Guid)
-			};
-			Publisher.Publish(commands, parms);
+			LinkHandler.JumpToTool(Publisher, new FwLinkArgs(AreaServices.InterlinearEditMachineName, CurrentObject.Guid));
 			// This is a workable alternative (where link is the one created above), but means this code has to know about the FwXApp class.
 			//(FwXApp.App as FwXApp).OnIncomingLink(link);
 			// This alternative does NOT work; it produces a deadlock...I think the remote code is waiting for the target app

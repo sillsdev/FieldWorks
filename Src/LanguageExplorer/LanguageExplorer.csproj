@@ -316,7 +316,6 @@
     <Compile Include="Areas\Grammar\Tools\GrammarSketch\GrammarSketchToolMenuHelper.cs" />
     <Compile Include="Areas\Grammar\Tools\PosEdit\FwMenuItem.cs" />
     <Compile Include="Areas\IdAndString.cs" />
-    <Compile Include="Areas\IFwGuiControl.cs" />
     <Compile Include="Areas\InsertOption.cs" />
     <Compile Include="Areas\IPhEnvSliceCommon.cs" />
     <Compile Include="Areas\IPreferedTargetAdjuster.cs" />
@@ -1907,6 +1906,7 @@
     </Compile>
     <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\HierarchicalLCModel.xml">
       <Link>XML\Combined\HierarchicalLCModel.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\Downloads\LCM\MasterLCModel.xml">
       <Link>XML\Combined\MasterLCModel.xml</Link>
@@ -1916,6 +1916,7 @@
     </None>
     <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\Merged_Parts_into_Layouts.xml">
       <Link>XML\Combined\Merged_Parts_into_Layouts.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\MergedLayout_detail.xml">
       <Link>XML\Combined\MergedLayout_detail.xml</Link>
@@ -1925,12 +1926,21 @@
     </None>
     <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\Merged_Combined_details.xml">
       <Link>XML\Combined\Merged_Combined_details.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\Merged_LCModel.xml">
       <Link>XML\Combined\Merged_LCModel.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\CombinedConfig_BleedingEdge.xml">
       <Link>XML\CombinedConfig_BleedingEdge.xml</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\Layouts_From_Inventory.xml">
+      <Link>XML\Combined\Layouts_From_Inventory.xml</Link>
+    </None>
+    <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\Parts_From_Inventory.xml">
+      <Link>XML\Combined\Parts_From_Inventory.xml</Link>
     </None>
     <Content Include="Resources\SimpleChooserParameters.xml" />
     <None Include="images\password-reveal-eye-16x16.png" />
@@ -3193,6 +3203,7 @@
     <EmbeddedResource Include="Areas\AreaResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>AreaResources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Areas\Grammar\GrammarResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -3754,7 +3765,9 @@
     <None Include="Resources\BulkEditWordformsToolParameters.xml" />
     <None Include="Resources\ComplexConcordanceToolParameters.xml" />
     <None Include="Resources\CompoundRuleAdvancedEditToolParameters.xml" />
-    <None Include="Resources\ConcordanceColumns.xml" />
+    <None Include="Resources\ConcordanceColumns.xml">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Resources\ConcordanceToolParameters.xml" />
     <None Include="Resources\EnvironmentEditToolParameters.xml" />
     <None Include="Resources\FeaturesAdvancedEditToolParameters.xml" />
@@ -3802,6 +3815,7 @@
     <None Include="Resources\NotebookBrowseColumnDefinitions.xml" />
     <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\CombinedConfig_Develop.xml">
       <Link>XML\Combined\CombinedConfig_Develop.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\CombinedConfig_Master.xml">
       <Link>XML\Combined\CombinedConfig_Master.xml</Link>

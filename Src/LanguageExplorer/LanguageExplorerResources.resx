@@ -679,12 +679,6 @@ you expect.</value>
     <value>Field Visibility</value>
     <comment>menu item</comment>
   </data>
-  <data name="ksFindExampleSentenceDlgBrowseViewPaneTitle" xml:space="preserve">
-    <value>Concordance</value>
-  </data>
-  <data name="ksFindExampleSentenceDlgPreviewPaneTitle" xml:space="preserve">
-    <value>Sentence with Translations</value>
-  </data>
   <data name="ksGenericUtilityCannotUndo" xml:space="preserve">
     <value>You cannot use 'Undo' to cancel the effect of this utility. You would need to go back to a previously saved version of the database.</value>
   </data>

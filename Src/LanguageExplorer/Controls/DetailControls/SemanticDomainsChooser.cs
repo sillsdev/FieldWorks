@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2012-2018 SIL International
+// Copyright (c) 2012-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -202,18 +202,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void OnEditDomainsLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			var toolName = XmlUtils.GetOptionalAttributeValue(LinkNode, "tool");
-			var commands = new List<string>
-			{
-				"AboutToFollowLink",
-				"FollowLink"
-			};
-			var parms = new List<object>
-			{
-				null,
-				new FwLinkArgs(toolName, new Guid())
-			};
-			m_publisher.Publish(commands, parms);
+			LinkHandler.JumpToTool(m_publisher, new FwLinkArgs(XmlUtils.GetOptionalAttributeValue(LinkNode, "tool"), new Guid()));
 			btnCancel.PerformClick();
 		}
 

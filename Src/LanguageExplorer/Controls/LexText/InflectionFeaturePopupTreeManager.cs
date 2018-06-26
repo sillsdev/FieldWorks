@@ -102,17 +102,7 @@ namespace LanguageExplorer.Controls.LexText
 							case DialogResult.Yes:
 							{
 								// go to m_highestPOS in editor
-								var commands = new List<string>
-								{
-									"AboutToFollowLink",
-									"FollowLink"
-								};
-								var parms = new List<object>
-								{
-									null,
-									new FwLinkArgs(AreaServices.PosEditMachineName, dlg.HighestPOS.Guid)
-								};
-								m_publisher.Publish(commands, parms);
+								LinkHandler.JumpToTool(m_publisher, new FwLinkArgs(AreaServices.PosEditMachineName, dlg.HighestPOS.Guid));
 								if (ParentForm != null && ParentForm.Modal)
 								{
 									// Close the dlg that opened the popup tree,

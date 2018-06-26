@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,7 +19,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	{
 		/// <summary />
 		internal ConcRecordList(StatusBar statusBar, LcmCache cache, ConcDecorator concDecorator, ILexSense owningSense)
-			: base("OccurrencesOfSense", statusBar, concDecorator, true, new VectorPropertyParameterObject(owningSense, "Occurrences", cache.MetaDataCacheAccessor.GetFieldId2(LexSenseTags.kClassId, "Occurrences", false)))
+			: base("OccurrencesOfSense", statusBar, concDecorator, true, new VectorPropertyParameterObject(owningSense, "Occurrences", concDecorator.MetaDataCache.GetFieldId2(LexSenseTags.kClassId, "Occurrences", false)))
 		{
 		}
 

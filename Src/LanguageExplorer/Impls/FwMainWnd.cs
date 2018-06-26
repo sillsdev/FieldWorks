@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -787,18 +787,9 @@ namespace LanguageExplorer.Impls
 			{
 				return true;
 			}
-			var commands = new List<string>
-			{
-				"AboutToFollowLink",
-				"FollowLink" // LinkHandler is only thing that cares about this message, and it (or its replacement) isn't listening yet.
-			};
-			var parms = new List<object>
-			{
-				null,
-				_startupLink
-			};
+			var startupLink = _startupLink;
 			_startupLink = null;
-			Publisher.Publish(commands, parms);
+			LinkHandler.JumpToTool(Publisher, startupLink);
 
 			return true;
 		}

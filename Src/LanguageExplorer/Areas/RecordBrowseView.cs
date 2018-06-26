@@ -308,6 +308,11 @@ namespace LanguageExplorer.Areas
 
 		public void OnFwRightMouseClick(SimpleRootSite sender, FwRightMouseClickEventArgs e)
 		{
+			if (_browseViewContextMenuFactory == null)
+			{
+				// Some browse views don't have a popup menu.
+				return;
+			}
 			var browseView = sender as XmlBrowseView;
 			if (browseView == null)
 			{

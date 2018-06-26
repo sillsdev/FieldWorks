@@ -5,7 +5,8 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
+using LanguageExplorer.Areas.TextsAndWords;
 using LanguageExplorer.Controls.PaneBar;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.Code;
@@ -17,40 +18,17 @@ using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
-#if RANDYTODO
-// TODO: Used by this:
-/*
-			<guicontrol id="findExampleSentences">
-				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.FindExampleSentenceDlg"/>
-				<parameters id="senseConcordanceControls">
-					<control id="ConcOccurrenceList">
-						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.ConcOccurrenceBrowseView"/>
-						<parameters id="ConcOccurrenceList" selectColumn="true" defaultChecked="false" forceReloadListOnInitOrChangeRoot="true" editable="false" clerk="OccurrencesOfSense" filterBar="true" ShowOwnerShortname="true">
-<!-- START include Lexicon Area (a10status="Fork has this in resources now"): "./Words/reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns" -->
-<!-- Look for it in TextAndWordsResources.ConcordanceColumns -->
-<!-- END include Lexicon Area (a10status="Fork has this in resources now"): "./Words/reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns" -->
-						</parameters>
-					</control>
-					<control id="SegmentPreviewControl">
-						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.RecordDocXmlView" />
-						<parameters id="SegmentPreviewControl" clerk="OccurrencesOfSense" treeBarAvailability="NotMyBusiness" layout="publicationNew" editable="false"/>
-					</control>
-				</parameters>
-			</guicontrol>
-*/
-#endif
 	/// <summary />
-	internal partial class FindExampleSentenceDlg : Form, IFwGuiControl
+	internal partial class FindExampleSentenceDlg : Form, IFlexComponent
 	{
-		LcmCache m_cache;
-		XmlNode m_configurationNode;
-		ILexExampleSentence m_les;
-		ILexSense m_owningSense;
-		ConcOccurrenceBrowseView m_rbv;
-		XmlView m_previewPane;
-		string m_helpTopic = "khtpFindExampleSentence";
-		IRecordList m_recordList;
 		private StatusBar _statusBar;
+		private LcmCache _cache;
+		private IRecordList _recordList;
+		private ILexExampleSentence _lexExampleSentence;
+		private ILexSense _owningSense;
+		private ConcOccurrenceBrowseView _concOccurrenceBrowseView;
+		private XmlView _previewPane;
+		private string _helpTopic = "khtpFindExampleSentence";
 
 		/// <summary />
 		public FindExampleSentenceDlg()
@@ -58,11 +36,33 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			InitializeComponent();
 		}
 
-		internal FindExampleSentenceDlg(StatusBar statusBar) : this()
+		internal FindExampleSentenceDlg(StatusBar statusBar, ICmObject sourceObject, IRecordList recordList) : this()
 		{
 			Guard.AgainstNull(statusBar, nameof(statusBar));
+			Guard.AgainstNull(sourceObject, nameof(sourceObject));
+			Guard.AgainstNull(recordList, nameof(recordList));
 
 			_statusBar = statusBar;
+			_cache = sourceObject.Cache;
+			_recordList = recordList;
+
+			// Find the sense we want examples for, which depends on the kind of source object.
+			if (sourceObject is ILexSense)
+			{
+				_owningSense = (ILexSense)sourceObject;
+			}
+			else
+			{
+				_owningSense = sourceObject.OwnerOfClass<ILexSense>();
+			}
+			if (sourceObject is ILexExampleSentence)
+			{
+				_lexExampleSentence = (ILexExampleSentence)sourceObject;
+			}
+			if (_owningSense == null)
+			{
+				throw new ArgumentException("Invalid object type for sourceObject.");
+			}
 		}
 
 		#region Implementation of IPropertyTableProvider
@@ -105,44 +105,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			PropertyTable = flexComponentParameters.PropertyTable;
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
-		}
-
-		#endregion
-
-		#region IFwGuiControl Members
-
-		/// <summary />
-		public void Init(XmlNode configurationNode, ICmObject sourceObject)
-		{
-			m_cache = sourceObject.Cache;
-
-			// Find the sense we want examples for, which depends on the kind of source object.
-			if (sourceObject is ILexExampleSentence)
-			{
-				m_les = (ILexExampleSentence)sourceObject;
-				if (m_les.Owner is ILexSense)
-				{
-					m_owningSense = (ILexSense)m_les.Owner;
-				}
-				else if (m_les.Owner is ILexExtendedNote)
-				{
-					m_owningSense = (ILexSense)m_les.Owner.Owner;
-				}
-			}
-			else if (sourceObject is ILexSense)
-			{
-				m_owningSense = (ILexSense)sourceObject;
-			}
-			else if (sourceObject is ILexExtendedNote)
-			{
-				m_owningSense = (ILexSense)sourceObject.Owner;
-			}
-			else
-			{
-				throw new ArgumentException("Invalid object type for sourceObject.");
-			}
-
-			m_configurationNode = configurationNode;
 
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			helpProvider.SetShowHelp(this, true);
@@ -150,155 +112,138 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			if (helpToicProvider != null)
 			{
 				helpProvider.HelpNamespace = helpToicProvider.HelpFile;
-				helpProvider.SetHelpKeyword(this, helpToicProvider.GetHelpString(m_helpTopic));
+				helpProvider.SetHelpKeyword(this, helpToicProvider.GetHelpString(_helpTopic));
 				btnHelp.Enabled = true;
 			}
 
 			AddConfigurableControls();
 		}
 
-		/// <summary />
-		public void Launch()
-		{
-			ShowDialog(PropertyTable.GetValue<Form>("window"));
-		}
-
 		#endregion
 
-		private XmlNode BrowseViewControlParameters => m_configurationNode.SelectSingleNode("control/parameters[@id='ConcOccurrenceList']");
+		private static XElement BrowseViewControlParameters => XDocument.Parse(TextAndWordsResources.ConcordanceColumns).Root;
 
 		private void AddConfigurableControls()
 		{
+			var flexParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
 			// Load the controls.
 			// 1. Initialize the preview pane (lower pane)
-			m_previewPane = new XmlView(0, "publicationNew", false)
+			_previewPane = new XmlView(0, "publicationNew", false)
 			{
-				Cache = m_cache,
+				Cache = _cache,
 				StyleSheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable)
 			};
+			_previewPane.InitializeFlexComponent(flexParameters);
 
 			var pbc = new BasicPaneBarContainer();
-			pbc.Init(PropertyTable, m_previewPane, new PaneBar());
+			pbc.Init(PropertyTable, _previewPane, new PaneBar());
 			pbc.Dock = DockStyle.Fill;
-			pbc.PaneBar.Text = LanguageExplorerResources.ksFindExampleSentenceDlgPreviewPaneTitle;
+			pbc.PaneBar.Text = LexiconResources.ksFindExampleSentenceDlgPreviewPaneTitle;
 			panel2.Controls.Add(pbc);
-			if (m_previewPane.RootBox == null)
+			if (_previewPane.RootBox == null)
 			{
-				m_previewPane.MakeRoot();
+				_previewPane.MakeRoot();
 			}
 
 			// 2. load the browse view. (upper pane)
-			var xnBrowseViewControlParameters = BrowseViewControlParameters;
-
-			/*
-			<clerk id="OccurrencesOfSense" shouldHandleDeletion="false">
-			  <dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcRecordClerk" />
-			  <recordList class="LexSense" field="Occurrences">
-				<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator" />
-			  </recordList>
-			  <filters />
-			  <sortMethods />
-			</clerk>
-			*/
-			// First create our record list, since we can't set it's OwningObject via the configuration/mediator/PropertyTable info.
-			// This record list is a "TemporaryRecordList" suclass, so dispose it when the dlg goes away.
-			var flexParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
-			var concDecorator = new ConcDecorator(m_cache.ServiceLocator);
+			// First create our record list (ConcRecordList).
+			// This record list is a "TemporaryRecordList" subclass, so we dispose it when the dlg goes away.
+			var concDecorator = new ConcDecorator(_cache.ServiceLocator);
 			concDecorator.InitializeFlexComponent(flexParameters);
-			m_recordList = new ConcRecordList(_statusBar, m_cache, concDecorator, m_owningSense);
+			_recordList = new ConcRecordList(_statusBar, _cache, concDecorator, _owningSense);
+			_recordList.InitializeFlexComponent(flexParameters);
 
-			m_rbv = DynamicLoader.CreateObject(xnBrowseViewControlParameters.ParentNode.SelectSingleNode("dynamicloaderinfo")) as ConcOccurrenceBrowseView;
-			m_rbv.InitializeFlexComponent(flexParameters);
-			m_rbv.Init(m_previewPane, m_recordList.VirtualListPublisher);
-			m_rbv.CheckBoxChanged += m_rbv_CheckBoxChanged;
+			_concOccurrenceBrowseView = new ConcOccurrenceBrowseView(BrowseViewControlParameters, _cache, _recordList);
+			_concOccurrenceBrowseView.InitializeFlexComponent(flexParameters);
+			_concOccurrenceBrowseView.Init(_previewPane, _recordList.VirtualListPublisher);
+			_concOccurrenceBrowseView.CheckBoxChanged += ConcOccurrenceBrowseViewCheckBoxChanged;
+
 			// add it to our controls.
 			var pbc1 = new BasicPaneBarContainer();
-			pbc1.Init(PropertyTable, m_rbv, new PaneBar());
+			pbc1.Init(PropertyTable, _concOccurrenceBrowseView, new PaneBar());
 			pbc1.BorderStyle = BorderStyle.FixedSingle;
 			pbc1.Dock = DockStyle.Fill;
-			pbc1.PaneBar.Text = LanguageExplorerResources.ksFindExampleSentenceDlgBrowseViewPaneTitle;
+			pbc1.PaneBar.Text = LexiconResources.ksFindExampleSentenceDlgBrowseViewPaneTitle;
 			panel1.Controls.Add(pbc1);
 
 			CheckAddBtnEnabling();
 		}
 
-		void m_rbv_CheckBoxChanged(object sender, CheckBoxChangedEventArgs e)
+		void ConcOccurrenceBrowseViewCheckBoxChanged(object sender, CheckBoxChangedEventArgs e)
 		{
 			CheckAddBtnEnabling();
 		}
 
 		private void CheckAddBtnEnabling()
 		{
-			btnAdd.Enabled = m_rbv.CheckedItems.Count > 0;
+			btnAdd.Enabled = _concOccurrenceBrowseView.CheckedItems.Any();
 		}
 		private void btnAdd_Click(object sender, EventArgs e)
 		{
 			// Get the checked occurrences;
-			var occurrences = m_rbv.CheckedItems;
-			if (occurrences == null || occurrences.Count == 0)
+			var occurrences = _concOccurrenceBrowseView.CheckedItems;
+			if (!occurrences.Any())
 			{
 				// do nothing.
 				return;
 			}
-			var uniqueSegments = (occurrences.Select(fake => m_recordList.VirtualListPublisher.get_ObjectProp(fake, ConcDecorator.kflidSegment))).Distinct().ToList();
-			var insertIndex = m_owningSense.ExamplesOS.Count; // by default, insert at the end.
-			if (m_les != null)
+			var uniqueSegments = (occurrences.Select(fake => _recordList.VirtualListPublisher.get_ObjectProp(fake, ConcDecorator.kflidSegment))).Distinct().ToList();
+			var insertIndex = _owningSense.ExamplesOS.Count; // by default, insert at the end.
+			if (_lexExampleSentence != null)
 			{
 				// we were given a LexExampleSentence, so set our insertion index after the given one.
-				insertIndex = m_owningSense.ExamplesOS.IndexOf(m_les) + 1;
+				insertIndex = _owningSense.ExamplesOS.IndexOf(_lexExampleSentence) + 1;
 			}
 
-			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoAddExamples, LanguageExplorerResources.ksRedoAddExamples,
-				m_cache.ActionHandlerAccessor,
-				() =>
+			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoAddExamples, LanguageExplorerResources.ksRedoAddExamples, _cache.ActionHandlerAccessor, () =>
+			{
+				var cNewExamples = 0;
+				foreach (var segHvo in uniqueSegments)
+				{
+					var seg = _cache.ServiceLocator.GetObject(segHvo) as ISegment;
+					ILexExampleSentence newLexExample;
+					if (cNewExamples == 0 && _lexExampleSentence != null &&
+						_lexExampleSentence.Example.BestVernacularAlternative.Text == "***" &&
+						(_lexExampleSentence.TranslationsOC == null || _lexExampleSentence.TranslationsOC.Count == 0) &&
+						_lexExampleSentence.Reference.Length == 0)
 					{
-						var cNewExamples = 0;
-						foreach (var segHvo in uniqueSegments)
-						{
-							var seg = m_cache.ServiceLocator.GetObject(segHvo) as ISegment;
-							ILexExampleSentence newLexExample;
-							if (cNewExamples == 0 && m_les != null &&
-								m_les.Example.BestVernacularAlternative.Text == "***" &&
-								(m_les.TranslationsOC == null || m_les.TranslationsOC.Count == 0) &&
-								m_les.Reference.Length == 0)
-							{
-								// we were given an empty LexExampleSentence, so use this one for our first new Example.
-								newLexExample = m_les;
-							}
-							else
-							{
-								// create a new example sentence.
-								newLexExample = m_cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>().Create();
-								m_owningSense.ExamplesOS.Insert(insertIndex + cNewExamples, newLexExample);
-								cNewExamples++;
-							}
-							// copy the segment string into the new LexExampleSentence
-							// Enhance: bold the relevant occurrence(s).
-							// LT-11388 Make sure baseline text gets copied into correct ws
-							var baseWs = GetBestVernWsForNewExample(seg);
-							newLexExample.Example.set_String(baseWs, seg.BaselineText);
-							if (seg.FreeTranslation.AvailableWritingSystemIds.Length > 0)
-							{
-								var trans = m_cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(newLexExample,
-									m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranFreeTranslation));
-								trans.Translation.CopyAlternatives(seg.FreeTranslation);
-							}
-							if (seg.LiteralTranslation.AvailableWritingSystemIds.Length > 0)
-							{
-								var trans = m_cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(newLexExample,
-									m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranLiteralTranslation));
-								trans.Translation.CopyAlternatives(seg.LiteralTranslation);
-							}
-						   // copy the reference.
-							var tssRef = seg.Paragraph.Reference(seg, seg.BeginOffset);
-							// convert the plain reference string into a link.
-							var tsb = tssRef.GetBldr();
-							var fwl = new FwLinkArgs(AreaServices.InterlinearEditMachineName, seg.Owner.Owner.Guid);
-							tsb.SetStrPropValue(0, tsb.Length, (int)FwTextPropType.ktptObjData,(char)FwObjDataTypes.kodtExternalPathName + fwl.ToString());
-							tsb.SetStrPropValue(0, tsb.Length, (int)FwTextPropType.ktptNamedStyle, "Hyperlink");
-							newLexExample.Reference = tsb.GetString();
-						}
-					});
+						// we were given an empty LexExampleSentence, so use this one for our first new Example.
+						newLexExample = _lexExampleSentence;
+					}
+					else
+					{
+						// create a new example sentence.
+						newLexExample = _cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>().Create();
+						_owningSense.ExamplesOS.Insert(insertIndex + cNewExamples, newLexExample);
+						cNewExamples++;
+					}
+					// copy the segment string into the new LexExampleSentence
+					// Enhance: bold the relevant occurrence(s).
+					// LT-11388 Make sure baseline text gets copied into correct ws
+					var baseWs = GetBestVernWsForNewExample(seg);
+					newLexExample.Example.set_String(baseWs, seg.BaselineText);
+					if (seg.FreeTranslation.AvailableWritingSystemIds.Length > 0)
+					{
+						var trans = _cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(newLexExample,
+							_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranFreeTranslation));
+						trans.Translation.CopyAlternatives(seg.FreeTranslation);
+					}
+					if (seg.LiteralTranslation.AvailableWritingSystemIds.Length > 0)
+					{
+						var trans = _cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(newLexExample,
+							_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranLiteralTranslation));
+						trans.Translation.CopyAlternatives(seg.LiteralTranslation);
+					}
+					// copy the reference.
+					var tssRef = seg.Paragraph.Reference(seg, seg.BeginOffset);
+					// convert the plain reference string into a link.
+					var tsb = tssRef.GetBldr();
+					var fwl = new FwLinkArgs(AreaServices.InterlinearEditMachineName, seg.Owner.Owner.Guid);
+					tsb.SetStrPropValue(0, tsb.Length, (int)FwTextPropType.ktptObjData, (char)FwObjDataTypes.kodtExternalPathName + fwl.ToString());
+					tsb.SetStrPropValue(0, tsb.Length, (int)FwTextPropType.ktptNamedStyle, "Hyperlink");
+					newLexExample.Reference = tsb.GetString();
+				}
+			});
 		}
 
 		private int GetBestVernWsForNewExample(ISegment seg)
@@ -306,17 +251,17 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var baseWs = seg.BaselineText.get_WritingSystem(0);
 			if (baseWs < 1)
 			{
-				return m_cache.DefaultVernWs;
+				return _cache.DefaultVernWs;
 			}
 
-			var possibleWss = m_cache.ServiceLocator.WritingSystems.VernacularWritingSystems;
-			var wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(baseWs);
-			return possibleWss.Contains(wsObj) ? baseWs : m_cache.DefaultVernWs;
+			var possibleWss = _cache.ServiceLocator.WritingSystems.VernacularWritingSystems;
+			var wsObj = _cache.ServiceLocator.WritingSystemManager.Get(baseWs);
+			return possibleWss.Contains(wsObj) ? baseWs : _cache.DefaultVernWs;
 		}
 
 		private void btnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_helpTopic);
+			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), _helpTopic);
 		}
 	}
 }

@@ -2,8 +2,10 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Xml.Linq;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
@@ -14,6 +16,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		int m_hvoSelectedOccurrence; // dummy HVO for occurrence, only understood by ConcSda
 		XmlView m_previewPane;
 		private ISilDataAccess m_decoratedSda; // typically a ConcSda, understands the segment property of the fake HVO.
+
+		public ConcOccurrenceBrowseView(XElement browseViewDefinitions, LcmCache cache, IRecordList recordList)
+			: base(browseViewDefinitions, null, cache, recordList)
+		{
+		}
 
 		/// <summary />
 		internal void Init(XmlView pubView, ISilDataAccess sda)

@@ -58,17 +58,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 						m_msaInflectionFeatureListDlgLauncherView.Init(m_cache, dlg.FS);
 						break;
 					case DialogResult.Yes:
-						var commands = new List<string>
-						{
-							"AboutToFollowLink",
-							"FollowLink"
-						};
-						var parms = new List<object>
-						{
-							null,
-							new FwLinkArgs(AreaServices.FeaturesAdvancedEditMachineName, m_cache.LanguageProject.MsFeatureSystemOA.Guid)
-						};
-						Publisher.Publish(commands, parms);
+						LinkHandler.JumpToTool(Publisher, new FwLinkArgs(AreaServices.FeaturesAdvancedEditMachineName, m_cache.LanguageProject.MsFeatureSystemOA.Guid));
 						break;
 				}
 			}

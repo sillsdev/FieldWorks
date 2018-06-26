@@ -330,6 +330,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Find example sentence....
+        /// </summary>
+        internal static string Find_example_sentence {
+            get {
+                return ResourceManager.GetString("Find_example_sentence", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon Find_Lexical_Entry {
@@ -688,6 +697,24 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Concordance.
+        /// </summary>
+        internal static string ksFindExampleSentenceDlgBrowseViewPaneTitle {
+            get {
+                return ResourceManager.GetString("ksFindExampleSentenceDlgBrowseViewPaneTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sentence with Translations.
+        /// </summary>
+        internal static string ksFindExampleSentenceDlgPreviewPaneTitle {
+            get {
+                return ResourceManager.GetString("ksFindExampleSentenceDlgPreviewPaneTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add Reference ({0}).
         /// </summary>
         internal static string ksIdentifyXEntry {
@@ -1038,6 +1065,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Merge Sense into....
+        /// </summary>
+        internal static string Merge_Sense_into {
+            get {
+                return ResourceManager.GetString("Merge_Sense_into", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Merge with entry....
         /// </summary>
         internal static string Merge_With_Entry {
@@ -1133,6 +1169,33 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string Move_Right {
             get {
                 return ResourceManager.GetString("Move_Right", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move Sense Down.
+        /// </summary>
+        internal static string Move_Sense_Down {
+            get {
+                return ResourceManager.GetString("Move_Sense_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move Sense to a New Entry.
+        /// </summary>
+        internal static string Move_Sense_to_a_New_Entry {
+            get {
+                return ResourceManager.GetString("Move_Sense_to_a_New_Entry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move Sense Up.
+        /// </summary>
+        internal static string Move_Sense_Up {
+            get {
+                return ResourceManager.GetString("Move_Sense_Up", resourceCulture);
             }
         }
         
@@ -1302,6 +1365,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string Show_Lexeme_Form_in_Concordance {
             get {
                 return ResourceManager.GetString("Show_Lexeme_Form_in_Concordance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Sense in Concordance.
+        /// </summary>
+        internal static string Show_Sense_in_Concordance {
+            get {
+                return ResourceManager.GetString("Show_Sense_in_Concordance", resourceCulture);
             }
         }
         

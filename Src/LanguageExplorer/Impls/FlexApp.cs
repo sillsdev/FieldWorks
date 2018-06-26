@@ -700,17 +700,7 @@ namespace LanguageExplorer.Impls
 			{
 				return;
 			}
-			var commands = new List<string>
-			{
-				"AboutToFollowLink",
-				"FollowLink"
-			};
-			var parms = new List<object>
-			{
-				null,
-				link
-			};
-			fwxwnd.Publisher.Publish(commands, parms);
+			LinkHandler.JumpToTool(fwxwnd.Publisher, link);
 			var asForm = fwxwnd as Form;
 			var topmost = asForm.TopMost;
 			asForm.TopMost = true;

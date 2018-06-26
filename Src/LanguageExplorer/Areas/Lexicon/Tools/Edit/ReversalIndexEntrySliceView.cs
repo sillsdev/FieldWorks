@@ -176,18 +176,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					return;
 				}
 			}
-			var rie = Cache.ServiceLocator.GetObject(hvo) as IReversalIndexEntry;
-			var commands = new List<string>
-			{
-				"AboutToFollowLink",
-				"FollowLink"
-			};
-			var parms = new List<object>
-			{
-				null,
-				new FwLinkArgs(AreaServices.ReversalEditCompleteMachineName, rie.MainEntry.Guid)
-			};
-			Publisher.Publish(commands, parms);
+			LinkHandler.JumpToTool(Publisher, new FwLinkArgs(AreaServices.ReversalEditCompleteMachineName, ((IReversalIndexEntry)Cache.ServiceLocator.GetObject(hvo)).MainEntry.Guid));
 		}
 
 		/// <summary>

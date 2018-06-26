@@ -2965,14 +2965,14 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
+				var checkedItems = new List<int>();
 				if (!BrowseView.Vc.HasSelectColumn)
 				{
-					return null;
+					return checkedItems;
 				}
 
 				var hvoRoot = RootObjectHvo;
 				var tagMain = MainTag;
-				var checkedItems = new List<int>();
 				ISilDataAccess sda = SpecialCache;
 				var citems = sda.get_VecSize(hvoRoot, tagMain);
 				for (var i = 0; i < citems; ++i)

@@ -120,18 +120,8 @@ namespace LanguageExplorer.Controls.LexText
 							// NOTE: We use PostMessage here, rather than SendMessage which
 							// disposes of the PopupTree before we and/or our parents might
 							// be finished using it (cf. LT-2563).
-							var commands = new List<string>
-							{
-								"AboutToFollowLink",
-								"FollowLink"
-							};
-							var parms = new List<object>
-							{
-								null,
-								new FwLinkArgs(JumpToToolNamed, dlg.SelectedPOS.Guid)
-							};
-							m_publisher.Publish(commands, parms);
-							if (ParentForm != null && ParentForm.Modal)
+							LinkHandler.JumpToTool(m_publisher, new FwLinkArgs(JumpToToolNamed, dlg.SelectedPOS.Guid));
+								if (ParentForm != null && ParentForm.Modal)
 							{
 								// Close the dlg that opened the master POS dlg,
 								// since its hotlink was used to close it,

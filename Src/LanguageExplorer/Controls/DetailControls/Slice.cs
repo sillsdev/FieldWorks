@@ -2195,31 +2195,33 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Is it possible to do a split menu command on this slice right now?
 		/// </summary>
-		public bool GetCanSplitNow()
+		public bool CanSplitNow
 		{
-			var obj = GetObjectForMenusToOperateOn();
-			if (obj == null)
+			get
 			{
-				return false;
-			}
+				var obj = GetObjectForMenusToOperateOn();
+				if (obj == null)
+				{
+					return false;
+				}
 
-			var owner = obj.Owner;
-			var flid = obj.OwningFlid;
-			if (!Cache.IsVectorProperty(flid))
-			{
-				return false;
-			}
+				var owner = obj.Owner;
+				var flid = obj.OwningFlid;
+				if (!Cache.IsVectorProperty(flid))
+				{
+					return false;
+				}
 
-			// For example, a LexSense belonging to a LexSense can always be split off to a new
-			// LexEntry.
-			var clsid = obj.ClassID;
-			if (clsid == owner.ClassID)
-			{
-				return true;
-			}
+				// For example, a LexSense belonging to a LexSense can always be split off to a new LexEntry.
+				var clsid = obj.ClassID;
+				if (clsid == owner.ClassID)
+				{
+					return true;
+				}
 
-			// Otherwise, we need at least two vector items to be able to split off this one.
-			return Cache.DomainDataByFlid.get_VecSize(owner.Hvo, flid) >= 2;
+				// Otherwise, we need at least two vector items to be able to split off this one.
+				return Cache.DomainDataByFlid.get_VecSize(owner.Hvo, flid) >= 2;
+			}
 		}
 
 		protected override void OnValidating(System.ComponentModel.CancelEventArgs e)

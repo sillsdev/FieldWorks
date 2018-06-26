@@ -148,17 +148,7 @@ namespace LanguageExplorer.Dumpster
 			var additionalProps = link.LinkProperties;
 			additionalProps.Add(new LinkProperty("SuspendLoadListUntilOnChangeFilter", link.ToolName));
 			additionalProps.Add(new LinkProperty("LinkSetupInfo", "ReviewUndecidedSpelling"));
-			var commands = new List<string>
-			{
-				"AboutToFollowLink",
-				"FollowLink"
-			};
-			var parms = new List<object>
-			{
-				null,
-				link
-			};
-			Publisher.Publish(commands, parms);
+			LinkHandler.JumpToTool(Publisher, link);
 			return true;
 		}
 
@@ -176,17 +166,7 @@ namespace LanguageExplorer.Dumpster
 			var additionalProps = link.LinkProperties;
 			additionalProps.Add(new LinkProperty("SuspendLoadListUntilOnChangeFilter", link.ToolName));
 			additionalProps.Add(new LinkProperty("LinkSetupInfo", "CorrectSpelling"));
-			var commands = new List<string>
-			{
-				"AboutToFollowLink",
-				"FollowLink"
-			};
-			var parms = new List<object>
-			{
-				null,
-				link
-			};
-			Publisher.Publish(commands, parms);
+			LinkHandler.JumpToTool(Publisher, link);
 			return true;
 		}
 
@@ -255,18 +235,7 @@ namespace LanguageExplorer.Dumpster
 			var command = (Command)commandObject;
 			if (command.TargetId != Guid.Empty)
 			{
-				var tool = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool");
-				var commands = new List<string>
-				{
-					"AboutToFollowLink",
-					"FollowLink"
-				};
-				var parms = new List<object>
-				{
-					null,
-					new FwLinkArgs(tool, command.TargetId)
-				};
-				Publisher.Publish(commands, parms);
+				LinkHandler.JumpToTool(Publisher, new FwLinkArgs(XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool"), command.TargetId));
 				command.TargetId = Guid.Empty;	// clear the target for future use.
 				return true;
 			}

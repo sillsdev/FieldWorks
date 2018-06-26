@@ -127,42 +127,6 @@ so I can look at that in the develop branch.
     <command id="CmdDataTree-Merge-MSA" label="Merge Grammatical Info. into..." message="DataTreeMerge">
       <parameters field="MorphoSyntaxAnalyses" className="MoMorphSynAnalysis" />
     </command>
-    <command id="CmdDataTree-Insert-SubSense" label="Insert Su_bsense" message="DataTreeInsert">
-      <parameters field="Senses" className="LexSense" ownerClass="LexSense" />
-    </command>
-    <command id="CmdDataTree-Insert-SenseBelow" label="Insert _Sense" message="DataTreeInsert">
-      <parameters field="Senses" className="LexSense" slice="owner" />
-    </command>
-    <command id="CmdDataTree-Insert-Entry-Sense" label="Insert _Top-Level Sense" message="DataTreeInsert">
-      <parameters field="Senses" className="LexSense" ownerClass="LexEntry" />
-    </command>
-    <command id="CmdDataTree-Delete-Sense" label="Delete this Sense and any Subsenses" message="DataTreeDeleteSense" icon="Delete">
-      <parameters field="Senses" className="LexSense" />
-    </command>
-    <command id="CmdDataTree-Merge-Sense" label="Merge Sense into..." message="DataTreeMerge">
-      <parameters field="Senses" className="LexSense" />
-    </command>
-    <command id="CmdDataTree-MoveUp-Sense" label="Move Sense _Up" message="MoveUpObjectInSequence" icon="MoveUp">
-      <parameters field="Senses" className="LexSense" />
-    </command>
-    <command id="CmdDataTree-MoveDown-Sense-Symbol" label="↓" message="MoveDownObjectInSequence">
-      <parameters field="Senses" className="LexSense" />
-    </command>
-    <command id="CmdDataTree-MoveUp-Sense-Symbol" label="↑" message="MoveUpObjectInSequence">
-      <parameters field="Senses" className="LexSense" />
-    </command>
-    <command id="CmdDataTree-MoveDown-Sense" label="Move Sense Down" message="MoveDownObjectInSequence" icon="MoveDown">
-      <parameters field="Senses" className="LexSense" />
-    </command>
-    <command id="CmdDataTree-MakeSub-Sense" label="Demote" message="DemoteSense" icon="MoveRight">
-      <parameters field="Senses" className="LexSense" />
-    </command>
-    <command id="CmdDataTree-Promote-Sense" label="Promote" message="PromoteSense" icon="MoveLeft">
-      <parameters field="Senses" className="LexSense" />
-    </command>
-    <command id="CmdDataTree-Split-Sense" label="Move Sense to a New Entry" message="DataTreeSplit">
-      <parameters field="Senses" className="LexSense" />
-    </command>
     <command id="CmdDataTree-MoveUp-ExtNote" label="Move Extended Note _Up" message="MoveUpObjectInSequence" icon="MoveUp">
       <parameters field="ExtendedNote" className="LexExtendedNote" />
     </command>
@@ -196,7 +160,7 @@ so I can look at that in the develop branch.
     <command id="CmdDataTree-Delete-Example" label="Delete Example" message="DataTreeDelete" icon="Delete">
       <parameters field="Examples" className="LexExampleSentence" />
     </command>
-    <command id="CmdFindExampleSentence" label="Find example sentence..." message="LaunchGuiControl">
+    <command id="CmdFindExampleSentence" label="Find example sentence..." message="LaunchGuiControl" a10status="PARTIALLY_DONE: still used in three pending menus">
       <parameters field="Example" ownerClass="LexExampleSentence" guicontrol="findExampleSentences" />
     </command>
     <command id="CmdDataTree-Insert-Translation" label="Insert Translation" message="DataTreeInsert">
@@ -1326,9 +1290,6 @@ so I can look at that in the develop branch.
     </menu>
     <menu id="mnuDataTree-SubEntryLink">
       <item command="CmdDataTree-Insert-SubEntryLink" />
-    </menu>
-    <menu id="mnuDataTree-Subsenses">
-      <item command="CmdDataTree-Insert-SubSense" />
     </menu>
     <menu id="mnuDataTree-InsertReversalSubentry">
       <item command="CmdDataTree-Insert-ReversalSubentry" />

@@ -594,7 +594,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		private void m_btnApply_Click(object sender, EventArgs e)
 		{
-			if (m_sourceSentences.CheckedItems.Count <= 0)
+			if (!m_sourceSentences.CheckedItems.Any())
 			{
 				return;
 			}

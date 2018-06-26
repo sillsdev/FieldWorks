@@ -193,17 +193,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void CmdMorphJumpToConcordance_Clicked(object sender, EventArgs e)
 		{
-			var commands = new List<string>
-			{
-				"AboutToFollowLink",
-				"FollowLink"
-			};
-			var parms = new List<object>
-			{
-				null,
-				new FwLinkArgs("concordance", MyDataTree.CurrentSlice.MyCmObject.Guid)
-			};
-			_publisher.Publish(commands, parms);
+			LinkHandler.JumpToTool(_publisher, new FwLinkArgs(AreaServices.ConcordanceMachineName, MyDataTree.CurrentSlice.MyCmObject.Guid));
 		}
 
 		private void CmdDataTree_Convert_LexemeForm_AffixProcess_Clicked(object sender, EventArgs e)
@@ -419,17 +409,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private void CmdLexemeFormJumpToConcordance_Clicked(object sender, EventArgs e)
 		{
 			// Should be a MoForm
-			var commands = new List<string>
-			{
-				"AboutToFollowLink",
-				"FollowLink"
-			};
-			var parms = new List<object>
-			{
-				null,
-				new FwLinkArgs("concordance", MyDataTree.CurrentSlice.MyCmObject.Guid)
-			};
-			_publisher.Publish(commands, parms);
+			LinkHandler.JumpToTool(_publisher, new FwLinkArgs(AreaServices.ConcordanceMachineName, MyDataTree.CurrentSlice.MyCmObject.Guid));
 		}
 
 		private void CmdDataTree_Swap_LexemeForm_Clicked(object sender, EventArgs e)
@@ -555,7 +535,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
 			// <command id="CmdDataTree-Delete-Allomorph" label="Delete Allomorph" message="DataTreeDelete" icon="Delete">
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, DataTreeDelete_Clicked, LexiconResources.Delete_Allomorph, image: LanguageExplorerResources.Delete);
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconAreaConstants.DataTreeDelete], LexiconResources.Delete_Allomorph, image: LanguageExplorerResources.Delete);
 			menu.Enabled = slice.CanDeleteNow;
 
 			// <command id="CmdDataTree-Swap-Allomorph" label="Swap Allomorph with Lexeme Form" message="SwapAllomorphWithLexeme">
@@ -633,7 +613,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			}
 
 			// <command id="CmdDataTree-Delete-Variant" label="Delete Variant" message="DataTreeDelete" icon="Delete">
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, DataTreeDelete_Clicked, LexiconResources.Delete_Variant, image: LanguageExplorerResources.Delete);
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconAreaConstants.DataTreeDelete], LexiconResources.Delete_Variant, image: LanguageExplorerResources.Delete);
 			menu.Enabled = slice.CanDeleteNow;
 
 			// End: <menu id="mnuDataTree-VariantForm">
@@ -665,17 +645,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			// <command id="CmdEntryJumpToDefault" label="Show Entry in Lexicon" message="JumpToTool">
 			// <parameters tool="lexiconEdit" className="LexEntry"/>
-			var commands = new List<string>
-			{
-				"AboutToFollowLink",
-				"FollowLink"
-			};
-			var parms = new List<object>
-			{
-				null,
-				new FwLinkArgs(AreaServices.LexiconEditMachineName, MyRecordList.CurrentObject.Guid)
-			};
-			_publisher.Publish(commands, parms);
+			LinkHandler.JumpToTool(_publisher, new FwLinkArgs(AreaServices.LexiconEditMachineName, MyRecordList.CurrentObject.Guid));
 		}
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_AlternateForm(Slice slice, string contextMenuId)
@@ -712,11 +682,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
 			// <command id="CmdDataTree-Merge-AlternateForm" label="Merge AlternateForm into..." message="DataTreeMerge">
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, DataTreeMerge_Clicked, LexiconResources.Merge_AlternateForm_into);
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconAreaConstants.DataTreeMerge], LexiconResources.Merge_AlternateForm_into);
 			menu.Enabled = slice.CanMergeNow;
 
 			// <command id="CmdDataTree-Delete-AlternateForm" label="Delete AlternateForm" message="DataTreeDelete" icon="Delete"> LexiconResources.Delete_Allomorph
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, DataTreeDelete_Clicked, LexiconResources.Delete_AlternateForm, image: LanguageExplorerResources.Delete);
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconAreaConstants.DataTreeDelete], LexiconResources.Delete_AlternateForm, image: LanguageExplorerResources.Delete);
 			menu.Enabled = slice.CanDeleteNow;
 
 			// End: <menu id="mnuDataTree-AlternateForm">
@@ -759,11 +729,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
 			// <command id="CmdDataTree-Merge-Allomorph" label="Merge Allomorph into..." message="DataTreeMerge">
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, DataTreeMerge_Clicked, LexiconResources.Merge_Allomorph_into);
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconAreaConstants.DataTreeMerge], LexiconResources.Merge_Allomorph_into);
 			menu.Enabled = slice.CanMergeNow;
 
 			// <command id="CmdDataTree-Delete-Allomorph" label="Delete Allomorph" message="DataTreeDelete" icon="Delete">
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, DataTreeDelete_Clicked, LexiconResources.Delete_Allomorph, image: LanguageExplorerResources.Delete);
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconAreaConstants.DataTreeDelete], LexiconResources.Delete_Allomorph, image: LanguageExplorerResources.Delete);
 			menu.Enabled = slice.CanDeleteNow;
 
 			// <command id="CmdDataTree-Swap-Allomorph" label="Swap Allomorph with Lexeme Form" message="SwapAllomorphWithLexeme">
@@ -815,18 +785,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				entry.AlternateFormsOS.Insert(allomorph.IndexInOwner, entry.LexemeFormOA);
 				entry.LexemeFormOA = allomorph;
 			});
-		}
-
-		private void DataTreeDelete_Clicked(object sender, EventArgs e)
-		{
-			var currentSlice = MyDataTree.CurrentSlice;
-			currentSlice.HandleDeleteCommand();
-		}
-
-		private void DataTreeMerge_Clicked(object sender, EventArgs e)
-		{
-			var currentSlice = MyDataTree.CurrentSlice;
-			currentSlice.HandleMergeCommand(true);
 		}
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_VariantForms(Slice slice, string contextMenuId)

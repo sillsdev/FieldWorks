@@ -117,17 +117,7 @@ namespace LanguageExplorer.Areas.Grammar
 							// TODO: this should be reviewed by someone who knows how these links should be done
 							// I'm just guessing.
 							// Also, is there some way to know the application name and tool name without hard coding them?
-							var commands = new List<string>
-							{
-								"AboutToFollowLink",
-								"FollowLink"
-							};
-							var parms = new List<object>
-							{
-								null,
-								new FwLinkArgs(AreaServices.PosEditMachineName, dlg.HighestPOS.Guid)
-							};
-							Publisher.Publish(commands, parms);
+							LinkHandler.JumpToTool(Publisher, new FwLinkArgs(AreaServices.PosEditMachineName, dlg.HighestPOS.Guid));
 						}
 						else
 						{

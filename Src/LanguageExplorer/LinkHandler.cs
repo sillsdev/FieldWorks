@@ -158,6 +158,8 @@ namespace LanguageExplorer
 			if (disposing)
 			{
 				Application.Idle -= Application_Idle;
+				PropertyTable.RemoveProperty("LinkHandler");
+				Subscriber.Unsubscribe("FollowLink", FollowLink_Handler);
 				_toolStripButtonHistoryBack.Click -= HistoryBack_Clicked;
 				_toolStripButtonHistoryForward.Click -= HistoryForward_Clicked;
 				_copyLocationAsHyperlinkToolStripMenuItem.Click -= CopyLocationAsHyperlink_Clicked;
@@ -545,5 +547,20 @@ namespace LanguageExplorer
 			}
 		}
 		#endregion
+
+		internal static void JumpToTool(IPublisher publisher, FwLinkArgs linkArgsForJump)
+		{
+			var commands = new List<string>
+			{
+				"AboutToFollowLink",
+				"FollowLink"
+			};
+			var parms = new List<object>
+			{
+				null,
+				linkArgsForJump
+			};
+			publisher.Publish(commands, parms);
+		}
 	}
 }

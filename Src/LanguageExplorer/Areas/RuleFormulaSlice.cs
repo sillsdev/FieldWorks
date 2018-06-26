@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -168,17 +168,7 @@ namespace LanguageExplorer.Areas
 
 		public bool OnContextJumpToNaturalClass(object args)
 		{
-			var commands = new List<string>
-			{
-				"AboutToFollowLink",
-				"FollowLink"
-			};
-			var parms = new List<object>
-			{
-				null,
-				new FwLinkArgs(AreaServices.NaturalClassEditMachineName, ((IPhSimpleContextNC)RuleFormulaControl.CurrentContext).FeatureStructureRA.Guid)
-			};
-			Publisher.Publish(commands, parms);
+			JumpToTool(AreaServices.NaturalClassEditMachineName);
 			return true;
 		}
 
@@ -194,19 +184,13 @@ namespace LanguageExplorer.Areas
 
 		public virtual bool OnContextJumpToPhoneme(object args)
 		{
-			var ctxt = RuleFormulaControl.CurrentContext as IPhSimpleContextSeg;
-			var commands = new List<string>
-			{
-				"AboutToFollowLink",
-				"FollowLink"
-			};
-			var parms = new List<object>
-			{
-				null,
-				new FwLinkArgs(AreaServices.PhonemeEditMachineName, ctxt.FeatureStructureRA.Guid)
-			};
-			Publisher.Publish(commands, parms);
+			JumpToTool(AreaServices.PhonemeEditMachineName);
 			return true;
+		}
+
+		private void JumpToTool(string toolName)
+		{
+			LinkHandler.JumpToTool(Publisher, new FwLinkArgs(toolName, ((IPhSimpleContextSeg)RuleFormulaControl.CurrentContext).FeatureStructureRA.Guid));
 		}
 	}
 }

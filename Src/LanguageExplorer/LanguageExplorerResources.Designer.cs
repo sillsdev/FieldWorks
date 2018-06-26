@@ -1337,24 +1337,6 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Concordance.
-        /// </summary>
-        internal static string ksFindExampleSentenceDlgBrowseViewPaneTitle {
-            get {
-                return ResourceManager.GetString("ksFindExampleSentenceDlgBrowseViewPaneTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Sentence with Translations.
-        /// </summary>
-        internal static string ksFindExampleSentenceDlgPreviewPaneTitle {
-            get {
-                return ResourceManager.GetString("ksFindExampleSentenceDlgPreviewPaneTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Format.
         /// </summary>
         internal static string ksFormat {

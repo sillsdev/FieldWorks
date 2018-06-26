@@ -767,24 +767,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			var menu = new ContextMenuStrip();
 			var item = new ToolStripMenuItem(XMLViewsStrings.ksShowEntryInLexicon);
 			menu.Items.Add(item);
-			item.Click += (sender, args) => JumpToToolFor(((ILexSense)target).Entry);
+			item.Click += (sender, args) => LinkHandler.JumpToTool(Publisher, new FwLinkArgs(AreaServices.LexiconEditMachineName, target.Guid));
 			menu.Show(this, pt);
 			return base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot);
-		}
-
-		private void JumpToToolFor(ICmObject target)
-		{
-			var commands = new List<string>
-			{
-				"AboutToFollowLink",
-				"FollowLink"
-			};
-			var parms = new List<object>
-			{
-				null,
-				new FwLinkArgs(AreaServices.LexiconEditMachineName, target.Guid)
-			};
-			Publisher.Publish(commands, parms);
 		}
 
 		/// <summary>

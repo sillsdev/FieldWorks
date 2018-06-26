@@ -1548,17 +1548,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					if (url.StartsWith(FwLinkArgs.kFwUrlPrefix))
 					{
-						var commands = new List<string>
-						{
-							"AboutToFollowLink",
-							"FollowLink"
-						};
-						var parms = new List<object>
-						{
-							null,
-							new FwLinkArgs(url)
-						};
-						m_xbv.Publisher.Publish(commands, parms);
+						LinkHandler.JumpToTool(m_xbv.Publisher, new FwLinkArgs(url));
 						return;
 					}
 				}

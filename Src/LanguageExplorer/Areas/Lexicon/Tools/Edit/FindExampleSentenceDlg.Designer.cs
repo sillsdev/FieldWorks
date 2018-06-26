@@ -24,18 +24,22 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			if (disposing)
 			{
 				components?.Dispose();
-				m_recordList?.Dispose();
+				_recordList?.Dispose();
+				_previewPane?.Dispose();
+				if (_concOccurrenceBrowseView != null)
+				{
+					_concOccurrenceBrowseView.CheckBoxChanged -= ConcOccurrenceBrowseViewCheckBoxChanged;
+					_concOccurrenceBrowseView.Dispose();
+				}
 			}
-			m_cache = null;
-			m_configurationNode = null;
-			m_les = null;
-			m_owningSense = null;
-			m_rbv = null;
-			m_previewPane = null;
-			m_helpTopic = null;
-			m_recordList = null;
 			_statusBar = null;
-
+			_cache = null;
+			_recordList = null;
+			_lexExampleSentence = null;
+			_owningSense = null;
+			_concOccurrenceBrowseView = null;
+			_previewPane = null;
+			_helpTopic = null;
 			PropertyTable = null;
 			Publisher = null;
 			Subscriber = null;

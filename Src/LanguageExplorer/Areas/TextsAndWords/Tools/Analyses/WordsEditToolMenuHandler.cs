@@ -316,18 +316,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			}
 			if (guid != Guid.Empty)
 			{
-				var tool = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "tool");
-				var commands = new List<string>
-											{
-												"AboutToFollowLink",
-												"FollowLink"
-											};
-				var parms = new List<object>
-											{
-												null,
-												new FwLinkArgs(tool, guid)
-											};
-				Publisher.Publish(commands, parms);
+				LinkHandler.JumpToTool(Publisher, new FwLinkArgs(XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "tool"), guid));
 				return true;
 			}
 			return false;

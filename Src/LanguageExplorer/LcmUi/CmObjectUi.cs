@@ -400,23 +400,6 @@ namespace LanguageExplorer.LcmUi
 			return null;
 		}
 
-#if RANDYTODO
-		public virtual void LaunchGuiControl(Command command)
-		{
-			string guicontrol = command.GetParameter("guicontrol");
-			string xpathToControl = string.Format("/window/controls/parameters/guicontrol[@id=\"{0}\"]", guicontrol);
-			XmlNode xnControl = command.ConfigurationNode.SelectSingleNode(xpathToControl);
-			if (xnControl != null)
-			{
-				using (var dlg = (IFwGuiControl) DynamicLoader.CreateObject(xnControl.SelectSingleNode("dynamicloaderinfo")))
-				{
-					dlg.Init(m_mediator, m_propertyTable, xnControl.SelectSingleNode("parameters"), Object);
-					dlg.Launch();
-				}
-			}
-		}
-#endif
-
 		/// <summary>
 		/// gives the guid of the object to use in the URL we construct when doing a jump
 		/// </summary>
@@ -434,19 +417,7 @@ namespace LanguageExplorer.LcmUi
 		public virtual bool OnJumpToTool(object commandObject)
 		{
 			var command = (Command) commandObject;
-			string tool = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool");
-			var guid = GuidForJumping(commandObject);
-			var commands = new List<string>
-									{
-										"AboutToFollowLink",
-										"FollowLink"
-									};
-			var parms = new List<object>
-									{
-										null,
-										new FwLinkArgs(tool, guid)
-									};
-			Publisher.Publish(commands, parms);
+			LinkHandler.JumpToTool(Publisher, new FwLinkArgs(XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool"), GuidForJumping(commandObject)));
 			return true;
 		}
 

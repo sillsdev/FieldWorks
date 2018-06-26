@@ -293,17 +293,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			Command command = (XCore.Command)commandObject;
 			string tool = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool");
 			var inflMsa = m_obj as IMoInflAffMsa;
-			var commands = new List<string>
-										{
-											"AboutToFollowLink",
-											"FollowLink"
-										};
-			var parms = new List<object>
-										{
-											null,
-											new FwLinkArgs(tool, inflMsa.Owner.Guid)
-										};
-			Publisher.Publish(commands, parms);
+			LinkHandler.JumpToTool(Publisher, tool, inflMsa.Owner);
 			return true; // handled this
 		}
 #endif

@@ -744,17 +744,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var newKid = list.Services.GetInstance<ILexRefTypeFactory>().Create();
 			list.PossibilitiesOS.Add(newKid);
 			Cache.DomainDataByFlid.EndUndoTask();
-			var commands = new List<string>
-			{
-				"AboutToFollowLink",
-				"FollowLink"
-			};
-			var parms = new List<object>
-			{
-				null,
-				new FwLinkArgs(AreaServices.LexRefEditMachineName, newKid.Guid)
-			};
-			ContainingDataTree.Publisher.Publish(commands, parms);
+			LinkHandler.JumpToTool(ContainingDataTree.Publisher, new FwLinkArgs(AreaServices.LexRefEditMachineName, newKid.Guid));
 		}
 
 		/// <summary />

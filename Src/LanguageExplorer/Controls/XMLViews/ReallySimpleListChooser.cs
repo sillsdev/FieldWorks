@@ -1574,17 +1574,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			if (m_publisher != null && m_linkJump != null)
 			{
-				var commands = new List<string>
-				{
-					"AboutToFollowLink",
-					"FollowLink"
-				};
-				var parms = new List<object>
-				{
-					null,
-					m_linkJump
-				};
-				m_publisher.Publish(commands, parms);
+				LinkHandler.JumpToTool(m_publisher, m_linkJump);
 				return true;
 			}
 			return false;
@@ -1598,17 +1588,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			if (publisher != null && m_linkJump != null)
 			{
-				var commands = new List<string>
-				{
-					"AboutToFollowLink",
-					"FollowLink"
-				};
-				var parms = new List<object>
-				{
-					null,
-					m_linkJump
-				};
-				m_publisher.Publish(commands, parms);
+				LinkHandler.JumpToTool(m_publisher, m_linkJump);
 				return true;
 			}
 			return false;

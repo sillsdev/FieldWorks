@@ -3404,17 +3404,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			Guid guid = GetGuidForJumpToTool((Command) commandObject, false, out tool);
 			if (guid != Guid.Empty)
 			{
-				var commands = new List<string>
-										{
-											"AboutToFollowLink",
-											"FollowLink"
-										};
-				var parms = new List<object>
-										{
-											null,
-											new FwLinkArgs(tool, guid)
-										};
-				Publisher.Publish(commands, parms);
+				LinkHandler.JumpToTool(Publisher, new FwLinkArgs(tool, guid));
 				((Command)commandObject).TargetId = Guid.Empty;	// clear the target for future use.
 				return true;
 			}
@@ -3457,17 +3447,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			additionalProps.Add(new LinkProperty("SuspendLoadListUntilOnChangeFilter", link.ToolName));
 			additionalProps.Add(new LinkProperty("LinkSetupInfo", linkSetupInfo));
 			additionalProps.Add(new LinkProperty("HvoOfAnthroItem", hvo.ToString(CultureInfo.InvariantCulture)));
-			var commands = new List<string>
-			{
-				"AboutToFollowLink",
-				"FollowLink"
-			};
-			var parms = new List<object>
-			{
-				null,
-				link
-			};
-			Publisher.Publish(commands, parms);
+			LinkHandler.JumpToTool(Publisher, link);
 		}
 
 		/// <summary>

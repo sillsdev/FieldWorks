@@ -594,17 +594,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private void CmdEntryJumpToConcordance_Clicked(object sender, EventArgs e)
 		{
 			// Should be a LexEntry
-			var commands = new List<string>
-			{
-				"AboutToFollowLink",
-				"FollowLink"
-			};
-			var parms = new List<object>
-			{
-				null,
-				new FwLinkArgs("concordance", MyRecordList.CurrentObject.Guid)
-			};
-			_publisher.Publish(commands, parms);
+			LinkHandler.JumpToTool(_publisher, new FwLinkArgs(AreaServices.ConcordanceMachineName, MyRecordList.CurrentObject.Guid));
 		}
 		#endregion popup slice menus
 

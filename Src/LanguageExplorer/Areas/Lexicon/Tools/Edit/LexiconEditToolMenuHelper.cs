@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -64,6 +64,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_lexiconEditToolUiWidgetManagers.Add(insertToolbar, new LexiconEditToolToolbarManager());
 			_lexiconEditToolUiWidgetManagers.Add(dataTreeStack, new LexiconEditToolDataTreeStackManager(MyDataTree));
 
+			// Start the ball rolling for sharing event handlers;
+			_sharedEventHandlers.Add(LexiconAreaConstants.DataTreeMerge, DataTreeMerge_Clicked);
+			_sharedEventHandlers.Add(LexiconAreaConstants.DataTreeDelete, DataTreeDelete_Clicked);
+			_sharedEventHandlers.Add(LexiconAreaConstants.DataTreeSplit, DataTreeSplit_Clicked);
+
 			// Now, it is fine to finish up the initialization of the managers, since all shared event handlers are in '_sharedEventHandlers'.
 			foreach (var manager in _lexiconEditToolUiWidgetManagers.Values)
 			{
@@ -78,6 +83,24 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		internal EventHandler GetHandler(string key)
 		{
 			return _sharedEventHandlers[key];
+		}
+
+		private void DataTreeMerge_Clicked(object sender, EventArgs e)
+		{
+			var currentSlice = MyDataTree.CurrentSlice;
+			currentSlice.HandleMergeCommand(true);
+		}
+
+		private void DataTreeDelete_Clicked(object sender, EventArgs e)
+		{
+			var currentSlice = MyDataTree.CurrentSlice;
+			currentSlice.HandleDeleteCommand();
+		}
+
+		private void DataTreeSplit_Clicked(object sender, EventArgs e)
+		{
+			var currentSlice = MyDataTree.CurrentSlice;
+			currentSlice.HandleSplitCommand();
 		}
 
 		#region IDisposable
