@@ -421,6 +421,7 @@
 
 	<Target Name="downloadDlls" DependsOnTargets="RestoreNuGetPackages" Condition="'$(disableDownloads)'!='true'">
 		<MakeDir Directories="$(DownloadsDir)"/>
+		<Message Text="NOT" Condition="'$(UseLocalLibraries)'=='Y'"/>
 		<Message Text="Downloading artifacts for Palaso, including  L10NSharp, Enchant.Net, ibusdotnet, NDesk.DBus, Spart, and Newtonsoft.Json."/>
 		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(PalasoBuildType)" VersionInfo="$(MasterVersionInfo)"
 			Artifacts="@(PalasoFiles)" DownloadsDir="$(DownloadsDir)" Condition="'$(UseLocalLibraries)'!='Y'"/>
@@ -429,11 +430,16 @@
 		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(ChorusBuildType)" VersionInfo="$(MasterVersionInfo)"
 			Artifacts="@(ChorusFiles)" DownloadsDir="$(DownloadsDir)" Condition="'$(UseLocalLibraries)'!='Y'"/>
 
+		<Message Text="nor" Condition="'$(UseLocalLibraries)'=='Y'"/>
+		<Message Text="Downloading artifacts for LCM." />
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(LcmBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="LCM.zip" DownloadsDir="$(DownloadsDir)" Condition="'$(UseLocalLibraries)'!='Y'" Tag=".lastSuccessful"/>
+		<Message Text="(the above artifacts will be copied from $(PalasoArtifactsDir), $(ChorusArtifactsDir), and $(LcmArtifactsDir), respectively, as  specified in LibraryDevelopment.targets)" Condition="'$(UseLocalLibraries)'=='Y'"/>
+
 		<Message Text="Downloading an artifact for IPCFramework."/>
 		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(IPCFrameworkBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="IPCFramework.dll" DownloadsDir="$(DownloadsDir)"/>
 
 		<!-- Due to platform-specific casing, ExCSS or ExCss is included in a variable -->
-		<Message Text="Downloading artifacts for ExCss."/>
+		<Message Text="Downloading artifacts for $(ExCss)."/>
 		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(ExCssBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="$(ExCss).dll;$(ExCss).$(DebugInfo)" DownloadsDir="$(DownloadsDir)"/>
 
 		<Message Text="Downloading artifacts for icu4c." Condition="'$(OS)'=='Windows_NT'"/>
@@ -455,9 +461,6 @@
 		<!-- Use wget to download nunit since mono 4.6 has TLS trouble. mono 5 is fine. -->
 		<Exec Command="wget '$(NUnitDownloadUrl)' -O '$(DownloadsDir)/NUnit-2.6.4.zip'" Condition="'$(OS)'!='Windows_NT'"/>
 		<DownloadFile Address="$(NUnitDownloadUrl)" DownloadsDir="$(DownloadsDir)"/>
-
-		<Message Text="Downloading artifacts for LCM." />
-		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(LcmBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="LCM.zip" DownloadsDir="$(DownloadsDir)" Condition="'$(UseLocalLibraries)'!='Y'" Tag=".lastSuccessful"/>
 	</Target>
 
 	<!-- Setup source variables (to enable local development in libpalaso, chorus, and liblcm) -->
