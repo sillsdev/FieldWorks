@@ -579,4 +579,43 @@
   <data name="Show_Sense_in_Concordance" xml:space="preserve">
     <value>Show Sense in Concordance</value>
   </data>
+  <data name="Delete_Example" xml:space="preserve">
+    <value>Delete Example</value>
+  </data>
+  <data name="Delete_Extended_Note" xml:space="preserve">
+    <value>Delete Extended Note</value>
+  </data>
+  <data name="Insert_Example_in_Note" xml:space="preserve">
+    <value>Insert Example in Note</value>
+  </data>
+  <data name="Insert_Translation" xml:space="preserve">
+    <value>Insert Translation</value>
+  </data>
+  <data name="Move_Example_Down" xml:space="preserve">
+    <value>Move Example _Down</value>
+  </data>
+  <data name="Move_Example_Up" xml:space="preserve">
+    <value>Move Example _Up</value>
+  </data>
+  <data name="Move_Extended_Note_Down" xml:space="preserve">
+    <value>Move Extended Note _Down</value>
+  </data>
+  <data name="Move_Extended_Note_Up" xml:space="preserve">
+    <value>Move Extended Note _Up</value>
+  </data>
+  <data name="Picture_Properties" xml:space="preserve">
+    <value>Picture Properties</value>
+  </data>
+  <data name="Delete_Example_from_Note" xml:space="preserve">
+    <value>Delete Example from Note</value>
+  </data>
+  <data name="Delete_Picture" xml:space="preserve">
+    <value>Delete Picture</value>
+  </data>
+  <data name="Move_Picture_Down" xml:space="preserve">
+    <value>Move Picture _Down</value>
+  </data>
+  <data name="Move_Picture_Up" xml:space="preserve">
+    <value>Move Picture _Up</value>
+  </data>
 </root>

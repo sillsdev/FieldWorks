@@ -112,6 +112,11 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		/// <summary>
+		/// Some Slice subclasses do the menus themselves.
+		/// </summary>
+		protected virtual bool DoINeedToAddTheCoreContextMenus => true;
+
+		/// <summary>
 		/// Add these menus:
 		/// 1. Separator (but only if there are already items in the ContextMenuStrip).
 		/// 2. 'Field Visbility', and its three sub-menus.
@@ -120,6 +125,11 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		internal void AddCoreContextMenus(ref Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> sliceTreeNodeContextMenuStripTuple)
 		{
+			if (!DoINeedToAddTheCoreContextMenus)
+			{
+				// Some slice subclasses do it themselves.
+				return;
+			}
 			ContextMenuStrip contextMenuStrip;
 			List<Tuple<ToolStripMenuItem, EventHandler>> menuItems;
 			if (sliceTreeNodeContextMenuStripTuple == null)
@@ -1579,7 +1589,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <param name="ownerClassName">class of expected owner. If the current slice's object is not
 		/// this class (or a subclass), look for a containing object that is.</param>
 		/// <remarks> called by the containing environment in response to a user command.</remarks>
-		internal void HandleInsertCommand(string fieldName, string className, string ownerClassName)
+		internal void HandleInsertCommand(string fieldName, string className, string ownerClassName = null)
 		{
 			var newObjectClassId = Cache.DomainDataByFlid.MetaDataCache.GetClassId(className);
 			if (newObjectClassId == 0)

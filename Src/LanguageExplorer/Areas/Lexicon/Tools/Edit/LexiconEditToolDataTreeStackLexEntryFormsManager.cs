@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
@@ -535,8 +536,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
 			// <command id="CmdDataTree-Delete-Allomorph" label="Delete Allomorph" message="DataTreeDelete" icon="Delete">
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconAreaConstants.DataTreeDelete], LexiconResources.Delete_Allomorph, image: LanguageExplorerResources.Delete);
-			menu.Enabled = slice.CanDeleteNow;
+			AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Allomorph, _sharedEventHandlers[LexiconAreaConstants.DataTreeDelete]);
 
 			// <command id="CmdDataTree-Swap-Allomorph" label="Swap Allomorph with Lexeme Form" message="SwapAllomorphWithLexeme">
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, SwapAllomorphWithLexeme_Clicked, LexiconResources.Swap_Allomorph_with_Lexeme_Form);
@@ -611,10 +611,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				menu.Visible = true;
 				menu.Enabled = slice.NextSlice.MyCmObject is ILexEntryRef && (slice.MyCmObject.ClassID == LexEntryTags.kClassId || slice.MyCmObject.Owner.ClassID == LexEntryTags.kClassId);
 			}
+			menu.ImageTransparentColor = Color.Magenta;
 
 			// <command id="CmdDataTree-Delete-Variant" label="Delete Variant" message="DataTreeDelete" icon="Delete">
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconAreaConstants.DataTreeDelete], LexiconResources.Delete_Variant, image: LanguageExplorerResources.Delete);
-			menu.Enabled = slice.CanDeleteNow;
+			AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Variant, _sharedEventHandlers[LexiconAreaConstants.DataTreeDelete]);
 
 			// End: <menu id="mnuDataTree-VariantForm">
 
@@ -686,8 +686,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			menu.Enabled = slice.CanMergeNow;
 
 			// <command id="CmdDataTree-Delete-AlternateForm" label="Delete AlternateForm" message="DataTreeDelete" icon="Delete"> LexiconResources.Delete_Allomorph
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconAreaConstants.DataTreeDelete], LexiconResources.Delete_AlternateForm, image: LanguageExplorerResources.Delete);
-			menu.Enabled = slice.CanDeleteNow;
+			AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_AlternateForm, _sharedEventHandlers[LexiconAreaConstants.DataTreeDelete]);
 
 			// End: <menu id="mnuDataTree-AlternateForm">
 
@@ -733,8 +732,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			menu.Enabled = slice.CanMergeNow;
 
 			// <command id="CmdDataTree-Delete-Allomorph" label="Delete Allomorph" message="DataTreeDelete" icon="Delete">
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconAreaConstants.DataTreeDelete], LexiconResources.Delete_Allomorph, image: LanguageExplorerResources.Delete);
-			menu.Enabled = slice.CanDeleteNow;
+			AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Allomorph, _sharedEventHandlers[LexiconAreaConstants.DataTreeDelete]);
 
 			// <command id="CmdDataTree-Swap-Allomorph" label="Swap Allomorph with Lexeme Form" message="SwapAllomorphWithLexeme">
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, SwapAllomorphWithLexeme_Clicked, LexiconResources.Swap_Allomorph_with_Lexeme_Form);

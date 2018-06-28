@@ -4,9 +4,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
+using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.LexText.DataNotebook;
@@ -269,7 +271,7 @@ namespace LanguageExplorer.Areas
 				default:
 					throw new ArgumentException("Unknown ExclusionReasonCode");
 			}
-			msg = string.Format(msg, reason);
+			msg = String.Format(msg, reason);
 			// TODO-Linux: Help is not implemented on Mono
 			MessageBox.Show(form, msg, caption, MessageBoxButtons.OK,
 				MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, 0,
@@ -367,6 +369,18 @@ namespace LanguageExplorer.Areas
 			visible = true;
 
 			return enabled;
+		}
+
+		internal static void CreateDeleteMenuItem(List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, ContextMenuStrip contextMenuStrip, Slice slice, string menuText, EventHandler deleteEventHandler)
+		{
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, deleteEventHandler, menuText, image: LanguageExplorerResources.Delete);
+			menu.Enabled = !slice.IsGhostSlice && slice.CanDeleteNow;
+			if (!menu.Enabled)
+			{
+				menu.Text = $"{menuText} {StringTable.Table.GetString("(cannot delete this)")}";
+			}
+			menu.ImageTransparentColor = Color.Magenta;
+			menu.Enabled = slice.CanDeleteNow;
 		}
 	}
 }

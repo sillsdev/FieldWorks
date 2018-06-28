@@ -22,6 +22,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		internal const string mnuDataTree_AffixProcess = "mnuDataTree-AffixProcess";
 		internal const string mnuDataTree_VariantForm = "mnuDataTree-VariantForm";
 		internal const string mnuDataTree_AlternateForm = "mnuDataTree-AlternateForm";
+		internal const string mnuDataTree_Example = "mnuDataTree-Example";
+		internal const string mnuDataTree_ExtendedNotes = "mnuDataTree-ExtendedNotes";
+		internal const string mnuDataTree_ExtendedNote = "mnuDataTree-ExtendedNote";
+		internal const string mnuDataTree_ExtendedNote_Examples = "mnuDataTree-ExtendedNote-Examples";
+		internal const string mnuDataTree_Picture = "mnuDataTree-Picture";
+		internal const string mnuDataTree_Subsenses = "mnuDataTree-Subsenses";
 
 		internal const string CmdGoToEntry = "GoToEntry_Clicked";
 		internal const string Show_Dictionary_Preview_Clicked = "Show_Dictionary_Preview_Clicked";

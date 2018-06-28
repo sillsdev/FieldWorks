@@ -309,10 +309,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			node.RemoveNodes();
 		}
 
+		/// <summary>
+		/// Some Slice subclasses (such as this one) do the menus themselves.
+		/// </summary>
+		protected override bool DoINeedToAddTheCoreContextMenus => false;
+
 		private ContextMenuStrip m_contextMenuStrip;
 		/// <summary />
 		public override bool HandleMouseDown(Point p)
 		{
+			base.HandleMouseDown(p);
 			DisposeContextMenu(this, new EventArgs());
 			m_contextMenuStrip = SetupContextMenuStrip();
 			m_contextMenuStrip.Closed += contextMenuStrip_Closed; // dispose when no longer needed (but not sooner! needed after this returns)

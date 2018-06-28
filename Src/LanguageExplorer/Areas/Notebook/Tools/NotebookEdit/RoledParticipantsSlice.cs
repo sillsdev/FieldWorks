@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -135,10 +135,16 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			return rec.ParticipantsOC.Any(roledPartic => roledPartic.ParticipantsRC.Any());
 		}
 
+		/// <summary>
+		/// Some Slice subclasses (such as this one) do the menus themselves.
+		/// </summary>
+		protected override bool DoINeedToAddTheCoreContextMenus => false;
+
 		private ContextMenuStrip m_contextMenuStrip;
 		/// <summary />
 		public override bool HandleMouseDown(Point p)
 		{
+			base.HandleMouseDown(p);
 			DisposeContextMenu(this, new EventArgs());
 			m_contextMenuStrip = CreateContextMenu();
 			m_contextMenuStrip.Closed += contextMenuStrip_Closed; // dispose when no longer needed (but not sooner! needed after this returns)

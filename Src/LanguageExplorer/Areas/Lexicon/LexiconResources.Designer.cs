@@ -198,6 +198,42 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete Example.
+        /// </summary>
+        internal static string Delete_Example {
+            get {
+                return ResourceManager.GetString("Delete_Example", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Example from Note.
+        /// </summary>
+        internal static string Delete_Example_from_Note {
+            get {
+                return ResourceManager.GetString("Delete_Example_from_Note", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Extended Note.
+        /// </summary>
+        internal static string Delete_Extended_Note {
+            get {
+                return ResourceManager.GetString("Delete_Extended_Note", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Picture.
+        /// </summary>
+        internal static string Delete_Picture {
+            get {
+                return ResourceManager.GetString("Delete_Picture", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete Reference.
         /// </summary>
         internal static string Delete_Reference {
@@ -490,6 +526,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Insert Example in Note.
+        /// </summary>
+        internal static string Insert_Example_in_Note {
+            get {
+                return ResourceManager.GetString("Insert_Example_in_Note", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Insert Extended Note.
         /// </summary>
         internal static string Insert_Extended_Note {
@@ -594,6 +639,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string Insert_Subsense_Tooltip {
             get {
                 return ResourceManager.GetString("Insert_Subsense_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Translation.
+        /// </summary>
+        internal static string Insert_Translation {
+            get {
+                return ResourceManager.GetString("Insert_Translation", resourceCulture);
             }
         }
         
@@ -1119,6 +1173,42 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Move Example _Down.
+        /// </summary>
+        internal static string Move_Example_Down {
+            get {
+                return ResourceManager.GetString("Move_Example_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move Example _Up.
+        /// </summary>
+        internal static string Move_Example_Up {
+            get {
+                return ResourceManager.GetString("Move_Example_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move Extended Note _Down.
+        /// </summary>
+        internal static string Move_Extended_Note_Down {
+            get {
+                return ResourceManager.GetString("Move_Extended_Note_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move Extended Note _Up.
+        /// </summary>
+        internal static string Move_Extended_Note_Up {
+            get {
+                return ResourceManager.GetString("Move_Extended_Note_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Move Form _Down.
         /// </summary>
         internal static string Move_Form_Down {
@@ -1142,6 +1232,24 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string Move_Left {
             get {
                 return ResourceManager.GetString("Move_Left", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move Picture _Down.
+        /// </summary>
+        internal static string Move_Picture_Down {
+            get {
+                return ResourceManager.GetString("Move_Picture_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move Picture _Up.
+        /// </summary>
+        internal static string Move_Picture_Up {
+            get {
+                return ResourceManager.GetString("Move_Picture_Up", resourceCulture);
             }
         }
         
@@ -1232,6 +1340,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string Picture {
             get {
                 return ResourceManager.GetString("Picture", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Picture Properties.
+        /// </summary>
+        internal static string Picture_Properties {
+            get {
+                return ResourceManager.GetString("Picture_Properties", resourceCulture);
             }
         }
         

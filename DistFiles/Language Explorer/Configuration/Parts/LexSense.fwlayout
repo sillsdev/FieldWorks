@@ -67,7 +67,6 @@
 	</layout>
 
 	<layout class="LexExampleSentence" type="detail" name="Notes">
-		<!-- menu="mnuDataTree-ExtendedNote-Examples" -->
 		<part ref="ExampleAllV" label="Example" expansion="expanded" menu="mnuDataTree-Example">
 			<indent>
 				<part ref="TranslationsAllA" expansion="expanded" param="Translation"/>
