@@ -12,6 +12,7 @@ using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.WritingSystems;
+using System.Text.RegularExpressions;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
 {
@@ -406,7 +407,8 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				{
 					string code = m_variantAbbrev.Text.Trim();
 					IEnumerable<VariantSubtag> variantSubtags;
-					if (IetfLanguageTag.TryGetVariantSubtags(code, out variantSubtags, m_variantNameString))
+					code = Regex.Replace(code, "^x-", "");
+					if (IetfLanguageTag.TryGetVariantSubtags("x-" + code, out variantSubtags, m_variantNameString))
 					{
 						foreach (VariantSubtag variantSubtag in variantSubtags)
 							yield return variantSubtag;
@@ -925,6 +927,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// <param name="e"></param>
 		private void m_variantCode_KeyPress(object sender, KeyPressEventArgs e)
 		{
+			m_enableLangTagSideEffects = false;
 			HandleKeyPress(e);
 		}
 
@@ -988,6 +991,8 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			// is needed.)
 			if (m_enableLangTagSideEffects)
 				OnScriptRegionVariantChanged(EventArgs.Empty);
+			else
+				HandleAudioVariant();
 		}
 
 		/// <summary>
