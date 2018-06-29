@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2017 SIL International
+﻿// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -432,13 +432,13 @@ namespace SIL.FieldWorks.XWorks
 		private static GeckoHtmlElement GetBottomCurrentPageButton(GeckoElement pageButtonElement)
 		{
 			// from the parent node select the second instance of the current page (the one with the id)
-			return (GeckoHtmlElement)pageButtonElement.OwnerDocument.Body.SelectFirst("(//*[@class='pagebutton' and @id])[2]");
+			return (GeckoHtmlElement)pageButtonElement.OwnerDocument.Body?.SelectFirst("(//*[@class='pagebutton' and @id])[2]");
 		}
 
 		private static GeckoHtmlElement GetTopCurrentPageButton(GeckoElement element)
 		{
 			// The page with the id is the current page, select the first one on the page
-			return (GeckoHtmlElement)element.OwnerDocument.Body.SelectFirst("//*[@class='pagebutton' and @id]");
+			return (GeckoHtmlElement)element.OwnerDocument.Body?.SelectFirst("//*[@class='pagebutton' and @id]");
 		}
 
 		private static bool HandleClickOnPageButton(RecordClerk clerk, GeckoElement element)
