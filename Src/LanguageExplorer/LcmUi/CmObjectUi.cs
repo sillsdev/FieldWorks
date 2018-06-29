@@ -513,7 +513,7 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Get the id of the context menu that should be shown for our object
 		/// </summary>
-		public virtual string ContextMenuId => "mnuObjectChoices";
+		protected virtual string ContextMenuId => "mnuObjectChoices";
 
 		/// <summary>
 		/// Given a populated choice group, mark the one that will be invoked by a ctrl-click.
@@ -619,6 +619,8 @@ namespace LanguageExplorer.LcmUi
 			// If a safe blocking mechanism can be found for the context menu, we can restore the original behavior
 			// which will have this code do the setup and teardown work.
 			//(hostControl as IReceiveSequentialMessages).Sequencer);
+#else
+			MessageBox.Show($"Looking for popup menu: '{sMenuId}'.", "Search for popup menu", MessageBoxButtons.OK);
 #endif
 
 			return true;

@@ -29,6 +29,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		private ToolStripMenuItem _writingSystemsMenu;
 		private List<ToolStripMenuItem> _writingSystemMenuItems;
 
+		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> _contextMenuTuple;
+
 		public MultiStringSlice(ICmObject obj, int flid, int ws, int wsOptional, bool forceIncludeEnglish, bool editable, bool spellCheck)
 		{
 			Control = new LabeledMultiStringView(obj.Hvo, flid, ws, wsOptional, forceIncludeEnglish, editable, spellCheck);
@@ -165,18 +167,20 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void HandleRightMouseClickedEvent(SimpleRootSite sender, FwRightMouseClickEventArgs e)
 		{
-			var contextMenuId = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "contextMenu");
+			var contextMenuId = ContextMenuMenuId;
 			if (string.IsNullOrEmpty(contextMenuId))
 			{
 				return;
 			}
 			e.EventHandled = true;
 			e.Selection.Install();
-			var contextMenuTuple = MyDataTreeStackContextMenuFactory.RightClickPopupMenuFactory.GetPopupContextMenu(this, contextMenuId);
-			if (contextMenuTuple != null)
+			if (_contextMenuTuple != null)
 			{
-				contextMenuTuple.Item1.Show(Control, e.MouseLocation);
+				MyDataTreeStackContextMenuFactory.RightClickPopupMenuFactory.DisposePopupContextMenu(_contextMenuTuple);
+				_contextMenuTuple = null;
 			}
+			_contextMenuTuple = MyDataTreeStackContextMenuFactory.RightClickPopupMenuFactory.GetPopupContextMenu(this, contextMenuId);
+			_contextMenuTuple?.Item1.Show(Control, e.MouseLocation);
 		}
 
 		/// <summary>

@@ -9,7 +9,6 @@ using SIL.LCModel;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Infrastructure;
@@ -182,21 +181,30 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			};
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(3);
 
+			ToolStripMenuItem menu;
 			var referenceVectorSlice = (ReferenceVectorSlice)slice;
-			// <command id="CmdMoveTargetToPreviousInSequence" label="Move Left" message="MoveTargetDownInSequence"/>
-			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveReferencedTargetDownInSequence_Clicked, LexiconResources.Move_Left);
 			bool visible;
-			menu.Enabled = referenceVectorSlice.CanDisplayMoveTargetDownInSequence(out visible);
-			menu.Visible = visible;
+			var enabled = referenceVectorSlice.CanDisplayMoveTargetDownInSequence(out visible);
+			if (visible)
+			{
+				// <command id="CmdMoveTargetToPreviousInSequence" label="Move Left" message="MoveTargetDownInSequence"/>
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveReferencedTargetDownInSequence_Clicked, LexiconResources.Move_Left);
+				menu.Enabled = enabled;
+			}
 
-			// <command id="CmdMoveTargetToNextInSequence" label="Move Right" message="MoveTargetUpInSequence"/>
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveReferencedTargetUpInSequence_Clicked, LexiconResources.Move_Right);
-			menu.Enabled = referenceVectorSlice.CanDisplayMoveTargetUpInSequence(out visible);
-			menu.Visible = visible;
+			enabled = referenceVectorSlice.CanDisplayMoveTargetUpInSequence(out visible);
+			if (visible)
+			{
+				// <command id="CmdMoveTargetToNextInSequence" label="Move Right" message="MoveTargetUpInSequence"/>
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveReferencedTargetUpInSequence_Clicked, LexiconResources.Move_Right);
+				menu.Enabled = enabled;
+			}
 
-			// <command id="CmdAlphabeticalOrder" label="Alphabetical Order" message="AlphabeticalOrder"/>
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Referenced_AlphabeticalOrder_Clicked, LexiconResources.Alphabetical_Order);
-			menu.Visible = menu.Enabled = referenceVectorSlice.CanAlphabetize;
+			if (referenceVectorSlice.CanAlphabetize)
+			{
+				// <command id="CmdAlphabeticalOrder" label="Alphabetical Order" message="AlphabeticalOrder"/>
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Referenced_AlphabeticalOrder_Clicked, LexiconResources.Alphabetical_Order);
+			}
 
 			// End: <menu id="mnuReorderVector">
 
@@ -219,18 +227,23 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			using (var imageHolder = new LanguageExplorer.DictionaryConfiguration.ImageHolder())
 			{
-				// <command id="CmdDataTree-MoveUp-VariantSpec" label="Move Variant Info Up" message="MoveUpObjectInSequence" icon="MoveUp"/>
-				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInOwningSequence_Clicked, LexiconResources.Move_Variant_Info_Up, image: imageHolder.smallCommandImages.Images[12]);
+				ToolStripMenuItem menu;
 				bool visible;
 				var enabled = AreaServices.CanMoveUpObjectInOwningSequence(MyDataTree, _cache, out visible);
-				menu.Visible = visible;
-				menu.Enabled = enabled;
+				if (visible)
+				{
+					// <command id="CmdDataTree-MoveUp-VariantSpec" label="Move Variant Info Up" message="MoveUpObjectInSequence" icon="MoveUp"/>
+					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInOwningSequence_Clicked, LexiconResources.Move_Variant_Info_Up, image: imageHolder.smallCommandImages.Images[12]);
+					menu.Enabled = enabled;
+				}
 
-				// <command id="CmdDataTree-MoveDown-VariantSpec" label="Move Variant Info Down" message="MoveDownObjectInSequence" icon="MoveDown"/>
-				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveDownObjectInOwningSequence_Clicked, LexiconResources.Move_Variant_Info_Down, image: imageHolder.smallCommandImages.Images[14]);
 				enabled = AreaServices.CanMoveDownObjectInOwningSequence(MyDataTree, _cache, out visible);
-				menu.Visible = visible;
-				menu.Enabled = enabled;
+				if (visible)
+				{
+					// <command id="CmdDataTree-MoveDown-VariantSpec" label="Move Variant Info Down" message="MoveDownObjectInSequence" icon="MoveDown"/>
+					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveDownObjectInOwningSequence_Clicked, LexiconResources.Move_Variant_Info_Down, image: imageHolder.smallCommandImages.Images[14]);
+					menu.Enabled = enabled;
+				}
 			}
 
 			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
@@ -310,18 +323,22 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 			using (var imageHolder = new LanguageExplorer.DictionaryConfiguration.ImageHolder())
 			{
-				// <command id="CmdDataTree-MoveUp-Pronunciation" label="Move Pronunciation _Up" message="MoveUpObjectInSequence" icon="MoveUp">
-				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInOwningSequence_Clicked, LexiconResources.Move_Pronunciation_Up, image: imageHolder.smallCommandImages.Images[12]);
 				bool visible;
 				var enabled = AreaServices.CanMoveUpObjectInOwningSequence(MyDataTree, _cache, out visible);
-				menu.Visible = true;
-				menu.Enabled = enabled;
+				if (visible)
+				{
+					// <command id="CmdDataTree-MoveUp-Pronunciation" label="Move Pronunciation _Up" message="MoveUpObjectInSequence" icon="MoveUp">
+					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInOwningSequence_Clicked, LexiconResources.Move_Pronunciation_Up, image: imageHolder.smallCommandImages.Images[12]);
+					menu.Enabled = enabled;
+				}
 
-				// <command id="CmdDataTree-MoveDown-Pronunciation" label="Move Pronunciation _Down" message="MoveDownObjectInSequence" icon="MoveDown">
-				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveDownObjectInOwningSequence_Clicked, LexiconResources.Move_Pronunciation_Down, image: imageHolder.smallCommandImages.Images[14]);
 				enabled = AreaServices.CanMoveDownObjectInOwningSequence(MyDataTree, _cache, out visible);
-				menu.Visible = true;
-				menu.Enabled = enabled;
+				if (visible)
+				{
+					// <command id="CmdDataTree-MoveDown-Pronunciation" label="Move Pronunciation _Down" message="MoveDownObjectInSequence" icon="MoveDown">
+					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveDownObjectInOwningSequence_Clicked, LexiconResources.Move_Pronunciation_Down, image: imageHolder.smallCommandImages.Images[14]);
+					menu.Enabled = enabled;
+				}
 			}
 
 			// <item label="-" translate="do not translate"/>
@@ -379,7 +396,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(6);
 
 			// <item command="CmdDataTree-Insert-Etymology" label="Insert _Etymology"/>
-			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconEditToolConstants.CmdDataTree_Insert_Etymology], LexiconResources.Insert_Etymology, LexiconResources.Insert_Etymology_Tooltip);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconEditToolConstants.CmdDataTree_Insert_Etymology], LexiconResources.Insert_Etymology, LexiconResources.Insert_Etymology_Tooltip);
 
 			// <item label="-" translate="do not translate"/>
 			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
@@ -388,17 +405,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				// <command id="CmdDataTree-MoveUp-Etymology" label="Move Etymology _Up" message="MoveUpObjectInSequence" icon="MoveUp">
 				//	<parameters field="Etymology" className="LexEtymology"/>
-				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInOwningSequence_Clicked, LexiconResources.Move_Etymology_Up, image: imageHolder.smallCommandImages.Images[12]);
+				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInOwningSequence_Clicked, LexiconResources.Move_Etymology_Up, image: imageHolder.smallCommandImages.Images[12]);
 				bool visible;
-				var enabled = AreaServices.CanMoveUpObjectInOwningSequence(MyDataTree, _cache, out visible);
-				menu.Visible = true;
-				menu.Enabled = enabled;
+				menu.Enabled = AreaServices.CanMoveUpObjectInOwningSequence(MyDataTree, _cache, out visible);
+
 				// <command id="CmdDataTree-MoveDown-Etymology" label="Move Etymology _Down" message="MoveDownObjectInSequence" icon="MoveDown">
 				//	<parameters field="Etymology" className="LexEtymology"/>
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveDownObjectInOwningSequence_Clicked, LexiconResources.Move_Etymology_Down, image: imageHolder.smallCommandImages.Images[14]);
-				enabled = AreaServices.CanMoveDownObjectInOwningSequence(MyDataTree, _cache, out visible);
-				menu.Visible = true;
-				menu.Enabled = enabled;
+				menu.Enabled = AreaServices.CanMoveDownObjectInOwningSequence(MyDataTree, _cache, out visible);
 			}
 
 			// <item label="-" translate="do not translate"/>
@@ -444,7 +458,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(3);
 
 			// <command id="CmdDataTree-Delete-LexReference" label="Delete Relation" message="DataTreeDelete" icon="Delete" />
-			CreateDeleteLexReferenceMenu(menuItems, contextMenuStrip, slice);
+			AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Relation, DataTreeDelete_LexReference_Clicked);
 
 			// <command id="CmdDataTree-Add-ToLexReference" label="Add Reference" message="DataTreeAddReference" />
 			CreateAdd_Replace_LexReferenceMenu(menuItems, contextMenuStrip, slice, LanguageExplorerResources.ksIdentifyRecord);
@@ -473,7 +487,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(3);
 
 			// <command id="CmdDataTree-Delete-LexReference" label="Delete Relation" message="DataTreeDelete" icon="Delete" />
-			CreateDeleteLexReferenceMenu(menuItems, contextMenuStrip, slice);
+			AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Relation, DataTreeDelete_LexReference_Clicked);
 
 			// <command id="CmdDataTree-Replace-LexReference" label="Replace Reference" message="DataTreeAddReference" />
 			CreateAdd_Replace_LexReferenceMenu(menuItems, contextMenuStrip, slice, LexiconResources.ksReplaceXEntry);
@@ -499,21 +513,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private void DataTree_Edit_LexReference_Clicked(object sender, EventArgs e)
 		{
 			MyDataTree.CurrentSlice.HandleEditCommand();
-		}
-
-		private void CreateDeleteLexReferenceMenu(List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, ContextMenuStrip contextMenuStrip, Slice slice)
-		{
-			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, DataTreeDelete_LexReference_Clicked, LexiconResources.Delete_Relation, image: LanguageExplorerResources.Delete);
-			if (slice.IsGhostSlice)
-			{
-				menu.Visible = menu.Enabled = false;
-			}
-			else
-			{
-				menu.Visible = true;
-				menu.Enabled = slice.CanDeleteNow;
-			}
-			menu.ImageTransparentColor = Color.Magenta;
 		}
 
 		private void CreateAdd_Replace_LexReferenceMenu(List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, ContextMenuStrip contextMenuStrip, Slice slice, string menuText)

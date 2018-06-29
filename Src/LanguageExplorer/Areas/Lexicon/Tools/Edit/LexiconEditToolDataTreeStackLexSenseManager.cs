@@ -268,15 +268,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				// <command id="CmdDataTree-MoveUp-ExtNote" label="Move Extended Note _Up" message="MoveUpObjectInSequence" icon="MoveUp">
 				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconAreaConstants.MoveUpObjectInOwningSequence], LexiconResources.Move_Extended_Note_Up, image: imageHolder.smallCommandImages.Images[12]);
 				bool visible;
-				var enabled = AreaServices.CanMoveUpObjectInOwningSequence(MyDataTree, _cache, out visible);
-				menu.Visible = true;
-				menu.Enabled = enabled;
+				menu.Enabled = AreaServices.CanMoveUpObjectInOwningSequence(MyDataTree, _cache, out visible);
 
 				// <command id="CmdDataTree-MoveDown-ExtNote" label="Move Extended Note _Down" message="MoveDownObjectInSequence" icon="MoveDown">
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconAreaConstants.MoveDownObjectInOwningSequence], LexiconResources.Move_Extended_Note_Down, image: imageHolder.smallCommandImages.Images[14]);
-				enabled = AreaServices.CanMoveDownObjectInOwningSequence(MyDataTree, _cache, out visible);
-				menu.Visible = true;
-				menu.Enabled = enabled;
+				menu.Enabled = AreaServices.CanMoveDownObjectInOwningSequence(MyDataTree, _cache, out visible);
 			}
 
 			// <item label="-" translate="do not translate"/>
@@ -324,15 +320,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				// <command id="CmdDataTree-MoveUp-ExampleInNote" label="Move Example _Up" message="MoveUpObjectInSequence" icon="MoveUp">
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconAreaConstants.MoveUpObjectInOwningSequence], LexiconResources.Move_Example_Up, image: imageHolder.smallCommandImages.Images[12]);
 				bool visible;
-				var enabled = AreaServices.CanMoveUpObjectInOwningSequence(MyDataTree, _cache, out visible);
-				menu.Visible = true;
-				menu.Enabled = enabled;
+				menu.Enabled = AreaServices.CanMoveUpObjectInOwningSequence(MyDataTree, _cache, out visible);
 
 				// <command id="CmdDataTree-MoveDown-ExampleInNote" label="Move Example _Down" message="MoveDownObjectInSequence" icon="MoveDown">
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconAreaConstants.MoveDownObjectInOwningSequence], LexiconResources.Move_Example_Down, image: imageHolder.smallCommandImages.Images[14]);
-				enabled = AreaServices.CanMoveDownObjectInOwningSequence(MyDataTree, _cache, out visible);
-				menu.Visible = true;
-				menu.Enabled = enabled;
+				menu.Enabled = AreaServices.CanMoveDownObjectInOwningSequence(MyDataTree, _cache, out visible);
 			}
 
 			// End: <menu id="mnuDataTree-ExtendedNote-Examples">
@@ -368,15 +360,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				// <command id="CmdDataTree-MoveUp-Picture" label="Move Picture _Up" message="MoveUpObjectInSequence" icon="MoveUp">
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconAreaConstants.MoveUpObjectInOwningSequence], LexiconResources.Move_Picture_Up, image: imageHolder.smallCommandImages.Images[12]);
 				bool visible;
-				var enabled = AreaServices.CanMoveUpObjectInOwningSequence(MyDataTree, _cache, out visible);
-				menu.Visible = true;
-				menu.Enabled = enabled;
+				menu.Enabled = AreaServices.CanMoveUpObjectInOwningSequence(MyDataTree, _cache, out visible);
 
 				// <command id="CmdDataTree-MoveDown-Picture" label="Move Picture _Down" message="MoveDownObjectInSequence" icon="MoveDown">
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconAreaConstants.MoveDownObjectInOwningSequence], LexiconResources.Move_Picture_Down, image: imageHolder.smallCommandImages.Images[14]);
-				enabled = AreaServices.CanMoveDownObjectInOwningSequence(MyDataTree, _cache, out visible);
-				menu.Visible = true;
-				menu.Enabled = enabled;
+				menu.Enabled = AreaServices.CanMoveDownObjectInOwningSequence(MyDataTree, _cache, out visible);
 			}
 
 			// <item label="-" translate="do not translate"/>
@@ -475,15 +463,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				// <command id="CmdDataTree-MoveUp-Example" label="Move Example _Up" message="MoveUpObjectInSequence" icon="MoveUp">
 				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconAreaConstants.MoveUpObjectInOwningSequence], LexiconResources.Move_Example_Up, image: imageHolder.smallCommandImages.Images[12]);
 				bool visible;
-				var enabled = AreaServices.CanMoveUpObjectInOwningSequence(MyDataTree, _cache, out visible);
-				menu.Visible = true;
-				menu.Enabled = enabled;
+				menu.Enabled = AreaServices.CanMoveUpObjectInOwningSequence(MyDataTree, _cache, out visible);
 
 				// <command id="CmdDataTree-MoveDown-Example" label="Move Example _Down" message="MoveDownObjectInSequence" icon="MoveDown">
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconAreaConstants.MoveDownObjectInOwningSequence], LexiconResources.Move_Example_Down, image: imageHolder.smallCommandImages.Images[14]);
-				enabled = AreaServices.CanMoveDownObjectInOwningSequence(MyDataTree, _cache, out visible);
-				menu.Visible = true;
-				menu.Enabled = enabled;
+				menu.Enabled = AreaServices.CanMoveDownObjectInOwningSequence(MyDataTree, _cache, out visible);
 			}
 
 			// <item label="-" translate="do not translate"/>
@@ -544,24 +528,18 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				// <command id="CmdDataTree-MoveUp-Sense" label="Move Sense Up" message="MoveUpObjectInSequence" icon="MoveUp">
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconAreaConstants.MoveUpObjectInOwningSequence], LexiconResources.Move_Sense_Up, image: imageHolder.smallCommandImages.Images[12]);
 				bool visible;
-				var enabled = AreaServices.CanMoveUpObjectInOwningSequence(MyDataTree, _cache, out visible);
-				menu.Visible = true;
-				menu.Enabled = enabled;
+				menu.Enabled = AreaServices.CanMoveUpObjectInOwningSequence(MyDataTree, _cache, out visible);
 
 				// <command id="CmdDataTree-MoveDown-Sense" label="Move Sense Down" message="MoveDownObjectInSequence" icon="MoveDown">
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconAreaConstants.MoveDownObjectInOwningSequence], LexiconResources.Move_Sense_Down, image: imageHolder.smallCommandImages.Images[14]);
-				enabled = AreaServices.CanMoveDownObjectInOwningSequence(MyDataTree, _cache, out visible);
-				menu.Visible = true;
-				menu.Enabled = enabled;
+				menu.Enabled = AreaServices.CanMoveDownObjectInOwningSequence(MyDataTree, _cache, out visible);
 
 				// <command id="CmdDataTree-MakeSub-Sense" label="Demote" message="DemoteSense" icon="MoveRight"> AreaResources.Demote
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Demote_Sense_Clicked, AreaResources.Demote, image: imageHolder.smallCommandImages.Images[13]);
-				menu.Visible = true;
 				menu.Enabled = CanDemoteSense(slice);
 
 				// <command id="CmdDataTree-Promote-Sense" label="Promote" message="PromoteSense" icon="MoveLeft"> AreaResources.Promote
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Promote_Sense_Clicked, AreaResources.Promote, image: imageHolder.smallCommandImages.Images[15]);
-				menu.Visible = true;
 				menu.Enabled = CanPromoteSense(slice);
 			}
 
@@ -570,12 +548,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			// <command id="CmdDataTree-Merge-Sense" label="Merge Sense into..." message="DataTreeMerge">
 			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconAreaConstants.DataTreeMerge], LexiconResources.Merge_Sense_into);
-			menu.Visible = true;
 			menu.Enabled = slice.CanMergeNow;
 
 			// <command id="CmdDataTree-Split-Sense" label="Move Sense to a New Entry" message="DataTreeSplit">
 			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconAreaConstants.DataTreeSplit], LexiconResources.Move_Sense_to_a_New_Entry);
-			menu.Visible = true;
 			menu.Enabled = slice.CanSplitNow;
 
 			// <command id="CmdDataTree-Delete-Sense" label="Delete this Sense and any Subsenses" message="DataTreeDeleteSense" icon="Delete">

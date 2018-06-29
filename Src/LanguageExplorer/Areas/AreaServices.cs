@@ -380,7 +380,6 @@ namespace LanguageExplorer.Areas
 				menu.Text = $"{menuText} {StringTable.Table.GetString("(cannot delete this)")}";
 			}
 			menu.ImageTransparentColor = Color.Magenta;
-			menu.Enabled = slice.CanDeleteNow;
 		}
 	}
 }

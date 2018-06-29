@@ -20,7 +20,7 @@ namespace LanguageExplorer.LcmUi
 			Debug.Assert(m_iType == CellarPropertyType.ReferenceCollection);
 		}
 
-		public override string ContextMenuId
+		protected override string ContextMenuId
 		{
 			get
 			{

@@ -84,11 +84,44 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public ObjectWeight Weight { get; set; } = ObjectWeight.field;
 
-		internal string HotlinksMenuId => XmlUtils.GetOptionalAttributeValue(CallerNode ?? ConfigurationNode, HotlinksAttributeName, string.Empty);
+		internal string HotlinksMenuId
+		{
+			get
+			{
+				var hotlinksMenuId = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, HotlinksAttributeName, string.Empty);
+				if (string.IsNullOrWhiteSpace(hotlinksMenuId))
+				{
+					hotlinksMenuId = XmlUtils.GetOptionalAttributeValue(CallerNode, HotlinksAttributeName, string.Empty);
+				}
+				return hotlinksMenuId; // It may still be string.Empty.
+			}
+		}
 
-		internal string LeftEdgeMenuId => XmlUtils.GetOptionalAttributeValue(CallerNode ?? ConfigurationNode, MenuAttributeName, string.Empty);
+		internal string LeftEdgeMenuId
+		{
+			get
+			{
+				var leftEdgeMenuId = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, MenuAttributeName, string.Empty);
+				if (string.IsNullOrWhiteSpace(leftEdgeMenuId))
+				{
+					leftEdgeMenuId = XmlUtils.GetOptionalAttributeValue(CallerNode, MenuAttributeName, string.Empty);
+				}
+				return leftEdgeMenuId; // It may still be string.Empty.
+			}
+		}
 
-		internal string ContextMenuMenuId => XmlUtils.GetOptionalAttributeValue(CallerNode ?? ConfigurationNode, ContextMenuAttributeName, string.Empty);
+		internal string ContextMenuMenuId
+		{
+			get
+			{
+				var contextMenuId = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, ContextMenuAttributeName, string.Empty);
+				if (string.IsNullOrWhiteSpace(contextMenuId))
+				{
+					contextMenuId = XmlUtils.GetOptionalAttributeValue(CallerNode, ContextMenuAttributeName, string.Empty);
+				}
+				return contextMenuId; // It may still be string.Empty.
+			}
+		}
 
 		internal void RemoveOldVisibilityMenus()
 		{

@@ -62,7 +62,7 @@ namespace LanguageExplorer.LcmUi
 		}
 		#endregion
 
-		public override string ContextMenuId => "mnuReferenceChoices";
+		protected override string ContextMenuId => "mnuReferenceChoices";
 
 		public ReferenceBaseUi(ICmObject rootObj) : base(rootObj) { }
 		public ReferenceBaseUi() { }
