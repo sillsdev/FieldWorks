@@ -13,7 +13,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	/// <summary>
 	/// A slice to show the IReversalIndexEntry objects.
 	/// </summary>
-	internal sealed class ReversalIndexEntrySlice : ViewPropertySlice, IVwNotifyChange
+	internal class ReversalIndexEntrySlice : ViewPropertySlice, IVwNotifyChange
 	{
 		/// <summary>
 		/// Use this to do the Add/RemoveNotifications.

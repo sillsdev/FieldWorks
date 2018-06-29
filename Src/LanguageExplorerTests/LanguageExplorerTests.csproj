@@ -300,6 +300,10 @@
     <Compile Include="Areas\Lexicon\LexEntryChangeHandlerTests.cs" />
     <Compile Include="Areas\Lexicon\LexReferenceTreeRootLauncherTests.cs" />
     <Compile Include="Areas\Lexicon\CircularRefBreakerTests.cs" />
+    <Compile Include="Areas\Lexicon\DummyReversalIndexEntrySlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+	<Compile Include="Areas\Lexicon\ReversalEntryViewTests.cs" />
     <Compile Include="Areas\Lexicon\SortReversalSubEntriesTests.cs" />
     <Compile Include="Areas\Lexicon\LexiconTestUtils.cs" />
     <Compile Include="Controls\LexText\LexImportTests.cs" />
