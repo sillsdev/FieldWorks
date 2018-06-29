@@ -28,7 +28,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -89,9 +88,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.pnlMoveButtons = new System.Windows.Forms.Panel();
 			this.btnTreatAsPunct = new System.Windows.Forms.Button();
 			this.btnTreatAsWrdForming = new System.Windows.Forms.Button();
-			this.pnlNumbers = new SIL.FieldWorks.Common.Controls.FwPanel();
-			this.chrGridNumbers = new SIL.FieldWorks.Common.Controls.CharacterGrid();
-			this.hlblNumbers = new SIL.FieldWorks.Common.Controls.HeaderLabel();
 			this.label4 = new System.Windows.Forms.Label();
 			this.cboSortOrder = new System.Windows.Forms.ComboBox();
 			this.btnAddCharacters = new System.Windows.Forms.Button();
@@ -100,6 +96,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.lblValidChars = new System.Windows.Forms.Label();
 			this.m_tooltip = new System.Windows.Forms.ToolTip(this.components);
 			this.panel2.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.splitContainerOuter)).BeginInit();
 			this.splitContainerOuter.Panel1.SuspendLayout();
 			this.splitContainerOuter.Panel2.SuspendLayout();
 			this.splitContainerOuter.SuspendLayout();
@@ -116,9 +113,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.tabData.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.gridCharInventory)).BeginInit();
 			this.tabUnicode.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.splitValidCharsOuter)).BeginInit();
 			this.splitValidCharsOuter.Panel1.SuspendLayout();
-			this.splitValidCharsOuter.Panel2.SuspendLayout();
 			this.splitValidCharsOuter.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.splitValidCharsInner)).BeginInit();
 			this.splitValidCharsInner.Panel1.SuspendLayout();
 			this.splitValidCharsInner.Panel2.SuspendLayout();
 			this.splitValidCharsInner.SuspendLayout();
@@ -127,123 +125,118 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.pnlOther.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.chrGridOther)).BeginInit();
 			this.pnlMoveButtons.SuspendLayout();
-			this.pnlNumbers.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.chrGridNumbers)).BeginInit();
 			this.SuspendLayout();
-			//
+			// 
 			// dataGridViewTextBoxColumn1
-			//
+			// 
 			this.dataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			this.dataGridViewTextBoxColumn1.DataPropertyName = "Character";
 			resources.ApplyResources(this.dataGridViewTextBoxColumn1, "dataGridViewTextBoxColumn1");
 			this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
 			this.dataGridViewTextBoxColumn1.ReadOnly = true;
 			this.dataGridViewTextBoxColumn1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-			//
+			// 
 			// dataGridViewTextBoxColumn2
-			//
+			// 
 			this.dataGridViewTextBoxColumn2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
 			this.dataGridViewTextBoxColumn2.DataPropertyName = "CharacterCodes";
 			resources.ApplyResources(this.dataGridViewTextBoxColumn2, "dataGridViewTextBoxColumn2");
 			this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
 			this.dataGridViewTextBoxColumn2.ReadOnly = true;
 			this.dataGridViewTextBoxColumn2.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-			//
+			// 
 			// dataGridViewTextBoxColumn3
-			//
+			// 
 			this.dataGridViewTextBoxColumn3.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
 			this.dataGridViewTextBoxColumn3.DataPropertyName = "Count";
 			resources.ApplyResources(this.dataGridViewTextBoxColumn3, "dataGridViewTextBoxColumn3");
 			this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
 			this.dataGridViewTextBoxColumn3.ReadOnly = true;
 			this.dataGridViewTextBoxColumn3.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-			//
+			// 
 			// dataGridViewTextBoxColumn4
-			//
+			// 
 			this.dataGridViewTextBoxColumn4.DataPropertyName = "Reference";
 			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
 			this.dataGridViewTextBoxColumn4.DefaultCellStyle = dataGridViewCellStyle1;
-			this.dataGridViewTextBoxColumn4.HeaderText = global::SIL.FieldWorks.FwCoreDlgs.FwCoreDlgs.kstidOpen;
+			resources.ApplyResources(this.dataGridViewTextBoxColumn4, "dataGridViewTextBoxColumn4");
 			this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
 			this.dataGridViewTextBoxColumn4.ReadOnly = true;
-			resources.ApplyResources(this.dataGridViewTextBoxColumn4, "dataGridViewTextBoxColumn4");
-			//
+			// 
 			// dataGridViewTextBoxColumn5
-			//
+			// 
 			this.dataGridViewTextBoxColumn5.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
 			this.dataGridViewTextBoxColumn5.DataPropertyName = "Before";
 			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
 			this.dataGridViewTextBoxColumn5.DefaultCellStyle = dataGridViewCellStyle2;
-			this.dataGridViewTextBoxColumn5.HeaderText = global::SIL.FieldWorks.FwCoreDlgs.FwCoreDlgs.kstidOpen;
+			resources.ApplyResources(this.dataGridViewTextBoxColumn5, "dataGridViewTextBoxColumn5");
 			this.dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
 			this.dataGridViewTextBoxColumn5.ReadOnly = true;
-			//
+			// 
 			// dataGridViewTextBoxColumn6
-			//
+			// 
 			this.dataGridViewTextBoxColumn6.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
 			this.dataGridViewTextBoxColumn6.DataPropertyName = "Character";
 			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
 			dataGridViewCellStyle3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
 			this.dataGridViewTextBoxColumn6.DefaultCellStyle = dataGridViewCellStyle3;
-			this.dataGridViewTextBoxColumn6.HeaderText = global::SIL.FieldWorks.FwCoreDlgs.FwCoreDlgs.kstidOpen;
+			resources.ApplyResources(this.dataGridViewTextBoxColumn6, "dataGridViewTextBoxColumn6");
 			this.dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
 			this.dataGridViewTextBoxColumn6.ReadOnly = true;
-			resources.ApplyResources(this.dataGridViewTextBoxColumn6, "dataGridViewTextBoxColumn6");
-			//
+			// 
 			// dataGridViewTextBoxColumn7
-			//
+			// 
 			this.dataGridViewTextBoxColumn7.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
 			this.dataGridViewTextBoxColumn7.DataPropertyName = "After";
 			dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
 			this.dataGridViewTextBoxColumn7.DefaultCellStyle = dataGridViewCellStyle4;
-			this.dataGridViewTextBoxColumn7.HeaderText = global::SIL.FieldWorks.FwCoreDlgs.FwCoreDlgs.kstidOpen;
+			resources.ApplyResources(this.dataGridViewTextBoxColumn7, "dataGridViewTextBoxColumn7");
 			this.dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
 			this.dataGridViewTextBoxColumn7.ReadOnly = true;
-			resources.ApplyResources(this.dataGridViewTextBoxColumn7, "dataGridViewTextBoxColumn7");
-			//
+			// 
 			// btnOk
-			//
+			// 
 			resources.ApplyResources(this.btnOk, "btnOk");
 			this.btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.btnOk.Name = "btnOk";
 			this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
-			//
+			// 
 			// btnCancel
-			//
+			// 
 			resources.ApplyResources(this.btnCancel, "btnCancel");
 			this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.btnCancel.Name = "btnCancel";
-			//
+			// 
 			// btnHelp
-			//
+			// 
 			resources.ApplyResources(this.btnHelp, "btnHelp");
 			this.btnHelp.Name = "btnHelp";
 			this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
-			//
+			// 
 			// panel2
-			//
+			// 
 			this.panel2.Controls.Add(this.btnOk);
 			this.panel2.Controls.Add(this.btnHelp);
 			this.panel2.Controls.Add(this.btnCancel);
 			resources.ApplyResources(this.panel2, "panel2");
 			this.panel2.Name = "panel2";
-			//
+			// 
 			// m_lblWsName
-			//
+			// 
 			resources.ApplyResources(this.m_lblWsName, "m_lblWsName");
 			this.m_lblWsName.Name = "m_lblWsName";
-			//
+			// 
 			// splitContainerOuter
-			//
+			// 
 			resources.ApplyResources(this.splitContainerOuter, "splitContainerOuter");
 			this.splitContainerOuter.Name = "splitContainerOuter";
-			//
+			// 
 			// splitContainerOuter.Panel1
-			//
+			// 
 			this.splitContainerOuter.Panel1.Controls.Add(this.tabCtrlAddFrom);
-			//
+			// 
 			// splitContainerOuter.Panel2
-			//
+			// 
 			this.splitContainerOuter.Panel2.Controls.Add(this.splitValidCharsOuter);
 			this.splitContainerOuter.Panel2.Controls.Add(this.label4);
 			this.splitContainerOuter.Panel2.Controls.Add(this.cboSortOrder);
@@ -252,9 +245,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.splitContainerOuter.Panel2.Controls.Add(this.btnRemoveChar);
 			this.splitContainerOuter.Panel2.Controls.Add(this.lblValidChars);
 			this.splitContainerOuter.TabStop = false;
-			//
+			// 
 			// tabCtrlAddFrom
-			//
+			// 
 			this.tabCtrlAddFrom.Controls.Add(this.tabBasedOn);
 			this.tabCtrlAddFrom.Controls.Add(this.tabManual);
 			this.tabCtrlAddFrom.Controls.Add(this.tabData);
@@ -264,9 +257,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.tabCtrlAddFrom.SelectedIndex = 0;
 			this.tabCtrlAddFrom.SelectedIndexChanged += new System.EventHandler(this.tabControlAddFrom_SelectedIndexChanged);
 			this.tabCtrlAddFrom.ClientSizeChanged += new System.EventHandler(this.tabCtrlAddFrom_ClientSizeChanged);
-			//
+			// 
 			// tabBasedOn
-			//
+			// 
 			this.tabBasedOn.Controls.Add(this.rdoLanguageFile);
 			this.tabBasedOn.Controls.Add(this.btnBrowseLangFile);
 			this.tabBasedOn.Controls.Add(this.label2);
@@ -277,36 +270,36 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			resources.ApplyResources(this.tabBasedOn, "tabBasedOn");
 			this.tabBasedOn.Name = "tabBasedOn";
 			this.tabBasedOn.UseVisualStyleBackColor = true;
-			//
+			// 
 			// rdoLanguageFile
-			//
+			// 
 			resources.ApplyResources(this.rdoLanguageFile, "rdoLanguageFile");
 			this.rdoLanguageFile.AutoEllipsis = true;
 			this.rdoLanguageFile.Name = "rdoLanguageFile";
 			this.rdoLanguageFile.UseVisualStyleBackColor = true;
 			this.rdoLanguageFile.CheckedChanged += new System.EventHandler(this.BasedOnRadioButton_CheckedChanged);
-			//
+			// 
 			// btnBrowseLangFile
-			//
+			// 
 			resources.ApplyResources(this.btnBrowseLangFile, "btnBrowseLangFile");
 			this.btnBrowseLangFile.Name = "btnBrowseLangFile";
 			this.btnBrowseLangFile.UseVisualStyleBackColor = true;
 			this.btnBrowseLangFile.Click += new System.EventHandler(this.btnBrowseLangFile_Click);
-			//
+			// 
 			// label2
-			//
+			// 
 			resources.ApplyResources(this.label2, "label2");
 			this.label2.Name = "label2";
-			//
+			// 
 			// txtLanguageFile
-			//
+			// 
 			resources.ApplyResources(this.txtLanguageFile, "txtLanguageFile");
 			this.txtLanguageFile.Name = "txtLanguageFile";
 			this.txtLanguageFile.TextChanged += new System.EventHandler(this.tabControlAddFrom_SelectedIndexChanged);
 			this.txtLanguageFile.Enter += new System.EventHandler(this.txtLanguageFile_Enter);
-			//
+			// 
 			// btnSimilarWs
-			//
+			// 
 			resources.ApplyResources(this.btnSimilarWs, "btnSimilarWs");
 			this.btnSimilarWs.DisplayLocaleId = null;
 			this.btnSimilarWs.Image = global::SIL.FieldWorks.FwCoreDlgs.Properties.Resources.ButtonDropDownArrow;
@@ -314,25 +307,25 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.btnSimilarWs.SelectedLocaleId = null;
 			this.btnSimilarWs.UseVisualStyleBackColor = true;
 			this.btnSimilarWs.LocaleSelected += new System.EventHandler(this.btnSimilarWs_LocaleSelected);
-			//
+			// 
 			// rdoSimilarWs
-			//
+			// 
 			this.rdoSimilarWs.AutoEllipsis = true;
 			resources.ApplyResources(this.rdoSimilarWs, "rdoSimilarWs");
 			this.rdoSimilarWs.Checked = true;
 			this.rdoSimilarWs.Name = "rdoSimilarWs";
 			this.rdoSimilarWs.TabStop = true;
 			this.rdoSimilarWs.UseVisualStyleBackColor = true;
-			this.rdoSimilarWs.TextChanged += new System.EventHandler(this.rdoSimilarWs_TextChanged);
 			this.rdoSimilarWs.CheckedChanged += new System.EventHandler(this.BasedOnRadioButton_CheckedChanged);
-			//
+			this.rdoSimilarWs.TextChanged += new System.EventHandler(this.rdoSimilarWs_TextChanged);
+			// 
 			// panel1
-			//
+			// 
 			resources.ApplyResources(this.panel1, "panel1");
 			this.panel1.Name = "panel1";
-			//
+			// 
 			// tabManual
-			//
+			// 
 			this.tabManual.Controls.Add(this.rbUnicodeValue);
 			this.tabManual.Controls.Add(this.grpUnicodeValue);
 			this.tabManual.Controls.Add(this.rbCharRange);
@@ -342,29 +335,29 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			resources.ApplyResources(this.tabManual, "tabManual");
 			this.tabManual.Name = "tabManual";
 			this.tabManual.UseVisualStyleBackColor = true;
-			//
+			// 
 			// rbUnicodeValue
-			//
+			// 
 			resources.ApplyResources(this.rbUnicodeValue, "rbUnicodeValue");
 			this.rbUnicodeValue.Name = "rbUnicodeValue";
 			this.rbUnicodeValue.UseVisualStyleBackColor = true;
 			this.rbUnicodeValue.CheckedChanged += new System.EventHandler(this.HandleCheckedChanged);
-			//
+			// 
 			// grpUnicodeValue
-			//
+			// 
 			resources.ApplyResources(this.grpUnicodeValue, "grpUnicodeValue");
 			this.grpUnicodeValue.Controls.Add(this.lblUnicodeValue);
 			this.grpUnicodeValue.Controls.Add(this.txtUnicodeValue);
 			this.grpUnicodeValue.Name = "grpUnicodeValue";
 			this.grpUnicodeValue.TabStop = false;
-			//
+			// 
 			// lblUnicodeValue
-			//
+			// 
 			resources.ApplyResources(this.lblUnicodeValue, "lblUnicodeValue");
 			this.lblUnicodeValue.Name = "lblUnicodeValue";
-			//
+			// 
 			// txtUnicodeValue
-			//
+			// 
 			this.txtUnicodeValue.AcceptsReturn = false;
 			this.txtUnicodeValue.AdjustStringHeight = true;
 			resources.ApplyResources(this.txtUnicodeValue, "txtUnicodeValue");
@@ -376,25 +369,25 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.txtUnicodeValue.WordWrap = false;
 			this.txtUnicodeValue.TextChanged += new System.EventHandler(this.txtUnicodeValue_TextChanged);
 			this.txtUnicodeValue.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtUnicodeValue_KeyPress);
-			//
+			// 
 			// rbCharRange
-			//
+			// 
 			resources.ApplyResources(this.rbCharRange, "rbCharRange");
 			this.rbCharRange.Name = "rbCharRange";
 			this.rbCharRange.UseVisualStyleBackColor = true;
 			this.rbCharRange.CheckedChanged += new System.EventHandler(this.HandleCheckedChanged);
-			//
+			// 
 			// rbSingleChar
-			//
+			// 
 			resources.ApplyResources(this.rbSingleChar, "rbSingleChar");
 			this.rbSingleChar.Checked = true;
 			this.rbSingleChar.Name = "rbSingleChar";
 			this.rbSingleChar.TabStop = true;
 			this.rbSingleChar.UseVisualStyleBackColor = true;
 			this.rbSingleChar.CheckedChanged += new System.EventHandler(this.HandleCheckedChanged);
-			//
+			// 
 			// grpCharRange
-			//
+			// 
 			resources.ApplyResources(this.grpCharRange, "grpCharRange");
 			this.grpCharRange.Controls.Add(this.lblLastCharCode);
 			this.grpCharRange.Controls.Add(this.lblFirstCharCode);
@@ -405,30 +398,30 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.grpCharRange.Controls.Add(this.txtFirstChar);
 			this.grpCharRange.Name = "grpCharRange";
 			this.grpCharRange.TabStop = false;
-			//
+			// 
 			// lblLastCharCode
-			//
+			// 
 			resources.ApplyResources(this.lblLastCharCode, "lblLastCharCode");
 			this.lblLastCharCode.Name = "lblLastCharCode";
-			//
+			// 
 			// lblFirstCharCode
-			//
+			// 
 			resources.ApplyResources(this.lblFirstCharCode, "lblFirstCharCode");
 			this.lblFirstCharCode.Name = "lblFirstCharCode";
-			//
+			// 
 			// lblRangeMsg
-			//
+			// 
 			resources.ApplyResources(this.lblRangeMsg, "lblRangeMsg");
 			this.lblRangeMsg.AutoEllipsis = true;
 			this.lblRangeMsg.Name = "lblRangeMsg";
-			//
+			// 
 			// lblFirstChar
-			//
+			// 
 			resources.ApplyResources(this.lblFirstChar, "lblFirstChar");
 			this.lblFirstChar.Name = "lblFirstChar";
-			//
+			// 
 			// txtLastChar
-			//
+			// 
 			this.txtLastChar.AcceptsReturn = false;
 			this.txtLastChar.AdjustStringHeight = true;
 			resources.ApplyResources(this.txtLastChar, "txtLastChar");
@@ -439,16 +432,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.txtLastChar.SuppressEnter = false;
 			this.txtLastChar.WordWrap = false;
 			this.txtLastChar.TextChanged += new System.EventHandler(this.txtLastChar_TextChanged);
-			this.txtLastChar.Leave += new System.EventHandler(this.HandleCharTextBoxLeave);
 			this.txtLastChar.Enter += new System.EventHandler(this.HandleCharTextBoxEnter);
-			//
+			this.txtLastChar.Leave += new System.EventHandler(this.HandleCharTextBoxLeave);
+			// 
 			// lblLastChar
-			//
+			// 
 			resources.ApplyResources(this.lblLastChar, "lblLastChar");
 			this.lblLastChar.Name = "lblLastChar";
-			//
+			// 
 			// txtFirstChar
-			//
+			// 
 			this.txtFirstChar.AcceptsReturn = false;
 			this.txtFirstChar.AdjustStringHeight = true;
 			this.txtFirstChar.BackColor = System.Drawing.SystemColors.Window;
@@ -459,24 +452,24 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.txtFirstChar.SuppressEnter = false;
 			this.txtFirstChar.WordWrap = false;
 			this.txtFirstChar.TextChanged += new System.EventHandler(this.txtFirstChar_TextChanged);
-			this.txtFirstChar.Leave += new System.EventHandler(this.HandleCharTextBoxLeave);
 			this.txtFirstChar.Enter += new System.EventHandler(this.HandleCharTextBoxEnter);
-			//
+			this.txtFirstChar.Leave += new System.EventHandler(this.HandleCharTextBoxLeave);
+			// 
 			// grpSingle
-			//
+			// 
 			resources.ApplyResources(this.grpSingle, "grpSingle");
 			this.grpSingle.Controls.Add(this.lblSingle);
 			this.grpSingle.Controls.Add(this.txtManualCharEntry);
 			this.grpSingle.Name = "grpSingle";
 			this.grpSingle.TabStop = false;
-			//
+			// 
 			// lblSingle
-			//
+			// 
 			resources.ApplyResources(this.lblSingle, "lblSingle");
 			this.lblSingle.Name = "lblSingle";
-			//
+			// 
 			// txtManualCharEntry
-			//
+			// 
 			this.txtManualCharEntry.AcceptsReturn = false;
 			this.txtManualCharEntry.AdjustStringHeight = true;
 			resources.ApplyResources(this.txtManualCharEntry, "txtManualCharEntry");
@@ -487,28 +480,28 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.txtManualCharEntry.SuppressEnter = false;
 			this.txtManualCharEntry.WordWrap = false;
 			this.txtManualCharEntry.TextChanged += new System.EventHandler(this.txtManualCharEntry_TextChanged);
-			this.txtManualCharEntry.Leave += new System.EventHandler(this.HandleCharTextBoxLeave);
 			this.txtManualCharEntry.Enter += new System.EventHandler(this.HandleCharTextBoxEnter);
-			//
+			this.txtManualCharEntry.Leave += new System.EventHandler(this.HandleCharTextBoxLeave);
+			// 
 			// tabData
-			//
+			// 
 			this.tabData.Controls.Add(this.contextCtrl);
 			this.tabData.Controls.Add(this.gridCharInventory);
 			resources.ApplyResources(this.tabData, "tabData");
 			this.tabData.Name = "tabData";
 			this.tabData.UseVisualStyleBackColor = true;
-			//
+			// 
 			// contextCtrl
-			//
+			// 
 			this.contextCtrl.DisplayedListName = "characters";
 			resources.ApplyResources(this.contextCtrl, "contextCtrl");
 			this.contextCtrl.Name = "contextCtrl";
 			this.contextCtrl.ScanMsgLabelText = "For a list of characters currently in use, click Scan.";
-			this.contextCtrl.GetContextInfo += new SIL.FieldWorks.FwCoreDlgs.CharContextCtrl.GetContextInfoHandler(this.contextCtrl_GetContextInfo);
 			this.contextCtrl.TextTokenSubStringsLoaded += new SIL.FieldWorks.FwCoreDlgs.CharContextCtrl.TextTokenSubStringsLoadedHandler(this.contextCtrl_TextTokenSubStringsLoaded);
-			//
+			this.contextCtrl.GetContextInfo += new SIL.FieldWorks.FwCoreDlgs.CharContextCtrl.GetContextInfoHandler(this.contextCtrl_GetContextInfo);
+			// 
 			// gridCharInventory
-			//
+			// 
 			this.gridCharInventory.AllowUserToAddRows = false;
 			this.gridCharInventory.AllowUserToDeleteRows = false;
 			this.gridCharInventory.AllowUserToResizeRows = false;
@@ -516,100 +509,96 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.gridCharInventory.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.gridCharInventory.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.gridCharInventory.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-			this.colChar,
-			this.colCharCode,
-			this.colCount,
-			this.colStatus});
+            this.colChar,
+            this.colCharCode,
+            this.colCount,
+            this.colStatus});
 			resources.ApplyResources(this.gridCharInventory, "gridCharInventory");
 			this.gridCharInventory.MultiSelect = false;
 			this.gridCharInventory.Name = "gridCharInventory";
 			this.gridCharInventory.RowHeadersVisible = false;
 			this.gridCharInventory.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
 			this.gridCharInventory.VirtualMode = true;
-			this.gridCharInventory.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.gridCharInventory_ColumnHeaderMouseClick);
-			this.gridCharInventory.CellValueNeeded += new System.Windows.Forms.DataGridViewCellValueEventHandler(this.gridCharInventory_CellValueNeeded);
 			this.gridCharInventory.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.gridCharInventory_CellFormatting);
 			this.gridCharInventory.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.gridCharInventory_CellPainting);
+			this.gridCharInventory.CellValueNeeded += new System.Windows.Forms.DataGridViewCellValueEventHandler(this.gridCharInventory_CellValueNeeded);
 			this.gridCharInventory.CellValuePushed += new System.Windows.Forms.DataGridViewCellValueEventHandler(this.gridCharInventory_CellValuePushed);
-			//
+			this.gridCharInventory.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.gridCharInventory_ColumnHeaderMouseClick);
+			// 
 			// colChar
-			//
+			// 
 			this.colChar.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			this.colChar.DataPropertyName = "Character";
 			resources.ApplyResources(this.colChar, "colChar");
 			this.colChar.Name = "colChar";
 			this.colChar.ReadOnly = true;
 			this.colChar.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-			//
+			// 
 			// colCharCode
-			//
+			// 
 			this.colCharCode.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
 			this.colCharCode.DataPropertyName = "CharacterCodes";
 			resources.ApplyResources(this.colCharCode, "colCharCode");
 			this.colCharCode.Name = "colCharCode";
 			this.colCharCode.ReadOnly = true;
 			this.colCharCode.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-			//
+			// 
 			// colCount
-			//
+			// 
 			this.colCount.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
 			this.colCount.DataPropertyName = "Count";
 			resources.ApplyResources(this.colCount, "colCount");
 			this.colCount.Name = "colCount";
 			this.colCount.ReadOnly = true;
 			this.colCount.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-			//
+			// 
 			// colStatus
-			//
+			// 
 			this.colStatus.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
 			this.colStatus.DataPropertyName = "IsValid";
 			resources.ApplyResources(this.colStatus, "colStatus");
 			this.colStatus.Name = "colStatus";
 			this.colStatus.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-			//
+			// 
 			// tabUnicode
-			//
+			// 
 			this.tabUnicode.Controls.Add(this.label3);
 			resources.ApplyResources(this.tabUnicode, "tabUnicode");
 			this.tabUnicode.Name = "tabUnicode";
 			this.tabUnicode.UseVisualStyleBackColor = true;
-			//
+			// 
 			// label3
-			//
+			// 
 			resources.ApplyResources(this.label3, "label3");
 			this.label3.Name = "label3";
-			//
+			// 
 			// splitValidCharsOuter
-			//
+			// 
 			resources.ApplyResources(this.splitValidCharsOuter, "splitValidCharsOuter");
 			this.splitValidCharsOuter.Name = "splitValidCharsOuter";
-			//
+			// 
 			// splitValidCharsOuter.Panel1
-			//
+			// 
 			this.splitValidCharsOuter.Panel1.Controls.Add(this.splitValidCharsInner);
-			//
-			// splitValidCharsOuter.Panel2
-			//
-			this.splitValidCharsOuter.Panel2.Controls.Add(this.pnlNumbers);
 			this.splitValidCharsOuter.TabStop = false;
-			//
+			// 
 			// splitValidCharsInner
-			//
+			// 
 			resources.ApplyResources(this.splitValidCharsInner, "splitValidCharsInner");
 			this.splitValidCharsInner.Name = "splitValidCharsInner";
-			//
+			// 
 			// splitValidCharsInner.Panel1
-			//
+			// 
 			this.splitValidCharsInner.Panel1.Controls.Add(this.pnlWordForming);
-			//
+			// 
 			// splitValidCharsInner.Panel2
-			//
+			// 
 			this.splitValidCharsInner.Panel2.Controls.Add(this.pnlOther);
 			this.splitValidCharsInner.Panel2.Controls.Add(this.pnlMoveButtons);
 			this.splitValidCharsInner.TabStop = false;
-			//
+			// 
 			// pnlWordForming
-			//
+			// 
 			this.pnlWordForming.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.pnlWordForming.ClipTextForChildControls = true;
 			this.pnlWordForming.ControlReceivingFocusOnMnemonic = null;
@@ -620,9 +609,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.pnlWordForming.MnemonicGeneratesClick = false;
 			this.pnlWordForming.Name = "pnlWordForming";
 			this.pnlWordForming.PaintExplorerBarBackground = false;
-			//
+			// 
 			// chrGridWordForming
-			//
+			// 
 			resources.ApplyResources(this.chrGridWordForming, "chrGridWordForming");
 			this.chrGridWordForming.AllowUserToAddRows = false;
 			this.chrGridWordForming.AllowUserToDeleteRows = false;
@@ -648,20 +637,20 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.chrGridWordForming.ShowCellToolTips = false;
 			this.chrGridWordForming.StandardTab = true;
 			this.chrGridWordForming.VirtualMode = true;
-			this.chrGridWordForming.DoubleClick += new System.EventHandler(this.btnRemoveChar_Click);
 			this.chrGridWordForming.CharacterChanged += new SIL.FieldWorks.Common.Controls.CharacterGrid.CharacterChangedHandler(this.HandleCharGridCharacterChanged);
-			//
+			this.chrGridWordForming.DoubleClick += new System.EventHandler(this.btnRemoveChar_Click);
+			// 
 			// hlblWordForming
-			//
+			// 
 			this.hlblWordForming.ClipTextForChildControls = true;
 			this.hlblWordForming.ControlReceivingFocusOnMnemonic = this.chrGridWordForming;
 			resources.ApplyResources(this.hlblWordForming, "hlblWordForming");
 			this.hlblWordForming.MnemonicGeneratesClick = false;
 			this.hlblWordForming.Name = "hlblWordForming";
 			this.hlblWordForming.ShowWindowBackgroudOnTopAndRightEdge = true;
-			//
+			// 
 			// pnlOther
-			//
+			// 
 			this.pnlOther.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.pnlOther.ClipTextForChildControls = true;
 			this.pnlOther.ControlReceivingFocusOnMnemonic = null;
@@ -672,9 +661,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.pnlOther.MnemonicGeneratesClick = false;
 			this.pnlOther.Name = "pnlOther";
 			this.pnlOther.PaintExplorerBarBackground = false;
-			//
+			// 
 			// chrGridOther
-			//
+			// 
 			resources.ApplyResources(this.chrGridOther, "chrGridOther");
 			this.chrGridOther.AllowUserToAddRows = false;
 			this.chrGridOther.AllowUserToDeleteRows = false;
@@ -701,133 +690,82 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.chrGridOther.StandardTab = true;
 			this.chrGridOther.VirtualMode = true;
 			this.chrGridOther.CharacterChanged += new SIL.FieldWorks.Common.Controls.CharacterGrid.CharacterChangedHandler(this.HandleCharGridCharacterChanged);
-			//
+			// 
 			// hlblOther
-			//
+			// 
 			this.hlblOther.ClipTextForChildControls = true;
 			this.hlblOther.ControlReceivingFocusOnMnemonic = this.chrGridOther;
 			resources.ApplyResources(this.hlblOther, "hlblOther");
 			this.hlblOther.MnemonicGeneratesClick = false;
 			this.hlblOther.Name = "hlblOther";
 			this.hlblOther.ShowWindowBackgroudOnTopAndRightEdge = true;
-			//
+			// 
 			// pnlMoveButtons
-			//
+			// 
 			this.pnlMoveButtons.Controls.Add(this.btnTreatAsPunct);
 			this.pnlMoveButtons.Controls.Add(this.btnTreatAsWrdForming);
 			resources.ApplyResources(this.pnlMoveButtons, "pnlMoveButtons");
 			this.pnlMoveButtons.Name = "pnlMoveButtons";
-			//
+			// 
 			// btnTreatAsPunct
-			//
+			// 
 			resources.ApplyResources(this.btnTreatAsPunct, "btnTreatAsPunct");
 			this.btnTreatAsPunct.Name = "btnTreatAsPunct";
 			this.m_tooltip.SetToolTip(this.btnTreatAsPunct, resources.GetString("btnTreatAsPunct.ToolTip"));
 			this.btnTreatAsPunct.UseVisualStyleBackColor = true;
 			this.btnTreatAsPunct.Click += new System.EventHandler(this.HandleTreatAsClick);
-			//
+			// 
 			// btnTreatAsWrdForming
-			//
+			// 
 			this.btnTreatAsWrdForming.AllowDrop = true;
 			resources.ApplyResources(this.btnTreatAsWrdForming, "btnTreatAsWrdForming");
 			this.btnTreatAsWrdForming.Name = "btnTreatAsWrdForming";
 			this.m_tooltip.SetToolTip(this.btnTreatAsWrdForming, resources.GetString("btnTreatAsWrdForming.ToolTip"));
 			this.btnTreatAsWrdForming.UseVisualStyleBackColor = true;
 			this.btnTreatAsWrdForming.Click += new System.EventHandler(this.HandleTreatAsClick);
-			//
-			// pnlNumbers
-			//
-			this.pnlNumbers.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.pnlNumbers.ClipTextForChildControls = true;
-			this.pnlNumbers.ControlReceivingFocusOnMnemonic = null;
-			this.pnlNumbers.Controls.Add(this.chrGridNumbers);
-			this.pnlNumbers.Controls.Add(this.hlblNumbers);
-			resources.ApplyResources(this.pnlNumbers, "pnlNumbers");
-			this.pnlNumbers.DoubleBuffered = true;
-			this.pnlNumbers.MnemonicGeneratesClick = false;
-			this.pnlNumbers.Name = "pnlNumbers";
-			this.pnlNumbers.PaintExplorerBarBackground = false;
-			//
-			// chrGridNumbers
-			//
-			resources.ApplyResources(this.chrGridNumbers, "chrGridNumbers");
-			this.chrGridNumbers.AllowUserToAddRows = false;
-			this.chrGridNumbers.AllowUserToDeleteRows = false;
-			this.chrGridNumbers.AllowUserToResizeColumns = false;
-			this.chrGridNumbers.AllowUserToResizeRows = false;
-			this.chrGridNumbers.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.chrGridNumbers.ColumnHeadersVisible = false;
-			this.chrGridNumbers.Cursor = System.Windows.Forms.Cursors.Default;
-			dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-			dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Window;
-			dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.ControlText;
-			dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			this.chrGridNumbers.DefaultCellStyle = dataGridViewCellStyle7;
-			this.chrGridNumbers.LoadCharactersFromFont = false;
-			this.chrGridNumbers.MultiSelect = false;
-			this.chrGridNumbers.Name = "chrGridNumbers";
-			this.chrGridNumbers.ReadOnly = true;
-			this.chrGridNumbers.RowHeadersVisible = false;
-			this.chrGridNumbers.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-			this.chrGridNumbers.ShowCellToolTips = false;
-			this.chrGridNumbers.StandardTab = true;
-			this.chrGridNumbers.VirtualMode = true;
-			this.chrGridNumbers.CharacterChanged += new SIL.FieldWorks.Common.Controls.CharacterGrid.CharacterChangedHandler(this.HandleCharGridCharacterChanged);
-			//
-			// hlblNumbers
-			//
-			this.hlblNumbers.ClipTextForChildControls = true;
-			this.hlblNumbers.ControlReceivingFocusOnMnemonic = this.chrGridNumbers;
-			resources.ApplyResources(this.hlblNumbers, "hlblNumbers");
-			this.hlblNumbers.MnemonicGeneratesClick = false;
-			this.hlblNumbers.Name = "hlblNumbers";
-			this.hlblNumbers.ShowWindowBackgroudOnTopAndRightEdge = true;
-			//
+			// 
 			// label4
-			//
+			// 
 			resources.ApplyResources(this.label4, "label4");
 			this.label4.Name = "label4";
-			//
+			// 
 			// cboSortOrder
-			//
+			// 
 			resources.ApplyResources(this.cboSortOrder, "cboSortOrder");
 			this.cboSortOrder.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.cboSortOrder.FormattingEnabled = true;
 			this.cboSortOrder.Items.AddRange(new object[] {
-			resources.GetString("cboSortOrder.Items")});
+            resources.GetString("cboSortOrder.Items")});
 			this.cboSortOrder.Name = "cboSortOrder";
-			//
+			// 
 			// btnAddCharacters
-			//
+			// 
 			this.btnAddCharacters.Image = global::SIL.FieldWorks.FwCoreDlgs.Properties.Resources.FwCopyRight;
 			resources.ApplyResources(this.btnAddCharacters, "btnAddCharacters");
 			this.btnAddCharacters.Name = "btnAddCharacters";
 			this.btnAddCharacters.UseVisualStyleBackColor = true;
 			this.btnAddCharacters.Click += new System.EventHandler(this.btnAddCharacters_Click);
-			//
+			// 
 			// btnRemoveAll
-			//
+			// 
 			resources.ApplyResources(this.btnRemoveAll, "btnRemoveAll");
 			this.btnRemoveAll.Name = "btnRemoveAll";
 			this.btnRemoveAll.Click += new System.EventHandler(this.btnRemoveAll_Click);
-			//
+			// 
 			// btnRemoveChar
-			//
+			// 
 			resources.ApplyResources(this.btnRemoveChar, "btnRemoveChar");
 			this.btnRemoveChar.Name = "btnRemoveChar";
 			this.btnRemoveChar.Click += new System.EventHandler(this.btnRemoveChar_Click);
-			//
+			// 
 			// lblValidChars
-			//
+			// 
 			resources.ApplyResources(this.lblValidChars, "lblValidChars");
 			this.lblValidChars.AutoEllipsis = true;
 			this.lblValidChars.Name = "lblValidChars";
-			//
+			// 
 			// ValidCharactersDlg
-			//
+			// 
 			this.AcceptButton = this.btnOk;
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -845,6 +783,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.splitContainerOuter.Panel1.ResumeLayout(false);
 			this.splitContainerOuter.Panel2.ResumeLayout(false);
 			this.splitContainerOuter.Panel2.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.splitContainerOuter)).EndInit();
 			this.splitContainerOuter.ResumeLayout(false);
 			this.tabCtrlAddFrom.ResumeLayout(false);
 			this.tabBasedOn.ResumeLayout(false);
@@ -863,18 +802,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.tabUnicode.ResumeLayout(false);
 			this.tabUnicode.PerformLayout();
 			this.splitValidCharsOuter.Panel1.ResumeLayout(false);
-			this.splitValidCharsOuter.Panel2.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.splitValidCharsOuter)).EndInit();
 			this.splitValidCharsOuter.ResumeLayout(false);
 			this.splitValidCharsInner.Panel1.ResumeLayout(false);
 			this.splitValidCharsInner.Panel2.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.splitValidCharsInner)).EndInit();
 			this.splitValidCharsInner.ResumeLayout(false);
 			this.pnlWordForming.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.chrGridWordForming)).EndInit();
 			this.pnlOther.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.chrGridOther)).EndInit();
 			this.pnlMoveButtons.ResumeLayout(false);
-			this.pnlNumbers.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.chrGridNumbers)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -934,7 +872,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private System.Windows.Forms.DataGridViewTextBoxColumn colCount;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn colStatus;
 		private SIL.FieldWorks.Common.Controls.CharacterGrid chrGridOther;
-		private SIL.FieldWorks.Common.Controls.CharacterGrid chrGridNumbers;
 		private System.Windows.Forms.RadioButton rbUnicodeValue;
 		private System.Windows.Forms.GroupBox grpUnicodeValue;
 		private System.Windows.Forms.Label lblUnicodeValue;
@@ -944,8 +881,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private SIL.FieldWorks.Common.Controls.FwPanel pnlOther;
 		private SIL.FieldWorks.Common.Controls.HeaderLabel hlblOther;
 		private SIL.FieldWorks.Common.Controls.HeaderLabel hlblWordForming;
-		private SIL.FieldWorks.Common.Controls.FwPanel pnlNumbers;
-		private SIL.FieldWorks.Common.Controls.HeaderLabel hlblNumbers;
 		private System.Windows.Forms.Button btnTreatAsPunct;
 		private System.Windows.Forms.Button btnTreatAsWrdForming;
 		private System.Windows.Forms.SplitContainer splitValidCharsOuter;

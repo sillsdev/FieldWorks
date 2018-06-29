@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -268,7 +268,7 @@
     <value>cbDictionaries</value>
   </data>
   <data name="&gt;&gt;cbDictionaries.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=8.0.4.24266, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=9.0.2.21367, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;cbDictionaries.Parent" xml:space="preserve">
     <value>tpGeneral</value>
@@ -295,7 +295,7 @@
     <value>m_regionVariantControl</value>
   </data>
   <data name="&gt;&gt;m_regionVariantControl.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.FwCoreDlgControls.RegionVariantControl, FwCoreDlgControls, Version=8.0.4.24268, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.FwCoreDlgControls.RegionVariantControl, FwCoreDlgControls, Version=9.0.2.21367, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_regionVariantControl.Parent" xml:space="preserve">
     <value>tpGeneral</value>
@@ -508,7 +508,7 @@
     <value>m_defaultFontsControl</value>
   </data>
   <data name="&gt;&gt;m_defaultFontsControl.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.FwCoreDlgControls.DefaultFontsControl, FwCoreDlgControls, Version=8.0.4.24268, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.FwCoreDlgControls.DefaultFontsControl, FwCoreDlgControls, Version=9.0.2.21367, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_defaultFontsControl.Parent" xml:space="preserve">
     <value>tpFonts</value>
@@ -559,7 +559,7 @@
     <value>m_keyboardControl</value>
   </data>
   <data name="&gt;&gt;m_keyboardControl.Type" xml:space="preserve">
-    <value>Palaso.UI.WindowsForms.WritingSystems.WSKeyboardControl, PalasoUIWindowsForms, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.Windows.Forms.WritingSystems.WSKeyboardControl, SIL.Windows.Forms.WritingSystems, Version=4.2.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_keyboardControl.Parent" xml:space="preserve">
     <value>tpKeyboard</value>
@@ -679,7 +679,7 @@
     <value>cbEncodingConverter</value>
   </data>
   <data name="&gt;&gt;cbEncodingConverter.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=8.0.4.24266, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=9.0.2.21367, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;cbEncodingConverter.Parent" xml:space="preserve">
     <value>tpConverters</value>
@@ -794,10 +794,9 @@
   </data>
   <data name="m_similarWsButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-        iVBORw0KGgoAAAANSUhEUgAAAAsAAAAHCAYAAADebrddAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAADVJREFUKFNj+M9A
-        PIQrZWAAMnFgmHEo5mJTjGwvhiOQNaA7EKuLQRqw+YQE7wG9RHxY/GcAAJYYiXc60TkqAAAAAElFTkSu
-        QmCC
+        iVBORw0KGgoAAAANSUhEUgAAAAsAAAAHCAYAAADebrddAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
+        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAANElEQVQoU2P4TwJEMEBMHBiuBsYAc9AU
+        gTCKPDIHBHEpBEEkJgJiUwiCSEzCEIlJCP5nAACWGIl3zGbZcQAAAABJRU5ErkJggg==
 </value>
   </data>
   <data name="m_similarWsButton.ImageAlign" type="System.Drawing.ContentAlignment, System.Drawing">
@@ -828,7 +827,7 @@
     <value>m_similarWsButton</value>
   </data>
   <data name="&gt;&gt;m_similarWsButton.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.FwCoreDlgControls.LocaleMenuButton, FwCoreDlgControls, Version=8.0.4.24268, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.FwCoreDlgControls.LocaleMenuButton, FwCoreDlgControls, Version=9.0.2.21367, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_similarWsButton.Parent" xml:space="preserve">
     <value>m_sortRulesLoadPanel</value>
@@ -963,7 +962,7 @@
     <value>m_sortRulesTextBox</value>
   </data>
   <data name="&gt;&gt;m_sortRulesTextBox.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=8.0.4.24269, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox, FwCoreDlgs, Version=9.0.2.24860, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_sortRulesTextBox.Parent" xml:space="preserve">
     <value>m_sortRulesPanel</value>
@@ -1152,7 +1151,7 @@
     <value>tpPUACharacters</value>
   </data>
   <data name="&gt;&gt;m_lblValidCharacters.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>0</value>
   </data>
   <data name="btnValidChars.HelpString" xml:space="preserve">
     <value>Opens a dialog box for adding and testing encoding converters.</value>
@@ -1185,7 +1184,7 @@
     <value>tpPUACharacters</value>
   </data>
   <data name="&gt;&gt;btnValidChars.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>1</value>
   </data>
   <data name="tpPUACharacters.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 22</value>
@@ -1213,6 +1212,78 @@
   </data>
   <data name="&gt;&gt;tpPUACharacters.ZOrder" xml:space="preserve">
     <value>5</value>
+  </data>
+  <data name="customDigits.AutoScroll" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="customDigits.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 27</value>
+  </data>
+  <data name="customDigits.Size" type="System.Drawing.Size, System.Drawing">
+    <value>432, 65</value>
+  </data>
+  <data name="customDigits.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="customDigits.WrapContents" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;customDigits.Name" xml:space="preserve">
+    <value>customDigits</value>
+  </data>
+  <data name="&gt;&gt;customDigits.Type" xml:space="preserve">
+    <value>SIL.FieldWorks.FwCoreDlgs.Controls.CustomDigitEntryControl, FwCoreDlgs, Version=9.0.2.24860, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;customDigits.Parent" xml:space="preserve">
+    <value>tpNumbers</value>
+  </data>
+  <data name="&gt;&gt;customDigits.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="numberSettingsCombo.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="numberSettingsCombo.Size" type="System.Drawing.Size, System.Drawing">
+    <value>240, 21</value>
+  </data>
+  <data name="numberSettingsCombo.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;numberSettingsCombo.Name" xml:space="preserve">
+    <value>numberSettingsCombo</value>
+  </data>
+  <data name="&gt;&gt;numberSettingsCombo.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;numberSettingsCombo.Parent" xml:space="preserve">
+    <value>tpNumbers</value>
+  </data>
+  <data name="&gt;&gt;numberSettingsCombo.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="tpNumbers.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 22</value>
+  </data>
+  <data name="tpNumbers.Size" type="System.Drawing.Size, System.Drawing">
+    <value>435, 282</value>
+  </data>
+  <data name="tpNumbers.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="tpNumbers.Text" xml:space="preserve">
+    <value>Numbers</value>
+  </data>
+  <data name="&gt;&gt;tpNumbers.Name" xml:space="preserve">
+    <value>tpNumbers</value>
+  </data>
+  <data name="&gt;&gt;tpNumbers.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tpNumbers.Parent" xml:space="preserve">
+    <value>tabControl</value>
+  </data>
+  <data name="&gt;&gt;tpNumbers.ZOrder" xml:space="preserve">
+    <value>6</value>
   </data>
   <data name="tabControl.ItemSize" type="System.Drawing.Size, System.Drawing">
     <value>42, 18</value>
@@ -1408,10 +1479,9 @@
   </data>
   <data name="btnAdd.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-        iVBORw0KGgoAAAANSUhEUgAAAAsAAAAHCAYAAADebrddAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAADVJREFUKFNj+M9A
-        PIQrZWAAMnFgmHEo5mJTjGwvhiOQNaA7EKuLQRqw+YQE7wG9RHxY/GcAAJYYiXc60TkqAAAAAElFTkSu
-        QmCC
+        iVBORw0KGgoAAAANSUhEUgAAAAsAAAAHCAYAAADebrddAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
+        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAANElEQVQoU2P4TwJEMEBMHBiuBsYAc9AU
+        gTCKPDIHBHEpBEEkJgJiUwiCSEzCEIlJCP5nAACWGIl3zGbZcQAAAABJRU5ErkJggg==
 </value>
   </data>
   <data name="btnAdd.ImageAlign" type="System.Drawing.ContentAlignment, System.Drawing">

@@ -5,6 +5,7 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -108,7 +109,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 					if (ich < 32)
 					{
 						chrp.szFaceName[ich] = fontName[ich];
-					}
+				}
 				}
 
 				if (fontName.Length < 32)
@@ -267,21 +268,21 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				switch (cfid)
 				{
 					case 0:
-						Enabled = false;
-						return;
+					Enabled = false;
+					return;
 					case 1:
-						// What if it's the dummy built-in graphite feature that we ignore?
-						// Get the list of features (only 1).
+					// What if it's the dummy built-in graphite feature that we ignore?
+					// Get the list of features (only 1).
 						using (var idsM = MarshalEx.ArrayToNative<int>(cfid))
-						{
-							m_featureEngine.GetFeatureIDs(cfid, idsM, out cfid);
+					{
+						m_featureEngine.GetFeatureIDs(cfid, idsM, out cfid);
 							var ids = MarshalEx.NativeToArray<int>(idsM, cfid);
-							if (ids[0] == kGrLangFeature)
-							{
-								Enabled = false;
-								return;
-							}
+						if (ids[0] == kGrLangFeature)
+						{
+							Enabled = false;
+							return;
 						}
+					}
 
 						break;
 				}
@@ -292,7 +293,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 
 		/// <summary>
 		/// Parse a feature string to find the next feature id value, skipping any leading
-		/// spaces. Also skip past the trailing equal sign, and any surrounding spaces.
+		/// spaces.  Also skip past the trailing equal sign, and any surrounding spaces.
 		/// </summary>
 		/// <param name="stFeatures">feature string to part</param>
 		/// <param name="ichMin">starting index into the feature string</param>
@@ -368,7 +369,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				if (ib < 4)
 				{
 					bVals[ib] = (byte)stFeatures[ich];
-				}
+			}
 			}
 			if (ich >= stFeatures.Length)
 			{
@@ -421,7 +422,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				else if (stFeatures[ich] == ',' && !fInQuote)
 				{
 					return ich + 1;
-				}
+			}
 			}
 			return ich;
 		}
@@ -476,8 +477,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 						if (ifeatFound > -1)
 						{
 							result[ifeatFound] = val;
-						}
 					}
+				}
 				}
 				ich = FindNextFeature(stFeatures, ich);
 			}
@@ -508,9 +509,43 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				{
 					stFeatures = stFeatures + ",";
 				}
-				stFeatures = stFeatures + ids[ifeat] + "=" + values[ifeat];
+				stFeatures = stFeatures + ConvertFontFeatureIdToCode(ids[ifeat]) + "=" + values[ifeat];
 			}
 			return stFeatures;
+		}
+
+		static private string ConvertFontFeatureIdToCode(int fontFeatureId)
+		{
+			byte[] bytes = BitConverter.GetBytes(fontFeatureId);
+			string result = String.Empty;
+			foreach (int value in bytes.Reverse())
+			{
+				result += Convert.ToChar(value);
+			}
+			return result;
+		}
+
+		static private int ConvertFontFeatureCodeToId(string fontFeature)
+		{
+			fontFeature = new string(fontFeature.ToCharArray().Reverse().ToArray());
+			byte[] numbers = fontFeature.Select(x => Convert.ToByte(x)).ToArray();
+			int fontFeatureId = BitConverter.ToInt32(numbers, 0);
+			return fontFeatureId;
+		}
+
+		static private string ConvertFontFeatureCodesToIds(string features)
+		{
+			// If the feature is empty or has already been converted just return
+			if (features.Length < 1 || !Char.IsLetter(features[0]))
+				return features;
+			var feature = features.Split(',');
+			foreach (var value in feature)
+			{
+				var keyValuePair = value.Split('=');
+				var key = ConvertFontFeatureCodeToId(keyValuePair[0]);
+				features = features.Replace(keyValuePair[0], key.ToString());
+			}
+			return features;
 		}
 
 		/// <summary />
@@ -553,6 +588,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				m_featureEngine.GetFeatureIDs(cfid, idsM, out cfid);
 				m_ids = MarshalEx.NativeToArray<int>(idsM, cfid);
 			}
+			FontFeatures = ConvertFontFeatureCodesToIds(FontFeatures);
 			m_values = ParseFeatureString(m_ids, FontFeatures);
 			Debug.Assert(m_ids.Length == m_values.Length);
 

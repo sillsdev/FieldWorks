@@ -476,4 +476,7 @@ If you need to make changes, tell the other users to close this project before y
     <value>{0} pt</value>
     <comment>size in "points"</comment>
   </data>
+  <data name="CustomNumberingSystem" xml:space="preserve">
+    <value>[Custom numbering system]</value>
+  </data>
 </root>

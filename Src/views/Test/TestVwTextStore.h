@@ -1165,22 +1165,26 @@ namespace TestViews
 				return;
 			MakeStringList2();
 			TS_RUNINFO tri;
-			const ULONG kcch1 = 30;
-			OLECHAR rgch1[kcch1 + 1];
-			ULONG cch;
+			const ULONG kcch1RequestedChars = 24;
+			OLECHAR rgch1Buffer[kcch1RequestedChars + 1];
+			ULONG cchExpectedReturnLength;
 
 			// Need some selection to start with as it determines which paragraph.
 			IVwSelectionPtr qselTemp;
 			CheckHr(m_qrootb->MakeSimpleSel(true, true, false, true, &qselTemp));
-			cch = min( kcch1, (ULONG)wcslen(s_rgpsz1[0]));
-			LockGetText lgt1(m_qtxs, 0, -1, rgch1, kcch1 + 1, &tri, 1);
+			cchExpectedReturnLength = min(kcch1RequestedChars, (ULONG)wcslen(s_rgpsz2[0]));
+			unitpp::assert_true("Unit test not set up correctly, buffer should be smaller than the data.", wcslen(s_rgpsz2[0]) > wcslen(rgch1Buffer));
+
+			// SUT
+			LockGetText lgt1(m_qtxs, 0, -1, rgch1Buffer, kcch1RequestedChars + 1, &tri, 1);
+
 			unitpp::assert_eq("Should succeed", S_OK, lgt1.m_hrLock);
-			unitpp::assert_eq("GetText(0,-1) lim ichNext", (LONG)cch, lgt1.m_ichNext);
-			unitpp::assert_true("GetText(0,-1) lim rgch1",
-				wcsncmp(rgch1, s_rgpsz1[0], cch) == 0);
-			unitpp::assert_eq("GetText(0,-1) lim cchOut", cch, lgt1.m_cchOut);
+			unitpp::assert_eq("GetText(0,-1) lim ichNext", (LONG)cchExpectedReturnLength, lgt1.m_ichNext);
+			unitpp::assert_true("GetText(0,-1) lim rgch1Buffer",
+				wcsncmp(rgch1Buffer, s_rgpsz2[0], cchExpectedReturnLength) == 0);
+			unitpp::assert_eq("GetText(0,-1) lim cchOut", cchExpectedReturnLength, lgt1.m_cchOut);
 			unitpp::assert_eq("GetText(0,-1) lim ctriOut", (ULONG)1, lgt1.m_ctriOut);
-			unitpp::assert_eq("GetText(0,-1) lim  run count", cch, tri.uCount);
+			unitpp::assert_eq("GetText(0,-1) lim run count", cchExpectedReturnLength, tri.uCount);
 			unitpp::assert_eq("GetText(0,-1) lim run type", TS_RT_PLAIN, tri.type);
 		}
 
@@ -1223,7 +1227,6 @@ namespace TestViews
 				return;
 			MakeStringList2();
 			TS_RUNINFO tri;
-			ULONG cch;
 			const int kcch2 = 1000;
 			OLECHAR rgch2[kcch2];
 
@@ -1231,15 +1234,19 @@ namespace TestViews
 			IVwSelectionPtr qselTemp;
 			CheckHr(m_qrootb->MakeSimpleSel(true, true, false, true, &qselTemp));
 
-			cch = 10 - 2;
-			LockGetText lgt3(m_qtxs, 2, 10, rgch2, kcch2, &tri, 1);
+			int firstChar = 2;
+			int lastChar = 10;
+			ULONG lengthOfCharsToFetch = lastChar - firstChar;
+			int expectedNext = 10;
+
+			LockGetText lgt3(m_qtxs, firstChar, lastChar, rgch2, kcch2, &tri, 1);
 			unitpp::assert_eq("Should succeed", S_OK, lgt3.m_hrLock);
-			unitpp::assert_eq("GetText(2,10) ichNext", (LONG)10, lgt3.m_ichNext);
+			unitpp::assert_eq("GetText(2,10) ichNext", (LONG)expectedNext, lgt3.m_ichNext);
 			unitpp::assert_true("GetText(2,10) rgch2",
-				wcsncmp(rgch2, s_rgpsz1[0] + 2, cch) == 0);
-			unitpp::assert_eq("GetText(2,10) cchOut", cch, lgt3.m_cchOut);
+				wcsncmp(rgch2, s_rgpsz1[0] + 2, lengthOfCharsToFetch) == 0);
+			unitpp::assert_eq("GetText(2,10) cchOut", lengthOfCharsToFetch, lgt3.m_cchOut);
 			unitpp::assert_eq("GetText(2,10) ctriOut", (ULONG)1, lgt3.m_ctriOut);
-			unitpp::assert_eq("GetText(2,10) run count", cch, tri.uCount);
+			unitpp::assert_eq("GetText(2,10) run count", lengthOfCharsToFetch, tri.uCount);
 			unitpp::assert_eq("GetText(2,10) run type", TS_RT_PLAIN, tri.type);
 		}
 
@@ -1253,20 +1260,24 @@ namespace TestViews
 				return;
 			MakeStringList2();
 			TS_RUNINFO tri;
-			ULONG cch;
 			const int kcch2 = 1000;
 			OLECHAR rgch2[kcch2];
 
 			// Need some selection to start with as it determines which paragraph.
 			IVwSelectionPtr qselTemp;
 			CheckHr(m_qrootb->MakeSimpleSel(true, true, false, true, &qselTemp));
-			cch = 0;
-			LockGetText lgt4(m_qtxs, 3, 3, rgch2, kcch2, &tri, 1);
+
+			int firstChar = 3;
+			int lastChar = 3;
+			ULONG lengthOfCharactersToFetch = lastChar - firstChar;
+			int expectedNext = lastChar;
+
+			LockGetText lgt4(m_qtxs, firstChar, lastChar, rgch2, kcch2, &tri, 1);
 			unitpp::assert_eq("Should succeed", S_OK, lgt4.m_hrLock);
-			unitpp::assert_eq("GetText(3,3) ichNext", (LONG)3, lgt4.m_ichNext);
-			unitpp::assert_eq("GetText(3,3) cchOut", cch, lgt4.m_cchOut);
+			unitpp::assert_eq("GetText(3,3) ichNext", (LONG)expectedNext, lgt4.m_ichNext);
+			unitpp::assert_eq("GetText(3,3) cchOut", lengthOfCharactersToFetch, lgt4.m_cchOut);
 			unitpp::assert_eq("GetText(3,3) ctriOut", (ULONG)1, lgt4.m_ctriOut);
-			unitpp::assert_eq("GetText(3,3) run count", cch, tri.uCount);
+			unitpp::assert_eq("GetText(3,3) run count", lengthOfCharactersToFetch, tri.uCount);
 			unitpp::assert_eq("GetText(3,3) run type", TS_RT_PLAIN, tri.type);
 		}
 
@@ -1363,7 +1374,11 @@ namespace TestViews
 			stu.Format(L"%s%n", s_rgpsz2[0]);
 			stu.Append(s_rgpsz2[4], 10);
 			cch = stu.Length();
-			LockGetText lgt8(m_qtxs, 0, s_cchPara1 + s_cchParaBreak + 10, rgch2, kcch2, &tri,
+			int firstChar = 0;
+			int lastChar = s_cchPara1 + s_cchParaBreak + 10;
+			unitpp::assert_eq("Unit test error", cch, (ULONG)(lastChar - firstChar));
+			// SUT
+			LockGetText lgt8(m_qtxs, firstChar, lastChar, rgch2, kcch2, &tri,
 				1);
 			unitpp::assert_eq("Should succeed", S_OK, lgt8.m_hrLock);
 			unitpp::assert_eq("GetText(MakeSelLong) ichNext", (LONG)cch, lgt8.m_ichNext);
@@ -1441,25 +1456,28 @@ namespace TestViews
 				return;
 			MakeStringList2();
 			TS_RUNINFO tri;
-			ULONG cch;
 			const int kcch2 = 1000;
 			OLECHAR rgch2[kcch2];
 
 			StrUni stu;
 			MakeSelLong();
-			stu.Assign(s_rgpsz2[4] + 1, 9);
-			cch = stu.Length();
+			int firstChar = s_cchPara1 + s_cchParaBreak + 1;
+			int lastChar = s_cchPara1 + s_cchParaBreak + 10;
+			ULONG lengthOfCharactersToFetch = lastChar - firstChar;
+			stu.Assign(s_rgpsz2[4] + 1, lengthOfCharactersToFetch);
+			ULONG expectedNext = lastChar;
+			// SUT
 			LockGetText lgt11(m_qtxs,
-				s_cchPara1 + s_cchParaBreak + 1, s_cchPara1 + s_cchParaBreak + 10,
+				firstChar, lastChar,
 				rgch2, kcch2, &tri, 1);
 			unitpp::assert_eq("Should succeed", S_OK, lgt11.m_hrLock);
 			unitpp::assert_eq("GetText(MakeSelLong) ichNext",
-				(LONG)(s_cchPara1 + s_cchParaBreak + 10), lgt11.m_ichNext);
+				(LONG)expectedNext, lgt11.m_ichNext);
 			unitpp::assert_true("GetText(MakeSelLong) text",
-				wcsncmp(rgch2, stu.Chars(), cch) == 0);
-			unitpp::assert_eq("GetText(MakeSelLong) cchOut", cch, lgt11.m_cchOut);
+				wcsncmp(rgch2, stu.Chars(), lengthOfCharactersToFetch) == 0);
+			unitpp::assert_eq("GetText(MakeSelLong) cchOut", lengthOfCharactersToFetch, lgt11.m_cchOut);
 			unitpp::assert_eq("GetText(MakeSelLong) ctriOut", (ULONG)1, lgt11.m_ctriOut);
-			unitpp::assert_eq("GetText(MakeSelLong) run count", cch, tri.uCount);
+			unitpp::assert_eq("GetText(MakeSelLong) run count", lengthOfCharactersToFetch, tri.uCount);
 			unitpp::assert_eq("GetText(MakeSelLong) run type", TS_RT_PLAIN, tri.type);
 		}
 
@@ -1500,6 +1518,153 @@ namespace TestViews
 			unitpp::assert_eq("GetText(0,-1) run 0 count",
 				s_triExpected3[0].uCount, tri[0].uCount);
 			unitpp::assert_eq("GetText(0,-1) run 0 type", s_triExpected3[0].type, tri[0].type);
+		}
+
+		/*--------------------------------------------------------------------------------------
+		Test VwTextStore::GetText(): Should return correct Out and Next information even if
+		using NFC and the buffer is smaller than the NFD data. See LT-19134.
+		--------------------------------------------------------------------------------------*/
+		void testGetText_SmallBufferNfc()
+		{
+			if (!m_fTestable)
+				return;
+
+			static const OLECHAR * data[] = {
+				L"\x1112\x1161\x11ab \x1112\x1161\x11ab \x1112\x1161\x11ab \x1112\x1161\x11ab \x1112\x1161\x11ab \x1112\x1161\x11ab",
+				NULL
+			};
+			static const OLECHAR dataInNFC[] = L"\xd55c \xd55c \xd55c \xd55c \xd55c \xd55c";
+
+			MakeStringList(data);
+			TS_RUNINFO tri[10];
+			// Buffer is smaller than the NFD data. Choosing buffer length 15 so it includes the
+			// first 4 clumps of characters in data, but is not identical to the size of an NFC
+			// version of the data (to make values clear when debugging).
+			const int kcch2BufferLength = 15;
+			OLECHAR rgch2Buffer[kcch2BufferLength];
+			// The expected output would be implementation dependent, but our implementation
+			// will give this.
+			static const OLECHAR expected[] = L"\xd55c \xd55c \xd55c \xd55c \xd55c \xd55c";
+
+			// Need some selection to start with as it determines which paragraph.
+			IVwSelectionPtr qselTemp;
+			CheckHr(m_qrootb->MakeSimpleSel(true, true, false, true, &qselTemp));
+
+			// The doc at https://msdn.microsoft.com/en-us/library/windows/desktop/ms538433(v=vs.85).aspx
+			// doesn't explicitly discuss NFD and NFC. It may be implementation dependent whether
+			// a GetText method considers all of its NFD data or just the first 'Buffer.Length'
+			// bytes of its NFD data, when providing NFC output.
+			// In our case, we will use the following.
+			ULONG cchLengthOfExpectedNfc = 11;
+
+			unitpp::assert_true("Unit test not set up correctly, buffer should be smaller than the data.", kcch2BufferLength < wcslen(data[0]));
+
+			// SUT
+			LockGetText lgt(m_qtxs, 0, -1, rgch2Buffer, kcch2BufferLength, tri, 10);
+
+			unitpp::assert_eq("Should succeed", S_OK, lgt.m_hrLock);
+			// This could be GetText implementation dependent.
+			unitpp::assert_eq("GetText(0,-1) ichNext", (LONG)cchLengthOfExpectedNfc,  lgt.m_ichNext);
+			// This will not only be implementation dependent, but unpredictable.
+			unitpp::assert_eq("GetText(0,-1) cchOut", cchLengthOfExpectedNfc, lgt.m_cchOut);
+			unitpp::assert_true("GetText(0,-1) rgch2Buffer",
+				wcsncmp(rgch2Buffer, expected, cchLengthOfExpectedNfc) == 0);
+		}
+
+		/*--------------------------------------------------------------------------------------
+		Test VwTextStore::GetText(): Should return correct Out and Next information even if
+		using NFC and the buffer is smaller than the data in NFC. See LT-19134.
+		--------------------------------------------------------------------------------------*/
+		void testGetText_SmallerBufferNfc()
+		{
+			if (!m_fTestable)
+				return;
+
+			static const OLECHAR * data[] = {
+				L"\x1112\x1161\x11ab \x1112\x1161\x11ab \x1112\x1161\x11ab \x1112\x1161\x11ab \x1112\x1161\x11ab \x1112\x1161\x11ab",
+				NULL
+			};
+			static const OLECHAR dataInNFC[] = L"\xd55c \xd55c \xd55c \xd55c \xd55c \xd55c";
+
+			MakeStringList(data);
+			TS_RUNINFO tri[10];
+			// Buffer is smaller than the NFD data, and smaller than an NFC representation of
+			// that data.
+			const int kcch2BufferLength = 7;
+			OLECHAR rgch2Buffer[kcch2BufferLength];
+			// The expected output would be implementation dependent, but our implementation
+			// will give this.
+			static const OLECHAR expected[] = L"\xd55c \xd55c \xd55c ";
+			// Only 6 characters because of a null terminator in the buffer.
+			ULONG cchLengthOfExpectedNfc = 6;
+
+			// Need some selection to start with as it determines which paragraph.
+			IVwSelectionPtr qselTemp;
+			CheckHr(m_qrootb->MakeSimpleSel(true, true, false, true, &qselTemp));
+
+			unitpp::assert_true("Unit test not set up correctly to test what it is intending to, buffer should be smaller than the data.",
+				kcch2BufferLength < wcslen(data[0]));
+			unitpp::assert_true("Unit test not set up correctly to test what it is intending to, buffer should be smaller than the data in NFC.",
+				kcch2BufferLength < wcslen(dataInNFC));
+
+			// SUT
+			LockGetText lgt(m_qtxs, 0, -1, rgch2Buffer, kcch2BufferLength, tri, 10);
+
+			unitpp::assert_eq("Should succeed", S_OK, lgt.m_hrLock);
+			unitpp::assert_eq("GetText(0,-1) ichNext", (LONG)cchLengthOfExpectedNfc, lgt.m_ichNext);
+			unitpp::assert_eq("GetText(0,-1) cchOut", cchLengthOfExpectedNfc, lgt.m_cchOut);
+			unitpp::assert_true("GetText(0,-1) rgch2Buffer",
+				wcsncmp(rgch2Buffer, expected, cchLengthOfExpectedNfc) == 0);
+		}
+
+		/*--------------------------------------------------------------------------------------
+		Test VwTextStore::GetText(): Should return good values even if
+		using NFC and the buffer is a length that would break up a set of combining NFD
+		characters, if it were holding the original data.
+		--------------------------------------------------------------------------------------*/
+		void testGetText_SplitNFD()
+		{
+			if (!m_fTestable)
+				return;
+
+			static const OLECHAR * data[] = {
+				L"\x0073\x0323\x0307 \x0073\x0323\x0307 \x0073\x0323\x0307 \x0073\x0323\x0307 \x0073\x0323\x0307",
+				NULL
+			};
+			static const OLECHAR dataInNFC[] = L"\x1e69 \x1e69 \x1e69 \x1e69 \x1e69";
+
+			MakeStringList(data);
+			TS_RUNINFO tri[10];
+			// This needn't mean anything. But 6 is part-way into the second group of combining
+			// characters, if we look 6 characters into 'data'. Let's not have this mess up our
+			// output.
+			const int kcch2BufferLength = 6;
+			OLECHAR rgch2Buffer[kcch2BufferLength];
+			static const OLECHAR expected[] = L"\x1e69 \x1e69 \x1e69";
+			// Only 5 characters because of a null terminator in the buffer.
+			ULONG cchLengthOfExpectedNfc = 5;
+
+			// Need some selection to start with as it determines which paragraph.
+			IVwSelectionPtr qselTemp;
+			CheckHr(m_qrootb->MakeSimpleSel(true, true, false, true, &qselTemp));
+
+			// SUT
+			LockGetText lgt(m_qtxs, 0, -1, rgch2Buffer, kcch2BufferLength, tri, 10);
+
+			unitpp::assert_eq("Should succeed", S_OK, lgt.m_hrLock);
+			unitpp::assert_eq("GetText(0,-1) ichNext", (LONG)cchLengthOfExpectedNfc, lgt.m_ichNext);
+			unitpp::assert_eq("GetText(0,-1) cchOut", cchLengthOfExpectedNfc, lgt.m_cchOut);
+			unitpp::assert_true("GetText(0,-1) rgch2Buffer",
+				wcsncmp(rgch2Buffer, expected, cchLengthOfExpectedNfc) == 0);
+
+			// Test when setting a specific ending value, rather than -1.
+			// SUT 2
+			LockGetText lgt2(m_qtxs, 0, 19, rgch2Buffer, kcch2BufferLength, tri, 10);
+			unitpp::assert_eq("Should succeed", S_OK, lgt2.m_hrLock);
+			unitpp::assert_eq("GetText ichNext", (LONG)cchLengthOfExpectedNfc, lgt2.m_ichNext);
+			unitpp::assert_eq("GetText cchOut", cchLengthOfExpectedNfc, lgt2.m_cchOut);
+			unitpp::assert_true("GetText rgch2Buffer",
+				wcsncmp(rgch2Buffer, expected, cchLengthOfExpectedNfc) == 0);
 		}
 
 		/*--------------------------------------------------------------------------------------

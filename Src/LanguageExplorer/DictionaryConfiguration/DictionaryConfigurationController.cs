@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018 SIL International
+﻿// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -264,8 +264,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 				if (!node.IsSubordinateParent && node.ReferencedOrDirectChildren != null)
 				{
 					CreateTreeOfTreeNodes(node, node.ReferencedOrDirectChildren);
-				}
 			}
+		}
 		}
 
 		/// <summary>
@@ -280,7 +280,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				throw new ArgumentNullException(nameof(node));
 			}
 
-			node.StringTable = StringTable.Table;   // for localization
+			node.StringTable = StringTable.Table;	// for localization
 			var newTreeNode = new TreeNode(node.DisplayLabel) { Tag = node, Checked = node.IsEnabled };
 
 			var treeView = View.TreeControl.Tree;
@@ -361,23 +361,23 @@ namespace LanguageExplorer.DictionaryConfiguration
 			switch (configurationType)
 			{
 				case "Dictionary":
-					{
-						var entryRepo = serviceLocator.GetInstance<ILexEntryRepository>().AllInstances().ToList();
-						// try to find the first entry with a headword not equal to "???"; otherwise, any entry will have to do.
-						return entryRepo.FirstOrDefault(entry => StringServices.DefaultHomographString() != entry.HeadWord.Text)
-							?? entryRepo.FirstOrDefault();
+				{
+					var entryRepo = serviceLocator.GetInstance<ILexEntryRepository>().AllInstances().ToList();
+					// try to find the first entry with a headword not equal to "???"; otherwise, any entry will have to do.
+					return entryRepo.FirstOrDefault(entry => StringServices.DefaultHomographString() != entry.HeadWord.Text)
+						?? entryRepo.FirstOrDefault();
 					}
 				case "Reversal Index":
-					{
-						var entryRepo = serviceLocator.GetInstance<IReversalIndexEntryRepository>().AllInstances().ToList(); // TODO pH 2015.07: filter by WS
-																															 // try to find the first entry with a headword not equal to "???"; otherwise, any entry will have to do.
+				{
+					var entryRepo = serviceLocator.GetInstance<IReversalIndexEntryRepository>().AllInstances().ToList(); // TODO pH 2015.07: filter by WS
+					// try to find the first entry with a headword not equal to "???"; otherwise, any entry will have to do.
 						return entryRepo.FirstOrDefault(entry => StringServices.DefaultHomographString() != entry.ReversalForm.BestAnalysisAlternative.Text)
-							?? entryRepo.FirstOrDefault() ?? serviceLocator.GetInstance<IReversalIndexEntryFactory>().Create();
-					}
+						?? entryRepo.FirstOrDefault() ?? serviceLocator.GetInstance<IReversalIndexEntryFactory>().Create();
+				}
 				default:
-					{
+				{
 						throw new NotImplementedException($"Default entry for {configurationType} type not implemented.");
-					}
+				}
 			}
 		}
 
@@ -393,7 +393,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			if (m_isDirty)
 			{
 				SaveModel();
-			}
+		}
 		}
 
 		internal void SaveModel()
@@ -663,7 +663,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			node.ReferenceItem = key;
 			node.ReferencedNode = sharedItem;
 			node.Children = null; // For now, we expect that nodes have ReferencedChildren NAND direct Children.
-								  // ENHANCE pH 2016.04: if we ever allow nodes to have both Referenced and direct Children, all DC-model-sync code will need to change.
+			// ENHANCE pH 2016.04: if we ever allow nodes to have both Referenced and direct Children, all DC-model-sync code will need to change.
 		}
 
 		#region ModelSynchronization
@@ -746,8 +746,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 				foreach (var child in node.Children)
 				{
 					FixTypeListOnNode(child, complexTypes, variantTypes, referenceTypes, noteTypes, isHybrid, cache);
-				}
 			}
+		}
 		}
 
 		/// <summary>Called on nodes with Variant options to determine whether they are sharing Variants with a sibling</summary>
@@ -775,10 +775,10 @@ namespace LanguageExplorer.DictionaryConfiguration
 			foreach (var opt in options)
 			{
 				Guid guid;
-				if (Guid.TryParse(opt.Id, out guid))    // can be empty string
+				if (Guid.TryParse(opt.Id, out guid))	// can be empty string
 				{
 					currentGuids.Add(guid);
-				}
+			}
 			}
 
 			if (filterInflectionalVariantTypes)
@@ -803,19 +803,16 @@ namespace LanguageExplorer.DictionaryConfiguration
 				// add types that do not exist already
 				foreach (var pos in possibilities)
 				{
-					if (options.Any(x =>
-						x.Id == pos.ToString() + ":f" || x.Id == pos.ToString() + ":r"))
+					if (options.Any(x => x.Id == pos.ToString() + ":f" || x.Id == pos.ToString() + ":r"))
 					{
 						continue;
 					}
-
 					var lexRelType = (ILexRefType)cache.LangProject.LexDbOA.ReferencesOA
 						?.ReallyReallyAllPossibilities.FirstOrDefault(x =>
 							x.Guid == pos);
 					if (lexRelType != null)
 					{
-						if (LexRefTypeTags.IsAsymmetric(
-							(LexRefTypeTags.MappingTypes)lexRelType.MappingType))
+						if (LexRefTypeTags.IsAsymmetric((LexRefTypeTags.MappingTypes)lexRelType.MappingType))
 						{
 							options.Add(new DictionaryNodeOption
 							{
@@ -858,8 +855,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 				if (!isValidGuid || !possibilities.Contains(guid))
 				{
 					options.RemoveAt(i); //Guid was invalid, or not present in the current possibilities
-				}
 			}
+		}
 		}
 
 		public static void EnsureValidStylesInModel(DictionaryConfigurationModel model, LcmCache cache)
@@ -910,7 +907,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			foreach (var child in node.Children)
 			{
 				UpdateWritingSystemInConfigNodes(child, cache);
-			}
+		}
 		}
 
 		public static string GetWsDefaultName(string wsType)
@@ -927,7 +924,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 					return LanguageExplorerResources.ksCurrentReversal;
 				case "analysis vernacular":
 					return DictionaryConfigurationStrings.ksBestAnalOrVern;
-				default:    // "vernacular analysis"
+				default:	// "vernacular analysis"
 					return DictionaryConfigurationStrings.ksBestVernOrAnal;
 			}
 		}
@@ -1072,7 +1069,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			foreach (var child in node.Children)
 			{
 				EnsureValidStylesInConfigNodes(child, styles);
-			}
+		}
 		}
 
 		private static void EnsureValidStylesInNodeOptions(ConfigurableDictionaryNode node, Dictionary<string, IStStyle> styles)
@@ -1104,7 +1101,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 					if (!IsParagraphStyle(nodeStyle, styles))
 					{
 						node.Style = null;
-					}
+				}
 				}
 				else
 				{
@@ -1112,9 +1109,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 					if (IsParagraphStyle(nodeStyle, styles))
 					{
 						node.Style = null;
-					}
 				}
 			}
+		}
 		}
 
 		private static bool IsParagraphStyle(string styleName, Dictionary<string, IStStyle> styles)
@@ -1226,8 +1223,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 					if (cfOwnerClassName == "LexEntry")
 					{
 						classToCustomFields["ILexEntryRef"] = classToCustomFields["LexEntryRef"] = classToCustomFields["LexEntry"];
-					}
 				}
+			}
 			}
 			var senseOrEntryFields = new List<int>();
 			if (classToCustomFields.ContainsKey("LexSense"))
@@ -1283,7 +1280,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				foreach (var customField in customFieldNodes)
 				{
 					customField.Parent = parent;
-				}
+			}
 			}
 
 			// Add any custom fields that didn't already exist in the children (at the end).
@@ -1389,10 +1386,10 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				case (int)CellarPropertyType.MultiString:
 				case (int)CellarPropertyType.MultiUnicode:
-					{
-						var wsTypeId = WritingSystemServices.GetMagicWsNameFromId(metaDataCache.GetFieldWs(fieldId));
-						return BuildWsOptionsForWsType(wsTypeId);
-					}
+				{
+					var wsTypeId = WritingSystemServices.GetMagicWsNameFromId(metaDataCache.GetFieldWs(fieldId));
+					return BuildWsOptionsForWsType(wsTypeId);
+				}
 				case (int)CellarPropertyType.OwningCollection:
 				case (int)CellarPropertyType.OwningSequence:
 				case (int)CellarPropertyType.ReferenceCollection:
@@ -1457,42 +1454,42 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				return;
 			}
-			ConfigurableDictionaryNode topNode = null;
-			// Search through the configuration trees associated with each toplevel TreeNode to find
-			// the best match.  If no match is found, give up.
-			foreach (TreeNode node in View.TreeControl.Tree.Nodes)
-			{
-				var configNode = node.Tag as ConfigurableDictionaryNode;
-				if (configNode == null)
+				ConfigurableDictionaryNode topNode = null;
+				// Search through the configuration trees associated with each toplevel TreeNode to find
+				// the best match.  If no match is found, give up.
+				foreach (TreeNode node in View.TreeControl.Tree.Nodes)
 				{
-					continue;
-				}
-				var cssClass = CssGenerator.GetClassAttributeForConfig(configNode);
-				if (classList[0].Split(' ').Contains(cssClass))
+					var configNode = node.Tag as ConfigurableDictionaryNode;
+					if (configNode == null)
 				{
-					topNode = configNode;
-					break;
+						continue;
 				}
-			}
+					var cssClass = CssGenerator.GetClassAttributeForConfig(configNode);
+					if (classList[0].Split(' ').Contains(cssClass))
+					{
+						topNode = configNode;
+						break;
+					}
+				}
 
-			if (topNode == null)
+				if (topNode == null)
 			{
-				return;
+					return;
 			}
-			// We have a match, so search through the TreeNode tree to find the TreeNode tagged
-			// with the given configuration node.  If found, set that as the SelectedNode.
-			classList.RemoveAt(0);
-			var startingConfigNode = FindConfigNode(topNode, classList);
-			foreach (TreeNode node in View.TreeControl.Tree.Nodes)
-			{
-				var startingTreeNode = FindMatchingTreeNode(node, startingConfigNode);
-				if (startingTreeNode != null)
+				// We have a match, so search through the TreeNode tree to find the TreeNode tagged
+				// with the given configuration node.  If found, set that as the SelectedNode.
+				classList.RemoveAt(0);
+				var startingConfigNode = FindConfigNode(topNode, classList);
+				foreach (TreeNode node in View.TreeControl.Tree.Nodes)
 				{
-					View.TreeControl.Tree.SelectedNode = startingTreeNode;
-					break;
+					var startingTreeNode = FindMatchingTreeNode(node, startingConfigNode);
+					if (startingTreeNode != null)
+					{
+						View.TreeControl.Tree.SelectedNode = startingTreeNode;
+						break;
+					}
 				}
 			}
-		}
 
 		/// <summary>
 		/// Recursively descend the configuration tree, progressively matching nodes against CSS class path.  Stop
@@ -1516,8 +1513,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				var match = FindConfigNode(topNode.Parent, classPath);
 				return ReferenceEquals(match, topNode.Parent)
-					? topNode   // this is the best we can find.
-					: match;    // we found something better!
+					? topNode	// this is the best we can find.
+					: match;	// we found something better!
 			}
 			ConfigurableDictionaryNode matchingNode = null;
 			foreach (var node in topNode.ReferencedOrDirectChildren)
@@ -1557,7 +1554,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				if (start != null)
 				{
 					return start;
-				}
+			}
 			}
 			return null;
 		}

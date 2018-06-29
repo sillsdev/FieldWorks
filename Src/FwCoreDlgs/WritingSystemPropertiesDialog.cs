@@ -72,6 +72,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public const int kWsConverters = 3;
 		/// <summary>Index(4) of the tab for writing system sorting</summary>
 		public const int kWsSorting = 4;
+		/// <summary>Index(6) of the tab for writing system Numbering system</summary>
+		public const int kWsNumbers = 6;
 		#endregion
 
 		internal WSKeyboardControl m_keyboardControl;
@@ -79,7 +81,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public const int kWsPUACharacters = 5;
 
 		internal WritingSystemSetupModel m_modelForKeyboard;
-
+		private CustomDigitEntryControl customDigits;
 		private static readonly string[] LocalizedLanguages = Directory.GetFiles(FwDirectoryFinder.TemplateDirectory, XmlTranslatedLists.LocalizedListPrefix + "*.zip")
 			.Select(f => Path.GetFileNameWithoutExtension(f).Substring(XmlTranslatedLists.LocalizedListPrefix.Length)).ToArray();
 
@@ -231,6 +233,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private TabPage tpConverters;
 		private TabPage tpSorting;
 		private TabPage tpPUACharacters;
+		private TabPage tpNumbers;
+		private ComboBox numberSettingsCombo;
+
 		private GroupBox groupBox2;
 		private Label label1;
 		private Label label3;
@@ -458,6 +463,32 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			languageSubtag = new LanguageSubtag(languageSubtag, languageName);
 			CoreWritingSystemDefinition ws = m_wsManager.Create(languageSubtag, scriptSubtag, regionSubtag, variantSubtags);
 			SetupDialog(ws, null, displayRelatedWss);
+			SetupNumbersTab(ws);
+		}
+
+		private void SetupNumbersTab(CoreWritingSystemDefinition ws)
+		{
+			var standardNumberingSystems = CLDRNumberingSystems.StandardNumberingSystems.ToArray();
+			numberSettingsCombo.Items.Add(Strings.CustomNumberingSystem);
+			var defaultDigits = CLDRNumberingSystems.GetDigitsForID(NumberingSystemDefinition.Default.Id);
+			numberSettingsCombo.Items.Add(defaultDigits);
+			foreach (var standardNumberingSystem in standardNumberingSystems)
+			{
+				if (standardNumberingSystem != defaultDigits)
+				{
+					numberSettingsCombo.Items.Add(standardNumberingSystem);
+				}
+			}
+			if (ws.NumberingSystem.IsCustom)
+			{
+				numberSettingsCombo.SelectedItem = Strings.CustomNumberingSystem;
+			}
+			else
+			{
+				numberSettingsCombo.SelectedItem = CLDRNumberingSystems.GetDigitsForID(ws.NumberingSystem.Id);
+			}
+
+			numberSettingsCombo.Enabled = numberSettingsCombo.Visible = true;
 		}
 
 		private void SetupDialog(CoreWritingSystemDefinition tempWs, CoreWritingSystemDefinition origWs, bool displayRelatedWss)
@@ -474,6 +505,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			LoadAvailableConverters();
 			PopulateRelatedWSsListBox(tempWs);
+			SetupNumbersTab(tempWs);
 		}
 
 		/// <summary>
@@ -899,6 +931,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.tpPUACharacters = new System.Windows.Forms.TabPage();
 			this.m_lblValidCharacters = new System.Windows.Forms.Label();
 			this.btnValidChars = new System.Windows.Forms.Button();
+			this.tpNumbers = new System.Windows.Forms.TabPage();
+			this.customDigits = new SIL.FieldWorks.FwCoreDlgs.Controls.CustomDigitEntryControl();
+			this.numberSettingsCombo = new System.Windows.Forms.ComboBox();
 			this.btnModifyEthnologueInfo = new System.Windows.Forms.Button();
 			this.btnHelp = new System.Windows.Forms.Button();
 			this.btnCancel = new System.Windows.Forms.Button();
@@ -929,6 +964,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			((System.ComponentModel.ISupportInitialize)(this.m_sortRulesTextBox)).BeginInit();
 			this.m_sortLanguagePanel.SuspendLayout();
 			this.tpPUACharacters.SuspendLayout();
+			this.tpNumbers.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.SuspendLayout();
 			//
@@ -940,6 +976,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.tabControl.Controls.Add(this.tpConverters);
 			this.tabControl.Controls.Add(this.tpSorting);
 			this.tabControl.Controls.Add(this.tpPUACharacters);
+			this.tabControl.Controls.Add(this.tpNumbers);
 			this.tabControl.HotTrack = true;
 			resources.ApplyResources(this.tabControl, "tabControl");
 			this.tabControl.Name = "tabControl";
@@ -1003,12 +1040,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			resources.ApplyResources(this.m_regionVariantControl, "m_regionVariantControl");
 			this.m_regionVariantControl.BackColor = System.Drawing.Color.Transparent;
 			this.m_regionVariantControl.Name = "m_regionVariantControl";
-			this.m_regionVariantControl.RegionName = global::SIL.FieldWorks.FwCoreDlgs.FwCoreDlgs.kstidOpen;
+			this.m_regionVariantControl.RegionName = "";
 			this.m_regionVariantControl.RegionSubtag = null;
-			this.m_regionVariantControl.ScriptName = global::SIL.FieldWorks.FwCoreDlgs.FwCoreDlgs.kstidOpen;
+			this.m_regionVariantControl.ScriptName = "";
 			this.m_regionVariantControl.ScriptSubtag = null;
 			this.helpProvider.SetShowHelp(this.m_regionVariantControl, ((bool)(resources.GetObject("m_regionVariantControl.ShowHelp"))));
-			this.m_regionVariantControl.VariantName = global::SIL.FieldWorks.FwCoreDlgs.FwCoreDlgs.kstidOpen;
+			this.m_regionVariantControl.VariantName = "";
 			this.m_regionVariantControl.WritingSystem = null;
 			this.m_regionVariantControl.ScriptRegionVariantChanged += new System.EventHandler(this.m_regionVariantControl_ScriptRegionVariantChanged);
 			//
@@ -1265,6 +1302,26 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.helpProvider.SetShowHelp(this.btnValidChars, ((bool)(resources.GetObject("btnValidChars.ShowHelp"))));
 			this.btnValidChars.Click += new System.EventHandler(this.btnValidChars_Click);
 			//
+			// tpNumbers
+			//
+			this.tpNumbers.Controls.Add(this.customDigits);
+			this.tpNumbers.Controls.Add(this.numberSettingsCombo);
+			resources.ApplyResources(this.tpNumbers, "tpNumbers");
+			this.tpNumbers.Name = "tpNumbers";
+			this.tpNumbers.UseVisualStyleBackColor = true;
+			//
+			// customDigits
+			//
+			resources.ApplyResources(this.customDigits, "customDigits");
+			this.customDigits.Name = "customDigits";
+			//
+			// numberSettingsCombo
+			//
+			this.numberSettingsCombo.FormattingEnabled = true;
+			resources.ApplyResources(this.numberSettingsCombo, "numberSettingsCombo");
+			this.numberSettingsCombo.Name = "numberSettingsCombo";
+			this.numberSettingsCombo.SelectedIndexChanged += new System.EventHandler(this.numberSettingsCombo_SelectedIndexChanged);
+			//
 			// btnModifyEthnologueInfo
 			//
 			this.helpProvider.SetHelpString(this.btnModifyEthnologueInfo, resources.GetString("btnModifyEthnologueInfo.HelpString"));
@@ -1433,6 +1490,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.m_sortLanguagePanel.PerformLayout();
 			this.tpPUACharacters.ResumeLayout(false);
 			this.tpPUACharacters.PerformLayout();
+			this.tpNumbers.ResumeLayout(false);
 			this.groupBox2.ResumeLayout(false);
 			this.groupBox2.PerformLayout();
 			this.ResumeLayout(false);
@@ -1696,6 +1754,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				if (!CheckOkToChangeContext())
 					return;
+				if (numberSettingsCombo.SelectedItem.Equals(Strings.CustomNumberingSystem))
+				{
+					CurrentWritingSystem.NumberingSystem = NumberingSystemDefinition.CreateCustomSystem(customDigits.GetDigits());
+				}
 				if (ThereAreChanges && SharedBackendServicesHelper.WarnOnConfirmingSingleUserChanges(m_cache))
 				{
 					SaveChanges();
@@ -1989,11 +2051,30 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				case kWsConverters:
 					fOkToChangeContext = CheckEncodingConverter();
 					break;
+				case kWsNumbers:
+					fOkToChangeContext = CheckForCustomNumbersValidity();
+					break;
 			}
 
 			if (fOkToChangeContext && !CheckWSIetfLanguageTagChange())
 				fOkToChangeContext = false;
 			return fOkToChangeContext;
+		}
+
+		private bool CheckForCustomNumbersValidity()
+		{
+			if (!numberSettingsCombo.SelectedItem.Equals(Strings.CustomNumberingSystem))
+			{
+				return true;
+			}
+
+			if (!customDigits.AreAllDigitsValid())
+			{
+				customDigits.HighlightProblemDigits();
+				return false;
+			}
+
+			return true;
 		}
 
 		private bool CheckIfSortingIsOK()
@@ -2373,5 +2454,26 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		#endregion
+
+		private void numberSettingsCombo_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			var digits = (string) numberSettingsCombo.SelectedItem;
+			var selectedNumberingSystem = (string) ((ComboBox) sender).SelectedItem;
+			if (!selectedNumberingSystem.Equals(Strings.CustomNumberingSystem))
+			{
+				CurrentWritingSystem.NumberingSystem = new NumberingSystemDefinition(CLDRNumberingSystems.FindNumberingSystemID(selectedNumberingSystem));
+				customDigits.Enabled = false;
+			}
+			else
+			{
+				digits = CurrentWritingSystem.NumberingSystem.IsCustom ? CurrentWritingSystem.NumberingSystem.Id.Split('(', ')')[1] : string.Empty;
+				customDigits.Enabled = true;
+			}
+
+			// ReSharper disable once CompareOfFloatsByEqualityOperator - comparing 0 is a non-issue
+			// If the current writing system is valid use font settings from it, otherwise pick reasonable defaults
+			customDigits.SetDigits(digits, string.IsNullOrWhiteSpace(CurrentWritingSystem.DefaultFontName) ? "Segoe" : CurrentWritingSystem.DefaultFontName,
+					CurrentWritingSystem.DefaultFontSize == 0.0f ? 12 : CurrentWritingSystem.DefaultFontSize);
+		}
 	}
 }

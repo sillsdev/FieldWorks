@@ -331,6 +331,9 @@
     <Compile Include="Controls\ComboTextBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Controls\CustomDigitEntryControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\DefaultFontsControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
