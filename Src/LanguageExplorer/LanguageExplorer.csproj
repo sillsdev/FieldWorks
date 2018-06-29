@@ -1914,6 +1914,12 @@
     <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\Fully_Merged_useful.xml">
       <Link>XML\Combined\Fully_Merged_useful.xml</Link>
     </None>
+    <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\Inventory_Layouts.xml">
+      <Link>XML\Combined\Inventory_Layouts.xml</Link>
+    </None>
+    <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\Inventory_Parts.xml">
+      <Link>XML\Combined\Inventory_Parts.xml</Link>
+    </None>
     <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\Merged_Parts_into_Layouts.xml">
       <Link>XML\Combined\Merged_Parts_into_Layouts.xml</Link>
       <SubType>Designer</SubType>
@@ -1935,12 +1941,6 @@
     <None Include="..\..\DistFiles\Language Explorer\Configuration\CombinedConfig_BleedingEdge.xml">
       <Link>XML\CombinedConfig_BleedingEdge.xml</Link>
       <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\Layouts_From_Inventory.xml">
-      <Link>XML\Combined\Layouts_From_Inventory.xml</Link>
-    </None>
-    <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\Parts_From_Inventory.xml">
-      <Link>XML\Combined\Parts_From_Inventory.xml</Link>
     </None>
     <Content Include="Resources\SimpleChooserParameters.xml" />
     <None Include="images\password-reveal-eye-16x16.png" />

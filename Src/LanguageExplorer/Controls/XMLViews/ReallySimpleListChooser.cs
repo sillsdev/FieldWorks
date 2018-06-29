@@ -1574,7 +1574,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			if (m_publisher != null && m_linkJump != null)
 			{
-				LinkHandler.JumpToTool(m_publisher, m_linkJump);
+				LinkHandler.PublishFollowLinkMessage(m_publisher, m_linkJump);
 				return true;
 			}
 			return false;
@@ -1588,7 +1588,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			if (publisher != null && m_linkJump != null)
 			{
-				LinkHandler.JumpToTool(m_publisher, m_linkJump);
+				LinkHandler.PublishFollowLinkMessage(m_publisher, m_linkJump);
 				return true;
 			}
 			return false;

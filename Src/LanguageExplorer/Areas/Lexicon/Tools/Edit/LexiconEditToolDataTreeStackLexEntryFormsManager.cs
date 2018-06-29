@@ -194,7 +194,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void CmdMorphJumpToConcordance_Clicked(object sender, EventArgs e)
 		{
-			LinkHandler.JumpToTool(_publisher, new FwLinkArgs(AreaServices.ConcordanceMachineName, MyDataTree.CurrentSlice.MyCmObject.Guid));
+			LinkHandler.PublishFollowLinkMessage(_publisher, new FwLinkArgs(AreaServices.ConcordanceMachineName, MyDataTree.CurrentSlice.MyCmObject.Guid));
 		}
 
 		private void CmdDataTree_Convert_LexemeForm_AffixProcess_Clicked(object sender, EventArgs e)
@@ -410,7 +410,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private void CmdLexemeFormJumpToConcordance_Clicked(object sender, EventArgs e)
 		{
 			// Should be a MoForm
-			LinkHandler.JumpToTool(_publisher, new FwLinkArgs(AreaServices.ConcordanceMachineName, MyDataTree.CurrentSlice.MyCmObject.Guid));
+			LinkHandler.PublishFollowLinkMessage(_publisher, new FwLinkArgs(AreaServices.ConcordanceMachineName, MyDataTree.CurrentSlice.MyCmObject.Guid));
 		}
 
 		private void CmdDataTree_Swap_LexemeForm_Clicked(object sender, EventArgs e)
@@ -645,7 +645,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			// <command id="CmdEntryJumpToDefault" label="Show Entry in Lexicon" message="JumpToTool">
 			// <parameters tool="lexiconEdit" className="LexEntry"/>
-			LinkHandler.JumpToTool(_publisher, new FwLinkArgs(AreaServices.LexiconEditMachineName, MyRecordList.CurrentObject.Guid));
+			LinkHandler.PublishFollowLinkMessage(_publisher, new FwLinkArgs(AreaServices.LexiconEditMachineName, MyRecordList.CurrentObject.Guid));
 		}
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_AlternateForm(Slice slice, string contextMenuId)

@@ -417,7 +417,7 @@ namespace LanguageExplorer.LcmUi
 		public virtual bool OnJumpToTool(object commandObject)
 		{
 			var command = (Command) commandObject;
-			LinkHandler.JumpToTool(Publisher, new FwLinkArgs(XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool"), GuidForJumping(commandObject)));
+			LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool"), GuidForJumping(commandObject)));
 			return true;
 		}
 

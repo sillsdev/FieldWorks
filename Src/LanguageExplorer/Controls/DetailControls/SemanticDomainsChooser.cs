@@ -202,7 +202,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void OnEditDomainsLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			LinkHandler.JumpToTool(m_publisher, new FwLinkArgs(XmlUtils.GetOptionalAttributeValue(LinkNode, "tool"), new Guid()));
+			LinkHandler.PublishFollowLinkMessage(m_publisher, new FwLinkArgs(XmlUtils.GetOptionalAttributeValue(LinkNode, "tool"), new Guid()));
 			btnCancel.PerformClick();
 		}
 

@@ -99,7 +99,7 @@ namespace LanguageExplorer.Controls.XMLViews
 #if RANDYTODO
 			// TODO: Remove in the end
 			var baseDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "DevWork", "NewDevWork", "05_Remove use of main xml config files", "Configuration");
-			Inventory.GetInventory("layouts", sDatabase).Root.Save(Path.Combine(baseDir, "Layouts_From_Inventory.xml"));
+			Inventory.GetInventory("layouts", sDatabase).Root.Save(Path.Combine(baseDir, "Inventory_Layouts.xml"));
 #endif
 
 			keyAttrs = new Dictionary<string, string[]>
@@ -110,7 +110,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			Inventory.SetInventory("parts", sDatabase, new Inventory(new[] { partDirectory }, "*Parts.xml", "/PartInventory/bin/*", keyAttrs, applicationName, projectPath));
 #if RANDYTODO
 			// TODO: Remove in the end
-			Inventory.GetInventory("parts", sDatabase).Root.Save(Path.Combine(baseDir, "Parts_From_Inventory.xml"));
+			Inventory.GetInventory("parts", sDatabase).Root.Save(Path.Combine(baseDir, "Inventory_Parts.xml"));
 #endif
 		}
 

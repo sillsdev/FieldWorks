@@ -4098,7 +4098,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					{
 						additionalProps.Add(new Property("ConcordOn", concordOn));
 					}
-					LinkHandler.JumpToTool(Publisher, fwLink);
+					LinkHandler.PublishFollowLinkMessage(Publisher, fwLink);
 					return true;
 				}
 			}

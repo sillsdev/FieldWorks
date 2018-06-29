@@ -190,7 +190,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					survivor.DateModified = DateTime.Now;
 				});
 				MessageBox.Show((Form)_mainWnd, LexiconResources.ksEntriesHaveBeenMerged, LexiconResources.ksMergeReport, MessageBoxButtons.OK, MessageBoxIcon.Information);
-				LinkHandler.JumpToTool(_publisher, new FwLinkArgs(null, survivor.Guid));
+				LinkHandler.PublishFollowLinkMessage(_publisher, new FwLinkArgs(null, survivor.Guid));
 			}
 		}
 	}

@@ -66,7 +66,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		public bool OnMappingJumpToNaturalClass(object args)
 		{
 			var mapping = (IMoModifyFromInput)RuleFormulaControl.CurrentObject;
-			LinkHandler.JumpToTool(Publisher, new FwLinkArgs(AreaServices.NaturalClassEditMachineName, mapping.ModificationRA.Guid));
+			LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(AreaServices.NaturalClassEditMachineName, mapping.ModificationRA.Guid));
 			return true;
 		}
 
@@ -83,7 +83,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		public bool OnMappingJumpToPhoneme(object args)
 		{
 			var mapping = (IMoInsertPhones)RuleFormulaControl.CurrentObject;
-			LinkHandler.JumpToTool(Publisher, new FwLinkArgs(AreaServices.PhonemeEditMachineName, mapping.ContentRS[0].Guid));
+			LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(AreaServices.PhonemeEditMachineName, mapping.ContentRS[0].Guid));
 			return true;
 		}
 	}

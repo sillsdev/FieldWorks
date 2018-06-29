@@ -289,7 +289,7 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			if (m_link != null)
 			{
-				LinkHandler.JumpToTool(m_publisher, m_link);
+				LinkHandler.PublishFollowLinkMessage(m_publisher, m_link);
 			}
 		}
 

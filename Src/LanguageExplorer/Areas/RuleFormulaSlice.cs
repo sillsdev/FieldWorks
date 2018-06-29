@@ -190,7 +190,7 @@ namespace LanguageExplorer.Areas
 
 		private void JumpToTool(string toolName)
 		{
-			LinkHandler.JumpToTool(Publisher, new FwLinkArgs(toolName, ((IPhSimpleContextSeg)RuleFormulaControl.CurrentContext).FeatureStructureRA.Guid));
+			LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(toolName, ((IPhSimpleContextSeg)RuleFormulaControl.CurrentContext).FeatureStructureRA.Guid));
 		}
 	}
 }

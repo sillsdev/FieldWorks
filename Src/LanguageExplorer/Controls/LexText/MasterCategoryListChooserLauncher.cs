@@ -70,7 +70,7 @@ namespace LanguageExplorer.Controls.LexText
 						// NOTE: We use PostMessage here, rather than SendMessage which
 						// disposes of the PopupTree before we and/or our parents might
 						// be finished using it (cf. LT-2563).
-						LinkHandler.JumpToTool(m_publisher, new FwLinkArgs(AreaServices.PosEditMachineName, dlg.SelectedPOS.Guid));
+						LinkHandler.PublishFollowLinkMessage(m_publisher, new FwLinkArgs(AreaServices.PosEditMachineName, dlg.SelectedPOS.Guid));
 						if (m_parentOfPopupMgr != null && m_parentOfPopupMgr.Modal)
 						{
 							// Close the dlg that opened the master POS dlg,

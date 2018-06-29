@@ -750,7 +750,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var newKid = list.Services.GetInstance<ILexRefTypeFactory>().Create();
 			list.PossibilitiesOS.Add(newKid);
 			Cache.DomainDataByFlid.EndUndoTask();
-			LinkHandler.JumpToTool(ContainingDataTree.Publisher, new FwLinkArgs(AreaServices.LexRefEditMachineName, newKid.Guid));
+			LinkHandler.PublishFollowLinkMessage(ContainingDataTree.Publisher, new FwLinkArgs(AreaServices.LexRefEditMachineName, newKid.Guid));
 		}
 
 		/// <summary />

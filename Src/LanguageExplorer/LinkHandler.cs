@@ -330,6 +330,8 @@ namespace LanguageExplorer
 
 		private void FollowActiveLink()
 		{
+#if RANDYTODO
+			// TODO: Make it work.
 			try
 			{
 				if (_linkActive.ToolName == "default")
@@ -401,8 +403,7 @@ namespace LanguageExplorer
 				{
 					// allow tools to skip loading a record if we're planning to jump to one.
 					// interested tools will need to reset this "JumpToRecord" property after handling OnJumpToRecord.
-					PropertyTable.SetProperty("SuspendLoadingRecordUntilOnJumpToRecord",
-						$"{_linkActive.ToolName},{_linkActive.TargetGuid}", settingsGroup: SettingsGroup.LocalSettings);
+					PropertyTable.SetProperty("SuspendLoadingRecordUntilOnJumpToRecord", $"{_linkActive.ToolName},{_linkActive.TargetGuid}", settingsGroup: SettingsGroup.LocalSettings);
 				}
 
 				var messages = new List<string>();
@@ -430,8 +431,6 @@ namespace LanguageExplorer
 						if (!guid.Equals(cmObject.Owner.Guid))
 						{
 							PropertyTable.SetProperty("ReversalIndexGuid", cmObject.Owner.Guid.ToString(), true);
-							messages.Add("ReversalIndexGuid");
-							newValues.Add(cmObject.Owner.Guid.ToString());
 						}
 					}
 					messages.Add("JumpToRecord");
@@ -446,6 +445,9 @@ namespace LanguageExplorer
 				var message = !string.IsNullOrEmpty(err.InnerException?.Message) ? string.Format(LanguageExplorerResources.UnableToFollowLink0, err.InnerException.Message) : LanguageExplorerResources.UnableToFollowLink;
 				MessageBox.Show(message, LanguageExplorerResources.FailedJump, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 			}
+#else
+			MessageBox.Show($"Not yet able to jump to:{Environment.NewLine}{Environment.NewLine}{_linkActive}", "Jump To Tool some day :-(", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+#endif
 		}
 
 		private void ShowCantJumpMessage(string msg)
@@ -548,7 +550,7 @@ namespace LanguageExplorer
 		}
 		#endregion
 
-		internal static void JumpToTool(IPublisher publisher, FwLinkArgs linkArgsForJump)
+		internal static void PublishFollowLinkMessage(IPublisher publisher, FwLinkArgs linkArgsForJump)
 		{
 			var commands = new List<string>
 			{

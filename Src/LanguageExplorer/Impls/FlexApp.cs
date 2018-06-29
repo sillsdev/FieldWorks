@@ -700,7 +700,7 @@ namespace LanguageExplorer.Impls
 			{
 				return;
 			}
-			LinkHandler.JumpToTool(fwxwnd.Publisher, link);
+			LinkHandler.PublishFollowLinkMessage(fwxwnd.Publisher, link);
 			var asForm = fwxwnd as Form;
 			var topmost = asForm.TopMost;
 			asForm.TopMost = true;

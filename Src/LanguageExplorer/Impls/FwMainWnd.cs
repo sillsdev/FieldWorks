@@ -789,7 +789,7 @@ namespace LanguageExplorer.Impls
 			}
 			var startupLink = _startupLink;
 			_startupLink = null;
-			LinkHandler.JumpToTool(Publisher, startupLink);
+			LinkHandler.PublishFollowLinkMessage(Publisher, startupLink);
 
 			return true;
 		}

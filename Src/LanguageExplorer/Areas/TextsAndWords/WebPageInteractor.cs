@@ -152,7 +152,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				return; // do nothing
 			}
-			LinkHandler.JumpToTool(m_publisher, new FwLinkArgs(sTool, cmo.Guid));
+			LinkHandler.PublishFollowLinkMessage(m_publisher, new FwLinkArgs(sTool, cmo.Guid));
 		}
 
 		/// <summary>

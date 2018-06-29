@@ -588,7 +588,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private bool CanDemoteSense(Slice currentSlice)
 		{
-			return currentSlice.MyCmObject is ILexSense && _cache.DomainDataByFlid.get_VecSize(currentSlice.MyCmObject.Hvo, currentSlice.MyCmObject.OwningFlid) > 1;
+			return currentSlice.MyCmObject is ILexSense && _cache.DomainDataByFlid.get_VecSize(currentSlice.MyCmObject.Owner.Hvo, currentSlice.MyCmObject.OwningFlid) > 1;
 		}
 
 		private void Demote_Sense_Clicked(object sender, EventArgs e)
@@ -637,7 +637,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			// Show Sense in Concordance menu item. (CmdSenseJumpToConcordance->msg: JumpToTool)
 			// <command id="CmdSenseJumpToConcordance" label="Show Sense in Concordance" message="JumpToTool">
-			LinkHandler.JumpToTool(_flexComponentParameters.Publisher, new FwLinkArgs(AreaServices.ConcordanceMachineName, MyRecordList.CurrentObject.Guid));
+			LinkHandler.PublishFollowLinkMessage(_flexComponentParameters.Publisher, new FwLinkArgs(AreaServices.ConcordanceMachineName, MyRecordList.CurrentObject.Guid));
 		}
 
 		private void FindExampleSentence_Clicked(object sender, EventArgs e)

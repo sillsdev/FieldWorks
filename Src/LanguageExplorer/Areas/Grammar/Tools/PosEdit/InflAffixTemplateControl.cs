@@ -293,7 +293,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			Command command = (XCore.Command)commandObject;
 			string tool = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool");
 			var inflMsa = m_obj as IMoInflAffMsa;
-			LinkHandler.JumpToTool(Publisher, tool, inflMsa.Owner);
+			LinkHandler.PublishFollowLinkMessage(Publisher, tool, inflMsa.Owner);
 			return true; // handled this
 		}
 #endif

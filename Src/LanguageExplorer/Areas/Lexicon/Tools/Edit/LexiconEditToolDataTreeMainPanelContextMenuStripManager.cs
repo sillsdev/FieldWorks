@@ -175,7 +175,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			// CreateMainPanelContextMenuStrip
 			// Show Entry in Concordance menu item. (CmdRootEntryJumpToConcordance->msg: JumpToTool)
-			LinkHandler.JumpToTool(_publisher, new FwLinkArgs(AreaServices.ConcordanceMachineName, MyRecordList.CurrentObject.Guid));
+			LinkHandler.PublishFollowLinkMessage(_publisher, new FwLinkArgs(AreaServices.ConcordanceMachineName, MyRecordList.CurrentObject.Guid));
 		}
 
 		private void CmdChangeToVariant_Clicked(object sender, EventArgs e)

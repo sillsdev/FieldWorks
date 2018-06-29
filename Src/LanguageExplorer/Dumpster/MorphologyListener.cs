@@ -148,7 +148,7 @@ namespace LanguageExplorer.Dumpster
 			var additionalProps = link.LinkProperties;
 			additionalProps.Add(new LinkProperty("SuspendLoadListUntilOnChangeFilter", link.ToolName));
 			additionalProps.Add(new LinkProperty("LinkSetupInfo", "ReviewUndecidedSpelling"));
-			LinkHandler.JumpToTool(Publisher, link);
+			LinkHandler.PublishFollowLinkMessage(Publisher, link);
 			return true;
 		}
 
@@ -166,7 +166,7 @@ namespace LanguageExplorer.Dumpster
 			var additionalProps = link.LinkProperties;
 			additionalProps.Add(new LinkProperty("SuspendLoadListUntilOnChangeFilter", link.ToolName));
 			additionalProps.Add(new LinkProperty("LinkSetupInfo", "CorrectSpelling"));
-			LinkHandler.JumpToTool(Publisher, link);
+			LinkHandler.PublishFollowLinkMessage(Publisher, link);
 			return true;
 		}
 
@@ -235,7 +235,7 @@ namespace LanguageExplorer.Dumpster
 			var command = (Command)commandObject;
 			if (command.TargetId != Guid.Empty)
 			{
-				LinkHandler.JumpToTool(Publisher, new FwLinkArgs(XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool"), command.TargetId));
+				LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool"), command.TargetId));
 				command.TargetId = Guid.Empty;	// clear the target for future use.
 				return true;
 			}

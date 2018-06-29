@@ -58,7 +58,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 						m_msaInflectionFeatureListDlgLauncherView.Init(m_cache, dlg.FS);
 						break;
 					case DialogResult.Yes:
-						LinkHandler.JumpToTool(Publisher, new FwLinkArgs(AreaServices.FeaturesAdvancedEditMachineName, m_cache.LanguageProject.MsFeatureSystemOA.Guid));
+						LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(AreaServices.FeaturesAdvancedEditMachineName, m_cache.LanguageProject.MsFeatureSystemOA.Guid));
 						break;
 				}
 			}

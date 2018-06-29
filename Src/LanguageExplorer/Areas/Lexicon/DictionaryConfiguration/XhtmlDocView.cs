@@ -738,7 +738,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 				{
 					return false;
 				}
-				LinkHandler.JumpToTool(Publisher, tool, null);
+				LinkHandler.PublishFollowLinkMessage(Publisher, tool, null);
 				return true;
 			}
 #endif

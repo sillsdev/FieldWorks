@@ -1548,7 +1548,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					if (url.StartsWith(FwLinkArgs.kFwUrlPrefix))
 					{
-						LinkHandler.JumpToTool(m_xbv.Publisher, new FwLinkArgs(url));
+						LinkHandler.PublishFollowLinkMessage(m_xbv.Publisher, new FwLinkArgs(url));
 						return;
 					}
 				}

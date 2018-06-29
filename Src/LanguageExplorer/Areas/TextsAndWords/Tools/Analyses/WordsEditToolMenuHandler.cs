@@ -316,7 +316,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			}
 			if (guid != Guid.Empty)
 			{
-				LinkHandler.JumpToTool(Publisher, new FwLinkArgs(XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "tool"), guid));
+				LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "tool"), guid));
 				return true;
 			}
 			return false;

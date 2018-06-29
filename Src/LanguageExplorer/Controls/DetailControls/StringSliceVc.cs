@@ -217,7 +217,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					if (url.StartsWith(FwLinkArgs.kFwUrlPrefix))
 					{
-						LinkHandler.JumpToTool(m_publisher, new FwLinkArgs(url));
+						LinkHandler.PublishFollowLinkMessage(m_publisher, new FwLinkArgs(url));
 						return;
 					}
 				}

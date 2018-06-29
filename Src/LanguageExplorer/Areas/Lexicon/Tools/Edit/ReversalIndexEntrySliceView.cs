@@ -176,7 +176,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					return;
 				}
 			}
-			LinkHandler.JumpToTool(Publisher, new FwLinkArgs(AreaServices.ReversalEditCompleteMachineName, ((IReversalIndexEntry)Cache.ServiceLocator.GetObject(hvo)).MainEntry.Guid));
+			LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(AreaServices.ReversalEditCompleteMachineName, ((IReversalIndexEntry)Cache.ServiceLocator.GetObject(hvo)).MainEntry.Guid));
 		}
 
 		/// <summary>

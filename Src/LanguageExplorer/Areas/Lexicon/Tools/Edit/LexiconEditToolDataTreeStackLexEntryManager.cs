@@ -586,7 +586,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private void CmdEntryJumpToConcordance_Clicked(object sender, EventArgs e)
 		{
 			// Should be a LexEntry
-			LinkHandler.JumpToTool(_publisher, new FwLinkArgs(AreaServices.ConcordanceMachineName, MyRecordList.CurrentObject.Guid));
+			LinkHandler.PublishFollowLinkMessage(_publisher, new FwLinkArgs(AreaServices.ConcordanceMachineName, MyRecordList.CurrentObject.Guid));
 		}
 		#endregion popup slice menus
 

@@ -831,7 +831,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			// If user chooses to add a new template then navigate them to the Text Constituent Chart Template list view
 			if (selection.SelectedItem as string == LanguageExplorerResources.ksCreateNewTemplate)
 			{
-				LinkHandler.JumpToTool(Publisher, new FwLinkArgs(LanguageExplorerResources.ksNewTemplateLink, new Guid()));
+				LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(LanguageExplorerResources.ksNewTemplateLink, new Guid()));
 				selection.SelectedItem = m_template;
 				return;
 			}
