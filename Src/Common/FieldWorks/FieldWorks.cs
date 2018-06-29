@@ -496,6 +496,12 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		private static void LaunchRestoreFromCommandLine(FwAppArgs appArgs)
 		{
+			if (!string.IsNullOrEmpty(appArgs.Database))
+			{
+				Logger.WriteEvent(string.Concat("Restoring project: ", appArgs.BackupFile));
+				RestoreCurrentProject(new FwRestoreProjectSettings(new RestoreProjectSettings(FwDirectoryFinder.ProjectsDirectory, appArgs.Database, appArgs.BackupFile, appArgs.RestoreOptions)), null);
+				return;
+			}
 			RestoreProject(null, appArgs.BackupFile);
 		}
 
