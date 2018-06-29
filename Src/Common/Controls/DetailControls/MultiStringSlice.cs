@@ -65,6 +65,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			var view = (LabeledMultiStringView)Control;
 			Label = null; // new slice normally has this
+			SetupWssToDisplay();
 			view.Reuse(obj.Hvo, flid, ws, wsOptional, forceIncludeEnglish, editable, spellCheck);
 		}
 
