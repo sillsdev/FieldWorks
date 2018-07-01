@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	internal sealed class LexiconEditToolToolsMenuManager : IToolUiWidgetManager
 	{
 		private IRecordList MyRecordList { get; set; }
-		private Dictionary<string, EventHandler> _sharedEventHandlers;
+		private ISharedEventHandlers _sharedEventHandlers;
 		private FlexComponentParameters _flexComponentParameters;
 		private IPublisher _publisher;
 		private LcmCache _cache;
@@ -45,17 +45,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		#region IToolUiWidgetManager
 
 		/// <inheritdoc />
-		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, Dictionary<string, EventHandler> sharedEventHandlers, IRecordList recordList)
+		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
-			Guard.AgainstNull(sharedEventHandlers, nameof(sharedEventHandlers));
 			Guard.AgainstNull(recordList, nameof(recordList));
 
 			_flexComponentParameters = majorFlexComponentParameters.FlexComponentParameters;
 			_publisher = majorFlexComponentParameters.FlexComponentParameters.Publisher;
 			_cache = majorFlexComponentParameters.LcmCache;
 			_mainWnd = majorFlexComponentParameters.MainWindow;
-			_sharedEventHandlers = sharedEventHandlers;
+			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
 			_sharedEventHandlers.Add(LexiconEditToolConstants.CmdMergeEntry, Merge_With_Entry_Clicked);
 			MyRecordList = recordList;
 
@@ -113,6 +112,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			if (disposing)
 			{
+				_sharedEventHandlers.Remove(LexiconEditToolConstants.CmdMergeEntry);
 				foreach (var menuTuple in _newToolsConfigurationMenusAndHandlers)
 				{
 					menuTuple.Item1.Click -= menuTuple.Item2;

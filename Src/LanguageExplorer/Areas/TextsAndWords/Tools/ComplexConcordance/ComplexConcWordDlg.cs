@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2013-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,18 +9,18 @@ using System.Windows.Forms;
 using Aga.Controls.Tree;
 using Aga.Controls.Tree.NodeControls;
 using LanguageExplorer.Controls;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 
-namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
+namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 {
-	public class ComplexConcMorphDlg : Form
+	public class ComplexConcWordDlg : Form
 	{
-		const string s_helpTopic = "khtpComplexConcMorphDlg";
+		const string s_helpTopic = "khtpComplexConcWordDlg";
 
 		private Button m_btnHelp;
 		private Button m_btnCancel;
@@ -32,9 +32,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private GroupBox groupBox2;
 		private ComboBox m_glossWsComboBox;
 		private FwTextBox m_glossTextBox;
-		private GroupBox groupBox3;
-		private ComboBox m_entryWsComboBox;
-		private FwTextBox m_entryTextBox;
 		private GroupBox groupBox4;
 		private TreeCombo m_categoryComboBox;
 		private GroupBox groupBox5;
@@ -53,17 +50,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
-		private ComplexConcMorphNode m_node;
+		private ComplexConcWordNode m_node;
 		private PossibilityComboController m_catPopupTreeManager;
 		private InflFeatureTreeModel m_inflModel;
 
-		public ComplexConcMorphDlg()
+		public ComplexConcWordDlg()
 		{
 			InitializeComponent();
 			AccessibleName = GetType().Name;
 		}
 
-		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, ComplexConcMorphNode node)
+		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, ComplexConcWordNode node)
 		{
 			m_cache = cache;
 			m_node = node;
@@ -74,15 +71,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_glossTextBox.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
 			m_glossTextBox.AdjustForStyleSheet(FwUtils.StyleSheetFromPropertyTable(propertyTable));
 
-			m_entryTextBox.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
-			m_entryTextBox.AdjustForStyleSheet(FwUtils.StyleSheetFromPropertyTable(propertyTable));
-
 			m_categoryComboBox.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
 
 			foreach (var ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
 			{
 				m_formWsComboBox.Items.Add(ws);
-				m_entryWsComboBox.Items.Add(ws);
 			}
 
 			foreach (var ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
@@ -95,7 +88,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_inflFeatsTreeView.ExpandAll();
 
 			SetTextBoxValue(m_node.Form, m_formTextBox, m_formWsComboBox, true);
-			SetTextBoxValue(m_node.Entry, m_entryTextBox, m_entryWsComboBox, true);
 			SetTextBoxValue(m_node.Gloss, m_glossTextBox, m_glossWsComboBox, false);
 
 			m_catPopupTreeManager = new PossibilityComboController(m_categoryComboBox,
@@ -134,8 +126,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			else
 			{
-				comboBox.SelectedItem = vern ? m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem
-					: m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+				comboBox.SelectedItem = vern ? m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem : m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 			}
 		}
 
@@ -143,7 +134,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			m_node.Form = string.IsNullOrEmpty(m_formTextBox.Text) ? null : m_formTextBox.Tss;
 			m_node.Gloss = string.IsNullOrEmpty(m_glossTextBox.Text) ? null : m_glossTextBox.Tss;
-			m_node.Entry = string.IsNullOrEmpty(m_entryTextBox.Text) ? null : m_entryTextBox.Tss;
 
 			m_inflModel.AddInflFeatures(m_node.InflFeatures);
 
@@ -180,11 +170,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void m_glossWsComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			UpdateTextBoxWs(m_glossWsComboBox, m_glossTextBox);
-		}
-
-		private void m_entryWsComboBox_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			UpdateTextBoxWs(m_entryWsComboBox, m_entryTextBox);
 		}
 
 		private void UpdateTextBoxWs(ComboBox wsComboBox, FwTextBox textBox)
@@ -242,7 +227,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ComplexConcMorphDlg));
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ComplexConcWordDlg));
 			this.m_btnHelp = new System.Windows.Forms.Button();
 			this.m_btnCancel = new System.Windows.Forms.Button();
 			this.m_btnOK = new System.Windows.Forms.Button();
@@ -250,9 +235,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
 			this.m_glossWsComboBox = new System.Windows.Forms.ComboBox();
 			this.m_glossTextBox = new SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox();
-			this.groupBox3 = new System.Windows.Forms.GroupBox();
-			this.m_entryWsComboBox = new System.Windows.Forms.ComboBox();
-			this.m_entryTextBox = new SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.m_formWsComboBox = new System.Windows.Forms.ComboBox();
 			this.m_formTextBox = new SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox();
@@ -271,8 +253,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			this.m_imageList = new System.Windows.Forms.ImageList(this.components);
 			this.groupBox2.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.m_glossTextBox)).BeginInit();
-			this.groupBox3.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.m_entryTextBox)).BeginInit();
 			this.groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.m_formTextBox)).BeginInit();
 			this.groupBox4.SuspendLayout();
@@ -288,6 +268,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			//
 			// m_btnCancel
 			//
+			this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			resources.ApplyResources(this.m_btnCancel, "m_btnCancel");
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
@@ -330,37 +311,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			this.m_helpProvider.SetShowHelp(this.m_glossTextBox, ((bool)(resources.GetObject("m_glossTextBox.ShowHelp"))));
 			this.m_glossTextBox.SuppressEnter = true;
 			this.m_glossTextBox.WordWrap = false;
-			//
-			// groupBox3
-			//
-			this.groupBox3.Controls.Add(this.m_entryWsComboBox);
-			this.groupBox3.Controls.Add(this.m_entryTextBox);
-			resources.ApplyResources(this.groupBox3, "groupBox3");
-			this.groupBox3.Name = "groupBox3";
-			this.m_helpProvider.SetShowHelp(this.groupBox3, ((bool)(resources.GetObject("groupBox3.ShowHelp"))));
-			this.groupBox3.TabStop = false;
-			//
-			// m_entryWsComboBox
-			//
-			this.m_entryWsComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.m_entryWsComboBox.FormattingEnabled = true;
-			resources.ApplyResources(this.m_entryWsComboBox, "m_entryWsComboBox");
-			this.m_entryWsComboBox.Name = "m_entryWsComboBox";
-			this.m_helpProvider.SetShowHelp(this.m_entryWsComboBox, ((bool)(resources.GetObject("m_entryWsComboBox.ShowHelp"))));
-			this.m_entryWsComboBox.SelectedIndexChanged += new System.EventHandler(this.m_entryWsComboBox_SelectedIndexChanged);
-			//
-			// m_entryTextBox
-			//
-			this.m_entryTextBox.AcceptsReturn = false;
-			this.m_entryTextBox.AdjustStringHeight = true;
-			this.m_entryTextBox.BackColor = System.Drawing.SystemColors.Window;
-			this.m_entryTextBox.controlID = null;
-			resources.ApplyResources(this.m_entryTextBox, "m_entryTextBox");
-			this.m_entryTextBox.HasBorder = true;
-			this.m_entryTextBox.Name = "m_entryTextBox";
-			this.m_helpProvider.SetShowHelp(this.m_entryTextBox, ((bool)(resources.GetObject("m_entryTextBox.ShowHelp"))));
-			this.m_entryTextBox.SuppressEnter = true;
-			this.m_entryTextBox.WordWrap = false;
 			//
 			// groupBox1
 			//
@@ -497,7 +447,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			this.m_imageList.Images.SetKeyName(0, "");
 			this.m_imageList.Images.SetKeyName(1, "");
 			//
-			// ComplexConcMorphDlg
+			// ComplexConcWordDlg
 			//
 			this.AcceptButton = this.m_btnOK;
 			resources.ApplyResources(this, "$this");
@@ -505,7 +455,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			this.CancelButton = this.m_btnCancel;
 			this.Controls.Add(this.groupBox5);
 			this.Controls.Add(this.groupBox4);
-			this.Controls.Add(this.groupBox3);
 			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.m_btnHelp);
@@ -514,14 +463,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
-			this.Name = "ComplexConcMorphDlg";
+			this.Name = "ComplexConcWordDlg";
 			this.m_helpProvider.SetShowHelp(this, ((bool)(resources.GetObject("$this.ShowHelp"))));
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
 			this.groupBox2.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.m_glossTextBox)).EndInit();
-			this.groupBox3.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.m_entryTextBox)).EndInit();
 			this.groupBox1.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.m_formTextBox)).EndInit();
 			this.groupBox4.ResumeLayout(false);

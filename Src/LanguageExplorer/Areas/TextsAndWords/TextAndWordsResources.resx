@@ -255,4 +255,22 @@
   <data name="Import_Standard_Format_Words_and_Glosses" xml:space="preserve">
     <value>Standard Format W_ords and Glosses...</value>
   </data>
+  <data name="Group" xml:space="preserve">
+    <value>Group</value>
+  </data>
+  <data name="Occurs_exactly_once" xml:space="preserve">
+    <value>Occurs exactly once</value>
+  </data>
+  <data name="Occurs_one_or_more_times" xml:space="preserve">
+    <value>Occurs one or more times</value>
+  </data>
+  <data name="Occurs_zero_or_more_times" xml:space="preserve">
+    <value>Occurs zero or more times</value>
+  </data>
+  <data name="Set_criteria" xml:space="preserve">
+    <value>Set criteria...</value>
+  </data>
+  <data name="Set_occurrence_min_and_max" xml:space="preserve">
+    <value>Set occurrence (min. and max.)...</value>
+  </data>
 </root>

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Chorus.FileTypeHandlers;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
@@ -52,13 +53,13 @@ namespace LanguageExplorer.Areas
 		#region Text and Words area
 		internal const string TextAndWordsAreaMachineName = "textsWords";
 		internal const string TextAndWordsAreaDefaultToolMachineName = InterlinearEditMachineName;
-		internal const string InterlinearEditMachineName = "interlinearEdit";
-		internal const string ConcordanceMachineName = "concordance";
-		internal const string ComplexConcordanceMachineName = "complexConcordance";
-		internal const string WordListConcordanceMachineName = "wordListConcordance";
-		internal const string AnalysesMachineName = "Analyses";
-		internal const string BulkEditWordformsMachineName = "bulkEditWordforms";
-		internal const string CorpusStatisticsMachineName = "corpusStatistics";
+			internal const string InterlinearEditMachineName = "interlinearEdit";
+			internal const string ConcordanceMachineName = "concordance";
+			internal const string ComplexConcordanceMachineName = "complexConcordance";
+			internal const string WordListConcordanceMachineName = "wordListConcordance";
+			internal const string AnalysesMachineName = "Analyses";
+			internal const string BulkEditWordformsMachineName = "bulkEditWordforms";
+			internal const string CorpusStatisticsMachineName = "corpusStatistics";
 		#endregion
 
 		#region Grammar area
@@ -123,9 +124,10 @@ namespace LanguageExplorer.Areas
 			internal const string ReversalToolReversalIndexPOSMachineName = "reversalToolReversalIndexPOS";
 		#endregion
 
-		#region views
+		#region menus
 
 		internal const string mnuBrowseView = "mnuBrowseView";
+		internal const string mnuEnvChoices = "mnuEnvChoices";
 
 		#endregion
 
@@ -133,6 +135,12 @@ namespace LanguageExplorer.Areas
 		#region commands
 
 		internal const string CmdEntryJumpToConcordance = "CmdEntryJumpToConcordance";
+		internal const string InsertSlash = "InsertSlash";
+		internal const string InsertEnvironmentBar = "InsertEnvironmentBar";
+		internal const string InsertNaturalClass = "InsertNaturalClass";
+		internal const string InsertOptionalItem = "InsertOptionalItem";
+		internal const string InsertHashMark = "InsertHashMark";
+		internal const string ShowEnvironmentError = "ShowEnvironmentError";
 
 		#endregion
 

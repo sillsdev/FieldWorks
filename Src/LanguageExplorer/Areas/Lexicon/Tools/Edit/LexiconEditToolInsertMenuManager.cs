@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 SIL International
+// Copyright (c) 2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -30,7 +30,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	internal sealed class LexiconEditToolInsertMenuManager : IToolUiWidgetManager
 	{
 		private IRecordList MyRecordList { get; set; }
-		private Dictionary<string, EventHandler> _sharedEventHandlers;
+		private ISharedEventHandlers _sharedEventHandlers;
 		private FlexComponentParameters _flexComponentParameters;
 		private IPropertyTable _propertyTable;
 		private LcmCache _cache;
@@ -50,10 +50,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		#region IToolUiWidgetManager
 
 		/// <inheritdoc />
-		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, Dictionary<string, EventHandler> sharedEventHandlers, IRecordList recordList)
+		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
-			Guard.AgainstNull(sharedEventHandlers, nameof(sharedEventHandlers));
 			Guard.AgainstNull(recordList, nameof(recordList));
 
 			_flexComponentParameters = majorFlexComponentParameters.FlexComponentParameters;
@@ -61,7 +60,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_cache = majorFlexComponentParameters.LcmCache;
 			_mainWnd = majorFlexComponentParameters.MainWindow;
 			MyRecordList = recordList;
-			_sharedEventHandlers = sharedEventHandlers;
+			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
 			_sharedEventHandlers.Add(LexiconEditToolConstants.CmdInsertLexEntry, Insert_Entry_Clicked);
 			_sharedEventHandlers.Add(LexiconEditToolConstants.CmdInsertSense, Insert_Sense_Clicked);
 			_sharedEventHandlers.Add(LexiconEditToolConstants.CmdInsertSubsense, Insert_Subsense_Clicked);
@@ -150,6 +149,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			if (disposing)
 			{
+				_sharedEventHandlers.Remove(LexiconEditToolConstants.CmdInsertLexEntry);
+				_sharedEventHandlers.Remove(LexiconEditToolConstants.CmdInsertSense);
+				_sharedEventHandlers.Remove(LexiconEditToolConstants.CmdInsertSubsense);
+				_sharedEventHandlers.Remove(LexiconEditToolConstants.CmdDataTree_Insert_AlternateForm);
+				_sharedEventHandlers.Remove(LexiconEditToolConstants.CmdDataTree_Insert_Etymology);
+				_sharedEventHandlers.Remove(LexiconEditToolConstants.CmdDataTree_Insert_Pronunciation);
+				_sharedEventHandlers.Remove(LexiconEditToolConstants.CmdInsertExtNote);
+				_sharedEventHandlers.Remove(LexiconEditToolConstants.CmdInsertPicture);
+				_sharedEventHandlers.Remove(LexiconEditToolConstants.CmdInsertVariant);
+				_sharedEventHandlers.Remove(LexiconEditToolConstants.CmdInsertMediaFile);
 				MyDataTree.CurrentSliceChanged -= MyDataTree_CurrentSliceChanged;
 				_senseMenuItems.Clear();
 

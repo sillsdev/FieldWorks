@@ -1397,4 +1397,7 @@ Do you want to continue with the export?</value>
   <data name="ksUndoChangeTemplate" xml:space="preserve">
     <value>Undo Change Template</value>
   </data>
+  <data name="Describe_Error_in_Environment" xml:space="preserve">
+    <value>_Describe Error in Environment</value>
+  </data>
 </root>

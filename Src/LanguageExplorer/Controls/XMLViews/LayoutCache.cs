@@ -1,4 +1,3 @@
-//#define RANDYTODO // TODO: Remove in the end
 // Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
@@ -96,11 +95,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				layoutInventory.LoadUserOverrides(LayoutVersionNumber, sDatabase);
 			}
 			Inventory.SetInventory("layouts", sDatabase, layoutInventory);
-#if RANDYTODO
-			// TODO: Remove in the end
-			var baseDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "DevWork", "NewDevWork", "05_Remove use of main xml config files", "Configuration");
-			Inventory.GetInventory("layouts", sDatabase).Root.Save(Path.Combine(baseDir, "Inventory_Layouts.xml"));
-#endif
 
 			keyAttrs = new Dictionary<string, string[]>
 			{
@@ -108,10 +102,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			};
 
 			Inventory.SetInventory("parts", sDatabase, new Inventory(new[] { partDirectory }, "*Parts.xml", "/PartInventory/bin/*", keyAttrs, applicationName, projectPath));
-#if RANDYTODO
-			// TODO: Remove in the end
-			Inventory.GetInventory("parts", sDatabase).Root.Save(Path.Combine(baseDir, "Inventory_Parts.xml"));
-#endif
 		}
 
 		/// <summary>

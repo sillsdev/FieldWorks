@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,7 +8,6 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls.LexText;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
@@ -28,9 +27,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	{
 		// column that is scheduled to be removed
 		private IPhContextOrVar m_removeCol;
+		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> _mnuMoAffixProcessRightClickTuple;
 
-		public AffixRuleFormulaControl(XElement configurationNode)
-			: base(configurationNode)
+		public AffixRuleFormulaControl(ISharedEventHandlers sharedEventHandlers, XElement configurationNode)
+			: base(sharedEventHandlers, configurationNode)
 		{
 		}
 
@@ -40,7 +40,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				if (value)
 				{
-					m_view.Select();
+					_view.Select();
 				}
 			}
 		}
@@ -82,9 +82,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			// Don't even 'think' of calling: m_view.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			// I know, I did but it crashed, since it has been done already.
-			m_view.Init(obj.Hvo, this, new AffixRuleFormulaVc(cache, PropertyTable), AffixRuleFormulaVc.kfragRule, cache.MainCacheAccessor);
+			_view.Init(obj.Hvo, this, new AffixRuleFormulaVc(cache, PropertyTable), AffixRuleFormulaVc.kfragRule, cache.MainCacheAccessor);
 
-			m_view.SelectionChanged += SelectionChanged;
+			_view.SelectionChanged += SelectionChanged;
 
 			InsertionControl.AddOption(new InsertOption(RuleInsertType.Phoneme), DisplayOption);
 			InsertionControl.AddOption(new InsertOption(RuleInsertType.NaturalClass), DisplayOption);
@@ -99,7 +99,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private bool DisplayOption(object option)
 		{
 			var type = ((InsertOption) option).Type;
-			var sel = SelectionHelper.Create(m_view);
+			var sel = SelectionHelper.Create(_view);
 			var cellId = GetCell(sel);
 			if (cellId == -1 || cellId == -2)
 			{
@@ -127,7 +127,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private bool DisplayVariableOption(object option)
 		{
-			var sel = SelectionHelper.Create(m_view);
+			var sel = SelectionHelper.Create(_view);
 			var cellId = GetCell(sel);
 			if (cellId == -1 || cellId == -2)
 			{
@@ -160,7 +160,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private bool DisplayColumnOption(object option)
 		{
-			var sel = SelectionHelper.Create(m_view);
+			var sel = SelectionHelper.Create(_view);
 			if (sel.IsRange)
 			{
 				return false;
@@ -195,7 +195,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private string DisplayNoOptsMsg()
 		{
-			var sel = SelectionHelper.Create(m_view);
+			var sel = SelectionHelper.Create(_view);
 			var cellId = GetCell(sel);
 			if (cellId == -1 || cellId == 2)
 			{
@@ -204,14 +204,32 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			return AreaResources.ksAffixRuleNoOptsMsg;
 		}
 
-		protected override string FeatureChooserHelpTopic
-		{
-			get { return "khtpChoose-LexiconEdit-PhonFeats-AffixRuleFormulaControl"; }
-		}
+		protected override string FeatureChooserHelpTopic => "khtpChoose-LexiconEdit-PhonFeats-AffixRuleFormulaControl";
 
 		protected override string RuleName => Rule.Form.BestVernacularAnalysisAlternative.Text;
 
 		protected override string ContextMenuID => "mnuMoAffixProcess";
+
+		#region Overrides of RuleFormulaControl
+		/// <inheritdoc />
+		protected override void ContextMenuRequested(object sender, ContextMenuRequestedEventArgs e)
+		{
+			e.Selection.Install();
+			// Use the local variable, since it does a lot of looking around for "CurrentObject".
+			var obj = CurrentObject;
+			if (obj == null)
+			{
+				return;
+			}
+
+			//// we only bother to display the context menu if an item is selected
+			//using (var ui = new CmObjectUi(obj))
+			//{
+			//	ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+			//	e.Handled = ui.HandleRightClick(this, true, ContextMenuID);
+			//}
+		}
+		#endregion
 
 		protected override int GetCell(SelectionHelper sel, SelectionHelper.SelLimitType limit)
 		{
@@ -753,7 +771,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				return;
 			}
 			// if there is a column that is scheduled to be removed, go ahead and remove it now
-			var sel = SelectionHelper.Create(m_view);
+			var sel = SelectionHelper.Create(_view);
 			var cellId = GetCell(sel);
 			if (m_removeCol.Hvo == cellId)
 			{
@@ -770,7 +788,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		public void SetMappingFeatures()
 		{
-			SelectionHelper.Create(m_view);
+			SelectionHelper.Create(_view);
 			var reconstruct = false;
 			var index = -1;
 			UndoableUnitOfWorkHelper.Do(AreaResources.ksAffixRuleUndoSetMappingFeatures, AreaResources.ksAffixRuleRedoSetMappingFeatures, m_cache.ActionHandlerAccessor, () =>
@@ -829,7 +847,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				}
 			});
 
-			m_view.Select();
+			_view.Select();
 			if (reconstruct)
 			{
 				ReconstructView(MoAffixProcessTags.kflidOutput, index, true);
@@ -838,7 +856,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		public void SetMappingNaturalClass()
 		{
-			SelectionHelper.Create(m_view);
+			SelectionHelper.Create(_view);
 
 			var natClasses = new HashSet<ICmObject>();
 			foreach (var nc in m_cache.LangProject.PhonologicalDataOA.NaturalClassesOS)
@@ -850,7 +868,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			}
 			var selectedNc = DisplayChooser(AreaResources.ksRuleNCOpt, AreaResources.ksRuleNCChooserLink,
 				AreaServices.NaturalClassEditMachineName, "RuleNaturalClassFlatList", natClasses) as IPhNCFeatures;
-			m_view.Select();
+			_view.Select();
 			if (selectedNc == null)
 			{
 				return;
@@ -886,10 +904,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
-			if (m_view != null)
+			if (_view != null)
 			{
 				int w = Width;
-				m_view.Width = w > 0 ? w : 0;
+				_view.Width = w > 0 ? w : 0;
 			}
 		}
 	}

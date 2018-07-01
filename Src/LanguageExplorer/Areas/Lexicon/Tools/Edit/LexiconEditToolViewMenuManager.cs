@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 SIL International
+// Copyright (c) 2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,7 +18,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	internal sealed class LexiconEditToolViewMenuManager : IToolUiWidgetManager
 	{
 		private IRecordList MyRecordList { get; set; }
-		private Dictionary<string, EventHandler> _sharedEventHandlers;
+		private ISharedEventHandlers _sharedEventHandlers;
 		private IPropertyTable _propertyTable;
 		private ISubscriber _subscriber;
 		private IPublisher _publisher;
@@ -41,16 +41,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		#region IToolUiWidgetManager
 
 		/// <inheritdoc />
-		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, Dictionary<string, EventHandler> sharedEventHandlers, IRecordList recordList)
+		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
-			Guard.AgainstNull(sharedEventHandlers, nameof(sharedEventHandlers));
 			Guard.AgainstNull(recordList, nameof(recordList));
 
 			_propertyTable = majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
 			_subscriber = majorFlexComponentParameters.FlexComponentParameters.Subscriber;
 			_publisher = majorFlexComponentParameters.FlexComponentParameters.Publisher;
-			_sharedEventHandlers = sharedEventHandlers;
+			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
 			_sharedEventHandlers.Add(LexiconEditToolConstants.Show_Dictionary_Preview_Clicked, Show_Dictionary_Preview_Clicked);
 
 			MyRecordList = recordList;
@@ -103,6 +102,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			if (disposing)
 			{
+				_sharedEventHandlers.Remove(LexiconEditToolConstants.Show_Dictionary_Preview_Clicked);
 				_subscriber.Unsubscribe("ShowHiddenFields", ShowHiddenFields_Handler);
 				_viewMenu.DropDownOpening -= ViewMenu_DropDown_Opening;
 				foreach (var menuTuple in _newViewMenusAndHandlers)

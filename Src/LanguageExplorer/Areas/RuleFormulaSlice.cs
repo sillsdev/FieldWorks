@@ -3,11 +3,11 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using LanguageExplorer.Controls.DetailControls;
+using SIL.Code;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel.Utils;
 
@@ -20,6 +20,15 @@ namespace LanguageExplorer.Areas
 	internal class RuleFormulaSlice : ViewSlice
 	{
 		public override RootSite RootSite => RuleFormulaControl.RootSite;
+
+		protected ISharedEventHandlers _sharedEventHandlers;
+
+		internal RuleFormulaSlice(ISharedEventHandlers sharedEventHandlers)
+		{
+			Guard.AgainstNull(sharedEventHandlers, nameof(_sharedEventHandlers));
+
+			_sharedEventHandlers = sharedEventHandlers;
+		}
 
 		public RuleFormulaControl RuleFormulaControl
 		{

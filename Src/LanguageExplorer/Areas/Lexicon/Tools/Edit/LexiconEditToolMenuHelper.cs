@@ -18,13 +18,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private LexiconAreaMenuHelper _lexiconAreaMenuHelper;
 		private string _extendedPropertyName;
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
+		private ITool _currentTool;
 		private Dictionary<string, IToolUiWidgetManager> _lexiconEditToolUiWidgetManagers = new Dictionary<string, IToolUiWidgetManager>();
 		private DataTree MyDataTree { get; set; }
 		private RecordBrowseView RecordBrowseView { get; set; }
 		private IRecordList MyRecordList { get; set; }
 		internal MultiPane InnerMultiPane { get; set; }
 		internal DataTreeStackContextMenuFactory MyDataTreeStackContextMenuFactory { get; set; }
-		private Dictionary<string, EventHandler> _sharedEventHandlers;
+		private ISharedEventHandlers _sharedEventHandlers;
 		private const string editMenu = "editMenu";
 		private const string viewMenu = "viewMenu";
 		private const string insertMenu = "insertMenu";
@@ -32,20 +33,30 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private const string insertToolbar = "insertToolbar";
 		private const string dataTreeStack = "dataTreeStack";
 
-		internal LexiconEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, DataTree dataTree, RecordBrowseView recordBrowseView, IRecordList recordList, string extendedPropertyName)
+		internal LexiconEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool currentTool, DataTree dataTree, RecordBrowseView recordBrowseView, IRecordList recordList, string extendedPropertyName)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+			Guard.AgainstNull(currentTool, nameof(currentTool));
 			Guard.AgainstNull(dataTree, nameof(dataTree));
 			Guard.AgainstNull(recordList, nameof(recordList));
 			Guard.AgainstNullOrEmptyString(extendedPropertyName, nameof(extendedPropertyName));
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
+			_currentTool = currentTool;
 			MyDataTree = dataTree;
 			RecordBrowseView = recordBrowseView;
 			MyRecordList = recordList;
 			MyDataTreeStackContextMenuFactory = MyDataTree.DataTreeStackContextMenuFactory;
+			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
 			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(_majorFlexComponentParameters, MyRecordList);
 			_extendedPropertyName = extendedPropertyName;
+
+			// Collect up all shared stuff, before initializing them.
+			// That way, they can each have access to everyone's shared event handlers.
+			// Otherwise, there is significant risk of them looking for a shared handler, but not finding it.
+			_sharedEventHandlers.Add(LexiconAreaConstants.DataTreeMerge, DataTreeMerge_Clicked);
+			_sharedEventHandlers.Add(LexiconAreaConstants.DataTreeDelete, DataTreeDelete_Clicked);
+			_sharedEventHandlers.Add(LexiconAreaConstants.DataTreeSplit, DataTreeSplit_Clicked);
 		}
 
 		internal void Initialize()
@@ -53,10 +64,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_lexiconAreaMenuHelper.Initialize();
 			_lexiconAreaMenuHelper.MyAreaWideMenuHelper.SetupToolsCustomFieldsMenu();
 
-			// Collect up all shared stuff, before initializing them.
-			// That way, they can each have access to everyone's shared event handlers.
-			// Otherwise, there is significant risk of them looking for a shared handler, but not finding it.
-			_sharedEventHandlers = new Dictionary<string, EventHandler>();
 			_lexiconEditToolUiWidgetManagers.Add(editMenu, new LexiconEditToolEditMenuManager());
 			_lexiconEditToolUiWidgetManagers.Add(viewMenu, new LexiconEditToolViewMenuManager(_extendedPropertyName, InnerMultiPane));
 			_lexiconEditToolUiWidgetManagers.Add(insertMenu, new LexiconEditToolInsertMenuManager(MyDataTree));
@@ -64,15 +71,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_lexiconEditToolUiWidgetManagers.Add(insertToolbar, new LexiconEditToolToolbarManager());
 			_lexiconEditToolUiWidgetManagers.Add(dataTreeStack, new LexiconEditToolDataTreeStackManager(MyDataTree));
 
-			// Start the ball rolling for sharing event handlers;
-			_sharedEventHandlers.Add(LexiconAreaConstants.DataTreeMerge, DataTreeMerge_Clicked);
-			_sharedEventHandlers.Add(LexiconAreaConstants.DataTreeDelete, DataTreeDelete_Clicked);
-			_sharedEventHandlers.Add(LexiconAreaConstants.DataTreeSplit, DataTreeSplit_Clicked);
-
 			// Now, it is fine to finish up the initialization of the managers, since all shared event handlers are in '_sharedEventHandlers'.
 			foreach (var manager in _lexiconEditToolUiWidgetManagers.Values)
 			{
-				manager.Initialize(_majorFlexComponentParameters, _sharedEventHandlers, MyRecordList);
+				manager.Initialize(_majorFlexComponentParameters, MyRecordList);
 			}
 		}
 
@@ -82,7 +84,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <exception cref="KeyNotFoundException">Thrown if <paramref name="key"/> is not in the shared event handler dictionary.</exception>
 		internal EventHandler GetHandler(string key)
 		{
-			return _sharedEventHandlers[key];
+			return _majorFlexComponentParameters.SharedEventHandlers.Get(key);
 		}
 
 		private void DataTreeMerge_Clicked(object sender, EventArgs e)
@@ -134,12 +136,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			if (disposing)
 			{
+				_sharedEventHandlers.Remove(LexiconAreaConstants.DataTreeMerge);
+				_sharedEventHandlers.Remove(LexiconAreaConstants.DataTreeDelete);
+				_sharedEventHandlers.Remove(LexiconAreaConstants.DataTreeSplit);
 				foreach (var handler in _lexiconEditToolUiWidgetManagers.Values)
 				{
 					handler.Dispose();
 				}
 				_lexiconEditToolUiWidgetManagers.Clear();
-				_sharedEventHandlers.Clear();
 				_lexiconAreaMenuHelper.Dispose();
 			}
 			_lexiconAreaMenuHelper = null;
@@ -151,7 +155,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			MyRecordList = null;
 			InnerMultiPane = null;
 			RecordBrowseView = null;
-			_sharedEventHandlers = null;
 
 			_isDisposed = true;
 		}

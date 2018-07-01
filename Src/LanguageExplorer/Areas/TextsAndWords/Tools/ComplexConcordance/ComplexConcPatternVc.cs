@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2013-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,13 +8,13 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using LanguageExplorer.Controls.LexText;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 
-namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
+namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 {
 	public class ComplexConcPatternVc : PatternVcBase
 	{
@@ -272,17 +272,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							string typeStr = null;
 							if (node is ComplexConcMorphNode)
 							{
-								typeStr = ITextStrings.ksComplexConcMorph;
+								typeStr = ComplexConcordanceResources.ksComplexConcMorph;
 							}
 							else if (node is ComplexConcWordNode)
 							{
-								typeStr = ITextStrings.ksComplexConcWord;
+								typeStr = ComplexConcordanceResources.ksComplexConcWord;
 							}
 							else if (node is ComplexConcTagNode)
 							{
-								typeStr = ITextStrings.ksComplexConcTag;
+								typeStr = ComplexConcordanceResources.ksComplexConcTag;
 							}
-							tss = CreateFeatureLine(ITextStrings.ksComplexConcType, typeStr, m_cache.DefaultUserWs);
+							tss = CreateFeatureLine(ComplexConcordanceResources.ksComplexConcType, typeStr, m_cache.DefaultUserWs);
 							break;
 
 						case ktagForm:
@@ -301,7 +301,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 								}
 							}
 							Debug.Assert(form != null);
-							tss = CreateFeatureLine(ITextStrings.ksComplexConcForm, form, false);
+							tss = CreateFeatureLine(ComplexConcordanceResources.ksComplexConcForm, form, false);
 							break;
 
 						case ktagEntry:
@@ -312,7 +312,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 								entry = entryMorphNode.Entry;
 							}
 							Debug.Assert(entry != null);
-							tss = CreateFeatureLine(ITextStrings.ksComplexConcEntry, entry, false);
+							tss = CreateFeatureLine(ComplexConcordanceResources.ksComplexConcEntry, entry, false);
 							break;
 
 						case ktagGloss:
@@ -331,7 +331,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 								}
 							}
 							Debug.Assert(gloss != null);
-							tss = CreateFeatureLine(ITextStrings.ksComplexConcGloss, gloss, false);
+							tss = CreateFeatureLine(ComplexConcordanceResources.ksComplexConcGloss, gloss, false);
 							break;
 
 						case ktagCategory:
@@ -353,7 +353,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 								}
 							}
 							Debug.Assert(category != null);
-							tss = CreateFeatureLine(ITextStrings.ksComplexConcCategory, category.Abbreviation.BestAnalysisAlternative, catNegated);
+							tss = CreateFeatureLine(ComplexConcordanceResources.ksComplexConcCategory, category.Abbreviation.BestAnalysisAlternative, catNegated);
 							break;
 
 						case ktagTag:
@@ -364,11 +364,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 								tagPoss = tagNode.Tag;
 							}
 							Debug.Assert(tagPoss != null);
-							tss = CreateFeatureLine(ITextStrings.ksComplexConcTag, tagPoss.Abbreviation.BestAnalysisAlternative, false);
+							tss = CreateFeatureLine(ComplexConcordanceResources.ksComplexConcTag, tagPoss.Abbreviation.BestAnalysisAlternative, false);
 							break;
 
 						case ktagInfl:
-							tss = CreateFeatureLine(ITextStrings.ksComplexConcInflFeatures, null, false);
+							tss = CreateFeatureLine(ComplexConcordanceResources.ksComplexConcInflFeatures, null, false);
 							break;
 
 						default:

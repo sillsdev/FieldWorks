@@ -81,7 +81,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Initialize the pane with a record list. (It already has the cache.)
 		/// </summary>
-		internal void Initialize(IRecordList recordList, ToolStripMenuItem printMenu)
+		internal void Initialize(ISharedEventHandlers sharedEventHandlers, IRecordList recordList, ToolStripMenuItem printMenu)
 		{
 			if (m_xrev != null)
 			{
@@ -91,7 +91,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif
-			var dataTree = new StTextDataTree(Cache);
+			var dataTree = new StTextDataTree(sharedEventHandlers, Cache);
 			m_xrev = new InterlinearTextsRecordEditView(this, new XElement("parameters", new XAttribute("layout", "FullInformation")), Cache, recordList, dataTree, printMenu);
 			m_xrev.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			m_xrev.Dock = DockStyle.Fill;

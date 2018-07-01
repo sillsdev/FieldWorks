@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2013-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,14 +7,14 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using SIL.Collections;
-using SIL.LCModel.Core.Text;
 using SIL.LCModel;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
 
-namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
+namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 {
 	public class ComplexConcParagraphData : IAnnotatedData<ShapeNode>, IDeepCloneable<ComplexConcParagraphData>
 	{

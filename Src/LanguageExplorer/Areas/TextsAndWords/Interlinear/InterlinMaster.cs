@@ -52,6 +52,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// true (typically used as concordance 3rd pane) to suppress autocreating a text if the
 		// record list has no current object.
 		protected bool m_fSuppressAutoCreate;
+		private ISharedEventHandlers _sharedEventHandlers;
 
 		// These constants allow us to use a switch statement in SaveBookMark()
 		const int ktpsInfo = (int)TabPageSelection.Info;
@@ -68,7 +69,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			InitializeComponent();
 		}
 
-		internal InterlinMaster(XElement configurationParametersElement, LcmCache cache, IRecordList recordList, ToolStripMenuItem fileMenu, ToolStripMenuItem printMenu, bool showTitlePane = true)
+		internal InterlinMaster(XElement configurationParametersElement, ISharedEventHandlers sharedEventHandlers, LcmCache cache, IRecordList recordList, ToolStripMenuItem fileMenu, ToolStripMenuItem printMenu, bool showTitlePane = true)
 			:base(configurationParametersElement, cache, recordList)
 		{
 			// This call is required by the Windows.Forms Form Designer.
@@ -81,6 +82,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_printViewPane.FileMenu = fileMenu;
 			m_idcGloss.FileMenu = fileMenu;
 			m_idcAnalyze.FileMenu = fileMenu;
+			_sharedEventHandlers = sharedEventHandlers;
 		}
 
 		internal string BookmarkId => MyRecordList.Id ?? string.Empty;
@@ -594,7 +596,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					case ktpsInfo:
 						// It may already be initialized, but this is not very expensive and sometimes
 						// the infoPane was initialized with no data and should be re-initialized here
-						m_infoPane.Initialize(MyRecordList, m_printMenu);
+						m_infoPane.Initialize(_sharedEventHandlers, MyRecordList, m_printMenu);
 						m_infoPane.Dock = DockStyle.Fill;
 
 						m_infoPane.Enabled = m_infoPane.CurrentRootHvo != 0;

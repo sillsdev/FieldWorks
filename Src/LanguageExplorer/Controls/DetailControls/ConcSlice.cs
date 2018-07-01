@@ -19,7 +19,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public override void Expand(int iSlice)
 		{
-			((MultiLevelConc)ContainingDataTree).InsertDummies(this, iSlice + 1, SliceInfo.Count);
+			((MultiLevelConcordanceDataTree)ContainingDataTree).InsertDummies(this, iSlice + 1, SliceInfo.Count);
 			Expansion = TreeItemState.ktisExpanded;
 			PerformLayout();
 			Invalidate(true); // invalidates all children.

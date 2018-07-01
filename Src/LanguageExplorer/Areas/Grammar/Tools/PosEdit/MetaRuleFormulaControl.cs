@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -22,8 +22,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 	/// </summary>
 	internal sealed class MetaRuleFormulaControl : RuleFormulaControl
 	{
-		public MetaRuleFormulaControl(XElement configurationNode)
-			: base(configurationNode)
+		public MetaRuleFormulaControl(ISharedEventHandlers sharedEventHandlers, XElement configurationNode)
+			: base(sharedEventHandlers, configurationNode)
 		{
 		}
 
@@ -33,7 +33,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			{
 				if (value)
 				{
-					m_view.Select();
+					_view.Select();
 				}
 			}
 		}
@@ -44,7 +44,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		{
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
 
-			m_view.Init(obj.Hvo, this, new MetaRuleFormulaVc(cache, PropertyTable), MetaRuleFormulaVc.kfragRule, cache.MainCacheAccessor);
+			_view.Init(obj.Hvo, this, new MetaRuleFormulaVc(cache, PropertyTable), MetaRuleFormulaVc.kfragRule, cache.MainCacheAccessor);
 
 			InsertionControl.AddOption(new InsertOption(RuleInsertType.Phoneme), DisplayOption);
 			InsertionControl.AddOption(new InsertOption(RuleInsertType.NaturalClass), DisplayOption);
@@ -57,7 +57,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		private bool DisplayOption(object option)
 		{
 			var type = ((InsertOption) option).Type;
-			var sel = SelectionHelper.Create(m_view);
+			var sel = SelectionHelper.Create(_view);
 			var cellId = GetCell(sel);
 			if (cellId == -1 || cellId == -2)
 			{
@@ -192,7 +192,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 		private string DisplayNoOptsMsg()
 		{
-			var sel = SelectionHelper.Create(m_view);
+			var sel = SelectionHelper.Create(_view);
 			var cellId = GetCell(sel);
 			switch (cellId)
 			{
@@ -519,12 +519,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
-			if (m_view == null)
+			if (_view == null)
 			{
 				return;
 			}
 			var w = Width;
-			m_view.Width = w > 0 ? w : 0;
+			_view.Width = w > 0 ? w : 0;
 		}
 	}
 }

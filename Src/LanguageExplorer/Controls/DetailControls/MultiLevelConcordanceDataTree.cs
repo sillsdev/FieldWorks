@@ -9,7 +9,7 @@ using SIL.LCModel;
 namespace LanguageExplorer.Controls.DetailControls
 {
 	/// <summary>
-	/// A MultiLevelConc (concordance) displays a concordance. The concordance can consist
+	/// A MultiLevelConcordanceDataTree (concordance) displays a concordance. The concordance can consist
 	/// of a mixture of context slices (which are leaf nodes in a tree, and typically display
 	/// one occurrence of an interesting item in context) and summary slices (which
 	/// typically show a particular interesting item, and can be expanded to show either
@@ -20,13 +20,14 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// displayed. Some default implementations are provided in this component.
 	///
 	/// </summary>
-	internal class MultiLevelConc : DataTree
+	internal class MultiLevelConcordanceDataTree : DataTree
 	{
 		#region member variables
 
 		private readonly IList m_items; // of IConcSliceInfo
 		#endregion
-		internal MultiLevelConc(LcmCache cache, IList items)
+		internal MultiLevelConcordanceDataTree(ISharedEventHandlers sharedEventHandlers, LcmCache cache, IList items)
+			:base(sharedEventHandlers)
 		{
 			m_items = items;
 			InitializeBasic(cache, false);

@@ -622,4 +622,19 @@ If you are not the one designated user who adds fields, or you are making some o
   <data name="Demote" xml:space="preserve">
     <value>Demote</value>
   </data>
+  <data name="Insert_Environment_bar" xml:space="preserve">
+    <value>Insert Environment bar</value>
+  </data>
+  <data name="Insert_Environment_slash" xml:space="preserve">
+    <value>Insert Environment slash</value>
+  </data>
+  <data name="Insert_Natural_Class" xml:space="preserve">
+    <value>Insert Natural Class</value>
+  </data>
+  <data name="Insert_Optional_Item" xml:space="preserve">
+    <value>Insert Optional Item</value>
+  </data>
+  <data name="Insert_Word_Boundary" xml:space="preserve">
+    <value>Insert Word Boundary</value>
+  </data>
 </root>

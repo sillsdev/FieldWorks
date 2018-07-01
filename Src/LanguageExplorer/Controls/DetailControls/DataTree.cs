@@ -1,3 +1,4 @@
+//#define RANDYTODOTEMP // TODO: Remove in the end
 // Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
@@ -9,6 +10,9 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
+#if RANDYTODOTEMP // TODO: Remove in the end
+using System.IO;
+#endif
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -16,6 +20,7 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.XMLViews;
+using SIL.Code;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -106,7 +111,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected HashSet<Tuple<int, int>> m_monitoredProps = new HashSet<Tuple<int, int>>();
 		/// <summary>Number of times DeepSuspendLayout has been called without matching DeepResumeLayout.</summary>
 		private int m_cDeepSuspendLayoutCount;
-
+		private ISharedEventHandlers _sharedEventHandlers;
 		protected LcmStyleSheet m_styleSheet;
 
 		/// <summary>
@@ -421,10 +426,14 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		#endregion Slice collection manipulation methods
 
-		internal DataTree()
+		internal DataTree(ISharedEventHandlers sharedEventHandlers)
 		{
+			Guard.AgainstNull(sharedEventHandlers, nameof(sharedEventHandlers));
+
 			DataTreeStackContextMenuFactory = new DataTreeStackContextMenuFactory();
 			Slices = new List<Slice>();
+
+			_sharedEventHandlers = sharedEventHandlers;
 		}
 
 		/// <summary>
@@ -964,6 +973,12 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			m_layoutInventory = layouts;
 			m_partInventory = parts;
+#if RANDYTODOTEMP
+			// TODO: Remove in the end
+			var baseDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "DevWork", "NewDevWork", "05_Remove use of main xml config files", "Configuration");
+			layouts.Root.Save(Path.Combine(baseDir, "Inventory_Layouts.xml"));
+			parts.Root.Save(Path.Combine(baseDir, "Inventory_Parts.xml"));
+#endif
 			InitializeBasic(cache, fHasSplitter);
 			InitializeComponent();
 			InitializeAdvanced();
@@ -1013,6 +1028,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			if (disposing)
 			{
+				PropertyTable.RemoveProperty("DataTree");
 				Subscriber.Unsubscribe("ShowHiddenFields", ShowHiddenFields_Handler);
 
 				// Do this first, before setting m_fDisposing to true.
@@ -1075,6 +1091,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				DataTreeStackContextMenuFactory?.Dispose();
 			}
 			DataTreeStackContextMenuFactory = null;
+			_sharedEventHandlers = null;
 		}
 
 		/// <summary>
@@ -1271,8 +1288,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		private void CreateSlices(bool differentObject)
 		{
-			var watch = new Stopwatch();
-			watch.Start();
+			//var watch = new Stopwatch();
+			//watch.Start();
 			var wasVisible = Visible;
 			var previousSlices = new ObjSeqHashMap();
 			ConstructingSlices = true;
@@ -1335,8 +1352,10 @@ namespace LanguageExplorer.Controls.DetailControls
 				ConstructingSlices = false;
 			}
 			if (wasVisible)
+			{
 				Show();
-			watch.Stop();
+			}
+			//watch.Stop();
 			// Uncomment this to investigate slice performance or issues with dissappearing slices
 			//Debug.WriteLine("CreateSlices took " + watch.ElapsedMilliseconds + " ms. Originally had " + oldSliceCount + " controls; now " + Slices.Count);
 			//previousSlices.Report();
@@ -2564,7 +2583,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			var slice = GetMatchingSlice(path, reuseMap);
 			if (slice == null)
 			{
-				slice = SliceFactory.Create(Cache, editor, flid, node, obj, PersistenceProvder, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), caller, reuseMap);
+				slice = SliceFactory.Create(Cache, editor, flid, node, obj, PersistenceProvder, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), caller, reuseMap, _sharedEventHandlers);
 				if (slice == null)
 				{
 					// One way this can happen in TestLangProj is with a part ref for a custom field that
@@ -4055,6 +4074,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
+			PropertyTable.SetProperty("DataTree", this, settingsGroup: SettingsGroup.LocalSettings);
 			Subscriber.Subscribe("ShowHiddenFields", ShowHiddenFields_Handler);
 
 			if (PersistenceProvder != null)

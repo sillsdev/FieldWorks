@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,6 +11,7 @@ using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.LcmUi;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
@@ -33,20 +34,25 @@ namespace LanguageExplorer.Areas
 	/// </summary>
 	internal class RuleFormulaControl : ButtonLauncher, IPatternControl
 	{
-		protected PatternView m_view;
+		protected PatternView _view;
+		protected ISharedEventHandlers _sharedEventHandlers;
 
 		public RuleFormulaControl()
 		{
 			InitializeComponent();
 		}
 
-		public RuleFormulaControl(XElement configurationNode)
+		public RuleFormulaControl(ISharedEventHandlers sharedEventHandlers, XElement configurationNode)
+			:this()
 		{
+			Guard.AgainstNull(sharedEventHandlers, nameof(_sharedEventHandlers));
+			Guard.AgainstNull(configurationNode, nameof(configurationNode));
+
+			_sharedEventHandlers = sharedEventHandlers;
 			m_configurationNode = configurationNode;
-			InitializeComponent();
 		}
 
-		public RootSite RootSite => m_view;
+		public RootSite RootSite => _view;
 
 		public InsertionControl InsertionControl { get; protected set; }
 
@@ -57,7 +63,7 @@ namespace LanguageExplorer.Areas
 				base.SliceIsCurrent = value;
 				if (value)
 				{
-					m_view.Select();
+					_view.Select();
 				}
 			}
 		}
@@ -143,7 +149,7 @@ namespace LanguageExplorer.Areas
 		{
 			get
 			{
-				var sel = SelectionHelper.Create(m_view);
+				var sel = SelectionHelper.Create(_view);
 				var obj = GetCmObject(sel, SelectionHelper.SelLimitType.Anchor);
 				var endObj = GetCmObject(sel, SelectionHelper.SelLimitType.End);
 				if (obj != endObj || obj == null || endObj == null)
@@ -158,11 +164,11 @@ namespace LanguageExplorer.Areas
 		{
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
 
-			m_mainControl = m_view;
+			m_mainControl = _view;
 
-			m_view.SelectionChanged += SelectionChanged;
-			m_view.RemoveItemsRequested += RemoveItemsRequested;
-			m_view.ContextMenuRequested += ContextMenuRequested;
+			_view.SelectionChanged += SelectionChanged;
+			_view.RemoveItemsRequested += RemoveItemsRequested;
+			_view.ContextMenuRequested += ContextMenuRequested;
 
 			InsertionControl.Insert += m_insertionControl_Insert;
 		}
@@ -424,7 +430,7 @@ namespace LanguageExplorer.Areas
 			}
 
 			// return focus to the view
-			m_view.Select();
+			_view.Select();
 			if (selectedEnv == null)
 			{
 				return;
@@ -448,7 +454,7 @@ namespace LanguageExplorer.Areas
 			var undo = string.Format(AreaResources.ksRuleUndoInsert, option);
 			var redo = string.Format(AreaResources.ksRuleRedoInsert, option);
 
-			var sel = SelectionHelper.Create(m_view);
+			var sel = SelectionHelper.Create(_view);
 			var cellId = -1;
 			var cellIndex = -1;
 			switch (option.Type)
@@ -547,7 +553,7 @@ namespace LanguageExplorer.Areas
 					break;
 			}
 
-			m_view.Select();
+			_view.Select();
 			if (cellId != -1)
 			{
 				// reconstruct the view and place the cursor after the newly added item
@@ -655,7 +661,7 @@ namespace LanguageExplorer.Areas
 
 		private void RemoveItemsRequested(object sender, RemoveItemsRequestedEventArgs e)
 		{
-			var sel = SelectionHelper.Create(m_view);
+			var sel = SelectionHelper.Create(_view);
 			var cellId = -1;
 			var cellIndex = -1;
 			UndoableUnitOfWorkHelper.Do(AreaResources.ksRuleUndoRemove, AreaResources.ksRuleRedoRemove, m_cache.ActionHandlerAccessor, () =>
@@ -862,7 +868,7 @@ namespace LanguageExplorer.Areas
 		{
 			base.InitializeFlexComponent(flexComponentParameters);
 
-			((IFlexComponent)m_view).InitializeFlexComponent(flexComponentParameters);
+			((IFlexComponent)_view).InitializeFlexComponent(flexComponentParameters);
 		}
 
 		/// <summary>
@@ -871,7 +877,7 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		public void SetContextFeatures()
 		{
-			var sel = SelectionHelper.Create(m_view);
+			var sel = SelectionHelper.Create(_view);
 			bool reconstruct;
 
 			using (var featChooser = new PhonologicalFeatureChooserDlg())
@@ -913,15 +919,15 @@ namespace LanguageExplorer.Areas
 				reconstruct = res == DialogResult.OK;
 			}
 
-			m_view.Select();
+			_view.Select();
 			if (reconstruct)
 			{
-				m_view.RootBox.Reconstruct();
+				_view.RootBox.Reconstruct();
 				sel.RestoreSelectionAndScrollPos();
 			}
 		}
 
-		private void ContextMenuRequested(object sender, ContextMenuRequestedEventArgs e)
+		protected virtual void ContextMenuRequested(object sender, ContextMenuRequestedEventArgs e)
 		{
 			e.Selection.Install();
 			// Use the local variable, since it does a lot of looking around for "CurrentObject".
@@ -953,8 +959,8 @@ namespace LanguageExplorer.Areas
 		/// <param name="initial">if <c>true</c> move the cursor to the beginning of the specified item, otherwise it is moved to the end</param>
 		protected void ReconstructView(int cellId, int cellIndex, bool initial)
 		{
-			m_view.RootBox.Reconstruct();
-			m_view.SelectAt(cellId, cellIndex, initial, true, true);
+			_view.RootBox.Reconstruct();
+			_view.SelectAt(cellId, cellIndex, initial, true, true);
 		}
 
 		internal static bool IsWordBoundary(IPhContextOrVar ctxt)
@@ -979,7 +985,7 @@ namespace LanguageExplorer.Areas
 
 		private void InitializeComponent()
 		{
-			this.m_view = new LanguageExplorer.Controls.LexText.PatternView();
+			this._view = new LanguageExplorer.Controls.LexText.PatternView();
 			this.InsertionControl = new InsertionControl();
 			this.m_panel.SuspendLayout();
 			this.SuspendLayout();
@@ -996,23 +1002,23 @@ namespace LanguageExplorer.Areas
 			//
 			// m_view
 			//
-			this.m_view.BackColor = System.Drawing.SystemColors.Window;
-			this.m_view.Dock = System.Windows.Forms.DockStyle.Left;
-			this.m_view.DoSpellCheck = false;
-			this.m_view.Group = null;
-			this.m_view.IsTextBox = false;
-			this.m_view.Location = new System.Drawing.Point(0, 0);
-			this.m_view.Name = "m_view";
-			this.m_view.ReadOnlyView = false;
-			this.m_view.ScrollMinSize = new System.Drawing.Size(0, 0);
-			this.m_view.ScrollPosition = new System.Drawing.Point(0, 0);
-			this.m_view.ShowRangeSelAfterLostFocus = false;
-			this.m_view.Size = new System.Drawing.Size(226, 20);
-			this.m_view.SizeChangedSuppression = false;
-			this.m_view.TabIndex = 3;
-			this.m_view.WritingSystemFactory = null;
-			this.m_view.WsPending = -1;
-			this.m_view.Zoom = 1F;
+			this._view.BackColor = System.Drawing.SystemColors.Window;
+			this._view.Dock = System.Windows.Forms.DockStyle.Left;
+			this._view.DoSpellCheck = false;
+			this._view.Group = null;
+			this._view.IsTextBox = false;
+			this._view.Location = new System.Drawing.Point(0, 0);
+			this._view.Name = "_view";
+			this._view.ReadOnlyView = false;
+			this._view.ScrollMinSize = new System.Drawing.Size(0, 0);
+			this._view.ScrollPosition = new System.Drawing.Point(0, 0);
+			this._view.ShowRangeSelAfterLostFocus = false;
+			this._view.Size = new System.Drawing.Size(226, 20);
+			this._view.SizeChangedSuppression = false;
+			this._view.TabIndex = 3;
+			this._view.WritingSystemFactory = null;
+			this._view.WsPending = -1;
+			this._view.Zoom = 1F;
 			//
 			// m_insertionControl
 			//
@@ -1024,12 +1030,12 @@ namespace LanguageExplorer.Areas
 			//
 			// RuleFormulaControl
 			//
-			this.Controls.Add(this.m_view);
+			this.Controls.Add(this._view);
 			this.Controls.Add(this.InsertionControl);
 			this.Name = "RuleFormulaControl";
 			this.Size = new System.Drawing.Size(247, 43);
 			this.Controls.SetChildIndex(this.InsertionControl, 0);
-			this.Controls.SetChildIndex(this.m_view, 0);
+			this.Controls.SetChildIndex(this._view, 0);
 			this.Controls.SetChildIndex(this.m_panel, 0);
 			this.m_panel.ResumeLayout(false);
 			this.ResumeLayout(false);

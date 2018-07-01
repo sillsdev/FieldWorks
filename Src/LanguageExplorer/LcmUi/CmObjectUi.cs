@@ -9,6 +9,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
+using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.LcmUi.Dialogs;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.XMLViews;
@@ -38,6 +39,7 @@ namespace LanguageExplorer.LcmUi
 		static readonly Dictionary<int, int> m_subclasses = new Dictionary<int, int>();
 		protected Control m_hostControl;
 		protected IVwViewConstructor m_vc;
+		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> _rightClickTuple;
 
 		#endregion Data members
 
@@ -352,6 +354,11 @@ namespace LanguageExplorer.LcmUi
 
 			if (disposing)
 			{
+				if (_rightClickTuple != null)
+				{
+					var dataTree = PropertyTable.GetValue<DataTree>("DataTree");
+					dataTree.DataTreeStackContextMenuFactory.RightClickPopupMenuFactory.DisposePopupContextMenu(_rightClickTuple);
+				}
 				// Dispose managed resources here.
 				var disposableVC = m_vc as IDisposable;
 				disposableVC?.Dispose();
@@ -367,6 +374,7 @@ namespace LanguageExplorer.LcmUi
 			PropertyTable = null;
 			Publisher = null;
 			Subscriber = null;
+			_rightClickTuple = null;
 
 			IsDisposed = true;
 
@@ -610,18 +618,30 @@ namespace LanguageExplorer.LcmUi
 				}
 			}
 
-#if RANDYTODO
-			// TODO: The context menu needs to be filtered to remove inappropriate menu items.
-			var window = PropertyTable.GetValue<IFwMainWnd>("window");
-			window.ShowContextMenu(sMenuId, new Point(Cursor.Position.X, Cursor.Position.Y), new TemporaryColleagueParameter(m_mediator, this, shouldDisposeThisWhenClosed), null, adjustMenu);
-			// Using the sequencer here now causes problems with slices that allow
-			// keyboard activity (cf. PhoneEnvReferenceView).
-			// If a safe blocking mechanism can be found for the context menu, we can restore the original behavior
-			// which will have this code do the setup and teardown work.
-			//(hostControl as IReceiveSequentialMessages).Sequencer);
-#else
-			MessageBox.Show($"Looking for popup menu: '{sMenuId}'.", "Search for popup menu", MessageBoxButtons.OK);
-#endif
+			var dataTree = PropertyTable.GetValue<DataTree>("DataTree");
+			if (dataTree != null)
+			{
+				if (_rightClickTuple != null)
+				{
+					dataTree.DataTreeStackContextMenuFactory.RightClickPopupMenuFactory.DisposePopupContextMenu(_rightClickTuple);
+					_rightClickTuple = null;
+				}
+				_rightClickTuple = dataTree.DataTreeStackContextMenuFactory.RightClickPopupMenuFactory.GetPopupContextMenu(dataTree.CurrentSlice, sMenuId);
+				if (_rightClickTuple == null)
+				{
+					// Nobody home (the menu).
+					MessageBox.Show($"Popup menu: '{sMenuId}' not found.{Environment.NewLine}{Environment.NewLine}Register a creator method for it in dataTree.DataTreeStackContextMenuFactory.RightClickPopupMenuFactory.", "Implement missing popup menu", MessageBoxButtons.OK);
+					return true;
+				}
+				adjustMenu?.Invoke(_rightClickTuple.Item1);
+				_rightClickTuple.Item1.Show(new Point(Cursor.Position.X, Cursor.Position.Y));
+			}
+			else
+			{
+				// Nobody home (DataTree).
+				MessageBox.Show($"Add DataTree to the PropertyTable.", "Implement missing popup menu", MessageBoxButtons.OK);
+				return true;
+			}
 
 			return true;
 		}

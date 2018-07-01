@@ -79,7 +79,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		/// <summary></summary>
-		internal static Slice Create(LcmCache cache, string editor, int flid, XElement node, ICmObject obj, IPersistenceProvider persistenceProvider, FlexComponentParameters flexComponentParameters, XElement caller, ObjSeqHashMap reuseMap)
+		internal static Slice Create(LcmCache cache, string editor, int flid, XElement node, ICmObject obj, IPersistenceProvider persistenceProvider, FlexComponentParameters flexComponentParameters, XElement caller, ObjSeqHashMap reuseMap, ISharedEventHandlers sharedEventHandlers)
 		{
 			var sliceWasRecyled = false;
 			Slice slice;
@@ -403,13 +403,13 @@ namespace LanguageExplorer.Controls.DetailControls
 
 				case "metaruleformula":
 				{
-					slice = new MetaRuleFormulaSlice();
+					slice = new MetaRuleFormulaSlice(sharedEventHandlers);
 					break;
 				}
 
 				case "regruleformula":
 				{
-					slice = new RegRuleFormulaSlice();
+					slice = new RegRuleFormulaSlice(sharedEventHandlers);
 					break;
 				}
 
@@ -445,7 +445,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 				case "affixruleformula":
 				{
-					slice = new AffixRuleFormulaSlice();
+					slice = new AffixRuleFormulaSlice(sharedEventHandlers);
 					break;
 				}
 
@@ -475,7 +475,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 				case "phenvstrrepresentation":
 				{
-					slice = new PhEnvStrRepresentationSlice(obj, persistenceProvider);
+					slice = new PhEnvStrRepresentationSlice(obj, persistenceProvider, sharedEventHandlers);
 					break;
 				}
 

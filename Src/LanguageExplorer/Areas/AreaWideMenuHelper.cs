@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
@@ -32,14 +33,23 @@ namespace LanguageExplorer.Areas
 		private ToolStripMenuItem _toolsCustomFieldsMenu;
 		private ToolStripMenuItem _toolsConfigureColumnsMenu;
 		private BrowseViewer _browseViewer;
+		private ISharedEventHandlers _sharedEventHandlers;
 
 		internal AreaWideMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
+			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
 
 			InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
+
+			_sharedEventHandlers.Add(AreaServices.InsertSlash, Insert_Slash_Clicked);
+			_sharedEventHandlers.Add(AreaServices.InsertEnvironmentBar, Insert_Underscore_Clicked);
+			_sharedEventHandlers.Add(AreaServices.InsertNaturalClass, Insert_NaturalClass_Clicked);
+			_sharedEventHandlers.Add(AreaServices.InsertOptionalItem, Insert_OptionalItem_Clicked);
+			_sharedEventHandlers.Add(AreaServices.InsertHashMark, Insert_HashMark_Clicked);
+			_sharedEventHandlers.Add(AreaServices.ShowEnvironmentError, ShowEnvironmentError_Clicked);
 		}
 
 		internal AreaWideMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
@@ -152,6 +162,36 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
+		private void Insert_Slash_Clicked(object sender, EventArgs e)
+		{
+			SenderTagAsIPhEnvSliceCommon(sender).InsertSlash();
+		}
+
+		private void Insert_Underscore_Clicked(object sender, EventArgs e)
+		{
+			SenderTagAsIPhEnvSliceCommon(sender).InsertEnvironmentBar();
+		}
+
+		private void Insert_NaturalClass_Clicked(object sender, EventArgs e)
+		{
+			SenderTagAsIPhEnvSliceCommon(sender).InsertNaturalClass();
+		}
+
+		private void Insert_OptionalItem_Clicked(object sender, EventArgs e)
+		{
+			SenderTagAsIPhEnvSliceCommon(sender).InsertOptionalItem();
+		}
+
+		private void Insert_HashMark_Clicked(object sender, EventArgs e)
+		{
+			SenderTagAsIPhEnvSliceCommon(sender).InsertHashMark();
+		}
+
+		private void ShowEnvironmentError_Clicked(object sender, EventArgs e)
+		{
+			SenderTagAsIPhEnvSliceCommon(sender).ShowEnvironmentError();
+		}
+
 		#region Implementation of IPropertyTableProvider
 
 		/// <summary>
@@ -227,6 +267,13 @@ namespace LanguageExplorer.Areas
 
 			if (disposing)
 			{
+				_sharedEventHandlers.Remove(AreaServices.InsertSlash);
+				_sharedEventHandlers.Remove(AreaServices.InsertEnvironmentBar);
+				_sharedEventHandlers.Remove(AreaServices.InsertNaturalClass);
+				_sharedEventHandlers.Remove(AreaServices.InsertOptionalItem);
+				_sharedEventHandlers.Remove(AreaServices.InsertHashMark);
+				_sharedEventHandlers.Remove(AreaServices.ShowEnvironmentError);
+
 				if (_fileExportMenu != null)
 				{
 					if (_usingLocalFileExportEventHandler)
@@ -267,5 +314,15 @@ namespace LanguageExplorer.Areas
 			_isDisposed = true;
 		}
 		#endregion
+
+		internal static IPhEnvSliceCommon SenderTagAsIPhEnvSliceCommon(object sender)
+		{
+			return (IPhEnvSliceCommon)((ToolStripMenuItem)sender).Tag;
+		}
+
+		internal static IPhEnvSliceCommon SliceAsIPhEnvSliceCommon(Slice slice)
+		{
+			return (IPhEnvSliceCommon)slice;
+		}
 	}
 }

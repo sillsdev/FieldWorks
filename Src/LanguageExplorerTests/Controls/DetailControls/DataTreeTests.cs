@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer;
 using LanguageExplorer.Controls.DetailControls;
+using LanguageExplorer.Impls;
 using LanguageExplorerTests.Impls;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -105,7 +106,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		public override void TestSetup()
 		{
 			base.TestSetup();
-			m_dtree = new DataTree();
+			m_dtree = new DataTree(new SharedEventHandlers());
 			SetupPubSubAndPropertyTable();
 			_dummyWindow = new DummyFwMainWnd();
 			m_propertyTable.SetProperty("window", _dummyWindow);
@@ -297,7 +298,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			_dummyWindow = new DummyFwMainWnd();
 			m_propertyTable.SetProperty("window", _dummyWindow);
 			m_parent = new Form();
-			m_dtree = new DataTree();
+			m_dtree = new DataTree(new SharedEventHandlers());
 			m_dtree.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
 			m_parent.Controls.Add(m_dtree);
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
@@ -325,7 +326,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			_dummyWindow = new DummyFwMainWnd();
 			m_propertyTable.SetProperty("window", _dummyWindow);
 			m_parent = new Form();
-			m_dtree = new DataTree();
+			m_dtree = new DataTree(new SharedEventHandlers());
 			m_dtree.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
 			m_parent.Controls.Add(m_dtree);
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
@@ -348,7 +349,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			_dummyWindow = new DummyFwMainWnd();
 			m_propertyTable.SetProperty("window", _dummyWindow);
 			m_parent = new Form();
-			m_dtree = new DataTree();
+			m_dtree = new DataTree(new SharedEventHandlers());
 			m_dtree.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
 			m_parent.Controls.Add(m_dtree);
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);

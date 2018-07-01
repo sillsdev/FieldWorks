@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 SIL International
+// Copyright (c) 2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -20,26 +20,25 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	internal sealed class LexiconEditToolEditMenuManager : IToolUiWidgetManager
 	{
 		private IRecordList MyRecordList { get; set; }
-		private Dictionary<string, EventHandler> _sharedEventHandlers;
 		private FlexComponentParameters _flexComponentParameters;
 		private LcmCache _cache;
 		private IFwMainWnd _mainWnd;
+		private ISharedEventHandlers _sharedEventHandlers;
 		private ToolStripMenuItem _editMenu;
 		private List<Tuple<ToolStripMenuItem, EventHandler>> _newEditMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>();
 
 		#region IToolUiWidgetManager
 
 		/// <inheritdoc />
-		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, Dictionary<string, EventHandler> sharedEventHandlers, IRecordList recordList)
+		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
-			Guard.AgainstNull(sharedEventHandlers, nameof(sharedEventHandlers));
 			Guard.AgainstNull(recordList, nameof(recordList));
 
 			_flexComponentParameters = majorFlexComponentParameters.FlexComponentParameters;
 			_cache = majorFlexComponentParameters.LcmCache;
 			_mainWnd = majorFlexComponentParameters.MainWindow;
-			_sharedEventHandlers = sharedEventHandlers;
+			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
 			_sharedEventHandlers.Add(LexiconEditToolConstants.CmdGoToEntry, GoToEntry_Clicked);
 			MyRecordList = recordList;
 
@@ -85,6 +84,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			if (disposing)
 			{
+				_sharedEventHandlers.Remove(LexiconEditToolConstants.CmdGoToEntry);
 				foreach (var menuTuple in _newEditMenusAndHandlers)
 				{
 					menuTuple.Item1.Click -= menuTuple.Item2;

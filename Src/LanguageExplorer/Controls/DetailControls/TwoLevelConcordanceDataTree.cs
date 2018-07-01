@@ -8,7 +8,7 @@ using SIL.LCModel;
 namespace LanguageExplorer.Controls.DetailControls
 {
 	/// <summary>
-	/// A TwoLevelConc (concordance) displays a concordance that is initially a
+	/// A TwoLevelConcordanceDataTree (concordance) displays a concordance that is initially a
 	/// list of words, each of which can be expanded to show a context list.
 	///
 	/// The most basic version is initialized with an Array of HVOs, one
@@ -32,7 +32,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// is supplied in the form of a INodeInfo object. A default implementation of
 	/// INodeInfo, SimpleNodeInfo, is provided in this package.
 	/// </summary>
-	internal class TwoLevelConc : DataTree
+	internal class TwoLevelConcordanceDataTree : DataTree
 	{
 		#region member variables
 
@@ -41,7 +41,8 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		#endregion
 
-		internal TwoLevelConc(LcmCache cache, IConcPolicy cp, IGetNodeInfo gni)
+		internal TwoLevelConcordanceDataTree(ISharedEventHandlers sharedEventHandlers, LcmCache cache, IConcPolicy cp, IGetNodeInfo gni)
+			:base(sharedEventHandlers)
 		{
 			m_cp = cp;
 			m_gni = gni;

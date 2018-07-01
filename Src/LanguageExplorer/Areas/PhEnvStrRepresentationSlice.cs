@@ -17,8 +17,8 @@ namespace LanguageExplorer.Areas
 		/// We want the persistence provider, and the easiest way to get it is to get all
 		/// this other stuff we don't need or use.
 		/// </summary>
-		public PhEnvStrRepresentationSlice(ICmObject obj, IPersistenceProvider persistenceProvider)
-			: base(new StringRepSliceView(obj.Hvo), obj, StringRepSliceVc.Flid)
+		public PhEnvStrRepresentationSlice(ICmObject obj, IPersistenceProvider persistenceProvider, ISharedEventHandlers sharedEventHandlers)
+			: base(new StringRepSliceView(sharedEventHandlers, obj.Hvo), obj, StringRepSliceVc.Flid)
 		{
 			PersistenceProvider = persistenceProvider;
 		}
@@ -39,42 +39,20 @@ namespace LanguageExplorer.Areas
 		}
 
 		#region Special menu item methods
-#if RANDYTODO
-		/// <summary>
-		/// This menu item is turned off if a slash already exists in the environment string.
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public virtual bool OnDisplayShowEnvironmentError(object commandObject,
-			ref UIItemDisplayProperties display)
-		{
-			StringRepSliceView view = Control as StringRepSliceView;
-			if (view == null)
-				return false;
-			display.Enabled = view.CanShowEnvironmentError();
-			return true;
-		}
-#endif
 
-		public bool OnShowEnvironmentError(object args)
+		/// <inheritdoc />
+		public bool CanShowEnvironmentError => MyStringRepSliceView.CanShowEnvironmentError();
+
+		/// <inheritdoc />
+		public void ShowEnvironmentError()
 		{
 			MyStringRepSliceView.ShowEnvironmentError();
-			return true;
 		}
 
-		/// <summary>
-		/// This menu item is turned off if a slash already exists in the environment string.
-		/// </summary>
-		public bool CanInsertSlash
-		{
-			get
-			{
-				var view = Control as StringRepSliceView;
-				return view != null && view.CanInsertSlash;
-			}
-		}
+		/// <inheritdoc />
+		public bool CanInsertSlash => MyStringRepSliceView.CanInsertSlash;
 
+		/// <inheritdoc />
 		public void InsertSlash()
 		{
 			Cache.DomainDataByFlid.BeginUndoTask(AreaResources.ksInsertEnvironmentSlash, AreaResources.ksInsertEnvironmentSlash);
@@ -82,19 +60,10 @@ namespace LanguageExplorer.Areas
 			Cache.DomainDataByFlid.EndUndoTask();
 		}
 
-		/// <summary>
-		/// This menu item is turned off if an underscore already exists in the environment
-		/// string.
-		/// </summary>
-		public bool CanInsertEnvironmentBar
-		{
-			get
-			{
-				var view = Control as StringRepSliceView;
-				return view != null && view.CanInsertEnvBar;
-			}
-		}
+		/// <inheritdoc />
+		public bool CanInsertEnvironmentBar => MyStringRepSliceView.CanInsertEnvBar;
 
+		/// <inheritdoc />
 		public void InsertEnvironmentBar()
 		{
 			Cache.DomainDataByFlid.BeginUndoTask(AreaResources.ksInsertEnvironmentBar, AreaResources.ksInsertEnvironmentBar);
@@ -104,18 +73,10 @@ namespace LanguageExplorer.Areas
 
 		private StringRepSliceView MyStringRepSliceView => (StringRepSliceView)Control;
 
-		/// <summary>
-		/// This menu item is on if a slash already exists in the environment.
-		/// </summary>
-		public bool CanInsertNaturalClass
-		{
-			get
-			{
-				var view = Control as StringRepSliceView;
-				return view != null && view.CanInsertItem;
-			}
-		}
+		/// <inheritdoc />
+		public bool CanInsertNaturalClass => MyStringRepSliceView.CanInsertItem;
 
+		/// <inheritdoc />
 		public void InsertNaturalClass()
 		{
 			Cache.DomainDataByFlid.BeginUndoTask(AreaResources.ksInsertNaturalClass, AreaResources.ksInsertNaturalClass);
@@ -123,18 +84,10 @@ namespace LanguageExplorer.Areas
 			Cache.DomainDataByFlid.EndUndoTask();
 		}
 
-		/// <summary>
-		/// This menu item is on if a slash already exists in the environment.
-		/// </summary>
-		public bool CanInsertOptionalItem
-		{
-			get
-			{
-				var view = Control as StringRepSliceView;
-				return view != null && view.CanInsertItem;
-			}
-		}
+		/// <inheritdoc />
+		public bool CanInsertOptionalItem => MyStringRepSliceView.CanInsertItem;
 
+		/// <inheritdoc />
 		public void InsertOptionalItem()
 		{
 			Cache.DomainDataByFlid.BeginUndoTask(AreaResources.ksInsertOptionalItem, AreaResources.ksInsertOptionalItem);
@@ -142,18 +95,10 @@ namespace LanguageExplorer.Areas
 			Cache.DomainDataByFlid.EndUndoTask();
 		}
 
-		/// <summary>
-		/// This menu item is on if a slash already exists in the environment.
-		/// </summary>
-		public bool CanInsertHashMark
-		{
-			get
-			{
-				var view = Control as StringRepSliceView;
-				return view != null && view.CanInsertHashMark;
-			}
-		}
+		/// <inheritdoc />
+		public bool CanInsertHashMark => MyStringRepSliceView.CanInsertHashMark;
 
+		/// <inheritdoc />
 		public void InsertHashMark()
 		{
 			Cache.DomainDataByFlid.BeginUndoTask(AreaResources.ksInsertWordBoundary, AreaResources.ksInsertWordBoundary);

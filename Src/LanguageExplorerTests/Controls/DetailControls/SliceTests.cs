@@ -7,6 +7,7 @@ using System.Collections;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls.DetailControls;
+using LanguageExplorer.Impls;
 using LanguageExplorerTests.Impls;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -123,7 +124,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		[Test]
 		public void CreateIndentedNodes_basic()
 		{
-			m_DataTree = new DataTree();
+			m_DataTree = new DataTree(new SharedEventHandlers());
 			m_DataTree.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
 			m_Slice = GenerateSlice(Cache, m_DataTree);
 
@@ -150,7 +151,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		public void Expand()
 		{
 			var obj = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
-			m_DataTree = new DataTree();
+			m_DataTree = new DataTree(new SharedEventHandlers());
 			var flexComponentParameters = new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber);
 			m_DataTree.InitializeFlexComponent(flexComponentParameters);
 			m_Slice = GenerateSlice(Cache, m_DataTree);
@@ -171,7 +172,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		{
 			var obj = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 
-			m_DataTree = new DataTree();
+			m_DataTree = new DataTree(new SharedEventHandlers());
 			var flexComponentParameters = new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber);
 			m_DataTree.InitializeFlexComponent(flexComponentParameters);
 			m_Slice = GenerateSlice(Cache, m_DataTree);
@@ -192,7 +193,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			var path = GeneratePath();
 			var reuseMap = new ObjSeqHashMap();
 			var obj = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
-			m_DataTree = new DataTree();
+			m_DataTree = new DataTree(new SharedEventHandlers());
 			var flexComponentParameters = new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber);
 			m_DataTree.InitializeFlexComponent(flexComponentParameters);
 			m_Slice = GenerateSlice(Cache, m_DataTree);

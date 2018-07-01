@@ -417,21 +417,6 @@
   <data name="InsertVariant" xml:space="preserve">
     <value>Insert Variant</value>
   </data>
-  <data name="Insert_Environment_slash" xml:space="preserve">
-    <value>Insert Environment slash</value>
-  </data>
-  <data name="Insert_Environment_bar" xml:space="preserve">
-    <value>Insert Environment bar</value>
-  </data>
-  <data name="Insert_Natural_Class" xml:space="preserve">
-    <value>Insert Natural Class</value>
-  </data>
-  <data name="Insert_Optional_Item" xml:space="preserve">
-    <value>Insert Optional Item</value>
-  </data>
-  <data name="Insert_Word_Boundary" xml:space="preserve">
-    <value>Insert Word Boundary</value>
-  </data>
   <data name="Convert_to_Affix_Form" xml:space="preserve">
     <value>Convert to Affix Form</value>
   </data>

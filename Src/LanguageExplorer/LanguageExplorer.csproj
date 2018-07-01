@@ -361,7 +361,9 @@
     <Compile Include="Areas\Lists\Tools\CustomListEdit\CustomListEditTool.cs" />
     <Compile Include="Areas\Notebook\NotebookAreaMenuHelper.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolMenuHelper.cs" />
+    <Compile Include="Areas\RightClickContextMenuManager.cs" />
     <Compile Include="Areas\RuleInsertType.cs" />
+    <Compile Include="Impls\SharedEventHandlers.cs" />
     <Compile Include="Areas\StringRepSliceVc.cs" />
     <Compile Include="Areas\StringRepSliceView.cs">
       <SubType>UserControl</SubType>
@@ -484,6 +486,14 @@
     <Compile Include="Areas\TextsAndWords\RespellOccurrence.cs" />
     <Compile Include="Areas\TextsAndWords\RespellUndoAction.cs" />
     <Compile Include="Areas\TextsAndWords\TextAndWordsAreaMenuHelper.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcordanceResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ComplexConcordanceResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcTagDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Areas\TextsAndWords\Tools\InterlinearEdit\InterlinearEditMenuHelper.cs" />
     <Compile Include="Areas\TextsAndWords\Tools\InterlinearEdit\InterlinearEditToolMenuHelper.cs" />
     <Compile Include="Areas\TextsAndWords\Tools\PartiallySharedMenuHelper.cs" />
@@ -940,6 +950,7 @@
     <Compile Include="Controls\XMLViews\VariantEntryTypesChooserBEditControl.cs" />
     <Compile Include="Controls\XMLViews\WsComboContent.cs" />
     <Compile Include="Controls\XMLViews\WsComboItem.cs" />
+    <Compile Include="ISharedEventHandlers.cs" />
     <Compile Include="ISortItemProvider.cs" />
     <Compile Include="DictionaryConfigurationServices.cs" />
     <Compile Include="DictionaryConfiguration\AlignmentType.cs" />
@@ -1049,7 +1060,7 @@
     <Compile Include="Controls\DetailControls\MSAReferenceComboBoxSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\MultiLevelConc.cs">
+    <Compile Include="Controls\DetailControls\MultiLevelConcordanceDataTree.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\MultiStringSlice.cs">
@@ -1143,7 +1154,7 @@
     <Compile Include="Controls\DetailControls\SummarySlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\TwoLevelConc.cs">
+    <Compile Include="Controls\DetailControls\TwoLevelConcordanceDataTree.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\VectorReferenceLauncher.cs">
@@ -1956,6 +1967,13 @@
       <DependentUpon>ConfigSenseLayout.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcordanceResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ComplexConcordanceResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcTagDlg.resx">
+      <DependentUpon>ComplexConcTagDlg.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\DetailControls\PicturePropertiesDialog.resx">
       <DependentUpon>PicturePropertiesDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -2115,8 +2133,8 @@
       <DependentUpon>MorphTypeChooser.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\DetailControls\MultiLevelConc.resx">
-      <DependentUpon>MultiLevelConc.cs</DependentUpon>
+    <EmbeddedResource Include="Controls\DetailControls\MultiLevelConcordanceDataTree.resx">
+      <DependentUpon>MultiLevelConcordanceDataTree.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\DetailControls\PhoneEnvReferenceLauncher.resx">
@@ -2676,36 +2694,33 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\ChooseTextWritingSystemDlg.Designer.cs">
       <DependentUpon>ChooseTextWritingSystemDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\ClosedFeatureNode.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\ClosedFeatureValue.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcControl.cs">
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ClosedFeatureNode.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ClosedFeatureValue.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcControl.Designer.cs">
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcControl.Designer.cs">
       <DependentUpon>ComplexConcControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcGroupNode.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcLeafNode.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcMorphDlg.cs">
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcGroupNode.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcLeafNode.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcMorphDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcMorphNode.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcOrNode.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcParagraphData.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcPatternModel.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcPatternNode.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcPatternSda.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcPatternVc.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcTagDlg.cs">
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcMorphNode.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcOrNode.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcParagraphData.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcPatternModel.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcPatternNode.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcPatternSda.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcPatternVc.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcTagNode.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcWordBdryNode.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcWordDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcTagNode.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcWordBdryNode.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcWordDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcWordNode.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexFeatureNode.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcWordNode.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexFeatureNode.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\ConcordanceContainer.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -2747,7 +2762,7 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearImageHolder.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\InflFeatureTreeModel.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\InflFeatureTreeModel.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\InfoPane.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -2820,7 +2835,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\ParseIsCurrentFixer.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\PossibilityComboController.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\PossibilityComboController.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\RawTextPane.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -2844,7 +2859,7 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\SandboxVc.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\Sfm2FlexText.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\ShowSpaceDecorator.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\SymbolicValue.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\SymbolicValue.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\TextsFilterItem.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\TextsTriStateTreeView.cs">
       <SubType>Component</SubType>
@@ -3254,17 +3269,14 @@
       <DependentUpon>ChooseTextWritingSystemDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\ComplexConcControl.resx">
+    <EmbeddedResource Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcControl.resx">
       <DependentUpon>ComplexConcControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\ComplexConcMorphDlg.resx">
+    <EmbeddedResource Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcMorphDlg.resx">
       <DependentUpon>ComplexConcMorphDlg.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\ComplexConcTagDlg.resx">
-      <DependentUpon>ComplexConcTagDlg.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\ComplexConcWordDlg.resx">
+    <EmbeddedResource Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcWordDlg.resx">
       <DependentUpon>ComplexConcWordDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\FilterAllTextsDialog.resx">

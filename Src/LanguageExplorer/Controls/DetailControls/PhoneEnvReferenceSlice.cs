@@ -9,7 +9,6 @@ using LanguageExplorer.Controls.XMLViews;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.Xml;
 
@@ -62,10 +61,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (disposing)
 			{
 				// Dispose managed resources here.
-				var rl = (PhoneEnvReferenceLauncher)Control;
-				rl.ViewSizeChanged -= OnViewSizeChanged;
-				var view = MainControlOfMyControl;
-				view.ViewSizeChanged -= OnViewSizeChanged;
+				MyLauncher.ViewSizeChanged -= OnViewSizeChanged;
+				MainControlOfMyControl.ViewSizeChanged -= OnViewSizeChanged;
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
@@ -80,13 +77,11 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		protected internal override bool UpdateDisplayIfNeeded(int hvo, int tag)
 		{
-			var rl = Control as PhoneEnvReferenceLauncher;
-			if (tag != Flid || rl == null)
+			if (tag != Flid)
 			{
 				return base.UpdateDisplayIfNeeded(hvo, tag);
 			}
-			var view = MainControlOfMyControl;
-			view.ResynchListToDatabaseAndRedisplay();
+			MainControlOfMyControl.ResynchListToDatabaseAndRedisplay();
 			return true;
 		}
 
@@ -94,7 +89,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			base.FinishInit();
 
-			var rl = (PhoneEnvReferenceLauncher)Control;
+			var rl = MyLauncher;
 			// Don't even 'think' of calling "rl.InitializeFlexComponent" at this point.
 			// I (RBR) have done it, and long since repented.
 			rl.Initialize(Cache, MyCmObject, m_flid, m_fieldName, PersistenceProvider, null, null);
@@ -121,8 +116,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				return;
 			}
 			m_dxLastWidth = Width; // BEFORE doing anything, actions below may trigger recursive call.
-			var rl = (ReferenceLauncher)Control;
-			var rs = (RootSite)rl.MainControl;
+			var rs = MainControlOfMyControl;
 			rs.PerformLayout();
 			if (rs.RootBox != null)
 			{
@@ -137,7 +131,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			var caption = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "label", string.Empty));
 
-			var launcher = (PhoneEnvReferenceLauncher)Control;
+			var launcher = MyLauncher;
 #if RANDYTODO
 			// TODO: Skip it for now, and figure out what to do with those context menus
 			Publisher.Publish("RegisterHelpTargetWithId", new object[]{launcher.Controls[1], caption, HelpId});
@@ -186,68 +180,51 @@ namespace LanguageExplorer.Controls.DetailControls
 			base.OnLeave(e);
 		}
 
-#region Special menu item methods
-#if RANDYTODO
-		/// <summary>
-		/// This menu item is turned off if an underscore already exists in the environment
-		/// string.
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public bool OnDisplayShowEnvironmentError(object commandObject,
-			ref UIItemDisplayProperties display)
-		{
-			PhoneEnvReferenceLauncher rl = (PhoneEnvReferenceLauncher)this.Control;
-			PhoneEnvReferenceView view = (PhoneEnvReferenceView)rl.MainControl;
-			display.Enabled = view.CanShowEnvironmentError();
-			return true;
-		}
-#endif
+		#region Special menu item methods
 
-		public bool OnShowEnvironmentError(object args)
+		/// <inheritdoc />
+		public bool CanShowEnvironmentError => MainControlOfMyControl.CanShowEnvironmentError();
+
+		/// <inheritdoc />
+		public void ShowEnvironmentError()
 		{
 			MainControlOfMyControl.ShowEnvironmentError();
-			return true;
 		}
 
-		/// <summary>
-		/// This menu item is disabled if a slash already exists in the environment string.
-		/// </summary>
+		/// <inheritdoc />
 		public bool CanInsertSlash => MainControlOfMyControl.CanInsertSlash;
 
+		/// <inheritdoc />
 		public void InsertSlash()
 		{
 			MainControlOfMyControl.RootBox.OnChar('/');
 		}
 
-		/// <summary>
-		/// This menu item is turned off if an underscore already exists in the environment  string.
-		/// </summary>
+		/// <inheritdoc />
 		public bool CanInsertEnvironmentBar => MainControlOfMyControl.CanInsertEnvBar;
 
+		/// <inheritdoc />
 		public void InsertEnvironmentBar()
 		{
 			MainControlOfMyControl.RootBox.OnChar('_');
 		}
 
-		/// <summary>
-		/// This menu item is on if a slash already exists in the environment.
-		/// </summary>
+		/// <inheritdoc />
 		public bool CanInsertNaturalClass => MainControlOfMyControl.CanInsertItem;
 
+		/// <inheritdoc />
 		public void InsertNaturalClass()
 		{
 			ReallySimpleListChooser.ChooseNaturalClass(MainControlOfMyControl.RootBox, Cache, PersistenceProvider, PropertyTable, Publisher, Subscriber);
 		}
 
-		private PhoneEnvReferenceView MainControlOfMyControl => (PhoneEnvReferenceView)((PhoneEnvReferenceLauncher)Control).MainControl;
+		private PhoneEnvReferenceView MainControlOfMyControl => (PhoneEnvReferenceView)MyLauncher.MainControl;
+		private PhoneEnvReferenceLauncher MyLauncher => (PhoneEnvReferenceLauncher)Control;
 
-		/// <summary>
-		/// This menu item is on if a slash already exists in the environment.
-		/// </summary>
+		/// <inheritdoc />
 		public bool CanInsertOptionalItem => MainControlOfMyControl.CanInsertItem;
 
+		/// <inheritdoc />
 		public void InsertOptionalItem()
 		{
 			InsertOptionalItem(MainControlOfMyControl.RootBox);
@@ -283,11 +260,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			rootb.MakeTextSelection(ihvoRoot, cvsli, rgvsli, tagTextProp, cpropPrevious, ichAnchor, ichEnd, ws, fAssocPrev, ihvoEnd, ttp, true);
 		}
 
-		/// <summary>
-		/// This menu item is on if a slash already exists in the environment.
-		/// </summary>
+		/// <inheritdoc />
 		public bool CanInsertHashMark => MainControlOfMyControl.CanInsertHashMark;
 
+		/// <inheritdoc />
 		public void InsertHashMark()
 		{
 			MainControlOfMyControl.RootBox.OnChar('#');

@@ -536,21 +536,6 @@ namespace LanguageExplorerTests.Controls.DetailControls
 
 		#endregion
 
-		#region Overrides of ButtonLauncher
-
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public override void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
-		{
-			base.InitializeFlexComponent(flexComponentParameters);
-
-			m_vectorRefView.InitializeFlexComponent(flexComponentParameters);
-		}
-
-		#endregion
-
 		public void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, string analysisWs)
 		{
 			Assert.IsNotNull(obj, "Must initialize with an object and flid.");

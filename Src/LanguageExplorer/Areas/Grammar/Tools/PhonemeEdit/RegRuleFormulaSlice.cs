@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,12 +15,17 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 	/// </summary>
 	internal sealed class RegRuleFormulaSlice : RuleFormulaSlice
 	{
-		public override void FinishInit()
+		internal RegRuleFormulaSlice(ISharedEventHandlers sharedEventHandlers)
+			: base(sharedEventHandlers)
 		{
-			Control = new RegRuleFormulaControl(ConfigurationNode);
 		}
 
-		RegRuleFormulaControl RegRuleFormulaControl => Control as RegRuleFormulaControl;
+		public override void FinishInit()
+		{
+			Control = new RegRuleFormulaControl(_sharedEventHandlers, ConfigurationNode);
+		}
+
+		private RegRuleFormulaControl RegRuleFormulaControl => Control as RegRuleFormulaControl;
 
 #if RANDYTODO
 		public bool OnDisplayContextSetOccurrence(object commandObject, ref XCore.UIItemDisplayProperties display)

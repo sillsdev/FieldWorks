@@ -10,6 +10,16 @@ namespace LanguageExplorer.Areas
 	internal interface IPhEnvSliceCommon
 	{
 		/// <summary>
+		/// See if an environment error message can be shown.
+		/// </summary>
+		bool CanShowEnvironmentError { get; }
+
+		/// <summary>
+		/// Show an environment error message.
+		/// </summary>
+		void ShowEnvironmentError();
+
+		/// <summary>
 		/// See if a hashmark can be inserted in an environment slice.
 		/// </summary>
 		bool CanInsertHashMark { get; }

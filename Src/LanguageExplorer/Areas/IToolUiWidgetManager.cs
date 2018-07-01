@@ -1,9 +1,8 @@
-﻿// Copyright (c) 2018 SIL International
+// Copyright (c) 2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
 
 namespace LanguageExplorer.Areas
 {
@@ -16,8 +15,7 @@ namespace LanguageExplorer.Areas
 		/// Initialize the implementation.
 		/// </summary>
 		/// <param name="majorFlexComponentParameters">The main parameter object for a given IFwMainWnd instance.</param>
-		/// <param name="sharedEventHandlers">Event handlers that are shared between implementations.</param>
 		/// <param name="recordList">The record list that provides the current main CmObject being displayed.</param>
-		void Initialize(MajorFlexComponentParameters majorFlexComponentParameters, Dictionary<string, EventHandler> sharedEventHandlers, IRecordList recordList);
+		void Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList);
 	}
 }

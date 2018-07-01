@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Collections.Generic;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
@@ -10,15 +9,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
 	internal sealed class AffixRuleFormulaSlice : RuleFormulaSlice
 	{
-		public AffixRuleFormulaSlice()
+		public AffixRuleFormulaSlice(ISharedEventHandlers sharedEventHandlers)
+			:base(sharedEventHandlers)
 		{
 		}
 
-		AffixRuleFormulaControl AffixRuleFormulaControl => (AffixRuleFormulaControl)Control;
+		private AffixRuleFormulaControl AffixRuleFormulaControl => (AffixRuleFormulaControl)Control;
 
 		public override void FinishInit()
 		{
-			Control = new AffixRuleFormulaControl(ConfigurationNode);
+			Control = new AffixRuleFormulaControl(_sharedEventHandlers, ConfigurationNode);
 		}
 
 #if RANDYTODO

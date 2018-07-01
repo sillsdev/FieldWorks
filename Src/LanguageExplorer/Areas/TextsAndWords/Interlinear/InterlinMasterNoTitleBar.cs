@@ -22,8 +22,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			InitializeComponent();
 		}
 
-		internal InterlinMasterNoTitleBar(XElement configurationParametersElement, LcmCache cache, IRecordList recordList, ToolStripMenuItem fileMenu, ToolStripMenuItem printMenu)
-			:base(configurationParametersElement, cache, recordList, fileMenu, printMenu, false)
+		internal InterlinMasterNoTitleBar(XElement configurationParametersElement, ISharedEventHandlers sharedEventHandlers, LcmCache cache, IRecordList recordList, ToolStripMenuItem fileMenu, ToolStripMenuItem printMenu)
+			:base(configurationParametersElement, sharedEventHandlers, cache, recordList, fileMenu, printMenu, false)
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();

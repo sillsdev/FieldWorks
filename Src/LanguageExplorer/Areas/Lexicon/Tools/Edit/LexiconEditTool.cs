@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -92,8 +92,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_recordBrowseView = new RecordBrowseView(root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
 
 			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
-			 var dataTree = new DataTree();
-			_lexiconEditToolMenuHelper = new LexiconEditToolMenuHelper(majorFlexComponentParameters, dataTree, _recordBrowseView, _recordList, showHiddenFieldsPropertyName);
+			 var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
+			_lexiconEditToolMenuHelper = new LexiconEditToolMenuHelper(majorFlexComponentParameters, this, dataTree, _recordBrowseView, _recordList, showHiddenFieldsPropertyName);
 
 			var recordEditView = new RecordEditView(XElement.Parse(LexiconResources.LexiconEditRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordList, dataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 			var nestedMultiPaneParameters = new MultiPaneParameters
@@ -211,7 +211,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> BrowseViewContextMenuCreatorMethod(IRecordList recordList, string browseViewMenuId)
 		{
-			// The actual menu declaration has a gazillion menu items, but only two of them are seen in this tool (plus the seperator).
+			// The actual menu declaration has a gazillion menu items, but only two of them are seen in this tool (plus the separator).
 			// Start: <menu id="mnuBrowseView" (partial) >
 			var contextMenuStrip = new ContextMenuStrip
 			{

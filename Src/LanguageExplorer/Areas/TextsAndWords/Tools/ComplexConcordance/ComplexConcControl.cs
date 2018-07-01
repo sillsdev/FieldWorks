@@ -1,24 +1,30 @@
-﻿// Copyright (c) 2013-2018 SIL International
+// Copyright (c) 2013-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
+using System.Drawing;
 using System.Linq;
+using System.Windows.Forms;
+using LanguageExplorer.Areas.TextsAndWords.Interlinear;
+using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.LexText;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
-namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
+namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 {
 	internal partial class ComplexConcControl : ConcordanceControlBase, IFocusablePanePortion, IPatternControl
 	{
+		private ContextMenuStrip _mnuComplexConcordance;
+		private List<Tuple<ToolStripMenuItem, EventHandler>> _menuItems;
+
 		private enum ComplexConcordanceInsertType
 		{
 			Word,
@@ -33,19 +39,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			switch (type)
 			{
 				case ComplexConcordanceInsertType.Morph:
-					return ITextStrings.ksComplexConcMorph;
+					return ComplexConcordanceResources.ksComplexConcMorph;
 
 				case ComplexConcordanceInsertType.Word:
-					return ITextStrings.ksComplexConcWord;
+					return ComplexConcordanceResources.ksComplexConcWord;
 
 				case ComplexConcordanceInsertType.TextTag:
-					return ITextStrings.ksComplexConcTag;
+					return ComplexConcordanceResources.ksComplexConcTag;
 
 				case ComplexConcordanceInsertType.Or:
 					return "OR";
 
 				case ComplexConcordanceInsertType.WordBoundary:
-					return string.Format("{0} (#)", ITextStrings.ksComplexConcWordBoundary);
+					return $"{ComplexConcordanceResources.ksComplexConcWordBoundary} (#)";
 			}
 
 			return null;
@@ -77,7 +83,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			InitializeComponent();
 		}
 
-		public override string AccName => "LanguageExplorer.Areas.TextsAndWords.Interlinear.ComplexConcControl";
+		public override string AccName => "LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance.ComplexConcControl";
 
 		#region Overrides of ConcordanceControlBase
 
@@ -510,17 +516,125 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				sh.Selection.Install();
 			}
-			if (nodes.Count > 0)
+			if (nodes.Any())
 			{
-				// we only bother to display the context menu if an item is selected
-				var window = PropertyTable.GetValue<IFwMainWnd>("window");
+				sh = SelectionHelper.Create(m_view);
+				_mnuComplexConcordance = new ContextMenuStrip()
+				{
+					Name = "mnuComplexConcordance"
+				};
+				_menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(7);
+				_mnuComplexConcordance.Closed += MnuComplexConcordance_Closed;
 
-#if RANDYTODO
-				window.ShowContextMenu("mnuComplexConcordance",
-					new Point(Cursor.Position.X, Cursor.Position.Y),
-					null, null);
-#endif
+				var currentNodes = CurrentNodes;
+				var visible = sh.IsRange && !(currentNodes[0] is ComplexConcOrNode) && !(currentNodes[currentNodes.Length - 1] is ComplexConcOrNode);
+				ToolStripMenuItem menu;
+				if (visible)
+				{
+					/*
+					<menu id="mnuComplexConcordance">
+					  <item command="CmdPatternNodeOccurOnce" />
+							<command id="CmdPatternNodeOccurOnce" label="Occurs exactly once" message="PatternNodeSetOccurrence">
+							  <parameters min="1" max="1" />
+							</command>
+					*/
+					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(_menuItems, _mnuComplexConcordance, PatternNodeSetOccurrence_Clicked, TextAndWordsResources.Occurs_exactly_once);
+					menu.Tag = new Dictionary<string, int>
+					{
+						{ "min", 1},
+						{ "max", 1}
+					};
+
+					/*
+					  <item command="CmdPatternNodeOccurZeroMore" />
+							<command id="CmdPatternNodeOccurZeroMore" label="Occurs zero or more times" message="PatternNodeSetOccurrence">
+							  <parameters min="0" max="-1" />
+							</command>
+					*/
+					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(_menuItems, _mnuComplexConcordance, PatternNodeSetOccurrence_Clicked, TextAndWordsResources.Occurs_zero_or_more_times);
+					menu.Tag = new Dictionary<string, int>
+					{
+						{ "min", 0},
+						{ "max", -1}
+					};
+
+					/*
+					  <item command="CmdPatternNodeOccurOneMore" />
+							<command id="CmdPatternNodeOccurOneMore" label="Occurs one or more times" message="PatternNodeSetOccurrence">
+							  <parameters min="1" max="-1" />
+							</command>
+					*/
+					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(_menuItems, _mnuComplexConcordance, PatternNodeSetOccurrence_Clicked, TextAndWordsResources.Occurs_one_or_more_times);
+					menu.Tag = new Dictionary<string, int>
+					{
+						{ "min", 1},
+						{ "max", -1}
+					};
+
+					/*
+					  <item command="CmdPatternNodeSetOccur" />
+							<command id="CmdPatternNodeSetOccur" label="Set occurrence (min. and max.)..." message="PatternNodeSetOccurrence" />
+					*/
+					ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(_menuItems, _mnuComplexConcordance, PatternNodeSetOccurrence_Clicked, TextAndWordsResources.Set_occurrence_min_and_max);
+				}
+
+				/*
+				  <item label="-" translate="do not translate" />
+				*/
+				if (_menuItems.Any())
+				{
+					ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(_mnuComplexConcordance);
+				}
+
+				visible = sh.IsRange && currentNodes.Length == 1 && (currentNodes[0] is ComplexConcWordNode || currentNodes[0] is ComplexConcMorphNode || currentNodes[0] is ComplexConcTagNode);
+				if (visible)
+				{
+					/*
+					  <item command="CmdPatternNodeSetCriteria" />
+							<command id="CmdPatternNodeSetCriteria" label="Set criteria..." message="PatternNodeSetCriteria" />
+					*/
+					ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(_menuItems, _mnuComplexConcordance, PatternNodeSetCriteria_Clicked, TextAndWordsResources.Set_criteria);
+				}
+
+				visible = currentNodes.Length > 1 && !(currentNodes[0] is ComplexConcOrNode) && !(currentNodes[currentNodes.Length - 1] is ComplexConcOrNode);
+				if (visible)
+				{
+					/*
+					  <item command="CmdPatternNodeGroup" />
+							<command id="CmdPatternNodeGroup" label="Group" message="PatternNodeGroup" />
+					</menu>
+					*/
+					ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(_menuItems, _mnuComplexConcordance, PatternNodeGroup_Clicked, TextAndWordsResources.Group);
+				}
+
+				// If last menu item is the separator, then remove it.
+				var count = _mnuComplexConcordance.Items.Count;
+				if (count > 0)
+				{
+					var lastMenuItem = _mnuComplexConcordance.Items[count - 1];
+					if (lastMenuItem is ToolStripSeparator)
+					{
+						_mnuComplexConcordance.Items.RemoveAt(count - 1);
+					}
+				}
+
+				_mnuComplexConcordance.Show(new Point(Cursor.Position.X, Cursor.Position.Y));
+				e.Handled = true;
 			}
+		}
+
+		private void MnuComplexConcordance_Closed(object sender, ToolStripDropDownClosedEventArgs e)
+		{
+			_mnuComplexConcordance.Closed -= MnuComplexConcordance_Closed;
+			// Get rid of it all.
+			foreach (var tuple in _menuItems)
+			{
+				tuple.Item1.Click -= tuple.Item2;
+				tuple.Item1.Dispose();
+			}
+			_mnuComplexConcordance.Dispose();
+			_mnuComplexConcordance = null;
+			_menuItems = null;
 		}
 
 		private IEnumerable<ComplexConcPatternNode> GetAllNodes(ComplexConcPatternNode node)
@@ -650,52 +764,24 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_view.Height = height;
 		}
 
-#if RANDYTODO
-		public bool OnDisplayPatternNodeGroup(object commandObject, ref UIItemDisplayProperties display)
+		private void PatternNodeGroup_Clicked(object sender, EventArgs e)
 		{
-			ComplexConcPatternNode[] nodes = CurrentNodes;
-			bool enable = nodes.Length > 1 && !(nodes[0] is ComplexConcOrNode) && !(nodes[nodes.Length - 1] is ComplexConcOrNode);
-			display.Enabled = enable;
-			display.Visible = enable;
-			return true;
-		}
-#endif
-
-		public bool OnPatternNodeGroup(object args)
-		{
-			var nodes = CurrentNodes;
-			var group = GroupNodes(nodes);
-			ReconstructView(group, false);
-			return true;
+			ReconstructView(GroupNodes(CurrentNodes), false);
 		}
 
-#if RANDYTODO
-		public bool OnDisplayPatternNodeSetOccurrence(object commandObject, ref UIItemDisplayProperties display)
-		{
-			SelectionHelper sel = SelectionHelper.Create(m_view);
-			ComplexConcPatternNode[] nodes = CurrentNodes;
-			bool enable = sel.IsRange && !(nodes[0] is ComplexConcOrNode) && !(nodes[nodes.Length - 1] is ComplexConcOrNode);
-			display.Enabled = enable;
-			display.Visible = enable;
-			return true;
-		}
-#endif
-
-		public bool OnPatternNodeSetOccurrence(object args)
+		private void PatternNodeSetOccurrence_Clicked(object sender, EventArgs e)
 		{
 			var nodes = CurrentNodes;
 			int min, max;
-#if RANDYTODO
-			var cmd = (Command) args;
-			if (cmd.Parameters.Count > 0)
+
+			var menu = (ToolStripMenuItem)sender;
+			if (menu.Tag != null)
 			{
-				string minStr = XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "min");
-				string maxStr = XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "max");
-				min = Int32.Parse(minStr);
-				max = Int32.Parse(maxStr);
+				var dictionary = (Dictionary<string, int>)menu.Tag;
+				min = dictionary["min"];
+				max = dictionary["max"];
 			}
 			else
-#endif
 			{
 				bool paren;
 				if (nodes.Length > 1)
@@ -720,7 +806,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					}
 					else
 					{
-						return true;
+						return;
 					}
 				}
 			}
@@ -729,7 +815,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			node.Minimum = min;
 			node.Maximum = max;
 			ReconstructView(node, false);
-			return true;
 		}
 
 		private ComplexConcPatternNode GroupNodes(ComplexConcPatternNode[] nodes)
@@ -746,19 +831,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return group;
 		}
 
-#if RANDYTODO
-		public bool OnDisplayPatternNodeSetCriteria(object commandObject, ref UIItemDisplayProperties display)
-		{
-			SelectionHelper sel = SelectionHelper.Create(m_view);
-			ComplexConcPatternNode[] nodes = CurrentNodes;
-			bool enable = sel.IsRange && nodes.Length == 1 && (nodes[0] is ComplexConcWordNode || nodes[0] is ComplexConcMorphNode || nodes[0] is ComplexConcTagNode);
-			display.Enabled = enable;
-			display.Visible = enable;
-			return true;
-		}
-#endif
-
-		public bool OnPatternNodeSetCriteria(object args)
+		private void PatternNodeSetCriteria_Clicked(object sender, EventArgs e)
 		{
 			var nodes = CurrentNodes;
 			var wordNode = nodes[0] as ComplexConcWordNode;
@@ -770,7 +843,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					dlg.SetDlgInfo(m_cache, PropertyTable, Publisher, wordNode);
 					if (dlg.ShowDialog(fwMainWnd) == DialogResult.Cancel)
 					{
-						return true;
+						return;
 					}
 				}
 			}
@@ -784,7 +857,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						dlg.SetDlgInfo(m_cache, PropertyTable, Publisher, morphNode);
 						if (dlg.ShowDialog(fwMainWnd) == DialogResult.Cancel)
 						{
-							return true;
+							return;
 						}
 					}
 				}
@@ -798,7 +871,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							dlg.SetDlgInfo(m_cache, PropertyTable, Publisher, tagNode);
 							if (dlg.ShowDialog(fwMainWnd) == DialogResult.Cancel)
 							{
-								return true;
+								return;
 							}
 						}
 					}
@@ -806,7 +879,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 
 			ReconstructView(nodes[0], false);
-			return true;
 		}
 
 		private void m_searchButton_Click(object sender, EventArgs e)

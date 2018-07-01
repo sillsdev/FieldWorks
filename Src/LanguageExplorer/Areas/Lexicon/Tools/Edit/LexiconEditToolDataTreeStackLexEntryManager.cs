@@ -27,7 +27,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private const string mnuDataTree_ComplexFormSpec = "mnuDataTree-ComplexFormSpec";
 		private const string mnuDataTree_DeleteAddLexReference = "mnuDataTree-DeleteAddLexReference";
 		private const string mnuDataTree_DeleteReplaceLexReference = "mnuDataTree-DeleteReplaceLexReference";
-		private Dictionary<string, EventHandler> _sharedEventHandlers;
+		private ISharedEventHandlers _sharedEventHandlers;
 		private IRecordList MyRecordList { get; set; }
 		private DataTree MyDataTree { get; set; }
 		private IPublisher _publisher;
@@ -50,15 +50,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		#region Implementation of IToolUiWidgetManager
 
 		/// <inheritdoc />
-		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, Dictionary<string, EventHandler> sharedEventHandlers, IRecordList recordList)
+		void IToolUiWidgetManager.Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
-			Guard.AgainstNull(sharedEventHandlers, nameof(sharedEventHandlers));
 			Guard.AgainstNull(recordList, nameof(recordList));
 
 			_publisher = majorFlexComponentParameters.FlexComponentParameters.Publisher;
 			_cache = majorFlexComponentParameters.LcmCache;
-			_sharedEventHandlers = sharedEventHandlers;
+			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
 			MyRecordList = recordList;
 
 			_sharedEventHandlers.Add(LexiconAreaConstants.CmdMoveTargetToPreviousInSequence, MoveReferencedTargetDownInSequence_Clicked);
@@ -83,7 +82,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			foreach (var manager in _dataTreeWidgetManagers.Values)
 			{
-				manager.Initialize(majorFlexComponentParameters, sharedEventHandlers, recordList);
+				manager.Initialize(majorFlexComponentParameters, recordList);
 			}
 		}
 
@@ -123,6 +122,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			if (disposing)
 			{
+				_sharedEventHandlers.Remove(LexiconAreaConstants.CmdMoveTargetToPreviousInSequence);
+				_sharedEventHandlers.Remove(LexiconAreaConstants.CmdMoveTargetToNextInSequence);
+				_sharedEventHandlers.Remove(LexiconAreaConstants.CmdAlphabeticalOrder);
+				_sharedEventHandlers.Remove(AreaServices.CmdEntryJumpToConcordance);
+				_sharedEventHandlers.Remove(LexiconAreaConstants.MoveUpObjectInOwningSequence);
+				_sharedEventHandlers.Remove(LexiconAreaConstants.MoveDownObjectInOwningSequence);
 				foreach (var manager in _dataTreeWidgetManagers.Values)
 				{
 					manager.Dispose();
@@ -316,9 +321,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			};
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(2);
 			// <item command="CmdDataTree-Insert-Pronunciation"/>
-			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconEditToolConstants.CmdDataTree_Insert_Pronunciation], LexiconResources.Insert_Pronunciation, LexiconResources.Insert_Pronunciation_Tooltip);
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(LexiconEditToolConstants.CmdDataTree_Insert_Pronunciation), LexiconResources.Insert_Pronunciation, LexiconResources.Insert_Pronunciation_Tooltip);
 			// <item command="CmdInsertMediaFile" label="Insert _Sound or Movie" defaultVisible="false"/>
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconEditToolConstants.CmdInsertMediaFile], LexiconResources.Sound_or_Movie, LexiconResources.Insert_Sound_Or_Movie_File_Tooltip);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(LexiconEditToolConstants.CmdInsertMediaFile), LexiconResources.Sound_or_Movie, LexiconResources.Insert_Sound_Or_Movie_File_Tooltip);
 			// <item label="-" translate="do not translate"/>
 			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 			using (var imageHolder = new LanguageExplorer.DictionaryConfiguration.ImageHolder())
@@ -376,7 +381,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			}
 			var hotlinksMenuItemList = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 			// <item command="CmdDataTree-Insert-Etymology"/>
-			ToolStripMenuItemFactory.CreateHotLinkToolStripMenuItem(hotlinksMenuItemList, _sharedEventHandlers[LexiconEditToolConstants.CmdDataTree_Insert_Etymology], LexiconResources.Insert_Etymology, LexiconResources.Insert_Etymology_Tooltip);
+			ToolStripMenuItemFactory.CreateHotLinkToolStripMenuItem(hotlinksMenuItemList, _sharedEventHandlers.Get(LexiconEditToolConstants.CmdDataTree_Insert_Etymology), LexiconResources.Insert_Etymology, LexiconResources.Insert_Etymology_Tooltip);
 
 			return hotlinksMenuItemList;
 		}
@@ -396,7 +401,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(6);
 
 			// <item command="CmdDataTree-Insert-Etymology" label="Insert _Etymology"/>
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconEditToolConstants.CmdDataTree_Insert_Etymology], LexiconResources.Insert_Etymology, LexiconResources.Insert_Etymology_Tooltip);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(LexiconEditToolConstants.CmdDataTree_Insert_Etymology), LexiconResources.Insert_Etymology, LexiconResources.Insert_Etymology_Tooltip);
 
 			// <item label="-" translate="do not translate"/>
 			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);

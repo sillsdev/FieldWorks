@@ -99,6 +99,7 @@ namespace LanguageExplorer.Impls
 		private CombinedStylesListHandler _combinedStylesListHandler;
 		private LinkHandler _linkHandler;
 		private readonly Stack<List<IdleProcessingHelper>> _idleProcessingHelpers = new Stack<List<IdleProcessingHelper>>();
+		private ISharedEventHandlers _sharedEventHandlers = new SharedEventHandlers();
 
 		/// <summary>
 		/// Create new instance of window.
@@ -705,7 +706,7 @@ namespace LanguageExplorer.Impls
 
 			_majorFlexComponentParameters = new MajorFlexComponentParameters(mainContainer, _menuStrip, toolStripContainer, _statusbar,
 				_parserMenuManager, _dataNavigationManager, _recordListRepositoryForTools, flexComponentParameters,
-				Cache, _flexApp, this, _sidePane);
+				Cache, _flexApp, this, _sharedEventHandlers, _sidePane);
 			_propertyTable.SetProperty("MajorFlexComponentParameters", _majorFlexComponentParameters, settingsGroup: SettingsGroup.GlobalSettings);
 
 			RecordListServices.Setup(_majorFlexComponentParameters);

@@ -481,24 +481,6 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Insert Environment bar.
-        /// </summary>
-        internal static string Insert_Environment_bar {
-            get {
-                return ResourceManager.GetString("Insert_Environment_bar", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Insert Environment slash.
-        /// </summary>
-        internal static string Insert_Environment_slash {
-            get {
-                return ResourceManager.GetString("Insert_Environment_slash", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Insert _Etymology.
         /// </summary>
         internal static string Insert_Etymology {
@@ -540,24 +522,6 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string Insert_Extended_Note {
             get {
                 return ResourceManager.GetString("Insert_Extended_Note", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Insert Natural Class.
-        /// </summary>
-        internal static string Insert_Natural_Class {
-            get {
-                return ResourceManager.GetString("Insert_Natural_Class", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Insert Optional Item.
-        /// </summary>
-        internal static string Insert_Optional_Item {
-            get {
-                return ResourceManager.GetString("Insert_Optional_Item", resourceCulture);
             }
         }
         
@@ -666,15 +630,6 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string Insert_Variant_Tooltip {
             get {
                 return ResourceManager.GetString("Insert_Variant_Tooltip", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Insert Word Boundary.
-        /// </summary>
-        internal static string Insert_Word_Boundary {
-            get {
-                return ResourceManager.GetString("Insert_Word_Boundary", resourceCulture);
             }
         }
         

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2013-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,19 +6,19 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using SIL.Collections;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
 using SIL.Machine.Matching;
 
-namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
+namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 {
-	public class ComplexConcWordNode : ComplexConcLeafNode
+	public class ComplexConcMorphNode : ComplexConcLeafNode
 	{
 		private readonly Dictionary<IFsFeatDefn, object> m_inflFeatures;
 
-		public ComplexConcWordNode()
+		public ComplexConcMorphNode()
 		{
 			m_inflFeatures = new Dictionary<IFsFeatDefn, object>();
 		}
@@ -26,6 +26,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public ITsString Form { get; set; }
 
 		public ITsString Gloss { get; set; }
+
+		public ITsString Entry { get; set; }
 
 		public IPartOfSpeech Category { get; set; }
 
@@ -37,9 +39,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			var fs = new FeatureStruct();
 			var typeFeat = featSys.GetFeature<SymbolicFeature>("type");
-			fs.AddValue(typeFeat, typeFeat.PossibleSymbols["word"]);
+			fs.AddValue(typeFeat, typeFeat.PossibleSymbols["morph"]);
 			AddStringValue(featSys, fs, Form, "form");
 			AddStringValue(featSys, fs, Gloss, "gloss");
+			AddStringValue(featSys, fs, Entry, "entry");
 			if (Category != null)
 			{
 				var catFeat = featSys.GetFeature<SymbolicFeature>("cat");
@@ -56,19 +59,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				fs.AddValue(inflFeat, GetFeatureStruct(featSys, m_inflFeatures));
 			}
 
-			var wordBdryFS = FeatureStruct.New(featSys).Symbol("bdry").Symbol("wordBdry").Value;
-			var group = new Group<ComplexConcParagraphData, ShapeNode>();
-			group.Children.Add(new Quantifier<ComplexConcParagraphData, ShapeNode>(0, 1, new Constraint<ComplexConcParagraphData, ShapeNode>(wordBdryFS))
-			{
-				IsGreedy = false
-			});
-			group.Children.Add(new Constraint<ComplexConcParagraphData, ShapeNode>(fs));
-			group.Children.Add(new Quantifier<ComplexConcParagraphData, ShapeNode>(0, 1, new Constraint<ComplexConcParagraphData, ShapeNode>(wordBdryFS))
-			{
-				IsGreedy = false
-			});
-
-			return AddQuantifier(group);
+			return AddQuantifier(new Constraint<ComplexConcParagraphData, ShapeNode>(fs));
 		}
 	}
 }

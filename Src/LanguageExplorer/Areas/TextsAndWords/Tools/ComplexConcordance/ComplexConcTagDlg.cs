@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2013-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,7 +8,7 @@ using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
-namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
+namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 {
 	public class ComplexConcTagDlg : Form
 	{
@@ -74,7 +74,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 				else
 				{
-					MessageBox.Show(this, ITextStrings.ksInvalidTagMsg, null, MessageBoxButtons.OK, MessageBoxIcon.Error);
+					MessageBox.Show(this, ComplexConcordanceResources.ksInvalidTagMsg, null, MessageBoxButtons.OK, MessageBoxIcon.Error);
 				}
 			}
 			else

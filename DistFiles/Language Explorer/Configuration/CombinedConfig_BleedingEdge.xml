@@ -30,62 +30,15 @@ so I can look at that in the develop branch.
     <command id="CmdStartLogging" label="Start Logging" message="StartLogging" />
     <command id="CmdRequestDebugInfo" label="Request Debug Info" message="RequestDebugInfo" shortcut="Ctrl+Shift+I" />
     <command id="CmdExportText" label="Export Text of browse view" message="ExportText" shortcut="Ctrl+Shift+E" />
-    <command id="CmdVisibleComplexForm" label="Referenced Complex Form" message="VisibleComplexForm">
-      <parameters tool="lexiconEdit" className="LexEntryOrLexSense" />
-    </command>
-    <command id="CmdShowSubentryUnderComponent" label="Show Subentry under this Component" message="AddComponentToPrimary">
-      <parameters tool="lexiconEdit" className="LexEntryRef" />
-    </command>
-    <command id="CmdPOSJumpToDefault" label="Show in Category Edit" message="JumpToTool">
-      <parameters tool="posEdit" className="PartOfSpeech" ownerClass="LangProject" ownerField="PartsOfSpeech" />
-    </command>
     <command id="CmdPublicationsJumpToDefault" label="Edit Publications" message="JumpToTool">
       <parameters tool="publicationsEdit" className="ICmPossibility" ownerClass="LangProject" ownerField="PublicationTypes" />
-    </command>
-    <command id="CmdWordPOSJumpToDefault" label="Show Word Category in Category Edit" message="JumpToTool">
-      <parameters tool="posEdit" className="WordPartOfSpeech" ownerClass="LangProject" ownerField="PartsOfSpeech" />
-    </command>
-    <command id="CmdEndoCompoundRuleJumpToDefault" label="Show in Compound Rules Editor" message="JumpToTool">
-      <parameters tool="compoundRuleAdvancedEdit" className="MoEndoCompound" />
-    </command>
-    <command id="CmdExoCompoundRuleJumpToDefault" label="Show in Compound Rules Editor" message="JumpToTool">
-      <parameters tool="compoundRuleAdvancedEdit" className="MoExoCompound" />
     </command>
     <command id="CmdPhonemeJumpToDefault" label="Show in Phonemes Editor" message="JumpToTool">
       <parameters tool="phonemeEdit" className="PhPhoneme" />
     </command>
-    <command id="CmdNaturalClassJumpToDefault" label="Show in Natural Classes Editor" message="JumpToTool">
-      <parameters tool="naturalClassEdit" className="PhNCSegments" />
-    </command>
-    <command id="CmdEnvironmentsJumpToDefault" label="Show in Environments Editor" message="JumpToTool">
-      <parameters tool="EnvironmentEdit" className="PhEnvironment" />
-    </command>
-    <command id="CmdWordformJumpToConcordance" label="Show Wordform in Concordance" message="JumpToTool">
-      <parameters tool="concordance" className="WfiWordform" />
-    </command>
-    <command id="CmdSenseJumpToConcordance" label="Show Sense in Concordance" message="JumpToTool">
-      <parameters tool="concordance" className="LexSense" />
-    </command>
-    <command id="CmdAnalysisJumpToConcordance" label="Show Analysis in Concordance" message="JumpToTool">
-      <parameters tool="concordance" className="WfiAnalysis" />
-    </command>
     <command id="CmdPOSJumpToConcordance" label="Show Category in Concordance" message="JumpToTool">
       <parameters tool="concordance" className="PartOfSpeech" ownerClass="LangProject" ownerField="PartsOfSpeech" />
     </command>
-    <command id="CmdLexGramInfoJumpToConcordance" label="Lex. Gram. Info." message="JumpToTool">
-      <parameters tool="concordance" concordOn="PartOfSpeechGramInfo" className="PartOfSpeechGramInfo" ownerClass="LangProject" ownerField="PartsOfSpeech" />
-    </command>
-    <command id="CmdWordPOSJumpToConcordance" label="Show Word Category in Concordance" message="JumpToTool">
-      <parameters tool="concordance" concordOn="WordPartOfSpeech" className="WordPartOfSpeech" ownerClass="LangProject" ownerField="PartsOfSpeech" />
-    </command>
-    <command id="CmdWordGlossJumpToConcordance" label="Show Word Gloss in Concordance" message="JumpToTool">
-      <parameters tool="concordance" className="WfiGloss" />
-    </command>
-    <command id="CmdWordformJumpToAnalyses" label="Show in Word Analyses" message="JumpToTool">
-      <parameters tool="Analyses" className="WfiWordform" />
-    </command>
-    <!-- This is on the popup menu, and is for non-record level objects. -->
-    <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem" />
     <!-- START include: "CommonDataTreeInclude.xml" query="root/commands/*" -->
     <command id="CmdDataTree-Delete" label="Delete {0}" message="DataTreeDelete" icon="Delete" />
     <!-- END include: "CommonDataTreeInclude.xml" query="root/commands/*" -->
@@ -234,18 +187,6 @@ so I can look at that in the develop branch.
       <parameters field="Analyses" className="WfiAnalysis" />
     </command>
     <command id="CmdRespeller" label="Change Spelling..." message="LaunchRespellerDlg" />
-    <command id="CmdPatternNodeOccurOnce" label="Occurs exactly once" message="PatternNodeSetOccurrence">
-      <parameters min="1" max="1" />
-    </command>
-    <command id="CmdPatternNodeOccurZeroMore" label="Occurs zero or more times" message="PatternNodeSetOccurrence">
-      <parameters min="0" max="-1" />
-    </command>
-    <command id="CmdPatternNodeOccurOneMore" label="Occurs one or more times" message="PatternNodeSetOccurrence">
-      <parameters min="1" max="-1" />
-    </command>
-    <command id="CmdPatternNodeSetOccur" label="Set occurrence (min. and max.)..." message="PatternNodeSetOccurrence" />
-    <command id="CmdPatternNodeSetCriteria" label="Set criteria..." message="PatternNodeSetCriteria" />
-    <command id="CmdPatternNodeGroup" label="Group" message="PatternNodeGroup" />
     <!-- END include: "Words/areaConfiguration.xml" query="root/commands/*" -->
     <!-- START include: "Grammar/areaConfiguration.xml" query="root/commands/*" -->
     <!-- START include (Grammar_Area): "DataTreeInclude.xml" query="window/commands/*" -->
@@ -411,32 +352,6 @@ so I can look at that in the develop branch.
     <command id="CmdInsertACPGroup" label="Group of ad hoc rules" message="InsertItemInVector" icon="coprohibGroup">
       <params className="MoAdhocProhibGr" />
     </command>
-    <command id="CmdJumpToEnvironmentList" label="Show in Environments list" message="JumpToTool">
-      <parameters tool="EnvironmentEdit" className="PhEnvironment" ownerClass="PhPhonData" ownerField="Environments" />
-    </command>
-    <command id="CmdShowEnvironmentErrorMessage" label="_Describe Error in Environment" message="ShowEnvironmentError" />
-    <command id="CmdInsertEnvSlash" label="Insert Environment _slash" message="InsertSlash" />
-    <command id="CmdInsertEnvUnderscore" label="Insert Environment _bar" message="InsertEnvironmentBar" />
-    <command id="CmdInsertEnvNaturalClass" label="Insert _Natural Class" message="InsertNaturalClass" />
-    <command id="CmdInsertEnvOptionalItem" label="Insert _Optional Item" message="InsertOptionalItem" />
-    <command id="CmdInsertEnvHashMark" label="Insert _Word Boundary" message="InsertHashMark" />
-    <command id="CmdCtxtOccurOnce" label="Occurs exactly once" message="ContextSetOccurrence">
-      <parameters min="1" max="1" />
-    </command>
-    <command id="CmdCtxtOccurZeroMore" label="Occurs zero or more times" message="ContextSetOccurrence">
-      <parameters min="0" max="-1" />
-    </command>
-    <command id="CmdCtxtOccurOneMore" label="Occurs one or more times" message="ContextSetOccurrence">
-      <parameters min="1" max="-1" />
-    </command>
-    <command id="CmdCtxtSetOccur" label="Set occurrence (min. and max.)..." message="ContextSetOccurrence" />
-    <command id="CmdCtxtSetFeatures" label="Set Phonological Features..." message="ContextSetFeatures" />
-    <command id="CmdCtxtJumpToNC" label="Show in Natural Classes list" message="ContextJumpToNaturalClass" />
-    <command id="CmdCtxtJumpToPhoneme" label="Show in Phonemes list" message="ContextJumpToPhoneme" />
-    <command id="CmdMappingSetFeatures" label="Set Phonological Features..." message="MappingSetFeatures" />
-    <command id="CmdMappingSetNC" label="Set Natural Class..." message="MappingSetNaturalClass" />
-    <command id="CmdMappingJumpToNC" label="Show in Natural Classes list" message="MappingJumpToNaturalClass" />
-    <command id="CmdMappingJumpToPhoneme" label="Show in Phonemes list" message="MappingJumpToPhoneme" />
     <!-- END include: "Grammar/areaConfiguration.xml" query="root/commands/*" -->
     <!-- START include: "Notebook/areaConfiguration.xml" query="root/commands/*" -->
     <command id="CmdInsertRecord" label="Record" message="InsertItemInVector" icon="nbkRecord" shortcut="Ctrl+I">
@@ -458,9 +373,6 @@ so I can look at that in the develop branch.
       <parameters className="RnGenericRec" subrecord="true" subsubrecord="true" />
     </command>
     <command id="CmdDataTree-Delete-Participants" label="Delete Participants" message="DeleteParticipants" />
-    <command id="CmdRecordJumpToDefault" label="Show Record in Notebook" message="JumpToTool">
-      <parameters tool="notebookEdit" className="RnGenericRec" />
-    </command>
     <command id="CmdMoveRecordUp" label="Move Up" message="MoveItemUpInVector">
       <parameters className="RnGenericRec" />
     </command>
@@ -562,101 +474,11 @@ so I can look at that in the develop branch.
     <command id="CmdInsertFeatureType" label="_Feature Type" message="InsertItemInVector" icon="AddItem">
       <params className="FsFeatStrucType" />
     </command>
-    <command id="CmdJumpToAcademicDomainList" label="Show in {0} list" message="JumpToTool">
-      <parameters tool="domainTypeEdit" className="CmPossibility" ownerClass="LexDb" ownerField="DomainTypes" />
-    </command>
-    <command id="CmdJumpToAnthroList" label="Show in {0} list" message="JumpToTool">
-      <parameters tool="anthroEdit" className="CmAnthroItem" ownerClass="LangProject" ownerField="AnthroList" />
-    </command>
-    <command id="CmdJumpToLexiconEditWithFilter" label="Filter for Lexical Entries with this category" message="JumpToLexiconEditFilterAnthroItems">
-      <parameters tool="lexiconEdit" className="CmAnthroItem" ownerClass="LangProject" ownerField="AnthroList" />
-    </command>
-    <command id="CmdJumpToNotebookEditWithFilter" label="Filter for Notebook Records with this category" message="JumpToNotebookEditFilterAnthroItems">
-      <parameters tool="notebookEdit" className="CmAnthroItem" ownerClass="LangProject" ownerField="AnthroList" />
-    </command>
-    <command id="CmdJumpToConfidenceList" label="Show in {0} list" message="JumpToTool">
-      <parameters tool="confidenceEdit" className="CmPossibility" ownerClass="LangProject" ownerField="ConfidenceLevels" />
-    </command>
-    <command id="CmdJumpToDialectLabelsList" label="Show in {0} list" message="JumpToTool">
-      <parameters tool="dialectsListEdit" className="CmPossibility" ownerClass="LexDb" ownerField="DialectLabels" />
-    </command>
-    <command id="CmdJumpToDiscChartMarkerList" label="Show in {0} list" message="JumpToTool">
-      <parameters tool="chartmarkEdit" className="CmPossibility" ownerClass="DsDiscourseData" ownerField="ChartMarkers" />
-    </command>
-    <command id="CmdJumpToDiscChartTemplateList" label="Show in {0} list" message="JumpToTool">
-      <parameters tool="charttempEdit" className="CmPossibility" ownerClass="DsDiscourseData" ownerField="ConstChartTempl" />
-    </command>
-    <command id="CmdJumpToEducationList" label="Show in {0} list" message="JumpToTool">
-      <parameters tool="educationEdit" className="CmPossibility" ownerClass="LangProject" ownerField="Education" />
-    </command>
-    <command id="CmdJumpToExtNoteTypeList" label="Show in {0} list" message="JumpToTool">
-      <parameters tool="extNoteTypeEdit" className="CmPossibility" ownerClass="LexDb" ownerField="ExtendedNoteTypes" />
-    </command>
-    <command id="CmdJumpToLanguagesList" label="Show in {0} list" message="JumpToTool">
-      <parameters tool="languagesListEdit" className="CmPossibility" ownerClass="LexDb" ownerField="Languages" />
-    </command>
-    <command id="CmdJumpToRoleList" label="Show in {0} list" message="JumpToTool">
-      <parameters tool="roleEdit" className="CmPossibility" ownerClass="LangProject" ownerField="Roles" />
-    </command>
-    <command id="CmdJumpToGenreList" label="Show in {0} list" message="JumpToTool">
-      <parameters tool="genresEdit" className="CmPossibility" ownerClass="LangProject" ownerField="GenreList" />
-    </command>
-    <command id="CmdJumpToLexRefTypeList" label="Show in {0} list" message="JumpToTool">
-      <parameters tool="lexRefEdit" className="LexRefType" ownerClass="LexDb" ownerField="References" />
-    </command>
-    <command id="CmdJumpToLocationList" label="Show in {0} list" message="JumpToTool">
-      <parameters tool="locationsEdit" className="CmLocation" ownerClass="LangProject" ownerField="Locations" />
-    </command>
-    <command id="CmdJumpToPublicationList" label="Show in {0} list" message="JumpToTool">
-      <parameters tool="publicationsEdit" className="CmPossibility" ownerClass="LexDb" ownerField="PublicationTypes" />
-    </command>
     <command id="CmdInsertLexEntryInflType" label="_Type" message="InsertItemInVector" icon="AddItem">
       <params className="LexEntryInflType" />
     </command>
     <command id="CmdInsertLexEntryType" label="_Type" message="InsertItemInVector" icon="AddItem">
       <params className="LexEntryType" />
-    </command>
-    <command id="CmdJumpToComplexEntryTypeList" label="Show in Complex Form Types list" message="JumpToTool">
-      <parameters tool="complexEntryTypeEdit" className="LexEntryType" ownerClass="LexDb" ownerField="ComplexEntryTypes" />
-    </command>
-    <command id="CmdJumpToVariantEntryTypeList" label="Show in Variant Types list" message="JumpToTool">
-      <parameters tool="variantEntryTypeEdit" className="LexEntryType" ownerClass="LexDb" ownerField="VariantEntryTypes" />
-    </command>
-    <command id="CmdJumpToTextMarkupTagsList" label="Show in {0} list" message="JumpToTool">
-      <parameters tool="textMarkupTagsEdit" className="CmPossibility" ownerClass="LangProject" ownerField="TextMarkupTags" />
-    </command>
-    <command id="CmdJumpToMorphTypeList" label="Show in Morpheme Types list" message="JumpToTool">
-      <parameters tool="morphTypeEdit" className="MoMorphType" ownerClass="LexDb" ownerField="MorphTypes" />
-    </command>
-    <command id="CmdJumpToPeopleList" label="Show in {0} list" message="JumpToTool">
-      <parameters tool="peopleEdit" className="CmPerson" ownerClass="LangProject" ownerField="People" />
-    </command>
-    <command id="CmdJumpToPositionList" label="Show in {0} list" message="JumpToTool">
-      <parameters tool="positionsEdit" className="CmPossibility" ownerClass="LangProject" ownerField="Positions" />
-    </command>
-    <command id="CmdJumpToRestrictionsList" label="Show in {0} list" message="JumpToTool">
-      <parameters tool="restrictionsEdit" className="CmPossibility" ownerClass="LangProject" ownerField="Restrictions" />
-    </command>
-    <command id="CmdJumpToSemanticDomainList" label="Show in {0} list" message="JumpToTool">
-      <parameters tool="semanticDomainEdit" className="CmSemanticDomain" ownerClass="LangProject" ownerField="SemanticDomainList" />
-    </command>
-    <command id="CmdJumpToSenseTypeList" label="Show in {0} list" message="JumpToTool">
-      <parameters tool="senseTypeEdit" className="CmPossibility" ownerClass="LexDb" ownerField="SenseTypes" />
-    </command>
-    <command id="CmdJumpToStatusList" label="Show in {0} list" message="JumpToTool">
-      <parameters tool="statusEdit" className="CmPossibility" ownerClass="LangProject" ownerField="Status" />
-    </command>
-    <command id="CmdJumpToTranslationTypeList" label="Show in {0} list" message="JumpToTool">
-      <parameters tool="translationTypeEdit" className="CmPossibility" ownerClass="LangProject" ownerField="TranslationTags" />
-    </command>
-    <command id="CmdJumpToUsageTypeList" label="Show in {0} list" message="JumpToTool">
-      <parameters tool="usageTypeEdit" className="CmPossibility" ownerClass="LexDb" ownerField="UsageTypes" />
-    </command>
-    <command id="CmdJumpToRecordTypeList" label="Show in {0} list" message="JumpToTool">
-      <parameters tool="recTypeEdit" className="CmPossibility" ownerClass="RnResearchNbk" ownerField="RecTypes" />
-    </command>
-    <command id="CmdJumpToTimeOfDayList" label="Show in {0} list" message="JumpToTool">
-      <parameters tool="timeOfDayEdit" className="CmPossibility" ownerClass="LangProject" ownerField="TimeOfDay" />
     </command>
     <!-- END include: "Lists/areaConfiguration.xml" query="root/commands/*" -->
     <command id="CmdHelpDemoWelcome" label="_Welcome" message="HelpDemoMovies">
@@ -869,29 +691,6 @@ so I can look at that in the develop branch.
   </menubar>
   <!-- ************************ contextMenus *********************** -->
   <contextMenus>
-    <menu id="mnuObjectChoices">
-      <item command="CmdEntryJumpToDefault" />
-      <item command="CmdWordformJumpToAnalyses" />
-      <menu label="Show Concordance of">
-        <item command="CmdWordformJumpToConcordance" label="Wordform" />
-        <item command="CmdAnalysisJumpToConcordance" label="Analysis" />
-        <item command="CmdMorphJumpToConcordance" label="Morph" a10status="See LexiconEditToolDataTreeStackLexEntryManager:Register_LexemeForm_Bundle for 'CmdMorphJumpToConcordance' defn." />
-        <item command="CmdEntryJumpToConcordance" label="Entry" />
-        <item command="CmdSenseJumpToConcordance" label="Sense" />
-        <item command="CmdLexGramInfoJumpToConcordance" />
-        <item command="CmdWordGlossJumpToConcordance" label="Word Gloss" />
-        <item command="CmdWordPOSJumpToConcordance" label="Word Category" />
-      </menu>
-      <item command="CmdPOSJumpToDefault" />
-      <item command="CmdWordPOSJumpToDefault" />
-      <item command="CmdEndoCompoundRuleJumpToDefault" />
-      <item command="CmdExoCompoundRuleJumpToDefault" />
-      <item command="CmdPhonemeJumpToDefault" />
-      <item command="CmdNaturalClassJumpToDefault" />
-      <item command="CmdEnvironmentsJumpToDefault" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdDeleteSelectedObject" />
-    </menu>
     <menu id="mnuBrowseView">
       <item command="CmdEntryJumpToDefault" />
       <item command="CmdWordformJumpToAnalyses" />
@@ -911,61 +710,6 @@ so I can look at that in the develop branch.
       <item label="-" translate="do not translate" />
       <!-- <item command="CmdDeleteSelectedObject"/> Done for Lex Edit tool, but odds are it is used elsewhere, as well. -->
     </menu>
-    <!-- The following commands are involked/displayed on a right click on a slice on a Possibility list item.
-
-			 In the C# code see the following  class ReferenceViewBase and class ReferenceBaseUi
-			 where ContextMenuId returns  "mnuReferenceChoices".
-
-			 Search in the xml files for the particular command (for example CmdJumpToAnthroList and CmdJumpToAnthroList2)
-			 See how the command has the following parameters
-				 className="CmAnthroItem" ownerClass="LangProject" ownerField="AnthroList"
-			 These parameters must be used to determine that this command is only shown on slices which contain
-			 Anthropology Categories.  The messsage is the command that is executed.-->
-    <menu id="mnuReferenceChoices">
-      <item command="CmdEntryJumpToDefault" />
-      <item command="CmdRecordJumpToDefault" />
-      <item command="CmdAnalysisJumpToConcordance" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdLexemeFormJumpToConcordance" a10status="See LexiconEditToolDataTreeStackLexEntryManager:Register_LexemeForm_Bundle for 'CmdLexemeFormJumpToConcordance' defn." />
-      <item command="CmdEntryJumpToConcordance" />
-      <item command="CmdSenseJumpToConcordance" />
-      <item command="CmdJumpToAcademicDomainList" />
-      <item command="CmdJumpToAnthroList" />
-      <item command="CmdJumpToLexiconEditWithFilter" />
-      <item command="CmdJumpToNotebookEditWithFilter" />
-      <item command="CmdJumpToConfidenceList" />
-      <item command="CmdJumpToDialectLabelsList" />
-      <item command="CmdJumpToDiscChartMarkerList" />
-      <item command="CmdJumpToDiscChartTemplateList" />
-      <item command="CmdJumpToEducationList" />
-      <item command="CmdJumpToRoleList" />
-      <item command="CmdJumpToExtNoteTypeList" />
-      <item command="CmdJumpToComplexEntryTypeList" />
-      <item command="CmdJumpToVariantEntryTypeList" />
-      <item command="CmdJumpToTextMarkupTagsList" />
-      <item command="CmdJumpToLexRefTypeList" />
-      <item command="CmdJumpToLanguagesList" />
-      <item command="CmdJumpToLocationList" />
-      <item command="CmdJumpToPublicationList" />
-      <item command="CmdJumpToMorphTypeList" />
-      <item command="CmdJumpToPeopleList" />
-      <item command="CmdJumpToPositionList" />
-      <item command="CmdJumpToRestrictionsList" />
-      <item command="CmdJumpToSemanticDomainList" />
-      <item command="CmdJumpToGenreList" />
-      <!--<item command="CmdJumpToSenseStatusList"/>-->
-      <item command="CmdJumpToSenseTypeList" />
-      <item command="CmdJumpToStatusList" />
-      <item command="CmdJumpToTranslationTypeList" />
-      <item command="CmdJumpToUsageTypeList" />
-      <item command="CmdJumpToRecordTypeList" />
-      <item command="CmdJumpToTimeOfDayList" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdShowSubentryUnderComponent" />
-      <item command="CmdVisibleComplexForm" />
-      <item command="CmdMoveTargetToPreviousInSequence" />
-      <item command="CmdMoveTargetToNextInSequence" />
-    </menu>
     <menu id="mnuBrowseHeader">
       <item label="Sorted From End" boolProperty="SortedFromEnd" />
       <item label="Sorted By Length" boolProperty="SortedByLength" />
@@ -982,25 +726,6 @@ so I can look at that in the develop branch.
         <item label="-" translate="do not translate" />
         <item command="CmdConfigureDictionary" />
       </menu>
-    </menu>
-    <menu id="mnuEnvReferenceChoices">
-      <item command="CmdJumpToEnvironmentList" />
-      <item command="CmdShowEnvironmentErrorMessage" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdInsertEnvSlash" />
-      <item command="CmdInsertEnvUnderscore" />
-      <item command="CmdInsertEnvNaturalClass" />
-      <item command="CmdInsertEnvOptionalItem" />
-      <item command="CmdInsertEnvHashMark" />
-    </menu>
-    <menu id="mnuEnvChoices">
-      <item command="CmdShowEnvironmentErrorMessage" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdInsertEnvSlash" />
-      <item command="CmdInsertEnvUnderscore" />
-      <item command="CmdInsertEnvNaturalClass" />
-      <item command="CmdInsertEnvOptionalItem" />
-      <item command="CmdInsertEnvHashMark" />
     </menu>
     <menu id="mnuStTextChoices">
       <item command="CmdCut" />
@@ -1317,15 +1042,6 @@ so I can look at that in the develop branch.
       <item command="CmdDataTree-Merge-WordGloss" />
       <item command="CmdDataTree-Delete-WordGloss" />
     </menu>
-    <menu id="mnuComplexConcordance">
-      <item command="CmdPatternNodeOccurOnce" />
-      <item command="CmdPatternNodeOccurZeroMore" />
-      <item command="CmdPatternNodeOccurOneMore" />
-      <item command="CmdPatternNodeSetOccur" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdPatternNodeSetCriteria" />
-      <item command="CmdPatternNodeGroup" />
-    </menu>
     <!-- END include: "Words/areaConfiguration.xml" query="root/contextMenus/*" -->
     <!-- START include: "Notebook/areaConfiguration.xml" query="root/contextMenus/*" -->
     <menu id="PaneBar-RecordDetail" label="">
@@ -1516,34 +1232,6 @@ so I can look at that in the develop branch.
       <item command="CmdInflAffixTemplate-Help" />
     </menu>
     <!-- END include (Grammar_Area): "InflAffixTemplateInclude.xml" query="window/contextMenus/*" -->
-    <menu id="mnuPhRegularRule">
-      <item command="CmdCtxtOccurOnce" />
-      <item command="CmdCtxtOccurZeroMore" />
-      <item command="CmdCtxtOccurOneMore" />
-      <item command="CmdCtxtSetOccur" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdCtxtSetFeatures" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdCtxtJumpToNC" />
-      <item command="CmdCtxtJumpToPhoneme" />
-    </menu>
-    <menu id="mnuPhMetathesisRule">
-      <item command="CmdCtxtSetFeatures" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdCtxtJumpToNC" />
-      <item command="CmdCtxtJumpToPhoneme" />
-    </menu>
-    <menu id="mnuMoAffixProcess">
-      <item command="CmdCtxtSetFeatures" />
-      <item command="CmdMappingSetFeatures" />
-      <item command="CmdMappingSetNC" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdCtxtJumpToNC" />
-      <item command="CmdCtxtJumpToPhoneme" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdMappingJumpToNC" />
-      <item command="CmdMappingJumpToPhoneme" />
-    </menu>
     <!-- END include: "Grammar/areaConfiguration.xml" query="root/contextMenus/*" -->
   </contextMenus>
   <!-- ************************ toolbars *********************** -->

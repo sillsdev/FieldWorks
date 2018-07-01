@@ -30,7 +30,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private const string mnuDataTree_CitationFormContext = "mnuDataTree-CitationFormContext";
 
 		private DataTree MyDataTree { get; set; }
-		private Dictionary<string, EventHandler> _sharedEventHandlers;
+		private ISharedEventHandlers _sharedEventHandlers;
 		private IRecordList MyRecordList { get; set; }
 		private IPropertyTable _propertyTable;
 		private IPublisher _publisher;
@@ -47,17 +47,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		#region Implementation of IToolUiWidgetManager
 
 		/// <inheritdoc />
-		public void Initialize(MajorFlexComponentParameters majorFlexComponentParameters, Dictionary<string, EventHandler> sharedEventHandlers, IRecordList recordList)
+		public void Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
-			Guard.AgainstNull(sharedEventHandlers, nameof(sharedEventHandlers));
 			Guard.AgainstNull(recordList, nameof(recordList));
 
 			_mainWindow = majorFlexComponentParameters.MainWindow;
 			_propertyTable = majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
 			_publisher = majorFlexComponentParameters.FlexComponentParameters.Publisher;
 			_cache = majorFlexComponentParameters.LcmCache; ;
-			_sharedEventHandlers = sharedEventHandlers;
+			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
 			MyRecordList = recordList;
 
 			// Slice stack for the various MoForm instances here and there in a LexEntry.
@@ -323,63 +322,33 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(5);
 
 			// <command id="CmdDataTree-Insert-Slash" label="Insert Environment slash" message="InsertSlash"/>
-			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Insert_Slash_Clicked, LexiconResources.Insert_Environment_slash);
-			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanInsertSlash;
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.InsertSlash), AreaResources.Insert_Environment_slash);
+			menu.Enabled = AreaWideMenuHelper.SliceAsIPhEnvSliceCommon(slice).CanInsertSlash;
+			menu.Tag = slice;
 
 			// <command id="CmdDataTree-Insert-Underscore" label="Insert Environment bar" message="InsertEnvironmentBar"/>
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Insert_Underscore_Clicked, LexiconResources.Insert_Environment_bar);
-			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanInsertEnvironmentBar;
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.InsertEnvironmentBar), AreaResources.Insert_Environment_bar);
+			menu.Enabled = AreaWideMenuHelper.SliceAsIPhEnvSliceCommon(slice).CanInsertEnvironmentBar;
+			menu.Tag = slice;
 
 			// <command id="CmdDataTree-Insert-NaturalClass" label="Insert Natural Class" message="InsertNaturalClass"/>
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Insert_NaturalClass_Clicked, LexiconResources.Insert_Natural_Class);
-			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanInsertNaturalClass;
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.InsertNaturalClass), AreaResources.Insert_Natural_Class);
+			menu.Enabled = AreaWideMenuHelper.SliceAsIPhEnvSliceCommon(slice).CanInsertNaturalClass;
+			menu.Tag = slice;
 
 			// <command id="CmdDataTree-Insert-OptionalItem" label="Insert Optional Item" message="InsertOptionalItem"/>
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Insert_OptionalItem_Clicked, LexiconResources.Insert_Optional_Item);
-			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanInsertOptionalItem;
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.InsertOptionalItem), AreaResources.Insert_Optional_Item);
+			menu.Enabled = AreaWideMenuHelper.SliceAsIPhEnvSliceCommon(slice).CanInsertOptionalItem;
+			menu.Tag = slice;
 
 			// <command id="CmdDataTree-Insert-HashMark" label="Insert Word Boundary" message="InsertHashMark"/>
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Insert_HashMark_Clicked, LexiconResources.Insert_Word_Boundary);
-			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanInsertHashMark;
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.InsertHashMark), AreaResources.Insert_Word_Boundary);
+			menu.Enabled = AreaWideMenuHelper.SliceAsIPhEnvSliceCommon(slice).CanInsertHashMark;
+			menu.Tag = slice;
 
 			// End: <menu id="mnuDataTree-Environments-Insert">
 
 			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
-		}
-
-		private void CmdDataTree_Insert_Slash_Clicked(object sender, EventArgs e)
-		{
-			SenderTagAsIPhEnvSliceCommon(sender).InsertSlash();
-		}
-
-		private void CmdDataTree_Insert_Underscore_Clicked(object sender, EventArgs e)
-		{
-			SenderTagAsIPhEnvSliceCommon(sender).InsertEnvironmentBar();
-		}
-
-		private void CmdDataTree_Insert_NaturalClass_Clicked(object sender, EventArgs e)
-		{
-			SenderTagAsIPhEnvSliceCommon(sender).InsertNaturalClass();
-		}
-
-		private void CmdDataTree_Insert_OptionalItem_Clicked(object sender, EventArgs e)
-		{
-			SenderTagAsIPhEnvSliceCommon(sender).InsertOptionalItem();
-		}
-
-		private void CmdDataTree_Insert_HashMark_Clicked(object sender, EventArgs e)
-		{
-			SenderTagAsIPhEnvSliceCommon(sender).InsertHashMark();
-		}
-
-		private IPhEnvSliceCommon SenderTagAsIPhEnvSliceCommon(object sender)
-		{
-			return (IPhEnvSliceCommon)((ToolStripMenuItem)sender).Tag;
-		}
-
-		private IPhEnvSliceCommon SliceAsIPhEnvSliceCommon(Slice slice)
-		{
-			return (IPhEnvSliceCommon)slice;
 		}
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_LexemeFormContext_RightClick(Slice slice, string contextMenuId)
@@ -397,7 +366,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(3);
 
 			// <item command="CmdEntryJumpToConcordance"/>		<!-- Show Entry in Concordance -->
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[AreaServices.CmdEntryJumpToConcordance], LexiconResources.Show_Entry_In_Concordance);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.CmdEntryJumpToConcordance), LexiconResources.Show_Entry_In_Concordance);
 			// <item command="CmdLexemeFormJumpToConcordance"/>
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdLexemeFormJumpToConcordance_Clicked, LexiconResources.Show_Lexeme_Form_in_Concordance);
 			// <item command="CmdDataTree-Swap-LexemeForm"/>
@@ -466,7 +435,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
 			// <item command="CmdEntryJumpToConcordance"/>		<!-- Show Entry in Concordance -->
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[AreaServices.CmdEntryJumpToConcordance], LexiconResources.Show_Entry_In_Concordance);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.CmdEntryJumpToConcordance), LexiconResources.Show_Entry_In_Concordance);
 
 			// End: <menu id="mnuDataTree-CitationFormContext">
 
@@ -520,11 +489,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			using (var imageHolder = new LanguageExplorer.DictionaryConfiguration.ImageHolder())
 			{
 				// <item command="CmdDataTree-MoveUp-Allomorph"/>
-				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconAreaConstants.MoveUpObjectInOwningSequence], LexiconResources.Move_Form_Up, image: imageHolder.smallCommandImages.Images[12]);
+				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(LexiconAreaConstants.MoveUpObjectInOwningSequence), LexiconResources.Move_Form_Up, image: imageHolder.smallCommandImages.Images[12]);
 				menu.Enabled = AreaServices.CanMoveUpObjectInOwningSequence(MyDataTree, _cache, out visible);
 
 				// <item command="CmdDataTree-MoveDown-Allomorph"/>
-				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconAreaConstants.MoveDownObjectInOwningSequence], LexiconResources.Move_Form_Down, image: imageHolder.smallCommandImages.Images[14]);
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(LexiconAreaConstants.MoveDownObjectInOwningSequence), LexiconResources.Move_Form_Down, image: imageHolder.smallCommandImages.Images[14]);
 				menu.Enabled = AreaServices.CanMoveDownObjectInOwningSequence(MyDataTree, _cache, out visible);
 			}
 
@@ -532,7 +501,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
 			// <command id="CmdDataTree-Delete-Allomorph" label="Delete Allomorph" message="DataTreeDelete" icon="Delete">
-			AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Allomorph, _sharedEventHandlers[LexiconAreaConstants.DataTreeDelete]);
+			AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Allomorph, _sharedEventHandlers.Get(LexiconAreaConstants.DataTreeDelete));
 
 			// <command id="CmdDataTree-Swap-Allomorph" label="Swap Allomorph with Lexeme Form" message="SwapAllomorphWithLexeme">
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, SwapAllomorphWithLexeme_Clicked, LexiconResources.Swap_Allomorph_with_Lexeme_Form);
@@ -597,7 +566,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdEntryJumpToDefault_Clicked, XMLViewsStrings.ksShowEntryInLexicon);
 
 			// <item command="CmdEntryJumpToConcordance"/>
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[AreaServices.CmdEntryJumpToConcordance], LexiconResources.Show_Entry_In_Concordance);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.CmdEntryJumpToConcordance), LexiconResources.Show_Entry_In_Concordance);
 
 			if (!slice.IsGhostSlice)
 			{
@@ -608,7 +577,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			}
 
 			// <command id="CmdDataTree-Delete-Variant" label="Delete Variant" message="DataTreeDelete" icon="Delete">
-			AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Variant, _sharedEventHandlers[LexiconAreaConstants.DataTreeDelete]);
+			AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Variant, _sharedEventHandlers.Get(LexiconAreaConstants.DataTreeDelete));
 
 			// End: <menu id="mnuDataTree-VariantForm">
 
@@ -660,11 +629,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			using (var imageHolder = new LanguageExplorer.DictionaryConfiguration.ImageHolder())
 			{
 				// <command id="CmdDataTree-MoveUp-AlternateForm" label="Move Form _Up" message="MoveUpObjectInSequence" icon="MoveUp">
-				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconAreaConstants.MoveUpObjectInOwningSequence], LexiconResources.Move_Form_Up, image: imageHolder.smallCommandImages.Images[12]);
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(LexiconAreaConstants.MoveUpObjectInOwningSequence), LexiconResources.Move_Form_Up, image: imageHolder.smallCommandImages.Images[12]);
 				bool visible;
 				menu.Enabled = AreaServices.CanMoveUpObjectInOwningSequence(MyDataTree, _cache, out visible);
 				// <command id="CmdDataTree-MoveDown-AlternateForm" label="Move Form _Down" message="MoveDownObjectInSequence" icon="MoveDown">
-				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconAreaConstants.MoveDownObjectInOwningSequence], LexiconResources.Move_Form_Down, image: imageHolder.smallCommandImages.Images[14]);
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(LexiconAreaConstants.MoveDownObjectInOwningSequence), LexiconResources.Move_Form_Down, image: imageHolder.smallCommandImages.Images[14]);
 				menu.Enabled = AreaServices.CanMoveDownObjectInOwningSequence(MyDataTree, _cache, out visible);
 			}
 
@@ -672,11 +641,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
 			// <command id="CmdDataTree-Merge-AlternateForm" label="Merge AlternateForm into..." message="DataTreeMerge">
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconAreaConstants.DataTreeMerge], LexiconResources.Merge_AlternateForm_into);
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(LexiconAreaConstants.DataTreeMerge), LexiconResources.Merge_AlternateForm_into);
 			menu.Enabled = slice.CanMergeNow;
 
 			// <command id="CmdDataTree-Delete-AlternateForm" label="Delete AlternateForm" message="DataTreeDelete" icon="Delete"> LexiconResources.Delete_Allomorph
-			AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_AlternateForm, _sharedEventHandlers[LexiconAreaConstants.DataTreeDelete]);
+			AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_AlternateForm, _sharedEventHandlers.Get(LexiconAreaConstants.DataTreeDelete));
 
 			// End: <menu id="mnuDataTree-AlternateForm">
 
@@ -701,12 +670,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			using (var imageHolder = new LanguageExplorer.DictionaryConfiguration.ImageHolder())
 			{
 				// <item command="CmdDataTree-MoveUp-Allomorph"/>
-				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconAreaConstants.MoveUpObjectInOwningSequence], LexiconResources.Move_Form_Up, image: imageHolder.smallCommandImages.Images[12]);
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(LexiconAreaConstants.MoveUpObjectInOwningSequence), LexiconResources.Move_Form_Up, image: imageHolder.smallCommandImages.Images[12]);
 				bool visible;
 				menu.Enabled = AreaServices.CanMoveUpObjectInOwningSequence(MyDataTree, _cache, out visible);
 
 				// <item command="CmdDataTree-MoveDown-Allomorph"/>
-				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconAreaConstants.MoveDownObjectInOwningSequence], LexiconResources.Move_Form_Down, image: imageHolder.smallCommandImages.Images[14]);
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(LexiconAreaConstants.MoveDownObjectInOwningSequence), LexiconResources.Move_Form_Down, image: imageHolder.smallCommandImages.Images[14]);
 				menu.Enabled = AreaServices.CanMoveDownObjectInOwningSequence(MyDataTree, _cache, out visible);
 			}
 
@@ -714,11 +683,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
 			// <command id="CmdDataTree-Merge-Allomorph" label="Merge Allomorph into..." message="DataTreeMerge">
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconAreaConstants.DataTreeMerge], LexiconResources.Merge_Allomorph_into);
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(LexiconAreaConstants.DataTreeMerge), LexiconResources.Merge_Allomorph_into);
 			menu.Enabled = slice.CanMergeNow;
 
 			// <command id="CmdDataTree-Delete-Allomorph" label="Delete Allomorph" message="DataTreeDelete" icon="Delete">
-			AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Allomorph, _sharedEventHandlers[LexiconAreaConstants.DataTreeDelete]);
+			AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, LexiconResources.Delete_Allomorph, _sharedEventHandlers.Get(LexiconAreaConstants.DataTreeDelete));
 
 			// <command id="CmdDataTree-Swap-Allomorph" label="Swap Allomorph with Lexeme Form" message="SwapAllomorphWithLexeme">
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, SwapAllomorphWithLexeme_Clicked, LexiconResources.Swap_Allomorph_with_Lexeme_Form);
@@ -788,7 +757,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
 			// <item command="CmdDataTree-Insert-VariantForm"/>
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconEditToolConstants.CmdInsertVariant], LexiconResources.Insert_Variant);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(LexiconEditToolConstants.CmdInsertVariant), LexiconResources.Insert_Variant);
 
 			// End: <menu id="mnuDataTree-VariantForms">
 
@@ -806,7 +775,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// NB: "CmdDataTree-Insert-VariantForm" is also used in two ordinary slice menus, which are defined in this class, so no need to add to shares.
 			// Real work is the same as the Insert Variant Insert menu item.
 			// <item command="CmdDataTree-Insert-VariantForm"/>
-			ToolStripMenuItemFactory.CreateHotLinkToolStripMenuItem(hotlinksMenuItemList, _sharedEventHandlers[LexiconEditToolConstants.CmdInsertVariant], LexiconResources.Insert_Variant);
+			ToolStripMenuItemFactory.CreateHotLinkToolStripMenuItem(hotlinksMenuItemList, _sharedEventHandlers.Get(LexiconEditToolConstants.CmdInsertVariant), LexiconResources.Insert_Variant);
 
 			return hotlinksMenuItemList;
 		}
@@ -826,7 +795,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(2);
 
 			// <item command="CmdDataTree-Insert-AlternateForm"/>
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers[LexiconEditToolConstants.CmdDataTree_Insert_AlternateForm], LexiconResources.Insert_Allomorph);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(LexiconEditToolConstants.CmdDataTree_Insert_AlternateForm), LexiconResources.Insert_Allomorph);
 
 			if (((ILexEntry)MyRecordList.CurrentObject).MorphTypes.FirstOrDefault(mt => mt.IsAffixType) != null)
 			{
@@ -854,7 +823,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var hotlinksMenuItemList = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
 			// <item command="CmdDataTree-Insert-AlternateForm"/>
-			ToolStripMenuItemFactory.CreateHotLinkToolStripMenuItem(hotlinksMenuItemList, _sharedEventHandlers[LexiconEditToolConstants.CmdDataTree_Insert_AlternateForm], LexiconResources.Insert_Allomorph);
+			ToolStripMenuItemFactory.CreateHotLinkToolStripMenuItem(hotlinksMenuItemList, _sharedEventHandlers.Get(LexiconEditToolConstants.CmdDataTree_Insert_AlternateForm), LexiconResources.Insert_Allomorph);
 
 			return hotlinksMenuItemList;
 		}

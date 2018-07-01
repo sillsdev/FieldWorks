@@ -1,32 +1,24 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2013-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using SIL.LCModel;
 
-namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
+namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 {
 	public class SymbolicValue : IEquatable<SymbolicValue>
 	{
-		private readonly IFsSymFeatVal m_value;
-
 		public SymbolicValue(IFsSymFeatVal value)
 		{
-			m_value = value;
+			FeatureValue = value;
 		}
 
-		public IFsSymFeatVal FeatureValue
-		{
-			get { return m_value; }
-		}
+		public IFsSymFeatVal FeatureValue { get; }
 
 		public bool Equals(SymbolicValue other)
 		{
-			if (other == null)
-				return false;
-
-			return m_value == other.m_value;
+			return other != null && FeatureValue == other.FeatureValue;
 		}
 
 		public override bool Equals(object obj)
@@ -36,12 +28,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public override int GetHashCode()
 		{
-			return m_value == null ? 0 : m_value.GetHashCode();
+			return FeatureValue == null ? 0 : FeatureValue.GetHashCode();
 		}
 
 		public override string ToString()
 		{
-			return m_value == null ? ITextStrings.ksComplexConcInflFeatAny : m_value.Name.BestAnalysisAlternative.Text;
+			return FeatureValue == null ? ComplexConcordanceResources.ksComplexConcInflFeatAny : FeatureValue.Name.BestAnalysisAlternative.Text;
 		}
 
 	}

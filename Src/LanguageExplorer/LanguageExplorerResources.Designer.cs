@@ -220,6 +220,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Describe Error in Environment.
+        /// </summary>
+        internal static string Describe_Error_in_Environment {
+            get {
+                return ResourceManager.GetString("Describe_Error_in_Environment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Dictionary.
         /// </summary>
         internal static string Dictionary {

@@ -132,6 +132,11 @@ namespace LanguageExplorer.Controls.DetailControls
 			PropertyTable = flexComponentParameters.PropertyTable;
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
+
+			if (MainControl is IFlexComponent)
+			{
+				((IFlexComponent)MainControl).InitializeFlexComponent(flexComponentParameters);
+			}
 		}
 
 		#endregion

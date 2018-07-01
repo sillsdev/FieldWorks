@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -25,8 +25,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 	/// </summary>
 	internal sealed class RegRuleFormulaControl : RuleFormulaControl
 	{
-		public RegRuleFormulaControl(XElement configurationNode)
-			: base(configurationNode)
+		public RegRuleFormulaControl(ISharedEventHandlers sharedEventHandlers, XElement configurationNode)
+			: base(sharedEventHandlers, configurationNode)
 		{
 		}
 
@@ -39,7 +39,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		{
 			get
 			{
-				var sel = SelectionHelper.Create(m_view);
+				var sel = SelectionHelper.Create(_view);
 				var cellId = GetCell(sel);
 				if (cellId == PhSegmentRuleTags.kflidStrucDesc || cellId == PhSegRuleRHSTags.kflidStrucChange)
 				{
@@ -60,8 +60,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
-			m_view.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-			m_view.Init(obj.Hvo, this, new RegRuleFormulaVc(cache, PropertyTable), RegRuleFormulaVc.kfragRHS, cache.MainCacheAccessor);
+			_view.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+			_view.Init(obj.Hvo, this, new RegRuleFormulaVc(cache, PropertyTable), RegRuleFormulaVc.kfragRHS, cache.MainCacheAccessor);
 
 			InsertionControl.AddOption(new InsertOption(RuleInsertType.Phoneme), DisplayOption);
 			InsertionControl.AddOption(new InsertOption(RuleInsertType.NaturalClass), DisplayOption);
@@ -80,7 +80,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		private bool DisplayOption(object option)
 		{
 			var opt = (InsertOption)option;
-			var sel = SelectionHelper.Create(m_view);
+			var sel = SelectionHelper.Create(_view);
 			var cellId = GetCell(sel);
 			if (cellId < 0)
 			{
@@ -736,7 +736,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		/// </summary>
 		public void SetContextOccurrence(int min, int max)
 		{
-			var sel = SelectionHelper.Create(m_view);
+			var sel = SelectionHelper.Create(_view);
 			var cellId = GetCell(sel);
 			var obj = GetCmObject(sel, SelectionHelper.SelLimitType.Anchor);
 			var ctxt = (IPhPhonContext) obj;
@@ -844,7 +844,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		/// </summary>
 		public void GetContextOccurrence(out int min, out int max)
 		{
-			var sel = SelectionHelper.Create(m_view);
+			var sel = SelectionHelper.Create(_view);
 			var obj = GetCmObject(sel, SelectionHelper.SelLimitType.Anchor);
 			if (obj.ClassID == PhIterationContextTags.kClassId)
 			{
@@ -862,13 +862,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
-			if (m_panel == null || m_view == null)
+			if (m_panel == null || _view == null)
 			{
 				return;
 			}
 			// make room for the environment button launcher
 			var w = Width - m_panel.Width;
-			m_view.Width = w > 0 ? w : 0;
+			_view.Width = w > 0 ? w : 0;
 		}
 	}
 }

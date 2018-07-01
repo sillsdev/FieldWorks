@@ -835,16 +835,12 @@ namespace LanguageExplorer.Controls.DetailControls
 		internal void ShowEnvironmentError()
 		{
 			string s;
-			if (!CanGetEnvironmentStringRep(out s) || m_validator.Recognize(s))
-			{
-				return;
-			}
+			CanGetEnvironmentStringRep(out s);
 			string sMsg;
 			int pos;
 			StringServices.CreateErrorMessageFromXml(s, m_validator.ErrorMessage, out pos, out sMsg);
 			MessageBox.Show(sMsg, DetailControlsStrings.ksBadEnv, MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
-
 
 		internal bool CanShowEnvironmentError()
 		{
@@ -1021,6 +1017,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				var hvo = m_realEnvs[hvoDummy].Hvo;
 				using (var ui = new ReferenceCollectionUi(Cache, m_rootObj, m_rootFlid, hvo))
 				{
+					ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 					return ui.HandleRightClick(this, true);
 				}
 			}
@@ -1028,6 +1025,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			// display the "Show in Environments list" item in the popup menu.
 			using (var ui = new CmObjectUi(m_rootObj))
 			{
+				ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				return ui.HandleRightClick(this, true, "mnuEnvReferenceChoices");
 			}
 		}
