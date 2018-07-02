@@ -20,10 +20,10 @@
 
 	<DirectoryRef Id="TARGETDIR">
 		<Component Id="FwPath" Guid="53E0A9D8-9477-423a-89A9-F6BC3FAC4F40">
-			<Environment Id="FwPath" Name="PATH" Action="set" System="yes" Part="first" Value="[INSTALLDIR]" />
+			<Environment Id="FwPath" Name="PATH" Action="set" System="yes" Part="first" Value="[APPFOLDER]" />
 		</Component>
 		<Component Id="FwInstallDir" Guid="A7FB26F2-4219-4C79-A16A-811DEAB111FE">
-			<Environment Id="FwInstallDir" Name="FIELDWORKSDIR" Action="set" System="yes" Value="[INSTALLDIR]" />
+			<Environment Id="FwInstallDir" Name="FIELDWORKSDIR" Action="set" System="yes" Value="[APPFOLDER]" />
 		</Component>
 	</DirectoryRef>
 	<ComponentGroup Id="FwEnvironmentVars">
