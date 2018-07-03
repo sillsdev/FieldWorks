@@ -686,6 +686,8 @@ namespace SIL.FieldWorks.Discourse
 
 		private void BuildTemplatePanel()
 		{
+			if (m_template == null)
+				return;
 			if (m_templateSelectionPanel.Controls.Count > 0)
 			{
 				((ComboBox) m_templateSelectionPanel.Controls[0]).SelectedItem = m_template;
