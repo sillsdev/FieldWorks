@@ -73,6 +73,8 @@ namespace SIL.FieldWorks.Common.Widgets
 				_digitControls[i].Font = DigitFont;
 				_digitControls[i].Text = (!isEmpty && tee.MoveNext()) ? tee.GetTextElement() : string.Empty;
 			}
+
+			this.ResetColor();
 		}
 
 		private Font DigitFont
@@ -130,5 +132,17 @@ namespace SIL.FieldWorks.Common.Widgets
 				}
 			}
 		}
+
+		/// <summary>
+		/// Set digit text box colors back to default.
+		/// </summary>
+		public void ResetColor()
+		{
+			for (var i = 0; i < 10; ++i)
+			{
+				_digitControls[i].BackColor = Color.Empty;
+			}
+		}
+
 	}
 }
