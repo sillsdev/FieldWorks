@@ -254,7 +254,7 @@ namespace XCore
 
 		protected ToolStripItem CreateMenuItem(ChoiceBase choice, out bool reallyVisible)
 		{
-			if(choice is SeparatorChoice)
+			if (choice is SeparatorChoice)
 			{
 				reallyVisible = true;
 				return new ToolStripSeparator();
@@ -289,7 +289,7 @@ namespace XCore
 			item.Image = image;
 			item.Checked = display.Checked;
 
-			if(choice.Shortcut != Keys.None)
+			if (choice.Shortcut != Keys.None)
 			{
 				KeysConverter sc = new KeysConverter();
 
@@ -299,7 +299,7 @@ namespace XCore
 						item.ShortcutKeys = choice.Shortcut;
 					// otherwise some other code must implement the shortcut, the built-in menu item code won't do it.
 				}
-				catch(Exception ex)
+				catch (Exception ex)
 				{
 					if (!(ex is InvalidEnumArgumentException))
 						throw new ConfigurationException(

@@ -148,7 +148,7 @@ namespace XCore
 			XmlNode mainControlNode = m_configurationParameters.SelectSingleNode("control");
 			Control mainControl = DynamicLoader.CreateObjectUsingLoaderNode(mainControlNode) as Control;
 			if (mainControl == null)
-				throw new ApplicationException("Soemthing went wrong trying to create the main control.");
+				throw new ApplicationException("Something went wrong trying to create the main control.");
 
 			if (!(mainControl is IxCoreContentControl))
 				throw new ApplicationException("A PaneBarContainer can only handle controls which implement IxCoreContentControl.");

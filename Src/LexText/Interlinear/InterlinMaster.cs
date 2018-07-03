@@ -184,15 +184,21 @@ namespace SIL.FieldWorks.IText
 
 		internal InterlinLineChoices.InterlinMode GetLineMode()
 		{
-			if (m_tabCtrl.SelectedIndex == (int)TabPageSelection.Gloss)
+			switch (m_tabCtrl.SelectedIndex)
 			{
-				return m_propertyTable.GetBoolProperty(InterlinDocForAnalysis.ksPropertyAddWordsToLexicon, false) ?
-					InterlinLineChoices.InterlinMode.GlossAddWordsToLexicon : InterlinLineChoices.InterlinMode.Gloss;
+				case (int)TabPageSelection.Gloss:
+					return m_propertyTable.GetBoolProperty(InterlinDocForAnalysis.ksPropertyAddWordsToLexicon, false) ?
+						InterlinLineChoices.InterlinMode.GlossAddWordsToLexicon : InterlinLineChoices.InterlinMode.Gloss;
+
+				case (int)TabPageSelection.ConstituentChart:
+					return InterlinLineChoices.InterlinMode.Chart;
+
+				case (int)TabPageSelection.TaggingView:
+					return InterlinLineChoices.InterlinMode.Gloss;
+
+				default:
+					return InterlinLineChoices.InterlinMode.Analyze;
 			}
-			if (m_tabCtrl.SelectedIndex == (int)TabPageSelection.TaggingView ||
-				m_tabCtrl.SelectedIndex == (int)TabPageSelection.ConstituentChart)
-				return InterlinLineChoices.InterlinMode.Gloss;
-			return InterlinLineChoices.InterlinMode.Analyze;
 		}
 
 		protected override void OnHandleCreated(EventArgs e)
@@ -1253,9 +1259,10 @@ namespace SIL.FieldWorks.IText
 		public bool OnDisplayConfigureInterlinear(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
+			// TODO: This boolean expression was changed so that the option would show up on the Text Chart tab
 			bool fShouldDisplay = (CurrentInterlinearTabControl != null &&
-				CurrentInterlinearTabControl is InterlinDocRootSiteBase &&
-				!(CurrentInterlinearTabControl is InterlinDocChart));
+				(CurrentInterlinearTabControl is InterlinDocRootSiteBase ||
+				CurrentInterlinearTabControl is InterlinDocChart));
 			display.Visible = fShouldDisplay;
 			display.Enabled = fShouldDisplay;
 			return true;
@@ -1269,6 +1276,8 @@ namespace SIL.FieldWorks.IText
 		{
 			if (CurrentInterlinearTabControl != null && CurrentInterlinearTabControl is InterlinDocRootSiteBase)
 				(CurrentInterlinearTabControl as InterlinDocRootSiteBase).OnConfigureInterlinear(argument);
+			else if (CurrentInterlinearTabControl != null && CurrentInterlinearTabControl is InterlinDocChart)
+				(CurrentInterlinearTabControl as InterlinDocChart).OnConfigureInterlinear(argument);
 
 			return true; // We handled this
 		}

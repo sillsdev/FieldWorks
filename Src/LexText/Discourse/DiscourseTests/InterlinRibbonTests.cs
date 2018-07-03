@@ -44,6 +44,7 @@ namespace SIL.FieldWorks.Discourse
 
 		public override void TestTearDown()
 		{
+			m_ribbon.Vc.Dispose();
 			m_ribbon.Dispose();
 			base.TestTearDown();
 		}

@@ -39,6 +39,7 @@ namespace SIL.FieldWorks.Discourse
 
 		// Base for dummy Hvos. Could be anything, but we'll try to make it unique.
 		private const int kBaseDummyId = -60001;
+		private int OccurrencesAccessed;
 		private int m_nextId;
 		/// <summary>
 		/// Contains all the dummy hvos currently stored in the ribbon.
@@ -55,6 +56,7 @@ namespace SIL.FieldWorks.Discourse
 		public InterlinRibbonDecorator(LcmCache cache, object sourceObj, int flid)
 			: base(cache.DomainDataByFlid as ISilDataAccessManaged)
 		{
+			OccurrencesAccessed = 0;
 			m_sourceObj = sourceObj;
 			m_myFlid = flid;
 			m_ribbonValues = new List<int>();
@@ -123,6 +125,8 @@ namespace SIL.FieldWorks.Discourse
 				m_ribbonValues.Add(hvoOcc);
 				m_cachedRibbonWords[hvoOcc] = wordForm as LocatedAnalysisOccurrence;
 			}
+
+
 			return m_ribbonValues.ToArray();
 		}
 

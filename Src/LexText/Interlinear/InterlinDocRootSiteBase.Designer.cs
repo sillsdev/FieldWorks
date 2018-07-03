@@ -26,13 +26,13 @@ namespace SIL.FieldWorks.IText
 				// Do this, before calling base.
 				if (m_sda != null)
 					m_sda.RemoveNotification(this);
-				if (m_vc != null)
-					m_vc.Dispose();
+				if (Vc != null)
+					Vc.Dispose();
 
 				if (m_contextButton != null && !Controls.Contains(m_contextButton))
 					m_contextButton.Dispose();
 			}
-			m_vc = null;
+			Vc = null;
 			m_contextButton = null;
 			base.Dispose(disposing);
 		}
@@ -52,7 +52,6 @@ namespace SIL.FieldWorks.IText
 			this.AccessibleName = "InterlinDocRootSiteBase";
 			this.Name = "InterlinDocRootSiteBase";
 			this.ResumeLayout(false);
-
 		}
 
 		#endregion

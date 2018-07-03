@@ -124,15 +124,15 @@ namespace XCore
 
 			bool somethingVisibleAlready = false;
 			bool wantsSeparatorBefore = false;
-			foreach(ChoiceRelatedClass item in group)
+			foreach (ChoiceRelatedClass item in group)
 			{
-				if(item is SeparatorChoice)
+				if (item is SeparatorChoice)
 				{
 					// don't just add one, we don't want it unless another visible item gets
 					// added, and one has already been added
 					wantsSeparatorBefore = somethingVisibleAlready;
 				}
-				else if(item is ChoiceBase)
+				else if (item is ChoiceBase)
 				{
 					bool reallyVisible;
 					ToolStripItem newItem = (ToolStripItem)CreateMenuItem(item as ChoiceBase, out reallyVisible);
@@ -194,7 +194,7 @@ namespace XCore
 					else if (choiceGroup.IsInlineChoiceList)
 					{
 						choiceGroup.PopulateNow();
-						foreach(ChoiceRelatedClass inlineItem in choiceGroup)
+						foreach (ChoiceRelatedClass inlineItem in choiceGroup)
 						{
 							Debug.Assert(inlineItem is ChoiceBase, "It should not be possible for an in line choice list to contain anything other than simple items!");
 							bool reallyVisible;

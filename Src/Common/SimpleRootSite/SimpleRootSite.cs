@@ -256,7 +256,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		protected Mediator m_mediator;
 		/// <summary>
-		/// The proerty Table provided by XCoreColleague.Init.
+		/// The property Table provided by XCoreColleague.Init.
 		/// </summary>
 		protected PropertyTable m_propertyTable;
 		/// <summary>

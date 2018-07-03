@@ -60,7 +60,7 @@ namespace SIL.FieldWorks.Discourse
 			//this.ReadOnlyView = true;
 		}
 
-		internal IVwViewConstructor Vc
+		internal ConstChartVc Vc
 		{
 			get { return m_vc; }
 		}
@@ -349,7 +349,13 @@ namespace SIL.FieldWorks.Discourse
 		internal InterlinLineChoices LineChoices
 		{
 			get { return m_lineChoices; }
-			set { m_lineChoices = value; }
+			set
+			{
+				m_lineChoices = value;
+
+				if (m_vc != null)
+					m_vc.LineChoices = value;
+			}
 		}
 
 		public override void MakeRoot()

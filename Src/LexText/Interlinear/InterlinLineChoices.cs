@@ -15,7 +15,9 @@ using SIL.LCModel.Utils;
 using System.Drawing;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
+using System.Windows.Forms;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
@@ -34,6 +36,8 @@ namespace SIL.FieldWorks.IText
 	{
 		Color kMorphLevelColor = Color.Purple;
 		Color kWordLevelColor = Color.Blue;
+		private List<InterlinLineSpec> m_allLineSpecs = new List<InterlinLineSpec>();
+		internal List<LineOption> m_allLineOptions = new List<LineOption>();
 		internal List<InterlinLineSpec> m_specs = new List<InterlinLineSpec>();
 		internal int m_wsDefVern; // The default vernacular writing system.
 		internal int m_wsDefAnal; // The default analysis writing system.
@@ -58,10 +62,8 @@ namespace SIL.FieldWorks.IText
 			this.Mode = mode;
 			UpdateFieldNamesFromLines(mode);
 			m_wsDefVern = defaultVernacularWs;
-			if (defaultAnalysisWs == WritingSystemServices.kwsAnal)
-				m_wsDefAnal = m_cache.DefaultAnalWs;
-			else
-				m_wsDefAnal = defaultAnalysisWs;
+			m_wsDefAnal = defaultAnalysisWs == WritingSystemServices.kwsAnal ? m_cache.DefaultAnalWs : defaultAnalysisWs;
+			AllLineOptions = LineOptions(mode).ToList();
 		}
 
 		public InterlinLineChoices(ILangProject proj, int defaultVernacularWs, int defaultAnalysisWs, InterlinMode mode)
@@ -74,7 +76,7 @@ namespace SIL.FieldWorks.IText
 		/// The mode that the configured lines are in.
 		/// If the mode changes, we'll reinitialze the fieldname (label) info.
 		/// </summary>
-		internal InterlinMode Mode
+		public InterlinMode Mode
 		{
 			get { return m_mode; }
 			set
@@ -86,6 +88,26 @@ namespace SIL.FieldWorks.IText
 				UpdateFieldNamesFromLines(m_mode);
 			}
 		}
+
+		internal List<LineOption> AllLineOptions
+		{
+			get { return m_allLineOptions; }
+			set
+			{
+				m_allLineOptions = value;
+
+				// AllLineOptions and AllLineSpecs will be identical
+				// On a set of AllLineOptions, AllLineSpecs will also be updated.
+				var newLineSpecs = new List<InterlinLineSpec>();
+				foreach (var option in value)
+				{
+					newLineSpecs.Add(CreateSpec(option.Flid, 0));
+				}
+				m_allLineSpecs = newLineSpecs;
+			}
+		}
+
+		internal List<InterlinLineSpec> AllLineSpecs => m_allLineSpecs;
 
 		/// <summary>
 		/// Count previous occurrences of the flid at the specified index.
@@ -110,7 +132,8 @@ namespace SIL.FieldWorks.IText
 		{
 			Analyze,
 			Gloss,
-			GlossAddWordsToLexicon
+			GlossAddWordsToLexicon,
+			Chart
 		}
 
 		public static InterlinLineChoices DefaultChoices(ILangProject proj, int vern, int analysis, InterlinMode mode)
@@ -121,6 +144,9 @@ namespace SIL.FieldWorks.IText
 				case InterlinMode.Analyze:
 					result.SetStandardState();
 					break;
+				case InterlinMode.Chart:
+					result.SetStandardChartState();
+					break;
 				case InterlinMode.Gloss:
 				case InterlinMode.GlossAddWordsToLexicon:
 					result.SetStandardGlossState();
@@ -129,26 +155,37 @@ namespace SIL.FieldWorks.IText
 			return result;
 		}
 
-		internal void SetStandardState()
+		public void SetStandardChartState()
+		{
+			m_specs.Clear();
+			Add(InterlinLineChoices.kflidWord);
+			Add(InterlinLineChoices.kflidWordGloss);
+			Add(InterlinLineChoices.kflidMorphemes);
+			Add(InterlinLineChoices.kflidLexGloss);
+			Add(InterlinLineChoices.kflidLexEntries);
+			Add(InterlinLineChoices.kflidLexPos);
+		}
+
+		public void SetStandardState()
 		{
 			m_specs.Clear();
 			Add(InterlinLineChoices.kflidWord); // 0
 			Add(InterlinLineChoices.kflidMorphemes); // 1
-			Add(InterlinLineChoices.kflidLexEntries); //2
-			Add(InterlinLineChoices.kflidLexGloss); //3
-			Add(InterlinLineChoices.kflidLexPos); //4
-			Add(InterlinLineChoices.kflidWordGloss); //5
-			Add(InterlinLineChoices.kflidWordPos); //6
-			Add(InterlinLineChoices.kflidFreeTrans); //7
+			Add(InterlinLineChoices.kflidLexEntries); // 2
+			Add(InterlinLineChoices.kflidLexGloss); // 3
+			Add(InterlinLineChoices.kflidLexPos); // 4
+			Add(InterlinLineChoices.kflidWordGloss); // 5
+			Add(InterlinLineChoices.kflidWordPos); // 6
+			Add(InterlinLineChoices.kflidFreeTrans); // 7
 		}
 
-		internal void SetStandardGlossState()
+		public void SetStandardGlossState()
 		{
 			m_specs.Clear();
 			Add(InterlinLineChoices.kflidWord); // 0
-			Add(InterlinLineChoices.kflidWordGloss); //5
-			Add(InterlinLineChoices.kflidWordPos); //6
-			Add(InterlinLineChoices.kflidFreeTrans); //7
+			Add(InterlinLineChoices.kflidWordGloss); // 5
+			Add(InterlinLineChoices.kflidWordPos); // 6
+			Add(InterlinLineChoices.kflidFreeTrans); // 7
 		}
 
 		public string Persist(ILgWritingSystemFactory wsf)
@@ -174,7 +211,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="defVern">Typically you want to pass in LgWritingSystemTags.kwsVernInParagraph</param>
 		/// <param name="defAnalysis"></param>
 		/// <returns></returns>
-		public static InterlinLineChoices Restore(string data, ILgWritingSystemFactory wsf, ILangProject proj, int defVern, int defAnalysis)
+		public static InterlinLineChoices Restore(string data, ILgWritingSystemFactory wsf, ILangProject proj, int defVern, int defAnalysis, InterlinMode mode = InterlinMode.Analyze)
 		{
 			Debug.Assert(defVern != 0);
 			Debug.Assert(defAnalysis != 0);
@@ -185,7 +222,7 @@ namespace SIL.FieldWorks.IText
 			switch(parts[0])
 			{
 				case "InterlinLineChoices":
-					result = new InterlinLineChoices(proj, defVern, defAnalysis);
+					result = new InterlinLineChoices(proj, defVern, defAnalysis, mode);
 					break;
 				case "EditableInterlinLineChoices":
 					result = new EditableInterlinLineChoices(proj, defVern, defAnalysis);
@@ -331,6 +368,15 @@ namespace SIL.FieldWorks.IText
 			Debug.Assert(m_specs.Count > 0);
 		}
 
+		public void Remove(int flid, int ws)
+		{
+			var spec = m_specs.Find(x => x.Flid == flid && x.WritingSystem == ws);
+			if (spec == null)
+				return;
+			if (OkToRemove(spec))
+				m_specs.Remove(spec);
+		}
+
 		/// These constants are defined for brevity here and convenience in testing. They use real field
 		/// IDs where that is possible. The names correspond to what we see by default in the dialog.
 		public const int kflidWord = WfiWordformTags.kflidForm;
@@ -366,14 +412,58 @@ namespace SIL.FieldWorks.IText
 			return UpdateFieldNamesFromLines(m_mode);
 		}
 
+		private List<InterlinLineSpec> AllLineSpecsForMode(InterlinMode mode)
+		{
+			if (mode == InterlinMode.Chart)
+			{
+				return new[]
+				{
+					CreateSpec(kflidWord, 0),
+					CreateSpec(kflidWordGloss, 0),
+					CreateSpec(kflidMorphemes, 0),
+					CreateSpec(kflidLexGloss, 0),
+					CreateSpec(kflidLexEntries, 0),
+					CreateSpec(kflidLexPos, 0)
+				}.Union(GetCustomLineSpecs(mode)).ToList();
+			}
+
+			return new[]
+			{
+				CreateSpec(kflidWord, 0),
+				CreateSpec(kflidMorphemes, 0),
+				CreateSpec(kflidLexGloss, 0),
+				CreateSpec(kflidLexEntries, 0),
+				CreateSpec(kflidLexPos, 0),
+				CreateSpec(kflidWordGloss, 0),
+				CreateSpec(kflidWordPos, 0),
+				CreateSpec(kflidFreeTrans, 0),
+				CreateSpec(kflidLitTrans, 0),
+				CreateSpec(kflidNote, 0)
+			}.Union(GetCustomLineSpecs(mode)).ToList();
+		}
+
 		private LineOption[] LineOptions(InterlinMode mode)
 		{
 			var customLineOptions = GetCustomLineOptions(mode);
-			return new LineOption[] {
+
+			if (mode == InterlinMode.Chart)
+			{
+				return new[]
+				{
+					new LineOption(kflidWord, ITextStrings.ksWord),
+					new LineOption(kflidWordGloss, ITextStrings.ksWordGloss),
+					new LineOption(kflidMorphemes, ITextStrings.ksMorphemes),
+					new LineOption(kflidLexGloss, ITextStrings.ksGloss),
+					new LineOption(kflidLexEntries, ITextStrings.ksLexEntries),
+					new LineOption(kflidLexPos, ITextStrings.ksGramInfo)
+				}.Union(customLineOptions).ToArray();
+			}
+
+			return new[] {
 				 new LineOption(kflidWord, ITextStrings.ksWord),
 				 new LineOption(kflidMorphemes, ITextStrings.ksMorphemes),
 				 new LineOption(kflidLexEntries, ITextStrings.ksLexEntries),
-				 new LineOption(kflidLexGloss, ITextStrings.ksGloss),
+				 new LineOption(kflidLexGloss, ITextStrings.ksLexGloss),
 				 new LineOption(kflidLexPos, ITextStrings.ksGramInfo),
 				 new LineOption(kflidWordGloss,
 					mode == InterlinMode.GlossAddWordsToLexicon ? ITextStrings.ksLexWordGloss : ITextStrings.ksWordGloss),
@@ -407,6 +497,30 @@ namespace SIL.FieldWorks.IText
 			}
 
 			return customLineOptions;
+		}
+
+		private List<InterlinLineSpec> GetCustomLineSpecs(InterlinMode mode)
+		{
+			var customLineSpecs = new List<InterlinLineSpec>();
+			switch (mode)
+			{
+				case InterlinMode.Analyze:
+				case InterlinMode.Gloss:
+					if (m_cache != null)
+					{
+						var classId = m_cache.MetaDataCacheAccessor.GetClassId("Segment");
+						var mdc = (IFwMetaDataCacheManaged) m_cache.MetaDataCacheAccessor;
+						foreach (int flid in mdc.GetFields(classId, false,
+							(int) CellarPropertyTypeFilter.All))
+						{
+							if (!mdc.IsCustom(flid))
+								continue;
+							customLineSpecs.Add(CreateSpec(flid, 0));
+						}
+					}
+					break;
+			}
+			return customLineSpecs;
 		}
 
 		/// <summary>
@@ -445,6 +559,7 @@ namespace SIL.FieldWorks.IText
 		{
 			return m_specs.IndexOf(spec);
 		}
+
 		/// <summary>
 		/// Add the specified flid (in the appropriate default writing system).
 		/// </summary>
@@ -712,6 +827,7 @@ namespace SIL.FieldWorks.IText
 				case kflidWord:
 					comboContent = ColumnConfigureDialog.ChooseComboContent(m_cache, m_wsDefVern, "vernacular");
 					ws = m_wsDefVern;
+					//ws = m_cache.DefaultVernWs;
 					break; // vern, not interlin, word
 				case kflidLexEntries:
 				case kflidMorphemes:
@@ -719,10 +835,12 @@ namespace SIL.FieldWorks.IText
 					comboContent = ColumnConfigureDialog.ChooseComboContent(m_cache, m_wsDefVern, "vernacular");
 					flidString = MoFormTags.kflidForm;
 					ws = m_wsDefVern;
+//					ws = m_cache.DefaultVernWs;
 					break; // vern, morpheme
 				case kflidLexGloss:
 					fMorphemeLevel = true;
 					ws = WritingSystemServices.kwsFirstAnal;
+//					ws = m_cache.LangProject.CurrentAnalysisWritingSystems[0].Handle;
 					flidString = LexSenseTags.kflidGloss;
 					comboContent = ColumnConfigureDialog.WsComboContent.kwccBestAnalysis;
 					break; // analysis, morpheme
@@ -732,24 +850,29 @@ namespace SIL.FieldWorks.IText
 					// so just do it when we have the actual hvos.
 					flidString = -1;
 					ws = WritingSystemServices.kwsFirstAnal;
+//					ws = m_cache.LangProject.CurrentAnalysisWritingSystems[0].Handle;
 					comboContent = ColumnConfigureDialog.WsComboContent.kwccBestAnalysis;
 					break; // analysis, morpheme
 				case kflidWordGloss:
 					ws = m_wsDefAnal;
+//					ws = m_cache.DefaultAnalWs;
 					break; // not morpheme-level
 				case kflidWordPos:
 					ws = WritingSystemServices.kwsFirstAnal;
+//					ws = m_cache.LangProject.CurrentAnalysisWritingSystems[0].Handle;
 					flidString = CmPossibilityTags.kflidAbbreviation;
 					comboContent = ColumnConfigureDialog.WsComboContent.kwccBestAnalysis;
 					break; // not morpheme-level
 				case kflidFreeTrans:
 				case kflidLitTrans:
 					ws = m_wsDefAnal;
+//					ws = m_cache.DefaultAnalWs;
 					fWordLevel = false;
 					break;
 				case kflidNote:
 					comboContent = ColumnConfigureDialog.WsComboContent.kwccVernAndAnal;
 					ws = m_wsDefAnal;
+//					ws = m_cache.DefaultAnalWs;
 					fWordLevel = false;
 					break;
 				default:
@@ -919,7 +1042,6 @@ namespace SIL.FieldWorks.IText
 			return result;
 		}
 
-
 		/// <summary>
 		/// Answer where line n should move up to (if it can move up).
 		/// If it can't answer -1.
@@ -1036,7 +1158,7 @@ namespace SIL.FieldWorks.IText
 			: base(proj, defaultVernacularWs, defaultAnalysisWs)
 		{
 		}
-		public static new InterlinLineChoices DefaultChoices(ILangProject proj, int vern, int analysis)
+		public new static InterlinLineChoices DefaultChoices(ILangProject proj, int vern, int analysis)
 		{
 			InterlinLineChoices result = new EditableInterlinLineChoices(proj, vern, analysis);
 			result.SetStandardState();
@@ -1162,185 +1284,196 @@ namespace SIL.FieldWorks.IText
 		//}
 	}
 
-	internal class LineOption
-	{
-		int m_flid;
-		string m_label;
-
-		public LineOption(int flid, string label)
+		internal class LineOption
 		{
-			m_flid = flid;
-			m_label = label;
-		}
+			int m_flid;
+			string m_label;
 
-		public override string ToString()
-		{
-			return m_label;
-		}
-
-		public int Flid
-		{
-			get { return m_flid; }
-		}
-	}
-
-	/// <summary>
-	/// The specification of what to show on one interlinear line.
-	/// Indicates what line (typically a field of a wordform, bundle, or segment)
-	/// and which it is a field of.
-	/// MorphemeLevel annotations are always also Word level.
-	/// </summary>
-	public class InterlinLineSpec : ICloneable
-	{
-		int m_flid;
-		int m_ws;
-		bool m_fMorpheme;
-		bool m_fWord;
-		int m_flidString; // the string property to use with m_ws
-		ColumnConfigureDialog.WsComboContent m_comboContent;
-		ITsString m_tssWsLabel;
-
-		public InterlinLineSpec()
-		{
-		}
-
-		/// <summary>
-		/// Compare the public property getters to the given spec.
-		/// </summary>
-		/// <param name="spec"></param>
-		/// <returns>true if all the public getter values match.</returns>
-		public bool SameSpec(InterlinLineSpec spec)
-		{
-			return ReflectionHelper.HaveSamePropertyValues(this, spec);
-		}
-
-		public int Flid
-		{
-			get { return m_flid; }
-			set { m_flid = value; }
-		}
-
-		public ColumnConfigureDialog.WsComboContent ComboContent
-		{
-			get { return m_comboContent; }
-			set { m_comboContent = value; }
-		}
-
-		/// <summary>
-		/// The flid referring to the string associated with the WritingSystem.
-		/// </summary>
-		public int StringFlid
-		{
-			get
+			public LineOption(int flid, string label)
 			{
-				if (m_flidString == 0)
-					return m_flid;
-				return m_flidString;
+				m_flid = flid;
+				m_label = label;
 			}
-			set { m_flidString = value; }
-		}
 
-		/// <summary>
-		/// Could be a magic writing system
-		/// </summary>
-		public int WritingSystem
-		{
-			get { return m_ws; }
-			set
+			public override string ToString()
 			{
-				if (m_ws == value)
-					return;
-				m_ws = value;
-				m_tssWsLabel = null;
+				return m_label;
+			}
+
+			public int Flid
+			{
+				get { return m_flid; }
+			}
+
+			public string Label
+			{
+				get { return m_label; }
+				set { m_label = value; }
 			}
 		}
 
 		/// <summary>
-		/// Indicate whether WritingSystem is a magic value.
+		/// The specification of what to show on one interlinear line.
+		/// Indicates what line (typically a field of a wordform, bundle, or segment)
+		/// and which it is a field of.
+		/// MorphemeLevel annotations are always also Word level.
 		/// </summary>
-		public bool IsMagicWritingSystem
+		public class InterlinLineSpec : ICloneable
 		{
-			get { return WritingSystem < 0; }
-		}
+			int m_flid;
+			int m_ws;
+			bool m_fMorpheme;
+			bool m_fWord;
+			int m_flidString; // the string property to use with m_ws
+			ColumnConfigureDialog.WsComboContent m_comboContent;
+			ITsString m_tssWsLabel;
 
-		/// <summary>
-		/// Get the actual ws of the WritingSystem based on the given hvo, if it refers to a non-empty alternative;
-		/// otherwise, get the actual ws for wsFallback
-		/// </summary>
-		public int GetActualWs(LcmCache cache, int hvo, int wsFallback)
-		{
-			if (StringFlid == -1)
+			public InterlinLineSpec()
 			{
-				// we depend upon someone else to determine the ws.
-				return 0;
 			}
-			int wsActual;
-			ITsString dummy;
+
+			/// <summary>
+			/// Compare the public property getters to the given spec.
+			/// </summary>
+			/// <param name="spec"></param>
+			/// <returns>true if all the public getter values match.</returns>
+			public bool SameSpec(InterlinLineSpec spec)
+			{
+				return ReflectionHelper.HaveSamePropertyValues(this, spec);
+			}
+
+			public int Flid
+			{
+				get { return m_flid; }
+				set { m_flid = value; }
+			}
+
+			public ColumnConfigureDialog.WsComboContent ComboContent
+			{
+				get { return m_comboContent; }
+				set { m_comboContent = value; }
+			}
+
+			/// <summary>
+			/// The flid referring to the string associated with the WritingSystem.
+			/// </summary>
+			public int StringFlid
+			{
+				get
+				{
+					if (m_flidString == 0)
+						return m_flid;
+					return m_flidString;
+				}
+				set { m_flidString = value; }
+			}
+
+			/// <summary>
+			/// Could be a magic writing system
+			/// </summary>
+			public int WritingSystem
+			{
+				get { return m_ws; }
+				set
+				{
+					if (m_ws == value)
+						return;
+					m_ws = value;
+					m_tssWsLabel = null;
+				}
+			}
+
+			/// <summary>
+			/// Indicate whether WritingSystem is a magic value.
+			/// </summary>
+			public bool IsMagicWritingSystem
+			{
+				get { return WritingSystem < 0; }
+			}
+
+			/// <summary>
+			/// Get the actual ws of the WritingSystem based on the given hvo, if it refers to a non-empty alternative;
+			/// otherwise, get the actual ws for wsFallback
+			/// </summary>
+			public int GetActualWs(LcmCache cache, int hvo, int wsFallback)
+			{
+				if (StringFlid == -1)
+				{
+					// we depend upon someone else to determine the ws.
+					return 0;
+				}
+
+				int wsActual;
+				ITsString dummy;
 			// While displaying the morph bundle, we need the ws used by the Form. If we can't get the Form from the MoForm, we
 			// substitute with the Form stored in the WfiMorphBundle. But our system incorrectly assumes that this object
 			// is a MoForm, so we specify that if our object is a WfiMorphBundle, use the relevant flid.
 			int flid = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo) is IWfiMorphBundle ? WfiMorphBundleTags.kflidForm : StringFlid;
 			WritingSystemServices.TryWs(cache, WritingSystem, wsFallback, hvo, flid, out wsActual, out dummy);
-			return wsActual;
-		}
-
-		public bool LexEntryLevel
-		{
-			get { return MorphemeLevel && Flid != InterlinLineChoices.kflidMorphemes; }
-		}
-
-		public bool MorphemeLevel
-		{
-			get { return m_fMorpheme; }
-			set
-			{
-				m_fMorpheme = value;
-				if (value)
-					m_fWord = true;
+				return wsActual;
 			}
-		}
 
-		public bool WordLevel
-		{
-			get { return m_fWord; }
-			set
+			public bool LexEntryLevel
 			{
-				m_fWord = value;
-				if (!value)
-					m_fMorpheme = false;
+				get { return MorphemeLevel && Flid != InterlinLineChoices.kflidMorphemes; }
 			}
-		}
-		#region ICloneable Members
 
-		public object Clone()
-		{
-			return MemberwiseClone();
-		}
-
-		public ITsString WsLabel(LcmCache cache)
-		{
-			if (m_tssWsLabel == null)
+			public bool MorphemeLevel
 			{
-				string label;
-				if (m_ws == WritingSystemServices.kwsFirstAnal)
+				get { return m_fMorpheme; }
+				set
 				{
-					label = ITextStrings.ksBstAn;
+					m_fMorpheme = value;
+					if (value)
+						m_fWord = true;
 				}
-				else if (m_ws == WritingSystemServices.kwsVernInParagraph)
-				{
-					label = ITextStrings.ksBaselineAbbr;
-				}
-				else
-				{
-					CoreWritingSystemDefinition wsAnalysis = cache.ServiceLocator.WritingSystemManager.Get(m_ws);
-					label = wsAnalysis.Abbreviation;
-				}
-				ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
-				tsb.Replace(0, tsb.Length, label, WsListManager.LanguageCodeTextProps(cache.DefaultUserWs));
-				m_tssWsLabel = tsb.GetString();
 			}
-			return m_tssWsLabel;
+
+			public bool WordLevel
+			{
+				get { return m_fWord; }
+				set
+				{
+					m_fWord = value;
+					if (!value)
+						m_fMorpheme = false;
+				}
+			}
+
+			#region ICloneable Members
+
+			public object Clone()
+			{
+				return MemberwiseClone();
+			}
+
+			public ITsString WsLabel(LcmCache cache)
+			{
+				if (m_tssWsLabel == null)
+				{
+					string label;
+					if (m_ws == WritingSystemServices.kwsFirstAnal)
+					{
+						label = ITextStrings.ksBstAn;
+					}
+					else if (m_ws == WritingSystemServices.kwsVernInParagraph)
+					{
+						label = ITextStrings.ksBaselineAbbr;
+					}
+					else
+					{
+						CoreWritingSystemDefinition wsAnalysis = cache.ServiceLocator.WritingSystemManager.Get(m_ws);
+						label = wsAnalysis.Abbreviation;
+					}
+
+					ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
+					tsb.Replace(0, tsb.Length, label, WsListManager.LanguageCodeTextProps(cache.DefaultUserWs));
+					m_tssWsLabel = tsb.GetString();
+				}
+
+				return m_tssWsLabel;
+			}
+
+			#endregion
 		}
-		#endregion
 	}
-}

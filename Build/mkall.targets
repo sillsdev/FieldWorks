@@ -387,6 +387,8 @@
 		<LcmOutputBaseFiles Include="SIL.LCModel.Core.Tests.dll" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Core.Tests.dll.config" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Core.Tests.$(DebugInfo)" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.Build.Tasks.dll" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.Build.Tasks.$(DebugInfo)" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.dll" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.$(DebugInfo)" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Tests.dll" />

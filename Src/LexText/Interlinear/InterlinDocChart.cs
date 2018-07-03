@@ -3,14 +3,22 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
+using XCore;
 
 namespace SIL.FieldWorks.IText
 {
 	/// <summary>
 	/// Dummy subclass so we can design the Chart tab.
 	/// </summary>
-	public class InterlinDocChart : UserControl
+	public class InterlinDocChart : UserControl, IInterlinConfigurable, ISetupLineChoices
 	{
+		public LcmCache Cache { get; set; }
+		public PropertyTable PropertyTable { get; set; }
+		public IVwRootBox Rootb { get; set; }
+		public InterlinVc Vc { get; set; }
+
 		private void InitializeComponent()
 		{
 			this.SuspendLayout();
@@ -27,10 +35,27 @@ namespace SIL.FieldWorks.IText
 			InitializeComponent();
 		}
 
+		public virtual void SetRoot(int hvo)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public virtual bool OnConfigureInterlinear(object argument)
+		{
+			throw new System.NotImplementedException();
+		}
+
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
 			base.Dispose(disposing);
+		}
+
+		public bool ForEditing { get; set; }
+
+		public virtual InterlinLineChoices SetupLineChoices(string lineConfigPropName, InterlinLineChoices.InterlinMode mode)
+		{
+			throw new System.NotImplementedException();
 		}
 	}
 }
