@@ -1,9 +1,10 @@
-﻿// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.LCModel.Core.Text;
@@ -82,6 +83,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_listBox.Dispose();
 
 			base.DisposeManagedResources();
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+			base.Dispose(disposing);
 		}
 
 		protected virtual void OnItemSelected(EventArgs e)

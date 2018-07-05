@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2017 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -289,6 +289,12 @@ namespace SIL.FieldWorks.IText
 				FocusBox = null;
 				OccurrenceBeforeApproveAndMove = null;
 				OccurrenceAfterApproveAndMove = null;
+			}
+
+			protected override void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+				base.Dispose(disposing);
 			}
 		}
 

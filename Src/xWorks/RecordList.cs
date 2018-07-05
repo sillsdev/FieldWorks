@@ -1655,6 +1655,12 @@ namespace SIL.FieldWorks.XWorks
 			m_owningObject = null;
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+			base.Dispose(disposing);
+		}
+
 		#endregion DisposableBase
 
 		#region IVwNotifyChange implementation

@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2017 SIL International
+// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -100,7 +100,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected IPersistenceProvider m_persistenceProvider;
 
 		protected Slice m_parentSlice;
-		private SplitContainer m_splitter;
+		private readonly SplitContainer m_splitter;
 
 		#endregion Data members
 

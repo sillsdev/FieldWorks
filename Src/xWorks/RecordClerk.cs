@@ -3185,6 +3185,12 @@ namespace SIL.FieldWorks.XWorks
 				m_waitCursor = null;
 			}
 
+			protected override void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+				base.Dispose(disposing);
+			}
+
 			#endregion DisposableBase
 		}
 
