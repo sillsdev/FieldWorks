@@ -573,8 +573,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				}
 			}
 
-			UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerResources.Undo_0, tsItem.Text),
-				string.Format(LanguageExplorerResources.Redo_0, tsItem.Text), MyCmObject, () =>
+			AreaServices.UndoExtension(tsItem.Text, Cache.ActionHandlerAccessor, () =>
 			{
 				if (newRef != null)
 				{

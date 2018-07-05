@@ -145,7 +145,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void Insert_Example_Clicked(object sender, EventArgs e)
 		{
-			UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerResources.Undo_0, LexiconResources.Insert_Example), string.Format(LanguageExplorerResources.Redo_0, LexiconResources.Insert_Example), _cache.ActionHandlerAccessor, () =>
+			AreaServices.UndoExtension(LexiconResources.Insert_Example, _cache.ActionHandlerAccessor, () =>
 			{
 				var sense = (ILexSense)MyDataTree.CurrentSlice.MyCmObject;
 				sense.ExamplesOS.Add(_cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>().Create());

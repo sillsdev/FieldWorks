@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Chorus.FileTypeHandlers;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
@@ -17,6 +16,7 @@ using LanguageExplorer.DictionaryConfiguration;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas
@@ -248,6 +248,11 @@ namespace LanguageExplorer.Areas
 			// Custom lists are unowned.
 			var list = cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>().GetObject(owningListGuid);
 			return list.Owner == null;
+		}
+
+		internal static void UndoExtension(string baseText, IActionHandler actionHandler, Action task)
+		{
+			UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerResources.Undo_0, baseText), string.Format(LanguageExplorerResources.Redo_0, baseText), actionHandler, task);
 		}
 
 		/// <summary>

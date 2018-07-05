@@ -55,9 +55,7 @@ namespace LanguageExplorer.Areas
 		/// <inheritdoc />
 		public void InsertSlash()
 		{
-			Cache.DomainDataByFlid.BeginUndoTask(AreaResources.ksInsertEnvironmentSlash, AreaResources.ksInsertEnvironmentSlash);
 			MyStringRepSliceView.RootBox.OnChar('/');
-			Cache.DomainDataByFlid.EndUndoTask();
 		}
 
 		/// <inheritdoc />
@@ -66,9 +64,7 @@ namespace LanguageExplorer.Areas
 		/// <inheritdoc />
 		public void InsertEnvironmentBar()
 		{
-			Cache.DomainDataByFlid.BeginUndoTask(AreaResources.ksInsertEnvironmentBar, AreaResources.ksInsertEnvironmentBar);
 			MyStringRepSliceView.RootBox.OnChar('_');
-			Cache.DomainDataByFlid.EndUndoTask();
 		}
 
 		private StringRepSliceView MyStringRepSliceView => (StringRepSliceView)Control;
@@ -79,9 +75,7 @@ namespace LanguageExplorer.Areas
 		/// <inheritdoc />
 		public void InsertNaturalClass()
 		{
-			Cache.DomainDataByFlid.BeginUndoTask(AreaResources.ksInsertNaturalClass, AreaResources.ksInsertNaturalClass);
-			var fOk = ReallySimpleListChooser.ChooseNaturalClass(MyStringRepSliceView.RootBox, Cache, PersistenceProvider, PropertyTable, Publisher, Subscriber);
-			Cache.DomainDataByFlid.EndUndoTask();
+			ReallySimpleListChooser.ChooseNaturalClass(MyStringRepSliceView.RootBox, Cache, PersistenceProvider, PropertyTable, Publisher, Subscriber);
 		}
 
 		/// <inheritdoc />
@@ -90,9 +84,7 @@ namespace LanguageExplorer.Areas
 		/// <inheritdoc />
 		public void InsertOptionalItem()
 		{
-			Cache.DomainDataByFlid.BeginUndoTask(AreaResources.ksInsertOptionalItem, AreaResources.ksInsertOptionalItem);
 			PhoneEnvReferenceSlice.InsertOptionalItem(MyStringRepSliceView.RootBox);
-			Cache.DomainDataByFlid.EndUndoTask();
 		}
 
 		/// <inheritdoc />
@@ -101,9 +93,7 @@ namespace LanguageExplorer.Areas
 		/// <inheritdoc />
 		public void InsertHashMark()
 		{
-			Cache.DomainDataByFlid.BeginUndoTask(AreaResources.ksInsertWordBoundary, AreaResources.ksInsertWordBoundary);
 			MyStringRepSliceView.RootBox.OnChar('#');
-			Cache.DomainDataByFlid.EndUndoTask();
 		}
 		#endregion
 	}

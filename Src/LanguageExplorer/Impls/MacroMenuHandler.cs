@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2012-2018 SIL International
+// Copyright (c) 2012-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,11 +8,11 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
+using LanguageExplorer.Areas;
 using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Impls
 {
@@ -116,8 +116,7 @@ namespace LanguageExplorer.Impls
 			var commandName = macro.CommandName;
 			// We normally let undo and redo be localized independently, but we compromise in the interests of making macros
 			// easier to create.
-			UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerResources.Undo_0, commandName), string.Format(LanguageExplorerResources.Redo_0, commandName), obj.Cache.ActionHandlerAccessor,
-				() => macro.RunMacro(obj, flid, ws, start, length));
+			AreaServices.UndoExtension(commandName, obj.Cache.ActionHandlerAccessor, () => macro.RunMacro(obj, flid, ws, start, length));
 		}
 
 		/// <summary>

@@ -12,7 +12,6 @@ using LanguageExplorer.Controls.DetailControls;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
@@ -191,9 +190,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void AddNewLexEntryRef(int flidTypes, string uowBase)
 		{
-			var entry = (ILexEntry)MyRecordList.CurrentObject;
-			UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerResources.Undo_0, uowBase), string.Format(LanguageExplorerResources.Redo_0, uowBase), entry, () =>
+			AreaServices.UndoExtension(uowBase, _cache.ActionHandlerAccessor, () =>
 			{
+				var entry = (ILexEntry)MyRecordList.CurrentObject;
 				var ler = _cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
 				if (flidTypes == LexEntryRefTags.kflidVariantEntryTypes)
 				{

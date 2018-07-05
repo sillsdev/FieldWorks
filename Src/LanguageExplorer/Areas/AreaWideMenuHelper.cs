@@ -164,27 +164,27 @@ namespace LanguageExplorer.Areas
 
 		private void Insert_Slash_Clicked(object sender, EventArgs e)
 		{
-			SenderTagAsIPhEnvSliceCommon(sender).InsertSlash();
+			AreaServices.UndoExtension(AreaResources.ksInsertEnvironmentSlash, PropertyTable.GetValue<LcmCache>("cache").ActionHandlerAccessor, ()=> SenderTagAsIPhEnvSliceCommon(sender).InsertSlash());
 		}
 
 		private void Insert_Underscore_Clicked(object sender, EventArgs e)
 		{
-			SenderTagAsIPhEnvSliceCommon(sender).InsertEnvironmentBar();
+			AreaServices.UndoExtension(AreaResources.ksInsertEnvironmentBar, PropertyTable.GetValue<LcmCache>("cache").ActionHandlerAccessor, () => SenderTagAsIPhEnvSliceCommon(sender).InsertEnvironmentBar());
 		}
 
 		private void Insert_NaturalClass_Clicked(object sender, EventArgs e)
 		{
-			SenderTagAsIPhEnvSliceCommon(sender).InsertNaturalClass();
+			AreaServices.UndoExtension(AreaResources.ksInsertNaturalClass, PropertyTable.GetValue<LcmCache>("cache").ActionHandlerAccessor, () => SenderTagAsIPhEnvSliceCommon(sender).InsertNaturalClass());
 		}
 
 		private void Insert_OptionalItem_Clicked(object sender, EventArgs e)
 		{
-			SenderTagAsIPhEnvSliceCommon(sender).InsertOptionalItem();
+			AreaServices.UndoExtension(AreaResources.ksInsertOptionalItem, PropertyTable.GetValue<LcmCache>("cache").ActionHandlerAccessor, () => SenderTagAsIPhEnvSliceCommon(sender).InsertOptionalItem());
 		}
 
 		private void Insert_HashMark_Clicked(object sender, EventArgs e)
 		{
-			SenderTagAsIPhEnvSliceCommon(sender).InsertHashMark();
+			AreaServices.UndoExtension(AreaResources.ksInsertWordBoundary, PropertyTable.GetValue<LcmCache>("cache").ActionHandlerAccessor, () => SenderTagAsIPhEnvSliceCommon(sender).InsertHashMark());
 		}
 
 		private void ShowEnvironmentError_Clicked(object sender, EventArgs e)

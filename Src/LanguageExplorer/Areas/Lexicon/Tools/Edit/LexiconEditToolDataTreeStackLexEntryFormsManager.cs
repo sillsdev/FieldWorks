@@ -215,7 +215,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				IMoForm newForm = null;
 				using (new WaitCursor((Form)_mainWindow))
 				{
-					UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerResources.Undo_0, LexiconResources.Convert_to_Affix_Process), string.Format(LanguageExplorerResources.Redo_0, LexiconResources.Convert_to_Affix_Process), entry, () =>
+					AreaServices.UndoExtension(LexiconResources.Convert_to_Affix_Process, _cache.ActionHandlerAccessor, () =>
 					{
 						switch (toClsid)
 						{
@@ -399,7 +399,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void SwapAllomorphWithLexeme(ILexEntry entry, IMoForm allomorph, string uowBase)
 		{
-			UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerResources.Undo_0, uowBase), string.Format(LanguageExplorerResources.Redo_0, uowBase), entry, () =>
+			AreaServices.UndoExtension(uowBase, _cache.ActionHandlerAccessor, () =>
 			{
 				entry.AlternateFormsOS.Insert(allomorph.IndexInOwner, entry.LexemeFormOA);
 				entry.LexemeFormOA = allomorph;
@@ -537,7 +537,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				IMoForm newForm = null;
 				using (new WaitCursor(mainWindow))
 				{
-					UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerResources.Undo_0, LexiconResources.Convert_to_Affix_Allomorph), string.Format(LanguageExplorerResources.Redo_0, LexiconResources.Convert_to_Affix_Allomorph), entry, () =>
+					AreaServices.UndoExtension(LexiconResources.Convert_to_Affix_Allomorph, _cache.ActionHandlerAccessor, () =>
 					{
 						newForm = entry.Services.GetInstance<IMoAffixAllomorphFactory>().Create();
 						entry.ReplaceMoForm(allomorph, newForm);
@@ -586,10 +586,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void CmdDataTree_Delete_VariantReference_Clicked(object sender, EventArgs e)
 		{
-			var slice = MyDataTree.CurrentSlice;
-			var ler = (ILexEntryRef)slice.NextSlice.MyCmObject;
-			UndoableUnitOfWorkHelper.Do(AreaResources.ksUndoDeleteRef, AreaResources.ksRedoDeleteRef, ler, () =>
+			UndoableUnitOfWorkHelper.Do(AreaResources.ksUndoDeleteRef, AreaResources.ksRedoDeleteRef, _cache.ActionHandlerAccessor, () =>
 			{
+				var slice = MyDataTree.CurrentSlice;
+				var ler = (ILexEntryRef)slice.NextSlice.MyCmObject;
 				ler.ComponentLexemesRS.Remove(MyDataTree.Root);
 				// probably not needed, but safe...
 				if (ler.PrimaryLexemesRS.Contains(MyDataTree.Root))
@@ -719,9 +719,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				IMoForm newForm = null;
 				using (new WaitCursor(mainWindow))
 				{
-					var entry = (ILexEntry)MyRecordList.CurrentObject;
-					UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerResources.Undo_0, LexiconResources.Convert_to_Affix_Process), string.Format(LanguageExplorerResources.Redo_0, LexiconResources.Convert_to_Affix_Process), entry, () =>
+					AreaServices.UndoExtension(LexiconResources.Convert_to_Affix_Process, _cache.ActionHandlerAccessor, () =>
 					{
+						var entry = (ILexEntry)MyRecordList.CurrentObject;
 						newForm = entry.Services.GetInstance<IMoAffixProcessFactory>().Create();
 						entry.ReplaceMoForm(allomorph, newForm);
 					});
@@ -734,7 +734,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private void SwapAllomorphWithLexeme_Clicked(object sender, EventArgs e)
 		{
 			var entry = (ILexEntry)MyDataTree.Root;
-			UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerResources.Undo_0, LexiconResources.Swap_Allomorph_with_Lexeme_Form), string.Format(LanguageExplorerResources.Redo_0, LexiconResources.Swap_Allomorph_with_Lexeme_Form), entry, () =>
+			AreaServices.UndoExtension(LexiconResources.Swap_Allomorph_with_Lexeme_Form, _cache.ActionHandlerAccessor, () =>
 			{
 				var allomorph = (IMoForm)MyDataTree.CurrentSlice.MyCmObject;
 				entry.AlternateFormsOS.Insert(allomorph.IndexInOwner, entry.LexemeFormOA);

@@ -25,7 +25,6 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
-using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 using SIL.Reporting;
 
@@ -1086,7 +1085,7 @@ namespace LanguageExplorer
 						SuppressSaveOnChangeRecord = true;
 						try
 						{
-							UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerResources.Undo_0, uowBaseText), string.Format(LanguageExplorerResources.Redo_0, uowBaseText), m_cache.ActionHandlerAccessor, () => DeleteCurrentObject(thingToDelete));
+							AreaServices.UndoExtension(uowBaseText, m_cache.ActionHandlerAccessor, () => DeleteCurrentObject(thingToDelete));
 						}
 						finally
 						{
