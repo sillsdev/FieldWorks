@@ -1,9 +1,10 @@
-﻿// Copyright (c) 2017 SIL International
+// Copyright (c) 2017-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -157,12 +158,17 @@ namespace SIL.FieldWorks.Common.RootSites
 				Marshal.ReleaseComObject(renderEngine);
 		}
 
-		/// <summary>
-		/// Disposes the managed resources.
-		/// </summary>
+		/// <inheritdoc/>
 		protected override void DisposeManagedResources()
 		{
 			ClearRenderEngines();
+		}
+
+		/// <inheritdoc/>
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+			base.Dispose(disposing);
 		}
 	}
 }
