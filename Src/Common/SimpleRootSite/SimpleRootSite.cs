@@ -335,11 +335,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		#endregion
 
 		#region Constructor, Dispose, Designer generated code
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		public SimpleRootSite()
 		{
 			// This call is required by the Windows.Forms Form Designer.
