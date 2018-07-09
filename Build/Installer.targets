@@ -172,7 +172,7 @@
 			<DeveloperFiles Include="$(fwrt)\DistFiles\TxtConv.exe"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Windows\**\*"/>
 			<IcuFiles Include="$(fwrt)\DistFiles\Icu$(IcuVersion)\**\*"/>
-			<InstallerResources Include="$(fwrt)\License.htm"/>
+			<InstallerResources Include="$(fwrt)\License.htm"/> <!-- allow users to view the license before installing -->
 			<InstallerResources Include="$(fwrt)\resources\App.ico"/>
 			<InstallerResources Include="$(fwrt)\resources\Installer.ico"/>
 			<!-- If you change this list, you must also update those listed at $(fwrt)\Localizations\ReadMe.md -->
@@ -244,6 +244,7 @@
 			<BinFiles Remove="$(OutputDirForConfig)\*Tests.*"/>
 			<BinFiles Remove="$(OutputDirForConfig)\test*"/>
 			<BinFiles Include="$(fwrt)\DistFiles\**\*" Exclude="@(DeveloperFiles);@(IcuFiles)"/>
+			<BinFiles Include="$(fwrt)\License.htm"/> <!-- install the license -->
 			<!-- Files used to customize the generic patchable installer -->
 			<OverrideFiles Include="$(fwrt)\FLExInstaller\*.wxi"/>
 		</ItemGroup>

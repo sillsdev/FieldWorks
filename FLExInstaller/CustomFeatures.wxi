@@ -13,7 +13,10 @@
 	<Feature Id='DesktopShortcut' Title='Desktop Shortcut' Description='Creates a shortcut on the desktop.' Level='3' ConfigurableDirectory='APPFOLDER' AllowAdvertise="no" InstallDefault="source" Absent='allow' TypicalDefault="install" >
 		<ComponentRef Id='ApplicationShortcutDesktop'/>
 	</Feature>
-	<Feature Id='MenuShortcut' Title='Start Menu Shortcut' Description='Creates a shortcut in the Start menu.' Level='3' ConfigurableDirectory='APPFOLDER' AllowAdvertise="no" InstallDefault="source" Absent='allow' TypicalDefault="install" >
+	<Feature Id='MenuShortcuts' Title='Start Menu Shortcuts' Description='Creates shortcuts in the Start Menu to FieldWorks, utilities, and key documentation.' Level='3' ConfigurableDirectory='APPFOLDER' AllowAdvertise="no" InstallDefault="source" Absent='allow' TypicalDefault="install" >
+		<ComponentRef Id='StartMenuShortcuts' />
+	</Feature>
+	<Feature Id='GenericShortcut_NotInstalled' Title='Generic Start Menu Shortcut' Description='Creates a shortcut in the Start menu.' Level='0' ConfigurableDirectory='APPFOLDER' AllowAdvertise="no" InstallDefault="source" Absent='allow' TypicalDefault="install" >
 		<ComponentRef Id='ApplicationShortcutMenu' />
 	</Feature>
 	<Feature Id="LOC" Title="Language Packs" Description="Additional languages for the user interface." Display="expand" Level="3" AllowAdvertise="no">

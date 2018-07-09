@@ -31,6 +31,43 @@
 		<ComponentRef Id="FwInstallDir"/>
 	</ComponentGroup>
 
+	<DirectoryRef Id="ProgramMenuFolder">
+		<Directory Id="FLExProgramMenuFolder" Name="$(var.ApplicationName) $(var.MajorVersion)">
+			<Component Id="StartMenuShortcuts" Guid="EE2CF3EF-30C2-48AC-8151-7B55191A1E59">
+				<Shortcut Id="HelpsShortcut"
+					Name="$(var.ApplicationName) Help"
+					Description="$(var.ApplicationName) Help"
+					Target="[APPFOLDER]Helps\FieldWorks_Language_Explorer_Help.chm"/>
+				<Shortcut Id="ApplicationStartSubmenuShortcut"
+					Name="$(var.ApplicationName)"
+					Description="$(var.ApplicationName) $(var.MajorVersion)"
+					Target="[APPFOLDER]Flex.exe"
+					WorkingDirectory="APPFOLDER"
+					Icon="Application_Icon.ico"/>
+				<Shortcut Id="MorphologyIntroShortcut"
+					Name="Morphology Introduction"
+					Description="A Conceptual Introduction to Morphological Parsing for Stage 1 of the FieldWorks Language Explorer"
+					Target="[APPFOLDER]Helps\WW-ConceptualIntro\ConceptualIntroduction.htm"/>
+				<Shortcut Id="UnicodeCharEditorShortcut"
+					Name="Unicode Character Editor"
+					Description="Unicode Character Editor"
+					Target="[APPFOLDER]UnicodeCharEditor.exe"
+					WorkingDirectory="APPFOLDER"/>
+				<Shortcut Id="EULAShortcut"
+					Name="View the End User License Agreement"
+					Description="$(var.ApplicationName) License"
+					Target="[APPFOLDER]License.htm"/>
+				<Shortcut Id="UninstallProductSubmenu"
+					Name="Uninstall $(var.ApplicationName)"
+					Target="[SystemFolder]msiexec.exe"
+					Arguments="/x [ProductCode]"
+					Description="Uninstalls $(var.ApplicationName)"/>
+				<RemoveFolder Id="RemoveFLExProgramMenuFolder" Directory="FLExProgramMenuFolder" On="uninstall"/>
+				<RegistryValue Root="HKCU" Key="Software\Microsoft\$(var.SafeApplicationName)$(var.MajorVersion)" Name="installed" Type="integer" Value="1" KeyPath="yes"/><!--REVIEW (Hasso) 2018.07: what is this and why is it *here*? (copied from genericinstaller's Framework.wxs -->
+			</Component>
+		</Directory>
+	</DirectoryRef>
+
 	<DirectoryRef  Id='APPFOLDER'>
 		<?if $(sys.BUILDARCH) = x64 ?>
 		<Merge Id="CC_DLL" Language="1033" SourceFile="$(var.EncodingConvertersPath)\CcDLLs64bitMM.msm" DiskId="1"/>
