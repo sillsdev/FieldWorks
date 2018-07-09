@@ -273,9 +273,9 @@ namespace SIL.FieldWorks.Discourse
 
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
-			ChartLocation cell;
+			int icol;
 			int irow;
-			if (GetCellInfo(e, out cell, out irow))
+			if (GetCellInfo(e, out icol, out irow))
 			{
 				var info = new SelLevInfo[1];
 				info[0].ihvo = irow;
@@ -295,7 +295,7 @@ namespace SIL.FieldWorks.Discourse
 						sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary,
 							out rcSec, out fSplit, out fEndBeforeAnchor);
 					}
-					SetHoverButtonLocation(rcPrimary, cell.ColIndex);
+					SetHoverButtonLocation(rcPrimary, icol);
 					if (!Controls.Contains(m_hoverButton))
 						Controls.Add(m_hoverButton);
 				}
@@ -321,7 +321,7 @@ namespace SIL.FieldWorks.Discourse
 			// If chart is Left to Right, we start with right border of cell and subtract button width and margin.
 			// If chart is Right to Left, we start with left border of cell and add margin.
 			var fudgeFactor = fRtl ? margin : -margin - m_hoverButton.Width;
-			var horizPosition = m_chart.ColumnPositions[columnIndex + extraColumnLeft + (fRtl ? 0 : 1)] + fudgeFactor;
+			var horizPosition = m_chart.ColumnPositions[columnIndex + extraColumnLeft + (fRtl ? -1 : 1) + (m_chart.NotesColumnOnRight ? 0 : 1)] + fudgeFactor;
 			return horizPosition;
 		}
 
@@ -449,26 +449,19 @@ namespace SIL.FieldWorks.Discourse
 			{
 				// Consider bringing up another menu only if we weren't already showing one.
 				// The above time test seems to be the only way to find out whether this click closed the last one.
-				ChartLocation cell;
+				int icol;
 				int irow;
-				if (GetCellInfo(e, out cell, out irow))
+				IDsConstChart chart =
+					Cache.ServiceLocator.GetInstance<IDsConstChartRepository>().GetObject(m_hvoChart);
+				ChartLocation cell;
+				if (GetCellInfo(e, out icol, out irow))
 				{
+					icol = LogicalFromDisplay(icol);
+					cell = new ChartLocation(chart.RowsOS[irow], icol);
 					m_cellContextMenu = m_logic.MakeCellContextMenu(cell);
 					m_cellContextMenu.Closed += m_cellContextMenu_Closed;
 					m_cellContextMenu.Show(this, e.X, e.Y);
 					return; // Don't call the base method, we don't want to make a selection.
-				}
-				if (cell != null && cell.IsValidLocation && cell.ColIndex >= AllColumns.Length)
-				{
-					// Click in Notes...make sure it has one.
-					if (cell.Row.Notes == null || cell.Row.Notes.Length == 0)
-					{
-						NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
-						{
-							cell.Row.Notes =
-								TsStringUtils.EmptyString(Cache.DefaultAnalWs);
-						});
-					}
 				}
 			}
 			base.OnMouseDown(e);
@@ -483,12 +476,12 @@ namespace SIL.FieldWorks.Discourse
 		/// Get info about which cell the user clicked in.
 		/// </summary>
 		/// <param name="e"></param>
-		/// <param name="clickedCell">This needs to include the 'logical' column index.</param>
+		/// <param name="icol">This needs to include the 'logical' column index.</param>
 		/// <param name="irow"></param>
 		/// <returns>true if it is a template column, or false if some other column (Notes?)</returns>
-		private bool GetCellInfo(MouseEventArgs e, out ChartLocation clickedCell, out int irow)
+		private bool GetCellInfo(MouseEventArgs e, out int icol, out int irow)
 		{
-			clickedCell = null; // in case of premature 'return'
+			icol = -1; // in case of premature 'return'
 			irow = -1;
 			if (m_hvoChart == 0 || AllColumns == null || e.Y > RootBox.Height || e.X > RootBox.Width)
 				return false;
@@ -509,10 +502,9 @@ namespace SIL.FieldWorks.Discourse
 				var chart = Cache.ServiceLocator.GetInstance<IDsConstChartRepository>().GetObject(m_hvoChart);
 				if (irow < 0 || chart.RowsOS.Count <= irow)
 					return false;
-				var icol = m_logic.GetColumnFromPosition(e.X, m_chart.ColumnPositions) - 1;
-				if (-1 < icol && icol < AllColumns.Length && e.Clicks > 0)
-					icol = LogicalFromDisplay(icol); // if this is just a mouse move, use 'display' column
-				clickedCell = new ChartLocation(chart.RowsOS[irow], icol);
+				icol = m_logic.GetColumnFromPosition(e.X, m_chart.ColumnPositions) - 1;
+				icol += (m_chart.ChartIsRtL && m_chart.NotesColumnOnRight) ? 1 :
+					(!m_chart.ChartIsRtL && !m_chart.NotesColumnOnRight) ? -1 : 0;
 				// return true if we clicked on a valid template column (other than notes)
 				// return false if we clicked on an 'other' column, like notes or row number?
 				return -1 < icol && icol < AllColumns.Length;
@@ -562,6 +554,11 @@ namespace SIL.FieldWorks.Discourse
 			this.Name = "ConstChartBody";
 			this.ResumeLayout(false);
 
+		}
+
+		public ConstituentChart Chart
+		{
+			get { return m_chart; }
 		}
 	}
 
@@ -1427,11 +1424,15 @@ namespace SIL.FieldWorks.Discourse
 
 				m_vwenv.IsRtL = fRtL;
 
+				if (!(m_body.Chart.NotesColumnOnRight ^ fRtL))
+					MakeNoteCell();
+
 				MakeRowLabelCell();
 
 				MakeMainCellParts(); // Make all the cell parts between row label and note.
 
-				MakeNoteCell();
+				if (m_body.Chart.NotesColumnOnRight ^ fRtL)
+					MakeNoteCell();
 
 				FlushDecorator();
 			}
@@ -1843,8 +1844,13 @@ namespace SIL.FieldWorks.Discourse
 			{
 				// LT-8545 remaining niggle; Note shouldn't be formatted.
 				// A small change to the XML config file ensures it's not underlined either.
+				m_vwenv.set_IntProperty((int)FwTextPropType.ktptBorderTrailing,
+						(int)FwTextPropVar.ktpvMilliPoint, 1500);
+				m_vwenv.set_IntProperty((int)FwTextPropType.ktptBorderColor,
+						(int)FwTextPropVar.ktpvDefault,
+						(int)ColorUtil.ConvertColorToBGR(Color.Black));
 				m_this.ApplyFormatting(m_vwenv, "normal");
-				OpenStandardCell(m_vwenv, 1, false);
+				m_vwenv.OpenTableCell(1, 1);
 			}
 
 			static internal void OpenStandardCell(IVwEnv vwenv, int ccols, bool fEndOfGroup)

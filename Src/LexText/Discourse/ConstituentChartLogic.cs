@@ -16,6 +16,7 @@ using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.IText;
+using SIL.Windows.Forms.Widgets;
 
 namespace SIL.FieldWorks.Discourse
 {
@@ -4054,12 +4055,12 @@ namespace SIL.FieldWorks.Discourse
 			return result;
 		}
 
-		internal void MakeMainHeaderCols(ListView view)
+		internal void MakeMainHeaderCols(ChartHeaderView view)
 		{
 			// This is actually a display method, not a true 'logic' method.
 			// That's why we need to test for RTL script.
 			view.SuspendLayout();
-			view.Columns.Clear();
+			view.Controls.Clear();
 
 			if (ChartIsRtL)
 			{
@@ -4069,43 +4070,40 @@ namespace SIL.FieldWorks.Discourse
 			}
 			else
 			{
+				MakeNotesColumnHeader(view);
 				MakeRowNumberColumnHeader(view);
 				MakeTemplateColumnHeaders(view);
-				MakeNotesColumnHeader(view);
 			}
 
-			view.ResumeLayout();
+			view.ResumeLayout(false);
 		}
 
-		private static void MakeNotesColumnHeader(ListView view)
+		private static void MakeNotesColumnHeader(ChartHeaderView view)
 		{
 			// Add one more column for notes.
-			var ch = new ColumnHeader();
+			var ch = new HeaderLabel();
 			ch.Text = DiscourseStrings.ksNotesColumnHeader;
-			view.Columns.Add(ch);
+			view.Controls.Add(ch);
 		}
 
-		private void MakeTemplateColumnHeaders(ListView view)
+		private void MakeTemplateColumnHeaders(ChartHeaderView view)
 		{
-			foreach (var col in AllMyColumns)
+			foreach (var col in ChartIsRtL? AllMyColumns.Reverse() : AllMyColumns)
 			{
-				var ch = new ColumnHeader();
+				var ch = new HeaderLabel();
 
 				// ensure NFC -- See LT-8815.
 				//ch.Text = m_possRepo.GetObject(col.Hvo).Name.BestAnalysisAlternative.Text.Normalize();
 				ch.Text = col.Name.BestAnalysisAlternative.Text.Normalize();
-				if (ChartIsRtL)
-					view.Columns.Insert(1, ch); // should be safe because the Notes column will get added first.
-				else
-					view.Columns.Add(ch);
+				view.Controls.Add(ch);
 			}
 		}
 
-		private static void MakeRowNumberColumnHeader(ListView view)
+		private static void MakeRowNumberColumnHeader(ChartHeaderView view)
 		{
-			var ch = new ColumnHeader();
+			var ch = new HeaderLabel();
 			ch.Text = ""; // otherwise default is 'column header'!
-			view.Columns.Add(ch);
+			view.Controls.Add(ch);
 		}
 
 		/// <summary>

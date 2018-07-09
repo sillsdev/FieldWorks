@@ -17,6 +17,7 @@ using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.IText;
 using SIL.Utils;
+using SIL.Windows.Forms.Widgets;
 using XCore;
 
 namespace SIL.FieldWorks.Discourse
@@ -107,7 +108,6 @@ namespace SIL.FieldWorks.Discourse
 			base.OnLoad(e);
 			// We don't want to know about column width changes until after we're initialized and have restored original widths.
 			m_headerMainCols.ColumnWidthChanged += m_headerMainCols_ColumnWidthChanged;
-			m_headerMainCols.ColumnWidthChanging += m_headerMainCols_ColumnWidthChanging;
 		}
 
 		/// <summary>
@@ -124,9 +124,7 @@ namespace SIL.FieldWorks.Discourse
 			m_body = new ConstChartBody(m_logic, this) { Cache = m_cache, Dock = DockStyle.Fill };
 
 			// Seems to be right (cf BrowseViewer) but not ideal.
-			m_headerMainCols = new ChartHeaderView(this) { Dock = DockStyle.Top,
-				View = View.Details, Height = 22, Scrollable = false,
-				AllowColumnReorder = false };
+			m_headerMainCols = new ChartHeaderView(this) { Dock = DockStyle.Top, Height = 22 };
 
 			m_headerMainCols.Layout += m_headerMainCols_Layout;
 			m_headerMainCols.SizeChanged += m_headerMainCols_SizeChanged;
@@ -285,38 +283,6 @@ namespace SIL.FieldWorks.Discourse
 			return true;
 		}
 
-		// padding (pixels) to autoresize column width to prevent wrapping
-		private const int kColPadding = 4;
-
-		internal void m_headerMainCols_ColumnAutoResize(int icolChanged)
-		{
-			var maxWidth = MaxUseableWidth();
-			// Determine content width and try to set column to that width
-			var changingColHdr = m_headerMainCols.Columns[icolChanged];
-			int colWidth = m_body.GetColumnContentsWidth(icolChanged);
-			// "real" column width
-			if (colWidth == 0)
-				// no content in this column, resize to header
-				m_headerMainCols.AutoResizeColumn(icolChanged, ColumnHeaderAutoResizeStyle.HeaderSize);
-			else
-			{
-				colWidth += kColPadding;
-				int cLimit = maxWidth / 2;
-				// limit resize to half of available width
-				changingColHdr.Width = (colWidth > cLimit) ? cLimit : colWidth;
-			}
-		}
-
-		/// <summary>
-		/// Whether or not Layout events for m_headerMainCols should be ignored. See FWNX-945.
-		/// </summary>
-		bool m_fIgnoreLayout;
-
-		void m_headerMainCols_ColumnWidthChanging(object sender, ColumnWidthChangingEventArgs e)
-		{
-			m_fIgnoreLayout = true;
-		}
-
 		void m_headerMainCols_ColumnWidthChanged(object sender, ColumnWidthChangedEventArgs e)
 		{
 			if (m_fInColWidthChanged)
@@ -325,10 +291,10 @@ namespace SIL.FieldWorks.Discourse
 			try
 			{
 				int icolChanged = e.ColumnIndex;
-				int ccol = m_headerMainCols.Columns.Count;
+				int ccol = m_headerMainCols.Controls.Count;
 				int totalWidth = 0;
 				int maxWidth = MaxUseableWidth();
-				foreach (ColumnHeader ch in m_headerMainCols.Columns)
+				foreach (Control ch in m_headerMainCols.Controls)
 					totalWidth += ch.Width + 0;
 				if (totalWidth > maxWidth)
 				{
@@ -338,7 +304,7 @@ namespace SIL.FieldWorks.Discourse
 					while (remainingCols > 0)
 					{
 						int deltaThis = delta / remainingCols;
-						m_headerMainCols.Columns[icolAdjust].Width -= deltaThis;
+						m_headerMainCols[icolAdjust].Width -= deltaThis;
 						delta -= deltaThis;
 						icolAdjust++;
 						remainingCols--;
@@ -357,7 +323,7 @@ namespace SIL.FieldWorks.Discourse
 			// Now adjust everything else
 			ComputeButtonWidths();
 			m_body.SetColWidths(m_columnWidths);
-			m_fIgnoreLayout = false;
+			m_headerMainCols.UpdatePositions();
 		}
 
 		void m_headerMainCols_SizeChanged(object sender, EventArgs e)
@@ -367,10 +333,6 @@ namespace SIL.FieldWorks.Discourse
 
 		void m_headerMainCols_Layout(object sender, LayoutEventArgs e)
 		{
-			// Unlike .NET, Mono fires Layout during column resizing. Ignore it. FWNX-945.
-			if (m_fIgnoreLayout)
-				return;
-
 			SetHeaderColAndButtonWidths();
 		}
 
@@ -379,18 +341,19 @@ namespace SIL.FieldWorks.Discourse
 		{
 			//Do not change column widths until positions have been updated to represent template change
 			//m_columnPositions should be one longer due to fenceposting
-			if (m_columnPositions != null && m_columnPositions.Length == m_headerMainCols.Columns.Count + 1)
+			if (m_columnPositions != null && m_columnPositions.Length == m_headerMainCols.Controls.Count + 1)
 			{
 				m_fInColWidthChanged = true;
 				try
 				{
 					//GetColumnWidths();
-					for (int i = 0; i < m_headerMainCols.Columns.Count; i++)
+					for (int i = 0; i < m_headerMainCols.Controls.Count; i++)
 					{
 						int width = m_columnPositions[i + 1] - m_columnPositions[i];
-						if (m_headerMainCols.Columns[i].Width != width)
-							m_headerMainCols.Columns[i].Width = width;
+						if (m_headerMainCols[i].Width != width)
+							m_headerMainCols[i].Width = width;
 					}
+					m_headerMainCols.UpdatePositions();
 				}
 				finally
 				{
@@ -507,15 +470,15 @@ namespace SIL.FieldWorks.Discourse
 			if (m_allColumns == null)
 				return; // no cols, can't do anything useful.
 
-			if (m_headerMainCols != null && m_headerMainCols.Columns.Count == m_allColumns.Length + ConstituentChartLogic.NumberOfExtraColumns)
+			if (m_headerMainCols != null && m_headerMainCols.Controls.Count == m_allColumns.Length + ConstituentChartLogic.NumberOfExtraColumns)
 			{
 				// Take it from the headers if we have them set up already.
 				m_columnWidths = new int[m_allColumns.Length + ConstituentChartLogic.NumberOfExtraColumns];
 				m_columnPositions = new int[m_allColumns.Length + ConstituentChartLogic.NumberOfExtraColumns + 1];
-				var ccol = m_headerMainCols.Columns.Count;
+				var ccol = m_headerMainCols.Controls.Count;
 				for (var icol = 0; icol < ccol; icol++)
 				{
-					var width = m_headerMainCols.Columns[icol].Width;
+					var width = m_headerMainCols[icol].Width;
 					// The column seems to be really one pixel wider than the column width of the header,
 					// possibly because of the boundary line width.
 					m_columnPositions[icol + 1] = m_columnPositions[icol] + width + 0;
@@ -545,12 +508,14 @@ namespace SIL.FieldWorks.Discourse
 			while (ipair < cPairs)
 			{
 				Control c = m_buttonRow.Controls[ipair * 2];
+				int offset = NotesColumnOnRight ? 0 : 1;
+				offset += ChartIsRtL ? 0 : 1;
 				// main button
-				c.Left = m_columnPositions[ipair + 1] + 2;
+				c.Left = m_columnPositions[ipair + offset] + 2;
 				// skip number column, fine tune
-				c.Width = m_columnPositions[ipair + 2] - m_columnPositions[ipair + 1] - widthBtnContextMenu;
+				c.Width = m_columnPositions[ipair + offset + 1] - m_columnPositions[ipair + offset] - widthBtnContextMenu;
 				// Redo button name in case some won't (or now will!) fit on the button
-				c.Text = GetBtnName(m_headerMainCols.Columns[ipair + 1].Text, c.Width - ((c as Button).Image.Width * 2));
+				c.Text = GetBtnName(m_headerMainCols[ipair + offset].Text, c.Width - ((c as Button).Image.Width * 2));
 				Control c2 = m_buttonRow.Controls[ipair * 2 + 1];
 				// pull-down
 				c2.Left = c.Right;
@@ -576,6 +541,11 @@ namespace SIL.FieldWorks.Discourse
 				var defWs = m_cache.ServiceLocator.WritingSystemManager.Get(RootStText.MainWritingSystem);
 				return defWs.RightToLeftScript;
 			}
+		}
+
+		public void RefreshRoot()
+		{
+			SetRoot(m_hvoRoot);
 		}
 
 		/// <summary>
@@ -663,15 +633,6 @@ namespace SIL.FieldWorks.Discourse
 					m_fInColWidthChanged = false;
 				}
 			}
-			if (m_chart != null)
-			{
-				m_body.SetRoot(m_chart.Hvo, m_allColumns, ChartIsRtL);
-
-				GetAndScrollToBookmark();
-			}
-
-			else
-				m_body.SetRoot(0, null, false);
 
 			// If necessary adjust number of buttons
 			if (m_MoveHereButtons.Count != m_allColumns.Length && hvo > 0)
@@ -682,6 +643,15 @@ namespace SIL.FieldWorks.Discourse
 
 			BuildTemplatePanel();
 
+			if (m_chart != null)
+			{
+				m_body.SetRoot(m_chart.Hvo, m_allColumns, ChartIsRtL);
+
+				GetAndScrollToBookmark();
+			}
+
+			else
+				m_body.SetRoot(0, null, false);
 		}
 
 		private void BuildTemplatePanel()
@@ -1227,6 +1197,11 @@ namespace SIL.FieldWorks.Discourse
 			// we handled this
 		}
 
+		public bool NotesColumnOnRight
+		{
+			get { return m_headerMainCols.NotesOnRight; }
+		}
+
 		#region IxCoreColleague Members
 
 		/// <summary>
@@ -1350,18 +1325,24 @@ namespace SIL.FieldWorks.Discourse
 	} // End Constituent Chart class
 
 	/// <summary>
-	/// This subclass of ListView is used to make the column headers for a Constituent Chart.
-	/// It's main function is to handle double-clicks on column boundaries so the chart (which is neither
-	/// a ListView nor a BrowseViewer) can resize its columns.
+	/// This control is used to make the column headers for a Constituent Chart.
+	/// It handles mouse events for resizing columns and
+	/// Dragging the notes column to the left or right side of the chart
 	/// </summary>
-	public class ChartHeaderView : ListView
+	public class ChartHeaderView : Control
 	{
 		private ConstituentChart m_chart;
+		private bool m_notesOnRight = true;
+		private bool m_isDraggingNotes;
+		private bool m_isResizingColumn;
+		private bool m_notesWasOnRight;
+		private int m_origHeaderLeft;
+		private int m_origMouseLeft;
+		private const int kColMinimumWidth = 5;
 
 		/// <summary>
 		/// Create one and set the chart it belongs to.
 		/// </summary>
-		/// <param name="chart"></param>
 		public ChartHeaderView(ConstituentChart chart)
 		{
 			m_chart = chart;
@@ -1380,7 +1361,7 @@ namespace SIL.FieldWorks.Discourse
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Releases the unmanaged resources used by the <see cref="T:System.Windows.Forms.ListView"/> and optionally releases the managed resources.
+		/// Releases the unmanaged resources used by the <see cref="T:System.Windows.Forms.Control"/> and optionally releases the managed resources.
 		/// </summary>
 		/// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
 		/// ------------------------------------------------------------------------------------
@@ -1399,39 +1380,306 @@ namespace SIL.FieldWorks.Discourse
 			base.Dispose(disposing);
 		}
 
-		const int WM_NOTIFY = 0x004E;
-		const int HDN_FIRST = -300;
-		const int HDN_DIVIDERDBLCLICKW = (HDN_FIRST - 25);
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Overrides <see cref="M:System.Windows.Forms.Control.WndProc(System.Windows.Forms.Message@)"/>.
-		/// </summary>
-		/// <param name="m">The Windows <see cref="T:System.Windows.Forms.Message"/> to process.</param>
-		/// ------------------------------------------------------------------------------------
-		protected override void WndProc(ref Message m)
+		public bool NotesOnRight
 		{
-			switch (m.Msg)
-			{
-			case WM_NOTIFY:
-				Win32.NMHEADER nmhdr = (Win32.NMHEADER)m.GetLParam(typeof(Win32.NMHEADER));
-				switch (nmhdr.hdr.code)
-				{
-				case HDN_DIVIDERDBLCLICKW:
-					// double-click on line between column headers.
-					// adjust width of column to match item of greatest length.
-					m_chart.m_headerMainCols_ColumnAutoResize(nmhdr.iItem);
-					break;
-				default:
-					base.WndProc(ref m);
-					break;
-				}
+			get { return m_notesOnRight; }
+		}
 
-				break;
-			default:
-				base.WndProc(ref m);
-				break;
+		/// <summary>
+		/// ControlList[] represents the z index, so in order to keep the draggable notes column at the top of the z order,
+		/// This custom [] is designed to be used instead representing the x order of column headers
+		/// </summary>
+		public Control this[int key]
+		{
+			get
+			{
+				if (key < 0 || key >= Controls.Count)
+					throw new IndexOutOfRangeException();
+				if (!m_notesOnRight)
+				{
+					return Controls[key];
+				}
+				return Controls[(key + 1) % Controls.Count];
 			}
+		}
+
+		/// <summary>
+		/// New IndexOf to complement custom []
+		/// </summary>
+		private int IndexOf(Control c)
+		{
+			for (int i = 0; i < Controls.Count; i++)
+			{
+				if (this[i] == c)
+				{
+					return i;
+				}
+			}
+
+			return -1;
+		}
+
+		/// <summary>
+		/// Updates the positions of all the column headers to consecutive order without gaps or overlaps
+		/// </summary>
+		public void UpdatePositions()
+		{
+			if (m_isDraggingNotes)
+				return;
+			if (Controls.Count < 2)
+				return;
+			this[0].Left = 1;
+			for (int i = 1; i < Controls.Count; i++)
+			{
+				this[i].Left = this[i - 1].Right;
+			}
+		}
+
+		/// <summary>
+		/// Moves all the other column headers to where they should be when the notes column is dropped
+		/// </summary>
+		private void UpdatePositionsExceptNotes()
+		{
+			if (m_notesOnRight)
+			{
+				Controls[1].Left = 1;
+			}
+			else
+			{
+				Controls[1].Left = Controls[0].Width;
+			}
+
+			for (int i = 2; i < Controls.Count; i++)
+			{
+				Controls[i].Left = Controls[i - 1].Right;
+			}
+		}
+
+		public event ColumnWidthChangedEventHandler ColumnWidthChanged;
+
+		/// <summary>
+		/// Resizes the identified column to the default width
+		/// </summary>
+		public void AutoResizeColumn(int iColumnChanged)
+		{
+			int num = Width / (Controls.Count + 1);
+			this[iColumnChanged].Width = num;
+			UpdatePositions();
+			ColumnWidthChanged(this, new ColumnWidthChangedEventArgs(iColumnChanged));
+		}
+
+		/// <summary>
+		/// Prepares new Control with the proper mouse events and visual elements
+		/// </summary>
+		protected override void OnControlAdded(ControlEventArgs e)
+		{
+			Control newColumn = e.Control;
+			newColumn.Height = 22;
+			newColumn.MouseDown += OnColumnMouseDown;
+			newColumn.MouseMove += OnColumnMouseMove;
+			newColumn.MouseUp += OnColumnMouseUp;
+			newColumn.Paint += OnColumnPaint;
+			newColumn.DoubleClick += OnColumnDoubleClick;
+			if (newColumn is HeaderLabel)
+			{
+				((HeaderLabel) newColumn).BorderStyle = BorderStyle.None;
+			}
+		}
+
+		/// <summary>
+		/// Handles a column's double click to automatically resize the column to the left of the border clicked
+		/// </summary>
+		private void OnColumnDoubleClick(object sender, EventArgs e)
+		{
+			var header = sender as Control;
+			if (header.Cursor != Cursors.VSplit)
+			{
+				return;
+			}
+
+			int leftHeader = IndexOf(header);
+			if (m_origMouseLeft < 3)
+			{
+				leftHeader--;
+			}
+			AutoResizeColumn(leftHeader);
+		}
+
+		/// <summary>
+		/// Handles a column's mousedown to possibly enter the resizing state and store the initial coordinates
+		/// </summary>
+		private void OnColumnMouseDown(object sender, MouseEventArgs e)
+		{
+			Control header = sender as Control;
+			if (header.Cursor == Cursors.VSplit)
+			{
+				m_isResizingColumn = true;
+			}
+
+			m_origHeaderLeft = header.Left;
+			m_origMouseLeft = e.X;
+			m_notesWasOnRight = m_notesOnRight;
+			header.SuspendLayout();
+			SuspendLayout();
+		}
+
+		/// <summary>
+		/// Handles a column's mousemove to resize if in the resize state or move the notes column
+		/// </summary>
+		private void OnColumnMouseMove(object sender, MouseEventArgs e)
+		{
+			var header = sender as Control;
+			if ((e.X < 3 && header != this[0]) || (e.X > header.Width - 3))
+			{
+				header.Cursor = Cursors.VSplit;
+			}
+			else
+			{
+				header.Cursor = DefaultCursor;
+			}
+
+			if (e.Button != MouseButtons.Left) return;
+			if (m_isResizingColumn)
+			{
+				ResizeColumn(header, e);
+			}
+			else
+			{
+				MoveColumn(header, e);
+			}
+			Parent.Update();
+		}
+
+		/// <summary>
+		/// Controls MouseMove event for column header in case we are in the resize state
+		/// </summary>
+		private void ResizeColumn(Control header, MouseEventArgs e)
+		{
+			Control prevHeader;
+			int X;
+			if (m_origMouseLeft < 3)
+			{
+				prevHeader = this[IndexOf(header) - 1];
+				X = e.X + header.Left - prevHeader.Left;
+			}
+			else
+			{
+				prevHeader = header;
+				X = e.X;
+			}
+
+			prevHeader.Width = X;
+			if (prevHeader.Width < kColMinimumWidth)
+				prevHeader.Width = kColMinimumWidth;
+			UpdatePositions();
+		}
+
+		/// <summary>
+		/// Controls MouseMove event for column header in case we are in the move notes column state
+		/// </summary>
+		private void MoveColumn(Control header, MouseEventArgs e)
+		{
+			if (header.Text != DiscourseStrings.ksNotesColumnHeader) return;
+			if (header.Left < m_origHeaderLeft - 20)
+			{
+				m_notesOnRight = false;
+			}
+			else if (header.Left > m_origHeaderLeft + 20 || m_notesWasOnRight)
+			{
+				m_notesOnRight = true;
+			}
+			else
+			{
+				m_notesOnRight = false;
+			}
+			UpdatePositionsExceptNotes();
+			m_isDraggingNotes = true;
+			header.Left += (e.X - m_origMouseLeft);
+		}
+
+		/// <summary>
+		/// Handles a column's mouseup to remove any state data and finalize changes made in a mousemove
+		/// </summary>
+		private void OnColumnMouseUp(object sender, MouseEventArgs e)
+		{
+			var header = sender as Control;
+			if (m_isResizingColumn)
+			{
+				UpdatePositions();
+				ColumnWidthChanged?.Invoke(this, new ColumnWidthChangedEventArgs(IndexOf(header)));
+			}
+			else if (m_isDraggingNotes)
+			{
+				header.Left = m_origHeaderLeft;
+			}
+
+			m_isDraggingNotes = false;
+			m_isResizingColumn = false;
+
+
+			UpdatePositions();
+			if (m_notesWasOnRight != NotesOnRight)
+			{
+				ColumnWidthChanged?.Invoke(this, new ColumnWidthChangedEventArgs(0));
+				m_chart.RefreshRoot();
+			}
+
+			header.ResumeLayout(false);
+			ResumeLayout(false);
+		}
+
+		/// <summary>
+		/// Draws the border around a column header
+		/// </summary>
+		private void OnColumnPaint(object sender, PaintEventArgs e)
+		{
+			var header = sender as Control;
+			var topLeft = new Point(0, 0);
+			var bottomRight = new Size(header.Width - 1, header.Height - 1);
+			e.Graphics.DrawRectangle(new Pen(Color.Black), new Rectangle(topLeft, bottomRight));
+		}
+
+		/// <summary>
+		/// Handles resizing of the last column if the mouse hangs over its border slightly
+		/// </summary>
+		protected override void OnMouseMove(MouseEventArgs e)
+		{
+			if (e.X < this[Controls.Count - 1].Right + 3)
+			{
+				Cursor = Cursors.VSplit;
+			}
+			else
+			{
+				Cursor = Cursors.Default;
+			}
+
+			if (!m_isResizingColumn)
+				return;
+
+			var header = this[Controls.Count - 1];
+			header.Width = e.X - header.Left;
+			if (header.Width < kColMinimumWidth)
+			{
+				header.Width = kColMinimumWidth;
+			}
+		}
+
+		protected override void OnMouseDown(MouseEventArgs e)
+		{
+			if (Cursor == Cursors.VSplit)
+			{
+				m_isResizingColumn = true;
+				SuspendLayout();
+				this[Controls.Count - 1].SuspendLayout();
+			}
+		}
+
+		protected override void OnMouseUp(MouseEventArgs e)
+		{
+			m_isResizingColumn = false;
+			ResumeLayout(false);
+			this[Controls.Count - 1].ResumeLayout(false);
+			ColumnWidthChanged(this, new ColumnWidthChangedEventArgs(Controls.Count - 1));
 		}
 	}
 }
