@@ -145,7 +145,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 		/// </summary>
 		private void OnDomKeyPress(object sender, DomKeyEventArgs e)
 		{
-			var browser = (GeckoWebBrowser) m_mainView.NativeBrowser;
+			var browser = (GeckoWebBrowser)m_mainView.NativeBrowser;
 			const int UP = 38;
 			const int DOWN = 40;
 			const int PAGEUP = 33;
@@ -153,47 +153,47 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			switch (e.KeyCode)
 			{
 				case UP:
-				{
-					if (browser.Window.ScrollY == 0)
 					{
-						AddMoreEntriesToPage(true, (GeckoWebBrowser)m_mainView.NativeBrowser);
+						if (browser.Window.ScrollY == 0)
+						{
+							AddMoreEntriesToPage(true, (GeckoWebBrowser)m_mainView.NativeBrowser);
+						}
+						break;
 					}
-					break;
-				}
 				case DOWN:
-				{
-					if (browser.Window.ScrollY >= browser.Window.ScrollMaxY)
 					{
-						AddMoreEntriesToPage(false, (GeckoWebBrowser)m_mainView.NativeBrowser);
+						if (browser.Window.ScrollY >= browser.Window.ScrollMaxY)
+						{
+							AddMoreEntriesToPage(false, (GeckoWebBrowser)m_mainView.NativeBrowser);
+						}
+						break;
 					}
-					break;
-				}
 				case PAGEUP:
-				{
-					if (browser.Window.ScrollY == 0)
 					{
-						var currentPage = GetTopCurrentPageButton(browser.Document.Body);
-						if (currentPage.PreviousSibling != null)
+						if (browser.Window.ScrollY == 0)
 						{
-							var itemIndex = int.Parse(((GeckoHtmlElement)currentPage.PreviousSibling).Attributes["endIndex"].NodeValue);
-							MyRecordList.JumpToRecord(PublicationDecorator.GetEntriesToPublish(PropertyTable, MyRecordList.VirtualFlid)[itemIndex]);
+							var currentPage = GetTopCurrentPageButton(browser.Document.Body);
+							if (currentPage.PreviousSibling != null)
+							{
+								var itemIndex = int.Parse(((GeckoHtmlElement)currentPage.PreviousSibling).Attributes["endIndex"].NodeValue);
+								MyRecordList.JumpToRecord(PublicationDecorator.GetEntriesToPublish(PropertyTable, MyRecordList.VirtualFlid)[itemIndex]);
+							}
 						}
+						break;
 					}
-					break;
-				}
 				case PAGEDOWN:
-				{
-					if (browser.Window.ScrollY >= browser.Window.ScrollMaxY)
 					{
-						var currentPage = GetTopCurrentPageButton(browser.Document.Body);
-						if (currentPage.NextSibling != null)
+						if (browser.Window.ScrollY >= browser.Window.ScrollMaxY)
 						{
-							var itemIndex = int.Parse(((GeckoHtmlElement)currentPage.NextSibling).Attributes["startIndex"].NodeValue);
-							MyRecordList.JumpToRecord(PublicationDecorator.GetEntriesToPublish(PropertyTable, MyRecordList.VirtualFlid)[itemIndex]);
+							var currentPage = GetTopCurrentPageButton(browser.Document.Body);
+							if (currentPage.NextSibling != null)
+							{
+								var itemIndex = int.Parse(((GeckoHtmlElement)currentPage.NextSibling).Attributes["startIndex"].NodeValue);
+								MyRecordList.JumpToRecord(PublicationDecorator.GetEntriesToPublish(PropertyTable, MyRecordList.VirtualFlid)[itemIndex]);
+							}
 						}
+						break;
 					}
-					break;
-				}
 				default:
 					break;
 			}
@@ -213,10 +213,10 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 				return false;
 			}
 			ExclusionReasonCode xrc;
-				// Make sure we explain to the user in case hvoTarget is not visible due to
-				// the current Publication layout or Configuration view.
-				if (!IsObjectVisible(hvoTarget, out xrc))
-				{
+			// Make sure we explain to the user in case hvoTarget is not visible due to
+			// the current Publication layout or Configuration view.
+			if (!IsObjectVisible(hvoTarget, out xrc))
+			{
 				AreaServices.GiveSimpleWarning(PropertyTable.GetValue<Form>("window"), PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").HelpFile, xrc);
 			}
 			return false;
@@ -286,11 +286,11 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			{
 				case GeckoMouseButton.Left:
 					if (HandleClickOnPageButton(MyRecordList, Cache.ServiceLocator.ObjectRepository, element))
-				{
-					return;
-				}
-				// Handle button clicks or select the entry represented by the current element.
-				HandleDomLeftClick(MyRecordList, Cache.ServiceLocator.ObjectRepository, e, element);
+					{
+						return;
+					}
+					// Handle button clicks or select the entry represented by the current element.
+					HandleDomLeftClick(MyRecordList, Cache.ServiceLocator.ObjectRepository, e, element);
 					break;
 				case GeckoMouseButton.Right:
 					HandleDomRightClick(browser, e, element, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), m_configObjectName, Cache, MyRecordList);
@@ -308,9 +308,9 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			{
 				return;
 			}
-				CloseContextMenuIfOpen();
-				SetActiveSelectedEntryOnView(browser);
-				// Without this we show the entry count in the status bar the first time we open the Dictionary or Rev. Index.
+			CloseContextMenuIfOpen();
+			SetActiveSelectedEntryOnView(browser);
+			// Without this we show the entry count in the status bar the first time we open the Dictionary or Rev. Index.
 			MyRecordList.SelectedRecordChanged(true, true);
 		}
 
@@ -357,7 +357,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			// Right-to-Left for the overall layout is determined by Dictionary-Normal
 			var dictionaryNormalStyle = new ExportStyleInfo(FwUtils.StyleSheetFromPropertyTable(PropertyTable).Styles["Dictionary-Normal"]);
 			var isNormalRightToLeft = dictionaryNormalStyle.DirectionIsRightToLeft == TriStateBool.triTrue; // default is LTR
-			// Get the current page
+																											// Get the current page
 			if (goingUp)
 			{
 				// Use the up/down info to select the adjacentPage
@@ -398,7 +398,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 				Tuple<int, int> newAdjPageRange;
 				// Gecko xpath seems to be sensitive to namespaces, using * instead of span helps
 				var currentPageButton = GetBottomCurrentPageButton(browserElement);
-				var adjPage = (GeckoHtmlElement) currentPageButton?.NextSibling;
+				var adjPage = (GeckoHtmlElement)currentPageButton?.NextSibling;
 				if (adjPage == null)
 				{
 					return;
@@ -453,13 +453,13 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 		private static GeckoHtmlElement GetBottomCurrentPageButton(GeckoElement pageButtonElement)
 		{
 			// from the parent node select the second instance of the current page (the one with the id)
-			return (GeckoHtmlElement)pageButtonElement.OwnerDocument.Body.SelectFirst("(//*[@class='pagebutton' and @id])[2]");
+			return (GeckoHtmlElement)pageButtonElement?.OwnerDocument?.Body?.SelectFirst("(//*[@class='pagebutton' and @id])[2]");
 		}
 
 		private static GeckoHtmlElement GetTopCurrentPageButton(GeckoElement element)
 		{
 			// The page with the id is the current page, select the first one on the page
-			return (GeckoHtmlElement)element.OwnerDocument.Body.SelectFirst("//*[@class='pagebutton' and @id]");
+			return (GeckoHtmlElement)element?.OwnerDocument?.Body?.SelectFirst("//*[@class='pagebutton' and @id]");
 		}
 
 		private static bool HandleClickOnPageButton(IRecordList recordList, ICmObjectRepository objectRepository, GeckoElement element)
@@ -473,11 +473,11 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			{
 				throw new ArgumentException(@"The element passed to this method should have a firstEntryGuid.", nameof(element));
 			}
-				var firstEntryOnPage = element.Attributes["firstEntryGuid"].NodeValue;
+			var firstEntryOnPage = element.Attributes["firstEntryGuid"].NodeValue;
 			var obj = objectRepository.GetObject(new Guid(firstEntryOnPage));
 			recordList.JumpToRecord(obj.Hvo);
-				return true;
-			}
+			return true;
+		}
 
 		/// <summary>
 		/// Pop up a menu to allow the user to start the document configuration dialog, and
@@ -522,9 +522,9 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			{
 				return;
 			}
-				s_contextMenu.Close();
-				DisposeContextMenu(null, null);
-			}
+			s_contextMenu.Close();
+			DisposeContextMenu(null, null);
+		}
 
 		private static void m_contextMenu_Closed(object sender, ToolStripDropDownClosedEventArgs e)
 		{
@@ -538,9 +538,9 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			{
 				return;
 			}
-				s_contextMenu.Dispose();
-				s_contextMenu = null;
-			}
+			s_contextMenu.Dispose();
+			s_contextMenu = null;
+		}
 
 		// Context menu exists just for one invocation (until idle).
 		private static ContextMenuStrip s_contextMenu;
@@ -557,10 +557,10 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			var cache = (LcmCache)tagObjects[5];
 			var activeRecordList = (RecordList)tagObjects[6];
 			var mainWindow = propertyTable.GetValue<IFwMainWnd>("window");
-				ICmObject current = null;
-				if (guid != Guid.Empty && cache != null && cache.ServiceLocator.ObjectRepository.IsValidObjectId(guid))
+			ICmObject current = null;
+			if (guid != Guid.Empty && cache != null && cache.ServiceLocator.ObjectRepository.IsValidObjectId(guid))
 			{
-					current = cache.ServiceLocator.GetObject(guid);
+				current = cache.ServiceLocator.GetObject(guid);
 			}
 			else if (activeRecordList != null)
 			{
@@ -585,7 +585,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			}
 		}
 
-#endregion
+		#endregion
 
 		/// <summary>
 		/// We wait until containing controls are laid out to try to set the content
@@ -595,7 +595,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			// Tell the record list it is active so it will update the list of entries. Pass false as we have no toolbar to update.
 			MyRecordList.ActivateUI();
 			// Update the entry list if necessary
-			if(!MyRecordList.ListLoadingSuppressed && MyRecordList.RequestedLoadWhileSuppressed)
+			if (!MyRecordList.ListLoadingSuppressed && MyRecordList.RequestedLoadWhileSuppressed)
 			{
 				MyRecordList.UpdateList(true, true);
 			}
@@ -606,7 +606,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			if (string.IsNullOrEmpty(PropertyTable.GetValue<string>("SuspendLoadingRecordUntilOnJumpToRecord", null)))
 			{
 				UpdateContent(PublicationDecorator, validConfiguration);
-		}
+			}
 		}
 
 		private string SetCurrentDictionaryPublicationLayout()
@@ -757,10 +757,10 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			inConfig = new List<string>();
 			notInConfig = new List<string>();
 			var config = new DictionaryConfigurationModel(configurationPath, Cache);
-			foreach(var pub in publications)
+			foreach (var pub in publications)
 			{
 				var name = pub.Name.UserDefaultWritingSystem.Text;
-				if(config.AllPublications || config.Publications.Contains(name))
+				if (config.AllPublications || config.Publications.Contains(name))
 				{
 					inConfig.Add(name);
 				}
@@ -782,10 +782,10 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 		{
 			hasPub = new SortedDictionary<string, string>();
 			doesNotHavePub = new SortedDictionary<string, string>();
-			foreach(var config in configurations)
+			foreach (var config in configurations)
 			{
 				var model = new DictionaryConfigurationModel(config.Value, Cache);
-				if(model.AllPublications || publication.Equals(LanguageExplorerResources.AllEntriesPublication)
+				if (model.AllPublications || publication.Equals(LanguageExplorerResources.AllEntriesPublication)
 												 || model.Publications.Contains(publication))
 				{
 					hasPub[config.Key] = config.Value;
@@ -810,10 +810,10 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 
 		internal string GetValidConfigurationForPublication(string publication)
 		{
-			if(publication == LanguageExplorerResources.AllEntriesPublication)
+			if (publication == LanguageExplorerResources.AllEntriesPublication)
 				return GetCurrentConfiguration(false);
 			var currentConfig = GetCurrentConfiguration(false);
-			var allConfigurations = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(Cache,m_configObjectName);
+			var allConfigurations = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(Cache, m_configObjectName);
 			IDictionary<string, string> hasPub;
 			IDictionary<string, string> doesNotHavePub;
 			SplitConfigurationsByPublication(allConfigurations,
@@ -821,7 +821,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 														out hasPub, out doesNotHavePub);
 			// If the current configuration is already valid use it otherwise return
 			// the first valid one or null if no configurations have the publication.
-			if(hasPub.Values.Contains(currentConfig))
+			if (hasPub.Values.Contains(currentConfig))
 			{
 				return currentConfig;
 			}
@@ -1122,12 +1122,12 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 		{
 			get
 			{
-				if(m_pubDecorator == null)
+				if (m_pubDecorator == null)
 				{
 					m_pubDecorator = new DictionaryPublicationDecorator(Cache, MyRecordList.VirtualListPublisher, MyRecordList.VirtualFlid);
 				}
 				var pubName = GetCurrentPublication();
-				if(LanguageExplorerResources.AllEntriesPublication == pubName)
+				if (LanguageExplorerResources.AllEntriesPublication == pubName)
 				{
 					// A null publication means show everything
 					m_pubDecorator.Publication = null;
@@ -1149,7 +1149,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 
 		private void SetConfigViewTitle()
 		{
-			var maxViewWidth = Width/2 - kSpaceForMenuButton;
+			var maxViewWidth = Width / 2 - kSpaceForMenuButton;
 			var allConfigurations = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(Cache, m_configObjectName);
 			var currentConfig = GetCurrentConfiguration(false);
 			var curViewName = allConfigurations.ContainsValue(currentConfig)

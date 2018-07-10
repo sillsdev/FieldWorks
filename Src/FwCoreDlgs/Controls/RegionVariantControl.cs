@@ -12,6 +12,7 @@ using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.WritingSystems;
+using System.Text.RegularExpressions;
 
 namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
@@ -319,7 +320,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 					if (!string.IsNullOrEmpty(code))
 					{
 						subtag = new RegionSubtag(code, m_regionName.Text.Trim());
-					}
+				}
 				}
 				else
 				{
@@ -370,13 +371,14 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				{
 					var code = m_variantAbbrev.Text.Trim();
 					IEnumerable<VariantSubtag> variantSubtags;
-					if (IetfLanguageTag.TryGetVariantSubtags(code, out variantSubtags, m_variantNameString))
+					code = Regex.Replace(code, "^x-", "");
+					if (IetfLanguageTag.TryGetVariantSubtags("x-" + code, out variantSubtags, m_variantNameString))
 					{
 						foreach (var variantSubtag in variantSubtags)
 						{
 							yield return variantSubtag;
-						}
 					}
+				}
 				}
 				else
 				{
@@ -409,13 +411,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 						switch (variantSubtags.Length)
 						{
 							case 1:
-								variantSubtag = variantSubtags[0];
+							variantSubtag = variantSubtags[0];
 								break;
 							case 2:
 								if (variantSubtags[1] == WellKnownSubtags.IpaPhonemicPrivateUse || variantSubtags[1] == WellKnownSubtags.IpaPhoneticPrivateUse)
-								{
-									variantSubtag = variantSubtags[1];
-								}
+						{
+								variantSubtag = variantSubtags[1];
+						}
 								break;
 						}
 					}
@@ -509,7 +511,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			if (!directed)
 			{
 				SelectNextControl(null, forward, true, true, false);
-			}
+		}
 		}
 
 		/// <summary>
@@ -710,7 +712,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			if (m_enableLangTagSideEffects)
 			{
 				DoSideEffectsOfChangingScriptTag();
-			}
+		}
 		}
 
 		/// <summary>
@@ -723,7 +725,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			if (enable)
 			{
 				DoSideEffectsOfChangingScriptTag();
-			}
+		}
 		}
 
 		private void DoSideEffectsOfChangingScriptTag()
@@ -774,7 +776,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			if (m_enableLangTagSideEffects)
 			{
 				DoSideEffectsOfChangingScriptTag();
-			}
+		}
 		}
 
 		/// <summary>
@@ -895,6 +897,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		private void m_variantCode_KeyPress(object sender, KeyPressEventArgs e)
 		{
+			m_enableLangTagSideEffects = false;
 			HandleKeyPress(e);
 		}
 
@@ -919,8 +922,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 					if (sb.Length == maxLen)
 					{
 						break;
-					}
 				}
+			}
 			}
 			return sb.ToString();
 		}
@@ -942,7 +945,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			if (m_enableLangTagSideEffects)
 			{
 				DoSideEffectsOfChangingScriptTag();
-			}
+		}
 		}
 
 		private void m_regionCode_TextChanged(object sender, EventArgs e)
@@ -952,7 +955,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			if (m_enableLangTagSideEffects)
 			{
 				DoSideEffectsOfChangingScriptTag();
-			}
+		}
 		}
 
 		private void m_variantCode_TextChanged(object sender, EventArgs e)
@@ -962,6 +965,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			if (m_enableLangTagSideEffects)
 			{
 				OnScriptRegionVariantChanged(EventArgs.Empty);
+			}
+			else
+			{
+				HandleAudioVariant();
 			}
 		}
 

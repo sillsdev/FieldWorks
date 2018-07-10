@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -136,6 +135,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		public void Reuse(ICmObject obj, int flid, int ws, int wsOptional, bool forceIncludeEnglish, bool editable, bool spellCheck)
 		{
 			Label = null; // new slice normally has this
+			SetWssToDisplayForPart(VisibleWritingSystems);
 			View.Reuse(obj.Hvo, flid, ws, wsOptional, forceIncludeEnglish, editable, spellCheck);
 		}
 

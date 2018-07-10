@@ -61,16 +61,19 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		{
 			var isEmpty = digits.Equals(string.Empty);
 			DigitFont = new Font(wsFontFamily, wsFontSize);
-			if (!isEmpty && digits.Length != 10)
+			if (!isEmpty && new StringInfo(digits).LengthInTextElements != 10)
 			{
 				throw new ArgumentException("digits string must include 10 characters, or be the empty string to clear all boxes", nameof(digits));
 			}
 
+			var tee = StringInfo.GetTextElementEnumerator(digits);
 			for (var i = 0; i < 10; ++i)
 			{
 				_digitControls[i].Font = DigitFont;
-				_digitControls[i].Text = isEmpty ? string.Empty : digits[i].ToString();
+				_digitControls[i].Text = (!isEmpty && tee.MoveNext()) ? tee.GetTextElement() : string.Empty;
 			}
+
+			this.ResetColor();
 		}
 
 		private Font DigitFont
@@ -131,5 +134,17 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				}
 			}
 		}
+
+		/// <summary>
+		/// Set digit text box colors back to default.
+		/// </summary>
+		public void ResetColor()
+		{
+			for (var i = 0; i < 10; ++i)
+			{
+				_digitControls[i].BackColor = Color.Empty;
+			}
+		}
+
 	}
 }

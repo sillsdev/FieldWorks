@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -201,7 +201,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					ICmObject oldSegment = null;
 					// Try and locate a segment with this Guid. Assign newTextPara to the paragraph we're working on if we haven't already
-					if(!string.IsNullOrEmpty(phrase.guid))
+					if (!string.IsNullOrEmpty(phrase.guid))
 					{
 						if (cache.ServiceLocator.ObjectRepository.TryGetObject(new Guid(phrase.guid), out oldSegment))
 						{
@@ -307,7 +307,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// Insert a space between phrases unless there is already one
 			if (bldr.Length > 0 && phraseText.Text[0] != ' ' && bldr.Text[bldr.Length - 1] != ' ')
 			{
-					bldr.Replace(bldr.Length, bldr.Length, " ", null);
+				bldr.Replace(bldr.Length, bldr.Length, " ", null);
 			}
 			bldr.ReplaceTsString(bldr.Length, bldr.Length, phraseText);
 			newTextPara.Contents = bldr.GetString();
@@ -373,50 +373,55 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-				foreach (var item in phrase.Items)
+			foreach (var item in phrase.Items)
+			{
+				switch (item.type)
 				{
-					switch (item.type)
-					{
-						case "reference-label":
+					case "reference-label":
 						newSegment.Reference = TsStringUtils.MakeString(item.Value, GetWsEngine(wsFactory, item.lang).Handle);
-							break;
-						case "gls":
-							newSegment.FreeTranslation.set_String(GetWsEngine(wsFactory, item.lang).Handle, item.Value);
-							break;
-						case "lit":
-							newSegment.LiteralTranslation.set_String(GetWsEngine(wsFactory, item.lang).Handle, item.Value);
-							break;
-						case "note":
-						var note = cache.ServiceLocator.GetInstance<INoteFactory>().Create();
-							newSegment.NotesOS.Add(note);
-							note.Content.set_String(GetWsEngine(wsFactory, item.lang).Handle, item.Value);
-							break;
-						case "txt":
-							phraseText = TsStringUtils.MakeString(item.Value, GetWsEngine(wsFactory, item.lang).Handle);
-							textInFile = true;
-							break;
-						case "segnum":
-							break; // The segnum item is not associated to a property, and also not a custom field. Skip merging it.
-						default:
-							var classId = cache.MetaDataCacheAccessor.GetClassId("Segment");
-							var mdc = cache.GetManagedMetaDataCache();
-							foreach (var flid in mdc.GetFields(classId, false, (int)CellarPropertyTypeFilter.All))
+						break;
+					case "gls":
+						newSegment.FreeTranslation.set_String(GetWsEngine(wsFactory, item.lang).Handle, item.Value);
+						break;
+					case "lit":
+						newSegment.LiteralTranslation.set_String(GetWsEngine(wsFactory, item.lang).Handle, item.Value);
+						break;
+					case "note":
+						var ws = GetWsEngine(wsFactory, item.lang).Handle;
+						var newNote = newSegment.NotesOS.FirstOrDefault(note => note.Content.get_String(ws).Text == item.Value);
+						if (newNote == null)
+						{
+							newNote = cache.ServiceLocator.GetInstance<INoteFactory>().Create();
+							newSegment.NotesOS.Add(newNote);
+							newNote.Content.set_String(GetWsEngine(wsFactory, item.lang).Handle, item.Value);
+						}
+						break;
+					case "txt":
+						phraseText = TsStringUtils.MakeString(item.Value, GetWsEngine(wsFactory, item.lang).Handle);
+						textInFile = true;
+						break;
+					case "segnum":
+						break; // The segnum item is not associated to a property, and also not a custom field. Skip merging it.
+					default:
+						var classId = cache.MetaDataCacheAccessor.GetClassId("Segment");
+						var mdc = cache.GetManagedMetaDataCache();
+						foreach (var flid in mdc.GetFields(classId, false, (int)CellarPropertyTypeFilter.All))
+						{
+							if (!mdc.IsCustom(flid))
 							{
-								if (!mdc.IsCustom(flid))
-								{
-										continue;
-								}
-								var customId = mdc.GetFieldId2(classId, item.type, true);
-								if (customId != 0)
-								{
-									var customWs = GetWsEngine(wsFactory, item.lang).Handle;
-									var customTierText = TsStringUtils.MakeString(item.Value, customWs);
-									cache.MainCacheAccessor.SetString(newSegment.Hvo, customId, customTierText);
-								}
+								continue;
 							}
-							break;
-					}
+							var customId = mdc.GetFieldId2(classId, item.type, true);
+							if (customId != 0)
+							{
+								var customWs = GetWsEngine(wsFactory, item.lang).Handle;
+								var customTierText = TsStringUtils.MakeString(item.Value, customWs);
+								cache.MainCacheAccessor.SetString(newSegment.Hvo, customId, customTierText);
+							}
+						}
+						break;
 				}
+			}
 		}
 
 		private static void AddELANInfoToSegment(LcmCache cache, Phrase phrase, ISegment newSegment)
@@ -436,7 +441,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private static ICmPerson FindOrCreateSpeaker(string speaker, LcmCache cache)
 		{
-			if(cache.LanguageProject.PeopleOA != null)
+			if (cache.LanguageProject.PeopleOA != null)
 			{
 				//find and return a person in this project whose name matches the speaker
 				foreach (var person in cache.LanguageProject.PeopleOA.PossibilitiesOS)
@@ -466,7 +471,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				ICmObject repoObj;
 				newSegment.Cache.ServiceLocator.ObjectRepository.TryGetObject(new Guid(word.guid), out repoObj);
 				var modelWord = repoObj as IAnalysis;
-				if(modelWord != null)
+				if (modelWord != null)
 				{
 					UpgradeToWordGloss(word, ref modelWord);
 					newSegment.AnalysesRS.Add(modelWord);
@@ -514,21 +519,21 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							//otherwise the message box can be displayed behind everything
 							var instructions = GetInstructions(interlinText, writingSystem.LanguageName, ITextStrings.ksImportVernacLangMissing);
 							var asyncResult = progress.SynchronizeInvoke.BeginInvoke(new ShowDialogAboveProgressbarDelegate(ShowDialogAboveProgressbar),
-								new object[]
-								{
-									progress,
-									instructions,
-									ITextStrings.ksImportVernacLangMissingTitle,
-									MessageBoxButtons.OKCancel
-								});
+																		 new object[]
+																			{
+																				progress,
+																				instructions,
+																				ITextStrings.ksImportVernacLangMissingTitle,
+																				MessageBoxButtons.OKCancel
+																			});
 							result = (DialogResult)progress.SynchronizeInvoke.EndInvoke(asyncResult);
 							switch (result)
 							{
 								case DialogResult.OK:
-								cache.LanguageProject.AddToCurrentVernacularWritingSystems((CoreWritingSystemDefinition) writingSystem);
+									cache.LanguageProject.AddToCurrentVernacularWritingSystems((CoreWritingSystemDefinition)writingSystem);
 									break;
 								case DialogResult.Cancel:
-								return false;
+									return false;
 							}
 						}
 					}
@@ -540,29 +545,29 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						}
 						var instructions = GetInstructions(interlinText, writingSystem.LanguageName, ITextStrings.ksImportAnalysisLangMissing);
 						var asyncResult = progress.SynchronizeInvoke.BeginInvoke(new ShowDialogAboveProgressbarDelegate(ShowDialogAboveProgressbar),
-							new object[]
-							{
-								progress,
-								instructions,
-								ITextStrings.ksImportAnalysisLangMissingTitle,
-								MessageBoxButtons.OKCancel
-							});
+																		 new object[]
+																			{
+																				progress,
+																				instructions,
+																				ITextStrings.ksImportAnalysisLangMissingTitle,
+																				MessageBoxButtons.OKCancel
+																			});
 						result = (DialogResult)progress.SynchronizeInvoke.EndInvoke(asyncResult);
-							//alert the user
+						//alert the user
 						switch (result)
-							{
+						{
 							case DialogResult.OK:
 								//alert the user
-								cache.LanguageProject.AddToCurrentAnalysisWritingSystems((CoreWritingSystemDefinition) writingSystem);
+								cache.LanguageProject.AddToCurrentAnalysisWritingSystems((CoreWritingSystemDefinition)writingSystem);
 								// We already have progress indications up.
 								XmlTranslatedLists.ImportTranslatedListsForWs(writingSystem.Id, cache, FwDirectoryFinder.TemplateDirectory, null);
 								break;
 							case DialogResult.Cancel:
 								return false;
-							}
 						}
 					}
 				}
+			}
 			return true;
 		}
 
@@ -603,7 +608,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			foreach (var para in interlinText.paragraphs)
 			{
-				if(para.phrases == null) // if there are no phrases, they have no languages we are interested in.
+				if (para.phrases == null) // if there are no phrases, they have no languages we are interested in.
 				{
 					continue;
 				}
@@ -616,7 +621,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							EnsureVernacularLanguage(interlinText, item.lang);
 						}
 					}
-					if(phrase.WordsContent.Words != null)
+					if (phrase.WordsContent.Words != null)
 					{
 						foreach (var word in phrase.WordsContent.Words)
 						{
@@ -635,7 +640,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		private static void EnsureVernacularLanguage(Interlineartext interlinText,string langName)
+		private static void EnsureVernacularLanguage(Interlineartext interlinText, string langName)
 		{
 			foreach (var lang in interlinText.languages.language)
 			{
@@ -733,7 +738,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				    foreach(item item in morpheme.items)
 				    {
 				        //fill in morpheme's stuff
-					}
+			}
 				}
 			}*/
 			return analysis;

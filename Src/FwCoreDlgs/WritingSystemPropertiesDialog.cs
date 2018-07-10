@@ -1318,6 +1318,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// numberSettingsCombo
 			//
 			this.numberSettingsCombo.FormattingEnabled = true;
+			this.numberSettingsCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			resources.ApplyResources(this.numberSettingsCombo, "numberSettingsCombo");
 			this.numberSettingsCombo.Name = "numberSettingsCombo";
 			this.numberSettingsCombo.SelectedIndexChanged += new System.EventHandler(this.numberSettingsCombo_SelectedIndexChanged);
