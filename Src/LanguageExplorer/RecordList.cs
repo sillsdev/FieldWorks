@@ -1122,6 +1122,7 @@ namespace LanguageExplorer
 		/// </summary>
 		public bool OnFirst => (SortedObjects.Count > 0) && m_currentIndex == 0;
 
+		/// <summary />
 		public bool OnInsertItemInVector(object argument)
 		{
 			if (!Editable)
@@ -1192,6 +1193,66 @@ namespace LanguageExplorer
 
 			return result;
 		}
+
+		#region Duplication
+
+#if RANDYTODO
+		/// <summary>
+		/// Influence the display of a particular *command* (which we don't know the name of)
+		/// by giving an opinion on whether we are prepared to handle its corresponding "DuplicateItemInVector"
+		/// *message*.
+		/// </summary>
+		/// <param name="commandObject"></param>
+		/// <param name="display"></param>
+		/// <returns></returns>
+		public bool OnDisplayDuplicateItemInVector(object commandObject, ref UIItemDisplayProperties display)
+		{
+			var command = (Command)commandObject;
+
+			// Can't copy an item if items can't be inserted
+			bool canInsert = OnDisplayInsertItemInVector(commandObject, ref display);
+			if (!canInsert)
+				return display.Enabled = false;
+
+			// "noCopy" gets an xml value a group of list id's from lists that should not display the button
+			string noCopy = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "noCopy") ?? "";
+			return display.Enabled = !noCopy.Contains(Id);
+		}
+
+		/// <summary>
+		/// This is triggered by any command whose message attribute is "DuplicateItemInVector"
+		/// </summary>
+		/// <param name="argument"></param>
+		/// <returns></returns>
+		public bool OnDuplicateItemInVector(object argument)
+		{
+			if (!Editable)
+				return false;
+
+			var command = (Command)argument;
+			bool result = false;
+			m_suppressSaveOnChangeRecord = true;
+			try
+			{
+				const int subitemFlid = 7004;
+				ICmPossibility original = (ICmPossibility)m_list.CurrentObject;
+				if (original.OwningFlid != subitemFlid && !original.ShortNameTSS.Text.Equals("???")) // Don't duplicate subitems or unnamed items
+					TreeBarHandlerUtils.Tree_Duplicate(original, 0, Cache);
+			}
+			catch (ApplicationException ae)
+			{
+				throw new ApplicationException("Could not duplicate the item requested by the command " + command.ConfigurationNode, ae);
+			}
+			finally
+			{
+				m_suppressSaveOnChangeRecord = false;
+			}
+
+			return result;
+		}
+#endif
+
+		#endregion
 
 		public void OnItemDataModified(object argument)
 		{
@@ -4028,9 +4089,9 @@ namespace LanguageExplorer
 
 		internal ListUpdateHelper UpdateHelper { get; set; }
 
-#endregion Protected stuff
+		#endregion Protected stuff
 
-#endregion Non-interface code
+		#endregion Non-interface code
 
 		private sealed class EditFilterMenuHandler : IDisposable
 		{

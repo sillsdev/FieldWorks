@@ -332,6 +332,7 @@
     <Compile Include="Areas\TextsAndWords\RespellingTests.cs" />
     <Compile Include="Areas\TextsAndWords\WordGrammarDebuggingTests.cs" />
     <Compile Include="Areas\AddCustomFieldDialogTests.cs" />
+    <Compile Include="Areas\TreeBarHandlerUtilsTests.cs" />
     <Compile Include="DictionaryConfiguration\AllReversalEntriesRecordListTests.cs" />
     <Compile Include="DictionaryConfiguration\BulkEditBarTests.cs" />
     <Compile Include="DictionaryConfiguration\ConfigurableDictionaryNodeTests.cs" />

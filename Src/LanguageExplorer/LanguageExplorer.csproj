@@ -1847,6 +1847,7 @@
     <Compile Include="Areas\TranslatedListsExporter.cs" />
     <Compile Include="DictionaryConfiguration\SwitchConfigurationEventArgs.cs" />
     <Compile Include="Areas\TreeBarHandler.cs" />
+    <Compile Include="Areas\TreeBarHandlerUtils.cs" />
     <Compile Include="Areas\RecordBrowseView.cs">
       <SubType>UserControl</SubType>
     </Compile>

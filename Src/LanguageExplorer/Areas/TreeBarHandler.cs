@@ -28,19 +28,17 @@ namespace LanguageExplorer.Areas
 		protected bool m_hierarchical;
 		protected bool m_includeAbbr;
 		protected string m_bestWS;
+
 		// This gets set when we skipped populating the tree bar because it wasn't visible.
 		protected bool m_fOutOfDate;
 		protected Dictionary<int, TreeNode> m_hvoToTreeNodeTable = new Dictionary<int, TreeNode>();
-
 		private TreeNode m_dragHiliteNode; // node that currently has background set to show drag destination
 		private TreeNode m_clickNode; // node the user mouse-downed on
-
 		protected ICmObjectRepository m_objRepo;
 		protected ICmPossibilityRepository m_possRepo;
-
 		TreeView m_tree;
-		int m_typeSize;		// font size for the tree's fonts.
-		// map from writing system to font.
+		int m_typeSize;	// font size for the tree's fonts.
+						// map from writing system to font.
 		readonly Dictionary<int, Font> m_wsToFontTable = new Dictionary<int, Font>();
 
 		/// <summary />
@@ -145,7 +143,6 @@ namespace LanguageExplorer.Areas
 			{
 				node.Text = text;
 			}
-
 			if (font != node.NodeFont)
 			{
 				node.NodeFont = font;
@@ -165,7 +162,7 @@ namespace LanguageExplorer.Areas
 			m_tree.DragDrop -= tree_DragDrop;
 			m_tree.DragOver -= tree_DragOver;
 			m_tree.GiveFeedback -= tree_GiveFeedback;
-		}
+	}
 
 		#endregion IRecordBarHandler implementation
 
@@ -317,6 +314,7 @@ namespace LanguageExplorer.Areas
 					tree.CollapseAll();
 					ExpandItems(tree.Nodes, expandedItems);
 				}
+
 				// Set the selection after expanding/collapsing the tree.  This allows the true
 				// selection to be visible even when the tree is collapsed but the selection is
 				// an internal node.  (See LT-4508.)
@@ -352,7 +350,7 @@ namespace LanguageExplorer.Areas
 		{
 			foreach (TreeNode node in treeNodeCollection)
 			{
-				if (!(node.Tag is int) || !expandedItems.Contains((int) node.Tag))
+				if (!(node.Tag is int) || !expandedItems.Contains((int)node.Tag))
 				{
 					continue;
 				}
@@ -527,14 +525,16 @@ namespace LanguageExplorer.Areas
 			var move = cache.ServiceLocator.GetObject(hvoMove);
 			var moveLabel = sourceItem.Text;
 			TreeNodeCollection newSiblings;
-			var tree = (TreeView) sender;
+			var tree = (TreeView)sender;
 			if (destNode == null)
 			{
 				ICmObject dest;
 				for (dest = move.Owner; dest != null; dest = dest.Owner)
 				{
 					if (!(dest is ICmPossibilityList))
+					{
 						continue;
+					}
 					hvoDest = dest.Hvo;
 					break;
 				}
@@ -577,10 +577,8 @@ namespace LanguageExplorer.Areas
 			using (new WaitCursor(tree.TopLevelControl))
 			using (new ListUpdateHelper(new ListUpdateHelperParameterObject { MyRecordList = MyRecordList }))
 			{
-				UndoableUnitOfWorkHelper.Do(AreaResources.UndoMoveItem, AreaResources.RedoMoveItem,
-					cache.ActionHandlerAccessor, () =>
-						cache.DomainDataByFlid.MoveOwnSeq(hvoOldOwner, flidSrc, srcIndex, srcIndex,
-														 hvoDest, flidDest, ihvoDest));
+				UndoableUnitOfWorkHelper.Do(AreaResources.UndoMoveItem, AreaResources.RedoMoveItem, cache.ActionHandlerAccessor, () =>
+						cache.DomainDataByFlid.MoveOwnSeq(hvoOldOwner, flidSrc, srcIndex, srcIndex, hvoDest, flidDest, ihvoDest));
 			}
 		}
 
@@ -675,7 +673,7 @@ namespace LanguageExplorer.Areas
 				if (movingColumnUI.CheckAndReportProtectedChartColumn())
 				{
 					return true;
-				}
+			}
 			}
 			// Other things being equal, we now need to make sure we aren't messing up the chart levels
 			// Unless something is badly wrong, the destination is either the root template,
@@ -686,13 +684,13 @@ namespace LanguageExplorer.Areas
 				MessageBox.Show(m_tree, AreaResources.ksCantPromoteGroupToTemplate, AreaResources.ksProhibitedMovement, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return true;
 			}
-				// if the destination IS the root, that's fine...anything can move there.
+			// if the destination IS the root, that's fine...anything can move there.
 			if (hvoDest == hvoTemplate)
 			{
 				return false;
 			}
-				// It's OK to move a leaf to a group (one level down from the root, as long as
-				// the destination 'group' isn't a column that's in use.
+			// It's OK to move a leaf to a group (one level down from the root, as long as
+			// the destination 'group' isn't a column that's in use.
 			var moveColumnIsLeaf = movingColumn.SubPossibilitiesOS.Count == 0;
 			if (m_objRepo.GetObject(hvoDest).Owner.Hvo == hvoTemplate && moveColumnIsLeaf)
 			{
@@ -704,7 +702,7 @@ namespace LanguageExplorer.Areas
 					if (dest.SubPossibilitiesOS.Count == 0)
 					{
 						return destUI.CheckAndReportProtectedChartColumn();
-					}
+				}
 				}
 				// If it's already a group it should be fine as a destination.
 				return false;
@@ -738,11 +736,11 @@ namespace LanguageExplorer.Areas
 			{
 				return false;
 			}
-			var hvoMove = (int) item.SourceNode.Tag;
+			var hvoMove = (int)item.SourceNode.Tag;
 			var hvoDest = 0;
 			if (destNode != null)
 			{
-				hvoDest = (int) destNode.Tag;
+				hvoDest = (int)destNode.Tag;
 			}
 			if (hvoDest <= 0)
 			{
@@ -762,7 +760,7 @@ namespace LanguageExplorer.Areas
 
 		void tree_MouseDown(object sender, MouseEventArgs e)
 		{
-			var tree = (TreeView) sender;
+			var tree = (TreeView)sender;
 			if (e.Button != MouseButtons.Left)
 			{
 				var node = tree.GetNodeAt(e.X, e.Y);
@@ -790,8 +788,8 @@ namespace LanguageExplorer.Areas
 				return;
 			}
 			var node = tree.SelectedNode;
-			m_clickNode = node;		// use the current selection just incase the
-									// user clicks off the list.  LT-5652
+			m_clickNode = node; // use the current selection just incase the
+								// user clicks off the list.  LT-5652
 			var label = node.Text;
 			try
 			{
@@ -807,7 +805,7 @@ namespace LanguageExplorer.Areas
 
 		protected virtual void AddTreeNodes(ArrayList sortedObjects, TreeView tree)
 		{
-			foreach(IManyOnePathSortItem item in sortedObjects)
+			foreach (IManyOnePathSortItem item in sortedObjects)
 			{
 				var hvo = item.RootObjectHvo;
 				if (hvo < 0) //was deleted
@@ -838,7 +836,7 @@ namespace LanguageExplorer.Areas
 			if (!m_hvoToTreeNodeTable.ContainsKey(keyHvo))
 			{
 				m_hvoToTreeNodeTable.Add(keyHvo, node);
-			}
+		}
 		}
 
 		protected virtual string GetDisplayPropertyName => "ShortNameTSS";
@@ -865,7 +863,7 @@ namespace LanguageExplorer.Areas
 		protected virtual TreeNode AddTreeNode(ICmObject obj, TreeNodeCollection parentsCollection)
 		{
 			Font font;
-			var node = new TreeNode( GetTreeNodeLabel(obj, out font) ) {Tag = obj.Hvo, NodeFont = font};
+			var node = new TreeNode(GetTreeNodeLabel(obj, out font)) { Tag = obj.Hvo, NodeFont = font };
 			parentsCollection.Add(node);
 			AddToTreeNodeTable(obj.Hvo, node);
 			AddSubNodes(obj, node.Nodes);

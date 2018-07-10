@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -532,5 +532,11 @@
   <data name="ResetViewTooltip" xml:space="preserve">
     <value>Reset this view</value>
     <comment>Used in Dictionary Config Mgr dialog</comment>
+  </data>
+  <data name="ksRedoDuplicate" xml:space="preserve">
+    <value>Redo Duplicate {0}</value>
+  </data>
+  <data name="ksUndoDuplicate" xml:space="preserve">
+    <value>Undo Duplicate {0}</value>
   </data>
 </root>

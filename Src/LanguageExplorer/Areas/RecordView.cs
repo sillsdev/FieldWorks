@@ -202,8 +202,8 @@ namespace LanguageExplorer.Areas
 				SetTreebarAvailability();
 				AddPaneBar();
 
-				//Historical comments here indicated that MyRecordList should be processed by the mediator before the
-				//view. This is handled by Priority now, RecordView is by default just after RecordList in the processing.
+				// Historical comments here indicated that MyRecordList should be processed by the mediator before the
+				// view. This is handled by Priority now, RecordView is by default just after RecordList in the processing.
 				SetupDataContext();
 			}
 			// In case it hasn't yet been loaded, load it!  See LT-10185.

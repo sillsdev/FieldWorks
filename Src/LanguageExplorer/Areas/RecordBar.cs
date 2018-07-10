@@ -13,11 +13,9 @@ namespace LanguageExplorer.Areas
 	/// </summary>
 	internal sealed class RecordBar : UserControl, IRecordBar
 	{
-		/// <summary />
 		private TreeView m_treeView;
-		/// <summary />
 		private ListView m_listView;
-		private ColumnHeader m_columnHeader1;
+		private ColumnHeader m_columnHeader;
 		private Control m_optionalHeaderControl;
 		private IPropertyTable m_propertyTable;
 
@@ -146,7 +144,10 @@ namespace LanguageExplorer.Areas
 			if (disposing)
 			{
 				components?.Dispose();
+				m_treeView?.Dispose();
 			}
+			m_treeView = null;
+
 			base.Dispose(disposing);
 		}
 
@@ -158,43 +159,43 @@ namespace LanguageExplorer.Areas
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RecordBar));
-			this.m_treeView = new System.Windows.Forms.TreeView();
-			this.m_listView = new System.Windows.Forms.ListView();
-			this.m_columnHeader1 = new System.Windows.Forms.ColumnHeader();
-			this.SuspendLayout();
+			m_treeView = new TreeView();
+			m_listView = new ListView();
+			m_columnHeader = new ColumnHeader();
+			SuspendLayout();
 			//
-			// m_treeView
+			// m_treeView tree view
 			//
 			resources.ApplyResources(this.m_treeView, "m_treeView");
-			this.m_treeView.Name = "m_treeView";
-			this.m_treeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-			((System.Windows.Forms.TreeNode)(resources.GetObject("m_treeView.Nodes"))),
-			((System.Windows.Forms.TreeNode)(resources.GetObject("m_treeView.Nodes1"))),
-			((System.Windows.Forms.TreeNode)(resources.GetObject("m_treeView.Nodes2")))});
+			m_treeView.Name = "m_treeView";
+			m_treeView.Nodes.AddRange(new TreeNode[] {
+			((TreeNode)(resources.GetObject("m_treeView.Nodes"))),
+			((TreeNode)(resources.GetObject("m_treeView.Nodes1"))),
+			((TreeNode)(resources.GetObject("m_treeView.Nodes2")))});
 			//
 			// m_listView
 			//
-			this.m_listView.AutoArrange = false;
-			this.m_listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-			this.m_columnHeader1});
-			resources.ApplyResources(this.m_listView, "m_listView");
-			this.m_listView.HideSelection = false;
-			this.m_listView.MultiSelect = false;
-			this.m_listView.Name = "m_listView";
-			this.m_listView.UseCompatibleStateImageBehavior = false;
-			this.m_listView.View = System.Windows.Forms.View.Details;
+			m_listView.AutoArrange = false;
+			m_listView.Columns.AddRange(new ColumnHeader[] {
+			m_columnHeader});
+			resources.ApplyResources(m_listView, "m_listView");
+			m_listView.HideSelection = false;
+			m_listView.MultiSelect = false;
+			m_listView.Name = "m_listView";
+			m_listView.UseCompatibleStateImageBehavior = false;
+			m_listView.View = View.Details;
 			//
 			// columnHeader1
 			//
-			resources.ApplyResources(this.m_columnHeader1, "m_columnHeader1");
+			resources.ApplyResources(m_columnHeader, "m_columnHeader");
 			//
 			// RecordBar
 			//
-			this.Controls.Add(this.m_listView);
-			this.Controls.Add(this.m_treeView);
-			this.Name = "RecordBar";
+			Controls.Add(m_listView);
+			Controls.Add(m_treeView);
+			Name = "RecordBar";
 			resources.ApplyResources(this, "$this");
-			this.ResumeLayout(false);
+			ResumeLayout(false);
 
 		}
 		#endregion
@@ -206,12 +207,12 @@ namespace LanguageExplorer.Areas
 		public bool ShowHeaderControl
 		{
 			set
-			{
-				if (HasHeaderControl)
+		{
+			if (HasHeaderControl)
 				{
 					m_optionalHeaderControl.Visible = value;
 				}
-			}
+		}
 		}
 	}
 }

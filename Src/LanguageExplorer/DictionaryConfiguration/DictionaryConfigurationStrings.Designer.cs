@@ -673,6 +673,15 @@ namespace LanguageExplorer.DictionaryConfiguration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Redo Duplicate {0}.
+        /// </summary>
+        internal static string ksRedoDuplicate {
+            get {
+                return ResourceManager.GetString("ksRedoDuplicate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Redo Insert {0}.
         /// </summary>
         internal static string ksRedoInsert {
@@ -885,6 +894,15 @@ namespace LanguageExplorer.DictionaryConfiguration {
         internal static string ksUndoDeleteMediaLink {
             get {
                 return ResourceManager.GetString("ksUndoDeleteMediaLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo Duplicate {0}.
+        /// </summary>
+        internal static string ksUndoDuplicate {
+            get {
+                return ResourceManager.GetString("ksUndoDuplicate", resourceCulture);
             }
         }
         
