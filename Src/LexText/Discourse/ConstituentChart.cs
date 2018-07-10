@@ -1320,6 +1320,19 @@ namespace SIL.FieldWorks.Discourse
 			dest.Add(flid);
 		}
 
+		public bool NotesDataFromPropertyTable
+		{
+			get
+			{
+				return m_propertyTable == null || m_propertyTable.GetBoolProperty("notesOnRight",
+					true, PropertyTable.SettingsGroup.LocalSettings);
+			}
+			set
+			{
+				m_propertyTable?.SetProperty("notesOnRight", value, PropertyTable.SettingsGroup.LocalSettings, false);
+			}
+		}
+
 		#endregion
 
 	} // End Constituent Chart class
@@ -1473,6 +1486,11 @@ namespace SIL.FieldWorks.Discourse
 		/// </summary>
 		protected override void OnControlAdded(ControlEventArgs e)
 		{
+			//Get the notes value from the property table once the first column has been added
+			if (Controls.Count == 1)
+			{
+				m_notesOnRight = m_chart.NotesDataFromPropertyTable;
+			}
 			Control newColumn = e.Control;
 			newColumn.Height = 22;
 			newColumn.MouseDown += OnColumnMouseDown;
@@ -1620,6 +1638,7 @@ namespace SIL.FieldWorks.Discourse
 			UpdatePositions();
 			if (m_notesWasOnRight != NotesOnRight)
 			{
+				m_chart.NotesDataFromPropertyTable = m_notesOnRight;
 				ColumnWidthChanged?.Invoke(this, new ColumnWidthChangedEventArgs(0));
 				m_chart.RefreshRoot();
 			}
