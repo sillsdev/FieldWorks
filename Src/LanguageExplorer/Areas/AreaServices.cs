@@ -141,6 +141,9 @@ namespace LanguageExplorer.Areas
 		internal const string InsertOptionalItem = "InsertOptionalItem";
 		internal const string InsertHashMark = "InsertHashMark";
 		internal const string ShowEnvironmentError = "ShowEnvironmentError";
+		internal const string ContextSetFeatures = "ContextSetFeatures";
+		internal const string ContextJumpToNaturalClass = "ContextJumpToNaturalClass";
+		internal const string ContextJumpToPhoneme = "ContextJumpToPhoneme";
 
 		#endregion
 

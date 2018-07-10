@@ -1018,7 +1018,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				using (var ui = new ReferenceCollectionUi(Cache, m_rootObj, m_rootFlid, hvo))
 				{
 					ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-					return ui.HandleRightClick(this, true);
+					return ui.HandleRightClick(this, true); // Will be: "mnuEnvReferenceChoices" or "mnuReferenceChoices", depending on what "m_rootFlid" is.
 				}
 			}
 			// We need a CmObjectUi in order to call HandleRightClick().  This won't

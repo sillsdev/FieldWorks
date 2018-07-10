@@ -3,8 +3,11 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 using System.Xml.Linq;
+using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
@@ -211,7 +214,49 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 		protected override string RuleName => Rule.Name.BestAnalysisAlternative.Text;
 
-		protected override string ContextMenuID => "mnuPhMetathesisRule";
+		protected override Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> CreateContextMenu()
+		{
+			// Start: <menu id="mnuPhMetathesisRule">
+
+			const string mnuPhMetathesisRule = "mnuPhMetathesisRule";
+
+			var contextMenuStrip = new ContextMenuStrip
+			{
+				Name = mnuPhMetathesisRule
+			};
+			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(4);
+
+			if (IsFeatsNCContextCurrent)
+			{
+				// <command id="CmdCtxtSetFeatures" label="Set Phonological Features..." message="ContextSetFeatures" />
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.ContextSetFeatures), AreaResources.Set_Phonological_Features);
+			}
+			// Need to remember where to insert the separator, if it is needed, at all.
+			var separatorInsertIndex = menuItems.Count - 1;
+
+			// <item label="-" translate="do not translate" /> Optionally inserted at separatorInsertIndex. See below.
+
+			if (IsNCContextCurrent)
+			{
+				// <command id="CmdCtxtJumpToNC" label="Show in Natural Classes list" message="ContextJumpToNaturalClass" />
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.ContextJumpToNaturalClass), AreaResources.Show_in_Natural_Classes_list);
+			}
+
+			if (IsPhonemeContextCurrent)
+			{
+				// <command id="CmdCtxtJumpToPhoneme" label="Show in Phonemes list" message="ContextJumpToPhoneme" />
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.ContextJumpToPhoneme), AreaResources.Show_in_Phonemes_list);
+			}
+
+			if (separatorInsertIndex > 0 && separatorInsertIndex < menuItems.Count - 1)
+			{
+				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip, separatorInsertIndex);
+			}
+
+			// End: <menu id="mnuPhMetathesisRule">
+
+			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+		}
 
 		protected override int GetNextCell(int cellId)
 		{

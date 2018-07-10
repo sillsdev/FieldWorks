@@ -20,9 +20,6 @@ namespace LanguageExplorer.Areas
 		private const string mnuObjectChoices = "mnuObjectChoices";
 		private const string mnuReferenceChoices = "mnuReferenceChoices";
 		private const string mnuEnvReferenceChoices = "mnuEnvReferenceChoices";
-		private const string mnuPhRegularRule = "mnuPhRegularRule";
-		private const string mnuPhMetathesisRule = "mnuPhMetathesisRule";
-		private const string mnuMoAffixProcess = "mnuMoAffixProcess";
 
 		private ITool _currentTool;
 		private DataTree MyDataTree { get; set; }
@@ -56,9 +53,6 @@ namespace LanguageExplorer.Areas
 			rightClickPopupMenuFactory.RegisterPopupContextCreatorMethod(mnuObjectChoices, PopupContextMenuCreatorMethod_mnuObjectChoices);
 			rightClickPopupMenuFactory.RegisterPopupContextCreatorMethod(mnuReferenceChoices, PopupContextMenuCreatorMethod_mnuReferenceChoices);
 			rightClickPopupMenuFactory.RegisterPopupContextCreatorMethod(mnuEnvReferenceChoices, PopupContextMenuCreatorMethod_mnuEnvReferenceChoices);
-			rightClickPopupMenuFactory.RegisterPopupContextCreatorMethod(mnuPhRegularRule, PopupContextMenuCreatorMethod_mnuPhRegularRule);
-			rightClickPopupMenuFactory.RegisterPopupContextCreatorMethod(mnuPhMetathesisRule, PopupContextMenuCreatorMethod_mnuPhMetathesisRule);
-			rightClickPopupMenuFactory.RegisterPopupContextCreatorMethod(mnuMoAffixProcess, PopupContextMenuCreatorMethod_mnuMoAffixProcess);
 		}
 
 		#endregion
@@ -107,7 +101,10 @@ namespace LanguageExplorer.Areas
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> PopupContextMenuCreatorMethod_mnuObjectChoices(Slice slice, string contextMenuId)
 		{
-			/*
+			/* "mnuObjectChoices" is used by ContextMenuId in CmObjectUi->HandleRightClick, but it is overridden by two subclasses:
+					ReferenceBaseUi ("mnuReferenceChoices")
+					ReferenceCollectionUi ("mnuReferenceChoices" OR "mnuEnvReferenceChoices" (if flid is on a IPhEnvironment))
+
 		    <menu id="mnuObjectChoices">
 		      <item command="CmdEntryJumpToDefault" /> // Also in "mnuBrowseView", menu: "mnuInflAffixTemplate-TemplateTable" & LexiconEditToolDataTreeStackLexEntryFormsManager->Create_mnuDataTree_VariantForm.
 		      <item command="CmdWordformJumpToAnalyses" /> // Also in "mnuBrowseView" & menu: "mnuIText-RawText".
@@ -175,8 +172,7 @@ namespace LanguageExplorer.Areas
 			/*
 		    <!-- The following commands are involked/displayed on a right click on a slice on a Possibility list item.
 
-			 In the C# code see the following  class ReferenceViewBase and class ReferenceBaseUi
-			 where ContextMenuId returns  "mnuReferenceChoices".
+			 In the C# code see the following  classes (ReferenceBaseUi and ReferenceCollectionUi) where ContextMenuId returns  "mnuReferenceChoices".
 
 			 Search in the xml files for the particular command (for example CmdJumpToAnthroList and CmdJumpToAnthroList2)
 			 See how the command has the following parameters
@@ -345,94 +341,18 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="EnvironmentEdit" className="PhEnvironment" ownerClass="PhPhonData" ownerField="Environments" />
 				    </command>
 		      <item command="CmdShowEnvironmentErrorMessage" />
-					<command id="CmdShowEnvironmentErrorMessage" label="_Describe Error in Environment" message="ShowEnvironmentError" />
+					<command id="CmdShowEnvironmentErrorMessage" label="_Describe Error in Environment" message="ShowEnvironmentError" /> SHARED
 		      <item label="-" translate="do not translate" />
 		      <item command="CmdInsertEnvSlash" />
-					<command id="CmdInsertEnvSlash" label="Insert Environment _slash" message="InsertSlash" />
+					<command id="CmdInsertEnvSlash" label="Insert Environment _slash" message="InsertSlash" /> SHARED
 		      <item command="CmdInsertEnvUnderscore" />
-					<command id="CmdInsertEnvUnderscore" label="Insert Environment _bar" message="InsertEnvironmentBar" />
+					<command id="CmdInsertEnvUnderscore" label="Insert Environment _bar" message="InsertEnvironmentBar" /> SHARED
 		      <item command="CmdInsertEnvNaturalClass" />
-					<command id="CmdInsertEnvNaturalClass" label="Insert _Natural Class" message="InsertNaturalClass" />
+					<command id="CmdInsertEnvNaturalClass" label="Insert _Natural Class" message="InsertNaturalClass" /> SHARED
 		      <item command="CmdInsertEnvOptionalItem" />
-					<command id="CmdInsertEnvOptionalItem" label="Insert _Optional Item" message="InsertOptionalItem" />
+					<command id="CmdInsertEnvOptionalItem" label="Insert _Optional Item" message="InsertOptionalItem" /> SHARED
 		      <item command="CmdInsertEnvHashMark" />
-					<command id="CmdInsertEnvHashMark" label="Insert _Word Boundary" message="InsertHashMark" />
-		    </menu>
-			*/
-			throw new NotImplementedException();
-		}
-
-		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> PopupContextMenuCreatorMethod_mnuPhRegularRule(Slice slice, string contextMenuId)
-		{
-			/* Grammar
-		    <menu id="mnuPhRegularRule">
-		      <item command="CmdCtxtOccurOnce" />
-				    <command id="CmdCtxtOccurOnce" label="Occurs exactly once" message="ContextSetOccurrence"> mnuPhRegularRule (x4)
-				      <parameters min="1" max="1" />
-				    </command>
-		      <item command="CmdCtxtOccurZeroMore" />
-				    <command id="CmdCtxtOccurZeroMore" label="Occurs zero or more times" message="ContextSetOccurrence"> mnuPhRegularRule (x4)
-				      <parameters min="0" max="-1" />
-				    </command>
-		      <item command="CmdCtxtOccurOneMore" />
-				    <command id="CmdCtxtOccurOneMore" label="Occurs one or more times" message="ContextSetOccurrence"> mnuPhRegularRule (x4)
-				      <parameters min="1" max="-1" />
-				    </command>
-		      <item command="CmdCtxtSetOccur" />
-					<command id="CmdCtxtSetOccur" label="Set occurrence (min. and max.)..." message="ContextSetOccurrence" /> mnuPhRegularRule (x4)
-		      <item label="-" translate="do not translate" />
-		      <item command="CmdCtxtSetFeatures" />
-					<command id="CmdCtxtSetFeatures" label="Set Phonological Features..." message="ContextSetFeatures" /> mnuPhRegularRule, mnuPhMetathesisRule, and mnuMoAffixProcess
-		      <item label="-" translate="do not translate" />
-		      <item command="CmdCtxtJumpToNC" />
-					<command id="CmdCtxtJumpToNC" label="Show in Natural Classes list" message="ContextJumpToNaturalClass" /> mnuPhRegularRule, mnuPhMetathesisRule, and mnuMoAffixProcess
-		      <item command="CmdCtxtJumpToPhoneme" />
-					<command id="CmdCtxtJumpToPhoneme" label="Show in Phonemes list" message="ContextJumpToPhoneme" /> mnuPhRegularRule, mnuPhMetathesisRule, and mnuMoAffixProcess
-		    </menu>
-			*/
-			throw new NotImplementedException();
-		}
-
-		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> PopupContextMenuCreatorMethod_mnuPhMetathesisRule(Slice slice, string contextMenuId)
-		{
-			/*
-		    <menu id="mnuPhMetathesisRule">
-		      <item command="CmdCtxtSetFeatures" />
-					<command id="CmdCtxtSetFeatures" label="Set Phonological Features..." message="ContextSetFeatures" /> mnuPhRegularRule, mnuPhMetathesisRule, and mnuMoAffixProcess
-		      <item label="-" translate="do not translate" />
-		      <item command="CmdCtxtJumpToNC" />
-					<command id="CmdCtxtJumpToNC" label="Show in Natural Classes list" message="ContextJumpToNaturalClass" /> mnuPhRegularRule, mnuPhMetathesisRule, and mnuMoAffixProcess
-		      <item command="CmdCtxtJumpToPhoneme" />
-					<command id="CmdCtxtJumpToPhoneme" label="Show in Phonemes list" message="ContextJumpToPhoneme" /> mnuPhRegularRule, mnuPhMetathesisRule, and mnuMoAffixProcess
-		    </menu>
-			*/
-			throw new NotImplementedException();
-		}
-
-		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> PopupContextMenuCreatorMethod_mnuMoAffixProcess(Slice slice, string contextMenuId)
-		{
-			/*
-			 RuleFormulaSlice (Yes)
-				AffixRuleFormulaSlice (Yes)
-				RegRuleFormulaSlice (Yes)
-				MetaRuleFormulaSlice (no)
-		    <menu id="mnuMoAffixProcess">
-		      <item command="CmdCtxtSetFeatures" />
-					<command id="CmdCtxtSetFeatures" label="Set Phonological Features..." message="ContextSetFeatures" /> mnuPhRegularRule, mnuPhMetathesisRule, and mnuMoAffixProcess
-		      <item command="CmdMappingSetFeatures" />
-					<command id="CmdMappingSetFeatures" label="Set Phonological Features..." message="MappingSetFeatures" /> mnuMoAffixProcess
-		      <item command="CmdMappingSetNC" />
-					<command id="CmdMappingSetNC" label="Set Natural Class..." message="MappingSetNaturalClass" /> mnuMoAffixProcess
-		      <item label="-" translate="do not translate" />
-		      <item command="CmdCtxtJumpToNC" />
-					<command id="CmdCtxtJumpToNC" label="Show in Natural Classes list" message="ContextJumpToNaturalClass" /> mnuPhRegularRule, mnuPhMetathesisRule, and mnuMoAffixProcess
-		      <item command="CmdCtxtJumpToPhoneme" />
-					<command id="CmdCtxtJumpToPhoneme" label="Show in Phonemes list" message="ContextJumpToPhoneme" /> mnuPhRegularRule, mnuPhMetathesisRule, and mnuMoAffixProcess
-		      <item label="-" translate="do not translate" />
-		      <item command="CmdMappingJumpToNC" />
-					<command id="CmdMappingJumpToNC" label="Show in Natural Classes list" message="MappingJumpToNaturalClass" /> AffixRuleFormulaSlice
-		      <item command="CmdMappingJumpToPhoneme" />
-					<command id="CmdMappingJumpToPhoneme" label="Show in Phonemes list" message="MappingJumpToPhoneme" /> AffixRuleFormulaSlice
+					<command id="CmdInsertEnvHashMark" label="Insert _Word Boundary" message="InsertHashMark" /> SHARED
 		    </menu>
 			*/
 			throw new NotImplementedException();

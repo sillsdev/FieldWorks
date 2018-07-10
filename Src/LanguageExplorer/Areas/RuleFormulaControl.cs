@@ -4,13 +4,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.XMLViews;
-using LanguageExplorer.LcmUi;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -36,6 +36,7 @@ namespace LanguageExplorer.Areas
 	{
 		protected PatternView _view;
 		protected ISharedEventHandlers _sharedEventHandlers;
+		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> _rightClickTuple;
 
 		public RuleFormulaControl()
 		{
@@ -100,7 +101,7 @@ namespace LanguageExplorer.Areas
 				{
 					return false;
 				}
-				var ncCtxt = (IPhSimpleContextNC) ctxt;
+				var ncCtxt = (IPhSimpleContextNC)ctxt;
 				return ncCtxt.FeatureStructureRA != null;
 			}
 		}
@@ -117,7 +118,7 @@ namespace LanguageExplorer.Areas
 				{
 					return false;
 				}
-				var segCtxt = (IPhSimpleContextSeg) ctxt;
+				var segCtxt = (IPhSimpleContextSeg)ctxt;
 				return segCtxt.FeatureStructureRA != null;
 			}
 		}
@@ -172,6 +173,28 @@ namespace LanguageExplorer.Areas
 
 			InsertionControl.Insert += m_insertionControl_Insert;
 		}
+
+		#region Overrides of ButtonLauncher
+		/// <inheritdoc />
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				if (_view != null)
+				{
+					_view.SelectionChanged -= SelectionChanged;
+					_view.RemoveItemsRequested -= RemoveItemsRequested;
+					_view.ContextMenuRequested -= ContextMenuRequested;
+					_view.Dispose();
+				}
+				InsertionControl.Insert -= m_insertionControl_Insert;
+			}
+			_view = null;
+			_sharedEventHandlers = null;
+
+			base.Dispose(disposing);
+		}
+		#endregion
 
 		private static int ToCellId(object ctxt)
 		{
@@ -366,14 +389,6 @@ namespace LanguageExplorer.Areas
 		}
 
 		protected virtual string RuleName
-		{
-			get
-			{
-				throw new NotSupportedException();
-			}
-		}
-
-		protected virtual string ContextMenuID
 		{
 			get
 			{
@@ -932,17 +947,34 @@ namespace LanguageExplorer.Areas
 			e.Selection.Install();
 			// Use the local variable, since it does a lot of looking around for "CurrentObject".
 			var obj = CurrentObject;
-
 			if (obj == null)
 			{
+				// We only bother to display the context menu if there is a CurrentObject.
 				return;
 			}
-			// we only bother to display the context menu if an item is selected
-			using (var ui = new CmObjectUi(obj))
+
+			_rightClickTuple = CreateContextMenu();
+			_rightClickTuple.Item1.Closed += ContextMenuStrip_Closed;
+
+			// Show menu.
+			_rightClickTuple.Item1.Show(new Point(Cursor.Position.X, Cursor.Position.Y));
+		}
+
+		private void ContextMenuStrip_Closed(object sender, ToolStripDropDownClosedEventArgs e)
+		{
+			// Get rid of the menu.
+			_rightClickTuple.Item1.Closed -= ContextMenuStrip_Closed;
+			foreach (var tuple in _rightClickTuple.Item2)
 			{
-				ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-				e.Handled = ui.HandleRightClick(this, true, ContextMenuID);
+				tuple.Item1.Click -= tuple.Item2;
 			}
+			_rightClickTuple.Item1.Dispose();
+			_rightClickTuple = null;
+		}
+
+		protected virtual Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> CreateContextMenu()
+		{
+			throw new NotSupportedException();
 		}
 
 		private void SelectionChanged(object sender, EventArgs eventArgs)

@@ -603,4 +603,10 @@
   <data name="Move_Picture_Up" xml:space="preserve">
     <value>Move Picture _Up</value>
   </data>
+  <data name="Insert_Sound_or_Movie" xml:space="preserve">
+    <value>Insert _Sound or Movie</value>
+  </data>
+  <data name="Set_Natural_Class" xml:space="preserve">
+    <value>Set Natural Class...</value>
+  </data>
 </root>

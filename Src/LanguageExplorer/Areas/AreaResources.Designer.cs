@@ -1477,6 +1477,33 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Set Phonological Features....
+        /// </summary>
+        internal static string Set_Phonological_Features {
+            get {
+                return ResourceManager.GetString("Set_Phonological_Features", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show in Natural Classes list.
+        /// </summary>
+        internal static string Show_in_Natural_Classes_list {
+            get {
+                return ResourceManager.GetString("Show_in_Natural_Classes_list", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show in Phonemes list.
+        /// </summary>
+        internal static string Show_in_Phonemes_list {
+            get {
+                return ResourceManager.GetString("Show_in_Phonemes_list", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Undo Move Item.
         /// </summary>
         internal static string UndoMoveItem {

@@ -25,9 +25,13 @@ namespace LanguageExplorer.Areas
 
 		internal RuleFormulaSlice(ISharedEventHandlers sharedEventHandlers)
 		{
-			Guard.AgainstNull(sharedEventHandlers, nameof(_sharedEventHandlers));
+			Guard.AgainstNull(sharedEventHandlers, nameof(sharedEventHandlers));
 
 			_sharedEventHandlers = sharedEventHandlers;
+
+			_sharedEventHandlers.Add(AreaServices.ContextSetFeatures, ContextSetFeatures_Clicked);
+			_sharedEventHandlers.Add(AreaServices.ContextJumpToNaturalClass, ContextJumpToNaturalClass_Clicked);
+			_sharedEventHandlers.Add(AreaServices.ContextJumpToPhoneme, ContextJumpToPhoneme_Clicked);
 		}
 
 		public RuleFormulaControl RuleFormulaControl
@@ -149,52 +153,19 @@ namespace LanguageExplorer.Areas
 			RuleFormulaControl.InsertionControl.SizeChanged += InsertionControl_SizeChanged;
 		}
 
-#if RANDYTODO
-		public bool OnDisplayContextSetFeatures(object commandObject, ref UIItemDisplayProperties display)
-		{
-			bool enable = RuleFormulaControl.IsFeatsNCContextCurrent;
-			display.Enabled = enable;
-			display.Visible = enable;
-			return true;
-		}
-#endif
-
-		public bool OnContextSetFeatures(object args)
+		private void ContextSetFeatures_Clicked(object sender, EventArgs e)
 		{
 			RuleFormulaControl.SetContextFeatures();
-			return true;
 		}
 
-#if RANDYTODO
-		public bool OnDisplayContextJumpToNaturalClass(object commandObject, ref UIItemDisplayProperties display)
-		{
-			bool enable = RuleFormulaControl.IsNCContextCurrent;
-			display.Enabled = enable;
-			display.Visible = enable;
-			return true;
-		}
-#endif
-
-		public bool OnContextJumpToNaturalClass(object args)
+		private void ContextJumpToNaturalClass_Clicked(object sender, EventArgs e)
 		{
 			JumpToTool(AreaServices.NaturalClassEditMachineName);
-			return true;
 		}
 
-#if RANDYTODO
-		public virtual bool OnDisplayContextJumpToPhoneme(object commandObject, ref XCore.UIItemDisplayProperties display)
-		{
-			bool enable = RuleFormulaControl.IsPhonemeContextCurrent;
-			display.Enabled = enable;
-			display.Visible = enable;
-			return true;
-		}
-#endif
-
-		public virtual bool OnContextJumpToPhoneme(object args)
+		private void ContextJumpToPhoneme_Clicked(object sender, EventArgs e)
 		{
 			JumpToTool(AreaServices.PhonemeEditMachineName);
-			return true;
 		}
 
 		private void JumpToTool(string toolName)

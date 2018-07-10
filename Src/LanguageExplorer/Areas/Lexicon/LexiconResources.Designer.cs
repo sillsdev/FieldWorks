@@ -571,6 +571,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Insert _Sound or Movie.
+        /// </summary>
+        internal static string Insert_Sound_or_Movie {
+            get {
+                return ResourceManager.GetString("Insert_Sound_or_Movie", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Insert Sound or Movie _File.
         /// </summary>
         internal static string Insert_Sound_Or_Movie_File {
@@ -1392,6 +1401,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string Sense {
             get {
                 return ResourceManager.GetString("Sense", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set Natural Class....
+        /// </summary>
+        internal static string Set_Natural_Class {
+            get {
+                return ResourceManager.GetString("Set_Natural_Class", resourceCulture);
             }
         }
         

@@ -323,7 +323,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// <item command="CmdDataTree-Insert-Pronunciation"/>
 			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(LexiconEditToolConstants.CmdDataTree_Insert_Pronunciation), LexiconResources.Insert_Pronunciation, LexiconResources.Insert_Pronunciation_Tooltip);
 			// <item command="CmdInsertMediaFile" label="Insert _Sound or Movie" defaultVisible="false"/>
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(LexiconEditToolConstants.CmdInsertMediaFile), LexiconResources.Sound_or_Movie, LexiconResources.Insert_Sound_Or_Movie_File_Tooltip);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(LexiconEditToolConstants.CmdInsertMediaFile), LexiconResources.Insert_Sound_or_Movie, LexiconResources.Insert_Sound_Or_Movie_File_Tooltip);
 			// <item label="-" translate="do not translate"/>
 			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 			using (var imageHolder = new LanguageExplorer.DictionaryConfiguration.ImageHolder())

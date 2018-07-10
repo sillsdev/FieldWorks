@@ -637,4 +637,13 @@ If you are not the one designated user who adds fields, or you are making some o
   <data name="Insert_Word_Boundary" xml:space="preserve">
     <value>Insert Word Boundary</value>
   </data>
+  <data name="Set_Phonological_Features" xml:space="preserve">
+    <value>Set Phonological Features...</value>
+  </data>
+  <data name="Show_in_Natural_Classes_list" xml:space="preserve">
+    <value>Show in Natural Classes list</value>
+  </data>
+  <data name="Show_in_Phonemes_list" xml:space="preserve">
+    <value>Show in Phonemes list</value>
+  </data>
 </root>

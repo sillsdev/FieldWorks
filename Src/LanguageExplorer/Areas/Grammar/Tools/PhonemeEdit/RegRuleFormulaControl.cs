@@ -3,8 +3,12 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 using System.Xml.Linq;
+using LanguageExplorer.Areas.TextsAndWords;
+using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.LexText;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -75,7 +79,133 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 
 		protected override string RuleName => Rhs.OwningRule.Name.BestAnalysisAlternative.Text;
 
-		protected override string ContextMenuID => "mnuPhRegularRule";
+		protected override Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> CreateContextMenu()
+		{
+			// Start: <menu id="mnuPhRegularRule">
+
+			const string mnuPhRegularRule = "mnuPhRegularRule";
+
+			var contextMenuStrip = new ContextMenuStrip
+			{
+				Name = mnuPhRegularRule
+			};
+			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(9);
+
+			if (CanModifyContextOccurrence)
+			{
+				/*
+				  <item command="CmdCtxtOccurOnce" />
+						<command id="CmdCtxtOccurOnce" label="Occurs exactly once" message="ContextSetOccurrence">
+						  <parameters min="1" max="1" />
+						</command>
+				*/
+				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, ContextSetOccurrence_Clicked, TextAndWordsResources.Occurs_exactly_once);
+				menu.Tag = new Dictionary<string, int>
+				{
+					{ "min", 1},
+					{ "max", 1}
+				};
+
+				/*
+				  <item command="CmdCtxtOccurZeroMore" />
+						<command id="CmdCtxtOccurZeroMore" label="Occurs zero or more times" message="ContextSetOccurrence">
+						  <parameters min="0" max="-1" />
+						</command>
+				*/
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, ContextSetOccurrence_Clicked, TextAndWordsResources.Occurs_zero_or_more_times);
+				menu.Tag = new Dictionary<string, int>
+				{
+					{ "min", 0},
+					{ "max", -1}
+				};
+
+				/*
+				  <item command="CmdCtxtOccurOneMore" />
+						<command id="CmdCtxtOccurOneMore" label="Occurs one or more times" message="ContextSetOccurrence">
+						  <parameters min="1" max="-1" />
+						</command>
+				*/
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, ContextSetOccurrence_Clicked, TextAndWordsResources.Occurs_one_or_more_times);
+				menu.Tag = new Dictionary<string, int>
+				{
+					{ "min", 1},
+					{ "max", -1}
+				};
+
+				// <command id="CmdCtxtSetOccur" label="Set occurrence (min. and max.)..." message="ContextSetOccurrence" />
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, ContextSetOccurrence_Clicked, TextAndWordsResources.Set_occurrence_min_and_max);
+			}
+			// Need to remember where to insert the separator, if it is needed, at all.
+			var separatorOneInsertIndex = menuItems.Count - 1;
+
+			// <item label="-" translate="do not translate" /> Optionally inserted at separatorOneInsertIndex. See below.
+
+			if (IsFeatsNCContextCurrent)
+			{
+				// <command id="CmdCtxtSetFeatures" label="Set Phonological Features..." message="ContextSetFeatures" />
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.ContextSetFeatures), AreaResources.Set_Phonological_Features);
+			}
+
+			// <item label="-" translate="do not translate" /> Optionally inserted at separatorTwoInsertIndex. See below.
+			var separatorTwoInsertIndex = menuItems.Count - 1;
+
+			if (IsNCContextCurrent)
+			{
+				// <command id="CmdCtxtJumpToNC" label="Show in Natural Classes list" message="ContextJumpToNaturalClass" />
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.ContextJumpToNaturalClass), AreaResources.Show_in_Natural_Classes_list);
+			}
+
+			if (IsPhonemeContextCurrent)
+			{
+				// <command id="CmdCtxtJumpToPhoneme" label="Show in Phonemes list" message="ContextJumpToPhoneme" />
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.ContextJumpToPhoneme), AreaResources.Show_in_Phonemes_list);
+			}
+
+			if (separatorOneInsertIndex > 0 && separatorOneInsertIndex < menuItems.Count - 1)
+			{
+				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip, separatorOneInsertIndex);
+			}
+			if (separatorTwoInsertIndex > separatorOneInsertIndex && separatorTwoInsertIndex < menuItems.Count - 1)
+			{
+				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip, separatorTwoInsertIndex);
+			}
+
+			// End: <menu id="mnuPhRegularRule">
+
+			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+		}
+
+		private void ContextSetOccurrence_Clicked(object sender, EventArgs e)
+		{
+			int min, max;
+			var setContextOccurrence = false;
+
+			var dictionary = ((ToolStripMenuItem)sender).Tag as Dictionary<string, int>;
+			if (dictionary != null)
+			{
+				min = dictionary["min"];
+				max = dictionary["max"];
+				setContextOccurrence = true;
+			}
+			else
+			{
+				GetContextOccurrence(out min, out max);
+				using (var dlg = new OccurrenceDlg(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), min, max, false))
+				{
+					if (dlg.ShowDialog(PropertyTable.GetValue<Form>("window")) == DialogResult.OK)
+					{
+						min = dlg.Minimum;
+						max = dlg.Maximum;
+						setContextOccurrence = true;
+					}
+				}
+			}
+			if (setContextOccurrence)
+			{
+				// The "SetContextOccurrence" method deals with UOW.
+				SetContextOccurrence(min, max);
+			}
+		}
 
 		private bool DisplayOption(object option)
 		{

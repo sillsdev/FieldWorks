@@ -7,7 +7,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.LexText;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
@@ -27,7 +29,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	{
 		// column that is scheduled to be removed
 		private IPhContextOrVar m_removeCol;
-		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> _mnuMoAffixProcessRightClickTuple;
 
 		public AffixRuleFormulaControl(ISharedEventHandlers sharedEventHandlers, XElement configurationNode)
 			: base(sharedEventHandlers, configurationNode)
@@ -208,26 +209,99 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		protected override string RuleName => Rule.Form.BestVernacularAnalysisAlternative.Text;
 
-		protected override string ContextMenuID => "mnuMoAffixProcess";
-
 		#region Overrides of RuleFormulaControl
+
 		/// <inheritdoc />
-		protected override void ContextMenuRequested(object sender, ContextMenuRequestedEventArgs e)
+		protected override Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> CreateContextMenu()
 		{
-			e.Selection.Install();
-			// Use the local variable, since it does a lot of looking around for "CurrentObject".
-			var obj = CurrentObject;
-			if (obj == null)
+			// Start: <menu id="mnuMoAffixProcess">
+			const string mnuMoAffixProcess = "mnuMoAffixProcess";
+
+			var contextMenuStrip = new ContextMenuStrip
 			{
-				return;
+				Name = mnuMoAffixProcess
+			};
+			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(8);
+
+			if (IsFeatsNCContextCurrent)
+			{
+				// <command id="CmdCtxtSetFeatures" label="Set Phonological Features..." message="ContextSetFeatures" />
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.ContextSetFeatures), AreaResources.Set_Phonological_Features);
 			}
 
-			//// we only bother to display the context menu if an item is selected
-			//using (var ui = new CmObjectUi(obj))
-			//{
-			//	ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-			//	e.Handled = ui.HandleRightClick(this, true, ContextMenuID);
-			//}
+			if (IsIndexCurrent)
+			{
+				// Visible & Enabled only when "IsIndexCurrent".
+				// <command id="CmdMappingSetFeatures" label="Set Phonological Features..." message="MappingSetFeatures" />
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MappingSetFeatures_Clicked, AreaResources.Set_Phonological_Features);
+
+				// <command id="CmdMappingSetNC" label="Set Natural Class..." message="MappingSetNaturalClass" />
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MappingSetNaturalClass_Clicked, LexiconResources.Set_Natural_Class);
+			}
+			// Need to remember where to insert the separator, if it is needed, at all.
+			var separatorOneInsertIndex = menuItems.Count - 1;
+
+			// <item label="-" translate="do not translate" /> Optionally inserted at separatorOneInsertIndex. See below.
+
+			if (IsNCContextCurrent)
+			{
+				// <command id="CmdCtxtJumpToNC" label="Show in Natural Classes list" message="ContextJumpToNaturalClass" />
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.ContextJumpToNaturalClass), AreaResources.Show_in_Natural_Classes_list);
+			}
+
+			if (IsPhonemeContextCurrent)
+			{
+				// <command id="CmdCtxtJumpToPhoneme" label="Show in Phonemes list" message="ContextJumpToPhoneme" />
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.ContextJumpToPhoneme), AreaResources.Show_in_Phonemes_list);
+			}
+
+			// <item label="-" translate="do not translate" /> Optionally inserted at separatorTwoInsertIndex. See below.
+			var separatorTwoInsertIndex = menuItems.Count - 1;
+
+			if (IsNCIndexCurrent)
+			{
+				// <command id="CmdMappingJumpToNC" label="Show in Natural Classes list" message="MappingJumpToNaturalClass" />
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MappingJumpToNaturalClass_Clicked, AreaResources.Show_in_Natural_Classes_list);
+			}
+
+			if (IsPhonemeCurrent)
+			{
+				// <command id="CmdMappingJumpToPhoneme" label="Show in Phonemes list" message="MappingJumpToPhoneme" />
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MappingJumpToPhoneme_Clicked, AreaResources.Show_in_Phonemes_list);
+			}
+
+			if (separatorOneInsertIndex > 0 && separatorOneInsertIndex < menuItems.Count - 1)
+			{
+				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip, separatorOneInsertIndex);
+			}
+			if (separatorTwoInsertIndex > separatorOneInsertIndex && separatorTwoInsertIndex < menuItems.Count - 1)
+			{
+				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip, separatorTwoInsertIndex);
+			}
+
+			// End: <menu id="mnuMoAffixProcess">
+
+			return  new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+		}
+
+		private void MappingSetFeatures_Clicked(object sender, EventArgs e)
+		{
+			SetMappingFeatures();
+		}
+
+		private void MappingSetNaturalClass_Clicked(object sender, EventArgs e)
+		{
+			SetMappingNaturalClass();
+		}
+
+		private void MappingJumpToNaturalClass_Clicked(object sender, EventArgs e)
+		{
+			LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(AreaServices.NaturalClassEditMachineName, ((IMoModifyFromInput)CurrentObject).ModificationRA.Guid));
+		}
+
+		private void MappingJumpToPhoneme_Clicked(object sender, EventArgs e)
+		{
+			LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(AreaServices.PhonemeEditMachineName, ((IMoInsertPhones)CurrentObject).ContentRS[0].Guid));
 		}
 		#endregion
 
