@@ -1712,15 +1712,44 @@ namespace SIL.FieldWorks.Discourse
 			else
 			{
 				row = Convert.ToInt32(rowLabel.Substring(0,posFirstLetter));
-				if (posFirstLetter == (rowLabel.Length - 1))
-				{
-					// only one letter present; we assume no more than 2 letters
-					// is it possible to have 53+ clauses in a Sentence?
-					clause = Convert.ToInt32(rowLabel[posFirstLetter]) - Convert.ToInt32('a') + 1;
-				}
-				else
-					clause = Convert.ToInt32(rowLabel[posFirstLetter + 1]) - Convert.ToInt32('a') + 27;
+				clause = ClauseNumberFromLabel(rowLabel.Substring(posFirstLetter));
 			}
+		}
+
+		/// <summary>
+		/// Converts a row clause label (Bijective Base-26) into the corresponding integer value
+		/// </summary>
+		private static int ClauseNumberFromLabel(string value)
+		{
+			if (value.Length < 1)
+			{
+				return 0;
+			}
+			if (value.Length == 1)
+			{
+				return Convert.ToInt32(value[0] - 'a' + 1);
+			}
+			int current = Convert.ToInt32(value[0] - 'a' + 1) * (int)Math.Pow(26, value.Length - 1);
+			return current + ClauseNumberFromLabel(value.Substring(1));
+		}
+
+		/// <summary>
+		/// Converts an integer value into its corresponding row clause label (Bijective Base-26)
+		/// </summary>
+		private static string LabelFromClauseNumber(int value)
+		{
+			if (value < 1)
+			{
+				return String.Empty;
+			}
+			if (value < 26)
+			{
+				return String.Empty + Convert.ToChar(value + 'a' - 1);
+			}
+			value--;
+			char c = Convert.ToChar(value % 26);
+			value -= c;
+			return LabelFromClauseNumber(value / 26) + Convert.ToChar(c + 'a');
 		}
 
 		/// <summary>
@@ -1786,13 +1815,8 @@ namespace SIL.FieldWorks.Discourse
 			else prevClauseNum++;
 
 			// Make the string
-			string result;
-			if (prevClauseNum > 26)
-				result = Convert.ToString(prevSentNum) + "a" + Convert.ToChar(Convert.ToInt32('a')
-																			  + prevClauseNum - 27);
-			else
-				result = Convert.ToString(prevSentNum) + Convert.ToChar(Convert.ToInt32('a')
-																		+ prevClauseNum - 1);
+			string result = Convert.ToString(prevSentNum) + LabelFromClauseNumber(prevClauseNum);
+
 			if (fSentBrkAfter && fSentBrkBefore)
 				// Strip 'a' off of string.
 				result = result.Substring(0, result.Length - 1);
