@@ -51,6 +51,7 @@ namespace SIL.FieldWorks.Discourse
 		private Panel m_templateSelectionPanel;
 		private Panel m_buttonRow;
 		private Panel m_bottomStuff;
+		private SplitContainer m_topBottomSplit;
 		// m_buttonRow above m_ribbon
 		private ChartHeaderView m_headerMainCols;
 		private Panel m_topStuff;
@@ -94,13 +95,23 @@ namespace SIL.FieldWorks.Discourse
 		{
 			SuspendLayout();
 
+			m_topBottomSplit = new SplitContainer();
+			m_topBottomSplit.Layout += SplitLayout;
 			BuildBottomStuffUI();
 			BuildTopStuffUI();
-			Controls.AddRange(new Control[] { m_topStuff, m_bottomStuff });
+			m_topBottomSplit.Orientation = Orientation.Horizontal;
+			Controls.Add(m_topBottomSplit);
 
 			Dock = DockStyle.Fill;
 
 			ResumeLayout();
+		}
+
+		private void SplitLayout(object sender, LayoutEventArgs e)
+		{
+			var container = sender as SplitContainer;
+			container.Width = Width;
+			container.Height = Height;
 		}
 
 		protected override void OnLoad(EventArgs e)
@@ -108,6 +119,15 @@ namespace SIL.FieldWorks.Discourse
 			base.OnLoad(e);
 			// We don't want to know about column width changes until after we're initialized and have restored original widths.
 			m_headerMainCols.ColumnWidthChanged += m_headerMainCols_ColumnWidthChanged;
+		}
+
+		protected override void OnLayout(LayoutEventArgs e)
+		{
+			//Call SplitLayout here to ensure Mono properly updates Splitter length
+			SplitLayout(m_topBottomSplit, e);
+			//Mono makes SplitLayout calls while Splitter is moving so set default distance here
+			m_topBottomSplit.SplitterDistance = (int) (Height * .9);
+			base.OnLayout(e);
 		}
 
 		/// <summary>
@@ -128,11 +148,10 @@ namespace SIL.FieldWorks.Discourse
 
 			m_headerMainCols.Layout += m_headerMainCols_Layout;
 			m_headerMainCols.SizeChanged += m_headerMainCols_SizeChanged;
-
 			m_templateSelectionPanel = new Panel() { Height = new Button().Height, Dock = DockStyle.Top, Width = 0};
 			m_templateSelectionPanel.Layout += new LayoutEventHandler(TemplateSelectionPanel_Layout);
 
-			m_topStuff = new Panel { Dock = DockStyle.Fill };
+			m_topStuff = m_topBottomSplit.Panel1;
 			m_topStuff.Controls.AddRange(new Control[] { m_body, m_headerMainCols, m_templateSelectionPanel });
 		}
 
@@ -161,7 +180,8 @@ namespace SIL.FieldWorks.Discourse
 			// Force the ToolTip text to be displayed whether or not the form is active.
 			m_toolTip = new ToolTip { AutoPopDelay = 5000, InitialDelay = 1000, ReshowDelay = 500, ShowAlways = true };
 
-			m_bottomStuff = new Panel { Height = 100, Dock = DockStyle.Bottom };
+			m_bottomStuff = m_topBottomSplit.Panel2;
+			m_bottomStuff.Height = 100;
 			m_bottomStuff.SuspendLayout();
 
 			m_buttonRow = new Panel { Height = new Button().Height, Dock = DockStyle.Top, BackColor = Color.FromKnownColor(KnownColor.ControlLight) };
