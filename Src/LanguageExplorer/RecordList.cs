@@ -2913,11 +2913,7 @@ namespace LanguageExplorer
 			}
 			else
 			{
-				using (CmObjectUi uiObj = CmObjectUi.MakeUi(CurrentObject))
-				{
-					uiObj.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-					msg = uiObj.ToStatusBar();
-				}
+				msg = CurrentObject.ToStatusBar();
 			}
 			return msg;
 		}

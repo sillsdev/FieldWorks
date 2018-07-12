@@ -1,7 +1,9 @@
-﻿// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
+using System.Globalization;
 using System.Linq;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -15,6 +17,31 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// </summary>
 	public static class LcmExtensions
 	{
+		public static string ToStatusBar(this ICmObject me)
+		{
+			if (!me.IsValidObject)
+			{
+				return FwUtilsStrings.ksDeletedObject;
+			}
+			DateTime dt;
+			var created = string.Empty;
+			var modified = string.Empty;
+			var myType = me.GetType();
+			var pi = myType.GetProperty("DateCreated");
+			if (pi != null)
+			{
+				dt = (DateTime)pi.GetValue(me, null);
+				created = dt.ToString("dd/MMM/yyyy", DateTimeFormatInfo.InvariantInfo);
+			}
+			pi = myType.GetProperty("DateModified");
+			if (pi != null)
+			{
+				dt = (DateTime)pi.GetValue(me, null);
+				modified = dt.ToString("dd/MMM/yyyy", DateTimeFormatInfo.InvariantInfo);
+			}
+			return $"{created} {modified}";
+		}
+
 		public static string ItemTypeName(this ICmPossibility me)
 		{
 			// This is the code that method did for ICmPossibility.

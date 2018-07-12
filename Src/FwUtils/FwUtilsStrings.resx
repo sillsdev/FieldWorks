@@ -240,4 +240,8 @@ If you want to use Paratext with this project, make a change in this project (so
   <data name="Yes" xml:space="preserve">
     <value>Yes</value>
   </data>
+  <data name="ksDeletedObject" xml:space="preserve">
+    <value>A deleted object</value>
+    <comment>displayed in status bar</comment>
+  </data>
 </root>

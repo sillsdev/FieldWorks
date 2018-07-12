@@ -171,7 +171,7 @@ namespace LanguageExplorer.LcmUi
 		{
 			var mdc = cache.DomainDataByFlid.MetaDataCache;
 			// If we've encountered an object with this Clsid before, and this clsid isn't in
-			// the switch below, the dictioanry will give us the appropriate clsid that IS in the
+			// the switch below, the dictionary will give us the appropriate clsid that IS in the
 			// map, so the loop below will have only one iteration. Otherwise, we start the
 			// search with the clsid of the object itself.
 			var realClsid = m_subclasses.ContainsKey(clsid) ? m_subclasses[clsid] : clsid;
@@ -905,34 +905,6 @@ namespace LanguageExplorer.LcmUi
 		public virtual void MoveUnderlyingObjectToCopyOfOwner()
 		{
 			MessageBox.Show(PropertyTable.GetValue<Form>("window"), LcmUiStrings.ksCannotMoveObjectToCopy, LcmUiStrings.ksBUG);
-		}
-
-		/// <summary>
-		/// Get a string suitable for use in the left panel of the LexText status bar.
-		/// It will show the created and modified dates, if the object has them.
-		/// </summary>
-		public string ToStatusBar()
-		{
-			if (!MyCmObject.IsValidObject)
-			{
-				return LcmUiStrings.ksDeletedObject;
-			}
-			DateTime dt;
-			var created = string.Empty;
-			var modified = string.Empty;
-			var pi = MyCmObject.GetType().GetProperty("DateCreated");
-			if (pi != null)
-			{
-				dt = (DateTime)pi.GetValue(MyCmObject, null);
-				created = dt.ToString("dd/MMM/yyyy", System.Globalization.DateTimeFormatInfo.InvariantInfo);
-			}
-			pi = MyCmObject.GetType().GetProperty("DateModified");
-			if (pi != null)
-			{
-				dt = (DateTime)pi.GetValue(MyCmObject, null);
-				modified = dt.ToString("dd/MMM/yyyy", System.Globalization.DateTimeFormatInfo.InvariantInfo);
-			}
-			return $"{created} {modified}";
 		}
 
 		/// <summary>
