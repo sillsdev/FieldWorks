@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -107,9 +107,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		public bool RefreshDisplay()
 		{
+			SuspendLayout();
 			DisposeSoundControls(); // before we do the base refresh, which will layout, and possibly miss a deleted WS.
 			var ret = m_innerView.RefreshDisplay();
 			SetupSoundControls();
+			ResumeLayout();
 			return ret;
 		}
 
@@ -253,6 +255,8 @@ namespace SIL.FieldWorks.Common.Widgets
 			base.OnLayout(levent);
 			if (m_innerView.VC == null || m_innerView.RootBox == null) // We can come in with no rootb from a dispose call.
 				return;
+			if (Visible)
+				m_innerView.RefreshDisplay();
 			int dpiX;
 			using (var graphics = CreateGraphics())
 			{
@@ -278,8 +282,8 @@ namespace SIL.FieldWorks.Common.Widgets
 						// Leave control.Top zero and hope layout gets called again when we can make
 						// the selection successfully.
 						Rectangle selRect;
-						m_innerView.GetSoundControlRectangle(sel, out selRect);
-						control.Top = selRect.Top;
+						if (m_innerView.GetSoundControlRectangle(sel, out selRect))
+							control.Top = selRect.Top;
 					}
 					// Don't crash trying to bring to front if control is not a child control on Linux (FWNX-1348).
 					// If control.Parent is null, don't crash, and bring to front anyway on Windows (LT-15148).
