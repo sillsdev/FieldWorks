@@ -300,8 +300,8 @@
 		<!-- bt395 is the master branch build of ExCss for Linux development. Update when appropriate. -->
 		<ExCssBuildType Condition="'$(OS)'=='Unix'">bt395</ExCssBuildType>
 		<ExCss Condition="'$(OS)'=='Unix'">ExCSS</ExCss>
-		<Icu4cBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'">Libraries_Icu4cWin32FieldWorksContinuous</Icu4cBuildType>
-		<Icu4cBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'">Libraries_Icu4cWin64FieldWorksContinuous</Icu4cBuildType>
+		<Icu4cBuildType32>Libraries_Icu4cWin32FieldWorksContinuous</Icu4cBuildType32>
+		<Icu4cBuildType64>Libraries_Icu4cWin64FieldWorksContinuous</Icu4cBuildType64>
 		<HermitCrabBuildType>bt410</HermitCrabBuildType>
 		<HermitCrabBuildTag>fw-8.3.tcbuildtag</HermitCrabBuildTag>
 		<DownloadsSilOrgDownloadUrl>http://downloads.sil.org/BuildDlls/FW8.1</DownloadsSilOrgDownloadUrl>
@@ -368,6 +368,15 @@
 		<ChorusFiles Include="LibChorus.dll"/>
 		<ChorusFiles Include="Vulcan.Uczniowie.HelpProvider.dll"/>
 
+		<IcuFiles Include="gennorm2.exe"/>
+		<IcuFiles Include="icudt$(IcuVersion).dll"/>
+		<IcuFiles Include="icuin$(IcuVersion).dll"/>
+		<IcuFiles Include="icutu$(IcuVersion).dll"/>
+		<IcuFiles Include="icuuc$(IcuVersion).dll"/>
+		<IcuFiles Include="icudt.lib"/>
+		<IcuFiles Include="icuin.lib"/>
+		<IcuFiles Include="icuuc.lib"/>
+
 		<LcmOutputBaseFiles Include="ICSharpCode.SharpZipLib.dll" />
 		<LcmOutputBaseFiles Include="Hunspellx86.dll" Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'!='x64'"/>
 		<LcmOutputBaseFiles Include="Hunspellx64.dll" Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'=='x64'"/>
@@ -421,6 +430,9 @@
 
 	<Target Name="downloadDlls" DependsOnTargets="RestoreNuGetPackages" Condition="'$(disableDownloads)'!='true'">
 		<MakeDir Directories="$(DownloadsDir)"/>
+		<MakeDir Directories="$(DownloadsDir)/lib"/>
+		<MakeDir Directories="$(DownloadsDir)/lib/x64"/>
+		<MakeDir Directories="$(DownloadsDir)/lib/x86"/>
 		<Message Text="NOT" Condition="'$(UseLocalLibraries)'=='Y'"/>
 		<Message Text="Downloading artifacts for Palaso, including  L10NSharp, Enchant.Net, ibusdotnet, NDesk.DBus, Spart, and Newtonsoft.Json."/>
 		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(PalasoBuildType)" VersionInfo="$(MasterVersionInfo)"
@@ -443,7 +455,8 @@
 		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(ExCssBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="$(ExCss).dll;$(ExCss).$(DebugInfo)" DownloadsDir="$(DownloadsDir)"/>
 
 		<Message Text="Downloading artifacts for icu4c." Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(Icu4cBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="gennorm2.exe;icudt$(IcuVersion).dll;icuin$(IcuVersion).dll;icutu$(IcuVersion).dll;icuuc$(IcuVersion).dll;icudt.lib;icuin.lib;icuuc.lib" DownloadsDir="$(DownloadsDir)" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(Icu4cBuildType32)" VersionInfo="$(MasterVersionInfo)" Artifacts="@(IcuFiles)" DownloadsDir="$(DownloadsDir)/lib/x86" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(Icu4cBuildType64)" VersionInfo="$(MasterVersionInfo)" Artifacts="@(IcuFiles)" DownloadsDir="$(DownloadsDir)/lib/x64" Condition="'$(OS)'=='Windows_NT'"/>
 
 		<Message Text="Downloading artifacts for HermitCrab." />
 		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(HermitCrabBuildType)" Tag="$(HermitCrabBuildTag)" VersionInfo="$(MasterVersionInfo)" Artifacts="QuickGraph.dll;SIL.Machine.dll;SIL.Collections.dll;SIL.HermitCrab.dll" DownloadsDir="$(DownloadsDir)"/>
@@ -490,11 +503,6 @@
 		<DownloadedFiles Include="$(DownloadsDir)/SIL.Machine.dll"/>
 		<DownloadedFiles Include="$(DownloadsDir)/SIL.Collections.dll"/>
 		<DownloadedFiles Include="$(DownloadsDir)/SIL.HermitCrab.dll"/>
-		<DownloadedFiles Include="$(DownloadsDir)/gennorm2.exe" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(DownloadsDir)/icudt$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(DownloadsDir)/icuin$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(DownloadsDir)/icutu$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(DownloadsDir)/icuuc$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
 	</ItemGroup>
 
 	<Target Name="CopyDlls" DependsOnTargets="downloadDlls">
@@ -516,11 +524,11 @@
 		<Copy SourceFiles="$(fwrt)/DistFiles/xample64.dll" DestinationFiles="$(dir-outputBase)/xample.dll"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'"/>
 		<!-- ICU libs -->
-		<Copy SourceFiles="$(DownloadsDir)/icudt.lib" DestinationFolder="$(fwrt)/Lib"
+		<Copy SourceFiles="$(DownloadsDir)/lib/$(arch)/icudt.lib" DestinationFolder="$(fwrt)/Lib"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
-		<Copy SourceFiles="$(DownloadsDir)/icuin.lib" DestinationFolder="$(fwrt)/Lib"
+		<Copy SourceFiles="$(DownloadsDir)/lib/$(arch)/icuin.lib" DestinationFolder="$(fwrt)/Lib"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
-		<Copy SourceFiles="$(DownloadsDir)/icuuc.lib" DestinationFolder="$(fwrt)/Lib"
+		<Copy SourceFiles="$(DownloadsDir)/lib/$(arch)/icuuc.lib" DestinationFolder="$(fwrt)/Lib"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<!-- NUnit dlls -->
 		<Unzip ZipFilename="$(DownloadsDir)/NUnit-2.6.4.zip" ToDir="$(DownloadsDir)/" />
@@ -546,6 +554,21 @@
 		<Copy SourceFiles="@(ChorusFiles -> '$(ChorusArtifactsDir)/%(Identity)')" DestinationFolder="$(dir-outputBase)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
 		<Copy SourceFiles="@(DownloadedFiles)" DestinationFolder="$(dir-outputBase)"
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+
+		<!-- Copy ICU files to lib/x64 and lib/x86. The ICU .lib files don't need included. -->
+
+		<ItemGroup>
+			<IcuFileSet32 Include="$(DownloadsDir)/lib/x86/icu*.dll" />
+			<IcuFileSet32 Include="$(DownloadsDir)/lib/x86/gennorm2.exe" />
+		</ItemGroup>
+		<ItemGroup>
+			<IcuFileSet64 Include="$(DownloadsDir)/lib/x64/icu*.dll" />
+			<IcuFileSet64 Include="$(DownloadsDir)/lib/x64/gennorm2.exe" />
+		</ItemGroup>
+
+		<!-- Include 32-bit ICU, even if arch is x64, so we can provide 32-bit ICU for 32-bit Paratext to use when the tools interact. -->
+		<Copy SourceFiles="@(IcuFileSet32)" DestinationFolder="$(dir-outputBase)/lib/x86" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'" />
+		<Copy SourceFiles="@(IcuFileSet64)" DestinationFolder="$(dir-outputBase)/lib/x64" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'" />
 
 		<!-- Encoding Converters Files -->
 
