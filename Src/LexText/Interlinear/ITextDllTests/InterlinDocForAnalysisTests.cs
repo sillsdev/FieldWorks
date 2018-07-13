@@ -296,8 +296,8 @@ namespace SIL.FieldWorks.IText
 			Cache = testText.Cache;
 			m_hvoRoot = testText.Hvo;
 			m_testText = testText;
-			m_vc = new InterlinVc(Cache);
-			m_vc.RootSite = this;
+			Vc = new InterlinVc(Cache);
+			Vc.RootSite = this;
 		}
 
 		protected override FocusBoxController CreateFocusBoxInternal()
@@ -339,7 +339,7 @@ namespace SIL.FieldWorks.IText
 		/// ------------------------------------------------------------------------------------
 		internal void CallSetActiveFreeform(int hvoSeg, int ws)
 		{
-			ReflectionHelper.CallMethod(m_vc, "SetActiveFreeform", hvoSeg,
+			ReflectionHelper.CallMethod(Vc, "SetActiveFreeform", hvoSeg,
 				SegmentTags.kflidFreeTranslation, ws, 0);
 		}
 	}

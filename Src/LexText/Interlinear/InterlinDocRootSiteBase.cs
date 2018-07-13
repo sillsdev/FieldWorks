@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -25,11 +25,11 @@ namespace SIL.FieldWorks.IText
 	/// Ideally this would be an abstract class, but Designer does not handle abstract classes.
 	/// </summary>
 	public partial class InterlinDocRootSiteBase : RootSite,
-		IInterlinearTabControl, IVwNotifyChange, IHandleBookmark, ISelectOccurrence, IStyleSheet, ISetupLineChoices
+		IVwNotifyChange, IHandleBookmark, ISelectOccurrence,
+		IStyleSheet, ISetupLineChoices, IInterlinearTabControl
 	{
 		private ISilDataAccess m_sda;
 		protected internal int m_hvoRoot; // IStText
-		protected InterlinVc m_vc;
 		protected ICmObjectRepository m_objRepo;
 
 		/// <summary>
@@ -54,6 +54,11 @@ namespace SIL.FieldWorks.IText
 		private long m_ticksWhenContextMenuClosed = 0;
 
 		private readonly HashSet<IWfiWordform> m_wordformsToUpdate;
+
+		public InterlinVc Vc { get; set; }
+		public PropertyTable PropertyTable { get; set; }
+		public IVwRootBox Rootb { get; set; }
+		//public InterlinVc Vc { get; set; }
 
 		public InterlinDocRootSiteBase()
 		{
@@ -87,12 +92,12 @@ namespace SIL.FieldWorks.IText
 			m_sda = m_cache.MainCacheAccessor;
 			m_sda.AddNotification(this);
 
-			m_vc.ShowMorphBundles = m_propertyTable.GetBoolProperty("ShowMorphBundles", true);
-			m_vc.LineChoices = LineChoices;
-			m_vc.ShowDefaultSense = true;
+			Vc.ShowMorphBundles = m_propertyTable.GetBoolProperty("ShowMorphBundles", true);
+			Vc.LineChoices = LineChoices;
+			Vc.ShowDefaultSense = true;
 
 			m_rootb.DataAccess = m_cache.MainCacheAccessor;
-			m_rootb.SetRootObject(m_hvoRoot, m_vc, InterlinVc.kfragStText, m_styleSheet);
+			m_rootb.SetRootObject(m_hvoRoot, Vc, InterlinVc.kfragStText, m_styleSheet);
 			m_objRepo = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 		}
 
@@ -124,7 +129,7 @@ namespace SIL.FieldWorks.IText
 			}
 			bool fFocusBox = TryHideFocusBoxAndUninstall();
 			ICmObject objRoot = m_objRepo.GetObject(m_hvoRoot);
-			using (var dlg = new InterlinearExportDialog(m_mediator, m_propertyTable, objRoot, m_vc))
+			using (var dlg = new InterlinearExportDialog(m_mediator, m_propertyTable, objRoot, Vc))
 			{
 				dlg.ShowDialog(this);
 			}
@@ -160,9 +165,9 @@ namespace SIL.FieldWorks.IText
 			throw new NotImplementedException();
 		}
 
-		private void EnsureVc()
+		protected void EnsureVc()
 		{
-			if (m_vc == null)
+			if (Vc == null)
 				MakeVc();
 		}
 
@@ -491,7 +496,7 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		private ContextMenuStrip MakeContextMenu(int ilineChoice)
+		protected virtual ContextMenuStrip MakeContextMenu(int ilineChoice)
 		{
 			var menu = new ContextMenuStrip();
 			// Menu items:
@@ -503,9 +508,9 @@ namespace SIL.FieldWorks.IText
 			// 5) Add Line > (submenu of currently hidden lines)
 			// 6) Configure Interlinear...
 
-			if (m_vc != null && m_vc.LineChoices != null) // just to be safe; shouldn't happen
+			if (Vc != null && Vc.LineChoices != null) // just to be safe; shouldn't happen
 			{
-				var curLineChoices = m_vc.LineChoices.Clone() as InterlinLineChoices;
+				var curLineChoices = Vc.LineChoices.Clone() as InterlinLineChoices;
 				if (curLineChoices == null)
 					return menu;
 
@@ -663,7 +668,7 @@ namespace SIL.FieldWorks.IText
 		private void hideItem_Click(object sender, EventArgs e)
 		{
 			var ilineToHide = (int) (((ToolStripMenuItem) sender).Tag);
-			var newLineChoices = m_vc.LineChoices.Clone() as InterlinLineChoices;
+			var newLineChoices = Vc.LineChoices.Clone() as InterlinLineChoices;
 			if (newLineChoices != null)
 			{
 				newLineChoices.Remove(newLineChoices[ilineToHide]);
@@ -680,7 +685,7 @@ namespace SIL.FieldWorks.IText
 
 			var flid = menuItem.Flid;
 			var wsToAdd = menuItem.Ws;
-			var newLineChoices = m_vc.LineChoices.Clone() as InterlinLineChoices;
+			var newLineChoices = Vc.LineChoices.Clone() as InterlinLineChoices;
 			if (newLineChoices != null)
 			{
 				newLineChoices.Add(flid, wsToAdd);
@@ -691,7 +696,7 @@ namespace SIL.FieldWorks.IText
 		private void moveUpItem_Click(object sender, EventArgs e)
 		{
 			var ilineToHide = (int)(((ToolStripMenuItem) sender).Tag);
-			var newLineChoices = m_vc.LineChoices.Clone() as InterlinLineChoices;
+			var newLineChoices = Vc.LineChoices.Clone() as InterlinLineChoices;
 			if (newLineChoices != null)
 			{
 				newLineChoices.MoveUp(ilineToHide);
@@ -702,7 +707,7 @@ namespace SIL.FieldWorks.IText
 		private void moveDownItem_Click(object sender, EventArgs e)
 		{
 			var ilineToHide = (int)(((ToolStripMenuItem) sender).Tag);
-			var newLineChoices = m_vc.LineChoices.Clone() as InterlinLineChoices;
+			var newLineChoices = Vc.LineChoices.Clone() as InterlinLineChoices;
 			if (newLineChoices != null)
 			{
 				newLineChoices.MoveDown(ilineToHide);
@@ -717,7 +722,7 @@ namespace SIL.FieldWorks.IText
 				return; // Impossible?
 
 			var flid = menuItem.Flid;
-			var newLineChoices = m_vc.LineChoices.Clone() as InterlinLineChoices;
+			var newLineChoices = Vc.LineChoices.Clone() as InterlinLineChoices;
 			if (newLineChoices != null)
 			{
 				newLineChoices.Add(flid);
@@ -727,7 +732,7 @@ namespace SIL.FieldWorks.IText
 
 		private void configLink_Click(object sender, EventArgs e)
 		{
-			OnConfigureInterlinear(null);
+			OnConfigureInterlinear(null/*, this is InterlinRibbon*/);
 		}
 
 		private void m_labelContextMenu_Closed(object sender, ToolStripDropDownClosedEventArgs e)
@@ -791,7 +796,7 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// This is for setting m_vc.LineChoices even before we have a valid vc.
 		/// </summary>
-		protected internal InterlinLineChoices LineChoices { get; set; }
+		public InterlinLineChoices LineChoices { get; set; }
 
 		/// <summary>
 		/// Tries to restore the LineChoices saved in the ConfigPropName property in the property table.
@@ -814,10 +819,10 @@ namespace SIL.FieldWorks.IText
 		///  Launch the Configure interlinear dialog and deal with the results
 		/// </summary>
 		/// <param name="argument"></param>
-		public bool OnConfigureInterlinear(object argument)
+		public bool OnConfigureInterlinear(object argument/*, bool isRibbon*/)
 		{
-			using (var dlg = new ConfigureInterlinDialog(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
-				m_vc.LineChoices.Clone() as InterlinLineChoices))
+			using (var dlg = new ConfigureInterlinDialog(this.m_cache, this.m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
+				this.Vc.LineChoices.Clone() as InterlinLineChoices)) //TODO DELANEY <--- This constructor will have a new boolean value which indicates whether it is being called from a ribbon.
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
@@ -835,7 +840,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="newChoices"></param>
 		internal virtual void UpdateForNewLineChoices(InterlinLineChoices newChoices)
 		{
-			m_vc.LineChoices = newChoices;
+			Vc.LineChoices = newChoices;
 			LineChoices = newChoices;
 
 			PersistAndDisplayChangedLineChoices();
@@ -844,7 +849,7 @@ namespace SIL.FieldWorks.IText
 		internal void PersistAndDisplayChangedLineChoices()
 		{
 			m_propertyTable.SetProperty(ConfigPropName,
-				m_vc.LineChoices.Persist(m_cache.LanguageWritingSystemFactoryAccessor),
+				Vc.LineChoices.Persist(m_cache.LanguageWritingSystemFactoryAccessor),
 				PropertyTable.SettingsGroup.LocalSettings,
 				true);
 			UpdateDisplayForNewLineChoices();
@@ -881,7 +886,7 @@ namespace SIL.FieldWorks.IText
 		private void UpdateGuesses(HashSet<IWfiWordform> wordforms, bool fUpdateDisplayWhereNeeded)
 		{
 			// now update the guesses for the paragraphs.
-			var pdut = new ParaDataUpdateTracker(m_vc.GuessServices, m_vc.Decorator);
+			var pdut = new ParaDataUpdateTracker(Vc.GuessServices, Vc.Decorator);
 			foreach (IStTxtPara para in RootStText.ParagraphsOS)
 				pdut.LoadAnalysisData(para, wordforms);
 			if (fUpdateDisplayWhereNeeded)
@@ -923,11 +928,11 @@ namespace SIL.FieldWorks.IText
 		}
 
 		#region implemention of IChangeRootObject
-		public void SetRoot(int hvo)
+		public virtual void SetRoot(int hvo)
 		{
 			EnsureVc();
 			if (LineChoices != null)
-				m_vc.LineChoices = LineChoices;
+				Vc.LineChoices = LineChoices;
 
 			SetRootInternal(hvo);
 			AddDecorator();
@@ -951,7 +956,10 @@ namespace SIL.FieldWorks.IText
 		{
 			// by default, just use the InterinVc decorator.
 			if (m_rootb != null)
-				m_rootb.DataAccess = m_vc.Decorator;
+			{
+				m_rootb.DataAccess = Vc.Decorator;
+			}
+
 		}
 
 		protected virtual void SetRootInternal(int hvo)
@@ -979,8 +987,8 @@ namespace SIL.FieldWorks.IText
 			// FWR-191: we don't need to reconstruct the display if we didn't need to reload annotations
 			// but until we detect that condition, we need to redisplay just in case, to keep things in sync.
 			// especially if someone edited the baseline.
-			ChangeOrMakeRoot(m_hvoRoot, m_vc, InterlinVc.kfragStText, m_styleSheet);
-			m_vc.RootSite = this;
+			ChangeOrMakeRoot(m_hvoRoot, Vc, InterlinVc.kfragStText, m_styleSheet);
+			Vc.RootSite = this;
 		}
 
 		#region IVwNotifyChange Members
@@ -1020,7 +1028,7 @@ namespace SIL.FieldWorks.IText
 			if (IsDisposed)
 				return true;
 
-			m_vc.GuessServices.ClearGuessData();
+			Vc.GuessServices.ClearGuessData();
 			UpdateWordforms(m_wordformsToUpdate);
 			m_wordformsToUpdate.Clear();
 			return true;
@@ -1034,7 +1042,7 @@ namespace SIL.FieldWorks.IText
 		#endregion
 		public void UpdatingOccurrence(IAnalysis oldAnalysis, IAnalysis newAnalysis)
 		{
-			m_vc.UpdatingOccurrence(oldAnalysis, newAnalysis);
+			Vc.UpdatingOccurrence(oldAnalysis, newAnalysis);
 		}
 
 		protected internal IStText RootStText

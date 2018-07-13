@@ -571,7 +571,7 @@ namespace SIL.FieldWorks.Discourse
 		/// <summary>
 		/// Set the root object.
 		/// </summary>
-		public void SetRoot(int hvo)
+		public override void SetRoot(int hvo)
 		{
 			int oldTemplateHvo = 0;
 			if (m_template != null)
@@ -680,7 +680,7 @@ namespace SIL.FieldWorks.Discourse
 				return;
 			if (m_templateSelectionPanel.Controls.Count > 0)
 			{
-				((ComboBox) m_templateSelectionPanel.Controls[0]).SelectedItem = m_template;
+				((ComboBox)m_templateSelectionPanel.Controls[0]).SelectedItem = m_template;
 				return;
 			}
 			ComboBox templateButton = new ComboBox();
@@ -689,7 +689,7 @@ namespace SIL.FieldWorks.Discourse
 			templateButton.Left = m_templateSelectionPanel.Width - templateButton.Width;
 			templateButton.DropDownStyle = ComboBoxStyle.DropDownList;
 			templateButton.SelectionChangeCommitted += TemplateSelectionChanged;
-			foreach (var chartTemplate in ((ICmPossibilityList) m_template.Owner).PossibilitiesOS)
+			foreach (var chartTemplate in ((ICmPossibilityList)m_template.Owner).PossibilitiesOS)
 			{
 				templateButton.Items.Add(chartTemplate);
 			}
@@ -727,10 +727,10 @@ namespace SIL.FieldWorks.Discourse
 			if (selectedChart == null)
 			{
 				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
-					{
-						selectedChart = m_serviceLocator.GetInstance<IDsConstChartFactory>().Create(
-							m_cache.LangProject.DiscourseDataOA, RootStText, selection.SelectedItem as ICmPossibility);
-					}
+				{
+					selectedChart = m_serviceLocator.GetInstance<IDsConstChartFactory>().Create(
+						m_cache.LangProject.DiscourseDataOA, RootStText, selection.SelectedItem as ICmPossibility);
+				}
 				);
 			}
 
@@ -1251,6 +1251,7 @@ namespace SIL.FieldWorks.Discourse
 			InterlinLineChoices lineChoices = GetLineChoices();
 			m_body.Init(mediator, propertyTable, m_configurationParameters);
 			m_body.LineChoices = lineChoices;
+			m_ribbon.Init(mediator, propertyTable, m_configurationParameters);
 			m_ribbon.LineChoices = lineChoices;
 		}
 
@@ -1520,7 +1521,7 @@ namespace SIL.FieldWorks.Discourse
 			newColumn.DoubleClick += OnColumnDoubleClick;
 			if (newColumn is HeaderLabel)
 			{
-				((HeaderLabel) newColumn).BorderStyle = BorderStyle.None;
+				((HeaderLabel)newColumn).BorderStyle = BorderStyle.None;
 			}
 		}
 

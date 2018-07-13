@@ -1235,7 +1235,7 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		/// <param name="vwenv"></param>
 		/// <param name="hvo"></param>
-		private void AddSegmentReference(IVwEnv vwenv, int hvo)
+		protected void AddSegmentReference(IVwEnv vwenv, int hvo)
 		{
 			ITsString tssSegNum;
 			StringBuilder sbSegNum = new StringBuilder();

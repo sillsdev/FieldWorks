@@ -3,6 +3,7 @@
 
   <PropertyGroup>
     <Platform Condition="'$(Platform)'==''">x64</Platform>
+	<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
 
   <UsingTask TaskName="CatenateFiles" AssemblyFile="FwBuildTasks.dll"/>

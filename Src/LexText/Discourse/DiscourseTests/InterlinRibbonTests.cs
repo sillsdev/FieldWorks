@@ -13,6 +13,7 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
+using XCore;
 
 namespace SIL.FieldWorks.Discourse
 {
@@ -44,6 +45,7 @@ namespace SIL.FieldWorks.Discourse
 
 		public override void TestTearDown()
 		{
+			m_ribbon.Vc.Dispose();
 			m_ribbon.Dispose();
 			base.TestTearDown();
 		}
@@ -118,6 +120,7 @@ namespace SIL.FieldWorks.Discourse
 		{
 			var glosses = GetParaAnalyses(m_firstPara);
 			var glossList = new List<AnalysisOccurrence>();
+			int labelOffset = 150;
 			glossList.AddRange(glosses);
 			EndSetupTask();
 
@@ -134,26 +137,26 @@ namespace SIL.FieldWorks.Discourse
 			m_ribbon.CallGetCoordRects(out rcSrc, out rcDst);
 
 			// SUT #2?!
-			m_ribbon.RootBox.MouseDown(1, 1, rcSrc, rcDst);
-			m_ribbon.RootBox.MouseUp(1, 1, rcSrc, rcDst);
-			Assert.AreEqual(new [] { glosses[0] }, m_ribbon.SelectedOccurrences);
+			m_ribbon.RootBox.MouseDown(labelOffset, 1, rcSrc, rcDst);
+			m_ribbon.RootBox.MouseUp(labelOffset, 1, rcSrc, rcDst);
+			Assert.AreEqual(new[] { glosses[0] }, m_ribbon.SelectedOccurrences);
 
 			Rectangle location = m_ribbon.GetSelLocation();
 			Assert.IsTrue(m_ribbon.RootBox.Selection.IsRange, "single click selection should expand to range");
-			int width = location.Width;
+			int offset = location.Width + labelOffset;
 
 			// SUT #3?!
 			// Clicking just right of that should add the second one. We need to allow for the gap between
-			// (about 10 pixels) and at the left of the view.
-			m_ribbon.RootBox.MouseDown(width + 15, 5, rcSrc, rcDst);
-			m_ribbon.RootBox.MouseUp(width + 15, 5, rcSrc, rcDst);
-			Assert.AreEqual(new [] { glosses[0], glosses[1] }, m_ribbon.SelectedOccurrences);
+			// (about 15 pixels) and at the left of the view.
+			m_ribbon.RootBox.MouseDown(offset + 15, 5, rcSrc, rcDst);
+			m_ribbon.RootBox.MouseUp(offset + 15, 5, rcSrc, rcDst);
+			Assert.AreEqual(new[] { glosses[0], glosses[1] }, m_ribbon.SelectedOccurrences);
 
 			// SUT #4?!
 			// And a shift-click back near the start should go back to just one of them.
 			m_ribbon.RootBox.MouseDownExtended(1, 1, rcSrc, rcDst);
 			m_ribbon.RootBox.MouseUp(1, 1, rcSrc, rcDst);
-			Assert.AreEqual(new [] { glosses[0] }, m_ribbon.SelectedOccurrences);
+			Assert.AreEqual(new[] { glosses[0] }, m_ribbon.SelectedOccurrences);
 		}
 		#endregion
 	}
@@ -166,6 +169,7 @@ namespace SIL.FieldWorks.Discourse
 		public TestInterlinRibbon(LcmCache cache, int hvoStText)
 			: base(cache, hvoStText)
 		{
+			m_propertyTable = new PropertyTable(null);
 		}
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

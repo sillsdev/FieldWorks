@@ -110,7 +110,8 @@ namespace SIL.FieldWorks.IText
 		{
 			Analyze,
 			Gloss,
-			GlossAddWordsToLexicon
+			GlossAddWordsToLexicon,
+			Chart
 		}
 
 		public static InterlinLineChoices DefaultChoices(ILangProject proj, int vern, int analysis, InterlinMode mode)
@@ -118,6 +119,7 @@ namespace SIL.FieldWorks.IText
 			InterlinLineChoices result = new InterlinLineChoices(proj, vern, analysis, mode);
 			switch (mode)
 			{
+				case InterlinMode.Chart:
 				case InterlinMode.Analyze:
 					result.SetStandardState();
 					break;
@@ -391,6 +393,7 @@ namespace SIL.FieldWorks.IText
 			switch (mode)
 			{
 				case InterlinMode.Analyze:
+				case InterlinMode.Chart:
 				case InterlinMode.Gloss:
 					if (m_cache != null)
 					{

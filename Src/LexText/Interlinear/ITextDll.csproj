@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
@@ -87,7 +87,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>  
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <OutputPath>..\..\..\Output\Debug\</OutputPath>
     <BaseAddress>285212672</BaseAddress>
@@ -143,6 +143,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\SIL.Windows.Forms.Keyboarding.dll</HintPath>
     </Reference>
+    <Reference Include="System.Configuration" />
     <Reference Include="ViewsInterfaces, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -473,7 +474,7 @@
     <Compile Include="InterlinTaggingChild.Designer.cs">
       <DependentUpon>InterlinTaggingChild.cs</DependentUpon>
     </Compile>
-	<Compile Include="InterlinTaggingVc.cs" />
+    <Compile Include="InterlinTaggingVc.cs" />
     <Compile Include="InterlinVc.cs">
       <SubType>Code</SubType>
     </Compile>

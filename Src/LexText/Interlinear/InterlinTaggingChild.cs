@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.IText
 
 		protected override void MakeVc()
 		{
-			m_vc = new InterlinTaggingVc(m_cache);
+			Vc = new InterlinTaggingVc(m_cache);
 			m_tagFact = m_cache.ServiceLocator.GetInstance<ITextTagFactory>();
 			m_segRepo = m_cache.ServiceLocator.GetInstance<ISegmentRepository>();
 		}
@@ -74,7 +74,7 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		protected override void AddDecorator()
 		{
-			m_rootb.DataAccess = (m_vc as InterlinTaggingVc).Decorator;
+			m_rootb.DataAccess = (Vc as InterlinTaggingVc).Decorator;
 		}
 
 		#region SelectionMethods
@@ -133,7 +133,8 @@ namespace SIL.FieldWorks.IText
 			if (AreHigherLevelsSameObject(analysisLevels, rgvsliEnd, out iend))
 			{
 				endLevels = analysisLevels.Clone() as SelLevInfo[];
-				if (endLevels != null)
+				if (endLevels == null) {}
+				else
 				{
 					endLevels[0] = new SelLevInfo(); // clone is SHALLOW; don't modify element of analysisLevels.
 					endLevels[0].ihvo = rgvsliEnd[iend].ihvo;
@@ -592,7 +593,7 @@ namespace SIL.FieldWorks.IText
 		protected virtual void CacheTagString(ITextTag textTag)
 		{
 			// Cache the new tagging string and call PropChanged?
-			(m_vc as InterlinTaggingVc).CacheTagString(textTag);
+			(Vc as InterlinTaggingVc).CacheTagString(textTag);
 		}
 
 		/// <summary>
@@ -604,7 +605,7 @@ namespace SIL.FieldWorks.IText
 			// Cache a string for each occurrence this tag references. (PropChanged?)
 
 			int row = textTag.TagRA.Owner.IndexInOwner;
-			(m_vc as InterlinTaggingVc).ClearTagStringForRow(textTag.GetOccurrences(), row);
+			(Vc as InterlinTaggingVc).ClearTagStringForRow(textTag.GetOccurrences(), row);
 		}
 
 		/// <summary>

@@ -445,12 +445,10 @@ namespace SIL.FieldWorks.Discourse
 
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
-			if (System.DateTime.Now.Ticks - m_ticksWhenContextMenuClosed > 50000) // 5ms!
+			if (e.Button == MouseButtons.Right || m_hoverButton.Bounds.Contains(e.Location))
 			{
-				// Consider bringing up another menu only if we weren't already showing one.
-				// The above time test seems to be the only way to find out whether this click closed the last one.
-				int icol;
-				int irow;
+				// Bring up the menu if the user right clicks or clicks on the menu hover button.
+				int irow, icol;
 				IDsConstChart chart =
 					Cache.ServiceLocator.GetInstance<IDsConstChartRepository>().GetObject(m_hvoChart);
 				ChartLocation cell;

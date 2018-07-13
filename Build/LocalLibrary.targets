@@ -47,6 +47,10 @@
 		<!--Build the Palaso library-->
 		<Message Text="Building libpalaso. Artifacts will be put into: $(PalasoArtifactsDir)" />
 		<MSBuild Projects="$(PalasoArtifactsDir)/../../build/Palaso.proj"
+			Targets="RestorePackages"
+			Properties="Configuration=$(ConfigName);Platform=$(LibpalasoPlatform)"
+			ToolsVersion="15.0" />
+		<MSBuild Projects="$(PalasoArtifactsDir)/../../build/Palaso.proj"
 			Targets="Build"
 			Properties="Configuration=$(ConfigName);Platform=$(LibpalasoPlatform)"
 			ToolsVersion="15.0" />
@@ -64,6 +68,10 @@
 		<Copy SourceFiles="@(ChorusDeps -> '$(PalasoArtifactsDir)/%(Identity)')" DestinationFolder="$(ChorusArtifactsDir)/../../lib/$(ConfigName)" />
 		<!--Build the Chorus library-->
 		<Message Text="Building chorus. Artifacts will be put into: $(ChorusArtifactsDir)" />
+		<MSBuild Projects="$(ChorusArtifactsDir)/../../build/Chorus.proj"
+			Targets="RestorePackages"
+			Properties="Configuration=$(ConfigName);Platform=$(ChorusPlatform)"
+			ToolsVersion="15.0" />
 		<MSBuild Projects="$(ChorusArtifactsDir)/../../build/Chorus.proj"
 			Targets="Compile"
 			Properties="Configuration=$(ConfigName);Platform=$(ChorusPlatform)"

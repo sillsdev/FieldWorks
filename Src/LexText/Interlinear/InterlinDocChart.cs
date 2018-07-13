@@ -3,14 +3,22 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
+using XCore;
 
 namespace SIL.FieldWorks.IText
 {
 	/// <summary>
 	/// Dummy subclass so we can design the Chart tab.
 	/// </summary>
-	public class InterlinDocChart : UserControl
+	public class InterlinDocChart : UserControl, IInterlinearTabControl
 	{
+		public LcmCache Cache { get; set; }
+		public PropertyTable PropertyTable { get; set; }
+		public InterlinVc Vc { get; set; }
+		public IVwRootBox Rootb { get; set; }
+
 		private void InitializeComponent()
 		{
 			this.SuspendLayout();
@@ -32,5 +40,11 @@ namespace SIL.FieldWorks.IText
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
 			base.Dispose(disposing);
 		}
+
+		public virtual void SetRoot(int hvo)
+		{
+			throw new System.NotImplementedException();
+		}
+
 	}
 }

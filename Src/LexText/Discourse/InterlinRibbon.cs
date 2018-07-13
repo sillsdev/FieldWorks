@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Xml;
+using System.Windows.Forms;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -14,6 +16,7 @@ using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.IText;
+using XCore;
 
 namespace SIL.FieldWorks.Discourse
 {
@@ -21,7 +24,7 @@ namespace SIL.FieldWorks.Discourse
 	/// This class displays a one-line ribbon of interlinear text which keeps adding more at the end
 	/// as stuff at the start gets moved into the main chart.
 	/// </summary>
-	public class InterlinRibbon : SimpleRootSite, IInterlinRibbon
+	public class InterlinRibbon : InterlinDocRootSiteBase, IInterlinRibbon
 	{
 		internal const int kfragRibbonWordforms = 2000000; // should be distinct from ones used in InterlinVc
 
@@ -31,7 +34,7 @@ namespace SIL.FieldWorks.Discourse
 		// If we are the DialogInterlinRibbon sub-class, this is hvoWordGroup.
 
 		protected int m_occurenceListId = -2011; // flid for charting ribbon
-		private RibbonVc m_vc;
+		//private RibbonVc Vc;
 		private int m_iEndSelLim;
 		private AnalysisOccurrence m_endSelLimPoint;
 
@@ -58,20 +61,29 @@ namespace SIL.FieldWorks.Discourse
 			m_fShowRangeSelAfterLostFocus = true;
 		}
 
+		protected override void MakeVc()
+		{
+			Vc = new RibbonVc(this);
+		}
+
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
 			{
-				if (m_vc != null)
-					m_vc.Dispose();
+				if (Vc != null)
+					Vc.Dispose();
 			}
-			m_vc = null;
+			Vc = null;
 			base.Dispose(disposing);
 		}
 
 		#region Properties
 
-		internal InterlinLineChoices LineChoices { get; set; }
+		protected internal InterlinLineChoices RibbonLineChoices
+		{
+			get { return LineChoices; }
+			set { LineChoices = value; }
+		}
 
 		public virtual int OccurenceListId
 		{
@@ -90,7 +102,7 @@ namespace SIL.FieldWorks.Discourse
 
 		protected internal int HvoRoot { get; private set; }
 
-		protected internal LcmCache Cache { get; protected set; }
+		//protected internal LcmCache Cache { get; protected set; }
 
 		/// <summary>
 		/// Setter handles PropChanged
@@ -161,7 +173,7 @@ namespace SIL.FieldWorks.Discourse
 		{
 			get
 			{
-				return m_vc != null && m_vc.RightToLeft;
+				return Vc != null && Vc.RightToLeft;
 			}
 		}
 
@@ -233,7 +245,7 @@ namespace SIL.FieldWorks.Discourse
 				var levelsE = new SelLevInfo[1];
 				levelsE[0].ihvo = end;
 				levelsE[0].tag = OccurenceListId;
-				RootBox.MakeTextSelInObj(0, 1, levelsA, 1, levelsE, false, false, false, true, true);
+				RootBox.MakeTextSelInObj(0, levelsA.Length, levelsA, levelsE.Length, levelsE, false, false, false, true, true);
 			}
 			finally
 			{
@@ -241,7 +253,12 @@ namespace SIL.FieldWorks.Discourse
 			}
 		}
 
-		public void SetRoot(int hvoStText)
+		protected override void AddDecorator()
+		{
+			m_rootb.DataAccess = Decorator;
+		}
+
+		public override void SetRoot(int hvoStText)
 		{
 			// Note: do not avoid  calling ChangeOrMakeRoot when hvoText == m_hvoRoot. The reconstruct
 			// may be needed when the ribbon contents have changed, e.g., because objects were deleted
@@ -249,7 +266,9 @@ namespace SIL.FieldWorks.Discourse
 			HvoRoot = hvoStText;
 			if (RootBox == null)
 				return;
-			ChangeOrMakeRoot(HvoRoot, m_vc, kfragRibbonWordforms, StyleSheet);
+			SetRootInternal(hvoStText);
+			ChangeOrMakeRoot(HvoRoot, Vc, kfragRibbonWordforms, StyleSheet);
+			AddDecorator();
 			MakeInitialSelection();
 		}
 
@@ -259,7 +278,7 @@ namespace SIL.FieldWorks.Discourse
 
 			base.MakeRoot();
 
-			m_vc = new RibbonVc(this);
+			EnsureVc();
 
 			if (LineChoices == null)
 			{
@@ -268,14 +287,20 @@ namespace SIL.FieldWorks.Discourse
 				LineChoices.Add(InterlinLineChoices.kflidWord);
 				LineChoices.Add(InterlinLineChoices.kflidWordGloss);
 			}
-			m_vc.LineChoices = LineChoices;
+			Vc.LineChoices = LineChoices;
+			SetRootInternal(HvoRoot);
 
 			m_rootb.DataAccess = Decorator;
-			m_rootb.SetRootObject(HvoRoot, m_vc, kfragRibbonWordforms, this.StyleSheet);
+			m_rootb.SetRootObject(HvoRoot, Vc, kfragRibbonWordforms, this.StyleSheet);
 
-			m_rootb.Activate(VwSelectionState.vssOutOfFocus); // Makes selection visible even before ever got focus.\
+			m_rootb.Activate(VwSelectionState.vssOutOfFocus); // Makes selection visible even before ever got focus.
 			MakeInitialSelection();
 		}
+
+		//protected override MakeContextMenu(int ilineChoices)
+		//{
+		//	return base.MakeContextMenu(ilineChoices);
+		//}
 
 		protected override void OnLoad(EventArgs e)
 		{
@@ -346,9 +371,16 @@ namespace SIL.FieldWorks.Discourse
 						vwenv.set_IntProperty((int)FwTextPropType.ktptAlign,
 							(int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalLeft);
 					}
+
+					vwenv.set_IntProperty((int)FwTextPropType.ktptMarginLeading,
+						(int)FwTextPropVar.ktpvMilliPoint, 10000);
+
+					vwenv.OpenDiv();
 					vwenv.OpenParagraph();
+					AddLabelPile(vwenv, m_cache, true, ShowMorphBundles);
 					vwenv.AddObjVecItems(m_ribbon.OccurenceListId, this, InterlinVc.kfragBundle);
 					vwenv.CloseParagraph();
+					vwenv.CloseDiv();
 					break;
 				case kfragBundle:
 					// Review: will this lead to multiple spurious blue lines?
@@ -424,7 +456,7 @@ namespace SIL.FieldWorks.Discourse
 		/// Enhance: it may cause flicker during drag, in which case, we may change to only do it on mouse up,
 		/// or only IF the mouse is up.
 		/// </summary>
-		protected override void  HandleSelectionChange(object sender, VwSelectionArgs args)
+		protected override void HandleSelectionChange(object sender, VwSelectionArgs args)
 		{
 			if (m_InSelectionChanged || RootBox.Selection == null)
 				return;
@@ -453,7 +485,7 @@ namespace SIL.FieldWorks.Discourse
 				SelLevInfo[] levelsE = new SelLevInfo[1];
 				levelsE[0].ihvo = end;
 				levelsE[0].tag = OccurenceListId;
-				RootBox.MakeTextSelInObj(0, 1, levelsA, 1, levelsE, false, false, false, true, true);
+				RootBox.MakeTextSelInObj(0, levelsA.Length, levelsA, levelsE.Length, levelsE, false, false, false, true, true);
 			}
 			finally
 			{
