@@ -150,7 +150,7 @@ namespace LanguageExplorer.LcmUi
 			if (hvoLf != 0)
 			{
 				// if we have a lexeme form and its label is non-empty, use it.
-				if (TryMultiStringAlt(sda, hvoLf, MoFormTags.kflidForm, out wsActual))
+				if (TryMultiStringAlt(hvoLf, MoFormTags.kflidForm, out wsActual))
 				{
 					m_wsActual = wsActual;
 					fGotLabel = true;
@@ -164,7 +164,7 @@ namespace LanguageExplorer.LcmUi
 			if (!fGotLabel)
 			{
 				// If we didn't get a useful form from the lexeme form try the citation form.
-				if (TryMultiStringAlt(sda, hvo, LexEntryTags.kflidCitationForm, out wsActual))
+				if (TryMultiStringAlt(hvo, LexEntryTags.kflidCitationForm, out wsActual))
 				{
 					m_wsActual = wsActual;
 					if (sPrefix != null)
@@ -231,25 +231,12 @@ namespace LanguageExplorer.LcmUi
 			vcEntry.Display(collector, hvoEntryToDisplay, (int)VcFrags.kfragHeadWord);
 			if (ler != null)
 			{
-				vcEntry.Display(collector, ler.Hvo, LexEntryVc.kfragVariantTypes);
+				vcEntry.Display(collector, ler.Hvo, kfragVariantTypes);
 			}
 			return collector.Result;
 		}
 
-		/// <summary />
-		public static ITsString GetLexEntryTss(IWfiMorphBundle morphBundle, int wsVern)
-		{
-			var cache = morphBundle.Cache;
-			var vcEntry = new LexEntryVc(cache) {WritingSystemCode = wsVern};
-			var collector = new TsStringCollectorEnv(null, cache.MainCacheAccessor, morphBundle.Hvo)
-			{
-				RequestAppendSpaceForFirstWordInNewParagraph = false
-			};
-			vcEntry.Display(collector, morphBundle.Hvo, (int)LexEntryVc.kfragEntryAndVariant);
-			return collector.Result;
-		}
-
-		private bool TryMultiStringAlt(ISilDataAccess sda, int hvo, int flid, out int wsActual)
+		private bool TryMultiStringAlt(int hvo, int flid, out int wsActual)
 		{
 			return WritingSystemServices.GetMagicStringAlt(m_cache, m_ws, hvo, flid, true, out wsActual) != null;
 		}

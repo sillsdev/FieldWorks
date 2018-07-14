@@ -64,7 +64,7 @@ namespace LanguageExplorer.LcmUi
 		/// 		{
 		/// 		...
 		/// 		case sometypeshownbyshortname:
-		/// 			IVwViewConstructor vcName = CmObjectUi.MakeUi(m_cache, hvo).Vc;
+		/// 			IVwViewConstructor vcName = CmObjectUi.MakeLcmModelUiObject(m_cache, hvo).Vc;
 		/// 			vwenv.AddObj(hvo, vcName, VcFrags.kfragShortName);
 		/// 			break;
 		/// 		...
@@ -80,7 +80,7 @@ namespace LanguageExplorer.LcmUi
 		///				...// possibly other properties of containing object.
 		///				// Display shortname of object in atomic object property XYZ
 		///				int hvoObj = vwenv.DataAccess.get_ObjectProp(hvo, kflidXYZ);
-		///				IVwViewConstructor vcName = CmObjectUi.MakeUi(m_cache, hvoObj).Vc;
+		///				IVwViewConstructor vcName = CmObjectUi.MakeLcmModelUiObject(m_cache, hvoObj).Vc;
 		///				vwenv.AddObjProp(kflidXYZ, vcName, VcFrags.kfragShortName);
 		///				...
 		///				break;
@@ -100,7 +100,7 @@ namespace LanguageExplorer.LcmUi
 		/// 		{
 		/// 		...
 		/// 		case sometypeshownbyshortname:
-		/// 			IVwViewConstructor vcName = CmObjectUi.MakeUi(m_cache, hvo).VernVc;
+		/// 			IVwViewConstructor vcName = CmObjectUi.MakeLcmModelUiObject(m_cache, hvo).VernVc;
 		/// 			vwenv.AddObj(hvo, vcName, VcFrags.kfragShortName);
 		/// 			break;
 		/// 		...
@@ -117,7 +117,7 @@ namespace LanguageExplorer.LcmUi
 		///				...// possibly other properties of containing object.
 		///				// Display shortname of object in atomic object property XYZ
 		///				int hvoObj = vwenv.DataAccess.get_ObjectProp(hvo, kflidXYZ);
-		///				IVwViewConstructor vcName = CmObjectUi.MakeUi(m_cache, hvoObj).VernVc;
+		///				IVwViewConstructor vcName = CmObjectUi.MakeLcmModelUiObject(m_cache, hvoObj).VernVc;
 		///				vwenv.AddObjProp(kflidXYZ, vcName, VcFrags.kfragShortName);
 		///				...
 		///				break;
@@ -131,17 +131,17 @@ namespace LanguageExplorer.LcmUi
 
 		/// <summary>
 		/// If you KNOW for SURE the right subclass of CmObjectUi, you can just make one
-		/// directly. Most clients should use MakeUi.
+		/// directly. Most clients should use MakeLcmModelUiObject.
 		/// </summary>
 		/// <param name="obj"></param>
-		public CmObjectUi(ICmObject obj)
+		protected CmObjectUi(ICmObject obj)
 		{
 			m_cmObject = obj;
 			m_cache = obj.Cache;
 		}
 
 		/// <summary>
-		/// This should only be used by MakeUi.
+		/// This should only be used by MakeLcmModelUiObject.
 		/// </summary>
 		protected CmObjectUi()
 		{
@@ -151,9 +151,9 @@ namespace LanguageExplorer.LcmUi
 		/// This is the main class factory that makes a corresponding CmObjectUi for any given
 		/// CmObject.
 		/// </summary>
-		public static CmObjectUi MakeUi(ICmObject obj)
+		public static CmObjectUi MakeLcmModelUiObject(ICmObject obj)
 		{
-			var result = MakeUi(obj.Cache, obj.Hvo, obj.ClassID);
+			var result = MakeLcmModelUiObject(obj.Cache, obj.Hvo, obj.ClassID);
 			result.m_cmObject = obj;
 			return result;
 		}
@@ -162,12 +162,12 @@ namespace LanguageExplorer.LcmUi
 		/// In many cases we don't really need the LCM object, which can be relatively expensive
 		/// to create. This version saves the information, and creates it when needed.
 		/// </summary>
-		public static CmObjectUi MakeUi(LcmCache cache, int hvo)
+		public static CmObjectUi MakeLcmModelUiObject(LcmCache cache, int hvo)
 		{
-			return MakeUi(cache, hvo, cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo).ClassID);
+			return MakeLcmModelUiObject(cache, hvo, cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo).ClassID);
 		}
 
-		private static CmObjectUi MakeUi(LcmCache cache, int hvo, int clsid)
+		private static CmObjectUi MakeLcmModelUiObject(LcmCache cache, int hvo, int clsid)
 		{
 			var mdc = cache.DomainDataByFlid.MetaDataCache;
 			// If we've encountered an object with this Clsid before, and this clsid isn't in
@@ -254,33 +254,33 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Create a new LCM object.
 		/// </summary>
-		public static CmObjectUi CreateNewUiObject(IPropertyTable propertyTable, IPublisher publisher, int classId, int hvoOwner, int flid, int insertionPosition)
+		internal static CmObjectUi MakeLcmModelUiObject(IPropertyTable propertyTable, IPublisher publisher, int classId, int hvoOwner, int flid, int insertionPosition)
 		{
 			var cache = propertyTable.GetValue<LcmCache>("cache");
 			switch (classId)
 			{
 				default:
-					return DefaultCreateNewUiObject(classId, hvoOwner, flid, insertionPosition, cache);
+					return MakeLcmModelUiObject(classId, hvoOwner, flid, insertionPosition, cache);
 				case CmPossibilityTags.kClassId:
-					return CmPossibilityUi.CreateNewUiObject(cache, classId, hvoOwner, flid, insertionPosition);
+					return CmPossibilityUi.MakeLcmModelUiObject(cache, classId, hvoOwner, flid, insertionPosition);
 				case PartOfSpeechTags.kClassId:
-					return PartOfSpeechUi.CreateNewUiObject(cache, propertyTable, publisher, classId, hvoOwner, flid, insertionPosition);
+					return PartOfSpeechUi.MakeLcmModelUiObject(cache, propertyTable, publisher, classId, hvoOwner, flid, insertionPosition);
 				case FsFeatDefnTags.kClassId:
-					return FsFeatDefnUi.CreateNewUiObject(cache, propertyTable, publisher, classId, hvoOwner, flid, insertionPosition);
+					return FsFeatDefnUi.MakeLcmModelUiObject(cache, propertyTable, publisher, classId, hvoOwner, flid, insertionPosition);
 				case LexSenseTags.kClassId:
-					return LexSenseUi.CreateNewUiObject(cache, hvoOwner, insertionPosition);
+					return LexSenseUi.MakeLcmModelUiObject(cache, hvoOwner, insertionPosition);
 				case LexPronunciationTags.kClassId:
-					return LexPronunciationUi.CreateNewUiObject(cache, classId, hvoOwner, flid, insertionPosition);
+					return LexPronunciationUi.MakeLcmModelUiObject(cache, classId, hvoOwner, flid, insertionPosition);
 			}
 		}
 
-		internal static CmObjectUi DefaultCreateNewUiObject(int classId, int hvoOwner, int flid, int insertionPosition, LcmCache cache)
+		internal static CmObjectUi MakeLcmModelUiObject(int classId, int hvoOwner, int flid, int insertionPosition, LcmCache cache)
 		{
 			CmObjectUi newUiObj = null;
 			UndoableUnitOfWorkHelper.Do(LcmUiStrings.ksUndoInsert, LcmUiStrings.ksRedoInsert, cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 			{
 				var newHvo = cache.DomainDataByFlid.MakeNewObject(classId, hvoOwner, flid, insertionPosition);
-				newUiObj = MakeUi(cache, newHvo, classId);
+				newUiObj = MakeLcmModelUiObject(cache, newHvo, classId);
 			});
 			return newUiObj;
 		}

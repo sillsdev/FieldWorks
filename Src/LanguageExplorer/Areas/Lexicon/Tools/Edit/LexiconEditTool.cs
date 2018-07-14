@@ -233,7 +233,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void CmdDeleteSelectedObject_Clicked(object sender, EventArgs e)
 		{
-			using (var cmObjectUi = CmObjectUi.MakeUi(_recordList.CurrentObject))
+			using (var cmObjectUi = CmObjectUi.MakeLcmModelUiObject(_recordList.CurrentObject))
 			{
 				cmObjectUi.InitializeFlexComponent(new FlexComponentParameters(_propertyTable, _publisher, _subscriber));
 				cmObjectUi.DeleteUnderlyingObject();

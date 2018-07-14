@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -23,13 +23,13 @@ namespace LanguageExplorer.LcmUi
 			Debug.Assert(obj is ILexPronunciation);
 		}
 
-		// For MakeUi method.
+		// For MakeLcmModelUiObject method.
 		internal LexPronunciationUi() {}
 
 		/// <summary>
 		/// Handle the context menu for inserting a LexPronunciation.
 		/// </summary>
-		public static LexPronunciationUi CreateNewUiObject(LcmCache cache, int classId, int hvoOwner, int flid, int insertionPosition)
+		public static LexPronunciationUi MakeLcmModelUiObject(LcmCache cache, int classId, int hvoOwner, int flid, int insertionPosition)
 		{
 			if (cache == null)
 			{
@@ -40,7 +40,7 @@ namespace LanguageExplorer.LcmUi
 			UndoableUnitOfWorkHelper.Do(LcmUiStrings.ksUndoInsert, LcmUiStrings.ksRedoInsert, cache.ActionHandlerAccessor, () =>
 			{
 				var newHvo = cache.DomainDataByFlid.MakeNewObject(classId, hvoOwner, flid, insertionPosition);
-				result = (LexPronunciationUi)MakeUi(cache, newHvo);
+				result = (LexPronunciationUi)MakeLcmModelUiObject(cache, newHvo);
 				// Forces them to be created (lest it try to happen while displaying the new object in PropChanged).
 				var dummy = cache.LangProject.DefaultPronunciationWritingSystem;
 			});

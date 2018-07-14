@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.Code;
@@ -21,16 +20,27 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Create one. Argument must be a CmPossibility.
 		/// Review JohnH (JohnT): should we declare the argument to be CmPossibility?
-		/// Note that declaring it to be forces us to just do a cast in every case of MakeUi, which is
+		/// Note that declaring it to be forces us to just do a cast in every case of MakeLcmModelUiObject, which is
 		/// passed an obj anyway.
 		/// </summary>
-		public CmPossibilityUi(ICmObject obj)
+		protected CmPossibilityUi(ICmPossibility obj)
 			: base(obj)
 		{
-			Debug.Assert(obj is ICmPossibility);
 		}
 
 		internal CmPossibilityUi() { }
+
+		internal static CmPossibilityUi MakeLcmModelUiObject(ICmPossibility obj)
+		{
+			return new CmPossibilityUi(obj);
+		}
+
+		public static CmObjectUi MakeLcmModelUiObject(LcmCache cache, int classId, int hvoOwner, int flid, int insertionPosition)
+		{
+			Guard.AgainstNull(cache, nameof(cache));
+
+			return CheckAndReportProblemAddingSubitem(cache, hvoOwner) ? null : MakeLcmModelUiObject(classId, hvoOwner, flid, insertionPosition, cache);
+		}
 
 		/// <summary>
 		/// Gets a special VC that knows to use the abbr for the shortname, etc.
@@ -207,13 +217,6 @@ namespace LanguageExplorer.LcmUi
 				return true;
 			}
 			return false;
-		}
-
-		public static CmObjectUi CreateNewUiObject(LcmCache cache, int classId, int hvoOwner, int flid, int insertionPosition)
-		{
-			Guard.AgainstNull(cache, nameof(cache));
-
-			return CheckAndReportProblemAddingSubitem(cache, hvoOwner) ? null : DefaultCreateNewUiObject(classId, hvoOwner, flid, insertionPosition, cache);
 		}
 
 		public override bool CanDelete(out string cannotDeleteMsg)

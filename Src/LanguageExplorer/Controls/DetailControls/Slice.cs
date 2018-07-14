@@ -1808,7 +1808,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						insertionPosition = -2;
 						break;
 				}
-				using (var uiObj = CmObjectUi.CreateNewUiObject(PropertyTable, Publisher, newObjectClassId, hvoOwner, flid, insertionPosition))
+				using (var uiObj = CmObjectUi.MakeLcmModelUiObject(PropertyTable, Publisher, newObjectClassId, hvoOwner, flid, insertionPosition))
 				{
 					// If uiObj is null, typically CreateNewUiObject displayed a dialog and the user cancelled.
 					// We return -1 to make the caller give up trying to insert, so we don't get another dialog if
@@ -1991,7 +1991,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			try
 			{
 				dataTree.SetCurrentObjectFlids(obj.Hvo, 0);
-				using (var ui = CmObjectUi.MakeUi(Cache, obj.Hvo))
+				using (var ui = CmObjectUi.MakeLcmModelUiObject(Cache, obj.Hvo))
 				{
 					ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 					result = ui.DeleteUnderlyingObject();
@@ -2225,7 +2225,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				throw new FwConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be merged.", ConfigurationNode);
 			}
 
-			using (var ui = CmObjectUi.MakeUi(Cache, obj.Hvo))
+			using (var ui = CmObjectUi.MakeLcmModelUiObject(Cache, obj.Hvo))
 			{
 				ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				ui.MergeUnderlyingObject(fLoseNoTextData);
@@ -2284,7 +2284,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				throw new FwConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be moved to a copy of its owner.", ConfigurationNode);
 			}
 
-			using (var ui = CmObjectUi.MakeUi(Cache, obj.Hvo))
+			using (var ui = CmObjectUi.MakeLcmModelUiObject(Cache, obj.Hvo))
 			{
 				ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				ui.MoveUnderlyingObjectToCopyOfOwner();

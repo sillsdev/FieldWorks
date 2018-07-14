@@ -14,25 +14,12 @@ namespace LanguageExplorer.LcmUi
 	/// </summary>
 	public class ReferenceCollectionUi : VectorReferenceUi
 	{
-		public ReferenceCollectionUi(LcmCache cache, ICmObject rootObj, int referenceFlid, int targetHvo) :
-			base(cache, rootObj, referenceFlid, targetHvo)
+		public ReferenceCollectionUi(LcmCache cache, ICmObject rootObj, int referenceFlid, int targetHvo)
+			: base(cache, rootObj, referenceFlid, targetHvo)
 		{
 			Debug.Assert(m_iType == CellarPropertyType.ReferenceCollection);
 		}
 
-		protected override string ContextMenuId
-		{
-			get
-			{
-				var clidDst = m_cache.DomainDataByFlid.MetaDataCache.GetDstClsId(m_flid);
-				switch (clidDst)
-				{
-					case PhEnvironmentTags.kClassId:
-						return "mnuEnvReferenceChoices";
-					default:
-						return "mnuReferenceChoices";
-				}
-			}
-		}
+		protected override string ContextMenuId => m_cache.DomainDataByFlid.MetaDataCache.GetDstClsId(m_flid) == PhEnvironmentTags.kClassId ? "mnuEnvReferenceChoices" : base.ContextMenuId;
 	}
 }

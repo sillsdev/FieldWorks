@@ -2498,7 +2498,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		bool m_fHandlingRightClickMenu;
 		private bool HandleRightClickOnObject(int hvoReal)
 		{
-			using (var rightClickUiObj = CmObjectUi.MakeUi(Cache, hvoReal))
+			using (var rightClickUiObj = CmObjectUi.MakeLcmModelUiObject(Cache, hvoReal))
 			{
 				rightClickUiObj.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				m_fHandlingRightClickMenu = true;
@@ -3890,7 +3890,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return; // LT-13878: User may have 'Ctrl+Click'ed on an arrow or off in space somewhere
 			}
 
-			using (var targetUiObj = CmObjectUi.MakeUi(Cache, hvoTarget))
+			using (var targetUiObj = CmObjectUi.MakeLcmModelUiObject(Cache, hvoTarget))
 			{
 				targetUiObj.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				targetUiObj.HandleCtrlClick(this);
@@ -3985,7 +3985,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					// TODO: We really want the guid, and it's usually just as accessible as
 					// the hvo, so methods like have been migrating to returning the guid.
 					// This method should do likewise...
-					using (var ui = CmObjectUi.MakeUi(Caches.MainCache, hvoMsa))
+					using (var ui = CmObjectUi.MakeLcmModelUiObject(Caches.MainCache, hvoMsa))
 					{
 						ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 						var guid = ui.GuidForJumping(null);

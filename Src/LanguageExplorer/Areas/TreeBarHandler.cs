@@ -665,7 +665,7 @@ namespace LanguageExplorer.Areas
 		/// <returns>true means we found and reported a bad move.</returns>
 		private bool CheckAndReportBadDiscourseTemplateMove(ICmPossibility movingColumn, int hvoTemplate, int hvoTemplateList, int hvoDest)
 		{
-			using (var movingColumnUI = new CmPossibilityUi(movingColumn))
+			using (var movingColumnUI = CmPossibilityUi.MakeLcmModelUiObject(movingColumn))
 			{
 				// NB: Doesn't need to call 'InitializeFlexComponent', since the code doesn't access the three objects the init call sets.
 				// First, check whether we're allowed to manipulate this column at all. This is the same check as
@@ -695,7 +695,7 @@ namespace LanguageExplorer.Areas
 			if (m_objRepo.GetObject(hvoDest).Owner.Hvo == hvoTemplate && moveColumnIsLeaf)
 			{
 				var dest = m_possRepo.GetObject(hvoDest);
-				using (var destUI = new CmPossibilityUi(dest))
+				using (var destUI = CmPossibilityUi.MakeLcmModelUiObject(dest))
 				{
 					// NB: Doesn't need to call 'InitializeFlexComponent', since the code doesn't access the three objects the init call sets.
 					// If it isn't already a group, we can only turn it into one if it's empty

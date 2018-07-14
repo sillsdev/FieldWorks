@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.LexText;
 using SIL.FieldWorks.Common.FwUtils;
@@ -18,12 +17,11 @@ namespace LanguageExplorer.LcmUi
 	{
 		/// <summary>
 		/// Create one. Argument must be a PartOfSpeech.
-		/// Note that declaring it to be forces us to just do a cast in every case of MakeUi, which is
+		/// Note that declaring it to be forces us to just do a cast in every case of MakeLcmModelUiObject, which is
 		/// passed an obj anyway.
 		/// </summary>
-		public PartOfSpeechUi(ICmObject obj) : base(obj)
+		private PartOfSpeechUi(IPartOfSpeech obj) : base(obj)
 		{
-			Debug.Assert(obj is IPartOfSpeech);
 		}
 
 		internal PartOfSpeechUi() { }
@@ -31,7 +29,7 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Handle the context menu for inserting a POS.
 		/// </summary>
-		public static PartOfSpeechUi CreateNewUiObject(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, int classId, int hvoOwner, int flid, int insertionPosition)
+		public static PartOfSpeechUi MakeLcmModelUiObject(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, int classId, int hvoOwner, int flid, int insertionPosition)
 		{
 			if (cache == null)
 			{

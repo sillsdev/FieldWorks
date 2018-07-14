@@ -110,7 +110,7 @@ namespace LanguageExplorer.Areas
 			}
 
 			var column = m_possRepo.GetObject(hvoMove);
-			using (var columnUI = new CmPossibilityUi(column))
+			using (var columnUI = CmPossibilityUi.MakeLcmModelUiObject(column))
 			{
 				if (columnUI.CheckAndReportProtectedChartColumn())
 				{

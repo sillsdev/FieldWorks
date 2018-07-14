@@ -599,7 +599,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				IWfiWordform wordform;
 				if (GetSelectedWordform(m_rootb.Selection, out wordform))
 				{
-					ui = CmObjectUi.MakeUi(Cache, wordform.Hvo);
+					ui = CmObjectUi.MakeLcmModelUiObject(Cache, wordform.Hvo);
 					ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				}
 #if RANDYTODO

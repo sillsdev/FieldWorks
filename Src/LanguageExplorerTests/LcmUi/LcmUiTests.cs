@@ -18,7 +18,7 @@ namespace LanguageExplorerTests.LcmUi
 		/// <summary>
 		///
 		/// </summary>
-		public DummyCmObjectUi(ICmObject obj) : base(obj)
+		private DummyCmObjectUi(ICmObject obj) : base(obj)
 		{
 		}
 
@@ -27,9 +27,7 @@ namespace LanguageExplorerTests.LcmUi
 		/// </summary>
 		public static DummyCmObjectUi MakeDummyUi(ICmObject obj)
 		{
-			var objectUi = new DummyCmObjectUi(obj);
-			objectUi.m_hvo = obj.Hvo;
-			return objectUi;
+			return new DummyCmObjectUi(obj) { m_hvo = obj.Hvo };
 		}
 
 		/// <summary>

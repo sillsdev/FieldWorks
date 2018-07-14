@@ -19,7 +19,7 @@ namespace LanguageExplorer.LcmUi
 	{
 		/// <summary>
 		/// Create one. Argument must be a PartOfSpeech.
-		/// Note that declaring it to be forces us to just do a cast in every case of MakeUi, which is
+		/// Note that declaring it to be forces us to just do a cast in every case of MakeLcmModelUiObject, which is
 		/// passed an obj anyway.
 		/// </summary>
 		public ReversalIndexEntryUi(ICmObject obj) : base(obj)

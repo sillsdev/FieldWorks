@@ -805,7 +805,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			using (new WaitCursor(mainWindow))
 			{
 				using (var dlg = new ConfirmDeleteObjectDlg(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
-				using (var ui = CmObjectUi.MakeUi(Cache, lr.Hvo))
+				using (var ui = CmObjectUi.MakeLcmModelUiObject(Cache, lr.Hvo))
 				{
 					ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 
@@ -873,7 +873,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var mainWindow = PropertyTable.GetValue<Form>("window");
 			using (new WaitCursor(mainWindow))
 			using (var dlg = new ConfirmDeleteObjectDlg(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
-			using (var ui = CmObjectUi.MakeUi(Cache, lr.Hvo))
+			using (var ui = CmObjectUi.MakeLcmModelUiObject(Cache, lr.Hvo))
 			{
 				ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 

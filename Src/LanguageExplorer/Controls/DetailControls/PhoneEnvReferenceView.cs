@@ -1023,7 +1023,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			// We need a CmObjectUi in order to call HandleRightClick().  This won't
 			// display the "Show in Environments list" item in the popup menu.
-			using (var ui = new CmObjectUi(m_rootObj))
+			using (var ui = CmObjectUi.MakeLcmModelUiObject(m_rootObj))
 			{
 				ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				return ui.HandleRightClick(this, true, "mnuEnvReferenceChoices");

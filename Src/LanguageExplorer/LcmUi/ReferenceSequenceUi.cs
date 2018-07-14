@@ -12,7 +12,7 @@ namespace LanguageExplorer.LcmUi
 {
 	/// <summary>
 	/// Currently only LexReferenceSequenceView displays a full sequence for lexical relations sequence.
-	/// Otherwise we could also manufacture ReferenceSequenceUi from ReferenceBaseUi.MakeUi().
+	/// Otherwise we could also manufacture ReferenceSequenceUi from ReferenceBaseUi.MakeLcmModelUiObject().
 	/// But since only LexReferenceSequenceView (e.g. Calendar) is handling changing the sequence of items
 	/// through the context menu, we'll wait till we really need it to come up with a solution that can
 	/// "exclude self" from the list in moving calculations.

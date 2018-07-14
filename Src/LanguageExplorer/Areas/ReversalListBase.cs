@@ -249,8 +249,8 @@ namespace LanguageExplorer.Areas
 			using (new WaitCursor(mainWindow))
 			{
 				using (var dlg = new ConfirmDeleteObjectDlg(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+				using (var ui = CmObjectUi.MakeLcmModelUiObject(ri))
 				{
-					var ui = new CmObjectUi(ri);
 					ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 					dlg.SetDlgInfo(ui, m_cache, PropertyTable);
 					dlg.TopMessage = LanguageExplorerResources.ksDeletingThisRevIndex;

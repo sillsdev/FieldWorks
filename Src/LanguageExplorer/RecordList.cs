@@ -1056,7 +1056,7 @@ namespace LanguageExplorer
 
 			using (var dlg = new ConfirmDeleteObjectDlg(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
-				using (var uiObj = CmObjectUi.MakeUi(thingToDelete))
+				using (var uiObj = CmObjectUi.MakeLcmModelUiObject(thingToDelete))
 				{
 					uiObj.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 					string cannotDeleteMsg;

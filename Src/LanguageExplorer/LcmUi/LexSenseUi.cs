@@ -130,7 +130,7 @@ namespace LanguageExplorer.LcmUi
 		/// first one.  If this is the first one, we may need to create an MSA if the owning entry
 		/// does not have an appropriate one.
 		/// </summary>
-		public static LexSenseUi CreateNewUiObject(LcmCache cache, int hvoOwner, int insertionPosition = int.MaxValue)
+		public static LexSenseUi MakeLcmModelUiObject(LcmCache cache, int hvoOwner, int insertionPosition = int.MaxValue)
 		{
 			Guard.AgainstNull(cache, nameof(cache));
 

@@ -18,10 +18,10 @@ namespace LanguageExplorer.LcmUi
 	{
 		/// <summary>
 		/// Create one. Argument must be a FsFeatDefn.
-		/// Note that declaring it to be forces us to just do a cast in every case of MakeUi, which is
+		/// Note that declaring it to be forces us to just do a cast in every case of MakeLcmModelUiObject, which is
 		/// passed an obj anyway.
 		/// </summary>
-		public FsFeatDefnUi(ICmObject obj) : base(obj)
+		protected FsFeatDefnUi(ICmObject obj) : base(obj)
 		{
 			Debug.Assert(obj is IFsFeatDefn);
 		}
@@ -31,7 +31,7 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Handle the context menu for inserting an FsFeatDefn.
 		/// </summary>
-		public static FsFeatDefnUi CreateNewUiObject(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, int classId, int hvoOwner, int flid, int insertionPosition)
+		public static FsFeatDefnUi MakeLcmModelUiObject(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, int classId, int hvoOwner, int flid, int insertionPosition)
 		{
 			Guard.AgainstNull(cache, nameof(cache));
 

@@ -17,7 +17,8 @@ namespace LanguageExplorer.LcmUi
 		protected int m_flid;
 		protected int m_hvoTarget;
 		protected CmObjectUi m_targetUi;
-		public ReferenceBaseUi(LcmCache cache, ICmObject rootObj, int referenceFlid, int targetHvo)
+
+		protected ReferenceBaseUi(LcmCache cache, ICmObject rootObj, int referenceFlid, int targetHvo)
 		{
 			// determine whether this is an atomic or vector relationship.
 			Debug.Assert(cache.IsReferenceProperty(referenceFlid));
@@ -28,14 +29,14 @@ namespace LanguageExplorer.LcmUi
 			m_cmObject = rootObj;
 			m_flid = referenceFlid;
 			m_hvoTarget = targetHvo;
-			m_targetUi = MakeUi(m_cache, m_hvoTarget);
+			m_targetUi = MakeLcmModelUiObject(m_cache, m_hvoTarget);
 		}
 
 		/// <summary>
 		/// This is the ReferenceUi factory.
 		/// We currently exclude ReferenceSequenceUi (see that class for reason).
 		/// </summary>
-		public static ReferenceBaseUi MakeUi(LcmCache cache, ICmObject rootObj, int referenceFlid, int targetHvo)
+		public static ReferenceBaseUi MakeLcmModelUiObject(LcmCache cache, ICmObject rootObj, int referenceFlid, int targetHvo)
 		{
 			var iType = (CellarPropertyType)cache.DomainDataByFlid.MetaDataCache.GetFieldType(referenceFlid);
 			switch (iType)
@@ -60,12 +61,10 @@ namespace LanguageExplorer.LcmUi
 			base.InitializeFlexComponent(flexComponentParameters);
 			m_targetUi.InitializeFlexComponent(flexComponentParameters);
 		}
-		#endregion
 
 		protected override string ContextMenuId => "mnuReferenceChoices";
 
-		public ReferenceBaseUi(ICmObject rootObj) : base(rootObj) { }
-		public ReferenceBaseUi() { }
+		#endregion
 
 #if RANDYTODO
 		public override bool OnDisplayJumpToTool(object commandObject, ref UIItemDisplayProperties display)

@@ -113,7 +113,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private ReferenceBaseUi GetCmObjectUiForRightClickMenu(int hvoTarget)
 		{
-			return ReferenceBaseUi.MakeUi(Cache, m_rootObj, m_rootFlid, hvoTarget);
+			return ReferenceBaseUi.MakeLcmModelUiObject(Cache, m_rootObj, m_rootFlid, hvoTarget);
 		}
 
 		protected virtual bool HandleRightClickOnObject(int hvo)

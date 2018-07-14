@@ -16,7 +16,7 @@ namespace LanguageExplorer.LcmUi
 	{
 		/// <summary>
 		/// Create one. Argument must be a WfiWordform.
-		/// Note that declaring it to be forces us to just do a cast in every case of MakeUi, which is
+		/// Note that declaring it to be forces us to just do a cast in every case of MakeLcmModelUiObject, which is
 		/// passed an obj anyway.
 		/// </summary>
 		public WfiWordformUi(ICmObject obj) : base(obj)
