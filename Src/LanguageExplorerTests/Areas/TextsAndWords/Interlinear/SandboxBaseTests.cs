@@ -1,9 +1,10 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using NUnit.Framework;
@@ -62,8 +63,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			}
 			finally
 			{
-				base.TestTearDown();
-			}
+			base.TestTearDown();
+		}
 		}
 
 		#endregion
@@ -761,6 +762,13 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 			public int SelectedMorphHvo { get; private set; }
 			public void HandleSelectIfActive() { }
+
+			protected override void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+
+				base.Dispose(disposing);
+			}
 		}
 
 		/// <summary>

@@ -14,6 +14,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
+using SIL.Windows.Forms.Widgets;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 {
@@ -80,20 +81,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		{
 			Cache = cache;
 			// Setup Factories and Repositories
-			var servLoc		= Cache.ServiceLocator;
-			m_textRepo		= servLoc.GetInstance<IStTextRepository>();
-			m_segRepo		= servLoc.GetInstance<ISegmentRepository>();
-			m_rowRepo		= servLoc.GetInstance<IConstChartRowRepository>();
-			m_rowFact		= servLoc.GetInstance<IConstChartRowFactory>();
-			m_wordGrpRepo	= servLoc.GetInstance<IConstChartWordGroupRepository>();
-			m_wordGrpFact	= servLoc.GetInstance<IConstChartWordGroupFactory>();
+			var servLoc = Cache.ServiceLocator;
+			m_textRepo = servLoc.GetInstance<IStTextRepository>();
+			m_segRepo = servLoc.GetInstance<ISegmentRepository>();
+			m_rowRepo = servLoc.GetInstance<IConstChartRowRepository>();
+			m_rowFact = servLoc.GetInstance<IConstChartRowFactory>();
+			m_wordGrpRepo = servLoc.GetInstance<IConstChartWordGroupRepository>();
+			m_wordGrpFact = servLoc.GetInstance<IConstChartWordGroupFactory>();
 			m_movedTextRepo = servLoc.GetInstance<IConstChartMovedTextMarkerRepository>();
 			m_movedTextFact = servLoc.GetInstance<IConstChartMovedTextMarkerFactory>();
 			m_clauseMkrRepo = servLoc.GetInstance<IConstChartClauseMarkerRepository>();
 			m_clauseMkrFact = servLoc.GetInstance<IConstChartClauseMarkerFactory>();
-			m_chartTagFact	= servLoc.GetInstance<IConstChartTagFactory>();
-			m_cellPartRepo	= servLoc.GetInstance<IConstituentChartCellPartRepository>();
-			m_possRepo		= servLoc.GetInstance<ICmPossibilityRepository>();
+			m_chartTagFact = servLoc.GetInstance<IConstChartTagFactory>();
+			m_cellPartRepo = servLoc.GetInstance<IConstituentChartCellPartRepository>();
+			m_possRepo = servLoc.GetInstance<ICmPossibilityRepository>();
 		}
 
 		public void Init(IHelpTopicProvider helpTopicProvider)
@@ -123,7 +124,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		internal int[] CurrHighlightCells
 		{
 			// Enhance GordonM: This really ought to use a pair of ChartLocation objects.
-			get { return m_currHighlightCells ?? (m_currHighlightCells = new int[4] {-1, -1, -1, -1}); }
+			get { return m_currHighlightCells ?? (m_currHighlightCells = new int[4] { -1, -1, -1, -1 }); }
 			set
 			{
 				var crowOld = 0;
@@ -134,7 +135,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					if (m_currHighlightCells[2] != irowOld)
 					{
 						crowOld++;
-				}
+					}
 				}
 				m_currHighlightCells = value;
 				if (StTextHvo != 0 && IsChOrphActive)
@@ -144,7 +145,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					if (m_currHighlightCells[2] != irowNew)
 					{
 						crowNew++;
-				}
+					}
 				}
 			}
 		}
@@ -162,7 +163,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			if (m_lastMoveCell != null && m_lastMoveCell.IsValidLocation)
 			{
 				MoveCellForward(m_lastMoveCell);
-		}
+			}
 		}
 
 		/// <summary>
@@ -173,7 +174,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			if (m_lastMoveCell != null && m_lastMoveCell.IsValidLocation)
 			{
 				MoveCellBack(m_lastMoveCell);
-		}
+			}
 		}
 
 		public bool CanRepeatLastMove => m_lastMoveCell != null && m_lastMoveCell.IsValidLocation;
@@ -287,8 +288,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					if (seg.AnalysesRS[i].HasWordform)
 					{
 						wordformRefsInThisText.Add(new Tuple<int, int>(seg.Hvo, i));
+					}
 				}
-			}
 			}
 
 			// Get a set of all AnalysisOccurrence objects currently in the chart.
@@ -388,8 +389,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				if (latestRow == null)
 				{
 					return null;
+				}
 			}
-		}
 		}
 
 		/// <summary>
@@ -465,7 +466,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				if (IsChOrphWithinWordGroup(iPara, offset, wordGrp))
 				{
 					icolPrec = icolFoll; // Fixes at least part of LT-8380
-					// Set 'out' variables
+										 // Set 'out' variables
 					if (rowFoll != null)
 					{
 						follCell = new ChartLocation(rowFoll, icolFoll);
@@ -498,7 +499,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				if (rowPrec.Hvo == rowFoll.Hvo) // rowFoll might have been changed in CheckFollowingRowPosition()
 				{
 					icolFoll = NarrowSearchBackward(iPara, offset, new ChartLocation(rowPrec, icolPrec), icolFoll);
-			}
+				}
 			}
 			// By the time we get here, we should be able to return the right answer.
 			// Set 'out' variables
@@ -510,7 +511,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			if (rowPrec != null)
 			{
 				precCell = new ChartLocation(rowPrec, icolPrec);
-		}
+			}
 		}
 
 		/// <summary>
@@ -520,9 +521,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private int NarrowSearchForward(int iPara, int offset, ChartLocation cell)
 		{
 			Debug.Assert(cell != null && cell.IsValidLocation); // Shouldn't occur; tested in calling routine
-			// Moving forward, can we narrow our search to another cell?
-			// We know that the first wordform in this row is "before" our ChOrph's logical position
-			// And we know that the right Preceding Cell is in this row
+																// Moving forward, can we narrow our search to another cell?
+																// We know that the first wordform in this row is "before" our ChOrph's logical position
+																// And we know that the right Preceding Cell is in this row
 			var result = cell.ColIndex;
 			for (var icolNew = cell.ColIndex + 1; icolNew < AllMyColumns.Length; icolNew++)
 			{
@@ -584,7 +585,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			var temp = new ChartLocation(tempRow, tempColIndex);
 			if (!temp.IsSameLocation(cell))
 			{
-				 result = temp;
+				result = temp;
 			}
 			// We are now ready for NarrowSearchBackward().
 			return result;
@@ -812,7 +813,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				if (!newFollCell.IsSameLocation(follCell))
 				{
 					break; // No longer in same ChOrph group
-			}
+				}
 			}
 			i--;
 			Ribbon.EndSelLimitIndex = i; // These emit PropChanged themselves now.
@@ -858,7 +859,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			// What we know:
 			//    m_chart exists and has at least one Row
 
-			var result = m_chart.RowsOS.SelectMany(row => m_wordGrpRepo.AllInstances(), (row, wordGrp) => new {row, wordGrp})
+			var result = m_chart.RowsOS.SelectMany(row => m_wordGrpRepo.AllInstances(), (row, wordGrp) => new { row, wordGrp })
 				.Where(@t => @t.row.CellsOS.Contains(@t.wordGrp) && @t.wordGrp.GetOccurrences().Contains(point))
 				.Select(@t => new ChartLocation(@t.row, IndexOfColumnForCellPart(@t.wordGrp))).ToList();
 
@@ -956,7 +957,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			if (depth == 1)
 			{
 				groups.Add(result.Count - 1);
-		}
+			}
 		}
 
 		#region actions for buttons
@@ -1144,7 +1145,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				while (existingWordGroup.EndRef() != expandTo)
 				{
 					existingWordGroup.GrowFromEnd(true);
-			}
+				}
 			}
 			else
 			{
@@ -1152,8 +1153,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				while (existingWordGroup.BegRef() != expandTo)
 				{
 					existingWordGroup.GrowFromBeginning(true);
+				}
 			}
-		}
 		}
 
 		private void NoteActionChangesRibbonItems()
@@ -1175,10 +1176,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			IConstChartRow modifiedRow = null;
 			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoMoveWordToColumn, LanguageExplorerResources.ksRedoMoveWordToColumn,
 				Cache.ActionHandlerAccessor, () =>
-			{
-				MakeNewRow();
-				result = MoveToColumn(ihvo, out modifiedRow);
-			});
+				{
+					MakeNewRow();
+					result = MoveToColumn(ihvo, out modifiedRow);
+				});
 			FireRowModifiedEvent(modifiedRow);
 			return result;
 		}
@@ -1340,7 +1341,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					if (nextWordGroup.Hvo == existingWordGroup.Hvo)
 					{
 						// This is the first WordGroup in this cell
-						return  FindWhereToAddResult.kInsertChOrphInWordGrp; // will 'grow' WordGroup backwards
+						return FindWhereToAddResult.kInsertChOrphInWordGrp; // will 'grow' WordGroup backwards
 					}
 					// will append to existing; whereToInsert will be wrong in this case!
 					break;
@@ -1434,7 +1435,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			}
 			else
 			{
-			m_chart.RowsOS.Insert(index + 1, newRow);
+				m_chart.RowsOS.Insert(index + 1, newRow);
 				SetupCompDetailsForInsertRow(originalRow, newRow);
 			}
 			// foneSentOnly = true, because we are only adding a letter to the current sentence.
@@ -1494,62 +1495,62 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoClearChart, LanguageExplorerResources.ksRedoClearChart,
 										Cache.ActionHandlerAccessor, () =>
-			{
-				// Because of possible side effects of deleting cells and rows, we'll do it
-				// one by one and be careful that there is still something to delete
-				// each time!
+										{
+											// Because of possible side effects of deleting cells and rows, we'll do it
+											// one by one and be careful that there is still something to delete
+											// each time!
 
-				// Delete the redundant rows. Contents of owned sequence are deleted automatically.
-				if (crowsToDelete > 0)
-				{
-					//m_chart.RowsOS.Replace(ifirstRowToDelete, crowsToDelete, new ICmObject[0]);
-					for (var i = crowsToDelete + ifirstRowToDelete - 1; i >= ifirstRowToDelete; i--)
-					{
-						m_chart.RowsOS.RemoveAt(i);
-						if (i < 0 || m_chart.Hvo == (int) SpecialHVOValues.kHvoObjectDeleted)
-						{
-							break;
-						}
-						var newCount = m_chart.RowsOS.Count;
-						// defend against side effect deleting earlier object
-						if (crows - 1 > newCount)
-						{
-							i--;
-						}
-						crows = newCount;
-					}
-				}
+											// Delete the redundant rows. Contents of owned sequence are deleted automatically.
+											if (crowsToDelete > 0)
+											{
+												//m_chart.RowsOS.Replace(ifirstRowToDelete, crowsToDelete, new ICmObject[0]);
+												for (var i = crowsToDelete + ifirstRowToDelete - 1; i >= ifirstRowToDelete; i--)
+												{
+													m_chart.RowsOS.RemoveAt(i);
+													if (i < 0 || m_chart.Hvo == (int)SpecialHVOValues.kHvoObjectDeleted)
+													{
+														break;
+													}
+													var newCount = m_chart.RowsOS.Count;
+													// defend against side effect deleting earlier object
+													if (crows - 1 > newCount)
+													{
+														i--;
+													}
+													crows = newCount;
+												}
+											}
 
-				// Delete the redundant stuff in the current row.
-				// Have to recalculate some of the original information in case of side effects
-				ccells = row.CellsOS.Count;
-				icellPart = cell.ColIndex == 0 ? 0 : FindIndexOfFirstCellPartInOrAfterColumn(cell);
-				ccellsToDelete = ccells - icellPart;
+											// Delete the redundant stuff in the current row.
+											// Have to recalculate some of the original information in case of side effects
+											ccells = row.CellsOS.Count;
+											icellPart = cell.ColIndex == 0 ? 0 : FindIndexOfFirstCellPartInOrAfterColumn(cell);
+											ccellsToDelete = ccells - icellPart;
 
-				if (ccellsToDelete > 0)
-				{
-					//row.CellsOS.Replace(icellPart, ccellsToDelete, new ICmObject[0]);
-					for (var i = ccellsToDelete + icellPart - 1; i >= icellPart; i--)
-					{
-						row.CellsOS.RemoveAt(i);
-						if (i < 0 || row.Hvo == (int) SpecialHVOValues.kHvoObjectDeleted)
-						{
-							break;
-						}
-						var newCount = row.CellsOS.Count;
-						// defend against side effect deleting earlier object(s)
-						if (ccells - 1 > newCount)
-						{
-							i--;
-						}
-						ccells = newCount;
-					}
-				}
+											if (ccellsToDelete > 0)
+											{
+												//row.CellsOS.Replace(icellPart, ccellsToDelete, new ICmObject[0]);
+												for (var i = ccellsToDelete + icellPart - 1; i >= icellPart; i--)
+												{
+													row.CellsOS.RemoveAt(i);
+													if (i < 0 || row.Hvo == (int)SpecialHVOValues.kHvoObjectDeleted)
+													{
+														break;
+													}
+													var newCount = row.CellsOS.Count;
+													// defend against side effect deleting earlier object(s)
+													if (ccells - 1 > newCount)
+													{
+														i--;
+													}
+													ccells = newCount;
+												}
+											}
 
-				RepairRowsNoLongerReferedToByClauseMarkers();
-				NoteActionChangesRibbonItems();
-				RenumberRows(DecrementRowSafely(rowIndex), false);
-			});
+											RepairRowsNoLongerReferedToByClauseMarkers();
+											NoteActionChangesRibbonItems();
+											RenumberRows(DecrementRowSafely(rowIndex), false);
+										});
 		}
 
 		/// <summary>
@@ -1577,7 +1578,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			foreach (var row in myAbnormalRows.Where(row => !clsMrkrTargets.Contains(row)))
 			{
 				ResetDepClauseProps(row);
-		}
+			}
 		}
 
 		private static void ResetDepClauseProps(IConstChartRow row)
@@ -1714,18 +1715,45 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			}
 			else
 			{
-				row = Convert.ToInt32(rowLabel.Substring(0,posFirstLetter));
-				if (posFirstLetter == (rowLabel.Length - 1))
-				{
-					// only one letter present; we assume no more than 2 letters
-					// is it possible to have 53+ clauses in a Sentence?
-					clause = Convert.ToInt32(rowLabel[posFirstLetter]) - Convert.ToInt32('a') + 1;
-				}
-				else
-				{
-					clause = Convert.ToInt32(rowLabel[posFirstLetter + 1]) - Convert.ToInt32('a') + 27;
+				row = Convert.ToInt32(rowLabel.Substring(0, posFirstLetter));
+				clause = ClauseNumberFromLabel(rowLabel.Substring(posFirstLetter));
 			}
 		}
+
+		/// <summary>
+		/// Converts a row clause label (Bijective Base-26) into the corresponding integer value
+		/// </summary>
+		private static int ClauseNumberFromLabel(string value)
+		{
+			if (value.Length < 1)
+			{
+				return 0;
+			}
+			if (value.Length == 1)
+			{
+				return Convert.ToInt32(value[0] - 'a' + 1);
+			}
+			int current = Convert.ToInt32(value[0] - 'a' + 1) * (int)Math.Pow(26, value.Length - 1);
+			return current + ClauseNumberFromLabel(value.Substring(1));
+		}
+
+		/// <summary>
+		/// Converts an integer value into its corresponding row clause label (Bijective Base-26)
+		/// </summary>
+		private static string LabelFromClauseNumber(int value)
+		{
+			if (value < 1)
+			{
+				return String.Empty;
+			}
+			if (value < 26)
+			{
+				return String.Empty + Convert.ToChar(value + 'a' - 1);
+			}
+			value--;
+			char c = Convert.ToChar(value % 26);
+			value -= c;
+			return LabelFromClauseNumber(value / 26) + Convert.ToChar(c + 'a');
 		}
 
 		/// <summary>
@@ -1793,9 +1821,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			else prevClauseNum++;
 
 			// Make the string
-			var result = prevClauseNum > 26
-				? Convert.ToString(prevSentNum) + "a" + Convert.ToChar(Convert.ToInt32('a') + prevClauseNum - 27)
-				: Convert.ToString(prevSentNum) + Convert.ToChar(Convert.ToInt32('a') + prevClauseNum - 1);
+			var result = Convert.ToString(prevSentNum) + LabelFromClauseNumber(prevClauseNum);
+
 			if (fSentBrkAfter && fSentBrkBefore)
 			{
 				// Strip 'a' off of string.
@@ -1825,10 +1852,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			IConstChartRow rowModified = null;
 			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoMakeMoved, LanguageExplorerResources.ksRedoMakeMoved,
 										Cache.ActionHandlerAccessor, () =>
-			{
-				MoveToColumn(icolActual, out rowModified);
-				MakeMovedFrom(icolActual, icolMovedFrom);
-			});
+										{
+											MoveToColumn(icolActual, out rowModified);
+											MakeMovedFrom(icolActual, icolMovedFrom);
+										});
 			FireRowModifiedEvent(rowModified);
 			return null;
 		}
@@ -1843,7 +1870,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				{
 					return string.Empty;
 				}
-					var result = LastRow.Label.Text;
+				var result = LastRow.Label.Text;
 				return result ?? string.Empty;
 			}
 		}
@@ -2000,7 +2027,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		{
 			var icellPartInsertAt = targetCell.Row.CellsOS.Count; // insert at end unless we find something in a later column.
 			var icellPart = 0;
-			for (var icol = 0; icol < AllMyColumns.Length && icellPart < targetCell.Row.CellsOS.Count; )
+			for (var icol = 0; icol < AllMyColumns.Length && icellPart < targetCell.Row.CellsOS.Count;)
 			{
 				var part = targetCell.Row.CellsOS[icellPart];
 				var col = part.ColumnRA;
@@ -2091,24 +2118,24 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoMakeDepClause, LanguageExplorerResources.ksRedoMakeDepClause,
 										Cache.ActionHandlerAccessor, () =>
-			{
-				// There's about to be something in the source cell.
-				RemoveMissingMarker(cell);
+										{
+											// There's about to be something in the source cell.
+											RemoveMissingMarker(cell);
 
-				foreach (var rowDst in depClauses)
-				{
-					// clears any state it has from other, hopefully 'further out' markers
-					// Enhance JohnT: possibly, we want to tag the marker itself so we have (partly redundant) information
-					// about which clauses are dependent at which position. Then we could confidently restore, and perhaps
-					// even figure out nesting automatically. For now (See LT-8100) we decided "most recent wins, though it
-					// may leave an orphan marker".
-					RemoveAllDepClauseMarkers(rowDst);
-					rowDst.ClauseType = depType;
-				}
-				depClauses[0].StartDependentClauseGroup = true;
-				depClauses[depClauses.Length - 1].EndDependentClauseGroup = true;
-				newClauseMrkr = m_clauseMkrFact.Create(cell.Row, FindIndexOfCellPartInLaterColumn(cell), AllMyColumns[cell.ColIndex], depClauses);
-			});
+											foreach (var rowDst in depClauses)
+											{
+												// clears any state it has from other, hopefully 'further out' markers
+												// Enhance JohnT: possibly, we want to tag the marker itself so we have (partly redundant) information
+												// about which clauses are dependent at which position. Then we could confidently restore, and perhaps
+												// even figure out nesting automatically. For now (See LT-8100) we decided "most recent wins, though it
+												// may leave an orphan marker".
+												RemoveAllDepClauseMarkers(rowDst);
+												rowDst.ClauseType = depType;
+											}
+											depClauses[0].StartDependentClauseGroup = true;
+											depClauses[depClauses.Length - 1].EndDependentClauseGroup = true;
+											newClauseMrkr = m_clauseMkrFact.Create(cell.Row, FindIndexOfCellPartInLaterColumn(cell), AllMyColumns[cell.ColIndex], depClauses);
+										});
 			return newClauseMrkr;
 		}
 
@@ -2327,8 +2354,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			}
 			var itemMissingMarker = new RowColMenuItem(LanguageExplorerResources.ksMarkMissingItem, clickedCell);
 			itemMissingMarker.Click += itemMissingMarker_Click;
-				itemMissingMarker.Checked = (mms == MissingMarkerState.kmmsChecked);
-				menu.Items.Add(itemMissingMarker);
+			itemMissingMarker.Checked = (mms == MissingMarkerState.kmmsChecked);
+			menu.Items.Add(itemMissingMarker);
 
 			return menu;
 		}
@@ -2408,7 +2435,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				markers = FindMyClauseMarkers(row);
 			}
 			row.CellsOS.Remove(cellPart);
-			if (cell.HvoRow != (int) SpecialHVOValues.kHvoObjectDeleted)
+			if (cell.HvoRow != (int)SpecialHVOValues.kHvoObjectDeleted)
 			{
 				return;
 			}
@@ -2427,7 +2454,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			foreach (var marker in markers)
 			{
 				marker.DependentClausesRS.Add(newrow);
-		}
+			}
 		}
 
 		private IConstChartClauseMarker[] FindMyClauseMarkers(IConstChartRow row)
@@ -2475,17 +2502,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		{
 			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoRemoveClauseMarker, LanguageExplorerResources.ksRedoRemoveClauseMarker,
 										Cache.ActionHandlerAccessor, () =>
-			{
-				foreach (var clauseMarker in PartsInCell(cell).OfType<IConstChartClauseMarker>())
-				{
-					foreach (var depRow in clauseMarker.DependentClausesRS)
-					{
-						RemoveAllDepClauseMarkers(depRow);
-					}
-					cell.Row.CellsOS.Remove(clauseMarker);
-					break;
-				}
-			});
+										{
+											foreach (var clauseMarker in PartsInCell(cell).OfType<IConstChartClauseMarker>())
+											{
+												foreach (var depRow in clauseMarker.DependentClausesRS)
+												{
+													RemoveAllDepClauseMarkers(depRow);
+												}
+												cell.Row.CellsOS.Remove(clauseMarker);
+												break;
+											}
+										});
 		}
 
 		private static void RemoveAllDepClauseMarkers(IConstChartRow depRow)
@@ -2592,7 +2619,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				else
 				{
 					fMMBackward = true;
-			}
+				}
 			}
 			int icol = srcCell.ColIndex;
 			MakePreposedOrPostPosedMenuItem(menu, srcCell, 0, icol, LanguageExplorerResources.ksPostposeFromMenuItem, fMMDifferentRow && fMMBackward); // True if a MT Marker is already out there.
@@ -2637,7 +2664,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			if (fMarkerPresent)
 			{
 				itemAdvanced.Checked = true;
-		}
+			}
 		}
 
 		private bool IsAnotherClausePossible(IConstChartRow rowSrc, bool fPrepose)
@@ -2656,7 +2683,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private List<IConstChartRow> CollectRowsInSentence(IConstChartRow curRow, bool fForward)
 		{
 			// Better check first to see if we're going forward and curRow has EOS feature
-			var result = new List<IConstChartRow> {curRow}; // include current row
+			var result = new List<IConstChartRow> { curRow }; // include current row
 			if (fForward && curRow.EndSentence)
 			{
 				return result;
@@ -2753,34 +2780,34 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			var dlg = new AdvancedMTDialog(Cache, fPrepose, paramObject, m_helpTopicProvider);
 			try
 			{
-			// Display dialog
-			if (dlg.ShowDialog() != DialogResult.OK)
+				// Display dialog
+				if (dlg.ShowDialog() != DialogResult.OK)
 				{
-				return;
+					return;
 				}
-			var fromRow = dlg.SelectedRow.Row;
-			var iColMovedFrom = IndexOfColumn(dlg.SelectedColumn.Column);
+				var fromRow = dlg.SelectedRow.Row;
+				var iColMovedFrom = IndexOfColumn(dlg.SelectedColumn.Column);
 
 				UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoMakeMoved, LanguageExplorerResources.ksRedoMakeMoved,
 				Cache.ActionHandlerAccessor, () =>
-			{
-				// LT-7668 If user chooses to make a movedText marker and one exists already for this cell
-				// we need to remove the first one before adding this one.
-				// Now we check all the WordGroups affected by our new MovedText item and remove any existing marker.
-				foreach (var wordGrp in paramObject.AffectedWordGroups)
 				{
-					IConstChartMovedTextMarker marker;
-					if (!IsMovedText(wordGrp, out marker))
-							{
-						continue;
-							}
-					RemoveMovedFrom(srcCell, FindChartLocOfCellPart(marker));
-				}
-				var movedFrom = new ChartLocation(fromRow, iColMovedFrom);
-				var cwords = dlg.SelectedOccurrences.Length;
-				MakeMovedFrom(srcCell, movedFrom, dlg.SelectedOccurrences[0], dlg.SelectedOccurrences[cwords - 1]);
-			});
-		}
+					// LT-7668 If user chooses to make a movedText marker and one exists already for this cell
+					// we need to remove the first one before adding this one.
+					// Now we check all the WordGroups affected by our new MovedText item and remove any existing marker.
+					foreach (var wordGrp in paramObject.AffectedWordGroups)
+					{
+						IConstChartMovedTextMarker marker;
+						if (!IsMovedText(wordGrp, out marker))
+						{
+							continue;
+						}
+						RemoveMovedFrom(srcCell, FindChartLocOfCellPart(marker));
+					}
+					var movedFrom = new ChartLocation(fromRow, iColMovedFrom);
+					var cwords = dlg.SelectedOccurrences.Length;
+					MakeMovedFrom(srcCell, movedFrom, dlg.SelectedOccurrences[0], dlg.SelectedOccurrences[cwords - 1]);
+				});
+			}
 			finally
 			{
 				dlg?.Dispose();
@@ -2851,7 +2878,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 								if (!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curPart, ref fReported, ref ipart, ref citems))
 								{
 									irow--;
-							}
+								}
 							}
 							continue;
 						}
@@ -2862,7 +2889,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 								if (!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curPart, ref fReported, ref ipart, ref citems))
 								{
 									irow--;
-							}
+								}
 							}
 							continue;
 						}
@@ -2882,7 +2909,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 							if (occurrences.Count > 0)
 							{
 								continue;
-						}
+							}
 						}
 						catch (NullReferenceException)
 						{
@@ -2932,7 +2959,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			// Restart the loop; we may have deleted additional items either before or after the one
 			// we expect to.
 			index = -1; // after auto-increment in for loop, starts over at beginning.
-			// if we just removed the last cell in the row, the row will be deleted too!
+						// if we just removed the last cell in the row, the row will be deleted too!
 			count = row.IsValidObject ? row.CellsOS.Count : 0;
 			return row.IsValidObject; // if row gets deleted, returns false.
 		}
@@ -2965,14 +2992,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				if (clickedCell.ColIndex == icolLast)
 				{
 					result.RemoveAt(0);
-			}
+				}
 			}
 			else
 			{
 				if (clickedCell.ColIndex == 0)
 				{
 					result.RemoveAt(result.Count - 1);
-			}
+				}
 			}
 			return result;
 		}
@@ -3009,15 +3036,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				var wordGrp = FindFirstWordGroup(PartsInCell(dstCell));
 				UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoMakeMoved, LanguageExplorerResources.ksRedoMakeMoved,
 											Cache.ActionHandlerAccessor, () =>
-				{
-					IConstChartMovedTextMarker mtmarker;
-					if (IsMovedText(wordGrp, out mtmarker))
-					{
-						var markerCell = new ChartLocation((IConstChartRow) mtmarker.Owner, IndexOfColumn(mtmarker.ColumnRA));
-						RemoveMovedFrom(dstCell, markerCell);
-					}
-					MakeMovedFrom(dstCell, srcCell);
-				});
+											{
+												IConstChartMovedTextMarker mtmarker;
+												if (IsMovedText(wordGrp, out mtmarker))
+												{
+													var markerCell = new ChartLocation((IConstChartRow)mtmarker.Owner, IndexOfColumn(mtmarker.ColumnRA));
+													RemoveMovedFrom(dstCell, markerCell);
+												}
+												MakeMovedFrom(dstCell, srcCell);
+											});
 			}
 		}
 
@@ -3087,7 +3114,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				if (ListRefersToMarker(markerRefsAsList, poss.Hvo))
 				{
 					item.Checked = true;
-			}
+				}
 			}
 
 			if (format != null)
@@ -3151,7 +3178,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			if (irowSrc > 0)
 			{
 				// put in just one 'previous clause' item.
-				var item = new DepClauseMenuItem(LanguageExplorerResources.ksPreviousClauseMenuItem, srcCell, new [] { m_chart.RowsOS[irowSrc - 1] });
+				var item = new DepClauseMenuItem(LanguageExplorerResources.ksPreviousClauseMenuItem, srcCell, new[] { m_chart.RowsOS[irowSrc - 1] });
 				item.Click += itemDC_Click;
 				item.DepType = depType;
 				itemMDC.DropDownItems.Add(item);
@@ -3212,23 +3239,23 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				{
 					return;
 				}
-					var outer = dlg.SelectedRow.Row;
+				var outer = dlg.SelectedRow.Row;
 				var index = outer.IndexInOwner;
 				var start = iSrc + 1;
 				var end = index;
-					if (index < iSrc)
-					{
-						start = index;
-						end = iSrc - 1;
-					}
-					var rows = new List<IConstChartRow>();
-					for (var i = start; i <= end; i++)
+				if (index < iSrc)
 				{
-						rows.Add(m_chart.RowsOS[i]);
+					start = index;
+					end = iSrc - 1;
 				}
-					MakeDependentClauseMarker(item.SrcCell, rows.ToArray(), item.DepType);
+				var rows = new List<IConstChartRow>();
+				for (var i = start; i <= end; i++)
+				{
+					rows.Add(m_chart.RowsOS[i]);
 				}
+				MakeDependentClauseMarker(item.SrcCell, rows.ToArray(), item.DepType);
 			}
+		}
 
 		public static string EndParaFeatureName => "endPara";
 
@@ -3258,17 +3285,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 				UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoLastRowInPara, LanguageExplorerResources.ksRedoLastRowInPara,
 											Cache.ActionHandlerAccessor, () =>
-				{
-					// Set both EOP and EOS
-					curRow.EndParagraph = true;
-					curRow.EndSentence = true;
+											{
+												// Set both EOP and EOS
+												curRow.EndParagraph = true;
+												curRow.EndSentence = true;
 
-					// Turning on EOP only affects numbering if EOS was off before
-					if (!fSentWasOn)
-					{
-						RenumberRows(irow, false);
-					}
-				});
+												// Turning on EOP only affects numbering if EOS was off before
+												if (!fSentWasOn)
+												{
+													RenumberRows(irow, false);
+												}
+											});
 			}
 		}
 
@@ -3287,28 +3314,28 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksRedoLastRowInSent, LanguageExplorerResources.ksUndoLastRowInSent,
 											Cache.ActionHandlerAccessor, () =>
-				{
-					// unchecking EOS, unchecks EOP too
-					curRow.EndSentence = false;
-					curRow.EndParagraph = false;
-					// Now we need to renumber our row labels, unless we're on the last row.
-					if (irow != m_chart.RowsOS.Count - 1)
-					{
-						RenumberRows(irow, false);
-					}
-				});
+											{
+												// unchecking EOS, unchecks EOP too
+												curRow.EndSentence = false;
+												curRow.EndParagraph = false;
+												// Now we need to renumber our row labels, unless we're on the last row.
+												if (irow != m_chart.RowsOS.Count - 1)
+												{
+													RenumberRows(irow, false);
+												}
+											});
 			}
 			else
 			{
 				UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoLastRowInSent, LanguageExplorerResources.ksRedoLastRowInSent,
 											Cache.ActionHandlerAccessor, () =>
-				{
-					curRow.EndSentence = true;
-					// Now we need to renumber our row labels, unless we're on the last row.
-					if (irow != m_chart.RowsOS.Count - 1)
-						RenumberRows(irow, false);
-				});
-		}
+											{
+												curRow.EndSentence = true;
+												// Now we need to renumber our row labels, unless we're on the last row.
+												if (irow != m_chart.RowsOS.Count - 1)
+													RenumberRows(irow, false);
+											});
+			}
 		}
 
 		/// <summary>
@@ -3333,23 +3360,23 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		{
 			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(LanguageExplorerResources.ksUndoMergeCells, LanguageExplorerResources.ksRedoMergeCells,
 										Cache.ActionHandlerAccessor, () =>
-			{
-				var cellPart = FindCellPartInColumn(srcCell, false);
-				if (following)
-				{
-					cellPart.MergesAfter = !cellPart.MergesAfter;
-					// Make sure other direction is off
-					if (cellPart.MergesAfter)
-						cellPart.MergesBefore = false;
-				}
-				else
-				{
-					cellPart.MergesBefore = !cellPart.MergesBefore;
-					// Make sure other direction is off
-					if (cellPart.MergesBefore)
-						cellPart.MergesAfter = false;
-				}
-			});
+										{
+											var cellPart = FindCellPartInColumn(srcCell, false);
+											if (following)
+											{
+												cellPart.MergesAfter = !cellPart.MergesAfter;
+												// Make sure other direction is off
+												if (cellPart.MergesAfter)
+													cellPart.MergesBefore = false;
+											}
+											else
+											{
+												cellPart.MergesBefore = !cellPart.MergesBefore;
+												// Make sure other direction is off
+												if (cellPart.MergesBefore)
+													cellPart.MergesAfter = false;
+											}
+										});
 			return null;
 		}
 
@@ -3426,7 +3453,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			foreach (var part in partsToMove)
 			{
 				part.ColumnRA = newCol;
-		}
+			}
 		}
 
 		/// <summary>
@@ -3481,7 +3508,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			for (var i = 0; i < chvo; i++)
 			{
 				row.CellsOS.RemoveAt(ihvo);
-		}
+			}
 		}
 
 		/// <summary>
@@ -3690,31 +3717,31 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoMoveWord, LanguageExplorerResources.ksRedoMoveWord,
 										Cache.ActionHandlerAccessor, () =>
-			{
-				// If the destination contains a missing marker get rid of it! Don't try to 'merge' with it.
-				RemoveMissingMarker(dstCell);
+										{
+											// If the destination contains a missing marker get rid of it! Don't try to 'merge' with it.
+											RemoveMissingMarker(dstCell);
 
-				bool fKeepOldWordGroup;
-				var wordGrpTarget = FindLastWordGroup(PartsInCell(dstCell));
-				var wordToMove = new[] {srcWordGroup.GetOccurrences()[0]};
-				if (wordGrpTarget == null)
-				{
-					// Make a new WordGroup and move one word
-					MakeWordGroup(dstCell, FindIndexOfCellPartInLaterColumn(dstCell), wordToMove);
-					fKeepOldWordGroup = srcWordGroup.ShrinkFromBeginning(true);
-				}
-				else
-				{
-					fKeepOldWordGroup = srcWordGroup.ShrinkFromBeginning(true);
-					wordGrpTarget.GrowFromEnd(true);
-				}
-				// Enhance GordonM: If we eventually allow a marker to show that words within a cell are reversed in order,
-				// that marker may need deleting here.
-				if (!fKeepOldWordGroup)
-				{
-					DeleteCellPart(srcWordGroup);
-				}
-			});
+											bool fKeepOldWordGroup;
+											var wordGrpTarget = FindLastWordGroup(PartsInCell(dstCell));
+											var wordToMove = new[] { srcWordGroup.GetOccurrences()[0] };
+											if (wordGrpTarget == null)
+											{
+												// Make a new WordGroup and move one word
+												MakeWordGroup(dstCell, FindIndexOfCellPartInLaterColumn(dstCell), wordToMove);
+												fKeepOldWordGroup = srcWordGroup.ShrinkFromBeginning(true);
+											}
+											else
+											{
+												fKeepOldWordGroup = srcWordGroup.ShrinkFromBeginning(true);
+												wordGrpTarget.GrowFromEnd(true);
+											}
+											// Enhance GordonM: If we eventually allow a marker to show that words within a cell are reversed in order,
+											// that marker may need deleting here.
+											if (!fKeepOldWordGroup)
+											{
+												DeleteCellPart(srcWordGroup);
+											}
+										});
 			m_lastMoveCell = dstCell;
 		}
 
@@ -3748,38 +3775,38 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoMoveWord, LanguageExplorerResources.ksRedoMoveWord,
 										Cache.ActionHandlerAccessor, () =>
-			{
-				// If the destination contains a missing marker get rid of it! Don't try to 'merge' with it.
-				RemoveMissingMarker(dstCell);
+										{
+											// If the destination contains a missing marker get rid of it! Don't try to 'merge' with it.
+											RemoveMissingMarker(dstCell);
 
-				var fKeepOldWordGroup = true;
-				var partsInDestCell = PartsInCell(dstCell);
-				var wordGrpTarget = FindFirstWordGroup(partsInDestCell);
-				var wordToMove = new AnalysisOccurrence(srcWordGroup.EndSegmentRA, srcWordGroup.EndAnalysisIndex);
-				if (wordGrpTarget == null)
-				{
-					var iinsertAt = FindIndexOfFirstCellPartInOrAfterColumn(dstCell);
-					// If there is a preposed marker in the same column at this index, increment index.
-					if (partsInDestCell.Count > 0 && IsPreposedMarker(partsInDestCell[0]))
-					{
-						iinsertAt++;
-					}
-					// Make a new WordGroup and move one word
-					MakeWordGroup(dstCell, iinsertAt, new [] { wordToMove });
-					fKeepOldWordGroup = srcWordGroup.ShrinkFromEnd(true);
-				}
-				else
-				{
-					fKeepOldWordGroup = srcWordGroup.ShrinkFromEnd(true);
-					wordGrpTarget.GrowFromBeginning(true);
-				}
-				// Enhance GordonM: If we eventually allow a marker to show that words within a cell are reversed in order,
-				// that marker may need deleting here.
-				if (!fKeepOldWordGroup)
-				{
-					DeleteCellPart(srcWordGroup);
-				}
-			});
+											var fKeepOldWordGroup = true;
+											var partsInDestCell = PartsInCell(dstCell);
+											var wordGrpTarget = FindFirstWordGroup(partsInDestCell);
+											var wordToMove = new AnalysisOccurrence(srcWordGroup.EndSegmentRA, srcWordGroup.EndAnalysisIndex);
+											if (wordGrpTarget == null)
+											{
+												var iinsertAt = FindIndexOfFirstCellPartInOrAfterColumn(dstCell);
+												// If there is a preposed marker in the same column at this index, increment index.
+												if (partsInDestCell.Count > 0 && IsPreposedMarker(partsInDestCell[0]))
+												{
+													iinsertAt++;
+												}
+												// Make a new WordGroup and move one word
+												MakeWordGroup(dstCell, iinsertAt, new[] { wordToMove });
+												fKeepOldWordGroup = srcWordGroup.ShrinkFromEnd(true);
+											}
+											else
+											{
+												fKeepOldWordGroup = srcWordGroup.ShrinkFromEnd(true);
+												wordGrpTarget.GrowFromBeginning(true);
+											}
+											// Enhance GordonM: If we eventually allow a marker to show that words within a cell are reversed in order,
+											// that marker may need deleting here.
+											if (!fKeepOldWordGroup)
+											{
+												DeleteCellPart(srcWordGroup);
+											}
+										});
 			m_lastMoveCell = dstCell;
 		}
 
@@ -3835,12 +3862,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			return new ListView();
 		}
 
-		internal void MakeMainHeaderCols(ListView view)
+		internal void MakeMainHeaderCols(ChartHeaderView view)
 		{
 			// This is actually a display method, not a true 'logic' method.
 			// That's why we need to test for RTL script.
 			view.SuspendLayout();
-			view.Columns.Clear();
+			view.Controls.Clear();
 
 			if (ChartIsRtL)
 			{
@@ -3850,51 +3877,46 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			}
 			else
 			{
+				MakeNotesColumnHeader(view);
 				MakeRowNumberColumnHeader(view);
 				MakeTemplateColumnHeaders(view);
-				MakeNotesColumnHeader(view);
 			}
 
-			view.ResumeLayout();
+			view.ResumeLayout(false);
 		}
 
-		private static void MakeNotesColumnHeader(ListView view)
+		private static void MakeNotesColumnHeader(ChartHeaderView view)
 		{
 			// Add one more column for notes.
-			var ch = new ColumnHeader
+			var ch = new HeaderLabel
 			{
 				Text = LanguageExplorerResources.ksNotesColumnHeader
 			};
-			view.Columns.Add(ch);
+			view.Controls.Add(ch);
 		}
 
-		private void MakeTemplateColumnHeaders(ListView view)
+		private void MakeTemplateColumnHeaders(ChartHeaderView view)
 		{
-			foreach (var col in AllMyColumns)
+			foreach (var col in ChartIsRtL ? AllMyColumns.Reverse() : AllMyColumns)
 			{
-				var ch = new ColumnHeader
+				var ch = new HeaderLabel
 				{
+
+					// ensure NFC -- See LT-8815.
+					//ch.Text = m_possRepo.GetObject(col.Hvo).Name.BestAnalysisAlternative.Text.Normalize();
 					Text = col.Name.BestAnalysisAlternative.Text.Normalize()
 				};
-				if (ChartIsRtL)
-				{
-					view.Columns.Insert(1, ch); // should be safe because the Notes column will get added first.
-				}
-				else
-				{
-					view.Columns.Add(ch);
+				view.Controls.Add(ch);
 			}
 		}
-		}
 
-		private static void MakeRowNumberColumnHeader(ListView view)
+		private static void MakeRowNumberColumnHeader(ChartHeaderView view)
 		{
-			var ch = new ColumnHeader
+			var ch = new HeaderLabel
 			{
-				Text = string.Empty
+				Text = string.Empty // otherwise default is 'column header'!
 			};
-			// otherwise default is 'column header'!
-			view.Columns.Add(ch);
+			view.Controls.Add(ch);
 		}
 
 		/// <summary>
@@ -3925,10 +3947,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			hvoItem = (int)SpecialHVOValues.kHvoUninitializedObject;
 			var clauses = (part as IConstChartClauseMarker)?.DependentClausesRS;
 			if (clauses?.Count > 0)
-				{
-					hvoItem = clauses[0].Hvo;
-					return true;
-				}
+			{
+				hvoItem = clauses[0].Hvo;
+				return true;
+			}
 			return false;
 		}
 
@@ -4014,8 +4036,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					if (IsMovedText(part))
 					{
 						cPrevMovedText++;
+					}
 				}
-			}
 			}
 			return false; // desperation, never found it!
 		}
@@ -4032,20 +4054,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			var irowPrec = CurrHighlightCells[0];
 			var irowFoll = CurrHighlightCells[2];
 			if (irowPrec > irow || irow > irowFoll)
-				{
+			{
 				return false;
 			}
 			var icolPrec = CurrHighlightCells[1];
 			var icolFoll = CurrHighlightCells[3];
-					if (irowPrec == irowFoll)
+			if (irowPrec == irowFoll)
 			{
-						return (icolPrec <= icol && icol <= icolFoll);
+				return (icolPrec <= icol && icol <= icolFoll);
 			}
 
-					if (irow == irowPrec && icol >= icolPrec)
+			if (irow == irowPrec && icol >= icolPrec)
 			{
-						return true;
-				}
+				return true;
+			}
 			return irow == irowFoll && icol <= icolFoll;
 		}
 
@@ -4077,7 +4099,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		internal int ConvertColumnIndexToFromRtL(int icol, int imaxCol)
 		{
 			// RTL chart 'logical' column indices are reverse from 'display' column indices.
-			var diff = ((float)imaxCol)/2 - icol;
+			var diff = ((float)imaxCol) / 2 - icol;
 			icol += (int)(diff * 2);
 			return icol;
 		}

@@ -573,6 +573,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				e.Cancel = true;
 			}
 		}
+
 		internal void ApproveAndStayPut(ICommandUndoRedoText undoRedoText)
 		{
 			// don't navigate, just save.
@@ -617,7 +618,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// or possibly (See LT-12229:If the nextWordform is the same as SelectedOccurrence)
 				// at the end of the text.
 				UpdateRealFromSandbox(undoRedoText, true, null); // save work done in sandbox
-																 // try to select the first configured annotation (not a null note) in this segment
+				// try to select the first configured annotation (not a null note) in this segment
 				if (InterlinDoc.SelectFirstTranslationOrNote())
 				{
 					// IP should now be on an annotation line.
@@ -637,7 +638,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// It could have "real" annotations.
 				AnalysisOccurrence realAnalysis;
 				var nextSeg = InterlinDoc.GetNextSegment
-				(SelectedOccurrence.Segment.Owner.IndexInOwner, SelectedOccurrence.Segment.IndexInOwner, false, out realAnalysis); // downward move
+					(SelectedOccurrence.Segment.Owner.IndexInOwner, SelectedOccurrence.Segment.IndexInOwner, false, out realAnalysis); // downward move
 				if (nextSeg != null && nextSeg != nextWordform.Segment)
 				{
 					// This is a segment before the one contaning the next wordform.
@@ -825,7 +826,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var nextOccurrence = GetNextOccurrenceToAnalyze(fForward, skipFullyAnalyzedWords);
 			InterlinDoc.TriggerAnalysisSelected(nextOccurrence, fSaveGuess, fMakeDefaultSelection);
 			if (!fMakeDefaultSelection && currentLineIndex >= 0 && InterlinWordControl != null)
+			{
 				InterlinWordControl.SelectOnOrBeyondLine(currentLineIndex, 1);
+			}
 		}
 
 		// It would be nice to have more of this logic in the StTextAnnotationNavigator, but the definition of FullyAnalyzed
@@ -833,13 +836,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private AnalysisOccurrence GetNextOccurrenceToAnalyze(bool fForward, bool skipFullyAnalyzedWords)
 		{
 			var navigator = new SegmentServices.StTextAnnotationNavigator(SelectedOccurrence);
-			var options = fForward
-							  ? navigator.GetWordformOccurrencesAdvancingIncludingStartingOccurrence()
+			var options = fForward ? navigator.GetWordformOccurrencesAdvancingIncludingStartingOccurrence()
 							  : navigator.GetWordformOccurrencesBackwardsIncludingStartingOccurrence();
 			if (options.First() == SelectedOccurrence)
+			{
 				options = options.Skip(1);
+			}
 			if (skipFullyAnalyzedWords)
+			{
 				options = options.Where(analysis => !IsFullyAnalyzed(analysis));
+			}
 			return options.DefaultIfEmpty(SelectedOccurrence).FirstOrDefault();
 		}
 
@@ -1004,7 +1010,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// and we only confirm these if SelectedOccurrence and occ are both sentence-initial.
 				// We want to do that only for sentence-initial occurrences.
 				if (occ.Analysis == newWordform || (occ.Analysis == oldWordform && occ.Index == 0 && SelectedOccurrence.Index == 0))
+				{
 					occ.Segment.AnalysesRS[occ.Index] = newAnalysis;
+				}
 			}
 		}
 #if RANDYTODO
@@ -1021,6 +1029,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			ApproveAndStayPut(undoRedoText);
 			return true;
 		}
+
 #if RANDYTODO
 		/// <summary>
 		/// Enable the "Approve Analysis And" submenu, if we can.
@@ -1387,6 +1396,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				OccurrenceBeforeApproveAndMove = null;
 				OccurrenceAfterApproveAndMove = null;
 			}
+
+			protected override void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+				base.Dispose(disposing);
+			}
 		}
 
 		/// <summary>
@@ -1399,8 +1414,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			readonly AnalysisOccurrence m_oldOccurrence;
 			AnalysisOccurrence m_newOccurrence;
 
-			internal UndoRedoApproveAnalysis(InterlinDocForAnalysis interlinDoc, AnalysisOccurrence oldAnnotation,
-				AnalysisOccurrence newAnnotation)
+			internal UndoRedoApproveAnalysis(InterlinDocForAnalysis interlinDoc, AnalysisOccurrence oldAnnotation, 				AnalysisOccurrence newAnnotation)
 			{
 				m_interlinDoc = interlinDoc;
 				m_cache = m_interlinDoc.Cache;

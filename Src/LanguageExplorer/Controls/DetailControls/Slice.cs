@@ -719,6 +719,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				SplitCont.FixedPanel = FixedPanel.Panel2;
 			}
 
+			// REVIEW (Hasso) 2018.07: would it be better to check !parent.Controls.Contains(this)?
 			if (!isBeingReused)
 			{
 				parentDataTree.Controls.Add(this); // Parent will have to move it into the right place.

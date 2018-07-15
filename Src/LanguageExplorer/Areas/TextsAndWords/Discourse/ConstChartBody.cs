@@ -235,9 +235,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
-			ChartLocation cell;
+			int icol;
 			int irow;
-			if (GetCellInfo(e, out cell, out irow))
+			if (GetCellInfo(e, out icol, out irow))
 			{
 				var info = new SelLevInfo[1];
 				info[0].ihvo = irow;
@@ -256,7 +256,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 						GetCoordRects(out rcSrcRoot, out rcDstRoot);
 						sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary, out rcSec, out fSplit, out fEndBeforeAnchor);
 					}
-					SetHoverButtonLocation(rcPrimary, cell.ColIndex);
+					SetHoverButtonLocation(rcPrimary, icol);
 					if (!Controls.Contains(m_hoverButton))
 					{
 						Controls.Add(m_hoverButton);
@@ -284,8 +284,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			// If chart is Left to Right, we start with right border of cell and subtract button width and margin.
 			// If chart is Right to Left, we start with left border of cell and add margin.
 			var fudgeFactor = fRtl ? margin : -margin - m_hoverButton.Width;
-			var horizPosition = m_chart.ColumnPositions[columnIndex + extraColumnLeft + (fRtl ? 0 : 1)] + fudgeFactor;
-			return horizPosition;
+			return m_chart.ColumnPositions[columnIndex + extraColumnLeft + (fRtl ? -1 : 1) + (m_chart.NotesColumnOnRight ? 0 : 1)] + fudgeFactor; ;
 		}
 
 		public void SetColWidths(int[] widths)
@@ -402,25 +401,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				// Consider bringing up another menu only if we weren't already showing one.
 				// The above time test seems to be the only way to find out whether this click closed the last one.
-				ChartLocation cell;
+				int icol;
 				int irow;
-				if (GetCellInfo(e, out cell, out irow))
+				var chart = Cache.ServiceLocator.GetInstance<IDsConstChartRepository>().GetObject(m_hvoChart);
+				ChartLocation cell;
+				if (GetCellInfo(e, out icol, out irow))
 				{
+					icol = LogicalFromDisplay(icol);
+					cell = new ChartLocation(chart.RowsOS[irow], icol);
 					m_cellContextMenu = Logic.MakeCellContextMenu(cell);
 					m_cellContextMenu.Closed += m_cellContextMenu_Closed;
 					m_cellContextMenu.Show(this, e.X, e.Y);
 					return; // Don't call the base method, we don't want to make a selection.
-				}
-				if (cell != null && cell.IsValidLocation && cell.ColIndex >= AllColumns.Length)
-				{
-					// Click in Notes...make sure it has one.
-					if (cell.Row.Notes == null || cell.Row.Notes.Length == 0)
-					{
-						NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
-							{
-								cell.Row.Notes = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
-							});
-					}
 				}
 			}
 			base.OnMouseDown(e);
@@ -435,12 +427,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// Get info about which cell the user clicked in.
 		/// </summary>
 		/// <param name="e"></param>
-		/// <param name="clickedCell">This needs to include the 'logical' column index.</param>
+		/// <param name="icol">This needs to include the 'logical' column index.</param>
 		/// <param name="irow"></param>
 		/// <returns>true if it is a template column, or false if some other column (Notes?)</returns>
-		private bool GetCellInfo(MouseEventArgs e, out ChartLocation clickedCell, out int irow)
+		private bool GetCellInfo(MouseEventArgs e, out int icol, out int irow)
 		{
-			clickedCell = null; // in case of premature 'return'
+			icol = -1; // in case of premature 'return'
 			irow = -1;
 			if (m_hvoChart == 0 || AllColumns == null || e.Y > RootBox.Height || e.X > RootBox.Width)
 			{
@@ -468,12 +460,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				{
 					return false;
 				}
-				var icol = Logic.GetColumnFromPosition(e.X, m_chart.ColumnPositions) - 1;
-				if (-1 < icol && icol < AllColumns.Length && e.Clicks > 0)
-				{
-					icol = LogicalFromDisplay(icol); // if this is just a mouse move, use 'display' column
-				}
-				clickedCell = new ChartLocation(chart.RowsOS[irow], icol);
+				icol = Logic.GetColumnFromPosition(e.X, m_chart.ColumnPositions) - 1;
+				icol += (m_chart.ChartIsRtL && m_chart.NotesColumnOnRight) ? 1 : (!m_chart.ChartIsRtL && !m_chart.NotesColumnOnRight) ? -1 : 0;
 				// return true if we clicked on a valid template column (other than notes)
 				// return false if we clicked on an 'other' column, like notes or row number?
 				return -1 < icol && icol < AllColumns.Length;
@@ -519,5 +507,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			this.ResumeLayout(false);
 
 		}
+
+		public ConstituentChart Chart => m_chart;
 	}
 }

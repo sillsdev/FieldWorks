@@ -194,7 +194,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			base.OnLoad(e);
 			// We don't want to know about column width changes until after we're initialized and have restored original widths.
 			m_headerMainCols.ColumnWidthChanged += m_headerMainCols_ColumnWidthChanged;
-			m_headerMainCols.ColumnWidthChanging += m_headerMainCols_ColumnWidthChanging;
 		}
 
 		/// <summary>
@@ -214,10 +213,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			m_headerMainCols = new ChartHeaderView(this)
 			{
 				Dock = DockStyle.Top,
-				View = View.Details,
-				Height = 22,
-				Scrollable = false,
-				AllowColumnReorder = false
+				Height = 22
 			};
 			m_headerMainCols.Layout += m_headerMainCols_Layout;
 			m_headerMainCols.SizeChanged += m_headerMainCols_SizeChanged;
@@ -275,12 +271,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		protected int GetWidth(string text, Font fnt)
 		{
-			int width;
 			using (var g = Graphics.FromHwnd(Handle))
 			{
-				width = (int)g.MeasureString(text, fnt).Width + 1;
+				return (int)g.MeasureString(text, fnt).Width + 1;
 			}
-			return width;
 		}
 
 		/// <summary>
@@ -374,40 +368,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			return true;
 		}
 
-		// padding (pixels) to autoresize column width to prevent wrapping
-		private const int kColPadding = 4;
-
-		internal void m_headerMainCols_ColumnAutoResize(int icolChanged)
-		{
-			var maxWidth = MaxUseableWidth();
-			// Determine content width and try to set column to that width
-			var changingColHdr = m_headerMainCols.Columns[icolChanged];
-			var colWidth = Body.GetColumnContentsWidth(icolChanged);
-			// "real" column width
-			if (colWidth == 0)
-			{
-				// no content in this column, resize to header
-				m_headerMainCols.AutoResizeColumn(icolChanged, ColumnHeaderAutoResizeStyle.HeaderSize);
-			}
-			else
-			{
-				colWidth += kColPadding;
-				var cLimit = maxWidth / 2;
-				// limit resize to half of available width
-				changingColHdr.Width = (colWidth > cLimit) ? cLimit : colWidth;
-			}
-		}
-
-		/// <summary>
-		/// Whether or not Layout events for m_headerMainCols should be ignored. See FWNX-945.
-		/// </summary>
-		bool m_fIgnoreLayout;
-
-		void m_headerMainCols_ColumnWidthChanging(object sender, ColumnWidthChangingEventArgs e)
-		{
-			m_fIgnoreLayout = true;
-		}
-
 		void m_headerMainCols_ColumnWidthChanged(object sender, ColumnWidthChangedEventArgs e)
 		{
 			if (m_fInColWidthChanged)
@@ -418,10 +378,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			try
 			{
 				var icolChanged = e.ColumnIndex;
-				var ccol = m_headerMainCols.Columns.Count;
+				var ccol = m_headerMainCols.Controls.Count;
 				var totalWidth = 0;
 				var maxWidth = MaxUseableWidth();
-				foreach (ColumnHeader ch in m_headerMainCols.Columns)
+				foreach (Control ch in m_headerMainCols.Controls)
 				{
 					totalWidth += ch.Width + 0;
 				}
@@ -433,7 +393,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					while (remainingCols > 0)
 					{
 						var deltaThis = delta / remainingCols;
-						m_headerMainCols.Columns[icolAdjust].Width -= deltaThis;
+						m_headerMainCols[icolAdjust].Width -= deltaThis;
 						delta -= deltaThis;
 						icolAdjust++;
 						remainingCols--;
@@ -455,7 +415,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			// Now adjust everything else
 			ComputeButtonWidths();
 			Body.SetColWidths(m_columnWidths);
-			m_fIgnoreLayout = false;
+			m_headerMainCols.UpdatePositions();
 		}
 
 		void m_headerMainCols_SizeChanged(object sender, EventArgs e)
@@ -465,12 +425,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		void m_headerMainCols_Layout(object sender, LayoutEventArgs e)
 		{
-			// Unlike .NET, Mono fires Layout during column resizing. Ignore it. FWNX-945.
-			if (m_fIgnoreLayout)
-			{
-				return;
-			}
-
 			SetHeaderColAndButtonWidths();
 		}
 
@@ -479,19 +433,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		{
 			// Do not change column widths until positions have been updated to represent template change
 			// ColumnPositions should be one longer due to fenceposting
-			if (ColumnPositions != null && ColumnPositions.Length == m_headerMainCols.Columns.Count + 1)
+			if (ColumnPositions != null && ColumnPositions.Length == m_headerMainCols.Controls.Count + 1)
 			{
 				m_fInColWidthChanged = true;
 				try
 				{
 					//GetColumnWidths();
-					for (var i = 0; i < m_headerMainCols.Columns.Count; i++)
+					for (var i = 0; i < m_headerMainCols.Controls.Count; i++)
 					{
 						var width = ColumnPositions[i + 1] - ColumnPositions[i];
-						if (m_headerMainCols.Columns[i].Width != width)
+						if (m_headerMainCols[i].Width != width)
 						{
-							m_headerMainCols.Columns[i].Width = width;
+							m_headerMainCols[i].Width = width;
 						}
+						m_headerMainCols.UpdatePositions();
 					}
 				}
 				finally
@@ -616,18 +571,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				return; // no cols, can't do anything useful.
 			}
 
-			if (m_headerMainCols == null || m_headerMainCols.Columns.Count !=
-				m_allColumns.Length + ConstituentChartLogic.NumberOfExtraColumns)
+			if (m_headerMainCols != null && m_headerMainCols.Controls.Count == m_allColumns.Length + ConstituentChartLogic.NumberOfExtraColumns)
 			{
 				return;
 			}
 			// Take it from the headers if we have them set up already.
 			m_columnWidths = new int[m_allColumns.Length + ConstituentChartLogic.NumberOfExtraColumns];
 			ColumnPositions = new int[m_allColumns.Length + ConstituentChartLogic.NumberOfExtraColumns + 1];
-			var ccol = m_headerMainCols.Columns.Count;
+			var ccol = m_headerMainCols.Controls.Count;
 			for (var icol = 0; icol < ccol; icol++)
 			{
-				var width = m_headerMainCols.Columns[icol].Width;
+				var width = m_headerMainCols[icol].Width;
 				// The column seems to be really one pixel wider than the column width of the header,
 				// possibly because of the boundary line width.
 				ColumnPositions[icol + 1] = ColumnPositions[icol] + width + 0;
@@ -660,7 +614,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				// skip number column, fine tune
 				c.Width = ColumnPositions[ipair + 2] - ColumnPositions[ipair + 1] - widthBtnContextMenu;
 				// Redo button name in case some won't (or now will!) fit on the button
-				c.Text = GetBtnName(m_headerMainCols.Columns[ipair + 1].Text, c.Width - ((c as Button).Image.Width * 2));
+				c.Text = GetBtnName(m_headerMainCols[ipair + 1].Text, c.Width - ((c as Button).Image.Width * 2));
 				var c2 = m_buttonRow.Controls[ipair * 2 + 1];
 				// pull-down
 				c2.Left = c.Right;
@@ -684,6 +638,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				var defWs = m_cache.ServiceLocator.WritingSystemManager.Get(RootStText.MainWritingSystem);
 				return defWs.RightToLeftScript;
 			}
+		}
+
+		public void RefreshRoot()
+		{
+			SetRoot(m_hvoRoot);
 		}
 
 		/// <summary>
@@ -780,16 +739,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					m_fInColWidthChanged = false;
 				}
 			}
-			if (m_chart != null)
-			{
-				Body.SetRoot(m_chart.Hvo, m_allColumns, ChartIsRtL);
-
-				GetAndScrollToBookmark();
-			}
-			else
-			{
-				Body.SetRoot(0, null, false);
-			}
 
 			// If necessary adjust number of buttons
 			if (m_MoveHereButtons.Count != m_allColumns.Length && hvo > 0)
@@ -800,12 +749,23 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 			BuildTemplatePanel();
 
+			if (m_chart != null)
+			{
+				Body.SetRoot(m_chart.Hvo, m_allColumns, ChartIsRtL);
+				GetAndScrollToBookmark();
+			}
+			else
+			{
+				Body.SetRoot(0, null, false);
+			}
 		}
 
 		private void BuildTemplatePanel()
 		{
 			if (m_template == null)
+			{
 				return;
+			}
 			if (m_templateSelectionPanel.Controls.Count > 0)
 			{
 				((ComboBox)m_templateSelectionPanel.Controls[0]).SelectedItem = m_template;
@@ -1294,9 +1254,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				return;
 			}
-			for (var icol = 0; icol < m_MoveHereButtons.Count; icol++)
+			foreach (var button in m_MoveHereButtons)
 			{
-				m_MoveHereButtons[icol].Enabled = true;
+				button.Enabled = true;
 			}
 		}
 
@@ -1371,6 +1331,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			return true; // we handled this
 		}
 
+		public bool NotesColumnOnRight => m_headerMainCols.NotesOnRight;
 
 		/// <summary>
 		/// Set/get the style sheet.
@@ -1384,7 +1345,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				var oldStyles = m_ribbon.StyleSheet;
 				m_ribbon.StyleSheet = value;
 				if (oldStyles != value)
+				{
 					m_ribbon.SelectFirstOccurence();
+				}
 				// otherwise, selection disappears.
 			}
 		}
@@ -1435,6 +1398,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			}
 			// Last resort.
 			dest.Add(flid);
+		}
+
+		public bool NotesDataFromPropertyTable
+		{
+			get
+			{
+				return PropertyTable == null || PropertyTable.GetValue("notesOnRight", true, SettingsGroup.LocalSettings);
+			}
+			set
+			{
+				PropertyTable?.SetProperty("notesOnRight", value, settingsGroup: SettingsGroup.LocalSettings);
+			}
 		}
 	}
 }

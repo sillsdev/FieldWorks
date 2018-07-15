@@ -21,7 +21,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private readonly IConstChartRow m_row;
 		private readonly LcmCache m_cache;
 		private readonly ConstChartVc m_this; // original 'this' object of the refactored method.
-		private readonly ConstChartBody m_chart;
+		private readonly ConstChartBody m_chartBody;
 		private int[] m_cellparts;
 		/// <summary>
 		/// Column for which cell is currently open (initially not for any column)
@@ -71,7 +71,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			m_partRepo = m_cache.ServiceLocator.GetInstance<IConstituentChartCellPartRepository>();
 
 			// Decorator makes sure that things get put out in the right order if chart is RtL
-			m_chart = baseObj.m_chart;
+			m_chartBody = baseObj.m_chart;
 			m_vwenv = new ChartRowEnvDecorator(vwenv);
 
 			m_hvoRow = hvo;
@@ -98,11 +98,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 			m_vwenv.IsRtL = fRtL;
 
+			if (!(m_chartBody.Chart.NotesColumnOnRight ^ fRtL))
+			{
+				MakeNoteCell();
+			}
+
 			MakeRowLabelCell();
 
 			MakeMainCellParts(); // Make all the cell parts between row label and note.
 
-			MakeNoteCell();
+			if (m_chartBody.Chart.NotesColumnOnRight ^ fRtL)
+			{
+				MakeNoteCell();
+			}
 
 			FlushDecorator();
 		}
@@ -151,7 +159,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			}
 			CloseCurrentlyOpenCell();
 			// Make any leftover empty cells.
-			MakeEmptyCells(m_chart.AllColumns.Length - m_iLastColForWhichCellExists - 1);
+			MakeEmptyCells(m_chartBody.AllColumns.Length - m_iLastColForWhichCellExists - 1);
 		}
 
 		private void ProcessCurrentCellPart(int hvoCellPart)
@@ -163,8 +171,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				// It doesn't belong to any column! Maybe the template got edited and the column
 				// was deleted? Arbitrarily assign it to the first column...logic below
 				// may change to the current column if any.
-				hvoColContainingCellPart = m_chart.AllColumns[0].Hvo;
-				ReportAndFixBadCellPart(hvoCellPart, m_chart.AllColumns[0]);
+				hvoColContainingCellPart = m_chartBody.AllColumns[0].Hvo;
+				ReportAndFixBadCellPart(hvoCellPart, m_chartBody.AllColumns[0]);
 			}
 			if (hvoColContainingCellPart == m_hvoCurCellCol)
 			{
@@ -174,7 +182,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			}
 			//var ihvoNewCol = m_chart.DisplayFromLogical(GetIndexOfColumn(hvoColContainingCellPart));
 			var ihvoNewCol = GetIndexOfColumn(hvoColContainingCellPart);
-			if (ihvoNewCol < m_iLastColForWhichCellExists || ihvoNewCol >= m_chart.AllColumns.Length)
+			if (ihvoNewCol < m_iLastColForWhichCellExists || ihvoNewCol >= m_chartBody.AllColumns.Length)
 			{
 				//Debug.Fail(string.Format("Cell part : {0} Chart AllColumns length is: {1} ihvoNewCol is: {2}", cellPart.Guid, m_chart.AllColumns.Length, ihvoNewCol));
 				// pathological case...cell part is out of order or its column has been deleted.
@@ -213,7 +221,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					// Determine how MANY cells it can use. Find the next CellPart in a different column, if any.
 					// It's column determines how many cells are empty. If it merges before, consider
 					// giving it a column to merge.
-					var iNextColumn = m_chart.AllColumns.Length; // by default can use all remaining columns.
+					var iNextColumn = m_chartBody.AllColumns.Length; // by default can use all remaining columns.
 					for (var icellPartNextCol = m_icellpart + 1; icellPartNextCol < m_cellparts.Length; icellPartNextCol++)
 					{
 						var hvoCellPartInNextCol = m_cellparts[icellPartNextCol];
@@ -260,9 +268,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			}
 			// starting from there find the last column that has the auto-missing property.
 			m_icolLastAutoMissing = -1;
-			for (; icol < m_chart.AllColumns.Length; icol++)
+			for (; icol < m_chartBody.AllColumns.Length; icol++)
 			{
-				if (m_chart.Logic.ColumnHasAutoMissingMarkers(icol))
+				if (m_chartBody.Logic.ColumnHasAutoMissingMarkers(icol))
 				{
 					m_icolLastAutoMissing = icol;
 				}
@@ -315,12 +323,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// </summary>
 		private void ReportAndFixBadCellPart(int hvo, ICmPossibility column)
 		{
-			if (!m_chart.BadChart)
+			if (!m_chartBody.BadChart)
 			{
 				MessageBox.Show(LanguageExplorerResources.ksFoundAndFixingInvalidDataCells,
 					LanguageExplorerResources.ksInvalidInternalConstituentChartData,
 					MessageBoxButtons.OK, MessageBoxIcon.Information);
-				m_chart.BadChart = true;
+				m_chartBody.BadChart = true;
 			}
 
 			// Suppress Undo handling...we may fix lots of these, it doesn't make sense for the user to
@@ -343,12 +351,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// </summary>
 		private bool GoesInsideClauseBrackets(int hvoPart)
 		{
-			if (m_chart.Logic.IsWordGroup(hvoPart))
+			if (m_chartBody.Logic.IsWordGroup(hvoPart))
 			{
 				return true;
 			}
 			int dummy;
-			if (m_chart.Logic.IsClausePlaceholder(hvoPart, out dummy))
+			if (m_chartBody.Logic.IsClausePlaceholder(hvoPart, out dummy))
 			{
 				return false;
 			}
@@ -357,7 +365,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		private void AddCellPartToCell(IConstituentChartCellPart cellPart)
 		{
-			var fSwitchBrackets = m_chart.IsRightToLeft && !(cellPart is IConstChartWordGroup);
+			var fSwitchBrackets = m_chartBody.IsRightToLeft && !(cellPart is IConstChartWordGroup);
 			if (m_cCellPartsInCurrentCell != 0)
 			{
 				m_vwenv.AddString(m_this.SpaceString);
@@ -381,7 +389,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			else if (IsListRef(cellPart))
 			{
 				// If we're about to add our first CellPart and its a ConstChartTag, see if AutoMissingMarker flies.
-				if (m_cCellPartsInCurrentCell == 1 && m_chart.Logic.ColumnHasAutoMissingMarkers(m_iLastColForWhichCellExists))
+				if (m_cCellPartsInCurrentCell == 1 && m_chartBody.Logic.ColumnHasAutoMissingMarkers(m_iLastColForWhichCellExists))
 				{
 					InsertAutoMissingMarker(m_iLastColForWhichCellExists);
 					m_cCellPartsInCurrentCell++;
@@ -411,7 +419,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private void AddCloseBracketAfterDepClause()
 		{
 			var key = ConstChartVc.GetRowStyleName(m_row);
-			if (m_chart.IsRightToLeft)
+			if (m_chartBody.IsRightToLeft)
 			{
 				m_this.AddRtLCloseBracketWithRLMs(m_vwenv, key);
 			}
@@ -424,7 +432,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private void AddOpenBracketBeforeDepClause()
 		{
 			var key = ConstChartVc.GetRowStyleName(m_row);
-			if (m_chart.IsRightToLeft)
+			if (m_chartBody.IsRightToLeft)
 			{
 				m_this.AddRtLOpenBracketWithRLMs(m_vwenv, key);
 			}
@@ -446,9 +454,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			// If this causes a bottle-neck, we may need to loop in reverse for RTL text.
 			var startIndex = m_iLastColForWhichCellExists + 1;
 			//var startIndex = 0;
-			for (ihvoNewCol = startIndex; ihvoNewCol < m_chart.AllColumns.Length; ihvoNewCol++)
+			for (ihvoNewCol = startIndex; ihvoNewCol < m_chartBody.AllColumns.Length; ihvoNewCol++)
 			{
-				if (hvoCol == m_chart.AllColumns[ihvoNewCol].Hvo)
+				if (hvoCol == m_chartBody.AllColumns[ihvoNewCol].Hvo)
 				{
 					break;
 				}
@@ -491,7 +499,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				var icol = i + m_iLastColForWhichCellExists + 1; // display column index
 				OpenStandardCell(icol, 1);
 				//if (m_chart.Logic.ColumnHasAutoMissingMarkers(m_chart.LogicalFromDisplay(icol)))
-				if (m_chart.Logic.ColumnHasAutoMissingMarkers(icol))
+				if (m_chartBody.Logic.ColumnHasAutoMissingMarkers(icol))
 				{
 					m_vwenv.OpenParagraph();
 					InsertAutoMissingMarker(icol);
@@ -504,23 +512,23 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private void InsertAutoMissingMarker(int icol)
 		{
 			// RightToLeft weirdness because non-wordgroup stuff doesn't work right!
-			if (icol == m_icolLastAutoMissing && m_chart.IsRightToLeft)
+			if (icol == m_icolLastAutoMissing && m_chartBody.IsRightToLeft)
 			{
 				AddCloseBracketAfterDepClause();
 			}
-			if (m_icellPartOpenClause == m_icellpart && !m_chart.IsRightToLeft)
+			if (m_icellPartOpenClause == m_icellpart && !m_chartBody.IsRightToLeft)
 			{
 				AddOpenBracketBeforeDepClause();
 				m_icellPartOpenClause = -1; // suppresses normal open and in any subsequent auto-missing cells.
 			}
 			m_vwenv.AddString(m_missMkr);
-			if (m_icellPartOpenClause == m_icellpart && m_chart.IsRightToLeft)
+			if (m_icellPartOpenClause == m_icellpart && m_chartBody.IsRightToLeft)
 			{
 				AddOpenBracketBeforeDepClause();
 				m_icellPartOpenClause = -1; // suppresses normal open and in any subsequent auto-missing cells.
 			}
 
-			if (icol == m_icolLastAutoMissing && !m_chart.IsRightToLeft)
+			if (icol == m_icolLastAutoMissing && !m_chartBody.IsRightToLeft)
 			{
 				AddCloseBracketAfterDepClause();
 			}
@@ -536,20 +544,22 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		private void OpenStandardCell(int icol, int ccols)
 		{
-			if (m_chart.Logic.IsHighlightedCell(m_row.IndexInOwner, icol))
+			if (m_chartBody.Logic.IsHighlightedCell(m_row.IndexInOwner, icol))
 			{
 				// use m_vwenv.set_IntProperty to set ktptBackColor for cells where the ChOrph could be inserted
 				m_vwenv.set_IntProperty((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.LightGreen));
 			}
-			OpenStandardCell(m_vwenv, ccols, m_chart.Logic.GroupEndIndices.Contains(icol));
+			OpenStandardCell(m_vwenv, ccols, m_chartBody.Logic.GroupEndIndices.Contains(icol));
 		}
 
 		private void OpenNoteCell()
 		{
 			// LT-8545 remaining niggle; Note shouldn't be formatted.
 			// A small change to the XML config file ensures it's not underlined either.
+			m_vwenv.set_IntProperty((int)FwTextPropType.ktptBorderTrailing, (int)FwTextPropVar.ktpvMilliPoint, 1500);
+			m_vwenv.set_IntProperty((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.Black));
 			m_this.ApplyFormatting(m_vwenv, "normal");
-			OpenStandardCell(m_vwenv, 1, false);
+			m_vwenv.OpenTableCell(1, 1);
 		}
 
 		internal static void OpenStandardCell(IVwEnv vwenv, int ccols, bool fEndOfGroup)

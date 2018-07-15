@@ -1,9 +1,10 @@
-﻿// Copyright (c) 2012-2018 SIL International
+// Copyright (c) 2012-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.XMLViews;
@@ -41,7 +42,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_displayNameProperty = displayNameProperty;
 			m_displayWs = displayWs;
 
-			m_listBox = new ComboListBox {DropDownStyle = ComboBoxStyle.DropDownList, ActivateOnShow = false};
+			m_listBox = new ComboListBox { DropDownStyle = ComboBoxStyle.DropDownList, ActivateOnShow = false };
 			m_listBox.SelectedIndexChanged += HandleSelectedIndexChanged;
 			m_listBox.SameItemSelected += HandleSameItemSelected;
 			m_listBox.StyleSheet = FwUtils.StyleSheetFromPropertyTable(propertyTable);
@@ -77,6 +78,13 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_listBox.Dispose();
 
 			base.DisposeManagedResources();
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+
+			base.Dispose(disposing);
 		}
 
 		protected virtual void OnItemSelected(EventArgs e)
@@ -176,7 +184,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					m_listBox.BeginUpdate();
 					m_listBox.Items.Clear();
 					// TODO: sort the results
-					foreach (var poss in m_searcher.Search(0, (ITsString) param))
+					foreach (var poss in m_searcher.Search(0, (ITsString)param))
 					{
 						// Every so often see whether the user has typed something that makes our search irrelevant.
 						if (ShouldAbort())

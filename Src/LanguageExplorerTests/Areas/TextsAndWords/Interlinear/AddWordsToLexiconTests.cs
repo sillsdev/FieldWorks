@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using NUnit.Framework;
@@ -364,6 +365,12 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			protected override void DisposeManagedResources()
 			{
 				UndoAll();
+			}
+
+			protected override void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+				base.Dispose(disposing);
 			}
 		}
 
