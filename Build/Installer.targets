@@ -245,6 +245,10 @@
 			<BinFiles Remove="$(OutputDirForConfig)\test*"/>
 			<BinFiles Include="$(fwrt)\DistFiles\**\*" Exclude="@(DeveloperFiles);@(IcuFiles)"/>
 			<BinFiles Include="$(fwrt)\License.htm"/> <!-- install the license -->
+			<!-- Files with special install locations or steps -->
+			<CustomInstallFiles Include="$(OutputDirForConfig)\FieldWorks.exe"/> <!-- easier to add firewall extension if it isn't harvested -->
+			<CustomInstallFiles Include="$(fwrt)\DistFiles\vs_piaredist.exe"/> <!-- Installed in Program Files\Common Files -->
+			<BinFiles Remove="@(CustomInstallFiles)"/>
 			<!-- Files used to customize the generic patchable installer -->
 			<OverrideFiles Include="$(fwrt)\FLExInstaller\*.wxi"/>
 		</ItemGroup>
@@ -252,6 +256,7 @@
 		<Copy SourceFiles="@(InstallerResources)" OverwriteReadonlyFiles="true" DestinationFolder="$(InstallerResourcesDir)"/>
 		<Copy SourceFiles="@(L10nFilesWithRecursiveDirs)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(L10nDirSuffix)/%(RecursiveDir)"/>
 		<Copy SourceFiles="@(BinFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/%(RecursiveDir)"/>
+		<Copy SourceFiles="@(CustomInstallFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/.."/>
 		<Copy SourceFiles="@(OverrideFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(OverridesDestDir)"/>
 		<CallTarget Targets="HarvestL10n"/>
 	</Target>

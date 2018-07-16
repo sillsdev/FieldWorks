@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Include>
-<!--	<ComponentRef Id="CreateIcuFolder"/> -->
-<!--	<ComponentRef Id="CopyLicenseTechReadme"/>-->
+	<ComponentRef Id="FieldWorks.exe"/>
 	<ComponentGroupRef Id="FwEnvironmentVars" />
 	<ComponentGroupRef Id="HarvestedDataFiles" />
+	<ComponentGroupRef Id="Miscelanea"/>
 	<MergeRef Id="CC_DLL"/>
 	<MergeRef Id="EncConverters_Common"/>
 	<MergeRef Id="PerlEC"/>

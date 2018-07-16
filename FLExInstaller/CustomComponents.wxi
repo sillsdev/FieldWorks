@@ -5,10 +5,20 @@
 <?define CFDir = CommonFilesFolder?>
 <?endif?>
 <?define EncodingConvertersPath = "..\..\packages\Encoding-Converters-Core.0.0.6\MergeModules" ?>
+<!-- REVIEW (Hasso) 2018.07: if this file gets too long, it can be split into separate files for MergeModules, L10n, and possibly others. -->
 <Include>
+	<?ifdef MASTERBUILDDIR?>
+	<WixVariable Id="RootObjectsDir" Value="$(var.MASTERBUILDDIR)\.."/>
+	<?else?>
+	<WixVariable Id="RootObjectsDir" Value="$(var.UPDATEBUILDDIR)\.."/>
+	<?endif?>
+
 	<DirectoryRef Id="$(var.PFDir)">
 		<Directory Id="$(var.CFDir)">
-			<Directory Id="SIL">
+			<Directory Id="SIL" Name="SIL">
+				<Component Id="vs_piaredist.exe" Guid="69E34503-AFF1-455d-8B02-38EC1EC156C2">
+					<File Id="vs_piaredist.exe" Name="vs_piaredist.exe" ReadOnly="yes" Source="!(wix.RootObjectsDir)\vs_piaredist.exe"/>
+				</Component>
 				<?if $(sys.BUILDARCH) = x64 ?>
 				<Merge Id="TECkit_DLLs" Language="1033" SourceFile="$(var.EncodingConvertersPath)\TECkit64bitDLLsMM.msm" DiskId="1"/>
 				<?else?>
@@ -81,6 +91,25 @@
 		<Merge Id="PythonEC" Language="1033" SourceFile="$(var.EncodingConvertersPath)\PythonEcMM.msm" DiskId="1"/>
 		<?endif?>
 
+		<Component Id="FieldWorks.exe" Guid="95461FE1-FA63-4D76-B32B-89A478EDA5C6">
+			<File Id="FieldWorks.exe" Name="FieldWorks.exe" Source="!(wix.RootObjectsDir)\FieldWorks.exe" ReadOnly="yes" Checksum="yes" KeyPath="yes" Assembly=".net" AssemblyApplication="FieldWorks.exe" AssemblyManifest="FieldWorks.exe">
+				<fire:FirewallException Id="FieldWorks.exe" Name="FieldWorks" IgnoreFailure="yes" Scope="any" xmlns:fire="http://schemas.microsoft.com/wix/FirewallExtension"/>
+			</File>
+			<ProgId Id="FwBackupFile" Icon="FieldWorks.exe" Description="FieldWorks Backup">
+				<Extension Id="fwbackup" >
+					<Verb Id="open" Command="&amp;Restore" Argument="&quot;%1&quot;" TargetFile="FieldWorks.exe" />
+				</Extension>
+			</ProgId>
+			<ProgId Id="FwDataFile" Icon="FieldWorks.exe" Description="FieldWorks Data File">
+				<Extension Id="fwdata" >
+					<Verb Id="open" Command="&amp;Open" Argument="&quot;%1&quot;" TargetFile="FieldWorks.exe" />
+				</Extension>
+			</ProgId>
+			<RegistryValue Id="RegHyperLinksProtocol" Root="HKCR" Key="silfw" Name="URL Protocol" Value="" Type="string" />
+			<RegistryValue Id="RegHyperLinksCmd" Root="HKCR" Key="silfw\shell\open\command" Type="string" Value='"[#FieldWorks.exe]" %1' />
+			<RegistryValue Id="RegHyperLinksSilfw" Root="HKCR" Key="silfw" Type="string" Value="URL:SILFW Protocol" />
+		</Component>
+
 		<!-- Harvested localizations are installed in the following directories -->
 		<!-- If you change this list, you must also update those listed at $(fwrt)\Localizations\ReadMe.md -->
 		<Directory Id="azL10NFOLDER" Name="az"/>
@@ -100,6 +129,10 @@
 		<Directory Id="viL10NFOLDER" Name="vi"/>
 		<Directory Id="zhL10NFOLDER" Name="zh-CN"/>
 	</DirectoryRef>
+
+	<ComponentGroup Id="Miscelanea">
+		<ComponentRef Id="vs_piaredist.exe"/>
+	</ComponentGroup>
 
 	<!-- These WixVariables insert the source directory into the harvest files (because Heat apparently can't) -->
 	<?ifdef MASTERBUILDDIR?>
