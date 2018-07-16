@@ -155,7 +155,7 @@
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\.git\**\*"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\OcmFrame\**\*"/> <!-- directory used only on Linux -->
 			<!-- No longer want TE helps, but they are not yet removed from the Helps repo. -->
-			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\FieldWorks_Translation_Editor_Help.chm\"/>
+			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\FieldWorks_Translation_Editor_Help.chm"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\Translation Editor\**\*"/>
 			<!-- End: No longer want TE helps, but they are not yet removed from the Helps repo. -->
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Icu54.zip"/>
