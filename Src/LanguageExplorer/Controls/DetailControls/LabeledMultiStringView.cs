@@ -104,9 +104,11 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public bool RefreshDisplay()
 		{
+			SuspendLayout();
 			DisposeSoundControls(); // before we do the base refresh, which will layout, and possibly miss a deleted WS.
 			var ret = InnerView.RefreshDisplay();
 			SetupSoundControls();
+			ResumeLayout();
 			return ret;
 		}
 
@@ -241,6 +243,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
+			if (Visible)
+			{
+				InnerView.RefreshDisplay();
+			}
 			int dpiX;
 			using (var graphics = CreateGraphics())
 			{
@@ -266,8 +272,10 @@ namespace LanguageExplorer.Controls.DetailControls
 						// Leave control.Top zero and hope layout gets called again when we can make
 						// the selection successfully.
 						Rectangle selRect;
-						InnerView.GetSoundControlRectangle(sel, out selRect);
-						control.Top = selRect.Top;
+						if (InnerView.GetSoundControlRectangle(sel, out selRect))
+						{
+							control.Top = selRect.Top;
+						}
 					}
 					// Don't crash trying to bring to front if control is not a child control on Linux (FWNX-1348).
 					// If control.Parent is null, don't crash, and bring to front anyway on Windows (LT-15148).

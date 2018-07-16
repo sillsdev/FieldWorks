@@ -144,7 +144,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			switch (m_ws)
 			{
 				case WritingSystemServices.kwsFirstAnal:
+				case WritingSystemServices.kwsAnal:
 					label = ITextStrings.ksBstAn;
+					break;
+				case WritingSystemServices.kwsFirstVern:
+				case WritingSystemServices.kwsVern:
+					label = ITextStrings.ksBstVn;
 					break;
 				case WritingSystemServices.kwsVernInParagraph:
 					label = ITextStrings.ksBaselineAbbr;

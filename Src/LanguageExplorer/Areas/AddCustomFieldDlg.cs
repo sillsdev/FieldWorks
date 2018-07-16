@@ -40,6 +40,7 @@ namespace LanguageExplorer.Areas
 		// variables for managing the dlg
 		private readonly IPropertyTable m_propertyTable;
 		private readonly IPublisher m_publisher;
+		private readonly CustomFieldLocationType m_customFieldLocationType;
 
 		private readonly Inventory m_layouts;
 		private readonly Dictionary<int, ModifiedLabel> m_dictModLabels = new Dictionary<int, ModifiedLabel>();
@@ -69,6 +70,7 @@ namespace LanguageExplorer.Areas
 			// create member variables
 			m_propertyTable = propertyTable;
 			m_publisher = publisher;
+			m_customFieldLocationType = customFieldLocationType;
 			m_cache = m_propertyTable.GetValue<LcmCache>("cache");
 			m_layouts = Inventory.GetInventory("layouts", m_cache.ProjectId.Name);
 
@@ -123,7 +125,7 @@ namespace LanguageExplorer.Areas
 				m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.MultiparagraphText, AreaResources.kMultiparagraphText));
 				m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.ListRefCollection, AreaResources.ksListRefCollection));
 				m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.ListRefAtomic, AreaResources.ksListRefAtomic));
-			// If you add additional value types here, a change is also needed in BasicCustomPropertyFixer (FixFwDataDll).
+				// If you add additional value types here, a change is also needed in BasicCustomPropertyFixer (FixFwDataDll).
 				m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.Date, AreaResources.ksDate));
 				m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.Number, AreaResources.ksNumber));
 			}
@@ -178,7 +180,8 @@ namespace LanguageExplorer.Areas
 			m_wsComboBox.Items.Clear();
 			m_wsComboBox.Items.Add(new IdAndString<int>(WritingSystemServices.kwsAnal, AreaResources.FirstAnalysisWs));
 			m_wsComboBox.Items.Add(new IdAndString<int>(WritingSystemServices.kwsVern, AreaResources.FirstVernacularWs));
-			if (m_typeComboBox.SelectedItem != null && ((IdAndString<CustomFieldType>)m_typeComboBox.SelectedItem).Id == CustomFieldType.SingleLineText)
+			if (m_typeComboBox.SelectedItem != null && ((IdAndString<CustomFieldType>)m_typeComboBox.SelectedItem).Id == CustomFieldType.SingleLineText
+				&& m_customFieldLocationType != CustomFieldLocationType.Interlinear)
 			{
 				m_wsComboBox.Items.Add(new IdAndString<int>(WritingSystemServices.kwsAnals, AreaResources.AllAnalysisWs));
 				m_wsComboBox.Items.Add(new IdAndString<int>(WritingSystemServices.kwsVerns, AreaResources.AllVernacularWs));

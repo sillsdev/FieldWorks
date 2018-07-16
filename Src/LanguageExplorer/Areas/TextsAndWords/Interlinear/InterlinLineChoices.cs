@@ -37,7 +37,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		internal List<InterlinLineSpec> m_specs = new List<InterlinLineSpec>();
 		internal int m_wsDefVern; // The default vernacular writing system.
 		internal int m_wsDefAnal; // The default analysis writing system.
-		internal ILangProject m_proj;   // provides more ws info.
+		internal ILangProject m_proj;	// provides more ws info.
 		internal LcmCache m_cache;
 		private readonly Dictionary<int, string> m_fieldNames = new Dictionary<int, string>();
 		InterlinMode m_mode = InterlinMode.Analyze;
@@ -204,7 +204,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					if (this[i].MorphemeLevel)
 					{
 						return true;
-					}
+				}
 				}
 				return false;
 			}
@@ -230,11 +230,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					continue;
 				}
-				// It's always OK (and optimal) to insert a new occurrence of the same
-				// flid right after the last existing one.
-				m_specs.Insert(i + 1, spec);
-				return i + 1;
-			}
+					// It's always OK (and optimal) to insert a new occurrence of the same
+					// flid right after the last existing one.
+					m_specs.Insert(i + 1, spec);
+					return i + 1;
+				}
 			for (var i = m_specs.Count - 1; i >= 0; i--)
 			{
 				if (!CanFollow(this[i], spec))
@@ -242,24 +242,24 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					continue;
 				}
 				var firstMorphemeIndex = FirstMorphemeIndex;
-				// Even if otherwise OK, if we're inserting something morpheme level
-				// and there's already morpheme-level stuff present it must follow
-				// the existing morpheme-level stuff.
-				if (fGotMorpheme && spec.MorphemeLevel && i >= firstMorphemeIndex &&
-					(!this[i].MorphemeLevel ||
-					spec.Flid == kflidMorphemes ||
-					spec.Flid == kflidLexEntries && this[i].Flid != kflidMorphemes))
+					// Even if otherwise OK, if we're inserting something morpheme level
+					// and there's already morpheme-level stuff present it must follow
+					// the existing morpheme-level stuff.
+					if (fGotMorpheme && spec.MorphemeLevel && i >= firstMorphemeIndex &&
+						(!this[i].MorphemeLevel ||
+						spec.Flid == kflidMorphemes ||
+						spec.Flid == kflidLexEntries && this[i].Flid != kflidMorphemes))
+					{
+						continue;
+					}
+					// And word-level annotations can't follow freeform ones.
+					if (spec.WordLevel && !this[i].WordLevel)
 				{
-					continue;
+						continue;
 				}
-				// And word-level annotations can't follow freeform ones.
-				if (spec.WordLevel && !this[i].WordLevel)
-				{
-					continue;
+					m_specs.Insert(i + 1, spec);
+					return i + 1;
 				}
-				m_specs.Insert(i + 1, spec);
-				return i + 1;
-			}
 			m_specs.Insert(0, spec); // can't follow anything, put first.
 			return 0;
 		}
@@ -416,7 +416,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return kWordLevelColor;
 			}
-			return SystemColors.ControlText;
+				return SystemColors.ControlText;
 		}
 
 		// Find where the spec is in your collection.
@@ -544,7 +544,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (spec.Flid == flid && result.IndexOf(spec.WritingSystem) < 0)
 				{
 					result.Add(spec.WritingSystem);
-				}
+			}
 			}
 			if (fGetDefaultForMissing && result.Count == 0)
 			{
@@ -583,7 +583,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					if (result.IndexOf(spec.WritingSystem) < 0)
 					{
 						result.Add(spec.WritingSystem);
-					}
+				}
 				}
 				return result;
 			}
@@ -631,7 +631,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (spec.Flid == flid && result.IndexOf(spec.WritingSystem) < 0 && spec.WritingSystem != wsToOmit)
 				{
 					result.Add(spec.WritingSystem);
-				}
+			}
 			}
 			return result;
 		}
@@ -673,7 +673,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (!OkToRemove(spec))
 				{
 					return spec;
-				}
+			}
 			}
 
 			// search for the first spec that is a default spec.
@@ -682,7 +682,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (IsDefaultSpec(spec))
 				{
 					return spec;
-				}
+			}
 			}
 
 			// lastly return the first matchingSpec
@@ -755,7 +755,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 
 			return new InterlinLineSpec
-			{
+		{
 				ComboContent = comboContent,
 				Flid = flid,
 				WritingSystem = wsRequested == 0 ? ws : wsRequested,
@@ -784,7 +784,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (ws > 0)
 			{
 				// first try to find an exact match.
-				index = IndexOf(flid, ws, true);
+				 index = IndexOf(flid, ws, true);
 			}
 
 			if (index == -1)
@@ -807,7 +807,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (this[i].Flid == flid && MatchingWritingSystem(this[i].WritingSystem, ws, fExact))
 				{
 					return i;
-				}
+			}
 			}
 			return -1;
 		}
@@ -874,7 +874,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (this[i].Flid == flid)
 				{
 					return i;
-				}
+			}
 			}
 			return -1;
 		}
@@ -892,7 +892,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			Debug.Assert(wsList == null || wsList.Length == flids.Length, "wsList should be empty or match the same item count in flids.");
 			var result = new List<InterlinLineSpec>();
 			for (var i = 0; i < m_specs.Count; i++)
-			{
+					{
 				result.AddRange(flids.Where((flid, j) => this[i].Flid == flid && (wsList == null || this[i].WritingSystem == wsList[j])).Select(t => this[i]));
 			}
 			return result;
@@ -970,12 +970,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return;
 			}
 			for (var i = n + 1; i < Count && ((fMoveMorphemeGroup && this[i].MorphemeLevel) || (fMoveNoteGroup && this[i].Flid == kflidNote)); i++)
-			{
+				{
 				var specT = this[i];
-				m_specs.RemoveAt(i);
-				m_specs.Insert(dest + i - n, specT);
+					m_specs.RemoveAt(i);
+					m_specs.Insert(dest + i - n, specT);
+				}
 			}
-		}
 
 		/// <summary>
 		/// Answer true if the item at line n can be moved down a line.
@@ -1009,7 +1009,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			foreach (var spec in m_specs)
 			{
 				result.m_specs.Add(spec.Clone() as InterlinLineSpec);
-			}
+	}
 			return result;
 		}
 		#endregion

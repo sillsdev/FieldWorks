@@ -113,13 +113,21 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Return the sound control rectangle.
 		/// </summary>
-		internal void GetSoundControlRectangle(IVwSelection sel, out Rectangle selRect)
+		internal bool GetSoundControlRectangle(IVwSelection sel, out Rectangle selRect)
 		{
+			// Trying to get the Rectangle for the sound control can cause a crash (LT-18994) if a refresh is pending
+			// to reconstruct the RootBox. Just return false for now and try again when the refresh is successful.
+			if (m_fRefreshPending)
+			{
+				selRect = new Rectangle(); // Just a dummy
+				return false;
+			}
 			using (new HoldGraphics(this))
 			{
 				bool fEndBeforeAnchor;
 				SelectionRectangle(sel, out selRect, out fEndBeforeAnchor);
 			}
+			return true;
 		}
 
 		/// <summary>
@@ -279,7 +287,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				if (fChangeRange)
 				{
 					hlpr.SetSelection(true);
-				}
+			}
 			}
 			finally
 			{
@@ -408,7 +416,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					if (!result.Contains(ws))
 					{
 						result.Add(ws);
-					}
+			}
 				}
 			}
 			return result;
@@ -460,12 +468,12 @@ namespace LanguageExplorer.Controls.DetailControls
 			for (; i < WritingSystems.Count; i++)
 			{
 				if (WritingSystems[i].Handle == ws)
-				{
+			{
 					break;
-				}
 			}
-			return i == WritingSystems.Count ? -1 : i;
 		}
+			return i == WritingSystems.Count ? -1 : i;
+	}
 	}
 
 	/// <summary>

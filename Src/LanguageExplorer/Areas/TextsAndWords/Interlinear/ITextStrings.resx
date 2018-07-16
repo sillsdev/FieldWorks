@@ -137,6 +137,10 @@
     <value>bst. an</value>
     <comment>short for Best Analysis (writing system)</comment>
   </data>
+  <data name="ksBstVn" xml:space="preserve">
+    <value>bst. vn</value>
+    <comment>short for Best Vernacular (writing system)</comment>
+  </data>
   <data name="ksCannotHideField" xml:space="preserve">
     <value>Cannot hide field</value>
   </data>
