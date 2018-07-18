@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Include xmlns="http://schemas.microsoft.com/wix/2006/wi"
-		xmlns:bal="http://schemas.microsoft.com/wix/BalExtension"
-		xmlns:util="http://schemas.microsoft.com/wix/UtilExtension"
-		xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension"
-		xmlns:dep="http://schemas.microsoft.com/wix/DependencyExtension">
+		xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
 	<Fragment>
 		<util:RegistrySearch Root="HKLM"
 					 Key="SOFTWARE\WOW6432Node\SIL\FLEx Bridge\9"

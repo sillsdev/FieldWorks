@@ -79,11 +79,12 @@
 
 	<!-- Build Directories -->
 	<PropertyGroup>
-		<InstallersBaseDir>$(fwrt)/BuildDir/</InstallersBaseDir>
+		<InstallersBaseDir>$(fwrt)/BuildDir</InstallersBaseDir>
 		<AppBuildMasterDir>$(InstallersBaseDir)/$(SafeApplicationName)_Build_Master_$(Platform)</AppBuildMasterDir>
 		<BinDirSuffix>objects/$(SafeApplicationName)</BinDirSuffix>
-		<L10nDirSuffix>$(BinDirSuffix)_L10n</L10nDirSuffix>
 		<DataDirSuffix>$(BinDirSuffix)_Data</DataDirSuffix>
+		<FontDirSuffix>$(BinDirSuffix)_Font</FontDirSuffix>
+		<L10nDirSuffix>$(BinDirSuffix)_L10n</L10nDirSuffix>
 		<InstallerDir>$(fwrt)\PatchableInstaller</InstallerDir>
 		<OverridesDestDir>$(InstallerDir)\Common</OverridesDestDir>
 		<InstallerResourcesDir>$(InstallerDir)\resources</InstallerResourcesDir>
@@ -92,7 +93,7 @@
 	<!-- ########################################################################################################## -->
 	<!-- ### Top Level Targets                                                                                  ### -->
 	<!-- ########################################################################################################## -->
-	<Target Name="BuildBaseInstaller" DependsOnTargets="RequirePlatform;GetDotNetFiles;CleanMasterOutputDir">
+	<Target Name="BuildBaseInstaller" DependsOnTargets="RequirePlatform;DownloadBundledInstallers;CleanMasterOutputDir">
 		<MSBuild Projects="$(MSBuildProjectFullPath)" Properties="BuildingBaseInstaller=true" Targets="BuildProductMain;BuildProductBaseMsi;CopyBuildToMaster"/>
 	</Target>
 
@@ -156,6 +157,7 @@
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\OcmFrame\**\*"/> <!-- directory used only on Linux -->
 			<!-- No longer want TE helps, but they are not yet removed from the Helps repo. -->
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\FieldWorks_Translation_Editor_Help.chm"/>
+			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\Using_Styles.chm"/> <!-- TE-specific per LT-18363 -->
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\Translation Editor\**\*"/>
 			<!-- End: No longer want TE helps, but they are not yet removed from the Helps repo. -->
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Icu54.zip"/>
@@ -171,6 +173,10 @@
 			<DeveloperFiles Include="$(fwrt)\DistFiles\TECkit\**\*"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\TxtConv.exe"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Windows\**\*"/>
+			<FontFiles Include="$(fwrt)\DistFiles\Fonts\Raw\*.ttf"/>
+			<FontFiles Include="$(DownloadsDir)\Fonts\**\*.ttf"/>
+			<FontDocumentation Include="$(DownloadsDir)\Fonts\*\*.txt"/>
+			<FontDocumentation Include="$(DownloadsDir)\Fonts\*\documentation\*"/>
 			<IcuDataFiles Include="$(fwrt)\DistFiles\Icu$(IcuVersion)\**\*"/>
 			<InstallerResources Include="$(fwrt)\License.htm"/> <!-- allow users to view the license before installing -->
 			<InstallerResources Include="$(fwrt)\resources\App.ico"/>
@@ -252,13 +258,15 @@
 			<!-- Files used to customize the generic patchable installer -->
 			<OverrideFiles Include="$(fwrt)\FLExInstaller\*.wxi"/>
 		</ItemGroup>
+		<Copy SourceFiles="@(FontFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(FontDirSuffix)"/>
+		<Copy SourceFiles="@(FontDocumentation)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/Fonts/%(RecursiveDir)"/>
 		<Copy SourceFiles="@(IcuDataFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(DataDirSuffix)/Icu$(IcuVersion)/%(RecursiveDir)"/>
 		<Copy SourceFiles="@(InstallerResources)" OverwriteReadonlyFiles="true" DestinationFolder="$(InstallerResourcesDir)"/>
 		<Copy SourceFiles="@(L10nFilesWithRecursiveDirs)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(L10nDirSuffix)/%(RecursiveDir)"/>
 		<Copy SourceFiles="@(BinFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/%(RecursiveDir)"/>
 		<Copy SourceFiles="@(CustomInstallFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/.."/>
 		<Copy SourceFiles="@(OverrideFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(OverridesDestDir)"/>
-		<CallTarget Targets="HarvestL10n"/>
+		<CallTarget Targets="HarvestL10n;HarvestFonts;ConvertHarvestsToWxi"/>
 	</Target>
 
 	<Target Name="HarvestL10n">
@@ -280,11 +288,6 @@
 			<TargetLocales Include="az;es;fa;fr;hi;hu;id;ko;ms;pt;ro;ru;te;tr;vi;zh-CN"/>
 		</ItemGroup>
 		<MSBuild Projects="$(MSBuildProjectFullPath)" Properties="TargetLocale=%(TargetLocales.Identity)" Targets="HarvestOneL10n"/>
-		<ItemGroup>
-			<HarvestedWxsFiles Include="$(L10nWxiDir)\*.wxs"/>
-		</ItemGroup>
-		<WxsToWxi SourceFile="%(HarvestedWxsFiles.Identity)"/>
-		<ForceDelete Files="@(HarvestedWxsFiles)"/>
 	</Target>
 
 	<Target Name="HarvestOneL10n">
@@ -292,10 +295,42 @@
 			<!-- Substring keeps Chinese the same length as everyone else (and '-' is an illegal character in some places) -->
 			<!-- "The nail that sticks up gets hammered down" (Japanese proverb) -->
 			<SafeTargetLocale>$(TargetLocale.Substring(0,2))</SafeTargetLocale>
+			<!-- KeyPathFix changes KeyPath="yes" to KeyPath="no" so we can overwrite later versions of files, if necessary. -->
+			<!-- See https://github.com/sillsdev/genericinstaller's README for details. -->
 			<KeyPathFixArg Condition="'$(FixKeyPath)'=='true'">-t $(InstallerDir)/BaseInstallerBuild/KeyPathFix.xsl</KeyPathFixArg>
 			<CommonHeatArgs>$(GuidGenArg) -scom -sreg -sfrag -srd -sw5150 -sw5151 $(KeyPathFixArg)</CommonHeatArgs>
 		</PropertyGroup>
 		<Exec Command="heat.exe dir $(L10nSrcDir)\$(TargetLocale) $(CommonHeatArgs) -cg $(SafeTargetLocale)Localization -dr $(SafeTargetLocale)L10NFOLDER -var wix.$(PatchPrefix)$(SafeTargetLocale)L10NDIR -out $(L10nWxiDir)\$(SafeTargetLocale)Harvest.wxs" />
+	</Target>
+
+	<Target Name="HarvestFonts">
+		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="HarvestFont" Condition="'$(BuildingBaseInstaller)'=='true'"
+			Properties="PatchPrefix=MASTER;FontSrcDir=$(AppBuildDir)\$(FontDirSuffix);HarvestWxiDir=$(OverridesDestDir)\Master"/>
+		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="HarvestFont" Condition="'$(BuildingBaseInstaller)'!='true'"
+			Properties="PatchPrefix=MASTER;FontSrcDir=$(AppBuildMasterDir)\$(FontDirSuffix);HarvestWxiDir=$(OverridesDestDir)\Master"/>
+		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="HarvestFont" Condition="'$(BuildingBaseInstaller)'!='true'"
+			Properties="PatchPrefix=UPDATE;;FontSrcDir=$(AppBuildDir)\$(FontDirSuffix);HarvestWxiDir=$(OverridesDestDir)\Update"/>
+	</Target>
+
+	<Target Name="HarvestFont">
+		<PropertyGroup>
+			<!-- Always generate GUID's late because we can (but feel free to change if desired) -->
+			<GuidGenArg>-ag</GuidGenArg>
+			<!-- Add TrueType="yes" to harvested fonts (simply copying them to \Windows\Fonts is insufficient) -->
+			<TrueTypeArg>-t $(InstallerDir)/BaseInstallerBuild/TrueType.xsl</TrueTypeArg>
+			<!-- Never apply KeyPathFix.xsl to fonts, so we don't install an older version on top of a newer version -->
+			<CommonHeatArgs>$(GuidGenArg) -scom -sreg -sfrag -srd -sw5150 -sw5151 $(TrueTypeArg)</CommonHeatArgs>
+		</PropertyGroup>
+		<Exec Command="heat.exe dir $(FontSrcDir) $(CommonHeatArgs) -cg HarvestedFonts -dr FontsFolder -var wix.$(PatchPrefix)FONTDIR -out $(HarvestWxiDir)\FontHarvest.wxs" />
+	</Target>
+
+	<Target Name="ConvertHarvestsToWxi">
+		<ItemGroup>
+			<HarvestedWxsFiles Include="$(OverridesDestDir)\Master\*.wxs"/>
+			<HarvestedWxsFiles Include="$(OverridesDestDir)\Update\*.wxs"/>
+		</ItemGroup>
+		<WxsToWxi SourceFile="%(HarvestedWxsFiles.Identity)"/>
+		<ForceDelete Files="@(HarvestedWxsFiles)"/>
 	</Target>
 
 	<Target Name="CopyBuildToMaster">
@@ -305,67 +340,88 @@
 		<Copy SourceFiles="@(ObjectFiles)" DestinationFolder="$(AppBuildMasterDir)/%(RecursiveDir)"/>
 	</Target>
 
-	<Target Name="GetDotNetFiles" >
+	<Target Name="DownloadBundledInstallers" DependsOnTargets="DownloadAndUnzipFonts">
 		<!-- REVIEW (Hasso) 2018.03: how many of these do we really need? -->
 		<PropertyGroup>
 			<WixLibsDir>$(InstallerDir)/libs/</WixLibsDir>
 		</PropertyGroup>
+		<!-- 32-bit VC redistributables -->
 		<DownloadFile Address="http://go.microsoft.com/fwlink/?LinkId=322115"
-			LocalFilename="$(WixLibsDir)/NDP451-KB2858728-x86-x64-AllOS-ENU.exe"
-			Condition="!Exists('$(WixLibsDir)/NDP451-KB2858728-x86-x64-AllOS-ENU.exe')" DownloadsDir="$(fwrt)/Downloads" /> <!-- .net 4.5.1 -->
+			LocalFilename="NDP451-KB2858728-x86-x64-AllOS-ENU.exe"
+			Condition="!Exists('$(WixLibsDir)/NDP451-KB2858728-x86-x64-AllOS-ENU.exe')" DownloadsDir="$(WixLibsDir)" /> <!-- .net 4.5.1 -->
 		<DownloadFile Address="https://download.microsoft.com/download/1/1/1/1116b75a-9ec3-481a-a3c8-1777b5381140/vcredist_x86.exe "
-			LocalFilename="$(WixLibsDir)/vcredist_2008_x86.exe"
+			LocalFilename="vcredist_2008_x86.exe"
 			Condition="!Exists('$(WixLibsDir)/vcredist_2008_x86.exe') And $(Platform)!='x64'"
 			DownloadsDir="$(WixLibsDir)"/>			<!-- VisualC++ 8 runtime -->
 		<DownloadFile Address="https://download.microsoft.com/download/5/B/C/5BC5DBB3-652D-4DCE-B14A-475AB85EEF6E/vcredist_x86.exe"
-			LocalFilename="$(WixLibsDir)/vcredist_x86.exe"
+			LocalFilename="vcredist_x86.exe"
 			Condition="!Exists('$(WixLibsDir)/vcredist_x86.exe') And $(Platform)!='x64'"
 			DownloadsDir="$(WixLibsDir)"/>			<!-- VisualC++ 10 runtime -->
 		<DownloadFile Address="https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x86.exe"
-			LocalFilename="$(WixLibsDir)/vcredist_2012_x86.exe"
+			LocalFilename="vcredist_2012_x86.exe"
 			Condition="!Exists('$(WixLibsDir)/vcredist_2012_x86.exe') And $(Platform)!='x64'"
 			DownloadsDir="$(WixLibsDir)"/>	<!-- VisualC++ 11 runtime -->
 		<DownloadFile Address="http://download.microsoft.com/download/0/5/6/056dcda9-d667-4e27-8001-8a0c6971d6b1/vcredist_x86.exe"
-			LocalFilename="$(WixLibsDir)/vcredist_2013_x86.exe"
+			LocalFilename="vcredist_2013_x86.exe"
 			Condition="!Exists('$(WixLibsDir)/vcredist_2013_x86.exe') And $(Platform)!='x64'"
 			DownloadsDir="$(WixLibsDir)"/>	<!-- VisualC++ 12 runtime -->
 		<DownloadFile Address="https://download.microsoft.com/download/9/3/F/93FCF1E7-E6A4-478B-96E7-D4B285925B00/vc_redist.x86.exe"
-			LocalFilename="$(WixLibsDir)/vcredist_2015_x86.exe"
+			LocalFilename="vcredist_2015_x86.exe"
 			Condition="!Exists('$(WixLibsDir)/vcredist_2015_x86.exe') And $(Platform)!='x64'"
 			DownloadsDir="$(WixLibsDir)"/>	<!-- VisualC++ 14 runtime -->
 		<DownloadFile Address="https://download.visualstudio.microsoft.com/download/pr/11687613/88b50ce70017bf10f2d56d60fcba6ab1/VC_redist.x86.exe"
-			LocalFilename="$(WixLibsDir)/vcredist_2017_x86.exe"
+			LocalFilename="vcredist_2017_x86.exe"
 			Condition="!Exists('$(WixLibsDir)/vcredist_2017_x86.exe') And $(Platform)!='x64'"
 			DownloadsDir="$(WixLibsDir)"/>	<!-- VisualC++ 14.1 runtime -->
-		<!-- 64bit redistributables -->
+		<!-- 64-bit VC redistributables -->
 		<DownloadFile Address="https://download.microsoft.com/download/d/2/4/d242c3fb-da5a-4542-ad66-f9661d0a8d19/vcredist_x64.exe	"
-			LocalFilename="$(WixLibsDir)/vcredist_2008_x64.exe"
+			LocalFilename="vcredist_2008_x64.exe"
 			Condition="!Exists('$(WixLibsDir)/vcredist_2008_x64.exe') And $(Platform)=='x64'"
 			DownloadsDir="$(WixLibsDir)"/>
 		<DownloadFile Address="https://download.microsoft.com/download/3/2/2/3224B87F-CFA0-4E70-BDA3-3DE650EFEBA5/vcredist_x64.exe"
-			LocalFilename="$(WixLibsDir)/vcredist_x64.exe"
+			LocalFilename="vcredist_x64.exe"
 			Condition="!Exists('$(WixLibsDir)/vcredist_x64.exe') And $(Platform)=='x64'"
 			DownloadsDir="$(WixLibsDir)"/>			<!-- VisualC++ 10 runtime -->
 		<DownloadFile Address="https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x64.exe"
-			LocalFilename="$(WixLibsDir)/vcredist_2012_x64.exe"
+			LocalFilename="vcredist_2012_x64.exe"
 			Condition="!Exists('$(WixLibsDir)/vcredist_2012_x64.exe') And $(Platform)=='x64'"
 			DownloadsDir="$(WixLibsDir)"/>	<!-- VisualC++ 11 runtime -->
 		<DownloadFile Address="https://download.microsoft.com/download/2/E/6/2E61CFA4-993B-4DD4-91DA-3737CD5CD6E3/vcredist_x64.exe"
-			LocalFilename="$(WixLibsDir)/vcredist_2013_x64.exe"
+			LocalFilename="vcredist_2013_x64.exe"
 			Condition="!Exists('$(WixLibsDir)/vcredist_2013_x64.exe') And $(Platform)=='x64'"
 			DownloadsDir="$(WixLibsDir)"/>	<!-- VisualC++ 12 runtime -->
 		<DownloadFile Address="https://download.microsoft.com/download/9/3/F/93FCF1E7-E6A4-478B-96E7-D4B285925B00/vc_redist.x64.exe"
-			LocalFilename="$(WixLibsDir)/vcredist_2015_x64.exe"
+			LocalFilename="vcredist_2015_x64.exe"
 			Condition="!Exists('$(WixLibsDir)/vcredist_2015_x64.exe') And $(Platform)=='x64'"
 			DownloadsDir="$(WixLibsDir)"/>	<!-- VisualC++ 14 runtime -->
 		<DownloadFile Address="https://download.visualstudio.microsoft.com/download/pr/11687625/2cd2dba5748dc95950a5c42c2d2d78e4/VC_redist.x64.exe"
-			LocalFilename="$(WixLibsDir)/vcredist_2017_x64.exe"
+			LocalFilename="vcredist_2017_x64.exe"
 			Condition="!Exists('$(WixLibsDir)/vcredist_2017_x64.exe') And $(Platform)=='x64'"
 			DownloadsDir="$(WixLibsDir)"/>	<!-- VisualC++ 14.1 runtime -->
+		<!-- FLEx Bridge -->
 		<DownloadFile Address="https://build.palaso.org/guestAuth/repository/download/FLExBridgeDevelopWin32InstallerSansPublish/.lastSuccessful/FLExBridge_Offline.exe"
-			LocalFilename="$(WixLibsDir)/FLExBridge_Offline.exe"
-			Condition="!Exists('$(WixLibsDir)/FLExBridge_Offline.exe')"
-			DownloadsDir="$(WixLibsDir)"/>	<!-- FlexBridge Installer download -->
+			DownloadsDir="$(WixLibsDir)"/> <!-- always download to get the latest version -->
+	</Target>
+
+	<Target Name="DownloadAndUnzipFonts">
+		<!-- TODO (Hasso) 2018.07: the latest version of Quivira is .otf, but making that change requires
+			more install smarts than we have time to write before this month's First Beta. -->
+		<!-- Note: we are downloading quivira, but also leaving it checked in in case the website disappears. -->
+		<DownloadFile Address="http://www.quivira-font.com/files/Quivira.ttf" DownloadsDir="$(fwrt)/DistFiles/Fonts/Raw"/>
+		<!-- TODO (Hasso) 2018.07: download latest version from wirl (LT-19288) -->
+		<DownloadFile Address="https://software.sil.org/downloads/r/andika/Andika-5.000.zip" DownloadsDir="$(DownloadsDir)"
+			Condition="!Exists('$(DownloadsDir)/Andika-5.000.zip')"/>
+		<DownloadFile Address="https://software.sil.org/downloads/r/charis/CharisSIL-5.000.zip" DownloadsDir="$(DownloadsDir)"
+			Condition="!Exists('$(DownloadsDir)/CharisSIL-5.000.zip')"/>
+		<DownloadFile Address="https://software.sil.org/downloads/r/doulos/DoulosSIL-5.000.zip" DownloadsDir="$(DownloadsDir)"
+			Condition="!Exists('$(DownloadsDir)/DoulosSIL-5.000.zip')"/>
+		<DownloadFile Address="https://software.sil.org/downloads/r/gentium/GentiumPlus-5.000.zip" DownloadsDir="$(DownloadsDir)"
+			Condition="!Exists('$(DownloadsDir)/GentiumPlus-5.000.zip')"/>
+		<ItemGroup>
+			<ZippedFonts Include="Andika-5.000;CharisSIL-5.000;DoulosSIL-5.000;GentiumPlus-5.000"/>
+		</ItemGroup>
+		<Unzip ZipFilename="$(DownloadsDir)/%(ZippedFonts.Identity).zip" ToDir="$(DownloadsDir)/Fonts"
+			Condition="!Exists('$(DownloadsDir)/Fonts/%(ZippedFonts.Identity)')"/>
 	</Target>
 
 	<!-- ########################################################################################################## -->

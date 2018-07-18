@@ -43,17 +43,17 @@
 
 	<DirectoryRef Id="ProgramMenuFolder">
 		<Directory Id="FLExProgramMenuFolder" Name="$(var.ApplicationName) $(var.MajorVersion)">
-			<Component Id="StartMenuShortcuts" Guid="EE2CF3EF-30C2-48AC-8151-7B55191A1E59">
-				<Shortcut Id="HelpsShortcut"
-					Name="$(var.ApplicationName) Help"
-					Description="$(var.ApplicationName) Help"
-					Target="[APPFOLDER]Helps\FieldWorks_Language_Explorer_Help.chm"/>
+			<Component Id="StartMenuFLExShortcuts" Guid="EE2CF3EF-30C2-48AC-8151-7B55191A1E59">
 				<Shortcut Id="ApplicationStartSubmenuShortcut"
 					Name="$(var.ApplicationName)"
 					Description="$(var.ApplicationName) $(var.MajorVersion)"
 					Target="[APPFOLDER]Flex.exe"
 					WorkingDirectory="APPFOLDER"
 					Icon="Application_Icon.ico"/>
+				<Shortcut Id="HelpsShortcut"
+					Name="$(var.ApplicationName) Help"
+					Description="$(var.ApplicationName) Help"
+					Target="[APPFOLDER]Helps\FieldWorks_Language_Explorer_Help.chm"/>
 				<Shortcut Id="MorphologyIntroShortcut"
 					Name="Morphology Introduction"
 					Description="A Conceptual Introduction to Morphological Parsing for Stage 1 of the FieldWorks Language Explorer"
@@ -73,10 +73,39 @@
 					Arguments="/x [ProductCode]"
 					Description="Uninstalls $(var.ApplicationName)"/>
 				<RemoveFolder Id="RemoveFLExProgramMenuFolder" Directory="FLExProgramMenuFolder" On="uninstall"/>
-				<RegistryValue Root="HKCU" Key="Software\Microsoft\$(var.SafeApplicationName)$(var.MajorVersion)" Name="installed" Type="integer" Value="1" KeyPath="yes"/><!--REVIEW (Hasso) 2018.07: what is this and why is it *here*? (copied from genericinstaller's Framework.wxs -->
+				<!-- The KeyPath for this component is required to be a registry key under HKCU -->
+				<RegistryValue Root="HKCU" Key="Software\Microsoft\$(var.SafeApplicationName)$(var.MajorVersion)" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+			</Component>
+		</Directory>
+		<Directory Id="SILProgramMenuFolder" Name="SIL">
+			<Component Id="StartMenuFontsShortcut" Guid="C3300D43-CBD9-4244-AFBE-35B9FF3C01BA">
+				<Shortcut Id="FontsShortcut"
+					Name="Fonts"
+					Description="SIL Font Documentation"
+					Target='"[WindowsFolder]explorer.exe" "[APPFOLDER]Fonts"'
+					WorkingDirectory='APPFOLDER'/>
+				<Shortcut Id="AndikaDocShortcut"
+					Name="Andika Documentation"
+					Target="[APPFOLDER]Fonts\Andika-5.000\README.txt"/>
+				<Shortcut Id="CharisSILDocShortcut"
+					Name="Charis SIL Documentation"
+					Target="[APPFOLDER]Fonts\CharisSIL-5.000\README.txt"/>
+				<Shortcut Id="DoulosSILDocShortcut"
+					Name="Doulos SIL Documentation"
+					Target="[APPFOLDER]Fonts\DoulosSIL-5.000\README.txt"/>
+				<Shortcut Id="GentiumPlusDocShortcut"
+					Name="Gentium Plus Documentation"
+					Target="[APPFOLDER]Fonts\GentiumPlus-5.000\README.txt"/>
+				<RemoveFolder Id="RemoveSILProgramMenuFolder" Directory="SILProgramMenuFolder" On="uninstall"/>
+				<!-- The KeyPath for this component is required to be a registry key under HKCU -->
+				<RegistryValue Root="HKCU" Key="Software\Microsoft\$(var.SafeApplicationName)$(var.MajorVersion)FontDocu" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
 			</Component>
 		</Directory>
 	</DirectoryRef>
+	<ComponentGroup Id="StartMenuShortcuts">
+		<ComponentRef Id="StartMenuFLExShortcuts"/>
+		<ComponentRef Id="StartMenuFontsShortcut"/>
+	</ComponentGroup>
 
 	<DirectoryRef  Id='APPFOLDER'>
 		<?if $(sys.BUILDARCH) = x64 ?>
@@ -152,7 +181,8 @@
 	<WixVariable Id="MASTERtrL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\tr"/>
 	<WixVariable Id="MASTERviL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\vi"/>
 	<WixVariable Id="MASTERzhL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\zh-CN"/>
-	<?define L10nWxiDir = .\master?>
+	<WixVariable Id="MASTERFONTDIR" Value="$(var.MASTERBUILDDIR)_Font"/>
+	<?define HarvestWxiDir = .\master?>
 	<?else?>
 	<WixVariable Id="UPDATEazL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\az"/>
 	<WixVariable Id="UPDATEesL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\es"/>
@@ -169,24 +199,25 @@
 	<WixVariable Id="UPDATEteL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\te"/>
 	<WixVariable Id="UPDATEtrL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\tr"/>
 	<WixVariable Id="UPDATEviL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\vi"/>
-	<WixVariable Id="UPDATEzhL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\zh-CN"/>
-	<?define L10nWxiDir = .\update?>
+	<WixVariable Id="UPDATEFONTNDIR" Value="$(var.UPDATEBUILDDIR)_Font"/>
+	<?define HarvestWxiDir = .\update?>
 	<?endif?>
 
-	<?include $(var.L10nWxiDir)\azHarvest.wxi?>
-	<?include $(var.L10nWxiDir)\esHarvest.wxi?>
-	<?include $(var.L10nWxiDir)\faHarvest.wxi?>
-	<?include $(var.L10nWxiDir)\frHarvest.wxi?>
-	<?include $(var.L10nWxiDir)\hiHarvest.wxi?>
-	<?include $(var.L10nWxiDir)\huHarvest.wxi?>
-	<?include $(var.L10nWxiDir)\idHarvest.wxi?>
-	<?include $(var.L10nWxiDir)\koHarvest.wxi?>
-	<?include $(var.L10nWxiDir)\msHarvest.wxi?>
-	<?include $(var.L10nWxiDir)\ptHarvest.wxi?>
-	<?include $(var.L10nWxiDir)\roHarvest.wxi?>
-	<?include $(var.L10nWxiDir)\ruHarvest.wxi?>
-	<?include $(var.L10nWxiDir)\teHarvest.wxi?>
-	<?include $(var.L10nWxiDir)\trHarvest.wxi?>
-	<?include $(var.L10nWxiDir)\viHarvest.wxi?>
-	<?include $(var.L10nWxiDir)\zhHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\azHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\esHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\faHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\frHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\hiHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\huHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\idHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\koHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\msHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\ptHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\roHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\ruHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\teHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\trHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\viHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\zhHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\FontHarvest.wxi?>
 </Include>

@@ -3,6 +3,7 @@
 	<ComponentRef Id="FieldWorks.exe"/>
 	<ComponentGroupRef Id="FwEnvironmentVars" />
 	<ComponentGroupRef Id="HarvestedDataFiles" />
+	<ComponentGroupRef Id="HarvestedFonts" />
 	<ComponentGroupRef Id="Miscelanea"/>
 	<MergeRef Id="CC_DLL"/>
 	<MergeRef Id="EncConverters_Common"/>
@@ -14,7 +15,7 @@
 		<ComponentRef Id='ApplicationShortcutDesktop'/>
 	</Feature>
 	<Feature Id='MenuShortcuts' Title='Start Menu Shortcuts' Description='Creates shortcuts in the Start Menu to FieldWorks, utilities, and key documentation.' Level='3' ConfigurableDirectory='APPFOLDER' AllowAdvertise="no" InstallDefault="source" Absent='allow' TypicalDefault="install" >
-		<ComponentRef Id='StartMenuShortcuts' />
+		<ComponentGroupRef Id='StartMenuShortcuts' />
 	</Feature>
 	<Feature Id='GenericShortcut_NotInstalled' Title='Generic Start Menu Shortcut' Description='Creates a shortcut in the Start menu.' Level='0' ConfigurableDirectory='APPFOLDER' AllowAdvertise="no" InstallDefault="source" Absent='allow' TypicalDefault="install" >
 		<ComponentRef Id='ApplicationShortcutMenu' />
