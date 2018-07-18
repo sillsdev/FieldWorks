@@ -21,7 +21,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	{
 		private int m_dxLastWidth; // width last time OnSizeChanged was called.
 
-		public PhoneEnvReferenceSlice(LcmCache cache, ICmObject obj, int flid)
+		public PhoneEnvReferenceSlice(ISharedEventHandlers sharedEventHandlers, LcmCache cache, ICmObject obj, int flid)
 			: base(new PhoneEnvReferenceLauncher(), cache, obj, flid)
 		{
 			Debug.Assert(obj is IMoAffixAllomorph || obj is IMoStemAllomorph);
@@ -98,6 +98,18 @@ namespace LanguageExplorer.Controls.DetailControls
 			var view = MainControlOfMyControl;
 			view.ViewSizeChanged += OnViewSizeChanged;
 			view.LayoutSizeChanged += view_LayoutSizeChanged;
+		}
+
+		/// <summary>
+		/// Set the Editable property on the launcher, which is created before installation, and
+		/// then finish installing this slice.
+		/// </summary>
+		public override void Install(DataTree parentDataTree)
+		{
+			base.Install(parentDataTree);
+
+			// The launcher's view wants the RightClickPopupMenuFactory to get one of two context menus.
+			MyLauncher.SetRightClickPopupMenuFactory(MyDataTreeStackContextMenuFactory.RightClickPopupMenuFactory);
 		}
 
 		// JohnT: this is the proper way to detect changes in height that come from editing within the view.

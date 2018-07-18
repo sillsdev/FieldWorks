@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
+using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.DetailControls.Resources;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
@@ -67,6 +68,11 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		#endregion // Construction, Initialization, and Disposal
+
+		internal void SetRightClickPopupMenuFactory(SliceRightClickPopupMenuFactory rightClickPopupMenuFactory)
+		{
+			m_phoneEnvRefView.SetRightClickContextMenuManager(rightClickPopupMenuFactory);
+		}
 
 		#region Overrides
 

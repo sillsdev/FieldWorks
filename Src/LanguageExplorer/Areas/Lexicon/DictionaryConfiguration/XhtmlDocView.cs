@@ -206,12 +206,20 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 		/// <returns></returns>
 		public bool OnJumpToRecord(object argument)
 		{
+#if RANDYTODO
+			// TODO: There is no OnDisplayJumpToRecord method, which would make the menu item not be visible at all, so no need for the area check.
+#endif
 			var hvoTarget = (int)argument;
 			if (hvoTarget <= 0 || PropertyTable.GetValue<string>(AreaServices.ToolChoice) !=
 				AreaServices.LexiconDictionaryMachineName)
 			{
 				return false;
 			}
+#if RANDYTODO
+			// TODO: Sounds like there may be no place to jump to at all.
+			// TODO: If a jump cannot be performed, why return 'false', since in the Mediator driven world,
+			// TODO: that will keep looking for a colleague who may be try to do the jump.
+#endif
 			ExclusionReasonCode xrc;
 			// Make sure we explain to the user in case hvoTarget is not visible due to
 			// the current Publication layout or Configuration view.

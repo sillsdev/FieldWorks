@@ -6,8 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
-using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
@@ -86,6 +86,8 @@ namespace LanguageExplorer.Areas
 				}
 			}
 		}
+
+		private Slice MySlice => (Slice)Parent;
 
 		#endregion INotifyControlInCurrentSlice implementation
 
@@ -267,6 +269,20 @@ namespace LanguageExplorer.Areas
 		#region Handle right click menu
 		protected override bool OnRightMouseUp(Point pt, Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
+			if (_mnuEnvChoices != null)
+			{
+				// Unwire event handlers.
+				foreach (var popupMenuItemTuple in _menuItems)
+				{
+					popupMenuItemTuple.Item1.Click -= popupMenuItemTuple.Item2;
+				}
+
+				_menuItems.Clear();
+				_mnuEnvChoices.Dispose();
+
+				_menuItems = null;
+				_mnuEnvChoices = null;
+			}
 			if (m_env == null)
 			{
 				return false;
@@ -276,76 +292,14 @@ namespace LanguageExplorer.Areas
 				Name = AreaServices.mnuEnvChoices
 			};
 			_menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(7);
-			_mnuEnvChoices.Closed += MnuEnvChoices_Closed;
 
-			/*
-		    <menu id="mnuEnvChoices">
-		      <item command="CmdShowEnvironmentErrorMessage" />
-					<command id="CmdShowEnvironmentErrorMessage" label="_Describe Error in Environment" message="ShowEnvironmentError" />
-			*/
-			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(_menuItems, _mnuEnvChoices, _sharedEventHandlers.Get(AreaServices.ShowEnvironmentError), LanguageExplorerResources.Describe_Error_in_Environment);
-			menu.Enabled = CanShowEnvironmentError();
-			menu.Tag = Parent;
+			AreaWideMenuHelper.CreateShowEnvironmentErrorMessageMenus(_sharedEventHandlers, MySlice, _menuItems, _mnuEnvChoices);
 
-			/*
-		      <item label="-" translate="do not translate" />
-			*/
-			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(_mnuEnvChoices);
-
-			/*
-		      <item command="CmdInsertEnvSlash" />
-					<command id="CmdInsertEnvSlash" label="Insert Environment _slash" message="InsertSlash" />
-			*/
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(_menuItems, _mnuEnvChoices, _sharedEventHandlers.Get(AreaServices.InsertSlash), AreaResources.Insert_Environment_slash);
-			menu.Enabled = CanInsertSlash;
-			menu.Tag = Parent;
-
-			/*
-		      <item command="CmdInsertEnvUnderscore" />
-					<command id="CmdInsertEnvUnderscore" label="Insert Environment _bar" message="InsertEnvironmentBar" />
-			*/
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(_menuItems, _mnuEnvChoices, _sharedEventHandlers.Get(AreaServices.InsertEnvironmentBar), AreaResources.Insert_Environment_bar);
-			menu.Enabled = CanInsertEnvBar;
-			menu.Tag = Parent;
-
-			/*
-		      <item command="CmdInsertEnvNaturalClass" />
-					<command id="CmdInsertEnvNaturalClass" label="Insert _Natural Class" message="InsertNaturalClass" />
-			*/
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(_menuItems, _mnuEnvChoices, _sharedEventHandlers.Get(AreaServices.InsertNaturalClass), AreaResources.Insert_Natural_Class);
-			menu.Enabled = CanInsertItem;
-			menu.Tag = Parent;
-
-			/*
-		      <item command="CmdInsertEnvOptionalItem" />
-					<command id="CmdInsertEnvOptionalItem" label="Insert _Optional Item" message="InsertOptionalItem" />
-			*/
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(_menuItems, _mnuEnvChoices, _sharedEventHandlers.Get(AreaServices.InsertOptionalItem), AreaResources.Insert_Optional_Item);
-			menu.Enabled = CanInsertItem;
-			menu.Tag = Parent;
-
-			/*
-		      <item command="CmdInsertEnvHashMark" />
-					<command id="CmdInsertEnvHashMark" label="Insert _Word Boundary" message="InsertHashMark" />
-		    </menu>
-			*/
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(_menuItems, _mnuEnvChoices, _sharedEventHandlers.Get(AreaServices.InsertHashMark), AreaResources.Insert_Word_Boundary);
-			menu.Enabled = CanInsertHashMark;
-			menu.Tag = Parent;
+			AreaWideMenuHelper.CreateCommonEnvironmentMenus(_sharedEventHandlers, MySlice, _menuItems, _mnuEnvChoices);
 
 			_mnuEnvChoices.Show(new Point(Cursor.Position.X, Cursor.Position.Y));
 
 			return true;
-		}
-
-		private void MnuEnvChoices_Closed(object sender, ToolStripDropDownClosedEventArgs e)
-		{
-			_mnuEnvChoices.Closed -= MnuEnvChoices_Closed;
-			foreach (var tuple in _menuItems)
-			{
-				tuple.Item1.Click -= tuple.Item2;
-			}
-			_mnuEnvChoices.Dispose();
 		}
 		#endregion
 	}

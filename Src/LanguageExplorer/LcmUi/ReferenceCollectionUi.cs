@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
+using LanguageExplorer.Areas;
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
 
@@ -20,6 +21,6 @@ namespace LanguageExplorer.LcmUi
 			Debug.Assert(m_iType == CellarPropertyType.ReferenceCollection);
 		}
 
-		protected override string ContextMenuId => m_cache.DomainDataByFlid.MetaDataCache.GetDstClsId(m_flid) == PhEnvironmentTags.kClassId ? "mnuEnvReferenceChoices" : base.ContextMenuId;
+		protected override string ContextMenuId => m_cache.DomainDataByFlid.MetaDataCache.GetDstClsId(m_flid) == PhEnvironmentTags.kClassId ? AreaServices.mnuEnvReferenceChoices : base.ContextMenuId;
 	}
 }

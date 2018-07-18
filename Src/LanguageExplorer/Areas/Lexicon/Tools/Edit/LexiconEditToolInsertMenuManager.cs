@@ -113,6 +113,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_senseMenuItems.Add(senseMenuItem);
 		}
 
+		/// <inheritdoc />
+		void IToolUiWidgetManager.UnwireSharedEventHandlers()
+		{
+		}
+
 		#endregion
 
 		#region IDisposable

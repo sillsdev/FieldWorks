@@ -204,17 +204,18 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				sLabel = LanguageExplorerResources.ksStars;
 			}
-			var sXml = $"<slice label=\"{sLabel}\" field=\"Targets\" editor=\"REPLACE_ME\"";
+			// Theoretically, "editorSlice" will be reset to some other value in the following switch statement.
+			// Otherwise, the original code would not have worked.
+			var editorSlice = string.Empty;
 			var sMenu = "mnuDataTree-DeleteAddLexReference";
-
 			// generate Xml for a specific slice matching this reference
 			switch ((LexRefTypeTags.MappingTypes)lrt.MappingType)
 			{
 				case LexRefTypeTags.MappingTypes.kmtSenseCollection:
-					sXml = sXml.Replace("REPLACE_ME", "lexreferencecollection");
+					editorSlice = "lexreferencecollection";
 					break;
 				case LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
-					sXml = sXml.Replace("REPLACE_ME", "lexreferenceunidirectional");
+					editorSlice = "lexreferenceunidirectional";
 					break;
 				case LexRefTypeTags.MappingTypes.kmtSensePair:
 				case LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair: // Sense Pair with different Forward/Reverse names
@@ -222,55 +223,55 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				case LexRefTypeTags.MappingTypes.kmtEntryAsymmetricPair: // Entry Pair with different Forward/Reverse names
 				case LexRefTypeTags.MappingTypes.kmtEntryOrSensePair:
 				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseAsymmetricPair: // Entry or sense Pair with different forward/Reverse names
-					sXml = sXml.Replace("REPLACE_ME", "lexreferencepair");
+					editorSlice = "lexreferencepair";
 					sMenu = "mnuDataTree-DeleteReplaceLexReference";
 					break;
 				case LexRefTypeTags.MappingTypes.kmtSenseTree:
 					if (fTreeRoot)
 					{
-						sXml = sXml.Replace("REPLACE_ME", "lexreferencetreebranches");
+						editorSlice = "lexreferencetreebranches";
 						sMenu = "mnuDataTree-DeleteAddLexReference";
 					}
 					else
 					{
-						sXml = sXml.Replace("REPLACE_ME", "lexreferencetreeroot");
+						editorSlice = "lexreferencetreeroot";
 						sMenu = "mnuDataTree-DeleteReplaceLexReference";
 					}
 					break;
 				case LexRefTypeTags.MappingTypes.kmtSenseSequence:
 				case LexRefTypeTags.MappingTypes.kmtEntrySequence:
 				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseSequence:
-					sXml = sXml.Replace("REPLACE_ME", "lexreferencesequence");
+					editorSlice = "lexreferencesequence";
 					break;
 				case LexRefTypeTags.MappingTypes.kmtEntryCollection:
-					sXml = sXml.Replace("REPLACE_ME", "lexreferencecollection");
+					editorSlice = "lexreferencecollection";
 					sMenu = "mnuDataTree-DeleteAddLexReference";
 					break;
 				case LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
-					sXml = sXml.Replace("REPLACE_ME", "lexreferenceunidirectional");
+					editorSlice = "lexreferenceunidirectional";
 					sMenu = "mnuDataTree-DeleteAddLexReference";
 					break;
 				case LexRefTypeTags.MappingTypes.kmtEntryTree:
 					if (fTreeRoot)
 					{
-						sXml = sXml.Replace("REPLACE_ME", "lexreferencetreebranches");
+						editorSlice = "lexreferencetreebranches";
 						sMenu = "mnuDataTree-DeleteAddLexReference";
 					}
 					else
 					{
-						sXml = sXml.Replace("REPLACE_ME", "lexreferencetreeroot");
+						editorSlice = "lexreferencetreeroot";
 						sMenu = "mnuDataTree-DeleteReplaceLexReference";
 					}
 					break;
 				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseCollection:
-					sXml = sXml.Replace("REPLACE_ME", "lexreferencecollection");
+					editorSlice = "lexreferencecollection";
 					if (MyCmObject is ILexEntry)
 					{
 						sMenu = "mnuDataTree-DeleteAddLexReference";
 					}
 					break;
 				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional:
-					sXml = sXml.Replace("REPLACE_ME", "lexreferenceunidirectional");
+					editorSlice = "lexreferenceunidirectional";
 					if (MyCmObject is ILexEntry)
 					{
 						sMenu = "mnuDataTree-DeleteAddLexReference";
@@ -283,19 +284,18 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					}
 					if (fTreeRoot)
 					{
-						sXml = sXml.Replace("REPLACE_ME", "lexreferencetreebranches");
+						editorSlice = "lexreferencetreebranches";
 						sMenu = "mnuDataTree-DeleteAddLexReference";
 					}
 					else
 					{
-						sXml = sXml.Replace("REPLACE_ME", "lexreferencetreeroot");
+						editorSlice = "lexreferencetreeroot";
 					}
 					break;
 
 			}
 
-			sXml += $" mappingType=\"{lrt.MappingType}\" hvoDisplayParent=\"{MyCmObject.Hvo}\" menu=\"{sMenu}\"><deParams displayProperty=\"HeadWord\"/></slice>";
-			node.ReplaceNodes(XElement.Parse(sXml));
+			node.ReplaceNodes(XElement.Parse($"<slice label=\"{sLabel}\" field=\"Targets\" editor=\"{editorSlice}\" mappingType=\"{lrt.MappingType}\" hvoDisplayParent=\"{MyCmObject.Hvo}\" menu=\"{sMenu}\"><deParams displayProperty=\"HeadWord\"/></slice>"));
 			var firstNewSliceIndex = insPos;
 			CreateIndentedNodes(caller, lr, indent, ref insPos, path, reuseMap, node);
 			for (var islice = firstNewSliceIndex; islice < insPos; islice++)

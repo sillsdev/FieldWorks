@@ -3327,7 +3327,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <param name="commandObject"></param>
 		/// <param name="display"></param>
 		/// <returns></returns>
-		public virtual bool OnDisplayShowHiddenFields(object commandObject, ref UIItemDisplayProperties display)
+		public bool OnDisplayShowHiddenFields(object commandObject, ref UIItemDisplayProperties display)
 		{
 			bool fAllow = PropertyTable.GetValue("AllowShowNormalFields", true);
 			display.Enabled = display.Visible = fAllow;
@@ -3388,13 +3388,14 @@ namespace LanguageExplorer.Controls.DetailControls
 			return true;
 		}
 
+	// RANDYTODO TODO: DataTree only handles jump stuff for menus that start with "mnuDataTree", so does nothing for menus such as: mnuEnvReferenceChoices, mnuReferenceChoices, or mnuObjectChoices.
 		/// <summary>
 		/// Enable menu items for jumping to the concordance (or lexiconEdit) tool.
 		/// </summary>
 		/// <param name="commandObject"></param>
 		/// <param name="display"></param>
 		/// <returns></returns>
-		public virtual bool OnDisplayJumpToTool(object commandObject, ref UIItemDisplayProperties display)
+		public bool OnDisplayJumpToTool(object commandObject, ref UIItemDisplayProperties display)
 		{
 			string tool;
 			if (display.Group != null && display.Group.IsContextMenu &&
@@ -3417,7 +3418,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Handle enabled menu items for jumping to another tool, or another location in the
 		/// current tool.
 		/// </summary>
-		public virtual bool OnJumpToTool(object commandObject)
+		public bool OnJumpToTool(object commandObject)
 		{
 			string tool;
 			Guid guid = GetGuidForJumpToTool((Command) commandObject, false, out tool);
@@ -3436,7 +3437,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Handle jumping to the lexiconEdit tool and filtering on the Anthropology Category the user has
 		/// right clicked on.
 		/// </summary>
-		public virtual bool OnJumpToLexiconEditFilterAnthroItems(object commandObject)
+		public bool OnJumpToLexiconEditFilterAnthroItems(object commandObject)
 		{
 			OnJumpToToolAndFilterAnthroItem("FilterAnthroItems", AreaServices.LexiconEditMachineName);
 			return true;
@@ -3446,7 +3447,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Handle jumping to the NotebookEdit tool and filtering on the Anthropology Category the user has
 		/// right clicked on.
 		/// </summary>
-		public virtual bool OnJumpToNotebookEditFilterAnthroItems(object commandObject)
+		public bool OnJumpToNotebookEditFilterAnthroItems(object commandObject)
 		{
 			OnJumpToToolAndFilterAnthroItem("FilterAnthroItems", AreaServices.NotebookEditToolMachineName);
 			return true;

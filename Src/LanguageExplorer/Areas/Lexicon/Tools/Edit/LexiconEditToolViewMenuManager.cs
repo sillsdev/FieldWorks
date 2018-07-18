@@ -66,6 +66,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_showHiddenFieldsMenu.Checked = _propertyTable.GetValue(_extendedPropertyName, false);
 		}
 
+		/// <inheritdoc />
+		void IToolUiWidgetManager.UnwireSharedEventHandlers()
+		{
+		}
+
 		#endregion
 
 		#region IDisposable

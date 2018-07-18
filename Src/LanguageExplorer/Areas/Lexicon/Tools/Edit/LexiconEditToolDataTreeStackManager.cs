@@ -44,6 +44,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			}
 		}
 
+		/// <inheritdoc />
+		void IToolUiWidgetManager.UnwireSharedEventHandlers()
+		{
+		}
+
 		#endregion
 
 		#region IDisposable

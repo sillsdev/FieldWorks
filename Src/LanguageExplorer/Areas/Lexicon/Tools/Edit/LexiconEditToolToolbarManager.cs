@@ -39,6 +39,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			InsertToolbarManager.AddInsertToolbarItems(_majorFlexComponentParameters, new List<ToolStripButton> { _insertEntryToolStripButton, _insertGoToEntryToolStripButton });
 		}
 
+		/// <inheritdoc />
+		void IToolUiWidgetManager.UnwireSharedEventHandlers()
+		{
+			_insertEntryToolStripButton.Click -= _sharedEventHandlers.Get(LexiconEditToolConstants.CmdInsertLexEntry);
+			_insertGoToEntryToolStripButton.Click -= _sharedEventHandlers.Get(LexiconEditToolConstants.CmdGoToEntry);
+		}
+
 		#endregion
 
 		#region IDisposable
@@ -75,8 +82,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			if (disposing)
 			{
-				_insertEntryToolStripButton.Click -= _sharedEventHandlers.Get(LexiconEditToolConstants.CmdInsertLexEntry);
-				_insertGoToEntryToolStripButton.Click -= _sharedEventHandlers.Get(LexiconEditToolConstants.CmdGoToEntry);
 				InsertToolbarManager.ResetInsertToolbar(_majorFlexComponentParameters);
 				_insertEntryToolStripButton.Dispose();
 				_insertGoToEntryToolStripButton.Dispose();

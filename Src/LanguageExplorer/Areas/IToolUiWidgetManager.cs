@@ -17,5 +17,10 @@ namespace LanguageExplorer.Areas
 		/// <param name="majorFlexComponentParameters">The main parameter object for a given IFwMainWnd instance.</param>
 		/// <param name="recordList">The record list that provides the current main CmObject being displayed.</param>
 		void Initialize(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList);
+
+		/// <summary>
+		/// In preparation for disposal, unwire any shared event handlers.
+		/// </summary>
+		void UnwireSharedEventHandlers();
 	}
 }

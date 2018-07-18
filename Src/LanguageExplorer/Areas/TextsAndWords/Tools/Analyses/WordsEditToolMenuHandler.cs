@@ -204,7 +204,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		}
 
 #if RANDYTODO
-		public virtual bool OnDisplayShowWordGlossConc(object commandObject,
+		public bool OnDisplayShowWordGlossConc(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
 			display.Enabled = display.Visible = InFriendlyArea;
@@ -229,7 +229,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		}
 
 #if RANDYTODO
-		public virtual bool OnDisplayShowHumanApprovedAnalysisConc(object commandObject,
+		public bool OnDisplayShowHumanApprovedAnalysisConc(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
 			display.Enabled = display.Visible = InFriendlyArea;
@@ -260,7 +260,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 	/// <param name="commandObject"></param>
 	/// <param name="display"></param>
 	/// <returns></returns>
-		public virtual bool OnDisplayJumpToTool(object commandObject, ref UIItemDisplayProperties display)
+		public bool OnDisplayJumpToTool(object commandObject, ref UIItemDisplayProperties display)
 		{
 			var cmd = (Command)commandObject;
 			var className = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "className");
@@ -294,7 +294,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// </summary>
 		/// <param name="commandObject"></param>
 		/// <returns></returns>
-		public virtual bool OnJumpToTool(object commandObject)
+		public bool OnJumpToTool(object commandObject)
 		{
 			var cmd = (Command)commandObject;
 			var className = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "className");

@@ -6,9 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
+using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 
 namespace LanguageExplorer.Areas
 {
@@ -17,10 +19,6 @@ namespace LanguageExplorer.Areas
 	/// </summary>
 	internal sealed class RightClickContextMenuManager : IToolUiWidgetManager
 	{
-		private const string mnuObjectChoices = "mnuObjectChoices";
-		private const string mnuReferenceChoices = "mnuReferenceChoices";
-		private const string mnuEnvReferenceChoices = "mnuEnvReferenceChoices";
-
 		private ITool _currentTool;
 		private DataTree MyDataTree { get; set; }
 		private FlexComponentParameters _flexComponentParameters;
@@ -50,9 +48,14 @@ namespace LanguageExplorer.Areas
 
 			var rightClickPopupMenuFactory = MyDataTree.DataTreeStackContextMenuFactory.RightClickPopupMenuFactory;
 
-			rightClickPopupMenuFactory.RegisterPopupContextCreatorMethod(mnuObjectChoices, PopupContextMenuCreatorMethod_mnuObjectChoices);
-			rightClickPopupMenuFactory.RegisterPopupContextCreatorMethod(mnuReferenceChoices, PopupContextMenuCreatorMethod_mnuReferenceChoices);
-			rightClickPopupMenuFactory.RegisterPopupContextCreatorMethod(mnuEnvReferenceChoices, PopupContextMenuCreatorMethod_mnuEnvReferenceChoices);
+			rightClickPopupMenuFactory.RegisterPopupContextCreatorMethod(AreaServices.mnuObjectChoices, PopupContextMenuCreatorMethod_mnuObjectChoices);
+			rightClickPopupMenuFactory.RegisterPopupContextCreatorMethod(AreaServices.mnuReferenceChoices, PopupContextMenuCreatorMethod_mnuReferenceChoices);
+			rightClickPopupMenuFactory.RegisterPopupContextCreatorMethod(AreaServices.mnuEnvReferenceChoices, PopupContextMenuCreatorMethod_mnuEnvReferenceChoices);
+		}
+
+		/// <inheritdoc />
+		void IToolUiWidgetManager.UnwireSharedEventHandlers()
+		{
 		}
 
 		#endregion
@@ -103,7 +106,7 @@ namespace LanguageExplorer.Areas
 		{
 			/* "mnuObjectChoices" is used by ContextMenuId in CmObjectUi->HandleRightClick, but it is overridden by two subclasses:
 					ReferenceBaseUi ("mnuReferenceChoices")
-					ReferenceCollectionUi ("mnuReferenceChoices" OR "mnuEnvReferenceChoices" (if flid is on a IPhEnvironment))
+					ReferenceCollectionUi : VectorReferenceUi : ReferenceBaseUi ("mnuReferenceChoices" OR "mnuEnvReferenceChoices" (if flid is on a IPhEnvironment))
 
 		    <menu id="mnuObjectChoices">
 		      <item command="CmdEntryJumpToDefault" /> // Also in "mnuBrowseView", menu: "mnuInflAffixTemplate-TemplateTable" & LexiconEditToolDataTreeStackLexEntryFormsManager->Create_mnuDataTree_VariantForm.
@@ -334,28 +337,60 @@ namespace LanguageExplorer.Areas
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> PopupContextMenuCreatorMethod_mnuEnvReferenceChoices(Slice slice, string contextMenuId)
 		{
-			/* Grammar
-		    <menu id="mnuEnvReferenceChoices">
-		      <item command="CmdJumpToEnvironmentList" />
-				    <command id="CmdJumpToEnvironmentList" label="Show in Environments list" message="JumpToTool">
-				      <parameters tool="EnvironmentEdit" className="PhEnvironment" ownerClass="PhPhonData" ownerField="Environments" />
-				    </command>
-		      <item command="CmdShowEnvironmentErrorMessage" />
-					<command id="CmdShowEnvironmentErrorMessage" label="_Describe Error in Environment" message="ShowEnvironmentError" /> SHARED
-		      <item label="-" translate="do not translate" />
-		      <item command="CmdInsertEnvSlash" />
-					<command id="CmdInsertEnvSlash" label="Insert Environment _slash" message="InsertSlash" /> SHARED
-		      <item command="CmdInsertEnvUnderscore" />
-					<command id="CmdInsertEnvUnderscore" label="Insert Environment _bar" message="InsertEnvironmentBar" /> SHARED
-		      <item command="CmdInsertEnvNaturalClass" />
-					<command id="CmdInsertEnvNaturalClass" label="Insert _Natural Class" message="InsertNaturalClass" /> SHARED
-		      <item command="CmdInsertEnvOptionalItem" />
-					<command id="CmdInsertEnvOptionalItem" label="Insert _Optional Item" message="InsertOptionalItem" /> SHARED
-		      <item command="CmdInsertEnvHashMark" />
-					<command id="CmdInsertEnvHashMark" label="Insert _Word Boundary" message="InsertHashMark" /> SHARED
-		    </menu>
-			*/
-			throw new NotImplementedException();
+			if (contextMenuId != AreaServices.mnuEnvReferenceChoices)
+			{
+				throw new ArgumentException($"Expected argument value of '{AreaServices.mnuEnvReferenceChoices}', but got '{contextMenuId}' instead.");
+			}
+
+			// Start: <menu id="mnuEnvReferenceChoices">
+
+			var contextMenuStrip = new ContextMenuStrip
+			{
+				Name = AreaServices.mnuEnvReferenceChoices
+			};
+			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(8);
+
+			var visible = CanJumpToEnvironmentList;
+			if (visible)
+			{
+				/*
+				  <item command="CmdJumpToEnvironmentList" />
+						<command id="CmdJumpToEnvironmentList" label="Show in Environments list" message="JumpToTool">
+						  <parameters tool="EnvironmentEdit" className="PhEnvironment" ownerClass="PhPhonData" ownerField="Environments" />
+						</command>
+				*/
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdJumpToEnvironmentList_Clicked, AreaResources.Show_in_Environments_list);
+			}
+
+			AreaWideMenuHelper.CreateShowEnvironmentErrorMessageMenus(_sharedEventHandlers, slice, menuItems, contextMenuStrip);
+
+			AreaWideMenuHelper.CreateCommonEnvironmentMenus(_sharedEventHandlers, slice, menuItems, contextMenuStrip);
+
+			// End: <menu id="mnuEnvReferenceChoices">
+
+			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+		}
+
+		private void CmdJumpToEnvironmentList_Clicked(object sender, EventArgs e)
+		{
+			LinkHandler.PublishFollowLinkMessage(_flexComponentParameters.Publisher, new FwLinkArgs(AreaServices.EnvironmentEditMachineName, MyDataTree.CurrentSlice.MyCmObject.Guid));
+		}
+
+		private bool CanJumpToEnvironmentList
+		{
+			get
+			{
+				var currentSlice = MyDataTree.CurrentSlice;
+				if (_currentTool.MachineName == AreaServices.EnvironmentEditMachineName && currentSlice.MyCmObject == MyRecordList.CurrentObject || currentSlice.MyCmObject.IsOwnedBy(MyRecordList.CurrentObject))
+				{
+					return false;
+				}
+				if (currentSlice.MyCmObject.ClassID == PhEnvironmentTags.kClassId)
+				{
+					return true;
+				}
+				return MyDataTree.Cache.DomainDataByFlid.MetaDataCache.GetBaseClsId(currentSlice.MyCmObject.ClassID) == PhEnvironmentTags.kClassId;
+			}
 		}
 	}
 }

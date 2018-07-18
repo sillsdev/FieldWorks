@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
+using LanguageExplorer.Areas;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
@@ -62,7 +63,7 @@ namespace LanguageExplorer.LcmUi
 			m_targetUi.InitializeFlexComponent(flexComponentParameters);
 		}
 
-		protected override string ContextMenuId => "mnuReferenceChoices";
+		protected override string ContextMenuId => AreaServices.mnuReferenceChoices;
 
 		#endregion
 

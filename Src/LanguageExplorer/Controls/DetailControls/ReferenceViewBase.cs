@@ -139,6 +139,7 @@ Debug.WriteLine("hvo=" + hvo.ToString()+" "+ui.Object.ShortName+"  "+ ui.Object.
 #if TESTMS
 Debug.WriteLine("ui.HandleRightClick: and returning true.");
 #endif
+					ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 					return ui.HandleRightClick(this, true, adjustMenu: CmObjectUi.MarkCtrlClickItem);
 				}
 #if TESTMS

@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
@@ -310,6 +311,8 @@ namespace LanguageExplorer.Areas
 			_toolsCustomFieldsSeparatorMenu = null;
 			_toolsCustomFieldsMenu = null;
 			_toolsCustomFieldsMenu = null;
+			_browseViewer = null;
+			_sharedEventHandlers = null;
 
 			_isDisposed = true;
 		}
@@ -323,6 +326,69 @@ namespace LanguageExplorer.Areas
 		internal static IPhEnvSliceCommon SliceAsIPhEnvSliceCommon(Slice slice)
 		{
 			return (IPhEnvSliceCommon)slice;
+		}
+
+		internal static void CreateShowEnvironmentErrorMessageMenus(ISharedEventHandlers sharedEventHandlers, Slice slice, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, ContextMenuStrip contextMenuStrip)
+		{
+			/*
+		      <item command="CmdShowEnvironmentErrorMessage" />
+					<command id="CmdShowEnvironmentErrorMessage" label="_Describe Error in Environment" message="ShowEnvironmentError" /> SHARED
+			*/
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, sharedEventHandlers.Get(AreaServices.ShowEnvironmentError), LanguageExplorerResources.Describe_Error_in_Environment);
+			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanShowEnvironmentError;
+			menu.Tag = slice;
+		}
+
+		internal static void CreateCommonEnvironmentMenus(ISharedEventHandlers sharedEventHandlers, Slice slice, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, ContextMenuStrip contextMenuStrip)
+		{
+			if (contextMenuStrip.Items.Count > 0)
+			{
+				/*
+				  <item label="-" translate="do not translate" />
+				*/
+				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
+			}
+
+			/*
+		      <item command="CmdInsertEnvSlash" />
+					<command id="CmdInsertEnvSlash" label="Insert Environment _slash" message="InsertSlash" /> SHARED
+			*/
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, sharedEventHandlers.Get(AreaServices.InsertSlash), AreaResources.Insert_Environment_slash);
+			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanInsertSlash;
+			menu.Tag = slice;
+
+			/*
+		      <item command="CmdInsertEnvUnderscore" />
+					<command id="CmdInsertEnvUnderscore" label="Insert Environment _bar" message="InsertEnvironmentBar" /> SHARED
+			*/
+
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, sharedEventHandlers.Get(AreaServices.InsertEnvironmentBar), AreaResources.Insert_Environment_bar);
+			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanInsertEnvironmentBar;
+			menu.Tag = slice;
+
+			/*
+		      <item command="CmdInsertEnvNaturalClass" />
+					<command id="CmdInsertEnvNaturalClass" label="Insert _Natural Class" message="InsertNaturalClass" /> SHARED
+			*/
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, sharedEventHandlers.Get(AreaServices.InsertNaturalClass), AreaResources.Insert_Natural_Class);
+			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanInsertNaturalClass;
+			menu.Tag = slice;
+
+			/*
+		      <item command="CmdInsertEnvOptionalItem" />
+					<command id="CmdInsertEnvOptionalItem" label="Insert _Optional Item" message="InsertOptionalItem" /> SHARED
+			*/
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, sharedEventHandlers.Get(AreaServices.InsertOptionalItem), AreaResources.Insert_Optional_Item);
+			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanInsertOptionalItem;
+			menu.Tag = slice;
+
+			/*
+		      <item command="CmdInsertEnvHashMark" />
+					<command id="CmdInsertEnvHashMark" label="Insert _Word Boundary" message="InsertHashMark" /> SHARED
+			*/
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, sharedEventHandlers.Get(AreaServices.InsertHashMark), AreaResources.Insert_Word_Boundary);
+			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanInsertHashMark;
+			menu.Tag = slice;
 		}
 	}
 }

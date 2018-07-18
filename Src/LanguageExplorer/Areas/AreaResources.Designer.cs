@@ -1486,6 +1486,15 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show in Environments list.
+        /// </summary>
+        internal static string Show_in_Environments_list {
+            get {
+                return ResourceManager.GetString("Show_in_Environments_list", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show in Natural Classes list.
         /// </summary>
         internal static string Show_in_Natural_Classes_list {

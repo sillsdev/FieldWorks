@@ -76,6 +76,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newToolsMenusAndHandlers, _toolsMenu, Merge_With_Entry_Clicked, LexiconResources.MergeWithEntry, LexiconResources.Merge_With_Entry_Tooltip, insertIndex: ++insertIndex);
 		}
 
+		/// <inheritdoc />
+		void IToolUiWidgetManager.UnwireSharedEventHandlers()
+		{
+		}
+
 		#endregion
 
 		#region IDisposable

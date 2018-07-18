@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using LanguageExplorer.Areas;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.LcmUi.Dialogs;
@@ -24,6 +25,13 @@ using SIL.Reporting;
 
 namespace LanguageExplorer.LcmUi
 {
+#if RANDYTODO
+	// TODO: This class was an IxCoreColleague implementor. It was added to the Mediator only when its HandleRightClick was called.
+	// TODO: The HandleRightClick method called window.ShowContextMenu, which eventually got around to this class being temporarily added to the Mediator
+	// TODO: in a now obsolete MenuAdapter class that handled menus of various sorts, including those right-click popup context menus.
+	// TODO: If I can pull it off, I'd like to get rid of all of those old mediator related methods in this class,
+	// TODO: as well as this class' HandleRightClick method.
+#endif
 	public class CmObjectUi : IFlexComponent, IDisposable
 	{
 		#region Data members
@@ -521,7 +529,7 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Get the id of the context menu that should be shown for our object
 		/// </summary>
-		protected virtual string ContextMenuId => "mnuObjectChoices";
+		protected virtual string ContextMenuId => AreaServices.mnuObjectChoices;
 
 		/// <summary>
 		/// Given a populated choice group, mark the one that will be invoked by a ctrl-click.

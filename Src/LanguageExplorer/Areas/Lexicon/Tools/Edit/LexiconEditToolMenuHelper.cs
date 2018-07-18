@@ -32,6 +32,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private const string toolsMenu = "toolsMenu";
 		private const string insertToolbar = "insertToolbar";
 		private const string dataTreeStack = "dataTreeStack";
+		private const string rightClickContextMenu = "rightClickContextMenu";
 
 		internal LexiconEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool currentTool, DataTree dataTree, RecordBrowseView recordBrowseView, IRecordList recordList, string extendedPropertyName)
 		{
@@ -70,6 +71,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_lexiconEditToolUiWidgetManagers.Add(toolsMenu, new LexiconEditToolToolsMenuManager(_lexiconAreaMenuHelper, RecordBrowseView.BrowseViewer));
 			_lexiconEditToolUiWidgetManagers.Add(insertToolbar, new LexiconEditToolToolbarManager());
 			_lexiconEditToolUiWidgetManagers.Add(dataTreeStack, new LexiconEditToolDataTreeStackManager(MyDataTree));
+			_lexiconEditToolUiWidgetManagers.Add(rightClickContextMenu, new RightClickContextMenuManager(_currentTool, MyDataTree));
 
 			// Now, it is fine to finish up the initialization of the managers, since all shared event handlers are in '_sharedEventHandlers'.
 			foreach (var manager in _lexiconEditToolUiWidgetManagers.Values)
@@ -136,13 +138,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			if (disposing)
 			{
+				foreach (var handlerKvp in _lexiconEditToolUiWidgetManagers)
+				{
+					handlerKvp.Value.Dispose();
+				}
 				_sharedEventHandlers.Remove(LexiconAreaConstants.DataTreeMerge);
 				_sharedEventHandlers.Remove(LexiconAreaConstants.DataTreeDelete);
 				_sharedEventHandlers.Remove(LexiconAreaConstants.DataTreeSplit);
-				foreach (var handler in _lexiconEditToolUiWidgetManagers.Values)
-				{
-					handler.Dispose();
-				}
 				_lexiconEditToolUiWidgetManagers.Clear();
 				_lexiconAreaMenuHelper.Dispose();
 			}

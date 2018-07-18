@@ -52,6 +52,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			MyDataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(LexiconEditToolConstants.PanelMenuId, CreateMainPanelContextMenuStrip);
 		}
 
+		/// <inheritdoc />
+		void IToolUiWidgetManager.UnwireSharedEventHandlers()
+		{
+		}
 		#endregion
 
 		#region IDisposable
@@ -88,11 +92,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			if (disposing)
 			{
-				if (_show_DictionaryPubPreviewContextMenu != null)
-				{
-					_show_DictionaryPubPreviewContextMenu.Click -= _sharedEventHandlers.Get(LexiconEditToolConstants.Show_Dictionary_Preview_Clicked);
-					_show_DictionaryPubPreviewContextMenu.Dispose();
-				}
+				_show_DictionaryPubPreviewContextMenu?.Dispose();
 			}
 			MyRecordList = null;
 			_sharedEventHandlers = null;

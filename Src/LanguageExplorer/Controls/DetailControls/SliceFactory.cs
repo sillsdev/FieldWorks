@@ -325,7 +325,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 				case "phoneenvreference":
 				{
-					slice = new PhoneEnvReferenceSlice(cache, obj, flid);
+					slice = new PhoneEnvReferenceSlice(sharedEventHandlers, cache, obj, flid);
 					break;
 				}
 

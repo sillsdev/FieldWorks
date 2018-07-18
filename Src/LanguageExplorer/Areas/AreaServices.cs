@@ -128,9 +128,11 @@ namespace LanguageExplorer.Areas
 
 		internal const string mnuBrowseView = "mnuBrowseView";
 		internal const string mnuEnvChoices = "mnuEnvChoices";
+		internal const string mnuObjectChoices = "mnuObjectChoices";
+		internal const string mnuReferenceChoices = "mnuReferenceChoices";
+		internal const string mnuEnvReferenceChoices = "mnuEnvReferenceChoices";
 
 		#endregion
-
 
 		#region commands
 
@@ -144,6 +146,15 @@ namespace LanguageExplorer.Areas
 		internal const string ContextSetFeatures = "ContextSetFeatures";
 		internal const string ContextJumpToNaturalClass = "ContextJumpToNaturalClass";
 		internal const string ContextJumpToPhoneme = "ContextJumpToPhoneme";
+
+		#endregion
+
+		#region LanguageExplorer.DictionaryConfiguration.ImageHolder smallCommandImages image constants
+
+		internal const int MoveUp = 12;
+		internal const int MoveRight = 13;
+		internal const int MoveDown = 14;
+		internal const int MoveLeft = 15;
 
 		#endregion
 
@@ -255,7 +266,7 @@ namespace LanguageExplorer.Areas
 
 		internal static void UndoExtension(string baseText, IActionHandler actionHandler, Action task)
 		{
-			UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerResources.Undo_0, baseText), string.Format(LanguageExplorerResources.Redo_0, baseText), actionHandler, task);
+			UndoableUnitOfWorkHelper.Do(String.Format(LanguageExplorerResources.Undo_0, baseText), String.Format(LanguageExplorerResources.Redo_0, baseText), actionHandler, task);
 		}
 
 		/// <summary>

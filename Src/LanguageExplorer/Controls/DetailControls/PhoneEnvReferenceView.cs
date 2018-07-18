@@ -9,11 +9,12 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using LanguageExplorer.Areas;
 using SIL.LCModel.Core.Phonology;
 using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using LanguageExplorer.Controls.DetailControls.Resources;
-using LanguageExplorer.LcmUi;
+using SIL.Code;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
@@ -60,6 +61,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		private int m_wsVern;
 		private PhonEnvRecognizer m_validator;
 		private Dictionary<int, IPhEnvironment> m_realEnvs = new Dictionary<int, IPhEnvironment>();
+		private SliceRightClickPopupMenuFactory _rightClickPopupMenuFactory;
+		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> _contextMenuTuple;
 
 		private System.ComponentModel.IContainer components = null;
 
@@ -989,6 +992,13 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 		#endregion
 
+		internal void SetRightClickContextMenuManager(SliceRightClickPopupMenuFactory rightClickPopupMenuFactory)
+		{
+			Guard.AgainstNull(rightClickPopupMenuFactory, nameof(rightClickPopupMenuFactory));
+
+			_rightClickPopupMenuFactory = rightClickPopupMenuFactory;
+		}
+
 		#region Handle right click menu
 		protected override bool OnRightMouseUp(Point pt, Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
@@ -1005,30 +1015,36 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private bool HandleRightClickOnObject(int hvoDummy)
 		{
+			if (_contextMenuTuple != null)
+			{
+				_rightClickPopupMenuFactory.DisposePopupContextMenu(_contextMenuTuple);
+				_contextMenuTuple = null;
+			}
 			if (hvoDummy == 0)
 			{
 				return false;
 			}
 
+			var contextMenuId = string.Empty;
 			if (m_realEnvs.ContainsKey(hvoDummy))
 			{
-				// This displays the "Show in Environments list" item in the popup menu, in
-				// addition to all the Insert X" items.
-				var hvo = m_realEnvs[hvoDummy].Hvo;
-				using (var ui = new ReferenceCollectionUi(Cache, m_rootObj, m_rootFlid, hvo))
-				{
-					ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-					return ui.HandleRightClick(this, true); // Will be: "mnuEnvReferenceChoices" or "mnuReferenceChoices", depending on what "m_rootFlid" is.
-				}
+				//// This *may* display the "Show in Environments list" item in the popup menu, in
+				//// addition to all the Insert X" items.
+				contextMenuId = Cache.DomainDataByFlid.MetaDataCache.GetDstClsId(m_rootFlid) == PhEnvironmentTags.kClassId ? AreaServices.mnuEnvReferenceChoices : AreaServices.mnuReferenceChoices;
 			}
-			// We need a CmObjectUi in order to call HandleRightClick().  This won't
-			// display the "Show in Environments list" item in the popup menu.
-			using (var ui = CmObjectUi.MakeLcmModelUiObject(m_rootObj))
+			else
 			{
-				ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-				return ui.HandleRightClick(this, true, "mnuEnvReferenceChoices");
+				contextMenuId = AreaServices.mnuEnvReferenceChoices;
 			}
+
+			_contextMenuTuple = _rightClickPopupMenuFactory.GetPopupContextMenu(MySlice, contextMenuId);
+			_contextMenuTuple.Item1.Show(new Point(Cursor.Position.X, Cursor.Position.Y));
+
+			return true;
 		}
+
+		private Slice MySlice => (Slice)Parent.Parent.Parent.Parent;
+
 		#endregion
 	}
 }

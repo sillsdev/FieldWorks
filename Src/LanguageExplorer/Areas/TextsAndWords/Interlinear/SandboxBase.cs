@@ -3898,7 +3898,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 #if RANDYTODO
-		public virtual bool OnDisplayJumpToTool(object commandObject, ref UIItemDisplayProperties display)
+		public bool OnDisplayJumpToTool(object commandObject, ref UIItemDisplayProperties display)
 		{
 			if (!m_fHandlingRightClickMenu)
 				return false;
@@ -4069,7 +4069,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		public virtual bool OnJumpToTool(object commandObject)
+		public bool OnJumpToTool(object commandObject)
 		{
 #if RANDYTODO
 			XCore.Command cmd = (XCore.Command)commandObject;
