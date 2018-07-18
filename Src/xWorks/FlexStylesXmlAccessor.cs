@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2015 SIL International
+// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -588,7 +588,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			if (hasColor != -1)
 			{
 				var color = Color.FromArgb((int)ColorUtil.ConvertRGBtoBGR((uint)colorValueBGR)); // convert BGR to RGB
-				GetColorValueFromSystemColor(attributeName, resultsList, color);
+				GetColorValueFromSystemColor(attributeName, color, resultsList);
 			}
 		}
 
@@ -597,15 +597,17 @@ namespace SIL.FieldWorks.XWorks.LexText
 			if (fontColor.ValueIsSet)
 			{
 				var color = fontColor.Value;
-				GetColorValueFromSystemColor(attributeName, resultsList, color);
+				GetColorValueFromSystemColor(attributeName, color, resultsList);
 			}
 		}
 
 		/// <summary>
 		/// Takes a system color and writes out a string if it is a known color, or an RGB value that the import code can read
 		/// </summary>
-		private static void GetColorValueFromSystemColor(string attributeName, List<Tuple<string, string>> resultsList, Color color)
+		private static void GetColorValueFromSystemColor(string attributeName, Color color, List<Tuple<string, string>> resultsList)
 		{
+			if (color.IsEmpty)
+				return;
 			var colorString = color.IsKnownColor
 				? color.Name.ToLowerInvariant()
 				: string.Format("({0},{1},{2})", color.R, color.G, color.B);
