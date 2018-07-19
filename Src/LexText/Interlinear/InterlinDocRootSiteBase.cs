@@ -26,7 +26,7 @@ namespace SIL.FieldWorks.IText
 	/// </summary>
 	public partial class InterlinDocRootSiteBase : RootSite,
 		IVwNotifyChange, IHandleBookmark, ISelectOccurrence,
-		IStyleSheet, ISetupLineChoices, IInterlinearTabControl
+		IStyleSheet, ISetupLineChoices, IInterlinConfigurable
 	{
 		private ISilDataAccess m_sda;
 		protected internal int m_hvoRoot; // IStText
@@ -58,7 +58,6 @@ namespace SIL.FieldWorks.IText
 		public InterlinVc Vc { get; set; }
 		public PropertyTable PropertyTable { get; set; }
 		public IVwRootBox Rootb { get; set; }
-		//public InterlinVc Vc { get; set; }
 
 		public InterlinDocRootSiteBase()
 		{
@@ -447,7 +446,7 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// Takes a mouse click point and makes an invisible selection for testing.
 		/// Exceptions caused by selection problems are caught, but not dealt with.
-		/// In case of an exception, the selection returned will be null.
+		/// In case of an exception, the selection returned will be null
 		/// </summary>
 		/// <param name="e"></param>
 		/// <returns></returns>
@@ -477,7 +476,7 @@ namespace SIL.FieldWorks.IText
 		protected int GetIndexOfLineChoice(IVwSelection selTest)
 		{
 			var helper = SelectionHelper.Create(selTest, this);
-			if (helper == null)
+			if (helper?.SelProps == null)
 				return -1;
 
 			var props = helper.SelProps;
@@ -499,6 +498,7 @@ namespace SIL.FieldWorks.IText
 		protected virtual ContextMenuStrip MakeContextMenu(int ilineChoice)
 		{
 			var menu = new ContextMenuStrip();
+			bool isRibbonMenu = Vc.ToString() == "RibbonVc";
 			// Menu items:
 			// 1) Hide [name of clicked line]
 			// 2) Add Writing System > (submenu of other wss for this line)
@@ -508,7 +508,7 @@ namespace SIL.FieldWorks.IText
 			// 5) Add Line > (submenu of currently hidden lines)
 			// 6) Configure Interlinear...
 
-			if (Vc != null && Vc.LineChoices != null) // just to be safe; shouldn't happen
+			if (Vc != null && Vc.LineChoices != null && !isRibbonMenu) // just to be safe; shouldn't happen
 			{
 				var curLineChoices = Vc.LineChoices.Clone() as InterlinLineChoices;
 				if (curLineChoices == null)
@@ -544,7 +544,7 @@ namespace SIL.FieldWorks.IText
 
 			// 6) Last, but not least, add a link to the Configure Interlinear dialog
 			var configLink = new ToolStripMenuItem(ITextStrings.ksConfigureLinkText);
-			configLink.Click += new EventHandler(configLink_Click);
+			configLink.Click += new EventHandler(configLink_Click); // TODO: Figure out how to pass more parameters
 			menu.Items.Add(configLink);
 
 			return menu;
@@ -796,7 +796,7 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// This is for setting m_vc.LineChoices even before we have a valid vc.
 		/// </summary>
-		public InterlinLineChoices LineChoices { get; set; }
+		protected InterlinLineChoices LineChoices { get; set; }
 
 		/// <summary>
 		/// Tries to restore the LineChoices saved in the ConfigPropName property in the property table.
@@ -819,10 +819,10 @@ namespace SIL.FieldWorks.IText
 		///  Launch the Configure interlinear dialog and deal with the results
 		/// </summary>
 		/// <param name="argument"></param>
-		public bool OnConfigureInterlinear(object argument/*, bool isRibbon*/)
+		public bool OnConfigureInterlinear(object argument)
 		{
 			using (var dlg = new ConfigureInterlinDialog(this.m_cache, this.m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
-				this.Vc.LineChoices.Clone() as InterlinLineChoices)) //TODO DELANEY <--- This constructor will have a new boolean value which indicates whether it is being called from a ribbon.
+				this.Vc.LineChoices.Clone() as InterlinLineChoices))
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{

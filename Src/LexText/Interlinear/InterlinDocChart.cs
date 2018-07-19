@@ -12,11 +12,11 @@ namespace SIL.FieldWorks.IText
 	/// <summary>
 	/// Dummy subclass so we can design the Chart tab.
 	/// </summary>
-	public class InterlinDocChart : UserControl, IInterlinearTabControl
+	public class InterlinDocChart : UserControl, IInterlinearTabControl, IInterlinConfigurable, ISetupLineChoices
 	{
 		public LcmCache Cache { get; set; }
 		public PropertyTable PropertyTable { get; set; }
-		public InterlinVc Vc { get; set; }
+		public InterlinVc Vc { get; protected set; }
 		public IVwRootBox Rootb { get; set; }
 
 		private void InitializeComponent()
@@ -35,13 +35,26 @@ namespace SIL.FieldWorks.IText
 			InitializeComponent();
 		}
 
+		public virtual void SetRoot(int hvo)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public virtual bool OnConfigureInterlinear(object argument)
+		{
+			throw new System.NotImplementedException();
+		}
+
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			Vc.Dispose();
 			base.Dispose(disposing);
 		}
 
-		public virtual void SetRoot(int hvo)
+		public bool ForEditing { get; set; }
+
+		public virtual InterlinLineChoices SetupLineChoices(string lineConfigPropName, InterlinLineChoices.InterlinMode mode)
 		{
 			throw new System.NotImplementedException();
 		}

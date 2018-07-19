@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.Discourse
 	/// by reflection because it needs to refer to the interlinear assembly (in order to display words
 	/// in interlinear mode), so the interlinear assembly can't know about this one.
 	/// </summary>
-	public partial class ConstituentChart : InterlinDocChart, IInterlinearTabControl, IHandleBookmark, IxCoreColleague, IStyleSheet
+	public partial class ConstituentChart : InterlinDocChart, IHandleBookmark, IxCoreColleague, IStyleSheet
 	{
 
 		#region Member Variables
@@ -66,10 +66,9 @@ namespace SIL.FieldWorks.Discourse
 		private ToolTip m_toolTip;
 		// controls the popup help items for the Constituent Chart Form
 		private InterAreaBookmark m_bookmark;
-		// To keep track of where we are in the text between panes (and areas)
-		internal LcmCache m_cache;
 		private ILcmServiceLocator m_serviceLocator;
 		private XmlNode m_configurationParameters;
+		private Mediator m_mediator;
 		#endregion
 
 		/// <summary>
@@ -84,11 +83,76 @@ namespace SIL.FieldWorks.Discourse
 		/// </summary>
 		internal ConstituentChart(LcmCache cache, ConstituentChartLogic logic)
 		{
-			m_cache = cache;
-			m_serviceLocator = m_cache.ServiceLocator;
+			Cache = cache;
+			m_serviceLocator = Cache.ServiceLocator;
 			m_logic = logic;
+			ForEditing = true;
+			Name = "ConstituentChart";
+			Vc = new InterlinVc(Cache);
 
 			BuildUIComponents();
+		}
+
+		/// <summary>
+		/// This is for setting Vc.LineChoices even before we have a valid vc.
+		/// </summary>
+		protected InterlinLineChoices LineChoices { get; set; }
+
+		/// <summary>
+		///  Launch the Configure interlinear dialog and deal with the results.
+		/// </summary>
+		public override bool OnConfigureInterlinear(object argument)
+		{
+			LineChoices = GetLineChoices();
+			Vc.LineChoices = LineChoices;
+
+			using (var dlg = new ConfigureInterlinDialog(Cache, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
+				m_ribbon.Vc.LineChoices.Clone() as InterlinLineChoices))
+			{
+				if (dlg.ShowDialog(this) == DialogResult.OK)
+				{
+					UpdateForNewLineChoices(dlg.Choices);
+				}
+
+				return true; // We handled this
+			}
+		}
+
+		/// <summary>
+		/// Persist the new line choices and
+		/// Reconstruct the document based on the given newChoices for interlinear lines.
+		/// </summary>
+		internal virtual void UpdateForNewLineChoices(InterlinLineChoices newChoices)
+		{
+			LineChoices = newChoices;
+			m_ribbon.Vc.LineChoices = newChoices;
+			m_body.LineChoices = newChoices;
+
+			PersistAndDisplayChangedLineChoices();
+		}
+
+		internal void PersistAndDisplayChangedLineChoices()
+		{
+			PropertyTable.SetProperty(ConfigPropName,
+				m_ribbon.Vc.LineChoices.Persist(Cache.LanguageWritingSystemFactoryAccessor),
+				PropertyTable.SettingsGroup.LocalSettings,
+				true);
+			PropertyTable.SetProperty(ConfigPropName,
+				m_body.LineChoices.Persist(Cache.LanguageWritingSystemFactoryAccessor),
+				PropertyTable.SettingsGroup.LocalSettings,
+				true);
+			UpdateDisplayForNewLineChoices();
+		}
+
+		/// <summary>
+		/// Do whatever is necessary to display new line choices.
+		/// </summary>
+		private void UpdateDisplayForNewLineChoices()
+		{
+			if (m_ribbon.RootBox == null || m_body.RootBox == null)
+				return;
+			m_ribbon.RootBox.Reconstruct();
+			m_body.RootBox.Reconstruct();
 		}
 
 		private void BuildUIComponents()
@@ -141,14 +205,14 @@ namespace SIL.FieldWorks.Discourse
 
 		private void BuildTopStuffUI()
 		{
-			m_body = new ConstChartBody(m_logic, this) { Cache = m_cache, Dock = DockStyle.Fill };
+			m_body = new ConstChartBody(m_logic, this) { Cache = Cache, Dock = DockStyle.Fill };
 
 			// Seems to be right (cf BrowseViewer) but not ideal.
 			m_headerMainCols = new ChartHeaderView(this) { Dock = DockStyle.Top, Height = 22 };
-
 			m_headerMainCols.Layout += m_headerMainCols_Layout;
 			m_headerMainCols.SizeChanged += m_headerMainCols_SizeChanged;
-			m_templateSelectionPanel = new Panel() { Height = new Button().Height, Dock = DockStyle.Top, Width = 0};
+
+			m_templateSelectionPanel = new Panel() { Height = new Button().Height, Dock = DockStyle.Top, Width = 0 };
 			m_templateSelectionPanel.Layout += new LayoutEventHandler(TemplateSelectionPanel_Layout);
 
 			m_topStuff = m_topBottomSplit.Panel1;
@@ -171,7 +235,7 @@ namespace SIL.FieldWorks.Discourse
 		private void BuildBottomStuffUI()
 		{
 			// fills the 'bottom stuff'
-			m_ribbon = new InterlinRibbon(m_cache, 0) { Dock = DockStyle.Fill };
+			m_ribbon = new InterlinRibbon(Cache, 0) { Dock = DockStyle.Fill };
 			m_logic.Ribbon = m_ribbon;
 			m_logic.Ribbon_Changed += m_logic_Ribbon_Changed;
 
@@ -191,19 +255,6 @@ namespace SIL.FieldWorks.Discourse
 			m_bottomStuff.Controls.AddRange(new Control[] { m_ribbon, m_buttonRow });
 			m_bottomStuff.ResumeLayout();
 		}
-
-		LcmCache IInterlinearTabControl.Cache
-		{
-			get { return m_cache; }
-			set { m_cache = value; }
-		}
-
-		//#region kflid Constants
-
-		//const int kflidRows = DsConstChartTags.kflidRows;
-		//const int kflidParagraphs = StTextTags.kflidParagraphs;
-
-		//#endregion
 
 		private const int kmaxWordforms = 20;
 
@@ -558,7 +609,7 @@ namespace SIL.FieldWorks.Discourse
 			{
 				if (RootStText == null || !RootStText.IsValidObject)
 					return false;
-				var defWs = m_cache.ServiceLocator.WritingSystemManager.Get(RootStText.MainWritingSystem);
+				var defWs = Cache.ServiceLocator.WritingSystemManager.Get(RootStText.MainWritingSystem);
 				return defWs.RightToLeftScript;
 			}
 		}
@@ -582,7 +633,7 @@ namespace SIL.FieldWorks.Discourse
 			if (m_hvoRoot == 0)
 				RootStText = null;
 			else
-				RootStText = (IStText)m_cache.ServiceLocator.ObjectRepository.GetObject(hvo);
+				RootStText = (IStText)Cache.ServiceLocator.ObjectRepository.GetObject(hvo);
 			if (m_hvoRoot > 0)
 			{
 				DetectAndReportTemplateProblem();
@@ -618,7 +669,7 @@ namespace SIL.FieldWorks.Discourse
 				m_ribbon.SetRoot(m_hvoRoot);
 				if (m_chart.TemplateRA == null)
 					// LT-8700: if original template is deleted we might need this
-					m_chart.TemplateRA = m_cache.LangProject.GetDefaultChartTemplate();
+					m_chart.TemplateRA = Cache.LangProject.GetDefaultChartTemplate();
 				m_template = m_chart.TemplateRA;
 				m_logic.StTextHvo = m_hvoRoot;
 				m_allColumns = m_logic.AllColumns(m_chart.TemplateRA).ToArray();
@@ -718,7 +769,7 @@ namespace SIL.FieldWorks.Discourse
 
 			//Detect if there is already a chart created for the given text and template
 			IDsConstChart selectedChart = null;
-			foreach (var chart in m_cache.LangProject.DiscourseDataOA.ChartsOC.Cast<IDsConstChart>().Where(chart => chart.BasedOnRA != null && chart.BasedOnRA == RootStText && chart.TemplateRA == template))
+			foreach (var chart in Cache.LangProject.DiscourseDataOA.ChartsOC.Cast<IDsConstChart>().Where(chart => chart.BasedOnRA != null && chart.BasedOnRA == RootStText && chart.TemplateRA == template))
 			{
 				selectedChart = chart;
 			}
@@ -726,12 +777,11 @@ namespace SIL.FieldWorks.Discourse
 			//If there is no such chart, then create one
 			if (selectedChart == null)
 			{
-				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 				{
 					selectedChart = m_serviceLocator.GetInstance<IDsConstChartFactory>().Create(
-						m_cache.LangProject.DiscourseDataOA, RootStText, selection.SelectedItem as ICmPossibility);
-				}
-				);
+						Cache.LangProject.DiscourseDataOA, RootStText, selection.SelectedItem as ICmPossibility);
+				});
 			}
 
 
@@ -833,13 +883,13 @@ namespace SIL.FieldWorks.Discourse
 
 		private void CreateChartInNonUndoableUOW()
 		{
-			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () => { m_chart = m_serviceLocator.GetInstance<IDsConstChartFactory>().Create(m_cache.LangProject.DiscourseDataOA, RootStText, m_cache.LangProject.GetDefaultChartTemplate()); });
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () => { m_chart = m_serviceLocator.GetInstance<IDsConstChartFactory>().Create(Cache.LangProject.DiscourseDataOA, RootStText, Cache.LangProject.GetDefaultChartTemplate()); });
 			m_chartHvo = m_chart.Hvo;
 		}
 
 		private void DetectAndReportTemplateProblem()
 		{
-			var templates = m_cache.LangProject.DiscourseDataOA.ConstChartTemplOA.PossibilitiesOS;
+			var templates = Cache.LangProject.DiscourseDataOA.ConstChartTemplOA.PossibilitiesOS;
 			if (templates.Count == 0 || templates[0].SubPossibilitiesOS.Count == 0)
 			{
 				MessageBox.Show(this, DiscourseStrings.ksNoColumns, DiscourseStrings.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -946,7 +996,7 @@ namespace SIL.FieldWorks.Discourse
 
 		private void FindAndCleanUpMyChart(int hvoStText)
 		{
-			foreach (var chart in m_cache.LangProject.DiscourseDataOA.ChartsOC.Cast<IDsConstChart>().Where(chart => chart.BasedOnRA != null && chart.BasedOnRA.Hvo == hvoStText))
+			foreach (var chart in Cache.LangProject.DiscourseDataOA.ChartsOC.Cast<IDsConstChart>().Where(chart => chart.BasedOnRA != null && chart.BasedOnRA.Hvo == hvoStText))
 			{
 				m_chart = chart;
 				m_logic.Chart = m_chart;
@@ -980,7 +1030,7 @@ namespace SIL.FieldWorks.Discourse
 
 		bool HasPersistantColWidths
 		{
-			get { return m_propertyTable.GetStringProperty(ColWidthId(), null) != null; }
+			get { return PropertyTable.GetStringProperty(ColWidthId(), null) != null; }
 		}
 
 		/// <summary>
@@ -991,7 +1041,7 @@ namespace SIL.FieldWorks.Discourse
 		{
 			if (m_mediator == null)
 				return false;
-			string savedCols = m_propertyTable.GetStringProperty(ColWidthId(), null);
+			string savedCols = PropertyTable.GetStringProperty(ColWidthId(), null);
 			if (savedCols == null)
 				return false;
 			XmlDocument doc = new XmlDocument();
@@ -1037,7 +1087,7 @@ namespace SIL.FieldWorks.Discourse
 			}
 			colList.Append("</root>");
 			var cwId = ColWidthId();
-			m_propertyTable.SetProperty(cwId, colList.ToString(), true);
+			PropertyTable.SetProperty(cwId, colList.ToString(), true);
 		}
 
 		private string ColWidthId()
@@ -1208,7 +1258,7 @@ namespace SIL.FieldWorks.Discourse
 			// guards against LT-8309, though I could not reproduce all cases.
 			if (m_chart == null || m_body == null || m_logic == null)
 				return false;
-			using (var dlg = new DiscourseExportDialog(m_mediator, m_propertyTable, m_chart.Hvo, m_body.Vc, m_logic.WsLineNumber))
+			using (var dlg = new DiscourseExportDialog(m_mediator, PropertyTable, m_chart.Hvo, m_body.Vc, m_logic.WsLineNumber))
 			{
 				dlg.ShowDialog(this);
 			}
@@ -1243,16 +1293,16 @@ namespace SIL.FieldWorks.Discourse
 		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			m_mediator = mediator;
-			m_propertyTable = propertyTable;
-			if (m_propertyTable != null)
-				m_logic.Init(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+			PropertyTable = propertyTable;
+			if (PropertyTable != null)
+				m_logic.Init(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 
 			m_configurationParameters = configurationParameters;
 			InterlinLineChoices lineChoices = GetLineChoices();
 			m_body.Init(mediator, propertyTable, m_configurationParameters);
 			m_body.LineChoices = lineChoices;
 			m_ribbon.Init(mediator, propertyTable, m_configurationParameters);
-			m_ribbon.LineChoices = lineChoices;
+			m_ribbon.RibbonLineChoices = lineChoices;
 		}
 
 		/// <summary>
@@ -1290,67 +1340,120 @@ namespace SIL.FieldWorks.Discourse
 		}
 
 		/// <summary>
-		/// This means it copies settings from the edit tab (in the same view).
-		/// Perversely these settings are saved with the 'doc' name.
+		/// The property table key storing InterlinLineChoices used by our display.
 		/// </summary>
 		private static string ConfigPropName
 		{
-			get { return "InterlinConfig_Doc"; }
-		}
-
-		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
-
-		private InterlinLineChoices GetLineChoices()
-		{
-			var result = new InterlinLineChoices(m_cache.LangProject, m_cache.DefaultVernWs, m_cache.DefaultAnalWs);
-			string persist = null;
-			if (m_propertyTable != null)
-			{
-				persist = m_propertyTable.GetStringProperty(ConfigPropName, null, PropertyTable.SettingsGroup.LocalSettings);
-			}
-			InterlinLineChoices lineChoices = null;
-			if (persist != null)
-			{
-				lineChoices = InterlinLineChoices.Restore(persist, m_cache.ServiceLocator.GetInstance<ILgWritingSystemFactory>(), m_cache.LangProject, m_cache.DefaultVernWs, m_cache.DefaultAnalWs);
-			}
-			GetLineChoice(result, lineChoices, InterlinLineChoices.kflidWord);
-			GetLineChoice(result, lineChoices, InterlinLineChoices.kflidWordGloss);
-			return result;
+			get;
+			set;
 		}
 
 		/// <summary>
-		/// Make sure there is SOME lineChoice for the specified flid in m_lineChoices.
-		/// If lineChoices is non-null and contains one for the right flid, choose the first.
+		/// Retrieves the Line Choices from persistence, or otherwise sets them to a default option
 		/// </summary>
-		/// <param name="dest"></param>
-		/// <param name="source"></param>
-		/// <param name="flid"></param>
-		private static void GetLineChoice(InterlinLineChoices dest, InterlinLineChoices source, int flid)
+		/// <param name="lineConfigPropName">The string key to retrieve Line Choices from the Property Table</param>
+		/// <param name="mode">Should always be Chart for this override</param>
+		public override InterlinLineChoices SetupLineChoices(string lineConfigPropName, InterlinLineChoices.InterlinMode mode)
 		{
-			if (source != null)
+			ConfigPropName = lineConfigPropName;
+			InterlinLineChoices lineChoices;
+			if (!TryRestoreLineChoices(out lineChoices))
 			{
-				var index = source.IndexOf(flid);
-				if (index >= 0)
+				if (ForEditing)
 				{
-					dest.Add(source[index]);
-					return;
+					lineChoices = EditableInterlinLineChoices.DefaultChoices(Cache.LangProject,
+						WritingSystemServices.kwsVern, WritingSystemServices.kwsAnal);
+					lineChoices.Mode = mode;
+					lineChoices.SetStandardChartState();
+				}
+				else
+				{
+					lineChoices = InterlinLineChoices.DefaultChoices(Cache.LangProject,
+						WritingSystemServices.kwsVern, WritingSystemServices.kwsAnal, mode);
 				}
 			}
-			// Last resort.
-			dest.Add(flid);
+			else if (ForEditing)
+			{
+				// just in case this hasn't been set for restored lines
+				lineChoices.Mode = mode;
+			}
+			LineChoices = lineChoices;
+			return LineChoices;
+		}
+
+		/// <summary>
+		/// Tries to retrieve the Line Choices from the Property Table and returns if it was succesful
+		/// </summary>
+		internal bool TryRestoreLineChoices(out InterlinLineChoices lineChoices)
+		{
+			lineChoices = null;
+			var persist = PropertyTable.GetStringProperty(ConfigPropName, null, PropertyTable.SettingsGroup.LocalSettings);
+			if (persist != null)
+			{
+				lineChoices = InterlinLineChoices.Restore(persist, Cache.LanguageWritingSystemFactoryAccessor,
+					Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs);
+			}
+			return persist != null && lineChoices != null;
+		}
+
+		/// <summary>
+		/// Gets the Line Choices stored in the property table
+		/// </summary>
+		private InterlinLineChoices GetLineChoices()
+		{
+			var result = new InterlinLineChoices(Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinLineChoices.InterlinMode.Chart);
+			string persist = null;
+			if (PropertyTable != null)
+			{
+				string configPropName = (ConfigPropName == null) ? "InterlinConfig_Edit_ConstituentChart" : ConfigPropName;
+				persist = PropertyTable.GetStringProperty(configPropName, null, PropertyTable.SettingsGroup.LocalSettings);
+			}
+			InterlinLineChoices lineChoices = null;
+
+			if (persist == null)
+			{
+				GetLineChoice(result, lineChoices,
+					InterlinLineChoices.kflidWord,
+					InterlinLineChoices.kflidWordGloss);
+				return result;
+			}
+			lineChoices = InterlinLineChoices.Restore(persist, Cache.ServiceLocator.GetInstance<ILgWritingSystemFactory>(), Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinLineChoices.InterlinMode.Chart);
+			return lineChoices;
+		}
+
+		/// <summary>
+		/// Make sure there is SOME lineChoice for the one of the specified flids.
+		/// If lineChoices is non-null and contains one for the right flid, choose the first.
+		/// </summary>
+		private static void GetLineChoice(InterlinLineChoices dest, InterlinLineChoices source, params int[] flids)
+		{
+			foreach (int flid in flids)
+			{
+				if (source != null)
+				{
+					var index = source.IndexOf(flid);
+					if (index >= 0)
+					{
+						dest.Add(source[index]);
+						return;
+					}
+				}
+
+				// Last resort.
+				dest.Add(flid);
+			}
 		}
 
 		public bool NotesDataFromPropertyTable
 		{
 			get
 			{
-				return m_propertyTable == null || m_propertyTable.GetBoolProperty("notesOnRight",
+				return PropertyTable == null || PropertyTable.GetBoolProperty("notesOnRight",
 					true, PropertyTable.SettingsGroup.LocalSettings);
 			}
 			set
 			{
-				m_propertyTable?.SetProperty("notesOnRight", value, PropertyTable.SettingsGroup.LocalSettings, false);
+				PropertyTable?.SetProperty("notesOnRight", value, PropertyTable.SettingsGroup.LocalSettings, false);
 			}
 		}
 

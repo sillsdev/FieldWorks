@@ -1562,6 +1562,7 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 	}
+
 	/// <summary>
 	///
 	/// </summary>
@@ -1569,6 +1570,7 @@ namespace SIL.FieldWorks.Common.Controls
 	{
 		private readonly string m_name;
 		private readonly string m_id;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="WsComboItem"/> class.
 		/// </summary>
@@ -1579,6 +1581,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_name = name;
 			m_id = id;
 		}
+
 		/// <summary>
 		/// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
 		/// </summary>
@@ -1589,6 +1592,32 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			return m_name;
 		}
+
+		/// <summary>
+		/// Returns true if the given object is a WsComboItem and the name and id match this WsComboItem.
+		/// </summary>
+		/// <param name="obj">The object to compare</param>
+		/// <returns>True if equal, false if not equal</returns>
+		public override bool Equals(object obj)
+		{
+			var item = obj as WsComboItem;
+			return item != null &&
+				   m_name == item.m_name &&
+				   m_id == item.m_id;
+		}
+
+		/// <summary>
+		/// Implemented for the Equals method.
+		/// </summary>
+		/// <returns></returns>
+		public override int GetHashCode()
+		{
+			var hashCode = 641297398;
+			hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(m_name);
+			hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(m_id);
+			return hashCode;
+		}
+
 		/// <summary>
 		/// Gets the writing system identifier.
 		/// </summary>
@@ -1597,5 +1626,15 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get { return m_id;}
 		}
+
+		/// <summary>
+		/// Stores the handle of the writing system.
+		/// </summary>
+		public int WritingSystem { get; set; }
+
+		/// <summary>
+		/// Stores the type of the writing system (vernacular, analysis, or both)
+		/// </summary>
+		public string WritingSystemType { get; set; }
 	}
 }

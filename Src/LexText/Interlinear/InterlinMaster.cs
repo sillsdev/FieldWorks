@@ -1273,9 +1273,10 @@ namespace SIL.FieldWorks.IText
 		/// <param name="argument"></param>
 		public bool OnConfigureInterlinear(object argument)
 		{
-			//bool isRibbon = CurrentInterlinearTabControl is InterlinDocChart;
-			if (CurrentInterlinearTabControl != null /*&& (CurrentInterlinearTabControl is InterlinDocRootSiteBase)*/)
-				(CurrentInterlinearTabControl as InterlinDocRootSiteBase).OnConfigureInterlinear(argument/*, isRibbon*/);
+			if (CurrentInterlinearTabControl != null && CurrentInterlinearTabControl is InterlinDocRootSiteBase)
+				(CurrentInterlinearTabControl as InterlinDocRootSiteBase).OnConfigureInterlinear(argument);
+			else if (CurrentInterlinearTabControl != null && CurrentInterlinearTabControl is InterlinDocChart)
+				(CurrentInterlinearTabControl as InterlinDocChart).OnConfigureInterlinear(argument);
 
 			return true; // We handled this
 		}

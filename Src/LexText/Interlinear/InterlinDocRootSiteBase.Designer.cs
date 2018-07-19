@@ -52,7 +52,6 @@ namespace SIL.FieldWorks.IText
 			this.AccessibleName = "InterlinDocRootSiteBase";
 			this.Name = "InterlinDocRootSiteBase";
 			this.ResumeLayout(false);
-
 		}
 
 		#endregion

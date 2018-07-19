@@ -1,0 +1,111 @@
+﻿/*
+Copyright (c) 2018 SIL International
+This software is licensed under the LGPL, version 2.1 or later
+(http://www.gnu.org/licenses/lgpl-2.1.html)
+*/
+body{
+	margin:0px;
+	font-family:sans-serif;
+}
+table{
+	border:none;
+	border-collapse:collapse;
+	margin:auto;
+}
+table td, .mainTh{
+	border-bottom:1px solid #C7C7C7;
+}
+table td, table th{
+	text-align:center;
+	vertical-align:middle;
+}
+table th{
+	padding:0.5em 1.5em;
+	white-space:nowrap;
+}
+table th:first-child{
+	padding:1em;
+}
+table tr:hover .grab{
+	opacity:1;
+}
+table tr:hover .specialGrab{
+	border-right:1px solid #C7C7C7;
+}
+.analysis, .both, .vernacular{
+	border-left:1px solid #C7C7C7;
+}
+.analysis ~ .analysis, .vernacular ~ .vernacular{
+	border-left:none;
+}
+.center{
+	text-align:center;
+}
+.clusterTable{
+	margin-right:0px;
+}
+.clusterTable thead{
+	opacity:0;
+	visibility:collapse;
+	line-height:0;
+}
+.clusterTable thead *{
+	border:none;
+}
+#container{
+	padding-right:80px;
+}
+.grab{
+	opacity:0;
+	text-align:center;
+	border-bottom:none;
+}
+.grab:hover{
+	opacity:1;
+	cursor:grab;
+	cursor:-moz-grab;
+	cursor:-webkit-grab;
+}
+.grab:active{
+	cursor:grabbing;
+	cursor:-moz-grabbing;
+	cursor:-webkit-grabbing;
+}
+.lineChoice{
+	text-align:left;
+	border-right:1px solid #C7C7C7;
+	min-width:120px;
+	max-width:120px;
+}
+.noBorder{
+	border-bottom:none;
+}
+.special{
+	border-bottom:1px dashed #A5A5A5;
+}
+#specialTable{
+	margin:auto;
+}
+.specialTD{
+	padding:0;
+	border-bottom:none;
+}
+#warning{
+	display:none;
+	color:#FF0000;
+	font-weight:bold;
+}
+.hasDashedLine tbody tr:first-child td:not(.grab):not(.specialTD){
+	border-bottom:1px dashed #A5A5A5;
+}
+.hasDashedLine tbody tr:first-child td:not(.grab){
+	border-bottom:1px solid #C7C7C7;
+}
+tr .mainTh{
+	min-width:100px;
+	max-width:100px;
+}
+tr .mainTh ~ .mainTh{
+	min-width:inherit;
+	max-width:inherit;
+}

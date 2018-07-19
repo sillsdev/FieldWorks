@@ -39,7 +39,7 @@ namespace XCore
 			m_mediator = mediator;
 			m_propertyTable = propertyTable;
 			m_configurationNode = configurationNode;
-			m_defaultVisible= XmlUtils.GetOptionalBooleanAttributeValue(m_configurationNode, "defaultVisible", true);
+			m_defaultVisible = XmlUtils.GetOptionalBooleanAttributeValue(m_configurationNode, "defaultVisible", true);
 		}
 
 		protected abstract void Populate();
@@ -117,13 +117,13 @@ namespace XCore
 		}
 		protected void UpdateUI()
 		{
-			Populate ();
+			Populate();
 			m_adapter.CreateUIForChoiceGroupCollection(this);
 		}
 
 		protected override void Populate()
 		{
-			XmlNodeList groups =m_configurationNode.SelectNodes(NodeSelector);
+			XmlNodeList groups = m_configurationNode.SelectNodes(NodeSelector);
 			foreach (XmlNode node in groups)
 			{
 				ChoiceGroup group = new ChoiceGroup(m_mediator, m_propertyTable, m_adapter, node, null);
@@ -394,7 +394,7 @@ namespace XCore
 		}
 		protected void UpdateUI()
 		{
-			Populate ();
+			Populate();
 			m_adapter.CreateUIForChoiceGroup(this);
 		}
 
@@ -453,7 +453,7 @@ namespace XCore
 			Populate();
 		}
 
-		protected void PopulateFromList ()
+		protected void PopulateFromList()
 		{
 			/// Just before this group is displayed, allow the group's contents to be modified by colleagues
 			//if this is a list-populated group.

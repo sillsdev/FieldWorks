@@ -6,8 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Xml;
-using System.Windows.Forms;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -16,7 +14,6 @@ using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.IText;
-using XCore;
 
 namespace SIL.FieldWorks.Discourse
 {
@@ -34,7 +31,6 @@ namespace SIL.FieldWorks.Discourse
 		// If we are the DialogInterlinRibbon sub-class, this is hvoWordGroup.
 
 		protected int m_occurenceListId = -2011; // flid for charting ribbon
-		//private RibbonVc Vc;
 		private int m_iEndSelLim;
 		private AnalysisOccurrence m_endSelLimPoint;
 
@@ -101,8 +97,6 @@ namespace SIL.FieldWorks.Discourse
 		}
 
 		protected internal int HvoRoot { get; private set; }
-
-		//protected internal LcmCache Cache { get; protected set; }
 
 		/// <summary>
 		/// Setter handles PropChanged
