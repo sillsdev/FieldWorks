@@ -256,7 +256,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			if (m_innerView.VC == null || m_innerView.RootBox == null) // We can come in with no rootb from a dispose call.
 				return;
 			if (Visible)
-				m_innerView.RefreshDisplay();
+				m_innerView.RefreshDisplayIfPending(); // Reconstruct the innerView's RootBox only if it is pending.
 			int dpiX;
 			using (var graphics = CreateGraphics())
 			{

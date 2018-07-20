@@ -72,6 +72,13 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get { return m_hvoObj; }
 		}
+		/// <summary>
+		/// Returns true if a refresh is pending. For testing.
+		/// </summary>
+		internal bool RefreshPending
+		{
+			get { return m_fRefreshPending; }
+		}
 
 		/// <summary>
 		/// This event is triggered at the start of the Display() method of the VC.
@@ -196,6 +203,16 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			m_rgws = WritingSystemOptions;
 			return base.RefreshDisplay();
+		}
+
+		/// <summary>
+		/// Use the refresh pending flag to determine if the display must be refreshed. The flag is set when
+		/// this control failed a previous RefreshDisplay which can happen when this control is reused.
+		/// </summary>
+		internal void RefreshDisplayIfPending()
+		{
+			if (m_fRefreshPending)
+				RefreshDisplay();
 		}
 
 		private void ConstructReuseCore(int hvo, int flid, int wsMagic, int wsOptional, bool forceIncludeEnglish, bool editable, bool spellCheck)
