@@ -102,10 +102,7 @@
 	<!-- ### Build Targets                                                                                      ### -->
 	<!-- ########################################################################################################## -->
 
-	<Target Name="BuildProductMain" DependsOnTargets="MakeInstallBuildFolders;BuildProduct">
-		<MSBuild Projects="$(MSBuildProjectFullPath)" BuildInParallel="true" Targets="Localize"/>
-		<CallTarget Targets="CopyFilesToInstall"/>
-	</Target>
+	<Target Name="BuildProductMain" DependsOnTargets="MakeInstallBuildFolders;BuildProduct;Localize;CopyFilesToInstall"/>
 
 	<Target Name="BuildProduct" DependsOnTargets="CleanInstaller;ProductCompile"/>
 
@@ -261,7 +258,7 @@
 		<Copy SourceFiles="@(BinFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/%(RecursiveDir)"/>
 		<Copy SourceFiles="@(CustomInstallFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/.."/>
 		<Copy SourceFiles="@(OverrideFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(OverridesDestDir)"/>
-		<MSBuild Projects="$(MSBuildProjectFullPath)" BuildInParallel="true" Targets="HarvestL10n"/>
+		<CallTarget Targets="HarvestL10n"/>
 	</Target>
 
 	<Target Name="HarvestL10n">
