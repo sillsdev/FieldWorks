@@ -649,4 +649,50 @@ If you are not the one designated user who adds fields, or you are making some o
   <data name="Show_in_Environments_list" xml:space="preserve">
     <value>Show in Environments list</value>
   </data>
+  <data name="Show_Analysis_in_Concordance" xml:space="preserve">
+    <value>Show Analysis in Concordance</value>
+  </data>
+  <data name="Show_Record_in_Notebook" xml:space="preserve">
+    <value>Show Record in Notebook</value>
+  </data>
+  <data name="ksShowEntryInLexicon" xml:space="preserve">
+    <value>Show Entry in Lexicon</value>
+    <comment>popup menu item in Collect Words view</comment>
+  </data>
+  <data name="Show_Entry_In_Concordance" xml:space="preserve">
+    <value>Show Entry in Concordance</value>
+  </data>
+  <data name="Show_Lexeme_Form_in_Concordance" xml:space="preserve">
+    <value>Show Lexeme Form in Concordance</value>
+  </data>
+  <data name="Filter_for_Lexical_Entries_with_this_category" xml:space="preserve">
+    <value>Filter for Lexical Entries with this category</value>
+  </data>
+  <data name="Filter_for_Notebook_Records_with_this_category" xml:space="preserve">
+    <value>Filter for Notebook Records with this category</value>
+  </data>
+  <data name="Move_Left" xml:space="preserve">
+    <value>Move Left</value>
+  </data>
+  <data name="Move_Right" xml:space="preserve">
+    <value>Move Right</value>
+  </data>
+  <data name="Show_in_0_list" xml:space="preserve">
+    <value>Show in {0} list</value>
+  </data>
+  <data name="Show_in_Complex_Form_Types_list" xml:space="preserve">
+    <value>Show in Complex Form Types list</value>
+  </data>
+  <data name="Show_in_Morpheme_Types_list" xml:space="preserve">
+    <value>Show in Morpheme Types list</value>
+  </data>
+  <data name="Show_in_Variant_Types_list" xml:space="preserve">
+    <value>Show in Variant Types list</value>
+  </data>
+  <data name="Show_Sense_in_Concordance" xml:space="preserve">
+    <value>Show Sense in Concordance</value>
+  </data>
+  <data name="Show_Subentry_under_this_Component" xml:space="preserve">
+    <value>Show Subentry under this Component</value>
+  </data>
 </root>

@@ -220,7 +220,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(3);
 
 			// <item command="CmdEntryJumpToConcordance"/>
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _lexiconEditToolMenuHelper.GetHandler(AreaServices.CmdEntryJumpToConcordance), LexiconResources.Show_Entry_In_Concordance);
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _lexiconEditToolMenuHelper.GetHandler(AreaServices.JumpToTool), AreaResources.Show_Entry_In_Concordance);
+			menu.Tag = new List<object> { _publisher, AreaServices.ConcordanceMachineName, recordList.CurrentObject.Guid };
+
 			// <item label="-" translate="do not translate"/>
 			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 			// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>

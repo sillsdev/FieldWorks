@@ -1191,15 +1191,6 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Move Left.
-        /// </summary>
-        internal static string Move_Left {
-            get {
-                return ResourceManager.GetString("Move_Left", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Move Picture _Down.
         /// </summary>
         internal static string Move_Picture_Down {
@@ -1232,15 +1223,6 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string Move_Pronunciation_Up {
             get {
                 return ResourceManager.GetString("Move_Pronunciation_Up", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Move Right.
-        /// </summary>
-        internal static string Move_Right {
-            get {
-                return ResourceManager.GetString("Move_Right", resourceCulture);
             }
         }
         
@@ -1437,33 +1419,6 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string Show_DictionaryPubPreview_ToolTip {
             get {
                 return ResourceManager.GetString("Show_DictionaryPubPreview_ToolTip", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Show Entry in Concordance.
-        /// </summary>
-        internal static string Show_Entry_In_Concordance {
-            get {
-                return ResourceManager.GetString("Show_Entry_In_Concordance", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Show Lexeme Form in Concordance.
-        /// </summary>
-        internal static string Show_Lexeme_Form_in_Concordance {
-            get {
-                return ResourceManager.GetString("Show_Lexeme_Form_in_Concordance", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Show Sense in Concordance.
-        /// </summary>
-        internal static string Show_Sense_in_Concordance {
-            get {
-                return ResourceManager.GetString("Show_Sense_in_Concordance", resourceCulture);
             }
         }
         

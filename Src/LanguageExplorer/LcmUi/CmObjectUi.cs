@@ -424,66 +424,6 @@ namespace LanguageExplorer.LcmUi
 			return MyCmObject.Guid;
 		}
 
-#if RANDYTODO
-		/// <summary>
-		/// This method CALLED BY REFLECTION is required to make various right-click menu commands
-		/// like Show Entry in Lexicon work in browse views. FWR-3695.
-		/// </summary>
-		/// <returns></returns>
-		public virtual bool OnJumpToTool(object commandObject)
-		{
-			var command = (Command) commandObject;
-			LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool"), GuidForJumping(commandObject)));
-			return true;
-		}
-
-		/// <summary>
-		/// called by the mediator to decide how/if a MenuItem or toolbar button should be displayed
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public virtual bool OnDisplayJumpToTool(object commandObject, ref UIItemDisplayProperties display)
-		{
-			var command = (Command) commandObject;
-			string tool = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool");
-			//string areaChoice = m_propertyTable.GetValue<string>(AreaServices.AreaChoice);
-			//string toolChoice = m_propertyTable.GetValue<string>($"{AreaServices.ToolForAreaNamed_}{areaChoice}");
-			string toolChoice = m_propertyTable.GetValue<string>(AreaServices.ToolChoice);
-			if (!IsAcceptableContextToJump(toolChoice, tool))
-			{
-				display.Visible = display.Enabled = false;
-				return true;
-			}
-			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
-
-
-			int specifiedClsid = 0;
-			var mdc = m_cache.GetManagedMetaDataCache();
-			if (mdc.ClassExists(className)) // otherwise is is a 'magic' class name treated specially in other OnDisplays.
-				specifiedClsid = mdc.GetClassId(className);
-
-			display.Visible = display.Enabled = ShouldDisplayMenuForClass(specifiedClsid, display);
-			if (display.Enabled)
-				command.TargetId = GuidForJumping(commandObject);
-			return true;
-		}
-#endif
-
-		protected virtual bool IsAcceptableContextToJump(string toolCurrent, string toolTarget)
-		{
-			if (toolCurrent == toolTarget)
-			{
-				var obj = GetCurrentCmObject();
-				// Disable if target is the current object, or target is owned directly by the target object.
-				if (obj != null && (obj.Hvo == m_hvo || m_cache.ServiceLocator.GetObject(m_hvo).Owner == obj))
-				{
-					return false; // we're already there!
-				}
-			}
-			return true;
-		}
-
 		private ICmObject GetCurrentCmObject()
 		{
 			ICmObject obj = null;
@@ -511,19 +451,6 @@ namespace LanguageExplorer.LcmUi
 				obj = PropertyTable.GetValue<ICmObject>("ActiveListSelectedObject", null);
 			}
 			return obj;
-		}
-
-		protected virtual bool ShouldDisplayMenuForClass(int specifiedClsid)
-		{
-			if (specifiedClsid == 0)
-			{
-				return false; // a special magic class id, only enabled explicitly.
-			}
-			if (MyCmObject.ClassID == specifiedClsid)
-			{
-				return true;
-			}
-			return m_cache.DomainDataByFlid.MetaDataCache.GetBaseClsId(MyCmObject.ClassID) == specifiedClsid;
 		}
 
 		/// <summary>
@@ -641,8 +568,11 @@ namespace LanguageExplorer.LcmUi
 					MessageBox.Show($"Popup menu: '{sMenuId}' not found.{Environment.NewLine}{Environment.NewLine}Register a creator method for it in dataTree.DataTreeStackContextMenuFactory.RightClickPopupMenuFactory.", "Implement missing popup menu", MessageBoxButtons.OK);
 					return true;
 				}
-				adjustMenu?.Invoke(_rightClickTuple.Item1);
-				_rightClickTuple.Item1.Show(new Point(Cursor.Position.X, Cursor.Position.Y));
+				if (_rightClickTuple.Item1.Items.Count > 0)
+				{
+					adjustMenu?.Invoke(_rightClickTuple.Item1);
+					_rightClickTuple.Item1.Show(new Point(Cursor.Position.X, Cursor.Position.Y));
+				}
 			}
 			else
 			{

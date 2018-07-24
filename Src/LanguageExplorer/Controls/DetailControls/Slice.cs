@@ -144,6 +144,27 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_visibilityMenus.Clear();
 		}
 
+		internal int GetSelectionHvoFromControls()
+		{
+			if (Control.Controls.Count == 0)
+			{
+				return 0;
+			}
+			foreach (Control innerControl in Control.Controls)
+			{
+				if (innerControl is RootSiteControl)
+				{
+					var site = (SimpleRootSite)innerControl;
+					if (site.RootBox != null)
+					{
+						var tsi = new TextSelInfo(site.RootBox);
+						return tsi.Hvo(true);
+					}
+				}
+			}
+			return 0; // no selection found
+		}
+
 		/// <summary>
 		/// Some Slice subclasses do the menus themselves.
 		/// </summary>

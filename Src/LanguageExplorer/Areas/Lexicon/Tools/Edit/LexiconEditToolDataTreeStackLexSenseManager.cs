@@ -519,12 +519,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
 			// <command id="CmdSenseJumpToConcordance" label="Show Sense in Concordance" message="JumpToTool">
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Show_Sense_in_Concordance_Clicked, LexiconResources.Show_Sense_in_Concordance);
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_Sense_in_Concordance);
+			menu.Tag = new List<object> { _flexComponentParameters.Publisher, AreaServices.ConcordanceMachineName, MyRecordList.CurrentObject.Guid };
 
 			// <item label="-" translate="do not translate"/>
 			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
-			ToolStripMenuItem menu;
 			using (var imageHolder = new LanguageExplorer.DictionaryConfiguration.ImageHolder())
 			{
 				// <command id="CmdDataTree-MoveUp-Sense" label="Move Sense Up" message="MoveUpObjectInSequence" icon="MoveUp">
@@ -609,13 +609,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					newOwningSense.SensesOS.Insert(index + 1, slice.MyCmObject as ILexSense);
 				}
 			});
-		}
-
-		private void Show_Sense_in_Concordance_Clicked(object sender, EventArgs e)
-		{
-			// Show Sense in Concordance menu item. (CmdSenseJumpToConcordance->msg: JumpToTool)
-			// <command id="CmdSenseJumpToConcordance" label="Show Sense in Concordance" message="JumpToTool">
-			LinkHandler.PublishFollowLinkMessage(_flexComponentParameters.Publisher, new FwLinkArgs(AreaServices.ConcordanceMachineName, MyRecordList.CurrentObject.Guid));
 		}
 
 		private void FindExampleSentence_Clicked(object sender, EventArgs e)

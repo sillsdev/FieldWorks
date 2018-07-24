@@ -53,15 +53,6 @@ namespace LanguageExplorer.LcmUi
 			return true;
 		}
 
-		protected override bool IsAcceptableContextToJump(string toolCurrent, string toolTarget)
-		{
-			if (toolCurrent == AreaServices.WordListConcordanceMachineName && toolTarget == AreaServices.ConcordanceMachineName)
-			{
-				return false;
-			}
-			return base.IsAcceptableContextToJump(toolCurrent, toolTarget);
-		}
-
 		public override bool CanDelete(out string cannotDeleteMsg)
 		{
 			if (base.CanDelete(out cannotDeleteMsg))

@@ -226,6 +226,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			};
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(4);
 
+			ToolStripMenuItem menu;
 			if (IsFeatsNCContextCurrent)
 			{
 				// <command id="CmdCtxtSetFeatures" label="Set Phonological Features..." message="ContextSetFeatures" />
@@ -239,13 +240,15 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			if (IsNCContextCurrent)
 			{
 				// <command id="CmdCtxtJumpToNC" label="Show in Natural Classes list" message="ContextJumpToNaturalClass" />
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.ContextJumpToNaturalClass), AreaResources.Show_in_Natural_Classes_list);
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_in_Natural_Classes_list);
+				menu.Tag = new List<object> { Publisher, AreaServices.NaturalClassEditMachineName, ((IPhSimpleContextSeg)MyRuleFormulaSlice.RuleFormulaControl.CurrentContext).FeatureStructureRA.Guid };
 			}
 
 			if (IsPhonemeContextCurrent)
 			{
 				// <command id="CmdCtxtJumpToPhoneme" label="Show in Phonemes list" message="ContextJumpToPhoneme" />
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.ContextJumpToPhoneme), AreaResources.Show_in_Phonemes_list);
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_in_Phonemes_list);
+				menu.Tag = new List<object> { Publisher, AreaServices.PhonemeEditMachineName, ((IPhSimpleContextSeg)MyRuleFormulaSlice.RuleFormulaControl.CurrentContext).FeatureStructureRA.Guid };
 			}
 
 			if (separatorInsertIndex > 0 && separatorInsertIndex < menuItems.Count - 1)

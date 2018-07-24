@@ -51,6 +51,7 @@ namespace LanguageExplorer.Areas
 			_sharedEventHandlers.Add(AreaServices.InsertOptionalItem, Insert_OptionalItem_Clicked);
 			_sharedEventHandlers.Add(AreaServices.InsertHashMark, Insert_HashMark_Clicked);
 			_sharedEventHandlers.Add(AreaServices.ShowEnvironmentError, ShowEnvironmentError_Clicked);
+			_sharedEventHandlers.Add(AreaServices.JumpToTool, JumpToTool_Clicked);
 		}
 
 		internal AreaWideMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
@@ -274,6 +275,7 @@ namespace LanguageExplorer.Areas
 				_sharedEventHandlers.Remove(AreaServices.InsertOptionalItem);
 				_sharedEventHandlers.Remove(AreaServices.InsertHashMark);
 				_sharedEventHandlers.Remove(AreaServices.ShowEnvironmentError);
+				_sharedEventHandlers.Remove(AreaServices.JumpToTool_Clicked);
 
 				if (_fileExportMenu != null)
 				{
@@ -389,6 +391,42 @@ namespace LanguageExplorer.Areas
 			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, sharedEventHandlers.Get(AreaServices.InsertHashMark), AreaResources.Insert_Word_Boundary);
 			menu.Enabled = SliceAsIPhEnvSliceCommon(slice).CanInsertHashMark;
 			menu.Tag = slice;
+		}
+
+		internal static bool CanJumpToTool(string currentToolMachineName, string targetToolMachineNameForJump, LcmCache cache, ICmObject rootObject, ICmObject currentObject, string className)
+		{
+			if ((currentToolMachineName == targetToolMachineNameForJump && currentObject.IsOwnedBy(rootObject))
+				|| (currentObject is IWfiWordform && targetToolMachineNameForJump == AreaServices.WordListConcordanceMachineName && targetToolMachineNameForJump == AreaServices.ConcordanceMachineName))
+			{
+				// Already on object in right tool, so no need to jump.
+				// Not visible or enabled.
+				return false;
+			}
+			var specifiedClsid = 0;
+			var mdc = cache.GetManagedMetaDataCache();
+			if (mdc.ClassExists(className)) // otherwise is is a 'magic' class name treated specially in other OnDisplays.
+			{
+				specifiedClsid = mdc.GetClassId(className);
+			}
+			if (specifiedClsid == 0)
+			{
+				// Not visible or enabled.
+				return false; // a special magic class id, only enabled explicitly.
+			}
+			if (currentObject.ClassID == specifiedClsid)
+			{
+				// Visible & enabled.
+				return true;
+			}
+
+			// Visible & enabled are the same at this point.
+			return cache.DomainDataByFlid.MetaDataCache.GetBaseClsId(currentObject.ClassID) == specifiedClsid;
+		}
+
+		private static void JumpToTool_Clicked(object sender, EventArgs e)
+		{
+			var tag = (List<object>)((ToolStripMenuItem)sender).Tag;
+			LinkHandler.PublishFollowLinkMessage((IPublisher)tag[0], new FwLinkArgs((string)tag[1], (Guid)tag[2]));
 		}
 	}
 }

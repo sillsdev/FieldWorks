@@ -223,9 +223,6 @@
   <data name="Show_DictionaryPubPreview_ToolTip" xml:space="preserve">
     <value>Display the dictionary entry for this lexeme above the Lexicon Edit pane.</value>
   </data>
-  <data name="Show_Entry_In_Concordance" xml:space="preserve">
-    <value>Show Entry in Concordance</value>
-  </data>
   <data name="BulkEditEntriesOrSensesToolParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\BulkEditEntriesOrSensesToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
     <comment>Do Not Localize</comment>
@@ -423,9 +420,6 @@
   <data name="Convert_to_Affix_Process" xml:space="preserve">
     <value>Convert to Affix Process</value>
   </data>
-  <data name="Show_Lexeme_Form_in_Concordance" xml:space="preserve">
-    <value>Show Lexeme Form in Concordance</value>
-  </data>
   <data name="Swap_Lexeme_Form_with_Allomorph" xml:space="preserve">
     <value>Swap Lexeme Form with Allomorph...</value>
   </data>
@@ -437,12 +431,6 @@
   </data>
   <data name="Alphabetical_Order" xml:space="preserve">
     <value>Alphabetical Order</value>
-  </data>
-  <data name="Move_Left" xml:space="preserve">
-    <value>Move Left</value>
-  </data>
-  <data name="Move_Right" xml:space="preserve">
-    <value>Move Right</value>
   </data>
   <data name="Move_Variant_Info_Down" xml:space="preserve">
     <value>Move Variant Info Down</value>
@@ -560,9 +548,6 @@
   </data>
   <data name="Move_Sense_Up" xml:space="preserve">
     <value>Move Sense Up</value>
-  </data>
-  <data name="Show_Sense_in_Concordance" xml:space="preserve">
-    <value>Show Sense in Concordance</value>
   </data>
   <data name="Delete_Example" xml:space="preserve">
     <value>Delete Example</value>

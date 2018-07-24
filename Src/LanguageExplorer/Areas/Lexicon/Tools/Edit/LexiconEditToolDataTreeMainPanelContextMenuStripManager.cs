@@ -164,16 +164,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
 			// Show Entry in Concordance menu item. (CmdRootEntryJumpToConcordance->msg: JumpToTool)
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdRootEntryJumpToConcordance_Clicked, LexiconResources.Show_Entry_In_Concordance);
+			contextMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_Entry_In_Concordance);
+			contextMenuItem.Tag = new List<object> { _publisher, AreaServices.ConcordanceMachineName, MyRecordList.CurrentObject.Guid };
 
 			return retVal;
-		}
-
-		private void CmdRootEntryJumpToConcordance_Clicked(object sender, EventArgs e)
-		{
-			// CreateMainPanelContextMenuStrip
-			// Show Entry in Concordance menu item. (CmdRootEntryJumpToConcordance->msg: JumpToTool)
-			LinkHandler.PublishFollowLinkMessage(_publisher, new FwLinkArgs(AreaServices.ConcordanceMachineName, MyRecordList.CurrentObject.Guid));
 		}
 
 		private void CmdChangeToVariant_Clicked(object sender, EventArgs e)

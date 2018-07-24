@@ -194,7 +194,7 @@ so I can look at that in the develop branch.
       <parameters tool="interlinearEdit" className="Text" />
     </command>
     <command id="CmdJumpToNotebook" label="Show Record in Notebook" message="JumpToTool">
-      <parameters tool="notebookEdit" className="RnGenericRecord" />
+      <parameters tool="notebookEdit" className="RnGenericRec" />
     </command>
     <command id="CmdDataTree-Insert-Adhoc-Group-Members-Allomorph" label="Insert Allomorph Rule" message="DataTreeInsert">
       <parameters field="Members" className="MoAlloAdhocProhib" />

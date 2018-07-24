@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
@@ -765,7 +764,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			// We have a valid (real, not temporary fake) LexEntry and will put up the context menu
 			var menu = new ContextMenuStrip();
-			var item = new ToolStripMenuItem(XMLViewsStrings.ksShowEntryInLexicon);
+			var item = new ToolStripMenuItem(AreaResources.ksShowEntryInLexicon);
 			menu.Items.Add(item);
 			item.Click += (sender, args) => LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(AreaServices.LexiconEditMachineName, target.Guid));
 			menu.Show(this, pt);

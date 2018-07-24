@@ -69,6 +69,8 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
+		protected RuleFormulaSlice MyRuleFormulaSlice => Parent.Parent.Parent as RuleFormulaSlice;
+
 		/// <summary>
 		/// Indicates that a PhSimpleContextNC with a PhNCFeatures is currently selected.
 		/// </summary>
@@ -593,7 +595,7 @@ namespace LanguageExplorer.Areas
 				chooser.TextParamHvo = m_cache.LangProject.PhonologicalDataOA.Hvo;
 				var guidTextParam = m_cache.LangProject.PhonologicalDataOA.Guid;
 				chooser.AddLink(linkText, LinkType.kGotoLink, new FwLinkArgs(toolName, guidTextParam));
-				chooser.ReplaceTreeView(PropertyTable, guiControl);
+				chooser.ReplaceTreeView(PropertyTable, Publisher, Subscriber, guiControl);
 				chooser.SetHelpTopic(FeatureChooserHelpTopic);
 
 				var res = chooser.ShowDialog();

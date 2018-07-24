@@ -276,6 +276,24 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Filter for Lexical Entries with this category.
+        /// </summary>
+        internal static string Filter_for_Lexical_Entries_with_this_category {
+            get {
+                return ResourceManager.GetString("Filter_for_Lexical_Entries_with_this_category", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filter for Notebook Records with this category.
+        /// </summary>
+        internal static string Filter_for_Notebook_Records_with_this_category {
+            get {
+                return ResourceManager.GetString("Filter_for_Notebook_Records_with_this_category", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to First Analysis Writing System.
         /// </summary>
         internal static string FirstAnalysisWs {
@@ -1237,6 +1255,15 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show Entry in Lexicon.
+        /// </summary>
+        internal static string ksShowEntryInLexicon {
+            get {
+                return ResourceManager.GetString("ksShowEntryInLexicon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Single-line Text.
         /// </summary>
         internal static string ksSingleLineText {
@@ -1405,6 +1432,24 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Move Left.
+        /// </summary>
+        internal static string Move_Left {
+            get {
+                return ResourceManager.GetString("Move_Left", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move Right.
+        /// </summary>
+        internal static string Move_Right {
+            get {
+                return ResourceManager.GetString("Move_Right", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to There is no description available for this item..
         /// </summary>
         internal static string NoDescriptionForItem {
@@ -1486,11 +1531,56 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show Analysis in Concordance.
+        /// </summary>
+        internal static string Show_Analysis_in_Concordance {
+            get {
+                return ResourceManager.GetString("Show_Analysis_in_Concordance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Entry in Concordance.
+        /// </summary>
+        internal static string Show_Entry_In_Concordance {
+            get {
+                return ResourceManager.GetString("Show_Entry_In_Concordance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show in {0} list.
+        /// </summary>
+        internal static string Show_in_0_list {
+            get {
+                return ResourceManager.GetString("Show_in_0_list", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show in Complex Form Types list.
+        /// </summary>
+        internal static string Show_in_Complex_Form_Types_list {
+            get {
+                return ResourceManager.GetString("Show_in_Complex_Form_Types_list", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show in Environments list.
         /// </summary>
         internal static string Show_in_Environments_list {
             get {
                 return ResourceManager.GetString("Show_in_Environments_list", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show in Morpheme Types list.
+        /// </summary>
+        internal static string Show_in_Morpheme_Types_list {
+            get {
+                return ResourceManager.GetString("Show_in_Morpheme_Types_list", resourceCulture);
             }
         }
         
@@ -1509,6 +1599,51 @@ namespace LanguageExplorer.Areas {
         internal static string Show_in_Phonemes_list {
             get {
                 return ResourceManager.GetString("Show_in_Phonemes_list", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show in Variant Types list.
+        /// </summary>
+        internal static string Show_in_Variant_Types_list {
+            get {
+                return ResourceManager.GetString("Show_in_Variant_Types_list", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Lexeme Form in Concordance.
+        /// </summary>
+        internal static string Show_Lexeme_Form_in_Concordance {
+            get {
+                return ResourceManager.GetString("Show_Lexeme_Form_in_Concordance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Record in Notebook.
+        /// </summary>
+        internal static string Show_Record_in_Notebook {
+            get {
+                return ResourceManager.GetString("Show_Record_in_Notebook", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Sense in Concordance.
+        /// </summary>
+        internal static string Show_Sense_in_Concordance {
+            get {
+                return ResourceManager.GetString("Show_Sense_in_Concordance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Subentry under this Component.
+        /// </summary>
+        internal static string Show_Subentry_under_this_Component {
+            get {
+                return ResourceManager.GetString("Show_Subentry_under_this_Component", resourceCulture);
             }
         }
         

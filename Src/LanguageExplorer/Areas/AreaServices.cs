@@ -136,7 +136,6 @@ namespace LanguageExplorer.Areas
 
 		#region commands
 
-		internal const string CmdEntryJumpToConcordance = "CmdEntryJumpToConcordance";
 		internal const string InsertSlash = "InsertSlash";
 		internal const string InsertEnvironmentBar = "InsertEnvironmentBar";
 		internal const string InsertNaturalClass = "InsertNaturalClass";
@@ -144,8 +143,7 @@ namespace LanguageExplorer.Areas
 		internal const string InsertHashMark = "InsertHashMark";
 		internal const string ShowEnvironmentError = "ShowEnvironmentError";
 		internal const string ContextSetFeatures = "ContextSetFeatures";
-		internal const string ContextJumpToNaturalClass = "ContextJumpToNaturalClass";
-		internal const string ContextJumpToPhoneme = "ContextJumpToPhoneme";
+		internal const string JumpToTool = "JumpToTool";
 
 		#endregion
 

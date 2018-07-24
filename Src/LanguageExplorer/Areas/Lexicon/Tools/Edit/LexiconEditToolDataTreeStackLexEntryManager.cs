@@ -63,7 +63,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_sharedEventHandlers.Add(LexiconAreaConstants.CmdMoveTargetToPreviousInSequence, MoveReferencedTargetDownInSequence_Clicked);
 			_sharedEventHandlers.Add(LexiconAreaConstants.CmdMoveTargetToNextInSequence, MoveReferencedTargetUpInSequence_Clicked);
 			_sharedEventHandlers.Add(LexiconAreaConstants.CmdAlphabeticalOrder, Referenced_AlphabeticalOrder_Clicked);
-			_sharedEventHandlers.Add(AreaServices.CmdEntryJumpToConcordance, CmdEntryJumpToConcordance_Clicked);
 			_sharedEventHandlers.Add(LexiconAreaConstants.MoveUpObjectInOwningSequence, MoveUpObjectInOwningSequence_Clicked);
 			_sharedEventHandlers.Add(LexiconAreaConstants.MoveDownObjectInOwningSequence, MoveDownObjectInOwningSequence_Clicked);
 
@@ -130,7 +129,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				_sharedEventHandlers.Remove(LexiconAreaConstants.CmdMoveTargetToPreviousInSequence);
 				_sharedEventHandlers.Remove(LexiconAreaConstants.CmdMoveTargetToNextInSequence);
 				_sharedEventHandlers.Remove(LexiconAreaConstants.CmdAlphabeticalOrder);
-				_sharedEventHandlers.Remove(AreaServices.CmdEntryJumpToConcordance);
 				_sharedEventHandlers.Remove(LexiconAreaConstants.MoveUpObjectInOwningSequence);
 				_sharedEventHandlers.Remove(LexiconAreaConstants.MoveDownObjectInOwningSequence);
 				foreach (var manager in _dataTreeWidgetManagers.Values)
@@ -198,7 +196,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			if (visible)
 			{
 				// <command id="CmdMoveTargetToPreviousInSequence" label="Move Left" message="MoveTargetDownInSequence"/>
-				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveReferencedTargetDownInSequence_Clicked, LexiconResources.Move_Left);
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveReferencedTargetDownInSequence_Clicked, AreaResources.Move_Left);
 				menu.Enabled = enabled;
 			}
 
@@ -206,7 +204,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			if (visible)
 			{
 				// <command id="CmdMoveTargetToNextInSequence" label="Move Right" message="MoveTargetUpInSequence"/>
-				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveReferencedTargetUpInSequence_Clicked, LexiconResources.Move_Right);
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveReferencedTargetUpInSequence_Clicked, AreaResources.Move_Right);
 				menu.Enabled = enabled;
 			}
 
@@ -589,15 +587,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					() => _cache.DomainDataByFlid.MoveOwnSeq(owningObject.Hvo, owningFlid, indexInOwningProperty, indexInOwningProperty, owningObject.Hvo, owningFlid, indexInOwningProperty + 2));
 			}
 		}
-
-		#region popup slice menus
-
-		private void CmdEntryJumpToConcordance_Clicked(object sender, EventArgs e)
-		{
-			// Should be a LexEntry
-			LinkHandler.PublishFollowLinkMessage(_publisher, new FwLinkArgs(AreaServices.ConcordanceMachineName, MyRecordList.CurrentObject.Guid));
-		}
-		#endregion popup slice menus
 
 		private void DeleteSliceObject()
 		{

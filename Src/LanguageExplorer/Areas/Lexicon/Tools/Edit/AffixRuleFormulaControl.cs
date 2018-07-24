@@ -9,7 +9,6 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.LexText;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
@@ -243,16 +242,19 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			// <item label="-" translate="do not translate" /> Optionally inserted at separatorOneInsertIndex. See below.
 
+			ToolStripMenuItem menu;
 			if (IsNCContextCurrent)
 			{
 				// <command id="CmdCtxtJumpToNC" label="Show in Natural Classes list" message="ContextJumpToNaturalClass" />
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.ContextJumpToNaturalClass), AreaResources.Show_in_Natural_Classes_list);
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_in_Natural_Classes_list);
+				menu.Tag = new List<object> { Publisher, AreaServices.NaturalClassEditMachineName, ((IPhSimpleContextSeg)MyRuleFormulaSlice.RuleFormulaControl.CurrentContext).FeatureStructureRA.Guid };
 			}
 
 			if (IsPhonemeContextCurrent)
 			{
 				// <command id="CmdCtxtJumpToPhoneme" label="Show in Phonemes list" message="ContextJumpToPhoneme" />
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.ContextJumpToPhoneme), AreaResources.Show_in_Phonemes_list);
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_in_Phonemes_list);
+				menu.Tag = new List<object> { Publisher, AreaServices.PhonemeEditMachineName, ((IPhSimpleContextSeg)MyRuleFormulaSlice.RuleFormulaControl.CurrentContext).FeatureStructureRA.Guid };
 			}
 
 			// <item label="-" translate="do not translate" /> Optionally inserted at separatorTwoInsertIndex. See below.
@@ -261,13 +263,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			if (IsNCIndexCurrent)
 			{
 				// <command id="CmdMappingJumpToNC" label="Show in Natural Classes list" message="MappingJumpToNaturalClass" />
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MappingJumpToNaturalClass_Clicked, AreaResources.Show_in_Natural_Classes_list);
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_in_Natural_Classes_list);
+				menu.Tag = new List<object> { Publisher, AreaServices.NaturalClassEditMachineName, ((IMoModifyFromInput)CurrentObject).ModificationRA.Guid };
 			}
 
 			if (IsPhonemeCurrent)
 			{
 				// <command id="CmdMappingJumpToPhoneme" label="Show in Phonemes list" message="MappingJumpToPhoneme" />
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MappingJumpToPhoneme_Clicked, AreaResources.Show_in_Phonemes_list);
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), AreaResources.Show_in_Phonemes_list);
+				menu.Tag = new List<object> { Publisher, AreaServices.PhonemeEditMachineName, ((IMoInsertPhones)CurrentObject).ContentRS[0].Guid };
 			}
 
 			if (separatorOneInsertIndex > 0 && separatorOneInsertIndex < menuItems.Count - 1)
@@ -294,15 +298,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			SetMappingNaturalClass();
 		}
 
-		private void MappingJumpToNaturalClass_Clicked(object sender, EventArgs e)
-		{
-			LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(AreaServices.NaturalClassEditMachineName, ((IMoModifyFromInput)CurrentObject).ModificationRA.Guid));
-		}
-
-		private void MappingJumpToPhoneme_Clicked(object sender, EventArgs e)
-		{
-			LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(AreaServices.PhonemeEditMachineName, ((IMoInsertPhones)CurrentObject).ContentRS[0].Guid));
-		}
 		#endregion
 
 		protected override int GetCell(SelectionHelper sel, SelectionHelper.SelLimitType limit)

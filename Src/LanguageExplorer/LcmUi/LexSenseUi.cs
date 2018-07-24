@@ -63,11 +63,6 @@ namespace LanguageExplorer.LcmUi
 		}
 #endif
 
-		protected override bool ShouldDisplayMenuForClass(int specifiedClsid)
-		{
-			return LexEntryTags.kClassId == specifiedClsid || LexSenseTags.kClassId == specifiedClsid;
-		}
-
 		protected override DummyCmObject GetMergeinfo(WindowParams wp, List<DummyCmObject> mergeCandidates, out string guiControl, out string helpTopic)
 		{
 			wp.m_title = LcmUiStrings.ksMergeSense;

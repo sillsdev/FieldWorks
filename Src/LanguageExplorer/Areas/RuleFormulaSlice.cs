@@ -30,8 +30,6 @@ namespace LanguageExplorer.Areas
 			_sharedEventHandlers = sharedEventHandlers;
 
 			_sharedEventHandlers.Add(AreaServices.ContextSetFeatures, ContextSetFeatures_Clicked);
-			_sharedEventHandlers.Add(AreaServices.ContextJumpToNaturalClass, ContextJumpToNaturalClass_Clicked);
-			_sharedEventHandlers.Add(AreaServices.ContextJumpToPhoneme, ContextJumpToPhoneme_Clicked);
 		}
 
 		public RuleFormulaControl RuleFormulaControl
@@ -156,21 +154,6 @@ namespace LanguageExplorer.Areas
 		private void ContextSetFeatures_Clicked(object sender, EventArgs e)
 		{
 			RuleFormulaControl.SetContextFeatures();
-		}
-
-		private void ContextJumpToNaturalClass_Clicked(object sender, EventArgs e)
-		{
-			JumpToTool(AreaServices.NaturalClassEditMachineName);
-		}
-
-		private void ContextJumpToPhoneme_Clicked(object sender, EventArgs e)
-		{
-			JumpToTool(AreaServices.PhonemeEditMachineName);
-		}
-
-		private void JumpToTool(string toolName)
-		{
-			LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(toolName, ((IPhSimpleContextSeg)RuleFormulaControl.CurrentContext).FeatureStructureRA.Guid));
 		}
 	}
 }

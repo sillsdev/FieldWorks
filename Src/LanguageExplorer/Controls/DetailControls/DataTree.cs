@@ -3342,51 +3342,17 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			return true; //we've handled this
 		}
+#endif
 
-		/// <summary>
-		/// Enable/Disable menu items for jumping to the Lexicon Edit tool and applying a column filter on the Anthropology Category
-		/// the user has right clicked on.
-		/// </summary>
-		public virtual bool OnDisplayJumpToLexiconEditFilterAnthroItems(object commandObject, ref UIItemDisplayProperties display)
+		internal bool CanJumpToToolAndFilterAnthroItem
 		{
-			return DisplayJumpToToolAndFilterAnthroItem(display, commandObject, "CmdJumpToLexiconEditWithFilter");
-		}
-
-		/// <summary>
-		/// Enable/Disable menu items for jumping to the Notebook Edit tool and applying a column filter on the Anthropology Category
-		/// the user has right clicked on.
-		/// </summary>
-		public virtual bool OnDisplayJumpToNotebookEditFilterAnthroItems(object commandObject, ref UIItemDisplayProperties display)
-		{
-			return DisplayJumpToToolAndFilterAnthroItem(display, commandObject, "CmdJumpToNotebookEditWithFilter");
-		}
-
-		private bool DisplayJumpToToolAndFilterAnthroItem(UIItemDisplayProperties display, object commandObject, string cmd)
-		{
-			if (display.Group != null && display.Group.IsContextMenu &&
-				!string.IsNullOrEmpty(display.Group.Id) &&
-				!display.Group.Id.StartsWith("mnuReferenceChoices"))
+			get
 			{
-				return false;
+				var fieldName = XmlUtils.GetOptionalAttributeValue(CurrentSlice.ConfigurationNode, "field");
+				return !string.IsNullOrEmpty(fieldName) && fieldName.Equals("AnthroCodes");
 			}
-
-			var fieldName = XmlUtils.GetOptionalAttributeValue(CurrentSlice.ConfigurationNode, "field");
-			if (string.IsNullOrEmpty(fieldName) || !fieldName.Equals("AnthroCodes"))
-			{
-				display.Enabled = display.Visible = false;
-				return true;
-			}
-
-			var xmlNode = (commandObject as XCore.Command).ConfigurationNode;
-			var command = XmlUtils.GetOptionalAttributeValue(xmlNode, "id");
-			if (string.IsNullOrEmpty(command))
-				return false;
-			if (command.Equals(cmd))
-				display.Enabled = display.Visible = true;
-			else
-				display.Enabled = display.Visible = false;
-			return true;
 		}
+#if RANDYTODO
 
 	// RANDYTODO TODO: DataTree only handles jump stuff for menus that start with "mnuDataTree", so does nothing for menus such as: mnuEnvReferenceChoices, mnuReferenceChoices, or mnuObjectChoices.
 		/// <summary>
@@ -3433,28 +3399,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 #endif
 
-		/// <summary>
-		/// Handle jumping to the lexiconEdit tool and filtering on the Anthropology Category the user has
-		/// right clicked on.
-		/// </summary>
-		public bool OnJumpToLexiconEditFilterAnthroItems(object commandObject)
+		internal void JumpToToolAndFilterAnthroItem(object sender, EventArgs e)
 		{
-			OnJumpToToolAndFilterAnthroItem("FilterAnthroItems", AreaServices.LexiconEditMachineName);
-			return true;
-		}
-
-		/// <summary>
-		/// Handle jumping to the NotebookEdit tool and filtering on the Anthropology Category the user has
-		/// right clicked on.
-		/// </summary>
-		public bool OnJumpToNotebookEditFilterAnthroItems(object commandObject)
-		{
-			OnJumpToToolAndFilterAnthroItem("FilterAnthroItems", AreaServices.NotebookEditToolMachineName);
-			return true;
-		}
-
-		private void OnJumpToToolAndFilterAnthroItem(string linkSetupInfo, string toolToJumpTo)
-		{
+			var menu = (ToolStripMenuItem)sender;
 			var obj = ((VectorReferenceView)((VectorReferenceLauncher)CurrentSlice.Control).MainControl).SelectedObject;
 			if (obj == null)
 			{
@@ -3462,10 +3409,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			var hvo = obj.Hvo;
 
-			FwLinkArgs link = new FwAppArgs(Cache.ProjectId.Handle, toolToJumpTo, Guid.Empty);
+			FwLinkArgs link = new FwAppArgs(Cache.ProjectId.Handle, (string)((ToolStripMenuItem)sender).Tag, Guid.Empty);
 			var additionalProps = link.LinkProperties;
 			additionalProps.Add(new LinkProperty("SuspendLoadListUntilOnChangeFilter", link.ToolName));
-			additionalProps.Add(new LinkProperty("LinkSetupInfo", linkSetupInfo));
+			additionalProps.Add(new LinkProperty("LinkSetupInfo", "FilterAnthroItems"));
 			additionalProps.Add(new LinkProperty("HvoOfAnthroItem", hvo.ToString(CultureInfo.InvariantCulture)));
 			LinkHandler.PublishFollowLinkMessage(Publisher, link);
 		}
@@ -3865,7 +3812,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			return false;
 		}
 
-		#endregion IxCoreColleague message handlers
+#endregion IxCoreColleague message handlers
 
 #if RANDYTODO
 		/// <summary>
@@ -4034,34 +3981,34 @@ namespace LanguageExplorer.Controls.DetailControls
 			return true;
 		}
 
-		#region Implementation of IPropertyTableProvider
+#region Implementation of IPropertyTableProvider
 
 		/// <summary>
 		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
 		/// </summary>
 		public IPropertyTable PropertyTable { get; private set; }
 
-		#endregion
+#endregion
 
-		#region Implementation of IPublisherProvider
+#region Implementation of IPublisherProvider
 
 		/// <summary>
 		/// Get the IPublisher.
 		/// </summary>
 		public IPublisher Publisher { get; private set; }
 
-		#endregion
+#endregion
 
-		#region Implementation of ISubscriberProvider
+#region Implementation of ISubscriberProvider
 
 		/// <summary>
 		/// Get the ISubscriber.
 		/// </summary>
 		public ISubscriber Subscriber { get; private set; }
 
-		#endregion
+#endregion
 
-		#region Implementation of IFlexComonent
+#region Implementation of IFlexComonent
 
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
@@ -4084,7 +4031,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-		#endregion
+#endregion
 
 		private void ShowHiddenFields_Handler(object obj)
 		{

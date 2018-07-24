@@ -111,12 +111,6 @@ namespace LanguageExplorer.Areas.Grammar
 						}
 						if (vrl == null)
 						{
-							// We do, too, need to change tools! Sometimes this slice shows up in a different context,
-							// such as the main data entry view. See LT-7167.
-							// go to m_highestPOS in editor
-							// TODO: this should be reviewed by someone who knows how these links should be done
-							// I'm just guessing.
-							// Also, is there some way to know the application name and tool name without hard coding them?
 							LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(AreaServices.PosEditMachineName, dlg.HighestPOS.Guid));
 						}
 						else

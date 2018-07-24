@@ -27,11 +27,6 @@ namespace LanguageExplorer.LcmUi
 		internal WfiGlossUi()
 		{ }
 
-		protected override bool ShouldDisplayMenuForClass(int specifiedClsid)
-		{
-			return WfiGlossTags.kClassId == specifiedClsid;
-		}
-
 		protected override DummyCmObject GetMergeinfo(WindowParams wp, List<DummyCmObject> mergeCandidates, out string guiControl, out string helpTopic)
 		{
 			wp.m_title = LcmUiStrings.ksMergeWordGloss;

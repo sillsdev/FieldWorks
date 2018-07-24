@@ -1,4 +1,3 @@
-//#define TESTMS
 // Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
@@ -118,35 +117,20 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected virtual bool HandleRightClickOnObject(int hvo)
 		{
-#if TESTMS
-Debug.WriteLine("Starting: ReferenceViewBase.HandleRightClickOnObject");
-#endif
 			if (hvo == 0)
 			{
-#if TESTMS
-Debug.WriteLine("ReferenceViewBase.HandleRightClickOnObject: hvo is 0, so returning.");
-#endif
 				return false;
 			}
-			using (var ui = GetCmObjectUiForRightClickMenu(hvo))
+			// We do NOT want a Using here. The temporary colleague created inside HandleRightClick should dispose
+			// of the object. (Not working as of the time of writing, but disposing it makes a much more definite
+			// problem, because it is gone before the user can choose one of the menu items. (FWR-2798 reopened)
+			var ui = GetCmObjectUiForRightClickMenu(hvo);
+			if (ui != null)
 			{
-#if TESTMS
-Debug.WriteLine("Created ReferenceBaseUi");
-Debug.WriteLine("hvo=" + hvo.ToString()+" "+ui.Object.ShortName+"  "+ ui.Object.ToString());
-#endif
-				if (ui != null)
-				{
-#if TESTMS
-Debug.WriteLine("ui.HandleRightClick: and returning true.");
-#endif
-					ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-					return ui.HandleRightClick(this, true, adjustMenu: CmObjectUi.MarkCtrlClickItem);
-				}
-#if TESTMS
-Debug.WriteLine("No ui: returning false");
-#endif
-				return false;
+				ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+				return ui.HandleRightClick(this, true, adjustMenu: CmObjectUi.MarkCtrlClickItem);
 			}
+			return false;
 		}
 	}
 }

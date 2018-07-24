@@ -25,11 +25,6 @@ namespace LanguageExplorer.LcmUi
 		internal WfiAnalysisUi()
 		{ }
 
-		protected override bool ShouldDisplayMenuForClass(int specifiedClsid)
-		{
-			return WfiAnalysisTags.kClassId == specifiedClsid;
-		}
-
 		protected override void ReallyDeleteUnderlyingObject()
 		{
 			// Gather original counts.

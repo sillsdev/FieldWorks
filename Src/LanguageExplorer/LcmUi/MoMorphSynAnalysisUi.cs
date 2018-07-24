@@ -27,11 +27,6 @@ namespace LanguageExplorer.LcmUi
 		{
 		}
 
-		protected override bool ShouldDisplayMenuForClass(int specifiedClsid)
-		{
-			return (PartOfSpeechTags.kClassId == specifiedClsid) && GuidForJumping(null) != Guid.Empty;
-		}
-
 		/// <summary>
 		/// Gets a special VC that knows to display the name or abbr of the PartOfSpeech.
 		/// </summary>

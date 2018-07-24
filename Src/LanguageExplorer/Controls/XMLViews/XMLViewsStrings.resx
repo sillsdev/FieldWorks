@@ -526,10 +526,6 @@ Do you want to proceed?</value>
   <data name="ksShowAsHeadwordIn" xml:space="preserve">
     <value>Show As Headword In</value>
   </data>
-  <data name="ksShowEntryInLexicon" xml:space="preserve">
-    <value>Show Entry in Lexicon</value>
-    <comment>popup menu item in Collect Words view</comment>
-  </data>
   <data name="ksRedoCheckAll" xml:space="preserve">
     <value>Redo Select All</value>
   </data>

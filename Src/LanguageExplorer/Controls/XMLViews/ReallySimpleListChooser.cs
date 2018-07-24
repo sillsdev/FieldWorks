@@ -1381,7 +1381,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Access for outsiders who don't call InitializExtras.
 		/// </summary>
-		public void ReplaceTreeView(IPropertyTable propertyTable, string sGuiControl)
+		public void ReplaceTreeView(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, string sGuiControl)
 		{
 			if (!m_fFlatList)
 			{
@@ -1391,6 +1391,14 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (m_propertyTable == null)
 			{
 				m_propertyTable = propertyTable;
+			}
+			if (m_publisher == null)
+			{
+				m_publisher = publisher;
+			}
+			if (m_subscriber == null)
+			{
+				m_subscriber = subscriber;
 			}
 			ReplaceTreeView(sGuiControl);
 		}
