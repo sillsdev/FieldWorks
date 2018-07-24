@@ -171,7 +171,7 @@
 			<DeveloperFiles Include="$(fwrt)\DistFiles\TECkit\**\*"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\TxtConv.exe"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Windows\**\*"/>
-			<IcuFiles Include="$(fwrt)\DistFiles\Icu$(IcuVersion)\**\*"/>
+			<IcuDataFiles Include="$(fwrt)\DistFiles\Icu$(IcuVersion)\**\*"/>
 			<InstallerResources Include="$(fwrt)\License.htm"/> <!-- allow users to view the license before installing -->
 			<InstallerResources Include="$(fwrt)\resources\App.ico"/>
 			<InstallerResources Include="$(fwrt)\resources\Installer.ico"/>
@@ -243,7 +243,7 @@
 			<BinFiles Remove="@(MergeModules)"/>
 			<BinFiles Remove="$(OutputDirForConfig)\*Tests.*"/>
 			<BinFiles Remove="$(OutputDirForConfig)\test*"/>
-			<BinFiles Include="$(fwrt)\DistFiles\**\*" Exclude="@(DeveloperFiles);@(IcuFiles)"/>
+			<BinFiles Include="$(fwrt)\DistFiles\**\*" Exclude="@(DeveloperFiles);@(IcuDataFiles)"/>
 			<BinFiles Include="$(fwrt)\License.htm"/> <!-- install the license -->
 			<!-- Files with special install locations or steps -->
 			<CustomInstallFiles Include="$(OutputDirForConfig)\FieldWorks.exe"/> <!-- easier to add firewall extension if it isn't harvested -->
@@ -252,7 +252,7 @@
 			<!-- Files used to customize the generic patchable installer -->
 			<OverrideFiles Include="$(fwrt)\FLExInstaller\*.wxi"/>
 		</ItemGroup>
-		<Copy SourceFiles="@(IcuFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(DataDirSuffix)/Icu$(IcuVersion)/%(RecursiveDir)"/>
+		<Copy SourceFiles="@(IcuDataFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(DataDirSuffix)/Icu$(IcuVersion)/%(RecursiveDir)"/>
 		<Copy SourceFiles="@(InstallerResources)" OverwriteReadonlyFiles="true" DestinationFolder="$(InstallerResourcesDir)"/>
 		<Copy SourceFiles="@(L10nFilesWithRecursiveDirs)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(L10nDirSuffix)/%(RecursiveDir)"/>
 		<Copy SourceFiles="@(BinFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/%(RecursiveDir)"/>
