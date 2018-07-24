@@ -89,7 +89,7 @@
 		<Message Text="Finished building testGenericLib and running tests." Condition="'$(action)'=='test'"/>
 	</Target>
 
-	<Target Name="FwKernel" DependsOnTargets="GenericLib;GenerateCellarConstants;AppCore;createCompMaps">
+	<Target Name="FwKernel" DependsOnTargets="GenericLib;GenerateCellarConstants;AppCore;createCompMaps;CopyDlls">
 		<Message Text="FwKernel make-target='$(make-target)'"/>
 		<Make Condition="'$(OS)'=='Windows_NT'"
 			Makefile="$(fwrt)\Src\Kernel\FwKernel.mak"
@@ -171,7 +171,7 @@
 		<CellarConstantsOutputs Include="$(fwrt)/Output/Common/CellarConstants.h"/>
 	</ItemGroup>
 
-	<Target Name="GenerateCellarConstants" DependsOnTargets="CopyCellarBaseConstants"
+	<Target Name="GenerateCellarConstants" DependsOnTargets="CopyCellarBaseConstants;CopyDlls"
 			Inputs="@(CellarConstantsInputs)" Outputs="@(CellarConstantsOutputs)">
 		<MakeDir Directories="$(dir-fwoutputCommon)" Condition="'$(action)'!='clean'"/>
 		<LcmGenerate XmlFile="$(LcmArtifactsDir)/MasterLCModel.xml"
@@ -456,7 +456,7 @@
 
 		<Message Text="Downloading artifacts for icu4c." Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(Icu4cBuildType32)" VersionInfo="$(MasterVersionInfo)" Artifacts="@(IcuFiles)" DownloadsDir="$(DownloadsDir)/lib/x86" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(Icu4cBuildType64)" VersionInfo="$(MasterVersionInfo)" Artifacts="@(IcuFiles)" DownloadsDir="$(DownloadsDir)/lib/x64" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(Icu4cBuildType64)" VersionInfo="$(MasterVersionInfo)" Artifacts="@(IcuFiles)" DownloadsDir="$(DownloadsDir)/lib/x64" Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'"/>
 
 		<Message Text="Downloading artifacts for HermitCrab." />
 		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(HermitCrabBuildType)" Tag="$(HermitCrabBuildTag)" VersionInfo="$(MasterVersionInfo)" Artifacts="QuickGraph.dll;SIL.Machine.dll;SIL.Collections.dll;SIL.HermitCrab.dll" DownloadsDir="$(DownloadsDir)"/>
@@ -530,6 +530,19 @@
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<Copy SourceFiles="$(DownloadsDir)/lib/$(arch)/icuuc.lib" DestinationFolder="$(fwrt)/Lib"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+		<!-- Copy ICU dll's and exe's to lib/x64 and lib/x86. The ICU .lib files don't need included. -->
+		<ItemGroup>
+			<IcuFileSet32 Include="$(DownloadsDir)/lib/x86/icu*.dll" />
+			<IcuFileSet32 Include="$(DownloadsDir)/lib/x86/gennorm2.exe" />
+		</ItemGroup>
+		<ItemGroup>
+			<IcuFileSet64 Include="$(DownloadsDir)/lib/x64/icu*.dll" />
+			<IcuFileSet64 Include="$(DownloadsDir)/lib/x64/gennorm2.exe" />
+		</ItemGroup>
+		<!-- Include 32-bit ICU, even if arch is x64, so we can provide 32-bit ICU for 32-bit Paratext to use when the tools interact. -->
+		<Copy SourceFiles="@(IcuFileSet32)" DestinationFolder="$(dir-outputBase)/lib/x86" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'" />
+		<Copy SourceFiles="@(IcuFileSet64)" DestinationFolder="$(dir-outputBase)/lib/x64" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'" />
+
 		<!-- NUnit dlls -->
 		<Unzip ZipFilename="$(DownloadsDir)/NUnit-2.6.4.zip" ToDir="$(DownloadsDir)/" />
 		<CreateItem Include="$(DownloadsDir)/NUnit-2.6.4/**/*">
@@ -538,6 +551,7 @@
 		<Copy SourceFiles="@(NUnitFiles)" DestinationFolder="$(fwrt)/Bin/NUnit/%(RecursiveDir)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 		<ForceDelete Files="$(DownloadsDir)/NUnit-2.6.4/" />
+
 		<!-- LCM dlls -->
 		<ForceDelete Files="$(DownloadsDir)/LCM/" />
 		<Unzip ZipFilename="$(DownloadsDir)/LCM.zip" ToDir="$(DownloadsDir)/LCM/" Condition="'$(UseLocalLibraries)'!='Y'"/>
@@ -555,23 +569,7 @@
 		<Copy SourceFiles="@(DownloadedFiles)" DestinationFolder="$(dir-outputBase)"
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 
-		<!-- Copy ICU files to lib/x64 and lib/x86. The ICU .lib files don't need included. -->
-
-		<ItemGroup>
-			<IcuFileSet32 Include="$(DownloadsDir)/lib/x86/icu*.dll" />
-			<IcuFileSet32 Include="$(DownloadsDir)/lib/x86/gennorm2.exe" />
-		</ItemGroup>
-		<ItemGroup>
-			<IcuFileSet64 Include="$(DownloadsDir)/lib/x64/icu*.dll" />
-			<IcuFileSet64 Include="$(DownloadsDir)/lib/x64/gennorm2.exe" />
-		</ItemGroup>
-
-		<!-- Include 32-bit ICU, even if arch is x64, so we can provide 32-bit ICU for 32-bit Paratext to use when the tools interact. -->
-		<Copy SourceFiles="@(IcuFileSet32)" DestinationFolder="$(dir-outputBase)/lib/x86" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'" />
-		<Copy SourceFiles="@(IcuFileSet64)" DestinationFolder="$(dir-outputBase)/lib/x64" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'" />
-
 		<!-- Encoding Converters Files -->
-
 		<Copy SourceFiles="@(ECWindowsFiles -> '$(fwrt)/packages/Encoding-Converters-Core.$(ECNugetVersion)/lib/net40/$(ECArch)/%(Identity)')"
 			DestinationFolder="$(dir-outputBase)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<Copy SourceFiles="@(ECPlugins -> '$(fwrt)/packages/Encoding-Converters-Core.$(ECNugetVersion)/Plugins/%(Identity)')"
