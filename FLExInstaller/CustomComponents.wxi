@@ -195,7 +195,7 @@
 	<WixVariable Id="UPDATEtrL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\tr"/>
 	<WixVariable Id="UPDATEviL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\vi"/>
 	<WixVariable Id="UPDATEzhL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\zh-CN"/>
-	<WixVariable Id="UPDATEFONTNDIR" Value="$(var.UPDATEBUILDDIR)_Font"/>
+	<WixVariable Id="UPDATEFONTDIR" Value="$(var.UPDATEBUILDDIR)_Font"/>
 	<?define HarvestWxiDir = .\update?>
 	<?endif?>
 
