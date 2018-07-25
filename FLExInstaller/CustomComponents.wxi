@@ -154,8 +154,15 @@
 		<Directory Id="zhL10NFOLDER" Name="zh-CN"/>
 	</DirectoryRef>
 
+	<DirectoryRef Id='HARVESTDATAFOLDER'>
+		<Component Id="RegisterICUFolder" Guid="FD94075E-CB26-4C7A-ADF4-B920FC1B25D1">
+			<RegistryValue Name="ICU54DataDir" Root="HKLM"  Key="Software\SIL" Type="string" KeyPath="yes" Value="[HARVESTDATAFOLDER]\Icu54" />
+		</Component>
+	</DirectoryRef>
+
 	<ComponentGroup Id="Miscelanea">
 		<ComponentRef Id="vs_piaredist.exe"/>
+		<ComponentRef Id="RegisterICUFolder"/>
 	</ComponentGroup>
 
 	<!-- These WixVariables insert the source directory into the harvest files (because Heat apparently can't) -->
