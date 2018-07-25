@@ -4,10 +4,10 @@
 
 
  /* File created by MIDL compiler version 8.00.0603 */
-/* at Thu Sep 21 14:47:44 2017
+/* at Tue Jul 24 10:34:15 2018
  */
-/* Compiler settings for C:\Dev\05_FieldWorks\Output\Common\FwKernelTlb.idl:
-    Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0603 
+/* Compiler settings for C:\Repositories\fwroot\fw\Output\Common\FwKernelTlb.idl:
+    Oicf, W1, Zp8, env=Win64 (32b run), target_arch=AMD64 8.00.0603 
     protocol : dce , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
     VC __declspec() decoration level: 
@@ -675,7 +675,7 @@ FF3D947F-1D35-487B-A769-5B6C68722054
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 ITsStrBldr
 ,
-71D84C4A-10A2-4A7C-B58C-D01386DAE5F7
+35C5278D-2A52-4B54-AB13-B6E346B301BA
 );
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 ITsIncStrBldr
@@ -4869,7 +4869,7 @@ ActionHandler;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
     
-    MIDL_INTERFACE("71D84C4A-10A2-4A7C-B58C-D01386DAE5F7")
+    MIDL_INTERFACE("35C5278D-2A52-4B54-AB13-B6E346B301BA")
     ITsStrBldr : public IUnknown
     {
     public:
@@ -4937,7 +4937,7 @@ ActionHandler;
         virtual HRESULT STDMETHODCALLTYPE ReplaceRgch( 
             /* [in] */ int ichMin,
             /* [in] */ int ichLim,
-            /* [size_is][in] */ const OLECHAR *prgchIns,
+            /* [in] */ const BSTR prgchIns,
             /* [in] */ int cchIns,
             /* [in] */ ITsTextProps *pttp) = 0;
         
@@ -5064,7 +5064,7 @@ ActionHandler;
             ITsStrBldr * This,
             /* [in] */ int ichMin,
             /* [in] */ int ichLim,
-            /* [size_is][in] */ const OLECHAR *prgchIns,
+            /* [in] */ const BSTR prgchIns,
             /* [in] */ int cchIns,
             /* [in] */ ITsTextProps *pttp);
         

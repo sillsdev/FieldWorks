@@ -41,6 +41,7 @@ protected:
 	VwStringBox()
 		:VwLeafBox()
 	{
+		m_ichMin = 0;
 #ifdef _DEBUG
 		// acts as a flag for validity of the box.
 		rgchDebugStr[0] = 0xffff;
@@ -601,6 +602,8 @@ public:
 	VwConcParaBox(VwPropertyStore * pzvps, VwSourceType vst = kvstConc)
 		: VwParagraphBox(pzvps, vst)
 	{
+		m_ichLimItem = m_ichLimItem = 0;
+		m_dmpAlign = 0;
 	}
 	void Init(int ichMinItem, int ichLimItem, int dmpAlign, VwConcParaOpts cpo);
 	virtual void DoPartialLayout(IVwGraphics * pvg, VwBox * pboxStart, int cLinesToSave,

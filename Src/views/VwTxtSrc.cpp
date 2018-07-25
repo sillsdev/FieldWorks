@@ -861,7 +861,8 @@ void VwMappedTxtSrc::AddString(ITsMutString * ptms, VwPropertyStore * pzvps,
 					CheckHr(ptms->GetBldr(&qtsb));
 					int cchTmp;
 					CheckHr(qtsb->get_Length(&cchTmp));
-					CheckHr(qtsb->ReplaceRgch(0, cchTmp, pch, 1, qttp));
+					StrUni uniPch(pch);
+					CheckHr(qtsb->ReplaceRgch(0, cchTmp, uniPch.Bstr(), 1, qttp));
 					CheckHr(qtsb->GetString(&qtss));
 				}
 				else
@@ -1227,6 +1228,9 @@ public:
 	MappedFetcher(int ichMin, int ichLim, OLECHAR * prgchOut, VwMappedTxtSrc * psrc)
 		: vtmi(psrc->Mapper())
 	{
+		pch = pchLim = nullptr;
+		itmi = ichren = ichlog = ichlogNextObj = ibst = ichlogMinThisString = 0;
+		qtms = nullptr;
 		m_psrc = psrc;
 		ichrenMin = ichMin;
 		ichrenLim = ichLim;

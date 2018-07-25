@@ -275,7 +275,7 @@ namespace LanguageExplorer.Areas
 				_sharedEventHandlers.Remove(AreaServices.InsertOptionalItem);
 				_sharedEventHandlers.Remove(AreaServices.InsertHashMark);
 				_sharedEventHandlers.Remove(AreaServices.ShowEnvironmentError);
-				_sharedEventHandlers.Remove(AreaServices.JumpToTool_Clicked);
+				_sharedEventHandlers.Remove(AreaServices.JumpToTool);
 
 				if (_fileExportMenu != null)
 				{

@@ -8410,7 +8410,7 @@ public:
 		// This prevents us from seeing spurious text runs from a previous spell check.
 		if (m_qsotsOverride)
 			m_psrc = m_qsotsOverride->EmbeddedSrc();
-		m_ich = 0;
+		m_ichLimRun = m_ich = 0;
 		m_cch = m_psrc->CchRen();
 		m_pvpbox->GetWritingSystemFactory(&m_qwsf);
 	}

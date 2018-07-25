@@ -240,7 +240,7 @@
 
 	<!-- Set some environment variables needed by make (or nmake) -->
 	<SetEnvVar Variable="PATH" Value="$(dir-outputBase):$(icu_lib):$(fwrt)/Lib/src/icu/install$(arch)/bin:$(PATH)" Condition="'$(OS)'=='Unix'"/>
-	<SetEnvVar Variable="PATH" Value="$(dir-outputBase);$(PATH)" Condition="'$(OS)'=='Windows_NT'"/>
+	<SetEnvVar Variable="PATH" Value="$(dir-outputBase);$(PATH);$(dir-outputBase)/lib/$(Arch)" Condition="'$(OS)'=='Windows_NT'"/>
 	<SetEnvVar Variable="BUILD_TYPE" Value="$(build-type)"/>
 	<SetEnvVar Variable="BUILD_CONFIG" Value="$(config-capital)" />
 	<SetEnvVar Variable="BUILD_ROOT" Value="$(fwrt)" />

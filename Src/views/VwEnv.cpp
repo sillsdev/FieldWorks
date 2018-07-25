@@ -41,10 +41,10 @@ static DummyFactory dfactEnv(_T("Sil.Views.VwEnv"));
 ----------------------------------------------------------------------------------------------*/
 VwEnv::VwEnv()
 {
+	m_pboxSaveFirst = m_pboxSaveLast = m_pboxSaveContainer = m_pgboxCurr = nullptr;
 	// COM object behavior
 	m_cref = 1;
 	ModuleEntry::ModuleAddRef();
-
 	// misc. variable initializations
 	Assert(m_fObjectOpen == false);  // we expect an object to be opened before an attribute
 	Assert(m_fTableRow == false);

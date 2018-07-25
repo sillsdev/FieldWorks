@@ -245,7 +245,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			if (Visible)
 			{
-				InnerView.RefreshDisplay();
+				InnerView.RefreshDisplayIfPending(); // Reconstruct the innerView's RootBox only if it is pending.
 			}
 			int dpiX;
 			using (var graphics = CreateGraphics())
@@ -275,7 +275,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						if (InnerView.GetSoundControlRectangle(sel, out selRect))
 						{
 							control.Top = selRect.Top;
-						}
+					}
 					}
 					// Don't crash trying to bring to front if control is not a child control on Linux (FWNX-1348).
 					// If control.Parent is null, don't crash, and bring to front anyway on Windows (LT-15148).

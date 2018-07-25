@@ -673,7 +673,7 @@ namespace LanguageExplorer.Areas
 				if (movingColumnUI.CheckAndReportProtectedChartColumn())
 				{
 					return true;
-			}
+				}
 			}
 			// Other things being equal, we now need to make sure we aren't messing up the chart levels
 			// Unless something is badly wrong, the destination is either the root template,
@@ -702,7 +702,7 @@ namespace LanguageExplorer.Areas
 					if (dest.SubPossibilitiesOS.Count == 0)
 					{
 						return destUI.CheckAndReportProtectedChartColumn();
-				}
+					}
 				}
 				// If it's already a group it should be fine as a destination.
 				return false;

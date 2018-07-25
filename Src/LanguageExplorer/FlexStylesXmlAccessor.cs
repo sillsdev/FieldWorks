@@ -123,7 +123,7 @@ namespace LanguageExplorer
 		protected override void ValidateContext(ContextValues context, string styleName)
 		{
 			if (context != ContextValues.InternalConfigureView && context != ContextValues.Internal &&
-			    context != ContextValues.General)
+				context != ContextValues.General)
 			{
 				ReportInvalidInstallation($"Style {styleName} is illegally defined with context '{context}' in {ResourceFileName}.");
 			}
@@ -426,25 +426,25 @@ namespace LanguageExplorer
 			{
 				return paragraphProps;
 			}
-			string lineSpaceType;
-			// relative is used for single, 1.5, double space
-			if (styleRules.LineSpacing.m_relative)
-			{
-				lineSpaceType = "rel";
-			}
-			else if (styleRules.LineSpacing.m_lineHeight <= 0)
-			{
-				// for historical reasons negative values mean exact, and positive mean at least
-				// (see: Framework\StylesXmlAccessor.cs SetParagraphProperties())
-				lineSpaceType = "exact";
-			}
-			else
-			{
-				lineSpaceType = "atleast";
-			}
-			var lineSpace = Math.Abs(styleRules.LineSpacing.m_lineHeight) / 1000 + " pt";
-			paragraphProps.Add(new Tuple<string, string>("lineSpacing", lineSpace));
-			paragraphProps.Add(new Tuple<string, string>("lineSpacingType", lineSpaceType));
+				string lineSpaceType;
+				// relative is used for single, 1.5, double space
+				if (styleRules.LineSpacing.m_relative)
+				{
+					lineSpaceType = "rel";
+				}
+				else if (styleRules.LineSpacing.m_lineHeight <= 0)
+				{
+					// for historical reasons negative values mean exact, and positive mean at least
+					// (see: Framework\StylesXmlAccessor.cs SetParagraphProperties())
+					lineSpaceType = "exact";
+				}
+				else
+				{
+					lineSpaceType = "atleast";
+				}
+				var lineSpace = Math.Abs(styleRules.LineSpacing.m_lineHeight) / 1000 + " pt";
+				paragraphProps.Add(new Tuple<string, string>("lineSpacing", lineSpace));
+				paragraphProps.Add(new Tuple<string, string>("lineSpacingType", lineSpaceType));
 
 			return paragraphProps;
 		}
@@ -558,24 +558,28 @@ namespace LanguageExplorer
 			{
 				return;
 			}
-			var color = Color.FromArgb((int)ColorUtil.ConvertRGBtoBGR((uint)colorValueBGR)); // convert BGR to RGB
-			GetColorValueFromSystemColor(attributeName, resultsList, color);
-		}
+				var color = Color.FromArgb((int)ColorUtil.ConvertRGBtoBGR((uint)colorValueBGR)); // convert BGR to RGB
+				GetColorValueFromSystemColor(attributeName, color, resultsList);
+			}
 
 		private void GetColorValueAttribute(string attributeName, IStyleProp<Color> fontColor, List<Tuple<string, string>> resultsList)
 		{
 			if (fontColor.ValueIsSet)
 			{
 				var color = fontColor.Value;
-				GetColorValueFromSystemColor(attributeName, resultsList, color);
+				GetColorValueFromSystemColor(attributeName, color, resultsList);
 			}
 		}
 
 		/// <summary>
 		/// Takes a system color and writes out a string if it is a known color, or an RGB value that the import code can read
 		/// </summary>
-		private static void GetColorValueFromSystemColor(string attributeName, List<Tuple<string, string>> resultsList, Color color)
+		private static void GetColorValueFromSystemColor(string attributeName, Color color, List<Tuple<string, string>> resultsList)
 		{
+			if (color.IsEmpty)
+			{
+				return;
+			}
 			var colorString = color.IsKnownColor ? color.Name.ToLowerInvariant() : $"({color.R},{color.G},{color.B})";
 			resultsList.Add(new Tuple<string, string>(attributeName, colorString));
 		}

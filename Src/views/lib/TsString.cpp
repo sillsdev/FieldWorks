@@ -1060,8 +1060,9 @@ public:
 		m_pptssRet = pptssRet;
 		m_ptssThis = ptssThis;
 		m_cichOffsetsToFix = 0;
-		m_prgpichOffsetsToFix = NULL;
+		m_prgpichOffsetsToFix = nullptr;
 		m_iichNextOffsetToFix = 0;
+		m_prgchInput = nullptr;
 	}
 
 	// qsort function for sorting an array of pointers to integers by the magnitude of the
@@ -1983,7 +1984,7 @@ STDMETHODIMP TsStrBldr::ReplaceTsString(int ichMin, int ichLim, ITsString * ptss
 /*----------------------------------------------------------------------------------------------
 	Replace a range with new text and optional properties.
 ----------------------------------------------------------------------------------------------*/
-STDMETHODIMP TsStrBldr::ReplaceRgch(int ichMin, int ichLim, const OLECHAR * prgchIns,
+STDMETHODIMP TsStrBldr::ReplaceRgch(int ichMin, int ichLim, const BSTR prgchIns,
 									int cchIns, ITsTextProps * pttp)
 {
 	BEGIN_COM_METHOD;

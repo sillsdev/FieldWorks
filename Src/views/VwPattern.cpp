@@ -1920,7 +1920,8 @@ void VwPattern::RemoveIgnorableRuns(ITsString * ptssIn, ITsString ** pptssOut)
 
 			ITsTextPropsPtr qttpReduced;
 			CheckHr(qtpb->GetTextProps(&qttpReduced));
-			CheckHr(qtsb->ReplaceRgch(cchBldr, cchBldr, pchBuf + tri.ichMin,
+			StrUni uniStrPchBuf(pchBuf + tri.ichMin);
+			CheckHr(qtsb->ReplaceRgch(cchBldr, cchBldr, uniStrPchBuf.Bstr(),
 				cchRun, qttpReduced));
 			cchBldr += cchRun;
 		}

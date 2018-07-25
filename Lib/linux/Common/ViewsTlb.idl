@@ -17,7 +17,7 @@ import "oaidl.idl";
 import "ocidl.idl";
 import "objidl.idl";
 
-#line 1 "C:\\Dev\\05_FieldWorks\\src\\Kernel\\common.idh"
+#line 1 "C:\\Repositories\\fwroot\\fw\\src\\Kernel\\common.idh"
 
 
 
@@ -128,7 +128,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	
 	importlib("FwKernelTlb.tlb");	
 
-	#line 1 "c:\\dev\\05_fieldworks\\src\\views\\Render.idh"
+	#line 1 "c:\\repositories\\fwroot\\fw\\src\\views\\Render.idh"
 
 
 
@@ -659,7 +659,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwGraphicsWin32;
 	};
-	#line 532 "c:\\dev\\05_fieldworks\\src\\views\\Render.idh"
+	#line 532 "c:\\repositories\\fwroot\\fw\\src\\views\\Render.idh"
 
 
 	
@@ -1304,7 +1304,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IRenderEngine;
 	};
-	#line 1177 "c:\\dev\\05_fieldworks\\src\\views\\Render.idh"
+	#line 1177 "c:\\repositories\\fwroot\\fw\\src\\views\\Render.idh"
 
 
 	
@@ -1383,9 +1383,8 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 			[in] int nLevel,				
 			[in] int value);				
 	};
-
 #line 28 ".\\ViewsTlb.idl"
-	#line 1 "c:\\dev\\05_fieldworks\\src\\views\\Views.idh"
+	#line 1 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
 
 
 
@@ -1911,7 +1910,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 
 
 
-#line 527 "c:\\dev\\05_fieldworks\\src\\views\\Views.idh"
+#line 527 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
 
 	
 	
@@ -2351,7 +2350,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 		interface IVwCacheDa;
 		interface IStructuredTextDataAccess;
 	};
-	#line 967 "c:\\dev\\05_fieldworks\\src\\views\\Views.idh"
+	#line 967 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
 
 	
 
@@ -3111,7 +3110,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwRootBox;
 	};
-#line 1727 "c:\\dev\\05_fieldworks\\src\\views\\Views.idh"
+#line 1727 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
 
 	
 
@@ -4852,7 +4851,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwPropertyStore;
 	};
-	#line 3468 "c:\\dev\\05_fieldworks\\src\\views\\Views.idh"
+	#line 3468 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
 
 	
 	typedef [v1_enum] enum VwOverlayFlags
@@ -5136,7 +5135,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwOverlay;
 	};
-	#line 3752 "c:\\dev\\05_fieldworks\\src\\views\\Views.idh"
+	#line 3752 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
 
 	
 	
@@ -5348,7 +5347,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwPrintContext;
 	};
-	#line 3964 "c:\\dev\\05_fieldworks\\src\\views\\Views.idh"
+	#line 3964 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
 
 
 	
@@ -5659,7 +5658,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwPattern;
 	};
-	#line 4275 "c:\\dev\\05_fieldworks\\src\\views\\Views.idh"
+	#line 4275 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
 
 
 	
@@ -5693,7 +5692,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 		interface IVwTxtSrcInit2;
 		interface IVwTextSource;
 	};
-	#line 4309 "c:\\dev\\05_fieldworks\\src\\views\\Views.idh"
+	#line 4309 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
 
 
 	
@@ -5725,7 +5724,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 		interface IVwTxtSrcInit;
 		interface IVwTextSource;
 	};
-	#line 4341 "c:\\dev\\05_fieldworks\\src\\views\\Views.idh"
+	#line 4341 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
 
 	
 
@@ -5763,7 +5762,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwSearchKiller;
 	};
-	#line 4379 "c:\\dev\\05_fieldworks\\src\\views\\Views.idh"
+	#line 4379 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
 
 	
 
@@ -5843,7 +5842,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwDrawRootBuffered;
 	};
-	#line 4459 "c:\\dev\\05_fieldworks\\src\\views\\Views.idh"
+	#line 4459 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
 
 	
 
@@ -5891,7 +5890,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwSynchronizer;
 	};
-	#line 4507 "c:\\dev\\05_fieldworks\\src\\views\\Views.idh"
+	#line 4507 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
 
 
 
@@ -6024,7 +6023,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface ILgCollatingEngine;
 	};
-	#line 4640 "c:\\dev\\05_fieldworks\\src\\views\\Views.idh"
+	#line 4640 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
 
 
 
@@ -6194,7 +6193,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("1CD09E06-6978-4969-A1FC-4627
 {
 	interface IVwLayoutStream;
 };
-#line 4810 "c:\\dev\\05_fieldworks\\src\\views\\Views.idh"
+#line 4810 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
 
 
 
@@ -6307,7 +6306,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IVwLayoutManager") 
 	{
 		interface IPictureFactory;
 	};
-#line 4923 "c:\\dev\\05_fieldworks\\src\\views\\Views.idh"
+#line 4923 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
 
 
 	
@@ -6328,7 +6327,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IVwLayoutManager") 
 	{
 		interface IVwWindow;
 	};
-	#line 4944 "c:\\dev\\05_fieldworks\\src\\views\\Views.idh"
+	#line 4944 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
 
 
 typedef [v1_enum] enum VwMouseEvent
@@ -6439,10 +6438,9 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("24636FD1-DB8D-4b2c-B4C0-44C2
 {
 	interface IDebugReport;
 };
-#line 5055 "c:\\dev\\05_fieldworks\\src\\views\\Views.idh"
+#line 5055 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
 
-#line 5057 "c:\\dev\\05_fieldworks\\src\\views\\Views.idh"
-
+#line 5057 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
 #line 29 ".\\ViewsTlb.idl"
 
 };
