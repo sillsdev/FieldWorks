@@ -309,7 +309,7 @@
 		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="HarvestFont" Condition="'$(BuildingBaseInstaller)'!='true'"
 			Properties="PatchPrefix=MASTER;FontSrcDir=$(AppBuildMasterDir)\$(FontDirSuffix);HarvestWxiDir=$(OverridesDestDir)\Master"/>
 		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="HarvestFont" Condition="'$(BuildingBaseInstaller)'!='true'"
-			Properties="PatchPrefix=UPDATE;;FontSrcDir=$(AppBuildDir)\$(FontDirSuffix);HarvestWxiDir=$(OverridesDestDir)\Update"/>
+			Properties="PatchPrefix=UPDATE;FontSrcDir=$(AppBuildDir)\$(FontDirSuffix);HarvestWxiDir=$(OverridesDestDir)\Update"/>
 	</Target>
 
 	<Target Name="HarvestFont">

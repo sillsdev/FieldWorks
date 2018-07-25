@@ -79,11 +79,6 @@
 		</Directory>
 		<Directory Id="SILProgramMenuFolder" Name="SIL">
 			<Component Id="StartMenuFontsShortcut" Guid="C3300D43-CBD9-4244-AFBE-35B9FF3C01BA">
-				<Shortcut Id="FontsShortcut"
-					Name="Fonts"
-					Description="SIL Font Documentation"
-					Target='"[WindowsFolder]explorer.exe" "[APPFOLDER]Fonts"'
-					WorkingDirectory='APPFOLDER'/>
 				<Shortcut Id="AndikaDocShortcut"
 					Name="Andika Documentation"
 					Target="[APPFOLDER]Fonts\Andika-5.000\README.txt"/>
@@ -199,6 +194,7 @@
 	<WixVariable Id="UPDATEteL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\te"/>
 	<WixVariable Id="UPDATEtrL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\tr"/>
 	<WixVariable Id="UPDATEviL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\vi"/>
+	<WixVariable Id="UPDATEzhL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\zh-CN"/>
 	<WixVariable Id="UPDATEFONTNDIR" Value="$(var.UPDATEBUILDDIR)_Font"/>
 	<?define HarvestWxiDir = .\update?>
 	<?endif?>
