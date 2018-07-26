@@ -1287,11 +1287,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
                 return ResourceManager.GetString("ksMorphemes", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Move Down.
-        /// </summary>
-        internal static string ksMoveDown {
+
+		/// <summary>
+		///   Looks up a localized string similar to Move Down.
+		/// </summary>
+		internal static string ksMoveDown {
             get {
                 return ResourceManager.GetString("ksMoveDown", resourceCulture);
             }

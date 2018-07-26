@@ -70,7 +70,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		internal InterlinMaster(XElement configurationParametersElement, ISharedEventHandlers sharedEventHandlers, LcmCache cache, IRecordList recordList, ToolStripMenuItem fileMenu, ToolStripMenuItem printMenu, bool showTitlePane = true)
-			:base(configurationParametersElement, cache, recordList)
+			: base(configurationParametersElement, cache, recordList)
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -167,24 +167,29 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					(site as Control).SuspendLayout();
 				}
 				site.SetRoot(RootStTextHvo);
-				if (site is Control) (site as Control).ResumeLayout();
+				if (site is Control)
+				{
+					(site as Control).ResumeLayout();
+				}
 			}
 		}
 
 		internal InterlinMode GetLineMode()
 		{
-			if (m_tabCtrl.SelectedIndex == (int)TabPageSelection.Gloss)
+			switch (m_tabCtrl.SelectedIndex)
 			{
-				return PropertyTable.GetValue(InterlinDocForAnalysis.ksPropertyAddWordsToLexicon, false) ?
-					InterlinMode.GlossAddWordsToLexicon : InterlinMode.Gloss;
-			}
+				case (int)TabPageSelection.Gloss:
+					return PropertyTable.GetValue(InterlinDocForAnalysis.ksPropertyAddWordsToLexicon, false) ? InterlinMode.GlossAddWordsToLexicon : InterlinMode.Gloss;
 
-			if (m_tabCtrl.SelectedIndex == (int) TabPageSelection.TaggingView ||
-			    m_tabCtrl.SelectedIndex == (int) TabPageSelection.ConstituentChart)
-			{
-				return InterlinMode.Gloss;
+				case (int)TabPageSelection.ConstituentChart:
+					return InterlinMode.Chart;
+
+				case (int)TabPageSelection.TaggingView:
+					return InterlinMode.Gloss;
+
+				default:
+					return InterlinMode.Analyze;
 			}
-			return InterlinMode.Analyze;
 		}
 
 		protected override void OnHandleCreated(EventArgs e)
@@ -336,7 +341,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return;
 			}
 			InterAreaBookmark mark;
-			if(m_bookmarks.TryGetValue(new Tuple<string, Guid>(MyRecordList.Id, RootStText.Guid), out mark))
+			if (m_bookmarks.TryGetValue(new Tuple<string, Guid>(MyRecordList.Id, RootStText.Guid), out mark))
 			{
 				//We only want to persist the save if we are in the interlinear edit, not the concordance view
 				mark.Save(curAnalysis, MyRecordList.Id.Equals(TextAndWordsArea.InterlinearTexts), IndexOfTextRecord);
@@ -461,7 +466,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			if (m_styleSheet == null)
 			{
-				return;		// cannot display properly without style sheet, so don't try.
+				return;     // cannot display properly without style sheet, so don't try.
 			}
 
 			// LT-10995: the TitleContentsPane m_tcPane and the TabControl m_tabCtrl used to be
@@ -481,7 +486,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// If there is a TitleContentsPane then it needs to be at the top of the
 				// container, match the container's width, and have its height calculated
 				// automatically:
-				m_tcPane.Location = new Point(0,0);
+				m_tcPane.Location = new Point(0, 0);
 				m_tcPane.Width = Width;
 				m_tcPane.AdjustHeight();
 
@@ -713,8 +718,6 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		/// <summary>
 		/// Determine whether we need to parse any of the texts paragraphs.
 		/// </summary>
-		/// <param name="stText"></param>
-		/// <returns></returns>
 		public static bool HasParagraphNeedingParse(IStText stText)
 		{
 			return stText.ParagraphsOS.Cast<IStTxtPara>().Any(para => !para.ParseIsCurrent);
@@ -964,7 +967,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 			// is filtering, he probably just wants to see that there are no matching texts, not
 			// make a new one.
 			if (MyRecordList is InterlinearTextsRecordList &&
-			    MyRecordList.CurrentObjectHvo == 0 && !m_fSuppressAutoCreate && !MyRecordList.ShouldNotModifyList
+				MyRecordList.CurrentObjectHvo == 0 && !m_fSuppressAutoCreate && !MyRecordList.ShouldNotModifyList
 				&& MyRecordList.Filter == null)
 			{
 				// This is needed in SwitchText(0) to avoid LT-12411 when in Info tab.
@@ -995,8 +998,8 @@ private void ReloadPaneBar(IPaneBar paneBar)
 			}
 			if (MyRecordList.CurrentObjectHvo == 0)
 			{
-				SwitchText(0);		// We no longer have a text.
-				return;				// We get another call when there is one.
+				SwitchText(0);      // We no longer have a text.
+				return;             // We get another call when there is one.
 			}
 			var hvoRoot = MyRecordList.CurrentObjectHvo;
 			if (MyRecordList.CurrentObjectHvo != 0 && !Cache.ServiceLocator.IsValidObjectId(MyRecordList.CurrentObjectHvo)) // RecordList is tracking an analysis
@@ -1019,7 +1022,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 					// If we have restarted FLEx since this text was created, the WS has been lost and replaced with the global default of English.
 					// If this is the case, default to the Default Vernacular WS (LT-15688)
 					var globalDefaultWs = Cache.ServiceLocator.WritingSystemManager.Get("en").Handle;
-					if(stText.MainWritingSystem == globalDefaultWs)
+					if (stText.MainWritingSystem == globalDefaultWs)
 					{
 						NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 							((IStTxtPara)stText.ParagraphsOS[0]).Contents = TsStringUtils.MakeString(string.Empty, Cache.DefaultVernWs));
@@ -1033,7 +1036,9 @@ private void ReloadPaneBar(IPaneBar paneBar)
 					}
 					// Don't steal the focus from another window.  See FWR-1795.
 					if (ParentForm == Form.ActiveForm)
+					{
 						m_rtPane.Focus();
+					}
 				}
 				if (RootStText == null || RootStText.Hvo != hvoRoot)
 				{
@@ -1058,7 +1063,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 			}
 
 			UpdateContextHistory();
-			m_fRefreshOccurred = false;	// reset our flag that a refresh occurred.
+			m_fRefreshOccurred = false; // reset our flag that a refresh occurred.
 		}
 
 		private int SetConcordanceBookmarkAndReturnRoot(int hvoRoot)
@@ -1142,7 +1147,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 			}
 			// Use a bookmark, if we've set one.
 			if (RootStText != null && m_bookmarks.ContainsKey(new Tuple<string, Guid>(MyRecordList.Id, RootStText.Guid)) &&
-			    m_bookmarks[new Tuple<string, Guid>(MyRecordList.Id, RootStText.Guid)].IndexOfParagraph >= 0)
+				m_bookmarks[new Tuple<string, Guid>(MyRecordList.Id, RootStText.Guid)].IndexOfParagraph >= 0)
 			{
 				(CurrentInterlinearTabControl as IHandleBookmark)?.SelectBookmark(m_bookmarks[new Tuple<string, Guid>(MyRecordList.Id, RootStText.Guid)]);
 			}
@@ -1225,7 +1230,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 			else if (m_idcGloss != null && m_idcGloss.Visible)
 			{
 				m_idcGloss.AddNote(command);
-			}
+		}
 #endif
 		}
 
@@ -1267,7 +1272,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 			set
 			{
 				PropertyTable.SetProperty("InterlinearTab", value.ToString(), true);
-				if (m_tabCtrl.SelectedIndex != (int) InterlinearTab)
+				if (m_tabCtrl.SelectedIndex != (int)InterlinearTab)
 				{
 					ShowTabView();
 				}
@@ -1281,12 +1286,11 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		/// <param name="commandObject"></param>
 		/// <param name="display"></param>
 		/// <returns></returns>
-		public bool OnDisplayConfigureInterlinear(object commandObject,
-			ref UIItemDisplayProperties display)
+		public bool OnDisplayConfigureInterlinear(object commandObject, ref UIItemDisplayProperties display)
 		{
 			bool fShouldDisplay = (CurrentInterlinearTabControl != null &&
-				CurrentInterlinearTabControl is InterlinDocRootSiteBase &&
-				!(CurrentInterlinearTabControl is InterlinDocChart));
+				(CurrentInterlinearTabControl is InterlinDocRootSiteBase ||
+				CurrentInterlinearTabControl is InterlinDocChart));
 			display.Visible = fShouldDisplay;
 			display.Enabled = fShouldDisplay;
 			return true;
@@ -1302,6 +1306,10 @@ private void ReloadPaneBar(IPaneBar paneBar)
 			if (CurrentInterlinearTabControl != null && CurrentInterlinearTabControl is InterlinDocRootSiteBase)
 			{
 				(CurrentInterlinearTabControl as InterlinDocRootSiteBase).OnConfigureInterlinear(argument);
+			}
+			else if (CurrentInterlinearTabControl != null && CurrentInterlinearTabControl is InterlinDocChart)
+			{
+				(CurrentInterlinearTabControl as InterlinDocChart).OnConfigureInterlinear(argument);
 			}
 
 			return true; // We handled this
@@ -1372,8 +1380,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		/// </summary>
 		/// <param name="commandObject"></param>
 		/// <param name="display"></param>
-		public bool OnDisplayITexts_AddWordsToLexicon(object commandObject,
-			ref UIItemDisplayProperties display)
+		public bool OnDisplayITexts_AddWordsToLexicon(object commandObject, ref UIItemDisplayProperties display)
 		{
 			var fCanDisplayAddWordsToLexiconPanelBarButton = InterlinearTab == TabPageSelection.Gloss;
 			display.Visible = fCanDisplayAddWordsToLexiconPanelBarButton;
@@ -1393,8 +1400,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		/// starting with "ShowHiddenFields-", and they are persisted in settings.</note>
 		/// <param name="commandObject"></param>
 		/// <param name="display"></param>
-		public bool OnDisplayShowHiddenFields_interlinearEdit(object commandObject,
-			ref UIItemDisplayProperties display)
+		public bool OnDisplayShowHiddenFields_interlinearEdit(object commandObject, ref UIItemDisplayProperties display)
 		{
 			var fCanDisplayAddWordsToLexiconPanelBarButton = InterlinearTab == TabPageSelection.Info;
 			display.Visible = fCanDisplayAddWordsToLexiconPanelBarButton;

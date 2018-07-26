@@ -37,8 +37,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// Base class for hosting a view in an application.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class SimpleRootSite : UserControl, IVwRootSite, IRootSite, IFlexComponent,
-		IEditingCallbacks, IReceiveSequentialMessages, IMessageFilter
+	public class SimpleRootSite : UserControl, IVwRootSite, IRootSite, IFlexComponent, IEditingCallbacks, IReceiveSequentialMessages, IMessageFilter
 	{
 		#region Events
 		/// <summary>
@@ -341,8 +340,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_messageSequencer = new MessageSequencer(this);
 			m_graphicsManager = CreateGraphicsManager();
 			m_orientationManager = CreateOrientationManager();
-			if(LicenseManager.UsageMode != LicenseUsageMode.Designtime)
-			SubscribeToRootSiteEventHandlerEvents();
+			if (LicenseManager.UsageMode != LicenseUsageMode.Designtime)
+			{
+				SubscribeToRootSiteEventHandlerEvents();
+			}
 		}
 
 #if DEBUG
@@ -1908,8 +1909,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				return;
 			}
-			using (PrintDocument printDoc = new PrintDocument())
-			using (PrintDialog dlg = new PrintDialog())
+			using (var printDoc = new PrintDocument())
+			using (var dlg = new PrintDialog())
 			{
 				dlg.Document = printDoc;
 				dlg.AllowSomePages = true;
@@ -1920,7 +1921,9 @@ namespace SIL.FieldWorks.Common.RootSites
 				AdjustPrintDialog(dlg);
 
 				if (dlg.ShowDialog() != DialogResult.OK)
+				{
 					return;
+				}
 
 				if (MiscUtils.IsUnix)
 				{
@@ -1929,7 +1932,9 @@ namespace SIL.FieldWorks.Common.RootSites
 						pageDlg.Document = dlg.Document;
 						pageDlg.AllowPrinter = false;
 						if (pageDlg.ShowDialog() != DialogResult.OK)
+						{
 							return;
+						}
 					}
 				}
 
@@ -5778,14 +5783,14 @@ namespace SIL.FieldWorks.Common.RootSites
 		private Form ContainingWindow()
 		{
 			for (var parent = Parent; parent != null; parent = parent.Parent)
-			{
+		{
 #if RANDYTODO
 			// TODO: parent is really IFwMainWnd, but as of this writing, that interface
 			// TODO: isn't available in this assembly, so use Form until
 			// TODO: a better solution for IFwMainWnd is found and caller can use the inerface directly.
 #endif
 				if (parent is Form)
-				{
+			{
 					return parent as Form;
 				}
 			}

@@ -86,11 +86,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		public void FinishInitialization()
 		{
 			InitCurrentList();
-
 			InitChoicesList();
-
 			InitWsCombo(WsComboContent.kwccNone);
-
 			EnableControls();
 		}
 
@@ -467,8 +464,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private ListViewItem MakeCurrentItem(XElement node)
 		{
 			var cols = new string[2];
-			var label = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(node, "label", null)) ??
-			            XmlUtils.GetMandatoryAttributeValue(node, "label");
+			var label = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(node, "label", null)) ?? XmlUtils.GetMandatoryAttributeValue(node, "label");
 			cols[0] = label;
 			var wsParam = XmlViewsUtils.FindWsParam(node);
 			var dispCategory = TranslateWsParamToLocalizedDisplayCategory(wsParam);
@@ -507,7 +503,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			};
 			if (XmlUtils.GetOptionalAttributeValue(node, "bulkEdit") != null || XmlUtils.GetOptionalAttributeValue(node, "transduce") != null)
 			{
-				itemWithToolTip .ImageIndex = 0;
+				itemWithToolTip.ImageIndex = 0;
 			}
 
 			return itemWithToolTip;
@@ -615,7 +611,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return result;
 			}
-			XmlUtils.SetAttribute(node, wsAttrName, StringServices.WsParamLabel+origWs);
+			XmlUtils.SetAttribute(node, wsAttrName, StringServices.WsParamLabel + origWs);
 			// reset 'label' attribute to 'originalLabel'
 			const string origLabelAttrName = "originalLabel";
 			var origLabel = XmlUtils.GetOptionalAttributeValue(node, origLabelAttrName);
@@ -722,7 +718,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose(bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
 			// Must not be run more than once.
@@ -731,11 +727,11 @@ namespace LanguageExplorer.Controls.XMLViews
 				return;
 			}
 
-			if( disposing )
+			if (disposing)
 			{
 				components?.Dispose();
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#region Windows Form Designer generated code
@@ -957,10 +953,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
-		private void ShowDuplicatesWarning(List<string> duplicateColumnLabels)
+		private static void ShowDuplicatesWarning(List<string> duplicateColumnLabels)
 		{
-			var duplicates = string.Join(", ", duplicateColumnLabels.ToArray());
-			MessageBox.Show(string.Format(XMLViewsStrings.ksDuplicateColumnMsg, duplicates), XMLViewsStrings.ksDuplicateColumn, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			MessageBox.Show(string.Format(XMLViewsStrings.ksDuplicateColumnMsg, string.Join(", ", duplicateColumnLabels.ToArray())), XMLViewsStrings.ksDuplicateColumn, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 		}
 
 		private bool HasDuplicateColumns()
@@ -1040,8 +1035,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		private string GetColumnLabel(int columnIndex)
 		{
 			return (StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(CurrentSpecs[columnIndex], "originalLabel", null)) ??
-			             StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(CurrentSpecs[columnIndex], "label", null))) ??
-			            XmlUtils.GetMandatoryAttributeValue(CurrentSpecs[columnIndex], "label");
+						 StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(CurrentSpecs[columnIndex], "label", null))) ??
+						XmlUtils.GetMandatoryAttributeValue(CurrentSpecs[columnIndex], "label");
 		}
 
 		private void addButton_Click(object sender, System.EventArgs e)
@@ -1156,7 +1151,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		void EnableControls()
 		{
-			addButton.Enabled =	optionsList.SelectedIndices.Count > 0 && optionsList.SelectedIndices[0] >= 0;
+			addButton.Enabled = optionsList.SelectedIndices.Count > 0 && optionsList.SelectedIndices[0] >= 0;
 			var index = CurrentListIndex;
 			removeButton.Enabled = index >= 0 && currentList.Items.Count > 1;
 			moveUpButton.Enabled = index > 0;
@@ -1333,7 +1328,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-			var wsId = ((WsComboItem) wsCombo.SelectedItem).Id;
+			var wsId = ((WsComboItem)wsCombo.SelectedItem).Id;
 			var current = CurrentSpecs[index];
 			var sWsOrig = XmlViewsUtils.FindWsParam(current);
 			if (string.IsNullOrEmpty(sWsOrig))
@@ -1421,7 +1416,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						}
 						if (string.IsNullOrEmpty(extra))
 						{
-							extra = newWs;	// but if all else fails...
+							extra = newWs;  // but if all else fails...
 						}
 						break;
 				}
@@ -1446,10 +1441,8 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			public int Compare(XElement x, XElement y)
 			{
-				var xVal = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(x, "label", null)) ??
-				           XmlUtils.GetMandatoryAttributeValue(x, "label");
-				var yVal = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(y, "label", null)) ??
-				           XmlUtils.GetMandatoryAttributeValue(y, "label");
+				var xVal = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(x, "label", null)) ?? XmlUtils.GetMandatoryAttributeValue(x, "label");
+				var yVal = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(y, "label", null)) ?? XmlUtils.GetMandatoryAttributeValue(y, "label");
 				return xVal.CompareTo(yVal);
 			}
 

@@ -264,7 +264,7 @@ namespace LanguageExplorer.Areas
 
 		internal static void UndoExtension(string baseText, IActionHandler actionHandler, Action task)
 		{
-			UndoableUnitOfWorkHelper.Do(String.Format(LanguageExplorerResources.Undo_0, baseText), String.Format(LanguageExplorerResources.Redo_0, baseText), actionHandler, task);
+			UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerResources.Undo_0, baseText), string.Format(LanguageExplorerResources.Redo_0, baseText), actionHandler, task);
 		}
 
 		/// <summary>

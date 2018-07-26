@@ -4,10 +4,11 @@
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
-	internal enum InterlinMode
+	public enum InterlinMode
 	{
 		Analyze,
 		Gloss,
-		GlossAddWordsToLexicon
+		GlossAddWordsToLexicon,
+		Chart
 	}
 }

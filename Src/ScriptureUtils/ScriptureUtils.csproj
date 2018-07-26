@@ -157,27 +157,27 @@
     </Reference>
     <Reference Include="SIL.Core.Desktop, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SIL.Core.Desktop.dll</HintPath>
+      <HintPath>..\..\Downloads\SIL.Core.Desktop.dll</HintPath>
     </Reference>
     <Reference Include="SIL.LCModel.Utils, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SIL.Core.Desktop.dll</HintPath>
+      <HintPath>..\..\Downloads\LCM\SIL.LCModel.Utils.dll</HintPath>
     </Reference>
     <Reference Include="SIL.LCModel.Core, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
+      <HintPath>..\..\Downloads\LCM\SIL.LCModel.Core.dll</HintPath>
     </Reference>
     <Reference Include="SIL.LCModel, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SIL.LCModel.dll</HintPath>
+      <HintPath>..\..\Downloads\LCM\SIL.LCModel.dll</HintPath>
     </Reference>
     <Reference Include="Paratext.LexicalContracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9a5af29a0e638a7b, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\Paratext.LexicalContracts.dll</HintPath>
+      <HintPath>..\..\Downloads\Paratext.LexicalContracts.dll</HintPath>
     </Reference>
     <Reference Include="ParatextShared, Version=7.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\ParatextShared.dll</HintPath>
+      <HintPath>..\..\Downloads\ParatextShared.dll</HintPath>
     </Reference>
     <Reference Include="SilEncConverters40" Condition="'$(OS)'=='Unix'">
       <SpecificVersion>False</SpecificVersion>
@@ -190,7 +190,10 @@
     <Reference Include="System.Core" />
     <Reference Include="Utilities, Version=7.4.100.10102, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\Utilities.dll</HintPath>
+      <HintPath>..\..\Downloads\Utilities.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Core">
+      <HintPath>..\..\Downloads\SIL.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

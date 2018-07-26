@@ -121,12 +121,15 @@
   <data name="label1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
   </data>
+  <data name="label1.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>8, 8</value>
+    <value>3, 0</value>
   </data>
   <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>941, 23</value>
+    <value>698, 23</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="label1.TabIndex" type="System.Int32, mscorlib">
@@ -142,265 +145,10 @@
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;label1.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>mainLayoutPanel</value>
   </data>
   <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
-    <value>13</value>
-  </data>
-  <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>8, 32</value>
-  </data>
-  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>208, 23</value>
-  </data>
-  <data name="label2.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="label2.Text" xml:space="preserve">
-    <value>Available lines:</value>
-  </data>
-  <data name="&gt;&gt;label2.Name" xml:space="preserve">
-    <value>label2</value>
-  </data>
-  <data name="&gt;&gt;label2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label2.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
-    <value>12</value>
-  </data>
-  <data name="optionsList.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Bottom, Left</value>
-  </data>
-  <data name="optionsList.Location" type="System.Drawing.Point, System.Drawing">
-    <value>8, 56</value>
-  </data>
-  <data name="optionsList.Size" type="System.Drawing.Size, System.Drawing">
-    <value>208, 238</value>
-  </data>
-  <data name="optionsList.TabIndex" type="System.Int32, mscorlib">
-    <value>14</value>
-  </data>
-  <data name="&gt;&gt;optionsList.Name" xml:space="preserve">
-    <value>optionsList</value>
-  </data>
-  <data name="&gt;&gt;optionsList.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ListBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;optionsList.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;optionsList.ZOrder" xml:space="preserve">
-    <value>11</value>
-  </data>
-  <data name="label3.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Bottom, Left</value>
-  </data>
-  <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>336, 312</value>
-  </data>
-  <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>88, 23</value>
-  </data>
-  <data name="label3.TabIndex" type="System.Int32, mscorlib">
-    <value>25</value>
-  </data>
-  <data name="label3.Text" xml:space="preserve">
-    <value>Writing System</value>
-  </data>
-  <data name="label3.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleRight</value>
-  </data>
-  <data name="&gt;&gt;label3.Name" xml:space="preserve">
-    <value>label3</value>
-  </data>
-  <data name="&gt;&gt;label3.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label3.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
     <value>0</value>
-  </data>
-  <data name="wsCombo.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Bottom, Left, Right</value>
-  </data>
-  <data name="wsCombo.Location" type="System.Drawing.Point, System.Drawing">
-    <value>432, 312</value>
-  </data>
-  <data name="wsCombo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>205, 21</value>
-  </data>
-  <data name="wsCombo.TabIndex" type="System.Int32, mscorlib">
-    <value>24</value>
-  </data>
-  <data name="&gt;&gt;wsCombo.Name" xml:space="preserve">
-    <value>wsCombo</value>
-  </data>
-  <data name="&gt;&gt;wsCombo.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=9.0.0.28002, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;wsCombo.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;wsCombo.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="moveDownButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Right</value>
-  </data>
-  <data name="moveDownButton.ImageIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <metadata name="imageList1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
-  <data name="imageList1.ImageStream" mimetype="application/x-microsoft.net.object.binary.base64">
-    <value>
-        AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj00LjAuMC4w
-        LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
-        ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAABi
-        CQAAAk1TRnQBSQFMAgEBAgEAARQBAAEUAQABIAEAASABAAT/AQkBAAj/AUIBTQE2AQQGAAE2AQQCAAEo
-        AwABgAMAASADAAEBAQABCAYAARAYAAGAAgABgAMAAoABAAGAAwABgAEAAYABAAKAAgADwAEAAcAB3AHA
-        AQAB8AHKAaYBAAEzBQABMwEAATMBAAEzAQACMwIAAxYBAAMcAQADIgEAAykBAANVAQADTQEAA0IBAAM5
-        AQABgAF8Af8BAAJQAf8BAAGTAQAB1gEAAf8B7AHMAQABxgHWAe8BAAHWAucBAAGQAakBrQIAAf8BMwMA
-        AWYDAAGZAwABzAIAATMDAAIzAgABMwFmAgABMwGZAgABMwHMAgABMwH/AgABZgMAAWYBMwIAAmYCAAFm
-        AZkCAAFmAcwCAAFmAf8CAAGZAwABmQEzAgABmQFmAgACmQIAAZkBzAIAAZkB/wIAAcwDAAHMATMCAAHM
-        AWYCAAHMAZkCAALMAgABzAH/AgAB/wFmAgAB/wGZAgAB/wHMAQABMwH/AgAB/wEAATMBAAEzAQABZgEA
-        ATMBAAGZAQABMwEAAcwBAAEzAQAB/wEAAf8BMwIAAzMBAAIzAWYBAAIzAZkBAAIzAcwBAAIzAf8BAAEz
-        AWYCAAEzAWYBMwEAATMCZgEAATMBZgGZAQABMwFmAcwBAAEzAWYB/wEAATMBmQIAATMBmQEzAQABMwGZ
-        AWYBAAEzApkBAAEzAZkBzAEAATMBmQH/AQABMwHMAgABMwHMATMBAAEzAcwBZgEAATMBzAGZAQABMwLM
-        AQABMwHMAf8BAAEzAf8BMwEAATMB/wFmAQABMwH/AZkBAAEzAf8BzAEAATMC/wEAAWYDAAFmAQABMwEA
-        AWYBAAFmAQABZgEAAZkBAAFmAQABzAEAAWYBAAH/AQABZgEzAgABZgIzAQABZgEzAWYBAAFmATMBmQEA
-        AWYBMwHMAQABZgEzAf8BAAJmAgACZgEzAQADZgEAAmYBmQEAAmYBzAEAAWYBmQIAAWYBmQEzAQABZgGZ
-        AWYBAAFmApkBAAFmAZkBzAEAAWYBmQH/AQABZgHMAgABZgHMATMBAAFmAcwBmQEAAWYCzAEAAWYBzAH/
-        AQABZgH/AgABZgH/ATMBAAFmAf8BmQEAAWYB/wHMAQABzAEAAf8BAAH/AQABzAEAApkCAAGZATMBmQEA
-        AZkBAAGZAQABmQEAAcwBAAGZAwABmQIzAQABmQEAAWYBAAGZATMBzAEAAZkBAAH/AQABmQFmAgABmQFm
-        ATMBAAGZATMBZgEAAZkBZgGZAQABmQFmAcwBAAGZATMB/wEAApkBMwEAApkBZgEAA5kBAAKZAcwBAAKZ
-        Af8BAAGZAcwCAAGZAcwBMwEAAWYBzAFmAQABmQHMAZkBAAGZAswBAAGZAcwB/wEAAZkB/wIAAZkB/wEz
-        AQABmQHMAWYBAAGZAf8BmQEAAZkB/wHMAQABmQL/AQABzAMAAZkBAAEzAQABzAEAAWYBAAHMAQABmQEA
-        AcwBAAHMAQABmQEzAgABzAIzAQABzAEzAWYBAAHMATMBmQEAAcwBMwHMAQABzAEzAf8BAAHMAWYCAAHM
-        AWYBMwEAAZkCZgEAAcwBZgGZAQABzAFmAcwBAAGZAWYB/wEAAcwBmQIAAcwBmQEzAQABzAGZAWYBAAHM
-        ApkBAAHMAZkBzAEAAcwBmQH/AQACzAIAAswBMwEAAswBZgEAAswBmQEAA8wBAALMAf8BAAHMAf8CAAHM
-        Af8BMwEAAZkB/wFmAQABzAH/AZkBAAHMAf8BzAEAAcwC/wEAAcwBAAEzAQAB/wEAAWYBAAH/AQABmQEA
-        AcwBMwIAAf8CMwEAAf8BMwFmAQAB/wEzAZkBAAH/ATMBzAEAAf8BMwH/AQAB/wFmAgAB/wFmATMBAAHM
-        AmYBAAH/AWYBmQEAAf8BZgHMAQABzAFmAf8BAAH/AZkCAAH/AZkBMwEAAf8BmQFmAQAB/wKZAQAB/wGZ
-        AcwBAAH/AZkB/wEAAf8BzAIAAf8BzAEzAQAB/wHMAWYBAAH/AcwBmQEAAf8CzAEAAf8BzAH/AQAC/wEz
-        AQABzAH/AWYBAAL/AZkBAAL/AcwBAAJmAf8BAAFmAf8BZgEAAWYC/wEAAf8CZgEAAf8BZgH/AQAC/wFm
-        AQABIQEAAaUBAANfAQADdwEAA4YBAAOWAQADywEAA7IBAAPXAQAD3QEAA+MBAAPqAQAD8QEAA/gBAAHw
-        AfsB/wEAAaQCoAEAA4ADAAH/AgAB/wMAAv8BAAH/AwAB/wEAAf8BAAL/AgAD//8A/wD/AJEABOwdAAHv
-        AexhAAHxHAABQwEPYQAB8RsAAe8CAAHsYAAB8RsAAUMCAAEPYAAB8RoAAe8EAAHsXwAB8RoAAUMEAAEP
-        XwAB8RkAAe8GAAHsVQAB8gTsBAABbQPsAfAVAAFDBgABD1YAAUMKAAEPFQAB7wgAAexVAAHvCgAB7BUA
-        AUMIAAEPVgABQwgAAQ8VAAHvCgAB7FUAAe8IAAHsFQABQwoAAQ9WAAFDBgABDxUAAfIE7AQAAW0D7AHw
-        VQAB7wYAAeweAAHxWgABQwQAAQ8fAAHxWgAB7wQAAewfAAHxWwABQwIAAQ8gAAHxWwAB7wIAAewgAAHx
-        XAABQwEPIQAB8VwAAe8B7B0ABOz/AP8A0QABQgFNAT4HAAE+AwABKAMAAYADAAEgAwABAQEAAQEGAAEC
-        FgAD/wEACP8IAAj/CAAI/wgACP8IAAj/CAAI/wgACP8IAAH/AfgBfwL/AfwC/wgAAf8B+AE/Av8B/AL/
-        CAAB/wH4AT8C/wH4AX8B/wgAAf8B+AE/Av8B+AF/Af8IAAH/AfgBPwL/AfABPwH/CAAB/wH4AT8C/wHw
-        AT8B/wgAAf8B+AE/Av8B4AEfAf8IAAH/AQABAwL/AeABHwH/CAAB/wGAAQcC/wHAAQ8B/wgAAf8BgAEH
-        Av8BwAEPAf8IAAH/AcABDwL/AYABBwH/CAAB/wHAAQ8C/wGAAQcB/wgAAf8B4AEfAv8BAAEDAf8IAAH/
-        AeABHwL/AfgBPwH/CAAB/wHwAT8C/wH4AT8B/wgAAf8B8AE/Av8B+AE/Af8IAAH/AfgBfwL/AfgBPwH/
-        CAAB/wH4AX8C/wH4AT8B/wgAAf8B/AP/AfgBPwH/CAAB/wH8A/8B+AF/Af8IAAj/CAAI/wgACP8IAAj/
-        CAAI/wgACw==
-</value>
-  </data>
-  <data name="moveDownButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>664, 175</value>
-  </data>
-  <data name="moveDownButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>32, 32</value>
-  </data>
-  <data name="moveDownButton.TabIndex" type="System.Int32, mscorlib">
-    <value>23</value>
-  </data>
-  <data name="&gt;&gt;moveDownButton.Name" xml:space="preserve">
-    <value>moveDownButton</value>
-  </data>
-  <data name="&gt;&gt;moveDownButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;moveDownButton.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;moveDownButton.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="moveUpButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Right</value>
-  </data>
-  <data name="moveUpButton.ImageIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="moveUpButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>664, 134</value>
-  </data>
-  <data name="moveUpButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>32, 32</value>
-  </data>
-  <data name="moveUpButton.TabIndex" type="System.Int32, mscorlib">
-    <value>22</value>
-  </data>
-  <data name="&gt;&gt;moveUpButton.Name" xml:space="preserve">
-    <value>moveUpButton</value>
-  </data>
-  <data name="&gt;&gt;moveUpButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;moveUpButton.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;moveUpButton.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="removeButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>224, 184</value>
-  </data>
-  <data name="removeButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>64, 23</value>
-  </data>
-  <data name="removeButton.TabIndex" type="System.Int32, mscorlib">
-    <value>21</value>
-  </data>
-  <data name="removeButton.Text" xml:space="preserve">
-    <value>&lt;&lt; &amp;Hide</value>
-  </data>
-  <data name="&gt;&gt;removeButton.Name" xml:space="preserve">
-    <value>removeButton</value>
-  </data>
-  <data name="&gt;&gt;removeButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;removeButton.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;removeButton.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="addButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>224, 152</value>
-  </data>
-  <data name="addButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>64, 23</value>
-  </data>
-  <data name="addButton.TabIndex" type="System.Int32, mscorlib">
-    <value>20</value>
-  </data>
-  <data name="addButton.Text" xml:space="preserve">
-    <value>&amp;Show &gt;&gt;</value>
-  </data>
-  <data name="&gt;&gt;addButton.Name" xml:space="preserve">
-    <value>addButton</value>
-  </data>
-  <data name="&gt;&gt;addButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;addButton.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;addButton.ZOrder" xml:space="preserve">
-    <value>5</value>
   </data>
   <data name="helpButton.AccessibleName" xml:space="preserve">
     <value>OK</value>
@@ -409,7 +157,7 @@
     <value>Bottom, Right</value>
   </data>
   <data name="helpButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>605, 352</value>
+    <value>617, 3</value>
   </data>
   <data name="helpButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -427,10 +175,10 @@
     <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;helpButton.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>buttonLayoutPanel</value>
   </data>
   <data name="&gt;&gt;helpButton.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>0</value>
   </data>
   <data name="cancelButton.AccessibleName" xml:space="preserve">
     <value>OK</value>
@@ -439,7 +187,7 @@
     <value>Bottom, Right</value>
   </data>
   <data name="cancelButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>517, 352</value>
+    <value>536, 3</value>
   </data>
   <data name="cancelButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -457,70 +205,10 @@
     <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;cancelButton.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>buttonLayoutPanel</value>
   </data>
   <data name="&gt;&gt;cancelButton.ZOrder" xml:space="preserve">
-    <value>7</value>
-  </data>
-  <data name="currentList.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Bottom, Left, Right</value>
-  </data>
-  <data name="LineColumn.Text" xml:space="preserve">
-    <value>Line</value>
-  </data>
-  <data name="LineColumn.Width" type="System.Int32, mscorlib">
-    <value>137</value>
-  </data>
-  <data name="InfoColumn.Text" xml:space="preserve">
-    <value>Writing System</value>
-  </data>
-  <data name="InfoColumn.Width" type="System.Int32, mscorlib">
-    <value>225</value>
-  </data>
-  <data name="currentList.Location" type="System.Drawing.Point, System.Drawing">
-    <value>296, 56</value>
-  </data>
-  <data name="currentList.Size" type="System.Drawing.Size, System.Drawing">
-    <value>362, 248</value>
-  </data>
-  <data name="currentList.TabIndex" type="System.Int32, mscorlib">
-    <value>16</value>
-  </data>
-  <data name="&gt;&gt;currentList.Name" xml:space="preserve">
-    <value>currentList</value>
-  </data>
-  <data name="&gt;&gt;currentList.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ListView, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;currentList.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;currentList.ZOrder" xml:space="preserve">
-    <value>8</value>
-  </data>
-  <data name="label4.Location" type="System.Drawing.Point, System.Drawing">
-    <value>296, 32</value>
-  </data>
-  <data name="label4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>128, 23</value>
-  </data>
-  <data name="label4.TabIndex" type="System.Int32, mscorlib">
-    <value>15</value>
-  </data>
-  <data name="label4.Text" xml:space="preserve">
-    <value>Displayed lines:</value>
-  </data>
-  <data name="&gt;&gt;label4.Name" xml:space="preserve">
-    <value>label4</value>
-  </data>
-  <data name="&gt;&gt;label4.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label4.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;label4.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>1</value>
   </data>
   <data name="okButton.AccessibleName" xml:space="preserve">
     <value>OK</value>
@@ -529,7 +217,7 @@
     <value>Bottom, Right</value>
   </data>
   <data name="okButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>429, 352</value>
+    <value>455, 3</value>
   </data>
   <data name="okButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -547,10 +235,94 @@
     <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;okButton.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>buttonLayoutPanel</value>
   </data>
   <data name="&gt;&gt;okButton.ZOrder" xml:space="preserve">
-    <value>10</value>
+    <value>2</value>
+  </data>
+  <data name="mainBrowser.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Left, Right</value>
+  </data>
+  <data name="mainBrowser.Location" type="System.Drawing.Point, System.Drawing">
+    <value>10, 33</value>
+  </data>
+  <data name="mainBrowser.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>10, 10, 10, 10</value>
+  </data>
+  <data name="mainBrowser.Size" type="System.Drawing.Size, System.Drawing">
+    <value>684, 300</value>
+  </data>
+  <data name="mainBrowser.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;mainBrowser.Name" xml:space="preserve">
+    <value>mainBrowser</value>
+  </data>
+  <data name="&gt;&gt;mainBrowser.Type" xml:space="preserve">
+    <value>SIL.Windows.Forms.HtmlBrowser.XWebBrowser, SIL.Windows.Forms, Version=4.2.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;mainBrowser.Parent" xml:space="preserve">
+    <value>mainLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;mainBrowser.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="buttonLayoutPanel.FlowDirection" type="System.Windows.Forms.FlowDirection, System.Windows.Forms">
+    <value>RightToLeft</value>
+  </data>
+  <data name="buttonLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 346</value>
+  </data>
+  <data name="buttonLayoutPanel.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 0, 0, 0</value>
+  </data>
+  <data name="buttonLayoutPanel.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
+    <value>No</value>
+  </data>
+  <data name="buttonLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>698, 29</value>
+  </data>
+  <data name="buttonLayoutPanel.TabIndex" type="System.Int32, mscorlib">
+    <value>21</value>
+  </data>
+  <data name="&gt;&gt;buttonLayoutPanel.Name" xml:space="preserve">
+    <value>buttonLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;buttonLayoutPanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonLayoutPanel.Parent" xml:space="preserve">
+    <value>mainLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;buttonLayoutPanel.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="mainLayoutPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="mainLayoutPanel.FlowDirection" type="System.Windows.Forms.FlowDirection, System.Windows.Forms">
+    <value>TopDown</value>
+  </data>
+  <data name="mainLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="mainLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>701, 390</value>
+  </data>
+  <data name="mainLayoutPanel.TabIndex" type="System.Int32, mscorlib">
+    <value>20</value>
+  </data>
+  <data name="&gt;&gt;mainLayoutPanel.Name" xml:space="preserve">
+    <value>mainLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;mainLayoutPanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mainLayoutPanel.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;mainLayoutPanel.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
@@ -603,26 +375,11 @@
         Af//8Af///gf////////////
 </value>
   </data>
+  <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
+    <value>CenterScreen</value>
+  </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Configure Interlinear Lines</value>
-  </data>
-  <data name="&gt;&gt;imageList1.Name" xml:space="preserve">
-    <value>imageList1</value>
-  </data>
-  <data name="&gt;&gt;imageList1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ImageList, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;LineColumn.Name" xml:space="preserve">
-    <value>LineColumn</value>
-  </data>
-  <data name="&gt;&gt;LineColumn.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;InfoColumn.Name" xml:space="preserve">
-    <value>InfoColumn</value>
-  </data>
-  <data name="&gt;&gt;InfoColumn.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>ConfigureInterlinDialog</value>

@@ -23,14 +23,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// <summary>
 	/// Ideally this would be an abstract class, but Designer does not handle abstract classes.
 	/// </summary>
-	internal partial class InterlinDocRootSiteBase : RootSite, IInterlinearTabControl, IVwNotifyChange, IHandleBookmark, ISelectOccurrence, IStyleSheet, ISetupLineChoices
+	public partial class InterlinDocRootSiteBase : RootSite, IVwNotifyChange, IHandleBookmark, ISelectOccurrence, IStyleSheet, ISetupLineChoices, IInterlinConfigurable
 	{
 		private ISilDataAccess m_sda;
 		/// <summary>
 		/// HVO of some IStText
 		/// </summary>
 		protected internal int m_hvoRoot;
-		protected InterlinVc m_vc;
 		protected ICmObjectRepository m_objRepo;
 		private ToolStripMenuItem _fileMenu;
 		private ToolStripMenuItem _exportMenu;
@@ -57,6 +56,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private long m_ticksWhenContextMenuClosed;
 
 		private readonly HashSet<IWfiWordform> m_wordformsToUpdate;
+
+		public InterlinVc Vc { get; set; }
+		public IVwRootBox Rootb { get; set; }
 
 		public InterlinDocRootSiteBase()
 		{
@@ -92,12 +94,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_sda = m_cache.MainCacheAccessor;
 			m_sda.AddNotification(this);
 
-			m_vc.ShowMorphBundles = true;
-			m_vc.LineChoices = LineChoices;
-			m_vc.ShowDefaultSense = true;
+			Vc.ShowMorphBundles = PropertyTable.GetValue("ShowMorphBundles", true);
+			Vc.LineChoices = LineChoices;
+			Vc.ShowDefaultSense = true;
 
 			m_rootb.DataAccess = m_cache.MainCacheAccessor;
-			m_rootb.SetRootObject(m_hvoRoot, m_vc, InterlinVc.kfragStText, m_styleSheet);
+			m_rootb.SetRootObject(m_hvoRoot, Vc, InterlinVc.kfragStText, m_styleSheet);
 			m_objRepo = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 		}
 
@@ -146,7 +148,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			var fFocusBox = TryHideFocusBoxAndUninstall();
 			var objRoot = m_objRepo.GetObject(m_hvoRoot);
-			using (var dlg = new InterlinearExportDialog(objRoot, m_vc))
+			using (var dlg = new InterlinearExportDialog(objRoot, Vc))
 			{
 				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				dlg.ShowDialog(this);
@@ -172,17 +174,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		protected virtual void MakeVc()
 		{
 			throw new NotSupportedException();
 		}
 
-		private void EnsureVc()
+		protected void EnsureVc()
 		{
-			if (m_vc == null)
+			if (Vc == null)
 			{
 				MakeVc();
 			}
@@ -247,7 +247,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					focusBox.Focus();
 				}
 				else
+				{
 					Focus();
+				}
 			}
 			VisibleChanged -= FocusWhenVisible;
 		}
@@ -305,7 +307,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected AnalysisOccurrence GetAnalysisFromSelection(IVwSelection sel)
 		{
 			AnalysisOccurrence result = null;
-
 			var cvsli = sel.CLevels(false);
 			cvsli--; // CLevels includes the string property itself, but AllTextSelInfo doesn't need it.
 
@@ -349,14 +350,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (seg != null && i > 0) // This checks the case where there is no Segment in the selection at all
 			{
 				// Make a new AnalysisOccurrence
-				var selObject = m_objRepo.GetObject(rgvsli[i-1].hvo);
+				var selObject = m_objRepo.GetObject(rgvsli[i - 1].hvo);
 				if (selObject is IAnalysis)
 				{
-					var indexInContainer = rgvsli[i-1].ihvo;
+					var indexInContainer = rgvsli[i - 1].ihvo;
 					result = new AnalysisOccurrence(seg, indexInContainer);
 				}
+
 				if (result == null || !result.IsValid)
+				{
 					result = new AnalysisOccurrence(seg, 0);
+				}
 			}
 			else
 			{
@@ -474,8 +478,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// Exceptions caused by selection problems are caught, but not dealt with.
 		/// In case of an exception, the selection returned will be null.
 		/// </summary>
-		/// <param name="e"></param>
-		/// <returns></returns>
 		protected IVwSelection GrabMousePtSelectionToTest(MouseEventArgs e)
 		{
 			IVwSelection selTest = null;
@@ -502,7 +504,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected int GetIndexOfLineChoice(IVwSelection selTest)
 		{
 			var helper = SelectionHelper.Create(selTest, this);
-			if (helper == null)
+			if (helper?.SelProps == null)
 			{
 				return -1;
 			}
@@ -523,9 +525,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		private ContextMenuStrip MakeContextMenu(int ilineChoice)
+		protected virtual ContextMenuStrip MakeContextMenu(int ilineChoice)
 		{
 			var menu = new ContextMenuStrip();
+			var isRibbonMenu = Vc.ToString() == "RibbonVc";
 			// Menu items:
 			// 1) Hide [name of clicked line]
 			// 2) Add Writing System > (submenu of other wss for this line)
@@ -535,9 +538,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// 5) Add Line > (submenu of currently hidden lines)
 			// 6) Configure Interlinear...
 
-			if (m_vc?.LineChoices != null) // just to be safe; shouldn't happen
+			if (Vc?.LineChoices != null && !isRibbonMenu) // just to be safe; shouldn't happen
 			{
-				var curLineChoices = m_vc.LineChoices.Clone() as InterlinLineChoices;
+				var curLineChoices = Vc.LineChoices.Clone() as InterlinLineChoices;
 				if (curLineChoices == null)
 				{
 					return menu;
@@ -583,7 +586,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			// 6) Last, but not least, add a link to the Configure Interlinear dialog
 			var configLink = new ToolStripMenuItem(ITextStrings.ksConfigureLinkText);
-			configLink.Click += configLink_Click;
+			configLink.Click += configLink_Click; // TODO: Figure out how to pass more parameters
 			menu.Items.Add(configLink);
 
 			return menu;
@@ -663,7 +666,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				case WritingSystemServices.kwsFirstAnal:
 					return Cache.LangProject.DefaultAnalysisWritingSystem.Handle;
 				case WritingSystemServices.kwsVernInParagraph:
-					return Cache.LangProject.DefaultVernacularWritingSystem.Handle;  // REVIEW (Hasso) 2018.01: this is frequently the case, but not always
+					return Cache.LangProject.DefaultVernacularWritingSystem.Handle; // REVIEW (Hasso) 2018.01: this is frequently the case, but not always
 			}
 
 			var ws = -50;
@@ -673,7 +676,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			catch
 			{
-				Debug.Assert(ws != -50, "InterpretWsLabel was not able to interpret the Ws Label. The most likely cause for this is that a magic ws was passed in.");
+				Debug.Assert(ws != -50, "InterpretWsLabel was not able to interpret the Ws Label.  The most likely cause for this is that a magic ws was passed in.");
 			}
 			return ws;
 		}
@@ -715,8 +718,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void hideItem_Click(object sender, EventArgs e)
 		{
-			var ilineToHide = (int) (((ToolStripMenuItem) sender).Tag);
-			var newLineChoices = m_vc.LineChoices.Clone() as InterlinLineChoices;
+			var ilineToHide = (int)(((ToolStripMenuItem)sender).Tag);
+			var newLineChoices = Vc.LineChoices.Clone() as InterlinLineChoices;
 			if (newLineChoices != null)
 			{
 				newLineChoices.Remove(newLineChoices[ilineToHide]);
@@ -735,7 +738,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			var flid = menuItem.Flid;
 			var wsToAdd = menuItem.Ws;
-			var newLineChoices = m_vc.LineChoices.Clone() as InterlinLineChoices;
+			var newLineChoices = Vc.LineChoices.Clone() as InterlinLineChoices;
 			if (newLineChoices != null)
 			{
 				newLineChoices.Add(flid, wsToAdd);
@@ -746,7 +749,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void moveUpItem_Click(object sender, EventArgs e)
 		{
 			var ilineToHide = (int)((ToolStripMenuItem)sender).Tag;
-			var newLineChoices = m_vc.LineChoices.Clone() as InterlinLineChoices;
+			var newLineChoices = Vc.LineChoices.Clone() as InterlinLineChoices;
 			if (newLineChoices != null)
 			{
 				newLineChoices.MoveUp(ilineToHide);
@@ -756,8 +759,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void moveDownItem_Click(object sender, EventArgs e)
 		{
-			var ilineToHide = (int)(((ToolStripMenuItem) sender).Tag);
-			var newLineChoices = m_vc.LineChoices.Clone() as InterlinLineChoices;
+			var ilineToHide = (int)(((ToolStripMenuItem)sender).Tag);
+			var newLineChoices = Vc.LineChoices.Clone() as InterlinLineChoices;
 			if (newLineChoices != null)
 			{
 				newLineChoices.MoveDown(ilineToHide);
@@ -774,7 +777,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 
 			var flid = menuItem.Flid;
-			var newLineChoices = m_vc.LineChoices.Clone() as InterlinLineChoices;
+			var newLineChoices = Vc.LineChoices.Clone() as InterlinLineChoices;
 			if (newLineChoices != null)
 			{
 				newLineChoices.Add(flid);
@@ -784,7 +787,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void configLink_Click(object sender, EventArgs e)
 		{
-			OnConfigureInterlinear(null);
+			OnConfigureInterlinear(null/*, this is InterlinRibbon*/);
 		}
 
 		private void m_labelContextMenu_Closed(object sender, ToolStripDropDownClosedEventArgs e)
@@ -822,8 +825,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					lineChoices = EditableInterlinLineChoices.DefaultChoices(m_cache.LangProject, WritingSystemServices.kwsVernInParagraph, WritingSystemServices.kwsAnal);
 					lineChoices.Mode = mode;
-					if (mode == InterlinMode.Gloss ||
-					    mode == InterlinMode.GlossAddWordsToLexicon)
+					if (mode == InterlinMode.Gloss || mode == InterlinMode.GlossAddWordsToLexicon)
 					{
 						lineChoices.SetStandardGlossState();
 					}
@@ -849,7 +851,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// This is for setting m_vc.LineChoices even before we have a valid vc.
 		/// </summary>
-		protected internal InterlinLineChoices LineChoices { get; set; }
+		internal InterlinLineChoices LineChoices { get; set; }
 
 		/// <summary>
 		/// Tries to restore the LineChoices saved in the ConfigPropName property in the property table.
@@ -860,8 +862,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var persist = PropertyTable.GetValue<string>(ConfigPropName, SettingsGroup.LocalSettings);
 			if (persist != null)
 			{
-				lineChoices = InterlinLineChoices.Restore(persist, m_cache.LanguageWritingSystemFactoryAccessor,
-					m_cache.LangProject, WritingSystemServices.kwsVernInParagraph, m_cache.DefaultAnalWs);
+				lineChoices = InterlinLineChoices.Restore(persist, m_cache.LanguageWritingSystemFactoryAccessor, m_cache.LangProject, WritingSystemServices.kwsVernInParagraph, m_cache.DefaultAnalWs);
 			}
 			return persist != null && lineChoices != null;
 		}
@@ -871,7 +872,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public bool OnConfigureInterlinear(object argument)
 		{
-			using (var dlg = new ConfigureInterlinDialog(m_cache, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_vc.LineChoices.Clone() as InterlinLineChoices))
+			using (var dlg = new ConfigureInterlinDialog(m_cache, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), Vc.LineChoices.Clone() as InterlinLineChoices))
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
@@ -888,7 +889,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		internal virtual void UpdateForNewLineChoices(InterlinLineChoices newChoices)
 		{
-			m_vc.LineChoices = newChoices;
+			Vc.LineChoices = newChoices;
 			LineChoices = newChoices;
 
 			PersistAndDisplayChangedLineChoices();
@@ -896,7 +897,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal void PersistAndDisplayChangedLineChoices()
 		{
-			PropertyTable.SetProperty(ConfigPropName, m_vc.LineChoices.Persist(m_cache.LanguageWritingSystemFactoryAccessor), true, true, SettingsGroup.LocalSettings);
+			PropertyTable.SetProperty(ConfigPropName, Vc.LineChoices.Persist(m_cache.LanguageWritingSystemFactoryAccessor), true, true, SettingsGroup.LocalSettings);
 			UpdateDisplayForNewLineChoices();
 		}
 
@@ -920,7 +921,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void UpdateGuesses(HashSet<IWfiWordform> wordforms, bool fUpdateDisplayWhereNeeded)
 		{
 			// now update the guesses for the paragraphs.
-			var pdut = new ParaDataUpdateTracker(m_vc.GuessServices, m_vc.Decorator);
+			var pdut = new ParaDataUpdateTracker(Vc.GuessServices, Vc.Decorator);
 			foreach (IStTxtPara para in RootStText.ParagraphsOS)
 			{
 				pdut.LoadAnalysisData(para, wordforms);
@@ -970,12 +971,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		#region implemention of IChangeRootObject
-		public void SetRoot(int hvo)
+		public virtual void SetRoot(int hvo)
 		{
 			EnsureVc();
 			if (LineChoices != null)
 			{
-				m_vc.LineChoices = LineChoices;
+				Vc.LineChoices = LineChoices;
 			}
 
 			SetRootInternal(hvo);
@@ -1000,7 +1001,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// by default, just use the InterinVc decorator.
 			if (m_rootb != null)
 			{
-				m_rootb.DataAccess = m_vc.Decorator;
+				m_rootb.DataAccess = Vc.Decorator;
 			}
 		}
 
@@ -1028,8 +1029,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// FWR-191: we don't need to reconstruct the display if we didn't need to reload annotations
 			// but until we detect that condition, we need to redisplay just in case, to keep things in sync.
 			// especially if someone edited the baseline.
-			ChangeOrMakeRoot(m_hvoRoot, m_vc, InterlinVc.kfragStText, m_styleSheet);
-			m_vc.RootSite = this;
+			ChangeOrMakeRoot(m_hvoRoot, Vc, InterlinVc.kfragStText, m_styleSheet);
+			Vc.RootSite = this;
 		}
 
 		#region IVwNotifyChange Members
@@ -1077,7 +1078,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return true;
 			}
 
-			m_vc.GuessServices.ClearGuessData();
+			Vc.GuessServices.ClearGuessData();
 			UpdateWordforms(m_wordformsToUpdate);
 			m_wordformsToUpdate.Clear();
 			return true;
@@ -1091,14 +1092,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		#endregion
 		public void UpdatingOccurrence(IAnalysis oldAnalysis, IAnalysis newAnalysis)
 		{
-			m_vc.UpdatingOccurrence(oldAnalysis, newAnalysis);
+			Vc.UpdatingOccurrence(oldAnalysis, newAnalysis);
 		}
 
-		protected internal IStText RootStText
-		{
-			get;
-			set;
-		}
+		protected internal IStText RootStText { get; set; }
 
 		internal static int GetParagraphIndexForAnalysis(AnalysisOccurrence point)
 		{
@@ -1130,7 +1127,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			fExactMatch = false;
 			if (RootStText == null || RootStText.ParagraphsOS.Count == 0 || bookmark.IndexOfParagraph < 0 ||
-			    bookmark.BeginCharOffset < 0 || bookmark.IndexOfParagraph >= RootStText.ParagraphsOS.Count)
+				bookmark.BeginCharOffset < 0 || bookmark.IndexOfParagraph >= RootStText.ParagraphsOS.Count)
 			{
 				return null;
 			}
@@ -1152,10 +1149,4 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		#endregion
 	}
-
-	/// <summary>
-	/// delegate for determining whether a paragraph should be updated according to occurrences based upon
-	/// the given wordforms.
-	/// </summary>
-	internal delegate bool UpdateGuessesCondition(IStTxtPara para, HashSet<IWfiWordform> wordforms);
 }

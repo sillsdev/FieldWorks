@@ -32,7 +32,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 	/// by reflection because it needs to refer to the interlinear assembly (in order to display words
 	/// in interlinear mode), so the interlinear assembly can't know about this one.
 	/// </summary>
-	public partial class ConstituentChart : InterlinDocChart, IInterlinearTabControl, IHandleBookmark, IFlexComponent, IStyleSheet
+	public partial class ConstituentChart : InterlinDocChart, IHandleBookmark, IFlexComponent, IStyleSheet
 	{
 		#region Member Variables
 		private InterlinRibbon m_ribbon;
@@ -43,13 +43,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		// Popups associated with each 'MoveHere' button
 		private bool m_fContextMenuButtonsEnabled;
 		private IDsConstChart m_chart;
-		private int m_chartHvo = 0;
+		private int m_chartHvo;
 		private ICmPossibility m_template;
 		private ICmPossibility[] m_allColumns;
 		private ConstituentChartLogic m_logic;
 		private Panel m_templateSelectionPanel;
 		private Panel m_buttonRow;
 		private Panel m_bottomStuff;
+		private SplitContainer m_topBottomSplit;
 		// m_buttonRow above m_ribbon
 		private ChartHeaderView m_headerMainCols;
 		private Panel m_topStuff;
@@ -63,8 +64,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private ToolTip m_toolTip;
 		// controls the popup help items for the Constituent Chart Form
 		private InterAreaBookmark m_bookmark;
-		// To keep track of where we are in the text between panes (and areas)
-		internal LcmCache m_cache;
 		private ILcmServiceLocator m_serviceLocator;
 		private XmlNode m_configurationParameters;
 		private ToolStripMenuItem _fileMenu;
@@ -82,9 +81,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// </summary>
 		internal ConstituentChart(LcmCache cache, ConstituentChartLogic logic)
 		{
-			m_cache = cache;
-			m_serviceLocator = m_cache.ServiceLocator;
+			Cache = cache;
+			m_serviceLocator = Cache.ServiceLocator;
 			m_logic = logic;
+			ForEditing = true;
+			Name = "ConstituentChart";
+			Vc = new InterlinVc(Cache);
 
 			BuildUIComponents();
 		}
@@ -125,15 +127,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				dlg.ShowDialog(this);
 			}
 		}
-
-		#region Implementation of IPropertyTableProvider
-
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
-
-		#endregion
 
 		#region Implementation of IPublisherProvider
 
@@ -176,17 +169,85 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		#endregion
 
+		/// <summary>
+		/// This is for setting Vc.LineChoices even before we have a valid vc.
+		/// </summary>
+		protected InterlinLineChoices LineChoices { get; set; }
+
+		/// <summary>
+		///  Launch the Configure interlinear dialog and deal with the results.
+		/// </summary>
+		public override bool OnConfigureInterlinear(object argument)
+		{
+			LineChoices = GetLineChoices();
+			Vc.LineChoices = LineChoices;
+
+			using (var dlg = new ConfigureInterlinDialog(Cache, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
+				m_ribbon.Vc.LineChoices.Clone() as InterlinLineChoices))
+			{
+				if (dlg.ShowDialog(this) == DialogResult.OK)
+				{
+					UpdateForNewLineChoices(dlg.Choices);
+				}
+
+				return true; // We handled this
+			}
+		}
+
+		/// <summary>
+		/// Persist the new line choices and
+		/// Reconstruct the document based on the given newChoices for interlinear lines.
+		/// </summary>
+		internal virtual void UpdateForNewLineChoices(InterlinLineChoices newChoices)
+		{
+			LineChoices = newChoices;
+			m_ribbon.Vc.LineChoices = newChoices;
+			Body.LineChoices = newChoices;
+
+			PersistAndDisplayChangedLineChoices();
+		}
+
+		internal void PersistAndDisplayChangedLineChoices()
+		{
+			PropertyTable.SetProperty(ConfigPropName, m_ribbon.Vc.LineChoices.Persist(Cache.LanguageWritingSystemFactoryAccessor), true, settingsGroup: SettingsGroup.LocalSettings);
+			PropertyTable.SetProperty(ConfigPropName, Body.LineChoices.Persist(Cache.LanguageWritingSystemFactoryAccessor), true, settingsGroup: SettingsGroup.LocalSettings);
+			UpdateDisplayForNewLineChoices();
+		}
+
+		/// <summary>
+		/// Do whatever is necessary to display new line choices.
+		/// </summary>
+		private void UpdateDisplayForNewLineChoices()
+		{
+			if (m_ribbon.RootBox == null || Body.RootBox == null)
+			{
+				return;
+			}
+			m_ribbon.RootBox.Reconstruct();
+			Body.RootBox.Reconstruct();
+		}
+
 		private void BuildUIComponents()
 		{
 			SuspendLayout();
 
+			m_topBottomSplit = new SplitContainer();
+			m_topBottomSplit.Layout += SplitLayout;
 			BuildBottomStuffUI();
 			BuildTopStuffUI();
-			Controls.AddRange(new Control[] { m_topStuff, m_bottomStuff });
+			m_topBottomSplit.Orientation = Orientation.Horizontal;
+			Controls.Add(m_topBottomSplit);
 
 			Dock = DockStyle.Fill;
 
 			ResumeLayout();
+		}
+
+		private void SplitLayout(object sender, LayoutEventArgs e)
+		{
+			var container = sender as SplitContainer;
+			container.Width = Width;
+			container.Height = Height;
 		}
 
 		protected override void OnLoad(EventArgs e)
@@ -194,6 +255,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			base.OnLoad(e);
 			// We don't want to know about column width changes until after we're initialized and have restored original widths.
 			m_headerMainCols.ColumnWidthChanged += m_headerMainCols_ColumnWidthChanged;
+		}
+
+		protected override void OnLayout(LayoutEventArgs e)
+		{
+			//Call SplitLayout here to ensure Mono properly updates Splitter length
+			SplitLayout(m_topBottomSplit, e);
+			//Mono makes SplitLayout calls while Splitter is moving so set default distance here
+			m_topBottomSplit.SplitterDistance = (int)(Height * .9);
+			base.OnLayout(e);
 		}
 
 		/// <summary>
@@ -207,7 +277,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		private void BuildTopStuffUI()
 		{
-			Body = new ConstChartBody(m_logic, this) { Cache = m_cache, Dock = DockStyle.Fill };
+			Body = new ConstChartBody(m_logic, this) { Cache = Cache, Dock = DockStyle.Fill };
 
 			// Seems to be right (cf BrowseViewer) but not ideal.
 			m_headerMainCols = new ChartHeaderView(this)
@@ -221,8 +291,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			m_templateSelectionPanel = new Panel() { Height = new Button().Height, Dock = DockStyle.Top, Width = 0 };
 			m_templateSelectionPanel.Layout += TemplateSelectionPanel_Layout;
 
-			m_topStuff = new Panel { Dock = DockStyle.Fill };
-			m_topStuff.Controls.AddRange(new Control[] { Body, m_headerMainCols });
+			m_topStuff = m_topBottomSplit.Panel1;
+			m_topStuff.Controls.AddRange(new Control[] { Body, m_headerMainCols, m_templateSelectionPanel });
 		}
 
 		private void TemplateSelectionPanel_Layout(object sender, EventArgs e)
@@ -241,7 +311,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private void BuildBottomStuffUI()
 		{
 			// fills the 'bottom stuff'
-			m_ribbon = new InterlinRibbon(m_cache, 0) { Dock = DockStyle.Fill };
+			m_ribbon = new InterlinRibbon(Cache, 0) { Dock = DockStyle.Fill };
 			m_logic.Ribbon = m_ribbon;
 			m_logic.Ribbon_Changed += m_logic_Ribbon_Changed;
 
@@ -250,7 +320,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			// Force the ToolTip text to be displayed whether or not the form is active.
 			m_toolTip = new ToolTip { AutoPopDelay = 5000, InitialDelay = 1000, ReshowDelay = 500, ShowAlways = true };
 
-			m_bottomStuff = new Panel { Height = 100, Dock = DockStyle.Bottom };
+			m_bottomStuff = m_topBottomSplit.Panel2;
+			m_bottomStuff.Height = 100;
 			m_bottomStuff.SuspendLayout();
 
 			m_buttonRow = new Panel { Height = new Button().Height, Dock = DockStyle.Top, BackColor = Color.FromKnownColor(KnownColor.ControlLight) };
@@ -259,12 +330,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 			m_bottomStuff.Controls.AddRange(new Control[] { m_ribbon, m_buttonRow });
 			m_bottomStuff.ResumeLayout();
-		}
-
-		LcmCache IInterlinearTabControl.Cache
-		{
-			get { return m_cache; }
-			set { m_cache = value; }
 		}
 
 		private const int kmaxWordforms = 20;
@@ -635,7 +700,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				{
 					return false;
 				}
-				var defWs = m_cache.ServiceLocator.WritingSystemManager.Get(RootStText.MainWritingSystem);
+				var defWs = Cache.ServiceLocator.WritingSystemManager.Get(RootStText.MainWritingSystem);
 				return defWs.RightToLeftScript;
 			}
 		}
@@ -648,7 +713,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Set the root object.
 		/// </summary>
-		public void SetRoot(int hvo)
+		public override void SetRoot(int hvo)
 		{
 			var oldTemplateHvo = 0;
 			if (m_template != null)
@@ -664,7 +729,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			}
 			else
 			{
-				RootStText = (IStText)m_cache.ServiceLocator.ObjectRepository.GetObject(hvo);
+				RootStText = (IStText)Cache.ServiceLocator.ObjectRepository.GetObject(hvo);
 			}
 			if (m_hvoRoot > 0)
 			{
@@ -673,8 +738,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				// Make sure text is parsed!
 				if (InterlinMaster.HasParagraphNeedingParse(RootStText))
 				{
-					NonUndoableUnitOfWorkHelper.Do(RootStText.Cache.ActionHandlerAccessor,
-						() => InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(RootStText, false));
+					NonUndoableUnitOfWorkHelper.Do(RootStText.Cache.ActionHandlerAccessor, () => InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(RootStText, false));
 				}
 
 				// We need to make or set the chart before calling NextUnusedInput.
@@ -701,7 +765,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				if (m_chart.TemplateRA == null)
 				{
 					// LT-8700: if original template is deleted we might need this
-					m_chart.TemplateRA = m_cache.LangProject.GetDefaultChartTemplate();
+					m_chart.TemplateRA = Cache.LangProject.GetDefaultChartTemplate();
 				}
 				m_template = m_chart.TemplateRA;
 				m_logic.StTextHvo = m_hvoRoot;
@@ -806,7 +870,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 			// Detect if there is already a chart created for the given text and template
 			IDsConstChart selectedChart = null;
-			foreach (var chart in m_cache.LangProject.DiscourseDataOA.ChartsOC.Cast<IDsConstChart>().Where(chart => chart.BasedOnRA != null && chart.BasedOnRA == RootStText && chart.TemplateRA == template))
+			foreach (var chart in Cache.LangProject.DiscourseDataOA.ChartsOC.Cast<IDsConstChart>().Where(chart => chart.BasedOnRA != null && chart.BasedOnRA == RootStText && chart.TemplateRA == template))
 			{
 				selectedChart = chart;
 			}
@@ -814,9 +878,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			//If there is no such chart, then create one
 			if (selectedChart == null)
 			{
-				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 				{
-					selectedChart = m_serviceLocator.GetInstance<IDsConstChartFactory>().Create(m_cache.LangProject.DiscourseDataOA, RootStText, selection.SelectedItem as ICmPossibility);
+					selectedChart = m_serviceLocator.GetInstance<IDsConstChartFactory>().Create(Cache.LangProject.DiscourseDataOA, RootStText, selection.SelectedItem as ICmPossibility);
 				});
 			}
 
@@ -925,16 +989,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		private void CreateChartInNonUndoableUOW()
 		{
-			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
-				m_chart = m_serviceLocator.GetInstance<IDsConstChartFactory>().Create(m_cache.LangProject.DiscourseDataOA, RootStText, m_cache.LangProject.GetDefaultChartTemplate());
+				m_chart = m_serviceLocator.GetInstance<IDsConstChartFactory>().Create(Cache.LangProject.DiscourseDataOA, RootStText, Cache.LangProject.GetDefaultChartTemplate());
 			});
 			m_chartHvo = m_chart.Hvo;
 		}
 
 		private void DetectAndReportTemplateProblem()
 		{
-			var templates = m_cache.LangProject.DiscourseDataOA.ConstChartTemplOA.PossibilitiesOS;
+			var templates = Cache.LangProject.DiscourseDataOA.ConstChartTemplOA.PossibilitiesOS;
 			if (templates.Count == 0 || templates[0].SubPossibilitiesOS.Count == 0)
 			{
 				MessageBox.Show(this, LanguageExplorerResources.ksNoColumns, LanguageExplorerResources.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -1046,7 +1110,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		private void FindAndCleanUpMyChart(int hvoStText)
 		{
-			foreach (var chart in m_cache.LangProject.DiscourseDataOA.ChartsOC.Cast<IDsConstChart>().Where(chart => chart.BasedOnRA != null && chart.BasedOnRA.Hvo == hvoStText))
+			foreach (var chart in Cache.LangProject.DiscourseDataOA.ChartsOC.Cast<IDsConstChart>().Where(chart => chart.BasedOnRA != null && chart.BasedOnRA.Hvo == hvoStText))
 			{
 				m_chart = chart;
 				m_logic.Chart = m_chart;
@@ -1322,6 +1386,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// </summary>
 		public bool OnExportDiscourse(object argument)
 		{
+			// guards against LT-8309, though I could not reproduce all cases.
+			if (m_chart == null || Body == null || m_logic == null)
+			{
+				return false;
+			}
 			using (var dlg = new DiscourseExportDialog(m_chart.Hvo, Body.Vc, m_logic.WsLineNumber))
 			{
 				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
@@ -1358,14 +1427,65 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		internal ConstChartBody Body { get; private set; }
 
 		/// <summary>
-		/// This means it copies settings from the edit tab (in the same view).
-		/// Perversely these settings are saved with the 'doc' name.
+		/// The property table key storing InterlinLineChoices used by our display.
 		/// </summary>
-		private static string ConfigPropName => "InterlinConfig_Doc";
+		private static string ConfigPropName
+		{
+			get;
+			set;
+		}
 
+		/// <summary>
+		/// Retrieves the Line Choices from persistence, or otherwise sets them to a default option
+		/// </summary>
+		/// <param name="lineConfigPropName">The string key to retrieve Line Choices from the Property Table</param>
+		/// <param name="mode">Should always be Chart for this override</param>
+		public override InterlinLineChoices SetupLineChoices(string lineConfigPropName, InterlinMode mode)
+		{
+			ConfigPropName = lineConfigPropName;
+			InterlinLineChoices lineChoices;
+			if (!TryRestoreLineChoices(out lineChoices))
+			{
+				if (ForEditing)
+				{
+					lineChoices = EditableInterlinLineChoices.DefaultChoices(Cache.LangProject, WritingSystemServices.kwsVern, WritingSystemServices.kwsAnal);
+					lineChoices.Mode = mode;
+					lineChoices.SetStandardChartState();
+				}
+				else
+				{
+					lineChoices = InterlinLineChoices.DefaultChoices(Cache.LangProject, WritingSystemServices.kwsVern, WritingSystemServices.kwsAnal, mode);
+				}
+			}
+			else if (ForEditing)
+			{
+				// just in case this hasn't been set for restored lines
+				lineChoices.Mode = mode;
+			}
+			LineChoices = lineChoices;
+			return LineChoices;
+		}
+
+		/// <summary>
+		/// Tries to retrieve the Line Choices from the Property Table and returns if it was succesful
+		/// </summary>
+		internal bool TryRestoreLineChoices(out InterlinLineChoices lineChoices)
+		{
+			lineChoices = null;
+			var persist = PropertyTable.GetValue<string>(ConfigPropName, null, SettingsGroup.LocalSettings);
+			if (persist != null)
+			{
+				lineChoices = InterlinLineChoices.Restore(persist, Cache.LanguageWritingSystemFactoryAccessor, Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs);
+			}
+			return persist != null && lineChoices != null;
+		}
+
+		/// <summary>
+		/// Gets the Line Choices stored in the property table
+		/// </summary>
 		private InterlinLineChoices GetLineChoices()
 		{
-			var result = new InterlinLineChoices(m_cache.LangProject, m_cache.DefaultVernWs, m_cache.DefaultAnalWs);
+			var result = new InterlinLineChoices(Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs);
 			string persist = null;
 			if (PropertyTable != null)
 			{
@@ -1374,30 +1494,36 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			InterlinLineChoices lineChoices = null;
 			if (persist != null)
 			{
-				lineChoices = InterlinLineChoices.Restore(persist, m_cache.ServiceLocator.GetInstance<ILgWritingSystemFactory>(), m_cache.LangProject, m_cache.DefaultVernWs, m_cache.DefaultAnalWs);
+				lineChoices = InterlinLineChoices.Restore(persist, Cache.ServiceLocator.GetInstance<ILgWritingSystemFactory>(), Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs);
 			}
-			GetLineChoice(result, lineChoices, InterlinLineChoices.kflidWord);
-			GetLineChoice(result, lineChoices, InterlinLineChoices.kflidWordGloss);
-			return result;
+			else
+			{
+				GetLineChoice(result, lineChoices, InterlinLineChoices.kflidWord, InterlinLineChoices.kflidWordGloss);
+				return result;
+			}
+			return lineChoices;
 		}
 
 		/// <summary>
-		/// Make sure there is SOME lineChoice for the specified flid in m_lineChoices.
+		/// Make sure there is SOME lineChoice for the one of the specified flids.
 		/// If lineChoices is non-null and contains one for the right flid, choose the first.
 		/// </summary>
-		private static void GetLineChoice(InterlinLineChoices dest, InterlinLineChoices source, int flid)
+		private static void GetLineChoice(InterlinLineChoices dest, InterlinLineChoices source, params int[] flids)
 		{
-			if (source != null)
+			foreach (var flid in flids)
 			{
-				var index = source.IndexOf(flid);
-				if (index >= 0)
+				if (source != null)
 				{
-					dest.Add(source[index]);
-					return;
+					var index = source.IndexOf(flid);
+					if (index >= 0)
+					{
+						dest.Add(source[index]);
+						return;
+					}
 				}
+				// Last resort.
+				dest.Add(flid);
 			}
-			// Last resort.
-			dest.Add(flid);
 		}
 
 		public bool NotesDataFromPropertyTable

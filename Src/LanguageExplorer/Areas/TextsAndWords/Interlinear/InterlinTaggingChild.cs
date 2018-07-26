@@ -57,7 +57,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected override void MakeVc()
 		{
-			m_vc = new InterlinTaggingVc(m_cache);
+			Vc = new InterlinTaggingVc(m_cache);
 			m_tagFact = m_cache.ServiceLocator.GetInstance<ITextTagFactory>();
 			m_segRepo = m_cache.ServiceLocator.GetInstance<ISegmentRepository>();
 		}
@@ -67,7 +67,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		protected override void AddDecorator()
 		{
-			m_rootb.DataAccess = ((InterlinTaggingVc)m_vc).Decorator;
+			m_rootb.DataAccess = ((InterlinTaggingVc)Vc).Decorator;
 		}
 
 		#region SelectionMethods
@@ -105,7 +105,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				else
 				{
 					RootBox.DestroySelection();
-			}
+				}
 			}
 			finally
 			{
@@ -152,18 +152,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			// Get the info about the other end of the selection.
 			var cvsli = vwselNew.CLevels(fEndPoint) - 1;
-			SelLevInfo[] rgvsliEnd;
 			using (var prgvsli = MarshalEx.ArrayToNative<SelLevInfo>(cvsli))
 			{
-				int ihvoRoot, tagTextProp, cpropPrevious, ich, ws;
-				bool fAssocPrev;
-				ITsTextProps ttpSelProps;
-				vwselNew.AllSelEndInfo(fEndPoint, out ihvoRoot, cvsli, prgvsli,
-					out tagTextProp, out cpropPrevious, out ich,
-					out ws, out fAssocPrev, out ttpSelProps);
-				rgvsliEnd = MarshalEx.NativeToArray<SelLevInfo>(prgvsli, cvsli);
+				int dummyHvoRoot;
+				int dummyTagTextProp;
+				int dummyPropPrevious;
+				int dummyIch;
+				int dummyWs;
+				bool dummyAssocPrev;
+				ITsTextProps dummyTtpSelProps;
+				vwselNew.AllSelEndInfo(fEndPoint, out dummyHvoRoot, cvsli, prgvsli, out dummyTagTextProp, out dummyPropPrevious, out dummyIch, out dummyWs, out dummyAssocPrev, out dummyTtpSelProps);
+				return MarshalEx.NativeToArray<SelLevInfo>(prgvsli, cvsli);
 			}
-			return rgvsliEnd;
 		}
 
 		/// <summary>
@@ -196,7 +196,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (point.IsValid && point.HasWordform)
 				{
 					selectedWordforms.Add(point);
-			}
+				}
 			}
 
 			m_hvoCurSegment = hvoSegment;
@@ -246,12 +246,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// This is important because although we are currently displaying just an StTxtPara,
 			// eventually it might be part of a higher level structure. We want to be able to
 			// reproduce everything that gets us down to the IAnalysis.
-			for (var i = rgvsli.Length; --i >= 0; )
+			for (var i = rgvsli.Length; --i >= 0;)
 			{
 				if (rgvsli[i].tag == SegmentTags.kflidAnalyses)
 				{
 					return i;
-			}
+				}
 			}
 			// Either the user didn't anchor the selection on a word or its not yet analyzed.
 			// TODO: How to handle the latter situation?!
@@ -280,7 +280,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (rgvsliEnd[iend].ihvo != analysisLevels[ianchor].ihvo)
 				{
 					return false;
-			}
+				}
 			}
 			if (iend < 0)
 			{
@@ -322,7 +322,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (!(lastSegment.AnalysesRS[i] is IPunctuationForm))
 				{
 					break;
-			}
+				}
 			}
 			levels[0].tag = SegmentTags.kflidAnalyses;
 			levels[0].ihvo = i;
@@ -393,9 +393,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					// if we don't overlap with an existing occurrence selection then
 					// make a new occurrence selection. (Otherwise, just make the context
 					// menu based on the current selected occurrences).
-					if (newSelectedOccurrences == null ||
-						newSelectedOccurrences.Count == 0 ||
-						!SelectedWordforms.Contains(newSelectedOccurrences[0]))
+					if (newSelectedOccurrences == null || newSelectedOccurrences.Count == 0 || !SelectedWordforms.Contains(newSelectedOccurrences[0]))
 					{
 						// make a new (occurrence) selection (via our SelectionChanged override)
 						// before making the context menu.
@@ -440,8 +438,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (tagList.SubPossibilitiesOS.Count > 0)
 				{
 					AddListToMenu(menu, tagList);
+				}
 			}
-		}
 		}
 
 		private void AddListToMenu(ToolStrip menu, ICmPossibility tagList)
@@ -465,8 +463,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private bool DoSelectedOccurrencesHaveTag(ICmPossibility poss)
 		{
-			var dummyTag = FindFirstTagOfSpecifiedTypeOnSelection(poss);
-			return dummyTag != null;
+			return FindFirstTagOfSpecifiedTypeOnSelection(poss) != null;
 		}
 
 		/// <summary>
@@ -477,8 +474,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <returns></returns>
 		private ITextTag FindFirstTagOfSpecifiedTypeOnSelection(ICmPossibility poss)
 		{
-			var tagList = FindAllTagsReferencingOccurrenceList(SelectedWordforms);
-			return tagList.FirstOrDefault(textTag => textTag.TagRA == poss);
+			return FindAllTagsReferencingOccurrenceList(SelectedWordforms).FirstOrDefault(textTag => textTag.TagRA == poss);
 		}
 
 		internal static ICmPossibilityList GetTaggingLists(ILangProject langProj)
@@ -489,9 +485,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return result;
 			}
-				// Create the containing object and lists.
-				result = langProj.GetDefaultTextTagList();
-				langProj.TextMarkupTagsOA = result;
+			// Create the containing object and lists.
+			result = langProj.GetDefaultTextTagList();
+			langProj.TextMarkupTagsOA = result;
 			return result;
 		}
 
@@ -508,13 +504,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var sh = SelectionHelper.Create(this);
 			if (item.Checked)
 			{
-				UndoableUnitOfWorkHelper.Do(ITextStrings.ksUndoDeleteTextTag, ITextStrings.ksRedoDeleteTextTag,
-											Cache.ActionHandlerAccessor, () => RemoveTextTagInstance(item.Possibility));
+				UndoableUnitOfWorkHelper.Do(ITextStrings.ksUndoDeleteTextTag, ITextStrings.ksRedoDeleteTextTag, Cache.ActionHandlerAccessor, () => RemoveTextTagInstance(item.Possibility));
 			}
 			else
 			{
-				UndoableUnitOfWorkHelper.Do(ITextStrings.ksUndoAddTextTag, ITextStrings.ksRedoAddTextTag,
-											Cache.ActionHandlerAccessor, () => MakeTextTagInstance(item.Possibility));
+				UndoableUnitOfWorkHelper.Do(ITextStrings.ksUndoAddTextTag, ITextStrings.ksRedoAddTextTag, Cache.ActionHandlerAccessor, () => MakeTextTagInstance(item.Possibility));
 			}
 			// We might try later to see if we can do without this! Nope.
 			sh?.RestoreSelectionAndScrollPos();
@@ -563,7 +557,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var tagRow = tagPoss.Owner.IndexInOwner;
 			foreach (var overlappingTag in overlappingTags)
 			{
-				int overlappingTagRow = overlappingTag.TagRA.Owner.IndexInOwner;
+				var overlappingTagRow = overlappingTag.TagRA.Owner.IndexInOwner;
 				if (tagRow == overlappingTagRow)
 				{
 					objsToDelete.Add(overlappingTag);
@@ -614,7 +608,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected virtual void CacheTagString(ITextTag textTag)
 		{
 			// Cache the new tagging string and call PropChanged?
-			((InterlinTaggingVc)m_vc).CacheTagString(textTag);
+			((InterlinTaggingVc)Vc).CacheTagString(textTag);
 		}
 
 		/// <summary>
@@ -623,9 +617,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected virtual void CacheNullTagString(ITextTag textTag)
 		{
 			// Cache a string for each occurrence this tag references. (PropChanged?)
-
-			var row = textTag.TagRA.Owner.IndexInOwner;
-			((InterlinTaggingVc)m_vc).ClearTagStringForRow(textTag.GetOccurrences(), row);
+			((InterlinTaggingVc)Vc).ClearTagStringForRow(textTag.GetOccurrences(), textTag.TagRA.Owner.IndexInOwner);
 		}
 
 		/// <summary>
@@ -666,7 +658,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return results;
 			}
 
-			var occurenceSet = new HashSet<AnalysisOccurrence>(occurrences);;
+			var occurenceSet = new HashSet<AnalysisOccurrence>(occurrences); ;
 			// Collect all segments referenced by these words
 			var segsUsed = new HashSet<ISegment>(occurenceSet.Select(o => o.Segment));
 			// Collect all tags referencing those segments
@@ -679,7 +671,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (occurenceSet.Intersect(ttag.GetOccurrences()).Any())
 				{
 					results.Add(ttag);
-			}
+				}
 			}
 
 			return results;

@@ -16,6 +16,7 @@ using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -30,14 +31,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// tagging line when it thinks it needs to do so.
 	/// Of course, it might be better implemented overall by a CollectorEnv approach...
 	/// </remarks>
-	internal class InterlinLineChoices : ICloneable
+	public class InterlinLineChoices : ICloneable
 	{
-		Color kMorphLevelColor = Color.Purple;
-		Color kWordLevelColor = Color.Blue;
+		readonly Color kMorphLevelColor = Color.Purple;
+		readonly Color kWordLevelColor = Color.Blue;
+		internal List<LineOption> m_allLineOptions = new List<LineOption>();
 		internal List<InterlinLineSpec> m_specs = new List<InterlinLineSpec>();
 		internal int m_wsDefVern; // The default vernacular writing system.
 		internal int m_wsDefAnal; // The default analysis writing system.
-		internal ILangProject m_proj;	// provides more ws info.
+		internal ILangProject m_proj;   // provides more ws info.
 		internal LcmCache m_cache;
 		private readonly Dictionary<int, string> m_fieldNames = new Dictionary<int, string>();
 		InterlinMode m_mode = InterlinMode.Analyze;
@@ -59,6 +61,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			UpdateFieldNamesFromLines(mode);
 			m_wsDefVern = defaultVernacularWs;
 			m_wsDefAnal = defaultAnalysisWs == WritingSystemServices.kwsAnal ? m_cache.DefaultAnalWs : defaultAnalysisWs;
+			AllLineOptions = LineOptions(mode).ToList();
 		}
 
 		public InterlinLineChoices(ILangProject proj, int defaultVernacularWs, int defaultAnalysisWs, InterlinMode mode)
@@ -85,6 +88,26 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				UpdateFieldNamesFromLines(m_mode);
 			}
 		}
+
+		internal List<LineOption> AllLineOptions
+		{
+			get { return m_allLineOptions; }
+			set
+			{
+				m_allLineOptions = value;
+
+				// AllLineOptions and AllLineSpecs will be identical
+				// On a set of AllLineOptions, AllLineSpecs will also be updated.
+				var newLineSpecs = new List<InterlinLineSpec>();
+				foreach (var option in value)
+				{
+					newLineSpecs.Add(CreateSpec(option.Flid, 0));
+				}
+				AllLineSpecs = newLineSpecs;
+			}
+		}
+
+		internal List<InterlinLineSpec> AllLineSpecs { get; private set; } = new List<InterlinLineSpec>();
 
 		/// <summary>
 		/// Count previous occurrences of the flid at the specified index.
@@ -115,6 +138,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				case InterlinMode.Analyze:
 					result.SetStandardState();
 					break;
+				case InterlinMode.Chart:
+					result.SetStandardChartState();
+					break;
 				case InterlinMode.Gloss:
 				case InterlinMode.GlossAddWordsToLexicon:
 					result.SetStandardGlossState();
@@ -123,26 +149,37 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return result;
 		}
 
+		internal void SetStandardChartState()
+		{
+			m_specs.Clear();
+			Add(kflidWord);
+			Add(kflidWordGloss);
+			Add(kflidMorphemes);
+			Add(kflidLexGloss);
+			Add(kflidLexEntries);
+			Add(kflidLexPos);
+		}
+
 		internal void SetStandardState()
 		{
 			m_specs.Clear();
 			Add(kflidWord); // 0
 			Add(kflidMorphemes); // 1
-			Add(kflidLexEntries); //2
-			Add(kflidLexGloss); //3
-			Add(kflidLexPos); //4
-			Add(kflidWordGloss); //5
-			Add(kflidWordPos); //6
-			Add(kflidFreeTrans); //7
+			Add(kflidLexEntries); // 2
+			Add(kflidLexGloss); // 3
+			Add(kflidLexPos); // 4
+			Add(kflidWordGloss); // 5
+			Add(kflidWordPos); // 6
+			Add(kflidFreeTrans); // 7
 		}
 
 		internal void SetStandardGlossState()
 		{
 			m_specs.Clear();
 			Add(kflidWord); // 0
-			Add(kflidWordGloss); //5
-			Add(kflidWordPos); //6
-			Add(kflidFreeTrans); //7
+			Add(kflidWordGloss); // 5
+			Add(kflidWordPos); // 6
+			Add(kflidFreeTrans); // 7
 		}
 
 		public string Persist(ILgWritingSystemFactory wsf)
@@ -160,7 +197,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		/// <summary />
-		public static InterlinLineChoices Restore(string data, ILgWritingSystemFactory wsf, ILangProject proj, int defVern, int defAnalysis)
+		public static InterlinLineChoices Restore(string data, ILgWritingSystemFactory wsf, ILangProject proj, int defVern, int defAnalysis, InterlinMode mode = InterlinMode.Analyze)
 		{
 			Debug.Assert(defVern != 0);
 			Debug.Assert(defAnalysis != 0);
@@ -171,7 +208,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			switch (parts[0])
 			{
 				case "InterlinLineChoices":
-					result = new InterlinLineChoices(proj, defVern, defAnalysis);
+					result = new InterlinLineChoices(proj, defVern, defAnalysis, mode);
 					break;
 				case "EditableInterlinLineChoices":
 					result = new EditableInterlinLineChoices(proj, defVern, defAnalysis);
@@ -204,7 +241,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					if (this[i].MorphemeLevel)
 					{
 						return true;
-				}
+					}
 				}
 				return false;
 			}
@@ -230,11 +267,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					continue;
 				}
-					// It's always OK (and optimal) to insert a new occurrence of the same
-					// flid right after the last existing one.
-					m_specs.Insert(i + 1, spec);
-					return i + 1;
-				}
+				// It's always OK (and optimal) to insert a new occurrence of the same
+				// flid right after the last existing one.
+				m_specs.Insert(i + 1, spec);
+				return i + 1;
+			}
 			for (var i = m_specs.Count - 1; i >= 0; i--)
 			{
 				if (!CanFollow(this[i], spec))
@@ -242,24 +279,24 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					continue;
 				}
 				var firstMorphemeIndex = FirstMorphemeIndex;
-					// Even if otherwise OK, if we're inserting something morpheme level
-					// and there's already morpheme-level stuff present it must follow
-					// the existing morpheme-level stuff.
-					if (fGotMorpheme && spec.MorphemeLevel && i >= firstMorphemeIndex &&
-						(!this[i].MorphemeLevel ||
-						spec.Flid == kflidMorphemes ||
-						spec.Flid == kflidLexEntries && this[i].Flid != kflidMorphemes))
-					{
-						continue;
-					}
-					// And word-level annotations can't follow freeform ones.
-					if (spec.WordLevel && !this[i].WordLevel)
+				// Even if otherwise OK, if we're inserting something morpheme level
+				// and there's already morpheme-level stuff present it must follow
+				// the existing morpheme-level stuff.
+				if (fGotMorpheme && spec.MorphemeLevel && i >= firstMorphemeIndex &&
+					(!this[i].MorphemeLevel ||
+					spec.Flid == kflidMorphemes ||
+					spec.Flid == kflidLexEntries && this[i].Flid != kflidMorphemes))
 				{
-						continue;
+					continue;
 				}
-					m_specs.Insert(i + 1, spec);
-					return i + 1;
+				// And word-level annotations can't follow freeform ones.
+				if (spec.WordLevel && !this[i].WordLevel)
+				{
+					continue;
 				}
+				m_specs.Insert(i + 1, spec);
+				return i + 1;
+			}
 			m_specs.Insert(0, spec); // can't follow anything, put first.
 			return 0;
 		}
@@ -314,6 +351,25 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			Debug.Assert(m_specs.Count > 0);
 		}
 
+
+		/// <summary>
+		/// Removes the Line Choice specified by a flid and writing system, then returns if the Remove was successful
+		/// </summary>
+		public bool Remove(int flid, int ws)
+		{
+			var spec = m_specs.Find(x => x.Flid == flid && x.WritingSystem == ws);
+			if (spec == null)
+			{
+				return false;
+			}
+			if (OkToRemove(spec))
+			{
+				m_specs.Remove(spec);
+				return true;
+			}
+			return false;
+		}
+
 		/// These constants are defined for brevity here and convenience in testing. They use real field
 		/// IDs where that is possible. The names correspond to what we see by default in the dialog.
 		public const int kflidWord = WfiWordformTags.kflidForm;
@@ -354,11 +410,25 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private LineOption[] LineOptions(InterlinMode mode)
 		{
 			var customLineOptions = GetCustomLineOptions(mode);
+
+			if (mode == InterlinMode.Chart)
+			{
+				return new[]
+				{
+					new LineOption(kflidWord, ITextStrings.ksWord),
+					new LineOption(kflidWordGloss, ITextStrings.ksWordGloss),
+					new LineOption(kflidMorphemes, ITextStrings.ksMorphemes),
+					new LineOption(kflidLexGloss, ITextStrings.ksGloss),
+					new LineOption(kflidLexEntries, ITextStrings.ksLexEntries),
+					new LineOption(kflidLexPos, ITextStrings.ksGramInfo)
+				}.Union(customLineOptions).ToArray();
+			}
+
 			return new[] {
 				 new LineOption(kflidWord, ITextStrings.ksWord),
 				 new LineOption(kflidMorphemes, ITextStrings.ksMorphemes),
 				 new LineOption(kflidLexEntries, ITextStrings.ksLexEntries),
-				 new LineOption(kflidLexGloss, ITextStrings.ksGloss),
+				 new LineOption(kflidLexGloss, ITextStrings.ksLexGloss),
 				 new LineOption(kflidLexPos, ITextStrings.ksGramInfo),
 				 new LineOption(kflidWordGloss, mode == InterlinMode.GlossAddWordsToLexicon ? ITextStrings.ksLexWordGloss : ITextStrings.ksWordGloss),
 				 new LineOption(kflidWordPos, mode == InterlinMode.GlossAddWordsToLexicon ? ITextStrings.ksLexWordCat : ITextStrings.ksWordCat),
@@ -374,13 +444,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			switch (mode)
 			{
 				case InterlinMode.Analyze:
+				case InterlinMode.Chart:
 				case InterlinMode.Gloss:
 					if (m_cache != null)
 					{
-						var classId = m_cache.MetaDataCacheAccessor.GetClassId("Segment");
-						var mdc = m_cache.GetManagedMetaDataCache();
-						customLineOptions.AddRange(mdc.GetFields(classId, false, (int)CellarPropertyTypeFilter.All)
-							.Where(flid => mdc.IsCustom(flid)).Select(flid => new LineOption(flid, mdc.GetFieldLabel(flid))));
+						var mdc = (IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor;
+						customLineOptions.AddRange(mdc.GetFields(m_cache.MetaDataCacheAccessor.GetClassId("Segment"), false, (int)CellarPropertyTypeFilter.All).Where(flid => mdc.IsCustom(flid)).Select(flid => new LineOption(flid, mdc.GetFieldLabel(flid))));
 					}
 					break;
 			}
@@ -416,7 +485,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return kWordLevelColor;
 			}
-				return SystemColors.ControlText;
+			return SystemColors.ControlText;
 		}
 
 		// Find where the spec is in your collection.
@@ -424,6 +493,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			return m_specs.IndexOf(spec);
 		}
+
 		/// <summary>
 		/// Add the specified flid (in the appropriate default writing system).
 		/// </summary>
@@ -544,7 +614,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (spec.Flid == flid && result.IndexOf(spec.WritingSystem) < 0)
 				{
 					result.Add(spec.WritingSystem);
-			}
+				}
 			}
 			if (fGetDefaultForMissing && result.Count == 0)
 			{
@@ -583,7 +653,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					if (result.IndexOf(spec.WritingSystem) < 0)
 					{
 						result.Add(spec.WritingSystem);
-				}
+					}
 				}
 				return result;
 			}
@@ -631,7 +701,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (spec.Flid == flid && result.IndexOf(spec.WritingSystem) < 0 && spec.WritingSystem != wsToOmit)
 				{
 					result.Add(spec.WritingSystem);
-			}
+				}
 			}
 			return result;
 		}
@@ -650,8 +720,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <returns>the integer where inserted</returns>
 		public int Add(int flid, int wsRequested)
 		{
-			var spec = CreateSpec(flid, wsRequested);
-			return Add(spec);
+			return Add(CreateSpec(flid, wsRequested));
 		}
 
 		/// <summary>
@@ -673,7 +742,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (!OkToRemove(spec))
 				{
 					return spec;
-			}
+				}
 			}
 
 			// search for the first spec that is a default spec.
@@ -682,7 +751,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (IsDefaultSpec(spec))
 				{
 					return spec;
-			}
+				}
 			}
 
 			// lastly return the first matchingSpec
@@ -755,7 +824,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 
 			return new InterlinLineSpec
-		{
+			{
 				ComboContent = comboContent,
 				Flid = flid,
 				WritingSystem = wsRequested == 0 ? ws : wsRequested,
@@ -784,7 +853,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (ws > 0)
 			{
 				// first try to find an exact match.
-				 index = IndexOf(flid, ws, true);
+				index = IndexOf(flid, ws, true);
 			}
 
 			if (index == -1)
@@ -807,7 +876,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (this[i].Flid == flid && MatchingWritingSystem(this[i].WritingSystem, ws, fExact))
 				{
 					return i;
-			}
+				}
 			}
 			return -1;
 		}
@@ -874,7 +943,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (this[i].Flid == flid)
 				{
 					return i;
-			}
+				}
 			}
 			return -1;
 		}
@@ -892,12 +961,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			Debug.Assert(wsList == null || wsList.Length == flids.Length, "wsList should be empty or match the same item count in flids.");
 			var result = new List<InterlinLineSpec>();
 			for (var i = 0; i < m_specs.Count; i++)
-					{
+			{
 				result.AddRange(flids.Where((flid, j) => this[i].Flid == flid && (wsList == null || this[i].WritingSystem == wsList[j])).Select(t => this[i]));
 			}
 			return result;
 		}
-
 
 		/// <summary>
 		/// Answer where line n should move up to (if it can move up).
@@ -970,12 +1038,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return;
 			}
 			for (var i = n + 1; i < Count && ((fMoveMorphemeGroup && this[i].MorphemeLevel) || (fMoveNoteGroup && this[i].Flid == kflidNote)); i++)
-				{
+			{
 				var specT = this[i];
-					m_specs.RemoveAt(i);
-					m_specs.Insert(dest + i - n, specT);
-				}
+				m_specs.RemoveAt(i);
+				m_specs.Insert(dest + i - n, specT);
 			}
+		}
 
 		/// <summary>
 		/// Answer true if the item at line n can be moved down a line.
@@ -1009,7 +1077,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			foreach (var spec in m_specs)
 			{
 				result.m_specs.Add(spec.Clone() as InterlinLineSpec);
-	}
+			}
 			return result;
 		}
 		#endregion

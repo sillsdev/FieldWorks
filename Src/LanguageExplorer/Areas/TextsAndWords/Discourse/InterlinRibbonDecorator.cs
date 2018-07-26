@@ -18,8 +18,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 	{
 		#region Member Data
 
-		private object m_sourceObj; // Might not be "owning" from a model standpoint
-
 		/// <summary>
 		/// Unique 'flid' for this Ribbon. So far there are two:
 		///		1) The main charting ribbon
@@ -42,10 +40,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		#endregion
 
-		public InterlinRibbonDecorator(LcmCache cache, object sourceObj, int flid)
+		public InterlinRibbonDecorator(LcmCache cache, int flid)
 			: base(cache.DomainDataByFlid as ISilDataAccessManaged)
 		{
-			m_sourceObj = sourceObj;
 			m_myFlid = flid;
 			m_ribbonValues = new List<int>();
 		}
@@ -106,6 +103,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				m_ribbonValues.Add(hvoOcc);
 				m_cachedRibbonWords[hvoOcc] = wordForm as LocatedAnalysisOccurrence;
 			}
+
 			return m_ribbonValues.ToArray();
 		}
 

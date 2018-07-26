@@ -785,7 +785,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			m_hvoStText = hvoStText;
 			m_iEndSelLim = -1;
 			m_endSelLimPoint = null;
-			m_sda = new InterlinRibbonDecorator(m_cache, m_hvoStText, m_occurenceListId);
+			m_sda = new InterlinRibbonDecorator(m_cache, m_occurenceListId);
 			m_analysisRepo = cache.ServiceLocator.GetInstance<IAnalysisRepository>();
 		}
 

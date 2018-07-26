@@ -363,6 +363,7 @@
     <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolMenuHelper.cs" />
     <Compile Include="Areas\RightClickContextMenuManager.cs" />
     <Compile Include="Areas\RuleInsertType.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\IInterlinConfigurable.cs" />
     <Compile Include="Impls\SharedEventHandlers.cs" />
     <Compile Include="Areas\StringRepSliceVc.cs" />
     <Compile Include="Areas\StringRepSliceView.cs">
@@ -2812,11 +2813,11 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinMasterNoTitleBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinPrintView.cs">
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinPrintChild.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinPrintView.Designer.cs">
-      <DependentUpon>InterlinPrintView.cs</DependentUpon>
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinPrintChild.Designer.cs">
+      <DependentUpon>InterlinPrintChild.cs</DependentUpon>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinTaggingChild.cs">
       <SubType>UserControl</SubType>
@@ -3346,8 +3347,8 @@
       <DependentUpon>InterlinMasterNoTitleBar.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\InterlinPrintView.resx">
-      <DependentUpon>InterlinPrintView.cs</DependentUpon>
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\InterlinPrintChild.resx">
+      <DependentUpon>InterlinPrintChild.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\InterlinTaggingChild.resx">

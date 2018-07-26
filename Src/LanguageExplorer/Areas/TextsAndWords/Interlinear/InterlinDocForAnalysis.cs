@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -95,8 +95,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					// Add spelling items if any (i.e., if we clicked a squiggle word).
 					int hvoObj, tagAnchor;
 					if (GetTagAndObjForOnePropSelection(e.Selection, out hvoObj, out tagAnchor) &&
-					    (tagAnchor == SegmentTags.kflidFreeTranslation || tagAnchor == SegmentTags.kflidLiteralTranslation ||
-					     tagAnchor == NoteTags.kflidContent))
+						(tagAnchor == SegmentTags.kflidFreeTranslation || tagAnchor == SegmentTags.kflidLiteralTranslation ||
+						tagAnchor == NoteTags.kflidContent))
 					{
 						helper.MakeSpellCheckMenuOptions(e.MouseLocation, this, menu);
 					}
@@ -139,14 +139,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal void SuppressResettingGuesses(Action task)
 		{
-			m_vc.Decorator.SuppressResettingGuesses(task);
+			Vc.Decorator.SuppressResettingGuesses(task);
 		}
 
 		public override void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
 			base.PropChanged(hvo, tag, ivMin, cvIns, cvDel);
 			if (!IsFocusBoxInstalled || FocusBox.SelectedOccurrence == null || tag != SegmentTags.kflidAnalyses ||
-			    FocusBox.SelectedOccurrence.Segment.Hvo != hvo)
+				FocusBox.SelectedOccurrence.Segment.Hvo != hvo)
 			{
 				return;
 			}
@@ -175,8 +175,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// null ref exceptions in the absence of testing for this (LT-13702), and we certainly don't need to update the focus box
 			// because its wordform has been updated if we can't find an actual wordform associated with the focus box.
 			if (!IsFocusBoxInstalled || FocusBox.SelectedOccurrence == null ||
-			    FocusBox.SelectedOccurrence.Analysis?.Wordform == null ||
-			    !wordforms.Contains(FocusBox.SelectedOccurrence.Analysis.Wordform) || FocusBox.IsDirty)
+				FocusBox.SelectedOccurrence.Analysis?.Wordform == null ||
+				!wordforms.Contains(FocusBox.SelectedOccurrence.Analysis.Wordform) || FocusBox.IsDirty)
 			{
 				return;
 			}
@@ -253,7 +253,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		protected override void MakeVc()
 		{
-			m_vc = new InterlinDocForAnalysisVc(m_cache);
+			Vc = new InterlinDocForAnalysisVc(m_cache);
 		}
 
 		#region Overrides of RootSite
@@ -265,7 +265,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		protected override void OnLostFocus(EventArgs e)
 		{
-			m_vc?.SetActiveFreeform(0, 0, 0, 0);
+			Vc?.SetActiveFreeform(0, 0, 0, 0);
 			base.OnLostFocus(e);
 		}
 
@@ -310,8 +310,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 				return;
 			}
-
-			if (!m_vc.CanBeAnalyzed(target))
+			if (!Vc.CanBeAnalyzed(target))
 			{
 				return;
 			}
@@ -357,7 +356,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-
 			if (IsFocusBoxInstalled)
 			{
 				FocusBox.UpdateRealFromSandbox(null, fSaveGuess, target);
@@ -392,11 +390,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// Set the VC size to match the FocusBox. Return true if it changed.
 		private bool SetFocusBoxSizeForVc()
 		{
-			if (m_vc == null || ExistingFocusBox == null)
+			if (Vc == null || ExistingFocusBox == null)
 			{
 				return false;
 			}
-			var interlinDocForAnalysisVc = m_vc as InterlinDocForAnalysisVc;
+			var interlinDocForAnalysisVc = Vc as InterlinDocForAnalysisVc;
 			if (interlinDocForAnalysisVc == null)
 			{
 				return false; // testing only? Anyway nothing can change.
@@ -416,7 +414,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			var newSize = new Size(width * 72000 / dpiX, FocusBox.Height * 72000 / dpiY);
 			if (newSize.Width == interlinDocForAnalysisVc.FocusBoxSize.Width &&
-			    newSize.Height == interlinDocForAnalysisVc.FocusBoxSize.Height)
+				newSize.Height == interlinDocForAnalysisVc.FocusBoxSize.Height)
 			{
 				return false;
 			}
@@ -608,7 +606,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						nextSegIndex = upward ? currentPara.SegmentsOS.Count - 1 : 0;
 					}
 					else
-					{	// no more paragraphs in this text
+					{   // no more paragraphs in this text
 						break;
 					}
 				}
@@ -813,7 +811,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// Enhance JohnT: ideally we would probably figure this margin
 			// to exactly match the margin between words set by the VC.
 			var left = rcPrimary.left;
-			if (m_vc.RightToLeft)
+			if (Vc.RightToLeft)
 			{
 				left += 8;
 			}
@@ -870,11 +868,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			get
 			{
-				return ((InterlinDocForAnalysisVc) m_vc).FocusBoxOccurrence;
+				return ((InterlinDocForAnalysisVc)Vc).FocusBoxOccurrence;
 			}
 			set
 			{
-				((InterlinDocForAnalysisVc)m_vc).FocusBoxOccurrence = value;
+				((InterlinDocForAnalysisVc)Vc).FocusBoxOccurrence = value;
 				Publisher.Publish("TextSelectedWord", value != null && value.HasWordform ? value.Analysis.Wordform : null);
 			}
 		}
@@ -890,8 +888,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal InterlinMode GetSelectedLineChoiceMode()
 		{
-			return PropertyTable.GetValue(ksPropertyAddWordsToLexicon, false) ?
-				InterlinMode.GlossAddWordsToLexicon : InterlinMode.Gloss;
+			return PropertyTable.GetValue(ksPropertyAddWordsToLexicon, false) ? InterlinMode.GlossAddWordsToLexicon : InterlinMode.Gloss;
 		}
 
 		#endregion
@@ -959,7 +956,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			base.OnKeyDown(e2);
 		}
 
-		private enum ArrowChange {None, Up, Down, Handled}
+		private enum ArrowChange { None, Up, Down, Handled }
 
 		/// <summary>
 		/// Performs a change in IP when arrow keys should take the IP from a translation or note
@@ -1025,7 +1022,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					// Should = isDownMove since hasFollowingAnalysis should be false
 				}
 				if (isUpNewSeg || isDownNewSeg)
-				{	// Get the next segment in direction with a real analysis or a real translation or note
+				{   // Get the next segment in direction with a real analysis or a real translation or note
 					if (IsTranslationOrNoteNext(curParaIndex, curSeg, isUpNewSeg))
 					{
 						if (hasPrompt && (id == InterlinLineChoices.kflidFreeTrans || id == InterlinLineChoices.kflidLitTrans))
@@ -1049,7 +1046,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					IAnalysis nextAnalysis = null;
 					var index = 0;
 					foreach (var an in curSeg.AnalysesRS.Reverse())
-					{	// need to count because an.IndexInOwner == 0 for all an - go figure
+					{   // need to count because an.IndexInOwner == 0 for all an - go figure
 						index++;
 						if (!an.HasWordform) continue;
 						break; // found the last real analysis
@@ -1179,7 +1176,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				hasPrevAnnotation = HasVisibleTranslationOrNote(curSeg, annotationsBefore);
 			}
 			else
-			{	// this is the first translation or note and it can't be a null note because it was selected
+			{   // this is the first translation or note and it can't be a null note because it was selected
 				var noteIsFirstAnnotation = lines.ToArray()[lineNum].Flid == InterlinLineChoices.kflidNote;
 				hasPrevAnnotation = noteIsFirstAnnotation && curNoteIndex > 0; // can have notes or empty notes before it
 			}
@@ -1222,7 +1219,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				hasFollowingAnnotation = HasVisibleTranslationOrNote(curSeg, annotationsAfter);
 			}
 			else
-			{	// this is the last translation or note and it can't be a null note because it was selected
+			{   // this is the last translation or note and it can't be a null note because it was selected
 				var noteIsLastAnnotation = LineChoices[LineChoices.Count - 1].Flid == InterlinLineChoices.kflidNote;
 				hasFollowingAnnotation = noteIsLastAnnotation && curNoteIndex < curSeg.NotesOS.Count - 1;
 			}
@@ -1299,14 +1296,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					where = ExtremePositionInString(ichAnchor, ichEnd, curNote.Content.get_String(wid).Length, isRightToLeft);
 					break;
 				case kTagUserPrompt: // user prompt property for empty translation annotations
-					// Is this free or literal?
+									 // Is this free or literal?
 					hasPrompt = true;
-					id = m_vc.ActiveFreeformFlid;
+					id = Vc.ActiveFreeformFlid;
 					id = (id == SegmentTags.kflidLiteralTranslation) ?
 						InterlinLineChoices.kflidLitTrans : InterlinLineChoices.kflidFreeTrans;
 					if (wid == 0)
 					{
-						wid = m_vc.ActiveFreeformWs;
+						wid = Vc.ActiveFreeformWs;
 					}
 					where = WhichEnd.Both;
 					break;
@@ -1451,7 +1448,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				index++;
 				var ind = forward ? index : seg.AnalysesRS.Count - index;
 				realAnalysis = new AnalysisOccurrence(seg, ind);
-				if (m_vc.CanBeAnalyzed(realAnalysis))
+				if (Vc.CanBeAnalyzed(realAnalysis))
 				{
 					found = true;
 					break; // found the first or last real analysis
@@ -1601,7 +1598,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					else if (analysis is IWfiAnalysis || analysis is IWfiWordform)
 					{
 						// check if we have a guess cached with a gloss. (LT-9973)
-						var guessHvo = m_vc.GetGuess(analysis);
+						var guessHvo = Vc.GetGuess(analysis);
 						if (guessHvo != 0)
 						{
 							var guess = Cache.ServiceLocator.ObjectRepository.GetObject(guessHvo) as IWfiGloss;
@@ -1639,7 +1636,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// is being changed.  See LT-9421.
 			SetCpropPreviousForInsert();
 			var helper = SelectionHelper.Create(this);
-			var flid = m_vc.ActiveFreeformFlid;
+			var flid = Vc.ActiveFreeformFlid;
 			UndoableUnitOfWorkHelper.Do(ITextStrings.ksUndoSetTransFromWordGlosses,
 				ITextStrings.ksRedoSetTransFromWordGlosses,
 				Cache.ActionHandlerAccessor,
@@ -1711,7 +1708,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			var rgsli = helper.GetLevelInfo(SelectionHelper.SelLimitType.Anchor);
 			var itagSegments = -1;
-			for (var i = rgsli.Length; --i >= 0; )
+			for (var i = rgsli.Length; --i >= 0;)
 			{
 				if (rgsli[i].tag == StTxtParaTags.kflidSegments)
 				{
@@ -1727,10 +1724,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var hvoSeg = rgsli[itagSegments].hvo;
 			var annType = freeAnn.AnnotationTypeRA;
 			var idx = 0;
-			var choices = m_vc.LineChoices;
+			var choices = Vc.LineChoices;
 			for (var i = choices.FirstFreeformIndex; i < choices.Count;)
 			{
-				var ffAannType = m_vc.SegDefnFromFfFlid(choices[i].Flid);
+				var ffAannType = Vc.SegDefnFromFfFlid(choices[i].Flid);
 				if (ffAannType == annType)
 				{
 					idx = i;
@@ -1791,7 +1788,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						helper.SetNumberOfPreviousProps(SelectionHelper.SelLimitType.Anchor, m_cpropPrevForInsert);
 						helper.SetNumberOfPreviousProps(SelectionHelper.SelLimitType.End, m_cpropPrevForInsert);
 						helper.MakeBest(true);
-						m_cpropPrevForInsert = -1;	// we've used this the one time it was needed.
+						m_cpropPrevForInsert = -1;  // we've used this the one time it was needed.
 					}
 					catch (Exception exc)
 					{
@@ -1844,7 +1841,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 				else if (flid != kTagUserPrompt)
 				{
-					m_vc.SetActiveFreeform(0, 0, 0, 0); // clear any current prompt.
+					Vc.SetActiveFreeform(0, 0, 0, 0); // clear any current prompt.
 				}
 				// do not extend the selection for a user prompt if the user is currently entering an IME composition,
 				// since we are about to switch the prompt to a real comment field
@@ -1870,7 +1867,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void SetupTranslationPrompt(SelectionHelper helper, int flid)
 		{
-			m_vc.SetActiveFreeform(helper.LevelInfo[0].hvo, flid, helper.Ws, helper.NumberOfPreviousProps);
+			Vc.SetActiveFreeform(helper.LevelInfo[0].hvo, flid, helper.Ws, helper.NumberOfPreviousProps);
 			helper.SetTextPropId(SelectionHelper.SelLimitType.Anchor, kTagUserPrompt);
 			helper.SetTextPropId(SelectionHelper.SelLimitType.End, kTagUserPrompt);
 			helper.NumberOfPreviousProps = 0; // only ever one occurrence of prompt.
@@ -1964,7 +1961,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected virtual FocusBoxController CreateFocusBoxInternal()
 		{
-			return new FocusBoxController(m_styleSheet, LineChoices, m_vc.RightToLeft);
+			return new FocusBoxController(m_styleSheet, LineChoices, Vc.RightToLeft);
 		}
 
 		/// <summary>
@@ -2212,7 +2209,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// eventually it might be part of a higher level structure. We want to be able to
 			// reproduce everything that gets us down to the analysis.
 			var itagAnalysis = -1;
-			for (var i = rgvsli.Length; --i >= 0; )
+			for (var i = rgvsli.Length; --i >= 0;)
 			{
 				if (rgvsli[i].tag == SegmentTags.kflidAnalyses)
 				{
@@ -2312,9 +2309,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				});
 
 			TryHideFocusBoxAndUninstall();
-			if (m_vc.LineChoices.IndexOf(InterlinLineChoices.kflidNote) < 0)
+			if (Vc.LineChoices.IndexOf(InterlinLineChoices.kflidNote) < 0)
 			{
-				m_vc.LineChoices.Add(InterlinLineChoices.kflidNote);
+				Vc.LineChoices.Add(InterlinLineChoices.kflidNote);
 				PersistAndDisplayChangedLineChoices();
 			}
 
@@ -2342,13 +2339,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal void RecordGuessIfNotKnown(AnalysisOccurrence selected)
 		{
-			if (m_vc != null) // I think this only happens in tests.
-				m_vc.RecordGuessIfNotKnown(selected);
+			if (Vc != null) // I think this only happens in tests.
+				Vc.RecordGuessIfNotKnown(selected);
 		}
 
 		internal IAnalysis GetGuessForWordform(IWfiWordform wf, int ws)
 		{
-			return m_vc?.GetGuessForWordform(wf, ws);
+			return Vc?.GetGuessForWordform(wf, ws);
 		}
 
 		internal bool PrepareToGoAway()
@@ -2432,7 +2429,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							IAnalysis occAn = occ.Analysis; // averts “Access to the modified closure” warning in resharper
 							if (occAn is IWfiAnalysis || occAn is IWfiWordform)
 							{   // this is an analysis or a wordform
-								int hvo = m_vc.GetGuess(occAn);
+								int hvo = Vc.GetGuess(occAn);
 								if (occAn.Hvo != hvo)
 								{   // this is a guess, so approve it
 									// 1) A second occurence of a word that has had a lexicon entry or sense created for it.

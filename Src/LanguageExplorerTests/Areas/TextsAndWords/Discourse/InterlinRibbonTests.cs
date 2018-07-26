@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords.Discourse;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.FwUtils.Attributes;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -24,29 +25,49 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 	[InitializeRealKeyboardController]
 	public class InterlinRibbonTests : InMemoryDiscourseTestBase
 	{
-		private TestInterlinRibbon m_ribbon;
+		private TestInterlinRibbon _ribbon;
+		private IPropertyTable _propertyTable;
+		private IPublisher _publisher;
+		private ISubscriber _subscriber;
 
-	#region Test setup
+		#region Test setup
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Create minimal test data required for every test.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected override void CreateTestData()
 		{
 			base.CreateTestData();
-			m_ribbon = new TestInterlinRibbon(Cache, m_stText.Hvo);
-			m_ribbon.Width = 100;
-			m_ribbon.Height = 40;
-			Assert.IsNotNull(m_ribbon.Decorator, "Don't have correct access here.");
-			m_ribbon.CacheRibbonItems(new List<AnalysisOccurrence>());
+			_ribbon = new TestInterlinRibbon(Cache, m_stText.Hvo)
+			{
+				Width = 100,
+				Height = 40
+			};
+			_propertyTable = TestSetupServices.SetupTestTriumvirate(out _publisher, out _subscriber);
+			_ribbon.InitializeFlexComponent(new FlexComponentParameters(_propertyTable, _publisher, _subscriber));
+			Assert.IsNotNull(_ribbon.Decorator, "Don't have correct access here.");
+			_ribbon.CacheRibbonItems(new List<AnalysisOccurrence>());
 		}
 
 		public override void TestTearDown()
 		{
-			m_ribbon.Dispose();
-			base.TestTearDown();
+			try
+			{
+				_ribbon?.Dispose();
+				_propertyTable?.Dispose();
+				_ribbon = null;
+				_propertyTable = null;
+				_publisher = null;
+				_subscriber = null;
+			}
+			catch (Exception err)
+			{
+				throw new Exception($"Error in running {GetType().Name} TestTearDown method.", err);
+			}
+			finally
+			{
+				base.TestTearDown();
+			}
 		}
 
 	#endregion
@@ -58,11 +79,15 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			var result = new List<AnalysisOccurrence>();
 			var point1 = new AnalysisOccurrence(para.SegmentsOS[0], 0);
 			if (!point1.IsValid)
+			{
 				return result.ToArray();
+			}
 			do
 			{
 				if (point1.HasWordform)
+				{
 					result.Add(point1);
+				}
 				point1 = point1.NextWordform();
 			} while (point1 != null && point1.IsValid);
 			return result.ToArray();
@@ -77,37 +102,34 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		{
 			EndSetupTask();
 			// SUT#1 (but not one that changes data)
-			m_ribbon.MakeRoot();
-			m_ribbon.CallLayout();
-			Assert.IsNotNull(m_ribbon.RootBox, "layout should produce some root box");
-			var widthEmpty = m_ribbon.RootBox.Width;
+			_ribbon.MakeRoot();
+			_ribbon.CallLayout();
+			Assert.IsNotNull(_ribbon.RootBox, "layout should produce some root box");
+			var widthEmpty = _ribbon.RootBox.Width;
 			var glosses = new AnalysisOccurrence[0];
 
 			// SUT#2 This changes data! Use a UOW.
-			UndoableUnitOfWorkHelper.Do("RibbonLayoutUndo", "RibbonLayoutRedo",
-										Cache.ActionHandlerAccessor, () => glosses = GetParaAnalyses(m_firstPara));
+			UndoableUnitOfWorkHelper.Do("RibbonLayoutUndo", "RibbonLayoutRedo", Cache.ActionHandlerAccessor, () => glosses = GetParaAnalyses(m_firstPara));
 
 			Assert.Greater(glosses.Length, 0);
 			var firstGloss = new List<AnalysisOccurrence> { glosses[0] };
 
 			// SUT#3 This changes some internal data! Use a UOW.
-			UndoableUnitOfWorkHelper.Do("CacheAnnsUndo", "CacheAnnsRedo", Cache.ActionHandlerAccessor,
-										() => m_ribbon.CacheRibbonItems(firstGloss));
-			m_ribbon.CallLayout();
+			UndoableUnitOfWorkHelper.Do("CacheAnnsUndo", "CacheAnnsRedo", Cache.ActionHandlerAccessor, () => _ribbon.CacheRibbonItems(firstGloss));
+			_ribbon.CallLayout();
 
-			int widthOne = m_ribbon.RootBox.Width;
-			int heightOne = m_ribbon.RootBox.Height;
+			int widthOne = _ribbon.RootBox.Width;
+			int heightOne = _ribbon.RootBox.Height;
 			Assert.IsTrue(widthOne > widthEmpty, "adding a wordform should make the root box wider");
 
 			var glossList = new List<AnalysisOccurrence>();
 			glossList.AddRange(glosses);
 
 			// SUT#4 This changes some internal data! Use a UOW.
-			UndoableUnitOfWorkHelper.Do("CacheAnnsUndo", "CacheAnnsRedo", Cache.ActionHandlerAccessor,
-										() => m_ribbon.CacheRibbonItems(glossList));
-			m_ribbon.CallLayout();
-			int widthMany = m_ribbon.RootBox.Width;
-			int heightMany = m_ribbon.RootBox.Height;
+			UndoableUnitOfWorkHelper.Do("CacheAnnsUndo", "CacheAnnsRedo", Cache.ActionHandlerAccessor, () => _ribbon.CacheRibbonItems(glossList));
+			_ribbon.CallLayout();
+			int widthMany = _ribbon.RootBox.Width;
+			int heightMany = _ribbon.RootBox.Height;
 			Assert.IsTrue(widthMany > widthOne, "adding more wordforms should make the root box wider");
 			// In a real view they might not be exactly equal due to subscripts and the like, but our
 			// text and anaysis are very simple.
@@ -119,42 +141,42 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		{
 			var glosses = GetParaAnalyses(m_firstPara);
 			var glossList = new List<AnalysisOccurrence>();
+			int labelOffset = 150;
 			glossList.AddRange(glosses);
 			EndSetupTask();
 
 			//SUT
-			UndoableUnitOfWorkHelper.Do("CacheAnnUndo", "CacheAnnRedo", m_actionHandler, () =>
-																						 m_ribbon.CacheRibbonItems(glossList));
+			UndoableUnitOfWorkHelper.Do("CacheAnnUndo", "CacheAnnRedo", m_actionHandler, () => _ribbon.CacheRibbonItems(glossList));
 
-			m_ribbon.MakeRoot();
-			m_ribbon.RootBox.Reconstruct(); // forces it to really be constructed
-			m_ribbon.CallOnLoad(new EventArgs());
-			Assert.AreEqual(new [] { glosses[0] }, m_ribbon.SelectedOccurrences, "should have selection even before any click");
+			_ribbon.MakeRoot();
+			_ribbon.RootBox.Reconstruct(); // forces it to really be constructed
+			_ribbon.CallOnLoad(new EventArgs());
+			Assert.AreEqual(new [] { glosses[0] }, _ribbon.SelectedOccurrences, "should have selection even before any click");
 
 			Rectangle rcSrc, rcDst;
-			m_ribbon.CallGetCoordRects(out rcSrc, out rcDst);
+			_ribbon.CallGetCoordRects(out rcSrc, out rcDst);
 
 			// SUT #2?!
-			m_ribbon.RootBox.MouseDown(1, 1, rcSrc, rcDst);
-			m_ribbon.RootBox.MouseUp(1, 1, rcSrc, rcDst);
-			Assert.AreEqual(new [] { glosses[0] }, m_ribbon.SelectedOccurrences);
+			_ribbon.RootBox.MouseDown(labelOffset, 1, rcSrc, rcDst);
+			_ribbon.RootBox.MouseUp(labelOffset, 1, rcSrc, rcDst);
+			Assert.AreEqual(new[] { glosses[0] }, _ribbon.SelectedOccurrences);
 
-			Rectangle location = m_ribbon.GetSelLocation();
-			Assert.IsTrue(m_ribbon.RootBox.Selection.IsRange, "single click selection should expand to range");
-			int width = location.Width;
+			Rectangle location = _ribbon.GetSelLocation();
+			Assert.IsTrue(_ribbon.RootBox.Selection.IsRange, "single click selection should expand to range");
+			int offset = location.Width + labelOffset;
 
 			// SUT #3?!
 			// Clicking just right of that should add the second one. We need to allow for the gap between
-			// (about 10 pixels) and at the left of the view.
-			m_ribbon.RootBox.MouseDown(width + 15, 5, rcSrc, rcDst);
-			m_ribbon.RootBox.MouseUp(width + 15, 5, rcSrc, rcDst);
-			Assert.AreEqual(new [] { glosses[0], glosses[1] }, m_ribbon.SelectedOccurrences);
+			// (about 15 pixels) and at the left of the view.
+			_ribbon.RootBox.MouseDown(offset + 15, 5, rcSrc, rcDst);
+			_ribbon.RootBox.MouseUp(offset + 15, 5, rcSrc, rcDst);
+			Assert.AreEqual(new[] { glosses[0], glosses[1] }, _ribbon.SelectedOccurrences);
 
 			// SUT #4?!
 			// And a shift-click back near the start should go back to just one of them.
-			m_ribbon.RootBox.MouseDownExtended(1, 1, rcSrc, rcDst);
-			m_ribbon.RootBox.MouseUp(1, 1, rcSrc, rcDst);
-			Assert.AreEqual(new [] { glosses[0] }, m_ribbon.SelectedOccurrences);
+			_ribbon.RootBox.MouseDownExtended(1, 1, rcSrc, rcDst);
+			_ribbon.RootBox.MouseUp(1, 1, rcSrc, rcDst);
+			Assert.AreEqual(new[] { glosses[0] }, _ribbon.SelectedOccurrences);
 		}
 	#endregion
 	}

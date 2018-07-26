@@ -37,7 +37,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// Enhance: it may cause flicker during drag, in which case, we may change to only do it on mouse up,
 		/// or only IF the mouse is up.
 		/// </summary>
-		protected override void  HandleSelectionChange(object sender, VwSelectionArgs args)
+		protected override void HandleSelectionChange(object sender, VwSelectionArgs args)
 		{
 			if (m_InSelectionChanged || RootBox.Selection == null)
 			{
@@ -70,7 +70,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				var levelsE = new SelLevInfo[1];
 				levelsE[0].ihvo = end;
 				levelsE[0].tag = OccurenceListId;
-				RootBox.MakeTextSelInObj(0, 1, levelsA, 1, levelsE, false, false, false, true, true);
+				RootBox.MakeTextSelInObj(0, levelsA.Length, levelsA, levelsE.Length, levelsE, false, false, false, true, true);
 			}
 			finally
 			{

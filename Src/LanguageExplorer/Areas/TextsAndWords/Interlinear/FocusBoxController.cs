@@ -123,16 +123,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void SetToolTips()
 		{
 #if RANDYTODO
-			toolTip.SetToolTip(btnBreakPhrase,
-							   AppendShortcutToToolTip(m_mediator.CommandSet["CmdBreakPhrase"] as Command));
-			toolTip.SetToolTip(btnConfirmChanges,
-							   AppendShortcutToToolTip(m_mediator.CommandSet["CmdApproveAndMoveNext"] as Command));
-			toolTip.SetToolTip(btnLinkNextWord,
-							   AppendShortcutToToolTip(m_mediator.CommandSet["CmdMakePhrase"] as Command));
-			toolTip.SetToolTip(btnUndoChanges,
-							   AppendShortcutToToolTip(m_mediator.CommandSet["CmdUndo"] as Command));
-			toolTip.SetToolTip(btnConfirmChangesForWholeText,
-							   AppendShortcutToToolTip(m_mediator.CommandSet["CmdApproveForWholeTextAndMoveNext"] as Command));
+			toolTip.SetToolTip(btnBreakPhrase, AppendShortcutToToolTip(m_mediator.CommandSet["CmdBreakPhrase"] as Command));
+			toolTip.SetToolTip(btnConfirmChanges, AppendShortcutToToolTip(m_mediator.CommandSet["CmdApproveAndMoveNext"] as Command));
+			toolTip.SetToolTip(btnLinkNextWord, AppendShortcutToToolTip(m_mediator.CommandSet["CmdMakePhrase"] as Command));
+			toolTip.SetToolTip(btnUndoChanges, AppendShortcutToToolTip(m_mediator.CommandSet["CmdUndo"] as Command));
+			toolTip.SetToolTip(btnConfirmChangesForWholeText, AppendShortcutToToolTip(m_mediator.CommandSet["CmdApproveForWholeTextAndMoveNext"] as Command));
 #endif
 		}
 
@@ -432,15 +427,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 #if RANDYTODO
 			var cmd = (ICommandUndoRedoText)arg;
-			UndoableUnitOfWorkHelper.Do(cmd.UndoText, cmd.RedoText, Cache.ActionHandlerAccessor,
-				() =>
-					{
-						SelectedOccurrence.MakePhraseWithNextWord();
-						if (InterlinDoc != null)
-						{
-							InterlinDoc.RecordGuessIfNotKnown(SelectedOccurrence);
-						}
-					});
+			UndoableUnitOfWorkHelper.Do(cmd.UndoText, cmd.RedoText, Cache.ActionHandlerAccessor, () =>
+			{
+				SelectedOccurrence.MakePhraseWithNextWord();
+				if (InterlinDoc != null)
+				{
+					InterlinDoc.RecordGuessIfNotKnown(SelectedOccurrence);
+				}
+			});
 			InterlinWordControl.SwitchWord(SelectedOccurrence);
 			UpdateButtonState();RANDYTODO
 #endif
@@ -457,10 +451,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// (LT-8069) in some odd circumstances, the break phrase icon lingers on the tool bar menu when it should
 			// have disappeared. If we're in that state, just return.
 			if (!ShowBreakPhraseIcon)
+			{
 				return;
+			}
 			var cmd = (ICommandUndoRedoText)arg;
-			UndoableUnitOfWorkHelper.Do(cmd.UndoText, cmd.RedoText, Cache.ActionHandlerAccessor,
-				() => SelectedOccurrence.BreakPhrase());
+			UndoableUnitOfWorkHelper.Do(cmd.UndoText, cmd.RedoText, Cache.ActionHandlerAccessor, () => SelectedOccurrence.BreakPhrase());
 			InterlinWordControl.SwitchWord(SelectedOccurrence);
 			UpdateButtonState();
 #endif
@@ -512,10 +507,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var window = PropertyTable.GetValue<IFwMainWnd>("window");
 
 #if RANDYTODO
-			window.ShowContextMenu("mnuFocusBox",
-				btnMenu.PointToScreen(new Point(btnMenu.Width / 2, btnMenu.Height / 2)),
-				null,
-				null);
+			window.ShowContextMenu("mnuFocusBox", btnMenu.PointToScreen(new Point(btnMenu.Width / 2, btnMenu.Height / 2)), null, null);
 #endif
 		}
 
@@ -1414,7 +1406,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			readonly AnalysisOccurrence m_oldOccurrence;
 			AnalysisOccurrence m_newOccurrence;
 
-			internal UndoRedoApproveAnalysis(InterlinDocForAnalysis interlinDoc, AnalysisOccurrence oldAnnotation, 				AnalysisOccurrence newAnnotation)
+			internal UndoRedoApproveAnalysis(InterlinDocForAnalysis interlinDoc, AnalysisOccurrence oldAnnotation, AnalysisOccurrence newAnnotation)
 			{
 				m_interlinDoc = interlinDoc;
 				m_cache = m_interlinDoc.Cache;

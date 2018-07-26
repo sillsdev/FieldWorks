@@ -25,7 +25,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// View constructor for InterlinView. Just to get something working, currently
 	/// it is just a literal.
 	/// </summary>
-	internal class InterlinVc : FwBaseVc, IDisposable
+	public class InterlinVc : FwBaseVc, IDisposable
 	{
 		#region Constants and other similar ints.
 
@@ -207,13 +207,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected internal IVwStylesheet StyleSheet { get; set; }
 
 		#region Disposable stuff
-		#if DEBUG
 		/// <summary/>
 		~InterlinVc()
 		{
 			Dispose(false);
 		}
-		#endif
 
 		/// <summary/>
 		public bool IsDisposed { get; private set; }
@@ -226,15 +224,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		/// <summary/>
-		protected virtual void Dispose(bool fDisposing)
+		protected virtual void Dispose(bool disposing)
 		{
-			Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + " *******");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " *******");
 			if (IsDisposed)
 			{
 				// No need to do it more than once.
 				return;
 			}
-			if (fDisposing)
+			if (disposing)
 			{
 				// Dispose managed resources here.
 				ListManager?.Dispose();
@@ -259,7 +257,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 		#endregion
 
-		public InterlinLineChoices LineChoices { get; set; }
+		internal InterlinLineChoices LineChoices { get; set; }
 
 		/// <summary>
 		/// The direction of the paragraph.
@@ -290,11 +288,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public bool UpdatingOccurrence(IAnalysis oldAnalysis, IAnalysis newAnalysis)
 		{
-			if (m_loader != null)
-			{
-				return m_loader.UpdatingOccurrence(oldAnalysis, newAnalysis);
-			}
-			return false;
+			return m_loader != null && m_loader.UpdatingOccurrence(oldAnalysis, newAnalysis);
 		}
 
 		private ITsString CommaSpaceString => m_tssCommaSpace ?? (m_tssCommaSpace = TsStringUtils.MakeString(", ", m_wsAnalysis));
@@ -405,7 +399,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (Decorator.get_IsPropInCache(analysis.Hvo, InterlinViewDataCache.AnalysisMostApprovedFlid, (int)CellarPropertyType.ReferenceAtomic, 0))
 			{
 				var hvoResult = Decorator.get_ObjectProp(analysis.Hvo, InterlinViewDataCache.AnalysisMostApprovedFlid);
-				if(hvoResult != 0 && Cache.ServiceLocator.IsValidObjectId(hvoResult))
+				if (hvoResult != 0 && Cache.ServiceLocator.IsValidObjectId(hvoResult))
 				{
 					return hvoResult;  // may have been cleared by setting to zero, or the Decorator could have stale data
 				}
@@ -423,241 +417,239 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			if (hvo == 0)
 			{
-				return;		// Can't do anything without an hvo (except crash -- see LT-9348).
+				return;     // Can't do anything without an hvo (except crash -- see LT-9348).
 			}
 
 			switch (frag)
 			{
-			case kfragStText:	// new root object for InterlinDocChild.
-				PreferredVernWs = WritingSystemServices.ActualWs(m_cache, WritingSystemServices.kwsVernInParagraph, hvo, StTextTags.kflidParagraphs);
-				vwenv.AddLazyVecItems(StTextTags.kflidParagraphs, this, kfragInterlinPara);
-				break;
-			case kfragInterlinPara: // Whole StTxtPara. This can be the root fragment in DE view.
-				if (vwenv.DataAccess.get_VecSize(hvo, StTxtParaTags.kflidSegments) == 0)
-				{
-					vwenv.NoteDependency(new[] { hvo }, new[] { StTxtParaTags.kflidSegments }, 1);
-					vwenv.AddString(m_tssEmptyPara);
-				}
-				else
-				{
-					// no need to calculate wsVernInParagraph at the paragraph level; we must recalculate for each word.
-					vwenv.AddLazyVecItems(StTxtParaTags.kflidSegments, this, kfragParaSegment);
-				}
-				break;
-			case kfragParaSegment:
-				// Don't put anything in this segment if it is a 'label' segment (typically containing a verse
-				// number for TE).
-				var seg = m_segRepository.GetObject(hvo);
-				if (seg.IsLabel)
-				{
+				case kfragStText:   // new root object for InterlinDocChild.
+					PreferredVernWs = WritingSystemServices.ActualWs(m_cache, WritingSystemServices.kwsVernInParagraph, hvo, StTextTags.kflidParagraphs);
+					vwenv.AddLazyVecItems(StTextTags.kflidParagraphs, this, kfragInterlinPara);
 					break;
-				}
-				// This puts ten points between segments. There's always 5 points below each line of interlinear;
-				// if there are no freeform annotations another 5 points makes 10 between segments.
-				// If there are freeforms, we need the full 10 points after the last of them.
-				var haveFreeform = seg.FreeTranslation != null || seg.LiteralTranslation != null || seg.NotesOS.Count > 0;
-				vwenv.set_IntProperty((int)FwTextPropType.ktptMarginBottom, (int)FwTextPropVar.ktpvMilliPoint, !haveFreeform ? 5000 : 10000);
-				vwenv.OpenDiv();
-				// Enhance JohnT: determine what the overall direction of the paragraph should
-				// be and set it.
-				if (m_mpBundleHeight == 0)
-				{
-					// First time...figure it out.
-					int dmpx, dmpyAnal, dmpyVern;
-					vwenv.get_StringWidth(m_tssEmptyAnalysis, null, out dmpx, out dmpyAnal);
-					vwenv.get_StringWidth(m_tssEmptyVern, null, out dmpx, out dmpyVern);
-					m_mpBundleHeight = dmpyAnal * 4 + dmpyVern * 3;
-				}
-				// The interlinear bundles are not editable.
-				vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
-				if (RightToLeft)
-				{
+				case kfragInterlinPara: // Whole StTxtPara. This can be the root fragment in DE view.
+					if (vwenv.DataAccess.get_VecSize(hvo, StTxtParaTags.kflidSegments) == 0)
+					{
+						vwenv.NoteDependency(new[] { hvo }, new[] { StTxtParaTags.kflidSegments }, 1);
+						vwenv.AddString(m_tssEmptyPara);
+					}
+					else
+					{
+						// no need to calculate wsVernInParagraph at the paragraph level; we must recalculate for each word.
+						vwenv.AddLazyVecItems(StTxtParaTags.kflidSegments, this, kfragParaSegment);
+					}
+					break;
+				case kfragParaSegment:
+					// Don't put anything in this segment if it is a 'label' segment (typically containing a verse
+					// number for TE).
+					var seg = m_segRepository.GetObject(hvo);
+					if (seg.IsLabel)
+					{
+						break;
+					}
+					// This puts ten points between segments. There's always 5 points below each line of interlinear;
+					// if there are no freeform annotations another 5 points makes 10 between segments.
+					// If there are freeforms, we need the full 10 points after the last of them.
+					var haveFreeform = seg.FreeTranslation != null || seg.LiteralTranslation != null || seg.NotesOS.Count > 0;
+					vwenv.set_IntProperty((int)FwTextPropType.ktptMarginBottom, (int)FwTextPropVar.ktpvMilliPoint, !haveFreeform ? 5000 : 10000);
+					vwenv.OpenDiv();
+					// Enhance JohnT: determine what the overall direction of the paragraph should
+					// be and set it.
+					if (m_mpBundleHeight == 0)
+					{
+						// First time...figure it out.
+						int dmpx, dmpyAnal, dmpyVern;
+						vwenv.get_StringWidth(m_tssEmptyAnalysis, null, out dmpx, out dmpyAnal);
+						vwenv.get_StringWidth(m_tssEmptyVern, null, out dmpx, out dmpyVern);
+						m_mpBundleHeight = dmpyAnal * 4 + dmpyVern * 3;
+					}
+					// The interlinear bundles are not editable.
+					vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
+					if (RightToLeft)
+					{
 						vwenv.set_IntProperty((int)FwTextPropType.ktptRightToLeft, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
 						vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalRight);
-				}
-				vwenv.set_IntProperty((int)FwTextPropType.ktptSpellCheck, (int)FwTextPropVar.ktpvEnum, (int)SpellingModes.ksmDoNotCheck);
-				vwenv.OpenParagraph();
-				AddSegmentReference(vwenv, hvo);	// Calculate and display the segment reference.
-				AddLabelPile(vwenv, m_cache, true, ShowMorphBundles);
-				vwenv.AddObjVecItems(SegmentTags.kflidAnalyses, this, kfragBundle);
-				// JohnT, 1 Feb 2008. Took this out as I can see no reason for it; AddObjVecItems handles
-				// the dependency already. Adding it just means that any change to the forms list
-				// regenerates a higher level than needed, which contributes to a great deal of scrolling
-				// and flashing (LT-7470).
-				// Originally added by Eric in revision 72 on the trunk as part of handling phrases.
-				// Eric can't see any reason we need it now, either. If you find a need to re-insert it,
-				// please document carefully the reasons it is needed and what bad consequences follow
-				// from removing it.
-				//vwenv.NoteDependency(new int[] { hvo }, new int[] { ktagSegmentForms }, 1);
-				vwenv.CloseParagraph();
-				// We'd get the same visual effect from just calling AddFreeformAnnotations here. But then a regenerate
-				// such as happens when hiding or showing a prompt has to redisplay the whole segment. This initially
-				// makes it lazy, then the lazy stuff gets expanded. In the process we may get undesired scrolling (LT-12248).
-				// So we insert another layer of object, allowing just the freeforms to be regenerated.
-				var flidSelf = Cache.MetaDataCacheAccessor.GetFieldId2(CmObjectTags.kClassId, "Self", false);
-				vwenv.AddObjProp(flidSelf, this, kfragFreeformBundle);
-				vwenv.CloseDiv();
-				break;
-			case kfragFreeformBundle:
-				AddFreeformAnnotations(vwenv, hvo);
-				break;
+					}
+					vwenv.set_IntProperty((int)FwTextPropType.ktptSpellCheck, (int)FwTextPropVar.ktpvEnum, (int)SpellingModes.ksmDoNotCheck);
+					vwenv.OpenParagraph();
+					AddSegmentReference(vwenv, hvo);    // Calculate and display the segment reference.
+					AddLabelPile(vwenv, m_cache, true, ShowMorphBundles);
+					vwenv.AddObjVecItems(SegmentTags.kflidAnalyses, this, kfragBundle);
+					// JohnT, 1 Feb 2008. Took this out as I can see no reason for it; AddObjVecItems handles
+					// the dependency already. Adding it just means that any change to the forms list
+					// regenerates a higher level than needed, which contributes to a great deal of scrolling
+					// and flashing (LT-7470).
+					// Originally added by Eric in revision 72 on the trunk as part of handling phrases.
+					// Eric can't see any reason we need it now, either. If you find a need to re-insert it,
+					// please document carefully the reasons it is needed and what bad consequences follow
+					// from removing it.
+					//vwenv.NoteDependency(new int[] { hvo }, new int[] { ktagSegmentForms }, 1);
+					vwenv.CloseParagraph();
+					// We'd get the same visual effect from just calling AddFreeformAnnotations here. But then a regenerate
+					// such as happens when hiding or showing a prompt has to redisplay the whole segment. This initially
+					// makes it lazy, then the lazy stuff gets expanded. In the process we may get undesired scrolling (LT-12248).
+					// So we insert another layer of object, allowing just the freeforms to be regenerated.
+					var flidSelf = Cache.MetaDataCacheAccessor.GetFieldId2(CmObjectTags.kClassId, "Self", false);
+					vwenv.AddObjProp(flidSelf, this, kfragFreeformBundle);
+					vwenv.CloseDiv();
+					break;
+				case kfragFreeformBundle:
+					AddFreeformAnnotations(vwenv, hvo);
+					break;
 				case kfragBundle:
 					// One annotated word bundle; hvo is the IAnalysis object.
-				// checking AllowLayout (especially in context of Undo/Redo make/break phrase)
-				// helps prevent us from rebuilding the display until we've finished
-				// reconstructing the data and cache. Otherwise we can crash.
-				if (RootSite != null && !RootSite.AllowLayout)
-				{
-					return;
-				}
-				AddWordBundleInternal(hvo, vwenv);
-				break;
-			case kfragIsolatedAnalysis: // This one is used for an isolated HVO that is surely an analysis.
-				{
-					var wa = m_analRepository.GetObject(hvo);
-					vwenv.AddObj(wa.Owner.Hvo, this, kfragWordformForm);
-					if (ShowMorphBundles)
+					// checking AllowLayout (especially in context of Undo/Redo make/break phrase)
+					// helps prevent us from rebuilding the display until we've finished
+					// reconstructing the data and cache. Otherwise we can crash.
+					if (RootSite != null && !RootSite.AllowLayout)
 					{
-						vwenv.AddObj(hvo, this, kfragAnalysisMorphs);
+						return;
 					}
-					var chvoGlosses = wa.MeaningsOC.Count;
-					for (var i = 0; i < ListManager.AnalysisWsIds.Length; ++i)
+					AddWordBundleInternal(hvo, vwenv);
+					break;
+				case kfragIsolatedAnalysis: // This one is used for an isolated HVO that is surely an analysis.
 					{
-						SetColor(vwenv, LabelRGBFor(LineChoices.IndexOf(InterlinLineChoices.kflidWordGloss, ListManager.AnalysisWsIds[i])));
-						if (chvoGlosses == 0)
+						var wa = m_analRepository.GetObject(hvo);
+						vwenv.AddObj(wa.Owner.Hvo, this, kfragWordformForm);
+						if (ShowMorphBundles)
 						{
-							// There are no glosses, display something indicating it is missing.
-							vwenv.AddProp(ktagAnalysisMissingGloss, this, kfragAnalysisMissingGloss);
+							vwenv.AddObj(hvo, this, kfragAnalysisMorphs);
 						}
-						else
+						var chvoGlosses = wa.MeaningsOC.Count;
+						for (var i = 0; i < ListManager.AnalysisWsIds.Length; ++i)
 						{
-							vwenv.AddObjVec(WfiAnalysisTags.kflidMeanings, this, kfragWordGlossWs + i);
+							SetColor(vwenv, LabelRGBFor(LineChoices.IndexOf(InterlinLineChoices.kflidWordGloss, ListManager.AnalysisWsIds[i])));
+							if (chvoGlosses == 0)
+							{
+								// There are no glosses, display something indicating it is missing.
+								vwenv.AddProp(ktagAnalysisMissingGloss, this, kfragAnalysisMissingGloss);
+							}
+							else
+							{
+								vwenv.AddObjVec(WfiAnalysisTags.kflidMeanings, this, kfragWordGlossWs + i);
+							}
 						}
+						AddAnalysisPos(vwenv, hvo, hvo, -1);
 					}
-					AddAnalysisPos(vwenv, hvo, hvo, -1);
-				}
-				break;
-			case kfragAnalysisMorphs:
-				var cmorphs = 0;
-				var co = m_coRepository.GetObject(hvo);
-				if (co is IWfiAnalysis)
-				{
-					cmorphs = ((IWfiAnalysis)co).MorphBundlesOS.Count;
-				}
-				// We really want a variable for this...there have been pathological cases where
-				// m_fHaveOpenedParagraph changed during the construction of the paragraph, and we want to be
-				// sure to close the paragraph if we opened it.
-				var openedParagraph = !m_fHaveOpenedParagraph;
-				if (openedParagraph)
-				{
-					vwenv.OpenParagraph();
-				}
-				if (cmorphs == 0)
-				{
-					DisplayMorphBundle(vwenv, 0);
-				}
-				else
-				{
-					vwenv.AddObjVecItems(WfiAnalysisTags.kflidMorphBundles, this, kfragMorphBundle);
-				}
+					break;
+				case kfragAnalysisMorphs:
+					var cmorphs = 0;
+					var co = m_coRepository.GetObject(hvo);
+					if (co is IWfiAnalysis)
+					{
+						cmorphs = ((IWfiAnalysis)co).MorphBundlesOS.Count;
+					}
+					// We really want a variable for this...there have been pathological cases where
+					// m_fHaveOpenedParagraph changed during the construction of the paragraph, and we want to be
+					// sure to close the paragraph if we opened it.
+					var openedParagraph = !m_fHaveOpenedParagraph;
+					if (openedParagraph)
+					{
+						vwenv.OpenParagraph();
+					}
+					if (cmorphs == 0)
+					{
+						DisplayMorphBundle(vwenv, 0);
+					}
+					else
+					{
+						vwenv.AddObjVecItems(WfiAnalysisTags.kflidMorphBundles, this, kfragMorphBundle);
+					}
 
-				if (openedParagraph)
-				{
-					vwenv.CloseParagraph();
-				}
-				break;
-			case kfragMorphType: // for export only at present, display the
-				vwenv.AddObjProp(MoFormTags.kflidMorphType, this, kfragPossibiltyAnalysisName);
-				break;
-			case kfragPossibiltyAnalysisName:
-				vwenv.AddStringAltMember(CmPossibilityTags.kflidName, m_cache.DefaultAnalWs, this);
-				break;
+					if (openedParagraph)
+					{
+						vwenv.CloseParagraph();
+					}
+					break;
+				case kfragMorphType: // for export only at present, display the
+					vwenv.AddObjProp(MoFormTags.kflidMorphType, this, kfragPossibiltyAnalysisName);
+					break;
+				case kfragPossibiltyAnalysisName:
+					vwenv.AddStringAltMember(CmPossibilityTags.kflidName, m_cache.DefaultAnalWs, this);
+					break;
 
 				case kfragMorphBundle:
 					// the lines of morpheme information (hvo is a WfiMorphBundle)
-				// Make an 'inner pile' to contain the bundle of morph information.
-				// Give it 10 points of separation from whatever follows.
-				DisplayMorphBundle(vwenv, hvo);
-				break;
-			case kfragSingleInterlinearAnalysisWithLabels:
-				vwenv.OpenDiv();
-				DisplaySingleInterlinearAnalysisWithLabels(vwenv, hvo);
-				vwenv.CloseDiv();
-				break;
-			// This frag is used to display a single interlin analysis that is always left-aligned, even for RTL languages
-			case kfragSingleInterlinearAnalysisWithLabelsLeftAlign:
-				vwenv.OpenDiv();
-				vwenv.set_IntProperty((int)FwTextPropType.ktptPadLeading, (int)FwTextPropVar.ktpvMilliPoint, LeftPadding);
-				vwenv.OpenParagraph();
-				vwenv.OpenInnerPile();
-				DisplaySingleInterlinearAnalysisWithLabels(vwenv, hvo);
-				vwenv.CloseInnerPile();
-				vwenv.CloseParagraph();
-				vwenv.CloseDiv();
-				break;
-			case kfragWordformForm: // The form of a WfiWordform.
-				vwenv.AddStringAltMember(WfiWordformTags.kflidForm, PreferredVernWs, this);
-				break;
-			case kfragPrefix:
-				vwenv.AddUnicodeProp(MoMorphTypeTags.kflidPrefix, PreferredVernWs, this);
-				break;
-			case kfragPostfix:
-				vwenv.AddUnicodeProp(MoMorphTypeTags.kflidPostfix, PreferredVernWs, this);
-				break;
-			case kfragSenseName: // The name (gloss) of a LexSense.
-				foreach (var wsId in ListManager.AnalysisWsIds)
-				{
-					vwenv.AddStringAltMember(LexSenseTags.kflidGloss, wsId, this);
-				}
-				break;
-			case kfragCategory:
-				// the category of a WfiAnalysis, a part of speech;
-				// display the Abbreviation property inherited from CmPossibility.
-				foreach (var wsId in ListManager.AnalysisWsIds)
-				{
-					vwenv.AddStringAltMember(CmPossibilityTags.kflidAbbreviation, wsId, this);
-				}
-				break;
-			default:
-				if (frag >= kfragWordGlossWs && frag < kfragWordGlossWs + ListManager.AnalysisWsIds.Length)
-				{
-					// Displaying one ws of the  form of a WfiGloss.
-						vwenv.AddStringAltMember(WfiGlossTags.kflidForm, ListManager.AnalysisWsIds[frag - kfragWordGlossWs], this);
-				}
-				else if (frag >= kfragLineChoices && frag < kfragLineChoices + LineChoices.Count)
-				{
-					var spec = LineChoices[frag - kfragLineChoices];
-					var ws = GetRealWsOrBestWsForContext(hvo, spec); // can be vernacular or analysis
-					if (ws > 0)
+					// Make an 'inner pile' to contain the bundle of morph information.
+					// Give it 10 points of separation from whatever follows.
+					DisplayMorphBundle(vwenv, hvo);
+					break;
+				case kfragSingleInterlinearAnalysisWithLabels:
+					vwenv.OpenDiv();
+					DisplaySingleInterlinearAnalysisWithLabels(vwenv, hvo);
+					vwenv.CloseDiv();
+					break;
+				// This frag is used to display a single interlin analysis that is always left-aligned, even for RTL languages
+				case kfragSingleInterlinearAnalysisWithLabelsLeftAlign:
+					vwenv.OpenDiv();
+					vwenv.set_IntProperty((int)FwTextPropType.ktptPadLeading, (int)FwTextPropVar.ktpvMilliPoint, LeftPadding);
+					vwenv.OpenParagraph();
+					vwenv.OpenInnerPile();
+					DisplaySingleInterlinearAnalysisWithLabels(vwenv, hvo);
+					vwenv.CloseInnerPile();
+					vwenv.CloseParagraph();
+					vwenv.CloseDiv();
+					break;
+				case kfragWordformForm: // The form of a WfiWordform.
+					vwenv.AddStringAltMember(WfiWordformTags.kflidForm, PreferredVernWs, this);
+					break;
+				case kfragPrefix:
+					vwenv.AddUnicodeProp(MoMorphTypeTags.kflidPrefix, PreferredVernWs, this);
+					break;
+				case kfragPostfix:
+					vwenv.AddUnicodeProp(MoMorphTypeTags.kflidPostfix, PreferredVernWs, this);
+					break;
+				case kfragSenseName: // The name (gloss) of a LexSense.
+					foreach (var wsId in ListManager.AnalysisWsIds)
 					{
-						vwenv.AddStringAltMember(spec.StringFlid, ws, this);
+						vwenv.AddStringAltMember(LexSenseTags.kflidGloss, wsId, this);
 					}
-				}
-				else if (frag >= kfragAnalysisCategoryChoices && frag < kfragAnalysisCategoryChoices + LineChoices.Count)
-				{
-					AddAnalysisPos(vwenv, hvo, hvo, frag - kfragAnalysisCategoryChoices);
-				}
-				else if (frag >= kfragMorphFormChoices && frag < kfragMorphFormChoices + LineChoices.Count)
-				{
-					DisplayMorphForm(vwenv, hvo, GetRealWsOrBestWsForContext(hvo, LineChoices[frag - kfragMorphFormChoices]));
-				}
-				else if (frag >= kfragSegFfChoices && frag < kfragSegFfChoices + LineChoices.Count)
-				{
-					AddFreeformComment(vwenv, hvo, frag - kfragSegFfChoices);
-				}
-				else
-				{
-					throw new Exception("Bad fragment ID in InterlinVc.Display");
-				}
-				break;
+					break;
+				case kfragCategory:
+					// the category of a WfiAnalysis, a part of speech;
+					// display the Abbreviation property inherited from CmPossibility.
+					foreach (var wsId in ListManager.AnalysisWsIds)
+					{
+						vwenv.AddStringAltMember(CmPossibilityTags.kflidAbbreviation, wsId, this);
+					}
+					break;
+				default:
+					if (frag >= kfragWordGlossWs && frag < kfragWordGlossWs + ListManager.AnalysisWsIds.Length)
+					{
+						// Displaying one ws of the  form of a WfiGloss.
+						vwenv.AddStringAltMember(WfiGlossTags.kflidForm, ListManager.AnalysisWsIds[frag - kfragWordGlossWs], this);
+					}
+					else if (frag >= kfragLineChoices && frag < kfragLineChoices + LineChoices.Count)
+					{
+						var spec = LineChoices[frag - kfragLineChoices];
+						var ws = GetRealWsOrBestWsForContext(hvo, spec); // can be vernacular or analysis
+						if (ws > 0)
+						{
+							vwenv.AddStringAltMember(spec.StringFlid, ws, this);
+						}
+					}
+					else if (frag >= kfragAnalysisCategoryChoices && frag < kfragAnalysisCategoryChoices + LineChoices.Count)
+					{
+						AddAnalysisPos(vwenv, hvo, hvo, frag - kfragAnalysisCategoryChoices);
+					}
+					else if (frag >= kfragMorphFormChoices && frag < kfragMorphFormChoices + LineChoices.Count)
+					{
+						DisplayMorphForm(vwenv, hvo, GetRealWsOrBestWsForContext(hvo, LineChoices[frag - kfragMorphFormChoices]));
+					}
+					else if (frag >= kfragSegFfChoices && frag < kfragSegFfChoices + LineChoices.Count)
+					{
+						AddFreeformComment(vwenv, hvo, frag - kfragSegFfChoices);
+					}
+					else
+					{
+						throw new Exception("Bad fragment ID in InterlinVc.Display");
+					}
+					break;
 			}
 		}
 
-		private void JoinGlossAffixesOfInflVariantTypes(ILexEntryRef entryRef1, int wsPreferred, out ITsIncStrBldr sbPrepend1, out ITsIncStrBldr sbAppend1)
+		private void JoinGlossAffixesOfInflVariantTypes(ILexEntryRef lexEntryRef, int wsPreferred, out ITsIncStrBldr sbPrepend, out ITsIncStrBldr sbAppend)
 		{
-			var glossWs1 = Cache.ServiceLocator.WritingSystemManager.Get(wsPreferred);
-			MorphServices.JoinGlossAffixesOfInflVariantTypes(entryRef1.VariantEntryTypesRS, glossWs1,
-															 out sbPrepend1, out sbAppend1);
+			MorphServices.JoinGlossAffixesOfInflVariantTypes(lexEntryRef.VariantEntryTypesRS, Cache.ServiceLocator.WritingSystemManager.Get(wsPreferred), out sbPrepend, out sbAppend);
 		}
 
 		/// <summary />
@@ -761,10 +753,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			AddLineIndexProperty(labelBldr, lineChoiceIndex);
 			tssLabel = labelBldr.GetString();
 			var labelWidth = 0;
-			int labelHeight; // unused
 			if (wssAnalysis.Length > 1)
 			{
-				vwenv.get_StringWidth(tssLabel, null, out labelWidth, out labelHeight);
+				int dummyLabelHeight;
+				vwenv.get_StringWidth(tssLabel, null, out labelWidth, out dummyLabelHeight);
 			}
 			var wsVernPara = GetWsForSeg(hvoSeg);
 			if (IsWsRtl(wssAnalysis[0]) != IsWsRtl(wsVernPara))
@@ -824,7 +816,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 				else
 				{
-					vwenv.set_IntProperty((int) FwTextPropType.ktptLeadingIndent, (int) FwTextPropVar.ktpvMilliPoint, labelWidth);
+					vwenv.set_IntProperty((int)FwTextPropType.ktptLeadingIndent, (int)FwTextPropVar.ktpvMilliPoint, labelWidth);
 				}
 				SetParaDirectionAndAlignment(vwenv, wssAnalysis[i]);
 				vwenv.OpenParagraph();
@@ -1042,7 +1034,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return;
 			}
 			// If anything causes the comment to change, get rid of the prompt.
-			vwenv.NoteDependency(new [] { hvo }, new [] { flidTarget }, 1);
+			vwenv.NoteDependency(new[] { hvo }, new[] { flidTarget }, 1);
 			// Passing the ws where we normally pass a tag, but DisplayVariant doesn't need the tag and does need to
 			// know which writing system.
 			vwenv.AddProp(SimpleRootSite.kTagUserPrompt, this, ws);
@@ -1054,7 +1046,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// Add a segment number appropriate to the current segment being displayed.
 		/// (See LT-1236.)
 		/// </summary>
-		private void AddSegmentReference(IVwEnv vwenv, int hvo)
+		protected void AddSegmentReference(IVwEnv vwenv, int hvo)
 		{
 			var sbSegNum = new StringBuilder();
 			var flid = 0;
@@ -1089,9 +1081,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						if (idxSeg >= 0 && cseg > 1)
 						{
 							sbSegNum.AppendFormat(".{0}", idxSeg + 1);
+						}
 					}
 				}
-			}
 			}
 			var tsbSegNum = TsStringUtils.MakeStrBldr();
 			tsbSegNum.ReplaceTsString(0, tsbSegNum.Length, TsStringUtils.MakeString(sbSegNum.ToString(), m_cache.DefaultUserWs));
@@ -1264,9 +1256,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 				result = null;
 				var collector = new TsStringCollectorEnv(null, vcLexGlossFrag.Cache.MainCacheAccessor, possibleVariant.Hvo)
-									{
-										RequestAppendSpaceForFirstWordInNewParagraph = false
-									};
+				{
+					RequestAppendSpaceForFirstWordInNewParagraph = false
+				};
 				if (vcLexGlossFrag.DisplayLexGlossWithInflType(collector, possibleVariant, sense, spec, inflType))
 				{
 					result = collector.Result;
@@ -1289,113 +1281,117 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return false;
 			}
-				var wsGloss = spec.GetActualWs(Cache, sense.Hvo, m_wsAnalysis);
-				var wsDefinitionGloss = Cache.ServiceLocator.WritingSystemManager.Get(wsGloss);
-				var wsUser = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
-				var testGloss = sense.Gloss.get_String(wsGloss);
-				// don't bother adding anything for an empty gloss.
+			var wsGloss = spec.GetActualWs(Cache, sense.Hvo, m_wsAnalysis);
+			var wsDefinitionGloss = Cache.ServiceLocator.WritingSystemManager.Get(wsGloss);
+			var wsUser = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
+			var testGloss = sense.Gloss.get_String(wsGloss);
+			// don't bother adding anything for an empty gloss.
 			if (testGloss.Text == null || testGloss.Text.Length < 0)
-				{
+			{
 				return false;
 			}
-					vwenv.OpenParagraph();
-					// see if we have an irregularly inflected form type reference
+			vwenv.OpenParagraph();
+			// see if we have an irregularly inflected form type reference
 			var leitFirst = ler.VariantEntryTypesRS.FirstOrDefault(let => @let.ClassID == LexEntryInflTypeTags.kClassId);
 
-					// add any GlossPrepend info
-					if (leitFirst != null)
-					{
-						vwenv.OpenInnerPile();
-						// TODO: add dependency to VariantType GlossPrepend/Append names
+			// add any GlossPrepend info
+			if (leitFirst != null)
+			{
+				vwenv.OpenInnerPile();
+				// TODO: add dependency to VariantType GlossPrepend/Append names
 				vwenv.NoteDependency(new[] { ler.Hvo }, new[] { LexEntryRefTags.kflidVariantEntryTypes }, 1);
-						vwenv.OpenParagraph();
-						ITsString tssPrepend = null;
-						if (inflType != null)
+				vwenv.OpenParagraph();
+				ITsString tssPrepend = null;
+				if (inflType != null)
+				{
+					tssPrepend = MorphServices.AddTssGlossAffix(null, inflType.GlossPrepend, wsDefinitionGloss, wsUser);
+				}
+				else
+				{
+					ITsIncStrBldr sbPrepend;
+					ITsIncStrBldr sbAppend;
+					JoinGlossAffixesOfInflVariantTypes(ler, wsGloss, out sbPrepend, out sbAppend);
+					if (sbPrepend.Text != null)
+					{
+						tssPrepend = sbPrepend.GetString();
+					}
+				}
+				{
+					// Use AddProp/DisplayVariant to store GlossAppend with m_tssPendingGlossAffix
+					// this allows InterlinearExporter to know to export a glsAppend item
+					try
+					{
+						if (tssPrepend != null)
 						{
-							tssPrepend = MorphServices.AddTssGlossAffix(null, inflType.GlossPrepend, wsDefinitionGloss, wsUser);
+							m_tssPendingGlossAffix = tssPrepend;
+							vwenv.AddProp(ktagGlossPrepend, this, 0);
 						}
 						else
 						{
-							ITsIncStrBldr sbPrepend;
-							ITsIncStrBldr sbAppend;
-							JoinGlossAffixesOfInflVariantTypes(ler, wsGloss, out sbPrepend, out sbAppend);
-							if (sbPrepend.Text != null)
-					{
-								tssPrepend = sbPrepend.GetString();
+							m_tssPendingGlossAffix = m_tssMissingGlossPrepend;
 						}
-						}
-						{
-							// Use AddProp/DisplayVariant to store GlossAppend with m_tssPendingGlossAffix
-							// this allows InterlinearExporter to know to export a glsAppend item
-							try
-							{
-								if (tssPrepend != null)
-								{
-									m_tssPendingGlossAffix = tssPrepend;
-									vwenv.AddProp(ktagGlossPrepend, this, 0);
-								}
-								else
-									m_tssPendingGlossAffix = m_tssMissingGlossPrepend;
-							}
-							finally
-							{
-								m_tssPendingGlossAffix = null;
-							}
-						}
-						vwenv.CloseParagraph();
-						vwenv.CloseInnerPile();
 					}
-					// add gloss of main entry or sense
+					finally
 					{
-						vwenv.OpenInnerPile();
-						// NOTE: remember to NoteDependency from OuterObject
-						vwenv.AddObj(sense.Hvo, this, kfragLineChoices + iLineChoice);
-						vwenv.CloseInnerPile();
+						m_tssPendingGlossAffix = null;
 					}
-					// now add variant type info
-					if (leitFirst != null)
-					{
-						vwenv.OpenInnerPile();
-						// TODO: add dependency to VariantType GlossPrepend/Append names
+				}
+				vwenv.CloseParagraph();
+				vwenv.CloseInnerPile();
+			}
+			// add gloss of main entry or sense
+			{
+				vwenv.OpenInnerPile();
+				// NOTE: remember to NoteDependency from OuterObject
+				vwenv.AddObj(sense.Hvo, this, kfragLineChoices + iLineChoice);
+				vwenv.CloseInnerPile();
+			}
+			// now add variant type info
+			if (leitFirst != null)
+			{
+				vwenv.OpenInnerPile();
+				// TODO: add dependency to VariantType GlossPrepend/Append names
 				vwenv.NoteDependency(new[] { ler.Hvo }, new[] { LexEntryRefTags.kflidVariantEntryTypes }, 1);
-						vwenv.OpenParagraph();
-						ITsString tssAppend = null;
-						if (inflType != null)
-						{
-							tssAppend = MorphServices.AddTssGlossAffix(null, inflType.GlossAppend, wsDefinitionGloss, wsUser);
-						}
-						else
-						{
-							ITsIncStrBldr sbPrepend;
-							ITsIncStrBldr sbAppend;
-							JoinGlossAffixesOfInflVariantTypes(ler, wsGloss, out sbPrepend, out sbAppend);
-							if (sbAppend.Text != null)
+				vwenv.OpenParagraph();
+				ITsString tssAppend = null;
+				if (inflType != null)
+				{
+					tssAppend = MorphServices.AddTssGlossAffix(null, inflType.GlossAppend, wsDefinitionGloss, wsUser);
+				}
+				else
+				{
+					ITsIncStrBldr sbPrepend;
+					ITsIncStrBldr sbAppend;
+					JoinGlossAffixesOfInflVariantTypes(ler, wsGloss, out sbPrepend, out sbAppend);
+					if (sbAppend.Text != null)
 					{
-								tssAppend = sbAppend.GetString();
-						}
-				}
-							// Use AddProp/DisplayVariant to store GlossAppend with m_tssPendingGlossAffix
-							// this allows InterlinearExporter to know to export a glsAppend item
-							try
-							{
-								if (tssAppend != null)
-								{
-									m_tssPendingGlossAffix = tssAppend;
-									vwenv.AddProp(ktagGlossAppend, this, 0);
-								}
-								else
-									m_tssPendingGlossAffix = m_tssMissingGlossAppend;
-							}
-							finally
-							{
-								m_tssPendingGlossAffix = null;
-							}
-						vwenv.CloseParagraph();
-						vwenv.CloseInnerPile();
+						tssAppend = sbAppend.GetString();
 					}
-					vwenv.CloseParagraph();
-					return true;
 				}
+				// Use AddProp/DisplayVariant to store GlossAppend with m_tssPendingGlossAffix
+				// this allows InterlinearExporter to know to export a glsAppend item
+				try
+				{
+					if (tssAppend != null)
+					{
+						m_tssPendingGlossAffix = tssAppend;
+						vwenv.AddProp(ktagGlossAppend, this, 0);
+					}
+					else
+					{
+						m_tssPendingGlossAffix = m_tssMissingGlossAppend;
+					}
+				}
+				finally
+				{
+					m_tssPendingGlossAffix = null;
+				}
+				vwenv.CloseParagraph();
+				vwenv.CloseInnerPile();
+			}
+			vwenv.CloseParagraph();
+			return true;
+		}
 
 		/// <summary>
 		/// Add the pile of labels used to identify the lines in interlinear text.
@@ -1441,7 +1437,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private static void AddLineIndexProperty(ITsStrBldr bldr, int i)
 		{
 			// BulletNumStartAt is a kludge because ktptObjData is ALSO ktptFontSize!
-			bldr.SetIntPropValues(0, bldr.Length, (int) FwTextPropType.ktptBulNumStartAt, (int) FwTextPropVar.ktpvDefault, i);
+			bldr.SetIntPropValues(0, bldr.Length, (int)FwTextPropType.ktptBulNumStartAt, (int)FwTextPropVar.ktpvDefault, i);
 		}
 
 
@@ -1452,9 +1448,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// and suffix.
 			// Todo: make prefix and suffix read-only.
 			vwenv.OpenParagraph(); // group prefix, form, suffix on one line.
-			// It may not have a morph type at all.
-			// RBR says: "So why take the chance of a null ref exception (which I ran into, in my ZPI data, of course)? :-)
-			// int typeID = mf.MorphTypeRA.Hvo;
+								   // It may not have a morph type at all.
+								   // RBR says: "So why take the chance of a null ref exception (which I ran into, in my ZPI data, of course)? :-)
+								   // int typeID = mf.MorphTypeRA.Hvo;
 			var morphType = mf.MorphTypeRA;
 			if (morphType != null)
 			{
@@ -1507,25 +1503,25 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				var wag = (IAnalysis)coRepository.GetObject(m_hvoWordBundleAnalysis);
 				switch (wag.ClassID)
 				{
-				case WfiWordformTags.kClassId:
-					m_hvoWordform = wag.Wordform.Hvo;
-					m_hvoDefault = m_this.GetGuess(wag.Wordform);
-					break;
-				case WfiAnalysisTags.kClassId:
-					m_hvoWordform = wag.Wordform.Hvo;
-					m_hvoWfiAnalysis = wag.Analysis.Hvo;
-					m_hvoDefault = m_this.GetGuess(wag.Analysis);
-					break;
-				case WfiGlossTags.kClassId:
-					m_hvoWfiAnalysis = wag.Analysis.Hvo;
-					m_hvoWordform = wag.Wordform.Hvo;
-					m_hvoDefault = wag.Hvo; // complete analysis. no point in searching for a default!
-					break;
-				default:
-					throw new Exception("invalid type used for word analysis");
+					case WfiWordformTags.kClassId:
+						m_hvoWordform = wag.Wordform.Hvo;
+						m_hvoDefault = m_this.GetGuess(wag.Wordform);
+						break;
+					case WfiAnalysisTags.kClassId:
+						m_hvoWordform = wag.Wordform.Hvo;
+						m_hvoWfiAnalysis = wag.Analysis.Hvo;
+						m_hvoDefault = m_this.GetGuess(wag.Analysis);
+						break;
+					case WfiGlossTags.kClassId:
+						m_hvoWfiAnalysis = wag.Analysis.Hvo;
+						m_hvoWordform = wag.Wordform.Hvo;
+						m_hvoDefault = wag.Hvo; // complete analysis. no point in searching for a default!
+						break;
+					default:
+						throw new Exception("invalid type used for word analysis");
 				}
 				m_defaultObj = coRepository.GetObject(m_hvoDefault);
-				for (var i = 0; i < m_choices.Count; )
+				for (var i = 0; i < m_choices.Count;)
 				{
 					m_this.CurrentLine = i;
 					var spec = m_choices[i];
@@ -1539,19 +1535,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						while (i < m_choices.Count && m_choices[i].MorphemeLevel)
 						{
 							i++;
-					}
+						}
 					}
 					else
 					{
-						switch(spec.Flid)
+						switch (spec.Flid)
 						{
-						case InterlinLineChoices.kflidWord:
+							case InterlinLineChoices.kflidWord:
 								DisplayWord(i, wag);
 								break;
-						case InterlinLineChoices.kflidWordGloss:
+							case InterlinLineChoices.kflidWordGloss:
 								DisplayWordGloss(spec, i);
 								break;
-						case InterlinLineChoices.kflidWordPos:
+							case InterlinLineChoices.kflidWordPos:
 								DisplayWordPOS(i);
 								break;
 						}
@@ -1568,7 +1564,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					m_this.IsDoingRealWordForm = true;
 					m_this.PreferredVernWs = TsStringUtils.GetWsAtOffset(tssRealForm, 0); // Cache the baseline WS for display of other specs
-					// LT-12203 Text chart doesn't want multiple analyses highlighting
+																						  // LT-12203 Text chart doesn't want multiple analyses highlighting
 					if (m_fshowMultipleAnalyses)
 					{
 						//identify those words the user has yet to approve which have multiple possible
@@ -1589,139 +1585,136 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 				switch (m_defaultObj.ClassID)
 				{
-				case WfiWordformTags.kClassId:
-				case WfiAnalysisTags.kClassId:
-				case WfiGlossTags.kClassId:
-					m_vwenv.AddObj(m_hvoWordform, m_this, kfragLineChoices + choiceIndex);
-					break;
-				default:
-					throw new Exception("Invalid type found in Segment analysis");
+					case WfiWordformTags.kClassId:
+					case WfiAnalysisTags.kClassId:
+					case WfiGlossTags.kClassId:
+						m_vwenv.AddObj(m_hvoWordform, m_this, kfragLineChoices + choiceIndex);
+						break;
+					default:
+						throw new Exception("Invalid type found in Segment analysis");
 				}
 			}
 
 			private void DisplayMorphemes()
 			{
-				switch(m_defaultObj.ClassID)
+				switch (m_defaultObj.ClassID)
 				{
-				case WfiWordformTags.kClassId:
-				case WfiAnalysisTags.kClassId:
-					if (m_this.ShowMorphBundles)
-					{
-						// Display the morpheme bundles.
-						if (m_hvoDefault != m_hvoWordBundleAnalysis)
+					case WfiWordformTags.kClassId:
+					case WfiAnalysisTags.kClassId:
+						if (m_this.ShowMorphBundles)
 						{
-							// Real analysis isn't what we're displaying, so morph breakdown
-							// is a guess. Is it a human-approved guess?
-							var isHumanGuess = m_this.Decorator.get_IntProp(m_hvoDefault, InterlinViewDataCache.OpinionAgentFlid) !=
-																			(int) AnalysisGuessServices.OpinionAgent.Parser;
-							m_this.SetGuessing(m_vwenv, isHumanGuess ? ApprovedGuessColor : MachineGuessColor);
+							// Display the morpheme bundles.
+							if (m_hvoDefault != m_hvoWordBundleAnalysis)
+							{
+								// Real analysis isn't what we're displaying, so morph breakdown
+								// is a guess. Is it a human-approved guess?
+								var isHumanGuess = m_this.Decorator.get_IntProp(m_hvoDefault, InterlinViewDataCache.OpinionAgentFlid) !=
+																				(int)AnalysisGuessServices.OpinionAgent.Parser;
+								m_this.SetGuessing(m_vwenv, isHumanGuess ? ApprovedGuessColor : MachineGuessColor);
+							}
+							m_vwenv.AddObj(m_hvoDefault, m_this, kfragAnalysisMorphs);
 						}
-						m_vwenv.AddObj(m_hvoDefault, m_this, kfragAnalysisMorphs);
-					}
-					break;
-				case WfiGlossTags.kClassId:
+						break;
+					case WfiGlossTags.kClassId:
 
-					if (m_this.ShowMorphBundles)
-					{
-						m_hvoWfiAnalysis = m_defaultObj.Owner.Hvo;
-						// Display all the morpheme stuff.
-						if (m_hvoWordBundleAnalysis == m_hvoWordform)
+						if (m_this.ShowMorphBundles)
 						{
-							// Real analysis is just word, one we're displaying is a default
-							m_this.SetGuessing(m_vwenv);
+							m_hvoWfiAnalysis = m_defaultObj.Owner.Hvo;
+							// Display all the morpheme stuff.
+							if (m_hvoWordBundleAnalysis == m_hvoWordform)
+							{
+								// Real analysis is just word, one we're displaying is a default
+								m_this.SetGuessing(m_vwenv);
+							}
+							m_vwenv.AddObj(m_hvoWfiAnalysis, m_this, kfragAnalysisMorphs);
 						}
-						m_vwenv.AddObj(m_hvoWfiAnalysis, m_this, kfragAnalysisMorphs);
-					}
-					break;
-				default:
-					throw new Exception("Invalid type found in Segment analysis");
+						break;
+					default:
+						throw new Exception("Invalid type found in Segment analysis");
 				}
 			}
 
 			private void DisplayWordGloss(InterlinLineSpec spec, int choiceIndex)
 			{
 
-				switch(m_defaultObj.ClassID)
+				switch (m_defaultObj.ClassID)
 				{
-				case WfiWordformTags.kClassId:
-					m_this.SetColor(m_vwenv, m_this.LabelRGBFor(choiceIndex)); // looks like missing word gloss.
-					m_vwenv.AddString(m_this.m_tssMissingAnalysis);
-					break;
-				case WfiAnalysisTags.kClassId:
-					if (m_hvoDefault != m_hvoWordBundleAnalysis)
-					{
-						// Real analysis isn't what we're displaying, so morph breakdown
-						// is a guess. Is it a human-approved guess?
-						var isHumanGuess = m_this.Decorator.get_IntProp(m_hvoDefault, InterlinViewDataCache.OpinionAgentFlid) !=
-																		(int)AnalysisGuessServices.OpinionAgent.Parser;
-						m_this.SetGuessing(m_vwenv, isHumanGuess ? ApprovedGuessColor : MachineGuessColor);
-					}
-					var wa = (IWfiAnalysis) m_defaultObj;
-					if (wa.MeaningsOC.Count == 0)
-					{
-						// There's no gloss, display something indicating it is missing.
-						m_this.SetColor(m_vwenv, m_this.LabelRGBFor(choiceIndex));
+					case WfiWordformTags.kClassId:
+						m_this.SetColor(m_vwenv, m_this.LabelRGBFor(choiceIndex)); // looks like missing word gloss.
 						m_vwenv.AddString(m_this.m_tssMissingAnalysis);
-					}
-					else
-					{
-						m_vwenv.AddObj(wa.MeaningsOC.First().Hvo, m_this, kfragLineChoices + choiceIndex);
-					}
-					break;
-				case WfiGlossTags.kClassId:
-					if (m_hvoWordBundleAnalysis == m_hvoDefault)
-					{
-						var wsActual = spec.WritingSystem;
-						if (spec.IsMagicWritingSystem)
+						break;
+					case WfiAnalysisTags.kClassId:
+						if (m_hvoDefault != m_hvoWordBundleAnalysis)
 						{
-							wsActual = spec.GetActualWs(m_cache, m_hvoWordBundleAnalysis, m_this.m_wsAnalysis);
+							// Real analysis isn't what we're displaying, so morph breakdown
+							// is a guess. Is it a human-approved guess?
+							var isHumanGuess = m_this.Decorator.get_IntProp(m_hvoDefault, InterlinViewDataCache.OpinionAgentFlid) != (int)AnalysisGuessServices.OpinionAgent.Parser;
+							m_this.SetGuessing(m_vwenv, isHumanGuess ? ApprovedGuessColor : MachineGuessColor);
 						}
-						// We're displaying properties of the current object, can do
-						// straightforwardly
-						m_this.FormatGloss(m_vwenv, wsActual);
-						m_vwenv.set_IntProperty((int)FwTextPropType.ktptSpellCheck, (int)FwTextPropVar.ktpvEnum, (int)SpellingModes.ksmForceCheck);
-						m_vwenv.AddObj(m_hvoWordBundleAnalysis, m_this, kfragLineChoices + choiceIndex);
-					}
-					else
-					{
-						m_this.SetGuessing(m_vwenv);
-						m_vwenv.AddObj(m_hvoDefault, m_this, kfragLineChoices + choiceIndex);
-					}
-					break;
-				default:
-					throw new Exception("Invalid type found in Segment analysis");
+						var wa = (IWfiAnalysis)m_defaultObj;
+						if (wa.MeaningsOC.Count == 0)
+						{
+							// There's no gloss, display something indicating it is missing.
+							m_this.SetColor(m_vwenv, m_this.LabelRGBFor(choiceIndex));
+							m_vwenv.AddString(m_this.m_tssMissingAnalysis);
+						}
+						else
+						{
+							m_vwenv.AddObj(wa.MeaningsOC.First().Hvo, m_this, kfragLineChoices + choiceIndex);
+						}
+						break;
+					case WfiGlossTags.kClassId:
+						if (m_hvoWordBundleAnalysis == m_hvoDefault)
+						{
+							var wsActual = spec.WritingSystem;
+							if (spec.IsMagicWritingSystem)
+							{
+								wsActual = spec.GetActualWs(m_cache, m_hvoWordBundleAnalysis, m_this.m_wsAnalysis);
+							}
+							// We're displaying properties of the current object, can do
+							// straightforwardly
+							m_this.FormatGloss(m_vwenv, wsActual);
+							m_vwenv.set_IntProperty((int)FwTextPropType.ktptSpellCheck, (int)FwTextPropVar.ktpvEnum, (int)SpellingModes.ksmForceCheck);
+							m_vwenv.AddObj(m_hvoWordBundleAnalysis, m_this, kfragLineChoices + choiceIndex);
+						}
+						else
+						{
+							m_this.SetGuessing(m_vwenv);
+							m_vwenv.AddObj(m_hvoDefault, m_this, kfragLineChoices + choiceIndex);
+						}
+						break;
+					default:
+						throw new Exception("Invalid type found in Segment analysis");
 				}
 			}
 
 			private void DisplayWordPOS(int choiceIndex)
 			{
-				switch(m_defaultObj.ClassID)
+				switch (m_defaultObj.ClassID)
 				{
-				case WfiWordformTags.kClassId:
-					m_this.SetColor(m_vwenv, m_this.LabelRGBFor(choiceIndex)); // looks like missing word POS.
-					m_vwenv.AddString(m_this.m_tssMissingAnalysis);
-					break;
-				case WfiAnalysisTags.kClassId:
-					if (m_hvoDefault != m_hvoWordBundleAnalysis)
-					{
-						// Real analysis isn't what we're displaying, so POS is a guess.
-						var isHumanApproved = m_this.Decorator.get_IntProp(m_hvoDefault, InterlinViewDataCache.OpinionAgentFlid)
-																			!= (int)AnalysisGuessServices.OpinionAgent.Parser;
-
-						m_this.SetGuessing(m_vwenv, isHumanApproved ? ApprovedGuessColor : MachineGuessColor);
-					}
-					m_this.AddAnalysisPos(m_vwenv, m_hvoDefault, m_hvoWordBundleAnalysis, choiceIndex);
-					break;
-				case WfiGlossTags.kClassId:
-					m_hvoWfiAnalysis = m_defaultObj.Owner.Hvo;
-					if (m_hvoWordBundleAnalysis == m_hvoWordform) // then our analysis is a guess
-					{
-						m_this.SetGuessing(m_vwenv);
-					}
-					m_vwenv.AddObj(m_hvoWfiAnalysis, m_this, kfragAnalysisCategoryChoices + choiceIndex);
-					break;
-				default:
-					throw new Exception("Invalid type found in Segment analysis");
+					case WfiWordformTags.kClassId:
+						m_this.SetColor(m_vwenv, m_this.LabelRGBFor(choiceIndex)); // looks like missing word POS.
+						m_vwenv.AddString(m_this.m_tssMissingAnalysis);
+						break;
+					case WfiAnalysisTags.kClassId:
+						if (m_hvoDefault != m_hvoWordBundleAnalysis)
+						{
+							// Real analysis isn't what we're displaying, so POS is a guess.
+							var isHumanApproved = m_this.Decorator.get_IntProp(m_hvoDefault, InterlinViewDataCache.OpinionAgentFlid) != (int)AnalysisGuessServices.OpinionAgent.Parser;
+							m_this.SetGuessing(m_vwenv, isHumanApproved ? ApprovedGuessColor : MachineGuessColor);
+						}
+						m_this.AddAnalysisPos(m_vwenv, m_hvoDefault, m_hvoWordBundleAnalysis, choiceIndex);
+						break;
+					case WfiGlossTags.kClassId:
+						m_hvoWfiAnalysis = m_defaultObj.Owner.Hvo;
+						if (m_hvoWordBundleAnalysis == m_hvoWordform) // then our analysis is a guess
+						{
+							m_this.SetGuessing(m_vwenv);
+						}
+						m_vwenv.AddObj(m_hvoWfiAnalysis, m_this, kfragAnalysisCategoryChoices + choiceIndex);
+						break;
+					default:
+						throw new Exception("Invalid type found in Segment analysis");
 				}
 			}
 		}
@@ -1730,7 +1723,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			switch (frag)
 			{
-			case kfragSegFf: // freeform annotations. (Cf override in InterlinPrintVc)
+				case kfragSegFf: // freeform annotations. (Cf override in InterlinPrintVc)
 					{
 						// Note that changes here may need to be refleced in FreeformAdder's code
 						// for selecting a newly created annotation.
@@ -1738,28 +1731,28 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						break;
 					}
 				default:
-				if (frag >= kfragWordGlossWs && frag < kfragWordGlossWs + ListManager.AnalysisWsIds.Length)
-				{
-					// Displaying one ws of all the glosses of an analysis, separated by commas.
-					vwenv.OpenParagraph();
-					var wa = m_coRepository.GetObject(hvo) as IWfiAnalysis;
-					var i = 0;
-					foreach (var gloss in wa.MeaningsOC)
+					if (frag >= kfragWordGlossWs && frag < kfragWordGlossWs + ListManager.AnalysisWsIds.Length)
 					{
-						if (i != 0)
+						// Displaying one ws of all the glosses of an analysis, separated by commas.
+						vwenv.OpenParagraph();
+						var wa = m_coRepository.GetObject(hvo) as IWfiAnalysis;
+						var i = 0;
+						foreach (var gloss in wa.MeaningsOC)
 						{
-							vwenv.AddString(CommaSpaceString);
+							if (i != 0)
+							{
+								vwenv.AddString(CommaSpaceString);
+							}
+							vwenv.AddObj(gloss.Hvo, this, frag);
+							i++;
 						}
-						vwenv.AddObj(gloss.Hvo, this, frag);
-						i++;
+						vwenv.CloseParagraph();
 					}
-					vwenv.CloseParagraph();
-				}
-				else
-				{
-					base.DisplayVec (vwenv, hvo, tag, frag);
-				}
-				break;
+					else
+					{
+						base.DisplayVec(vwenv, hvo, tag, frag);
+					}
+					break;
 			}
 		}
 
@@ -1770,7 +1763,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			for (var ispec = LineChoices.FirstFreeformIndex; ispec < LineChoices.Count; ispec += LineChoices.AdjacentWssAtIndex(ispec, hvoSeg).Length)
 			{
 				var flid = LineChoices[ispec].Flid;
-				switch(flid)
+				switch (flid)
 				{
 					case InterlinLineChoices.kflidFreeTrans:
 					case InterlinLineChoices.kflidLitTrans:
@@ -1871,16 +1864,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal ICmAnnotationDefn SegDefnFromFfFlid(int flid)
 		{
-			switch(flid)
+			switch (flid)
 			{
-			case InterlinLineChoices.kflidFreeTrans:
+				case InterlinLineChoices.kflidFreeTrans:
 					throw new InvalidOperationException("Uses obsolete FT annotation defn that is no longer in system.");
-			case InterlinLineChoices.kflidLitTrans:
+				case InterlinLineChoices.kflidLitTrans:
 					throw new InvalidOperationException("Uses obsolete FT annotation defn that is no longer in system.");
-			case InterlinLineChoices.kflidNote:
+				case InterlinLineChoices.kflidNote:
 					return GetAnnDefnId(m_cache, CmAnnotationDefnTags.kguidAnnNote);
-			default:
-				break; // unknown type, ignore it.
+				default:
+					break; // unknown type, ignore it.
 			}
 			return null;
 		}
@@ -1890,33 +1883,33 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			switch (tag)
 			{
 				case SimpleRootSite.kTagUserPrompt:
-				// In this case, frag is the writing system we really want the user to type.
-				// We put a zero-width space in that WS at the start of the string since that is the
-				// WS the user will end up typing in.
+					// In this case, frag is the writing system we really want the user to type.
+					// We put a zero-width space in that WS at the start of the string since that is the
+					// WS the user will end up typing in.
 					var bldr = TsStringUtils.MakeString(ITextStrings.ksEmptyFreeTransPrompt, m_cache.DefaultUserWs).GetBldr();
 					bldr.SetIntPropValues(0, bldr.Length, (int)FwTextPropType.ktptSpellCheck, (int)FwTextPropVar.ktpvEnum, (int)SpellingModes.ksmDoNotCheck);
-				bldr.Replace(0, 0, "\u200B", null);
-				// This dummy property should always be set on a user prompt. It allows certain formatting commands to be
-				// handled specially.
-				bldr.SetIntPropValues(0, bldr.Length, SimpleRootSite.ktptUserPrompt, (int)FwTextPropVar.ktpvDefault, 1);
-				bldr.SetIntPropValues(0, 1, (int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, frag);
-				return bldr.GetString();
+					bldr.Replace(0, 0, "\u200B", null);
+					// This dummy property should always be set on a user prompt. It allows certain formatting commands to be
+					// handled specially.
+					bldr.SetIntPropValues(0, bldr.Length, SimpleRootSite.ktptUserPrompt, (int)FwTextPropVar.ktpvDefault, 1);
+					bldr.SetIntPropValues(0, 1, (int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, frag);
+					return bldr.GetString();
 				case ktagGlossAppend: // Fall through
 				case ktagGlossPrepend:
-				// not really a variant, per se. rather a kludge so InterlinearExport will export glsAppend item.
-				return m_tssPendingGlossAffix;
+					// not really a variant, per se. rather a kludge so InterlinearExport will export glsAppend item.
+					return m_tssPendingGlossAffix;
 			}
 
 			switch (frag)
 			{
-			case kfragAnalysisMissingGloss:
-			case kfragBundleMissingSense:
-			case kfragAnalysisMissingPos:
-				return m_tssMissingAnalysis;
-			case kfragMissingWholeAnalysis:
-				return m_tssMissingVernacular;
-			default:
-				return null;
+				case kfragAnalysisMissingGloss:
+				case kfragBundleMissingSense:
+				case kfragAnalysisMissingPos:
+					return m_tssMissingAnalysis;
+				case kfragMissingWholeAnalysis:
+					return m_tssMissingVernacular;
+				default:
+					return null;
 			}
 		}
 
@@ -1934,11 +1927,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var obj = m_cache.ServiceLocator.ObjectRepository.GetObject(hvo);
 			switch (frag)
 			{
-					// If you change this, remember that an estimate that is too HIGH just means it takes a few iterations
-					// to fill the screen, and the thumb on the scroll bar is a bit small. But if it is too SMALL,
-					// we will expand more objects than we need, which is much more expensive.
-					// Also remember: this gets called for EVERY paragraph and segment in
-					// the text, it needs to run pretty fast.
+				// If you change this, remember that an estimate that is too HIGH just means it takes a few iterations
+				// to fill the screen, and the thumb on the scroll bar is a bit small. But if it is too SMALL,
+				// we will expand more objects than we need, which is much more expensive.
+				// Also remember: this gets called for EVERY paragraph and segment in
+				// the text, it needs to run pretty fast.
 				case kfragInterlinPara:
 					var para = obj as IStTxtPara;
 					if (para == null)
@@ -1982,9 +1975,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private int EstimateSegmentHeight(ISegment seg, int dxAvailWidth)
 		{
 			var length = seg.BaselineText.Length;
-			var width = length*kPixelsPerChar + kPixelsForRowLabels;
-			var rows = dxAvailWidth/width + 1;
-			return rows*LineChoices.Count*kPixelsPerLine;
+			var width = length * kPixelsPerChar + kPixelsForRowLabels;
+			var rows = dxAvailWidth / width + 1;
+			return rows * LineChoices.Count * kPixelsPerLine;
 		}
 
 		/// <summary>
@@ -2021,7 +2014,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				for (var ihvo = 0; ihvo < chvo; ihvo++)
 				{
 					LoadParaData(rghvo[ihvo]);
-			}
+				}
 			}
 			catch (Exception)
 			{
@@ -2048,7 +2041,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (m_loader == null)
 			{
 				m_loader = CreateParaLoader();
-		}
+			}
 		}
 
 		internal virtual IParaDataLoader CreateParaLoader()
@@ -2114,7 +2107,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (hvoPos == 0)
 			{
 				vwenv.OpenParagraph();
-				vwenv.NoteDependency(new int[] {hvoAnalysis}, new[] {WfiAnalysisTags.kflidCategory}, 1);
+				vwenv.NoteDependency(new int[] { hvoAnalysis }, new[] { WfiAnalysisTags.kflidCategory }, 1);
 				vwenv.AddString(m_tssMissingAnalysis);
 				vwenv.CloseParagraph();
 			}
@@ -2124,15 +2117,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			else
 			{
-			if (hvoCurrent == hvoAnalysis)
+				if (hvoCurrent == hvoAnalysis)
 				{
-				vwenv.AddObjProp(WfiAnalysisTags.kflidCategory, this, kfragLineChoices + choiceIndex);
+					vwenv.AddObjProp(WfiAnalysisTags.kflidCategory, this, kfragLineChoices + choiceIndex);
 				}
-			else
+				else
 				{
-				vwenv.AddObj(hvoAnalysis, this, kfragAnalysisCategoryChoices + choiceIndex); // causes recursive call with right hvoCurrent
+					vwenv.AddObj(hvoAnalysis, this, kfragAnalysisCategoryChoices + choiceIndex); // causes recursive call with right hvoCurrent
+				}
 			}
-		}
 		}
 
 		/// <summary>
@@ -2149,6 +2142,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public override void DisplayEmbeddedObject(IVwEnv vwenv, int hvo)
 		{
-	}
+		}
 	}
 }

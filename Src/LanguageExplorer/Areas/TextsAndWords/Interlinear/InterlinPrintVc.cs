@@ -22,7 +22,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public InterlinPrintVc(LcmCache cache) : base(cache)
 		{
-
 		}
 
 		protected override int LabelRGBFor(InterlinLineSpec spec)
@@ -46,7 +45,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				case kfragStText: // The whole text, root object for the InterlinDocChild.
 					if (hvo == 0)
 					{
-						return;		// What if the user deleted all the texts?  See LT-6727.
+						return;     // What if the user deleted all the texts?  See LT-6727.
 					}
 					var stText = m_coRepository.GetObject(hvo) as IStText;
 					vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvDefault, (int)TptEditable.ktptNotEditable);
@@ -67,8 +66,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					vwenv.OpenParagraph();
 					ITsString tssAnal;
 					int wsAnalysisTitle;
-					if (stText.Title.TryWs(WritingSystemServices.kwsFirstAnal, out wsAnalysisTitle, out tssAnal) &&
-					    !tssAnal.Equals(stText.Title.BestVernacularAlternative))
+					if (stText.Title.TryWs(WritingSystemServices.kwsFirstAnal, out wsAnalysisTitle, out tssAnal) && !tssAnal.Equals(stText.Title.BestVernacularAlternative))
 					{
 						if (fAddedVernacular)
 						{

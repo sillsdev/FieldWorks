@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -35,12 +35,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 				// Do this, before calling base.
 				m_sda?.RemoveNotification(this);
-				m_vc?.Dispose();
+				Vc?.Dispose();
 
 				if (m_contextButton != null && !Controls.Contains(m_contextButton))
+				{
 					m_contextButton.Dispose();
+				}
 			}
-			m_vc = null;
+			Vc = null;
 			m_contextButton = null;
 			_fileMenu = null;
 			_exportMenu = null;
@@ -63,7 +65,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			this.AccessibleName = "InterlinDocRootSiteBase";
 			this.Name = "InterlinDocRootSiteBase";
 			this.ResumeLayout(false);
-
 		}
 
 		#endregion

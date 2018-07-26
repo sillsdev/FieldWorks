@@ -7,13 +7,11 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
-using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
-using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Resources;
 using Rect = SIL.FieldWorks.Common.ViewsInterfaces.Rect;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
@@ -25,16 +23,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 	/// </summary>
 	public class ConstChartBody : RootSite
 	{
+		private InterlinLineChoices m_lineChoices;
 		private int m_hvoChart;
-		private ConstChartVc m_vc;
-		private ConstituentChart m_chart;
 		private Button m_hoverButton;
 		/// <summary>
 		/// The context menu displayed for a cell.
 		/// </summary>
 		private ContextMenuStrip m_cellContextMenu;
-
-		private long m_ticksWhenContextMenuClosed;
 
 		/// <summary>
 		/// Make one.
@@ -42,13 +37,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		public ConstChartBody(ConstituentChartLogic logic, ConstituentChart chart)
 			: base(null)
 		{
+			InitializeComponent();
 			Logic = logic;
 			Logic.RowModifiedEvent += m_logic_RowModifiedEvent;
-			m_chart = chart;
-			IsRightToLeft = m_chart.ChartIsRtL;
+			Chart = chart;
+			IsRightToLeft = Chart.ChartIsRtL;
 		}
 
-		internal IVwViewConstructor Vc => m_vc;
+		internal ConstChartVc Vc { get; private set; }
 
 		/// <summary>
 		/// Right-to-Left Mark; for flipping individual characters.
@@ -65,14 +61,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		{
 			// Review: This WaitCursor doesn't seem to work. Anyone know why?
 			using (new WaitCursor())
+			using (var g = Graphics.FromHwnd(Handle))
 			{
-				using (var g = Graphics.FromHwnd(Handle))
-				{
-					// get a best estimate to determine row needing the greatest column width.
-					var env = new MaxStringWidthForChartColumn(m_vc, m_styleSheet, Cache.MainCacheAccessor, m_hvoChart, g, icolChanged);
-					Vc.Display(env, m_hvoChart, ConstChartVc.kfragChart);
-					return env.MaxStringWidth;
-				}
+				// get a best estimate to determine row needing the greatest column width.
+				var env = new MaxStringWidthForChartColumn(Vc, m_styleSheet, Cache.MainCacheAccessor, m_hvoChart, g, icolChanged);
+				Vc.Display(env, m_hvoChart, ConstChartVc.kfragChart);
+				return env.MaxStringWidth;
 			}
 		}
 
@@ -130,7 +124,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			Debug.Assert(bookmark != null);
 			Debug.Assert(bookmark.IndexOfParagraph >= 0);
 
-			if (m_chart == null || Logic.Chart.RowsOS.Count < 1)
+			if (Chart == null || Logic.Chart.RowsOS.Count < 1)
 			{
 				return; // nothing to do (and leave the bookmark alone)
 			}
@@ -158,7 +152,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				return;
 			}
 			// Otherwise, Bookmark is for an occurrence that is not yet charted.
-			m_chart.ScrollToEndOfChart();
+			Chart.ScrollToEndOfChart();
 		}
 
 		/// <summary>
@@ -169,7 +163,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <param name="fbookmark">true if called for a bookmark, false if called for ChOrph highlighting</param>
 		internal void SelectAndScrollToLoc(ChartLocation chartLoc, bool fbookmark)
 		{
-			Debug.Assert(m_chart != null);
+			Debug.Assert(Chart != null);
 			Debug.Assert(chartLoc != null);
 			Debug.Assert(chartLoc.Row != null);
 
@@ -272,7 +266,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		private void SetHoverButtonLocation(Rect cellRect, int columnIndex)
 		{
-			var horizPosition = CalculateHoverButtonHorizPosition(columnIndex, m_chart.ChartIsRtL);
+			var horizPosition = CalculateHoverButtonHorizPosition(columnIndex, Chart.ChartIsRtL);
 			var result = new Point(horizPosition, cellRect.top);
 			m_hoverButton.Location = result;
 		}
@@ -284,7 +278,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			// If chart is Left to Right, we start with right border of cell and subtract button width and margin.
 			// If chart is Right to Left, we start with left border of cell and add margin.
 			var fudgeFactor = fRtl ? margin : -margin - m_hoverButton.Width;
-			return m_chart.ColumnPositions[columnIndex + extraColumnLeft + (fRtl ? -1 : 1) + (m_chart.NotesColumnOnRight ? 0 : 1)] + fudgeFactor; ;
+			return Chart.ColumnPositions[columnIndex + extraColumnLeft + (fRtl ? -1 : 1) + (Chart.NotesColumnOnRight ? 0 : 1)] + fudgeFactor;
 		}
 
 		public void SetColWidths(int[] widths)
@@ -304,22 +298,38 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			// possibly because of the left border.
 			lengths[0].nVal -= 1000;
 			RootBox?.SetTableColWidths(lengths, ccol);
-			// TODO: fix this properly - why is m_vc null?
-			m_vc?.SetColWidths(lengths);
+			// TODO: fix this properly - why is Vc null?
+			// TODO: Answer: It will be null if either of these apply: 1) MakeRoot() was not called, or 2) this instance has been disposed.
+			// TODO: Answer: Its the same for the line above for "RootBox?".
+			Vc?.SetColWidths(lengths);
 		}
 
-		internal InterlinLineChoices LineChoices { get; set; }
+		internal InterlinLineChoices LineChoices
+		{
+			get
+			{
+				return m_lineChoices;
+			}
+			set
+			{
+				m_lineChoices = value;
+				if (Vc != null)
+				{
+					Vc.LineChoices = value;
+				}
+			}
+		}
 
 		public override void MakeRoot()
 		{
 			base.MakeRoot();
 
-			m_vc = new ConstChartVc(this)
+			Vc = new ConstChartVc(this)
 			{
 				LineChoices = LineChoices
 			};
 			m_rootb.DataAccess = Cache.MainCacheAccessor;
-			m_rootb.SetRootObject(m_hvoChart, m_vc, ConstChartVc.kfragChart, StyleSheet);
+			m_rootb.SetRootObject(m_hvoChart, Vc, ConstChartVc.kfragChart, StyleSheet);
 		}
 
 		/// <summary>
@@ -344,7 +354,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				return;
 			}
-			BadChart = false;	// new chart, new possibilities for problems...
+			BadChart = false;   // new chart, new possibilities for problems...
 			m_hvoChart = hvoChart;
 			AllColumns = allColumns;
 
@@ -372,7 +382,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			if (disposing)
 			{
 				m_cellContextMenu?.Dispose();
-				m_vc?.Dispose();
+				Vc?.Dispose();
 				if (m_hoverButton != null)
 				{
 					if (Controls.Contains(m_hoverButton))
@@ -383,7 +393,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				}
 			}
 			m_cellContextMenu = null;
-			m_vc = null;
+			Vc = null;
 			m_hoverButton = null;
 			base.Dispose(disposing);
 		}
@@ -397,30 +407,22 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
-			if (DateTime.Now.Ticks - m_ticksWhenContextMenuClosed > 50000) // 5ms!
+			if (e.Button == MouseButtons.Right || m_hoverButton.Bounds.Contains(e.Location))
 			{
-				// Consider bringing up another menu only if we weren't already showing one.
-				// The above time test seems to be the only way to find out whether this click closed the last one.
+				// Bring up the menu if the user right clicks or clicks on the menu hover button.
 				int icol;
 				int irow;
 				var chart = Cache.ServiceLocator.GetInstance<IDsConstChartRepository>().GetObject(m_hvoChart);
-				ChartLocation cell;
 				if (GetCellInfo(e, out icol, out irow))
 				{
 					icol = LogicalFromDisplay(icol);
-					cell = new ChartLocation(chart.RowsOS[irow], icol);
+					var cell = new ChartLocation(chart.RowsOS[irow], icol);
 					m_cellContextMenu = Logic.MakeCellContextMenu(cell);
-					m_cellContextMenu.Closed += m_cellContextMenu_Closed;
 					m_cellContextMenu.Show(this, e.X, e.Y);
 					return; // Don't call the base method, we don't want to make a selection.
 				}
 			}
 			base.OnMouseDown(e);
-		}
-
-		private void m_cellContextMenu_Closed(object sender, ToolStripDropDownClosedEventArgs e)
-		{
-			m_ticksWhenContextMenuClosed = System.DateTime.Now.Ticks;
 		}
 
 		/// <summary>
@@ -460,8 +462,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				{
 					return false;
 				}
-				icol = Logic.GetColumnFromPosition(e.X, m_chart.ColumnPositions) - 1;
-				icol += (m_chart.ChartIsRtL && m_chart.NotesColumnOnRight) ? 1 : (!m_chart.ChartIsRtL && !m_chart.NotesColumnOnRight) ? -1 : 0;
+				icol = Logic.GetColumnFromPosition(e.X, Chart.ColumnPositions) - 1;
+				icol += (Chart.ChartIsRtL && Chart.NotesColumnOnRight) ? 1 : (!Chart.ChartIsRtL && !Chart.NotesColumnOnRight) ? -1 : 0;
 				// return true if we clicked on a valid template column (other than notes)
 				// return false if we clicked on an 'other' column, like notes or row number?
 				return -1 < icol && icol < AllColumns.Length;
@@ -508,6 +510,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		}
 
-		public ConstituentChart Chart => m_chart;
+		public ConstituentChart Chart { get; }
 	}
 }

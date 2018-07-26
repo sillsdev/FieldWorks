@@ -6,19 +6,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
 	internal class LineOption
 	{
-		private readonly string _label;
-
 		public LineOption(int flid, string label)
 		{
 			Flid = flid;
-			_label = label;
+			Label = label;
 		}
 
 		public override string ToString()
 		{
-			return _label;
+			return Label;
 		}
 
 		public int Flid { get; }
+
+		public string Label { get; }
 	}
 }

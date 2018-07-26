@@ -36,9 +36,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 						vwenv.set_IntProperty((int)FwTextPropType.ktptRightToLeft, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
 						vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalLeft);
 					}
+					vwenv.set_IntProperty((int)FwTextPropType.ktptMarginLeading, (int)FwTextPropVar.ktpvMilliPoint, 10000);
+					vwenv.OpenDiv();
 					vwenv.OpenParagraph();
+					AddLabelPile(vwenv, m_cache, true, ShowMorphBundles);
 					vwenv.AddObjVecItems(m_ribbon.OccurenceListId, this, InterlinVc.kfragBundle);
 					vwenv.CloseParagraph();
+					vwenv.CloseDiv();
 					break;
 				case kfragBundle:
 					// Review: will this lead to multiple spurious blue lines?

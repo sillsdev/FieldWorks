@@ -18,7 +18,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 	/// This class displays a one-line ribbon of interlinear text which keeps adding more at the end
 	/// as stuff at the start gets moved into the main chart.
 	/// </summary>
-	public class InterlinRibbon : SimpleRootSite, IInterlinRibbon
+	public class InterlinRibbon : InterlinDocRootSiteBase, IInterlinRibbon
 	{
 		internal const int kfragRibbonWordforms = 2000000; // should be distinct from ones used in InterlinVc
 
@@ -28,14 +28,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		// If we are the DialogInterlinRibbon sub-class, this is hvoWordGroup.
 
 		protected int m_occurenceListId = -2011; // flid for charting ribbon
-		private RibbonVc m_vc;
 		private int m_iEndSelLim;
 		private AnalysisOccurrence m_endSelLimPoint;
 
 		// Lazy initialization provides a chance for subclass to use its own
 		// version of OccurenceListId
 		private InterlinRibbonDecorator m_sda;
-		protected bool m_InSelectionChanged = false;
+		protected bool m_InSelectionChanged;
 
 		#endregion
 
@@ -53,27 +52,34 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			m_fShowRangeSelAfterLostFocus = true;
 		}
 
+		protected override void MakeVc()
+		{
+			Vc = new RibbonVc(this);
+		}
+
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
 			{
-				m_vc?.Dispose();
+				Vc?.Dispose();
 			}
-			m_vc = null;
+			Vc = null;
 			base.Dispose(disposing);
 		}
 
 		#region Properties
 
-		internal InterlinLineChoices LineChoices { get; set; }
+		protected internal InterlinLineChoices RibbonLineChoices
+		{
+			get { return LineChoices; }
+			set { LineChoices = value; }
+		}
 
 		public virtual int OccurenceListId => m_occurenceListId;
 
-		public ISilDataAccessManaged Decorator => m_sda ?? (m_sda = new InterlinRibbonDecorator(Cache, HvoRoot, OccurenceListId));
+		public ISilDataAccessManaged Decorator => m_sda ?? (m_sda = new InterlinRibbonDecorator(Cache, OccurenceListId));
 
 		protected internal int HvoRoot { get; private set; }
-
-		protected internal LcmCache Cache { get; protected set; }
 
 		/// <summary>
 		/// Setter handles PropChanged
@@ -146,7 +152,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			}
 		}
 
-		public bool IsRightToLeft => m_vc != null && m_vc.RightToLeft;
+		public bool IsRightToLeft => Vc != null && Vc.RightToLeft;
 
 		protected override void GetScrollOffsets(out int dxd, out int dyd)
 		{
@@ -175,7 +181,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			}
 			var oldLim = Decorator.get_VecSize(HvoRoot, OccurenceListId);
 			Debug.Assert((Decorator as InterlinRibbonDecorator) != null, "No ribbon decorator!");
-			((InterlinRibbonDecorator) Decorator).CacheRibbonItems(fragList);
+			((InterlinRibbonDecorator)Decorator).CacheRibbonItems(fragList);
 			RootBox?.PropChanged(HvoRoot, OccurenceListId, 0, cwords, oldLim);
 		}
 
@@ -221,7 +227,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				var levelsE = new SelLevInfo[1];
 				levelsE[0].ihvo = end;
 				levelsE[0].tag = OccurenceListId;
-				RootBox.MakeTextSelInObj(0, 1, levelsA, 1, levelsE, false, false, false, true, true);
+				RootBox.MakeTextSelInObj(0, levelsA.Length, levelsA, levelsE.Length, levelsE, false, false, false, true, true);
 			}
 			finally
 			{
@@ -229,7 +235,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			}
 		}
 
-		public void SetRoot(int hvoStText)
+		protected override void AddDecorator()
+		{
+			m_rootb.DataAccess = Decorator;
+		}
+
+		public override void SetRoot(int hvoStText)
 		{
 			// Note: do not avoid  calling ChangeOrMakeRoot when hvoText == m_hvoRoot. The reconstruct
 			// may be needed when the ribbon contents have changed, e.g., because objects were deleted
@@ -239,7 +250,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				return;
 			}
-			ChangeOrMakeRoot(HvoRoot, m_vc, kfragRibbonWordforms, StyleSheet);
+			SetRootInternal(hvoStText);
+			ChangeOrMakeRoot(HvoRoot, Vc, kfragRibbonWordforms, StyleSheet);
+			AddDecorator();
 			MakeInitialSelection();
 		}
 
@@ -247,7 +260,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		{
 			base.MakeRoot();
 
-			m_vc = new RibbonVc(this);
+			EnsureVc();
 
 			if (LineChoices == null)
 			{
@@ -256,12 +269,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				LineChoices.Add(InterlinLineChoices.kflidWord);
 				LineChoices.Add(InterlinLineChoices.kflidWordGloss);
 			}
-			m_vc.LineChoices = LineChoices;
+			Vc.LineChoices = LineChoices;
+			SetRootInternal(HvoRoot);
 
 			m_rootb.DataAccess = Decorator;
-			m_rootb.SetRootObject(HvoRoot, m_vc, kfragRibbonWordforms, this.StyleSheet);
+			m_rootb.SetRootObject(HvoRoot, Vc, kfragRibbonWordforms, this.StyleSheet);
 
-			m_rootb.Activate(VwSelectionState.vssOutOfFocus); // Makes selection visible even before ever got focus.\
+			m_rootb.Activate(VwSelectionState.vssOutOfFocus); // Makes selection visible even before ever got focus.
 			MakeInitialSelection();
 		}
 

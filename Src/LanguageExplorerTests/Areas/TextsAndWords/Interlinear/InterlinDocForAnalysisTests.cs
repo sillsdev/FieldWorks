@@ -316,8 +316,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			Cache = testText.Cache;
 			m_hvoRoot = testText.Hvo;
 			m_testText = testText;
-			m_vc = new InterlinVc(Cache);
-			m_vc.RootSite = this;
+			Vc = new InterlinVc(Cache);
+			Vc.RootSite = this;
 		}
 
 		protected override FocusBoxController CreateFocusBoxInternal()
@@ -359,7 +359,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		/// ------------------------------------------------------------------------------------
 		internal void CallSetActiveFreeform(int hvoSeg, int ws)
 		{
-			ReflectionHelper.CallMethod(m_vc, "SetActiveFreeform", hvoSeg,
+			ReflectionHelper.CallMethod(Vc, "SetActiveFreeform", hvoSeg,
 				SegmentTags.kflidFreeTranslation, ws, 0);
 		}
 	}
