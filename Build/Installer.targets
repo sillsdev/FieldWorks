@@ -173,7 +173,7 @@
 			<DeveloperFiles Include="$(fwrt)\DistFiles\TECkit\**\*"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\TxtConv.exe"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Windows\**\*"/>
-			<FontFiles Include="$(fwrt)\DistFiles\Fonts\Raw\*.ttf"/>
+			<FontFiles Include="$(fwrt)\DistFiles\Fonts\Raw\Quivira.otf"/>
 			<FontFiles Include="$(DownloadsDir)\Fonts\**\*.ttf"/>
 			<FontDocumentation Include="$(DownloadsDir)\Fonts\*\*.txt"/>
 			<FontDocumentation Include="$(DownloadsDir)\Fonts\*\documentation\*"/>
@@ -266,7 +266,7 @@
 		<Copy SourceFiles="@(BinFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/%(RecursiveDir)"/>
 		<Copy SourceFiles="@(CustomInstallFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/.."/>
 		<Copy SourceFiles="@(OverrideFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(OverridesDestDir)"/>
-		<CallTarget Targets="HarvestL10n;HarvestFonts;ConvertHarvestsToWxi"/>
+		<CallTarget Targets="HarvestL10n;ConvertHarvestsToWxi"/>
 	</Target>
 
 	<Target Name="HarvestL10n">
@@ -301,27 +301,6 @@
 			<CommonHeatArgs>$(GuidGenArg) -scom -sreg -sfrag -srd -sw5150 -sw5151 $(KeyPathFixArg)</CommonHeatArgs>
 		</PropertyGroup>
 		<Exec Command="heat.exe dir $(L10nSrcDir)\$(TargetLocale) $(CommonHeatArgs) -cg $(SafeTargetLocale)Localization -dr $(SafeTargetLocale)L10NFOLDER -var wix.$(PatchPrefix)$(SafeTargetLocale)L10NDIR -out $(L10nWxiDir)\$(SafeTargetLocale)Harvest.wxs" />
-	</Target>
-
-	<Target Name="HarvestFonts">
-		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="HarvestFont" Condition="'$(BuildingBaseInstaller)'=='true'"
-			Properties="PatchPrefix=MASTER;FontSrcDir=$(AppBuildDir)\$(FontDirSuffix);HarvestWxiDir=$(OverridesDestDir)\Master"/>
-		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="HarvestFont" Condition="'$(BuildingBaseInstaller)'!='true'"
-			Properties="PatchPrefix=MASTER;FontSrcDir=$(AppBuildMasterDir)\$(FontDirSuffix);HarvestWxiDir=$(OverridesDestDir)\Master"/>
-		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="HarvestFont" Condition="'$(BuildingBaseInstaller)'!='true'"
-			Properties="PatchPrefix=UPDATE;FontSrcDir=$(AppBuildDir)\$(FontDirSuffix);HarvestWxiDir=$(OverridesDestDir)\Update"/>
-	</Target>
-
-	<Target Name="HarvestFont">
-		<PropertyGroup>
-			<!-- Always generate GUID's late because we can (but feel free to change if desired) -->
-			<GuidGenArg>-ag</GuidGenArg>
-			<!-- Add TrueType="yes" to harvested fonts (simply copying them to \Windows\Fonts is insufficient) -->
-			<TrueTypeArg>-t $(InstallerDir)/BaseInstallerBuild/TrueType.xsl</TrueTypeArg>
-			<!-- Never apply KeyPathFix.xsl to fonts, so we don't install an older version on top of a newer version -->
-			<CommonHeatArgs>$(GuidGenArg) -scom -sreg -sfrag -srd -sw5150 -sw5151 $(TrueTypeArg)</CommonHeatArgs>
-		</PropertyGroup>
-		<Exec Command="heat.exe dir $(FontSrcDir) $(CommonHeatArgs) -cg HarvestedFonts -dr FontsFolder -var wix.$(PatchPrefix)FONTDIR -out $(HarvestWxiDir)\FontHarvest.wxs" />
 	</Target>
 
 	<Target Name="ConvertHarvestsToWxi">
@@ -404,10 +383,9 @@
 	</Target>
 
 	<Target Name="DownloadAndUnzipFonts">
-		<!-- TODO (Hasso) 2018.07: the latest version of Quivira is .otf, but making that change requires
-			more install smarts than we have time to write before this month's First Beta. -->
-		<!-- Note: we are downloading quivira, but also leaving it checked in in case the website disappears. -->
-		<DownloadFile Address="http://www.quivira-font.com/files/Quivira.ttf" DownloadsDir="$(fwrt)/DistFiles/Fonts/Raw"/>
+		<!-- Note: we are downloading quivira but also leaving it checked in in case the website disappears. -->
+		<DownloadFile Address="http://www.quivira-font.com/files/Quivira.otf" DownloadsDir="$(fwrt)/DistFiles/Fonts/Raw"
+			ContinueOnError="true"/>
 		<!-- TODO (Hasso) 2018.07: download latest version from wirl (LT-19288) -->
 		<DownloadFile Address="https://software.sil.org/downloads/r/andika/Andika-5.000.zip" DownloadsDir="$(DownloadsDir)"
 			Condition="!Exists('$(DownloadsDir)/Andika-5.000.zip')"/>

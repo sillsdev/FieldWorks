@@ -222,5 +222,5 @@
 	<?include $(var.HarvestWxiDir)\trHarvest.wxi?>
 	<?include $(var.HarvestWxiDir)\viHarvest.wxi?>
 	<?include $(var.HarvestWxiDir)\zhHarvest.wxi?>
-	<?include $(var.HarvestWxiDir)\FontHarvest.wxi?>
+	<?include Fonts.wxi?>
 </Include>
