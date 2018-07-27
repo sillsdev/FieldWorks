@@ -39,7 +39,6 @@ DEFINE_THIS_FILE
 //:>********************************************************************************************
 //:>	   Local Constants and static variables
 //:>********************************************************************************************
-static UniscribeRunInfo g_uri; // information about a run.
 
 DisableMultiscribe::SetMultiscribeEnabledFunc DisableMultiscribe::s_setMultiscribeEnabled = NULL;
 bool DisableMultiscribe::s_multiscribeHandleRetrieved = false;
@@ -303,7 +302,7 @@ STDMETHODIMP UniscribeEngine::FindBreakPoint(
 	int citem;
 	LgCharRenderProps chrpThis;
 	LgCharRenderProps chrp;
-	UniscribeRunInfo & uri = g_uri;
+	UniscribeRunInfo uri; // information about a run
 	int ichMinUri = -1; // JT: this is apparently set to ichMinNfc each iteration and never otherwise changed.
 	uri.pchrp = &chrp;
 	IVwGraphicsWin32Ptr qvg32;
