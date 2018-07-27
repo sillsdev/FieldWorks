@@ -93,11 +93,11 @@
 	<!-- ########################################################################################################## -->
 	<!-- ### Top Level Targets                                                                                  ### -->
 	<!-- ########################################################################################################## -->
-	<Target Name="BuildBaseInstaller" DependsOnTargets="RequirePlatform;DownloadBundledInstallers;CleanMasterOutputDir">
+	<Target Name="BuildBaseInstaller" DependsOnTargets="RequirePlatform;DownloadAndUnzipFonts;DownloadBundledInstallers;CleanMasterOutputDir">
 		<MSBuild Projects="$(MSBuildProjectFullPath)" Properties="BuildingBaseInstaller=true" Targets="BuildProductMain;BuildProductBaseMsi;CopyBuildToMaster"/>
 	</Target>
 
-	<Target Name="BuildPatchInstaller" DependsOnTargets="RequirePlatform;BuildProductMain;BuildProductPatchMsp"/>
+	<Target Name="BuildPatchInstaller" DependsOnTargets="RequirePlatform;DownloadAndUnzipFonts;BuildProductMain;BuildProductPatchMsp"/>
 
 	<!-- ########################################################################################################## -->
 	<!-- ### Build Targets                                                                                      ### -->
@@ -340,7 +340,7 @@
 		<Copy SourceFiles="@(ObjectFiles)" DestinationFolder="$(AppBuildMasterDir)/%(RecursiveDir)"/>
 	</Target>
 
-	<Target Name="DownloadBundledInstallers" DependsOnTargets="DownloadAndUnzipFonts">
+	<Target Name="DownloadBundledInstallers">
 		<!-- REVIEW (Hasso) 2018.03: how many of these do we really need? -->
 		<PropertyGroup>
 			<WixLibsDir>$(InstallerDir)/libs/</WixLibsDir>
