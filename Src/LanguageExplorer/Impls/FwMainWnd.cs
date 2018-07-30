@@ -163,7 +163,7 @@ namespace LanguageExplorer.Impls
 				{"phonologicalRulebasedParserHermitCrab", _phonologicalRulebasedParserHermitCrabNETToolStripMenuItem},
 				{"editParserParameters", _editParserParametersToolStripMenuItem}
 			};
-			_parserMenuManager = new ParserMenuManager(_statusbar.Panels[LanguageExplorerConstants.StatusBarPanelProgress], parserMenuItems);
+			_parserMenuManager = new ParserMenuManager(_sharedEventHandlers, _statusbar.Panels[LanguageExplorerConstants.StatusBarPanelProgress], parserMenuItems);
 		}
 
 		/// <summary>

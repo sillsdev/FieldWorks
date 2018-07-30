@@ -1,8 +1,9 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using LanguageExplorer;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using NUnit.Framework;
 using Rhino.Mocks;
@@ -19,9 +20,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 	[TestFixture]
 	public class ComboHandlerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		private IPropertyTable m_propertyTable;
-		private IPublisher m_publisher;
-		private ISubscriber m_subscriber;
+		private IPropertyTable _propertyTable;
+		private IPublisher _publisher;
+		private ISubscriber _subscriber;
+		private ISharedEventHandlers _sharedEventHandlers;
 
 		#region Overrides of LcmTestBase
 
@@ -34,7 +36,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		{
 			base.TestSetup();
 
-			m_propertyTable = TestSetupServices.SetupTestTriumvirate(out m_publisher, out m_subscriber);
+			var flexComponentParameters = TestSetupServices.SetupEverything(Cache, out _sharedEventHandlers, false);
+			_propertyTable = flexComponentParameters.PropertyTable;
+			_publisher = flexComponentParameters.Publisher;
+			_subscriber = flexComponentParameters.Subscriber;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -47,10 +52,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		{
 			try
 			{
-				m_propertyTable?.Dispose();
-				m_propertyTable = null;
-				m_publisher = null;
-				m_subscriber = null;
+				_propertyTable?.Dispose();
+				_propertyTable = null;
+				_publisher = null;
+				_subscriber = null;
 			}
 			catch (Exception err)
 			{
@@ -92,13 +97,13 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			mb.SenseRA = sense;
 			mb.MorphRA = morph;
 
-			var flexComponentParameterObject = new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber);
+			var flexComponentParameterObject = new FlexComponentParameters(_propertyTable, _publisher, _subscriber);
 			// Make a sandbox and sut
 			InterlinLineChoices lineChoices = InterlinLineChoices.DefaultChoices(Cache.LangProject,
 				Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinMode.Analyze);
 			using (var sut = new IhMissingEntry(null))
 			{
-				using (var sandbox = new SandboxBase(Cache, null, lineChoices, wa.Hvo))
+				using (var sandbox = new SandboxBase(_sharedEventHandlers, Cache, null, lineChoices, wa.Hvo))
 				{
 					sandbox.InitializeFlexComponent(flexComponentParameterObject);
 					sut.SetSandboxForTesting(sandbox);
@@ -114,7 +119,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				entry.MorphoSyntaxAnalysesOC.Add(msa);
 				sense.MorphoSyntaxAnalysisRA = msa;
 				mb.MsaRA = msa;
-				using (var sandbox = new SandboxBase(Cache, null, lineChoices, wa.Hvo))
+				using (var sandbox = new SandboxBase(_sharedEventHandlers, Cache, null, lineChoices, wa.Hvo))
 				{
 					sandbox.InitializeFlexComponent(flexComponentParameterObject);
 					sut.SetSandboxForTesting(sandbox);

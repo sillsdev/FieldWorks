@@ -29,6 +29,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			if (disposing)
 			{
+				_sharedEventHandlers.Remove(AreaServices.SandboxJumpToTool);
 				PropertyTable.RemoveProperty("FirstControlToHandleMessages", SettingsGroup.LocalSettings);
 			}
 
@@ -56,6 +57,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_vc = null;
 			m_rawWordform = null;
 			FormOfWordform = null;
+			_sharedEventHandlers = null;
 		}
 
 		#region Component Designer generated code

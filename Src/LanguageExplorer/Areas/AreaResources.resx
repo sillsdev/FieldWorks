@@ -695,4 +695,51 @@ If you are not the one designated user who adds fields, or you are making some o
   <data name="Show_Subentry_under_this_Component" xml:space="preserve">
     <value>Show Subentry under this Component</value>
   </data>
+  <data name="Analysis" xml:space="preserve">
+    <value>Analysis</value>
+  </data>
+  <data name="ksFldWordform" xml:space="preserve">
+    <value>Wordform</value>
+    <comment>name for SFM import field; name matches enumeration member name</comment>
+  </data>
+  <data name="Lex_Gram_Info" xml:space="preserve">
+    <value>Lex. Gram. Info.</value>
+    <comment>short for Grammatical Information; note indentation formed by leading spaces</comment>
+  </data>
+  <data name="Morph" xml:space="preserve">
+    <value>Morph</value>
+  </data>
+  <data name="Show_Concordance_of" xml:space="preserve">
+    <value>Show Concordance of</value>
+  </data>
+  <data name="Show_in_Word_Analyses" xml:space="preserve">
+    <value>Show in Word Analyses</value>
+  </data>
+  <data name="Show_Wordform_in_Concordance" xml:space="preserve">
+    <value>Show Wordform in Concordance</value>
+  </data>
+  <data name="Show_in_Category_Edit" xml:space="preserve">
+    <value>Show in Category Edit</value>
+  </data>
+  <data name="Show_in_Compound_Rules_Editor" xml:space="preserve">
+    <value>Show in Compound Rules Editor</value>
+  </data>
+  <data name="Show_in_Environments_Editor" xml:space="preserve">
+    <value>Show in Environments Editor</value>
+  </data>
+  <data name="Show_in_Natural_Classes_Editor" xml:space="preserve">
+    <value>Show in Natural Classes Editor</value>
+  </data>
+  <data name="Show_in_Phonemes_Editor" xml:space="preserve">
+    <value>Show in Phonemes Editor</value>
+  </data>
+  <data name="Show_Word_Category_in_Category_Edit" xml:space="preserve">
+    <value>Show Word Category in Category Edit</value>
+  </data>
+  <data name="Show_Word_Category_in_Concordance" xml:space="preserve">
+    <value>Show Word Category in Concordance</value>
+  </data>
+  <data name="Word_Category" xml:space="preserve">
+    <value>Word Category</value>
+  </data>
 </root>

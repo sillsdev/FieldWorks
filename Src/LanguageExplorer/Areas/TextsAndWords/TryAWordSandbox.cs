@@ -18,8 +18,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary>
 		/// Create a new one.
 		/// </summary>
-		public TryAWordSandbox(LcmCache cache, IVwStylesheet ss, InterlinLineChoices choices, IAnalysis analysis)
-			: base(cache, ss, choices)
+		public TryAWordSandbox(ISharedEventHandlers sharedEventHandlers, LcmCache cache, IVwStylesheet ss, InterlinLineChoices choices, IAnalysis analysis)
+			: base(sharedEventHandlers, cache, ss, choices)
 		{
 			SizeToContent = true;
 			LoadForWordBundleAnalysis(analysis.Hvo);

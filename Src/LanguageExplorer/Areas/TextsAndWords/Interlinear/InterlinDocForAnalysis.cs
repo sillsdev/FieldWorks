@@ -55,6 +55,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		#endregion
 
+		internal ISharedEventHandlers SharedEventHandlers { get; set; }
+
 		private void PropertyAddWordsToLexicon_Changed(object newValue)
 		{
 			if (LineChoices == null)
@@ -1961,7 +1963,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected virtual FocusBoxController CreateFocusBoxInternal()
 		{
-			return new FocusBoxController(m_styleSheet, LineChoices, Vc.RightToLeft);
+			return new FocusBoxController(SharedEventHandlers, m_styleSheet, LineChoices, Vc.RightToLeft);
 		}
 
 		/// <summary>

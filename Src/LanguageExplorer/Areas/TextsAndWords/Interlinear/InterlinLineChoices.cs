@@ -420,7 +420,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					new LineOption(kflidMorphemes, ITextStrings.ksMorphemes),
 					new LineOption(kflidLexGloss, ITextStrings.ksGloss),
 					new LineOption(kflidLexEntries, ITextStrings.ksLexEntries),
-					new LineOption(kflidLexPos, ITextStrings.ksGramInfo)
+					new LineOption(kflidLexPos, AreaResources.Lex_Gram_Info)
 				}.Union(customLineOptions).ToArray();
 			}
 
@@ -429,7 +429,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				 new LineOption(kflidMorphemes, ITextStrings.ksMorphemes),
 				 new LineOption(kflidLexEntries, ITextStrings.ksLexEntries),
 				 new LineOption(kflidLexGloss, ITextStrings.ksLexGloss),
-				 new LineOption(kflidLexPos, ITextStrings.ksGramInfo),
+				 new LineOption(kflidLexPos, AreaResources.Lex_Gram_Info),
 				 new LineOption(kflidWordGloss, mode == InterlinMode.GlossAddWordsToLexicon ? ITextStrings.ksLexWordGloss : ITextStrings.ksWordGloss),
 				 new LineOption(kflidWordPos, mode == InterlinMode.GlossAddWordsToLexicon ? ITextStrings.ksLexWordCat : ITextStrings.ksWordCat),
 				 new LineOption(kflidFreeTrans, ITextStrings.ksFreeTranslation),

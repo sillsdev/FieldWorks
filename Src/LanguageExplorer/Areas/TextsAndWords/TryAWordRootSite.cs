@@ -21,6 +21,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 {
 	internal sealed class TryAWordRootSite : RootSiteControl
 	{
+		private ISharedEventHandlers _sharedEventHandlers;
 		private InterlinVc m_vc;
 		private ITsString m_sWordForm;
 		private IWfiWordform m_wordform;
@@ -30,8 +31,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private bool m_fRootMade;
 		private int m_labelWidth;
 
-		public TryAWordRootSite()
+		public TryAWordRootSite(ISharedEventHandlers sharedEventHandlers)
 		{
+			_sharedEventHandlers = sharedEventHandlers;
 		}
 
 		#region Overrides of SimpleRootSite
@@ -273,7 +275,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			}
 
 			m_rootb.SetRootObject(analysis.Hvo, m_vc, m_kfragSingleInterlinearAnalysisWithLabels, m_styleSheet);
-			m_tryAWordSandbox = new TryAWordSandbox(m_cache, StyleSheet, m_vc.LineChoices, analysis)
+			m_tryAWordSandbox = new TryAWordSandbox(_sharedEventHandlers, m_cache, StyleSheet, m_vc.LineChoices, analysis)
 			{
 				Visible = false
 			};

@@ -8,7 +8,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.LexText;
@@ -21,6 +20,7 @@ using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using LanguageExplorer.Filters;
+using SIL.Code;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -33,15 +33,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private int m_hvoMatch;
 		private int m_backupHvo;
 		private POSPopupTreeManager m_pOSPopupTreeManager;
+		private ISharedEventHandlers _sharedEventHandlers;
 
 		public ConcordanceControl()
 		{
 			ConstructorSurrogate();
 		}
 
-		internal ConcordanceControl(MatchingConcordanceItems recordList)
+		internal ConcordanceControl(ISharedEventHandlers sharedEventHandlers, MatchingConcordanceItems recordList)
 			:base(recordList)
 		{
+			Guard.AgainstNull(sharedEventHandlers, nameof(sharedEventHandlers));
+
+			_sharedEventHandlers = sharedEventHandlers;
 			ConstructorSurrogate();
 		}
 
@@ -53,6 +57,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			helpProvider.SetShowHelp(this, true);
 			m_tbSearchText.SuppressEnter = true;
+
+			_sharedEventHandlers.Add(AreaServices.JumpToConcordance, JumpToConcordance_Clicked);
 		}
 
 		#region Overrides of ConcordanceControlBase
@@ -834,39 +840,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksBaseline,
 				WritingSystemServices.kwsVerns,
 				ConcordanceLines.kBaseline));
-			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksWord,
-				WritingSystemServices.kwsVerns,
-				ConcordanceLines.kWord));
-			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksMorphemes,
-				WritingSystemServices.kwsVerns,
-				ConcordanceLines.kMorphemes));
-			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksLexEntry,
-				WritingSystemServices.kwsVerns,
-				ConcordanceLines.kLexEntry));
-			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksLexGloss,
-				WritingSystemServices.kwsAnals,
-				ConcordanceLines.kLexGloss));
-			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksGramInfo,
-				WritingSystemServices.kwsAnals,
-				ConcordanceLines.kGramCategory));
-			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksWordGloss,
-				WritingSystemServices.kwsAnals,
-				ConcordanceLines.kWordGloss));
-			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksWordCat,
-				WritingSystemServices.kwsAnals,
-				ConcordanceLines.kWordCategory));
-			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksFreeTranslation,
-				WritingSystemServices.kwsAnals,
-				ConcordanceLines.kFreeTranslation));
-			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksLiteralTranslation,
-				WritingSystemServices.kwsAnals,
-				ConcordanceLines.kLiteralTranslation));
-			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksNote,
-				WritingSystemServices.kwsAnals,
-				ConcordanceLines.kNote));
-			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksTagging,
-				WritingSystemServices.kwsAnals,
-				ConcordanceLines.kTags));
+			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksWord, WritingSystemServices.kwsVerns, ConcordanceLines.kWord));
+			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksMorphemes, WritingSystemServices.kwsVerns, ConcordanceLines.kMorphemes));
+			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksLexEntry, WritingSystemServices.kwsVerns, ConcordanceLines.kLexEntry));
+			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksLexGloss, WritingSystemServices.kwsAnals, ConcordanceLines.kLexGloss));
+			m_cbLine.Items.Add(new ConcordLine(AreaResources.Lex_Gram_Info, WritingSystemServices.kwsAnals, ConcordanceLines.kGramCategory));
+			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksWordGloss, WritingSystemServices.kwsAnals, ConcordanceLines.kWordGloss));
+			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksWordCat, WritingSystemServices.kwsAnals, ConcordanceLines.kWordCategory));
+			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksFreeTranslation, WritingSystemServices.kwsAnals, ConcordanceLines.kFreeTranslation));
+			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksLiteralTranslation, WritingSystemServices.kwsAnals, ConcordanceLines.kLiteralTranslation));
+			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksNote, WritingSystemServices.kwsAnals, ConcordanceLines.kNote));
+			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksTagging, WritingSystemServices.kwsAnals, ConcordanceLines.kTags));
 
 
 			m_cbLine.SelectedIndex = 0;
@@ -1131,9 +1115,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					continue;
 				}
-				result.Add(MakeOccurrence(myPara,
-					GetReferenceBeginOffsetInPara(tagInstance),
-					GetReferenceEndOffsetInPara(tagInstance)));
+				result.Add(MakeOccurrence(myPara, GetReferenceBeginOffsetInPara(tagInstance), GetReferenceEndOffsetInPara(tagInstance)));
 			}
 			return result;
 		}
@@ -1181,7 +1163,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		private void AddUnparsedParagraphs(IStText text, List<IStTxtPara> collectUnparsed, HashSet<IStTxtPara> collectUsefulParas)
+		private static void AddUnparsedParagraphs(IStText text, List<IStTxtPara> collectUnparsed, HashSet<IStTxtPara> collectUsefulParas)
 		{
 			foreach (IStTxtPara para in text.ParagraphsOS)
 			{
@@ -1241,53 +1223,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 			}
 			return result;
-		}
-
-		/// <summary>
-		/// If we're not matching diacritics, then our first pass has to allow for diacritics
-		/// in the baseline text, but we can at least filter on all the non-diacritic chars in
-		/// sequence to maybe eliminate some paragraphs at this initial stage.
-		/// </summary>
-		private string FirstPassFilterString(string sMatch)
-		{
-			if (m_rbtnUseRegExp.Checked || !m_chkMatchCase.Checked)
-			{
-				return "%";		// can we do better?
-			}
-			var sb = new StringBuilder(sMatch);
-			if (!m_chkMatchDiacritics.Checked)
-			{
-				// Allow any number of diacritics (or other chars for that matter, alas) between
-				// every nondiacritic character in the string.
-				for (var ich = sb.Length - 1; ich > 0; --ich)
-				{
-					if (Icu.IsDiacritic(sb[ich]))
-					{
-						sb[ich] = '%';
-					}
-					else
-					{
-						sb.Insert(ich, '%');
-					}
-				}
-			}
-			// Add beginning and ending wildcards as needed.
-			if (m_rbtnAnywhere.Checked || m_rbtnAtEnd.Checked)
-			{
-				sb.Insert(0, '%');
-			}
-
-			if (m_rbtnAnywhere.Checked || m_rbtnAtStart.Checked)
-			{
-				sb.Append('%');
-			}
-			// Get rid of any doubled wildcard markers.  Doing this 3 times reduces as many as
-			// 8 consecutive markers to a single one.
-			sb.Replace("%%", "%");
-			sb.Replace("%%", "%");
-			sb.Replace("%%", "%");
-			// Double single quotes to quote them as part of an SQL string.
-			return sb.ToString().Replace("'", "''");
 		}
 
 		/// <summary>
@@ -1355,7 +1290,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				if (matcher is RegExpMatcher)
 				{
-					ShowRegExpMatcherError(matcher);
+					ShowRegExpMatcherError();
 				}
 				else
 				{
@@ -1365,7 +1300,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return matcher;
 		}
 
-		private void ShowRegExpMatcherError(IMatcher matcher)
+		private void ShowRegExpMatcherError()
 		{
 			var errMsg = "Invalid regular expression";
 			MessageBox.Show(this, errMsg, @"Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -1494,13 +1429,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return result;
 		}
 
-		private bool InitializeConcordanceSearch(string sMatch, int ws, ConcordanceLines line)
+		private void InitializeConcordanceSearch(string sMatch, int ws, ConcordanceLines line)
 		{
 			SetDefaultVisibilityOfItems(true, string.Empty);
 			m_fObjectConcorded = false;
 			if (string.IsNullOrEmpty(sMatch))
 			{
-				return false;
+				return;
 			}
 			SetConcordanceLine(line);
 			SetWritingSystem(ws);
@@ -1512,7 +1447,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_btnSearch.Enabled = true;
 			m_btnSearch_Click(this, new EventArgs());
 			SaveSettings();
-			return true;
 		}
 
 		private void SetDefaultVisibilityOfItems(bool fDefault, string sConcordedOn)
@@ -1546,12 +1480,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_btnSearch.Visible = fDefault;
 		}
 
-		private bool InitializeConcordanceSearch(ICmObject cmo)
+		private void InitializeConcordanceSearch(ICmObject cmo)
 		{
-			return InitializeConcordanceSearch(cmo, cmo.ShortNameTSS);
+			InitializeConcordanceSearch(cmo, cmo.ShortNameTSS);
 		}
 
-		private bool InitializeConcordanceSearch(ICmObject cmo, ITsString tssObj)
+		private void InitializeConcordanceSearch(ICmObject cmo, ITsString tssObj)
 		{
 			var sType = cmo.GetType().Name;
 			var sTag = StringTable.Table.GetString(sType, "ClassNames");
@@ -1569,55 +1503,34 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var dxWidth = m_fwtbItem.PreferredWidth;
 			m_fwtbItem.Width = dxWidth;
 			LoadMatches(true);
-			return true;
 		}
 
 		/// <summary>
 		/// Select the Word Category line to search on and then select the part of speech to match the target
 		/// then search based on those selections.
 		/// </summary>
-		private bool InitializeConcordanceSearchWordPOS(ICmObject target)
+		private void InitializeConcordanceSearchWordPOS(ICmObject target)
 		{
 			if (!(target is IPartOfSpeech))
 			{
-				return false;
+				return;
 			}
 
-			var partOfSpeech = (IPartOfSpeech) target;
+			var partOfSpeech = (IPartOfSpeech)target;
 			SetConcordanceLine(ConcordanceLines.kWordCategory);
 			m_pOSPopupTreeManager.LoadPopupTree(partOfSpeech.Hvo);
-
-			//m_btnSearch.Enabled = true;
-			//m_btnSearch_Click(this, new EventArgs()); // This button click just does LoadMatches(true)
 			LoadMatches(true);
 			SaveSettings();
-			return true;
 		}
 
 		#endregion
 
-		#region IXCore related (callable) methods
-
-		public bool OnJumpToRecord(object argument)
+		private void JumpToConcordance_Clicked(object sender, EventArgs e)
 		{
-			// Check if we're the right tool, and that we have a valid object id.
-			var toolChoice = PropertyTable.GetValue<string>(AreaServices.ToolChoice);
-			var areaChoice = PropertyTable.GetValue<string>(AreaServices.AreaChoice);
-			var concordOn = PropertyTable.GetValue<string>("ConcordOn");
-			PropertyTable.RemoveProperty("ConcordOn");
-			Debug.Assert(!string.IsNullOrEmpty(toolChoice) && !string.IsNullOrEmpty(areaChoice));
-			if (areaChoice != AreaServices.TextAndWordsAreaMachineName || toolChoice != AreaServices.ConcordanceMachineName)
-			{
-				return false;
-			}
-			var hvoTarget = (int)argument;
-			if (!m_cache.ServiceLocator.IsValidObjectId(hvoTarget))
-			{
-				return false;
-			}
 			try
 			{
-				var target = m_cache.ServiceLocator.GetObject(hvoTarget);
+				var tag = (List<object>)((ToolStripMenuItem)sender).Tag;
+				var target = (ICmObject)tag[0];
 				var clid = target.ClassID;
 				switch (clid)
 				{
@@ -1635,7 +1548,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					case WfiAnalysisTags.kClassId:
 					case PartOfSpeechTags.kClassId:
 					case WfiGlossTags.kClassId:
-						if (!string.IsNullOrEmpty(concordOn) && concordOn.Equals("WordPartOfSpeech"))
+						if (((string)tag[1]).Equals(AreaServices.WordPartOfSpeech))
 						{
 							InitializeConcordanceSearchWordPOS(target);
 						}
@@ -1648,7 +1561,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					case MoInflAffMsaTags.kClassId:
 					case MoDerivAffMsaTags.kClassId:
 					case MoUnclassifiedAffixMsaTags.kClassId:
-						if (!string.IsNullOrEmpty(concordOn) && concordOn.Equals("PartOfSpeechGramInfo"))
+						if (((string)tag[1]).Equals(AreaServices.PartOfSpeechGramInfo))
 						{
 							Debug.Assert(target is IMoMorphSynAnalysis);
 							var msa = target as IMoMorphSynAnalysis;
@@ -1661,18 +1574,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						break;
 					default:
 						if (m_cache.ClassIsOrInheritsFrom(clid, MoFormTags.kClassId))
+						{
 							InitializeConcordanceSearch(target);
+						}
 						break;
 				}
 			}
 			finally
 			{
-				// indicate that OnJumpToRecord has been handled.
+				// indicate that JumpToConcordance_Clicked has been handled.
 				m_recordList.SuspendLoadingRecordUntilOnJumpToRecord = false;
 			}
-			return true;
 		}
-
-		#endregion
 	}
 }

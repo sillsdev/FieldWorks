@@ -16,8 +16,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 	/// </summary>
 	internal sealed class InterlinearSlice : ViewSlice
 	{
-		public InterlinearSlice()
+		private ISharedEventHandlers _sharedEventHandlers;
+
+		public InterlinearSlice(ISharedEventHandlers sharedEventHandlers)
 		{
+			_sharedEventHandlers = sharedEventHandlers;
 			Debug.WriteLine("Created.");
 		}
 
@@ -70,7 +73,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// </summary>
 		public override void FinishInit()
 		{
-			var ctrl = new AnalysisInterlinearRs(Cache, (IWfiAnalysis) MyCmObject, ConfigurationNode);
+			var ctrl = new AnalysisInterlinearRs(_sharedEventHandlers, Cache, (IWfiAnalysis) MyCmObject, ConfigurationNode);
 			ctrl.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			Control = ctrl;
 		}

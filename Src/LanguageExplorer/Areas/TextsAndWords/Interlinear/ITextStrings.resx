@@ -227,10 +227,6 @@
     <value>Lex. Gloss</value>
     <comment>note indentation formed by leading spaces</comment>
   </data>
-  <data name="ksGramInfo" xml:space="preserve">
-    <value>Lex. Gram. Info.</value>
-    <comment>short for Grammatical Information; note indentation formed by leading spaces</comment>
-  </data>
   <data name="ksHidesDependentLinesAlso" xml:space="preserve">
     <value>If you hide this line, some dependent lines will also be hidden.</value>
   </data>

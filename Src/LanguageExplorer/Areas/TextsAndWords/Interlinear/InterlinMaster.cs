@@ -83,6 +83,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_idcGloss.FileMenu = fileMenu;
 			m_idcAnalyze.FileMenu = fileMenu;
 			_sharedEventHandlers = sharedEventHandlers;
+			m_idcGloss.SharedEventHandlers = sharedEventHandlers;
+			m_idcAnalyze.SharedEventHandlers = sharedEventHandlers;
 		}
 
 		internal string BookmarkId => MyRecordList.Id ?? string.Empty;

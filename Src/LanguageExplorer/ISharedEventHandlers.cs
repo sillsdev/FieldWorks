@@ -36,5 +36,13 @@ namespace LanguageExplorer
 		/// <exception cref="ArgumentNullException">Thrown when <paramref name="key"/> is null.</exception>
 		/// <exception cref="ArgumentException">Thrown when an element with the given <paramref name="key"/> is not present.</exception>
 		EventHandler Get(string key);
+
+		/// <summary>
+		/// Try to get an event handler for the given <paramref name="key"/>.
+		/// </summary>
+		/// <param name="key">A unique name for the handler.</param>
+		/// <param name="eventHandler">The handler, or null if <paramref name="key"/> has not been registered.</param>
+		/// <returns>'true', if the  <paramref name="key"/> has been registered, otherwise 'false'.</returns>
+		bool TryGetEventHandler(string key, out EventHandler eventHandler);
 	}
 }

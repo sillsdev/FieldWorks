@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -1230,10 +1230,6 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
   </data>
   <data name="ksFldIgnored" xml:space="preserve">
     <value>Don't Import</value>
-    <comment>name for SFM import field; name matches enumeration member name</comment>
-  </data>
-  <data name="ksFldWordform" xml:space="preserve">
-    <value>Wordform</value>
     <comment>name for SFM import field; name matches enumeration member name</comment>
   </data>
   <data name="ksFldWordGloss" xml:space="preserve">

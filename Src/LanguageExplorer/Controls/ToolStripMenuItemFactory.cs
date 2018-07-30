@@ -59,6 +59,8 @@ namespace LanguageExplorer.Controls
 			}
 		}
 
+		#region HotLinkToolStripMenuItem creation methods
+
 		/// <summary>
 		/// Create a new hotlink ToolStripMenuItem.
 		/// </summary>
@@ -74,22 +76,9 @@ namespace LanguageExplorer.Controls
 			return hotlinkToolStripMenuItem;
 		}
 
-		/// <summary>
-		/// Create a new ToolStripMenuItem and place it in <paramref name="menuItems"/> amd in  <paramref name="contextMenuStrip"/>.
-		/// </summary>
-		/// <remarks>
-		/// Most callers don't do anything with the returned ToolStripMenuItem, but a few callers want to do more customizing, so let them.
-		/// </remarks>
-		internal static ToolStripMenuItem CreateToolStripMenuItemForContextMenuStrip(IList<Tuple<ToolStripMenuItem, EventHandler>> menuItems, ContextMenuStrip contextMenuStrip, EventHandler eventHandler, string menuText, string menuTooltip = "", Keys shortcutKeys = Keys.None, Image image = null, int insertIndex = int.MaxValue)
-		{
-			var toolStripMenuItem = CreateToolStripMenuItem(eventHandler, MungeTheMenuText(menuText), menuTooltip, shortcutKeys, image);
+		#endregion HotLinkToolStripMenuItem creation methods
 
-			InsertToolStripMenuItem(contextMenuStrip.Items, toolStripMenuItem, insertIndex);
-
-			menuItems.Add(new Tuple<ToolStripMenuItem, EventHandler>(toolStripMenuItem, eventHandler));
-
-			return toolStripMenuItem;
-		}
+		#region ToolStripMenuItem creation methods
 
 		/// <summary>
 		/// Create a new ToolStripMenuItem and place it in <paramref name="menuItems"/> and in <paramref name="mainMenuStrip"/>.
@@ -121,6 +110,19 @@ namespace LanguageExplorer.Controls
 			return toolStripMenuItem;
 		}
 
+		internal static ToolStripSeparator CreateToolStripSeparatorForToolStripMenuItem(ToolStripMenuItem mainMenuStrip, int insertIndex = int.MaxValue)
+		{
+			var newToolStripSeparator = new ToolStripSeparator();
+
+			InsertToolStripMenuItem(mainMenuStrip.DropDownItems, newToolStripSeparator, insertIndex);
+
+			return newToolStripSeparator;
+		}
+
+		#endregion ToolStripMenuItem creation methods
+
+		#region ContextMenuStrip creation methods
+
 		/// <summary>
 		/// Call this when the new menu is expected to hold more menus, and has no event handler, image, or tooltip.
 		/// </summary>
@@ -133,13 +135,21 @@ namespace LanguageExplorer.Controls
 			return toolStripMenuItem;
 		}
 
-		internal static ToolStripSeparator CreateToolStripSeparatorForToolStripMenuItem(ToolStripMenuItem mainMenuStrip, int insertIndex = int.MaxValue)
+		/// <summary>
+		/// Create a new ToolStripMenuItem and place it in <paramref name="menuItems"/> amd in  <paramref name="contextMenuStrip"/>.
+		/// </summary>
+		/// <remarks>
+		/// Most callers don't do anything with the returned ToolStripMenuItem, but a few callers want to do more customizing, so let them.
+		/// </remarks>
+		internal static ToolStripMenuItem CreateToolStripMenuItemForContextMenuStrip(IList<Tuple<ToolStripMenuItem, EventHandler>> menuItems, ContextMenuStrip contextMenuStrip, EventHandler eventHandler, string menuText, string menuTooltip = "", Keys shortcutKeys = Keys.None, Image image = null, int insertIndex = int.MaxValue)
 		{
-			var newToolStripSeparator = new ToolStripSeparator();
+			var toolStripMenuItem = CreateToolStripMenuItem(eventHandler, MungeTheMenuText(menuText), menuTooltip, shortcutKeys, image);
 
-			InsertToolStripMenuItem(mainMenuStrip.DropDownItems, newToolStripSeparator, insertIndex);
+			InsertToolStripMenuItem(contextMenuStrip.Items, toolStripMenuItem, insertIndex);
 
-			return newToolStripSeparator;
+			menuItems.Add(new Tuple<ToolStripMenuItem, EventHandler>(toolStripMenuItem, eventHandler));
+
+			return toolStripMenuItem;
 		}
 
 		internal static ToolStripSeparator CreateToolStripSeparatorForContextMenuStrip(ContextMenuStrip mainMenuStrip, int insertIndex = int.MaxValue)
@@ -150,5 +160,7 @@ namespace LanguageExplorer.Controls
 
 			return newToolStripSeparator;
 		}
+
+		#endregion ContextMenuStrip creation methods
 	}
 }

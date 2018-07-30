@@ -25,6 +25,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				components?.Dispose();
 				((IDisposable)InterlinWordControl)?.Dispose();
 			}
+			_sharedEventHandlers = null;
+			m_stylesheet = null;
 			components = null;
 			InterlinWordControl = null;
 			PropertyTable = null;

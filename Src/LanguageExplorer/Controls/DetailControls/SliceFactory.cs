@@ -397,7 +397,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 				case "interlinear":
 				{
-					slice = new InterlinearSlice();
+					slice = new InterlinearSlice(sharedEventHandlers);
 					break;
 				}
 

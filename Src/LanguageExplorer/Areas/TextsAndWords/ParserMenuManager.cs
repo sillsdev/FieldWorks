@@ -37,6 +37,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private TryAWordDlg m_dialog;
 		private FormWindowState m_prevWindowState;
 		private Timer m_timer;
+		private ISharedEventHandlers _sharedEventHandlers;
 		private StatusBarPanel _statusPanelProgress;
 		private Dictionary<string, ToolStripMenuItem> _parserToolStripMenuItems;
 		private IStText _currentStText;
@@ -44,8 +45,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private IRecordList _recordList;
 
 		/// <summary />
-		internal ParserMenuManager(StatusBarPanel statusPanelProgress, Dictionary<string, ToolStripMenuItem> parserMenuItems)
+		internal ParserMenuManager(ISharedEventHandlers sharedEventHandlers, StatusBarPanel statusPanelProgress, Dictionary<string, ToolStripMenuItem> parserMenuItems)
 		{
+			_sharedEventHandlers = sharedEventHandlers;
 			_statusPanelProgress = statusPanelProgress;
 			_parserToolStripMenuItems = parserMenuItems;
 		}
@@ -627,7 +629,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 						m_prevWindowState = m_dialog.WindowState;
 					}
 				};
-				m_dialog.SetDlgInfo(CurrentWordform, this);
+				m_dialog.SetDlgInfo(_sharedEventHandlers, CurrentWordform, this);
 				var form = PropertyTable.GetValue<Form>("window");
 				m_dialog.Show(form);
 				// This allows Keyman to work correctly on initial typing.

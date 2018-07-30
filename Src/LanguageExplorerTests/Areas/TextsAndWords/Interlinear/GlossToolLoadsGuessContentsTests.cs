@@ -1,9 +1,10 @@
-﻿// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Linq;
+using LanguageExplorer;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using NUnit.Framework;
 using Rhino.Mocks;
@@ -21,10 +22,11 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 	public class GlossToolLoadsGuessContentsTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private IText _text;
-		private AddWordsToLexiconTests.SandboxForTests _sandbox;
+		private SandboxForTests _sandbox;
 		private IPropertyTable _propertyTable;
 		private IPublisher _publisher;
 		private ISubscriber _subscriber;
+		private ISharedEventHandlers _sharedEventHandlers;
 
 		/// <summary/>
 		[TestFixtureSetUp]
@@ -77,12 +79,15 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		public override void TestSetup()
 		{
 			base.TestSetup();
-			_propertyTable = TestSetupServices.SetupTestTriumvirate(out _publisher, out _subscriber);
+			var flexComponentParameters = TestSetupServices.SetupEverything(Cache, out _sharedEventHandlers, false);
+			_propertyTable = flexComponentParameters.PropertyTable;
+			_publisher = flexComponentParameters.Publisher;
+			_subscriber = flexComponentParameters.Subscriber;
 			InterlinLineChoices lineChoices = InterlinLineChoices.DefaultChoices(Cache.LangProject,
 																				 Cache.DefaultVernWs,
 																				 Cache.DefaultAnalWs,
 																				 InterlinMode.Gloss);
-			_sandbox = new AddWordsToLexiconTests.SandboxForTests(Cache, lineChoices);
+			_sandbox = new SandboxForTests(_sharedEventHandlers, Cache, lineChoices);
 			_sandbox.InitializeFlexComponent(new FlexComponentParameters(_propertyTable, _publisher, _subscriber));
 		}
 		/// <summary>

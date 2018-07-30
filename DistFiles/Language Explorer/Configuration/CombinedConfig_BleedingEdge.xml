@@ -33,9 +33,6 @@ so I can look at that in the develop branch.
     <command id="CmdPublicationsJumpToDefault" label="Edit Publications" message="JumpToTool">
       <parameters tool="publicationsEdit" className="ICmPossibility" ownerClass="LangProject" ownerField="PublicationTypes" />
     </command>
-    <command id="CmdPhonemeJumpToDefault" label="Show in Phonemes Editor" message="JumpToTool">
-      <parameters tool="phonemeEdit" className="PhPhoneme" />
-    </command>
     <command id="CmdPOSJumpToConcordance" label="Show Category in Concordance" message="JumpToTool">
       <parameters tool="concordance" className="PartOfSpeech" ownerClass="LangProject" ownerField="PartsOfSpeech" />
     </command>

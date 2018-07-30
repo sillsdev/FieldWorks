@@ -115,6 +115,15 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Analysis.
+        /// </summary>
+        internal static string Analysis {
+            get {
+                return ResourceManager.GetString("Analysis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Columns....
         /// </summary>
         internal static string ConfigureColumns {
@@ -638,6 +647,15 @@ namespace LanguageExplorer.Areas {
         internal static string ksErrorInEnvironment {
             get {
                 return ResourceManager.GetString("ksErrorInEnvironment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wordform.
+        /// </summary>
+        internal static string ksFldWordform {
+            get {
+                return ResourceManager.GetString("ksFldWordform", resourceCulture);
             }
         }
         
@@ -1432,6 +1450,24 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Lex. Gram. Info..
+        /// </summary>
+        internal static string Lex_Gram_Info {
+            get {
+                return ResourceManager.GetString("Lex_Gram_Info", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Morph.
+        /// </summary>
+        internal static string Morph {
+            get {
+                return ResourceManager.GetString("Morph", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Move Left.
         /// </summary>
         internal static string Move_Left {
@@ -1540,6 +1576,15 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show Concordance of.
+        /// </summary>
+        internal static string Show_Concordance_of {
+            get {
+                return ResourceManager.GetString("Show_Concordance_of", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show Entry in Concordance.
         /// </summary>
         internal static string Show_Entry_In_Concordance {
@@ -1558,11 +1603,38 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show in Category Edit.
+        /// </summary>
+        internal static string Show_in_Category_Edit {
+            get {
+                return ResourceManager.GetString("Show_in_Category_Edit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show in Complex Form Types list.
         /// </summary>
         internal static string Show_in_Complex_Form_Types_list {
             get {
                 return ResourceManager.GetString("Show_in_Complex_Form_Types_list", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show in Compound Rules Editor.
+        /// </summary>
+        internal static string Show_in_Compound_Rules_Editor {
+            get {
+                return ResourceManager.GetString("Show_in_Compound_Rules_Editor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show in Environments Editor.
+        /// </summary>
+        internal static string Show_in_Environments_Editor {
+            get {
+                return ResourceManager.GetString("Show_in_Environments_Editor", resourceCulture);
             }
         }
         
@@ -1585,11 +1657,29 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show in Natural Classes Editor.
+        /// </summary>
+        internal static string Show_in_Natural_Classes_Editor {
+            get {
+                return ResourceManager.GetString("Show_in_Natural_Classes_Editor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show in Natural Classes list.
         /// </summary>
         internal static string Show_in_Natural_Classes_list {
             get {
                 return ResourceManager.GetString("Show_in_Natural_Classes_list", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show in Phonemes Editor.
+        /// </summary>
+        internal static string Show_in_Phonemes_Editor {
+            get {
+                return ResourceManager.GetString("Show_in_Phonemes_Editor", resourceCulture);
             }
         }
         
@@ -1608,6 +1698,15 @@ namespace LanguageExplorer.Areas {
         internal static string Show_in_Variant_Types_list {
             get {
                 return ResourceManager.GetString("Show_in_Variant_Types_list", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show in Word Analyses.
+        /// </summary>
+        internal static string Show_in_Word_Analyses {
+            get {
+                return ResourceManager.GetString("Show_in_Word_Analyses", resourceCulture);
             }
         }
         
@@ -1648,6 +1747,33 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show Word Category in Category Edit.
+        /// </summary>
+        internal static string Show_Word_Category_in_Category_Edit {
+            get {
+                return ResourceManager.GetString("Show_Word_Category_in_Category_Edit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Word Category in Concordance.
+        /// </summary>
+        internal static string Show_Word_Category_in_Concordance {
+            get {
+                return ResourceManager.GetString("Show_Word_Category_in_Concordance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Wordform in Concordance.
+        /// </summary>
+        internal static string Show_Wordform_in_Concordance {
+            get {
+                return ResourceManager.GetString("Show_Wordform_in_Concordance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Undo Move Item.
         /// </summary>
         internal static string UndoMoveItem {
@@ -1669,6 +1795,15 @@ namespace LanguageExplorer.Areas {
         internal static string VisibilityFilter_All {
             get {
                 return ResourceManager.GetString("VisibilityFilter_All", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Word Category.
+        /// </summary>
+        internal static string Word_Category {
+            get {
+                return ResourceManager.GetString("Word_Category", resourceCulture);
             }
         }
     }

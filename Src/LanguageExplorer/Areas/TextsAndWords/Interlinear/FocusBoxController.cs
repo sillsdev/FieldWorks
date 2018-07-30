@@ -25,7 +25,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	internal partial class FocusBoxController : UserControl, IFlexComponent, ISelectOccurrence, SimpleRootSite.ISuppressDefaultKeyboardOnKillFocus
 	{
 		// Set by the constructor, this determines whether 'move right' means 'move next' or 'move previous' and similar things.
-		private bool m_fRightToLeft;
+		private readonly bool m_fRightToLeft;
+		private ISharedEventHandlers _sharedEventHandlers;
 		private IVwStylesheet m_stylesheet;
 		protected InterlinLineChoices m_lineChoices;
 
@@ -42,10 +43,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			btnMenu.GotFocus += HandleFocusWrongButton;
 		}
 
-		public FocusBoxController(IVwStylesheet stylesheet, InterlinLineChoices lineChoices, bool rightToLeft)
-			: this(stylesheet, lineChoices)
+		public FocusBoxController(ISharedEventHandlers sharedEventHandlers, IVwStylesheet stylesheet, InterlinLineChoices lineChoices, bool rightToLeft)
+			: this(sharedEventHandlers, stylesheet, lineChoices)
 		{
 			m_fRightToLeft = rightToLeft;
+		}
+
+		public FocusBoxController(ISharedEventHandlers sharedEventHandlers, IVwStylesheet stylesheet, InterlinLineChoices lineChoices)
+			: this()
+		{
+			_sharedEventHandlers = sharedEventHandlers;
+			m_stylesheet = stylesheet;
+			m_lineChoices = lineChoices;
 		}
 
 		internal bool IsDirty => InterlinWordControl.IsDirty;
@@ -65,13 +74,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			// Under certain circumstances this can get called when sandbox is null (LT-11468)
 			InterlinWordControl?.UpdateLineChoices(choices);
-		}
-
-		public FocusBoxController(IVwStylesheet stylesheet, InterlinLineChoices lineChoices)
-			: this()
-		{
-			m_stylesheet = stylesheet;
-			m_lineChoices = lineChoices;
 		}
 
 		#region Implementation of IPropertyTableProvider
@@ -179,7 +181,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal virtual IAnalysisControlInternal CreateNewSandbox(AnalysisOccurrence selected)
 		{
-			var sandbox = new Sandbox(selected.Analysis.Cache, m_stylesheet, m_lineChoices, selected, this)
+			var sandbox = new Sandbox(_sharedEventHandlers, selected.Analysis.Cache, m_stylesheet, m_lineChoices, selected, this)
 			{
 				SizeToContent = true,
 				ShowMorphBundles = true,

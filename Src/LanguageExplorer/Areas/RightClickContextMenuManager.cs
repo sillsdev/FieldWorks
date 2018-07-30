@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.Lexicon;
+using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.DictionaryConfiguration;
@@ -24,7 +25,7 @@ namespace LanguageExplorer.Areas
 	internal sealed class RightClickContextMenuManager : IToolUiWidgetManager
 	{
 		private ITool _currentTool;
-		private DataTree MyDataTree { get; }
+		private DataTree MyDataTree { get; set; }
 		private FlexComponentParameters _flexComponentParameters;
 		private ISharedEventHandlers _sharedEventHandlers;
 		private IRecordList MyRecordList { get; set; }
@@ -102,6 +103,11 @@ namespace LanguageExplorer.Areas
 			if (disposing)
 			{
 			}
+			_currentTool = null;
+			MyDataTree = null;
+			_flexComponentParameters = null;
+			_sharedEventHandlers = null;
+			MyRecordList = null;
 			_cache = null;
 
 			_isDisposed = true;
@@ -111,70 +117,183 @@ namespace LanguageExplorer.Areas
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> PopupContextMenuCreatorMethod_mnuObjectChoices(Slice slice, string contextMenuId)
 		{
-			/* "mnuObjectChoices" is used by ContextMenuId in CmObjectUi->HandleRightClick, but it is overridden by two subclasses:
-					ReferenceBaseUi ("mnuReferenceChoices")
-					ReferenceCollectionUi : VectorReferenceUi : ReferenceBaseUi ("mnuReferenceChoices" OR "mnuEnvReferenceChoices" (if flid is on a IPhEnvironment))
+			if (contextMenuId != AreaServices.mnuObjectChoices)
+			{
+				throw new ArgumentException($"Expected argument value of '{AreaServices.mnuObjectChoices}', but got '{contextMenuId}' instead.");
+			}
 
-		    <menu id="mnuObjectChoices">
-		      <item command="CmdEntryJumpToDefault" /> // Also in "mnuBrowseView", menu: "mnuInflAffixTemplate-TemplateTable" & LexiconEditToolDataTreeStackLexEntryFormsManager->Create_mnuDataTree_VariantForm.
-		      <item command="CmdWordformJumpToAnalyses" /> // Also in "mnuBrowseView" & menu: "mnuIText-RawText".
+			// Start: <menu id="mnuObjectChoices">
+
+			var contextMenuStrip = new ContextMenuStrip
+			{
+				Name = AreaServices.mnuObjectChoices
+			};
+			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(19);
+
+			/*
+		      <item command="CmdEntryJumpToDefault" />
+			*/
+			var wantSeparator = false;
+			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, LexEntryTags.kClassName, AreaResources.ksShowEntryInLexicon, AreaServices.LexiconEditMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator);
+
+			/*
+		      <item command="CmdWordformJumpToAnalyses" />
 				    <command id="CmdWordformJumpToAnalyses" label="Show in Word Analyses" message="JumpToTool">
 				      <parameters tool="Analyses" className="WfiWordform" />
 				    </command>
-		      <menu label="Show Concordance of">
-		        <item command="CmdWordformJumpToConcordance" label="Wordform" /> // Also in "mnuBrowseView" & menu: "mnuIText-RawText".
+			*/
+			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, WfiWordformTags.kClassName, AreaResources.Show_in_Word_Analyses, AreaServices.AnalysesMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator);
+
+			// <menu label="Show Concordance of">
+			// NB: Use the returned 'menu' to hold its sub-menus.
+			var menu = ToolStripMenuItemFactory.CreateBaseMenuForToolStripMenuItem(contextMenuStrip, AreaResources.Show_Concordance_of);
+
+			/*
+		        <item command="CmdWordformJumpToConcordance" label="Wordform" />
 					    <command id="CmdWordformJumpToConcordance" label="Show Wordform in Concordance" message="JumpToTool">
 					      <parameters tool="concordance" className="WfiWordform" />
 					    </command>
-		        <item command="CmdAnalysisJumpToConcordance" label="Analysis" /> // Also: menu "mnuDataTree-HumanApprovedAnalysis" & another place in this class.
-		        <item command="CmdMorphJumpToConcordance" label="Morph" /> // See LexiconEditToolDataTreeStackLexEntryManager:Register_LexemeForm_Bundle for 'CmdMorphJumpToConcordance' defn.
-		        <item command="CmdEntryJumpToConcordance" label="Entry" /> // Also in "mnuBrowseView" & (LexiconEditTool->).
-		        <item command="CmdSenseJumpToConcordance" label="Sense" /> // Also in "mnuBrowseView" & LexiconEditToolDataTreeStackLexSenseManager->Create_mnuDataTree_Sense
+			*/
+			ConditionallyAddJumpToToolMenuItem(menu, menuItems, slice, WfiWordformTags.kClassName, AreaResources.ksFldWordform, AreaServices.ConcordanceMachineName, slice.MyCmObject.Guid, ref wantSeparator);
+
+			/*
+		        <item command="CmdAnalysisJumpToConcordance" label="Analysis" />
+			*/
+			ConditionallyAddJumpToToolMenuItem(menu, menuItems, slice, WfiAnalysisTags.kClassName, AreaResources.Analysis, AreaServices.ConcordanceMachineName, slice.MyCmObject.Guid, ref wantSeparator);
+
+			/*
+		        <item command="CmdMorphJumpToConcordance" label="Morph" />
+			*/
+			ConditionallyAddJumpToToolMenuItem(menu, menuItems, slice, MoFormTags.kClassName, AreaResources.Morph, AreaServices.ConcordanceMachineName, slice.MyCmObject.Guid, ref wantSeparator);
+
+			/*
+		        <item command="CmdEntryJumpToConcordance" label="Entry" />
+			*/
+			ConditionallyAddJumpToToolMenuItem(menu, menuItems, slice, LexEntryTags.kClassName, AreaResources.Entry, AreaServices.ConcordanceMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator);
+
+			/*
+		        <item command="CmdSenseJumpToConcordance" label="Sense" />
+			*/
+			ConditionallyAddJumpToToolMenuItem(menu, menuItems, slice, LexSenseTags.kClassName, AreaResources.Sense, AreaServices.ConcordanceMachineName, slice.MyCmObject.Guid, ref wantSeparator);
+
+			/*
 		        <item command="CmdLexGramInfoJumpToConcordance" />
 					    <command id="CmdLexGramInfoJumpToConcordance" label="Lex. Gram. Info." message="JumpToTool">
 					      <parameters tool="concordance" concordOn="PartOfSpeechGramInfo" className="PartOfSpeechGramInfo" ownerClass="LangProject" ownerField="PartsOfSpeech" />
 					    </command>
-		        <item command="CmdWordGlossJumpToConcordance" label="Word Gloss" /> // Also in "mnuBrowseView".
+			*/
+			ConditionallyAddJumpToToolMenuItem(menu, menuItems, slice, AreaResources.Lex_Gram_Info, AreaServices.PartOfSpeechGramInfo, ref wantSeparator);
+
+			/*
+		        <item command="CmdWordGlossJumpToConcordance" label="Word Gloss" />
 					    <command id="CmdWordGlossJumpToConcordance" label="Show Word Gloss in Concordance" message="JumpToTool">
 					      <parameters tool="concordance" className="WfiGloss" />
 					    </command>
-		        <item command="CmdWordPOSJumpToConcordance" label="Word Category" /> // Also in "mnuBrowseView".
+			*/
+			ConditionallyAddJumpToToolMenuItem(menu, menuItems, slice, WfiGlossTags.kClassName, AreaResources.Show_Word_Category_in_Concordance, AreaServices.ConcordanceMachineName, slice.MyCmObject.Guid, ref wantSeparator);
+
+			/*
+		        <item command="CmdWordPOSJumpToConcordance" label="Word Category" />
 					    <command id="CmdWordPOSJumpToConcordance" label="Show Word Category in Concordance" message="JumpToTool">
 					      <parameters tool="concordance" concordOn="WordPartOfSpeech" className="WordPartOfSpeech" ownerClass="LangProject" ownerField="PartsOfSpeech" />
 					    </command>
-		      </menu>
-		      <item command="CmdPOSJumpToDefault" /> // Also in "mnuBrowseView".
+			*/
+			ConditionallyAddJumpToToolMenuItem(menu, menuItems, slice, AreaResources.Word_Category, AreaServices.WordPartOfSpeech, ref wantSeparator);
+			// </menu>  End of "Show Concordance of" menu.
+
+			/*
+		      <item command="CmdPOSJumpToDefault" />
 				    <command id="CmdPOSJumpToDefault" label="Show in Category Edit" message="JumpToTool">
 				      <parameters tool="posEdit" className="PartOfSpeech" ownerClass="LangProject" ownerField="PartsOfSpeech" />
 				    </command>
-		      <item command="CmdWordPOSJumpToDefault" /> // Also in "mnuBrowseView".
+			*/
+			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, PartOfSpeechTags.kClassName, AreaResources.Show_in_Category_Edit, AreaServices.PosEditMachineName, slice.MyCmObject.Guid, ref wantSeparator);
+
+			/*
+		      <item command="CmdWordPOSJumpToDefault" />
 				    <command id="CmdWordPOSJumpToDefault" label="Show Word Category in Category Edit" message="JumpToTool">
 				      <parameters tool="posEdit" className="WordPartOfSpeech" ownerClass="LangProject" ownerField="PartsOfSpeech" />
 				    </command>
-		      <item command="CmdEndoCompoundRuleJumpToDefault" /> // Also in "mnuBrowseView".
+			*/
+			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, AreaResources.Show_Word_Category_in_Category_Edit, AreaServices.WordPartOfSpeech, string.Empty);
+
+			/*
+		      <item command="CmdEndoCompoundRuleJumpToDefault" />
 				    <command id="CmdEndoCompoundRuleJumpToDefault" label="Show in Compound Rules Editor" message="JumpToTool">
 				      <parameters tool="compoundRuleAdvancedEdit" className="MoEndoCompound" />
 				    </command>
-		      <item command="CmdExoCompoundRuleJumpToDefault" /> // Also in "mnuBrowseView".
+			*/
+			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, MoEndoCompoundTags.kClassName, AreaResources.Show_in_Compound_Rules_Editor, AreaServices.CompoundRuleAdvancedEditMachineName, slice.MyCmObject.Guid, ref wantSeparator);
+
+			/*
+		      <item command="CmdExoCompoundRuleJumpToDefault" />
 				    <command id="CmdExoCompoundRuleJumpToDefault" label="Show in Compound Rules Editor" message="JumpToTool">
 				      <parameters tool="compoundRuleAdvancedEdit" className="MoExoCompound" />
 				    </command>
+			*/
+			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, MoExoCompoundTags.kClassName, AreaResources.Show_in_Compound_Rules_Editor, AreaServices.CompoundRuleAdvancedEditMachineName, slice.MyCmObject.Guid, ref wantSeparator);
+
+			/*
 		      <item command="CmdPhonemeJumpToDefault" />
-				    <command id="CmdNaturalClassJumpToDefault" label="Show in Natural Classes Editor" message="JumpToTool">
-				      <parameters tool="naturalClassEdit" className="PhNCSegments" />
+				    <command id="CmdPhonemeJumpToDefault" label="Show in Phonemes Editor" message="JumpToTool">
+				      <parameters tool="phonemeEdit" className="PhPhoneme" />
 				    </command>
-		      <item command="CmdNaturalClassJumpToDefault" /> // Also in "mnuBrowseView".
-		      <item command="CmdEnvironmentsJumpToDefault" /> // Also in "mnuBrowseView".
+			*/
+			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, PhPhonemeTags.kClassName, AreaResources.Show_in_Phonemes_Editor, AreaServices.PhonemeEditMachineName, slice.MyCmObject.Guid, ref wantSeparator);
+
+			/*
+		      <item command="CmdNaturalClassJumpToDefault" />
+				    <command id="CmdNaturalClassJumpToDefault" label="Show in Natural Classes Editor" message="JumpToTool">
+				      <parameters tool="naturalClassedit" className="PhNCSegments" />
+				    </command>
+			*/
+			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, PhNCSegmentsTags.kClassName, AreaResources.Show_in_Natural_Classes_Editor, AreaServices.CompoundRuleAdvancedEditMachineName, slice.MyCmObject.Guid, ref wantSeparator);
+
+			/*
+		      <item command="CmdEnvironmentsJumpToDefault" />
 				    <command id="CmdEnvironmentsJumpToDefault" label="Show in Environments Editor" message="JumpToTool">
 				      <parameters tool="EnvironmentEdit" className="PhEnvironment" />
 				    </command>
-		      <item label="-" translate="do not translate" />
-		      <item command="CmdDeleteSelectedObject" />
-				    <!-- This is on the popup menu, and is for non-record level objects. -->
-				    <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem" />
-		    </menu>
 			*/
-			throw new NotImplementedException();
+			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, PhEnvironmentTags.kClassName, AreaResources.Show_in_Environments_Editor, AreaServices.EnvironmentEditMachineName, slice.MyCmObject.Guid, ref wantSeparator);
+
+			var currentObject = slice.MyCmObject;
+			if (slice.MyCmObject.CanDelete && (currentObject is IWfiMorphBundle || currentObject is IWfiAnalysis ))
+			{
+				/*
+				  <item label="-" translate="do not translate" />
+				*/
+				var separatorInsertLocation = menuItems.Count - 1;
+				wantSeparator = separatorInsertLocation > 0;
+				if (wantSeparator)
+				{
+					ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip, separatorInsertLocation);
+					wantSeparator = false;
+				}
+				/* Delete_selected_0
+				  <item command="CmdDeleteSelectedObject" />
+						<!-- This is on the popup menu, and is for non-record level objects. -->
+						<command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem" />
+				*/
+				// Instead of deleting a single WfiMorphBundle (which is what would normally happen
+				// in our automated handling, delete the owning WfiAnalysis.  (See LT-6217.)
+				var sliceForDeletionOperation = slice;
+				if (currentObject is IWfiMorphBundle)
+				{
+					sliceForDeletionOperation = slice.ParentSlice;
+				}
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, DeleteAnalysis_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString(WfiAnalysisTags.kClassName, "ClassNames")));
+				menu.Tag = sliceForDeletionOperation;
+			}
+
+			// End: <menu id="mnuObjectChoices">
+
+			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+		}
+
+		private void DeleteAnalysis_Clicked(object sender, EventArgs e)
+		{
+			((Slice)((ToolStripMenuItem)sender).Tag).HandleDeleteCommand();
 		}
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> PopupContextMenuCreatorMethod_mnuReferenceChoices(Slice slice, string contextMenuId)
@@ -204,7 +323,7 @@ namespace LanguageExplorer.Areas
 			*/
 
 			/*
-		      <item command="CmdEntryJumpToDefault" /> // Also in: "mnuInflAffixTemplate-TemplateTable" & "mnuBrowseView" & "mnuDataTree-VariantForm" (in LexiconEditToolDataTreeStackLexEntryFormsManager->Create_mnuDataTree_VariantForm)
+		      <item command="CmdEntryJumpToDefault" />
 				    <command id="CmdEntryJumpToDefault" label="Show Entry in Lexicon" message="JumpToTool">
 				      <parameters tool="lexiconEdit" className="LexEntry" />
 				    </command>
@@ -221,7 +340,7 @@ namespace LanguageExplorer.Areas
 			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, RnGenericRecTags.kClassName, AreaResources.Show_Record_in_Notebook, AreaServices.NotebookEditToolMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator);
 
 			/*
-		      <item command="CmdAnalysisJumpToConcordance" /> // Also in "mnuDataTree-HumanApprovedAnalysis"
+		      <item command="CmdAnalysisJumpToConcordance" />
 				    <command id="CmdAnalysisJumpToConcordance" label="Show Analysis in Concordance" message="JumpToTool">
 				      <parameters tool="concordance" className="WfiAnalysis" />
 				    </command>
@@ -235,7 +354,7 @@ namespace LanguageExplorer.Areas
 			wantSeparator = separatorInsertLocation > 0;
 
 			/*
-			  <item command="CmdLexemeFormJumpToConcordance" /> // See: LexiconEditToolDataTreeStackLexEntryManager:Register_LexemeForm_Bundle for 'CmdLexemeFormJumpToConcordance' defn.
+			  <item command="CmdLexemeFormJumpToConcordance" />
 				<command id="CmdLexemeFormJumpToConcordance" label="Show Lexeme Form in Concordance" message="JumpToTool">
 				  <parameters tool="concordance" className="MoForm" />
 				</command>
@@ -243,12 +362,12 @@ namespace LanguageExplorer.Areas
 			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, MoFormTags.kClassName, AreaResources.Show_Lexeme_Form_in_Concordance, AreaServices.ConcordanceMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator, separatorInsertLocation);
 
 			/*
-		      <item command="CmdEntryJumpToConcordance" /> // Used in mnuBrowseView (in "lexiconEdit" tool).
+		      <item command="CmdEntryJumpToConcordance" />
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, MoFormTags.kClassName, AreaResources.Show_Entry_In_Concordance, AreaServices.ConcordanceMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, LexEntryTags.kClassName, AreaResources.Show_Entry_In_Concordance, AreaServices.ConcordanceMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator, separatorInsertLocation);
 
 			/*
-		      <item command="CmdSenseJumpToConcordance" /> // Used in mnuBrowseView
+		      <item command="CmdSenseJumpToConcordance" />
 				    <command id="CmdSenseJumpToConcordance" label="Show Sense in Concordance" message="JumpToTool">
 				      <parameters tool="concordance" className="LexSense" />
 				    </command>
@@ -271,16 +390,15 @@ namespace LanguageExplorer.Areas
 			*/
 			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, CmAnthroItemTags.kClassName, string.Format(AreaResources.Show_in_0_list, _cache.LanguageProject.AnthroListOA.ShortName), AreaServices.DomainTypeEditMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator, separatorInsertLocation);
 
-			/*
-		      <item command="CmdJumpToLexiconEditWithFilter" />
-				    <command id="CmdJumpToLexiconEditWithFilter" label="Filter for Lexical Entries with this category" message="JumpToLexiconEditFilterAnthroItems">
-				      <parameters tool="lexiconEdit" className="CmAnthroItem" ownerClass="LangProject" ownerField="AnthroList" />
-				    </command>
-			*/
 			ToolStripMenuItem menu;
-			var visibleAndEnabled = MyDataTree.CanJumpToToolAndFilterAnthroItem;
-			if (visibleAndEnabled)
+			if (MyDataTree.CanJumpToToolAndFilterAnthroItem)
 			{
+				/*
+				  <item command="CmdJumpToLexiconEditWithFilter" />
+						<command id="CmdJumpToLexiconEditWithFilter" label="Filter for Lexical Entries with this category" message="JumpToLexiconEditFilterAnthroItems">
+						  <parameters tool="lexiconEdit" className="CmAnthroItem" ownerClass="LangProject" ownerField="AnthroList" />
+						</command>
+				*/
 				if (wantSeparator)
 				{
 					ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip, separatorInsertLocation);
@@ -288,22 +406,13 @@ namespace LanguageExplorer.Areas
 				}
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MyDataTree.JumpToToolAndFilterAnthroItem, AreaResources.Filter_for_Lexical_Entries_with_this_category);
 				menu.Tag = AreaServices.LexiconEditMachineName;
-			}
 
-			/*
-		      <item command="CmdJumpToNotebookEditWithFilter" />
-				    <command id="CmdJumpToNotebookEditWithFilter" label="Filter for Notebook Records with this category" message="JumpToNotebookEditFilterAnthroItems">
-				      <parameters tool="notebookEdit" className="CmAnthroItem" ownerClass="LangProject" ownerField="AnthroList" />
-				    </command>
-			*/
-			visibleAndEnabled = MyDataTree.CanJumpToToolAndFilterAnthroItem;
-			if (visibleAndEnabled)
-			{
-				if (wantSeparator)
-				{
-					ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip, separatorInsertLocation);
-					wantSeparator = false;
-				}
+				/*
+				  <item command="CmdJumpToNotebookEditWithFilter" />
+						<command id="CmdJumpToNotebookEditWithFilter" label="Filter for Notebook Records with this category" message="JumpToNotebookEditFilterAnthroItems">
+						  <parameters tool="notebookEdit" className="CmAnthroItem" ownerClass="LangProject" ownerField="AnthroList" />
+						</command>
+				*/
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MyDataTree.JumpToToolAndFilterAnthroItem, AreaResources.Filter_for_Notebook_Records_with_this_category);
 				menu.Tag = AreaServices.NotebookEditToolMachineName;
 			}
@@ -521,7 +630,7 @@ namespace LanguageExplorer.Areas
 			separatorInsertLocation = menuItems.Count - 1;
 			wantSeparator = separatorInsertLocation > 0;
 
-			/* **************
+			/*
 		      <item command="CmdShowSubentryUnderComponent" />
 				    <command id="CmdShowSubentryUnderComponent" label="Show Subentry under this Component" message="AddComponentToPrimary">
 				      <parameters tool="lexiconEdit" className="LexEntryRef" />
@@ -531,6 +640,7 @@ namespace LanguageExplorer.Areas
 			ICmObject target = null;
 			var selectedComponentHvo = slice.Flid != LexEntryRefTags.kflidComponentLexemes || ler == null ? 0 : slice.GetSelectionHvoFromControls();
 			var menuIsChecked = false;
+			var visibleAndEnabled = false;
 			if (selectedComponentHvo != 0)
 			{
 				target = _cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(selectedComponentHvo);
@@ -540,7 +650,7 @@ namespace LanguageExplorer.Areas
 					menuIsChecked = ler.PrimaryLexemesRS.Contains(target); // LT-11292
 				}
 			}
-			visibleAndEnabled = visibleAndEnabled && _currentTool.MachineName == AreaServices.LexiconEditMachineName && ler != null;
+			visibleAndEnabled = visibleAndEnabled && _currentTool.MachineName == AreaServices.LexiconEditMachineName;
 			if (visibleAndEnabled)
 			{
 				if (wantSeparator)
@@ -719,6 +829,60 @@ namespace LanguageExplorer.Areas
 						++idx;
 					}
 				}
+			}
+		}
+
+		private void ConditionallyAddJumpToToolMenuItem(ToolStripMenuItem mainMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, Slice slice, string menuLabel, string concordOn, ref bool wantSeparator, int separatorInsertLocation = 0)
+		{
+			EventHandler eventHandler;
+			if (_currentTool.MachineName != AreaServices.ConcordanceMachineName || !slice.MyCmObject.IsValidObject || !_sharedEventHandlers.TryGetEventHandler(AreaServices.JumpToConcordance, out eventHandler))
+			{
+				return;
+			}
+			if (wantSeparator)
+			{
+				ToolStripMenuItemFactory.CreateToolStripSeparatorForToolStripMenuItem(mainMenuStrip, separatorInsertLocation);
+				wantSeparator = false;
+			}
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, mainMenuStrip, eventHandler, menuLabel);
+			menu.Tag = new List<object> { slice.MyCmObject, concordOn };
+		}
+
+		private void ConditionallyAddJumpToToolMenuItem(ContextMenuStrip contextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, string menuLabel, string className, string concordOn)
+		{
+			var activeForm = Form.ActiveForm;
+			if (Form.ActiveForm == null)
+			{
+				// Can't do much of there is no form at all.
+				return;
+			}
+			var sandboxBase = activeForm.ActiveControl as SandboxBase;
+			if (sandboxBase == null || !sandboxBase.CanJumpToTool(_currentTool, className))
+			{
+				// Got form, but no sandbox: ∴, no go.
+				return;
+			}
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.SandboxJumpToTool), menuLabel);
+			var tagList = new List<object> { AreaServices.PosEditMachineName, className };
+			if (string.IsNullOrWhiteSpace(concordOn))
+			{
+				tagList.Add(concordOn);
+			}
+			menu.Tag = tagList;
+		}
+
+		private void ConditionallyAddJumpToToolMenuItem(ToolStripMenuItem mainMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, Slice slice, string className, string menuLabel, string targetToolName, Guid targetGuid, ref bool wantSeparator, int separatorInsertLocation = 0)
+		{
+			var visibleAndEnabled = AreaWideMenuHelper.CanJumpToTool(_currentTool.MachineName, targetToolName, _cache, MyRecordList.CurrentObject, slice.MyCmObject, className);
+			if (visibleAndEnabled)
+			{
+				if (wantSeparator)
+				{
+					ToolStripMenuItemFactory.CreateToolStripSeparatorForToolStripMenuItem(mainMenuStrip, separatorInsertLocation);
+					wantSeparator = false;
+				}
+				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, mainMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), menuLabel);
+				menu.Tag = new List<object> { _flexComponentParameters.Publisher, targetToolName, targetGuid };
 			}
 		}
 

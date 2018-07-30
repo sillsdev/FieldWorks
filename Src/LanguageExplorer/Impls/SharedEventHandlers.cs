@@ -49,6 +49,12 @@ namespace LanguageExplorer.Impls
 			return _sharedEventHandlers[key];
 		}
 
+		/// <inheritdoc />
+		public bool TryGetEventHandler(string key, out EventHandler eventHandler)
+		{
+			return _sharedEventHandlers.TryGetValue(key, out eventHandler);
+		}
+
 		#endregion
 	}
 }

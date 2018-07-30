@@ -104,7 +104,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 				FirstControlParameters = new SplitterChildControlParameters(), // Control (PaneBarContainer+ConcordanceControl) added below. Leave Label null.
 				SecondControlParameters = new SplitterChildControlParameters() // Control (PaneBarContainer+RecordBrowseView) added below. Leave Label null.
 			};
-			_concordanceControl = new ConcordanceControl((MatchingConcordanceItems)_recordList);
+			_concordanceControl = new ConcordanceControl(majorFlexComponentParameters.SharedEventHandlers, (MatchingConcordanceItems)_recordList);
 			nestedMultiPaneParameters.FirstControlParameters.Control = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, _concordanceControl);
 			_recordBrowseView = new RecordBrowseView(root.Element("wordOccurrenceList").Element("parameters"), _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
 			nestedMultiPaneParameters.SecondControlParameters.Control = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, _recordBrowseView);

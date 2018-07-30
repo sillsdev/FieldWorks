@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using LanguageExplorer;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -27,6 +28,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		private IPropertyTable _propertyTable;
 		private IPublisher _publisher;
 		private ISubscriber _subscriber;
+		private ISharedEventHandlers _sharedEventHandlers;
 
 		#region Overrides of MemoryOnlyBackendProviderRestoredForEachTestTestBase
 
@@ -39,7 +41,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		{
 			base.TestSetup();
 
-			_propertyTable = TestSetupServices.SetupTestTriumvirate(out _publisher, out _subscriber);
+			var flexComponentParameters = TestSetupServices.SetupEverything(Cache, out _sharedEventHandlers, false);
+			_propertyTable = flexComponentParameters.PropertyTable;
+			_publisher = flexComponentParameters.Publisher;
+			_subscriber = flexComponentParameters.Subscriber;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -705,7 +710,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			// Make a sandbox and sut
 			InterlinLineChoices lineChoices = InterlinLineChoices.DefaultChoices(Cache.LangProject,
 				Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinMode.Analyze);
-			using(var sandbox = new SandboxBase(Cache, null, lineChoices, wa.Hvo))
+			using(var sandbox = new SandboxBase(_sharedEventHandlers, Cache, null, lineChoices, wa.Hvo))
 			{
 				sandbox.InitializeFlexComponent(new FlexComponentParameters(_propertyTable, _publisher, _subscriber));
 				var mockList = new MockComboHandler();
@@ -783,7 +788,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		{
 			var occurrence = createDataForSandbox();
 			var lineChoices = InterlinLineChoices.DefaultChoices(Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs);
-			var sandbox = new SandboxBase(Cache, null, lineChoices, occurrence.Analysis.Hvo);
+			var sandbox = new SandboxBase(_sharedEventHandlers, Cache, null, lineChoices, occurrence.Analysis.Hvo);
 			sandbox.InitializeFlexComponent(new FlexComponentParameters(_propertyTable, _publisher, _subscriber));
 			sandbox.MakeRoot();
 			return sandbox;

@@ -26,18 +26,18 @@ namespace LanguageExplorer.Areas
 	/// </summary>
 	internal static class AreaServices
 	{
-		/// <summary>
-		/// Display for required default sorter.
-		/// </summary>
-		internal const string Default = "Default";
-		internal const string ShortName = "ShortName";
+		#region General area/tool
+
 		internal const string AreaChoice = "areaChoice";
 		internal const string ToolChoice = "toolChoice";
 		internal const string ToolForAreaNamed_ = "ToolForAreaNamed_";
 		internal const string InitialArea = "InitialArea";
 		internal const string InitialAreaMachineName = LexiconAreaMachineName;
 
+		#endregion General area/tool
+
 		#region Lexicon area
+
 		internal const string LexiconAreaMachineName = "lexicon";
 		internal const string LexiconAreaDefaultToolMachineName = LexiconEditMachineName;
 			internal const string LexiconEditMachineName = "lexiconEdit";
@@ -48,9 +48,11 @@ namespace LanguageExplorer.Areas
 			internal const string BulkEditEntriesOrSensesMachineName = "bulkEditEntriesOrSenses";
 			internal const string ReversalEditCompleteMachineName = "reversalEditComplete";
 			internal const string ReversalBulkEditReversalEntriesMachineName = "reversalBulkEditReversalEntries";
-		#endregion
+
+		#endregion Lexicon area
 
 		#region Text and Words area
+
 		internal const string TextAndWordsAreaMachineName = "textsWords";
 		internal const string TextAndWordsAreaDefaultToolMachineName = InterlinearEditMachineName;
 			internal const string InterlinearEditMachineName = "interlinearEdit";
@@ -60,9 +62,11 @@ namespace LanguageExplorer.Areas
 			internal const string AnalysesMachineName = "Analyses";
 			internal const string BulkEditWordformsMachineName = "bulkEditWordforms";
 			internal const string CorpusStatisticsMachineName = "corpusStatistics";
-		#endregion
+
+		#endregion Text and Words area
 
 		#region Grammar area
+
 		internal const string GrammarAreaMachineName = "grammar";
 		internal const string GrammarAreaDefaultToolMachineName = PosEditMachineName;
 			internal const string PosEditMachineName = "posEdit";
@@ -79,17 +83,21 @@ namespace LanguageExplorer.Areas
 			internal const string ProdRestrictEditMachineName = "ProdRestrictEdit";
 			internal const string GrammarSketchMachineName = "grammarSketch";
 			internal const string LexiconProblemsMachineName = "lexiconProblems";
-		#endregion
+
+		#endregion Grammar area
 
 		#region Notebook area
+
 		internal const string NotebookAreaMachineName = "notebook";
 		internal const string NotebookAreaDefaultToolMachineName = NotebookEditToolMachineName;
 			internal const string NotebookEditToolMachineName = "notebookEdit";
 			internal const string NotebookBrowseToolMachineName = "notebookBrowse";
 			internal const string NotebookDocumentToolMachineName = "notebookDocument";
-		#endregion
+
+		#endregion Notebook area
 
 		#region Lists area
+
 		internal const string ListsAreaMachineName = "lists";
 		internal const string ListsAreaDefaultToolMachineName = DomainTypeEditMachineName;
 			internal const string DomainTypeEditMachineName = "domainTypeEdit";
@@ -122,7 +130,8 @@ namespace LanguageExplorer.Areas
 			internal const string RecTypeEditMachineName = "recTypeEdit";
 			internal const string TimeOfDayEditMachineName = "timeOfDayEdit";
 			internal const string ReversalToolReversalIndexPOSMachineName = "reversalToolReversalIndexPOS";
-		#endregion
+
+		#endregion Lists area
 
 		#region menus
 
@@ -132,7 +141,7 @@ namespace LanguageExplorer.Areas
 		internal const string mnuReferenceChoices = "mnuReferenceChoices";
 		internal const string mnuEnvReferenceChoices = "mnuEnvReferenceChoices";
 
-		#endregion
+		#endregion menus
 
 		#region commands
 
@@ -144,8 +153,10 @@ namespace LanguageExplorer.Areas
 		internal const string ShowEnvironmentError = "ShowEnvironmentError";
 		internal const string ContextSetFeatures = "ContextSetFeatures";
 		internal const string JumpToTool = "JumpToTool";
+		internal const string JumpToConcordance = "JumpToConcordance";
+		internal const string SandboxJumpToTool = "SandboxJumpToTool";
 
-		#endregion
+		#endregion commands
 
 		#region LanguageExplorer.DictionaryConfiguration.ImageHolder smallCommandImages image constants
 
@@ -154,7 +165,19 @@ namespace LanguageExplorer.Areas
 		internal const int MoveDown = 14;
 		internal const int MoveLeft = 15;
 
-		#endregion
+		#endregion LanguageExplorer.DictionaryConfiguration.ImageHolder smallCommandImages image constants
+
+		#region Random strings
+
+		/// <summary>
+		/// Display for required default sorter.
+		/// </summary>
+		internal const string Default = "Default";
+		internal const string ShortName = "ShortName";
+		internal const string PartOfSpeechGramInfo = "PartOfSpeechGramInfo";
+		internal const string WordPartOfSpeech = "WordPartOfSpeech";
+
+		#endregion Random strings
 
 		/// <summary>
 		/// Handle the provided import dialog.

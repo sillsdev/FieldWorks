@@ -1,8 +1,9 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using LanguageExplorer;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -20,12 +21,16 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		private IPropertyTable _propertyTable;
 		private IPublisher _publisher;
 		private ISubscriber _subscriber;
+		private ISharedEventHandlers _sharedEventHandlers;
 
 		public override void TestSetup()
 		{
 			base.TestSetup();
 
-			_propertyTable = TestSetupServices.SetupTestTriumvirate(out _publisher, out _subscriber);
+			var flexComponentParameters = TestSetupServices.SetupEverything(Cache, out _sharedEventHandlers, false);
+			_propertyTable = flexComponentParameters.PropertyTable;
+			_publisher = flexComponentParameters.Publisher;
+			_subscriber = flexComponentParameters.Subscriber;
 		}
 		public override void TestTearDown()
 		{
@@ -130,7 +135,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			entry.LexemeFormOA = morph;
 			morph.Form.set_String(Cache.DefaultVernWs, "here");
 			morph.MorphTypeRA = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphSuffix);
-			using (var testSandbox = new AddWordsToLexiconTests.SandboxForTests(Cache, InterlinLineChoices.DefaultChoices(Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs)))
+			using (var testSandbox = new SandboxForTests(_sharedEventHandlers, Cache, InterlinLineChoices.DefaultChoices(Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs)))
 			{
 				testSandbox.InitializeFlexComponent(new FlexComponentParameters(_propertyTable, _publisher, _subscriber));
 				testSandbox.RawWordform = TsStringUtils.MakeString("here", Cache.DefaultVernWs);

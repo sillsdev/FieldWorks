@@ -32,9 +32,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 
 		private InterlinVc m_vc;
 		private IWfiAnalysis m_wfiAnalysis;
+		private ISharedEventHandlers _sharedEventHandlers;
 		private XElement m_configurationNode;
 		private OneAnalysisSandbox m_oneAnalSandbox;
-		private IWfiWordform m_wordform;
 		private Rect m_rcPrimary;
 
 		#endregion Data members
@@ -50,15 +50,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// <summary>
 		/// Make one. Everything interesting happens when it is given a root object, however.
 		/// </summary>
-		public AnalysisInterlinearRs(LcmCache cache, IWfiAnalysis analysis, XElement configurationNode)
+		public AnalysisInterlinearRs(ISharedEventHandlers sharedEventHandlers, LcmCache cache, IWfiAnalysis analysis, XElement configurationNode)
 			: base(cache)
 		{
+			Guard.AgainstNull(sharedEventHandlers, nameof(sharedEventHandlers));
 			Guard.AgainstNull(analysis, nameof(analysis));
 			Guard.AgainstNull(configurationNode, nameof(configurationNode));
 
+			_sharedEventHandlers = sharedEventHandlers;
 			m_configurationNode = configurationNode;
 			m_wfiAnalysis = analysis;
-			m_wordform = m_wfiAnalysis.Wordform;
 		}
 
 		#endregion Construction
@@ -91,11 +92,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				m_oneAnalSandbox?.Dispose();
 				m_vc?.Dispose();
 			}
-			m_oneAnalSandbox = null;
 			m_vc = null;
-			m_configurationNode = null;
-			m_wordform = null;
 			m_wfiAnalysis = null;
+			_sharedEventHandlers = null;
+			m_configurationNode = null;
+			m_oneAnalSandbox = null;
 		}
 
 		#endregion Dispose
@@ -151,7 +152,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				return;
 			}
 
-			m_oneAnalSandbox = new OneAnalysisSandbox(m_cache, StyleSheet, m_vc.LineChoices, m_wfiAnalysis.Hvo)
+			m_oneAnalSandbox = new OneAnalysisSandbox(_sharedEventHandlers, m_cache, StyleSheet, m_vc.LineChoices, m_wfiAnalysis.Hvo)
 			{
 				Visible = false
 			};

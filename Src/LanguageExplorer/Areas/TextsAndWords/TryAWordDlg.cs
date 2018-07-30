@@ -59,7 +59,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		private WebPageInteractor m_webPageInteractor;
 		private IParserTrace m_trace;
-
+		private ISharedEventHandlers _sharedEventHandlers;
 		#endregion Data members
 
 		/// <summary />
@@ -120,8 +120,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		#endregion
 
-		internal void SetDlgInfo(IWfiWordform wordform, ParserMenuManager parserMenuManager)
+		internal void SetDlgInfo(ISharedEventHandlers sharedEventHandlers, IWfiWordform wordform, ParserMenuManager parserMenuManager)
 		{
+			_sharedEventHandlers = sharedEventHandlers;
 			m_persistProvider = PersistenceProviderFactory.CreatePersistenceProvider(PropertyTable);
 			m_cache = PropertyTable.GetValue<LcmCache>("cache");
 			m_parserMenuManager = parserMenuManager;
@@ -164,7 +165,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		private void SetRootSite()
 		{
-			m_rootsite = new TryAWordRootSite()
+			m_rootsite = new TryAWordRootSite(_sharedEventHandlers)
 			{
 				Dock = DockStyle.Top
 			};

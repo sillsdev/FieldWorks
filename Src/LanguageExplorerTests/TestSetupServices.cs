@@ -1,9 +1,10 @@
-﻿// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
 using System.IO;
+using LanguageExplorer;
 using LanguageExplorer.Impls;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
@@ -49,6 +50,25 @@ namespace LanguageExplorerTests
 				styleSheet.Init(cache, cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
 				flexComponentParameters.PropertyTable.SetProperty("FlexStyleSheet", styleSheet);
 			}
+			return flexComponentParameters;
+		}
+
+		internal static FlexComponentParameters SetupEverything(LcmCache cache, out ISharedEventHandlers sharedEventHandlers, bool includeStylesheet = true)
+		{
+			SetupCache(cache);
+
+			ISubscriber subscriber;
+			IPublisher publisher;
+			var propertyTable = SetupTestTriumvirate(out publisher, out subscriber);
+			propertyTable.SetProperty("cache", cache);
+			var flexComponentParameters = new FlexComponentParameters(propertyTable, publisher, subscriber);
+			if (includeStylesheet)
+			{
+				var styleSheet = new LcmStyleSheet();
+				styleSheet.Init(cache, cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
+				flexComponentParameters.PropertyTable.SetProperty("FlexStyleSheet", styleSheet);
+			}
+			sharedEventHandlers = new SharedEventHandlers();
 			return flexComponentParameters;
 		}
 

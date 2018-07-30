@@ -37,8 +37,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Create a new one.
 		/// </summary>
-		public Sandbox(LcmCache cache, IVwStylesheet ss, InterlinLineChoices choices, AnalysisOccurrence selected, FocusBoxController focusBox)
-			: this(cache, ss, choices)
+		public Sandbox(ISharedEventHandlers sharedEventHandlers, LcmCache cache, IVwStylesheet ss, InterlinLineChoices choices, AnalysisOccurrence selected, FocusBoxController focusBox)
+			: this(sharedEventHandlers, cache, ss, choices)
 		{
 			FocusBox = focusBox;
 			m_interlinDoc = focusBox.InterlinDoc;
@@ -48,8 +48,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		/// <summary />
-		public Sandbox(LcmCache cache, IVwStylesheet ss, InterlinLineChoices choices)
-			: base(cache, ss, choices)
+		public Sandbox(ISharedEventHandlers sharedEventHandlers, LcmCache cache, IVwStylesheet ss, InterlinLineChoices choices)
+			: base(sharedEventHandlers, cache, ss, choices)
 		{
 		}
 
