@@ -259,7 +259,8 @@ namespace LanguageExplorer.Impls
 				"ParserUI.dll",
 				"FdoUi.dll",
 				"DetailControls.dll",
-				"XMLViews.dll"
+				"XMLViews.dll",
+				"Filters.dll",
 			};
 			// Some old properties have stored old dlls that have been assimilated, as well as classes to construct that still have those old namespaces.
 			// We want to fix all of those to use the correct assembly (LanguageExplorer) and new namespace.

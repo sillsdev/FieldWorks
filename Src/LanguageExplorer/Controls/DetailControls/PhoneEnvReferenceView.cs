@@ -1043,7 +1043,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			return true;
 		}
 
-		private Slice MySlice => (Slice)Parent.Parent.Parent.Parent;
+		private Slice MySlice => this.ParentOfType<Slice>();
 
 		#endregion
 	}

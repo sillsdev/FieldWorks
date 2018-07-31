@@ -21,7 +21,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	{
 		private int m_dxLastWidth; // width last time OnSizeChanged was called.
 
-		public PhoneEnvReferenceSlice(ISharedEventHandlers sharedEventHandlers, LcmCache cache, ICmObject obj, int flid)
+		public PhoneEnvReferenceSlice(LcmCache cache, ICmObject obj, int flid)
 			: base(new PhoneEnvReferenceLauncher(), cache, obj, flid)
 		{
 			Debug.Assert(obj is IMoAffixAllomorph || obj is IMoStemAllomorph);

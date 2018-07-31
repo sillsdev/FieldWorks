@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -20,18 +20,17 @@ namespace LanguageExplorer.Areas.Lexicon
 	internal sealed class LexiconAreaMenuHelper : IFlexComponent, IDisposable
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
-		private AreaWideMenuHelper _areaWideMenuHelper;
 		private ToolStripMenuItem _fileImportMenu;
 		private List<Tuple<ToolStripMenuItem, EventHandler>> _newFileMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>();
 
-		internal AreaWideMenuHelper MyAreaWideMenuHelper => _areaWideMenuHelper;
+		internal AreaWideMenuHelper MyAreaWideMenuHelper { get; private set; }
 
 		internal LexiconAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
-			_areaWideMenuHelper = new AreaWideMenuHelper(_majorFlexComponentParameters, recordList);
+			MyAreaWideMenuHelper = new AreaWideMenuHelper(_majorFlexComponentParameters, recordList);
 
 			InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 		}
@@ -39,7 +38,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		internal void Initialize()
 		{
 			// Set up File->Export menu, which is visible and enabled in all lexicon area tools, using the default event handler.
-			_areaWideMenuHelper.SetupFileExportMenu();
+			MyAreaWideMenuHelper.SetupFileExportMenu();
 
 			// Add two lexicon area-wide import options.
 			AddFileImportMenuItems();
@@ -120,7 +119,7 @@ namespace LanguageExplorer.Areas.Lexicon
 
 			if (disposing)
 			{
-				_areaWideMenuHelper.Dispose();
+				MyAreaWideMenuHelper.Dispose();
 				foreach (var menuTuple in _newFileMenusAndHandlers)
 				{
 					menuTuple.Item1.Click -= menuTuple.Item2;
@@ -130,7 +129,7 @@ namespace LanguageExplorer.Areas.Lexicon
 				_newFileMenusAndHandlers.Clear();
 			}
 			_majorFlexComponentParameters = null;
-			_areaWideMenuHelper = null;
+			MyAreaWideMenuHelper = null;
 			_fileImportMenu = null;
 			_newFileMenusAndHandlers = null;
 

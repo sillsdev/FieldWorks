@@ -140,6 +140,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				foreach (var handlerKvp in _lexiconEditToolUiWidgetManagers)
 				{
+					handlerKvp.Value.UnwireSharedEventHandlers();
+				}
+				foreach (var handlerKvp in _lexiconEditToolUiWidgetManagers)
+				{
 					handlerKvp.Value.Dispose();
 				}
 				_sharedEventHandlers.Remove(LexiconAreaConstants.DataTreeMerge);

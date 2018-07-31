@@ -47,6 +47,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <inheritdoc />
 		void IToolUiWidgetManager.UnwireSharedEventHandlers()
 		{
+			foreach (var manager in _dataTreeWidgetManagers.Values)
+			{
+				manager.UnwireSharedEventHandlers();
+			}
 		}
 
 		#endregion

@@ -916,8 +916,7 @@ namespace LanguageExplorer.Areas
 			};
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(8);
 
-			var visible = CanJumpToEnvironmentList;
-			if (visible)
+			if (CanJumpToEnvironmentList)
 			{
 				/*
 				  <item command="CmdJumpToEnvironmentList" />

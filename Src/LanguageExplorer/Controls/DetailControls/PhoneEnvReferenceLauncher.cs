@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.DetailControls.Resources;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;

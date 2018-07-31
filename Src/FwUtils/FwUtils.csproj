@@ -234,6 +234,7 @@
     </Compile>
     <Compile Include="ActivationContextHelper.cs" />
     <Compile Include="AlphaOutline.cs" />
+    <Compile Include="ControlExtensions.cs" />
     <Compile Include="FontHeightAdjuster.cs" />
     <Compile Include="FwApplicationSettingsBase.cs" />
     <Compile Include="IApp.cs" />

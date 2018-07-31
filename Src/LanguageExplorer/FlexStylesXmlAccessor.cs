@@ -34,7 +34,7 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Parameterless constructor for the purposes of Xml serialization
 		/// </summary>
-		private FlexStylesXmlAccessor() {}
+		private FlexStylesXmlAccessor() { }
 
 		private string m_sourceDocumentPath;
 		private static readonly Dictionary<string, string> BulletPropertyMap = new Dictionary<string, string>
@@ -426,25 +426,25 @@ namespace LanguageExplorer
 			{
 				return paragraphProps;
 			}
-				string lineSpaceType;
-				// relative is used for single, 1.5, double space
-				if (styleRules.LineSpacing.m_relative)
-				{
-					lineSpaceType = "rel";
-				}
-				else if (styleRules.LineSpacing.m_lineHeight <= 0)
-				{
-					// for historical reasons negative values mean exact, and positive mean at least
-					// (see: Framework\StylesXmlAccessor.cs SetParagraphProperties())
-					lineSpaceType = "exact";
-				}
-				else
-				{
-					lineSpaceType = "atleast";
-				}
-				var lineSpace = Math.Abs(styleRules.LineSpacing.m_lineHeight) / 1000 + " pt";
-				paragraphProps.Add(new Tuple<string, string>("lineSpacing", lineSpace));
-				paragraphProps.Add(new Tuple<string, string>("lineSpacingType", lineSpaceType));
+			string lineSpaceType;
+			// relative is used for single, 1.5, double space
+			if (styleRules.LineSpacing.m_relative)
+			{
+				lineSpaceType = "rel";
+			}
+			else if (styleRules.LineSpacing.m_lineHeight <= 0)
+			{
+				// for historical reasons negative values mean exact, and positive mean at least
+				// (see: Framework\StylesXmlAccessor.cs SetParagraphProperties())
+				lineSpaceType = "exact";
+			}
+			else
+			{
+				lineSpaceType = "atleast";
+			}
+			var lineSpace = Math.Abs(styleRules.LineSpacing.m_lineHeight) / 1000 + " pt";
+			paragraphProps.Add(new Tuple<string, string>("lineSpacing", lineSpace));
+			paragraphProps.Add(new Tuple<string, string>("lineSpacingType", lineSpaceType));
 
 			return paragraphProps;
 		}
@@ -558,9 +558,9 @@ namespace LanguageExplorer
 			{
 				return;
 			}
-				var color = Color.FromArgb((int)ColorUtil.ConvertRGBtoBGR((uint)colorValueBGR)); // convert BGR to RGB
-				GetColorValueFromSystemColor(attributeName, color, resultsList);
-			}
+			var color = Color.FromArgb((int)ColorUtil.ConvertRGBtoBGR((uint)colorValueBGR)); // convert BGR to RGB
+			GetColorValueFromSystemColor(attributeName, color, resultsList);
+		}
 
 		private void GetColorValueAttribute(string attributeName, IStyleProp<Color> fontColor, List<Tuple<string, string>> resultsList)
 		{
