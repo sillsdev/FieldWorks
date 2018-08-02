@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2017 SIL International
+// Copyright (c) 2002-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -603,6 +603,10 @@ namespace ParatextImport
 			m_undoManager = undoManager;
 			m_importCallbacks = importCallbacks;
 			m_importCallbacks.Importer = this;
+
+			// Ensure that we have up-to-date versification information
+			string edCheckDir = FwDirectoryFinder.EditorialChecksDirectory;
+			ScrReference.InitializeVersification(edCheckDir, false);
 
 			Debug.Assert(m_settings.BasicSettingsExist);
 			// ENHANCE (TomB): Make it possible to start importing in the middle

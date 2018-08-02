@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2016 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.IText
 					return;
 				}
 				m_scriptureStylesheet = new LcmStyleSheet();
-				m_scriptureStylesheet.Init(m_cache, m_scr.Hvo, ScriptureTags.kflidStyles);
+				m_scriptureStylesheet.Init(m_cache, m_cache.LangProject.Hvo, LangProjectTags.kflidStyles);
 			}
 		}
 
@@ -650,7 +650,7 @@ namespace SIL.FieldWorks.IText
 			IScrImportSet importSettings = null;
 			var haveSomethingToImport = NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 			{
-				importSettings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6, m_scriptureStylesheet, FwDirectoryFinder.TeStylesPath);
+				importSettings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6, m_scriptureStylesheet, FwDirectoryFinder.FlexStylesPath);
 				importSettings.RevertToSaved();
 				importSettings.ParatextScrProj = m_associatedPtText.Name;
 				importSettings.StartRef = new BCVRef(bookNum, 0, 0);
@@ -692,7 +692,7 @@ namespace SIL.FieldWorks.IText
 			IScrImportSet importSettings = null;
 			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 			{
-				importSettings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6, m_scriptureStylesheet, FwDirectoryFinder.TeStylesPath);
+				importSettings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6, m_scriptureStylesheet, FwDirectoryFinder.FlexStylesPath);
 				importSettings.ParatextScrProj = m_associatedPtText.Name;
 				importSettings.StartRef = new BCVRef(bookNum, 0, 0);
 				importSettings.ParatextBTProj = btProject.Name;

@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2016 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -243,8 +243,8 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			var styleSheet = new LcmStyleSheet();
 
-			styleSheet.Init(Cache, m_scr.Hvo,
-				ScriptureTags.kflidStyles);
+			styleSheet.Init(Cache, Cache.LangProject.Hvo,
+				LangProjectTags.kflidStyles);
 
 			Debug.Assert(m_basicView == null, "m_basicView is not null.");
 

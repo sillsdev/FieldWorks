@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -40,9 +40,6 @@ namespace SIL.FieldWorks.IText
 		/// this is the clerk, if any, that determines the text for our control.
 		/// </summary>
 		RecordClerk m_clerk;
-
-		private IVwStylesheet m_flexStylesheet;
-		private IVwStylesheet m_teStylesheet;
 
 		public RawTextPane() : base(null)
 		{
@@ -105,7 +102,6 @@ namespace SIL.FieldWorks.IText
 
 			if (hvo != m_hvoRoot || m_vc == null)
 			{
-				SetStyleSheet(hvo);
 				m_hvoRoot = hvo;
 				SetupVc();
 				ChangeOrMakeRoot(m_hvoRoot, m_vc, (int)StTextFrags.kfrText, m_styleSheet);
@@ -133,35 +129,6 @@ namespace SIL.FieldWorks.IText
 		public override bool CanApplyStyle
 		{
 			get { return base.CanApplyStyle && !ScriptureServices.ScriptureIsResponsibleFor(m_rootObj); }
-		}
-
-
-		private void SetStyleSheet(int hvo)
-		{
-			var text = hvo == 0 ? null : (IStText)Cache.ServiceLocator.GetObject(hvo);
-
-			IVwStylesheet wantedStylesheet = m_styleSheet;
-			if (text != null && ScriptureServices.ScriptureIsResponsibleFor(text))
-			{
-				// Use the Scripture stylesheet
-				if (m_teStylesheet == null)
-				{
-					m_flexStylesheet = m_styleSheet; // remember the default.
-					var stylesheet = new LcmStyleSheet();
-					stylesheet.Init(Cache, Cache.LangProject.TranslatedScriptureOA.Hvo, ScriptureTags.kflidStyles);
-					m_teStylesheet = stylesheet;
-				}
-				wantedStylesheet = m_teStylesheet;
-			}
-			else if (m_flexStylesheet != null)
-			{
-				wantedStylesheet = m_flexStylesheet;
-			}
-			if (wantedStylesheet != m_styleSheet)
-			{
-				m_styleSheet = wantedStylesheet;
-				// Todo: set up the comobo; set the main window one.
-			}
 		}
 
 		#endregion
