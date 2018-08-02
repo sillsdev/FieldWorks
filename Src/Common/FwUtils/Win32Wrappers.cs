@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------
-// Copyright (c) 2007-2016 SIL International
+// Copyright (c) 2007-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -1771,68 +1771,65 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		#region Kernel32.dll
 		/// <summary>
-		/// The <c>MemoryStatus</c> structure contains information about the current
-		/// state of both physical and virtual memory.
+		/// Contains information about the current state of both physical and virtual memory.
 		/// </summary>
-		public struct MemoryStatus
+		public struct MemoryStatusEx
 		{
 			/// <summary>
-			/// Size of the <c>MemoryStatus</c> data structure, in bytes. You do not
-			/// need to set this member before calling the <see cref="GlobalMemoryStatus"/>
+			/// Size of the <c>MemoryStatus</c> data structure, in bytes. You must
+			/// need to set this member before calling <see cref="GlobalMemoryStatusEx"/>
 			/// function; the function sets it.
 			/// </summary>
 			public uint dwLength;
-			/// <summary>See MSDN documentation</summary>
+			/// <summary>Percentage of physical memory use (0-100)</summary>
 			public uint dwMemoryLoad;
 			/// <summary>Total size of physical memory, in bytes.</summary>
-			public uint dwTotalPhys;
-			/// <summary>Size of physical memory available, in bytes. </summary>
-			public uint dwAvailPhys;
-			/// <summary>Size of the committed memory limit, in bytes. </summary>
-			public uint dwTotalPageFile;
+			public ulong ullTotalPhys;
+			/// <summary>Size of physical memory available, in bytes.</summary>
+			public ulong ullAvailPhys;
+			/// <summary>Current committed memory limit for the system or the current process, whichever is smaller, in bytes.</summary>
+			public ulong ullTotalPageFile;
 			/// <summary>Size of available memory to commit, in bytes.</summary>
-			public uint dwAvailPageFile;
+			public ulong ullAvailPageFile;
 			/// <summary>Total size of the user mode portion of the virtual address space of
 			/// the calling process, in bytes.</summary>
-			public uint dwTotalVirtual;
+			public ulong ullTotalVirtual;
 			/// <summary>Size of unreserved and uncommitted memory in the user mode portion
 			/// of the virtual address space of the calling process, in bytes.</summary>
-			public uint dwAvailVirtual;
-		};
+			public ulong ullAvailVirtual;
+			/// <summary>Reserved. This value is always 0.</summary>
+			public ulong ullAvailExtendedVirtual;
+		}
 
 		/// <summary>
-		/// The <c>GlobalMemoryStatus</c> function obtains information about the system's
+		/// Retrieves information about the system's
 		/// current usage of both physical and virtual memory.
 		/// </summary>
-		/// <param name="ms">Pointer to a <see cref="MemoryStatus"/>  structure. The
-		/// <c>GlobalMemoryStatus</c> function stores information about current memory
+		/// <param name="ms">Pointer to a <see cref="MemoryStatusEx"/> structure. This
+		/// function stores information about current memory
 		/// availability into this structure.</param>
 		[DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-		extern public static void GlobalMemoryStatus(ref MemoryStatus ms);
+		public static extern void GlobalMemoryStatusEx(ref MemoryStatusEx ms);
 
 		/// <summary>
-		/// The <c>GetDiskFreeSpace</c> function retrieves information about the specified
-		/// disk, including the amount of free space on the disk.
+		/// Retrieves information about the specified disk, including the amount of free space on the disk.
 		/// </summary>
-		/// <param name="rootPathName">[in] Pointer to a null-terminated string that specifies
-		/// the root directory of the disk to return information about. See MSDN for more
-		/// information</param>
-		/// <param name="sectorsPerCluster">[out] Pointer to a variable for the number of
-		/// sectors per cluster.</param>
-		/// <param name="bytesPerSector">[out] Pointer to a variable for the number of bytes
-		/// per sector.</param>
-		/// <param name="numberOfFreeClusters">[out] Pointer to a variable for the total
-		/// number of free clusters on the disk that are available to the user associated with
-		/// the calling thread. </param>
-		/// <param name="totalNumberOfClusters">[out] Pointer to a variable for the total
-		/// number of clusters on the disk that are available to the user associated with the
-		/// calling thread. </param>
-		/// <returns><para>If the function succeeds, the return value is <b>true</b>.</para>
-		/// <para>If the function fails, the return value is <b>false</b>. </para></returns>
-		[DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-		extern public static bool
-			GetDiskFreeSpace(string rootPathName, ref uint sectorsPerCluster, ref uint bytesPerSector,
-			ref uint numberOfFreeClusters, ref uint totalNumberOfClusters);
+		/// <param name="lpDirectoryName">A directory on the disk. If this parameter is NULL, the function uses the root of the current disk.
+		/// If this parameter is a UNC name, it must include a trailing backslash, for example, "\MyServer\MyShare".
+		/// This parameter does not have to specify the root directory on a disk. The function accepts any directory on a disk.
+		/// The calling application must have FILE_LIST_DIRECTORY access rights for this directory.</param>
+		/// <param name="lpFreeBytesAvailable">TBD
+		/// (per https://docs.microsoft.com/en-us/windows/desktop/api/fileapi/nf-fileapi-getdiskfreespaceexa accessed 2018.08.02)</param>
+		/// <param name="lpTotalNumberOfBytes">A pointer to a variable that receives the total number of bytes on a disk that are available to the
+		/// user who is associated with the calling thread. This parameter can be NULL.
+		/// If per-user quotas are being used, this value may be less than the total number of bytes on a disk.</param>
+		/// <param name="lpTotalNumberOfFreeBytes">A pointer to a variable that receives the total number of free bytes on a disk.
+		/// This parameter can be NULL.</param>
+		/// <returns>true if and only if the call succeeds</returns>
+		[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static extern bool GetDiskFreeSpaceEx(string lpDirectoryName,
+			out ulong lpFreeBytesAvailable, out ulong lpTotalNumberOfBytes, out ulong lpTotalNumberOfFreeBytes);
 
 		/// <summary></summary>
 #if !__MonoCS__

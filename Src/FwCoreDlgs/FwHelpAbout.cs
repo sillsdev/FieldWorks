@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2017 SIL International
+// Copyright (c) 2002-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 using SIL.Acknowledgements;
@@ -27,10 +28,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private System.ComponentModel.IContainer components;
 
-		private string m_sAvailableMemoryFmt;
-		private string m_sTitleFmt;
-		private string m_sAvailableDiskSpaceFmt;
-		private string m_sProdDate = string.Empty;
+		private const double BytesPerMiB = 1024 * 1024;
+		private const double BytesPerGiB = 1024 * BytesPerMiB;
+
+		private readonly string m_sAvailableMemoryFmt;
+		private readonly string m_sTitleFmt;
+		private readonly string m_sAvailableDiskSpaceFmt;
 		private Label lblName;
 		private Label edtAvailableDiskSpace;
 		private Label edtAvailableMemory;
@@ -39,7 +42,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private Label lblAvailableMemory;
 		private Label lblFwVersion;
 		private TextBox txtCopyright;
-		private LinkLabel m_systemMonitorLink;
 
 		/// <summary>The assembly of the product-specific EXE (e.g., TE.exe or FLEx.exe).
 		/// .Net callers should set this.</summary>
@@ -47,11 +49,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		#region Construction and Disposal
-		/// ----------------------------------------------------------------------------------------
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// ----------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		public FwHelpAbout()
 		{
 			//
@@ -78,7 +76,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				lblAvailableDiskSpace.Visible = false;
 				edtAvailableDiskSpace.Visible = false;
 
-				m_systemMonitorLink = new LinkLabel
+				var systemMonitorLink = new LinkLabel
 				{
 					Text = FwCoreDlgs.kstidMemoryDiskUsageInformation,
 					Visible = true,
@@ -88,8 +86,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					Left = lblAvailableMemory.Left,
 					Width = edtAvailableMemory.Right - lblAvailableMemory.Left,
 				};
-				m_systemMonitorLink.LinkClicked += HandleSystemMonitorLinkClicked;
-				Controls.Add(m_systemMonitorLink);
+				systemMonitorLink.LinkClicked += HandleSystemMonitorLinkClicked;
+				Controls.Add(systemMonitorLink);
 
 				// Package information
 
@@ -291,12 +289,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		#region Initialization Methods
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// When the window handle gets created we want to initialize the controls
 		/// </summary>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			base.OnHandleCreated(e);
@@ -304,16 +299,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			try
 			{
 				// Set the Application label to the name of the app
-				VersionInfoProvider viProvider = new VersionInfoProvider(ProductExecutableAssembly, true);
+				var viProvider = new VersionInfoProvider(ProductExecutableAssembly, true);
 				lblName.Text = viProvider.ProductName;
 				lblAppVersion.Text = viProvider.ApplicationVersion;
 				lblFwVersion.Text = viProvider.MajorVersion;
 
 				// List the copyright information
-				Dictionary<string, AcknowledgementAttribute> acknowlegements = AcknowledgementsProvider.CollectAcknowledgements();
+				var acknowlegements = AcknowledgementsProvider.CollectAcknowledgements();
 				var list = acknowlegements.Keys.ToList();
 				list.Sort();
-				string text = viProvider.CopyrightString + Environment.NewLine + viProvider.LicenseString + Environment.NewLine + viProvider.LicenseURL;
+				var text = viProvider.CopyrightString + Environment.NewLine + viProvider.LicenseString + Environment.NewLine + viProvider.LicenseURL;
 				foreach (var key in list)
 				{
 					text += "\r\n" + "\r\n" + key + "\r\n" + acknowlegements[key].Copyright + " " + acknowlegements[key].Url + " " + acknowlegements[key].LicenseUrl;
@@ -323,24 +318,20 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				// Set the title bar text
 				Text = string.Format(m_sTitleFmt, viProvider.ProductName);
 
-				string strRoot = Path.GetPathRoot(Application.ExecutablePath);
+				var strRoot = Path.GetPathRoot(Application.ExecutablePath);
 
 				// Set the memory information
-				Win32.MemoryStatus ms = new Win32.MemoryStatus();
-				Win32.GlobalMemoryStatus(ref ms);
-				edtAvailableMemory.Text = string.Format(m_sAvailableMemoryFmt,
-					ms.dwAvailPhys / 1024, ms.dwTotalPhys / 1024);
+				var memStatEx = new Win32.MemoryStatusEx();
+				memStatEx.dwLength = (uint)Marshal.SizeOf(memStatEx);
+				Win32.GlobalMemoryStatusEx(ref memStatEx);
+				edtAvailableMemory.Text = string.Format(m_sAvailableMemoryFmt, memStatEx.ullAvailPhys / BytesPerMiB, memStatEx.ullTotalPhys / BytesPerMiB);
 
 				// Set the available disk space information.
-				uint cSectorsPerCluster = 0, cBytesPerSector = 0, cFreeClusters = 0,
-					cTotalClusters = 0;
-				Win32.GetDiskFreeSpace(strRoot, ref cSectorsPerCluster, ref cBytesPerSector,
-					ref cFreeClusters, ref cTotalClusters);
-				uint cbKbFree =
-					(uint)(((Int64)cFreeClusters * cSectorsPerCluster * cBytesPerSector) >> 10);
-
-				edtAvailableDiskSpace.Text =
-					string.Format(m_sAvailableDiskSpaceFmt, cbKbFree, strRoot);
+				ulong _, lpTotalNumberOfBytes, lpTotalNumberOfFreeBytes;
+				Win32.GetDiskFreeSpaceEx(strRoot, out _, out lpTotalNumberOfBytes, out lpTotalNumberOfFreeBytes);
+				var gbFree = lpTotalNumberOfFreeBytes / BytesPerGiB;
+				var gbTotal = lpTotalNumberOfBytes / BytesPerGiB;
+				edtAvailableDiskSpace.Text = string.Format(m_sAvailableDiskSpaceFmt, gbFree, gbTotal, strRoot);
 			}
 			catch
 			{
