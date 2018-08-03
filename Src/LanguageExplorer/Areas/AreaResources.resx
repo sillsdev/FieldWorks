@@ -245,17 +245,11 @@
   <data name="ksRulePhonemeOpt" xml:space="preserve">
     <value>Phoneme</value>
   </data>
-  <data name="ksRuleRedoInsert" xml:space="preserve">
-    <value>Redo Insert {0}</value>
-  </data>
   <data name="ksRuleRedoRemove" xml:space="preserve">
     <value>Redo Remove from Rule</value>
   </data>
   <data name="ksRuleRedoUpdateEnv" xml:space="preserve">
     <value>Redo Update Environment</value>
-  </data>
-  <data name="ksRuleUndoInsert" xml:space="preserve">
-    <value>Undo Insert {0}</value>
   </data>
   <data name="ksRuleUndoRemove" xml:space="preserve">
     <value>Undo Remove from Rule</value>
@@ -741,5 +735,20 @@ If you are not the one designated user who adds fields, or you are making some o
   </data>
   <data name="Word_Category" xml:space="preserve">
     <value>Word Category</value>
+  </data>
+  <data name="AddItem" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\images\Morphology\Insert Cat.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AddSubItem" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\images\Morphology\Insert Sub-Cat.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Add_a_new_category" xml:space="preserve">
+    <value>Add a new category...(CTRL+I)</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>Category...</value>
+  </data>
+  <data name="Subcategory" xml:space="preserve">
+    <value>Subcategory...</value>
   </data>
 </root>

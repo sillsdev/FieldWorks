@@ -468,8 +468,8 @@ namespace LanguageExplorer.Areas
 		{
 			var option = (InsertOption) e.Option;
 
-			var undo = string.Format(AreaResources.ksRuleUndoInsert, option);
-			var redo = string.Format(AreaResources.ksRuleRedoInsert, option);
+			var undo = string.Format(LanguageExplorerResources.ksUndoInsert0, option);
+			var redo = string.Format(LanguageExplorerResources.ksRedoInsert0, option);
 
 			var sel = SelectionHelper.Create(_view);
 			var cellId = -1;

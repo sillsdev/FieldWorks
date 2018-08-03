@@ -63,12 +63,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 			{
 				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(SemanticDomainList_ListArea, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
-			_listsAreaMenuHelper = new ListsAreaMenuHelper(majorFlexComponentParameters, (IListArea)_area, _recordList);
 
-#if RANDYTODO
-			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
-#endif
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
+			_listsAreaMenuHelper = new ListsAreaMenuHelper(majorFlexComponentParameters, dataTree, (IListArea)_area, _recordList);
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
@@ -79,6 +76,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 				_recordList,
 				dataTree,
 				MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
+
+			// Too early before now.
+			_listsAreaMenuHelper.Initialize();
 			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), false, SettingsGroup.LocalSettings))
 			{
 				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish("ShowHiddenFields", true);
@@ -149,9 +149,21 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 		{
 			Require.That(recordListId == SemanticDomainList_ListArea, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{SemanticDomainList_ListArea}'.");
 
+			/*
+            <clerk id="SemanticDomainList">
+              <recordList owner="LangProject" property="SemanticDomainList">
+                <dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList" />
+              </recordList>
+              <treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="true" ws="best analysis" class="SIL.FieldWorks.XWorks.SemanticDomainRdeTreeBarHandler" altTitleId="SemanticDomain-Plural" />
+              <filters />
+              <sortMethods>
+                <sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName" />
+              </sortMethods>
+            </clerk>
+			*/
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
-				cache.LanguageProject.TextMarkupTagsOA,
+				cache.LanguageProject.SemanticDomainListOA,
 				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, true, "best analysis"), new RecordFilterParameterObject(null, true, true));
 		}
 	}

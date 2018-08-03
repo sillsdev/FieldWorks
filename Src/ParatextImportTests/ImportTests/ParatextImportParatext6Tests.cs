@@ -14,6 +14,7 @@ using SIL.LCModel.Utils;
 
 namespace ParatextImport.ImportTests
 {
+#if RANDYTODO
 	#region Paratext 6 Import Tests (in-memory cache)
 	/// ---------------------------------------------------------------------------------------
 	/// <summary>
@@ -23,7 +24,7 @@ namespace ParatextImport.ImportTests
 	[TestFixture]
 	public class ParatextImportTestParatext6 : ParatextImportTestsBase
 	{
-		#region Setup/Teardown
+	#region Setup/Teardown
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes import settings (mappings and options) for "Paratext 6" type of import.
@@ -40,9 +41,9 @@ namespace ParatextImport.ImportTests
 			m_settings.ImportBookIntros = true;
 			m_settings.ImportAnnotations = false;
 		}
-		#endregion
+	#endregion
 
-		#region Footnote tests
+	#region Footnote tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test importing a simple footnote (in the intro material) that begins with an
@@ -1104,9 +1105,9 @@ namespace ParatextImport.ImportTests
 			VerifySimpleFootnote(0, "footnote text", "v");
 			Assert.AreEqual("131Verse one", paraContents.Contents.Text);
 		}
-		#endregion
+	#endregion
 
-		#region Import Annotations Tests
+	#region Import Annotations Tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test ability to import an annotation stream NOT interleaved with the Scripture
@@ -1404,9 +1405,9 @@ namespace ParatextImport.ImportTests
 			Assert.AreEqual(1001001, annotation.EndRef);
 			m_importer.VerifyAnnotationText(annotation.DiscussionOA, "Discussion", "Note for verse 1", m_wsAnal);
 		}
-		#endregion
+	#endregion
 
-		#region Back Translation tests
+	#region Back Translation tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test ability to import a single back-translation NOT interleaved with the scripture
@@ -3301,9 +3302,9 @@ namespace ParatextImport.ImportTests
 			VerifyFootnoteWithTranslation(0, "Primer pata nota", "Hi mom", string.Empty,
 				ScrStyleNames.NormalFootnoteParagraph);
 		}
-		#endregion
+	#endregion
 
-		#region Invalid marker tests
+	#region Invalid marker tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Attempt to import a Paratext Scripture file that has a chapter number before a book.
@@ -3331,7 +3332,8 @@ namespace ParatextImport.ImportTests
 				Assert.Fail("Wrong exception detected.");
 			}
 		}
-		#endregion
+	#endregion
 	}
 	#endregion
+#endif
 }

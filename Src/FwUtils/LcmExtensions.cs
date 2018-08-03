@@ -5,6 +5,7 @@
 using System;
 using System.Globalization;
 using System.Linq;
+using SIL.Code;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -53,7 +54,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 			var owningFieldName = me.Cache.DomainDataByFlid.MetaDataCache.GetFieldName(owningList.OwningFlid);
 			var itemsTypeName = owningList.ItemsTypeName();
-			return itemsTypeName != "*" + owningFieldName + "*" ? itemsTypeName : stringTableName;
+			return itemsTypeName != AddAsteriskBrackets(owningFieldName) ? itemsTypeName : stringTableName;
 		}
 
 		public static string ItemsTypeName(this ICmPossibilityList me)
@@ -62,11 +63,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 				? me.Cache.DomainDataByFlid.MetaDataCache.GetFieldName(me.OwningFlid)
 				: me.Name.BestAnalysisVernacularAlternative.Text;
 			var itemsTypeName = StringTable.Table.GetString(listName, "PossibilityListItemTypeNames");
-			return itemsTypeName != "*" + listName + "*"
+			return itemsTypeName != AddAsteriskBrackets(listName)
 				? itemsTypeName
 				: (me.PossibilitiesOS.Any()
 					? StringTable.Table.GetString(me.PossibilitiesOS[0].GetType().Name, "ClassNames")
 					: itemsTypeName);
+		}
+
+		private static string AddAsteriskBrackets(string baseData)
+		{
+			return $"*{baseData}*";
 		}
 
 		public static string ItemTypeName(this ICmCustomItem me)
@@ -117,6 +123,42 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static ISilDataAccessManaged GetManagedSilDataAccess(this LcmCache me)
 		{
 			return (ISilDataAccessManaged)me.DomainDataByFlid;
+		}
+
+		public static ILexEntryType Create(this ILexEntryTypeFactory me, ICmPossibilityList owner)
+		{
+			Guard.AgainstNull(owner, nameof(owner));
+
+			var lexEntryType = me.Create();
+			owner.PossibilitiesOS.Add(lexEntryType);
+			return lexEntryType;
+		}
+
+		public static ILexEntryType Create(this ILexEntryTypeFactory me, ILexEntryType owner)
+		{
+			Guard.AgainstNull(owner, nameof(owner));
+
+			var lexEntryType = me.Create();
+			owner.SubPossibilitiesOS.Add(lexEntryType);
+			return lexEntryType;
+		}
+
+		public static ILexRefType Create(this ILexRefTypeFactory me, ICmPossibilityList owner)
+		{
+			Guard.AgainstNull(owner, nameof(owner));
+
+			var lexRefType = me.Create();
+			owner.PossibilitiesOS.Add(lexRefType);
+			return lexRefType;
+		}
+
+		public static ILexRefType Create(this ILexRefTypeFactory me, ILexRefType owner)
+		{
+			Guard.AgainstNull(owner, nameof(owner));
+
+			var lexRefType = me.Create();
+			owner.SubPossibilitiesOS.Add(lexRefType);
+			return lexRefType;
 		}
 	}
 }

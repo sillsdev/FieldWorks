@@ -349,6 +349,9 @@
     <Compile Include="Areas\Lists\ConfigureListDlg.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Areas\Lists\ListsAreaEditMenuManager.cs" />
+    <Compile Include="Areas\Lists\ListsAreaInsertMenuManager.cs" />
+    <Compile Include="Areas\Lists\ListsAreaToolbarManager.cs" />
     <Compile Include="Areas\Lists\Tools\DialectsListEdit\DialectsListEditTool.cs" />
     <Compile Include="Areas\Lists\Tools\ExtNoteTypeEdit\ExtNoteTypeEditTool.cs" />
     <Compile Include="Areas\Lists\Tools\LanguagesListEdit\LanguagesListEditTool.cs" />
@@ -2951,7 +2954,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Dumpster\AreaListener.cs" />
-    <Compile Include="Dumpster\MasterDlgListener.cs" />
     <Compile Include="Dumpster\MorphologyListener.cs" />
     <Compile Include="Areas\TextsAndWords\OccurrenceComparer.cs" />
     <Compile Include="Areas\TextsAndWords\OccurrenceSorter.cs" />

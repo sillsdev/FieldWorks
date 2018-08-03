@@ -19,7 +19,7 @@ namespace LanguageExplorer.Areas.Lists {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class ListResources {
@@ -89,6 +89,15 @@ namespace LanguageExplorer.Areas.Lists {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Anthropology Category.
+        /// </summary>
+        internal static string Anthropology_Category {
+            get {
+                return ResourceManager.GetString("Anthropology_Category", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-ChartMarkers&quot; /&gt;.
         /// </summary>
@@ -105,6 +114,15 @@ namespace LanguageExplorer.Areas.Lists {
         internal static string CharttempEditParameters {
             get {
                 return ResourceManager.GetString("CharttempEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Complex Form Type.
+        /// </summary>
+        internal static string Complex_Form_Type {
+            get {
+                return ResourceManager.GetString("Complex_Form_Type", resourceCulture);
             }
         }
         
@@ -157,7 +175,7 @@ namespace LanguageExplorer.Areas.Lists {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-        ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-DialectItems&quot; /&gt;.
+        ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;DialectEdit&quot; emptyTitleId=&quot;No-DialectItems&quot; /&gt;.
         /// </summary>
         internal static string DialectsListEditParameters {
             get {
@@ -196,6 +214,15 @@ namespace LanguageExplorer.Areas.Lists {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Feature Type.
+        /// </summary>
+        internal static string Feature_Type {
+            get {
+                return ResourceManager.GetString("Feature_Type", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;parameters id=&quot;featureTypesList&quot; filterBar=&quot;true&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; altTitleId=&quot;FsFeatStrucType-Plural&quot; editable=&quot;false&quot;&gt;
         ///	&lt;columns&gt;
@@ -226,6 +253,69 @@ namespace LanguageExplorer.Areas.Lists {
         internal static string GenresEditParameters {
             get {
                 return ResourceManager.GetString("GenresEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Anthropology Category.
+        /// </summary>
+        internal static string Insert_Anthropology_Category {
+            get {
+                return ResourceManager.GetString("Insert_Anthropology_Category", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Item.
+        /// </summary>
+        internal static string Insert_Item {
+            get {
+                return ResourceManager.GetString("Insert_Item", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Lexical Reference Type.
+        /// </summary>
+        internal static string Insert_Lexical_Reference_Type {
+            get {
+                return ResourceManager.GetString("Insert_Lexical_Reference_Type", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Location.
+        /// </summary>
+        internal static string Insert_Location {
+            get {
+                return ResourceManager.GetString("Insert_Location", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Person.
+        /// </summary>
+        internal static string Insert_Person {
+            get {
+                return ResourceManager.GetString("Insert_Person", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Semantic Domain.
+        /// </summary>
+        internal static string Insert_Semantic_Domain {
+            get {
+                return ResourceManager.GetString("Insert_Semantic_Domain", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Type.
+        /// </summary>
+        internal static string Insert_Type {
+            get {
+                return ResourceManager.GetString("Insert_Type", resourceCulture);
             }
         }
         
@@ -377,6 +467,15 @@ namespace LanguageExplorer.Areas.Lists {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Lexical Relation.
+        /// </summary>
+        internal static string Lexical_Relation {
+            get {
+                return ResourceManager.GetString("Lexical_Relation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-LexicalRelations&quot; /&gt;.
         /// </summary>
@@ -399,6 +498,15 @@ namespace LanguageExplorer.Areas.Lists {
         internal static string ListToolsSliceFilters {
             get {
                 return ResourceManager.GetString("ListToolsSliceFilters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Location.
+        /// </summary>
+        internal static string Location {
+            get {
+                return ResourceManager.GetString("Location", resourceCulture);
             }
         }
         
@@ -429,6 +537,15 @@ namespace LanguageExplorer.Areas.Lists {
         internal static string PeopleEditParameters {
             get {
                 return ResourceManager.GetString("PeopleEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Person.
+        /// </summary>
+        internal static string Person {
+            get {
+                return ResourceManager.GetString("Person", resourceCulture);
             }
         }
         
@@ -517,6 +634,15 @@ namespace LanguageExplorer.Areas.Lists {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Semantic Domain.
+        /// </summary>
+        internal static string Semantic_Domain {
+            get {
+                return ResourceManager.GetString("Semantic_Domain", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-SemanticDomains&quot; /&gt;.
         /// </summary>
@@ -543,6 +669,42 @@ namespace LanguageExplorer.Areas.Lists {
         internal static string StatusEditParameters {
             get {
                 return ResourceManager.GetString("StatusEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Subcategory.
+        /// </summary>
+        internal static string Subcategory {
+            get {
+                return ResourceManager.GetString("Subcategory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Subdomain.
+        /// </summary>
+        internal static string Subdomain {
+            get {
+                return ResourceManager.GetString("Subdomain", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Subitem.
+        /// </summary>
+        internal static string Subitem {
+            get {
+                return ResourceManager.GetString("Subitem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Subtype.
+        /// </summary>
+        internal static string Subtype {
+            get {
+                return ResourceManager.GetString("Subtype", resourceCulture);
             }
         }
         
@@ -583,6 +745,15 @@ namespace LanguageExplorer.Areas.Lists {
         internal static string UsageTypeEditParameters {
             get {
                 return ResourceManager.GetString("UsageTypeEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Variant Type.
+        /// </summary>
+        internal static string Variant_Type {
+            get {
+                return ResourceManager.GetString("Variant_Type", resourceCulture);
             }
         }
         

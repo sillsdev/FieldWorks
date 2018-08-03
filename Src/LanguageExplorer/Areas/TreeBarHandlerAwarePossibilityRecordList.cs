@@ -46,6 +46,11 @@ namespace LanguageExplorer.Areas
 			base.BecomeInactive();
 		}
 
+		public override void UpdateRecordTreeBar()
+		{
+			_possibilityTreeBarHandler.ForcePopulateRecordBar(this);
+		}
+
 		public override void UpdateRecordTreeBarIfNeeded()
 		{
 			_possibilityTreeBarHandler.PopulateRecordBarIfNeeded(this);
@@ -58,7 +63,7 @@ namespace LanguageExplorer.Areas
 				return;
 			}
 			s_lastRecordListToLoadTreeBar = this;
-			_possibilityTreeBarHandler.PopulateRecordBar(this);
+			_possibilityTreeBarHandler.ForcePopulateRecordBar(this);
 		}
 
 		protected override void Dispose(bool disposing)

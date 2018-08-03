@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.Linq;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.Common.RootSites
@@ -184,6 +185,19 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
+				foreach (var rootSite in m_availableSites.ToList())
+				{
+					// Get rid of any deadbeat controls.
+					var control = (Control)rootSite;
+					if (control.IsDisposed || !control.IsHandleCreated || !(control.TopLevelControl is Form))
+					{
+						m_availableSites.Remove(rootSite);
+						if (m_activeSite == rootSite)
+						{
+							m_activeSite = null;
+						}
+					}
+				}
 				if (m_activeSite != null)
 				{
 					Control control = m_activeSite as Control;

@@ -17,6 +17,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 
 namespace ParatextImport.ImportTests
 {
+#if RANDYTODO
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Base class for several import test classes
@@ -24,7 +25,7 @@ namespace ParatextImport.ImportTests
 	/// ----------------------------------------------------------------------------------------
 	public class ParatextImportTestsBase : ScrInMemoryLcmTestBase
 	{
-		#region Member variables
+	#region Member variables
 		/// <summary></summary>
 		protected DummyParatextImporter m_importer;
 		/// <summary></summary>
@@ -42,7 +43,7 @@ namespace ParatextImport.ImportTests
 		protected int m_wsAnal;
 		/// <summary></summary>
 		protected ITsTextProps m_ttpAnalWS;
-		#endregion
+	#endregion
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Creates a Back Translation for the stuff in Exodus with the following layout:
@@ -198,7 +199,7 @@ namespace ParatextImport.ImportTests
 			return book;
 		}
 
-		#region Setup/Teardown
+	#region Setup/Teardown
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test fixture setup
@@ -301,9 +302,9 @@ namespace ParatextImport.ImportTests
 			tsPropsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_wsAnal);
 			m_ttpAnalWS = tsPropsBldr.GetTextProps();
 		}
-		#endregion
+	#endregion
 
-		#region Properties
+	#region Properties
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// returns the default vernacular writing system
@@ -323,9 +324,9 @@ namespace ParatextImport.ImportTests
 		{
 			get { return m_wsAnal; }
 		}
-		#endregion
+	#endregion
 
-		#region Helper functions for tests
+	#region Helper functions for tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests that the given run of m_importer.NormalParaStrBldr contains the specified text
@@ -668,6 +669,7 @@ namespace ParatextImport.ImportTests
 		{
 			return CharStyleTextProps(styleName, m_wsVern);
 		}
-		#endregion
+	#endregion
 	}
+#endif
 }

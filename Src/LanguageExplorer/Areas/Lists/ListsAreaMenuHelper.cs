@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,10 +7,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.DetailControls;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas.Lists
 {
@@ -20,73 +20,60 @@ namespace LanguageExplorer.Areas.Lists
 	internal sealed class ListsAreaMenuHelper : IFlexComponent, IDisposable
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
-		private AreaWideMenuHelper _areaWideMenuHelper;
+		private Dictionary<string, IToolUiWidgetManager> _listAreaUiWidgetManagers = new Dictionary<string, IToolUiWidgetManager>();
+		private ISharedEventHandlers _sharedEventHandlers;
 		private IListArea _listArea;
-		private IRecordList _recordList;
-		private ToolStripMenuItem _editMenu;
-		private List<Tuple<ToolStripMenuItem, EventHandler>> _newEditMenusAndHandlers;
-		private ToolStripMenuItem _deleteCustomListToolMenu;
-		private ToolStripMenuItem _insertMenu;
-		private List<Tuple<ToolStripMenuItem, EventHandler>> _newInsertMenusAndHandlers;
+		private IRecordList MyRecordList { get; set; }
+		private DataTree MyDataTree { get; }
 		private ToolStripMenuItem _toolConfigureMenu;
 		private ToolStripMenuItem _configureListMenu;
+		private const string editMenu = "editMenu";
+		private const string insertMenu = "insertMenu";
+		private const string insertToolbar = "insertToolbar";
+		internal const string AddNewPossibilityListItem = "AddNewPossibilityListItem";
+		internal const string AddNewSubPossibilityListItem = "AddNewSubPossibilityListItem";
+		internal const string InsertFeatureType = "InsertFeatureType";
+		internal const string InsertVariantEntryTypeItem = "InsertLexEntryInflType";
+		internal const string InsertVariantEntryTypeSubitem = "InsertLexEntryInflTypeSubtype";
 
-		internal ListsAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IListArea listArea, IRecordList recordList)
+		internal AreaWideMenuHelper MyAreaWideMenuHelper { get; private set; }
+
+		internal ListsAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, DataTree dataTree, IListArea listArea, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+			Guard.AgainstNull(dataTree, nameof(dataTree));
 			Guard.AgainstNull(listArea, nameof(listArea));
 			Guard.AgainstNull(recordList, nameof(recordList));
 
-			_newEditMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>();
-			_newInsertMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>();
 			_majorFlexComponentParameters = majorFlexComponentParameters;
 			_listArea = listArea;
-			_recordList = recordList;
-			_areaWideMenuHelper = new AreaWideMenuHelper(_majorFlexComponentParameters, recordList);
-			// Set up File->Export menu, which is visible and enabled in all list area tools, using the default event handler.
-			_areaWideMenuHelper.SetupFileExportMenu();
+			MyRecordList = recordList;
+			MyDataTree = dataTree;
+			MyAreaWideMenuHelper = new AreaWideMenuHelper(_majorFlexComponentParameters, recordList);
+		}
 
+		internal void Initialize()
+		{
+			// Set up File->Export menu, which is visible and enabled in all list area tools, using the default event handler.
+			MyAreaWideMenuHelper.SetupFileExportMenu();
 			InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 
-			AddCommonEditMenus();
-			// Add common Lists are Insert menus
-			AddCommonInsertMenus();
-			/*
-			Insert toolbar
-				<item command="CmdInsertSemDom" defaultVisible="false" />
-				<item command="CmdDataTree-Insert-SemanticDomain" defaultVisible="false" label="Subdomain" />
+			_listAreaUiWidgetManagers.Add(editMenu, new ListsAreaEditMenuManager(_listArea));
+			_listAreaUiWidgetManagers.Add(insertMenu, new ListsAreaInsertMenuManager(MyDataTree, _listArea));
+			// Add second, so it gets initialized second. The ListsAreaInsertMenuManager instance adds shared event handlers.
+			_listAreaUiWidgetManagers.Add(insertToolbar, new ListsAreaToolbarManager(MyDataTree, _listArea));
 
-				<item command="CmdInsertCustomItem" defaultVisible="false" />
-				<item command="CmdDataTree-Insert-CustomItem" defaultVisible="false" label="Subitem" />
-
-				<item command="CmdInsertPossibility" defaultVisible="false" />
-				<item command="CmdDataTree-Insert-Possibility" defaultVisible="false" label="Subitem" />
-
-				<item command="CmdInsertLexEntryInflType" defaultVisible="false" />
-				<item command="CmdDataTree-Insert-LexEntryInflType" defaultVisible="false" label="Subtype" />
-
-				<item command="CmdInsertLocation" defaultVisible="false" />
-				<item command="CmdDataTree-Insert-Location" defaultVisible="false" label="Subitem" />
-
-				<item command="CmdInsertLexEntryType" defaultVisible="false" />
-				<item command="CmdDataTree-Insert-LexEntryType" defaultVisible="false" label="Subtype" />
-
-				<item command="CmdInsertAnthroCategory" defaultVisible="false" />
-				<item command="CmdDataTree-Insert-AnthroCategory" defaultVisible="false" label="Subcategory" />
-
-				<item command="CmdInsertAnnotationDef" defaultVisible="false" />
-				<item command="CmdInsertMorphType" defaultVisible="false" />
-				<item command="CmdInsertPerson" defaultVisible="false" />
-				<item command="CmdInsertLexRefType" defaultVisible="false" />
-				<item command="CmdInsertFeatureType" defaultVisible="false" />
-			*/
 			/*
 				Tools->Configure: <command id = "CmdConfigureList" label="List..." message="ConfigureList" />
 			*/
 			_toolConfigureMenu = MenuServices.GetToolsConfigureMenu(_majorFlexComponentParameters.MenuStrip);
 			_configureListMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_toolConfigureMenu, ConfigureList_Click, ListResources.ConfigureList, ListResources.ConfigureListTooltip, insertIndex: 0);
 
-			Application.Idle += Application_Idle;
+			// Now, it is fine to finish up the initialization of the managers, since all shared event handlers are in '_sharedEventHandlers'.
+			foreach (var manager in _listAreaUiWidgetManagers.Values)
+			{
+				manager.Initialize(_majorFlexComponentParameters, MyRecordList);
+			}
 		}
 
 		#region Implementation of IPropertyTableProvider
@@ -164,121 +151,39 @@ namespace LanguageExplorer.Areas.Lists
 
 			if (disposing)
 			{
-				Application.Idle -= Application_Idle;
-				_areaWideMenuHelper.Dispose();
-				foreach (var tuple in _newEditMenusAndHandlers)
+				foreach (var manager in _listAreaUiWidgetManagers.Values)
 				{
-					_editMenu.DropDownItems.Remove(tuple.Item1);
-					tuple.Item1.Click -= tuple.Item2;
-					tuple.Item1.Dispose();
+					manager.UnwireSharedEventHandlers();
 				}
-				_newEditMenusAndHandlers.Clear();
-				foreach (var tuple in _newInsertMenusAndHandlers)
+				foreach (var manager in _listAreaUiWidgetManagers.Values)
 				{
-					_insertMenu.DropDownItems.Remove(tuple.Item1);
-					tuple.Item1.Click -= tuple.Item2;
-					tuple.Item1.Dispose();
+					manager.Dispose();
 				}
-				_newInsertMenusAndHandlers.Clear();
-				_toolConfigureMenu.DropDownItems.Remove(_configureListMenu);
-				_configureListMenu.Click -= ConfigureList_Click;
-				_configureListMenu.Dispose();
+				_listAreaUiWidgetManagers.Clear();
+				MyAreaWideMenuHelper.Dispose();
+				_toolConfigureMenu?.DropDownItems.Remove(_configureListMenu);
+				if (_configureListMenu != null)
+				{
+					_configureListMenu.Click -= ConfigureList_Click;
+					_configureListMenu.Dispose();
+				}
 			}
 			_majorFlexComponentParameters = null;
-			_areaWideMenuHelper = null;
+			MyAreaWideMenuHelper = null;
 			_listArea = null;
-			_recordList = null;
-			_editMenu = null;
-			_newEditMenusAndHandlers = null;
-			_deleteCustomListToolMenu = null;
-			_insertMenu = null;
-			_newInsertMenusAndHandlers = null;
+			MyRecordList = null;
 			_toolConfigureMenu = null;
 			_configureListMenu = null;
+			_sharedEventHandlers = null;
+			_listAreaUiWidgetManagers = null;
 
 			_isDisposed = true;
 		}
 		#endregion
 
-		private void AddCommonEditMenus()
-		{
-			_editMenu = MenuServices.GetEditMenu(_majorFlexComponentParameters.MenuStrip);
-			// End of Edit menu: <command id = "CmdDeleteCustomList" label="Delete Custom _List" message="DeleteCustomList" />
-			_deleteCustomListToolMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newEditMenusAndHandlers, _editMenu, DeleteCustomList_Click, ListResources.DeleteCustomList);
-		}
-
-		private void AddCommonInsertMenus()
-		{
-			_insertMenu = MenuServices.GetInsertMenu(_majorFlexComponentParameters.MenuStrip);
-
-			var insertIndex = 0;
-/*
-These all go on the "Insert" menu, but they are tool-specific. Start at 0.
-      <item command="CmdInsertSemDom" defaultVisible="false" />
-      <item command="CmdDataTree-Insert-SemanticDomain" defaultVisible="false" label="Subdomain" />
-
-      <item command="CmdInsertCustomItem" defaultVisible="false" />
-      <item command="CmdDataTree-Insert-CustomItem" defaultVisible="false" label="Subitem" />
-
-      <item command="CmdInsertPossibility" defaultVisible="false" />
-      <item command="CmdDataTree-Insert-Possibility" defaultVisible="false" label="Subitem" />
-
-      <item command="CmdInsertLexEntryInflType" defaultVisible="false" />
-      <item command="CmdDataTree-Insert-LexEntryInflType" defaultVisible="false" label="Subtype" />
-
-      <item command="CmdInsertLocation" defaultVisible="false" />
-      <item command="CmdDataTree-Insert-Location" defaultVisible="false" label="Subitem" />
-
-      <item command="CmdInsertLexEntryType" defaultVisible="false" />
-      <item command="CmdDataTree-Insert-LexEntryType" defaultVisible="false" label="Subtype" />
-
-      <item command="CmdInsertAnthroCategory" defaultVisible="false" />
-      <item command="CmdDataTree-Insert-AnthroCategory" defaultVisible="false" label="Subcategory" />
-
-      <item command="CmdInsertAnnotationDef" defaultVisible="false" />
-      <item command="CmdInsertMorphType" defaultVisible="false" />
-      <item command="CmdInsertPerson" defaultVisible="false" />
-      <item command="CmdInsertLexRefType" defaultVisible="false" />
-      <item command="CmdInsertFeatureType" defaultVisible="false" />
-*/
-			// <item label="-" translate="do not translate" />
-			ToolStripMenuItemFactory.CreateToolStripSeparatorForToolStripMenuItem(_insertMenu, insertIndex++);
-			// <item command="CmdAddCustomList" defaultVisible="false" />
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, AddCustomList_Click, ListResources.AddCustomList, ListResources.AddCustomListTooltip, insertIndex: insertIndex);
-		}
-
-		private void AddCustomList_Click(object sender, EventArgs e)
-		{
-			using (var dlg = new AddCustomListDlg(PropertyTable, Publisher, _majorFlexComponentParameters.LcmCache))
-			{
-				if (dlg.ShowDialog((Form)_majorFlexComponentParameters.MainWindow) == DialogResult.OK)
-				{
-					_listArea.AddCustomList(dlg.NewList);
-				}
-			}
-		}
-
-		private void DeleteCustomList_Click(object sender, EventArgs e)
-		{
-			UndoableUnitOfWorkHelper.Do(ListResources.ksUndoDeleteCustomList, ListResources.ksRedoDeleteCustomList, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () => new DeleteCustomList(_majorFlexComponentParameters.LcmCache).Run((ICmPossibilityList)_recordList.OwningObject));
-			_listArea.RemoveCustomListTool(_listArea.ActiveTool);
-		}
-
-		private void Application_Idle(object sender, EventArgs e)
-		{
-			var inDeletingTerritory = false;
-			var recordListOwningObject = _recordList.OwningObject as ICmPossibilityList;
-			if (recordListOwningObject != null && recordListOwningObject.Owner == null)
-			{
-				inDeletingTerritory = true;
-			}
-			// Only see and use the delete button for the currently selected tool
-			_deleteCustomListToolMenu.Visible = _deleteCustomListToolMenu.Enabled = inDeletingTerritory;
-		}
-
 		private void ConfigureList_Click(object sender, EventArgs e)
 		{
-			var list = (ICmPossibilityList)_recordList.OwningObject;
+			var list = (ICmPossibilityList)MyRecordList.OwningObject;
 			var originalUiName = list.Name.BestAnalysisAlternative.Text;
 			using (var dlg = new ConfigureListDlg(PropertyTable, Publisher, _majorFlexComponentParameters.LcmCache, list))
 			{

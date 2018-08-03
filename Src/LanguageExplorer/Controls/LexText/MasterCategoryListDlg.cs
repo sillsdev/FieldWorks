@@ -9,10 +9,12 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.Code;
 using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.FwUtils.MessageBoxEx;
 using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.Windows.Forms;
 
 namespace LanguageExplorer.Controls.LexText
@@ -30,7 +32,6 @@ namespace LanguageExplorer.Controls.LexText
 		private List<TreeNode> m_nodes = new List<TreeNode>();
 		private bool m_skipEvents;
 		private IPartOfSpeech m_subItemOwner;
-
 		private Label label1;
 		private Label label2;
 		private TreeView m_tvMasterList;
@@ -93,30 +94,30 @@ namespace LanguageExplorer.Controls.LexText
 		///  <summary />
 		public void SetDlginfo(ICmPossibilityList posList, IPropertyTable propertyTable, bool launchedFromInsertMenu, IPartOfSpeech subItemOwner)
 		{
-			m_subItemOwner = subItemOwner; // May be null, which is fine.
+			Guard.AgainstNull(posList, nameof(posList));
+			Guard.AgainstNull(propertyTable, nameof(propertyTable));
+
+			m_subItemOwner = subItemOwner; // Will be null, which is fine, if the new owner is to be the list.
 			m_posList = posList;
 			m_launchedFromInsertMenu = launchedFromInsertMenu;
 			m_propertyTable = propertyTable;
-			if (m_propertyTable != null)
+			// Reset window location.
+			// Get location to the stored values, if any.
+			Point dlgLocation;
+			Size dlgSize;
+			if (m_propertyTable.TryGetValue("masterCatListDlgLocation", out dlgLocation) && m_propertyTable.TryGetValue("masterCatListDlgSize", out dlgSize))
 			{
-				// Reset window location.
-				// Get location to the stored values, if any.
-				Point dlgLocation;
-				Size dlgSize;
-				if (m_propertyTable.TryGetValue("masterCatListDlgLocation", out dlgLocation) && m_propertyTable.TryGetValue("masterCatListDlgSize", out dlgSize))
-				{
-					var rect = new Rectangle(dlgLocation, dlgSize);
-					ScreenHelper.EnsureVisibleRect(ref rect);
-					DesktopBounds = rect;
-					StartPosition = FormStartPosition.Manual;
-				}
-				m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
-				if (m_helpTopicProvider != null)
-				{
-					helpProvider = new HelpProvider { HelpNamespace = m_helpTopicProvider.HelpFile };
-					helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
-					helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
-				}
+				var rect = new Rectangle(dlgLocation, dlgSize);
+				ScreenHelper.EnsureVisibleRect(ref rect);
+				DesktopBounds = rect;
+				StartPosition = FormStartPosition.Manual;
+			}
+			m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			if (m_helpTopicProvider != null)
+			{
+				helpProvider = new HelpProvider { HelpNamespace = m_helpTopicProvider.HelpFile };
+				helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
+				helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			}
 			m_bnHelp.Enabled = (m_helpTopicProvider != null);
 
@@ -394,8 +395,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Cancel, if it is already in the database.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		private void m_tvMasterList_BeforeCheck(object sender, TreeViewCancelEventArgs e)
 		{
 			if (m_skipEvents)
@@ -442,7 +441,6 @@ namespace LanguageExplorer.Controls.LexText
 					SelectedPOS = null;
 					break;
 				case DialogResult.OK:
-				{
 					// Closing with normal selection(s).
 					foreach (var tn in m_nodes)
 					{
@@ -457,46 +455,40 @@ namespace LanguageExplorer.Controls.LexText
 					SelectedPOS = mc2.POS;
 					Debug.Assert(SelectedPOS != null);
 					break;
-				}
 				case DialogResult.Yes:
-				{
 					// Closing via the hotlink.
-					// Do nothing special, except avoid setting m_selPOS to null, as in the default case.
+					// Do nothing special, except avoid setting SelectedPOS to null, as in the default case.
 					break;
-				}
 			}
-
-			if (m_propertyTable != null)
-			{
-				m_propertyTable.SetProperty("masterCatListDlgLocation", Location, true, true);
-				m_propertyTable.SetProperty("masterCatListDlgSize", Size, true, true);
-			}
+			m_propertyTable.SetProperty("masterCatListDlgLocation", Location, true);
+			m_propertyTable.SetProperty("masterCatListDlgSize", Size, true);
 		}
 
-		private void linkLabel1_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
+		private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			if (!m_launchedFromInsertMenu)
 			{
 				MessageBoxExManager.Trigger("CreateNewFromGrammaticalCategoryCatalog");
 			}
-			m_cache.DomainDataByFlid.BeginUndoTask(LexTextControls.ksUndoInsertCategory, LexTextControls.ksRedoInsertCategory);
-			var posFactory = m_cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>();
-			if (m_subItemOwner != null)
+			UndoableUnitOfWorkHelper.Do(LexTextControls.ksUndoInsertCategory, LexTextControls.ksRedoInsertCategory, m_cache.ActionHandlerAccessor, () =>
 			{
-				SelectedPOS = posFactory.Create();
-				m_subItemOwner.SubPossibilitiesOS.Add(SelectedPOS);
-			}
-			else
-			{
-				SelectedPOS = posFactory.Create();
-				m_posList.PossibilitiesOS.Add(SelectedPOS);
-			}
-			m_cache.DomainDataByFlid.EndUndoTask();
+				var posFactory = m_cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>();
+				if (m_subItemOwner != null)
+				{
+					SelectedPOS = posFactory.Create();
+					m_subItemOwner.SubPossibilitiesOS.Add(SelectedPOS);
+				}
+				else
+				{
+					SelectedPOS = posFactory.Create();
+					m_posList.PossibilitiesOS.Add(SelectedPOS);
+				}
+			});
 			DialogResult = DialogResult.Yes;
 			Close();
 		}
 
-		private void m_bnHelp_Click(object sender, System.EventArgs e)
+		private void m_bnHelp_Click(object sender, EventArgs e)
 		{
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, s_helpTopic);
 		}

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,6 +14,7 @@ using SIL.LCModel.Utils;
 
 namespace ParatextImport
 {
+#if RANDYTODO
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Tests for the <see cref="BookMerger"/> class.
@@ -22,7 +23,7 @@ namespace ParatextImport
 	[TestFixture]
 	public class BookMergerTests : BookMergerTestsBase
 	{
-		#region DetectDifferences -Basics
+	#region DetectDifferences -Basics
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the BookMerger.DetectDifferences method when the current book and
@@ -120,9 +121,9 @@ namespace ParatextImport
 			// MoveFirst should return null because there are no diffs.
 			Assert.IsNull(m_bookMerger.Differences.MoveFirst());
 		}
-		#endregion
+	#endregion
 
-		#region DetectDifferences -Empty book(s), paragraph(s), etc.
+	#region DetectDifferences -Empty book(s), paragraph(s), etc.
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the BookMerger.DetectDifferences method when the current book and
@@ -300,9 +301,9 @@ namespace ParatextImport
 			Assert.IsNull(m_bookMerger.Differences.MoveNext());
 		}
 		}
-		#endregion
+	#endregion
 
-		#region DetectDifferences in Verses and Text
+	#region DetectDifferences in Verses and Text
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the BookMerger.DetectDifferences method when the current book and
@@ -1744,9 +1745,9 @@ namespace ParatextImport
 			Assert.AreEqual(ichEndV9Rev, diff.IchLimRev);
 		}
 		}
-		#endregion
+	#endregion
 
-		#region DetectDifferences in Footnotes
+	#region DetectDifferences in Footnotes
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the BookMerger.DetectDifferences
@@ -1811,7 +1812,7 @@ namespace ParatextImport
 		}
 		}
 
-		#region Detect Differences with missing and added footnotes
+	#region Detect Differences with missing and added footnotes
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test DetectDifferences when a footnote is missing in the current
@@ -2148,9 +2149,9 @@ namespace ParatextImport
 			Assert.AreEqual(2, diff.SubDiffsForORCs.Count, "One footnote added to, and another removed from, current");
 			//TODO: Verify subdiff details
 		}
-		#endregion
+	#endregion
 
-		#region Detect Differences Within Footnotes
+	#region Detect Differences Within Footnotes
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the BookMerger.DetectDifferences method when the current book and
@@ -2215,9 +2216,9 @@ namespace ParatextImport
 		//[Test]
 		//public void DetectDifferences_FootnoteCharStyleDifference()
 
-		#endregion
+	#endregion
 
-		#region Detect Differences Where Footnote ORCs Are Adjacent To Other Diffs
+	#region Detect Differences Where Footnote ORCs Are Adjacent To Other Diffs
 		//		/// ------------------------------------------------------------------------------------
 //		/// <summary>
 //		/// Test the BookMerger.DetectDifferences method when the current book has
@@ -2683,10 +2684,10 @@ namespace ParatextImport
 			Assert.AreEqual(8, footnoteDiff.IchLimCurr);
 			Assert.AreEqual(null, footnoteDiff.ParaRev);
 		}
-		#endregion
-		#endregion
+	#endregion
+	#endregion
 
-		#region DetectDifferences: Styles
+	#region DetectDifferences: Styles
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the BookMerger.DetectDifferences method when the currrent and
@@ -3556,9 +3557,9 @@ namespace ParatextImport
 			DiffTestHelper.VerifySubDiffTextCompared(diff, 1, DifferenceType.TextDifference | DifferenceType.ParagraphStyleDifference,
 				null, 0, 0, para2Rev, 0, 1);
 		}
-		#endregion
+	#endregion
 
-		#region DetectDifferences: Verse added/missing
+	#region DetectDifferences: Verse added/missing
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the BookMerger.DetectDifferences
@@ -4048,9 +4049,9 @@ namespace ParatextImport
 			Assert.IsNull(m_bookMerger.Differences.MovePrev());
 		}
 		}
-		#endregion
+	#endregion
 
-		#region DetectDifferences: Scripture Paragraphs added/missing
+	#region DetectDifferences: Scripture Paragraphs added/missing
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Detect differences when paragraphs are added in the current.
@@ -4214,11 +4215,11 @@ namespace ParatextImport
 			// MoveNext should return null because there are no more differences
 			Assert.IsNull(m_bookMerger.Differences.MoveNext());
 		}
-		#endregion
+	#endregion
 
-		#region Scripture Paragraph Split/Merge
+	#region Scripture Paragraph Split/Merge
 
-		#region DetectDiffs: Paragraph Split At Verse Start (boundary)
+	#region DetectDiffs: Paragraph Split At Verse Start (boundary)
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Detect differences when one paragraph is split into two.
@@ -4588,9 +4589,9 @@ namespace ParatextImport
 				para1Curr, para1Curr.Contents.Text.Length, para1Curr.Contents.Text.Length,
 				para1Rev, 28);
 		}
-		#endregion
+	#endregion
 
-		#region Revert: Paragraph split at verse start (boundary)
+	#region Revert: Paragraph split at verse start (boundary)
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the <see cref="BookMerger.ReplaceCurrentWithRevision"/> method when the
@@ -5590,9 +5591,9 @@ namespace ParatextImport
 				para2Rev, 0, para2Rev.Contents.Length);
 		}
 
-		#endregion
+	#endregion
 
-		#region DetectDiffs: Paragraph Split Mid-Verse
+	#region DetectDiffs: Paragraph Split Mid-Verse
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Detect differences when a paragraph is split into two, in mid-verse.
@@ -6037,9 +6038,9 @@ namespace ParatextImport
 			para2Rev = AddParaToMockedSectionContent(sectionRev, ScrStyleNames.NormalParagraph);
 			AddVerse(para2Rev, 0, 4, "They were filled with the Holy Spirit and spoke in tongues.");
 		}
-		#endregion
+	#endregion
 
-		#region Revert: Paragraph split Mid-Verse
+	#region Revert: Paragraph split Mid-Verse
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Setups the current and revision paragraphs when the current is split in the middle of
@@ -6985,9 +6986,9 @@ namespace ParatextImport
 			Assert.AreEqual("4They were filled with the Holy Spirit and spoke in tongues.",
 				newPara.Contents.Text);
 		}
-		#endregion
+	#endregion
 
-		#region DetectDiffs: Paragraph Merge at Verse Start (boundary)
+	#region DetectDiffs: Paragraph Merge at Verse Start (boundary)
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Detect differences when two paragraphs are merged into one, at the start of a verse.
@@ -7090,9 +7091,9 @@ namespace ParatextImport
 			DiffTestHelper.VerifySubDiffTextCompared(diff, 1, DifferenceType.NoDifference,
 				null, 0, 0, para2Rev, 0, 0);
 		}
-		#endregion
+	#endregion
 
-		#region Revert: Paragraph merge at verse start (boundary)
+	#region Revert: Paragraph merge at verse start (boundary)
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the <see cref="BookMerger.ReplaceCurrentWithRevision"/> method when the
@@ -7614,9 +7615,9 @@ namespace ParatextImport
 			m_bookMerger.DetectDifferences_ReCheck();
 			Assert.AreEqual(0, m_bookMerger.Differences.Count);
 		}
-		#endregion
+	#endregion
 
-		#region DetectDiffs: Paragraph Merge Mid-Verse
+	#region DetectDiffs: Paragraph Merge Mid-Verse
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Detect differences when two paragraphs are merged into one, in mid-verse.
@@ -7675,9 +7676,9 @@ namespace ParatextImport
 			DiffTestHelper.VerifySubDiffTextCompared(diff, 1, DifferenceType.NoDifference,
 				null, 0, 0, para2Rev, 0, 0);
 		}
-		#endregion
+	#endregion
 
-		#region Revert: Paragraph merge Mid-Verse
+	#region Revert: Paragraph merge Mid-Verse
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the <see cref="BookMerger.ReplaceCurrentWithRevision"/> method when the
@@ -8694,11 +8695,11 @@ namespace ParatextImport
 			m_bookMerger.DetectDifferences_ReCheck();
 			Assert.AreEqual(0, m_bookMerger.Differences.Count);
 		}
-			#endregion
-		#endregion
+	#endregion
+	#endregion
 
-		#region Multi-Paragraph Verses (e.g. poetry)
-			#region Multi-para Verses: One-To-Many Segments (Para Split)
+	#region Multi-Paragraph Verses (e.g. poetry)
+	#region Multi-para Verses: One-To-Many Segments (Para Split)
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Detect differences when the current has one verse in three paragraphs
@@ -9111,9 +9112,9 @@ namespace ParatextImport
 			m_bookMerger.DetectDifferences_ReCheck();
 			Assert.AreEqual(0, m_bookMerger.Differences.Count);
 		}
-			#endregion
+	#endregion
 
-			#region Multi-para Verses: Many-To-One Segments (Paras Merged)
+	#region Multi-para Verses: Many-To-One Segments (Paras Merged)
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Detect differences when the current has a verse in one paragraph and the
@@ -9676,9 +9677,9 @@ namespace ParatextImport
 			m_bookMerger.DetectDifferences_ReCheck();
 			Assert.AreEqual(0, m_bookMerger.Differences.Count);
 		}
-			#endregion
+	#endregion
 
-			#region Multi-para Verses: Many-To-Many Segments -Detect
+	#region Multi-para Verses: Many-To-Many Segments -Detect
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Detect differences when the current has one verse in three paragraphs
@@ -9991,8 +9992,8 @@ namespace ParatextImport
 			// MoveNext should return null because there are no more differences
 			Assert.IsNull(m_bookMerger.Differences.MoveNext());
 		}
-			#endregion
-			#region Multi-para Verses: Many-To-Many Segments -Revert
+	#endregion
+	#region Multi-para Verses: Many-To-Many Segments -Revert
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the <see cref="BookMerger.ReplaceCurrentWithRevision"/> method when the current
@@ -11347,9 +11348,9 @@ namespace ParatextImport
 			Assert.AreEqual(0, m_bookMerger.Differences.Count);
 		}
 
-			#endregion
+	#endregion
 
-			#region Multi-Paragraph Verse Bridges -Detect
+	#region Multi-Paragraph Verse Bridges -Detect
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the BookMerger.DetectDifferences
@@ -11584,8 +11585,8 @@ namespace ParatextImport
 
 			Assert.IsNull(m_bookMerger.Differences.MoveNext());
 		}
-			#endregion
-			#region Multi-Paragraph Verse Bridges -Revert
+	#endregion
+	#region Multi-Paragraph Verse Bridges -Revert
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the BookMerger.DetectDifferences
@@ -11676,9 +11677,9 @@ namespace ParatextImport
 			m_bookMerger.DetectDifferences_ReCheck();
 			Assert.AreEqual(0, m_bookMerger.Differences.Count);
 		}
-			#endregion
+	#endregion
 
-			#region Multi-para Verses: Split/Merge by Section Break
+	#region Multi-para Verses: Split/Merge by Section Break
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Detect differences when the current has one verse in three paragraphs and
@@ -11918,9 +11919,9 @@ namespace ParatextImport
 			m_bookMerger.DetectDifferences_ReCheck();
 			Assert.AreEqual(0, m_bookMerger.Differences.Count);
 		}
-			#endregion
+	#endregion
 
-			#region Multi-para Verses: Missing
+	#region Multi-para Verses: Missing
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Replaces the Current with the Revision when a a multi paragraph verse in whole paragraphs
@@ -12237,9 +12238,9 @@ namespace ParatextImport
 			m_bookMerger.DetectDifferences_ReCheck();
 			Assert.AreEqual(0, m_bookMerger.Differences.Count);
 		}
-			#endregion
+	#endregion
 
-			#region Multi-para Verses: Added
+	#region Multi-para Verses: Added
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Replaces the Current with the Revision when a a multi paragraph verse is added
@@ -12542,11 +12543,11 @@ namespace ParatextImport
 			m_bookMerger.DetectDifferences_ReCheck();
 			Assert.AreEqual(0, m_bookMerger.Differences.Count);
 		}
-			#endregion
+	#endregion
 
-		#endregion
+	#endregion
 
-		#region DetectDifferences for Moved Verses to Adjacent Paragraphs
+	#region DetectDifferences for Moved Verses to Adjacent Paragraphs
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the BookMerger.DetectDifferences
@@ -12673,9 +12674,9 @@ namespace ParatextImport
 			DiffTestHelper.VerifySubDiffTextCompared(diff, 1, DifferenceType.NoDifference,
 				para2Curr, 0, 0, null, 0, 0);
 		}
-		#endregion
+	#endregion
 
-		#region Detect Differences with missing and added pictures
+	#region Detect Differences with missing and added pictures
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test DetectDifferences when a picture is added to the current
@@ -12751,9 +12752,9 @@ namespace ParatextImport
 			Assert.AreEqual(1, m_bookMerger.Differences.Count);
 			return picPos;
 		}
-		#endregion
+	#endregion
 
-		#region DetectDifferences in Section Heads
+	#region DetectDifferences in Section Heads
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the BookMerger.DetectDifferences
@@ -13121,9 +13122,9 @@ namespace ParatextImport
 			DiffTestHelper.VerifySectionDiff(diff, 01001001, 01001001, DifferenceType.SectionHeadAddedToCurrent,
 				sectionCur2, (IScrTxtPara)sectionRev2.ContentOA[0], 0);
 		}
-		#endregion
+	#endregion
 
-		#region DetectDifferences in Titles
+	#region DetectDifferences in Titles
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the BookMerger.DetectDifferences method when the current book and
@@ -13272,9 +13273,9 @@ namespace ParatextImport
 
 			Assert.IsNull(m_bookMerger.Differences.MoveNext());
 		}
-		#endregion
+	#endregion
 
-		#region DetectDifferences in Minimally Overlapped Scripture Sections
+	#region DetectDifferences in Minimally Overlapped Scripture Sections
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the BookMerger.DetectDifferences method when sections have only
@@ -13479,9 +13480,9 @@ namespace ParatextImport
 			Assert.IsNull(m_bookMerger.Differences.MoveNext());
 		}
 		}
-		#endregion
+	#endregion
 
-		#region DetectDifferences in Intro Sections (text correlation)
+	#region DetectDifferences in Intro Sections (text correlation)
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Detect differences when one intro paragraph is split into two.
@@ -14493,9 +14494,9 @@ namespace ParatextImport
 			DiffTestHelper.VerifySectionDiff(diff, 01001000, 01001000, DifferenceType.SectionAddedToCurrent,
 				section2Cur, para1Rev, para1Rev.Contents.Length);
 		}
-		#endregion
+	#endregion
 
-		#region DetectDifferences for Missing/Added Intro Section
+	#region DetectDifferences for Missing/Added Intro Section
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the BookMerger.DetectDifferences method when entire sections are
@@ -14600,9 +14601,9 @@ namespace ParatextImport
 				new IScrSection[] { section2Rev, section3Rev },
 				para1Curr, para1Curr.Contents.Length);
 		}
-		#endregion
+	#endregion
 
-		#region DetectDifferences for Missing/Added Scripture Sections
+	#region DetectDifferences for Missing/Added Scripture Sections
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the BookMerger.DetectDifferences method when entire sections are
@@ -14958,9 +14959,9 @@ namespace ParatextImport
 			DiffTestHelper.VerifySectionDiff(diff, 01003001, 01003001, DifferenceType.SectionAddedToCurrent,
 				section1Curr, para1Rev, para1Rev.Contents.Length);
 		}
-		#endregion
+	#endregion
 
-		#region DetectDifferences in Split/Combined Scripture Sections
+	#region DetectDifferences in Split/Combined Scripture Sections
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the DetectDifferences method when a section head is added in the Current
@@ -15375,9 +15376,9 @@ namespace ParatextImport
 				para1Curr, ichV12Curr + 2, ichV12Curr + 4,
 				para2Rev, 2);
 		}
-		#endregion
+	#endregion
 
-		#region DetectDifferences in Multiple Overlapped Scripture Sections
+	#region DetectDifferences in Multiple Overlapped Scripture Sections
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the BookMerger.DetectDifferences
@@ -16325,9 +16326,9 @@ namespace ParatextImport
 		{
 			// REVIEW(BryanW): What is scenario 2A?
 		}
-		#endregion
+	#endregion
 
-		#region DetectDifferencesInListOfStTexts
+	#region DetectDifferencesInListOfStTexts
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// This is lower level test than most DetectDifferences test. We specifically call
@@ -16406,9 +16407,9 @@ namespace ParatextImport
 			Assert.IsNull(m_bookMerger.Differences.MoveNext());
 		}
 		}
-		#endregion
+	#endregion
 
-		#region ReplaceCurrentWithRevision WithinPara Tests
+	#region ReplaceCurrentWithRevision WithinPara Tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the <see cref="BookMerger.ReplaceCurrentWithRevision"/> method when the
@@ -17445,9 +17446,9 @@ namespace ParatextImport
 			m_bookMerger.DetectDifferences_ReCheck();
 			Assert.AreEqual(0, m_bookMerger.Differences.Count);
 		}
-		#endregion
+	#endregion
 
-		#region ReplaceCurrentWithRevision: Scripture Paragraphs added/missing
+	#region ReplaceCurrentWithRevision: Scripture Paragraphs added/missing
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the <see cref="BookMerger.ReplaceCurrentWithRevision"/> method when the
@@ -19143,9 +19144,9 @@ namespace ParatextImport
 	//[Test]
 	//public void ReplaceCurWithRev_SectionHead_ParaAdded()
 
-		#endregion
+	#endregion
 
-		#region ReplaceCurrentWithRevision: Intro Paragraph added/missing
+	#region ReplaceCurrentWithRevision: Intro Paragraph added/missing
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the <see cref="BookMerger.ReplaceCurrentWithRevision"/> method when the
@@ -19803,9 +19804,9 @@ namespace ParatextImport
 			m_bookMerger.DetectDifferences_ReCheck();
 			Assert.AreEqual(0, m_bookMerger.Differences.Count);
 		}
-		#endregion
+	#endregion
 
-		#region ReplaceCurrentWithRevision Missing/Added Section Tests
+	#region ReplaceCurrentWithRevision Missing/Added Section Tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the ReplaceCurrentWithRevision method when sections are "missing in current"
@@ -21501,9 +21502,9 @@ namespace ParatextImport
 			m_bookMerger.DetectDifferences_ReCheck();
 			Assert.AreEqual(0, m_bookMerger.Differences.Count);
 		}
-		#endregion
+	#endregion
 
-		#region ReplaceCurrentWithRevision Split/Combined Section Tests
+	#region ReplaceCurrentWithRevision Split/Combined Section Tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the ReplaceCurrentWithRevision method when a section head is missing in the Current
@@ -23108,9 +23109,9 @@ namespace ParatextImport
 			Assert.AreEqual("4Verse four. ", ((IScrTxtPara)sectionCurr2.ContentOA[1]).Contents.Text);
 		}
 
-		#endregion
+	#endregion
 
-		#region ReplaceCurrentWithRevision Split/Combined Section "AddedHeadIsFirst" Tests
+	#region ReplaceCurrentWithRevision Split/Combined Section "AddedHeadIsFirst" Tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the <see cref="BookMerger.ReplaceCurrentWithRevision"/> method when Scripture
@@ -23784,9 +23785,9 @@ namespace ParatextImport
 			//m_bookMerger.DetectDifferences_ReCheck();
 			//Assert.AreEqual(0, m_bookMerger.Differences.Count);
 		}
-		#endregion
+	#endregion
 
-		#region ReplaceCurrentWithRevision empty paragraph Tests
+	#region ReplaceCurrentWithRevision empty paragraph Tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the <see cref="BookMerger.ReplaceCurrentWithRevision"/> method when the section
@@ -24074,9 +24075,9 @@ namespace ParatextImport
 			m_bookMerger.DetectDifferences_ReCheck();
 			Assert.AreEqual(0, m_bookMerger.Differences.Count);
 		}
-		#endregion
+	#endregion
 
-		#region ReplaceCurrentWithRevision Copy Paragraph Tests
+	#region ReplaceCurrentWithRevision Copy Paragraph Tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the IScrTxtPara.ReplacePara() method.
@@ -24161,9 +24162,9 @@ namespace ParatextImport
 			Assert.AreEqual(BackTranslationStatus.Finished.ToString(),
 				footnoteTrans.Status.get_String(btWs).Text);
 		}
-		#endregion
+	#endregion
 
-		#region ReplaceCurWithRev_ParaStyleDifferenceInSubDiff Tests
+	#region ReplaceCurWithRev_ParaStyleDifferenceInSubDiff Tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the <see cref="BookMerger.ReplaceCurrentWithRevision"/> method to ensure that
@@ -24206,9 +24207,9 @@ namespace ParatextImport
 			m_bookMerger.DetectDifferences_ReCheck();
 			Assert.AreEqual(0, m_bookMerger.Differences.Count);
 		}
-		#endregion
+	#endregion
 
-		#region ReplaceCurrentWithRevision Complex Verse Break Differences Tests
+	#region ReplaceCurrentWithRevision Complex Verse Break Differences Tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the <see cref="BookMerger.ReplaceCurrentWithRevision"/> method to ensure that
@@ -24255,9 +24256,9 @@ namespace ParatextImport
 			m_bookMerger.DetectDifferences_ReCheck();
 			Assert.AreEqual(0, m_bookMerger.Differences.Count);
 		}
-		#endregion
+	#endregion
 
-		#region Wickedly evil, straight from the pit of Hades tests
+	#region Wickedly evil, straight from the pit of Hades tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Simulates a complex scenario where multiple paragraph style changes and paragraph
@@ -24324,9 +24325,9 @@ namespace ParatextImport
 			m_bookMerger.DetectDifferences_ReCheck();
 			Assert.AreEqual(0, m_bookMerger.Differences.Count);
 		}
-		#endregion
+	#endregion
 
-		#region Other helper methods
+	#region Other helper methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// AddVerse to a paragraph saving the character offset with the para at the the start
@@ -24430,6 +24431,7 @@ namespace ParatextImport
 		}
 
 
-		#endregion
+	#endregion
 	}
+#endif
 }

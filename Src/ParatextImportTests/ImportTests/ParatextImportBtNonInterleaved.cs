@@ -13,6 +13,7 @@ using SIL.LCModel;
 
 namespace ParatextImport.ImportTests
 {
+#if RANDYTODO
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Tests importing non-interleaved back translations
@@ -810,4 +811,5 @@ namespace ParatextImport.ImportTests
 			AssertEx.RunIsCorrect(tss1, 2, "BT text for verse one", null, m_wsAnal);
 		}
 	}
+#endif
 }

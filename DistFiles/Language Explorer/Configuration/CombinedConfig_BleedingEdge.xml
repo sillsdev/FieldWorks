@@ -109,7 +109,6 @@ so I can look at that in the develop branch.
     <command id="CmdConfigureDictionary" label="Configure {0}" message="ConfigureDictionary" />
     <!-- END include: "Lexicon/areaConfiguration.xml" query="root/commands/*" -->
     <!-- START include: "Words/areaConfiguration.xml" query="root/commands/*" -->
-    <command id="CmdImportWordSet" label="_Import Word Set..." message="ImportWordSet" a10status="DONE" />
     <command id="CmdInsertText" label="New _Text" message="InsertInterlinText" shortcut="Ctrl+T" icon="addNewText">
       <parameters className="StText" />
     </command>
@@ -118,7 +117,6 @@ so I can look at that in the develop branch.
     <command id="CmdAddNote" label="_Note" message="AddNote" shortcut="Ctrl+N" icon="insertNote" />
     <command id="CmdAddWordGlossesToFreeTrans" label="_Word Glosses" message="AddWordGlossesToFreeTrans" shortcut="Enter" />
     <command id="CmdGuessWordBreaks" label="_Guess Word Breaks" message="GuessWordBreaks" />
-    <command id="CmdParse" label="_Parse" message="ReParse" a10status="NOT USED/IMPLEMENTED" />
     <command id="CmdApproveAll" label="Approve All" message="ApproveAll" icon="approveAll" />
     <command id="CmdApprove" label="Approve and _Stay" message="ApproveAndStayPut" shortcut="Ctrl+S" />
     <command id="CmdApproveAndMoveNext" label="_Approve and Move Next" message="ApproveAndMoveNext" shortcut="Enter" icon="approveAndMoveNext" />
@@ -128,12 +126,8 @@ so I can look at that in the develop branch.
     <command id="CmdBrowseMoveNextSameLine" label="Move Next, _Same Line" message="BrowseMoveNextSameLine" shortcut="Shift+Ctrl+Enter" />
     <command id="CmdMoveFocusBoxRight" label="Move _Right" message="MoveFocusBoxRight" shortcut="Ctrl+Right" />
     <command id="CmdMoveFocusBoxLeft" label="Move _Left" message="MoveFocusBoxLeft" shortcut="Ctrl+Left" />
-    <command id="CmdBundleDown" label="Move _Down" message="BundleDown" shortcut="Ctrl+Down" a10status="NOT USED/IMPLEMENTED" />
-    <command id="CmdBundleUp" label="Move _Up" message="BundleUp" shortcut="Ctrl+Up" a10status="NOT USED/IMPLEMENTED" />
     <command id="CmdMoveFocusBoxRightNc" label="Move _Right" message="MoveFocusBoxRightNc" shortcut="Shift+Ctrl+Right" />
     <command id="CmdMoveFocusBoxLeftNc" label="Move _Left" message="MoveFocusBoxLeftNc" shortcut="Shift+Ctrl+Left" />
-    <command id="CmdBundleDownNc" label="Move _Down" message="BundleDownNc" shortcut="Ctrl+Shift+Down" a10status="NOT USED/IMPLEMENTED" />
-    <command id="CmdBundleUpNc" label="Move _Up" message="BundleUpNc" shortcut="Ctrl+Shift+Up" a10status="NOT USED/IMPLEMENTED" />
     <command id="CmdLastBundle" label="Last Word" message="LastBundle" shortcut="Ctrl+End" />
     <command id="CmdFirstBundle" label="First Word" message="FirstBundle" shortcut="Ctrl+Home" />
     <command id="CmdOpenCombo" label="Open Combo" message="OpenCombo" shortcut="Alt+Down" />
@@ -360,7 +354,7 @@ so I can look at that in the develop branch.
     <command id="CmdInsertSubsubrecord" label="Subrecord of subrecord" message="InsertItemInVector" icon="nbkRecord">
       <params className="RnGenericRec" subrecord="true" subsubrecord="true" />
     </command>
-    <command id="CmdGoToRecord" label="_Find Record..." message="GotoRecord" icon="goToRecord" shortcut="Ctrl+F" a10status="Defined here, but used in Main.xml">
+    <command id="CmdGoToRecord" label="_Find Record..." message="GotoRecord" icon="goToRecord" shortcut="Ctrl+F" >
       <parameters title="Go To Record" formlabel="Go _To..." okbuttonlabel="_Go" />
     </command>
     <command id="CmdDataTree-Insert-Subrecord" label="Insert _Subrecord" message="InsertItemInVector">
@@ -394,38 +388,17 @@ so I can look at that in the develop branch.
     <command id="CmdDataTree-Delete-Question" label="Delete Question" message="DataTreeDelete" icon="Delete">
       <parameters field="Questions" className="CmDomainQ" />
     </command>
-    <command id="CmdDataTree-Insert-Possibility" label="Insert subitem" message="DataTreeInsert" icon="AddSubItem">
-      <parameters field="SubPossibilities" className="CmPossibility" />
-    </command>
     <command id="CmdDataTree-Delete-Possibility" label="Delete subitem and its subitems" message="DataTreeDelete" icon="Delete">
       <parameters field="SubPossibilities" className="CmPossibility" />
     </command>
-    <command id="CmdDataTree-Insert-CustomItem" label="Insert subitem" message="DataTreeInsert" icon="AddSubItem">
-      <parameters field="SubPossibilities" className="CmCustomItem" />
-    </command>
     <command id="CmdDataTree-Delete-CustomItem" label="Delete subitem and its subitems" message="DataTreeDelete" icon="Delete">
       <parameters field="SubPossibilities" className="CmCustomItem" />
-    </command>
-    <command id="CmdDataTree-Insert-SemanticDomain" label="Insert subdomain" message="DataTreeInsert" icon="AddSubItem">
-      <parameters field="SubPossibilities" className="CmSemanticDomain" />
     </command>
     <command id="CmdDataTree-Insert-AnnotationDefn" label="Insert Annotation Definition" message="DataTreeInsert" icon="AddSubItem">
       <parameters field="SubPossibilities" className="CmAnnotationDefn" />
     </command>
     <command id="CmdDataTree-Insert-MorphType" label="Insert Morpheme Type" message="DataTreeInsert" icon="AddSubItem">
       <parameters field="SubPossibilities" className="MoMorphType" />
-    </command>
-    <command id="CmdDataTree-Insert-LexEntryInflType" label="Insert Subtype" message="DataTreeInsert" icon="AddSubItem">
-      <parameters field="SubPossibilities" className="LexEntryInflType" />
-    </command>
-    <command id="CmdDataTree-Insert-LexEntryType" label="Insert Subtype" message="DataTreeInsert" icon="AddSubItem">
-      <parameters field="SubPossibilities" className="LexEntryType" />
-    </command>
-    <command id="CmdDataTree-Insert-AnthroCategory" label="Insert subcategory" message="DataTreeInsert" icon="AddSubItem">
-      <parameters field="SubPossibilities" className="CmAnthroItem" />
-    </command>
-    <command id="CmdDataTree-Insert-Location" label="Insert subitem" message="DataTreeInsert" icon="AddSubItem">
-      <parameters field="SubPossibilities" className="CmLocation" />
     </command>
     <command id="CmdDataTree-Insert-ReversalSubPOS" label="Insert Reversal Subcategory" message="DataTreeInsert">
       <parameters field="SubPossibilities" className="PartOfSpeech" />
@@ -474,42 +447,6 @@ so I can look at that in the develop branch.
 	<command id="CmdDuplicateFeatureType" label="_Feature Type" message="DuplicateItemInVector" icon="Copy">
 		<params className="FsFeatStrucType" noCopy="featureTypes"/>
 	</command>
-    <command id="CmdInsertSemDom" label="_Semantic Domain" message="InsertItemInVector" icon="AddItem">
-      <params className="CmSemanticDomain" />
-    </command>
-    <command id="CmdInsertAnnotationDef" label="_Annotation Definition" message="InsertItemInVector" icon="AddItem">
-      <params className="CmAnnotationDefn" />
-    </command>
-    <command id="CmdInsertPossibility" label="_Item" message="InsertItemInVector" icon="AddItem">
-      <params className="CmPossibility" restrictFromClerkID="ProdRestrict" />
-    </command>
-    <command id="CmdInsertCustomItem" label="_Item" message="InsertItemInVector" icon="AddItem">
-      <params className="CmCustomItem" />
-    </command>
-    <command id="CmdInsertMorphType" label="_Morph Type" message="InsertItemInVector" icon="AddItem">
-      <params className="MoMorphType" />
-    </command>
-    <command id="CmdInsertAnthroCategory" label="Anthropology _Category" message="InsertItemInVector" icon="AddItem">
-      <params className="CmAnthroItem" />
-    </command>
-    <command id="CmdInsertPerson" label="_Person" message="InsertItemInVector" icon="AddItem">
-      <params className="CmPerson" />
-    </command>
-    <command id="CmdInsertLocation" label="_Location" message="InsertItemInVector" icon="AddItem">
-      <params className="CmLocation" />
-    </command>
-    <command id="CmdInsertLexRefType" label="_Lexical Reference Type" message="InsertItemInVector" icon="AddItem">
-      <params className="LexRefType" />
-    </command>
-    <command id="CmdInsertFeatureType" label="_Feature Type" message="InsertItemInVector" icon="AddItem">
-      <params className="FsFeatStrucType" />
-    </command>
-    <command id="CmdInsertLexEntryInflType" label="_Type" message="InsertItemInVector" icon="AddItem">
-      <params className="LexEntryInflType" />
-    </command>
-    <command id="CmdInsertLexEntryType" label="_Type" message="InsertItemInVector" icon="AddItem">
-      <params className="LexEntryType" />
-    </command>
     <!-- END include: "Lists/areaConfiguration.xml" query="root/commands/*" -->
     <command id="CmdHelpDemoWelcome" label="_Welcome" message="HelpDemoMovies">
       <parameters file="1-welcome" />
@@ -576,7 +513,7 @@ so I can look at that in the develop branch.
   </commands>
   <!-- ************************ menus *********************** -->
   <menubar>
-    <menu id="Edit" label="_Edit" b4InsertMenu="true" a10status="PARTIALLY_DONE">
+    <menu id="Edit" label="_Edit" b4InsertMenu="true" >
       <!-- START include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->
       <item command="CmdGoToRecord" />
       <!-- END include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->
@@ -587,7 +524,7 @@ so I can look at that in the develop branch.
       <item command="CmdGoToWfiWordform" defaultVisible="false" />
       <!-- END include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->
     </menu>
-    <menu id="View" label="_View" b4InsertMenu="true" a10status="PARTIALLY_DONE">
+    <menu id="View" label="_View" b4InsertMenu="true" >
       <item label="Invisible Spaces" boolProperty="ShowInvisibleSpaces" defaultVisible="false" settingsGroup="local" />
       <item label="-" translate="do not translate" />
       <menu id="FilterChoices" label="_Filters" list="FiltersList" behavior="singlePropertyAtomicValue" property="currentFilterForRecordClerk_THISCHANGES" settingsGroup="local" />
@@ -595,9 +532,8 @@ so I can look at that in the develop branch.
       <item command="CmdChooseTexts" defaultVisible="false" />
       <!-- END include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*" -->
     </menu>
-    <menu id="Data" label="_Data" a10status="PARTIALLY_DONE">
+    <menu id="Data" label="_Data" >
       <!-- START include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Data']/*" -->
-      <item command="CmdParse" defaultVisible="false" a10status="NOT USED/IMPLEMENTED" />
       <item label="-" translate="do not translate" />
       <item command="CmdApproveAndMoveNext" defaultVisible="false" />
       <item command="CmdApproveForWholeTextAndMoveNext" defaultVisible="false" />
@@ -623,7 +559,7 @@ so I can look at that in the develop branch.
       <item command="CmdApproveAll" defaultVisible="false" />
       <!-- END include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Data']/*" -->
     </menu>
-    <menu id="Insert" label="_Insert" a10status="DONE">
+    <menu id="Insert" label="_Insert" >
       <!-- START include: "Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*" -->
       <item command="CmdInsertReversalEntry" defaultVisible="false" />
       <!-- END include: "Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*" -->
@@ -634,8 +570,6 @@ so I can look at that in the develop branch.
       <item command="CmdAddWordGlossesToFreeTrans" defaultVisible="false" />
       <item label="Click Inserts Invisible Space" boolProperty="ClickInvisibleSpace" defaultVisible="false" settingsGroup="local" icon="zeroWidth" />
       <item command="CmdGuessWordBreaks" defaultVisible="false" />
-      <item label="-" translate="do not translate" a10status="DONE" />
-      <item command="CmdImportWordSet" defaultVisible="false" a10status="DONE" />
       <item command="CmdInsertHumanApprovedAnalysis" defaultVisible="false" a10status="PLACEHOLDER" />
       <!-- END include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*" -->
       <!-- START include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*" -->
@@ -644,27 +578,6 @@ so I can look at that in the develop branch.
       <item command="CmdInsertSubsubrecord" defaultVisible="false" />
       <item command="CmdAddToLexicon" label="Entry..." defaultVisible="false" />
       <!-- END include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*" -->
-      <!-- START include: "Lists/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*" -->
-      <item command="CmdInsertSemDom" defaultVisible="false" />
-      <item command="CmdDataTree-Insert-SemanticDomain" defaultVisible="false" label="Subdomain" />
-      <item command="CmdInsertAnnotationDef" defaultVisible="false" />
-      <item command="CmdInsertPossibility" defaultVisible="false" />
-      <item command="CmdInsertCustomItem" defaultVisible="false" />
-      <item command="CmdInsertMorphType" defaultVisible="false" />
-      <item command="CmdInsertLexEntryInflType" defaultVisible="false" />
-      <item command="CmdInsertLexEntryType" defaultVisible="false" />
-      <item command="CmdDataTree-Insert-LexEntryInflType" defaultVisible="false" label="Subtype" />
-      <item command="CmdDataTree-Insert-LexEntryType" defaultVisible="false" label="Subtype" />
-      <item command="CmdInsertAnthroCategory" defaultVisible="false" />
-      <item command="CmdDataTree-Insert-AnthroCategory" defaultVisible="false" label="Subcategory" />
-      <item command="CmdInsertPerson" defaultVisible="false" />
-      <item command="CmdInsertLocation" defaultVisible="false" />
-      <item command="CmdDataTree-Insert-Location" defaultVisible="false" label="Subitem" />
-      <item command="CmdInsertLexRefType" defaultVisible="false" />
-      <item command="CmdInsertFeatureType" defaultVisible="false" />
-      <item command="CmdDataTree-Insert-Possibility" defaultVisible="false" label="Subitem" />
-      <item command="CmdDataTree-Insert-CustomItem" defaultVisible="false" label="Subitem" />
-      <!-- END include: "Lists/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*" -->
       <!-- START include: "Grammar/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*" -->
       <item command="CmdInsertPOS" defaultVisible="false" />
       <item command="CmdDataTree-Insert-POS-SubPossibilities" defaultVisible="false" label="Subcategory..." />
@@ -696,8 +609,8 @@ so I can look at that in the develop branch.
       <item command="CmdInsertACPGroup" defaultVisible="false" />
       <!-- END include: "Grammar/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*" -->
     </menu>
-    <menu id="Tools" label="_Tools" a10status="DONE">
-      <menu label="Configure" a10status="DONE">
+    <menu id="Tools" label="_Tools" >
+      <menu label="Configure" >
         <!-- START include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*" -->
         <item command="CmdConfigureInterlinear" defaultVisible="false" />
         <!-- END include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*" -->
@@ -785,7 +698,7 @@ so I can look at that in the develop branch.
       <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-PhonologicalRuleEdit" defaultVisible="true" settingsGroup="local" />
     </menu>
     <menu id="PaneBar-ShowHiddenFields-AdhocCoprohibitionRuleEdit" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-AdhocCoprohibitionRuleEdit" defaultVisible="true" settingsGroup="local" a10status="AUGEMNTSPELLING" />
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-AdhocCoprohibitionRuleEdit" defaultVisible="true" settingsGroup="local" a10status="AUGMENTSPELLING" />
     </menu>
     <menu id="PaneBar-ShowHiddenFields-phonologicalFeaturesAdvancedEdit" label="">
       <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-phonologicalFeaturesAdvancedEdit" defaultVisible="true" settingsGroup="local" />
@@ -918,7 +831,7 @@ so I can look at that in the develop branch.
       </menu>
     </menu>
     <menu id="PaneBar-ReversalEntryDetail" label="">
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-reversalEditComplete" defaultVisible="true" settingsGroup="local" a10status="Prop renamed from ShowHiddenFields-reversalToolEditComplete" />
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-reversalEditComplete" defaultVisible="true" settingsGroup="local" />
     </menu>
     <menu id="PaneBar-ShowFailingItems-Classified" label="">
       <item label="Show Unused Items" boolProperty="ShowFailingItems-lexiconClassifiedDictionary" defaultVisible="true" settingsGroup="local" />
@@ -1266,7 +1179,7 @@ so I can look at that in the develop branch.
   </contextMenus>
   <!-- ************************ toolbars *********************** -->
   <toolbars>
-    <toolbar id="Insert" a10status="PARTIALLY_DONE">
+    <toolbar id="Insert" >
       <!-- START include: "Lexicon/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item" -->
       <item command="CmdInsertReversalEntry" defaultVisible="false" />
       <item command="CmdGoToReversalEntry" defaultVisible="false" />
@@ -1288,25 +1201,6 @@ so I can look at that in the develop branch.
       <item command="CmdLexiconLookup" defaultVisible="false" />
       <!-- END include: "Notebook/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item" -->
       <!-- START include: "Lists/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item" -->
-      <item command="CmdInsertSemDom" defaultVisible="false" />
-      <item command="CmdDataTree-Insert-SemanticDomain" defaultVisible="false" label="Subdomain" />
-      <item command="CmdInsertAnnotationDef" defaultVisible="false" />
-      <item command="CmdInsertPossibility" defaultVisible="false" />
-      <item command="CmdInsertCustomItem" defaultVisible="false" />
-      <item command="CmdInsertMorphType" defaultVisible="false" />
-      <item command="CmdInsertLexEntryInflType" defaultVisible="false" />
-      <item command="CmdInsertLexEntryType" defaultVisible="false" />
-      <item command="CmdDataTree-Insert-LexEntryInflType" defaultVisible="false" label="Subtype" />
-      <item command="CmdDataTree-Insert-LexEntryType" defaultVisible="false" label="Subtype" />
-      <item command="CmdInsertAnthroCategory" defaultVisible="false" />
-      <item command="CmdDataTree-Insert-AnthroCategory" defaultVisible="false" label="Subcategory" />
-      <item command="CmdInsertPerson" defaultVisible="false" />
-      <item command="CmdInsertLocation" defaultVisible="false" />
-      <item command="CmdDataTree-Insert-Location" defaultVisible="false" label="Subitem" />
-      <item command="CmdInsertLexRefType" defaultVisible="false" />
-      <item command="CmdInsertFeatureType" defaultVisible="false" />
-      <item command="CmdDataTree-Insert-Possibility" defaultVisible="false" label="Subitem" />
-      <item command="CmdDataTree-Insert-CustomItem" defaultVisible="false" label="Subitem" />
       <item command="CmdDuplicateSemDom" defaultVisible="false"/>
       <item command="CmdDuplicateAnnotationDef" defaultVisible="false"/>
       <item command="CmdDuplicatePossibility" defaultVisible="false"/>
@@ -1344,7 +1238,7 @@ so I can look at that in the develop branch.
       <item command="CmdInsertACPGroup" defaultVisible="false" />
       <!-- END include: "Grammar/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item" -->
     </toolbar>
-    <toolbar id="View" a10status="PARTIALLY_DONE">
+    <toolbar id="View" >
       <!-- START include: "Words/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='View']/item" -->
       <item command="CmdChooseTexts" defaultVisible="false" />
       <!-- END include: "Words/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='View']/item" -->
@@ -1397,19 +1291,7 @@ so I can look at that in the develop branch.
       <!-- Insert menu -->
       <item id="CmdInsertGenericMajorEntry">Create a new entry and add it to the lexicon.</item>
       <item id="CmdInsertPOS">Add a new category.</item>
-      <item id="CmdInsertAnnotationDef">Create a new annotation definition.</item>
-      <item id="CmdInsertSemDom">Create a new semantic domain.</item>
-      <item id="CmdInsertPossibility">Create a new {0}.</item>
-      <item id="CmdInsertCustomItem">Create a new {0}.</item>
       <item id="CmdInsertExceptionFeature">Create a new {0}.</item>
-      <item id="CmdInsertMorphType">Create a new morpheme type.</item>
-      <item id="CmdInsertLexEntryType">Create a new {0}.</item>
-      <item id="CmdDataTree-Insert-LexEntryType">Insert a new subtype in this type.</item>
-      <item id="CmdInsertVariant" a10status="DONE">Add a Variant Form to this entry</item>
-      <item id="CmdInsertAnthroCategory">Create a new anthropology category.</item>
-      <item id="CmdInsertLocation">Create a new location.</item>
-      <item id="CmdInsertPerson">Add a new person.</item>
-      <item id="CmdInsertLexRefType">Create a new lexical relation.</item>
       <item id="CmdInsertEndocentricCompound">Create a new headed compound.</item>
       <item id="CmdInsertExocentricCompound">Create a new non-headed compound.</item>
       <item id="CmdInsertPhoneme">Create a new phoneme.</item>
@@ -1421,22 +1303,14 @@ so I can look at that in the develop branch.
       <item id="CmdInsertMorphemeACP">Create a rule to prevent morphemes from co-occurring.</item>
       <item id="CmdInsertAllomorphACP">Create a rule to prevent allomorphs from co-occurring.</item>
       <item id="CmdInsertACPGroup">Create a group of ad hoc rules.</item>
-      <item id="CmdImportWordSet">Import a set of words in a file and give the set a name.</item>
       <item id="CmdAddNote">Insert a note.</item>
-      <item id="CmdChooseTexts" a10status="DONE">Choose texts to display and use.</item>
       <item id="CmdInsertStemAllomorph">Add an allomorph of a stem.</item>
       <item id="CmdInsertAffixAllomorph">Add an allomorph of an affix.</item>
       <item id="CmdInsertText">Add a new text to the corpus.</item>
-      <item id="CmdInsertFeatureType">Create a new feature type.</item>
       <item id="CmdInsertPhonologicalClosedFeature">Add a phonological feature.</item>
       <item id="CmdInsertClosedFeature">Add a feature.</item>
       <item id="CmdInsertComplexFeature">Add a complex feature.</item>
       <item id="CmdDataTree-Insert-POS-SubPossibilities">Add a subcategory...</item>
-      <item id="CmdDataTree-Insert-AnthroCategory">Insert a subcategory in this anthropology category.</item>
-      <item id="CmdDataTree-Insert-SemanticDomain">Insert a subdomain in this semantic domain.</item>
-      <item id="CmdDataTree-Insert-Location">Insert a subitem in this location.</item>
-      <item id="CmdDataTree-Insert-Possibility">Insert a subitem in this item.</item>
-      <item id="CmdDataTree-Insert-CustomItem">Insert a subitem in this item.</item>
       <item id="CmdInsertRecord">Create a new Record in your Notebook.</item>
       <item id="CmdInsertSubrecord">Create a Subrecord in your Notebook.</item>
       <item id="ClickInvisibleSpace">Turn on mode in which a click inserts an invisible, zero-width space.</item>

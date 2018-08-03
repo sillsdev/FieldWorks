@@ -10,6 +10,7 @@ using SIL.LCModel.DomainServices;
 
 namespace ParatextImport
 {
+#if RANDYTODO
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	///
@@ -744,4 +745,5 @@ namespace ParatextImport
 		}
 
 	}
+#endif
 }

@@ -11,6 +11,7 @@ using SIL.LCModel.DomainServices;
 
 namespace ParatextImport.ImportTests
 {
+#if RANDYTODO
 	/// ---------------------------------------------------------------------------------------
 	/// <summary>
 	/// ImportStyleProxyTests class to test ImportStyleProxy
@@ -257,4 +258,5 @@ namespace ParatextImport.ImportTests
 		}
 		#endregion
 	}
+#endif
 }

@@ -15,6 +15,7 @@ using SIL.LCModel.DomainServices;
 
 namespace ParatextImport.ImportTests
 {
+#if RANDYTODO
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Tests importing interleaved back translations
@@ -23,7 +24,7 @@ namespace ParatextImport.ImportTests
 	[TestFixture]
 	public class ParatextImportBtInterleaved: ParatextImportTestsBase
 	{
-		#region Setup
+	#region Setup
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes import settings (mappings and options) for "Other" type of import.
@@ -40,7 +41,7 @@ namespace ParatextImport.ImportTests
 				ScrStyleNames.NormalFootnoteParagraph, null, null));
 
 		}
-		#endregion
+	#endregion
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -3352,4 +3353,5 @@ namespace ParatextImport.ImportTests
 			m_importer.FinalizeImport();
 		}
 	}
+#endif
 }

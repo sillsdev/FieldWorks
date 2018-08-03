@@ -61,6 +61,35 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add a new category...(CTRL+I).
+        /// </summary>
+        internal static string Add_a_new_category {
+            get {
+                return ResourceManager.GetString("Add_a_new_category", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon AddItem {
+            get {
+                object obj = ResourceManager.GetObject("AddItem", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon AddSubItem {
+            get {
+                object obj = ResourceManager.GetObject("AddSubItem", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to All Analysis then all Vernacular Writing Systems.
         /// </summary>
         internal static string AllAnalysisVernacularWs {
@@ -120,6 +149,15 @@ namespace LanguageExplorer.Areas {
         internal static string Analysis {
             get {
                 return ResourceManager.GetString("Analysis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Category....
+        /// </summary>
+        internal static string Category {
+            get {
+                return ResourceManager.GetString("Category", resourceCulture);
             }
         }
         
@@ -1183,15 +1221,6 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Redo Insert {0}.
-        /// </summary>
-        internal static string ksRuleRedoInsert {
-            get {
-                return ResourceManager.GetString("ksRuleRedoInsert", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Redo Remove from Rule.
         /// </summary>
         internal static string ksRuleRedoRemove {
@@ -1206,15 +1235,6 @@ namespace LanguageExplorer.Areas {
         internal static string ksRuleRedoUpdateEnv {
             get {
                 return ResourceManager.GetString("ksRuleRedoUpdateEnv", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo Insert {0}.
-        /// </summary>
-        internal static string ksRuleUndoInsert {
-            get {
-                return ResourceManager.GetString("ksRuleUndoInsert", resourceCulture);
             }
         }
         
@@ -1770,6 +1790,15 @@ namespace LanguageExplorer.Areas {
         internal static string Show_Wordform_in_Concordance {
             get {
                 return ResourceManager.GetString("Show_Wordform_in_Concordance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Subcategory....
+        /// </summary>
+        internal static string Subcategory {
+            get {
+                return ResourceManager.GetString("Subcategory", resourceCulture);
             }
         }
         

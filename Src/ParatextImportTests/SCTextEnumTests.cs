@@ -21,6 +21,7 @@ using SIL.LCModel.DomainServices;
 
 namespace ParatextImport
 {
+#if RANDYTODO
 	#region DummyEncConverter class
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -29,7 +30,7 @@ namespace ParatextImport
 	/// ----------------------------------------------------------------------------------------
 	public class DummyEncConverter : IEncConverter
 	{
-		#region Methods we care about
+	#region Methods we care about
 		/// <summary>
 		/// The only method we really care about for testing
 		/// </summary>
@@ -39,9 +40,9 @@ namespace ParatextImport
 		{
 			return sInput.ToUpper();
 		}
-		#endregion
+	#endregion
 
-		#region Members we don't care about
+	#region Members we don't care about
 		/// <summary></summary>
 		public bool DirectionForward
 		{
@@ -247,7 +248,7 @@ namespace ParatextImport
 			get { return m_fIsInRepository; }
 			set { m_fIsInRepository = value; }
 		}
-		#endregion
+	#endregion
 	}
 	#endregion
 
@@ -260,11 +261,11 @@ namespace ParatextImport
 	[TestFixture]
 	public class SCTextEnumTests : ScrInMemoryLcmTestBase
 	{
-		#region data members
+	#region data members
 		private IScrImportSet m_settings;
 		private IEncConverters m_converters;
 		private MockFileOS m_fileOs;
-		#endregion
+	#endregion
 
 		/// <summary>
 		/// Override to end the undoable UOW, Undo everything, and 'commit',
@@ -295,7 +296,7 @@ namespace ParatextImport
 			FileUtils.Manager.SetFileAdapter(m_fileOs);
 		}
 
-		#region Private helper methods
+	#region Private helper methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Helper method to get a TextEnum ready to read
@@ -323,9 +324,9 @@ namespace ParatextImport
 				return Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			}
 		}
-		#endregion
+	#endregion
 
-		#region Tests for normal operation
+	#region Tests for normal operation
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// This test reads a portion of a book
@@ -2165,9 +2166,9 @@ namespace ParatextImport
 			Assert.AreEqual("|r", textSeg.Marker);
 			Assert.AreEqual(" nice test. ", textSeg.Text);
 		}
-		#endregion
+	#endregion
 
-		#region Error reporting tests
+	#region Error reporting tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test that we get the proper error when a data file has been deleted.
@@ -2279,7 +2280,8 @@ namespace ParatextImport
 
 			Assert.AreEqual(7, text.CurrentLineNumber);
 		}
-		#endregion
+	#endregion
 	}
 	#endregion
+#endif
 }

@@ -12,6 +12,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 
 namespace ParatextImport
 {
+#if RANDYTODO
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Tests for the <see cref="Cluster"/>,  <see cref="ClusterListHelper"/>,
@@ -33,7 +34,7 @@ namespace ParatextImport
 
 		private ITsString m_tssVerse; // text to include in a verse
 
-		#region Setup
+	#region Setup
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -62,9 +63,9 @@ namespace ParatextImport
 
 			base.TestTearDown();
 		}
-		#endregion
+	#endregion
 
-		#region Section Overlap Cluster tests
+	#region Section Overlap Cluster tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the ClusterListHelper.DetermineSectionOverlapClusters method for sections
@@ -693,9 +694,9 @@ namespace ParatextImport
 			VerifySectionCluster(clusterList[0],
 				01001001, 01008001, ClusterType.MatchedItems, section1Curr, section1Rev);
 		}
-		#endregion
+	#endregion
 
-		#region Section Head Correlation Tests
+	#region Section Head Correlation Tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the <see cref="SectionHeadCorrelationHelper.DetermineSectionHeadCorrelationClusters"/>
@@ -850,9 +851,9 @@ namespace ParatextImport
 			VerifySectionCluster(correlationList[2],
 				01001022, 01001040, ClusterType.MatchedItems, section2Cur, section2Rev);
 		}
-		#endregion
+	#endregion
 
-		#region ScrVerse OverLap Cluster tests
+	#region ScrVerse OverLap Cluster tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the <see cref="ClusterListHelper.DetermineScrVerseOverlapClusters"/> method for
@@ -1250,7 +1251,7 @@ namespace ParatextImport
 				01001004, 01001004, ClusterType.MissingInCurrent, null, scrVersesRev[4], 4);
 		}
 
-		#region Stanza Break tests
+	#region Stanza Break tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the <see cref="ClusterListHelper.DetermineScrVerseOverlapClusters"/> method for
@@ -1733,11 +1734,11 @@ namespace ParatextImport
 			VerifyScrVerseCluster(clusterList[2],
 				01001002, 01001002, ClusterType.MissingInCurrent, null, scrVersesRev[1], 1);
 		}
-		#endregion
+	#endregion
 
-		#endregion
+	#endregion
 
-		#region Helper Methods - Verify Cluster
+	#region Helper Methods - Verify Cluster
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Verifies expected characteristics of any kind of cluster.
@@ -2062,6 +2063,7 @@ namespace ParatextImport
 			else
 				Assert.Fail("Unhandled expected type.");
 		}
-		#endregion
+	#endregion
 	}
+#endif
 }

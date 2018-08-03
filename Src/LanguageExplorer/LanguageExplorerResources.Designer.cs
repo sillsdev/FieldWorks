@@ -473,6 +473,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Insert {0}.
+        /// </summary>
+        internal static string Insert_0 {
+            get {
+                return ResourceManager.GetString("Insert_0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to basic.
         /// </summary>
         internal static string kBasicFailureFileContents {

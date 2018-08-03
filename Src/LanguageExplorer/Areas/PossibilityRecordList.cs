@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -50,52 +49,30 @@ namespace LanguageExplorer.Areas
 
 		protected override ClassAndPropInfo GetMatchingClass(string className)
 		{
-			// A possibility list only allows one type of possibility to be owned in the list.
-			var pssl = OwningList;
-			var possClass = pssl.ItemClsid;
-			var sPossClass = VirtualListPublisher.MetaDataCache.GetClassName(possClass);
+			// With one exception (see below) a possibility list only allows one type of possibility to be owned in the list.
+			var owningPossibilityList = OwningList;
+			var owningPossibilityListClass = VirtualListPublisher.MetaDataCache.GetClassName(owningPossibilityList.ItemClsid);
 			// for the special case of the VariantEntryTypes list, allow inserting a LexEntryInflType object
 			// as long as the currently selected object has a parent of that class.
-			if (m_owningObject.Guid == new Guid(LangProjectTags.kguidLexVariantTypes))
+			// NB: m_owningObject is an instance of ICmPossibilityList.
+			if (owningPossibilityList.OwningFlid == LexDbTags.kflidVariantEntryTypes)
 			{
 				// return null only if the class of the owner does not match the given className
 				// in case of owner being the list itself, use the general class for the list items.
-				var currentObjOwner = CurrentObject.Owner;
-				var classNameOfOwnerOfCurrentObject = currentObjOwner.Hvo == pssl.Hvo
-					? sPossClass
-					: currentObjOwner.ClassName;
+				var currentPossibilityOwner = CurrentObject.Owner;
+				var classNameOfOwnerOfCurrentObject = ReferenceEquals(currentPossibilityOwner, owningPossibilityList) ? owningPossibilityListClass : currentPossibilityOwner.ClassName;
 				if (classNameOfOwnerOfCurrentObject != className)
 				{
 					return null;
 				}
 			}
-			else if (sPossClass != className)
+			else if (owningPossibilityListClass != className)
 			{
 				return null;
 			}
 
 			return m_insertableClasses.FirstOrDefault(cpi => cpi.signatureClassName == className);
 		}
-
-#if RANDYTODO
-	/// <summary>
-	/// Adjust the name of the menu item if appropriate. PossibilityRecordList overrides.
-	/// </summary>
-	/// <param name="command"></param>
-	/// <param name="display"></param>
-		public override void AdjustInsertCommandName(Command command, UIItemDisplayProperties display)
-		{
-			var pssl = OwningList;
-			var owningFieldName = pssl.Name.BestAnalysisAlternative.Text;
-			if (pssl.OwningFlid != 0)
-				owningFieldName = VirtualListPublisher.MetaDataCache.GetFieldName(pssl.OwningFlid);
-			var itemTypeName = pssl.ItemsTypeName();
-			if (itemTypeName != "*" + owningFieldName + "*")
-				display.Text = "_" + itemTypeName;	// prepend a keyboard accelarator marker
-			var toolTipInsert = FwUtils.RemoveUnderline(display.Text);	// strip any menu keyboard accelerator marker;
-			command.ToolTipInsert = toolTipInsert.ToLower();
-		}
-#endif
 
 		// For this class we have to reload if sub-possibilities changed, too.
 		// Enhance JohnT: we could attempt to verify that hvo is something owned by our root object,

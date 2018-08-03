@@ -9,6 +9,7 @@ using SIL.LCModel.Core.Scripture;
 
 namespace ParatextImport
 {
+#if RANDYTODO
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Summary description for DifferenceTests.
@@ -138,4 +139,5 @@ namespace ParatextImport
 			Assert.IsNull(clonedDiff.SubDiffsForParas[0].SubDiffsForParas[0].SubDiffsForParas);
 		}
 	}
+#endif
 }

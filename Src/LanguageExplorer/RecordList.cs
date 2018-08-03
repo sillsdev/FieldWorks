@@ -118,10 +118,6 @@ namespace LanguageExplorer
 		/// This enables/disables filtering independent of assigning a filter.  The default is enabled (true).
 		/// </summary>
 		protected bool m_fEnableFilters = true;
-		/// <summary>
-		/// This becomes the SilDataAccess for any views which want to see the filtered, sorted record list.
-		/// </summary>
-		protected ObjectListPublisher m_objectListPublisher;
 		protected StatusBar _statusBar;
 		/// <summary />
 		protected IRecordChangeHandler _recordChangeHandler;
@@ -158,17 +154,18 @@ namespace LanguageExplorer
 
 		#region Constructors
 
-		/// <summary>
-		/// Default constructor that allows subclasses to not call any of the others (cf: SubservientRecordList).
-		/// </summary>
-		protected RecordList()
-		{}
+		protected RecordList(ISilDataAccessManaged decorator)
+		{
+			Guard.AgainstNull(decorator, nameof(decorator));
+
+			VirtualListPublisher = new ObjectListPublisher(decorator, RecordListFlid);
+		}
 
 		internal RecordList(string id, StatusBar statusBar, ISilDataAccessManaged decorator, bool usingAnalysisWs, VectorPropertyParameterObject vectorPropertyParameterObject, RecordFilterParameterObject recordFilterParameterObject = null, RecordSorter defaultSorter = null)
+			: this(decorator)
 		{
 			Guard.AgainstNullOrEmptyString(id, nameof(id));
 			Guard.AgainstNull(statusBar, nameof(statusBar));
-			Guard.AgainstNull(decorator, nameof(decorator));
 			Guard.AgainstNull(vectorPropertyParameterObject, nameof(vectorPropertyParameterObject));
 
 			Id = id;
@@ -182,7 +179,6 @@ namespace LanguageExplorer
 			PropertyName = vectorPropertyParameterObject.PropertyName;
 			m_flid = vectorPropertyParameterObject.Flid;
 			m_usingAnalysisWs = usingAnalysisWs;
-			m_objectListPublisher = new ObjectListPublisher(decorator, RecordListFlid);
 			m_oldLength = 0;
 		}
 
@@ -293,7 +289,7 @@ namespace LanguageExplorer
 			m_insertableClasses = null;
 			m_sortedObjects = null;
 			m_owningObject = null;
-			m_objectListPublisher = null;
+			VirtualListPublisher = null;
 			_statusBar = null;
 			_recordChangeHandler = null;
 			_bulkEditListUpdateHelper = null;
@@ -624,6 +620,11 @@ namespace LanguageExplorer
 			// disappearing from filter), stop that now, so it won't affect any future use of the list.
 			ListLoadingSuppressed = false;
 		}
+
+		/// <summary>
+		/// Get whether the Clear filter toolbar button can be enabled, or not.
+		/// </summary>
+		public bool CanChangeFilterClearAll => IsPrimaryRecordList && Filter != null && Filter.IsUserVisible;
 
 		public bool CanMoveTo(Navigation navigateTo)
 		{
@@ -1012,6 +1013,33 @@ namespace LanguageExplorer
 				// notify clients of this change.
 				FilterChangedByList?.Invoke(this, args);
 			}
+		}
+
+		public void OnChangeFilterClearAll()
+		{
+			_activeMenuBarFilter = null; // there won't be a menu bar filter after this.
+			if (Filter is AndFilter)
+			{
+				// If some parts are not user visible we should not remove them.
+				var af = (AndFilter)Filter;
+				var children = af.Filters;
+				var childrenToKeep = from RecordFilter filter in children where !filter.IsUserVisible select filter;
+				var count = childrenToKeep.Count();
+				if (count == 1)
+				{
+					OnChangeFilter(new FilterChangeEventArgs(childrenToKeep.First(), af));
+					return;
+				}
+				if (count > 0)
+				{
+					var af2 = CreateNewAndFilter(childrenToKeep.ToArray());
+					OnChangeFilter(new FilterChangeEventArgs(af2, Filter));
+					return;
+				}
+				// Otherwise none of the children need to be kept, get rid of the whole filter.
+			}
+
+			OnChangeFilter(new FilterChangeEventArgs(null, Filter));
 		}
 
 		public void OnChangeListItemsClass(int listItemsClass, int newTargetFlid, bool force)
@@ -1471,7 +1499,7 @@ namespace LanguageExplorer
 
 		public virtual void ReloadIfNeeded()
 		{
-			if (OwningObject != null && m_objectListPublisher != null)
+			if (OwningObject != null && VirtualListPublisher != null)
 			{
 				// A full refresh wipes out all caches as of 26 October 2005,
 				// so we have to reload it. This fixes the sextuplets:
@@ -1650,6 +1678,11 @@ namespace LanguageExplorer
 			UpdateOwningObject(true);
 		}
 
+		public virtual void UpdateRecordTreeBar()
+		{
+			// Subclasses that actually know about a record bar (e.g.; TreeBarHandlerAwarePossibilityRecordList) should override this method.
+		}
+
 		public virtual void UpdateRecordTreeBarIfNeeded()
 		{
 			// Subclasses that actually know about a record bar (e.g.; TreeBarHandlerAwarePossibilityRecordList) should override this method.
@@ -1729,13 +1762,19 @@ namespace LanguageExplorer
 		/// which wraps the main SDA and is wrapped by our ObjectListPublisher.
 		/// Otherwise, our ObjectListPublisher wraps the main SDA directly.
 		/// </summary>
-		public ISilDataAccessManaged VirtualListPublisher => m_objectListPublisher;
+		public ISilDataAccessManaged VirtualListPublisher
+		{
+			get;
+			private set;
+		}
 
 		#endregion Implementation of IRecordList
 
 		#endregion All interface implementations
 
-		#region Non-interface codeRecordList
+		#region Non-interface code
+
+		#region Internal stuff
 
 #if RANDYTODO
 		// TODO: Think about not using the static, but also not adding IRecordListRepository to the property table.
@@ -1775,274 +1814,7 @@ namespace LanguageExplorer
 			return $"RecordList-{vectorName}";
 		}
 
-#if RANDYTODO
-		// TODO: I think this may be a bad merge.
-		public virtual void Init(LcmCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
-		{
-			BaseInit(cache, mediator, propertyTable, recordListNode);
-			string owner = XmlUtils.GetOptionalAttributeValue(recordListNode, "owner");
-			bool analysis = XmlUtils.GetOptionalBooleanAttributeValue(recordListNode, "analysisWs", false);
-			if (!string.IsNullOrEmpty(m_propertyName))
-			{
-				fontHeight = FontHeightAdjuster.GetFontHeightForStyle(
-				"Normal", stylesheet,
-				wsContainer.DefaultAnalysisWritingSystem.Handle,
-				cache.WritingSystemFactory) / 1000; //fontHeight is probably pixels
-			}
-			else
-			{
-				fontHeight = FontHeightAdjuster.GetFontHeightForStyle(
-				"Normal", stylesheet,
-				wsContainer.DefaultVernacularWritingSystem.Handle,
-				cache.WritingSystemFactory) / 1000; //fontHeight is probably pixels
-			}
-			return fontHeight;
-		}
-
-		protected void BaseInit(LcmCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
-		{
-			Debug.Assert(mediator != null);
-
-			m_recordListNode = recordListNode;
-			m_mediator = mediator;
-			m_propertyTable = propertyTable;
-			m_propertyName = XmlUtils.GetOptionalAttributeValue(recordListNode, "property", "");
-			m_cache = cache;
-			CurrentIndex = -1;
-			m_hvoCurrent = 0;
-			m_oldLength = 0;
-		}
-
-		// TODO: Delete in the end, but keep for now, so areas/tools know what to give us.
-		// TODO: We now get the owning object, flid, and whether the WS is vern or Anal in a constructor.
-		/// <summary>
-		/// Return the Flid for the model property that this vector represents.
-		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="owner"></param>
-		/// <param name="owningObject"></param>
-		/// <param name="fontName"></param>
-		/// <param name="typeSize"></param>
-		/// <returns></returns>
-		internal int GetFlidOfVectorFromName(string name, string owner, out ICmObject owningObject, ref string fontName, ref int typeSize)
-		{
-			var defAnalWsFontName = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.DefaultFontName;
-			owningObject = null;
-			int realFlid = 0;
-			switch (name)
-			{
-				default:
-					// REVIEW (TimS): This code was added as a way to include information easier in
-					// XCore.  Is this a good idea or should we just add another case statement each
-					// time a new name is needed?
-					try
-					{
-						// ENHANCE (TimS): The same method of getting the flid could be done to
-						// get the owner.
-						switch (owner)
-						{
-							case "LangProject":
-								owningObject = m_cache.LanguageProject;
-								break;
-							case "LexDb":
-								owningObject = m_cache.LanguageProject.LexDbOA;
-								break;
-							case "RnResearchNbk":
-								owningObject = m_cache.LanguageProject.ResearchNotebookOA;
-								break;
-							case "DsDiscourseData":
-								owningObject = m_cache.LanguageProject.DiscourseDataOA;
-								break;
-							default:
-								Debug.Assert(false, "Illegal owner specified for possibility list.");
-								break;
-						}
-						realFlid = VirtualListPublisher.MetaDataCache.GetFieldId(owningObject.ClassName, name, true);
-					}
-					catch (Exception e)
-					{
-						throw new FwConfigurationException("The field '" + name + "' with owner '" +
-							owner + "' has not been implemented in the switch statement " +
-							"in RecordList.GetVectorFromName().", e);
-					}
-					break;
-
-				// Other supported stuff
-				case "Entries":
-					if (owner == "ReversalIndex")
-					{
-						if (m_cache.LanguageProject.LexDbOA.ReversalIndexesOC.Count > 0)
-						{
-							owningObject = m_cache.LanguageProject.LexDbOA.ReversalIndexesOC.ToArray()[0];
-							realFlid = ReversalIndexTags.kflidEntries;
-						}
-					}
-#if RANDYTODO
-					// TODO: DONE: Handled in EntriesOrChildClassesRecordList subclass.
-					else
-					{
-						owningObject = m_cache.LanguageProject.LexDbOA;
-						realFlid = m_cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
-					}
-#endif
-					break;
-				case "Scripture_0_0_Content": // StText that is contents of first section of first book.
-					try
-					{
-						var sb = m_cache.LanguageProject.TranslatedScriptureOA.ScriptureBooksOS[0];
-						var ss = sb.SectionsOS[0];
-						owningObject = ss.ContentOA;
-					}
-					catch (NullReferenceException)
-					{
-						Trace.Fail("Could not get the test Scripture object.  Your language project might not have one (or their could have been some other error).  Try TestLangProj.");
-						throw;
-					}
-					realFlid = StTextTags.kflidParagraphs;
-					break;
-				case "Texts":
-					owningObject = m_cache.LanguageProject;
-					realFlid = m_cache.ServiceLocator.GetInstance<Virtuals>().LangProjTexts;
-					break;
-				case "MsFeatureSystem":
-					owningObject = m_cache.LanguageProject;
-					realFlid = LangProjectTags.kflidMsFeatureSystem;
-					break;
-
-				// phonology
-				case "Phonemes":
-					if (m_cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS.Count == 0)
-					{
-						// Pathological...this helps the memory-only backend mainly, but makes others self-repairing.
-						NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_cache.ActionHandlerAccessor,
-						   () =>
-						   {
-							   m_cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS.Add(
-							   m_cache.ServiceLocator.GetInstance<IPhPhonemeSetFactory>().Create());
-						   });
-					}
-					owningObject = m_cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS[0];
-					realFlid = PhPhonemeSetTags.kflidPhonemes;
-					break;
-				case "BoundaryMarkers":
-					owningObject = m_cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS[0];
-					realFlid = PhPhonemeSetTags.kflidBoundaryMarkers;
-					break;
-				case "Environments":
-					owningObject = m_cache.LanguageProject.PhonologicalDataOA;
-					realFlid = PhPhonDataTags.kflidEnvironments;
-					break;
-				case "NaturalClasses":
-					owningObject = m_cache.LanguageProject.PhonologicalDataOA;
-					realFlid = PhPhonDataTags.kflidNaturalClasses;
-					fontName = defAnalWsFontName;
-					typeSize = GetFontHeightFromStylesheet(m_cache, PropertyTable, true);
-					break;
-
-				case "PhonologicalFeatures":
-					owningObject = m_cache.LangProject.PhFeatureSystemOA;
-					realFlid = FsFeatureSystemTags.kflidFeatures;
-					fontName = defAnalWsFontName;
-					typeSize = GetFontHeightFromStylesheet(m_cache, PropertyTable, true);
-					break;
-
-				case "PhonologicalRules":
-					owningObject = m_cache.LangProject.PhonologicalDataOA;
-					realFlid = PhPhonDataTags.kflidPhonRules;
-					break;
-
-				// morphology
-				case "AdhocCoprohibitions":
-					owningObject = m_cache.LanguageProject.MorphologicalDataOA;
-					realFlid = MoMorphDataTags.kflidAdhocCoProhibitions;
-					fontName = defAnalWsFontName;
-					typeSize = GetFontHeightFromStylesheet(m_cache, PropertyTable, true);
-					break;
-				case "CompoundRules":
-					owningObject = m_cache.LanguageProject.MorphologicalDataOA;
-					realFlid = MoMorphDataTags.kflidCompoundRules;
-					fontName = defAnalWsFontName;
-					typeSize = GetFontHeightFromStylesheet(m_cache, PropertyTable, true);
-					break;
-
-				case "Features":
-					owningObject = m_cache.LanguageProject.MsFeatureSystemOA;
-					realFlid = FsFeatureSystemTags.kflidFeatures;
-					fontName = defAnalWsFontName;
-					typeSize = GetFontHeightFromStylesheet(m_cache, PropertyTable, true);
-					break;
-
-				case "FeatureTypes":
-					owningObject = m_cache.LanguageProject.MsFeatureSystemOA;
-					realFlid = FsFeatureSystemTags.kflidTypes;
-					fontName = defAnalWsFontName;
-					typeSize = GetFontHeightFromStylesheet(m_cache, PropertyTable, true);
-					break;
-
-				case "ProdRestrict":
-					owningObject = m_cache.LanguageProject.MorphologicalDataOA;
-					realFlid = MoMorphDataTags.kflidProdRestrict;
-					fontName = defAnalWsFontName;
-					typeSize = GetFontHeightFromStylesheet(m_cache, PropertyTable, true);
-					break;
-
-				case "Problems":
-					owningObject = m_cache.LanguageProject;
-					realFlid = LangProjectTags.kflidAnnotations;
-					fontName = defAnalWsFontName;
-					typeSize = GetFontHeightFromStylesheet(m_cache, PropertyTable, true);
-					break;
-				case "Wordforms":
-					owningObject = m_cache.LanguageProject;
-					//realFlid = cache.MetaDataCacheAccessor.GetFieldId("LangProject", "Wordforms", false);
-					realFlid = ObjectListPublisher.OwningFlid;
-					break;
-				case "ReversalIndexes":
-					{
-						owningObject = m_cache.LanguageProject.LexDbOA;
-						realFlid = m_cache.DomainDataByFlid.MetaDataCache.GetFieldId("LexDb", "CurrentReversalIndices", false);
-						break;
-					}
-
-				//dependent properties
-				case AreaServices.AnalysesMachineName:
-					{
-						//TODO: HACK! making it show the first one.
-						var wfRepository = m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
-						if (wfRepository.Count > 0)
-							owningObject = wfRepository.AllInstances().First();
-						realFlid = WfiWordformTags.kflidAnalyses;
-						break;
-					}
-				case "SemanticDomainList":
-					owningObject = m_cache.LanguageProject.SemanticDomainListOA;
-					realFlid = CmPossibilityListTags.kflidPossibilities;
-					break;
-#if RANDYTODO
-					// TODO: DONE: Handled in EntriesOrChildClassesRecordList subclass.
-				case "AllSenses":
-				case "AllEntryRefs":
-					{
-						owningObject = m_cache.LanguageProject.LexDbOA;
-						realFlid = m_cache.DomainDataByFlid.MetaDataCache.GetFieldId("LexDb", name, false);
-						// Todo: something about initial sorting...
-						break;
-					}
-#endif
-			}
-
-			return realFlid;
-		}
-
-		/// <summary>
-		/// Adjust the name of the menu item if appropriate. PossibilityRecordList overrides.
-		/// </summary>
-		/// <param name="command"></param>
-		/// <param name="display"></param>
-		public virtual void AdjustInsertCommandName(Command command, UIItemDisplayProperties display)
-		{
-		}
-#endif
+		#endregion Internal stuff
 
 		#region Private stuff
 
@@ -2464,8 +2236,6 @@ namespace LanguageExplorer
 
 		private string SorterPropertyTableId => PropertyTableId("sorter");
 
-		protected string CurrentFilterPropertyTableId => "currentFilterForRecordList_" + Id;
-
 		private void ResetStatusBarMessageForCurrentObject()
 		{
 			var msg = string.Empty;
@@ -2476,13 +2246,6 @@ namespace LanguageExplorer
 			}
 			StatusBarPanelServices.SetStatusPanelMessage(_statusBar, msg);
 		}
-
-		/// <summary>
-		/// Generally only one record list should respond to record navigation in the user interface.
-		/// The "primary" record list is the one that should respond to record navigation.
-		/// </summary>
-		/// <returns>true iff this record list should respond to record navigation</returns>
-		protected virtual bool IsPrimaryRecordList => true;
 
 		private int FindClosestValidIndex(int idx, int cobj)
 		{
@@ -2642,29 +2405,6 @@ namespace LanguageExplorer
 			}
 		}
 
-		private sealed class CpiPathBasedCreateAndInsert : ICreateAndInsert<ICmObject>
-		{
-			internal CpiPathBasedCreateAndInsert(int hvoOwner, IList<ClassAndPropInfo> cpiPath, RecordList list)
-			{
-				HvoOwner = hvoOwner;
-				CpiPath = cpiPath;
-				List = list;
-			}
-
-			private readonly int HvoOwner;
-			private readonly IList<ClassAndPropInfo> CpiPath;
-			private readonly RecordList List;
-
-			#region ICreateAndInsert<ICmObject> Members
-
-			public ICmObject Create()
-			{
-				return List.CreateNewObject(HvoOwner, CpiPath);
-			}
-
-			#endregion
-		}
-
 		/// <summary>
 		/// Creates a new AndFilter and registers it for later disposal.
 		/// </summary>
@@ -2809,38 +2549,6 @@ namespace LanguageExplorer
 		}
 
 		/// <summary>
-		/// Get whether the Clear filter toolbar button can be enabled, or not.
-		/// </summary>
-		public bool CanChangeFilterClearAll => IsPrimaryRecordList && Filter != null && Filter.IsUserVisible;
-
-		public void OnChangeFilterClearAll()
-		{
-			_activeMenuBarFilter = null; // there won't be a menu bar filter after this.
-			if (Filter is AndFilter)
-			{
-				// If some parts are not user visible we should not remove them.
-				var af = (AndFilter)Filter;
-				var children = af.Filters;
-				var childrenToKeep = from RecordFilter filter in children where !filter.IsUserVisible select filter;
-				var count = childrenToKeep.Count();
-				if (count == 1)
-				{
-					OnChangeFilter(new FilterChangeEventArgs(childrenToKeep.First(), af));
-					return;
-				}
-				if (count > 0)
-				{
-					var af2 = CreateNewAndFilter(childrenToKeep.ToArray());
-					OnChangeFilter(new FilterChangeEventArgs(af2, Filter));
-					return;
-				}
-				// Otherwise none of the children need to be kept, get rid of the whole filter.
-			}
-
-			OnChangeFilter(new FilterChangeEventArgs(null, Filter));
-		}
-
-		/// <summary>
 		/// replace any matching items in our sort list.
 		/// </summary>
 		private void ReplaceListItem(int hvoReplaced, ListChangedActions listChangeAction = ListChangedActions.Normal)
@@ -2898,6 +2606,15 @@ namespace LanguageExplorer
 		#endregion Private stuff
 
 		#region Protected stuff
+
+		protected string CurrentFilterPropertyTableId => "currentFilterForRecordList_" + Id;
+
+		/// <summary>
+		/// Generally only one record list should respond to record navigation in the user interface.
+		/// The "primary" record list is the one that should respond to record navigation.
+		/// </summary>
+		/// <returns>true iff this record list should respond to record navigation</returns>
+		protected virtual bool IsPrimaryRecordList => true;
 
 		protected virtual void UpdateOwningObject(bool fUpdateOwningObjectOnlyIfChanged = false)
 		{
@@ -3200,7 +2917,7 @@ namespace LanguageExplorer
 				ReloadList(ivMin, cvIns, cvDel);
 				return true;
 			}
-			if (tag == SegmentTags.kflidAnalyses && m_objectListPublisher.OwningFieldName == "Wordforms")
+			if (tag == SegmentTags.kflidAnalyses && ((ObjectListPublisher)VirtualListPublisher).OwningFieldName == "Wordforms")
 			{
 				// Changing this potentially changes the list of wordforms that occur in the interesting texts.
 				// Hopefully we don't rebuild the list every time; usually this can only be changed in another view.
@@ -3368,7 +3085,7 @@ namespace LanguageExplorer
 			// add the remaining items.
 			if (m_sorter != null)
 			{
-				m_sorter.DataAccess = m_objectListPublisher; // for safety, ensure this any time we use it.
+				m_sorter.DataAccess = VirtualListPublisher; // for safety, ensure this any time we use it.
 				m_sorter.SetPercentDone = DoNothing; // no progress for inserting one item
 				m_sorter.MergeInto(SortedObjects, remainingInsertItems);
 			}
@@ -3469,7 +3186,7 @@ namespace LanguageExplorer
 			{
 				return;
 			}
-			m_sorter.DataAccess = m_objectListPublisher;
+			m_sorter.DataAccess = VirtualListPublisher;
 			if (m_sorter is IReportsSortProgress)
 			{
 				// Uses the last 80% of the bar (first part used for building the list).
@@ -3493,12 +3210,12 @@ namespace LanguageExplorer
 			}
 			else
 			{
-				m_sorter.DataAccess = m_objectListPublisher;
+				m_sorter.DataAccess = VirtualListPublisher;
 				m_sorter.CollectItems(hvo, sortedObjects);
 			}
 			if (m_filter != null && m_fEnableFilters)
 			{
-				m_filter.DataAccess = m_objectListPublisher;
+				m_filter.DataAccess = VirtualListPublisher;
 				for (var i = start; i < sortedObjects.Count;)
 				{
 					if (m_filter.Accept(sortedObjects[i] as IManyOnePathSortItem))
@@ -3833,26 +3550,7 @@ namespace LanguageExplorer
 				return false;
 			}
 			List<ClassAndPropInfo> cpiPath;
-#if NEEDED // If we need to be able to use this code path to insert into virtual properties, we will need to make them
-// Support writing, or do something similar to the old code which figured out a path of places to insert
-// the real object. As far as I (JohnT) can tell, though, we don't currently have any virtual properties
-// at the top level of a record list into which we try to insert newly created objects in this way.
-// check to see if we're wanting to insert into an owning relationship via a virtual property.
-				var vh = Cache.VwCacheDaAccessor.GetVirtualHandlerId(m_flid) as BaseLCMPropertyVirtualHandler;
-				if (vh != null)
-				{
-					cpi.hvoOwner = m_owningObject.Hvo;
-					cpiPath = vh.GetRealOwningPath();
-					if (cpiPath.Count == 0)
-						return false;
-				}
-				else
-				{
-					cpiPath = new List<ClassAndPropInfo>(new ClassAndPropInfo[] { cpi });
-				}
-#else
 			cpiPath = new List<ClassAndPropInfo>(new[] { cpi });
-#endif
 			var createAndInsertMethodObj = new CpiPathBasedCreateAndInsert(m_owningObject.Hvo, cpiPath, this);
 			var newObj = DoCreateAndInsert(createAndInsertMethodObj);
 			var hvoNew = newObj?.Hvo ?? 0;
@@ -4088,6 +3786,29 @@ namespace LanguageExplorer
 		#endregion Protected stuff
 
 		#endregion Non-interface code
+
+		private sealed class CpiPathBasedCreateAndInsert : ICreateAndInsert<ICmObject>
+		{
+			internal CpiPathBasedCreateAndInsert(int hvoOwner, IList<ClassAndPropInfo> cpiPath, RecordList list)
+			{
+				HvoOwner = hvoOwner;
+				CpiPath = cpiPath;
+				List = list;
+			}
+
+			private readonly int HvoOwner;
+			private readonly IList<ClassAndPropInfo> CpiPath;
+			private readonly RecordList List;
+
+			#region ICreateAndInsert<ICmObject> Members
+
+			public ICmObject Create()
+			{
+				return List.CreateNewObject(HvoOwner, CpiPath);
+			}
+
+			#endregion
+		}
 
 		private sealed class EditFilterMenuHandler : IDisposable
 		{

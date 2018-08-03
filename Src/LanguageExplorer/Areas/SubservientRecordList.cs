@@ -35,15 +35,14 @@ namespace LanguageExplorer.Areas
 		/// This constructor uses the default (parameterless) constructor of RecordList.
 		/// </remarks>
 		internal SubservientRecordList(string id, StatusBar statusBar, ISilDataAccessManaged decorator, bool usingAnalysisWs, int flid, IRecordList recordListProvidingRootObject)
+			: base(decorator)
 		{
 			Guard.AgainstNull(recordListProvidingRootObject, nameof(recordListProvidingRootObject));
 			Guard.AgainstNullOrEmptyString(id, nameof(id));
 			Guard.AgainstNull(statusBar, nameof(statusBar));
-			Guard.AgainstNull(decorator, nameof(decorator));
 
 			Id = id;
 			_statusBar = statusBar;
-			m_objectListPublisher = new ObjectListPublisher(decorator, RecordListFlid);
 			m_usingAnalysisWs = usingAnalysisWs;
 			PropertyName = string.Empty;
 			m_fontName = MiscUtils.StandardSansSerif;

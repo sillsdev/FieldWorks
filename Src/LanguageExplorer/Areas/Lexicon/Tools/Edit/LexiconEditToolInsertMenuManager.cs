@@ -165,15 +165,21 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				_sharedEventHandlers.Remove(LexiconEditToolConstants.CmdInsertVariant);
 				_sharedEventHandlers.Remove(LexiconEditToolConstants.CmdInsertMediaFile);
 				MyDataTree.CurrentSliceChanged -= MyDataTree_CurrentSliceChanged;
-				_senseMenuItems.Clear();
 
 				foreach (var menuTuple in _newInsertMenusAndHandlers)
 				{
 					menuTuple.Item1.Click -= menuTuple.Item2;
 					_insertMenu.DropDownItems.Remove(menuTuple.Item1);
+					_senseMenuItems.Remove(menuTuple.Item1);
 					menuTuple.Item1.Dispose();
 				}
 				_newInsertMenusAndHandlers.Clear();
+				foreach (var remainingSenseMenuItem in _senseMenuItems)
+				{
+					_insertMenu.DropDownItems.Remove(remainingSenseMenuItem);
+					remainingSenseMenuItem.Dispose();
+				}
+				_senseMenuItems.Clear();
 			}
 			MyRecordList = null;
 			_sharedEventHandlers = null;

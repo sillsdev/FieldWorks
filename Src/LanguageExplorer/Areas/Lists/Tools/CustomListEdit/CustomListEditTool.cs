@@ -67,13 +67,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.CustomListEdit
 			{
 				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(MachineName, majorFlexComponentParameters.Statusbar, _customList, FactoryMethod);
 			}
-			_listsAreaMenuHelper = new ListsAreaMenuHelper(majorFlexComponentParameters, _area, _recordList);
 
 #if RANDYTODO
-// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
-// TODO: See if custom lists really use ListResources.PositionsEditParameters.
+			// TODO: See if custom lists really use ListResources.PositionsEditParameters.
 #endif
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
+			_listsAreaMenuHelper = new ListsAreaMenuHelper(majorFlexComponentParameters, dataTree, (IListArea)_area, _recordList);
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
@@ -84,6 +83,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.CustomListEdit
 				_recordList,
 				dataTree,
 				MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
+
+			// Too early before now.
+			_listsAreaMenuHelper.Initialize();
 			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), false, SettingsGroup.LocalSettings))
 			{
 				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish("ShowHiddenFields", true);

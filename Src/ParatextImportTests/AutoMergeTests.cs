@@ -12,6 +12,7 @@ using SIL.LCModel.Utils;
 
 namespace ParatextImport
 {
+#if RANDYTODO
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Dummy class to ensure that MakeBackupIfNeeded gets called when needed.
@@ -47,14 +48,14 @@ namespace ParatextImport
 	[TestFixture]
 	public class AutoMergeTests : ScrInMemoryLcmTestBase
 	{
-		#region Member variables
+	#region Member variables
 		private IScrBook m_genesis;
 		private IScrBook m_genesisRevision;
 		private DummyBookMerger m_bookMerger;
 		private DummyBookVersionAgent m_bookVersionAgent;
-		#endregion
+	#endregion
 
-		#region Setup
+	#region Setup
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Create Genesis and a revision of Genesis, and create the BookMerger.
@@ -102,9 +103,9 @@ namespace ParatextImport
 			m_genesisRevision = AddArchiveBookToMockedScripture(1, "Genesis");
 			AddTitleToMockedBook(m_genesisRevision, "Genesis");
 		}
-		#endregion
+	#endregion
 
-		#region AutoMerge Succeeded Tests
+	#region AutoMerge Succeeded Tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test that AutoMerge successfully merges in a newly imported Scripture section that
@@ -548,9 +549,9 @@ namespace ParatextImport
 			Assert.AreEqual("111There was one world-wide language and only one verse in this chapter to boot.",
 				((IScrTxtPara)newSection5Curr.ContentOA.ParagraphsOS[0]).Contents.Text);
 		}
-		#endregion
+	#endregion
 
-		#region AutoMerge Failed Tests
+	#region AutoMerge Failed Tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test that AutoMerge fails to merge an imported Scripture section at the start of
@@ -765,9 +766,9 @@ namespace ParatextImport
 			Assert.AreEqual(section1Curr, m_genesis.SectionsOS[0]);
 			Assert.AreEqual("First Book of the Bible", ((IScrTxtPara)m_genesis.TitleOA.ParagraphsOS[0]).Contents.Text);
 		}
-		#endregion
+	#endregion
 
-		#region Partial Overwrite tests (yeah, this sort of doesn't belong in this file, but...)
+	#region Partial Overwrite tests (yeah, this sort of doesn't belong in this file, but...)
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the DoPartialOverwrite method when there is no title in the revision.
@@ -1134,6 +1135,7 @@ namespace ParatextImport
 			IScrTxtPara title = (IScrTxtPara)bookMerger.BookCurr.TitleOA.ParagraphsOS[0];
 			Assert.AreEqual("Genesis", title.Contents.Text);
 		}
-		#endregion
+	#endregion
 	}
+#endif
 }

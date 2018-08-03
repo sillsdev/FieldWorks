@@ -156,11 +156,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_extendedPropertyName = null;
 			_majorFlexComponentParameters = null;
 			_lexiconEditToolUiWidgetManagers = null;
+			_sharedEventHandlers = null;
 			MyDataTreeStackContextMenuFactory = null;
 			MyDataTree = null;
 			MyRecordList = null;
 			InnerMultiPane = null;
 			RecordBrowseView = null;
+			_currentTool = null;
 
 			_isDisposed = true;
 		}

@@ -252,11 +252,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
-		/// Replace underline character with ampersand.
+		/// Remove underline character.
 		/// </summary>
 		public static string RemoveUnderline(string guiString)
 		{
-			return guiString.Replace("_", String.Empty);
+			return guiString.Replace("_", string.Empty);
+		}
+
+		/// <summary>
+		/// Remove ampersand character.
+		/// </summary>
+		public static string RemoveAmpersand(string guiString)
+		{
+			return guiString.Replace("&", string.Empty);
 		}
 
 		/// ------------------------------------------------------------------------------------

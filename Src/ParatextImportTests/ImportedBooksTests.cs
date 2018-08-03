@@ -9,6 +9,7 @@ using SIL.LCModel.Core.Scripture;
 
 namespace ParatextImport
 {
+#if RANDYTODO
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Tests for the ImportedBooks class
@@ -18,12 +19,12 @@ namespace ParatextImport
 	public class ImportedBooksTests : ScrInMemoryLcmTestBase
 	{
 
-		#region Member variables
+	#region Member variables
 		private IScrDraft m_savedVersion;
 		private IScrDraft m_importedVersion;
-		#endregion
+	#endregion
 
-		#region Overrides
+	#region Overrides
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Called to make the test data for the tests
@@ -55,9 +56,9 @@ namespace ParatextImport
 			base.TestSetup();
 			m_savedVersion = Cache.ServiceLocator.GetInstance<IScrDraftFactory>().Create("ImportedBooksTests");
 		}
-		#endregion
+	#endregion
 
-		#region New Book Tests
+	#region New Book Tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the import dialog to verify that new books are correctly detected.
@@ -81,9 +82,9 @@ namespace ParatextImport
 			ImportedBooks.SaveImportedBooks(Cache, m_importedVersion, m_savedVersion, importedBooks.Keys, null);
 			Assert.AreEqual(1, m_scr.ScriptureBooksOS.Count);
 		}
-		#endregion
+	#endregion
 
-		#region Book name tests
+	#region Book name tests
 		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests getting book name when it is a full book.
@@ -188,9 +189,9 @@ namespace ParatextImport
 
 			Assert.AreEqual("(intro only)", ImportedBooks.GetBookInfo(m_importedVersion.BooksOS[0]));
 		}
-		#endregion
+	#endregion
 
-		#region Helper methods
+	#region Helper methods
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -210,6 +211,7 @@ namespace ParatextImport
 			AddVerse(para, startChapter, firstVerse, "verse " + firstVerse + ". ");
 			AddVerse(para, endChapter > startChapter ? endChapter : 0, lastVerse, "verse " + lastVerse + ". ");
 		}
-		#endregion
+	#endregion
 	}
+#endif
 }

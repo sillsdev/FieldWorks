@@ -11,7 +11,7 @@ using SIL.Code;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
-	internal class LexiconEditToolToolbarManager : IToolUiWidgetManager
+	internal sealed class LexiconEditToolToolbarManager : IToolUiWidgetManager
 	{
 		private IRecordList MyRecordList { get; set; }
 		private MajorFlexComponentParameters _majorFlexComponentParameters;

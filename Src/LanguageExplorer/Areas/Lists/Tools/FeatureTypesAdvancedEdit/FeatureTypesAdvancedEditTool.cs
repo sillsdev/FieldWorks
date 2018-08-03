@@ -66,18 +66,15 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 			{
 				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(FeatureTypes, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
-			_listsAreaMenuHelper = new ListsAreaMenuHelper(majorFlexComponentParameters, (IListArea)_area, _recordList);
 			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 #if RANDYTODO
 			// TODO: Set up factory method for the browse view.
 #endif
 			_recordBrowseView = new RecordBrowseView(XDocument.Parse(ListResources.FeatureTypesAdvancedEditBrowseViewParameters).Root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
 
-#if RANDYTODO
-			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
-#endif
 			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
+			_listsAreaMenuHelper = new ListsAreaMenuHelper(majorFlexComponentParameters, dataTree, (IListArea)_area, _recordList);
 			var recordEditView = new RecordEditView(XElement.Parse(ListResources.FeatureTypesAdvancedEditRecordEditViewParameters), XDocument.Parse(AreaResources.HideAdvancedListItemFields), majorFlexComponentParameters.LcmCache, _recordList, dataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
@@ -103,7 +100,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 				recordEditView, "Details", paneBar);
 
 			panelButton.MyDataTree = recordEditView.MyDataTree;
+
 			// Too early before now.
+			_listsAreaMenuHelper.Initialize();
 			recordEditView.FinishInitialization();
 			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false, SettingsGroup.LocalSettings))
 			{

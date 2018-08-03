@@ -155,6 +155,7 @@ namespace LanguageExplorer.Areas
 		internal const string JumpToTool = "JumpToTool";
 		internal const string JumpToConcordance = "JumpToConcordance";
 		internal const string SandboxJumpToTool = "SandboxJumpToTool";
+		internal const string InsertCategory = "InsertCategory";
 
 		#endregion commands
 
@@ -176,6 +177,10 @@ namespace LanguageExplorer.Areas
 		internal const string ShortName = "ShortName";
 		internal const string PartOfSpeechGramInfo = "PartOfSpeechGramInfo";
 		internal const string WordPartOfSpeech = "WordPartOfSpeech";
+		internal const string OwningField = "field";
+		internal const string ClassName = "className";
+		internal const string OwnerClassName = "ownerClassName";
+		internal const string BaseUowMessage = "baseUowMessage";
 
 		#endregion Random strings
 
@@ -428,6 +433,31 @@ namespace LanguageExplorer.Areas
 				menu.Text = $"{menuText} {StringTable.Table.GetString("(cannot delete this)")}";
 			}
 			menu.ImageTransparentColor = Color.Magenta;
+		}
+
+		internal static Dictionary<string, string> PopulateForMainItemInsert(ICmPossibilityList owningList, ICmPossibility currentPossibility, string baseUowMessage)
+		{
+			var mdc = owningList.Cache.GetManagedMetaDataCache();
+			var owningPossibility = currentPossibility.OwningPossibility;
+
+			return new Dictionary<string, string>
+			{
+				{ ClassName, mdc.GetClassName(owningList.ItemClsid) },
+				{ OwnerClassName, owningPossibility == null ? owningList.ClassName : owningPossibility.ClassName },
+				{ OwningField, owningPossibility == null ? mdc.GetFieldName(CmPossibilityListTags.kflidPossibilities) : mdc.GetFieldName(CmPossibilityTags.kflidSubPossibilities) },
+				{ baseUowMessage, baseUowMessage }
+			};
+		}
+
+		internal static Dictionary<string, string> PopulateForSubitemInsert(ICmPossibility owningPossibility, string baseUowMessage)
+		{
+			return new Dictionary<string, string>
+			{
+				{ ClassName, owningPossibility.ClassName },
+				{ OwnerClassName, owningPossibility.ClassName },
+				{ OwningField, owningPossibility.Cache.GetManagedMetaDataCache().GetFieldName(CmPossibilityTags.kflidSubPossibilities) },
+				{ BaseUowMessage, baseUowMessage }
+			};
 		}
 	}
 }

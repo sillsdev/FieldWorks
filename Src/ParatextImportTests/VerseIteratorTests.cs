@@ -11,11 +11,12 @@ using SIL.LCModel.DomainServices;
 
 namespace ParatextImport
 {
+#if RANDYTODO
 	/// <summary/>
 	[TestFixture]
 	public class VerseIteratorTests: BookMergerTestsBase
 	{
-		#region VerseIterator tests
+	#region VerseIterator tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the VerseIterator class within BookMerger.
@@ -372,6 +373,7 @@ namespace ParatextImport
 			scrVerse = m_bookMerger.NextVerseInSet();
 			Assert.IsNull(scrVerse);
 		}
-		#endregion
+	#endregion
 	}
+#endif
 }

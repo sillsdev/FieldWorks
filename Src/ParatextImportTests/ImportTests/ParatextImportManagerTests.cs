@@ -16,6 +16,7 @@ using SIL.LCModel.Infrastructure;
 
 namespace ParatextImport.ImportTests
 {
+#if RANDYTODO
 	#region class SegmentInfo
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -314,14 +315,14 @@ namespace ParatextImport.ImportTests
 	/// ----------------------------------------------------------------------------------------
 	public class DummyParatextImportManager : ParatextImportManager
 	{
-		#region Member data
+	#region Member data
 		private readonly IScripture m_scr;
 		private HashSet<int> m_originalDrafts;
 		internal int m_cDisplayImportedBooksDlgCalled;
 		private bool m_fSimulateAcceptAllBooks;
-		#endregion
+	#endregion
 
-		#region Constructor
+	#region Constructor
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DummyParatextImportManager"/> class.
 		/// </summary>
@@ -331,9 +332,9 @@ namespace ParatextImport.ImportTests
 			m_scr = cache.LangProject.TranslatedScriptureOA;
 			ResetOriginalDrafts();
 		}
-		#endregion
+	#endregion
 
-		#region Internal methods/properties for testing
+	#region Internal methods/properties for testing
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Resets the original drafts.
@@ -404,9 +405,9 @@ namespace ParatextImport.ImportTests
 			}
 		}
 
-		#endregion
+	#endregion
 
-		#region Overridden methods
+	#region Overridden methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Creates a TeImportUi object.
@@ -419,7 +420,7 @@ namespace ParatextImport.ImportTests
 		{
 			return new DummyParatextImportUi();
 		}
-		#endregion
+	#endregion
 	}
 	#endregion
 
@@ -432,11 +433,11 @@ namespace ParatextImport.ImportTests
 	/// ----------------------------------------------------------------------------------------
 	internal class DummyParatextImportManagerWithMockImporter : DummyParatextImportManager
 	{
-		#region Member data
+	#region Member data
 		private List<SegmentInfo> m_segmentList;
-		#endregion
+	#endregion
 
-		#region Constructor
+	#region Constructor
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DummyParatextImportManagerWithMockImporter"/> class.
 		/// </summary>
@@ -444,9 +445,9 @@ namespace ParatextImport.ImportTests
 			base(cache, importSettings, styleSheet)
 		{
 		}
-		#endregion
+	#endregion
 
-		#region Overridden methods
+	#region Overridden methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Import scripture and embed it in a Undo task so that it is undoable.
@@ -474,7 +475,7 @@ namespace ParatextImport.ImportTests
 			return ScrReference.Empty;
 		}
 
-		#endregion
+	#endregion
 	}
 	#endregion
 
@@ -487,14 +488,14 @@ namespace ParatextImport.ImportTests
 	[TestFixture]
 	public class ParatextImportManagerTests : ScrInMemoryLcmTestBase
 	{
-		#region Member variables
+	#region Member variables
 		private DummyParatextImportManagerWithMockImporter m_importMgr;
 		private BCVRef m_titus;
 		private LcmStyleSheet m_styleSheet;
 		private IScrImportSet m_settings;
-		#endregion
+	#endregion
 
-		#region Setup/Teardown
+	#region Setup/Teardown
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Create temp registry settings and unzipped files
@@ -565,9 +566,9 @@ namespace ParatextImport.ImportTests
 			Cache.ActionHandlerAccessor.BeginUndoTask("Bogus", "Bogus");
 			base.TestTearDown();
 		}
-		#endregion
+	#endregion
 
-		#region Stopping import of new book tests
+	#region Stopping import of new book tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test that canceling the import of a new book causes it to be discarded.
@@ -643,9 +644,9 @@ namespace ParatextImport.ImportTests
 			Assert.IsNull(m_importMgr.UndoManager.ImportedVersion);
 			Assert.AreEqual(1, m_importMgr.m_cDisplayImportedBooksDlgCalled);
 		}
-		#endregion
+	#endregion
 
-		#region Restore after cancel tests
+	#region Restore after cancel tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test that canceling the import of an existing book causes the original book to be
@@ -1466,9 +1467,9 @@ namespace ParatextImport.ImportTests
 			Assert.AreEqual(iBookId, m_scr.ScriptureBooksOS[1].CanonicalNum,
 				"Books are not in correct order.");
 		}
-		#endregion
+	#endregion
 
-		#region Diff changes get rolled into import task
+	#region Diff changes get rolled into import task
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test that if an import is followed by edits in the Compare And Merge dialog, the
@@ -1502,9 +1503,9 @@ namespace ParatextImport.ImportTests
 			Assert.AreEqual("&Undo Import", Cache.ActionHandlerAccessor.GetUndoText());
 			Assert.AreEqual(1, m_importMgr.m_cDisplayImportedBooksDlgCalled);
 		}
-		#endregion
+	#endregion
 
-		#region Attach BT to correct version tests
+	#region Attach BT to correct version tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test that if a non-interleaved import gets a book followed by a BT of that same
@@ -1714,9 +1715,9 @@ namespace ParatextImport.ImportTests
 
 			Assert.AreEqual(0, m_importMgr.m_cDisplayImportedBooksDlgCalled);
 		}
-		#endregion
+	#endregion
 
-		#region Private helper methods
+	#region Private helper methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the first paragraph of the first Scripture section (skips intros) in book.
@@ -1740,7 +1741,8 @@ namespace ParatextImport.ImportTests
 			}
 			return scrHead1Para1;
 		}
-		#endregion
+	#endregion
 	}
 	#endregion
+#endif
 }

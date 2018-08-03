@@ -7,6 +7,7 @@ using SIL.LCModel.Core.Scripture;
 
 namespace ParatextImport.ImportTests
 {
+#if RANDYTODO
 	#region ParatextImportNoUi
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -107,4 +108,5 @@ namespace ParatextImport.ImportTests
 		}
 	}
 	#endregion
+#endif
 }

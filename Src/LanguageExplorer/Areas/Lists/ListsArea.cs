@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,65 +12,6 @@ using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
-#if RANDYTODO
-	// Tools not shown now:
-        <clerk id="AffixCategoryList">
-            <recordList owner="LangProject" property="AffixCategories">
-            <dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList" />
-            </recordList>
-            <treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler" />
-            <filters />
-            <sortMethods>
-            <sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName" />
-            </sortMethods>
-        </clerk>
-		<tool label="Affix Categories" value="affixCategoryEdit" icon="EditView">
-			<control>
-				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
-				<parameters collapse="144000">
-					<control>
-						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.RecordEditView"/>
-						<parameters area="lists" clerk="AffixCategoryList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="default" a10status="DONE" />
-					</control>
-				</parameters>
-			</control>
-		</tool>
-
-        <clerk id="AnnotationDefList">
-            <recordList owner="LangProject" property="AnnotationDefs">
-            <dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList" />
-            </recordList>
-            <treeBarHandler assemblyPath="xWorks.dll" expand="true" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler" />
-            <filters />
-            <sortMethods>
-            <sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName" />
-            </sortMethods>
-        </clerk>
-		<tool label="Annotation Definitions" value="annotationDefEdit" icon="EditView">
-			<control>
-				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
-				<parameters collapse="144000">
-					<control>
-						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.RecordEditView"/>
-						<parameters area="lists" clerk="AnnotationDefList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="default" a10status="DONE" />
-					</control>
-				</parameters>
-			</control>
-		</tool>
-
-		// Not used in any tool?
-		<clerk id="ScrNoteTypesList">
-			<recordList owner="Scripture" property="NoteCategories">
-			<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList" />
-			</recordList>
-			<treeBarHandler assemblyPath="xWorks.dll" expand="true" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler" />
-			<filters />
-			<sortMethods>
-			<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName" />
-			</sortMethods>
-		</clerk>
--->
-#endif
 namespace LanguageExplorer.Areas.Lists
 {
 	[Export(AreaServices.ListsAreaMachineName, typeof(IArea))]
@@ -185,31 +126,31 @@ namespace LanguageExplorer.Areas.Lists
 					AreaServices.ComplexEntryTypeEditMachineName,
 					AreaServices.ConfidenceEditMachineName,
 					AreaServices.DialectsListEditMachineName,
-					AreaServices.ChartmarkEditMachineName,
-					AreaServices.CharttempEditMachineName,
 					AreaServices.EducationEditMachineName,
-					AreaServices.RoleEditMachineName,
 					AreaServices.ExtNoteTypeEditMachineName,
 					AreaServices.FeatureTypesAdvancedEditMachineName,
 					AreaServices.GenresEditMachineName,
 					AreaServices.LanguagesListEditMachineName,
 					AreaServices.LexRefEditMachineName,
 					AreaServices.LocationsEditMachineName,
-					AreaServices.PublicationsEditMachineName,
 					AreaServices.MorphTypeEditMachineName,
+					AreaServices.RecTypeEditMachineName,
 					AreaServices.PeopleEditMachineName,
 					AreaServices.PositionsEditMachineName,
+					AreaServices.PublicationsEditMachineName,
 					AreaServices.RestrictionsEditMachineName,
+					AreaServices.ReversalToolReversalIndexPOSMachineName,
+					AreaServices.RoleEditMachineName,
 					AreaServices.SemanticDomainEditMachineName,
 					AreaServices.SenseTypeEditMachineName,
 					AreaServices.StatusEditMachineName,
+					AreaServices.ChartmarkEditMachineName,
+					AreaServices.CharttempEditMachineName,
 					AreaServices.TextMarkupTagsEditMachineName,
+					AreaServices.TimeOfDayEditMachineName,
 					AreaServices.TranslationTypeEditMachineName,
 					AreaServices.UsageTypeEditMachineName,
-					AreaServices.VariantEntryTypeEditMachineName,
-					AreaServices.RecTypeEditMachineName,
-					AreaServices.TimeOfDayEditMachineName,
-					AreaServices.ReversalToolReversalIndexPOSMachineName
+					AreaServices.VariantEntryTypeEditMachineName
 				};
 
 				var retval = myToolsInOrder.Select(toolName => _myBuiltinTools.First(tool => tool.MachineName == toolName)).ToList();

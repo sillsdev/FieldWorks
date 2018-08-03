@@ -30,6 +30,12 @@ namespace LanguageExplorer.Areas
 			UpdateHeaderVisibility();
 		}
 
+		internal void ForcePopulateRecordBar(IRecordList list)
+		{
+			MyRecordList = null;
+			PopulateRecordBar(list);
+		}
+
 		/// <summary>
 		/// It's possible that another tree bar handler recently turned over control of the RecordBar
 		/// to us, if so, we want to make sure they didn't leave the optional info bar visible.

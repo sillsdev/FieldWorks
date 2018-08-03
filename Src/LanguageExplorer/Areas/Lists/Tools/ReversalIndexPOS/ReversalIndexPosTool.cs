@@ -73,6 +73,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_cache = majorFlexComponentParameters.LcmCache;
 			var currentGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(_propertyTable, "ReversalIndexGuid");
 			if (currentGuid != Guid.Empty)
 			{
@@ -83,18 +84,14 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			{
 				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(ReversalIndexPOSRecordList.ReversalEntriesPOS, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
-			_listsAreaMenuHelper = new ListsAreaMenuHelper(majorFlexComponentParameters, (IListArea)_area, _recordList);
 			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 #if RANDYTODO
 			// TODO: Set up factory method for the browse view.
 #endif
-
 			_recordBrowseView = new RecordBrowseView(XDocument.Parse(ListResources.ReversalToolReversalIndexPOSBrowseViewParameters).Root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
-#if RANDYTODO
-			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
-#endif
 			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
+			_listsAreaMenuHelper = new ListsAreaMenuHelper(majorFlexComponentParameters, dataTree, (IListArea)_area, _recordList);
 			dataTree.DataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(panelMenuId, CreateMainPanelContextMenuStrip);
 			var recordEditView = new RecordEditView(XDocument.Parse(ListResources.ReversalToolReversalIndexPOSRecordEditViewParameters).Root, XDocument.Parse(AreaResources.HideAdvancedListItemFields), majorFlexComponentParameters.LcmCache, _recordList, dataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 			var mainMultiPaneParameters = new MultiPaneParameters
@@ -130,8 +127,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				recordEditView, "Details", recordEditViewPaneBar);
 
 			panelButton.MyDataTree = recordEditView.MyDataTree;
+
 			// Too early before now.
 			recordEditView.FinishInitialization();
+			_listsAreaMenuHelper.Initialize();
 			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false, SettingsGroup.LocalSettings))
 			{
 				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish("ShowHiddenFields", true);

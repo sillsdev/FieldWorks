@@ -245,7 +245,7 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// Makes the record list available to subclasses.
 		/// </summary>
-		protected IRecordList MyRecordList { get; private set; }
+		protected IRecordList MyRecordList { get; set; }
 
 		protected virtual void PopulateRecordBar(IRecordList recordList, bool editable)
 		{

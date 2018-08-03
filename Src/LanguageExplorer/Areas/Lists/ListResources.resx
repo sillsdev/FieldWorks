@@ -322,4 +322,61 @@ Are you sure you want to delete this list?</value>
   <data name="LanguagesListEditParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\LanguagesListEditParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="Anthropology_Category" xml:space="preserve">
+    <value>Anthropology Category</value>
+  </data>
+  <data name="Subcategory" xml:space="preserve">
+    <value>Subcategory</value>
+  </data>
+  <data name="Feature_Type" xml:space="preserve">
+    <value>Feature Type</value>
+  </data>
+  <data name="Lexical_Relation" xml:space="preserve">
+    <value>Lexical Relation</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Location</value>
+  </data>
+  <data name="Subitem" xml:space="preserve">
+    <value>Subitem</value>
+  </data>
+  <data name="Person" xml:space="preserve">
+    <value>Person</value>
+  </data>
+  <data name="Semantic_Domain" xml:space="preserve">
+    <value>Semantic Domain</value>
+  </data>
+  <data name="Subdomain" xml:space="preserve">
+    <value>Subdomain</value>
+  </data>
+  <data name="Complex_Form_Type" xml:space="preserve">
+    <value>Complex Form Type</value>
+  </data>
+  <data name="Subtype" xml:space="preserve">
+    <value>Subtype</value>
+  </data>
+  <data name="Variant_Type" xml:space="preserve">
+    <value>Variant Type</value>
+  </data>
+  <data name="Insert_Anthropology_Category" xml:space="preserve">
+    <value>Insert Anthropology Category</value>
+  </data>
+  <data name="Insert_Item" xml:space="preserve">
+    <value>Insert Item</value>
+  </data>
+  <data name="Insert_Lexical_Reference_Type" xml:space="preserve">
+    <value>Insert Lexical Reference Type</value>
+  </data>
+  <data name="Insert_Location" xml:space="preserve">
+    <value>Insert Location</value>
+  </data>
+  <data name="Insert_Person" xml:space="preserve">
+    <value>Insert Person</value>
+  </data>
+  <data name="Insert_Semantic_Domain" xml:space="preserve">
+    <value>Insert Semantic Domain</value>
+  </data>
+  <data name="Insert_Type" xml:space="preserve">
+    <value>Insert Type</value>
+  </data>
 </root>

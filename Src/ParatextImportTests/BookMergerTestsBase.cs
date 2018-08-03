@@ -11,6 +11,7 @@ using SIL.LCModel.Utils;
 
 namespace ParatextImport
 {
+#if RANDYTODO
 	#region class DummyBookMerger
 	/// ------------------------------------------------------------------------------------
 	/// <summary>
@@ -204,16 +205,16 @@ namespace ParatextImport
 	[TestFixture]
 	public class BookMergerTestsBase: ScrInMemoryLcmTestBase
 	{
-		#region Member variables
+	#region Member variables
 		/// <summary/>
 		protected IScrBook m_genesis;
 		/// <summary/>
 		protected IScrBook m_genesisRevision;
 		/// <summary/>
 		protected DummyBookMerger m_bookMerger;
-		#endregion
+	#endregion
 
-		#region Setup
+	#region Setup
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Create Genesis and a revision of Genesis, and create the BookMerger.
@@ -288,7 +289,8 @@ namespace ParatextImport
 				" content to 2 Peter the writer encourages his readers to fight on for the faith which" +
 				" once and for all God has given to his people.", null);
 		}
-		#endregion
+	#endregion
 
 	}
+#endif
 }

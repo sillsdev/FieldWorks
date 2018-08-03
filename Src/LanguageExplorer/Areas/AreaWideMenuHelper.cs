@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
+using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
@@ -52,6 +53,7 @@ namespace LanguageExplorer.Areas
 			_sharedEventHandlers.Add(AreaServices.InsertHashMark, Insert_HashMark_Clicked);
 			_sharedEventHandlers.Add(AreaServices.ShowEnvironmentError, ShowEnvironmentError_Clicked);
 			_sharedEventHandlers.Add(AreaServices.JumpToTool, JumpToTool_Clicked);
+			_sharedEventHandlers.Add(AreaServices.InsertCategory, InsertCategory_Clicked);
 		}
 
 		internal AreaWideMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
@@ -276,6 +278,7 @@ namespace LanguageExplorer.Areas
 				_sharedEventHandlers.Remove(AreaServices.InsertHashMark);
 				_sharedEventHandlers.Remove(AreaServices.ShowEnvironmentError);
 				_sharedEventHandlers.Remove(AreaServices.JumpToTool);
+				_sharedEventHandlers.Remove(AreaServices.InsertCategory);
 
 				if (_fileExportMenu != null)
 				{
@@ -427,6 +430,19 @@ namespace LanguageExplorer.Areas
 		{
 			var tag = (List<object>)((ToolStripMenuItem)sender).Tag;
 			LinkHandler.PublishFollowLinkMessage((IPublisher)tag[0], new FwLinkArgs((string)tag[1], (Guid)tag[2]));
+		}
+
+		private void InsertCategory_Clicked(object sender, EventArgs e)
+		{
+			var tagList = (List<object>)((ToolStripItem)sender).Tag;
+			using (var dlg = new MasterCategoryListDlg())
+			{
+				var recordList = (IRecordList)tagList[1];
+				var selectedCategoryOwner = recordList.CurrentObject?.Owner;
+				var propertyTable = _majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
+				dlg.SetDlginfo((ICmPossibilityList)tagList[0], propertyTable, true, selectedCategoryOwner as IPartOfSpeech);
+				dlg.ShowDialog(propertyTable.GetValue<Form>("window"));
+			}
 		}
 	}
 }

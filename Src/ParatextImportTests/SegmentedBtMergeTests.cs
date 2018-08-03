@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2018 SIL International
+// Copyright (c) 2007-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -17,6 +17,7 @@ using SIL.LCModel.Utils;
 
 namespace ParatextImport
 {
+#if RANDYTODO
 	/// <summary>
 	/// Additional tests of BookMerger to confirm appropriate merging of segmented back translation.
 	/// These tests do not confirm the necessary calls to LoadSegmentFreeTranslations, since this
@@ -29,7 +30,7 @@ namespace ParatextImport
 		private IScrBook m_genesisRevision;
 		private DummyBookMerger m_bookMerger;
 
-		#region Setup
+	#region Setup
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Adds an additional analysis writing system to make it harder for the tests to pass.
@@ -119,9 +120,9 @@ namespace ParatextImport
 				" content to 2 Peter the writer encourages his readers “to fight on for the faith which" +
 				" once and for all God has given to his people.", null);
 		}
-		#endregion	}
+	#endregion	}
 
-		#region helper methods
+	#region helper methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Verify that object has been deleted. This is a rather kludgy way to do it, but the memory cache
@@ -302,9 +303,9 @@ namespace ParatextImport
 			AddSegmentTranslations((IScrTxtPara)footnote1Curr[0], 0, noteTrans);
 			return footnote1Curr;
 		}
-		#endregion helper methods
+	#endregion helper methods
 
-		#region ReplaceCurrentWithRevision WithinPara Tests
+	#region ReplaceCurrentWithRevision WithinPara Tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the <see cref="BookMerger.ReplaceCurrentWithRevision"/> method when the
@@ -2596,6 +2597,7 @@ namespace ParatextImport
 				new[] { 1, "verse two.".Length },
 				new[] { 0, 1 }, "paragraph 2");
 		}
-		#endregion
+	#endregion
 	}
+#endif
 }
