@@ -383,6 +383,7 @@
 	</Target>
 
 	<Target Name="DownloadAndUnzipFonts">
+		<MakeDir Directories="$(DownloadsDir)" Condition="!Exists('$(DownloadsDir)')"/>
 		<!-- Note: we are downloading quivira but also leaving it checked in in case the website disappears. -->
 		<DownloadFile Address="http://www.quivira-font.com/files/Quivira.otf" DownloadsDir="$(fwrt)/DistFiles/Fonts/Raw"
 			ContinueOnError="true"/>
