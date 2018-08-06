@@ -3760,8 +3760,46 @@ VwNotifier * VwNotifier::FindChild(int iprop, int ihvoTarget, int ich)
 		return NULL; // No objects, or something.
 	if (pnote->Parent() != this)
 		return NULL; // Ran out of our objects, found something else
+	std::vector<VwNotifier *> notifierChain;
+	int testLength = 0;
 	for (; pnote && pnote->ObjectIndex() < ihvoTarget; pnote = pnote->NextNotifier())
-		;
+	{
+		if(std::find(notifierChain.begin(), notifierChain.end(), pnote) != notifierChain.end() || testLength > 150)
+		{
+#if defined(WIN32) || defined(WIN64)
+			// Build string of tags
+			StrUni szTags;
+			pnote->Tags();
+			szTags.Append(L"pnote tags: ");
+			for(int i = 0; i < pnote->CProps(); ++i)
+			{
+				wchar_t flid[20];
+				_itow_s(pnote->Tags()[i], flid, 10);
+				szTags.Append(flid);
+				szTags.Append(L",");
+			}
+			szTags.Append(L"\nnotifiers:");
+			vector<VwNotifier*>::iterator it;  // declare an iterator to a vector of strings
+			for (it = notifierChain.begin(); it != notifierChain.end(); ++it) {
+				wchar_t whvo[20];
+				_itow_s((*it)->m_hvo, whvo, 10);
+				szTags.Append(whvo);
+				szTags.Append(",");
+			}
+			// Build info about parent notifier
+			StrUni stuErr;
+			stuErr.Format(L"Hello Fran! Jason here. Good news, I found the loop that FLEx was getting stuck in.\n"
+				L"Here is the data I need to hopefully really fix it\n"
+				L"loopCount = %d, ihvoTarget = %d iprop = %d ich = %d\n"
+				L"pnote->hvo %d, pnote->objectIndex %d, pnote->parent->hvo %d\n",
+				testLength, ihvoTarget, iprop, ich, pnote->m_hvo, pnote->ObjectIndex(), pnote->Parent()->m_hvo);
+			stuErr.Append(szTags.Chars());
+			::MessageBox(NULL, stuErr.Chars(), L"Diagnostic Info", MB_OK);
+#endif
+		}
+		notifierChain.push_back(pnote);
+		++testLength;
+	}
 	if (!pnote)
 		return NULL; // ran out without finding it, maybe no box generated for this object?
 	if (pnote->ObjectIndex() != ihvoTarget)
