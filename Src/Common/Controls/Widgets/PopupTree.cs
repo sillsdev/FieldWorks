@@ -661,8 +661,7 @@ namespace SIL.FieldWorks.Common.Widgets
 				{
 					// Send tab key to the TabStopControl so that it can set the focus to the
 					// next control.
-					Win32.PostMessage(TabStopControl.Handle, (int)Win32.WinMsgs.WM_KEYDOWN,
-						(uint)e.KeyCode, 0);
+					Win32.PostMessage(TabStopControl.Handle, Win32.WinMsgs.WM_KEYDOWN, (int)e.KeyCode, 0);
 				}
 				e.Handled = true;
 			}
