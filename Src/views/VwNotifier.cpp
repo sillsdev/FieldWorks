@@ -3512,13 +3512,7 @@ VwNotifier * VwNotifier::NextNotifier()
 {
 	VwBox * pbox = m_pboxLast;
 	int itss = m_itssLimSubString;
-	if (itss >= 0 && dynamic_cast<VwParagraphBox *>(pbox)->Source()->CStrings() > itss)
-	{
-		// Start looking with the next string of the same box, which is the limit of the
-		// current notifier, so nothing to do.
-		// itss++; // Old code, I think a bug...
-	}
-	else
+	if (itss < 0 || dynamic_cast<VwParagraphBox *>(pbox)->Source()->CStrings() <= itss)
 	{
 		itss = -1; // important in case starting point was last tss in para.
 		// This notifier doesn't end part-way through a box, but with a complete box (or with the
@@ -3599,21 +3593,21 @@ VwNotifier * VwNotifier::NextNotifier()
 			// If, however, we found a notifier that is not embedded in our parent at all,
 			// we have run out and must give up.
 			if (!pnote)
-				return NULL;
+				return nullptr;
 		}
 		if (!pnote)
-			return NULL;
+			return nullptr;
 		if (pnote->PropIndex() == this->PropIndex())
 		{
-			Assert(pnote->ObjectIndex() > this->ObjectIndex());
-			return pnote; // got it
+			Assert(pnote->ObjectIndex() > this->ObjectIndex() && pnote != this);
+			return pnote != this ? pnote : nullptr; // got it, unless it is us, then we've got problems and we'll just quit
 		}
 		// Otherwise, it may be a notifier for some box embedded inside this...if so,
 		// keep looking.
 		pbox = pnote->LastBox()->NextBoxAfter();
 		itss = -1;
 	}
-	return NULL; // ran out of boxes
+	return nullptr; // ran out of boxes
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -3700,7 +3694,7 @@ VwNotifier * VwNotifier::FindChild(int iprop, int ihvoTarget, int ich)
 {
 	VwBox * pbox = Boxes()[iprop];
 	if (!pbox)
-		return NULL; // empty prop, can't find object notifier, no objects
+		return nullptr; // empty prop, can't find object notifier, no objects
 	// Scan the list of boxes. If this property was displayed lazily, we may find a lazy box
 	// that represents it. If so we can make the necessary expansion.
 	VwBox * pboxLim = GetLimOfProp(iprop);
@@ -3733,7 +3727,7 @@ VwNotifier * VwNotifier::FindChild(int iprop, int ihvoTarget, int ich)
 		// special case for embedded object display.
 		VwParagraphBox * pvpbox = dynamic_cast<VwParagraphBox *>(pbox);
 		if (!pvpbox)
-			return NULL;
+			return nullptr;
 		for (VwBox * pboxChild = pvpbox->FirstBox(); pboxChild; pboxChild = pboxChild->NextOrLazy())
 		{
 			VwMoveablePileBox * pmpbox = dynamic_cast<VwMoveablePileBox *>(pboxChild);
@@ -3742,9 +3736,9 @@ VwNotifier * VwNotifier::FindChild(int iprop, int ihvoTarget, int ich)
 			// Now, we want a notifier for stuff INSIDE the pmpbox.
 			VwNotifier * pnoteSub = NextNotifierAt(Level() + 1, pmpbox->FirstBox(), -1);
 			if (!pnoteSub)
-				return NULL; // No objects, or something.
+				return nullptr; // No objects, or something.
 			if (pnoteSub->Parent() != this)
-				return NULL; // Ran out of our objects, found something else
+				return nullptr; // Ran out of our objects, found something else
 			// This is not infallible, there could be more than one root object in the
 			// embedded stuff. Then we'll need some more info to select one of them.
 			// It's also remotely possible that the MP box we found has NO embedded
@@ -3752,34 +3746,35 @@ VwNotifier * VwNotifier::FindChild(int iprop, int ihvoTarget, int ich)
 			// These are very pathological cases. For now, assume we got the one we want.
 			return pnoteSub;
 		}
-		return NULL; // looking for an embedded object, not found.
+		return nullptr; // looking for an embedded object, not found.
 	}
 
 	VwNotifier * pnote = NextNotifierAt(Level() + 1, pbox, StringIndexes()[iprop]);
 	if (!pnote)
-		return NULL; // No objects, or something.
+		return nullptr; // No objects, or something.
 	if (pnote->Parent() != this)
-		return NULL; // Ran out of our objects, found something else
+		return nullptr; // Ran out of our objects, found something else
 	std::vector<VwNotifier *> notifierChain;
-	int testLength = 0;
 	for (; pnote && pnote->ObjectIndex() < ihvoTarget; pnote = pnote->NextNotifier())
 	{
-		if(std::find(notifierChain.begin(), notifierChain.end(), pnote) != notifierChain.end() || testLength > 150)
+		if(std::find(notifierChain.begin(), notifierChain.end(), pnote) != notifierChain.end())
 		{
 #if defined(WIN32) || defined(WIN64)
-			// Build string of tags
+#if DEBUG
+			// Build string of tags for the notifier
 			StrUni szTags;
 			pnote->Tags();
 			szTags.Append(L"pnote tags: ");
-			for(int i = 0; i < pnote->CProps(); ++i)
+			for (int i = 0; i < pnote->CProps(); ++i)
 			{
 				wchar_t flid[20];
 				_itow_s(pnote->Tags()[i], flid, 10);
 				szTags.Append(flid);
 				szTags.Append(L",");
 			}
+			// Append the string for each notifier that has been attempted
 			szTags.Append(L"\nnotifiers:");
-			vector<VwNotifier*>::iterator it;  // declare an iterator to a vector of strings
+			vector<VwNotifier*>::iterator it;
 			for (it = notifierChain.begin(); it != notifierChain.end(); ++it) {
 				wchar_t whvo[20];
 				_itow_s((*it)->m_hvo, whvo, 10);
@@ -3788,22 +3783,25 @@ VwNotifier * VwNotifier::FindChild(int iprop, int ihvoTarget, int ich)
 			}
 			// Build info about parent notifier
 			StrUni stuErr;
-			stuErr.Format(L"Hello Fran! Jason here. Good news, I found the loop that FLEx was getting stuck in.\n"
-				L"Here is the data I need to hopefully really fix it\n"
-				L"loopCount = %d, ihvoTarget = %d iprop = %d ich = %d\n"
+			stuErr.Format(L"Hello developer. There is a very ugly loop in our display code.\n"
+				L"The end user will have a blank box wherever this Notifier should have drawn.\n"
+				L"Here is some data that could help you really fix it.\n"
+				L"ihvoTarget = %d iprop = %d ich = %d\n"
 				L"pnote->hvo %d, pnote->objectIndex %d, pnote->parent->hvo %d\n",
-				testLength, ihvoTarget, iprop, ich, pnote->m_hvo, pnote->ObjectIndex(), pnote->Parent()->m_hvo);
+				ihvoTarget, iprop, ich, pnote->m_hvo, pnote->ObjectIndex(), pnote->Parent()->m_hvo);
 			stuErr.Append(szTags.Chars());
-			::MessageBox(NULL, stuErr.Chars(), L"Diagnostic Info", MB_OK);
+			::MessageBox(nullptr, stuErr.Chars(), L"Diagnostic Info", MB_OK);
 #endif
+#endif
+			pnote = nullptr; // This notifier tree is actually a graph. Draw nothing and break out of our infinite loop.
+			break;
 		}
 		notifierChain.push_back(pnote);
-		++testLength;
 	}
 	if (!pnote)
-		return NULL; // ran out without finding it, maybe no box generated for this object?
+		return nullptr; // ran out without finding it, maybe no box generated for this object?
 	if (pnote->ObjectIndex() != ihvoTarget)
-		return NULL; // got past index without finding it, maybe same reason?
+		return nullptr; // got past index without finding it, maybe same reason?
 	return pnote;
 }
 
