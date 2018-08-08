@@ -10,6 +10,7 @@ using System.Threading;
 using System.Windows.Forms;
 using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Utils;
 using SIL.Utils;
 
 // ReSharper disable LocalizableElement -- Justification: we're cheap, and the messages in this file are displayed only in an error state.
@@ -39,7 +40,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 					case "-install":
 					case "--install":
 						// If we have any custom character data, install it!
-						Icu.InitIcuDataDir();
+						InitializeIcu();
 						var customCharsFile = CharEditorWindow.CustomCharsFile;
 						if (File.Exists(customCharsFile))
 						{
@@ -67,7 +68,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 						break;
 					case null:
 						// There were no arguments (the program was double-clicked or opened through the Start menu); run the graphical interface
-						Icu.InitIcuDataDir();
+						InitializeIcu();
 						window = new CharEditorWindow();
 						Application.Run(window);
 						break;
@@ -105,6 +106,21 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 					StartCleanup();
 				}
 			}
+		}
+
+		private static void InitializeIcu()
+		{
+			if (MiscUtils.IsWindows)
+			{
+				var arch = Environment.Is64BitProcess ? "x64" : "x86";
+				// ReSharper disable once AssignNullToNotNullAttribute -- If FlexExe returns null we have bigger problems
+				var icuPath = Path.Combine(Path.GetDirectoryName(FwDirectoryFinder.FlexExe), "lib", arch);
+				// Append icu dll location to PATH, such as .../lib/x64, to help C# and C++ code find icu.
+				Environment.SetEnvironmentVariable("PATH",
+					Environment.GetEnvironmentVariable("PATH") + Path.PathSeparator + icuPath);
+			}
+
+			Icu.InitIcuDataDir();
 		}
 
 		private static void StartCleanup()
