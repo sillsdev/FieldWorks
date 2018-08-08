@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2017 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -43,6 +43,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		[TestFixtureSetUp]
 		public void Setup()
 		{
+			FwRegistryHelper.Initialize();
 			Assert.IsTrue(InitializeIcuData());
 			m_sCustomCharsFile = Path.Combine(Icu.DefaultDirectory, "CustomChars.xml");
 			m_sCustomCharsBackup = Path.Combine(Icu.DefaultDirectory, "TestBackupForCustomChars.xml");
@@ -115,7 +116,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 		private static void VerifyNonexistentChars()
 		{
-			Icu.InitIcuDataDir();
+			FwUtils.InitializeIcu();
 
 			Assert.IsFalse(Icu.IsAlphabetic(kChar1));
 			Assert.IsFalse(Icu.IsAlphabetic(kChar2));
@@ -182,7 +183,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 		private static void VerifyNewlyCreatedChars()
 		{
-			Icu.InitIcuDataDir();
+			FwUtils.InitializeIcu();
 
 			// The commented out methods below use u_getIntPropertyValue(), which doesn't
 			// work reliably with the limited number of data files that we modify.

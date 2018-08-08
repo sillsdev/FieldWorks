@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2017 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -232,7 +232,10 @@ namespace SIL.FieldWorks
 				// by a bug in XP.
 				Application.EnableVisualStyles();
 
-				InitializeIcu();
+				// Set ICU_DATA environment variable
+				SetIcuDataDirEnvironmentVariable();
+
+				FwUtils.InitializeIcu();
 
 				// initialize the SLDR
 				Sldr.Initialize();
@@ -385,24 +388,6 @@ namespace SIL.FieldWorks
 				}
 			}
 			return 0;
-		}
-
-		private static void InitializeIcu()
-		{
-			var arch = Environment.Is64BitProcess ? "x64" : "x86";
-			var icuPath = Path.Combine(Path.GetDirectoryName(FwDirectoryFinder.FlexExe), "lib", arch);
-			// Append icu dll location to PATH, such as .../lib/x64, to help C# and C++ code
-			// find icu.
-			if (MiscUtils.IsWindows)
-			{
-				Environment.SetEnvironmentVariable("PATH",
-					Environment.GetEnvironmentVariable("PATH") + Path.PathSeparator + icuPath);
-			}
-
-			// Set ICU_DATA environment variable
-			SetIcuDataDirEnvironmentVariable();
-
-			LCModel.Core.Text.Icu.InitIcuDataDir();
 		}
 
 		/// <summary>

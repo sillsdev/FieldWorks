@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2017 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,7 +14,7 @@ using SIL.FieldWorks.FwCoreDlgs;
 
 namespace SIL.FieldWorks.PaObjects
 {
-	/// ----------------------------------------------------------------------------------------
+	/// ReSharper disable once InheritdocConsiderUsage -- cannot inheritdoc from multiple bases.
 	public class PaLexicalInfo : IPaLexicalInfo, IDisposable
 	{
 		private List<PaWritingSystem> m_writingSystems;
@@ -67,8 +67,8 @@ namespace SIL.FieldWorks.PaObjects
 		public bool ShowOpenProject(Form owner, ref Rectangle dialogBounds,
 			ref int dialogSplitterPos, out string name, out string server)
 		{
-			LCModel.Core.Text.Icu.InitIcuDataDir();
-			FwRegistryHelper.Initialize(); // inorder to find correct Registry keys
+			FwRegistryHelper.Initialize();
+			FwUtils.InitializeIcu();
 
 			using (var dlg = new ChooseLangProjectDialog(dialogBounds, dialogSplitterPos))
 			{

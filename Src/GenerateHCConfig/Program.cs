@@ -1,11 +1,15 @@
-﻿using System;
+// Copyright (c) 2016-2018 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.IO;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.WordWorks.Parser;
 using SIL.HermitCrab;
-using SIL.Machine.Annotations;
+using SIL.LCModel;
 using SIL.LCModel.Utils;
+using SIL.Machine.Annotations;
 using SIL.WritingSystems;
 
 namespace GenerateHCConfig
@@ -26,7 +30,8 @@ namespace GenerateHCConfig
 				return 1;
 			}
 
-			Icu.InitIcuDataDir();
+			FwRegistryHelper.Initialize();
+			FwUtils.InitializeIcu();
 			Sldr.Initialize();
 			var synchronizeInvoke = new SingleThreadedSynchronizeInvoke();
 			var spanFactory = new ShapeSpanFactory();
