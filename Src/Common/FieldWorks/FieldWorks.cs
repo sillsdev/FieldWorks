@@ -390,7 +390,7 @@ namespace SIL.FieldWorks
 		private static void InitializeIcu()
 		{
 			var arch = Environment.Is64BitProcess ? "x64" : "x86";
-			var icuPath = Path.Combine(Environment.CurrentDirectory, "lib", arch);
+			var icuPath = Path.Combine(Path.GetDirectoryName(FwDirectoryFinder.FlexExe), "lib", arch);
 			// Append icu dll location to PATH, such as .../lib/x64, to help C# and C++ code
 			// find icu.
 			if (MiscUtils.IsWindows)
