@@ -319,7 +319,7 @@
 		<Copy SourceFiles="@(ObjectFiles)" DestinationFolder="$(AppBuildMasterDir)/%(RecursiveDir)"/>
 	</Target>
 
-	<Target Name="DownloadBundledInstallers">
+	<Target Name="DownloadBundledInstallers" Condition="'$(disableDownloads)'!='true'">
 		<!-- REVIEW (Hasso) 2018.03: how many of these do we really need? -->
 		<PropertyGroup>
 			<WixLibsDir>$(InstallerDir)/libs/</WixLibsDir>
@@ -382,7 +382,7 @@
 			DownloadsDir="$(WixLibsDir)"/> <!-- always download to get the latest version -->
 	</Target>
 
-	<Target Name="DownloadAndUnzipFonts">
+	<Target Name="DownloadAndUnzipFonts" Condition="'$(disableDownloads)'!='true'">
 		<MakeDir Directories="$(DownloadsDir)" Condition="!Exists('$(DownloadsDir)')"/>
 		<!-- Note: we are downloading quivira but also leaving it checked in in case the website disappears. -->
 		<DownloadFile Address="http://www.quivira-font.com/files/Quivira.otf" DownloadsDir="$(fwrt)/DistFiles/Fonts/Raw"
