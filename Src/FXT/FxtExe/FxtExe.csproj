@@ -137,10 +137,10 @@
 	  <HintPath>..\..\..\Output\Debug\SIL.LCModel.dll</HintPath>
 	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
-	<Reference Include="FDOBrowser, Version=7.3.0.19428, Culture=neutral, processorArchitecture=x86">
+	<Reference Include="LCMBrowser">
 	  <SpecificVersion>False</SpecificVersion>
 	  <ExecutableExtension>.exe</ExecutableExtension>
-	  <HintPath>..\..\..\Output\Debug\FDOBrowser.exe</HintPath>
+	  <HintPath>..\..\..\Output\Debug\LCMBrowser.exe</HintPath>
 	</Reference>
 	<Reference Include="FwControls, Version=7.3.0.19072, Culture=neutral, processorArchitecture=x86">
 	  <SpecificVersion>False</SpecificVersion>

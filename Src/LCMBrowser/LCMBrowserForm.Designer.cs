@@ -1,13 +1,13 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.IO;
 using SIL.LCModel.Core.KernelInterfaces;
 
-namespace FDOBrowser
+namespace LCMBrowser
 {
-	partial class FDOBrowserForm
+	partial class LCMBrowserForm
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -44,15 +44,15 @@ namespace FDOBrowser
 		private void InitializeComponent()
 		{
 			this.SuspendLayout();
-			//
-			// FDOBrowserForm
-			//
+			// 
+			// LCMBrowserForm
+			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(872, 567);
 			this.Location = new System.Drawing.Point(0, 0);
-			this.Name = "FDOBrowserForm";
-			this.Text = "FDO Browser";
+			this.Name = "LCMBrowserForm";
+			this.Text = "LCM Browser";
 			this.Controls.SetChildIndex(this.m_dockPanel, 0);
 			this.ResumeLayout(false);
 			this.PerformLayout();

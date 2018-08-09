@@ -6,7 +6,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Xml;
-using FDOBrowser;
+using LCMBrowser;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;

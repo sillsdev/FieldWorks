@@ -1,11 +1,11 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-namespace FDOBrowser
+namespace LCMBrowser
 {
 	/// <summary>
-	/// Class to hold custom fields in FDOBrowser
+	/// Class to hold custom fields in LCMBrowser
 	///  </summary>
 	///
 	public class CustomFields
@@ -22,14 +22,7 @@ namespace FDOBrowser
 		///<summary />
 		public string Type = "";
 
-		///<summary>
-		/// Initialize class with passed in parameters.
-		///</summary>
-		///<param name="name"></param>
-		///<param name="classID"></param>
-		///<param name="fieldID"></param>
-		///<param name="type"></param>
-		///
+		///<summary/>
 		public CustomFields(string name, int classID, int fieldID, string type)
 		{
 			this.Name = name;

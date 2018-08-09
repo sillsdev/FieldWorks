@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,7 +7,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using SIL.LCModel;
 
-namespace FDOBrowser
+namespace LCMBrowser
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -28,8 +28,8 @@ namespace FDOBrowser
 		{
 			InitializeComponent();
 			m_fmtMsg = lblMsg.Text;
-			m_showCmObjProps = FDOClassList.ShowCmObjectProperties;
-			cboClass.Items.AddRange(FDOClassList.AllFDOClasses.ToArray());
+			m_showCmObjProps = LCMClassList.ShowCmObjectProperties;
+			cboClass.Items.AddRange(LCMClassList.AllFDOClasses.ToArray());
 			cboClass.SelectedIndex = 0;
 			cboClass_SelectionChangeCommitted(null, null);
 		}
@@ -44,7 +44,7 @@ namespace FDOBrowser
 			if (obj == null)
 				return;
 
-			foreach (FDOClass cls in cboClass.Items)
+			foreach (LCMClass cls in cboClass.Items)
 			{
 				if (obj.GetType() == cls.ClassType)
 				{
@@ -61,15 +61,15 @@ namespace FDOBrowser
 		/// ------------------------------------------------------------------------------------
 		private void cboClass_SelectionChangeCommitted(object sender, EventArgs e)
 		{
-			FDOClass clsProps = cboClass.SelectedItem as FDOClass;
+			LCMClass clsProps = cboClass.SelectedItem as LCMClass;
 			lblMsg.Text = string.Format(m_fmtMsg, clsProps.ClassName);
 			gridProperties.CellValueChanged -= gridProperties_CellValueChanged;
 			gridProperties.Rows.Clear();
 
-			foreach (FDOClassProperty prop in clsProps.Properties)
+			foreach (LCMClassProperty prop in clsProps.Properties)
 			{
 				bool fIsDisplayedCmObjProp =
-					(m_showCmObjProps || !FDOClassList.IsCmObjectProperty(prop.Name));
+					(m_showCmObjProps || !LCMClassList.IsCmObjectProperty(prop.Name));
 
 				int i = gridProperties.Rows.Add(prop.Displayed && fIsDisplayedCmObjProp, prop.Name, prop);
 				gridProperties.Rows[i].ReadOnly = !fIsDisplayedCmObjProp;
@@ -90,7 +90,7 @@ namespace FDOBrowser
 			if (e.ColumnIndex == 0 && e.RowIndex >= 0)
 			{
 				DataGridViewCellCollection cells = gridProperties.Rows[e.RowIndex].Cells;
-				FDOClassProperty prop = cells[2].Value as FDOClassProperty;
+				LCMClassProperty prop = cells[2].Value as LCMClassProperty;
 				prop.Displayed = (bool)cells[0].Value;
 			}
 		}
@@ -105,8 +105,8 @@ namespace FDOBrowser
 			if (e.ColumnIndex == 1 && e.RowIndex >= 0 && !m_showCmObjProps)
 			{
 				DataGridViewCellCollection cells = gridProperties.Rows[e.RowIndex].Cells;
-				FDOClassProperty prop = cells[2].Value as FDOClassProperty;
-				if (FDOClassList.IsCmObjectProperty(prop.Name))
+				LCMClassProperty prop = cells[2].Value as LCMClassProperty;
+				if (LCMClassList.IsCmObjectProperty(prop.Name))
 					e.CellStyle.ForeColor = SystemColors.GrayText;
 			}
 		}
@@ -149,7 +149,7 @@ namespace FDOBrowser
 		/// ------------------------------------------------------------------------------------
 		private void btnOK_Click(object sender, EventArgs e)
 		{
-			FDOClassList.Save();
+			LCMClassList.Save();
 			Close();
 		}
 
@@ -163,7 +163,7 @@ namespace FDOBrowser
 		private void btnCancel_Click(object sender, EventArgs e)
 		{
 			// This will blow away any changes.
-			FDOClassList.Reset();
+			LCMClassList.Reset();
 			Close();
 		}
 	}
