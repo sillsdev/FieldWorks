@@ -1,10 +1,11 @@
-﻿// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
@@ -123,7 +124,7 @@ namespace SIL.FieldWorks.IText
 					numberOfSegments += text[index].SegmentsOS.Count;
 					//count all the things analyzed as words
 					var words = new List<IAnalysis>(text[index].Analyses);
-					foreach (var word in words)
+					foreach (var word in words.Where(x => x.Wordform.ShortName != "???"))
 					{
 						var wordForm = word.Wordform;
 						if (wordForm != null)
