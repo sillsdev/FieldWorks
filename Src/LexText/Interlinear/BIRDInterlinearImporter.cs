@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -418,9 +418,14 @@ namespace SIL.FieldWorks.IText
 							newSegment.LiteralTranslation.set_String(GetWsEngine(wsFactory, item.lang).Handle, item.Value);
 							break;
 						case "note":
-							INote note = cache.ServiceLocator.GetInstance<INoteFactory>().Create();
-							newSegment.NotesOS.Add(note);
-							note.Content.set_String(GetWsEngine(wsFactory, item.lang).Handle, item.Value);
+							int ws = GetWsEngine(wsFactory, item.lang).Handle;
+							INote newNote = newSegment.NotesOS.FirstOrDefault(note => note.Content.get_String(ws).Text == item.Value);
+							if (newNote == null)
+							{
+								newNote = cache.ServiceLocator.GetInstance<INoteFactory>().Create();
+								newSegment.NotesOS.Add(newNote);
+								newNote.Content.set_String(GetWsEngine(wsFactory, item.lang).Handle, item.Value);
+							}
 							break;
 						case "txt":
 							phraseText = TsStringUtils.MakeString(item.Value, GetWsEngine(wsFactory, item.lang).Handle);

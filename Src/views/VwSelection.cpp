@@ -3658,6 +3658,7 @@ public:
 	OnTypingMethod(VwTextSelection * psel, IVwGraphics * pvg, const wchar * pchInput,
 		int cchInput, VwShiftStatus ss, int * pwsPending)
 	{
+		m_ichAnchor = m_ichEnd = 0;
 		m_qsel = psel;
 		m_pvg = pvg;
 		m_ss = ss;
@@ -4475,9 +4476,10 @@ public:
 			int cchIns = (int)(pch - m_pchInput);
 			if (cchIns)
 			{
+				StrUni stuInput(m_pchInput, cchIns);
 				CheckHr(m_qsel->m_qtsbProp->ReplaceRgch(
 					m_ichAnchor - m_qsel->m_ichMinEditProp,
-					m_ichAnchor - m_qsel->m_ichMinEditProp, m_pchInput, cchIns, qttp));
+					m_ichAnchor - m_qsel->m_ichMinEditProp, stuInput.Bstr(), cchIns, qttp));
 				m_ichAnchor += cchIns;
 				m_ichEnd += cchIns;
 				m_cchInput -= cchIns;
@@ -6073,6 +6075,7 @@ private:
 public:
 	GetSelectionStringMethod(VwTextSelection * pvwsel, BSTR bstrNonText, bool fWholeSelection)
 	{
+		m_pvpboxLast = nullptr;
 		m_pvwsel = pvwsel;
 		m_bstrNonText = bstrNonText;
 		m_fWholeSelection = fWholeSelection;
@@ -6372,8 +6375,8 @@ protected:
 				vch.Resize(ichLimRen - ichMinRen);
 				pts->Fetch(ichMinRen, ichLimRen, vch.Begin());
 				cchRun = ichLimRen - ichMinRen;
-
-				CheckHr(m_qtsb->ReplaceRgch(m_ichSel, m_ichSel, vch.Begin(), cchRun, qttp));
+				StrUni bstRun(vch.Begin(), cchRun);
+				CheckHr(m_qtsb->ReplaceRgch(m_ichSel, m_ichSel, bstRun.Bstr(), cchRun, qttp));
 				m_ichSel += cchRun;
 			}
 			ichNew = ichMinTss + tri.ichLim;
@@ -12372,7 +12375,7 @@ bool PropsDiffer(ITsTextProps * pttp1, ITsTextProps * pttp2, int ttp)
 
 // Answer true if the text props differ in a way which should prevent the associated characters from
 // being considered part of the same word.
-bool PropsIndicateWordBreak(ITsTextProps * pttp1, ITsTextProps * pttp2,IVwStylesheet * psty)
+bool PropsIndicateWordBreak(ITsTextProps * pttp1, ITsTextProps * pttp2, IVwStylesheet * psty)
 {
 	if (pttp1 == pttp2)
 		return false; // most common case, no change.
@@ -12399,9 +12402,6 @@ bool PropsIndicateWordBreak(ITsTextProps * pttp1, ITsTextProps * pttp2,IVwStyles
 	if (sbstrStyle2.Length())
 		CheckHr(psty->GetStyleRgch(sbstrStyle2.Length(), sbstrStyle2.Bstr(), &qttp2));
 	return PropsIndicateWordBreak(qttp1, qttp2, NULL);
-	// What on earth should we do if one style means something and the other doesn't??
-	// Simplest just to treat as no significant difference, I think.
-	return false;
 }
 
 void VwTextSelection::FindWordBoundaries(int & ichMinWord, int & ichLimWord)

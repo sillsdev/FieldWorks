@@ -818,28 +818,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				ITsString tssEmpty = TsStringUtils.EmptyString(ws);
 				m_sdaRev.CacheStringAlt(m_dummyId, ReversalIndexEntryTags.kflidReversalForm,
 					ws, tssEmpty);
-				// This updates the real data with the createdRevHvo. Reversal index entries in this sense will be reordered alphabetically.
-				int createdRevHvo = ConvertDummiesToReal(hvoObj);
-				if (createdRevHvo <= 0)
-				{
-					return;
-				}
 
 				// Refresh
 				RootBox.PropChanged(hvoIndex, kFlidEntries, count, 1, 0);
-
-				if (m_sense.ReferringReversalIndexEntries.Count() == 0)
-				{
-					return;
-				}
-
-				// Reset selection. Handle the reordering of reversal index entries.
-				IReversalIndexEntry currentEntry = m_sense.ReferringReversalIndexEntries.First(entry => entry.Hvo == createdRevHvo);
-				int updatedihvoEntryIndex = m_sense.ReferringReversalIndexEntries.IndexOf(currentEntry);
+				// Reset selection.
 				SelLevInfo[] rgvsli = new SelLevInfo[2];
 				rgvsli[0].cpropPrevious = 0;
 				rgvsli[0].tag = kFlidEntries;
-				rgvsli[0].ihvo = updatedihvoEntryIndex;
+				rgvsli[0].ihvo = count - 1;
 				rgvsli[1].cpropPrevious = 0;
 				rgvsli[1].tag = kFlidIndices;
 				rgvsli[1].ihvo = ihvoIndex;
@@ -853,7 +839,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					throw;
 				}
 
-				m_hvoOldSelection = createdRevHvo;
+				m_hvoOldSelection = hvoObj;
 				CheckHeight();
 			}
 

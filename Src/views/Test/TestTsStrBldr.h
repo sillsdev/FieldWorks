@@ -75,7 +75,7 @@ namespace TestViews
 			tip.m_nVar = 0;
 			tip.m_nVal = kwsSPN;
 			TsTextProps::Create(&tip, 1, NULL, 0, &qttp);
-			hr = m_pztsb0->ReplaceRgch(0, cch, g_pszTest2.Chars(), g_cchTest2, qttp);
+			hr = m_pztsb0->ReplaceRgch(0, cch, g_pszTest2.Bstr(), g_cchTest2, qttp);
 			unitpp::assert_eq("ReplaceRgch succeeded", S_OK, hr);
 
 			hr = m_pztsb0->get_Length(&cch);

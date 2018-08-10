@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2017 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -235,8 +235,7 @@ namespace SIL.FieldWorks
 				// Set ICU_DATA environment variable
 				SetIcuDataDirEnvironmentVariable();
 
-				// initialize ICU
-				LCModel.Core.Text.Icu.InitIcuDataDir();
+				FwUtils.InitializeIcu();
 
 				// initialize the SLDR
 				Sldr.Initialize();
@@ -496,6 +495,12 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		private static void LaunchRestoreFromCommandLine(FwAppArgs appArgs)
 		{
+			if (!string.IsNullOrEmpty(appArgs.Database))
+			{
+				Logger.WriteEvent(string.Concat("Restoring project: ", appArgs.BackupFile));
+				RestoreCurrentProject(new FwRestoreProjectSettings(new RestoreProjectSettings(FwDirectoryFinder.ProjectsDirectory, appArgs.Database, appArgs.BackupFile, appArgs.RestoreOptions)), null);
+				return;
+			}
 			RestoreProject(null, appArgs.BackupFile);
 		}
 

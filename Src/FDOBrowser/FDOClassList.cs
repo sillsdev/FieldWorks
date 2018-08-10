@@ -55,7 +55,7 @@ namespace FDOBrowser
 			// Find the FDO.dll assembly.
 			foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
 			{
-				if (asm.FullName.StartsWith("FDO,"))
+				if (asm.FullName.StartsWith("SIL.LCModel,"))
 				{
 					s_asmFDO = asm;
 					return;

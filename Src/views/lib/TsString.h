@@ -635,7 +635,7 @@ public:
 	// ITsStrBldr methods to modify the current state.
 	STDMETHOD(Replace)(int ichMin, int ichLim, BSTR bstrIns, ITsTextProps * pttp);
 	STDMETHOD(ReplaceTsString)(int ichMin, int ichLim, ITsString * ptssIns);
-	STDMETHOD(ReplaceRgch)(int ichMin, int ichLim, const OLECHAR * prgchIns, int cchIns,
+	STDMETHOD(ReplaceRgch)(int ichMin, int ichLim, const BSTR prgchIns, int cchIns,
 		ITsTextProps * pttp);
 
 	STDMETHOD(SetProperties)(int ichMin, int ichLim, ITsTextProps * pttp);

@@ -414,7 +414,7 @@
     <value>8</value>
   </data>
   <data name="edtAvailableDiskSpace.Text" xml:space="preserve">
-    <value>{0} KB Free on {1}</value>
+    <value>{0:n1} GB free out of {1:n0} GB on {2}</value>
   </data>
   <data name="&gt;&gt;edtAvailableDiskSpace.Name" xml:space="preserve">
     <value>edtAvailableDiskSpace</value>
@@ -441,7 +441,7 @@
     <value>6</value>
   </data>
   <data name="edtAvailableMemory.Text" xml:space="preserve">
-    <value>{0} KB out of {1} KB</value>
+    <value>{0:n0} MB out of {1:n0} MB</value>
   </data>
   <data name="&gt;&gt;edtAvailableMemory.Name" xml:space="preserve">
     <value>edtAvailableMemory</value>

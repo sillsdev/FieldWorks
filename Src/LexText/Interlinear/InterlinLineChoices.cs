@@ -1363,9 +1363,13 @@ namespace SIL.FieldWorks.IText
 			if (m_tssWsLabel == null)
 			{
 				string label;
-				if (m_ws == WritingSystemServices.kwsFirstAnal)
+				if (m_ws == WritingSystemServices.kwsFirstAnal || m_ws == WritingSystemServices.kwsAnal)
 				{
 					label = ITextStrings.ksBstAn;
+				}
+				else if (m_ws == WritingSystemServices.kwsFirstVern || m_ws == WritingSystemServices.kwsVern)
+				{
+					label = ITextStrings.ksBstVn;
 				}
 				else if (m_ws == WritingSystemServices.kwsVernInParagraph)
 				{

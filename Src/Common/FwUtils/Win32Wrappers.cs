@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------
-// Copyright (c) 2007-2016 SIL International
+// Copyright (c) 2007-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -13,6 +13,7 @@ using System.Text;
 using System.Windows.Forms.VisualStyles;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using System.Linq;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 
 #if __MonoCS__
@@ -1066,7 +1067,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </returns>
 #if !__MonoCS__
 		[DllImport("user32.dll")]
-		extern static public IntPtr ActivateKeyboardLayout(IntPtr hkl, KLF uFlags);
+		public static extern IntPtr ActivateKeyboardLayout(IntPtr hkl, KLF uFlags);
 #else
 		// TODO-Linux: Implement if needed
 		static public IntPtr ActivateKeyboardLayout(IntPtr hkl, KLF uFlags)
@@ -1122,7 +1123,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 #if !__MonoCS__
 		[DllImport("user32.dll")]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		public extern static bool SendMessage(IntPtr hwnd, int msg, IntPtr wp, IntPtr lp);
+		public static extern bool SendMessage(IntPtr hwnd, int msg, IntPtr wp, IntPtr lp);
 #else
 		// TODO-Linux: Implement if needed
 		public static bool SendMessage(IntPtr hwnd, int msg, IntPtr wp, IntPtr lp)
@@ -1273,8 +1274,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 #endif
 
+		/// <summary/>
 #if !__MonoCS__
-		/// <summary></summary>
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
 		public static extern bool PeekMessage(ref MSG msg, IntPtr hWnd, uint wFilterMin, uint wFilterMax, uint wFlag);
 #else
@@ -1285,8 +1286,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return false;
 		}
 #endif
+
+		/// <summary/>
 #if !__MonoCS__
-		/// <summary></summary>
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
 		public static extern bool TranslateMessage(ref MSG msg);
 #else
@@ -1297,8 +1299,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return false;
 		}
 #endif
+
+		/// <summary/>
 #if !__MonoCS__
-		/// <summary></summary>
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
 		public static extern bool DispatchMessage(ref MSG msg);
 #else
@@ -1309,8 +1312,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return false;
 		}
 #endif
+
+		/// <summary/>
 #if !__MonoCS__
-		/// <summary></summary>
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
 		public static extern bool IsDialogMessage(IntPtr hWnd, ref MSG msg);
 #else
@@ -1321,13 +1325,20 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return false;
 		}
 #endif
+
+		/// <summary/>
+		public static bool PostMessage(IntPtr hWnd, WinMsgs msg, int wParam, int lParam)
+		{
+			return PostMessage(hWnd, (uint)msg, (IntPtr)wParam, (IntPtr)lParam);
+		}
+
+		/// <summary/>
 #if !__MonoCS__
-		/// <summary></summary>
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern bool PostMessage(IntPtr hWnd, int Msg, uint wParam, uint lParam);
+		public static extern bool PostMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 #else
 		private static MethodInfo s_postMessage;
-		public static bool PostMessage(IntPtr hWnd, int Msg, uint wParam, uint lParam)
+		public static bool PostMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
 		{
 			if (s_postMessage == null)
 			{
@@ -1338,35 +1349,27 @@ namespace SIL.FieldWorks.Common.FwUtils
 					new Type[] { typeof(IntPtr), enumType, typeof(IntPtr), typeof(IntPtr) },
 					null);
 			}
-			return (bool)s_postMessage.Invoke(null, new object[] {hWnd, Msg, (IntPtr)wParam, (IntPtr)lParam});
+			return (bool)s_postMessage.Invoke(null, new object[] {hWnd, (int)msg, wParam, lParam});
 		}
 #endif
+
 #if !__MonoCS__
 		/// <summary></summary>
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern bool PostThreadMessage(int idThread, int Msg, uint wParam, uint lParam);
+		public static extern bool PostThreadMessage(int idThread, int msg, uint wParam, uint lParam);
 #else
 		// TODO-Linux: Implement if needed
-		public static bool PostThreadMessage(int idThread, int Msg, uint wParam, uint lParam)
+		public static bool PostThreadMessage(int idThread, int msg, uint wParam, uint lParam)
 		{
 			Console.WriteLine("Warning using unimplemented method PostThreadMessage");
 			return false;
 		}
 #endif
+
 #if !__MonoCS__
 		/// <summary></summary>
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern bool PostMessage(IntPtr hWnd, WinMsgs Msg, int wParam, int lParam);
-#else
-		public static bool PostMessage(IntPtr hWnd, WinMsgs Msg, int wParam, int lParam)
-		{
-			return PostMessage(hWnd, (int)Msg, (uint)wParam, (uint)lParam);
-		}
-#endif
-#if !__MonoCS__
-		/// <summary></summary>
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public extern static IntPtr GetDlgItem(IntPtr hDlg, int nControlID);
+		public static extern IntPtr GetDlgItem(IntPtr hDlg, int nControlID);
 #else
 		// TODO-Linux: Implement if needed
 		public static IntPtr GetDlgItem(IntPtr hDlg, int nControlID)
@@ -1375,6 +1378,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return IntPtr.Zero;
 		}
 #endif
+
 #if !__MonoCS__
 		/// <summary></summary>
 		[DllImport("user32.dll", ExactSpelling = true, CharSet = CharSet.Auto)]
@@ -1393,7 +1397,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 #if !__MonoCS__
 		/// <summary></summary>
 		[DllImport("user32.dll")]
-		public extern static bool SetForegroundWindow(IntPtr hWnd);
+		public static extern bool SetForegroundWindow(IntPtr hWnd);
 #else
 		public static bool SetForegroundWindow(IntPtr hWnd)
 		{
@@ -1411,7 +1415,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 #if !__MonoCS__
 		/// <summary></summary>
 		[DllImport("user32.dll")]
-		public extern static bool SetForegroundWindow(int hWnd);
+		public static extern bool SetForegroundWindow(int hWnd);
 #else
 		// TODO-Linux: Implement if needed
 		public static bool SetForegroundWindow(int hWnd)
@@ -1423,7 +1427,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 #if !__MonoCS__
 		/// <summary></summary>
 		[DllImport("user32.dll")]
-		public extern static bool GetWindowRect(IntPtr hWnd, out Rect rect);
+		public static extern bool GetWindowRect(IntPtr hWnd, out Rect rect);
 #else
 		public static bool GetWindowRect(IntPtr hWnd, out Rect rect)
 		{
@@ -1520,7 +1524,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 #if !__MonoCS__
 		/// <summary></summary>
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public extern static IntPtr SetParent(IntPtr hChild, IntPtr hParent);
+		public static extern IntPtr SetParent(IntPtr hChild, IntPtr hParent);
 #else
 		// TODO-Linux: Implement if needed
 		public static IntPtr SetParent(IntPtr hChild, IntPtr hParent)
@@ -1533,7 +1537,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>The MenuItemFromPoint function determines which menu item, if any, is at the
 		/// specified location.</summary>
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public extern static int MenuItemFromPoint(IntPtr hWnd, IntPtr hMenu, Point ptScreen);
+		public static extern int MenuItemFromPoint(IntPtr hWnd, IntPtr hMenu, Point ptScreen);
 #else
 		// TODO-Linux: Implement if needed
 		public static int MenuItemFromPoint(IntPtr hWnd, IntPtr hMenu, Point ptScreen)
@@ -1545,7 +1549,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 #if !__MonoCS__
 		/// <summary>The EndMenu function ends the calling thread's active menu.</summary>
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public extern static bool EndMenu();
+		public static extern bool EndMenu();
 #else
 		// TODO-Linux: Implement if needed
 		public static bool EndMenu()
@@ -1557,7 +1561,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 #if !__MonoCS__
 		/// <summary> go from client to screen</summary>
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public extern static bool ClientToScreen(IntPtr hWnd, ref POINT ptScreen);
+		public static extern bool ClientToScreen(IntPtr hWnd, ref POINT ptScreen);
 #else
 		// TODO-Linux: Implement if neededs
 		public static bool ClientToScreen(IntPtr hWnd, ref POINT ptScreen)
@@ -1569,7 +1573,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 #if !__MonoCS__
 		/// <summary> go from screen to client</summary>
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public extern static bool ScreenToClient(IntPtr hWnd, ref POINT ptScreen);
+		public static extern bool ScreenToClient(IntPtr hWnd, ref POINT ptScreen);
 #else
 		// TODO-Linux: Implement if needed
 		public static bool ScreenToClient(IntPtr hWnd, ref POINT ptScreen)
@@ -1587,7 +1591,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// occurs</returns>
 #if !__MonoCS__
 		[DllImport("user32.dll")]
-		extern static public uint RegisterWindowMessage(string name);
+		public static extern uint RegisterWindowMessage(string name);
 #else
 		// TODO-Linux: Implement if needed
 		static public uint RegisterWindowMessage(string name)
@@ -1710,7 +1714,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// the scroll box. If the function fails, the return value is 0.</returns>
 		/// ------------------------------------------------------------------------------------
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public extern static short SetScrollPos(IntPtr hWnd, WhichScrollBar nBar, short nPos, bool fRedraw);
+		public static extern short SetScrollPos(IntPtr hWnd, WhichScrollBar nBar, short nPos, bool fRedraw);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1726,7 +1730,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// the scroll box. If the function fails, the return value is 0. </returns>
 		/// ------------------------------------------------------------------------------------
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public extern static short GetScrollPos(IntPtr hWnd, WhichScrollBar nBar);
+		public static extern short GetScrollPos(IntPtr hWnd, WhichScrollBar nBar);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1745,7 +1749,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// fails, the return value is <c>false</c>.</returns>
 		/// ------------------------------------------------------------------------------------
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public extern static bool SetScrollRange(IntPtr hWnd, WhichScrollBar nBar, short nMinPos,
+		public static extern bool SetScrollRange(IntPtr hWnd, WhichScrollBar nBar, short nMinPos,
 			short nMaxPos, bool fRedraw);
 
 		/// ------------------------------------------------------------------------------------
@@ -1763,7 +1767,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// fails, the return value is <c>false</c>.</returns>
 		/// ------------------------------------------------------------------------------------
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public extern static bool GetScrollRange(IntPtr hWnd, WhichScrollBar nBar,
+		public static extern bool GetScrollRange(IntPtr hWnd, WhichScrollBar nBar,
 			out short nMinPos, out short nMaxPos);
 		#endregion // Scrolling
 
@@ -1771,68 +1775,65 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		#region Kernel32.dll
 		/// <summary>
-		/// The <c>MemoryStatus</c> structure contains information about the current
-		/// state of both physical and virtual memory.
+		/// Contains information about the current state of both physical and virtual memory.
 		/// </summary>
-		public struct MemoryStatus
+		public struct MemoryStatusEx
 		{
 			/// <summary>
-			/// Size of the <c>MemoryStatus</c> data structure, in bytes. You do not
-			/// need to set this member before calling the <see cref="GlobalMemoryStatus"/>
+			/// Size of the <c>MemoryStatus</c> data structure, in bytes. You must
+			/// need to set this member before calling <see cref="GlobalMemoryStatusEx"/>
 			/// function; the function sets it.
 			/// </summary>
 			public uint dwLength;
-			/// <summary>See MSDN documentation</summary>
+			/// <summary>Percentage of physical memory use (0-100)</summary>
 			public uint dwMemoryLoad;
 			/// <summary>Total size of physical memory, in bytes.</summary>
-			public uint dwTotalPhys;
-			/// <summary>Size of physical memory available, in bytes. </summary>
-			public uint dwAvailPhys;
-			/// <summary>Size of the committed memory limit, in bytes. </summary>
-			public uint dwTotalPageFile;
+			public ulong ullTotalPhys;
+			/// <summary>Size of physical memory available, in bytes.</summary>
+			public ulong ullAvailPhys;
+			/// <summary>Current committed memory limit for the system or the current process, whichever is smaller, in bytes.</summary>
+			public ulong ullTotalPageFile;
 			/// <summary>Size of available memory to commit, in bytes.</summary>
-			public uint dwAvailPageFile;
+			public ulong ullAvailPageFile;
 			/// <summary>Total size of the user mode portion of the virtual address space of
 			/// the calling process, in bytes.</summary>
-			public uint dwTotalVirtual;
+			public ulong ullTotalVirtual;
 			/// <summary>Size of unreserved and uncommitted memory in the user mode portion
 			/// of the virtual address space of the calling process, in bytes.</summary>
-			public uint dwAvailVirtual;
-		};
+			public ulong ullAvailVirtual;
+			/// <summary>Reserved. This value is always 0.</summary>
+			public ulong ullAvailExtendedVirtual;
+		}
 
 		/// <summary>
-		/// The <c>GlobalMemoryStatus</c> function obtains information about the system's
+		/// Retrieves information about the system's
 		/// current usage of both physical and virtual memory.
 		/// </summary>
-		/// <param name="ms">Pointer to a <see cref="MemoryStatus"/>  structure. The
-		/// <c>GlobalMemoryStatus</c> function stores information about current memory
+		/// <param name="ms">Pointer to a <see cref="MemoryStatusEx"/> structure. This
+		/// function stores information about current memory
 		/// availability into this structure.</param>
 		[DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-		extern public static void GlobalMemoryStatus(ref MemoryStatus ms);
+		public static extern void GlobalMemoryStatusEx(ref MemoryStatusEx ms);
 
 		/// <summary>
-		/// The <c>GetDiskFreeSpace</c> function retrieves information about the specified
-		/// disk, including the amount of free space on the disk.
+		/// Retrieves information about the specified disk, including the amount of free space on the disk.
 		/// </summary>
-		/// <param name="rootPathName">[in] Pointer to a null-terminated string that specifies
-		/// the root directory of the disk to return information about. See MSDN for more
-		/// information</param>
-		/// <param name="sectorsPerCluster">[out] Pointer to a variable for the number of
-		/// sectors per cluster.</param>
-		/// <param name="bytesPerSector">[out] Pointer to a variable for the number of bytes
-		/// per sector.</param>
-		/// <param name="numberOfFreeClusters">[out] Pointer to a variable for the total
-		/// number of free clusters on the disk that are available to the user associated with
-		/// the calling thread. </param>
-		/// <param name="totalNumberOfClusters">[out] Pointer to a variable for the total
-		/// number of clusters on the disk that are available to the user associated with the
-		/// calling thread. </param>
-		/// <returns><para>If the function succeeds, the return value is <b>true</b>.</para>
-		/// <para>If the function fails, the return value is <b>false</b>. </para></returns>
-		[DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-		extern public static bool
-			GetDiskFreeSpace(string rootPathName, ref uint sectorsPerCluster, ref uint bytesPerSector,
-			ref uint numberOfFreeClusters, ref uint totalNumberOfClusters);
+		/// <param name="lpDirectoryName">A directory on the disk. If this parameter is NULL, the function uses the root of the current disk.
+		/// If this parameter is a UNC name, it must include a trailing backslash, for example, "\MyServer\MyShare".
+		/// This parameter does not have to specify the root directory on a disk. The function accepts any directory on a disk.
+		/// The calling application must have FILE_LIST_DIRECTORY access rights for this directory.</param>
+		/// <param name="lpFreeBytesAvailable">TBD
+		/// (per https://docs.microsoft.com/en-us/windows/desktop/api/fileapi/nf-fileapi-getdiskfreespaceexa accessed 2018.08.02)</param>
+		/// <param name="lpTotalNumberOfBytes">A pointer to a variable that receives the total number of bytes on a disk that are available to the
+		/// user who is associated with the calling thread. This parameter can be NULL.
+		/// If per-user quotas are being used, this value may be less than the total number of bytes on a disk.</param>
+		/// <param name="lpTotalNumberOfFreeBytes">A pointer to a variable that receives the total number of free bytes on a disk.
+		/// This parameter can be NULL.</param>
+		/// <returns>true if and only if the call succeeds</returns>
+		[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static extern bool GetDiskFreeSpaceEx(string lpDirectoryName,
+			out ulong lpFreeBytesAvailable, out ulong lpTotalNumberOfBytes, out ulong lpTotalNumberOfFreeBytes);
 
 		/// <summary></summary>
 #if !__MonoCS__
@@ -1897,7 +1898,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public struct SecurityAttributes
 		{
 			/// <summary>length of the structure</summary>
-			public UInt32 length;
+			public uint length;
 			/// <summary>security descriptor struct - define this if needed</summary>
 			public IntPtr securityDescriptor;
 			/// <summary>true to allow the handle to be inherited</summary>
@@ -1912,14 +1913,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		public const UInt32 WAIT_OBJECT_0 = 0;
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary></summary>
-		/// ------------------------------------------------------------------------------------
-
+#if false // there are no usages of Create- or ReleaseSemaphore
+		/// <summary/>
 #if !__MonoCS__
 		[DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-		extern public static IntPtr CreateSemaphore(ref SecurityAttributes securityAttributes,
-			int initialCount, int maximumCount, string name);
+		public static extern IntPtr CreateSemaphore(ref SecurityAttributes securityAttributes,
+			long initialCount, long maximumCount, string name);
 #else
 		// TODO-Linux: Implement if needed
 		public static IntPtr CreateSemaphore(ref SecurityAttributes securityAttributes,
@@ -1934,7 +1933,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 #if !__MonoCS__
 		[DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-		extern public static bool ReleaseSemaphore(IntPtr semaphore, int releaseCount,
+		public static extern bool ReleaseSemaphore(IntPtr semaphore, long releaseCount,
 			out int previousCount);
 #else
 		// TODO-Linux: Implement if needed
@@ -1946,15 +1945,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return false;
 		}
 #endif
+#endif // false
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary></summary>
 		/// ------------------------------------------------------------------------------------
 #if !__MonoCS__
 		[DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-		extern public static UInt32 WaitForSingleObject(IntPtr handle, UInt32 milliseconds);
+		public static extern uint WaitForSingleObject(IntPtr handle, uint milliseconds);
 #else
 		// TODO-Linux: Implement if needed
-		public static UInt32 WaitForSingleObject(IntPtr handle, UInt32 milliseconds)
+		public static uint WaitForSingleObject(IntPtr handle, uint milliseconds)
 		{
 			Console.WriteLine("Warning using unimplemented method WaitForSingleObject");
 			return 0;
@@ -1964,12 +1965,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 #if __MonoCS__
 #pragma warning restore 1591 // missing XML comment
 #endif
-		#endregion
+#endregion
 
 
-		#endregion
+#endregion
 
-		#region Comctl32.dll
+#region Comctl32.dll
 		/// <summary></summary>
 		[DllImport("comctl32.dll")]
 		public static extern bool InitCommonControlsEx(INITCOMMONCONTROLSEX icc);
@@ -2811,16 +2812,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 			I_IMAGENONE = -2
 		}
 
-		#endregion
+#endregion
 
-		#region Ole32.dll
+#region Ole32.dll
 		/// <summary>
 		/// Carries out the clipboard shutdown sequence. It also releases the <c>IDataObject</c>
 		/// pointer that was previously placed on the clipboard.
 		/// </summary>
 		/// <returns><c>true</c> if the clipboard has been flushed.</returns>
 		[DllImport("ole32.dll")]
-		public extern static int OleFlushClipboard();
+		public static extern int OleFlushClipboard();
 
 		/// <summary>
 		/// Determines whether the data object pointer previously placed on the clipboard is
@@ -2829,10 +2830,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="pDataObject">[in] Pointer to the data object previously copied or cut.</param>
 		/// <returns><c>true</c> if object still on the clipboard.</returns>
 		[DllImport("ole32.dll")]
-		public extern static bool OleIsCurrentClipboard([MarshalAs(UnmanagedType.IUnknown)]object pDataObject);
-		#endregion
+		public static extern bool OleIsCurrentClipboard([MarshalAs(UnmanagedType.IUnknown)]object pDataObject);
+#endregion
 
-		#region Shell32.dll
+#region Shell32.dll
 
 		/// <summary></summary>
 		public enum LVNotifications
@@ -3271,9 +3272,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			NM_RELEASEDCAPTURE = (NM_FIRST - 16)
 		}
 
-		#endregion
+#endregion
 
-		#region Imm32.dll
+#region Imm32.dll
 
 		/// <summary>
 		/// These values are used with the ImmGetConversionStatus and ImmSetConversionStatus functions.
@@ -3374,7 +3375,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[return: MarshalAs(UnmanagedType.Bool)]
 		public static extern bool ImmSetConversionStatus(HandleRef context, int conversionMode,
 			int sentenceMode);
-		#endregion
+#endregion
 
 		/// <summary></summary>
 		public const int SPI_GETNONCLIENTMETRICS = 41;
@@ -3399,7 +3400,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return null;
 		}
 
-		#region gdi32.dll
+#region gdi32.dll
 
 		[DllImport("gdi32.dll")]
 		internal static extern uint GetFontUnicodeRanges(IntPtr hdc, IntPtr lpgs);
@@ -3418,9 +3419,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public struct FontRange
 		{
 			/// <summary></summary>
-			public UInt16 Low;
+			public ushort Low;
 			/// <summary></summary>
-			public UInt16 High;
+			public ushort High;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -3437,17 +3438,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 				hdc = g.GetHdc();
 				hFont = font.ToHfont();
 				old = SelectObject(hdc, hFont);
-				uint size = GetFontUnicodeRanges(hdc, IntPtr.Zero);
+				var size = GetFontUnicodeRanges(hdc, IntPtr.Zero);
 				glyphSet = Marshal.AllocHGlobal((int)size);
 				GetFontUnicodeRanges(hdc, glyphSet);
 				fontRanges = new List<FontRange>();
-				int count = Marshal.ReadInt32(glyphSet, 12);
+				var count = Marshal.ReadInt32(glyphSet, 12);
 
 				for (int i = 0; i < count; i++)
 				{
-					FontRange range = new FontRange();
-					range.Low = (UInt16)Marshal.ReadInt16(glyphSet, 16 + i * 4);
-					range.High = (UInt16)(range.Low + Marshal.ReadInt16(glyphSet, 18 + i * 4) - 1);
+					var range = new FontRange
+						{ Low = (ushort)Marshal.ReadInt16(glyphSet, 16 + i * 4) };
+					range.High = (ushort)(range.Low + Marshal.ReadInt16(glyphSet, 18 + i * 4) - 1);
 					fontRanges.Add(range);
 				}
 
@@ -3492,8 +3493,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		public static bool IsCharGlyphInFont(string str, Font fnt)
 		{
-			return (string.IsNullOrEmpty(str) || fnt == null ?
-				false : IsCharGlyphInFont(str[0], fnt));
+			return !string.IsNullOrEmpty(str) && fnt != null && IsCharGlyphInFont(str[0], fnt);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -3507,28 +3507,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 			if ((int)chr <= 0 || fnt == null)
 				return false;
 
-			UInt16 intval = Convert.ToUInt16(chr);
-			List<FontRange> ranges = GetUnicodeRangesForFont(fnt);
-			bool isChrPresent = false;
-
-			foreach (FontRange range in ranges)
-			{
-				if (intval >= range.Low && intval <= range.High)
-				{
-					isChrPresent = true;
-					break;
-				}
-			}
-
-			return isChrPresent;
+			var intval = Convert.ToUInt16(chr);
+			var ranges = GetUnicodeRangesForFont(fnt);
+			return ranges.Any(range => intval >= range.Low && intval <= range.High);
 		}
 
-		#endregion
+#endregion
 	}
 
-	#endregion
+#endregion
 
-	#region class LogicalFont
+#region class LogicalFont
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Defines a class for holding info about a logical font.
@@ -3592,5 +3581,5 @@ namespace SIL.FieldWorks.Common.FwUtils
 			get { return lfCharSet == (byte)TextMetricsCharacterSet.Symbol; }
 		}
 	}
-	#endregion
+#endregion
 }

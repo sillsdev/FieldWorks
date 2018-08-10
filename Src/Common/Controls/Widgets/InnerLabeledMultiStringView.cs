@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2017 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -72,6 +72,13 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get { return m_hvoObj; }
 		}
+		/// <summary>
+		/// Returns true if a refresh is pending. For testing.
+		/// </summary>
+		internal bool RefreshPending
+		{
+			get { return m_fRefreshPending; }
+		}
 
 		/// <summary>
 		/// This event is triggered at the start of the Display() method of the VC.
@@ -127,11 +134,19 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Return the sound control rectangle.
 		/// </summary>
-		internal void GetSoundControlRectangle(IVwSelection sel, out Rectangle selRect)
+		internal bool GetSoundControlRectangle(IVwSelection sel, out Rectangle selRect)
 		{
+			// Trying to get the Rectangle for the sound control can cause a crash (LT-18994) if a refresh is pending
+			// to reconstruct the RootBox. Just return false for now and try again when the refresh is successful.
+			if (m_fRefreshPending)
+			{
+				selRect = new Rectangle(); // Just a dummy
+				return false;
+			}
 			bool fEndBeforeAnchor;
 			using (new HoldGraphics(this))
 				SelectionRectangle(sel, out selRect, out fEndBeforeAnchor);
+			return true;
 		}
 
 		/// <summary>
@@ -188,6 +203,16 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			m_rgws = WritingSystemOptions;
 			return base.RefreshDisplay();
+		}
+
+		/// <summary>
+		/// Use the refresh pending flag to determine if the display must be refreshed. The flag is set when
+		/// this control failed a previous RefreshDisplay which can happen when this control is reused.
+		/// </summary>
+		internal void RefreshDisplayIfPending()
+		{
+			if (m_fRefreshPending)
+				RefreshDisplay();
 		}
 
 		private void ConstructReuseCore(int hvo, int flid, int wsMagic, int wsOptional, bool forceIncludeEnglish, bool editable, bool spellCheck)

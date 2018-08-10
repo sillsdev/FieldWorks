@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,7 +11,6 @@ using System.Linq;
 using System.Threading;
 using System.Text;
 using System.Windows.Forms;
-using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Reporting;
 
@@ -553,7 +552,7 @@ namespace XCore
 		}
 
 		// flag set if we are going to have a specific m_mainWindowHandler but don't yet.
-		bool m_specificToOneMainWindow = false;
+		private bool m_specificToOneMainWindow;
 		private bool m_safeToBroadcast = true;
 		private IntPtr m_mainWndPtr = IntPtr.Zero;
 
@@ -580,7 +579,7 @@ namespace XCore
 					mainWndPtr = process.MainWindowHandle;
 			}
 			if (mainWndPtr != IntPtr.Zero)
-				Win32.PostMessage(mainWndPtr, Mediator.WM_BROADCAST_ITEM_INQUEUE, 0, 0);
+				Win32.PostMessage(mainWndPtr, WM_BROADCAST_ITEM_INQUEUE, (IntPtr)0, (IntPtr)0);
 		}
 
 		/// <summary>Add an item to the queue and let the app know an item is present to be processed.</summary>

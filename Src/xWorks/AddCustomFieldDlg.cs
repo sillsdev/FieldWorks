@@ -57,6 +57,7 @@ namespace SIL.FieldWorks.XWorks
 		// variables for managing the dlg
 		private readonly Mediator m_mediator;
 		private readonly PropertyTable m_propertyTable;
+		private readonly LocationType m_locationType;
 
 		private readonly Inventory m_layouts;
 		private readonly Dictionary<int, ModifiedLabel> m_dictModLabels = new Dictionary<int, ModifiedLabel>();
@@ -99,6 +100,7 @@ namespace SIL.FieldWorks.XWorks
 			// create member variables
 			m_mediator = mediator;
 			m_propertyTable = propertyTable;
+			m_locationType = locationType;
 			m_cache = m_propertyTable.GetValue<LcmCache>("cache");
 			m_layouts = Inventory.GetInventory("layouts", m_cache.ProjectId.Name);
 
@@ -210,7 +212,8 @@ namespace SIL.FieldWorks.XWorks
 			m_wsComboBox.Items.Add(new IdAndString<int>(WritingSystemServices.kwsAnal, xWorksStrings.FirstAnalysisWs));
 			m_wsComboBox.Items.Add(new IdAndString<int>(WritingSystemServices.kwsVern, xWorksStrings.FirstVernacularWs));
 			if (m_typeComboBox.SelectedItem != null
-				&& ((IdAndString<CustomFieldType>)m_typeComboBox.SelectedItem).Id == CustomFieldType.SingleLineText)
+				&& ((IdAndString<CustomFieldType>)m_typeComboBox.SelectedItem).Id == CustomFieldType.SingleLineText
+				&& m_locationType != LocationType.Interlinear)
 			{
 				m_wsComboBox.Items.Add(new IdAndString<int>(WritingSystemServices.kwsAnals, xWorksStrings.AllAnalysisWs));
 				m_wsComboBox.Items.Add(new IdAndString<int>(WritingSystemServices.kwsVerns, xWorksStrings.AllVernacularWs));
