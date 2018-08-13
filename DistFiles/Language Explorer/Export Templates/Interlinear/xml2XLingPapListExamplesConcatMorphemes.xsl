@@ -94,14 +94,6 @@ phrase
 				<xsl:with-param name="sScriptureType" select="$sScriptureType"/>
 			</xsl:call-template>
 		</xsl:variable>
-		<xsl:variable name="sThisTextId">
-			<!-- we really need something from the DB or some such.  Am trying this in hopes it will be unique in most cases -->
-			<xsl:for-each select="../phrase[position()=last()]">
-				<!--                <xsl:if test="position()=last()">-->
-				<xsl:value-of select="generate-id()"/>
-				<!--                </xsl:if>-->
-			</xsl:for-each>
-		</xsl:variable>
 		<listInterlinear letter="x{$sThisTextId}-{translate($sLevel,':','.')}">
 			<xsl:call-template name="OutputInterlinearContent"/>
 		</listInterlinear>
