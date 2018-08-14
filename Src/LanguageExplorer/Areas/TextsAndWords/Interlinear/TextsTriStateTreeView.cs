@@ -63,7 +63,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					return;
 				}
 				m_scriptureStylesheet = new LcmStyleSheet();
-				m_scriptureStylesheet.Init(m_cache, m_scr.Hvo, ScriptureTags.kflidStyles);
+				m_scriptureStylesheet.Init(m_cache, m_cache.LangProject.Hvo, LangProjectTags.kflidStyles);
 			}
 		}
 
@@ -618,7 +618,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			IScrImportSet importSettings = null;
 			var haveSomethingToImport = NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 			{
-				importSettings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6, m_scriptureStylesheet, FwDirectoryFinder.TeStylesPath);
+				importSettings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6, m_scriptureStylesheet, FwDirectoryFinder.FlexStylesPath);
 				importSettings.RevertToSaved();
 				importSettings.ParatextScrProj = m_associatedPtText.Name;
 				importSettings.StartRef = new BCVRef(bookNum, 0, 0);
@@ -660,7 +660,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			IScrImportSet importSettings = null;
 			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 			{
-				importSettings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6, m_scriptureStylesheet, FwDirectoryFinder.TeStylesPath);
+				importSettings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6, m_scriptureStylesheet, FwDirectoryFinder.FlexStylesPath);
 				importSettings.ParatextScrProj = m_associatedPtText.Name;
 				importSettings.StartRef = new BCVRef(bookNum, 0, 0);
 				importSettings.ParatextBTProj = btProject.Name;

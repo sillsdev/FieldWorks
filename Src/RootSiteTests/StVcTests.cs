@@ -287,7 +287,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			footnote.FootnoteMarker = TsStringUtils.MakeString("a", Cache.WritingSystemFactory.GetWsFromStr("en"));
 			// Prepare the test by creating a footnote view
 			LcmStyleSheet styleSheet = new LcmStyleSheet();
-			styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
+			styleSheet.Init(Cache, Cache.LangProject.Hvo, LangProjectTags.kflidStyles);
 
 			IPublisher publisher;
 			ISubscriber subscriber;
@@ -355,7 +355,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			translation.Translation.set_String(analWs, TsStringUtils.MakeString("abcde", analWs));
 
 			LcmStyleSheet styleSheet = new LcmStyleSheet();
-			styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
+			styleSheet.Init(Cache, Cache.LangProject.Hvo, LangProjectTags.kflidStyles);
 
 			// Prepare the test by creating a footnote view
 			IPublisher publisher;
@@ -396,7 +396,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			// Prepare the test by creating a footnote view
 			LcmStyleSheet styleSheet = new LcmStyleSheet();
-			styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
+			styleSheet.Init(Cache, Cache.LangProject.Hvo, LangProjectTags.kflidStyles);
 
 			using (Form form = new Form())
 			using (DummyFootnoteView footnoteView = new DummyFootnoteView(Cache))

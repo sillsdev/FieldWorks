@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -89,7 +89,7 @@ namespace LanguageExplorer.Areas
 		}
 		private List<IStText> m_scriptureTexts;
 
-		public bool IncludeScripture { get; }
+		public bool IncludeScripture { get; private set; }
 
 		/// <summary>
 		/// Get the "core" (non-scripture) texts that we want to display. This is all the ones not on the excluded list.
@@ -193,9 +193,9 @@ namespace LanguageExplorer.Areas
 					foreach (var st in m_scriptureTexts)
 					{
 						yield return st;
-					}
 				}
 			}
+		}
 		}
 
 		/// <summary>
@@ -248,8 +248,8 @@ namespace LanguageExplorer.Areas
 					{
 						if (ClearInvalidObjects(m_scriptureTexts, CoreTexts.Count, IncludeScripture))
 						{
-							UpdatePropertyTable();
-						}
+								UpdatePropertyTable();
+					}
 					}
 					break;
 				default:
@@ -382,12 +382,13 @@ namespace LanguageExplorer.Areas
 				else
 				{
 					m_scriptureTexts.Add(obj);
-				}
+			}
 			}
 			UpdatePropertyTable();
 			UpdateExcludedCoreTexts(excludedGuids);
 			m_coreTexts = null;
 			m_interestingTests = null; // regenerate when next needed. (Before we raise changed, which may use it...)
+			IncludeScripture = m_scriptureTexts.Count > 0;
 			var newTexts = InterestingTexts.ToArray();
 			var firstChange = 0;
 			var minLength = Math.Min(oldTexts.Length, newTexts.Length);
@@ -442,13 +443,13 @@ namespace LanguageExplorer.Areas
 				{
 					return false; // not a text in current Scripture.
 				}
-				CoreTexts.Add(newText);
+					CoreTexts.Add(newText);
 				m_interestingTests?.Add(newText);
-				excludedCoreTextIdList.Remove(newText.Guid);
-				UpdateExcludedCoreTexts(excludedCoreTextIdList);
-				RaiseInterestingTextsChanged(CoreTexts.Count - 1, 1, 0);
-				return true; // added sucessfully
-			}
+					excludedCoreTextIdList.Remove(newText.Guid);
+					UpdateExcludedCoreTexts(excludedCoreTextIdList);
+					RaiseInterestingTextsChanged(CoreTexts.Count - 1, 1, 0);
+					return true; // added sucessfully
+				}
 			int index;
 			for (index = 0; index < m_scriptureTexts.Count; index++)
 			{
@@ -471,14 +472,14 @@ namespace LanguageExplorer.Areas
 					else
 					{
 						index--; // move index to point at heading
-					}
+				}
 				}
 				else if (sec.ContentOA != null)
 				{
 					if (index >= m_scriptureTexts.Count - 1 || m_scriptureTexts[index + 1] != sec.ContentOA)
 					{
 						m_scriptureTexts.Insert(index + 1, sec.ContentOA);
-					}
+				}
 				}
 				// At this point the heading and contents of the section for the inserted text
 				// are at index. We look for adjacent sections in the same chapter and if necessary
@@ -531,10 +532,10 @@ namespace LanguageExplorer.Areas
 			{
 				return index - 1; // next earlier item goes before one already present.
 			}
-			// Not present, add it.
-			m_scriptureTexts.Insert(index, item);
-			return index; // no change, things moved up.
-		}
+				// Not present, add it.
+				m_scriptureTexts.Insert(index, item);
+				return index; // no change, things moved up.
+			}
 
 		private int AddAfter(int indexAfter, IStText item)
 		{

@@ -604,6 +604,10 @@ namespace ParatextImport
 			m_importCallbacks = importCallbacks;
 			m_importCallbacks.Importer = this;
 
+			// Ensure that we have up-to-date versification information
+			string edCheckDir = FwDirectoryFinder.EditorialChecksDirectory;
+			ScrReference.InitializeVersification(edCheckDir, false);
+
 			Debug.Assert(m_settings.BasicSettingsExist);
 			// ENHANCE (TomB): Make it possible to start importing in the middle
 			// of a book.

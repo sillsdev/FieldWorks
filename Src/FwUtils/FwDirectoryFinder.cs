@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -33,8 +33,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string ksFlexFolderName = "Language Explorer";
 
 
-		/// <summary>The Scripture-specific stylesheet (ideally, this would be in a TE-specific place, but LCM needs it)</summary>
-		public const string kTeStylesFilename = "TeStyles.xml";
+		/// <summary>The style sheet for all FLEx styles (including scripture).</summary>
+		public const string kFlexStylesFilename = "FlexStyles.xml";
 		private const string ksProjectsDir = "ProjectsDir";
 
 		private const string CompanyName = "SIL";
@@ -43,14 +43,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the full path of the Scripture-specific stylesheet.
-		/// This should NOT be in the TE folder, because it is used by the SE edition, when
-		/// doing minimal scripture initialization in order to include Paratext texts.
+		/// Gets the full path of the FLEx style sheet.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public static string TeStylesPath
+		public static string FlexStylesPath
 		{
-			get { return Path.Combine(CodeDirectory, ksFlexFolderName, kTeStylesFilename); }
+			get { return Path.Combine(CodeDirectory, ksFlexFolderName, kFlexStylesFilename); }
 		}
 
 		/// ------------------------------------------------------------------------------------

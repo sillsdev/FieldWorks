@@ -30,9 +30,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private ShowSpaceDecorator m_showSpaceDa;
 		private bool m_fClickInsertsZws; // true for the special mode where click inserts a zero-width space
 
-		private IVwStylesheet m_flexStylesheet;
-		private IVwStylesheet m_teStylesheet;
-
 		public RawTextPane() : base(null)
 		{
 			BackColor = Color.FromKnownColor(KnownColor.Window);
@@ -96,7 +93,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			if (hvo != RootHvo || Vc == null)
 			{
-				SetStyleSheet(hvo);
 				RootHvo = hvo;
 				SetupVc();
 				ChangeOrMakeRoot(RootHvo, Vc, (int)StTextFrags.kfrText, m_styleSheet);
@@ -125,40 +121,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// We can't set the style for Scripture...that has to follow some very specific rules implemented in TE.
 		/// </summary>
 		public override bool CanApplyStyle => base.CanApplyStyle && !ScriptureServices.ScriptureIsResponsibleFor(m_rootObj);
-
-		private void SetStyleSheet(int hvo)
-		{
-			var text = hvo == 0 ? null : (IStText)Cache.ServiceLocator.GetObject(hvo);
-			var wantedStylesheet = m_styleSheet;
-			if (ScriptureServices.ScriptureIsResponsibleFor(text))
-			{
-				// Use the Scripture stylesheet
-				if (m_teStylesheet == null)
-				{
-					m_flexStylesheet = m_styleSheet; // remember the default.
-					var stylesheet = new LcmStyleSheet();
-					stylesheet.Init(Cache, Cache.LangProject.TranslatedScriptureOA.Hvo, ScriptureTags.kflidStyles);
-					m_teStylesheet = stylesheet;
-				}
-				wantedStylesheet = m_teStylesheet;
-			}
-			else if (m_flexStylesheet != null)
-			{
-				wantedStylesheet = m_flexStylesheet;
-			}
-
-			if (wantedStylesheet == m_styleSheet)
-			{
-				return;
-			}
-				m_styleSheet = wantedStylesheet;
-			if (m_styleSheet == m_flexStylesheet)
-			{
-				// Only do it for Flex styles, since Scripture text styles cannot be used in Flex (cf. "CanApplyStyle" property, above).
-				// This will allow for character & paragraph styles to be in the combobox.
-				Publisher.Publish("ResetStyleSheet", m_styleSheet);
-			}
-		}
 
 		#endregion
 
@@ -321,7 +283,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// Receives the broadcast message "PropertyChanged"
 		/// </summary>
 		public void OnPropertyChanged(string name)
-		{
+			{
 			bool newVal; // used in two cases below
 			switch (name)
 			{

@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -38,8 +38,8 @@ namespace ParatextImport.ImportTests
 			m_styleSheet = new LcmStyleSheet();
 			// Force load of styles
 			IScripture scr = Cache.LangProject.TranslatedScriptureOA;
-			Assert.IsTrue(scr.StylesOC.Count > 0);
-			m_styleSheet.Init(Cache, scr.Hvo, ScriptureTags.kflidStyles);
+			Assert.IsTrue(Cache.LangProject.StylesOC.Count > 0);
+			m_styleSheet.Init(Cache, Cache.LangProject.Hvo, LangProjectTags.kflidStyles);
 		}
 
 		/// ------------------------------------------------------------------------------------

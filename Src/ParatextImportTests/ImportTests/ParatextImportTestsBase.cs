@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2017 SIL International
+// Copyright (c) 2007-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -230,14 +230,14 @@ namespace ParatextImport.ImportTests
 			base.TestSetup();
 
 			m_styleSheet = new LcmStyleSheet();
-			m_styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
+			m_styleSheet.Init(Cache, Cache.LangProject.Hvo, LangProjectTags.kflidStyles);
 			InitWsInfo();
 
 			DummyParatextImporter.s_translatorNoteDefn = Cache.ServiceLocator.GetInstance<ICmAnnotationDefnRepository>().TranslatorAnnotationDefn;
 			DummyParatextImporter.s_consultantNoteDefn = Cache.ServiceLocator.GetInstance<ICmAnnotationDefnRepository>().ConsultantAnnotationDefn;
 
 			m_titus = new BCVRef(56001001);
-			m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Other, m_styleSheet, FwDirectoryFinder.TeStylesPath);
+			m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Other, m_styleSheet, FwDirectoryFinder.FlexStylesPath);
 			m_settings.StartRef = m_titus;
 			m_settings.EndRef = m_titus;
 			m_settings.ImportTranslation = true;
