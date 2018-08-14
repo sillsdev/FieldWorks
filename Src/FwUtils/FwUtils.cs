@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2017 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,8 +10,10 @@ using System.Globalization;
 using System.Media;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using System.IO;
 using System.Xml;
 using System.Xml.Linq;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
@@ -165,6 +167,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static WritingSystemManager CreateWritingSystemManager()
 		{
 			return new WritingSystemManager {TemplateFolder = FwDirectoryFinder.TemplateDirectory};
+		}
+
+		/// <summary>
+		/// Initialize the ICU Data Dir. If necessary, adds the architecture-appropriate ICU DLL's to the PATH.
+		/// </summary>
+		public static void InitializeIcu()
+		{
+			if (MiscUtils.IsWindows)
+			{
+				var arch = Environment.Is64BitProcess ? "x64" : "x86";
+				// ReSharper disable once AssignNullToNotNullAttribute -- If FieldWorksExe returns null we have bigger problems
+				var icuPath = Path.Combine(Path.GetDirectoryName(FwDirectoryFinder.FieldWorksExe), "lib", arch);
+				// Append icu dll location to PATH, such as .../lib/x64, to help C# and C++ code find icu.
+				Environment.SetEnvironmentVariable("PATH", Environment.GetEnvironmentVariable("PATH") + Path.PathSeparator + icuPath);
+			}
+
+			Icu.InitIcuDataDir();
 		}
 
 		/// ------------------------------------------------------------------------------------

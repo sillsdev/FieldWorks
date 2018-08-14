@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,6 +11,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using Paratext.LexicalContracts;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel;
 using SIL.ObjectModel;
@@ -44,8 +45,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		/// </summary>
 		public FwLexiconPlugin()
 		{
-			RegistryHelper.CompanyName = "SIL";
-			RegistryHelper.ProductName = "FieldWorks";
+			FwRegistryHelper.Initialize();
 
 			// setup necessary environment variables on Linux
 			if (MiscUtils.IsUnix)
@@ -73,7 +73,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 				if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("FW_ROOTCODE")))
 					Environment.SetEnvironmentVariable("FW_ROOTCODE", ParatextLexiconPluginDirectoryFinder.CodeDirectory);
 			}
-			Icu.InitIcuDataDir();
+			FwUtils.InitializeIcu();
 			if (!Sldr.IsInitialized)
 			{
 				Sldr.Initialize();

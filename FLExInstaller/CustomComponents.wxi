@@ -79,11 +79,6 @@
 		</Directory>
 		<Directory Id="SILProgramMenuFolder" Name="SIL">
 			<Component Id="StartMenuFontsShortcut" Guid="C3300D43-CBD9-4244-AFBE-35B9FF3C01BA">
-				<Shortcut Id="FontsShortcut"
-					Name="Fonts"
-					Description="SIL Font Documentation"
-					Target='"[WindowsFolder]explorer.exe" "[APPFOLDER]Fonts"'
-					WorkingDirectory='APPFOLDER'/>
 				<Shortcut Id="AndikaDocShortcut"
 					Name="Andika Documentation"
 					Target="[APPFOLDER]Fonts\Andika-5.000\README.txt"/>
@@ -159,8 +154,15 @@
 		<Directory Id="zhL10NFOLDER" Name="zh-CN"/>
 	</DirectoryRef>
 
+	<DirectoryRef Id='HARVESTDATAFOLDER'>
+		<Component Id="RegisterICUFolder" Guid="FD94075E-CB26-4C7A-ADF4-B920FC1B25D1">
+			<RegistryValue Name="ICU54DataDir" Root="HKLM"  Key="Software\SIL" Type="string" KeyPath="yes" Value="[HARVESTDATAFOLDER]\Icu54" />
+		</Component>
+	</DirectoryRef>
+
 	<ComponentGroup Id="Miscelanea">
 		<ComponentRef Id="vs_piaredist.exe"/>
+		<ComponentRef Id="RegisterICUFolder"/>
 	</ComponentGroup>
 
 	<!-- These WixVariables insert the source directory into the harvest files (because Heat apparently can't) -->
@@ -199,7 +201,8 @@
 	<WixVariable Id="UPDATEteL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\te"/>
 	<WixVariable Id="UPDATEtrL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\tr"/>
 	<WixVariable Id="UPDATEviL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\vi"/>
-	<WixVariable Id="UPDATEFONTNDIR" Value="$(var.UPDATEBUILDDIR)_Font"/>
+	<WixVariable Id="UPDATEzhL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\zh-CN"/>
+	<WixVariable Id="UPDATEFONTDIR" Value="$(var.UPDATEBUILDDIR)_Font"/>
 	<?define HarvestWxiDir = .\update?>
 	<?endif?>
 
@@ -219,5 +222,5 @@
 	<?include $(var.HarvestWxiDir)\trHarvest.wxi?>
 	<?include $(var.HarvestWxiDir)\viHarvest.wxi?>
 	<?include $(var.HarvestWxiDir)\zhHarvest.wxi?>
-	<?include $(var.HarvestWxiDir)\FontHarvest.wxi?>
+	<?include Fonts.wxi?>
 </Include>

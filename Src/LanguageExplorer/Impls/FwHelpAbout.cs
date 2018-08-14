@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 using SIL.Acknowledgements;
@@ -23,9 +24,12 @@ namespace LanguageExplorer.Impls
 
 		private System.ComponentModel.IContainer components;
 
-		private string m_sAvailableMemoryFmt;
-		private string m_sTitleFmt;
-		private string m_sAvailableDiskSpaceFmt;
+		private const double BytesPerMiB = 1024 * 1024;
+		private const double BytesPerGiB = 1024 * BytesPerMiB;
+
+		private readonly string m_sAvailableMemoryFmt;
+		private readonly string m_sTitleFmt;
+		private readonly string m_sAvailableDiskSpaceFmt;
 		private Label lblName;
 		private Label edtAvailableDiskSpace;
 		private Label edtAvailableMemory;
@@ -34,16 +38,13 @@ namespace LanguageExplorer.Impls
 		private Label lblAvailableMemory;
 		private Label lblFwVersion;
 		private TextBox txtCopyright;
-		private LinkLabel m_systemMonitorLink;
 
 		/// <summary>The assembly of the product-specific EXE.  .Net callers should set this.</summary>
 		public Assembly ProductExecutableAssembly { get; set; }
 		#endregion
 
 		#region Construction and Disposal
-		/// <summary>
-		/// Constructor
-		/// </summary>
+		/// <inheritdoc />
 		public FwHelpAbout()
 		{
 			//
@@ -70,7 +71,7 @@ namespace LanguageExplorer.Impls
 				lblAvailableDiskSpace.Visible = false;
 				edtAvailableDiskSpace.Visible = false;
 
-				m_systemMonitorLink = new LinkLabel
+				var systemMonitorLink = new LinkLabel
 				{
 					Text = LanguageExplorerResources.kstidMemoryDiskUsageInformation,
 					Visible = true,
@@ -80,8 +81,8 @@ namespace LanguageExplorer.Impls
 					Left = lblAvailableMemory.Left,
 					Width = edtAvailableMemory.Right - lblAvailableMemory.Left,
 				};
-				m_systemMonitorLink.LinkClicked += HandleSystemMonitorLinkClicked;
-				Controls.Add(m_systemMonitorLink);
+				systemMonitorLink.LinkClicked += HandleSystemMonitorLinkClicked;
+				Controls.Add(systemMonitorLink);
 
 				// Package information
 
@@ -301,16 +302,17 @@ namespace LanguageExplorer.Impls
 				var strRoot = Path.GetPathRoot(Application.ExecutablePath);
 
 				// Set the memory information
-				var ms = new Win32.MemoryStatus();
-				Win32.GlobalMemoryStatus(ref ms);
-				edtAvailableMemory.Text = string.Format(m_sAvailableMemoryFmt, ms.dwAvailPhys / 1024, ms.dwTotalPhys / 1024);
+				var memStatEx = new Win32.MemoryStatusEx();
+				memStatEx.dwLength = (uint)Marshal.SizeOf(memStatEx);
+				Win32.GlobalMemoryStatusEx(ref memStatEx);
+				edtAvailableMemory.Text = string.Format(m_sAvailableMemoryFmt, memStatEx.ullAvailPhys / BytesPerMiB, memStatEx.ullTotalPhys / BytesPerMiB);
 
 				// Set the available disk space information.
-				uint cSectorsPerCluster = 0, cBytesPerSector = 0, cFreeClusters = 0, cTotalClusters = 0;
-				Win32.GetDiskFreeSpace(strRoot, ref cSectorsPerCluster, ref cBytesPerSector, ref cFreeClusters, ref cTotalClusters);
-				var cbKbFree = (uint)(((long)cFreeClusters * cSectorsPerCluster * cBytesPerSector) >> 10);
-
-				edtAvailableDiskSpace.Text = string.Format(m_sAvailableDiskSpaceFmt, cbKbFree, strRoot);
+				ulong _, lpTotalNumberOfBytes, lpTotalNumberOfFreeBytes;
+				Win32.GetDiskFreeSpaceEx(strRoot, out _, out lpTotalNumberOfBytes, out lpTotalNumberOfFreeBytes);
+				var gbFree = lpTotalNumberOfFreeBytes / BytesPerGiB;
+				var gbTotal = lpTotalNumberOfBytes / BytesPerGiB;
+				edtAvailableDiskSpace.Text = string.Format(m_sAvailableDiskSpaceFmt, gbFree, gbTotal, strRoot);
 			}
 			catch
 			{

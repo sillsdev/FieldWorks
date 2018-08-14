@@ -3,7 +3,7 @@
 	<ComponentRef Id="FieldWorks.exe"/>
 	<ComponentGroupRef Id="FwEnvironmentVars" />
 	<ComponentGroupRef Id="HarvestedDataFiles" />
-	<ComponentGroupRef Id="HarvestedFonts" />
+	<ComponentGroupRef Id="Fonts" />
 	<ComponentGroupRef Id="Miscelanea"/>
 	<MergeRef Id="CC_DLL"/>
 	<MergeRef Id="EncConverters_Common"/>

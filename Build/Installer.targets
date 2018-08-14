@@ -93,11 +93,11 @@
 	<!-- ########################################################################################################## -->
 	<!-- ### Top Level Targets                                                                                  ### -->
 	<!-- ########################################################################################################## -->
-	<Target Name="BuildBaseInstaller" DependsOnTargets="RequirePlatform;DownloadBundledInstallers;CleanMasterOutputDir">
+	<Target Name="BuildBaseInstaller" DependsOnTargets="RequirePlatform;DownloadAndUnzipFonts;DownloadBundledInstallers;CleanMasterOutputDir">
 		<MSBuild Projects="$(MSBuildProjectFullPath)" Properties="BuildingBaseInstaller=true" Targets="BuildProductMain;BuildProductBaseMsi;CopyBuildToMaster"/>
 	</Target>
 
-	<Target Name="BuildPatchInstaller" DependsOnTargets="RequirePlatform;BuildProductMain;BuildProductPatchMsp"/>
+	<Target Name="BuildPatchInstaller" DependsOnTargets="RequirePlatform;DownloadAndUnzipFonts;BuildProductMain;BuildProductPatchMsp"/>
 
 	<!-- ########################################################################################################## -->
 	<!-- ### Build Targets                                                                                      ### -->
@@ -173,7 +173,7 @@
 			<DeveloperFiles Include="$(fwrt)\DistFiles\TECkit\**\*"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\TxtConv.exe"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Windows\**\*"/>
-			<FontFiles Include="$(fwrt)\DistFiles\Fonts\Raw\*.ttf"/>
+			<FontFiles Include="$(fwrt)\DistFiles\Fonts\Raw\Quivira.otf"/>
 			<FontFiles Include="$(DownloadsDir)\Fonts\**\*.ttf"/>
 			<FontDocumentation Include="$(DownloadsDir)\Fonts\*\*.txt"/>
 			<FontDocumentation Include="$(DownloadsDir)\Fonts\*\documentation\*"/>
@@ -266,7 +266,7 @@
 		<Copy SourceFiles="@(BinFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/%(RecursiveDir)"/>
 		<Copy SourceFiles="@(CustomInstallFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/.."/>
 		<Copy SourceFiles="@(OverrideFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(OverridesDestDir)"/>
-		<CallTarget Targets="HarvestL10n;HarvestFonts;ConvertHarvestsToWxi"/>
+		<CallTarget Targets="HarvestL10n;ConvertHarvestsToWxi"/>
 	</Target>
 
 	<Target Name="HarvestL10n">
@@ -303,27 +303,6 @@
 		<Exec Command="heat.exe dir $(L10nSrcDir)\$(TargetLocale) $(CommonHeatArgs) -cg $(SafeTargetLocale)Localization -dr $(SafeTargetLocale)L10NFOLDER -var wix.$(PatchPrefix)$(SafeTargetLocale)L10NDIR -out $(L10nWxiDir)\$(SafeTargetLocale)Harvest.wxs" />
 	</Target>
 
-	<Target Name="HarvestFonts">
-		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="HarvestFont" Condition="'$(BuildingBaseInstaller)'=='true'"
-			Properties="PatchPrefix=MASTER;FontSrcDir=$(AppBuildDir)\$(FontDirSuffix);HarvestWxiDir=$(OverridesDestDir)\Master"/>
-		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="HarvestFont" Condition="'$(BuildingBaseInstaller)'!='true'"
-			Properties="PatchPrefix=MASTER;FontSrcDir=$(AppBuildMasterDir)\$(FontDirSuffix);HarvestWxiDir=$(OverridesDestDir)\Master"/>
-		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="HarvestFont" Condition="'$(BuildingBaseInstaller)'!='true'"
-			Properties="PatchPrefix=UPDATE;;FontSrcDir=$(AppBuildDir)\$(FontDirSuffix);HarvestWxiDir=$(OverridesDestDir)\Update"/>
-	</Target>
-
-	<Target Name="HarvestFont">
-		<PropertyGroup>
-			<!-- Always generate GUID's late because we can (but feel free to change if desired) -->
-			<GuidGenArg>-ag</GuidGenArg>
-			<!-- Add TrueType="yes" to harvested fonts (simply copying them to \Windows\Fonts is insufficient) -->
-			<TrueTypeArg>-t $(InstallerDir)/BaseInstallerBuild/TrueType.xsl</TrueTypeArg>
-			<!-- Never apply KeyPathFix.xsl to fonts, so we don't install an older version on top of a newer version -->
-			<CommonHeatArgs>$(GuidGenArg) -scom -sreg -sfrag -srd -sw5150 -sw5151 $(TrueTypeArg)</CommonHeatArgs>
-		</PropertyGroup>
-		<Exec Command="heat.exe dir $(FontSrcDir) $(CommonHeatArgs) -cg HarvestedFonts -dr FontsFolder -var wix.$(PatchPrefix)FONTDIR -out $(HarvestWxiDir)\FontHarvest.wxs" />
-	</Target>
-
 	<Target Name="ConvertHarvestsToWxi">
 		<ItemGroup>
 			<HarvestedWxsFiles Include="$(OverridesDestDir)\Master\*.wxs"/>
@@ -340,15 +319,16 @@
 		<Copy SourceFiles="@(ObjectFiles)" DestinationFolder="$(AppBuildMasterDir)/%(RecursiveDir)"/>
 	</Target>
 
-	<Target Name="DownloadBundledInstallers" DependsOnTargets="DownloadAndUnzipFonts">
+	<Target Name="DownloadBundledInstallers" Condition="'$(disableDownloads)'!='true'">
 		<!-- REVIEW (Hasso) 2018.03: how many of these do we really need? -->
 		<PropertyGroup>
 			<WixLibsDir>$(InstallerDir)/libs/</WixLibsDir>
 		</PropertyGroup>
-		<!-- 32-bit VC redistributables -->
+		<!-- .NET 4.5.1 -->
 		<DownloadFile Address="http://go.microsoft.com/fwlink/?LinkId=322115"
 			LocalFilename="NDP451-KB2858728-x86-x64-AllOS-ENU.exe"
-			Condition="!Exists('$(WixLibsDir)/NDP451-KB2858728-x86-x64-AllOS-ENU.exe')" DownloadsDir="$(WixLibsDir)" /> <!-- .net 4.5.1 -->
+			Condition="!Exists('$(WixLibsDir)/NDP451-KB2858728-x86-x64-AllOS-ENU.exe')" DownloadsDir="$(WixLibsDir)" />
+		<!-- 32-bit VC redistributables -->
 		<DownloadFile Address="https://download.microsoft.com/download/1/1/1/1116b75a-9ec3-481a-a3c8-1777b5381140/vcredist_x86.exe "
 			LocalFilename="vcredist_2008_x86.exe"
 			Condition="!Exists('$(WixLibsDir)/vcredist_2008_x86.exe') And $(Platform)!='x64'"
@@ -377,7 +357,7 @@
 		<DownloadFile Address="https://download.microsoft.com/download/d/2/4/d242c3fb-da5a-4542-ad66-f9661d0a8d19/vcredist_x64.exe	"
 			LocalFilename="vcredist_2008_x64.exe"
 			Condition="!Exists('$(WixLibsDir)/vcredist_2008_x64.exe') And $(Platform)=='x64'"
-			DownloadsDir="$(WixLibsDir)"/>
+			DownloadsDir="$(WixLibsDir)"/>			<!-- VisualC++ 8 runtime -->
 		<DownloadFile Address="https://download.microsoft.com/download/3/2/2/3224B87F-CFA0-4E70-BDA3-3DE650EFEBA5/vcredist_x64.exe"
 			LocalFilename="vcredist_x64.exe"
 			Condition="!Exists('$(WixLibsDir)/vcredist_x64.exe') And $(Platform)=='x64'"
@@ -403,11 +383,11 @@
 			DownloadsDir="$(WixLibsDir)"/> <!-- always download to get the latest version -->
 	</Target>
 
-	<Target Name="DownloadAndUnzipFonts">
-		<!-- TODO (Hasso) 2018.07: the latest version of Quivira is .otf, but making that change requires
-			more install smarts than we have time to write before this month's First Beta. -->
-		<!-- Note: we are downloading quivira, but also leaving it checked in in case the website disappears. -->
-		<DownloadFile Address="http://www.quivira-font.com/files/Quivira.ttf" DownloadsDir="$(fwrt)/DistFiles/Fonts/Raw"/>
+	<Target Name="DownloadAndUnzipFonts" Condition="'$(disableDownloads)'!='true'">
+		<MakeDir Directories="$(DownloadsDir)" Condition="!Exists('$(DownloadsDir)')"/>
+		<!-- Note: we are downloading quivira but also leaving it checked in in case the website disappears. -->
+		<DownloadFile Address="http://www.quivira-font.com/files/Quivira.otf" DownloadsDir="$(fwrt)/DistFiles/Fonts/Raw"
+			ContinueOnError="true"/>
 		<!-- TODO (Hasso) 2018.07: download latest version from wirl (LT-19288) -->
 		<DownloadFile Address="https://software.sil.org/downloads/r/andika/Andika-5.000.zip" DownloadsDir="$(DownloadsDir)"
 			Condition="!Exists('$(DownloadsDir)/Andika-5.000.zip')"/>

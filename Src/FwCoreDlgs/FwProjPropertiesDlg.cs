@@ -1337,17 +1337,27 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void DisplayModifyWritingSystemProperties(CheckedListBox list, bool addNewForLangOfSelectedWs)
 		{
-			CoreWritingSystemDefinition selectedWs = GetCurrentSelectedWs(list);
+			var selectedWs = GetCurrentSelectedWs(list);
 
 			IEnumerable<CoreWritingSystemDefinition> newWritingSystems;
 			if (WritingSystemPropertiesDialog.ShowModifyDialog(this, selectedWs, addNewForLangOfSelectedWs, m_cache, CurrentWritingSystemContainer,
 				m_helpTopicProvider, m_app, out newWritingSystems))
 			{
 				m_fWsChanged = true;
-				foreach (CoreWritingSystemDefinition newWs in newWritingSystems)
+				foreach (var newWs in newWritingSystems)
 				{
-					if (!list.Items.Cast<CoreWritingSystemDefinition>().Any(ws => ws.Id == newWs.Id))
-						list.Items.Add(newWs, true);
+					var exWs = list.Items.Cast<CoreWritingSystemDefinition>().FirstOrDefault(ws => ws.LanguageTag == newWs.LanguageTag);
+					if (exWs != null)
+					{
+						// LT-19296: for some reason, the first time we set the font for a new WS, a duplicate is created.
+						list.Items.Remove(exWs);
+					}
+					list.Items.Add(newWs, true);
+					if (list.SelectedItem == null)
+					{
+						// exWs was probably selected before; select its replacement.
+						list.SelectedItem = newWs;
+					}
 				}
 				list.Invalidate();
 				//LT-13893   Make sure that the HomographWs still matches the DefaultVernacularWritingSystem in case it was changed.

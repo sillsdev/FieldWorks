@@ -286,11 +286,11 @@ void UniscribeSegment::ShapePlaceRun(UniscribeRunInfo& uri, bool fCreatingSeg)
 	// Enhance JohnT: (multithread) lock static buffers.
 	// Make sure buffers are big enough.
 	int cglyphMax = uri.CGlyphMax();
-	if (cglyphMax < uri.cch * 3 / 2 + 1)
+	if (cglyphMax < uri.cch * 3 / 2 + 16)
 	{
-		// MS Doc says 1.5 * cch is enough for all current scripts but may not always be.
+		// MS Doc says 1.5 * cch + 16 is enough for all current scripts but may not always be.
 		// Hence the call-again if not enough.
-		cglyphMax = uri.cch * 3 / 2 + 1;
+		cglyphMax = uri.cch * 3 / 2 + 16;
 		uri.UpdateGlyphSize(cglyphMax);
 	}
 	if (uri.CClusterMax() < uri.cch)
@@ -318,7 +318,7 @@ void UniscribeSegment::ShapePlaceRun(UniscribeRunInfo& uri, bool fCreatingSeg)
 		if (hr == E_OUTOFMEMORY)
 		{
 			// Increase buffer size if necessary until we have enough.
-			// Note: if the system is really out of memory, the resize operaions will fail.
+			// Note: if the system is really out of memory, the resize operations will fail.
 			cglyphMax *= 2;
 			uri.UpdateGlyphSize(cglyphMax);
 			continue;
@@ -349,9 +349,9 @@ void UniscribeSegment::ShapePlaceRun(UniscribeRunInfo& uri, bool fCreatingSeg)
 				L"This problem is sometimes caused by trying to use a font that is not installed; the font FieldWorks is trying to use is %s.\n"
 				L"If you see this problem and cannot correct it by installing the proper font, please report it to FlexErrors@sil.org\n"
 				L"It is also sometimes caused by very long strings, usually from some kind of data corruption; the current text has %d characters.\n"
-				L"This problem is documented in the FieldWorks bug tracking system as TE-8046 and LT-9823.\n"
+				L"Specific failure code [%d].\n"
 				L"This is (the start of) the text that cannot be rendered: %s.",
-				rgchFont, uri.cch, rgchErr);
+				rgchFont, uri.cch, hr, rgchErr);
 			::MessageBox(NULL, stuErr.Chars(), L"Error", MB_OK);
 			ThrowHr(WarnHr(hr), stuErr);
 #else

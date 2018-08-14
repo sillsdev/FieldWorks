@@ -224,7 +224,7 @@ namespace LanguageExplorer.Controls
 			if (!Visible)
 			{
 				RemoveFilter();
-			}
+		}
 		}
 
 		// Remove your message filter, typically prior to hiding, or because we got hidden.
@@ -531,7 +531,7 @@ namespace LanguageExplorer.Controls
 			{
 				return; // spurious one during load form.
 			}
-			// We want to effectively treat this like a mouse click.
+				// We want to effectively treat this like a mouse click.
 			AfterSelect?.Invoke(this, new TreeViewEventArgs(m_treeView.SelectedNode, TreeViewAction.ByMouse));
 			HideForm();
 		}
@@ -546,31 +546,31 @@ namespace LanguageExplorer.Controls
 				case Keys.Up | Keys.Alt:
 				case Keys.Down | Keys.Alt:
 				case Keys.Return:
-					HandleTreeItemSelect();
-					e.Handled = true;
+				HandleTreeItemSelect();
+				e.Handled = true;
 					break;
 				case Keys.Tab:
 				case Keys.Tab | Keys.Shift:
-					HandleTreeItemSelect();
-					if (TabStopControl != null)
-					{
-						// Send tab key to the TabStopControl so that it can set the focus to the
-						// next control.
-						Win32.PostMessage(TabStopControl.Handle, (int)Win32.WinMsgs.WM_KEYDOWN, (uint)e.KeyCode, 0);
-					}
-					e.Handled = true;
+				HandleTreeItemSelect();
+				if (TabStopControl != null)
+				{
+					// Send tab key to the TabStopControl so that it can set the focus to the
+					// next control.
+					Win32.PostMessage(TabStopControl.Handle, Win32.WinMsgs.WM_KEYDOWN, (int)e.KeyCode, 0);
+				}
+				e.Handled = true;
 					break;
 				case Keys.Escape:
 				case Keys.Alt | Keys.F4:
-					// If we're in a ComboBox, we must handle the Escape key here, otherwise
-					// IMessageFilter.PreFilterMessage in FwInnerTextBox will handle it
-					// inadvertently forcing the parent dialog to close (cf. LT-2280).
-					//
-					// LT-9250 Crash while closing the PopupTree by pressing Alt+F4 keys and
-					// then trying to open it again. If this is not handled here then
-					// this.Dispose(true) is called which leads to the crash.
-					HideForm();
-					e.Handled = true;
+				// If we're in a ComboBox, we must handle the Escape key here, otherwise
+				// IMessageFilter.PreFilterMessage in FwInnerTextBox will handle it
+				// inadvertently forcing the parent dialog to close (cf. LT-2280).
+				//
+				// LT-9250 Crash while closing the PopupTree by pressing Alt+F4 keys and
+				// then trying to open it again. If this is not handled here then
+				// this.Dispose(true) is called which leads to the crash.
+				HideForm();
+				e.Handled = true;
 					break;
 			}
 		}
@@ -647,139 +647,139 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		public int NaturalHeight => Height;
 
-		/// <summary>Message filter for detecting events that may turn off
-		/// the insert verse numbers mode</summary>
+	/// <summary>Message filter for detecting events that may turn off
+	/// the insert verse numbers mode</summary>
 		private sealed class FwPopupMessageFilter : IMessageFilter, IDisposable
+	{
+		private PopupTree m_popupTree;
+
+		/// <summary>Constructor for filter object</summary>
+		public FwPopupMessageFilter(PopupTree popupTree)
 		{
-			private PopupTree m_popupTree;
+			m_popupTree = popupTree;
+		}
 
-			/// <summary>Constructor for filter object</summary>
-			public FwPopupMessageFilter(PopupTree popupTree)
-			{
-				m_popupTree = popupTree;
-			}
-
-			#region IDisposable & Co. implementation
-			/// <summary>
-			/// See if the object has been disposed.
-			/// </summary>
+		#region IDisposable & Co. implementation
+		/// <summary>
+		/// See if the object has been disposed.
+		/// </summary>
 			private bool IsDisposed { get; set; }
 
-			/// <summary>
-			/// Finalizer, in case client doesn't dispose it.
-			/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
-			/// </summary>
-			/// <remarks>
-			/// In case some clients forget to dispose it directly.
-			/// </remarks>
-			~FwPopupMessageFilter()
-			{
-				Dispose(false);
-				// The base class finalizer is called automatically.
-			}
+		/// <summary>
+		/// Finalizer, in case client doesn't dispose it.
+		/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
+		/// </summary>
+		/// <remarks>
+		/// In case some clients forget to dispose it directly.
+		/// </remarks>
+		~FwPopupMessageFilter()
+		{
+			Dispose(false);
+			// The base class finalizer is called automatically.
+		}
 
 			/// <summary />
-			public void Dispose()
-			{
-				Dispose(true);
-				// This object will be cleaned up by the Dispose method.
-				// Therefore, you should call GC.SupressFinalize to
-				// take this object off the finalization queue
-				// and prevent finalization code for this object
-				// from executing a second time.
-				GC.SuppressFinalize(this);
-			}
+		public void Dispose()
+		{
+			Dispose(true);
+			// This object will be cleaned up by the Dispose method.
+			// Therefore, you should call GC.SupressFinalize to
+			// take this object off the finalization queue
+			// and prevent finalization code for this object
+			// from executing a second time.
+			GC.SuppressFinalize(this);
+		}
 
-			/// <summary>
-			/// Executes in two distinct scenarios.
-			///
-			/// 1. If disposing is true, the method has been called directly
-			/// or indirectly by a user's code via the Dispose method.
-			/// Both managed and unmanaged resources can be disposed.
-			///
-			/// 2. If disposing is false, the method has been called by the
-			/// runtime from inside the finalizer and you should not reference (access)
-			/// other managed objects, as they already have been garbage collected.
-			/// Only unmanaged resources can be disposed.
-			/// </summary>
-			/// <param name="disposing"></param>
-			/// <remarks>
-			/// If any exceptions are thrown, that is fine.
-			/// If the method is being done in a finalizer, it will be ignored.
-			/// If it is thrown by client code calling Dispose,
-			/// it needs to be handled by fixing the bug.
-			/// </remarks>
+		/// <summary>
+		/// Executes in two distinct scenarios.
+		///
+		/// 1. If disposing is true, the method has been called directly
+		/// or indirectly by a user's code via the Dispose method.
+		/// Both managed and unmanaged resources can be disposed.
+		///
+		/// 2. If disposing is false, the method has been called by the
+		/// runtime from inside the finalizer and you should not reference (access)
+		/// other managed objects, as they already have been garbage collected.
+		/// Only unmanaged resources can be disposed.
+		/// </summary>
+		/// <param name="disposing"></param>
+		/// <remarks>
+		/// If any exceptions are thrown, that is fine.
+		/// If the method is being done in a finalizer, it will be ignored.
+		/// If it is thrown by client code calling Dispose,
+		/// it needs to be handled by fixing the bug.
+		/// </remarks>
 			private void Dispose(bool disposing)
-			{
-				Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
-				// Must not be run more than once.
+		{
+			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
+			// Must not be run more than once.
 				if (IsDisposed)
 				{
-					return;
+				return;
 				}
 
-				if (disposing)
-				{
-					// Dispose managed resources here.
-				}
+			if (disposing)
+			{
+				// Dispose managed resources here.
+			}
 
-				// Dispose unmanaged resources here, whether disposing is true or false.
-				m_popupTree = null; // It is disposed of elsewhere.
+			// Dispose unmanaged resources here, whether disposing is true or false.
+			m_popupTree = null; // It is disposed of elsewhere.
 
 				IsDisposed = true;
-			}
+		}
 
-			#endregion IDisposable & Co. implementation
+		#endregion IDisposable & Co. implementation
 
 			/// <summary />
-			/// <returns>true if the message is consumed, false to pass it on.</returns>
-			public bool PreFilterMessage(ref Message m)
+		/// <returns>true if the message is consumed, false to pass it on.</returns>
+		public bool PreFilterMessage(ref Message m)
+		{
+			switch ((Win32.WinMsgs)m.Msg)
 			{
-				switch ((Win32.WinMsgs)m.Msg)
-				{
 
-					case Win32.WinMsgs.WM_NCLBUTTONDOWN:
-					case Win32.WinMsgs.WM_NCLBUTTONUP:
-					case Win32.WinMsgs.WM_LBUTTONDOWN:
-						{
-							// Make sure the popuptree hasn't been disposed of with out setting
-							// the m_popupTree variable to null:
-							if (m_popupTree.IsDisposed)
+			case Win32.WinMsgs.WM_NCLBUTTONDOWN:
+			case Win32.WinMsgs.WM_NCLBUTTONUP:
+			case Win32.WinMsgs.WM_LBUTTONDOWN:
+			{
+				// Make sure the popuptree hasn't been disposed of with out setting
+				// the m_popupTree variable to null:
+				if (m_popupTree.IsDisposed)
 							{
-								return false;   // default case
+					return false;	// default case
 							}
-							// Handle any mouse left button activity.
-							// Non-client areas include the title bar, menu bar, window borders,
-							// and scroll bars. But the only one in our combo is the scroll bar.
+				// Handle any mouse left button activity.
+				// Non-client areas include the title bar, menu bar, window borders,
+				// and scroll bars. But the only one in our combo is the scroll bar.
 							var c = FromHandle(m.HWnd);
-							// Clicking anywhere in an FwListBox, including it's scroll bar,
-							// behaves normally.
+				// Clicking anywhere in an FwListBox, including it's scroll bar,
+				// behaves normally.
 							if (c == m_popupTree.m_treeView)
 							{
-								return false;
+					return false;
 							}
 
-							// On Mono clicking on the FwListBox Scrollbar causes return from Control.FromHandle
-							// to be a ImplicitScrollBar which is a child of the FwListBox.
-							if (c is ScrollBar && c.Parent == m_popupTree.m_treeView)
+				// On Mono clicking on the FwListBox Scrollbar causes return from Control.FromHandle
+				// to be a ImplicitScrollBar which is a child of the FwListBox.
+				if (c is ScrollBar && c.Parent == m_popupTree.m_treeView)
 							{
-								return false;
+					return false;
 							}
 
-							// Any other click is captured and causes the list box to go away.
-							// Only do this if the popup tree is visible
-							if (m_popupTree.Visible)
-							{
-								m_popupTree.HideForm();
-								return true;
-							}
-							return false;
-						}
-					default:
-						return false;
+				// Any other click is captured and causes the list box to go away.
+				// Only do this if the popup tree is visible
+				if (m_popupTree.Visible)
+				{
+					m_popupTree.HideForm();
+					return true;
 				}
+				return false;
+			}
+			default:
+				return false;
 			}
 		}
+	}
 
 		/// <summary>
 		/// We need to subclass TreeView in order to override IsInputChar(), otherwise

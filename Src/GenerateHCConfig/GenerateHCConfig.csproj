@@ -68,6 +68,10 @@
     <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FwUtils, Version=10.0.0.30892, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\FwUtils.dll</HintPath>
+    </Reference>
     <Reference Include="SIL.LCModel.Core">
       <HintPath>..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
     </Reference>
