@@ -32,7 +32,6 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		public void SetUp()
 		{
 			FwRegistryHelper.Initialize();
-			FwUtils.InitializeIcu();
 			m_threadHelper = new ThreadHelper();
 			var ui = new DummyLcmUI(m_threadHelper);
 			var projectId = new ParatextLexiconPluginProjectId(BackendProviderType.kMemoryOnly, "Test.fwdata");

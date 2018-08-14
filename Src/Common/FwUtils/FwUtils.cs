@@ -160,16 +160,30 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public static void InitializeIcu()
 		{
-			if (MiscUtils.IsWindows)
+			// Set ICU_DATA environment variable
+			if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ICU_DATA")))
 			{
-				var arch = Environment.Is64BitProcess ? "x64" : "x86";
-				// ReSharper disable once AssignNullToNotNullAttribute -- If FlexExe returns null we have bigger problems
-				var icuPath = Path.Combine(Path.GetDirectoryName(FwDirectoryFinder.FlexExe), "lib", arch);
-				// Append icu dll location to PATH, such as .../lib/x64, to help C# and C++ code find icu.
-				Environment.SetEnvironmentVariable("PATH",
-					Environment.GetEnvironmentVariable("PATH") + Path.PathSeparator + icuPath);
-			}
+				// We read the registry value and set an environment variable ICU_DATA here so that
+				// FwKernelInterfaces.dll is independent of WinForms.
+				string icuDirValueName = string.Format("Icu{0}DataDir",
+					LCModel.Core.Text.Icu.Version);
+				using (var userKey = RegistryHelper.CompanyKey)
+				using (var machineKey = RegistryHelper.CompanyKeyLocalMachine)
+				{
+					string dir = null;
+					if (userKey != null && userKey.GetValue(icuDirValueName) != null)
+					{
+						dir = userKey.GetValue(icuDirValueName, dir) as string;
+					}
+					else if (machineKey != null && machineKey.GetValue(icuDirValueName) != null)
+					{
 
+						dir = machineKey.GetValue(icuDirValueName, dir) as string;
+					}
+					if (!string.IsNullOrEmpty(dir))
+						Environment.SetEnvironmentVariable("ICU_DATA", dir);
+				}
+			}
 			Icu.InitIcuDataDir();
 		}
 
