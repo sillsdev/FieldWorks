@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -313,7 +313,8 @@ namespace LanguageExplorerTests.Impls
 		[SetUp]
 		public void TestSetup()
 		{
-			TestSetupServices.SetupTestPubSubSystem(out _publisher, out _subscriber);
+			var propertyTable = TestSetupServices.SetupTestTriumvirate(out _publisher, out _subscriber);
+			propertyTable.Dispose(); // We don't really want it.
 		}
 
 		/// <summary>

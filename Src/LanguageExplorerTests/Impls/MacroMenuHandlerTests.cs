@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2012-2018 SIL International
+// Copyright (c) 2012-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -33,7 +33,9 @@ namespace LanguageExplorerTests.Impls
 		{
 			base.TestSetup();
 
-			_propertyTable = TestSetupServices.SetupTestPropertyTable();
+			IPublisher publisherDummy;
+			ISubscriber subscriberDummy;
+			_propertyTable = TestSetupServices.SetupTestTriumvirate(out publisherDummy, out subscriberDummy);
 			_macroMenuHandler = new MacroMenuHandler();
 			_propertyTable.SetProperty("cache", Cache);
 			_macroMenuHandler.InitializeForTests(Cache);

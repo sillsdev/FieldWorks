@@ -66,7 +66,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			base.FixtureSetup();
 
-			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
+			ISharedEventHandlers dummy;
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, out dummy);
 
 			var styles = _flexComponentParameters.PropertyTable.GetValue<LcmStyleSheet>("FlexStyleSheet").Styles;
 			if (!styles.Contains(DictionaryNormal))

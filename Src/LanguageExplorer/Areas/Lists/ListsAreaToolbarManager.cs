@@ -5,11 +5,13 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using SIL.Code;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Lists
@@ -23,6 +25,7 @@ namespace LanguageExplorer.Areas.Lists
 		private IListArea _listArea;
 		private ToolStripButton _insertItemToolStripButton;
 		private ToolStripButton _insertSubItemToolStripButton;
+		private ToolStripButton _duplicateItemToolStripButton;
 
 		internal ListsAreaToolbarManager(DataTree dataTree, IListArea listArea)
 		{
@@ -46,205 +49,6 @@ namespace LanguageExplorer.Areas.Lists
 			MyRecordList = recordList;
 
 			AddInsertToolbarItems();
-		}
-
-		private void AddInsertToolbarItems()
-		{
-			/*
-			These all go on the "Insert" toolbar, but they are tool-specific.
-			*/
-			var activeListTool = _listArea.ActiveTool;
-			var currentPossibilityList = MyRecordList.OwningObject as ICmPossibilityList; // Will be null for AreaServices.FeatureTypesAdvancedEditMachineName tool.
-			if (currentPossibilityList != null && currentPossibilityList.IsClosed)
-			{
-				// No sense in bothering with toolbar buttons, since the list is closed to adding new items.
-				return;
-			}
-			var currentPossibility = (ICmPossibility)MyRecordList.CurrentObject; // May be a subclass of ICmPossibility.
-			var toolbarButtonCreationData = new List<Tuple<EventHandler, string, Dictionary<string, string>>>(2);
-			//string tooltip;
-			switch (activeListTool.MachineName)
-			{
-				case AreaServices.AnthroEditMachineName:
-					/*
-						<item command="CmdInsertAnthroCategory" defaultVisible="false" />
-					*/
-					toolbarButtonCreationData.Add(new Tuple<EventHandler, string, Dictionary<string, string>>(_sharedEventHandlers.Get(ListsAreaMenuHelper.AddNewPossibilityListItem), ListResources.Anthropology_Category, AreaServices.PopulateForMainItemInsert(currentPossibilityList, currentPossibility, ListResources.Insert_Anthropology_Category)));
-
-					/*
-						<item command="CmdDataTree-Insert-AnthroCategory" defaultVisible="false" label="Subcategory" />
-					*/
-					toolbarButtonCreationData.Add(new Tuple<EventHandler, string, Dictionary<string, string>>(_sharedEventHandlers.Get(ListsAreaMenuHelper.AddNewSubPossibilityListItem), ListResources.Subcategory, AreaServices.PopulateForSubitemInsert(currentPossibility, ListResources.Insert_Anthropology_Category)));
-					break;
-				case AreaServices.FeatureTypesAdvancedEditMachineName:
-					/*
-						  <item command="CmdInsertFeatureType" defaultVisible="false" />
-								<command id="CmdInsertFeatureType" label="_Feature Type" message="InsertItemInVector" icon="AddItem">
-								  <params className="FsFeatStrucType" />
-								</command>
-					*/
-					_insertItemToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_sharedEventHandlers.Get(ListsAreaMenuHelper.InsertFeatureType), "toolStripButtonInsertItem", AreaResources.AddItem.ToBitmap(), ListResources.Feature_Type);
-					InsertToolbarManager.AddInsertToolbarItems(_majorFlexComponentParameters, new List<ToolStripButton> { _insertItemToolStripButton });
-					break;
-				case AreaServices.LexRefEditMachineName:
-					/*
-						<item command="CmdInsertLexRefType" defaultVisible="false" />
-					    <command id="CmdInsertLexRefType" label="_Lexical Reference Type" message="InsertItemInVector" icon="AddItem">
-					      <params className="LexRefType" />
-					    </command>
-						<item id="CmdInsertLexRefType">Create a new lexical relation.</item>
-					*/
-					// No need for something like: CmdDataTree-Insert-LexRefType, since they are not nested.
-					toolbarButtonCreationData.Add(new Tuple<EventHandler, string, Dictionary<string, string>>(_sharedEventHandlers.Get(ListsAreaMenuHelper.AddNewPossibilityListItem), ListResources.Lexical_Relation, AreaServices.PopulateForMainItemInsert(currentPossibilityList, currentPossibility, ListResources.Insert_Lexical_Reference_Type)));
-					break;
-				case AreaServices.LocationsEditMachineName:
-					/*
-						<item command="CmdInsertLocation" defaultVisible="false" />
-					*/
-					toolbarButtonCreationData.Add(new Tuple<EventHandler, string, Dictionary<string, string>>(_sharedEventHandlers.Get(ListsAreaMenuHelper.AddNewPossibilityListItem), ListResources.Location, AreaServices.PopulateForMainItemInsert(currentPossibilityList, currentPossibility, ListResources.Insert_Location)));
-					/*
-						<item command="CmdDataTree-Insert-Location" defaultVisible="false" label="Subitem" />
-					*/
-					toolbarButtonCreationData.Add(new Tuple<EventHandler, string, Dictionary<string, string>>(_sharedEventHandlers.Get(ListsAreaMenuHelper.AddNewSubPossibilityListItem), ListResources.Subitem, AreaServices.PopulateForSubitemInsert(currentPossibility, ListResources.Insert_Location)));
-					break;
-				case AreaServices.MorphTypeEditMachineName:
-					// List is closed at least as of 6AUG2018, when I (RBR) tried to add the menus.
-					break;
-				case AreaServices.PeopleEditMachineName:
-					/*
-						<item command="CmdInsertPerson" defaultVisible="false" />
-					*/
-					// No need for something like: CmdDataTree-Insert-Person, since there are no nested people.
-					toolbarButtonCreationData.Add(new Tuple<EventHandler, string, Dictionary<string, string>>(_sharedEventHandlers.Get(ListsAreaMenuHelper.AddNewPossibilityListItem), ListResources.Person, AreaServices.PopulateForMainItemInsert(currentPossibilityList, currentPossibility, ListResources.Insert_Person)));
-					break;
-				case AreaServices.SemanticDomainEditMachineName:
-					/*
-						<item command="CmdInsertSemDom" defaultVisible="false" />
-					*/
-					toolbarButtonCreationData.Add(new Tuple<EventHandler, string, Dictionary<string, string>>(_sharedEventHandlers.Get(ListsAreaMenuHelper.AddNewPossibilityListItem), ListResources.Semantic_Domain, AreaServices.PopulateForMainItemInsert(currentPossibilityList, currentPossibility, ListResources.Insert_Semantic_Domain)));
-					/*
-						<item command="CmdDataTree-Insert-SemanticDomain" defaultVisible="false" label="Subdomain" />
-					*/
-					toolbarButtonCreationData.Add(new Tuple<EventHandler, string, Dictionary<string, string>>(_sharedEventHandlers.Get(ListsAreaMenuHelper.AddNewSubPossibilityListItem), ListResources.Subdomain, AreaServices.PopulateForSubitemInsert(currentPossibility, ListResources.Insert_Semantic_Domain)));
-					break;
-				case AreaServices.ComplexEntryTypeEditMachineName:
-					// This list can only have LexEntryType instances.
-					/*
-						<command id="CmdInsertLexEntryType" label="_Type" message="InsertItemInVector" icon="AddItem">
-						  <params className="LexEntryType" />
-						</command>
-					*/
-					toolbarButtonCreationData.Add(new Tuple<EventHandler, string, Dictionary<string, string>>(_sharedEventHandlers.Get(ListsAreaMenuHelper.AddNewPossibilityListItem), ListResources.Complex_Form_Type, AreaServices.PopulateForMainItemInsert(currentPossibilityList, currentPossibility, ListResources.Insert_Type)));
-					/*
-						<command id="CmdDataTree-Insert-LexEntryType" label="Insert Subtype" message="DataTreeInsert" icon="AddSubItem">
-						  <parameters field="SubPossibilities" className="LexEntryType" />
-						</command>
-					*/
-					toolbarButtonCreationData.Add(new Tuple<EventHandler, string, Dictionary<string, string>>(_sharedEventHandlers.Get(ListsAreaMenuHelper.AddNewSubPossibilityListItem), ListResources.Subtype, AreaServices.PopulateForSubitemInsert(currentPossibility, ListResources.Insert_Type)));
-					break;
-				case AreaServices.VariantEntryTypeEditMachineName:
-					// NB: Inserts one of two class options:
-					//		1) It will insert LexEntryInflType instances in an owning LexEntryInflType instance.
-					//		2) It will only insert at the top or nested in other LexEntryType instances.
-					toolbarButtonCreationData.Add(new Tuple<EventHandler, string, Dictionary<string, string>>(_sharedEventHandlers.Get(ListsAreaMenuHelper.InsertVariantEntryTypeItem), ListResources.Variant_Type, AreaServices.PopulateForMainItemInsert(currentPossibilityList, currentPossibility, ListResources.Insert_Type)));
-					toolbarButtonCreationData.Add(new Tuple<EventHandler, string, Dictionary<string, string>>(_sharedEventHandlers.Get(ListsAreaMenuHelper.InsertVariantEntryTypeSubitem), ListResources.Subtype, AreaServices.PopulateForSubitemInsert(currentPossibility, ListResources.Insert_Type)));
-					break;
-				case AreaServices.ReversalToolReversalIndexPOSMachineName:
-					// The FW 8 & 9 behavior has this one below the custom list creation menu, but I'm (RBR) going to regularize it and put it above.
-					/*
-						<item command="CmdInsertPOS" defaultVisible="false" />
-					    <command id="CmdInsertPOS" label="Category" message="InsertItemInVector" shortcut="Ctrl+I" icon="AddItem">
-					      <params className="PartOfSpeech" />
-					    </command>
-					*/
-					_insertItemToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_sharedEventHandlers.Get(AreaServices.InsertCategory), "toolStripButtonInsertItem", AreaResources.AddItem.ToBitmap(), AreaResources.Add_a_new_category);
-					_insertItemToolStripButton.Tag = new List<object> { currentPossibilityList, MyRecordList };
-					InsertToolbarManager.AddInsertToolbarItems(_majorFlexComponentParameters, new List<ToolStripButton> { _insertItemToolStripButton });
-					/*
-						<item command="CmdDataTree-Insert-POS-SubPossibilities" defaultVisible="false" label="Subcategory..." />
-						<command id="CmdDataTree-Insert-POS-SubPossibilities" label="Insert Subcategory..." message="DataTreeInsert" icon="AddSubItem">
-						  <parameters field="SubPossibilities" className="PartOfSpeech" slice="owner" />
-						</command>
-					*/
-					_insertSubItemToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_sharedEventHandlers.Get(AreaServices.InsertCategory), "toolStripButtonInsertSubItem", AreaResources.AddSubItem.ToBitmap(), AreaResources.Subcategory);
-					_insertSubItemToolStripButton.Tag = new List<object> { currentPossibilityList, MyRecordList };
-					InsertToolbarManager.AddInsertToolbarItems(_majorFlexComponentParameters, new List<ToolStripButton> { _insertSubItemToolStripButton });
-					break;
-				case AreaServices.DomainTypeEditMachineName: // Fall through to default.
-				case AreaServices.ConfidenceEditMachineName: // Fall through to default.
-				case AreaServices.DialectsListEditMachineName: // Fall through to default.
-				case AreaServices.EducationEditMachineName: // Fall through to default.
-				case AreaServices.ExtNoteTypeEditMachineName: // Fall through to default.
-				case AreaServices.GenresEditMachineName: // Fall through to default.
-				case AreaServices.LanguagesListEditMachineName: // Fall through to default.
-				case AreaServices.RecTypeEditMachineName: // Fall through to default.
-				case AreaServices.PositionsEditMachineName: // Fall through to default.
-				case AreaServices.PublicationsEditMachineName: // Fall through to default.
-				case AreaServices.RestrictionsEditMachineName: // Fall through to default.
-				case AreaServices.RoleEditMachineName: // Fall through to default.
-				case AreaServices.SenseTypeEditMachineName: // Fall through to default.
-				case AreaServices.StatusEditMachineName: // Fall through to default.
-				case AreaServices.ChartmarkEditMachineName: // Fall through to default.
-				case AreaServices.CharttempEditMachineName: // Fall through to default.
-				case AreaServices.TextMarkupTagsEditMachineName: // Fall through to default.
-				case AreaServices.TimeOfDayEditMachineName: // Fall through to default.
-				case AreaServices.TranslationTypeEditMachineName: // Fall through to default.
-				case AreaServices.UsageTypeEditMachineName: // Fall through to default.
-				default:
-					/*
-						NB: use this class: <CmCustomItem num="27" abstract="false" base="CmPossibility" />
-						<item command="CmdInsertCustomItem" defaultVisible="false" />
-
-					XOR
-
-						NB: use this class: <CmPossibility num="7" abstract="false" base="CmObject">
-						<item command="CmdInsertPossibility" defaultVisible="false" />
-					*/
-					toolbarButtonCreationData.Add(new Tuple<EventHandler, string, Dictionary<string, string>>(_sharedEventHandlers.Get(ListsAreaMenuHelper.AddNewPossibilityListItem), ListResources.Insert_Item, AreaServices.PopulateForMainItemInsert(currentPossibilityList, currentPossibility, ListResources.Insert_Item)));
-					/*
-					*/
-					if (currentPossibilityList.Depth > 1)
-					{
-						/*
-							NB: Use this class: <CmCustomItem num="27" abstract="false" base="CmPossibility" />
-							<item command="CmdDataTree-Insert-CustomItem" defaultVisible="false" label="Subitem" />
-
-						XOR
-
-							NB: Use this class: <CmPossibility num="7" abstract="false" base="CmObject">
-							<item command="CmdDataTree-Insert-Possibility" defaultVisible="false" label="Subitem" />
-						*/
-						toolbarButtonCreationData.Add(new Tuple<EventHandler, string, Dictionary<string, string>>(_sharedEventHandlers.Get(ListsAreaMenuHelper.AddNewSubPossibilityListItem), ListResources.Subtype, AreaServices.PopulateForSubitemInsert(currentPossibility, ListResources.Insert_Item)));
-					}
-					break;
-			}
-
-			// If there is nothing in "toolbarButtonCreationData", then the tool did everything.
-			if (toolbarButtonCreationData.Any())
-			{
-				// Menu creation baton passed here.
-				// The first item in "toolbarButtonCreationData", it is the main "Add" item.
-				var currentMenuTuple = toolbarButtonCreationData[0];
-				_insertItemToolStripButton = ToolStripButtonFactory.CreateToolStripButton(currentMenuTuple.Item1, "toolStripButtonInsertItem", AreaResources.AddItem.ToBitmap(), currentMenuTuple.Item2);
-				_insertItemToolStripButton.Tag = new List<object> { currentPossibilityList, MyDataTree, MyRecordList, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable, currentMenuTuple.Item3 };
-
-				// SubItem information is optionally present in "menuCreationData" in the second space.
-				if (toolbarButtonCreationData.Count == 2)
-				{
-					// NB: Lists that cannot have subitems won't be adding this toolbar button option at all.
-					currentMenuTuple = toolbarButtonCreationData[1];
-					_insertSubItemToolStripButton = ToolStripButtonFactory.CreateToolStripButton(currentMenuTuple.Item1, "toolStripButtonInsertSubItem", AreaResources.AddSubItem.ToBitmap(), currentMenuTuple.Item2);
-					_insertSubItemToolStripButton.Tag = new List<object> { currentPossibility, MyDataTree, MyRecordList, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable, currentMenuTuple.Item3 };
-					_insertSubItemToolStripButton.Enabled = currentPossibilityList.PossibilitiesOS.Any(); // Visbile, but only enabled, if there are possible owners for the new sub item.
-				}
-
-				var itemsToAdd = new List<ToolStripButton> { _insertItemToolStripButton };
-				if (_insertSubItemToolStripButton != null)
-				{
-					itemsToAdd.Add(_insertSubItemToolStripButton);
-				}
-				InsertToolbarManager.AddInsertToolbarItems(_majorFlexComponentParameters, itemsToAdd);
-			}
 		}
 
 		/// <inheritdoc />
@@ -295,19 +99,288 @@ namespace LanguageExplorer.Areas.Lists
 
 			if (disposing)
 			{
+				Application.Idle -= ApplicationOnIdle;
 				InsertToolbarManager.ResetInsertToolbar(_majorFlexComponentParameters);
 				_insertItemToolStripButton?.Dispose();
 				_insertSubItemToolStripButton?.Dispose();
+				_duplicateItemToolStripButton?.Dispose();
 			}
 			MyRecordList = null;
+			MyDataTree = null;
 			_majorFlexComponentParameters = null;
 			_sharedEventHandlers = null;
+			_listArea = null;
 			_insertItemToolStripButton = null;
 			_insertSubItemToolStripButton = null;
+			_duplicateItemToolStripButton = null;
 
 			_isDisposed = true;
 		}
 
 		#endregion
+
+		private void AddInsertToolbarItems()
+		{
+			const string insertMainItem = "insertMainItem";
+			const string insertSubItem = "insertSubItem";
+			const string duplicateMainItem = "duplicateMainItem";
+			/*
+			These all go on the "Insert" toolbar, but they are tool-specific.
+			*/
+			var activeListTool = _listArea.ActiveTool;
+			var currentPossibilityList = MyRecordList.OwningObject as ICmPossibilityList; // Will be null for AreaServices.FeatureTypesAdvancedEditMachineName tool.
+			if (currentPossibilityList != null && currentPossibilityList.IsClosed)
+			{
+				// No sense in bothering with toolbar buttons, since the list is closed to adding new items.
+				return;
+			}
+
+			var toolsThatSupportItemDuplication = new HashSet<string>
+			{
+				AreaServices.ChartmarkEditMachineName,
+				AreaServices.CharttempEditMachineName,
+				AreaServices.TextMarkupTagsEditMachineName
+			};
+			var currentPossibility = MyRecordList.CurrentObject as ICmPossibility; // May be a subclass of ICmPossibility. Will be null, if nothing is in the list.
+			// The first one will be the main Insert item button
+			// The second is optional for lists that allow inserting subitems.
+			// The third is option for lists that allow dulicating top level items.
+			// If the third is added, but not the second, then null must be added to hold the place of the third.
+			var toolbarButtonCreationData = new Dictionary<string, Tuple<EventHandler, string, Dictionary<string, string>>>(3);
+			switch (activeListTool.MachineName)
+			{
+				case AreaServices.AnthroEditMachineName:
+					/*
+						<item command="CmdInsertAnthroCategory" defaultVisible="false" />
+					*/
+					toolbarButtonCreationData.Add(insertMainItem, new Tuple<EventHandler, string, Dictionary<string, string>>(_sharedEventHandlers.Get(ListsAreaMenuHelper.AddNewPossibilityListItem), ListResources.Anthropology_Category, AreaServices.PopulateForMainItemInsert(currentPossibilityList, currentPossibility, ListResources.Insert_Anthropology_Category)));
+
+					/*
+						<item command="CmdDataTree-Insert-AnthroCategory" defaultVisible="false" label="Subcategory" />
+					*/
+					toolbarButtonCreationData.Add(insertSubItem, new Tuple<EventHandler, string, Dictionary<string, string>>(_sharedEventHandlers.Get(ListsAreaMenuHelper.AddNewSubPossibilityListItem), ListResources.Subcategory, AreaServices.PopulateForSubitemInsert(currentPossibilityList, currentPossibility, ListResources.Insert_Anthropology_Category)));
+					// No duplication.
+					break;
+				case AreaServices.FeatureTypesAdvancedEditMachineName:
+					/*
+						  <item command="CmdInsertFeatureType" defaultVisible="false" />
+								<command id="CmdInsertFeatureType" label="_Feature Type" message="InsertItemInVector" icon="AddItem">
+								  <params className="FsFeatStrucType" />
+								</command>
+					*/
+					_insertItemToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_sharedEventHandlers.Get(ListsAreaMenuHelper.InsertFeatureType), "toolStripButtonInsertItem", AreaResources.AddItem.ToBitmap(), ListResources.Feature_Type);
+					InsertToolbarManager.AddInsertToolbarItems(_majorFlexComponentParameters, new List<ToolStripButton> { _insertItemToolStripButton });
+					// No duplication.
+					break;
+				case AreaServices.LexRefEditMachineName:
+					/*
+						<item command="CmdInsertLexRefType" defaultVisible="false" />
+					    <command id="CmdInsertLexRefType" label="_Lexical Reference Type" message="InsertItemInVector" icon="AddItem">
+					      <params className="LexRefType" />
+					    </command>
+						<item id="CmdInsertLexRefType">Create a new lexical relation.</item>
+					*/
+					// No need for something like: CmdDataTree-Insert-LexRefType, since they are not nested.
+					toolbarButtonCreationData.Add(insertMainItem, new Tuple<EventHandler, string, Dictionary<string, string>>(_sharedEventHandlers.Get(ListsAreaMenuHelper.AddNewPossibilityListItem), ListResources.Lexical_Relation, AreaServices.PopulateForMainItemInsert(currentPossibilityList, currentPossibility, ListResources.Insert_Lexical_Reference_Type)));
+					// No duplication.
+					break;
+				case AreaServices.LocationsEditMachineName:
+					/*
+						<item command="CmdInsertLocation" defaultVisible="false" />
+					*/
+					toolbarButtonCreationData.Add(insertMainItem, new Tuple<EventHandler, string, Dictionary<string, string>>(_sharedEventHandlers.Get(ListsAreaMenuHelper.AddNewPossibilityListItem), ListResources.Location, AreaServices.PopulateForMainItemInsert(currentPossibilityList, currentPossibility, ListResources.Insert_Location)));
+					/*
+						<item command="CmdDataTree-Insert-Location" defaultVisible="false" label="Subitem" />
+					*/
+					toolbarButtonCreationData.Add(insertSubItem, new Tuple<EventHandler, string, Dictionary<string, string>>(_sharedEventHandlers.Get(ListsAreaMenuHelper.AddNewSubPossibilityListItem), ListResources.Subitem, AreaServices.PopulateForSubitemInsert(currentPossibilityList, currentPossibility, ListResources.Insert_Location)));
+					// No duplication.
+					break;
+				case AreaServices.MorphTypeEditMachineName:
+					// Can't get here, since code above would have returned.
+					// List is closed at least as of 6AUG2018, when I (RBR) tried to add the menus.
+					// No duplication.
+					break;
+				case AreaServices.PeopleEditMachineName:
+					/*
+						<item command="CmdInsertPerson" defaultVisible="false" />
+					*/
+					// No need for something like: CmdDataTree-Insert-Person, since there are no nested people.
+					toolbarButtonCreationData.Add(insertMainItem, new Tuple<EventHandler, string, Dictionary<string, string>>(_sharedEventHandlers.Get(ListsAreaMenuHelper.AddNewPossibilityListItem), ListResources.Person, AreaServices.PopulateForMainItemInsert(currentPossibilityList, currentPossibility, ListResources.Insert_Person)));
+					// No duplication.
+					break;
+				case AreaServices.SemanticDomainEditMachineName:
+					/*
+						<item command="CmdInsertSemDom" defaultVisible="false" />
+					*/
+					toolbarButtonCreationData.Add(insertMainItem, new Tuple<EventHandler, string, Dictionary<string, string>>(_sharedEventHandlers.Get(ListsAreaMenuHelper.AddNewPossibilityListItem), ListResources.Semantic_Domain, AreaServices.PopulateForMainItemInsert(currentPossibilityList, currentPossibility, ListResources.Insert_Semantic_Domain)));
+					/*
+						<item command="CmdDataTree-Insert-SemanticDomain" defaultVisible="false" label="Subdomain" />
+					*/
+					toolbarButtonCreationData.Add(insertSubItem, new Tuple<EventHandler, string, Dictionary<string, string>>(_sharedEventHandlers.Get(ListsAreaMenuHelper.AddNewSubPossibilityListItem), ListResources.Subdomain, AreaServices.PopulateForSubitemInsert(currentPossibilityList, currentPossibility, ListResources.Insert_Semantic_Domain)));
+					// No duplication.
+					break;
+				case AreaServices.ComplexEntryTypeEditMachineName:
+					// This list can only have LexEntryType instances.
+					/*
+						<command id="CmdInsertLexEntryType" label="_Type" message="InsertItemInVector" icon="AddItem">
+						  <params className="LexEntryType" />
+						</command>
+					*/
+					toolbarButtonCreationData.Add(insertMainItem, new Tuple<EventHandler, string, Dictionary<string, string>>(_sharedEventHandlers.Get(ListsAreaMenuHelper.AddNewPossibilityListItem), ListResources.Complex_Form_Type, AreaServices.PopulateForMainItemInsert(currentPossibilityList, currentPossibility, ListResources.Insert_Type)));
+					/*
+						<command id="CmdDataTree-Insert-LexEntryType" label="Insert Subtype" message="DataTreeInsert" icon="AddSubItem">
+						  <parameters field="SubPossibilities" className="LexEntryType" />
+						</command>
+					*/
+					toolbarButtonCreationData.Add(insertSubItem, new Tuple<EventHandler, string, Dictionary<string, string>>(_sharedEventHandlers.Get(ListsAreaMenuHelper.AddNewSubPossibilityListItem), ListResources.Subtype, AreaServices.PopulateForSubitemInsert(currentPossibilityList, currentPossibility, ListResources.Insert_Type)));
+					// No duplication.
+					break;
+				case AreaServices.VariantEntryTypeEditMachineName:
+					// NB: Inserts one of two class options:
+					//		1) It will insert LexEntryInflType instances in an owning LexEntryInflType instance.
+					//		2) It will only insert at the top or nested in other LexEntryType instances.
+					toolbarButtonCreationData.Add(insertMainItem, new Tuple<EventHandler, string, Dictionary<string, string>>(_sharedEventHandlers.Get(ListsAreaMenuHelper.AddNewPossibilityListItem), ListResources.Variant_Type, AreaServices.PopulateForMainItemInsert(currentPossibilityList, currentPossibility, ListResources.Insert_Type)));
+					toolbarButtonCreationData.Add(insertSubItem, new Tuple<EventHandler, string, Dictionary<string, string>>(_sharedEventHandlers.Get(ListsAreaMenuHelper.AddNewSubPossibilityListItem), ListResources.Subtype, AreaServices.PopulateForSubitemInsert(currentPossibilityList, currentPossibility, ListResources.Insert_Type)));
+					break;
+				case AreaServices.ReversalToolReversalIndexPOSMachineName:
+					// The FW 8 & 9 behavior has this one below the custom list creation menu, but I'm (RBR) going to regularize it and put it above.
+					/*
+						<item command="CmdInsertPOS" defaultVisible="false" />
+					    <command id="CmdInsertPOS" label="Category" message="InsertItemInVector" shortcut="Ctrl+I" icon="AddItem">
+					      <params className="PartOfSpeech" />
+					    </command>
+					*/
+					_insertItemToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_sharedEventHandlers.Get(AreaServices.InsertCategory), "toolStripButtonInsertItem", AreaResources.AddItem.ToBitmap(), AreaResources.Add_a_new_category);
+					_insertItemToolStripButton.Tag = new List<object> { currentPossibilityList, MyRecordList };
+					InsertToolbarManager.AddInsertToolbarItems(_majorFlexComponentParameters, new List<ToolStripButton> { _insertItemToolStripButton });
+					/*
+						<item command="CmdDataTree-Insert-POS-SubPossibilities" defaultVisible="false" label="Subcategory..." />
+						<command id="CmdDataTree-Insert-POS-SubPossibilities" label="Insert Subcategory..." message="DataTreeInsert" icon="AddSubItem">
+						  <parameters field="SubPossibilities" className="PartOfSpeech" slice="owner" />
+						</command>
+					*/
+					_insertSubItemToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_sharedEventHandlers.Get(AreaServices.InsertCategory), "toolStripButtonInsertSubItem", AreaResources.AddSubItem.ToBitmap(), AreaResources.Subcategory);
+					_insertSubItemToolStripButton.Tag = new List<object> { currentPossibilityList, MyRecordList };
+					InsertToolbarManager.AddInsertToolbarItems(_majorFlexComponentParameters, new List<ToolStripButton> { _insertSubItemToolStripButton });
+					// No duplication.
+					break;
+				case AreaServices.DomainTypeEditMachineName: // Fall through to default.
+				case AreaServices.ConfidenceEditMachineName: // Fall through to default. // No duplication.
+				case AreaServices.DialectsListEditMachineName: // Fall through to default. // No duplication.
+				case AreaServices.EducationEditMachineName: // Fall through to default. // No duplication.
+				case AreaServices.ExtNoteTypeEditMachineName: // Fall through to default. // No duplication.
+				case AreaServices.GenresEditMachineName: // Fall through to default. // No duplication.
+				case AreaServices.LanguagesListEditMachineName: // Fall through to default. // No duplication.
+				case AreaServices.RecTypeEditMachineName: // Fall through to default. // No duplication.
+				case AreaServices.PositionsEditMachineName: // Fall through to default. // No duplication.
+				case AreaServices.PublicationsEditMachineName: // Fall through to default. // No duplication.
+				case AreaServices.RestrictionsEditMachineName: // Fall through to default. // No duplication.
+				case AreaServices.RoleEditMachineName: // Fall through to default. // No duplication.
+				case AreaServices.SenseTypeEditMachineName: // Fall through to default. // No duplication.
+				case AreaServices.StatusEditMachineName: // Fall through to default. // No duplication.
+				case AreaServices.ChartmarkEditMachineName: // Fall through to default.
+				case AreaServices.CharttempEditMachineName: // Fall through to default.
+				case AreaServices.TextMarkupTagsEditMachineName: // Fall through to default.
+				case AreaServices.TimeOfDayEditMachineName: // Fall through to default. // No duplication.
+				case AreaServices.TranslationTypeEditMachineName: // Fall through to default. // No duplication.
+				case AreaServices.UsageTypeEditMachineName: // Fall through to default. // No duplication.
+				default:
+					/*
+						NB: use this class: <CmCustomItem num="27" abstract="false" base="CmPossibility" />
+						<item command="CmdInsertCustomItem" defaultVisible="false" />
+
+					XOR
+
+						NB: use this class: <CmPossibility num="7" abstract="false" base="CmObject">
+						<item command="CmdInsertPossibility" defaultVisible="false" />
+					*/
+					toolbarButtonCreationData.Add(insertMainItem, new Tuple<EventHandler, string, Dictionary<string, string>>(_sharedEventHandlers.Get(ListsAreaMenuHelper.AddNewPossibilityListItem), ListResources.Insert_Item, AreaServices.PopulateForMainItemInsert(currentPossibilityList, currentPossibility, ListResources.Insert_Item)));
+					/*
+					*/
+					if (currentPossibilityList.Depth > 1)
+					{
+						/*
+							NB: Use this class: <CmCustomItem num="27" abstract="false" base="CmPossibility" />
+							<item command="CmdDataTree-Insert-CustomItem" defaultVisible="false" label="Subitem" />
+
+						XOR
+
+							NB: Use this class: <CmPossibility num="7" abstract="false" base="CmObject">
+							<item command="CmdDataTree-Insert-Possibility" defaultVisible="false" label="Subitem" />
+						*/
+						toolbarButtonCreationData.Add(insertSubItem, new Tuple<EventHandler, string, Dictionary<string, string>>(_sharedEventHandlers.Get(ListsAreaMenuHelper.AddNewSubPossibilityListItem), ListResources.Subtype, AreaServices.PopulateForSubitemInsert(currentPossibilityList, currentPossibility, ListResources.Insert_Item)));
+					}
+					if (toolsThatSupportItemDuplication.Contains(activeListTool.MachineName) || activeListTool.MachineName.StartsWith("CustomList"))
+					{
+						// Add support for the duplicate main item button.
+						toolbarButtonCreationData.Add(duplicateMainItem, new Tuple<EventHandler, string, Dictionary<string, string>>(Duplicate_Item_Clicked, ListResources.Duplicate_Item, AreaServices.PopulateForSubitemInsert(currentPossibilityList, currentPossibility, ListResources.Duplicate_Item)));
+					}
+					break;
+			}
+
+			// If there is nothing in "toolbarButtonCreationData", then the tool did everything.
+			if (toolbarButtonCreationData.Any())
+			{
+				// Menu creation baton passed here.
+				// The first item in "toolbarButtonCreationData", it is the main "Add" item.
+				var currentMenuTuple = toolbarButtonCreationData[insertMainItem];
+				_insertItemToolStripButton = ToolStripButtonFactory.CreateToolStripButton(currentMenuTuple.Item1, "toolStripButtonInsertItem", AreaResources.AddItem.ToBitmap(), currentMenuTuple.Item2);
+				_insertItemToolStripButton.Tag = new List<object> { currentPossibilityList, MyDataTree, MyRecordList, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable, currentMenuTuple.Item3 };
+
+				// SubItem information is optionally present in "toolbarButtonCreationData".
+				if (toolbarButtonCreationData.TryGetValue(insertSubItem, out currentMenuTuple))
+				{
+					// NB: Lists that cannot have subitems won't be adding this toolbar button option at all.
+					_insertSubItemToolStripButton = ToolStripButtonFactory.CreateToolStripButton(currentMenuTuple.Item1, "toolStripButtonInsertSubItem", AreaResources.AddSubItem.ToBitmap(), currentMenuTuple.Item2);
+					_insertSubItemToolStripButton.Tag = new List<object> { currentPossibility, MyDataTree, MyRecordList, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable, currentMenuTuple.Item3 };
+					_insertSubItemToolStripButton.Enabled = currentPossibilityList.PossibilitiesOS.Any(); // Visbile, but only enabled, if there are possible owners for the new sub item.
+				}
+
+				// The Duplicate item button is optionally present .
+				if (toolbarButtonCreationData.TryGetValue(duplicateMainItem, out currentMenuTuple))
+				{
+					_duplicateItemToolStripButton = ToolStripButtonFactory.CreateToolStripButton(currentMenuTuple.Item1, "toolStripButtonDuplicateItem", ListResources.Copy, currentMenuTuple.Item2);
+					_duplicateItemToolStripButton.ImageTransparentColor = Color.Magenta;
+					_duplicateItemToolStripButton.Tag = new List<object> { currentPossibility, MyDataTree, MyRecordList, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable, currentMenuTuple.Item3 };
+				}
+
+				var itemsToAdd = new List<ToolStripButton> { _insertItemToolStripButton };
+				if (_insertSubItemToolStripButton != null)
+				{
+					itemsToAdd.Add(_insertSubItemToolStripButton);
+				}
+				if (_duplicateItemToolStripButton != null)
+				{
+					itemsToAdd.Add(_duplicateItemToolStripButton);
+				}
+				InsertToolbarManager.AddInsertToolbarItems(_majorFlexComponentParameters, itemsToAdd);
+
+				Application.Idle += ApplicationOnIdle;
+			}
+		}
+
+		private void Duplicate_Item_Clicked(object sender, EventArgs e)
+		{
+			// NB: This will not be enabled if a subitem is the current record in the record list.
+			var tag = (List<object>)((ToolStripItem)sender).Tag;
+			var possibilityList = (ICmPossibilityList)tag[0];
+			var recordList = (IRecordList)tag[2];
+			var otherOptions = (Dictionary<string, string>)tag[4];
+			var cache = possibilityList.Cache;
+			ICmPossibility newPossibility = null;
+			var currentPossibility = (ICmPossibility)recordList.CurrentObject;
+			AreaServices.UndoExtension(otherOptions[AreaServices.BaseUowMessage], cache.ActionHandlerAccessor, () =>
+			{
+				currentPossibility.Clone(possibilityList);
+			});
+		}
+
+		private void ApplicationOnIdle(object sender, EventArgs e)
+		{
+			if (_duplicateItemToolStripButton != null)
+			{
+				_duplicateItemToolStripButton.Enabled = MyRecordList.CurrentObject != null && MyRecordList.CurrentObject.Owner.ClassID == CmPossibilityListTags.kClassId;
+			}
+		}
 	}
 }

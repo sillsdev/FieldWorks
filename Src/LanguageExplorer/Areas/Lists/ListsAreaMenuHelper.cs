@@ -33,8 +33,6 @@ namespace LanguageExplorer.Areas.Lists
 		internal const string AddNewPossibilityListItem = "AddNewPossibilityListItem";
 		internal const string AddNewSubPossibilityListItem = "AddNewSubPossibilityListItem";
 		internal const string InsertFeatureType = "InsertFeatureType";
-		internal const string InsertVariantEntryTypeItem = "InsertLexEntryInflType";
-		internal const string InsertVariantEntryTypeSubitem = "InsertLexEntryInflTypeSubtype";
 
 		internal AreaWideMenuHelper MyAreaWideMenuHelper { get; private set; }
 
@@ -111,7 +109,7 @@ namespace LanguageExplorer.Areas.Lists
 		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
 		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
 		{
-			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+			FlexComponentParameters.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 
 			PropertyTable = flexComponentParameters.PropertyTable;
 			Publisher = flexComponentParameters.Publisher;

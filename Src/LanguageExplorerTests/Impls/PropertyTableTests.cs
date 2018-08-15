@@ -46,7 +46,9 @@ namespace LanguageExplorerTests.Impls
 		[SetUp]
 		public void SetUp()
 		{
-			_propertyTable = TestSetupServices.SetupTestPropertyTable();
+			IPublisher publisherDummy;
+			ISubscriber subscriberDummy;
+			_propertyTable = TestSetupServices.SetupTestTriumvirate(out publisherDummy, out subscriberDummy);
 			_propertyTable.LocalSettingsId = "TestLocal";
 			_propertyTable.UserSettingDirectory = _originalSettingsPath;
 

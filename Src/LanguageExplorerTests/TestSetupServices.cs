@@ -16,63 +16,14 @@ namespace LanguageExplorerTests
 {
 	public static class TestSetupServices
 	{
-		public static void SetupTestPubSubSystem(out IPublisher publisher, out ISubscriber subscriber)
+		public static IPropertyTable SetupTestTriumvirate(out IPublisher publisher, out ISubscriber subscriber)
 		{
 			subscriber = new Subscriber();
 			publisher = new Publisher(subscriber);
-		}
-
-		public static IPropertyTable SetupTestPropertyTable()
-		{
-			ISubscriber subscriber;
-			IPublisher publisher;
-			return SetupTestTriumvirate(out publisher, out subscriber);
-		}
-
-		public static IPropertyTable SetupTestTriumvirate(out IPublisher publisher, out ISubscriber subscriber)
-		{
-			SetupTestPubSubSystem(out publisher, out subscriber);
 			return new PropertyTable(publisher);
 		}
 
-		internal static FlexComponentParameters SetupEverything(LcmCache cache, bool includeStylesheet = true)
-		{
-			SetupCache(cache);
-
-			ISubscriber subscriber;
-			IPublisher publisher;
-			var propertyTable = SetupTestTriumvirate(out publisher, out subscriber);
-			propertyTable.SetProperty("cache", cache);
-			var flexComponentParameters = new FlexComponentParameters(propertyTable, publisher, subscriber);
-			if (includeStylesheet)
-			{
-				var styleSheet = new LcmStyleSheet();
-				styleSheet.Init(cache, cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
-				flexComponentParameters.PropertyTable.SetProperty("FlexStyleSheet", styleSheet);
-			}
-			return flexComponentParameters;
-		}
-
 		internal static FlexComponentParameters SetupEverything(LcmCache cache, out ISharedEventHandlers sharedEventHandlers, bool includeStylesheet = true)
-		{
-			SetupCache(cache);
-
-			ISubscriber subscriber;
-			IPublisher publisher;
-			var propertyTable = SetupTestTriumvirate(out publisher, out subscriber);
-			propertyTable.SetProperty("cache", cache);
-			var flexComponentParameters = new FlexComponentParameters(propertyTable, publisher, subscriber);
-			if (includeStylesheet)
-			{
-				var styleSheet = new LcmStyleSheet();
-				styleSheet.Init(cache, cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
-				flexComponentParameters.PropertyTable.SetProperty("FlexStyleSheet", styleSheet);
-			}
-			sharedEventHandlers = new SharedEventHandlers();
-			return flexComponentParameters;
-		}
-
-		internal static void SetupCache(LcmCache cache)
 		{
 			Guard.AgainstNull(cache, nameof(cache));
 
@@ -90,6 +41,20 @@ namespace LanguageExplorerTests
 				}
 			}
 			DirectoryUtilities.CopyDirectoryContents(Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "DictionaryConfiguration", "TestData"), baseDir);
+
+			ISubscriber subscriber;
+			IPublisher publisher;
+			var propertyTable = SetupTestTriumvirate(out publisher, out subscriber);
+			propertyTable.SetProperty("cache", cache);
+			var flexComponentParameters = new FlexComponentParameters(propertyTable, publisher, subscriber);
+			if (includeStylesheet)
+			{
+				var styleSheet = new LcmStyleSheet();
+				styleSheet.Init(cache, cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
+				flexComponentParameters.PropertyTable.SetProperty("FlexStyleSheet", styleSheet);
+			}
+			sharedEventHandlers = new SharedEventHandlers();
+			return flexComponentParameters;
 		}
 	}
 }

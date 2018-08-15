@@ -1851,7 +1851,6 @@
     <Compile Include="Areas\TranslatedListsExporter.cs" />
     <Compile Include="DictionaryConfiguration\SwitchConfigurationEventArgs.cs" />
     <Compile Include="Areas\TreeBarHandler.cs" />
-    <Compile Include="Areas\TreeBarHandlerUtils.cs" />
     <Compile Include="Areas\RecordBrowseView.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1958,6 +1957,7 @@
       <Link>XML\CombinedConfig_BleedingEdge.xml</Link>
       <SubType>Designer</SubType>
     </None>
+    <None Include="Resources\Copy.bmp" />
     <Content Include="Resources\SimpleChooserParameters.xml" />
     <None Include="images\password-reveal-eye-16x16.png" />
     <Content Include="Resources\DialectsListEditParameters.xml" />

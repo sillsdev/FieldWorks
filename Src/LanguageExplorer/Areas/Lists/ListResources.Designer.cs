@@ -165,6 +165,16 @@ namespace LanguageExplorer.Areas.Lists {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Copy {
+            get {
+                object obj = ResourceManager.GetObject("Copy", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete Custom _List.
         /// </summary>
         internal static string DeleteCustomList {
@@ -190,6 +200,15 @@ namespace LanguageExplorer.Areas.Lists {
         internal static string DomainTypeEditParameters {
             get {
                 return ResourceManager.GetString("DomainTypeEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Duplicate Item.
+        /// </summary>
+        internal static string Duplicate_Item {
+            get {
+                return ResourceManager.GetString("Duplicate_Item", resourceCulture);
             }
         }
         

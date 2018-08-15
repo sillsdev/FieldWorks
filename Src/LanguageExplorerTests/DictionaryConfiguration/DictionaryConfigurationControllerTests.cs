@@ -39,7 +39,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			base.TestSetup();
 
 			_model = new DictionaryConfigurationModel();
-			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
+			ISharedEventHandlers dummy;
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, out dummy);
 			_propertyTable = _flexComponentParameters.PropertyTable;
 			// Add styles to the stylesheet to prevent intermittent unit test failures setting the selected index in the Styles Combobox
 			var styles = FwUtils.StyleSheetFromPropertyTable(_propertyTable).Styles;
@@ -881,7 +882,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			internal MockWindowSetup(LcmCache cache)
 			{
-				FlexParams = TestSetupServices.SetupEverything(cache);
+				ISharedEventHandlers dummy;
+				FlexParams = TestSetupServices.SetupEverything(cache, out dummy);
 				FlexParams.PropertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconDictionaryMachineName);
 			}
 

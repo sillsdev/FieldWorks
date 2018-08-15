@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -56,7 +56,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			_cf3 = new CustomFieldForTest(Cache, CustomFieldGenDate, Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0, CellarPropertyType.GenDate, Guid.Empty);
 			_cf4 = new CustomFieldForTest(Cache, CustomFieldLocation, Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), -1, CellarPropertyType.ReferenceAtomic, Cache.LanguageProject.LocationsOA.Guid);
 
-			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
+			ISharedEventHandlers dummy;
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, out dummy);
 			_lcmStyleSheet = _flexComponentParameters.PropertyTable.GetValue<LcmStyleSheet>("FlexStyleSheet");
 			_migrator = new PreHistoricMigrator(string.Empty, Cache, null, _flexComponentParameters.PropertyTable);
 		}

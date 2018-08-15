@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -110,7 +110,8 @@ namespace LanguageExplorerTests
 
 		protected override void FixtureInit()
 		{
-			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
+			ISharedEventHandlers dummy;
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, out dummy);
 			m_entryFactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			m_senseFactory = Cache.ServiceLocator.GetInstance<ILexSenseFactory>();
 			m_exampleFactory = Cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>();

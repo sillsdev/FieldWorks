@@ -438,7 +438,7 @@ namespace LanguageExplorer.Areas
 		internal static Dictionary<string, string> PopulateForMainItemInsert(ICmPossibilityList owningList, ICmPossibility currentPossibility, string baseUowMessage)
 		{
 			var mdc = owningList.Cache.GetManagedMetaDataCache();
-			var owningPossibility = currentPossibility.OwningPossibility;
+			var owningPossibility = currentPossibility?.OwningPossibility;
 
 			return new Dictionary<string, string>
 			{
@@ -449,13 +449,15 @@ namespace LanguageExplorer.Areas
 			};
 		}
 
-		internal static Dictionary<string, string> PopulateForSubitemInsert(ICmPossibility owningPossibility, string baseUowMessage)
+		internal static Dictionary<string, string> PopulateForSubitemInsert(ICmPossibilityList owningList, ICmPossibility owningPossibility, string baseUowMessage)
 		{
+			var mdc = owningList.Cache.GetManagedMetaDataCache();
+			var className = owningPossibility == null ? mdc.GetClassName(owningList.ItemClsid) : owningPossibility.ClassName;
 			return new Dictionary<string, string>
 			{
-				{ ClassName, owningPossibility.ClassName },
-				{ OwnerClassName, owningPossibility.ClassName },
-				{ OwningField, owningPossibility.Cache.GetManagedMetaDataCache().GetFieldName(CmPossibilityTags.kflidSubPossibilities) },
+				{ ClassName, className },
+				{ OwnerClassName, className },
+				{ OwningField, mdc.GetFieldName(CmPossibilityTags.kflidSubPossibilities) },
 				{ BaseUowMessage, baseUowMessage }
 			};
 		}

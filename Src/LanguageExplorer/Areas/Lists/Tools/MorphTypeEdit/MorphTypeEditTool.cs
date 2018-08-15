@@ -160,10 +160,11 @@ namespace LanguageExplorer.Areas.Lists.Tools.MorphTypeEdit
               </sortMethods>
             </clerk>
 			*/
+			// NB: The morph type list is closed to add/remove, but it does allow editing extant items.
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
 				cache.LanguageProject.LexDbOA.MorphTypesOA,
-				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, false, false, "best analysis"), new RecordFilterParameterObject(null, true, true));
+				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, false, false, "best analysis"), new RecordFilterParameterObject(null));
 		}
 	}
 }

@@ -21,6 +21,8 @@ namespace LanguageExplorer.Areas.Lists
 	/// </summary>
 	internal sealed class ListsAreaInsertMenuManager : IToolUiWidgetManager
 	{
+		private const string MainItem = "MainItem";
+		private const string Subitem = "Subitem";
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private ISharedEventHandlers _sharedEventHandlers;
 		private ToolStripMenuItem _insertMenu;
@@ -59,8 +61,6 @@ namespace LanguageExplorer.Areas.Lists
 			_majorFlexComponentParameters.SharedEventHandlers.Add(ListsAreaMenuHelper.AddNewPossibilityListItem, AddNewPossibilityListItem_Clicked);
 			_majorFlexComponentParameters.SharedEventHandlers.Add(ListsAreaMenuHelper.AddNewSubPossibilityListItem, AddNewSubPossibilityListItem_Clicked);
 			_majorFlexComponentParameters.SharedEventHandlers.Add(ListsAreaMenuHelper.InsertFeatureType, InsertFeatureType_Clicked);
-			_majorFlexComponentParameters.SharedEventHandlers.Add(ListsAreaMenuHelper.InsertVariantEntryTypeItem, VariantEntryTypeItem_Clicked);
-			_majorFlexComponentParameters.SharedEventHandlers.Add(ListsAreaMenuHelper.InsertVariantEntryTypeSubitem, VariantEntryTypeSubitem_Clicked);
 
 			// Add Lists area Insert menus
 			AddInsertMenus();
@@ -107,6 +107,7 @@ namespace LanguageExplorer.Areas.Lists
 
 			if (disposing)
 			{
+				Application.Idle -= ApplicationOnIdle;
 				if (_toolStripSeparator != null)
 				{
 					_insertMenu.DropDownItems.Remove(_toolStripSeparator);
@@ -122,8 +123,6 @@ namespace LanguageExplorer.Areas.Lists
 				_majorFlexComponentParameters.SharedEventHandlers.Remove(ListsAreaMenuHelper.AddNewPossibilityListItem);
 				_majorFlexComponentParameters.SharedEventHandlers.Remove(ListsAreaMenuHelper.AddNewSubPossibilityListItem);
 				_majorFlexComponentParameters.SharedEventHandlers.Remove(ListsAreaMenuHelper.InsertFeatureType);
-				_majorFlexComponentParameters.SharedEventHandlers.Remove(ListsAreaMenuHelper.InsertVariantEntryTypeItem);
-				_majorFlexComponentParameters.SharedEventHandlers.Remove(ListsAreaMenuHelper.InsertVariantEntryTypeSubitem);
 			}
 			_newInsertMenusAndHandlers = null;
 			_insertMenu = null;
@@ -149,10 +148,9 @@ namespace LanguageExplorer.Areas.Lists
 			if (currentPossibilityList != null && currentPossibilityList.IsClosed)
 			{
 				// No sense in bothering with menus, since the list is closed to adding new items.
-				MessageBox.Show($"List '{currentPossibilityList.ShortName}' is a closed list.{Environment.NewLine}Tool machine name: '{activeListTool.MachineName}'.{Environment.NewLine}Tool UI name: '{activeListTool.UiName}'");
 				return;
 			}
-			var currentPossibility = (ICmPossibility)MyRecordList.CurrentObject; // May be a subclass of ICmPossibility.
+			var currentPossibility = MyRecordList.CurrentObject as ICmPossibility; // May be a subclass of ICmPossibility. Will be null, if nothing is in the list.
 			var menuCreationData = new List<Tuple<EventHandler, string, Dictionary<string, string>>>(2);
 			ToolStripMenuItem menu;
 			string tooltip;
@@ -171,7 +169,7 @@ namespace LanguageExplorer.Areas.Lists
 						  <parameters field="SubPossibilities" className="CmAnthroItem" />
 						</command>
 					*/
-					menuCreationData.Add(new Tuple<EventHandler, string, Dictionary<string, string>>(AddNewSubPossibilityListItem_Clicked, ListResources.Subcategory, AreaServices.PopulateForSubitemInsert(currentPossibility, ListResources.Insert_Anthropology_Category)));
+					menuCreationData.Add(new Tuple<EventHandler, string, Dictionary<string, string>>(AddNewSubPossibilityListItem_Clicked, ListResources.Subcategory, AreaServices.PopulateForSubitemInsert(currentPossibilityList, currentPossibility, ListResources.Insert_Anthropology_Category)));
 					break;
 				case AreaServices.FeatureTypesAdvancedEditMachineName:
 					/*
@@ -202,9 +200,10 @@ namespace LanguageExplorer.Areas.Lists
 						  <parameters field="SubPossibilities" className="CmLocation" />
 						</command>
 					*/
-					menuCreationData.Add(new Tuple<EventHandler, string, Dictionary<string, string>>(AddNewSubPossibilityListItem_Clicked, ListResources.Subitem, AreaServices.PopulateForSubitemInsert(currentPossibility, ListResources.Insert_Location)));
+					menuCreationData.Add(new Tuple<EventHandler, string, Dictionary<string, string>>(AddNewSubPossibilityListItem_Clicked, ListResources.Subitem, AreaServices.PopulateForSubitemInsert(currentPossibilityList, currentPossibility, ListResources.Insert_Location)));
 					break;
 				case AreaServices.MorphTypeEditMachineName:
+					// Can't get here, since code above would have returned.
 					// List is closed at least as of 6AUG2018, when I (RBR) tried to add the menus.
 					break;
 				case AreaServices.PeopleEditMachineName:
@@ -228,7 +227,7 @@ namespace LanguageExplorer.Areas.Lists
 						   <parameters field="SubPossibilities" className="CmSemanticDomain" />
 						 </command>
 					*/
-					menuCreationData.Add(new Tuple<EventHandler, string, Dictionary<string, string>>(AddNewSubPossibilityListItem_Clicked, ListResources.Subdomain, AreaServices.PopulateForSubitemInsert(currentPossibility, ListResources.Insert_Semantic_Domain)));
+					menuCreationData.Add(new Tuple<EventHandler, string, Dictionary<string, string>>(AddNewSubPossibilityListItem_Clicked, ListResources.Subdomain, AreaServices.PopulateForSubitemInsert(currentPossibilityList, currentPossibility, ListResources.Insert_Semantic_Domain)));
 					break;
 				case AreaServices.ComplexEntryTypeEditMachineName:
 					// This list can only have LexEntryType instances.
@@ -243,7 +242,7 @@ namespace LanguageExplorer.Areas.Lists
 						  <parameters field="SubPossibilities" className="LexEntryType" />
 						</command>
 					*/
-					menuCreationData.Add(new Tuple<EventHandler, string, Dictionary<string, string>>(AddNewSubPossibilityListItem_Clicked, ListResources.Subtype, AreaServices.PopulateForSubitemInsert(currentPossibility, ListResources.Insert_Type)));
+					menuCreationData.Add(new Tuple<EventHandler, string, Dictionary<string, string>>(AddNewSubPossibilityListItem_Clicked, ListResources.Subtype, AreaServices.PopulateForSubitemInsert(currentPossibilityList, currentPossibility, ListResources.Insert_Type)));
 					break;
 				case AreaServices.VariantEntryTypeEditMachineName:
 					// NB: Inserts one of two class options:
@@ -257,13 +256,13 @@ namespace LanguageExplorer.Areas.Lists
 						  <parameters field="SubPossibilities" className="LexEntryType" />
 						</command>
 					*/
-					menuCreationData.Add(new Tuple<EventHandler, string, Dictionary<string, string>>(VariantEntryTypeItem_Clicked, ListResources.Variant_Type, AreaServices.PopulateForMainItemInsert(currentPossibilityList, currentPossibility, ListResources.Insert_Type)));
+					menuCreationData.Add(new Tuple<EventHandler, string, Dictionary<string, string>>(AddNewPossibilityListItem_Clicked, ListResources.Variant_Type, AreaServices.PopulateForMainItemInsert(currentPossibilityList, currentPossibility, ListResources.Insert_Type)));
 					/*
 						<command id="CmdDataTree-Insert-LexEntryInflType" label="Insert Subtype" message="DataTreeInsert" icon="AddSubItem">
 						  <parameters field="SubPossibilities" className="LexEntryInflType" />
 						</command>
 					*/
-					menuCreationData.Add(new Tuple<EventHandler, string, Dictionary<string, string>>(VariantEntryTypeSubitem_Clicked, ListResources.Subtype, AreaServices.PopulateForSubitemInsert(currentPossibility, ListResources.Insert_Type)));
+					menuCreationData.Add(new Tuple<EventHandler, string, Dictionary<string, string>>(AddNewSubPossibilityListItem_Clicked, ListResources.Subtype, AreaServices.PopulateForSubitemInsert(currentPossibilityList, currentPossibility, ListResources.Insert_Type)));
 					break;
 				case AreaServices.ReversalToolReversalIndexPOSMachineName:
 					// The FW 8 behavior has this one below the custom list creation menu, but I'm (RBR) going to regularize it and put it above.
@@ -335,7 +334,7 @@ namespace LanguageExplorer.Areas.Lists
 							  <parameters field="SubPossibilities" className="CmPossibility" />
 							</command>
 						*/
-						menuCreationData.Add(new Tuple<EventHandler, string, Dictionary<string, string>>(AddNewPossibilityListItem_Clicked, ListResources.Subitem, AreaServices.PopulateForSubitemInsert(currentPossibility, ListResources.Subitem)));
+						menuCreationData.Add(new Tuple<EventHandler, string, Dictionary<string, string>>(AddNewPossibilityListItem_Clicked, ListResources.Subitem, AreaServices.PopulateForSubitemInsert(currentPossibilityList, currentPossibility, ListResources.Subitem)));
 					}
 					break;
 			}
@@ -347,7 +346,7 @@ namespace LanguageExplorer.Areas.Lists
 				// The first item in "menuCreationData", it is the main "Add" item.
 				var currentMenuTuple = menuCreationData[0];
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, currentMenuTuple.Item1, currentMenuTuple.Item2, image: AreaResources.AddItem.ToBitmap(), insertIndex: insertIndex++);
-				menu.Name = "MainItem";
+				menu.Name = MainItem;
 				menu.Tag = new List<object> { currentPossibilityList, MyDataTree, MyRecordList, _propertyTable, currentMenuTuple.Item3 };
 
 				// SubItem information is optionally present in "menuCreationData" in the second space.
@@ -356,7 +355,7 @@ namespace LanguageExplorer.Areas.Lists
 					// NB: Lists that cannot have subitems won't be adding this menu option at all.
 					currentMenuTuple = menuCreationData[1];
 					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, currentMenuTuple.Item1, currentMenuTuple.Item2, image: AreaResources.AddSubItem.ToBitmap(), insertIndex: insertIndex++);
-					menu.Name = "Subitem";
+					menu.Name = Subitem;
 					menu.Tag = new List<object> { currentPossibility, MyDataTree, MyRecordList, _propertyTable, currentMenuTuple.Item3 };
 					menu.Enabled = currentPossibilityList.PossibilitiesOS.Any(); // Visbile, but only enabled, if there are possible owners for the new sub item.
 				}
@@ -370,59 +369,8 @@ namespace LanguageExplorer.Areas.Lists
 
 			// <item command="CmdAddCustomList" defaultVisible="false" />
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, AddCustomList_Click, ListResources.AddCustomList, ListResources.AddCustomListTooltip, insertIndex: insertIndex);
-		}
 
-		private void VariantEntryTypeItem_Clicked(object sender, EventArgs e)
-		{
-			var currentObject = MyRecordList.CurrentObject;
-			switch (currentObject.ClassName)
-			{
-				case "LexEntryInflType":
-					// Check owner.
-					switch (currentObject.Owner.ClassName)
-					{
-						case "LexEntryInflType":
-							// Insert a sibling of type: LexEntryInflType.
-							/*
-							<item command="CmdInsertLexEntryInflType" defaultVisible="false" />
-							*/
-							TemporaryEventHandler(sender, "Adding new LexEntryInflType sub-type to: '{0}'.");
-							break;
-						default:
-							// Insert a sibling of type: LexEntryType.
-							TemporaryEventHandler(sender, "Adding new LexEntryType type to: '{0}'.");
-							break;
-					}
-					break;
-				default:
-					// Add LexEntryType child
-					TemporaryEventHandler(sender, "Adding new LexEntryType sub-type to: '{0}'.");
-					break;
-			}
-		}
-
-		private void VariantEntryTypeSubitem_Clicked(object sender, EventArgs e)
-		{
-			var currentObject = MyRecordList.CurrentObject;
-			switch (currentObject.ClassName)
-			{
-				case "LexEntryInflType":
-					// Add LexEntryInflType child of LexEntryInflType.
-					TemporaryEventHandler(sender, "Adding new LexEntryInflType sub-type to: '{0}'.");
-					break;
-				default:
-					// Add LexEntryType child
-					TemporaryEventHandler(sender, "Adding new LexEntryType sub-type to: '{0}'.");
-					break;
-			}
-		}
-
-		private static void TemporaryEventHandler(object sender, string baseMessage)
-		{
-			var tag = (List<object>)((ToolStripItem)sender).Tag;
-			var possibilityList = (ICmPossibilityList)tag[0];
-			var propertyTable = (IPropertyTable)tag[3];
-			MessageBox.Show(propertyTable.GetValue<Form>("window"), string.Format(baseMessage, possibilityList.ShortName));
+			Application.Idle += ApplicationOnIdle;
 		}
 
 		private void InsertFeatureType_Clicked(object sender, EventArgs e)
@@ -529,7 +477,8 @@ namespace LanguageExplorer.Areas.Lists
 						newPossibility = cache.ServiceLocator.GetInstance<ILexEntryTypeFactory>().Create((ILexEntryType)owningPossibility);
 						break;
 					case LexEntryInflTypeTags.kClassName:
-						throw new NotSupportedException("Cannot create LexEntryInflType instances in Flex at the list level.");
+						newPossibility = cache.ServiceLocator.GetInstance<ILexEntryInflTypeFactory>().Create((ILexEntryInflType)owningPossibility);
+						break;
 					case LexRefTypeTags.kClassName:
 						throw new NotSupportedException("Cannot create LexRefType sub-item instances in Flex.");
 					case ChkTermTags.kClassName:
@@ -552,6 +501,16 @@ namespace LanguageExplorer.Areas.Lists
 				{
 					_listArea.AddCustomList(dlg.NewList);
 				}
+			}
+		}
+
+		private void ApplicationOnIdle(object sender, EventArgs e)
+		{
+			var currentList = (ICmPossibilityList)MyRecordList.OwningObject;
+			var currentTuple = _newInsertMenusAndHandlers.FirstOrDefault(tuple => tuple.Item1.Name == Subitem);
+			if (currentTuple != null)
+			{
+				currentTuple.Item1.Enabled = currentList.PossibilitiesOS.Any();
 			}
 		}
 	}

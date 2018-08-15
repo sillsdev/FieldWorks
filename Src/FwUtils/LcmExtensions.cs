@@ -5,6 +5,7 @@
 using System;
 using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using SIL.Code;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -143,6 +144,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return lexEntryType;
 		}
 
+		public static ILexEntryInflType Create(this ILexEntryInflTypeFactory me, ILexEntryInflType owner)
+		{
+			Guard.AgainstNull(owner, nameof(owner));
+
+			var lexEntryInflType = me.Create();
+			owner.SubPossibilitiesOS.Add(lexEntryInflType);
+			return lexEntryInflType;
+		}
+
 		public static ILexRefType Create(this ILexRefTypeFactory me, ICmPossibilityList owner)
 		{
 			Guard.AgainstNull(owner, nameof(owner));
@@ -159,6 +169,128 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var lexRefType = me.Create();
 			owner.SubPossibilitiesOS.Add(lexRefType);
 			return lexRefType;
+		}
+
+		public static ICmPossibility Clone(this ICmPossibility me, ICmPossibilityList owner)
+		{
+			Guard.AgainstNull(owner, nameof(owner));
+
+			if (!owner.PossibilitiesOS.Contains(me))
+			{
+				throw new InvalidOperationException($"Cannot clone a CmPossibility that is not owned by a list: '{me.Guid}'");
+			}
+			ICmPossibility newbie;
+			switch (me.ClassID)
+			{
+				case CmPossibilityTags.kClassId:
+					newbie = me.Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(Guid.NewGuid(), owner);
+					break;
+				case CmCustomItemTags.kClassId:
+					newbie = me.Cache.ServiceLocator.GetInstance<ICmCustomItemFactory>().Create(Guid.NewGuid(), owner);
+					break;
+				default:
+					throw new NotSupportedException($"Cloning is only supported for ICmPossibility and ICmCustomItem instances, but not for: '{me.ClassName}'.");
+			}
+			CopyCoreCmPossibilityInformation(me, newbie);
+			ClonePossibilityChildren(me, newbie);
+
+			return newbie;
+		}
+
+		private static ICmPossibility Clone(this ICmPossibility me, ICmPossibility owner)
+		{
+			Guard.AgainstNull(owner, nameof(owner));
+
+			if (!owner.SubPossibilitiesOS.Contains(me))
+			{
+				throw new InvalidOperationException($"Cannot clone a CmPossibility that is not owned by another possibility: '{me.Guid}'");
+			}
+			ICmPossibility newbie = null;
+			switch (me.ClassID)
+			{
+				case CmPossibilityTags.kClassId:
+					newbie = me.Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(Guid.NewGuid(), owner);
+					break;
+				case CmCustomItemTags.kClassId:
+					newbie = me.Cache.ServiceLocator.GetInstance<ICmCustomItemFactory>().Create(Guid.NewGuid(), (ICmCustomItem)owner);
+					break;
+				default:
+					throw new NotSupportedException($"Cloning is only supported for ICmPossibility and ICmCustomItem instances, but not for: '{me.ClassName}'.");
+			}
+			CopyCoreCmPossibilityInformation(me, newbie);
+			ClonePossibilityChildren(me, newbie);
+
+			return newbie;
+		}
+
+		private static void ClonePossibilityChildren(ICmPossibility original, ICmPossibility copy)
+		{
+			// Subitems
+			// Skip any with no names (e.g., "???").
+			foreach (var subitem in original.SubPossibilitiesOS.Where(si => !si.ShortNameTSS.Text.Equals("???")))
+			{
+				copy.SubPossibilitiesOS.Add(Clone(subitem, copy));
+			}
+		}
+
+		private static void CopyCoreCmPossibilityInformation(ICmPossibility original, ICmPossibility copy)
+		{
+			var ws = original.Name.AvailableWritingSystemIds[0];
+			copy.Name.set_String(ws, original.Name.UiString);
+			copy.Name.AnalysisDefaultWritingSystem = original.Name.AnalysisDefaultWritingSystem;
+			copy.Name.VernacularDefaultWritingSystem = original.Name.VernacularDefaultWritingSystem;
+			if (original.OwningFlid == CmPossibilityListTags.kflidPossibilities)
+			{
+				//Only the top one needs a name change
+				copy.Name.set_String(ws, ChangeName(copy));
+			}
+			if (!string.IsNullOrEmpty(original.Abbreviation.UiString))
+			{
+				copy.Abbreviation.set_String(ws, original.Abbreviation.UiString);
+			}
+			if (!string.IsNullOrEmpty(original.Description.UiString))
+			{
+				copy.Description.set_String(ws, original.Description.UiString);
+			}
+			copy.StatusRA = original.StatusRA;
+			if (copy.DiscussionOA != null)
+			{
+				copy.DiscussionOA = original.DiscussionOA;
+			}
+			copy.ConfidenceRA = original.ConfidenceRA;
+			foreach (var person in original.ResearchersRC)
+			{
+				copy.ResearchersRC.Add(person);
+			}
+			foreach (var poss in original.RestrictionsRC)
+			{
+				copy.RestrictionsRC.Add(poss);
+			}
+		}
+
+		private static string ChangeName(ICmPossibility obj)
+		{
+			var max = 0;
+			// Captures the name up to a (Copy) and captures the duplicate number if it exists
+			var regex = new Regex(@"(.[a-z0-9A-Z\s]*) \(Copy\) \((.[0-9]*)\)$");
+			var match = regex.Match(obj.Name.UiString);
+			//Only need the name up to the (Copy) so grab that if a duplicate else use original name
+			var prefix = (match.Success) ? match.Groups[1].Value : obj.Name.UiString;
+			//Find the highest duplicate number for that template
+			foreach (var possibility in obj.OwningList.AllOwnedObjects)
+			{
+				match = regex.Match(possibility.ShortNameTSS.Text);
+				if (match.Success && match.Groups[1].Value.Equals(prefix))
+				{
+					var temp = Convert.ToInt32(match.Groups[2].Value);
+					if (temp > max)
+					{
+						max = temp;
+					}
+				}
+			}
+			max++; //Increment so the latest duplicate has the highest duplicate number
+			return prefix + " (Copy) (" + max + ")";
 		}
 	}
 }

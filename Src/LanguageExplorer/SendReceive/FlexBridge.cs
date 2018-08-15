@@ -152,7 +152,7 @@ namespace LanguageExplorer.SendReceive
 		/// <inheritdoc />
 		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
 		{
-			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+			FlexComponentParameters.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 
 			PropertyTable = flexComponentParameters.PropertyTable;
 			Publisher = flexComponentParameters.Publisher;

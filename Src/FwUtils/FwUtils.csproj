@@ -254,7 +254,6 @@
     <Compile Include="DriveUtil.cs" />
     <Compile Include="DynamicLoader.cs" />
     <Compile Include="FLExBridgeHelper.cs" />
-    <Compile Include="FlexComponentCheckingService.cs" />
     <Compile Include="FlexComponentParameters.cs" />
     <Compile Include="GeneratedFwUtils.cs" />
     <Compile Include="IChecksDataSource.cs" />

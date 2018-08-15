@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2018 SIL International
+// Copyright (c) 2016-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -29,7 +29,8 @@ namespace LanguageExplorerTests
 		{
 			base.FixtureSetup();
 
-			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, false);
+			ISharedEventHandlers dummy;
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, out dummy, false);
 			_flexComponentParameters.PropertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconDictionaryMachineName);
 		}
 

@@ -72,7 +72,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
 		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
 		{
-			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+			FlexComponentParameters.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 
 			PropertyTable = flexComponentParameters.PropertyTable;
 			Publisher = flexComponentParameters.Publisher;

@@ -51,6 +51,11 @@ namespace LanguageExplorer.Areas
 		{
 			// With one exception (see below) a possibility list only allows one type of possibility to be owned in the list.
 			var owningPossibilityList = OwningList;
+			if (owningPossibilityList.IsClosed)
+			{
+				// Can't insert anything into a closed list.
+				return null;
+			}
 			var owningPossibilityListClass = VirtualListPublisher.MetaDataCache.GetClassName(owningPossibilityList.ItemClsid);
 			// for the special case of the VariantEntryTypes list, allow inserting a LexEntryInflType object
 			// as long as the currently selected object has a parent of that class.
