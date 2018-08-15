@@ -155,7 +155,13 @@ namespace SIL.FieldWorks.XWorks.LexText
 		{
 			if (context != ContextValues.InternalConfigureView &&
 				context != ContextValues.Internal &&
-				context != ContextValues.General)
+				context != ContextValues.General &&
+				context != ContextValues.Book &&
+				context != ContextValues.Text &&
+				context != ContextValues.PsuedoStyle &&
+				context != ContextValues.InternalMappable &&
+				context != ContextValues.Note &&
+				context != ContextValues.Title)
 				ReportInvalidInstallation(String.Format(
 					"Style {0} is illegally defined with context '{1}' in {2}.",
 					styleName, context, ResourceFileName));

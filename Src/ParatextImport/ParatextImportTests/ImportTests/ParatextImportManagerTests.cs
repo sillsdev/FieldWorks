@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -507,7 +507,7 @@ namespace ParatextImport.ImportTests
 			base.FixtureSetup();
 
 			m_styleSheet = new LcmStyleSheet();
-			m_styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
+			m_styleSheet.Init(Cache, Cache.LangProject.Hvo, LangProjectTags.kflidStyles);
 
 			// By default, use auto-generated footnote markers for import tests.
 			m_scr.FootnoteMarkerType = FootnoteMarkerTypes.AutoFootnoteMarker;
@@ -516,7 +516,7 @@ namespace ParatextImport.ImportTests
 
 			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
 			{
-				m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Unknown, m_styleSheet, FwDirectoryFinder.TeStylesPath);
+				m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Unknown, m_styleSheet, FwDirectoryFinder.FlexStylesPath);
 				DummyParatextImporter.MakeSFImportTestSettings(m_settings);
 			});
 		}

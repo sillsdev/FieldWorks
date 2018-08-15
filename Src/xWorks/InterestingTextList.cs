@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -382,6 +382,7 @@ namespace SIL.FieldWorks.XWorks
 			UpdateExcludedCoreTexts(excludedGuids);
 			m_coreTexts = null;
 			m_interestingTests = null; // regenerate when next needed. (Before we raise changed, which may use it...)
+			IncludeScripture = m_scriptureTexts.Count > 0;
 			var newTexts = InterestingTexts.ToArray();
 			int firstChange = 0;
 			int minLength = Math.Min(oldTexts.Length, newTexts.Length);
