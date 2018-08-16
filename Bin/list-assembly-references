@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# List dlls referenced by an assembly.
+#
+# Usage: ./list-assembly-references /path/SomeAssembly.dll
+#
+# Omits:
+#  System.*
+#  mscorlib
+#  Mono.*
+
+monodis "$1" --assemblyref|grep Name=|perl -p -e 's/.*Name=// && s/$/.dll/' | perl -n -e 'print unless /^System\./' | perl -n -e 'print unless /^mscorlib\./' | perl -n -e 'print unless /^Mono\./'
