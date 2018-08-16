@@ -356,8 +356,8 @@
 		<PalasoFiles Include="Enchant.Net.dll"/>
 		<PalasoFiles Include="Enchant.Net.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<PalasoFiles Include="ibusdotnet.dll" Condition="'$(OS)'=='Unix'"/>
-		<PalasoFiles Include="NDesk.DBus.dll" Condition="'$(OS)'=='Unix'"/>
-		<PalasoFiles Include="NDesk.DBus.dll.config" Condition="'$(OS)'=='Unix'"/>
+		<PalasoFiles Include="NDesk.DBus.dll"/>
+		<PalasoFiles Include="NDesk.DBus.dll.config"/>
 		<PalasoFiles Include="taglib-sharp.dll"/>
 		<PalasoFiles Include="Spart.dll"/>
 		<PalasoFiles Include="icu.net.dll"/>
@@ -391,7 +391,7 @@
 		<LcmOutputBaseFiles Include="SIL.LCModel.Utils.Tests.dll.config" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Utils.Tests.$(DebugInfo)" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Core.dll" />
-		<LcmOutputBaseFiles Include="SIL.LCModel.Core.dll.config" Condition="'$(OS)'=='Unix'" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.Core.dll.config"/>
 		<LcmOutputBaseFiles Include="SIL.LCModel.Core.$(DebugInfo)" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Core.Tests.dll" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Core.Tests.dll.config" />

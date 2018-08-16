@@ -12,6 +12,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
+using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
@@ -31,6 +32,14 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		[SetUp]
 		public void SetUp()
 		{
+			// Force initialization in ILRepacked SIL.WritingSystems assembly,
+			// even if a referenced SIl.WritingSystems assembly somewhere down
+			// the dependency chain, that we won't be using, was initialized.
+			if (!Sldr.IsInitialized)
+			{
+				Sldr.Initialize();
+			}
+
 			FwRegistryHelper.Initialize();
 			m_threadHelper = new ThreadHelper();
 			var ui = new DummyLcmUI(m_threadHelper);
