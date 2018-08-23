@@ -448,7 +448,7 @@ namespace LCMBrowser
 			this.cmnuSelectProps.Text = "Select Displayed Properties for {0}...";
 			this.cmnuSelectProps.Click += new System.EventHandler(this.CmnuSelectPropsClick);
 			// 
-			// ObjectBrowser
+			// LCMBrowserForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;

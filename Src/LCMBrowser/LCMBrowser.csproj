@@ -166,7 +166,7 @@
     <Compile Include="LCMClassProperty.cs" />
     <Compile Include="LCMClass.cs" />
     <Compile Include="LCMClassList.cs" />
-    <Compile Include="LcmInspectorList.cs" />
+    <Compile Include="LCM_InspectorList.cs" />
     <Compile Include="ModelWnd.cs">
       <SubType>Form</SubType>
     </Compile>

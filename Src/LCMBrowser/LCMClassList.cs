@@ -43,7 +43,7 @@ namespace LCMBrowser
 		/// </summary>
 		private static void FindLCMAssembly()
 		{
-			// Find the LCM.dll assembly.
+			// Find the SIL.LCModel.dll assembly.
 			foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
 			{
 				if (asm.FullName.StartsWith("SIL.LCModel,"))

@@ -116,38 +116,6 @@ namespace SIL.FieldWorks
 #endif
 
 		/// <summary>
-		/// Sets the ICU_DATA environment variable.
-		/// </summary>
-		private static void SetIcuDataDirEnvironmentVariable()
-		{
-			if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ICU_DATA")))
-			{
-				return;
-			}
-
-			// We read the registry value and set an environment variable ICU_DATA here so that
-			// FwKernelInterfaces.dll is independent of WinForms.
-			var icuDirValueName = $"Icu{LCModel.Core.Text.Icu.Version}DataDir";
-			using(var userKey = RegistryHelper.CompanyKey)
-			using(var machineKey = RegistryHelper.CompanyKeyLocalMachine)
-			{
-				string dir = null;
-				if (userKey?.GetValue(icuDirValueName) != null)
-				{
-					dir = userKey.GetValue(icuDirValueName, dir) as string;
-				}
-				else if (machineKey?.GetValue(icuDirValueName) != null)
-				{
-					dir = machineKey.GetValue(icuDirValueName, dir) as string;
-				}
-				if (!string.IsNullOrEmpty(dir))
-				{
-					Environment.SetEnvironmentVariable("ICU_DATA", dir);
-				}
-			}
-		}
-
-		/// <summary>
 		/// The main entry point for the FieldWorks executable.
 		/// </summary>
 		/// <param name="rgArgs">The command line arguments.</param>
@@ -242,9 +210,6 @@ namespace SIL.FieldWorks
 				// in native code do not have icons if we just use this method. This is caused
 				// by a bug in XP.
 				Application.EnableVisualStyles();
-
-				// Set ICU_DATA environment variable
-				SetIcuDataDirEnvironmentVariable();
 
 				FwUtils.InitializeIcu();
 
@@ -720,7 +685,7 @@ namespace SIL.FieldWorks
 				if (fAddQuotes)
 				{
 					bldr.Append("\"");
-				}
+			}
 			}
 			try
 			{
@@ -774,14 +739,14 @@ namespace SIL.FieldWorks
 				{
 					Cache.ProjectId.UiName // be sure to include myself!
 				};
-				RunOnRemoteClients(kFwRemoteRequest, requestor =>
-				{
-					projects.Add(requestor.ProjectName);
-					return false;
-				});
+			RunOnRemoteClients(kFwRemoteRequest, requestor =>
+			{
+				projects.Add(requestor.ProjectName);
+				return false;
+			});
 
-				return projects;
-			}
+			return projects;
+		}
 		}
 
 		#region Cache Creation and Handling
@@ -831,7 +796,7 @@ namespace SIL.FieldWorks
 				if (!currentWss.Contains(ws))
 				{
 					deletedWss.Append(ws + ", ");
-				}
+			}
 			}
 			return deletedWss.ToString().TrimEnd(',',' ');
 		}
@@ -845,9 +810,9 @@ namespace SIL.FieldWorks
 				{
 					continue;
 				}
-				ws.DefaultCollation = new IcuRulesCollationDefinition("standard");
-				nullCollationWs.Append(ws.DisplayLabel + ",");
-			}
+					ws.DefaultCollation = new IcuRulesCollationDefinition("standard");
+					nullCollationWs.Append(ws.DisplayLabel + ",");
+				}
 			if (nullCollationWs.Length > 0)
 			{
 				nullCollationWs = nullCollationWs.Remove(nullCollationWs.Length - 1, 1);
@@ -886,21 +851,21 @@ namespace SIL.FieldWorks
 				return;
 			}
 			MessageBox.Show(string.Format(Properties.Resources.ksInvalidLinkedFilesFolder, linkedFilesFolder), Properties.Resources.ksErrorCaption);
-			using (var folderBrowserDlg = new FolderBrowserDialogAdapter())
-			{
-				folderBrowserDlg.Description = Properties.Resources.ksLinkedFilesFolder;
-				folderBrowserDlg.RootFolder = Environment.SpecialFolder.Desktop;
-				folderBrowserDlg.SelectedPath = Directory.Exists(defaultFolder) ? defaultFolder : cache.ProjectId.ProjectFolder;
-				if (folderBrowserDlg.ShowDialog() == DialogResult.OK)
+				using (var folderBrowserDlg = new FolderBrowserDialogAdapter())
 				{
-					linkedFilesFolder = folderBrowserDlg.SelectedPath;
-				}
-				else
+					folderBrowserDlg.Description = Properties.Resources.ksLinkedFilesFolder;
+					folderBrowserDlg.RootFolder = Environment.SpecialFolder.Desktop;
+					folderBrowserDlg.SelectedPath = Directory.Exists(defaultFolder) ? defaultFolder : cache.ProjectId.ProjectFolder;
+					if (folderBrowserDlg.ShowDialog() == DialogResult.OK)
 				{
-					FileUtils.EnsureDirectoryExists(defaultFolder);
-					linkedFilesFolder = defaultFolder;
+						linkedFilesFolder = folderBrowserDlg.SelectedPath;
 				}
-			}
+					else
+					{
+						FileUtils.EnsureDirectoryExists(defaultFolder);
+						linkedFilesFolder = defaultFolder;
+					}
+				}
 			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(cache.ActionHandlerAccessor, () => { cache.LangProject.LinkedFilesRootDir = linkedFilesFolder; });
 		}
 
@@ -913,7 +878,7 @@ namespace SIL.FieldWorks
 			if (linkedFilesFolder == defaultLinkedFilesFolder)
 			{
 				FileUtils.EnsureDirectoryExists(defaultLinkedFilesFolder);
-			}
+		}
 		}
 
 		/// <summary>
@@ -1147,16 +1112,16 @@ namespace SIL.FieldWorks
 		/// false otherise</returns>
 		private static bool SafelyReportException(Exception error, IFwMainWnd parent, bool isLethal)
 		{
-				// Be very, very careful about changing stuff here. Code here MUST not throw exceptions,
-				// even when the application is in a crashed state. For example, error reporting failed
-				// before I added the static registry keys, because getting App.SettingsKey failed somehow.
-				var appKey = FwRegistryHelper.FieldWorksRegistryKey;
+			// Be very, very careful about changing stuff here. Code here MUST not throw exceptions,
+			// even when the application is in a crashed state. For example, error reporting failed
+			// before I added the static registry keys, because getting App.SettingsKey failed somehow.
+			var appKey = FwRegistryHelper.FieldWorksRegistryKey;
 			if (parent != null  && s_flexApp != null)
 			{
-					appKey = s_flexAppKey;
+				appKey = s_flexAppKey;
 			}
-				return ErrorReporter.ReportException(error, appKey, SupportEmail, parent as Form, isLethal);
-			}
+			return ErrorReporter.ReportException(error, appKey, SupportEmail, parent as Form, isLethal);
+		}
 
 		/// <summary>
 		/// Gets the setting for displaying error message boxes. The value is retrieved from
@@ -1196,7 +1161,7 @@ namespace SIL.FieldWorks
 		private static void ShowSplashScreen()
 		{
 			s_splashScreen = new FwSplashScreen
-			{
+		{
 				ProductExecutableAssembly = Assembly.GetExecutingAssembly()
 			};
 			s_splashScreen.Show(!FwRegistrySettings.DisableSplashScreenSetting, s_noUserInterface);

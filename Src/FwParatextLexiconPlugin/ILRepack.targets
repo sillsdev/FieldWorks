@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright (c) 2018 SIL International
+This software is licensed under the LGPL, version 2.1 or later
+(http://www.gnu.org/licenses/lgpl-2.1.html)
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
+	<PropertyGroup>
+		<FwrtPath>../..</FwrtPath>
+		<ILRepackBin Condition="('$(OS)' == 'Windows_NT')">&quot;$(FwrtPath)\packages\ILRepack.2.0.16\tools\ILRepack.exe&quot;</ILRepackBin>
+		<ILRepackBin Condition="('$(OS)' != 'Windows_NT')">mono &quot;$(FwrtPath)\packages\ILRepack.2.0.16\tools\ILRepack.exe&quot;</ILRepackBin>
+		<PrimaryAssembly>$(OutputPath)/FwParatextLexiconPlugin.dll</PrimaryAssembly>
+		<DownloadsPath>$(FwrtPath)/Downloads</DownloadsPath>
+	</PropertyGroup>
+	<ItemGroup>
+		<RepackAssemblies Include="$(DownloadsPath)/SIL.Core.dll"/>
+		<RepackAssemblies Include="$(DownloadsPath)/SIL.Core.Desktop.dll"/>
+		<RepackAssemblies Include="$(DownloadsPath)/LCM/SIL.LCModel.dll"/>
+		<RepackAssemblies Include="$(DownloadsPath)/LCM/SIL.LCModel.Core.dll"/>
+		<RepackAssemblies Include="$(DownloadsPath)/LCM/SIL.LCModel.Utils.dll"/>
+		<RepackAssemblies Include="$(DownloadsPath)/SIL.Machine.dll"/>
+		<RepackAssemblies Include="$(DownloadsPath)/SIL.WritingSystems.dll"/>
+		<RepackAssemblies Include="$(DownloadsPath)/SIL.HermitCrab.dll"/>
+		<RepackAssemblies Include="$(DownloadsPath)/SIL.Lexicon.dll"/>
+		<RepackAssemblies Include="$(OutputPath)/ParserCore.dll"/>
+		<RepackAssemblies Include="$(OutputPath)/FwUtils.dll"/>
+	</ItemGroup>
+	<ItemGroup>
+		<LibDirs Include="$(OutputPath)"/>
+	</ItemGroup>
+	<Target Name="AfterBuild" DependsOnTargets="ILRepack">
+		<!-- Insert tasks to run after build here -->
+	</Target>
+	<Target Name="ILRepack" DependsOnTargets="">
+		<!-- ILRepack some dependencies into primary assembly, first renaming
+			primary assembly so the original filename can be used as the
+			output of ILRepack. -->
+		<Copy SourceFiles="$(PrimaryAssembly)" DestinationFiles="$(PrimaryAssembly)~" />
+		<Exec Command="$(ILRepackBin) /internalize /out:$(PrimaryAssembly) @(LibDirs -> '/lib:%(Identity)', ' ') $(PrimaryAssembly)~ @(RepackAssemblies -> '%(Identity)', ' ')" />
+		<!-- Any dependency .config files may contain dllmaps that we will need in the repacked assembly. -->
+		<Copy SourceFiles="$(OutputPath)/SIL.LCModel.Core.dll.config" DestinationFiles="$(PrimaryAssembly).config"/>
+	</Target>
+</Project>

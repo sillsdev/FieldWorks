@@ -28,11 +28,9 @@ using SIL.LCModel.Infrastructure;
 
 namespace LCMBrowser
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// LCMBrowserForm Class
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public partial class LCMBrowserForm : Form, IHelpTopicProvider
 	{
 		#region Data members
