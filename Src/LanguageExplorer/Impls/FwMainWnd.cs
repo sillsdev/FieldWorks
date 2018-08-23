@@ -861,7 +861,7 @@ namespace LanguageExplorer.Impls
 		public IRecordBar RecordBarControl => (mainContainer.SecondControl as CollapsingSplitContainer)?.FirstControl as IRecordBar;
 
 		/// <summary>
-		/// Get the TreeView of RecordBarControl, or null if not present, or it is not showng a tree.
+		/// Get the TreeView of RecordBarControl, or null if not present, or it is not showing a tree.
 		/// </summary>
 		public TreeView TreeStyleRecordList
 		{

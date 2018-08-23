@@ -18,7 +18,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 namespace LCMBrowser
 {
 	/// <summary />
-	public class LcmInspectorList : GenericInspectorObjectList
+	public class LCModelInspectorList : GenericInspectorObjectList
 	{
 		private LcmCache m_cache;
 		private IFwMetaDataCacheManaged m_mdc;
@@ -34,9 +34,9 @@ namespace LCMBrowser
 		public bool UseMetaDataCache { get; set; }
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:LcmInspectorList"/> class.
+		/// Initializes a new instance of the <see cref="T:LCM_InspectorList"/> class.
 		/// </summary>
-		public LcmInspectorList(LcmCache cache)
+		public LCModelInspectorList(LcmCache cache)
 		{
 			m_cache = cache;
 			m_mdc = m_cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();

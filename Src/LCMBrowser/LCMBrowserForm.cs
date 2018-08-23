@@ -604,7 +604,7 @@ namespace LCMBrowser
 		/// ------------------------------------------------------------------------------------
 		private IInspectorList GetNewInspectorList()
 		{
-			return new LcmInspectorList(m_cache);
+			return new LCModelInspectorList(m_cache);
 		}
 
 		/// ------------------------------------------------------------------------------------
