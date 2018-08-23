@@ -54,6 +54,7 @@ namespace LanguageExplorer.Areas
 			_sharedEventHandlers.Add(AreaServices.ShowEnvironmentError, ShowEnvironmentError_Clicked);
 			_sharedEventHandlers.Add(AreaServices.JumpToTool, JumpToTool_Clicked);
 			_sharedEventHandlers.Add(AreaServices.InsertCategory, InsertCategory_Clicked);
+			_sharedEventHandlers.Add(AreaServices.DataTreeDelete, DataTreeDelete_Clicked);
 		}
 
 		internal AreaWideMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
@@ -132,6 +133,11 @@ namespace LanguageExplorer.Areas
 			{
 				_toolsConfigureMenu = MenuServices.GetToolsConfigureMenu(_majorFlexComponentParameters.MenuStrip);
 			}
+		}
+
+		private void DataTreeDelete_Clicked(object sender, EventArgs e)
+		{
+			SenderTagAsSlice(sender).HandleDeleteCommand();
 		}
 
 		private void AddCustomField_Click(object sender, EventArgs e)
@@ -279,6 +285,7 @@ namespace LanguageExplorer.Areas
 				_sharedEventHandlers.Remove(AreaServices.ShowEnvironmentError);
 				_sharedEventHandlers.Remove(AreaServices.JumpToTool);
 				_sharedEventHandlers.Remove(AreaServices.InsertCategory);
+				_sharedEventHandlers.Remove(AreaServices.DataTreeDelete);
 
 				if (_fileExportMenu != null)
 				{
@@ -326,6 +333,11 @@ namespace LanguageExplorer.Areas
 		internal static IPhEnvSliceCommon SenderTagAsIPhEnvSliceCommon(object sender)
 		{
 			return (IPhEnvSliceCommon)((ToolStripMenuItem)sender).Tag;
+		}
+
+		internal static Slice SenderTagAsSlice(object sender)
+		{
+			return (Slice)((ToolStripMenuItem)sender).Tag;
 		}
 
 		internal static IPhEnvSliceCommon SliceAsIPhEnvSliceCommon(Slice slice)

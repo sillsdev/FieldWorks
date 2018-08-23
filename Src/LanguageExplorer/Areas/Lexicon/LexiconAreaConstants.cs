@@ -16,7 +16,6 @@ namespace LanguageExplorer.Areas.Lexicon
 		internal const string MoveUpObjectInOwningSequence = "MoveUpObjectInOwningSequence";
 		internal const string MoveDownObjectInOwningSequence = "MoveDownObjectInOwningSequence";
 		internal const string DataTreeMerge = "DataTreeMerge";
-		internal const string DataTreeDelete = "DataTreeDelete";
 		internal const string DataTreeSplit = "DataTreeSplit";
 	}
 }

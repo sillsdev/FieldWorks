@@ -385,4 +385,34 @@ Are you sure you want to delete this list?</value>
   <data name="Duplicate_Item" xml:space="preserve">
     <value>Duplicate Item</value>
   </data>
+  <data name="Delete_Question" xml:space="preserve">
+    <value>Delete Question</value>
+  </data>
+  <data name="Delete_subitem_and_its_subitems" xml:space="preserve">
+    <value>Delete subitem and its subitems</value>
+  </data>
+  <data name="Insert_Question" xml:space="preserve">
+    <value>Insert Question</value>
+  </data>
+  <data name="Insert_Subcategory" xml:space="preserve">
+    <value>Insert Subcategory</value>
+  </data>
+  <data name="Insert_Subdomain" xml:space="preserve">
+    <value>Insert Subdomain</value>
+  </data>
+  <data name="Insert_Subitem" xml:space="preserve">
+    <value>Insert Subitem</value>
+  </data>
+  <data name="Insert_Subtype" xml:space="preserve">
+    <value>Insert Subtype</value>
+  </data>
+  <data name="Delete_this_Category_and_any_Subcategories" xml:space="preserve">
+    <value>Delete this Category and any Subcategories</value>
+  </data>
+  <data name="Merge_Category_into" xml:space="preserve">
+    <value>Merge Category into...</value>
+  </data>
+  <data name="Move_Category" xml:space="preserve">
+    <value>Move Category...</value>
+  </data>
 </root>

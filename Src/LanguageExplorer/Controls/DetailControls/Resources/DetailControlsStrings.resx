@@ -282,12 +282,6 @@
   <data name="ksRedoMoveDown" xml:space="preserve">
     <value>Redo Move Down</value>
   </data>
-  <data name="ksUndoPromote" xml:space="preserve">
-    <value>Undo Promote</value>
-  </data>
-  <data name="ksRedoPromote" xml:space="preserve">
-    <value>Redo Promote</value>
-  </data>
   <data name="ksChooseOwnerOfDemotedSubrecord" xml:space="preserve">
     <value>Choose Owner of Demoted Subrecord</value>
   </data>

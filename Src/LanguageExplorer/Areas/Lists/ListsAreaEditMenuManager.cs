@@ -121,7 +121,7 @@ namespace LanguageExplorer.Areas.Lists
 
 		private void DeleteCustomList_Click(object sender, EventArgs e)
 		{
-			UndoableUnitOfWorkHelper.Do(ListResources.ksUndoDeleteCustomList, ListResources.ksRedoDeleteCustomList, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () => new DeleteCustomList(_majorFlexComponentParameters.LcmCache).Run((ICmPossibilityList)MyRecordList.OwningObject));
+			UndoableUnitOfWorkHelper.Do(ListResources.ksUndoDeleteCustomList, ListResources.ksRedoDeleteCustomList, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () => new DeleteCustomList(_majorFlexComponentParameters.LcmCache).Run(ListsAreaMenuHelper.GetPossibilityList(MyRecordList)));
 			_listArea.RemoveCustomListTool(_listArea.ActiveTool);
 		}
 	}

@@ -252,12 +252,12 @@ namespace LanguageExplorer.Areas.Lists
 						<command id="CmdInsertLexEntryType" label="_Type" message="InsertItemInVector" icon="AddItem">
 						  <params className="LexEntryType" />
 						</command>
-						<command id="CmdDataTree-Insert-LexEntryType" label="Insert Subtype" message="DataTreeInsert" icon="AddSubItem">
-						  <parameters field="SubPossibilities" className="LexEntryType" />
-						</command>
 					*/
 					menuCreationData.Add(new Tuple<EventHandler, string, Dictionary<string, string>>(AddNewPossibilityListItem_Clicked, ListResources.Variant_Type, AreaServices.PopulateForMainItemInsert(currentPossibilityList, currentPossibility, ListResources.Insert_Type)));
 					/*
+						<command id="CmdDataTree-Insert-LexEntryType" label="Insert Subtype" message="DataTreeInsert" icon="AddSubItem">
+						  <parameters field="SubPossibilities" className="LexEntryType" />
+						</command>
 						<command id="CmdDataTree-Insert-LexEntryInflType" label="Insert Subtype" message="DataTreeInsert" icon="AddSubItem">
 						  <parameters field="SubPossibilities" className="LexEntryInflType" />
 						</command>
@@ -334,7 +334,7 @@ namespace LanguageExplorer.Areas.Lists
 							  <parameters field="SubPossibilities" className="CmPossibility" />
 							</command>
 						*/
-						menuCreationData.Add(new Tuple<EventHandler, string, Dictionary<string, string>>(AddNewPossibilityListItem_Clicked, ListResources.Subitem, AreaServices.PopulateForSubitemInsert(currentPossibilityList, currentPossibility, ListResources.Subitem)));
+						menuCreationData.Add(new Tuple<EventHandler, string, Dictionary<string, string>>(AddNewSubPossibilityListItem_Clicked, ListResources.Insert_Subitem, AreaServices.PopulateForSubitemInsert(currentPossibilityList, currentPossibility, ListResources.Insert_Subitem)));
 					}
 					break;
 			}
@@ -506,7 +506,7 @@ namespace LanguageExplorer.Areas.Lists
 
 		private void ApplicationOnIdle(object sender, EventArgs e)
 		{
-			var currentList = (ICmPossibilityList)MyRecordList.OwningObject;
+			var currentList = ListsAreaMenuHelper.GetPossibilityList(MyRecordList);
 			var currentTuple = _newInsertMenusAndHandlers.FirstOrDefault(tuple => tuple.Item1.Name == Subitem);
 			if (currentTuple != null)
 			{

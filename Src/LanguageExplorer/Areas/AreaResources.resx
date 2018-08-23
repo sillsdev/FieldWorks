@@ -751,4 +751,19 @@ If you are not the one designated user who adds fields, or you are making some o
   <data name="Subcategory" xml:space="preserve">
     <value>Subcategory...</value>
   </data>
+  <data name="Category_to_merge_into" xml:space="preserve">
+    <value>Category to merge into</value>
+  </data>
+  <data name="Category_to_move_to" xml:space="preserve">
+    <value>Category to move to</value>
+  </data>
+  <data name="Insert_Subcategory" xml:space="preserve">
+    <value>Insert Subcategory...</value>
+  </data>
+  <data name="Merge_Reversal_Category" xml:space="preserve">
+    <value>Merge Reversal Category</value>
+  </data>
+  <data name="Move_Reversal_Category" xml:space="preserve">
+    <value>Move Reversal Category</value>
+  </data>
 </root>

@@ -175,6 +175,33 @@ namespace LanguageExplorer.Areas.Lists {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete Question.
+        /// </summary>
+        internal static string Delete_Question {
+            get {
+                return ResourceManager.GetString("Delete_Question", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete subitem and its subitems.
+        /// </summary>
+        internal static string Delete_subitem_and_its_subitems {
+            get {
+                return ResourceManager.GetString("Delete_subitem_and_its_subitems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete this Category and any Subcategories.
+        /// </summary>
+        internal static string Delete_this_Category_and_any_Subcategories {
+            get {
+                return ResourceManager.GetString("Delete_this_Category_and_any_Subcategories", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete Custom _List.
         /// </summary>
         internal static string DeleteCustomList {
@@ -321,11 +348,56 @@ namespace LanguageExplorer.Areas.Lists {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Insert Question.
+        /// </summary>
+        internal static string Insert_Question {
+            get {
+                return ResourceManager.GetString("Insert_Question", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Insert Semantic Domain.
         /// </summary>
         internal static string Insert_Semantic_Domain {
             get {
                 return ResourceManager.GetString("Insert_Semantic_Domain", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Subcategory.
+        /// </summary>
+        internal static string Insert_Subcategory {
+            get {
+                return ResourceManager.GetString("Insert_Subcategory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Subdomain.
+        /// </summary>
+        internal static string Insert_Subdomain {
+            get {
+                return ResourceManager.GetString("Insert_Subdomain", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Subitem.
+        /// </summary>
+        internal static string Insert_Subitem {
+            get {
+                return ResourceManager.GetString("Insert_Subitem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Subtype.
+        /// </summary>
+        internal static string Insert_Subtype {
+            get {
+                return ResourceManager.GetString("Insert_Subtype", resourceCulture);
             }
         }
         
@@ -540,12 +612,30 @@ namespace LanguageExplorer.Areas.Lists {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Merge Category into....
+        /// </summary>
+        internal static string Merge_Category_into {
+            get {
+                return ResourceManager.GetString("Merge_Category_into", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-MorphemeTypes&quot; /&gt;.
         /// </summary>
         internal static string MorphTypeEditParameters {
             get {
                 return ResourceManager.GetString("MorphTypeEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move Category....
+        /// </summary>
+        internal static string Move_Category {
+            get {
+                return ResourceManager.GetString("Move_Category", resourceCulture);
             }
         }
         

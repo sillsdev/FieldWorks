@@ -797,24 +797,6 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Category to merge into.
-        /// </summary>
-        internal static string ksCategoryToMergeInto {
-            get {
-                return ResourceManager.GetString("ksCategoryToMergeInto", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Category to move to.
-        /// </summary>
-        internal static string ksCategoryToMoveTo {
-            get {
-                return ResourceManager.GetString("ksCategoryToMoveTo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Cautions:.
         /// </summary>
         internal static string ksCautions {
@@ -2260,15 +2242,6 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Redo Merge Reversal Category.
-        /// </summary>
-        internal static string ksRedoMergeRevCategory {
-            get {
-                return ResourceManager.GetString("ksRedoMergeRevCategory", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Redo Move Cell Back.
         /// </summary>
         internal static string ksRedoMoveCellBack {
@@ -2283,15 +2256,6 @@ namespace LanguageExplorer {
         internal static string ksRedoMoveCellForward {
             get {
                 return ResourceManager.GetString("ksRedoMoveCellForward", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Redo Move Reversal Category.
-        /// </summary>
-        internal static string ksRedoMoveRevCategory {
-            get {
-                return ResourceManager.GetString("ksRedoMoveRevCategory", resourceCulture);
             }
         }
         
@@ -2337,15 +2301,6 @@ namespace LanguageExplorer {
         internal static string ksRedoPreposeFrom {
             get {
                 return ResourceManager.GetString("ksRedoPreposeFrom", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Redo Promote.
-        /// </summary>
-        internal static string ksRedoPromote {
-            get {
-                return ResourceManager.GetString("ksRedoPromote", resourceCulture);
             }
         }
         
@@ -2942,15 +2897,6 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Undo Merge Reversal Category.
-        /// </summary>
-        internal static string ksUndoMergeRevCategory {
-            get {
-                return ResourceManager.GetString("ksUndoMergeRevCategory", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Undo Move Cell Back.
         /// </summary>
         internal static string ksUndoMoveCellBack {
@@ -2965,15 +2911,6 @@ namespace LanguageExplorer {
         internal static string ksUndoMoveCellForward {
             get {
                 return ResourceManager.GetString("ksUndoMoveCellForward", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo Move Reversal Category.
-        /// </summary>
-        internal static string ksUndoMoveRevCategory {
-            get {
-                return ResourceManager.GetString("ksUndoMoveRevCategory", resourceCulture);
             }
         }
         
@@ -3019,15 +2956,6 @@ namespace LanguageExplorer {
         internal static string ksUndoPreposeFrom {
             get {
                 return ResourceManager.GetString("ksUndoPreposeFrom", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo Promote.
-        /// </summary>
-        internal static string ksUndoPromote {
-            get {
-                return ResourceManager.GetString("ksUndoPromote", resourceCulture);
             }
         }
         

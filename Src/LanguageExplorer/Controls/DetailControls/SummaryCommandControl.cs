@@ -37,14 +37,16 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 		private SliceHotlinksMenuFactory MySliceHotlinksMenuFactory { get; set; }
+		private SliceLeftEdgeContextMenuFactory MySliceLeftEdgeContextMenuFactory { get; set; }
 
-		internal SummaryCommandControl(SummarySlice slice, SliceHotlinksMenuFactory sliceHotlinksMenuFactory)
+		internal SummaryCommandControl(SummarySlice slice, SliceHotlinksMenuFactory sliceHotlinksMenuFactory, SliceLeftEdgeContextMenuFactory sliceLeftEdgeContextMenuFactory)
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
 
 			m_slice = slice;
 			MySliceHotlinksMenuFactory = sliceHotlinksMenuFactory;
+			MySliceLeftEdgeContextMenuFactory = sliceLeftEdgeContextMenuFactory;
 			m_hotLinkFont = new Font(MiscUtils.StandardSansSerif, (float)10.0, FontStyle.Underline);
 			m_timer = new Timer
 			{
@@ -86,6 +88,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_buttonMenuItems.Clear();
 			m_buttonMenuItems = null;
 			MySliceHotlinksMenuFactory = null;
+			MySliceLeftEdgeContextMenuFactory = null;
 
 			base.Dispose( disposing );
 		}
@@ -140,6 +143,22 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 				var hotlinksMenuId = m_slice.HotlinksMenuId;
 				m_hotlinksMenuItems = string.IsNullOrWhiteSpace(hotlinksMenuId) ? null : MySliceHotlinksMenuFactory.GetHotlinksMenuItems(m_slice, hotlinksMenuId);
+				if (m_hotlinksMenuItems == null)
+				{
+					// Try the ordinary menu, but without the core context menus.
+					var leftEdgeMenus = string.IsNullOrWhiteSpace(hotlinksMenuId) ? null : MySliceLeftEdgeContextMenuFactory.GetLeftEdgeContextMenu(m_slice, hotlinksMenuId, false);
+					if (leftEdgeMenus == null)
+					{
+						return;
+					}
+					leftEdgeMenus.Item1.Items.Clear();
+					leftEdgeMenus.Item1.Dispose();
+					m_hotlinksMenuItems = leftEdgeMenus.Item2;
+					if (!m_hotlinksMenuItems.Any())
+					{
+						m_hotlinksMenuItems = null;
+					}
+				}
 				if (m_hotlinksMenuItems == null || !m_hotlinksMenuItems.Any())
 				{
 					return;

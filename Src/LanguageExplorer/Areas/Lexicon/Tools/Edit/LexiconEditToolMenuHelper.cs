@@ -56,7 +56,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// That way, they can each have access to everyone's shared event handlers.
 			// Otherwise, there is significant risk of them looking for a shared handler, but not finding it.
 			_sharedEventHandlers.Add(LexiconAreaConstants.DataTreeMerge, DataTreeMerge_Clicked);
-			_sharedEventHandlers.Add(LexiconAreaConstants.DataTreeDelete, DataTreeDelete_Clicked);
 			_sharedEventHandlers.Add(LexiconAreaConstants.DataTreeSplit, DataTreeSplit_Clicked);
 		}
 
@@ -93,12 +92,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			var currentSlice = MyDataTree.CurrentSlice;
 			currentSlice.HandleMergeCommand(true);
-		}
-
-		private void DataTreeDelete_Clicked(object sender, EventArgs e)
-		{
-			var currentSlice = MyDataTree.CurrentSlice;
-			currentSlice.HandleDeleteCommand();
 		}
 
 		private void DataTreeSplit_Clicked(object sender, EventArgs e)
@@ -147,7 +140,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					handlerKvp.Value.Dispose();
 				}
 				_sharedEventHandlers.Remove(LexiconAreaConstants.DataTreeMerge);
-				_sharedEventHandlers.Remove(LexiconAreaConstants.DataTreeDelete);
 				_sharedEventHandlers.Remove(LexiconAreaConstants.DataTreeSplit);
 				_lexiconEditToolUiWidgetManagers.Clear();
 				_lexiconAreaMenuHelper.Dispose();

@@ -156,6 +156,7 @@ namespace LanguageExplorer.Areas
 		internal const string JumpToConcordance = "JumpToConcordance";
 		internal const string SandboxJumpToTool = "SandboxJumpToTool";
 		internal const string InsertCategory = "InsertCategory";
+		internal const string DataTreeDelete = "DataTreeDelete";
 
 		#endregion commands
 
@@ -293,6 +294,11 @@ namespace LanguageExplorer.Areas
 		internal static void UndoExtension(string baseText, IActionHandler actionHandler, Action task)
 		{
 			UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerResources.Undo_0, baseText), string.Format(LanguageExplorerResources.Redo_0, baseText), actionHandler, task);
+		}
+
+		internal static void UndoExtensionUsingNewOrCurrentUOW(string baseText, IActionHandler actionHandler, Action task)
+		{
+			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(string.Format(LanguageExplorerResources.Undo_0, baseText), string.Format(LanguageExplorerResources.Redo_0, baseText), actionHandler, task);
 		}
 
 		/// <summary>
@@ -433,6 +439,7 @@ namespace LanguageExplorer.Areas
 				menu.Text = $"{menuText} {StringTable.Table.GetString("(cannot delete this)")}";
 			}
 			menu.ImageTransparentColor = Color.Magenta;
+			menu.Tag = slice;
 		}
 
 		internal static Dictionary<string, string> PopulateForMainItemInsert(ICmPossibilityList owningList, ICmPossibility currentPossibility, string baseUowMessage)

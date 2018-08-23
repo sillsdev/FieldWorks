@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
@@ -32,6 +33,30 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected override bool ShouldHide => false;
 
+		#region Overrides of Slice
+		/// <inheritdoc />
+		internal override string HotlinksMenuId
+		{
+			get
+			{
+				// Try the normal hotlinks attribute value.
+				var hotlinksMenuId = base.HotlinksMenuId;
+				if (string.IsNullOrEmpty(hotlinksMenuId))
+				{
+					// Try the ordinary context menu for the CallerNode.
+					hotlinksMenuId = XmlUtils.GetOptionalAttributeValue(CallerNode, "menu");
+					if (string.IsNullOrEmpty(hotlinksMenuId))
+					{
+						// Try the ordinary context menu for the configuation node.
+						hotlinksMenuId = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "menu");
+					}
+				}
+				return hotlinksMenuId;
+			}
+		}
+
+		#endregion
+
 		#region Overrides of ViewSlice
 
 		/// <summary />
@@ -39,7 +64,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			base.Install(parentDataTree);
 
-			m_commandControl = new SummaryCommandControl(this, MyDataTreeStackContextMenuFactory.HotlinksMenuFactory)
+			m_commandControl = new SummaryCommandControl(this, MyDataTreeStackContextMenuFactory.HotlinksMenuFactory, MyDataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory)
 			{
 				Dock = DockStyle.Fill,
 				Visible = XmlUtils.GetOptionalBooleanAttributeValue(CallerNode, "commandVisible", false)
@@ -418,22 +443,21 @@ namespace LanguageExplorer.Controls.DetailControls
 				return false;		// shouldn't get here
 			}
 
-			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Resources.DetailControlsStrings.ksUndoPromote, Resources.DetailControlsStrings.ksRedoPromote,
-				Cache.ActionHandlerAccessor, () =>
+			AreaServices.UndoExtensionUsingNewOrCurrentUOW(AreaResources.Promote, Cache.ActionHandlerAccessor, () =>
+			{
+				if (recOwner.Owner is IRnGenericRec)
 				{
-					if (recOwner.Owner is IRnGenericRec)
-					{
-						(recOwner.Owner as IRnGenericRec).SubRecordsOS.Insert(recOwner.OwnOrd + 1, rec);
-					}
-					else if (recOwner.Owner is IRnResearchNbk)
-					{
-						(recOwner.Owner as IRnResearchNbk).RecordsOC.Add(rec);
-					}
-					else
-					{
-						throw new Exception("RnGenericRec object not owned by either RnResearchNbk or RnGenericRec??");
-					}
-				});
+					(recOwner.Owner as IRnGenericRec).SubRecordsOS.Insert(recOwner.OwnOrd + 1, rec);
+				}
+				else if (recOwner.Owner is IRnResearchNbk)
+				{
+					(recOwner.Owner as IRnResearchNbk).RecordsOC.Add(rec);
+				}
+				else
+				{
+					throw new Exception("RnGenericRec object not owned by either RnResearchNbk or RnGenericRec??");
+				}
+			});
 			if (recOwner.Owner is IRnResearchNbk)
 			{
 				// If possible, jump to the newly promoted record.

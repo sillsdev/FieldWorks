@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 SIL International
+// Copyright (c) 2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -21,10 +21,13 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Get the ContextMenuStrip and a list of its ToolStripMenuItem items for the given menu for the given Slice.
 		/// </summary>
-		internal Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> GetLeftEdgeContextMenu(Slice slice, string ordinaryMenuId)
+		internal Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> GetLeftEdgeContextMenu(Slice slice, string ordinaryMenuId, bool addContextMenus = true)
 		{
 			var retval = _leftEdgeMenuCreatorMethods.ContainsKey(ordinaryMenuId) ? _leftEdgeMenuCreatorMethods[ordinaryMenuId].Invoke(slice, ordinaryMenuId) : null;
-			slice.AddCoreContextMenus(ref retval);
+			if (addContextMenus)
+			{
+				slice.AddCoreContextMenus(ref retval);
+			}
 			return retval;
 		}
 

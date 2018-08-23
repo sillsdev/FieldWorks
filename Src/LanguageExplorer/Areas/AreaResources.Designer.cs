@@ -162,6 +162,24 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Category to merge into.
+        /// </summary>
+        internal static string Category_to_merge_into {
+            get {
+                return ResourceManager.GetString("Category_to_merge_into", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Category to move to.
+        /// </summary>
+        internal static string Category_to_move_to {
+            get {
+                return ResourceManager.GetString("Category_to_move_to", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Columns....
         /// </summary>
         internal static string ConfigureColumns {
@@ -415,6 +433,15 @@ namespace LanguageExplorer.Areas {
         internal static string Insert_Optional_Item {
             get {
                 return ResourceManager.GetString("Insert_Optional_Item", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Subcategory....
+        /// </summary>
+        internal static string Insert_Subcategory {
+            get {
+                return ResourceManager.GetString("Insert_Subcategory", resourceCulture);
             }
         }
         
@@ -1479,6 +1506,15 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Merge Reversal Category.
+        /// </summary>
+        internal static string Merge_Reversal_Category {
+            get {
+                return ResourceManager.GetString("Merge_Reversal_Category", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Morph.
         /// </summary>
         internal static string Morph {
@@ -1493,6 +1529,15 @@ namespace LanguageExplorer.Areas {
         internal static string Move_Left {
             get {
                 return ResourceManager.GetString("Move_Left", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move Reversal Category.
+        /// </summary>
+        internal static string Move_Reversal_Category {
+            get {
+                return ResourceManager.GetString("Move_Reversal_Category", resourceCulture);
             }
         }
         

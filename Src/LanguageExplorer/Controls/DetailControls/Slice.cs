@@ -84,7 +84,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public ObjectWeight Weight { get; set; } = ObjectWeight.field;
 
-		internal string HotlinksMenuId
+		internal virtual string HotlinksMenuId
 		{
 			get
 			{

@@ -5,8 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Windows.Forms;
-using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
@@ -20,20 +18,19 @@ namespace LanguageExplorer.Areas.Lists
 	internal sealed class ListsAreaMenuHelper : IFlexComponent, IDisposable
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
-		private Dictionary<string, IToolUiWidgetManager> _listAreaUiWidgetManagers = new Dictionary<string, IToolUiWidgetManager>();
+		private Dictionary<string, IToolUiWidgetManager> _listAreaUiWidgetManagers;
 		private ISharedEventHandlers _sharedEventHandlers;
 		private IListArea _listArea;
 		private IRecordList MyRecordList { get; set; }
 		private DataTree MyDataTree { get; }
-		private ToolStripMenuItem _toolConfigureMenu;
-		private ToolStripMenuItem _configureListMenu;
 		private const string editMenu = "editMenu";
 		private const string insertMenu = "insertMenu";
+		private const string toolsMenu = "toolsMenu";
 		private const string insertToolbar = "insertToolbar";
+		private const string dataTreeStack = "dataTreeStack";
 		internal const string AddNewPossibilityListItem = "AddNewPossibilityListItem";
 		internal const string AddNewSubPossibilityListItem = "AddNewSubPossibilityListItem";
 		internal const string InsertFeatureType = "InsertFeatureType";
-
 		internal AreaWideMenuHelper MyAreaWideMenuHelper { get; private set; }
 
 		internal ListsAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, DataTree dataTree, IListArea listArea, IRecordList recordList)
@@ -47,7 +44,7 @@ namespace LanguageExplorer.Areas.Lists
 			_listArea = listArea;
 			MyRecordList = recordList;
 			MyDataTree = dataTree;
-			MyAreaWideMenuHelper = new AreaWideMenuHelper(_majorFlexComponentParameters, recordList);
+			MyAreaWideMenuHelper = new AreaWideMenuHelper(_majorFlexComponentParameters, recordList); // We want this to get the shared AreaServices.DataTreeDelete handler.
 		}
 
 		internal void Initialize()
@@ -56,16 +53,15 @@ namespace LanguageExplorer.Areas.Lists
 			MyAreaWideMenuHelper.SetupFileExportMenu();
 			InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 
-			_listAreaUiWidgetManagers.Add(editMenu, new ListsAreaEditMenuManager(_listArea));
-			_listAreaUiWidgetManagers.Add(insertMenu, new ListsAreaInsertMenuManager(MyDataTree, _listArea));
-			// Add second, so it gets initialized second. The ListsAreaInsertMenuManager instance adds shared event handlers.
-			_listAreaUiWidgetManagers.Add(insertToolbar, new ListsAreaToolbarManager(MyDataTree, _listArea));
-
-			/*
-				Tools->Configure: <command id = "CmdConfigureList" label="List..." message="ConfigureList" />
-			*/
-			_toolConfigureMenu = MenuServices.GetToolsConfigureMenu(_majorFlexComponentParameters.MenuStrip);
-			_configureListMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_toolConfigureMenu, ConfigureList_Click, ListResources.ConfigureList, ListResources.ConfigureListTooltip, insertIndex: 0);
+			_listAreaUiWidgetManagers = new Dictionary<string, IToolUiWidgetManager>
+			{
+				{ editMenu, new ListsAreaEditMenuManager(_listArea) },
+				{ insertMenu, new ListsAreaInsertMenuManager(MyDataTree, _listArea) },
+				{ toolsMenu, new ListsAreaToolsMenuManager(_listArea) },
+				// The ListsAreaInsertMenuManager instance adds shared event handlers that ListsAreaToolbarManager needs to use.
+				{ insertToolbar, new ListsAreaToolbarManager(MyDataTree, _listArea) },
+				{ dataTreeStack, new ListsAreaDataTreeStackManager(MyDataTree, _listArea) }
+			};
 
 			// Now, it is fine to finish up the initialization of the managers, since all shared event handlers are in '_sharedEventHandlers'.
 			foreach (var manager in _listAreaUiWidgetManagers.Values)
@@ -119,6 +115,7 @@ namespace LanguageExplorer.Areas.Lists
 		#endregion
 
 		#region IDisposable
+
 		private bool _isDisposed;
 
 		~ListsAreaMenuHelper()
@@ -159,19 +156,11 @@ namespace LanguageExplorer.Areas.Lists
 				}
 				_listAreaUiWidgetManagers.Clear();
 				MyAreaWideMenuHelper.Dispose();
-				_toolConfigureMenu?.DropDownItems.Remove(_configureListMenu);
-				if (_configureListMenu != null)
-				{
-					_configureListMenu.Click -= ConfigureList_Click;
-					_configureListMenu.Dispose();
-				}
 			}
 			_majorFlexComponentParameters = null;
 			MyAreaWideMenuHelper = null;
 			_listArea = null;
 			MyRecordList = null;
-			_toolConfigureMenu = null;
-			_configureListMenu = null;
 			_sharedEventHandlers = null;
 			_listAreaUiWidgetManagers = null;
 
@@ -179,17 +168,9 @@ namespace LanguageExplorer.Areas.Lists
 		}
 		#endregion
 
-		private void ConfigureList_Click(object sender, EventArgs e)
+		internal static ICmPossibilityList GetPossibilityList(IRecordList recordList)
 		{
-			var list = (ICmPossibilityList)MyRecordList.OwningObject;
-			var originalUiName = list.Name.BestAnalysisAlternative.Text;
-			using (var dlg = new ConfigureListDlg(PropertyTable, Publisher, _majorFlexComponentParameters.LcmCache, list))
-			{
-				if (dlg.ShowDialog((Form) _majorFlexComponentParameters.MainWindow) == DialogResult.OK && originalUiName != list.Name.BestAnalysisAlternative.Text)
-				{
-					_listArea.ModifiedCustomList(_listArea.ActiveTool);
-				}
-			}
+			return recordList.OwningObject as ICmPossibilityList; // This will be null for the AreaServices.FeatureTypesAdvancedEditMachineName tool, which isn't a list at all.
 		}
 	}
 }

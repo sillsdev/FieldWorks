@@ -349,9 +349,12 @@
     <Compile Include="Areas\Lists\ConfigureListDlg.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Areas\Lists\ListsAreaConstants.cs" />
+    <Compile Include="Areas\Lists\ListsAreaDataTreeStackManager.cs" />
     <Compile Include="Areas\Lists\ListsAreaEditMenuManager.cs" />
     <Compile Include="Areas\Lists\ListsAreaInsertMenuManager.cs" />
     <Compile Include="Areas\Lists\ListsAreaToolbarManager.cs" />
+    <Compile Include="Areas\Lists\ListsAreaToolsMenuManager.cs" />
     <Compile Include="Areas\Lists\Tools\DialectsListEdit\DialectsListEditTool.cs" />
     <Compile Include="Areas\Lists\Tools\ExtNoteTypeEdit\ExtNoteTypeEditTool.cs" />
     <Compile Include="Areas\Lists\Tools\LanguagesListEdit\LanguagesListEditTool.cs" />
@@ -3844,6 +3847,7 @@
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\CmPossibilityParts.xml">
       <Link>XML\Parts\CmPossibilityParts.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\LexEntryParts.xml">
       <Link>XML\Parts\LexEntryParts.xml</Link>
@@ -3860,6 +3864,7 @@
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\ReversalParts.xml">
       <Link>XML\Parts\ReversalParts.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\WFIParts.xml">
       <Link>XML\Parts\WFIParts.xml</Link>
@@ -3869,6 +3874,7 @@
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\CmPossibility.fwlayout">
       <Link>XML\Parts\CmPossibility.fwlayout</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\LexEntry.fwlayout">
       <Link>XML\Parts\LexEntry.fwlayout</Link>
@@ -3886,6 +3892,7 @@
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\Reversal.fwlayout">
       <Link>XML\Parts\Reversal.fwlayout</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\WFI.fwlayout">
       <Link>XML\Parts\WFI.fwlayout</Link>
