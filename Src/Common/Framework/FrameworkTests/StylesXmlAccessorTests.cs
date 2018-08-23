@@ -1,8 +1,9 @@
-﻿// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Linq;
 using NUnit.Framework;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -209,6 +210,42 @@ namespace SIL.FieldWorks.Common.Framework
 			Assert.That(factoryStyle.Owner, Is.Not.Null, "factory style owner");
 			Assert.That(factoryStyle.Guid, Is.EqualTo(factoryGuid), "Should have the factory-specifiied GUID");
 		}
+
+		/// <summary>
+		/// Test that scripture styles get moved to the language project now that TE has been removed.
+		/// </summary>
+		[Test]
+		public void FindOrCreateStyles_SucceedsAfterStylesMovedFromScripture()
+		{
+			IScripture scr = Cache.ServiceLocator.GetInstance<IScriptureFactory>().Create();
+			var scriptureStyle = Cache.ServiceLocator.GetInstance<IStStyleFactory>().Create();
+			scr.StylesOC.Add(scriptureStyle);
+			string styleName = "Scripture Style";
+			scriptureStyle.Name = styleName;
+
+			scriptureStyle.Type = StyleType.kstParagraph;
+			scriptureStyle.Context = ContextValues.Text;
+			scriptureStyle.Structure = StructureValues.Body;
+			scriptureStyle.Function = FunctionValues.Prose;
+			scriptureStyle.IsBuiltIn = true;
+			scriptureStyle.IsModified = true;
+			scriptureStyle.NextRA = scriptureStyle;
+			var props1 = TsStringUtils.MakeProps("mystyle", Cache.DefaultAnalWs);
+			scriptureStyle.Rules = props1;
+			scriptureStyle.UserLevel = 5;
+
+			Guid scrStyleGuid = scriptureStyle.Guid;
+			var sut = new TestAccessorForFindOrCreateStyle(Cache);
+			Assert.That(scr.StylesOC.Count, Is.EqualTo(0), "Style should have been removed from Scripture.");
+			Assert.That(Cache.LangProject.StylesOC.Count, Is.EqualTo(1), "Style should have been added to language project.");
+			Assert.That(Cache.LangProject.StylesOC.First().Name, Is.EqualTo(styleName), "Style name should not have changed.");
+			var movedStyle = sut.FindOrCreateStyle(styleName, StyleType.kstParagraph, ContextValues.Text,
+				StructureValues.Body, FunctionValues.Prose, scrStyleGuid);
+
+			Assert.That(movedStyle, Is.EqualTo(scriptureStyle));
+			Assert.That(movedStyle.Name, Is.EqualTo(styleName), "Style name should not have changed.");
+			Assert.That(movedStyle.Owner, Is.EqualTo(Cache.LangProject), "The style owner should be the language project.");
+		}
 	}
 
 	/// <summary>
@@ -223,6 +260,10 @@ namespace SIL.FieldWorks.Common.Framework
 		public TestAccessorForFindOrCreateStyle(LcmCache cache) : base(cache)
 		{
 			m_databaseStyles = cache.LangProject.StylesOC;
+			if (cache.LangProject.TranslatedScriptureOA != null)
+			{
+				MoveStylesFromScriptureToLangProject();
+			}
 			// see class comment. This would not be normal behavior for a StylesXmlAccessor subclass constructor.
 			foreach (var sty in m_databaseStyles)
 				m_htOrigStyles[sty.Name] = sty;
