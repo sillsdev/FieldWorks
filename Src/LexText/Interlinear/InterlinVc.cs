@@ -1970,7 +1970,7 @@ namespace SIL.FieldWorks.IText
 						vwenv.AddObjVecItems(SegmentTags.kflidNotes, this, kfragSegFfChoices + ispec);
 						break;
 					default:
-						if(((IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor).IsCustom(flid))
+						if(((IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor).FieldExists(flid) && ((IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor).IsCustom(flid))
 							AddCustomFreeFormComment(vwenv, hvoSeg, ispec);
 						break; // unknown type, ignore it.
 

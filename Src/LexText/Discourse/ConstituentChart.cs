@@ -1391,7 +1391,7 @@ namespace SIL.FieldWorks.Discourse
 			if (persist != null)
 			{
 				lineChoices = InterlinLineChoices.Restore(persist, Cache.LanguageWritingSystemFactoryAccessor,
-					Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs);
+					Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinLineChoices.InterlinMode.Analyze, PropertyTable, ConfigPropName);
 			}
 			return persist != null && lineChoices != null;
 		}
@@ -1417,7 +1417,7 @@ namespace SIL.FieldWorks.Discourse
 					InterlinLineChoices.kflidWordGloss);
 				return result;
 			}
-			lineChoices = InterlinLineChoices.Restore(persist, Cache.ServiceLocator.GetInstance<ILgWritingSystemFactory>(), Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinLineChoices.InterlinMode.Chart);
+			lineChoices = InterlinLineChoices.Restore(persist, Cache.ServiceLocator.GetInstance<ILgWritingSystemFactory>(), Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinLineChoices.InterlinMode.Chart, PropertyTable, ConfigPropName);
 			return lineChoices;
 		}
 

@@ -723,7 +723,7 @@ namespace SIL.FieldWorks.IText
 
 			var flid = menuItem.Flid;
 			var newLineChoices = Vc.LineChoices.Clone() as InterlinLineChoices;
-			if (newLineChoices != null)
+			if (newLineChoices != null && ((IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor).FieldExists(flid))
 			{
 				newLineChoices.Add(flid);
 				UpdateForNewLineChoices(newLineChoices);
@@ -810,7 +810,7 @@ namespace SIL.FieldWorks.IText
 			if (persist != null)
 			{
 				lineChoices = InterlinLineChoices.Restore(persist, m_cache.LanguageWritingSystemFactoryAccessor,
-					m_cache.LangProject, WritingSystemServices.kwsVernInParagraph, m_cache.DefaultAnalWs);
+					m_cache.LangProject, WritingSystemServices.kwsVernInParagraph, m_cache.DefaultAnalWs, InterlinLineChoices.InterlinMode.Analyze, m_propertyTable, ConfigPropName);
 			}
 			return persist != null && lineChoices != null;
 		}
