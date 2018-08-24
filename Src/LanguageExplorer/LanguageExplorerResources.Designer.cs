@@ -2996,7 +2996,7 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This tool is designed for a typist to use during a semantically-based word-collection workshop.  For information on this method, see http://www.rapidwords.net and http://www.sil.org/computing/ddp/..
+        ///   Looks up a localized string similar to This tool is designed for a typist to use during a semantically-based word-collection workshop.  For information on this method, see http://www.rapidwords.net.
         /// </summary>
         internal static string ksUsedForSemanticBasedEntry {
             get {

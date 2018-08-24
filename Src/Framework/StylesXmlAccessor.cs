@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 using System.Xml;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
@@ -286,6 +287,9 @@ namespace SIL.FieldWorks.Common.Framework
 				string.Empty);
 			m_progressDlg.Position = 0;
 
+			// Move all styles from Scripture into LangProject if the Scripture object exists
+			MoveStylesFromScriptureToLangProject();
+
 			// Populate hashtable with initial set of styles
 			// these are NOT from the *Styles.xml files or from TeStylesXmlAccessor.InitReservedStyles()
 			// They are from loading scripture styles in TE tests only.
@@ -301,8 +305,6 @@ namespace SIL.FieldWorks.Common.Framework
 
 			// First pass to create styles and set general properties.
 			CreateAndUpdateStyles(tagList);
-
-			CreateAnyReservedStylesThatDontAlreadyHaveTheGoodFortuneOfExisting();
 
 			// Second pass to set up "based-on" and "next" styles
 			SetBasedOnAndNextProps(tagList);
@@ -321,40 +323,27 @@ namespace SIL.FieldWorks.Common.Framework
 			SetNewResourceVersion(GetVersion(m_sourceStyles));
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Only TE currently uses "reserved" styles. For Flex m_htReservedStyles is empty.
-		/// For TE m_htReservedStyles is set in TeStylesXmlAccessor.InitReservedStyles().
-		/// You have to like this "self documenting name".
+		/// Moves styles that were specific to Scripture into the language project. Projects will have just one style sheet
+		/// that will be used throughout the project, including imported scripture.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void CreateAnyReservedStylesThatDontAlreadyHaveTheGoodFortuneOfExisting()
+		protected void MoveStylesFromScriptureToLangProject()
 		{
-			foreach (KeyValuePair<string, ReservedStyleInfo> kvp in m_htReservedStyles)
+			IScripture scr = Cache.LangProject.TranslatedScriptureOA;
+			if (scr == null)
+				return;
+			foreach (IStStyle style in scr.StylesOC)
 			{
-				string styleName = kvp.Key;
-				ReservedStyleInfo info = kvp.Value;
-				if (!info.created)
+				if (m_databaseStyles.Any(st => st.Name == style.Name))
 				{
-					m_progressDlg.Message =
-						string.Format(ResourceHelper.GetResourceString("kstidCreatingStylesStatusMsg"),
-						styleName);
-
-					// Find the existing style if there is one; otherwise, create new style object
-					var style = FindOrCreateStyle(styleName, info.styleType, info.context,
-						info.structure, info.function, info.guid);
-
-					// Avoid nasty crashing problems and take some decently haphazard stab at
-					// getting the right "Normal" font face (all the other built-in default
-					// properties are already okay).
-					if (IsNormalStyle(styleName))
-					{
-						ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
-						propsBldr.SetStrPropValue((int)FwTextPropType.ktptFontFamily,
-							AppDefaultFont);
-						style.Rules = propsBldr.GetTextProps();
-					}
+					// We found a style with the same name as one already in out language project. Just use the one we already have.
+					var flexStyle = m_databaseStyles.First(st => st.Name == style.Name);
+					DomainObjectServices.ReplaceReferencesWhereValid(style, flexStyle);
+					scr.StylesOC.Remove(style);
+					continue;
 				}
+				// Adding the style to our database will automatically remove the style from Scripture.
+				m_databaseStyles.Add(style);
 			}
 		}
 
@@ -503,7 +492,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Find the existing style if there is one; otherwise, create new style object
-		/// These styles are defined in FlexStyles.xml or TeStyles.xml which have fixed guids
+		/// These styles are defined in FlexStyles.xml which have fixed guids
 		/// All guids of factory styles changed with release 7.3
 		/// </summary>
 		/// <param name="styleName">Name of style</param>
@@ -534,8 +523,7 @@ namespace SIL.FieldWorks.Common.Framework
 
 					// Before we set any data on the new style we should give it an owner.
 					// Don't delete the old one yet, though, because we want to copy things from it (and references to it).
-					var owner = oldStyle.Owner;
-					var owningCollection = owner is ILangProject ? ((ILangProject)owner).StylesOC : ((IScripture)owner).StylesOC;
+					var owningCollection = ((ILangProject) oldStyle.Owner).StylesOC;
 					owningCollection.Add(style);
 
 					style.IsBuiltIn = true; // whether or not it was before, it is now.

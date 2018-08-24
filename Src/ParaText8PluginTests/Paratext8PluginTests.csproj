@@ -72,7 +72,7 @@
       <HintPath>..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="ParatextData">
-      <HintPath>..\..\packages\ParatextData.8.0.4\lib\net461\ParatextData.dll</HintPath>
+      <HintPath>..\..\packages\ParatextData.8.1.4\lib\net461\ParatextData.dll</HintPath>
     </Reference>
     <Reference Include="ScriptureUtils">
       <HintPath>..\..\Output\Debug\ScriptureUtils.dll</HintPath>
