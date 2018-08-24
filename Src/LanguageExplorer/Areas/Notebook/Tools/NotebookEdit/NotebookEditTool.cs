@@ -62,7 +62,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.SetDefault($"{AreaServices.ToolForAreaNamed_}{_area.MachineName}", MachineName, true);
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(NotebookArea.Records, majorFlexComponentParameters.Statusbar, NotebookArea.NotebookFactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(NotebookArea.Records, majorFlexComponentParameters.Statusbar, NotebookArea.NotebookFactoryMethod);
 			}
 			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 #if RANDYTODO

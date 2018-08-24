@@ -81,7 +81,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			}
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(LexiconArea.AllReversalEntries, majorFlexComponentParameters.Statusbar, LexiconArea.AllReversalEntriesFactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(LexiconArea.AllReversalEntries, majorFlexComponentParameters.Statusbar, LexiconArea.AllReversalEntriesFactoryMethod);
 			}
 
 			var root = XDocument.Parse(LexiconResources.ReversalEditCompleteToolParameters).Root;

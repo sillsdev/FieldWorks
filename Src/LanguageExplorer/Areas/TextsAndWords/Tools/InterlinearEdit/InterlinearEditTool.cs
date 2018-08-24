@@ -66,7 +66,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 #endif
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(TextAndWordsArea.InterlinearTexts, majorFlexComponentParameters.Statusbar, TextAndWordsArea.InterlinearTextsFactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(TextAndWordsArea.InterlinearTexts, majorFlexComponentParameters.Statusbar, TextAndWordsArea.InterlinearTextsFactoryMethod);
 			}
 			var multiPaneParameters = new MultiPaneParameters
 			{

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -70,7 +70,7 @@ DONE:					<item command="CmdImportWordSet" defaultVisible="false"/>
 
 		private void ImportWordSetToolStripMenuItemOnClick(object sender, EventArgs eventArgs)
 		{
-			using (var dlg = new ImportWordSetDlg(_majorFlexComponentParameters.LcmCache, _majorFlexComponentParameters.FlexApp, RecordList.ActiveRecordListRepository.ActiveRecordList, _majorFlexComponentParameters.ParserMenuManager))
+			using (var dlg = new ImportWordSetDlg(_majorFlexComponentParameters.LcmCache, _majorFlexComponentParameters.FlexApp, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepository>("RecordListRepository").ActiveRecordList, _majorFlexComponentParameters.ParserMenuManager))
 			{
 				dlg.ShowDialog((Form)_majorFlexComponentParameters.MainWindow);
 			}

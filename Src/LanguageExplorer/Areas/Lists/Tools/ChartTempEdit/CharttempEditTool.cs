@@ -62,7 +62,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 		{
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(DiscChartTemplateList, majorFlexComponentParameters.Statusbar, FactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(DiscChartTemplateList, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
 
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);

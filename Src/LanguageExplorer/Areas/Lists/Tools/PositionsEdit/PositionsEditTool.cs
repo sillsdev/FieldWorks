@@ -61,7 +61,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.PositionsEdit
 		{
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(PositionList, majorFlexComponentParameters.Statusbar, FactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(PositionList, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
 
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);

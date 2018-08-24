@@ -82,7 +82,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(ReversalIndexPOSRecordList.ReversalEntriesPOS, majorFlexComponentParameters.Statusbar, FactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(ReversalIndexPOSRecordList.ReversalEntriesPOS, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
 			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 #if RANDYTODO

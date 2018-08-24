@@ -122,6 +122,45 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		#endregion
 
 		/// <summary>
+		/// Clean up any resources being used.
+		/// </summary>
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
+			{
+				return;
+			}
+
+			if (disposing)
+			{
+				components?.Dispose();
+
+				if (m_cbNewSpelling != null)
+				{
+					m_cbNewSpelling.TextChanged -= m_dstWordform_TextChanged;
+				}
+				if (m_sourceSentences != null)
+				{
+					m_sourceSentences.CheckBoxChanged -= sentences_CheckBoxChanged;
+				}
+
+				if (m_srcRecordList != null)
+				{
+					PropertyTable.GetValue<IRecordListRepository>("RecordListRepository").RemoveRecordList(m_srcRecordList);
+				}
+			}
+			m_cache = null;
+			m_srcwfiWordform = null;
+			m_srcRecordList = null;
+			PropertyTable = null;
+			Publisher = null;
+			Subscriber = null;
+
+			base.Dispose(disposing);
+		}
+
+		/// <summary>
 		/// This version is used inside FLEx when the friendly tool is not active. So, we need to
 		/// build the concordance, but on FLEx's list, and we can assume all the parts and layouts
 		/// are loaded.
@@ -157,13 +196,13 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		internal bool SetDlgInfo(XElement configurationParameters)
 		{
-			m_wordformRecordList = RecordList.ActiveRecordListRepository.GetRecordList(TextAndWordsArea.ConcordanceWords);
+			m_wordformRecordList = PropertyTable.GetValue<IRecordListRepository>("RecordListRepository").GetRecordList(TextAndWordsArea.ConcordanceWords);
 			m_wordformRecordList.SuppressSaveOnChangeRecord = true; // various things trigger change record and would prevent Undo
 
 			//We need to re-parse the interesting texts so that the rows in the dialog show all the occurrences (make sure it is up to date)
 			if(m_wordformRecordList is InterlinearTextsRecordList)
 			{
-				//Unsuppress to allow for the list to be reloaded during ParseInterstingTextsIfNeeded()
+				//Un-suppress to allow for the list to be reloaded during ParseInterestingTextsIfNeeded()
 				//(this record list and its list are not visible in this dialog, so there will be no future reload)
 				m_wordformRecordList.ListLoadingSuppressed = false;
 				(m_wordformRecordList as InterlinearTextsRecordList).ParseInterstingTextsIfNeeded(); //Trigger the parsing

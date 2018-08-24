@@ -61,7 +61,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 		{
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(VariantEntryTypeList, majorFlexComponentParameters.Statusbar, FactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(VariantEntryTypeList, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
 
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);

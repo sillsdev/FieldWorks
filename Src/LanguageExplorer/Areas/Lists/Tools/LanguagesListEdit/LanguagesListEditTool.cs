@@ -61,7 +61,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.LanguagesListEdit
 		{
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(LanguagesList, majorFlexComponentParameters.Statusbar, FactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(LanguagesList, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
 
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);

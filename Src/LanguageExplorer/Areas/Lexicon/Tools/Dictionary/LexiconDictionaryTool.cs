@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -83,7 +83,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			_fwMainWnd = majorFlexComponentParameters.MainWindow;
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(LexiconArea.Entries, majorFlexComponentParameters.Statusbar, LexiconArea.EntriesFactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(LexiconArea.Entries, majorFlexComponentParameters.Statusbar, LexiconArea.EntriesFactoryMethod);
 			}
 
 			var root = XDocument.Parse(LexiconResources.LexiconDictionaryToolParameters).Root;

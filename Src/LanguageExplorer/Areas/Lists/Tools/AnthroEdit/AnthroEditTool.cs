@@ -61,7 +61,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.AnthroEdit
 		{
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(AnthropologyList, majorFlexComponentParameters.Statusbar, FactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(AnthropologyList, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
 
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);

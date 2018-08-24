@@ -57,15 +57,14 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			{
 				// Initialize the view with an action that can create one if the use clicks on it.
 				defaultRoleCreator = () =>
+				{
+					// create a default roled participants object if it does not already exist
+					NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 					{
-						// create a default roled participants object if it does not already exist
-						NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
-							() =>
-								{
-									defaultRoledPartic = Record.MakeDefaultRoledParticipant();
-								});
-						return defaultRoledPartic;
-					};
+						defaultRoledPartic = Record.MakeDefaultRoledParticipant();
+					});
+					return defaultRoledPartic;
+				};
 			}
 
 			// this slice displays the default roled participants
@@ -74,13 +73,11 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			{
 				vrl.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			}
-			vrl.Initialize(Cache, defaultRoledPartic, RnRoledParticTags.kflidParticipants, m_fieldName, PersistenceProvider,
-				DisplayNameProperty,
-				BestWsName); // TODO: Get better default 'best ws'.
+			vrl.Initialize(Cache, defaultRoledPartic, RnRoledParticTags.kflidParticipants, m_fieldName, PersistenceProvider, DisplayNameProperty, BestWsName); // TODO: Get better default 'best ws'.
 			vrl.ObjectCreator = defaultRoleCreator;
 			vrl.ConfigurationNode = ConfigurationNode;
 			vrl.ViewSizeChanged += OnViewSizeChanged;
-			var view = (VectorReferenceView) vrl.MainControl;
+			var view = (VectorReferenceView)vrl.MainControl;
 			view.ViewSizeChanged += OnViewSizeChanged;
 			// We don't want to be visible until later, since otherwise we get a temporary
 			// display in the wrong place with the wrong size that serves only to annoy the
@@ -184,7 +181,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				}
 			}
 
-			// display the standard visiblility and help menu items
+			// display the standard visibility and help menu items
 			var tsdropdown = new ToolStripDropDownMenu();
 			var itemAlways = new ToolStripMenuItem(LanguageExplorerResources.ksAlwaysVisible, null, ShowFieldAlwaysVisible);
 			var itemIfData = new ToolStripMenuItem(LanguageExplorerResources.ksHiddenUnlessData, null, ShowFieldIfData);
@@ -224,8 +221,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			}
 			var labels = ObjectLabel.CreateObjectLabels(Cache, Cache.LanguageProject.PeopleOA.PossibilitiesOS, DisplayNameProperty, displayWs);
 
-			using (var chooser = new SimpleListChooser(PersistenceProvider, labels, m_fieldName,
-				Cache, null, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+			using (var chooser = new SimpleListChooser(PersistenceProvider, labels, m_fieldName, Cache, null, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
 				chooser.TextParamHvo = Cache.LanguageProject.PeopleOA.Hvo;
 				chooser.SetHelpTopic(GetChooserHelpTopicID());

@@ -63,7 +63,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(Categories_withTreeBarHandler, majorFlexComponentParameters.Statusbar, FactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(Categories_withTreeBarHandler, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
 			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper(majorFlexComponentParameters, _recordList); // Use generic export event handler.
 

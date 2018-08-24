@@ -69,7 +69,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 		{
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(ComplexConcOccurrencesOfSelectedUnit, majorFlexComponentParameters.Statusbar, FactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(ComplexConcOccurrencesOfSelectedUnit, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
 			_textAndWordsAreaMenuHelper = new TextAndWordsAreaMenuHelper(majorFlexComponentParameters);
 			_textAndWordsAreaMenuHelper.AddMenusForAllButConcordanceTool();

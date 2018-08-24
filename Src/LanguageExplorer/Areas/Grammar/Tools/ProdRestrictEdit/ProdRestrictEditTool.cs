@@ -61,7 +61,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.ProdRestrictEdit
 		{
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(ProdRestrict, majorFlexComponentParameters.Statusbar, FactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(ProdRestrict, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
 			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper(majorFlexComponentParameters, _recordList); // Use generic export event handler.
 			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();

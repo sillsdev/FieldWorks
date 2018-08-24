@@ -61,7 +61,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 		{
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(PhonologicalRules, majorFlexComponentParameters.Statusbar, FactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(PhonologicalRules, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
 			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper(majorFlexComponentParameters, _recordList); // Use generic export event handler.
 			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();

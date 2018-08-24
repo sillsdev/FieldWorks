@@ -31,7 +31,7 @@ namespace LanguageExplorer
 			{
 				throw new InvalidOperationException("Do not setup the window more than once.");
 			}
-			_mapping.Add(handle, new Tuple<DataNavigationManager, ParserMenuManager, IRecordListRepositoryForTools>(majorFlexComponentParameters.DataNavigationManager, majorFlexComponentParameters.ParserMenuManager, majorFlexComponentParameters.RecordListRepositoryForTools));
+			_mapping.Add(handle, new Tuple<DataNavigationManager, ParserMenuManager, IRecordListRepositoryForTools>(majorFlexComponentParameters.DataNavigationManager, majorFlexComponentParameters.ParserMenuManager, majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository")));
 		}
 
 		internal static void TearDown(IntPtr handle)

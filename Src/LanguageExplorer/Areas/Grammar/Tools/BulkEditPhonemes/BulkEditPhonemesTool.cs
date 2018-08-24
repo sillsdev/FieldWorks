@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -63,7 +63,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 			}
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(GrammarArea.Phonemes, majorFlexComponentParameters.Statusbar, GrammarArea.PhonemesFactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(GrammarArea.Phonemes, majorFlexComponentParameters.Statusbar, GrammarArea.PhonemesFactoryMethod);
 			}
 			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper(majorFlexComponentParameters, _recordList); // Use generic export event handler.
 			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();

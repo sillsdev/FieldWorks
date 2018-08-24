@@ -302,7 +302,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					oldSelectionAnchorIndex = GetRowIndexFromSelection(vwSelection, false);
 					selection = SelectionHelper.GetSelectionInfo(vwSelection, this);
 				}
-				// Don't set the data mamber here, as it may be too late for the clients of the above event.
+				// Don't set the data member here, as it may be too late for the clients of the above event.
 				// If they access the SelectedIndex property between the event firing and this setting,
 				// they would get the old value, which is wrong.
 				//m_selectedIndex = value;
@@ -319,7 +319,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					catch (Exception)
 					{
 						m_bv.RaiseSelectionDrawingFailure();
-						//throw new SelectionDrawingError("failed to clear old selection for object " + hvoObjOldSel, e);
 					}
 				}
 				// Turn on the highlighting of the new item.
@@ -878,7 +877,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					{
 						// Deleting everything in one view doesn't seem to fix the RecordList in
 						// related views.  See LT-9711.
-						IRecordListUpdater recordListUpdater = RecordList.ActiveRecordListRepository.ActiveRecordList;
+						IRecordListUpdater recordListUpdater = PropertyTable.GetValue<IRecordListRepository>("RecordListRepository").ActiveRecordList;
 						if (recordListUpdater != null)
 						{
 							using (new WaitCursor(this))

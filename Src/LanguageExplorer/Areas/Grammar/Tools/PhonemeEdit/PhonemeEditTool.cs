@@ -68,7 +68,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 			}
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(GrammarArea.Phonemes, majorFlexComponentParameters.Statusbar, GrammarArea.PhonemesFactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(GrammarArea.Phonemes, majorFlexComponentParameters.Statusbar, GrammarArea.PhonemesFactoryMethod);
 			}
 			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper(majorFlexComponentParameters, _recordList); // Use generic export event handler.
 			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();

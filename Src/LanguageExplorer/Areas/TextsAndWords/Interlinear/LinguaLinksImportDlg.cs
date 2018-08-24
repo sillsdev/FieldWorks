@@ -689,7 +689,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					Debug.Assert(m_nextInput == m_LinguaLinksXmlFileName.Text);
 					// Ensure the idle time processing for change record doesn't cause problems
 					// because the import creates a record to change to.  See FWR-3700.
-					var recordList = RecordList.ActiveRecordListRepository.ActiveRecordList;
+					var recordList = m_propertyTable.GetValue<IRecordListRepository>("RecordListRepository").ActiveRecordList;
 					var fSuppressedSave = false;
 					try
 					{

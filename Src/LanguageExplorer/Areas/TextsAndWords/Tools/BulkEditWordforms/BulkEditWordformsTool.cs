@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -60,7 +60,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 		{
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(TextAndWordsArea.ConcordanceWords, majorFlexComponentParameters.Statusbar, TextAndWordsArea.ConcordanceWordsFactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(TextAndWordsArea.ConcordanceWords, majorFlexComponentParameters.Statusbar, TextAndWordsArea.ConcordanceWordsFactoryMethod);
 			}
 			_areaWideMenuHelper = new AreaWideMenuHelper(majorFlexComponentParameters, _recordList);
 			_areaWideMenuHelper.SetupFileExportMenu();

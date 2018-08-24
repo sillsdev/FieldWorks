@@ -39,6 +39,8 @@ namespace LanguageExplorer.Areas.Lists
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			_sidePane = null;
+			ActiveTool?.Deactivate(majorFlexComponentParameters);
+			ActiveTool = null;
 		}
 
 		/// <summary>

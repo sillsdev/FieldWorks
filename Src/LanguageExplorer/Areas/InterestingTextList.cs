@@ -294,7 +294,7 @@ namespace LanguageExplorer.Areas
 			}
 
 			// We won't keep track of the record list between calls since it could change from time to time.
-			var recordList = RecordList.ActiveRecordListRepository.ActiveRecordList;
+			var recordList = m_propertyTable.GetValue<IRecordListRepository>("RecordListRepository").ActiveRecordList;
 			if (recordList == null)
 			{
 				return;

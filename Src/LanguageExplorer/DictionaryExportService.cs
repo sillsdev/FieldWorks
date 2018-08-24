@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2018 SIL International
+// Copyright (c) 2016-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -42,7 +42,7 @@ namespace LanguageExplorer
 		public int CountDictionaryEntries(DictionaryConfigurationModel config)
 		{
 			int[] entries;
-			using (RecordListActivator.ActivateRecordListMatchingExportType(DictionaryType, _statusBar))
+			using (RecordListActivator.ActivateRecordListMatchingExportType(DictionaryType, _statusBar, m_propertyTable))
 			{
 				ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entries, DictionaryType, Cache, MyRecordList);
 			}
@@ -69,7 +69,7 @@ namespace LanguageExplorer
 		/// </summary>
 		public SortedDictionary<string,int> GetCountsOfReversalIndexes(IEnumerable<string> selectedReversalIndexes)
 		{
-			using (RecordListActivator.ActivateRecordListMatchingExportType(ReversalType, _statusBar))
+			using (RecordListActivator.ActivateRecordListMatchingExportType(ReversalType, _statusBar, m_propertyTable))
 			{
 				var relevantReversalIndexesAndTheirCounts = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances()
 					.Select(repo => Cache.ServiceLocator.GetObject(repo.Guid) as IReversalIndex)
@@ -92,7 +92,7 @@ namespace LanguageExplorer
 
 		public void ExportDictionaryContent(string xhtmlPath, DictionaryConfigurationModel configuration = null, IThreadedProgress progress = null)
 		{
-			using (RecordListActivator.ActivateRecordListMatchingExportType(DictionaryType, _statusBar))
+			using (RecordListActivator.ActivateRecordListMatchingExportType(DictionaryType, _statusBar, m_propertyTable))
 			{
 				configuration = configuration ?? new DictionaryConfigurationModel(DictionaryConfigurationServices.GetCurrentConfiguration(m_propertyTable, "Dictionary"), Cache);
 				ExportConfiguredXhtml(xhtmlPath, configuration, DictionaryType, progress);
@@ -102,7 +102,7 @@ namespace LanguageExplorer
 		public void ExportReversalContent(string xhtmlPath, string reversalWs = null, DictionaryConfigurationModel configuration = null,
 			IThreadedProgress progress = null)
 		{
-			using (RecordListActivator.ActivateRecordListMatchingExportType(ReversalType, _statusBar))
+			using (RecordListActivator.ActivateRecordListMatchingExportType(ReversalType, _statusBar, m_propertyTable))
 			using (ReversalIndexActivator.ActivateReversalIndex(reversalWs, m_propertyTable, Cache, MyRecordList))
 			{
 				configuration = configuration ?? new DictionaryConfigurationModel(DictionaryConfigurationServices.GetCurrentConfiguration(m_propertyTable, "ReversalIndex"), Cache);
@@ -126,10 +126,12 @@ namespace LanguageExplorer
 			private static IRecordList s_dictionaryRecordList;
 			private static IRecordList s_reversalIndexRecordList;
 			private IRecordList m_currentRecordList;
+			private IRecordListRepository _recordListRepository;
 
-			private RecordListActivator(IRecordList currentRecordList)
+			private RecordListActivator(IRecordListRepository recordListRepository, IRecordList currentRecordList)
 			{
-				RecordList.ActiveRecordListRepository.ActiveRecordList = null;
+				_recordListRepository = recordListRepository;
+				_recordListRepository.ActiveRecordList = null;
 				m_currentRecordList = currentRecordList;
 			}
 
@@ -148,9 +150,10 @@ namespace LanguageExplorer
 				{
 					s_dictionaryRecordList?.BecomeInactive();
 					s_reversalIndexRecordList?.BecomeInactive();
-					RecordList.ActiveRecordListRepository.ActiveRecordList = m_currentRecordList;
+					_recordListRepository.ActiveRecordList = m_currentRecordList;
 				}
 				m_currentRecordList = null;
+				_recordListRepository = null;
 			}
 
 			~RecordListActivator()
@@ -172,7 +175,7 @@ namespace LanguageExplorer
 				}
 			}
 
-			public static RecordListActivator ActivateRecordListMatchingExportType(string exportType, StatusBar statusBar)
+			public static RecordListActivator ActivateRecordListMatchingExportType(string exportType, StatusBar statusBar, IPropertyTable propertyTable)
 			{
 				var isDictionary = exportType == DictionaryType;
 				const string area = AreaServices.InitialAreaMachineName;
@@ -180,7 +183,8 @@ namespace LanguageExplorer
 				var controlElement = AreaListener.GetContentControlParameters(null, area, tool);
 				Debug.Assert(controlElement != null, "Prepare to be disappointed, since it will be null.");
 				var parameters = controlElement.XPathSelectElement(".//parameters[@clerk]");
-				var activeRecordList = RecordList.ActiveRecordListRepository.ActiveRecordList;
+				var activeRecordListRepository = propertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository");
+				var activeRecordList = activeRecordListRepository.ActiveRecordList;
 				if (DoesRecordListMatchParams(activeRecordList, parameters))
 				{
 					return null; // No need to juggle record lists if the one we want is already active
@@ -189,11 +193,11 @@ namespace LanguageExplorer
 				var tempRecordList = isDictionary ? s_dictionaryRecordList : s_reversalIndexRecordList;
 				if (tempRecordList == null)
 				{
-					tempRecordList = isDictionary ? ((IRecordListRepositoryForTools)RecordList.ActiveRecordListRepository).GetRecordList(LexiconArea.Entries, statusBar, LexiconArea.EntriesFactoryMethod) : ((IRecordListRepositoryForTools)RecordList.ActiveRecordListRepository).GetRecordList(LexiconArea.AllReversalEntries, statusBar, LexiconArea.AllReversalEntriesFactoryMethod);
+					tempRecordList = isDictionary ? activeRecordListRepository.GetRecordList(LexiconArea.Entries, statusBar, LexiconArea.EntriesFactoryMethod) : activeRecordListRepository.GetRecordList(LexiconArea.AllReversalEntries, statusBar, LexiconArea.AllReversalEntriesFactoryMethod);
 					CacheRecordList(exportType, tempRecordList);
 				}
 
-				var retval = new RecordListActivator(activeRecordList);
+				var retval = new RecordListActivator(activeRecordListRepository, activeRecordList);
 				tempRecordList.ActivateUI(false);
 				tempRecordList.UpdateList(true, true);
 				return retval; // ensure the current active record list is reactivated after we use another record list temporarily.

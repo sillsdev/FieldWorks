@@ -763,10 +763,10 @@ namespace LanguageExplorer.Areas
 			switch (m_rgFxtTypes[FxtIndex((string)m_exportItems[0].Tag)].m_ft)
 			{
 				case FxtTypes.kftConfigured:
-					new DictionaryExportService(m_cache, RecordList.ActiveRecordListRepository.ActiveRecordList, PropertyTable, Publisher, _mainWindowStatusBar).ExportDictionaryContent(xhtmlPath, progress: progress);
+					new DictionaryExportService(m_cache, PropertyTable.GetValue<IRecordListRepository>("RecordListRepository").ActiveRecordList, PropertyTable, Publisher, _mainWindowStatusBar).ExportDictionaryContent(xhtmlPath, progress: progress);
 					break;
 				case FxtTypes.kftReversal:
-					new DictionaryExportService(m_cache, RecordList.ActiveRecordListRepository.ActiveRecordList, PropertyTable, Publisher, _mainWindowStatusBar).ExportReversalContent(xhtmlPath, progress: progress);
+					new DictionaryExportService(m_cache, PropertyTable.GetValue<IRecordListRepository>("RecordListRepository").ActiveRecordList, PropertyTable, Publisher, _mainWindowStatusBar).ExportReversalContent(xhtmlPath, progress: progress);
 					break;
 			}
 			return null;
@@ -1674,7 +1674,7 @@ namespace LanguageExplorer.Areas
 			// root object.
 
 			InitFromMainControl(PropertyTable.GetValue<object>("currentContentControlObject", null));
-			m_recordList = RecordList.ActiveRecordListRepository.ActiveRecordList;
+			m_recordList = PropertyTable.GetValue<IRecordListRepository>("RecordListRepository").ActiveRecordList;
 
 			m_chkExportPictures.Checked = false;
 			m_chkExportPictures.Visible = false;

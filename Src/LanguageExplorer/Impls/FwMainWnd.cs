@@ -333,8 +333,11 @@ namespace LanguageExplorer.Impls
 				replaceToolStripMenuItem.Visible = true;
 				replaceToolStripMenuItem.Enabled = false;
 
-				_currentArea.ActiveTool = null;
-				_currentTool?.Deactivate(_majorFlexComponentParameters);
+				if (_currentArea.ActiveTool != null)
+				{
+					_currentArea.ActiveTool = null;
+					_currentTool?.Deactivate(_majorFlexComponentParameters);
+				}
 				_currentTool = clickedTool;
 				_currentArea.ActiveTool = clickedTool;
 				var areaName = _currentArea.MachineName;
@@ -374,11 +377,7 @@ namespace LanguageExplorer.Impls
 			using (new IdleProcessingHelper(this))
 			{
 				ClearDuringTransition();
-				if (_currentArea != null)
-				{
-					_currentArea.Deactivate(_majorFlexComponentParameters);
-					_currentArea.ActiveTool = null;
-				}
+				_currentArea?.Deactivate(_majorFlexComponentParameters);
 				_currentArea = clickedArea;
 				PropertyTable.SetProperty(AreaServices.AreaChoice, _currentArea.MachineName, true, settingsGroup: SettingsGroup.LocalSettings);
 				_currentArea.Activate(_majorFlexComponentParameters);
@@ -423,7 +422,7 @@ namespace LanguageExplorer.Impls
 		{
 			// "UseVernSpellingDictionary" Controls checking the global Tools->Spelling->Show Vernacular Spelling Errors menu.
 			PropertyTable.SetDefault("UseVernSpellingDictionary", true, true, settingsGroup: SettingsGroup.GlobalSettings);
-			// This "PropertyTableVersion" property will control the beahvior of the "ConvertOldPropertiesToNewIfPresent" method.
+			// This "PropertyTableVersion" property will control the behavior of the "ConvertOldPropertiesToNewIfPresent" method.
 			PropertyTable.SetDefault("PropertyTableVersion", int.MinValue, true, settingsGroup: SettingsGroup.GlobalSettings);
 			// This is the splitter distance for the sidebar/secondary splitter pair of controls.
 			PropertyTable.SetDefault("SidebarWidthGlobal", 140, true, settingsGroup: SettingsGroup.GlobalSettings);
@@ -477,7 +476,9 @@ namespace LanguageExplorer.Impls
 			PropertyTable.SetProperty("HelpTopicProvider", _flexApp);
 			PropertyTable.SetProperty("FlexStyleSheet", _stylesheet);
 			PropertyTable.SetProperty("LinkHandler", _linkHandler);
-			_temporaryPropertyNames.AddRange(new[] { "window", "App", "cache", "HelpTopicProvider", "FlexStyleSheet", "LinkHandler" });
+			_propertyTable.SetProperty("MajorFlexComponentParameters", _majorFlexComponentParameters, settingsGroup: SettingsGroup.GlobalSettings);
+			_propertyTable.SetProperty("RecordListRepository", _recordListRepositoryForTools, settingsGroup: SettingsGroup.GlobalSettings);
+			_temporaryPropertyNames.AddRange(new[] { "window", "App", "cache", "HelpTopicProvider", "FlexStyleSheet", "LinkHandler", "MajorFlexComponentParameters", "RecordListRepository" });
 		}
 		private readonly HashSet<string> _temporaryPropertyNames = new HashSet<string>();
 
@@ -705,9 +706,8 @@ namespace LanguageExplorer.Impls
 			SetupParserMenuItems();
 
 			_majorFlexComponentParameters = new MajorFlexComponentParameters(mainContainer, _menuStrip, toolStripContainer, _statusbar,
-				_parserMenuManager, _dataNavigationManager, _recordListRepositoryForTools, flexComponentParameters,
+				_parserMenuManager, _dataNavigationManager, flexComponentParameters,
 				Cache, _flexApp, this, _sharedEventHandlers, _sidePane);
-			_propertyTable.SetProperty("MajorFlexComponentParameters", _majorFlexComponentParameters, settingsGroup: SettingsGroup.GlobalSettings);
 
 			RecordListServices.Setup(_majorFlexComponentParameters);
 
@@ -1009,7 +1009,6 @@ namespace LanguageExplorer.Impls
 				Subscriber.Unsubscribe("MigrateOldConfigurations", MigrateOldConfigurations);
 				RecordListServices.TearDown(Handle);
 				_currentArea?.Deactivate(_majorFlexComponentParameters);
-				_currentTool?.Deactivate(_majorFlexComponentParameters);
 				_sendReceiveMenuManager?.Dispose();
 				_parserMenuManager?.Dispose();
 				_dataNavigationManager?.Dispose();
@@ -1052,6 +1051,7 @@ namespace LanguageExplorer.Impls
 			_combinedStylesListHandler = null;
 			_linkHandler = null;
 			_macroMenuHandler = null;
+			_sharedEventHandlers = null;
 
 			base.Dispose(disposing);
 
@@ -1755,11 +1755,6 @@ very simple minor adjustments. ;)"
 		/// <param name="e">An <see cref="T:System.EventArgs"/> that contains the event data. </param>
 		protected override void OnLoad(EventArgs e)
 		{
-			if (_recordListRepositoryForTools != RecordList.ActiveRecordListRepository)
-			{
-				RecordList.ActiveRecordListRepository = _recordListRepositoryForTools;
-			}
-
 			// Tools make it visible as needed.
 			InsertToolbarManager.ResetInsertToolbar(_majorFlexComponentParameters);
 
@@ -1782,20 +1777,6 @@ very simple minor adjustments. ;)"
 			if (Platform.IsLinux && _flexApp != null)
 			{
 				SIL.Windows.Forms.Miscellaneous.X11.SetWmClass(_flexApp.WindowClassName, Handle);
-			}
-		}
-
-		#endregion
-
-		#region Handle record list repository and last known active record list
-		/// <summary>
-		/// This window is being activated, so (re)-set static stuff to what we want.
-		/// </summary>
-		private void FwMainWnd_Activated(object sender, EventArgs e)
-		{
-			if (_recordListRepositoryForTools != RecordList.ActiveRecordListRepository)
-			{
-				RecordList.ActiveRecordListRepository = _recordListRepositoryForTools;
 			}
 		}
 

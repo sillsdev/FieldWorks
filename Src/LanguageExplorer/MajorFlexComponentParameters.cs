@@ -30,8 +30,6 @@ namespace LanguageExplorer
 		/// <summary />
 		internal FlexComponentParameters FlexComponentParameters { get; }
 		/// <summary />
-		internal IRecordListRepositoryForTools RecordListRepositoryForTools { get; }
-		/// <summary />
 		internal LcmCache LcmCache { get; }
 		/// <summary />
 		internal IFlexApp FlexApp { get; }
@@ -44,7 +42,6 @@ namespace LanguageExplorer
 
 		internal MajorFlexComponentParameters(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar,
 			ParserMenuManager parserMenuManager, DataNavigationManager dataNavigationManager,
-			IRecordListRepositoryForTools recordListRepositoryForTools,
 			FlexComponentParameters flexComponentParameters, LcmCache lcmCache, IFlexApp flexApp, IFwMainWnd mainWindow, ISharedEventHandlers sharedEventHandlers, SidePane sidePane)
 		{
 			MainCollapsingSplitContainer = mainCollapsingSplitContainer;
@@ -53,7 +50,6 @@ namespace LanguageExplorer
 			Statusbar = statusbar;
 			ParserMenuManager = parserMenuManager;
 			DataNavigationManager = dataNavigationManager;
-			RecordListRepositoryForTools = recordListRepositoryForTools;
 			FlexComponentParameters = flexComponentParameters;
 			LcmCache = lcmCache;
 			FlexApp = flexApp;

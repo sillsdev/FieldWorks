@@ -577,7 +577,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		internal IRecordList ActiveRecordList => RecordList.ActiveRecordListRepository.ActiveRecordList;
+		internal IRecordList ActiveRecordList => PropertyTable.GetValue<IRecordListRepository>("RecordListRepository").ActiveRecordList;
 
 		#endregion Overrides of RootSite
 

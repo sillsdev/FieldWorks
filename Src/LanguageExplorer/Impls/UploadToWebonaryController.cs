@@ -39,7 +39,7 @@ namespace LanguageExplorer.Impls
 		{
 			m_cache = cache;
 			PropertyTable = propertyTable;
-			m_exportService = new DictionaryExportService(cache, RecordList.ActiveRecordListRepository.ActiveRecordList, propertyTable, publisher, statusBar);
+			m_exportService = new DictionaryExportService(cache, PropertyTable.GetValue<IRecordListRepository>("RecordListRepository").ActiveRecordList, propertyTable, publisher, statusBar);
 			m_publicationActivator = new PublicationActivator(propertyTable);
 		}
 

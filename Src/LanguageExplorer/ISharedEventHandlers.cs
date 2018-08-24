@@ -21,7 +21,7 @@ namespace LanguageExplorer
 		void Add(string key, EventHandler sharedEventHandler);
 
 		/// <summary>
-		/// Remove the hanlder for the given <paramref name="key"/>.
+		/// Remove the handler for the given <paramref name="key"/>.
 		/// </summary>
 		/// <param name="key">A unique name for the handler.</param>
 		/// <exception cref="ArgumentNullException">Thrown when <paramref name="key"/> is null.</exception>

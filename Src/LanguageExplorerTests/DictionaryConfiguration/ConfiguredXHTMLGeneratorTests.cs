@@ -76,11 +76,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			}
 
 			_recordListRepositoryForTools = new RecordListRepository(Cache, _flexComponentParameters);
-			RecordList.ActiveRecordListRepository = _recordListRepositoryForTools;
+			_flexComponentParameters.PropertyTable.SetProperty("RecordListRepository", _recordListRepositoryForTools, settingsGroup: SettingsGroup.GlobalSettings);
 			_statusBar = new StatusBar();
 			_recordList = CreateRecordList();
-			RecordList.ActiveRecordListRepository.AddRecordList(_recordList);
-			RecordList.ActiveRecordListRepository.ActiveRecordList = _recordList;
+			_recordListRepositoryForTools.AddRecordList(_recordList);
+			_recordListRepositoryForTools.ActiveRecordList = _recordList;
 
 			_flexComponentParameters.PropertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconDictionaryMachineName);
 			Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "DictionaryConfiguration", "TestData", "TestData.fwdata");
@@ -108,7 +108,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			try
 			{
-				RecordList.ActiveRecordListRepository = null;
 				_statusBar?.Dispose();
 				_recordListRepositoryForTools?.Dispose();
 				_flexComponentParameters.PropertyTable.Dispose();
@@ -244,7 +243,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			const string letterHeadingXPath = "//div[@class='letHead']";
 			try
 			{
-				var recordList = RecordList.ActiveRecordListRepository.ActiveRecordList;
+				var recordList = _recordListRepositoryForTools.ActiveRecordList;
 				recordList.SortName = "Headword (fr)";
 				xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(new[] { firstAEntry.Hvo }, pubEverything, model, _flexComponentParameters.PropertyTable, Cache, recordList);
 				AssertThatXmlIn.File(xhtmlPath).HasSpecifiedNumberOfMatchesForXpath(letterHeadingXPath, 1);
@@ -8140,7 +8139,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			const string letterHeaderXPath = "//div[@class='letHead']";
 			try
 			{
-				var recordList = RecordList.ActiveRecordListRepository.ActiveRecordList;
+				var recordList = _recordListRepositoryForTools.ActiveRecordList;
 				recordList.SortName = "Glosses";
 				xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(new[] { firstAEntry.Hvo }, pubEverything, model, _flexComponentParameters.PropertyTable, Cache, _recordList);
 				var xhtml = File.ReadAllText(xhtmlPath);

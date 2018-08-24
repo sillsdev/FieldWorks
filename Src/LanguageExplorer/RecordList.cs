@@ -555,7 +555,7 @@ namespace LanguageExplorer
 
 		public virtual void ActivateUI(bool updateStatusBar = true)
 		{
-			if (ActiveRecordListRepository.ActiveRecordList != this)
+			if (PropertyTable.GetValue<IRecordListRepository>("RecordListRepository").ActiveRecordList != this)
 			{
 				RecordListServices.SetRecordList(PropertyTable.GetValue<Form>("window").Handle, this);
 			}
@@ -1715,23 +1715,6 @@ namespace LanguageExplorer
 		#region Non-interface code
 
 		#region Internal stuff
-
-#if RANDYTODO
-		// TODO: Think about not using the static, but also not adding IRecordListRepository to the property table.
-		// TODO: A new intance is included in MajorFlexComponentParameters,
-		// TODO: which is then passed to the Activate/Deactivate of IMajorFlexComponent implementations.
-		// TODO: Perhaps some other interface can be created that would allow IRecordListRepository to be passed
-		// TODO: further down the chain to clients who try to fetch a record list from the property table.
-		// TODO: They would then get it from the repository, and not the property table.
-		// TODO: At that point this static can be removed.
-		// TODO: The risk of using the static is that there can be multiple windows,
-		// TODO: each of which has its own repository, property table, etc.
-		// TODO: That means each window has to reset the static, when it becomes active (which now happens).
-#endif
-		/// <summary>
-		/// Holder of the repository (for now, at least).
-		/// </summary>
-		internal static IRecordListRepository ActiveRecordListRepository { get; set; }
 
 		/// <summary>
 		/// verifies that the two classes match, if not, throws message.
@@ -3758,12 +3741,13 @@ namespace LanguageExplorer
 			internal EditFilterMenuHandler(RecordList recordList)
 			{
 				_recordList = recordList;
-				if (_recordList.PropertyTable?.GetValue<MajorFlexComponentParameters>("MajorFlexComponentParameters") == null)
+				var majorFlexComponentParameters = _recordList.PropertyTable?.GetValue<MajorFlexComponentParameters>("MajorFlexComponentParameters");
+				if (majorFlexComponentParameters == null)
 				{
 					// Tests may not have the property set.
 					return;
 				}
-				_viewFilterMenuItem = MenuServices.GetViewFilterMenu(_recordList.PropertyTable.GetValue<MajorFlexComponentParameters>("MajorFlexComponentParameters").MenuStrip);
+				_viewFilterMenuItem = MenuServices.GetViewFilterMenu(majorFlexComponentParameters.MenuStrip);
 				CreateFilterMenus();
 			}
 
@@ -3779,8 +3763,10 @@ namespace LanguageExplorer
 				{
 					foreach (var filter in _recordList._filterProvider.Filters)
 					{
-						var filterMenu = new ToolStripMenuItem(FiltersStrings.ksUnknown, LanguageExplorerResources.FWFilterBasic_Small, OtherFilterMenu_Clicked);
-						filterMenu.Tag = filter;
+						var filterMenu = new ToolStripMenuItem(FiltersStrings.ksUnknown, LanguageExplorerResources.FWFilterBasic_Small, OtherFilterMenu_Clicked)
+						{
+							Tag = filter
+						};
 						_viewFilterMenuItem.DropDownItems.Add(filterMenu);
 					}
 				}

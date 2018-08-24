@@ -45,7 +45,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 
 			majorFlexComponentParameters.MainCollapsingSplitContainer.SecondControl = this;
 			InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
-			_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(TextAndWordsArea.InterlinearTexts, majorFlexComponentParameters.Statusbar, TextAndWordsArea.InterlinearTextsFactoryMethod);
+			_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(TextAndWordsArea.InterlinearTexts, majorFlexComponentParameters.Statusbar, TextAndWordsArea.InterlinearTextsFactoryMethod);
 
 			// Add toolbar button.
 			_toolStripView = ToolbarServices.GetViewToolStrip(majorFlexComponentParameters.ToolStripContainer);

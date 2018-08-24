@@ -11,44 +11,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		private System.ComponentModel.IContainer components = null;
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-		protected override void Dispose(bool disposing)
-		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if (IsDisposed)
-				return;
-
-			if (disposing)
-			{
-				components?.Dispose();
-
-				if (m_cbNewSpelling != null)
-				{
-					m_cbNewSpelling.TextChanged -= m_dstWordform_TextChanged;
-				}
-				if (m_sourceSentences != null)
-				{
-					m_sourceSentences.CheckBoxChanged -= sentences_CheckBoxChanged;
-				}
-
-				if (m_srcRecordList != null)
-				{
-					RecordList.ActiveRecordListRepository.RemoveRecordList(m_srcRecordList);
-				}
-			}
-			m_cache = null;
-			m_srcwfiWordform = null;
-			m_srcRecordList = null;
-			PropertyTable = null;
-			Publisher = null;
-			Subscriber = null;
-
-			base.Dispose(disposing);
-		}
-
 		#region Windows Form Designer generated code
 
 		/// <summary>

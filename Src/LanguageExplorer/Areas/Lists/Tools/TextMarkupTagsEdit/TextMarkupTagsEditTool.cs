@@ -61,8 +61,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.TextMarkupTagsEdit
 		{
 			if (_recordList == null)
 			{
-				_recordList =
-					majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(TextMarkupTagsList, majorFlexComponentParameters.Statusbar, FactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(TextMarkupTagsList, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
 
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);

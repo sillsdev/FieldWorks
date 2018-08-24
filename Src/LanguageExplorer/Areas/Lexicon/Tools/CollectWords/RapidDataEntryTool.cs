@@ -96,7 +96,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			var root = XDocument.Parse(LexiconResources.RapidDataEntryToolParameters).Root;
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(LexiconArea.SemanticDomainList_LexiconArea, majorFlexComponentParameters.Statusbar, LexiconArea.SemanticDomainList_LexiconAreaFactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(LexiconArea.SemanticDomainList_LexiconArea, majorFlexComponentParameters.Statusbar, LexiconArea.SemanticDomainList_LexiconAreaFactoryMethod);
 			}
 			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, _recordList);
 			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
@@ -133,7 +133,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			var recordEditView = new RecordEditView(root.Element("recordeditview").Element("parameters"), XDocument.Parse(LexiconResources.HideAdvancedFeatureFields), majorFlexComponentParameters.LcmCache, _recordList, dataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 			if (_nestedRecordList == null)
 			{
-				_nestedRecordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(RDEwords, majorFlexComponentParameters.Statusbar, RDEwordsFactoryMethod);
+				_nestedRecordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(RDEwords, majorFlexComponentParameters.Statusbar, RDEwordsFactoryMethod);
 			}
 			_recordBrowseView = new RecordBrowseView(root.Element("recordbrowseview").Element("parameters"), _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _nestedRecordList);
 			var mainMultiPaneParameters = new MultiPaneParameters
@@ -236,7 +236,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			return new SubservientRecordList(recordListId, statusBar,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,
 				new VectorPropertyParameterObject(cache.LanguageProject.SemanticDomainListOA, "ReferringSenses", cache.MetaDataCacheAccessor.GetFieldId2(CmSemanticDomainTags.kClassId, "ReferringSenses", false)),
-				((IRecordListRepositoryForTools)RecordList.ActiveRecordListRepository).GetRecordList(LexiconArea.SemanticDomainList_LexiconArea, statusBar, LexiconArea.SemanticDomainList_LexiconAreaFactoryMethod));
+				flexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(LexiconArea.SemanticDomainList_LexiconArea, statusBar, LexiconArea.SemanticDomainList_LexiconAreaFactoryMethod));
 		}
 	}
 }

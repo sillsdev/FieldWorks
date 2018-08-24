@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -26,7 +26,7 @@ namespace LanguageExplorerTests.Impls
 			using (var statusbar = new StatusBar())
 			using (IRecordListRepository recordListRepository = new RecordListRepository(Cache, new FlexComponentParameters(propertyTable, publisher, subscriber)))
 			{
-				RecordList.ActiveRecordListRepository = recordListRepository;
+				propertyTable.SetProperty("RecordListRepository", recordListRepository, settingsGroup: SettingsGroup.GlobalSettings);
 				propertyTable.SetProperty("cache", Cache);
 				propertyTable.SetProperty("window", dummyWindow);
 
@@ -52,7 +52,6 @@ namespace LanguageExplorerTests.Impls
 				recordListRepository.RemoveRecordList(recordList);
 				Assert.IsNull(recordListRepository.ActiveRecordList);
 			}
-			RecordList.ActiveRecordListRepository = null;
 		}
 	}
 }
