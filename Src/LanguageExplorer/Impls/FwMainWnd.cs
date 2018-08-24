@@ -395,7 +395,6 @@ namespace LanguageExplorer.Impls
 		{
 			LoadPropertyTable();
 			SetDefaultProperties();
-			SetTemporaryProperties();
 			RemoveObsoleteProperties();
 			PropertyTable.ConvertOldPropertiesToNewIfPresent();
 		}
@@ -708,6 +707,7 @@ namespace LanguageExplorer.Impls
 			_majorFlexComponentParameters = new MajorFlexComponentParameters(mainContainer, _menuStrip, toolStripContainer, _statusbar,
 				_parserMenuManager, _dataNavigationManager, flexComponentParameters,
 				Cache, _flexApp, this, _sharedEventHandlers, _sidePane);
+			SetTemporaryProperties();
 
 			RecordListServices.Setup(_majorFlexComponentParameters);
 

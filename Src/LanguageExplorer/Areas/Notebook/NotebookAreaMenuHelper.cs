@@ -20,12 +20,10 @@ namespace LanguageExplorer.Areas.Notebook
 	internal sealed class NotebookAreaMenuHelper : IFlexComponent, IDisposable
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
-		private AreaWideMenuHelper _areaWideMenuHelper;
 		private IRecordList _recordList;
 		private ToolStripMenuItem _fileImportMenu;
 		private List<Tuple<ToolStripMenuItem, EventHandler>> _newFileMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>();
-
-		internal AreaWideMenuHelper MyAreaWideMenuHelper => _areaWideMenuHelper;
+		internal AreaWideMenuHelper MyAreaWideMenuHelper { get; private set; }
 
 		internal NotebookAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
@@ -33,21 +31,7 @@ namespace LanguageExplorer.Areas.Notebook
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
 			_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(NotebookArea.Records, majorFlexComponentParameters.Statusbar, NotebookArea.NotebookFactoryMethod);
-			_areaWideMenuHelper = new AreaWideMenuHelper(_majorFlexComponentParameters, _recordList);
-
-			InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
-		}
-
-		internal void Initialize()
-		{
-			// File->Export menu is visible and enabled in this tool.
-			// Add File->Export event handler.
-			_areaWideMenuHelper.SetupFileExportMenu(FileExportMenu_Click);
-
-			// Add one notebook area-wide import option.
-			_fileImportMenu = MenuServices.GetFileImportMenu(_majorFlexComponentParameters.MenuStrip);
-			// <item command="CmdImportSFMNotebook" />
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newFileMenusAndHandlers, _fileImportMenu, ImportSFMNotebook_Clicked, NotebookResources.Import_Standard_Format_Notebook_data, insertIndex: 1);
+			MyAreaWideMenuHelper = new AreaWideMenuHelper(_majorFlexComponentParameters, _recordList);
 		}
 
 		void FileExportMenu_Click(object sender, EventArgs e)
@@ -111,6 +95,16 @@ namespace LanguageExplorer.Areas.Notebook
 			PropertyTable = flexComponentParameters.PropertyTable;
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
+
+			// File->Export menu is visible and enabled in this tool.
+			// Add File->Export event handler.
+			MyAreaWideMenuHelper.SetupFileExportMenu(FileExportMenu_Click);
+			MyAreaWideMenuHelper.SetupToolsCustomFieldsMenu();
+
+			// Add one notebook area-wide import option.
+			_fileImportMenu = MenuServices.GetFileImportMenu(_majorFlexComponentParameters.MenuStrip);
+			// <item command="CmdImportSFMNotebook" />
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newFileMenusAndHandlers, _fileImportMenu, ImportSFMNotebook_Clicked, NotebookResources.Import_Standard_Format_Notebook_data, insertIndex: 1);
 		}
 
 		#endregion
@@ -146,7 +140,7 @@ namespace LanguageExplorer.Areas.Notebook
 
 			if (disposing)
 			{
-				_areaWideMenuHelper.Dispose();
+				MyAreaWideMenuHelper.Dispose();
 
 				foreach (var menuTuple in _newFileMenusAndHandlers)
 				{
@@ -157,7 +151,7 @@ namespace LanguageExplorer.Areas.Notebook
 				_newFileMenusAndHandlers.Clear();
 			}
 			_majorFlexComponentParameters = null;
-			_areaWideMenuHelper = null;
+			MyAreaWideMenuHelper = null;
 			_recordList = null;
 			_fileImportMenu = null;
 			_newFileMenusAndHandlers = null;

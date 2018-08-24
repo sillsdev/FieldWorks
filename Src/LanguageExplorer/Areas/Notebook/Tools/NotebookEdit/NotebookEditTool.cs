@@ -24,7 +24,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 	[Export(AreaServices.NotebookAreaMachineName, typeof(ITool))]
 	internal sealed class NotebookEditTool : ITool
 	{
-		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
+		private NotebookEditToolMenuHelper _notebookEditToolMenuHelper;
 		private const string panelMenuId = "left";
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
@@ -45,10 +45,10 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 
 			// Dispose after the main UI stuff.
-			_browseViewContextMenuFactory.Dispose();
+			_notebookEditToolMenuHelper.Dispose();
 
 			_recordBrowseView = null;
-			_browseViewContextMenuFactory = null;
+			_notebookEditToolMenuHelper = null;
 		}
 
 		/// <summary>
@@ -64,12 +64,9 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(NotebookArea.Records, majorFlexComponentParameters.Statusbar, NotebookArea.NotebookFactoryMethod);
 			}
-			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
-#if RANDYTODO
-			// TODO: Set up factory method for the browse view.
-#endif
+			_notebookEditToolMenuHelper = new NotebookEditToolMenuHelper(majorFlexComponentParameters, _recordList);
 
-			_recordBrowseView = new RecordBrowseView(NotebookArea.LoadDocument(NotebookResources.NotebookEditBrowseParameters).Root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
+			_recordBrowseView = new RecordBrowseView(NotebookArea.LoadDocument(NotebookResources.NotebookEditBrowseParameters).Root, _notebookEditToolMenuHelper.MyBrowseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif
@@ -115,7 +112,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			panelButton.MyDataTree = recordEditView.MyDataTree;
 			// Too early before now.
 			recordEditView.FinishInitialization();
-			((NotebookArea)_area).MyNotebookAreaMenuHelper.MyAreaWideMenuHelper.SetupToolsCustomFieldsMenu();
+			_notebookEditToolMenuHelper.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
 			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false, SettingsGroup.LocalSettings))
 			{
 				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish("ShowHiddenFields", true);

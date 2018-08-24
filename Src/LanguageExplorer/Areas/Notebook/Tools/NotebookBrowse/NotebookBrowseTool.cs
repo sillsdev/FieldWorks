@@ -16,7 +16,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 	[Export(AreaServices.NotebookAreaMachineName, typeof(ITool))]
 	internal sealed class NotebookBrowseTool : ITool
 	{
-		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
+		private NotebookBrowseToolMenuHelper _browseToolMenuHelper;
 		private PaneBarContainer _paneBarContainer;
 		private RecordBrowseView _recordBrowseView;
 		private IRecordList _recordList;
@@ -36,10 +36,10 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 
 			// Dispose after the main UI stuff.
-			_browseViewContextMenuFactory.Dispose();
+			_browseToolMenuHelper.Dispose();
 
 			_recordBrowseView = null;
-			_browseViewContextMenuFactory = null;
+			_browseToolMenuHelper = null;
 		}
 
 		/// <summary>
@@ -55,16 +55,14 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 				// Try getting it from the notebook area.
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(NotebookArea.Records, majorFlexComponentParameters.Statusbar, NotebookArea.NotebookFactoryMethod);
 			}
-			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
-#if RANDYTODO
-			// TODO: Set up factory method for the browse view.
-#endif
-			_recordBrowseView = new RecordBrowseView(NotebookArea.LoadDocument(NotebookResources.NotebookBrowseParameters).Root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
+			_browseToolMenuHelper = new NotebookBrowseToolMenuHelper(majorFlexComponentParameters, _recordList);
+			_recordBrowseView = new RecordBrowseView(NotebookArea.LoadDocument(NotebookResources.NotebookBrowseParameters).Root, _browseToolMenuHelper.MyBrowseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				_recordBrowseView);
-			((NotebookArea)_area).MyNotebookAreaMenuHelper.MyAreaWideMenuHelper.SetupToolsCustomFieldsMenu();
+
+			_browseToolMenuHelper.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
 		}
 
 		/// <summary>

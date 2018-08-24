@@ -24,12 +24,10 @@ namespace LanguageExplorer.Areas.Notebook
 		internal const string Records = "records";
 		private const string MyUiName = "Notebook";
 		private string PropertyNameForToolName => $"{AreaServices.ToolForAreaNamed_}{MachineName}";
-		private NotebookAreaMenuHelper _notebookAreaMenuHelper;
 		[Import]
 		private IPropertyTable _propertyTable;
 
 		internal IRecordList MyRecordList { get; set; }
-		internal NotebookAreaMenuHelper MyNotebookAreaMenuHelper => _notebookAreaMenuHelper;
 
 		internal static XDocument LoadDocument(string resourceName)
 		{
@@ -48,8 +46,6 @@ namespace LanguageExplorer.Areas.Notebook
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_notebookAreaMenuHelper.Dispose();
-			_notebookAreaMenuHelper = null;
 			ActiveTool?.Deactivate(majorFlexComponentParameters);
 			ActiveTool = null;
 		}
@@ -63,8 +59,6 @@ namespace LanguageExplorer.Areas.Notebook
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			_propertyTable.SetDefault(PropertyNameForToolName, AreaServices.NotebookAreaDefaultToolMachineName, true);
-			_notebookAreaMenuHelper = new NotebookAreaMenuHelper(majorFlexComponentParameters);
-			_notebookAreaMenuHelper.Initialize();
 		}
 
 		/// <summary>

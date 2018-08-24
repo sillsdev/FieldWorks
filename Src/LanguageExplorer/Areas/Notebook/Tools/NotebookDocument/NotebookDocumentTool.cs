@@ -17,7 +17,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 	[Export(AreaServices.NotebookAreaMachineName, typeof(ITool))]
 	internal sealed class NotebookDocumentTool : ITool
 	{
-		private NotebookDocumentMenuHelper _notebookDocumentMenuHelper;
+		private NotebookDocumentToolMenuHelper _notebookDocumentToolMenuHelper;
 		private PaneBarContainer _paneBarContainer;
 		private IRecordList _recordList;
 		[Import(AreaServices.NotebookAreaMachineName)]
@@ -36,9 +36,9 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 
 			// Dispose after the main UI stuff.
-			_notebookDocumentMenuHelper.Dispose();
+			_notebookDocumentToolMenuHelper.Dispose();
 
-			_notebookDocumentMenuHelper = null;
+			_notebookDocumentToolMenuHelper = null;
 		}
 
 		/// <summary>
@@ -53,13 +53,13 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(NotebookArea.Records, majorFlexComponentParameters.Statusbar, NotebookArea.NotebookFactoryMethod);
 			}
-			_notebookDocumentMenuHelper = new NotebookDocumentMenuHelper(majorFlexComponentParameters, _recordList);
+			_notebookDocumentToolMenuHelper = new NotebookDocumentToolMenuHelper(majorFlexComponentParameters, _recordList);
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				new XmlDocView(XDocument.Parse(NotebookResources.NotebookDocumentParameters).Root, majorFlexComponentParameters.LcmCache, _recordList));
 
-			_notebookDocumentMenuHelper.Initialize();
+			_notebookDocumentToolMenuHelper.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
 		}
 
 		/// <summary>

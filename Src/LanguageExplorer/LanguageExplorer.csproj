@@ -359,7 +359,9 @@
     <Compile Include="Areas\Lists\Tools\ExtNoteTypeEdit\ExtNoteTypeEditTool.cs" />
     <Compile Include="Areas\Lists\Tools\LanguagesListEdit\LanguagesListEditTool.cs" />
     <Compile Include="Areas\MainEntryFromSubEntryTargetAdjuster.cs" />
-    <Compile Include="Areas\Notebook\Tools\NotebookDocument\NotebookDocumentMenuHelper.cs" />
+    <Compile Include="Areas\Notebook\Tools\NotebookDocument\NotebookDocumentToolMenuHelper.cs" />
+    <Compile Include="Areas\Notebook\Tools\NotebookBrowse\NotebookBrowseToolMenuHelper.cs" />
+    <Compile Include="Areas\Notebook\Tools\NotebookEdit\NotebookEditToolMenuHelper.cs" />
     <Compile Include="Areas\NullTargetAdjuster.cs" />
     <Compile Include="Areas\ReversalListBase.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\ConcRecordList.cs" />

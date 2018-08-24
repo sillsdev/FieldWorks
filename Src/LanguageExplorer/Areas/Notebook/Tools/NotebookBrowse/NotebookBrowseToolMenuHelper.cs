@@ -1,40 +1,34 @@
-﻿// Copyright (c) 2018 SIL International
+// Copyright (c) 2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Diagnostics;
-using System.Windows.Forms;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 
-namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
+namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 {
-	internal sealed class NotebookDocumentMenuHelper : IFlexComponent, IDisposable
+	/// <summary>
+	/// This class handles all interaction for the NotebookBrowseTool for its menus, toolbars, plus all context menus that are used in Slices and PaneBars.
+	/// </summary>
+	internal sealed class NotebookBrowseToolMenuHelper : IFlexComponent, IDisposable
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
-		private ToolStripMenuItem _editFindMenu;
+		private NotebookAreaMenuHelper _notebookAreaMenuHelper;
 
-		internal NotebookDocumentMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
+		internal BrowseViewContextMenuFactory MyBrowseViewContextMenuFactory { get; private set; }
+
+		internal NotebookBrowseToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
-			_editFindMenu = MenuServices.GetEditFindMenu(_majorFlexComponentParameters.MenuStrip);
-			_editFindMenu.Enabled = _editFindMenu.Visible = true;
-			_editFindMenu.Click += EditFindMenu_Click;
-
-			InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
-		}
-
-		private void EditFindMenu_Click(object sender, EventArgs e)
-		{
-			PropertyTable.GetValue<IApp>("App").ShowFindReplaceDialog(false, _majorFlexComponentParameters.MainWindow.ActiveView as IVwRootSite, _majorFlexComponentParameters.LcmCache, _majorFlexComponentParameters.MainWindow as Form);
-		}
-
-		internal void Initialize()
-		{
+			_notebookAreaMenuHelper = new NotebookAreaMenuHelper(majorFlexComponentParameters);
+#if RANDYTODO
+			// TODO: Set up factory method for the browse view.
+#endif
+			MyBrowseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 		}
 
 		#region Implementation of IPropertyTableProvider
@@ -56,7 +50,9 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 		/// Get the ISubscriber.
 		/// </summary>
 		public ISubscriber Subscriber { get; private set; }
+		#endregion
 
+		#region Implementation of IFlexComponent
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
@@ -68,13 +64,15 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 			PropertyTable = flexComponentParameters.PropertyTable;
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
+
+			_notebookAreaMenuHelper.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 		}
 		#endregion
 
 		#region Implementation of IDisposable
 		private bool _isDisposed;
 
-		~NotebookDocumentMenuHelper()
+		~NotebookBrowseToolMenuHelper()
 		{
 			// The base class finalizer is called automatically.
 			Dispose(false);
@@ -102,10 +100,12 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 
 			if (disposing)
 			{
-				_editFindMenu.Click -= EditFindMenu_Click;
+				_notebookAreaMenuHelper?.Dispose();
+				MyBrowseViewContextMenuFactory?.Dispose();
 			}
+			MyBrowseViewContextMenuFactory = null;
 			_majorFlexComponentParameters = null;
-			_editFindMenu = null;
+			_notebookAreaMenuHelper = null;
 
 			_isDisposed = true;
 		}
