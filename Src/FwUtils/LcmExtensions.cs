@@ -171,66 +171,41 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return lexRefType;
 		}
 
-		public static ICmPossibility Clone(this ICmPossibility me, ICmPossibilityList owner)
+		public static ICmPossibility Clone(this ICmPossibility me)
 		{
-			Guard.AgainstNull(owner, nameof(owner));
+			var owner = me.Owner;
+			Require.That(owner != null, $"Cannot clone a CmPossibility that is not owned: '{me.Guid}'");
+			Require.That(me.ClassID == CmPossibilityTags.kClassId, $"This only allows for cloning CmPossibility instance, but not instances of '{me.ClassName}'.");
 
-			if (!owner.PossibilitiesOS.Contains(me))
-			{
-				throw new InvalidOperationException($"Cannot clone a CmPossibility that is not owned by a list: '{me.Guid}'");
-			}
-			ICmPossibility newbie;
-			switch (me.ClassID)
-			{
-				case CmPossibilityTags.kClassId:
-					newbie = me.Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(Guid.NewGuid(), owner);
-					break;
-				case CmCustomItemTags.kClassId:
-					newbie = me.Cache.ServiceLocator.GetInstance<ICmCustomItemFactory>().Create(Guid.NewGuid(), owner);
-					break;
-				default:
-					throw new NotSupportedException($"Cloning is only supported for ICmPossibility and ICmCustomItem instances, but not for: '{me.ClassName}'.");
-			}
+			var newbie = owner is ICmPossibilityList ? me.Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(Guid.NewGuid(), (ICmPossibilityList)owner) : me.Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(Guid.NewGuid(), (ICmPossibility)owner);
 			CopyCoreCmPossibilityInformation(me, newbie);
-			ClonePossibilityChildren(me, newbie);
 
-			return newbie;
-		}
-
-		private static ICmPossibility Clone(this ICmPossibility me, ICmPossibility owner)
-		{
-			Guard.AgainstNull(owner, nameof(owner));
-
-			if (!owner.SubPossibilitiesOS.Contains(me))
-			{
-				throw new InvalidOperationException($"Cannot clone a CmPossibility that is not owned by another possibility: '{me.Guid}'");
-			}
-			ICmPossibility newbie = null;
-			switch (me.ClassID)
-			{
-				case CmPossibilityTags.kClassId:
-					newbie = me.Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(Guid.NewGuid(), owner);
-					break;
-				case CmCustomItemTags.kClassId:
-					newbie = me.Cache.ServiceLocator.GetInstance<ICmCustomItemFactory>().Create(Guid.NewGuid(), (ICmCustomItem)owner);
-					break;
-				default:
-					throw new NotSupportedException($"Cloning is only supported for ICmPossibility and ICmCustomItem instances, but not for: '{me.ClassName}'.");
-			}
-			CopyCoreCmPossibilityInformation(me, newbie);
-			ClonePossibilityChildren(me, newbie);
-
-			return newbie;
-		}
-
-		private static void ClonePossibilityChildren(ICmPossibility original, ICmPossibility copy)
-		{
-			// Subitems
+			// Sub-items
 			// Skip any with no names (e.g., "???").
-			foreach (var subitem in original.SubPossibilitiesOS.Where(si => !si.ShortNameTSS.Text.Equals("???")))
+			foreach (var subitem in me.SubPossibilitiesOS.Where(si => !si.ShortNameTSS.Text.Equals("???")))
 			{
-				copy.SubPossibilitiesOS.Add(Clone(subitem, copy));
+				newbie.SubPossibilitiesOS.Add(subitem.Clone());
 			}
+
+			return newbie;
+		}
+
+		public static ICmCustomItem Clone(this ICmCustomItem me)
+		{
+			var owner = me.Owner;
+			Require.That(me.Owner != null, $"Cannot clone a CmCustomItem that is not owned: '{me.Guid}'");
+
+			var newbie = owner is ICmPossibilityList ? (ICmCustomItem)me.Cache.ServiceLocator.GetInstance<ICmCustomItemFactory>().Create(Guid.NewGuid(), (ICmPossibilityList)owner) : (ICmCustomItem)me.Cache.ServiceLocator.GetInstance<ICmCustomItemFactory>().Create(Guid.NewGuid(), (ICmCustomItem)owner);
+			CopyCoreCmPossibilityInformation(me, newbie);
+
+			// Sub-items
+			// Skip any with no names (e.g., "???").
+			foreach (var subitem in me.SubPossibilitiesOS.Where(si => !si.ShortNameTSS.Text.Equals("???")))
+			{
+				newbie.SubPossibilitiesOS.Add(subitem.Clone());
+			}
+
+			return newbie;
 		}
 
 		private static void CopyCoreCmPossibilityInformation(ICmPossibility original, ICmPossibility copy)

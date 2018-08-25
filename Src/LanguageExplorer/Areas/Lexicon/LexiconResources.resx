@@ -281,9 +281,6 @@
   <data name="Undo_Insert_Etymology" xml:space="preserve">
     <value>Undo Insert Etymology</value>
   </data>
-  <data name="Major_Entry" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\images\Create Entry.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="Go" xml:space="preserve">
     <value>_Go</value>
   </data>

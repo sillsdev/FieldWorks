@@ -561,12 +561,14 @@ namespace LanguageExplorer.Areas
 
 		private void DisposeContextMenu(object sender, EventArgs e)
 		{
+			//Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 			Application.Idle -= DisposeContextMenu;
 			if (m_contextMenu != null)
 			{
 				m_contextMenu.Dispose();
 				m_contextMenu = null;
 			}
+			//Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 		}
 
 		// Context menu exists just for one invocation (until idle).
@@ -1100,9 +1102,6 @@ namespace LanguageExplorer.Areas
 		/// The configure dialog may be launched any time this tool is active.
 		/// Its name is derived from the name of the tool.
 		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
 		public virtual bool OnDisplayConfigureXmlDocView(object commandObject, ref UIItemDisplayProperties display)
 		{
 			if (string.IsNullOrEmpty(m_configObjectName))

@@ -16,11 +16,11 @@ namespace LanguageExplorerTests
 {
 	public static class TestSetupServices
 	{
-		public static IPropertyTable SetupTestTriumvirate(out IPublisher publisher, out ISubscriber subscriber)
+		public static void SetupTestTriumvirate(out IPropertyTable propertyTable, out IPublisher publisher, out ISubscriber subscriber)
 		{
 			subscriber = new Subscriber();
 			publisher = new Publisher(subscriber);
-			return new PropertyTable(publisher);
+			propertyTable = new PropertyTable(publisher);
 		}
 
 		internal static FlexComponentParameters SetupEverything(LcmCache cache, out ISharedEventHandlers sharedEventHandlers, bool includeStylesheet = true)
@@ -44,7 +44,8 @@ namespace LanguageExplorerTests
 
 			ISubscriber subscriber;
 			IPublisher publisher;
-			var propertyTable = SetupTestTriumvirate(out publisher, out subscriber);
+			IPropertyTable propertyTable;
+			SetupTestTriumvirate(out propertyTable, out publisher, out subscriber);
 			propertyTable.SetProperty("cache", cache);
 			var flexComponentParameters = new FlexComponentParameters(propertyTable, publisher, subscriber);
 			if (includeStylesheet)

@@ -2394,25 +2394,36 @@ namespace LanguageExplorer.Controls.DetailControls
 			var wsContainer = Cache.ServiceLocator.WritingSystems;
 			if (fVisIfData) // Contains the tests to see if usable data is inside the field (for all types of fields)
 			{
-				if (editor != null && editor == "custom")
+				var editorIsNull = string.IsNullOrWhiteSpace(editor);
+				if (!editorIsNull)
 				{
-					Type typeFound;
-					var mi = XmlViewsUtils.GetStaticMethod(node, "assemblyPath", "class", "ShowSliceForVisibleIfData", out typeFound);
-					if (mi != null)
+					switch (editor)
 					{
-						var parameters = new object[2];
-						parameters[0] = node;
-						parameters[1] = obj;
-						var result = mi.Invoke(typeFound, System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic, null, parameters, null);
-						if (!(bool) result)
-						{
-							return NodeTestResult.kntrNothing;
-						}
+						case "custom":
+#if RANDYTODO
+							// TODO: This branch was for the 'custom' editors, which no longer is in xml. So, figure out how to make it work again.
+#endif
+							Type typeFound;
+							var mi = XmlViewsUtils.GetStaticMethod(node, "assemblyPath", "class", "ShowSliceForVisibleIfData", out typeFound);
+							if (mi != null)
+							{
+								var parameters = new object[2];
+								parameters[0] = node;
+								parameters[1] = obj;
+								var result = mi.Invoke(typeFound, System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic, null, parameters, null);
+								if (!(bool)result)
+								{
+									return NodeTestResult.kntrNothing;
+								}
+							}
+							break;
+						case "autocustom":
+							if (flid == 0)
+							{
+								flid = SliceFactory.GetCustomFieldFlid(caller, realSda.MetaDataCache, obj);
+							}
+							break;
 					}
-				}
-				else if (flid == 0 && editor != null && editor == "autocustom")
-				{
-					flid = SliceFactory.GetCustomFieldFlid(caller, realSda.MetaDataCache, obj);
 				}
 
 				if (flid != 0)
@@ -2546,7 +2557,7 @@ namespace LanguageExplorer.Controls.DetailControls
 							break;
 					}
 				}
-				else if (editor == null)
+				else if (editorIsNull)
 				{
 					// may be a summary node for a sequence or atomic node. Suppress it as well as the prop.
 					XElement child = null;
@@ -3320,30 +3331,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		#region IxCoreColleague message handlers
 
-#if RANDYTODO
-		/// <summary>
-		/// This property may be turned on and off any time a DataTree is an active colleague.
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public bool OnDisplayShowHiddenFields(object commandObject, ref UIItemDisplayProperties display)
-		{
-			bool fAllow = PropertyTable.GetValue("AllowShowNormalFields", true);
-			display.Enabled = display.Visible = fAllow;
-
-			if (display.Enabled)
-			{
-				// The boolProperty of this menu item isn't the real one, so we control the checked status
-				// from here.  See the OnPropertyChanged method for how changes are handled.
-				string toolChoice = PropertyTable.GetValue<string>(AreaServices.ToolChoice);
-				display.Checked = PropertyTable.GetValue("ShowHiddenFields-" + toolChoice, SettingsGroup.LocalSettings, false);
-			}
-
-			return true; //we've handled this
-		}
-#endif
-
 		internal bool CanJumpToToolAndFilterAnthroItem
 		{
 			get
@@ -3527,7 +3514,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			return cmd.TargetId;
 		}
-#endif
 
 		private IRnGenericRec CreateAndAssociateNotebookRecord()
 		{
@@ -3554,6 +3540,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			referringRecord = text.AssociatedNotebookRecord;
 			return referringRecord != null;
 		}
+#endif
 
 		/// <summary>
 		/// Receives the broadcast message "PropertyChanged"
@@ -3813,173 +3800,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 #endregion IxCoreColleague message handlers
-
-#if RANDYTODO
-		/// <summary>
-		/// See if it makes sense to provide the "Demote..." command.
-		/// </summary>
-		public bool OnDisplayDemoteItemInVector(object commandObject, ref UIItemDisplayProperties display)
-		{
-			var command = (Command)commandObject;
-			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
-			bool fIsValid = false;
-			if (className == "RnGenericRec")
-			{
-				if (Root != null && Root is IRnGenericRec)
-				{
-					if (Root.Owner is IRnResearchNbk && (Root.Owner as IRnResearchNbk).RecordsOC.Count > 1)
-						fIsValid = true;
-				}
-			}
-			display.Enabled = fIsValid;
-			return true;
-		}
-#endif
-
-		/// <summary>
-		/// Implement the "Demote..." command.
-		/// </summary>
-		public bool OnDemoteItemInVector(object argument)
-		{
-			var rec = Root as IRnGenericRec;
-			if (rec == null)
-			{
-				return false;		// shouldn't get here
-			}
-			IRnGenericRec newOwner;
-			if (Root.Owner is IRnResearchNbk)
-			{
-				var notebk = (IRnResearchNbk)Root.Owner;
-				var owners = notebk.RecordsOC.Where(recT => recT != Root).ToList();
-				newOwner = owners.Count == 1 ? owners[0] : ChooseNewOwner(owners.ToArray(), Resources.DetailControlsStrings.ksChooseOwnerOfDemotedRecord);
-			}
-			else
-			{
-				return false;
-			}
-
-			if (newOwner == null)
-			{
-				return true;
-			}
-
-			if (newOwner == rec)
-			{
-				throw new Exception("RnGenericRec cannot own itself!");
-			}
-
-			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Resources.DetailControlsStrings.ksUndoDemote,
-				Resources.DetailControlsStrings.ksRedoDemote, Cache.ActionHandlerAccessor, () =>
-				{
-					newOwner.SubRecordsOS.Insert(0, rec);
-				});
-			return true;
-		}
-
-		internal IRnGenericRec ChooseNewOwner(IRnGenericRec[] records, string sTitle)
-		{
-
-			const string helpTopic = "khtpDataNotebook-ChooseOwnerOfDemotedRecord";
-			var persistProvider = PersistenceProviderFactory.CreatePersistenceProvider(PropertyTable);
-			var labels = ObjectLabel.CreateObjectLabels(Cache, records, "ShortName", Cache.WritingSystemFactory.GetStrFromWs(Cache.DefaultAnalWs));
-			using (var dlg = new ReallySimpleListChooser(persistProvider, labels, string.Empty, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
-			{
-				dlg.Text = sTitle;
-				dlg.SetHelpTopic(helpTopic);
-				if (dlg.ShowDialog() == DialogResult.OK)
-				{
-					return dlg.SelectedObject as IRnGenericRec;
-				}
-			}
-			return null;
-		}
-
-#if RANDYTODO
-		// TODO: Not used, since the DTMenuHandler class is no more (12SEP2017).
-		/// <summary>
-		/// Try to find a slice that matches the information gleaned from another slice,
-		/// probably one that has been disposed since the information was obtained.  If there's
-		/// a following slice that matches except for the object id, return that slice as well.
-		/// </summary>
-		/// <remarks>
-		/// This is used by DTMenuHandler.OnDataTreeCopy() whenever creating the copy causes the
-		/// data tree to be rebuilt.  See FWR-2123 for motivation.
-		/// </remarks>
-		public Slice FindMatchingSlices(ICmObject obj, object[] key, Type type, out Slice newCopy)
-		{
-			Slice sliceFound = null;
-			newCopy = null;
-			foreach (Slice slice in Slices)
-			{
-				if (slice.GetType() != type)
-					continue;
-				if (EquivalentKeys(slice.Key, key, sliceFound == null))
-				{
-					if (slice.Object == obj)
-						sliceFound = slice;
-					else if (sliceFound != null && slice.Object != obj && slice.Object.ClassID == obj.ClassID)
-						newCopy = slice;
-					if (sliceFound != null && newCopy != null)
-						break;
-				}
-			}
-			return sliceFound;
-		}
-#endif
-
-		private bool EquivalentKeys(object[] newKey, object[] oldKey, bool fCheckInts)
-		{
-			if (newKey.Length != oldKey.Length)
-			{
-				return false;
-			}
-			for (var i = 0; i < newKey.Length; ++i)
-			{
-				if (newKey[i] == oldKey[i])
-				{
-					continue;
-				}
-				if (newKey[i] is XElement && oldKey[i] is XElement)
-				{
-					var newNode = newKey[i] as XElement;
-					var oldNode = oldKey[i] as XElement;
-					if (newNode.Name != oldNode.Name)
-					{
-						return false;
-					}
-
-					if (newNode.GetInnerText() != oldNode.GetInnerText())
-					{
-						return false;
-					}
-
-					if (newNode.GetOuterXml() == oldNode.GetOuterXml())
-					{
-						continue;
-					}
-					foreach (var xa in oldNode.Attributes())
-					{
-						var xaNew = newNode.Attribute(xa.Name);
-						if (xaNew == null || xaNew.Value != xa.Value)
-						{
-							return false;
-						}
-					}
-				}
-				else if (newKey[i] is int && oldKey[i] is int)
-				{
-					if (fCheckInts && (int) newKey[i] != (int) oldKey[i])
-					{
-						return false;
-					}
-				}
-				else
-				{
-					return false;
-				}
-			}
-			return true;
-		}
 
 #region Implementation of IPropertyTableProvider
 

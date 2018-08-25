@@ -53,7 +53,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(NotebookArea.Records, majorFlexComponentParameters.Statusbar, NotebookArea.NotebookFactoryMethod);
 			}
-			_notebookDocumentToolMenuHelper = new NotebookDocumentToolMenuHelper(majorFlexComponentParameters, _recordList);
+			_notebookDocumentToolMenuHelper = new NotebookDocumentToolMenuHelper(majorFlexComponentParameters, this, _recordList);
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,

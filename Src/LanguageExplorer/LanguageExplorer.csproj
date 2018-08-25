@@ -1182,7 +1182,7 @@
     <Compile Include="Controls\HtmlControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\AddAllomorphDlg.cs">
+    <Compile Include="Areas\TextsAndWords\Interlinear\AddAllomorphDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Controls\LexText\AddNewSenseDlg.cs">
@@ -1332,7 +1332,7 @@
     <Compile Include="Controls\LexText\InsertionControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\InsertRecordDlg.cs">
+    <Compile Include="Areas\Notebook\InsertRecordDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="IPatternControl.cs" />
@@ -1373,19 +1373,19 @@
     </Compile>
     <Compile Include="Controls\LexText\FlexLiftMerger.cs" />
     <Compile Include="Controls\LexText\CmLiftEntry.cs" />
-    <Compile Include="Controls\LexText\LinkAllomorphDlg.cs">
+    <Compile Include="Areas\Grammar\Tools\AdhocCoprohibEdit\LinkAllomorphDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\LinkEntryOrSenseDlg.cs">
+    <Compile Include="Areas\LinkEntryOrSenseDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\LinkMSADlg.cs">
+    <Compile Include="Areas\Grammar\Tools\AdhocCoprohibEdit\LinkMSADlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\LinkVariantToEntryOrSense.cs">
+    <Compile Include="Areas\LinkVariantToEntryOrSense.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\LinkVariantToEntryOrSense.Designer.cs">
+    <Compile Include="Areas\LinkVariantToEntryOrSense.Designer.cs">
       <DependentUpon>LinkVariantToEntryOrSense.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\LexText\MasterCategoryListDlg.cs">
@@ -1426,11 +1426,10 @@
     <Compile Include="Controls\LexText\PhonologicalFeaturePopupTreeManager.cs" />
     <Compile Include="Controls\LexText\PopupTreeManager.cs" />
     <Compile Include="Controls\LexText\POSPopupTreeManager.cs" />
-    <Compile Include="Dumpster\RecordDlgListener.cs" />
-    <Compile Include="Controls\LexText\RecordGoDlg.cs">
+    <Compile Include="Areas\Notebook\RecordGoDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\RecordGoSearchEngine.cs" />
+    <Compile Include="Areas\Notebook\RecordGoSearchEngine.cs" />
     <Compile Include="Controls\LexText\RemoveItemsRequestedEventArgs.cs" />
     <Compile Include="Controls\LexText\InterlinDestination.cs" />
     <Compile Include="Controls\LexText\SfmToTextsAndWordsMappingBaseDlg.cs">
@@ -1963,12 +1962,13 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Resources\Copy.bmp" />
-    <Content Include="Resources\SimpleChooserParameters.xml" />
+    <None Include="Resources\NotebookRecordGoDlgParameters.xml" />
+    <None Include="Resources\SimpleChooserParameters.xml" />
     <None Include="images\password-reveal-eye-16x16.png" />
-    <Content Include="Resources\DialectsListEditParameters.xml" />
-    <Content Include="Resources\ExtNoteTypeEditParameters.xml" />
-    <Content Include="Resources\GrammarSketchTransforms.xml" />
-    <Content Include="Resources\LanguagesListEditParameters.xml" />
+    <None Include="Resources\DialectsListEditParameters.xml" />
+    <None Include="Resources\ExtNoteTypeEditParameters.xml" />
+    <None Include="Resources\GrammarSketchTransforms.xml" />
+    <None Include="Resources\LanguagesListEditParameters.xml" />
     <EmbeddedResource Include="Areas\ConfigParentNode.resx">
       <DependentUpon>ConfigParentNode.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -2188,7 +2188,7 @@
       <DependentUpon>VectorReferenceView.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\AddAllomorphDlg.resx">
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\AddAllomorphDlg.resx">
       <DependentUpon>AddAllomorphDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -2262,7 +2262,7 @@
     <EmbeddedResource Include="Controls\LexText\InsertionControl.resx">
       <DependentUpon>InsertionControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\InsertRecordDlg.resx">
+    <EmbeddedResource Include="Areas\Notebook\InsertRecordDlg.resx">
       <DependentUpon>InsertRecordDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -2299,19 +2299,19 @@
       <DependentUpon>LiftImportDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\LinkAllomorphDlg.resx">
+    <EmbeddedResource Include="Areas\Grammar\Tools\AdhocCoprohibEdit\LinkAllomorphDlg.resx">
       <DependentUpon>LinkAllomorphDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\LinkEntryOrSenseDlg.resx">
+    <EmbeddedResource Include="Areas\LinkEntryOrSenseDlg.resx">
       <DependentUpon>LinkEntryOrSenseDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\LinkMSADlg.resx">
+    <EmbeddedResource Include="Areas\Grammar\Tools\AdhocCoprohibEdit\LinkMSADlg.resx">
       <DependentUpon>LinkMSADlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\LinkVariantToEntryOrSense.resx">
+    <EmbeddedResource Include="Areas\LinkVariantToEntryOrSense.resx">
       <DependentUpon>LinkVariantToEntryOrSense.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -2353,7 +2353,7 @@
     <EmbeddedResource Include="Controls\LexText\PhonologicalFeatureChooserDlg.resx">
       <DependentUpon>PhonologicalFeatureChooserDlg.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\RecordGoDlg.resx">
+    <EmbeddedResource Include="Areas\Notebook\RecordGoDlg.resx">
       <DependentUpon>RecordGoDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -3643,6 +3643,7 @@
     <Content Include="Areas\TextsAndWords\Interlinear\icons\ZeroWidth.ico" />
     <Content Include="images\AddScripture.ico" />
     <Content Include="images\Create Entry.ico" />
+    <None Include="images\Create Entry1.ico" />
     <Content Include="images\Create Reversal Entry.ico" />
     <Content Include="images\Find Lexical Entry.ico" />
     <Content Include="images\Find Reversal Entry.ico" />

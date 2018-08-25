@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Areas;
 using SIL.FieldWorks.Common.FwUtils;
@@ -44,6 +45,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		private void LaunchChooseFromMasterCategoryListOnIdle(object sender, EventArgs e)
 		{
+			//Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 			Application.Idle -= LaunchChooseFromMasterCategoryListOnIdle; // now being handled
 
 			// now launch the dialog
@@ -88,6 +90,7 @@ namespace LanguageExplorer.Controls.LexText
 						break;
 				}
 			}
+			//Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 		}
 	}
 }

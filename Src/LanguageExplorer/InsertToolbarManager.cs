@@ -10,22 +10,22 @@ namespace LanguageExplorer
 {
 	internal static class InsertToolbarManager
 	{
-		internal static void AddInsertToolbarItems(MajorFlexComponentParameters majorFlexComponentParameters, List<ToolStripButton> insertStripButtons)
+		internal static void AddInsertToolbarItems(MajorFlexComponentParameters majorFlexComponentParameters, List<ToolStripItem> insertStripItems)
 		{
-			insertStripButtons.Reverse();
+			insertStripItems.Reverse();
 			var toolStripInsert = GetInsertToolStrip(majorFlexComponentParameters);
-			foreach (var button in insertStripButtons)
+			foreach (var toolStripItem in insertStripItems)
 			{
-				toolStripInsert.Items.Insert(0, button);
+				toolStripInsert.Items.Insert(0, toolStripItem);
 			}
-			toolStripInsert.Visible = insertStripButtons.Any(button => button.Enabled);
+			toolStripInsert.Visible = insertStripItems.Any(button => button.Enabled);
 		}
 
 		internal static void ResetInsertToolbar(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			var toolStripInsert = GetInsertToolStrip(majorFlexComponentParameters);
-			var goners = new List<ToolStripButton>();
-			foreach (ToolStripButton item in toolStripInsert.Items)
+			var goners = new List<ToolStripItem>();
+			foreach (ToolStripItem item in toolStripInsert.Items)
 			{
 				if (item.Name == "toolStripButtonFindText")
 				{

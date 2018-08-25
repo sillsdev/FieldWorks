@@ -43,7 +43,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 				Width = 100,
 				Height = 40
 			};
-			_propertyTable = TestSetupServices.SetupTestTriumvirate(out _publisher, out _subscriber);
+			TestSetupServices.SetupTestTriumvirate(out _propertyTable, out _publisher, out _subscriber);
 			_ribbon.InitializeFlexComponent(new FlexComponentParameters(_propertyTable, _publisher, _subscriber));
 			Assert.IsNotNull(_ribbon.Decorator, "Don't have correct access here.");
 			_ribbon.CacheRibbonItems(new List<AnalysisOccurrence>());

@@ -48,7 +48,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 			m_cache = PropertyTable.GetValue<LcmCache>("cache");
 			VisibleChanged += OnVisibleChanged;
-			m_styleSheet = PropertyTable.GetValue<LcmStyleSheet>("FlexStyleSheet");
+			m_styleSheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable);
 			var wsObj = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			RightToLeft = wsObj.RightToLeftScript ? RightToLeft.Yes : RightToLeft.No;
 			AutoScroll = true;

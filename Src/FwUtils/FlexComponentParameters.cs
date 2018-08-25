@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using SIL.Code;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -39,14 +40,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public static void CheckInitializationValues(FlexComponentParameters sourceFlexComponentParameters, FlexComponentParameters targetFlexComponentParameters)
 		{
-			if (sourceFlexComponentParameters == null)
-			{
-				throw new ArgumentNullException(nameof(sourceFlexComponentParameters));
-			}
-			if (targetFlexComponentParameters == null)
-			{
-				throw new ArgumentNullException(nameof(targetFlexComponentParameters));
-			}
+			Guard.AgainstNull(sourceFlexComponentParameters, nameof(sourceFlexComponentParameters));
+			Guard.AgainstNull(targetFlexComponentParameters, nameof(targetFlexComponentParameters));
 
 			// The three source values must not be null.
 			if (sourceFlexComponentParameters.PropertyTable == null)
@@ -63,17 +58,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 
 			// Three target values must be null.
+			const string danger_Will_Robinson = "Thou shalt not initialize an IFlexComponent instance more than one time!";
 			if (targetFlexComponentParameters.PropertyTable != null)
 			{
-				throw new InvalidOperationException("target property table must be null");
+				throw new InvalidOperationException($"Target property table must be null. {danger_Will_Robinson}");
 			}
 			if (targetFlexComponentParameters.Publisher != null)
 			{
-				throw new InvalidOperationException(" target publisher must be null");
+				throw new InvalidOperationException($"Target publisher must be null.  {danger_Will_Robinson}");
 			}
 			if (targetFlexComponentParameters.Subscriber != null)
 			{
-				throw new InvalidOperationException("target subscriber must be null");
+				throw new InvalidOperationException($"Target subscriber must be null.  {danger_Will_Robinson}");
 			}
 		}
 	}

@@ -26,7 +26,9 @@ namespace LanguageExplorerTests.Filters
 			var wsf = new WordSetFilter(wfiset);
 			IPublisher publisher;
 			ISubscriber subscriber;
-			using (var propertyTable = TestSetupServices.SetupTestTriumvirate(out publisher, out subscriber))
+			IPropertyTable propertyTable;
+			TestSetupServices.SetupTestTriumvirate(out propertyTable, out publisher, out subscriber);
+			try
 			{
 				propertyTable.SetProperty("cache", Cache);
 				flp.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, subscriber));
@@ -34,6 +36,10 @@ namespace LanguageExplorerTests.Filters
 				andFilter.Add(wsf);
 				flp.Filters.Add(wsf);
 				flp.OnAdjustFilterSelection(andFilter);
+			}
+			finally
+			{
+				propertyTable.Dispose();
 			}
 		}
 	}

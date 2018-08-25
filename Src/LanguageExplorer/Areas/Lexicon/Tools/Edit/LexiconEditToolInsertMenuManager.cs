@@ -78,7 +78,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			var insertIndex = 0;
 			// <item command="CmdInsertLexEntry" defaultVisible="false" />
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_Entry_Clicked, LexiconResources.Entry, LexiconResources.Entry_Tooltip, Keys.Control | Keys.E, LexiconResources.Major_Entry.ToBitmap(), insertIndex);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_Entry_Clicked, LexiconResources.Entry, LexiconResources.Entry_Tooltip, Keys.Control | Keys.E, AreaResources.Major_Entry.ToBitmap(), insertIndex);
 			// <item command="CmdInsertSense" defaultVisible="false" />
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_Sense_Clicked, LexiconResources.Sense, LexiconResources.InsertSenseToolTip, insertIndex: ++insertIndex);
 			// <item command="CmdInsertVariant" defaultVisible="false" />
@@ -374,7 +374,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				if (dlg.Initialize())
 				{
-					dlg.UseMultiStringCaption(_cache, WritingSystemServices.kwsVernAnals, _propertyTable.GetValue<LcmStyleSheet>("FlexStyleSheet"));
+					dlg.UseMultiStringCaption(_cache, WritingSystemServices.kwsVernAnals, FwUtils.StyleSheetFromPropertyTable(_propertyTable));
 					if (dlg.ShowDialog() == DialogResult.OK)
 					{
 						UndoableUnitOfWorkHelper.Do(LexiconResources.ksUndoInsertPicture, LexiconResources.ksRedoInsertPicture, owningSense, () =>

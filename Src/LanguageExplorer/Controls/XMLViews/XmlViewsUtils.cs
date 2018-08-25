@@ -1181,8 +1181,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			var sAssemblyName = XmlUtils.GetOptionalAttributeValue(node, sAssemblyAttr);
 			var sClassName = XmlUtils.GetOptionalAttributeValue(node, sClassAttr);
-			var mi = GetStaticMethod(sAssemblyName, sClassName, sMethodName, "node " + node.GetOuterXml(), out typeFound);
-			return mi;
+			return GetStaticMethod(sAssemblyName, sClassName, sMethodName, "node " + node.GetOuterXml(), out typeFound);
 		}
 
 		/// <summary>

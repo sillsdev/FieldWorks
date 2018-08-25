@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2011-2015 SIL International
+// Copyright (c) 2011-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -67,7 +67,7 @@ namespace SIL.FieldWorks.LexicalProvider
 				IPublisher publisher = new MyDoNothingPublisher();
 				ISubscriber subscriber = new MyDoNothingSubscriber();
 				IPropertyTable propertyTable = new MyDoAlmostNothingPropertyTable();
-				var styleSheet = propertyTable.GetValue<LcmStyleSheet>("FlexStyleSheet");
+				var styleSheet = FwUtils.StyleSheetFromPropertyTable(propertyTable);
 				styleSheet.Init(FieldWorks.Cache, FieldWorks.Cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
 				LexEntryUi.DisplayEntries(FieldWorks.Cache, null, propertyTable, publisher, subscriber, new FlexHelpTopicProvider(), "UserHelpFile", tss, null);
 			});

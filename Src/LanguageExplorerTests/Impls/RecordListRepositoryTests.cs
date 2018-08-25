@@ -21,36 +21,44 @@ namespace LanguageExplorerTests.Impls
 			// Setup
 			IPublisher publisher;
 			ISubscriber subscriber;
-			using (var propertyTable = TestSetupServices.SetupTestTriumvirate(out publisher, out subscriber))
-			using (var dummyWindow = new DummyFwMainWnd())
-			using (var statusbar = new StatusBar())
-			using (IRecordListRepository recordListRepository = new RecordListRepository(Cache, new FlexComponentParameters(propertyTable, publisher, subscriber)))
+			IPropertyTable propertyTable;
+			TestSetupServices.SetupTestTriumvirate(out propertyTable, out publisher, out subscriber);
+			try
 			{
-				propertyTable.SetProperty("RecordListRepository", recordListRepository, settingsGroup: SettingsGroup.GlobalSettings);
-				propertyTable.SetProperty("cache", Cache);
-				propertyTable.SetProperty("window", dummyWindow);
+				using (var dummyWindow = new DummyFwMainWnd())
+				using (var statusBar = new StatusBar())
+				using (IRecordListRepository recordListRepository = new RecordListRepository(Cache, new FlexComponentParameters(propertyTable, publisher, subscriber)))
+				{
+					propertyTable.SetProperty("RecordListRepository", recordListRepository, settingsGroup: SettingsGroup.GlobalSettings);
+					propertyTable.SetProperty("cache", Cache);
+					propertyTable.SetProperty("window", dummyWindow);
 
-				// Test 1. Make sure a bogus record list isn't in the repository.
-				Assert.IsNull(recordListRepository.GetRecordList("bogusRecordListId"));
-				// Test 2. Make sure there is no active clerk.
-				Assert.IsNull(recordListRepository.ActiveRecordList);
+					// Test 1. Make sure a bogus record list isn't in the repository.
+					Assert.IsNull(recordListRepository.GetRecordList("bogusRecordListId"));
+					// Test 2. Make sure there is no active clerk.
+					Assert.IsNull(recordListRepository.ActiveRecordList);
 
-				// Test 3. New record list is added.
-				var recordList = new RecordList("records", statusbar, Cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false, new VectorPropertyParameterObject(Cache.LanguageProject.ResearchNotebookOA, "AllRecords", Cache.MetaDataCacheAccessor.GetFieldId2(RnResearchNbkTags.kClassId, "AllRecords", false)));
-				recordList.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, subscriber));
+					// Test 3. New record list is added.
+					var recordList = new RecordList("records", statusBar, Cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false, new VectorPropertyParameterObject(Cache.LanguageProject.ResearchNotebookOA, "AllRecords", Cache.MetaDataCacheAccessor.GetFieldId2(RnResearchNbkTags.kClassId, "AllRecords", false)));
+					recordList.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, subscriber));
 
-				recordListRepository.AddRecordList(recordList);
-				Assert.AreSame(recordList, recordListRepository.GetRecordList("records"));
-				Assert.IsNull(recordListRepository.ActiveRecordList);
+					recordListRepository.AddRecordList(recordList);
+					Assert.AreSame(recordList, recordListRepository.GetRecordList("records"));
+					Assert.IsNull(recordListRepository.ActiveRecordList);
 
-				// Test 4. Check out active record list
-				Assert.IsNull(recordListRepository.ActiveRecordList);
-				recordListRepository.ActiveRecordList = recordList;
-				Assert.AreSame(recordList, recordListRepository.ActiveRecordList);
+					// Test 4. Check out active record list
+					Assert.IsNull(recordListRepository.ActiveRecordList);
+					recordListRepository.ActiveRecordList = recordList;
+					Assert.AreSame(recordList, recordListRepository.ActiveRecordList);
 
-				// Test 5. Remove record list.
-				recordListRepository.RemoveRecordList(recordList);
-				Assert.IsNull(recordListRepository.ActiveRecordList);
+					// Test 5. Remove record list.
+					recordListRepository.RemoveRecordList(recordList);
+					Assert.IsNull(recordListRepository.ActiveRecordList);
+				}
+			}
+			finally
+			{
+				propertyTable.Dispose();
 			}
 		}
 	}

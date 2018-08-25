@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
@@ -149,10 +150,12 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		private void ApplicationOnIdle(object sender, EventArgs eventArgs)
 		{
+			//Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 			var activeView = _mainWnd.ActiveView as SimpleRootSite;
 			var enableControls = activeView != null && !(activeView is SandboxBase) && activeView.IsSelectionFormattable;
 			_formatToolStripComboBox.Enabled = enableControls;
 			_writingSystemToolStripMenuItem.Enabled = enableControls;
+			//Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 		}
 
 		private void SetupControlsForWritingSystems()
@@ -176,17 +179,19 @@ namespace LanguageExplorer.Impls
 
 		private void WritingSystemToolStripMenuItemOnClick(object sender, EventArgs eventArgs)
 		{
-			NotifyClientsOfWritingSystemChange(_allWritingSystemDefinitions.First(wsDefn => wsDefn.DisplayLabel == (string)_formatToolStripComboBox.SelectedItem));
+			var activeView = _mainWnd.ActiveView;
+			NotifyClientsOfWritingSystemChange(activeView, _allWritingSystemDefinitions.First(wsDefn => wsDefn.DisplayLabel == ((CoreWritingSystemDefinition)_formatToolStripComboBox.SelectedItem).DisplayLabel));
 		}
 
 		private void FormatToolStripComboBoxOnSelectedIndexChanged(object sender, EventArgs eventArgs)
 		{
-			NotifyClientsOfWritingSystemChange((CoreWritingSystemDefinition)((ToolStripMenuItem)sender).Tag);
+			var activeView = _mainWnd.ActiveView;
+			NotifyClientsOfWritingSystemChange(activeView, (CoreWritingSystemDefinition)((ToolStripComboBox)sender).SelectedItem);
 		}
 
-		private void NotifyClientsOfWritingSystemChange(CoreWritingSystemDefinition newlySelectedWritingSystem)
+		private void NotifyClientsOfWritingSystemChange(IRootSite rootSite, CoreWritingSystemDefinition newlySelectedWritingSystem)
 		{
-			_mainWnd.ActiveView?.EditingHelper.SetKeyboardForWs(newlySelectedWritingSystem);
+			rootSite?.EditingHelper.SetKeyboardForWs(newlySelectedWritingSystem);
 		}
 
 		private void UpdateComboboxSelectedItem(object newValue)

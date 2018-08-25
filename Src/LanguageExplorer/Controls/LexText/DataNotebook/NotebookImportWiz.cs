@@ -218,7 +218,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				m_tbSaveAsFileName.Text = m_tbSettingsFileName.Text;
 				DirtySettings = false;
 			}
-			m_stylesheet = m_propertyTable.GetValue<LcmStyleSheet>("FlexStyleSheet");
+			m_stylesheet = FwUtils.StyleSheetFromPropertyTable(m_propertyTable);
 			ShowSaveButtonOrNot();
 		}
 

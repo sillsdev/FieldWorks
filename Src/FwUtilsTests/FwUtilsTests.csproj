@@ -225,6 +225,7 @@
     <Compile Include="InterfacesTests.cs" />
     <Compile Include="DisposableObjectsSetTests.cs" />
     <Compile Include="IVwCacheDaTests.cs" />
+    <Compile Include="LcmExtensionsTests.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

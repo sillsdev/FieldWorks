@@ -59,7 +59,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			ISharedEventHandlers dummy;
 			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, out dummy);
 			_writingSystemManager = Cache.ServiceLocator.WritingSystemManager;
-			_lcmStyleSheet = _flexComponentParameters.PropertyTable.GetValue<LcmStyleSheet>("FlexStyleSheet");
+			_lcmStyleSheet = FwUtils.StyleSheetFromPropertyTable(_flexComponentParameters.PropertyTable);
 			_owningTable = new StyleInfoTable("AbbySomebody", _writingSystemManager);
 		}
 

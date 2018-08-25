@@ -26,6 +26,7 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
+using SIL.ObjectModel;
 using SIL.Reporting;
 
 namespace LanguageExplorer
@@ -149,6 +150,13 @@ namespace LanguageExplorer
 		/// </summary>
 		protected Dictionary<string, PropertyRecordSorter> _allSorters;
 		private EditFilterMenuHandler _editFilterMenuHandler;
+		private Dictionary<Navigation, bool> _canMoveTo = new Dictionary<Navigation, bool>
+		{
+			{ Navigation.First, false },
+			{ Navigation.Next, false },
+			{ Navigation.Previous, false },
+			{ Navigation.Last, false }
+		};
 
 		#endregion Data members
 
@@ -626,27 +634,35 @@ namespace LanguageExplorer
 		/// </summary>
 		public bool CanChangeFilterClearAll => IsPrimaryRecordList && Filter != null && Filter.IsUserVisible;
 
-		public bool CanMoveTo(Navigation navigateTo)
+		public IReadOnlyDictionary<Navigation, bool> CanMoveToOptions()
 		{
-			bool canMoveTo;
-			switch (navigateTo)
+			var currentIndex = CurrentIndex;
+			foreach (var key in _canMoveTo.Keys.ToList())
 			{
-				case Navigation.First:
-					canMoveTo = FirstItemIndex != -1 && FirstItemIndex != CurrentIndex;
-					break;
-				case Navigation.Next:
-					canMoveTo = NextItemIndex != -1 && NextItemIndex != CurrentIndex;
-					break;
-				case Navigation.Previous:
-					canMoveTo = PrevItemIndex != -1 && PrevItemIndex != CurrentIndex;
-					break;
-				case Navigation.Last:
-					canMoveTo = LastItemIndex != -1 && LastItemIndex != CurrentIndex;
-					break;
-				default:
-					throw new IndexOutOfRangeException($"I don't know if one can move to '{navigateTo}'.");
+				bool canMoveTo;
+				switch (key)
+				{
+					case Navigation.First:
+						var firstItemIndex = FirstItemIndex;
+						_canMoveTo[key] = firstItemIndex != -1 && firstItemIndex != currentIndex;
+						break;
+					case Navigation.Next:
+						var nextItemIndex = NextItemIndex;
+						_canMoveTo[key] = nextItemIndex != -1 && nextItemIndex != currentIndex;
+						break;
+					case Navigation.Previous:
+						var prevItemIndex = PrevItemIndex;
+						_canMoveTo[key] = prevItemIndex != -1 && prevItemIndex != currentIndex;
+						break;
+					case Navigation.Last:
+						var lastItemIndex = LastItemIndex;
+						_canMoveTo[key] = lastItemIndex != -1 && lastItemIndex != currentIndex;
+						break;
+					default:
+						throw new IndexOutOfRangeException($"I don't know if one can move to '{key}'.");
+				}
 			}
-			return canMoveTo;
+			return _canMoveTo;
 		}
 
 		/// <summary>
@@ -3567,17 +3583,7 @@ namespace LanguageExplorer
 		/// (In hierarchical lists, this is not necessarily the first item.)
 		/// If the list is empty return -1.
 		/// </summary>
-		protected virtual int FirstItemIndex
-		{
-			get
-			{
-				if (m_sortedObjects == null || m_sortedObjects.Count == 0)
-				{
-					return -1;
-				}
-				return 0;
-			}
-		}
+		protected virtual int FirstItemIndex => m_sortedObjects == null || m_sortedObjects.Count == 0 ? -1 : 0;
 
 		/// <summary>
 		/// Used on occasions like changing views, this should suppress any optimization that prevents real reloads.

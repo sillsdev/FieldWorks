@@ -32,7 +32,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		{
 			base.TestSetup();
 
-			m_propertyTable = TestSetupServices.SetupTestTriumvirate(out m_publisher, out m_subscriber);
+			TestSetupServices.SetupTestTriumvirate(out m_propertyTable, out m_publisher, out m_subscriber);
 			_dummyWindow = new DummyFwMainWnd();
 			m_propertyTable.SetProperty("window", _dummyWindow);
 		}

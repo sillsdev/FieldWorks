@@ -2107,15 +2107,6 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Redo Delete Participants.
-        /// </summary>
-        internal static string ksRedoDeleteParticipants {
-            get {
-                return ResourceManager.GetString("ksRedoDeleteParticipants", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Redo Delete Reversal Entry from Sense.
         /// </summary>
         internal static string ksRedoDeleteRevFromSense {
@@ -2758,15 +2749,6 @@ namespace LanguageExplorer {
         internal static string ksUndoCreatingEntry {
             get {
                 return ResourceManager.GetString("ksUndoCreatingEntry", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo Delete Participants.
-        /// </summary>
-        internal static string ksUndoDeleteParticipants {
-            get {
-                return ResourceManager.GetString("ksUndoDeleteParticipants", resourceCulture);
             }
         }
         

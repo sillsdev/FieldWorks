@@ -91,6 +91,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				foreach (var manager in _dataTreeWidgetManagers.Values)
 				{
+					manager.UnwireSharedEventHandlers();
+				}
+				foreach (var manager in _dataTreeWidgetManagers.Values)
+				{
 					manager.Dispose();
 				}
 				_dataTreeWidgetManagers.Clear();

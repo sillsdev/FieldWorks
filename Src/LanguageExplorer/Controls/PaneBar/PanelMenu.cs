@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -39,7 +39,7 @@ namespace LanguageExplorer.Controls.PaneBar
 			if (_panelMenuContextMenuAndItems != null)
 			{
 				// Get rid of the old ones, since some tools (e.g., ReversalBulkEditReversalEntriesTool) need to rebuild the menu items each time it is shown.
-				_dataTreeMainPanelContextMenuFactory.DisposePanelMenuContextMenu(_panelMenuId);
+				_dataTreeMainPanelContextMenuFactory.RemovePanelMenuContextMenu(_panelMenuId);
 				_panelMenuContextMenuAndItems = null;
 				ContextMenuStrip = null;
 			}
@@ -58,7 +58,10 @@ namespace LanguageExplorer.Controls.PaneBar
 				Click -= PanelMenu_Click;
 				if (_panelMenuContextMenuAndItems != null)
 				{
-					_dataTreeMainPanelContextMenuFactory.DisposePanelMenuContextMenu(_panelMenuId);
+					// Get rid of the old ones, since some tools (e.g., ReversalBulkEditReversalEntriesTool) need to rebuild the menu items each time it is shown.
+					_dataTreeMainPanelContextMenuFactory.RemovePanelMenuContextMenu(_panelMenuId);
+					_panelMenuContextMenuAndItems = null;
+					ContextMenuStrip = null;
 				}
 			}
 

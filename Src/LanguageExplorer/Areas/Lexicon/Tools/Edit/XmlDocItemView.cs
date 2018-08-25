@@ -140,6 +140,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		void DisposeContextMenu(object sender, EventArgs e)
 		{
+			//Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 			Application.Idle -= DisposeContextMenu;
 			if (m_contextMenu != null)
 			{
@@ -149,6 +150,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				m_contextMenu.Dispose();
 				m_contextMenu = null;
 			}
+			//Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 		}
 
 		protected override void OnHandleCreated(EventArgs e)

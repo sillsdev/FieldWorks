@@ -4,11 +4,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using LanguageExplorer.Areas;
-using LanguageExplorer.LcmUi;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
@@ -69,8 +68,10 @@ namespace LanguageExplorer
 
 		private void Application_Idle(object sender, EventArgs e)
 		{
+			//Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 			_toolStripButtonHistoryBack.Enabled = _backStack.Any();
 			_toolStripButtonHistoryForward.Enabled = _forwardStack.Any();
+			//Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 		}
 
 		private static void Push(LinkedList<FwLinkArgs> stack, FwLinkArgs context)

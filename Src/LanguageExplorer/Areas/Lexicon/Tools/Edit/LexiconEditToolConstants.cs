@@ -9,7 +9,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	/// </summary>
 	internal static class LexiconEditToolConstants
 	{
-		internal const string PanelMenuId = "left";
 		internal const string Show_DictionaryPubPreview = "Show_DictionaryPubPreview";
 		internal const string mnuDataTree_Sense = "mnuDataTree-Sense";
 		internal const string mnuDataTree_Etymology = "mnuDataTree-Etymology";

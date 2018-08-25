@@ -167,6 +167,7 @@ namespace LanguageExplorer.Areas.Grammar
 		/// <param name="node"></param>
 		/// <param name="obj">object to check; should be an IFsFeatStruc</param>
 		/// <returns>true if the feature structure has content in FeatureSpecs; false otherwise</returns>
+		/// <remarks>Called by DataTree via reflection.</remarks>
 		public static bool ShowSliceForVisibleIfData(XElement node, ICmObject obj)
 		{
 			var flid = GetFlid(node, obj);

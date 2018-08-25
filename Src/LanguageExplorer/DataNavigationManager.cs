@@ -113,14 +113,11 @@ namespace LanguageExplorer
 			}
 			else
 			{
-				var currentTuple = _menuItems[Navigation.First];
-				currentTuple.Item1.Enabled = currentTuple.Item2.Enabled = _recordList.CanMoveTo(Navigation.First);
-				currentTuple = _menuItems[Navigation.Previous];
-				currentTuple.Item1.Enabled = currentTuple.Item2.Enabled = _recordList.CanMoveTo(Navigation.Previous);
-				currentTuple = _menuItems[Navigation.Next];
-				currentTuple.Item1.Enabled = currentTuple.Item2.Enabled = _recordList.CanMoveTo(Navigation.Next);
-				currentTuple = _menuItems[Navigation.Last];
-				currentTuple.Item1.Enabled = currentTuple.Item2.Enabled = _recordList.CanMoveTo(Navigation.Last);
+				foreach (var kvp in _recordList.CanMoveToOptions())
+				{
+					var currentTuple = _menuItems[kvp.Key];
+					currentTuple.Item1.Enabled = currentTuple.Item2.Enabled = kvp.Value;
+				}
 			}
 		}
 

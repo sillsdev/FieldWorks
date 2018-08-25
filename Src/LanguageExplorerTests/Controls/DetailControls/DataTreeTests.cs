@@ -117,7 +117,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 
 		private void SetupPubSubAndPropertyTable()
 		{
-			m_propertyTable = TestSetupServices.SetupTestTriumvirate(out m_publisher, out m_subscriber);
+			TestSetupServices.SetupTestTriumvirate(out m_propertyTable, out m_publisher, out m_subscriber);
 		}
 
 		/// <summary>

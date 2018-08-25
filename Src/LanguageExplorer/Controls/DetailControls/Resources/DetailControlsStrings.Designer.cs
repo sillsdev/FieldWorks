@@ -109,24 +109,6 @@ namespace LanguageExplorer.Controls.DetailControls.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Choose Owner of Demoted Record.
-        /// </summary>
-        internal static string ksChooseOwnerOfDemotedRecord {
-            get {
-                return ResourceManager.GetString("ksChooseOwnerOfDemotedRecord", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Choose Owner of Demoted Subrecord.
-        /// </summary>
-        internal static string ksChooseOwnerOfDemotedSubrecord {
-            get {
-                return ResourceManager.GetString("ksChooseOwnerOfDemotedSubrecord", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Command disabled.
         /// </summary>
         internal static string ksCmdDisabled {
@@ -379,33 +361,6 @@ namespace LanguageExplorer.Controls.DetailControls.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Redo Demote.
-        /// </summary>
-        internal static string ksRedoDemote {
-            get {
-                return ResourceManager.GetString("ksRedoDemote", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Redo Move Down.
-        /// </summary>
-        internal static string ksRedoMoveDown {
-            get {
-                return ResourceManager.GetString("ksRedoMoveDown", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Redo Move Up.
-        /// </summary>
-        internal static string ksRedoMoveUp {
-            get {
-                return ResourceManager.GetString("ksRedoMoveUp", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Redo Change Order.
         /// </summary>
         internal static string ksRedoReorder {
@@ -564,33 +519,6 @@ namespace LanguageExplorer.Controls.DetailControls.Resources {
         internal static string ksUndoDeleteRef {
             get {
                 return ResourceManager.GetString("ksUndoDeleteRef", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo Demote.
-        /// </summary>
-        internal static string ksUndoDemote {
-            get {
-                return ResourceManager.GetString("ksUndoDemote", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo Move Down.
-        /// </summary>
-        internal static string ksUndoMoveDown {
-            get {
-                return ResourceManager.GetString("ksUndoMoveDown", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo Move Up.
-        /// </summary>
-        internal static string ksUndoMoveUp {
-            get {
-                return ResourceManager.GetString("ksUndoMoveUp", resourceCulture);
             }
         }
         

@@ -217,7 +217,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Help_Clicked, LanguageExplorerResources.ksHelp, image: ResourceHelper.ButtonMenuHelpIcon);
 		}
 
-		private void Help_Clicked(object sender, EventArgs eventArgs)
+		protected void Help_Clicked(object sender, EventArgs eventArgs)
 		{
 			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), GetSliceHelpTopicID());
 		}
@@ -848,11 +848,13 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void LayoutSplitter(object sender, EventArgs e)
 		{
+			//Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 			Application.Idle -= LayoutSplitter;
 			if (SplitCont != null && !IsDisposed)
 			{
 				SplitCont.PerformLayout();
 			}
+			//Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 		}
 
 		/// <summary>
@@ -1133,7 +1135,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		public string ChooserDlgHelpTopicID => XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "chooserDlgHelpTopicID");
 
 		/// <summary />
-		public string GetSliceHelpTopicID()
+		public virtual string GetSliceHelpTopicID()
 		{
 			return GetHelpTopicID(HelpTopicID, "khtpField");
 		}

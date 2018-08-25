@@ -208,7 +208,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public static Font GetFontForNormalStyle(int hvoWs, ILgWritingSystemFactory wsf, IPropertyTable propertyTable)
 		{
-			return GetFontForNormalStyle(hvoWs, propertyTable.GetValue<LcmStyleSheet>("FlexStyleSheet"), wsf);
+			return GetFontForNormalStyle(hvoWs, FwUtils.StyleSheetFromPropertyTable(propertyTable), wsf);
 		}
 
 		/// <summary>

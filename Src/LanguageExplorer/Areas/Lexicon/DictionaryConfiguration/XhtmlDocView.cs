@@ -541,13 +541,14 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 
 		private static void DisposeContextMenu(object sender, EventArgs e)
 		{
+			//Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 			Application.Idle -= DisposeContextMenu;
-			if (s_contextMenu == null)
+			if (s_contextMenu != null)
 			{
-				return;
+				s_contextMenu.Dispose();
+				s_contextMenu = null;
 			}
-			s_contextMenu.Dispose();
-			s_contextMenu = null;
+			//Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 		}
 
 		// Context menu exists just for one invocation (until idle).

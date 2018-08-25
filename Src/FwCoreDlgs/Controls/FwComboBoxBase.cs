@@ -768,7 +768,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public void AdjustForStyleSheet(Form parent, Control grower, IPropertyTable propertyTable)
 		{
-			AdjustForStyleSheet(parent, grower, propertyTable.GetValue<LcmStyleSheet>("FlexStyleSheet"));
+			AdjustForStyleSheet(parent, grower, FwUtils.StyleSheetFromPropertyTable(propertyTable));
 		}
 
 		/// <summary>

@@ -48,7 +48,7 @@ namespace LanguageExplorerTests.Impls
 		{
 			IPublisher publisherDummy;
 			ISubscriber subscriberDummy;
-			_propertyTable = TestSetupServices.SetupTestTriumvirate(out publisherDummy, out subscriberDummy);
+			TestSetupServices.SetupTestTriumvirate(out _propertyTable, out publisherDummy, out subscriberDummy);
 			_propertyTable.LocalSettingsId = "TestLocal";
 			_propertyTable.UserSettingDirectory = _originalSettingsPath;
 
@@ -891,7 +891,7 @@ namespace LanguageExplorerTests.Impls
 				"LanguageExplorer.Areas.TextsAndWords.Discourse.AdvancedMTDialog",
 				"LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance.ClosedFeatureValue",
 				"LanguageExplorer.Areas.Lexicon.CircularRefBreaker",
-				"LanguageExplorer.Controls.LexText.AddAllomorphDlg",
+				"LanguageExplorer.Areas.TextsAndWords.Interlinear.AddAllomorphDlg",
 				"LanguageExplorer.Impls.RestoreDefaultsDlg",
 				"LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibAtomicLauncher",
 				"LanguageExplorer.Areas.TextsAndWords.ImportWordSetDlg",

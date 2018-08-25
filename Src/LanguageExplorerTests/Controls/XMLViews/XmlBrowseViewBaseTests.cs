@@ -520,7 +520,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		{
 			base.TestSetup();
 
-			m_propertyTable = TestSetupServices.SetupTestTriumvirate(out m_publisher, out m_subscriber);
+			TestSetupServices.SetupTestTriumvirate(out m_propertyTable, out m_publisher, out m_subscriber);
 			var bv = new FakeBrowseViewer();
 			var flexComponentParameters = new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber);
 			bv.InitializeFlexComponent(flexComponentParameters);
@@ -534,12 +534,9 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			try
 			{
 				m_view.m_bv.Dispose();
+				m_propertyTable?.Dispose();
 
-				if (m_propertyTable != null)
-				{
-					m_propertyTable.Dispose();
-					m_propertyTable = null;
-				}
+				m_propertyTable = null;
 				m_publisher = null;
 				m_subscriber = null;
 			}

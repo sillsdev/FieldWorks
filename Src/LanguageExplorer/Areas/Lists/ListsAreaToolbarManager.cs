@@ -25,6 +25,7 @@ namespace LanguageExplorer.Areas.Lists
 		private IListArea _listArea;
 		private ToolStripButton _insertItemToolStripButton;
 		private ToolStripButton _insertSubItemToolStripButton;
+		private ToolStripButton _insertEntryToolStripButton;
 		private ToolStripButton _duplicateItemToolStripButton;
 
 		internal ListsAreaToolbarManager(DataTree dataTree, IListArea listArea)
@@ -100,6 +101,7 @@ namespace LanguageExplorer.Areas.Lists
 			if (disposing)
 			{
 				Application.Idle -= ApplicationOnIdle;
+				MyDataTree.CurrentSliceChanged -= MyDataTreeOnCurrentSliceChanged;
 				InsertToolbarManager.ResetInsertToolbar(_majorFlexComponentParameters);
 				_insertItemToolStripButton?.Dispose();
 				_insertSubItemToolStripButton?.Dispose();
@@ -169,7 +171,7 @@ namespace LanguageExplorer.Areas.Lists
 								</command>
 					*/
 					_insertItemToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_sharedEventHandlers.Get(ListsAreaMenuHelper.InsertFeatureType), "toolStripButtonInsertItem", AreaResources.AddItem.ToBitmap(), ListResources.Feature_Type);
-					InsertToolbarManager.AddInsertToolbarItems(_majorFlexComponentParameters, new List<ToolStripButton> { _insertItemToolStripButton });
+					InsertToolbarManager.AddInsertToolbarItems(_majorFlexComponentParameters, new List<ToolStripItem> { _insertItemToolStripButton });
 					// No duplication.
 					break;
 				case AreaServices.LexRefEditMachineName:
@@ -252,7 +254,7 @@ namespace LanguageExplorer.Areas.Lists
 					*/
 					_insertItemToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_sharedEventHandlers.Get(AreaServices.InsertCategory), "toolStripButtonInsertItem", AreaResources.AddItem.ToBitmap(), AreaResources.Add_a_new_category);
 					_insertItemToolStripButton.Tag = new List<object> { currentPossibilityList, MyRecordList };
-					InsertToolbarManager.AddInsertToolbarItems(_majorFlexComponentParameters, new List<ToolStripButton> { _insertItemToolStripButton });
+					InsertToolbarManager.AddInsertToolbarItems(_majorFlexComponentParameters, new List<ToolStripItem> { _insertItemToolStripButton });
 					/*
 						<item command="CmdDataTree-Insert-POS-SubPossibilities" defaultVisible="false" label="Subcategory..." />
 						<command id="CmdDataTree-Insert-POS-SubPossibilities" label="Insert Subcategory..." message="DataTreeInsert" icon="AddSubItem">
@@ -261,7 +263,7 @@ namespace LanguageExplorer.Areas.Lists
 					*/
 					_insertSubItemToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_sharedEventHandlers.Get(AreaServices.InsertCategory), "toolStripButtonInsertSubItem", AreaResources.AddSubItem.ToBitmap(), AreaResources.Subcategory);
 					_insertSubItemToolStripButton.Tag = new List<object> { currentPossibilityList, MyRecordList };
-					InsertToolbarManager.AddInsertToolbarItems(_majorFlexComponentParameters, new List<ToolStripButton> { _insertSubItemToolStripButton });
+					InsertToolbarManager.AddInsertToolbarItems(_majorFlexComponentParameters, new List<ToolStripItem> { _insertSubItemToolStripButton });
 					// No duplication.
 					break;
 				case AreaServices.DomainTypeEditMachineName: // Fall through to default.
@@ -318,6 +320,13 @@ namespace LanguageExplorer.Areas.Lists
 					break;
 			}
 
+			if (activeListTool.MachineName != AreaServices.FeatureTypesAdvancedEditMachineName)
+			{
+				// Add "Entry" menu to all other tools.
+				_insertEntryToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_sharedEventHandlers.Get(AreaServices.CmdAddToLexicon), "toolStripButtonInsertEntry", AreaResources.Major_Entry.ToBitmap(), AreaResources.Add_to_Dictionary);
+				_insertEntryToolStripButton.Tag = MyDataTree;
+				_insertEntryToolStripButton.Visible = false;
+			}
 			// If there is nothing in "toolbarButtonCreationData", then the tool did everything.
 			if (toolbarButtonCreationData.Any())
 			{
@@ -330,7 +339,7 @@ namespace LanguageExplorer.Areas.Lists
 				// SubItem information is optionally present in "toolbarButtonCreationData".
 				if (toolbarButtonCreationData.TryGetValue(insertSubItem, out currentMenuTuple))
 				{
-					// NB: Lists that cannot have subitems won't be adding this toolbar button option at all.
+					// NB: Lists that cannot have sub-items won't be adding this toolbar button option at all.
 					_insertSubItemToolStripButton = ToolStripButtonFactory.CreateToolStripButton(currentMenuTuple.Item1, "toolStripButtonInsertSubItem", AreaResources.AddSubItem.ToBitmap(), currentMenuTuple.Item2);
 					_insertSubItemToolStripButton.Tag = new List<object> { currentPossibility, MyDataTree, MyRecordList, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable, currentMenuTuple.Item3 };
 					_insertSubItemToolStripButton.Enabled = currentPossibilityList.PossibilitiesOS.Any(); // Visbile, but only enabled, if there are possible owners for the new sub item.
@@ -344,7 +353,12 @@ namespace LanguageExplorer.Areas.Lists
 					_duplicateItemToolStripButton.Tag = new List<object> { currentPossibility, MyDataTree, MyRecordList, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable, currentMenuTuple.Item3 };
 				}
 
-				var itemsToAdd = new List<ToolStripButton> { _insertItemToolStripButton };
+				var itemsToAdd = new List<ToolStripItem>(4);
+				if (_insertEntryToolStripButton != null)
+				{
+					itemsToAdd.Add(_insertEntryToolStripButton);
+				}
+				itemsToAdd.Add(_insertItemToolStripButton);
 				if (_insertSubItemToolStripButton != null)
 				{
 					itemsToAdd.Add(_insertSubItemToolStripButton);
@@ -356,31 +370,58 @@ namespace LanguageExplorer.Areas.Lists
 				InsertToolbarManager.AddInsertToolbarItems(_majorFlexComponentParameters, itemsToAdd);
 
 				Application.Idle += ApplicationOnIdle;
+				MyDataTree.CurrentSliceChanged += MyDataTreeOnCurrentSliceChanged;
 			}
 		}
 
 		private void Duplicate_Item_Clicked(object sender, EventArgs e)
 		{
-			// NB: This will not be enabled if a subitem is the current record in the record list.
+			// NB: This will not be enabled if a sub-item is the current record in the record list.
 			var tag = (List<object>)((ToolStripItem)sender).Tag;
 			var possibilityList = (ICmPossibilityList)tag[0];
 			var recordList = (IRecordList)tag[2];
 			var otherOptions = (Dictionary<string, string>)tag[4];
-			var cache = possibilityList.Cache;
-			ICmPossibility newPossibility = null;
 			var currentPossibility = (ICmPossibility)recordList.CurrentObject;
-			AreaServices.UndoExtension(otherOptions[AreaServices.BaseUowMessage], cache.ActionHandlerAccessor, () =>
+			AreaServices.UndoExtension(otherOptions[AreaServices.BaseUowMessage], possibilityList.Cache.ActionHandlerAccessor, () =>
 			{
-				currentPossibility.Clone(possibilityList);
+				if (currentPossibility is ICmCustomItem)
+				{
+					((ICmCustomItem)currentPossibility).Clone();
+				}
+				else
+				{
+					// NB: This will throw, if 'currentPossibility' is a subclass of ICmPossibility, since we don't support duplicating those.
+					currentPossibility.Clone();
+				}
 			});
 		}
 
 		private void ApplicationOnIdle(object sender, EventArgs e)
 		{
+			//Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 			if (_duplicateItemToolStripButton != null)
 			{
 				_duplicateItemToolStripButton.Enabled = MyRecordList.CurrentObject != null && MyRecordList.CurrentObject.Owner.ClassID == CmPossibilityListTags.kClassId;
 			}
+			var currentSliceAsStTextSlice = AreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree);
+			if (_insertEntryToolStripButton != null && _insertEntryToolStripButton.Visible &&  currentSliceAsStTextSlice != null)
+			{
+				AreaWideMenuHelper.Set_CmdAddToLexicon_State(_majorFlexComponentParameters.LcmCache, _insertEntryToolStripButton, currentSliceAsStTextSlice.RootSite.RootBox.Selection);
+			}
+			else
+			{
+				_insertEntryToolStripButton.Enabled = false;
+			}
+			//Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+		}
+
+		private void MyDataTreeOnCurrentSliceChanged(object sender, CurrentSliceChangedEventArgs e)
+		{
+			if (_insertEntryToolStripButton == null)
+			{
+				return;
+			}
+			_insertEntryToolStripButton.Visible = e.CurrentSlice is StTextSlice;
 		}
 	}
 }

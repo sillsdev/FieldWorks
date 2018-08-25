@@ -114,20 +114,27 @@ namespace LanguageExplorerTests.Controls.LexText
 
 			IPublisher publisher;
 			ISubscriber subscriber;
-			using (var propertyTable = TestSetupServices.SetupTestTriumvirate(out publisher, out subscriber))
-			using (var dlg = new FeatureSystemInflectionFeatureListDlg())
+			IPropertyTable propertyTable;
+			TestSetupServices.SetupTestTriumvirate(out propertyTable, out publisher, out subscriber);
+			try
 			{
-				ILexEntryInflType cobj =
-					Cache.ServiceLocator.GetInstance<ILexEntryInflTypeFactory>().Create();
-				lp.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Add(cobj);
-				dlg.SetDlgInfo(Cache, propertyTable, cobj, 0);
+				using (var dlg = new FeatureSystemInflectionFeatureListDlg())
+				{
+					ILexEntryInflType cobj = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeFactory>().Create();
+					lp.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Add(cobj);
+					dlg.SetDlgInfo(Cache, propertyTable, cobj, 0);
 
-				// load some feature system values into treeview
-				FeatureStructureTreeView tv = dlg.TreeView;
+					// load some feature system values into treeview
+					FeatureStructureTreeView tv = dlg.TreeView;
 
-				Assert.AreEqual(2, tv.Nodes.Count, "Count of top level nodes in tree view");
-				TreeNodeCollection col = tv.Nodes[0].Nodes;
-				Assert.AreEqual(3, col.Count, "Count of first level nodes in tree view");
+					Assert.AreEqual(2, tv.Nodes.Count, "Count of top level nodes in tree view");
+					TreeNodeCollection col = tv.Nodes[0].Nodes;
+					Assert.AreEqual(3, col.Count, "Count of first level nodes in tree view");
+				}
+			}
+			finally
+			{
+				propertyTable.Dispose();
 			}
 		}
 
@@ -164,13 +171,23 @@ namespace LanguageExplorerTests.Controls.LexText
 		{
 			IPublisher publisher;
 			ISubscriber subscriber;
-			using (var propertyTable = TestSetupServices.SetupTestTriumvirate(out publisher, out subscriber))
-			using (MsaInflectionFeatureListDlg dlg = new MsaInflectionFeatureListDlg())
+			IPropertyTable propertyTable;
+			TestSetupServices.SetupTestTriumvirate(out propertyTable, out publisher, out subscriber);
+			try
 			{
-				foreach (IFsFeatureSpecification spec in featStruct.FeatureSpecsOC)
-					featStruct.FeatureSpecsOC.Remove(spec);
-				dlg.SetDlgInfo(Cache, propertyTable, featStruct, MoStemMsaTags.kflidMsFeatures);
-				dlg.UpdateFeatureStructure(tv.Nodes);
+				using (MsaInflectionFeatureListDlg dlg = new MsaInflectionFeatureListDlg())
+				{
+					foreach (IFsFeatureSpecification spec in featStruct.FeatureSpecsOC)
+					{
+						featStruct.FeatureSpecsOC.Remove(spec);
+					}
+					dlg.SetDlgInfo(Cache, propertyTable, featStruct, MoStemMsaTags.kflidMsFeatures);
+					dlg.UpdateFeatureStructure(tv.Nodes);
+				}
+			}
+			finally
+			{
+				propertyTable.Dispose();
 			}
 		}
 

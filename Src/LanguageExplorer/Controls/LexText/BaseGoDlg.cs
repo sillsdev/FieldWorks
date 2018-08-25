@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.XMLViews;
+using SIL.Code;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
@@ -178,7 +179,8 @@ namespace LanguageExplorer.Controls.LexText
 
 		protected virtual void SetDlgInfo(LcmCache cache, WindowParams wp, int ws)
 		{
-			Debug.Assert(cache != null);
+			Guard.AgainstNull(cache, nameof(cache));
+
 			m_cache = cache;
 
 			// Reset window location.

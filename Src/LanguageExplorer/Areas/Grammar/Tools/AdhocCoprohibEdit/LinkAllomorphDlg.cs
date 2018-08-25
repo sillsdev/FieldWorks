@@ -2,20 +2,22 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Diagnostics;
-using System.Windows.Forms;
+using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.LexText;
 using SIL.LCModel;
 
-namespace LanguageExplorer.Controls.LexText
+namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 {
-	public class LinkMSADlg : EntryGoDlg
+	public class LinkAllomorphDlg : EntryGoDlg
 	{
 		#region Data members
 
-		private Label label3;
-		private FwComboBox m_fwcbFunctions;
-		private GroupBox groupBox1;
-		private GroupBox groupBox2;
+		private System.Windows.Forms.Label label3;
+		private FwComboBox m_fwcbAllomorphs;
+		private System.Windows.Forms.GroupBox groupBox1;
+		private System.Windows.Forms.GroupBox grplbl;
 
 		#endregion Data members
 
@@ -23,30 +25,47 @@ namespace LanguageExplorer.Controls.LexText
 
 		protected override WindowParams DefaultWindowParams => new WindowParams
 		{
-			m_title = LexTextControls.ksChooseMorphAndGramInfo,
+			m_title = LexTextControls.ksChooseAllomorph,
 			m_btnText = LexTextControls.ks_OK
 		};
 
-		protected override string PersistenceLabel => "LinkMSA";
+		protected override string PersistenceLabel => "LinkAllomorph";
 
 		/// <summary>
 		/// Gets the database id of the selected object.
 		/// </summary>
-		public override ICmObject SelectedObject => m_cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>().GetObject(((LMsa)m_fwcbFunctions.SelectedItem).HVO);
+		public override ICmObject SelectedObject => m_cache.ServiceLocator.GetInstance<IMoFormRepository>().GetObject(((LAllomorph)m_fwcbAllomorphs.SelectedItem).HVO);
 		#endregion Properties
+
+		/// <summary>
+		/// This method handles the 'form' text change so that when it goes back to a length of zero,
+		/// the allomorphs combo box is made empty.
+		/// (This is a refinement of the dlg to act 'more correctly'.)
+		/// </summary>
+		protected void Form_TextChanged(object sender, EventArgs e)
+		{
+			if (m_tbForm.Text.Length == 0)
+			{
+				m_fwcbAllomorphs.Text = "";		// clear the text box
+				m_fwcbAllomorphs.Items.Clear();	// clear the drop down list box
+			}
+		}
 
 		#region	Construction and Destruction
 
-		public LinkMSADlg()
+		public LinkAllomorphDlg()
 		{
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
-			ShowControlsBasedOnPanel1Position();	// used for sizing and display of some controls
+
+			SetHelpTopic("hktpInsertAllomorphChooseAllomorph");
+
+			m_tbForm.TextChanged += Form_TextChanged;			// erase when needed
+
+			ShowControlsBasedOnPanel1Position();	// make sure controls are all set properly
 
 			m_btnInsert.Enabled = false;
 			m_btnHelp.Enabled = true;
-
-			SetHelpTopic("khtpInsertMorphemeChooseFunction");
 		}
 
 		/// <summary>
@@ -75,51 +94,68 @@ namespace LanguageExplorer.Controls.LexText
 			m_startingEntry = startingEntry;
 
 			SetDlgInfo(cache, (WindowParams)null);
-			SetComboWritingSystemFactory(cache);
 		}
 
 		/// <summary>
-		/// Common and needed code for the setup of the dlg
-		/// </summary>
-		private void SetComboWritingSystemFactory(LcmCache cache)
-		{
-			m_fwcbFunctions.WritingSystemFactory = cache.WritingSystemFactory;
-			m_fwcbFunctions.WritingSystemCode = cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
-		}
-
-		/// <summary>
-		/// Set up the dlg in preparation to showing it.
+		/// Common init of the dialog, whether or not we have a starting lex entry.
 		/// </summary>
 		public override void SetDlgInfo(LcmCache cache, WindowParams wp)
 		{
 			base.SetDlgInfo(cache, wp);
 			// This is needed to make the replacement MatchingEntriesBrowser visible:
 			Controls.SetChildIndex(m_matchingObjectsBrowser, 0);
-			// LT-6325 fix...
-			SetComboWritingSystemFactory(cache);
+
+			m_fwcbAllomorphs.WritingSystemFactory = cache.WritingSystemFactory;
+			m_fwcbAllomorphs.WritingSystemCode = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
+			// For a resizeable dialog, we don't want AdjustForStylesheet to really change its size,
+			// because then it ends up growing every time it launches!
+			var oldHeight = Height;
+			m_fwcbAllomorphs.AdjustForStyleSheet(this, grplbl, PropertyTable);
+			Height = oldHeight;
 		}
+
 		#endregion	Construction and Destruction
 
 		#region	Other methods
 
 		protected override void HandleMatchingSelectionChanged()
 		{
-			m_fwcbFunctions.Items.Clear();
+			m_fwcbAllomorphs.Items.Clear();
+			m_fwcbAllomorphs.Text = string.Empty;
 			if (m_selObject == null)
 			{
 				return;
 			}
-			m_fwcbFunctions.SuspendLayout();
-			foreach (var msa in ((ILexEntry)m_selObject).MorphoSyntaxAnalysesOC)
+			m_fwcbAllomorphs.SuspendLayout();
+			/* NB: We remove abstract MoForms, because the adhoc allo coprohibiton object wants them removed.
+			 * If any other client of this dlg comes along that wants them,
+			 * we will need to feed in a parameter that tells us whether to exclude them or not.
+			*/
+			// Add the lexeme form, if it exists.
+			var entry = (ILexEntry)m_selObject;
+			var lf = entry.LexemeFormOA;
+			if (lf != null && !lf.IsAbstract)
 			{
-				m_fwcbFunctions.Items.Add(new LMsa(msa));
+				m_fwcbAllomorphs.Items.Add(new LAllomorph(entry.LexemeFormOA));
 			}
-			if (m_fwcbFunctions.Items.Count > 0)
+			foreach (var allo in entry.AlternateFormsOS)
 			{
-				m_fwcbFunctions.SelectedItem = m_fwcbFunctions.Items[0];
+				if (!allo.IsAbstract)
+				{
+					m_fwcbAllomorphs.Items.Add(new LAllomorph(allo));
+				}
 			}
-			m_btnOK.Enabled = m_fwcbFunctions.Items.Count > 0;
-			m_fwcbFunctions.ResumeLayout();
+			if (m_fwcbAllomorphs.Items.Count > 0)
+			{
+				m_fwcbAllomorphs.SelectedItem = m_fwcbAllomorphs.Items[0];
+			}
+			m_btnOK.Enabled = m_fwcbAllomorphs.Items.Count > 0;
+			m_fwcbAllomorphs.ResumeLayout();
+			// For a resizeable dialog, we don't want AdjustForStylesheet to really change its size,
+			// because then it ends up growing every time it launches!
+			var oldHeight = Height;
+			m_fwcbAllomorphs.AdjustForStyleSheet(this, grplbl, PropertyTable);
+			Height = oldHeight;
 		}
 
 		#endregion	Other methods
@@ -131,11 +167,11 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LinkMSADlg));
-			this.m_fwcbFunctions = new LanguageExplorer.Controls.FwComboBox();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LinkAllomorphDlg));
 			this.label3 = new System.Windows.Forms.Label();
+			this.m_fwcbAllomorphs = new LanguageExplorer.Controls.FwComboBox();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.groupBox2 = new System.Windows.Forms.GroupBox();
+			this.grplbl = new System.Windows.Forms.GroupBox();
 			this.m_panel1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.m_tbForm)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.m_fwTextBoxBottomMsg)).BeginInit();
@@ -165,42 +201,26 @@ namespace LanguageExplorer.Controls.LexText
 			//
 			resources.ApplyResources(this.m_matchingObjectsBrowser, "m_matchingObjectsBrowser");
 			//
-			// m_tbForm
-			//
-			resources.ApplyResources(this.m_tbForm, "m_tbForm");
-			//
-			// m_cbWritingSystems
-			//
-			resources.ApplyResources(this.m_cbWritingSystems, "m_cbWritingSystems");
-			//
-			// label1
-			//
-			resources.ApplyResources(this.m_wsLabel, "label1");
-			//
 			// m_fwTextBoxBottomMsg
 			//
 			resources.ApplyResources(this.m_fwTextBoxBottomMsg, "m_fwTextBoxBottomMsg");
-			//
-			// label2
-			//
-			resources.ApplyResources(this.m_objectsLabel, "label2");
-			//
-			// m_fwcbFunctions
-			//
-			resources.ApplyResources(this.m_fwcbFunctions, "m_fwcbFunctions");
-			this.m_fwcbFunctions.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.m_fwcbFunctions.DropDownWidth = 123;
-			this.m_fwcbFunctions.DroppedDown = false;
-			this.m_fwcbFunctions.Name = "m_fwcbFunctions";
-			this.m_fwcbFunctions.PreviousTextBoxText = null;
-			this.m_fwcbFunctions.SelectedIndex = -1;
-			this.m_fwcbFunctions.SelectedItem = null;
-			this.m_fwcbFunctions.StyleSheet = null;
 			//
 			// label3
 			//
 			resources.ApplyResources(this.label3, "label3");
 			this.label3.Name = "label3";
+			//
+			// m_fwcbAllomorphs
+			//
+			resources.ApplyResources(this.m_fwcbAllomorphs, "m_fwcbAllomorphs");
+			this.m_fwcbAllomorphs.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.m_fwcbAllomorphs.DropDownWidth = 200;
+			this.m_fwcbAllomorphs.DroppedDown = false;
+			this.m_fwcbAllomorphs.Name = "m_fwcbAllomorphs";
+			this.m_fwcbAllomorphs.PreviousTextBoxText = null;
+			this.m_fwcbAllomorphs.SelectedIndex = -1;
+			this.m_fwcbAllomorphs.SelectedItem = null;
+			this.m_fwcbAllomorphs.StyleSheet = null;
 			//
 			// groupBox1
 			//
@@ -209,25 +229,27 @@ namespace LanguageExplorer.Controls.LexText
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.TabStop = false;
 			//
-			// groupBox2
+			// grplbl
 			//
-			resources.ApplyResources(this.groupBox2, "groupBox2");
-			this.groupBox2.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.TabStop = false;
+			resources.ApplyResources(this.grplbl, "grplbl");
+			this.grplbl.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+			this.grplbl.Name = "grplbl";
+			this.grplbl.TabStop = false;
 			//
-			// LinkMSADlg
+			// LinkAllomorphDlg
 			//
 			resources.ApplyResources(this, "$this");
-			this.Controls.Add(this.m_fwcbFunctions);
+			this.Controls.Add(this.m_fwcbAllomorphs);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.groupBox1);
-			this.Controls.Add(this.groupBox2);
+			this.Controls.Add(this.grplbl);
 			this.m_helpProvider.SetHelpNavigator(this, ((System.Windows.Forms.HelpNavigator)(resources.GetObject("$this.HelpNavigator"))));
-			this.Name = "LinkMSADlg";
+			this.Name = "LinkAllomorphDlg";
 			this.m_helpProvider.SetShowHelp(this, ((bool)(resources.GetObject("$this.ShowHelp"))));
-			this.Controls.SetChildIndex(this.groupBox2, 0);
+			this.Controls.SetChildIndex(this.grplbl, 0);
 			this.Controls.SetChildIndex(this.groupBox1, 0);
+			this.Controls.SetChildIndex(this.label3, 0);
+			this.Controls.SetChildIndex(this.m_fwcbAllomorphs, 0);
 			this.Controls.SetChildIndex(this.m_btnClose, 0);
 			this.Controls.SetChildIndex(this.m_btnOK, 0);
 			this.Controls.SetChildIndex(this.m_btnInsert, 0);
@@ -238,8 +260,6 @@ namespace LanguageExplorer.Controls.LexText
 			this.Controls.SetChildIndex(this.m_wsLabel, 0);
 			this.Controls.SetChildIndex(this.m_fwTextBoxBottomMsg, 0);
 			this.Controls.SetChildIndex(this.m_objectsLabel, 0);
-			this.Controls.SetChildIndex(this.label3, 0);
-			this.Controls.SetChildIndex(this.m_fwcbFunctions, 0);
 			this.m_panel1.ResumeLayout(false);
 			this.m_panel1.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.m_tbForm)).EndInit();

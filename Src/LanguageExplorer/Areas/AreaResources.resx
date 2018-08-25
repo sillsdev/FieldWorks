@@ -766,4 +766,19 @@ If you are not the one designated user who adds fields, or you are making some o
   <data name="Move_Reversal_Category" xml:space="preserve">
     <value>Move Reversal Category</value>
   </data>
+  <data name="EntryWithDots" xml:space="preserve">
+    <value>Entry...</value>
+  </data>
+  <data name="Major_Entry" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\images\Create Entry1.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Add_to_Dictionary" xml:space="preserve">
+    <value>Add to Dictionary...</value>
+  </data>
+  <data name="Add_the_current_word_to_the_lexicon" xml:space="preserve">
+    <value>Add the current word to the lexicon (if it is a vernacular word).</value>
+  </data>
+  <data name="Find_in_Dictionary" xml:space="preserve">
+    <value>Find in _Dictionary...</value>
+  </data>
 </root>

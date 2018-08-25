@@ -55,7 +55,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 				// Try getting it from the notebook area.
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(NotebookArea.Records, majorFlexComponentParameters.Statusbar, NotebookArea.NotebookFactoryMethod);
 			}
-			_browseToolMenuHelper = new NotebookBrowseToolMenuHelper(majorFlexComponentParameters, _recordList);
+			_browseToolMenuHelper = new NotebookBrowseToolMenuHelper(majorFlexComponentParameters, this, _recordList);
 			_recordBrowseView = new RecordBrowseView(NotebookArea.LoadDocument(NotebookResources.NotebookBrowseParameters).Root, _browseToolMenuHelper.MyBrowseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,

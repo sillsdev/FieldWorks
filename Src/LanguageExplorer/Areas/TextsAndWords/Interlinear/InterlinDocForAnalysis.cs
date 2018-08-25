@@ -31,7 +31,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// so we can put all AddWordsToLexicon related code there rather than having this
 		/// class do double duty.
 		/// </summary>
-		internal const string ksPropertyAddWordsToLexicon = "ITexts_AddWordsToLexicon";
+		internal const string ITexts_AddWordsToLexicon = "ITexts_AddWordsToLexicon";
 
 		public InterlinDocForAnalysis()
 		{
@@ -50,7 +50,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			base.InitializeFlexComponent(flexComponentParameters);
 
-			Subscriber.Subscribe("ksPropertyAddWordsToLexicon", PropertyAddWordsToLexicon_Changed);
+			Subscriber.Subscribe(ITexts_AddWordsToLexicon, PropertyAddWordsToLexicon_Changed);
 		}
 
 		#endregion
@@ -890,7 +890,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal InterlinMode GetSelectedLineChoiceMode()
 		{
-			return PropertyTable.GetValue(ksPropertyAddWordsToLexicon, false) ? InterlinMode.GlossAddWordsToLexicon : InterlinMode.Gloss;
+			return PropertyTable.GetValue(ITexts_AddWordsToLexicon, false) ? InterlinMode.GlossAddWordsToLexicon : InterlinMode.Gloss;
 		}
 
 		#endregion

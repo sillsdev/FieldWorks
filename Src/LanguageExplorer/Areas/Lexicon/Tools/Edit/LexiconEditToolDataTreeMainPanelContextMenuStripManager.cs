@@ -49,7 +49,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
 			MyRecordList = recordList;
 
-			MyDataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(LexiconEditToolConstants.PanelMenuId, CreateMainPanelContextMenuStrip);
+			MyDataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(AreaServices.PanelMenuId, CreateMainPanelContextMenuStrip);
 		}
 
 		/// <inheritdoc />

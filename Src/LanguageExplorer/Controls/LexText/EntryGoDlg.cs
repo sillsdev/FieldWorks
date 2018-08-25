@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -83,9 +83,9 @@ namespace LanguageExplorer.Controls.LexText
 				m_matchingObjectsBrowser.SearchAsync(GetFields(string.Empty, selectedWs.Handle));
 			}
 		}
-#endregion Construction and Destruction
+		#endregion Construction and Destruction
 
-#region	Other methods
+		#region	Other methods
 
 		/// <summary>
 		/// Reset the list of matching items.
@@ -202,9 +202,9 @@ namespace LanguageExplorer.Controls.LexText
 			}
 		}
 
-#endregion  // Other methods
+		#endregion  // Other methods
 
-#region	Event handlers
+		#region	Event handlers
 
 		protected override string AdjustText(out int addToSelection)
 		{
@@ -259,6 +259,6 @@ namespace LanguageExplorer.Controls.LexText
 				}
 			}
 		}
-#endregion  // Event handlers
+		#endregion  // Event handlers
 	}
 }

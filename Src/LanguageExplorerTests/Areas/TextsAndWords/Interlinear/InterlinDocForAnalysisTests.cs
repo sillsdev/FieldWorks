@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -80,7 +80,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		{
 			base.TestSetup();
 
-			m_propertyTable = TestSetupServices.SetupTestTriumvirate(out m_publisher, out m_subscriber);
+			TestSetupServices.SetupTestTriumvirate(out m_propertyTable, out m_publisher, out m_subscriber);
 			m_interlinDoc = new MockInterlinDocForAnalysis(m_stText0);
 			m_interlinDoc.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
 			m_focusBox = m_interlinDoc.FocusBox as TestableFocusBox;

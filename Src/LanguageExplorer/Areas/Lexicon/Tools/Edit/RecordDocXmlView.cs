@@ -135,13 +135,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		}
 
 #if RANDYTODO
-/// <summary>
-/// The configure dialog may be launched any time this tool is active.
-/// Its name is derived from the name of the tool.
-/// </summary>
-/// <param name="commandObject"></param>
-/// <param name="display"></param>
-/// <returns></returns>
+		/// <summary>
+		/// The configure dialog may be launched any time this tool is active.
+		/// Its name is derived from the name of the tool.
+		/// </summary>
 		public virtual bool OnDisplayConfigureXmlDocView(object commandObject, ref UIItemDisplayProperties display)
 		{
 			if (string.IsNullOrEmpty(m_configObjectName))

@@ -1042,16 +1042,6 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
-        /// </summary>
-        internal static System.Drawing.Icon Major_Entry {
-            get {
-                object obj = ResourceManager.GetObject("Major_Entry", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;parameters id=&quot;lexentryMatchList&quot; listItemsClass=&quot;LexEntry&quot; filterBar=&quot;false&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; altTitleId=&quot;LexEntry-Plural&quot; editable=&quot;false&quot;&gt;
         ///	&lt;columns&gt;

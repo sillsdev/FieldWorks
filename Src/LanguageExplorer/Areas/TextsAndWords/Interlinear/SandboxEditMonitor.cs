@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -356,6 +356,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </remarks>
 		private void RecreateDelayedSelection(object sender, EventArgs e)
 		{
+			//Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 			Application.Idle -= RecreateDelayedSelection;
 			if (m_sandbox != null && m_infoDelayed != null && m_sandbox.RootBox != null)
 			{
@@ -375,6 +376,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			m_infoDelayed = null;
 			m_needDelayedSelection = false;
+			//Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 		}
 
 		#endregion

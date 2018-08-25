@@ -14,6 +14,7 @@ using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.LexText.DataNotebook;
 using LanguageExplorer.DictionaryConfiguration;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -157,6 +158,8 @@ namespace LanguageExplorer.Areas
 		internal const string SandboxJumpToTool = "SandboxJumpToTool";
 		internal const string InsertCategory = "InsertCategory";
 		internal const string DataTreeDelete = "DataTreeDelete";
+		internal const string CmdAddToLexicon = "CmdAddToLexicon";
+		internal const string LexiconLookup = "LexiconLookup";
 
 		#endregion commands
 
@@ -182,6 +185,9 @@ namespace LanguageExplorer.Areas
 		internal const string ClassName = "className";
 		internal const string OwnerClassName = "ownerClassName";
 		internal const string BaseUowMessage = "baseUowMessage";
+		internal const string PanelMenuId = "left";
+		internal const string MainItem = "MainItem";
+		internal const string SubItem = "Subitem";
 
 		#endregion Random strings
 
@@ -293,12 +299,12 @@ namespace LanguageExplorer.Areas
 
 		internal static void UndoExtension(string baseText, IActionHandler actionHandler, Action task)
 		{
-			UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerResources.Undo_0, baseText), string.Format(LanguageExplorerResources.Redo_0, baseText), actionHandler, task);
+			UndoableUnitOfWorkHelper.Do(String.Format(LanguageExplorerResources.Undo_0, baseText), String.Format(LanguageExplorerResources.Redo_0, baseText), actionHandler, task);
 		}
 
 		internal static void UndoExtensionUsingNewOrCurrentUOW(string baseText, IActionHandler actionHandler, Action task)
 		{
-			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(string.Format(LanguageExplorerResources.Undo_0, baseText), string.Format(LanguageExplorerResources.Redo_0, baseText), actionHandler, task);
+			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(String.Format(LanguageExplorerResources.Undo_0, baseText), String.Format(LanguageExplorerResources.Redo_0, baseText), actionHandler, task);
 		}
 
 		/// <summary>

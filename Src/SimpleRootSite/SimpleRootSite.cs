@@ -3333,8 +3333,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		void PostponedInvalidate(object sender, EventArgs e)
 		{
+			//Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 			Application.Idle -= PostponedInvalidate;
 			Invalidate();
+			//Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 		}
 
 		/// -----------------------------------------------------------------------------------

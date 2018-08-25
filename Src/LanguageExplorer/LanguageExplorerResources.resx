@@ -762,9 +762,6 @@ you expect.</value>
   <data name="ksRedoCreatingEntry" xml:space="preserve">
     <value>Redo Creating Entry</value>
   </data>
-  <data name="ksRedoDeleteParticipants" xml:space="preserve">
-    <value>Redo Delete Participants</value>
-  </data>
   <data name="ksRedoDeleteRevFromSense" xml:space="preserve">
     <value>Redo Delete Reversal Entry from Sense</value>
   </data>
@@ -850,9 +847,6 @@ you expect.</value>
   </data>
   <data name="ksUndoCreatingEntry" xml:space="preserve">
     <value>Undo Creating Entry</value>
-  </data>
-  <data name="ksUndoDeleteParticipants" xml:space="preserve">
-    <value>Undo Delete Participants</value>
   </data>
   <data name="ksUndoDeleteRevFromSense" xml:space="preserve">
     <value>Undo Delete Reversal Entry from Sense</value>
@@ -1286,10 +1280,6 @@ Do you want to continue with the export?</value>
   <data name="ksVariantTypes" xml:space="preserve">
     <value>Variant Types:</value>
   </data>
-  <data name="MoveDown" xml:space="preserve">
-    <value>Move Down</value>
-    <comment>action on a tree view item</comment>
-  </data>
   <data name="MoveUp" xml:space="preserve">
     <value>Move Up</value>
     <comment>action on a tree view item</comment>
@@ -1378,5 +1368,8 @@ Do you want to continue with the export?</value>
   </data>
   <data name="Insert_0" xml:space="preserve">
     <value>Insert {0}</value>
+  </data>
+  <data name="MoveDown" xml:space="preserve">
+    <value>Move Down</value>
   </data>
 </root>

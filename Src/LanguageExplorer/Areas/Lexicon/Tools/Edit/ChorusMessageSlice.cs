@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2013-2018 SIL International
+// Copyright (c) 2013-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -139,6 +139,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <param name="node"></param>
 		/// <param name="obj">object to check; should be an ILexEntry</param>
 		/// <returns>true if there are chorus notes for this object; false otherwise</returns>
+		/// <remarks>Called by DataTree via reflection.</remarks>
 		public static bool ShowSliceForVisibleIfData(XmlNode node, ICmObject obj)
 		{
 			using (var chorusSystem = new ChorusSystem(obj.Cache.ProjectId.ProjectFolder))

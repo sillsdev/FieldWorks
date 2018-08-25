@@ -155,10 +155,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_LexemeForm(Slice slice, string contextMenuId)
 		{
-			if (contextMenuId != LexiconEditToolConstants.mnuDataTree_LexemeForm)
-			{
-				throw new ArgumentException($"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_LexemeForm}', but got '{contextMenuId}' instead.");
-			}
+			Require.That(contextMenuId == LexiconEditToolConstants.mnuDataTree_LexemeForm, $"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_LexemeForm}', but got '{contextMenuId}' instead.");
 
 			// Start: <menu id="mnuDataTree-LexemeForm">
 			var contextMenuStrip = new ContextMenuStrip
@@ -308,10 +305,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Environments_Insert(Slice slice, string contextMenuId)
 		{
-			if (contextMenuId != LexiconEditToolConstants.mnuDataTree_Environments_Insert)
-			{
-				throw new ArgumentException($"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_Environments_Insert}', but got '{contextMenuId}' instead.");
-			}
+			Require.That(contextMenuId == LexiconEditToolConstants.mnuDataTree_Environments_Insert, $"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_Environments_Insert}', but got '{contextMenuId}' instead.");
 
 			// Start: <menu id="mnuDataTree-Environments-Insert">
 			// This "mnuDataTree-Environments-Insert" menu is used in four places.
@@ -330,10 +324,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_LexemeFormContext_RightClick(Slice slice, string contextMenuId)
 		{
-			if (contextMenuId != mnuDataTree_LexemeFormContext)
-			{
-				throw new ArgumentException($"Expected argument value of '{mnuDataTree_LexemeFormContext}', but got '{contextMenuId}' instead.");
-			}
+			Require.That(contextMenuId == mnuDataTree_LexemeFormContext, $"Expected argument value of '{mnuDataTree_LexemeFormContext}', but got '{contextMenuId}' instead.");
 
 			// Start: <menu id="mnuDataTree-LexemeFormContext">
 			var contextMenuStrip = new ContextMenuStrip
@@ -395,10 +386,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_CitationFormContext(Slice slice, string contextMenuId)
 		{
-			if (contextMenuId != mnuDataTree_CitationFormContext)
-			{
-				throw new ArgumentException($"Expected argument value of '{mnuDataTree_CitationFormContext}', but got '{contextMenuId}' instead.");
-			}
+			Require.That(contextMenuId == mnuDataTree_CitationFormContext, $"Expected argument value of '{mnuDataTree_CitationFormContext}', but got '{contextMenuId}' instead.");
 
 			// Start: <menu id="mnuDataTree-CitationFormContext">
 			var contextMenuStrip = new ContextMenuStrip
@@ -447,10 +435,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_AffixProcess(Slice slice, string contextMenuId)
 		{
-			if (contextMenuId != LexiconEditToolConstants.mnuDataTree_AffixProcess)
-			{
-				throw new ArgumentException($"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_AffixProcess}', but got '{contextMenuId}' instead.");
-			}
+			Require.That(contextMenuId == LexiconEditToolConstants.mnuDataTree_AffixProcess, $"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_AffixProcess}', but got '{contextMenuId}' instead.");
 
 			// Start: <menu id="mnuDataTree-AffixProcess">
 			var contextMenuStrip = new ContextMenuStrip
@@ -526,10 +511,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_VariantForm(Slice slice, string contextMenuId)
 		{
-			if (contextMenuId != LexiconEditToolConstants.mnuDataTree_VariantForm)
-			{
-				throw new ArgumentException($"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_VariantForm}', but got '{contextMenuId}' instead.");
-			}
+			Require.That(contextMenuId == LexiconEditToolConstants.mnuDataTree_VariantForm, $"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_VariantForm}', but got '{contextMenuId}' instead.");
 
 			// Start: <menu id="mnuDataTree-VariantForm">
 			var contextMenuStrip = new ContextMenuStrip
@@ -584,10 +566,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_AlternateForm(Slice slice, string contextMenuId)
 		{
-			if (contextMenuId != LexiconEditToolConstants.mnuDataTree_AlternateForm)
-			{
-				throw new ArgumentException($"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_AlternateForm}', but got '{contextMenuId}' instead.");
-			}
+			Require.That(contextMenuId == LexiconEditToolConstants.mnuDataTree_AlternateForm, $"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_AlternateForm}', but got '{contextMenuId}' instead.");
 
 			// Start: <menu id="mnuDataTree-AlternateForm">
 			var contextMenuStrip = new ContextMenuStrip
@@ -625,10 +604,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Allomorph(Slice slice, string contextMenuId)
 		{
-			if (contextMenuId != LexiconEditToolConstants.mnuDataTree_Allomorph)
-			{
-				throw new ArgumentException($"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_Allomorph}', but got '{contextMenuId}' instead.");
-			}
+			Require.That(contextMenuId == LexiconEditToolConstants.mnuDataTree_Allomorph, $"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_Allomorph}', but got '{contextMenuId}' instead.");
 
 			// Start: <menu id="mnuDataTree-Allomorph">
 			var contextMenuStrip = new ContextMenuStrip
@@ -716,10 +692,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_VariantForms(Slice slice, string contextMenuId)
 		{
-			if (contextMenuId != LexiconEditToolConstants.mnuDataTree_VariantForms)
-			{
-				throw new ArgumentException($"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_VariantForms}', but got '{contextMenuId}' instead.");
-			}
+			Require.That(contextMenuId == LexiconEditToolConstants.mnuDataTree_VariantForms, $"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_VariantForms}', but got '{contextMenuId}' instead.");
 
 			// Start: <menu id="mnuDataTree-VariantForms">
 			var contextMenuStrip = new ContextMenuStrip
@@ -738,10 +711,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_VariantForms_Hotlinks(Slice slice, string hotlinksMenuId)
 		{
-			if (hotlinksMenuId != mnuDataTree_VariantForms_Hotlinks)
-			{
-				throw new ArgumentException($"Expected argument value of '{mnuDataTree_VariantForms_Hotlinks}', but got '{hotlinksMenuId}' instead.");
-			}
+			Require.That(hotlinksMenuId == mnuDataTree_VariantForms_Hotlinks, $"Expected argument value of '{mnuDataTree_VariantForms_Hotlinks}', but got '{hotlinksMenuId}' instead.");
 
 			var hotlinksMenuItemList = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 			// NB: "CmdDataTree-Insert-VariantForm" is also used in two ordinary slice menus, which are defined in this class, so no need to add to shares.
@@ -754,10 +724,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_AlternateForms(Slice slice, string contextMenuId)
 		{
-			if (contextMenuId != LexiconEditToolConstants.mnuDataTree_AlternateForms)
-			{
-				throw new ArgumentException($"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_AlternateForms}', but got '{contextMenuId}' instead.");
-			}
+			Require.That(contextMenuId == LexiconEditToolConstants.mnuDataTree_AlternateForms, $"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_AlternateForms}', but got '{contextMenuId}' instead.");
 
 			// Start: <menu id="mnuDataTree-AlternateForms">
 			var contextMenuStrip = new ContextMenuStrip
@@ -788,10 +755,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_AlternateForms_Hotlinks(Slice slice, string hotlinksMenuId)
 		{
-			if (hotlinksMenuId != mnuDataTree_AlternateForms_Hotlinks)
-			{
-				throw new ArgumentException($"Expected argument value of '{mnuDataTree_AlternateForms_Hotlinks}', but got '{hotlinksMenuId}' instead.");
-			}
+			Require.That(hotlinksMenuId == mnuDataTree_AlternateForms_Hotlinks, $"Expected argument value of '{mnuDataTree_AlternateForms_Hotlinks}', but got '{hotlinksMenuId}' instead.");
+
 			var hotlinksMenuItemList = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
 			// <item command="CmdDataTree-Insert-AlternateForm"/>

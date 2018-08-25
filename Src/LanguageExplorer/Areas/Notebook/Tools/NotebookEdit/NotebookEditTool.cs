@@ -25,7 +25,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 	internal sealed class NotebookEditTool : ITool
 	{
 		private NotebookEditToolMenuHelper _notebookEditToolMenuHelper;
-		private const string panelMenuId = "left";
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
 		private IRecordList _recordList;
@@ -64,15 +63,11 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(NotebookArea.Records, majorFlexComponentParameters.Statusbar, NotebookArea.NotebookFactoryMethod);
 			}
-			_notebookEditToolMenuHelper = new NotebookEditToolMenuHelper(majorFlexComponentParameters, _recordList);
 
-			_recordBrowseView = new RecordBrowseView(NotebookArea.LoadDocument(NotebookResources.NotebookEditBrowseParameters).Root, _notebookEditToolMenuHelper.MyBrowseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
-#if RANDYTODO
-			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
-#endif
 			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
-			dataTree.DataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(panelMenuId, CreateMainPanelContextMenuStrip);
+			_notebookEditToolMenuHelper = new NotebookEditToolMenuHelper(majorFlexComponentParameters, this, dataTree, _recordList);
+			_recordBrowseView = new RecordBrowseView(NotebookArea.LoadDocument(NotebookResources.NotebookEditBrowseParameters).Root, _notebookEditToolMenuHelper.MyBrowseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
 			var recordEditView = new RecordEditView(XElement.Parse(NotebookResources.NotebookEditRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordList, dataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
@@ -85,7 +80,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			var paneBar = new PaneBar();
 			var img = LanguageExplorerResources.MenuWidget;
 			img.MakeTransparent(Color.Magenta);
-			var panelMenu = new PanelMenu(dataTree.DataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory, panelMenuId)
+			var panelMenu = new PanelMenu(dataTree.DataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory, AreaServices.PanelMenuId)
 			{
 				Dock = DockStyle.Left,
 				BackgroundImage = img,
@@ -173,64 +168,5 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
-
-		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> CreateMainPanelContextMenuStrip(string panelMenuId)
-		{
-			var contextMenuStrip = new ContextMenuStrip();
-			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>();
-			var retVal = new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
-
-			// Insert_Subrecord menu item.
-			/*
-<item label="Insert _Subrecord" command="CmdDataTree-Insert-Subrecord"/>
-<command id="CmdDataTree-Insert-Subrecord" label="Insert _Subrecord" message="InsertItemInVector">
-	<parameters className="RnGenericRec" subrecord="true"/>
-</command>
-			*/
-			var contextMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Subrecord_Clicked, NotebookResources.Insert_Subrecord);
-#if !RANDYTODO
-			// TODO: Enable it and have better event handler deal with it.
-			contextMenuItem.Enabled = false;
-#endif
-
-			// Insert Insert S_ubrecord of Subrecord menu item. (CmdInsertSubsense->msg: DataTreeInsert, also on Insert menu)
-			/*
-				<item label="Insert S_ubrecord of Subrecord" command="CmdDataTree-Insert-Subsubrecord" defaultVisible="false"/>
-<command id="CmdDataTree-Insert-Subsubrecord" label="Insert S_ubrecord of Subrecord" message="InsertItemInVector">
-	<parameters className="RnGenericRec" subrecord="true" subsubrecord="true"/>
-</command>
-			*/
-			contextMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Subsubrecord_Clicked, NotebookResources.Insert_Subrecord_of_Subrecord);
-#if !RANDYTODO
-			// TODO: Enable it and have better event handler deal with it.
-			contextMenuItem.Enabled = false;
-#endif
-			// Demote Record... menu item. (CmdDemoteRecord).
-			/*
-<item command="CmdDemoteRecord"/>
-<command id="CmdDemoteRecord" label="Demote Record..." message="DemoteItemInVector">
-	<parameters className="RnGenericRec"/>
-</command>
-			*/
-			contextMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Demote_Record_Clicked, NotebookResources.Demote_Record);
-#if !RANDYTODO
-			// TODO: Enable it and have better event handler deal with it.
-			contextMenuItem.Enabled = false;
-#endif
-
-			return retVal;
-		}
-
-		private void Demote_Record_Clicked(object sender, EventArgs e)
-		{
-		}
-
-		private void Insert_Subsubrecord_Clicked(object sender, EventArgs e)
-		{
-		}
-
-		private void Insert_Subrecord_Clicked(object sender, EventArgs e)
-		{
-		}
 	}
 }

@@ -1349,6 +1349,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		void DisposeContextMenu(object sender, EventArgs e)
 		{
+			//Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 			Application.Idle -= DisposeContextMenu;
 			if (m_contextMenuStrip == null || m_contextMenuStrip.IsDisposed)
 			{
@@ -1356,6 +1357,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			}
 			m_contextMenuStrip.Dispose();
 			m_contextMenuStrip = null;
+			//Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 		}
 
 		protected override void OnGotFocus(EventArgs e)

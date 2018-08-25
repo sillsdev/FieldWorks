@@ -32,11 +32,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			MyRecordList = recordList;
 
 			// <item command="CmdInsertLexEntry" defaultVisible="false" />
-			_insertEntryToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_sharedEventHandlers.Get(LexiconEditToolConstants.CmdInsertLexEntry), "toolStripButtonInsertEntry", LexiconResources.Major_Entry.ToBitmap(), LexiconResources.Entry_Tooltip);
+			_insertEntryToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_sharedEventHandlers.Get(LexiconEditToolConstants.CmdInsertLexEntry), "toolStripButtonInsertEntry", AreaResources.Major_Entry.ToBitmap(), LexiconResources.Entry_Tooltip);
 			// <item command="CmdGoToEntry" defaultVisible="false" />
 			_insertGoToEntryToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_sharedEventHandlers.Get(LexiconEditToolConstants.CmdGoToEntry), "toolStripButtonGoToEntry", LexiconResources.Find_Lexical_Entry.ToBitmap(), LexiconResources.GoToEntryToolTip);
 
-			InsertToolbarManager.AddInsertToolbarItems(_majorFlexComponentParameters, new List<ToolStripButton> { _insertEntryToolStripButton, _insertGoToEntryToolStripButton });
+			InsertToolbarManager.AddInsertToolbarItems(_majorFlexComponentParameters, new List<ToolStripItem> { _insertEntryToolStripButton, _insertGoToEntryToolStripButton });
 		}
 
 		/// <inheritdoc />

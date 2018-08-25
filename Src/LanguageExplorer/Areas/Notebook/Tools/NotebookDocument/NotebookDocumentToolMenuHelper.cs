@@ -17,7 +17,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 		private ToolStripMenuItem _editFindMenu;
 		private NotebookAreaMenuHelper _notebookAreaMenuHelper;
 
-		internal NotebookDocumentToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
+		internal NotebookDocumentToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool currentNotebookTool, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 
@@ -25,7 +25,9 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 			_editFindMenu = MenuServices.GetEditFindMenu(_majorFlexComponentParameters.MenuStrip);
 			_editFindMenu.Enabled = _editFindMenu.Visible = true;
 			_editFindMenu.Click += EditFindMenu_Click;
-			_notebookAreaMenuHelper = new NotebookAreaMenuHelper(majorFlexComponentParameters);
+			_notebookAreaMenuHelper = new NotebookAreaMenuHelper(majorFlexComponentParameters, currentNotebookTool);
+
+			AddTool_ConfigureItem();
 		}
 
 		private void EditFindMenu_Click(object sender, EventArgs e)
@@ -112,5 +114,13 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 			_isDisposed = true;
 		}
 		#endregion
+
+		private void AddTool_ConfigureItem()
+		{
+			/*
+				<item label="{0}" command="CmdConfigureXmlDocView" defaultVisible="false" />
+					<command id="CmdConfigureXmlDocView" label="{0}" message="ConfigureXmlDocView" />
+			*/
+		}
 	}
 }

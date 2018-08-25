@@ -19,12 +19,12 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 
 		internal BrowseViewContextMenuFactory MyBrowseViewContextMenuFactory { get; private set; }
 
-		internal NotebookBrowseToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
+		internal NotebookBrowseToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool currentNotebookTool, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
-			_notebookAreaMenuHelper = new NotebookAreaMenuHelper(majorFlexComponentParameters);
+			_notebookAreaMenuHelper = new NotebookAreaMenuHelper(majorFlexComponentParameters, currentNotebookTool);
 #if RANDYTODO
 			// TODO: Set up factory method for the browse view.
 #endif

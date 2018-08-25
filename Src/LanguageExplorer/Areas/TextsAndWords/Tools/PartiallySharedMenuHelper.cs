@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 SIL International
+// Copyright (c) 2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -46,6 +46,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 
 		private void Application_Idle(object sender, EventArgs e)
 		{
+			//Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 			// Sort out whether to display/enable the _editFindMenu.
 			// NB: This will work the same for the Edit-Replace menu.
 			var oldVisible = _editFindMenu.Visible;
@@ -64,7 +65,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 				_replaceToolStripMenuItem.Enabled = newEnabled;
 				_insertFindAndReplaceButton.Enabled = newEnabled;
 			}
-			//ToolbarServices.LayoutToolStrips((Form)_majorFlexComponentParameters.MainWindow, _majorFlexComponentParameters.ToolStripContainer);
+			//Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 		}
 
 		private void EditFindMenu_Click(object sender, EventArgs e)

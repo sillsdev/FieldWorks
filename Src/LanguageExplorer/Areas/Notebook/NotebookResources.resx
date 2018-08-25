@@ -126,6 +126,12 @@
   <data name="Exporting_" xml:space="preserve">
     <value>Exporting...</value>
   </data>
+  <data name="Find_a_Record_in_your_Notebook" xml:space="preserve">
+    <value>Find a Record in your Notebook.</value>
+  </data>
+  <data name="Find_Record" xml:space="preserve">
+    <value>_Find Record...</value>
+  </data>
   <data name="Import_Standard_Format_Notebook_data" xml:space="preserve">
     <value>Standard Format _Notebook data...</value>
   </data>
@@ -155,5 +161,38 @@
   <data name="NotebookEditRecordEditViewParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\NotebookEditRecordEditViewParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
     <comment>Do Not Localize</comment>
+  </data>
+  <data name="NotebookRecordGoDlgParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\NotebookRecordGoDlgParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="Create_a_new_Record_in_your_Notebook" xml:space="preserve">
+    <value>Create a new Record in your Notebook.</value>
+  </data>
+  <data name="Create_a_Subrecord_in_your_Notebook" xml:space="preserve">
+    <value>Create a Subrecord in your Notebook.</value>
+  </data>
+  <data name="Record" xml:space="preserve">
+    <value>Record</value>
+  </data>
+  <data name="Subrecord" xml:space="preserve">
+    <value>Subrecord</value>
+  </data>
+  <data name="Subrecord_of_subrecord" xml:space="preserve">
+    <value>Subrecord of subrecord</value>
+  </data>
+  <data name="Choose_Owner_of_Demoted_Record" xml:space="preserve">
+    <value>Choose Owner of Demoted Record</value>
+  </data>
+  <data name="Choose_Owner_of_Demoted_Subrecord" xml:space="preserve">
+    <value>Choose Owner of Demoted Subrecord</value>
+  </data>
+  <data name="Delete_Participants" xml:space="preserve">
+    <value>Delete Participants</value>
+  </data>
+  <data name="Demote" xml:space="preserve">
+    <value>Demote...</value>
+  </data>
+  <data name="UowDemoteBase" xml:space="preserve">
+    <value>Demote</value>
   </data>
 </root>

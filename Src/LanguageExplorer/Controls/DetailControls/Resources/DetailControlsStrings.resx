@@ -261,30 +261,6 @@
   <data name="ksRedoTextChange" xml:space="preserve">
     <value>Redo Text Change</value>
   </data>
-  <data name="ksUndoDemote" xml:space="preserve">
-    <value>Undo Demote</value>
-  </data>
-  <data name="ksRedoDemote" xml:space="preserve">
-    <value>Redo Demote</value>
-  </data>
-  <data name="ksChooseOwnerOfDemotedRecord" xml:space="preserve">
-    <value>Choose Owner of Demoted Record</value>
-  </data>
-  <data name="ksUndoMoveUp" xml:space="preserve">
-    <value>Undo Move Up</value>
-  </data>
-  <data name="ksRedoMoveUp" xml:space="preserve">
-    <value>Redo Move Up</value>
-  </data>
-  <data name="ksUndoMoveDown" xml:space="preserve">
-    <value>Undo Move Down</value>
-  </data>
-  <data name="ksRedoMoveDown" xml:space="preserve">
-    <value>Redo Move Down</value>
-  </data>
-  <data name="ksChooseOwnerOfDemotedSubrecord" xml:space="preserve">
-    <value>Choose Owner of Demoted Subrecord</value>
-  </data>
   <data name="ksUndoCreatingInflectionalAffixCategoryItem" xml:space="preserve">
     <value>Undo Creating Inflectional Affix Category Item</value>
   </data>

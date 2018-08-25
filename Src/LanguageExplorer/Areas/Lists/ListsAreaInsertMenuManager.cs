@@ -21,12 +21,11 @@ namespace LanguageExplorer.Areas.Lists
 	/// </summary>
 	internal sealed class ListsAreaInsertMenuManager : IToolUiWidgetManager
 	{
-		private const string MainItem = "MainItem";
-		private const string Subitem = "Subitem";
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private ISharedEventHandlers _sharedEventHandlers;
 		private ToolStripMenuItem _insertMenu;
 		private List<Tuple<ToolStripMenuItem, EventHandler>> _newInsertMenusAndHandlers;
+		private ToolStripMenuItem _insertEntryMenu;
 		private ToolStripSeparator _toolStripSeparator;
 		private DataTree MyDataTree { get; set; }
 		private IRecordList MyRecordList { get; set; }
@@ -108,6 +107,7 @@ namespace LanguageExplorer.Areas.Lists
 			if (disposing)
 			{
 				Application.Idle -= ApplicationOnIdle;
+				MyDataTree.CurrentSliceChanged -= MyDataTreeOnCurrentSliceChanged;
 				if (_toolStripSeparator != null)
 				{
 					_insertMenu.DropDownItems.Remove(_toolStripSeparator);
@@ -151,7 +151,7 @@ namespace LanguageExplorer.Areas.Lists
 				return;
 			}
 			var currentPossibility = MyRecordList.CurrentObject as ICmPossibility; // May be a subclass of ICmPossibility. Will be null, if nothing is in the list.
-			var menuCreationData = new List<Tuple<EventHandler, string, Dictionary<string, string>>>(2);
+			var menuCreationData = new List<Tuple<EventHandler, string, Dictionary<string, string>>>(3);
 			ToolStripMenuItem menu;
 			string tooltip;
 			var insertIndex = 0;
@@ -339,6 +339,13 @@ namespace LanguageExplorer.Areas.Lists
 					break;
 			}
 
+			if (activeListTool.MachineName != AreaServices.FeatureTypesAdvancedEditMachineName)
+			{
+				// Add "Entry" menu to all other tools.
+				_insertEntryMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, _sharedEventHandlers.Get(AreaServices.CmdAddToLexicon), AreaResources.EntryWithDots, image: AreaResources.Major_Entry.ToBitmap(), insertIndex: insertIndex++);
+				_insertEntryMenu.Tag = MyDataTree;
+				_insertEntryMenu.Visible = false;
+			}
 			// If there is nothing in "menuCreationData", then the tool did everything.
 			if (menuCreationData.Any())
 			{
@@ -346,7 +353,7 @@ namespace LanguageExplorer.Areas.Lists
 				// The first item in "menuCreationData", it is the main "Add" item.
 				var currentMenuTuple = menuCreationData[0];
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, currentMenuTuple.Item1, currentMenuTuple.Item2, image: AreaResources.AddItem.ToBitmap(), insertIndex: insertIndex++);
-				menu.Name = MainItem;
+				menu.Name = AreaServices.MainItem;
 				menu.Tag = new List<object> { currentPossibilityList, MyDataTree, MyRecordList, _propertyTable, currentMenuTuple.Item3 };
 
 				// SubItem information is optionally present in "menuCreationData" in the second space.
@@ -355,7 +362,7 @@ namespace LanguageExplorer.Areas.Lists
 					// NB: Lists that cannot have subitems won't be adding this menu option at all.
 					currentMenuTuple = menuCreationData[1];
 					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, currentMenuTuple.Item1, currentMenuTuple.Item2, image: AreaResources.AddSubItem.ToBitmap(), insertIndex: insertIndex++);
-					menu.Name = Subitem;
+					menu.Name = AreaServices.SubItem;
 					menu.Tag = new List<object> { currentPossibility, MyDataTree, MyRecordList, _propertyTable, currentMenuTuple.Item3 };
 					menu.Enabled = currentPossibilityList.PossibilitiesOS.Any(); // Visbile, but only enabled, if there are possible owners for the new sub item.
 				}
@@ -371,6 +378,7 @@ namespace LanguageExplorer.Areas.Lists
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, AddCustomList_Click, ListResources.AddCustomList, ListResources.AddCustomListTooltip, insertIndex: insertIndex);
 
 			Application.Idle += ApplicationOnIdle;
+			MyDataTree.CurrentSliceChanged += MyDataTreeOnCurrentSliceChanged;
 		}
 
 		private void InsertFeatureType_Clicked(object sender, EventArgs e)
@@ -506,12 +514,28 @@ namespace LanguageExplorer.Areas.Lists
 
 		private void ApplicationOnIdle(object sender, EventArgs e)
 		{
+			//Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 			var currentList = ListsAreaMenuHelper.GetPossibilityList(MyRecordList);
-			var currentTuple = _newInsertMenusAndHandlers.FirstOrDefault(tuple => tuple.Item1.Name == Subitem);
+			var currentTuple = _newInsertMenusAndHandlers.FirstOrDefault(tuple => tuple.Item1.Name == AreaServices.SubItem);
 			if (currentTuple != null)
 			{
 				currentTuple.Item1.Enabled = currentList.PossibilitiesOS.Any();
 			}
+			var currentSliceAsStTextSlice = AreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree);
+			if (_insertEntryMenu != null && _insertEntryMenu.Visible && currentSliceAsStTextSlice != null)
+			{
+				AreaWideMenuHelper.Set_CmdAddToLexicon_State(_majorFlexComponentParameters.LcmCache, _insertEntryMenu, currentSliceAsStTextSlice.RootSite.RootBox.Selection);
+			}
+			//Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+		}
+
+		private void MyDataTreeOnCurrentSliceChanged(object sender, CurrentSliceChangedEventArgs e)
+		{
+			if (_insertEntryMenu == null)
+			{
+				return;
+			}
+			_insertEntryMenu.Visible = e.CurrentSlice is StTextSlice;
 		}
 	}
 }

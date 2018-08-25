@@ -1,18 +1,18 @@
-﻿// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using System.Xml.XPath;
+using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.XMLViews;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 
-namespace LanguageExplorer.Controls.LexText
+namespace LanguageExplorer.Areas.Notebook
 {
 	public class RecordGoDlg : BaseGoDlg
 	{
@@ -36,27 +36,9 @@ namespace LanguageExplorer.Controls.LexText
 
 		protected override void InitializeMatchingObjects()
 		{
-#if RANDYTODO
-			// TODO: Use this xml, instead of 'guiControl'.
-/*
-			<guicontrol id="matchingRecords">
-				<parameters id="recordMatchList" listItemsClass="RnGenericRec" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" altTitleId="RnGenericRec-Plural" editable="false">
-					<columns>
-						<column label="Record Type" editable="false" width="72000">
-							<obj field="Type" layout="Name"/>
-						</column>
-						<column label="Title" editable="false" width="196000">
-							<string field="Title"/>
-						</column>
-					</columns>
-				</parameters>
-			</guicontrol>
-*/
-#endif
-			var xnWindow = PropertyTable.GetValue<XElement>("WindowConfiguration");
-			var configNode = xnWindow.XPathSelectElement("controls/parameters/guicontrol[@id=\"matchingRecords\"]/parameters");
+			var configParamsElement = XDocument.Parse(NotebookResources.NotebookRecordGoDlgParameters).Root;
 			var searchEngine = SearchEngine.Get(PropertyTable, "RecordGoSearchEngine", () => new RecordGoSearchEngine(m_cache));
-			m_matchingObjectsBrowser.Initialize(m_cache, FwUtils.StyleSheetFromPropertyTable(PropertyTable), configNode, searchEngine);
+			m_matchingObjectsBrowser.Initialize(m_cache, FwUtils.StyleSheetFromPropertyTable(PropertyTable), configParamsElement, searchEngine);
 			// start building index
 			var ws = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
 			if (ws != null)
@@ -78,7 +60,7 @@ namespace LanguageExplorer.Controls.LexText
 			m_btnOK.Enabled = false;
 			m_oldSearchKey = searchKey;
 
-			var ws = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
+			var ws = (CoreWritingSystemDefinition)m_cbWritingSystems.SelectedItem;
 			var wsSelHvo = ws?.Handle ?? 0;
 			if (wsSelHvo == 0)
 			{
@@ -137,7 +119,7 @@ namespace LanguageExplorer.Controls.LexText
 			// RecordGoDlg
 			//
 			resources.ApplyResources(this, "$this");
-			this.m_helpProvider.SetHelpNavigator(this, ((System.Windows.Forms.HelpNavigator)(resources.GetObject("$this.HelpNavigator"))));
+			this.m_helpProvider.SetHelpNavigator(this, ((HelpNavigator)(resources.GetObject("$this.HelpNavigator"))));
 			this.Name = "RecordGoDlg";
 			this.m_helpProvider.SetShowHelp(this, ((bool)(resources.GetObject("$this.ShowHelp"))));
 			this.m_panel1.ResumeLayout(false);

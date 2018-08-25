@@ -124,7 +124,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var img = LanguageExplorerResources.MenuWidget;
 			img.MakeTransparent(Color.Magenta);
 
-			var panelMenu = new PanelMenu(_lexiconEditToolMenuHelper.MyDataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory, LexiconEditToolConstants.PanelMenuId)
+			var panelMenu = new PanelMenu(_lexiconEditToolMenuHelper.MyDataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory, AreaServices.PanelMenuId)
 			{
 				Dock = DockStyle.Left,
 				BackgroundImage = img,

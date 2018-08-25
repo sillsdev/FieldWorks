@@ -1,10 +1,11 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.LCModel.Utils;
@@ -348,6 +349,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		void Application_Idle(object sender, EventArgs e)
 		{
+			//Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 			var incompleteTasks = new List<IdleQueueTask>();
 			try
 			{
@@ -387,6 +389,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 						m_queue.Enqueue(task.Priority, task);
 				}
 			}
+			//Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 		}
 
 		static bool ShouldAbort()

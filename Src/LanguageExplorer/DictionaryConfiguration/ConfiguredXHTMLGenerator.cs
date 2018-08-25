@@ -3209,7 +3209,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			if (!string.IsNullOrEmpty(style))
 			{
 				var wsId = settings.Cache.WritingSystemFactory.GetWsFromStr(writingSystem);
-				var cssStyle = CssGenerator.GenerateCssStyleFromLcmStyleSheet(style, wsId, settings.ReadOnlyPropertyTable.GetValue<LcmStyleSheet>("FlexStyleSheet"), settings.Cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(wsId));
+				var cssStyle = CssGenerator.GenerateCssStyleFromLcmStyleSheet(style, wsId, FwUtils.StyleSheetFromPropertyTable(settings.ReadOnlyPropertyTable), settings.Cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(wsId));
 				var css = cssStyle.ToString();
 				if (!string.IsNullOrEmpty(css))
 				{

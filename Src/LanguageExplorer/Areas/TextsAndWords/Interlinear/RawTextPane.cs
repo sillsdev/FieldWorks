@@ -627,24 +627,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		#endregion
 
 		/// <summary>
-		/// Return a word selection based on the beginning of the current selection.
-		/// Here the "beginning" of the selection is the offset corresponding to word order,
-		/// not the selection anchor.
-		/// </summary>
-		/// <returns>null if we couldn't handle the selection</returns>
-		private IVwSelection SelectionBeginningGrowToWord(IVwSelection sel)
-		{
-			if (sel == null)
-			{
-				return null;
-			}
-			// REVISIT (EricP) Need to check if Ws is IsRightToLeft?
-			var sel2 = sel.EndBeforeAnchor ? sel.EndPoint(true) : sel.EndPoint(false);
-			var sel3 = sel2?.GrowToWord();
-			return sel3;
-		}
-
-		/// <summary>
 		/// Look up the selected wordform in the dictionary and display its lexical entry.
 		/// </summary>
 		public bool OnLexiconLookup(object argument)
@@ -652,8 +634,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			int ichMin, ichLim, hvo, tag, ws;
 			if (GetSelectedWordPos(m_rootb.Selection, out hvo, out tag, out ws, out ichMin, out ichLim))
 			{
-				LexEntryUi.DisplayOrCreateEntry(m_cache, hvo, tag, ws, ichMin, ichLim, this,
-					PropertyTable, Publisher, Subscriber, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "UserHelpFile");
+				LexEntryUi.DisplayOrCreateEntry(m_cache, hvo, tag, ws, ichMin, ichLim, this, PropertyTable, Publisher, Subscriber, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "UserHelpFile");
 			}
 			return true;
 		}
@@ -672,15 +653,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return false;
 			}
-			// out variables for GetSelectedWordPos
-			int hvo, tag, ws, ichMin, ichLim;
+			int hvoDummy, tagDummy, wsDummy, ichMinDummy, ichLimDummy;
 			// We just need to see if it's possible
-			return GetSelectedWordPos(sel, out hvo, out tag, out ws, out ichMin, out ichLim);
+			return GetSelectedWordPos(sel, out hvoDummy, out tagDummy, out wsDummy, out ichMinDummy, out ichLimDummy);
 		}
 
 		private bool GetSelectedWordPos(IVwSelection sel, out int hvo, out int tag, out int ws, out int ichMin, out int ichLim)
 		{
-			var wordsel = SelectionBeginningGrowToWord(sel);
+			IVwSelection wordsel = null;
+			if (sel != null)
+			{
+				var sel2 = sel.EndBeforeAnchor ? sel.EndPoint(true) : sel.EndPoint(false);
+				wordsel = sel2?.GrowToWord();
+			}
 			if (wordsel == null)
 			{
 				hvo = tag = ws = 0;

@@ -69,7 +69,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			ISharedEventHandlers dummy;
 			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, out dummy);
 
-			var styles = _flexComponentParameters.PropertyTable.GetValue<LcmStyleSheet>("FlexStyleSheet").Styles;
+			var styles = FwUtils.StyleSheetFromPropertyTable(_flexComponentParameters.PropertyTable).Styles;
 			if (!styles.Contains(DictionaryNormal))
 			{
 				styles.Add(new BaseStyleInfo { Name = DictionaryNormal });

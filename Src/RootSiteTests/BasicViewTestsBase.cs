@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			styleSheet.Init(Cache, Cache.LangProject.Hvo, LangProjectTags.kflidStyles);
 
 			Debug.Assert(m_basicView == null, "m_basicView is not null.");
-			m_propertyTable = TestSetupServices.SetupTestTriumvirate(out m_publisher, out m_subscriber);
+			TestSetupServices.SetupTestTriumvirate(out m_propertyTable, out m_publisher, out m_subscriber);
 
 			//if (m_basicView != null)
 			//	m_basicView.Dispose();

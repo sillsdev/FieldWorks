@@ -344,42 +344,6 @@ so I can look at that in the develop branch.
       <params className="MoAdhocProhibGr" />
     </command>
     <!-- END include: "Grammar/areaConfiguration.xml" query="root/commands/*" -->
-    <!-- START include: "Notebook/areaConfiguration.xml" query="root/commands/*" -->
-    <command id="CmdInsertRecord" label="Record" message="InsertItemInVector" icon="nbkRecord" shortcut="Ctrl+I">
-      <params className="RnGenericRec" />
-    </command>
-    <command id="CmdInsertSubrecord" label="Subrecord" message="InsertItemInVector" icon="nbkRecord">
-      <params className="RnGenericRec" subrecord="true" />
-    </command>
-    <command id="CmdInsertSubsubrecord" label="Subrecord of subrecord" message="InsertItemInVector" icon="nbkRecord">
-      <params className="RnGenericRec" subrecord="true" subsubrecord="true" />
-    </command>
-    <command id="CmdGoToRecord" label="_Find Record..." message="GotoRecord" icon="goToRecord" shortcut="Ctrl+F" >
-      <parameters title="Go To Record" formlabel="Go _To..." okbuttonlabel="_Go" />
-    </command>
-    <command id="CmdDataTree-Insert-Subrecord" label="Insert _Subrecord" message="InsertItemInVector">
-      <parameters className="RnGenericRec" subrecord="true" />
-    </command>
-    <command id="CmdDataTree-Insert-Subsubrecord" label="Insert S_ubrecord of Subrecord" message="InsertItemInVector">
-      <parameters className="RnGenericRec" subrecord="true" subsubrecord="true" />
-    </command>
-    <command id="CmdDataTree-Delete-Participants" label="Delete Participants" message="DeleteParticipants" />
-    <command id="CmdMoveRecordUp" label="Move Up" message="MoveItemUpInVector">
-      <parameters className="RnGenericRec" />
-    </command>
-    <command id="CmdMoveRecordDown" label="Move Down" message="MoveItemDownInVector">
-      <parameters className="RnGenericRec" />
-    </command>
-    <command id="CmdPromoteSubrecord" label="Promote" message="PromoteSubitemInVector">
-      <parameters className="RnGenericRec" />
-    </command>
-    <command id="CmdDemoteRecord" label="Demote Record..." message="DemoteItemInVector">
-      <parameters className="RnGenericRec" />
-    </command>
-    <command id="CmdDemoteSubrecord" label="Demote..." message="DemoteSubitemInVector">
-      <parameters className="RnGenericRec" />
-    </command>
-    <!-- END include: "Notebook/areaConfiguration.xml" query="root/commands/*" -->
     <command id="CmdHelpDemoWelcome" label="_Welcome" message="HelpDemoMovies">
       <parameters file="1-welcome" />
     </command>
@@ -440,15 +404,10 @@ so I can look at that in the develop branch.
     <command id="CmdHelpDemoPlayAll" label="_Play all (32 minutes)" message="HelpDemoMovies">
       <parameters file="Play_all" />
     </command>
-    <command id="CmdAddToLexicon" label="Add to Dictionary..." message="AddToLexicon" icon="majorEntry" />
-    <command id="CmdConfigureXmlDocView" label="{0}" message="ConfigureXmlDocView" />
   </commands>
   <!-- ************************ menus *********************** -->
   <menubar>
     <menu id="Edit" label="_Edit" b4InsertMenu="true" >
-      <!-- START include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->
-      <item command="CmdGoToRecord" />
-      <!-- END include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->
       <!-- START include: "Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->
       <item command="CmdGoToReversalEntry" defaultVisible="false" />
       <!-- END include: "Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->
@@ -504,12 +463,6 @@ so I can look at that in the develop branch.
       <item command="CmdGuessWordBreaks" defaultVisible="false" />
       <item command="CmdInsertHumanApprovedAnalysis" defaultVisible="false" a10status="PLACEHOLDER" />
       <!-- END include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*" -->
-      <!-- START include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*" -->
-      <item command="CmdInsertRecord" defaultVisible="false" />
-      <item command="CmdInsertSubrecord" defaultVisible="false" />
-      <item command="CmdInsertSubsubrecord" defaultVisible="false" />
-      <item command="CmdAddToLexicon" label="Entry..." defaultVisible="false" />
-      <!-- END include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*" -->
       <!-- START include: "Grammar/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*" -->
       <item command="CmdInsertPOS" defaultVisible="false" />
       <item command="CmdDataTree-Insert-POS-SubPossibilities" defaultVisible="false" label="Subcategory..." />
@@ -546,13 +499,9 @@ so I can look at that in the develop branch.
         <!-- START include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*" -->
         <item command="CmdConfigureInterlinear" defaultVisible="false" />
         <!-- END include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*" -->
-        <!-- START include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*" -->
-        <item label="{0}" command="CmdConfigureXmlDocView" defaultVisible="false" />
-        <!-- END include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*" -->
       </menu>
       <!-- START include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Tools']/*" -->
-      <!-- These two are mutually exclusive.-->
-      <item command="CmdLexiconLookup" defaultVisible="false" />
+      <!-- These two (CmdLexiconLookup & the next one) are mutually exclusive.-->
       <item label="Add Words to Lexicon" defaultVisible="false" boolProperty="ITexts_AddWordsToLexicon" />
       <!-- END include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Tools']/*" -->
       <!-- Non-area-specific Tools go here. -->
@@ -918,36 +867,6 @@ so I can look at that in the develop branch.
       <item command="CmdDataTree-Delete-WordGloss" />
     </menu>
     <!-- END include: "Words/areaConfiguration.xml" query="root/contextMenus/*" -->
-    <!-- START include: "Notebook/areaConfiguration.xml" query="root/contextMenus/*" -->
-    <menu id="PaneBar-RecordDetail" label="">
-      <menu id="RecordPaneMenu" icon="MenuWidget">
-        <item label="Insert _Subrecord" command="CmdDataTree-Insert-Subrecord" />
-        <item label="Insert S_ubrecord of Subrecord" command="CmdDataTree-Insert-Subsubrecord" defaultVisible="false" />
-        <item command="CmdDemoteRecord" />
-      </menu>
-      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-notebookEdit" defaultVisible="true" settingsGroup="local" />
-    </menu>
-    <menu id="mnuDataTree-Subrecord-Hotlinks">
-      <item command="CmdDataTree-Insert-Subrecord" />
-    </menu>
-    <menu id="mnuDataTree-Participants">
-      <item command="CmdDataTree-Delete-Participants" />
-    </menu>
-    <menu id="mnuDataTree-SubRecords">
-      <item command="CmdDataTree-Insert-Subrecord" />
-    </menu>
-    <menu id="mnuDataTree-SubRecords-Hotlinks">
-      <item command="CmdDataTree-Insert-Subrecord" />
-    </menu>
-    <menu id="mnuDataTree-SubRecordSummary">
-      <item command="CmdDataTree-Insert-Subrecord" />
-      <item command="CmdDataTree-Insert-Subsubrecord" />
-      <item command="CmdMoveRecordUp" />
-      <item command="CmdMoveRecordDown" />
-      <item command="CmdPromoteSubrecord" />
-      <item command="CmdDemoteSubrecord" />
-    </menu>
-    <!-- END include: "Notebook/areaConfiguration.xml" query="root/contextMenus/*" -->
     <!-- START include: "Grammar/areaConfiguration.xml" query="root/contextMenus/*" -->
     <!-- START include (Grammar_Area): "DataTreeInclude.xml" query="window/contextMenus/*" -->
     <menu id="mnuDataTree-Text">
@@ -1066,13 +985,6 @@ so I can look at that in the develop branch.
       <item command="CmdGoToWfiWordform" defaultVisible="false" />
       <item command="CmdBreakPhrase" defaultVisible="false" />
       <!-- END include: "Words/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item" -->
-      <!-- START include: "Notebook/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item" -->
-      <item command="CmdInsertRecord" defaultVisible="false" />
-      <item command="CmdGoToRecord" defaultVisible="false" />
-      <item label="-" translate="do not translate" />
-      <item command="CmdAddToLexicon" defaultVisible="false" />
-      <item command="CmdLexiconLookup" defaultVisible="false" />
-      <!-- END include: "Notebook/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item" -->
       <!-- START include: "Grammar/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item" -->
       <item command="CmdInsertPOS" defaultVisible="false" />
       <item command="CmdDataTree-Insert-POS-SubPossibilities" label="Subcategory..." defaultVisible="false" />
@@ -1123,7 +1035,6 @@ so I can look at that in the develop branch.
       <item id="CmdImport">Import an existing lexicon.</item>
       <!-- Edit menu -->
       <item id="CmdBreakPhrase">Break selected phrase into words.</item>
-      <item id="CmdGoToRecord">Find a Record in your Notebook.</item>
       <!-- View menu -->
       <item id="CmdHistoryBack">Back</item>
       <item id="CmdHistoryForward">Forward</item>
@@ -1172,15 +1083,11 @@ so I can look at that in the develop branch.
       <item id="CmdInsertClosedFeature">Add a feature.</item>
       <item id="CmdInsertComplexFeature">Add a complex feature.</item>
       <item id="CmdDataTree-Insert-POS-SubPossibilities">Add a subcategory...</item>
-      <item id="CmdInsertRecord">Create a new Record in your Notebook.</item>
-      <item id="CmdInsertSubrecord">Create a Subrecord in your Notebook.</item>
       <item id="ClickInvisibleSpace">Turn on mode in which a click inserts an invisible, zero-width space.</item>
       <item id="CmdGuessWordBreaks">Have Language Explorer insert invisible, zero-width spaces as word breaks according to the word list and lexical entries.</item>
       <!-- Tools menu -->
       <item id="Entries">Show the entries and edit them.</item>
       <item id="Problems">See a list of entries with problems.</item>
-      <item id="CmdLexiconLookup">Show dictionary entry for root/stem of current word, or open a search dialog box.</item>
-      <item id="CmdAddToLexicon">Add the current word to the lexicon (if it is a vernacular word).</item>
       <item id="CmdAddWordsToSpellDict">Add words marked as correctly spelled to the active spelling dictionary.</item>
       <item id="CmdEditSpellingStatus">Bulk Edit Spelling Status.</item>
       <item id="CmdViewIncorrectWords">View incorrectly spelled words in use.</item>

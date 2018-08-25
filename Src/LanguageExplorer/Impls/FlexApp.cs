@@ -1207,9 +1207,11 @@ namespace LanguageExplorer.Impls
 
 		private void CloseOldWindow(object sender, EventArgs e)
 		{
+			//Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 			Application.Idle -= CloseOldWindow;
 			m_windowToCloseOnIdle?.Close();
 			m_windowToCloseOnIdle = null;
+			//Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 		}
 
 		/// <summary>

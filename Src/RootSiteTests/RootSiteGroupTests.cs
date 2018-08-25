@@ -27,8 +27,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="height"></param>
 		/// <param name="rootb"></param>
 		/// ------------------------------------------------------------------------------------
-		private void PrepareView(DummyBasicView rootSite, int width, int height,
-			IVwRootBox rootb)
+		private void PrepareView(DummyBasicView rootSite, int width, int height, IVwRootBox rootb)
 		{
 			rootSite.Visible = false;
 			rootSite.Width = width;
@@ -52,40 +51,48 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			IPublisher publisher;
 			ISubscriber subscriber;
-			using (var propertyTable = TestSetupServices.SetupTestTriumvirate(out publisher, out subscriber))
-			using (DummyBasicView stylePane = new DummyBasicView(), draftPane = new DummyBasicView(), btPane = new DummyBasicView())
+			IPropertyTable propertyTable;
+			TestSetupServices.SetupTestTriumvirate(out propertyTable, out publisher, out subscriber);
+			try
 			{
-				var flexComponentParameterObject = new FlexComponentParameters(propertyTable, publisher, subscriber);
-				stylePane.InitializeFlexComponent(flexComponentParameterObject);
-				draftPane.InitializeFlexComponent(flexComponentParameterObject);
-				btPane.InitializeFlexComponent(flexComponentParameterObject);
-				using (RootSiteGroup group = new RootSiteGroup())
+				using (DummyBasicView stylePane = new DummyBasicView(), draftPane = new DummyBasicView(), btPane = new DummyBasicView())
 				{
-					PrepareView(stylePane, 50, 300, (IVwRootBox)rootBox);
-					PrepareView(draftPane, 150, 300, (IVwRootBox)rootBox);
-					PrepareView(btPane, 150, 300, (IVwRootBox)rootBox);
+					var flexComponentParameterObject = new FlexComponentParameters(propertyTable, publisher, subscriber);
+					stylePane.InitializeFlexComponent(flexComponentParameterObject);
+					draftPane.InitializeFlexComponent(flexComponentParameterObject);
+					btPane.InitializeFlexComponent(flexComponentParameterObject);
+					using (RootSiteGroup group = new RootSiteGroup())
+					{
+						PrepareView(stylePane, 50, 300, rootBox);
+						PrepareView(draftPane, 150, 300, rootBox);
+						PrepareView(btPane, 150, 300, rootBox);
 
-					group.AddToSyncGroup(stylePane);
-					group.AddToSyncGroup(draftPane);
-					group.AddToSyncGroup(btPane);
-					group.ScrollingController = btPane;
-					group.Controls.AddRange(new Control[] { stylePane, draftPane, btPane });
+						group.AddToSyncGroup(stylePane);
+						group.AddToSyncGroup(draftPane);
+						group.AddToSyncGroup(btPane);
+						group.ScrollingController = btPane;
+						group.Controls.AddRange(new Control[] { stylePane, draftPane, btPane });
 
-					btPane.ScrollMinSize = new Size(100, 1000);
-					btPane.ScrollPosition = new Point(0, 700);
+						btPane.ScrollMinSize = new Size(100, 1000);
+						btPane.ScrollPosition = new Point(0, 700);
 
-					// now call AdjustScrollRange on each of the panes.
-					// This simulates what the views code does.
-					// This was taken out because it doesn't seem like the views code does this
-					// anymore. It just calls AdjustScrollRange for the original view that changed.
-					// Done as a part of TE-3576
-					//stylePane.AdjustScrollRange(null, 0, 0, -100, 500);
-					//draftPane.AdjustScrollRange(null, 0, 0, -50, 500);
-					btPane.AdjustScrollRange(null, 0, 0, 100, 500);
+						// now call AdjustScrollRange on each of the panes.
+						// This simulates what the views code does.
+						// This was taken out because it doesn't seem like the views code does this
+						// anymore. It just calls AdjustScrollRange for the original view that changed.
+						// Done as a part of TE-3576
+						//stylePane.AdjustScrollRange(null, 0, 0, -100, 500);
+						//draftPane.AdjustScrollRange(null, 0, 0, -50, 500);
+						btPane.AdjustScrollRange(null, 0, 0, 100, 500);
 
-					Assert.AreEqual(1108, btPane.ScrollMinSize.Height, "Wrong ScrollMinSize");
-					Assert.AreEqual(800, -btPane.ScrollPosition.Y, "Wrong scroll position");
+						Assert.AreEqual(1108, btPane.ScrollMinSize.Height, "Wrong ScrollMinSize");
+						Assert.AreEqual(800, -btPane.ScrollPosition.Y, "Wrong scroll position");
+					}
 				}
+			}
+			finally
+			{
+				propertyTable.Dispose();
 			}
 		}
 

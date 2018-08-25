@@ -112,7 +112,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		[SetUp]
 		public void Setup()
 		{
-			m_propertyTable = TestSetupServices.SetupTestTriumvirate(out m_publisher, out m_subscriber);
+			TestSetupServices.SetupTestTriumvirate(out m_propertyTable, out m_publisher, out m_subscriber);
 
 			m_site = new DummyRootSite();
 			m_site.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));

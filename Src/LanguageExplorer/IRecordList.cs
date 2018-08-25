@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using LanguageExplorer.Filters;
@@ -24,7 +25,7 @@ namespace LanguageExplorer
 		bool AreCustomFieldsAProblem(int[] clsids);
 		void BecomeInactive();
 		bool CanChangeFilterClearAll { get; }
-		bool CanMoveTo(Navigation navigateTo);
+		IReadOnlyDictionary<Navigation, bool> CanMoveToOptions();
 		int CurrentIndex { get; set; }
 		ICmObject CurrentObject { get; }
 		int CurrentObjectHvo { get; }

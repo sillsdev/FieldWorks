@@ -19,40 +19,31 @@ namespace LanguageExplorer.Areas.Notebook
 	/// </summary>
 	internal sealed class NotebookAreaMenuHelper : IFlexComponent, IDisposable
 	{
+		internal const string CmdGoToRecord = "CmdGoToRecord";
+		internal const int nbkRecord = 0;
+		internal const int goToRecord = 1;
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
+		private ISharedEventHandlers _sharedEventHandlers;
+		private ITool _currentNotebookTool;
 		private IRecordList _recordList;
+		private ToolStripMenuItem _editMenu;
+		private List<Tuple<ToolStripMenuItem, EventHandler>> _newEditMenusAndHandlers;
 		private ToolStripMenuItem _fileImportMenu;
 		private List<Tuple<ToolStripMenuItem, EventHandler>> _newFileMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>();
 		internal AreaWideMenuHelper MyAreaWideMenuHelper { get; private set; }
 
-		internal NotebookAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters)
+		internal NotebookAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool currentNotebookTool)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+			Guard.AgainstNull(currentNotebookTool, nameof(currentNotebookTool));
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
+			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
+			_currentNotebookTool = currentNotebookTool;
 			_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(NotebookArea.Records, majorFlexComponentParameters.Statusbar, NotebookArea.NotebookFactoryMethod);
 			MyAreaWideMenuHelper = new AreaWideMenuHelper(_majorFlexComponentParameters, _recordList);
-		}
 
-		void FileExportMenu_Click(object sender, EventArgs e)
-		{
-				if (_recordList.AreCustomFieldsAProblem(new[] { RnGenericRecTags.kClassId}))
-				{
-					return;
-				}
-				using (var dlg = new NotebookExportDialog())
-				{
-					dlg.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
-					dlg.ShowDialog((Form)_majorFlexComponentParameters.MainWindow);
-				}
-		}
-
-		private void ImportSFMNotebook_Clicked(object sender, EventArgs e)
-		{
-			using (var importWizardDlg = new NotebookImportWiz())
-			{
-				AreaServices.HandleDlg(importWizardDlg, _majorFlexComponentParameters.LcmCache, _majorFlexComponentParameters.FlexApp, _majorFlexComponentParameters.MainWindow, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable, _majorFlexComponentParameters.FlexComponentParameters.Publisher);
-			}
+			_sharedEventHandlers.Add(CmdGoToRecord, GotoRecord_Clicked);
 		}
 
 		#region Implementation of IPropertyTableProvider
@@ -95,6 +86,9 @@ namespace LanguageExplorer.Areas.Notebook
 			PropertyTable = flexComponentParameters.PropertyTable;
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
+
+			// Add Edit menu item that is available in all Notebook tools.
+			AddEditMenuItems();
 
 			// File->Export menu is visible and enabled in this tool.
 			// Add File->Export event handler.
@@ -149,15 +143,80 @@ namespace LanguageExplorer.Areas.Notebook
 					menuTuple.Item1.Dispose();
 				}
 				_newFileMenusAndHandlers.Clear();
+
+				foreach (var menuTuple in _newEditMenusAndHandlers)
+				{
+					menuTuple.Item1.Click -= menuTuple.Item2;
+					_editMenu.DropDownItems.Remove(menuTuple.Item1);
+					menuTuple.Item1.Dispose();
+				}
+				_newEditMenusAndHandlers.Clear();
+
+				_sharedEventHandlers.Remove(CmdGoToRecord);
 			}
 			_majorFlexComponentParameters = null;
+			_sharedEventHandlers = null;
+			_currentNotebookTool = null;
 			MyAreaWideMenuHelper = null;
 			_recordList = null;
 			_fileImportMenu = null;
 			_newFileMenusAndHandlers = null;
+			_editMenu = null;
+			_newEditMenusAndHandlers = null;
 
 			_isDisposed = true;
 		}
 		#endregion
+
+		private void AddEditMenuItems()
+		{
+			//< item command = "CmdGoToRecord" />
+			using (var imageHolder = new NotebookImageHolder())
+			{
+				_editMenu = MenuServices.GetEditMenu(_majorFlexComponentParameters.MenuStrip);
+				_newEditMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newEditMenusAndHandlers, _editMenu, GotoRecord_Clicked, NotebookResources.Find_Record, NotebookResources.Find_a_Record_in_your_Notebook, Keys.Control | Keys.F, imageHolder.buttonImages.Images[goToRecord], 10);
+			}
+		}
+
+		private void GotoRecord_Clicked(object sender, EventArgs e)
+		{
+			/*
+			    <command id="CmdGoToRecord" label="_Find Record..." message="GotoRecord" icon="goToRecord" shortcut="Ctrl+F" >
+			      <parameters title="Go To Record" formlabel="Go _To..." okbuttonlabel="_Go" />
+			    </command>
+			*/
+			using (var dlg = new RecordGoDlg())
+			{
+				dlg.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
+				var cache = PropertyTable.GetValue<LcmCache>("cache");
+				dlg.SetDlgInfo(cache, null);
+				if (dlg.ShowDialog() == DialogResult.OK)
+				{
+					LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(_currentNotebookTool.MachineName, dlg.SelectedObject.Guid));
+				}
+			}
+		}
+
+		void FileExportMenu_Click(object sender, EventArgs e)
+		{
+			if (_recordList.AreCustomFieldsAProblem(new[] { RnGenericRecTags.kClassId }))
+			{
+				return;
+			}
+			using (var dlg = new NotebookExportDialog())
+			{
+				dlg.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
+				dlg.ShowDialog((Form)_majorFlexComponentParameters.MainWindow);
+			}
+		}
+
+		private void ImportSFMNotebook_Clicked(object sender, EventArgs e)
+		{
+			using (var importWizardDlg = new NotebookImportWiz())
+			{
+				AreaServices.HandleDlg(importWizardDlg, _majorFlexComponentParameters.LcmCache, _majorFlexComponentParameters.FlexApp, _majorFlexComponentParameters.MainWindow, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable, _majorFlexComponentParameters.FlexComponentParameters.Publisher);
+			}
+		}
 	}
 }

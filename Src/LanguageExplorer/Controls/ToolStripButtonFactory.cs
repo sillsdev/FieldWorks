@@ -26,5 +26,10 @@ namespace LanguageExplorer.Controls
 
 			return newToolStripButton;
 		}
+
+		internal static ToolStripSeparator CreateToolStripSeparator()
+		{
+			return new ToolStripSeparator();
+		}
 	}
 }

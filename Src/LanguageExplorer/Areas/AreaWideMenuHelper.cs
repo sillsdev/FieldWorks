@@ -10,10 +10,14 @@ using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.LcmUi;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Areas
@@ -55,6 +59,8 @@ namespace LanguageExplorer.Areas
 			_sharedEventHandlers.Add(AreaServices.JumpToTool, JumpToTool_Clicked);
 			_sharedEventHandlers.Add(AreaServices.InsertCategory, InsertCategory_Clicked);
 			_sharedEventHandlers.Add(AreaServices.DataTreeDelete, DataTreeDelete_Clicked);
+			_sharedEventHandlers.Add(AreaServices.CmdAddToLexicon, CmdAddToLexicon_Clicked);
+			_sharedEventHandlers.Add(AreaServices.LexiconLookup, LexiconLookup_Clicked);
 		}
 
 		internal AreaWideMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
@@ -65,10 +71,140 @@ namespace LanguageExplorer.Areas
 			_recordList = recordList;
 		}
 
+		#region Implementation of IPropertyTableProvider
+
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		#endregion
+
+		#region Implementation of IFlexComponent
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
+		{
+			FlexComponentParameters.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+
+			PropertyTable = flexComponentParameters.PropertyTable;
+			Publisher = flexComponentParameters.Publisher;
+			Subscriber = flexComponentParameters.Subscriber;
+		}
+
+		#endregion
+
+		#region IDisposable
+		private bool _isDisposed;
+
+		~AreaWideMenuHelper()
+		{
+			// The base class finalizer is called automatically.
+			Dispose(false);
+		}
+
+		/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+		public void Dispose()
+		{
+			Dispose(true);
+			// This object will be cleaned up by the Dispose method.
+			// Therefore, you should call GC.SupressFinalize to
+			// take this object off the finalization queue
+			// and prevent finalization code for this object
+			// from executing a second time.
+			GC.SuppressFinalize(this);
+		}
+
+		private void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (_isDisposed)
+			{
+				return; // No need to do it more than once.
+			}
+
+			if (disposing)
+			{
+				_sharedEventHandlers.Remove(AreaServices.InsertSlash);
+				_sharedEventHandlers.Remove(AreaServices.InsertEnvironmentBar);
+				_sharedEventHandlers.Remove(AreaServices.InsertNaturalClass);
+				_sharedEventHandlers.Remove(AreaServices.InsertOptionalItem);
+				_sharedEventHandlers.Remove(AreaServices.InsertHashMark);
+				_sharedEventHandlers.Remove(AreaServices.ShowEnvironmentError);
+				_sharedEventHandlers.Remove(AreaServices.JumpToTool);
+				_sharedEventHandlers.Remove(AreaServices.InsertCategory);
+				_sharedEventHandlers.Remove(AreaServices.DataTreeDelete);
+				_sharedEventHandlers.Remove(AreaServices.CmdAddToLexicon);
+				_sharedEventHandlers.Remove(AreaServices.LexiconLookup);
+
+				if (_fileExportMenu != null)
+				{
+					if (_usingLocalFileExportEventHandler)
+					{
+						_fileExportMenu.Click -= CommonFileExportMenu_Click;
+					}
+					else
+					{
+						_fileExportMenu.Click -= _foreignFileExportHandler;
+					}
+					_fileExportMenu.Visible = false;
+					_fileExportMenu.Enabled = false;
+				}
+				if (_toolsConfigureMenu != null)
+				{
+					_toolsCustomFieldsMenu.Click -= AddCustomField_Click;
+					_toolsConfigureMenu.DropDownItems.Remove(_toolsCustomFieldsMenu);
+					_toolsConfigureMenu.DropDownItems.Remove(_toolsCustomFieldsSeparatorMenu);
+					_toolsConfigureMenu.DropDownItems.Remove(_toolsCustomFieldsMenu);
+					_toolsCustomFieldsMenu.Dispose();
+					_toolsCustomFieldsSeparatorMenu.Dispose();
+					_toolsCustomFieldsMenu.Dispose();
+				}
+				if (_toolsConfigureColumnsMenu != null)
+				{
+					_toolsConfigureColumnsMenu.Click -= ConfigureColumns_Click;
+				}
+			}
+			_majorFlexComponentParameters = null;
+			_recordList = null;
+			_fileExportMenu = null;
+			_foreignFileExportHandler = null;
+			_toolsConfigureMenu = null;
+			_toolsCustomFieldsSeparatorMenu = null;
+			_toolsCustomFieldsMenu = null;
+			_toolsCustomFieldsMenu = null;
+			_browseViewer = null;
+			_sharedEventHandlers = null;
+
+			_isDisposed = true;
+		}
+		#endregion
+
 		/// <summary>
 		/// Setup the File->Export menu.
 		/// </summary>
-		/// <param name="handler">The handler to use, or null to use the more globel one.</param>
+		/// <param name="handler">The handler to use, or null to use the more global one.</param>
 		internal void SetupFileExportMenu(EventHandler handler = null)
 		{
 			_foreignFileExportHandler = handler;
@@ -174,7 +310,7 @@ namespace LanguageExplorer.Areas
 
 		private void Insert_Slash_Clicked(object sender, EventArgs e)
 		{
-			AreaServices.UndoExtension(AreaResources.ksInsertEnvironmentSlash, PropertyTable.GetValue<LcmCache>("cache").ActionHandlerAccessor, ()=> SenderTagAsIPhEnvSliceCommon(sender).InsertSlash());
+			AreaServices.UndoExtension(AreaResources.ksInsertEnvironmentSlash, PropertyTable.GetValue<LcmCache>("cache").ActionHandlerAccessor, () => SenderTagAsIPhEnvSliceCommon(sender).InsertSlash());
 		}
 
 		private void Insert_Underscore_Clicked(object sender, EventArgs e)
@@ -202,134 +338,6 @@ namespace LanguageExplorer.Areas
 			SenderTagAsIPhEnvSliceCommon(sender).ShowEnvironmentError();
 		}
 
-		#region Implementation of IPropertyTableProvider
-
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
-
-		#endregion
-
-		#region Implementation of IPublisherProvider
-
-		/// <summary>
-		/// Get the IPublisher.
-		/// </summary>
-		public IPublisher Publisher { get; private set; }
-
-		#endregion
-
-		#region Implementation of ISubscriberProvider
-
-		/// <summary>
-		/// Get the ISubscriber.
-		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-
-		#endregion
-
-		#region Implementation of IFlexComponent
-
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
-		{
-			FlexComponentParameters.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
-			PropertyTable = flexComponentParameters.PropertyTable;
-			Publisher = flexComponentParameters.Publisher;
-			Subscriber = flexComponentParameters.Subscriber;
-		}
-
-		#endregion
-
-		#region IDisposable
-		private bool _isDisposed;
-
-		~AreaWideMenuHelper()
-		{
-			// The base class finalizer is called automatically.
-			Dispose(false);
-		}
-
-		/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
-		public void Dispose()
-		{
-			Dispose(true);
-			// This object will be cleaned up by the Dispose method.
-			// Therefore, you should call GC.SupressFinalize to
-			// take this object off the finalization queue
-			// and prevent finalization code for this object
-			// from executing a second time.
-			GC.SuppressFinalize(this);
-		}
-
-		private void Dispose(bool disposing)
-		{
-			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if (_isDisposed)
-			{
-				return; // No need to do it more than once.
-			}
-
-			if (disposing)
-			{
-				_sharedEventHandlers.Remove(AreaServices.InsertSlash);
-				_sharedEventHandlers.Remove(AreaServices.InsertEnvironmentBar);
-				_sharedEventHandlers.Remove(AreaServices.InsertNaturalClass);
-				_sharedEventHandlers.Remove(AreaServices.InsertOptionalItem);
-				_sharedEventHandlers.Remove(AreaServices.InsertHashMark);
-				_sharedEventHandlers.Remove(AreaServices.ShowEnvironmentError);
-				_sharedEventHandlers.Remove(AreaServices.JumpToTool);
-				_sharedEventHandlers.Remove(AreaServices.InsertCategory);
-				_sharedEventHandlers.Remove(AreaServices.DataTreeDelete);
-
-				if (_fileExportMenu != null)
-				{
-					if (_usingLocalFileExportEventHandler)
-					{
-						_fileExportMenu.Click -= CommonFileExportMenu_Click;
-					}
-					else
-					{
-						_fileExportMenu.Click -= _foreignFileExportHandler;
-					}
-					_fileExportMenu.Visible = false;
-					_fileExportMenu.Enabled = false;
-				}
-				if (_toolsConfigureMenu != null)
-				{
-					_toolsCustomFieldsMenu.Click -= AddCustomField_Click;
-					_toolsConfigureMenu.DropDownItems.Remove(_toolsCustomFieldsMenu);
-					_toolsConfigureMenu.DropDownItems.Remove(_toolsCustomFieldsSeparatorMenu);
-					_toolsConfigureMenu.DropDownItems.Remove(_toolsCustomFieldsMenu);
-					_toolsCustomFieldsMenu.Dispose();
-					_toolsCustomFieldsSeparatorMenu.Dispose();
-					_toolsCustomFieldsMenu.Dispose();
-				}
-				if (_toolsConfigureColumnsMenu != null)
-				{
-					_toolsConfigureColumnsMenu.Click -= ConfigureColumns_Click;
-				}
-			}
-			_majorFlexComponentParameters = null;
-			_recordList = null;
-			_fileExportMenu = null;
-			_foreignFileExportHandler = null;
-			_toolsConfigureMenu = null;
-			_toolsCustomFieldsSeparatorMenu = null;
-			_toolsCustomFieldsMenu = null;
-			_toolsCustomFieldsMenu = null;
-			_browseViewer = null;
-			_sharedEventHandlers = null;
-
-			_isDisposed = true;
-		}
-		#endregion
-
 		internal static IPhEnvSliceCommon SenderTagAsIPhEnvSliceCommon(object sender)
 		{
 			return (IPhEnvSliceCommon)((ToolStripMenuItem)sender).Tag;
@@ -338,6 +346,11 @@ namespace LanguageExplorer.Areas
 		internal static Slice SenderTagAsSlice(object sender)
 		{
 			return (Slice)((ToolStripMenuItem)sender).Tag;
+		}
+
+		internal static StTextSlice DataTreeCurrentSliceAsStTextSlice(DataTree dataTree)
+		{
+			return dataTree.CurrentSlice as StTextSlice; // May be null.
 		}
 
 		internal static IPhEnvSliceCommon SliceAsIPhEnvSliceCommon(Slice slice)
@@ -454,6 +467,155 @@ namespace LanguageExplorer.Areas
 				var propertyTable = _majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
 				dlg.SetDlginfo((ICmPossibilityList)tagList[0], propertyTable, true, selectedCategoryOwner as IPartOfSpeech);
 				dlg.ShowDialog(propertyTable.GetValue<Form>("window"));
+			}
+		}
+
+		internal static void Set_CmdAddToLexicon_State(LcmCache cache, ToolStripItem toolStripItem, IVwSelection selection)
+		{
+			var enabled = false;
+			if (selection != null)
+			{
+				// Enable the command if the selection exists, we actually have a word, and it's in
+				// the default vernacular writing system.
+				int ichMin;
+				int ichLim;
+				int hvoDummy;
+				int tagDummy;
+				int ws;
+				ITsString tss;
+				GetWordLimitsOfSelection(selection, out ichMin, out ichLim, out hvoDummy, out tagDummy, out ws, out tss);
+				if (ws == 0)
+				{
+					ws = GetWsFromString(tss, ichMin, ichLim);
+				}
+				if (ichLim > ichMin && ws == cache.DefaultVernWs)
+				{
+					enabled = true;
+				}
+			}
+
+			toolStripItem.Enabled = enabled;
+		}
+
+		private void CmdAddToLexicon_Clicked(object sender, EventArgs e)
+		{
+			var dataTree = (DataTree)((ToolStripItem)sender).Tag;
+			var currentSlice = DataTreeCurrentSliceAsStTextSlice(dataTree);
+			int ichMin;
+			int ichLim;
+			int hvoDummy;
+			int Dummy;
+			int ws;
+			ITsString tss;
+			GetWordLimitsOfSelection(currentSlice.RootSite.RootBox.Selection, out ichMin, out ichLim, out hvoDummy, out Dummy, out ws, out tss);
+			if (ws == 0)
+			{
+				ws = GetWsFromString(tss, ichMin, ichLim);
+			}
+			if (ichLim <= ichMin || ws != _majorFlexComponentParameters.LcmCache.DefaultVernWs)
+			{
+				return;
+			}
+			var tsb = tss.GetBldr();
+			if (ichLim < tsb.Length)
+			{
+				tsb.Replace(ichLim, tsb.Length, null, null);
+			}
+
+			if (ichMin > 0)
+			{
+				tsb.Replace(0, ichMin, null, null);
+			}
+			var tssForm = tsb.GetString();
+			using (var dlg = new InsertEntryDlg())
+			{
+				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+				dlg.SetDlgInfo(_majorFlexComponentParameters.LcmCache, tssForm);
+				if (dlg.ShowDialog((Form)_majorFlexComponentParameters.MainWindow) == DialogResult.OK)
+				{
+					// is there anything special we want to do?
+				}
+			}
+		}
+
+		private static int GetWsFromString(ITsString tss, int ichMin, int ichLim)
+		{
+			if (tss == null || tss.Length == 0 || ichMin >= ichLim)
+			{
+				return 0;
+			}
+			var runMin = tss.get_RunAt(ichMin);
+			var runMax = tss.get_RunAt(ichLim - 1);
+			var ws = tss.get_WritingSystem(runMin);
+			if (runMin == runMax)
+			{
+				return ws;
+			}
+			for (var i = runMin + 1; i <= runMax; ++i)
+			{
+				var wsT = tss.get_WritingSystem(i);
+				if (wsT != ws)
+				{
+					return 0;
+				}
+			}
+			return ws;
+		}
+
+		private static void GetWordLimitsOfSelection(IVwSelection sel, out int ichMin, out int ichLim, out int hvo, out int tag, out int ws, out ITsString tss)
+		{
+			ichMin = ichLim = hvo = tag = ws = 0;
+			tss = null;
+			IVwSelection wordsel = null;
+			if (sel != null)
+			{
+				var sel2 = sel.EndBeforeAnchor ? sel.EndPoint(true) : sel.EndPoint(false);
+				wordsel = sel2?.GrowToWord();
+			}
+			if (wordsel == null)
+			{
+				return;
+			}
+
+			bool fAssocPrev;
+			wordsel.TextSelInfo(false, out tss, out ichMin, out fAssocPrev, out hvo, out tag, out ws);
+			wordsel.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvo, out tag, out ws);
+		}
+
+		internal bool IsLexiconLookupEnabled(IVwSelection selection)
+		{
+			if (selection == null)
+			{
+				return false;
+			}
+			// Enable the command if the selection exists and we actually have a word.
+			int ichMin;
+			int ichLim;
+			int hvoDummy;
+			int tagDummy;
+			int wsDummy;
+			ITsString tssDummy;
+			GetWordLimitsOfSelection(selection, out ichMin, out ichLim, out hvoDummy, out tagDummy, out wsDummy, out tssDummy);
+			return ichLim > ichMin;
+		}
+
+		private void LexiconLookup_Clicked(object sender, EventArgs e)
+		{
+			var selection = (IVwSelection)((ToolStripItem)sender).Tag;
+			if (selection == null)
+			{
+				return;
+			}
+			int ichMin;
+			int ichLim;
+			int hvo;
+			int tag;
+			int ws;
+			ITsString tss;
+			GetWordLimitsOfSelection(selection, out ichMin, out ichLim, out hvo, out tag, out ws, out tss);
+			if (ichLim > ichMin)
+			{
+				LexEntryUi.DisplayOrCreateEntry(_majorFlexComponentParameters.LcmCache, hvo, tag, ws, ichMin, ichLim, PropertyTable.GetValue<IWin32Window>("window"), PropertyTable, Publisher, Subscriber, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "UserHelpFile");
 			}
 		}
 	}

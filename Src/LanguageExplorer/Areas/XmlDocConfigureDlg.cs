@@ -3409,7 +3409,7 @@ namespace LanguageExplorer.Areas
 			using (var dlg = new ConfigureHomographDlg())
 			{
 				var flexApp = m_mainWindow.PropertyTable.GetValue<IFlexApp>("App");
-				dlg.SetupDialog(m_mainWindow.Cache.ServiceLocator.GetInstance<HomographConfiguration>(), m_mainWindow.Cache, m_mainWindow.PropertyTable.GetValue<LcmStyleSheet>("FlexStyleSheet"), flexApp, flexApp);
+				dlg.SetupDialog(m_mainWindow.Cache.ServiceLocator.GetInstance<HomographConfiguration>(), m_mainWindow.Cache, FwUtils.StyleSheetFromPropertyTable(m_mainWindow.PropertyTable), flexApp, flexApp);
 				dlg.StartPosition = FormStartPosition.CenterScreen;
 				MasterRefreshRequired = dlg.ShowDialog((Form)m_mainWindow) == DialogResult.OK;
 			}

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 SIL International
+// Copyright (c) 2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -44,32 +44,13 @@ namespace LanguageExplorer.Controls.DetailControls
 			_panelMenuCreatorMethods.Add(panelMenuId, panelMenuCreatorMethod);
 		}
 
-		internal void DisposePanelMenuContextMenu(string panelMenuId)
+		internal void RemovePanelMenuContextMenu(string panelMenuId)
 		{
-			var panelMenuTuple = GetPanelMenu(panelMenuId);
-			if (panelMenuTuple == null)
+			if (!_panelMenuCreatorMethods.ContainsKey(panelMenuId))
 			{
-				// Nothing to do.
-				return;
+				return; // Nothing to remove.
 			}
-			// Unwire event handlers.
-			foreach (var menuItemTuple in panelMenuTuple.Item2)
-			{
-				menuItemTuple.Item1.Click -= menuItemTuple.Item2;
-			}
-			// Dispose menu and its items.
-			// It needs to do it on that "ToList", since simply disposing it will remove it from the "Items" collection,
-			// which then throws with a changing contents while iterating.
-			foreach (var item in panelMenuTuple.Item1.Items.Cast<IDisposable>().ToList())
-			{
-				item.Dispose();
-			}
-			panelMenuTuple.Item1.Dispose();
-
-			// Clear out the list of ToolStripMenuItem items.
-			panelMenuTuple.Item2.Clear();
-
-			// Keep the creator method.
+			_panelMenuCreatorMethods.Remove(panelMenuId);
 		}
 
 		#region IDisposable
@@ -105,6 +86,10 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			if (disposing)
 			{
+				//foreach (var kvp in _panelMenuCreatorMethods)
+				//{
+				//	RemovePanelMenuContextMenu(kvp.Key);
+				//}
 				_panelMenuCreatorMethods.Clear();
 			}
 			_panelMenuCreatorMethods = null;

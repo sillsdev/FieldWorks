@@ -118,10 +118,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_ExtendedNote_Hotlinks(Slice slice, string hotlinksMenuId)
 		{
-			if (hotlinksMenuId != mnuDataTree_ExtendedNote_Hotlinks)
-			{
-				throw new ArgumentException($"Expected argument value of '{mnuDataTree_ExtendedNote_Hotlinks}', but got '{hotlinksMenuId}' instead.");
-			}
+			Require.That(hotlinksMenuId == mnuDataTree_ExtendedNote_Hotlinks, $"Expected argument value of '{mnuDataTree_ExtendedNote_Hotlinks}', but got '{hotlinksMenuId}' instead.");
+
 			var hotlinksMenuItemList = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
 			// <command id="CmdDataTree-Insert-ExtNote" label="Insert Extended Note" message="DataTreeInsert">
@@ -132,11 +130,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_Sense_Hotlinks(Slice slice, string hotlinksMenuId)
 		{
-			// mnuDataTree-Sense-Hotlinks
-			if (hotlinksMenuId != mnuDataTree_Sense_Hotlinks)
-			{
-				throw new ArgumentException($"Expected argument value of '{mnuDataTree_Sense_Hotlinks}', but got '{hotlinksMenuId}' instead.");
-			}
+			Require.That(hotlinksMenuId == mnuDataTree_Sense_Hotlinks, $"Expected argument value of '{mnuDataTree_Sense_Hotlinks}', but got '{hotlinksMenuId}' instead.");
+
 			var hotlinksMenuItemList = new List<Tuple<ToolStripMenuItem, EventHandler>>(2);
 
 			//<command id="CmdDataTree-Insert-Example" label="Insert _Example" message="DataTreeInsert">
@@ -220,10 +215,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_ExtendedNotes(Slice slice, string contextMenuId)
 		{
-			if (contextMenuId != LexiconEditToolConstants.mnuDataTree_ExtendedNotes)
-			{
-				throw new ArgumentException($"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_ExtendedNotes}', but got '{contextMenuId}' instead.");
-			}
+			Require.That(contextMenuId == LexiconEditToolConstants.mnuDataTree_ExtendedNotes, $"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_ExtendedNotes}', but got '{contextMenuId}' instead.");
 
 			// Start: <menu id="mnuDataTree-ExtendedNotes">
 
@@ -248,10 +240,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_ExtendedNote(Slice slice, string contextMenuId)
 		{
-			if (contextMenuId != LexiconEditToolConstants.mnuDataTree_ExtendedNote)
-			{
-				throw new ArgumentException($"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_ExtendedNote}', but got '{contextMenuId}' instead.");
-			}
+			Require.That(contextMenuId == LexiconEditToolConstants.mnuDataTree_ExtendedNote, $"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_ExtendedNote}', but got '{contextMenuId}' instead.");
 
 			// Start: <menu id="mnuDataTree-ExtendedNote">
 
@@ -297,10 +286,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_ExtendedNote_Examples(Slice slice, string contextMenuId)
 		{
-			if (contextMenuId != LexiconEditToolConstants.mnuDataTree_ExtendedNote_Examples)
-			{
-				throw new ArgumentException($"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_ExtendedNote_Examples}', but got '{contextMenuId}' instead.");
-			}
+			Require.That(contextMenuId == LexiconEditToolConstants.mnuDataTree_ExtendedNote_Examples, $"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_ExtendedNote_Examples}', but got '{contextMenuId}' instead.");
 
 			// Start: <menu id="mnuDataTree-ExtendedNote-Examples">
 
@@ -338,10 +324,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Picture(Slice slice, string contextMenuId)
 		{
-			if (contextMenuId != LexiconEditToolConstants.mnuDataTree_Picture)
-			{
-				throw new ArgumentException($"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_Picture}', but got '{contextMenuId}' instead.");
-			}
+			Require.That(contextMenuId == LexiconEditToolConstants.mnuDataTree_Picture, $"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_Picture}', but got '{contextMenuId}' instead.");
 
 			// Start: <menu id="mnuDataTree-Picture">
 
@@ -415,10 +398,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Subsenses(Slice slice, string contextMenuId)
 		{
-			if (contextMenuId != LexiconEditToolConstants.mnuDataTree_Subsenses)
-			{
-				throw new ArgumentException($"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_Subsenses}', but got '{contextMenuId}' instead.");
-			}
+			Require.That(contextMenuId == LexiconEditToolConstants.mnuDataTree_Subsenses, $"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_Subsenses}', but got '{contextMenuId}' instead.");
 
 			// Start: <menu id="mnuDataTree-Subsenses">
 
@@ -438,10 +418,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Example(Slice slice, string contextMenuId)
 		{
-			if (contextMenuId != LexiconEditToolConstants.mnuDataTree_Example)
-			{
-				throw new ArgumentException($"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_Example}', but got '{contextMenuId}' instead.");
-			}
+			Require.That(contextMenuId == LexiconEditToolConstants.mnuDataTree_Example, $"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_Example}', but got '{contextMenuId}' instead.");
 
 			// Start: <menu id="mnuDataTree-Example">
 
@@ -485,10 +462,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Sense(Slice slice, string contextMenuId)
 		{
-			if (contextMenuId != LexiconEditToolConstants.mnuDataTree_Sense)
-			{
-				throw new ArgumentException($"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_Sense}', but got '{contextMenuId}' instead.");
-			}
+			Require.That(contextMenuId == LexiconEditToolConstants.mnuDataTree_Sense, $"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_Sense}', but got '{contextMenuId}' instead.");
 
 			// Start: <menu id="mnuDataTree-Sense">
 			var contextMenuStrip = new ContextMenuStrip

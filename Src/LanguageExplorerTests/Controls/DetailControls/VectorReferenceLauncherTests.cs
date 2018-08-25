@@ -61,12 +61,11 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		{
 			base.CreateTestData();
 
-			m_propertyTable = TestSetupServices.SetupTestTriumvirate(out m_publisher, out m_subscriber);
+			TestSetupServices.SetupTestTriumvirate(out m_propertyTable, out m_publisher, out m_subscriber);
 
 			var servLoc = Cache.ServiceLocator;
 			m_leFact = servLoc.GetInstance<ILexEntryFactory>();
 			m_lerFact = servLoc.GetInstance<ILexEntryRefFactory>();
-			//m_moFact = servLoc.GetInstance<IMoStemAllomorphFactory>();
 			MockLauncher = new MockVectorReferenceLauncher();
 			MockLauncher.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
 			m_wsAnalysis = Cache.DefaultAnalWs;

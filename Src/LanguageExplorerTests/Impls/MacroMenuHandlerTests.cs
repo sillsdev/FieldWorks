@@ -35,7 +35,7 @@ namespace LanguageExplorerTests.Impls
 
 			IPublisher publisherDummy;
 			ISubscriber subscriberDummy;
-			_propertyTable = TestSetupServices.SetupTestTriumvirate(out publisherDummy, out subscriberDummy);
+			TestSetupServices.SetupTestTriumvirate(out _propertyTable, out publisherDummy, out subscriberDummy);
 			_macroMenuHandler = new MacroMenuHandler();
 			_propertyTable.SetProperty("cache", Cache);
 			_macroMenuHandler.InitializeForTests(Cache);

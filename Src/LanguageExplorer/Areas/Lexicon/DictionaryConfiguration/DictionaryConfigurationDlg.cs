@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -142,6 +142,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 				EventHandler refreshDelegate = null;
 				refreshDelegate = delegate
 				{
+					//Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 					// Since we are handling this delayed the dialog may have been closed before we get around to it
 					if (m_preview.IsDisposed)
 					{
@@ -155,6 +156,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 					browser.LoadContent(value, "file:///c:/MayNotExist/doesnotmatter.html", "application/xhtml+xml");
 					m_preview.Refresh();
 					Application.Idle -= refreshDelegate;
+					//Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 				};
 				Application.Idle += refreshDelegate;
 			}

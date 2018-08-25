@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -12,6 +13,7 @@ using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.Xml;
@@ -119,17 +121,13 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		/// <summary>
 		/// Determine if the object really has data to be shown in the slice
 		/// </summary>
+		/// <remarks>Called by DataTree via reflection.</remarks>
 		public static bool ShowSliceForVisibleIfData(XElement node, ICmObject obj)
 		{
 			// this slice does not have data if the only roled participants object
 			// is the default roled participants and it does not contain any participants
-			var rec = (IRnGenericRec) obj;
-			if (rec.ParticipantsOC.Count > 1)
-			{
-				return true;
-			}
-
-			return rec.ParticipantsOC.Any(roledPartic => roledPartic.ParticipantsRC.Any());
+			var rec = (IRnGenericRec)obj;
+			return rec.ParticipantsOC.Count > 1 || rec.ParticipantsOC.Any(roledPartic => roledPartic.ParticipantsRC.Any());
 		}
 
 		/// <summary>
@@ -159,13 +157,16 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 
 		void DisposeContextMenu(object sender, EventArgs e)
 		{
+			//Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 			Application.Idle -= DisposeContextMenu;
 			if (m_contextMenuStrip != null && !m_contextMenuStrip.IsDisposed)
 			{
 				m_contextMenuStrip.Dispose();
 				m_contextMenuStrip = null;
 			}
+			//Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 		}
+
 		private ContextMenuStrip CreateContextMenu()
 		{
 			var contextMenuStrip = new ContextMenuStrip();
@@ -200,10 +201,9 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 
 			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 			contextMenuStrip.Items.Add(fieldVis);
-#if RANDYTODO
-			Image imgHelp = ContainingDataTree.SmallImages.GetImage("Help");
-			contextMenuStrip.Items.Add(new ToolStripMenuItem(LanguageExplorerResources.ksHelp, imgHelp, ShowHelpTopic));
-#endif
+
+			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(); ;
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Help_Clicked, LanguageExplorerResources.ksHelp, image: ResourceHelper.ButtonMenuHelpIcon);
 
 			return contextMenuStrip;
 		}
@@ -275,37 +275,10 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			SetFieldVisibility("never");
 		}
 
-		private void ShowHelpTopic(object sender, EventArgs e)
-		{
-			var areaName = PropertyTable.GetValue<string>(AreaServices.AreaChoice);
-			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
-				areaName == AreaServices.TextAndWordsAreaMachineName
-					? "khtpField-notebookEdit-InterlinearEdit-RnGenericRec-Participants"
-					: "khtpField-notebookEdit-CustomSlice-RnGenericRec-Participants");
-		}
-
-#if RANDYTODO
-		public virtual bool OnDisplayDeleteParticipants(object commandObject, ref UIItemDisplayProperties display)
-		{
-			display.Enabled = true;
-			display.Visible = true;
-			return true;
-		}
-#endif
-
 		/// <summary />
-		public bool OnDeleteParticipants(object args)
+		public override string GetSliceHelpTopicID()
 		{
-			var slice = ContainingDataTree.CurrentSlice;
-			var roledPartic = slice.MyCmObject as IRnRoledPartic;
-			if (roledPartic != null)
-			{
-				UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoDeleteParticipants, LanguageExplorerResources.ksRedoDeleteParticipants, roledPartic,
-					() => Record.ParticipantsOC.Remove(roledPartic));
-				Collapse();
-				Expand();
-			}
-			return true;
+			return PropertyTable.GetValue<string>(AreaServices.AreaChoice) == AreaServices.TextAndWordsAreaMachineName ? "khtpField-notebookEdit-InterlinearEdit-RnGenericRec-Participants" : "khtpField-notebookEdit-CustomSlice-RnGenericRec-Participants";
 		}
 
 		/// <summary>

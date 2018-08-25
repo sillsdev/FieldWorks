@@ -117,10 +117,7 @@ namespace LanguageExplorer.Areas
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> PopupContextMenuCreatorMethod_mnuObjectChoices(Slice slice, string contextMenuId)
 		{
-			if (contextMenuId != AreaServices.mnuObjectChoices)
-			{
-				throw new ArgumentException($"Expected argument value of '{AreaServices.mnuObjectChoices}', but got '{contextMenuId}' instead.");
-			}
+			Require.That(contextMenuId == AreaServices.mnuObjectChoices, $"Expected argument value of '{AreaServices.mnuObjectChoices}', but got '{contextMenuId}' instead.");
 
 			// Start: <menu id="mnuObjectChoices">
 
@@ -298,10 +295,7 @@ namespace LanguageExplorer.Areas
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> PopupContextMenuCreatorMethod_mnuReferenceChoices(Slice slice, string contextMenuId)
 		{
-			if (contextMenuId != AreaServices.mnuReferenceChoices)
-			{
-				throw new ArgumentException($"Expected argument value of '{AreaServices.mnuReferenceChoices}', but got '{contextMenuId}' instead.");
-			}
+			Require.That(contextMenuId == AreaServices.mnuReferenceChoices, $"Expected argument value of '{AreaServices.mnuReferenceChoices}', but got '{contextMenuId}' instead.");
 
 			// Start: <menu id="mnuReferenceChoices">
 
@@ -903,10 +897,7 @@ namespace LanguageExplorer.Areas
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> PopupContextMenuCreatorMethod_mnuEnvReferenceChoices(Slice slice, string contextMenuId)
 		{
-			if (contextMenuId != AreaServices.mnuEnvReferenceChoices)
-			{
-				throw new ArgumentException($"Expected argument value of '{AreaServices.mnuEnvReferenceChoices}', but got '{contextMenuId}' instead.");
-			}
+			Require.That(contextMenuId == AreaServices.mnuEnvReferenceChoices, $"Expected argument value of '{AreaServices.mnuEnvReferenceChoices}', but got '{contextMenuId}' instead.");
 
 			// Start: <menu id="mnuEnvReferenceChoices">
 

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -34,15 +34,23 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			sda.SetString(hvos[1], PhoneEnvReferenceView.kEnvStringRep, TsStringUtils.MakeString("abc", 6));
 			IPublisher publisher;
 			ISubscriber subscriber;
-			using (var propertyTable = TestSetupServices.SetupTestTriumvirate(out publisher, out subscriber))
-			using (var view = new PhoneEnvReferenceView())
+			IPropertyTable propertyTable;
+			TestSetupServices.SetupTestTriumvirate(out propertyTable, out publisher, out subscriber);
+			try
 			{
-				view.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, subscriber));
-				view.SetSda(sda);
-				view.SetRoot(form);
-				view.SetCache(Cache);
-				var results = view.EnvsBeingRequestedForThisEntry();
-				Assert.That(results, Has.Count.EqualTo(1));
+				using (var view = new PhoneEnvReferenceView())
+				{
+					view.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, subscriber));
+					view.SetSda(sda);
+					view.SetRoot(form);
+					view.SetCache(Cache);
+					var results = view.EnvsBeingRequestedForThisEntry();
+					Assert.That(results, Has.Count.EqualTo(1));
+				}
+			}
+			finally
+			{
+				propertyTable.Dispose();
 			}
 		}
 	}

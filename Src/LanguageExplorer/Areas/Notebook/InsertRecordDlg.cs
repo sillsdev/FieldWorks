@@ -1,16 +1,18 @@
-﻿// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Windows.Forms;
-using SIL.LCModel.Core.KernelInterfaces;
+using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.LexText;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Infrastructure;
 
-namespace LanguageExplorer.Controls.LexText
+namespace LanguageExplorer.Areas.Notebook
 {
 	public class InsertRecordDlg : Form, IFlexComponent
 	{
@@ -58,15 +60,16 @@ namespace LanguageExplorer.Controls.LexText
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
-			// Must not be run more than once.
+
 			if (IsDisposed)
 			{
+				// No need to run more than once.
 				return;
 			}
 
-			if(disposing)
+			if (disposing)
 			{
-				if(m_typePopupTreeManager != null)
+				if (m_typePopupTreeManager != null)
 				{
 					m_typePopupTreeManager.Dispose();
 					m_typePopupTreeManager = null;
@@ -77,7 +80,7 @@ namespace LanguageExplorer.Controls.LexText
 		}
 		#endregion Dispose
 
-		public void SetDlgInfo(LcmCache cache, ICmObject owner)
+		public void SetDlgInfo(LcmCache cache, ICmObject owner, ITsString tssTitle = null)
 		{
 			m_cache = cache;
 			m_owner = owner;
@@ -108,12 +111,11 @@ namespace LanguageExplorer.Controls.LexText
 			m_typePopupTreeManager.LoadPopupTree(m_cache.ServiceLocator.GetObject(RnResearchNbkTags.kguidRecObservation).Hvo);
 			// Ensure that we start out focused in the Title text box.  See FWR-2731.
 			m_titleTextBox.Select();
-		}
 
-		public void SetDlgInfo(LcmCache cache, ICmObject owner, ITsString tssTitle)
-		{
-			SetDlgInfo(cache, owner);
-			m_titleTextBox.Tss = tssTitle;
+			if (tssTitle != null)
+			{
+				m_titleTextBox.Tss = tssTitle;
+			}
 		}
 
 		private void AdjustControlAndDialogHeight(Control control, int preferredHeight)
@@ -139,16 +141,16 @@ namespace LanguageExplorer.Controls.LexText
 					UndoableUnitOfWorkHelper.Do(LexTextControls.ksUndoCreateRecord, LexTextControls.ksRedoCreateRecord, m_cache.ActionHandlerAccessor, () =>
 					{
 						var recFactory = m_cache.ServiceLocator.GetInstance<IRnGenericRecFactory>();
-						var posHvo = ((HvoTreeNode) m_typeCombo.SelectedNode).Hvo;
+						var posHvo = ((HvoTreeNode)m_typeCombo.SelectedNode).Hvo;
 						var type = m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(posHvo);
 						switch (m_owner.ClassID)
 						{
 							case RnResearchNbkTags.kClassId:
-								NewRecord = recFactory.Create((IRnResearchNbk) m_owner, m_titleTextBox.Tss, type);
+								NewRecord = recFactory.Create((IRnResearchNbk)m_owner, m_titleTextBox.Tss, type);
 								break;
 
 							case RnGenericRecTags.kClassId:
-								NewRecord = recFactory.Create((IRnGenericRec) m_owner, m_titleTextBox.Tss, type);
+								NewRecord = recFactory.Create((IRnGenericRec)m_owner, m_titleTextBox.Tss, type);
 								break;
 						}
 					});

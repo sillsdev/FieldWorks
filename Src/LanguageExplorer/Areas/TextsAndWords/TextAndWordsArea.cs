@@ -65,7 +65,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				_propertyTable.SetDefault("CopyAnalysesToNewSpelling", true, true, settingsGroup: SettingsGroup.GlobalSettings);
 				_propertyTable.SetDefault("MaintainCaseOnChangeSpelling", true, true, settingsGroup: SettingsGroup.GlobalSettings);
 
-				_propertyTable.SetDefault("ITexts_AddWordsToLexicon", false, true);
+				_propertyTable.SetDefault(InterlinDocForAnalysis.ITexts_AddWordsToLexicon, false, true);
 				_propertyTable.SetDefault("ITexts_ShowAddWordsToLexiconDlg", true, true);
 				_propertyTable.SetDefault("ITexts-ScriptureIds", string.Empty, true);
 				_hasBeenActivated = true;

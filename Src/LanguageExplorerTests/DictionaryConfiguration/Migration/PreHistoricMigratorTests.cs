@@ -58,7 +58,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 
 			ISharedEventHandlers dummy;
 			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, out dummy);
-			_lcmStyleSheet = _flexComponentParameters.PropertyTable.GetValue<LcmStyleSheet>("FlexStyleSheet");
+			_lcmStyleSheet = FwUtils.StyleSheetFromPropertyTable(_flexComponentParameters.PropertyTable);
 			_migrator = new PreHistoricMigrator(string.Empty, Cache, null, _flexComponentParameters.PropertyTable);
 		}
 

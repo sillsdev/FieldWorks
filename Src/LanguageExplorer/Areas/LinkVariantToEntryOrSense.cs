@@ -5,15 +5,17 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.LexText;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel;
-using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Infrastructure;
 
-namespace LanguageExplorer.Controls.LexText
+namespace LanguageExplorer.Areas
 {
 	public partial class LinkVariantToEntryOrSense : LinkEntryOrSenseDlg
 	{

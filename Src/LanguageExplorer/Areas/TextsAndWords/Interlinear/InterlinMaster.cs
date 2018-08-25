@@ -181,7 +181,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			switch (m_tabCtrl.SelectedIndex)
 			{
 				case (int)TabPageSelection.Gloss:
-					return PropertyTable.GetValue(InterlinDocForAnalysis.ksPropertyAddWordsToLexicon, false) ? InterlinMode.GlossAddWordsToLexicon : InterlinMode.Gloss;
+					return PropertyTable.GetValue(InterlinDocForAnalysis.ITexts_AddWordsToLexicon, false) ? InterlinMode.GlossAddWordsToLexicon : InterlinMode.Gloss;
 
 				case (int)TabPageSelection.ConstituentChart:
 					return InterlinMode.Chart;

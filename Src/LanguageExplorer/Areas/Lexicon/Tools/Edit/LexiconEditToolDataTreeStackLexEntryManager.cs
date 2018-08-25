@@ -137,6 +137,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				_sharedEventHandlers.Remove(LexiconAreaConstants.MoveDownObjectInOwningSequence);
 				foreach (var manager in _dataTreeWidgetManagers.Values)
 				{
+					manager.UnwireSharedEventHandlers();
+				}
+				foreach (var manager in _dataTreeWidgetManagers.Values)
+				{
 					manager.Dispose();
 				}
 				_dataTreeWidgetManagers.Clear();
@@ -180,10 +184,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuReorderVector(Slice slice, string contextMenuId)
 		{
-			if (contextMenuId != LexiconAreaConstants.mnuReorderVector)
-			{
-				throw new ArgumentException($"Expected argument value of '{LexiconAreaConstants.mnuReorderVector}', but got '{contextMenuId}' instead.");
-			}
+			Require.That(contextMenuId == LexiconAreaConstants.mnuReorderVector, $"Expected argument value of '{LexiconAreaConstants.mnuReorderVector}', but got '{contextMenuId}' instead.");
 
 			// Start: <menu id="mnuReorderVector">
 			// This menu and its commands are shared
@@ -225,10 +226,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_VariantSpec(Slice slice, string contextMenuId)
 		{
-			if (contextMenuId != mnuDataTree_VariantSpec)
-			{
-				throw new ArgumentException($"Expected argument value of '{mnuDataTree_VariantSpec}', but got '{contextMenuId}' instead.");
-			}
+			Require.That(contextMenuId == mnuDataTree_VariantSpec, $"Expected argument value of '{mnuDataTree_VariantSpec}', but got '{contextMenuId}' instead.");
 
 			// Start: <menu id="mnuDataTree-VariantSpec">
 			var contextMenuStrip = new ContextMenuStrip
@@ -283,10 +281,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_ComplexFormSpec(Slice slice, string contextMenuId)
 		{
-			if (contextMenuId != mnuDataTree_ComplexFormSpec)
-			{
-				throw new ArgumentException($"Expected argument value of '{mnuDataTree_ComplexFormSpec}', but got '{contextMenuId}' instead.");
-			}
+			Require.That(contextMenuId == mnuDataTree_ComplexFormSpec, $"Expected argument value of '{mnuDataTree_ComplexFormSpec}', but got '{contextMenuId}' instead.");
 
 			// Start: <menu id="mnuDataTree-ComplexFormSpec">
 			var contextMenuStrip = new ContextMenuStrip
@@ -321,6 +316,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Pronunciation(Slice slice, string contextMenuId)
 		{
+			Require.That(contextMenuId == LexiconEditToolConstants.mnuDataTree_AlternateForms, $"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_AlternateForms}', but got '{contextMenuId}' instead.");
+
 			// Start: <menu id="mnuDataTree-Pronunciation">
 			var contextMenuStrip = new ContextMenuStrip
 			{
@@ -382,10 +379,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_Etymology_Hotlinks(Slice slice, string hotlinksMenuId)
 		{
-			if (hotlinksMenuId != mnuDataTree_Etymology_Hotlinks)
-			{
-				throw new ArgumentException($"Expected argument value of '{mnuDataTree_Etymology_Hotlinks}', but got '{hotlinksMenuId}' instead.");
-			}
+			Require.That(hotlinksMenuId == mnuDataTree_Etymology_Hotlinks, $"Expected argument value of '{mnuDataTree_Etymology_Hotlinks}', but got '{hotlinksMenuId}' instead.");
+
 			var hotlinksMenuItemList = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 			// <item command="CmdDataTree-Insert-Etymology"/>
 			ToolStripMenuItemFactory.CreateHotLinkToolStripMenuItem(hotlinksMenuItemList, _sharedEventHandlers.Get(LexiconEditToolConstants.CmdDataTree_Insert_Etymology), LexiconResources.Insert_Etymology, LexiconResources.Insert_Etymology_Tooltip);
@@ -395,10 +390,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Etymology(Slice slice, string contextMenuId)
 		{
-			if (contextMenuId != LexiconEditToolConstants.mnuDataTree_Etymology)
-			{
-				throw new ArgumentException($"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_Etymology}', but got '{contextMenuId}' instead.");
-			}
+			Require.That(contextMenuId == LexiconEditToolConstants.mnuDataTree_Etymology, $"Expected argument value of '{LexiconEditToolConstants.mnuDataTree_Etymology}', but got '{contextMenuId}' instead.");
 
 			// Start: <menu id="mnuDataTree-Etymology">
 			var contextMenuStrip = new ContextMenuStrip
@@ -456,10 +448,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_DeleteAddLexReference(Slice slice, string contextMenuId)
 		{
-			if (contextMenuId != mnuDataTree_DeleteAddLexReference)
-			{
-				throw new ArgumentException($"Expected argument value of '{mnuDataTree_DeleteAddLexReference}', but got '{contextMenuId}' instead.");
-			}
+			Require.That(contextMenuId == mnuDataTree_DeleteAddLexReference, $"Expected argument value of '{mnuDataTree_DeleteAddLexReference}', but got '{contextMenuId}' instead.");
 
 			// Start: <menu id="mnuDataTree-DeleteAddLexReference">
 			// This menu and its commands are shared
@@ -485,10 +474,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_DeleteReplaceLexReference(Slice slice, string contextMenuId)
 		{
-			if (contextMenuId != mnuDataTree_DeleteReplaceLexReference)
-			{
-				throw new ArgumentException($"Expected argument value of '{mnuDataTree_DeleteReplaceLexReference}', but got '{contextMenuId}' instead.");
-			}
+			Require.That(contextMenuId == mnuDataTree_DeleteReplaceLexReference, $"Expected argument value of '{mnuDataTree_DeleteReplaceLexReference}', but got '{contextMenuId}' instead.");
 
 			// Start: <menu id="mnuDataTree-DeleteReplaceLexReference">
 			// This menu and its commands are shared

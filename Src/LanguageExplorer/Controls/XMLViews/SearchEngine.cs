@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -34,7 +34,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				// then create a new override of this method that feeds the last bool parameter in as 'true'.
 				// This default method can then feed that override 'false'.
 				propertyTable.SetProperty(propName, searchEngine);
-				propertyTable.SetPropertyDispose(propName, true);
+				propertyTable.SetPropertyDispose(propName);
 			}
 			return searchEngine;
 		}

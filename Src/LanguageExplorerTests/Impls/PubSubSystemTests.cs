@@ -313,7 +313,8 @@ namespace LanguageExplorerTests.Impls
 		[SetUp]
 		public void TestSetup()
 		{
-			var propertyTable = TestSetupServices.SetupTestTriumvirate(out _publisher, out _subscriber);
+			IPropertyTable propertyTable;
+			TestSetupServices.SetupTestTriumvirate(out propertyTable, out _publisher, out _subscriber);
 			propertyTable.Dispose(); // We don't really want it.
 		}
 

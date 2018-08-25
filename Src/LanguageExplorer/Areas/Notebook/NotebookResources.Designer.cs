@@ -19,7 +19,7 @@ namespace LanguageExplorer.Areas.Notebook {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class NotebookResources {
@@ -61,6 +61,60 @@ namespace LanguageExplorer.Areas.Notebook {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Choose Owner of Demoted Record.
+        /// </summary>
+        internal static string Choose_Owner_of_Demoted_Record {
+            get {
+                return ResourceManager.GetString("Choose_Owner_of_Demoted_Record", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose Owner of Demoted Subrecord.
+        /// </summary>
+        internal static string Choose_Owner_of_Demoted_Subrecord {
+            get {
+                return ResourceManager.GetString("Choose_Owner_of_Demoted_Subrecord", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create a new Record in your Notebook..
+        /// </summary>
+        internal static string Create_a_new_Record_in_your_Notebook {
+            get {
+                return ResourceManager.GetString("Create_a_new_Record_in_your_Notebook", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create a Subrecord in your Notebook..
+        /// </summary>
+        internal static string Create_a_Subrecord_in_your_Notebook {
+            get {
+                return ResourceManager.GetString("Create_a_Subrecord_in_your_Notebook", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Participants.
+        /// </summary>
+        internal static string Delete_Participants {
+            get {
+                return ResourceManager.GetString("Delete_Participants", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Demote....
+        /// </summary>
+        internal static string Demote {
+            get {
+                return ResourceManager.GetString("Demote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Demote Record....
         /// </summary>
         internal static string Demote_Record {
@@ -84,6 +138,24 @@ namespace LanguageExplorer.Areas.Notebook {
         internal static string Exporting0 {
             get {
                 return ResourceManager.GetString("Exporting0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Find a Record in your Notebook..
+        /// </summary>
+        internal static string Find_a_Record_in_your_Notebook {
+            get {
+                return ResourceManager.GetString("Find_a_Record_in_your_Notebook", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Find Record....
+        /// </summary>
+        internal static string Find_Record {
+            get {
+                return ResourceManager.GetString("Find_Record", resourceCulture);
             }
         }
         
@@ -129,7 +201,7 @@ namespace LanguageExplorer.Areas.Notebook {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-        ///&lt;parameters id=&quot;id&quot; altTitleId=&quot;RnGenericRec-Plural&quot; area=&quot;notebook&quot; clerk=&quot;records&quot; field=&quot;Records&quot; filterBar=&quot;true&quot;  /&gt;
+        ///&lt;parameters id=&quot;RecordsList&quot; altTitleId=&quot;RnGenericRec-Plural&quot; area=&quot;notebook&quot; clerk=&quot;records&quot; field=&quot;Records&quot; filterBar=&quot;true&quot;  /&gt;
         ///.
         /// </summary>
         internal static string NotebookBrowseParameters {
@@ -166,11 +238,66 @@ namespace LanguageExplorer.Areas.Notebook {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-        ///&lt;parameters persistContext=&quot;normalEdit&quot; layout=&quot;Normal&quot; layoutChoiceField=&quot;Type&quot; treeBarAvailability=&quot;NotAllowed&quot; showDescendantInRoot=&quot;true&quot; emptyTitleId=&quot;No-RnGenericRecs&quot; printLayout=&quot;publishRecord&quot; /&gt;.
+        ///&lt;parameters persistContext=&quot;normalEdit&quot; suppressInfoBar=&quot;ifNotFirst&quot; layout=&quot;Normal&quot; layoutChoiceField=&quot;Type&quot; treeBarAvailability=&quot;NotAllowed&quot; showDescendantInRoot=&quot;true&quot; emptyTitleId=&quot;No-RnGenericRecs&quot; printLayout=&quot;publishRecord&quot; /&gt;.
         /// </summary>
         internal static string NotebookEditRecordEditViewParameters {
             get {
                 return ResourceManager.GetString("NotebookEditRecordEditViewParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters id=&quot;recordMatchList&quot; listItemsClass=&quot;RnGenericRec&quot; filterBar=&quot;false&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; altTitleId=&quot;RnGenericRec-Plural&quot; editable=&quot;false&quot;&gt;
+        ///	&lt;columns&gt;
+        ///		&lt;column label=&quot;Record Type&quot; editable=&quot;false&quot; width=&quot;72000&quot;&gt;
+        ///			&lt;obj field=&quot;Type&quot; layout=&quot;Name&quot;/&gt;
+        ///		&lt;/column&gt;
+        ///		&lt;column label=&quot;Title&quot; editable=&quot;false&quot; width=&quot;196000&quot;&gt;
+        ///			&lt;string field=&quot;Title&quot;/&gt;
+        ///		&lt;/column&gt;
+        ///	&lt;/columns&gt;
+        ///&lt;/parameters&gt;.
+        /// </summary>
+        internal static string NotebookRecordGoDlgParameters {
+            get {
+                return ResourceManager.GetString("NotebookRecordGoDlgParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Record.
+        /// </summary>
+        internal static string Record {
+            get {
+                return ResourceManager.GetString("Record", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Subrecord.
+        /// </summary>
+        internal static string Subrecord {
+            get {
+                return ResourceManager.GetString("Subrecord", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Subrecord of subrecord.
+        /// </summary>
+        internal static string Subrecord_of_subrecord {
+            get {
+                return ResourceManager.GetString("Subrecord_of_subrecord", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Demote.
+        /// </summary>
+        internal static string UowDemoteBase {
+            get {
+                return ResourceManager.GetString("UowDemoteBase", resourceCulture);
             }
         }
     }

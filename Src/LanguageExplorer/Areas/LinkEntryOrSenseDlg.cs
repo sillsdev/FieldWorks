@@ -4,12 +4,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Diagnostics;
+using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.LexText;
 using SIL.LCModel;
 
-namespace LanguageExplorer.Controls.LexText
+namespace LanguageExplorer.Areas
 {
 	public class LinkEntryOrSenseDlg : EntryGoDlg
 	{

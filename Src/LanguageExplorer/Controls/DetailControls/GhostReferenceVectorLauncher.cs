@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2011-2018 SIL International
+// Copyright (c) 2011-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,6 +15,8 @@ namespace LanguageExplorer.Controls.DetailControls
 {
 	internal class GhostReferenceVectorLauncher: ButtonLauncher
 	{
+#if RANDYTODO
+		// TODO: This seems to be Notebook stuff only.
 		// We want to emulate what ReferenceLauncher does, but without the object being created
 		// until the user clicks OK in the simple list chooser.
 		protected override void HandleChooser()
@@ -88,5 +90,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 			}
 		}
+#endif
 	}
 }

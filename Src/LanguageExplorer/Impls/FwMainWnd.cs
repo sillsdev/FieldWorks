@@ -1665,7 +1665,7 @@ namespace LanguageExplorer.Impls
 		/// This will set the Enable property on the Edit->Delete menu and the Delete toolbar button,
 		/// and it will set the text of the Edit->Delete menu.
 		/// </summary>
-		private void SetupEditDeleteMenus()
+		private void SetupEditDeleteMenus(IRootSite activeView)
 		{
 			bool enableDelete;
 			var activeRecordList = _recordListRepositoryForTools.ActiveRecordList;
@@ -1684,7 +1684,6 @@ namespace LanguageExplorer.Impls
 				tooltipText = string.Format(LanguageExplorerResources.DeleteRecordTooltip, userFriendlyClassName);
 				deleteText = string.Format(deleteTextBase, userFriendlyClassName);
 				// See if a view can do it.
-				var activeView = ActiveView;
 				if (activeView is XmlDocView)
 				{
 					enableDelete = false;
@@ -1865,49 +1864,83 @@ very simple minor adjustments. ;)"
 
 		private void Application_Idle(object sender, EventArgs e)
 		{
+			Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+			//Debug.WriteLine($"Start 'SetEnabledStateForWidgets': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 			_dataNavigationManager.SetEnabledStateForWidgets();
+			//Debug.WriteLine($"End 'SetEnabledStateForWidgets': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 
-			var hasActiveView = _viewHelper.ActiveView != null;
-			selectAllToolStripMenuItem.Enabled = hasActiveView;
-			cutToolStripMenuItem.Enabled = (hasActiveView && _viewHelper.ActiveView.EditingHelper.CanCut());
-			copyToolStripMenuItem.Enabled = (hasActiveView && _viewHelper.ActiveView.EditingHelper.CanCopy());
-			pasteToolStripMenuItem.Enabled = (hasActiveView && _viewHelper.ActiveView.EditingHelper.CanPaste());
-			pasteHyperlinkToolStripMenuItem.Enabled = (hasActiveView && _viewHelper.ActiveView.EditingHelper is RootSiteEditingHelper && ((RootSiteEditingHelper)_viewHelper.ActiveView.EditingHelper).CanPasteUrl());
-			applyStyleToolStripMenuItem.Enabled = hasActiveView && CanApplyStyle;
-			pasteHyperlinkToolStripMenuItem.Enabled = hasActiveView && _viewHelper.ActiveView.EditingHelper is RootSiteEditingHelper && ((RootSiteEditingHelper)_viewHelper.ActiveView.EditingHelper).CanPasteUrl();
-			selectAllToolStripMenuItem.Enabled = hasActiveView && !DataUpdateMonitor.IsUpdateInProgress();
+			var activeView = _viewHelper.ActiveView;
+			var hasActiveView = activeView != null;
+			if (hasActiveView)
+			{
+				//Debug.WriteLine($"Start 'hasActiveView = true': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+				selectAllToolStripMenuItem.Enabled = true;
+				var editingHelper = activeView.EditingHelper;
+				cutToolStripMenuItem.Enabled = editingHelper.CanCut();
+				copyToolStripMenuItem.Enabled = editingHelper.CanCopy();
+				pasteToolStripMenuItem.Enabled = editingHelper.CanPaste();
+				applyStyleToolStripMenuItem.Enabled = CanApplyStyle(editingHelper);
+				selectAllToolStripMenuItem.Enabled = !DataUpdateMonitor.IsUpdateInProgress();
+				if (editingHelper is RootSiteEditingHelper)
+				{
+					var editingHelperAsRootSiteEditingHelper = (RootSiteEditingHelper)editingHelper;
+					pasteHyperlinkToolStripMenuItem.Enabled = editingHelperAsRootSiteEditingHelper.CanPasteUrl();
+					pasteHyperlinkToolStripMenuItem.Enabled = editingHelperAsRootSiteEditingHelper.CanPasteUrl();
+				}
+				else
+				{
+					pasteHyperlinkToolStripMenuItem.Enabled = false;
+					pasteHyperlinkToolStripMenuItem.Enabled = false;
+				}
+				//Debug.WriteLine($"End 'hasActiveView = true': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+			}
+			else
+			{
+				//Debug.WriteLine($"Start 'hasActiveView = false': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+				selectAllToolStripMenuItem.Enabled = false;
+				cutToolStripMenuItem.Enabled = false;
+				copyToolStripMenuItem.Enabled = false;
+				pasteToolStripMenuItem.Enabled = false;
+				pasteHyperlinkToolStripMenuItem.Enabled = false;
+				applyStyleToolStripMenuItem.Enabled = false;
+				pasteHyperlinkToolStripMenuItem.Enabled = false;
+				selectAllToolStripMenuItem.Enabled = false;
+				//Debug.WriteLine($"End 'hasActiveView = false': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+			}
 			toolStripButtonChangeFilterClearAll.Enabled = _recordListRepositoryForTools.ActiveRecordList.CanChangeFilterClearAll;
 
 			// Enable/disable toolbar buttons.
+			//Debug.WriteLine($"Start 'SetupEditUndoAndRedoMenus': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 			SetupEditUndoAndRedoMenus();
+			//Debug.WriteLine($"End 'SetupEditUndoAndRedoMenus': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 
 			// Enable/disable Edit->Delete menu item (including changing the text) and the Delete toolbar item.
-			SetupEditDeleteMenus();
+			//Debug.WriteLine($"Start 'SetupEditDeleteMenus': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+			SetupEditDeleteMenus(activeView);
+			//Debug.WriteLine($"End 'SetupEditDeleteMenus': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 
 			if (linkToFileToolStripMenuItem.Visible)
 			{
 				linkToFileToolStripMenuItem.Enabled = EditingHelper is RootSiteEditingHelper && ((RootSiteEditingHelper)EditingHelper).CanInsertLinkToFile();
 			}
+			Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
 		}
 
-		private bool CanApplyStyle
+		private static bool CanApplyStyle(EditingHelper editingHelper)
 		{
-			get
+			var selectionHelper = editingHelper.CurrentSelection;
+			if (selectionHelper == null)
 			{
-				var selectionHelper = _viewHelper.ActiveView?.EditingHelper.CurrentSelection;
-				if (selectionHelper == null)
-				{
-					return false;
-				}
-				var rootSite = selectionHelper.RootSite as RootSite;
-				if (rootSite != null)
-				{
-					return rootSite.CanApplyStyle;
-				}
-
-				var selection = selectionHelper.Selection;
-				return selection != null && selection.IsEditable && (selection.CanFormatChar || selection.CanFormatPara);
+				return false;
 			}
+			var rootSite = selectionHelper.RootSite as RootSite;
+			if (rootSite != null)
+			{
+				return rootSite.CanApplyStyle;
+			}
+
+			var selection = selectionHelper.Selection;
+			return selection != null && selection.IsEditable && (selection.CanFormatChar || selection.CanFormatPara);
 		}
 
 		private void Format_Styles_Click(object sender, EventArgs e)

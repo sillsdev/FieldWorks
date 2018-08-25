@@ -70,6 +70,24 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add the current word to the lexicon (if it is a vernacular word)..
+        /// </summary>
+        internal static string Add_the_current_word_to_the_lexicon {
+            get {
+                return ResourceManager.GetString("Add_the_current_word_to_the_lexicon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add to Dictionary....
+        /// </summary>
+        internal static string Add_to_Dictionary {
+            get {
+                return ResourceManager.GetString("Add_to_Dictionary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon AddItem {
@@ -305,6 +323,15 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Entry....
+        /// </summary>
+        internal static string EntryWithDots {
+            get {
+                return ResourceManager.GetString("EntryWithDots", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An error occurred while exporting your data. This could be the result of an error in an FXT file, an output file that is locked, or a bug in the FieldWorks code..
         /// </summary>
         internal static string ErrorExporting_ProbablyBug {
@@ -355,6 +382,15 @@ namespace LanguageExplorer.Areas {
         internal static string Filter_for_Notebook_Records_with_this_category {
             get {
                 return ResourceManager.GetString("Filter_for_Notebook_Records_with_this_category", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Find in _Dictionary....
+        /// </summary>
+        internal static string Find_in_Dictionary {
+            get {
+                return ResourceManager.GetString("Find_in_Dictionary", resourceCulture);
             }
         }
         
@@ -1502,6 +1538,16 @@ namespace LanguageExplorer.Areas {
         internal static string Lex_Gram_Info {
             get {
                 return ResourceManager.GetString("Lex_Gram_Info", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon Major_Entry {
+            get {
+                object obj = ResourceManager.GetObject("Major_Entry", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
         
