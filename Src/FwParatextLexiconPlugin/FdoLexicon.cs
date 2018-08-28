@@ -260,7 +260,32 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		public bool CanOpenInLexicon
 		{
-			get { return ParatextLexiconPluginRegistryHelper.IsFieldWorksInstalled; }
+			get
+			{
+				return FdoLexicon.IsFwInstalled;
+			}
+		}
+
+		private static bool IsFwInstalled
+		{
+			get
+			{
+				return !string.IsNullOrEmpty(FwDir);
+			}
+		}
+
+		private static string FwDir
+		{
+			get
+			{
+				string fwCodePath = Environment.GetEnvironmentVariable("FIELDWORKSDIR");
+				if (!string.IsNullOrEmpty(fwCodePath) && Directory.Exists(fwCodePath))
+				{
+					return fwCodePath;
+				}
+
+				return null;
+			}
 		}
 
 		public void OpenInLexicon(Lexeme lexeme)
