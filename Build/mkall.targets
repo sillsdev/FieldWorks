@@ -305,7 +305,7 @@
 		<Icu4cBuildType32>Libraries_Icu4cWin32FieldWorksContinuous</Icu4cBuildType32>
 		<Icu4cBuildType64>Libraries_Icu4cWin64FieldWorksContinuous</Icu4cBuildType64>
 		<HermitCrabBuildType>bt410</HermitCrabBuildType>
-		<HermitCrabBuildTag>fw-8.3.tcbuildtag</HermitCrabBuildTag>
+		<HermitCrabBuildTag>fw-9.0.4.tcbuildtag</HermitCrabBuildTag>
 		<DownloadsSilOrgDownloadUrl>http://downloads.sil.org/BuildDlls/FW8.1</DownloadsSilOrgDownloadUrl>
 		<DownloadsSilOrgOSDownloadUrl Condition="'$(OS)'=='Windows_NT'">$(DownloadsSilOrgDownloadUrl)/Windows</DownloadsSilOrgOSDownloadUrl>
 		<DownloadsSilOrgOSDownloadUrl Condition="'$(OS)'=='Unix'">$(DownloadsSilOrgDownloadUrl)/Linux</DownloadsSilOrgOSDownloadUrl>
@@ -313,7 +313,7 @@
 		<LcmBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'">Liblcm_LiblcmWin32masterContinuous</LcmBuildType>
 		<LcmBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'">Lcm_LiblcmWin64masterContinuous</LcmBuildType>
 		<LcmBuildType Condition="'$(OS)'=='Unix'">Liblcm_LiblcmLinux64masterContinuous</LcmBuildType>
-		<LcmBuildTag>fw-9.0.tcbuildtag</LcmBuildTag>
+		<LcmBuildTag>fw-9.0.4.tcbuildtag</LcmBuildTag>
 		<!-- Windows/.Net and Linux/Mono use different extensions for debug information files. -->
 		<DebugInfo Condition="'$(OS)'=='Unix'">dll.mdb</DebugInfo>
 		<DebugInfo Condition="'$(OS)'=='Windows_NT'">pdb</DebugInfo>
@@ -337,7 +337,6 @@
 		<PalasoFiles Include="SIL.Archiving.dll"/>
 		<PalasoFiles Include="SIL.Archiving.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<PalasoFiles Include="SIL.Archiving.pdb"/>
-		<PalasoFiles Include="Ionic.Zip.dll"/>
 		<PalasoFiles Include="Keyman10Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<PalasoFiles Include="Keyman7Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<PalasoFiles Include="KeymanLink.dll" Condition="'$(OS)'=='Windows_NT'"/>
