@@ -14,6 +14,7 @@ using System.IO;
 using SIL.FieldWorks.Common.FwUtils;
 using System.Text;
 using SIL.FieldWorks.Common.Controls;
+using SIL.LCModel.FixData;
 using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.FixData
