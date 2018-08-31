@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2017 SIL International
+// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,13 +9,13 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Serialization;
+using Ionic.Zip;
 using SIL.LCModel;
 using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.LCModel.Utils;
 using SIL.Linq;
 using SIL.WritingSystems;
 using XCore;
-using Ionic.Zip;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;

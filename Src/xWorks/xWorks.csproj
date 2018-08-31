@@ -101,7 +101,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>  
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <OutputPath>..\..\Output\Debug\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
@@ -154,8 +154,11 @@
     <Reference Include="Accessibility">
       <Name>Accessibility</Name>
     </Reference>
+    <Reference Include="DotNetZip">
+      <HintPath>..\..\packages\DotNetZip.1.11.0\lib\net20\DotNetZip.dll</HintPath>
+    </Reference>
     <Reference Include="NAudio, Version=1.7.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\NAudio.1.7.3\lib\net35\NAudio.dll</HintPath>
+      <HintPath>..\..\packages\NAudio.1.7.3\lib\net35\NAudio.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="SIL.Core.Desktop, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
@@ -215,9 +218,6 @@
     </Reference>
     <Reference Include="Geckofx-Winforms">
       <HintPath>..\..\Output\Debug\Geckofx-Winforms.dll</HintPath>
-    </Reference>
-    <Reference Include="DotNetZip">
-      <HintPath>..\..\Output\Debug\DotNetZip.dll</HintPath>
     </Reference>
     <Reference Include="L10NSharp, Version=1.1.4981.28556, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
