@@ -592,7 +592,7 @@
 			<NuGottenFiles Include="$(GeckoDir)/lib/net40/*.*" Condition="'$(OS)'!='Windows_NT'"/>
 			<NuGottenFiles Include="$(GeckoDir)/build/Geckofx-Core.dll.config" Condition="'$(OS)'!='Windows_NT'"/>
 			<NuGottenFiles Include="$(GeckoDir)/content/**/*.*"/>
-			<NuGottenFiles Include="$(fwrt)/packages/DotNetZip.1.10.1/lib/net20/*.*"/>
+			<NuGottenFiles Include="$(fwrt)/packages/DotNetZip.1.11.0/lib/net20/*.*"/>
 			<NuGottenFiles Include="$(fwrt)/packages/NAudio.1.7.3/lib/net35/NAudio.dll"/>
 			<NuGottenFiles Include="$(fwrt)/packages/NAudio.Lame.1.0.4/lib/net20/NAudio.Lame.dll"/>
 			<NuGottenFiles Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'" Include="$(fwrt)/packages/NAudio.Lame.1.0.4/content/libmp3lame.32.dll"/>
