@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,7 +12,7 @@ using SIL.LCModel.Infrastructure;
 using SIL.LCModel;
 using System.IO;
 
-namespace FDOBrowser
+namespace LCMBrowser
 {
 	#region FDOClassList class
 	/// ----------------------------------------------------------------------------------------
@@ -20,13 +20,12 @@ namespace FDOBrowser
 	///
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public static class FDOClassList
+	public static class LCMClassList
 	{
-		private static List<string> s_cmObjectProperties;
-		private static List<string> s_allFDOClassNames;
-		private static List<FDOClass> s_allFDOClasses;
-		private static Dictionary<Type, FDOClass> s_FDOClassesByType;
-		private static Assembly s_asmFDO;
+		private static List<string> s_allLCMClassNames;
+		private static List<LCMClass> s_allFDOClasses;
+		private static Dictionary<Type, LCMClass> s_FDOClassesByType;
+		private static Assembly s_LCMAssembly;
 		private static string s_settingFileName;
 		private static bool s_showCmObjProps = false;
 
@@ -35,13 +34,13 @@ namespace FDOBrowser
 		/// Initializes a new instance of the <see cref="T:FDOClassList"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		static FDOClassList()
+		static LCMClassList()
 		{
 			s_settingFileName = System.Windows.Forms.Application.LocalUserAppDataPath;
 			s_settingFileName = Path.Combine(s_settingFileName, "ClassSettings.xml");
 
-			FindFDOAssembly();
-			LoadAllFDOClasses();
+			FindLCMAssembly();
+			LoadAllLCMClasses();
 			LoadCmObjectProperties();
 		}
 
@@ -50,14 +49,14 @@ namespace FDOBrowser
 		/// Finds the FDO assembly.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private static void FindFDOAssembly()
+		private static void FindLCMAssembly()
 		{
 			// Find the FDO.dll assembly.
 			foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
 			{
 				if (asm.FullName.StartsWith("SIL.LCModel,"))
 				{
-					s_asmFDO = asm;
+					s_LCMAssembly = asm;
 					return;
 				}
 			}
@@ -71,7 +70,7 @@ namespace FDOBrowser
 		/// ------------------------------------------------------------------------------------
 		public static void Reset()
 		{
-			LoadAllFDOClasses();
+			LoadAllLCMClasses();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -79,14 +78,14 @@ namespace FDOBrowser
 		/// Loads all FDO classes.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private static void LoadAllFDOClasses()
+		private static void LoadAllLCMClasses()
 		{
 			LoadFDOClassNames();
 
 			if (File.Exists(s_settingFileName))
 			{
 				s_allFDOClasses =
-					XmlSerializationHelper.DeserializeFromFile<List<FDOClass>>(s_settingFileName);
+					XmlSerializationHelper.DeserializeFromFile<List<LCMClass>>(s_settingFileName);
 
 				if (s_allFDOClasses != null)
 				{
@@ -94,13 +93,13 @@ namespace FDOBrowser
 					// any that used to be in the meta data cache but are no longer there.
 					for (int i = s_allFDOClasses.Count - 1; i >= 0; i--)
 					{
-						if (!s_allFDOClassNames.Contains(s_allFDOClasses[i].ClassName))
+						if (!s_allLCMClassNames.Contains(s_allFDOClasses[i].ClassName))
 							s_allFDOClasses.RemoveAt(i);
 					}
 
 					// Go through the FDO class names from the meta data cache and
 					// make sure all of them are found in the list just deserialized.
-					foreach (string name in s_allFDOClassNames)
+					foreach (string name in s_allLCMClassNames)
 					{
 						// Search the deserialized list for the class name.
 						var query = from cls in s_allFDOClasses
@@ -110,23 +109,23 @@ namespace FDOBrowser
 						// If the class was not found in the deserialized list,
 						// then add it to the list.
 						if (query.Count() == 0)
-							s_allFDOClasses.Add(new FDOClass(GetFDOClassType(name)));
+							s_allFDOClasses.Add(new LCMClass(GetLCMClassType(name)));
 					}
 				}
 			}
 
 			if (s_allFDOClasses == null)
 			{
-				s_allFDOClasses = new List<FDOClass>();
-				foreach (string name in AllFDOClassNames)
-					s_allFDOClasses.Add(GetFDOClassProperties(name));
+				s_allFDOClasses = new List<LCMClass>();
+				foreach (string name in AllLcmClassNames)
+					s_allFDOClasses.Add(GetLCMClassProperties(name));
 
 				s_allFDOClasses.Sort((c1, c2) => c1.ClassName.CompareTo(c2.ClassName));
 			}
 
 			// Store the classes in a list accessible by the class' type.
-			s_FDOClassesByType = new Dictionary<Type, FDOClass>();
-			foreach (FDOClass cls in s_allFDOClasses)
+			s_FDOClassesByType = new Dictionary<Type, LCMClass>();
+			foreach (LCMClass cls in s_allFDOClasses)
 				s_FDOClassesByType[cls.ClassType] = cls;
 		}
 
@@ -137,7 +136,7 @@ namespace FDOBrowser
 		/// ------------------------------------------------------------------------------------
 		private static void LoadFDOClassNames()
 		{
-			if (s_allFDOClassNames != null)
+			if (s_allLCMClassNames != null)
 				return;
 
 			using (var threadHelper = new ThreadHelper())
@@ -145,12 +144,12 @@ namespace FDOBrowser
 				new SilentLcmUI(threadHelper), FwDirectoryFinder.LcmDirectories, new LcmSettings()))
 			{
 				IFwMetaDataCacheManaged mdc = (IFwMetaDataCacheManaged)cache.MainCacheAccessor.MetaDataCache;
-				s_allFDOClassNames = new List<string>();
+				s_allLCMClassNames = new List<string>();
 
 				foreach (int clsid in mdc.GetClassIds())
-					s_allFDOClassNames.Add(mdc.GetClassName(clsid));
+					s_allLCMClassNames.Add(mdc.GetClassName(clsid));
 
-				s_allFDOClassNames.Sort((x, y) => x.CompareTo(y));
+				s_allLCMClassNames.Sort((x, y) => x.CompareTo(y));
 			}
 		}
 
@@ -161,12 +160,12 @@ namespace FDOBrowser
 		/// ------------------------------------------------------------------------------------
 		private static void LoadCmObjectProperties()
 		{
-			FDOClass clsProps = GetFDOClassProperties("CmObject");
-			s_cmObjectProperties = new List<string>();
-			foreach (FDOClassProperty prop in clsProps.Properties)
-				s_cmObjectProperties.Add(prop.Name);
+			LCMClass clsProps = GetLCMClassProperties("CmObject");
+			CmObjectProperties = new List<string>();
+			foreach (LCMClassProperty prop in clsProps.Properties)
+				CmObjectProperties.Add(prop.Name);
 
-			s_cmObjectProperties.Sort((x, y) => x.CompareTo(y));
+			CmObjectProperties.Sort((x, y) => x.CompareTo(y));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -184,14 +183,14 @@ namespace FDOBrowser
 		/// Gets the loaded FDO assembly.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public static Assembly FDOAssembly
+		public static Assembly LCMAssembly
 		{
 			get
 			{
-				if (s_asmFDO == null)
-					FindFDOAssembly();
+				if (s_LCMAssembly == null)
+					FindLCMAssembly();
 
-				return s_asmFDO;
+				return s_LCMAssembly;
 			}
 		}
 
@@ -212,9 +211,9 @@ namespace FDOBrowser
 		/// Gets a list of all the FDO classes.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public static List<string> AllFDOClassNames
+		public static List<string> AllLcmClassNames
 		{
-			get	{ return s_allFDOClassNames; }
+			get	{ return s_allLCMClassNames; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -222,7 +221,7 @@ namespace FDOBrowser
 		/// Gets a list of all the FDO classes and their properties.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public static List<FDOClass> AllFDOClasses
+		public static List<LCMClass> AllFDOClasses
 		{
 			get	{ return s_allFDOClasses; }
 		}
@@ -232,10 +231,7 @@ namespace FDOBrowser
 		/// Gets the cm object properties.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public static List<string> CmObjectProperties
-		{
-			get	{ return s_cmObjectProperties; }
-		}
+		public static List<string> CmObjectProperties { get; private set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -244,7 +240,7 @@ namespace FDOBrowser
 		/// ------------------------------------------------------------------------------------
 		public static bool IsCmObjectProperty(string propName)
 		{
-			return s_cmObjectProperties.Contains(propName);
+			return CmObjectProperties.Contains(propName);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -257,7 +253,7 @@ namespace FDOBrowser
 		{
 			if (s_showCmObjProps || !IsCmObjectProperty(propName))
 			{
-				FDOClass cls;
+				LCMClass cls;
 				if (s_FDOClassesByType.TryGetValue(cmObj.GetType(), out cls))
 					return cls.IsPropertyDisplayed(propName);
 			}
@@ -270,9 +266,9 @@ namespace FDOBrowser
 		/// Gets the properties for the specified class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public static Type GetFDOClassType(string className)
+		public static Type GetLCMClassType(string className)
 		{
-			foreach (Type type in s_asmFDO.GetTypes())
+			foreach (Type type in s_LCMAssembly.GetTypes())
 			{
 				if (type.Name == className)
 					return type;
@@ -290,7 +286,7 @@ namespace FDOBrowser
 		{
 			get
 			{
-				return from type in s_asmFDO.GetTypes()
+				return from type in s_LCMAssembly.GetTypes()
 					   where type.IsInterface && type.GetInterface("IRepository`1") != null
 					   select type;
 			}
@@ -301,43 +297,43 @@ namespace FDOBrowser
 		/// Gets the properties for the specified class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public static FDOClass GetFDOClassProperties(string className)
+		public static LCMClass GetLCMClassProperties(string className)
 		{
-			Type type = GetFDOClassType(className);
-			return (type != null ? new FDOClass(type) : null);
+			Type type = GetLCMClassType(className);
+			return (type != null ? new LCMClass(type) : null);
 		}
 	}
 
 	#endregion
 
-	#region FDOClass class
+	#region LCMClass class
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	///
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class FDOClass
+	public class LCMClass
 	{
 		private Type m_classType;
 		private string m_className;
-		private List<FDOClassProperty> m_properties = new List<FDOClassProperty>();
+		private List<LCMClassProperty> m_properties = new List<LCMClassProperty>();
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FDOClass"/> class.
+		/// Initializes a new instance of the <see cref="T:LCMClass"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public FDOClass()
+		public LCMClass()
 		{
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FDOClass"/> class.
+		/// Initializes a new instance of the <see cref="T:LCMClass"/> class.
 		/// </summary>
 		/// <param name="className">Name of the class.</param>
 		/// ------------------------------------------------------------------------------------
-		public FDOClass(string className) : this()
+		public LCMClass(string className) : this()
 		{
 			ClassName = className;
 			InitPropsForType(m_classType);
@@ -345,11 +341,11 @@ namespace FDOBrowser
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FDOClass"/> class.
+		/// Initializes a new instance of the <see cref="T:LCMClass"/> class.
 		/// </summary>
 		/// <param name="type">The type.</param>
 		/// ------------------------------------------------------------------------------------
-		public FDOClass(Type type) : this(type.Name)
+		public LCMClass(Type type) : this(type.Name)
 		{
 			InitPropsForType(type);
 		}
@@ -359,14 +355,14 @@ namespace FDOBrowser
 		/// Clones this instance.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public FDOClass Clone()
+		public LCMClass Clone()
 		{
 			// Make copies of all the class' properties.
-			List<FDOClassProperty> props = new List<FDOClassProperty>();
-			foreach (FDOClassProperty clsProp in Properties)
-				props.Add(new FDOClassProperty { Name = clsProp.Name, Displayed = clsProp.Displayed });
+			List<LCMClassProperty> props = new List<LCMClassProperty>();
+			foreach (LCMClassProperty clsProp in Properties)
+				props.Add(new LCMClassProperty { Name = clsProp.Name, Displayed = clsProp.Displayed });
 
-			FDOClass cls = new FDOClass(m_classType);
+			LCMClass cls = new LCMClass(m_classType);
 			cls.Properties = props;
 			return cls;
 		}
@@ -383,7 +379,7 @@ namespace FDOBrowser
 			set
 			{
 				m_className = value;
-				m_classType = FDOClassList.GetFDOClassType(value);
+				m_classType = LCMClassList.GetLCMClassType(value);
 			}
 		}
 
@@ -393,7 +389,7 @@ namespace FDOBrowser
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[XmlElement("property")]
-		public List<FDOClassProperty> Properties
+		public List<LCMClassProperty> Properties
 		{
 			get { return m_properties; }
 			set { m_properties = value; }
@@ -409,7 +405,7 @@ namespace FDOBrowser
 			get
 			{
 				if (m_classType == null && m_className != null)
-					m_classType = FDOClassList.GetFDOClassType(m_className);
+					m_classType = LCMClassList.GetLCMClassType(m_className);
 
 				return m_classType;
 			}
@@ -427,7 +423,7 @@ namespace FDOBrowser
 			PropertyInfo[] props = type.GetProperties(flags);
 
 			foreach (PropertyInfo pi in props)
-				Properties.Add(new FDOClassProperty {Name = pi.Name, Displayed = true});
+				Properties.Add(new LCMClassProperty {Name = pi.Name, Displayed = true});
 
 			Properties.Sort((p1, p2) => p1.Name.CompareTo(p2.Name));
 		}
@@ -439,7 +435,7 @@ namespace FDOBrowser
 		/// ------------------------------------------------------------------------------------
 		public bool IsPropertyDisplayed(string propName)
 		{
-			foreach (FDOClassProperty prop in Properties)
+			foreach (LCMClassProperty prop in Properties)
 			{
 				if (prop.Name == propName)
 					return prop.Displayed;
@@ -464,13 +460,13 @@ namespace FDOBrowser
 
 	#endregion
 
-	#region FDOClassProperty
+	#region LCMClassProperty
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	///
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class FDOClassProperty
+	public class LCMClassProperty
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -482,7 +478,7 @@ namespace FDOBrowser
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets or sets a value indicating whether this <see cref="T:FDOClassProperty"/> is displayed.
+		/// Gets or sets a value indicating whether this <see cref="T:LCMClassProperty"/> is displayed.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[XmlAttribute]

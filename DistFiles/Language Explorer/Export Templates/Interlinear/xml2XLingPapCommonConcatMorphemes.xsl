@@ -21,7 +21,10 @@ Elements to ignore or are handled elsewhere
 			<xsl:variable name="sLang" select="@lang"/>
 			<xsl:if test="preceding-sibling::item[@type='note' and @lang=$sLang] or following-sibling::item[@type='note' and @lang=$sLang]">
 				<xsl:for-each select="preceding-sibling::item[@type='note' and @lang=$sLang] | following-sibling::item[@type='note' and @lang=$sLang]">
-					<endnote id="n{generate-id()}">
+					<xsl:variable name="sEndnoteNumber">
+						<xsl:number level="any" count="item[@type='note']" format="1"/>
+					</xsl:variable>
+					<endnote id="n{$sThisTextId}.{$sEndnoteNumber}">
 						<p>
 							<xsl:apply-templates/>
 						</p>

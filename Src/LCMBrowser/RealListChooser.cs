@@ -1,19 +1,11 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: RealListChooser.cs
-// Responsibility:
-//
-// <remarks>
-// This implements a control during the dialog.
-// The control is a listbox that lists the whatever is passsed into it.
-// </remarks>
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace FDOBrowser
+namespace LCMBrowser
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

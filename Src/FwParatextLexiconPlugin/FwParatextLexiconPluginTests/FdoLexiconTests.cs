@@ -12,6 +12,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
+using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
@@ -31,8 +32,15 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		[SetUp]
 		public void SetUp()
 		{
+			// Force initialization in ILRepacked SIL.WritingSystems assembly,
+			// even if a referenced SIl.WritingSystems assembly somewhere down
+			// the dependency chain, that we won't be using, was initialized.
+			if (!Sldr.IsInitialized)
+			{
+				Sldr.Initialize();
+			}
+
 			FwRegistryHelper.Initialize();
-			FwUtils.InitializeIcu();
 			m_threadHelper = new ThreadHelper();
 			var ui = new DummyLcmUI(m_threadHelper);
 			var projectId = new ParatextLexiconPluginProjectId(BackendProviderType.kMemoryOnly, "Test.fwdata");
@@ -657,6 +665,33 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 			lexeme = m_lexicon.FindMatchingLexemes("form2").Single();
 			Assert.That(lexeme.LexicalRelations.Select(lr => lr.Name), Is.EquivalentTo(new[] {"Whole", "Other"}));
+		}
+
+		/// <summary>
+		/// The Paratext Open in Lexicon button should be enabled if FW is found.
+		/// Part of LT-18529 and LT-18721.
+		/// </summary>
+		[Test]
+		public void CanOpenInLexicon_Works()
+		{
+			var origFwDirEnviromentSetting = Environment.GetEnvironmentVariable("FIELDWORKSDIR");
+			try
+			{
+				Environment.SetEnvironmentVariable("FIELDWORKSDIR", null);
+				// SUT
+				Assert.That(m_lexicon.CanOpenInLexicon, Is.False,
+					"Should not be able to open in Lexicon if FW location is not known.");
+
+				var likeAPathToFw = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+				Environment.SetEnvironmentVariable("FIELDWORKSDIR", likeAPathToFw);
+				// SUT
+				Assert.That(m_lexicon.CanOpenInLexicon, Is.True,
+					"Should report ablity to open in Lexicon if FW location is known.");
+			}
+			finally
+			{
+				Environment.SetEnvironmentVariable("FIELDWORKSDIR", origFwDirEnviromentSetting);
+			}
 		}
 
 		#endregion

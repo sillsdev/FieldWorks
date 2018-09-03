@@ -24,14 +24,10 @@ using SIL.FieldWorks.Resources;
 using SIL.ObjectBrowser;
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace FDOBrowser
+namespace LCMBrowser
 {
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// FDOBrowserForm Class
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	public partial class FDOBrowserForm : ObjectBrowser, IHelpTopicProvider
+	/// <summary/>
+	public partial class LCMBrowserForm : ObjectBrowser, IHelpTopicProvider
 	{
 		#region Data members
 
@@ -85,9 +81,10 @@ namespace FDOBrowser
 		/// Constructor.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public FDOBrowserForm()
+		public LCMBrowserForm()
 		{
 			InitializeComponent();
+			Icon = System.Drawing.Icon.FromHandle(Properties.Resources.LCMBrowser.GetHicon());
 			SetupCustomMenusAndToolbarItems();
 		}
 
@@ -97,8 +94,8 @@ namespace FDOBrowser
 			base.OnLoad(e);
 
 			OpenModelWindow();
-			FDOClassList.ShowCmObjectProperties = Properties.Settings.Default.ShowCmObjectProperties;
-			m_tsbShowCmObjectProps.Checked = FDOClassList.ShowCmObjectProperties;
+			LCMClassList.ShowCmObjectProperties = Properties.Settings.Default.ShowCmObjectProperties;
+			m_tsbShowCmObjectProps.Checked = LCMClassList.ShowCmObjectProperties;
 		}
 
 		#region SetupCustomMenusAndToolbarItems
@@ -163,7 +160,7 @@ namespace FDOBrowser
 			m_tsbShowCmObjectProps = new ToolStripButton();
 			m_tsbShowCmObjectProps.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			m_tsbShowCmObjectProps.Enabled = false;
-			m_tsbShowCmObjectProps.Image = FDOBrowser.Properties.Resources.kimidShowCmObjectProperties;
+			m_tsbShowCmObjectProps.Image = Properties.Resources.kimidShowCmObjectProperties;
 			m_tsbShowCmObjectProps.ImageTransparentColor = System.Drawing.Color.Magenta;
 			m_tsbShowCmObjectProps.Name = "m_tsbShowCmObjectProps";
 			m_tsbShowCmObjectProps.Size = new System.Drawing.Size(23, 22);
@@ -224,7 +221,7 @@ namespace FDOBrowser
 			// mnuViewfDOModel
 			//
 			m_mnuViewfDOModel = new ToolStripMenuItem();
-			m_mnuViewfDOModel.Image = FDOBrowser.Properties.Resources.kimidFDOModel;
+			m_mnuViewfDOModel.Image = Properties.Resources.kimidFDOModel;
 			m_mnuViewfDOModel.Name = "mnuViewfDOModel";
 			m_mnuViewfDOModel.Size = new System.Drawing.Size(230, 22);
 			m_mnuViewfDOModel.Text = "&FDO Model";
@@ -454,7 +451,7 @@ namespace FDOBrowser
 				m_repositoryWnd.Show(m_dockPanel);
 			else
 			{
-				var repositories = FDOClassList.RepositoryTypes.Select(repoType =>
+				var repositories = LCMClassList.RepositoryTypes.Select(repoType =>
 					   m_cache.ServiceLocator.GetInstance(repoType)).ToList();
 
 				// Go through all the service types and find those that are repositories. For each
@@ -702,7 +699,7 @@ namespace FDOBrowser
 		/// ------------------------------------------------------------------------------------
 		protected override IInspectorList GetNewInspectorList()
 		{
-			return new FdoInspectorList(m_cache);
+			return new LCMInspectorList(m_cache);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -741,7 +738,7 @@ namespace FDOBrowser
 		bool HandleWillObjDisappearOnRefresh(object sender, IInspectorObject io)
 		{
 			// Check if the selected object will disappear after refreshing the grid.
-			return (io.DisplayName != "Guid" && FDOClassList.IsCmObjectProperty(io.DisplayName));
+			return (io.DisplayName != "Guid" && LCMClassList.IsCmObjectProperty(io.DisplayName));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -775,7 +772,7 @@ namespace FDOBrowser
 		private void MTsbShowCmObjectPropsClick(object sender, EventArgs e)
 		{
 			m_tsbShowCmObjectProps.Checked = !m_tsbShowCmObjectProps.Checked;
-			FDOClassList.ShowCmObjectProperties = m_tsbShowCmObjectProps.Checked;
+			LCMClassList.ShowCmObjectProperties = m_tsbShowCmObjectProps.Checked;
 
 			foreach (IDockContent dc in m_dockPanel.DocumentsToArray())
 			{

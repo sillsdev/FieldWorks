@@ -7,9 +7,9 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.WritingSystems;
 
-namespace FDOBrowser
+namespace LCMBrowser
 {
-	static class Program
+	static class LCMBrowser
 	{
 		/// <summary/>
 		[STAThread]
@@ -20,7 +20,7 @@ namespace FDOBrowser
 			FwRegistryHelper.Initialize();
 			FwUtils.InitializeIcu();
 			Sldr.Initialize();
-			using (var form = new FDOBrowserForm())
+			using (var form = new LCMBrowserForm())
 			{
 				Application.Run(form);
 			}

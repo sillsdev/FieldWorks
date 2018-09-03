@@ -1,4 +1,4 @@
-// Copyright (c) 2016 SIL International
+// Copyright (c) 2016-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -17,15 +17,15 @@ using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.ObjectBrowser;
 
-namespace FDOBrowser
+namespace LCMBrowser
 {
-	#region FdoInspectorList class
+	#region LCMInspectorList class
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	///
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class FdoInspectorList : GenericInspectorObjectList
+	public class LCMInspectorList : GenericInspectorObjectList
 	{
 		private LcmCache m_cache;
 		private IFwMetaDataCacheManaged m_mdc;
@@ -44,10 +44,10 @@ namespace FDOBrowser
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FdoInspectorList"/> class.
+		/// Initializes a new instance of the <see cref="T:LCMInspectorList"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public FdoInspectorList(LcmCache cache)
+		public LCMInspectorList(LcmCache cache)
 		{
 			m_cache = cache;
 			m_mdc = m_cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
@@ -133,7 +133,7 @@ namespace FDOBrowser
 					if (tmpObj is ITsString)
 						return GetInspectorObjectsForTsString(tmpObj as ITsString, io, level);
 
-					if (ObjectBrowser.m_virtualFlag == false && tmpObj is FDOBrowser.TextProps)
+					if (ObjectBrowser.m_virtualFlag == false && tmpObj is TextProps)
 						return GetInspectorObjectsForTextProps(tmpObj as TextProps, io, level);
 
 					if (ObjectBrowser.m_virtualFlag == false && io != null && io.DisplayName == "Values" &&
@@ -575,8 +575,8 @@ namespace FDOBrowser
 				}
 			}
 
-			if (FDOBrowserForm.CFields != null && FDOBrowserForm.CFields.Count > 0 && obj != null)
-				foreach (CustomFields cf2 in FDOBrowserForm.CFields)
+			if (LCMBrowserForm.CFields != null && LCMBrowserForm.CFields.Count > 0 && obj != null)
+				foreach (CustomFields cf2 in LCMBrowserForm.CFields)
 				{
 					if (obj.ToString().Contains(m_mdc.GetClassName(cf2.ClassID)))
 					{
@@ -745,13 +745,13 @@ namespace FDOBrowser
 				if (props[i].Name == "Guid")
 					continue;
 
-				if (!FDOClassList.IsPropertyDisplayed(cmObj, props[i].Name))
+				if (!LCMClassList.IsPropertyDisplayed(cmObj, props[i].Name))
 				{
 					props.RemoveAt(i);
 					continue;
 				}
 
-				work = FDOBrowserForm.StripOffTypeChars(props[i].Name);
+				work = LCMBrowserForm.StripOffTypeChars(props[i].Name);
 
 				try
 				{

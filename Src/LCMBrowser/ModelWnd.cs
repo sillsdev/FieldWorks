@@ -13,7 +13,7 @@ using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Core.Cellar;
 
-namespace FDOBrowser
+namespace LCMBrowser
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -194,7 +194,7 @@ namespace FDOBrowser
 
 				else
 				{
-					if (FDOBrowserForm.m_virtualFlag == false && (flid >= 20000000 && flid < 30000000))
+					if (LCMBrowserForm.m_virtualFlag == false && (flid >= 20000000 && flid < 30000000))
 						continue;
 					else
 					{
@@ -312,9 +312,9 @@ namespace FDOBrowser
 
 			// Add custom fields
 
-			if (FDOBrowserForm.CFields != null && FDOBrowserForm.CFields.Count > 0)
+			if (LCMBrowserForm.CFields != null && LCMBrowserForm.CFields.Count > 0)
 			{
-				foreach (CustomFields cf in FDOBrowserForm.CFields)
+				foreach (CustomFields cf in LCMBrowserForm.CFields)
 				{
 					if (clid == cf.ClassID)
 					{
