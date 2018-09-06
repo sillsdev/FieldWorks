@@ -6,13 +6,16 @@ echo NOTE: If you are building from a clean repository, you will need to answer 
 echo
 echo
 
+BUILD=msbuild
 PLATFORM=$(test `arch` = x86_64 && echo x64 || echo x86)
 
 # Optionally skip question about local libraries and set to use downloaded artifacts by running
-#   ./run-in-environ xbuild /t:WriteNonlocalDevelopmentPropertiesFile
+#   ./run-in-environ msbuild /t:WriteNonlocalDevelopmentPropertiesFile
 # The setting and paths can later be changed by editing LibraryDevelopment.properties
 
-"$(dirname "$0")"/run-in-environ xbuild "/t:RestoreNuGetPackages" && \
+# Use xbuild for CheckDevelopmentPropertiesFile since mono5-sil msbuild has trouble. When move to mono6, may be able to use msbuild again.
+
+"$(dirname "$0")"/run-in-environ $BUILD "/t:RestoreNuGetPackages" && \
 "$(dirname "$0")"/run-in-environ xbuild "/t:CheckDevelopmentPropertiesFile" && \
-"$(dirname "$0")"/run-in-environ xbuild "/t:refreshTargets" && \
-"$(dirname "$0")"/run-in-environ xbuild /p:Platform=$PLATFORM "$@"
+"$(dirname "$0")"/run-in-environ $BUILD "/t:refreshTargets" && \
+"$(dirname "$0")"/run-in-environ $BUILD /p:Platform=$PLATFORM "$@"
