@@ -15,6 +15,7 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.ObjectModel;
+using SIL.PlatformUtilities;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -264,15 +265,16 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <returns></returns>
 		private static bool ShouldAbort()
 		{
-#if !__MonoCS__
+			if (Platform.IsMono)
+			{
+				// ShouldAbort seems to be used for optimization purposes so returning false
+				// just loses the optimization.
+				return false;
+			}
+
 			var msg = new Win32.MSG();
 			return Win32.PeekMessage(ref msg, IntPtr.Zero, (uint)Win32.WinMsgs.WM_KEYDOWN, (uint)Win32.WinMsgs.WM_KEYDOWN,
 				(uint)Win32.PeekFlags.PM_NOREMOVE);
-#else
-			// ShouldAbort seems to be used for optimization purposes so returing false
-			// just loses the optimization.
-			return false;
-#endif
 		}
 	}
 }

@@ -24,7 +24,9 @@ using SIL.LCModel.Application;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 using SIL.Utils;
+using SIL.Windows.Forms.HtmlBrowser;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -119,11 +121,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary></summary>
 		protected IVwStylesheet m_stylesheet;
 
-#if __MonoCS__
-		private Gecko.GeckoWebBrowser m_webBrowser;
-#else
-		private WebBrowser m_webBrowser;
-#endif
+		private XWebBrowser m_webBrowser;
 		private Panel m_mainPanel;
 		private Button m_helpBrowserButton;
 		private SplitContainer m_splitContainer;
@@ -1056,40 +1054,45 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 
 			// only create the web browser if we needed, because this control is pretty resource intensive
-#if __MonoCS__
-			m_webBrowser = new Gecko.GeckoWebBrowser
+			m_webBrowser = new XWebBrowser
 			{
-				Dock = DockStyle.Fill,
-				TabIndex = 1,
-				MinimumSize = new Size(20, 20),
-				NoDefaultContextMenu = true
+				Dock = DockStyle.Fill
 			};
-#else
-			m_webBrowser = new WebBrowser
+
+			if (Platform.IsMono)
 			{
-				Dock = DockStyle.Fill,
-				IsWebBrowserContextMenuEnabled = false,
-				WebBrowserShortcutsEnabled = false,
-				AllowWebBrowserDrop = false
-			};
-#endif
+				var browser = m_webBrowser.NativeBrowser as Gecko.GeckoWebBrowser;
+				browser.TabIndex = 1;
+				browser.MinimumSize = new Size(20, 20);
+				browser.NoDefaultContextMenu = true;
+			}
+			else
+			{
+				var browser = m_webBrowser.NativeBrowser as WebBrowser;
+				browser.IsWebBrowserContextMenuEnabled = false;
+				browser.WebBrowserShortcutsEnabled = false;
+				browser.AllowWebBrowserDrop = false;
+			}
 			m_helpBrowserButton.Visible = true;
 			m_viewExtrasPanel.Visible = true;
-#if !__MonoCS__
-			m_webBrowser.Navigated += m_webBrowser_Navigated;
-#endif
+			if (!Platform.IsMono)
+				m_webBrowser.Navigated += m_webBrowser_Navigated;
+
 			m_webBrowser.CanGoBackChanged += m_webBrowser_CanGoBackChanged;
 			m_webBrowser.CanGoForwardChanged += m_webBrowser_CanGoForwardChanged;
 			m_splitContainer.Panel2.Controls.Add(m_webBrowser);
 
 			m_backButton = new ToolStripButton(null, m_imageList.Images[2], m_backButton_Click) {Enabled = false};
 			m_forwardButton = new ToolStripButton(null, m_imageList.Images[3], m_forwardButton_Click) {Enabled = false};
-#if __MonoCS__
-			m_helpBrowserStrip = new ToolStrip(m_backButton, m_forwardButton) { Dock = DockStyle.Top };
-#else
-			m_printButton = new ToolStripButton(null, m_imageList.Images[4], m_printButton_Click);
-			m_helpBrowserStrip = new ToolStrip(m_backButton, m_forwardButton, m_printButton) { Dock = DockStyle.Top };
-#endif
+
+			if (Platform.IsMono)
+				m_helpBrowserStrip = new ToolStrip(m_backButton, m_forwardButton) { Dock = DockStyle.Top };
+			else
+			{
+				m_printButton = new ToolStripButton(null, m_imageList.Images[4], m_printButton_Click);
+				m_helpBrowserStrip = new ToolStrip(m_backButton, m_forwardButton, m_printButton) { Dock = DockStyle.Top };
+			}
+
 			m_splitContainer.Panel2.Controls.Add(m_helpBrowserStrip);
 
 			if (splitterDistance < m_splitContainer.Width)
@@ -1193,30 +1196,37 @@ namespace SIL.FieldWorks.Common.Controls
 				if (pos != null)
 				{
 					string helpFile = pos.OwningList.HelpFile;
-#if __MonoCS__
-					// Force Linux to use combined Ocm/OcmFrame files
-					if (helpFile == "Ocm.chm")
-						helpFile = "OcmFrame";
-#endif
+					if (!Platform.IsWindows)
+					{
+						// Force Linux to use combined Ocm/OcmFrame files
+						if (helpFile == "Ocm.chm")
+							helpFile = "OcmFrame";
+					}
 					string helpTopic = pos.HelpId;
 					if (!string.IsNullOrEmpty(helpFile) && !string.IsNullOrEmpty(helpTopic))
 					{
 						string curHelpTopic = GetHelpTopic(m_webBrowser.Url);
-						if (curHelpTopic == null || helpTopic.ToLowerInvariant() != curHelpTopic.ToLowerInvariant())
+						if (curHelpTopic == null || helpTopic.ToLowerInvariant() !=
+							curHelpTopic.ToLowerInvariant())
 						{
 							if (!Path.IsPathRooted(helpFile))
 							{
 								// Helps are part of the installed code files.  See FWR-1002.
-								string helpsPath = Path.Combine(FwDirectoryFinder.CodeDirectory, "Helps");
+								string helpsPath = Path.Combine(FwDirectoryFinder.CodeDirectory,
+									"Helps");
 								helpFile = Path.Combine(helpsPath, helpFile);
 							}
-#if __MonoCS__
-							// remove file extension, we need folder of the same name with the htm files
-							helpFile = helpFile.Replace(".chm","");
-							string url = string.Format("{0}/{1}.htm", helpFile, helpTopic.ToLowerInvariant());
-#else
-							string url = string.Format("its:{0}::/{1}.htm", helpFile, helpTopic);
-#endif
+
+							string url;
+							if (Platform.IsWindows)
+								url = string.Format("its:{0}::/{1}.htm", helpFile, helpTopic);
+							else
+							{
+								// remove file extension, we need folder of the same name with the htm files
+								helpFile = helpFile.Replace(".chm", "");
+								url = string.Format("{0}/{1}.htm", helpFile, helpTopic.ToLowerInvariant());
+							}
+
 							m_webBrowser.Navigate(url);
 						}
 					}
@@ -1237,17 +1247,12 @@ namespace SIL.FieldWorks.Common.Controls
 			if (url == null)
 				return null;
 			string urlStr = url.ToString();
-#if __MonoCS__
-			int startIndex = urlStr.IndexOf("OcmFrame/");
+			var prefix = Platform.IsWindows ? "::/" : "OcmFrame/";
+			var startIndex = urlStr.IndexOf(prefix);
 			if (startIndex == -1)
-				return null;
-			startIndex += 9;
-#else
-			int startIndex = urlStr.IndexOf("::/");
-			if (startIndex == -1)
-				return null;
-			startIndex += 3;
-#endif
+					return null;
+			startIndex += prefix.Length;
+
 			int endIndex = urlStr.IndexOf(".htm", startIndex);
 			if (endIndex == -1)
 				return null;
@@ -1322,12 +1327,10 @@ namespace SIL.FieldWorks.Common.Controls
 				if (FileUtils.FileExists(tempfile))
 					FileUtils.Delete(tempfile);
 			}
-#if !__MonoCS__
-			else
+			else if (Platform.IsWindows)
 			{
 				m_webBrowser.DocumentText = htmlElem.ToString();
 			}
-#endif
 		}
 
 		private void m_flvLabels_SelectionChanged(object sender, FwObjectSelectionEventArgs e)
@@ -1350,12 +1353,11 @@ namespace SIL.FieldWorks.Common.Controls
 			m_webBrowser.GoForward();
 		}
 
-#if !__MonoCS__
 		private void m_printButton_Click(object sender, EventArgs e)
 		{
-			m_webBrowser.ShowPrintDialog();
+			if (Platform.IsWindows)
+				((WebBrowser)m_webBrowser.NativeBrowser).ShowPrintDialog();
 		}
-#endif
 
 		private void ExpandHelpBrowser()
 		{
@@ -2661,12 +2663,14 @@ namespace SIL.FieldWorks.Common.Controls
 							return label.Object;
 					}
 				}
-#if __MonoCS__
-				// On Mono, m_labelsTreeView.SelectedNode is somehow cleared between OnOKClick
-				// and getting SelectedObject from the caller.  (See FWNX-853.)
-				if (m_chosenLabel != null)
-					return m_chosenLabel.Object;
-#endif
+
+				if (Platform.IsMono)
+				{
+					// On Mono, m_labelsTreeView.SelectedNode is somehow cleared between OnOKClick
+					// and getting SelectedObject from the caller.  (See FWNX-853.)
+					if (m_chosenLabel != null)
+						return m_chosenLabel.Object;
+				}
 				return null;
 			}
 		}

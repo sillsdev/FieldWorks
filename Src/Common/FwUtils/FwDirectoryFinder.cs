@@ -17,6 +17,7 @@ using Microsoft.Win32;
 using SIL.LCModel;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -178,10 +179,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			// but not in the code folder structure.
 			// Sure hope the caller can handle it.
 
-#if __MonoCS__
-			else if (!Directory.Exists(retval)) // previous Substring(1) causes problem for 'full path' in Linux
+			else if (!Platform.IsWindows && !Directory.Exists(retval)) // previous Substring(1) causes problem for 'full path' in Linux
 				return subDirectory;
-#endif
 
 			return retval;
 		}

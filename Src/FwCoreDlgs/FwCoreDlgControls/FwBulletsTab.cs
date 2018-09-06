@@ -10,6 +10,7 @@ using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainServices;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
 {
@@ -132,15 +133,18 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		public void UpdateForStyle(StyleInfo styleInfo)
 		{
 			CheckDisposed();
-#if __MonoCS__
-			// On Mono, the sequence of events when changing styles can cause this to be
-			// called even when switching to a character style.  See FWNX-870.
-			if (!styleInfo.IsParagraphStyle)
-				return;
-#endif
+
+			if (Platform.IsMono)
+			{
+				// On Mono, the sequence of events when changing styles can cause this to be
+				// called even when switching to a character style.  See FWNX-870.
+				if (!styleInfo.IsParagraphStyle)
+					return;
+			}
+
 			m_dontUpdateInheritance = true;
 
-			bool fDifferentStyle = m_StyleInfo == null ? true : (styleInfo.Name != m_StyleInfo.Name);
+			bool fDifferentStyle = m_StyleInfo == null || styleInfo.Name != m_StyleInfo.Name;
 
 			// Don't use a 0 size bullet. Fixes FWNX-575.
 			if (styleInfo != null && styleInfo.IBullet != null)

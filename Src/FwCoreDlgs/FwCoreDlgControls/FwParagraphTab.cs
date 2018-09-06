@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.DomainServices;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
 {
@@ -214,12 +215,15 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		public void UpdateForStyle(StyleInfo styleInfo)
 		{
 			CheckDisposed();
-#if __MonoCS__
-			// On Mono, the sequence of events when changing styles can cause this to be
-			// called even when switching to a character style.  See FWNX-870.
-			if (!styleInfo.IsParagraphStyle)
-				return;
-#endif
+
+			if (Platform.IsMono)
+			{
+				// On Mono, the sequence of events when changing styles can cause this to be
+				// called even when switching to a character style.  See FWNX-870.
+				if (!styleInfo.IsParagraphStyle)
+					return;
+			}
+
 			// Don't allow controls to undo their inherited state while filling in
 			m_dontUpdateInheritance = true;
 			m_currentStyleInfo = styleInfo;

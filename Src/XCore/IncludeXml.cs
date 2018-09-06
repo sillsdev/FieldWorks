@@ -20,6 +20,7 @@ using System.IO;
 
 using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.PlatformUtilities;
 using SIL.Utils;
 
 namespace XCore
@@ -68,14 +69,15 @@ namespace XCore
 		/// <param name="cachedDoms"></param>=
 		/// <param name="parentPath"></param>=
 		/// <param name="dom"></param>=
-		protected void ProcessDom(Dictionary<string, XmlDocument> cachedDoms, string parentPath, XmlDocument dom)
+		protected void ProcessDom(Dictionary<string, XmlDocument> cachedDoms, string parentPath,
+			XmlDocument dom)
 		{
 			XmlNode nodeForError = null;
 			string baseFile = "";
 			XmlNode baseNode = dom.SelectSingleNode("//includeBase");
 			if (baseNode != null)
 			{
-				baseFile = XmlUtils.GetMandatoryAttributeValue(baseNode,"path");
+				baseFile = XmlUtils.GetMandatoryAttributeValue(baseNode, "path");
 				//now that we have read it, remove it, so that it does not violate the schema of
 				//the output file.
 				baseNode.ParentNode.RemoveChild(baseNode);
@@ -83,28 +85,20 @@ namespace XCore
 
 			try
 			{
-#if !__MonoCS__
 				foreach (XmlNode includeNode in dom.SelectNodes("//include"))
 				{
-#else
-				// TODO-Linux: work around for mono bug https://bugzilla.novell.com/show_bug.cgi?id=495693
-				XmlNodeList includeList = dom.SelectNodes("//include");
-				for(int j = includeList.Count - 1; j >= 0; --j)
-				{
-					XmlNode includeNode = includeList[j];
-					if (includeNode == null)
-						continue;
-#endif
 					nodeForError = includeNode;
 					ReplaceNode(cachedDoms, parentPath, includeNode, baseFile);
 				}
 			}
 			catch (Exception error)
 			{
-				throw new ApplicationException("Error while processing <include> element:" + nodeForError.OuterXml, error);
+				throw new ApplicationException(
+					"Error while processing <include> element:" + nodeForError.OuterXml, error);
 			}
 
-			Debug.Assert(dom.SelectSingleNode("//include") == null, "some <include> node was not handled");
+			Debug.Assert(dom.SelectSingleNode("//include") == null,
+				"some <include> node was not handled");
 		}
 
 		/// <summary>

@@ -19,6 +19,7 @@ using SIL.LCModel.Application;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 using XCore;
 
 namespace SIL.FieldWorks.IText
@@ -455,10 +456,13 @@ namespace SIL.FieldWorks.IText
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);
-#if !__MonoCS__ // FWNX-419
+
+			if (Platform.IsMono)
+				return;
+
+			// FWNX-419
 			if (!MouseMoveSuppressed && IsFocusBoxInstalled)
 				MoveFocusBoxIntoPlace(true);
-#endif
 		}
 
 		/// <summary>
@@ -1979,18 +1983,20 @@ namespace SIL.FieldWorks.IText
 			{
 				pt = PixelToView(new Point(e.X, e.Y));
 				GetCoordRects(out rcSrcRoot, out rcDstRoot);
-#if __MonoCS__
-				// Adjust the destination to the original scroll position.  This completes
-				// the fix for FWNX-794/851.
-				rcDstRoot.Location = m_ptScrollPos;
-#endif
+
+				if (Platform.IsMono)
+				{
+					// Adjust the destination to the original scroll position.  This completes
+					// the fix for FWNX-794/851.
+					rcDstRoot.Location = m_ptScrollPos;
+				}
+
 				IVwSelection sel = RootBox.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, false);
 				if (sel == null || !HandleClickSelection(sel, false, false))
 					base.OnMouseDown(e);
 			}
 		}
 
-#if __MonoCS__
 		/// <summary>
 		/// The Mono runtime changes the scroll position to the currently existing control
 		/// before passing on to the OnMouseDown method.  This works fine for statically defined
@@ -2008,15 +2014,15 @@ namespace SIL.FieldWorks.IText
 		/// to compile FieldWorks.
 		/// </remarks>
 		private Point m_ptScrollPos;
-#endif
 
 		public override void OriginalWndProc(ref Message msg)
 		{
-#if __MonoCS__
-			// When handling a left mouse button down event, save the original scroll position.
-			if (msg.Msg == (int)Win32.WinMsgs.WM_LBUTTONDOWN)
-				m_ptScrollPos = AutoScrollPosition;
-#endif
+			if (Platform.IsMono)
+			{
+				// When handling a left mouse button down event, save the original scroll position.
+				if (msg.Msg == (int)Win32.WinMsgs.WM_LBUTTONDOWN)
+					m_ptScrollPos = AutoScrollPosition;
+			}
 			base.OriginalWndProc(ref msg);
 		}
 

@@ -8,7 +8,7 @@ using System.Drawing;
 using System.ComponentModel;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Drawing;
-
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -31,11 +31,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>Space between the steps panel and the steps tab control.</summary>
 		protected const int kTabStepsPanStepsPadding = 5;
 		/// <summary>Space between the right edge of the steps label and the form.</summary>
-#if !__MonoCS__
-		protected const int kdxpStepsLabelRightPadding = 9;
-#else
-		protected const int kdxpStepsLabelRightPadding = 12;	// FWNX-514. (could keep the two the same maybe)
-#endif
+		protected readonly int kdxpStepsLabelRightPadding = !Platform.IsMono ?  9 : 12; // FWNX-514. (could keep the two the same maybe)
 		/// <summary>Space between the bottom edge of the steps label and the form.</summary>
 		protected const int kdypStepsLabelBottomPadding = 54;
 		/// <summary>Space between the bottom edge of the buttons and the form.</summary>

@@ -835,7 +835,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			bool needToVerifySurrogates = char.IsSurrogate(chsFirst);
 			// The first character goes into the buffer
 			buffer.Append(chsFirst);
-#if !__MonoCS__
+
+			if (Platform.IsMono)
+				return;
+
 			// Note: When/if porting to MONO, the following block of code can be removed
 			// and still work.
 			if (chsFirst < ' ' || chsFirst == (char)VwSpecialChars.kscDelForward)
@@ -930,7 +933,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				else
 					break;
 			}
-#endif
+
 			// If there were surrogate characters in the typed input verify that they are all matched pairs
 			// and clear out the buffer if they are not.
 			if (needToVerifySurrogates)
@@ -1103,9 +1106,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		protected virtual bool CallOnExtendedKey(int chw, VwShiftStatus ss)
 		{
-#if __MonoCS__
-			chw &= 0xffff; // OnExtenedKey only expectes chw to contain the key info not the modifer info
-#endif
+			if (Platform.IsMono)
+				chw &= 0xffff; // OnExtendedKey only expects chw to contain the key info not the modifer info
 
 			if (Callbacks == null || Callbacks.EditedRootBox == null)
 			{

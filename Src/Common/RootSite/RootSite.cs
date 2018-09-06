@@ -116,8 +116,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			base.AutoScroll = true;
 
 			InitializeComponent();
-#if !__MonoCS__
-#endif
+
 			// RootSite shouldn't handle tabs like a control
 			AcceptsTab = true;
 			AcceptsReturn = true;

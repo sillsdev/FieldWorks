@@ -22,6 +22,7 @@ using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 using SIL.Utils;
 using XCore;
 
@@ -862,13 +863,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				parent.Controls.Add(this); // Parent will have to move it into the right place.
 				parent.Slices.Add(this);
 			}
-#if __MonoCS__ // FWNX-266
-			if (mainControl != null && mainControl.Visible == false)
+
+			if (Platform.IsMono)
 			{
-				// ensure Launcher Control is shown.
-				mainControl.Visible = true;
+				// FWNX-266
+				if (mainControl != null && mainControl.Visible == false)
+				{
+					// ensure Launcher Control is shown.
+					mainControl.Visible = true;
+				}
 			}
-#endif
+
 			SetSplitPosition();
 
 			// Don'f fire off all those size changed event handlers, unless it is really needed.

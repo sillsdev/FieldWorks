@@ -166,9 +166,7 @@
     <Reference Include="System.Windows.Forms">
       <Name>System.Windows.Forms</Name>
     </Reference>
-    <Reference Include="System.Xml">
-      <Name>System.XML</Name>
-    </Reference>
+    <Reference Include="System.Xml"/>
     <Reference Include="xCoreInterfaces">
       <Name>xCoreInterfaces</Name>
       <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>

@@ -274,6 +274,7 @@
     <Compile Include="WelcomeToFieldWorksDlg.Designer.cs">
       <DependentUpon>WelcomeToFieldWorksDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="WindowsInstallerQuery.cs" />
     <None Include="App.config" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProjectMatch.cs" />

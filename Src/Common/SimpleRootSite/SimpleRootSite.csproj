@@ -152,6 +152,12 @@
     <Reference Include="Accessibility">
       <Name>Accessibility</Name>
     </Reference>
+    <Reference Include="ibusdotnet, Version=2.0.0.20771, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\ibusdotnet.2.0.0.20771\lib\ibusdotnet.dll</HintPath>
+    </Reference>
+    <Reference Include="NDesk.DBus, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f6716e4f9b2ed099, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\NDesk.DBus.0.13.1\lib\NDesk.DBus.dll</HintPath>
+    </Reference>
     <Reference Include="SIL.Core.Desktop, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SIL.Core.Desktop.dll</HintPath>
@@ -194,18 +200,10 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data">
-      <Name>System.Data</Name>
-    </Reference>
-    <Reference Include="System.Drawing">
-      <Name>System.Drawing</Name>
-    </Reference>
-    <Reference Include="System.Windows.Forms">
-      <Name>System.Windows.Forms</Name>
-    </Reference>
-    <Reference Include="System.Xml">
-      <Name>System.XML</Name>
-    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="xCoreInterfaces, Version=7.0.0.40569, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
@@ -213,12 +211,6 @@
     </Reference>
     <Reference Include="ManagedVwDrawRootBuffered">
       <HintPath>..\..\..\Output\Debug\ManagedVwDrawRootBuffered.dll</HintPath>
-    </Reference>
-    <Reference Include="NDesk.DBus" Condition="'$(OS)'=='Unix'">
-      <HintPath>..\..\..\Output\Debug\NDesk.DBus.dll</HintPath>
-    </Reference>
-    <Reference Include="ibusdotnet" Condition="'$(OS)'=='Unix'">
-      <HintPath>..\..\..\Output\Debug\ibusdotnet.dll</HintPath>
     </Reference>
     <Reference Include="FwUtils">
       <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>

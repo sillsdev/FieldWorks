@@ -275,12 +275,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public override LcmCache Cache
 		{
-#if __MonoCS__ // TODO-Linux: Work around Mono compiler bug.
 			get
 			{
 				return base.Cache;
 			}
-#endif
 			set
 			{
 				base.Cache = value;

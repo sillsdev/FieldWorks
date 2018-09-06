@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
@@ -213,8 +213,11 @@
       <Name>xCoreInterfaces</Name>
       <HintPath>..\..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="ibusdotnet" Condition="'$(OS)'=='Unix'">
-      <HintPath>..\..\..\..\Output\Debug\ibusdotnet.dll</HintPath>
+    <Reference Include="ibusdotnet, Version=2.0.0.20771, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\ibusdotnet.2.0.0.20771\lib\ibusdotnet.dll</HintPath>
+    </Reference>
+    <Reference Include="NDesk.DBus, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f6716e4f9b2ed099, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\NDesk.DBus.0.13.1\lib\NDesk.DBus.dll</HintPath>
     </Reference>
     <Reference Include="Rhino.Mocks">
       <HintPath>..\..\..\..\Bin\Rhino\Rhino.Mocks.dll</HintPath>

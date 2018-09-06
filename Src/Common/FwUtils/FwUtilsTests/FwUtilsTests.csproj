@@ -197,6 +197,7 @@
     <Compile Include="Attributes\CreateComObjectsFromManifestAttribute.cs" />
     <Compile Include="Attributes\HandleApplicationThreadExceptionAttribute.cs" />
     <Compile Include="Attributes\RedirectHKCU.cs" />
+    <Compile Include="Attributes\RequiresSTAOnWindowsAttribute.cs" />
     <Compile Include="Attributes\SuppressErrorBeepsAttribute.cs" />
     <Compile Include="CharEnumeratorForByteArrayTests.cs" />
     <Compile Include="DebugProcsTests.cs" />

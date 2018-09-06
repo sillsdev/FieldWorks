@@ -1,3 +1,7 @@
+// Copyright (c) 2015-2018 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 //#define TraceMouseCalls		// uncomment this line to trace mouse messages
 using System;
 using System.Collections.Generic;
@@ -1012,9 +1016,7 @@ namespace SIL.FieldWorks.IText
 			m_editMonitor = new SandboxEditMonitor(this); // after creating sec cache.
 			m_propertyTable.SetProperty("FirstControlToHandleMessages", this, PropertyTable.SettingsGroup.LocalSettings, false);
 			m_propertyTable.SetPropertyPersistence("FirstControlToHandleMessages", false);
-#if !__MonoCS__
-#endif
-			}
+		}
 
 		public SandboxBase(LcmCache cache, Mediator mediator, PropertyTable propertyTable, IVwStylesheet ss, InterlinLineChoices choices, int hvoAnalysis)
 			: this(cache, mediator, propertyTable, ss, choices)
@@ -1074,14 +1076,15 @@ namespace SIL.FieldWorks.IText
 
 		private void SubscribeToRootSiteEventHandlerEvents()
 		{
-#if __MonoCS__
-			var ibusRootSiteEventHandler = m_rootSiteEventHandler as IbusRootSiteEventHandler;
-			if (ibusRootSiteEventHandler != null)
+			if (MiscUtils.IsMono)
 			{
-				ibusRootSiteEventHandler.PreeditOpened += OnPreeditOpened;
-				ibusRootSiteEventHandler.PreeditClosed += OnPreeditClosed;
+				var ibusRootSiteEventHandler = m_rootSiteEventHandler as IbusRootSiteEventHandler;
+				if (ibusRootSiteEventHandler != null)
+				{
+					ibusRootSiteEventHandler.PreeditOpened += OnPreeditOpened;
+					ibusRootSiteEventHandler.PreeditClosed += OnPreeditClosed;
+				}
 			}
-#endif
 		}
 
 		private void OnPreeditOpened (object sender, EventArgs e)

@@ -16,6 +16,7 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.PlatformUtilities;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks
@@ -427,10 +428,12 @@ namespace SIL.FieldWorks.XWorks
 				string filterPath = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "filterPath");
 				if (filterPath!= null)
 				{
-#if __MonoCS__
-					// TODO-Linux: fix the data
-					filterPath = filterPath.Replace(@"\", "/");
-#endif
+					if (!Platform.IsWindows)
+					{
+						// TODO-Linux: fix the data
+						filterPath = filterPath.Replace(@"\", "/");
+					}
+
 					var document = new XmlDocument();
 					document.Load(FwDirectoryFinder.GetCodeFile(filterPath));
 					m_dataEntryForm.SliceFilter = new SliceFilter(document);

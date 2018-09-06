@@ -18,6 +18,7 @@ using SIL.LCModel.Utils;
 using System.Reflection;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.PlatformUtilities;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -48,9 +49,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_combo.SelectedValueChanged += this.SelectionChanged;
 			m_combo.GotFocus += m_combo_GotFocus;
 			m_combo.DropDownClosed += m_combo_DropDownClosed;
-#if __MonoCS__	// FWNX-545
-			m_combo.Parent.SizeChanged += new EventHandler(OnComboParentSizeChanged);
-#endif
+			if (Platform.IsMono)
+			{
+				// FWNX-545
+				m_combo.Parent.SizeChanged += OnComboParentSizeChanged;
+			}
+
 			PopulateCombo(parameters);
 			// We need to watch the cache for changes to our property.
 			cache.DomainDataByFlid.AddNotification(this);
@@ -146,17 +150,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_combo.MaxDropDownItems = Math.Min(m_combo.Items.Count, 20);
 		}
 
-#if __MonoCS__
 		/// <summary>
 		/// In .Net/Windows, shrinking the parent SplitContainer doesn't appear to shrink the
 		/// ComboBox permanently. However, it does in Mono/Linux.  See FWNX-545.
 		/// </summary>
+		/// <remarks>Method is only used on Linux</remarks>
 		private void OnComboParentSizeChanged(object sender, EventArgs e)
 		{
+			Debug.Assert(Platform.IsMono, "Only needed on Linux (FWNX-545)");
 			if (m_combo.Width < m_comboWidth)
 				m_combo.Width = m_comboWidth;
 		}
-#endif
 
 		protected override void UpdateDisplayFromDatabase()
 		{

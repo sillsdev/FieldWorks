@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.PlatformUtilities;
 
 namespace Utils.MessageBoxExLib
 {
@@ -942,17 +943,18 @@ namespace Utils.MessageBoxExLib
 			}
 		}
 
-#if !__MonoCS__
-		[DllImport("user32.dll", CharSet=CharSet.Auto)]
-		private static extern bool MessageBeep(uint type);
-#else
+		[DllImport("user32.dll", CharSet=CharSet.Auto, EntryPoint = "MessageBeep")]
+		private static extern bool MessageBeepWindows(uint type);
+
 		private static bool MessageBeep(uint type)
 		{
+			if (Platform.IsWindows)
+				return MessageBeepWindows(type);
+
 			Console.WriteLine("Warning using unimplemented method MessageBeep");
 			// TODO-Linux: make a beep somehow using managed code
 			return true;
 		}
-#endif
 		#endregion
 
 		private void MessageBoxExForm_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)

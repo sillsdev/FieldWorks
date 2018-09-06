@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 using System.Reflection;
+using SIL.PlatformUtilities;
 using SIL.Utils;
 
 namespace XCore
@@ -47,13 +48,16 @@ namespace XCore
 			InitializeComponent();
 		}
 
-#if __MonoCS__ // FWNX-425
+		// FWNX-425
 		/// <summary> make Width always match parent Width </summary>
 		protected override void OnLayout(LayoutEventArgs levent)
 		{
-			if (Parent != null && Width != Parent.Width)
+			if (Platform.IsMono)
 			{
-				Width = Parent.Width;
+				if (Parent != null && Width != Parent.Width)
+				{
+					Width = Parent.Width;
+				}
 			}
 
 			base.OnLayout (levent);
@@ -62,14 +66,16 @@ namespace XCore
 		/// <summary> make Width always match parent Width </summary>
 		protected override void OnSizeChanged(EventArgs e)
 		{
-			if (Parent != null && Width != Parent.Width)
+			if (Platform.IsMono)
 			{
-				Width = Parent.Width;
+				if (Parent != null && Width != Parent.Width)
+				{
+					Width = Parent.Width;
+				}
 			}
 
 			base.OnSizeChanged (e);
 		}
-#endif
 
 		#endregion Construction
 
@@ -168,15 +174,17 @@ namespace XCore
 				mp.ParentSizeHint = ParentSizeHint;
 			}*/
 			(mainControl as IxCoreColleague).Init(m_mediator, m_propertyTable, mainControlNode.SelectSingleNode("parameters"));
-#if __MonoCS__
-			// At least one IPaneBarUser main control disposes of its MainPaneBar.  This can
-			// cause the program to hang later on.  See FWNX-1036 for details.
-			if ((m_paneBar as Control).IsDisposed)
+			if (Platform.IsMono)
 			{
-				Controls.Remove(m_paneBar as Control);
-				m_paneBar = null;
+				// At least one IPaneBarUser main control disposes of its MainPaneBar.  This can
+				// cause the program to hang later on.  See FWNX-1036 for details.
+				if ((m_paneBar as Control).IsDisposed)
+				{
+					Controls.Remove(m_paneBar as Control);
+					m_paneBar = null;
+				}
 			}
-#endif
+
 			Controls.Add(mainControl);
 			if (mainControl is MultiPane)
 			{

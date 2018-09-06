@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
 using SIL.ObjectModel;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -18,7 +19,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 	[SuppressUnmanagedCodeSecurity]
 	public class ActivationContextHelper : DisposableBase
 	{
-#if !__MonoCS__
 		#region Unmanaged structs and methods
 		[StructLayout(LayoutKind.Sequential, Pack = 4, CharSet = CharSet.Unicode)]
 		private struct ActCtx
@@ -50,7 +50,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		#endregion // Unmanaged structs and methods
 
 		private IntPtr m_activationContext;
-#endif
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ActivationContextHelper"/> class.
@@ -58,7 +57,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="manifestFile">The manifest file.</param>
 		public ActivationContextHelper(string manifestFile)
 		{
-#if !__MonoCS__
+			if (!Platform.IsWindows)
+				return;
+
 			// Specifying a full path to the manifest file like this allows our unit tests to work even with a
 			// test runner like Resharper 8 which does not set the current directory to the one containing the DLLs.
 			// Note that we have to use CodeBase here because NUnit runs the tests from a shadow copy directory
@@ -75,7 +76,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			if (handle == (IntPtr)(-1))
 				throw new Win32Exception(Marshal.GetLastWin32Error(), "Error creating activation context");
 			m_activationContext = handle;
-#endif
 		}
 
 		/// <summary>
@@ -83,12 +83,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		protected override void DisposeUnmanagedResources()
 		{
-#if !__MonoCS__
+			if (!Platform.IsWindows)
+				return;
+
 			// dispose managed and unmanaged objects
 			if (m_activationContext != IntPtr.Zero)
 				ReleaseActCtx(m_activationContext);
 			m_activationContext = IntPtr.Zero;
-#endif
 		}
 
 		/// <summary>
@@ -98,10 +99,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public IDisposable Activate()
 		{
 			IntPtr cookie = IntPtr.Zero;
-#if !__MonoCS__
-			if (!ActivateActCtx(m_activationContext, out cookie))
-				throw new Win32Exception(Marshal.GetLastWin32Error(), "Error activating context");
-#endif
+
+			if (Platform.IsWindows)
+			{
+				if (!ActivateActCtx(m_activationContext, out cookie))
+					throw new Win32Exception(Marshal.GetLastWin32Error(),
+						"Error activating context");
+			}
+
 			return new Activation(cookie);
 		}
 
@@ -116,11 +121,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			protected override void DisposeUnmanagedResources()
 			{
-#if !__MonoCS__
+				if (!Platform.IsWindows)
+					return;
+
 				if (m_cookie != IntPtr.Zero)
 					DeactivateActCtx(0, m_cookie);
 				m_cookie = IntPtr.Zero;
-#endif
 			}
 		}
 	}

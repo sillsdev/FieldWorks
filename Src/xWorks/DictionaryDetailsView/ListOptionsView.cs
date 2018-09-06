@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 {
@@ -33,7 +34,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			base.Dispose(disposing);
 		}
 
-#if __MonoCS__
 		/// <summary>
 		/// Adjust the location of the checkBoxDisplayOption and the height of the listView properly as the
 		/// size of the ListOptionsView changes.  (The Mono runtime library does not do this properly for some
@@ -44,6 +44,10 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
+
+			if (!Platform.IsMono)
+				return;
+
 			Control firstCheckBox = checkBoxDisplayOption.Visible ? checkBoxDisplayOption : checkBoxDisplayOption2.Visible ? checkBoxDisplayOption2 : null;
 			Control secondCheckBox = firstCheckBox != checkBoxDisplayOption2 ? checkBoxDisplayOption2.Visible ? checkBoxDisplayOption2 : null : null;
 
@@ -68,7 +72,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 				firstCheckBox.Location = new Point(firstCheckBox.Location.X, firstCheckBoxTop);
 			}
 		}
-#endif
 
 		//
 		// User configuration properties

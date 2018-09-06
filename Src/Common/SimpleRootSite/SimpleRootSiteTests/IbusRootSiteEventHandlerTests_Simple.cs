@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-#if __MonoCS__
 using System.Drawing;
 using IBusDotNet;
 using NUnit.Framework;
@@ -20,6 +19,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 	/// selection by anchor and end whereas in Palaso we use anchor and length!</remarks>
 	[TestFixture]
 	[InitializeRealKeyboardController]
+	[Platform(Include = "Linux", Reason = "IbusRootSiteEventHandlerTests_Simple is Linux only")]
 	public class IbusRootSiteEventHandlerTests_Simple: SimpleRootsiteTestsBase<UndoableRealDataCache>
 	{
 		private IbusRootSiteEventHandler Handler
@@ -314,4 +314,3 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		}
 	}
 }
-#endif

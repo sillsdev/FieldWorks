@@ -5,10 +5,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html).
 // </copyright>
 // --------------------------------------------------------------------------------------------
-#if __MonoCS__
 using System;
 using Gtk;
-using SIL.FieldWorks.Common.Controls.FileDialog;
 
 namespace SIL.FieldWorks.Common.Controls.FileDialog.Linux
 {
@@ -80,4 +78,3 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Linux
 		}
 	}
 }
-#endif

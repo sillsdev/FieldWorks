@@ -26,6 +26,7 @@ using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -3820,7 +3821,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			// I don't fully understand why, but it seems the base class does some
 			// critical repositioning of buttons. See LT-4675.
 			OnResize(e);
-#if __MonoCS__
+
+			if (!Platform.IsMono)
+				return;
+
 			// This button moving logic works on mono.  At this point, the sizes of the
 			// list views have settled down.  See FWNX-847.
 			int minY = listViewMappingLanguages.Bottom + 7;
@@ -3841,24 +3845,25 @@ namespace SIL.FieldWorks.LexText.Controls
 				MoveButton(btnModifyCharMapping, btnAddCharMapping, minY);
 				MoveButton(btnDeleteCharMapping, btnModifyCharMapping, minY);
 			}
-#endif
 		}
 
-#if __MonoCS__
-		void MoveButton(Button btn, Button btnLeft, int y)
+		private void MoveButton(Button btn, Button btnLeft, int y)
 		{
+			Debug.Assert(Platform.IsMono, "only needed on Linux");
 			if (btnLeft == null)
 				btn.Location = new Point(btn.Left, y);
 			else
 				btn.Location = new Point(btnLeft.Right + 7, y);
 		}
-#endif
 
-// This moving button logic has issues on mono. (and on Windows, if truth be told!)
-#if !__MonoCS__
+		// This moving button logic has issues on mono. (and on Windows, if truth be told!)
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
+
+			if (Platform.IsMono)
+				return;
+
 			/// The following code is added to handle the adjustment that the framework
 			/// makes 'at some point' in the start up process of this dialog to handle
 			/// cases where the dpi is > 96.
@@ -3927,6 +3932,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void MoveButton(ButtonBase btn, int dw, int dh)
 		{
+			Debug.Assert(!Platform.IsMono, "only needed on Windows");
 			Point oldPoint = btn.Location;
 			oldPoint.X += dw;
 			oldPoint.Y += dh;
@@ -3935,12 +3941,12 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void MoveButton2(ButtonBase btn, int dw, int YCoord)
 		{
+			Debug.Assert(!Platform.IsMono, "only needed on Windows");
 			Point oldPoint = btn.Location;
 			oldPoint.X += dw;
 			oldPoint.Y = YCoord;
 			btn.Location = oldPoint;
 		}
-#endif
 
 		private void btnSaveMapFile_Click(object sender, System.EventArgs e)
 		{
@@ -3992,9 +3998,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				// LT-10904 added checkbox
 				listViewContentMapping.Height =
 					tabSteps.Bottom - btnModifyContentMapping.Height - m_chkCreateMissingLinks.Height - listViewContentMapping.Top - 20;
-				var nudge = 0;
-				if (MiscUtils.IsUnix)
-					nudge = 25;
+				var nudge = Platform.IsUnix ? 25 : 0;
 				// LT-17974 Adjust layout on Linux/Mono so checkbox and modify button are not overlapping.
 				listViewContentMapping.Height -= nudge;
 

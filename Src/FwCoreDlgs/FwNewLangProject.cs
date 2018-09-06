@@ -4,6 +4,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -12,6 +13,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.Reporting;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

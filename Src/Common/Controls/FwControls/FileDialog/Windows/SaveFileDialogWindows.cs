@@ -5,7 +5,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html).
 // </copyright>
 // --------------------------------------------------------------------------------------------
-#if !__MonoCS__
 using System.IO;
 using System.Windows.Forms;
 
@@ -36,4 +35,3 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Windows
 		}
 	}
 }
-#endif

@@ -11,6 +11,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.PlatformUtilities;
 
 namespace SIL.SilSidePane
 {
@@ -52,13 +53,7 @@ namespace SIL.SilSidePane
 		private OutlookBarButton m_rightClickedButton;
 		internal OutlookBarButton m_selectedButton;
 
-#if __MonoCS__ // TODO-Linux: FWNX-459
-		private Renderer m_renderer = Renderer.Outlook2003;
-#else
-		// This choice seems arbirtrary, but it gives highlighting and coloring
-		// similar to FW6.0
-		private Renderer m_renderer = Renderer.Outlook2007;
-#endif
+		private Renderer m_renderer;
 		private bool m_dropDownHovering;
 		private bool m_isResizing;
 		private bool m_canGrow;
@@ -84,6 +79,18 @@ namespace SIL.SilSidePane
 		/// <summary></summary>
 		public OutlookBar()
 		{
+			if (Platform.IsMono)
+			{
+				// TODO-Linux: FWNX-459
+				m_renderer = Renderer.Outlook2003;
+			}
+			else
+			{
+				// This choice seems arbitrary, but it gives highlighting and coloring
+				// similar to FW6.0
+				m_renderer = Renderer.Outlook2007;
+			}
+
 			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
 			SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
 			SetStyle(ControlStyles.ResizeRedraw, true);

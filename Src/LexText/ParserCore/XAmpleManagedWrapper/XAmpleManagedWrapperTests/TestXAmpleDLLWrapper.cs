@@ -64,16 +64,24 @@ namespace XAmpleManagedWrapperTests
 		}
 
 		[Test]
-		public void GetAmpleThreadId()
+		[Platform(Include = "Win")]
+		public void GetAmpleThreadId_Windows()
 		{
 			using (XAmpleDLLWrapper wrapper = CreateXAmpleDllWrapper())
 			{
 				int threadId = wrapper.GetAmpleThreadId();
-#if __MonoCS__
-				Assert.AreEqual(0, threadId);
-#else
 				Assert.AreNotEqual(0, threadId);
-#endif
+			}
+		}
+
+		[Test]
+		[Platform(Exclude = "Win")]
+		public void GetAmpleThreadId_Linux()
+		{
+			using (XAmpleDLLWrapper wrapper = CreateXAmpleDllWrapper())
+			{
+				int threadId = wrapper.GetAmpleThreadId();
+				Assert.AreEqual(0, threadId);
 			}
 		}
 

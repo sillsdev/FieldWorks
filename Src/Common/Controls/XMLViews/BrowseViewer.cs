@@ -23,6 +23,7 @@ using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
 using SIL.Reporting;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 using SIL.Utils;
 using XCore;
 
@@ -926,11 +927,14 @@ namespace SIL.FieldWorks.Common.Controls
 			m_lvHeader.Size = new Size(4000, 22);
 			m_lvHeader.TabIndex = 0;
 			m_lvHeader.View = View.Details;
-#if __MonoCS__	// FWNX-224
-			m_lvHeader.ColumnLeftClick += m_lvHeader_ColumnLeftClick;
-#else
-			m_lvHeader.ColumnClick += m_lvHeader_ColumnLeftClick;
-#endif
+			if (Platform.IsMono)
+			{
+				// FWNX-224
+				m_lvHeader.ColumnLeftClick += m_lvHeader_ColumnLeftClick;
+			}
+			else
+				m_lvHeader.ColumnClick += m_lvHeader_ColumnLeftClick;
+
 			m_lvHeader.ColumnRightClick += m_lvHeader_ColumnRightClick;
 			m_lvHeader.ColumnDragDropReordered += m_lvHeader_ColumnDragDropReordered;
 			m_lvHeader.AllowColumnReorder = true;
@@ -1518,11 +1522,14 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					if (m_lvHeader != null)
 					{
-#if __MonoCS__	// FWNX-224
-						m_lvHeader.ColumnLeftClick -= m_lvHeader_ColumnLeftClick;
-#else
-						m_lvHeader.ColumnClick -= m_lvHeader_ColumnLeftClick;
-#endif
+						if (Platform.IsMono)
+						{
+							// FWNX-224
+							m_lvHeader.ColumnLeftClick -= m_lvHeader_ColumnLeftClick;
+						}
+						else
+							m_lvHeader.ColumnClick -= m_lvHeader_ColumnLeftClick;
+
 						m_lvHeader.ColumnRightClick -= m_lvHeader_ColumnRightClick;
 						m_lvHeader.ColumnDragDropReordered -= m_lvHeader_ColumnDragDropReordered;
 						if (!m_scrollContainer.Controls.Contains(m_lvHeader))
@@ -1655,9 +1662,11 @@ namespace SIL.FieldWorks.Common.Controls
 			if (Width != m_lastLayoutWidth && m_lastLayoutWidth != 0)
 				AdjustControls();
 
-#if __MonoCS__ // FWNX-425
-			EnsureScrollContainerIsCorrectWidth();
-#endif
+			if (Platform.IsMono)
+			{
+				// FWNX-425
+				EnsureScrollContainerIsCorrectWidth();
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -3845,9 +3854,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="levent"></param>
 		protected override void OnLayout(LayoutEventArgs levent)
 		{
-#if __MonoCS__ // FWNX-425
-			m_bv.EnsureScrollContainerIsCorrectWidth();
-#endif
+			if (Platform.IsMono)
+				m_bv.EnsureScrollContainerIsCorrectWidth(); // FWNX-425
 
 			m_bv.LayoutScrollControls();
 			// It's important to do this AFTER laying out the embedded controls, because it figures
@@ -3855,17 +3863,15 @@ namespace SIL.FieldWorks.Common.Controls
 			base.OnLayout (levent);
 		}
 
-#if __MonoCS__ // FWNX-425
-#pragma warning disable 1587
-		/// <summary> </summary>
-#pragma warning restore 1587
+		/// <summary/>
 		protected override void OnSizeChanged(EventArgs e)
 		{
-			m_bv.EnsureScrollContainerIsCorrectWidth();
+			if (Platform.IsMono)
+				m_bv.EnsureScrollContainerIsCorrectWidth(); // FWNX-425
 
 			base.OnSizeChanged(e);
 		}
-#endif
+
 		/// <summary>
 		///
 		/// </summary>

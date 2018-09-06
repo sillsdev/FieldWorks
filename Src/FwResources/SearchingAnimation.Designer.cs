@@ -2,6 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using SIL.PlatformUtilities;
+
 namespace SIL.FieldWorks.Resources
 {
 	partial class SearchingAnimation
@@ -33,9 +35,13 @@ namespace SIL.FieldWorks.Resources
 		/// </summary>
 		private void InitializeComponent()
 		{
-#if !__MonoCS__ // TODO-Linux FWNX-222: work around mono giflib inadequacies
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SearchingAnimation));
-#endif
+			System.ComponentModel.ComponentResourceManager resources = null;
+			if (!Platform.IsMono)
+			{
+				// TODO-Linux FWNX-222: work around mono giflib inadequacies
+				resources = new System.ComponentModel.ComponentResourceManager(typeof(SearchingAnimation));
+			}
+
 			this.pictureBox1 = new System.Windows.Forms.PictureBox();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
 			this.SuspendLayout();
@@ -43,11 +49,15 @@ namespace SIL.FieldWorks.Resources
 			// pictureBox1
 			//
 			this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-#if !__MonoCS__ // TODO-Linux FWNX-222: work around mono giflib inadequacies
-			this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-#else
-			this.pictureBox1.Image = new System.Drawing.Bitmap(32,23);
-#endif
+
+			if (Platform.IsMono)
+				this.pictureBox1.Image = new System.Drawing.Bitmap(32,23);
+			else
+			{
+				// TODO-Linux FWNX-222: work around mono giflib inadequacies
+				this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+			}
+
 			this.pictureBox1.Location = new System.Drawing.Point(0, 0);
 			this.pictureBox1.Name = "pictureBox1";
 			this.pictureBox1.Size = new System.Drawing.Size(48, 50);

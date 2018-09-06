@@ -18,6 +18,7 @@ using System.Collections;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -280,9 +281,7 @@ namespace SIL.FieldWorks.Common.Controls
 				ColumnsChanged(this, new EventArgs());
 		}
 
-#if __MonoCS__
 		private bool m_recursionProtection = false; // FWNX-262
-#endif
 
 		/// <summary>
 		/// Raises the <see cref="E:System.Windows.Forms.Control.Enter"/> event.
@@ -290,19 +289,19 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="e">An <see cref="T:System.EventArgs"/> that contains the event data.</param>
 		protected override void OnEnter(EventArgs e)
 		{
-#if __MonoCS__
-			if (m_recursionProtection) // FWNX-262
-				return;
-			m_recursionProtection = true;
-#endif
+			if (Platform.IsMono)
+			{
+				if (m_recursionProtection) // FWNX-262
+					return;
+
+				m_recursionProtection = true;
+			}
 
 			m_bvMatches.SelectedRowHighlighting = XmlBrowseViewBase.SelectionHighlighting.border;
 			base.OnEnter(e);
 			m_bvMatches.Select();
 
-#if __MonoCS__
 			m_recursionProtection = false;
-#endif
 		}
 
 		/// <summary>
