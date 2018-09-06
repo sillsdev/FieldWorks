@@ -7,8 +7,16 @@
 		{
 			"name": "Launch",
 			"env": {
+				// Use Flexbridge from code, rather than a package, if desired.
+				"FLEXBRIDGEDIR": "${workspaceRoot}/../flexbridge/output/DebugMono",
+				// Display on main display :0, or on a Xephyr :2.
 				"DISPLAY": ":0",
-				"FIELDWORKSDIR": "${workspaceRoot}/Output/Debug"
+				// Help FW+PT find FW. This could be set in environ, but because it needs set on a user's machine independently of environ, it's set here.
+				"FIELDWORKSDIR": "${workspaceRoot}/Output/Debug",
+				// When launching FieldWorks, use this mono.
+				"PATH": "/opt/mono4-sil/bin:${env:PATH}",
+				// Path to the rest of the necessary enviromnent settings for FieldWorks. This is handled by a mono wrapper script in /opt.
+				"MONO_ENVIRON": "${workspaceRoot}/environ"
 			},
 			"type": "mono",
 			"request": "launch",
