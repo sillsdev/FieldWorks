@@ -9,6 +9,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.Web;
 using SIL.LCModel;
+using SIL.PlatformUtilities;
 using SIL.Reporting;
 
 namespace SIL.FieldWorks.Common.FwUtils
@@ -718,12 +719,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 					continue;
 
 				int iCurrChar = 0;
-#if __MonoCS__
-				if (sArg[iCurrChar] == '-') // Start of option
-				// Linux absolute paths begin with a slash
-#else
-				if (sArg[iCurrChar] == '-' || sArg[iCurrChar] == '/') // Start of option
-#endif
+				if (sArg[iCurrChar] == '-' || Platform.IsWindows && sArg[iCurrChar] == '/') // Start of option
 				{
 					// Start of a new argument key
 					if (!String.IsNullOrEmpty(value))

@@ -83,15 +83,15 @@
   <ItemGroup>
     <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Downloads\SIL.Core.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\SIL.Core.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Core.Desktop, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Downloads\SIL.Core.Desktop.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\SIL.Core.Desktop.dll</HintPath>
     </Reference>
     <Reference Include="SIL.LCModel.FixData">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Downloads\LCM\SIL.LCModel.FixData.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\LCM\SIL.LCModel.FixData.dll</HintPath>
     </Reference>
     <Reference Include="SIL.LCModel.Utils">
       <SpecificVersion>False</SpecificVersion>
@@ -99,7 +99,7 @@
     </Reference>
     <Reference Include="SIL.Windows.Forms, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Downloads\SIL.Windows.Forms.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\SIL.Windows.Forms.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

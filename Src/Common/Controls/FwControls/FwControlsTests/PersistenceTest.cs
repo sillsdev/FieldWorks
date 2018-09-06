@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -124,20 +125,16 @@ namespace SIL.FieldWorks.Common.Controls
 			using (var form = new DummyPersistedFormManual())
 			{
 				form.Show();
-#if !__MonoCS__
 				FormWindowState state = form.WindowState;
-#endif
 
 				// Restore to normal state, original size
 				form.WindowState = FormWindowState.Normal;
 				Rectangle rcForm = form.DesktopBounds;
 				form.Close();
 
-#if !__MonoCS__
-				Assert.AreEqual(FormWindowState.Maximized, state);
-#else
-				// TODO-Linux: probably fails because of this bug https://bugzilla.novell.com/show_bug.cgi?id=495562 renable this when this has been fixed
-#endif
+				// TODO-Linux: probably fails because of this bug https://bugzilla.novell.com/show_bug.cgi?id=495562 re-enable this when this has been fixed
+				if (!Platform.IsMono)
+					Assert.AreEqual(FormWindowState.Maximized, state);
 				Assert.AreEqual(rectOrig, rcForm);
 			}
 		}
@@ -203,20 +200,16 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				form.Show();
 
-#if !__MonoCS__
 				FormWindowState state = form.WindowState;
-#endif
 
 				// Restore to normal state, verify that we have original size
 				form.WindowState = FormWindowState.Normal;
 				Rectangle rcForm = form.DesktopBounds;
 				form.Close();
 
-#if !__MonoCS__
-				Assert.AreEqual(FormWindowState.Maximized, state);
-#else
-				// TODO-Linux: proberbly fails because of this bug https://bugzilla.novell.com/show_bug.cgi?id=495562 renable this when this has been fixed
-#endif
+				// TODO-Linux: probably fails because of this bug https://bugzilla.novell.com/show_bug.cgi?id=495562 re-enable this when this has been fixed
+				if (!Platform.IsMono)
+					Assert.AreEqual(FormWindowState.Maximized, state);
 				Assert.AreEqual(rectOrig, rcForm);
 			}
 		}
@@ -282,17 +275,13 @@ namespace SIL.FieldWorks.Common.Controls
 			using (var form = new DummyPersistedFormWinDef())
 			{
 				form.Show();
-#if !__MonoCS__
 				FormWindowState state = form.WindowState;
-#endif
 				form.WindowState = FormWindowState.Normal;
 				Rectangle rcForm = form.DesktopBounds;
 				form.Close();
-#if !__MonoCS__
-				Assert.AreEqual(FormWindowState.Maximized, state);
-#else
-				// TODO-Linux: proberbly fails because of this bug https://bugzilla.novell.com/show_bug.cgi?id=495562 renable this when this has been fixed
-#endif
+				// TODO-Linux: probably fails because of this bug https://bugzilla.novell.com/show_bug.cgi?id=495562 re-enable this when this has been fixed
+				if (!Platform.IsMono)
+					Assert.AreEqual(FormWindowState.Maximized, state);
 				Assert.AreEqual(rectCompare, rcForm);
 			}
 		}

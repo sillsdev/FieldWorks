@@ -18,6 +18,7 @@ using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
 using SIL.LCModel;
+using SIL.PlatformUtilities;
 using SIL.Utils;
 using XCore;
 
@@ -72,10 +73,12 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					FormLanguageSwitchSingleton.Instance.ChangeCurrentThreadUICulture(ci);
 					FormLanguageSwitchSingleton.Instance.ChangeLanguage(this);
-#if __MonoCS__
-					// Mono leaves the wait cursor on, unlike .Net itself.
-					Cursor.Current = Cursors.Default;
-#endif
+
+					if (Platform.IsMono)
+					{
+						// Mono leaves the wait cursor on, unlike .Net itself.
+						Cursor.Current = Cursors.Default;
+					}
 				}
 				// This needs to be consistent with Common/FieldWorks/FieldWorks.SetUICulture().
 				FwRegistryHelper.FieldWorksRegistryKey.SetValue(FwRegistryHelper.UserLocaleValueName, m_sNewUserWs);
@@ -231,7 +234,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				Debug.WriteLine(dir);
 				// Currently not offering Concorder plugin in FW7, therefore, we
 				// can remove the feature until we need to implement. (FWNX-755)
-				if(MiscUtils.IsUnix && dir == Path.Combine(basePluginPath, "Concorder"))
+				if (Platform.IsUnix && dir == Path.Combine(basePluginPath, "Concorder"))
 					continue;
 				string managerPath = Path.Combine(dir, "ExtensionManager.xml");
 				if (File.Exists(managerPath))

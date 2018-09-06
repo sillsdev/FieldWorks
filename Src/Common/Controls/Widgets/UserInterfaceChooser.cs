@@ -12,16 +12,15 @@
 // its own language and script.
 // </remarks>
 using System;
-#if __MonoCS__
 using System.Collections.Generic;
 using System.Drawing;
-#endif
 using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using SIL.LCModel.Core.Text;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -43,14 +42,15 @@ namespace SIL.FieldWorks.Common.Widgets
 		public UserInterfaceChooser()
 		{
 			InitializeComponent();
-#if __MonoCS__
-			// On Windows, finding fonts for strings appears to work fine.  On Linux, fonts
-			// are found based purely on the current locale setting.  So displaying Chinese
-			// text when the locale is set to Hindi just doesn't work.  Thus, to get our
-			// fancy display of language choices to work on Linux, we have to draw the list
-			// ourselves.  (See FWNX-1069.)
-			this.DrawMode = DrawMode.OwnerDrawVariable;
-#endif
+			if (Platform.IsMono)
+			{
+				// On Windows, finding fonts for strings appears to work fine.  On Linux, fonts
+				// are found based purely on the current locale setting.  So displaying Chinese
+				// text when the locale is set to Hindi just doesn't work.  Thus, to get our
+				// fancy display of language choices to work on Linux, we have to draw the list
+				// ourselves.  (See FWNX-1069.)
+				this.DrawMode = DrawMode.OwnerDrawVariable;
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -210,15 +210,17 @@ namespace SIL.FieldWorks.Common.Widgets
 			m_sNewUserWs = ldi.Locale;
 		}
 
-#if __MonoCS__
-		// See the comment above about FWNX-1069.
-
 		/// <summary>
 		/// Handles the measure item event.
 		/// </summary>
 		protected override void OnMeasureItem(MeasureItemEventArgs e)
 		{
 			base.OnMeasureItem(e);
+
+			if (!Platform.IsMono)
+				return;
+
+			// See the comment above about FWNX-1069.
 			var lang = ((LanguageDisplayItem)Items[e.Index]).Locale;
 			using (Font font = GetFontForLanguage(lang))
 			{
@@ -279,12 +281,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			// For some reason, Mono requires both FwUtils in the next line.
 			string fontName = FwUtils.FwUtils.GetFontNameForLanguage(lang);
-			if (String.IsNullOrEmpty(fontName))
+			if (string.IsNullOrEmpty(fontName))
 				return new Font(FontFamily.GenericSansSerif, 8.25F);
-			else
-				return new Font(fontName, 8.25F);
+			return new Font(fontName, 8.25F);
 		}
-#endif
 
 		#region LanguageDisplayItem class
 		/// ------------------------------------------------------------------------------------

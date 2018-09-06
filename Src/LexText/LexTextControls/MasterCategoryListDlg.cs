@@ -15,6 +15,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
+using SIL.PlatformUtilities;
 using SIL.Utils;
 using SIL.Windows.Forms;
 using XCore;
@@ -810,19 +811,20 @@ namespace SIL.FieldWorks.LexText.Controls
 					foreach (MasterCategoryCitation mcc in m_citations)
 						mcc.ResetDescription(rtbDescription);
 				}
-#if __MonoCS__
-				// Ensure that the top of the description is showing (FWNX-521).
-				rtbDescription.Select(0,0);
-				rtbDescription.ScrollToCaret();
-#endif
+
+				if (Platform.IsMono)
+				{
+					// Ensure that the top of the description is showing (FWNX-521).
+					rtbDescription.Select(0,0);
+					rtbDescription.ScrollToCaret();
+				}
 			}
 
 			public override string ToString()
 			{
 				if (InDatabase)
 					return String.Format(LexTextControls.ksXInFwProject, m_term);
-				else
-					return m_term;
+				return m_term;
 			}
 		}
 

@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -57,19 +58,23 @@ namespace SIL.FieldWorks.Common.Widgets
 			this.Size = this.DefaultSize; // Defeat extraordinary side effect of setting StartPosition.
 			EnableAfterAndBeforeSelectHandling(true);
 			m_treeView.AccessibleName = "PopupTreeTree";
-#if !__MonoCS__ // FWNX-399 - on mono this sidestep/workaround causes problems because it relies on the order event handlers
+			if (!Platform.IsMono)
+			{
+				// FWNX-399 - on mono this sidestep/workaround causes problems because it relies on the order event handlers
 				// which on mono can be registered in a difference order.
-				// possibly a better way to do this workaround if it is still neccessary is to
+				// possibly a better way to do this workaround if it is still necessary is to
 				// override OnNodeMouseClick.
-			// The following two event handlers are needed to sidestep a bug in the AfterSelect
-			// processing: the builtin TreeView code does not allow the user to select the
-			// highlighted item in the tree, even if it is not really selected, and the TreeView
-			// code forces something to be highlighted even when nothing is selected.  So we
-			// simulate the Select operation for exactly those conditions: nothing yet selected,
-			// or trying to select what has already been selected.
-			m_treeView.MouseDown += new MouseEventHandler(m_treeView_MouseDown);
-			m_treeView.MouseUp += new MouseEventHandler(m_treeView_MouseUp);
-#endif
+
+				// The following two event handlers are needed to sidestep a bug in the AfterSelect
+				// processing: the builtin TreeView code does not allow the user to select the
+				// highlighted item in the tree, even if it is not really selected, and the TreeView
+				// code forces something to be highlighted even when nothing is selected.  So we
+				// simulate the Select operation for exactly those conditions: nothing yet selected,
+				// or trying to select what has already been selected.
+				m_treeView.MouseDown += new MouseEventHandler(m_treeView_MouseDown);
+				m_treeView.MouseUp += new MouseEventHandler(m_treeView_MouseUp);
+			}
+
 			m_treeView.KeyDown += new KeyEventHandler(m_treeView_KeyDown);
 			this.AccessibleName = "PopupTreeForm";
 		}
@@ -306,10 +311,12 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				CheckDisposed();
 
-#if __MonoCS__
-				// FWNX-267: forcing the creation of the handle to ensure setting SelectedNode generates the AfterSelect event.
-				var h = m_treeView.Handle;
-#endif
+				if (Platform.IsMono)
+				{
+					// FWNX-267: forcing the creation of the handle to ensure setting SelectedNode generates the AfterSelect event.
+					var h = m_treeView.Handle;
+				}
+
 				m_treeView.SelectedNode = value;
 				if (value != null)
 				{
@@ -414,10 +421,13 @@ namespace SIL.FieldWorks.Common.Widgets
 				if (m_treeView != null)
 				{
 					EnableAfterAndBeforeSelectHandling(false);
-#if !__MonoCS__ // FWNX-399
-					m_treeView.MouseDown -= new MouseEventHandler(m_treeView_MouseDown);
-					m_treeView.MouseUp -= new MouseEventHandler(m_treeView_MouseUp);
-#endif
+					if (!Platform.IsMono)
+					{
+						// FWNX-399
+						m_treeView.MouseDown -= new MouseEventHandler(m_treeView_MouseDown);
+						m_treeView.MouseUp -= new MouseEventHandler(m_treeView_MouseUp);
+					}
+
 					m_treeView.KeyDown -= new KeyEventHandler(m_treeView_KeyDown);
 					if (!Controls.Contains(m_treeView))
 						m_treeView.Dispose();
@@ -564,11 +574,14 @@ namespace SIL.FieldWorks.Common.Widgets
 				m_launchForm = Form.ActiveForm;
 			Debug.Assert(m_launchForm != this);
 
-#if __MonoCS__ // FWNX-520: avoid a weird mono problem
-			this.Show(m_launchForm);
-#else
-			this.Show();
-#endif
+			if (Platform.IsMono)
+			{
+				// FWNX-520: avoid a weird mono problem
+				Show(m_launchForm);
+			}
+			else
+				Show();
+
 			m_fShown = true;
 			TreeNode selNode = m_treeView.SelectedNode;
 			if (selNode != null)
@@ -581,15 +594,16 @@ namespace SIL.FieldWorks.Common.Widgets
 			// selected node, things expand and scroll to show it.
 		}
 
-#if !__MonoCS__ // FWNX-399
 		/// <summary>
 		/// Handle a MouseDown event, recording the selected node if it seems likely that the
 		/// TreeView Select operation will ignore it.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
+		/// <remarks>Method is only used on Windows</remarks>
 		private void m_treeView_MouseDown(object sender, MouseEventArgs e)
 		{
+			Debug.Assert(!Platform.IsMono, "Method only needed on Windows (FWNX-399)");
 			TreeNode tn = m_treeView.GetNodeAt(e.X, e.Y);
 			if (tn != null  &&
 				(e.X >= tn.Bounds.X && e.X <= tn.Bounds.X + tn.Bounds.Width) &&
@@ -609,8 +623,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
+		/// <remarks>Method is only used on Windows</remarks>
 		private void m_treeView_MouseUp(object sender, MouseEventArgs e)
 		{
+			Debug.Assert(!Platform.IsMono, "Method only needed on Windows (FWNX-399)");
 			TreeNode tn = m_treeView.GetNodeAt(e.X, e.Y);
 			if (tn != null &&
 				tn == m_tnMouseDown &&
@@ -628,7 +644,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			}
 			m_tnMouseDown = null;
 		}
-#endif
 
 		private void HandleTreeItemSelect()
 		{

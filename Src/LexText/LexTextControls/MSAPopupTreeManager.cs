@@ -12,6 +12,7 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.DomainServices;
+using SIL.PlatformUtilities;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -368,11 +369,14 @@ namespace SIL.FieldWorks.LexText.Controls
 			// This is at least required if the user selects "Cancel" from the dialog below.
 			if (m_sense.MorphoSyntaxAnalysisRA != null)
 				pt.SelectObj(m_sense.MorphoSyntaxAnalysisRA.Hvo);
-#if __MonoCS__
-			// If Popup tree is shown whilest the dialog is shown, the first click on the dialog is consumed by the
-			// Popup tree, (and closes it down). On .NET the PopupTree appears to be automatically closed.
-			pt.HideForm();
-#endif
+
+			if (Platform.IsMono)
+			{
+				// If Popup tree is shown whilest the dialog is shown, the first click on the dialog is consumed by the
+				// Popup tree, (and closes it down). On .NET the PopupTree appears to be automatically closed.
+				pt.HideForm();
+			}
+
 			using (MsaCreatorDlg dlg = new MsaCreatorDlg())
 			{
 				SandboxGenericMSA dummyMsa = new SandboxGenericMSA();
@@ -400,11 +404,14 @@ namespace SIL.FieldWorks.LexText.Controls
 			// This is at least required if the user selects "Cancel" from the dialog below.
 			if (m_sense.MorphoSyntaxAnalysisRA != null)
 				pt.SelectObj(m_sense.MorphoSyntaxAnalysisRA.Hvo);
-#if __MonoCS__
-			// If Popup tree is shown whilest the dialog is shown, the first click on the dialog is consumed by the
-			// Popup tree, (and closes it down). On .NET the PopupTree appears to be automatically closed.
-			pt.HideForm();
-#endif
+
+			if (Platform.IsMono)
+			{
+				// If Popup tree is shown whilest the dialog is shown, the first click on the dialog is consumed by the
+				// Popup tree, (and closes it down). On .NET the PopupTree appears to be automatically closed.
+				pt.HideForm();
+			}
+
 			SandboxGenericMSA dummyMsa = SandboxGenericMSA.Create(m_sense.MorphoSyntaxAnalysisRA);
 			using (MsaCreatorDlg dlg = new MsaCreatorDlg())
 			{

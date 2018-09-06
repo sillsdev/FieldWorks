@@ -9,6 +9,7 @@ using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace XCore
 {
@@ -391,13 +392,14 @@ namespace XCore
 					// if it is not complete, queue it up to run when the application is idle again.
 					if (!task.Delegate(task.Parameter))
 						incompleteTasks.Add(task);
-#if __MonoCS__ // FWNX-348
-					// ShouldAbort() always == false on mono because of no PeekMessage
-					// so run one cycle and wait for the next Application Idle event
-					break;
-#endif
 
-
+					if (Platform.IsMono)
+					{
+						// FWNX-348
+						// ShouldAbort() always == false on mono because of no PeekMessage
+						// so run one cycle and wait for the next Application Idle event
+						break;
+					}
 				}
 			}
 			finally
@@ -412,16 +414,18 @@ namespace XCore
 
 		static bool ShouldAbort()
 		{
-#if !__MonoCS__ // FWNX-348
+			if (Platform.IsMono)
+			{
+				// FWNX-348
+				// The below code is examining the Windows Message Pump to
+				// see if there are any queued messages if there are it returns true
+				// to cancel the idle.
+
+				return false;
+			}
+
 			var msg = new Win32.MSG();
 			return Win32.PeekMessage(ref msg, IntPtr.Zero, 0, 0, (uint)Win32.PeekFlags.PM_NOREMOVE);
-#else
-			// The above code is examining the Windows Message Pump to
-			// see if there are any queued messages if there are it returns true
-			// to cancel the idle.
-
-			return false;
-#endif
 		}
 
 		#region Implementation of IEnumerable

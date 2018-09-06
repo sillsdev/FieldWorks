@@ -15,6 +15,7 @@ using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -25,26 +26,28 @@ namespace SIL.FieldWorks.Common.Controls
 	/// ----------------------------------------------------------------------------------------
 	public class CharacterGrid : DataGridView
 	{
-#if !__MonoCS__
-		[DllImport("gdi32.dll", CharSet=CharSet.Auto)]
-		private static extern uint GetGlyphIndices(IntPtr hdc, string lpstr, int c,
+		[DllImport("gdi32.dll", CharSet=CharSet.Auto, EntryPoint = "GetGlyphIndices")]
+		private static extern uint GetGlyphIndicesWindows(IntPtr hdc, string lpstr, int c,
 			[In, Out] ushort[] pgi, int fl);
-#else
+
 		private static uint GetGlyphIndices(IntPtr hdc, string lpstr, int c, [In, Out] ushort[] pgi, int fl)
 		{
+			if (Platform.IsWindows)
+				return GetGlyphIndicesWindows(hdc, lpstr, c, pgi, fl);
+
 			throw new NotImplementedException();
 		}
-#endif
 
-#if !__MonoCS__
 		[DllImport("gdi32.dll", EntryPoint="SelectObject")]
-		private static extern IntPtr SelectObject(IntPtr hdc, IntPtr hfont);
-#else
+		private static extern IntPtr SelectObjectWindows(IntPtr hdc, IntPtr hfont);
+
 		private static IntPtr SelectObject(IntPtr hdc, IntPtr hfont)
 		{
+			if (Platform.IsWindows)
+				return SelectObjectWindows(hdc, hfont);
+
 			throw new NotImplementedException();
 		}
-#endif
 
 		/// <summary>Handler for character changed event.</summary>
 		public delegate void CharacterChangedHandler(CharacterGrid grid, string newCharacter);

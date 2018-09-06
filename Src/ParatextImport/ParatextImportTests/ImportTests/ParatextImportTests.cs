@@ -13,9 +13,6 @@ using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
-#if __MonoCS__
-#pragma warning disable 419 // ambiguous reference; mono bug #639867
-#endif
 
 namespace ParatextImport.ImportTests
 {
@@ -5807,6 +5804,3 @@ namespace ParatextImport.ImportTests
 	}
 	#endregion
 }
-#if __MonoCS__
-#pragma warning restore 419 // ambiguous reference; mono bug #639867
-#endif

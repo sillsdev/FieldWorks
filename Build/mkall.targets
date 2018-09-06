@@ -357,7 +357,6 @@
 		<PalasoFiles Include="irrKlang.NET4.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<PalasoFiles Include="Enchant.Net.dll"/>
 		<PalasoFiles Include="Enchant.Net.dll.config" Condition="'$(OS)'=='Unix'"/>
-		<PalasoFiles Include="ibusdotnet.dll" Condition="'$(OS)'=='Unix'"/>
 		<PalasoFiles Include="NDesk.DBus.dll"/>
 		<PalasoFiles Include="NDesk.DBus.dll.config"/>
 		<PalasoFiles Include="taglib-sharp.dll"/>

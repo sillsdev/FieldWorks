@@ -135,7 +135,7 @@ else
 	$(LINK.cc) -shared -o $@ $^ $(LDLIBS)
 endif
 	# TODO: this is a hack. Remove after implementing FWNX-823.
-	-cd $(OUT_DIR) && ln -s $(@F) oleaut32.dll
+	-cd $(OUT_DIR) && ln -sf $(@F) oleaut32.dll
 
 $(OUT_DIR)/libVwGraphics.so: $(VWG_OBJS) $(OBJS_OTHER) $(LINK_LIBS)
 	$(LINK.cc) -shared -o $@ $^ $(LDLIBS)

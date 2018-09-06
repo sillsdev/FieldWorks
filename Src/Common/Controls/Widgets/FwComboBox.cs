@@ -13,7 +13,8 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
-using SIL.LCModel.Utils; // for Win32 message defns.
+using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Widgets
@@ -461,10 +462,8 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				CheckDisposed();
 				m_useVisualStyleBackColor = value;
-#if !__MonoCS__
-				if (value)
+				if (!Platform.IsMono && value)
 					m_comboTextBox.BackColor = Color.Transparent;
-#endif
 			}
 		}
 
@@ -1071,23 +1070,27 @@ namespace SIL.FieldWorks.Common.Widgets
 
 			if (sz != m_dropDownBox.Form.Size)
 				m_dropDownBox.Form.Size = sz;
-#if __MonoCS__	// FWNX-748: ensure a launching form that is not m_dropDownBox itself.
-			// In Mono, Form.ActiveForm occasionally returns m_dropDownBox at this point.  So we
-			// try another approach to finding the launching form for displaying m_dropDownBox.
-			// Note that the launching form never changes, so it needs to be set only once.
-			if (m_dropDownBox.LaunchingForm == null)
+			if (Platform.IsMono)
 			{
-				Control parent = this;
-				Form launcher = parent as Form;
-				while (parent != null && launcher == null)
+				// FWNX-748: ensure a launching form that is not m_dropDownBox itself.
+				// In Mono, Form.ActiveForm occasionally returns m_dropDownBox at this point.  So we
+				// try another approach to finding the launching form for displaying m_dropDownBox.
+				// Note that the launching form never changes, so it needs to be set only once.
+				if (m_dropDownBox.LaunchingForm == null)
 				{
-					parent = parent.Parent;
-					launcher = parent as Form;
+					Control parent = this;
+					Form launcher = parent as Form;
+					while (parent != null && launcher == null)
+					{
+						parent = parent.Parent;
+						launcher = parent as Form;
+					}
+
+					if (launcher != null)
+						m_dropDownBox.LaunchingForm = launcher;
 				}
-				if (launcher != null)
-					m_dropDownBox.LaunchingForm = launcher;
 			}
-#endif
+
 			m_dropDownBox.Launch(Parent.RectangleToScreen(Bounds), workingArea);
 
 			// for some reason, sometimes the size of the form changes after it has become visible, so
@@ -2112,11 +2115,14 @@ namespace SIL.FieldWorks.Common.Widgets
 			CheckDisposed();
 
 			m_previousForm = Form.ActiveForm;
-#if __MonoCS__	// FWNX-908: Crash closing combobox.
-			// Somehow on Mono, Form.ActiveForm can sometimes return m_listForm at this point.
-			if (m_previousForm == null || m_previousForm == m_listForm)
-				m_previousForm = LaunchingForm;
-#endif
+			if (Platform.IsMono)
+			{
+				// FWNX-908: Crash closing combobox.
+				// Somehow on Mono, Form.ActiveForm can sometimes return m_listForm at this point.
+				if (m_previousForm == null || m_previousForm == m_listForm)
+					m_previousForm = LaunchingForm;
+			}
+
 			m_listForm.ShowInTaskbar = false; // this is mainly to prevent it showing in the task bar.
 			//Figure where to put it. First try right below the main combo box.
 			// Pathologically the list box may be bigger than the available height. If so shrink it.
@@ -2188,14 +2194,15 @@ namespace SIL.FieldWorks.Common.Widgets
 
 		private static void ShowInactiveTopmost(Form owner, Form frm)
 		{
-#if __MonoCS__
-			// TODO:  Implement something comparable on Linux/Mono if possible.
-#else
+			if (Platform.IsMono)
+			{
+				// TODO:  Implement something comparable on Linux/Mono if possible.
+				return;
+			}
 			if (owner != null)
 				SetWindowLong(frm.Handle, GWL_HWNDPARENT, owner.Handle.ToInt32());
 			ShowWindow(frm.Handle, SW_SHOWNOACTIVATE);
 			SetWindowPos(frm.Handle.ToInt32(), HWND_TOPMOST, frm.Left, frm.Top, frm.Width, frm.Height, SWP_NOACTIVATE);
-#endif
 		}
 
 		/// <summary>
@@ -2652,18 +2659,15 @@ namespace SIL.FieldWorks.Common.Widgets
 			m_comboBox = comboBox;
 			// Allows it to be big unless client shrinks it.
 			Font = new Font(Font.Name, (float)100.0);
-#if !__MonoCS__
-			if (Application.RenderWithVisualStyles)
+			if (!Platform.IsMono && Application.RenderWithVisualStyles)
 			{
 				DoubleBuffered = true;
 				BackColor = Color.Transparent;
+				return;
 			}
-			else
-#endif
-			{
-				// And, if not changed, it's background color is white.
-				BackColor = SystemColors.Window;
-			}
+
+			// And, if not changed, it's background color is white.
+			BackColor = SystemColors.Window;
 		}
 
 		/// <summary>

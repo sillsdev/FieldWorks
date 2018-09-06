@@ -22,21 +22,21 @@ using System.Threading;
 using System.Windows.Forms;
 using Gecko;
 using Microsoft.Win32;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.Framework;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.FieldWorks.FdoUi;
+using SIL.FieldWorks.FwCoreDlgs;
+using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices.BackupRestore;
 using SIL.LCModel.DomainServices.DataMigration;
 using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.FdoUi;
-using SIL.FieldWorks.FwCoreDlgs;
-using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.LexicalProvider;
 using SIL.FieldWorks.PaObjects;
 using SIL.FieldWorks.Resources;
@@ -44,12 +44,13 @@ using SIL.FieldWorks.XWorks;
 using SIL.Keyboarding;
 using SIL.Reporting;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 using SIL.Utils;
 using SIL.Windows.Forms.HtmlBrowser;
 using SIL.Windows.Forms.Keyboarding;
 using SIL.WritingSystems;
 using XCore;
-using ConfigurationException = SIL.Utils.ConfigurationException;
+using ConfigurationException = SIL.Reporting.ConfigurationException;
 
 namespace SIL.FieldWorks
 {
@@ -117,11 +118,10 @@ namespace SIL.FieldWorks
 		#endregion
 
 		#region Main Method and Initialization Methods
-#if !__MonoCS__
+
 		/// <summary></summary>
 		[DllImport("kernel32.dll")]
 		public static extern IntPtr LoadLibrary(string fileName);
-#endif
 
 		/// ----------------------------------------------------------------------------
 		/// <summary>
@@ -136,6 +136,7 @@ namespace SIL.FieldWorks
 			Logger.Init(FwUtils.ksSuiteName);
 
 			Icu.Wrapper.ConfineIcuVersions(54);
+			Icu.Wrapper.Init();
 			LcmCache.NewerWritingSystemFound += ComplainToUserAboutNewWs;
 			FwRegistryHelper.Initialize();
 
@@ -743,9 +744,12 @@ namespace SIL.FieldWorks
 			}
 			catch (Exception exception)
 			{
-				// I (TomH) would rather know about the exception than silently failing. so show exception on Mono least.
-#if DEBUG && __MonoCS__
-				MessageBox.Show(exception.ToString());
+#if DEBUG
+				if (Platform.IsMono)
+				{
+					// I (TomH) would rather know about the exception than silently failing. so show exception on Mono least.
+					MessageBox.Show(exception.ToString());
+				}
 #endif
 			}
 
@@ -3798,86 +3802,5 @@ namespace SIL.FieldWorks
 		#endregion
 	}
 	#endregion
-
-#region WindowsInstallerQuery Class
-#if !__MonoCS__
-
-	///<summary>
-	/// Class to find out some details about the current FW installation.
-	///</summary>
-	public static class WindowsInstallerQuery
-	{
-		private const string InstallerProductCode = "{8E80F1ED-826A-46d5-A59A-D8A203F2F0D9}";
-		private const string InstalledProductNameProperty = "InstalledProductName";
-		private const string TeFeatureName = "TE";
-
-		private const int ErrorMoreData = 234;
-		private const int ErrorUnknownProduct = 1605;
-		private const int ErrorUnknownFeature = 1606;
-
-		[DllImport("msi.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-		private static extern Int32 MsiGetProductInfo(string product, string property,
-			StringBuilder valueBuf, ref Int32 cchValueBuf);
-
-		[DllImport("msi.dll", CharSet = CharSet.Unicode)]
-		internal static extern uint MsiOpenProduct(string szProduct, out int hProduct);
-
-		[DllImport("msi.dll", CharSet = CharSet.Unicode)]
-		internal static extern uint MsiGetFeatureInfo(int hProduct, string szFeature, out uint lpAttributes, StringBuilder lpTitleBuf, ref uint cchTitleBuf, StringBuilder lpHelpBuf, ref uint cchHelpBuf);
-
-		/// <summary>
-		/// Check the installer status to see if FW is installed on the user's machine.
-		/// If not, it can be assumed we are running on a developer's machine.
-		/// </summary>
-		/// <returns>True if this is an installed version</returns>
-		public static bool IsThisInstalled()
-		{
-			string productName;
-
-			var status = GetProductInfo(InstalledProductNameProperty, out productName);
-
-			return status != ErrorUnknownProduct;
-		}
-
-		/// <summary>
-		/// Check the installer status to see if we are running a BTE version of FW.
-		/// If the product is not installed then we assume this is a developer build
-		/// and just say it's BTE anyway.
-		/// </summary>
-		/// <returns>True if this is a BTE version</returns>
-		public static bool IsThisBTE()
-		{
-			string productName;
-
-			var status = GetProductInfo(InstalledProductNameProperty, out productName);
-
-			if (status == ErrorUnknownProduct)
-				return true; // Assume it's BTE if we can't find installation information
-
-			return productName.EndsWith("BTE");
-		}
-
-		private static Int32 GetProductInfo(string propertyName, out string propertyValue)
-		{
-			var sbBuffer = new StringBuilder();
-			var len = sbBuffer.Capacity;
-			sbBuffer.Length = 0;
-
-			var status = MsiGetProductInfo(InstallerProductCode, propertyName, sbBuffer, ref len);
-			if (status == ErrorMoreData)
-			{
-				len++;
-				sbBuffer.EnsureCapacity(len);
-				status = MsiGetProductInfo(InstallerProductCode, InstalledProductNameProperty, sbBuffer, ref len);
-			}
-
-			propertyValue = sbBuffer.ToString();
-
-			return status;
-		}
-	}
-
-#endif
-#endregion
 
 }

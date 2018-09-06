@@ -13,6 +13,7 @@ using System.Threading;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 using IPCFramework;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -209,11 +210,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 			// current culture may have country etc info after a hyphen. FlexBridge just needs the main language ID.
 			// It probably can't ever be null or empty, but let's be as robust as possible.
 			var locale = Thread.CurrentThread.CurrentUICulture.Name;
-#if __MonoCS__
+
 			// Mono doesn't have a plain "zh" locale.  It needs the country code for Chinese.  See FWNX-1255.
-			if (locale != "zh-CN")
-#endif
-			locale = string.IsNullOrWhiteSpace(locale) ? "en" : locale.Split('-')[0];
+			if (!Platform.IsMono || locale != "zh-CN")
+				locale = string.IsNullOrWhiteSpace(locale) ? "en" : locale.Split('-')[0];
 			AddArg(ref args, "-locale", locale);
 
 			if (_noBlockerHostAndCallback != null)

@@ -13,6 +13,7 @@ using System.Threading;
 using System.Windows.Forms;
 
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -101,11 +102,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_fNoUi = fNoUi;
 			m_waitHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
 
-#if __MonoCS__
-			// mono winforms can't create items not on main thread.
-			StartSplashScreen(); // Create Modeless dialog on Main GUI thread
-#else
-			if (fNoUi)
+			if (Platform.IsMono)
+			{
+				// mono winforms can't create items not on main thread.
+				StartSplashScreen(); // Create Modeless dialog on Main GUI thread
+			}
+			else if (fNoUi)
 				StartSplashScreen();
 			else
 			{
@@ -118,7 +120,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				m_thread.Start();
 				m_waitHandle.WaitOne();
 			}
-#endif
 
 			Debug.Assert(m_splashScreen != null);
 			lock (m_splashScreen.m_Synchronizer)
@@ -164,18 +165,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					// Something bad happened, but we are closing anyways :)
 				}
 			}
-#if !__MonoCS__
-			if (m_thread != null)
-				m_thread.Join();
-#endif
+
+			if (!Platform.IsMono)
+			{
+				if (m_thread != null)
+					m_thread.Join();
+			}
+
 			lock (m_splashScreen.m_Synchronizer)
 			{
 				m_splashScreen.Dispose();
 				m_splashScreen = null;
 			}
-#if !__MonoCS__
-			m_thread = null;
-#endif
+
+			if (!Platform.IsMono)
+				m_thread = null;
 		}
 
 		/// ----------------------------------------------------------------------------------------
@@ -448,17 +452,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				IntPtr blah = m_splashScreen.Handle; // force handle creation.
 			}
-			else
+			else if (Platform.IsMono)
 			{
-#if !__MonoCS__
-				m_splashScreen.ShowDialog();
-#else
-			// Mono Winforms can't create Forms that are not on the Main thread.
-			m_splashScreen.CreateControl();
-			m_splashScreen.Message = string.Empty;
-			m_splashScreen.Show();
-#endif
+				// Mono Winforms can't create Forms that are not on the Main thread.
+				m_splashScreen.CreateControl();
+				m_splashScreen.Message = string.Empty;
+				m_splashScreen.Show();
 			}
+			else
+				m_splashScreen.ShowDialog();
 		}
 		#endregion
 
@@ -482,8 +484,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <returns>
 		/// The return value from the background thread.
 		/// </returns>
-		/// ------------------------------------------------------------------------------------
-		/// ------------------------------------------------------------------------------------
 		public object RunTask(Func<IThreadedProgress, object[], object> backgroundTask, params object[] parameters)
 		{
 			return RunTask(true, backgroundTask, parameters);
@@ -499,8 +499,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <returns>
 		/// The return value from the background thread.
 		/// </returns>
-		/// ------------------------------------------------------------------------------------
-		/// ------------------------------------------------------------------------------------
 		public object RunTask(bool fDisplayUi, Func<IThreadedProgress, object[], object> backgroundTask, params object[] parameters)
 		{
 			return backgroundTask(this, parameters);

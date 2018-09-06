@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -174,15 +175,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Gets the name of the executable
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-#if !__MonoCS__
-		[DllImport("kernel32.dll", SetLastError = true)]
+		[DllImport("kernel32.dll", SetLastError = true, EntryPoint = "GetModuleFileName")]
 		[PreserveSig]
-		private static extern uint GetModuleFileName(IntPtr hModule, [Out]StringBuilder lpFilename,
-		[MarshalAs(UnmanagedType.U4)]int nSize);
-#else
+		private static extern uint GetModuleFileNameWindows(IntPtr hModule, [Out]StringBuilder lpFilename,
+			[MarshalAs(UnmanagedType.U4)]int nSize);
+
 		private static uint GetModuleFileName(IntPtr hModule, StringBuilder lpFilename,
 			int nSize)
 		{
+			if (Platform.IsWindows)
+				return GetModuleFileNameWindows(hModule, lpFilename, nSize);
+
 			if (hModule != IntPtr.Zero)
 				return 0; // not supported (yet)
 
@@ -198,7 +201,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		[DllImport ("libc")]
 		private static extern int readlink(string path, byte[] buffer, int buflen);
-#endif
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

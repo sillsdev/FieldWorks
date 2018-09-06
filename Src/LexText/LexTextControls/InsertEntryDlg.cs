@@ -24,6 +24,7 @@ using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.LexText.Controls.MGA;
 using SIL.FieldWorks.Resources;
+using SIL.PlatformUtilities;
 using SIL.Windows.Forms;
 using XCore;
 
@@ -490,11 +491,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			base.OnLoad(e);
 			if (Size != size)
 				Size = size;
-#if __MonoCS__
-			// Mono doesn't seem to fire the Activated event, so call the method here.
-			// This fixes FWNX-783, setting the focus in the gloss textbox.
-			SetInitialFocus();
-#endif
+
+			if (Platform.IsMono)
+			{
+				// Mono doesn't seem to fire the Activated event, so call the method here.
+				// This fixes FWNX-783, setting the focus in the gloss textbox.
+				SetInitialFocus();
+			}
 		}
 
 		bool m_fInitialized;
@@ -535,22 +538,22 @@ namespace SIL.FieldWorks.LexText.Controls
 			SetInitialFocus();
 		}
 
-#if __MonoCS__
-		/// <summary>
-		/// </summary>
+		/// <summary/>
 		protected override void WndProc(ref Message m)
 		{
-			// FWNX-520: fix some focus issues.
-			// By the time this message is processed, the popup form (PopupTree) may need to be the
-			// active window, so ignore WM_ACTIVATE.
-			if (m.Msg == 0x6 /*WM_ACTIVATE*/ && System.Windows.Forms.Form.ActiveForm == this)
+			if (Platform.IsMono)
 			{
-				return;
+				// FWNX-520: fix some focus issues.
+				// By the time this message is processed, the popup form (PopupTree) may need to be the
+				// active window, so ignore WM_ACTIVATE.
+				if (m.Msg == 0x6 /*WM_ACTIVATE*/ && System.Windows.Forms.Form.ActiveForm == this)
+				{
+					return;
+				}
 			}
 
 			base.WndProc(ref m);
 		}
-#endif
 
 		/// <summary>
 		/// Initialize the dialog.

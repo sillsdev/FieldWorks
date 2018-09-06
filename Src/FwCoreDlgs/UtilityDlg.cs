@@ -10,6 +10,7 @@ using System.Xml;
 using System.Diagnostics;
 using System.IO;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.PlatformUtilities;
 using SIL.Utils;
 using XCore;
 
@@ -340,16 +341,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void m_clbUtilities_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			var currentFont = m_rtbDescription.SelectionFont;
-#if __MonoCS__
-			// Creating the bold equivalent of the current font doesn't seem to work in Mono,
-			// as we crash shortly due to failures in GDIPlus.GdipMeasureString() using that
-			// font.
-			var boldFont = currentFont;
-#else
-			var boldFontStyle = FontStyle.Bold;
-			using (var boldFont = new Font(currentFont.FontFamily, currentFont.Size, boldFontStyle))
-#endif
+
+			Font boldFont = null;
+			try
 			{
+				var boldFontStyle = FontStyle.Bold;
+				// Creating the bold equivalent of the current font doesn't seem to work in Mono,
+				// as we crash shortly due to failures in GDIPlus.GdipMeasureString() using that
+				// font.
+				boldFont = Platform.IsMono
+					? currentFont
+					: new Font(currentFont.FontFamily, currentFont.Size, boldFontStyle);
+
 				m_whatDescription = m_whenDescription = m_redoDescription = null;
 				((IUtility)m_clbUtilities.SelectedItem).OnSelection();
 				m_rtbDescription.Clear();
@@ -384,14 +387,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					m_rtbDescription.AppendText(FwCoreDlgs.ksQuestions);
 				else
 					m_rtbDescription.AppendText(m_redoDescription);
-#if __MonoCS__
-				// If we don't have a selection explicitly set, we will crash deep in the Mono
-				// code (RichTextBox.cs:618, property SelectionFont:get) shortly.
-				m_rtbDescription.Focus();
-				m_rtbDescription.SelectionStart = 0;
-				m_rtbDescription.SelectionLength = 0;
-				m_clbUtilities.Focus();
-#endif
+
+				if (Platform.IsMono)
+				{
+					// If we don't have a selection explicitly set, we will crash deep in the Mono
+					// code (RichTextBox.cs:618, property SelectionFont:get) shortly.
+					m_rtbDescription.Focus();
+					m_rtbDescription.SelectionStart = 0;
+					m_rtbDescription.SelectionLength = 0;
+					m_clbUtilities.Focus();
+				}
+			}
+			finally
+			{
+				if (!Platform.IsMono && boldFont != null)
+					boldFont.Dispose();
 			}
 		}
 

@@ -198,9 +198,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-#if __MonoCS__
-		[Ignore("// TODO-Linux: This test is too dependent on mono ScrollableControl behaving the sames as .NET")]
-#endif
+		[Platform(Exclude = "Linux", Reason = "This test is too dependent on mono ScrollableControl behaving the sames as .NET")]
 		public void AdjustScrollRange_VScroll_PosInMiddle()
 		{
 			ShowForm(Lng.English, DummyBasicViewVc.DisplayType.kAll);
@@ -267,9 +265,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-#if __MonoCS__
-		[Ignore("// TODO-Linux: This test is too dependent on mono ScrollableControl behaving the sames as .NET")]
-#endif
+		[Platform(Exclude = "Linux", Reason = "This test is too dependent on mono ScrollableControl behaving the sames as .NET")]
 		public void AdjustScrollRange_VScroll_PosAlmostAtEnd()
 		{
 			ShowForm(Lng.English, DummyBasicViewVc.DisplayType.kAll, 150);
@@ -362,9 +358,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-#if __MonoCS__
-		[Ignore("// TODO-Linux: This test is too dependent on mono ScrollableControl behaving the sames as .NET")]
-#endif
+		[Platform(Exclude = "Linux", Reason = "This test is too dependent on mono ScrollableControl behaving the sames as .NET")]
 		public void AdjustScrollRange_VScroll_PosAtEnd()
 		{
 			ShowForm(Lng.English, DummyBasicViewVc.DisplayType.kAll);
@@ -433,9 +427,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-#if __MonoCS__
-		[Ignore("// TODO-Linux: This test is too dependent on mono ScrollableControl behaving the sames as .NET")]
-#endif
+		[Platform(Exclude = "Linux", Reason = "This test is too dependent on mono ScrollableControl behaving the sames as .NET")]
 		public void AdjustScrollRange_VScroll_ScrollRangeLessThanClientRectangle()
 		{
 			ShowForm(Lng.English, DummyBasicViewVc.DisplayType.kAll);

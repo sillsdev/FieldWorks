@@ -12,6 +12,7 @@ using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.LexText.Controls;
+using SIL.PlatformUtilities;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.LexEd
@@ -141,17 +142,15 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 		}
 
-#if __MonoCS__
 		/// <summary>
 		/// Activate menu only if Alt key is being pressed.  See FWNX-1353.
 		/// </summary>
 		/// <remarks>TODO: Getting here without the Alt key may be considered a Mono bug.</remarks>
 		protected override bool ProcessDialogChar(char charCode)
 		{
-			if (Control.ModifierKeys == Keys.Alt)
+			if (!Platform.IsMono || Control.ModifierKeys == Keys.Alt)
 				return base.ProcessDialogChar(charCode);
 			return false;
 		}
-#endif
 	}
 }

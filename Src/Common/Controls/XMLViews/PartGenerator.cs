@@ -13,6 +13,7 @@ using SIL.LCModel;
 using XCore;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.PlatformUtilities;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -380,12 +381,17 @@ namespace SIL.FieldWorks.Common.Controls
 			// couldn't find a specific part, so get the generic part in order to generate the specific part
 			partNode = m_vc.GetNodeForPart(layoutGeneric, false, layoutClass);
 			if (partNode == null)
-#if !__MonoCS__
-				throw new ApplicationException("Couldn't find generic Part (" + className + "-Jt-" + layout + ")");
-#else
-				// TODO-Linux: Fix this in the correct way.
-				return null;
-#endif
+			{
+				if (Platform.IsMono)
+				{
+					// TODO-Linux: Fix this in the correct way.
+					return null;
+				}
+
+				throw new ApplicationException(
+					string.Format("Couldn't find generic Part ({0}-Jt-{1})", className, layout));
+			}
+
 			if (partNode != null)
 			{
 				var generatedParts = new List<XmlNode>();

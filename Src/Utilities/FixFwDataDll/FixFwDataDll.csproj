@@ -99,7 +99,7 @@
       <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
     <Reference Include="SIL.LCModel.FixData">
-      <HintPath>..\..\..\Downloads\LCM\SIL.LCModel.FixData.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\LCM\SIL.LCModel.FixData.dll</HintPath>
     </Reference>
     <Reference Include="SIL.LCModel.Utils, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

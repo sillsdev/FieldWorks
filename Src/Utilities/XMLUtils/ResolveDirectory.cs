@@ -14,6 +14,7 @@
 // -------
 using System;
 using System.IO;
+using SIL.PlatformUtilities;
 
 namespace SIL.Utils
 {
@@ -56,32 +57,33 @@ namespace SIL.Utils
 		/// <returns></returns>
 		public string Resolve(string path, bool fIgnoreMissingFile)
 		{
-			string result = System.Environment.ExpandEnvironmentVariables(path);
+			string result = Environment.ExpandEnvironmentVariables(path);
 			if (m_baseDirectory!= null)
-				result = System.IO.Path.Combine(m_baseDirectory, result);
+				result = Path.Combine(m_baseDirectory, result);
 			else
-				result = System.IO.Path.GetFullPath(result);
+				result = Path.GetFullPath(result);
 
-#if __MonoCS__
-			// TODO-Linux: xml files contain include paths of the form fruit\veggies
-			// which System.IO.File.Exists (on Linux) can't handle because of the '\' char
-			// so we convert if System.IO.File.Exists fails and reattempt the Exists method
-
-			string modifiedResult;
-			if (!System.IO.File.Exists(result))
+			if (!Platform.IsWindows)
 			{
-				modifiedResult = result.Replace('\\', '/');
-				if (System.IO.File.Exists(modifiedResult))
-					result = modifiedResult;
-			}
-#endif
+				// TODO-Linux: xml files contain include paths of the form fruit\veggies
+				// which System.IO.File.Exists (on Linux) can't handle because of the '\' char
+				// so we convert if System.IO.File.Exists fails and reattempt the Exists method
 
-			if (!System.IO.File.Exists(result))
+				string modifiedResult;
+				if (!File.Exists(result))
+				{
+					modifiedResult = result.Replace('\\', '/');
+					if (File.Exists(modifiedResult))
+						result = modifiedResult;
+				}
+			}
+
+			if (!File.Exists(result))
 			{
 				if (fIgnoreMissingFile)
 					return null;
-				else
-					throw new FileNotFoundException(result);
+
+				throw new FileNotFoundException(result);
 			}
 			return result;
 		}
@@ -105,13 +107,13 @@ namespace SIL.Utils
 		/// <returns></returns>
 		public string Resolve(string parentPath, string path, bool fIgnoreMissingFile)
 		{
-			string result = System.Environment.ExpandEnvironmentVariables(path);
+			string result = Environment.ExpandEnvironmentVariables(path);
 			if (parentPath!= null)
-				result = System.IO.Path.Combine(parentPath, result);
+				result = Path.Combine(parentPath, result);
 			else
-				result = System.IO.Path.GetFullPath(result);
+				result = Path.GetFullPath(result);
 
-			if(!System.IO.File.Exists(result))
+			if(!File.Exists(result))
 				return Resolve(path, fIgnoreMissingFile);//using the parentPath did not help, try looking in the base directory
 
 			return result;
@@ -132,7 +134,7 @@ namespace SIL.Utils
 			get { return m_baseDirectory; }
 			set
 			{
-				m_baseDirectory= System.Environment.ExpandEnvironmentVariables(value);
+				m_baseDirectory= Environment.ExpandEnvironmentVariables(value);
 			}
 		}
 	}

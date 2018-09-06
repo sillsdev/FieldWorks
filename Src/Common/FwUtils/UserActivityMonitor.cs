@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -35,13 +36,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Application.RemoveMessageFilter(this);
 		}
 
-#if !__MonoCS__ // GetKeyboardState doesn't exist in Mono.
 		/// <summary>
 		/// WinAPI get keyboard state method to detect keyDown events
 		/// </summary>
 		[DllImport("user32.dll")]
 		public static extern int GetKeyboardState(byte[] keystate);
-#endif
 
 		/// <summary>
 		/// Gets the last user activity time.
@@ -49,11 +48,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public DateTime LastActivityTime {
 			get
 			{
-#if !__MonoCS__ // GetKeyboardState doesn't exist in Mono.
-				var keys = new byte[256];
-				if (GetKeyboardState(keys) >= 0 && keys.Any(k => (k & Keydown) > 0))
+				if (Platform.IsWindows)
+				{
+					// GetKeyboardState doesn't exist in Mono.
+					var keys = new byte[256];
+					if (GetKeyboardState(keys) >= 0 && keys.Any(k => (k & Keydown) > 0))
 						return DateTime.Now; // If the user is holding down e.g. the Backspace key, that counts as current activity
-#endif
+				}
+
 				return m_lastActivityTime;
 			}
 		}

@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using Microsoft.Win32;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.UnicodeCharEditor
 {
@@ -143,15 +144,16 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 			public void AddLineX(string line, bool echoToStdError)
 			{
-				var dateStamp = String.Format("[{0}] ", DateTime.Now);
+				var dateStamp = string.Format("[{0}] ", DateTime.Now);
 
 				//			// always log to the debug output window
 				//			System.Diagnostics.Debug.Write(dateStamp, "Log");
-#if !__MonoCS__
-				// TODO-Linux: this breaks unit test: InstallLanguageTests.IcuTests.TestInstallLanguage_argumentParser
-				// since System.Diagnostics.Debug goes to StdOut on Linux.
-				System.Diagnostics.Debug.WriteLine(line);
-#endif
+				if (Platform.IsWindows)
+				{
+					// TODO-Linux: this breaks unit test: InstallLanguageTests.IcuTests.TestInstallLanguage_argumentParser
+					// since System.Diagnostics.Debug goes to StdOut on Linux.
+					System.Diagnostics.Debug.WriteLine(line);
+				}
 
 				if (!Logging)
 					return;

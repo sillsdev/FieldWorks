@@ -10,6 +10,7 @@ using SIL.LCModel.Utils;
 using SIL.LCModel.Core.Scripture;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.DomainServices;
+using SIL.PlatformUtilities;
 
 namespace ParatextImport
 {
@@ -465,12 +466,13 @@ namespace ParatextImport
 		public int CompareTo(object obj)
 		{
 
-#if __MonoCS__
-			// TODO-Linux: List.Sort seems to call CompareTo on the same item.
-			// Maybe duplicates in the list? Investigate.
-			if (obj == this)
-				return 0;
-#endif
+			if (Platform.IsMono)
+			{
+				// TODO-Linux: List.Sort seems to call CompareTo on the same item.
+				// Maybe duplicates in the list? Investigate.
+				if (obj == this)
+					return 0;
+			}
 
 			// Cast the given object and store it, so we don't have to keep casting it
 			Cluster otherCluster = (Cluster)obj;

@@ -2,6 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using SIL.PlatformUtilities;
+
 namespace SIL.FieldWorks.Common.Widgets
 {
 	partial class UserInterfaceChooser
@@ -18,17 +20,16 @@ namespace SIL.FieldWorks.Common.Widgets
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if (disposing && (components != null))
+			if (disposing)
 			{
-				components.Dispose();
+				if (components != null)
+					components.Dispose();
+
+				if (m_foreColorBrush != null)
+					m_foreColorBrush.Dispose();
 			}
-#if __MonoCS__
-			if (disposing && (m_foreColorBrush != null))
-			{
-				m_foreColorBrush.Dispose();
-				m_foreColorBrush = null;
-			}
-#endif
+			m_foreColorBrush = null;
+
 			base.Dispose(disposing);
 		}
 

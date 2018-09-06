@@ -23,6 +23,7 @@ using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 using SIL.Windows.Forms;
 using XCore;
 
@@ -1138,12 +1139,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// After a find next, focus the find box and select the text in it.
 			fweditFindText.Select();
 			fweditFindText.SelectAll();
-#if __MonoCS__
-			RemoveWaitCursor(this);
-#endif
+			if (Platform.IsMono)
+				RemoveWaitCursor(this);
 		}
 
-#if __MonoCS__
 		/// <summary>
 		/// Remove the wait cursor, which is left behind on several controls when the
 		/// DataUpdateMonitor object is disposed.  This is a patch over a bug in Mono
@@ -1152,9 +1151,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <remarks>
 		/// The strange thing is that the cursor on all these controls seems to already
 		/// be set to Cursors.Default, but this fix works.
+		/// Method is only used on Linux.
 		/// </remarks>
 		private void RemoveWaitCursor(Control ctl)
 		{
+			Debug.Assert(Platform.IsMono, "This method is only needed with Mono on Linux");
 			foreach (var c in ctl.Controls)
 			{
 				var control = c as Control;
@@ -1163,7 +1164,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			ctl.Cursor = Cursors.Default;
 		}
-#endif
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -3093,7 +3093,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (m_ownerControl != null)
 				m_ownerControl.Update();
 
-#if !__MonoCS__ // Currently (Aug 2010) Mono Winforms on X11 doesn't support PeekMessage with filtering.
+			if (Platform.IsMono)
+				return;
+
+			// Currently (Aug 2010) Mono Winforms on X11 doesn't support PeekMessage with filtering.
 			// Process keystrokes and lbutton events so the user can stop the dlg work.
 			// This should allow the dlg to be stopped mid stream with out the risk
 			// of the DoEvents call.
@@ -3132,10 +3135,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					Win32.DispatchMessage(ref msg);
 				}
 			}
-#endif
 		}
 
-#if !__MonoCS__ // Currently (Aug 2010) Mono Winforms on X11 doesn't support PeekMessage with filtering.
+		// Currently (Aug 2010) Mono Winforms on X11 doesn't support PeekMessage with filtering.
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Peeks at the pending messages and if it finds any message in the given range, that
@@ -3152,7 +3154,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			return Win32.PeekMessage(ref msg, m_ownerControl.Handle, (uint)min, (uint)max,
 				(uint)Win32.PeekFlags.PM_REMOVE);
 		}
-#endif
 		#endregion
 	}
 	#endregion

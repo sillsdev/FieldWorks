@@ -23,6 +23,7 @@ using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 using SIL.Utils;
 using XCore;
 
@@ -908,22 +909,23 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		private void MonoIgnoreUpdates()
 		{
-			#if __MonoCS__
+#if USEIGNOREUPDATES
 			// static method call to get reasonable performance from mono
-			// IgnoreUpdates is custom functionaily added to mono's winforms
+			// IgnoreUpdates is custom functionality added to mono's winforms
+			// (commit 3233f63ece7e922d03a115ce8d8524e8554be19d)
 
 			// Stops all winforms Size events
 			Control.IgnoreUpdates();
-			#endif
+#endif
 		}
 
 		private void MonoResumeUpdates()
 		{
-			#if __MonoCS__
+#if USEIGNOREUPDATES
 			// static method call to get reasonable performance from mono
 			// Resumes all winforms Size events
 			Control.UnignoreUpdates();
-			#endif
+#endif
 		}
 
 		/// <summary>
@@ -3264,10 +3266,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			int minHeight = GetMinFieldHeight();
 			int desiredWidth = ClientRectangle.Width;
 
-#if __MonoCS__ // FWNX-370: work around https://bugzilla.novell.com/show_bug.cgi?id=609596
-			if (VerticalScroll.Visible)
+			// FWNX-370: work around https://bugzilla.novell.com/show_bug.cgi?id=609596
+			if (Platform.IsMono && VerticalScroll.Visible)
 				desiredWidth -= SystemInformation.VerticalScrollBarWidth;
-#endif
+
 			Point oldPos = AutoScrollPosition;
 			var desiredScrollPosition = new Point(-oldPos.X, -oldPos.Y);
 

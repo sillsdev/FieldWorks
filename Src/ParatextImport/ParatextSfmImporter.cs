@@ -20,6 +20,7 @@ using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.Reporting;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace ParatextImport
 {
@@ -1661,11 +1662,7 @@ namespace ParatextImport
 		private string GetRootedPath(string fileName)
 		{
 			string fullPath = null;
-#if !__MonoCS__
-			if (fileName.Length < 2 || !char.IsLetter(fileName[0]) || fileName[1] != Path.VolumeSeparatorChar)
-#else
-			if (fileName[0] != Path.DirectorySeparatorChar) // is fileName a relative Path
-#endif
+			if (IsRelativePath(fileName))
 			{
 				try
 				{
@@ -1699,6 +1696,13 @@ namespace ParatextImport
 				}
 			}
 			return fileName;
+		}
+
+		private static bool IsRelativePath(string fileName)
+		{
+			return Platform.IsWindows ?
+				fileName.Length < 2 || !char.IsLetter(fileName[0]) || fileName[1] != Path.VolumeSeparatorChar :
+				fileName[0] != Path.DirectorySeparatorChar;
 		}
 
 		/// <summary>

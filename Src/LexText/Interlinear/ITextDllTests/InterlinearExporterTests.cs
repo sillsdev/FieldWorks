@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,6 +15,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
+using SIL.PlatformUtilities;
 using SIL.TestUtilities;
 
 namespace SIL.FieldWorks.IText
@@ -1132,13 +1133,14 @@ namespace SIL.FieldWorks.IText
 
 				// The Mono implementation of XmlDocument.Validate is buggy (Xamarin Bug 8381).
 				// But the other validation checks below are still worthwhile.
-#if !__MonoCS__
-				//validate export against schema.
-				Assert.DoesNotThrow(() =>
+				if (!Platform.IsMono)
 				{
-					exportedDoc.Validate(DontIgnore);
-				});
-#endif
+					//validate export against schema.
+					Assert.DoesNotThrow(() =>
+					{
+						exportedDoc.Validate(DontIgnore);
+					});
+				}
 
 				//validate segment reference to MediaURI
 				AssertThatXmlIn.Dom(exportedDoc).HasAtLeastOneMatchForXpath("//phrase[@media-file=\"" + recGuid + "\"]");

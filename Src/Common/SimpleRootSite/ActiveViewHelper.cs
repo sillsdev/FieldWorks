@@ -345,9 +345,10 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			if (control is IControl)
 			{
-#if __MonoCS__ // TODO-Linux FWNX-534: work around for mono bug: https://bugzilla.novell.com/show_bug.cgi?id=656701
-				if (!control.IsDisposed)
-#endif
+				// TODO-Linux FWNX-534: work around for mono bug: https://bugzilla.novell.com/show_bug.cgi?id=656701
+				if (control.IsDisposed)
+					return;
+
 				foreach (Control focusableControl in ((IControl)control).FocusableControls)
 					DeepRemoveControl(focusableControl);
 			}

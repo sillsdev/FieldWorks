@@ -395,9 +395,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			set {m_unionIncludeAndTypeFilter = value;}
 		}
 
-#if __MonoCS__
-#pragma warning disable 419 // ambiguous reference; mono bug #639867
-#endif
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets a List containing a list of ContextValues of styles to exclude from
@@ -488,9 +485,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				m_includedContexts = value;
 			}
 		}
-#if __MonoCS__
-#pragma warning restore 419 // ambiguous reference; mono bug #639867
-#endif
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

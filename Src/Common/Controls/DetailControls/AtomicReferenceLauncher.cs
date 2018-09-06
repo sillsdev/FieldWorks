@@ -14,6 +14,7 @@ using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.Common.Controls;
 using XCore;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.PlatformUtilities;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -35,11 +36,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
-#if __MonoCS__ // FWNX-266
-			// Ensure parent get created before m_atomicRefView otherwise
-			// m_atomicRefView Handle can be in an invalid state (in mono).
-			CreateHandle();
-#endif
+
+			if (Platform.IsMono)
+			{
+				// FWNX-266
+				// Ensure parent get created before m_atomicRefView otherwise
+				// m_atomicRefView Handle can be in an invalid state (in mono).
+				CreateHandle();
+			}
 		}
 
 		/// <summary>

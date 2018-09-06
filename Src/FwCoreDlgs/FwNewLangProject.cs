@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -19,6 +20,7 @@ using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Resources;
 using SIL.Reporting;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -149,30 +151,32 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			AccessibleName = GetType().Name;
 			m_useMemoryWSManager = useMemoryWSManager;
 			m_wsManager = m_useMemoryWSManager ? new WritingSystemManager() : new WritingSystemManager(SingletonsContainer.Get<CoreGlobalWritingSystemRepository>());
-#if __MonoCS__
-			FixLabelFont(m_lblTip);
-			FixLabelFont(m_lblAnalysisWrtSys);
-			FixLabelFont(m_lblVernacularWrtSys);
-			FixLabelFont(m_lblProjectName);
-			FixLabelFont(m_lblSpecifyWrtSys);
-#endif
+
+			if (Platform.IsMono)
+			{
+				FixLabelFont(m_lblTip);
+				FixLabelFont(m_lblAnalysisWrtSys);
+				FixLabelFont(m_lblVernacularWrtSys);
+				FixLabelFont(m_lblProjectName);
+				FixLabelFont(m_lblSpecifyWrtSys);
+			}
 		}
 
-#if __MonoCS__
 		/// <summary>
 		/// Fix the label font for Linux/Mono.  Without this fix, the label may
 		/// still show boxes for Chinese characters when the rest of the UI is
 		/// properly showing Chinese characters.
 		/// </summary>
 		/// <param name="lbl">Label</param>
+		/// <remarks>Method is only used on Linux</remarks>
 		private void FixLabelFont(Label lbl)
 		{
+			Debug.Assert(Platform.IsMono, "Not needed on Windows");
 			using (var oldFont = lbl.Font)
 			{
 				lbl.Font = new Font("Sans", oldFont.Size, oldFont.Style, oldFont.Unit);
 			}
 		}
-#endif
 
 		/// <summary>
 		/// Check to see if the object has been disposed.
@@ -887,27 +891,23 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			if (m_cbVernWrtSys.Items.Count > 0)
 			{
-#if !__MonoCS__
-				int i = (wsSaveVern == null ? 0 : m_cbVernWrtSys.FindString(wsSaveVern.ToString()));
-#else
-	// TODO-Linux: mono difference? on mono setting SelectedIndex to 0 on an empty combo throws exception
-				int i = (wsSaveVern == null ? -1 : m_cbVernWrtSys.FindString(wsSaveVern.ToString()));
-				if (i != -1)
-#endif
-				m_cbVernWrtSys.SelectedIndex = (i >= 0 ? i : 0);
+				// TODO-Linux: mono difference? on mono setting SelectedIndex to 0 on an empty combo throws exception
+				if (wsSaveVern != null || !Platform.IsMono)
+				{
+					var i = wsSaveVern == null ? 0 : m_cbVernWrtSys.FindString(wsSaveVern.ToString());
+					m_cbVernWrtSys.SelectedIndex = i >= 0 ? i : 0;
+				}
 			}
 			m_cbVernWrtSys.EndUpdate();
 
 			if (m_cbAnalWrtSys.Items.Count > 0)
 			{
-#if !__MonoCS__
-				int i = (wsSaveAnal == null ? 0 : m_cbAnalWrtSys.FindString(wsSaveAnal.ToString()));
-#else
 				// TODO-Linux: mono difference? on mono setting SelectedIndex to 0 on an empty combo throws exception
-				int i = (wsSaveAnal == null ? -1 : m_cbAnalWrtSys.FindString(wsSaveAnal.ToString()));
-				if (i != -1)
-#endif
-				m_cbAnalWrtSys.SelectedIndex = (i >= 0 ? i : 0);
+				if (wsSaveAnal != null || !Platform.IsMono)
+				{
+					var i = wsSaveAnal == null ? 0 : m_cbAnalWrtSys.FindString(wsSaveAnal.ToString());
+					m_cbAnalWrtSys.SelectedIndex = i >= 0 ? i : 0;
+				}
 			}
 			m_cbAnalWrtSys.EndUpdate();
 		}

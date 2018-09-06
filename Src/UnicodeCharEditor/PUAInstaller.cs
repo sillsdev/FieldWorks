@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using SIL.LCModel.Utils;
 using SIL.LCModel.Core.Text;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.UnicodeCharEditor
 {
@@ -354,15 +355,16 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 		private static string GetIcuExecutable(string exeName)
 		{
-#if !__MonoCS__
+			if (Platform.IsMono)
+			{
+				// TODO-Linux: Review - is the approach of expecting executable location to be in PATH ok?
+				return exeName;
+			}
+
 			var codeBaseUri = typeof(PUAInstaller).Assembly.CodeBase;
 			var path = Path.GetDirectoryName(FileUtils.StripFilePrefix(codeBaseUri));
 
 			return Path.Combine(path, exeName + ".exe");
-#else
-			// TODO-Linux: Review - is the approach of expecting execuatble location to be in PATH ok?
-			return exeName;
-#endif
 		}
 
 		///  <summary>
