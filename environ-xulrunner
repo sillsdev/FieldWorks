@@ -14,7 +14,9 @@ XULRUNNER="${GECKOFX}/Firefox-Linux${BITS}"
 LD_LIBRARY_PATH="${XULRUNNER}:${LD_LIBRARY_PATH}"
 if [ "$RUNMODE" != "PACKAGING" ]
 then
-	LD_PRELOAD=libgeckofix.so
+	if [[ $(/sbin/ldconfig -N -v $(sed 's/:/ /g' <<< $LD_LIBRARY_PATH) 2>/dev/null | grep libgeckofix.so | wc -l) > 0 ]]; then
+		LD_PRELOAD=libgeckofix.so
+	fi
 fi
 
 export XULRUNNER
