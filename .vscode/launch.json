@@ -7,7 +7,8 @@
 		{
 			"name": "Launch",
 			"env": {
-				"DISPLAY": ":0"
+				"DISPLAY": ":0",
+				"FIELDWORKSDIR": "${workspaceRoot}/Output/Debug"
 			},
 			"type": "mono",
 			"request": "launch",
