@@ -667,6 +667,33 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			Assert.That(lexeme.LexicalRelations.Select(lr => lr.Name), Is.EquivalentTo(new[] {"Whole", "Other"}));
 		}
 
+		/// <summary>
+		/// The Paratext Open in Lexicon button should be enabled if FW is found.
+		/// Part of LT-18529 and LT-18721.
+		/// </summary>
+		[Test]
+		public void CanOpenInLexicon_Works()
+		{
+			var origFwDirEnviromentSetting = Environment.GetEnvironmentVariable("FIELDWORKSDIR");
+			try
+			{
+				Environment.SetEnvironmentVariable("FIELDWORKSDIR", null);
+				// SUT
+				Assert.That(m_lexicon.CanOpenInLexicon, Is.False,
+					"Should not be able to open in Lexicon if FW location is not known.");
+
+				var likeAPathToFw = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+				Environment.SetEnvironmentVariable("FIELDWORKSDIR", likeAPathToFw);
+				// SUT
+				Assert.That(m_lexicon.CanOpenInLexicon, Is.True,
+					"Should report ablity to open in Lexicon if FW location is known.");
+			}
+			finally
+			{
+				Environment.SetEnvironmentVariable("FIELDWORKSDIR", origFwDirEnviromentSetting);
+			}
+		}
+
 		#endregion
 	}
 }

@@ -1,5 +1,3 @@
-#!/bin/sh
-
 # Environment settings for running FieldWorks
 #
 # Source this file in a shell and then run "mono FieldWorks.exe -app {Te,Flex}"

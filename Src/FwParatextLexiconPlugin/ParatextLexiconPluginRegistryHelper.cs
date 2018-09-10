@@ -40,6 +40,9 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			}
 		}
 
+		/// <summary>
+		/// Is Fieldworks installed, based on querying the registry.
+		/// </summary>
 		public static bool IsFieldWorksInstalled
 		{
 			get

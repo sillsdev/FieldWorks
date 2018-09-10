@@ -177,12 +177,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 			// being exported, so they can be reconnected to the imported
 			// styles of the same name.
 			var preimportStyleLinks = _cache.LangProject.StylesOC.Where(style => DictionaryConfigurationServices.UnsupportedStyles.Contains(style.Name)).ToDictionary(
-					style => style.Name,
-					style => new
-					{
+				style => style.Name,
+				style => new
+				{
 						BasedOn = style.BasedOnRA?.Name,
 						Next = style.NextRA?.Name
-					});
+				});
 			NonUndoableUnitOfWorkHelper.DoSomehow(_cache.ActionHandlerAccessor, () =>
 			{
 				// Before importing styles, remove all the current styles, except

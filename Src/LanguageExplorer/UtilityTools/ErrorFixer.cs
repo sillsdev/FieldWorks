@@ -10,7 +10,7 @@ using System.IO;
 using SIL.FieldWorks.Common.FwUtils;
 using System.Text;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FixData;
+using SIL.LCModel.FixData;
 using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.UtilityTools

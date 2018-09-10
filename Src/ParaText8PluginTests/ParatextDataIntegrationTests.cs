@@ -1,12 +1,15 @@
-﻿// Copyright (c) 2018 SIL International
+// Copyright (c) 2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using NUnit.Framework;
+using Paratext.Data;
+using PtxUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -43,6 +46,21 @@ namespace Paratext8Plugin
 		public static bool IsInstalled { get { return _provider != null && _provider.IsInstalled; } }
 	}
 
+	class ConsoleAlert : Alert
+	{
+		protected override void ShowLaterInternal(string text, string caption, AlertLevel alertLevel)
+		{
+			Console.WriteLine(text);
+		}
+
+		protected override AlertResult ShowInternal(IComponent owner, string text, string caption, AlertButtons alertButtons,
+			AlertLevel alertLevel, AlertDefaultButton defaultButton, bool showInTaskbar)
+		{
+			Console.WriteLine(text);
+			return AlertResult.Negative;
+		}
+	}
+
 	/// <summary>
 	/// Tests to determine that the ParatextData dll is functioning as expected.
 	/// </summary>
@@ -53,13 +71,16 @@ namespace Paratext8Plugin
 		[TestFixtureSetUp]
 		public void FixtureSetUp()
 		{
-			/*
-				Nothing for now
-			*/
+			Alert.Implementation = new ConsoleAlert();
 		}
 
-#if RANDYTODO
-		// TODO: Newly failing on Linux.
+		[SetUp]
+		public void Setup()
+		{
+			if (!ParatextInfo.IsParatextInstalled)
+				Assert.Ignore("Paratext is not installed");
+		}
+
 		[Test]
 		public void ParatextCanInitialize()
 		{
@@ -75,6 +96,5 @@ namespace Paratext8Plugin
 				Assert.False(e.GetType().Name.Contains(typeof(FileLoadException).Name));
 			}
 		}
-#endif
 	}
 }

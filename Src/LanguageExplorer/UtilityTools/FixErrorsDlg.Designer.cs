@@ -5,7 +5,7 @@
 // File: FixLinksDlg.cs
 // Responsibility: mcconnel
 // ---------------------------------------------------------------------------------------------
-namespace SIL.FieldWorks.FixData
+namespace LanguageExplorer.UtilityTools
 {
 	partial class FixErrorsDlg
 	{

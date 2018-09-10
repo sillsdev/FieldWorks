@@ -125,23 +125,26 @@
     </Reference>
     <Reference Include="SIL.Core.Desktop, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SIL.Core.Desktop.dll</HintPath>
+      <HintPath>..\..\Downloads\SIL.Core.Desktop.dll</HintPath>
     </Reference>
     <Reference Include="SIL.LCModel">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SIL.LCModel.dll</HintPath>
+      <HintPath>..\..\Downloads\LCM\SIL.LCModel.dll</HintPath>
     </Reference>
     <Reference Include="SIL.LCModel.Core">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
+      <HintPath>..\..\Downloads\LCM\SIL.LCModel.Core.dll</HintPath>
     </Reference>
     <Reference Include="SIL.LCModel.Utils">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
+      <HintPath>..\..\Downloads\LCM\SIL.LCModel.Utils.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.LCModel.FixData">
+      <HintPath>..\..\Downloads\LCM\SIL.LCModel.FixData.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Media, Version=4.1.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SIL.Media.dll</HintPath>
+      <HintPath>..\..\Downloads\SIL.Media.dll</HintPath>
     </Reference>
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Security" />
@@ -151,7 +154,7 @@
     </Reference>
     <Reference Include="Chorus">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\Chorus.exe</HintPath>
+      <HintPath>..\..\Downloads\Chorus.exe</HintPath>
     </Reference>
     <Reference Include="Framework">
       <SpecificVersion>False</SpecificVersion>
@@ -179,7 +182,11 @@
       <HintPath>..\..\Downloads\Geckofx-Winforms.dll</HintPath>
     </Reference>
     <Reference Include="DotNetZip">
-      <HintPath>..\..\Output\Debug\DotNetZip.dll</HintPath>
+      <HintPath>..\..\packages\DotNetZip.1.11.0\lib\net20\DotNetZip.dll</HintPath>
+    </Reference>
+    <Reference Include="NAudio, Version=1.7.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NAudio.1.7.3\lib\net35\NAudio.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
       <SpecificVersion>False</SpecificVersion>
@@ -227,23 +234,23 @@
     </Reference>
     <Reference Include="SIL.Collections">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\SIL.Collections.dll</HintPath>
+      <HintPath>..\..\Downloads\SIL.Collections.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Core">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\SIL.Core.dll</HintPath>
+      <HintPath>..\..\Downloads\SIL.Core.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Lift">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\SIL.Lift.dll</HintPath>
+      <HintPath>..\..\Downloads\SIL.Lift.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Machine">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\SIL.Machine.dll</HintPath>
+      <HintPath>..\..\Downloads\SIL.Machine.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Windows.Forms">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\SIL.Windows.Forms.dll</HintPath>
+      <HintPath>..\..\Downloads\SIL.Windows.Forms.dll</HintPath>
     </Reference>
     <Reference Include="ParserCore">
       <SpecificVersion>False</SpecificVersion>
@@ -259,15 +266,15 @@
     </Reference>
     <Reference Include="SIL.Archiving">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\SIL.Archiving.dll</HintPath>
+      <HintPath>..\..\Downloads\SIL.Archiving.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Windows.Forms.Keyboarding" Condition="'$(OS)'=='Unix'">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\SIL.Windows.Forms.Keyboarding.dll</HintPath>
+      <HintPath>..\..\Downloads\SIL.Windows.Forms.Keyboarding.dll</HintPath>
     </Reference>
     <Reference Include="SIL.WritingSystems">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\SIL.WritingSystems.dll</HintPath>
+      <HintPath>..\..\Downloads\SIL.WritingSystems.dll</HintPath>
     </Reference>
     <Reference Include="SimpleRootSite">
       <SpecificVersion>False</SpecificVersion>
@@ -1233,6 +1240,12 @@
     <Compile Include="RecordFilterParameterObject.cs" />
     <Compile Include="SendReceive\ImportFailureStatus.cs" />
     <Compile Include="ToolbarServices.cs" />
+    <Compile Include="UtilityTools\FixErrorsDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UtilityTools\FixErrorsDlg.Designer.cs">
+      <DependentUpon>FixErrorsDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="VectorPropertyParameterObject.cs" />
     <Compile Include="DictionaryConfiguration\ConfigType.cs" />
     <Compile Include="DictionaryConfiguration\ConfigureHomographDlg.cs">
@@ -2524,6 +2537,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Areas\ViewBase.resx">
       <DependentUpon>ViewBase.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UtilityTools\FixErrorsDlg.resx">
+      <DependentUpon>FixErrorsDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="UtilityTools\UtilityDlg.resx">

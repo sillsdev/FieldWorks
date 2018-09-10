@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -260,7 +260,32 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		public bool CanOpenInLexicon
 		{
-			get { return ParatextLexiconPluginRegistryHelper.IsFieldWorksInstalled; }
+			get
+			{
+				return IsFwInstalled;
+			}
+		}
+
+		private static bool IsFwInstalled
+		{
+			get
+			{
+				return !string.IsNullOrEmpty(FwDir);
+			}
+		}
+
+		private static string FwDir
+		{
+			get
+			{
+				string fwCodePath = Environment.GetEnvironmentVariable("FIELDWORKSDIR");
+				if (!string.IsNullOrEmpty(fwCodePath) && Directory.Exists(fwCodePath))
+				{
+					return fwCodePath;
+				}
+
+				return null;
+			}
 		}
 
 		public void OpenInLexicon(Lexeme lexeme)

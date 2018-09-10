@@ -9,13 +9,13 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Serialization;
+using Ionic.Zip;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.LcmUi.Dialogs;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 using SIL.Linq;
 using SIL.WritingSystems;
-using Ionic.Zip;
 using SIL.Code;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
@@ -89,7 +89,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			if (!configuration.Publications.Contains(publication))
 			{
 				configuration.Publications.Add(publication);
-			}
+		}
 		}
 
 		/// <summary>Disassociate a publication from a dictionary configuration.</summary>
@@ -264,7 +264,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				if (_allPublicationsItem.Checked)
 				{
 					_view.publicationsListView.Items.Cast<ListViewItem>().ForEach(item => item.Checked = true);
-				}
+			}
 			}
 			else // "normal" item, not AllPublications
 			{
@@ -498,7 +498,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				if (dlg.ShowDialog() != DialogResult.Yes)
 				{
 					return;
-				}
+			}
 			}
 
 			DeleteConfiguration(configurationToDelete);

@@ -7,7 +7,7 @@
 
 using System;
 using System.ComponentModel;
-using SIL.FieldWorks.FixData;
+using SIL.LCModel.FixData;
 using SIL.Reporting;
 using SIL.LCModel.Utils;
 using SIL.Windows.Forms.HotSpot;
