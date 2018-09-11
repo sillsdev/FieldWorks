@@ -387,6 +387,8 @@
 		<LcmOutputBaseFiles Include="protobuf-net.dll" />
 		<LcmOutputBaseFiles Include="StructureMap.dll" />
 		<LcmOutputBaseFiles Include="Tools.dll" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.FixData.dll" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.FixData.$(DebugInfo)" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Utils.dll" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Utils.$(DebugInfo)" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Utils.Tests.dll" />
