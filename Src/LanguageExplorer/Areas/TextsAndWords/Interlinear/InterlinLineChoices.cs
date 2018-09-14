@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;
@@ -197,7 +198,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		/// <summary />
-		public static InterlinLineChoices Restore(string data, ILgWritingSystemFactory wsf, ILangProject proj, int defVern, int defAnalysis, InterlinMode mode = InterlinMode.Analyze)
+		/// <remarks>The typical value for defAnalysis is LgWritingSystemTags.kwsVernInParagraph</remarks>
+		public static InterlinLineChoices Restore(string data, ILgWritingSystemFactory wsf, ILangProject proj, int defVern, int defAnalysis, InterlinMode mode = InterlinMode.Analyze, IPropertyTable propertyTable = null, string configPropName = "")
 		{
 			Debug.Assert(defVern != 0);
 			Debug.Assert(defAnalysis != 0);
@@ -225,7 +227,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 				var flid = int.Parse(flidAndWs[0]);
 				var ws = wsf.GetWsFromStr(flidAndWs[1]);
-				result.Add(flid, ws);
+				// Some virtual Ids such as -61 and 103 create standard items. so, we need to add those items always
+				if (flid <= ComplexConcPatternVc.kfragFeatureLine || proj.Cache.GetManagedMetaDataCache().FieldExists(flid))
+				{
+					result.Add(flid, ws);
+				}
+				else
+				{
+					if (propertyTable != null && !string.IsNullOrEmpty(configPropName))
+					{
+						data = data.Replace("," + flid + "%", "");
+						propertyTable.SetProperty(configPropName, data, true);
+					}
+				}
 			}
 			return result;
 		}
@@ -448,8 +462,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				case InterlinMode.Gloss:
 					if (m_cache != null)
 					{
-						var mdc = (IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor;
-						customLineOptions.AddRange(mdc.GetFields(m_cache.MetaDataCacheAccessor.GetClassId("Segment"), false, (int)CellarPropertyTypeFilter.All).Where(flid => mdc.IsCustom(flid)).Select(flid => new LineOption(flid, mdc.GetFieldLabel(flid))));
+						var mdc = m_cache.GetManagedMetaDataCache();
+						customLineOptions.AddRange(mdc.GetFields(mdc.GetClassId("Segment"), false, (int)CellarPropertyTypeFilter.All).Where(flid => mdc.IsCustom(flid)).Select(flid => new LineOption(flid, mdc.GetFieldLabel(flid))));
 					}
 					break;
 			}
@@ -761,7 +775,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary />
 		internal InterlinLineSpec CreateSpec(int flid, int wsRequested)
 		{
-			int ws;
+			var ws = 0;
 			var fMorphemeLevel = false;
 			var fWordLevel = true;
 			var flidString = 0;
@@ -813,11 +827,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					break;
 				default:
 					var mdc = m_cache.GetManagedMetaDataCache();
-					if (!mdc.IsCustom(flid))
+					if (mdc.FieldExists(flid))
 					{
-						throw new Exception(@"Adding unknown field to interlinear");
+						if (!mdc.IsCustom(flid))
+						{
+							throw new Exception("Adding unknown field to interlinear");
+						}
+						ws = mdc.GetFieldWs(flid);
 					}
-					ws = mdc.GetFieldWs(flid);
 					fWordLevel = false;
 					comboContent = WsComboContent.kwccAnalAndVern;
 					break;

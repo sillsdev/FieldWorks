@@ -1776,7 +1776,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						vwenv.AddObjVecItems(SegmentTags.kflidNotes, this, kfragSegFfChoices + ispec);
 						break;
 					default:
-						if (m_cache.GetManagedMetaDataCache().IsCustom(flid))
+						var mdc = m_cache.GetManagedMetaDataCache();
+						if (mdc.FieldExists(flid) && mdc.IsCustom(flid))
 						{
 							AddCustomFreeFormComment(vwenv, hvoSeg, ispec);
 						}

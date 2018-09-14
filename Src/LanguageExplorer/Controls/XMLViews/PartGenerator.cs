@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
@@ -30,7 +31,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// The metadata cache
 		/// </summary>
-		protected IFwMetaDataCache m_mdc;
+		protected IFwMetaDataCacheManaged m_mdc;
 		XElement m_input;
 		int m_clsid;
 		/// <summary>
@@ -58,7 +59,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		internal PartGenerator(LcmCache cache, XElement input, XmlVc vc, int rootClassId)
 		{
 			m_cache = cache;
-			m_mdc = cache.MetaDataCacheAccessor;
+			m_mdc = cache.GetManagedMetaDataCache();
 			m_vc = vc;
 			m_rootClassId = rootClassId;
 			m_input = input;
@@ -107,7 +108,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (m_destClsid != 0)
 			{
 				var flidDestClass = m_mdc.GetDstClsId(flid);
-				var acceptableClasses = ((IFwMetaDataCacheManaged)m_mdc).GetAllSubclasses(m_destClsid);
+				var acceptableClasses = m_mdc.GetAllSubclasses(m_destClsid);
 				if (!acceptableClasses.ContainsCollection(new[] {flidDestClass}))
 				{
 					return false;
@@ -119,7 +120,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				case "none":
 					return true;
 				case "customOnly":
-					return ((IFwMetaDataCacheManaged) m_mdc).IsCustom(flid);
+					return m_mdc.IsCustom(flid);
 				case "featureDefns":
 					return flid == FsFeatureSystemTags.kflidFeatures;
 			}
@@ -169,20 +170,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 				// Todo JohnT: handle restrictions.
 				var acceptedFields = new List<int>();
-				int[] uiIds;
-				if (m_mdc is IFwMetaDataCacheManaged)
-				{
-					uiIds = ((IFwMetaDataCacheManaged)m_mdc).GetFields(m_clsid, true, (int)fieldTypes);
-				}
-				else
-				{
-					var countFoundFlids = m_mdc.GetFields(m_clsid, true, (int)fieldTypes, 0, ArrayPtr.Null);
-					using (var flids = MarshalEx.ArrayToNative<int>(countFoundFlids))
-					{
-						countFoundFlids = m_mdc.GetFields(m_clsid, true, (int)fieldTypes, countFoundFlids, flids);
-						uiIds = MarshalEx.NativeToArray<int>(flids, countFoundFlids);
-					}
-				}
+				var uiIds = m_mdc.GetFields(m_clsid, true, (int)fieldTypes);
 				foreach (var ui in uiIds)
 				{
 					if (Accept(ui))
@@ -285,23 +273,22 @@ namespace LanguageExplorer.Controls.XMLViews
 			AppendClassAttribute(output, fieldName, className);
 			var visitorLab = new ReplaceSubstringInAttr("$label", labelName);
 			XmlUtils.VisitAttributes(output, visitorLab);
-			if (customFieldId == 0 || !(m_mdc is IFwMetaDataCacheManaged))
+			if (customFieldId == 0)
 			{
 				return;
 			}
-			var mdc = m_mdc as IFwMetaDataCacheManaged;
-			if (!mdc.IsCustom(customFieldId) || mdc.GetDstClsId(customFieldId) == 0)
+			if (!m_mdc.IsCustom(customFieldId) || m_mdc.GetDstClsId(customFieldId) == 0)
 			{
 				return;
 			}
-			var guidList = mdc.GetFieldListRoot(customFieldId);
+			var guidList = m_mdc.GetFieldListRoot(customFieldId);
 			if (guidList == Guid.Empty)
 			{
 				return;
 			}
 
 			var list = m_cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>().GetObject(guidList);
-			var targetList = list.Owner != null ? $"{list.Owner.ClassName}.{mdc.GetFieldName(list.OwningFlid)}" : $"unowned.{guidList.ToString()}";
+			var targetList = list.Owner != null ? $"{list.Owner.ClassName}.{m_mdc.GetFieldName(list.OwningFlid)}" : $"unowned.{guidList.ToString()}";
 			XmlUtils.VisitAttributes(output, new ReplaceSubstringInAttr("$targetList", targetList));
 		}
 

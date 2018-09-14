@@ -1477,7 +1477,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			var persist = PropertyTable.GetValue<string>(ConfigPropName, null, SettingsGroup.LocalSettings);
 			if (persist != null)
 			{
-				lineChoices = InterlinLineChoices.Restore(persist, Cache.LanguageWritingSystemFactoryAccessor, Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs);
+				lineChoices = InterlinLineChoices.Restore(persist, Cache.LanguageWritingSystemFactoryAccessor, Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinMode.Analyze, PropertyTable, ConfigPropName);
 			}
 			return persist != null && lineChoices != null;
 		}
@@ -1496,7 +1496,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			InterlinLineChoices lineChoices = null;
 			if (persist != null)
 			{
-				lineChoices = InterlinLineChoices.Restore(persist, Cache.ServiceLocator.GetInstance<ILgWritingSystemFactory>(), Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs);
+				lineChoices = InterlinLineChoices.Restore(persist, Cache.ServiceLocator.GetInstance<ILgWritingSystemFactory>(), Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinMode.Chart, PropertyTable, ConfigPropName);
 			}
 			else
 			{

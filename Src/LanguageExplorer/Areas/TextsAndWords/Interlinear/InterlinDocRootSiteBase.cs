@@ -778,7 +778,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			var flid = menuItem.Flid;
 			var newLineChoices = Vc.LineChoices.Clone() as InterlinLineChoices;
-			if (newLineChoices != null)
+			if (newLineChoices != null && m_cache.GetManagedMetaDataCache().FieldExists(flid))
 			{
 				newLineChoices.Add(flid);
 				UpdateForNewLineChoices(newLineChoices);
@@ -862,7 +862,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var persist = PropertyTable.GetValue<string>(ConfigPropName, SettingsGroup.LocalSettings);
 			if (persist != null)
 			{
-				lineChoices = InterlinLineChoices.Restore(persist, m_cache.LanguageWritingSystemFactoryAccessor, m_cache.LangProject, WritingSystemServices.kwsVernInParagraph, m_cache.DefaultAnalWs);
+				lineChoices = InterlinLineChoices.Restore(persist, m_cache.LanguageWritingSystemFactoryAccessor, m_cache.LangProject, WritingSystemServices.kwsVernInParagraph, m_cache.DefaultAnalWs, InterlinMode.Analyze, PropertyTable, ConfigPropName);
 			}
 			return persist != null && lineChoices != null;
 		}
