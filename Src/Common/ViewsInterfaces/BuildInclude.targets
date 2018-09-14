@@ -15,7 +15,7 @@
 		<ViewsIdhFiles Include="../../CommonCOMDlgs/CmnFwDlgs.idh"/>
 	</ItemGroup>
 	<ItemGroup>
-		<ViewsRefs Include="$(OutDir)/../Common/FwKernelTlb.iip" />
+		<ViewsRefs Include="$(OutDir)/../Common/FwKernelTlb.json" />
 	</ItemGroup>
 	<ItemGroup>
 		<ViewsInputs Include="@(ViewsIdhFiles)" />
@@ -33,7 +33,7 @@
 
 	<Target Name="AfterClean">
 		<Delete Files="@(OutputFiles)" ContinueOnError="true"/>
-		<Delete Files="Views.cs;$(OutDir)/../Common/ViewsTlb.iip" ContinueOnError="true"/>
+		<Delete Files="Views.cs;$(OutDir)/../Common/ViewsTlb.iip;$(OutDir)/../Common/ViewsTlb.json" ContinueOnError="true"/>
 	</Target>
 	<Target Name="BeforeBuild" DependsOnTargets="ViewsCs">
 	</Target>

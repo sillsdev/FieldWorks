@@ -269,7 +269,7 @@
 			<LcmFilesToDelete Include="$(fwrt)/DistFiles/Templates/NewLangProj.fwdata" />
 			<LcmFilesToDelete Include="$(fwrt)/DistFiles/Templates/POS.xml" />
 			<LcmFilesToDelete Include="$(fwrt)/DistFiles/Templates/SemDom.xml" />
-			<LcmFilesToDelete Include="$(dir-fwoutputCommon)/FwKernelTlb.iip" />
+			<LcmFilesToDelete Include="$(dir-fwoutputCommon)/FwKernelTlb.json" />
 		</ItemGroup>
 		<ForceDelete Files="@(LcmFilesToDelete)" />
 		<ForceDelete Files="$(fwrt)/DistFiles/Icu$(IcuVersion)" />
@@ -409,7 +409,7 @@
 		<LcmOutputBaseFiles Include="SIL.LCModel.Tests.dll.config" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Tests.pdb" />
 
-		<LcmOutputCommonFiles Include="KernelInterfaces/FwKernelTlb.iip" />
+		<LcmOutputCommonFiles Include="KernelInterfaces/FwKernelTlb.json" />
 
 		<LcmFwKernelFiles Include="KernelInterfaces/common.idh" />
 		<LcmFwKernelFiles Include="KernelInterfaces/FwKernel.idh" />
