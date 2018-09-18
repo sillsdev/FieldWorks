@@ -313,23 +313,8 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 		{
 			return (tn.Nodes.Count == 0);
 		}
-		void UndoLastSelectedNode()
-		{
-			if (m_lastSelectedTreeNode != null)
-			{
-				if (IsTerminalNode(m_lastSelectedTreeNode))
-				{
-					m_lastSelectedTreeNode.Checked = false;
-					if (m_fTerminalsUseCheckBoxes)
-						m_lastSelectedTreeNode.ImageIndex = m_lastSelectedTreeNode.SelectedImageIndex = (int)ImageKind.checkBox;
-					else
-						m_lastSelectedTreeNode.ImageIndex = m_lastSelectedTreeNode.SelectedImageIndex = (int)ImageKind.radio;
-				}
-			}
-		}
 		protected virtual void HandleCheckBoxNodes(TreeView tv, TreeNode tn)
 		{
-			UndoLastSelectedNode();
 			if (m_fTerminalsUseCheckBoxes)
 			{
 				if (IsTerminalNode(tn))
