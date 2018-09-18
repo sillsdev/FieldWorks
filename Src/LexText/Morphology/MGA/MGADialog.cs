@@ -238,8 +238,30 @@ namespace  SIL.FieldWorks.LexText.Controls.MGA
 		public void OnInsertButtonClick(object obj, EventArgs ea)
 		{
 			CheckDisposed();
+			ProcessAnySelectedNodes(treeViewGlossListItem.Nodes);
+		}
 
-			MasterInflectionFeature mif = (MasterInflectionFeature)treeViewGlossListItem.SelectedNode.Tag;
+		private void ProcessAnySelectedNodes(TreeNodeCollection nodes)
+		{
+			foreach (TreeNode node in nodes)
+			{
+				if (node.Nodes.Count > 0)
+				{
+					ProcessAnySelectedNodes(node.Nodes);
+				}
+				else
+				{
+					if (node.Checked)
+					{
+						InsertSelectedItem(node);
+					}
+				}
+			}
+		}
+
+		private void InsertSelectedItem(TreeNode selectedNode)
+		{
+			MasterInflectionFeature mif = (MasterInflectionFeature)selectedNode.Tag;
 			if (mif == null)
 				return; // just to be safe
 			GlossListBoxItem glbiNew = new GlossListBoxItem(m_cache, mif.Node,
@@ -262,6 +284,7 @@ namespace  SIL.FieldWorks.LexText.Controls.MGA
 			EnableMoveUpDownButtons();
 			ShowGloss();
 		}
+
 		void OnModifyButtonClick(object obj, EventArgs ea)
 		{
 			MessageBox.Show(MGAStrings.ksNoModifyButtonYet);
