@@ -13,8 +13,8 @@ using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.LexText.DataNotebook;
 using LanguageExplorer.DictionaryConfiguration;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -158,6 +158,7 @@ namespace LanguageExplorer.Areas
 		internal const string SandboxJumpToTool = "SandboxJumpToTool";
 		internal const string InsertCategory = "InsertCategory";
 		internal const string DataTreeDelete = "DataTreeDelete";
+		internal const string CmdDeleteSelectedObject = "CmdDeleteSelectedObject";
 		internal const string CmdAddToLexicon = "CmdAddToLexicon";
 		internal const string LexiconLookup = "LexiconLookup";
 
@@ -450,27 +451,47 @@ namespace LanguageExplorer.Areas
 
 		internal static Dictionary<string, string> PopulateForMainItemInsert(ICmPossibilityList owningList, ICmPossibility currentPossibility, string baseUowMessage)
 		{
+			Guard.AgainstNull(owningList, nameof(owningList));
+			// The list may be empty, so 'currentPossibility' may be null.
+
 			var mdc = owningList.Cache.GetManagedMetaDataCache();
 			var owningPossibility = currentPossibility?.OwningPossibility;
 
-			return new Dictionary<string, string>
+			string className;
+			string ownerClassName;
+			if (owningPossibility == null)
 			{
-				{ ClassName, mdc.GetClassName(owningList.ItemClsid) },
-				{ OwnerClassName, owningPossibility == null ? owningList.ClassName : owningPossibility.ClassName },
-				{ OwningField, owningPossibility == null ? mdc.GetFieldName(CmPossibilityListTags.kflidPossibilities) : mdc.GetFieldName(CmPossibilityTags.kflidSubPossibilities) },
-				{ baseUowMessage, baseUowMessage }
-			};
+				className = owningList.ClassName;
+				ownerClassName = mdc.GetFieldName(CmPossibilityListTags.kflidPossibilities);
+			}
+			else
+			{
+				className = owningPossibility.ClassName;
+				ownerClassName = mdc.GetFieldName(CmPossibilityTags.kflidSubPossibilities);
+			}
+			// Top level newbies are of the class specified in the list,
+			// even for lists that allow for certain newbies to be of some other class, such as the variant entry ref type list.
+			return CreateSharedInsertDictionary(mdc.GetClassName(owningList.ItemClsid), className, ownerClassName, baseUowMessage);
 		}
 
 		internal static Dictionary<string, string> PopulateForSubitemInsert(ICmPossibilityList owningList, ICmPossibility owningPossibility, string baseUowMessage)
 		{
+			// There has to be a list that ultimately owns a possibility.
+			Guard.AgainstNull(owningList, nameof(owningList));
+
 			var mdc = owningList.Cache.GetManagedMetaDataCache();
 			var className = owningPossibility == null ? mdc.GetClassName(owningList.ItemClsid) : owningPossibility.ClassName;
+			var ownerClassName = className;
+			return CreateSharedInsertDictionary(className, ownerClassName, mdc.GetFieldName(CmPossibilityTags.kflidSubPossibilities), baseUowMessage);
+		}
+
+		private static Dictionary<string, string> CreateSharedInsertDictionary(string className, string ownerClassName, string owningFieldName, string baseUowMessage)
+		{
 			return new Dictionary<string, string>
 			{
 				{ ClassName, className },
-				{ OwnerClassName, className },
-				{ OwningField, mdc.GetFieldName(CmPossibilityTags.kflidSubPossibilities) },
+				{ OwnerClassName, ownerClassName },
+				{ OwningField, owningFieldName },
 				{ BaseUowMessage, baseUowMessage }
 			};
 		}

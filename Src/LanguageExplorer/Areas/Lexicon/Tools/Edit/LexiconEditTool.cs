@@ -11,7 +11,6 @@ using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
-using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.Application;
@@ -226,20 +225,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// <item label="-" translate="do not translate"/>
 			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 			// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("LexEntry", "ClassNames")));
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _lexiconEditToolMenuHelper.GetHandler(AreaServices.CmdDeleteSelectedObject), string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("LexEntry", "ClassNames")));
 
 			// End: <menu id="mnuBrowseView" (partial) >
 
 			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
-		}
-
-		private void CmdDeleteSelectedObject_Clicked(object sender, EventArgs e)
-		{
-			using (var cmObjectUi = CmObjectUi.MakeLcmModelUiObject(_recordList.CurrentObject))
-			{
-				cmObjectUi.InitializeFlexComponent(new FlexComponentParameters(_propertyTable, _publisher, _subscriber));
-				cmObjectUi.DeleteUnderlyingObject();
-			}
 		}
 	}
 }

@@ -86,10 +86,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			if (disposing)
 			{
-				//foreach (var kvp in _panelMenuCreatorMethods)
-				//{
-				//	RemovePanelMenuContextMenu(kvp.Key);
-				//}
 				_panelMenuCreatorMethods.Clear();
 			}
 			_panelMenuCreatorMethods = null;

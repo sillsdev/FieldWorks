@@ -447,7 +447,7 @@ namespace LanguageExplorer.Controls.LexText
 						var mc = (MasterCategory)tn.Tag;
 						if ((tn.Checked || tn == m_tvMasterList.SelectedNode) && !mc.InDatabase)
 						{
-							// if this.m_subItemOwner != null, it indicates where to put the newly chosed POS
+							// if this.m_subItemOwner != null, it indicates where to put the newly chosen POS
 							mc.AddToDatabase(m_cache, m_posList, tn.Parent?.Tag as MasterCategory, m_subItemOwner);
 						}
 					}

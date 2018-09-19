@@ -106,20 +106,29 @@ namespace LanguageExplorer.Areas.Notebook {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Demote....
-        /// </summary>
-        internal static string Demote {
-            get {
-                return ResourceManager.GetString("Demote", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Demote Record....
         /// </summary>
         internal static string Demote_Record {
             get {
                 return ResourceManager.GetString("Demote_Record", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Demote.
+        /// </summary>
+        internal static string Demote_SansDots {
+            get {
+                return ResourceManager.GetString("Demote_SansDots", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Demote....
+        /// </summary>
+        internal static string Demote_WithDots {
+            get {
+                return ResourceManager.GetString("Demote_WithDots", resourceCulture);
             }
         }
         
@@ -289,15 +298,6 @@ namespace LanguageExplorer.Areas.Notebook {
         internal static string Subrecord_of_subrecord {
             get {
                 return ResourceManager.GetString("Subrecord_of_subrecord", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Demote.
-        /// </summary>
-        internal static string UowDemoteBase {
-            get {
-                return ResourceManager.GetString("UowDemoteBase", resourceCulture);
             }
         }
     }

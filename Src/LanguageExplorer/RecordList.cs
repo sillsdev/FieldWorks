@@ -1129,7 +1129,9 @@ namespace LanguageExplorer
 						SuppressSaveOnChangeRecord = true;
 						try
 						{
+							RemoveItemsFor(thingToDelete.Hvo);
 							AreaServices.UndoExtension(uowBaseText, m_cache.ActionHandlerAccessor, () => DeleteCurrentObject(thingToDelete));
+							UpdateRecordTreeBar();
 						}
 						finally
 						{
@@ -2980,7 +2982,7 @@ namespace LanguageExplorer
 				hvoNewObject = newObj.Hvo;
 				// we don't want to add new sort items, if we've already added them, but we do want to allow
 				// a replacement.
-				if (hvoToReplace == hvoNewObject || IndexOfFirstSortItem(new List<int>(new int[] { hvoNewObject })) < 0)
+				if (hvoToReplace == hvoNewObject || IndexOfFirstSortItem(new List<int>(new[] { hvoNewObject })) < 0)
 				{
 					MakeItemsFor(newSortItems, newObj.Hvo);
 				}
@@ -3484,12 +3486,10 @@ namespace LanguageExplorer
 			var cpi = GetMatchingClass(className);
 			Debug.Assert(cpi != null, "This object should not have been asked to insert an object of the class " + className + ".");
 			if (cpi == null)
-
 			{
 				return false;
 			}
-			List<ClassAndPropInfo> cpiPath;
-			cpiPath = new List<ClassAndPropInfo>(new[] { cpi });
+			var cpiPath = new List<ClassAndPropInfo>(new[] { cpi });
 			var createAndInsertMethodObj = new CpiPathBasedCreateAndInsert(m_owningObject.Hvo, cpiPath, this);
 			var newObj = DoCreateAndInsert(createAndInsertMethodObj);
 			var hvoNew = newObj?.Hvo ?? 0;
@@ -3527,15 +3527,7 @@ namespace LanguageExplorer
 					UpdatingList = true;
 					try
 					{
-						RemoveItemsFor(CurrentObject.Hvo);
-						VirtualListPublisher.DeleteObj(thingToDelete.Hvo);
-					}
-					catch (Exception e)
-					{
-#if RANDYTODO
-						// TODO: Remove the 'catch' block, when deletion works again.
-#endif
-						Console.WriteLine("Crashed.");
+						thingToDelete.Delete();
 					}
 					finally
 					{

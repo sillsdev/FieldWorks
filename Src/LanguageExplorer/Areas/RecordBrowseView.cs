@@ -177,10 +177,14 @@ namespace LanguageExplorer.Areas
 					BrowseViewer.SelectionDrawingFailure -= OnBrowseSelectionDrawingFailed;
 					BrowseViewer.CheckBoxChanged -= OnCheckBoxChanged;
 					BrowseViewer.SortersCompatible -= AreSortersCompatible;
+					// DisposeBrowseViewContextMenu isn't picky about _browseViewContextMenuTuple not being null, so don't bother checking it for null.
+					_browseViewContextMenuFactory?.DisposeBrowseViewContextMenu(_browseViewContextMenuTuple);
 				}
 				components?.Dispose();
 			}
 			BrowseViewer = null;
+			_browseViewContextMenuFactory = null;
+			_browseViewContextMenuTuple = null;
 
 			base.Dispose(disposing);
 		}
@@ -338,8 +342,8 @@ namespace LanguageExplorer.Areas
 			{
 				return;
 			}
-			var browseViewContextMenuTuple = _browseViewContextMenuFactory.GetBrowseViewContextMenu(MyRecordList, AreaServices.mnuBrowseView);
-			browseViewContextMenuTuple.Item1.Show(browseView, e.MouseLocation);
+			_browseViewContextMenuTuple = _browseViewContextMenuFactory.GetBrowseViewContextMenu(MyRecordList, AreaServices.mnuBrowseView);
+			_browseViewContextMenuTuple.Item1.Show(browseView, e.MouseLocation);
 			e.EventHandled = true;
 		}
 

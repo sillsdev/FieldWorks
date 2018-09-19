@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using Gecko.WebIDL;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
@@ -16,7 +15,6 @@ using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
-using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 {
@@ -34,6 +32,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private ITool _notebookEditTool;
 		private NotebookAreaMenuHelper _notebookAreaMenuHelper;
+		private IToolUiWidgetManager _rightClickContextMenuManager;
 		private DataTree MyDataTree { get; set; }
 		private IRecordList MyRecordList { get; set; }
 		private ToolStripMenuItem _insertMenu;
@@ -62,10 +61,9 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			MyRecordList = recordList;
 
 			_notebookAreaMenuHelper = new NotebookAreaMenuHelper(majorFlexComponentParameters, currentNotebookTool);
-#if RANDYTODO
-			// TODO: Set up factory method for the browse view.
-#endif
 			MyBrowseViewContextMenuFactory = new BrowseViewContextMenuFactory();
+			MyBrowseViewContextMenuFactory.RegisterBrowseViewContextMenuCreatorMethod(AreaServices.mnuBrowseView, BrowseViewContextMenuCreatorMethod);
+			_rightClickContextMenuManager = new RightClickContextMenuManager(_notebookEditTool, MyDataTree);
 		}
 
 		#region Implementation of IPropertyTableProvider
@@ -104,6 +102,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 
 			_notebookAreaMenuHelper.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 			MyDataTree.DataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(AreaServices.PanelMenuId, CreateMainPanelContextMenuStrip);
+			_rightClickContextMenuManager.Initialize(_majorFlexComponentParameters, MyRecordList);
 
 			// Add Edit menus, Insert menus, & Insert toolbar buttons.
 			AddInsertMenuItems();
@@ -150,7 +149,9 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				Application.Idle -= Application_Idle;
 				_insertMenu.DropDownOpening -= InsertMenu_DropDownOpening;
 				MyDataTree.CurrentSliceChanged -= MyDataTreeOnCurrentSliceChanged;
+				_rightClickContextMenuManager?.UnwireSharedEventHandlers();
 				InsertToolbarManager.ResetInsertToolbar(_majorFlexComponentParameters);
+				_rightClickContextMenuManager?.Dispose();
 				_insertRecordToolStripButton?.Dispose();
 				_insertFindRecordToolStripButton?.Dispose();
 				_insertToolStripSeparator?.Dispose();
@@ -170,6 +171,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			_majorFlexComponentParameters = null;
 			_notebookEditTool = null;
 			_notebookAreaMenuHelper = null;
+			_rightClickContextMenuManager = null;
 			MyDataTree = null;
 			MyRecordList = null;
 			_insertMenu = null;
@@ -305,7 +307,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				throw new InvalidOperationException("RnGenericRec cannot own itself!");
 			}
 
-			AreaServices.UndoExtensionUsingNewOrCurrentUOW(NotebookResources.UowDemoteBase, cache.ActionHandlerAccessor, () =>
+			AreaServices.UndoExtensionUsingNewOrCurrentUOW(NotebookResources.Demote_SansDots, cache.ActionHandlerAccessor, () =>
 			{
 				newOwner.SubRecordsOS.Insert(0, record);
 			});
@@ -604,7 +606,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				      <parameters className="RnGenericRec" />
 				    </command>
 			*/
-			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, DemoteSubrecord_Clicked, NotebookResources.Demote);
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, DemoteSubrecord_Clicked, NotebookResources.Demote_WithDots);
 			menu.Enabled = CanDemoteSubitemInVector;
 
 			// End: <menu id="mnuDataTree-SubRecordSummary">
@@ -732,7 +734,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				throw new InvalidOperationException("RnGenericRec cannot own itself!");
 			}
 
-			AreaServices.UndoExtensionUsingNewOrCurrentUOW(NotebookResources.UowDemoteBase, cache.ActionHandlerAccessor, () =>
+			AreaServices.UndoExtensionUsingNewOrCurrentUOW(NotebookResources.Demote_SansDots, cache.ActionHandlerAccessor, () =>
 			{
 				newOwner.SubRecordsOS.Insert(0, record);
 			});
@@ -790,6 +792,24 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			ToolStripMenuItemFactory.CreateHotLinkToolStripMenuItem(hotlinksMenuItemList, Insert_Subrecord_Clicked, NotebookResources.Insert_Subrecord);
 
 			return hotlinksMenuItemList;
+		}
+
+		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> BrowseViewContextMenuCreatorMethod(IRecordList recordList, string browseViewMenuId)
+		{
+			// The actual menu declaration has a gazillion menu items, but only two of them are seen in this tool (plus the separator).
+			// Start: <menu id="mnuBrowseView" (partial) >
+			var contextMenuStrip = new ContextMenuStrip
+			{
+				Name = AreaServices.mnuBrowseView
+			};
+			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+
+			// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.CmdDeleteSelectedObject), string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("RnGenericRec", "ClassNames")));
+
+			// End: <menu id="mnuBrowseView" (partial) >
+
+			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 		}
 	}
 }

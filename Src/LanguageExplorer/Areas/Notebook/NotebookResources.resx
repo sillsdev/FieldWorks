@@ -189,10 +189,10 @@
   <data name="Delete_Participants" xml:space="preserve">
     <value>Delete Participants</value>
   </data>
-  <data name="Demote" xml:space="preserve">
+  <data name="Demote_WithDots" xml:space="preserve">
     <value>Demote...</value>
   </data>
-  <data name="UowDemoteBase" xml:space="preserve">
+  <data name="Demote_SansDots" xml:space="preserve">
     <value>Demote</value>
   </data>
 </root>

@@ -61,6 +61,7 @@ namespace LanguageExplorer.Areas
 			_sharedEventHandlers.Add(AreaServices.DataTreeDelete, DataTreeDelete_Clicked);
 			_sharedEventHandlers.Add(AreaServices.CmdAddToLexicon, CmdAddToLexicon_Clicked);
 			_sharedEventHandlers.Add(AreaServices.LexiconLookup, LexiconLookup_Clicked);
+			_sharedEventHandlers.Add(AreaServices.CmdDeleteSelectedObject, CmdDeleteSelectedObject_Clicked);
 		}
 
 		internal AreaWideMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
@@ -157,6 +158,7 @@ namespace LanguageExplorer.Areas
 				_sharedEventHandlers.Remove(AreaServices.DataTreeDelete);
 				_sharedEventHandlers.Remove(AreaServices.CmdAddToLexicon);
 				_sharedEventHandlers.Remove(AreaServices.LexiconLookup);
+				_sharedEventHandlers.Remove(AreaServices.CmdDeleteSelectedObject);
 
 				if (_fileExportMenu != null)
 				{
@@ -272,6 +274,16 @@ namespace LanguageExplorer.Areas
 		}
 
 		private void DataTreeDelete_Clicked(object sender, EventArgs e)
+		{
+			HandleDeletion(sender);
+		}
+
+		private void CmdDeleteSelectedObject_Clicked(object sender, EventArgs e)
+		{
+			HandleDeletion(sender);
+		}
+
+		private static void HandleDeletion(object sender)
 		{
 			SenderTagAsSlice(sender).HandleDeleteCommand();
 		}
