@@ -53,6 +53,7 @@ namespace SIL.FieldWorks.Common.Widgets
 
 			public void AddColumn(string name, int widthPct)
 			{
+				Grid.Columns.Add(name, name);
 			}
 
 			public List<FwMultilingualPropView.ColumnInfo> FieldsToDisplay {
@@ -108,7 +109,7 @@ namespace SIL.FieldWorks.Common.Widgets
 					f.Show();
 					Application.DoEvents();
 
-					control.CommitEdit(DataGridViewDataErrorContexts.Commit);
+					Assert.That(() => control.CommitEdit(DataGridViewDataErrorContexts.Commit), Throws.Nothing);
 				}
 			}
 		}
