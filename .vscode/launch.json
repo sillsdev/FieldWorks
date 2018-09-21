@@ -4,8 +4,37 @@
 	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
 	"version": "0.2.0",
 	"configurations": [
+		/*
+		This is a way to enable unmanaged debugging of unit tests with GDB. Since the tests
+		that you may want to debug vary I leave it commented out. It is advisable to
+		build mono locally so that all debug information is available. Mine sits in
+		/opt/mono5-dbg.
+		This configuration requires the `webfreak.debug` extension.
 		{
-			"name": "Launch",
+			"type": "gdb",
+			"request": "launch",
+			"name": "GDB debug tests",
+			"target": "/opt/mono5-dbg/bin/mono-sgen",
+			"cwd": "${workspaceRoot}/Output_x86_64/Debug",
+			"arguments": " --debug ../../NUnit.Runners.Net4.2.6.4/tools/nunit-console.exe -run=SIL.FieldWorks.Common.Widgets.FwListBoxTests.Add_EmptyObjectCollection_CollectionContainsSingleElement WidgetsTests.dll",
+			"env": {
+				"DISPLAY": ":0",
+				"GDK_SHARP": "/usr/lib/cli/gdk-sharp-2.0/",
+				"PATH": "/opt/mono5-dbg/bin:/opt/mono5-sil/bin:${workspaceRoot}/Output_x86_64/Debug:/usr/lib/fieldworks/icu-bin:${workspaceRoot}/../libcom/COM/buildx86_64/bin:/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+				"LD_LIBRARY_PATH": "/opt/mono5-dbg/lib:/opt/mono5-sil/lib:/usr/lib/fieldworks:${workspaceRoot}/Output_x86_64/Debug:/usr/lib/fieldworks/lib:${workspaceRoot}/../libcom/COM/buildx86_64/lib:${workspaceRoot}/Output_x86_64/Debug/Firefox-Linux64:/usr/lib",
+				"FW_ROOT": "${workspaceRoot}/DistFiles",
+				"FW_ROOTCODE": "${workspaceRoot}/DistFiles",
+				"FW_ROOTDATA": "${workspaceRoot}/DistFiles",
+				"FW_CommonAppData": "${workspaceRoot}/Output_x86_64/VarLibFieldworks",
+				"MONO_REGISTRY_PATH": "${workspaceRoot}/Output_x86_64/registry",
+				"MONO_GAC_PREFIX": "/opt/mono5-dbg:/opt/mono5-sil:/usr/lib/fieldworks:/usr",
+				"MONO_PATH": "${workspaceRoot}/DistFiles:${workspaceRoot}/Output_x86_64/Debug:/usr/lib/cli/gdk-sharp-2.0/:/usr/lib/fieldworks",
+				"MONO_TRACE_LISTENER": "Console.Out"
+			}
+		},
+		*/
+		{
+			"name": "Launch FW",
 			"env": {
 				"DISPLAY": ":0"
 			},
