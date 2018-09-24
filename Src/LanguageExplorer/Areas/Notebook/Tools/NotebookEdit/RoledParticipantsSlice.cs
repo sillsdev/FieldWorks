@@ -221,7 +221,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			}
 			var labels = ObjectLabel.CreateObjectLabels(Cache, Cache.LanguageProject.PeopleOA.PossibilitiesOS, DisplayNameProperty, displayWs);
 
-			using (var chooser = new SimpleListChooser(PersistenceProvider, labels, m_fieldName, Cache, null, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+			using (var chooser = new SimpleListChooser(PersistenceProvider, labels, m_fieldName, Cache, null, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 			{
 				chooser.TextParamHvo = Cache.LanguageProject.PeopleOA.Hvo;
 				chooser.SetHelpTopic(GetChooserHelpTopicID());
@@ -300,7 +300,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 
 		private void ExpandNewNode(IRnRoledPartic roledPartic)
 		{
-			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>("window"), ContainingDataTree))
+			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>(FwUtils.window), ContainingDataTree))
 			{
 				XElement caller = null;
 				if (Key.Length > 1)
@@ -318,7 +318,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		/// </summary>
 		public override void Expand(int iSlice)
 		{
-			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>("window"), ContainingDataTree))
+			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>(FwUtils.window), ContainingDataTree))
 			{
 				XElement caller = null;
 				if (Key.Length > 1)

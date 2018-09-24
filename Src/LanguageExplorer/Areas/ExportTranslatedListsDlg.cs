@@ -225,7 +225,7 @@ namespace LanguageExplorer.Areas
 
 		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "khtpExportTranslatedListsDlg");
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), "khtpExportTranslatedListsDlg");
 		}
 
 		private void m_btnSelectAll_Click(object sender, EventArgs e)

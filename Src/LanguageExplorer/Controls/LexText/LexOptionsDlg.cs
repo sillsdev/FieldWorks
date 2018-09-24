@@ -83,12 +83,12 @@ namespace LanguageExplorer.Controls.LexText
 			// open that project automatically instead of displaying the usual Welcome dialog.
 			get
 			{
-				var app = m_propertyTable.GetValue<IFlexApp>("App");
+				var app = m_propertyTable.GetValue<IFlexApp>(LanguageExplorerConstants.App);
 				return app.RegistrySettings.AutoOpenLastEditedProject;
 			}
 			set
 			{
-				var app = m_propertyTable.GetValue<IFlexApp>("App");
+				var app = m_propertyTable.GetValue<IFlexApp>(LanguageExplorerConstants.App);
 				if (app != null)
 				{
 					app.RegistrySettings.AutoOpenLastEditedProject = value;
@@ -112,7 +112,7 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			m_propertyTable = propertyTable;
 			m_cache = cache;
-			m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
 			m_sUserWs = m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem.Id;
 			NewUserWs = m_sUserWs;
 			var appSettings = m_propertyTable.GetValue<FwApplicationSettingsBase>("AppSettings");

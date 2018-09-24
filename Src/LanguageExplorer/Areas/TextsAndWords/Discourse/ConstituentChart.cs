@@ -160,7 +160,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			m_logic.Init(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+			m_logic.Init(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider));
 			var lineChoices = GetLineChoices();
 			Body.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			Body.LineChoices = lineChoices;
@@ -182,7 +182,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			LineChoices = GetLineChoices();
 			Vc.LineChoices = LineChoices;
 
-			using (var dlg = new ConfigureInterlinDialog(Cache, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
+			using (var dlg = new ConfigureInterlinDialog(Cache, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider),
 				m_ribbon.Vc.LineChoices.Clone() as InterlinLineChoices))
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)

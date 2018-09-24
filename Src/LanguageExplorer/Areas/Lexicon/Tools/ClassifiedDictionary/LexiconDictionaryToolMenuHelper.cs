@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 SIL International
+// Copyright (c) 2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -47,7 +47,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 
 		private void EditFindMenu_Click(object sender, EventArgs e)
 		{
-			PropertyTable.GetValue<IApp>("App").ShowFindReplaceDialog(sender == _editFindMenu, _majorFlexComponentParameters.MainWindow.ActiveView as IVwRootSite, _majorFlexComponentParameters.LcmCache, _majorFlexComponentParameters.MainWindow as Form);
+			PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App).ShowFindReplaceDialog(sender == _editFindMenu, _majorFlexComponentParameters.MainWindow.ActiveView as IVwRootSite, _majorFlexComponentParameters.LcmCache, _majorFlexComponentParameters.MainWindow as Form);
 		}
 
 		#region Implementation of IPropertyTableProvider

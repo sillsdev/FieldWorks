@@ -88,7 +88,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				var list = m_cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>().GetObject(m_hvoList);
 				var persistProvider = PersistenceProviderFactory.CreatePersistenceProvider(PropertyTable);
 				var labels = ObjectLabel.CreateObjectLabels(m_cache, list.PossibilitiesOS, m_displayNameProperty, m_displayWs);
-				using (var chooser = new ReallySimpleListChooser(persistProvider, labels, m_fieldName, m_cache, m_chosenObjs, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+				using (var chooser = new ReallySimpleListChooser(persistProvider, labels, m_fieldName, m_cache, m_chosenObjs, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 				{
 					chooser.Atomic = Atomic;
 					chooser.Cache = m_cache;

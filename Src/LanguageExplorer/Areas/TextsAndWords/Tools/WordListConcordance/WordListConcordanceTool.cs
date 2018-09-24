@@ -73,9 +73,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			var recordListRepository = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository);
 			if (_recordListProvidingOwner == null)
 			{
-				_recordListProvidingOwner = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(TextAndWordsArea.ConcordanceWords, majorFlexComponentParameters.Statusbar, TextAndWordsArea.ConcordanceWordsFactoryMethod);
+				_recordListProvidingOwner = recordListRepository.GetRecordList(TextAndWordsArea.ConcordanceWords, majorFlexComponentParameters.StatusBar, TextAndWordsArea.ConcordanceWordsFactoryMethod);
 			}
 			_areaWideMenuHelper = new AreaWideMenuHelper(majorFlexComponentParameters, _recordListProvidingOwner);
 			_areaWideMenuHelper.SetupFileExportMenu();
@@ -88,7 +89,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 
 			if (_subservientRecordList == null)
 			{
-				_subservientRecordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(OccurrencesOfSelectedWordform, majorFlexComponentParameters.Statusbar, FactoryMethod);
+				_subservientRecordList = recordListRepository.GetRecordList(OccurrencesOfSelectedWordform, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
 
 			var nestedMultiPaneParameters = new MultiPaneParameters
@@ -131,7 +132,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 
 			_interlinMasterNoTitleBar.FinishInitialization();
 			majorFlexComponentParameters.DataNavigationManager.RecordList = _recordListProvidingOwner;
-			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepository>("RecordListRepository").ActiveRecordList = _subservientRecordList;
+			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList = _subservientRecordList;
 		}
 
 		/// <summary>
@@ -211,7 +212,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			return new SubservientRecordList(recordListId, statusBar,
 				concDecorator, false,
 				ConcDecorator.kflidWfOccurrences,
-				flexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(TextAndWordsArea.ConcordanceWords, statusBar, TextAndWordsArea.ConcordanceWordsFactoryMethod));
+				flexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(TextAndWordsArea.ConcordanceWords, statusBar, TextAndWordsArea.ConcordanceWordsFactoryMethod));
 		}
 	}
 }

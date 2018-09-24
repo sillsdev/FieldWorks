@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -89,7 +89,7 @@ namespace LanguageExplorer.Dumpster
 				return false;
 
 			var currentConfig = DictionaryConfigurationServices.GetCurrentConfiguration(PropertyTable, true);
-			var cache = PropertyTable.GetValue<LcmCache>("cache");
+			var cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 			var configuration = new DictionaryConfigurationModel(currentConfig, cache);
 			DictionaryConfigurationController.UpdateWritingSystemInModel(configuration, cache);
 			configuration.Save();
@@ -100,7 +100,7 @@ namespace LanguageExplorer.Dumpster
 		public bool OnWritingSystemDeleted(object param)
 		{
 			var currentConfig = DictionaryConfigurationServices.GetCurrentConfiguration(PropertyTable, true, null);
-			var cache = PropertyTable.GetValue<LcmCache>("cache");
+			var cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 			var configuration = new DictionaryConfigurationModel(currentConfig, cache);
 			if (configuration.HomographConfiguration != null && ((string[])param).Any(x => x.ToString() == configuration.HomographConfiguration.HomographWritingSystem))
 			{

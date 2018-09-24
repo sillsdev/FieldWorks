@@ -155,7 +155,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				}
 				catch (Exception error)
 				{
-					var app = PropertyTable.GetValue<IFlexApp>("App");
+					var app = PropertyTable.GetValue<IFlexApp>(LanguageExplorerConstants.App);
 					using (var appSettingsKey = app.SettingsKey)
 					{
 						//don't really need to make the program stop just because we could not show this record.

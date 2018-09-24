@@ -171,9 +171,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			}
 			using(var dlg = new XmlDocConfigureDlg())
 			{
-				var mainWindow = PropertyTable.GetValue<IFwMainWnd>("window");
-				dlg.SetConfigDlgInfo(m_configurationParametersElement, Cache, FwUtils.StyleSheetFromPropertyTable(PropertyTable),
-					mainWindow, PropertyTable, Publisher, sProp);
+				var mainWindow = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window);
+				dlg.SetConfigDlgInfo(m_configurationParametersElement, Cache, FwUtils.StyleSheetFromPropertyTable(PropertyTable), mainWindow, PropertyTable, Publisher, sProp);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					// LT-8767 When this dialog is launched from the Configure Dictionary View dialog

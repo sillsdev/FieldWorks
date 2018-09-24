@@ -54,7 +54,7 @@ namespace LanguageExplorer.Areas.Lists
 
 		private void CustomListDlg_Load(object sender, EventArgs e)
 		{
-			if (m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider") != null)
+			if (m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider) != null)
 			{
 				InitializeHelpProvider();
 			}
@@ -252,9 +252,9 @@ namespace LanguageExplorer.Areas.Lists
 		{
 			m_helpProvider = new HelpProvider
 			{
-				HelpNamespace = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").HelpFile
+				HelpNamespace = m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider).HelpFile
 			};
-			m_helpProvider.SetHelpKeyword(this, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").GetHelpString(s_helpTopic));
+			m_helpProvider.SetHelpKeyword(this, m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider).GetHelpString(s_helpTopic));
 			m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			m_helpProvider.SetShowHelp(this, true);
 		}
@@ -335,7 +335,7 @@ namespace LanguageExplorer.Areas.Lists
 			{
 				return;
 			}
-			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), s_helpTopic);
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), s_helpTopic);
 		}
 
 		#region Implementation of IDisposable

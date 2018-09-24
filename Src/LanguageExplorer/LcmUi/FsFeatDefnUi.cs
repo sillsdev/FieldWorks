@@ -44,7 +44,7 @@ namespace LanguageExplorer.LcmUi
 			using (var dlg = new MasterInflectionFeatureListDlg(className))
 			{
 				dlg.SetDlginfo(cache.LanguageProject.MsFeatureSystemOA, propertyTable, true);
-				switch (dlg.ShowDialog(propertyTable.GetValue<Form>("window")))
+				switch (dlg.ShowDialog(propertyTable.GetValue<Form>(FwUtils.window)))
 				{
 					case DialogResult.OK: // Fall through.
 					case DialogResult.Yes:

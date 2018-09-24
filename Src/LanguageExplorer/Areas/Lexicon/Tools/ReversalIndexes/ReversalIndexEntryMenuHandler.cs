@@ -119,7 +119,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 					dlg.FilteredReversalEntryHvos.Add(owningEntry.Hvo);
 				dlg.SetHelpTopic("khtpMoveReversalEntry");
 				var wp = new WindowParams { m_btnText = LanguageExplorerResources.ks_MoveEntry, m_title = LanguageExplorerResources.ksMoveRevEntry };
-				var cache = PropertyTable.GetValue<LcmCache>("cache");
+				var cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 				dlg.SetDlgInfo(cache, wp, PropertyTable, Publisher, Subscriber);
 				if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
 				{

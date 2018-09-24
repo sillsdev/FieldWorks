@@ -117,7 +117,7 @@ namespace LanguageExplorer.Areas.Lists
 		/// <summary>
 		/// Get all installed tools for the area.
 		/// </summary>
-		public IList<ITool> AllToolsInOrder
+		public IReadOnlyList<ITool> AllToolsInOrder
 		{
 			get
 			{
@@ -160,14 +160,17 @@ namespace LanguageExplorer.Areas.Lists
 				_allTools = new HashSet<ITool>(_myBuiltinTools);
 
 				// Load tools for custom lists.
-				var cache = _propertyTable.GetValue<LcmCache>("cache");
+				var cache = _propertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 				var customLists = cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>().AllInstances().Where(list => list.Owner == null).ToList();
-				foreach (var customList in customLists)
+				if (!_sortedListOfCustomTools.Any())
 				{
-					var customTool = new CustomListEditTool(this, customList);
-					_sortedListOfCustomTools.Add(customTool.MachineName, customTool);
+					foreach (var customList in customLists)
+					{
+						var customTool = new CustomListEditTool(this, customList);
+						_sortedListOfCustomTools.Add(customTool.MachineName, customTool);
+					}
+					_allTools.UnionWith(_sortedListOfCustomTools.Values);
 				}
-				_allTools.UnionWith(_sortedListOfCustomTools.Values);
 				retval.AddRange(_sortedListOfCustomTools.Values);
 				return retval;
 			}

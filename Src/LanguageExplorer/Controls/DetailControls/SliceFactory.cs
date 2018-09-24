@@ -19,7 +19,6 @@ using LanguageExplorer.Areas.Notebook.Tools.NotebookEdit;
 using LanguageExplorer.Areas.TextsAndWords.Tools.Analyses;
 using LanguageExplorer.Controls.DetailControls.Resources;
 using LanguageExplorer.Controls.XMLViews;
-using LanguageExplorer.LcmUi;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
@@ -53,7 +52,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					ws = wsContainer.DefaultPronunciationWritingSystem.Handle;
 					break;
 				case "reversal":
-					var riGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(propertyTable, "ReversalIndexGuid");
+					var riGuid = RecordListServices.GetObjectGuidIfValid(propertyTable, "ReversalIndexGuid");
 					if (!riGuid.Equals(Guid.Empty))
 					{
 						IReversalIndex ri;

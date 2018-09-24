@@ -219,7 +219,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected void Help_Clicked(object sender, EventArgs eventArgs)
 		{
-			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), GetSliceHelpTopicID());
+			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), GetSliceHelpTopicID());
 		}
 
 		private void AlwaysVisible_Clicked(object sender, EventArgs eventArgs)
@@ -1303,7 +1303,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return false;
 			}
-			var actualHelpString = PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").GetHelpString(helpStr);
+			var actualHelpString = PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider).GetHelpString(helpStr);
 			if (actualHelpString == "NullStringId")
 			{
 				actualHelpString = null;
@@ -1394,7 +1394,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// and the caller often has the info already, especially in loops expanding many children.</remarks>
 		public virtual void Expand(int iSlice)
 		{
-			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>("window"), ContainingDataTree))
+			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>(FwUtils.window), ContainingDataTree))
 			{
 				try
 				{
@@ -1446,7 +1446,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				iNextSliceNotChild++;
 			}
-			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>("window"), ContainingDataTree))
+			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>(FwUtils.window), ContainingDataTree))
 			{
 				var count = iNextSliceNotChild - iSlice - 1;
 				while (count > 0)

@@ -577,7 +577,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		internal IRecordList ActiveRecordList => PropertyTable.GetValue<IRecordListRepository>("RecordListRepository").ActiveRecordList;
+		internal IRecordList ActiveRecordList => PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList;
 
 		#endregion Overrides of RootSite
 
@@ -634,7 +634,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			int ichMin, ichLim, hvo, tag, ws;
 			if (GetSelectedWordPos(m_rootb.Selection, out hvo, out tag, out ws, out ichMin, out ichLim))
 			{
-				LexEntryUi.DisplayOrCreateEntry(m_cache, hvo, tag, ws, ichMin, ichLim, this, PropertyTable, Publisher, Subscriber, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "UserHelpFile");
+				LexEntryUi.DisplayOrCreateEntry(m_cache, hvo, tag, ws, ichMin, ichLim, this, PropertyTable, Publisher, Subscriber, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), "UserHelpFile");
 			}
 			return true;
 		}

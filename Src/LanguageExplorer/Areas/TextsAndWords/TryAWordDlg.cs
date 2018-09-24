@@ -124,7 +124,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			_sharedEventHandlers = sharedEventHandlers;
 			m_persistProvider = PersistenceProviderFactory.CreatePersistenceProvider(PropertyTable);
-			m_cache = PropertyTable.GetValue<LcmCache>("cache");
+			m_cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 			m_parserMenuManager = parserMenuManager;
 
 			Text = $@"{m_cache.ProjectId.UiName} - {Text}";
@@ -144,7 +144,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 			m_webPageInteractor = new WebPageInteractor(m_htmlControl, Publisher, m_cache, m_wordformTextBox);
 
-			var helpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			var helpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
 			if (helpTopicProvider != null) // trying this
 			{
 				m_helpProvider.HelpNamespace = helpTopicProvider.HelpFile;
@@ -577,7 +577,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				m_parserMenuManager.DisconnectFromParser();
 				m_statusLabel.Text = ParserStoppedMessage();
 				m_tryItButton.Enabled = true;
-				var app = PropertyTable.GetValue<IApp>("App");
+				var app = PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
 				ErrorReporter.ReportException(ex, app.SettingsKey, app.SupportEmailAddress, this, false);
 				return;
 			}
@@ -625,7 +625,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		private void m_buttonHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), HelpTopicID);
+			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), HelpTopicID);
 		}
 
 		private void m_closeButton_Click(object sender, EventArgs e)

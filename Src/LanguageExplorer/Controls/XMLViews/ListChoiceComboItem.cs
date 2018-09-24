@@ -212,7 +212,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			var chosenObjs = from hvo in oldTargets select (hvo == 0 ? null : m_cache.ServiceLocator.GetObject(hvo));
 			var persistProvider = PersistenceProviderFactory.CreatePersistenceProvider(m_propertyTable);
-			return LeafFlid == 0 ? new ReallySimpleListChooser(persistProvider, labels, "Items", m_cache, chosenObjs, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")) : new LeafChooser(persistProvider, labels, "Items", m_cache, chosenObjs, LeafFlid, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+			return LeafFlid == 0 ? new ReallySimpleListChooser(persistProvider, labels, "Items", m_cache, chosenObjs, m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)) : new LeafChooser(persistProvider, labels, "Items", m_cache, chosenObjs, LeafFlid, m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider));
 		}
 
 		private ITsString MakeLabel(ListChoiceFilter filter)

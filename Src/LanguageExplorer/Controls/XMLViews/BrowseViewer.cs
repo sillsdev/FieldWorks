@@ -716,7 +716,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			var xa = m_configParamsElement.Attribute("filterBar");
 			if (xa != null && xa.Value == "true")
 			{
-				FilterBar = new FilterBar(this, PropertyTable.GetValue<IApp>("App"));
+				FilterBar = new FilterBar(this, PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App));
 				FilterBar.FilterChanged += FilterChangedHandler;
 				FilterBar.Name = "FilterBar";
 				FilterBar.AccessibleName = "FilterBar";
@@ -2147,7 +2147,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_icolCurrent = e.Column;
 
 #if RANDYTODO
-			IFwMainWnd window = PropertyTable.GetValue<IFwMainWnd>("window");
+			IFwMainWnd window = PropertyTable.GetValue<IFwMainWnd>(LanguageExplorerConstants.window);
 			window.ShowContextMenu("mnuBrowseHeader",
 				new Point(Cursor.Position.X, Cursor.Position.Y),
 				new TemporaryColleagueParameter(m_xbv.Mediator, this, false),
@@ -2455,7 +2455,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return null;
 			}
-			var app = PropertyTable.GetValue<IApp>("App");
+			var app = PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
 			var finder = LayoutFinder.CreateFinder(Cache, colSpec, BrowseView.Vc, app);
 			return new FilterBarCellFilter(finder, matcher);
 		}
@@ -2820,7 +2820,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			if (colSpec != null)
 			{
-				var finder = LayoutFinder.CreateFinder(Cache, colSpec, BrowseView.Vc, PropertyTable.GetValue<IApp>("App"));
+				var finder = LayoutFinder.CreateFinder(Cache, colSpec, BrowseView.Vc, PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App));
 				return new GenRecordSorter(new StringFinderCompare(finder, new WritingSystemComparer(colWs)));
 			}
 			return null;

@@ -146,7 +146,7 @@ namespace LanguageExplorer.Areas
 		{
 			base.Install(parentDataTree);
 
-			RuleFormulaControl.Initialize(PropertyTable.GetValue<LcmCache>("cache"), MyCmObject, -1, AreaResources.ksRuleEnvChooserName, ContainingDataTree.PersistenceProvder, null, null);
+			RuleFormulaControl.Initialize(PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache), MyCmObject, -1, AreaResources.ksRuleEnvChooserName, ContainingDataTree.PersistenceProvder, null, null);
 			RuleFormulaControl.InsertionControl.Hide();
 			RuleFormulaControl.InsertionControl.SizeChanged += InsertionControl_SizeChanged;
 		}

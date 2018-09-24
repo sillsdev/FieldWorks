@@ -29,7 +29,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
-			m_PhonologicalFeatureListDlgLauncherView.Init(PropertyTable.GetValue<LcmCache>("cache"), obj as IFsFeatStruc);
+			m_PhonologicalFeatureListDlgLauncherView.Init(PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache), obj as IFsFeatStruc);
 			if (Slice.MyCmObject.ClassID == PhPhonemeTags.kClassId)
 			{
 				m_PhonologicalFeatureListDlgLauncherView.Phoneme = Slice.MyCmObject as IPhPhoneme;

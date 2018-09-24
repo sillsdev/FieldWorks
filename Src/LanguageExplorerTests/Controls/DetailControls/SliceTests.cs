@@ -34,7 +34,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 
 			TestSetupServices.SetupTestTriumvirate(out m_propertyTable, out m_publisher, out m_subscriber);
 			_dummyWindow = new DummyFwMainWnd();
-			m_propertyTable.SetProperty("window", _dummyWindow);
+			m_propertyTable.SetProperty(FwUtils.window, _dummyWindow);
 		}
 		#endregion
 

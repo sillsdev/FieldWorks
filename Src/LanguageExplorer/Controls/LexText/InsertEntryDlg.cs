@@ -756,7 +756,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public void SetDlgInfo(LcmCache cache, ITsString tssForm)
 		{
-			var helpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			var helpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
 			if (helpTopicProvider != null)
 			{
 				m_helpProvider.HelpNamespace = helpTopicProvider.HelpFile;
@@ -947,7 +947,7 @@ namespace LanguageExplorer.Controls.LexText
 		public void SetHelpTopic(string helpTopic)
 		{
 			s_helpTopic = helpTopic;
-			var helpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			var helpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
 			if (helpTopicProvider != null)
 			{
 				m_helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(s_helpTopic));
@@ -1669,7 +1669,7 @@ namespace LanguageExplorer.Controls.LexText
 					// Get a wait cursor by setting the LinkLabel to use a wait cursor. See FWNX-700.
 					// Need to use a wait cursor while creating dialog, but not when showing it.
 					using (new WaitCursor(m_lnkAssistant))
-					using (var dlg = new MGAHtmlHelpDialog(m_cache, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_tbLexicalForm.Text))
+					using (var dlg = new MGAHtmlHelpDialog(m_cache, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), m_tbLexicalForm.Text))
 					{
 						if (dlg.ShowDialog() == DialogResult.OK)
 						{
@@ -1687,7 +1687,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		private void btnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "FLExHelpFile", s_helpTopic);
+			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), "FLExHelpFile", s_helpTopic);
 		}
 
 		#endregion Event Handlers

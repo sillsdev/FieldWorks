@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Windows.Forms;
 using System.Linq;
 using LanguageExplorer.LcmUi;
@@ -60,7 +59,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// </summary>
 		public void Process()
 		{
-			var cache = m_dlg.PropertyTable.GetValue<LcmCache>("cache");
+			var cache = m_dlg.PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 			var homographWsId = cache.LanguageProject.HomographWs;
 			var homographWs = cache.ServiceLocator.WritingSystems.AllWritingSystems.Where(ws => ws.Id == homographWsId);
 			var homographWsLabel = homographWs.First().DisplayLabel;

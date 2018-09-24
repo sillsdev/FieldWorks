@@ -46,7 +46,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			base.InitializeFlexComponent(flexComponentParameters);
 
-			m_cache = PropertyTable.GetValue<LcmCache>("cache");
+			m_cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 			VisibleChanged += OnVisibleChanged;
 			m_styleSheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable);
 			var wsObj = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;

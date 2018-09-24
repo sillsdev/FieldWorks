@@ -22,7 +22,7 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Get all installed tools for the area.
 		/// </summary>
-		IList<ITool> AllToolsInOrder { get; }
+		IReadOnlyList<ITool> AllToolsInOrder { get; }
 
 		/// <summary>
 		/// Get the image for the area.

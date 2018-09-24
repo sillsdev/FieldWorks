@@ -52,10 +52,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 									false,
 									propertyTable,
 									publisher,
-									propertyTable.GetValue<Form>("window"));
+									propertyTable.GetValue<Form>(FwUtils.window));
 
 			m_posPopupTreeManager.LoadPopupTree(m_node.Tag?.Hvo ?? 0);
-			m_helpTopicProvider = propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			m_helpTopicProvider = propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
 			m_helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
 			m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
 			m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);

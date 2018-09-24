@@ -40,7 +40,7 @@ namespace LanguageExplorer.Areas.Notebook
 			_majorFlexComponentParameters = majorFlexComponentParameters;
 			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
 			_currentNotebookTool = currentNotebookTool;
-			_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(NotebookArea.Records, majorFlexComponentParameters.Statusbar, NotebookArea.NotebookFactoryMethod);
+			_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(NotebookArea.Records, majorFlexComponentParameters.StatusBar, NotebookArea.NotebookFactoryMethod);
 			MyAreaWideMenuHelper = new AreaWideMenuHelper(_majorFlexComponentParameters, _recordList);
 
 			_sharedEventHandlers.Add(CmdGoToRecord, GotoRecord_Clicked);
@@ -189,7 +189,7 @@ namespace LanguageExplorer.Areas.Notebook
 			using (var dlg = new RecordGoDlg())
 			{
 				dlg.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
-				var cache = PropertyTable.GetValue<LcmCache>("cache");
+				var cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 				dlg.SetDlgInfo(cache, null);
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{

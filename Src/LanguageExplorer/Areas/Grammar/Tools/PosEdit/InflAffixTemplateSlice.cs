@@ -137,7 +137,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				}
 				// both vern and anal are LTR (unmarked case)
 			}
-			var ctrl = new InflAffixTemplateControl(PropertyTable.GetValue<LcmCache>("cache"), MyCmObject.Hvo, ConfigurationNode);
+			var ctrl = new InflAffixTemplateControl(PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache), MyCmObject.Hvo, ConfigurationNode);
 			ctrl.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			Control = ctrl;
 			m_menuHandler = InflAffixTemplateMenuHandler.Create(ctrl, ConfigurationNode);

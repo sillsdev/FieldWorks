@@ -144,7 +144,7 @@ namespace LanguageExplorer.Controls.LexText
 
 				ResetWindowLocationAndSize();
 
-				m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+				m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
 				helpProvider = new HelpProvider
 				{
 					HelpNamespace = m_helpTopicProvider.HelpFile

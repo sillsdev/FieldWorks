@@ -76,14 +76,14 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				if (m_propertyTable != null)
 				{
-					var app = m_propertyTable.GetValue<IApp>("App");
+					var app = m_propertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
 					if (app != null)
 					{
 						parent = app.ActiveMainWindow;
 					}
 					if (parent == null)
 					{
-						parent = m_propertyTable.GetValue<Form>("window");
+						parent = m_propertyTable.GetValue<Form>(FwUtils.window);
 					}
 				}
 				if (parent == null)

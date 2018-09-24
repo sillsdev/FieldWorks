@@ -68,7 +68,7 @@ namespace LanguageExplorer.Areas.Grammar
 				ctrl.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			}
 			Size = new Size(208, 32);
-			ctrl.Initialize(PropertyTable.GetValue<LcmCache>("cache"),
+			ctrl.Initialize(PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache),
 				MyCmObject,
 				1, // Maybe need a real flid?
 				"InterlinearName",

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2013-2018 SIL International
+// Copyright (c) 2013-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -71,8 +71,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			m_helpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
-			m_cache = PropertyTable.GetValue<LcmCache>("cache");
+			m_helpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
+			m_cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 		}
 
 		#endregion

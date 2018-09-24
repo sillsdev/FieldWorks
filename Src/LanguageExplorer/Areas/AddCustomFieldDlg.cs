@@ -71,7 +71,7 @@ namespace LanguageExplorer.Areas
 			m_propertyTable = propertyTable;
 			m_publisher = publisher;
 			m_customFieldLocationType = customFieldLocationType;
-			m_cache = m_propertyTable.GetValue<LcmCache>("cache");
+			m_cache = m_propertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 			m_layouts = Inventory.GetInventory("layouts", m_cache.ProjectId.Name);
 
 			InitializeComponent();		// form required method
@@ -82,9 +82,9 @@ namespace LanguageExplorer.Areas
 
 			m_helpProvider = new HelpProvider
 			{
-				HelpNamespace = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").HelpFile
+				HelpNamespace = m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider).HelpFile
 			};
-			m_helpProvider.SetHelpKeyword(this, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").GetHelpString(s_helpTopic));
+			m_helpProvider.SetHelpKeyword(this, m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider).GetHelpString(s_helpTopic));
 			m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			m_helpProvider.SetShowHelp(this, true);
 
@@ -708,7 +708,7 @@ namespace LanguageExplorer.Areas
 			}
 			if (changed)	// only fire the 'big gun' if something has actually changed
 			{
-				m_propertyTable.GetValue<IFwMainWnd>("window").RefreshAllViews();
+				m_propertyTable.GetValue<IFwMainWnd>(FwUtils.window).RefreshAllViews();
 			}
 			DialogResult = DialogResult.OK;
 		}
@@ -931,7 +931,7 @@ namespace LanguageExplorer.Areas
 
 		private void m_helpButton_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), s_helpTopic);
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), s_helpTopic);
 		}
 
 		#endregion

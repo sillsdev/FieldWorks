@@ -41,7 +41,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected new MorphTypeChooser GetChooser(IEnumerable<ObjectLabel> labels)
 		{
 			var sShowAllTypes = StringTable.Table.GetStringWithXPath("ChangeLexemeMorphTypeShowAllTypes", m_ksPath);
-			var x = new MorphTypeChooser(m_persistProvider, labels, m_fieldName, m_obj, m_displayNameProperty, m_flid, sShowAllTypes, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"))
+			var x = new MorphTypeChooser(m_persistProvider, labels, m_fieldName, m_obj, m_displayNameProperty, m_flid, sShowAllTypes, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider))
 			{
 				Cache = m_cache
 			};
@@ -100,7 +100,7 @@ namespace LanguageExplorer.Controls.DetailControls
 								// TODO-Linux: Help is not implemented in Mono
 								if (MessageBox.Show(FindForm(), DetailControlsStrings.ksRootNoComponentsMessage,
 									    DetailControlsStrings.ksRootNoComponentsCaption, MessageBoxButtons.YesNo,
-									    MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, 0, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").HelpFile,
+									    MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, 0, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider).HelpFile,
 									    HelpNavigator.Topic, "/Using_Tools/Lexicon_tools/Lexicon_Edit/change_the_morph_type.htm") != DialogResult.Yes)
 								{
 									return;

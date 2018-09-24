@@ -64,7 +64,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected override void ReportCannotDelete()
 		{
 			var text = CurrentObject is IWfiWordform ? ITextStrings.ksCannotDeleteWordform : ITextStrings.ksCannotDeleteScripture;
-			MessageBox.Show(PropertyTable.GetValue<Form>("window"), text, ITextStrings.ksError, MessageBoxButtons.OK, MessageBoxIcon.Error);
+			MessageBox.Show(PropertyTable.GetValue<Form>(FwUtils.window), text, ITextStrings.ksError, MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
 
 		protected override bool AddItemToList(int hvoItem)
@@ -98,9 +98,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var interestingTextsList = GetInterestingTextList();
 			var interestingTexts = interestingTextsList.InterestingTexts.ToArray();
 
-			using (var dlg = new FilterTextsDialog(PropertyTable.GetValue<IApp>("App"), m_cache, interestingTexts, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+			using (var dlg = new FilterTextsDialog(PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App), m_cache, interestingTexts, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 			{
-				if (dlg.ShowDialog(PropertyTable.GetValue<Form>("window")) != DialogResult.OK)
+				if (dlg.ShowDialog(PropertyTable.GetValue<Form>(FwUtils.window)) != DialogResult.OK)
 				{
 					return true;
 				}
@@ -163,7 +163,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var newText = DoCreateAndInsert(createAndInsertMethodObj);
 
 			// Check to if a genre was assigned to this text
-			// (when selected from the text list: ie a genre w/o a text was sellected)
+			// (when selected from the text list: ie a genre w/o a text was selected)
 			var property = GetCorrespondingPropertyName("DelayedGenreAssignment");
 			var genreList = PropertyTable.GetValue<List<TreeNode>>(property, null);
 			var ownerText = newText.Owner as IText;
@@ -213,7 +213,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					using (var dlg = new ChooseTextWritingSystemDlg())
 					{
-						dlg.Initialize(m_cache, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), wsText);
+						dlg.Initialize(m_cache, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), wsText);
 						dlg.ShowDialog(Form.ActiveForm);
 						wsText = dlg.TextWs;
 					}

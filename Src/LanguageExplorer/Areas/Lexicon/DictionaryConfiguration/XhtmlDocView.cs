@@ -225,7 +225,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			// the current Publication layout or Configuration view.
 			if (!IsObjectVisible(hvoTarget, out xrc))
 			{
-				AreaServices.GiveSimpleWarning(PropertyTable.GetValue<Form>("window"), PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").HelpFile, xrc);
+				AreaServices.GiveSimpleWarning(PropertyTable.GetValue<Form>(FwUtils.window), PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider).HelpFile, xrc);
 			}
 			return false;
 		}
@@ -565,7 +565,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			// 4 is used further down
 			var cache = (LcmCache)tagObjects[5];
 			var activeRecordList = (RecordList)tagObjects[6];
-			var mainWindow = propertyTable.GetValue<IFwMainWnd>("window");
+			var mainWindow = propertyTable.GetValue<IFwMainWnd>(FwUtils.window);
 			ICmObject current = null;
 			if (guid != Guid.Empty && cache != null && cache.ServiceLocator.ObjectRepository.IsValidObjectId(guid))
 			{
@@ -590,7 +590,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			var guid = (Guid)tagObjects[2];
 			using (var dlg = new XmlDiagnosticsDlg(element, guid))
 			{
-				dlg.ShowDialog(propTable.GetValue<IWin32Window>("window"));
+				dlg.ShowDialog(propTable.GetValue<IWin32Window>(FwUtils.window));
 			}
 		}
 

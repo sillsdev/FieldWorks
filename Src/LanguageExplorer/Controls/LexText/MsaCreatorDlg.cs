@@ -81,7 +81,7 @@ namespace LanguageExplorer.Controls.LexText
 				s_helpTopic = "khtpEditGrammaticalFunction";
 				btnOk.Text = LexTextControls.ks_OK;
 			}
-			var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
 			helpProvider.HelpNamespace = helpTopicProvider.HelpFile;
 			helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(s_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
@@ -288,7 +288,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		private void btnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), s_helpTopic);
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), s_helpTopic);
 		}
 
 		#endregion Event handlers

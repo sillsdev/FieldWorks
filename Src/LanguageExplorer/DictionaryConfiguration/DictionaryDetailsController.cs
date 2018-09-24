@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -55,7 +55,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		public DictionaryDetailsController(IDictionaryDetailsView view, IPropertyTable propertyTable)
 		{
 			m_propertyTable = propertyTable;
-			m_cache = propertyTable.GetValue<LcmCache>("cache");
+			m_cache = propertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 			m_styleSheet = FwUtils.StyleSheetFromPropertyTable(propertyTable);
 			LoadStylesLists();
 			View = view;
@@ -888,7 +888,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				var controller = new HeadwordNumbersController(dlg, m_configModel, m_cache);
 				// ReSharper disable once AccessToDisposedClosure - can only be used before the dialog is disposed
 				dlg.RunStylesDialog += (sender, e) => HandleStylesBtn((ComboBox) sender, ((ComboBox)sender).Text);
-				dlg.SetupDialog(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+				dlg.SetupDialog(m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider));
 				dlg.SetStyleSheet = FwUtils.StyleSheetFromPropertyTable(m_propertyTable);
 				if (dlg.ShowDialog(View.TopLevelControl) != DialogResult.OK)
 				{
@@ -909,8 +909,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 			// TODO: Enable after xWorks is merged into Lang Exp.
 			// If the combo is not enabled, don't allow the Styles dialog to change it (pass null instead). FixStyles will ensure a refresh.
 			FwStylesDlg.RunStylesDialogForCombo(combo.Enabled ? combo : null, FixStyles(combo.Enabled),
-				defaultStyle, m_styleSheet, 0, 0, m_cache, View.TopLevelControl, m_propertyTable.GetValue<IApp>("App"),
-				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), new FlexStylesXmlAccessor(m_cache.LanguageProject.LexDbOA).SetPropsToFactorySettings);
+				defaultStyle, m_styleSheet, 0, 0, m_cache, View.TopLevelControl, m_propertyTable.GetValue<IApp>(LanguageExplorerConstants.App),
+				m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), new FlexStylesXmlAccessor(m_cache.LanguageProject.LexDbOA).SetPropsToFactorySettings);
 #endif
 		}
 

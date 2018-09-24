@@ -94,7 +94,7 @@ namespace LanguageExplorer.UtilityTools
 		{
 			try
 			{
-				var cache = m_dlg.PropertyTable.GetValue<LcmCache>("cache");
+				var cache = m_dlg.PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 				m_dlg.ProgressBar.Maximum = cache.LanguageProject.LexDbOA.Entries.Count();
 				m_dlg.ProgressBar.Step=1;
 				var locale = InvokePython("-icu"); //ask the python script for the icu local

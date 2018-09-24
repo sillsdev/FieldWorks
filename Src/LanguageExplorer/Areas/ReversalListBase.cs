@@ -61,7 +61,7 @@ namespace LanguageExplorer.Areas
 				if (stringFinderComparer != null)
 				{
 					var colSpec = ReflectionHelper.GetField(stringFinderComparer.Finder, "m_colSpec") as XElement ?? BrowseViewFormCol;
-					sorter.Comparer = new StringFinderCompare(LayoutFinder.CreateFinder(m_cache, colSpec, fakevc, PropertyTable.GetValue<IApp>("App")), stringFinderComparer.SubComparer);
+					sorter.Comparer = new StringFinderCompare(LayoutFinder.CreateFinder(m_cache, colSpec, fakevc, PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App)), stringFinderComparer.SubComparer);
 				}
 				return true;
 			}
@@ -70,7 +70,7 @@ namespace LanguageExplorer.Areas
 				return false;
 			}
 			// Try to create a sorter based on the current Reversal Index's WritingSystem
-			var newGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
+			var newGuid = RecordListServices.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
 			if (newGuid.Equals(Guid.Empty))
 			{
 				return false;
@@ -81,7 +81,7 @@ namespace LanguageExplorer.Areas
 				return false;
 			}
 			var writingSystem = (CoreWritingSystemDefinition)m_cache.WritingSystemFactory.get_Engine(ri.WritingSystem);
-			Sorter = new GenRecordSorter(new StringFinderCompare(LayoutFinder.CreateFinder(m_cache, BrowseViewFormCol, fakevc, PropertyTable.GetValue<IApp>("App")), new WritingSystemComparer(writingSystem)));
+			Sorter = new GenRecordSorter(new StringFinderCompare(LayoutFinder.CreateFinder(m_cache, BrowseViewFormCol, fakevc, PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App)), new WritingSystemComparer(writingSystem)));
 			return true;
 		}
 
@@ -90,7 +90,7 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		public override void OnPropertyChanged(string name)
 		{
-			var window = PropertyTable.GetValue<IFwMainWnd>("window");
+			var window = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window);
 			if (window != null)
 			{
 #if RANDYTODO
@@ -149,7 +149,7 @@ namespace LanguageExplorer.Areas
 				return;
 			}
 			ChangeOwningObject(newGuid);
-			var guid = ReversalIndexEntryUi.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
+			var guid = RecordListServices.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
 			if (guid.Equals(Guid.Empty) || !guid.Equals(newGuid))
 			{
 				SetReversalIndexGuid(newGuid);
@@ -229,7 +229,7 @@ namespace LanguageExplorer.Areas
 		/// <summary />
 		public virtual void OnDeleteReversalIndex(object argument)
 		{
-			var oldGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
+			var oldGuid = RecordListServices.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
 			if (oldGuid.Equals(Guid.Empty))
 			{
 				return;
@@ -245,10 +245,10 @@ namespace LanguageExplorer.Areas
 		/// <summary />
 		public void DeleteReversalIndex(IReversalIndex ri)
 		{
-			var mainWindow = PropertyTable.GetValue<Form>("window");
+			var mainWindow = PropertyTable.GetValue<Form>(FwUtils.window);
 			using (new WaitCursor(mainWindow))
 			{
-				using (var dlg = new ConfirmDeleteObjectDlg(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+				using (var dlg = new ConfirmDeleteObjectDlg(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 				using (var ui = CmObjectUi.MakeLcmModelUiObject(ri))
 				{
 					ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
@@ -288,7 +288,7 @@ namespace LanguageExplorer.Areas
 			}
 			// Without this, stale data can still display in the BulkEditSenses tool if you
 			// recreate the deleted reversal index.
-			PropertyTable.GetValue<IFwMainWnd>("window").RefreshAllViews();
+			PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).RefreshAllViews();
 		}
 
 		/// <summary>
@@ -322,7 +322,7 @@ namespace LanguageExplorer.Areas
 		{
 			try
 			{
-				ChangeOwningObject(ReversalIndexEntryUi.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid"));
+				ChangeOwningObject(RecordListServices.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid"));
 			}
 			catch
 			{

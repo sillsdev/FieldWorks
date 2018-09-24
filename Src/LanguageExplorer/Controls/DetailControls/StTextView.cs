@@ -59,7 +59,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public void Init(int ws)
 		{
-			Cache = PropertyTable.GetValue<LcmCache>("cache");
+			Cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 			StyleSheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable);
 			m_vc = new StVc("Normal", ws)
 			{

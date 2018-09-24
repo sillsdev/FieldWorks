@@ -234,7 +234,7 @@ namespace LanguageExplorer.LcmUi
 					false,
 					PropertyTable,
 					Publisher,
-					PropertyTable.GetValue<Form>("window"));
+					PropertyTable.GetValue<Form>(FwUtils.window));
 				m_pOSPopupTreeManager.AfterSelect += m_pOSPopupTreeManager_AfterSelect;
 			}
 			m_pOSPopupTreeManager.LoadPopupTree(0);

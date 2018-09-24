@@ -324,7 +324,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					dlg.Multiselect = true;
 
 					var dialogResult = DialogResult.None;
-					var helpProvider = _propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+					var helpProvider = _propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
 					var linkedFilesRootDir = _cache.LangProject.LinkedFilesRootDir;
 					var mediaFactory = _cache.ServiceLocator.GetInstance<ICmMediaFactory>();
 					while (dialogResult != DialogResult.OK && dialogResult != DialogResult.Cancel)
@@ -369,8 +369,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private void Insert_Picture_Clicked(object sender, EventArgs e)
 		{
 			var owningSense = MyDataTree.CurrentSlice.MyCmObject as ILexSense ?? MyDataTree.CurrentSlice.MyCmObject.OwnerOfClass<ILexSense>();
-			var app = _propertyTable.GetValue<IFlexApp>("App");
-			using (var dlg = new PicturePropertiesDialog(_cache, null, _propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, true))
+			var app = _propertyTable.GetValue<IFlexApp>(LanguageExplorerConstants.App);
+			using (var dlg = new PicturePropertiesDialog(_cache, null, _propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), app, true))
 			{
 				if (dlg.Initialize())
 				{

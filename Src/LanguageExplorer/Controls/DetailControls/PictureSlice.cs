@@ -171,8 +171,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		public void showProperties()
 		{
 			var pic = (ICmPicture)MyCmObject;
-			var app = PropertyTable.GetValue<IApp>("App");
-			using (var dlg = new PicturePropertiesDialog(Cache, pic, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, true))
+			var app = PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
+			using (var dlg = new PicturePropertiesDialog(Cache, pic, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), app, true))
 			{
 				if (!dlg.Initialize())
 				{

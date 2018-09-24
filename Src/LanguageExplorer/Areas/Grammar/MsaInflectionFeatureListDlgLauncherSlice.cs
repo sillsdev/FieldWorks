@@ -90,7 +90,7 @@ namespace LanguageExplorer.Areas.Grammar
 			}
 
 			ctrl.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-			ctrl.Initialize(PropertyTable.GetValue<LcmCache>("cache"),
+			ctrl.Initialize(PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache),
 				m_fs,
 				m_flid,
 				"Name",

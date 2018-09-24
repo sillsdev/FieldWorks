@@ -66,7 +66,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 		{
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(OccurrencesOfSelectedUnit, majorFlexComponentParameters.Statusbar, FactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(OccurrencesOfSelectedUnit, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
 			var mainConcordanceContainerParameters = new MultiPaneParameters
 			{

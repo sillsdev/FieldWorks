@@ -2409,7 +2409,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				cache.LanguageProject.PhonologicalDataOA.NaturalClassesOS, "",
 				cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id);
 
-			using (var chooser = new ReallySimpleListChooser(persistenceProvider, labels, "NaturalClass", propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+			using (var chooser = new ReallySimpleListChooser(persistenceProvider, labels, "NaturalClass", propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 			{
 				var sTitle = StringTable.Table.GetString("kstidChooseNaturalClass", "Linguistics/Morphology/NaturalClassChooser");
 				var sDescription = StringTable.Table.GetString("kstidNaturalClassListing", "Linguistics/Morphology/NaturalClassChooser");

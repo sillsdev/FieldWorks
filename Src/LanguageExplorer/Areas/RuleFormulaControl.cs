@@ -427,7 +427,7 @@ namespace LanguageExplorer.Areas
 
 			var labels = ObjectLabel.CreateObjectLabels(m_cache, candidates.OrderBy(e => e.ShortName), null, displayWs);
 
-			using (var chooser = new SimpleListChooser(m_persistProvider, labels, m_fieldName, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+			using (var chooser = new SimpleListChooser(m_persistProvider, labels, m_fieldName, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 			{
 				chooser.Cache = m_cache;
 				chooser.TextParamHvo = m_cache.LangProject.PhonologicalDataOA.Hvo;
@@ -589,7 +589,7 @@ namespace LanguageExplorer.Areas
 
 			var labels = ObjectLabel.CreateObjectLabels(m_cache, candidates);
 
-			using (var chooser = new SimpleListChooser(m_persistProvider, labels, fieldName, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+			using (var chooser = new SimpleListChooser(m_persistProvider, labels, fieldName, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 			{
 				chooser.Cache = m_cache;
 				chooser.TextParamHvo = m_cache.LangProject.PhonologicalDataOA.Hvo;

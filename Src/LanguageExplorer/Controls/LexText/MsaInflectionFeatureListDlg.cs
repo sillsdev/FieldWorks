@@ -130,7 +130,7 @@ namespace LanguageExplorer.Controls.LexText
 				DesktopBounds = rect;
 				StartPosition = FormStartPosition.Manual;
 			}
-			var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
 			if (helpTopicProvider != null) // Will be null when running tests
 			{
 				helpProvider = new HelpProvider {HelpNamespace = helpTopicProvider.HelpFile};
@@ -680,7 +680,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		private void m_bnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_helpTopic);
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), m_helpTopic);
 		}
 	}
 }

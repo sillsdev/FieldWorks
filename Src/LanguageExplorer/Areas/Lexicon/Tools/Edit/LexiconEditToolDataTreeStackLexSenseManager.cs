@@ -49,7 +49,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			Guard.AgainstNull(recordList, nameof(recordList));
 
 			_cache = majorFlexComponentParameters.LcmCache;
-			_statusBar = majorFlexComponentParameters.Statusbar;
+			_statusBar = majorFlexComponentParameters.StatusBar;
 			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
 			MyRecordList = recordList;
 			_mainWnd = majorFlexComponentParameters.MainWindow;

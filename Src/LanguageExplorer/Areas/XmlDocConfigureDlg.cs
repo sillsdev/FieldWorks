@@ -1126,7 +1126,7 @@ namespace LanguageExplorer.Areas
 		{
 			using (new WaitCursor(this))
 			{
-				LayoutCache.InitializePartInventories(null, m_propertyTable.GetValue<IApp>("App").ApplicationName, Cache.ProjectId.ProjectFolder);
+				LayoutCache.InitializePartInventories(null, m_propertyTable.GetValue<IApp>(LanguageExplorerConstants.App).ApplicationName, Cache.ProjectId.ProjectFolder);
 				var layouts = Inventory.GetInventory("layouts", null);
 				var parts = Inventory.GetInventory("parts", null);
 				//preserve layouts which are marked as copies
@@ -1186,7 +1186,7 @@ namespace LanguageExplorer.Areas
 
 		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_helpTopicID);
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), m_helpTopicID);
 		}
 
 		/// <summary>
@@ -1228,8 +1228,8 @@ namespace LanguageExplorer.Areas
 #else
 				0, 0,
 #endif
-				Cache, this, m_propertyTable.GetValue<IApp>("App"),
-				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
+				Cache, this, m_propertyTable.GetValue<IApp>(LanguageExplorerConstants.App),
+				m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider),
 				(new FlexStylesXmlAccessor(Cache.LanguageProject.LexDbOA)).SetPropsToFactorySettings);
 		}
 
@@ -3408,7 +3408,7 @@ namespace LanguageExplorer.Areas
 		{
 			using (var dlg = new ConfigureHomographDlg())
 			{
-				var flexApp = m_mainWindow.PropertyTable.GetValue<IFlexApp>("App");
+				var flexApp = m_mainWindow.PropertyTable.GetValue<IFlexApp>(LanguageExplorerConstants.App);
 				dlg.SetupDialog(m_mainWindow.Cache.ServiceLocator.GetInstance<HomographConfiguration>(), m_mainWindow.Cache, FwUtils.StyleSheetFromPropertyTable(m_mainWindow.PropertyTable), flexApp, flexApp);
 				dlg.StartPosition = FormStartPosition.CenterScreen;
 				MasterRefreshRequired = dlg.ShowDialog((Form)m_mainWindow) == DialogResult.OK;

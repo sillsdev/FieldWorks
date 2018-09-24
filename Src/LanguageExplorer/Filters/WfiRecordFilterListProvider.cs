@@ -33,7 +33,7 @@ namespace LanguageExplorer.Filters
 		{
 			base.InitializeFlexComponent(flexComponentParameters);
 
-			m_cache = PropertyTable.GetValue<LcmCache>("cache");
+			m_cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 			ReLoad();
 		}
 

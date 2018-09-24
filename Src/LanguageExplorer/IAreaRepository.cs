@@ -37,7 +37,7 @@ namespace LanguageExplorer
 		/// Notebook
 		/// Lists
 		/// </summary>
-		/// <returns>The areas in correct order for display in sidbar.</returns>
-		IList<IArea> AllAreasInOrder { get; }
+		/// <returns>The areas in correct order for display in sidebar.</returns>
+		IReadOnlyList<IArea> AllAreasInOrder { get; }
 	}
 }

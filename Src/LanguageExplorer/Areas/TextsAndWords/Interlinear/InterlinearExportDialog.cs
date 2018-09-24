@@ -103,7 +103,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				textsToChooseFrom = textsToChooseFrom.Where(text => !ScriptureServices.ScriptureIsResponsibleFor(text)).ToList();
 			}
 			var interestingTexts = textsToChooseFrom.ToArray();
-			using (var dlg = new FilterTextsDialog(PropertyTable.GetValue<IApp>("App"), m_cache, interestingTexts, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+			using (var dlg = new FilterTextsDialog(PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App), m_cache, interestingTexts, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 			{
 				// LT-12181: Was 'PruneToSelectedTexts(text) and most others were deleted.
 				// We want 'PruneToInterestingTextsAndSelect(interestingTexts, selectedText)'

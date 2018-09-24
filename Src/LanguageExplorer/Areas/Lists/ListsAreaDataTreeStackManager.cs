@@ -549,7 +549,7 @@ namespace LanguageExplorer.Areas.Lists
 					labels.Add(ObjectLabel.CreateObjectLabelOnly(cache, pos, "ShortNameTSS", "best analysis"));
 				}
 			}
-			using (var dlg = new SimpleListChooser(cache, null, _propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), labels, null, AreaResources.Category_to_move_to, null))
+			using (var dlg = new SimpleListChooser(cache, null, _propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), labels, null, AreaResources.Category_to_move_to, null))
 			{
 				dlg.SetHelpTopic("khtpChoose-CategoryToMoveTo");
 				if (dlg.ShowDialog() == DialogResult.OK)
@@ -581,7 +581,7 @@ namespace LanguageExplorer.Areas.Lists
 			var currentPartOfSpeech = (IPartOfSpeech)slice.MyCmObject;
 			var cache = MyDataTree.Cache;
 			var labels = MergeOrMoveCandidates(currentPartOfSpeech).Select(pos => ObjectLabel.CreateObjectLabelOnly(cache, pos, "ShortNameTSS", "best analysis")).ToList();
-			using (var dlg = new SimpleListChooser(cache, null, _propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), labels, null, AreaResources.Category_to_merge_into, null))
+			using (var dlg = new SimpleListChooser(cache, null, _propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), labels, null, AreaResources.Category_to_merge_into, null))
 			{
 				dlg.SetHelpTopic("khtpMergeCategories");
 				if (dlg.ShowDialog() == DialogResult.OK)

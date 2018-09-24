@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.Lexicon;
@@ -16,6 +17,7 @@ using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
+using SIL.Xml;
 
 namespace LanguageExplorer.Areas
 {
@@ -110,7 +112,7 @@ namespace LanguageExplorer.Areas
 			MyRecordList = null;
 			_cache = null;
 
-			_isDisposed = true;
+			 _isDisposed = true;
 		}
 
 		#endregion
@@ -129,9 +131,12 @@ namespace LanguageExplorer.Areas
 
 			/*
 		      <item command="CmdEntryJumpToDefault" />
+			    <command id="CmdEntryJumpToDefault" label="Show Entry in Lexicon" message="JumpToTool">
+			      <parameters tool="lexiconEdit" className="LexEntry" />
+			    </command>
 			*/
 			var wantSeparator = false;
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, LexEntryTags.kClassName, AreaResources.ksShowEntryInLexicon, AreaServices.LexiconEditMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator);
+			ConditionallyAddJumpToToolMenuItem_Overload_Also_Rans(contextMenuStrip, menuItems, slice, AreaServices.LexiconEditMachineName, ref wantSeparator, LexEntryTags.kClassName, AreaResources.ksShowEntryInLexicon);
 
 			/*
 		      <item command="CmdWordformJumpToAnalyses" />
@@ -139,9 +144,9 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="Analyses" className="WfiWordform" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, WfiWordformTags.kClassName, AreaResources.Show_in_Word_Analyses, AreaServices.AnalysesMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator);
+			ConditionallyAddJumpToToolMenuItem_Overload_Also_Rans(contextMenuStrip, menuItems, slice, AreaServices.AnalysesMachineName, ref wantSeparator, WfiWordformTags.kClassName, AreaResources.Show_in_Word_Analyses);
 
-			// <menu label="Show Concordance of">
+	// <menu label="Show Concordance of">
 			// NB: Use the returned 'menu' to hold its sub-menus.
 			var menu = ToolStripMenuItemFactory.CreateBaseMenuForToolStripMenuItem(contextMenuStrip, AreaResources.Show_Concordance_of);
 
@@ -151,27 +156,39 @@ namespace LanguageExplorer.Areas
 					      <parameters tool="concordance" className="WfiWordform" />
 					    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(menu, menuItems, slice, WfiWordformTags.kClassName, AreaResources.ksFldWordform, AreaServices.ConcordanceMachineName, slice.MyCmObject.Guid, ref wantSeparator);
+			ConditionallyAddJumpToToolMenuItem_Overload_Show_In_Concordance(menu, menuItems, slice, ref wantSeparator, AreaResources.ksFldWordform);
 
 			/*
 		        <item command="CmdAnalysisJumpToConcordance" label="Analysis" />
+				    <command id="CmdAnalysisJumpToConcordance" label="Show Analysis in Concordance" message="JumpToTool">
+				      <parameters tool="concordance" className="WfiAnalysis" />
+				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(menu, menuItems, slice, WfiAnalysisTags.kClassName, AreaResources.Analysis, AreaServices.ConcordanceMachineName, slice.MyCmObject.Guid, ref wantSeparator);
+			ConditionallyAddJumpToToolMenuItem_Overload_Show_In_Concordance(menu, menuItems, slice, ref wantSeparator, AreaResources.Analysis);
 
 			/*
 		        <item command="CmdMorphJumpToConcordance" label="Morph" />
+				    <command id="CmdMorphJumpToConcordance" label="Show Morph in Concordance" message="JumpToTool">
+				      <parameters tool="concordance" className="MoForm" />
+				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(menu, menuItems, slice, MoFormTags.kClassName, AreaResources.Morph, AreaServices.ConcordanceMachineName, slice.MyCmObject.Guid, ref wantSeparator);
+			ConditionallyAddJumpToToolMenuItem_Overload_Show_In_Concordance(menu, menuItems, slice, ref wantSeparator, AreaResources.Morph);
 
 			/*
 		        <item command="CmdEntryJumpToConcordance" label="Entry" />
+				    <command id="CmdEntryJumpToConcordance" label="Show Entry in Concordance" message="JumpToTool">
+				      <parameters tool="concordance" className="LexEntry" />
+				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(menu, menuItems, slice, LexEntryTags.kClassName, AreaResources.Entry, AreaServices.ConcordanceMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator);
+			ConditionallyAddJumpToToolMenuItem_Overload_Show_In_Concordance(menu, menuItems, slice, ref wantSeparator, AreaResources.Entry);
 
 			/*
 		        <item command="CmdSenseJumpToConcordance" label="Sense" />
+				    <command id="CmdSenseJumpToConcordance" label="Show Sense in Concordance" message="JumpToTool">
+				      <parameters tool="concordance" className="LexSense" />
+				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(menu, menuItems, slice, LexSenseTags.kClassName, AreaResources.Sense, AreaServices.ConcordanceMachineName, slice.MyCmObject.Guid, ref wantSeparator);
+			ConditionallyAddJumpToToolMenuItem_Overload_Show_In_Concordance(menu, menuItems, slice, ref wantSeparator, AreaResources.Sense);
 
 			/*
 		        <item command="CmdLexGramInfoJumpToConcordance" />
@@ -179,7 +196,7 @@ namespace LanguageExplorer.Areas
 					      <parameters tool="concordance" concordOn="PartOfSpeechGramInfo" className="PartOfSpeechGramInfo" ownerClass="LangProject" ownerField="PartsOfSpeech" />
 					    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(menu, menuItems, slice, AreaResources.Lex_Gram_Info, AreaServices.PartOfSpeechGramInfo, ref wantSeparator);
+			ConditionallyAddJumpToToolMenuItem_Overload_Show_In_Concordance(menu, menuItems, slice, ref wantSeparator, AreaResources.Lex_Gram_Info, AreaServices.PartOfSpeechGramInfo);
 
 			/*
 		        <item command="CmdWordGlossJumpToConcordance" label="Word Gloss" />
@@ -187,7 +204,7 @@ namespace LanguageExplorer.Areas
 					      <parameters tool="concordance" className="WfiGloss" />
 					    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(menu, menuItems, slice, WfiGlossTags.kClassName, AreaResources.Show_Word_Category_in_Concordance, AreaServices.ConcordanceMachineName, slice.MyCmObject.Guid, ref wantSeparator);
+			ConditionallyAddJumpToToolMenuItem_Overload_Show_In_Concordance(menu, menuItems, slice, ref wantSeparator, AreaResources.Word_Gloss);
 
 			/*
 		        <item command="CmdWordPOSJumpToConcordance" label="Word Category" />
@@ -195,8 +212,8 @@ namespace LanguageExplorer.Areas
 					      <parameters tool="concordance" concordOn="WordPartOfSpeech" className="WordPartOfSpeech" ownerClass="LangProject" ownerField="PartsOfSpeech" />
 					    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(menu, menuItems, slice, AreaResources.Word_Category, AreaServices.WordPartOfSpeech, ref wantSeparator);
-			// </menu>  End of "Show Concordance of" menu.
+			ConditionallyAddJumpToToolMenuItem_Overload_Show_In_Concordance(menu, menuItems, slice, ref wantSeparator, AreaResources.Word_Category, AreaServices.WordPartOfSpeech);
+	// </menu>  End of "Show Concordance of" menu.
 
 			/*
 		      <item command="CmdPOSJumpToDefault" />
@@ -204,7 +221,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="posEdit" className="PartOfSpeech" ownerClass="LangProject" ownerField="PartsOfSpeech" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, PartOfSpeechTags.kClassName, AreaResources.Show_in_Category_Edit, AreaServices.PosEditMachineName, slice.MyCmObject.Guid, ref wantSeparator);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.PartsOfSpeechOA, slice, AreaServices.PosEditMachineName, ref wantSeparator, PartOfSpeechTags.kClassName, AreaResources.Show_in_Category_Edit);
 
 			/*
 		      <item command="CmdWordPOSJumpToDefault" />
@@ -212,7 +229,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="posEdit" className="WordPartOfSpeech" ownerClass="LangProject" ownerField="PartsOfSpeech" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, AreaResources.Show_Word_Category_in_Category_Edit, AreaServices.WordPartOfSpeech, string.Empty);
+			ConditionallyAddJumpToToolMenuItem_Overload_FromSandboxBase(contextMenuStrip, menuItems, AreaServices.WordPartOfSpeech, AreaResources.Show_Word_Category_in_Category_Edit);
 
 			/*
 		      <item command="CmdEndoCompoundRuleJumpToDefault" />
@@ -220,7 +237,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="compoundRuleAdvancedEdit" className="MoEndoCompound" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, MoEndoCompoundTags.kClassName, AreaResources.Show_in_Compound_Rules_Editor, AreaServices.CompoundRuleAdvancedEditMachineName, slice.MyCmObject.Guid, ref wantSeparator);
+			ConditionallyAddJumpToToolMenuItem_Overload_Also_Rans(contextMenuStrip, menuItems, slice, AreaServices.CompoundRuleAdvancedEditMachineName, ref wantSeparator, MoEndoCompoundTags.kClassName, AreaResources.Show_in_Compound_Rules_Editor);
 
 			/*
 		      <item command="CmdExoCompoundRuleJumpToDefault" />
@@ -228,7 +245,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="compoundRuleAdvancedEdit" className="MoExoCompound" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, MoExoCompoundTags.kClassName, AreaResources.Show_in_Compound_Rules_Editor, AreaServices.CompoundRuleAdvancedEditMachineName, slice.MyCmObject.Guid, ref wantSeparator);
+			ConditionallyAddJumpToToolMenuItem_Overload_Also_Rans(contextMenuStrip, menuItems, slice, AreaServices.CompoundRuleAdvancedEditMachineName, ref wantSeparator, MoExoCompoundTags.kClassName, AreaResources.Show_in_Compound_Rules_Editor);
 
 			/*
 		      <item command="CmdPhonemeJumpToDefault" />
@@ -236,7 +253,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="phonemeEdit" className="PhPhoneme" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, PhPhonemeTags.kClassName, AreaResources.Show_in_Phonemes_Editor, AreaServices.PhonemeEditMachineName, slice.MyCmObject.Guid, ref wantSeparator);
+			ConditionallyAddJumpToToolMenuItem_Overload_Also_Rans(contextMenuStrip, menuItems, slice, AreaServices.PhonemeEditMachineName, ref wantSeparator, PhPhonemeTags.kClassName, AreaResources.Show_in_Phonemes_Editor);
 
 			/*
 		      <item command="CmdNaturalClassJumpToDefault" />
@@ -244,7 +261,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="naturalClassedit" className="PhNCSegments" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, PhNCSegmentsTags.kClassName, AreaResources.Show_in_Natural_Classes_Editor, AreaServices.CompoundRuleAdvancedEditMachineName, slice.MyCmObject.Guid, ref wantSeparator);
+			ConditionallyAddJumpToToolMenuItem_Overload_Also_Rans(contextMenuStrip, menuItems, slice, AreaServices.CompoundRuleAdvancedEditMachineName, ref wantSeparator, PhNCSegmentsTags.kClassName, AreaResources.Show_in_Natural_Classes_Editor);
 
 			/*
 		      <item command="CmdEnvironmentsJumpToDefault" />
@@ -252,7 +269,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="EnvironmentEdit" className="PhEnvironment" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, PhEnvironmentTags.kClassName, AreaResources.Show_in_Environments_Editor, AreaServices.EnvironmentEditMachineName, slice.MyCmObject.Guid, ref wantSeparator);
+			ConditionallyAddJumpToToolMenuItem_Overload_Also_Rans(contextMenuStrip, menuItems, slice, AreaServices.EnvironmentEditMachineName, ref wantSeparator, PhEnvironmentTags.kClassName, AreaResources.Show_in_Environments_Editor);
 
 			var currentObject = slice.MyCmObject;
 			if (slice.MyCmObject.CanDelete && (currentObject is IWfiMorphBundle || currentObject is IWfiAnalysis ))
@@ -305,7 +322,7 @@ namespace LanguageExplorer.Areas
 			};
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(42);
 			/*
-		    <!-- The following commands are involked/displayed on a right click on a slice on a Possibility list item.
+		    <!-- The following commands are invoked/displayed on a right click on a slice on a Possibility list item.
 
 			 In the C# code see the following  classes (ReferenceBaseUi and ReferenceCollectionUi) where ContextMenuId returns  "mnuReferenceChoices".
 
@@ -313,7 +330,7 @@ namespace LanguageExplorer.Areas
 			 See how the command has the following parameters
 				 className="CmAnthroItem" ownerClass="LangProject" ownerField="AnthroList"
 			 These parameters must be used to determine that this command is only shown on slices which contain
-			 Anthropology Categories.  The messsage is the command that is executed.-->
+			 Anthropology Categories.  The message is the command that is executed.-->
 			*/
 
 			/*
@@ -323,7 +340,7 @@ namespace LanguageExplorer.Areas
 				    </command>
 			*/
 			var wantSeparator = false;
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, LexEntryTags.kClassName, AreaResources.ksShowEntryInLexicon, AreaServices.LexiconEditMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator);
+			ConditionallyAddJumpToToolMenuItem_Overload_Also_Rans(contextMenuStrip, menuItems, slice, AreaServices.LexiconEditMachineName, ref wantSeparator, LexEntryTags.kClassName, AreaResources.ksShowEntryInLexicon);
 
 			/*
 		      <item command="CmdRecordJumpToDefault" />
@@ -331,7 +348,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="notebookEdit" className="RnGenericRec" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, RnGenericRecTags.kClassName, AreaResources.Show_Record_in_Notebook, AreaServices.NotebookEditToolMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator);
+			ConditionallyAddJumpToToolMenuItem_Overload_Also_Rans(contextMenuStrip, menuItems, slice, AreaServices.NotebookEditToolMachineName, ref wantSeparator, RnGenericRecTags.kClassName, AreaResources.Show_Record_in_Notebook);
 
 			/*
 		      <item command="CmdAnalysisJumpToConcordance" />
@@ -339,7 +356,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="concordance" className="WfiAnalysis" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, WfiAnalysisTags.kClassName, AreaResources.Show_Analysis_in_Concordance, AreaServices.ConcordanceMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator);
+			ConditionallyAddJumpToToolMenuItem_Overload_Also_Rans(contextMenuStrip, menuItems, slice, AreaServices.ConcordanceMachineName, ref wantSeparator, WfiAnalysisTags.kClassName, AreaResources.Show_Analysis_in_Concordance);
 
 			/*
 		      <item label="-" translate="do not translate" />
@@ -353,12 +370,15 @@ namespace LanguageExplorer.Areas
 				  <parameters tool="concordance" className="MoForm" />
 				</command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, MoFormTags.kClassName, AreaResources.Show_Lexeme_Form_in_Concordance, AreaServices.ConcordanceMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Also_Rans(contextMenuStrip, menuItems, slice, AreaServices.ConcordanceMachineName, ref wantSeparator, MoFormTags.kClassName, AreaResources.Show_Lexeme_Form_in_Concordance, separatorInsertLocation);
 
 			/*
 		      <item command="CmdEntryJumpToConcordance" />
+			    <command id="CmdEntryJumpToConcordance" label="Show Entry in Concordance" message="JumpToTool">
+			      <parameters tool="concordance" className="LexEntry" />
+			    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, LexEntryTags.kClassName, AreaResources.Show_Entry_In_Concordance, AreaServices.ConcordanceMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Also_Rans(contextMenuStrip, menuItems, slice, AreaServices.ConcordanceMachineName, ref wantSeparator, LexEntryTags.kClassName, AreaResources.Show_Entry_In_Concordance, separatorInsertLocation);
 
 			/*
 		      <item command="CmdSenseJumpToConcordance" />
@@ -366,7 +386,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="concordance" className="LexSense" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, LexSenseTags.kClassName, AreaResources.Show_Sense_in_Concordance, AreaServices.ConcordanceMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Also_Rans(contextMenuStrip, menuItems, slice, AreaServices.ConcordanceMachineName, ref wantSeparator, LexSenseTags.kClassName, AreaResources.Show_Sense_in_Concordance, separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToAcademicDomainList" />
@@ -374,7 +394,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="domainTypeEdit" className="CmPossibility" ownerClass="LexDb" ownerField="DomainTypes" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, CmPossibilityTags.kClassName, string.Format(AreaResources.Show_in_0_list, _cache.LanguageProject.LexDbOA.DomainTypesOA.ShortName), AreaServices.DomainTypeEditMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.LexDbOA.DomainTypesOA, slice, AreaServices.DomainTypeEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToAnthroList" />
@@ -382,15 +402,15 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="anthroEdit" className="CmAnthroItem" ownerClass="LangProject" ownerField="AnthroList" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, CmAnthroItemTags.kClassName, string.Format(AreaResources.Show_in_0_list, _cache.LanguageProject.AnthroListOA.ShortName), AreaServices.DomainTypeEditMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.AnthroListOA, slice, AreaServices.AnthroEditMachineName, ref wantSeparator, CmAnthroItemTags.kClassName, separatorInsertLocation: separatorInsertLocation);
 
 			ToolStripMenuItem menu;
-			if (MyDataTree.CanJumpToToolAndFilterAnthroItem)
+			if (CanJumpToToolAndFilterAnthroItem)
 			{
 				/*
 				  <item command="CmdJumpToLexiconEditWithFilter" />
 						<command id="CmdJumpToLexiconEditWithFilter" label="Filter for Lexical Entries with this category" message="JumpToLexiconEditFilterAnthroItems">
-						  <parameters tool="lexiconEdit" className="CmAnthroItem" ownerClass="LangProject" ownerField="AnthroList" />
+						  <parameters tool=c className="CmAnthroItem" ownerClass="LangProject" ownerField="AnthroList" />
 						</command>
 				*/
 				if (wantSeparator)
@@ -398,8 +418,11 @@ namespace LanguageExplorer.Areas
 					ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip, separatorInsertLocation);
 					wantSeparator = false;
 				}
-				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MyDataTree.JumpToToolAndFilterAnthroItem, AreaResources.Filter_for_Lexical_Entries_with_this_category);
-				menu.Tag = AreaServices.LexiconEditMachineName;
+				if (_currentTool.MachineName != AreaServices.LexiconEditMachineName)
+				{
+					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, JumpToToolAndFilterAnthroItem, AreaResources.Filter_for_Lexical_Entries_with_this_category);
+					menu.Tag = AreaServices.LexiconEditMachineName;
+				}
 
 				/*
 				  <item command="CmdJumpToNotebookEditWithFilter" />
@@ -407,8 +430,11 @@ namespace LanguageExplorer.Areas
 						  <parameters tool="notebookEdit" className="CmAnthroItem" ownerClass="LangProject" ownerField="AnthroList" />
 						</command>
 				*/
-				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MyDataTree.JumpToToolAndFilterAnthroItem, AreaResources.Filter_for_Notebook_Records_with_this_category);
-				menu.Tag = AreaServices.NotebookEditToolMachineName;
+				if (_currentTool.MachineName != AreaServices.NotebookEditToolMachineName)
+				{
+					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, JumpToToolAndFilterAnthroItem, AreaResources.Filter_for_Notebook_Records_with_this_category);
+					menu.Tag = AreaServices.NotebookEditToolMachineName;
+				}
 			}
 
 			/*
@@ -417,7 +443,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="confidenceEdit" className="CmPossibility" ownerClass="LangProject" ownerField="ConfidenceLevels" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, CmPossibilityTags.kClassName, string.Format(AreaResources.Show_in_0_list, _cache.LanguageProject.ConfidenceLevelsOA.ShortName), AreaServices.DomainTypeEditMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.ConfidenceLevelsOA, slice, AreaServices.ConfidenceEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToDialectLabelsList" />
@@ -425,7 +451,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="dialectsListEdit" className="CmPossibility" ownerClass="LexDb" ownerField="DialectLabels" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, CmPossibilityTags.kClassName, string.Format(AreaResources.Show_in_0_list, _cache.LanguageProject.LexDbOA.DialectLabelsOA.ShortName), AreaServices.DialectsListEditMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.LexDbOA.DialectLabelsOA, slice, AreaServices.DialectsListEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToDiscChartMarkerList" />
@@ -433,7 +459,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="chartmarkEdit" className="CmPossibility" ownerClass="DsDiscourseData" ownerField="ChartMarkers" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, CmPossibilityTags.kClassName, string.Format(AreaResources.Show_in_0_list, _cache.LanguageProject.DiscourseDataOA.ChartMarkersOA.ShortName), AreaServices.ChartmarkEditMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.DiscourseDataOA.ChartMarkersOA, slice, AreaServices.ChartmarkEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToDiscChartTemplateList" />
@@ -441,7 +467,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="charttempEdit" className="CmPossibility" ownerClass="DsDiscourseData" ownerField="ConstChartTempl" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, CmPossibilityTags.kClassName, string.Format(AreaResources.Show_in_0_list, _cache.LanguageProject.DiscourseDataOA.ChartMarkersOA.ShortName), AreaServices.ChartmarkEditMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.DiscourseDataOA.ConstChartTemplOA, slice, AreaServices.CharttempEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToEducationList" />
@@ -449,7 +475,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="educationEdit" className="CmPossibility" ownerClass="LangProject" ownerField="Education" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, CmPossibilityTags.kClassName, string.Format(AreaResources.Show_in_0_list, _cache.LanguageProject.EducationOA.ShortName), AreaServices.EducationEditMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.EducationOA, slice, AreaServices.EducationEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToRoleList" />
@@ -457,7 +483,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="roleEdit" className="CmPossibility" ownerClass="LangProject" ownerField="Roles" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, CmPossibilityTags.kClassName, string.Format(AreaResources.Show_in_0_list, _cache.LanguageProject.RolesOA.ShortName), AreaServices.RoleEditMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.RolesOA, slice, AreaServices.RoleEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToExtNoteTypeList" />
@@ -465,7 +491,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="extNoteTypeEdit" className="CmPossibility" ownerClass="LexDb" ownerField="ExtendedNoteTypes" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, CmPossibilityTags.kClassName, string.Format(AreaResources.Show_in_0_list, _cache.LanguageProject.LexDbOA.ExtendedNoteTypesOA.ShortName), AreaServices.ExtNoteTypeEditMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.LexDbOA.ExtendedNoteTypesOA, slice, AreaServices.ExtNoteTypeEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToComplexEntryTypeList" />
@@ -473,7 +499,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="complexEntryTypeEdit" className="LexEntryType" ownerClass="LexDb" ownerField="ComplexEntryTypes" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, LexEntryTypeTags.kClassName, AreaResources.Show_in_Complex_Form_Types_list, AreaServices.ComplexEntryTypeEditMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.LexDbOA.ComplexEntryTypesOA, slice, AreaServices.ComplexEntryTypeEditMachineName, ref wantSeparator, LexEntryTypeTags.kClassName, AreaResources.Show_in_Complex_Form_Types_list, separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToVariantEntryTypeList" />
@@ -481,7 +507,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="variantEntryTypeEdit" className="LexEntryType" ownerClass="LexDb" ownerField="VariantEntryTypes" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, LexEntryTypeTags.kClassName, AreaResources.Show_in_Variant_Types_list, AreaServices.VariantEntryTypeEditMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.LexDbOA.VariantEntryTypesOA, slice, AreaServices.VariantEntryTypeEditMachineName, ref wantSeparator, LexEntryTypeTags.kClassName, AreaResources.Show_in_Variant_Types_list, separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToTextMarkupTagsList" />
@@ -489,7 +515,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="textMarkupTagsEdit" className="CmPossibility" ownerClass="LangProject" ownerField="TextMarkupTags" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, CmPossibilityTags.kClassName, string.Format(AreaResources.Show_in_0_list, _cache.LanguageProject.TextMarkupTagsOA.ShortName), AreaServices.TextMarkupTagsEditMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.TextMarkupTagsOA, slice, AreaServices.TextMarkupTagsEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToLexRefTypeList" />
@@ -497,7 +523,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="lexRefEdit" className="LexRefType" ownerClass="LexDb" ownerField="References" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, LexRefTypeTags.kClassName, string.Format(AreaResources.Show_in_0_list, _cache.LanguageProject.LexDbOA.ReferencesOA.ShortName), AreaServices.LexRefEditMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.LexDbOA.ReferencesOA, slice, AreaServices.LexRefEditMachineName, ref wantSeparator, LexRefTypeTags.kClassName, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToLanguagesList" />
@@ -505,7 +531,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="languagesListEdit" className="CmPossibility" ownerClass="LexDb" ownerField="Languages" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, CmPossibilityTags.kClassName, string.Format(AreaResources.Show_in_0_list, _cache.LanguageProject.LexDbOA.LanguagesOA.ShortName), AreaServices.LanguagesListEditMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.LexDbOA.LanguagesOA, slice, AreaServices.LanguagesListEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToLocationList" />
@@ -513,7 +539,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="locationsEdit" className="CmLocation" ownerClass="LangProject" ownerField="Locations" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, CmLocationTags.kClassName, string.Format(AreaResources.Show_in_0_list, _cache.LanguageProject.LocationsOA.ShortName), AreaServices.LocationsEditMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.LocationsOA, slice, AreaServices.LocationsEditMachineName, ref wantSeparator, CmLocationTags.kClassName, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToPublicationList" />
@@ -521,7 +547,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="publicationsEdit" className="CmPossibility" ownerClass="LexDb" ownerField="PublicationTypes" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, CmPossibilityTags.kClassName, string.Format(AreaResources.Show_in_0_list, _cache.LanguageProject.LexDbOA.PublicationTypesOA.ShortName), AreaServices.PublicationsEditMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.LexDbOA.PublicationTypesOA, slice, AreaServices.PublicationsEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToMorphTypeList" />
@@ -529,7 +555,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="morphTypeEdit" className="MoMorphType" ownerClass="LexDb" ownerField="MorphTypes" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, MoMorphTypeTags.kClassName, AreaResources.Show_in_Morpheme_Types_list, AreaServices.MorphTypeEditMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.LexDbOA.MorphTypesOA, slice, AreaServices.MorphTypeEditMachineName, ref wantSeparator, MoMorphTypeTags.kClassName, AreaResources.Show_in_Morpheme_Types_list, separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToPeopleList" />
@@ -537,7 +563,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="peopleEdit" className="CmPerson" ownerClass="LangProject" ownerField="People" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, CmPersonTags.kClassName, string.Format(AreaResources.Show_in_0_list, _cache.LanguageProject.PeopleOA.ShortName), AreaServices.PeopleEditMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.PeopleOA, slice, AreaServices.PeopleEditMachineName, ref wantSeparator, CmPersonTags.kClassName, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToPositionList" />
@@ -545,7 +571,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="positionsEdit" className="CmPossibility" ownerClass="LangProject" ownerField="Positions" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, CmPossibilityTags.kClassName, string.Format(AreaResources.Show_in_0_list, _cache.LanguageProject.PositionsOA.ShortName), AreaServices.PositionsEditMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.PositionsOA, slice, AreaServices.PositionsEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToRestrictionsList" />
@@ -553,7 +579,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="restrictionsEdit" className="CmPossibility" ownerClass="LangProject" ownerField="Restrictions" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, CmPossibilityTags.kClassName, string.Format(AreaResources.Show_in_0_list, _cache.LanguageProject.RestrictionsOA.ShortName), AreaServices.RestrictionsEditMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.RestrictionsOA, slice, AreaServices.RestrictionsEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToSemanticDomainList" />
@@ -561,6 +587,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="semanticDomainEdit" className="CmSemanticDomain" ownerClass="LangProject" ownerField="SemanticDomainList" />
 				    </command>
 			*/
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.SemanticDomainListOA, slice, AreaServices.SemanticDomainEditMachineName, ref wantSeparator, CmSemanticDomainTags.kClassName, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToGenreList" />
@@ -568,7 +595,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="genresEdit" className="CmPossibility" ownerClass="LangProject" ownerField="GenreList" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, CmPossibilityTags.kClassName, string.Format(AreaResources.Show_in_0_list, _cache.LanguageProject.GenreListOA.ShortName), AreaServices.GenresEditMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.GenreListOA, slice, AreaServices.GenresEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToSenseTypeList" />
@@ -576,7 +603,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="senseTypeEdit" className="CmPossibility" ownerClass="LexDb" ownerField="SenseTypes" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, CmPossibilityTags.kClassName, string.Format(AreaResources.Show_in_0_list, _cache.LanguageProject.LexDbOA.SenseTypesOA.ShortName), AreaServices.SenseTypeEditMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.LexDbOA.SenseTypesOA, slice, AreaServices.SenseTypeEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToStatusList" />
@@ -584,7 +611,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="statusEdit" className="CmPossibility" ownerClass="LangProject" ownerField="Status" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, CmPossibilityTags.kClassName, string.Format(AreaResources.Show_in_0_list, _cache.LanguageProject.StatusOA.ShortName), AreaServices.StatusEditMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.StatusOA, slice, AreaServices.StatusEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToTranslationTypeList" />
@@ -592,7 +619,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="translationTypeEdit" className="CmPossibility" ownerClass="LangProject" ownerField="TranslationTags" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, CmPossibilityTags.kClassName, string.Format(AreaResources.Show_in_0_list, _cache.LanguageProject.TranslationTagsOA.ShortName), AreaServices.TranslationTypeEditMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.TranslationTagsOA, slice, AreaServices.TranslationTypeEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToUsageTypeList" />
@@ -600,7 +627,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="usageTypeEdit" className="CmPossibility" ownerClass="LexDb" ownerField="UsageTypes" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, CmPossibilityTags.kClassName, string.Format(AreaResources.Show_in_0_list, _cache.LanguageProject.LexDbOA.UsageTypesOA.ShortName), AreaServices.UsageTypeEditMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.LexDbOA.UsageTypesOA, slice, AreaServices.UsageTypeEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToRecordTypeList" />
@@ -608,7 +635,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="recTypeEdit" className="CmPossibility" ownerClass="RnResearchNbk" ownerField="RecTypes" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, CmPossibilityTags.kClassName, string.Format(AreaResources.Show_in_0_list, _cache.LanguageProject.ResearchNotebookOA.RecTypesOA.ShortName), AreaServices.RecTypeEditMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.ResearchNotebookOA.RecTypesOA, slice, AreaServices.RecTypeEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToTimeOfDayList" />
@@ -616,7 +643,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="timeOfDayEdit" className="CmPossibility" ownerClass="LangProject" ownerField="TimeOfDay" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem(contextMenuStrip, menuItems, slice, CmPossibilityTags.kClassName, string.Format(AreaResources.Show_in_0_list, _cache.LanguageProject.TimeOfDayOA.ShortName), AreaServices.TimeOfDayEditMachineName, MyRecordList.CurrentObject.Guid, ref wantSeparator, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.TimeOfDayOA, slice, AreaServices.TimeOfDayEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item label="-" translate="do not translate" />
@@ -717,6 +744,32 @@ namespace LanguageExplorer.Areas
 			// End: <menu id="mnuReferenceChoices">
 
 			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+		}
+
+		private bool CanJumpToToolAndFilterAnthroItem
+		{
+			get
+			{
+				var fieldName = XmlUtils.GetOptionalAttributeValue(MyDataTree.CurrentSlice.ConfigurationNode, "field");
+				return !string.IsNullOrEmpty(fieldName) && fieldName.Equals("AnthroCodes");
+			}
+		}
+
+		private void JumpToToolAndFilterAnthroItem(object sender, EventArgs e)
+		{
+			var obj = ((VectorReferenceView)((VectorReferenceLauncher)MyDataTree.CurrentSlice.Control).MainControl).SelectedObject;
+			if (obj == null)
+			{
+				return;
+			}
+			var hvo = obj.Hvo;
+
+			FwLinkArgs link = new FwAppArgs(_cache.ProjectId.Handle, (string)((ToolStripMenuItem)sender).Tag, Guid.Empty);
+			var additionalProps = link.LinkProperties;
+			additionalProps.Add(new LinkProperty("SuspendLoadListUntilOnChangeFilter", link.ToolName));
+			additionalProps.Add(new LinkProperty("LinkSetupInfo", "FilterAnthroItems"));
+			additionalProps.Add(new LinkProperty("HvoOfAnthroItem", hvo.ToString(CultureInfo.InvariantCulture)));
+			LinkHandler.PublishFollowLinkMessage(_flexComponentParameters.Publisher, link);
 		}
 
 		private void VisibleComplexForm_Clicked(object sender, EventArgs e)
@@ -826,24 +879,9 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
-		private void ConditionallyAddJumpToToolMenuItem(ToolStripMenuItem mainMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, Slice slice, string menuLabel, string concordOn, ref bool wantSeparator, int separatorInsertLocation = 0)
+		private void ConditionallyAddJumpToToolMenuItem_Overload_FromSandboxBase(ContextMenuStrip contextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, string className, string menuLabel)
 		{
-			EventHandler eventHandler;
-			if (_currentTool.MachineName != AreaServices.ConcordanceMachineName || !slice.MyCmObject.IsValidObject || !_sharedEventHandlers.TryGetEventHandler(AreaServices.JumpToConcordance, out eventHandler))
-			{
-				return;
-			}
-			if (wantSeparator)
-			{
-				ToolStripMenuItemFactory.CreateToolStripSeparatorForToolStripMenuItem(mainMenuStrip, separatorInsertLocation);
-				wantSeparator = false;
-			}
-			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, mainMenuStrip, eventHandler, menuLabel);
-			menu.Tag = new List<object> { slice.MyCmObject, concordOn };
-		}
-
-		private void ConditionallyAddJumpToToolMenuItem(ContextMenuStrip contextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, string menuLabel, string className, string concordOn)
-		{
+			// 1 user in PopupContextMenuCreatorMethod_mnuObjectChoices
 			var activeForm = Form.ActiveForm;
 			if (Form.ActiveForm == null)
 			{
@@ -856,33 +894,66 @@ namespace LanguageExplorer.Areas
 				// Got form, but no sandbox: ∴, no go.
 				return;
 			}
+
 			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.SandboxJumpToTool), menuLabel);
 			var tagList = new List<object> { AreaServices.PosEditMachineName, className };
-			if (string.IsNullOrWhiteSpace(concordOn))
-			{
-				tagList.Add(concordOn);
-			}
 			menu.Tag = tagList;
 		}
 
-		private void ConditionallyAddJumpToToolMenuItem(ToolStripMenuItem mainMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, Slice slice, string className, string menuLabel, string targetToolName, Guid targetGuid, ref bool wantSeparator, int separatorInsertLocation = 0)
+		private void ConditionallyAddJumpToToolMenuItem_Overload_Show_In_Concordance(ToolStripMenuItem mainMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, Slice slice, ref bool wantSeparator, string menuLabel, string concordOn = null, int separatorInsertLocation = 0)
 		{
-			var visibleAndEnabled = AreaWideMenuHelper.CanJumpToTool(_currentTool.MachineName, targetToolName, _cache, MyRecordList.CurrentObject, slice.MyCmObject, className);
-			if (visibleAndEnabled)
+			// 2 users in PopupContextMenuCreatorMethod_mnuObjectChoices.
+			EventHandler eventHandler;
+			if (_currentTool.MachineName != AreaServices.ConcordanceMachineName || !slice.MyCmObject.IsValidObject || !_sharedEventHandlers.TryGetEventHandler(AreaServices.JumpToConcordance, out eventHandler))
 			{
-				if (wantSeparator)
-				{
-					ToolStripMenuItemFactory.CreateToolStripSeparatorForToolStripMenuItem(mainMenuStrip, separatorInsertLocation);
-					wantSeparator = false;
-				}
-				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, mainMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), menuLabel);
-				menu.Tag = new List<object> { _flexComponentParameters.Publisher, targetToolName, targetGuid };
+				return;
 			}
+
+			if (wantSeparator)
+			{
+				ToolStripMenuItemFactory.CreateToolStripSeparatorForToolStripMenuItem(mainMenuStrip, separatorInsertLocation);
+				wantSeparator = false;
+			}
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, mainMenuStrip, eventHandler, menuLabel);
+			var tagValues = new List<object> { slice.MyCmObject };
+			if (!string.IsNullOrWhiteSpace(concordOn))
+			{
+				tagValues.Add(concordOn);
+			}
+			menu.Tag = tagValues;
 		}
 
-		private void ConditionallyAddJumpToToolMenuItem(ContextMenuStrip contextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, Slice slice, string className, string menuLabel, string targetToolName, Guid targetGuid, ref bool wantSeparator, int separatorInsertLocation = 0)
+		private void ConditionallyAddJumpToToolMenuItem_Overload_Also_Rans(ContextMenuStrip contextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, Slice slice, string targetToolName, ref bool wantSeparator, string className, string menuLabel, int separatorInsertLocation = 0)
 		{
-			var visibleAndEnabled = AreaWideMenuHelper.CanJumpToTool(_currentTool.MachineName, targetToolName, _cache, MyRecordList.CurrentObject, slice.MyCmObject, className);
+			// 7 users in PopupContextMenuCreatorMethod_mnuObjectChoices
+			// 6 users in PopupContextMenuCreatorMethod_mnuReferenceChoices
+			var selectedObject = MyRecordList.CurrentObject;
+			var asReferenceVectorSlice = slice as ReferenceVectorSlice; // May be null.
+			if (asReferenceVectorSlice != null)
+			{
+				// Dig out selected item in slice.
+				var vectorReferenceLauncher = (VectorReferenceLauncher)asReferenceVectorSlice.Control;
+				var vectorReferenceView = (VectorReferenceView)vectorReferenceLauncher.MainControl;
+				selectedObject = vectorReferenceView.SelectedObject;
+			}
+			else
+			{
+				var asAtomicReferenceSlice = slice as AtomicReferenceSlice; // May be null.
+				if (asAtomicReferenceSlice != null)
+				{
+					// Dig out selected item in slice.
+					var atomicReferenceLauncher = (AtomicReferenceLauncher)asAtomicReferenceSlice.Control;
+					var atomicReferenceView = (AtomicReferenceView)atomicReferenceLauncher.MainControl;
+					selectedObject = _cache.ServiceLocator.GetObject(_cache.GetManagedSilDataAccess().get_ObjectProp(atomicReferenceView.Object.Hvo, slice.Flid));
+				}
+			}
+			if (selectedObject is ICmPossibility)
+			{
+				// These are handled by a dedicated method.
+				return;
+			}
+
+			var visibleAndEnabled = AreaWideMenuHelper.CanJumpToTool(_currentTool.MachineName, targetToolName, _cache, MyRecordList.CurrentObject, selectedObject, className);
 			if (visibleAndEnabled)
 			{
 				if (wantSeparator)
@@ -891,9 +962,56 @@ namespace LanguageExplorer.Areas
 					wantSeparator = false;
 				}
 				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), menuLabel);
-				menu.Tag = new List<object> { _flexComponentParameters.Publisher, targetToolName, targetGuid };
+				menu.Tag = new List<object> { _flexComponentParameters.Publisher, targetToolName, selectedObject.Guid };
 			}
 		}
+
+		/// <summary>
+		/// Used only for possibility lists and possibilities.
+		/// </summary>
+		private void ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(ContextMenuStrip contextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, ICmPossibilityList listToJumpTo, Slice slice, string targetToolName, ref bool wantSeparator, string className = CmPossibilityTags.kClassName, string menuLabel = null, int separatorInsertLocation = 0)
+		{
+			// 1 user in PopupContextMenuCreatorMethod_mnuObjectChoices
+			// 28 users in PopupContextMenuCreatorMethod_mnuReferenceChoices
+			Guard.AgainstNull(listToJumpTo, nameof(listToJumpTo));
+
+			if (menuLabel == null)
+			{
+				menuLabel = string.Format(AreaResources.Show_in_0_list, listToJumpTo.ShortName);
+			}
+			var selectedObject = MyRecordList.CurrentObject as ICmPossibility; // Most likely it is null.
+			var asReferenceVectorSlice = slice as ReferenceVectorSlice; // May be null.
+			if (asReferenceVectorSlice != null)
+			{
+				// Dig out selected item in slice.
+				var vectorReferenceLauncher = (VectorReferenceLauncher)asReferenceVectorSlice.Control;
+				var vectorReferenceView = (VectorReferenceView)vectorReferenceLauncher.MainControl;
+				selectedObject = vectorReferenceView.SelectedObject as ICmPossibility;
+			}
+			var asAtomicReferenceSlice = slice as AtomicReferenceSlice; // May be null.
+			if (asAtomicReferenceSlice != null)
+			{
+				// Dig out selected item in slice.
+				var atomicReferenceLauncher = (AtomicReferenceLauncher)asAtomicReferenceSlice.Control;
+				var atomicReferenceView = (AtomicReferenceView)atomicReferenceLauncher.MainControl;
+				selectedObject = _cache.ServiceLocator.GetObject(_cache.GetManagedSilDataAccess().get_ObjectProp(atomicReferenceView.Object.Hvo, slice.Flid)) as ICmPossibility;
+			}
+			Debug.Assert(selectedObject != null, "Found another path that isn't returning a possibility. Find it and make it work here.");
+			if (listToJumpTo != selectedObject.OwningList)
+			{
+				return;
+			}
+
+			if (wantSeparator)
+			{
+				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip, separatorInsertLocation);
+				wantSeparator = false;
+			}
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.JumpToTool), menuLabel);
+			menu.Tag = new List<object> { _flexComponentParameters.Publisher, targetToolName, selectedObject.Guid };
+		}
+
+		#region "mnuEnvReferenceChoices"
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> PopupContextMenuCreatorMethod_mnuEnvReferenceChoices(Slice slice, string contextMenuId)
 		{
@@ -944,5 +1062,7 @@ namespace LanguageExplorer.Areas
 				return MyDataTree.Cache.DomainDataByFlid.MetaDataCache.GetBaseClsId(currentSlice.MyCmObject.ClassID) == PhEnvironmentTags.kClassId;
 			}
 		}
+
+#endregion "mnuEnvReferenceChoices"
 	}
 }

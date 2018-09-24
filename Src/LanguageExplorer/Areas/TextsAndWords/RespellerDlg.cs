@@ -116,7 +116,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			PropertyTable = flexComponentParameters.PropertyTable;
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
-			m_cache = PropertyTable.GetValue<LcmCache>("cache");
+			m_cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 		}
 
 		#endregion
@@ -147,7 +147,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 				if (m_srcRecordList != null)
 				{
-					PropertyTable.GetValue<IRecordListRepository>("RecordListRepository").RemoveRecordList(m_srcRecordList);
+					PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).RemoveRecordList(m_srcRecordList);
 				}
 			}
 			m_cache = null;
@@ -196,7 +196,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		internal bool SetDlgInfo(XElement configurationParameters)
 		{
-			m_wordformRecordList = PropertyTable.GetValue<IRecordListRepository>("RecordListRepository").GetRecordList(TextAndWordsArea.ConcordanceWords);
+			m_wordformRecordList = PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).GetRecordList(TextAndWordsArea.ConcordanceWords);
 			m_wordformRecordList.SuppressSaveOnChangeRecord = true; // various things trigger change record and would prevent Undo
 
 			//We need to re-parse the interesting texts so that the rows in the dialog show all the occurrences (make sure it is up to date)
@@ -227,7 +227,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				m_cbCopyAnalyses.Click += m_cbCopyAnalyses_Click;
 				m_cbMaintainCase.Checked = PropertyTable.GetValue<bool>("MaintainCaseOnChangeSpelling");
 				m_cbMaintainCase.Click += m_cbMaintainCase_Click;
-				m_cache = PropertyTable.GetValue<LcmCache>("cache");
+				m_cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 
 				// We need to use the 'best vern' ws,
 				// since that is what is showing in the Words-Analyses detail edit control.
@@ -611,14 +611,14 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			if (ChangesWereMade)
 			{
-				PropertyTable.GetValue<IFwMainWnd>("window").RefreshAllViews();
+				PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).RefreshAllViews();
 			}
 			Close();
 		}
 
 		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "FLExHelpFile", s_helpTopic);
+			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), "FLExHelpFile", s_helpTopic);
 		}
 
 		private void m_dstWordform_TextChanged(object sender, EventArgs e)

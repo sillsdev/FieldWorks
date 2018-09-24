@@ -87,7 +87,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				m_fieldName,
 				m_cache,
 				contents,
-				PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+				PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider));
 		}
 
 		/// <summary>

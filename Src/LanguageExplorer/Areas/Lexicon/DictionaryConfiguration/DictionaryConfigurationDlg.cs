@@ -71,7 +71,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			treeDetail_Button_Split.IsSplitterFixed = true;
 			MinimumSize = new Size(m_grpConfigurationManagement.Width + 3, manageConfigs_treeDetailButton_split.Height);
 
-			m_helpTopicProvider = propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			m_helpTopicProvider = propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
 			m_helpProvider = new HelpProvider { HelpNamespace = m_helpTopicProvider.HelpFile };
 			m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(HelpTopic));
 			m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
@@ -321,7 +321,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 
 		private void helpButton_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_helpTopic);
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), m_helpTopic);
 		}
 
 		private void OnConfigurationChanged(object sender, EventArgs e)

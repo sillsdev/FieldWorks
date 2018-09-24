@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -55,7 +55,7 @@ namespace LanguageExplorer.SendReceive
 
 			//Give all forms the opportunity to save any uncommitted data
 			//(important for analysis sandboxes)
-			var activeForm = propertyTable.GetValue<Form>("window");
+			var activeForm = propertyTable.GetValue<Form>(FwUtils.window);
 			activeForm?.ValidateChildren(ValidationConstraints.Enabled);
 			//Commit all the data in the cache and save to disk
 			ProjectLockingService.UnlockCurrentProject(cache);

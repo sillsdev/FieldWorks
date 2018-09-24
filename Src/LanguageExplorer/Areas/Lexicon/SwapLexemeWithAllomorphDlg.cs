@@ -113,7 +113,7 @@ namespace LanguageExplorer.Areas.Lexicon
 			// Determine the help file to use, if any
 			m_helpTopic = "khtpSwapLexemeWithAllomorph";
 
-			var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
 			if (helpTopicProvider == null)
 			{
 				return;
@@ -290,7 +290,7 @@ namespace LanguageExplorer.Areas.Lexicon
 
 		private void buttonHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_helpTopic);
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), m_helpTopic);
 		}
 	}
 }

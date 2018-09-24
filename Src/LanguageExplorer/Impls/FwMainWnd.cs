@@ -469,15 +469,15 @@ namespace LanguageExplorer.Impls
 		{
 			_temporaryPropertyNames.Clear();
 			// Not persisted, but needed at runtime.
-			PropertyTable.SetProperty("window", this);
-			PropertyTable.SetProperty("App", _flexApp);
-			PropertyTable.SetProperty("cache", Cache);
-			PropertyTable.SetProperty("HelpTopicProvider", _flexApp);
-			PropertyTable.SetProperty("FlexStyleSheet", _stylesheet);
-			PropertyTable.SetProperty("LinkHandler", _linkHandler);
-			_propertyTable.SetProperty("MajorFlexComponentParameters", _majorFlexComponentParameters, settingsGroup: SettingsGroup.GlobalSettings);
-			_propertyTable.SetProperty("RecordListRepository", _recordListRepositoryForTools, settingsGroup: SettingsGroup.GlobalSettings);
-			_temporaryPropertyNames.AddRange(new[] { "window", "App", "cache", "HelpTopicProvider", "FlexStyleSheet", "LinkHandler", "MajorFlexComponentParameters", "RecordListRepository" });
+			PropertyTable.SetProperty(FwUtils.window, this);
+			PropertyTable.SetProperty(LanguageExplorerConstants.App, _flexApp);
+			PropertyTable.SetProperty(LanguageExplorerConstants.cache, Cache);
+			PropertyTable.SetProperty(LanguageExplorerConstants.HelpTopicProvider, _flexApp);
+			PropertyTable.SetProperty(FwUtils.FlexStyleSheet, _stylesheet);
+			PropertyTable.SetProperty(LanguageExplorerConstants.LinkHandler, _linkHandler);
+			_propertyTable.SetProperty(LanguageExplorerConstants.MajorFlexComponentParameters, _majorFlexComponentParameters, settingsGroup: SettingsGroup.GlobalSettings);
+			_propertyTable.SetProperty(LanguageExplorerConstants.RecordListRepository, _recordListRepositoryForTools, settingsGroup: SettingsGroup.GlobalSettings);
+			_temporaryPropertyNames.AddRange(new[] { FwUtils.window, LanguageExplorerConstants.App, LanguageExplorerConstants.cache, LanguageExplorerConstants.HelpTopicProvider, FwUtils.FlexStyleSheet, LanguageExplorerConstants.LinkHandler, LanguageExplorerConstants.MajorFlexComponentParameters, LanguageExplorerConstants.RecordListRepository });
 		}
 		private readonly HashSet<string> _temporaryPropertyNames = new HashSet<string>();
 
@@ -1526,7 +1526,7 @@ namespace LanguageExplorer.Impls
 				Configurations = configurations,
 				Publications = publications
 			};
-			using (var controller = new UploadToWebonaryController(Cache, PropertyTable, Publisher, _majorFlexComponentParameters.Statusbar))
+			using (var controller = new UploadToWebonaryController(Cache, PropertyTable, Publisher, _statusbar))
 			using (var dialog = new UploadToWebonaryDlg(controller, model, PropertyTable))
 			{
 				dialog.ShowDialog();

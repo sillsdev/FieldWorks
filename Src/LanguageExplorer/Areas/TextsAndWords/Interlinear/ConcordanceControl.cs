@@ -494,7 +494,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 											false,
 											PropertyTable,
 											Publisher,
-											PropertyTable.GetValue<Form>("window")) { Sorted = false };
+											PropertyTable.GetValue<Form>(FwUtils.window)) { Sorted = false };
 					break;
 				default: //Lex. Gram. Info and Word Cat. both work the same, and are handled here in the default option
 					m_pOSPopupTreeManager = new POSComboController(m_cbSearchText,
@@ -504,7 +504,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 											false,
 											PropertyTable,
 											Publisher,
-											PropertyTable.GetValue<Form>("window"));
+											PropertyTable.GetValue<Form>(FwUtils.window));
 					break;
 			}
 			m_pOSPopupTreeManager.AfterSelect += POSAfterSelect;

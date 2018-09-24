@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -45,7 +44,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// <returns></returns>
 		internal static Guid GetReversalIndexGuid(IPropertyTable propertyTable, IPublisher publisher)
 		{
-			var riGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(propertyTable, "ReversalIndexGuid");
+			var riGuid = RecordListServices.GetObjectGuidIfValid(propertyTable, "ReversalIndexGuid");
 
 			if (!riGuid.Equals(Guid.Empty))
 			{
@@ -53,7 +52,7 @@ namespace LanguageExplorer.Areas.Lexicon
 			}
 			try
 			{
-				riGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(propertyTable, "ReversalIndexGuid");
+				riGuid = RecordListServices.GetObjectGuidIfValid(propertyTable, "ReversalIndexGuid");
 			}
 			catch
 			{

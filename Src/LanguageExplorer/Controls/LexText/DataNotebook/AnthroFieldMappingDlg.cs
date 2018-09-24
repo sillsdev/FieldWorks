@@ -234,7 +234,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		{
 			using (var dlg = new AddCustomFieldDlg(m_propertyTable, m_publisher, CustomFieldLocationType.Notebook))
 			{
-				if (dlg.ShowCustomFieldWarning(m_propertyTable.GetValue<Form>("window")))
+				if (dlg.ShowCustomFieldWarning(m_propertyTable.GetValue<Form>(FwUtils.window)))
 				{
 					dlg.ShowDialog();
 				}

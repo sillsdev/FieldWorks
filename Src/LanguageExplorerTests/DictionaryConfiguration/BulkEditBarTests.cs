@@ -232,7 +232,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			internal BulkEditBarForTests(BrowseViewer bv, XmlNode spec, Mediator mediator, IPropertyTable propertyTable, LcmCache cache)
 				: base(bv, spec, mediator, propertyTable, cache)
 			{
-				m_wnd = propertyTable.GetValue<MockFwXWindow>("window");
+				m_wnd = propertyTable.GetValue<MockFwXWindow>(LanguageExplorerConstants.window);
 			}
 
 			internal void SwitchTab(string tabName)
@@ -344,7 +344,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				Mediator mediator, IPropertyTable propertyTable, ISortItemProvider sortItemProvider, ISilDataAccessManaged sdaRecordList)
 				: base(nodeSpec, hvoRoot, madeUpFieldIdentifier, cache, mediator, propertyTable, sortItemProvider, sdaRecordList)
 			{
-				m_wnd = m_propertyTable.GetValue<MockFwXWindow>("window");
+				m_wnd = m_propertyTable.GetValue<MockFwXWindow>(LanguageExplorerConstants.window);
 				m_xbv.MakeRoot(); // needed to process OnRecordNavigation
 			}
 
@@ -488,7 +488,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			protected override BrowseViewer CreateBrowseViewer(XmlNode nodeSpec, int hvoRoot, int madeUpFieldIdentifier,
 				LcmCache cache, Mediator mediator, IPropertyTable propertyTable, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 			{
-				var app = propertyTable.GetValue<MockFwXApp>("App");
+				var app = propertyTable.GetValue<MockFwXApp>(LanguageExplorerConstants.App);
 				return new BrowseViewerForTests(nodeSpec, hvoRoot, madeUpFieldIdentifier, cache,
 					mediator, propertyTable,
 					sortItemProvider, sda);

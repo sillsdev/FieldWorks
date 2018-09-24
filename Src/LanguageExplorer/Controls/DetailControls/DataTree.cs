@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.Globalization;
 #if RANDYTODOTEMP // TODO: Remove in the end
 using System.IO;
 #endif
@@ -706,7 +705,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			// Find the first parent IRecordListOwner object (if any) that
 			// owns an IRecordListUpdater.
-			var rlo = PropertyTable.GetValue<IRecordListOwner>("window");
+			var rlo = PropertyTable.GetValue<IRecordListOwner>(FwUtils.window);
 			if (rlo != null)
 			{
 				m_rlu = rlo.FindRecordListUpdater(m_listName);
@@ -799,7 +798,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			MonoIgnoreUpdates();
 
-			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>("window"), this))
+			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>(FwUtils.window), this))
 			{
 				try
 				{
@@ -1004,7 +1003,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void InitializeAdvanced()
 		{
-			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>("window"), this))
+			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>(FwUtils.window), this))
 			{
 				// NB: The ArrayList created here can hold disparate objects, such as XmlNodes and ints.
 				if (Root != null)
@@ -1177,12 +1176,13 @@ namespace LanguageExplorer.Controls.DetailControls
 				return;
 			}
 
-			using (new WaitCursor(PropertyTable.GetValue<Form>("window")))
+			var fwMainWnd = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window);
+			using (new WaitCursor((Form)fwMainWnd))
 			{
 				try
 				{
 					var oldCurrent = m_currentSlice;
-					using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>("window"), this))
+					using (new DataTreeLayoutSuspensionHelper(fwMainWnd, this))
 					{
 						var scrollbarPosition = VerticalScroll.Value;
 
@@ -3330,18 +3330,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		#endregion automated tree navigation
 
 		#region IxCoreColleague message handlers
-
-		internal bool CanJumpToToolAndFilterAnthroItem
-		{
-			get
-			{
-				var fieldName = XmlUtils.GetOptionalAttributeValue(CurrentSlice.ConfigurationNode, "field");
-				return !string.IsNullOrEmpty(fieldName) && fieldName.Equals("AnthroCodes");
-			}
-		}
 #if RANDYTODO
-
-	// RANDYTODO TODO: DataTree only handles jump stuff for menus that start with "mnuDataTree", so does nothing for menus such as: mnuEnvReferenceChoices, mnuReferenceChoices, or mnuObjectChoices.
+		// TODO: DataTree only handles jump stuff for menus that start with "mnuDataTree", so does nothing for menus such as: mnuEnvReferenceChoices, mnuReferenceChoices, or mnuObjectChoices.
 		/// <summary>
 		/// Enable menu items for jumping to the concordance (or lexiconEdit) tool.
 		/// </summary>
@@ -3384,25 +3374,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			return false;
 		}
-#endif
-
-		internal void JumpToToolAndFilterAnthroItem(object sender, EventArgs e)
-		{
-			var menu = (ToolStripMenuItem)sender;
-			var obj = ((VectorReferenceView)((VectorReferenceLauncher)CurrentSlice.Control).MainControl).SelectedObject;
-			if (obj == null)
-			{
-				return;
-			}
-			var hvo = obj.Hvo;
-
-			FwLinkArgs link = new FwAppArgs(Cache.ProjectId.Handle, (string)((ToolStripMenuItem)sender).Tag, Guid.Empty);
-			var additionalProps = link.LinkProperties;
-			additionalProps.Add(new LinkProperty("SuspendLoadListUntilOnChangeFilter", link.ToolName));
-			additionalProps.Add(new LinkProperty("LinkSetupInfo", "FilterAnthroItems"));
-			additionalProps.Add(new LinkProperty("HvoOfAnthroItem", hvo.ToString(CultureInfo.InvariantCulture)));
-			LinkHandler.PublishFollowLinkMessage(Publisher, link);
-		}
 
 		/// <summary>
 		/// Converts a List of integers into a comma-delimited string of numbers.
@@ -3412,7 +3383,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			return XmlUtils.MakeIntegerListValue(hvoList.ToArray());
 		}
 
-#if RANDYTODO
 		/// <summary>
 		/// Common logic shared between OnDisplayJumpToTool and OnJumpToTool.
 		/// forEnableOnly is true when called from OnDisplayJumpToTool.
@@ -3699,7 +3669,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				if (ContainsFocus)
 				{
 					// see if we can find the parent slice for focusedControl
-					var currentControl = PropertyTable.GetValue<IFwMainWnd>("window").FocusedControl;
+					var currentControl = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).FocusedControl;
 					while (currentControl != null && currentControl != this)
 					{
 						if (currentControl is Slice)

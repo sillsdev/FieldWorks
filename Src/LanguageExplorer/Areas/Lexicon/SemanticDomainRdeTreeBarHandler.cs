@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -45,7 +45,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		void ISemanticDomainTreeBarHandler.FinishInitialization(IPaneBar paneBar)
 		{
 			m_titleBar = paneBar;
-			_recordBar = m_propertyTable.GetValue<IFwMainWnd>("window").RecordBarControl;
+			_recordBar = m_propertyTable.GetValue<IFwMainWnd>(FwUtils.window).RecordBarControl;
 			if (_recordBar == null)
 			{
 				return;
@@ -200,7 +200,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// </summary>
 		protected override void UpdateHeaderVisibility()
 		{
-			var window = m_propertyTable.GetValue<IFwMainWnd>("window");
+			var window = m_propertyTable.GetValue<IFwMainWnd>(FwUtils.window);
 			if (window == null)
 			{
 				return;

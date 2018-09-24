@@ -193,9 +193,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 			else
 			{
 				GetContextOccurrence(out min, out max);
-				using (var dlg = new OccurrenceDlg(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), min, max, false))
+				using (var dlg = new OccurrenceDlg(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), min, max, false))
 				{
-					if (dlg.ShowDialog(PropertyTable.GetValue<Form>("window")) == DialogResult.OK)
+					if (dlg.ShowDialog(PropertyTable.GetValue<Form>(FwUtils.window)) == DialogResult.OK)
 					{
 						min = dlg.Minimum;
 						max = dlg.Maximum;

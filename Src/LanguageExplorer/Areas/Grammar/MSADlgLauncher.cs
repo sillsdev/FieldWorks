@@ -32,7 +32,7 @@ namespace LanguageExplorer.Areas.Grammar
 		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
-			m_msaDlglauncherView.Init(PropertyTable.GetValue<LcmCache>("cache"), obj as IMoMorphSynAnalysis);
+			m_msaDlglauncherView.Init(PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache), obj as IMoMorphSynAnalysis);
 		}
 
 		/// <summary>

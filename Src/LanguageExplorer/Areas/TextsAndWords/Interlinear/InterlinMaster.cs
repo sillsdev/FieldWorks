@@ -708,7 +708,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 	string groupId = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "PaneBarGroupId", null);
 	if (groupId != null)
 	{
-		XWindow window = (XWindow)m_mediator.PropertyTable.GetValue("window");
+		XWindow window = (XWindow)m_mediator.PropertyTable.GetValue(LanguageExplorerConstants.window);
 		ChoiceGroup group = window.GetChoiceGroupForMenu(groupId);
 		group.PopulateNow();
 		paneBar.AddGroup(group);
@@ -1190,7 +1190,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 			// Although it's a modal dialog, it's dangerous for it to be visible in contexts where it
 			// could not be launched, presumably because it doesn't apply to that view, and may do
 			// something dangerous to another view (cf LT-7961).
-			var app = PropertyTable.GetValue<IApp>("App");
+			var app = PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
 			if (app != null && !enabled)
 			{
 				app.RemoveFindReplaceDialog();
@@ -1200,7 +1200,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 
 		internal void HandleFindAndReplace(bool doReplace)
 		{
-			PropertyTable.GetValue<IApp>("App")?.ShowFindReplaceDialog(doReplace, m_rtPane, Cache, PropertyTable.GetValue<Form>("window"));
+			PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App)?.ShowFindReplaceDialog(doReplace, m_rtPane, Cache, PropertyTable.GetValue<Form>(FwUtils.window));
 		}
 
 #if RANDYTODO
@@ -1357,7 +1357,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 			var link = new FwLinkArgs(PropertyTable.GetValue<string>(AreaServices.ToolChoice), guid, InterlinearTab.ToString());
 			link.LinkProperties.Add(new LinkProperty("InterlinearTab", InterlinearTab.ToString()));
 			MyRecordList.SelectedRecordChanged(true, true); // make sure we update the record count in the Status bar.
-			PropertyTable.GetValue<LinkHandler>("LinkHandler").AddLinkToHistory(link);
+			PropertyTable.GetValue<LinkHandler>(LanguageExplorerConstants.LinkHandler).AddLinkToHistory(link);
 		}
 
 		/// <summary>

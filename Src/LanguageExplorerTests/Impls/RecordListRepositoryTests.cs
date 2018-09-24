@@ -29,9 +29,9 @@ namespace LanguageExplorerTests.Impls
 				using (var statusBar = new StatusBar())
 				using (IRecordListRepository recordListRepository = new RecordListRepository(Cache, new FlexComponentParameters(propertyTable, publisher, subscriber)))
 				{
-					propertyTable.SetProperty("RecordListRepository", recordListRepository, settingsGroup: SettingsGroup.GlobalSettings);
-					propertyTable.SetProperty("cache", Cache);
-					propertyTable.SetProperty("window", dummyWindow);
+					propertyTable.SetProperty(LanguageExplorerConstants.RecordListRepository, recordListRepository, settingsGroup: SettingsGroup.GlobalSettings);
+					propertyTable.SetProperty(LanguageExplorerConstants.cache, Cache);
+					propertyTable.SetProperty(FwUtils.window, dummyWindow);
 
 					// Test 1. Make sure a bogus record list isn't in the repository.
 					Assert.IsNull(recordListRepository.GetRecordList("bogusRecordListId"));

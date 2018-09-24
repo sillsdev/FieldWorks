@@ -40,7 +40,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			m_propertyTable = propertyTable;
 			m_parseResult = parseResult;
-			m_cache = m_propertyTable.GetValue<LcmCache>("cache");
+			m_cache = m_propertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 			m_xmlHtmlStack = new Stack<Tuple<XDocument, string>>();
 			m_intermediateTransform = new XslCompiledTransform();
 			m_intermediateTransform.Load(Path.Combine(Path.GetTempPath(), m_cache.ProjectId.Name + "XAmpleWordGrammarDebugger.xsl"), new XsltSettings(true, false), new XmlUrlResolver());

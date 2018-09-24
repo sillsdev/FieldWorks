@@ -109,7 +109,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		private void ConfigureWritingSystems_Clicked(object sender, EventArgs eventArgs)
 		{
 			ReloadWssToDisplayForPart();
-			using (var dlg = new ConfigureWritingSystemsDlg(WritingSystemOptionsForDisplay, WritingSystemsSelectedForDisplay, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+			using (var dlg = new ConfigureWritingSystemsDlg(WritingSystemOptionsForDisplay, WritingSystemsSelectedForDisplay, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 			{
 				dlg.Text = string.Format(DetailControlsStrings.ksSliceConfigureWssDlgTitle, Label);
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)

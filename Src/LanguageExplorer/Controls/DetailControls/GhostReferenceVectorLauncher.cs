@@ -33,7 +33,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				m_fieldName,
 				m_cache,
 				new ICmObject[0],
-				PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+				PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider));
 			chooser.SetHelpTopic(Slice.GetChooserHelpTopicID());
 
 			chooser.SetObjectAndFlid(0, m_flid);

@@ -69,7 +69,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_tree.StyleSheet = stylesheet;
 			var list = Cache.LanguageProject.PartsOfSpeechOA;
 
-			m_MSAPopupTreeManager = new MSAPopupTreeManager(m_tree, Cache, list, m_tree.WritingSystemCode, true, PropertyTable, Publisher, PropertyTable.GetValue<Form>("window"));
+			m_MSAPopupTreeManager = new MSAPopupTreeManager(m_tree, Cache, list, m_tree.WritingSystemCode, true, PropertyTable, Publisher, PropertyTable.GetValue<Form>(FwUtils.window));
 			m_MSAPopupTreeManager.AfterSelect += m_MSAPopupTreeManager_AfterSelect;
 			m_MSAPopupTreeManager.Sense = MyCmObject as ILexSense;
 			m_MSAPopupTreeManager.PersistenceProvider = m_persistProvider;

@@ -112,7 +112,7 @@ namespace LanguageExplorer.Controls.LexText
 				DesktopBounds = rect;
 				StartPosition = FormStartPosition.Manual;
 			}
-			m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
 			if (m_helpTopicProvider != null)
 			{
 				helpProvider = new HelpProvider { HelpNamespace = m_helpTopicProvider.HelpFile };

@@ -116,7 +116,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				fieldName,
 				m_cache,
 				contents,
-				m_dlg.PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+				m_dlg.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider));
 		}
 
 		/// <summary />

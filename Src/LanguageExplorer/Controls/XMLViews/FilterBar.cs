@@ -566,7 +566,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					combo.Items.Add(new FilterComboItem(MakeLabel(XMLViewsStrings.ksGreaterThanOne),
 						new RangeIntMatcher(2, Int32.MaxValue), item));
 					combo.Items.Add(new RestrictComboItem(MakeLabel(XMLViewsStrings.ksRestrict_),
-						m_bv.PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
+						m_bv.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider),
 						item,
 						m_cache.ServiceLocator.WritingSystemManager.UserWs,
 						combo));
@@ -574,7 +574,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				case "genDate":
 				case "date":
 					combo.Items.Add(new RestrictDateComboItem(MakeLabel(XMLViewsStrings.ksRestrict_),
-						m_bv.PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
+						m_bv.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider),
 						item,
 						m_cache.ServiceLocator.WritingSystemManager.UserWs,
 						sortType == "genDate",
@@ -784,7 +784,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			item.Combo = combo;
 			combo.Items.Add(new FilterComboItem(MakeLabel(XMLViewsStrings.ksShowAll), null, item));
 			combo.Items.Add(new RestrictComboItem(MakeLabel(XMLViewsStrings.ksRestrict_),
-				m_bv.PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
+				m_bv.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider),
 				item, m_cache.ServiceLocator.WritingSystemManager.UserWs, combo));
 			combo.SelectedIndex = 0;
 			// Do this after selecting initial item, so we don't get a spurious notification.

@@ -5944,7 +5944,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (!SuppressPrintHandling)
 			{
 				// Get the "Print" menu from the window's "File" menu, and wire up the Print_Click handler and enable the menu.
-				var mainWindow = PropertyTable.GetValue<Form>("window");
+				var mainWindow = PropertyTable.GetValue<Form>(FwUtils.FwUtils.window);
 				// Many tests have no window.
 				if (mainWindow != null)
 				{

@@ -108,7 +108,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			helpProvider.SetShowHelp(this, true);
-			var helpToicProvider = PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			var helpToicProvider = PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
 			if (helpToicProvider != null)
 			{
 				helpProvider.HelpNamespace = helpToicProvider.HelpFile;
@@ -261,7 +261,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void btnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), _helpTopic);
+			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), _helpTopic);
 		}
 	}
 }

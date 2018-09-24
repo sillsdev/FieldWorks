@@ -235,7 +235,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			using (var dlg = new InsertRecordDlg())
 			{
 				dlg.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
-				var cache = PropertyTable.GetValue<LcmCache>("cache");
+				var cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 				ICmObject owner;
 				var currentRecord = MyRecordList.CurrentObject;
 				var researchNbk = (IRnResearchNbk)MyRecordList.OwningObject;
@@ -744,7 +744,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		{
 			var cache = _majorFlexComponentParameters.LcmCache;
 			using (var dlg = new ReallySimpleListChooser(PersistenceProviderFactory.CreatePersistenceProvider(PropertyTable), ObjectLabel.CreateObjectLabels(cache, records, "ShortName", cache.WritingSystemFactory.GetStrFromWs(cache.DefaultAnalWs)),
-				string.Empty, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+				string.Empty, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 			{
 				dlg.Text = sTitle;
 				dlg.SetHelpTopic("khtpDataNotebook-ChooseOwnerOfDemotedRecord");

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2013-2018 SIL International
+// Copyright (c) 2013-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -28,7 +28,7 @@ namespace LanguageExplorer
 		internal SILErrorReportingAdapter(Form parentForm, IPropertyTable propertyTable)
 		{
 			m_parentForm = parentForm;
-			var app = propertyTable.GetValue<IFlexApp>("App");
+			var app = propertyTable.GetValue<IFlexApp>(LanguageExplorerConstants.App);
 			m_registryKey = app.SettingsKey;
 			m_supportEmailAddress = app.SupportEmailAddress;
 		}

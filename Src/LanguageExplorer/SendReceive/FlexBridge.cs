@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -239,7 +239,7 @@ namespace LanguageExplorer.SendReceive
 		private void ObtainAnyFlexBridgeProject_Click(object sender, EventArgs e)
 		{
 			ObtainedProjectType obtainedProjectType;
-			var newprojectPathname = ObtainProjectMethod.ObtainProjectFromAnySource(PropertyTable.GetValue<Form>("window"), FlexApp, out obtainedProjectType);
+			var newprojectPathname = ObtainProjectMethod.ObtainProjectFromAnySource(PropertyTable.GetValue<Form>(FwUtils.window), FlexApp, out obtainedProjectType);
 			if (string.IsNullOrEmpty(newprojectPathname))
 			{
 				return; // We dealt with it.

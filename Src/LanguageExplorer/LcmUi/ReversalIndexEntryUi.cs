@@ -2,12 +2,10 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using LanguageExplorer.Controls.LexText;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
 namespace LanguageExplorer.LcmUi
@@ -54,33 +52,6 @@ namespace LanguageExplorer.LcmUi
 			guiControl = "MergeReversalEntryList";
 			helpTopic = "khtpMergeReversalEntry";
 			return new DummyCmObject(m_hvo, rie.ShortName, wsIndex);
-		}
-
-		/// <summary>
-		/// Fetches the GUID value of the given property, having checked it is a valid object.
-		/// If it is not a valid object, the property is removed.
-		/// </summary>
-		public static Guid GetObjectGuidIfValid(IPropertyTable propertyTable, string key)
-		{
-			var sGuid = propertyTable.GetValue<string>(key);
-			if (string.IsNullOrEmpty(sGuid))
-			{
-				return Guid.Empty;
-			}
-
-			Guid guid;
-			if (!Guid.TryParse(sGuid, out guid))
-			{
-				return Guid.Empty;
-			}
-
-			var cache = propertyTable.GetValue<LcmCache>("cache");
-			if (cache.ServiceLocator.ObjectRepository.IsValidObjectId(guid))
-			{
-				return guid;
-			}
-			propertyTable.RemoveProperty(key);
-			return Guid.Empty;
 		}
 	}
 }

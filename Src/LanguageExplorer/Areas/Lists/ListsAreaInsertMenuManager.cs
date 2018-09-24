@@ -386,7 +386,7 @@ namespace LanguageExplorer.Areas.Lists
 			using (var dlg = new MasterInflectionFeatureListDlg("FsFeatDefn"))
 			{
 				dlg.SetDlginfo(MyRecordList.CurrentObject.Cache.LanguageProject.MsFeatureSystemOA, _propertyTable, true);
-				dlg.ShowDialog(_propertyTable.GetValue<Form>("window"));
+				dlg.ShowDialog(_propertyTable.GetValue<Form>(FwUtils.window));
 			}
 		}
 

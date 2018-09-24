@@ -493,7 +493,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			var aiForceMultipleChoices = new ICmObject[0];
 			var chooser = new SimpleListChooser(persistProvider, labels,
 				m_ChooseInflectionalAffixHelpTopic, Cache, aiForceMultipleChoices,
-				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+				m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider));
 			chooser.SetHelpTopic("khtpChoose-Grammar-InflAffixTemplateControl");
 			chooser.SetFontForDialog(new int[] { Cache.DefaultVernWs, Cache.DefaultAnalWs }, StyleSheet, WritingSystemFactory);
 			chooser.Cache = Cache;
@@ -610,7 +610,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			var slotFlid = fIsPrefixSlot ? MoInflAffixTemplateTags.kflidPrefixSlots : MoInflAffixTemplateTags.kflidSuffixSlots;
 			var labels = ObjectLabel.CreateObjectLabels(Cache, m_template.ReferenceTargetCandidates(slotFlid), null);
 			var persistProvider = PersistenceProviderFactory.CreatePersistenceProvider(PropertyTable);
-			var chooser = new SimpleListChooser(persistProvider, labels, m_ChooseSlotHelpTopic, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+			var chooser = new SimpleListChooser(persistProvider, labels, m_ChooseSlotHelpTopic, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider));
 			chooser.SetHelpTopic("khtpChoose-Grammar-InflAffixTemplateControl");
 			chooser.Cache = Cache;
 			chooser.TextParamHvo = m_template.Owner.Hvo;
@@ -701,7 +701,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 		public bool OnInflAffixTemplateHelp(object cmd)
 		{
-			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_ChooseInflectionalAffixHelpTopic);
+			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), m_ChooseInflectionalAffixHelpTopic);
 			return true;
 		}
 
@@ -872,7 +872,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// <summary />
 		internal ITsString MenuLabelForInflAffixTemplateHelp(string sLabel)
 		{
-			var helptopic = PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").GetHelpString(m_ChooseInflectionalAffixHelpTopic);
+			var helptopic = PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider).GetHelpString(m_ChooseInflectionalAffixHelpTopic);
 			if ((m_obj.ClassID != MoInflAffMsaTags.kClassId && m_obj.ClassID != MoInflAffixSlotTags.kClassId && m_obj.ClassID != MoInflAffixTemplateTags.kClassId)
 			    || helptopic == null)
 			{

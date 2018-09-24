@@ -1831,6 +1831,15 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show Morph in Concordance.
+        /// </summary>
+        internal static string Show_Morph_In_Concordance {
+            get {
+                return ResourceManager.GetString("Show_Morph_In_Concordance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show Record in Notebook.
         /// </summary>
         internal static string Show_Record_in_Notebook {
@@ -1924,6 +1933,15 @@ namespace LanguageExplorer.Areas {
         internal static string Word_Category {
             get {
                 return ResourceManager.GetString("Word_Category", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Word Gloss.
+        /// </summary>
+        internal static string Word_Gloss {
+            get {
+                return ResourceManager.GetString("Word_Gloss", resourceCulture);
             }
         }
     }

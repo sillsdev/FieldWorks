@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Areas;
-using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.WritingSystems;
@@ -164,7 +163,7 @@ namespace LanguageExplorer.Dumpster
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			var cache = PropertyTable.GetValue<LcmCache>("cache");
+			var cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 			var wsMgr = cache.ServiceLocator.WritingSystemManager;
 			cache.DomainDataByFlid.BeginNonUndoableTask();
 			var usedWses = new List<CoreWritingSystemDefinition>();
@@ -201,7 +200,7 @@ namespace LanguageExplorer.Dumpster
 			}
 
 			// Set up for the reversal index combo box or dropdown menu.
-			var reversalIndexGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
+			var reversalIndexGuid = RecordListServices.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
 			if (reversalIndexGuid == Guid.Empty)
 			{
 				// We haven't established the reversal index yet.  Choose the first one available.
@@ -246,7 +245,7 @@ namespace LanguageExplorer.Dumpster
 			using (var dlg = new ReversalEntryGoDlg())
 			{
 				dlg.ReversalIndex = Entry.ReversalIndex;
-				var cache = PropertyTable.GetValue<LcmCache>("cache");
+				var cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 				dlg.SetDlgInfo(cache, null, PropertyTable, Publisher);
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
@@ -326,7 +325,7 @@ namespace LanguageExplorer.Dumpster
 		public bool OnDisplayReversalIndexList(object parameter, ref UIListDisplayProperties display)
 		{
 			display.List.Clear();
-			var lp = m_propertyTable.GetValue<LcmCache>("cache").LanguageProject;
+			var lp = m_propertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache).LanguageProject;
 			// List all existing reversal indexes.  (LT-4479, as amended)
 			// But only for analysis wss
 			foreach (IReversalIndex ri in from ri in lp.LexDbOA.ReversalIndexesOC

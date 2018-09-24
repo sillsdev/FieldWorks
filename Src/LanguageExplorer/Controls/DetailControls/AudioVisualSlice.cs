@@ -105,7 +105,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			var ctrl = (AudioVisualLauncher)Control;
 			ctrl.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			ctrl.Initialize(
-				PropertyTable.GetValue<LcmCache>("cache"),
+				PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache),
 				Media.MediaFileRA,
 				CmFileTags.kflidInternalPath,
 				"InternalPath",

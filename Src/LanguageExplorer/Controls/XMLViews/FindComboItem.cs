@@ -32,7 +32,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		public override bool Invoke()
 		{
 			IVwStylesheet stylesheet = FwUtils.StyleSheetFromPropertyTable(m_bv.PropertyTable);
-			using (var dlg = new SimpleMatchDlg(m_combo.WritingSystemFactory, m_bv.PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), Ws, stylesheet, m_bv.Cache))
+			using (var dlg = new SimpleMatchDlg(m_combo.WritingSystemFactory, m_bv.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), Ws, stylesheet, m_bv.Cache))
 			{
 				dlg.SetDlgValues(m_matcher, stylesheet);
 				if (dlg.ShowDialog() != DialogResult.OK || dlg.Pattern.Length == 0)

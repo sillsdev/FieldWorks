@@ -256,7 +256,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					break;
 			}
 
-			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), helpTopic);
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), helpTopic);
 		}
 
 		protected override void OnCancelButton()
@@ -333,8 +333,8 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				DirtySettings = true;
 			}
 			m_lvMappingLanguages.Sort();
-			var app = m_propertyTable.GetValue<IApp>("App");
-			m_btnAddWritingSystem.Initialize(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, wss);
+			var app = m_propertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
+			m_btnAddWritingSystem.Initialize(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), app, wss);
 		}
 
 		private ListViewItem CreateListViewItemForWS(CoreWritingSystemDefinition ws)
@@ -355,7 +355,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private void btnBackup_Click(object sender, EventArgs e)
 		{
-			using (var dlg = new BackupProjectDlg(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+			using (var dlg = new BackupProjectDlg(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 			{
 				dlg.ShowDialog(this);
 			}
@@ -514,8 +514,8 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				var lvi = m_lvMappingLanguages.SelectedItems[0];
 				var sName = lvi.SubItems[0].Text;
 				var sEncCnv = lvi.SubItems[1].Text;
-				var app = m_propertyTable.GetValue<IApp>("App");
-				dlg.Initialize(sName, sEncCnv, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app);
+				var app = m_propertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
+				dlg.Initialize(sName, sEncCnv, m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), app);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					var sNewEncCnv = dlg.EncodingConverter;
@@ -539,8 +539,8 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			{
 				var lvi = m_lvContentMapping.SelectedItems[0];
 				var rsfm = lvi.Tag as RnSfMarker;
-				var app = m_propertyTable.GetValue<IApp>("App");
-				dlg.Initialize(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, rsfm, m_SfmFile, m_mapFlidName, m_stylesheet, m_propertyTable, m_publisher);
+				var app = m_propertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
+				dlg.Initialize(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), app, rsfm, m_SfmFile, m_mapFlidName, m_stylesheet, m_propertyTable, m_publisher);
 				if (dlg.ShowDialog(this) != DialogResult.OK)
 				{
 					return;
@@ -586,8 +586,8 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		{
 			using (var dlg = new ImportCharMappingDlg())
 			{
-				var app = m_propertyTable.GetValue<IApp>("App");
-				dlg.Initialize(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, m_stylesheet, null);
+				var app = m_propertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
+				dlg.Initialize(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), app, m_stylesheet, null);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					var cmNew = new CharMapping
@@ -617,8 +617,8 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			using (var dlg = new ImportCharMappingDlg())
 			{
 				var cm = lvi.Tag as CharMapping;
-				var app = m_propertyTable.GetValue<IApp>("App");
-				dlg.Initialize(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, m_stylesheet, cm);
+				var app = m_propertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
+				dlg.Initialize(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), app, m_stylesheet, cm);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					cm.BeginMarker = dlg.BeginMarker;

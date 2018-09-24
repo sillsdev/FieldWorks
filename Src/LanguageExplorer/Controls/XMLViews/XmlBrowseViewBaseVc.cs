@@ -114,7 +114,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		internal XmlBrowseViewBaseVc(XmlBrowseViewBase xbv)
 		{
-			TheApp = xbv.m_bv.PropertyTable.GetValue<IApp>("App");
+			TheApp = xbv.m_bv.PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
 			XmlBrowseViewBaseVcInit(xbv.Cache, xbv.DataAccess);
 
 		}

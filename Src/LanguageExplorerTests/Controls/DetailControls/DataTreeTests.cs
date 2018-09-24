@@ -109,7 +109,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			m_dtree = new DataTree(new SharedEventHandlers());
 			SetupPubSubAndPropertyTable();
 			_dummyWindow = new DummyFwMainWnd();
-			m_propertyTable.SetProperty("window", _dummyWindow);
+			m_propertyTable.SetProperty(FwUtils.window, _dummyWindow);
 			m_dtree.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
 			m_parent = new Form();
 			m_parent.Controls.Add(m_dtree);
@@ -281,7 +281,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			m_parent.Close();
 			m_parent.Dispose();
 			m_parent = null;
-			m_propertyTable.RemoveProperty("window");
+			m_propertyTable.RemoveProperty(FwUtils.window);
 			_dummyWindow.Dispose();
 			_dummyWindow = null;
 
@@ -296,7 +296,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			m_propertyTable.Dispose();
 			SetupPubSubAndPropertyTable();
 			_dummyWindow = new DummyFwMainWnd();
-			m_propertyTable.SetProperty("window", _dummyWindow);
+			m_propertyTable.SetProperty(FwUtils.window, _dummyWindow);
 			m_parent = new Form();
 			m_dtree = new DataTree(new SharedEventHandlers());
 			m_dtree.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
@@ -314,7 +314,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			m_parent.Close();
 			m_parent.Dispose();
 			m_parent = null;
-			m_propertyTable.RemoveProperty("window");
+			m_propertyTable.RemoveProperty(FwUtils.window);
 			_dummyWindow.Dispose();
 			_dummyWindow = null;
 
@@ -324,7 +324,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			m_propertyTable.Dispose();
 			SetupPubSubAndPropertyTable();
 			_dummyWindow = new DummyFwMainWnd();
-			m_propertyTable.SetProperty("window", _dummyWindow);
+			m_propertyTable.SetProperty(FwUtils.window, _dummyWindow);
 			m_parent = new Form();
 			m_dtree = new DataTree(new SharedEventHandlers());
 			m_dtree.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
@@ -337,7 +337,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			m_parent.Close();
 			m_parent.Dispose();
 			m_parent = null;
-			m_propertyTable.RemoveProperty("window");
+			m_propertyTable.RemoveProperty(FwUtils.window);
 			_dummyWindow.Dispose();
 			_dummyWindow = null;
 
@@ -347,7 +347,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			m_propertyTable.Dispose();
 			SetupPubSubAndPropertyTable();
 			_dummyWindow = new DummyFwMainWnd();
-			m_propertyTable.SetProperty("window", _dummyWindow);
+			m_propertyTable.SetProperty(FwUtils.window, _dummyWindow);
 			m_parent = new Form();
 			m_dtree = new DataTree(new SharedEventHandlers());
 			m_dtree.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));

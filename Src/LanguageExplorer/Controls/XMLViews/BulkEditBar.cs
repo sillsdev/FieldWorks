@@ -1471,7 +1471,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			if (helpTopic != string.Empty)
 			{
-				ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), helpTopic);
+				ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), helpTopic);
 			}
 		}
 
@@ -2677,8 +2677,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				//Change the Title from "Find and Replace" to "Bulk Replace Setup"
 				findDlg.Text = string.Format(XMLViewsStrings.khtpBulkReplaceTitle);
-				var app = PropertyTable.GetValue<IApp>("App");
-				findDlg.SetDialogValues(m_cache, Pattern, m_bv.BrowseView.StyleSheet, FindForm(), PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app);
+				var app = PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
+				findDlg.SetDialogValues(m_cache, Pattern, m_bv.BrowseView.StyleSheet, FindForm(), PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), app);
 				findDlg.RestoreAndPersistSettingsIn(PropertyTable);
 				// Set this AFTER it has the correct WSF!
 				findDlg.ReplaceText = m_tssReplace;
@@ -2800,7 +2800,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					if (fIsSourceCombo)
 					{
-						accessor = new ManyOnePathSortItemReadWriter(m_cache, node, m_bv, PropertyTable.GetValue<IApp>("App"));
+						accessor = new ManyOnePathSortItemReadWriter(m_cache, node, m_bv, PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App));
 					}
 					else if(!IsColumnWsBothVernacularAndAnalysis(node))
 					{
@@ -2914,8 +2914,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			try
 			{
 				var prevEC = m_transduceProcessorCombo.Text;
-				var app = PropertyTable.GetValue<IApp>("App");
-				using (var dlg = new AddCnvtrDlg(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, null, m_transduceProcessorCombo.Text, null, true))
+				var app = PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
+				using (var dlg = new AddCnvtrDlg(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), app, null, m_transduceProcessorCombo.Text, null, true))
 				{
 					dlg.ShowDialog();
 

@@ -9,7 +9,6 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.Lexicon.Tools.Edit;
-using LanguageExplorer.LcmUi;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using LanguageExplorer.Filters;
@@ -113,7 +112,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		{
 			_propertyTable.SetProperty(AreaServices.InitialArea, MachineName, true, settingsGroup: SettingsGroup.LocalSettings);
 
-			var serviceLocator = _propertyTable.GetValue<LcmCache>("cache").ServiceLocator;
+			var serviceLocator = _propertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache).ServiceLocator;
 			var hc = serviceLocator.GetInstance<HomographConfiguration>();
 			_propertyTable.SetProperty(khomographconfiguration, hc.PersistData, true);
 
@@ -134,7 +133,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// <summary>
 		/// Get all installed tools for the area.
 		/// </summary>
-		public IList<ITool> AllToolsInOrder
+		public IReadOnlyList<ITool> AllToolsInOrder
 		{
 			get
 			{
@@ -226,7 +225,7 @@ namespace LanguageExplorer.Areas.Lexicon
 				<!--<recordFilterListProvider assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.WfiRecordFilterListProvider"/>-->
 			</clerk>
 			*/
-			var currentGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(flexComponentParameters.PropertyTable, "ReversalIndexGuid");
+			var currentGuid = RecordListServices.GetObjectGuidIfValid(flexComponentParameters.PropertyTable, "ReversalIndexGuid");
 			IReversalIndex revIdx = null;
 			if (currentGuid != Guid.Empty)
 			{

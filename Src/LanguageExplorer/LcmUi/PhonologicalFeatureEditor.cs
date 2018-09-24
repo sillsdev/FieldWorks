@@ -217,7 +217,7 @@ namespace LanguageExplorer.LcmUi
 
 				m_PhonologicalFeatureTreeManager = new PhonologicalFeaturePopupTreeManager(m_tree,
 																						   m_cache, false, PropertyTable, m_publisher,
-																						   PropertyTable.GetValue<Form>("window"),
+																						   PropertyTable.GetValue<Form>(FwUtils.window),
 																						   m_displayWs, m_closedFeature);
 				m_PhonologicalFeatureTreeManager.AfterSelect += m_PhonFeaturePopupTreeManager_AfterSelect;
 			}

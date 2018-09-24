@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -327,7 +327,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			string sMorphs;
 			var propTable = ((IPropertyTableProvider)m_sandbox.FindForm()).PropertyTable;
-			using (var dlg = new EditMorphBreaksDlg(propTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+			using (var dlg = new EditMorphBreaksDlg(propTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 			{
 				var tssWord = m_sandbox.SbWordForm(m_sandbox.RawWordformWs);
 				sMorphs = m_sandbox.SandboxEditMonitor.BuildCurrentMorphsString();

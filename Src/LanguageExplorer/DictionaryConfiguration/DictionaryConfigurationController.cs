@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -36,7 +36,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		internal ICmObject _previewEntry;
 
-		private LcmCache Cache => PropertyTable.GetValue<LcmCache>("cache");
+		private LcmCache Cache => PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 
 		/// <summary>
 		/// The view to display the model in
@@ -1615,7 +1615,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			var cache = PropertyTable.GetValue<LcmCache>("cache");
+			var cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 			if (_previewEntry == null)
 			{
 				_previewEntry = GetDefaultEntryForType(DictionaryConfigurationServices.GetDictionaryConfigurationBaseType(PropertyTable), cache);
@@ -1632,7 +1632,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				var currentModel = _model;
 				bool managerMadeChanges;
 				// show the Configuration Manager dialog
-				using (var dialog = new DictionaryConfigurationManagerDlg(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+				using (var dialog = new DictionaryConfigurationManagerDlg(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 				{
 					var configurationManagerController = new DictionaryConfigurationManagerController(dialog, _dictionaryConfigurations, GetAllPublications(cache), _projectConfigDir, _defaultConfigDir, _model);
 					configurationManagerController.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));

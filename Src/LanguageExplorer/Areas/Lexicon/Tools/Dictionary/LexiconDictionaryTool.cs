@@ -83,7 +83,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			_fwMainWnd = majorFlexComponentParameters.MainWindow;
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(LexiconArea.Entries, majorFlexComponentParameters.Statusbar, LexiconArea.EntriesFactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LexiconArea.Entries, majorFlexComponentParameters.StatusBar, LexiconArea.EntriesFactoryMethod);
 			}
 
 			var root = XDocument.Parse(LexiconResources.LexiconDictionaryToolParameters).Root;
@@ -205,7 +205,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			// 1. <menu list="Configurations" inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" property="DictionaryPublicationLayout"/>
 			IDictionary<string, string> hasPub;
 			IDictionary<string, string> doesNotHavePub;
-			var allConfigurations = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(_propertyTable.GetValue<LcmCache>("cache"), _configureObjectName);
+			var allConfigurations = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(_propertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache), _configureObjectName);
 			_xhtmlDocView.SplitConfigurationsByPublication(allConfigurations, _xhtmlDocView.GetCurrentPublication(), out hasPub, out doesNotHavePub);
 			// Add menu items that display the configuration name and send PropChanges with
 			// the configuration path.

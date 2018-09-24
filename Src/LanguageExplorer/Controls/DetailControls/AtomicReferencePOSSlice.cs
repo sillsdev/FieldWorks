@@ -87,7 +87,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					ws = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
 				}
 				Tree.WritingSystemCode = ws;
-				m_pOSPopupTreeManager = new POSPopupTreeManager(Tree, Cache, list, ws, false, propertyTable, publisher, propertyTable.GetValue<Form>("window"));
+				m_pOSPopupTreeManager = new POSPopupTreeManager(Tree, Cache, list, ws, false, propertyTable, publisher, propertyTable.GetValue<Form>(FwUtils.window));
 				m_pOSPopupTreeManager.AfterSelect += m_pOSPopupTreeManager_AfterSelect;
 			}
 			try

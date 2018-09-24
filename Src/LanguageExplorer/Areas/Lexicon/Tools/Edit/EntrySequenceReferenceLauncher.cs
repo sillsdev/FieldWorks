@@ -115,7 +115,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					var ler = m_obj as ILexEntryRef;
 					Debug.Assert(ler != null);
 					var labels = ObjectLabel.CreateObjectLabels(m_cache, ler.ComponentLexemesRS, m_displayNameProperty, displayWs);
-					using (var chooser = new ReallySimpleListChooser(null, labels, "PrimaryLexemes", m_cache, ler.PrimaryLexemesRS, false, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+					using (var chooser = new ReallySimpleListChooser(null, labels, "PrimaryLexemes", m_cache, ler.PrimaryLexemesRS, false, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 					{
 						chooser.HideDisplayUsageCheckBox();
 						chooser.SetObjectAndFlid(m_obj.Hvo, m_flid);	// may set TextParamHvo
@@ -196,7 +196,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var labels = ObjectLabel.CreateObjectLabels(m_cache, options, m_displayNameProperty, displayWs);
 			using (var chooser = new ReallySimpleListChooser(null,
 				labels, fieldName, m_cache, oldValue,
-				false, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+				false, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 			{
 				chooser.HideDisplayUsageCheckBox();
 				chooser.SetObjectAndFlid(m_obj.Hvo, m_flid);	// may set TextParamHvo

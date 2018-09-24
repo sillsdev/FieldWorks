@@ -22,7 +22,7 @@ namespace LanguageExplorer
 		/// <summary />
 		internal ToolStripContainer ToolStripContainer { get; }
 		/// <summary />
-		internal StatusBar Statusbar { get; }
+		internal StatusBar StatusBar { get; }
 		/// <summary />
 		internal ParserMenuManager ParserMenuManager { get; }
 		/// <summary />
@@ -40,14 +40,14 @@ namespace LanguageExplorer
 		/// <summary />
 		internal SidePane SidePane { get; }
 
-		internal MajorFlexComponentParameters(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar,
+		internal MajorFlexComponentParameters(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusBar,
 			ParserMenuManager parserMenuManager, DataNavigationManager dataNavigationManager,
 			FlexComponentParameters flexComponentParameters, LcmCache lcmCache, IFlexApp flexApp, IFwMainWnd mainWindow, ISharedEventHandlers sharedEventHandlers, SidePane sidePane)
 		{
 			MainCollapsingSplitContainer = mainCollapsingSplitContainer;
 			MenuStrip = menuStrip;
 			ToolStripContainer = toolStripContainer;
-			Statusbar = statusbar;
+			StatusBar = statusBar;
 			ParserMenuManager = parserMenuManager;
 			DataNavigationManager = dataNavigationManager;
 			FlexComponentParameters = flexComponentParameters;

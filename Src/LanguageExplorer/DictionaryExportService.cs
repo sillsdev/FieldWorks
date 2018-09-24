@@ -183,7 +183,7 @@ namespace LanguageExplorer
 				var controlElement = AreaListener.GetContentControlParameters(null, area, tool);
 				Debug.Assert(controlElement != null, "Prepare to be disappointed, since it will be null.");
 				var parameters = controlElement.XPathSelectElement(".//parameters[@clerk]");
-				var activeRecordListRepository = propertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository");
+				var activeRecordListRepository = propertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository);
 				var activeRecordList = activeRecordListRepository.ActiveRecordList;
 				if (DoesRecordListMatchParams(activeRecordList, parameters))
 				{

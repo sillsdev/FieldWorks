@@ -32,7 +32,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 
 		private void EditFindMenu_Click(object sender, EventArgs e)
 		{
-			PropertyTable.GetValue<IApp>("App").ShowFindReplaceDialog(false, _majorFlexComponentParameters.MainWindow.ActiveView as IVwRootSite, _majorFlexComponentParameters.LcmCache, _majorFlexComponentParameters.MainWindow as Form);
+			PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App).ShowFindReplaceDialog(false, _majorFlexComponentParameters.MainWindow.ActiveView as IVwRootSite, _majorFlexComponentParameters.LcmCache, _majorFlexComponentParameters.MainWindow as Form);
 		}
 
 		#region Implementation of IPropertyTableProvider

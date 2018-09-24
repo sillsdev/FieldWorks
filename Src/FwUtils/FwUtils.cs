@@ -10,7 +10,6 @@ using System.Globalization;
 using System.Media;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
-using System.IO;
 using System.Xml;
 using System.Xml.Linq;
 using SIL.LCModel.Core.Text;
@@ -39,6 +38,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Use the one that is correct for your context, in case they need to be changed later.)
 		/// </summary>
 		public const string ksFlexAppName = "Language Explorer";
+
+		/// <summary />
+		public const string FlexStyleSheet = "FlexStyleSheet";
+
+		/// <summary />
+		public const string window = "window";
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -179,23 +184,24 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				// We read the registry value and set an environment variable ICU_DATA here so that
 				// FwKernelInterfaces.dll is independent of WinForms.
-				string icuDirValueName = string.Format("Icu{0}DataDir",
-					LCModel.Core.Text.Icu.Version);
+				var icuDirValueName = $"Icu{Icu.Version}DataDir";
 				using (var userKey = RegistryHelper.CompanyKey)
 				using (var machineKey = RegistryHelper.CompanyKeyLocalMachine)
 				{
 					string dir = null;
 					if (userKey != null && userKey.GetValue(icuDirValueName) != null)
-			{
+					{
 						dir = userKey.GetValue(icuDirValueName, dir) as string;
-			}
+					}
 					else if (machineKey != null && machineKey.GetValue(icuDirValueName) != null)
 					{
 
 						dir = machineKey.GetValue(icuDirValueName, dir) as string;
 					}
 					if (!string.IsNullOrEmpty(dir))
+					{
 						Environment.SetEnvironmentVariable("ICU_DATA", dir);
+					}
 				}
 			}
 			Icu.InitIcuDataDir();
@@ -265,7 +271,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns></returns>
 		public static Control FindControl(Control parentControl, string nameOfChildToFocus)
 		{
-			if (String.IsNullOrEmpty(nameOfChildToFocus))
+			if (string.IsNullOrEmpty(nameOfChildToFocus))
 			{
 				return null;
 			}
@@ -309,12 +315,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		public static Rectangle GetRcFromString(string str)
 		{
-			str = str.Replace("{", String.Empty);
-			str = str.Replace("}", String.Empty);
-			str = str.Replace("X=", String.Empty);
-			str = str.Replace("Y=", String.Empty);
-			str = str.Replace("Width=", String.Empty);
-			str = str.Replace("Height=", String.Empty);
+			str = str.Replace("{", string.Empty);
+			str = str.Replace("}", string.Empty);
+			str = str.Replace("X=", string.Empty);
+			str = str.Replace("Y=", string.Empty);
+			str = str.Replace("Width=", string.Empty);
+			str = str.Replace("Height=", string.Empty);
 
 			string[] strVals = str.Split(",".ToCharArray(), 4);
 			Rectangle rc = Rectangle.Empty;
@@ -633,7 +639,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static string GetTestLangProjDataBaseName()
 		{
 			string dbName = Environment.GetEnvironmentVariable("TE_DATABASE");
-			if (String.IsNullOrEmpty(dbName))
+			if (string.IsNullOrEmpty(dbName))
 				return "TestLangProj";
 			return dbName;
 		}
@@ -658,7 +664,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public static LcmStyleSheet StyleSheetFromPropertyTable(IPropertyRetriever propertyTable)
 		{
-			return propertyTable.GetValue<LcmStyleSheet>("FlexStyleSheet");
+			return propertyTable.GetValue<LcmStyleSheet>(FlexStyleSheet);
 		}
 	}
 

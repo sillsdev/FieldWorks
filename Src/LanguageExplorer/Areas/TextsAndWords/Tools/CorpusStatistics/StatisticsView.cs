@@ -45,7 +45,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 
 			majorFlexComponentParameters.MainCollapsingSplitContainer.SecondControl = this;
 			InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
-			_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(TextAndWordsArea.InterlinearTexts, majorFlexComponentParameters.Statusbar, TextAndWordsArea.InterlinearTextsFactoryMethod);
+			_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(TextAndWordsArea.InterlinearTexts, majorFlexComponentParameters.StatusBar, TextAndWordsArea.InterlinearTextsFactoryMethod);
 
 			// Add toolbar button.
 			_toolStripView = ToolbarServices.GetViewToolStrip(majorFlexComponentParameters.ToolStripContainer);
@@ -116,7 +116,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 
 			RebuildStatisticsTable();
 			//add our current state to the history system
-			PropertyTable.GetValue<LinkHandler>("LinkHandler").AddLinkToHistory(new FwLinkArgs(PropertyTable.GetValue<string>(AreaServices.ToolChoice), Guid.Empty));
+			PropertyTable.GetValue<LinkHandler>(LanguageExplorerConstants.LinkHandler).AddLinkToHistory(new FwLinkArgs(PropertyTable.GetValue<string>(AreaServices.ToolChoice), Guid.Empty));
 		}
 
 		#endregion
@@ -218,7 +218,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			// TODO-Linux: SelectionTabs isn't implemented on Mono
 			statisticsBox.SelectionTabs = new[] { 10, 300};
 			//retrieve the default UI font.
-			var cache = PropertyTable.GetValue<LcmCache>("cache");
+			var cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 			var font = FontHeightAdjuster.GetFontForStyle(StyleServices.NormalStyleName, FwUtils.StyleSheetFromPropertyTable(PropertyTable), cache.DefaultUserWs, cache.WritingSystemFactory);
 			//increase the size of the default UI font and make it bold for the header.
 			var headerFont = new Font(font.FontFamily, font.SizeInPoints + 1.0f, FontStyle.Bold, font.Unit, font.GdiCharSet);

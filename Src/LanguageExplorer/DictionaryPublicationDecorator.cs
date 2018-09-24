@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2012-2018 SIL International
+// Copyright (c) 2012-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -450,7 +449,7 @@ namespace LanguageExplorer
 					return VecProp(Cache.LangProject.LexDbOA.Hvo, virtualFlid);
 				case "Reversal Index":
 				{
-					var reversalIndexGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(propertyTable, "ReversalIndexGuid");
+					var reversalIndexGuid = RecordListServices.GetObjectGuidIfValid(propertyTable, "ReversalIndexGuid");
 					if (reversalIndexGuid != Guid.Empty)
 					{
 						var currentReversalIndex = Cache.ServiceLocator.GetObject(reversalIndexGuid) as IReversalIndex;

@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Areas;
@@ -67,7 +66,7 @@ namespace LanguageExplorer.Dumpster
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			Cache = PropertyTable.GetValue<LcmCache>("cache");
+			Cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 			m_wordformRepos = Cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
 		}
 
@@ -106,7 +105,7 @@ namespace LanguageExplorer.Dumpster
 		/// <returns></returns>
 		private static Guid ActiveWordform(IWfiWordformRepository wordformRepos, IPropertyTable propertyTable)
 		{
-			var app = propertyTable.GetValue<IApp>("App");
+			var app = propertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
 			var window = app?.ActiveMainWindow as IFwMainWnd;
 			var activeView = window?.ActiveView;
 			if (activeView == null)

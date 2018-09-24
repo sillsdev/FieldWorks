@@ -76,7 +76,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			}
 
 			_recordListRepositoryForTools = new RecordListRepository(Cache, _flexComponentParameters);
-			_flexComponentParameters.PropertyTable.SetProperty("RecordListRepository", _recordListRepositoryForTools, settingsGroup: SettingsGroup.GlobalSettings);
+			_flexComponentParameters.PropertyTable.SetProperty(LanguageExplorerConstants.RecordListRepository, _recordListRepositoryForTools, settingsGroup: SettingsGroup.GlobalSettings);
 			_statusBar = new StatusBar();
 			_recordList = CreateRecordList();
 			_recordListRepositoryForTools.AddRecordList(_recordList);

@@ -738,7 +738,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 					break;
 			}
 			return InterlinComboHandler.MakeCombo(
-				propertyTable != null ? propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider") : null, tagIcon,
+				propertyTable?.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), tagIcon,
 				this, morphIndex) as InterlinComboHandler;
 		}
 

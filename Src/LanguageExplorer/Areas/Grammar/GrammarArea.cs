@@ -110,7 +110,7 @@ namespace LanguageExplorer.Areas.Grammar
 		/// <summary>
 		/// Get all installed tools for the area.
 		/// </summary>
-		public IList<ITool> AllToolsInOrder
+		public IReadOnlyList<ITool> AllToolsInOrder
 		{
 			get
 			{

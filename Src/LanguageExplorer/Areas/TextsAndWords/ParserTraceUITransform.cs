@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -29,7 +29,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		public string Transform(IPropertyTable propertyTable, XDocument doc, string baseName, XsltArgumentList args)
 		{
-			var cache = propertyTable.GetValue<LcmCache>("cache");
+			var cache = propertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 			SetWritingSystemBasedArguments(cache, propertyTable, args);
 			args.AddParam("prmIconPath", "", IconPath);
 			var filePath = Path.Combine(Path.GetTempPath(), cache.ProjectId.Name + baseName + ".htm");

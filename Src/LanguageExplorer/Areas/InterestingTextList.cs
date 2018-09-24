@@ -77,7 +77,7 @@ namespace LanguageExplorer.Areas
 
 		private void GetCache()
 		{
-			Cache = m_propertyTable.GetValue<LcmCache>("cache");
+			Cache = m_propertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 		}
 
 		private List<IStText> m_coreTexts;
@@ -294,7 +294,7 @@ namespace LanguageExplorer.Areas
 			}
 
 			// We won't keep track of the record list between calls since it could change from time to time.
-			var recordList = m_propertyTable.GetValue<IRecordListRepository>("RecordListRepository").ActiveRecordList;
+			var recordList = m_propertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList;
 			if (recordList == null)
 			{
 				return;

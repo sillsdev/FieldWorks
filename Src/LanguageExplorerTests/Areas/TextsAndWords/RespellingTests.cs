@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using LanguageExplorer;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Areas.TextsAndWords;
 using LanguageExplorer.Controls.XMLViews;
@@ -81,7 +82,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 						Cache.ServiceLocator.GetInstance<ISilDataAccessManaged>().RemoveNotification(interestingTextlist);
 						m_propertyTable.RemoveProperty("InterestingTexts");
 					}
-					m_propertyTable.RemoveProperty("cache");
+					m_propertyTable.RemoveProperty(LanguageExplorerConstants.cache);
 					m_propertyTable.Dispose();
 				}
 				m_propertyTable = null;

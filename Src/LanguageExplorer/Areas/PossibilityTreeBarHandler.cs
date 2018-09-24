@@ -42,7 +42,7 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		protected virtual void UpdateHeaderVisibility()
 		{
-			var window = m_propertyTable.GetValue<IFwMainWnd>("window");
+			var window = m_propertyTable.GetValue<IFwMainWnd>(FwUtils.window);
 			if (window?.RecordBarControl == null)
 			{
 				return;

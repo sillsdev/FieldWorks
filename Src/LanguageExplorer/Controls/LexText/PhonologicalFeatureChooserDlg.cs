@@ -255,7 +255,7 @@ namespace LanguageExplorer.Controls.LexText
 					StartPosition = FormStartPosition.Manual;
 				}
 
-				var helpTopicProvider = (m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+				var helpTopicProvider = (m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider));
 				if (helpTopicProvider != null) // Will be null when running tests
 				{
 					m_helpProvider.HelpNamespace = helpTopicProvider.HelpFile;
@@ -282,7 +282,7 @@ namespace LanguageExplorer.Controls.LexText
 		public void SetHelpTopic(string helpTopic)
 		{
 			m_helpTopic = helpTopic;
-			m_helpProvider.SetHelpKeyword(this, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").GetHelpString(helpTopic));
+			m_helpProvider.SetHelpKeyword(this, m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider).GetHelpString(helpTopic));
 		}
 
 		public void HandleJump()
@@ -798,7 +798,7 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				m_helpTopic = "khtpChoose-Phonemes";
 			}
-			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_helpTopic);
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), m_helpTopic);
 		}
 
 		private sealed class PhonologicalFeaturePublisher : ObjectListPublisher

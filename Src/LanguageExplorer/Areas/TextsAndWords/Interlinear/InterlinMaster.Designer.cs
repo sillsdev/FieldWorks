@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -37,7 +37,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// as it does in TE.
 				if (PropertyTable != null)
 				{
-					IApp app = PropertyTable.GetValue<IApp>("App");
+					IApp app = PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
 					if (app != null)
 					{
 						app.RemoveFindReplaceDialog();

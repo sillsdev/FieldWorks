@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -43,10 +43,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 
 		void FileExportMenu_Click(object sender, EventArgs e)
 		{
-			using (var dlg = new ExportDialog(_majorFlexComponentParameters.Statusbar))
+			using (var dlg = new ExportDialog(_majorFlexComponentParameters.StatusBar))
 			{
 				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-				dlg.ShowDialog(PropertyTable.GetValue<Form>("window"));
+				dlg.ShowDialog(PropertyTable.GetValue<Form>(FwUtils.window));
 			}
 		}
 

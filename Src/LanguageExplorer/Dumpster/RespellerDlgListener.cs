@@ -67,7 +67,7 @@ namespace LanguageExplorer.Dumpster
 				var tssVern = wfiWordform.Form.BestVernacularAlternative;
 				return tssVern;
 			}
-			var app = PropertyTable.GetValue<IApp>("App");
+			var app = PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
 			if (app == null)
 				return null;
 			var window = app.ActiveMainWindow as IFwMainWnd;
@@ -87,7 +87,7 @@ namespace LanguageExplorer.Dumpster
 			{
 				// Check for a valid vernacular writing system.  (See LT-8892.)
 				var ws = TsStringUtils.GetWsAtOffset(tssWord, 0);
-				var cache = PropertyTable.GetValue<LcmCache>("cache");
+				var cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 				CoreWritingSystemDefinition wsObj = cache.ServiceLocator.WritingSystemManager.Get(ws);
 				if (cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Contains(wsObj))
 					return tssWord;
@@ -136,7 +136,7 @@ namespace LanguageExplorer.Dumpster
 #endif
 					if (dlg.SetDlgInfo(null))
 					{
-						dlg.ShowDialog((Form)PropertyTable.GetValue<IFwMainWnd>("window"));
+						dlg.ShowDialog((Form)PropertyTable.GetValue<IFwMainWnd>(LanguageExplorerConstants.window));
 						changesWereMade = dlg.ChangesWereMade;
 					}
 					else
@@ -172,7 +172,7 @@ namespace LanguageExplorer.Dumpster
 			if (tss == null || string.IsNullOrEmpty(tss.Text))
 				return;
 
-			var cache = PropertyTable.GetValue<LcmCache>("cache");
+			var cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 			var wordform = WordformApplicationServices.GetWordformForForm(cache, tss);
 			using (var luh = new ListUpdateHelper(RecordList.RecordListRepository.ActiveRecordList))
 			{
@@ -184,7 +184,7 @@ namespace LanguageExplorer.Dumpster
 #endif
 					if (dlg.SetDlgInfo(wordform, null))
 					{
-						dlg.ShowDialog((Form)PropertyTable.GetValue<IFwMainWnd>("window"));
+						dlg.ShowDialog((Form)PropertyTable.GetValue<IFwMainWnd>(LanguageExplorerConstants.window));
 					}
 					else
 					{

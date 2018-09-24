@@ -552,7 +552,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		public bool OnAddApprovedAnalysis(object argument)
 		{
 			var mainWnd = (IFwMainWnd)m_dataTree.FindForm();
-			using (EditMorphBreaksDlg dlg = new EditMorphBreaksDlg(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+			using (EditMorphBreaksDlg dlg = new EditMorphBreaksDlg(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 			{
 				IWfiWordform wf = Wordform;
 				if (wf == null)

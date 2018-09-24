@@ -53,7 +53,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_propertyTable = propertyTable;
 			if (m_propertyTable != null)
 			{
-				m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+				m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
 			}
 			SetDialogTitle();
 		}
@@ -592,11 +592,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					Close();
 				}
 			}
-			m_propertyTable.GetValue<IFwMainWnd>("window").RefreshAllViews();
+			m_propertyTable.GetValue<IFwMainWnd>(FwUtils.window).RefreshAllViews();
 			if (m_firstNewText != null)
 			{
 				// try to select it.
-				var recordList = m_propertyTable.GetValue<IRecordListRepository>("RecordListRepository").GetRecordList(TextAndWordsArea.InterlinearTexts);
+				var recordList = m_propertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).GetRecordList(TextAndWordsArea.InterlinearTexts);
 				recordList?.JumpToRecord(m_firstNewText.ContentsOA.Hvo);
 			}
 		}
@@ -747,7 +747,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				var index = m_mappingsList.SelectedIndices[0];
 				var mapping = m_mappings[index];
 				var destinationsFilter = GetDestinationsFilter();
-				dlg.SetupDlg(m_helpTopicProvider, m_propertyTable.GetValue<IApp>("App"), m_cache, mapping, destinationsFilter);
+				dlg.SetupDlg(m_helpTopicProvider, m_propertyTable.GetValue<IApp>(LanguageExplorerConstants.App), m_cache, mapping, destinationsFilter);
 				dlg.ShowDialog(this);
 				var item = m_mappingsList.Items[index];
 				item.SubItems[2].Text = GetDestinationName(mapping.Destination);
@@ -787,7 +787,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_helpTopicID);
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), m_helpTopicID);
 		}
 
 		private void m_browseSaveSettingsFileButon_Click(object sender, EventArgs e)

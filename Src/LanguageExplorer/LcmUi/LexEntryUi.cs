@@ -288,7 +288,7 @@ namespace LanguageExplorer.LcmUi
 				// This can be called from TE...in that case, we don't complain about missing include
 				// files (true argument) but just trust that we put enough in the installer to make it work.
 				XmlDocument configuration = XWindow.LoadConfigurationWithIncludes(configFile, true);
-				XmlNode windowConfigurationNode = configuration.SelectSingleNode("window");
+				XmlNode windowConfigurationNode = configuration.SelectSingleNode(LanguageExplorerConstants.window);
 				propertyTable.SetProperty("WindowConfiguration", windowConfigurationNode, false, true);
 			}
 #endif

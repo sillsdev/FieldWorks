@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,7 +11,7 @@ namespace LanguageExplorerTests.Repository
 	internal class AreaTestBase : MefTestBase
 	{
 		protected IArea _myArea;
-		protected IList<ITool> _myOrderedTools;
+		protected IReadOnlyList<ITool> _myOrderedTools;
 		protected string _areaMachineName;
 
 		/// <summary>

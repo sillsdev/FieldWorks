@@ -84,5 +84,17 @@ namespace LanguageExplorer
 		internal const string AllReversalIndexesFilenameBase = "AllReversalIndexes";
 		/// <summary />
 		internal const string RevIndexDir = "ReversalIndex";
+		/// <summary />
+		internal const string App = "App";
+		/// <summary />
+		internal const string cache = "cache";
+		/// <summary />
+		internal const string HelpTopicProvider = "HelpTopicProvider";
+		/// <summary />
+		internal const string LinkHandler = "LinkHandler";
+		/// <summary />
+		internal const string MajorFlexComponentParameters = "MajorFlexComponentParameters";
+		/// <summary />
+		internal const string RecordListRepository = "RecordListRepository";
 	}
 }

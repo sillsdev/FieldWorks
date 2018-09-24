@@ -52,7 +52,7 @@ namespace LanguageExplorerTests
 			{
 				var styleSheet = new LcmStyleSheet();
 				styleSheet.Init(cache, cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
-				flexComponentParameters.PropertyTable.SetProperty("FlexStyleSheet", styleSheet);
+				flexComponentParameters.PropertyTable.SetProperty(FwUtils.FlexStyleSheet, styleSheet);
 			}
 			sharedEventHandlers = new SharedEventHandlers();
 			return flexComponentParameters;

@@ -501,10 +501,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			switch (HelpId)
 			{
 				case "LexSenseReferences":
-					ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "khtpFieldLexSenseLexicalRelations");
+					ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), "khtpFieldLexSenseLexicalRelations");
 					break;
 				case "LexEntryReferences":
-					ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "khtpFieldLexEntryCrossReference");
+					ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), "khtpFieldLexEntryCrossReference");
 					break;
 				default:
 					Debug.Assert(false, "Tried to show help for a LexReferenceMultiSlice that does not have an associated Help Topic ID");
@@ -756,7 +756,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary />
 		private void ExpandNewNode()
 		{
-			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>("window"), ContainingDataTree))
+			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>(FwUtils.window), ContainingDataTree))
 			{
 				XElement caller = null;
 				if (Key.Length > 1)
@@ -777,7 +777,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <param name="iSlice"></param>
 		public override void Expand(int iSlice)
 		{
-			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>("window"), ContainingDataTree))
+			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>(FwUtils.window), ContainingDataTree))
 			{
 				XElement caller = null;
 				if (Key.Length > 1)
@@ -802,10 +802,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				throw new FwConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be deleted.", ConfigurationNode);
 			}
-			var mainWindow = PropertyTable.GetValue<Form>("window");
+			var mainWindow = PropertyTable.GetValue<Form>(FwUtils.window);
 			using (new WaitCursor(mainWindow))
 			{
-				using (var dlg = new ConfirmDeleteObjectDlg(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+				using (var dlg = new ConfirmDeleteObjectDlg(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 				using (var ui = CmObjectUi.MakeLcmModelUiObject(Cache, lr.Hvo))
 				{
 					ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
@@ -871,9 +871,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				throw new FwConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be deleted.", ConfigurationNode);
 			}
-			var mainWindow = PropertyTable.GetValue<Form>("window");
+			var mainWindow = PropertyTable.GetValue<Form>(FwUtils.window);
 			using (new WaitCursor(mainWindow))
-			using (var dlg = new ConfirmDeleteObjectDlg(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+			using (var dlg = new ConfirmDeleteObjectDlg(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 			using (var ui = CmObjectUi.MakeLcmModelUiObject(Cache, lr.Hvo))
 			{
 				ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
@@ -935,7 +935,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				throw new FwConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be deleted.", ConfigurationNode);
 			}
-			using (var dlg = new LexReferenceDetailsDlg(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+			using (var dlg = new LexReferenceDetailsDlg(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 			{
 				dlg.ReferenceName = lr.Name.AnalysisDefaultWritingSystem.Text;
 				dlg.ReferenceComment = lr.Comment.AnalysisDefaultWritingSystem.Text;

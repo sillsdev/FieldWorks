@@ -123,7 +123,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			m_sLastXmlFileName = string.Empty;
 
-			var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
 			if (helpTopicProvider == null)
 			{
 				return;
@@ -338,7 +338,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void linkLabel2_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "khtpLinguaLinksImportLink");
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), "khtpLinguaLinksImportLink");
 		}
 
 		private static string BaseName(string fullName)
@@ -608,8 +608,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var selIndex = selIndexes[0];
 			// only support 1
 			var lvItem = listViewMapping.Items[selIndex];
-			var app = m_propertyTable.GetValue<IApp>("App");
-			using (var dlg = new LexImportWizardLanguage(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app))
+			var app = m_propertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
+			using (var dlg = new LexImportWizardLanguage(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), app))
 			{
 				var llName = lvItem.Text;
 				var fwName = lvItem.SubItems[1].Text;
@@ -689,7 +689,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					Debug.Assert(m_nextInput == m_LinguaLinksXmlFileName.Text);
 					// Ensure the idle time processing for change record doesn't cause problems
 					// because the import creates a record to change to.  See FWR-3700.
-					var recordList = m_propertyTable.GetValue<IRecordListRepository>("RecordListRepository").ActiveRecordList;
+					var recordList = m_propertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList;
 					var fSuppressedSave = false;
 					try
 					{
@@ -773,7 +773,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), s_helpTopic);
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), s_helpTopic);
 		}
 
 		// class to contain 'ws' information to be put in combo boxes

@@ -29,7 +29,7 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		public override void FinishInit()
 		{
-			MyStringRepSliceView.Cache = PropertyTable.GetValue<LcmCache>("cache");
+			MyStringRepSliceView.Cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 			MyStringRepSliceView.ResetValidator();
 
 			if (MyStringRepSliceView.RootBox == null)

@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -159,7 +158,7 @@ namespace LanguageExplorer
 			if (disposing)
 			{
 				Application.Idle -= Application_Idle;
-				PropertyTable.RemoveProperty("LinkHandler");
+				PropertyTable.RemoveProperty(LanguageExplorerConstants.LinkHandler);
 				Subscriber.Unsubscribe("FollowLink", FollowLink_Handler);
 				_toolStripButtonHistoryBack.Click -= HistoryBack_Clicked;
 				_toolStripButtonHistoryForward.Click -= HistoryForward_Clicked;
@@ -428,7 +427,7 @@ namespace LanguageExplorer
 						// For the reversal index tool, just getting the tool right isn't enough.  We
 						// also need to be showing the proper index.  (See FWR-1105.)
 						// 'guid' can be 'Guid.Empty'.
-						var guid = ReversalIndexEntryUi.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
+						var guid = RecordListServices.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
 						if (!guid.Equals(cmObject.Owner.Guid))
 						{
 							PropertyTable.SetProperty("ReversalIndexGuid", cmObject.Owner.Guid.ToString(), true);
@@ -453,7 +452,7 @@ namespace LanguageExplorer
 
 		private void ShowCantJumpMessage(string msg)
 		{
-			MessageBox.Show(PropertyTable.GetValue<Form>("window") ?? Form.ActiveForm, msg, LanguageExplorerResources.ksCantJumpCaption);
+			MessageBox.Show(PropertyTable.GetValue<Form>(FwUtils.window) ?? Form.ActiveForm, msg, LanguageExplorerResources.ksCantJumpCaption);
 		}
 
 		/// <summary>
@@ -512,7 +511,7 @@ namespace LanguageExplorer
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			PropertyTable.SetProperty("LinkHandler", this);
+			PropertyTable.SetProperty(LanguageExplorerConstants.LinkHandler, this);
 			Subscriber.Subscribe("FollowLink", FollowLink_Handler);
 		}
 

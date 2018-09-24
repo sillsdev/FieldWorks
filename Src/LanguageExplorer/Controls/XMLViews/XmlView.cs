@@ -246,7 +246,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 
 			Debug.Assert(m_layoutName != null, "No layout name.");
-			var app = PropertyTable.GetValue<IFlexApp>("App");
+			var app = PropertyTable.GetValue<IFlexApp>(LanguageExplorerConstants.App);
 			m_xmlVc = new XmlVc(m_layoutName, m_fEditable, this, app, DecoratedDataAccess)
 			{
 				Cache = m_cache,

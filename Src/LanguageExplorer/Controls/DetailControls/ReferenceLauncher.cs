@@ -170,7 +170,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <returns>The SimpleListChooser.</returns>
 		protected virtual SimpleListChooser GetChooser(IEnumerable<ObjectLabel> labels)
 		{
-			var x = new SimpleListChooser(m_persistProvider, labels, m_fieldName, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+			var x = new SimpleListChooser(m_persistProvider, labels, m_fieldName, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider));
 			x.NullLabel.DisplayName  = XmlUtils.GetOptionalAttributeValue(m_configurationNode, "nullLabel", "<EMPTY>");
 			return x;
 		}

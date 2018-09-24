@@ -179,7 +179,7 @@ namespace LanguageExplorer.Areas
 			// persist record lists's CurrentIndex in a db specific way
 			var propName = MyRecordList.PersistedIndexProperty;
 			PropertyTable.SetProperty(propName, MyRecordList.CurrentIndex, true, settingsGroup: SettingsGroup.LocalSettings);
-			var window = PropertyTable.GetValue<IFwMainWnd>("window");
+			var window = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window);
 
 			using (new IdleProcessingHelper(window))
 			{
@@ -334,7 +334,7 @@ namespace LanguageExplorer.Areas
 			catch (Exception error)
 			{
 				//don't really need to make the program stop just because we could not show this record.
-				var app = PropertyTable.GetValue<IApp>("App");
+				var app = PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
 				ErrorReporter.ReportException(error, app.SettingsKey, app.SupportEmailAddress, null, false);
 			}
 #if DEBUG

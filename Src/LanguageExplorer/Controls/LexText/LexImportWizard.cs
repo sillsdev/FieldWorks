@@ -201,7 +201,7 @@ namespace LanguageExplorer.Controls.LexText
 			PropertyTable = propertyTable;
 			if (propertyTable != null)
 			{
-				m_app = propertyTable.GetValue<IApp>("App");
+				m_app = propertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
 				m_stylesheet = FwUtils.StyleSheetFromPropertyTable(propertyTable);
 			}
 			Publisher = publisher;
@@ -785,7 +785,7 @@ namespace LanguageExplorer.Controls.LexText
 			// get list of current Language descriptor values
 			var langDescs = GetUILanguages();
 
-			using (var dlg = new LexImportWizardLanguage(m_cache, langDescs, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app))
+			using (var dlg = new LexImportWizardLanguage(m_cache, langDescs, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), m_app))
 			{
 			if (dlg.ShowDialog(this) == DialogResult.OK)
 			{
@@ -824,7 +824,7 @@ namespace LanguageExplorer.Controls.LexText
 				}
 			}
 
-			using (var dlg = new LexImportWizardLanguage(m_cache, langDescs, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app))
+			using (var dlg = new LexImportWizardLanguage(m_cache, langDescs, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), m_app))
 			{
 				dlg.LangToModify(desc, name, map);
 				if (dlg.ShowDialog(this) != DialogResult.OK)
@@ -975,7 +975,7 @@ namespace LanguageExplorer.Controls.LexText
 			var contentMapping = listViewContentMapping.Items[selIndex].Tag as ContentMapping;
 			using (var dlg = new LexImportWizardMarker(m_LexFields))
 			{
-				dlg.Init(contentMapping, langDescs, m_cache, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app);
+				dlg.Init(contentMapping, langDescs, m_cache, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), m_app);
 				var dr = dlg.ShowDialog(this);
 
 				// Custom fields have to be handled independantly of the dialogresult being ok sense they
@@ -1619,7 +1619,7 @@ namespace LanguageExplorer.Controls.LexText
 					break;
 			}
 
-			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), helpTopic);
+			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), helpTopic);
 		}
 
 		protected override void OnFinishButton()
@@ -3374,7 +3374,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		private void btnBackup_Click(object sender, EventArgs e)
 		{
-			using (var dlg = new BackupProjectDlg(m_cache, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+			using (var dlg = new BackupProjectDlg(m_cache, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 			{
 				dlg.ShowDialog(this);
 			}
@@ -3801,7 +3801,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		private void btnAddCharMapping_Click(object sender, EventArgs e)
 		{
-			using (var dlg = new LexImportWizardCharMarkerDlg(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app, m_stylesheet))
+			using (var dlg = new LexImportWizardCharMarkerDlg(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), m_app, m_stylesheet))
 			{
 				dlg.Init(null, GetUILanguages(), m_cache);
 				dlg.SetExistingBeginMarkers(ExtractExistingBeginMarkers(false));
@@ -3827,7 +3827,7 @@ namespace LanguageExplorer.Controls.LexText
 
 			var selIndex = selIndexes[0]; // only support 1
 			var selectedIFM = (ClsInFieldMarker)listViewCharMappings.Items[selIndex].Tag;
-			using (var dlg = new LexImportWizardCharMarkerDlg(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app, m_stylesheet))
+			using (var dlg = new LexImportWizardCharMarkerDlg(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), m_app, m_stylesheet))
 			{
 				dlg.Init(selectedIFM, GetUILanguages(), m_cache);
 				dlg.SetExistingBeginMarkers(ExtractExistingBeginMarkers(true));

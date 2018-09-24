@@ -78,7 +78,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					nullLabel = null;
 				}
 			}
-			var c = new SimpleListChooser(m_cache, m_persistProvider, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), labels, Target, m_fieldName, nullLabel, m_atomicRefView.StyleSheet);
+			var c = new SimpleListChooser(m_cache, m_persistProvider, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), labels, Target, m_fieldName, nullLabel, m_atomicRefView.StyleSheet);
 			return c;
 		}
 

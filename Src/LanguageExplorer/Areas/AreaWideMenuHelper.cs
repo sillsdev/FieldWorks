@@ -195,7 +195,7 @@ namespace LanguageExplorer.Areas
 			_toolsConfigureMenu = null;
 			_toolsCustomFieldsSeparatorMenu = null;
 			_toolsCustomFieldsMenu = null;
-			_toolsCustomFieldsMenu = null;
+			_toolsConfigureColumnsMenu = null;
 			_browseViewer = null;
 			_sharedEventHandlers = null;
 
@@ -231,10 +231,10 @@ namespace LanguageExplorer.Areas
 			{
 				return;
 			}
-			using (var dlg = new ExportDialog(_majorFlexComponentParameters.Statusbar))
+			using (var dlg = new ExportDialog(_majorFlexComponentParameters.StatusBar))
 			{
 				dlg.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
-				dlg.ShowDialog(PropertyTable.GetValue<Form>("window"));
+				dlg.ShowDialog(PropertyTable.GetValue<Form>(FwUtils.window));
 			}
 		}
 
@@ -290,8 +290,8 @@ namespace LanguageExplorer.Areas
 
 		private void AddCustomField_Click(object sender, EventArgs e)
 		{
-			var activeForm = PropertyTable.GetValue<Form>("window");
-			if (SharedBackendServices.AreMultipleApplicationsConnected(PropertyTable.GetValue<LcmCache>("cache")))
+			var activeForm = PropertyTable.GetValue<Form>(FwUtils.window);
+			if (SharedBackendServices.AreMultipleApplicationsConnected(PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache)))
 			{
 				MessageBoxUtils.Show(activeForm, AreaResources.ksCustomFieldsCanNotBeAddedDueToOtherAppsText, AreaResources.ksCustomFieldsCanNotBeAddedDueToOtherAppsCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return;
@@ -322,27 +322,27 @@ namespace LanguageExplorer.Areas
 
 		private void Insert_Slash_Clicked(object sender, EventArgs e)
 		{
-			AreaServices.UndoExtension(AreaResources.ksInsertEnvironmentSlash, PropertyTable.GetValue<LcmCache>("cache").ActionHandlerAccessor, () => SenderTagAsIPhEnvSliceCommon(sender).InsertSlash());
+			AreaServices.UndoExtension(AreaResources.ksInsertEnvironmentSlash, PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache).ActionHandlerAccessor, () => SenderTagAsIPhEnvSliceCommon(sender).InsertSlash());
 		}
 
 		private void Insert_Underscore_Clicked(object sender, EventArgs e)
 		{
-			AreaServices.UndoExtension(AreaResources.ksInsertEnvironmentBar, PropertyTable.GetValue<LcmCache>("cache").ActionHandlerAccessor, () => SenderTagAsIPhEnvSliceCommon(sender).InsertEnvironmentBar());
+			AreaServices.UndoExtension(AreaResources.ksInsertEnvironmentBar, PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache).ActionHandlerAccessor, () => SenderTagAsIPhEnvSliceCommon(sender).InsertEnvironmentBar());
 		}
 
 		private void Insert_NaturalClass_Clicked(object sender, EventArgs e)
 		{
-			AreaServices.UndoExtension(AreaResources.ksInsertNaturalClass, PropertyTable.GetValue<LcmCache>("cache").ActionHandlerAccessor, () => SenderTagAsIPhEnvSliceCommon(sender).InsertNaturalClass());
+			AreaServices.UndoExtension(AreaResources.ksInsertNaturalClass, PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache).ActionHandlerAccessor, () => SenderTagAsIPhEnvSliceCommon(sender).InsertNaturalClass());
 		}
 
 		private void Insert_OptionalItem_Clicked(object sender, EventArgs e)
 		{
-			AreaServices.UndoExtension(AreaResources.ksInsertOptionalItem, PropertyTable.GetValue<LcmCache>("cache").ActionHandlerAccessor, () => SenderTagAsIPhEnvSliceCommon(sender).InsertOptionalItem());
+			AreaServices.UndoExtension(AreaResources.ksInsertOptionalItem, PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache).ActionHandlerAccessor, () => SenderTagAsIPhEnvSliceCommon(sender).InsertOptionalItem());
 		}
 
 		private void Insert_HashMark_Clicked(object sender, EventArgs e)
 		{
-			AreaServices.UndoExtension(AreaResources.ksInsertWordBoundary, PropertyTable.GetValue<LcmCache>("cache").ActionHandlerAccessor, () => SenderTagAsIPhEnvSliceCommon(sender).InsertHashMark());
+			AreaServices.UndoExtension(AreaResources.ksInsertWordBoundary, PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache).ActionHandlerAccessor, () => SenderTagAsIPhEnvSliceCommon(sender).InsertHashMark());
 		}
 
 		private void ShowEnvironmentError_Clicked(object sender, EventArgs e)
@@ -435,13 +435,15 @@ namespace LanguageExplorer.Areas
 
 		internal static bool CanJumpToTool(string currentToolMachineName, string targetToolMachineNameForJump, LcmCache cache, ICmObject rootObject, ICmObject currentObject, string className)
 		{
-			if ((currentToolMachineName == targetToolMachineNameForJump && currentObject.IsOwnedBy(rootObject))
-				|| (currentObject is IWfiWordform && targetToolMachineNameForJump == AreaServices.WordListConcordanceMachineName && targetToolMachineNameForJump == AreaServices.ConcordanceMachineName))
+			if (currentToolMachineName == targetToolMachineNameForJump)
 			{
-				// Already on object in right tool, so no need to jump.
-				// Not visible or enabled.
-				return false;
+				return (ReferenceEquals(rootObject, currentObject) || currentObject.IsOwnedBy(rootObject));
 			}
+			if (currentObject is IWfiWordform)
+			{
+				return _concordanceTools.Contains(targetToolMachineNameForJump);
+			}
+			// Do it the hard way.
 			var specifiedClsid = 0;
 			var mdc = cache.GetManagedMetaDataCache();
 			if (mdc.ClassExists(className)) // otherwise is is a 'magic' class name treated specially in other OnDisplays.
@@ -463,6 +465,12 @@ namespace LanguageExplorer.Areas
 			return cache.DomainDataByFlid.MetaDataCache.GetBaseClsId(currentObject.ClassID) == specifiedClsid;
 		}
 
+		private static readonly HashSet<string> _concordanceTools = new HashSet<string>
+		{
+			AreaServices.WordListConcordanceMachineName,
+			AreaServices.ConcordanceMachineName
+		};
+
 		private static void JumpToTool_Clicked(object sender, EventArgs e)
 		{
 			var tag = (List<object>)((ToolStripMenuItem)sender).Tag;
@@ -478,7 +486,7 @@ namespace LanguageExplorer.Areas
 				var selectedCategoryOwner = recordList.CurrentObject?.Owner;
 				var propertyTable = _majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
 				dlg.SetDlginfo((ICmPossibilityList)tagList[0], propertyTable, true, selectedCategoryOwner as IPartOfSpeech);
-				dlg.ShowDialog(propertyTable.GetValue<Form>("window"));
+				dlg.ShowDialog(propertyTable.GetValue<Form>(FwUtils.window));
 			}
 		}
 
@@ -627,7 +635,7 @@ namespace LanguageExplorer.Areas
 			GetWordLimitsOfSelection(selection, out ichMin, out ichLim, out hvo, out tag, out ws, out tss);
 			if (ichLim > ichMin)
 			{
-				LexEntryUi.DisplayOrCreateEntry(_majorFlexComponentParameters.LcmCache, hvo, tag, ws, ichMin, ichLim, PropertyTable.GetValue<IWin32Window>("window"), PropertyTable, Publisher, Subscriber, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "UserHelpFile");
+				LexEntryUi.DisplayOrCreateEntry(_majorFlexComponentParameters.LcmCache, hvo, tag, ws, ichMin, ichLim, PropertyTable.GetValue<IWin32Window>(FwUtils.window), PropertyTable, Publisher, Subscriber, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), "UserHelpFile");
 			}
 		}
 	}

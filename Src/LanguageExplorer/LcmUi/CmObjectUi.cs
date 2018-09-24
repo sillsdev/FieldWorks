@@ -264,7 +264,7 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		internal static CmObjectUi MakeLcmModelUiObject(IPropertyTable propertyTable, IPublisher publisher, int classId, int hvoOwner, int flid, int insertionPosition)
 		{
-			var cache = propertyTable.GetValue<LcmCache>("cache");
+			var cache = propertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 			switch (classId)
 			{
 				default:
@@ -488,7 +488,7 @@ namespace LanguageExplorer.LcmUi
 		public bool HandleCtrlClick(Control hostControl)
 		{
 #if RANDYTODO
-			var window = PropertyTable.GetValue<IFwMainWnd>("window");
+			var window = PropertyTable.GetValue<IFwMainWnd>(LanguageExplorerConstants.window);
 			m_hostControl = hostControl;
 			var group = window.GetChoiceGroupForMenu(ContextMenuId);
 			group.PopulateNow();
@@ -531,7 +531,7 @@ namespace LanguageExplorer.LcmUi
 				// Callers outside of the FooUi classes (e.g.: RuleFormulaControl) supply the menu id,
 				// or they are happy with the FooUi ContextMenuId virtual property value (e.g.: SandboxBase).
 				// In any case, only "hostControl" is of interest to this class, where all other parameters are passed
-				// on to somthing that handles the context menu.
+				// on to something that handles the context menu.
 				sMenuId = ContextMenuId;
 			}
 			m_hostControl = hostControl;
@@ -545,7 +545,7 @@ namespace LanguageExplorer.LcmUi
 				// See e.g. LT-5156, 6534, 7160.
 				// Indeed, since CmBaseAnnotation presents itself as a 'Problem Report', we don't want
 				// to do it for any kind of annotation that couldn't be one!
-				var activeRecordList = PropertyTable.GetValue<IRecordListRepository>("RecordListRepository").ActiveRecordList;
+				var activeRecordList = PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList;
 				if (activeRecordList is MatchingConcordanceItems)
 				{
 					// We don't want this either.  See LT-6101.
@@ -675,10 +675,10 @@ namespace LanguageExplorer.LcmUi
 			}
 			else
 			{
-				var mainWindow = PropertyTable.GetValue<Form>("window");
+				var mainWindow = PropertyTable.GetValue<Form>(FwUtils.window);
 				using (new WaitCursor(mainWindow))
 				{
-					using (var dlg = new ConfirmDeleteObjectDlg(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+					using (var dlg = new ConfirmDeleteObjectDlg(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 					{
 						string cannotDeleteMsg;
 						if (CanDelete(out cannotDeleteMsg))
@@ -750,13 +750,13 @@ namespace LanguageExplorer.LcmUi
 			}
 
 			IFlexApp app;
-			if (propertyTable != null && propertyTable.TryGetValue("App", out app))
+			if (propertyTable != null && propertyTable.TryGetValue(LanguageExplorerConstants.App, out app))
 			{
 					app.PictureHolder.ReleasePicture(file.AbsoluteInternalPath);
 			}
 			var fileToDelete = file.AbsoluteInternalPath;
 
-			propertyTable.GetValue<IFwMainWnd>("window").IdleQueue.Add(IdleQueuePriority.Low, obj =>
+			propertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Add(IdleQueuePriority.Low, obj =>
 			{
 				try
 				{
@@ -795,10 +795,10 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public void MergeUnderlyingObject(bool fLoseNoTextData)
 		{
-			var mainWindow = PropertyTable.GetValue<Form>("window");
+			var mainWindow = PropertyTable.GetValue<Form>(FwUtils.window);
 			using (new WaitCursor(mainWindow))
 			{
-				using (var dlg = new MergeObjectDlg(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+				using (var dlg = new MergeObjectDlg(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 				{
 					dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 					var wp = new WindowParams();
@@ -842,7 +842,7 @@ namespace LanguageExplorer.LcmUi
 		/// <summary />
 		public virtual void MoveUnderlyingObjectToCopyOfOwner()
 		{
-			MessageBox.Show(PropertyTable.GetValue<Form>("window"), LcmUiStrings.ksCannotMoveObjectToCopy, LcmUiStrings.ksBUG);
+			MessageBox.Show(PropertyTable.GetValue<Form>(FwUtils.window), LcmUiStrings.ksCannotMoveObjectToCopy, LcmUiStrings.ksBUG);
 		}
 
 		/// <summary>

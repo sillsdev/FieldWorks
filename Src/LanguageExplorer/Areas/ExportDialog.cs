@@ -15,7 +15,6 @@ using System.Xml.Xsl;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.Dumpster;
-using LanguageExplorer.LcmUi;
 using LanguageExplorer.DictionaryConfiguration;
 using Microsoft.Win32;
 using SIL.Reporting;
@@ -735,7 +734,7 @@ namespace LanguageExplorer.Areas
 					{
 						// Show the pretty yellow semi-crash dialog box, with instructions for the
 						// user to report the bug.
-						var app = PropertyTable.GetValue<IApp>("App");
+						var app = PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
 						ErrorReporter.ReportException(new Exception(AreaResources.ksLiftExportBugReport, e.InnerException), app.SettingsKey, app.SupportEmailAddress, this, false);
 					}
 					else
@@ -763,10 +762,10 @@ namespace LanguageExplorer.Areas
 			switch (m_rgFxtTypes[FxtIndex((string)m_exportItems[0].Tag)].m_ft)
 			{
 				case FxtTypes.kftConfigured:
-					new DictionaryExportService(m_cache, PropertyTable.GetValue<IRecordListRepository>("RecordListRepository").ActiveRecordList, PropertyTable, Publisher, _mainWindowStatusBar).ExportDictionaryContent(xhtmlPath, progress: progress);
+					new DictionaryExportService(m_cache, PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList, PropertyTable, Publisher, _mainWindowStatusBar).ExportDictionaryContent(xhtmlPath, progress: progress);
 					break;
 				case FxtTypes.kftReversal:
-					new DictionaryExportService(m_cache, PropertyTable.GetValue<IRecordListRepository>("RecordListRepository").ActiveRecordList, PropertyTable, Publisher, _mainWindowStatusBar).ExportReversalContent(xhtmlPath, progress: progress);
+					new DictionaryExportService(m_cache, PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList, PropertyTable, Publisher, _mainWindowStatusBar).ExportReversalContent(xhtmlPath, progress: progress);
 					break;
 			}
 			return null;
@@ -1246,7 +1245,7 @@ namespace LanguageExplorer.Areas
 
 		private void buttonHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_helpTopic);
+			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), m_helpTopic);
 		}
 
 		private void ce_UpdateProgress(object sender)
@@ -1374,17 +1373,17 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		private void ProcessPathwayExport()
 		{
-			var app = PropertyTable.GetValue<IApp>("App");
+			var app = PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
 			var cssDialog = Path.Combine(PathwayUtils.PathwayInstallDirectory, "CssDialog.dll");
 			var sf = ReflectionHelper.CreateObject(cssDialog, "SIL.PublishingSolution.Contents", null);
 			Debug.Assert(sf != null);
-			var cache = PropertyTable.GetValue<LcmCache>("cache");
+			var cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 			ReflectionHelper.SetProperty(sf, "DatabaseName", cache.ProjectId.Name);
 			var fContentsExists = SelectOption("ReversalIndexXHTML");
 			if (fContentsExists)
 			{
 				// Inform Pathway if the reversal index is empty (or doesn't exist).  See FWR-3283.
-				var riGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
+				var riGuid = RecordListServices.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
 				if (!riGuid.Equals(Guid.Empty))
 				{
 					IReversalIndex ri;
@@ -1554,7 +1553,7 @@ namespace LanguageExplorer.Areas
 			}
 			catch (FileNotFoundException)
 			{
-				var app = PropertyTable.GetValue<IApp>("App");
+				var app = PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
 				MessageBox.Show($@"The {currInput} Section may be Empty (or) Not exported", app.ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return false;
 
@@ -1641,7 +1640,7 @@ namespace LanguageExplorer.Areas
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			m_cache = PropertyTable.GetValue<LcmCache>("cache");
+			m_cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 
 			AccessibleName = GetType().Name;
 
@@ -1661,7 +1660,7 @@ namespace LanguageExplorer.Areas
 
 			m_helpTopic = "khtpExportLexicon";
 
-			var helpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			var helpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
 			helpProvider = new HelpProvider
 			{
 				HelpNamespace = helpTopicProvider.HelpFile
@@ -1674,7 +1673,7 @@ namespace LanguageExplorer.Areas
 			// root object.
 
 			InitFromMainControl(PropertyTable.GetValue<object>("currentContentControlObject", null));
-			m_recordList = PropertyTable.GetValue<IRecordListRepository>("RecordListRepository").ActiveRecordList;
+			m_recordList = PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList;
 
 			m_chkExportPictures.Checked = false;
 			m_chkExportPictures.Visible = false;

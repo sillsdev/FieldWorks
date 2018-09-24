@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -479,7 +479,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				return;
 			}
 
-			using (var dlg = new ConfirmDeleteObjectDlg(PropertyTable.GetValue<IFlexApp>("App")))
+			using (var dlg = new ConfirmDeleteObjectDlg(PropertyTable.GetValue<IFlexApp>(LanguageExplorerConstants.App)))
 			{
 				dlg.WindowTitle = DictionaryConfigurationStrings.Confirm + " " + DictionaryConfigurationStrings.Delete;
 				var kindOfConfiguration = DictionaryConfigurationServices.GetDictionaryConfigurationType(PropertyTable);
@@ -648,7 +648,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}
 
 			var importController = new DictionaryConfigurationImportController(_cache, _projectConfigDir, _configurations);
-			using (var importDialog = new DictionaryConfigurationImportDlg(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")) { HelpTopic = _view.HelpTopic })
+			using (var importDialog = new DictionaryConfigurationImportDlg(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)) { HelpTopic = _view.HelpTopic })
 			{
 				importController.DisplayView(importDialog);
 			}
@@ -665,7 +665,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			_view.Close();
 			ConfigurationViewImported?.Invoke();
 
-			PropertyTable.GetValue<IFwMainWnd>("window").RefreshAllViews();
+			PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).RefreshAllViews();
 		}
 
 		public bool IsConfigurationACustomizedOriginal(DictionaryConfigurationModel configuration)
@@ -749,7 +749,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			_cache = PropertyTable.GetValue<LcmCache>("cache");
+			_cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 
 			if (!PropertyTable.GetValue("SkipSomeTestInitialization", false))
 			{

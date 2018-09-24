@@ -119,7 +119,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		/// <summary>
 		/// LCM cache.
 		/// </summary>
-		private LcmCache Cache => m_cache ?? (m_cache = PropertyTable.GetValue<LcmCache>("cache"));
+		private LcmCache Cache => m_cache ?? (m_cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache));
 
 		#endregion // Properties
 
@@ -179,7 +179,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			ShowSketch();
 
 			//add our current state to the history system
-			PropertyTable.GetValue<LinkHandler>("LinkHandler").AddLinkToHistory(new FwLinkArgs(PropertyTable.GetValue<string>(AreaServices.ToolChoice), Guid.Empty));
+			PropertyTable.GetValue<LinkHandler>(LanguageExplorerConstants.LinkHandler).AddLinkToHistory(new FwLinkArgs(PropertyTable.GetValue<string>(AreaServices.ToolChoice), Guid.Empty));
 		}
 
 		#endregion

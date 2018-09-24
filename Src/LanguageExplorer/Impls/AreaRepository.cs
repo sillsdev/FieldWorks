@@ -49,8 +49,8 @@ namespace LanguageExplorer.Impls
 		/// Lists
 		/// User defined areas (unspecified order, but after the fully supported areas)
 		/// </summary>
-		/// <returns>The areas in correct order for display in sidbar.</returns>
-		public IList<IArea> AllAreasInOrder
+		/// <returns>The areas in correct order for display in sidebar.</returns>
+		public IReadOnlyList<IArea> AllAreasInOrder
 		{
 			get
 			{

@@ -733,9 +733,6 @@ If you are not the one designated user who adds fields, or you are making some o
   <data name="Show_Word_Category_in_Concordance" xml:space="preserve">
     <value>Show Word Category in Concordance</value>
   </data>
-  <data name="Word_Category" xml:space="preserve">
-    <value>Word Category</value>
-  </data>
   <data name="AddItem" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\images\Morphology\Insert Cat.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -780,5 +777,14 @@ If you are not the one designated user who adds fields, or you are making some o
   </data>
   <data name="Find_in_Dictionary" xml:space="preserve">
     <value>Find in _Dictionary...</value>
+  </data>
+  <data name="Show_Morph_In_Concordance" xml:space="preserve">
+    <value>Show Morph in Concordance</value>
+  </data>
+  <data name="Word_Category" xml:space="preserve">
+    <value>Word Category</value>
+  </data>
+  <data name="Word_Gloss" xml:space="preserve">
+    <value>Word Gloss</value>
   </data>
 </root>

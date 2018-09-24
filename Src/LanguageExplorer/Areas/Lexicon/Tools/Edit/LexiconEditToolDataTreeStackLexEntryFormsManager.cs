@@ -494,7 +494,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var allomorph = (IMoForm)slice.MyCmObject;
 			if (CheckForFormDataLoss(allomorph))
 			{
-				var mainWindow = _propertyTable.GetValue<Form>("window");
+				var mainWindow = _propertyTable.GetValue<Form>(FwUtils.window);
 				IMoForm newForm = null;
 				using (new WaitCursor(mainWindow))
 				{
@@ -663,7 +663,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var allomorph = (IMoForm)MyDataTree.CurrentSlice.MyCmObject;
 			if (CheckForFormDataLoss(allomorph))
 			{
-				var mainWindow = _propertyTable.GetValue<Form>("window");
+				var mainWindow = _propertyTable.GetValue<Form>(FwUtils.window);
 				IMoForm newForm = null;
 				using (new WaitCursor(mainWindow))
 				{

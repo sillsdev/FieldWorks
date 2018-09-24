@@ -815,7 +815,7 @@ namespace LanguageExplorer.Areas
 			m_currentObject = MyRecordList.CurrentObject;
 			m_currentIndex = currentIndex;
 			//add our current state to the history system
-			PropertyTable.GetValue<LinkHandler>("LinkHandler").AddLinkToHistory(new FwLinkArgs(PropertyTable.GetValue<string>(AreaServices.ToolChoice), MyRecordList.CurrentObject?.Guid ?? Guid.Empty));
+			PropertyTable.GetValue<LinkHandler>(LanguageExplorerConstants.LinkHandler).AddLinkToHistory(new FwLinkArgs(PropertyTable.GetValue<string>(AreaServices.ToolChoice), MyRecordList.CurrentObject?.Guid ?? Guid.Empty));
 
 			SelectAndScrollToCurrentRecord();
 			base.ShowRecord();
@@ -838,7 +838,7 @@ namespace LanguageExplorer.Areas
 			// the current Publication layout or Configuration view.
 			if (!IsObjectVisible(hvoTarget, out xrc))
 			{
-				AreaServices.GiveSimpleWarning(PropertyTable.GetValue<Form>("window"), PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").HelpFile, xrc);
+				AreaServices.GiveSimpleWarning(PropertyTable.GetValue<Form>(FwUtils.window), PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider).HelpFile, xrc);
 			}
 			return true;
 		}
@@ -1029,7 +1029,7 @@ namespace LanguageExplorer.Areas
 				// Create the main view
 
 				// Review JohnT: should it be m_configurationParametersElement or .FirstChild?
-				var app = PropertyTable.GetValue<IFlexApp>("App");
+				var app = PropertyTable.GetValue<IFlexApp>(LanguageExplorerConstants.App);
 				m_mainView = new XmlSeqView(Cache, m_hvoOwner, m_madeUpFieldIdentifier, m_configurationParametersElement, MyRecordList.VirtualListPublisher, app, Publication);
 				m_mainView.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				m_mainView.Dock = DockStyle.Fill;
@@ -1138,7 +1138,7 @@ namespace LanguageExplorer.Areas
 			}
 			using(var dlg = new XmlDocConfigureDlg())
 			{
-				var mainWindow = PropertyTable.GetValue<IFwMainWnd>("window");
+				var mainWindow = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window);
 				dlg.SetConfigDlgInfo(m_configurationParametersElement, Cache, StyleSheet, mainWindow, PropertyTable, Publisher, sProp);
 				dlg.SetActiveNode(nodePath);
 				if(dlg.ShowDialog(this) == DialogResult.OK)

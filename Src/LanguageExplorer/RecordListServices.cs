@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords;
 using SIL.Code;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 
 namespace LanguageExplorer
 {
@@ -31,7 +33,7 @@ namespace LanguageExplorer
 			{
 				throw new InvalidOperationException("Do not setup the window more than once.");
 			}
-			_mapping.Add(handle, new Tuple<DataNavigationManager, ParserMenuManager, IRecordListRepositoryForTools>(majorFlexComponentParameters.DataNavigationManager, majorFlexComponentParameters.ParserMenuManager, majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository")));
+			_mapping.Add(handle, new Tuple<DataNavigationManager, ParserMenuManager, IRecordListRepositoryForTools>(majorFlexComponentParameters.DataNavigationManager, majorFlexComponentParameters.ParserMenuManager, majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository)));
 		}
 
 		internal static void TearDown(IntPtr handle)
@@ -45,6 +47,33 @@ namespace LanguageExplorer
 			dataForWindow.Item1.RecordList = recordList;
 			dataForWindow.Item2.MyRecordList = recordList;
 			dataForWindow.Item3.ActiveRecordList = recordList;
+		}
+
+		/// <summary>
+		/// Fetches the GUID value of the given property, having checked it is a valid object.
+		/// If it is not a valid object, the property is removed.
+		/// </summary>
+		internal static Guid GetObjectGuidIfValid(IPropertyTable propertyTable, string key)
+		{
+			var sGuid = propertyTable.GetValue<string>(key);
+			if (String.IsNullOrEmpty(sGuid))
+			{
+				return Guid.Empty;
+			}
+
+			Guid guid;
+			if (!Guid.TryParse(sGuid, out guid))
+			{
+				return Guid.Empty;
+			}
+
+			var cache = propertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+			if (cache.ServiceLocator.ObjectRepository.IsValidObjectId(guid))
+			{
+				return guid;
+			}
+			propertyTable.RemoveProperty(key);
+			return Guid.Empty;
 		}
 	}
 }

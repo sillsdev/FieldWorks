@@ -158,9 +158,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			helpProvider.HelpNamespace = PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").HelpFile;
+			helpProvider.HelpNamespace = PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider).HelpFile;
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
-			helpProvider.SetHelpKeyword(this, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").GetHelpString(s_helpTopic));
+			helpProvider.SetHelpKeyword(this, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider).GetHelpString(s_helpTopic));
 			helpProvider.SetShowHelp(this, true);
 
 			_progAdvInd = new ProgressReporting(_toolStripProgressBar);
@@ -801,7 +801,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		private void btnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), s_helpTopic);
+			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), s_helpTopic);
 		}
 
 		#endregion Event Handlers

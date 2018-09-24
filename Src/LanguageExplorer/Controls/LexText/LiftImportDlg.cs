@@ -109,7 +109,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		private void btnBackup_Click(object sender, EventArgs e)
 		{
-			using (var dlg = new BackupProjectDlg(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+			using (var dlg = new BackupProjectDlg(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 			{
 				dlg.ShowDialog(this);
 			}
@@ -312,7 +312,7 @@ namespace LanguageExplorer.Controls.LexText
 				}
 				// Show the pretty yellow semi-crash dialog box, with instructions for the
 				// user to report the bug.  Then ask the user whether to continue.
-				var app = m_propertyTable.GetValue<IApp>("App");
+				var app = m_propertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
 				ErrorReporter.ReportException(new Exception(sMsg, lfe), app.SettingsKey, app.SupportEmailAddress, this, false);
 				return MessageBox.Show(LexTextControls.ksContinueLiftImportQuestion, LexTextControls.ksProblemImporting, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes;
 			}
@@ -425,7 +425,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		private void btnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "khtpImportLIFT");
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), "khtpImportLIFT");
 		}
 	}
 }

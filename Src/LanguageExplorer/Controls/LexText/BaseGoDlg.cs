@@ -204,7 +204,7 @@ namespace LanguageExplorer.Controls.LexText
 				StartPosition = FormStartPosition.Manual;
 			}
 
-			m_helpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			m_helpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
 			if (m_helpTopicProvider != null)
 			{
 				m_helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;

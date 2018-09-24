@@ -87,7 +87,7 @@ namespace LanguageExplorer.Areas.Notebook
 
 			m_helpTopic = "khtpDataNotebook-InsertRecordDlg";
 
-			m_helpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			m_helpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
 			if (m_helpTopicProvider != null) // Will be null when running tests
 			{
 				m_helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;

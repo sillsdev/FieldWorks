@@ -65,7 +65,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.CustomListEdit
 		{
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>("RecordListRepository").GetRecordList(MachineName, majorFlexComponentParameters.Statusbar, _customList, FactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(MachineName, majorFlexComponentParameters.StatusBar, _customList, FactoryMethod);
 			}
 
 #if RANDYTODO

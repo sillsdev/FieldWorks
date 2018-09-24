@@ -506,7 +506,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void btnMenu_Click(object sender, EventArgs e)
 		{
-			var window = PropertyTable.GetValue<IFwMainWnd>("window");
+			var window = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window);
 
 #if RANDYTODO
 			window.ShowContextMenu("mnuFocusBox", btnMenu.PointToScreen(new Point(btnMenu.Width / 2, btnMenu.Height / 2)), null, null);

@@ -663,7 +663,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 					{
 						var morphNode = new ComplexConcMorphNode();
 						dlg.SetDlgInfo(m_cache, PropertyTable, Publisher, morphNode);
-						if (dlg.ShowDialog(PropertyTable.GetValue<Form>("window")) == DialogResult.OK)
+						if (dlg.ShowDialog(PropertyTable.GetValue<Form>(FwUtils.window)) == DialogResult.OK)
 						{
 							node = morphNode;
 						}
@@ -675,7 +675,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 					{
 						var wordNode = new ComplexConcWordNode();
 						dlg.SetDlgInfo(m_cache, PropertyTable, Publisher, wordNode);
-						if (dlg.ShowDialog(PropertyTable.GetValue<Form>("window")) == DialogResult.OK)
+						if (dlg.ShowDialog(PropertyTable.GetValue<Form>(FwUtils.window)) == DialogResult.OK)
 						{
 							node = wordNode;
 						}
@@ -687,7 +687,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 					{
 						var tagNode = new ComplexConcTagNode();
 						dlg.SetDlgInfo(m_cache, PropertyTable, Publisher, tagNode);
-						if (dlg.ShowDialog(PropertyTable.GetValue<Form>("window")) == DialogResult.OK)
+						if (dlg.ShowDialog(PropertyTable.GetValue<Form>(FwUtils.window)) == DialogResult.OK)
 						{
 							node = tagNode;
 						}
@@ -796,10 +796,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 					max = nodes[0].Maximum;
 					paren = !nodes[0].IsLeaf;
 				}
-				using (var dlg = new OccurrenceDlg(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), min, max, paren))
+				using (var dlg = new OccurrenceDlg(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), min, max, paren))
 				{
 					dlg.SetHelpTopic("khtpCtxtOccurComplexConcordance");
-					if (dlg.ShowDialog(PropertyTable.GetValue<Form>("window")) == DialogResult.OK)
+					if (dlg.ShowDialog(PropertyTable.GetValue<Form>(FwUtils.window)) == DialogResult.OK)
 					{
 						min = dlg.Minimum;
 						max = dlg.Maximum;
@@ -835,7 +835,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 		{
 			var nodes = CurrentNodes;
 			var wordNode = nodes[0] as ComplexConcWordNode;
-			var fwMainWnd = PropertyTable.GetValue<Form>("window");
+			var fwMainWnd = PropertyTable.GetValue<Form>(FwUtils.window);
 			if (wordNode != null)
 			{
 				using (var dlg = new ComplexConcWordDlg())
