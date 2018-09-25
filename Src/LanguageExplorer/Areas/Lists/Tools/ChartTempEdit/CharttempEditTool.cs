@@ -171,7 +171,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
 				template,
-				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, true, true, false, "best analysis"), new RecordFilterParameterObject(true, true));
+				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, true, true, false, "best analysis"));
 		}
 	}
 }

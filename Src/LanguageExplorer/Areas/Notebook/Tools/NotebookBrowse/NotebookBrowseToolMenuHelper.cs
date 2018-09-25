@@ -3,7 +3,10 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Windows.Forms;
+using LanguageExplorer.Controls;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -16,8 +19,8 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private NotebookAreaMenuHelper _notebookAreaMenuHelper;
-
 		internal BrowseViewContextMenuFactory MyBrowseViewContextMenuFactory { get; private set; }
+		private ISharedEventHandlers _sharedEventHandlers;
 
 		internal NotebookBrowseToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool currentNotebookTool, IRecordList recordList)
 		{
@@ -25,9 +28,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
 			_notebookAreaMenuHelper = new NotebookAreaMenuHelper(majorFlexComponentParameters, currentNotebookTool);
-#if RANDYTODO
-			// TODO: Set up factory method for the browse view.
-#endif
+			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
 			MyBrowseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 		}
 
@@ -66,6 +67,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 			Subscriber = flexComponentParameters.Subscriber;
 
 			_notebookAreaMenuHelper.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
+			MyBrowseViewContextMenuFactory.RegisterBrowseViewContextMenuCreatorMethod(AreaServices.mnuBrowseView, BrowseViewContextMenuCreatorMethod);
 		}
 		#endregion
 
@@ -110,5 +112,26 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 			_isDisposed = true;
 		}
 		#endregion
+
+		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> BrowseViewContextMenuCreatorMethod(IRecordList recordList, string browseViewMenuId)
+		{
+			// The actual menu declaration has a gazillion menu items, but only two of them are seen in this tool (plus the separator).
+			// Start: <menu id="mnuBrowseView" (partial) >
+			var contextMenuStrip = new ContextMenuStrip
+			{
+				Name = AreaServices.mnuBrowseView
+			};
+			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+
+			// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
+			var menuText = string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("RnGenericRec", "ClassNames"));
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.DeleteSelectedBrowseViewObject), menuText);
+			var tagList = new List<object> { recordList, menuText, StatusBarPanelServices.GetStatusBarProgressPanel(_majorFlexComponentParameters.StatusBar) };
+			menu.Tag = tagList;
+
+			// End: <menu id="mnuBrowseView" (partial) >
+
+			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+		}
 	}
 }

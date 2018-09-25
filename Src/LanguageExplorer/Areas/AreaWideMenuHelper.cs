@@ -12,6 +12,7 @@ using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.LcmUi;
 using SIL.Code;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Resources;
@@ -62,6 +63,7 @@ namespace LanguageExplorer.Areas
 			_sharedEventHandlers.Add(AreaServices.CmdAddToLexicon, CmdAddToLexicon_Clicked);
 			_sharedEventHandlers.Add(AreaServices.LexiconLookup, LexiconLookup_Clicked);
 			_sharedEventHandlers.Add(AreaServices.CmdDeleteSelectedObject, CmdDeleteSelectedObject_Clicked);
+			_sharedEventHandlers.Add(AreaServices.DeleteSelectedBrowseViewObject, DeleteSelectedBrowseViewObject_Clicked);
 		}
 
 		internal AreaWideMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
@@ -159,6 +161,7 @@ namespace LanguageExplorer.Areas
 				_sharedEventHandlers.Remove(AreaServices.CmdAddToLexicon);
 				_sharedEventHandlers.Remove(AreaServices.LexiconLookup);
 				_sharedEventHandlers.Remove(AreaServices.CmdDeleteSelectedObject);
+				_sharedEventHandlers.Remove(AreaServices.DeleteSelectedBrowseViewObject);
 
 				if (_fileExportMenu != null)
 				{
@@ -283,6 +286,12 @@ namespace LanguageExplorer.Areas
 			HandleDeletion(sender);
 		}
 
+		private void DeleteSelectedBrowseViewObject_Clicked(object sender, EventArgs e)
+		{
+			var tag = (IList<object>)((ToolStripMenuItem)sender).Tag;
+			((IRecordList)tag[0]).DeleteRecord((string)tag[1], (StatusBarProgressPanel)tag[2]);
+		}
+
 		private static void HandleDeletion(object sender)
 		{
 			SenderTagAsSlice(sender).HandleDeleteCommand();
@@ -355,9 +364,9 @@ namespace LanguageExplorer.Areas
 			return (IPhEnvSliceCommon)((ToolStripMenuItem)sender).Tag;
 		}
 
-		internal static Slice SenderTagAsSlice(object sender)
+		private static Slice SenderTagAsSlice(object sender)
 		{
-			return (Slice)((ToolStripMenuItem)sender).Tag;
+			return ((ToolStripMenuItem)sender).Tag as Slice; // May be null.
 		}
 
 		internal static StTextSlice DataTreeCurrentSliceAsStTextSlice(DataTree dataTree)

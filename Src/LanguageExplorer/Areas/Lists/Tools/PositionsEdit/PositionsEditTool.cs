@@ -163,7 +163,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.PositionsEdit
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
 				cache.LanguageProject.PositionsOA,
-				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, false, false, "best analysis"), new RecordFilterParameterObject(null, true, true));
+				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, false, false, "best analysis"));
 		}
 	}
 }

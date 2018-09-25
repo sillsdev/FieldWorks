@@ -156,7 +156,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 			return new RecordList(recordListId, statusBar,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,
 				new VectorPropertyParameterObject(cache.LanguageProject, "Problems", LangProjectTags.kflidAnnotations),
-				new RecordFilterParameterObject(probAnnFilter, true, true));
+				new RecordFilterParameterObject(probAnnFilter));
 		}
 	}
 }

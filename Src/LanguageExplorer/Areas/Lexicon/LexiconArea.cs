@@ -184,8 +184,7 @@ namespace LanguageExplorer.Areas.Lexicon
 				{
 					{ AreaServices.Default, new PropertyRecordSorter(AreaServices.ShortName) },
 					{ "PrimaryGloss", new PropertyRecordSorter("PrimaryGloss") }
-				},
-				new RecordFilterParameterObject(true, true));
+				});
 			return recordList;
 		}
 
@@ -206,7 +205,7 @@ namespace LanguageExplorer.Areas.Lexicon
 			*/
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
 				new DictionaryPublicationDecorator(cache, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), CmPossibilityListTags.kflidPossibilities), cache.LanguageProject.SemanticDomainListOA,
-				new SemanticDomainRdeTreeBarHandler(flexComponentParameters.PropertyTable), new RecordFilterParameterObject(false));
+				new SemanticDomainRdeTreeBarHandler(flexComponentParameters.PropertyTable), new RecordFilterParameterObject(allowDeletions: false));
 		}
 
 		internal static IRecordList AllReversalEntriesFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)

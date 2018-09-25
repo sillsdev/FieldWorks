@@ -25,6 +25,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	{
 		private LexiconEditToolMenuHelper _lexiconEditToolMenuHelper;
 		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
+		private DataTree MyDataTree { get; set; }
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
 		private MultiPane _innerMultiPane;
@@ -58,6 +59,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_innerMultiPane = null;
 			_lexiconEditToolMenuHelper = null;
 			_browseViewContextMenuFactory = null;
+			MyDataTree = null;
 		}
 
 		/// <summary>
@@ -91,10 +93,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_recordBrowseView = new RecordBrowseView(root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
 
 			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
-			 var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
-			_lexiconEditToolMenuHelper = new LexiconEditToolMenuHelper(majorFlexComponentParameters, this, dataTree, _recordBrowseView, _recordList, showHiddenFieldsPropertyName);
+			MyDataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
+			_lexiconEditToolMenuHelper = new LexiconEditToolMenuHelper(majorFlexComponentParameters, this, MyDataTree, _recordBrowseView, _recordList, showHiddenFieldsPropertyName);
 
-			var recordEditView = new RecordEditView(XElement.Parse(LexiconResources.LexiconEditRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordList, dataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
+			var recordEditView = new RecordEditView(XElement.Parse(LexiconResources.LexiconEditRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordList, MyDataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 			var nestedMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Horizontal,
@@ -225,7 +227,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// <item label="-" translate="do not translate"/>
 			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 			// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _lexiconEditToolMenuHelper.GetHandler(AreaServices.CmdDeleteSelectedObject), string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("LexEntry", "ClassNames")));
+			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _lexiconEditToolMenuHelper.GetHandler(AreaServices.CmdDeleteSelectedObject), string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("LexEntry", "ClassNames")));
+			var currentSlice = MyDataTree.CurrentSlice;
+			if (currentSlice == null)
+			{
+				MyDataTree.GotoFirstSlice();
+			}
+			menu.Tag = MyDataTree.CurrentSlice;
 
 			// End: <menu id="mnuBrowseView" (partial) >
 

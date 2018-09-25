@@ -164,7 +164,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
 				cache.LanguageProject.LexDbOA.DomainTypesOA,
-				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, false, "best analysis"), new RecordFilterParameterObject(true, true));
+				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, false, "best analysis"));
 		}
 	}
 }

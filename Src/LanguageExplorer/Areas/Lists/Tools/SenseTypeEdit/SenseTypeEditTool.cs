@@ -163,7 +163,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.SenseTypeEdit
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
 				cache.LanguageProject.LexDbOA.SenseTypesOA,
-				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, false, false, "best analysis"), new RecordFilterParameterObject(null, true, true));
+				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, false, false, "best analysis"));
 		}
 	}
 }

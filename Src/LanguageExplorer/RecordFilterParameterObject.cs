@@ -8,12 +8,7 @@ namespace LanguageExplorer
 {
 	internal sealed class RecordFilterParameterObject
 	{
-		internal RecordFilterParameterObject(bool allowDeletions = false, bool shouldHandleDeletion = false)
-			: this(null, allowDeletions, shouldHandleDeletion)
-		{
-		}
-
-		internal RecordFilterParameterObject(RecordFilter defaultFilter = null, bool allowDeletions = false, bool shouldHandleDeletion = false)
+		internal RecordFilterParameterObject(RecordFilter defaultFilter = null, bool allowDeletions = true, bool shouldHandleDeletion = true)
 		{
 			DefaultFilter = defaultFilter;
 			AllowDeletions = allowDeletions;

@@ -163,7 +163,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.GenresEdit
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
 				cache.LanguageProject.GenreListOA,
-				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, false, "best analysis"), new RecordFilterParameterObject(null, true, true));
+				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, false, "best analysis"));
 		}
 	}
 }

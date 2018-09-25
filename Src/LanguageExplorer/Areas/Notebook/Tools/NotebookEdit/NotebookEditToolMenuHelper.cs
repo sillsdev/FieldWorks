@@ -805,7 +805,13 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
 			// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.CmdDeleteSelectedObject), string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("RnGenericRec", "ClassNames")));
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.CmdDeleteSelectedObject), string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("RnGenericRec", "ClassNames")));
+			var currentSlice = MyDataTree.CurrentSlice;
+			if (currentSlice == null)
+			{
+				MyDataTree.GotoFirstSlice();
+			}
+			menu.Tag = MyDataTree.CurrentSlice;
 
 			// End: <menu id="mnuBrowseView" (partial) >
 

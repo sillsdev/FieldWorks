@@ -159,6 +159,7 @@ namespace LanguageExplorer.Areas
 		internal const string InsertCategory = "InsertCategory";
 		internal const string DataTreeDelete = "DataTreeDelete";
 		internal const string CmdDeleteSelectedObject = "CmdDeleteSelectedObject";
+		internal const string DeleteSelectedBrowseViewObject = "DeleteSelectedBrowseViewObject";
 		internal const string CmdAddToLexicon = "CmdAddToLexicon";
 		internal const string LexiconLookup = "LexiconLookup";
 

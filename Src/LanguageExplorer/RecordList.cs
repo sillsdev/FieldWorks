@@ -175,13 +175,17 @@ namespace LanguageExplorer
 			Guard.AgainstNull(statusBar, nameof(statusBar));
 			Guard.AgainstNull(vectorPropertyParameterObject, nameof(vectorPropertyParameterObject));
 
+			if (recordFilterParameterObject == null)
+			{
+				recordFilterParameterObject = new RecordFilterParameterObject();
+			}
 			Id = id;
 			_statusBar = statusBar;
 			_defaultSorter = defaultSorter ?? new PropertyRecordSorter(AreaServices.ShortName);
 			_defaultSortLabel = AreaServices.Default;
-			_defaultFilter = recordFilterParameterObject?.DefaultFilter;
-			Editable = recordFilterParameterObject?.AllowDeletions ?? true;
-			_shouldHandleDeletion = recordFilterParameterObject?.ShouldHandleDeletion ?? false;
+			_defaultFilter = recordFilterParameterObject.DefaultFilter;
+			Editable = recordFilterParameterObject.AllowDeletions;
+			_shouldHandleDeletion = recordFilterParameterObject.ShouldHandleDeletion;
 			m_owningObject = vectorPropertyParameterObject.Owner;
 			PropertyName = vectorPropertyParameterObject.PropertyName;
 			m_flid = vectorPropertyParameterObject.Flid;
@@ -1068,7 +1072,7 @@ namespace LanguageExplorer
 			// example, XmlBrowseRDEView.cs to handle the message instead.
 
 #if RANDYTODO
-			// Note from RandyR: One of these days we should probably subclass this object, and perhaps the record list more.
+			// Note from RandyR: One of these days we should probably subclass the record list more.
 			// The "reversalEntries" record list wants to handle the message, even though it isn't the primary record list.
 			// The m_shouldHandleDeletion member was also added, so the "reversalEntries" record list's primary record list
 			// would not handle the message, and delete an entire reversal index.

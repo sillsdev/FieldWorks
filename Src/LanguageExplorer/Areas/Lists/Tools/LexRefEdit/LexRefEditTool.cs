@@ -163,7 +163,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.LexRefEdit
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
 				cache.LanguageProject.LexDbOA.ReferencesOA,
-				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, true, "best analysis"), new RecordFilterParameterObject(null, true, true));
+				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, true, "best analysis"));
 		}
 	}
 }

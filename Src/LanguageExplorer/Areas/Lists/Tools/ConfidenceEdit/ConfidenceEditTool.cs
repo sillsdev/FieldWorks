@@ -163,7 +163,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ConfidenceEdit
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
 				cache.LanguageProject.ConfidenceLevelsOA,
-				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, false, "best analysis"), new RecordFilterParameterObject(true, true));
+				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, false, "best analysis"));
 		}
 	}
 }

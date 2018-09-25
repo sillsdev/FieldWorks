@@ -163,7 +163,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.TimeOfDayEdit
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
 				cache.LanguageProject.TimeOfDayOA,
-				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, true, true, false, "best analysis"), new RecordFilterParameterObject(null, true, true));
+				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, true, true, false, "best analysis"));
 		}
 	}
 }

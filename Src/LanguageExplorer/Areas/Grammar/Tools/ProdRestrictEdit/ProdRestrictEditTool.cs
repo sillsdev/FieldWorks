@@ -182,7 +182,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.ProdRestrictEdit
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
 				cache.LanguageProject.MorphologicalDataOA.ProdRestrictOA,
-				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, false, false, "best analorvern"), new RecordFilterParameterObject(false));
+				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, false, false, "best analorvern"), new RecordFilterParameterObject(allowDeletions: false));
 		}
 	}
 }

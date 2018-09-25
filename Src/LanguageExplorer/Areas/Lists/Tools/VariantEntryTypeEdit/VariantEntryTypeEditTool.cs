@@ -164,7 +164,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
 				cache.LanguageProject.LexDbOA.VariantEntryTypesOA,
-				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, false, "best analysis"), new RecordFilterParameterObject(null, true, true));
+				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, false, "best analysis"));
 		}
 	}
 }

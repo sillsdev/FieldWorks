@@ -26,7 +26,7 @@ namespace LanguageExplorer.Areas.Lexicon
 
 		/// <summary />
 		internal AllReversalEntriesRecordList(StatusBar statusBar, ILcmServiceLocator serviceLocator, ISilDataAccessManaged decorator, IReversalIndex reversalIndex)
-			: base(AllReversalEntries, statusBar, decorator, true, new VectorPropertyParameterObject(reversalIndex, "AllEntries", ReversalIndexTags.kflidEntries), new RecordFilterParameterObject(true, true))
+			: base(AllReversalEntries, statusBar, decorator, true, new VectorPropertyParameterObject(reversalIndex, "AllEntries", ReversalIndexTags.kflidEntries))
 		{
 			m_fontName = serviceLocator.WritingSystemManager.Get(reversalIndex.WritingSystem).DefaultFontName;
 			m_oldLength = 0;

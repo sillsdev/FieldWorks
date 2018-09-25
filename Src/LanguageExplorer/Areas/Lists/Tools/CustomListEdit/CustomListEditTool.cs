@@ -163,7 +163,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.CustomListEdit
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
 				customList,
-				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, customList.Depth > 1, customList.DisplayOption == (int)PossNameType.kpntName, customList.GetWsString()), new RecordFilterParameterObject(true, true));
+				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, customList.Depth > 1, customList.DisplayOption == (int)PossNameType.kpntName, customList.GetWsString()));
 		}
 	}
 }

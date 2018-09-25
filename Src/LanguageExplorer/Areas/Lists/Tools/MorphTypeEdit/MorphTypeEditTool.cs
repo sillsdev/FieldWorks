@@ -164,7 +164,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.MorphTypeEdit
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
 				cache.LanguageProject.LexDbOA.MorphTypesOA,
-				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, false, false, "best analysis"), new RecordFilterParameterObject(null));
+				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, false, false, "best analysis"));
 		}
 	}
 }

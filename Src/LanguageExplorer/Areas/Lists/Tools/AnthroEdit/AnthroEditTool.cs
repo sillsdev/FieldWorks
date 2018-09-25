@@ -164,7 +164,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.AnthroEdit
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
 				cache.LanguageProject.AnthroListOA,
-				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, true, "best analysis"), new RecordFilterParameterObject(true, true));
+				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, true, "best analysis"));
 		}
 	}
 }
