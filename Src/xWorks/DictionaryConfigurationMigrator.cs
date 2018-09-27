@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2016 SIL International
+// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public class DictionaryConfigurationMigrator
 	{
-		public const int VersionCurrent = 21;
+		public const int VersionCurrent = 22;
 		internal const string NodePathSeparator = " > ";
 		public const string RootFileName = "Root";
 		public const string HybridFileName = "Hybrid";
