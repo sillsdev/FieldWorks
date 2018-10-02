@@ -382,51 +382,41 @@ namespace SIL.FieldWorks.Common.Controls
 			partNode = m_vc.GetNodeForPart(layoutGeneric, false, layoutClass);
 			if (partNode == null)
 			{
-				if (Platform.IsMono)
-				{
-					// TODO-Linux: Fix this in the correct way.
-					return null;
-				}
-
 				throw new ApplicationException(
 					string.Format("Couldn't find generic Part ({0}-Jt-{1})", className, layout));
 			}
 
-			if (partNode != null)
+			var generatedParts = new List<XmlNode>();
+			// clone the generic node so we can substitute any attributes that need to be substituted.
+			XmlNode generatedPartNode = partNode.CloneNode(true);
+			ReplaceParamsInAttributes(generatedPartNode, "", fieldNameForReplace, fieldIdForWs, className);
+			Inventory.GetInventory("parts", m_vc.Cache.ProjectId.Name).AddNodeToInventory(generatedPartNode);
+			generatedParts.Add(generatedPartNode);
+			// now see if we need to create other parts from further generic layouts.
+			if (fieldNameForReplace.Contains("$fieldName"))
 			{
-				var generatedParts = new List<XmlNode>();
-				// clone the generic node so we can substitute any attributes that need to be substituted.
-				XmlNode generatedPartNode = partNode.CloneNode(true);
-				ReplaceParamsInAttributes(generatedPartNode, "", fieldNameForReplace, fieldIdForWs, className);
-				Inventory.GetInventory("parts", m_vc.Cache.ProjectId.Name).AddNodeToInventory(generatedPartNode);
-				generatedParts.Add(generatedPartNode);
-				// now see if we need to create other parts from further generic layouts.
-				if (fieldNameForReplace.Contains("$fieldName"))
-				{
-					// use the generated part, since it contains a template reference.
-					partNode = generatedPartNode;
-				}
-
-				XmlNode nextLayoutNode = null;
-				XmlAttribute layoutAttr = partNode.Attributes["layout"];
-				if (layoutAttr != null && layoutAttr.Value.Contains("$fieldName"))
-					nextLayoutNode = partNode;
-				else if (partNode.ChildNodes.Count > 0)
-					nextLayoutNode = partNode.SelectSingleNode(".//*[contains(@layout, '$fieldName')]");
-				if (nextLayoutNode != null)
-				{
-					// now build the new node from its layouts
-					string fieldName = XmlUtils.GetMandatoryAttributeValue(nextLayoutNode, "field");
-					int field = m_vc.Cache.DomainDataByFlid.MetaDataCache.GetFieldId(className, fieldName, true);
-					int nextLayoutClass = m_vc.Cache.GetDestinationClass(field);
-					List<XmlNode> furtherGeneratedParts = GeneratePartsFromLayouts(nextLayoutClass, fieldNameForReplace, fieldIdForWs,
-						ref nextLayoutNode);
-					if (furtherGeneratedParts != null)
-						generatedParts.AddRange(furtherGeneratedParts);
-				}
-				return generatedParts;
+				// use the generated part, since it contains a template reference.
+				partNode = generatedPartNode;
 			}
-			return null;
+
+			XmlNode nextLayoutNode = null;
+			XmlAttribute layoutAttr = partNode.Attributes["layout"];
+			if (layoutAttr != null && layoutAttr.Value.Contains("$fieldName"))
+				nextLayoutNode = partNode;
+			else if (partNode.ChildNodes.Count > 0)
+				nextLayoutNode = partNode.SelectSingleNode(".//*[contains(@layout, '$fieldName')]");
+			if (nextLayoutNode != null)
+			{
+				// now build the new node from its layouts
+				string fieldName = XmlUtils.GetMandatoryAttributeValue(nextLayoutNode, "field");
+				int field = m_vc.Cache.DomainDataByFlid.MetaDataCache.GetFieldId(className, fieldName, true);
+				int nextLayoutClass = m_vc.Cache.GetDestinationClass(field);
+				List<XmlNode> furtherGeneratedParts = GeneratePartsFromLayouts(nextLayoutClass, fieldNameForReplace, fieldIdForWs,
+					ref nextLayoutNode);
+				if (furtherGeneratedParts != null)
+					generatedParts.AddRange(furtherGeneratedParts);
+			}
+			return generatedParts;
 		}
 
 		/// ------------------------------------------------------------------------------------
