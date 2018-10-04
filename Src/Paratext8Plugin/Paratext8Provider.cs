@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using Paratext.Data;
+using PtxUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.Scripture;
 // ReSharper disable InconsistentNaming
@@ -27,6 +28,7 @@ namespace Paratext8Plugin
 		public void Initialize()
 		{
 			ParatextData.Initialize();
+			Alert.Implementation = new ParatextAlert();
 		}
 
 		public void RefreshScrTexts()
