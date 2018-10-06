@@ -157,14 +157,20 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 
 		void DisposeContextMenu(object sender, EventArgs e)
 		{
-			//Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 			Application.Idle -= DisposeContextMenu;
 			if (m_contextMenuStrip != null && !m_contextMenuStrip.IsDisposed)
 			{
 				m_contextMenuStrip.Dispose();
 				m_contextMenuStrip = null;
 			}
-			//Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 		}
 
 		private ContextMenuStrip CreateContextMenu()

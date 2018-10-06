@@ -1,32 +1,28 @@
-// Copyright (c) 2018 SIL International
-// This software is licensed under the LGPL, version 2.1 or later
-// (http://www.gnu.org/licenses/lgpl-2.1.html)
-
 using System;
 using System.Diagnostics;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 
-namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
+namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 {
 	/// <summary>
 	/// This class handles all interaction for the NotebookBrowseTool for its menus, toolbars, plus all context menus that are used in Slices and PaneBars.
 	/// </summary>
-	internal sealed class NotebookBrowseToolMenuHelper : IFlexComponent, IDisposable
+	internal sealed class LexiconBrowseToolMenuHelper : IFlexComponent, IDisposable
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
-		private NotebookAreaMenuHelper _notebookAreaMenuHelper;
-		private RecordBrowseView _browseView;
+		private LexiconAreaMenuHelper _lexiconAreaMenuHelper;
+		internal BrowseViewContextMenuFactory MyBrowseViewContextMenuFactory { get; private set; }
+		private ISharedEventHandlers _sharedEventHandlers;
 
-		internal NotebookBrowseToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool currentNotebookTool, RecordBrowseView browseView)
+		internal LexiconBrowseToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
-			Guard.AgainstNull(currentNotebookTool, nameof(currentNotebookTool));
-			Guard.AgainstNull(browseView, nameof(browseView));
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
-			_notebookAreaMenuHelper = new NotebookAreaMenuHelper(majorFlexComponentParameters, currentNotebookTool, null);
-			_browseView = browseView;
+			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, recordList);
+			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
+			MyBrowseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 		}
 
 		#region Implementation of IPropertyTableProvider
@@ -63,16 +59,16 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			_notebookAreaMenuHelper.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
-			_notebookAreaMenuHelper.MyAreaWideMenuHelper.SetupToolsConfigureColumnsMenu(_browseView.BrowseViewer);
-			_notebookAreaMenuHelper.MyAreaWideMenuHelper.SetupToolsCustomFieldsMenu();
+			_lexiconAreaMenuHelper.Initialize();
+			_lexiconAreaMenuHelper.MyAreaWideMenuHelper.SetupToolsCustomFieldsMenu();
+			//MyBrowseViewContextMenuFactory.RegisterBrowseViewContextMenuCreatorMethod(AreaServices.mnuBrowseView, BrowseViewContextMenuCreatorMethod);
 		}
 		#endregion
 
 		#region Implementation of IDisposable
 		private bool _isDisposed;
 
-		~NotebookBrowseToolMenuHelper()
+		~LexiconBrowseToolMenuHelper()
 		{
 			// The base class finalizer is called automatically.
 			Dispose(false);
@@ -100,10 +96,12 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 
 			if (disposing)
 			{
-				_notebookAreaMenuHelper?.Dispose();
+				//_notebookAreaMenuHelper?.Dispose();
+				MyBrowseViewContextMenuFactory?.Dispose();
 			}
+			MyBrowseViewContextMenuFactory = null;
 			_majorFlexComponentParameters = null;
-			_notebookAreaMenuHelper = null;
+			//_notebookAreaMenuHelper = null;
 
 			_isDisposed = true;
 		}

@@ -1744,11 +1744,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		{
 			if (value < 1)
 			{
-				return String.Empty;
+				return string.Empty;
 			}
 			if (value < 26)
 			{
-				return String.Empty + Convert.ToChar(value + 'a' - 1);
+				return string.Empty + Convert.ToChar(value + 'a' - 1);
 			}
 			value--;
 			char c = Convert.ToChar(value % 26);

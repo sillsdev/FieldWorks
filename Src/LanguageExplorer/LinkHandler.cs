@@ -67,10 +67,16 @@ namespace LanguageExplorer
 
 		private void Application_Idle(object sender, EventArgs e)
 		{
-			//Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 			_toolStripButtonHistoryBack.Enabled = _backStack.Any();
 			_toolStripButtonHistoryForward.Enabled = _forwardStack.Any();
-			//Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 		}
 
 		private static void Push(LinkedList<FwLinkArgs> stack, FwLinkArgs context)

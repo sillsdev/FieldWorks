@@ -349,7 +349,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		void Application_Idle(object sender, EventArgs e)
 		{
-			//Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 			var incompleteTasks = new List<IdleQueueTask>();
 			try
 			{
@@ -389,7 +392,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 						m_queue.Enqueue(task.Priority, task);
 				}
 			}
-			//Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 		}
 
 		static bool ShouldAbort()
@@ -406,7 +412,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 #endif
 		}
 
-		#region Implementation of IEnumerable
+#region Implementation of IEnumerable
 
 		/// <summary>
 		/// Returns an enumerator that iterates through the queue.
@@ -429,9 +435,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return GetEnumerator();
 		}
 
-		#endregion
+#endregion
 
-		#region Implementation of ICollection<IdleQueueTask>
+#region Implementation of ICollection<IdleQueueTask>
 
 		/// <summary>
 		/// Schedules the specified delegate to be invoked when the application
@@ -527,9 +533,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
-		#endregion
+#endregion
 
-		#region Implementation of IApplicationIdleEventHandler
+#region Implementation of IApplicationIdleEventHandler
 		/// <summary>
 		/// Call this for the duration of a block of code where we don't want idle events.
 		/// (Note that various things outside our control may pump events and cause the
@@ -560,6 +566,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 				}
 			}
 		}
-		#endregion
+#endregion
 	}
 }

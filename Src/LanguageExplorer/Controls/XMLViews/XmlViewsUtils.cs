@@ -224,7 +224,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// 0000010
 			// Then, negative numbers should sort with more negative ones smaller.
 			// We do this by a similar approach, with leading minus (fortunately smaller
-			// alphabetically than zero), followed by a similar trick applied to Int32.Max + val + 1
+			// alphabetically than zero), followed by a similar trick applied to int.Max + val + 1
 			// -0000001
 			// -0000002
 			// However, if we pad with zeros as above, "0" as a pattern matches everything!
@@ -234,7 +234,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return AlphaCompPosNumString(val);
 			}
-			// We add 1 here because otherwise we pass a negative value to the other method for Int32.MinValue
+			// We add 1 here because otherwise we pass a negative value to the other method for int.MinValue
 			return "-" + AlphaCompPosNumString(int.MaxValue + val + 1);
 		}
 

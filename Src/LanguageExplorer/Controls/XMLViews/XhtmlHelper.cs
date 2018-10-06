@@ -1127,7 +1127,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void WriteCssHeadrefBefore()
 		{
-			List<String> texts;
+			List<string> texts;
 			m_writer.Write(".headref:before {content:\"");
 			m_dictClassData.TryGetValue("headref-before", out texts);
 			m_writer.Write(texts[0]); // only one text in the list

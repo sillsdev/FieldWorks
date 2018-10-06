@@ -225,6 +225,15 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Document....
+        /// </summary>
+        internal static string ConfigureDocument {
+            get {
+                return ResourceManager.GetString("ConfigureDocument", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Custom _Fields....
         /// </summary>
         internal static string CustomFields {
@@ -382,6 +391,16 @@ namespace LanguageExplorer.Areas {
         internal static string Filter_for_Notebook_Records_with_this_category {
             get {
                 return ResourceManager.GetString("Filter_for_Notebook_Records_with_this_category", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon Find_Dictionary {
+            get {
+                object obj = ResourceManager.GetObject("Find_Dictionary", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
         

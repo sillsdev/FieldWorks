@@ -14,7 +14,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	{
 		/// <summary />
 		[Test]
-		public void DuplicateTest()
+		public void CmPossibilityCloneTest()
 		{
 			var factory = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>();
 			var testList = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().CreateUnowned("TestList", Cache.DefaultUserWs);

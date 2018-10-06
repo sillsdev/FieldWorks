@@ -169,6 +169,16 @@ namespace LanguageExplorer.Areas.Notebook {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap goToRecord {
+            get {
+                object obj = ResourceManager.GetObject("goToRecord", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Standard Format _Notebook data....
         /// </summary>
         internal static string Import_Standard_Format_Notebook_data {
@@ -192,6 +202,16 @@ namespace LanguageExplorer.Areas.Notebook {
         internal static string Insert_Subrecord_of_Subrecord {
             get {
                 return ResourceManager.GetString("Insert_Subrecord_of_Subrecord", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap nbkRecord {
+            get {
+                object obj = ResourceManager.GetObject("nbkRecord", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         

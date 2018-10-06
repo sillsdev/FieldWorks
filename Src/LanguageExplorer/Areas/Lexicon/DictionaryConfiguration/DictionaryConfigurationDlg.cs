@@ -142,7 +142,10 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 				EventHandler refreshDelegate = null;
 				refreshDelegate = delegate
 				{
-					//Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 					// Since we are handling this delayed the dialog may have been closed before we get around to it
 					if (m_preview.IsDisposed)
 					{
@@ -156,7 +159,10 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 					browser.LoadContent(value, "file:///c:/MayNotExist/doesnotmatter.html", "application/xhtml+xml");
 					m_preview.Refresh();
 					Application.Idle -= refreshDelegate;
-					//Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 				};
 				Application.Idle += refreshDelegate;
 			}
@@ -180,7 +186,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			}
 		}
 
-		public void ShowPublicationsForConfiguration(String publications)
+		public void ShowPublicationsForConfiguration(string publications)
 		{
 			m_txtPubsForConfig.Text = publications;
 		}

@@ -273,7 +273,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 							else
 							{
 								//add the string for this writing system in all lower case to the set, unique count is case insensitive
-								languageTypeCount.Add(ws, new HashSet<String> { word.Wordform.Form.get_String(ws).Text.ToLower() });
+								languageTypeCount.Add(ws, new HashSet<string> { word.Wordform.Form.get_String(ws).Text.ToLower() });
 							}
 						}
 					}

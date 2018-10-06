@@ -56,7 +56,7 @@ namespace LanguageExplorer
 		internal static Guid GetObjectGuidIfValid(IPropertyTable propertyTable, string key)
 		{
 			var sGuid = propertyTable.GetValue<string>(key);
-			if (String.IsNullOrEmpty(sGuid))
+			if (string.IsNullOrEmpty(sGuid))
 			{
 				return Guid.Empty;
 			}

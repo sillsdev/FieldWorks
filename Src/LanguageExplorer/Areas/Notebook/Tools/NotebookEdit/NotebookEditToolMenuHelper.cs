@@ -34,6 +34,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		private NotebookAreaMenuHelper _notebookAreaMenuHelper;
 		private IToolUiWidgetManager _rightClickContextMenuManager;
 		private DataTree MyDataTree { get; set; }
+		private RecordBrowseView RecordBrowseView { get; set; }
 		private IRecordList MyRecordList { get; set; }
 		private ToolStripMenuItem _insertMenu;
 		private List<Tuple<ToolStripMenuItem, EventHandler>> _newInsertMenusAndHandlers;
@@ -44,10 +45,13 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		private ToolStripSeparator _insertToolStripSeparator;
 		private ToolStripButton _insertAddToDictionaryToolStripButton;
 		private ToolStripButton _insertFindInDictionaryToolStripButton;
+		private ToolStripMenuItem _toolsMenu;
+		private ToolStripSeparator _toolsFindInDictionarySeparator;
+		private ToolStripMenuItem _toolsFindInDictionaryMenu;
 
 		internal BrowseViewContextMenuFactory MyBrowseViewContextMenuFactory { get; private set; }
 
-		internal NotebookEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool currentNotebookTool, DataTree dataTree, IRecordList recordList)
+		internal NotebookEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool currentNotebookTool, DataTree dataTree, RecordBrowseView recordBrowseView, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(currentNotebookTool, nameof(currentNotebookTool));
@@ -58,12 +62,16 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			_majorFlexComponentParameters = majorFlexComponentParameters;
 			_notebookEditTool = currentNotebookTool;
 			MyDataTree = dataTree;
+			RecordBrowseView = recordBrowseView;
 			MyRecordList = recordList;
 
-			_notebookAreaMenuHelper = new NotebookAreaMenuHelper(majorFlexComponentParameters, currentNotebookTool);
+			var insertIndex = -1;
+			_notebookAreaMenuHelper = new NotebookAreaMenuHelper(majorFlexComponentParameters, currentNotebookTool, dataTree);
 			MyBrowseViewContextMenuFactory = new BrowseViewContextMenuFactory();
 			MyBrowseViewContextMenuFactory.RegisterBrowseViewContextMenuCreatorMethod(AreaServices.mnuBrowseView, BrowseViewContextMenuCreatorMethod);
 			_rightClickContextMenuManager = new RightClickContextMenuManager(_notebookEditTool, MyDataTree);
+			// <item command="CmdConfigureColumns" defaultVisible="false" />
+			_notebookAreaMenuHelper.MyAreaWideMenuHelper.SetupToolsConfigureColumnsMenu(RecordBrowseView.BrowseViewer, ++insertIndex);
 		}
 
 		#region Implementation of IPropertyTableProvider
@@ -101,6 +109,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			Subscriber = flexComponentParameters.Subscriber;
 
 			_notebookAreaMenuHelper.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
+			_notebookAreaMenuHelper.MyAreaWideMenuHelper.SetupToolsCustomFieldsMenu();
 			MyDataTree.DataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(AreaServices.PanelMenuId, CreateMainPanelContextMenuStrip);
 			_rightClickContextMenuManager.Initialize(_majorFlexComponentParameters, MyRecordList);
 
@@ -109,10 +118,26 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			AddInsertToolbarItems();
 			SetupSliceMenus();
 
+			_toolsMenu = MenuServices.GetToolsMenu(_majorFlexComponentParameters.MenuStrip);
+			var insertIndex = 1;
+			_toolsFindInDictionarySeparator = ToolStripMenuItemFactory.CreateToolStripSeparatorForToolStripMenuItem(_toolsMenu, insertIndex++);
+			/*
+			  <item command="CmdLexiconLookup" defaultVisible="false" />
+				<command id="CmdLexiconLookup" label="Find in _Dictionary..." message="LexiconLookup" icon="findInDictionary" />
+			*/
+			_toolsMenu.DropDownOpening += ToolsMenu_DropDownOpening;
+			_toolsFindInDictionaryMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_toolsMenu, _majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.LexiconLookup), AreaResources.Find_in_Dictionary, image: AreaResources.Find_Dictionary.ToBitmap(), insertIndex: insertIndex);
+
 			Application.Idle += Application_Idle;
 			_insertMenu.DropDownOpening += InsertMenu_DropDownOpening;
 			MyDataTree.CurrentSliceChanged += MyDataTreeOnCurrentSliceChanged;
 		}
+
+		private void ToolsMenu_DropDownOpening(object sender, EventArgs e)
+		{
+			_toolsFindInDictionaryMenu.Enabled = AreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree) != null;
+		}
+
 		#endregion
 
 		#region Implementation of IDisposable
@@ -146,6 +171,13 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 
 			if (disposing)
 			{
+				_toolsMenu.DropDownItems.Remove(_toolsFindInDictionarySeparator);
+				_toolsFindInDictionarySeparator.Dispose();
+				_toolsMenu.DropDownOpening -= ToolsMenu_DropDownOpening;
+				_toolsMenu.DropDownItems.Remove(_toolsFindInDictionaryMenu);
+				_toolsFindInDictionaryMenu.Click -= _majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.LexiconLookup);
+				_toolsFindInDictionaryMenu.Dispose();
+
 				Application.Idle -= Application_Idle;
 				_insertMenu.DropDownOpening -= InsertMenu_DropDownOpening;
 				MyDataTree.CurrentSliceChanged -= MyDataTreeOnCurrentSliceChanged;
@@ -182,6 +214,9 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			_insertAddToDictionaryToolStripButton = null;
 			_insertFindInDictionaryToolStripButton = null;
 			MyBrowseViewContextMenuFactory = null;
+			_toolsMenu = null;
+			_toolsFindInDictionarySeparator = null;
+			_toolsFindInDictionaryMenu = null;
 
 			_isDisposed = true;
 		}
@@ -319,34 +354,31 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			_newInsertMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>(4);
 
 			var insertIndex = 0;
-			using (var imageHolder = new NotebookImageHolder())
-			{
-				/*
-				  <item command="CmdInsertRecord" defaultVisible="false" /> // Shared locally
-					Tooltip: <item id="CmdInsertRecord">Create a new Record in your Notebook.</item>
-						<command id="CmdInsertRecord" label="Record" message="InsertItemInVector" icon="nbkRecord" shortcut="Ctrl+I">
-						  <params className="RnGenericRec" />
-						</command>
-				*/
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_Record_Clicked, NotebookResources.Record, NotebookResources.Create_a_new_Record_in_your_Notebook, Keys.Control | Keys.I, imageHolder.buttonImages.Images[NotebookAreaMenuHelper.nbkRecord], insertIndex++);
+			/*
+			  <item command="CmdInsertRecord" defaultVisible="false" /> // Shared locally
+				Tooltip: <item id="CmdInsertRecord">Create a new Record in your Notebook.</item>
+					<command id="CmdInsertRecord" label="Record" message="InsertItemInVector" icon="nbkRecord" shortcut="Ctrl+I">
+					  <params className="RnGenericRec" />
+					</command>
+			*/
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_Record_Clicked, NotebookResources.Record, NotebookResources.Create_a_new_Record_in_your_Notebook, Keys.Control | Keys.I, NotebookResources.nbkRecord, insertIndex++);
 
-				/*
-				  <item command="CmdInsertSubrecord" defaultVisible="false" />
-					Tooltip: <item id="CmdInsertSubrecord">Create a Subrecord in your Notebook.</item>
-						<command id="CmdInsertSubrecord" label="Subrecord" message="InsertItemInVector" icon="nbkRecord">
-						  <params className="RnGenericRec" subrecord="true" />
-						</command>
-				*/
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_Subrecord_Clicked, NotebookResources.Subrecord, NotebookResources.Create_a_Subrecord_in_your_Notebook, image: imageHolder.buttonImages.Images[NotebookAreaMenuHelper.nbkRecord], insertIndex: insertIndex++);
+			/*
+			  <item command="CmdInsertSubrecord" defaultVisible="false" />
+				Tooltip: <item id="CmdInsertSubrecord">Create a Subrecord in your Notebook.</item>
+					<command id="CmdInsertSubrecord" label="Subrecord" message="InsertItemInVector" icon="nbkRecord">
+					  <params className="RnGenericRec" subrecord="true" />
+					</command>
+			*/
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_Subrecord_Clicked, NotebookResources.Subrecord, NotebookResources.Create_a_Subrecord_in_your_Notebook, image: NotebookResources.nbkRecord, insertIndex: insertIndex++);
 
-				/*
-				  <item command="CmdInsertSubsubrecord" defaultVisible="false" />
-						<command id="CmdInsertSubsubrecord" label="Subrecord of subrecord" message="InsertItemInVector" icon="nbkRecord">
-						  <params className="RnGenericRec" subrecord="true" subsubrecord="true" />
-						</command>
-				*/
-				_insertSubsubrecordMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_Subsubrecord_Clicked, NotebookResources.Subrecord_of_subrecord, image: imageHolder.buttonImages.Images[NotebookAreaMenuHelper.nbkRecord], insertIndex: insertIndex++);
-			}
+			/*
+			  <item command="CmdInsertSubsubrecord" defaultVisible="false" />
+					<command id="CmdInsertSubsubrecord" label="Subrecord of subrecord" message="InsertItemInVector" icon="nbkRecord">
+					  <params className="RnGenericRec" subrecord="true" subsubrecord="true" />
+					</command>
+			*/
+			_insertSubsubrecordMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_Subsubrecord_Clicked, NotebookResources.Subrecord_of_subrecord, image: NotebookResources.nbkRecord, insertIndex: insertIndex++);
 
 			/*
 			  <item command="CmdAddToLexicon" label="Entry..." defaultVisible="false" /> // Shared locally
@@ -416,51 +448,45 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		private void AddInsertToolbarItems()
 		{
 			var newToolbarItems = new List<ToolStripItem>(5);
-			using (var imageHolder = new NotebookImageHolder())
-			{
-				/*
-				  <item command="CmdInsertRecord" defaultVisible="false" /> // Shared locally
-					Tooltip: <item id="CmdInsertRecord">Create a new Record in your Notebook.</item>
-						<command id="CmdInsertRecord" label="Record" message="InsertItemInVector" icon="nbkRecord" shortcut="Ctrl+I">
-						  <params className="RnGenericRec" />
-						</command>
-				*/
-				_insertRecordToolStripButton = ToolStripButtonFactory.CreateToolStripButton(Insert_Record_Clicked, "toolStripButtonInsertRecord", imageHolder.buttonImages.Images[NotebookAreaMenuHelper.nbkRecord], $"{NotebookResources.Create_a_new_Record_in_your_Notebook} (CTRL+I)");
-				newToolbarItems.Add(_insertRecordToolStripButton);
+			/*
+			  <item command="CmdInsertRecord" defaultVisible="false" /> // Shared locally
+				Tooltip: <item id="CmdInsertRecord">Create a new Record in your Notebook.</item>
+					<command id="CmdInsertRecord" label="Record" message="InsertItemInVector" icon="nbkRecord" shortcut="Ctrl+I">
+					  <params className="RnGenericRec" />
+					</command>
+			*/
+			_insertRecordToolStripButton = ToolStripButtonFactory.CreateToolStripButton(Insert_Record_Clicked, "toolStripButtonInsertRecord", NotebookResources.nbkRecord, $"{NotebookResources.Create_a_new_Record_in_your_Notebook} (CTRL+I)");
+			newToolbarItems.Add(_insertRecordToolStripButton);
 
-				/*
-				  <item command="CmdGoToRecord" defaultVisible="false" /> // Shared from afar
-				*/
-				_insertFindRecordToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_majorFlexComponentParameters.SharedEventHandlers.Get(NotebookAreaMenuHelper.CmdGoToRecord), "toolStripButtonInsertFindRecord", imageHolder.buttonImages.Images[NotebookAreaMenuHelper.goToRecord], $"{NotebookResources.Find_a_Record_in_your_Notebook} (CTRL+F)");
-				newToolbarItems.Add(_insertFindRecordToolStripButton);
+			/*
+			  <item command="CmdGoToRecord" defaultVisible="false" /> // Shared from afar
+			*/
+			_insertFindRecordToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_majorFlexComponentParameters.SharedEventHandlers.Get(NotebookAreaMenuHelper.CmdGoToRecord), "toolStripButtonInsertFindRecord", NotebookResources.goToRecord, $"{NotebookResources.Find_a_Record_in_your_Notebook} (CTRL+F)");
+			newToolbarItems.Add(_insertFindRecordToolStripButton);
 
-				/*
-				  <item label="-" translate="do not translate" />
-				*/
-				_insertToolStripSeparator = ToolStripButtonFactory.CreateToolStripSeparator();
-				newToolbarItems.Add(_insertToolStripSeparator);
+			/*
+			  <item label="-" translate="do not translate" />
+			*/
+			_insertToolStripSeparator = ToolStripButtonFactory.CreateToolStripSeparator();
+			newToolbarItems.Add(_insertToolStripSeparator);
 
-				/*
-				  <item command="CmdAddToLexicon" defaultVisible="false" /> // Shared from afar
-					Tooltip: <item id="CmdAddToLexicon">Add the current word to the lexicon (if it is a vernacular word).</item>
-						<command id="CmdAddToLexicon" label="Add to Dictionary..." message="AddToLexicon" icon="majorEntry" />
-				*/
-				_insertAddToDictionaryToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.CmdAddToLexicon), "toolStripButtonAddToLexicon", AreaResources.Major_Entry.ToBitmap(), AreaResources.Add_the_current_word_to_the_lexicon);
-				newToolbarItems.Add(_insertAddToDictionaryToolStripButton);
-				_insertAddToDictionaryToolStripButton.Enabled = AreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree) != null;
-				_insertAddToDictionaryToolStripButton.Tag = MyDataTree;
+			/*
+			  <item command="CmdAddToLexicon" defaultVisible="false" /> // Shared from afar
+				Tooltip: <item id="CmdAddToLexicon">Add the current word to the lexicon (if it is a vernacular word).</item>
+					<command id="CmdAddToLexicon" label="Add to Dictionary..." message="AddToLexicon" icon="majorEntry" />
+			*/
+			_insertAddToDictionaryToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.CmdAddToLexicon), "toolStripButtonAddToLexicon", AreaResources.Major_Entry.ToBitmap(), AreaResources.Add_the_current_word_to_the_lexicon);
+			newToolbarItems.Add(_insertAddToDictionaryToolStripButton);
+			_insertAddToDictionaryToolStripButton.Enabled = AreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree) != null;
+			_insertAddToDictionaryToolStripButton.Tag = MyDataTree;
 
-				using (var interlinearImageHolder = new InterlinearImageHolder())
-				{
-					/*
-					  <item command="CmdLexiconLookup" defaultVisible="false" />
-						<command id="CmdLexiconLookup" label="Find in _Dictionary..." message="LexiconLookup" icon="findInDictionary" />
-					*/
-					_insertFindInDictionaryToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.LexiconLookup), "toolStripButtonLexiconLookup", interlinearImageHolder.buttonImages.Images[0], AreaResources.Find_in_Dictionary);
-					newToolbarItems.Add(_insertFindInDictionaryToolStripButton);
-					_insertFindInDictionaryToolStripButton.Enabled = AreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree) != null;
-				}
-			}
+			/*
+			  <item command="CmdLexiconLookup" defaultVisible="false" />
+				<command id="CmdLexiconLookup" label="Find in _Dictionary..." message="LexiconLookup" icon="findInDictionary" />
+			*/
+			_insertFindInDictionaryToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.LexiconLookup), "toolStripButtonLexiconLookup", AreaResources.Find_Dictionary.ToBitmap(), AreaResources.Find_in_Dictionary);
+			newToolbarItems.Add(_insertFindInDictionaryToolStripButton);
+			_insertFindInDictionaryToolStripButton.Enabled = AreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree) != null;
 
 			InsertToolbarManager.AddInsertToolbarItems(_majorFlexComponentParameters, newToolbarItems);
 		}

@@ -91,7 +91,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private Button buttonHelp;
 		private HelpProvider m_helpProvider;
-		private String m_helpTopic;
+		private string m_helpTopic;
 		private IHelpTopicProvider m_helpTopicProvider;
 
 		private RadioButton m_AddButton;

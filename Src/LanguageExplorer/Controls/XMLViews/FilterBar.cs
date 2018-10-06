@@ -562,9 +562,9 @@ namespace LanguageExplorer.Controls.XMLViews
 					combo.Items.Add(new FilterComboItem(MakeLabel(XMLViewsStrings.ksZero),
 						new ExactMatcher(MatchExactPattern(XMLViewsStrings.ksZero)), item));
 					combo.Items.Add(new FilterComboItem(MakeLabel(XMLViewsStrings.ksGreaterThanZero),
-						new RangeIntMatcher(1, Int32.MaxValue), item));
+						new RangeIntMatcher(1, int.MaxValue), item));
 					combo.Items.Add(new FilterComboItem(MakeLabel(XMLViewsStrings.ksGreaterThanOne),
-						new RangeIntMatcher(2, Int32.MaxValue), item));
+						new RangeIntMatcher(2, int.MaxValue), item));
 					combo.Items.Add(new RestrictComboItem(MakeLabel(XMLViewsStrings.ksRestrict_),
 						m_bv.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider),
 						item,
@@ -663,7 +663,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
-		internal IVwPattern MatchExactPattern(String str)
+		internal IVwPattern MatchExactPattern(string str)
 		{
 			var ws = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
 			IVwPattern pattern = VwPatternClass.Create();

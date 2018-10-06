@@ -46,7 +46,7 @@ namespace LanguageExplorer.Controls.LexText
 				try
 				{
 					m_growing = true;
-					var sz = new Size(Width, Int32.MaxValue);
+					var sz = new Size(Width, int.MaxValue);
 					sz = TextRenderer.MeasureText(Text, Font, sz, TextFormatFlags.WordBreak);
 					// The mono implementation chops off the bottom line of the display (FWNX-752).
 					if (MiscUtils.IsMono)

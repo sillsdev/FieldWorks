@@ -469,6 +469,7 @@ namespace LanguageExplorer.Areas
 			var backColorName = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "backColor", "Window");
 			BackColor = Color.FromName(backColorName);
 			m_configObjectName = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "configureObjectName", null));
+			Debug.Assert(!string.IsNullOrWhiteSpace(m_configObjectName), "Add 'configureObjectName' attribute value to parameters.");
 		}
 
 		public virtual bool OnRecordNavigation(object argument)
@@ -561,14 +562,20 @@ namespace LanguageExplorer.Areas
 
 		private void DisposeContextMenu(object sender, EventArgs e)
 		{
-			//Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 			Application.Idle -= DisposeContextMenu;
 			if (m_contextMenu != null)
 			{
 				m_contextMenu.Dispose();
 				m_contextMenu = null;
 			}
-			//Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 		}
 
 		// Context menu exists just for one invocation (until idle).
@@ -1097,54 +1104,25 @@ namespace LanguageExplorer.Areas
 			SetInfoBarText();
 		}
 
-#if RANDYTODO
-		/// <summary>
-		/// The configure dialog may be launched any time this tool is active.
-		/// Its name is derived from the name of the tool.
-		/// </summary>
-		public virtual bool OnDisplayConfigureXmlDocView(object commandObject, ref UIItemDisplayProperties display)
-		{
-			if (string.IsNullOrEmpty(m_configObjectName))
-			{
-				display.Enabled = display.Visible = false;
-				return true;
-			}
-			display.Enabled = true;
-			display.Visible = true;
-			// Enhance JohnT: make this configurable. We'd like to use the 'label' attribute of the 'tool'
-			// element, but we don't have it, only the two-level-down 'parameters' element
-			// so use "configureObjectName" parameter for now.
-			// REVIEW: FOR LOCALIZABILITY, SHOULDN'T THE "..." BE PART OF THE SOURCE FOR display.Text?
-			display.Text = string.Format(display.Text, m_configObjectName + "...");
-			return true; //we've handled this
-		}
-#endif
-
 		/// <summary>
 		/// Launch the configure dialog.
 		/// </summary>
-		public bool OnConfigureXmlDocView(object commandObject)
+		internal void ConfigureXmlDocView_Clicked(object sender, EventArgs e)
 		{
 			RunConfigureDialog(string.Empty);
-			return true; // we handled it
 		}
 
 		private void RunConfigureDialog(string nodePath)
 		{
-			var sProp = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "layoutProperty");
-			if (string.IsNullOrEmpty(sProp))
-			{
-				sProp = "DictionaryPublicationLayout";
-			}
 			using(var dlg = new XmlDocConfigureDlg())
 			{
+				var sProp = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "layoutProperty", "DictionaryPublicationLayout");
 				var mainWindow = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window);
 				dlg.SetConfigDlgInfo(m_configurationParametersElement, Cache, StyleSheet, mainWindow, PropertyTable, Publisher, sProp);
 				dlg.SetActiveNode(nodePath);
 				if(dlg.ShowDialog(this) == DialogResult.OK)
 				{
-					var sNewLayout = PropertyTable.GetValue<string>(sProp);
-					m_mainView.ResetTables(sNewLayout);
+					m_mainView.ResetTables(PropertyTable.GetValue<string>(sProp));
 					SelectAndScrollToCurrentRecord();
 				}
 				if (dlg.MasterRefreshRequired)

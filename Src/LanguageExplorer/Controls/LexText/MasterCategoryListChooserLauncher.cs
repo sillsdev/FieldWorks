@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Areas;
@@ -45,7 +44,10 @@ namespace LanguageExplorer.Controls.LexText
 
 		private void LaunchChooseFromMasterCategoryListOnIdle(object sender, EventArgs e)
 		{
-			//Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 			Application.Idle -= LaunchChooseFromMasterCategoryListOnIdle; // now being handled
 
 			// now launch the dialog
@@ -90,7 +92,10 @@ namespace LanguageExplorer.Controls.LexText
 						break;
 				}
 			}
-			//Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 		}
 	}
 }

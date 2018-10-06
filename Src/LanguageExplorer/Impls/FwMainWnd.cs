@@ -100,6 +100,7 @@ namespace LanguageExplorer.Impls
 		private LinkHandler _linkHandler;
 		private readonly Stack<List<IdleProcessingHelper>> _idleProcessingHelpers = new Stack<List<IdleProcessingHelper>>();
 		private ISharedEventHandlers _sharedEventHandlers = new SharedEventHandlers();
+		private HashSet<string> _temporaryPropertyNames = new HashSet<string>();
 
 		/// <summary>
 		/// Create new instance of window.
@@ -468,18 +469,49 @@ namespace LanguageExplorer.Impls
 		private void SetTemporaryProperties()
 		{
 			_temporaryPropertyNames.Clear();
+			_temporaryPropertyNames.AddRange(new[]
+			{
+				FwUtils.window,
+				LanguageExplorerConstants.App,
+				LanguageExplorerConstants.cache,
+				LanguageExplorerConstants.HelpTopicProvider,
+				FwUtils.FlexStyleSheet,
+				LanguageExplorerConstants.LinkHandler,
+				LanguageExplorerConstants.MajorFlexComponentParameters,
+				LanguageExplorerConstants.RecordListRepository
+			});
 			// Not persisted, but needed at runtime.
-			PropertyTable.SetProperty(FwUtils.window, this);
-			PropertyTable.SetProperty(LanguageExplorerConstants.App, _flexApp);
-			PropertyTable.SetProperty(LanguageExplorerConstants.cache, Cache);
-			PropertyTable.SetProperty(LanguageExplorerConstants.HelpTopicProvider, _flexApp);
-			PropertyTable.SetProperty(FwUtils.FlexStyleSheet, _stylesheet);
-			PropertyTable.SetProperty(LanguageExplorerConstants.LinkHandler, _linkHandler);
-			_propertyTable.SetProperty(LanguageExplorerConstants.MajorFlexComponentParameters, _majorFlexComponentParameters, settingsGroup: SettingsGroup.GlobalSettings);
-			_propertyTable.SetProperty(LanguageExplorerConstants.RecordListRepository, _recordListRepositoryForTools, settingsGroup: SettingsGroup.GlobalSettings);
-			_temporaryPropertyNames.AddRange(new[] { FwUtils.window, LanguageExplorerConstants.App, LanguageExplorerConstants.cache, LanguageExplorerConstants.HelpTopicProvider, FwUtils.FlexStyleSheet, LanguageExplorerConstants.LinkHandler, LanguageExplorerConstants.MajorFlexComponentParameters, LanguageExplorerConstants.RecordListRepository });
+			foreach (var key in _temporaryPropertyNames)
+			{
+				switch (key)
+				{
+					case FwUtils.window:
+						PropertyTable.SetProperty(key, this);
+						break;
+					case LanguageExplorerConstants.App:
+						PropertyTable.SetProperty(key, _flexApp);
+						break;
+					case LanguageExplorerConstants.cache:
+						PropertyTable.SetProperty(key, Cache);
+						break;
+					case LanguageExplorerConstants.HelpTopicProvider:
+						PropertyTable.SetProperty(key, _flexApp);
+						break;
+					case FwUtils.FlexStyleSheet:
+						PropertyTable.SetProperty(key, _stylesheet);
+						break;
+					case LanguageExplorerConstants.LinkHandler:
+						PropertyTable.SetProperty(key, _linkHandler);
+						break;
+					case LanguageExplorerConstants.MajorFlexComponentParameters:
+						PropertyTable.SetProperty(key, _majorFlexComponentParameters, settingsGroup: SettingsGroup.GlobalSettings);
+						break;
+					case LanguageExplorerConstants.RecordListRepository:
+						PropertyTable.SetProperty(key, _recordListRepositoryForTools, settingsGroup: SettingsGroup.GlobalSettings);
+						break;
+				}
+			}
 		}
-		private readonly HashSet<string> _temporaryPropertyNames = new HashSet<string>();
 
 		private void RemoveTemporaryProperties()
 		{
@@ -1019,7 +1051,11 @@ namespace LanguageExplorer.Impls
 				_linkHandler?.Dispose();
 
 				// Get rid of known, temporary, properties
-				RemoveTemporaryProperties();
+				foreach (var temporaryPropertyName in _temporaryPropertyNames)
+				{
+					PropertyTable.RemoveProperty(temporaryPropertyName);
+				}
+				_temporaryPropertyNames.Clear();
 
 				components?.Dispose();
 
@@ -1052,19 +1088,20 @@ namespace LanguageExplorer.Impls
 			_linkHandler = null;
 			_macroMenuHandler = null;
 			_sharedEventHandlers = null;
+			_temporaryPropertyNames = null;
 
 			base.Dispose(disposing);
 
 			if (disposing && _recordListRepositoryForTools != null)
 			{
 				_recordListRepositoryForTools.Dispose();
-				_recordListRepositoryForTools = null;
 			}
+			_recordListRepositoryForTools = null;
 
 			// Leave the PropertyTable for last, since the above stuff may still want to access it, while shutting down.
 			if (disposing)
 			{
-				PropertyTable?.Dispose();
+				_propertyTable?.Dispose();
 			}
 			_propertyTable = null;
 		}
@@ -1864,16 +1901,25 @@ very simple minor adjustments. ;)"
 
 		private void Application_Idle(object sender, EventArgs e)
 		{
-			Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
-			//Debug.WriteLine($"Start 'SetEnabledStateForWidgets': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+//Debug.WriteLine($"Start 'SetEnabledStateForWidgets': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 			_dataNavigationManager.SetEnabledStateForWidgets();
-			//Debug.WriteLine($"End 'SetEnabledStateForWidgets': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+//Debug.WriteLine($"End 'SetEnabledStateForWidgets': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 
 			var activeView = _viewHelper.ActiveView;
 			var hasActiveView = activeView != null;
 			if (hasActiveView)
 			{
-				//Debug.WriteLine($"Start 'hasActiveView = true': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+//Debug.WriteLine($"Start 'hasActiveView = true': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 				selectAllToolStripMenuItem.Enabled = true;
 				var editingHelper = activeView.EditingHelper;
 				cutToolStripMenuItem.Enabled = editingHelper.CanCut();
@@ -1892,11 +1938,17 @@ very simple minor adjustments. ;)"
 					pasteHyperlinkToolStripMenuItem.Enabled = false;
 					pasteHyperlinkToolStripMenuItem.Enabled = false;
 				}
-				//Debug.WriteLine($"End 'hasActiveView = true': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+//Debug.WriteLine($"End 'hasActiveView = true': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 			}
 			else
 			{
-				//Debug.WriteLine($"Start 'hasActiveView = false': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+//Debug.WriteLine($"Start 'hasActiveView = false': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 				selectAllToolStripMenuItem.Enabled = false;
 				cutToolStripMenuItem.Enabled = false;
 				copyToolStripMenuItem.Enabled = false;
@@ -1905,25 +1957,43 @@ very simple minor adjustments. ;)"
 				applyStyleToolStripMenuItem.Enabled = false;
 				pasteHyperlinkToolStripMenuItem.Enabled = false;
 				selectAllToolStripMenuItem.Enabled = false;
-				//Debug.WriteLine($"End 'hasActiveView = false': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+//Debug.WriteLine($"End 'hasActiveView = false': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 			}
 			toolStripButtonChangeFilterClearAll.Enabled = _recordListRepositoryForTools.ActiveRecordList.CanChangeFilterClearAll;
 
 			// Enable/disable toolbar buttons.
-			//Debug.WriteLine($"Start 'SetupEditUndoAndRedoMenus': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+//Debug.WriteLine($"Start 'SetupEditUndoAndRedoMenus': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 			SetupEditUndoAndRedoMenus();
-			//Debug.WriteLine($"End 'SetupEditUndoAndRedoMenus': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+//Debug.WriteLine($"End 'SetupEditUndoAndRedoMenus': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 
 			// Enable/disable Edit->Delete menu item (including changing the text) and the Delete toolbar item.
-			//Debug.WriteLine($"Start 'SetupEditDeleteMenus': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+//Debug.WriteLine($"Start 'SetupEditDeleteMenus': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 			SetupEditDeleteMenus(activeView);
-			//Debug.WriteLine($"End 'SetupEditDeleteMenus': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+//Debug.WriteLine($"End 'SetupEditDeleteMenus': Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 
 			if (linkToFileToolStripMenuItem.Visible)
 			{
 				linkToFileToolStripMenuItem.Enabled = EditingHelper is RootSiteEditingHelper && ((RootSiteEditingHelper)EditingHelper).CanInsertLinkToFile();
 			}
-			Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 		}
 
 		private static bool CanApplyStyle(EditingHelper editingHelper)

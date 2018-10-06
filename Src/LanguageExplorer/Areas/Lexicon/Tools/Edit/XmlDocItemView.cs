@@ -140,7 +140,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		void DisposeContextMenu(object sender, EventArgs e)
 		{
-			//Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 			Application.Idle -= DisposeContextMenu;
 			if (m_contextMenu != null)
 			{
@@ -150,7 +153,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				m_contextMenu.Dispose();
 				m_contextMenu = null;
 			}
-			//Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 		}
 
 		protected override void OnHandleCreated(EventArgs e)

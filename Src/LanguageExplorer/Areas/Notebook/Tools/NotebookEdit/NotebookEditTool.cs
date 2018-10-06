@@ -25,11 +25,14 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 	internal sealed class NotebookEditTool : ITool
 	{
 		private NotebookEditToolMenuHelper _notebookEditToolMenuHelper;
+		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
+		private DataTree MyDataTree { get; set; }
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
 		private IRecordList _recordList;
 		[Import(AreaServices.NotebookAreaMachineName)]
 		private IArea _area;
+		private ISharedEventHandlers _sharedEventHandlers;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -44,10 +47,12 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 
 			// Dispose after the main UI stuff.
+			_browseViewContextMenuFactory.Dispose();
 			_notebookEditToolMenuHelper.Dispose();
 
 			_recordBrowseView = null;
 			_notebookEditToolMenuHelper = null;
+			_browseViewContextMenuFactory = null;
 		}
 
 		/// <summary>
@@ -63,12 +68,15 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(NotebookArea.Records, majorFlexComponentParameters.StatusBar, NotebookArea.NotebookFactoryMethod);
 			}
+			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
+			_browseViewContextMenuFactory = new BrowseViewContextMenuFactory();
+			_browseViewContextMenuFactory.RegisterBrowseViewContextMenuCreatorMethod(AreaServices.mnuBrowseView, BrowseViewContextMenuCreatorMethod);
 
 			var showHiddenFieldsPropertyName = PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName);
-			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
-			_notebookEditToolMenuHelper = new NotebookEditToolMenuHelper(majorFlexComponentParameters, this, dataTree, _recordList);
-			_recordBrowseView = new RecordBrowseView(NotebookArea.LoadDocument(NotebookResources.NotebookEditBrowseParameters).Root, _notebookEditToolMenuHelper.MyBrowseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
-			var recordEditView = new RecordEditView(XElement.Parse(NotebookResources.NotebookEditRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordList, dataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
+			MyDataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
+			_recordBrowseView = new RecordBrowseView(NotebookArea.LoadDocument(NotebookResources.NotebookEditBrowseParameters).Root, _browseViewContextMenuFactory, majorFlexComponentParameters.LcmCache, _recordList);
+			_notebookEditToolMenuHelper = new NotebookEditToolMenuHelper(majorFlexComponentParameters, this, MyDataTree, _recordBrowseView, _recordList);
+			var recordEditView = new RecordEditView(XElement.Parse(NotebookResources.NotebookEditRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordList, MyDataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
@@ -80,7 +88,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			var paneBar = new PaneBar();
 			var img = LanguageExplorerResources.MenuWidget;
 			img.MakeTransparent(Color.Magenta);
-			var panelMenu = new PanelMenu(dataTree.DataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory, AreaServices.PanelMenuId)
+			var panelMenu = new PanelMenu(MyDataTree.DataTreeStackContextMenuFactory.MainPanelMenuContextMenuFactory, AreaServices.PanelMenuId)
 			{
 				Dock = DockStyle.Left,
 				BackgroundImage = img,
@@ -168,5 +176,29 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
+
+		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> BrowseViewContextMenuCreatorMethod(IRecordList recordList, string browseViewMenuId)
+		{
+			// The actual menu declaration has a gazillion menu items, but only two of them are seen in this tool (plus the separator).
+			// Start: <menu id="mnuBrowseView" (partial) >
+			var contextMenuStrip = new ContextMenuStrip
+			{
+				Name = AreaServices.mnuBrowseView
+			};
+			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+
+			// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.CmdDeleteSelectedObject), string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("RnGenericRec", "ClassNames")));
+			var currentSlice = MyDataTree.CurrentSlice;
+			if (currentSlice == null)
+			{
+				MyDataTree.GotoFirstSlice();
+			}
+			menu.Tag = MyDataTree.CurrentSlice;
+
+			// End: <menu id="mnuBrowseView" (partial) >
+
+			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+		}
 	}
 }

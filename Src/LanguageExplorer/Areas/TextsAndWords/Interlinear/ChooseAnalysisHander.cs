@@ -257,7 +257,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			AddItem(wa, MakeSimpleString(ITextStrings.ksNewWordGloss), false, WfiGlossTags.kClassId);
 		}
 
-		protected ITsString MakeSimpleString(String str)
+		protected ITsString MakeSimpleString(string str)
 		{
 			var builder = TsStringUtils.MakeStrBldr();
 			var bldr = TsStringUtils.MakePropsBldr();

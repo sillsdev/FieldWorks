@@ -12,6 +12,7 @@ using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.LcmUi;
 using SIL.Code;
+using SIL.Collections;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -41,6 +42,7 @@ namespace LanguageExplorer.Areas
 		private ToolStripMenuItem _toolsConfigureColumnsMenu;
 		private BrowseViewer _browseViewer;
 		private ISharedEventHandlers _sharedEventHandlers;
+		private readonly HashSet<string> _sharedEventKeyNames = new HashSet<string>();
 
 		internal AreaWideMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
@@ -51,19 +53,67 @@ namespace LanguageExplorer.Areas
 
 			InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 
-			_sharedEventHandlers.Add(AreaServices.InsertSlash, Insert_Slash_Clicked);
-			_sharedEventHandlers.Add(AreaServices.InsertEnvironmentBar, Insert_Underscore_Clicked);
-			_sharedEventHandlers.Add(AreaServices.InsertNaturalClass, Insert_NaturalClass_Clicked);
-			_sharedEventHandlers.Add(AreaServices.InsertOptionalItem, Insert_OptionalItem_Clicked);
-			_sharedEventHandlers.Add(AreaServices.InsertHashMark, Insert_HashMark_Clicked);
-			_sharedEventHandlers.Add(AreaServices.ShowEnvironmentError, ShowEnvironmentError_Clicked);
-			_sharedEventHandlers.Add(AreaServices.JumpToTool, JumpToTool_Clicked);
-			_sharedEventHandlers.Add(AreaServices.InsertCategory, InsertCategory_Clicked);
-			_sharedEventHandlers.Add(AreaServices.DataTreeDelete, DataTreeDelete_Clicked);
-			_sharedEventHandlers.Add(AreaServices.CmdAddToLexicon, CmdAddToLexicon_Clicked);
-			_sharedEventHandlers.Add(AreaServices.LexiconLookup, LexiconLookup_Clicked);
-			_sharedEventHandlers.Add(AreaServices.CmdDeleteSelectedObject, CmdDeleteSelectedObject_Clicked);
-			_sharedEventHandlers.Add(AreaServices.DeleteSelectedBrowseViewObject, DeleteSelectedBrowseViewObject_Clicked);
+			_sharedEventKeyNames.AddRange(new []
+			{
+				AreaServices.InsertSlash,
+				AreaServices.InsertEnvironmentBar,
+				AreaServices.InsertNaturalClass,
+				AreaServices.InsertOptionalItem,
+				AreaServices.InsertHashMark,
+				AreaServices.ShowEnvironmentError,
+				AreaServices.JumpToTool,
+				AreaServices.InsertCategory,
+				AreaServices.DataTreeDelete,
+				AreaServices.CmdAddToLexicon,
+				AreaServices.LexiconLookup,
+				AreaServices.CmdDeleteSelectedObject,
+				AreaServices.DeleteSelectedBrowseViewObject
+			});
+			foreach (var key in _sharedEventKeyNames)
+			{
+				switch (key)
+				{
+					case AreaServices.InsertSlash:
+						_sharedEventHandlers.Add(key, Insert_Slash_Clicked);
+						break;
+					case AreaServices.InsertEnvironmentBar:
+						_sharedEventHandlers.Add(key, Insert_Underscore_Clicked);
+						break;
+					case AreaServices.InsertNaturalClass:
+						_sharedEventHandlers.Add(key, Insert_NaturalClass_Clicked);
+						break;
+					case AreaServices.InsertOptionalItem:
+						_sharedEventHandlers.Add(key, Insert_OptionalItem_Clicked);
+						break;
+					case AreaServices.InsertHashMark:
+						_sharedEventHandlers.Add(key, Insert_HashMark_Clicked);
+						break;
+					case AreaServices.ShowEnvironmentError:
+						_sharedEventHandlers.Add(key, ShowEnvironmentError_Clicked);
+						break;
+					case AreaServices.JumpToTool:
+						_sharedEventHandlers.Add(key, JumpToTool_Clicked);
+						break;
+					case AreaServices.InsertCategory:
+						_sharedEventHandlers.Add(key, InsertCategory_Clicked);
+						break;
+					case AreaServices.DataTreeDelete:
+						_sharedEventHandlers.Add(key, DataTreeDelete_Clicked);
+						break;
+					case AreaServices.CmdAddToLexicon:
+						_sharedEventHandlers.Add(key, CmdAddToLexicon_Clicked);
+						break;
+					case AreaServices.LexiconLookup:
+						_sharedEventHandlers.Add(key, LexiconLookup_Clicked);
+						break;
+					case AreaServices.CmdDeleteSelectedObject:
+						_sharedEventHandlers.Add(key, CmdDeleteSelectedObject_Clicked);
+						break;
+					case AreaServices.DeleteSelectedBrowseViewObject:
+						_sharedEventHandlers.Add(key, DeleteSelectedBrowseViewObject_Clicked);
+						break;
+				}
+			}
 		}
 
 		internal AreaWideMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
@@ -149,19 +199,10 @@ namespace LanguageExplorer.Areas
 
 			if (disposing)
 			{
-				_sharedEventHandlers.Remove(AreaServices.InsertSlash);
-				_sharedEventHandlers.Remove(AreaServices.InsertEnvironmentBar);
-				_sharedEventHandlers.Remove(AreaServices.InsertNaturalClass);
-				_sharedEventHandlers.Remove(AreaServices.InsertOptionalItem);
-				_sharedEventHandlers.Remove(AreaServices.InsertHashMark);
-				_sharedEventHandlers.Remove(AreaServices.ShowEnvironmentError);
-				_sharedEventHandlers.Remove(AreaServices.JumpToTool);
-				_sharedEventHandlers.Remove(AreaServices.InsertCategory);
-				_sharedEventHandlers.Remove(AreaServices.DataTreeDelete);
-				_sharedEventHandlers.Remove(AreaServices.CmdAddToLexicon);
-				_sharedEventHandlers.Remove(AreaServices.LexiconLookup);
-				_sharedEventHandlers.Remove(AreaServices.CmdDeleteSelectedObject);
-				_sharedEventHandlers.Remove(AreaServices.DeleteSelectedBrowseViewObject);
+				foreach (var key in _sharedEventKeyNames)
+				{
+					_sharedEventHandlers.Remove(key);
+				}
 
 				if (_fileExportMenu != null)
 				{
@@ -178,6 +219,11 @@ namespace LanguageExplorer.Areas
 				}
 				if (_toolsConfigureMenu != null)
 				{
+					if (_toolsConfigureColumnsMenu != null)
+					{
+						_toolsConfigureColumnsMenu.Click -= ConfigureColumns_Click;
+						_toolsConfigureMenu.DropDownItems.Remove(_toolsConfigureColumnsMenu);
+					}
 					_toolsCustomFieldsMenu.Click -= AddCustomField_Click;
 					_toolsConfigureMenu.DropDownItems.Remove(_toolsCustomFieldsMenu);
 					_toolsConfigureMenu.DropDownItems.Remove(_toolsCustomFieldsSeparatorMenu);
@@ -185,10 +231,6 @@ namespace LanguageExplorer.Areas
 					_toolsCustomFieldsMenu.Dispose();
 					_toolsCustomFieldsSeparatorMenu.Dispose();
 					_toolsCustomFieldsMenu.Dispose();
-				}
-				if (_toolsConfigureColumnsMenu != null)
-				{
-					_toolsConfigureColumnsMenu.Click -= ConfigureColumns_Click;
 				}
 			}
 			_majorFlexComponentParameters = null;
@@ -371,7 +413,7 @@ namespace LanguageExplorer.Areas
 
 		internal static StTextSlice DataTreeCurrentSliceAsStTextSlice(DataTree dataTree)
 		{
-			return dataTree.CurrentSlice as StTextSlice; // May be null.
+			return dataTree?.CurrentSlice as StTextSlice; // May be null.
 		}
 
 		internal static IPhEnvSliceCommon SliceAsIPhEnvSliceCommon(Slice slice)

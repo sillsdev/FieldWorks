@@ -328,6 +328,7 @@
     <Compile Include="Areas\IPreferedTargetAdjuster.cs" />
     <Compile Include="Areas\IToolUiWidgetManager.cs" />
     <Compile Include="Areas\Lexicon\LexiconAreaConstants.cs" />
+    <Compile Include="Areas\Lexicon\Tools\Browse\LexiconBrowseToolMenuHelper.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolDataTreeMainPanelContextMenuStripManager.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolDataTreeStackLexEntryFormsManager.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolDataTreeStackLexEntryManager.cs" />
@@ -3026,9 +3027,6 @@
     <Compile Include="Areas\Lexicon\SwapLexemeWithAllomorphDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\Notebook\NotebookImageHolder.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Areas\Lexicon\LexEntryImages.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -3465,10 +3463,6 @@
       <DependentUpon>ReversalIndexEntryFormSlice.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\Notebook\NotebookImageHolder.resx">
-      <DependentUpon>NotebookImageHolder.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Areas\Lexicon\LexEntryImages.resx">
       <DependentUpon>LexEntryImages.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -3662,6 +3656,7 @@
     <Content Include="images\Create Entry.ico" />
     <None Include="images\Create Entry1.ico" />
     <Content Include="images\Create Reversal Entry.ico" />
+    <None Include="images\Find Dictionary.ico" />
     <Content Include="images\Find Lexical Entry.ico" />
     <Content Include="images\Find Reversal Entry.ico" />
     <Content Include="images\LexEd.ico" />

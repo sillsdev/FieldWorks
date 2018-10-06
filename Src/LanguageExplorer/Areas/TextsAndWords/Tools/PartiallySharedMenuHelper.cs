@@ -46,7 +46,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 
 		private void Application_Idle(object sender, EventArgs e)
 		{
-			//Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 			// Sort out whether to display/enable the _editFindMenu.
 			// NB: This will work the same for the Edit-Replace menu.
 			var oldVisible = _editFindMenu.Visible;
@@ -65,7 +68,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 				_replaceToolStripMenuItem.Enabled = newEnabled;
 				_insertFindAndReplaceButton.Enabled = newEnabled;
 			}
-			//Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 		}
 
 		private void EditFindMenu_Click(object sender, EventArgs e)

@@ -102,7 +102,7 @@ namespace LanguageExplorer
 		/// Return a string from a resource ID.
 		/// </summary>
 		/// <param name="stid">String resource id</param>
-		/// <returns>String</returns>
+		/// <returns>string</returns>
 		string GetResourceString(string stid);
 
 		/// <summary>

@@ -5,6 +5,7 @@
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
+using LanguageExplorer.Controls;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -15,17 +16,24 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private ToolStripMenuItem _editFindMenu;
+		private ToolStripMenuItem _toolsConfigureMenu;
+		private ToolStripMenuItem _toolsConfigureDocumentMenu;
 		private NotebookAreaMenuHelper _notebookAreaMenuHelper;
+		private XmlDocView _docView;
 
-		internal NotebookDocumentToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool currentNotebookTool, IRecordList recordList)
+		internal NotebookDocumentToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool currentNotebookTool, XmlDocView docView, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+			Guard.AgainstNull(currentNotebookTool, nameof(currentNotebookTool));
+			Guard.AgainstNull(docView, nameof(docView));
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
+			_docView = docView;
 			_editFindMenu = MenuServices.GetEditFindMenu(_majorFlexComponentParameters.MenuStrip);
 			_editFindMenu.Enabled = _editFindMenu.Visible = true;
 			_editFindMenu.Click += EditFindMenu_Click;
-			_notebookAreaMenuHelper = new NotebookAreaMenuHelper(majorFlexComponentParameters, currentNotebookTool);
+			_notebookAreaMenuHelper = new NotebookAreaMenuHelper(majorFlexComponentParameters, currentNotebookTool, null);
+			_toolsConfigureMenu = MenuServices.GetToolsConfigureMenu(_majorFlexComponentParameters.MenuStrip);
 
 			AddTool_ConfigureItem();
 		}
@@ -106,9 +114,14 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 			{
 				_notebookAreaMenuHelper?.Dispose();
 				_editFindMenu.Click -= EditFindMenu_Click;
+				_toolsConfigureMenu.DropDownItems.Remove(_toolsConfigureDocumentMenu);
+				_toolsConfigureDocumentMenu.Click -= _docView.ConfigureXmlDocView_Clicked;
+				_toolsConfigureDocumentMenu.Dispose();
 			}
 			_majorFlexComponentParameters = null;
 			_editFindMenu = null;
+			_toolsConfigureMenu = null;
+			_toolsConfigureDocumentMenu = null;
 			_notebookAreaMenuHelper = null;
 
 			_isDisposed = true;
@@ -121,6 +134,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 				<item label="{0}" command="CmdConfigureXmlDocView" defaultVisible="false" />
 					<command id="CmdConfigureXmlDocView" label="{0}" message="ConfigureXmlDocView" />
 			*/
+			_toolsConfigureDocumentMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_toolsConfigureMenu, _docView.ConfigureXmlDocView_Clicked, AreaResources.ConfigureDocument, insertIndex: 0);
 		}
 	}
 }

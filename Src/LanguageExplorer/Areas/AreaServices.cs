@@ -301,12 +301,12 @@ namespace LanguageExplorer.Areas
 
 		internal static void UndoExtension(string baseText, IActionHandler actionHandler, Action task)
 		{
-			UndoableUnitOfWorkHelper.Do(String.Format(LanguageExplorerResources.Undo_0, baseText), String.Format(LanguageExplorerResources.Redo_0, baseText), actionHandler, task);
+			UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerResources.Undo_0, baseText), string.Format(LanguageExplorerResources.Redo_0, baseText), actionHandler, task);
 		}
 
 		internal static void UndoExtensionUsingNewOrCurrentUOW(string baseText, IActionHandler actionHandler, Action task)
 		{
-			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(String.Format(LanguageExplorerResources.Undo_0, baseText), String.Format(LanguageExplorerResources.Redo_0, baseText), actionHandler, task);
+			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(string.Format(LanguageExplorerResources.Undo_0, baseText), string.Format(LanguageExplorerResources.Redo_0, baseText), actionHandler, task);
 		}
 
 		/// <summary>
@@ -338,7 +338,7 @@ namespace LanguageExplorer.Areas
 				default:
 					throw new ArgumentException("Unknown ExclusionReasonCode");
 			}
-			msg = String.Format(msg, reason);
+			msg = string.Format(msg, reason);
 			// TODO-Linux: Help is not implemented on Mono
 			MessageBox.Show(form, msg, caption, MessageBoxButtons.OK,
 				MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, 0,

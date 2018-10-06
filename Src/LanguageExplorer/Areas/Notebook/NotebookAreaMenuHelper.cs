@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.LexText.DataNotebook;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
@@ -20,9 +21,8 @@ namespace LanguageExplorer.Areas.Notebook
 	internal sealed class NotebookAreaMenuHelper : IFlexComponent, IDisposable
 	{
 		internal const string CmdGoToRecord = "CmdGoToRecord";
-		internal const int nbkRecord = 0;
-		internal const int goToRecord = 1;
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
+		private DataTree MyDataTree { get; set; }
 		private ISharedEventHandlers _sharedEventHandlers;
 		private ITool _currentNotebookTool;
 		private IRecordList _recordList;
@@ -32,7 +32,7 @@ namespace LanguageExplorer.Areas.Notebook
 		private List<Tuple<ToolStripMenuItem, EventHandler>> _newFileMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>();
 		internal AreaWideMenuHelper MyAreaWideMenuHelper { get; private set; }
 
-		internal NotebookAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool currentNotebookTool)
+		internal NotebookAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool currentNotebookTool, DataTree dataTree)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(currentNotebookTool, nameof(currentNotebookTool));
@@ -40,6 +40,7 @@ namespace LanguageExplorer.Areas.Notebook
 			_majorFlexComponentParameters = majorFlexComponentParameters;
 			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
 			_currentNotebookTool = currentNotebookTool;
+			MyDataTree = dataTree; // May be null.
 			_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(NotebookArea.Records, majorFlexComponentParameters.StatusBar, NotebookArea.NotebookFactoryMethod);
 			MyAreaWideMenuHelper = new AreaWideMenuHelper(_majorFlexComponentParameters, _recordList);
 
@@ -93,7 +94,6 @@ namespace LanguageExplorer.Areas.Notebook
 			// File->Export menu is visible and enabled in this tool.
 			// Add File->Export event handler.
 			MyAreaWideMenuHelper.SetupFileExportMenu(FileExportMenu_Click);
-			MyAreaWideMenuHelper.SetupToolsCustomFieldsMenu();
 
 			// Add one notebook area-wide import option.
 			_fileImportMenu = MenuServices.GetFileImportMenu(_majorFlexComponentParameters.MenuStrip);
@@ -155,6 +155,7 @@ namespace LanguageExplorer.Areas.Notebook
 				_sharedEventHandlers.Remove(CmdGoToRecord);
 			}
 			_majorFlexComponentParameters = null;
+			MyDataTree = null;
 			_sharedEventHandlers = null;
 			_currentNotebookTool = null;
 			MyAreaWideMenuHelper = null;
@@ -171,12 +172,9 @@ namespace LanguageExplorer.Areas.Notebook
 		private void AddEditMenuItems()
 		{
 			//< item command = "CmdGoToRecord" />
-			using (var imageHolder = new NotebookImageHolder())
-			{
-				_editMenu = MenuServices.GetEditMenu(_majorFlexComponentParameters.MenuStrip);
-				_newEditMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newEditMenusAndHandlers, _editMenu, GotoRecord_Clicked, NotebookResources.Find_Record, NotebookResources.Find_a_Record_in_your_Notebook, Keys.Control | Keys.F, imageHolder.buttonImages.Images[goToRecord], 10);
-			}
+			_editMenu = MenuServices.GetEditMenu(_majorFlexComponentParameters.MenuStrip);
+			_newEditMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newEditMenusAndHandlers, _editMenu, GotoRecord_Clicked, NotebookResources.Find_Record, NotebookResources.Find_a_Record_in_your_Notebook, Keys.Control | Keys.F, NotebookResources.goToRecord, 10);
 		}
 
 		private void GotoRecord_Clicked(object sender, EventArgs e)

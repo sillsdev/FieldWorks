@@ -27,7 +27,7 @@ namespace LanguageExplorer
 	/// A list of key attributes may be supplied; if a node with the same values
 	/// for all key attributes (or absence of a key attribute) is found in more
 	/// than one file, the last encountered 'wins'.
-	/// For example (square brakets used for angle ones)
+	/// For example (square brackets used for angle ones)
 	/// [layout class="LexSense" type="Detail" id="Advanced"]
 	/// (here class, type, and id are listed as key attributes).
 	///
@@ -1066,7 +1066,7 @@ namespace LanguageExplorer
 					continue;
 				}
 				//if the version is the same then we want to use the basic AddNode to get it into the inventory
-				if(version == Int32.Parse(XmlUtils.GetOptionalAttributeValue(element, "version", version.ToString())))
+				if(version == int.Parse(XmlUtils.GetOptionalAttributeValue(element, "version", version.ToString())))
 				{
 					AddNode(element, root);
 					continue;

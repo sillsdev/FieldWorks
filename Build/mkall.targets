@@ -310,9 +310,9 @@
 		<DownloadsSilOrgOSDownloadUrl Condition="'$(OS)'=='Windows_NT'">$(DownloadsSilOrgDownloadUrl)/Windows</DownloadsSilOrgOSDownloadUrl>
 		<DownloadsSilOrgOSDownloadUrl Condition="'$(OS)'=='Unix'">$(DownloadsSilOrgDownloadUrl)/Linux</DownloadsSilOrgOSDownloadUrl>
 		<NUnitDownloadUrl>https://github.com/nunit/nunitv2/releases/download/2.6.4/NUnit-2.6.4.zip</NUnitDownloadUrl>
-		<LcmBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'">Liblcm_LiblcmWin32masterContinuous</LcmBuildType>
-		<LcmBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'">Lcm_LiblcmWin64masterContinuous</LcmBuildType>
-		<LcmBuildType Condition="'$(OS)'=='Unix'">Liblcm_LiblcmLinux64masterContinuous</LcmBuildType>
+		<LcmBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'">lcm_win32_develop_continuous</LcmBuildType>
+		<LcmBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'">lcm_win64_develop_continuous</LcmBuildType>
+		<LcmBuildType Condition="'$(OS)'=='Unix'">lcm_linux64_develop_continuous</LcmBuildType>
 		<LcmBuildTag>.lastSuccessful</LcmBuildTag>
 		<!-- Windows/.Net and Linux/Mono use different extensions for debug information files. -->
 		<DebugInfo Condition="'$(OS)'=='Unix'">dll.mdb</DebugInfo>

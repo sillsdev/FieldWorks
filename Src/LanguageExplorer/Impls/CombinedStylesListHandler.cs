@@ -147,16 +147,25 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		private void ApplicationOnIdle(object sender, EventArgs eventArgs)
 		{
-			//Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 			var activeView = _mainWnd.ActiveView as SimpleRootSite;
 			if (activeView == null)
 			{
-				//Debug.WriteLine($"End1: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+Debug.WriteLine($"End1: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 				return;
 			}
 			if (!activeView.Focused)
 			{
-				//Debug.WriteLine($"End2: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+Debug.WriteLine($"End2: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 				return;
 			}
 
@@ -178,7 +187,10 @@ namespace LanguageExplorer.Impls
 				}
 				if (originalEnabledState == enabled)
 				{
-					//Debug.WriteLine($"End3: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+Debug.WriteLine($"End3: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 					return; // No change.
 				}
 
@@ -231,7 +243,10 @@ namespace LanguageExplorer.Impls
 				_formatToolStripComboBox.SelectedItem = enabled ? newText : string.Empty;
 				_skipProcessingClickEvent = false;
 			}
-			//Debug.WriteLine($"End4: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+Debug.WriteLine($"End4: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 		}
 
 		private void CollectStyleInformation()

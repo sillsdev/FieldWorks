@@ -356,7 +356,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </remarks>
 		private void RecreateDelayedSelection(object sender, EventArgs e)
 		{
-			//Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 			Application.Idle -= RecreateDelayedSelection;
 			if (m_sandbox != null && m_infoDelayed != null && m_sandbox.RootBox != null)
 			{
@@ -376,7 +379,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			m_infoDelayed = null;
 			m_needDelayedSelection = false;
-			//Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 		}
 
 		#endregion

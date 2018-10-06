@@ -34,7 +34,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		#region StringFinder Members
 
-		const int maxDigits = 10; // Int32.MaxValue.ToString().Length;, but that is not 'const'!
+		const int maxDigits = 10; // int.MaxValue.ToString().Length;, but that is not 'const'!
 
 		/// <summary>
 		/// Get a key from the item for sorting. Add enough leading zeros so string comparison

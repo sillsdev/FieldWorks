@@ -2533,7 +2533,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						spellFilter = MakeFilter(possibleColumns, "Spelling Status", new ExactMatcher(FilterBar.MatchExactPattern(correctLabel)));
 					}
 
-					var occurrenceFilter = MakeFilter(possibleColumns, "Number in Corpus", new RangeIntMatcher(1, Int32.MaxValue));
+					var occurrenceFilter = MakeFilter(possibleColumns, "Number in Corpus", new RangeIntMatcher(1, int.MaxValue));
 					var andFilter = new AndFilter();
 					andFilter.Add(spellFilter);
 					andFilter.Add(occurrenceFilter);

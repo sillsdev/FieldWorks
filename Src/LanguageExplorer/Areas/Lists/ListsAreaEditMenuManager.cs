@@ -109,7 +109,10 @@ namespace LanguageExplorer.Areas.Lists
 
 		private void Application_Idle(object sender, EventArgs e)
 		{
-			//Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 			var inDeletingTerritory = false;
 			var recordListOwningObject = MyRecordList.OwningObject as ICmPossibilityList;
 			if (recordListOwningObject != null && recordListOwningObject.Owner == null)
@@ -118,7 +121,10 @@ namespace LanguageExplorer.Areas.Lists
 			}
 			// Only see and use the delete button for the currently selected tool
 			_deleteCustomListToolMenu.Visible = _deleteCustomListToolMenu.Enabled = inDeletingTerritory;
-			//Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 		}
 
 		private void DeleteCustomList_Click(object sender, EventArgs e)
