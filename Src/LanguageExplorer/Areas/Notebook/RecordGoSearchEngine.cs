@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.LCModel;
@@ -67,6 +68,13 @@ namespace LanguageExplorer.Areas.Notebook
 			}
 
 			throw new ArgumentException("Unrecognized field.", nameof(field));
+		}
+
+		/// <inheritdoc />
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+			base.Dispose(disposing);
 		}
 	}
 }

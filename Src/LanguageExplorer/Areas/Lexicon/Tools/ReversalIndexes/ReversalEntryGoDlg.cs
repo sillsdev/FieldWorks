@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
@@ -255,6 +256,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			protected override IEnumerable<int> FilterResults(IEnumerable<int> results)
 			{
 				return results?.Where(hvo => !FilteredEntryHvos.Contains(hvo));
+			}
+
+			/// <inheritdoc />
+			protected override void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+				base.Dispose(disposing);
 			}
 		}
 	}

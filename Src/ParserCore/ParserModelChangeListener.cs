@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
 using SIL.ObjectModel;
@@ -36,6 +37,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		protected override void DisposeManagedResources()
 		{
 			m_cache.DomainDataByFlid.RemoveNotification(this);
+		}
+
+		/// <inheritdoc />
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+			base.Dispose(disposing);
 		}
 
 		public bool ModelChanged

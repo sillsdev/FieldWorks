@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.ObjectModel;
@@ -101,6 +102,13 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			Icu.CloseCollator(m_col);
 			m_col = IntPtr.Zero;
+		}
+
+		/// <inheritdoc />
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+			base.Dispose(disposing);
 		}
 	}
 }

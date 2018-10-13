@@ -1,9 +1,10 @@
-﻿// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using LanguageExplorer.LcmUi;
@@ -28,8 +29,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	{
 		// Main array of information retrieved from sel that made combo.
 		protected SelLevInfo[] m_rgvsli;
-		protected int m_hvoSbWord; // Hvo of the root word.
-		protected int m_hvoSelObject; // lowest level object selected.
+		// Hvo of the root word.
+		protected int m_hvoSbWord;
+		// lowest level object selected.
+		protected int m_hvoSelObject;
 		// selected morph, if any...may be zero if not in morph, or equal to m_hvoSelObject.
 		// int for all classes, except IhMissingEntry, which studds MorphItem data into it.
 		// So, that ill-behaved class has to make its own m_items data member.
@@ -100,6 +103,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			m_items?.Clear(); // I've seen it contain ints or MorphItems.
 
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+			base.Dispose(disposing);
 		}
 
 		protected override void DisposeUnmanagedResources()

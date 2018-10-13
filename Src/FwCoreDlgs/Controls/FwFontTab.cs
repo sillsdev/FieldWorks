@@ -252,7 +252,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			// only include the magic font names, not the real ones.
 			FillFontNames(ws > -1);
 
-			m_FontAttributes.ShowingInheritedProperties = ShowingInheritedProperties;
+			m_FontAttributes.ShowingInheritedProperties = true; // Always allow re-setting to unspecified for font attributes
 
 			// Initialize controls based on whether or not this style inherits from another style.
 			InitControlBehavior(ShowingInheritedProperties);

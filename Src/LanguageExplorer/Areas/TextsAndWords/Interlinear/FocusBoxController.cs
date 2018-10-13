@@ -191,8 +191,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// Layout will ignore size.
 			//sandbox.Mediator = Mediator;
 			panelSandbox.Controls.Add(sandbox); // Makes it real and may give it a root box.
-			// Note: adding sandbox to Controls doesn't always MakeRoot(), because OnHandleCreated happens
-			// only when the parent control is Visible.
+												// Note: adding sandbox to Controls doesn't always MakeRoot(), because OnHandleCreated happens
+												// only when the parent control is Visible.
 			if (sandbox.RootBox == null)
 			{
 				sandbox.MakeRoot();
@@ -271,7 +271,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					return;
 				}
 				panelControlBar.Width = panelSandbox.Width; // if greater than min width.
-				// move control panel to bottom of sandbox panel.
+															// move control panel to bottom of sandbox panel.
 				panelControlBar.Location = new Point(panelControlBar.Location.X, panelSandbox.Height - 1);
 				// move side bar to right of sandbox panel.
 				if (InterlinWordControl.RightToLeftWritingSystem)
@@ -358,7 +358,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private bool HaveValidOccurrence()
 		{
-			return SelectedOccurrence !=null && SelectedOccurrence.IsValid;
+			return SelectedOccurrence != null && SelectedOccurrence.IsValid;
 		}
 
 		internal bool ShowBreakPhraseIcon => HaveValidOccurrence() && SelectedOccurrence.CanBreakPhrase();
@@ -612,7 +612,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// or possibly (See LT-12229:If the nextWordform is the same as SelectedOccurrence)
 				// at the end of the text.
 				UpdateRealFromSandbox(undoRedoText, true, null); // save work done in sandbox
-				// try to select the first configured annotation (not a null note) in this segment
+																 // try to select the first configured annotation (not a null note) in this segment
 				if (InterlinDoc.SelectFirstTranslationOrNote())
 				{
 					// IP should now be on an annotation line.
@@ -631,8 +631,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// It would have no analyses or just punctuation.
 				// It could have "real" annotations.
 				AnalysisOccurrence realAnalysis;
-				var nextSeg = InterlinDoc.GetNextSegment
-					(SelectedOccurrence.Segment.Owner.IndexInOwner, SelectedOccurrence.Segment.IndexInOwner, false, out realAnalysis); // downward move
+				var nextSeg = InterlinDoc.GetNextSegment(SelectedOccurrence.Segment.Owner.IndexInOwner, SelectedOccurrence.Segment.IndexInOwner, false, out realAnalysis); // downward move
 				if (nextSeg != null && nextSeg != nextWordform.Segment)
 				{
 					// This is a segment before the one contaning the next wordform.

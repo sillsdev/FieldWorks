@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -28,6 +29,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		internal bool CanEdit()
 		{
 			return m_rootSite.RootHvo != 0 && m_rootSite != null && !m_rootSite.IsDisposed && !m_rootSite.ReadOnlyView && m_rootSite.Vc.Editable;
+		}
+
+		/// <inheritdoc />
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+			base.Dispose(disposing);
 		}
 	}
 }

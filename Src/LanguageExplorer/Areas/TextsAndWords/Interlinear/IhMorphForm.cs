@@ -340,5 +340,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			return sMorphs;
 		}
+
+		/// <inheritdoc />
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+			base.Dispose(disposing);
+		}
 	}
 }

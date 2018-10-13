@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -276,6 +277,13 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			}
 
 			Sldr.Cleanup();
+		}
+
+		/// <inheritdoc />
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+			base.Dispose(disposing);
 		}
 
 		private class LcmLexiconCollection : KeyedCollection<string, LcmLexicon>

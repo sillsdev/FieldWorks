@@ -1,9 +1,10 @@
-﻿// Copyright (c) 2014-2017 SIL International
+// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -112,6 +113,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				m_changeListener.Dispose();
 				m_changeListener = null;
 			}
+		}
+
+		/// <inheritdoc />
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+			base.Dispose(disposing);
 		}
 
 		private void LoadParser()

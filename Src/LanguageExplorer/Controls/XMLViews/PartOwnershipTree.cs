@@ -89,6 +89,14 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_classOwnershipTree = null;
 			m_parentToChildrenSpecs = null;
 		}
+
+		/// <inheritdoc />
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+			base.Dispose(disposing);
+		}
+
 		#endregion DisposableBase overrides
 
 		/// <summary>

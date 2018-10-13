@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
 using SIL.LCModel;
@@ -207,6 +208,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				m_TaskReport.Dispose();
 				m_TaskReport = null;
 			}
+		}
+
+		/// <inheritdoc />
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+			base.Dispose(disposing);
 		}
 
 		/// <summary>

@@ -26,6 +26,7 @@ no exception: Create an infl affix slot with no affixes in it and then use this 
 */
 
 using System;
+using System.Diagnostics;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
@@ -79,6 +80,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				m_parser.Dispose();
 				m_parser = null;
 			}
+		}
+
+		/// <inheritdoc />
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+			base.Dispose(disposing);
 		}
 
 		public ParseFiler ParseFiler

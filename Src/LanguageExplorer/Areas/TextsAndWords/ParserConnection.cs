@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Xml.Linq;
@@ -113,6 +114,13 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 			m_event.Close();
 			m_event.Dispose();
+		}
+
+		/// <inheritdoc />
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+			base.Dispose(disposing);
 		}
 
 		/// <summary />

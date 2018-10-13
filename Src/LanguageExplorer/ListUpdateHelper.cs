@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Diagnostics;
 using SIL.Code;
 using SIL.ObjectModel;
 
@@ -145,6 +146,13 @@ namespace LanguageExplorer
 		protected override void DisposeUnmanagedResources()
 		{
 			m_recordList = null;
+		}
+
+		/// <inheritdoc />
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+			base.Dispose(disposing);
 		}
 
 		#endregion DisposableBase

@@ -83,7 +83,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
-
 			base.Dispose(disposing);
 		}
 
@@ -274,7 +273,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			var msg = new Win32.MSG();
 			return Win32.PeekMessage(ref msg, IntPtr.Zero, (uint)Win32.WinMsgs.WM_KEYDOWN, (uint)Win32.WinMsgs.WM_KEYDOWN, (uint)Win32.PeekFlags.PM_NOREMOVE);
 #else
-			// ShouldAbort seems to be used for optimization purposes so returing false
+			// ShouldAbort seems to be used for optimization purposes so returning false
 			// just loses the optimization.
 			return false;
 #endif

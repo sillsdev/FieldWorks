@@ -192,6 +192,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				return results?.Where(hvo => hvo != CurrentEntryHvo);
 			}
+
+			/// <inheritdoc />
+			protected override void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+				base.Dispose(disposing);
+			}
 		}
 		#endregion	Other methods
 

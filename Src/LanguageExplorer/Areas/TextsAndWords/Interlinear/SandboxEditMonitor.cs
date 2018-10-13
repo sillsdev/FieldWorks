@@ -415,6 +415,12 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			m_sda?.RemoveNotification(this);
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+			base.Dispose(disposing);
+		}
+
 		protected override void DisposeUnmanagedResources()
 		{
 			m_sda = null;

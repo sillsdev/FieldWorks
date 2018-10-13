@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -123,6 +123,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </remarks>
 		protected override void Dispose(bool disposing)
 		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
 			// Must not be run more than once.
 			if (IsDisposed)
 			{
