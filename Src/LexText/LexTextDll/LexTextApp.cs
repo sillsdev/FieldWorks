@@ -20,6 +20,8 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.LexText.Controls.DataNotebook;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.DomainServices;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.LexText
@@ -802,8 +804,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			// as the suggestion for fixing LT-8797.
 			try
 			{
-				// Make sure this DB uses the current stylesheet version.
-				FlexStylesXmlAccessor.EnsureCurrentStylesheet(Cache.LangProject, progressDlg);
+				SafelyEnsureStyleSheetPostTERemoval(progressDlg);
 			}
 			catch (WorkerThreadException e)
 			{
@@ -813,6 +814,16 @@ namespace SIL.FieldWorks.XWorks.LexText
 			}
 
 			return true;
+		}
+
+		private void SafelyEnsureStyleSheetPostTERemoval(IThreadedProgress progressDlg)
+		{
+			// Ensure that we have up-to-date versification information so that projects with old scripture styles
+			// will migrate the styles into the FlexStyles successfully
+			ScrReference.InitializeVersification(FwDirectoryFinder.EditorialChecksDirectory, false);
+			// Make sure this DB uses the current stylesheet version
+			// Suppress adjusting scripture sections since isn't safe to do so at this point
+			SectionAdjustmentSuppressionHelper.Do(() => FlexStylesXmlAccessor.EnsureCurrentStylesheet(Cache.LangProject, progressDlg));
 		}
 
 		/// <summary>
