@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017 SIL International
+// Copyright (c) 2012-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,6 +6,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Security;
 using NUnit.Framework;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.FwUtils.Attributes
 {
@@ -14,8 +15,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 	/// NUnit helper class that allows to create COM objects from a manifest file
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class |
-		AttributeTargets.Interface)]
+	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Interface)]
 	[SuppressUnmanagedCodeSecurity]
 	public class CreateComObjectsFromManifestAttribute : TestActionAttribute
 	{
@@ -35,24 +35,26 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 			m_currentActivation = m_activationContext.Activate();
 			m_debugProcs = new DebugProcs();
 
-#if __MonoCS__
-			try
+			if (!Platform.IsWindows)
 			{
-				using (var process = System.Diagnostics.Process.GetCurrentProcess())
+				try
 				{
-					// try to change PTRACE option so that unmanaged call stacks show more useful
-					// information. Since Ubuntu 10.10 a normal user is no longer allowed to use
-					// PTRACE. This prevents call stacks and assertions from working properly.
-					// However, we can set a flag on the currently running process to allow
-					// it. See also the similar code in Generic/ModuleEntry.cpp
-					prctl(PR_SET_PTRACER, (IntPtr)process.Id, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+					using (var process = System.Diagnostics.Process.GetCurrentProcess())
+					{
+						// try to change PTRACE option so that unmanaged call stacks show more useful
+						// information. Since Ubuntu 10.10 a normal user is no longer allowed to use
+						// PTRACE. This prevents call stacks and assertions from working properly.
+						// However, we can set a flag on the currently running process to allow
+						// it. See also the similar code in Generic/ModuleEntry.cpp
+						prctl(PR_SET_PTRACER, (IntPtr)process.Id, IntPtr.Zero, IntPtr.Zero,
+							IntPtr.Zero);
+					}
+				}
+				catch (Exception e)
+				{
+					// just ignore any errors we get
 				}
 			}
-			catch (Exception e)
-			{
-				// just ignore any errors we get
-			}
-#endif
 		}
 
 		/// <summary/>
@@ -74,12 +76,10 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 		[DllImport("ole32.dll")]
 		private static extern void CoFreeUnusedLibraries();
 
-#if __MonoCS__
-		[DllImport ("libc")] // Linux
+		[DllImport("libc")] // Linux
 		private static extern int prctl(int option, IntPtr arg2, IntPtr arg3, IntPtr arg4,
 			IntPtr arg5);
 
 		private const int PR_SET_PTRACER = 0x59616d61;
-#endif
 	}
 }

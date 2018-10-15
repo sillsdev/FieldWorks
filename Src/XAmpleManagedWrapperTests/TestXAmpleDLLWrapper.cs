@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -64,16 +64,24 @@ namespace XAmpleManagedWrapperTests
 		}
 
 		[Test]
-		public void GetAmpleThreadId()
+		[Platform(Include = "Win")]
+		public void GetAmpleThreadId_Windows()
 		{
 			using (XAmpleDLLWrapper wrapper = CreateXAmpleDllWrapper())
 			{
 				int threadId = wrapper.GetAmpleThreadId();
-#if __MonoCS__
-				Assert.AreEqual(0, threadId);
-#else
 				Assert.AreNotEqual(0, threadId);
-#endif
+			}
+		}
+
+		[Test]
+		[Platform(Exclude = "Win")]
+		public void GetAmpleThreadId_Linux()
+		{
+			using (XAmpleDLLWrapper wrapper = CreateXAmpleDllWrapper())
+			{
+				int threadId = wrapper.GetAmpleThreadId();
+				Assert.AreEqual(0, threadId);
 			}
 		}
 

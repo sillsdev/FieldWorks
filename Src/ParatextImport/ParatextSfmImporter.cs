@@ -20,6 +20,7 @@ using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.Reporting;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace ParatextImport
 {
@@ -115,7 +116,7 @@ namespace ParatextImport
 			BCVRef reference)
 		{
 			m_strbldrCaption = TsStringUtils.MakeIncStrBldr();
-			m_strbldrCaption.SetIntPropValues((int) FwTextPropType.ktptWs, (int) FwTextPropVar.ktpvDefault, ws);
+			m_strbldrCaption.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, ws);
 			if (!string.IsNullOrEmpty(captionText))
 			{
 				m_strbldrCaption.Append(captionText);
@@ -728,7 +729,7 @@ namespace ParatextImport
 				{
 					ParaStylePropsProxy = (m_fInScriptureText ? m_ScrSectionHeadParaProxy : m_DefaultIntroSectionHeadParaProxy)
 				};
-				paraBldr.StringBuilder.SetIntPropValues(0, 0, (int) FwTextPropType.ktptWs, (int) FwTextPropVar.ktpvDefault,
+				paraBldr.StringBuilder.SetIntPropValues(0, 0, (int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault,
 					m_wsVern);
 				paraBldr.CreateParagraph(m_sectionHeading);
 			}
@@ -740,7 +741,7 @@ namespace ParatextImport
 				{
 					ParaStylePropsProxy = (m_fInScriptureText ? m_DefaultScrParaProxy : m_DefaultIntroParaProxy)
 				};
-				paraBldr.StringBuilder.SetIntPropValues(0, 0, (int) FwTextPropType.ktptWs, (int) FwTextPropVar.ktpvDefault,
+				paraBldr.StringBuilder.SetIntPropValues(0, 0, (int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault,
 					m_wsVern);
 				paraBldr.CreateParagraph(m_sectionContent);
 			}
@@ -896,9 +897,9 @@ namespace ParatextImport
 				{
 					FinalizeImport();
 				}
-// ReSharper disable EmptyGeneralCatchClause Justification: want to throw the exception from the outer try/catch block
-				catch {}
-// ReSharper restore EmptyGeneralCatchClause
+				// ReSharper disable EmptyGeneralCatchClause Justification: want to throw the exception from the outer try/catch block
+				catch { }
+				// ReSharper restore EmptyGeneralCatchClause
 				throw;
 			}
 			finally
@@ -1398,7 +1399,7 @@ namespace ParatextImport
 		{
 			var fFoundSpecialTarget = false;
 			var fProcessingPicture = false;
-			switch(m_styleProxy.MappingTarget)
+			switch (m_styleProxy.MappingTarget)
 			{
 				case MappingTargetType.TEStyle:
 					// TEStyle is not a special target
@@ -1457,7 +1458,7 @@ namespace ParatextImport
 						if (m_currPictureInfo != null && m_currPictureInfo.Caption != null)
 						{
 							InsertPicture(); // Already found a caption for the current picture; treat this as a new picture.
-}
+						}
 						if (m_currPictureInfo == null)
 						{
 							m_currPictureInfo = new ToolboxPictureInfo();
@@ -1661,11 +1662,7 @@ namespace ParatextImport
 		private string GetRootedPath(string fileName)
 		{
 			string fullPath = null;
-#if !__MonoCS__
-			if (fileName.Length < 2 || !char.IsLetter(fileName[0]) || fileName[1] != Path.VolumeSeparatorChar)
-#else
-			if (fileName[0] != Path.DirectorySeparatorChar) // is fileName a relative Path
-#endif
+			if (IsRelativePath(fileName))
 			{
 				try
 				{
@@ -1699,6 +1696,13 @@ namespace ParatextImport
 				}
 			}
 			return fileName;
+		}
+
+		private static bool IsRelativePath(string fileName)
+		{
+			return Platform.IsWindows ?
+				fileName.Length < 2 || !char.IsLetter(fileName[0]) || fileName[1] != Path.VolumeSeparatorChar :
+				fileName[0] != Path.DirectorySeparatorChar;
 		}
 
 		/// <summary>
@@ -1784,7 +1788,7 @@ namespace ParatextImport
 			var wsCurrentStream = SOWrapper.CurrentWs(m_wsOfPrevImportStream);
 			// If this is the first book, a new book, or a new domain...
 			if (!m_fFoundABook || m_nBookNumber != SOWrapper.SegmentFirstRef.Book ||
-				m_prevImportDomain != m_importDomain ||	m_wsOfPrevImportStream != wsCurrentStream)
+				m_prevImportDomain != m_importDomain || m_wsOfPrevImportStream != wsCurrentStream)
 			{
 				ProcessStartOfBook();
 				m_nPrevBookNumber = m_nBookNumber;
@@ -1821,8 +1825,8 @@ namespace ParatextImport
 		{
 			// Never skip chapter and verse numbers
 			if (m_styleProxy.Function == FunctionValues.Chapter ||
-			    m_styleProxy.Function == FunctionValues.Verse ||
-			    m_styleProxy.Context == ContextValues.Title)
+				m_styleProxy.Function == FunctionValues.Verse ||
+				m_styleProxy.Context == ContextValues.Title)
 			{
 				return false;
 			}
@@ -1856,7 +1860,7 @@ namespace ParatextImport
 						SOWrapper.CurrentFileName, SOWrapper.CurrentLineNumber,
 						m_sMarker + " " + m_sSegmentText,
 						m_fFoundABook ? ScrReference.NumberToBookCode(m_nBookNumber) : null,
-						m_foundAChapter ? m_nChapter.ToString(): "1",
+						m_foundAChapter ? m_nChapter.ToString() : "1",
 						(verse > 0) ? verse.ToString() : "1");
 				}
 			}
@@ -2143,7 +2147,7 @@ namespace ParatextImport
 				if (m_fInFootnote)
 				{
 					EndFootnote(); // any current footnote is terminated
-}
+				}
 
 				if (m_importDomain == ImportDomain.Main)
 				{
@@ -2189,8 +2193,8 @@ namespace ParatextImport
 		private void HandleOtherParagraphStyles()
 		{
 			if (m_styleProxy.StyleType != StyleType.kstParagraph || m_context == ContextValues.Book ||
-			    m_context == ContextValues.Title || m_styleProxy.Structure == StructureValues.Heading ||
-			    m_context == ContextValues.Note)
+				m_context == ContextValues.Title || m_styleProxy.Structure == StructureValues.Heading ||
+				m_context == ContextValues.Note)
 			{
 				return;
 			}
@@ -2520,7 +2524,7 @@ namespace ParatextImport
 					// remember that we are now processing a footnote
 					SetInFootnote();
 					CheckDataForFootnoteMarker();
-					m_BTFootnoteStrBldr  = TsStringUtils.MakeStrBldr();
+					m_BTFootnoteStrBldr = TsStringUtils.MakeStrBldr();
 					m_sBtFootnoteParaStyle = (m_styleProxy.StyleType == StyleType.kstCharacter) ? m_DefaultFootnoteParaProxy.StyleId : m_styleProxy.StyleId;
 					if (m_importDomain == ImportDomain.Main)
 					{
@@ -2543,7 +2547,7 @@ namespace ParatextImport
 								SOWrapper.CurrentFileName, SOWrapper.CurrentLineNumber,
 								m_sMarker + " " + m_sSegmentText,
 								m_fFoundABook ? CurrentBook.BookId : null,
-								m_foundAChapter ? m_nChapter.ToString(): null,
+								m_foundAChapter ? m_nChapter.ToString() : null,
 								(verse > 0) ? verse.ToString() : null,
 								true);
 						}
@@ -2678,9 +2682,9 @@ namespace ParatextImport
 		/// Tertiary character style.
 		/// </summary>
 		private bool ProcessingParagraphStart => ((m_styleProxy.StyleType == StyleType.kstParagraph &&
-		                                           (m_currDomain & MarkerDomain.Footnote) == 0 &&
-		                                           (m_context != ContextValues.Title || !m_fInBookTitle)) ||
-		                                          (m_context == ContextValues.Title && !m_fInBookTitle));
+												   (m_currDomain & MarkerDomain.Footnote) == 0 &&
+												   (m_context != ContextValues.Title || !m_fInBookTitle)) ||
+												  (m_context == ContextValues.Title && !m_fInBookTitle));
 
 		/// <summary>
 		/// Remember info about this paragraph so we can try to find a corresponding paragraph
@@ -3390,7 +3394,7 @@ namespace ParatextImport
 			{
 				// segment is a char style
 				m_fInVerseTextParagraph = m_fInScriptureText;
-				m_ParaBldr.ParaStylePropsProxy = (m_fInScriptureText)?
+				m_ParaBldr.ParaStylePropsProxy = (m_fInScriptureText) ?
 				m_DefaultScrParaProxy : m_DefaultIntroParaProxy;
 			}
 
@@ -4025,7 +4029,7 @@ namespace ParatextImport
 		/// </summary>
 		private void CheckDataForFootnoteMarker()
 		{
-			var segments = m_sSegmentText.TrimStart().Split(new[] {' '}, 2);
+			var segments = m_sSegmentText.TrimStart().Split(new[] { ' ' }, 2);
 			bool fSingleToken = (segments.Length == 1 || segments[1].Trim() == string.Empty);
 			if (segments[0] == "+")
 			{

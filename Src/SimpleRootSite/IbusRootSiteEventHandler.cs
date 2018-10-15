@@ -1,8 +1,7 @@
-// Copyright (c) 2013-2017 SIL International
+// Copyright (c) 2013-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-#if __MonoCS__
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -16,7 +15,6 @@ using SIL.Windows.Forms.Keyboarding.Linux;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
-
 	/// <summary>
 	/// Views code specific handler of IBus events
 	/// </summary>
@@ -49,7 +47,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					m_TextProps = textProps;
 			}
 
-			public SelectionHelper SelectionHelper { get; private set;}
+			public SelectionHelper SelectionHelper { get; private set; }
 
 			public IVwSelection RestoreSelection()
 			{
@@ -344,7 +342,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-#region IIbusEventHandler implementation
+		#region IIbusEventHandler implementation
 
 		/// <summary>
 		/// Called by the IBusKeyboardAdapter to cancel any open compositions, e.g. after the
@@ -649,7 +647,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			get { return m_InitialSelection != null; }
 		}
 
-#endregion
+		#endregion
 	}
 }
-#endif

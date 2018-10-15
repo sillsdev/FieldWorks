@@ -120,7 +120,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="backColor">background color for paragraph</param>
 		/// -----------------------------------------------------------------------------------
 		public StVc(string sStyleName, int wsDefault, Color backColor) :
-			this (sStyleName, wsDefault)
+			this(sStyleName, wsDefault)
 		{
 			m_BackColor = backColor;
 		}
@@ -179,7 +179,7 @@ namespace SIL.FieldWorks.Common.RootSites
 						TsStringUtils.MakePropsBldr();
 
 					tsPropsBuilder.SetStrPropValue(
-						(int)FwTextPropType.ktptNamedStyle,	StyleServices.NormalStyleName);
+						(int)FwTextPropType.ktptNamedStyle, StyleServices.NormalStyleName);
 					m_ttpNormal = tsPropsBuilder.GetTextProps();
 				}
 				return m_ttpNormal;
@@ -268,12 +268,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public override LcmCache Cache
 		{
-#if __MonoCS__ // TODO-Linux: Work around Mono compiler bug.
 			get
 			{
 				return base.Cache;
 			}
-#endif
 			set
 			{
 				base.Cache = value;
@@ -492,7 +490,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			// Make the paragraph containing the paragraph contents.
 			OpenPara(vwenv, paraHvo);
 			// Cause a regenerate when the style changes...this is mainly used for Undo.
-			vwenv.NoteDependency(new[] {paraHvo}, new[] {StParaTags.kflidStyleRules}, 1);
+			vwenv.NoteDependency(new[] { paraHvo }, new[] { StParaTags.kflidStyleRules }, 1);
 			// Insert the label if it is the first paragraph.
 			if (vc.Label != null)
 			{
@@ -533,7 +531,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					// problem with losing the IP when typing (FWR-1415), the dependency is not
 					// added in print layout views. The missing prompt seems less of a problem
 					// than the problem with typing.
-					vwenv.NoteDependency(new[]{paraHvo}, new[]{StTxtParaTags.kflidContents}, 1);
+					vwenv.NoteDependency(new[] { paraHvo }, new[] { StTxtParaTags.kflidContents }, 1);
 				}
 			}
 			else if (contentType == ContentTypes.kctSegmentBT)
@@ -615,81 +613,81 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public override void Display(IVwEnv vwenv, int hvo, int frag)
 		{
-			switch(frag)
+			switch (frag)
 			{
 				case (int)StTextFrags.kfrFootnote:
-				{
-					if (HandleEmptyText(vwenv, hvo))
-						break;
-					IStFootnote footnote = Cache.ServiceLocator.GetInstance<IStFootnoteRepository>().GetObject(hvo);
-					if (footnote.DisplayFootnoteMarker)
 					{
-						// We need to note this dependency here (for the update of the footnote
-						// marker) instead of in the frag for the marker because noting the
-						// dependency at the frag for the marker caused some weird problems
-						// with the VwNotifiers which caused the view to sometimes update
-						// incorrectly. (FWR-1299) It also makes more sense for it to be here
-						// since the dependency would be on the whole footnote in either case
-						// anyways.
-						vwenv.NoteDependency(new int[] { footnote.Owner.Hvo }, new int[] { footnote.OwningFlid }, 1);
+						if (HandleEmptyText(vwenv, hvo))
+							break;
+						IStFootnote footnote = Cache.ServiceLocator.GetInstance<IStFootnoteRepository>().GetObject(hvo);
+						if (footnote.DisplayFootnoteMarker)
+						{
+							// We need to note this dependency here (for the update of the footnote
+							// marker) instead of in the frag for the marker because noting the
+							// dependency at the frag for the marker caused some weird problems
+							// with the VwNotifiers which caused the view to sometimes update
+							// incorrectly. (FWR-1299) It also makes more sense for it to be here
+							// since the dependency would be on the whole footnote in either case
+							// anyways.
+							vwenv.NoteDependency(new int[] { footnote.Owner.Hvo }, new int[] { footnote.OwningFlid }, 1);
+						}
+						vwenv.AddObjVecItems(StTextTags.kflidParagraphs, this,
+							(int)StTextFrags.kfrFootnotePara);
+						break;
 					}
-					vwenv.AddObjVecItems(StTextTags.kflidParagraphs, this,
-						(int)StTextFrags.kfrFootnotePara);
-					break;
-				}
 
 				case (int)StTextFrags.kfrText:
-				{
-					if (HandleEmptyText(vwenv, hvo))
+					{
+						if (HandleEmptyText(vwenv, hvo))
+							break;
+						if (hvo == 0)
+							return; // leave view empty, better than crashing.
+						if (m_fLazy)
+						{
+							vwenv.AddLazyVecItems(StTextTags.kflidParagraphs, this,
+								(int)StTextFrags.kfrPara);
+						}
+						else
+						{
+							vwenv.AddObjVecItems(StTextTags.kflidParagraphs, this,
+								(int)StTextFrags.kfrPara);
+						}
 						break;
-					if (hvo == 0)
-						return; // leave view empty, better than crashing.
-					if (m_fLazy)
-					{
-						vwenv.AddLazyVecItems(StTextTags.kflidParagraphs, this,
-							(int)StTextFrags.kfrPara);
 					}
-					else
-					{
-						vwenv.AddObjVecItems(StTextTags.kflidParagraphs, this,
-							(int)StTextFrags.kfrPara);
-					}
-					break;
-				}
 				case (int)StTextFrags.kfrFootnoteMarker:
-				{
-					IStFootnote footnote = Cache.ServiceLocator.GetInstance<IStFootnoteRepository>().GetObject(hvo);
-					if (footnote.DisplayFootnoteMarker)
-						DisplayFootnoteMarker(vwenv, footnote);
-					break;
-				}
+					{
+						IStFootnote footnote = Cache.ServiceLocator.GetInstance<IStFootnoteRepository>().GetObject(hvo);
+						if (footnote.DisplayFootnoteMarker)
+							DisplayFootnoteMarker(vwenv, footnote);
+						break;
+					}
 				case (int)StTextFrags.kfrLabel:
-				{
-					// The label is not editable.
-					vwenv.set_IntProperty((int)FwTextPropType.ktptEditable,
-						(int)FwTextPropVar.ktpvEnum,
-						(int)TptEditable.ktptNotEditable);
-					vwenv.AddString(m_tssLabel);
-					break;
-				}
+					{
+						// The label is not editable.
+						vwenv.set_IntProperty((int)FwTextPropType.ktptEditable,
+							(int)FwTextPropVar.ktpvEnum,
+							(int)TptEditable.ktptNotEditable);
+						vwenv.AddString(m_tssLabel);
+						break;
+					}
 
 				case (int)StTextFrags.kfrPara:
 				case (int)StTextFrags.kfrFootnotePara:
-				{
-					InsertParagraphBody(vwenv, hvo, frag, true, ContentType, this);
-					break;
-				}
+					{
+						InsertParagraphBody(vwenv, hvo, frag, true, ContentType, this);
+						break;
+					}
 
 				case (int)StTextFrags.kfrTranslation:
-				{
-					vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum,
-						Editable ? (int)TptEditable.ktptIsEditable : (int)TptEditable.ktptNotEditable);
-					// Display the translation, or its user prompt
-					ICmTranslation trans = Cache.ServiceLocator.GetInstance<ICmTranslationRepository>().GetObject(hvo);
-					if (!InsertTranslationUserPrompt(vwenv, trans))
-						vwenv.AddStringAltMember(CmTranslationTags.kflidTranslation, m_wsDefault, this);
-					break;
-				}
+					{
+						vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum,
+							Editable ? (int)TptEditable.ktptIsEditable : (int)TptEditable.ktptNotEditable);
+						// Display the translation, or its user prompt
+						ICmTranslation trans = Cache.ServiceLocator.GetInstance<ICmTranslationRepository>().GetObject(hvo);
+						if (!InsertTranslationUserPrompt(vwenv, trans))
+							vwenv.AddStringAltMember(CmTranslationTags.kflidTranslation, m_wsDefault, this);
+						break;
+					}
 				case (int)StTextFrags.kfrSegmentFreeTranslations:
 					// Hvo is one segment of an StTxtPara.
 					ISegment seg = Cache.ServiceLocator.GetInstance<ISegmentRepository>().GetObject(hvo);
@@ -697,7 +695,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					{
 						// Added dependencies to get labels to update automatically (FWR-1341, FWR-1342, FWR-1417)
 						vwenv.NoteStringValDependency(seg.Paragraph.Hvo, StTxtParaTags.kflidContents, 0, seg.Paragraph.Contents);
-						vwenv.NoteDependency(new [] {seg.Paragraph.Hvo}, new [] {StTxtParaTags.kflidSegments}, 1);
+						vwenv.NoteDependency(new[] { seg.Paragraph.Hvo }, new[] { StTxtParaTags.kflidSegments }, 1);
 						vwenv.AddString(GetBackTransLabelText(seg));
 						vwenv.AddSimpleRect((int)ColorUtil.ConvertColorToBGR(BackColor), 1200, 0, 0); // a narrow space, font-neutral
 					}
@@ -719,7 +717,7 @@ namespace SIL.FieldWorks.Common.RootSites
 						{
 							ITsStrBldr bldr = tssVal.GetBldr();
 							bldr.Replace(0, bldr.Length, "", null); // reduce to empty string in ws.
-							// We want it to change back to the prompt if all is deleted.
+																	// We want it to change back to the prompt if all is deleted.
 							vwenv.NoteStringValDependency(hvo, SegmentTags.kflidFreeTranslation, BackTranslationWS, bldr.GetString());
 							vwenv.AddStringAltMember(SegmentTags.kflidFreeTranslation, BackTranslationWS, this);
 							// This little separator is useful here, too. Temporarily the comment may be displayed this way even when empty,
@@ -789,8 +787,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public override int EstimateHeight(int hvo, int frag, int dxpAvailWidth)
 		{
-			return (HeightEstimator == null) ? 120 :
-				HeightEstimator.EstimateHeight(hvo, frag, dxpAvailWidth);
+			return (HeightEstimator == null) ? 120 : HeightEstimator.EstimateHeight(hvo, frag, dxpAvailWidth);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -816,13 +813,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		protected virtual void DisplayFootnoteMarker(IVwEnv vwenv, IStFootnote footnote)
 		{
 			// The footnote marker is not editable.
-			vwenv.set_IntProperty((int)FwTextPropType.ktptEditable,
-				(int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
+			vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
 			vwenv.AddStringProp(StFootnoteTags.kflidFootnoteMarker, null);
 
 			// add a read-only space after the footnote marker
-			vwenv.set_IntProperty((int)FwTextPropType.ktptEditable,
-				(int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
+			vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
 			vwenv.AddString(OneSpaceString);
 		}
 

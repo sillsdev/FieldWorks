@@ -18,17 +18,14 @@ namespace LanguageExplorer.Controls.LexText
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+
 			if (disposing)
 			{
 				components?.Dispose();
+				m_foreColorBrush?.Dispose();
 			}
-#if __MonoCS__
-			if (disposing && (m_foreColorBrush != null))
-			{
-				m_foreColorBrush.Dispose();
-				m_foreColorBrush = null;
-			}
-#endif
+			m_foreColorBrush = null;
+
 			base.Dispose(disposing);
 		}
 

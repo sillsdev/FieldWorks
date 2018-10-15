@@ -9,6 +9,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.DomainServices;
+using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.Controls.LexText
 {
@@ -309,11 +310,12 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				pt.SelectObj(Sense.MorphoSyntaxAnalysisRA.Hvo);
 			}
-#if __MonoCS__
-			// If Popup tree is shown whilest the dialog is shown, the first click on the dialog is consumed by the
-			// Popup tree, (and closes it down). On .NET the PopupTree appears to be automatically closed.
-			pt.HideForm();
-#endif
+			if (Platform.IsMono)
+			{
+				// If Popup tree is shown whilst the dialog is shown, the first click on the dialog is consumed by the
+				// Popup tree, (and closes it down). On .NET the PopupTree appears to be automatically closed.
+				pt.HideForm();
+			}
 			using (var dlg = new MsaCreatorDlg())
 			{
 				var dummyMsa = new SandboxGenericMSA { MsaType = Sense.GetDesiredMsaType() };
@@ -341,11 +343,12 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				pt.SelectObj(Sense.MorphoSyntaxAnalysisRA.Hvo);
 			}
-#if __MonoCS__
-			// If Popup tree is shown whilest the dialog is shown, the first click on the dialog is consumed by the
-			// Popup tree, (and closes it down). On .NET the PopupTree appears to be automatically closed.
-			pt.HideForm();
-#endif
+			if (Platform.IsMono)
+			{
+				// If Popup tree is shown whilst the dialog is shown, the first click on the dialog is consumed by the
+				// Popup tree, (and closes it down). On .NET the PopupTree appears to be automatically closed.
+				pt.HideForm();
+			}
 			var dummyMsa = SandboxGenericMSA.Create(Sense.MorphoSyntaxAnalysisRA);
 			using (var dlg = new MsaCreatorDlg())
 			{

@@ -1,15 +1,9 @@
-// --------------------------------------------------------------------------------------------
-// <copyright from='2011' to='2011' company='SIL International'>
-// Copyright (c) 2011-2015 SIL International
+// Copyright (c) 2011-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
-// (http://www.gnu.org/licenses/lgpl-2.1.html).
-// </copyright>
-// --------------------------------------------------------------------------------------------
-#if __MonoCS__
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 using System;
 using System.IO;
 using Gtk;
-using SIL.FieldWorks.Common.Controls.FileDialog;
 
 namespace SIL.FieldWorks.Common.Controls.FileDialog.Linux
 {
@@ -77,4 +71,3 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Linux
 		}
 	}
 }
-#endif

@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
@@ -13,6 +12,7 @@ using SIL.LCModel.Core.Cellar;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Resources;
+using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
@@ -146,7 +146,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <param name="ihvoDstStart">Place to put them (if sequence).</param>
 		private ObjectDragInfo TestDropEffects(DragEventArgs drgevent, out int hvoDstOwner, out int flidDst, out int ihvoDstStart)
 		{
-			var odi = (ObjectDragInfo) drgevent.Data.GetData(typeof(ObjectDragInfo));
+			var odi = (ObjectDragInfo)drgevent.Data.GetData(typeof(ObjectDragInfo));
 			drgevent.Effect = DragDropEffects.None; // default
 			hvoDstOwner = 0; // not used unless we get to GetSeqContext call, but compiler demands we set them.
 			flidDst = 0;
@@ -257,7 +257,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
@@ -266,7 +266,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				return;
 			}
 
-			if( disposing )
+			if (disposing)
 			{
 				_sliceLeftEdgeContextMenuFactory.DisposeLeftEdgeContextMenu(_leftEdgeContextMenu);
 				Paint -= HandlePaint;
@@ -280,7 +280,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			_leftEdgeContextMenuId = null;
 			_leftEdgeContextMenu = null;
 
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		private void HandlePaint(object sender, PaintEventArgs pea)
@@ -384,7 +384,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		protected override void OnDoubleClick(EventArgs e)
 		{
-			base.OnDoubleClick (e);
+			base.OnDoubleClick(e);
 			if (m_myParentSlice.Expansion == TreeItemState.ktisFixed)
 			{
 				return;
@@ -415,7 +415,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			// successful way I (JT) found to defeat this behavior, and I tried many.
 			if (meArgs.Button.Equals(MouseButtons.Right) || (ShowingContextIcon && meArgs.X < 20))
 			{
-				var mouseLocation = new Point(meArgs.X,meArgs.Y);
+				var mouseLocation = new Point(meArgs.X, meArgs.Y);
 				if (m_myParentSlice.HandleMouseDown(mouseLocation))
 				{
 					if (_leftEdgeContextMenu != null)
@@ -513,19 +513,17 @@ namespace LanguageExplorer.Controls.DetailControls
 			Debug.WriteLine("TreeNode key down");
 		}
 
-		#if __MonoCS__
 		/// <summary>
 		/// Activate menu only if Alt key is being pressed.  See FWNX-1353.
 		/// </summary>
 		/// <remarks>TODO: Getting here without the Alt key may be considered a Mono bug.</remarks>
 		protected override bool ProcessDialogChar(char charCode)
 		{
-			if (Control.ModifierKeys == Keys.Alt)
+			if (!Platform.IsMono || ModifierKeys == Keys.Alt)
 			{
 				return base.ProcessDialogChar(charCode);
 			}
 			return false;
 		}
-		#endif
 	}
 }

@@ -898,9 +898,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		protected override int[] GetPossibleWritingSystemsToSelectByInputLanguage(ILgWritingSystemFactory wsf)
 		{
 			var writingSystems = Cache.ServiceLocator.WritingSystems;
-			return (from ws in writingSystems.CurrentAnalysisWritingSystems.Union(writingSystems.CurrentVernacularWritingSystems).Union(
-				writingSystems.CurrentPronunciationWritingSystems)
-					   select ws.Handle).ToArray();
+			return writingSystems.CurrentAnalysisWritingSystems
+				.Union(writingSystems.CurrentVernacularWritingSystems)
+				.Union(writingSystems.CurrentPronunciationWritingSystems)
+				.Select(ws => ws.Handle).ToArray();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1038,7 +1039,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (m_group != null && this != m_group.ScrollingController)
 				m_group.ScrollingController.ScrollToTop();
 			else
-				base.ScrollToTop ();
+				base.ScrollToTop();
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -1054,7 +1055,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				MakeSelectionVisible(null);
 			}
 			else
-				base.ScrollToEnd ();
+				base.ScrollToEnd();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1463,7 +1464,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					}
 				}
 			}
-			return (rootSite == null)? null : rootSite.CastAsIVwRootSite();
+			return (rootSite == null) ? null : rootSite.CastAsIVwRootSite();
 		}
 
 		/// ------------------------------------------------------------------------------------

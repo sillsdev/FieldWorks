@@ -9,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.UtilityTools
 {
@@ -117,7 +118,7 @@ namespace LanguageExplorer.UtilityTools
 			var leAssembly = Assembly.GetExecutingAssembly();
 			foreach (var type in leAssembly.GetTypes().Where(t => interfaceType.IsAssignableFrom(t) && t.IsClass))
 			{
-				utilities.Add(type.Name, (IUtility)leAssembly.CreateInstance(type.FullName, true, BindingFlags.Instance | BindingFlags.NonPublic, null, new object[] {this}, null, null));
+				utilities.Add(type.Name, (IUtility)leAssembly.CreateInstance(type.FullName, true, BindingFlags.Instance | BindingFlags.NonPublic, null, new object[] { this }, null, null));
 			}
 
 			m_clbUtilities.Items.Add(utilities["HomographResetter"]);
@@ -171,7 +172,7 @@ namespace LanguageExplorer.UtilityTools
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
@@ -297,16 +298,17 @@ namespace LanguageExplorer.UtilityTools
 		private void m_clbUtilities_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			var currentFont = m_rtbDescription.SelectionFont;
-#if __MonoCS__
-			// Creating the bold equivalent of the current font doesn't seem to work in Mono,
-			// as we crash shortly due to failures in GDIPlus.GdipMeasureString() using that
-			// font.
-			var boldFont = currentFont;
-#else
-			const FontStyle boldFontStyle = FontStyle.Bold;
-			using (var boldFont = new Font(currentFont.FontFamily, currentFont.Size, boldFontStyle))
-#endif
+
+			Font boldFont = null;
+			try
 			{
+				var boldFontStyle = FontStyle.Bold;
+				// Creating the bold equivalent of the current font doesn't seem to work in Mono,
+				// as we crash shortly due to failures in GDIPlus.GdipMeasureString() using that
+				// font.
+				boldFont = Platform.IsMono
+					? currentFont
+					: new Font(currentFont.FontFamily, currentFont.Size, boldFontStyle);
 				WhatDescription = WhenDescription = RedoDescription = null;
 				((IUtility)m_clbUtilities.SelectedItem).OnSelection();
 				m_rtbDescription.Clear();
@@ -332,14 +334,21 @@ namespace LanguageExplorer.UtilityTools
 				m_rtbDescription.AppendText(Environment.NewLine);
 				m_rtbDescription.SelectionFont = currentFont;
 				m_rtbDescription.AppendText(string.IsNullOrEmpty(RedoDescription) ? LanguageExplorerResources.ksQuestions : RedoDescription);
-#if __MonoCS__
-				// If we don't have a selection explicitly set, we will crash deep in the Mono
-				// code (RichTextBox.cs:618, property SelectionFont:get) shortly.
-				m_rtbDescription.Focus();
-				m_rtbDescription.SelectionStart = 0;
-				m_rtbDescription.SelectionLength = 0;
-				m_clbUtilities.Focus();
-#endif
+
+				if (Platform.IsMono)
+				{
+					// If we don't have a selection explicitly set, we will crash deep in the Mono
+					// code (RichTextBox.cs:618, property SelectionFont:get) shortly.
+					m_rtbDescription.Focus();
+					m_rtbDescription.SelectionStart = 0;
+					m_rtbDescription.SelectionLength = 0;
+					m_clbUtilities.Focus();
+				}
+			}
+			finally
+			{
+				if (!Platform.IsMono && boldFont != null)
+					boldFont.Dispose();
 			}
 		}
 

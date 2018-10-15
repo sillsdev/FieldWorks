@@ -12,6 +12,7 @@ using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
+using SIL.PlatformUtilities;
 using SIL.Xml;
 
 namespace LanguageExplorer.Controls.LexText
@@ -276,11 +277,12 @@ namespace LanguageExplorer.Controls.LexText
 					mcc.ResetDescription(rtbDescription);
 				}
 			}
-#if __MonoCS__
-			// Ensure that the top of the description is showing (FWNX-521).
-			rtbDescription.Select(0,0);
-			rtbDescription.ScrollToCaret();
-#endif
+			if (Platform.IsMono)
+			{
+				// Ensure that the top of the description is showing (FWNX-521).
+				rtbDescription.Select(0, 0);
+				rtbDescription.ScrollToCaret();
+			}
 		}
 
 		public override string ToString()

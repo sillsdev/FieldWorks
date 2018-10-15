@@ -25,36 +25,37 @@ using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.Controls.LexText
 {
 	internal sealed class LexImportWizard : WizardDialog, IFwExtension
 	{
-		private bool m_FeasabilityReportGenerated;	// has to run before import
+		private bool m_FeasabilityReportGenerated;  // has to run before import
 		private LcmCache m_cache;
 		private IApp m_app;
 		private IVwStylesheet m_stylesheet;
-		private bool m_formHasLoaded = false;	// so we don't process text changed msgs
-		private int m_origWidth;	// ref value for dlg width
-		private int m_origHeight;	// ref value for dlg height
-		private bool m_origSet;		// this is set to false in the default constructor
-		private CRC m_crcObj;	// CRC Object to use for telling if the input file has changed
-		private DateTime m_lastDateTime;	// used to keep track of the last write date on the data file
-		private uint m_crcOfInputFile;		// the computed crc of the data file
-		private string m_processedInputFile;	// the name of the file last processed
-		private string m_processedMapFile;	// name of the map file last processed
-		private bool m_dirtyInputFile;	// dirty flag for the database (input) file
-		private bool m_dirtyMapFile;	// dirty flag for the settings (map) file
-		private bool m_isPhaseInputFile;	// true if the input file is a previous XML phase [1,2,3,4] output file
-		public ILexImportFields m_LexFields;	// object that contains all the lex fields
-		public ILexImportFields m_CustomFields;	// object that contains all the currently defined custom fields
+		private bool m_formHasLoaded = false;   // so we don't process text changed msgs
+		private int m_origWidth;    // ref value for dlg width
+		private int m_origHeight;   // ref value for dlg height
+		private bool m_origSet;     // this is set to false in the default constructor
+		private CRC m_crcObj;   // CRC Object to use for telling if the input file has changed
+		private DateTime m_lastDateTime;    // used to keep track of the last write date on the data file
+		private uint m_crcOfInputFile;      // the computed crc of the data file
+		private string m_processedInputFile;    // the name of the file last processed
+		private string m_processedMapFile;  // name of the map file last processed
+		private bool m_dirtyInputFile;  // dirty flag for the database (input) file
+		private bool m_dirtyMapFile;    // dirty flag for the settings (map) file
+		private bool m_isPhaseInputFile;    // true if the input file is a previous XML phase [1,2,3,4] output file
+		public ILexImportFields m_LexFields;    // object that contains all the lex fields
+		public ILexImportFields m_CustomFields; // object that contains all the currently defined custom fields
 		private MarkerPresenter m_MappingMgr;
 		private Label labelStep5Description;
 		private Label lblStep5KeyMarkers;
-		private TreeView tvBeginMarkers;	// object that has the data for the marker pg
-		private bool m_DirtyStep5 = true;	// if true requires the display to be redrawn
-		private bool m_fCanceling;	// used to tell if the cancel processing is in action
-		private bool m_dirtySenseLastSave = true;	// used to tell if the save question is needed
+		private TreeView tvBeginMarkers;    // object that has the data for the marker pg
+		private bool m_DirtyStep5 = true;   // if true requires the display to be redrawn
+		private bool m_fCanceling;  // used to tell if the cancel processing is in action
+		private bool m_dirtySenseLastSave = true;   // used to tell if the save question is needed
 		private string m_sTempDir;
 		private string m_sImportFields;
 		private string m_sMDFImportMap;
@@ -166,7 +167,7 @@ namespace LanguageExplorer.Controls.LexText
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 			openFileDialog = new OpenFileDialogAdapter();
-			m_crcObj = new CRC();	// CRC Object to use for telling if the input file has changed
+			m_crcObj = new CRC();   // CRC Object to use for telling if the input file has changed
 			m_lastDateTime = DateTime.MinValue;
 			m_crcOfInputFile = 1;
 
@@ -185,9 +186,9 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			using (var g = CreateGraphics())
 			{
-				var size = g.MeasureString(label, font, 1000);	// expected values are < 100
+				var size = g.MeasureString(label, font, 1000);  // expected values are < 100
 				var width = (int)Math.Ceiling(size.Width);
-				return width + kdxpStepSquareWidth + 3 * kdxpStepListSpacing;	// add fudge factor for squares -- see WizardDialog.cs.
+				return width + kdxpStepSquareWidth + 3 * kdxpStepListSpacing;   // add fudge factor for squares -- see WizardDialog.cs.
 			}
 		}
 
@@ -207,7 +208,7 @@ namespace LanguageExplorer.Controls.LexText
 			Publisher = publisher;
 			m_dirtyInputFile = true;
 			m_dirtyMapFile = true;
-			m_processedInputFile = m_processedMapFile = string.Empty;	// no files processed yet
+			m_processedInputFile = m_processedMapFile = string.Empty;   // no files processed yet
 			m_isPhaseInputFile = false;
 
 			InitOutputFiles();
@@ -219,7 +220,7 @@ namespace LanguageExplorer.Controls.LexText
 
 			// now read in any custom fields
 			bool customFieldsChanged;
-			m_CustomFields = ReadCustomFieldsFromDB(out customFieldsChanged);	// compare with map file before showing the UI and before the Import
+			m_CustomFields = ReadCustomFieldsFromDB(out customFieldsChanged);   // compare with map file before showing the UI and before the Import
 
 			// set up default button states
 			NextButtonEnabled = true;
@@ -240,9 +241,9 @@ namespace LanguageExplorer.Controls.LexText
 			}
 			else
 			{
-				m_SaveAsFileName.Text = string.Empty;	// empty if not found already
+				m_SaveAsFileName.Text = string.Empty;   // empty if not found already
 			}
-			AllowQuickFinishButton();	// show it if it's valid
+			AllowQuickFinishButton();   // show it if it's valid
 
 			// Copied from the previous LexImport dlg constructor (ImportLexicon.cs)
 			// Ensure that we have the default encoding converter (to/from MS Windows Code Page
@@ -283,7 +284,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
@@ -292,11 +293,11 @@ namespace LanguageExplorer.Controls.LexText
 				return;
 			}
 
-			if( disposing )
+			if (disposing)
 			{
 				components?.Dispose();
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		public IPropertyTable PropertyTable { get; private set; }
@@ -309,7 +310,7 @@ namespace LanguageExplorer.Controls.LexText
 		}
 		private void LexImportWizard_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-			if (DialogResult != DialogResult.OK) // only simulate a cancel button if not finished normally
+			if (DialogResult != DialogResult.OK)    // only simulate a cancel button if not finished normally
 			{
 				OnCancelButton();
 			}
@@ -320,7 +321,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// and saveas file names.  Also interacts with the persistance part to
 		/// retrieve previous settings for selected database file names.
 		#region Step 2 event handlers and routines
-		private enum OFType { Database, Settings, SaveAs };	// openfile type
+		private enum OFType { Database, Settings, SaveAs }; // openfile type
 
 		private void btnDatabaseBrowse_Click(object sender, System.EventArgs e)
 		{
@@ -387,24 +388,24 @@ namespace LanguageExplorer.Controls.LexText
 					// Before doing the 'fileType' based tests, make sure it's not a PhaseX file
 					if (GetDictionaryFileAsPhaseFileNumber(openFileDialog.FileName) > 0)
 					{
-						isValid = true;		// trusting that phaseX files properly named are valid
+						isValid = true;     // trusting that phaseX files properly named are valid
 						text = LexTextControls.ksPhaseFile;
 					}
 					else switch (fileType)
-					{
-						case OFType.Database:
-							text = LexTextControls.ksStandardFormat;
-							isValid = new IsSfmFile(openFileDialog.FileName).IsValid;
-							break;
-						case OFType.SaveAs:
-							text = LexTextControls.ksXmlSettings;
-							isValid = true;		// no requirements sense the file will be overridden
-							break;
-						default:
-							text = LexTextControls.ksXmlSettings;
-							isValid = MarkerPresenter.IsValidMapFile(openFileDialog.FileName);
-							break;
-					}
+						{
+							case OFType.Database:
+								text = LexTextControls.ksStandardFormat;
+								isValid = new IsSfmFile(openFileDialog.FileName).IsValid;
+								break;
+							case OFType.SaveAs:
+								text = LexTextControls.ksXmlSettings;
+								isValid = true;     // no requirements sense the file will be overridden
+								break;
+							default:
+								text = LexTextControls.ksXmlSettings;
+								isValid = MarkerPresenter.IsValidMapFile(openFileDialog.FileName);
+								break;
+						}
 
 					if (!isValid)
 					{
@@ -417,7 +418,7 @@ namespace LanguageExplorer.Controls.LexText
 							case DialogResult.No:
 								continue;
 						}
-						break;	// exit with current still
+						break;  // exit with current still
 					}
 					return openFileDialog.FileName;
 				}
@@ -579,7 +580,7 @@ namespace LanguageExplorer.Controls.LexText
 		private void SetDatabaseNameIntoLabel()
 		{
 			var resources = new System.Resources.ResourceManager(typeof(LexImportWizard));
-			var lblText = resources.GetString("lblMappingLanguagesInstructions.Text");	//dbLabelText");
+			var lblText = resources.GetString("lblMappingLanguagesInstructions.Text");  //dbLabelText");
 			lblMappingLanguagesInstructions.Text = string.Format(lblText, m_cache.ProjectId.Name);
 		}
 
@@ -587,7 +588,7 @@ namespace LanguageExplorer.Controls.LexText
 		private Hashtable GetUILanguages()
 		{
 			var langs = new Hashtable();
-			foreach(ListViewItem lvItem in listViewMappingLanguages.Items)
+			foreach (ListViewItem lvItem in listViewMappingLanguages.Items)
 			{
 				var langInfo = (LanguageInfoUI)lvItem.Tag;
 				langs.Add(langInfo.Key, langInfo);
@@ -688,7 +689,7 @@ namespace LanguageExplorer.Controls.LexText
 
 					var root = doc.Root;
 					lif.ReadElement(root);
-					sb.Append(lif.CRC);	// for cumulative CRC (over the whole list)
+					sb.Append(lif.CRC); // for cumulative CRC (over the whole list)
 					crcs.Add(lif.CRC);
 					customFields.AddCustomField(fd.Class, lif);
 				}
@@ -728,7 +729,7 @@ namespace LanguageExplorer.Controls.LexText
 		private bool AddInLineMarker(ClsInFieldMarker marker, bool makeSelected)
 		{
 			// now put the info into the list view
-			string[] columns = {marker.Begin, marker.EndListToString(), marker.Language, marker.Style};
+			string[] columns = { marker.Begin, marker.EndListToString(), marker.Language, marker.Style };
 			var lvItem = new ListViewItem(columns)
 			{
 				Tag = marker,
@@ -739,9 +740,9 @@ namespace LanguageExplorer.Controls.LexText
 			if (listViewCharMappings.Items.Contains(lvItem) == false)
 			{
 				listViewCharMappings.Items.Add(lvItem);
-				if (marker.Ignore) // this is ignored
+				if (marker.Ignore)  // this is ignored
 				{
-					lvItem.ForeColor = Color.Blue; // show as ignored
+					lvItem.ForeColor = Color.Blue;      // show as ignored
 				}
 			}
 			else
@@ -759,9 +760,9 @@ namespace LanguageExplorer.Controls.LexText
 
 		private static ListViewItem CreateLanguageMappingItem(string langDesc, string ws, string ec, string wsId)
 		{
-			var lvItem = new ListViewItem(new[] {langDesc, ws, ec});
+			var lvItem = new ListViewItem(new[] { langDesc, ws, ec });
 			var langInfo = new LanguageInfoUI(langDesc, ws, ec, wsId);
-			if (langInfo.FwName == STATICS.Ignore)	// this is ignored due to lang
+			if (langInfo.FwName == STATICS.Ignore)  // this is ignored due to lang
 			{
 				lvItem.UseItemStyleForSubItems = false;
 				lvItem.SubItems[1].ForeColor = Color.Blue;
@@ -787,17 +788,17 @@ namespace LanguageExplorer.Controls.LexText
 
 			using (var dlg = new LexImportWizardLanguage(m_cache, langDescs, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), m_app))
 			{
-			if (dlg.ShowDialog(this) == DialogResult.OK)
-			{
-				m_dirtySenseLastSave = true;
-				string langDesc, ws, ec, wsId;
-				// retrieve the new WS information from the dlg
-				dlg.GetCurrentLangInfo(out langDesc, out ws, out ec, out wsId);
+				if (dlg.ShowDialog(this) == DialogResult.OK)
+				{
+					m_dirtySenseLastSave = true;
+					string langDesc, ws, ec, wsId;
+					// retrieve the new WS information from the dlg
+					dlg.GetCurrentLangInfo(out langDesc, out ws, out ec, out wsId);
 
-				// now put the lang info into the language list view
-				AddLanguage(langDesc, ws, ec, wsId);
+					// now put the lang info into the language list view
+					AddLanguage(langDesc, ws, ec, wsId);
+				}
 			}
-		}
 		}
 
 		private void btnModifyMappingLanguage_Click(object sender, EventArgs e)
@@ -808,7 +809,7 @@ namespace LanguageExplorer.Controls.LexText
 			var name = string.Empty;
 			var desc = string.Empty;
 			var selectedFound = false;
-			foreach(ListViewItem lvItem in listViewMappingLanguages.Items)
+			foreach (ListViewItem lvItem in listViewMappingLanguages.Items)
 			{
 				langDescs.Add(lvItem.Text, null);
 				if (lvItem.Selected && !selectedFound)
@@ -908,20 +909,20 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				return;
 			}
-			if (info.AutoImport)	// this is an autoimport field
+			if (info.AutoImport)    // this is an autoimport field
 			{
 				item.UseItemStyleForSubItems = false;
-				for (var i=0; i<5; i++)
+				for (var i = 0; i < 5; i++)
 				{
 					item.SubItems[i].ForeColor = Color.Red;
 				}
 			}
-			if (info.Exclude)	// this is an excluded field
+			if (info.Exclude)   // this is an excluded field
 			{
 				item.UseItemStyleForSubItems = false;
 				item.SubItems[4].ForeColor = Color.Blue;
 			}
-			if (info.WritingSystem == STATICS.Ignore)	// this is ignored due to lang
+			if (info.WritingSystem == STATICS.Ignore)   // this is ignored due to lang
 			{
 				item.UseItemStyleForSubItems = false;
 				item.SubItems[5].ForeColor = Color.Blue;
@@ -929,7 +930,7 @@ namespace LanguageExplorer.Controls.LexText
 			if (info.LanguageDescriptor == ContentMapping.Unknown())
 			{
 				item.UseItemStyleForSubItems = false;
-				item.SubItems[5].ForeColor = Color.Red;	// column 5 due to column 1 being hidden (zero width)
+				item.SubItems[5].ForeColor = Color.Red; // column 5 due to column 1 being hidden (zero width)
 			}
 		}
 
@@ -939,7 +940,7 @@ namespace LanguageExplorer.Controls.LexText
 			listViewContentMapping.Items.Clear();
 
 			var markers = m_MappingMgr.ContentMappingItems;
-			foreach(DictionaryEntry markerEntry in markers)
+			foreach (DictionaryEntry markerEntry in markers)
 			{
 				var info = (ContentMapping)markerEntry.Value;
 				if (info.LexImportField is LexImportCustomField)
@@ -966,10 +967,10 @@ namespace LanguageExplorer.Controls.LexText
 			var selIndexes = listViewContentMapping.SelectedIndices;
 			if (selIndexes.Count < 1 || selIndexes.Count > 1)
 			{
-				return;	// only handle single selection at this time
+				return; // only handle single selection at this time
 			}
 
-			var selIndex = selIndexes[0];	// only support 1
+			var selIndex = selIndexes[0];   // only support 1
 			var langDescs = GetUILanguages();
 
 			var contentMapping = listViewContentMapping.Items[selIndex].Tag as ContentMapping;
@@ -1165,10 +1166,11 @@ namespace LanguageExplorer.Controls.LexText
 
 
 		// The idea here is to sort the individual markers by their source order
-		private sealed class SortClassMarkers : IComparer {
+		private sealed class SortClassMarkers : IComparer
+		{
 			#region IComparer Members
 
-			public int  Compare(object x, object y)
+			public int Compare(object x, object y)
 			{
 				var a = (ContentMapping)x;
 				var b = (ContentMapping)y;
@@ -1206,8 +1208,8 @@ namespace LanguageExplorer.Controls.LexText
 				var info = (ContentMapping)item.Tag;
 				if (info.AutoImport)
 				{
-					continue; // autoimport fields can't be taged to start certian classes...
-			}
+					continue;           // autoimport fields can't be taged to start certian classes...
+				}
 
 				ArrayList markers;
 				if (classMarkers.ContainsKey(info.DestinationClass))
@@ -1241,9 +1243,9 @@ namespace LanguageExplorer.Controls.LexText
 			tvBeginMarkers.BeginUpdate();
 			tvBeginMarkers.Nodes.Clear();
 
-			TreeNode tempTreeNode = null;	// last node that needs a begin marker selected
+			TreeNode tempTreeNode = null;   // last node that needs a begin marker selected
 
-			foreach(DictionaryEntry dict in sortedClassMarkers)
+			foreach (DictionaryEntry dict in sortedClassMarkers)
 			{
 				// skip Unknown, ignore and exclude markers
 				if ((string)dict.Key == "Unknown")
@@ -1251,7 +1253,7 @@ namespace LanguageExplorer.Controls.LexText
 					continue;
 				}
 
-				var mappingInfo = dict.Value as ArrayList;	// MarkerPresenter.ContentMapping;
+				var mappingInfo = dict.Value as ArrayList;  // MarkerPresenter.ContentMapping;
 				var tnode = new TreeNode(dict.Key as string)
 				{
 					Tag = null,
@@ -1261,7 +1263,7 @@ namespace LanguageExplorer.Controls.LexText
 				// Make it bold because this is a parent node
 				tnode.SelectedImageKey = tnode.ImageKey = "Bullet";
 
-				foreach(ContentMapping field in mappingInfo)
+				foreach (ContentMapping field in mappingInfo)
 				{
 					var cnode = new TreeNode("\\" + field.Marker + " (" + field.DestinationField + ")")
 					{
@@ -1270,11 +1272,11 @@ namespace LanguageExplorer.Controls.LexText
 					if (field.Exclude ||
 						field.IsLangIgnore || // field.DestinationField == MarkerPresenter.ContentMapping.Ignore() ||
 						field.DestinationField == ContentMapping.Unknown() ||
-						field.LanguageDescriptor == ContentMapping.Unknown())	// can't pick field with unknown lang descriptor
+						field.LanguageDescriptor == ContentMapping.Unknown())   // can't pick field with unknown lang descriptor
 					{
 						continue;
 					}
-					cnode.Checked = field.IsBeginMarker;	// check it if it's already identified as a begin marker
+					cnode.Checked = field.IsBeginMarker;    // check it if it's already identified as a begin marker
 					cnode.SelectedImageKey = cnode.ImageKey = cnode.Checked ? "CheckedBox" : "CheckBox";
 					tnode.Nodes.Add(cnode);
 				}
@@ -1282,23 +1284,23 @@ namespace LanguageExplorer.Controls.LexText
 				if (HasCheckedChild(tnode) == 0)
 				{
 					tnode.BackColor = Color.Gold;
-					tempTreeNode = tnode;			// get a reference so we can ensure visible later.
+					tempTreeNode = tnode;           // get a reference so we can ensure visible later.
 				}
 				else
-					tnode.Checked = true;			// has child that is selected, so show as selected
+					tnode.Checked = true;           // has child that is selected, so show as selected
 			}
 			tvBeginMarkers.ExpandAll();
 			tvBeginMarkers.EndUpdate();
 
-			tempTreeNode?.EnsureVisible();	// make sure the node that needs a begin marker is visible
+			tempTreeNode?.EnsureVisible();  // make sure the node that needs a begin marker is visible
 		}
 
 		private bool Step5NextButtonEnabled()
 		{
 			var nextOk = true;
-			foreach(TreeNode node in tvBeginMarkers.Nodes)
+			foreach (TreeNode node in tvBeginMarkers.Nodes)
 			{
-				if (HasCheckedChild(node) == 0)	// count of checked children
+				if (HasCheckedChild(node) == 0) // count of checked children
 				{
 					nextOk = false;
 					break;
@@ -1351,31 +1353,31 @@ namespace LanguageExplorer.Controls.LexText
 			// funcWS instead of letting it default to "".
 			switch (data.FwDestID)
 			{
-				case "lxrel":	// Lexical relation
-				case "cref":	// Cross reference fields
+				case "lxrel":   // Lexical relation
+				case "cref":    // Cross reference fields
 				case "funold": // Old lexical function field
 					if (data.RefFuncWS == string.Empty)
 					{
-						data.RefFuncWS = topAnalysis;	// dont let it be blank for old map files
+						data.RefFuncWS = topAnalysis;   // dont let it be blank for old map files
 					}
 					break;
 
-				case "subd":	// Subentry (Derivation)
-				case "subc":	// Subentry (Compound)
-				case "subi":	// Subentry (Idiom)
-				case "subk":	// Subentry (Keyterm Phrase)
-				case "subpd":	// Subentry (Phrasal Verb)
-				case "subs":	// Subentry (Saying)
-					data.FwDestID_Changed = "sub";	// new value
+				case "subd":    // Subentry (Derivation)
+				case "subc":    // Subentry (Compound)
+				case "subi":    // Subentry (Idiom)
+				case "subk":    // Subentry (Keyterm Phrase)
+				case "subpd":   // Subentry (Phrasal Verb)
+				case "subs":    // Subentry (Saying)
+					data.FwDestID_Changed = "sub";  // new value
 					data.RefFuncWS = topAnalysis;
 					break;
 
-				case "vard":	// Variant (Dialectal)
-				case "varf":	// Variant (Free)
-				case "vari":	// Variant (Inflectional)
-				case "vars":	// Variant (Spelling)
-					//case "varc":	// Variant (Comment)
-					data.FwDestID_Changed = "var";	// new value
+				case "vard":    // Variant (Dialectal)
+				case "varf":    // Variant (Free)
+				case "vari":    // Variant (Inflectional)
+				case "vars":    // Variant (Spelling)
+								//case "varc":	// Variant (Comment)
+					data.FwDestID_Changed = "var";  // new value
 					data.RefFuncWS = topAnalysis;
 					break;
 			}
@@ -1404,7 +1406,7 @@ namespace LanguageExplorer.Controls.LexText
 				var info = (ContentMapping)lvItem.Tag;
 				if (info == null || info.DestinationField == STATICS.Unknown)
 				{
-					continue;	// skip these from output
+					continue;   // skip these from output
 				}
 
 				// convert from ContentMapping object to a FieldHierarchyInfo object
@@ -1418,7 +1420,7 @@ namespace LanguageExplorer.Controls.LexText
 					var destClass = string.Empty;
 					if (info.LexImportField is LexImportCustomField)
 					{
-						destClass = info.DestinationClass;	// (info.LexImportField as Sfm2Xml.LexImportCustomField).UIClass;
+						destClass = info.DestinationClass;  // (info.LexImportField as Sfm2Xml.LexImportCustomField).UIClass;
 					}
 
 					data = new FieldHierarchyInfo(info.Marker, info.FwId, info.LanguageDescriptor, info.IsBeginMarker, destClass);
@@ -1429,7 +1431,7 @@ namespace LanguageExplorer.Controls.LexText
 				data.IsExcluded = info.Exclude;
 				data.IsAbbrvField = info.IsAbbrvField;
 				data.IsAbbr = info.IsAbbr;
-				CheckForMapFileVersionChanges(data);	// make changes if the map file read in is older than the current version
+				CheckForMapFileVersionChanges(data);    // make changes if the map file read in is older than the current version
 				sfmInfo.Add(data);
 
 				var xmlOutput = info.ClsFieldDescription.ToXmlString();
@@ -1486,10 +1488,10 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			using (new WaitCursor(this))
 			{
-				SaveSettings();	// saves to registry and creates the new map file
+				SaveSettings(); // saves to registry and creates the new map file
 				btnGenerateReport.Enabled = false;
 				Converter importConverter = new FlexConverter(m_cache);
-				Converter.Log.Reset();	// remove any previous error msgs
+				Converter.Log.Reset();  // remove any previous error msgs
 
 				// if there are auto fields in the xml file, pass them on to the converter
 				var autoFields = m_MappingMgr.LexImportFields.GetAutoFields();
@@ -1588,7 +1590,7 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			string helpTopic = null;
 
-			switch(CurrentStepNumber)
+			switch (CurrentStepNumber)
 			{
 				case 0:
 					helpTopic = "khtpImportSFMStep1";
@@ -1648,8 +1650,8 @@ namespace LanguageExplorer.Controls.LexText
 				dlg.Maximum = 200;
 				using (new WaitCursor(this, true))
 				{
-					var startPhase = GetDictionaryFileAsPhaseFileNumber();	// see if starting with phase file
-					// XSLT files
+					var startPhase = GetDictionaryFileAsPhaseFileNumber();  // see if starting with phase file
+																			// XSLT files
 					var sTransformDir = Path.Combine(FwDirectoryFinder.CodeDirectory, string.Format("Language Explorer{0}Import{0}", Path.DirectorySeparatorChar));
 
 					var lexImport = new LexImport(m_cache, m_sTempDir, sTransformDir);
@@ -1661,7 +1663,7 @@ namespace LanguageExplorer.Controls.LexText
 
 					if (fRet)
 					{
-						DialogResult = DialogResult.OK;	// only 'OK' if not exception
+						DialogResult = DialogResult.OK; // only 'OK' if not exception
 					}
 				}
 			}
@@ -1708,7 +1710,7 @@ namespace LanguageExplorer.Controls.LexText
 		private bool GetLastImportFile(out string fileName)
 		{
 			fileName = string.Empty;
-			m_DatabaseFileName.Text = string.Empty;	// no default value to start with
+			m_DatabaseFileName.Text = string.Empty; // no default value to start with
 			var key = m_app.SettingsKey;
 			var sDictFile = key?.GetValue("LatestImportDictFile") as string;
 			if (string.IsNullOrWhiteSpace(sDictFile))
@@ -1724,8 +1726,8 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		private void FindFilesForDatabaseFile(string dbToImport)
 		{
-			m_SettingsFileName.Text = string.Empty;	// empty at start
-			m_SaveAsFileName.Text = string.Empty;		// empty at start
+			m_SettingsFileName.Text = string.Empty; // empty at start
+			m_SaveAsFileName.Text = string.Empty;       // empty at start
 			string settings, saveAs;
 			if (FindDBSettingsSaved(dbToImport, out settings, out saveAs))
 			{
@@ -1747,7 +1749,7 @@ namespace LanguageExplorer.Controls.LexText
 		private void SaveSettings()
 		{
 			var dbImportName = m_DatabaseFileName.Text;
-			if (dbImportName != string.Empty)	// has value to save
+			if (dbImportName != string.Empty)   // has value to save
 			{
 				using (var key = m_app.SettingsKey)
 				{
@@ -1809,7 +1811,7 @@ namespace LanguageExplorer.Controls.LexText
 			// LT-7057: if no settings file, don't ask to save
 			if (UsesInvalidFileNames(true))
 			{
-				return;	// finsih with out prompting to save...
+				return; // finsih with out prompting to save...
 			}
 
 			// ask to save the settings
@@ -1877,13 +1879,13 @@ namespace LanguageExplorer.Controls.LexText
 			var msg = string.Format(LexTextControls.ksInputFileContentsChanged, m_processedInputFile);
 			MessageBox.Show(this, msg, LexTextControls.ksInputFileContentsChangedTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-			m_lastDateTime = File.GetLastWriteTime(m_processedInputFile);	// used to keep track of the last write date on the data file
-			m_crcOfInputFile = m_crcObj.FileCRC(m_processedInputFile);		// the computed crc of the data file
+			m_lastDateTime = File.GetLastWriteTime(m_processedInputFile);   // used to keep track of the last write date on the data file
+			m_crcOfInputFile = m_crcObj.FileCRC(m_processedInputFile);      // the computed crc of the data file
 			m_dirtyInputFile = false;
 			m_dirtyMapFile = false;
 			var changeToUI = m_MappingMgr.UpdateSfmDataChanged();
 			DisplayMarkerStep();
-			m_FeasabilityReportGenerated = false;	// reset when intputs change
+			m_FeasabilityReportGenerated = false;   // reset when intputs change
 			return changeToUI;
 		}
 
@@ -1896,7 +1898,7 @@ namespace LanguageExplorer.Controls.LexText
 					// now see if the content has changed
 					if (m_crcOfInputFile != m_crcObj.FileCRC(m_DatabaseFileName.Text))
 					{
-						return true;	// content has changed
+						return true;    // content has changed
 					}
 				}
 			}
@@ -1909,79 +1911,79 @@ namespace LanguageExplorer.Controls.LexText
 
 		private bool EnableNextButton()
 		{
-			AllowQuickFinishButton();	// this should be done atleast before each step
+			AllowQuickFinishButton();   // this should be done atleast before each step
 			var rval = false;
 			using (new WaitCursor(this))
 			{
 				switch (CurrentStepNumber)
 				{
-				case 1: // has to have a dictionary file to allow 'next'
-					if (m_isPhaseInputFile || (m_DatabaseFileName.Text.Length > 0 && File.Exists(m_DatabaseFileName.Text) && m_SaveAsFileName.Text != m_sMDFImportMap))		// not same as MDFImport.map file
-					{
+					case 1: // has to have a dictionary file to allow 'next'
+						if (m_isPhaseInputFile || (m_DatabaseFileName.Text.Length > 0 && File.Exists(m_DatabaseFileName.Text) && m_SaveAsFileName.Text != m_sMDFImportMap))     // not same as MDFImport.map file
+						{
+							rval = true;
+						}
+						break;
+
+					case 2: // preparing to display the languages info
+						if (m_dirtyMapFile)
+						{
+							ReadLanguageInfoFromMapFile();
+							m_processedMapFile = m_SettingsFileName.Text;
+						}
 						rval = true;
-					}
-					break;
 
-				case 2:	// preparing to display the languages info
-					if (m_dirtyMapFile)
-					{
-						ReadLanguageInfoFromMapFile();
-						m_processedMapFile = m_SettingsFileName.Text;
-					}
-					rval = true;
+						// make sure there is a value for the 'Save as:' entry
+						if (m_SaveAsFileName.Text.Length <= 0 && !m_isPhaseInputFile)
+						{
+							m_SaveAsFileName.Text = RemoveTheFileExtension(m_DatabaseFileName.Text) + "-import-settings.map";
+						}
+						break;
 
-					// make sure there is a value for the 'Save as:' entry
-					if (m_SaveAsFileName.Text.Length <= 0 && !m_isPhaseInputFile)
-					{
-						m_SaveAsFileName.Text = RemoveTheFileExtension(m_DatabaseFileName.Text) + "-import-settings.map";
-					}
-					break;
+					case 3:
+						// current technique for getting the custom fields in the DB
+						bool customFieldsChanged;
+						m_CustomFields = Wizard().ReadCustomFieldsFromDB(out customFieldsChanged);
 
-				case 3:
-					// current technique for getting the custom fields in the DB
-					bool customFieldsChanged;
-					m_CustomFields = Wizard().ReadCustomFieldsFromDB(out customFieldsChanged);
+						UpdateIfInputFileContentsChanged();
+						if (m_dirtyInputFile || m_dirtyMapFile)
+						{
+							ReadIFMFromMapFile();   // do it now before setting the dirty map flag to false
+							m_processedInputFile = m_DatabaseFileName.Text;
+							m_lastDateTime = File.GetLastWriteTime(m_processedInputFile);   // used to keep track of the last write date on the data file
+							m_crcOfInputFile = m_crcObj.FileCRC(m_processedInputFile);      // the computed crc of the data file
+							m_dirtyInputFile = false;
+							m_dirtyMapFile = false;
+							var topAnalysisWS = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(m_cache.DefaultAnalWs);
+							m_MappingMgr = new MarkerPresenter(FwDirectoryFinder.CodeDirectory,
+								Wizard().GetUILanguages(),
+								topAnalysisWS,
+								m_SettingsFileName.Text,
+								m_DatabaseFileName.Text,
+								m_sImportFields, 6);    // number of columns
+							DisplayMarkerStep();
+							m_FeasabilityReportGenerated = false;   // reset when intputs change
+						}
+						rval = true;
+						break;
 
-					UpdateIfInputFileContentsChanged();
-					if (m_dirtyInputFile || m_dirtyMapFile)
-					{
-						ReadIFMFromMapFile();	// do it now before setting the dirty map flag to false
-						m_processedInputFile = m_DatabaseFileName.Text;
-						m_lastDateTime = File.GetLastWriteTime(m_processedInputFile);	// used to keep track of the last write date on the data file
-						m_crcOfInputFile = m_crcObj.FileCRC(m_processedInputFile);		// the computed crc of the data file
-						m_dirtyInputFile = false;
-						m_dirtyMapFile = false;
-						var topAnalysisWS = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(m_cache.DefaultAnalWs);
-						m_MappingMgr = new MarkerPresenter(FwDirectoryFinder.CodeDirectory,
-							Wizard().GetUILanguages(),
-							topAnalysisWS,
-							m_SettingsFileName.Text,
-							m_DatabaseFileName.Text,
-							m_sImportFields, 6);	// number of columns
-						DisplayMarkerStep();
-						m_FeasabilityReportGenerated = false;	// reset when intputs change
-					}
-					rval = true;
-					break;
+					case 4:
+						UpdateIfInputFileContentsChanged();
+						DisplayBeginMarkers();
+						m_DirtyStep5 = false;
+						rval = Step5NextButtonEnabled();
+						break;
 
-				case 4:
-					UpdateIfInputFileContentsChanged();
-					DisplayBeginMarkers();
-					m_DirtyStep5 = false;
-					rval = Step5NextButtonEnabled();
-					break;
+					case 5: // preparing to display the inline markers
+						rval = true;
+						break;
 
-				case 5:	// preparing to display the inline markers
-					rval = true;
-					break;
+					case 6:
+						rval = m_FeasabilityReportGenerated;
+						break;
 
-				case 6:
-					rval = m_FeasabilityReportGenerated;
-					break;
-
-				default:
-					rval = true;
-					break;
+					default:
+						rval = true;
+						break;
 				}
 			}
 			return rval;
@@ -2029,21 +2031,21 @@ namespace LanguageExplorer.Controls.LexText
 			if (m_QuickFinish)
 			{
 				// go back to the page where we came from
-				tabSteps.SelectedIndex = m_lastQuickFinishTab+1;
+				tabSteps.SelectedIndex = m_lastQuickFinishTab + 1;
 				m_CurrentStepNumber = m_lastQuickFinishTab;
 				UpdateStepLabel();
-				m_QuickFinish = false;	// going back, so turn off flag
+				m_QuickFinish = false;  // going back, so turn off flag
 			}
 			else if (CurrentStepNumber == 6 && m_isPhaseInputFile)
 			{
 				// skip the pages in the middle that were skipped getting here
-				tabSteps.SelectedIndex = 2;	// 0-7
-				m_CurrentStepNumber = 1;	// 1-8
+				tabSteps.SelectedIndex = 2; // 0-7
+				m_CurrentStepNumber = 1;    // 1-8
 				UpdateStepLabel();
 			}
 
-			NextButtonEnabled = true;	// make sure it's enabled if we go back from generated report
-			AllowQuickFinishButton();	// make it visible if needed, or hidden if not
+			NextButtonEnabled = true;   // make sure it's enabled if we go back from generated report
+			AllowQuickFinishButton();   // make it visible if needed, or hidden if not
 		}
 
 		private bool UsesInvalidFileNames(bool runSilent)
@@ -2129,15 +2131,15 @@ namespace LanguageExplorer.Controls.LexText
 					if (fStayHere)
 					{
 						// Don't go anywhere, stay right here.
-						m_CurrentStepNumber = 1;	// 1-8
-						tabSteps.SelectedIndex = 0;	// 0-7
+						m_CurrentStepNumber = 1;    // 1-8
+						tabSteps.SelectedIndex = 0; // 0-7
 						UpdateStepLabel();
 					}
 					if (GetDictionaryFileAsPhaseFileNumber() > 0)
 					{
 						// we need to skip to the final step now, also handle back processing from there
-						m_CurrentStepNumber = 7;	// 1-8
-						tabSteps.SelectedIndex = 6;	// 0-7
+						m_CurrentStepNumber = 7;    // 1-8
+						tabSteps.SelectedIndex = 6; // 0-7
 						UpdateStepLabel();
 					}
 					ReadOptionInfoFromMapFile();
@@ -2146,7 +2148,7 @@ namespace LanguageExplorer.Controls.LexText
 					if (UpdateIfInputFileContentsChanged())
 					{
 						// don't go to the next page, stay here due to change
-						NextButtonEnabled = true;	//  EnableNextButton();
+						NextButtonEnabled = true;   //  EnableNextButton();
 						m_CurrentStepNumber = 3;
 
 						return; // don't do the default processing
@@ -2898,7 +2900,7 @@ namespace LanguageExplorer.Controls.LexText
 
 				if (!tn.Checked && HasCheckedChild(tn.Parent) == 0) // no sibling nodes selected either
 				{
-					tn.Parent.BackColor = Color.Gold; // add attention to ones with out checked buttons
+					tn.Parent.BackColor = Color.Gold;       // add attention to ones with out checked buttons
 				}
 				else
 				{
@@ -3018,7 +3020,7 @@ namespace LanguageExplorer.Controls.LexText
 				var unicodeTag = string.Empty; // only put out the tag if the data is unicode already
 				if (IslxFieldAlreadyUnicode())
 				{
-					unicodeTag ="<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />" + sNewLine + "  ";
+					unicodeTag = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />" + sNewLine + "  ";
 				}
 				var sHtml = string.Format("<html>{0}<head>{0}  {4}<title>{1}</title>{0}{2}{0}</head>{0}<body>{0}<h2>{1}</h2>{0}{3}</body>{0}</html>{0}", sNewLine, sHeadInfo, script, m_sPhase1HtmlReport, unicodeTag);
 				sw.Write(sHtml);
@@ -3030,11 +3032,11 @@ namespace LanguageExplorer.Controls.LexText
 		private static int ProcessErrorLogErrors(XmlDocument xmlMap, ref string sHtml)
 		{
 			var errorCount = 0;
-			var listedErrors = 0;	// only will be present if it's less than errorCount
+			var listedErrors = 0;   // only will be present if it's less than errorCount
 			var errorsNode = xmlMap.SelectSingleNode("database/ErrorLog/Errors");
 			if (errorsNode != null)
 			{
-				foreach(XmlAttribute Attribute in errorsNode.Attributes)
+				foreach (XmlAttribute Attribute in errorsNode.Attributes)
 				{
 					switch (Attribute.Name)
 					{
@@ -3178,7 +3180,7 @@ namespace LanguageExplorer.Controls.LexText
 			fileName = fileName.Replace("\\", "\\\\");
 			var sHtml = new StringBuilder();
 			var cautionCount = 0;
-			var listedCautions = 0;	// only will be present if it's less than errorCount
+			var listedCautions = 0; // only will be present if it's less than errorCount
 			var oooNode = xmlMap.SelectSingleNode("database/ErrorLog/OutOfOrder");
 			if (oooNode != null)
 			{
@@ -3369,7 +3371,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		private void listViewMappingLanguages_DoubleClick(object sender, EventArgs e)
 		{
-			btnModifyMappingLanguage.PerformClick();	// same as pressing the modify button
+			btnModifyMappingLanguage.PerformClick();    // same as pressing the modify button
 		}
 
 		private void btnBackup_Click(object sender, EventArgs e)
@@ -3450,7 +3452,7 @@ namespace LanguageExplorer.Controls.LexText
 
 			if (AllowQuickFinishButton())
 			{
-				m_lastQuickFinishTab = m_CurrentStepNumber;	// save for later
+				m_lastQuickFinishTab = m_CurrentStepNumber; // save for later
 
 				// before jumping we need to make sure all the data structures are populated
 				//  for (near) future use.
@@ -3462,13 +3464,13 @@ namespace LanguageExplorer.Controls.LexText
 
 				if (GetDictionaryFileAsPhaseFileNumber() > 0)
 				{
-					m_CurrentStepNumber = 7;	// 1-8
-					tabSteps.SelectedIndex = 7;	// 0-7
+					m_CurrentStepNumber = 7;    // 1-8
+					tabSteps.SelectedIndex = 7; // 0-7
 				}
 				else
 				{
-					m_CurrentStepNumber = 6;	// 1-8
-					tabSteps.SelectedIndex = 6;	// 0-7
+					m_CurrentStepNumber = 6;    // 1-8
+					tabSteps.SelectedIndex = 6; // 0-7
 				}
 
 				// we need to skip to the final step now, also handle back processing from there
@@ -3490,20 +3492,25 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			if (CurrentStepNumber == 1)
 			{
-					NextButtonEnabled = EnableNextButton();
+				NextButtonEnabled = EnableNextButton();
 			}
 		}
 
 		protected override void OnLoad(EventArgs e)
 		{
 			base.OnLoad(e);
-			m_origSet = true;	// At this point the framework has adjusted the size
+			m_origSet = true;   // At this point the framework has adjusted the size
 								// for the finial time, so lock it down.
-			// JohnT: this seems to be necessary for correct drawing at 120dpi.
-			// I don't fully understand why, but it seems the base class does some
-			// critical repositioning of buttons. See LT-4675.
+								// JohnT: this seems to be necessary for correct drawing at 120dpi.
+								// I don't fully understand why, but it seems the base class does some
+								// critical repositioning of buttons. See LT-4675.
 			OnResize(e);
-#if __MonoCS__
+
+			if (!Platform.IsMono)
+			{
+				return;
+			}
+
 			// This button moving logic works on mono.  At this point, the sizes of the
 			// list views have settled down.  See FWNX-847.
 			int minY = listViewMappingLanguages.Bottom + 7;
@@ -3524,24 +3531,31 @@ namespace LanguageExplorer.Controls.LexText
 				MoveButton(btnModifyCharMapping, btnAddCharMapping, minY);
 				MoveButton(btnDeleteCharMapping, btnModifyCharMapping, minY);
 			}
-#endif
 		}
 
-#if __MonoCS__
-		void MoveButton(Button btn, Button btnLeft, int y)
+		private void MoveButton(Button btn, Button btnLeft, int y)
 		{
+			Debug.Assert(Platform.IsMono, "only needed on Linux");
 			if (btnLeft == null)
+			{
 				btn.Location = new Point(btn.Left, y);
+			}
 			else
+			{
 				btn.Location = new Point(btnLeft.Right + 7, y);
+			}
 		}
-#endif
 
-// This moving button logic has issues on mono. (and on Windows, if truth be told!)
-#if !__MonoCS__
+		// This moving button logic has issues on mono. (and on Windows, if truth be told!)
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
+
+			if (Platform.IsMono)
+			{
+				return;
+			}
+
 			// The following code is added to handle the adjustment that the framework
 			// makes 'at some point' in the start up process of this dialog to handle
 			// cases where the dpi is > 96.
@@ -3549,7 +3563,7 @@ namespace LanguageExplorer.Controls.LexText
 			// that is to be adjusted has been created.  From there the differences are
 			// added to the controls until the sizing stops.  At that point it looks
 			// good / normal again.
-			if (m_origWidth == 0 && listViewContentMapping != null)	// have size info
+			if (m_origWidth == 0 && listViewContentMapping != null) // have size info
 			{
 				// capture the original size information of the dialog
 				m_origWidth = Width;
@@ -3557,7 +3571,7 @@ namespace LanguageExplorer.Controls.LexText
 			}
 			else
 			{
-				if (m_origSet == false && Width != 0 && m_origWidth != 0)	// adjust sizes
+				if (m_origSet == false && Width != 0 && m_origWidth != 0)   // adjust sizes
 				{
 					var diffWidth = Width - m_origWidth;
 					var diffHeight = Height - m_origHeight;
@@ -3573,10 +3587,10 @@ namespace LanguageExplorer.Controls.LexText
 					listViewCharMappings.Height += diffHeight;
 
 					// move the buttons now in both x and y directions
-					diffHeight += 3;	// still need a little more ...  LT-4918
-					diffHeight += 7;	// ... and more now after style change ... LT-9941
+					diffHeight += 3;    // still need a little more ...  LT-4918
+					diffHeight += 7;    // ... and more now after style change ... LT-9941
 
-					var buttonYCoord = Convert.ToInt32(listViewCharMappings.Height*1.03);
+					var buttonYCoord = Convert.ToInt32(listViewCharMappings.Height * 1.03);
 
 					if (btnAddMappingLanguage.Location.Y >= buttonYCoord)
 					{
@@ -3611,6 +3625,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		private void MoveButton(ButtonBase btn, int dw, int dh)
 		{
+			Debug.Assert(!Platform.IsMono, "only needed on Windows");
 			var oldPoint = btn.Location;
 			oldPoint.X += dw;
 			oldPoint.Y += dh;
@@ -3619,12 +3634,12 @@ namespace LanguageExplorer.Controls.LexText
 
 		private void MoveButton2(ButtonBase btn, int dw, int YCoord)
 		{
+			Debug.Assert(!Platform.IsMono, "only needed on Windows");
 			var oldPoint = btn.Location;
 			oldPoint.X += dw;
 			oldPoint.Y = YCoord;
 			btn.Location = oldPoint;
 		}
-#endif
 
 		private void btnSaveMapFile_Click(object sender, System.EventArgs e)
 		{
@@ -3653,14 +3668,14 @@ namespace LanguageExplorer.Controls.LexText
 			NextButtonEnabled = nextState;
 			UpdateStepLabel();
 
-			AllowQuickFinishButton();	// make it visible if needed, or hidden if not
+			AllowQuickFinishButton();   // make it visible if needed, or hidden if not
 
 			MessageBox.Show(this, string.Format(LexTextControls.ksMappingFileXUpdated, m_SaveAsFileName.Text), LexTextControls.ksSettingsSaved, MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
 
 		protected override void OnResize(EventArgs e)
 		{
-			base.OnResize (e);
+			base.OnResize(e);
 
 			// The wizard base class redraws the controls, so
 			// move the cancel button after it's done ...
@@ -3674,16 +3689,12 @@ namespace LanguageExplorer.Controls.LexText
 			// make sure the controls that tend to 'float' when the resx is checked out -
 			//  still have a good screen position and size
 			listViewMappingLanguages.Width = tabSteps.Width - 40;
-			listViewMappingLanguages.Height = lblSteps.Top - btnAddMappingLanguage.Height -  listViewMappingLanguages.Top - 20;
+			listViewMappingLanguages.Height = lblSteps.Top - btnAddMappingLanguage.Height - listViewMappingLanguages.Top - 20;
 
 			listViewContentMapping.Width = tabSteps.Width - 40;
 			// LT-10904 added checkbox
 			listViewContentMapping.Height = tabSteps.Bottom - btnModifyContentMapping.Height - m_chkCreateMissingLinks.Height - listViewContentMapping.Top - 20;
-			var nudge = 0;
-			if (MiscUtils.IsUnix)
-			{
-				nudge = 25;
-			}
+			var nudge = Platform.IsUnix ? 25 : 0;
 			// LT-17974 Adjust layout on Linux/Mono so checkbox and modify button are not overlapping.
 			listViewContentMapping.Height -= nudge;
 
@@ -3694,7 +3705,7 @@ namespace LanguageExplorer.Controls.LexText
 			tvBeginMarkers.Height = tabSteps.Bottom - tvBeginMarkers.Top - 20;
 
 			var buttonSpace = btnDatabaseBrowse.Location.X - (m_DatabaseFileName.Location.X + m_DatabaseFileName.Width);
-			FixControlWidth(lblDatabaseInstructions, tabSteps.Width -  9);
+			FixControlWidth(lblDatabaseInstructions, tabSteps.Width - 9);
 			FixControlLocation(btnDatabaseBrowse, tabSteps.Width - 9);
 			FixControlWidth(m_DatabaseFileName, btnDatabaseBrowse.Left - buttonSpace);
 
@@ -3822,7 +3833,7 @@ namespace LanguageExplorer.Controls.LexText
 			var selIndexes = listViewCharMappings.SelectedIndices;
 			if (selIndexes.Count < 1 || selIndexes.Count > 1)
 			{
-				return;	// only handle single selection at this time
+				return; // only handle single selection at this time
 			}
 
 			var selIndex = selIndexes[0]; // only support 1
@@ -3852,7 +3863,7 @@ namespace LanguageExplorer.Controls.LexText
 			var selIndexes = listViewCharMappings.SelectedIndices;
 			if (selIndexes.Count < 1 || selIndexes.Count > 1)
 			{
-				return;	// only handle single selection at this time
+				return; // only handle single selection at this time
 			}
 
 			var selIndex = selIndexes[0]; // only support 1
@@ -3946,7 +3957,7 @@ namespace LanguageExplorer.Controls.LexText
 					sig = "Number";
 					break;
 				default:
-				throw new Exception("Error converting custom field to LexImportField - unexpected signature");
+					throw new Exception("Error converting custom field to LexImportField - unexpected signature");
 			}
 
 			var lif = new LexImportCustomField(

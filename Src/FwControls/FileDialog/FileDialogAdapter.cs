@@ -1,10 +1,7 @@
-// --------------------------------------------------------------------------------------------
-// <copyright from='2011' to='2011' company='SIL International'>
-// Copyright (c) 2011-2015 SIL International
+// Copyright (c) 2011-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
-// (http://www.gnu.org/licenses/lgpl-2.1.html).
-// </copyright>
-// --------------------------------------------------------------------------------------------
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
@@ -14,7 +11,7 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog
 	/// <summary>
 	/// File dialog adapter.
 	/// </summary>
-	public abstract class FileDialogAdapter: IFileDialog, IDisposable
+	public abstract class FileDialogAdapter : IFileDialog, IDisposable
 	{
 		/// <summary/>
 		protected IFileDialog m_dlg;
@@ -211,13 +208,13 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog
 		#endregion
 
 		#region Disposable stuff
-		#if DEBUG
+#if DEBUG
 		/// <summary/>
 		~FileDialogAdapter()
 		{
 			Dispose(false);
 		}
-		#endif
+#endif
 
 		/// <summary/>
 		public bool IsDisposed { get; private set; }

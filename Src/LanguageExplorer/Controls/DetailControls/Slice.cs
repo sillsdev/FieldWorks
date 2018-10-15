@@ -21,6 +21,7 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
+using SIL.PlatformUtilities;
 using SIL.LCModel.Utils;
 using SIL.Xml;
 
@@ -331,9 +332,10 @@ namespace LanguageExplorer.Controls.DetailControls
 
 				Debug.Assert(MyCmObject != null, "JH Made a false assumption!");
 				var flid = GetFlid(field);
-				Debug.Assert(flid != 0); // current field should have ID!
-				//at this point we are not even thinking about showing reference sequences in the DataTree
-				//so I have not dealt with that
+				// current field should have ID!
+				Debug.Assert(flid != 0);
+				// at this point we are not even thinking about showing reference sequences in the DataTree
+				// so I have not dealt with that
 				return GetFieldType(flid) == (int)CellarPropertyType.OwningSequence;
 			}
 		}
@@ -699,7 +701,8 @@ namespace LanguageExplorer.Controls.DetailControls
 				// It was hard-coded to 40, but it isn't right for indented slices,
 				// as they then can be shrunk so narrow as to completely cover up their label.
 				SplitCont.Panel1MinSize = (20 * (Indent + 1)) + 20;
-				SplitCont.Panel2MinSize = 0; // min size of right pane
+				// min size of right pane
+				SplitCont.Panel2MinSize = 0;
 				// This makes the splitter essentially invisible.
 				SplitCont.BackColor = Color.FromKnownColor(KnownColor.Window); //to make it invisible
 				treeNode.MouseEnter += TreeNodeMouseEnter;
@@ -746,13 +749,17 @@ namespace LanguageExplorer.Controls.DetailControls
 				parentDataTree.Controls.Add(this); // Parent will have to move it into the right place.
 				parentDataTree.Slices.Add(this);
 			}
-#if __MonoCS__ // FWNX-266
-			if (mainControl != null && mainControl.Visible == false)
+
+			if (Platform.IsMono)
 			{
-				// ensure Launcher Control is shown.
-				mainControl.Visible = true;
+				// FWNX-266
+				if (mainControl != null && mainControl.Visible == false)
+				{
+					// ensure Launcher Control is shown.
+					mainControl.Visible = true;
+				}
 			}
-#endif
+
 			SetSplitPosition();
 
 			// Don'f fire off all those size changed event handlers, unless it is really needed.
@@ -961,7 +968,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			base.Dispose(disposing);
 		}
 
-#endregion IDisposable override
+		#endregion IDisposable override
 
 		/// <summary>
 		/// This method determines how much we should indent nodes produced from "part ref"
@@ -1239,7 +1246,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			// Distinguish the Example (sense) field and the expanded example (LexExtendedNote) field
 			className = (fieldName == "Example" && ownerClassName == "LexExtendedNote") ? "LexExtendedNote" : className;
 			// Distinguish the Translation (sense) field and the expanded example (LexExtendedNote) field
-			className = fieldName.StartsWith("Translation")&& (ownerClassName == "LexExtendedNote" || (MyCmObject.Owner != null && MyCmObject.Owner.ClassName == "LexExtendedNote")) ? "LexExtendedNote" : className;
+			className = fieldName.StartsWith("Translation") && (ownerClassName == "LexExtendedNote" || (MyCmObject.Owner != null && MyCmObject.Owner.ClassName == "LexExtendedNote")) ? "LexExtendedNote" : className;
 			var toolChoice = PropertyTable.GetValue<string>(AreaServices.ToolChoice);
 
 			var generatedHelpTopicID = helpTopicPrefix + "-" + toolChoice + "-" + className + "-" + fieldName;
@@ -1494,7 +1501,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			DrawLabel(LabelIndent(), y, gr, clipWidth);
 		}
 
-		public bool IsObjectNode => (ConfigurationNode.Element("node") != null || ("PhCode" == MyCmObject.ClassName))	// todo: this should tell if the attr (not the nested one) is to a basic type or a cmobject
+		public bool IsObjectNode => (ConfigurationNode.Element("node") != null || ("PhCode" == MyCmObject.ClassName))   // todo: this should tell if the attr (not the nested one) is to a basic type or a cmobject
 									&& ConfigurationNode.Element("seq") == null &&
 									//MoAlloAdhocProhib.adjacency is the top-level node, but it's not really an object that you should be able to delete
 									MyCmObject != ContainingDataTree.Root;
@@ -1528,7 +1535,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			var cache = ContainingDataTree.Cache;
 			var mdc = cache.DomainDataByFlid.MetaDataCache as IFwMetaDataCacheManaged;
 			var repo = cache.ServiceLocator.GetInstance<ICmObjectRepository>();
-			for (var inode = Key.Length; --inode >= 0; )
+			for (var inode = Key.Length; --inode >= 0;)
 			{
 				var objNode = Key[inode];
 				var element = objNode as XElement;
@@ -1553,7 +1560,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 						return false;
 					}
 					hvoOwner = MyCmObject.Hvo;
-					ihvoPosition = -1;		// 1 before actual location.
+					ihvoPosition = -1;      // 1 before actual location.
 					return true;
 				}
 
@@ -1594,7 +1601,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				return false;
 			}
 
-			for (var inode = Key.Length; --inode >= 0; )
+			for (var inode = Key.Length; --inode >= 0;)
 			{
 				var objNode = Key[inode];
 				var element = objNode as XElement;
@@ -1745,7 +1752,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			}
 			if (insertionPosition < 0)
 			{
-				return insertionPosition == -2;		// -2 keeps dlg for adding subPOSes from firing for each slice when cancelled.
+				return insertionPosition == -2;     // -2 keeps dlg for adding subPOSes from firing for each slice when cancelled.
 			}
 
 			return true;
@@ -1827,7 +1834,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			try
 			{
 				dtContainer.SetCurrentObjectFlids(hvoOwner, flid);
-				var fieldType = (CellarPropertyType) Cache.MetaDataCacheAccessor.GetFieldType(flid);
+				var fieldType = (CellarPropertyType)Cache.MetaDataCacheAccessor.GetFieldType(flid);
 				switch (fieldType)
 				{
 					case CellarPropertyType.OwningCollection:
@@ -1967,7 +1974,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			var myKey = Key;
 			for (var i = iLastRealVisible + 1; i < IndexInContainer; ++i)
 			{
-				var slice = containingDT.FieldAt(i);	// make it real.
+				var slice = containingDT.FieldAt(i);    // make it real.
 				if (!slice.Visible) // make it visible.
 				{
 					DataTree.MakeSliceVisible(slice);
@@ -2050,7 +2057,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		internal List<Slice> GetNearbySlices()
 		{
 			var index = IndexInContainer;
-			var closeSlices = new List<Slice> {this};
+			var closeSlices = new List<Slice> { this };
 			var count = ContainingDataTree.Slices.Count;
 			var limit = Math.Min(Math.Max(index, count - index), 40);
 			for (var i = 1; i <= limit; i++)
@@ -2541,7 +2548,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// </summary>
 		public virtual void AboutToDiscard()
 		{
-			BeingDiscarded = true;	// Remember that we're going away in case we need to know this for subsequent method calls.
+			BeingDiscarded = true;  // Remember that we're going away in case we need to know this for subsequent method calls.
 		}
 
 		/// <summary>
@@ -2605,6 +2612,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			}
 		}
 
-#endregion
+		#endregion
 	}
 }

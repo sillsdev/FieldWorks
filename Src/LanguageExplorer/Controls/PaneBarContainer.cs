@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.Controls
 {
@@ -67,29 +68,34 @@ namespace LanguageExplorer.Controls
 			Controls.Add(MainControl);
 		}
 
-#if __MonoCS__ // FWNX-425
+		// FWNX-425
 		/// <summary> make Width always match parent Width </summary>
 		protected override void OnLayout(LayoutEventArgs levent)
 		{
-			if (Parent != null && Width != Parent.Width)
+			if (Platform.IsMono)
 			{
-				Width = Parent.Width;
+				if (Parent != null && Width != Parent.Width)
+				{
+					Width = Parent.Width;
+				}
 			}
 
-			base.OnLayout (levent);
+			base.OnLayout(levent);
 		}
 
 		/// <summary> make Width always match parent Width </summary>
 		protected override void OnSizeChanged(EventArgs e)
 		{
-			if (Parent != null && Width != Parent.Width)
+			if (Platform.IsMono)
 			{
-				Width = Parent.Width;
+				if (Parent != null && Width != Parent.Width)
+				{
+					Width = Parent.Width;
+				}
 			}
 
-			base.OnSizeChanged (e);
+			base.OnSizeChanged(e);
 		}
-#endif
 
 		#endregion Construction
 

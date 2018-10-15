@@ -13,6 +13,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Areas;
+using LanguageExplorer.Filters;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -21,10 +22,10 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.DomainServices;
-using LanguageExplorer.Filters;
 using SIL.FieldWorks.Resources;
 using SIL.Reporting;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 using SIL.Xml;
 
 namespace LanguageExplorer.Controls.XMLViews
@@ -63,8 +64,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		private ToolTip m_tooltip;
 
 		private int[] m_colWidths; // Last values computed and set by AdjustColumnWidths.
-		// This flag is used to minimize redoing the filtering and sorting when
-		// changing the list of columns shown.
+								   // This flag is used to minimize redoing the filtering and sorting when
+								   // changing the list of columns shown.
 		private bool m_fUpdatingColumnList;
 
 		/// <summary />
@@ -580,7 +581,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			InitializeComponent();
 
 			// TODO: Add any initialization after the InitForm call
-			AccNameDefault = "BrowseViewer";	// default accessibility name
+			AccNameDefault = "BrowseViewer";    // default accessibility name
 		}
 
 		/// <summary>
@@ -666,11 +667,15 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_lvHeader.Size = new Size(4000, 22);
 			m_lvHeader.TabIndex = 0;
 			m_lvHeader.View = View.Details;
-#if __MonoCS__	// FWNX-224
-			m_lvHeader.ColumnLeftClick += m_lvHeader_ColumnLeftClick;
-#else
-			m_lvHeader.ColumnClick += m_lvHeader_ColumnLeftClick;
-#endif
+			if (Platform.IsMono)
+			{
+				// FWNX-224
+				m_lvHeader.ColumnLeftClick += m_lvHeader_ColumnLeftClick;
+			}
+			else
+			{
+				m_lvHeader.ColumnClick += m_lvHeader_ColumnLeftClick;
+			}
 			m_lvHeader.ColumnRightClick += m_lvHeader_ColumnRightClick;
 			m_lvHeader.ColumnDragDropReordered += m_lvHeader_ColumnDragDropReordered;
 			m_lvHeader.AllowColumnReorder = true;
@@ -852,7 +857,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					e.ForceReload = true;
 				}
 			}
-			if(typeChanged || e.ForceReload)
+			if (typeChanged || e.ForceReload)
 			{
 				BulkEditBar.ResumeRecordListRowChanges(); // <-- against my better judgement. naylor 11-2011
 			}
@@ -871,7 +876,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-			m_lastChangedSelectionListItemsClass = (int) BrowseView.Vc.ListItemsClass;
+			m_lastChangedSelectionListItemsClass = (int)BrowseView.Vc.ListItemsClass;
 			SaveSelectionItems(new HashSet<int>(selectionItemsToSave));
 		}
 
@@ -921,7 +926,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 
 			var newSorters = new ArrayList();
-			for(var i = 0; i < sorters.Count; i++)
+			for (var i = 0; i < sorters.Count; i++)
 			{
 				var ifsi = ColumnInfoIndexOfCompatibleSorter(sorters[i] as RecordSorter);
 				if (sorters[i] as GenRecordSorter == null && ifsi < 0)
@@ -949,7 +954,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				var newGrs = FilterBar.ColumnInfo[ifsi].Sorter as GenRecordSorter;
 				if (!newGrs.Equals(grs))
 				{
-					sfc.CopyTo(newGrs.Comparer as StringFinderCompare);	// copy Order and SortFromEnd
+					sfc.CopyTo(newGrs.Comparer as StringFinderCompare); // copy Order and SortFromEnd
 					fSortChanged = true;
 				}
 				if (andSorter != null)
@@ -1212,7 +1217,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			// Must not be run more than once.
 			if (IsDisposed)
@@ -1220,7 +1225,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				return;
 			}
 
-			if( disposing )
+			if (disposing)
 			{
 				Subscriber.Unsubscribe("LinkFollowed", LinkFollowed_Handler);
 				if (m_configParamsElement != null && SpecialCache != null && BrowseView != null && RootObjectHvo != 0)
@@ -1251,11 +1256,15 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					if (m_lvHeader != null)
 					{
-#if __MonoCS__	// FWNX-224
-						m_lvHeader.ColumnLeftClick -= m_lvHeader_ColumnLeftClick;
-#else
-						m_lvHeader.ColumnClick -= m_lvHeader_ColumnLeftClick;
-#endif
+						if (Platform.IsMono)
+						{
+							// FWNX-224
+							m_lvHeader.ColumnLeftClick -= m_lvHeader_ColumnLeftClick;
+						}
+						else
+						{
+							m_lvHeader.ColumnClick -= m_lvHeader_ColumnLeftClick;
+						}
 						m_lvHeader.ColumnRightClick -= m_lvHeader_ColumnRightClick;
 						m_lvHeader.ColumnDragDropReordered -= m_lvHeader_ColumnDragDropReordered;
 						if (!Scroller.Controls.Contains(m_lvHeader))
@@ -1367,17 +1376,18 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		protected override void OnSizeChanged(EventArgs e)
 		{
-			base.OnSizeChanged (e);
+			base.OnSizeChanged(e);
 			// the != 0 check makes sure we don't do this until we've been laid out for real
 			// at least once, which doesn't happen until we have all the requisite stuff created.
 			if (Width != m_lastLayoutWidth && m_lastLayoutWidth != 0)
 			{
 				AdjustControls();
 			}
-
-#if __MonoCS__ // FWNX-425
-			EnsureScrollContainerIsCorrectWidth();
-#endif
+			if (Platform.IsMono)
+			{
+				// FWNX-425
+				EnsureScrollContainerIsCorrectWidth();
+			}
 		}
 
 		/// <summary>
@@ -1387,7 +1397,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			if (m_configureButton == null)
 			{
-				return;		// layout hasn't actually occurred yet -- see FWNX-733.
+				return;     // layout hasn't actually occurred yet -- see FWNX-733.
 			}
 			m_lastLayoutWidth = Width;
 
@@ -1411,7 +1421,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			ScrollBar.Location = new Point(Width - ScrollBar.Width, m_configureButton.Height);
 			BrowseView?.SetScrollBarParameters(ScrollBar);
 
-			Scroller.Location = new Point(0,0);
+			Scroller.Location = new Point(0, 0);
 			Scroller.Height = scrollContHeight;
 			EnsureScrollContainerIsCorrectWidth();
 		}
@@ -1970,7 +1980,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					{
 						// Same one, just reversing the direction
 						var i = asorter.CompatibleSorterIndex(newSorter);
-						asorter.Sorters[i] = reverseNewSorter(newSorter, (RecordSorter) asorter.Sorters[i]);
+						asorter.Sorters[i] = reverseNewSorter(newSorter, (RecordSorter)asorter.Sorters[i]);
 					}
 					else
 					{
@@ -2028,7 +2038,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				return false; // If there isn't a sorter, no columns can be actively sorted
 			}
 
-			var sorters = Sorter is AndSorter ? ((AndSorter)Sorter).Sorters : new ArrayList {Sorter};
+			var sorters = Sorter is AndSorter ? ((AndSorter)Sorter).Sorters : new ArrayList { Sorter };
 
 			// This loop attempts to locate the sorter in the list of active sorters that responsible for the column in question
 			foreach (RecordSorter rs in sorters)
@@ -2132,17 +2142,17 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			if (FilterBar == null)
 			{
-				return;			// for now we can't sort without a filter bar.
+				return;         // for now we can't sort without a filter bar.
 			}
 			var ifsi = e.Column - FilterBar.ColumnOffset;
 			if (ifsi < 0)
 			{
-				return;			// Clicked on the check box column.
+				return;         // Clicked on the check box column.
 			}
 			var fsi = FilterBar.ColumnInfo[ifsi];
 			if (fsi == null)
 			{
-				return;			// Can't sort by this column.
+				return;         // Can't sort by this column.
 			}
 			m_icolCurrent = e.Column;
 
@@ -2171,7 +2181,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					continue;
 				}
 
-				var label = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue( node, "label", null)) ?? XmlUtils.GetMandatoryAttributeValue(node, "label");
+				var label = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(node, "label", null)) ?? XmlUtils.GetMandatoryAttributeValue(node, "label");
 				var mi = new MenuItem(label, ConfigItemClicked);
 
 				// tick the checkbox for items that match something in current visible list.
@@ -2322,9 +2332,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			m_lvHeader.BeginUpdate();
 			var fSave = m_lvHeader.AdjustingWidth;
-			m_lvHeader.AdjustingWidth = true;	// Don't call AdjustColumnWidths() for each column.
-			// Remove all columns (except the 'select' column if any).
-			// We don't need to use ColumnsInDisplayOrder here because we don't allow the select column to be re-ordered.
+			m_lvHeader.AdjustingWidth = true;   // Don't call AdjustColumnWidths() for each column.
+												// Remove all columns (except the 'select' column if any).
+												// We don't need to use ColumnsInDisplayOrder here because we don't allow the select column to be re-ordered.
 			while (m_lvHeader.Columns.Count > ColumnIndexOffset())
 			{
 				m_lvHeader.Columns.RemoveAt(m_lvHeader.Columns.Count - 1);
@@ -2360,7 +2370,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			widths = new Dictionary<XElement, int>();
 			var index = 0;
-			foreach(var node in colSpecs)
+			foreach (var node in colSpecs)
 			{
 				widths.Add(node, m_lvHeader.ColumnsInDisplayOrder[ColumnHeaderIndex(index)].Width);
 				index++;
@@ -2371,7 +2381,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			// If we have changes we need to commit, do it before we mess up the column sequence.
 			BulkEditBar?.SaveSettings(); // before we change column list!
-			// Sync the Browse View columns with the new column header order.
+										 // Sync the Browse View columns with the new column header order.
 			var columnsOrder = e.DragDropColumnOrder;
 			var oldSpecs = new List<XElement>(ColumnSpecs);
 			var delta = ColumnIndexOffset();
@@ -2498,76 +2508,76 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				case "ReviewUndecidedSpelling":
 				case "CorrectSpelling":
-				{
-					var colSpec = XmlViewsUtils.FindNodeWithAttrVal(possibleColumns, "label", "Spelling Status");
-					if (colSpec == null)
 					{
-						return null;
-					}
-					int desiredItem;
-					if (linkSetupInfoValue == "CorrectSpelling")
-					{
-						desiredItem = (int)SpellingStatusStates.correct;
-					}
-					else //linkSetupInfo == "ReviewUndecidedSpelling"
-					{
-						desiredItem = (int)SpellingStatusStates.undecided;
-					}
+						var colSpec = XmlViewsUtils.FindNodeWithAttrVal(possibleColumns, "label", "Spelling Status");
+						if (colSpec == null)
+						{
+							return null;
+						}
+						int desiredItem;
+						if (linkSetupInfoValue == "CorrectSpelling")
+						{
+							desiredItem = (int)SpellingStatusStates.correct;
+						}
+						else //linkSetupInfo == "ReviewUndecidedSpelling"
+						{
+							desiredItem = (int)SpellingStatusStates.undecided;
+						}
 
-					var labels = BrowseView.GetStringList(colSpec);
-					if (labels == null || labels.Length < desiredItem)
-					{
-						return null;
-					}
-					var correctLabel = labels[desiredItem];
+						var labels = BrowseView.GetStringList(colSpec);
+						if (labels == null || labels.Length < desiredItem)
+						{
+							return null;
+						}
+						var correctLabel = labels[desiredItem];
 
-					FilterBarCellFilter spellFilter;
-					if (linkSetupInfoValue == "CorrectSpelling") //"Exclude Correct" TE-8200
-					{
-						// Use this one for NOT Correct ("Exclude Correct"), that is, undecided OR incorrect,
-						// all things that have squiggles. (could also be "Exclude Incorrect" or "Exclude Undecided")
-						spellFilter = MakeFilter(possibleColumns, "Spelling Status", new InvertMatcher(new ExactMatcher(FilterBar.MatchExactPattern(correctLabel))));
-					}
-					else // linkSetupInfo == "ReviewUndecidedSpelling"   --> "Undecided"
-					{
-						spellFilter = MakeFilter(possibleColumns, "Spelling Status", new ExactMatcher(FilterBar.MatchExactPattern(correctLabel)));
-					}
+						FilterBarCellFilter spellFilter;
+						if (linkSetupInfoValue == "CorrectSpelling") //"Exclude Correct" TE-8200
+						{
+							// Use this one for NOT Correct ("Exclude Correct"), that is, undecided OR incorrect,
+							// all things that have squiggles. (could also be "Exclude Incorrect" or "Exclude Undecided")
+							spellFilter = MakeFilter(possibleColumns, "Spelling Status", new InvertMatcher(new ExactMatcher(FilterBar.MatchExactPattern(correctLabel))));
+						}
+						else // linkSetupInfo == "ReviewUndecidedSpelling"   --> "Undecided"
+						{
+							spellFilter = MakeFilter(possibleColumns, "Spelling Status", new ExactMatcher(FilterBar.MatchExactPattern(correctLabel)));
+						}
 
-					var occurrenceFilter = MakeFilter(possibleColumns, "Number in Corpus", new RangeIntMatcher(1, int.MaxValue));
-					var andFilter = new AndFilter();
-					andFilter.Add(spellFilter);
-					andFilter.Add(occurrenceFilter);
-					// If we need to change the list of objects, best to do it now, before we load the list
-					// because of the change filter, and suppress the next load.
-					return andFilter;
-				}
+						var occurrenceFilter = MakeFilter(possibleColumns, "Number in Corpus", new RangeIntMatcher(1, int.MaxValue));
+						var andFilter = new AndFilter();
+						andFilter.Add(spellFilter);
+						andFilter.Add(occurrenceFilter);
+						// If we need to change the list of objects, best to do it now, before we load the list
+						// because of the change filter, and suppress the next load.
+						return andFilter;
+					}
 				case "FilterAnthroItems":
-				{
-					var hvoOfAnthroItemProperty = linkProperties.FirstOrDefault(prop => prop.Name == "HvoOfAnthroItem");
-					var itemHvo = hvoOfAnthroItemProperty?.Value as string;
-					if (string.IsNullOrWhiteSpace(linkSetupInfoValue))
 					{
-						return null;
-					}
+						var hvoOfAnthroItemProperty = linkProperties.FirstOrDefault(prop => prop.Name == "HvoOfAnthroItem");
+						var itemHvo = hvoOfAnthroItemProperty?.Value as string;
+						if (string.IsNullOrWhiteSpace(linkSetupInfoValue))
+						{
+							return null;
+						}
 
-					var colSpec = XmlViewsUtils.FindNodeWithAttrVal(possibleColumns, "label", "Anthropology Categories");
-					if (colSpec == null)
-					{
-						return null;
-					}
+						var colSpec = XmlViewsUtils.FindNodeWithAttrVal(possibleColumns, "label", "Anthropology Categories");
+						if (colSpec == null)
+						{
+							return null;
+						}
 
-					var chosenHvos = ParseCommaDelimitedHvoString(itemHvo);
-					ListChoiceFilter filterListChoice = new ColumnSpecFilter(Cache, ListMatchOptions.Any, chosenHvos, colSpec);
-					filterListChoice.MakeUserVisible(true);
-					return filterListChoice;
-				}
+						var chosenHvos = ParseCommaDelimitedHvoString(itemHvo);
+						ListChoiceFilter filterListChoice = new ColumnSpecFilter(Cache, ListMatchOptions.Any, chosenHvos, colSpec);
+						filterListChoice.MakeUserVisible(true);
+						return filterListChoice;
+					}
 			}
 			return null;
 		}
 
 		private static int[] ParseCommaDelimitedHvoString(string itemHvos)
 		{
-			var shvoArray = itemHvos.Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries);
+			var shvoArray = itemHvos.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
 			var chosenHvos = new int[shvoArray.Length];
 			for (var i = 0; i < shvoArray.Length; i++)
 			{
@@ -2909,7 +2919,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			// TODO: REVISIT: If more than one BrowseViewer gets this message, how do
 			// we know which one should handle it?  Can't we handle this some other way?
-			switch(name)
+			switch (name)
 			{
 				default:
 					return;

@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel.DomainServices;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
@@ -357,12 +357,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			set
 			{
 				m_useVisualStyleBackColor = value;
-#if !__MonoCS__
-				if (value)
+				if (!Platform.IsMono && value)
 				{
 					TextBox.BackColor = Color.Transparent;
 				}
-#endif
 			}
 		}
 
@@ -884,23 +882,27 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			{
 				m_dropDownBox.Form.Size = sz;
 			}
-#if __MonoCS__	// FWNX-748: ensure a launching form that is not m_dropDownBox itself.
-// In Mono, Form.ActiveForm occasionally returns m_dropDownBox at this point.  So we
-// try another approach to finding the launching form for displaying m_dropDownBox.
-// Note that the launching form never changes, so it needs to be set only once.
-			if (m_dropDownBox.LaunchingForm == null)
+			if (Platform.IsMono)
 			{
-				Control parent = this;
-				Form launcher = parent as Form;
-				while (parent != null && launcher == null)
+				// FWNX-748: ensure a launching form that is not m_dropDownBox itself.
+				// In Mono, Form.ActiveForm occasionally returns m_dropDownBox at this point.  So we
+				// try another approach to finding the launching form for displaying m_dropDownBox.
+				// Note that the launching form never changes, so it needs to be set only once.
+				if (m_dropDownBox.LaunchingForm == null)
 				{
-					parent = parent.Parent;
-					launcher = parent as Form;
+					Control parent = this;
+					Form launcher = parent as Form;
+					while (parent != null && launcher == null)
+					{
+						parent = parent.Parent;
+						launcher = parent as Form;
+					}
+					if (launcher != null)
+					{
+						m_dropDownBox.LaunchingForm = launcher;
+					}
 				}
-				if (launcher != null)
-					m_dropDownBox.LaunchingForm = launcher;
 			}
-#endif
 			m_dropDownBox.Launch(Parent.RectangleToScreen(Bounds), workingArea);
 
 			// for some reason, sometimes the size of the form changes after it has become visible, so

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using SIL.LCModel.Core.Cellar;
 using LanguageExplorer.Controls.DetailControls.Resources;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
@@ -45,18 +46,19 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			InitializeComponent();
 
-#if __MonoCS__
-			// FWNX-817:
-			// center calendar on Form. This is necessary because it has a different size
-			// on Linux
-			m_calendar.Left = (ClientRectangle.Width - m_calendar.Width) / 2;
-			// make the empty calender box the same size as calendar
-			var oriEmptyCalendarSize = m_emptyCalendar.Size;
-			m_emptyCalendar.Size = m_calendar.Size;
-			m_emptyCalendar.Location = m_calendar.Location;
-			// resize "No Calendar Available" label.
-			label1.Size = m_emptyCalendar.Size - (oriEmptyCalendarSize - label1.Size);
-#endif
+			if (Platform.IsMono)
+			{
+				// FWNX-817:
+				// center calendar on Form. This is necessary because it has a different size
+				// on Linux
+				m_calendar.Left = (ClientRectangle.Width - m_calendar.Width) / 2;
+				// make the empty calender box the same size as calendar
+				var oriEmptyCalendarSize = m_emptyCalendar.Size;
+				m_emptyCalendar.Size = m_calendar.Size;
+				m_emptyCalendar.Location = m_calendar.Location;
+				// resize "No Calendar Available" label.
+				label1.Size = m_emptyCalendar.Size - (oriEmptyCalendarSize - label1.Size);
+			}
 		}
 
 		/// <summary>

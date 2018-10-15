@@ -8,11 +8,11 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls.DetailControls;
-using LanguageExplorer.Controls.LexText;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
+using SIL.PlatformUtilities;
 using SIL.Xml;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
@@ -65,40 +65,39 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			}
 			try
 			{
-				UndoableUnitOfWorkHelper.Do(sUndo, sRedo, m_obj,
-					() =>
-					{
-						var ent = m_obj as ILexEntry;
+				UndoableUnitOfWorkHelper.Do(sUndo, sRedo, m_obj, () =>
+				{
+					var ent = m_obj as ILexEntry;
 
-						// Adapted from part of DtMenuHandler.AddNewLexEntryRef.
-						var ler = ent.Services.GetInstance<ILexEntryRefFactory>().Create();
-						ent.EntryRefsOS.Add(ler);
-						if (fForVariant)
-						{
-							// The slice this is part of should only be displayed for lex entries with no VariantEntryRefs.
-							Debug.Assert(!ent.VariantEntryRefs.Any());
-							ler.VariantEntryTypesRS.Add(ent.Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS[0] as ILexEntryType);
-							ler.RefType = LexEntryRefTags.krtVariant;
-							ler.HideMinorEntry = 0;
-						}
-						else
-						{
-							// The slice this is part of should only be displayed for lex entries with no ComplexEntryRefs.
-							Debug.Assert(!ent.ComplexFormEntryRefs.Any());
-							ler.RefType = LexEntryRefTags.krtComplexForm;
-							ler.HideMinorEntry = 0; // LT-10928
-							// Logic similar to this is in EntrySequenceReferenceLauncher.AddNewObjectsToProperty()
-							// (when LER already exists so slice is not ghost)
-							ler.PrimaryLexemesRS.Add(newObj);
-							// Since it's a new LER, we can't know it to be a derivative, so by default it is visible.
-							// but do NOT do that here, it's now built into the process of adding it to PrimaryLexemes,
-							// and we don't want to do it twice.
-							// ler.ShowComplexFormsInRS.Add(newObj);
-							ent.ChangeRootToStem();
-						}
-						// Must do this AFTER setting the RefType (so dependent virtual properties can be updated properly)
-						ler.ComponentLexemesRS.Add(newObj);
-					});
+					// Adapted from part of DtMenuHandler.AddNewLexEntryRef.
+					var ler = ent.Services.GetInstance<ILexEntryRefFactory>().Create();
+					ent.EntryRefsOS.Add(ler);
+					if (fForVariant)
+					{
+						// The slice this is part of should only be displayed for lex entries with no VariantEntryRefs.
+						Debug.Assert(!ent.VariantEntryRefs.Any());
+						ler.VariantEntryTypesRS.Add(ent.Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS[0] as ILexEntryType);
+						ler.RefType = LexEntryRefTags.krtVariant;
+						ler.HideMinorEntry = 0;
+					}
+					else
+					{
+						// The slice this is part of should only be displayed for lex entries with no ComplexEntryRefs.
+						Debug.Assert(!ent.ComplexFormEntryRefs.Any());
+						ler.RefType = LexEntryRefTags.krtComplexForm;
+						ler.HideMinorEntry = 0; // LT-10928
+												// Logic similar to this is in EntrySequenceReferenceLauncher.AddNewObjectsToProperty()
+												// (when LER already exists so slice is not ghost)
+						ler.PrimaryLexemesRS.Add(newObj);
+						// Since it's a new LER, we can't know it to be a derivative, so by default it is visible.
+						// but do NOT do that here, it's now built into the process of adding it to PrimaryLexemes,
+						// and we don't want to do it twice.
+						// ler.ShowComplexFormsInRS.Add(newObj);
+						ent.ChangeRootToStem();
+					}
+					// Must do this AFTER setting the RefType (so dependent virtual properties can be updated properly)
+					ler.ComponentLexemesRS.Add(newObj);
+				});
 			}
 			catch (ArgumentException)
 			{
@@ -106,17 +105,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			}
 		}
 
-#if __MonoCS__
-	/// <summary>
-	/// Activate menu only if Alt key is being pressed.  See FWNX-1353.
-	/// </summary>
-	/// <remarks>TODO: Getting here without the Alt key may be considered a Mono bug.</remarks>
+		/// <summary>
+		/// Activate menu only if Alt key is being pressed.  See FWNX-1353.
+		/// </summary>
+		/// <remarks>TODO: Getting here without the Alt key may be considered a Mono bug.</remarks>
 		protected override bool ProcessDialogChar(char charCode)
 		{
-			if (Control.ModifierKeys == Keys.Alt)
-				return base.ProcessDialogChar(charCode);
-			return false;
+			return (!Platform.IsMono || ModifierKeys == Keys.Alt) && base.ProcessDialogChar(charCode);
 		}
-#endif
 	}
 }

@@ -12,10 +12,11 @@ using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using SIL.LCModel.Utils;
 using SIL.LCModel.Core.Text;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.UnicodeCharEditor
 {
-	/// <summary/>
+	/// <summary />
 	public class PUAInstaller
 	{
 		private readonly Dictionary<int, PUACharacter> m_dictCustomChars = new Dictionary<int, PUACharacter>();
@@ -212,7 +213,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		private void AddUndoFileFrame(string srcFile, string backupFile)
 		{
 			LogFile.AddVerboseLine("Adding Undo File: <" + backupFile + ">");
-			var frame = new UndoFiles {m_originalFile = srcFile, m_backupFile = backupFile};
+			var frame = new UndoFiles { m_originalFile = srcFile, m_backupFile = backupFile };
 			m_undoFileStack.Add(frame);
 		}
 
@@ -224,7 +225,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		public void RemoveBackupFiles()
 		{
 			LogFile.AddVerboseLine("Removing Undo Files --- Start");
-			for (var i = m_undoFileStack.Count; --i >= 0; )
+			for (var i = m_undoFileStack.Count; --i >= 0;)
 			{
 				var frame = m_undoFileStack[i];
 				if (File.Exists(frame.m_backupFile))
@@ -240,7 +241,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// </summary>
 		public void RestoreFiles()
 		{
-			for (var i = m_undoFileStack.Count; --i >= 0; )
+			for (var i = m_undoFileStack.Count; --i >= 0;)
 			{
 				var frame = m_undoFileStack[i];
 				var fi = new FileInfo(frame.m_backupFile);
@@ -314,16 +315,16 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			using (var gennormProcess = new Process())
 			{
 				gennormProcess.StartInfo = new ProcessStartInfo
-					{
-						FileName = executable,
-						WorkingDirectory = Path.GetDirectoryName(executable), // lets it find its DLL
-						Arguments = args,
-						WindowStyle = ProcessWindowStyle.Hidden,
-						CreateNoWindow = true,
-						UseShellExecute = false,
-						RedirectStandardOutput = true,
-						RedirectStandardError = true
-					};
+				{
+					FileName = executable,
+					WorkingDirectory = Path.GetDirectoryName(executable), // lets it find its DLL
+					Arguments = args,
+					WindowStyle = ProcessWindowStyle.Hidden,
+					CreateNoWindow = true,
+					UseShellExecute = false,
+					RedirectStandardOutput = true,
+					RedirectStandardError = true
+				};
 
 				// For some reason Hidden worked on FW6.0, but not on FW7.0+. NoWindow works!?!
 
@@ -345,7 +346,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 						LogFile.AddErrorLine(stdOutput);
 						LogFile.AddErrorLine(stdError);
 					}
-					if (ret == (int) IcuErrorCodes.FILE_ACCESS_ERROR)
+					if (ret == (int)IcuErrorCodes.FILE_ACCESS_ERROR)
 						throw new IcuLockedException(ErrorCodes.Gennorm, stdError);
 					throw new PuaException(ErrorCodes.Gennorm, stdError);
 				}
@@ -354,15 +355,16 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 		private static string GetIcuExecutable(string exeName)
 		{
-#if !__MonoCS__
+			if (Platform.IsMono)
+			{
+				// TODO-Linux: Review - is the approach of expecting executable location to be in PATH ok?
+				return exeName;
+			}
+
 			var codeBaseUri = typeof(PUAInstaller).Assembly.CodeBase;
 			var path = Path.GetDirectoryName(FileUtils.StripFilePrefix(codeBaseUri));
 
 			return Path.Combine(path, exeName + ".exe");
-#else
-			// TODO-Linux: Review - is the approach of expecting execuatble location to be in PATH ok?
-			return exeName;
-#endif
 		}
 
 		///  <summary>

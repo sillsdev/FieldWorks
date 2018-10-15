@@ -11,6 +11,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.Controls.SilSidePane
 {
@@ -32,13 +33,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		private OutlookBarButton m_leftClickedButton;
 		private OutlookBarButton m_rightClickedButton;
 
-#if __MonoCS__ // TODO-Linux: FWNX-459
-		private Renderer m_renderer = Renderer.Outlook2003;
-#else
-		// This choice seems arbirtrary, but it gives highlighting and coloring
-		// similar to FW6.0
-		private Renderer m_renderer = Renderer.Outlook2007;
-#endif
+		private Renderer m_renderer;
 		private bool m_dropDownHovering;
 		private bool m_isResizing;
 		private bool m_canGrow;
@@ -63,6 +58,18 @@ namespace LanguageExplorer.Controls.SilSidePane
 		/// <summary />
 		public OutlookBar()
 		{
+			if (Platform.IsMono)
+			{
+				// TODO-Linux: FWNX-459
+				m_renderer = Renderer.Outlook2003;
+			}
+			else
+			{
+				// This choice seems arbitrary, but it gives highlighting and coloring
+				// similar to FW6.0
+				m_renderer = Renderer.Outlook2007;
+			}
+
 			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
 			SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
 			SetStyle(ControlStyles.ResizeRedraw, true);
@@ -838,7 +845,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 			switch (Renderer)
 			{
 				case Renderer.Outlook2003: return SystemBrushes.ControlText; // Brushes.Black;
-				case Renderer.Outlook2007: return (isSelected ? new SolidBrush(Color.FromArgb(32, 77, 137 )) : Brushes.Black);
+				case Renderer.Outlook2007: return (isSelected ? new SolidBrush(Color.FromArgb(32, 77, 137)) : Brushes.Black);
 				case Renderer.Custom: return new SolidBrush(isSelected ? ForeColor : ForeColorSelected);
 			}
 
@@ -1044,13 +1051,16 @@ namespace LanguageExplorer.Controls.SilSidePane
 			{
 				switch (Renderer)
 				{
-					case Renderer.Outlook2003: return new LinearGradientBrush(GripRectangle,
-						ProfessionalColors.OverflowButtonGradientBegin, ProfessionalColors.OverflowButtonGradientEnd,
-						LinearGradientMode.Vertical);
-					case Renderer.Outlook2007: return new LinearGradientBrush(GripRectangle,
-						Color.FromArgb(227, 239, 255), Color.FromArgb(179, 212, 255), LinearGradientMode.Vertical);
-					case Renderer.Custom: return new LinearGradientBrush(GripRectangle,
-						ButtonColorPassiveTop, ButtonColorPassiveBottom, LinearGradientMode.Vertical);
+					case Renderer.Outlook2003:
+						return new LinearGradientBrush(GripRectangle,
+ ProfessionalColors.OverflowButtonGradientBegin, ProfessionalColors.OverflowButtonGradientEnd,
+ LinearGradientMode.Vertical);
+					case Renderer.Outlook2007:
+						return new LinearGradientBrush(GripRectangle,
+ Color.FromArgb(227, 239, 255), Color.FromArgb(179, 212, 255), LinearGradientMode.Vertical);
+					case Renderer.Custom:
+						return new LinearGradientBrush(GripRectangle,
+	  ButtonColorPassiveTop, ButtonColorPassiveBottom, LinearGradientMode.Vertical);
 				}
 
 				return null;
@@ -1182,7 +1192,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 						Enabled = btn.Enabled
 					};
 					mnu.Click += MnuClicked;
-				contextMenuStrip.Items.Add(mnu);
+					contextMenuStrip.Items.Add(mnu);
 				}
 			}
 

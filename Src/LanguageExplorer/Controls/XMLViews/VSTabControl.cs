@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
+using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.Controls.XMLViews
 {
@@ -273,10 +274,10 @@ namespace LanguageExplorer.Controls.XMLViews
 			switch (Alignment)
 			{
 				case TabAlignment.Top:
-				{
-					var trunc = selRect.Height * RowCount + 2;
-					rcPage.Y += trunc; rcPage.Height -= trunc;
-				}
+					{
+						var trunc = selRect.Height * RowCount + 2;
+						rcPage.Y += trunc; rcPage.Height -= trunc;
+					}
 					break;
 				case TabAlignment.Bottom: rcPage.Height -= (selRect.Height + sAdjHeight) * RowCount; break;
 			}
@@ -518,37 +519,42 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private static class NativeMethods
 		{
-#if __MonoCS__
-		public static IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam)
-		{
-			Console.WriteLine("Warning: using unimplemented method NativeMethods.SendMessage");
-			return IntPtr.Zero;
-		}
+			public static IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam)
+			{
+				if (Platform.IsWindows)
+					return SendMessageWindows(hWnd, Msg, wParam, lParam);
 
-		public static bool DeleteObject(IntPtr hObject)
-		{
-			Console.WriteLine("Warning: using unimplemented method NativeMethods.DeleteObject");
-			return true;
-		}
+				Console.WriteLine("Warning: using unimplemented method NativeMethods.SendMessage");
+				return IntPtr.Zero;
+			}
 
+			public static bool DeleteObject(IntPtr hObject)
+			{
+				if (Platform.IsWindows)
+					return DeleteObjectWindows(hObject);
 
-		public static uint RealGetWindowClass(IntPtr hWnd, StringBuilder ClassName, uint ClassNameMax)
-		{
-			Console.WriteLine("Warning: using unimplemented method NativeMethods.RealGetWindowClass");
-			return 0;
-		}
+				Console.WriteLine("Warning: using unimplemented method NativeMethods.DeleteObject");
+				return true;
+			}
 
-#else
+			public static uint RealGetWindowClass(IntPtr hWnd, StringBuilder ClassName, uint ClassNameMax)
+			{
+				if (Platform.IsWindows)
+					return RealGetWindowClassWindows(hWnd, ClassName, ClassNameMax);
+
+				Console.WriteLine("Warning: using unimplemented method NativeMethods.RealGetWindowClass");
+				return 0;
+			}
+
 			[DllImport("user32.dll", EntryPoint = "SendMessageW", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
-			public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+			private static extern IntPtr SendMessageWindows(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
 			[DllImport("gdi32.dll", EntryPoint = "DeleteObject", CallingConvention = CallingConvention.StdCall)]
 			[return: MarshalAs(UnmanagedType.Bool)]
-			public static extern bool DeleteObject(IntPtr hObject);
+			private static extern bool DeleteObjectWindows(IntPtr hObject);
 
 			[DllImport("user32.dll", EntryPoint = "RealGetWindowClassW", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
-			public static extern uint RealGetWindowClass(IntPtr hWnd, StringBuilder ClassName, uint ClassNameMax);
-#endif
+			private static extern uint RealGetWindowClassWindows(IntPtr hWnd, StringBuilder ClassName, uint ClassNameMax);
 
 			#region API Structures
 			[StructLayout(LayoutKind.Sequential)]

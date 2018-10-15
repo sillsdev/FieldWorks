@@ -10,6 +10,7 @@ using SIL.LCModel.Infrastructure;
 using LanguageExplorer.Controls.DetailControls.Resources;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.PlatformUtilities;
 using SIL.Xml;
 
 namespace LanguageExplorer.Controls.DetailControls
@@ -31,11 +32,14 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
-#if __MonoCS__ // FWNX-266
-			// Ensure parent get created before m_atomicRefView otherwise
-			// m_atomicRefView Handle can be in an invalid state (in mono).
-			CreateHandle();
-#endif
+
+			if (Platform.IsMono)
+			{
+				// FWNX-266
+				// Ensure parent get created before m_atomicRefView otherwise
+				// m_atomicRefView Handle can be in an invalid state (in mono).
+				CreateHandle();
+			}
 		}
 
 		/// <summary>
@@ -143,7 +147,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		protected override void OnLeave(EventArgs e)
 		{
-			base.OnLeave (e);
+			base.OnLeave(e);
 			m_atomicRefView?.RootBox?.DestroySelection();
 		}
 
@@ -182,12 +186,12 @@ namespace LanguageExplorer.Controls.DetailControls
 			// AtomicReferenceLauncher
 			//
 			this.Controls.Add(this.m_atomicRefView);
-			this.Controls.Add(this.m_panel);			//?
+			this.Controls.Add(this.m_panel);            //?
 			this.MainControl = this.m_atomicRefView;
 			this.Name = "AtomicReferenceLauncher";
 			this.Size = new System.Drawing.Size(250, 20);
 			this.Controls.SetChildIndex(this.m_atomicRefView, 0);
-			this.Controls.SetChildIndex(this.m_panel, 1);		//0
+			this.Controls.SetChildIndex(this.m_panel, 1);       //0
 			this.ResumeLayout(false);
 
 		}

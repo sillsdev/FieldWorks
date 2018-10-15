@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Linq;
 using System.Runtime.InteropServices;
+using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.Controls.XMLViews
 {
@@ -21,23 +22,21 @@ namespace LanguageExplorer.Controls.XMLViews
 	{
 		private BrowseViewer m_bv;
 		private ImageList m_imgList;
-		private bool m_fColumnDropped = false;	// set this after we've drag and dropped a column
+		private bool m_fColumnDropped = false;  // set this after we've drag and dropped a column
 		private ToolTip m_tooltip;
 
-#if __MonoCS__	// FWNX-224
-			// on Mono, when a right click is pressed, this class emits a RightClick event
-			// followed by a generic click event.
-			// This flag allows use to generate a LeftClick event if we previously didn't
-			// receive a RightClick.
-			private bool m_fIgnoreNextClick = false;
-#endif
+		// FWNX-224
+		// on Mono, when a right click is pressed, this class emits a RightClick event
+		// followed by a generic click event.
+		// This flag allows use to generate a LeftClick event if we previously didn't
+		// receive a RightClick.
+		private bool m_fIgnoreNextClick = false;
 
 		/// <summary />
 		public event ColumnRightClickEventHandler ColumnRightClick;
-#if __MonoCS__   // FWNX-224
+		// FWNX-224
 		/// <summary>event for 'left click'</summary>
 		public event ColumnClickEventHandler ColumnLeftClick;
-#endif
 
 		/// <summary />
 		public event ColumnDragDropReorderedHandler ColumnDragDropReordered;
@@ -46,16 +45,19 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		int kHalfArrowSize = 6;
 
-#if __MonoCS__ // FWNX-646: missing column headings
+		// FWNX-646: missing column headings
 		/// <summary/>
 		protected override void OnParentVisibleChanged(EventArgs e)
 		{
-			// Force a call to internal mono method LayoutDetails().
-			BeginUpdate();
-			EndUpdate();
+			if (Platform.IsMono)
+			{
+				// Force a call to internal mono method LayoutDetails().
+				BeginUpdate();
+				EndUpdate();
+			}
+
 			base.OnParentVisibleChanged(e);
 		}
-#endif
 
 		/// <summary>
 		/// Create one and set the browse view it belongs to.
@@ -70,17 +72,19 @@ namespace LanguageExplorer.Controls.XMLViews
 				TransparentColor = Color.FromKnownColor(KnownColor.ControlLight)
 			};
 
-			m_imgList.Images.Add(GetArrowBitmap(ArrowType.Ascending, ArrowSize.Large));		// Add ascending arrow
-			m_imgList.Images.Add(GetArrowBitmap(ArrowType.Ascending, ArrowSize.Medium));		// Add ascending arrow
-			m_imgList.Images.Add(GetArrowBitmap(ArrowType.Ascending, ArrowSize.Small));		// Add ascending arrow
-			m_imgList.Images.Add(GetArrowBitmap(ArrowType.Descending, ArrowSize.Large));		// Add descending arrow
-			m_imgList.Images.Add(GetArrowBitmap(ArrowType.Descending, ArrowSize.Medium));		// Add descending arrow
-			m_imgList.Images.Add(GetArrowBitmap(ArrowType.Descending, ArrowSize.Small));		// Add descending arrow
+			m_imgList.Images.Add(GetArrowBitmap(ArrowType.Ascending, ArrowSize.Large));     // Add ascending arrow
+			m_imgList.Images.Add(GetArrowBitmap(ArrowType.Ascending, ArrowSize.Medium));        // Add ascending arrow
+			m_imgList.Images.Add(GetArrowBitmap(ArrowType.Ascending, ArrowSize.Small));     // Add ascending arrow
+			m_imgList.Images.Add(GetArrowBitmap(ArrowType.Descending, ArrowSize.Large));        // Add descending arrow
+			m_imgList.Images.Add(GetArrowBitmap(ArrowType.Descending, ArrowSize.Medium));       // Add descending arrow
+			m_imgList.Images.Add(GetArrowBitmap(ArrowType.Descending, ArrowSize.Small));        // Add descending arrow
 
 			ColumnWidthChanged += ListView_ColumnWidthChanged;
-#if __MonoCS__ // FWNX-224
-			ColumnClick += HandleColumnClick;
-#endif
+			if (Platform.IsMono)
+			{
+				// FWNX-224
+				ColumnClick += HandleColumnClick;
+			}
 			ColumnWidthChanging += ListView_ColumnWidthChanging;
 			ColumnReordered += HandleColumnReordered;
 		}
@@ -269,8 +273,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		#endregion
 
 
-#if __MonoCS__ // FWNX-224
-		internal void HandleColumnClick (object sender, ColumnClickEventArgs e)
+		// FWNX-224
+		internal void HandleColumnClick(object sender, ColumnClickEventArgs e)
 		{
 			if (m_fIgnoreNextClick)
 			{
@@ -279,9 +283,10 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 
 			if (ColumnLeftClick != null && m_fIgnoreNextClick == false)
+			{
 				ColumnLeftClick(this, e);
+			}
 		}
-#endif
 
 		/// <summary>
 		/// Releases the unmanaged resources used by the <see cref="T:System.Windows.Forms.ListView"/> and optionally releases the managed resources.
@@ -306,7 +311,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_timer = null;
 			m_tooltip = null;
 
-			base.Dispose (disposing);
+			base.Dispose(disposing);
 		}
 
 		/// <summary>
@@ -537,10 +542,12 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		protected void OnColumnRightClick(int iItem, Point ptLoc)
 		{
-#if __MonoCS__ // FWNX-224
-			// set flag so next ColumnClick event doesn't generate a left click
-			m_fIgnoreNextClick = true;
-#endif
+			if (Platform.IsMono)
+			{
+				// FWNX-224
+				// set flag so next ColumnClick event doesn't generate a left click
+				m_fIgnoreNextClick = true;
+			}
 
 			ColumnRightClick?.Invoke(this, new ColumnRightClickEventArgs(iItem, ptLoc));
 		}
@@ -557,7 +564,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private Bitmap GetArrowBitmap(ArrowType type, ArrowSize size)
 		{
 			int offset;
-			switch(size)
+			switch (size)
 			{
 				case ArrowSize.Large:
 					offset = 0;
@@ -576,8 +583,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			var bmp = new Bitmap(kHalfArrowSize * 2, kHalfArrowSize * 2);
 			using (var gfx = Graphics.FromImage(bmp))
 			{
-				Brush brush = new SolidBrush(Color.FromArgb(215,230,255));
-				var pen = new Pen(Color.FromArgb(49,106,197));
+				Brush brush = new SolidBrush(Color.FromArgb(215, 230, 255));
+				var pen = new Pen(Color.FromArgb(49, 106, 197));
 
 				gfx.FillRectangle(new SolidBrush(Color.FromKnownColor(KnownColor.ControlLight)), 0, 0, kHalfArrowSize * 2, kHalfArrowSize * 2);
 
@@ -585,12 +592,12 @@ namespace LanguageExplorer.Controls.XMLViews
 				switch (type)
 				{
 					case ArrowType.Ascending:
-						points = new[] { new Point(kHalfArrowSize, offset), new Point(kHalfArrowSize * 2 - 1 - offset, kHalfArrowSize * 2 - 1 - offset), new Point(offset,kHalfArrowSize * 2 - 1 - offset)};
+						points = new[] { new Point(kHalfArrowSize, offset), new Point(kHalfArrowSize * 2 - 1 - offset, kHalfArrowSize * 2 - 1 - offset), new Point(offset, kHalfArrowSize * 2 - 1 - offset) };
 						gfx.FillPolygon(brush, points);
 						gfx.DrawPolygon(pen, points);
 						break;
 					case ArrowType.Descending:
-						points = new[] { new Point(offset,offset), new Point(kHalfArrowSize * 2 - 1 - offset, offset), new Point(kHalfArrowSize,kHalfArrowSize * 2 - 1 - offset)};
+						points = new[] { new Point(offset, offset), new Point(kHalfArrowSize * 2 - 1 - offset, offset), new Point(kHalfArrowSize, kHalfArrowSize * 2 - 1 - offset) };
 						gfx.FillPolygon(brush, points);
 						gfx.DrawPolygon(pen, points);
 						break;

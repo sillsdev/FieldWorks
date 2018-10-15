@@ -1,24 +1,17 @@
-// --------------------------------------------------------------------------------------------
 // Copyright (c) 2007-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// <remarks>
-// Declaration of wrappers for Win32 methods
-// </remarks>
-// --------------------------------------------------------------------------------------------
+
 using System;
 using System.Drawing;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms.VisualStyles;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Linq;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-
-#if __MonoCS__
-using System.Reflection;
-#endif
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -1010,19 +1003,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 		#endregion
 
-#if __MonoCS__
-// TODO-Linux: ensure all methods in this file have XML comments.
-#pragma warning disable 1591 // missing XML comment
-
 		private static Assembly s_monoWinFormsAssembly;
 		private static Assembly MonoWinFormsAssembly
 		{
 			get
 			{
 				if (s_monoWinFormsAssembly == null)
-					#pragma warning disable 0612 // Using Obsolete method LoadWithPartialName.
+#pragma warning disable 0612, 0618 // Using Obsolete method LoadWithPartialName.
 					s_monoWinFormsAssembly = Assembly.LoadWithPartialName("System.Windows.Forms");
-					#pragma warning restore 0612
+#pragma warning restore 0612, 0618
 				return s_monoWinFormsAssembly;
 			}
 		}
@@ -1038,20 +1027,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 				return s_xplatUIType;
 			}
 		}
-#endif
 		/// <summary></summary>
-#if !__MonoCS__
 		[DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-		public static extern bool SystemParametersInfo(int uiAction, int uiParam,
-			ref NONCLIENTMETRICS ncMetrics, int fWinIni);
-#else
-		// TODO-Linux: Implement if needed
-		public static bool SystemParametersInfo(int uiAction, int uiParam,
-			ref NONCLIENTMETRICS ncMetrics, int fWinIni)
-		{
-			return true;
-		}
-#endif
+		private static extern bool SystemParametersInfo(int uiAction, int uiParam, ref NONCLIENTMETRICS ncMetrics, int fWinIni);
 
 		/// <summary>
 		/// The <c>ActivateKeyboardLayout</c> function sets the input locale identifier
@@ -1064,266 +1042,325 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns>The return value is an input locale identifier. If the function succeeds,
 		/// the return value is the previous input locale identifier. Otherwise, it is zero.
 		/// </returns>
-#if !__MonoCS__
-		[DllImport("user32.dll")]
-		public static extern IntPtr ActivateKeyboardLayout(IntPtr hkl, KLF uFlags);
-#else
-		// TODO-Linux: Implement if needed
-		static public IntPtr ActivateKeyboardLayout(IntPtr hkl, KLF uFlags)
+		public static IntPtr ActivateKeyboardLayout(IntPtr hkl, KLF uFlags)
 		{
+			if (Platform.IsWindows)
+			{
+				return ActivateKeyboardLayoutWindows(hkl, uFlags);
+			}
+
 			Console.WriteLine("Warning using unimplemented method ActivateKeyboardLayout");
 			return IntPtr.Zero;
 		}
-#endif
+
+		[DllImport("user32.dll", EntryPoint = "ActivateKeyboardLayout")]
+		private static extern IntPtr ActivateKeyboardLayoutWindows(IntPtr hkl, KLF uFlags);
 
 		/// <summary></summary>
-#if !__MonoCS__
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern int MessageBox(IntPtr hWnd, string lpText, string lpCaption,
-			uint uType);
-#else
-		public static int MessageBox(IntPtr hWnd, string lpText, string lpCaption,
-			uint uType)
+		public static int MessageBox(IntPtr hWnd, string lpText, string lpCaption, uint uType)
 		{
+			if (Platform.IsWindows)
+			{
+				return MessageBoxWindows(hWnd, lpText, lpCaption, uType);
+			}
+
 			// TODO-Linux: Do this properly take account of uType. (yes/no dialog ect.)
 			System.Windows.Forms.Control temp = System.Windows.Forms.Panel.FromHandle(hWnd);
 			System.Windows.Forms.MessageBox.Show(temp, lpText, lpCaption);
 			return 0;
 		}
-#endif
+
+		[DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "MessageBox")]
+		private static extern int MessageBoxWindows(IntPtr hWnd, string lpText, string lpCaption, uint uType);
 
 		/// <summary></summary>
-#if !__MonoCS__
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern bool TrackMouseEvent(ref TRACKMOUSEEVENTS tme);
-#else
-		// TODO-Linux: Implement if needed
 		public static bool TrackMouseEvent(ref TRACKMOUSEEVENTS tme)
 		{
+			if (Platform.IsWindows)
+			{
+				return TrackMouseEventWindows(ref tme);
+			}
+
+			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method TrackMouseEvent");
 			return false;
 		}
-#endif
+
+		[DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "TrackMouseEvent")]
+		private static extern bool TrackMouseEventWindows(ref TRACKMOUSEEVENTS tme);
 
 		/// <summary></summary>
-#if !__MonoCS__
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern bool GetMenuItemRect(IntPtr hWnd, IntPtr hMenu, uint item, ref RECT rc);
-#else
-		// TODO-Linux: Implement if needed
 		public static bool GetMenuItemRect(IntPtr hWnd, IntPtr hMenu, uint item, ref RECT rc)
 		{
+			if (Platform.IsWindows)
+			{
+				return GetMenuItemRectWindows(hWnd, hMenu, item, ref rc);
+			}
+
+			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method GetMenuItemRect");
 			return false;
 		}
-#endif
+
+		[DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "GetMenuItemRect")]
+		private static extern bool GetMenuItemRectWindows(IntPtr hWnd, IntPtr hMenu, uint item, ref RECT rc);
 
 		/// <summary>The all-encompassing SendMessage function.</summary>
-#if !__MonoCS__
-		[DllImport("user32.dll")]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		public static extern bool SendMessage(IntPtr hwnd, int msg, IntPtr wp, IntPtr lp);
-#else
-		// TODO-Linux: Implement if needed
 		public static bool SendMessage(IntPtr hwnd, int msg, IntPtr wp, IntPtr lp)
 		{
+			if (Platform.IsWindows)
+			{
+				return SendMessageWindows(hwnd, msg, wp, lp);
+			}
+
+			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method SendMessage");
 			return false;
 		}
-#endif
+
+		[DllImport("user32.dll", EntryPoint = "SendMessage")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static extern bool SendMessageWindows(IntPtr hwnd, int msg, IntPtr wp, IntPtr lp);
+
 
 		/// <summary></summary>
-#if !__MonoCS__
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern int SendMessage(IntPtr hWnd, int msg, int wParam, int lParam);
-#else
-		// TODO-Linux: Implement if needed
 		public static int SendMessage(IntPtr hWnd, int msg, int wParam, int lParam)
 		{
+			if (Platform.IsWindows)
+			{
+				return SendMessageWindows(hWnd, msg, wParam, lParam);
+			}
+
+			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method SendMessage");
 			return 0;
 		}
-#endif
+
+		[DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "SendMessage")]
+		private static extern int SendMessageWindows(IntPtr hWnd, int msg, int wParam, int lParam);
 
 		/// <summary></summary>
-#if !__MonoCS__
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern int SendMessage(IntPtr hWnd, WinMsgs msg, int wParam, int lParam);
-#else
-		// TODO-Linux: Implement if needed
 		public static int SendMessage(IntPtr hWnd, WinMsgs msg, int wParam, int lParam)
 		{
+			if (Platform.IsWindows)
+			{
+				return SendMessageWindows(hWnd, msg, wParam, lParam);
+			}
+
+			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method SendMessage");
 			return 0;
 		}
-#endif
+
+		[DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "SendMessage")]
+		private static extern int SendMessageWindows(IntPtr hWnd, WinMsgs msg, int wParam, int lParam);
 
 		/// <summary></summary>
-#if !__MonoCS__
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern IntPtr SendMessage(IntPtr hWnd, int msg, int wParam, IntPtr lParam);
-#else
-		// TODO-Linux: Implement if needed
 		public static IntPtr SendMessage(IntPtr hWnd, int msg, int wParam, IntPtr lParam)
 		{
+			if (Platform.IsWindows)
+			{
+				return SendMessageWindows(hWnd, msg, wParam, lParam);
+			}
+
+			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method SendMessage");
 			return IntPtr.Zero;
 		}
-#endif
 
-#if !__MonoCS__
+		[DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "SendMessage")]
+		private static extern IntPtr SendMessageWindows(IntPtr hWnd, int msg, int wParam, IntPtr lParam);
+
 		/// <summary></summary>
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern void SendMessage(IntPtr hWnd, int msg, int wParam, ref RECT lParam);
-#else
-		// TODO-Linux: Implement if needed
 		public static void SendMessage(IntPtr hWnd, int msg, int wParam, ref RECT lParam)
 		{
+			if (Platform.IsWindows)
+			{
+				SendMessageWindows(hWnd, msg, wParam, ref lParam);
+				return;
+			}
+
+			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method SendMessage");
 		}
-#endif
 
-#if !__MonoCS__
+		[DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "SendMessage")]
+		private static extern void SendMessageWindows(IntPtr hWnd, int msg, int wParam, ref RECT lParam);
+
 		/// <summary></summary>
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern int SendMessage(IntPtr hWnd, int msg, int wParam, ref POINT lParam);
-#else
-		// TODO-Linux: Implement if needed
 		public static int SendMessage(IntPtr hWnd, int msg, int wParam, ref POINT lParam)
 		{
+			if (Platform.IsWindows)
+			{
+				return SendMessageWindows(hWnd, msg, wParam, ref lParam);
+			}
+
+			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method SendMessage");
 			return 0;
 		}
-#endif
 
-#if !__MonoCS__
+		[DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "SendMessage")]
+		private static extern int SendMessageWindows(IntPtr hWnd, int msg, int wParam, ref POINT lParam);
+
 		/// <summary></summary>
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern void SendMessage(IntPtr hWnd, LVMsgs msg, int wParam, ref LVITEM lParam);
-#else
-		// TODO-Linux: Implement if needed
 		public static void SendMessage(IntPtr hWnd, LVMsgs msg, int wParam, ref LVITEM lParam)
 		{
+			if (Platform.IsWindows)
+			{
+				SendMessageWindows(hWnd, msg, wParam, ref lParam);
+				return;
+			}
+
+			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method SendMessage");
 		}
-#endif
+		[DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "SendMessage")]
+		private static extern void SendMessageWindows(IntPtr hWnd, LVMsgs msg, int wParam, ref LVITEM lParam);
 
-#if !__MonoCS__
 		/// <summary></summary>
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern int SendMessage(IntPtr hWnd, HdrCtrlMsgs msg, int wParam, int lParam);
-#else
-		// TODO-Linux: Implement if needed
 		public static int SendMessage(IntPtr hWnd, HdrCtrlMsgs msg, int wParam, int lParam)
 		{
+			if (Platform.IsWindows)
+			{
+				return SendMessageWindows(hWnd, msg, wParam, lParam);
+			}
+
+			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method SendMessage");
 			return 0;
 		}
-#endif
 
-#if !__MonoCS__
+		[DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "SendMessage")]
+		private static extern int SendMessageWindows(IntPtr hWnd, HdrCtrlMsgs msg, int wParam, int lParam);
+
 		/// <summary></summary>
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern int SendMessage(IntPtr hWnd, int msg, int wParam, ref TBBUTTON lParam);
-#else
-		// TODO-Linux: Implement if needed
 		public static int SendMessage(IntPtr hWnd, int msg, int wParam, ref TBBUTTON lParam)
 		{
+			if (Platform.IsWindows)
+			{
+				return SendMessageWindows(hWnd, msg, wParam, ref lParam);
+			}
+
+			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method SendMessage");
 			return 0;
 		}
-#endif
 
-#if !__MonoCS__
+		[DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "SendMessage")]
+		private static extern int SendMessageWindows(IntPtr hWnd, int msg, int wParam, ref TBBUTTON lParam);
+
 		/// <summary></summary>
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern int SendMessage(IntPtr hWnd, int msg, int wParam, ref TBBUTTONINFO lParam);
-#else
-		// TODO-Linux: Implement if needed
 		public static int SendMessage(IntPtr hWnd, int msg, int wParam, ref TBBUTTONINFO lParam)
 		{
+			if (Platform.IsWindows)
+			{
+				return SendMessageWindows(hWnd, msg, wParam, ref lParam);
+			}
+
+			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method SendMessage");
 			return 0;
 		}
-#endif
 
-#if !__MonoCS__
+		[DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "SendMessage")]
+		private static extern int SendMessageWindows(IntPtr hWnd, int msg, int wParam, ref TBBUTTONINFO lParam);
+
 		/// <summary></summary>
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern int SendMessage(IntPtr hWnd, int msg, int wParam, ref REBARBANDINFO lParam);
-#else
-		// TODO-Linux: Implement if needed
 		public static int SendMessage(IntPtr hWnd, int msg, int wParam, ref REBARBANDINFO lParam)
 		{
+			if (Platform.IsWindows)
+			{
+				return SendMessageWindows(hWnd, msg, wParam, ref lParam);
+			}
+
+			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method SendMessage");
 			return 0;
 		}
-#endif
 
-#if !__MonoCS__
+		[DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "SendMessage")]
+		private static extern int SendMessageWindows(IntPtr hWnd, int msg, int wParam, ref REBARBANDINFO lParam);
+
 		/// <summary></summary>
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern int SendMessage(IntPtr hWnd, int msg, int wParam, ref RBHITTESTINFO lParam);
-#else
-		// TODO-Linux: Implement if needed
 		public static int SendMessage(IntPtr hWnd, int msg, int wParam, ref RBHITTESTINFO lParam)
 		{
+			if (Platform.IsWindows)
+			{
+				return SendMessageWindows(hWnd, msg, wParam, ref lParam);
+			}
+
+			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method SendMessage");
 			return 0;
 		}
-#endif
+
+		[DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "SendMessage")]
+		private static extern int SendMessageWindows(IntPtr hWnd, int msg, int wParam, ref RBHITTESTINFO lParam);
 
 		/// <summary/>
-#if !__MonoCS__
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern bool PeekMessage(ref MSG msg, IntPtr hWnd, uint wFilterMin, uint wFilterMax, uint wFlag);
-#else
-		// TODO-Linux: Implement if needed
 		public static bool PeekMessage(ref MSG msg, IntPtr hWnd, uint wFilterMin, uint wFilterMax, uint wFlag)
 		{
+			if (Platform.IsWindows)
+			{
+				return PeekMessageWindows(ref msg, hWnd, wFilterMin, wFilterMax, wFlag);
+			}
+
+			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method PeekMessage");
 			return false;
 		}
-#endif
+
+		[DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "PeekMessage")]
+		private static extern bool PeekMessageWindows(ref MSG msg, IntPtr hWnd, uint wFilterMin, uint wFilterMax, uint wFlag);
 
 		/// <summary/>
-#if !__MonoCS__
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern bool TranslateMessage(ref MSG msg);
-#else
-		// TODO-Linux: Implement if needed
 		public static bool TranslateMessage(ref MSG msg)
 		{
+			if (Platform.IsWindows)
+			{
+				return TranslateMessageWindows(ref msg);
+			}
+
+			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method TranslateMessage");
 			return false;
 		}
-#endif
+
+		[DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "TranslateMessage")]
+		private static extern bool TranslateMessageWindows(ref MSG msg);
 
 		/// <summary/>
-#if !__MonoCS__
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern bool DispatchMessage(ref MSG msg);
-#else
-		// TODO-Linux: Implement if needed
 		public static bool DispatchMessage(ref MSG msg)
 		{
+			if (Platform.IsWindows)
+			{
+				return DispatchMessageWindows(ref msg);
+			}
+
+			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method DispatchMessage");
 			return false;
 		}
-#endif
+
+		[DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "DispatchMessage")]
+		private static extern bool DispatchMessageWindows(ref MSG msg);
 
 		/// <summary/>
-#if !__MonoCS__
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern bool IsDialogMessage(IntPtr hWnd, ref MSG msg);
-#else
-		// TODO-Linux: Implement if needed
 		public static bool IsDialogMessage(IntPtr hWnd, ref MSG msg)
 		{
+			if (Platform.IsWindows)
+			{
+				return IsDialogMessageWindows(hWnd, ref msg);
+			}
+
+			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method IsDialogMessage");
 			return false;
 		}
-#endif
+
+		[DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "IsDialogMessage")]
+		private static extern bool IsDialogMessageWindows(IntPtr hWnd, ref MSG msg);
 
 		/// <summary/>
 		public static bool PostMessage(IntPtr hWnd, WinMsgs msg, int wParam, int lParam)
@@ -1332,12 +1369,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary/>
-#if !__MonoCS__
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern bool PostMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
-#else
-		private static MethodInfo s_postMessage;
 		public static bool PostMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
+		{
+			return Platform.IsWindows ? PostMessageWindows(hWnd, msg, wParam, lParam) : PostMessageLinux(hWnd, msg, wParam, lParam);
+		}
+
+		[DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "PostMessage")]
+		private static extern bool PostMessageWindows(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+
+		private static MethodInfo s_postMessage;
+
+		public static bool PostMessageLinux(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
 		{
 			if (s_postMessage == null)
 			{
@@ -1348,42 +1390,56 @@ namespace SIL.FieldWorks.Common.FwUtils
 					new Type[] { typeof(IntPtr), enumType, typeof(IntPtr), typeof(IntPtr) },
 					null);
 			}
-			return (bool)s_postMessage.Invoke(null, new object[] {hWnd, (int)msg, wParam, lParam});
+			return (bool)s_postMessage.Invoke(null, new object[] { hWnd, (int)msg, wParam, lParam });
 		}
-#endif
 
-#if !__MonoCS__
 		/// <summary></summary>
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern bool PostThreadMessage(int idThread, int msg, uint wParam, uint lParam);
-#else
-		// TODO-Linux: Implement if needed
 		public static bool PostThreadMessage(int idThread, int msg, uint wParam, uint lParam)
 		{
+			if (Platform.IsWindows)
+			{
+				return PostThreadMessageWindows(idThread, msg, wParam, lParam);
+			}
+
+			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method PostThreadMessage");
 			return false;
 		}
-#endif
 
-#if !__MonoCS__
-		/// <summary></summary>
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern IntPtr GetDlgItem(IntPtr hDlg, int nControlID);
-#else
-		// TODO-Linux: Implement if needed
+		[DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "PostThreadMessage")]
+		private static extern bool PostThreadMessageWindows(int idThread, int msg, uint wParam, uint lParam);
+
+		/// <summary/>
 		public static IntPtr GetDlgItem(IntPtr hDlg, int nControlID)
 		{
+			if (Platform.IsWindows)
+			{
+				return GetDlgItemWindows(hDlg, nControlID);
+			}
+
+			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method GetDlgItem");
 			return IntPtr.Zero;
 		}
-#endif
 
-#if !__MonoCS__
-		/// <summary></summary>
-		[DllImport("user32.dll", ExactSpelling = true, CharSet = CharSet.Auto)]
-		public static extern IntPtr GetParent(IntPtr hWnd);
-#else
+		[DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "GetDlgItem")]
+		private static extern IntPtr GetDlgItemWindows(IntPtr hDlg, int nControlID);
+
+		/// <summary/>
 		public static IntPtr GetParent(IntPtr hWnd)
+		{
+			if (Platform.IsWindows)
+			{
+				return GetParentWindows(hWnd);
+			}
+
+			return GetParentLinux(hWnd);
+		}
+
+		[DllImport("user32.dll", ExactSpelling = true, CharSet = CharSet.Auto, EntryPoint = "GetParent")]
+		private static extern IntPtr GetParentWindows(IntPtr hWnd);
+
+		private static IntPtr GetParentLinux(IntPtr hWnd)
 		{
 			System.Windows.Forms.Control temp = System.Windows.Forms.Panel.FromHandle(hWnd);
 			if (temp != null && temp.Parent != null)
@@ -1391,14 +1447,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			return IntPtr.Zero;
 		}
-#endif
 
-#if !__MonoCS__
-		/// <summary></summary>
-		[DllImport("user32.dll")]
-		public static extern bool SetForegroundWindow(IntPtr hWnd);
-#else
+
+		/// <summary/>
 		public static bool SetForegroundWindow(IntPtr hWnd)
+		{
+			if (Platform.IsWindows)
+			{
+				return SetForegroundWindowWindows(hWnd);
+			}
+
+			return SetForegroundWindowLinux(hWnd);
+		}
+
+		[DllImport("user32.dll", EntryPoint = "SetForegroundWindow")]
+		private static extern bool SetForegroundWindowWindows(IntPtr hWnd);
+
+		private static bool SetForegroundWindowLinux(IntPtr hWnd)
 		{
 			System.Windows.Forms.Control temp = System.Windows.Forms.Panel.FromHandle(hWnd);
 			if (temp != null)
@@ -1409,26 +1474,38 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			return false;
 		}
-#endif
 
-#if !__MonoCS__
-		/// <summary></summary>
-		[DllImport("user32.dll")]
-		public static extern bool SetForegroundWindow(int hWnd);
-#else
-		// TODO-Linux: Implement if needed
+		/// <summary/>
 		public static bool SetForegroundWindow(int hWnd)
 		{
+			if (Platform.IsWindows)
+			{
+				return SetForegroundWindowWindows(hWnd);
+			}
+
+			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method SetForegroundWindow");
 			return false;
 		}
-#endif
-#if !__MonoCS__
-		/// <summary></summary>
-		[DllImport("user32.dll")]
-		public static extern bool GetWindowRect(IntPtr hWnd, out Rect rect);
-#else
+
+		[DllImport("user32.dll", EntryPoint = "SetForegroundWindow")]
+		private static extern bool SetForegroundWindowWindows(int hWnd);
+
+		/// <summary/>
 		public static bool GetWindowRect(IntPtr hWnd, out Rect rect)
+		{
+			if (Platform.IsWindows)
+			{
+				return GetWindowRectWindows(hWnd, out rect);
+			}
+
+			return GetWindowRectLinux(hWnd, out rect);
+		}
+
+		[DllImport("user32.dll", EntryPoint = "GetWindowRect")]
+		private static extern bool GetWindowRectWindows(IntPtr hWnd, out Rect rect);
+
+		private static bool GetWindowRectLinux(IntPtr hWnd, out Rect rect)
 		{
 			System.Windows.Forms.Control temp = System.Windows.Forms.Panel.FromHandle(hWnd);
 			if (temp != null)
@@ -1436,151 +1513,177 @@ namespace SIL.FieldWorks.Common.FwUtils
 				rect = new Rect(temp.Location.X, temp.Location.Y, temp.Location.X + temp.Size.Width, temp.Location.Y + temp.Size.Height);
 				return true;
 			}
-			rect = new Rect(0,0,0,0);
+			rect = new Rect(0, 0, 0, 0);
 			return false;
 		}
-#endif
-#if !__MonoCS__
-		/// <summary></summary>
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern IntPtr GetFocus();
-#else
-		private static MethodInfo s_getFocus;
+
+		/// <summary/>
 		public static IntPtr GetFocus()
+		{
+			if (Platform.IsWindows)
+				return GetFocusWindows();
+
+			return GetFocusLinux();
+		}
+
+		[DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "GetFocus")]
+		private static extern IntPtr GetFocusWindows();
+
+		private static MethodInfo s_getFocus;
+		private static IntPtr GetFocusLinux()
 		{
 			if (s_getFocus == null)
 				s_getFocus = XplatUI.GetMethod("GetFocus",
-					System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static,
+					BindingFlags.NonPublic | BindingFlags.Static,
 					null, Type.EmptyTypes, null);
 			return (IntPtr)s_getFocus.Invoke(null, null);
 
 		}
-#endif
 
 		/// <summary></summary>
 		public delegate IntPtr HookProc(int nCode, IntPtr wParam, IntPtr lParam);
-#if !__MonoCS__
-		/// <summary></summary>
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern IntPtr SetWindowsHookEx(int hookid, HookProc pfnhook, IntPtr hinst, int threadid);
-#else
-		// TODO-Linux: Implement if needed
-		public static IntPtr SetWindowsHookEx(int hookid, HookProc pfnhook, IntPtr hinst, int threadid)
+
+		/// <summary/>
+		public static IntPtr SetWindowsHookEx(int hookid, HookProc pfnhook, IntPtr hinst,
+			int threadid)
 		{
+			if (Platform.IsWindows)
+				return SetWindowsHookExWindows(hookid, pfnhook, hinst, threadid);
+
+			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method SetWindowsHookEx");
 			return IntPtr.Zero;
 		}
-#endif
-#if !__MonoCS__
-		/// <summary></summary>
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern bool GetWindowPlacement(IntPtr hWnd, out WINDOWPLACEMENT lpwndpl);
-#else
-		// TODO-Linux: Implement if needed
+
+		[DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "SetWindowsHookEx")]
+		private static extern IntPtr SetWindowsHookExWindows(int hookid, HookProc pfnhook, IntPtr hinst, int threadid);
+
+		/// <summary/>
 		public static bool GetWindowPlacement(IntPtr hWnd, out WINDOWPLACEMENT lpwndpl)
 		{
+			if (Platform.IsWindows)
+				return GetWindowPlacementWindows(hWnd, out lpwndpl);
+
 			Console.WriteLine("Warning using unimplemented method GetWindowPlacement");
 			lpwndpl = new WINDOWPLACEMENT();
 			return false;
 		}
-#endif
-#if !__MonoCS__
-		/// <summary></summary>
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern bool SetWindowPlacement(IntPtr hWnd, ref WINDOWPLACEMENT lParam);
-#else
-		// TODO-Linux: Implement if needed
+
+		[DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "GetWindowPlacement")]
+		private static extern bool GetWindowPlacementWindows(IntPtr hWnd, out WINDOWPLACEMENT lpwndpl);
+
+		/// <summary/>
 		public static bool SetWindowPlacement(IntPtr hWnd, ref WINDOWPLACEMENT lParam)
 		{
+			if (Platform.IsWindows)
+				return SetWindowPlacementWindows(hWnd, ref lParam);
+
+			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method SetWindowPlacement");
 			return false;
 		}
-#endif
-#if !__MonoCS__
-		/// <summary></summary>
-		[DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
-		public static extern bool UnhookWindowsHookEx(IntPtr hhook);
-#else
-		// TODO-Linux: Implement if needed
+
+		[DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "SetWindowPlacement")]
+		private static extern bool SetWindowPlacementWindows(IntPtr hWnd, ref WINDOWPLACEMENT lParam);
+
+		/// <summary/>
 		public static bool UnhookWindowsHookEx(IntPtr hhook)
 		{
+			if (Platform.IsWindows)
+				return UnhookWindowsHookExWindows(hhook);
+
+			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method UnhookWindowsHookEx");
 			return false;
 		}
-#endif
-#if !__MonoCS__
-		/// <summary></summary>
-		[DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
-		public static extern IntPtr CallNextHookEx(IntPtr hhook, int code, IntPtr wparam, IntPtr lparam);
-#else
-		// TODO-Linux: Implement if needed
+
+		[DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true, EntryPoint = "UnhookWindowsHookEx")]
+		private static extern bool UnhookWindowsHookExWindows(IntPtr hhook);
+
+		/// <summary/>
 		public static IntPtr CallNextHookEx(IntPtr hhook, int code, IntPtr wparam, IntPtr lparam)
 		{
+			if (Platform.IsWindows)
+				return CallNextHookExWindows(hhook, code, wparam, lparam);
+
+			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method CallNextHookEx");
 			return IntPtr.Zero;
 		}
-#endif
-#if !__MonoCS__
-		/// <summary></summary>
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern IntPtr SetParent(IntPtr hChild, IntPtr hParent);
-#else
-		// TODO-Linux: Implement if needed
+
+		[DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true, EntryPoint = "CallNextHookEx")]
+		private static extern IntPtr CallNextHookExWindows(IntPtr hhook, int code, IntPtr wparam, IntPtr lparam);
+
+		/// <summary/>
 		public static IntPtr SetParent(IntPtr hChild, IntPtr hParent)
 		{
+			if (Platform.IsWindows)
+				return SetParentWindows(hChild, hParent);
+
+			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method SetParent");
 			return IntPtr.Zero;
 		}
-#endif
-#if !__MonoCS__
+
+		[DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "SetParent")]
+		private static extern IntPtr SetParentWindows(IntPtr hChild, IntPtr hParent);
+
 		/// <summary>The MenuItemFromPoint function determines which menu item, if any, is at the
 		/// specified location.</summary>
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern int MenuItemFromPoint(IntPtr hWnd, IntPtr hMenu, Point ptScreen);
-#else
-		// TODO-Linux: Implement if needed
 		public static int MenuItemFromPoint(IntPtr hWnd, IntPtr hMenu, Point ptScreen)
 		{
+			if (Platform.IsWindows)
+				return MenuItemFromPointWindows(hWnd, hMenu, ptScreen);
+
+			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method MenuItemFromPoint");
 			return 0;
 		}
-#endif
-#if !__MonoCS__
+
+		[DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "MenuItemFromPoint")]
+		private static extern int MenuItemFromPointWindows(IntPtr hWnd, IntPtr hMenu, Point ptScreen);
+
 		/// <summary>The EndMenu function ends the calling thread's active menu.</summary>
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern bool EndMenu();
-#else
-		// TODO-Linux: Implement if needed
 		public static bool EndMenu()
 		{
+			if (Platform.IsWindows)
+				return EndMenuWindows();
+
+			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method EndMenu");
 			return false;
 		}
-#endif
-#if !__MonoCS__
+
+		[DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "EndMenu")]
+		private static extern bool EndMenuWindows();
+
 		/// <summary> go from client to screen</summary>
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern bool ClientToScreen(IntPtr hWnd, ref POINT ptScreen);
-#else
-		// TODO-Linux: Implement if neededs
 		public static bool ClientToScreen(IntPtr hWnd, ref POINT ptScreen)
 		{
+			if (Platform.IsWindows)
+				return ClientToScreenWindows(hWnd, ref ptScreen);
+
+			// TODO-Linux: Implement if neededs
 			Console.WriteLine("Warning using unimplemented method ClientToScreen");
 			return false;
 		}
-#endif
-#if !__MonoCS__
+
+		[DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "ClientToScreen")]
+		private static extern bool ClientToScreenWindows(IntPtr hWnd, ref POINT ptScreen);
+
 		/// <summary> go from screen to client</summary>
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern bool ScreenToClient(IntPtr hWnd, ref POINT ptScreen);
-#else
-		// TODO-Linux: Implement if needed
 		public static bool ScreenToClient(IntPtr hWnd, ref POINT ptScreen)
 		{
+			if (Platform.IsWindows)
+				return ScreenToClientWindows(hWnd, ref ptScreen);
+
+			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method ScreenToClient");
 			return false;
 		}
-#endif
+
+		[DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "ScreenToClient")]
+		private static extern bool ScreenToClientWindows(IntPtr hWnd, ref POINT ptScreen);
 
 		/// <summary>The RegisterWindowMessage function defines a new window message that is
 		/// guaranteed to be unique throughout the system. The message value can be used when
@@ -1588,17 +1691,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="name">unique name of a message</param>
 		/// <returns>message identifier in the range 0xC000 through 0xFFFF, or 0 if an error
 		/// occurs</returns>
-#if !__MonoCS__
-		[DllImport("user32.dll")]
-		public static extern uint RegisterWindowMessage(string name);
-#else
-		// TODO-Linux: Implement if needed
-		static public uint RegisterWindowMessage(string name)
+		public static uint RegisterWindowMessage(string name)
 		{
+			if (Platform.IsWindows)
+				return RegisterWindowMessageWindows(name);
+
+			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method RegisterWindowMessage");
 			return 0;
 		}
-#endif
+
+		[DllImport("user32.dll", EntryPoint = "RegisterWindowMessage")]
+		private static extern uint RegisterWindowMessageWindows(string name);
 
 		/// <summary></summary>
 		public const int GWL_STYLE = -16;
@@ -1616,17 +1720,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns>If the function succeeds, the return value is the requested value. If the
 		/// function fails, the return value is zero.</returns>
 		/// ------------------------------------------------------------------------------------
-#if !__MonoCS__
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern int GetWindowLong(HandleRef hWnd, int nIndex);
-#else
-		// TODO-Linux: Implement if needed
 		public static int GetWindowLong(HandleRef hWnd, int nIndex)
 		{
+			if (Platform.IsWindows)
+				return GetWindowLongWindows(hWnd, nIndex);
+
+			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method GetWindowLong");
 			return 0;
 		}
-#endif
+
+		[DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "GetWindowLong")]
+		private static extern int GetWindowLongWindows(HandleRef hWnd, int nIndex);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1635,20 +1740,21 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="hWnd">The window handle.</param>
 		/// <param name="nIndex">Specifies the zero-based offset to the value to be set.</param>
 		/// <param name="dwNewLong">Specifies the replacement value. </param>
-		/// <returns>If the function succeeds, the return value is the previous value of the
+		/// <returns>If the function succeeds, the return value the previous value of the
 		/// specified offset. If the function fails, the return value is zero. </returns>
 		/// ------------------------------------------------------------------------------------
-#if !__MonoCS__
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern int SetWindowLong(HandleRef hWnd, int nIndex, int dwNewLong);
-#else
-		// TODO-Linux: Implement if needed
 		public static int SetWindowLong(HandleRef hWnd, int nIndex, int dwNewLong)
 		{
+			if (Platform.IsWindows)
+				return SetWindowLongWindows(hWnd, nIndex, dwNewLong);
+
+			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method SetWindowLong");
 			return 0;
 		}
-#endif
+
+		[DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "SetWindowLong")]
+		private static extern int SetWindowLongWindows(HandleRef hWnd, int nIndex, int dwNewLong);
 
 		#region MessageBeep
 		/// <summary>
@@ -1835,22 +1941,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 			out ulong lpFreeBytesAvailable, out ulong lpTotalNumberOfBytes, out ulong lpTotalNumberOfFreeBytes);
 
 		/// <summary></summary>
-#if !__MonoCS__
-		[DllImport("kernel32.dll", ExactSpelling = true, CharSet = CharSet.Auto)]
-		public static extern int GetCurrentThreadId();
-#else
 		public static int GetCurrentThreadId()
 		{
+			if (Platform.IsWindows)
+				return GetCurrentThreadIdWindows();
+
 			return System.Threading.Thread.CurrentThread.ManagedThreadId;
 		}
-#endif
+
+		[DllImport("kernel32.dll", ExactSpelling = true, CharSet = CharSet.Auto, EntryPoint = "GetCurrentThreadId")]
+		private static extern int GetCurrentThreadIdWindows();
+
 		/// <summary></summary>
-#if !__MonoCS__
-		[DllImport("user32.dll", ExactSpelling = true, CharSet = CharSet.Auto)]
-		public static extern int GetWindowThreadProcessId(IntPtr hwnd, out int procID);
-#else
 		public static int GetWindowThreadProcessId(IntPtr hwnd, out int procID)
 		{
+			if (Platform.IsWindows)
+				return GetWindowThreadProcessIdWindows(hwnd, out procID);
+
 			using (var process = System.Diagnostics.Process.GetCurrentProcess())
 			{
 				procID = process.Id;
@@ -1858,22 +1965,31 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
-		[DllImport ("libc")]
+		[DllImport("user32.dll", ExactSpelling = true, CharSet = CharSet.Auto, EntryPoint = "GetWindowThreadProcessId")]
+		private static extern int GetWindowThreadProcessIdWindows(IntPtr hwnd, out int procID);
+
+		[DllImport("libc")]
 		private static extern int readlink(string path, byte[] buffer, int buflen);
-#endif
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the name of the executable
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-#if !__MonoCS__
-		[DllImport("kernel32.dll", SetLastError = true)]
+		public static uint GetModuleFileName(IntPtr hModule, StringBuilder lpFilename, int nSize)
+		{
+			if (Platform.IsWindows)
+				return GetModuleFileNameWindows(hModule, lpFilename, nSize);
+
+			return GetModuleFileNameLinux(hModule, lpFilename, nSize);
+		}
+
+		[DllImport("kernel32.dll", SetLastError = true, EntryPoint = "GetModuleFileName")]
 		[PreserveSig]
-		public static extern uint GetModuleFileName(IntPtr hModule, [Out]StringBuilder lpFilename,
+		private static extern uint GetModuleFileNameWindows(IntPtr hModule, [Out]StringBuilder lpFilename,
 			[MarshalAs(UnmanagedType.U4)]int nSize);
-#else
-		public static uint GetModuleFileName(IntPtr hModule, StringBuilder lpFilename,
+
+		private static uint GetModuleFileNameLinux(IntPtr hModule, StringBuilder lpFilename,
 			int nSize)
 		{
 			if (hModule != IntPtr.Zero)
@@ -1888,7 +2004,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			lpFilename.Append(new String(cbuf, 0, nChars));
 			return (uint)nChars;
 		}
-#endif
 
 		#region Synchronization
 		/// ------------------------------------------------------------------------------------
@@ -1912,64 +2027,28 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		public const UInt32 WAIT_OBJECT_0 = 0;
 
-#if false // there are no usages of Create- or ReleaseSemaphore
-		/// <summary/>
-#if !__MonoCS__
-		[DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-		public static extern IntPtr CreateSemaphore(ref SecurityAttributes securityAttributes,
-			long initialCount, long maximumCount, string name);
-#else
-		// TODO-Linux: Implement if needed
-		public static IntPtr CreateSemaphore(ref SecurityAttributes securityAttributes,
-			int initialCount, int maximumCount, string name)
-		{
-			Console.WriteLine("Warning using unimplemented method CreateSemaphore");
-			return IntPtr.Zero;
-		}
-#endif
 		/// ------------------------------------------------------------------------------------
 		/// <summary></summary>
 		/// ------------------------------------------------------------------------------------
-#if !__MonoCS__
-		[DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-		public static extern bool ReleaseSemaphore(IntPtr semaphore, long releaseCount,
-			out int previousCount);
-#else
-		// TODO-Linux: Implement if needed
-		public static bool ReleaseSemaphore(IntPtr semaphore, int releaseCount,
-			out int previousCount)
-		{
-			Console.WriteLine("Warning using unimplemented method ReleaseSemaphore");
-			previousCount = 0;
-			return false;
-		}
-#endif
-#endif // false
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary></summary>
-		/// ------------------------------------------------------------------------------------
-#if !__MonoCS__
-		[DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-		public static extern uint WaitForSingleObject(IntPtr handle, uint milliseconds);
-#else
-		// TODO-Linux: Implement if needed
 		public static uint WaitForSingleObject(IntPtr handle, uint milliseconds)
 		{
+			if (Platform.IsWindows)
+				return WaitForSingleObjectWindows(handle, milliseconds);
+
+			// TODO-Linux: Implement if needed
 			Console.WriteLine("Warning using unimplemented method WaitForSingleObject");
 			return 0;
 		}
-#endif
 
-#if __MonoCS__
-#pragma warning restore 1591 // missing XML comment
-#endif
-#endregion
+		[DllImport("kernel32.dll", CharSet = CharSet.Auto, EntryPoint = "WaitForSingleObject")]
+		private static extern uint WaitForSingleObjectWindows(IntPtr handle, uint milliseconds);
+
+		#endregion
 
 
-#endregion
+		#endregion
 
-#region Comctl32.dll
+		#region Comctl32.dll
 		/// <summary></summary>
 		[DllImport("comctl32.dll")]
 		public static extern bool InitCommonControlsEx(INITCOMMONCONTROLSEX icc);
@@ -2811,9 +2890,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			I_IMAGENONE = -2
 		}
 
-#endregion
+		#endregion
 
-#region Ole32.dll
+		#region Ole32.dll
 		/// <summary>
 		/// Carries out the clipboard shutdown sequence. It also releases the <c>IDataObject</c>
 		/// pointer that was previously placed on the clipboard.
@@ -2830,9 +2909,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns><c>true</c> if object still on the clipboard.</returns>
 		[DllImport("ole32.dll")]
 		public static extern bool OleIsCurrentClipboard([MarshalAs(UnmanagedType.IUnknown)]object pDataObject);
-#endregion
+		#endregion
 
-#region Shell32.dll
+		#region Shell32.dll
 
 		/// <summary></summary>
 		public enum LVNotifications
@@ -3271,15 +3350,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 			NM_RELEASEDCAPTURE = (NM_FIRST - 16)
 		}
 
-#endregion
+		#endregion
 
-#region Imm32.dll
+		#region Imm32.dll
 
 		/// <summary>
 		/// These values are used with the ImmGetConversionStatus and ImmSetConversionStatus functions.
 		/// </summary>
 		[Flags]
-		public enum IME_CMODE: uint
+		public enum IME_CMODE : uint
 		{
 			/// <summary>Alphanumeric input mode. This is the default.</summary>
 			ALPHANUMERIC = 0x0000,
@@ -3287,7 +3366,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			NATIVE = 0x0001,
 			/// <summary>Set to 1 if KATAKANA mode; 0 if HIRAGANA mode.</summary>
 			KATAKANA = 0x0002,  // only effect under IME_CMODE_NATIVE
-			/// <summary>Set to 1 if full shape mode; 0 if half shape mode.</summary>
+								/// <summary>Set to 1 if full shape mode; 0 if half shape mode.</summary>
 			FULLSHAPE = 0x0008,
 			/// <summary>Set to 1 if ROMAN input mode; 0 if not.</summary>
 			ROMAN = 0x0010,
@@ -3329,7 +3408,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// The application must call ImmReleaseContext when it is finished with the input
 		/// context.</remarks>
 		/// ------------------------------------------------------------------------------------
-		[DllImport("imm32.dll", CharSet=CharSet.Auto)]
+		[DllImport("imm32.dll", CharSet = CharSet.Auto)]
 		public static extern IntPtr ImmGetContext(HandleRef hWnd);
 
 		/// ------------------------------------------------------------------------------------
@@ -3355,7 +3434,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="sentenceMode">The sentence mode value.</param>
 		/// <returns><c>true</c> if the method succeeded, otherwise <c>false</c>.</returns>
 		/// ------------------------------------------------------------------------------------
-		[DllImport("imm32.dll", CharSet=CharSet.Auto)]
+		[DllImport("imm32.dll", CharSet = CharSet.Auto)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		public static extern bool ImmGetConversionStatus(HandleRef context, out int conversionMode,
 			out int sentenceMode);
@@ -3374,7 +3453,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[return: MarshalAs(UnmanagedType.Bool)]
 		public static extern bool ImmSetConversionStatus(HandleRef context, int conversionMode,
 			int sentenceMode);
-#endregion
+		#endregion
 
 		/// <summary></summary>
 		public const int SPI_GETNONCLIENTMETRICS = 41;
@@ -3390,7 +3469,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			ncm.cbSize = Marshal.SizeOf(typeof(NONCLIENTMETRICS));
 			try
 			{
-				bool result = SystemParametersInfo(SPI_GETNONCLIENTMETRICS, ncm.cbSize, ref ncm, 0);
+				bool result = !Platform.IsWindows || SystemParametersInfo(SPI_GETNONCLIENTMETRICS, ncm.cbSize, ref ncm, 0);
 				//int lastError = Marshal.GetLastWin32Error();
 				return (result ? Font.FromLogFont(ncm.lfCaptionFont) : null);
 			}
@@ -3399,7 +3478,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return null;
 		}
 
-#region gdi32.dll
+		#region gdi32.dll
 
 		[DllImport("gdi32.dll")]
 		internal static extern uint GetFontUnicodeRanges(IntPtr hdc, IntPtr lpgs);
@@ -3446,7 +3525,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				for (int i = 0; i < count; i++)
 				{
 					var range = new FontRange
-						{ Low = (ushort)Marshal.ReadInt16(glyphSet, 16 + i * 4) };
+					{ Low = (ushort)Marshal.ReadInt16(glyphSet, 16 + i * 4) };
 					range.High = (ushort)(range.Low + Marshal.ReadInt16(glyphSet, 18 + i * 4) - 1);
 					fontRanges.Add(range);
 				}
@@ -3472,13 +3551,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 			if (str == null)
 				return false;
 
-#if !__MonoCS__ // TODO-Linux FWNX-159: port
+			if (Platform.IsMono)
+			{
+				// TODO-Linux FWNX-159: port
+				Console.WriteLine("Using unimplemented method AreCharGlyphsInFont");
+				return true;
+			}
+
 			foreach (char chr in str)
 			{
 				if (!IsCharGlyphInFont(chr, fnt))
 					return false;
 			}
-#endif
 
 			return true;
 		}
@@ -3509,14 +3593,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var intval = Convert.ToUInt16(chr);
 			var ranges = GetUnicodeRangesForFont(fnt);
 			return ranges.Any(range => intval >= range.Low && intval <= range.High);
-			}
-
-#endregion
 		}
 
-#endregion
+		#endregion
+	}
 
-#region class LogicalFont
+	#endregion
+
+	#region class LogicalFont
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Defines a class for holding info about a logical font.
@@ -3580,5 +3664,5 @@ namespace SIL.FieldWorks.Common.FwUtils
 			get { return lfCharSet == (byte)TextMetricsCharacterSet.Symbol; }
 		}
 	}
-#endregion
+	#endregion
 }

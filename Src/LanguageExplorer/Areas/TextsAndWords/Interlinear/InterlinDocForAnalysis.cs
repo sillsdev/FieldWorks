@@ -21,6 +21,7 @@ using SIL.LCModel.Application;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -547,12 +548,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);
-#if !__MonoCS__ // FWNX-419
+
+			if (Platform.IsMono)
+			{
+				return;
+			}
+
+			// FWNX-419
 			if (!MouseMoveSuppressed && IsFocusBoxInstalled)
 			{
 				MoveFocusBoxIntoPlace(true);
 			}
-#endif
 		}
 
 		/// <summary>
@@ -2093,11 +2099,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				Rectangle rcSrcRoot;
 				Rectangle rcDstRoot;
 				GetCoordRects(out rcSrcRoot, out rcDstRoot);
-#if __MonoCS__
-				// Adjust the destination to the original scroll position.  This completes
-				// the fix for FWNX-794/851.
-				rcDstRoot.Location = m_ptScrollPos;
-#endif
+
+				if (Platform.IsMono)
+				{
+					// Adjust the destination to the original scroll position.  This completes
+					// the fix for FWNX-794/851.
+					rcDstRoot.Location = m_ptScrollPos;
+				}
 				var sel = RootBox.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, false);
 				if (sel == null || !HandleClickSelection(sel, false, false))
 				{
@@ -2106,7 +2114,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-#if __MonoCS__
 		/// <summary>
 		/// The Mono runtime changes the scroll position to the currently existing control
 		/// before passing on to the OnMouseDown method.  This works fine for statically defined
@@ -2124,15 +2131,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// to compile FieldWorks.
 		/// </remarks>
 		private Point m_ptScrollPos;
-#endif
 
 		public override void OriginalWndProc(ref Message msg)
 		{
-#if __MonoCS__
-			// When handling a left mouse button down event, save the original scroll position.
-			if (msg.Msg == (int)Win32.WinMsgs.WM_LBUTTONDOWN)
-				m_ptScrollPos = AutoScrollPosition;
-#endif
+			if (Platform.IsMono)
+			{
+				// When handling a left mouse button down event, save the original scroll position.
+				if (msg.Msg == (int)Win32.WinMsgs.WM_LBUTTONDOWN)
+				{
+					m_ptScrollPos = AutoScrollPosition;
+				}
+			}
 			base.OriginalWndProc(ref msg);
 		}
 
@@ -2428,7 +2437,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						var analyses = navigator.GetAnalysisOccurrencesAdvancingInStText().ToList();
 						foreach (var occ in analyses)
 						{   // This could be punctuation or any kind of analysis.
-							IAnalysis occAn = occ.Analysis; // averts “Access to the modified closure” warning in resharper
+							IAnalysis occAn = occ.Analysis; // averts â€œAccess to the modified closureâ€ warning in resharper
 							if (occAn is IWfiAnalysis || occAn is IWfiWordform)
 							{   // this is an analysis or a wordform
 								int hvo = Vc.GetGuess(occAn);

@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -46,7 +47,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed { get; private set;}
+		public bool IsDisposed { get; private set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -117,7 +118,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 #if DEBUG
 			if (m_DebugReport != null)
 			{
-					//m_DebugReport.ClearSink();
 				Marshal.ReleaseComObject(m_DebugReport);
 				m_DebugReport = null;
 			}
@@ -161,15 +161,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Gets the name of the executable
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-#if !__MonoCS__
-		[DllImport("kernel32.dll", SetLastError = true)]
+		[DllImport("kernel32.dll", SetLastError = true, EntryPoint = "GetModuleFileName")]
 		[PreserveSig]
-		private static extern uint GetModuleFileName(IntPtr hModule, [Out]StringBuilder lpFilename,
-		[MarshalAs(UnmanagedType.U4)]int nSize);
-#else
+		private static extern uint GetModuleFileNameWindows(IntPtr hModule, [Out]StringBuilder lpFilename,
+			[MarshalAs(UnmanagedType.U4)]int nSize);
+
 		private static uint GetModuleFileName(IntPtr hModule, StringBuilder lpFilename,
 			int nSize)
 		{
+			if (Platform.IsWindows)
+				return GetModuleFileNameWindows(hModule, lpFilename, nSize);
+
 			if (hModule != IntPtr.Zero)
 				return 0; // not supported (yet)
 
@@ -183,9 +185,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return (uint)nChars;
 		}
 
-		[DllImport ("libc")]
+		[DllImport("libc")]
 		private static extern int readlink(string path, byte[] buffer, int buflen);
-#endif
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -232,23 +233,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 					bldr.Append("...");
 					bldr.AppendLine(nameOnly);
 				}
-				else if ((availLength - availLength/3) > (filePath.Length - nameOnly.Length))
+				else if ((availLength - availLength / 3) > (filePath.Length - nameOnly.Length))
 				{
 					// path is smaller. keeping full path and putting ... in the
 					// middle of filename
-					bldr.Append(filePath.Substring(0, availLength - 3 - nameOnly.Length/2)); // "...".Length
+					bldr.Append(filePath.Substring(0, availLength - 3 - nameOnly.Length / 2)); // "...".Length
 					bldr.Append("...");
-					bldr.AppendLine(nameOnly.Substring(nameOnly.Length/2));
+					bldr.AppendLine(nameOnly.Substring(nameOnly.Length / 2));
 				}
 				else
 				{
 					// both path and filename are long. Using first part of path. Using first
 					// and last part of filename
-					bldr.Append(filePath.Substring(0, availLength - availLength/3 - 3)); // "...".Length
+					bldr.Append(filePath.Substring(0, availLength - availLength / 3 - 3)); // "...".Length
 					bldr.Append("...");
-					bldr.Append(nameOnly.Substring(1, availLength/6 - 1));
+					bldr.Append(nameOnly.Substring(1, availLength / 6 - 1));
 					bldr.Append("...");
-					bldr.AppendLine(nameOnly.Substring(nameOnly.Length - availLength/6 + 2));
+					bldr.AppendLine(nameOnly.Substring(nameOnly.Length - availLength / 6 + 2));
 				}
 			}
 			else
@@ -275,6 +276,5 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 #endif
 		#endregion
-
 	}
 }

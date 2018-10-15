@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2017 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using Microsoft.Win32;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.UnicodeCharEditor
 {
@@ -71,7 +72,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 		#endregion
 
-		private sealed class LogFileImpl: IDisposable
+		private sealed class LogFileImpl : IDisposable
 		{
 			#region private member variables
 			private readonly string m_sFileName;
@@ -101,25 +102,25 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 							if (useLogFile != null)
 							{
-								if (useLogFile.Substring(0, 1).ToUpperInvariant() == "T" ||	// true
-									useLogFile.Substring(0, 1).ToUpperInvariant() == "Y" ||	// yes
-									useLogFile == "1")								// 1
+								if (useLogFile.Substring(0, 1).ToUpperInvariant() == "T" || // true
+									useLogFile.Substring(0, 1).ToUpperInvariant() == "Y" || // yes
+									useLogFile == "1")                              // 1
 								{
 									Logging = true;
 									VerboseLogging = false;
 								}
 
-								if (useLogFile.Substring(0, 1).ToUpperInvariant() == "V")		// verbose
+								if (useLogFile.Substring(0, 1).ToUpperInvariant() == "V")       // verbose
 								{
 									Logging = true;
 									VerboseLogging = true;
 								}
 
-								if (Logging)	// logging is enabled
+								if (Logging)    // logging is enabled
 								{
 									m_sFileName = (string)regKey.GetValue("InstallLanguageLog");
 									if (m_sFileName != null)
-										m_file = new StreamWriter(m_sFileName, true) { AutoFlush = true};
+										m_file = new StreamWriter(m_sFileName, true) { AutoFlush = true };
 									else
 									{
 										Console.WriteLine(
@@ -136,22 +137,23 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				catch (Exception e)
 				{
 					Console.WriteLine(@"An error occurred: '{0}'", e);
-					m_sFileName = "";	// can't log with exception somewhere...
+					m_sFileName = "";   // can't log with exception somewhere...
 					Logging = false;
 				}
 			}
 
 			public void AddLineX(string line, bool echoToStdError)
 			{
-				var dateStamp = String.Format("[{0}] ", DateTime.Now);
+				var dateStamp = string.Format("[{0}] ", DateTime.Now);
 
 				//			// always log to the debug output window
 				//			System.Diagnostics.Debug.Write(dateStamp, "Log");
-#if !__MonoCS__
-				// TODO-Linux: this breaks unit test: InstallLanguageTests.IcuTests.TestInstallLanguage_argumentParser
-				// since System.Diagnostics.Debug goes to StdOut on Linux.
-				System.Diagnostics.Debug.WriteLine(line);
-#endif
+				if (Platform.IsWindows)
+				{
+					// TODO-Linux: this breaks unit test: InstallLanguageTests.IcuTests.TestInstallLanguage_argumentParser
+					// since System.Diagnostics.Debug goes to StdOut on Linux.
+					System.Diagnostics.Debug.WriteLine(line);
+				}
 
 				if (!Logging)
 					return;
@@ -175,13 +177,13 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			}
 
 			#region Disposable stuff
-			#if DEBUG
+#if DEBUG
 			/// <summary/>
 			~LogFileImpl()
 			{
 				Dispose(false);
 			}
-			#endif
+#endif
 
 			/// <summary/>
 			public void Dispose()

@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.DomainServices;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
@@ -191,12 +192,15 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public void UpdateForStyle(StyleInfo styleInfo)
 		{
-#if __MonoCS__
-			// On Mono, the sequence of events when changing styles can cause this to be
-			// called even when switching to a character style.  See FWNX-870.
-			if (!styleInfo.IsParagraphStyle)
-				return;
-#endif
+			if (Platform.IsMono)
+			{
+				// On Mono, the sequence of events when changing styles can cause this to be
+				// called even when switching to a character style.  See FWNX-870.
+				if (!styleInfo.IsParagraphStyle)
+				{
+					return;
+				}
+			}
 			// Don't allow controls to undo their inherited state while filling in
 			m_dontUpdateInheritance = true;
 			m_currentStyleInfo = styleInfo;
@@ -227,15 +231,15 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			m_cboSpecialIndentation.SetInheritableProp(styleInfo.IFirstLineIndent);
 			if (styleInfo.IFirstLineIndent.Value == 0)
 			{
-				m_cboSpecialIndentation.AdjustedSelectedIndex = 1;	// none
+				m_cboSpecialIndentation.AdjustedSelectedIndex = 1;  // none
 			}
 			else if (styleInfo.IFirstLineIndent.Value > 0)
 			{
-				m_cboSpecialIndentation.AdjustedSelectedIndex = 2;	// first line
+				m_cboSpecialIndentation.AdjustedSelectedIndex = 2;  // first line
 			}
 			else
 			{
-				m_cboSpecialIndentation.AdjustedSelectedIndex = 3;	// hanging
+				m_cboSpecialIndentation.AdjustedSelectedIndex = 3;  // hanging
 			}
 			m_nudIndentBy.ForeColor = GetCtrlForeColorForProp(styleInfo.IFirstLineIndent);
 			m_nudIndentBy.MeasureValue = Math.Abs(styleInfo.IFirstLineIndent.Value);
@@ -272,15 +276,15 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 			else
 			{
-				switch(info.m_lineHeight)
+				switch (info.m_lineHeight)
 				{
-					case 10000:	// single spacing
+					case 10000: // single spacing
 						m_cboLineSpacing.AdjustedSelectedIndex = 1;
 						break;
-					case 15000:	// 1.5 line spacing
+					case 15000: // 1.5 line spacing
 						m_cboLineSpacing.AdjustedSelectedIndex = 2;
 						break;
-					case 20000:	// double spacing
+					case 20000: // double spacing
 						m_cboLineSpacing.AdjustedSelectedIndex = 3;
 						break;
 				}
@@ -455,7 +459,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		private bool RtoL => ((TriStateBool)m_cboDirection.SelectedIndex == TriStateBool.triNotSet &&
 							  DefaultTextDirectionRtoL) ||
-							 (TriStateBool)m_cboDirection.SelectedIndex == TriStateBool.triTrue;
+					(TriStateBool)m_cboDirection.SelectedIndex == TriStateBool.triTrue;
 		#endregion
 
 		#region Private helper methods
@@ -596,7 +600,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 
 					case kAtLeastIndex: // at least
 					case kExactlyIndex: // exactly
-						// only adjust for this at values above 12pt.
+										// only adjust for this at values above 12pt.
 						var spaceAt = (m_nudSpacingAt.MeasureValue - 12000) / kmptPerPixel;
 						if (spaceAt > 0)
 						{
@@ -606,7 +610,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				}
 
 				// Draw the background and the line
-				var lineBackground = new Rectangle(drawRect.X + leftIndent, drawRect.Y, drawRect.Width - leftIndent - rightIndent, (lineRect.Bottom - drawRect.Y) + + bottomSpace + ((i < 2) ? kLineSpacing : 0));
+				var lineBackground = new Rectangle(drawRect.X + leftIndent, drawRect.Y, drawRect.Width - leftIndent - rightIndent, (lineRect.Bottom - drawRect.Y) + +bottomSpace + ((i < 2) ? kLineSpacing : 0));
 				g.FillRectangle(new SolidBrush(m_cboBackground.ColorValue), lineBackground);
 				g.FillRectangle(SystemBrushes.WindowText, lineRect);
 

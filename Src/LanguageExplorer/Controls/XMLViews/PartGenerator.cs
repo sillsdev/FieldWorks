@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2017 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -109,7 +109,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				var flidDestClass = m_mdc.GetDstClsId(flid);
 				var acceptableClasses = m_mdc.GetAllSubclasses(m_destClsid);
-				if (!acceptableClasses.ContainsCollection(new[] {flidDestClass}))
+				if (!acceptableClasses.ContainsCollection(new[] { flidDestClass }))
 				{
 					return false;
 				}
@@ -136,7 +136,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			get
 			{
 				CellarPropertyTypeFilter fieldTypes;
-				switch(m_fieldType)
+				switch (m_fieldType)
 				{
 					case "mlstring":
 						fieldTypes = CellarPropertyTypeFilter.AllMulti; // bitmap selects ML fields
@@ -206,7 +206,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			var ids = FieldIds;
 			var result = new XElement[ids.Count];
-			for(var iresult = 0; iresult < result.Length; iresult++)
+			for (var iresult = 0; iresult < result.Length; iresult++)
 			{
 				var output = m_source.Clone();
 				result[iresult] = output;
@@ -370,17 +370,12 @@ namespace LanguageExplorer.Controls.XMLViews
 			partNode = m_vc.GetNodeForPart(layoutGeneric, false, layoutClass);
 			if (partNode == null)
 			{
-#if !__MonoCS__
 				throw new ApplicationException("Couldn't find generic Part (" + className + "-Jt-" + layout + ")");
-#else
-// TODO-Linux: Fix this in the correct way.
-				return null;
-#endif
 			}
 			var generatedParts = new List<XElement>();
 			// clone the generic node so we can substitute any attributes that need to be substituted.
 			var generatedPartNode = partNode.Clone();
-			ReplaceParamsInAttributes(generatedPartNode, "", fieldNameForReplace, fieldIdForWs, className);
+			ReplaceParamsInAttributes(generatedPartNode, string.Empty, fieldNameForReplace, fieldIdForWs, className);
 			Inventory.GetInventory("parts", m_vc.Cache.ProjectId.Name).AddNodeToInventory(generatedPartNode);
 			generatedParts.Add(generatedPartNode);
 			// now see if we need to create other parts from further generic layouts.
@@ -389,7 +384,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				// use the generated part, since it contains a template reference.
 				partNode = generatedPartNode;
 			}
-
 			XElement nextLayoutNode = null;
 			var layoutAttr = partNode.Attribute("layout");
 			if (layoutAttr != null && layoutAttr.Value.Contains("$fieldName"))
@@ -401,7 +395,9 @@ namespace LanguageExplorer.Controls.XMLViews
 				nextLayoutNode = partNode.XPathSelectElement(".//*[contains(@layout, '$fieldName')]");
 			}
 			if (nextLayoutNode == null)
-			{ return generatedParts;}
+			{
+				return generatedParts;
+			}
 			// now build the new node from its layouts
 			var fieldName = XmlUtils.GetMandatoryAttributeValue(nextLayoutNode, "field");
 			var field = m_vc.Cache.DomainDataByFlid.MetaDataCache.GetFieldId(className, fieldName, true);
@@ -504,7 +500,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			var fGenerateChildPartsForParentLayouts = (generateModeForColumns == "childPartsForParentLayouts");
 
 			// childPartsForParentLayouts
-			foreach(var child in root.Elements())
+			foreach (var child in root.Elements())
 			{
 				if (fGenerateChildPartsForParentLayouts)
 				{

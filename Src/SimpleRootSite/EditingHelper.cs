@@ -219,7 +219,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		#endregion
 
 		#region Member variables
-		private UserControl m_control; // currently either SimpleRootSite or PublicationControl.
+		/// <summary>currently either SimpleRootSite or PublicationControl.</summary>
+		private UserControl m_control;
 		/// <summary>Object that provides editing callback methods (in production code, this is usually (always?) the rootsite)</summary>
 		protected IEditingCallbacks m_callbacks;
 		/// <summary>The default cursor to use</summary>
@@ -404,7 +405,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				wsf.GetWritingSystems(ptr, cws);
 				int[] vwsT = MarshalEx.NativeToArray<int>(ptr, cws);
 				if (cws == 1 && vwsT[0] == 0)
-					return null;	// no writing systems to work with
+					return null;    // no writing systems to work with
 				return new List<int>(vwsT);
 			}
 		}
@@ -446,7 +447,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public void ApplyWritingSystem(int hvoWsNew)
 		{
-			if(Callbacks == null || Callbacks.EditedRootBox == null)
+			if (Callbacks == null || Callbacks.EditedRootBox == null)
 				return;
 
 			IVwSelection vwsel = Callbacks.EditedRootBox.Selection;
@@ -826,7 +827,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			// The first character goes into the buffer
 			buffer.Append(chsFirst);
-#if !__MonoCS__
+
+			if (Platform.IsMono)
+				return;
+
 			// Note: When/if porting to MONO, the following block of code can be removed
 			// and still work.
 			if (chsFirst < ' ' || chsFirst == (char)VwSpecialChars.kscDelForward)
@@ -920,7 +924,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				else
 					break;
 			}
-#endif
+
 			// Shows that the buffering is working
 			//			if (buffer.Length > 1)
 			//				Debug.WriteLine("typeahead : >" + buffer + "< len = " + buffer.Length);
@@ -1011,7 +1015,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		protected virtual void CallOnTyping(string str, Keys modifiers)
 		{
 			//	Console.WriteLine("CallOnTyping : " + str);
-			if(Callbacks == null || Callbacks.EditedRootBox == null)
+			if (Callbacks == null || Callbacks.EditedRootBox == null)
 			{
 				return;
 			}
@@ -1046,7 +1050,7 @@ namespace SIL.FieldWorks.Common.RootSites
 						if (!(ex1 is ArgumentOutOfRangeException))
 							continue;
 						MessageBox.Show(ex1.Message, Resources.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-						Callbacks.EditedRootBox.Reconstruct();	// Restore the actual value visually.
+						Callbacks.EditedRootBox.Reconstruct();  // Restore the actual value visually.
 						fNotified = true;
 						break;
 					}
@@ -1074,21 +1078,20 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		protected virtual bool CallOnExtendedKey(int chw, VwShiftStatus ss)
 		{
-#if __MonoCS__
-			chw &= 0xffff; // OnExtenedKey only expectes chw to contain the key info not the modifer info
-#endif
+			if (Platform.IsMono)
+				chw &= 0xffff; // OnExtendedKey only expects chw to contain the key info not the modifer info
 
 			if (Callbacks == null || Callbacks.EditedRootBox == null)
 			{
 				return false;
 			}
 			Callbacks.WsPending = -1; // using these keys suppresses prior input lang change.
-			// sets the arrow direction to physical or logical based on LTR or RTL
+									  // sets the arrow direction to physical or logical based on LTR or RTL
 			CkBehavior nFlags = Callbacks.ComplexKeyBehavior(chw, ss);
 
 			int retVal = Callbacks.EditedRootBox.OnExtendedKey(chw, ss, (int)nFlags);
 			Marshal.ThrowExceptionForHR(retVal); // Don't ignore error HRESULTs
-			return  retVal != 1;
+			return retVal != 1;
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -1100,7 +1103,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		protected virtual void HandleKeyDown(KeyEventArgs e, VwShiftStatus ss)
 		{
-			if(Callbacks == null || Callbacks.EditedRootBox == null)
+			if (Callbacks == null || Callbacks.EditedRootBox == null)
 			{
 				return;
 			}
@@ -1139,7 +1142,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				  e.KeyCode == Keys.F7 || e.KeyCode == Keys.F8) && ss == VwShiftStatus.kfssNone)
 			{
 				// FWNX-456 fix for refreshing lines that cursor is not properly invalidating
-				if(Control is SimpleRootSite)
+				if (Control is SimpleRootSite)
 				{
 					Point ip = (Control as SimpleRootSite).IPLocation;
 					Rect src, dst;
@@ -1442,7 +1445,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				IVwSelection sel = null;
 				try
 				{
-					 sel = rootb.MakeSelAt(mousePos.X, mousePos.Y, rcSrcRoot, rcDstRoot, false);
+					sel = rootb.MakeSelAt(mousePos.X, mousePos.Y, rcSrcRoot, rcDstRoot, false);
 				}
 				catch (COMException)
 				{
@@ -1948,7 +1951,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		protected virtual int ParagraphContentsTag
 		{
-			get {throw new NotImplementedException();}
+			get { throw new NotImplementedException(); }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2022,7 +2025,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			out IVwPropertyStore[] vvps)
 		{
 			IVwRootBox rootbox = null;
-			if(Callbacks != null)
+			if (Callbacks != null)
 			{
 				rootbox = Callbacks.EditedRootBox;
 			}
@@ -2069,7 +2072,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		public virtual void ApplyStyle(string sStyleToApply, IVwSelection vwsel,
 			ITsTextProps[] vttpPara, ITsTextProps[] vttpChar)
 		{
-			if(Callbacks == null || Callbacks.EditedRootBox == null ||
+			if (Callbacks == null || Callbacks.EditedRootBox == null ||
 				Callbacks.EditedRootBox.DataAccess == null)
 				return;
 
@@ -2152,7 +2155,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			for (int ittp = 0; ittp < vttp.Length; ++ittp)
 			{
 				string oldStyle = null;
-				if (vttp[ittp] != null)		// this can happen if para never had style set explicitly.
+				if (vttp[ittp] != null)     // this can happen if para never had style set explicitly.
 					oldStyle = vttp[ittp].GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
 				fChangedStyle |= (oldStyle != strNewVal);
 
@@ -2202,7 +2205,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (!GetCharacterProps(out vwsel, out vttp, out vvps))
 				return;
 
-			if(Callbacks == null || Callbacks.EditedRootBox == null)
+			if (Callbacks == null || Callbacks.EditedRootBox == null)
 				return;
 
 			RemoveCharFormatting(vwsel, ref vttp, null, removeAllStyles);
@@ -2288,7 +2291,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 				// Allow a subclass to exclude styles that may have special semantics that should not
 				// removed by applying a style when they are a part of a selection with multiple runs.
-				if (!removeAllStyles &&	cttp > 1)
+				if (!removeAllStyles && cttp > 1)
 				{
 					string oldStyle = vttp[ittp].GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
 					if (SpecialSemanticsCharacterStyle(oldStyle))
@@ -2535,81 +2538,81 @@ namespace SIL.FieldWorks.Common.RootSites
 				int nWeight, nRelHeight;
 				switch ((FwTextPropType)tpt)
 				{
-				case FwTextPropType.ktptLineHeight:
-					nValSoft = vpsSoft.get_IntProperty(tpt);
-					nRelHeight = vpsSoft.get_IntProperty((int)VwStyleProperty.kspRelLineHeight);
-					if (nRelHeight != 0)
-					{
-						nVarSoft = (int)FwTextPropVar.ktpvRelative;
-						nValSoft = nRelHeight;
-					}
+					case FwTextPropType.ktptLineHeight:
+						nValSoft = vpsSoft.get_IntProperty(tpt);
+						nRelHeight = vpsSoft.get_IntProperty((int)VwStyleProperty.kspRelLineHeight);
+						if (nRelHeight != 0)
+						{
+							nVarSoft = (int)FwTextPropVar.ktpvRelative;
+							nValSoft = nRelHeight;
+						}
 						// By default, we have no min spacing; interpret this as single-space.
-					else if (nValSoft == 0)
-					{
-						nVarSoft = (int)FwTextPropVar.ktpvRelative;
-						nValSoft = (int)FwTextPropConstants.kdenTextPropRel;
-					}
+						else if (nValSoft == 0)
+						{
+							nVarSoft = (int)FwTextPropVar.ktpvRelative;
+							nValSoft = (int)FwTextPropConstants.kdenTextPropRel;
+						}
 						// Otherwise interpret as absolute. Use the value we already.
-					else
+						else
+							nVarSoft = (int)FwTextPropVar.ktpvMilliPoint;
+						break;
+					case FwTextPropType.ktptBold:
+						// For an inverting property, a value of invert is never redundant.
+						if (nValHard == (int)FwTextToggleVal.kttvInvert)
+							continue;
+						nWeight = vpsSoft.get_IntProperty(tpt);
+						nValSoft = (nWeight > 550) ? (int)FwTextToggleVal.kttvInvert :
+							(int)FwTextToggleVal.kttvOff;
+						nVarSoft = (int)FwTextPropVar.ktpvEnum;
+						break;
+					case FwTextPropType.ktptItalic:
+						// For an inverting property, a value of invert is never redundant.
+						if (nValHard == (int)FwTextToggleVal.kttvInvert)
+							continue;
+						nValSoft = vpsSoft.get_IntProperty(tpt);
+						nVarSoft = (int)FwTextPropVar.ktpvEnum;
+						break;
+					case FwTextPropType.ktptUnderline:
+					case FwTextPropType.ktptSuperscript:
+					case FwTextPropType.ktptRightToLeft:
+					case FwTextPropType.ktptKeepWithNext:
+					case FwTextPropType.ktptKeepTogether:
+					case FwTextPropType.ktptWidowOrphanControl:
+					case FwTextPropType.ktptAlign:
+					case FwTextPropType.ktptBulNumScheme:
+						nValSoft = vpsSoft.get_IntProperty(tpt);
+						nVarSoft = (int)FwTextPropVar.ktpvEnum;
+						break;
+					case FwTextPropType.ktptFontSize:
+					case FwTextPropType.ktptOffset:
+					case FwTextPropType.ktptLeadingIndent:      // == ktptMarginLeading
+					case FwTextPropType.ktptTrailingIndent: // == ktptMarginTrailing
+					case FwTextPropType.ktptFirstIndent:
+					case FwTextPropType.ktptSpaceBefore:        // == ktptMswMarginTop
+					case FwTextPropType.ktptSpaceAfter:     // == ktptMarginBottom
+					case FwTextPropType.ktptBorderTop:
+					case FwTextPropType.ktptBorderBottom:
+					case FwTextPropType.ktptBorderLeading:
+					case FwTextPropType.ktptBorderTrailing:
+					case FwTextPropType.ktptMarginTop:
+					case FwTextPropType.ktptPadTop:
+					case FwTextPropType.ktptPadBottom:
+					case FwTextPropType.ktptPadLeading:
+					case FwTextPropType.ktptPadTrailing:
+						nValSoft = vpsSoft.get_IntProperty(tpt);
 						nVarSoft = (int)FwTextPropVar.ktpvMilliPoint;
-					break;
-				case FwTextPropType.ktptBold:
-					// For an inverting property, a value of invert is never redundant.
-					if (nValHard == (int)FwTextToggleVal.kttvInvert)
+						break;
+					case FwTextPropType.ktptForeColor:
+					case FwTextPropType.ktptBackColor:
+					case FwTextPropType.ktptUnderColor:
+					case FwTextPropType.ktptBorderColor:
+					case FwTextPropType.ktptBulNumStartAt:
+						nValSoft = vpsSoft.get_IntProperty(tpt);
+						nVarSoft = (int)FwTextPropVar.ktpvDefault;
+						break;
+					default:
+						// Ignore.
 						continue;
-					nWeight = vpsSoft.get_IntProperty(tpt);
-					nValSoft = (nWeight > 550) ? (int)FwTextToggleVal.kttvInvert :
-						(int)FwTextToggleVal.kttvOff;
-					nVarSoft = (int)FwTextPropVar.ktpvEnum;
-					break;
-				case FwTextPropType.ktptItalic:
-					// For an inverting property, a value of invert is never redundant.
-					if (nValHard == (int)FwTextToggleVal.kttvInvert)
-						continue;
-					nValSoft = vpsSoft.get_IntProperty(tpt);
-					nVarSoft = (int)FwTextPropVar.ktpvEnum;
-					break;
-				case FwTextPropType.ktptUnderline:
-				case FwTextPropType.ktptSuperscript:
-				case FwTextPropType.ktptRightToLeft:
-				case FwTextPropType.ktptKeepWithNext:
-				case FwTextPropType.ktptKeepTogether:
-				case FwTextPropType.ktptWidowOrphanControl:
-				case FwTextPropType.ktptAlign:
-				case FwTextPropType.ktptBulNumScheme:
-					nValSoft = vpsSoft.get_IntProperty(tpt);
-					nVarSoft = (int)FwTextPropVar.ktpvEnum;
-					break;
-				case FwTextPropType.ktptFontSize:
-				case FwTextPropType.ktptOffset:
-				case FwTextPropType.ktptLeadingIndent:		// == ktptMarginLeading
-				case FwTextPropType.ktptTrailingIndent:	// == ktptMarginTrailing
-				case FwTextPropType.ktptFirstIndent:
-				case FwTextPropType.ktptSpaceBefore:		// == ktptMswMarginTop
-				case FwTextPropType.ktptSpaceAfter:		// == ktptMarginBottom
-				case FwTextPropType.ktptBorderTop:
-				case FwTextPropType.ktptBorderBottom:
-				case FwTextPropType.ktptBorderLeading:
-				case FwTextPropType.ktptBorderTrailing:
-				case FwTextPropType.ktptMarginTop:
-				case FwTextPropType.ktptPadTop:
-				case FwTextPropType.ktptPadBottom:
-				case FwTextPropType.ktptPadLeading:
-				case FwTextPropType.ktptPadTrailing:
-					nValSoft = vpsSoft.get_IntProperty(tpt);
-					nVarSoft = (int)FwTextPropVar.ktpvMilliPoint;
-					break;
-				case FwTextPropType.ktptForeColor:
-				case FwTextPropType.ktptBackColor:
-				case FwTextPropType.ktptUnderColor:
-				case FwTextPropType.ktptBorderColor:
-				case FwTextPropType.ktptBulNumStartAt:
-					nValSoft = vpsSoft.get_IntProperty(tpt);
-					nVarSoft = (int)FwTextPropVar.ktpvDefault;
-					break;
-				default:
-					// Ignore.
-					continue;
 				}
 
 				if (nValHard == nValSoft && nVarHard == nVarSoft)
@@ -2632,16 +2635,16 @@ namespace SIL.FieldWorks.Common.RootSites
 
 				switch ((FwTextPropType)tpt)
 				{
-				case FwTextPropType.ktptFontFamily:
-				case FwTextPropType.ktptWsStyle:
-				case FwTextPropType.ktptFontVariations:
-				case FwTextPropType.ktptBulNumTxtBef:
-				case FwTextPropType.ktptBulNumTxtAft:
-				case FwTextPropType.ktptBulNumFontInfo:
-					break; // Process.
-				default:
-					// Ignore.
-					continue;
+					case FwTextPropType.ktptFontFamily:
+					case FwTextPropType.ktptWsStyle:
+					case FwTextPropType.ktptFontVariations:
+					case FwTextPropType.ktptBulNumTxtBef:
+					case FwTextPropType.ktptBulNumTxtAft:
+					case FwTextPropType.ktptBulNumFontInfo:
+						break; // Process.
+					default:
+						// Ignore.
+						continue;
 				}
 
 				string strSoft;
@@ -2816,7 +2819,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		public void SetKeyboardForSelection(IVwSelection vwsel)
 		{
 			if (vwsel == null || Callbacks == null || !Callbacks.GotCacheOrWs)
-				return;			// Can't do anything useful, so let's not do anything at all.
+				return;         // Can't do anything useful, so let's not do anything at all.
 
 			int nWs = SelectionHelper.GetFirstWsOfSelection(vwsel);
 			if (nWs == 0)
@@ -2935,9 +2938,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		internal void GotFocus()
 		{
 		}
-#endregion
+		#endregion
 
-#region Cut/copy/paste handling methods
+		#region Cut/copy/paste handling methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Useful in stand-alone RootSites such as FwTextBox and LabeledMultiStringView to
@@ -3036,7 +3039,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			catch (ExternalException e)
 			{
-				MessageBox.Show(Resources.ksCopyFailed+e.Message);
+				MessageBox.Show(Resources.ksCopyFailed + e.Message);
 			}
 		}
 
@@ -3081,8 +3084,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		internal void CopyTssToClipboard(ITsString tss)
 		{
 			Debug.Assert(tss != null && tss.Length > 0); // if this asserts it is likely that
-			// the user selected a footnote marker but the TextRepOfObj() method isn't
-			// implemented.
+														 // the user selected a footnote marker but the TextRepOfObj() method isn't
+														 // implemented.
 
 			SetTsStringOnClipboard(tss, false, WritingSystemFactory);
 		}
@@ -3202,7 +3205,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			if (!IsSelectionInOneEditableProp())
 				return false;
-			if(m_callbacks == null || m_callbacks.EditedRootBox == null)
+			if (m_callbacks == null || m_callbacks.EditedRootBox == null)
 				return false;
 			IVwSelection sel = m_callbacks.EditedRootBox.Selection;
 			int ich, hvoObj, tag, ws;
@@ -3261,7 +3264,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			// Do nothing if command is not enabled. Needed for Ctrl-V keypress.
 			if (!CanPaste() || Callbacks == null || Callbacks.EditedRootBox == null ||
-				!Callbacks.GotCacheOrWs  || CurrentSelection == null)
+				!Callbacks.GotCacheOrWs || CurrentSelection == null)
 				return false;
 
 			IVwSelection vwsel = CurrentSelection.Selection;
@@ -3362,7 +3365,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 
 			if (tss == null)
-			{	// all else didn't work, so try with an ordinary string
+			{   // all else didn't work, so try with an ordinary string
 				string str = ClipboardUtils.GetText();
 				tss = TsStringUtils.MakeString(str, ttpSel);
 			}
@@ -3597,8 +3600,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			destWs = -1;
 			return PasteStatus.PreserveWs;
 		}
-#endregion
+		#endregion
 	}
-#endregion
-
+	#endregion
 }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -78,7 +78,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_tssMissingMorphGloss = TsStringUtils.MakeString(ITextStrings.ksStars, m_wsAnalysis);
 			m_tssMissingMorphPos = TsStringUtils.MakeString(ITextStrings.ksStars, m_wsAnalysis);
 			m_tssMissingWordPos = m_tssMissingMorphPos;
-			m_PulldownArrowPic = OLECvt.ConvertImageToComPicture(ResourceHelper.InterlinPopupArrow);
+			m_PulldownArrowPic = OLEConvert.ConvertImageToComPicture(ResourceHelper.InterlinPopupArrow);
 			m_dxmpArrowPicWidth = ConvertPictureWidthToMillipoints(m_PulldownArrowPic.Picture);
 			var wsObj = caches.MainCache.ServiceLocator.WritingSystemManager.Get(m_sandbox.RawWordformWs);
 			if (wsObj != null)

@@ -1,21 +1,18 @@
-﻿// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ProjectLocationDlg.cs
-// Responsibility: FW team
+
 using System;
 using System.IO;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Windows.Forms;
+using Mono.Unix;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
-#if __MonoCS__
-using Mono.Unix;
-#endif
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -37,7 +34,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			InitializeComponent();
 		}
-
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -68,37 +64,37 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void m_tbProjectsFolder_TextChanged(object sender, EventArgs e)
 		{
 			m_btnOK.Enabled = true;
-			if(Directory.Exists(m_tbProjectsFolder.Text))
+			if (Directory.Exists(m_tbProjectsFolder.Text))
 			{
 				var newFolder = m_tbProjectsFolder.Text;
 				var oldFolder = FwDirectoryFinder.ProjectsDirectory;
-				if(!MiscUtils.IsUnix)
+				if (!MiscUtils.IsUnix)
 				{
 					newFolder = newFolder.ToLowerInvariant();
 					oldFolder = oldFolder.ToLowerInvariant();
 				}
-				if(newFolder == oldFolder)
+				if (newFolder == oldFolder)
 				{
 					// The original directory is presumably always ok.
 					m_btnOK.Enabled = true;
 				}
-				else if(newFolder.StartsWith(oldFolder))
+				else if (newFolder.StartsWith(oldFolder))
 				{
 					string path = m_tbProjectsFolder.Text;
 					// If it contains a settings directory, assume it's a project settings folder...possibly settings for a remote project.
-					if(Directory.Exists(Path.Combine(path, LcmFileHelper.ksConfigurationSettingsDir)))
+					if (Directory.Exists(Path.Combine(path, LcmFileHelper.ksConfigurationSettingsDir)))
 					{
 						m_btnOK.Enabled = false;
 						return;
 					}
-					while(path.Length > 3)
+					while (path.Length > 3)
 					{
-						foreach(string file in Directory.GetFiles(path))
+						foreach (string file in Directory.GetFiles(path))
 						{
 							string filename = file;
-							if(!MiscUtils.IsUnix)
+							if (!MiscUtils.IsUnix)
 								filename = filename.ToLowerInvariant();
-							if(filename.EndsWith(".fwdata"))
+							if (filename.EndsWith(".fwdata"))
 							{
 								m_btnOK.Enabled = false;
 								return;
@@ -129,46 +125,46 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				pathToTest = Path.GetFullPath(folderToTest);
 			}
-			catch(Exception)
+			catch (Exception)
 			{
 				return false;
 			}
 			// A directory doesn't have to exist yet to be suitable but if the root directory isn't suitable that's not good
-			while(!Directory.Exists(pathToTest))
+			while (!Directory.Exists(pathToTest))
 			{
-				if(String.IsNullOrEmpty(pathToTest.Trim()))
+				if (String.IsNullOrEmpty(pathToTest.Trim()))
 					return false;
 				pathToTest = Path.GetDirectoryName(pathToTest);
 			}
-			if(!MiscUtils.IsUnix)
+			if (Platform.IsWindows)
 			{
 				// Check the OS file permissions for the folder
 				var accessControlList = Directory.GetAccessControl(pathToTest);
 				var accessRules = accessControlList.GetAccessRules(true, true, typeof(SecurityIdentifier));
 				var readAllowed = false;
 				var writeAllowed = false;
-				foreach(FileSystemAccessRule rule in accessRules)
+				foreach (FileSystemAccessRule rule in accessRules)
 				{
 					//If we find one that matches the identity we are looking for
-					using(var currentUserIdentity = WindowsIdentity.GetCurrent())
+					using (var currentUserIdentity = WindowsIdentity.GetCurrent())
 					{
 						var userName = currentUserIdentity.User.Value;
-						if(
+						if (
 							rule.IdentityReference.Value.Equals(userName, StringComparison.CurrentCultureIgnoreCase) ||
 						currentUserIdentity.Groups.Contains(rule.IdentityReference))
 						{
-							if((FileSystemRights.Read & rule.FileSystemRights) == FileSystemRights.Read)
+							if ((FileSystemRights.Read & rule.FileSystemRights) == FileSystemRights.Read)
 							{
-								if(rule.AccessControlType == AccessControlType.Allow)
+								if (rule.AccessControlType == AccessControlType.Allow)
 									readAllowed = true;
-								if(rule.AccessControlType == AccessControlType.Deny)
+								if (rule.AccessControlType == AccessControlType.Deny)
 									return false;
 							}
-							if((FileSystemRights.Write & rule.FileSystemRights) == FileSystemRights.Write)
+							if ((FileSystemRights.Write & rule.FileSystemRights) == FileSystemRights.Write)
 							{
-								if(rule.AccessControlType == AccessControlType.Allow)
+								if (rule.AccessControlType == AccessControlType.Allow)
 									writeAllowed = true;
-								if(rule.AccessControlType == AccessControlType.Deny)
+								if (rule.AccessControlType == AccessControlType.Deny)
 									return false;
 							}
 						}
@@ -176,12 +172,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				}
 				return readAllowed && writeAllowed;
 			}
-#if __MonoCS__
+
+			// Linux
 			var ufi = new UnixDirectoryInfo(pathToTest);
-			return (ufi.CanAccess(Mono.Unix.Native.AccessModes.R_OK) && ufi.CanAccess(Mono.Unix.Native.AccessModes.W_OK)); // accessible for writing
-#else
-			return false; // unreachable in practice
-#endif
+			return ufi.CanAccess(Mono.Unix.Native.AccessModes.R_OK) &&
+				ufi.CanAccess(Mono.Unix.Native.AccessModes.W_OK); // accessible for writing
 		}
 
 		/// ------------------------------------------------------------------------------------

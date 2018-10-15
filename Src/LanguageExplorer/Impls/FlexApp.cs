@@ -12,21 +12,22 @@ using System.Linq;
 using System.Security;
 using System.Threading;
 using System.Windows.Forms;
-using LanguageExplorer.Controls.XMLViews;
 using Microsoft.Win32;
+using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.FwUtils.MessageBoxEx;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.LCModel;
-using SIL.LCModel.DomainServices;
-using SIL.LCModel.Infrastructure;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
-using SIL.Reporting;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
+using SIL.Reporting;
 using SIL.Windows.Forms;
 using Win32 = SIL.FieldWorks.Common.FwUtils.Win32;
 
@@ -1056,8 +1057,7 @@ namespace LanguageExplorer.Impls
 			// as the suggestion for fixing LT-8797.
 			try
 			{
-				// Make sure this DB uses the current stylesheet version.
-				FlexStylesXmlAccessor.EnsureCurrentStylesheet(Cache.LangProject, progressDlg);
+				SafelyEnsureStyleSheetPostTERemoval(progressDlg);
 			}
 			catch (WorkerThreadException e)
 			{
@@ -1066,6 +1066,16 @@ namespace LanguageExplorer.Impls
 			}
 
 			return true;
+		}
+
+		private void SafelyEnsureStyleSheetPostTERemoval(IThreadedProgress progressDlg)
+		{
+			// Ensure that we have up-to-date versification information so that projects with old scripture styles
+			// will migrate the styles into the FlexStyles successfully
+			ScrReference.InitializeVersification(FwDirectoryFinder.EditorialChecksDirectory, false);
+			// Make sure this DB uses the current stylesheet version
+			// Suppress adjusting scripture sections since isn't safe to do so at this point
+			SectionAdjustmentSuppressionHelper.Do(() => FlexStylesXmlAccessor.EnsureCurrentStylesheet(Cache.LangProject, progressDlg));
 		}
 
 		/// <summary>

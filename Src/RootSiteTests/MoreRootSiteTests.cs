@@ -1,10 +1,7 @@
 // Copyright (c) 2003-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: MoreRootSiteTests.cs
-// Responsibility: FW team
-// --------------------------------------------------------------------------------------------
+
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
@@ -196,9 +193,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-#if __MonoCS__
-		[Ignore("// TODO-Linux: This test is too dependent on mono ScrollableControl behaving the sames as .NET")]
-#endif
+		[Platform(Exclude = "Linux", Reason = "This test is too dependent on mono ScrollableControl behaving the sames as .NET")]
 		public void AdjustScrollRange_VScroll_PosInMiddle()
 		{
 			ShowForm(Lng.English, DummyBasicViewVc.DisplayType.kAll);
@@ -265,9 +260,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-#if __MonoCS__
-		[Ignore("// TODO-Linux: This test is too dependent on mono ScrollableControl behaving the sames as .NET")]
-#endif
+		[Platform(Exclude = "Linux", Reason = "This test is too dependent on mono ScrollableControl behaving the sames as .NET")]
 		public void AdjustScrollRange_VScroll_PosAlmostAtEnd()
 		{
 			ShowForm(Lng.English, DummyBasicViewVc.DisplayType.kAll, 150);
@@ -332,7 +325,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "3. test");
 			Assert.IsTrue(fRet, "3. test"); // JohnT; because adjust scroll pos suppressed.
 
-			fRet = view.AdjustScrollRange(0, 0, - (dydWindheight + 30), 0);
+			fRet = view.AdjustScrollRange(0, 0, -(dydWindheight + 30), 0);
 			//nHeight -= dydWindheight + 30;
 			nPos = Math.Max(0, nPos - dydWindheight - 30); // JohnT: also can't be less than zero.
 			Assert.AreEqual(nPos, -view.ScrollPosition.Y, "3. test");
@@ -360,9 +353,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-#if __MonoCS__
-		[Ignore("// TODO-Linux: This test is too dependent on mono ScrollableControl behaving the sames as .NET")]
-#endif
+		[Platform(Exclude = "Linux", Reason = "This test is too dependent on mono ScrollableControl behaving the sames as .NET")]
 		public void AdjustScrollRange_VScroll_PosAtEnd()
 		{
 			ShowForm(Lng.English, DummyBasicViewVc.DisplayType.kAll);
@@ -431,9 +422,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-#if __MonoCS__
-		[Ignore("// TODO-Linux: This test is too dependent on mono ScrollableControl behaving the sames as .NET")]
-#endif
+		[Platform(Exclude = "Linux", Reason = "This test is too dependent on mono ScrollableControl behaving the sames as .NET")]
 		public void AdjustScrollRange_VScroll_ScrollRangeLessThanClientRectangle()
 		{
 			ShowForm(Lng.English, DummyBasicViewVc.DisplayType.kAll);
@@ -643,7 +632,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "3. test");
 			Assert.IsFalse(fRet, "3. test");
 
-			fRet = view.AdjustScrollRange(- (dxdWindwidth + 30), 0, 0, 0);
+			fRet = view.AdjustScrollRange(-(dxdWindwidth + 30), 0, 0, 0);
 			nWidth -= dxdWindwidth + 30;
 			nPos -= dxdWindwidth + 30;
 			Assert.AreEqual(nPos, -view.ScrollPosition.X, "3. test");
@@ -720,7 +709,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			nPos = 0;
 			Assert.AreEqual(nPos, -view.ScrollPosition.X, "5. test");
 			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "5. test");
-			Assert.IsTrue(fRet,"5. test: scroll position forced to change");
+			Assert.IsTrue(fRet, "5. test: scroll position forced to change");
 			Assert.IsFalse(view.HScroll, "5. test: scrollbar still visible");
 
 			RestorePreviousXScrollRange(nChange, dxdSomewhere);
@@ -731,7 +720,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			nPos = 0;
 			Assert.AreEqual(nPos, -view.ScrollPosition.X, "5. test");
 			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "5. test");
-			Assert.IsTrue(fRet,"5. test: scroll position has not changed");
+			Assert.IsTrue(fRet, "5. test: scroll position has not changed");
 			Assert.IsFalse(view.HScroll, "5. test: scrollbar still visible");
 
 			RestorePreviousXScrollRange(nChange, view.DisplayRectangle.Width);
@@ -740,7 +729,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			fRet = view.AdjustScrollRange(-nChange, 0, 0, 0);
 			Assert.AreEqual(nPos, -view.ScrollPosition.X, "5. test");
 			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "5. test");
-			Assert.IsTrue(fRet,"5. test: scroll position has not changed");
+			Assert.IsTrue(fRet, "5. test: scroll position has not changed");
 			Assert.IsFalse(view.HScroll, "5. test: scrollbar still visible");
 
 			RestorePreviousXScrollRange(nChange, dxdSomewhere);
@@ -749,7 +738,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			fRet = view.AdjustScrollRange(-nChange, 0, 0, 0);
 			Assert.AreEqual(nPos, -view.ScrollPosition.X, "5. test");
 			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "5. test");
-			Assert.IsTrue(fRet,"5. test: scroll position has not changed");
+			Assert.IsTrue(fRet, "5. test: scroll position has not changed");
 			Assert.IsFalse(view.HScroll, "5. test: scrollbar still visible");
 		}
 
@@ -863,7 +852,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				SelLevInfo[] rgvsliEnd = new SelLevInfo[clev];
 				rgvsli.CopyTo(rgvsliEnd, 0);
 				rgvsli[0].ihvo = 0; // first paragraph
-				rgvsli[clev-1].ihvo = 2; // third section
+				rgvsli[clev - 1].ihvo = 2; // third section
 				rootBox.MakeTextSelInObj(ihvoRoot, clev, rgvsli, clev, rgvsliEnd, false, true, true, true,
 					true);
 
@@ -952,7 +941,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				SelLevInfo[] rgvsliEnd = new SelLevInfo[clev];
 				rgvsli.CopyTo(rgvsliEnd, 0);
 				rgvsli[0].ihvo = 0; // first paragraph
-				rgvsli[clev-1].ihvo = 2; // third section
+				rgvsli[clev - 1].ihvo = 2; // third section
 				rootBox.MakeTextSelInObj(ihvoRoot, clev, rgvsli, clev, rgvsliEnd, false, true, true, true,
 					true);
 

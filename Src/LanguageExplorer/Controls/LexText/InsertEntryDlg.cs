@@ -26,6 +26,7 @@ using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Resources;
+using SIL.PlatformUtilities;
 using SIL.Windows.Forms;
 
 namespace LanguageExplorer.Controls.LexText
@@ -50,7 +51,7 @@ namespace LanguageExplorer.Controls.LexText
 		private Button m_btnOK;
 		private Button m_btnCancel;
 		private Label m_formLabel;
-		private FwTextBox m_tbLexicalForm;	// text box used if one vernacular ws
+		private FwTextBox m_tbLexicalForm;  // text box used if one vernacular ws
 		private FwTextBox m_tbGloss; // text box used if one analysis ws
 		private LabeledMultiStringControl msLexicalForm; // multistring text box used for multiple vernacular ws
 		private LabeledMultiStringControl msGloss; // multistring text box used for multiple analysis ws.
@@ -465,11 +466,12 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				Size = size;
 			}
-#if __MonoCS__
-			// Mono doesn't seem to fire the Activated event, so call the method here.
-			// This fixes FWNX-783, setting the focus in the gloss textbox.
-			SetInitialFocus();
-#endif
+			if (Platform.IsMono)
+			{
+				// Mono doesn't seem to fire the Activated event, so call the method here.
+				// This fixes FWNX-783, setting the focus in the gloss textbox.
+				SetInitialFocus();
+			}
 		}
 
 		bool m_fInitialized;
@@ -517,22 +519,22 @@ namespace LanguageExplorer.Controls.LexText
 			SetInitialFocus();
 		}
 
-#if __MonoCS__
-		/// <summary>
-		/// </summary>
+		/// <summary />
 		protected override void WndProc(ref Message m)
 		{
-			// FWNX-520: fix some focus issues.
-			// By the time this message is processed, the popup form (PopupTree) may need to be the
-			// active window, so ignore WM_ACTIVATE.
-			if (m.Msg == 0x6 /*WM_ACTIVATE*/ && System.Windows.Forms.Form.ActiveForm == this)
+			if (Platform.IsMono)
 			{
-				return;
+				// FWNX-520: fix some focus issues.
+				// By the time this message is processed, the popup form (PopupTree) may need to be the
+				// active window, so ignore WM_ACTIVATE.
+				if (m.Msg == 0x6 /*WM_ACTIVATE*/ && System.Windows.Forms.Form.ActiveForm == this)
+				{
+					return;
+				}
 			}
 
 			base.WndProc(ref m);
 		}
-#endif
 
 		/// <summary>
 		/// Initialize the dialog.
@@ -702,7 +704,7 @@ namespace LanguageExplorer.Controls.LexText
 				m_searchAnimation.Top = m_matchingEntriesGroupBox.Top + (m_matchingEntriesGroupBox.Height / 2) - (m_searchAnimation.Height / 2);
 				m_searchAnimation.Left = m_matchingEntriesGroupBox.Left + (m_matchingEntriesGroupBox.Width / 2) - (m_searchAnimation.Width / 2);
 			}
-			catch(Exception e)
+			catch (Exception e)
 			{
 				MessageBox.Show(e.ToString());
 				MessageBox.Show(e.StackTrace);
@@ -725,7 +727,7 @@ namespace LanguageExplorer.Controls.LexText
 
 			// Grow the dialog and move all lower controls down to make room.
 			GrowDialogAndAdjustControls(tb.Parent.Height - oldHeight, tb.Parent);
-			ms.TabIndex = tb.TabIndex;	// assume the same tab order as the single ws control
+			ms.TabIndex = tb.TabIndex;  // assume the same tab order as the single ws control
 			return ms;
 		}
 
@@ -1185,51 +1187,51 @@ namespace LanguageExplorer.Controls.LexText
 			switch (DialogResult)
 			{
 				default:
-				{
-					Debug.Assert(false, "Unexpected DialogResult.");
-					break;
-				}
+					{
+						Debug.Assert(false, "Unexpected DialogResult.");
+						break;
+					}
 				case DialogResult.Yes:
-				{
-					// Exiting via existing entry selection.
-					DialogResult = DialogResult.OK;
-					m_fNewlyCreated = false;
-					m_entry = (ILexEntry)m_matchingObjectsBrowser.SelectedObject;
-					break;
-				}
+					{
+						// Exiting via existing entry selection.
+						DialogResult = DialogResult.OK;
+						m_fNewlyCreated = false;
+						m_entry = (ILexEntry)m_matchingObjectsBrowser.SelectedObject;
+						break;
+					}
 				case DialogResult.Cancel:
-				{
-					break;
-				}
+					{
+						break;
+					}
 				case DialogResult.OK:
-				{
-					// In the beginning, Larry specified the gloss to not be required.
-					// Then, Andy changed it to be required.
-					// As of LT-518, it is again not required.
-					// I'll leave it in, but blocked, in case it changes again. :-)
-					//&& tbGloss.Text.Length > 0
-					// As of LT-832, categories are all optional.
-					if (!LexFormNotEmpty())
 					{
-						e.Cancel = true;
-						MessageBox.Show(this, LexTextControls.ksFillInLexForm, LexTextControls.ksMissingInformation, MessageBoxButtons.OK, MessageBoxIcon.Information);
-						return;
+						// In the beginning, Larry specified the gloss to not be required.
+						// Then, Andy changed it to be required.
+						// As of LT-518, it is again not required.
+						// I'll leave it in, but blocked, in case it changes again. :-)
+						//&& tbGloss.Text.Length > 0
+						// As of LT-832, categories are all optional.
+						if (!LexFormNotEmpty())
+						{
+							e.Cancel = true;
+							MessageBox.Show(this, LexTextControls.ksFillInLexForm, LexTextControls.ksMissingInformation, MessageBoxButtons.OK, MessageBoxIcon.Information);
+							return;
+						}
+						if (!CheckMorphType())
+						{
+							e.Cancel = true;
+							MessageBox.Show(this, LexTextControls.ksInvalidLexForm, LexTextControls.ksMissingInformation, MessageBoxButtons.OK, MessageBoxIcon.Information);
+							return;
+						}
+						if (CircumfixProblem())
+						{
+							e.Cancel = true;
+							MessageBox.Show(this, LexTextControls.ksCompleteCircumfix, LexTextControls.ksMissingInformation, MessageBoxButtons.OK, MessageBoxIcon.Information);
+							return;
+						}
+						CreateNewEntry();
+						break;
 					}
-					if (!CheckMorphType())
-					{
-						e.Cancel = true;
-						MessageBox.Show(this, LexTextControls.ksInvalidLexForm, LexTextControls.ksMissingInformation, MessageBoxButtons.OK, MessageBoxIcon.Information);
-						return;
-					}
-					if (CircumfixProblem())
-					{
-						e.Cancel = true;
-						MessageBox.Show(this, LexTextControls.ksCompleteCircumfix, LexTextControls.ksMissingInformation, MessageBoxButtons.OK, MessageBoxIcon.Information);
-						return;
-					}
-					CreateNewEntry();
-					break;
-				}
 			}
 		}
 

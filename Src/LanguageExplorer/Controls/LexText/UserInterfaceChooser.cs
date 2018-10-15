@@ -3,17 +3,15 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-#if __MonoCS__
-using System.Collections.Generic;
 using System.Drawing;
-using SIL.FieldWorks.Common.FwUtils;
-#endif
 using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Text;
+using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.Controls.LexText
 {
@@ -34,14 +32,15 @@ namespace LanguageExplorer.Controls.LexText
 		public UserInterfaceChooser()
 		{
 			InitializeComponent();
-#if __MonoCS__
-			// On Windows, finding fonts for strings appears to work fine.  On Linux, fonts
-			// are found based purely on the current locale setting.  So displaying Chinese
-			// text when the locale is set to Hindi just doesn't work.  Thus, to get our
-			// fancy display of language choices to work on Linux, we have to draw the list
-			// ourselves.  (See FWNX-1069.)
-			this.DrawMode = DrawMode.OwnerDrawVariable;
-#endif
+			if (Platform.IsMono)
+			{
+				// On Windows, finding fonts for strings appears to work fine.  On Linux, fonts
+				// are found based purely on the current locale setting.  So displaying Chinese
+				// text when the locale is set to Hindi just doesn't work.  Thus, to get our
+				// fancy display of language choices to work on Linux, we have to draw the list
+				// ourselves.  (See FWNX-1069.)
+				this.DrawMode = DrawMode.OwnerDrawVariable;
+			}
 		}
 
 		/// <summary>
@@ -154,7 +153,7 @@ namespace LanguageExplorer.Controls.LexText
 				var ldi = new LanguageDisplayItem(sLocale);
 				if (ldi.Name.Length == 0)
 				{
-					ldi.Name = ldi.Locale;	// TODO: find a better fallback.
+					ldi.Name = ldi.Locale;  // TODO: find a better fallback.
 				}
 
 				Items.Add(ldi);
@@ -196,12 +195,9 @@ namespace LanguageExplorer.Controls.LexText
 		protected override void OnSelectedIndexChanged(EventArgs e)
 		{
 			base.OnSelectedIndexChanged(e);
-			var ldi = (LanguageDisplayItem) SelectedItem;
+			var ldi = (LanguageDisplayItem)SelectedItem;
 			m_sNewUserWs = ldi.Locale;
 		}
-
-#if __MonoCS__
-		// See the comment above about FWNX-1069.
 
 		/// <summary>
 		/// Handles the measure item event.
@@ -209,6 +205,13 @@ namespace LanguageExplorer.Controls.LexText
 		protected override void OnMeasureItem(MeasureItemEventArgs e)
 		{
 			base.OnMeasureItem(e);
+
+			if (!Platform.IsMono)
+			{
+				return;
+			}
+
+			// See the comment above about FWNX-1069.
 			var lang = ((LanguageDisplayItem)Items[e.Index]).Locale;
 			using (Font font = GetFontForLanguage(lang))
 			{
@@ -247,7 +250,7 @@ namespace LanguageExplorer.Controls.LexText
 			// Select the appropriate brush depending on if the item is selected.
 			// Since State can be a combinateion (bit-flag) of enum values, you can't use
 			// "==" to compare them.
-			if ( (e.State & DrawItemState.Selected) == DrawItemState.Selected )
+			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
 			{
 				brush = SystemBrushes.HighlightText;
 			}
@@ -272,17 +275,13 @@ namespace LanguageExplorer.Controls.LexText
 		private Font GetFontForLanguage(string lang)
 		{
 			// For some reason, Mono requires both FwUtils in the next line.
-			string fontName = FwUtils.GetFontNameForLanguage(lang);
+			var fontName = FwUtils.GetFontNameForLanguage(lang);
 			if (string.IsNullOrEmpty(fontName))
 			{
 				return new Font(FontFamily.GenericSansSerif, 8.25F);
 			}
-			else
-			{
-				return new Font(fontName, 8.25F);
-			}
+			return new Font(fontName, 8.25F);
 		}
-#endif
 
 		#region LanguageDisplayItem class
 		/// <summary />

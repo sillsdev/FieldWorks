@@ -9,6 +9,7 @@ using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
 using SIL.LCModel;
+using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.Controls.LexText
 {
@@ -56,10 +57,11 @@ namespace LanguageExplorer.Controls.LexText
 				{
 					FormLanguageSwitchSingleton.Instance.ChangeCurrentThreadUICulture(ci);
 					FormLanguageSwitchSingleton.Instance.ChangeLanguage(this);
-#if __MonoCS__
-					// Mono leaves the wait cursor on, unlike .Net itself.
-					Cursor.Current = Cursors.Default;
-#endif
+					if (Platform.IsMono)
+					{
+						// Mono leaves the wait cursor on, unlike .Net itself.
+						Cursor.Current = Cursors.Default;
+					}
 				}
 				// This needs to be consistent with Common/FieldWorks/FieldWorks.SetUICulture().
 				FwRegistryHelper.FieldWorksRegistryKey.SetValue(FwRegistryHelper.UserLocaleValueName, NewUserWs);
@@ -138,6 +140,6 @@ namespace LanguageExplorer.Controls.LexText
 		public bool PluginsUpdated { get; } = false;
 
 		private void updateGlobalWS_MouseHover(object sender, EventArgs e)
-		{}
+		{ }
 	}
 }

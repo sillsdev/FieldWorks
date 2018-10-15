@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 {
@@ -33,7 +34,6 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 			base.Dispose(disposing);
 		}
 
-#if __MonoCS__
 		/// <summary>
 		/// Adjust the location of the checkBoxDisplayOption and the height of the listView properly as the
 		/// size of the ListOptionsView changes.  (The Mono runtime library does not do this properly for some
@@ -44,10 +44,14 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
+
+			if (!Platform.IsMono)
+				return;
+
 			Control firstCheckBox = checkBoxDisplayOption.Visible ? checkBoxDisplayOption : checkBoxDisplayOption2.Visible ? checkBoxDisplayOption2 : null;
 			Control secondCheckBox = firstCheckBox != checkBoxDisplayOption2 ? checkBoxDisplayOption2.Visible ? checkBoxDisplayOption2 : null : null;
 
-			if(firstCheckBox != null && secondCheckBox != null) // Trying to display both option checkboxes
+			if (firstCheckBox != null && secondCheckBox != null) // Trying to display both option checkboxes
 			{
 				// account for the vertical space needed for both checkboxes and a little buffer
 				var listViewBottom = this.Height - firstCheckBox.Height - secondCheckBox.Height - 3;
@@ -58,7 +62,7 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 				firstCheckBox.Location = new Point(firstCheckBox.Location.X, firstCheckBoxTop);
 				secondCheckBox.Location = new Point(secondCheckBox.Location.X, secondCheckBoxTop);
 			}
-			else if(firstCheckBox != null) // Only displaying one option checkbox
+			else if (firstCheckBox != null) // Only displaying one option checkbox
 			{
 				// account for the vertical space needed for a single checkbox plus buffer
 				var listViewBottom = this.Height - firstCheckBox.Height - 3;
@@ -68,7 +72,6 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 				firstCheckBox.Location = new Point(firstCheckBox.Location.X, firstCheckBoxTop);
 			}
 		}
-#endif
 
 		//
 		// User configuration properties

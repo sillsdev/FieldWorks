@@ -67,7 +67,8 @@
 
 	<Target Name="linuxLibs">
 		<Exec Command="make externaltargets" WorkingDirectory="$(fwrt)" Condition="'$(action)'!='clean'"/>
-		<Exec Command="make externaltargets-test" WorkingDirectory="$(fwrt)" Condition="'$(action)'=='test'"/>
+		<Exec Command="make externaltargets-test" WorkingDirectory="$(fwrt)"
+			IgnoreStandardErrorWarningFormat="true" Condition="'$(action)'=='test'"/>
 		<CreateItem Include="$(dir-fwoutputlibPlatform)/Release/*.*">
 			<Output TaskParameter="Include" ItemName="LinuxReleaseLibs"/>
 		</CreateItem>

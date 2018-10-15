@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				string actualFilePath = FileUtils.ActualFilePath(imagePath);
 				using (var image = Image.FromFile(actualFilePath))
 				{
-					comPicture = (IPicture)OLECvt.ToOLE_IPictureDisp(image);
+					comPicture = (IPicture)OLEConvert.ToOLE_IPictureDisp(image);
 				}
 			}
 			catch (Exception e)
@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				m_previousPictures = new Dictionary<string, IPicture>();
 			if (!m_previousPictures.TryGetValue(key, out comPicture))
 			{
-				comPicture = (IPicture)OLECvt.ToOLE_IPictureDisp(source);
+				comPicture = (IPicture)OLEConvert.ToOLE_IPictureDisp(source);
 				m_previousPictures[key] = comPicture;
 			}
 			return comPicture;

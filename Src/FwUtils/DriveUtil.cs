@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2017 SIL International
+// Copyright (c) 2002-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -28,7 +28,6 @@
 
 using System;
 using System.IO;
-using System.Management;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -42,7 +41,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		///
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public enum DriveTypes: int
+		public enum DriveTypes : int
 		{
 			/// <summary>Drive type couldn't be determined.</summary>
 			Invalid = 0,
@@ -68,60 +67,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <remarks>This returns an empty string on Linux (unless environment variable
 		/// 'windir' happens to be set).</remarks>
 		/// -----------------------------------------------------------------------------------
-		static public string BootDrive
+		public static string BootDrive
 		{
 			get
 			{
 				return Path.GetPathRoot(Environment.GetEnvironmentVariable("windir"));
 			}
 		}
-
-#if !__MonoCS__
-		// This method is currently not used anywhere. If we'll use it we have to do something
-		// on Linux since it probably won't work like this.
-
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// A static method returning a logical drive's type.
-		/// </summary>
-		/// <param name="drive">A drive specification in any one of three formats:
-		/// 'x', 'x:' or 'x:\' (where 'x' is the drive letter)</param>
-		/// <returns>A value indicating the type of the drive specified.</returns>
-		/// -----------------------------------------------------------------------------------
-		static public DriveTypes GetLogicalDriveType(string drive)
-		{
-			try
-			{
-				// This check is here because when a ManagementObject is created by getting
-				// the device ID for a diskette drive, the drive sounds like it's trying to
-				// be accessed. That's annoying and time consuming. I'm going to go out on
-				// a limb (a safe one, I think) and assume all drive's labeled 'A' and 'B'
-				// are diskette drives.
-				if (drive.ToUpper().StartsWith("A") || drive.ToUpper().StartsWith("B"))
-					return DriveTypes.Removable;
-
-				// Using the ManagmentObject (WMI) model to get drive types expects
-				// drive specifications to be in the form "x:" (where x is the drive
-				// letter). So if the caller passes a drive letter with the trailing
-				// backslash, (which is quite likely if the caller used the
-				// GetLogicalDrives() .Net method to get a list of available drives),
-				// strip it off.
-				if (drive.EndsWith("\\"))
-					drive = drive.Substring(0, 2);
-
-				using (ManagementObject mo =
-					new ManagementObject("win32_logicaldisk.DeviceID=\"" + drive + "\""))
-				{
-					// This is a funky cast, but that's what it took to force conformity.
-					return (DriveTypes)((System.UInt32)(mo["DriveType"]));
-				}
-			}
-			catch
-			{
-				return DriveTypes.Invalid;
-			}
-		}
-#endif
 
 		//--------------------------------------------------------------------------------------
 		// Removing code that is no longer used in the src base.  It was using
@@ -138,7 +90,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns>Just the directory path portion of a full path. (Uses the
 		/// FileInfo.DirectoryName method.)</returns>
 		///--------------------------------------------------------------------------------------
-		static public string DirectoryNameOnly(string fullName)
+		public static string DirectoryNameOnly(string fullName)
 		{
 			FileInfo fi = new FileInfo(fullName);
 			return fi.DirectoryName;
@@ -152,7 +104,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns>Just the file name portion of a full path. (Uses the FileInfo.Name
 		/// method.)</returns>
 		///--------------------------------------------------------------------------------------
-		static public string FileNameOnly(string fullName)
+		public static string FileNameOnly(string fullName)
 		{
 			FileInfo fi = new FileInfo(fullName);
 			return fi.Name;
@@ -167,16 +119,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns>Just the file extension portion (including the period) of a full
 		/// path. (Uses the FileInfo.Extension method.)</returns>
 		///--------------------------------------------------------------------------------------
-		static public string FileExtensionOnly(string fullName)
+		public static string FileExtensionOnly(string fullName)
 		{
 			FileInfo fi = new FileInfo(fullName);
 			return fi.Extension;
 		}
-
-		//--------------------------------------------------------------------------------------
-		// Removing code that is no longer used in the src base.  It was using
-		// Application.DoEvents which is being irradicated from the src.  This is
-		// old code and much of it now exists in the framework.
-		//--------------------------------------------------------------------------------------
 	}
 }

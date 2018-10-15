@@ -128,7 +128,8 @@ namespace LanguageExplorer.MGA
 
 			using (var graphics = CreateGraphics())
 			{
-				var fRatio = graphics.DpiX / 96.0f; // try to adjust for screen resolution
+				// try to adjust for screen resolution
+				var fRatio = graphics.DpiX / 96.0f;
 				// on start-up, ensure the selected gloss panel is wide enough for all the buttons
 				splitContainerVertical.SplitterDistance = splitContainerVertical.Width - (buttonAcceptGloss.Width + buttonCancel.Width + buttonHelp.Width + (int)(16 * fRatio));
 				Text += " " + m_cache.ProjectId.UiName;
@@ -215,26 +216,47 @@ namespace LanguageExplorer.MGA
 
 		public void OnInsertButtonClick(object obj, EventArgs ea)
 		{
-			var mif = (MasterInflectionFeature)treeViewGlossListItem.SelectedNode.Tag;
-			if (mif == null)
+			ProcessAnySelectedNodes(treeViewGlossListItem.Nodes);
+		}
+
+		private void ProcessAnySelectedNodes(TreeNodeCollection nodes)
+		{
+			foreach (TreeNode node in nodes)
 			{
-				return; // just to be safe
+				if (node.Nodes.Count > 0)
+				{
+					ProcessAnySelectedNodes(node.Nodes);
+				}
+				else
+				{
+					if (node.Checked)
+					{
+						InsertSelectedItem(node);
+					}
+				}
 			}
-			var glbiNew = new GlossListBoxItem(m_cache, mif.Node,
+		}
+
+		private void InsertSelectedItem(TreeNode selectedNode)
+		{
+			MasterInflectionFeature mif = (MasterInflectionFeature)selectedNode.Tag;
+			if (mif == null)
+				return; // just to be safe
+			GlossListBoxItem glbiNew = new GlossListBoxItem(m_cache, mif.Node,
 				treeViewGlossListItem.AfterSeparator, treeViewGlossListItem.ComplexNameSeparator,
 				treeViewGlossListItem.ComplexNameFirst);
 			GlossListBoxItem glbiConflict;
 			if (glossListBoxGloss.NewItemConflictsWithExtantItem(glbiNew, out glbiConflict))
 			{
 				const string ksPath = "/group[@id='Linguistics']/group[@id='Morphology']/group[@id='MGA']/";
-				var sMsg1 = StringTable.Table.GetStringWithXPath("ItemConflictDlgMessage", ksPath);
-				var sMsg = string.Format(sMsg1, glbiConflict);
-				var sCaption = StringTable.Table.GetStringWithXPath("ItemConflictDlgCaption", ksPath);
+				string sMsg1 = StringTable.Table.GetStringWithXPath("ItemConflictDlgMessage", ksPath);
+				string sMsg = String.Format(sMsg1, glbiConflict);
+				string sCaption = StringTable.Table.GetStringWithXPath("ItemConflictDlgCaption", ksPath);
 				MessageBox.Show(sMsg, sCaption, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				return;
 			}
 			// raise event
-			var glea = new GlossListEventArgs(glbiNew);
+			GlossListEventArgs glea = new GlossListEventArgs(glbiNew);
 			OnInsertMGAGlossListItem(glea);
 			buttonAcceptGloss.Enabled = true;
 			EnableMoveUpDownButtons();

@@ -14,6 +14,7 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -24,26 +25,28 @@ namespace SIL.FieldWorks.Common.Controls
 	/// ----------------------------------------------------------------------------------------
 	public class CharacterGrid : DataGridView
 	{
-#if !__MonoCS__
-		[DllImport("gdi32.dll", CharSet=CharSet.Auto)]
-		private static extern uint GetGlyphIndices(IntPtr hdc, string lpstr, int c,
+		[DllImport("gdi32.dll", CharSet = CharSet.Auto, EntryPoint = "GetGlyphIndices")]
+		private static extern uint GetGlyphIndicesWindows(IntPtr hdc, string lpstr, int c,
 			[In, Out] ushort[] pgi, int fl);
-#else
+
 		private static uint GetGlyphIndices(IntPtr hdc, string lpstr, int c, [In, Out] ushort[] pgi, int fl)
 		{
+			if (Platform.IsWindows)
+				return GetGlyphIndicesWindows(hdc, lpstr, c, pgi, fl);
+
 			throw new NotImplementedException();
 		}
-#endif
 
-#if !__MonoCS__
-		[DllImport("gdi32.dll", EntryPoint="SelectObject")]
-		private static extern IntPtr SelectObject(IntPtr hdc, IntPtr hfont);
-#else
+		[DllImport("gdi32.dll", EntryPoint = "SelectObject")]
+		private static extern IntPtr SelectObjectWindows(IntPtr hdc, IntPtr hfont);
+
 		private static IntPtr SelectObject(IntPtr hdc, IntPtr hfont)
 		{
+			if (Platform.IsWindows)
+				return SelectObjectWindows(hdc, hfont);
+
 			throw new NotImplementedException();
 		}
-#endif
 
 		/// <summary>Handler for character changed event.</summary>
 		public delegate void CharacterChangedHandler(CharacterGrid grid, string newCharacter);
@@ -113,17 +116,17 @@ namespace SIL.FieldWorks.Common.Controls
 			if (IsDisposed)
 				return;
 
-			if( disposing )
+			if (disposing)
 			{
 				if (m_fntForSpecialChar != null)
 					m_fntForSpecialChar.Dispose();
 				if (m_toolTip != null)
 					m_toolTip.Dispose();
 			}
-					m_fntForSpecialChar = null;
+			m_fntForSpecialChar = null;
 			m_toolTip = null;
 
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#endregion
@@ -381,7 +384,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the display name for the specified space or control character. If no display
-		/// name is found, then the U+ value is retured.
+		/// name is found, then the U+ value is returned.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public static string GetSpecialCharDisplayText(string chr)
@@ -398,7 +401,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Removes all characters. If characters are loaded from font, they will be readded
+		/// Removes all characters. If characters are loaded from font, they will be re-added
 		/// automatically when the control is repainted.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -814,7 +817,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if (MiscUtils.IsUnix)
 			{
-				// on unix we don't support getting Glyph's from the font.
+				// on unix we don't support getting Glyphs from the font.
 				// The results i m_chars is only currently used be CalcCellSize
 				// before being cleared by a call to RemoveAllCharacters.
 				m_chars = new List<string>();
@@ -871,7 +874,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Determines the max. height and width of grid cells in order to accomdate the
+		/// Determines the max. height and width of grid cells in order to accomodate the
 		/// largest character.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------

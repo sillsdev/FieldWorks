@@ -27,7 +27,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 	public delegate string GetCurrentStyleNameHandler(StyleType type);
 
 	/// <summary />
-	public abstract class BaseStyleListHelper: IDisposable
+	public abstract class BaseStyleListHelper : IDisposable
 	{
 		/// <summary>Occurs when a style is chosen from the list.</summary>
 		public event StyleChosenHandler StyleChosen;
@@ -282,8 +282,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// ------------------------------------------------------------------------------------
 		public bool IgnoreListRefresh
 		{
-			get {return m_ignoreListRefresh;}
-			set {m_ignoreListRefresh = value;}
+			get { return m_ignoreListRefresh; }
+			set { m_ignoreListRefresh = value; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -328,8 +328,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		[Browsable(false)]
 		public LcmStyleSheet StyleSheet
 		{
-			get	{return m_styleSheet;}
-			set	{m_styleSheet = value;}
+			get { return m_styleSheet; }
+			set { m_styleSheet = value; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -340,8 +340,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// ------------------------------------------------------------------------------------
 		public LcmCache Cache
 		{
-			get {return m_cache;}
-			set	{m_cache = value;}
+			get { return m_cache; }
+			set { m_cache = value; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -356,8 +356,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// ------------------------------------------------------------------------------------
 		public StyleType ShowOnlyStylesOfType
 		{
-			get {return m_typeFilter;}
-			set {m_typeFilter = value;}
+			get { return m_typeFilter; }
+			set { m_typeFilter = value; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -369,13 +369,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// ------------------------------------------------------------------------------------
 		public bool UnionIncludeAndTypeFilter
 		{
-			get {return m_unionIncludeAndTypeFilter;}
-			set {m_unionIncludeAndTypeFilter = value;}
+			get { return m_unionIncludeAndTypeFilter; }
+			set { m_unionIncludeAndTypeFilter = value; }
 		}
 
-#if __MonoCS__
-#pragma warning disable 419 // ambiguous reference; mono bug #639867
-#endif
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets a List containing a list of ContextValues of styles to exclude from
@@ -466,9 +463,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				m_includedContexts = value;
 			}
 		}
-#if __MonoCS__
-#pragma warning restore 419 // ambiguous reference; mono bug #639867
-#endif
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -480,7 +474,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// ------------------------------------------------------------------------------------
 		public List<string> ExplicitStylesToDisplay
 		{
-			get {return m_explicitStylesToDisplay;}
+			get { return m_explicitStylesToDisplay; }
 			set
 			{
 				m_explicitStylesToDisplay = value;

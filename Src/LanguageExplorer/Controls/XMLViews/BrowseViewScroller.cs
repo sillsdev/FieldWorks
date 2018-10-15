@@ -2,11 +2,10 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-#if __MonoCS__
 using System;
-#endif
 using System.Diagnostics;
 using System.Windows.Forms;
+using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.Controls.XMLViews
 {
@@ -26,27 +25,27 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary />
 		protected override void OnLayout(LayoutEventArgs levent)
 		{
-#if __MonoCS__ // FWNX-425
-			m_bv.EnsureScrollContainerIsCorrectWidth();
-#endif
+			if (Platform.IsMono)
+			{
+				m_bv.EnsureScrollContainerIsCorrectWidth(); // FWNX-425
+			}
 
 			m_bv.LayoutScrollControls();
 			// It's important to do this AFTER laying out the embedded controls, because it figures
 			// out whether to display the scroll bar based on their sizes and positions.
-			base.OnLayout (levent);
+			base.OnLayout(levent);
 		}
 
-#if __MonoCS__ // FWNX-425
-#pragma warning disable 1587
-		/// <summary> </summary>
-#pragma warning restore 1587
+		/// <summary />
 		protected override void OnSizeChanged(EventArgs e)
 		{
-			m_bv.EnsureScrollContainerIsCorrectWidth();
+			if (Platform.IsMono)
+			{
+				m_bv.EnsureScrollContainerIsCorrectWidth(); // FWNX-425
+			}
 
 			base.OnSizeChanged(e);
 		}
-#endif
 
 		/// <summary />
 		protected override void OnMouseWheel(MouseEventArgs e)

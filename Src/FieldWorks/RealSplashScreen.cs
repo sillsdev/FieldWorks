@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 using SIL.Windows.Forms;
 
 namespace SIL.FieldWorks
@@ -338,9 +339,12 @@ namespace SIL.FieldWorks
 				try
 				{
 
-#if DEBUG && !__MonoCS__
-					Thread.CurrentThread.Name = "UpdateOpacityCallback";
+					if (!Platform.IsMono)
+					{
+#if DEBUG
+						Thread.CurrentThread.Name = "UpdateOpacityCallback";
 #endif
+					}
 
 					if (m_timer == null)
 					{
@@ -352,14 +356,18 @@ namespace SIL.FieldWorks
 					// debugging while starting up, but it might happen at other times too
 					// - so just be safe.
 					if (!IsDisposed && IsHandleCreated)
-#if !__MonoCS__
-						Invoke(new UpdateOpacityDelegate(UpdateOpacity));
-#else // Windows have to be on the main thread on mono.
 					{
-						UpdateOpacity();
-						Application.DoEvents(); // force a paint
+						if (Platform.IsMono)
+						{
+							// Windows have to be on the main thread on mono.
+							UpdateOpacity();
+							Application.DoEvents(); // force a paint
+						}
+						else
+						{
+							Invoke(new UpdateOpacityDelegate(UpdateOpacity));
+						}
 					}
-#endif
 				}
 				catch (Exception e)
 				{
@@ -373,18 +381,16 @@ namespace SIL.FieldWorks
 			}
 		}
 
-		/// <summary />
 		private void UpdateOpacity()
 		{
 			try
 			{
 				var currentOpacity = Opacity;
 				if (currentOpacity < 1.0)
-#if !__MonoCS__
-					Opacity = currentOpacity + 0.05;
-#else
-					Opacity = currentOpacity + 0.025; // looks nicer on mono/linux
-#endif
+				{
+					// 0.025 looks nicer on mono/linux
+					Opacity = currentOpacity + (Platform.IsMono ? 0.025 : 0.05);
+				}
 				else if (m_timer != null)
 				{
 					m_timer.Dispose();

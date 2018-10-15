@@ -8,6 +8,7 @@ using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -76,7 +77,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <remarks>This method is called after each test</remarks>
 		/// ------------------------------------------------------------------------------------
 		[TearDown]
-		public override void  TestTearDown()
+		public override void TestTearDown()
 		{
 			// NB: DO NOT USE NORMAL TEARDOWN APPROACH.
 			// LcmTestBase::TestTeardown uses m_actionHandler which seems to
@@ -106,12 +107,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		protected virtual void ShowForm(DummyBasicViewVc.DisplayType display)
 		{
-#if !__MonoCS__
-			int height = 307 - 25;
-#else
 			// TODO-Linux: This value works better, given mono differences. Possibly look into this further.
-			int height = 300;
-#endif
+			int height = Platform.IsMono ? 300 : 307 - 25;
+
 			ShowForm(display, height);
 		}
 

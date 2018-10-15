@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -111,7 +112,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			if (!(obj is IdleQueueTask))
 				return false;
 
-			return Equals((IdleQueueTask) obj);
+			return Equals((IdleQueueTask)obj);
 		}
 
 		/// <summary>
@@ -210,11 +211,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </remarks>
 		protected virtual void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Method can be called several times,
 			// but the main code must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
@@ -375,13 +378,14 @@ Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}'
 					// if it is not complete, queue it up to run when the application is idle again.
 					if (!task.Delegate(task.Parameter))
 						incompleteTasks.Add(task);
-#if __MonoCS__ // FWNX-348
-					// ShouldAbort() always == false on mono because of no PeekMessage
-					// so run one cycle and wait for the next Application Idle event
-					break;
-#endif
 
-
+					if (Platform.IsMono)
+					{
+						// FWNX-348
+						// ShouldAbort() always == false on mono because of no PeekMessage
+						// so run one cycle and wait for the next Application Idle event
+						break;
+					}
 				}
 			}
 			finally
@@ -400,19 +404,21 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 
 		static bool ShouldAbort()
 		{
-#if !__MonoCS__ // FWNX-348
+			if (Platform.IsMono)
+			{
+				// FWNX-348
+				// The below code is examining the Windows Message Pump to
+				// see if there are any queued messages if there are it returns true
+				// to cancel the idle.
+
+				return false;
+			}
+
 			var msg = new Win32.MSG();
 			return Win32.PeekMessage(ref msg, IntPtr.Zero, 0, 0, (uint)Win32.PeekFlags.PM_NOREMOVE);
-#else
-			// The above code is examining the Windows Message Pump to
-			// see if there are any queued messages if there are it returns true
-			// to cancel the idle.
-
-			return false;
-#endif
 		}
 
-#region Implementation of IEnumerable
+		#region Implementation of IEnumerable
 
 		/// <summary>
 		/// Returns an enumerator that iterates through the queue.
@@ -435,9 +441,9 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			return GetEnumerator();
 		}
 
-#endregion
+		#endregion
 
-#region Implementation of ICollection<IdleQueueTask>
+		#region Implementation of ICollection<IdleQueueTask>
 
 		/// <summary>
 		/// Schedules the specified delegate to be invoked when the application
@@ -533,9 +539,9 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			}
 		}
 
-#endregion
+		#endregion
 
-#region Implementation of IApplicationIdleEventHandler
+		#region Implementation of IApplicationIdleEventHandler
 		/// <summary>
 		/// Call this for the duration of a block of code where we don't want idle events.
 		/// (Note that various things outside our control may pump events and cause the
@@ -566,6 +572,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				}
 			}
 		}
-#endregion
+		#endregion
 	}
 }

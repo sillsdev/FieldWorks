@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,10 +6,9 @@ using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Diagnostics;
-#if !__MonoCS__
-using NAudio.Wave;
 using NAudio.Lame;
-#endif
+using NAudio.Wave;
+using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.DictionaryConfiguration
 {
@@ -47,35 +46,47 @@ namespace LanguageExplorer.DictionaryConfiguration
 				throw new Exception("The source file path is invalid.");
 			}
 
-			byte[] mp3Bytes;
 			var wavBytes = ReadWavFile(sourceFilePath);
 			var wavHash = MD5.Create().ComputeHash(wavBytes);
 			SaveBytes(Path.ChangeExtension(destinationFilePath, ".txt"), wavHash);
-			// NAudio doesn't work on Linux so the conversion is run through LAME on the terminal
-#if __MonoCS__
-			ProcessStartInfo startInfo = new ProcessStartInfo ();
-			startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-			startInfo.FileName = "/bin/bash";
-			startInfo.Arguments = "-c 'lame -h " + sourceFilePath + " " + destinationFilePath + "'";
-			startInfo.UseShellExecute = false;
-			startInfo.CreateNoWindow = true;
-			var process = new Process();
-			process.StartInfo = startInfo;
-			process.EnableRaisingEvents = true;
-			process.Start ();
-			process.WaitForExit();
-#else
+			if (Platform.IsWindows)
+				ConvertBytesToMp3_Windows(wavBytes, destinationFilePath);
+			else
+				ConvertWavToMp3Linux(sourceFilePath, destinationFilePath);
+		}
+
+		private static void ConvertBytesToMp3_Windows(byte[] wavBytes, string destinationFilePath)
+		{
 			using (var outputStream = new MemoryStream())
 			using (var inputStream = new MemoryStream(wavBytes))
 			using (var fileReader = new WaveFileReader(inputStream))
 			using (var fileWriter = new LameMP3FileWriter(outputStream, fileReader.WaveFormat, 128))
 			{
 				fileReader.CopyTo(fileWriter);
-				mp3Bytes = outputStream.ToArray();
+				var mp3Bytes = outputStream.ToArray();
+				SaveBytes(destinationFilePath, mp3Bytes);
 			}
+		}
 
-			SaveBytes(destinationFilePath, mp3Bytes);
-#endif
+		private static void ConvertWavToMp3Linux(string sourceFilePath, string destinationFilePath)
+		{
+			// NAudio doesn't work on Linux so the conversion is run through LAME on the terminal
+			using (var process = new Process())
+			{
+				var startInfo = new ProcessStartInfo
+				{
+					WindowStyle = ProcessWindowStyle.Hidden,
+					FileName = "/bin/bash",
+					Arguments = string.Format("-c 'lame -h {0} {1}'", sourceFilePath,
+						destinationFilePath),
+					UseShellExecute = false,
+					CreateNoWindow = true
+				};
+				process.StartInfo = startInfo;
+				process.EnableRaisingEvents = true;
+				process.Start();
+				process.WaitForExit();
+			}
 		}
 
 		/// <summary>

@@ -11,6 +11,7 @@ using System.Linq;
 using System.Security;
 using Microsoft.Win32;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -46,7 +47,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>Default implementation of registry helper</summary>
-		private class FwRegistryHelperImpl: IFwRegistryHelper
+		private class FwRegistryHelperImpl : IFwRegistryHelper
 		{
 			public FwRegistryHelperImpl()
 			{
@@ -122,13 +123,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				using (var ParatextKey = Registry.LocalMachine.OpenSubKey("Software\\ScrChecks\\1.0"))
 				{
-#if __MonoCS__
+					if (Platform.IsWindows)
+						return ParatextKey != null && RegistryHelper.KeyExists(ParatextKey, "Program_Files_Directory_Ptw7");
+
 					// Unfortunately on Linux Paratext 7.5 does not produce all the same registry keys as it does on Windows
 					// we can't actually tell the version of Paratext from these keys, so assume 7 if Settings_Directory is found
 					return ParatextKey != null && RegistryHelper.KeyExists(ParatextKey, "Settings_Directory");
-#else
-					return ParatextKey != null && RegistryHelper.KeyExists(ParatextKey, "Program_Files_Directory_Ptw7");
-#endif
 				}
 			}
 		}

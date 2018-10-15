@@ -17,6 +17,7 @@ using LanguageExplorer.Filters;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.Controls.XMLViews
 {
@@ -222,28 +223,26 @@ namespace LanguageExplorer.Controls.XMLViews
 			ColumnsChanged?.Invoke(this, new EventArgs());
 		}
 
-#if __MonoCS__
 		private bool m_recursionProtection = false; // FWNX-262
-#endif
 
 		/// <summary>
 		/// Raises the <see cref="E:System.Windows.Forms.Control.Enter"/> event.
 		/// </summary>
 		protected override void OnEnter(EventArgs e)
 		{
-#if __MonoCS__
-			if (m_recursionProtection) // FWNX-262
-				return;
-			m_recursionProtection = true;
-#endif
+			if (Platform.IsMono)
+			{
+				if (m_recursionProtection) // FWNX-262
+					return;
+
+				m_recursionProtection = true;
+			}
 
 			m_bvMatches.SelectedRowHighlighting = SelectionHighlighting.border;
 			base.OnEnter(e);
 			m_bvMatches.Select();
 
-#if __MonoCS__
 			m_recursionProtection = false;
-#endif
 		}
 
 		/// <summary>
@@ -384,7 +383,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			var browseViewSorter = m_bvMatches.CreateSorterForFirstColumn(ws);
 
-			return browseViewSorter == null ? null: new FindResultSorter(firstSearchStr, browseViewSorter);
+			return browseViewSorter == null ? null : new FindResultSorter(firstSearchStr, browseViewSorter);
 		}
 
 		private void FireSelectionChanged()

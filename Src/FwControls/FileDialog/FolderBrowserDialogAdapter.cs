@@ -1,10 +1,7 @@
-// --------------------------------------------------------------------------------------------
-// <copyright from='2012' to='2012' company='SIL International'>
-// Copyright (c) 2012-2015 SIL International
+// Copyright (c) 2011-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
-// (http://www.gnu.org/licenses/lgpl-2.1.html).
-// </copyright>
-// --------------------------------------------------------------------------------------------
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Windows.Forms;
 
@@ -14,7 +11,7 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog
 	/// Cross-platform FolderBrowser dialog. On Windows it displays .NET's WinForms
 	/// FolderBrowserDialog, on Linux the GTK FileChooserDialog (limited to selecting folders).
 	/// </summary>
-	public class FolderBrowserDialogAdapter: IFolderBrowserDialog, IDisposable
+	public class FolderBrowserDialogAdapter : IFolderBrowserDialog, IDisposable
 	{
 		/// <summary/>
 		protected IFolderBrowserDialog m_dlg;
@@ -88,13 +85,13 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog
 		#endregion
 
 		#region Disposable stuff
-		#if DEBUG
+#if DEBUG
 		/// <summary/>
 		~FolderBrowserDialogAdapter()
 		{
 			Dispose(false);
 		}
-		#endif
+#endif
 
 		/// <summary/>
 		public bool IsDisposed { get; private set; }

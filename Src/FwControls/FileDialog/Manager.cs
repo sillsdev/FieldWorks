@@ -1,11 +1,9 @@
-// --------------------------------------------------------------------------------------------
-// <copyright from='2011' to='2011' company='SIL International'>
-// Copyright (c) 2011-2015 SIL International
+// Copyright (c) 2011-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
-// (http://www.gnu.org/licenses/lgpl-2.1.html).
-// </copyright>
-// --------------------------------------------------------------------------------------------
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.Controls.FileDialog
 {
@@ -61,15 +59,26 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog
 		/// --------------------------------------------------------------------------------
 		public static void Reset()
 		{
-#if __MonoCS__
+			if (Platform.IsWindows)
+				ResetWindows();
+			else
+				ResetLinux();
+		}
+
+		// NOTE: leave this as a separate method. Otherwise we need the gtk-sharp assemblies
+		// on Windows.
+		private static void ResetLinux()
+		{
 			SetOpenFileDialog<Linux.OpenFileDialogLinux>();
 			SetSaveFileDialog<Linux.SaveFileDialogLinux>();
 			SetFolderBrowserDialog<Linux.FolderBrowserDialogLinux>();
-#else
+		}
+
+		private static void ResetWindows()
+		{
 			SetOpenFileDialog<Windows.OpenFileDialogWindows>();
 			SetSaveFileDialog<Windows.SaveFileDialogWindows>();
 			SetFolderBrowserDialog<Windows.FolderBrowserDialogWindows>();
-#endif
 		}
 
 		/// <summary>

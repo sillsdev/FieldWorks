@@ -102,7 +102,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected static CoreWritingSystemDefinition s_qwsCurrent;
 		/// <summary />
 		protected static int s_cwsMulti;    // count of current ws alternatives.
-		/// <summary />
+											/// <summary />
 		protected static string s_sMultiSep;
 		/// <summary />
 		protected static bool s_fMultiFirst;
@@ -111,7 +111,8 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		int m_cHeightEstimates; // how many times has EstimateHeight been called for this width?
 		int m_dxWidthForEstimate;
-		int m_heightEstimate; // Our current best height estimate (0 if never estimated)
+		// Our current best height estimate (0 if never estimated)
+		int m_heightEstimate;
 		// used by <savehvo>.  This was first used in conjunction with displaying minor entries
 		// related to an entry or sense, organized by type of minor entry.
 		readonly Stack<int> m_stackHvo = new Stack<int>();
@@ -238,7 +239,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		public void ResetTables()
 		{
 			ResetTables(m_rootLayoutName);
-			m_cFields = 0;	// also force reload of custom field maps.
+			m_cFields = 0;  // also force reload of custom field maps.
 		}
 
 		/// <summary>
@@ -284,7 +285,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (fragId == 2)
 			{
 				// This number reserved for the main lazy sequence of an XmlSeqView.
-				Debug.Assert(MainSeqFlid != 0); // XmlSeqView must supply a main flid.
+				// XmlSeqView must supply a main flid.
+				Debug.Assert(MainSeqFlid != 0);
 				// For displaying reversal indexes, we need to know the reversal index
 				// language (writing system).
 				var obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
@@ -396,7 +398,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			if (m_CommandIcon == null)
 			{
-				m_CommandIcon = (IPicture)OLECvt.ToOLE_IPictureDisp(ResourceHelper.BlueCircleDownArrowForView);
+				m_CommandIcon = (IPicture)OLEConvert.ToOLE_IPictureDisp(ResourceHelper.BlueCircleDownArrowForView);
 			}
 
 			var condition = XmlUtils.GetOptionalAttributeValue(frag, "visibility", "objectSelected");
@@ -501,7 +503,7 @@ namespace LanguageExplorer.Controls.XMLViews
 								}
 								break;
 						}
-						refs.Add(new HvoAndIndex {RefHvo = lr.Hvo, Index = lri.Index, OriginalIndex = originalIndex++});
+						refs.Add(new HvoAndIndex { RefHvo = lr.Hvo, Index = lri.Index, OriginalIndex = originalIndex++ });
 					}
 				}
 				// Now, sort the list according to the order given by the information stored in
@@ -512,8 +514,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (objs[0].ClassID == LexEntryRefTags.kClassId && (m_mapGuidToComplexRefInfo != null || m_mapGuidToVariantRefInfo != null))
 			{
 				var originalIndex = 0;
-				var refs = objs.OfType<ILexEntryRef>().Select(ler => new {ler, info = GetTypeInfoForEntryRef(ler)})
-					.Where(@t => @t.info != null).Select(@t => new HvoAndIndex {RefHvo = @t.ler.Hvo, Index = @t.info.Index, OriginalIndex = originalIndex++}).ToList();
+				var refs = objs.OfType<ILexEntryRef>().Select(ler => new { ler, info = GetTypeInfoForEntryRef(ler) })
+					.Where(@t => @t.info != null).Select(@t => new HvoAndIndex { RefHvo = @t.ler.Hvo, Index = @t.info.Index, OriginalIndex = originalIndex++ }).ToList();
 				// Now, sort the list according to the order given by the information stored in
 				// m_mapGuidToComplexRefInfo or m_mapGuidToVariantRefInfo, and return the new array of hvos.
 				refs.Sort(SortHvoByIndex);
@@ -527,8 +529,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			{
 				var originalIndex = 0;
-				var refs = (objs.OfType<ILexEntry>().Select(le => new {le, info = GetTypeInfoForSubEntry(le)})
-					.Where(@t => @t.info != null).Select(@t => new HvoAndIndex {RefHvo = @t.le.Hvo, Index = @t.info.Index, OriginalIndex = ++originalIndex})).ToList();
+				var refs = (objs.OfType<ILexEntry>().Select(le => new { le, info = GetTypeInfoForSubEntry(le) })
+					.Where(@t => @t.info != null).Select(@t => new HvoAndIndex { RefHvo = @t.le.Hvo, Index = @t.info.Index, OriginalIndex = ++originalIndex })).ToList();
 				// Now, sort the list according to the order given by the information stored in
 				// m_mapGuidToComplexRefInfo and return the new array of hvos.
 				refs.Sort(SortHvoByIndex);
@@ -920,7 +922,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				if (fFirst)
 				{
 					if (tss.Length != 0)
-					fFirst = false;
+						fFirst = false;
 				}
 				else if (tssSep != null)
 				{
@@ -989,7 +991,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					case "string":
 						{
 							var hvoTarget = hvo;
-							GetActualTarget(frag, ref hvoTarget, m_sda);	// modify the hvo if needed
+							GetActualTarget(frag, ref hvoTarget, m_sda);    // modify the hvo if needed
 							if (hvo != hvoTarget)
 							{
 								AddStringFromOtherObj(frag, hvoTarget, vwenv, caller);
@@ -1069,7 +1071,7 @@ namespace LanguageExplorer.Controls.XMLViews
 									var argument = XmlUtils.GetOptionalAttributeValue(frag, "argument");
 									if (!string.IsNullOrEmpty(argument))
 									{
-										var value = (ITsString)mi.Invoke(obj, new object[] {argument});
+										var value = (ITsString)mi.Invoke(obj, new object[] { argument });
 										vwenv.AddString(value);
 									}
 								}
@@ -1079,7 +1081,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					case "configureMlString":
 						{
 							var hvoTarget = hvo;
-							GetActualTarget(frag, ref hvoTarget, m_sda);	// modify the hvo if needed
+							GetActualTarget(frag, ref hvoTarget, m_sda);    // modify the hvo if needed
 							int flid;
 							if (TryCustomField(m_sda, frag, hvoTarget, out flid))
 							{
@@ -1099,7 +1101,7 @@ namespace LanguageExplorer.Controls.XMLViews
 							}
 							// The Ws info specified in the part ref node
 							var sWs = XmlUtils.GetOptionalAttributeValue(caller, "ws");
-							var wsIds = sWs == "reversal" ? new HashSet<int> {ReversalWs} : WritingSystemServices.GetAllWritingSystems(m_cache, FwUtils.ConvertElement(caller), null, hvoTarget, flid);
+							var wsIds = sWs == "reversal" ? new HashSet<int> { ReversalWs } : WritingSystemServices.GetAllWritingSystems(m_cache, FwUtils.ConvertElement(caller), null, hvoTarget, flid);
 							if (wsIds.Count == 1)
 							{
 								if (hvoTarget != hvo)
@@ -1127,7 +1129,7 @@ namespace LanguageExplorer.Controls.XMLViews
 								var style = XmlUtils.GetOptionalAttributeValue(caller, "style");
 								if (!string.IsNullOrEmpty(style))
 								{
-									vwenv.set_StringProperty((int) FwTextPropType.ktptNamedStyle, style);
+									vwenv.set_StringProperty((int)FwTextPropType.ktptNamedStyle, style);
 								}
 							}
 							// Note: the following assertion is indicative of not setting colSpec attribute multipara="true"
@@ -1148,7 +1150,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						{
 							ProcessProperties(frag, vwenv);
 							vwenv.OpenDiv();
-							ProcessChildren(frag, vwenv, hvo, caller);	// caller used for numbering subrecords
+							ProcessChildren(frag, vwenv, hvo, caller);  // caller used for numbering subrecords
 							vwenv.CloseDiv();
 							break;
 						}
@@ -1287,7 +1289,7 @@ namespace LanguageExplorer.Controls.XMLViews
 							break;
 						}
 					case "objectOfRowUsingViewConstructor": // display the current object using an external VC.
-						//notice this assumes that it wants a LcmCache as an argument
+															//notice this assumes that it wants a LcmCache as an argument
 						var vc = (IVwViewConstructor)DynamicLoader.CreateObject(frag, m_cache);
 						var selectorId = Convert.ToInt32(XmlUtils.GetMandatoryAttributeValue(frag, "selector"));
 						// Note this is AddObj, not AddObjProp, and it explicitly adds the current object using the new vc and fragId
@@ -2222,7 +2224,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// Forced magic ws. Find the corresponding actual WS.
 			if (WsForce == WritingSystemServices.kwsReversalIndex && ReversalWs > 0)
 			{
-				return ReversalWs;	// we know this one locally.
+				return ReversalWs;  // we know this one locally.
 			}
 			int wsActual;
 			WritingSystemServices.GetMagicStringAlt(m_cache, m_sda, WsForce, hvo, flid, false, out wsActual);
@@ -2319,7 +2321,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			if (style != null && flowType != "divInPara")
 			{
-				vwenv.set_StringProperty((int) FwTextPropType.ktptNamedStyle, style);
+				vwenv.set_StringProperty((int)FwTextPropType.ktptNamedStyle, style);
 			}
 			switch (flowType)
 			{
@@ -2348,26 +2350,26 @@ namespace LanguageExplorer.Controls.XMLViews
 			InsertLiteralString(frag, vwenv, "after", flowType, null); // don't need default style here, we're inside the main span for the property.
 			if (style != null || flowType != null)
 			{
-					switch (flowType)
-					{
-						default:
-							vwenv.CloseSpan();
-							break;
-						case "para":
-							vwenv.CloseParagraph();
-							break;
-						case "div":
-							vwenv.CloseDiv();
-							break;
-						case "none":
-							break;
-						case "divInPara":
-							vwenv.CloseDiv();
-							vwenv.OpenParagraph();
-							// If we end up with an empty paragraph, try to make it disappear.
-							vwenv.EmptyParagraphBehavior(1);
-							break;
-					}
+				switch (flowType)
+				{
+					default:
+						vwenv.CloseSpan();
+						break;
+					case "para":
+						vwenv.CloseParagraph();
+						break;
+					case "div":
+						vwenv.CloseDiv();
+						break;
+					case "none":
+						break;
+					case "divInPara":
+						vwenv.CloseDiv();
+						vwenv.OpenParagraph();
+						// If we end up with an empty paragraph, try to make it disappear.
+						vwenv.EmptyParagraphBehavior(1);
+						break;
+				}
 			}
 			(vwenv as ConfiguredExport)?.EndCssClassIfNeeded(frag);
 		}
@@ -2549,7 +2551,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			var nVal = ttp.GetIntPropValues((int)FwTextPropType.ktptLeadingIndent, out nVar);
 			if (nVal != -1 && nVar != -1)
 			{
-				vwenv.set_IntProperty((int) FwTextPropType.ktptLeadingIndent, nVar, nVal);
+				vwenv.set_IntProperty((int)FwTextPropType.ktptLeadingIndent, nVar, nVal);
 			}
 		}
 
@@ -2619,7 +2621,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				if (flowType == "div")
 				{
 					fMadePara = true;
-					vwenv.set_StringProperty((int) FwTextPropType.ktptNamedStyle, sStyle);
+					vwenv.set_StringProperty((int)FwTextPropType.ktptNamedStyle, sStyle);
 					vwenv.OpenParagraph();
 				}
 				else
@@ -2660,7 +2662,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return string.Empty;
 			}
-			Debug.Assert(m_stackPartRef.Count == 0 || partRef == m_stackPartRef[0], "PartRef " + XmlUtils.GetOptionalAttributeValue(partRef,"ref","NoRefFound") + " is not the first in the stack");
+			Debug.Assert(m_stackPartRef.Count == 0 || partRef == m_stackPartRef[0], "PartRef " + XmlUtils.GetOptionalAttributeValue(partRef, "ref", "NoRefFound") + " is not the first in the stack");
 			var i = 1;
 			while (XmlUtils.GetOptionalBooleanAttributeValue(partRef, "hideConfig", false) && i < m_stackPartRef.Count)
 			{
@@ -2691,7 +2693,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (IdentifySource)
 			{
 				var bldr = tss.GetBldr();
-				bldr.SetStrPropValue(0, tss.Length, (int) FwTextPropType.ktptBulNumTxtBef, NodeIdentifier(whereFrom));
+				bldr.SetStrPropValue(0, tss.Length, (int)FwTextPropType.ktptBulNumTxtBef, NodeIdentifier(whereFrom));
 				vwenv.AddString(bldr.GetString());
 			}
 			else
@@ -2859,7 +2861,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						ILexEntry entry;
 						if (repo.TryGetObject(hvoObj, out entry) && entry.EntryRefsOS.Count > 0)
 						{
-							var fOk = false;	// assume we don't want this entry.
+							var fOk = false;    // assume we don't want this entry.
 							foreach (var entryref in entry.EntryRefsOS.Where(entryref => entryref.HideMinorEntry == 0))
 							{
 								switch (entryref.RefType)
@@ -2938,7 +2940,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						{
 							continue;
 						}
-						var lri = new LexReferenceInfo(s) {Index = i};
+						var lri = new LexReferenceInfo(s) { Index = i };
 						List<LexReferenceInfo> lris;
 						if (!m_mapGuidToReferenceInfo.TryGetValue(lri.ItemGuid, out lris))
 						{
@@ -3086,7 +3088,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public static bool ConditionPasses(IVwEnv vwenv, XElement frag, int hvo, LcmCache cache, ISilDataAccess sda, XElement caller)
 		{
-			GetActualTarget(frag, ref hvo, sda);	// modify the hvo if needed
+			GetActualTarget(frag, ref hvo, sda);    // modify the hvo if needed
 
 			if (!IsConditionsPass(frag, hvo, sda))
 			{
@@ -3210,8 +3212,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		private static bool IntEqualsConditionPasses(IVwEnv vwenv, XElement frag, int hvo, ISilDataAccess sda)
 		{
-			var intValue = XmlUtils.GetOptionalIntegerValue(frag, "intequals", -2);	// -2 might be valid
-			var intValue2 = XmlUtils.GetOptionalIntegerValue(frag, "intequals", -3);	// -3 might be valid
+			var intValue = XmlUtils.GetOptionalIntegerValue(frag, "intequals", -2); // -2 might be valid
+			var intValue2 = XmlUtils.GetOptionalIntegerValue(frag, "intequals", -3);    // -3 might be valid
 			if (intValue != -2 || intValue2 != -3)
 			{
 				var value = GetValueFromCache(vwenv, frag, hvo, sda);
@@ -3228,8 +3230,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		private static bool IntGreaterConditionPasses(IVwEnv vwenv, XElement frag, int hvo, ISilDataAccess sda)
 		{
-			var intValue = XmlUtils.GetOptionalIntegerValue(frag, "intgreaterthan", -2);	// -2 might be valid
-			var intValue2 = XmlUtils.GetOptionalIntegerValue(frag, "intgreaterthan", -3);	// -3 might be valid
+			var intValue = XmlUtils.GetOptionalIntegerValue(frag, "intgreaterthan", -2);    // -2 might be valid
+			var intValue2 = XmlUtils.GetOptionalIntegerValue(frag, "intgreaterthan", -3);   // -3 might be valid
 			if (intValue != -2 || intValue2 != -3)
 			{
 				var value = GetValueFromCache(vwenv, frag, hvo, sda);
@@ -3246,8 +3248,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		private static bool IntLessConditionPasses(IVwEnv vwenv, XElement frag, int hvo, ISilDataAccess sda)
 		{
-			var intValue = XmlUtils.GetOptionalIntegerValue(frag, "intlessthan", -2);	// -2 might be valid
-			var intValue2 = XmlUtils.GetOptionalIntegerValue(frag, "intlessthan", -3);	// -3 might be valid
+			var intValue = XmlUtils.GetOptionalIntegerValue(frag, "intlessthan", -2);   // -2 might be valid
+			var intValue2 = XmlUtils.GetOptionalIntegerValue(frag, "intlessthan", -3);  // -3 might be valid
 			if (intValue != -2 || intValue2 != -3)
 			{
 				var value = GetValueFromCache(vwenv, frag, hvo, sda);
@@ -3393,7 +3395,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		private static bool BoolEqualsConditionPasses(IVwEnv vwenv, XElement frag, int hvo, ISilDataAccess sda)
 		{
-			var boolValue = XmlUtils.GetOptionalAttributeValue(frag, "boolequals", "notFound");	// must be either 'true' or 'false'.
+			var boolValue = XmlUtils.GetOptionalAttributeValue(frag, "boolequals", "notFound"); // must be either 'true' or 'false'.
 			if (boolValue != "notFound")
 			{
 				return GetBoolValueFromCache(vwenv, frag, hvo, sda) == (boolValue == "true");
@@ -3484,7 +3486,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				var tsString = sda.get_StringProp(hvo, flid);
 				int var;
-				var realWs = tsString.get_Properties(0).GetIntPropValues((int) FwTextPropType.ktptWs, out var);
+				var realWs = tsString.get_Properties(0).GetIntPropValues((int)FwTextPropType.ktptWs, out var);
 				// Third argument must be 0 to indicate a non-multistring.
 				// Fourth argument is the TsString version of the string we are testing against.
 				// The display will update for a change in whether it is true that sda.get_StringProp(hvo, flid) is equal to arg4
@@ -3523,9 +3525,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			NoteDependency(vwenv, hvo, flid);
 			var fldType = sda.MetaDataCache.GetFieldType(flid);
 			if (fldType == (int)CellarPropertyType.OwningSequence
-			    || fldType == (int)CellarPropertyType.ReferenceCollection
-			    || fldType == (int)CellarPropertyType.OwningCollection
-			    || fldType == (int)CellarPropertyType.ReferenceSequence)
+				|| fldType == (int)CellarPropertyType.ReferenceCollection
+				|| fldType == (int)CellarPropertyType.OwningCollection
+				|| fldType == (int)CellarPropertyType.ReferenceSequence)
 			{
 				len = sda.get_VecSize(hvo, flid);
 			}
@@ -3760,7 +3762,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public ISilDataAccess DataAccess
 		{
-			get { return m_sda;}
+			get { return m_sda; }
 			set
 			{
 				m_sda = value;
@@ -4493,7 +4495,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						vwenv.set_IntProperty((int)FwTextPropType.ktptMaxLines, (int)FwTextPropVar.ktpvDefault, Convert.ToInt32(value));
 						break;
 					}
-				//Todo JohnT: and a good many more...
+					//Todo JohnT: and a good many more...
 			}
 		}
 

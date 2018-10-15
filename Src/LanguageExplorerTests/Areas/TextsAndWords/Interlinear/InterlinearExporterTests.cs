@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -16,6 +16,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
+using SIL.PlatformUtilities;
 using SIL.TestUtilities;
 
 namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
@@ -83,8 +84,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			string xslt = File.ReadAllText(fileXsl);
 			var xform = new XslCompiledTransform(false);
 			using (var stringReader = new StringReader(xslt))
-				using (var xmlReader = XmlReader.Create(stringReader))
-					xform.Load(xmlReader);
+			using (var xmlReader = XmlReader.Create(stringReader))
+				xform.Load(xmlReader);
 
 			using (var stream = createStream())
 			{
@@ -105,11 +106,11 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		{
 			StreamFactory<MemoryStream> createStream = () => new MemoryStream();
 			var transformedDoc = new XmlDocument();
-			ExtractStream<MemoryStream> extractStream = delegate(MemoryStream stream)
-															{
-																stream.Seek(0, SeekOrigin.Begin);
-																transformedDoc.Load(stream);
-															};
+			ExtractStream<MemoryStream> extractStream = delegate (MemoryStream stream)
+			{
+				stream.Seek(0, SeekOrigin.Begin);
+				transformedDoc.Load(stream);
+			};
 			TransformDoc(usxDocument, createStream, extractStream, fileXsl);
 			return transformedDoc;
 		}
@@ -222,7 +223,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 					MorphServices.FindMorphType(Cache, ref formGo, out clsidForm), tssGoForm, "go", null);
 				var leEn = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
 					MorphServices.FindMorphType(Cache, ref formEn, out clsidForm), tssEnForm, ".PP", null);
-				pa.BreakIntoMorphs(0, 2, new ArrayList{ leGo.LexemeFormOA, tssEnForm });
+				pa.BreakIntoMorphs(0, 2, new ArrayList { leGo.LexemeFormOA, tssEnForm });
 				pa.SetMorphSense(0, 2, 0, leGo.SensesOS[0]);
 				pa.SetMorphSense(0, 2, 1, leEn.SensesOS[0]);
 				pa.ReparseParagraph();
@@ -310,7 +311,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 				AssertThatXmlIn.Dom(htmlDoc).HasSpecifiedNumberOfMatchesForXpath(@"//*[@class='itx_Freeform_gls']", 3 + 1); // "Should be 3 empty and 1 non-empty freeform Free (gloss) annotations"
 				AssertThatXmlIn.Dom(htmlDoc).HasSpecifiedNumberOfMatchesForXpath(@"//*[@class='itx_Freeform_lit']", 3 + 1); // "Should be 3 empty and 1 non-empty freeform literal annotations"
-				AssertThatXmlIn.Dom(htmlDoc).HasSpecifiedNumberOfMatchesForXpath(@"//*[@class='itx_Freeform_note']", 2); // "Should be 2 freeform note annotations"
+				// "Should be 2 freeform note annotations"
+				AssertThatXmlIn.Dom(htmlDoc).HasSpecifiedNumberOfMatchesForXpath(@"//*[@class='itx_Freeform_note']", 2);
 				// (Free, Literal, and two Notes).
 				Assert.That(htmlDoc.SelectNodes(@"//*[@class='itx_Freeform_gls']")[3].InnerText, Is.EqualTo(tssFreeTranslation.Text));
 				Assert.That(htmlDoc.SelectNodes(@"//*[@class='itx_Freeform_lit']")[3].InnerText, Is.EqualTo(tssLitTranslation.Text));
@@ -940,7 +942,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				int clsidForm;
 				ILexEntry leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
 					MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "glossgo", null);
-				pa.BreakIntoMorphs(0, 1, new ArrayList() {leGo.LexemeFormOA});
+				pa.BreakIntoMorphs(0, 1, new ArrayList() { leGo.LexemeFormOA });
 				pa.SetMorphSense(0, 1, 0, leGo.SensesOS[0]);
 
 				pa.ReparseParagraph();
@@ -1130,13 +1132,14 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 				// The Mono implementation of XmlDocument.Validate is buggy (Xamarin Bug 8381).
 				// But the other validation checks below are still worthwhile.
-#if !__MonoCS__
-				//validate export against schema.
-				Assert.DoesNotThrow(() =>
+				if (!Platform.IsMono)
 				{
-					exportedDoc.Validate(DontIgnore);
-				});
-#endif
+					//validate export against schema.
+					Assert.DoesNotThrow(() =>
+					{
+						exportedDoc.Validate(DontIgnore);
+					});
+				}
 
 				//validate segment reference to MediaURI
 				AssertThatXmlIn.Dom(exportedDoc).HasAtLeastOneMatchForXpath("//phrase[@media-file=\"" + recGuid + "\"]");

@@ -17,6 +17,7 @@ using Microsoft.Win32;
 using SIL.LCModel;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -172,10 +173,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			// but not in the code folder structure.
 			// Sure hope the caller can handle it.
 
-#if __MonoCS__
-			else if (!Directory.Exists(retval)) // previous Substring(1) causes problem for 'full path' in Linux
+			else if (!Platform.IsWindows && !Directory.Exists(retval)) // previous Substring(1) causes problem for 'full path' in Linux
 				return subDirectory;
-#endif
 
 			return retval;
 		}
@@ -369,8 +368,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 					// and the source dir is $FW/Src.
 					Uri uriBase = new Uri(Assembly.GetExecutingAssembly().CodeBase);
 					var dir = Path.GetDirectoryName(Uri.UnescapeDataString(uriBase.AbsolutePath));
-					dir = Path.GetDirectoryName(dir);		// strip the parent directory name (Debug)
-					dir = Path.GetDirectoryName(dir);		// strip the parent directory again (Output)
+					dir = Path.GetDirectoryName(dir);       // strip the parent directory name (Debug)
+					dir = Path.GetDirectoryName(dir);       // strip the parent directory again (Output)
 					dir = Path.Combine(dir, "Src");
 					if (!Directory.Exists(dir))
 						throw new ApplicationException("Could not find the Src directory.  Was expecting it at: " + dir);
@@ -397,7 +396,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 					string src = Path.Combine(fw, "Src");
 					if (!Directory.Exists(src))
 						throw new ApplicationException(@"Could not find the Src directory.  Was expecting it at: " + src);
-						m_srcdir = src;
+					m_srcdir = src;
 				}
 				return m_srcdir;
 			}

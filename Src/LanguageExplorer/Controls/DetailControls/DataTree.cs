@@ -28,6 +28,7 @@ using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 using SIL.Xml;
 
 namespace LanguageExplorer.Controls.DetailControls
@@ -169,21 +170,21 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			if (m_traceSwitch.TraceVerbose)
 			{
-				Trace.WriteLine("DataTreeThreadID="+System.Threading.Thread.CurrentThread.GetHashCode()+": "+s);
+				Trace.WriteLine("DataTreeThreadID=" + System.Threading.Thread.CurrentThread.GetHashCode() + ": " + s);
 			}
 		}
 		protected void TraceInfoLine(string s)
 		{
 			if (m_traceSwitch.TraceInfo || m_traceSwitch.TraceVerbose)
 			{
-				Trace.WriteLine("DataTreeThreadID="+System.Threading.Thread.CurrentThread.GetHashCode()+": "+s);
+				Trace.WriteLine("DataTreeThreadID=" + System.Threading.Thread.CurrentThread.GetHashCode() + ": " + s);
 			}
 		}
 		#endregion
 
 		#region Slice collection manipulation methods
 
-		private ToolTip ToolTip => m_tooltip ?? (m_tooltip = new ToolTip {ShowAlways = true});
+		private ToolTip ToolTip => m_tooltip ?? (m_tooltip = new ToolTip { ShowAlways = true });
 
 		private void InsertSliceAndRegisterWithContextHelp(int index, Slice slice)
 		{
@@ -686,7 +687,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					slice.Dispose();
 				}
 				m_currentSlice = null; //no more current slice
-				// A tooltip doesn't always exist: see LT-11441, LT-11442, and LT-11444.
+									   // A tooltip doesn't always exist: see LT-11441, LT-11442, and LT-11444.
 				m_tooltip?.RemoveAll();
 
 				Root = null;
@@ -759,22 +760,23 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void MonoIgnoreUpdates()
 		{
-			#if __MonoCS__
+#if USEIGNOREUPDATES
 			// static method call to get reasonable performance from mono
-			// IgnoreUpdates is custom functionaily added to mono's winforms
+			// IgnoreUpdates is custom functionality added to mono's winforms
+			// (commit 3233f63ece7e922d03a115ce8d8524e8554be19d)
 
 			// Stops all winforms Size events
 			Control.IgnoreUpdates();
-			#endif
+#endif
 		}
 
 		private void MonoResumeUpdates()
 		{
-			#if __MonoCS__
+#if USEIGNOREUPDATES
 			// static method call to get reasonable performance from mono
 			// Resumes all winforms Size events
 			Control.UnignoreUpdates();
-			#endif
+#endif
 		}
 
 		/// <summary>
@@ -1049,7 +1051,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					if (m_rch.HasRecordListUpdater)
 					{
-						m_rch.Fixup(false); // no need to refresh record list on shutdown.
+						m_rch.Fixup(false);     // no need to refresh record list on shutdown.
 					}
 					else
 					{
@@ -1265,7 +1267,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 				finally
 				{
-					RefreshListNeeded = false; // reset our flag.
+					RefreshListNeeded = false;  // reset our flag.
 
 					m_currentSlicePartName = null;
 					m_currentSliceObjGuid = Guid.Empty;
@@ -1279,8 +1281,8 @@ namespace LanguageExplorer.Controls.DetailControls
 #endif
 					}
 				}
+			}
 		}
-	}
 
 		/// <summary>
 		/// Create slices appropriate for current root object and layout, reusing any existing slices,
@@ -1319,7 +1321,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					}
 				}
 				var gonnerHasToolTip = false; // Does any goner have one?
-				// Get rid of the dummies we aren't going to remove.
+											  // Get rid of the dummies we aren't going to remove.
 				foreach (var slice in dummySlices)
 				{
 					gonnerHasToolTip |= slice.ToolTip != null;
@@ -1396,7 +1398,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				var y = second.Key[i];
 				// We need this ugly chunk because two distinct wrappers for the same integer
 				// do not compare as equal! And we use integers (hvos) in these key lists...
-				if (x != y && !(x is int && y is int && ((int) x) == ((int) y)))
+				if (x != y && !(x is int && y is int && ((int)x) == ((int)y)))
 				{
 					return false;
 				}
@@ -1423,7 +1425,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					{
 						continue;
 					}
-						// shouldn't be visible
+					// shouldn't be visible
 					Slice nextSlice = null;
 					if (i < Slices.Count - 1)
 					{
@@ -1442,7 +1444,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					// (as is the case with empty sections), or isn't indented (as for the line following
 					// the empty 'Subclasses' heading in each inflection class).
 					if (XmlUtils.GetOptionalBooleanAttributeValue(slice.ConfigurationNode, "header", false) &&
-					    nextSlice.Weight != ObjectWeight.heavy && IsChildSlice(slice, nextSlice))
+						nextSlice.Weight != ObjectWeight.heavy && IsChildSlice(slice, nextSlice))
 					{
 						continue;
 					}
@@ -1575,11 +1577,11 @@ namespace LanguageExplorer.Controls.DetailControls
 			XElement template;
 			var useName = layoutName ?? "default";
 			var origName = useName;
-			for( ; ; )
+			for (; ; )
 			{
 				var classname = m_mdc.GetClassName(classId);
 				// Inventory of layouts has keys class, type, name
-				template = m_layoutInventory.GetElement("layout", new[] {classname, "detail", useName, choiceGuidStr});
+				template = m_layoutInventory.GetElement("layout", new[] { classname, "detail", useName, choiceGuidStr });
 				if (template != null)
 				{
 					break;
@@ -1736,7 +1738,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			if (cPossible > 0)
 			{
-				testResult = NodeTestResult.kntrPossible;	// everything else was nothing...
+				testResult = NodeTestResult.kntrPossible;   // everything else was nothing...
 			}
 
 			return insPos;
@@ -1794,12 +1796,12 @@ namespace LanguageExplorer.Controls.DetailControls
 					// Use the part inventory to find the indicated part.
 					var classId = obj.ClassID;
 					XElement part;
-					for (;;)
+					for (; ; )
 					{
 						var classname = m_mdc.GetClassName(classId);
 						// Inventory of parts has key ID. The ID is made up of the class name, "-Detail-", partname.
 						var key = classname + "-Detail-" + partName;
-						part = m_partInventory.GetElement("part", new[] {key});
+						part = m_partInventory.GetElement("part", new[] { key });
 
 						if (part != null)
 							break;
@@ -1900,7 +1902,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private static XElement FindPersistableParent(XElement parent, string originalParentXml)
 		{
-			if(Equals("part", parent.Name.LocalName) || Equals("layout", parent.Name.LocalName))
+			if (Equals("part", parent.Name.LocalName) || Equals("layout", parent.Name.LocalName))
 			{
 				return parent;
 			}
@@ -1915,7 +1917,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			if (!sibling.Attributes().Any())
 			{
-				return false;	// no attributes on this nodeas XmlComment  LT-3566
+				return false;   // no attributes on this nodeas XmlComment  LT-3566
 			}
 
 			var paramAttr = sibling.Attribute("param");
@@ -1958,7 +1960,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						fVisIfData, caller);
 
 					case "obj":
-						return AddAtomicNode(path, node, reuseMap, flid, obj, parentSlice, indent  + Slice.ExtraIndent(node), ref insertPosition, fTestOnly, parameter,
+						return AddAtomicNode(path, node, reuseMap, flid, obj, parentSlice, indent + Slice.ExtraIndent(node), ref insertPosition, fTestOnly, parameter,
 						fVisIfData, caller);
 
 					case "if":
@@ -2264,7 +2266,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					MakeGhostSlice(path, node, reuseMap, obj, parentSlice, flid, caller, indent, ref insertPosition);
 				}
 			}
-			else if (cobj < kInstantSliceMax ||	// This may be a little on the small side
+			else if (cobj < kInstantSliceMax || // This may be a little on the small side
 				m_currentObjectFlids.Contains(flid) || (!string.IsNullOrEmpty(m_currentSlicePartName) && m_currentSliceObjGuid != Guid.Empty && m_currentSliceNew == null))
 			{
 				//Create slices immediately
@@ -2285,7 +2287,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				var contents = SetupContents(flid, obj);
 				foreach (var hvo in contents)
 				{
-					var dos = new DummyObjectSlice(indent, node, (ArrayList)(path.Clone()), obj, flid, cnt, layoutOverride, layoutChoiceField, caller) {Cache = Cache, ParentSlice = parentSlice};
+					var dos = new DummyObjectSlice(indent, node, (ArrayList)(path.Clone()), obj, flid, cnt, layoutOverride, layoutChoiceField, caller) { Cache = Cache, ParentSlice = parentSlice };
 					path.Add(hvo);
 					// This is really important. Since some slices are invisible, all must be,
 					// or Show() will reorder them.
@@ -2433,8 +2435,8 @@ namespace LanguageExplorer.Controls.DetailControls
 					{
 						default: // if we don't know how to check, make it visible.
 							break;
-							// These cases are a bit tricky. We're duplicating some information here about how the slices
-							// interpret their ws parameter. Don't see how to avoid it, though, without creating the slices even if not needed.
+						// These cases are a bit tricky. We're duplicating some information here about how the slices
+						// interpret their ws parameter. Don't see how to avoid it, though, without creating the slices even if not needed.
 						case CellarPropertyType.MultiString:
 						case CellarPropertyType.MultiUnicode:
 							var ws = XmlUtils.GetOptionalAttributeValue(node, "ws", null);
@@ -2502,10 +2504,10 @@ namespace LanguageExplorer.Controls.DetailControls
 								return NodeTestResult.kntrNothing;
 							}
 							break;
-							// Usually, the header nodes for sequences and atomic object props
-							// have no editor. But sometimes they may have a jtview summary
-							// or the like. If an object-prop flid is specified, check it,
-							// in case we want to suppress the whole header.
+						// Usually, the header nodes for sequences and atomic object props
+						// have no editor. But sometimes they may have a jtview summary
+						// or the like. If an object-prop flid is specified, check it,
+						// in case we want to suppress the whole header.
 						case CellarPropertyType.OwningAtomic:
 						case CellarPropertyType.ReferenceAtomic:
 							var hvoT = realSda.get_ObjectProp(obj.Hvo, flid);
@@ -2516,13 +2518,13 @@ namespace LanguageExplorer.Controls.DetailControls
 							var objt = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoT);
 							if (objt.ClassID == StTextTags.kClassId) // if clid is an sttext clid
 							{
-								var txt = (IStText) objt;
+								var txt = (IStText)objt;
 								// Test if the StText has only one paragraph
 								var cpara = txt.ParagraphsOS.Count;
 								if (cpara == 1)
 								{
 									// Tests if paragraph is empty
-									var tss = ((IStTxtPara) txt.ParagraphsOS[0]).Contents;
+									var tss = ((IStTxtPara)txt.ParagraphsOS[0]).Contents;
 									if (tss == null || tss.Length == 0)
 									{
 										return NodeTestResult.kntrNothing;
@@ -2682,7 +2684,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				abbr = StringTable.Table.GetString(label, "LabelAbbreviations");
 				if (abbr == "*" + label + "*")
 				{
-					abbr = null;	// couldn't find it in the StringTable, reset it to null.
+					abbr = null;    // couldn't find it in the StringTable, reset it to null.
 				}
 			}
 			abbr = InterpretLabelAttribute(abbr, obj);
@@ -2696,7 +2698,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			var weightString = XmlUtils.GetOptionalAttributeValue(node, "weight", "field");
 			ObjectWeight weight;
-			switch(weightString)
+			switch (weightString)
 			{
 				case "heavy":
 					weight = ObjectWeight.heavy;
@@ -2726,7 +2728,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				if (node.Name == "ChangeRecordHandler")
 				{
-					continue;	// Handle only at the top level (at least for now).
+					continue;   // Handle only at the top level (at least for now).
 				}
 				insertPos = ApplyLayout(obj, parentSlice, node, indent, insertPos, path, reuseMap);
 			}
@@ -2868,7 +2870,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				base.OnLayout(levent);
 				if (AutoScrollPosition != aspOld)
 				{
-					AutoScrollPosition = new Point (-aspOld.X, -aspOld.Y);
+					AutoScrollPosition = new Point(-aspOld.X, -aspOld.Y);
 				}
 
 				if (smallestSize.IsEmpty || ClientSize.Width < smallestSize.Width)
@@ -2936,12 +2938,11 @@ namespace LanguageExplorer.Controls.DetailControls
 			var minHeight = GetMinFieldHeight();
 			var desiredWidth = ClientRectangle.Width;
 
-#if __MonoCS__ // FWNX-370: work around https://bugzilla.novell.com/show_bug.cgi?id=609596
-			if (VerticalScroll.Visible)
+			// FWNX-370: work around https://bugzilla.novell.com/show_bug.cgi?id=609596
+			if (Platform.IsMono && VerticalScroll.Visible)
 			{
 				desiredWidth -= SystemInformation.VerticalScrollBarWidth;
 			}
-#endif
 			var oldPos = AutoScrollPosition;
 			var desiredScrollPosition = new Point(-oldPos.X, -oldPos.Y);
 
@@ -3114,7 +3115,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			var cItem = Slices.Count;
 			// Start at the next editor and work down, skipping more nested editors.
-			for (var i =iStart + 1; i < cItem; ++i)
+			for (var i = iStart + 1; i < cItem; ++i)
 			{
 				var nIndCur = FieldOrDummyAt(i).Indent;
 				if (nIndCur == nInd) // We found another item at this level, so return it.
@@ -3142,7 +3143,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		public int PrevFieldAtIndent(int nInd, int iStart)
 		{
 			// Start at the next editor and work down, skipping more nested editors.
-			for (var i =iStart - 1; i >= 0; --i)
+			for (var i = iStart - 1; i >= 0; --i)
 			{
 				var nIndCur = FieldOrDummyAt(i).Indent;
 				if (nIndCur == nInd) // We found another item at this level, so return it.
@@ -3595,7 +3596,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			var lastChildIndex = CurrentSlice.IndexInContainer;
 			while (lastChildIndex < Slices.Count && Slice.StartsWith(Slices[lastChildIndex].Key, previousSummary.Key)
-			                                     && Slices[lastChildIndex].Bottom - previousSummary.Top < ClientRectangle.Height - 20)
+				&& Slices[lastChildIndex].Bottom - previousSummary.Top < ClientRectangle.Height - 20)
 			{
 				lastChildIndex++;
 			}
@@ -3635,7 +3636,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_fSuspendSettingCurrentSlice = false;
 			try
 			{
-				SetDefaultCurrentSlice((bool) parameter);
+				SetDefaultCurrentSlice((bool)parameter);
 			}
 			finally
 			{
@@ -3661,7 +3662,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_currentSliceNew = null;
 			if (sliceToSetAsCurrent != null && sliceToSetAsCurrent.IsDisposed)
 			{
-				sliceToSetAsCurrent = null;	// someone's creating slices faster than we can display!
+				sliceToSetAsCurrent = null; // someone's creating slices faster than we can display!
 			}
 			// try to see if any of our current slices have focus. if so, use that one.
 			if (sliceToSetAsCurrent == null)
@@ -3693,7 +3694,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (sliceToSetAsCurrent != null)
 			{
 				CurrentSlice = sliceToSetAsCurrent;
-				if (!suppressFocusChange && !m_currentSlice.Focused && m_fCurrentContentControlObjectTriggered)	// probably coming from m_currentSliceNew
+				if (!suppressFocusChange && !m_currentSlice.Focused && m_fCurrentContentControlObjectTriggered) // probably coming from m_currentSliceNew
 				{
 					// For string type slices, place cursor at end of (top) line.  This works
 					// more reliably than putting it at the beginning for some reason, and makes
@@ -3769,36 +3770,36 @@ namespace LanguageExplorer.Controls.DetailControls
 			return false;
 		}
 
-#endregion IxCoreColleague message handlers
+		#endregion IxCoreColleague message handlers
 
-#region Implementation of IPropertyTableProvider
+		#region Implementation of IPropertyTableProvider
 
 		/// <summary>
 		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
 		/// </summary>
 		public IPropertyTable PropertyTable { get; private set; }
 
-#endregion
+		#endregion
 
-#region Implementation of IPublisherProvider
+		#region Implementation of IPublisherProvider
 
 		/// <summary>
 		/// Get the IPublisher.
 		/// </summary>
 		public IPublisher Publisher { get; private set; }
 
-#endregion
+		#endregion
 
-#region Implementation of ISubscriberProvider
+		#region Implementation of ISubscriberProvider
 
 		/// <summary>
 		/// Get the ISubscriber.
 		/// </summary>
 		public ISubscriber Subscriber { get; private set; }
 
-#endregion
+		#endregion
 
-#region Implementation of IFlexComonent
+		#region Implementation of IFlexComonent
 
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
@@ -3821,7 +3822,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-#endregion
+		#endregion
 
 		private void ShowHiddenFields_Handler(object obj)
 		{

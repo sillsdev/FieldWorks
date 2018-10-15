@@ -4,6 +4,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
@@ -12,11 +13,9 @@ using Microsoft.Win32;
 using SIL.Email;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 using SIL.Reporting;
 
-#if __MonoCS__
-using System.Runtime.InteropServices;
-#endif
 
 namespace SIL.Utils
 {
@@ -300,10 +299,11 @@ namespace SIL.Utils
 			if (!string.IsNullOrEmpty(error.HelpLink) && error.HelpLink.IndexOf("::/") > 0 &&
 				!string.IsNullOrEmpty(error.Message))
 			{
-				s_fIgnoreReport = true; // This is presumably a hopelessly fatal error, so we
+				// This is presumably a hopelessly fatal error, so we
 				// don't want to report any subsequent errors at all.
 				// Look for the end of the basic message which will be terminated by two new lines or
 				// two CRLF sequences.
+				s_fIgnoreReport = true;
 				int lengthOfBasicMessage = error.Message.IndexOf("\r\n\r\n");
 				if (lengthOfBasicMessage <= 0)
 					lengthOfBasicMessage = error.Message.IndexOf("\n\n");
@@ -508,7 +508,7 @@ namespace SIL.Utils
 				ShowDialog((parent != null && !parent.IsDisposed) ? parent : null);
 				s_fIgnoreReport = false;
 			}
-			else	//the test environment already prohibits dialogs but will save the contents of assertions in some log.
+			else    //the test environment already prohibits dialogs but will save the contents of assertions in some log.
 				Debug.Fail(m_details.Text);
 		}
 
@@ -685,20 +685,21 @@ namespace SIL.Utils
 				// called from the Finalizer thread
 				if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
 				{
-#if __MonoCS__
-					// Workaround for Xamarin bug #4959. I had a mono fix for that bug
-					// but that doesn't work with FW - I couldn't figure out why not.
-					// This is a dirty hack but at least works :-)
-					var clipboardAtom = gdk_atom_intern("CLIPBOARD", true);
-					var clipboard = gtk_clipboard_get(clipboardAtom);
-					if (clipboard != IntPtr.Zero)
+					if (Platform.IsMono)
 					{
-						gtk_clipboard_set_text(clipboard, body, -1);
-						gtk_clipboard_store(clipboard);
+						// Workaround for Xamarin bug #4959. I had a mono fix for that bug
+						// but that doesn't work with FW - I couldn't figure out why not.
+						// This is a dirty hack but at least works :-)
+						var clipboardAtom = gdk_atom_intern("CLIPBOARD", true);
+						var clipboard = gtk_clipboard_get(clipboardAtom);
+						if (clipboard != IntPtr.Zero)
+						{
+							gtk_clipboard_set_text(clipboard, body, -1);
+							gtk_clipboard_store(clipboard);
+						}
 					}
-#else
-					ClipboardUtils.SetDataObject(body, true);
-#endif
+					else
+						ClipboardUtils.SetDataObject(body, true);
 				}
 				else
 					Logger.WriteEvent(body);
@@ -716,21 +717,19 @@ namespace SIL.Utils
 			Application.Exit();
 		}
 
-#if __MonoCS__
 		// Workaround for Xamarin bug #4959
 
 		[DllImport("libgdk-x11-2.0")]
-		internal extern static IntPtr gdk_atom_intern(string atomName, bool onlyIfExists);
+		internal static extern IntPtr gdk_atom_intern(string atomName, bool onlyIfExists);
 
 		[DllImport("libgtk-x11-2.0")]
-		internal extern static IntPtr gtk_clipboard_get(IntPtr atom);
+		internal static extern IntPtr gtk_clipboard_get(IntPtr atom);
 
 		[DllImport("libgtk-x11-2.0")]
-		internal extern static void gtk_clipboard_store(IntPtr clipboard);
+		internal static extern void gtk_clipboard_store(IntPtr clipboard);
 
 		[DllImport("libgtk-x11-2.0")]
-		internal extern static void gtk_clipboard_set_text(IntPtr clipboard, [MarshalAs(UnmanagedType.LPStr)] string text, int len);
-#endif
+		internal static extern void gtk_clipboard_set_text(IntPtr clipboard, [MarshalAs(UnmanagedType.LPStr)] string text, int len);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

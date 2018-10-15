@@ -1,8 +1,6 @@
-// Copyright (c) 2011-2017 SIL International
+// Copyright (c) 2011-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-
-#if __MonoCS__
 
 using System.Runtime.InteropServices;
 using SIL.LCModel.Core.WritingSystems;
@@ -17,7 +15,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// and MANAGED_KEYBOARDING is, that is, on Mono but not on Windows. Thus, the code here is basically Mono/Linux-only.
 	/// </summary>
 	[Guid("830BAF1F-6F84-46EF-B63E-3C1BFDF9E83E")]
-	public class ViewInputManager: IViewInputMgr
+	public class ViewInputManager : IViewInputMgr
 	{
 		private IVwRootBox m_rootb;
 
@@ -141,7 +139,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				if (wsf == null)
 					return null;
 
-				return (CoreWritingSystemDefinition) wsf.get_EngineOrNull(nWs);
+				return (CoreWritingSystemDefinition)wsf.get_EngineOrNull(nWs);
 			}
 		}
 
@@ -154,7 +152,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				var manager = (WritingSystemManager) m_rootb.DataAccess.WritingSystemFactory;
+				var manager = (WritingSystemManager)m_rootb.DataAccess.WritingSystemFactory;
 				CoreWritingSystemDefinition ws = CurrentWritingSystem;
 				if (ws == null)
 					return KeyboardController.NullKeyboard;
@@ -165,4 +163,3 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 	}
 }
-#endif

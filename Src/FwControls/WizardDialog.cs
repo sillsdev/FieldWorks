@@ -7,6 +7,7 @@ using System.Resources;
 using System.Drawing;
 using System.ComponentModel;
 using System.Windows.Forms;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -14,7 +15,7 @@ namespace SIL.FieldWorks.Common.Controls
 	{
 		string[] StepNames { get; }
 		int LastStepNumber { get; }
-		int CurrentStepNumber{ get; }
+		int CurrentStepNumber { get; }
 		Font StepsFont { get; }
 		Color TextColor { get; }
 		Panel PanSteps { get; }
@@ -28,12 +29,11 @@ namespace SIL.FieldWorks.Common.Controls
 		#region Data Members
 		/// <summary>Space between the steps panel and the steps tab control.</summary>
 		protected const int kTabStepsPanStepsPadding = 5;
-		/// <summary>Space between the right edge of the steps label and the form.</summary>
-#if !__MonoCS__
-		protected const int kdxpStepsLabelRightPadding = 9;
-#else
-		protected const int kdxpStepsLabelRightPadding = 12;	// FWNX-514. (could keep the two the same maybe)
-#endif
+		/// <summary>
+		/// Space between the right edge of the steps label and the form.
+		/// FWNX-514. (could keep the two the same maybe)
+		/// </summary>
+		protected readonly int kdxpStepsLabelRightPadding = !Platform.IsMono ? 9 : 12;
 		/// <summary>Space between the bottom edge of the steps label and the form.</summary>
 		protected const int kdypStepsLabelBottomPadding = 54;
 		/// <summary>Space between the bottom edge of the buttons and the form.</summary>
@@ -123,8 +123,8 @@ namespace SIL.FieldWorks.Common.Controls
 			HelpTopicIdPrefix = "khtpField-InterlinearSfmImportWizard-Step";
 			SetInitialHelpTopicID();
 			m_NextText = resources.GetString("kstidWizForwardButtonText");
-			m_FinishText = resources.GetString("kstidWizFinishButtonText");;
-			m_StepIndicatorFormat = resources.GetString("kstidWizStepLabel");;
+			m_FinishText = resources.GetString("kstidWizFinishButtonText"); ;
+			m_StepIndicatorFormat = resources.GetString("kstidWizStepLabel"); ;
 		}
 
 		/// <summary>
@@ -147,9 +147,9 @@ namespace SIL.FieldWorks.Common.Controls
 			if (IsDisposed)
 				return;
 
-			if( disposing )
+			if (disposing)
 			{
-				if(components != null)
+				if (components != null)
 				{
 					components.Dispose();
 				}
@@ -161,7 +161,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_FinishText = null;
 			m_StepIndicatorFormat = null;
 
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#endregion
@@ -455,8 +455,8 @@ namespace SIL.FieldWorks.Common.Controls
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		protected bool NextButtonEnabled
 		{
-			get{return m_btnNext.Enabled;}
-			set {m_btnNext.Enabled = value;}
+			get { return m_btnNext.Enabled; }
+			set { m_btnNext.Enabled = value; }
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -472,8 +472,8 @@ namespace SIL.FieldWorks.Common.Controls
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		protected bool BackButtonEnabled
 		{
-			get {return m_btnBack.Enabled;}
-			set {m_btnBack.Enabled = value;}
+			get { return m_btnBack.Enabled; }
+			set { m_btnBack.Enabled = value; }
 		}
 		#endregion
 
@@ -791,7 +791,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (m_CurrentStepNumber == m_LastStepNumber)
 			{
 				m_btnNext.Text = m_FinishText;
-//				this.helpProvider1.SetHelpString(NextHelpString"));
+				//				this.helpProvider1.SetHelpString(NextHelpString"));
 
 			}
 			else
@@ -871,13 +871,13 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// -----------------------------------------------------------------------------------
-/// <summary>
-///
-/// </summary>
-/// -----------------------------------------------------------------------------------
-protected virtual void OnHelpButton()
-{
-}
+		/// <summary>
+		///
+		/// </summary>
+		/// -----------------------------------------------------------------------------------
+		protected virtual void OnHelpButton()
+		{
+		}
 		#endregion
 
 		#region WizardDialog Helper Functions

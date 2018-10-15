@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
@@ -22,18 +23,14 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			m_comboBox = comboBox;
 			// Allows it to be big unless client shrinks it.
 			Font = new Font(Font.Name, (float)100.0);
-#if !__MonoCS__
-			if (Application.RenderWithVisualStyles)
+			if (!Platform.IsMono && Application.RenderWithVisualStyles)
 			{
 				DoubleBuffered = true;
 				BackColor = Color.Transparent;
+				return;
 			}
-			else
-#endif
-			{
-				// And, if not changed, it's background color is white.
-				BackColor = SystemColors.Window;
-			}
+			// And, if not changed, it's background color is white.
+			BackColor = SystemColors.Window;
 		}
 
 		/// <summary>

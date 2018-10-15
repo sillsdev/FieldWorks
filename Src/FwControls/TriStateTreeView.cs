@@ -10,12 +10,13 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.Controls
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// A tree view with tri-state check boxes - Unchecked, Checked, and greyed out
+	/// A tree view with tri-state check boxes - Unchecked, Checked, and grayed out
 	/// </summary>
 	/// <remarks>
 	/// REVIEW: If we want to have icons in addition to the check boxes, we probably have to
@@ -50,7 +51,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		#region Redefined Win-API structs and methods
 		/// <summary></summary>
-		[StructLayout(LayoutKind.Sequential, Pack=1)]
+		[StructLayout(LayoutKind.Sequential, Pack = 1)]
 		public struct TV_HITTESTINFO
 		{
 			/// <summary>Client coordinates of the point to test.</summary>
@@ -95,13 +96,13 @@ namespace SIL.FieldWorks.Common.Controls
 		public enum TreeViewMessages
 		{
 			/// <summary></summary>
-			TV_FIRST            = 0x1100,      // TreeView messages
-			/// <summary></summary>
-			TVM_HITTEST         = (TV_FIRST + 17),
+			TV_FIRST = 0x1100,      // TreeView messages
+									/// <summary></summary>
+			TVM_HITTEST = (TV_FIRST + 17),
 		}
 
 		/// <summary></summary>
-		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		[DllImport("user32.dll", CharSet = CharSet.Auto)]
 		public static extern int SendMessage(IntPtr hWnd, TreeViewMessages msg, int wParam, ref TV_HITTESTINFO lParam);
 		#endregion
 
@@ -154,14 +155,14 @@ namespace SIL.FieldWorks.Common.Controls
 		/// resources; <c>false</c> to release only unmanaged resources.
 		/// </param>
 		/// -----------------------------------------------------------------------------------
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;
 
-			if( disposing )
+			if (disposing)
 			{
 				if (components != null)
 				{
@@ -173,7 +174,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			m_TriStateImages = null;
 
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#endregion
@@ -287,32 +288,35 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		protected override void OnClick(EventArgs e)
 		{
-			base.OnClick (e);
+			base.OnClick(e);
 
-#if !__MonoCS__
-			TV_HITTESTINFO hitTestInfo = new TV_HITTESTINFO();
-			hitTestInfo.pt = PointToClient(Control.MousePosition);
-			SendMessage(Handle, TreeViewMessages.TVM_HITTEST,
-				0, ref hitTestInfo);
-			if ((hitTestInfo.flags & TVHit.OnItemIcon) == TVHit.OnItemIcon)
+			if (Platform.IsMono)
 			{
-				TreeNode node = GetNodeAt(hitTestInfo.pt);
+				// The SendMessage determines whether we've hit the node proper or the
+				// +/- box to expand or collapse.  We'll try to check this by looking
+				// at the X location ourselves.  (See FWNX-468.)
+				Point pt = PointToClient(Control.MousePosition);
+				TreeNode node = GetNodeAt(pt); // This uses only the Y location.
 				if (node != null)
-					ChangeNodeState(node);
+				{
+					var bounds = node.Bounds; // This gives the text area of the node.
+					if (pt.X >= bounds.X - 20 && pt.X < bounds.X)
+						ChangeNodeState(node);
+				}
 			}
-#else
-			// The SendMessage determines whether we've hit the node proper or the
-			// +/- box to expand or collapse.  We'll try to check this by looking
-			// at the X location ourselves.  (See FWNX-468.)
-			Point pt = PointToClient(Control.MousePosition);
-			TreeNode node = GetNodeAt(pt);	// This uses only the Y location.
-			if (node != null)
+			else
 			{
-				var bounds = node.Bounds;	// This gives the text area of the node.
-				if (pt.X >= bounds.X - 20 && pt.X < bounds.X)
-					ChangeNodeState(node);
+				TV_HITTESTINFO hitTestInfo = new TV_HITTESTINFO();
+				hitTestInfo.pt = PointToClient(Control.MousePosition);
+				SendMessage(Handle, TreeViewMessages.TVM_HITTEST,
+					0, ref hitTestInfo);
+				if ((hitTestInfo.flags & TVHit.OnItemIcon) == TVHit.OnItemIcon)
+				{
+					TreeNode node = GetNodeAt(hitTestInfo.pt);
+					if (node != null)
+						ChangeNodeState(node);
+				}
 			}
-#endif
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -323,7 +327,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
-			base.OnKeyDown (e);
+			base.OnKeyDown(e);
 
 			if (e.KeyCode == Keys.Space)
 				ChangeNodeState(SelectedNode);

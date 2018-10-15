@@ -5,16 +5,14 @@
 
 using System;
 using System.Collections.Generic;
-#if __MonoCS__
 using System.Linq;
-#endif
-using System.Diagnostics;
 using System.Windows.Forms;
+using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.Controls.SilSidePane
 {
 	/// <summary>
-	/// Item area in a sidepane which uses large buttons with large icons.
+	/// Item area in a side pane which uses large buttons with large icons.
 	/// </summary>
 	internal class OutlookButtonPanelItemArea : OutlookButtonPanel, IItemArea
 	{
@@ -26,14 +24,14 @@ namespace LanguageExplorer.Controls.SilSidePane
 		public virtual void Add(Item item)
 		{
 			var widget = new ToolStripButton
-				{
-					Text = item.Text,
-					Name = item.Name,
-					Image = item.Icon,
-					ImageScaling = ToolStripItemImageScaling.None,
-					ImageTransparentColor = System.Drawing.Color.Magenta,
-					Tag = item,
-				};
+			{
+				Text = item.Text,
+				Name = item.Name,
+				Image = item.Icon,
+				ImageScaling = ToolStripItemImageScaling.None,
+				ImageTransparentColor = System.Drawing.Color.Magenta,
+				Tag = item,
+			};
 			widget.Click += HandleWidgetClick;
 			item.UnderlyingWidget = widget;
 
@@ -52,15 +50,19 @@ namespace LanguageExplorer.Controls.SilSidePane
 		{
 			var widget = (ToolStripButton)item.UnderlyingWidget;
 			widget.PerformClick();
-#if __MonoCS__
-			// We need to explicitly uncheck the previous selection.  See FWNX-661.
-			foreach (var button in widget.Owner.Items.OfType<ToolStripButton>())
+			if (Platform.IsMono)
 			{
-				if (button.Checked && button != widget)
-					button.Checked = false;
+				// We need to explicitly uncheck the previous selection.  See FWNX-661.
+				foreach (var button in widget.Owner.Items.OfType<ToolStripButton>())
+				{
+					if (button.Checked && button != widget)
+					{
+						button.Checked = false;
+					}
+				}
+
+				widget.Checked = true;
 			}
-			widget.Checked = true;
-#endif
 		}
 
 		/// <summary />

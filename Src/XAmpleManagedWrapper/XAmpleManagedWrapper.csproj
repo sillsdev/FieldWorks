@@ -84,6 +84,10 @@
     <LangVersion>6</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="SIL.Core">
+      <SpecificVersion>false</SpecificVersion>
+      <HintPath>..\..\Output\Debug\SIL.Core.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>

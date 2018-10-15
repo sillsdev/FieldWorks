@@ -8,12 +8,11 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
-
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks
 {
-	#region FwSplashScreen implementation
 	/// <summary>
 	/// FW Splash Screen
 	/// </summary>
@@ -22,8 +21,8 @@ namespace SIL.FieldWorks
 		#region Events
 		event CancelEventHandler IProgress.Canceling
 		{
-			add {  }
-			remove {  }
+			add { }
+			remove { }
 		}
 		#endregion
 
@@ -98,11 +97,12 @@ namespace SIL.FieldWorks
 			m_fNoUi = fNoUi;
 			m_waitHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
 
-#if __MonoCS__
-			// mono winforms can't create items not on main thread.
-			StartSplashScreen(); // Create Modeless dialog on Main GUI thread
-#else
-			if (fNoUi)
+			if (Platform.IsMono)
+			{
+				// mono winforms can't create items not on main thread.
+				StartSplashScreen(); // Create Modeless dialog on Main GUI thread
+			}
+			else if (fNoUi)
 			{
 				StartSplashScreen();
 			}
@@ -116,7 +116,6 @@ namespace SIL.FieldWorks
 				m_thread.Start();
 				m_waitHandle.WaitOne();
 			}
-#endif
 
 			Debug.Assert(m_splashScreen != null);
 			lock (m_splashScreen.m_Synchronizer)
@@ -160,17 +159,19 @@ namespace SIL.FieldWorks
 					// Something bad happened, but we are closing anyways :)
 				}
 			}
-#if !__MonoCS__
-			m_thread?.Join();
-#endif
+			if (!Platform.IsMono)
+			{
+				m_thread?.Join();
+			}
 			lock (m_splashScreen.m_Synchronizer)
 			{
 				m_splashScreen.Dispose();
 				m_splashScreen = null;
 			}
-#if !__MonoCS__
-			m_thread = null;
-#endif
+			if (!Platform.IsMono)
+			{
+				m_thread = null;
+			}
 		}
 
 		/// <summary>
@@ -229,7 +230,7 @@ namespace SIL.FieldWorks
 			{
 				lock (m_splashScreen.m_Synchronizer)
 				{
-					SetIntPropDelegate minMethod = delegate(int min) { m_splashScreen.Minimum = min; };
+					SetIntPropDelegate minMethod = delegate (int min) { m_splashScreen.Minimum = min; };
 					m_splashScreen.Invoke(minMethod, value);
 				}
 			}
@@ -245,14 +246,14 @@ namespace SIL.FieldWorks
 				lock (m_splashScreen.m_Synchronizer)
 				{
 					GetIntPropDelegate maxMethod = () => m_splashScreen.Maximum;
-					return (int) m_splashScreen.Invoke(maxMethod);
+					return (int)m_splashScreen.Invoke(maxMethod);
 				}
 			}
 			set
 			{
 				lock (m_splashScreen.m_Synchronizer)
 				{
-					SetIntPropDelegate maxMethod = delegate(int max) { m_splashScreen.Maximum = max; };
+					SetIntPropDelegate maxMethod = delegate (int max) { m_splashScreen.Maximum = max; };
 					m_splashScreen.Invoke(maxMethod, value);
 				}
 			}
@@ -275,7 +276,7 @@ namespace SIL.FieldWorks
 			{
 				lock (m_splashScreen.m_Synchronizer)
 				{
-					SetStringPropDelegate setMethod = delegate(string val) { m_splashScreen.Message = val; };
+					SetStringPropDelegate setMethod = delegate (string val) { m_splashScreen.Message = val; };
 					m_splashScreen.Invoke(setMethod, value);
 				}
 			}
@@ -299,7 +300,7 @@ namespace SIL.FieldWorks
 			{
 				lock (m_splashScreen.m_Synchronizer)
 				{
-					SetIntPropDelegate method = delegate(int val) { m_splashScreen.Position = val; };
+					SetIntPropDelegate method = delegate (int val) { m_splashScreen.Position = val; };
 					m_splashScreen.Invoke(method, value);
 				}
 			}
@@ -322,7 +323,7 @@ namespace SIL.FieldWorks
 			{
 				lock (m_splashScreen.m_Synchronizer)
 				{
-					SetIntPropDelegate method = delegate(int val) { m_splashScreen.StepSize = val; };
+					SetIntPropDelegate method = delegate (int val) { m_splashScreen.StepSize = val; };
 					m_splashScreen.Invoke(method, value);
 				}
 			}
@@ -334,7 +335,7 @@ namespace SIL.FieldWorks
 		public string Title
 		{
 			get { throw new Exception("The property 'Title' is not implemented."); }
-			set {  }
+			set { }
 		}
 
 		/// <summary>
@@ -357,7 +358,7 @@ namespace SIL.FieldWorks
 			{
 				if (m_splashScreen.InvokeRequired)
 				{
-					return (bool) m_splashScreen.Invoke((Func<bool>)(() => m_splashScreen.IsIndeterminate));
+					return (bool)m_splashScreen.Invoke((Func<bool>)(() => m_splashScreen.IsIndeterminate));
 				}
 				return m_splashScreen.IsIndeterminate;
 			}
@@ -398,16 +399,16 @@ namespace SIL.FieldWorks
 			{
 				var blah = m_splashScreen.Handle; // force handle creation.
 			}
+			else if (Platform.IsMono)
+			{
+				// Mono Winforms can't create Forms that are not on the Main thread.
+				m_splashScreen.CreateControl();
+				m_splashScreen.Message = string.Empty;
+				m_splashScreen.Show();
+			}
 			else
 			{
-#if !__MonoCS__
 				m_splashScreen.ShowDialog();
-#else
-			// Mono Winforms can't create Forms that are not on the Main thread.
-			m_splashScreen.CreateControl();
-			m_splashScreen.Message = string.Empty;
-			m_splashScreen.Show();
-#endif
 			}
 		}
 		#endregion
@@ -450,5 +451,4 @@ namespace SIL.FieldWorks
 		}
 		#endregion
 	}
-	#endregion
 }

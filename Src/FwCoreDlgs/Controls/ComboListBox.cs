@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
@@ -165,8 +166,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// same way. Value is always derived from the selected index. Setting has no effect unless
 		/// the text matches a selected item.
 		/// </summary>
-		[ Browsable(true), DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)
-		]
+		[Browsable(true), DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
 		public override string Text
 		{
 			get
@@ -202,9 +202,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		{
 			m_activateOnShow = true;
 			HasBorder = true;
-			Dock = DockStyle.Fill; // It fills the list form.
+			// It fills the list form.
+			Dock = DockStyle.Fill;
 			// Create a form to hold the list.
-			Form = new Form {Size = Size, FormBorderStyle = FormBorderStyle.None, StartPosition = FormStartPosition.Manual, TopMost = true};
+			Form = new Form { Size = Size, FormBorderStyle = FormBorderStyle.None, StartPosition = FormStartPosition.Manual, TopMost = true };
 			Form.Controls.Add(this);
 			Form.Deactivate += m_ListForm_Deactivate;
 			Tracking = true;
@@ -218,7 +219,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
 			// Must not be run more than once.
@@ -291,12 +292,17 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		public void Launch(Rectangle launcherBounds, Rectangle screenBounds)
 		{
 			m_previousForm = Form.ActiveForm;
-#if __MonoCS__ // FWNX-908: Crash closing combobox.
-// Somehow on Mono, Form.ActiveForm can sometimes return m_listForm at this point.
-			if (m_previousForm == null || m_previousForm == Form)
-				m_previousForm = LaunchingForm;
-#endif
-			Form.ShowInTaskbar = false; // this is mainly to prevent it showing in the task bar.
+			if (Platform.IsMono)
+			{
+				// FWNX-908: Crash closing combobox.
+				// Somehow on Mono, Form.ActiveForm can sometimes return m_listForm at this point.
+				if (m_previousForm == null || m_previousForm == Form)
+				{
+					m_previousForm = LaunchingForm;
+				}
+			}
+			// this is mainly to prevent it showing in the task bar.
+			Form.ShowInTaskbar = false;
 			//Figure where to put it. First try right below the main combo box.
 			// Pathologically the list box may be bigger than the available height. If so shrink it.
 			var maxListHeight = Math.Max(launcherBounds.Top - screenBounds.Top, screenBounds.Bottom - launcherBounds.Bottom);
@@ -373,14 +379,17 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 
 		private static void ShowInactiveTopmost(Form owner, Form frm)
 		{
-#if __MonoCS__
-// TODO:  Implement something comparable on Linux/Mono if possible.
-#else
+			if (Platform.IsMono)
+			{
+				// TODO:  Implement something comparable on Linux/Mono if possible.
+				return;
+			}
 			if (owner != null)
+			{
 				SetWindowLong(frm.Handle, GWL_HWNDPARENT, owner.Handle.ToInt32());
+			}
 			ShowWindow(frm.Handle, SW_SHOWNOACTIVATE);
 			SetWindowPos(frm.Handle.ToInt32(), HWND_TOPMOST, frm.Left, frm.Top, frm.Width, frm.Height, SWP_NOACTIVATE);
-#endif
 		}
 
 		/// <summary>
@@ -497,7 +506,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		protected override void OnLostFocus(EventArgs e)
 		{
-			base.OnLostFocus (e);
+			base.OnLostFocus(e);
 			HideForm();
 		}
 

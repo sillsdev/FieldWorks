@@ -1,10 +1,7 @@
-// --------------------------------------------------------------------------------------------
-// <copyright from='2011' to='2011' company='SIL International'>
-// Copyright (c) 2011-2015 SIL International
+// Copyright (c) 2011-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
-// (http://www.gnu.org/licenses/lgpl-2.1.html).
-// </copyright>
-// --------------------------------------------------------------------------------------------
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System.IO;
 
 namespace SIL.FieldWorks.Common.Controls.FileDialog
@@ -12,7 +9,7 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog
 	/// <summary>
 	/// Interface to the OpenFileDialog
 	/// </summary>
-	public interface IOpenFileDialog: IFileDialog
+	public interface IOpenFileDialog : IFileDialog
 	{
 		/// <summary>
 		/// Gets or sets a value indicating whether the dialog box allows multiple files to be

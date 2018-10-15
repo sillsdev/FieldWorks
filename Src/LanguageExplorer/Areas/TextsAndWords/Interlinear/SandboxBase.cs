@@ -1,8 +1,8 @@
-//#define TraceMouseCalls		// uncomment this line to trace mouse messages
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+//#define TraceMouseCalls		// uncomment this line to trace mouse messages
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -842,14 +842,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void SubscribeToRootSiteEventHandlerEvents()
 		{
-#if __MonoCS__
-			var ibusRootSiteEventHandler = m_rootSiteEventHandler as IbusRootSiteEventHandler;
-			if (ibusRootSiteEventHandler != null)
+			if (MiscUtils.IsMono)
 			{
-				ibusRootSiteEventHandler.PreeditOpened += OnPreeditOpened;
-				ibusRootSiteEventHandler.PreeditClosed += OnPreeditClosed;
+				var ibusRootSiteEventHandler = m_rootSiteEventHandler as IbusRootSiteEventHandler;
+				if (ibusRootSiteEventHandler != null)
+				{
+					ibusRootSiteEventHandler.PreeditOpened += OnPreeditOpened;
+					ibusRootSiteEventHandler.PreeditClosed += OnPreeditClosed;
+				}
 			}
-#endif
 		}
 
 		private void OnPreeditOpened(object sender, EventArgs e)
@@ -913,12 +914,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		///  <summary />
-		/// <param name="hvoSbWord">either m_hvoSbWord, m_hvoPrevSbWordb, or m_hvoNextSbWord
-		/// </param>
-		/// <param name="fLookForDefaults"></param>
-		/// <param name="fAdjustCase">If true, may adjust case of morpheme when
-		/// proposing whole word as default morpheme breakdown.</param>
-		/// <returns>true if any guessing is involved.</returns>
+		///  <param name="hvoSbWord">either m_hvoSbWord, m_hvoPrevSbWordb, or m_hvoNextSbWord
+		///  </param>
+		///  <param name="fLookForDefaults"></param>
+		///  <param name="fAdjustCase">If true, may adjust case of morpheme when
+		///  proposing whole word as default morpheme breakdown.</param>
+		///  <returns>true if any guessing is involved.</returns>
 		private bool LoadRealDataIntoSec1(int hvoSbWord, bool fLookForDefaults, bool fAdjustCase)
 		{
 			var cda = (IVwCacheDa)Caches.DataAccess;
@@ -2519,7 +2520,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		/// <summary>
 		/// The Sandbox is about to close, or move to another word...if there are pending edits,
-		/// save them. This is done by simulating a Return key press in the combo.
+		/// save them.  This is done by simulating a Return key press in the combo.
 		/// </summary>
 		public void FinishUpOk()
 		{

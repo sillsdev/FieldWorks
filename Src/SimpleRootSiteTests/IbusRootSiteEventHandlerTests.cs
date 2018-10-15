@@ -1,8 +1,7 @@
-// Copyright (c) 2013-2017 SIL International
+// Copyright (c) 2013-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-#if __MonoCS__
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -27,7 +26,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	[Platform(Include = "Linux", Reason="IbusRootSiteEventHandlerTests is Linux only")]
+	[Platform(Include = "Linux", Reason = "IbusRootSiteEventHandlerTests is Linux only")]
 	public class IbusRootSiteEventHandlerTests
 	{
 		// some lparam values representing keypress that we use for testing.
@@ -44,12 +43,12 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			lparams.Add('D', 0x40280001);
 			lparams.Add('E', 0x401A0001);
 			lparams.Add('F', 0x40290001);
-//			lparams.Add('G', );
-//			lparams.Add('H', );
+			//			lparams.Add('G', );
+			//			lparams.Add('H', );
 			lparams.Add('I', 0x401F0001);
-//			lparams.Add('J', );
-//			lparams.Add('K', );
-//			lparams.Add('L', );
+			//			lparams.Add('J', );
+			//			lparams.Add('K', );
+			//			lparams.Add('L', );
 			lparams.Add('M', 0x403A0001);
 			lparams.Add('N', 0x40390001);
 			lparams.Add('O', 0x40200001);
@@ -106,59 +105,59 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		/// <summary>Simulate multiple keypresses.</summary>
 		[TestCase(typeof(CommitOnlyIbusCommunicator),
-			/* input: */new[] {"\b"},
+			/* input: */new[] { "\b" },
 			/* expected: */"", "", 0, 0, TestName = "EmptyStateSendSingleControlCharacter_SelectionIsInsertionPoint")]
 		[TestCase(typeof(CommitOnlyIbusCommunicator),
-			/* input: */ new[] {"T"},
-			/* expected: */ "T", "",  1, 1, TestName="EmptyStateSendSingleKeyPress_SelectionIsInsertionPoint")]
+			/* input: */ new[] { "T" },
+			/* expected: */ "T", "", 1, 1, TestName = "EmptyStateSendSingleKeyPress_SelectionIsInsertionPoint")]
 		[TestCase(typeof(CommitOnlyIbusCommunicator),
 			/* input: */ new[] { "T", "U" },
-			/* expected: */ "TU", "",  2, 2, TestName="EmptyStateSendTwoKeyPresses_SelectionIsInsertionPoint")]
+			/* expected: */ "TU", "", 2, 2, TestName = "EmptyStateSendTwoKeyPresses_SelectionIsInsertionPoint")]
 		[TestCase(typeof(KeyboardThatSendsDeletesAsCommitsDummyIBusCommunicator),
-			/* input: */ new[] {"S", "T", "U", " "},
-			/* expected: */ "stu", "", 3, 3, TestName="KeyboardThatSendsBackspacesInItsCommits_BackspacesShouldNotBeIngored")]
+			/* input: */ new[] { "S", "T", "U", " " },
+			/* expected: */ "stu", "", 3, 3, TestName = "KeyboardThatSendsBackspacesInItsCommits_BackspacesShouldNotBeIngored")]
 		[TestCase(typeof(KeyboardThatSendsBackspacesAsForwardKeyEvents),
-			/* input: */ new[] {"S", "T", "U", " "},
-			/* expected: */ "stu", "", 3, 3, TestName="KeyboardThatSendsBackspacesInItsForwardKeyEvent_BackspacesShouldNotBeIngored")]
+			/* input: */ new[] { "S", "T", "U", " " },
+			/* expected: */ "stu", "", 3, 3, TestName = "KeyboardThatSendsBackspacesInItsForwardKeyEvent_BackspacesShouldNotBeIngored")]
 		[TestCase(typeof(KeyboardThatCommitsPreeditOnSpace),
-			/* input: */new[] {"t"},
+			/* input: */new[] { "t" },
 			/* expected: */"t", "t", 1, 1, TestName = "OneCharNoSpace_PreeditContainsChar")]
 		[TestCase(typeof(CommitBeforeUpdateIbusCommunicator),
-			/* input: */ new[] {"T"},
-			/* expected: */ "T", "T", 1, 1, TestName="SimplePreeditEmptyStateSendSingleKeyPress")]
+			/* input: */ new[] { "T" },
+			/* expected: */ "T", "T", 1, 1, TestName = "SimplePreeditEmptyStateSendSingleKeyPress")]
 		[TestCase(typeof(CommitBeforeUpdateIbusCommunicator),
-			/* input: */ new[] {"S", "T", "U"},
-			/* expected: */ "STU", "U", 3, 3, TestName="SimplePreeditEmptyStateSendThreeKeyPresses")]
+			/* input: */ new[] { "S", "T", "U" },
+			/* expected: */ "STU", "U", 3, 3, TestName = "SimplePreeditEmptyStateSendThreeKeyPresses")]
 		[TestCase(typeof(CommitBeforeUpdateIbusCommunicator),
-			/* input: */ new[] {"T", "U"},
-			/* expected: */ "TU", "U", 2, 2, TestName="SimplePreeditEmptyStateSendTwoKeyPresses")]
+			/* input: */ new[] { "T", "U" },
+			/* expected: */ "TU", "U", 2, 2, TestName = "SimplePreeditEmptyStateSendTwoKeyPresses")]
 		[TestCase(typeof(KeyboardWithGlyphSubstitution),
-			/* input: */ new[] {" "},
-			/* expected: */ " ", "", 1, 1, TestName="Space_JustAddsToDocument")]
+			/* input: */ new[] { " " },
+			/* expected: */ " ", "", 1, 1, TestName = "Space_JustAddsToDocument")]
 		[TestCase(typeof(KeyboardWithGlyphSubstitution),
-			/* input: */ new[] {"t", "u"},
-			/* expected: */ "tu", "tu", 2, 2, TestName="TwoChars_OnlyPreedit")]
+			/* input: */ new[] { "t", "u" },
+			/* expected: */ "tu", "tu", 2, 2, TestName = "TwoChars_OnlyPreedit")]
 		[TestCase(typeof(KeyboardThatCommitsPreeditOnSpace),
-			/* input: */ new[] {"t", "u", /*commit:*/" "},
-			/* expected: */ "TU", "", 2, 2, TestName="TwoCharsAndSpace_PreeditIsCommitted")]
+			/* input: */ new[] { "t", "u", /*commit:*/" " },
+			/* expected: */ "TU", "", 2, 2, TestName = "TwoCharsAndSpace_PreeditIsCommitted")]
 		[TestCase(typeof(KeyboardThatCommitsPreeditOnSpace),
-			/* input: */ new[] {"t", "u"},
-			/* expected: */ "tu", "tu", 2, 2, TestName="TwoCharsNoSpace_PreeditContainsChars")]
+			/* input: */ new[] { "t", "u" },
+			/* expected: */ "tu", "tu", 2, 2, TestName = "TwoCharsNoSpace_PreeditContainsChars")]
 		[TestCase(typeof(KeyboardWithGlyphSubstitution),
-			/* input: */ new[] {"t", "u", /*commit*/" "},
-			/* expected: */ "T", "", 1, 1, TestName="TwoCharsSpace_SubstitutionWorkedAndPreeditIsEmpty")]
+			/* input: */ new[] { "t", "u", /*commit*/" " },
+			/* expected: */ "T", "", 1, 1, TestName = "TwoCharsSpace_SubstitutionWorkedAndPreeditIsEmpty")]
 		[TestCase(typeof(KeyboardThatCommitsPreeditOnSpace),
-			/* input: */ new[] {"t", "u", /*commit:*/" ", "s", "u", /* commit*/" "},
-			/* expected: */ "TUSU", "", 4, 4, TestName="TwoCharsSpaceTwoChars_PreeditIsEmpty")]
+			/* input: */ new[] { "t", "u", /*commit:*/" ", "s", "u", /* commit*/" " },
+			/* expected: */ "TUSU", "", 4, 4, TestName = "TwoCharsSpaceTwoChars_PreeditIsEmpty")]
 		[TestCase(typeof(KeyboardThatCommitsPreeditOnSpace),
-			/* input: */ new[] {"t", "u", /*commit:*/" ", "s", "u" /* don't commit*/},
-			/* expected: */ "TUsu", "su", 4, 4, TestName="TwoCharsSpaceTwoChars_PreeditIsLastHalf")]
+			/* input: */ new[] { "t", "u", /*commit:*/" ", "s", "u" /* don't commit*/},
+			/* expected: */ "TUsu", "su", 4, 4, TestName = "TwoCharsSpaceTwoChars_PreeditIsLastHalf")]
 		[TestCase(typeof(KeyboardWithGlyphSubstitution),
-			/* input: */ new[] {"t", "u", /*commit*/" ", "s", "u" /*don't commit*/},
-			/* expected: */ "Tsu", "su", 3, 3, TestName="TwoCharsSpaceTwoChars_SubstitutionWorkedAndPreeditIsLastHalf")]
+			/* input: */ new[] { "t", "u", /*commit*/" ", "s", "u" /*don't commit*/},
+			/* expected: */ "Tsu", "su", 3, 3, TestName = "TwoCharsSpaceTwoChars_SubstitutionWorkedAndPreeditIsLastHalf")]
 		[TestCase(typeof(KeyboardWithGlyphSubstitution),
-			/* input: */ new[] {"t", "u", /*commit*/" ", "s", "u", /*commit*/" "},
-			/* expected: */ "TS", "", 2, 2, TestName="TwoCharsSpaceTwoCharsSpace_SubstitutionWorkedAndPreeditIsEmpty")]
+			/* input: */ new[] { "t", "u", /*commit*/" ", "s", "u", /*commit*/" " },
+			/* expected: */ "TS", "", 2, 2, TestName = "TwoCharsSpaceTwoCharsSpace_SubstitutionWorkedAndPreeditIsEmpty")]
 		public void SimulateKeypress(Type ibusCommunicator,
 			string[] keys,
 			string expectedDocument, string expectedSelectionText, int expectedAnchor, int expectedEnd)
@@ -231,8 +230,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		/// <summary>Test cases for FWNX-674</summary>
 		[Test]
-		[TestCase(1, 2, TestName="ReplaceForwardSelectedChar_Replaced")]
-		[TestCase(2, 1, TestName="ReplaceBackwardSelectedChar_Replaced")]
+		[TestCase(1, 2, TestName = "ReplaceForwardSelectedChar_Replaced")]
+		[TestCase(2, 1, TestName = "ReplaceBackwardSelectedChar_Replaced")]
 		public void CorrectPlacementOfTypedChars(int anchor, int end)
 		{
 			// Setup
@@ -295,14 +294,14 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		}
 
 		[Test]
-		[TestCase("d",   1, 2, "ABdC",  "d", 1, 2, TestName="OneKey_ForwardSelection_PreeditPlacedAfter")]
-		[TestCase("d",   2, 1, "AdBC",  "d", 3, 2, TestName="OneKey_BackwardSelection_PreeditPlacedBefore")]
-		[TestCase("dd",  1, 2, "ABddC","dd", 1, 2, TestName="TwoKeys_ForwardSelection_PreeditPlacedAfter")]
-		[TestCase("dd",  2, 1, "AddBC","dd", 4, 3, TestName="TwoKeys_BackwardSelection_PreeditPlacedBefore")]
-		[TestCase("dd",  2, 3, "ABCdd","dd", 2, 3, TestName="TwoKeysEnd_ForwardSelection_PreeditPlacedAfter")]
-		[TestCase("dd",  3, 2, "ABddC","dd", 5, 4, TestName="TwoKeysEnd_BackwardSelection_PreeditPlacedBefore")]
-		[TestCase("dd ", 2, 3, "ABD",    "", 3, 3, TestName="Commit_ForwardSelection_IPAfter")]
-		[TestCase("dd ", 3, 2, "ABD",    "", 3, 3, TestName="Commit_BackwardSelection_IPAfter")]
+		[TestCase("d", 1, 2, "ABdC", "d", 1, 2, TestName = "OneKey_ForwardSelection_PreeditPlacedAfter")]
+		[TestCase("d", 2, 1, "AdBC", "d", 3, 2, TestName = "OneKey_BackwardSelection_PreeditPlacedBefore")]
+		[TestCase("dd", 1, 2, "ABddC", "dd", 1, 2, TestName = "TwoKeys_ForwardSelection_PreeditPlacedAfter")]
+		[TestCase("dd", 2, 1, "AddBC", "dd", 4, 3, TestName = "TwoKeys_BackwardSelection_PreeditPlacedBefore")]
+		[TestCase("dd", 2, 3, "ABCdd", "dd", 2, 3, TestName = "TwoKeysEnd_ForwardSelection_PreeditPlacedAfter")]
+		[TestCase("dd", 3, 2, "ABddC", "dd", 5, 4, TestName = "TwoKeysEnd_BackwardSelection_PreeditPlacedBefore")]
+		[TestCase("dd ", 2, 3, "ABD", "", 3, 3, TestName = "Commit_ForwardSelection_IPAfter")]
+		[TestCase("dd ", 3, 2, "ABD", "", 3, 3, TestName = "Commit_BackwardSelection_IPAfter")]
 		public void CorrectPlacementOfPreedit(string input, int anchor, int end, string expectedText,
 			string expectedPreedit, int expectedAnchor, int expectedEnd)
 		{
@@ -754,17 +753,17 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		public int CurrentDepth { get { return 0; } }
 
-		public int TopMarkHandle  { get { return 0; } }
+		public int TopMarkHandle { get { return 0; } }
 
-		public int UndoableActionCount  { get { return 0; } }
+		public int UndoableActionCount { get { return 0; } }
 
 		public int UndoableSequenceCount { get { return 0; } }
 
-		public int RedoableSequenceCount  { get { return 0; } }
+		public int RedoableSequenceCount { get { return 0; } }
 
 		public bool IsUndoOrRedoInProgress { get { return false; } }
 
-		public bool SuppressSelections  { get { return false; } }
+		public bool SuppressSelections { get { return false; } }
 		#endregion
 	}
 
@@ -1577,7 +1576,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		}
 	}
 
-	public interface ITestableIbusCommunicator: IIbusCommunicator
+	public interface ITestableIbusCommunicator : IIbusCommunicator
 	{
 		string PreEdit { get; }
 	}
@@ -1708,13 +1707,13 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		}
 
 		#region Disposable stuff
-		#if DEBUG
+#if DEBUG
 		/// <summary/>
 		~KeyboardThatCommitsPreeditOnSpace()
 		{
 			Dispose(false);
 		}
-		#endif
+#endif
 
 		/// <summary/>
 		public bool IsDisposed { get; private set; }
@@ -1856,9 +1855,9 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		}
 	}
 
-	class XkbKeyboardRetrievingAdaptorDouble: XkbKeyboardRetrievingAdaptor
+	class XkbKeyboardRetrievingAdaptorDouble : XkbKeyboardRetrievingAdaptor
 	{
-		public XkbKeyboardRetrievingAdaptorDouble(IXklEngine engine): base(engine)
+		public XkbKeyboardRetrievingAdaptorDouble(IXklEngine engine) : base(engine)
 		{
 		}
 
@@ -1867,9 +1866,9 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		}
 	}
 
-	class IbusKeyboardRetrievingAdaptorDouble: IbusKeyboardRetrievingAdaptor
+	class IbusKeyboardRetrievingAdaptorDouble : IbusKeyboardRetrievingAdaptor
 	{
-		public IbusKeyboardRetrievingAdaptorDouble(IIbusCommunicator ibusCommunicator): base(ibusCommunicator)
+		public IbusKeyboardRetrievingAdaptorDouble(IIbusCommunicator ibusCommunicator) : base(ibusCommunicator)
 		{
 		}
 
@@ -1964,7 +1963,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		public void NotifySelectionLocationAndHeight(int x, int y, int height)
 		{
 		}
-	#endregion
+		#endregion
 
 		public string PreEdit
 		{
@@ -2077,7 +2076,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		public string PreEdit
 		{
-			get { return string.Empty;}
+			get { return string.Empty; }
 		}
 	}
 
@@ -2194,4 +2193,3 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 	#endregion
 }
-#endif

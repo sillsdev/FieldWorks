@@ -10,6 +10,7 @@ using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainServices;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
@@ -94,12 +95,15 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public void UpdateForStyle(StyleInfo styleInfo)
 		{
-#if __MonoCS__
-			// On Mono, the sequence of events when changing styles can cause this to be
-			// called even when switching to a character style.  See FWNX-870.
-			if (!styleInfo.IsParagraphStyle)
-				return;
-#endif
+			if (Platform.IsMono)
+			{
+				// On Mono, the sequence of events when changing styles can cause this to be
+				// called even when switching to a character style.  See FWNX-870.
+				if (!styleInfo.IsParagraphStyle)
+				{
+					return;
+				}
+			}
 			m_dontUpdateInheritance = true;
 
 			var fDifferentStyle = m_StyleInfo == null || (styleInfo.Name != m_StyleInfo.Name);
@@ -234,11 +238,11 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				{
 					bulInfo.m_bulletCustom = m_tbBulletCustom.Text;
 					bulInfo.FontInfo = m_BulletsFontInfo;
-					bulInfo.m_numberScheme = (VwBulNum) ((int) VwBulNum.kvbnBulletBase);
+					bulInfo.m_numberScheme = (VwBulNum)((int)VwBulNum.kvbnBulletBase);
 				}
 				else
 				{
-					bulInfo.m_numberScheme = (VwBulNum) ((int) VwBulNum.kvbnBulletBase + m_cboBulletScheme.SelectedIndex);
+					bulInfo.m_numberScheme = (VwBulNum)((int)VwBulNum.kvbnBulletBase + m_cboBulletScheme.SelectedIndex);
 					bulInfo.FontInfo = m_BulletsFontInfo;
 				}
 			}
@@ -355,27 +359,27 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		{
 			switch (m_cboNumberScheme.SelectedIndex)
 			{
-				case 0:		// 1, 2, 3'
+				case 0:     // 1, 2, 3'
 					m_nudStartAt.Mode = DataUpDownMode.Normal;
 					break;
 
-				case 1:		// I, II, III (Roman numerals)
+				case 1:     // I, II, III (Roman numerals)
 					m_nudStartAt.Mode = DataUpDownMode.Roman;
 					break;
 
-				case 2:		// i, ii, iii (lower case Roman numerals)
+				case 2:     // i, ii, iii (lower case Roman numerals)
 					m_nudStartAt.Mode = DataUpDownMode.RomanLowerCase;
 					break;
 
-				case 3:		// A, B, C
+				case 3:     // A, B, C
 					m_nudStartAt.Mode = DataUpDownMode.Letters;
 					break;
 
-				case 4:		// a, b, c
+				case 4:     // a, b, c
 					m_nudStartAt.Mode = DataUpDownMode.LettersLowerCase;
 					break;
 
-				case 5:		// 01, 02, 03
+				case 5:     // 01, 02, 03
 					m_nudStartAt.Mode = DataUpDownMode.Normal;
 					break;
 			}

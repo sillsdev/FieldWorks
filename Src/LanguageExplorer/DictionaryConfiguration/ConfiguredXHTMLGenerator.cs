@@ -24,6 +24,7 @@ using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 using FileUtils = SIL.LCModel.Utils.FileUtils;
 
 namespace LanguageExplorer.DictionaryConfiguration
@@ -957,10 +958,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 						internalPath = fileProperty.InternalPath;
 					}
 					// fileProperty.InternalPath can have a backward slash so that gets replaced with a forward slash in Linux
-#if __MonoCS__
-					if(!string.IsNullOrEmpty(internalPath))
+					if (!Platform.IsWindows && !string.IsNullOrEmpty(internalPath))
 						internalPath = fileProperty.InternalPath.Replace('\\', '/');
-#endif
+
 					if (fileProperty != null && !string.IsNullOrEmpty(internalPath))
 					{
 						var srcAttr = GenerateSrcAttributeForMediaFromFilePath(internalPath, "AudioVisual", settings);

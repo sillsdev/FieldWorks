@@ -22,12 +22,14 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Xml;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
+using SIL.Windows.Forms.HtmlBrowser;
+using SIL.Xml;
 
 namespace LanguageExplorer.Controls.XMLViews
 {
-	/// <summary></summary>
+	/// <summary />
 	public class ReallySimpleListChooser : Form
 	{
 		/// <summary />
@@ -38,7 +40,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected TreeView m_labelsTreeView;
 		private bool m_fFlatList = false;
 		private bool m_fSortLabels = true;
-		private bool m_fSortLabelsSet = false;	// set true if explicitly assigned.
+		private bool m_fSortLabelsSet = false;  // set true if explicitly assigned.
 		private List<ICmObject> m_objs;
 		private FlatListView m_flvLabels;
 		private List<ObjectLabel> m_labels;
@@ -107,11 +109,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary></summary>
 		protected IVwStylesheet m_stylesheet;
 
-#if __MonoCS__
-		private Gecko.GeckoWebBrowser m_webBrowser;
-#else
-		private WebBrowser m_webBrowser;
-#endif
+		private XWebBrowser m_webBrowser;
 		private Panel m_mainPanel;
 		private Button m_helpBrowserButton;
 		private SplitContainer m_splitContainer;
@@ -224,7 +222,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			m_stylesheet = stylesheet;
 			m_helpTopicProvider = helpTopicProvider;
-			m_nullLabel = new NullObjectLabel(cache) {DisplayName = nullLabel};
+			m_nullLabel = new NullObjectLabel(cache) { DisplayName = nullLabel };
 			Cache = cache;
 			m_persistProvider = persistProvider;
 			m_fieldName = fieldName;
@@ -396,7 +394,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_persistProvider?.RestoreWindowSettings("SimpleListChooser", this);
 
 			// It's easier to localize a format string than code that pieces together a string.
-			Text = fieldName == XMLViewsStrings.ksPublishIn || fieldName ==  XMLViewsStrings.ksShowAsHeadwordIn ? fieldName : string.Format(XMLViewsStrings.ksChooseX, fieldName);
+			Text = fieldName == XMLViewsStrings.ksPublishIn || fieldName == XMLViewsStrings.ksShowAsHeadwordIn ? fieldName : string.Format(XMLViewsStrings.ksChooseX, fieldName);
 
 			m_labelsTreeView.CheckBoxes = true;
 			m_labelsTreeView.AfterCheck += m_labelsTreeView_AfterCheck;
@@ -529,14 +527,14 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			m_link2Panel.Controls.Clear();
 
-			m_AddButton = new RadioButton {Text = XMLViewsStrings.ksAddToExisting, Checked = true};
+			m_AddButton = new RadioButton { Text = XMLViewsStrings.ksAddToExisting, Checked = true };
 			m_AddButton.Width = ((m_link2Panel.Width - m_link2Panel.Padding.Horizontal) / 2) - m_AddButton.Margin.Horizontal - 1;
 			m_link2Panel.Controls.Add(m_AddButton);
 
 			m_RemoveButton = new RadioButton { Text = XMLViewsStrings.ksRemoveExisting, Width = m_AddButton.Width, Height = 30 };
 			m_link2Panel.Controls.Add(m_RemoveButton);
 
-			m_ReplaceButton = new RadioButton {Text = XMLViewsStrings.ksReplaceExisting, Width = m_labelsTreeView.Width};
+			m_ReplaceButton = new RadioButton { Text = XMLViewsStrings.ksReplaceExisting, Width = m_labelsTreeView.Width };
 			m_link2Panel.Controls.Add(m_ReplaceButton);
 
 			m_link2Panel.Visible = true;
@@ -557,22 +555,22 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			m_link2Panel.Controls.Clear();
 
-			m_AnyButton = new RadioButton {Text = XMLViewsStrings.ksAnyChecked, Checked = true};
+			m_AnyButton = new RadioButton { Text = XMLViewsStrings.ksAnyChecked, Checked = true };
 			m_AnyButton.Width = ((m_link2Panel.Width - m_link2Panel.Padding.Horizontal) / 2) - m_AnyButton.Margin.Horizontal - 1;
 			m_link2Panel.Controls.Add(m_AnyButton);
 
 			if (!fAtomic)
 			{
-				m_AllButton = new RadioButton {Text = XMLViewsStrings.ksAllChecked, Width = m_AnyButton.Width};
+				m_AllButton = new RadioButton { Text = XMLViewsStrings.ksAllChecked, Width = m_AnyButton.Width };
 				m_link2Panel.Controls.Add(m_AllButton);
 			}
 
-			m_NoneButton = new RadioButton {Text = XMLViewsStrings.ksNoChecked, Width = m_AnyButton.Width};
+			m_NoneButton = new RadioButton { Text = XMLViewsStrings.ksNoChecked, Width = m_AnyButton.Width };
 			m_link2Panel.Controls.Add(m_NoneButton);
 
 			if (!fAtomic)
 			{
-				m_ExactButton = new RadioButton {Text = XMLViewsStrings.ksExactlyChecked, Width = m_AnyButton.Width};
+				m_ExactButton = new RadioButton { Text = XMLViewsStrings.ksExactlyChecked, Width = m_AnyButton.Width };
 				m_link2Panel.Controls.Add(m_ExactButton);
 			}
 
@@ -826,44 +824,44 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			var linkNodes = node.Elements("chooserLink").ToList();
 			Debug.Assert(linkNodes != null && linkNodes.Count <= 2);
-			for (var i = linkNodes.Count - 1; i >= 0 ; --i)
+			for (var i = linkNodes.Count - 1; i >= 0; --i)
 			{
 				var sType = XmlUtils.GetOptionalAttributeValue(linkNodes[i], "type", "goto").ToLower();
 				var sLabel = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(linkNodes[i], "label", null));
 				switch (sType)
 				{
 					case "goto":
-					{
-						var sTool = XmlUtils.GetOptionalAttributeValue(linkNodes[i], "tool");
-						if (sLabel != null && sTool != null)
 						{
-							AddLink(sLabel, LinkType.kGotoLink, new FwLinkArgs(sTool, m_guidLink));
+							var sTool = XmlUtils.GetOptionalAttributeValue(linkNodes[i], "tool");
+							if (sLabel != null && sTool != null)
+							{
+								AddLink(sLabel, LinkType.kGotoLink, new FwLinkArgs(sTool, m_guidLink));
+							}
+							break;
 						}
-						break;
-					}
 					case "dialog":
-					{
-						var sDialog = XmlUtils.GetOptionalAttributeValue(linkNodes[i], "dialog");
-						// TODO: make use of sDialog somehow to create a ChooserCommand object.
-						// TODO: maybe even better, use a new SubDialog object that allows us
-						// to call the specified dialog, then return to this dialog, adding
-						// a newly created object to the list of chosen items (or making the
-						// newly created object the chosen item).
-						if (sLabel != null && sDialog != null)
 						{
-							AddLink(sLabel, LinkType.kDialogLink, null);
+							var sDialog = XmlUtils.GetOptionalAttributeValue(linkNodes[i], "dialog");
+							// TODO: make use of sDialog somehow to create a ChooserCommand object.
+							// TODO: maybe even better, use a new SubDialog object that allows us
+							// to call the specified dialog, then return to this dialog, adding
+							// a newly created object to the list of chosen items (or making the
+							// newly created object the chosen item).
+							if (sLabel != null && sDialog != null)
+							{
+								AddLink(sLabel, LinkType.kDialogLink, null);
+							}
+							break;
 						}
-						break;
-					}
 					case "simple":
-					{
-						var sTool = XmlUtils.GetOptionalAttributeValue(linkNodes[i], "tool");
-						if (sLabel != null && sTool != null)
 						{
-							AddSimpleLink(sLabel, sTool, linkNodes[i]);
+							var sTool = XmlUtils.GetOptionalAttributeValue(linkNodes[i], "tool");
+							if (sLabel != null && sTool != null)
+							{
+								AddSimpleLink(sLabel, sTool, linkNodes[i]);
+							}
+							break;
 						}
-						break;
-					}
 				}
 			}
 			var sGuiControl = XmlUtils.GetOptionalAttributeValue(node, "guicontrol");
@@ -1016,40 +1014,47 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 
 			// only create the web browser if we needed, because this control is pretty resource intensive
-#if __MonoCS__
-			m_webBrowser = new Gecko.GeckoWebBrowser
+			m_webBrowser = new XWebBrowser
 			{
-				Dock = DockStyle.Fill,
-				TabIndex = 1,
-				MinimumSize = new Size(20, 20),
-				NoDefaultContextMenu = true
+				Dock = DockStyle.Fill
 			};
-#else
-			m_webBrowser = new WebBrowser
+
+			if (Platform.IsMono)
 			{
-				Dock = DockStyle.Fill,
-				IsWebBrowserContextMenuEnabled = false,
-				WebBrowserShortcutsEnabled = false,
-				AllowWebBrowserDrop = false
-			};
-#endif
+				var browser = m_webBrowser.NativeBrowser as Gecko.GeckoWebBrowser;
+				browser.TabIndex = 1;
+				browser.MinimumSize = new Size(20, 20);
+				browser.NoDefaultContextMenu = true;
+			}
+			else
+			{
+				var browser = m_webBrowser.NativeBrowser as WebBrowser;
+				browser.IsWebBrowserContextMenuEnabled = false;
+				browser.WebBrowserShortcutsEnabled = false;
+				browser.AllowWebBrowserDrop = false;
+			}
 			m_helpBrowserButton.Visible = true;
 			m_viewExtrasPanel.Visible = true;
-#if !__MonoCS__
-			m_webBrowser.Navigated += m_webBrowser_Navigated;
-#endif
+			if (!Platform.IsMono)
+			{
+				m_webBrowser.Navigated += m_webBrowser_Navigated;
+			}
 			m_webBrowser.CanGoBackChanged += m_webBrowser_CanGoBackChanged;
 			m_webBrowser.CanGoForwardChanged += m_webBrowser_CanGoForwardChanged;
 			m_splitContainer.Panel2.Controls.Add(m_webBrowser);
 
-			m_backButton = new ToolStripButton(null, m_imageList.Images[2], m_backButton_Click) {Enabled = false};
-			m_forwardButton = new ToolStripButton(null, m_imageList.Images[3], m_forwardButton_Click) {Enabled = false};
-#if __MonoCS__
-			m_helpBrowserStrip = new ToolStrip(m_backButton, m_forwardButton) { Dock = DockStyle.Top };
-#else
-			m_printButton = new ToolStripButton(null, m_imageList.Images[4], m_printButton_Click);
-			m_helpBrowserStrip = new ToolStrip(m_backButton, m_forwardButton, m_printButton) { Dock = DockStyle.Top };
-#endif
+			m_backButton = new ToolStripButton(null, m_imageList.Images[2], m_backButton_Click) { Enabled = false };
+			m_forwardButton = new ToolStripButton(null, m_imageList.Images[3], m_forwardButton_Click) { Enabled = false };
+
+			if (Platform.IsMono)
+			{
+				m_helpBrowserStrip = new ToolStrip(m_backButton, m_forwardButton) { Dock = DockStyle.Top };
+			}
+			else
+			{
+				m_printButton = new ToolStripButton(null, m_imageList.Images[4], m_printButton_Click);
+				m_helpBrowserStrip = new ToolStrip(m_backButton, m_forwardButton, m_printButton) { Dock = DockStyle.Top };
+			}
 			m_splitContainer.Panel2.Controls.Add(m_helpBrowserStrip);
 
 			if (splitterDistance < m_splitContainer.Width)
@@ -1157,16 +1162,20 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (pos != null)
 			{
 				var helpFile = pos.OwningList.HelpFile;
-#if __MonoCS__
-// Force Linux to use combined Ocm/OcmFrame files
+				if (!Platform.IsWindows)
+				{
+					// Force Linux to use combined Ocm/OcmFrame files
 					if (helpFile == "Ocm.chm")
+					{
 						helpFile = "OcmFrame";
-#endif
+					}
+				}
 				var helpTopic = pos.HelpId;
 				if (!string.IsNullOrEmpty(helpFile) && !string.IsNullOrEmpty(helpTopic))
 				{
 					var curHelpTopic = GetHelpTopic(m_webBrowser.Url);
-					if (curHelpTopic != null && helpTopic.ToLowerInvariant() == curHelpTopic.ToLowerInvariant())
+					if (curHelpTopic != null && helpTopic.ToLowerInvariant() ==
+						curHelpTopic.ToLowerInvariant())
 					{
 						return;
 					}
@@ -1176,13 +1185,17 @@ namespace LanguageExplorer.Controls.XMLViews
 						var helpsPath = Path.Combine(FwDirectoryFinder.CodeDirectory, "Helps");
 						helpFile = Path.Combine(helpsPath, helpFile);
 					}
-#if __MonoCS__
-// remove file extension, we need folder of the same name with the htm files
-					helpFile = helpFile.Replace(".chm","");
-					string url = string.Format("{0}/{1}.htm", helpFile, helpTopic.ToLowerInvariant());
-#else
-					var url = $"its:{helpFile}::/{helpTopic}.htm";
-#endif
+					string url;
+					if (Platform.IsWindows)
+					{
+						url = $"its:{helpFile}::/{helpTopic}.htm";
+					}
+					else
+					{
+						// remove file extension, we need folder of the same name with the htm files
+						helpFile = helpFile.Replace(".chm", "");
+						url = $"{helpFile}/{helpTopic.ToLowerInvariant()}.htm";
+					}
 					m_webBrowser.Navigate(url);
 				}
 				else
@@ -1203,19 +1216,14 @@ namespace LanguageExplorer.Controls.XMLViews
 				return null;
 			}
 			var urlStr = url.ToString();
-#if __MonoCS__
-			int startIndex = urlStr.IndexOf("OcmFrame/");
-			if (startIndex == -1)
-				return null;
-			startIndex += 9;
-#else
-			var startIndex = urlStr.IndexOf("::/");
+			var prefix = Platform.IsWindows ? "::/" : "OcmFrame/";
+			var startIndex = urlStr.IndexOf(prefix);
 			if (startIndex == -1)
 			{
 				return null;
 			}
-			startIndex += 3;
-#endif
+			startIndex += prefix.Length;
+
 			var endIndex = urlStr.IndexOf(".htm", startIndex);
 			return endIndex == -1 ? null : urlStr.Substring(startIndex, endIndex - startIndex);
 		}
@@ -1270,21 +1278,19 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (MiscUtils.IsMono)
 			{
 				var tempfile = Path.Combine(FileUtils.GetTempFile("htm"));
-			var xDocument = new XDocument(htmlElem);
-			xDocument.Save(tempfile);
-			m_webBrowser.Navigate(tempfile);
+				var xDocument = new XDocument(htmlElem);
+				xDocument.Save(tempfile);
+				m_webBrowser.Navigate(tempfile);
 				if (FileUtils.FileExists(tempfile))
 				{
 					FileUtils.Delete(tempfile);
 				}
-			tempfile = null;
+				tempfile = null;
 			}
-#if !__MonoCS__
-			else
+			else if (Platform.IsWindows)
 			{
 				m_webBrowser.DocumentText = htmlElem.ToString();
 			}
-#endif
 		}
 
 		private void m_flvLabels_SelectionChanged(object sender, FwObjectSelectionEventArgs e)
@@ -1307,12 +1313,13 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_webBrowser.GoForward();
 		}
 
-#if !__MonoCS__
 		private void m_printButton_Click(object sender, EventArgs e)
 		{
-			m_webBrowser.ShowPrintDialog();
+			if (Platform.IsWindows)
+			{
+				((WebBrowser)m_webBrowser.NativeBrowser).ShowPrintDialog();
+			}
 		}
-#endif
 
 		private void ExpandHelpBrowser()
 		{
@@ -1636,7 +1643,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		protected void LoadTree(IEnumerable<ObjectLabel> labels, ICmObject currentObj, bool showCurrentSelection)
 		{
-			Debug.Assert(showCurrentSelection? (m_chosenObjs == null) : (currentObj == null), "If showEmptyOption is false, currentHvo should be zero, since it is meaningless");
+			Debug.Assert(showCurrentSelection ? (m_chosenObjs == null) : (currentObj == null), "If showEmptyOption is false, currentHvo should be zero, since it is meaningless");
 
 			if (m_fFlatList)
 			{
@@ -1784,7 +1791,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			return stack;
 		}
 
-#region we-might-not-need-this-stuff-anymore
+		#region we-might-not-need-this-stuff-anymore
 		/// <summary>
 		/// Finds the node at root level.
 		/// </summary>
@@ -1854,7 +1861,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			return null;
 		}
-#endregion
+		#endregion
 
 		/// <summary>
 		/// returns the object that was selected, or null and cancelled.
@@ -1889,7 +1896,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose(bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
 			// Must not be run more than once.
@@ -1898,14 +1905,14 @@ namespace LanguageExplorer.Controls.XMLViews
 				return;
 			}
 
-			if ( disposing )
+			if (disposing)
 			{
 				components?.Dispose();
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
-#region Windows Form Designer generated code
+		#region Windows Form Designer generated code
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Required method for Designer support - do not modify
@@ -2146,7 +2153,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			this.ResumeLayout(false);
 
 		}
-#endregion
+		#endregion
 
 		private void HandleCommmandChoice(ChooserCommandNode node)
 		{
@@ -2228,7 +2235,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				if (m_labelsTreeView != null)
 				{
-					ChosenOne = ((LabelNode) m_labelsTreeView.SelectedNode)?.Label;
+					ChosenOne = ((LabelNode)m_labelsTreeView.SelectedNode)?.Label;
 				}
 				else
 				{
@@ -2448,7 +2455,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					return true;
 				}
-				var pnc = (IPhNaturalClass) chooser.ChosenOne.Object;
+				var pnc = (IPhNaturalClass)chooser.ChosenOne.Object;
 				var tss = pnc.Abbreviation.BestAnalysisVernacularAlternative;
 				var sName = tss.Text;
 				var sIns = $"[{sName}]";
@@ -2493,12 +2500,15 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					return label.Object;
 				}
-#if __MonoCS__
-				// On Mono, m_labelsTreeView.SelectedNode is somehow cleared between OnOKClick
-				// and getting SelectedObject from the caller.  (See FWNX-853.)
-				if (ChosenOne != null)
-					return ChosenOne.Object;
-#endif
+				if (Platform.IsMono)
+				{
+					// On Mono, m_labelsTreeView.SelectedNode is somehow cleared between OnOKClick
+					// and getting SelectedObject from the caller.  (See FWNX-853.)
+					if (ChosenOne != null)
+					{
+						return ChosenOne.Object;
+					}
+				}
 				return null;
 			}
 		}

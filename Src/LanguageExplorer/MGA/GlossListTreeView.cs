@@ -59,7 +59,7 @@ namespace LanguageExplorer.MGA
 		/// </summary>
 		public LcmCache Cache
 		{
-			set { m_cache = value;}
+			set { m_cache = value; }
 		}
 		/// <summary>
 		/// Gets flag whether the name of the complex item comes first or not.
@@ -106,11 +106,11 @@ namespace LanguageExplorer.MGA
 				// SECTION 3. Populate the TreeView with the DOM nodes.
 				PopulateTreeView(dom, treeTop);
 			}
-			catch(XmlException xex)
+			catch (XmlException xex)
 			{
 				MessageBox.Show(xex.Message);
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
 				MessageBox.Show(ex.Message);
 			}
@@ -216,7 +216,7 @@ namespace LanguageExplorer.MGA
 			{
 				return;
 			}
-			var tv = (TreeView) obj;
+			var tv = (TreeView)obj;
 			var tn = tv.GetNodeAt(mea.X, mea.Y);
 			if (tn == null)
 			{
@@ -246,25 +246,8 @@ namespace LanguageExplorer.MGA
 			return tn.Nodes.Count == 0;
 		}
 
-		private void UndoLastSelectedNode()
-		{
-			if (m_lastSelectedTreeNode == null || !IsTerminalNode(m_lastSelectedTreeNode))
-			{
-				return;
-			}
-			m_lastSelectedTreeNode.Checked = false;
-			if (TerminalsUseCheckBoxes)
-			{
-				m_lastSelectedTreeNode.ImageIndex = m_lastSelectedTreeNode.SelectedImageIndex = (int) MGAImageKind.checkBox;
-			}
-			else
-			{
-				m_lastSelectedTreeNode.ImageIndex = m_lastSelectedTreeNode.SelectedImageIndex = (int)MGAImageKind.radio;
-			}
-		}
 		protected virtual void HandleCheckBoxNodes(TreeView tv, TreeNode tn)
 		{
-			UndoLastSelectedNode();
 			if (TerminalsUseCheckBoxes)
 			{
 				if (!IsTerminalNode(tn))
@@ -277,7 +260,7 @@ namespace LanguageExplorer.MGA
 					if (mif == null || !mif.InDatabase)
 					{
 						tn.Checked = false;
-						tn.ImageIndex = tn.SelectedImageIndex = (int) MGAImageKind.checkBox;
+						tn.ImageIndex = tn.SelectedImageIndex = (int)MGAImageKind.checkBox;
 					}
 				}
 				else
@@ -302,7 +285,7 @@ namespace LanguageExplorer.MGA
 										if (m_cache.LanguageProject.MsFeatureSystemOA.GetSymbolicValue(sId) != null)
 										{
 											sibling.Checked = true;
-											sibling.ImageIndex = sibling.SelectedImageIndex = (int) MGAImageKind.checkedBox;
+											sibling.ImageIndex = sibling.SelectedImageIndex = (int)MGAImageKind.checkedBox;
 										}
 									}
 								}
@@ -341,7 +324,7 @@ namespace LanguageExplorer.MGA
 		private static void OnAfterCollapse(object obj, TreeViewEventArgs tvea)
 		{
 			var tn = tvea.Node;
-			if (tn.ImageIndex == (int) MGAImageKind.openFolder)
+			if (tn.ImageIndex == (int)MGAImageKind.openFolder)
 			{
 				tn.ImageIndex = tn.SelectedImageIndex = (int)MGAImageKind.closedFolder;
 			}
@@ -350,7 +333,7 @@ namespace LanguageExplorer.MGA
 		private static void OnAfterExpand(object obj, TreeViewEventArgs tvea)
 		{
 			var tn = tvea.Node;
-			if (tn.ImageIndex == (int) MGAImageKind.closedFolder)
+			if (tn.ImageIndex == (int)MGAImageKind.closedFolder)
 			{
 				tn.ImageIndex = tn.SelectedImageIndex = (int)MGAImageKind.openFolder;
 			}
@@ -410,9 +393,9 @@ namespace LanguageExplorer.MGA
 		protected virtual TreeNode CreateNewNode(XmlNode currentNode, string sType, StringBuilder sbNode, string sTerm)
 		{
 			var imageKind = GetImageKind(sType);
-			var newNode = new TreeNode(TsStringUtils.NormalizeToNFC(sbNode.ToString()), (int) imageKind, (int) imageKind);
+			var newNode = new TreeNode(TsStringUtils.NormalizeToNFC(sbNode.ToString()), (int)imageKind, (int)imageKind);
 			var mif = new MasterInflectionFeature(currentNode, imageKind, sTerm);
-			newNode.Tag = (MasterInflectionFeature) mif;
+			newNode.Tag = (MasterInflectionFeature)mif;
 			return newNode;
 		}
 
@@ -428,7 +411,7 @@ namespace LanguageExplorer.MGA
 			idAttr.Value = sTarget;
 			idAttr.Value = sTarget;
 			currentNode.Attributes.Append(idAttr);
-			var guidAttr = (XmlAttribute) xn.SelectSingleNode("@guid");
+			var guidAttr = (XmlAttribute)xn.SelectSingleNode("@guid");
 			Debug.Assert(guidAttr != null, "guid is a required attribute for items with ids");
 			currentNode.Attributes.Append((XmlAttribute)guidAttr.Clone());
 			var typeAttr = (XmlAttribute)xn.SelectSingleNode("@type");
@@ -437,8 +420,8 @@ namespace LanguageExplorer.MGA
 				currentNode.Attributes.Append((XmlAttribute)typeAttr.Clone());
 			}
 			// replace any abbrev, term or def items from target and add any citations in target
-			var asNodes =  new string[3] {"abbrev", "term", "def"};
-			for (var i = 0; i<3; i++)
+			var asNodes = new string[3] { "abbrev", "term", "def" };
+			for (var i = 0; i < 3; i++)
 			{
 				var newTempNode = xn.SelectSingleNode(asNodes[i]);
 				var oldNode = currentNode.SelectSingleNode(asNodes[i]);

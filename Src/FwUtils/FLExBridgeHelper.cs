@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,6 +12,7 @@ using System.Threading;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 using IPCFramework;
+using SIL.PlatformUtilities;
 using SIL.IO;
 using FileUtils = SIL.LCModel.Utils.FileUtils;
 
@@ -210,11 +211,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 			// current culture may have country etc info after a hyphen. FlexBridge just needs the main language ID.
 			// It probably can't ever be null or empty, but let's be as robust as possible.
 			var locale = Thread.CurrentThread.CurrentUICulture.Name;
-#if __MonoCS__
 			// Mono doesn't have a plain "zh" locale.  It needs the country code for Chinese.  See FWNX-1255.
-			if (locale != "zh-CN")
-#endif
-			locale = string.IsNullOrWhiteSpace(locale) ? "en" : locale.Split('-')[0];
+			if (!Platform.IsMono || locale != "zh-CN")
+			{
+				locale = string.IsNullOrWhiteSpace(locale) ? "en" : locale.Split('-')[0];
+			}
 			AddArg(ref args, "-locale", locale);
 
 			if (_noBlockerHostAndCallback != null)
@@ -268,7 +269,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// This skips the piping and doesn't pause the Flex UI thread for the
 				// two 'view' options and for the 'About Flex Bridge' and 'Check for Updates'.
 				// We store the host and a callback so that, when FLExBridge quits, we can kill the host and call the callback.
-				_noBlockerHostAndCallback = new Tuple<IIPCHost, Action> (host, onNonBlockerCommandComplete);
+				_noBlockerHostAndCallback = new Tuple<IIPCHost, Action>(host, onNonBlockerCommandComplete);
 			}
 			else
 			{
@@ -292,19 +293,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			// Let the service host cleanup happen in another thread so the user can get on with life.
 			var letTheHostDie = new Thread(() =>
+			{
+				try
 				{
-					try
-					{
-						host.Close();
-						var disposableHost = host as IDisposable;
-						if(disposableHost != null)
-							disposableHost.Dispose();
-					}
-					catch(Exception)
-					{
-						//we don't care anymore, just die.
-					}
-				});
+					host.Close();
+					var disposableHost = host as IDisposable;
+					if (disposableHost != null)
+						disposableHost.Dispose();
+				}
+				catch (Exception)
+				{
+					//we don't care anymore, just die.
+				}
+			});
 			letTheHostDie.Start();
 		}
 
@@ -511,7 +512,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			if (_noBlockerHostAndCallback != null)
 			{
 				KillTheHost(_noBlockerHostAndCallback.Item1);
-				if(_noBlockerHostAndCallback.Item2 != null)
+				if (_noBlockerHostAndCallback.Item2 != null)
 					_noBlockerHostAndCallback.Item2();
 				_noBlockerHostAndCallback = null;
 			}
@@ -545,5 +546,4 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public string JumpUrl => _jumpUrl;
 	}
-
 }

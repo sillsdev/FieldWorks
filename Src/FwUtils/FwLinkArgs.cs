@@ -9,6 +9,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.Web;
 using SIL.LCModel;
+using SIL.PlatformUtilities;
 using SIL.Reporting;
 
 namespace SIL.FieldWorks.Common.FwUtils
@@ -283,7 +284,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="o">The o.</param>
 		protected string Encode(object o)
 		{
-			switch(o.GetType().ToString())
+			switch (o.GetType().ToString())
 			{
 				default: throw new ArgumentException("Don't know how to serialize type of " + o.GetType());
 				case "System.Boolean":
@@ -299,7 +300,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="value">The value.</param>
 		protected object Decode(string value)
 		{
-			if(value.IndexOf("bool:") > -1)
+			if (value.IndexOf("bool:") > -1)
 			{
 				value = value.Substring(5);
 				return bool.Parse(value);
@@ -664,12 +665,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 					continue;
 
 				int iCurrChar = 0;
-#if __MonoCS__
-				if (sArg[iCurrChar] == '-') // Start of option
-				// Linux absolute paths begin with a slash
-#else
-				if (sArg[iCurrChar] == '-' || sArg[iCurrChar] == '/') // Start of option
-#endif
+				if (sArg[iCurrChar] == '-' || Platform.IsWindows && sArg[iCurrChar] == '/') // Start of option
 				{
 					// Start of a new argument key
 					if (!String.IsNullOrEmpty(value))
@@ -754,7 +750,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				// It is a single character tag.
 				string sKey = sArg.Substring(iCurrChar, 1).ToLowerInvariant();
-				if (sKey == "?" || sKey == "h")	// Variants of help.
+				if (sKey == "?" || sKey == "h") // Variants of help.
 				{
 					++iCurrChar;
 					return kHelp;

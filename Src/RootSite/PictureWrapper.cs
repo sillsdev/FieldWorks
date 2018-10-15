@@ -1,9 +1,6 @@
-// Copyright (c) 2011-2013 SIL International
+// Copyright (c) 2011-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: PictureWrapper.cs
-// Responsibility: FW Team
 
 using System;
 using System.Drawing;
@@ -65,7 +62,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				}
 				try
 				{
-					picture = (IPicture)OLECvt.ToOLE_IPictureDisp(image);
+					picture = (IPicture)OLEConvert.ToOLE_IPictureDisp(image);
 				}
 				catch
 				{
@@ -83,7 +80,7 @@ namespace SIL.FieldWorks.Common.RootSites
 						// on Mono
 						image = Image.FromStream(imageStream, true);
 					}
-					picture = (IPicture)OLECvt.ToOLE_IPictureDisp(image);
+					picture = (IPicture)OLEConvert.ToOLE_IPictureDisp(image);
 				}
 				m_width = picture.Width;
 				m_height = picture.Height;

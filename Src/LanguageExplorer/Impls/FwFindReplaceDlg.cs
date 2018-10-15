@@ -25,6 +25,7 @@ using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 using SIL.Windows.Forms;
 
 namespace LanguageExplorer.Impls
@@ -34,20 +35,20 @@ namespace LanguageExplorer.Impls
 	/// </summary>
 	internal sealed class FwFindReplaceDlg : Form, IMessageFilter
 	{
-#region Constants
+		#region Constants
 		private const string kPersistenceLabel = "FindReplace_";
 
-#endregion
+		#endregion
 
-#region Events
+		#region Events
 		/// <summary>Handler for MatchNotFound events.</summary>
 		private delegate bool MatchNotFoundHandler(object sender, string defaultMsg, MatchType type);
 
 		/// <summary>Fired when a match is not found.</summary>
 		private event MatchNotFoundHandler MatchNotFound;
-#endregion
+		#endregion
 
-#region Enumerations
+		#region Enumerations
 		/// <summary>
 		/// Status of matches during find/replace
 		/// </summary>
@@ -62,9 +63,9 @@ namespace LanguageExplorer.Impls
 			/// <summary>A replace all is done and it made replacements</summary>
 			ReplaceAllFinished
 		}
-#endregion
+		#endregion
 
-#region Data members
+		#region Data members
 		/// <summary>all the search settings</summary>
 		private IVwPattern m_vwFindPattern;
 		/// <summary>Environment that keeps track of where we're finding</summary>
@@ -162,9 +163,9 @@ namespace LanguageExplorer.Impls
 		private Label lblFindFormat;
 		private RegexHelperMenu regexContextMenuReplace;
 
-#endregion
+		#endregion
 
-#region Construction, initialization, destruction
+		#region Construction, initialization, destruction
 		/// <summary>
 		/// Initializes a new instance of the <see cref="FwFindReplaceDlg"/> class.
 		/// </summary>
@@ -188,11 +189,11 @@ namespace LanguageExplorer.Impls
 			btnMore.Image = ResourceHelper.MoreButtonDoubleArrowIcon;
 			btnFormat.Image = ResourceHelper.ButtonMenuArrowIcon;
 			panelSearchOptions.Visible = false;
-			fweditFindText.TextChanged +=HandleTextChanged;
-			fweditReplaceText.TextChanged +=HandleTextChanged;
+			fweditFindText.TextChanged += HandleTextChanged;
+			fweditReplaceText.TextChanged += HandleTextChanged;
 
-			m_searchKiller.Control = this;	// used for redrawing
-			m_searchKiller.StopControl = btnClose;	// need to know the stop button
+			m_searchKiller.Control = this;  // used for redrawing
+			m_searchKiller.StopControl = btnClose;  // need to know the stop button
 		}
 
 		/// <summary>
@@ -518,9 +519,9 @@ namespace LanguageExplorer.Impls
 			m_findEnvironment = null;
 			base.Dispose(disposing);
 		}
-#endregion // Construction, initialization, destruction
+		#endregion // Construction, initialization, destruction
 
-#region Other methods
+		#region Other methods
 		/// <summary>
 		/// Removes any end of paragraph marker from the string builder.
 		/// </summary>
@@ -591,7 +592,7 @@ namespace LanguageExplorer.Impls
 					}
 				}
 			}
-			base.OnLayout (levent);
+			base.OnLayout(levent);
 		}
 
 		/// <summary>
@@ -639,9 +640,9 @@ namespace LanguageExplorer.Impls
 			}
 			return tss;
 		}
-#endregion
+		#endregion
 
-#region Windows Form Designer generated code
+		#region Windows Form Designer generated code
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
@@ -942,9 +943,9 @@ namespace LanguageExplorer.Impls
 			this.ResumeLayout(false);
 
 		}
-#endregion
+		#endregion
 
-#region Event handlers
+		#region Event handlers
 		/// <summary>
 		/// Handles the CheckedChanged event of the chkMatchWS control.
 		/// </summary>
@@ -959,7 +960,7 @@ namespace LanguageExplorer.Impls
 		protected override void OnVisibleChanged(EventArgs e)
 		{
 			if (Visible)
-			{	// this means we were hidden and now will be visible
+			{   // this means we were hidden and now will be visible
 				var resources = new System.Resources.ResourceManager(typeof(FwFindReplaceDlg));
 				btnClose.Text = resources.GetString("btnClose.Text");
 
@@ -1002,7 +1003,7 @@ namespace LanguageExplorer.Impls
 				var item = (MenuItem)sender;
 				if (item.Parent == mnuWritingSystem)
 				{
-					ApplyWS(LastTextBoxInFocus, (int) item.Tag);
+					ApplyWS(LastTextBoxInFocus, (int)item.Tag);
 				}
 			}
 		}
@@ -1014,7 +1015,7 @@ namespace LanguageExplorer.Impls
 		{
 			if (sender is MenuItem)
 			{
-				var item = (MenuItem) sender;
+				var item = (MenuItem)sender;
 				if (item.Parent == mnuStyle)
 				{
 					ApplyStyle(LastTextBoxInFocus, item.Text);
@@ -1037,12 +1038,12 @@ namespace LanguageExplorer.Impls
 			// After a find next, focus the find box and select the text in it.
 			fweditFindText.Select();
 			fweditFindText.SelectAll();
-#if __MonoCS__
-			RemoveWaitCursor(this);
-#endif
+			if (Platform.IsMono)
+			{
+				RemoveWaitCursor(this);
+			}
 		}
 
-#if __MonoCS__
 		/// <summary>
 		/// Remove the wait cursor, which is left behind on several controls when the
 		/// DataUpdateMonitor object is disposed.  This is a patch over a bug in Mono
@@ -1051,9 +1052,11 @@ namespace LanguageExplorer.Impls
 		/// <remarks>
 		/// The strange thing is that the cursor on all these controls seems to already
 		/// be set to Cursors.Default, but this fix works.
+		/// Method is only used on Linux.
 		/// </remarks>
 		private void RemoveWaitCursor(Control ctl)
 		{
+			Debug.Assert(Platform.IsMono, "This method is only needed with Mono on Linux");
 			foreach (var c in ctl.Controls)
 			{
 				var control = c as Control;
@@ -1064,7 +1067,6 @@ namespace LanguageExplorer.Impls
 			}
 			ctl.Cursor = Cursors.Default;
 		}
-#endif
 
 		/// <summary>
 		/// Handle the Replace button click event. The first time the user presses the
@@ -1150,8 +1152,8 @@ namespace LanguageExplorer.Impls
 				if (PatternIsValid())
 				{
 					m_searchKiller.AbortRequest = false;
-					m_searchKiller.Control = this;	// used for redrawing
-					m_searchKiller.StopControl = btnClose;	// need to know the stop button
+					m_searchKiller.Control = this;  // used for redrawing
+					m_searchKiller.StopControl = btnClose;  // need to know the stop button
 					m_vwFindPattern.ReplaceWith = ReplaceText;
 
 					var initialSelection = CurrentSelection;
@@ -1340,7 +1342,7 @@ namespace LanguageExplorer.Impls
 			base.OnClosing(e);
 			// If no other handler of this event tried to intervene, the dialog itself will
 			// prevent closing and just hide itself.
-			if (e.Cancel == false && ! m_inGetSpecs)
+			if (e.Cancel == false && !m_inGetSpecs)
 			{
 				e.Cancel = true;
 				Hide();
@@ -1385,7 +1387,7 @@ namespace LanguageExplorer.Impls
 				tabFind.Controls.Clear();
 				tabReplace.Controls.Add(panelSearchOptions);
 				tabReplace.Controls.Add(panelBasic);
-				if(!m_inGetSpecs)
+				if (!m_inGetSpecs)
 				{
 					btnReplace.Show();
 					btnReplaceAll.Show();
@@ -1432,7 +1434,7 @@ namespace LanguageExplorer.Impls
 			{
 				s_helpTopic = "khtpReplace";
 			}
-			if (tabControls != null && tabControls.TabCount <= 1 && s_helpTopic != "khtpFindNotebook") //find/replace help topic for lexicon
+			if (tabControls != null && tabControls.TabCount <= 1 && s_helpTopic != "khtpFindNotebook")   //find/replace help topic for lexicon
 			{
 				s_helpTopic = "khtpLexFind";
 			}
@@ -1637,9 +1639,9 @@ namespace LanguageExplorer.Impls
 				ctrl.Enabled = false;
 			}
 		}
-#endregion
+		#endregion
 
-#region Methods where the work is actually done.
+		#region Methods where the work is actually done.
 		/// <summary>
 		/// Enables or disables all the controls except the close/stop/cancel button on the
 		/// find/replace dialog.
@@ -2210,16 +2212,16 @@ namespace LanguageExplorer.Impls
 			return finalLength - initialLength;
 		}
 
-#endregion
+		#endregion
 
-#region Protected properties
+		#region Protected properties
 		/// <summary>
 		/// The data access for the find and replace dialog.
 		/// </summary>
 		private ISilDataAccess DataAccess => ActiveView?.RootBox.DataAccess;
 		#endregion
 
-#region Protected helper methods
+		#region Protected helper methods
 		/// <summary>
 		/// Given an FwTextBox, we get the name of the WS of the current selection. If the
 		/// selection spans multiple writing systems, we return an empty string.
@@ -2251,7 +2253,7 @@ namespace LanguageExplorer.Impls
 			var sCurrentWs = GetCurrentWS(LastTextBoxInFocus);
 			foreach (var ws in writingSystems)
 			{
-				mnuWritingSystem.MenuItems.Add(new MenuItem(ws.DisplayLabel, clickEvent) {Checked = sCurrentWs == ws, Tag = ws.Handle});
+				mnuWritingSystem.MenuItems.Add(new MenuItem(ws.DisplayLabel, clickEvent) { Checked = sCurrentWs == ws, Tag = ws.Handle });
 			}
 		}
 
@@ -2489,9 +2491,9 @@ namespace LanguageExplorer.Impls
 			format.Visible = fShowLabels;
 			formatText.Visible = fShowLabels;
 		}
-#endregion
+		#endregion
 
-#region Public properties
+		#region Public properties
 		/// <summary>
 		/// Returns the text to find
 		/// </summary>
@@ -2536,7 +2538,7 @@ namespace LanguageExplorer.Impls
 		public FwTextBox LastTextBoxInFocus { get; private set; }
 		#endregion
 
-#region IMessageFilter Members
+		#region IMessageFilter Members
 		/// <summary>
 		/// Provide tabbing with the view controls and handle the ESC key to close the find dialog
 		/// </summary>
@@ -2583,7 +2585,12 @@ namespace LanguageExplorer.Impls
 			{
 				Control?.Update();
 
-#if !__MonoCS__ // Currently (Aug 2010) Mono Winforms on X11 doesn't support PeekMessage with filtering.
+				if (Platform.IsMono)
+				{
+					return;
+				}
+
+				// Currently (Aug 2010) Mono Winforms on X11 doesn't support PeekMessage with filtering.
 				// Process keystrokes and lbutton events so the user can stop the dlg work.
 				// This should allow the dlg to be stopped mid stream with out the risk
 				// of the DoEvents call.
@@ -2607,7 +2614,7 @@ namespace LanguageExplorer.Impls
 					}
 					else if (msg.message == (int)Win32.WinMsgs.WM_KEYDOWN &&
 						msg.wParam == (IntPtr)Win32.VirtualKeycodes.VK_ESCAPE &&
-						StopControl != null && msg.hwnd == StopControl.Handle)
+							StopControl != null && msg.hwnd == StopControl.Handle)
 					{
 						((Button)StopControl).PerformClick();
 					}
@@ -2618,20 +2625,22 @@ namespace LanguageExplorer.Impls
 						Win32.DispatchMessage(ref msg);
 					}
 				}
-#endif
 			}
 
-#if !__MonoCS__ // Currently (Aug 2010) Mono Winforms on X11 doesn't support PeekMessage with filtering.
+			// Currently (Aug 2010) Mono Winforms on X11 doesn't support PeekMessage with filtering.
 			/// <summary>
 			/// Peeks at the pending messages and if it finds any message in the given range, that
 			/// message is removed from the stack and passed back to be handled immediately.
 			/// </summary>
+			/// <param name="min">The minumum message to handle.</param>
+			/// <param name="max">The maximum message to handle.</param>
+			/// <param name="msg">The message found, if any.</param>
+			/// <returns><c>true</c> if a matching message is found; <c>false</c> otherwise.</returns>
 			private bool PeekMessage(Win32.WinMsgs min, Win32.WinMsgs max, out Win32.MSG msg)
 			{
 				msg = new Win32.MSG();
 				return Win32.PeekMessage(ref msg, Control.Handle, (uint)min, (uint)max, (uint)Win32.PeekFlags.PM_REMOVE);
 			}
-#endif
 			#endregion
 		}
 		#endregion
