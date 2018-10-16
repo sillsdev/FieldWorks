@@ -54,7 +54,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(NotebookArea.Records, majorFlexComponentParameters.StatusBar, NotebookArea.NotebookFactoryMethod);
 			}
 			var docView = new XmlDocView(XDocument.Parse(NotebookResources.NotebookDocumentParameters).Root, majorFlexComponentParameters.LcmCache, _recordList);
-			_notebookDocumentToolMenuHelper = new NotebookDocumentToolMenuHelper(majorFlexComponentParameters, this, docView, _recordList);
+			_notebookDocumentToolMenuHelper = new NotebookDocumentToolMenuHelper(majorFlexComponentParameters, this, _recordList, docView);
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,

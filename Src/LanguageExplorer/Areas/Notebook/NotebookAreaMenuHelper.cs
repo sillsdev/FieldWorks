@@ -21,6 +21,9 @@ namespace LanguageExplorer.Areas.Notebook
 	internal sealed class NotebookAreaMenuHelper : IFlexComponent, IDisposable
 	{
 		internal const string CmdGoToRecord = "CmdGoToRecord";
+		internal const string CmdInsertRecord = "CmdInsertRecord";
+		internal const string CmdInsertSubRecord = "CmdInsertSubRecord";
+		internal const string CmdInsertSubSubRecord = "CmdInsertSubSubRecord";
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private DataTree MyDataTree { get; set; }
 		private ISharedEventHandlers _sharedEventHandlers;
@@ -30,21 +33,29 @@ namespace LanguageExplorer.Areas.Notebook
 		private List<Tuple<ToolStripMenuItem, EventHandler>> _newEditMenusAndHandlers;
 		private ToolStripMenuItem _fileImportMenu;
 		private List<Tuple<ToolStripMenuItem, EventHandler>> _newFileMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>();
+		private ToolStripMenuItem _insertMenu;
+		private List<Tuple<ToolStripMenuItem, EventHandler>> _newInsertMenusAndHandlers;
+		private ToolStripMenuItem _insertSubsubrecordMenuItem;
+		private ToolStripMenuItem _insertEntryMenu;
 		internal AreaWideMenuHelper MyAreaWideMenuHelper { get; private set; }
 
-		internal NotebookAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool currentNotebookTool, DataTree dataTree)
+		internal NotebookAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool currentNotebookTool, IRecordList recordList, DataTree dataTree = null)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(currentNotebookTool, nameof(currentNotebookTool));
+			Guard.AgainstNull(recordList, nameof(recordList));
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
 			_sharedEventHandlers = majorFlexComponentParameters.SharedEventHandlers;
 			_currentNotebookTool = currentNotebookTool;
+			_recordList = recordList;
 			MyDataTree = dataTree; // May be null.
-			_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(NotebookArea.Records, majorFlexComponentParameters.StatusBar, NotebookArea.NotebookFactoryMethod);
 			MyAreaWideMenuHelper = new AreaWideMenuHelper(_majorFlexComponentParameters, _recordList);
 
 			_sharedEventHandlers.Add(CmdGoToRecord, GotoRecord_Clicked);
+			_sharedEventHandlers.Add(CmdInsertRecord, Insert_Record_Clicked);
+			_sharedEventHandlers.Add(CmdInsertSubRecord, Insert_Subrecord_Clicked);
+			_sharedEventHandlers.Add(CmdInsertSubSubRecord, Insert_Subsubrecord_Clicked);
 		}
 
 		#region Implementation of IPropertyTableProvider
@@ -136,6 +147,11 @@ namespace LanguageExplorer.Areas.Notebook
 			{
 				MyAreaWideMenuHelper.Dispose();
 
+				if (MyDataTree != null)
+				{
+					MyDataTree.CurrentSliceChanged -= MyDataTreeOnCurrentSliceChanged;
+				}
+				_insertMenu.DropDownOpening -= InsertMenu_DropDownOpening;
 				foreach (var menuTuple in _newFileMenusAndHandlers)
 				{
 					menuTuple.Item1.Click -= menuTuple.Item2;
@@ -152,7 +168,18 @@ namespace LanguageExplorer.Areas.Notebook
 				}
 				_newEditMenusAndHandlers.Clear();
 
+				foreach (var menuTuple in _newInsertMenusAndHandlers)
+				{
+					menuTuple.Item1.Click -= menuTuple.Item2;
+					_insertMenu.DropDownItems.Remove(menuTuple.Item1);
+					menuTuple.Item1.Dispose();
+				}
+				_newInsertMenusAndHandlers?.Clear();
+
 				_sharedEventHandlers.Remove(CmdGoToRecord);
+				_sharedEventHandlers.Remove(CmdInsertRecord);
+				_sharedEventHandlers.Remove(CmdInsertSubRecord);
+				_sharedEventHandlers.Remove(CmdInsertSubSubRecord);
 			}
 			_majorFlexComponentParameters = null;
 			MyDataTree = null;
@@ -164,10 +191,141 @@ namespace LanguageExplorer.Areas.Notebook
 			_newFileMenusAndHandlers = null;
 			_editMenu = null;
 			_newEditMenusAndHandlers = null;
+			_insertMenu = null;
+			_newInsertMenusAndHandlers = null;
 
 			_isDisposed = true;
 		}
 		#endregion
+
+		internal void AddInsertMenuItems(bool includeCmdAddToLexicon = true)
+		{
+			_insertMenu = MenuServices.GetInsertMenu(_majorFlexComponentParameters.MenuStrip);
+			_newInsertMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>(includeCmdAddToLexicon ? 4 : 3);
+
+			var insertIndex = 0;
+			/*
+			  <item command="CmdInsertRecord" defaultVisible="false" /> // Shared locally
+				Tooltip: <item id="CmdInsertRecord">Create a new Record in your Notebook.</item>
+					<command id="CmdInsertRecord" label="Record" message="InsertItemInVector" icon="nbkRecord" shortcut="Ctrl+I">
+					  <params className="RnGenericRec" />
+					</command>
+			*/
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_Record_Clicked, NotebookResources.Record, NotebookResources.Create_a_new_Record_in_your_Notebook, Keys.Control | Keys.I, NotebookResources.nbkRecord, insertIndex++);
+
+			/*
+			  <item command="CmdInsertSubrecord" defaultVisible="false" />
+				Tooltip: <item id="CmdInsertSubrecord">Create a Subrecord in your Notebook.</item>
+					<command id="CmdInsertSubrecord" label="Subrecord" message="InsertItemInVector" icon="nbkRecord">
+					  <params className="RnGenericRec" subrecord="true" />
+					</command>
+			*/
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_Subrecord_Clicked, NotebookResources.Subrecord, NotebookResources.Create_a_Subrecord_in_your_Notebook, image: NotebookResources.nbkRecord, insertIndex: insertIndex++);
+
+			/*
+			  <item command="CmdInsertSubsubrecord" defaultVisible="false" />
+					<command id="CmdInsertSubsubrecord" label="Subrecord of subrecord" message="InsertItemInVector" icon="nbkRecord">
+					  <params className="RnGenericRec" subrecord="true" subsubrecord="true" />
+					</command>
+			*/
+			_insertSubsubrecordMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_Subsubrecord_Clicked, NotebookResources.Subrecord_of_subrecord, image: NotebookResources.nbkRecord, insertIndex: insertIndex++);
+
+			if (includeCmdAddToLexicon)
+			{
+				/*
+				  <item command="CmdAddToLexicon" label="Entry..." defaultVisible="false" /> // Shared locally
+					Tooltip: <item id="CmdAddToLexicon">Add the current word to the lexicon (if it is a vernacular word).</item>
+						<command id="CmdAddToLexicon" label="Add to Dictionary..." message="AddToLexicon" icon="majorEntry" />
+				*/
+				_insertEntryMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, _majorFlexComponentParameters.SharedEventHandlers.Get(AreaServices.CmdAddToLexicon), AreaResources.EntryWithDots, image: AreaResources.Major_Entry.ToBitmap(), insertIndex: insertIndex++);
+				_insertEntryMenu.Tag = MyDataTree;
+				_insertEntryMenu.Enabled = AreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree) != null;
+			}
+			if (MyDataTree != null)
+			{
+				MyDataTree.CurrentSliceChanged += MyDataTreeOnCurrentSliceChanged;
+			}
+			_insertMenu.DropDownOpening += InsertMenu_DropDownOpening;
+		}
+
+		private void InsertMenu_DropDownOpening(object sender, EventArgs e)
+		{
+			// Set visibility/Enable for _insertSubsubrecordMenuItem.
+			_insertSubsubrecordMenuItem.Visible = _recordList.CurrentObject != null && _recordList.CurrentObject.OwningFlid == RnGenericRecTags.kflidSubRecords;
+
+			var currentSliceAsStTextSlice = AreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree);
+			if (_insertEntryMenu != null && _insertEntryMenu.Visible && currentSliceAsStTextSlice != null)
+			{
+				AreaWideMenuHelper.Set_CmdAddToLexicon_State(_majorFlexComponentParameters.LcmCache, _insertEntryMenu, currentSliceAsStTextSlice.RootSite.RootBox.Selection);
+			}
+		}
+
+		private void MyDataTreeOnCurrentSliceChanged(object sender, CurrentSliceChangedEventArgs e)
+		{
+			if (_insertEntryMenu != null)
+			{
+				_insertEntryMenu.Enabled = AreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree) != null;
+			}
+		}
+
+		private void Insert_Record_Clicked(object sender, EventArgs e)
+		{
+			InsertRecord_Common();
+		}
+
+		private void Insert_Subrecord_Clicked(object sender, EventArgs e)
+		{
+			/*
+				<command id="CmdDataTree-Insert-Subrecord" label="Insert _Subrecord" message="InsertItemInVector">
+					<parameters className="RnGenericRec" subrecord="true"/>
+				</command>
+			*/
+			InsertRecord_Common();
+		}
+
+		private void Insert_Subsubrecord_Clicked(object sender, EventArgs e)
+		{
+			/*
+				<command id="CmdDataTree-Insert-Subsubrecord" label="Insert S_ubrecord of Subrecord" message="InsertItemInVector">
+					<parameters className="RnGenericRec" subrecord="true" subsubrecord="true"/>
+				</command>
+			*/
+			InsertRecord_Common(true);
+		}
+
+		private void InsertRecord_Common(bool subSubRecord = false)
+		{
+			using (var dlg = new InsertRecordDlg())
+			{
+				dlg.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
+				var cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+				ICmObject owner;
+				var currentRecord = _recordList.CurrentObject;
+				var researchNbk = (IRnResearchNbk)_recordList.OwningObject;
+				if (currentRecord == null)
+				{
+					// No records at all, so notebook is the owner.
+					owner = researchNbk;
+				}
+				else
+				{
+					if (subSubRecord)
+					{
+						// Dig out sub record from record list.
+						owner = _recordList.CurrentObject.Owner as IRnGenericRec;
+					}
+					else
+					{
+						owner = currentRecord;
+					}
+				}
+				dlg.SetDlgInfo(cache, owner);
+				if (dlg.ShowDialog(Form.ActiveForm) == DialogResult.OK)
+				{
+					//LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(_notebookEditTool.MachineName, dlg.NewRecord.Guid));
+				}
+			}
+		}
 
 		private void AddEditMenuItems()
 		{

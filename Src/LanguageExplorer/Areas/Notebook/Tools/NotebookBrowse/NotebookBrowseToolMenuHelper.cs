@@ -18,14 +18,14 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 		private NotebookAreaMenuHelper _notebookAreaMenuHelper;
 		private RecordBrowseView _browseView;
 
-		internal NotebookBrowseToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool currentNotebookTool, RecordBrowseView browseView)
+		internal NotebookBrowseToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool currentNotebookTool, IRecordList recordList, RecordBrowseView browseView)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(currentNotebookTool, nameof(currentNotebookTool));
 			Guard.AgainstNull(browseView, nameof(browseView));
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
-			_notebookAreaMenuHelper = new NotebookAreaMenuHelper(majorFlexComponentParameters, currentNotebookTool, null);
+			_notebookAreaMenuHelper = new NotebookAreaMenuHelper(majorFlexComponentParameters, currentNotebookTool, recordList);
 			_browseView = browseView;
 		}
 
@@ -66,6 +66,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 			_notebookAreaMenuHelper.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 			_notebookAreaMenuHelper.MyAreaWideMenuHelper.SetupToolsConfigureColumnsMenu(_browseView.BrowseViewer);
 			_notebookAreaMenuHelper.MyAreaWideMenuHelper.SetupToolsCustomFieldsMenu();
+			_notebookAreaMenuHelper.AddInsertMenuItems(false);
 		}
 		#endregion
 

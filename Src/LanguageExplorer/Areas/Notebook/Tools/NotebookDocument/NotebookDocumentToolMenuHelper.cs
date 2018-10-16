@@ -21,7 +21,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 		private NotebookAreaMenuHelper _notebookAreaMenuHelper;
 		private XmlDocView _docView;
 
-		internal NotebookDocumentToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool currentNotebookTool, XmlDocView docView, IRecordList recordList)
+		internal NotebookDocumentToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool currentNotebookTool, IRecordList recordList, XmlDocView docView)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(currentNotebookTool, nameof(currentNotebookTool));
@@ -32,7 +32,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 			_editFindMenu = MenuServices.GetEditFindMenu(_majorFlexComponentParameters.MenuStrip);
 			_editFindMenu.Enabled = _editFindMenu.Visible = true;
 			_editFindMenu.Click += EditFindMenu_Click;
-			_notebookAreaMenuHelper = new NotebookAreaMenuHelper(majorFlexComponentParameters, currentNotebookTool, null);
+			_notebookAreaMenuHelper = new NotebookAreaMenuHelper(majorFlexComponentParameters, currentNotebookTool, recordList);
 			_toolsConfigureMenu = MenuServices.GetToolsConfigureMenu(_majorFlexComponentParameters.MenuStrip);
 
 			AddTool_ConfigureItem();
@@ -78,6 +78,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 			Subscriber = flexComponentParameters.Subscriber;
 
 			_notebookAreaMenuHelper.InitializeFlexComponent(flexComponentParameters);
+			_notebookAreaMenuHelper.AddInsertMenuItems(false);
 		}
 		#endregion
 
