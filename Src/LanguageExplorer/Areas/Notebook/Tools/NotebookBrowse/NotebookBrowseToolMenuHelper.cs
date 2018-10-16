@@ -3,7 +3,9 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Windows.Forms;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -15,8 +17,11 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 	internal sealed class NotebookBrowseToolMenuHelper : IFlexComponent, IDisposable
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
+		private ISharedEventHandlers _sharedEventHandlers;
 		private NotebookAreaMenuHelper _notebookAreaMenuHelper;
 		private RecordBrowseView _browseView;
+		private ToolStripButton _insertRecordToolStripButton;
+		private ToolStripButton _insertFindRecordToolStripButton;
 
 		internal NotebookBrowseToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool currentNotebookTool, IRecordList recordList, RecordBrowseView browseView)
 		{
@@ -25,6 +30,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 			Guard.AgainstNull(browseView, nameof(browseView));
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
+			_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
 			_notebookAreaMenuHelper = new NotebookAreaMenuHelper(majorFlexComponentParameters, currentNotebookTool, recordList);
 			_browseView = browseView;
 		}
@@ -67,6 +73,8 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 			_notebookAreaMenuHelper.MyAreaWideMenuHelper.SetupToolsConfigureColumnsMenu(_browseView.BrowseViewer);
 			_notebookAreaMenuHelper.MyAreaWideMenuHelper.SetupToolsCustomFieldsMenu();
 			_notebookAreaMenuHelper.AddInsertMenuItems(false);
+
+			AddInsertToolbarItems();
 		}
 		#endregion
 
@@ -101,13 +109,43 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 
 			if (disposing)
 			{
+				_insertRecordToolStripButton.Click -= _sharedEventHandlers.Get(NotebookAreaMenuHelper.CmdInsertRecord);
+				_insertFindRecordToolStripButton.Click -= _sharedEventHandlers.Get(NotebookAreaMenuHelper.CmdGoToRecord);
+				_insertRecordToolStripButton?.Dispose();
+				_insertFindRecordToolStripButton?.Dispose();
 				_notebookAreaMenuHelper?.Dispose();
 			}
 			_majorFlexComponentParameters = null;
 			_notebookAreaMenuHelper = null;
+			_insertRecordToolStripButton = null;
+			_insertFindRecordToolStripButton = null;
+			_sharedEventHandlers = null;
+			_browseView = null;
 
 			_isDisposed = true;
 		}
 		#endregion
+
+		private void AddInsertToolbarItems()
+		{
+			var newToolbarItems = new List<ToolStripItem>(2);
+
+			_notebookAreaMenuHelper.AddCommonInsertToolbarItems(newToolbarItems);
+			/*
+			  <item command="CmdInsertRecord" defaultVisible="false" />
+				Tooltip: <item id="CmdInsertRecord">Create a new Record in your Notebook.</item>
+					<command id="CmdInsertRecord" label="Record" message="InsertItemInVector" icon="nbkRecord" shortcut="Ctrl+I">
+					  <params className="RnGenericRec" />
+					</command>
+			*/
+			_insertRecordToolStripButton = (ToolStripButton)newToolbarItems[0];
+
+			/*
+			  <item command="CmdGoToRecord" defaultVisible="false" />
+			*/
+			_insertFindRecordToolStripButton = (ToolStripButton)newToolbarItems[1]; ;
+
+			InsertToolbarManager.AddInsertToolbarItems(_majorFlexComponentParameters, newToolbarItems);
+		}
 	}
 }

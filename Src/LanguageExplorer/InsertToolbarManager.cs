@@ -12,11 +12,11 @@ namespace LanguageExplorer
 	{
 		internal static void AddInsertToolbarItems(MajorFlexComponentParameters majorFlexComponentParameters, List<ToolStripItem> insertStripItems)
 		{
-			insertStripItems.Reverse();
 			var toolStripInsert = GetInsertToolStrip(majorFlexComponentParameters);
+			var currentCount = toolStripInsert.Items.Count;
 			foreach (var toolStripItem in insertStripItems)
 			{
-				toolStripInsert.Items.Insert(0, toolStripItem);
+				toolStripInsert.Items.Insert(currentCount++, toolStripItem);
 			}
 			toolStripInsert.Visible = insertStripItems.Any(button => button.Enabled);
 		}
@@ -27,7 +27,7 @@ namespace LanguageExplorer
 			var goners = new List<ToolStripItem>();
 			foreach (ToolStripItem item in toolStripInsert.Items)
 			{
-				if (item.Name == "toolStripButtonFindText")
+				if (item.Name == ToolbarServices.ToolStripButtonFindText)
 				{
 					item.Enabled = false;
 				}
@@ -54,7 +54,7 @@ namespace LanguageExplorer
 
 		private static ToolStrip GetInsertToolStrip(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			return (ToolStrip)majorFlexComponentParameters.ToolStripContainer.TopToolStripPanel.Controls.Find("toolStripInsert", false).First();
+			return (ToolStrip)majorFlexComponentParameters.ToolStripContainer.TopToolStripPanel.Controls.Find(ToolbarServices.ToolStripInsert, false).First();
 		}
 	}
 }

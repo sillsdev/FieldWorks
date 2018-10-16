@@ -198,6 +198,23 @@ namespace LanguageExplorer.Areas.Notebook
 		}
 		#endregion
 
+		internal void AddCommonInsertToolbarItems(List<ToolStripItem> newToolbarItems)
+		{
+			/*
+			  <item command="CmdInsertRecord" defaultVisible="false" /> // Shared locally
+				Tooltip: <item id="CmdInsertRecord">Create a new Record in your Notebook.</item>
+					<command id="CmdInsertRecord" label="Record" message="InsertItemInVector" icon="nbkRecord" shortcut="Ctrl+I">
+					  <params className="RnGenericRec" />
+					</command>
+			*/
+			newToolbarItems.Add(ToolStripButtonFactory.CreateToolStripButton(_sharedEventHandlers.Get(CmdInsertRecord), "toolStripButtonInsertRecord", NotebookResources.nbkRecord, $"{NotebookResources.Create_a_new_Record_in_your_Notebook} (CTRL+I)"));
+
+			/*
+			  <item command="CmdGoToRecord" defaultVisible="false" /> // Shared from afar
+			*/
+			newToolbarItems.Add(ToolStripButtonFactory.CreateToolStripButton(_sharedEventHandlers.Get(CmdGoToRecord), "toolStripButtonInsertFindRecord", NotebookResources.goToRecord, $"{NotebookResources.Find_a_Record_in_your_Notebook} (CTRL+F)"));
+		}
+
 		internal void AddInsertMenuItems(bool includeCmdAddToLexicon = true)
 		{
 			_insertMenu = MenuServices.GetInsertMenu(_majorFlexComponentParameters.MenuStrip);
@@ -280,7 +297,7 @@ namespace LanguageExplorer.Areas.Notebook
 					<parameters className="RnGenericRec" subrecord="true"/>
 				</command>
 			*/
-			InsertRecord_Common();
+			InsertRecord_Common(false);
 		}
 
 		private void Insert_Subsubrecord_Clicked(object sender, EventArgs e)
@@ -290,10 +307,10 @@ namespace LanguageExplorer.Areas.Notebook
 					<parameters className="RnGenericRec" subrecord="true" subsubrecord="true"/>
 				</command>
 			*/
-			InsertRecord_Common(true);
+			InsertRecord_Common(false);
 		}
 
-		private void InsertRecord_Common(bool subSubRecord = false)
+		private void InsertRecord_Common(bool insertMainRecord = true)
 		{
 			using (var dlg = new InsertRecordDlg())
 			{
@@ -302,22 +319,15 @@ namespace LanguageExplorer.Areas.Notebook
 				ICmObject owner;
 				var currentRecord = _recordList.CurrentObject;
 				var researchNbk = (IRnResearchNbk)_recordList.OwningObject;
-				if (currentRecord == null)
+				if (currentRecord == null || insertMainRecord)
 				{
-					// No records at all, so notebook is the owner.
+					// Notebook is the owner.
 					owner = researchNbk;
 				}
 				else
 				{
-					if (subSubRecord)
-					{
-						// Dig out sub record from record list.
-						owner = _recordList.CurrentObject.Owner as IRnGenericRec;
-					}
-					else
-					{
-						owner = currentRecord;
-					}
+                    // It could be a sub-record, or a sub-sub-record.
+					owner = currentRecord;
 				}
 				dlg.SetDlgInfo(cache, owner);
 				if (dlg.ShowDialog(Form.ActiveForm) == DialogResult.OK)

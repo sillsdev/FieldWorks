@@ -150,11 +150,15 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				Application.Idle -= Application_Idle;
 				_editFindMenu.Click -= EditFindMenu_Click;
 				_insertFindAndReplaceButton.Click -= EditFindMenu_Click;
+				_insertFindAndReplaceButton.Visible = _insertFindAndReplaceButton.Enabled = false;
+				_replaceToolStripMenuItem.Click -= EditFindMenu_Click;
+				_replaceToolStripMenuItem.Visible = _replaceToolStripMenuItem.Enabled = false;
 			}
 			_majorFlexComponentParameters = null;
 			_editFindMenu = null;
 			_insertFindAndReplaceButton = null;
 			_interlinMasterNoTitleBar = null;
+			_replaceToolStripMenuItem = null;
 
 			_isDisposed = true;
 		}

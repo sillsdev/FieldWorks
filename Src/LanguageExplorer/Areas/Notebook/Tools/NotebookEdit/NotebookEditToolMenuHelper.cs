@@ -177,7 +177,12 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				Application.Idle -= Application_Idle;
 				MyDataTree.CurrentSliceChanged -= MyDataTreeOnCurrentSliceChanged;
 				_rightClickContextMenuManager?.UnwireSharedEventHandlers();
-				InsertToolbarManager.ResetInsertToolbar(_majorFlexComponentParameters);
+				_insertRecordToolStripButton.Click -= _sharedEventHandlers.Get(NotebookAreaMenuHelper.CmdInsertRecord);
+				_insertFindRecordToolStripButton.Click -= _sharedEventHandlers.Get(NotebookAreaMenuHelper.CmdGoToRecord);
+				_insertAddToDictionaryToolStripButton.Click -= _sharedEventHandlers.Get(AreaServices.CmdAddToLexicon);
+				_insertFindInDictionaryToolStripButton.Click -= _sharedEventHandlers.Get(AreaServices.LexiconLookup);
+
+				 InsertToolbarManager.ResetInsertToolbar(_majorFlexComponentParameters);
 				_rightClickContextMenuManager?.Dispose();
 				_insertRecordToolStripButton?.Dispose();
 				_insertFindRecordToolStripButton?.Dispose();
@@ -277,7 +282,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 
 		private void Application_Idle(object sender, EventArgs e)
 		{
-			// Deal with visibility and enabling of toolbar buttons.
+			// Deal with enabling of two dictionary related toolbar buttons. (Unlike shipping FLEx, these are always visible.)
 			var currentSliceAsStTextSlice = AreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree);
 			IVwSelection currentSelection = null;
 			if (_insertAddToDictionaryToolStripButton != null && currentSliceAsStTextSlice != null)
@@ -312,21 +317,21 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		private void AddInsertToolbarItems()
 		{
 			var newToolbarItems = new List<ToolStripItem>(5);
+
+			_notebookAreaMenuHelper.AddCommonInsertToolbarItems(newToolbarItems);
 			/*
-			  <item command="CmdInsertRecord" defaultVisible="false" /> // Shared locally
+			  <item command="CmdInsertRecord" defaultVisible="false" />
 				Tooltip: <item id="CmdInsertRecord">Create a new Record in your Notebook.</item>
 					<command id="CmdInsertRecord" label="Record" message="InsertItemInVector" icon="nbkRecord" shortcut="Ctrl+I">
 					  <params className="RnGenericRec" />
 					</command>
 			*/
-			_insertRecordToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_sharedEventHandlers.Get(NotebookAreaMenuHelper.CmdInsertRecord), "toolStripButtonInsertRecord", NotebookResources.nbkRecord, $"{NotebookResources.Create_a_new_Record_in_your_Notebook} (CTRL+I)");
-			newToolbarItems.Add(_insertRecordToolStripButton);
+			_insertRecordToolStripButton = (ToolStripButton)newToolbarItems[0];
 
 			/*
-			  <item command="CmdGoToRecord" defaultVisible="false" /> // Shared from afar
+			  <item command="CmdGoToRecord" defaultVisible="false" />
 			*/
-			_insertFindRecordToolStripButton = ToolStripButtonFactory.CreateToolStripButton(_sharedEventHandlers.Get(NotebookAreaMenuHelper.CmdGoToRecord), "toolStripButtonInsertFindRecord", NotebookResources.goToRecord, $"{NotebookResources.Find_a_Record_in_your_Notebook} (CTRL+F)");
-			newToolbarItems.Add(_insertFindRecordToolStripButton);
+			_insertFindRecordToolStripButton = (ToolStripButton)newToolbarItems[1];
 
 			/*
 			  <item label="-" translate="do not translate" />
@@ -335,7 +340,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			newToolbarItems.Add(_insertToolStripSeparator);
 
 			/*
-			  <item command="CmdAddToLexicon" defaultVisible="false" /> // Shared from afar
+			  <item command="CmdAddToLexicon" defaultVisible="false" />
 				Tooltip: <item id="CmdAddToLexicon">Add the current word to the lexicon (if it is a vernacular word).</item>
 					<command id="CmdAddToLexicon" label="Add to Dictionary..." message="AddToLexicon" icon="majorEntry" />
 			*/
