@@ -357,10 +357,12 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 #if !__MonoCS__
 			var codeBaseUri = typeof(PUAInstaller).Assembly.CodeBase;
 			var path = Path.GetDirectoryName(FileUtils.StripFilePrefix(codeBaseUri));
-
-			return Path.Combine(path, exeName + ".exe");
+			var x86Path = Path.Combine(path, "lib", "x86", exeName + ".exe");
+			var x64Path = Path.Combine(path, "lib", "x64", exeName + ".exe");
+			var barePath = Path.Combine(path, exeName + ".exe");
+			return File.Exists(x86Path) ? x86Path : File.Exists(x64Path) ? x86Path : barePath;
 #else
-			// TODO-Linux: Review - is the approach of expecting execuatble location to be in PATH ok?
+// TODO-Linux: Review - is the approach of expecting execuatble location to be in PATH ok?
 			return exeName;
 #endif
 		}
