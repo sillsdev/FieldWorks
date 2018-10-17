@@ -37,7 +37,7 @@ namespace LanguageExplorer.Areas
 			base.InitializeFlexComponent(flexComponentParameters);
 
 			m_fontName = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.DefaultFontName;
-			m_typeSize = GetFontHeightFromStylesheet(m_cache, PropertyTable, true);
+			m_typeSize = FontHeightAdjuster.GetFontHeightFromStylesheet(m_cache, PropertyTable, true);
 		}
 
 		protected override bool ListAlreadySorted => !OwningList.IsSorted;

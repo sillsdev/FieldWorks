@@ -157,6 +157,32 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
+		/// Get the font size from the Stylesheet
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="propertyTable"></param>
+		/// <param name="analysisWs">pass in 'true' for the DefaultAnalysisWritingSystem
+		/// pass in 'false' for the DefaultVernacularWritingSystem</param>
+		/// <returns>Return Font size from stylesheet (probably in pixels).</returns>
+		public static int GetFontHeightFromStylesheet(LcmCache cache, IPropertyTable propertyTable, bool analysisWs)
+		{
+			IVwStylesheet stylesheet = FwUtils.StyleSheetFromPropertyTable(propertyTable);
+			var wsContainer = cache.ServiceLocator.WritingSystems;
+			return analysisWs
+				? GetFontHeightForStyle("Normal", stylesheet, wsContainer.DefaultAnalysisWritingSystem.Handle, cache.WritingSystemFactory) / 1000
+				: GetFontHeightForStyle("Normal", stylesheet, wsContainer.DefaultVernacularWritingSystem.Handle, cache.WritingSystemFactory) / 1000;
+		}
+
+		public static void GetDefaultFontNameAndSize(bool analysisWs, LcmCache cache, IPropertyTable propertyTable, out string fontName, out int typeSize)
+		{
+			var wsContainer = cache.ServiceLocator.WritingSystems;
+			fontName = analysisWs
+				? wsContainer.DefaultAnalysisWritingSystem.DefaultFontName
+				: wsContainer.DefaultVernacularWritingSystem.DefaultFontName;
+			typeSize = GetFontHeightFromStylesheet(cache, propertyTable, analysisWs);
+		}
+
+		/// <summary>
 		/// Find the height of the font used for the given style name and writing system
 		/// </summary>
 		/// <param name="styleName">Style name</param>

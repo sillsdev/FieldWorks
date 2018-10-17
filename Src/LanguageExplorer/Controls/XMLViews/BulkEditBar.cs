@@ -2815,7 +2815,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 				catch
 				{
-					Debug.Fail(string.Format("There was an error creating Delete combo item for column ({0})"), optionLabel);
+					Debug.Fail(string.Format("There was an error creating Delete combo item for column ({0})", selectedItem.ColumnIndex), optionLabel);
 					// skip buggy column
 					continue;
 				}

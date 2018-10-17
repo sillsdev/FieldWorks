@@ -337,7 +337,7 @@ namespace LanguageExplorer
 			m_oldLength = 0;
 			var wsContainer = m_cache.ServiceLocator.WritingSystems;
 			m_fontName = m_usingAnalysisWs ? wsContainer.DefaultAnalysisWritingSystem.DefaultFontName : wsContainer.DefaultVernacularWritingSystem.DefaultFontName;
-			m_typeSize = GetFontHeightFromStylesheet(m_cache, PropertyTable, m_usingAnalysisWs);
+			m_typeSize = FontHeightAdjuster.GetFontHeightFromStylesheet(m_cache, PropertyTable, m_usingAnalysisWs);
 
 			if (m_owningObject != null)
 			{
@@ -2811,36 +2811,6 @@ namespace LanguageExplorer
 		protected virtual string FilterStatusContents(bool listIsFiltered)
 		{
 			return listIsFiltered ? LanguageExplorerResources.Filtered : string.Empty;
-		}
-
-		/// <summary>
-		/// Get the font size from the Stylesheet
-		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="propertyTable"></param>
-		/// <param name="analysisWs">pass in 'true' for the DefaultAnalysisWritingSystem
-		/// pass in 'false' for the DefaultVernacularWritingSystem</param>
-		/// <returns>return Font size from stylesheet</returns>
-		protected static int GetFontHeightFromStylesheet(LcmCache cache, IPropertyTable propertyTable, bool analysisWs)
-		{
-			int fontHeight;
-			IVwStylesheet stylesheet = FwUtils.StyleSheetFromPropertyTable(propertyTable);
-			var wsContainer = cache.ServiceLocator.WritingSystems;
-			if (analysisWs)
-			{
-				fontHeight = FontHeightAdjuster.GetFontHeightForStyle(
-					             "Normal", stylesheet,
-					             wsContainer.DefaultAnalysisWritingSystem.Handle,
-					             cache.WritingSystemFactory) / 1000; //fontHeight is probably pixels
-			}
-			else
-			{
-				fontHeight = FontHeightAdjuster.GetFontHeightForStyle(
-					             "Normal", stylesheet,
-					             wsContainer.DefaultVernacularWritingSystem.Handle,
-					             cache.WritingSystemFactory) / 1000; //fontHeight is probably pixels
-			}
-			return fontHeight;
 		}
 
 		/// <summary>
