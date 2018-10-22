@@ -35,9 +35,7 @@ using MatchedPair = SIL.WritingSystems.MatchedPair;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
-	/// <summary>
-	/// The writing system properties dialog.
-	/// </summary>
+	/// <inheritdoc />
 	public class WritingSystemPropertiesDialog : Form
 	{
 		private enum CollationRulesType
@@ -858,10 +856,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		// Allows us temporarily to override the normal behavior of CurrentWritingSystem.
 		private CoreWritingSystemDefinition m_overrideCurrentWritingSystem;
 
-		/// <summary>
-		/// Gets the current writing system.
-		/// </summary>
-		/// <value>The current writing system.</value>
+		/// <summary/>
 		protected CoreWritingSystemDefinition CurrentWritingSystem
 		{
 			get
@@ -872,10 +867,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		/// <summary>
-		/// Gets the new writing systems.
-		/// </summary>
-		/// <value>The new writing systems.</value>
+		/// <summary/>
 		public IEnumerable<CoreWritingSystemDefinition> NewWritingSystems
 		{
 			get
@@ -887,11 +879,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary>
-		/// Returns <c>true</c> if writing system was changed.
+		/// Returns <c>true</c> if a writing system was changed.
 		/// </summary>
-		/// <value>
-		/// 	<c>true</c> if this instance is changed; otherwise, <c>false</c>.
-		/// </value>
 		public bool IsChanged
 		{
 			get
@@ -1823,19 +1812,20 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 					if (IsNew(tempWS))
 					{
-						m_wsManager.Replace(tempWS);
+						m_wsManager.Replace(tempWS); // REVIEW (Hasso) 2018.10: "Replace" seems like a strange thing to do with a new WS
 						m_fChanged = true;
 					}
 					else if (tempWS.IsChanged)
 					{
-						string oldId = origWS.Id;
-						origWS.Copy(tempWS);
+						var oldId = origWS.Id;
+						var oldHandle = origWS.Handle;
+						origWS.Copy(tempWS); // REVIEW (Hasso) 2018.10: We already have tempWS, and after this copy, origWS is an inacurate name. So why do we copy?
 						if (oldId != tempWS.LanguageTag)
 						{
 							// update the ID
 							m_wsManager.Set(origWS);
 							if (uowHelper != null)
-								WritingSystemServices.UpdateWritingSystemId(m_cache, origWS, oldId);
+								WritingSystemServices.UpdateWritingSystemId(m_cache, origWS, oldHandle, oldId);
 						}
 						m_fChanged = true;
 						var mediator = GetMediator();

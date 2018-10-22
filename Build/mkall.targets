@@ -313,7 +313,7 @@
 		<LcmBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'">Liblcm_LiblcmWin32masterContinuous</LcmBuildType>
 		<LcmBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'">Lcm_LiblcmWin64masterContinuous</LcmBuildType>
 		<LcmBuildType Condition="'$(OS)'=='Unix'">Liblcm_LiblcmLinux64masterContinuous</LcmBuildType>
-		<LcmBuildTag>fw-9.0.4.tcbuildtag</LcmBuildTag>
+		<LcmBuildTag>fw-9.0.5.tcbuildtag</LcmBuildTag>
 		<!-- Windows/.Net and Linux/Mono use different extensions for debug information files. -->
 		<DebugInfo Condition="'$(OS)'=='Unix'">dll.mdb</DebugInfo>
 		<DebugInfo Condition="'$(OS)'=='Windows_NT'">pdb</DebugInfo>
