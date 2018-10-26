@@ -7,7 +7,6 @@ using System.Runtime.InteropServices;
 
 namespace SIL.FieldWorks.Common.FwUtils.Attributes
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// NUnit helper attribute that optionally redirects HKCU to a subkey so that multiple
 	/// builds can run in parallel. Depending on wether the environment variable
@@ -18,7 +17,6 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 	/// in the registry.
 	/// </summary>
 	/// <seealso href="http://www.nunit.org/index.php?p=actionAttributes&amp;r=2.6.2"/>
-	/// ----------------------------------------------------------------------------------------
 	[AttributeUsage(AttributeTargets.Assembly)]
 	public class RedirectHKCU : NUnit.Framework.TestActionAttribute
 	{
@@ -39,28 +37,25 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 			{
 				var subKey = Environment.GetEnvironmentVariable("BUILDAGENT_SUBKEY");
 				if (string.IsNullOrEmpty(subKey))
+				{
 					return string.Empty;
+				}
 				if (subKey.EndsWith("\\"))
+				{
 					return subKey;
+				}
 				return subKey + "\\";
 			}
 		}
 
-		private static string TmpRegistryKey
-		{
-			// keep in sync with Generic/RedirectHKCU.h and SetupInclude.targets
-			get { return string.Format(@"Software\SIL\BuildAgents\{0}\HKCU", KeyPart); }
-		}
+		private static string TmpRegistryKey => $@"Software\SIL\BuildAgents\{KeyPart}\HKCU";
 
-		/// <summary>
-		/// Method gets called once at the very start of running the tests
-		/// </summary>
+		/// <inheritdoc />
 		public override void BeforeTest(NUnit.Framework.TestDetails testDetails)
 		{
 			base.BeforeTest(testDetails);
 
-			if (Environment.OSVersion.Platform != PlatformID.Unix &&
-				!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("BUILDAGENT_SUBKEY")))
+			if (Environment.OSVersion.Platform != PlatformID.Unix && !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("BUILDAGENT_SUBKEY")))
 			{
 				UIntPtr hKey;
 				RegCreateKey(HKEY_CURRENT_USER, TmpRegistryKey, out hKey);
@@ -69,13 +64,10 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 			}
 		}
 
-		/// <summary>
-		/// Method gets called once at the end of running the tests
-		/// </summary>
+		/// <inheritdoc />
 		public override void AfterTest(NUnit.Framework.TestDetails testDetails)
 		{
-			if (Environment.OSVersion.Platform != PlatformID.Unix &&
-				!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("BUILDAGENT_SUBKEY")))
+			if (Environment.OSVersion.Platform != PlatformID.Unix && !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("BUILDAGENT_SUBKEY")))
 			{
 				// End redirection. Otherwise test might fail when we run them multiple
 				// times in NUnit.
@@ -84,10 +76,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 			base.AfterTest(testDetails);
 		}
 
-		/// <summary />
-		public override NUnit.Framework.ActionTargets Targets
-		{
-			get { return NUnit.Framework.ActionTargets.Suite; }
-		}
+		/// <inheritdoc />
+		public override NUnit.Framework.ActionTargets Targets => NUnit.Framework.ActionTargets.Suite;
 	}
 }
