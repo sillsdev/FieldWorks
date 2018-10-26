@@ -523,13 +523,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		public static string GetUserForProcess(Process process)
 		{
+			// Verify permission to read process Handle
+			IntPtr procHandle;
+			try
+			{
+				procHandle = process.Handle;
+			}
+			catch (InvalidOperationException)
+			{
+				return string.Empty;
+			}
 			try
 			{
 				if (MiscUtils.IsDotNet)
 				{
 					IntPtr procToken;
 					string sidString = null;
-					if (OpenProcessToken(process.Handle, TOKEN_QUERY, out procToken))
+					if (OpenProcessToken(procHandle, TOKEN_QUERY, out procToken))
 					{
 						IntPtr sid = GetSidForProcessToken(procToken);
 						if (sid != IntPtr.Zero)
@@ -545,7 +555,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			catch (Exception ex)
 			{
 				Debug.WriteLine("GetUserForProcess failed: " + ex.Message);
-				return "";
+				return string.Empty;
 			}
 		}
 
