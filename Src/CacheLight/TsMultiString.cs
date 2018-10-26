@@ -1,11 +1,10 @@
-﻿// Copyright (c) 2016 SIL International
+// Copyright (c) 2016-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
-using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.CacheLight
@@ -19,19 +18,17 @@ namespace SIL.FieldWorks.CacheLight
 			m_strings = new SmallDictionary<int, ITsString>();
 		}
 
-		public int StringCount
-		{
-			get { return m_strings.Count; }
-		}
+		public int StringCount => m_strings.Count;
 
 		public ITsString GetStringFromIndex(int iws, out int ws)
 		{
-			int idx = 0;
-			foreach (KeyValuePair<int, ITsString> kvp in m_strings)
+			var idx = 0;
+			foreach (var kvp in m_strings)
 			{
 				if (idx++ != iws)
+				{
 					continue;
-
+				}
 				ws = kvp.Key;
 				return kvp.Value;
 			}
@@ -51,15 +48,22 @@ namespace SIL.FieldWorks.CacheLight
 			ITsString originalValue;
 			m_strings.TryGetValue(ws, out originalValue);
 			if (tss == originalValue)
+			{
 				return;
+			}
 			if (tss != null && originalValue != null && tss.Equals(originalValue))
+			{
 				return;
-
+			}
 			// If tss is null, then just remove ws from the dictionary.
 			if (tss == null)
+			{
 				m_strings.Remove(ws);
+			}
 			else
+			{
 				m_strings[ws] = tss;
+			}
 		}
 	}
 }

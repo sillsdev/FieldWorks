@@ -276,7 +276,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="TextCacheModel.xml" />
+    <None Include="TextCacheModel.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="SimpleRootSiteDataProviderCacheModel.xml" />

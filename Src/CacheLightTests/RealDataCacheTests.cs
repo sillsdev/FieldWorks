@@ -1,102 +1,61 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic; // Needed for KeyNotFoundException.
-using System.IO;
+using System.Collections.Generic;
 using NUnit.Framework;
 using SIL.FieldWorks.CacheLight;
-using SIL.LCModel.Utils;
-using System.Text;
-using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.CacheLightTests
 {
 	/// <summary>
 	/// Tests the two main interfaces (ISilDataAccess and IVwCacheDa) for RealDataCache.
 	/// </summary>
-	public class RealDataCacheBase
+	[TestFixture]
+	public sealed class RealDataCacheISilDataAccessTests
 	{
-		/// <summary></summary>
+		/// <summary />
 		private RealDataCache m_realDataCache;
+		/// <summary />
+		private ISilDataAccess SilDataAccess => m_realDataCache;
+		/// <summary />
+		private IVwCacheDa VwCacheDa => m_realDataCache;
 
-		/// <summary>
-		///
-		/// </summary>
-		protected ISilDataAccess SilDataAccess
-		{
-			get { return m_realDataCache; }
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		protected IVwCacheDa VwCacheDa
-		{
-			get { return m_realDataCache; }
-		}
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// If a test overrides this, it should call this base implementation.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[TestFixtureSetUp]
-		public virtual void FixtureSetup()
+		public void FixtureSetup()
 		{
-			FileUtils.Manager.SetFileAdapter(new MockFileOS());
-			using (TextWriter fw = FileUtils.OpenFileForWrite("TestModel.xsd", Encoding.UTF8))
-				fw.Write(Properties.Resources.TestModel_xsd);
-			using (TextWriter fw = FileUtils.OpenFileForWrite("TestModel.xml", Encoding.UTF8))
-				fw.Write(Properties.Resources.TestModel_xml);
-
 			m_realDataCache = new RealDataCache
 			{
 				MetaDataCache = MetaDataCache.CreateMetaDataCache("TestModel.xml")
 			};
 		}
 
-		/// <summary/>
+		/// <summary />
 		[TestFixtureTearDown]
-		public virtual void FixtureTearDown()
+		public void FixtureTearDown()
 		{
-			FileUtils.Manager.Reset();
 			m_realDataCache.Dispose();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Shuts down the LCM cache
 		/// </summary>
 		/// <remarks>This method is called after each test</remarks>
-		/// ------------------------------------------------------------------------------------
 		[TearDown]
-		public virtual void Exit()
+		public void Exit()
 		{
 			VwCacheDa.ClearAllData();
 		}
-	}
 
-	/// <summary>
-	/// Tests the IVwCacheDa methods for RealDataCache.
-	/// Since IVwCacheDa is so short on 'getters', I have to use
-	/// the 'getters' from the ISilDataAccess interface,
-	/// in order tobe able to test these at all. :-(
-	/// </summary>
-	public class RealDataCacheIVwCacheDaTests : RealDataCacheBase
-	{
-	}
-
-	/// <summary>
-	/// Tests the two main interfaces (ISilDataAccess and IVwCacheDa) for RealDataCache.
-	/// </summary>
-	[TestFixture]
-	public class RealDataCacheISilDataAccessTests : RealDataCacheBase
-	{
 		/// <summary>
 		/// Test Int Property get/set.
 		/// </summary>
@@ -129,7 +88,6 @@ namespace SIL.FieldWorks.CacheLightTests
 			// Set class first, or it will throw the exception in the wrong place.
 			var clid = SilDataAccess.MetaDataCache.GetClassId("ClassC");
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
-
 			SilDataAccess.get_ObjectProp(hvo, (int)CmObjectFields.kflidCmObject_Owner);
 		}
 
@@ -159,6 +117,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			Assert.IsFalse(isInCache, "Int is in cache.");
 			Assert.AreEqual(0, ownerHvo, "Wrong owner.");
 		}
+
 		/// <summary>
 		/// Test Int Property get, when no set has been done.
 		/// </summary>
@@ -170,7 +129,6 @@ namespace SIL.FieldWorks.CacheLightTests
 			// Set class first, or it will throw the exception in the wrong place.
 			var clid = SilDataAccess.MetaDataCache.GetClassId("ClassC");
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
-
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassC", "IntProp2", false);
 			SilDataAccess.get_IntProp(hvo, tag);
 		}
@@ -489,7 +447,9 @@ namespace SIL.FieldWorks.CacheLightTests
 				var prgbNew = MarshalEx.NativeToArray<byte>(arrayPtr, chvo);
 				Assert.AreEqual(prgb.Length, prgbNew.Length);
 				for (var i = 0; i < prgbNew.Length; i++)
+				{
 					Assert.AreEqual(prgb[i], prgbNew[i]);
+				}
 			}
 		}
 
@@ -643,7 +603,7 @@ namespace SIL.FieldWorks.CacheLightTests
 		[Test]
 		public void MakeNewObjectTest_UnownedObject()
 		{
-			int hvoNew = SilDataAccess.MakeNewObject(1, 0, -1, 0);
+			var hvoNew = SilDataAccess.MakeNewObject(1, 0, -1, 0);
 			Assert.IsTrue(SilDataAccess.get_IsValidObject(hvoNew));
 			Assert.AreEqual(1, SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_Class));
 		}
@@ -654,10 +614,10 @@ namespace SIL.FieldWorks.CacheLightTests
 		[Test]
 		public void MakeNewObjectTest_OwnedObjectAtomic()
 		{
-			int hvoOwner = SilDataAccess.MakeNewObject(1, 0, -1, 0);
+			var hvoOwner = SilDataAccess.MakeNewObject(1, 0, -1, 0);
 			var clid = SilDataAccess.MetaDataCache.GetClassId("ClassA");
 			var flid = SilDataAccess.MetaDataCache.GetFieldId2(1, "AtomicProp97", false);
-			int hvoNew = SilDataAccess.MakeNewObject(clid, hvoOwner, flid, -2);
+			var hvoNew = SilDataAccess.MakeNewObject(clid, hvoOwner, flid, -2);
 			Assert.IsTrue(SilDataAccess.get_IsValidObject(hvoNew));
 			Assert.AreEqual(flid, SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_OwnFlid));
 			Assert.AreEqual(hvoOwner, SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_Owner));
@@ -671,24 +631,24 @@ namespace SIL.FieldWorks.CacheLightTests
 		[Test]
 		public void MakeNewObjectTest_OwnedObjectSequence()
 		{
-			int hvoOwner = SilDataAccess.MakeNewObject(1, 0, -1, 0);
+			var hvoOwner = SilDataAccess.MakeNewObject(1, 0, -1, 0);
 			var clid = SilDataAccess.MetaDataCache.GetClassId("ClassB");
 			var flid = SilDataAccess.MetaDataCache.GetFieldId2(1, "SequenceProp98", false);
-			int[] hvoNewObjects = new int[5];
+			var hvoNewObjects = new int[5];
 			hvoNewObjects[0] = SilDataAccess.MakeNewObject(clid, hvoOwner, flid, 1);
 			hvoNewObjects[2] = SilDataAccess.MakeNewObject(clid, hvoOwner, flid, 1);
 			hvoNewObjects[1] = SilDataAccess.MakeNewObject(clid, hvoOwner, flid, 1);
 			hvoNewObjects[3] = SilDataAccess.MakeNewObject(clid, hvoOwner, flid, 10);
 			hvoNewObjects[4] = SilDataAccess.MakeNewObject(clid, hvoOwner, flid, 0);
 			Assert.AreEqual(5, SilDataAccess.get_VecSize(hvoOwner, flid));
-			int prevOwnOrd = -1;
-			for (int i = 0; i < 5; i++)
+			var prevOwnOrd = -1;
+			for (var i = 0; i < 5; i++)
 			{
-				int hvoNew = SilDataAccess.get_VecItem(hvoOwner, flid, i);
+				var hvoNew = SilDataAccess.get_VecItem(hvoOwner, flid, i);
 				Assert.IsTrue(SilDataAccess.get_IsValidObject(hvoNew));
 				Assert.AreEqual(flid, SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_OwnFlid));
 				Assert.AreEqual(hvoOwner, SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_Owner));
-				int ownOrd = SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_OwnOrd);
+				var ownOrd = SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_OwnOrd);
 				Assert.IsTrue(prevOwnOrd < ownOrd);
 				prevOwnOrd = ownOrd;
 				Assert.AreEqual(clid, SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_Class));
@@ -701,10 +661,10 @@ namespace SIL.FieldWorks.CacheLightTests
 		[Test]
 		public void MakeNewObjectTest_OwnedObjectCollection()
 		{
-			int hvoOwner = SilDataAccess.MakeNewObject(1, 0, -1, 0);
+			var hvoOwner = SilDataAccess.MakeNewObject(1, 0, -1, 0);
 			var clid = SilDataAccess.MetaDataCache.GetClassId("ClassC");
 			var flid = SilDataAccess.MetaDataCache.GetFieldId2(1, "CollectionProp99", false);
-			int hvoNew = SilDataAccess.MakeNewObject(clid, hvoOwner, flid, -1);
+			var hvoNew = SilDataAccess.MakeNewObject(clid, hvoOwner, flid, -1);
 			Assert.IsTrue(SilDataAccess.get_IsValidObject(hvoNew));
 			Assert.AreEqual(flid, SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_OwnFlid));
 			Assert.AreEqual(hvoOwner, SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_Owner));

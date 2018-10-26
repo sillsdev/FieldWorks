@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using LanguageExplorer;
 using LanguageExplorer.Controls.XMLViews;
@@ -57,13 +58,10 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		{
 			base.FixtureSetup();
 
-			SetupTestModel(XmlViewsResources.TextCacheModel_xml);
-
-			m_sda = new RealDataCache();
-			m_sda.MetaDataCache = MetaDataCache.CreateMetaDataCache("TestModel.xml");
-			//m_cache.ParaContentsFlid = kflidParaContents;
-			//m_cache.ParaPropertiesFlid = kflidParaProperties;
-			//m_cache.TextParagraphsFlid = kflidTextParas;
+			m_sda = new RealDataCache
+			{
+				MetaDataCache = MetaDataCache.CreateMetaDataCache("TextCacheModel_LanguageExplorer.xml")
+			};
 
 			Debug.Assert(m_wsManager == null);
 			m_wsManager = Cache.ServiceLocator.WritingSystemManager;
@@ -72,13 +70,6 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			m_wsAnal = Cache.DefaultAnalWs;
 
 			m_wsVern = Cache.DefaultVernWs;
-
-			//IWritingSystem deWs;
-			//m_wsManager.GetOrSet("de", out deWs);
-			//m_wsDeu = deWs.Handle;
-
-			//m_wsManager.UserWs = m_wsEng;
-			//m_wsUser = m_wsManager.UserWs;
 
 			m_hvoLexDb = m_sda.MakeNewObject(kclsidLexDb, 0, -1, -1);
 
@@ -90,15 +81,19 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			m_sda.SetMultiStringAlt(m_hvoKick, kflidEntry_Form, m_wsVern, TsStringUtils.MakeString("kick", m_wsVern));
 			m_sda.SetString(m_hvoKick, kflidEntry_Summary, TsStringUtils.MakeString("strike with foot", m_wsAnal));
 
-			var keyAttrs = new Dictionary<string, string[]>();
-			keyAttrs["layout"] = new[] { "class", "type", "name", "choiceGuid" };
-			keyAttrs["group"] = new[] { "label" };
-			keyAttrs["part"] = new[] { "ref" };
+			var keyAttrs = new Dictionary<string, string[]>
+			{
+				["layout"] = new[] { "class", "type", "name", "choiceGuid" },
+				["group"] = new[] { "label" },
+				["part"] = new[] { "ref" }
+			};
 			var layoutInventory = new Inventory("*.fwlayout", "/LayoutInventory/*", keyAttrs, "test", "nowhere");
 			layoutInventory.LoadElements(XmlViewsResources.Layouts_xml, 1);
 
-			keyAttrs = new Dictionary<string, string[]>();
-			keyAttrs["part"] = new[] { "id" };
+			keyAttrs = new Dictionary<string, string[]>
+			{
+				["part"] = new[] { "id" }
+			};
 
 			var partInventory = new Inventory("*Parts.xml", "/PartInventory/bin/*", keyAttrs, "test", "nowhere");
 			partInventory.LoadElements(XmlViewsResources.Parts_xml, 1);
@@ -116,8 +111,6 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		{
 			try
 			{
-				FileUtils.Manager.Reset();
-
 				// GrowToWord causes a Char Property Engine to be created, and the test runner
 				// fails if we don't shut the factory down.
 				m_sda.Dispose();
@@ -130,21 +123,6 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			finally
 			{
 				base.FixtureTeardown();
-			}
-		}
-
-		public static void SetupTestModel(string cacheModelfile)
-		{
-			FileUtils.Manager.SetFileAdapter(new MockFileOS());
-			using (TextWriter fw = FileUtils.OpenFileForWrite("TestModel.xsd", Encoding.UTF8))
-			{
-				fw.Write(SIL.FieldWorks.CacheLightTests.Properties.Resources.TestModel_xsd);
-				fw.Close();
-			}
-			using (TextWriter fw = FileUtils.OpenFileForWrite("TestModel.xml", Encoding.UTF8))
-			{
-				fw.Write(cacheModelfile);
-				fw.Close();
 			}
 		}
 

@@ -1,13 +1,12 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Xml;
-using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 
 namespace SIL.FieldWorks.CacheLight
 {
@@ -18,22 +17,22 @@ namespace SIL.FieldWorks.CacheLight
 	{
 		private readonly Dictionary<string, int> m_wsCache;
 
-		public TsStringfactory(Dictionary<string, int> wsCache)
+		internal TsStringfactory(Dictionary<string, int> wsCache)
 		{
 			m_wsCache = wsCache;
 		}
 
-		public ITsString CreateFromAStr(XmlNode aStrNode, out int wsAStr)
+		internal ITsString CreateFromAStr(XmlNode aStrNode, out int wsAStr)
 		{
 			wsAStr = m_wsCache[aStrNode.Attributes["ws"].Value];
-			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
+			var tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, wsAStr);
 			ProcessRunElements(aStrNode.ChildNodes, tisb);
 
 			return tisb.GetString();
 		}
 
-		public ITsString CreateFromStr(XmlNode strNode)
+		internal ITsString CreateFromStr(XmlNode strNode)
 		{
 			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			ProcessRunElements(strNode.ChildNodes, tisb);
@@ -44,7 +43,9 @@ namespace SIL.FieldWorks.CacheLight
 		private void ProcessRunElements(XmlNodeList runNodes, ITsIncStrBldr tisb)
 		{
 			foreach (XmlNode runNode in runNodes)
+			{
 				ProcessRunElement(runNode, tisb);
+			}
 		}
 
 		private void ProcessRunElement(XmlNode runNode, ITsIncStrBldr tisb)
@@ -166,7 +167,7 @@ Stephen McCon...	(Of course, that calls all sorts of other methods to do the wor
 						break;
 					default:
 						// Unrecognized attr, so do nothing.
-						Debug.WriteLine(String.Format("Unrecognized <Run> element attribute: {0}", attr.Name));
+						Debug.WriteLine($"Unrecognized <Run> element attribute: {attr.Name}");
 						break;
 				}
 			}

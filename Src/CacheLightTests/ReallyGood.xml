@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7000010" xsi:noNamespaceSchemaLocation="TestModel.xsd">
+	<class num='1' id='ClassA' abstract='false' base='BaseClass'/>
+</EntireModel>

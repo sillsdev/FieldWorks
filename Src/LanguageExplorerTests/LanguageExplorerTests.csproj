@@ -427,7 +427,7 @@
     <None Include="Controls\XMLViews\LayoutMergerTestData\User.xml" />
     <None Include="Controls\XMLViews\Resources\Layouts.xml" />
     <None Include="Controls\XMLViews\Resources\Parts.xml" />
-    <None Include="Controls\XMLViews\Resources\TextCacheModel.xml" />
+    <None Include="Controls\XMLViews\Resources\TextCacheModel_LanguageExplorer.xml" />
     <None Include="DictionaryConfiguration\TestData\AudioFiles\abu2.wav" />
     <None Include="DictionaryConfiguration\TestData\ConfigurationSettings\Dictionary\ProjectDictionaryOverrides.css" />
     <None Include="DictionaryConfiguration\TestData\ConfigurationSettings\ReversalIndex\ProjectReversalOverrides.css" />

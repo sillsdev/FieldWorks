@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
 	<ItemGroup>
-		<SourceFiles Include="Controls\SilSidePane\whitepixel.bmp;Controls\SilSidePane\DefaultIcon.ico"/>
+		<SourceFiles Include="Controls\SilSidePane\whitepixel.bmp;Controls\SilSidePane\DefaultIcon.ico;Controls\XMLViews\Resources\TextCacheModel_LanguageExplorer.xml"/>
 	</ItemGroup>
 	<Target Name="BeforeBuild">
 		<Copy SourceFiles="@(SourceFiles)" DestinationFolder="$(OutDir)" OverwriteReadOnlyFiles="true"/>

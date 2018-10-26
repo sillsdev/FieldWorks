@@ -220,11 +220,9 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		[TestFixtureSetUp]
 		public virtual void FixtureSetup()
 		{
-			SetupTestModel(Properties.Resources.TextCacheModel_xml);
-
 			m_cache = new T
 			{
-				MetaDataCache = MetaDataCache.CreateMetaDataCache("TestModel.xml"),
+				MetaDataCache = MetaDataCache.CreateMetaDataCache("TextCacheModel.xml"),
 				ParaContentsFlid = SimpleRootsiteTestsConstants.kflidParaContents,
 				ParaPropertiesFlid = SimpleRootsiteTestsConstants.kflidParaProperties,
 				TextParagraphsFlid = SimpleRootsiteTestsConstants.kflidTextParas
@@ -248,21 +246,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			m_wsManager.UserWs = m_wsEng;
 			m_wsUser = m_wsManager.UserWs;
-		}
-
-		public static void SetupTestModel(string cacheModelfile)
-		{
-			FileUtils.Manager.SetFileAdapter(new MockFileOS());
-			using (TextWriter fw = FileUtils.OpenFileForWrite("TestModel.xsd", Encoding.UTF8))
-			{
-				fw.Write(CacheLightTests.Properties.Resources.TestModel_xsd);
-				fw.Close();
-			}
-			using (TextWriter fw = FileUtils.OpenFileForWrite("TestModel.xml", Encoding.UTF8))
-			{
-				fw.Write(cacheModelfile);
-				fw.Close();
-			}
 		}
 
 		/// ------------------------------------------------------------------------------------

@@ -19,7 +19,7 @@ namespace LanguageExplorerTests.Controls.XMLViews {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class XmlViewsResources {
@@ -100,26 +100,6 @@ namespace LanguageExplorerTests.Controls.XMLViews {
         internal static string Parts_xml {
             get {
                 return ResourceManager.GetString("Parts_xml", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
-        ///&lt;EntireModel xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; version=&quot;7000010&quot; xsi:noNamespaceSchemaLocation=&quot;TestModel.xsd&quot;&gt;
-        ///	&lt;class num=&quot;0&quot; id=&quot;CmObject&quot; abstract=&quot;true&quot; abbr=&quot;obj&quot;&gt;
-        ///		&lt;props/&gt;
-        ///	&lt;/class&gt;
-        ///	&lt;class num=&quot;1&quot; id=&quot;LexDb&quot; abstract=&quot;false&quot; abbr=&quot;proj&quot; base=&quot;CmObject&quot; depth=&quot;0&quot;&gt;
-        ///		&lt;props&gt;
-        ///			&lt;owning num=&quot;2&quot; id=&quot;Entries&quot; card=&quot;seq&quot; sig=&quot;Entry&quot;/&gt;
-        ///		&lt;/props&gt;
-        ///	&lt;/class&gt;
-        ///	&lt;class num=&quot;7&quot; id=&quot;Entry&quot; abstract=&quot;false&quot; abbr=&quot;E&quot; base=&quot;CmObject&quot; depth=&quot;0&quot;&gt;
-        /// [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string TextCacheModel_xml {
-            get {
-                return ResourceManager.GetString("TextCacheModel_xml", resourceCulture);
             }
         }
     }
