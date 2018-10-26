@@ -18,61 +18,22 @@ so I can look at that in the develop branch.
   -->
   <!-- ************************ commands *********************** -->
   <commands>
-    <command id="CmdListColleagues" label="List _Colleagues" message="ListColleagues" />
-    <command id="CmdSynch" label="S_ynchronize with LiftShare..." message="Synchronize" translate="This command tries to update from an external source of lexical data." />
-    <command id="CmdConfigureColumns" label="_Columns..." icon="columnChooser" message="ConfigureColumns" />
-    <command id="CmdEditSpellingStatus" label="Edit Spelling Status" message="EditSpellingStatus" a10status="Used in Words area" />
+    <command id="CmdEditSpellingStatus" label="Edit Spelling Status" message="EditSpellingStatus" />
     <command id="CmdViewIncorrectWords" label="View Incorrect Words in Use" message="ViewIncorrectWords" />
     <command id="CmdChangeSpelling" label="Change Spelling..." message="LaunchRespellerDlg" />
-    <command id="CmdCopy" label="_Copy" message="EditCopy" icon="Copy" shortcut="Ctrl+C" a10status="PARTIALLY_DONE" />
-    <command id="CmdCut" label="Cu_t" message="EditCut" icon="Cut" shortcut="Ctrl+X" a10status="PARTIALLY_DONE" />
-    <command id="CmdPaste" label="_Paste" message="EditPaste" icon="Paste" shortcut="Ctrl+V" a10status="PARTIALLY_DONE" />
-    <command id="CmdStartLogging" label="Start Logging" message="StartLogging" />
-    <command id="CmdRequestDebugInfo" label="Request Debug Info" message="RequestDebugInfo" shortcut="Ctrl+Shift+I" />
-    <command id="CmdExportText" label="Export Text of browse view" message="ExportText" shortcut="Ctrl+Shift+E" />
+    <command id="CmdCopy" label="_Copy" message="EditCopy" icon="Copy" shortcut="Ctrl+C" />
+    <command id="CmdCut" label="Cu_t" message="EditCut" icon="Cut" shortcut="Ctrl+X" />
+    <command id="CmdPaste" label="_Paste" message="EditPaste" icon="Paste" shortcut="Ctrl+V" />
     <command id="CmdPublicationsJumpToDefault" label="Edit Publications" message="JumpToTool">
       <parameters tool="publicationsEdit" className="ICmPossibility" ownerClass="LangProject" ownerField="PublicationTypes" />
     </command>
     <command id="CmdPOSJumpToConcordance" label="Show Category in Concordance" message="JumpToTool">
       <parameters tool="concordance" className="PartOfSpeech" ownerClass="LangProject" ownerField="PartsOfSpeech" />
     </command>
-    <!-- START include: "CommonDataTreeInclude.xml" query="root/commands/*" -->
-    <command id="CmdDataTree-Delete" label="Delete {0}" message="DataTreeDelete" icon="Delete" />
-    <!-- END include: "CommonDataTreeInclude.xml" query="root/commands/*" -->
     <!-- START include: "Lexicon/areaConfiguration.xml" query="root/commands/*" -->
     <!-- START include (Lexicon_Area): "DataTreeInclude.xml" query="window/commands/*" -->
-    <command id="CmdDataTree-Create-LexemeForm-StemAllomorph" label="Create Stem Form" message="DataTreeInsert">
-      <parameters field="LexemeForm" className="MoStemAllomorph" />
-    </command>
-    <command id="CmdDataTree-Create-LexemeForm-AffixAllomorph" label="Create Affix Form" message="DataTreeInsert">
-      <parameters field="LexemeForm" className="MoAffixAllomorph" />
-    </command>
-    <command id="CmdDataTree-Insert-StemMsa" label="Insert Grammatical Info. for Stem" message="DataTreeInsert">
-      <parameters field="MorphoSyntaxAnalyses" className="MoStemMsa" />
-    </command>
-    <command id="CmdDataTree-Insert-InflectionAffixMsa" label="Insert Grammatical Info. for Inflectional Affix" message="DataTreeInsert">
-      <parameters field="MorphoSyntaxAnalyses" className="MoInflAffMsa" />
-    </command>
-    <command id="CmdDataTree-Insert-DerivationAffixMsa" label="Insert Grammatical Info. for Derivational Affix" message="DataTreeInsert">
-      <parameters field="MorphoSyntaxAnalyses" className="MoDerivAffMsa" />
-    </command>
-    <command id="CmdDataTree-Insert-UnclassifiedAffixMsa" label="Insert Grammatical Info. for Affix" message="DataTreeInsert">
-      <parameters field="MorphoSyntaxAnalyses" className="MoUnclassifiedAffixMsa" />
-    </command>
-    <command id="CmdDataTree-Delete-MSA" label="Delete Grammatical Info." message="DataTreeDelete" icon="Delete">
-      <parameters field="MorphoSyntaxAnalyses" className="MoMorphSynAnalysis" />
-    </command>
-    <command id="CmdDataTree-Merge-MSA" label="Merge Grammatical Info. into..." message="DataTreeMerge">
-      <parameters field="MorphoSyntaxAnalyses" className="MoMorphSynAnalysis" />
-    </command>
-    <command id="CmdDataTree-Delete-Example" label="Delete Example" message="DataTreeDelete" icon="Delete">
-      <parameters field="Examples" className="LexExampleSentence" />
-    </command>
     <command id="CmdDataTree-Delete-Translation" label="Delete Translation" message="DataTreeDelete" icon="Delete">
       <parameters field="Translations" className="CmTranslation" />
-    </command>
-    <command id="CmdDataTree-Insert-SubEntryLink" label="Insert Main Entry" message="DataTreeInsert">
-      <parameters field="MainEntriesOrSenses" className="LexRefEntryOrSense" />
     </command>
     <command id="CmdDataTree-Insert-ReversalSubentry" label="Insert Reversal Subentry" message="DataTreeInsert">
       <parameters field="Subentries" className="ReversalIndexEntry" />
@@ -344,66 +305,6 @@ so I can look at that in the develop branch.
       <params className="MoAdhocProhibGr" />
     </command>
     <!-- END include: "Grammar/areaConfiguration.xml" query="root/commands/*" -->
-    <command id="CmdHelpDemoWelcome" label="_Welcome" message="HelpDemoMovies">
-      <parameters file="1-welcome" />
-    </command>
-    <command id="CmdHelpDemoOverview" label="_Overview" message="HelpDemoMovies">
-      <parameters file="2-overview" />
-    </command>
-    <command id="CmdHelpDemoConfigColumns" label="_Configuring columns" message="HelpDemoMovies">
-      <parameters file="3-configcolumns" />
-    </command>
-    <command id="CmdHelpDemoFilter" label="_Filtering" message="HelpDemoMovies">
-      <parameters file="4-filter" />
-    </command>
-    <command id="CmdHelpDemoSort" label="_Sorting" message="HelpDemoMovies">
-      <parameters file="5-sort" />
-    </command>
-    <command id="CmdHelpDemoFields" label="Fi_elds" message="HelpDemoMovies">
-      <parameters file="6-fields" />
-    </command>
-    <command id="CmdHelpDemoNewEntry" label="_New entry" message="HelpDemoMovies">
-      <parameters file="7-newentry" />
-    </command>
-    <command id="CmdHelpDemoFindEntry" label="_Find entry" message="HelpDemoMovies">
-      <parameters file="8-findentry" />
-    </command>
-    <command id="CmdHelpDemoGramInfo" label="_Grammatical info. (POS)" message="HelpDemoMovies">
-      <parameters file="9-graminfo" />
-    </command>
-    <command id="CmdHelpDemoLexRel" label="_Lexical relations" message="HelpDemoMovies">
-      <parameters file="10-lexrel" />
-    </command>
-    <command id="CmdHelpDemoSubentry" label="_Subentry (derivative)" message="HelpDemoMovies">
-      <parameters file="11-subentry" />
-    </command>
-    <command id="CmdHelpDemoMinor" label="_Minor entry (variant)" message="HelpDemoMovies">
-      <parameters file="12-minor" />
-    </command>
-    <command id="CmdHelpDemoCategorized" label="_Collect Words" message="HelpDemoMovies">
-      <parameters file="13-categorized" />
-    </command>
-    <command id="CmdHelpDemoBulkList" label="_Bulk Edit (list choice)" message="HelpDemoMovies">
-      <parameters file="14-bulklist" />
-    </command>
-    <command id="CmdHelpDemoBulkCopy" label="Bulk _Edit (copy)" message="HelpDemoMovies">
-      <parameters file="15-bulkcopy" />
-    </command>
-    <command id="CmdHelpDemoBulkClick" label="Bulk Edit (c_lick copy)" message="HelpDemoMovies">
-      <parameters file="16-bulkclick" />
-    </command>
-    <command id="CmdHelpDemoText" label="_Interlinearizing" message="HelpDemoMovies">
-      <parameters file="17-Text" />
-    </command>
-    <command id="CmdHelpDemoWords" label="Words (_assign analysis)" message="HelpDemoMovies">
-      <parameters file="18-words" />
-    </command>
-    <command id="CmdHelpDemoGrammar" label="_Grammar (new template)" message="HelpDemoMovies">
-      <parameters file="19-grammar" />
-    </command>
-    <command id="CmdHelpDemoPlayAll" label="_Play all (32 minutes)" message="HelpDemoMovies">
-      <parameters file="Play_all" />
-    </command>
   </commands>
   <!-- ************************ menus *********************** -->
   <menubar>
@@ -718,16 +619,6 @@ so I can look at that in the develop branch.
       <item label="Show Unused Items" boolProperty="ShowFailingItems-lexiconClassifiedDictionary" defaultVisible="true" settingsGroup="local" />
     </menu>
     <!-- START include (Lexicon_Area): "DataTreeInclude.xml" query="window/contextMenus/*" -->
-    <menu id="mnuDataTree-MSAs">
-      <item command="CmdDataTree-Insert-DerivationAffixMsa" />
-      <item command="CmdDataTree-Insert-InflectionAffixMsa" />
-      <item command="CmdDataTree-Insert-UnclassifiedAffixMsa" />
-      <item command="CmdDataTree-Insert-StemMsa" />
-    </menu>
-    <menu id="mnuDataTree-MSA">
-      <item command="CmdDataTree-Merge-MSA" />
-      <item command="CmdDataTree-Delete-MSA" />
-    </menu>
     <menu id="mnuDataTree-Examples">
       <item command="CmdDataTree-Insert-Example" />
       <item command="CmdFindExampleSentence" />
@@ -737,9 +628,6 @@ so I can look at that in the develop branch.
     </menu>
     <menu id="mnuDataTree-Translation">
       <item command="CmdDataTree-Delete-Translation" />
-    </menu>
-    <menu id="mnuDataTree-SubEntryLink">
-      <item command="CmdDataTree-Insert-SubEntryLink" />
     </menu>
     <menu id="mnuDataTree-InsertReversalSubentry">
       <item command="CmdDataTree-Insert-ReversalSubentry" />

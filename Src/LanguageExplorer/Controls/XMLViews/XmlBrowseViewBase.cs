@@ -89,23 +89,6 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		#region Properties
 
-		/// <summary>
-		/// Export the contents of the browse view to the debug window. Answer false so other browse views can export theirs also.
-		/// </summary>
-		public bool OnExportText(object args)
-		{
-			Debug.WriteLine("--------------");
-			int hvo, frag;
-			IVwViewConstructor vc;
-			IVwStylesheet ss;
-			m_rootb.GetRootObject(out hvo, out vc, out frag, out ss);
-			var collector = new LineCollector(null, SpecialCache, hvo);
-			m_xbvvc.Display(collector, hvo, frag);
-			Debug.WriteLine(collector.Result);
-			Debug.WriteLine("--------------");
-			return false;
-		}
-
 		/// <summary />
 		internal ISortItemProvider SortItemProvider => m_sortItemProvider;
 
@@ -120,30 +103,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// that the filter bar needs.
 		/// </summary>
 		internal virtual XmlBrowseViewBaseVc Vc => m_xbvvc;
-
-		/// <summary>
-		/// Called when [request debug info].
-		/// </summary>
-		public bool OnRequestDebugInfo(object commandObj)
-		{
-			using (var logger = new SimpleLogger())
-			{
-				m_xbvvc.LogStream = logger;
-				var cv = SpecialCache.get_VecSize(m_hvoRoot, MainTag);
-				if (cv > 0)
-				{
-					var hvoObjSel = SpecialCache.get_VecItem(m_hvoRoot, MainTag, m_selectedIndex < 0 ? 0 : m_selectedIndex);
-					m_rootb.PropChanged(hvoObjSel, m_tagMe, 0, 0, 0);
-					Update(); // causes the PropChanged to actually invoke the VC.
-				}
-				else
-				{
-					logger.WriteLine("The record list is empty.");
-				}
-				MessageBox.Show(this, logger.Content, @"DEBUG: Row generation info");
-			}
-			return true;
-		}
 
 		/// <summary />
 		public override bool RefreshDisplay()

@@ -1180,7 +1180,7 @@ namespace LanguageExplorer.Impls
 		{
 			try
 			{
-				var pathMovies = string.Format(FwDirectoryFinder.CodeDirectory + "{0}Language Explorer{0}Movies{0}Demo Movies.html", Path.DirectorySeparatorChar);
+				var pathMovies = Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "Movies", "Demo Movies.html");
 
 				OpenDocument<Win32Exception>(pathMovies, win32err =>
 				{
@@ -1195,7 +1195,7 @@ namespace LanguageExplorer.Impls
 					else
 					{
 						// User probably does not have movies. Try to launch the "no movies" web page:
-						var pathNoMovies = string.Format(FwDirectoryFinder.CodeDirectory + "{0}Language Explorer{0}Movies{0}notfound.html", Path.DirectorySeparatorChar);
+						var pathNoMovies = Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "Movies", "notfound.html");
 
 						OpenDocument<Win32Exception>(pathNoMovies, win32err2 =>
 						{
@@ -1216,8 +1216,7 @@ namespace LanguageExplorer.Impls
 			catch (Exception)
 			{
 				// Some other unforeseen error:
-				MessageBox.Show(null, string.Format(FrameworkStrings.ksErrorCannotLaunchMovies,
-					string.Format(FwDirectoryFinder.CodeDirectory + "{0}Language Explorer{0}Movies", Path.DirectorySeparatorChar)), LanguageExplorerResources.ksError);
+				MessageBox.Show(null, string.Format(FrameworkStrings.ksErrorCannotLaunchMovies, Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "Movies")), LanguageExplorerResources.ksError);
 			}
 		}
 
