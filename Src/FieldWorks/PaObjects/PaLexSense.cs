@@ -1,292 +1,177 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Serialization;
-using SIL.PaToFdoInterfaces;
 using SIL.LCModel;
+using SIL.PaToFdoInterfaces;
 
 namespace SIL.FieldWorks.PaObjects
 {
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	public class PaLexSense : IPaLexSense
 	{
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public PaLexSense()
 		{
 		}
 
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		internal PaLexSense(ILexSense lxSense)
 		{
 			var svcloc = lxSense.Cache.ServiceLocator;
 
-			xAnthropologyNote = PaMultiString.Create(lxSense.AnthroNote, svcloc);
-			xBibliography = PaMultiString.Create(lxSense.Bibliography, svcloc);
-			xDefinition = PaMultiString.Create(lxSense.Definition, svcloc);
-			xDiscourseNote = PaMultiString.Create(lxSense.DiscourseNote, svcloc);
-			xEncyclopedicInfo = PaMultiString.Create(lxSense.EncyclopedicInfo, svcloc);
-			xGeneralNote = PaMultiString.Create(lxSense.GeneralNote, svcloc);
-			xGloss = PaMultiString.Create(lxSense.Gloss, svcloc);
-			xGrammarNote = PaMultiString.Create(lxSense.GrammarNote, svcloc);
-			xPhonologyNote = PaMultiString.Create(lxSense.PhonologyNote, svcloc);
-			xRestrictions = PaMultiString.Create(lxSense.Restrictions, svcloc);
-			xSemanticsNote = PaMultiString.Create(lxSense.SemanticsNote, svcloc);
-			xSociolinguisticsNote = PaMultiString.Create(lxSense.SocioLinguisticsNote, svcloc);
-			xReversalEntries = lxSense.ReferringReversalIndexEntries.Select(x => PaMultiString.Create(x.ReversalForm, svcloc)).ToList();
-			xGuid = lxSense.Guid;
+			AnthropologyNote = PaMultiString.Create(lxSense.AnthroNote, svcloc);
+			Bibliography = PaMultiString.Create(lxSense.Bibliography, svcloc);
+			Definition = PaMultiString.Create(lxSense.Definition, svcloc);
+			DiscourseNote = PaMultiString.Create(lxSense.DiscourseNote, svcloc);
+			EncyclopedicInfo = PaMultiString.Create(lxSense.EncyclopedicInfo, svcloc);
+			GeneralNote = PaMultiString.Create(lxSense.GeneralNote, svcloc);
+			Gloss = PaMultiString.Create(lxSense.Gloss, svcloc);
+			GrammarNote = PaMultiString.Create(lxSense.GrammarNote, svcloc);
+			PhonologyNote = PaMultiString.Create(lxSense.PhonologyNote, svcloc);
+			Restrictions = PaMultiString.Create(lxSense.Restrictions, svcloc);
+			SemanticsNote = PaMultiString.Create(lxSense.SemanticsNote, svcloc);
+			SociolinguisticsNote = PaMultiString.Create(lxSense.SocioLinguisticsNote, svcloc);
+			ReversalEntries = lxSense.ReferringReversalIndexEntries.Select(x => PaMultiString.Create(x.ReversalForm, svcloc));
+			Guid = lxSense.Guid;
 
 			ImportResidue = lxSense.ImportResidue.Text;
 			Source = lxSense.Source.Text;
 			ScientificName = lxSense.ScientificName.Text;
 
-			xAnthroCodes = lxSense.AnthroCodesRC.Select(x => PaCmPossibility.Create(x)).ToList();
-			xDomainTypes = lxSense.DomainTypesRC.Select(x => PaCmPossibility.Create(x)).ToList();
-			xUsages = lxSense.UsageTypesRC.Select(x => PaCmPossibility.Create(x)).ToList();
-			xSemanticDomains = lxSense.SemanticDomainsRC.Select(x => PaCmPossibility.Create(x)).ToList();
-			xStatus = PaCmPossibility.Create(lxSense.StatusRA);
-			xSenseType = PaCmPossibility.Create(lxSense.SenseTypeRA);
+			AnthroCodes = lxSense.AnthroCodesRC.Select(x => PaCmPossibility.Create(x));
+			DomainTypes = lxSense.DomainTypesRC.Select(x => PaCmPossibility.Create(x));
+			Usages = lxSense.UsageTypesRC.Select(x => PaCmPossibility.Create(x));
+			SemanticDomains = lxSense.SemanticDomainsRC.Select(x => PaCmPossibility.Create(x));
+			Status = PaCmPossibility.Create(lxSense.StatusRA);
+			SenseType = PaCmPossibility.Create(lxSense.SenseTypeRA);
 
 			ICmPossibility poss = null;
 			var msa = lxSense.MorphoSyntaxAnalysisRA;
 			if (msa is IMoDerivAffMsa)
+			{
 				poss = ((IMoDerivAffMsa)msa).FromPartOfSpeechRA;
+			}
 			else if (msa is IMoDerivStepMsa)
+			{
 				poss = ((IMoDerivStepMsa)msa).PartOfSpeechRA;
+			}
 			else if (msa is IMoInflAffMsa)
+			{
 				poss = ((IMoInflAffMsa)msa).PartOfSpeechRA;
+			}
 			else if (msa is IMoStemMsa)
+			{
 				poss = ((IMoStemMsa)msa).PartOfSpeechRA;
+			}
 			else if (msa is IMoUnclassifiedAffixMsa)
+			{
 				poss = ((IMoUnclassifiedAffixMsa)msa).PartOfSpeechRA;
-
+			}
 			if (poss != null)
-				xPartOfSpeech = PaCmPossibility.Create(poss);
+			{
+				PartOfSpeech = PaCmPossibility.Create(poss);
+			}
 		}
 
 		#region IPaLexSense Members
-		/// ------------------------------------------------------------------------------------
-		public List<PaCmPossibility> xAnthroCodes { get; set; }
 
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IEnumerable<IPaCmPossibility> AnthroCodes
-		{
-			get { return xAnthroCodes.Select(x => (IPaCmPossibility)x); }
-		}
+		public IEnumerable<IPaCmPossibility> AnthroCodes { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public PaMultiString xAnthropologyNote { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IPaMultiString AnthropologyNote
-		{
-			get { return xAnthropologyNote; }
-		}
+		public IPaMultiString AnthropologyNote { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public PaMultiString xBibliography { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IPaMultiString Bibliography
-		{
-			get { return xBibliography; }
-		}
+		public IPaMultiString Bibliography { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public PaMultiString xDefinition { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IPaMultiString Definition
-		{
-			get { return xDefinition; }
-		}
+		public IPaMultiString Definition { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public PaMultiString xDiscourseNote { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IPaMultiString DiscourseNote
-		{
-			get { return xDiscourseNote; }
-		}
+		public IPaMultiString DiscourseNote { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public List<PaCmPossibility> xDomainTypes { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IEnumerable<IPaCmPossibility> DomainTypes
-		{
-			get { return xDomainTypes.Select(x => (IPaCmPossibility)x); }
-		}
+		public IEnumerable<IPaCmPossibility> DomainTypes { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public PaMultiString xEncyclopedicInfo { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IPaMultiString EncyclopedicInfo
-		{
-			get { return xEncyclopedicInfo; }
-		}
+		public IPaMultiString EncyclopedicInfo { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public PaMultiString xGeneralNote { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IPaMultiString GeneralNote
-		{
-			get { return xGeneralNote; }
-		}
+		public IPaMultiString GeneralNote { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public PaMultiString xGloss { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IPaMultiString Gloss
-		{
-			get { return xGloss; }
-		}
+		public IPaMultiString Gloss { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public PaMultiString xGrammarNote { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IPaMultiString GrammarNote
-		{
-			get { return xGrammarNote; }
-		}
+		public IPaMultiString GrammarNote { get; }
 
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		public string ImportResidue { get; set; }
 
-		/// ------------------------------------------------------------------------------------
-		public PaCmPossibility xPartOfSpeech { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IPaCmPossibility PartOfSpeech
-		{
-			get { return xPartOfSpeech; }
-		}
+		public IPaCmPossibility PartOfSpeech { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public PaMultiString xPhonologyNote { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IPaMultiString PhonologyNote
-		{
-			get { return xPhonologyNote; }
-		}
+		public IPaMultiString PhonologyNote { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public PaMultiString xRestrictions { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IPaMultiString Restrictions
-		{
-			get { return xRestrictions; }
-		}
+		public IPaMultiString Restrictions { get; }
 
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		public string ScientificName { get; set; }
 
-		/// ------------------------------------------------------------------------------------
-		public List<PaCmPossibility> xSemanticDomains { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IEnumerable<IPaCmPossibility> SemanticDomains
-		{
-			get { return xSemanticDomains.Select(x => (IPaCmPossibility)x); }
-		}
+		public IEnumerable<IPaCmPossibility> SemanticDomains { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public PaMultiString xSemanticsNote { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IPaMultiString SemanticsNote
-		{
-			get { return xSemanticsNote; }
-		}
+		public IPaMultiString SemanticsNote { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public PaCmPossibility xSenseType { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IPaCmPossibility SenseType
-		{
-			get { return xSenseType; }
-		}
+		public IPaCmPossibility SenseType { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public PaMultiString xSociolinguisticsNote { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IPaMultiString SociolinguisticsNote
-		{
-			get { return xSociolinguisticsNote; }
-		}
+		public IPaMultiString SociolinguisticsNote { get; }
 
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		public string Source { get; set; }
 
-		/// ------------------------------------------------------------------------------------
-		public PaCmPossibility xStatus { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IPaCmPossibility Status
-		{
-			get { return xStatus; }
-		}
+		public IPaCmPossibility Status { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public List<PaCmPossibility> xUsages { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IEnumerable<IPaCmPossibility> Usages
-		{
-			get { return xUsages.Select(x => (IPaCmPossibility)x); }
-		}
+		public IEnumerable<IPaCmPossibility> Usages { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public List<PaMultiString> xReversalEntries { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IEnumerable<IPaMultiString> ReversalEntries
-		{
-			get { return xReversalEntries.Select(x => (IPaMultiString)x); }
-		}
+		public IEnumerable<IPaMultiString> ReversalEntries { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public Guid xGuid { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public Guid Guid
-		{
-			get { return xGuid; }
-		}
-
+		public Guid Guid { get; }
 		#endregion
 	}
 }

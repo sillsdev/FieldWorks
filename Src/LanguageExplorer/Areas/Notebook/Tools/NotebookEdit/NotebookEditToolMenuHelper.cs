@@ -282,7 +282,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 
 		private void Application_Idle(object sender, EventArgs e)
 		{
-			// Deal with enabling of two dictionary related toolbar buttons. (Unlike shipping FLEx, these are always visible.)
+			// Deal with enabling of two dictionary related toolbar buttons. (Unlike FieldWorks 9.0, these are always visible.)
 			var currentSliceAsStTextSlice = AreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree);
 			IVwSelection currentSelection = null;
 			if (_insertAddToDictionaryToolStripButton != null && currentSliceAsStTextSlice != null)

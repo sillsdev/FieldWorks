@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,39 +10,22 @@ using SIL.PaToFdoInterfaces;
 
 namespace SIL.FieldWorks.PaObjects
 {
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	public class PaVariantOfInfo : IPaVariantOfInfo
 	{
-		/// ------------------------------------------------------------------------------------
-		public PaVariantOfInfo()
-		{
-		}
-
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		internal PaVariantOfInfo(ILexEntryRef lxEntryRef)
 		{
-			xVariantComment = PaMultiString.Create(lxEntryRef.Summary, lxEntryRef.Cache.ServiceLocator);
-			xVariantType = lxEntryRef.VariantEntryTypesRS.Select(x => PaCmPossibility.Create(x)).ToList();
+			VariantComment = PaMultiString.Create(lxEntryRef.Summary, lxEntryRef.Cache.ServiceLocator);
+			VariantType = lxEntryRef.VariantEntryTypesRS.Select(x => PaCmPossibility.Create(x));
 		}
 
-		/// ------------------------------------------------------------------------------------
-		public List<PaCmPossibility> xVariantType { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IEnumerable<IPaCmPossibility> VariantType
-		{
-			get { return xVariantType.Cast<IPaCmPossibility>(); }
-		}
+		public IEnumerable<IPaCmPossibility> VariantType { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public PaMultiString xVariantComment { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IPaMultiString VariantComment
-		{
-			get { return xVariantComment; }
-		}
+		public IPaMultiString VariantComment { get; }
 	}
 }

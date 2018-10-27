@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,47 +9,34 @@ using SIL.PaToFdoInterfaces;
 
 namespace SIL.FieldWorks.PaObjects
 {
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	public class PaVariant : IPaVariant
 	{
-		/// ------------------------------------------------------------------------------------
+		private readonly PaVariantOfInfo _variantInfo;
+
+		/// <summary />
 		public PaVariant()
 		{
 		}
 
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		internal PaVariant(ILexEntryRef lxEntryRef)
 		{
 			var lx = lxEntryRef.OwnerOfClass<ILexEntry>();
-			xVariantForm = PaMultiString.Create(lx.LexemeFormOA.Form, lxEntryRef.Cache.ServiceLocator);
-			xVariantInfo = new PaVariantOfInfo(lxEntryRef);
+			VariantForm = PaMultiString.Create(lx.LexemeFormOA.Form, lxEntryRef.Cache.ServiceLocator);
+			_variantInfo = new PaVariantOfInfo(lxEntryRef);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		public PaMultiString xVariantForm { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IPaMultiString VariantForm
-		{
-			get { return xVariantForm; }
-		}
+		public IPaMultiString VariantForm { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public PaVariantOfInfo xVariantInfo { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IEnumerable<IPaCmPossibility> VariantType
-		{
-			get { return xVariantInfo.VariantType; }
-		}
+		public IEnumerable<IPaCmPossibility> VariantType => _variantInfo.VariantType;
 
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IPaMultiString VariantComment
-		{
-			get { return xVariantInfo.VariantComment; }
-		}
+		public IPaMultiString VariantComment => _variantInfo.VariantComment;
 	}
 }

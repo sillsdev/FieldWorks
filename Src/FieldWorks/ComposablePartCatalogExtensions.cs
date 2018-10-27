@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -29,10 +29,6 @@ namespace SIL.FieldWorks
 		/// <summary>
 		/// Create a globally scoped definition of parts.
 		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="catalog"></param>
-		/// <param name="children"></param>
-		/// <returns></returns>
 		public static CompositionScopeDefinition AsScopeWithPublicSurface<T>(this ComposablePartCatalog catalog, params CompositionScopeDefinition[] children)
 		{
 			IEnumerable<ExportDefinition> definitions = catalog.Parts.SelectMany((p) => p.ExportDefinitions.Where((e) => e.ContractName == AttributedModelServices.GetContractName(typeof(T))));

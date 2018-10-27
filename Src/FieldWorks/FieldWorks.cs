@@ -22,10 +22,10 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using Gecko;
-using Microsoft.Win32;
 using LanguageExplorer;
 using LanguageExplorer.LcmUi;
 using LanguageExplorer.SendReceive;
+using Microsoft.Win32;
 using SIL.Code;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
@@ -35,18 +35,18 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel;
-using SIL.LCModel.DomainServices.BackupRestore;
-using SIL.LCModel.DomainServices.DataMigration;
-using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.LexicalProvider;
 using SIL.FieldWorks.PaObjects;
 using SIL.FieldWorks.Resources;
 using SIL.Keyboarding;
-using SIL.Reporting;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainServices.BackupRestore;
+using SIL.LCModel.DomainServices.DataMigration;
+using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
+using SIL.Reporting;
 using SIL.Utils;
 using SIL.Windows.Forms.HtmlBrowser;
 using SIL.Windows.Forms.Keyboarding;
@@ -83,9 +83,6 @@ namespace SIL.FieldWorks
 		#region Static variables
 
 		private static volatile bool s_allowFinalShutdown = true;
-		private static volatile bool s_fWaitingForUserOrOtherFw;
-		private static volatile bool s_fSingleProcessMode;
-		private static volatile ProjectId s_projectId;
 		private static bool s_applicationExiting;
 		private static bool s_doingRename;
 		private static bool s_renameSuccessful;
@@ -240,7 +237,7 @@ namespace SIL.FieldWorks
 					s_appSettings.Reporting = reportingSettings; //to avoid a defect in Settings rely on the Save in the code below
 				}
 
-				// Allow develpers and testers to avoid cluttering our analytics by setting an environment variable (FEEDBACK = false)
+				// Allow developers and testers to avoid cluttering our analytics by setting an environment variable (FEEDBACK = false)
 				var feedbackEnvVar = Environment.GetEnvironmentVariable("FEEDBACK");
 				if (feedbackEnvVar != null)
 				{
@@ -335,7 +332,7 @@ namespace SIL.FieldWorks
 				}
 
 				// Create a listener for this project for applications using FLEx as a LexicalProvider.
-				LexicalProviderManager.StartLexicalServiceProvider(s_projectId, Cache);
+				LexicalProviderManager.StartLexicalServiceProvider(Project, Cache);
 
 				if (MiscUtils.IsMono)
 				{
@@ -415,16 +412,16 @@ namespace SIL.FieldWorks
 				projectId.Type = BackendProviderType.kSharedXML;
 			}
 
-			// s_projectId can be non-null if the user decided to restore a project from
+			// Project can be non-null if the user decided to restore a project from
 			// the Welcome to Fieldworks dialog. (FWR-2146)
-			if (s_projectId == null && !LaunchProject(appArgs, ref projectId))
+			if (Project == null && !LaunchProject(appArgs, ref projectId))
 			{
 				return false;
 			}
 
 			// The project was successfully loaded so store it. This will let any other
 			// FieldWorks processes that are waiting on us be able to continue.
-			s_projectId = projectId;
+			Project = projectId;
 
 			// Warn user about failed Lift import if necessary.
 			var liftFolder = CommonBridgeServices.GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder);
@@ -607,12 +604,17 @@ namespace SIL.FieldWorks
 		/// <summary>
 		/// Gets a value indicating whether FW is in "single process mode".
 		/// </summary>
-		internal static bool InSingleProcessMode => s_fSingleProcessMode;
+		internal static bool InSingleProcessMode { get; private set; }
+
+		/// <summary>
+		/// Gets a value indicating whether FW is in "single process mode".
+		/// </summary>
+		private static bool WaitingForUserOrOtherFw { get; set; }
 
 		/// <summary>
 		/// Gets the project associated with this FieldWorks process.
 		/// </summary>
-		internal static ProjectId Project => s_projectId;
+		internal static ProjectId Project { get; private set; }
 
 		/// <summary>
 		/// Gets the cache used by this FieldWorks instance.
@@ -1364,7 +1366,7 @@ namespace SIL.FieldWorks
 		internal static bool OpenNewProject(ProjectId projectId)
 		{
 			Guard.AgainstNull(projectId, nameof(projectId));
-			Debug.Assert(!projectId.Equals(s_projectId));
+			Debug.Assert(!projectId.Equals(Project));
 
 			return OpenProjectWithNewProcess(projectId);
 		}
@@ -1379,7 +1381,7 @@ namespace SIL.FieldWorks
 		{
 			Guard.AgainstNull(projectId, nameof(projectId));
 
-			if (projectId.Equals(s_projectId))
+			if (projectId.Equals(Project))
 			{
 				// We're trying to open this same project. Just open a new window for the
 				// specified application
@@ -1453,7 +1455,7 @@ namespace SIL.FieldWorks
 		internal static bool RenameProject(string dbNewName)
 		{
 			// TODO (FWR-722): Also move project-specific registry settings
-			var projId = s_projectId;
+			var projId = Project;
 			s_doingRename = true;
 			s_renameSuccessful = false;
 			s_renameNewName = dbNewName;
@@ -1465,7 +1467,7 @@ namespace SIL.FieldWorks
 				// during the next Windows message pump). We needed to have the rename happen
 				// after all the main windows are closed, but before the cache is disposed.
 				// The only semi-clean way of doing that is to do what we did. (FWR-3179)
-				ExecuteWithAppsShutDown(() => s_projectId ?? projId);
+				ExecuteWithAppsShutDown(() => Project ?? projId);
 			}
 			finally
 			{
@@ -1491,10 +1493,10 @@ namespace SIL.FieldWorks
 			// in LCM because we pass the ProjectId by reference and it gets set in the BEP),
 			// however, generally, we aren't guaranteed that this behavior actually takes place,
 			// so we need to do it here to make sure our reference is updated.
-			s_projectId.Path = Cache.ProjectId.Path;
+			Project.Path = Cache.ProjectId.Path;
 			// Update the path in the writing system manager so that it won't crash trying to
 			// write to a nonexistent folder.
-			Cache.ServiceLocator.WritingSystemManager.LocalStoreFolder = Path.Combine(s_projectId.ProjectFolder, "WritingSystemStore");
+			Cache.ServiceLocator.WritingSystemManager.LocalStoreFolder = Path.Combine(Project.ProjectFolder, "WritingSystemStore");
 		}
 		#endregion
 
@@ -1520,7 +1522,7 @@ namespace SIL.FieldWorks
 			var projectToTry = lastProjectId;
 
 			// Continue to ask for an option until one is selected.
-			s_fWaitingForUserOrOtherFw = true;
+			WaitingForUserOrOtherFw = true;
 			do
 			{
 				if (exception != null)
@@ -1598,11 +1600,11 @@ namespace SIL.FieldWorks
 					}
 					switch (dlg.DlgResult)
 					{
-						case WelcomeToFieldWorksDlg.ButtonPress.New:
+						case ButtonPress.New:
 							projectToTry = CreateNewProject();
 							Debug.Assert(projectToTry == null || projectToTry.IsValid);
 							break;
-						case WelcomeToFieldWorksDlg.ButtonPress.Open:
+						case ButtonPress.Open:
 							projectToTry = ChooseLangProject();
 							try
 							{
@@ -1613,7 +1615,7 @@ namespace SIL.FieldWorks
 								exception = e;
 							}
 							break;
-						case WelcomeToFieldWorksDlg.ButtonPress.Link:
+						case ButtonPress.Link:
 							// LT-13943 - this guard keeps the projectToTry from getting blasted by a null when it has
 							// a useful projectId (like the initial sample db the first time FLEx is run).
 							if (lastProjectId != null && !lastProjectId.Equals(projectToTry))
@@ -1622,15 +1624,15 @@ namespace SIL.FieldWorks
 							}
 							Debug.Assert(projectToTry.IsValid);
 							break;
-						case WelcomeToFieldWorksDlg.ButtonPress.Restore:
+						case ButtonPress.Restore:
 							s_allowFinalShutdown = false;
 							RestoreProject(null, app);
 							s_allowFinalShutdown = true;
-							projectToTry = s_projectId; // Restore probably used this process
+							projectToTry = Project; // Restore probably used this process
 							break;
-						case WelcomeToFieldWorksDlg.ButtonPress.Exit:
+						case ButtonPress.Exit:
 							return null; // Should cause the FW process to exit later
-						case WelcomeToFieldWorksDlg.ButtonPress.Receive:
+						case ButtonPress.Receive:
 							if (!FwNewLangProject.CheckProjectDirectory(null, helpTopicProvider))
 							{
 								break;
@@ -1652,14 +1654,14 @@ namespace SIL.FieldWorks
 								}
 							}
 							break;
-						case WelcomeToFieldWorksDlg.ButtonPress.Import:
+						case ButtonPress.Import:
 							projectToTry = CreateNewProject();
 							if (projectToTry != null)
 							{
 								var projectLaunched = LaunchProject(args, ref projectToTry);
 								if (projectLaunched)
 								{
-									s_projectId = projectToTry; // Window is open on this project, we must not try to initialize it again.
+									Project = projectToTry; // Window is open on this project, we must not try to initialize it again.
 									var mainWindow = Form.ActiveForm;
 									if (mainWindow is IFwMainWnd)
 									{
@@ -1683,7 +1685,7 @@ namespace SIL.FieldWorks
 
 			Logger.WriteEvent("Project selected in Welcome dialog: " + projectToTry);
 
-			s_fWaitingForUserOrOtherFw = false;
+			WaitingForUserOrOtherFw = false;
 			return projectToTry;
 		}
 
@@ -2262,7 +2264,7 @@ namespace SIL.FieldWorks
 			ThreadHelper.Invoke(() =>
 			{
 				// Determine if we need to start a new process for the restore
-				if (s_projectId != null && s_projectId.IsSameLocalProject(new ProjectId(restoreSettings.Settings.FullProjectPath)))
+				if (Project != null && Project.IsSameLocalProject(new ProjectId(restoreSettings.Settings.FullProjectPath)))
 				{
 					// We need to invoke so that the mediator that processed the restore menu item
 					// can be safely disposed of (and everything that it holds on to can be released).
@@ -2272,7 +2274,7 @@ namespace SIL.FieldWorks
 				}
 				else if (!TryFindRestoreHandler(restoreSettings))
 				{
-					if (s_projectId == null)
+					if (Project == null)
 					{
 						// No other FieldWorks process was running that could handle the request.
 						// However, we don't know what project we are opening yet, so just use the
@@ -2328,7 +2330,7 @@ namespace SIL.FieldWorks
 						if (RestoreProjectDlg.HandleRestoreFileErrors(null, restoreSettings.Settings.Backup.File, () => DoRestore(restoreService)))
 						{
 							s_LinkDirChangedTo = restoreService.LinkDirChangedTo;
-							return s_projectId ?? new ProjectId(restoreSettings.Settings.FullProjectPath);
+							return Project ?? new ProjectId(restoreSettings.Settings.FullProjectPath);
 						}
 					}
 					catch (CannotConvertException e)
@@ -2469,13 +2471,13 @@ namespace SIL.FieldWorks
 		{
 			ThreadHelper.Invoke(() =>
 			{
-				Debug.Assert(s_projectId != null, "We shouldn't try to handle a link request until an application is started");
+				Debug.Assert(Project != null, "We shouldn't try to handle a link request until an application is started");
 				var linkedProject = new ProjectId(link.DatabaseType, link.Database);
 				if (IsSharedXmlBackendNeeded(linkedProject))
 				{
 					linkedProject.Type = BackendProviderType.kSharedXML;
 				}
-				if (linkedProject.Equals(s_projectId))
+				if (linkedProject.Equals(Project))
 				{
 					FollowLink(link);
 				}
@@ -2743,7 +2745,7 @@ namespace SIL.FieldWorks
 					// The application is already running so make sure we don't try re-initialize it
 					if (app.MainWindows.Count == 0)
 					{
-						ApplicationBusyDialog.ShowOnSeparateThread(args, ApplicationBusyDialog.WaitFor.WindowToActivate, app, null);
+						ApplicationBusyDialog.ShowOnSeparateThread(args, WaitFor.WindowToActivate, app, null);
 					}
 					else
 					{
@@ -2795,7 +2797,7 @@ namespace SIL.FieldWorks
 		/// <returns>True if the application was successfully initialized, false otherwise</returns>
 		private static bool InitializeFirstApp(IFlexApp app, ProjectId projectId)
 		{
-			Debug.Assert(Cache == null && s_projectId == null, "This should only get called once");
+			Debug.Assert(Cache == null && Project == null, "This should only get called once");
 			Debug.Assert(projectId != null, "Should have exited the program");
 
 			using (var process = Process.GetCurrentProcess())
@@ -3055,7 +3057,7 @@ namespace SIL.FieldWorks
 					var ar = invoker.BeginInvoke(project, args, null, null);
 					while (!ar.IsCompleted)
 					{
-						s_fWaitingForUserOrOtherFw = true;
+						WaitingForUserOrOtherFw = true;
 						// Wait until this process knows which project it is loading.
 						if (!ar.AsyncWaitHandle.WaitOne(9000, false))
 						{
@@ -3086,7 +3088,7 @@ namespace SIL.FieldWorks
 					}
 				} while (isMyProject == ProjectMatch.DontKnowYet);
 
-				s_fWaitingForUserOrOtherFw = false;
+				WaitingForUserOrOtherFw = false;
 				return (isMyProject == ProjectMatch.ItsMyProject);
 			});
 		}
@@ -3394,7 +3396,7 @@ namespace SIL.FieldWorks
 		/// <param name="action">The action to execute.</param>
 		private static void ExecuteWithAllFwProcessesShutDown(Func<ProjectId> action)
 		{
-			s_fSingleProcessMode = true;
+			InSingleProcessMode = true;
 			try
 			{
 				// Try to shut down other instances of FieldWorks gracefully so that their data
@@ -3418,7 +3420,7 @@ namespace SIL.FieldWorks
 			}
 			finally
 			{
-				s_fSingleProcessMode = false;
+				InSingleProcessMode = false;
 			}
 		}
 
@@ -3433,7 +3435,7 @@ namespace SIL.FieldWorks
 				try
 				{
 					HandleLinkRequest(appArgs);
-					return s_projectId;
+					return Project;
 				}
 				catch (Exception e)
 				{
@@ -3477,7 +3479,7 @@ namespace SIL.FieldWorks
 					return;
 				}
 
-				s_projectId = null; // Needs to be null in InitializeFirstApp
+				Project = null; // Needs to be null in InitializeFirstApp
 
 				// Restart the default app from which the action was kicked off
 				var app = GetOrCreateApplication(new FwAppArgs(projId.Handle, string.Empty, Guid.Empty));
@@ -3486,7 +3488,7 @@ namespace SIL.FieldWorks
 					return;
 				}
 
-				s_projectId = projId; // Process needs to know its project
+				Project = projId; // Process needs to know its project
 			}
 			finally
 			{
@@ -3592,17 +3594,17 @@ namespace SIL.FieldWorks
 		/// </returns>
 		internal static ProjectMatch GetProjectMatchStatus(ProjectId projectId)
 		{
-			if (s_fSingleProcessMode)
+			if (InSingleProcessMode)
 			{
 				return ProjectMatch.SingleProcessMode;
 			}
 
-			if (s_fWaitingForUserOrOtherFw)
+			if (WaitingForUserOrOtherFw)
 			{
 				return ProjectMatch.WaitingForUserOrOtherFw;
 			}
 
-			var thisProjectId = s_projectId; // Store in temp variable for thread safety
+			var thisProjectId = Project; // Store in temp variable for thread safety
 			if (thisProjectId == null)
 			{
 				return ProjectMatch.DontKnowYet;

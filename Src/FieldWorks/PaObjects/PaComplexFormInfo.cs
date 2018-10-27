@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,71 +10,57 @@ using SIL.PaToFdoInterfaces;
 
 namespace SIL.FieldWorks.PaObjects
 {
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	public class PaComplexFormInfo : IPaComplexFormInfo
 	{
-		/// ------------------------------------------------------------------------------------
-		public PaComplexFormInfo()
+		/// <summary />
+		public PaComplexFormInfo(IPaMultiString complexFormComment, IEnumerable<IPaCmPossibility> complexFormType)
 		{
-			xComponents = new List<string>();
+			Components = new List<string>();
+			ComplexFormComment = complexFormComment;
+			ComplexFormType = complexFormType;
 		}
 
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		internal static PaComplexFormInfo Create(ILexEntryRef lxEntryRef)
 		{
 			if (lxEntryRef.RefType != LexEntryRefTags.krtComplexForm)
+			{
 				return null;
+			}
 
-			var pcfi = new PaComplexFormInfo();
-			pcfi.xComplexFormComment = PaMultiString.Create(lxEntryRef.Summary, lxEntryRef.Cache.ServiceLocator);
-			pcfi.xComplexFormType = lxEntryRef.ComplexEntryTypesRS.Select(x => PaCmPossibility.Create(x)).ToList();
-
+			var pcfi = new PaComplexFormInfo(PaMultiString.Create(lxEntryRef.Summary, lxEntryRef.Cache.ServiceLocator), lxEntryRef.ComplexEntryTypesRS.Select(x => PaCmPossibility.Create(x)));
 			foreach (var component in lxEntryRef.ComponentLexemesRS)
 			{
 				if (component is ILexEntry)
-					pcfi.xComponents.Add(((ILexEntry)component).HeadWord.Text);
+				{
+					pcfi.Components.Add(((ILexEntry)component).HeadWord.Text);
+				}
 				else if (component is ILexSense)
 				{
 					var lxSense = (ILexSense)component;
 					var text = lxSense.Entry.HeadWord.Text;
 					if (lxSense.Entry.SensesOS.Count > 1)
-						text += string.Format(" {0}", lxSense.IndexInOwner + 1);
-
-					pcfi.xComponents.Add(text);
+					{
+						text += $" {lxSense.IndexInOwner + 1}";
+					}
+					pcfi.Components.Add(text);
 				}
 			}
 
 			return pcfi;
 		}
 
-		/// ------------------------------------------------------------------------------------
-		public List<string> xComponents { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public List<string> Components
-		{
-			get { return xComponents; }
-		}
+		public List<string> Components { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public PaMultiString xComplexFormComment { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IPaMultiString ComplexFormComment
-		{
-			get { return xComplexFormComment; }
-		}
+		public IPaMultiString ComplexFormComment { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public List<PaCmPossibility> xComplexFormType { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IEnumerable<IPaCmPossibility> ComplexFormType
-		{
-			get { return xComplexFormType.Cast<IPaCmPossibility>(); }
-		}
+		public IEnumerable<IPaCmPossibility> ComplexFormType { get; }
 	}
 }

@@ -240,6 +240,7 @@
     <Compile Include="ApplicationBusyDialog.Designer.cs">
       <DependentUpon>ApplicationBusyDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="ButtonPress.cs" />
     <Compile Include="ChooseLangProjectDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -251,9 +252,15 @@
     <Compile Include="FwApplicationSettings.cs" />
     <Compile Include="FwRestoreProjectSettings.cs" />
     <Compile Include="FwSplashScreen.cs" />
+    <Compile Include="LexicalProvider\EntryType.cs" />
+    <Compile Include="LexicalProvider\ILexicalServiceProvider.cs" />
+    <Compile Include="LexicalProvider\LexemeType.cs" />
+    <Compile Include="LexicalProvider\LexGloss.cs" />
+    <Compile Include="LexicalProvider\LexicalEntry.cs" />
     <Compile Include="LexicalProvider\LexicalProviderImpl.cs" />
     <Compile Include="LexicalProvider\LexicalProviderManager.cs" />
     <Compile Include="LexicalProvider\LexicalServiceProvider.cs" />
+    <Compile Include="LexicalProvider\LexSense.cs" />
     <Compile Include="MissingOldFieldWorksDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -283,6 +290,7 @@
     <Compile Include="RealSplashScreen.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="WaitFor.cs" />
     <Compile Include="WelcomeToFieldWorksDlg.Designer.cs">
       <DependentUpon>WelcomeToFieldWorksDlg.cs</DependentUpon>
     </Compile>

@@ -42,7 +42,6 @@ namespace SIL.FieldWorks
 		private Label lblAppVersion;
 		private Label lblFwVersion;
 		private PictureBox m_picSilLogo;
-
 		private ProgressLine progressLine;
 		private PictureBox marqueeGif;
 		private bool m_fDisplaySILInfo;
@@ -56,9 +55,8 @@ namespace SIL.FieldWorks
 		#endregion
 
 		#region Constructor
-		/// <summary>
-		/// Default Constructor for FwSplashScreen
-		/// </summary>
+
+		/// <summary />
 		private RealSplashScreen()
 		{
 			//
@@ -75,11 +73,7 @@ namespace SIL.FieldWorks
 			HandleCreated += SetPosition;
 		}
 
-		/// <summary>
-		/// Default Constructor for FwSplashScreen
-		/// </summary>
-		/// <param name="fDisplaySILInfo">if set to <c>false</c>, any SIL-identifying information
-		/// will be hidden.</param>
+		/// <summary />
 		public RealSplashScreen(bool fDisplaySILInfo) : this()
 		{
 			m_fDisplaySILInfo = fDisplaySILInfo;
@@ -90,13 +84,15 @@ namespace SIL.FieldWorks
 			}
 		}
 
-		/// <summary>
-		/// Disposes of the resources (other than memory) used by the
-		/// <see cref="T:System.Windows.Forms.Form"></see>.
-		/// </summary>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
 			if (disposing)
 			{
 				m_timer?.Dispose();
@@ -250,7 +246,7 @@ namespace SIL.FieldWorks
 		public void RealClose()
 		{
 			m_timer?.Change(Timeout.Infinite, Timeout.Infinite);
-			base.Close();
+			Close();
 		}
 
 		/// <summary>
@@ -272,9 +268,8 @@ namespace SIL.FieldWorks
 		#endregion
 
 		#region Non-public methods
-		/// <summary>
-		/// Raises the <see cref="E:System.Windows.Forms.Control.VisibleChanged"></see> event.
-		/// </summary>
+
+		/// <inheritdoc />
 		protected override void OnVisibleChanged(EventArgs e)
 		{
 			base.OnVisibleChanged(e);

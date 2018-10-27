@@ -1,66 +1,44 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.IO;
 using System.Xml.Serialization;
-using SIL.PaToFdoInterfaces;
 using SIL.LCModel;
+using SIL.PaToFdoInterfaces;
 
 namespace SIL.FieldWorks.PaObjects
 {
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	public class PaMediaFile : IPaMediaFile
 	{
-		/// ------------------------------------------------------------------------------------
-		public PaMediaFile()
-		{
-		}
-
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		internal PaMediaFile(ICmMedia mediaFile)
 		{
 			OriginalPath = mediaFile.MediaFileRA.OriginalPath;
 			AbsoluteInternalPath = mediaFile.MediaFileRA.AbsoluteInternalPath;
 			InternalPath = mediaFile.MediaFileRA.InternalPath;
-			xLabel = PaMultiString.Create(mediaFile.Label, mediaFile.Cache.ServiceLocator);
+			Label = PaMultiString.Create(mediaFile.Label, mediaFile.Cache.ServiceLocator);
 		}
 
 		#region IPaMediaFile Members
-		/// ------------------------------------------------------------------------------------
-		public PaMultiString xLabel { get; set; }
 
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IPaMultiString Label
-		{
-			get { return xLabel; }
-		}
+		public IPaMultiString Label { get; }
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the media absolute, internal file path.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		public string AbsoluteInternalPath { get; set; }
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the internal media file path.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		public string InternalPath { get; set; }
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the original media file path.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		public string OriginalPath { get; set; }
 
 		#endregion
 
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		public override string ToString()
 		{
 			return Path.GetFileName(AbsoluteInternalPath);

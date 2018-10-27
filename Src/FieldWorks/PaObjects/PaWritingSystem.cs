@@ -1,25 +1,23 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
 using System.Linq;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.PaToFdoInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.PaToFdoInterfaces;
 
 namespace SIL.FieldWorks.PaObjects
 {
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	public class PaWritingSystem : IPaWritingSystem
 	{
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Loads all the writing systems from the specified service locator into a
 		/// collection of PaWritingSystem objects.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		internal static string GetWritingSystemsAsXml(ILcmServiceLocator svcloc)
 		{
 			var wsList = new List<PaWritingSystem>();
@@ -28,8 +26,8 @@ namespace SIL.FieldWorks.PaObjects
 			{
 				if (!wsList.Any(w => w.Id == ws.Id))
 				{
-					bool isVern = (svcloc.WritingSystems.VernacularWritingSystems.Contains(ws));
-					bool isAnal = (svcloc.WritingSystems.AnalysisWritingSystems.Contains(ws));
+					var isVern = svcloc.WritingSystems.VernacularWritingSystems.Contains(ws);
+					var isAnal = svcloc.WritingSystems.AnalysisWritingSystems.Contains(ws);
 					wsList.Add(new PaWritingSystem(ws, svcloc, isVern, isAnal));
 				}
 			}
@@ -37,14 +35,13 @@ namespace SIL.FieldWorks.PaObjects
 			return XmlSerializationHelper.SerializeToString(wsList);
 		}
 
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public PaWritingSystem()
 		{
 		}
 
-		/// ------------------------------------------------------------------------------------
-		private PaWritingSystem(CoreWritingSystemDefinition lgws, ILcmServiceLocator svcloc, bool isVern,
-			bool isAnal)
+		/// <summary />
+		private PaWritingSystem(CoreWritingSystemDefinition lgws, ILcmServiceLocator svcloc, bool isVern, bool isAnal)
 		{
 			Id = lgws.Id;
 			DisplayName = lgws.DisplayLabel;
@@ -61,102 +58,46 @@ namespace SIL.FieldWorks.PaObjects
 		}
 
 		#region IPaWritingSystem Members
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the ISO-blah, blah code.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+
+		/// <inheritdoc />
 		public string Id { get; set; }
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the name.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		public string DisplayName { get; set; }
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the writing system language name.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		public string LanguageName { get; set; }
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the writing system abbreviation.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		public string Abbreviation { get; set; }
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the ICU locale.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		public string IcuLocale { get; set; }
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the hvo.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		public int Hvo { get; set; }
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets a value indicating whether or not the writing system is a vernacular writing
-		/// system.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		public bool IsVernacular { get; set; }
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets a value indicating whether or not the writing system is a analysis writing
-		/// system.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		public bool IsAnalysis { get; set; }
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets a value indicating whether or not the writing system is the default
-		/// analysis writing system.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		public bool IsDefaultAnalysis { get; set; }
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets a value indicating whether or not the writing system is the default
-		/// pronunciation writing system.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		public bool IsDefaultPronunciation { get; set; }
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets a value indicating whether or not the writing system is the default
-		/// vernacular writing system.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		public bool IsDefaultVernacular { get; set; }
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the default font.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		public string DefaultFontName { get; set; }
 
 		#endregion
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Returns a <see cref="T:System.String"/> that represents this instance.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		public override string ToString()
 		{
 			return DisplayName ?? (Id ?? string.Empty);

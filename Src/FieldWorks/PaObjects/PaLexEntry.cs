@@ -1,26 +1,24 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SIL.PaToFdoInterfaces;
-using SIL.LCModel;
 using System.Xml.Serialization;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
+using SIL.PaToFdoInterfaces;
 
 namespace SIL.FieldWorks.PaObjects
 {
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	public class PaLexEntry : IPaLexEntry
 	{
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Loads all the lexical entries from the specified service locator into a collection
 		/// of PaLexEntry objects.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		internal static List<PaLexEntry> GetAll(ILcmServiceLocator svcloc)
 		{
 			return svcloc.GetInstance<ILexEntryRepository>().AllInstances()
@@ -28,12 +26,10 @@ namespace SIL.FieldWorks.PaObjects
 				.Select(lx => new PaLexEntry(lx)).ToList();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Loads all the lexical entries from the specified service locator into a collection
 		/// of PaLexEntry objects and returns the collection in a serialized list.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		internal static string GetAllAsXml(ILcmServiceLocator svcloc)
 		{
 			try
@@ -46,252 +42,135 @@ namespace SIL.FieldWorks.PaObjects
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public PaLexEntry()
 		{
 		}
 
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		internal PaLexEntry(ILexEntry lxEntry)
 		{
 			var svcloc = lxEntry.Cache.ServiceLocator;
 
 			DateCreated = lxEntry.DateCreated;
 			DateModified = lxEntry.DateModified;
-			//ExcludeAsHeadword = lxEntry.ExcludeAsHeadword; remove
 			ExcludeAsHeadword = false; // MDL: remove when IPaLexEntry is updated
-			// ShowMainEntryIn = lxEntry.ShowMainEntryIn.Select(x => new PaLexShowMainEntryIn(x)).ToList(); // MDL: uncomment when IPaLexEntry is updated
 
 			ImportResidue = lxEntry.ImportResidue.Text;
 
-			xPronunciations = lxEntry.PronunciationsOS.Select(x => new PaLexPronunciation(x)).ToList();
-			xSenses = lxEntry.SensesOS.Select(x => new PaLexSense(x)).ToList();
-			xComplexForms = lxEntry.ComplexFormEntries.Where(x => x.LexemeFormOA != null).Select(x => PaMultiString.Create(x.LexemeFormOA.Form, svcloc)).ToList();
-			xAllomorphs = lxEntry.AllAllomorphs.Select(x => PaMultiString.Create(x.Form, svcloc)).ToList();
-
-			xLexemeForm = lxEntry.LexemeFormOA != null ? PaMultiString.Create(lxEntry.LexemeFormOA.Form, svcloc) : null;
-			xMorphType = PaCmPossibility.Create(lxEntry.PrimaryMorphType);
-			xCitationForm = PaMultiString.Create(lxEntry.CitationForm, svcloc);
-			xNote = PaMultiString.Create(lxEntry.Comment, svcloc);
-			xLiteralMeaning = PaMultiString.Create(lxEntry.LiteralMeaning, svcloc);
-			xBibliography = PaMultiString.Create(lxEntry.Bibliography, svcloc);
-			xRestrictions = PaMultiString.Create(lxEntry.Restrictions, svcloc);
-			xSummaryDefinition = PaMultiString.Create(lxEntry.SummaryDefinition, svcloc);
-			xVariantOfInfo = lxEntry.VariantEntryRefs.Select(x => new PaVariantOfInfo(x)).ToList();
-			xVariants = lxEntry.VariantFormEntryBackRefs.Select(x => new PaVariant(x)).ToList();
-			xGuid = lxEntry.Guid;
+			Pronunciations = lxEntry.PronunciationsOS.Select(x => new PaLexPronunciation(x));
+			Senses = lxEntry.SensesOS.Select(x => new PaLexSense(x));
+			ComplexForms = lxEntry.ComplexFormEntries.Where(x => x.LexemeFormOA != null).Select(x => PaMultiString.Create(x.LexemeFormOA.Form, svcloc));
+			Allomorphs = lxEntry.AllAllomorphs.Select(x => PaMultiString.Create(x.Form, svcloc));
+			LexemeForm = lxEntry.LexemeFormOA != null ? PaMultiString.Create(lxEntry.LexemeFormOA.Form, svcloc) : null;
+			MorphType = PaCmPossibility.Create(lxEntry.PrimaryMorphType);
+			CitationForm = PaMultiString.Create(lxEntry.CitationForm, svcloc);
+			Note = PaMultiString.Create(lxEntry.Comment, svcloc);
+			LiteralMeaning = PaMultiString.Create(lxEntry.LiteralMeaning, svcloc);
+			Bibliography = PaMultiString.Create(lxEntry.Bibliography, svcloc);
+			Restrictions = PaMultiString.Create(lxEntry.Restrictions, svcloc);
+			SummaryDefinition = PaMultiString.Create(lxEntry.SummaryDefinition, svcloc);
+			VariantOfInfo = lxEntry.VariantEntryRefs.Select(x => new PaVariantOfInfo(x));
+			Variants = lxEntry.VariantFormEntryBackRefs.Select(x => new PaVariant(x));
+			Guid = lxEntry.Guid;
 
 			// append all etymology forms together separated by commas
 			if (lxEntry.EtymologyOS.Count > 0)
 			{
-				xEtymology = new PaMultiString();
+				Etymology = new PaMultiString();
 				foreach (var etymology in lxEntry.EtymologyOS)
 				{
-					PaMultiString.Append(xEtymology, etymology.Form, svcloc);
+					PaMultiString.Append((PaMultiString)Etymology, etymology.Form, svcloc);
 				}
 			}
 
-			xComplexFormInfo = (from eref in lxEntry.EntryRefsOS
-								let pcfi = PaComplexFormInfo.Create(eref)
-								where pcfi != null
-								select pcfi).ToList();
+			ComplexFormInfo = (lxEntry.EntryRefsOS
+				.Select(eref => new { eref, pcfi = PaComplexFormInfo.Create(eref) })
+				.Where(@t => @t.pcfi != null)
+				.Select(@t => @t.pcfi));
 		}
 
 		#region IPaLexEntry implementation
-		/// ------------------------------------------------------------------------------------
-		/// MDL: Replace this with ShowMainEntryIn it behaves the same as ExcludeAsHeadword,
-		/// but on a publicaton by publication basis including Main Dictionary and "$$all_entries$$".
+
+		/// <inheritdoc />
 		public bool ExcludeAsHeadword { get; set; }
 
-		// ------------------------------------------------------------------------------------
-		// Until you delete the comment markers, don't use three slashes
-		// unless you want dreaded Error CS1591.
-		//public List<PaLexShowMainEntryIn> xShowMainEntryIn { get; set; }  /// MDL: uncomment when added to IPaLexEntry
-		//[XmlIgnore]
-		// ------------------------------------------------------------------------------------
-		// public IEnumerable<IPaLexShowMainEntryIn> xShowMainEntryIn /// MDL: uncomment when added to IPaLexEntry
-		//{
-		//	get { return xShowMainEntryIn.Cast<IPaLexPronunciation>(); }
-		//}
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		public string ImportResidue { get; set; }
 
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		public DateTime DateCreated { get; set; }
 
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		public DateTime DateModified { get; set; }
 
-		/// ------------------------------------------------------------------------------------
-		public PaMultiString xLexemeForm { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IPaMultiString LexemeForm
-		{
-			get { return xLexemeForm; }
-		}
+		public IPaMultiString LexemeForm { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public PaCmPossibility xMorphType { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IPaCmPossibility MorphType
-		{
-			get { return xMorphType; }
-		}
+		public IPaCmPossibility MorphType { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public PaMultiString xCitationForm { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IPaMultiString CitationForm
-		{
-			get { return xCitationForm; }
-		}
+		public IPaMultiString CitationForm { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public List<PaVariant> xVariants { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IEnumerable<IPaVariant> Variants
-		{
-			get { return xVariants.Cast<IPaVariant>(); }
-		}
+		public IEnumerable<IPaVariant> Variants { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public List<PaVariantOfInfo> xVariantOfInfo { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IEnumerable<IPaVariantOfInfo> VariantOfInfo
-		{
-			get { return xVariantOfInfo.Cast<IPaVariantOfInfo>(); }
-		}
+		public IEnumerable<IPaVariantOfInfo> VariantOfInfo { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public PaMultiString xSummaryDefinition { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IPaMultiString SummaryDefinition
-		{
-			get { return xSummaryDefinition; }
-		}
+		public IPaMultiString SummaryDefinition { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public PaMultiString xEtymology { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IPaMultiString Etymology
-		{
-			get { return xEtymology; }
-		}
+		public IPaMultiString Etymology { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public PaMultiString xNote { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IPaMultiString Note
-		{
-			get { return xNote; }
-		}
+		public IPaMultiString Note { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public PaMultiString xLiteralMeaning { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IPaMultiString LiteralMeaning
-		{
-			get { return xLiteralMeaning; }
-		}
+		public IPaMultiString LiteralMeaning { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public PaMultiString xBibliography { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IPaMultiString Bibliography
-		{
-			get { return xBibliography; }
-		}
+		public IPaMultiString Bibliography { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public PaMultiString xRestrictions { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IPaMultiString Restrictions
-		{
-			get { return xRestrictions; }
-		}
+		public IPaMultiString Restrictions { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public List<PaLexPronunciation> xPronunciations { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IEnumerable<IPaLexPronunciation> Pronunciations
-		{
-			get { return xPronunciations.Cast<IPaLexPronunciation>(); }
-		}
+		public IEnumerable<IPaLexPronunciation> Pronunciations { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public List<PaLexSense> xSenses { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IEnumerable<IPaLexSense> Senses
-		{
-			get { return xSenses.Cast<IPaLexSense>(); }
-		}
+		public IEnumerable<IPaLexSense> Senses { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public List<PaMultiString> xComplexForms { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IEnumerable<IPaMultiString> ComplexForms
-		{
-			get { return xComplexForms.Cast<IPaMultiString>(); }
-		}
+		public IEnumerable<IPaMultiString> ComplexForms { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public List<PaComplexFormInfo> xComplexFormInfo { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IEnumerable<IPaComplexFormInfo> ComplexFormInfo
-		{
-			get { return xComplexFormInfo.Cast<IPaComplexFormInfo>(); }
-		}
+		public IEnumerable<IPaComplexFormInfo> ComplexFormInfo { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public List<PaMultiString> xAllomorphs { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IEnumerable<IPaMultiString> Allomorphs
-		{
-			get { return xAllomorphs.Cast<IPaMultiString>(); }
-		}
+		public IEnumerable<IPaMultiString> Allomorphs { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public Guid xGuid { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public Guid Guid
-		{
-			get { return xGuid; }
-		}
+		public Guid Guid { get; }
 
 		#endregion
 	}

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -26,42 +26,42 @@ namespace SIL.FieldWorks
 			m_settings = Common.FwUtils.Properties.Settings.Default;
 		}
 
-		/// <summary />
+		/// <inheritdoc />
 		public override bool UpdateGlobalWSStore
 		{
 			get { return m_settings.UpdateGlobalWSStore; }
 			set { m_settings.UpdateGlobalWSStore = value; }
 		}
 
-		/// <summary />
+		/// <inheritdoc />
 		public override ReportingSettings Reporting
 		{
 			get { return m_settings.Reporting; }
 			set { m_settings.Reporting = value; }
 		}
 
-		/// <summary />
+		/// <inheritdoc />
 		public override string LocalKeyboards
 		{
 			get { return m_settings.LocalKeyboards; }
 			set { m_settings.LocalKeyboards = value; }
 		}
 
-		/// <summary />
+		/// <inheritdoc />
 		public override string WebonaryUser
 		{
 			get { return m_settings.WebonaryUser; }
 			set { m_settings.WebonaryUser = value; }
 		}
 
-		/// <summary />
+		/// <inheritdoc />
 		public override string WebonaryPass
 		{
 			get { return m_settings.WebonaryPass; }
 			set { m_settings.WebonaryPass = value; }
 		}
 
-		/// <summary />
+		/// <inheritdoc />
 		public override void UpgradeIfNecessary()
 		{
 			if (m_settings.CallUpgrade)
@@ -69,7 +69,7 @@ namespace SIL.FieldWorks
 				// LT-18723 Upgrade m_settings to generate the user.config file for FLEx 9.0
 				m_settings.Save();
 				m_settings.Upgrade();
-				string baseConfigFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), Application.CompanyName, Application.ProductName);
+				var baseConfigFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), Application.CompanyName, Application.ProductName);
 				if (Directory.Exists(baseConfigFolder))
 				{
 					// For some reason the version returned from Assembly.GetExecutingAssembly.GetName().Version does not return the
@@ -87,7 +87,7 @@ namespace SIL.FieldWorks
 			}
 		}
 
-		/// <summary />
+		/// <inheritdoc />
 		public override void Save()
 		{
 			m_settings.Save();

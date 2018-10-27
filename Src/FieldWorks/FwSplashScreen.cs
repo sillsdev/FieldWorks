@@ -208,8 +208,7 @@ namespace SIL.FieldWorks
 		{
 			lock (m_splashScreen.m_Synchronizer)
 			{
-				m_splashScreen.Invoke(new SetIntPropDelegate(m_splashScreen.Step),
-					nStepAmt);
+				m_splashScreen.Invoke(new SetIntPropDelegate(m_splashScreen.Step), nStepAmt);
 			}
 		}
 
@@ -375,13 +374,13 @@ namespace SIL.FieldWorks
 		}
 
 		/// <summary>
-		/// Gets or sets a value indicating whether the opertation executing on the separate thread
+		/// Gets or sets a value indicating whether the operation executing on the separate thread
 		/// can be cancelled by a different thread (typically the main UI thread).
 		/// </summary>
 		public bool AllowCancel
 		{
 			get { return false; }
-			set { throw new NotImplementedException(); }
+			set { throw new NotSupportedException(); }
 		}
 
 		/// <summary />
@@ -426,7 +425,7 @@ namespace SIL.FieldWorks
 		/// dialog and start the background task in a separate thread.
 		/// </summary>
 		/// <param name="backgroundTask">The background task.</param>
-		/// <param name="parameters">The paramters that will be passed to the background task</param>
+		/// <param name="parameters">The parameters that will be passed to the background task</param>
 		/// <returns>
 		/// The return value from the background thread.
 		/// </returns>
@@ -441,7 +440,7 @@ namespace SIL.FieldWorks
 		/// <param name="fDisplayUi">set to <c>true</c> to display the progress dialog,
 		/// <c>false</c> to run without UI.</param>
 		/// <param name="backgroundTask">The background task.</param>
-		/// <param name="parameters">The paramters that will be passed to the background task</param>
+		/// <param name="parameters">The parameters that will be passed to the background task</param>
 		/// <returns>
 		/// The return value from the background thread.
 		/// </returns>

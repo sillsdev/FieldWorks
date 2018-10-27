@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,55 +8,38 @@ using SIL.PaToFdoInterfaces;
 
 namespace SIL.FieldWorks.PaObjects
 {
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	public class PaCmPossibility : IPaCmPossibility
 	{
-		/// ------------------------------------------------------------------------------------
-		public PaCmPossibility()
-		{
-		}
-
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		internal static PaCmPossibility Create(ICmPossibility poss)
 		{
 			return (poss == null ? null : new PaCmPossibility(poss));
 		}
 
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		private PaCmPossibility(ICmPossibility poss)
 		{
 			var svcloc = poss.Cache.ServiceLocator;
-			xAbbreviation = PaMultiString.Create(poss.Abbreviation, svcloc);
-			xName = PaMultiString.Create(poss.Name, svcloc);
+			Abbreviation = PaMultiString.Create(poss.Abbreviation, svcloc);
+			Name = PaMultiString.Create(poss.Name, svcloc);
 		}
 
 		#region IPaCmPossibility Members
-		/// ------------------------------------------------------------------------------------
-		public PaMultiString xAbbreviation { get; set; }
 
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IPaMultiString Abbreviation
-		{
-			get { return xAbbreviation; }
-		}
+		public IPaMultiString Abbreviation { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public PaMultiString xName { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IPaMultiString Name
-		{
-			get { return xName; }
-		}
-
+		public IPaMultiString Name { get; }
 		#endregion
 
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		public override string ToString()
 		{
-			return string.Format("{0} ({1})", Name, Abbreviation);
+			return $"{Name} ({Abbreviation})";
 		}
 	}
 }

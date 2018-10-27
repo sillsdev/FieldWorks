@@ -7,53 +7,21 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Reporting;
 using SIL.LCModel.Utils;
+using SIL.Reporting;
 
 namespace SIL.FieldWorks
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Dialog presenting multiple options for how to begin a FLEx session
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	internal partial class WelcomeToFieldWorksDlg : Form
 	{
 		private string m_helpTopic = "khtpWelcomeToFieldworks";
 		private readonly HelpProvider helpProvider;
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public enum ButtonPress
-		{
-			/// <summary></summary>
-			Open,
-			/// <summary></summary>
-			New,
-			/// <summary></summary>
-			Restore,
-			/// <summary></summary>
-			Exit,
-			/// <summary>
-			/// Receive a project through S/R LiftBridge or FLExBridge
-			/// </summary>
-			Receive,
-			/// <summary>
-			/// Import an SFM data set into a new FLEx project
-			/// </summary>
-			Import,
-			/// <summary>
-			/// Clicked the Sample/LastEdited project link
-			/// </summary>
-			Link,
-		}
-
 		#region Construction, Initialization and Deconstruction
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="WelcomeToFieldWorksDlg"/> class.
 		/// </summary>
@@ -62,7 +30,6 @@ namespace SIL.FieldWorks
 		/// project could not be opened.</param>
 		/// <param name="showReportingRow">True (usually only on the first run) when we want to show the first-time warning about
 		/// sending google analytics information</param>
-		/// ------------------------------------------------------------------------------------
 		public WelcomeToFieldWorksDlg(IHelpTopicProvider helpTopicProvider, StartupException exception, bool showReportingRow)
 		{
 			InitializeComponent();
@@ -89,8 +56,10 @@ namespace SIL.FieldWorks
 			}
 
 			m_helpTopicProvider = helpTopicProvider;
-			helpProvider = new HelpProvider();
-			helpProvider.HelpNamespace = FwDirectoryFinder.CodeDirectory + m_helpTopicProvider.GetHelpString("UserHelpFile");
+			helpProvider = new HelpProvider
+			{
+				HelpNamespace = FwDirectoryFinder.CodeDirectory + m_helpTopicProvider.GetHelpString("UserHelpFile")
+			};
 			helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(m_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			receiveButton.Enabled = FLExBridgeHelper.IsFlexBridgeInstalled();
@@ -104,8 +73,7 @@ namespace SIL.FieldWorks
 
 		public void SetFirstOrLastProjectText(bool firstTimeOpening)
 		{
-			m_sampleOrLastProjectLinkLabel.Text = firstTimeOpening ? Properties.Resources.ksOpenSampleProject :
-					Properties.Resources.ksOpenLastEditedProject;
+			m_sampleOrLastProjectLinkLabel.Text = firstTimeOpening ? Properties.Resources.ksOpenSampleProject : Properties.Resources.ksOpenLastEditedProject;
 		}
 
 		public string ProjectLinkUiName
@@ -127,58 +95,42 @@ namespace SIL.FieldWorks
 		/// resources; <c>false</c> to release only unmanaged resources.
 		/// </param>
 		/// ------------------------------------------------------------------------------------
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
-				return;
-
-			if( disposing )
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
+				return;
 			}
-			base.Dispose( disposing );
+			if (disposing)
+			{
+				components?.Dispose();
+			}
+			base.Dispose(disposing);
 		}
 
 		#endregion
 
-		#region Properties
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the button that was pressed
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public ButtonPress DlgResult
-		{
-			get
-			{
-				return m_dlgResult;
-			}
-		}
-		#endregion
+		public ButtonPress DlgResult { get; private set; } = ButtonPress.Exit;
 
 		#region Overriden methods
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Log the dialog result
 		/// </summary>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
 		protected override void OnClosing(CancelEventArgs e)
 		{
-			Logger.WriteEvent("Closing dialog: " + m_dlgResult);
-			base.OnClosing (e);
+			Logger.WriteEvent("Closing dialog: " + DlgResult);
+			base.OnClosing(e);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// When the dialog is loaded, make sure it gets focused.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected override void OnShown(EventArgs e)
 		{
 			base.OnShown(e);
@@ -187,7 +139,9 @@ namespace SIL.FieldWorks
 			Activate();
 
 			if (MiscUtils.IsUnix)
+			{
 				ReLayoutCorrectly();
+			}
 		}
 
 		/// <summary>
@@ -199,101 +153,76 @@ namespace SIL.FieldWorks
 		/// </summary>
 		private void ReLayoutCorrectly()
 		{
-			var shrunkWidth = this.mainVerticalLayout.Width;
-			this.mainVerticalLayout.AutoSize = false;
-			this.mainVerticalLayout.Width = shrunkWidth;
+			var shrunkWidth = mainVerticalLayout.Width;
+			mainVerticalLayout.AutoSize = false;
+			mainVerticalLayout.Width = shrunkWidth;
 
 			var heightOfVisibleControls = 0;
 			foreach (Control control in this.mainVerticalLayout.Controls)
 			{
 				if (control.Visible == false)
+				{
 					continue;
+				}
 				heightOfVisibleControls += control.Height;
 				heightOfVisibleControls += control.Margin.Top;
 				heightOfVisibleControls += control.Margin.Bottom;
 			}
-			this.mainVerticalLayout.Height = heightOfVisibleControls;
+			mainVerticalLayout.Height = heightOfVisibleControls;
 		}
 		#endregion
 
 		#region Button click handlers
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
+
+		/// <summary />
 		private void m_btnOpen_Click(object sender, EventArgs e)
 		{
-			m_dlgResult = ButtonPress.Open;
+			DlgResult = ButtonPress.Open;
 			Hide();
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		private void m_btnNew_Click(object sender, EventArgs e)
 		{
-			m_dlgResult = ButtonPress.New;
+			DlgResult = ButtonPress.New;
 			Hide();
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		private void m_btnRestore_Click(object sender, EventArgs e)
 		{
-			m_dlgResult = ButtonPress.Restore;
+			DlgResult = ButtonPress.Restore;
 			Hide();
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		private void m_btnExit_Click(object sender, EventArgs e)
 		{
-			m_dlgResult = ButtonPress.Exit;
+			DlgResult = ButtonPress.Exit;
 			Hide();
 		}
 
 		private void m_openProjectLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			m_dlgResult = ButtonPress.Link;
+			DlgResult = ButtonPress.Link;
 			Hide();
 		}
 
 		private void Receive_Click(object sender, EventArgs e)
 		{
-			m_dlgResult = ButtonPress.Receive;
+			DlgResult = ButtonPress.Receive;
 			Hide();
 		}
 
 		private void Import_Click(object sender, EventArgs e)
 		{
-			m_dlgResult = ButtonPress.Import;
+			DlgResult = ButtonPress.Import;
 			Hide();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Open the context-sensitive help for this dialog.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
 		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, m_helpTopic);
@@ -306,8 +235,10 @@ namespace SIL.FieldWorks
 			m_sampleOrLastProjectLinkLabel.Visible = false;
 			m_openSampleOrLastProjectLink.Visible = false;
 			m_lblProjectLoadError.Visible = true;
-			if(!string.IsNullOrEmpty(m_lblProjectLoadError.Text))
+			if (!string.IsNullOrEmpty(m_lblProjectLoadError.Text))
+			{
 				Icon = SystemIcons.Exclamation;
+			}
 		}
 
 		internal void ShowLinkHideErrorLabel()

@@ -1,9 +1,6 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: MoveProjectsDlg.cs
-// Responsibility: mcconnel
 
 using System;
 using System.Windows.Forms;
@@ -11,22 +8,16 @@ using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks
 {
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	public partial class MoveProjectsDlg : Form
 	{
 		IHelpTopicProvider m_helpTopicProvider;
 		private HelpProvider m_helpProvider;
 		private string m_helpTopic = "khtpMoveProjectDlgNewLocation";
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:MoveProjectsDlg"/> class.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public MoveProjectsDlg(IHelpTopicProvider helpTopicProvider)
 		{
 			InitializeComponent();
@@ -36,13 +27,13 @@ namespace SIL.FieldWorks
 
 		private void m_btnYes_Click(object sender, EventArgs e)
 		{
-			this.DialogResult = DialogResult.Yes;
+			DialogResult = DialogResult.Yes;
 			Close();
 		}
 
 		private void m_btnNo_Click(object sender, EventArgs e)
 		{
-			this.DialogResult = DialogResult.No;
+			DialogResult = DialogResult.No;
 			Close();
 		}
 
@@ -61,7 +52,9 @@ namespace SIL.FieldWorks
 				if (m_btnHelp.Enabled)
 				{
 					if (m_helpProvider == null)
+					{
 						m_helpProvider = new HelpProvider();
+					}
 					m_helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
 					m_helpProvider.SetHelpKeyword(this, keyword);
 					m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);

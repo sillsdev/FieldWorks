@@ -3,10 +3,10 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Windows.Forms;
 using System.Diagnostics;
-using SIL.LCModel.DomainServices.BackupRestore;
 using System.Drawing;
+using System.Windows.Forms;
+using SIL.LCModel.DomainServices.BackupRestore;
 
 namespace SIL.FieldWorks
 {
@@ -16,17 +16,13 @@ namespace SIL.FieldWorks
 	/// </summary>
 	public partial class MissingOldFieldWorksDlg : Form
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:MissingOldFieldWorksDlg"/> class.
-		/// </summary>
+		/// <summary />
 		private MissingOldFieldWorksDlg()
 		{
 			InitializeComponent();
 		}
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
+		/// <summary />
 		public MissingOldFieldWorksDlg(RestoreProjectSettings settings, bool fHaveFw60, bool fHaveSqlSvr) : this()
 		{
 			Debug.Assert(!fHaveFw60 || !fHaveSqlSvr);
@@ -75,7 +71,7 @@ namespace SIL.FieldWorks
 		/// <summary>
 		/// Shrink the dialog box if necessary.
 		/// </summary>
-		protected override void OnLoad(System.EventArgs e)
+		protected override void OnLoad(EventArgs e)
 		{
 			base.OnLoad(e);
 			int kDiff;

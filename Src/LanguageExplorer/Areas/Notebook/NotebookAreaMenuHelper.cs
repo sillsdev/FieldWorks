@@ -332,7 +332,7 @@ namespace LanguageExplorer.Areas.Notebook
 				dlg.SetDlgInfo(cache, owner);
 				if (dlg.ShowDialog(Form.ActiveForm) == DialogResult.OK)
 				{
-					//LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(_notebookEditTool.MachineName, dlg.NewRecord.Guid));
+					LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(_currentNotebookTool.MachineName, dlg.NewRecord.Guid));
 				}
 			}
 		}

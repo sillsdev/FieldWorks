@@ -1,12 +1,13 @@
-﻿// Copyright (c) 2016 SIL International
+// Copyright (c) 2016-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
 using NUnit.Framework;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel;
 using SIL.FieldWorks.PaObjects;
+using SIL.LCModel;
+using SIL.LCModel.Core.Text;
+using SIL.PaToFdoInterfaces;
 
 namespace SIL.FieldWorks
 {
@@ -17,7 +18,7 @@ namespace SIL.FieldWorks
 	{
 		private int _enWsId;
 
-		/// <summary/>
+		/// <summary />
 		[TestFixtureSetUp]
 		public override void FixtureSetup()
 		{
@@ -27,17 +28,17 @@ namespace SIL.FieldWorks
 			_enWsId = enWs.Handle;
 		}
 
-		/// <summary/>
+		/// <summary />
 		[Test]
 		public void PaLexEntry_EtymologyEmptyWorks()
 		{
 			var entry = CreateLexEntry();
 			// SUT
 			var paEntry = new PaLexEntry(entry);
-			Assert.Null(paEntry.xEtymology);
+			Assert.Null(paEntry.Etymology);
 		}
 
-		/// <summary/>
+		/// <summary />
 		[Test]
 		public void PaLexEntry_EtymologySingleItemWorks()
 		{
@@ -48,18 +49,17 @@ namespace SIL.FieldWorks
 			etymology.Form.set_String(_enWsId, firstForm);
 			// SUT
 			var paEntry = new PaLexEntry(entry);
-			Assert.NotNull(paEntry.xEtymology);
-			Assert.That(paEntry.xEtymology.Texts.Contains(firstForm.Text));
+			Assert.NotNull(paEntry.Etymology);
+			Assert.That(((PaMultiString)paEntry.Etymology).Texts.Contains(firstForm.Text));
 		}
 
 		private ILexEntry CreateLexEntry()
 		{
 			var factory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
-			var entry = factory.Create();
-			return entry;
+			return factory.Create();
 		}
 
-		/// <summary/>
+		/// <summary />
 		[Test]
 		public void PaLexEntry_EtymologyMultipleItemsWorks()
 		{
@@ -74,9 +74,9 @@ namespace SIL.FieldWorks
 			var secondForm = TsStringUtils.MakeString("SecondForm", _enWsId);
 			etymology.Form.set_String(_enWsId, secondForm);
 			// SUT
-			var paEntry = new PaLexEntry(entry);
-			Assert.NotNull(paEntry.xEtymology);
-			Assert.That(paEntry.xEtymology.Texts.Contains(firstForm.Text + ", " + secondForm.Text));
+			IPaLexEntry paEntry = new PaLexEntry(entry);
+			Assert.NotNull(paEntry.Etymology);
+			Assert.That(((PaMultiString)paEntry.Etymology).Texts.Contains(firstForm.Text + ", " + secondForm.Text));
 		}
 	}
 }

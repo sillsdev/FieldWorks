@@ -1,82 +1,55 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Serialization;
-using SIL.PaToFdoInterfaces;
 using SIL.LCModel;
+using SIL.PaToFdoInterfaces;
 
 namespace SIL.FieldWorks.PaObjects
 {
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	public class PaLexPronunciation : IPaLexPronunciation
 	{
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public PaLexPronunciation()
 		{
 		}
 
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		internal PaLexPronunciation(ILexPronunciation lxPro)
 		{
-			xForm = PaMultiString.Create(lxPro.Form, lxPro.Cache.ServiceLocator);
-			xLocation = PaCmPossibility.Create(lxPro.LocationRA);
+			Form = PaMultiString.Create(lxPro.Form, lxPro.Cache.ServiceLocator);
+			Location = PaCmPossibility.Create(lxPro.LocationRA);
 			CVPattern = lxPro.CVPattern.Text;
 			Tone = lxPro.Tone.Text;
-			xGuid = lxPro.Guid;
-
-			xMediaFiles = (from x in lxPro.MediaFilesOS
-						   where x != null && x.MediaFileRA != null
-						   select new PaMediaFile(x)).ToList();
+			Guid = lxPro.Guid;
+			MediaFiles = lxPro.MediaFilesOS.Where(x => x?.MediaFileRA != null).Select(x => new PaMediaFile(x));
 		}
 
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		public string CVPattern { get; set; }
 
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		public string Tone { get; set; }
 
-		/// ------------------------------------------------------------------------------------
-		public PaMultiString xForm { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IPaMultiString Form
-		{
-			get { return xForm; }
-		}
+		public IPaMultiString Form { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public List<PaMediaFile> xMediaFiles { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IEnumerable<IPaMediaFile> MediaFiles
-		{
-			get { return xMediaFiles.Select(x => (IPaMediaFile)x); }
-		}
+		public IEnumerable<IPaMediaFile> MediaFiles { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public PaCmPossibility xLocation { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public IPaCmPossibility Location
-		{
-			get { return xLocation; }
-		}
+		public IPaCmPossibility Location { get; }
 
-		/// ------------------------------------------------------------------------------------
-		public Guid xGuid { get; set; }
-
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		[XmlIgnore]
-		public Guid Guid
-		{
-			get { return xGuid; }
-		}
+		public Guid Guid { get; }
 	}
 }

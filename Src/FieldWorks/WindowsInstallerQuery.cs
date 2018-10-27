@@ -15,11 +15,9 @@ namespace SIL.FieldWorks
 	{
 		private const string InstallerProductCode = "{8E80F1ED-826A-46d5-A59A-D8A203F2F0D9}";
 		private const string InstalledProductNameProperty = "InstalledProductName";
-		private const string TeFeatureName = "TE";
 
 		private const int ErrorMoreData = 234;
 		private const int ErrorUnknownProduct = 1605;
-		private const int ErrorUnknownFeature = 1606;
 
 		[DllImport("msi.dll", CharSet = CharSet.Unicode, SetLastError = true)]
 		private static extern Int32 MsiGetProductInfo(string product, string property, StringBuilder valueBuf, ref Int32 cchValueBuf);

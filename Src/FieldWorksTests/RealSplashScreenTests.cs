@@ -8,7 +8,6 @@ using NUnit.Framework;
 
 namespace SIL.FieldWorks
 {
-#if RANDYTODO // New Linux failure: "Missing Dispose() call for RealSplashScreen."
 	/// <summary>
 	/// Test FwCoreDlgs RealSplashScreen
 	/// </summary>
@@ -45,5 +44,4 @@ namespace SIL.FieldWorks
 			}
 		}
 	}
-#endif
 }
