@@ -5,22 +5,22 @@
 using System;
 using System.Linq;
 using NUnit.Framework;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 
 namespace SIL.FieldWorks.Common.Framework
 {
 	/// <summary>
-	/// Partial test of the StylesXmlAccessor. More tests for this class are in TeStylesXmlAccessorTests.cs.
+	/// Partial test of the StylesXmlAccessor.
 	/// </summary>
 	[TestFixture]
 	public class StylesXmlAccessorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		/// <summary>
 		/// This is not a very comprehensive test. There are important behaviors it does not test, such as the renaming
-		/// when the imported style has different values for the context-releated properties. This test just covers
+		/// when the imported style has different values for the context-related properties. This test just covers
 		/// the new behaviors for one particular issue, in particular, that when replacing a style with a substitute guid,
 		/// the Rules are preserved and the Next and BasedOn are successfully adjusted.
 		/// </summary>
@@ -64,10 +64,8 @@ namespace SIL.FieldWorks.Common.Framework
 
 			var sut = new TestAccessorForFindOrCreateStyle(Cache);
 
-			sut.FindOrCreateStyle("testA", StyleType.kstParagraph, ContextValues.General, StructureValues.Undefined,
-				FunctionValues.Prose, factoryGuid1);
-			sut.FindOrCreateStyle("testB", StyleType.kstParagraph, ContextValues.General, StructureValues.Undefined,
-				FunctionValues.Prose, factoryGuid2);
+			sut.FindOrCreateStyle("testA", StyleType.kstParagraph, ContextValues.General, StructureValues.Undefined, FunctionValues.Prose, factoryGuid1);
+			sut.FindOrCreateStyle("testB", StyleType.kstParagraph, ContextValues.General, StructureValues.Undefined, FunctionValues.Prose, factoryGuid2);
 
 			Assert.That(style1.IsValidObject, Is.False, "should have deleted original style in course of changing guid");
 
@@ -86,8 +84,7 @@ namespace SIL.FieldWorks.Common.Framework
 			Assert.That(newStyle2.NextRA, Is.EqualTo(newStyle1), "should have transferred the next style ref to the replacement");
 			Assert.That(newStyle2.BasedOnRA, Is.EqualTo(newStyle1), "should have transferred the base style ref to the replacement");
 
-			Assert.That(style3.BasedOnRA, Is.EqualTo(newStyle2),
-				"should have transferred the base style ref to the replacement, even for style not processed");
+			Assert.That(style3.BasedOnRA, Is.EqualTo(newStyle2), "should have transferred the base style ref to the replacement, even for style not processed");
 		}
 
 		/// <summary>
@@ -134,16 +131,13 @@ namespace SIL.FieldWorks.Common.Framework
 
 			var sut = new TestAccessorForFindOrCreateStyle(Cache);
 
-			sut.FindOrCreateStyle("testA", StyleType.kstParagraph, ContextValues.Text, StructureValues.Heading,
-				FunctionValues.Prose, factoryGuid1);
-			sut.FindOrCreateStyle("testB", StyleType.kstParagraph, ContextValues.Text, StructureValues.Body,
-				FunctionValues.Prose, factoryGuid2);
+			sut.FindOrCreateStyle("testA", StyleType.kstParagraph, ContextValues.Text, StructureValues.Heading, FunctionValues.Prose, factoryGuid1);
+			sut.FindOrCreateStyle("testB", StyleType.kstParagraph, ContextValues.Text, StructureValues.Body, FunctionValues.Prose, factoryGuid2);
 
 			Assert.That(style1.IsValidObject, Is.False, "should have deleted original style in course of changing guid");
 
 			IStStyle newStyle1;
-			Assert.That(Cache.ServiceLocator.GetInstance<IStStyleRepository>().TryGetObject(factoryGuid1, out newStyle1), Is.True,
-				"should have created a new style with the specified guid");
+			Assert.That(Cache.ServiceLocator.GetInstance<IStStyleRepository>().TryGetObject(factoryGuid1, out newStyle1), Is.True, "should have created a new style with the specified guid");
 			Assert.That(newStyle1.Name, Is.EqualTo("testA"));
 			Assert.That(newStyle1.IsBuiltIn, Is.True);
 			Assert.That(newStyle1.IsModified, Is.True);
@@ -152,8 +146,7 @@ namespace SIL.FieldWorks.Common.Framework
 			Assert.That(newStyle1.UserLevel, Is.EqualTo(5));
 
 			IStStyle newStyle2;
-			Assert.That(Cache.ServiceLocator.GetInstance<IStStyleRepository>().TryGetObject(factoryGuid2, out newStyle2),Is.True,
-				"should have created second new style with the specified guid");
+			Assert.That(Cache.ServiceLocator.GetInstance<IStStyleRepository>().TryGetObject(factoryGuid2, out newStyle2), Is.True, "should have created second new style with the specified guid");
 			Assert.That(newStyle2.Name, Is.EqualTo("testB"));
 			Assert.That(newStyle2.IsBuiltIn, Is.True);
 			Assert.That(newStyle2.IsModified, Is.True);
@@ -188,8 +181,7 @@ namespace SIL.FieldWorks.Common.Framework
 
 			var sut = new TestAccessorForFindOrCreateStyle(Cache);
 
-			sut.FindOrCreateStyle(styleName, StyleType.kstCharacter, ContextValues.General, StructureValues.Undefined,
-				FunctionValues.Prose, factoryGuid);
+			sut.FindOrCreateStyle(styleName, StyleType.kstCharacter, ContextValues.General, StructureValues.Undefined, FunctionValues.Prose, factoryGuid);
 
 			var userStyle1 = Cache.ServiceLocator.GetInstance<IStStyleRepository>().GetObject(userGuid); // will throw if not found
 			Assert.That(userStyle1, Is.SameAs(userStyle));
@@ -215,10 +207,10 @@ namespace SIL.FieldWorks.Common.Framework
 		[Test]
 		public void FindOrCreateStyles_SucceedsAfterStylesMovedFromScripture()
 		{
-			IScripture scr = Cache.ServiceLocator.GetInstance<IScriptureFactory>().Create();
+			var scr = Cache.ServiceLocator.GetInstance<IScriptureFactory>().Create();
 			var scriptureStyle = Cache.ServiceLocator.GetInstance<IStStyleFactory>().Create();
 			scr.StylesOC.Add(scriptureStyle);
-			string styleName = "Scripture Style";
+			var styleName = "Scripture Style";
 			scriptureStyle.Name = styleName;
 
 			scriptureStyle.Type = StyleType.kstParagraph;
@@ -232,13 +224,12 @@ namespace SIL.FieldWorks.Common.Framework
 			scriptureStyle.Rules = props1;
 			scriptureStyle.UserLevel = 5;
 
-			Guid scrStyleGuid = scriptureStyle.Guid;
+			var scrStyleGuid = scriptureStyle.Guid;
 			var sut = new TestAccessorForFindOrCreateStyle(Cache);
 			Assert.That(scr.StylesOC.Count, Is.EqualTo(0), "Style should have been removed from Scripture.");
 			Assert.That(Cache.LangProject.StylesOC.Count, Is.EqualTo(1), "Style should have been added to language project.");
 			Assert.That(Cache.LangProject.StylesOC.First().Name, Is.EqualTo(styleName), "Style name should not have changed.");
-			var movedStyle = sut.FindOrCreateStyle(styleName, StyleType.kstParagraph, ContextValues.Text,
-				StructureValues.Body, FunctionValues.Prose, scrStyleGuid);
+			var movedStyle = sut.FindOrCreateStyle(styleName, StyleType.kstParagraph, ContextValues.Text, StructureValues.Body, FunctionValues.Prose, scrStyleGuid);
 
 			Assert.That(movedStyle, Is.EqualTo(scriptureStyle));
 			Assert.That(movedStyle.Name, Is.EqualTo(styleName), "Style name should not have changed.");
@@ -253,7 +244,7 @@ namespace SIL.FieldWorks.Common.Framework
 	/// The FindOrCreateStyle method is normally called (indirectly) by CreateStyles(), which initializes m_databaseStyles
 	/// to contain all the pre-existing styles. For this test we just do this in the constructor of our private subclass.
 	/// </summary>
-	class TestAccessorForFindOrCreateStyle : StylesXmlAccessor
+	internal class TestAccessorForFindOrCreateStyle : StylesXmlAccessor
 	{
 		public TestAccessorForFindOrCreateStyle(LcmCache cache) : base(cache)
 		{
@@ -264,31 +255,30 @@ namespace SIL.FieldWorks.Common.Framework
 			}
 			// see class comment. This would not be normal behavior for a StylesXmlAccessor subclass constructor.
 			foreach (var sty in m_databaseStyles)
+			{
 				m_htOrigStyles[sty.Name] = sty;
+			}
 		}
 		protected override string ResourceFilePathFromFwInstall
 		{
-			get { throw new NotImplementedException(); }
+			get { throw new NotSupportedException(); }
 		}
 
 		protected override string ResourceName
 		{
-			get { throw new NotImplementedException(); }
+			get { throw new NotSupportedException(); }
 		}
 
-		protected override LcmCache Cache
-		{
-			get { return m_cache; }
-		}
+		protected override LcmCache Cache => m_cache;
 
 		protected override ILcmOwningCollection<ICmResource> ResourceList
 		{
-			get { throw new NotImplementedException(); }
+			get { throw new NotSupportedException(); }
 		}
 
 		protected override ILcmOwningCollection<IStStyle> StyleCollection
 		{
-			get { throw new NotImplementedException(); }
+			get { throw new NotSupportedException(); }
 		}
 	}
 }

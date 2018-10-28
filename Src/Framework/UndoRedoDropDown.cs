@@ -9,15 +9,13 @@ using SIL.FieldWorks.Common.Controls;
 
 namespace SIL.FieldWorks.Common.Framework
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Drop down list box that shows the undoable/redoable actions
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public class UndoRedoDropDown : UserControl
 	{
 		#region Data members
-		private System.Windows.Forms.Label m_NumberOfUndoes;
+		private Label m_NumberOfUndoes;
 		private readonly string m_NumberOfActionsSingle;
 		private readonly string m_NumberOfActionsPlural;
 		private ScrollListBox m_Actions;
@@ -26,45 +24,38 @@ namespace SIL.FieldWorks.Common.Framework
 		#endregion
 
 		#region Delegates and Events
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Represents the method that will handle the event that occures when the user clicks
 		/// an item in the list box.
 		/// </summary>
 		/// <param name="sender">The source of the event.</param>
 		/// <param name="iClicked">The zero-based index of the clicked item.</param>
-		/// ------------------------------------------------------------------------------------
 		public delegate void ClickEventHandler(object sender, int iClicked);
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Occurs when the user clicks an item in the list box.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public event ClickEventHandler ItemClick;
 		#endregion
 
 		#region Constructors
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="UndoRedoDropDown"/> class.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+
+		/// <summary />
 		public UndoRedoDropDown()
 		{
 			InitializeComponent();
 
 			m_NumberOfUndoes.BackColor = Color.FromArgb(200, m_NumberOfUndoes.BackColor);
-			this.AccessibilityObject.Name = "UndoRedoDropDown";
+			AccessibilityObject.Name = "UndoRedoDropDown";
 
 			// Give the label at the bottom of the list slightly different background from
 			// the background color of the rest of the list.
-			Color clr = m_NumberOfUndoes.BackColor;
+			var clr = m_NumberOfUndoes.BackColor;
 			clr = Color.FromArgb(Math.Abs(clr.R - 15), Math.Abs(clr.G - 15), Math.Abs(clr.B - 15));
 			m_NumberOfUndoes.BackColor = clr;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="UndoRedoDropDown"/> class.
 		/// </summary>
@@ -75,9 +66,8 @@ namespace SIL.FieldWorks.Common.Framework
 		/// actions when there are more than one, e.g. "Undo {0} actions" (will typically have
 		/// a placeholder for the number)</param>
 		/// <param name="cancel">The string that's shown to cancel the undo/redo</param>
-		/// ------------------------------------------------------------------------------------
 		public UndoRedoDropDown(string numberOfActionsSingle, string numberOfActionsPlural,
-			string cancel): this()
+			string cancel) : this()
 		{
 			m_NumberOfActionsPlural = numberOfActionsPlural;
 			m_NumberOfActionsSingle = numberOfActionsSingle;
@@ -85,7 +75,7 @@ namespace SIL.FieldWorks.Common.Framework
 		}
 		#endregion // Constructors
 
-		/// <summary/>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
@@ -176,261 +166,253 @@ namespace SIL.FieldWorks.Common.Framework
 		#endregion
 
 		#region Public methods and properties
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Adjusts the height of the list. This should be called after all the items are
 		/// added.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public void AdjustHeight()
 		{
 			// Adjust the height of the drop down. We want to show max. 10 items
-			int nMaxItems = Math.Min(m_Actions.Items.Count, 10);
-			Height = nMaxItems * m_Actions.ItemHeight + m_NumberOfUndoes.Height
-				+ 2 * SystemInformation.BorderSize.Height;
+			var nMaxItems = Math.Min(m_Actions.Items.Count, 10);
+			Height = nMaxItems * m_Actions.ItemHeight + m_NumberOfUndoes.Height + 2 * SystemInformation.BorderSize.Height;
 
 			// Always select the first undo/redo action
 			if (m_Actions.Items.Count > 0)
+			{
 				SelectListItems(0, 0);
+			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the collection of actions in the list box
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public ListBox.ObjectCollection Actions
-		{
-			get
-			{
-				return m_Actions.Items;
-			}
-		}
+		public ListBox.ObjectCollection Actions => m_Actions.Items;
 		#endregion // Public methods and properties
 
 		#region Event handler
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Select all actions to the cursor
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
-		private void OnMouseMoveOrDown(object sender, System.Windows.Forms.MouseEventArgs e)
+		private void OnMouseMoveOrDown(object sender, MouseEventArgs e)
 		{
 			if (m_fIgnoreNextMouseMoved)
 			{
 				m_fIgnoreNextMouseMoved = false;
 				return;
 			}
-
-			int iLastSelected = m_Actions.IndexFromPoint(e.X, e.Y);
+			var iLastSelected = m_Actions.IndexFromPoint(e.X, e.Y);
 			if (iLastSelected > -1)
 			{
 				SelectListItems(iLastSelected, m_Actions.TopIndex);
 			}
 			else if (e.Button == MouseButtons.Left)
-			{	// User moved mouse outside the list box while holding down left mouse button
+			{
+				// User moved mouse outside the list box while holding down left mouse button
 				if (m_Actions.DisplayRectangle.Contains(new Point(e.X, m_Actions.Top)))
-				{	// above or below list box - select everything that's showing
-					if (e.Y < m_Actions.Top)
-					{	// scroll up
-						m_Actions.VerticalScroll(ScrollEventType.SmallDecrement);
-					}
-					else
-					{	// scroll down
-						m_Actions.VerticalScroll(ScrollEventType.SmallIncrement);
-					}
+				{
+					// above or below list box - select everything that's showing
+					m_Actions.VerticalScroll(e.Y < m_Actions.Top ? ScrollEventType.SmallDecrement : ScrollEventType.SmallIncrement);
 					Refresh();
 				}
 				else
-				{	// left or right of list box - cancel
+				{
+					// left or right of list box - cancel
 					SelectListItems(-1, m_Actions.TopIndex); // unselect all
 				}
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handle scroll actions. Update the selection too.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
-		private void OnScroll(object sender, System.Windows.Forms.ScrollEventArgs e)
+		private void OnScroll(object sender, ScrollEventArgs e)
 		{
 			if (e.Type == ScrollEventType.EndScroll || e.Type == ScrollEventType.ThumbPosition)
-				return;
-
-			int iLastSelected;
-			if (e.NewValue == m_Actions.TopIndex)
-			{	// nothing changed
+			{
 				return;
 			}
-			else if (e.NewValue < m_Actions.TopIndex)
-			{	// scroll up
+			int iLastSelected;
+			if (e.NewValue == m_Actions.TopIndex)
+			{
+				// nothing changed
+				return;
+			}
+			if (e.NewValue < m_Actions.TopIndex)
+			{
+				// scroll up
 				iLastSelected = e.NewValue;
 			}
 			else
-			{	// scroll down
+			{
+				// scroll down
 				iLastSelected = e.NewValue + m_Actions.ItemsPerPage - 1;
 				if (iLastSelected >= m_Actions.Items.Count)
+				{
 					iLastSelected = m_Actions.Items.Count - 1;
+				}
 			}
 
 			SelectListItems(iLastSelected, e.NewValue);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// User clicked an item
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
-		private void OnMouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
+		private void OnMouseUp(object sender, MouseEventArgs e)
 		{
 			if (e.Button != MouseButtons.Left)
+			{
 				return;
-
-			int iLastSelected = m_Actions.IndexFromPoint(e.X, e.Y);
-
+			}
+			var iLastSelected = m_Actions.IndexFromPoint(e.X, e.Y);
 			Hide();
-
 			if (iLastSelected > -1)
 			{
-				if (ItemClick != null)
-					ItemClick(this, iLastSelected);
+				ItemClick?.Invoke(this, iLastSelected);
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handle cursor up and down keys
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
-		private void OnKeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+		private void OnKeyDown(object sender, KeyEventArgs e)
 		{
 			switch (e.KeyCode)
 			{
 				case Keys.Down:
-				{
-					if (m_Actions.SelectedIndices.Count >= m_Actions.Items.Count)
-						return;
-
-					int iLastSelected = m_Actions.SelectedIndices.Count;
-					if (iLastSelected > m_Actions.TopIndex + m_Actions.ItemsPerPage - 1)
 					{
-						m_Actions.VerticalScroll(ScrollEventType.SmallIncrement);
+						if (m_Actions.SelectedIndices.Count >= m_Actions.Items.Count)
+						{
+							return;
+						}
+						var iLastSelected = m_Actions.SelectedIndices.Count;
+						if (iLastSelected > m_Actions.TopIndex + m_Actions.ItemsPerPage - 1)
+						{
+							m_Actions.VerticalScroll(ScrollEventType.SmallIncrement);
 
+						}
+						else
+						{
+							SelectListItems(iLastSelected, m_Actions.TopIndex);
+						}
+						// for some reason changing the selection here causes a MouseMove message
+						// to happen which resets the selection. Therefore we set a flag that the
+						// next MouseMove event will be ignored.
+						if (m_Actions.DisplayRectangle.Contains(m_Actions.PointToClient(MousePosition)))
+						{
+							m_fIgnoreNextMouseMoved = true;
+						}
+						break;
 					}
-					else
-						SelectListItems(iLastSelected, m_Actions.TopIndex);
-
-					// for some reason changing the selection here causes a MouseMove message
-					// to happen which resets the selection. Therefore we set a flag that the
-					// next MouseMove event will be ignored.
-					if (m_Actions.DisplayRectangle.Contains(
-						m_Actions.PointToClient(MousePosition)))
-					{
-						m_fIgnoreNextMouseMoved = true;
-					}
-					break;
-				}
 				case Keys.Up:
-				{
-					if (m_Actions.SelectedIndices.Count <= 1) // always keep first one selected
-						return;
-
-					int topIndex = m_Actions.TopIndex;
-					int iLastSelected = m_Actions.SelectedIndices.Count - 2;
-					if (iLastSelected < topIndex)
-						m_Actions.VerticalScroll(ScrollEventType.SmallDecrement);
-					else
-						SelectListItems(iLastSelected, topIndex);
-
-					// for some reason changing the selection here causes a MouseMove message
-					// to happen which resets the selection. Therefore we set a flag that the
-					// next MouseMove event will be ignored.
-					if (m_Actions.DisplayRectangle.Contains(
-						m_Actions.PointToClient(MousePosition)))
 					{
-						m_fIgnoreNextMouseMoved = true;
+						if (m_Actions.SelectedIndices.Count <= 1) // always keep first one selected
+						{
+							return;
+						}
+						var topIndex = m_Actions.TopIndex;
+						var iLastSelected = m_Actions.SelectedIndices.Count - 2;
+						if (iLastSelected < topIndex)
+						{
+							m_Actions.VerticalScroll(ScrollEventType.SmallDecrement);
+						}
+						else
+						{
+							SelectListItems(iLastSelected, topIndex);
+						}
+						// for some reason changing the selection here causes a MouseMove message
+						// to happen which resets the selection. Therefore we set a flag that the
+						// next MouseMove event will be ignored.
+						if (m_Actions.DisplayRectangle.Contains(m_Actions.PointToClient(MousePosition)))
+						{
+							m_fIgnoreNextMouseMoved = true;
+						}
+						break;
 					}
-					break;
-				}
 				case Keys.PageDown:
-				{
-					// want to select to end of page
-					int iLastSelected = m_Actions.SelectedIndices.Count + m_Actions.ItemsPerPage - 2;
-					if (iLastSelected > m_Actions.TopIndex + m_Actions.ItemsPerPage - 1)
-						m_Actions.VerticalScroll(ScrollEventType.LargeIncrement);
-					else
-						SelectListItems(iLastSelected, m_Actions.TopIndex);
-					break;
-				}
+					{
+						// want to select to end of page
+						var iLastSelected = m_Actions.SelectedIndices.Count + m_Actions.ItemsPerPage - 2;
+						if (iLastSelected > m_Actions.TopIndex + m_Actions.ItemsPerPage - 1)
+						{
+							m_Actions.VerticalScroll(ScrollEventType.LargeIncrement);
+						}
+						else
+						{
+							SelectListItems(iLastSelected, m_Actions.TopIndex);
+						}
+						break;
+					}
 				case Keys.PageUp:
-				{
-					if (m_Actions.SelectedIndices.Count <= 1) // always keep first one selected
-						return;
-
-					int topIndex = m_Actions.TopIndex;
-					int iLastSelected = m_Actions.SelectedIndices.Count - m_Actions.ItemsPerPage;
-					if (iLastSelected < topIndex)
-						m_Actions.VerticalScroll(ScrollEventType.LargeDecrement);
-					else
-						SelectListItems(iLastSelected, topIndex);
-					break;
-				}
+					{
+						if (m_Actions.SelectedIndices.Count <= 1) // always keep first one selected
+						{
+							return;
+						}
+						var topIndex = m_Actions.TopIndex;
+						var iLastSelected = m_Actions.SelectedIndices.Count - m_Actions.ItemsPerPage;
+						if (iLastSelected < topIndex)
+						{
+							m_Actions.VerticalScroll(ScrollEventType.LargeDecrement);
+						}
+						else
+						{
+							SelectListItems(iLastSelected, topIndex);
+						}
+						break;
+					}
 				case Keys.Escape:
 					Hide();
-					break;
-				default:
 					break;
 			}
 		}
 		#endregion // Event Handler
 
 		#region Private methods
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Select the list items from zero through iLastSelected, and update the list text.
 		/// </summary>
 		/// <param name="iLastSelected"></param>
 		/// <param name="topIndex">Current or new top index</param>
-		/// ------------------------------------------------------------------------------------
 		private void SelectListItems(int iLastSelected, int topIndex)
 		{
 			if (m_Actions.SelectedIndices.Count == iLastSelected + 1)
+			{
 				return; // nothing changed - still on the same item
-
+			}
 			m_Actions.BeginUpdate();
 
 			// select appropriate items
 			if (iLastSelected >= m_Actions.SelectedIndices.Count)
 			{
-				for (int i = m_Actions.SelectedIndices.Count; i <= iLastSelected; i++)
+				for (var i = m_Actions.SelectedIndices.Count; i <= iLastSelected; i++)
+				{
 					m_Actions.SetSelected(i, true);
+				}
 			}
 			else
 			{
-				for (int i = m_Actions.SelectedIndices.Count - 1; i > iLastSelected; i--)
+				for (var i = m_Actions.SelectedIndices.Count - 1; i > iLastSelected; i--)
+				{
 					m_Actions.SetSelected(i, false);
+				}
 			}
 
 			// update status text
 			if (iLastSelected < 0)
+			{
 				m_NumberOfUndoes.Text = m_Cancel;
+			}
 			else if (iLastSelected == 0)
+			{
 				m_NumberOfUndoes.Text = m_NumberOfActionsSingle;
+			}
 			else
 			{
-				m_NumberOfUndoes.Text =
-					string.Format(m_NumberOfActionsPlural, iLastSelected + 1);
+				m_NumberOfUndoes.Text = string.Format(m_NumberOfActionsPlural, iLastSelected + 1);
 			}
-
 			m_Actions.EndUpdate();
 			m_Actions.TopIndex = topIndex;
 		}

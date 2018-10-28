@@ -259,6 +259,8 @@
     <Compile Include="FwRegistrySettings.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="OverwriteOptions.cs" />
+    <Compile Include="ReservedStyleInfo.cs" />
     <Compile Include="SettingsXmlAccessorBase.cs" />
     <Compile Include="StatusBarProgressHandler.cs" />
     <Compile Include="StylesXmlAccessor.cs" />
@@ -294,9 +296,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="LT.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Impls\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

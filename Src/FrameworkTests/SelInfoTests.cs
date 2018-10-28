@@ -1,37 +1,37 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 
-namespace SIL.FieldWorks.Common.Framework.SelInfo
+namespace SIL.FieldWorks.Common.Framework
 {
-	/// ------------------------------------------------------------------------------------
 	/// <summary>
 	/// Tests the compare methods of SelectionHelper.SelInfo
 	/// </summary>
-	/// ------------------------------------------------------------------------------------
 	[TestFixture]
 	public class SelInfo_Compare
 	{
 		private SelectionHelper.SelInfo s1;
 		private SelectionHelper.SelInfo s2;
 
-		/// --------------------------------------------------------------------------------
 		/// <summary>
-		/// Initalize the selection helper objects
+		/// Initialize the selection helper objects
 		/// </summary>
-		/// --------------------------------------------------------------------------------
 		[SetUp]
 		public void Setup()
 		{
-			s1 = new SelectionHelper.SelInfo();
-			s1.rgvsli = new SelLevInfo[2];
-			s2 = new SelectionHelper.SelInfo();
-			s2.rgvsli = new SelLevInfo[2];
+			s1 = new SelectionHelper.SelInfo
+			{
+				rgvsli = new SelLevInfo[2]
+			};
+			s2 = new SelectionHelper.SelInfo
+			{
+				rgvsli = new SelLevInfo[2]
+			};
 		}
 
 		/// <summary />
@@ -42,11 +42,9 @@ namespace SIL.FieldWorks.Common.Framework.SelInfo
 			s2 = null;
 		}
 
-		/// --------------------------------------------------------------------------------
 		/// <summary>
 		/// Having different number of levels should throw an exception.
 		/// </summary>
-		/// --------------------------------------------------------------------------------
 		[Test]
 		[ExpectedException(typeof(ArgumentException))]
 		public void NumberOfLevels()
@@ -57,12 +55,10 @@ namespace SIL.FieldWorks.Common.Framework.SelInfo
 			Assert.IsFalse((s1 < s2)); // exception
 		}
 
-		/// --------------------------------------------------------------------------------
 		/// <summary>
 		/// Test different parent (top level) objects. If the tags are different we expect
 		/// an exception.
 		/// </summary>
-		/// --------------------------------------------------------------------------------
 		[Test]
 		[ExpectedException(typeof(ArgumentException))]
 		public void TopLevelParentObjects()
@@ -97,15 +93,13 @@ namespace SIL.FieldWorks.Common.Framework.SelInfo
 			Assert.IsFalse((s2 > s1));
 
 			s2.rgvsli[1].tag = 2;
-			Assert.IsFalse((s1 < s2));	// exception
+			Assert.IsFalse((s1 < s2));  // exception
 		}
 
-		/// --------------------------------------------------------------------------------
 		/// <summary>
 		/// Test different immediate parent objects. If the tags are different we expect
 		/// an exception.
 		/// </summary>
-		/// --------------------------------------------------------------------------------
 		[Test]
 		[ExpectedException(typeof(ArgumentException))]
 		public void ImmediateParentObjects()
@@ -145,15 +139,12 @@ namespace SIL.FieldWorks.Common.Framework.SelInfo
 			Assert.IsFalse((s2 > s1));
 
 			s2.rgvsli[0].tag = 2;
-			Assert.IsFalse((s1 < s2));	// exception
+			Assert.IsFalse((s1 < s2));  // exception
 		}
 
-
-		/// --------------------------------------------------------------------------------
 		/// <summary>
 		/// Test differing objects.
 		/// </summary>
-		/// --------------------------------------------------------------------------------
 		[Test]
 		public void Leafs()
 		{

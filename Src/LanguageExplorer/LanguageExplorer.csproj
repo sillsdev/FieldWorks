@@ -103,10 +103,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\ExCSS.dll</HintPath>
     </Reference>
-    <Reference Include="FixFwDataDll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\FixFwDataDll.dll</HintPath>
-    </Reference>
     <Reference Include="NAudio, Version=1.7.3.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NAudio.1.7.3\lib\net35\NAudio.dll</HintPath>

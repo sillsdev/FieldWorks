@@ -1,5 +1,9 @@
-using SIL.LCModel.Core.KernelInterfaces;
+// Copyright (c) 2014-2018 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.Common.Framework
@@ -22,7 +26,6 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <summary>
 		/// Copy constructor, builds an ExportStyleInfo from a BaseStyleInfo
 		/// </summary>
-		/// <param name="style"></param>
 		public ExportStyleInfo(BaseStyleInfo style) : base(style, "export" + style.Name)
 		{
 		}
@@ -30,104 +33,48 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <summary>
 		/// Returns the rtl value, or TriStateBool.triNotSet
 		/// </summary>
-		public new TriStateBool DirectionIsRightToLeft
-		{
-			get
-			{
-				if(m_rtl.ValueIsSet)
-					return m_rtl.Value;
-				else
-					return TriStateBool.triNotSet;
-			}
-		}
+		public new TriStateBool DirectionIsRightToLeft => m_rtl.ValueIsSet ? m_rtl.Value : TriStateBool.triNotSet;
 
-		/// <summary/>
-		public bool HasKeepTogether
-		{
-			get { return m_keepTogether.ValueIsSet; }
-		}
+		/// <summary />
+		public bool HasKeepTogether => m_keepTogether.ValueIsSet;
 
-		/// <summary/>
-		public bool HasKeepWithNext
-		{
-			get { return m_keepWithNext.ValueIsSet; }
-		}
+		/// <summary />
+		public bool HasKeepWithNext => m_keepWithNext.ValueIsSet;
 
-		/// <summary/>
-		public bool HasWidowOrphanControl
-		{
-			get { return m_widowOrphanControl.ValueIsSet; }
-		}
+		/// <summary />
+		public bool HasWidowOrphanControl => m_widowOrphanControl.ValueIsSet;
 
-		/// <summary/>
-		public bool HasAlignment
-		{
-			get { return m_alignment.ValueIsSet; }
-		}
+		/// <summary />
+		public bool HasAlignment => m_alignment.ValueIsSet;
 
-		/// <summary/>
-		public bool HasLineSpacing
-		{
-			get { return m_lineSpacing.ValueIsSet; }
-		}
+		/// <summary />
+		public bool HasLineSpacing => m_lineSpacing.ValueIsSet;
 
-		/// <summary/>
-		public bool HasSpaceBefore
-		{
-			get { return m_spaceBefore.ValueIsSet; }
-		}
+		/// <summary />
+		public bool HasSpaceBefore => m_spaceBefore.ValueIsSet;
 
-		/// <summary/>
-		public bool HasSpaceAfter
-		{
-			get { return m_spaceAfter.ValueIsSet; }
-		}
+		/// <summary />
+		public bool HasSpaceAfter => m_spaceAfter.ValueIsSet;
 
-		/// <summary/>
-		public bool HasFirstLineIndent
-		{
-			get { return m_firstLineIndent.ValueIsSet; }
-		}
+		/// <summary />
+		public bool HasFirstLineIndent => m_firstLineIndent.ValueIsSet;
 
-		/// <summary/>
-		public bool HasLeadingIndent
-		{
-			get { return m_leadingIndent.ValueIsSet; }
-		}
+		/// <summary />
+		public bool HasLeadingIndent => m_leadingIndent.ValueIsSet;
 
-		/// <summary/>
-		public bool HasTrailingIndent
-		{
-			get { return m_trailingIndent.ValueIsSet; }
-		}
+		/// <summary />
+		public bool HasTrailingIndent => m_trailingIndent.ValueIsSet;
 
-		/// <summary/>
-		public bool HasBorder
-		{
-			get { return m_border.ValueIsSet; }
-		}
+		/// <summary />
+		public bool HasBorder => m_border.ValueIsSet;
 
-		/// <summary/>
-		public bool HasBorderColor
-		{
-			get { return m_borderColor.ValueIsSet; }
-		}
+		/// <summary />
+		public bool HasBorderColor => m_borderColor.ValueIsSet;
 
-		/// <summary/>
-		public string InheritsFrom
-		{
-			get { return m_basedOnStyleName; }
-		}
+		/// <summary />
+		public string InheritsFrom => m_basedOnStyleName;
 
-		/// <summary/>
-		public VwBulNum NumberScheme
-		{
-			get
-			{
-				return m_bulletInfo != null && m_bulletInfo.ValueIsSet
-							 ? m_bulletInfo.Value.m_numberScheme
-							 : VwBulNum.kvbnNone;
-			}
-		}
+		/// <summary />
+		public VwBulNum NumberScheme => m_bulletInfo != null && m_bulletInfo.ValueIsSet ? m_bulletInfo.Value.m_numberScheme : VwBulNum.kvbnNone;
 	}
 }
