@@ -1,31 +1,27 @@
-// Copyright (c) 2008-2017 SIL International
+// Copyright (c) 2008-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Text;
-using NUnit.Framework;
 using System.Windows.Forms;
+using NUnit.Framework;
 
 namespace SIL.FieldWorks.Common.Controls
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// Tests the CaseSensistiveListBox class to make sure it treats the items as case sensitive
+	/// Tests the CaseSensitiveListBox class to make sure it treats the items as case sensitive
 	/// when looking for string matches.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
 	public class CaseSensitiveListBoxTests
 	{
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the method FindString
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void FindString()
 		{
-			using (CaseSensitiveListBox lb = new CaseSensitiveListBox())
+			using (var lb = new CaseSensitiveListBox())
 			{
 				lb.Items.Add("B\u00e1".Normalize(NormalizationForm.FormC));
 				lb.Items.Add("blah");
@@ -45,15 +41,13 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the method FindStringExact
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void FindStringExact()
 		{
-			using (CaseSensitiveListBox lb = new CaseSensitiveListBox())
+			using (var lb = new CaseSensitiveListBox())
 			{
 				lb.Items.Add("B\u00e1".Normalize(NormalizationForm.FormC));
 				lb.Items.Add("blah");

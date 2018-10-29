@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,61 +9,44 @@ using SIL.Windows.Forms;
 
 namespace SIL.FieldWorks.Common.Controls
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// Implements a label control whose background appearance mimics that of a list view
-	/// header.
+	/// Implements a label control whose background appearance mimics that of a list view header.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public class HeaderLabel : FwTextPanel
 	{
-		private bool m_showWindowBackgroudOnTopAndRightEdge = true;
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="HeaderLabel"/> class.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public HeaderLabel()
 		{
 			// By default, don't hide mnemonic prefix.
 			TextFormatFlags &= ~TextFormatFlags.HidePrefix;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets a value indicating whether or not a one pixel line on the top and
-		/// right edge of the panel is painted the window background color. This is they
+		/// right edge of the panel is painted the window background color. This is the
 		/// way a list view header is drawn... believe it or not.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public bool ShowWindowBackgroudOnTopAndRightEdge
-		{
-			get { return m_showWindowBackgroudOnTopAndRightEdge; }
-			set { m_showWindowBackgroudOnTopAndRightEdge = value; }
-		}
+		public bool ShowWindowBackgroundOnTopAndRightEdge { get; set; } = true;
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Draw a background that looks like a list view header.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		protected override void OnPaintBackground(PaintEventArgs e)
 		{
-			Rectangle rc = ClientRectangle;
+			var rc = ClientRectangle;
 			e.Graphics.FillRectangle(SystemBrushes.Window, rc);
-			VisualStyleElement element = VisualStyleElement.Header.Item.Normal;
+			var element = VisualStyleElement.Header.Item.Normal;
 
-			// Draw the background, preferrably using visual styles.
+			// Draw the background, preferably using visual styles.
 			if (!PaintingHelper.CanPaintVisualStyle(element))
+			{
 				ControlPaint.DrawButton(e.Graphics, rc, ButtonState.Normal);
+			}
 			else
 			{
 				// Add 2 so the separator that's drawn at the right
 				// side of normal list resultView header isn't visible.
 				rc.Width += 2;
 
-				if (m_showWindowBackgroudOnTopAndRightEdge)
+				if (ShowWindowBackgroundOnTopAndRightEdge)
 				{
 					// Shrink the rectangle so the top and left
 					// edge window background don't get clobbered.
@@ -72,15 +55,14 @@ namespace SIL.FieldWorks.Common.Controls
 					rc.X++;
 				}
 
-				VisualStyleRenderer renderer = new VisualStyleRenderer(element);
+				var renderer = new VisualStyleRenderer(element);
 				renderer.DrawBackground(e.Graphics, rc);
 
-				if (m_showWindowBackgroudOnTopAndRightEdge)
+				if (ShowWindowBackgroundOnTopAndRightEdge)
 				{
 					// Draw a window background color line down the right edge.
 					rc = ClientRectangle;
-					e.Graphics.DrawLine(SystemPens.Window,
-						new Point(rc.Width - 1, 0), new Point(rc.Width - 1, rc.Bottom));
+					e.Graphics.DrawLine(SystemPens.Window, new Point(rc.Width - 1, 0), new Point(rc.Width - 1, rc.Bottom));
 				}
 			}
 		}

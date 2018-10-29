@@ -14,7 +14,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 	/// This is a combo box whose whole purpose in life is to represent a property which can be
 	/// either explicit or inherited.
 	/// </summary>
-	public class FwInheritablePropComboBox : FwOverrideComboBox, IInheritableFwControl
+	public class FwInheritablePropComboBox : FwOverrideComboBox
 	{
 		#region Data members
 		private bool m_ShowingInheritedProperties = true;

@@ -637,7 +637,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.chrGridWordForming.ShowCellToolTips = false;
 			this.chrGridWordForming.StandardTab = true;
 			this.chrGridWordForming.VirtualMode = true;
-			this.chrGridWordForming.CharacterChanged += new SIL.FieldWorks.Common.Controls.CharacterGrid.CharacterChangedHandler(this.HandleCharGridCharacterChanged);
+			this.chrGridWordForming.CharacterChanged += new SIL.FieldWorks.Common.Controls.CharacterChangedHandler(this.HandleCharGridCharacterChanged);
 			this.chrGridWordForming.DoubleClick += new System.EventHandler(this.btnRemoveChar_Click);
 			// 
 			// hlblWordForming
@@ -647,7 +647,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			resources.ApplyResources(this.hlblWordForming, "hlblWordForming");
 			this.hlblWordForming.MnemonicGeneratesClick = false;
 			this.hlblWordForming.Name = "hlblWordForming";
-			this.hlblWordForming.ShowWindowBackgroudOnTopAndRightEdge = true;
+			this.hlblWordForming.ShowWindowBackgroundOnTopAndRightEdge = true;
 			// 
 			// pnlOther
 			// 
@@ -689,7 +689,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.chrGridOther.ShowCellToolTips = false;
 			this.chrGridOther.StandardTab = true;
 			this.chrGridOther.VirtualMode = true;
-			this.chrGridOther.CharacterChanged += new SIL.FieldWorks.Common.Controls.CharacterGrid.CharacterChangedHandler(this.HandleCharGridCharacterChanged);
+			this.chrGridOther.CharacterChanged += new SIL.FieldWorks.Common.Controls.CharacterChangedHandler(this.HandleCharGridCharacterChanged);
 			// 
 			// hlblOther
 			// 
@@ -698,7 +698,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			resources.ApplyResources(this.hlblOther, "hlblOther");
 			this.hlblOther.MnemonicGeneratesClick = false;
 			this.hlblOther.Name = "hlblOther";
-			this.hlblOther.ShowWindowBackgroudOnTopAndRightEdge = true;
+			this.hlblOther.ShowWindowBackgroundOnTopAndRightEdge = true;
 			// 
 			// pnlMoveButtons
 			// 

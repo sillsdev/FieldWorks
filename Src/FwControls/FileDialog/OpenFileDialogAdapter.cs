@@ -19,19 +19,14 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog
 		}
 
 		#region IOpenFileDialog implementation
-		/// <summary>
-		/// Opens the file selected by the user, with read-only permission. The file is specified
-		/// by the FileName property.
-		/// </summary>
+
+		/// <inheritdoc />
 		public Stream OpenFile()
 		{
 			return ((IOpenFileDialog)m_dlg).OpenFile();
 		}
 
-		/// <summary>
-		/// Gets or sets a value indicating whether the dialog box allows multiple files to be
-		/// selected.
-		/// </summary>
+		/// <inheritdoc />
 		public bool Multiselect
 		{
 			get { return ((IOpenFileDialog)m_dlg).Multiselect; }

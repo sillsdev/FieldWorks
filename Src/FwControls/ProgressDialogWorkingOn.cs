@@ -6,34 +6,26 @@ using System.Windows.Forms;
 
 namespace SIL.FieldWorks.Common.Controls
 {
-	/// <summary>
-	/// Summary description for ProgressDialogWorkingOn.
-	/// </summary>
+	/// <summary />
 	public class ProgressDialogWorkingOn : Form
 	{
-		private System.Windows.Forms.Label m_LabelCreationProgress;
-		private System.Windows.Forms.Label m_LabelWorkingOnPrompt;
-		private System.Windows.Forms.Label m_LabelWorkingOn;
-		private System.Windows.Forms.ProgressBar m_ProgressBar;
-		private System.Windows.Forms.Button m_CancelBtn;
+		private Label m_LabelCreationProgress;
+		private Label m_LabelWorkingOnPrompt;
+		private Label m_LabelWorkingOn;
+		private ProgressBar m_ProgressBar;
+		private Button m_CancelBtn;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 
-		/// <summary>
-		/// Initializes a new instance of the ProgressDialog class.
-		/// </summary>
+		/// <summary />
 		public ProgressDialogWorkingOn()
 		{
 			//
 			// Required for Windows Form Designer support
 			//
 			InitializeComponent();
-
-			//
-			// TODO: Add any constructor code after InitializeComponent call
-			//
 		}
 
 		/// <summary>
@@ -42,18 +34,17 @@ namespace SIL.FieldWorks.Common.Controls
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
 			if (IsDisposed)
-				return;
-
-			if( disposing )
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
+				// No need to run it more than once.
+				return;
 			}
-			base.Dispose( disposing );
+
+			if (disposing)
+			{
+				components?.Dispose();
+			}
+			base.Dispose(disposing);
 		}
 
 		#region Windows Form Designer generated code
@@ -123,11 +114,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			m_ProgressBar.PerformStep();
 		}
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Gets or sets the content of the "Working on" field
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public string WorkingOnText
 		{
 			get
@@ -155,12 +145,10 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the minimum number of steps or increments corresponding to a progress
 		/// bar that's 100% filled.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public int Minimum
 		{
 			get
@@ -173,12 +161,10 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the maximum number of steps or increments corresponding to a progress
 		/// bar that's 100% filled.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public int Maximum
 		{
 			get
@@ -189,15 +175,6 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				m_ProgressBar.Maximum = value;
 			}
-		}
-
-		/// <summary>
-		/// Provides access to the progress bar for use in a ProgressState.
-		/// Note that as a side effect the minimum and maximum get set.
-		/// </summary>
-		public IProgressDisplayer ProgressDisplayer
-		{
-			get { return new ProgressBarWrapper(m_ProgressBar); }
 		}
 	}
 }

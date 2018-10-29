@@ -1235,6 +1235,9 @@
     <Compile Include="MGA\MasterItemCitation.cs" />
     <Compile Include="RecordFilterParameterObject.cs" />
     <Compile Include="SendReceive\ImportFailureStatus.cs" />
+    <Compile Include="StatusBarTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ToolbarServices.cs" />
     <Compile Include="UtilityTools\FixErrorsDlg.cs">
       <SubType>Form</SubType>

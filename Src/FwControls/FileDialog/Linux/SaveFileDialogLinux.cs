@@ -1,13 +1,14 @@
 // Copyright (c) 2011-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.IO;
 using Gtk;
 
 namespace SIL.FieldWorks.Common.Controls.FileDialog.Linux
 {
-	internal class SaveFileDialogLinux: FileDialogLinux, ISaveFileDialog
+	internal class SaveFileDialogLinux : FileDialogLinux, ISaveFileDialog
 	{
 		public SaveFileDialogLinux()
 		{
@@ -40,14 +41,12 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Linux
 
 		protected override void ReportFileNotFound(string fileName)
 		{
-			ShowMessageBox(string.Format(FileDialogStrings.FileNotFoundSave, Environment.NewLine), ButtonsType.Ok, MessageType.Warning,
-				fileName);
+			ShowMessageBox(string.Format(FileDialogStrings.FileNotFoundSave, Environment.NewLine), ButtonsType.Ok, MessageType.Warning, fileName);
 		}
 
 		private bool OkToCreateFile()
 		{
-			return ShowMessageBox(string.Format(FileDialogStrings.CreateFile, Environment.NewLine),
-				ButtonsType.YesNo, MessageType.Question, InternalFileName) == ResponseType.Yes;
+			return ShowMessageBox(string.Format(FileDialogStrings.CreateFile, Environment.NewLine), ButtonsType.YesNo, MessageType.Question, InternalFileName) == ResponseType.Yes;
 		}
 
 		protected override FileChooserDialog CreateFileChooserDialog()

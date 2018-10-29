@@ -105,7 +105,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var prevSeqCount = m_cache.ActionHandlerAccessor.UndoableSequenceCount;
 			foreach (var obj in m_objList)
 			{
-				m_treeTexts.CheckNodeByTag(obj, TriStateTreeView.TriStateTreeViewCheckState.Checked);
+				m_treeTexts.CheckNodeByTag(obj, TriStateTreeViewCheckState.Checked);
 			}
 
 			if (prevSeqCount != m_cache.ActionHandlerAccessor.UndoableSequenceCount)

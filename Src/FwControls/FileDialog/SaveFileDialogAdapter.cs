@@ -19,29 +19,21 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog
 			m_dlg = Manager.CreateSaveFileDialog();
 		}
 
-		/// <summary>
-		/// Gets or sets a value indicating whether the dialog box prompts the user for permission
-		/// to create a file if the user specifies a file that does not exist.
-		/// </summary>
+		/// <inheritdoc />
 		public bool CreatePrompt
 		{
 			get { return ((ISaveFileDialog)m_dlg).CreatePrompt; }
 			set { ((ISaveFileDialog)m_dlg).CreatePrompt = value; }
 		}
 
-		/// <summary>
-		/// Gets or sets a value indicating whether the Save As dialog box displays a warning if
-		/// the user specifies a file name that already exists.
-		/// </summary>
+		/// <inheritdoc />
 		public bool OverwritePrompt
 		{
 			get { return ((ISaveFileDialog)m_dlg).OverwritePrompt; }
 			set { ((ISaveFileDialog)m_dlg).OverwritePrompt = value; }
 		}
 
-		/// <summary>
-		/// Opens the file with read/write permission selected by the user.
-		/// </summary>
+		/// <inheritdoc />
 		public Stream OpenFile()
 		{
 			return ((ISaveFileDialog)m_dlg).OpenFile();

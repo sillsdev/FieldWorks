@@ -5,7 +5,6 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.Controls;
 
 namespace SIL.FieldWorks.Common.Framework
 {
@@ -87,7 +86,7 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(UndoRedoDropDown));
 			this.m_NumberOfUndoes = new System.Windows.Forms.Label();
-			this.m_Actions = new SIL.FieldWorks.Common.Controls.ScrollListBox();
+			this.m_Actions = new ScrollListBox();
 			this.SuspendLayout();
 			//
 			// m_NumberOfUndoes

@@ -142,15 +142,6 @@
         cj8LuRnj9qBHbjsiLFZjzIQqnxOxA2ISW7MPZ2v2AAAAAElFTkSuQmCC
 </value>
   </data>
-  <data name="kstidLangNoneAbove" xml:space="preserve">
-    <value>None of the above</value>
-  </data>
-  <data name="kstidLangNotFound" xml:space="preserve">
-    <value>No matches were found.{0}You may wish to try a different spelling or word order, or a less specific name.{0}If you are searching for countries, note that USA is used rather than United States, United Kingdom rather than UK or Britain.</value>
-  </data>
-  <data name="kstidLangNotFoundCaption" xml:space="preserve">
-    <value>No matches</value>
-  </data>
   <data name="kstidWizTabPage" xml:space="preserve">
     <value>Pg. {0}</value>
   </data>

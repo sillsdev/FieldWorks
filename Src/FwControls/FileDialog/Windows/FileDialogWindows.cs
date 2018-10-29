@@ -1,13 +1,14 @@
 // Copyright (c) 2011-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 
 namespace SIL.FieldWorks.Common.Controls.FileDialog.Windows
 {
-	internal abstract class FileDialogWindows: IFileDialog, IDisposable
+	internal abstract class FileDialogWindows : IFileDialog, IDisposable
 	{
 		protected System.Windows.Forms.FileDialog m_dlg;
 
@@ -75,10 +76,7 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Windows
 			set { m_dlg.FileName = value; }
 		}
 
-		public string[] FileNames
-		{
-			get { return m_dlg.FileNames; }
-		}
+		public string[] FileNames => m_dlg.FileNames;
 
 		public string Filter
 		{
@@ -130,15 +128,14 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Windows
 		#endregion
 
 		#region Disposable stuff
-#if DEBUG
-		/// <summary>Finalizer</summary>
+
+		/// <summary />
 		~FileDialogWindows()
 		{
 			Dispose(false);
 		}
-#endif
 
-		/// <summary/>
+		/// <inheritdoc />
 		public void Dispose()
 		{
 			Dispose(true);
@@ -146,13 +143,13 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Windows
 		}
 
 		/// <summary/>
-		protected virtual void Dispose(bool fDisposing)
+		protected virtual void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + ". *******");
-			if (fDisposing && m_dlg != null)
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". *******");
+
+			if (disposing)
 			{
-				// dispose managed and unmanaged objects
-				m_dlg.Dispose();
+				m_dlg?.Dispose();
 			}
 			m_dlg = null;
 		}

@@ -1120,7 +1120,7 @@ namespace LanguageExplorer
 				if (DialogResult.Yes == dlg.ShowDialog(window))
 				{
 					using (new WaitCursor(window))
-					using (ProgressState state = new PredictiveProgressState(panel, "Delete record"))
+					using (var state = ProgressState.CreatePredictiveProgressState(panel, "Delete record"))
 					{
 						state.SetMilestone(LanguageExplorerResources.DeletingTheObject);
 						state.Breath();

@@ -1,12 +1,13 @@
 // Copyright (c) 2011-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Windows.Forms;
 
 namespace SIL.FieldWorks.Common.Controls.FileDialog.Windows
 {
-	internal class FolderBrowserDialogWindows: IFolderBrowserDialog, IDisposable
+	internal class FolderBrowserDialogWindows : IFolderBrowserDialog, IDisposable
 	{
 		protected FolderBrowserDialog m_dlg;
 
@@ -69,13 +70,12 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Windows
 		#endregion
 
 		#region Disposable stuff
-#if DEBUG
-		/// <summary>Finalizer</summary>
+
+		/// <summary />
 		~FolderBrowserDialogWindows()
 		{
 			Dispose(false);
 		}
-#endif
 
 		/// <summary/>
 		public void Dispose()
@@ -88,10 +88,11 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Windows
 		protected virtual void Dispose(bool fDisposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + ". *******");
-			if (fDisposing && m_dlg != null)
+
+			if (fDisposing)
 			{
 				// dispose managed and unmanaged objects
-				m_dlg.Dispose();
+				m_dlg?.Dispose();
 			}
 			m_dlg = null;
 		}

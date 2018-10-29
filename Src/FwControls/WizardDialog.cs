@@ -3,27 +3,15 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Resources;
-using System.Drawing;
 using System.ComponentModel;
+using System.Drawing;
+using System.Resources;
 using System.Windows.Forms;
 using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.Controls
 {
-	internal interface IWizardPaintPanSteps
-	{
-		string[] StepNames { get; }
-		int LastStepNumber { get; }
-		int CurrentStepNumber { get; }
-		Font StepsFont { get; }
-		Color TextColor { get; }
-		Panel PanSteps { get; }
-	}
-
-	/// <summary>
-	/// Summary description for WizardDialog.
-	/// </summary>
+	/// <summary />
 	public class WizardDialog : Form, IWizardPaintPanSteps
 	{
 		#region Data Members
@@ -49,48 +37,44 @@ namespace SIL.FieldWorks.Common.Controls
 		protected const int kdypTabPanelHeightDiff = 24;
 		/// <summary>This is the height difference between the tab control and the form.</summary>
 		protected const int kdypFormTabHeightDiff = 52;
-		/// <summary></summary>
+		/// <summary />
 		protected const int kdxpStepListSpacing = 8;
-		/// <summary></summary>
+		/// <summary />
 		protected const int kdypStepListSpacing = 10;
-		/// <summary></summary>
+		/// <summary />
 		protected const int kdxpStepSquareWidth = 14;
-		/// <summary></summary>
+		/// <summary />
 		protected const int kdypStepSquareHeight = 14;
-		/// <summary></summary>
+		/// <summary />
 		protected static readonly Color kclrPendingStep = Color.LightGray;
-		/// <summary></summary>
+		/// <summary />
 		protected static readonly Color kclrCompletedStep = Color.Gray;
-		/// <summary></summary>
+		/// <summary />
 		protected static readonly Color kclrCurrentStep = Color.LightGreen;
-		/// <summary></summary>
+		/// <summary />
 		protected static readonly Color kclrLastStep = Color.Red;
-		/// <summary></summary>
-		protected int m_CurrentStepNumber = 0;
-
-		private String[] m_StepNames;
-		private int m_LastStepNumber;
+		/// <summary />
+		protected int m_CurrentStepNumber;
+		private string[] m_StepNames;
 		private Font m_StepsFont = SystemInformation.MenuFont;
-		private Color m_StepTextColor = Color.White;
 		private string m_NextText;
 		private string m_FinishText;
 		private string m_StepIndicatorFormat;
-		/// <summary></summary>
+		/// <summary />
 		protected string m_helpTopicID;
-
-		/// <summary></summary>
+		/// <summary />
 		protected System.Windows.Forms.Panel panSteps;
-		/// <summary></summary>
+		/// <summary />
 		protected System.Windows.Forms.Label lblSteps;
-		/// <summary></summary>
+		/// <summary />
 		protected System.Windows.Forms.Button m_btnBack;
-		/// <summary></summary>
+		/// <summary />
 		protected System.Windows.Forms.Button m_btnCancel;
-		/// <summary></summary>
+		/// <summary />
 		protected System.Windows.Forms.Button m_btnNext;
-		/// <summary></summary>
+		/// <summary />
 		protected System.Windows.Forms.Button m_btnHelp;
-		/// <summary></summary>
+		/// <summary />
 		protected System.Windows.Forms.TabControl tabSteps;
 		private System.Windows.Forms.HelpProvider helpProvider2;
 
@@ -103,11 +87,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		#region Construction, Initialization, Disposal
 
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
+		/// <summary />
 		public WizardDialog()
 		{
 			//
@@ -116,10 +96,7 @@ namespace SIL.FieldWorks.Common.Controls
 			InitializeComponent();
 			AccessibleName = GetType().Name;
 
-			ResourceManager resources =
-				new ResourceManager("SIL.FieldWorks.Common.Controls.FwControls",
-				System.Reflection.Assembly.GetExecutingAssembly());
-
+			var resources = new ResourceManager("SIL.FieldWorks.Common.Controls.FwControls", System.Reflection.Assembly.GetExecutingAssembly());
 			HelpTopicIdPrefix = "khtpField-InterlinearSfmImportWizard-Step";
 			SetInitialHelpTopicID();
 			m_NextText = resources.GetString("kstidWizForwardButtonText");
@@ -127,34 +104,26 @@ namespace SIL.FieldWorks.Common.Controls
 			m_StepIndicatorFormat = resources.GetString("kstidWizStepLabel"); ;
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		public void SetInitialHelpTopicID()
 		{
 			m_helpTopicID = HelpTopicIdPrefix + (m_CurrentStepNumber + 1.ToString()).TrimStart('0');
 		}
 
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
 			if (IsDisposed)
+			{
+				// No need to run it more than once.
 				return;
+			}
 
 			if (disposing)
 			{
-				if (components != null)
-				{
-					components.Dispose();
-				}
-				if (m_StepsFont != null)
-					m_StepsFont.Dispose();
+				components?.Dispose();
+				m_StepsFont?.Dispose();
 			}
 			m_StepsFont = null;
 			m_NextText = null;
@@ -288,11 +257,9 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the font for the text in the steps panel.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		[Browsable(true)]
 		[Category("Appearance")]
 		public Font StepTextFont
@@ -308,60 +275,22 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets or sets the foreground color of the text in the steps panel.
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
-		[Browsable(true)]
-		[Category("Appearance")]
-		public Color StepTextColor
-		{
-			get
-			{
-				return m_StepTextColor;
-			}
-			set
-			{
-				m_StepTextColor = value;
-				panSteps.Invalidate();
-			}
-		}
-
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the current step number. (Steps numbers are zero-based.)
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		[Browsable(false)]
-		public int CurrentStepNumber
-		{
-			get
-			{
-				return m_CurrentStepNumber;
-			}
-		}
+		public int CurrentStepNumber => m_CurrentStepNumber;
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the number of the final step. (Steps numbers are zero-based.)
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		[Browsable(false)]
-		public int LastStepNumber
-		{
-			get
-			{
-				return m_LastStepNumber;
-			}
-		}
+		public int LastStepNumber { get; private set; }
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the number of step pages needed for the wizard. This count must
 		/// always be equal to or greater than the number of steps.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		[Browsable(true)]
 		[Category("Misc")]
 		public int StepPageCount
@@ -374,12 +303,14 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				// Make sure there are never fewer pages than there are steps.
 				if (m_StepNames != null && value < m_StepNames.Length)
+				{
 					value = m_StepNames.Length;
-
+				}
 				// Do nothing if the number of pages didn't change or is negative.
 				if (value == tabSteps.TabCount || value < 0)
+				{
 					return;
-
+				}
 				// Remove all the tabs if designer specified no steps.
 				if (value == 0)
 				{
@@ -388,8 +319,9 @@ namespace SIL.FieldWorks.Common.Controls
 					// page variables removed from the generated code. Trust me,
 					// even though you may not understand what I just said -- DDO.
 					foreach (TabPage page in tabSteps.TabPages)
+					{
 						page.Dispose();
-
+					}
 					tabSteps.TabPages.Clear();
 					panSteps.Invalidate();
 					return;
@@ -399,9 +331,9 @@ namespace SIL.FieldWorks.Common.Controls
 				// the number of pages specified.
 				if (value > tabSteps.TabCount)
 				{
-					for (int i = tabSteps.TabCount; i < value; i++)
+					for (var i = tabSteps.TabCount; i < value; i++)
 					{
-						TabPage newPage = new TabPage(String.Format(FwControls.kstidWizTabPage, i + 1));
+						var newPage = new TabPage(String.Format(FwControls.kstidWizTabPage, i + 1));
 						tabSteps.TabPages.Add(newPage);
 					}
 				}
@@ -412,23 +344,23 @@ namespace SIL.FieldWorks.Common.Controls
 					// being removed will be lost. (For commentary on why I
 					// use dispose, see the comments earlier in this property
 					// where value == 0).
-					for (int i = tabSteps.TabCount - 1; i >= value; i--)
+					for (var i = tabSteps.TabCount - 1; i >= value; i--)
+					{
 						tabSteps.TabPages[i].Dispose();
+					}
 				}
 			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the array of strings used in the steps panel. The number of
 		/// elements in this array determines the number of wizard steps.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		[Browsable(true)]
 		[Category("Misc")]
 		[Localizable(true)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
-		public String[] StepNames
+		public string[] StepNames
 		{
 			get
 			{
@@ -437,19 +369,17 @@ namespace SIL.FieldWorks.Common.Controls
 			set
 			{
 				m_StepNames = value;
-				m_LastStepNumber = (m_StepNames == null ? -1 : m_StepNames.Length - 1);
+				LastStepNumber = m_StepNames?.Length - 1 ?? -1;
 				UpdateStepLabel();
 			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the Enabled state of the Next button.
 		/// </summary>
 		/// <remarks>The button itself is private because making it protected causes
 		/// Designer to attempt to re-locate it in the derived class, which ends up
 		/// putting it in the wrong place.</remarks>
-		/// -----------------------------------------------------------------------------------
 		[Browsable(false)]
 		[Localizable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -459,31 +389,11 @@ namespace SIL.FieldWorks.Common.Controls
 			set { m_btnNext.Enabled = value; }
 		}
 
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets or sets the Enabled state of the Back button.
-		/// </summary>
-		/// <remarks>The button itself is private because making it protected causes
-		/// Designer to attempt to re-locate it in the derived class, which ends up
-		/// putting it in the wrong place.</remarks>
-		/// -----------------------------------------------------------------------------------
-		[Browsable(false)]
-		[Localizable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		protected bool BackButtonEnabled
-		{
-			get { return m_btnBack.Enabled; }
-			set { m_btnBack.Enabled = value; }
-		}
 		#endregion
 
 		#region WizardDialog Overrides
 
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
+		/// <inheritdoc />
 		protected override void OnLoad(EventArgs e)
 		{
 			base.OnLoad(e);
@@ -507,54 +417,37 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		/// <summary>
-		/// This seemingly useless method is needed to get the Wizard buttons to display when
-		/// using 120DPI fonts. Without a resize, the tab control covers up the buttons.
-		/// </summary>
-		/// <param name="e"></param>
+		/// <inheritdoc />
 		protected override void OnActivated(EventArgs e)
 		{
 			base.OnActivated(e);
-			this.OnResize(null);
+			OnResize(null);
 		}
 
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// This will draw the the etched line that separates the dialog's buttons at the
-		/// bottom from the rest of the dialog. It will also call the method to update the
-		/// "Step x of n" label.
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
+		/// <inheritdoc />
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);
 
 			// Draw the etched, horizontal line separating the wizard buttons
 			// from the rest of the form.
-			LineDrawing.DrawDialogControlSeparator(e.Graphics, ClientRectangle,
-				lblSteps.Bottom + (m_btnHelp.Top - lblSteps.Bottom) / 2);
+			LineDrawing.DrawDialogControlSeparator(e.Graphics, ClientRectangle, lblSteps.Bottom + (m_btnHelp.Top - lblSteps.Bottom) / 2);
 
 			UpdateStepLabel();
 		}
 
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Position the controls according to the size of the form. We don't use the bottom
-		/// anchor property since it really causes problems in derived classes. The buttons
-		/// aren't anchored to any side for the same reason.
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
+		/// <inheritdoc />
 		protected override void OnResize(EventArgs e)
 		{
 			if (e != null)
+			{
 				base.OnResize(e);
-
-			this.SuspendLayout();
+			}
+			SuspendLayout();
 
 			tabSteps.Left = panSteps.Right + kTabStepsPanStepsPadding;
 			tabSteps.Height = ClientSize.Height - kdypFormTabHeightDiff;
-			tabSteps.Width = Width - (panSteps.Right + kTabStepsPanStepsPadding +
-				panSteps.Left);
+			tabSteps.Width = Width - (panSteps.Right + kTabStepsPanStepsPadding + panSteps.Left);
 
 			panSteps.Height = tabSteps.Height - kdypTabPanelHeightDiff;
 			lblSteps.Top = ClientSize.Height - (lblSteps.Height + kdypStepsLabelBottomPadding);
@@ -568,37 +461,25 @@ namespace SIL.FieldWorks.Common.Controls
 			m_btnBack.Top = ClientSize.Height - (m_btnBack.Height + kdypButtonsBottomPadding);
 			m_btnBack.Left = m_btnNext.Left - m_btnBack.Width;
 
-			this.ResumeLayout(true);
+			ResumeLayout(true);
 		}
 
 		#endregion
 
 		#region WizardDialog Control Events
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
-		private void panSteps_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
+
+		/// <summary />
+		private void panSteps_Paint(object sender, PaintEventArgs e)
 		{
 			PanStepsPaint(this, e);
 		}
 
 		#region IWizardPaintPanSteps implementation
-		Font IWizardPaintPanSteps.StepsFont
-		{
-			get { return m_StepsFont; }
-		}
+		Font IWizardPaintPanSteps.StepsFont => m_StepsFont;
 
-		Color IWizardPaintPanSteps.TextColor
-		{
-			get { return m_StepTextColor; }
-		}
+		Color IWizardPaintPanSteps.TextColor { get; } = Color.White;
 
-		Panel IWizardPaintPanSteps.PanSteps
-		{
-			get { return panSteps; }
-		}
+		Panel IWizardPaintPanSteps.PanSteps => panSteps;
 
 		/// <summary>
 		/// Set the HelpTopicPrefix with this.
@@ -607,41 +488,34 @@ namespace SIL.FieldWorks.Common.Controls
 
 		#endregion
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Paint method for steps.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		internal static void PanStepsPaint(IWizardPaintPanSteps steps, PaintEventArgs e)
 		{
 			if (steps.StepNames == null || steps.LastStepNumber == -1)
+			{
 				return;
-
+			}
 			// This is the minimum height a single step text line will occupy.
 			// (Note: this doesn't include the spacing between step text lines.)
-			int dyStepHeight = Math.Max(steps.StepsFont.Height, kdypStepSquareHeight);
+			var dyStepHeight = Math.Max(steps.StepsFont.Height, kdypStepSquareHeight);
 
 			// This is the rectangle for the text of step one. Each subsequent step's
 			// text rectangle will be calculated by increasing the rectangle's Y
 			// property accordingly. 3 is added as the number of horizontal pixels
 			// between the text and the colored square.
-			Rectangle rcText =
-				new Rectangle(kdxpStepListSpacing + kdxpStepSquareWidth + 3,
-				kdypStepListSpacing,
-				steps.PanSteps.Width - (kdxpStepListSpacing + kdxpStepSquareWidth + 3),
-				dyStepHeight);
+			var rcText = new Rectangle(kdxpStepListSpacing + kdxpStepSquareWidth + 3, kdypStepListSpacing,
+				steps.PanSteps.Width - (kdxpStepListSpacing + kdxpStepSquareWidth + 3), dyStepHeight);
 
 			// This is the distance between the top of a step text's rectangle
 			// and the top of the colored square's rectangle. However, if the step
 			// text's rectangle is shorter than the height of the square, the
 			// padding will be zero.
-			int dySquarePadding = (dyStepHeight > kdypStepSquareHeight) ?
-				(dyStepHeight - kdypStepSquareHeight) / 2 : 0;
+			var dySquarePadding = dyStepHeight > kdypStepSquareHeight ? (dyStepHeight - kdypStepSquareHeight) / 2 : 0;
 
 			// This is the rectangle for step one's colored square.
-			Rectangle rcSquare = new Rectangle(kdxpStepListSpacing,
-				kdypStepListSpacing + dySquarePadding,
-				kdxpStepSquareWidth, kdypStepSquareHeight);
+			var rcSquare = new Rectangle(kdxpStepListSpacing, kdypStepListSpacing + dySquarePadding, kdxpStepSquareWidth, kdypStepSquareHeight);
 
 			using (var sf = new StringFormat(StringFormat.GenericTypographic))
 			{
@@ -652,27 +526,33 @@ namespace SIL.FieldWorks.Common.Controls
 				// Calculate the horizontal position for the vertical connecting
 				// line. (Subtracting 1 puts it just off center because the line
 				// will be 2 pixels thick.)
-				int xpConnectingLine = rcSquare.X + (kdxpStepSquareWidth / 2) - 1;
+				var xpConnectingLine = rcSquare.X + (kdxpStepSquareWidth / 2) - 1;
 
 				// Create brushes for the colored squares and the step text.
-				using (SolidBrush brSquare = new SolidBrush(kclrPendingStep),
-					brText = new SolidBrush(steps.TextColor))
+				using (SolidBrush brSquare = new SolidBrush(kclrPendingStep), brText = new SolidBrush(steps.TextColor))
 				{
-					for (int i = 0; i <= steps.LastStepNumber; i++)
+					for (var i = 0; i <= steps.LastStepNumber; i++)
 					{
 						e.Graphics.DrawString(steps.StepNames[i], steps.StepsFont, brText, rcText, sf);
 						rcText.Y += dyStepHeight + kdypStepListSpacing;
 
 						// Determine what color the square should be.
 						if (i == steps.LastStepNumber)
+						{
 							brSquare.Color = kclrLastStep;
+						}
 						else if (i == steps.CurrentStepNumber)
+						{
 							brSquare.Color = kclrCurrentStep;
+						}
 						else if (i < steps.CurrentStepNumber)
+						{
 							brSquare.Color = kclrCompletedStep;
+						}
 						else
+						{
 							brSquare.Color = kclrPendingStep;
-
+						}
 						// Draw the square next to the step text label.
 						e.Graphics.FillRectangle(brSquare, rcSquare);
 						rcSquare.Y += (dyStepHeight + kdypStepListSpacing);
@@ -684,13 +564,9 @@ namespace SIL.FieldWorks.Common.Controls
 							{
 								line.LineType = LineTypes.Solid;
 
-								line.Draw(xpConnectingLine,
-									rcSquare.Y - kdypStepListSpacing,
-									xpConnectingLine, rcSquare.Y, kclrCompletedStep);
+								line.Draw(xpConnectingLine, rcSquare.Y - kdypStepListSpacing, xpConnectingLine, rcSquare.Y, kclrCompletedStep);
 
-								line.Draw(xpConnectingLine + 1,
-									rcSquare.Y - kdypStepListSpacing,
-									xpConnectingLine + 1, rcSquare.Y, kclrPendingStep);
+								line.Draw(xpConnectingLine + 1, rcSquare.Y - kdypStepListSpacing, xpConnectingLine + 1, rcSquare.Y, kclrPendingStep);
 							}
 						}
 					}
@@ -698,87 +574,65 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Handle the Click event of the Back button
 		/// </summary>
-		/// <param name="sender">Ignored</param>
-		/// <param name="e">Ignored</param>
-		/// <remarks>This is <c>protected</c> for the purposes of exposing it in test code
-		/// only. Production code can override the <see cref="OnBackButton"/> method if
-		/// necessary</remarks>
-		/// -----------------------------------------------------------------------------------
 		protected void btnBack_Click(object sender, System.EventArgs e)
 		{
 			if (ValidToGoBackward())
 			{
-				this.OnBackButton();
+				OnBackButton();
 			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Handle the Click event of the Next button
 		/// </summary>
-		/// <param name="sender">Ignored</param>
-		/// <param name="e">Ignored</param>
 		/// <remarks>This is <c>protected</c> for the purposes of exposing it in test code
 		/// only. Production code can override the <see cref="OnNextButton"/> method if
 		/// necessary</remarks>
-		/// -----------------------------------------------------------------------------------
 		protected void btnNext_Click(object sender, System.EventArgs e)
 		{
 			if (!ValidToGoForward())
+			{
 				return;
-
-			if (m_CurrentStepNumber == m_LastStepNumber)
+			}
+			if (m_CurrentStepNumber == LastStepNumber)
 			{
 				// Allow OnFinishButton() to change DialogResult (See TE-4237).
-				this.DialogResult = DialogResult.OK;
-				this.OnFinishButton();
-				this.Visible = false;
+				DialogResult = DialogResult.OK;
+				OnFinishButton();
+				Visible = false;
 			}
 			else
 			{
-				this.OnNextButton();
+				OnNextButton();
 			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Handle the Click event of the Cancel button
 		/// </summary>
-		/// <param name="sender">Ignored</param>
-		/// <param name="e">Ignored</param>
 		/// <remarks>This is <c>protected</c> for the purposes of exposing it in test code
 		/// only. Production code can override the <see cref="OnCancelButton"/> method if
 		/// necessary</remarks>
-		/// -----------------------------------------------------------------------------------
 		protected void btnCancel_Click(object sender, System.EventArgs e)
 		{
-			this.OnCancelButton();
+			OnCancelButton();
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Handle the Click event of the Help button
 		/// </summary>
-		/// <param name="sender">Ignored</param>
-		/// <param name="e">Ignored</param>
 		/// <remarks>This is <c>protected</c> for the purposes of exposing it in test code
 		/// only. Production code can override the <see cref="OnHelpButton"/> method if
 		/// necessary</remarks>
-		/// -----------------------------------------------------------------------------------
 		protected void btnHelp_Click(object sender, System.EventArgs e)
 		{
-			this.OnHelpButton();
+			OnHelpButton();
 		}
 
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
+		/// <summary />
 		private void tabSteps_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			UpdateStepLabel();
@@ -788,60 +642,43 @@ namespace SIL.FieldWorks.Common.Controls
 
 			// If on the last step, change the Next button's text to read 'Finish'
 			// (or the localized equivalent).
-			if (m_CurrentStepNumber == m_LastStepNumber)
-			{
-				m_btnNext.Text = m_FinishText;
-				//				this.helpProvider1.SetHelpString(NextHelpString"));
-
-			}
-			else
-			{
-				m_btnNext.Text = m_NextText;
-			}
+			m_btnNext.Text = m_CurrentStepNumber == LastStepNumber ? m_FinishText : m_NextText;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Allows the inheritor to cause a click on the Next button to be ignored.
 		/// </summary>
 		/// <returns>A boolean representing whether or not it's valid to continue to
 		/// the next step in the wizard.</returns>
-		/// -----------------------------------------------------------------------------------
 		protected virtual bool ValidToGoForward()
 		{
 			return true;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Allows the inheritor to cause a click on the Back button to be ignored.
 		/// </summary>
 		/// <returns>A boolean representing whether or not it's valid to return to the
 		/// previous step in the wizard.</returns>
-		/// -----------------------------------------------------------------------------------
 		protected virtual bool ValidToGoBackward()
 		{
 			return true;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Subclass can override this method to do any actions necessary when wizard is
 		/// finished.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		protected virtual void OnFinishButton()
 		{
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Extensions of the base class may choose to skip the call to the base class which
 		/// would abort the tab advance.
 		/// The preferred method of avoiding the change to the next pane is to use the ValidToGoForward
 		/// method but in some cases this is not the best design.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		protected virtual void OnNextButton()
 		{
 			m_CurrentStepNumber++;
@@ -849,11 +686,7 @@ namespace SIL.FieldWorks.Common.Controls
 			tabSteps.SelectedIndex++;
 		}
 
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
+		/// <summary />
 		protected virtual void OnBackButton()
 		{
 			m_CurrentStepNumber--;
@@ -861,20 +694,12 @@ namespace SIL.FieldWorks.Common.Controls
 			tabSteps.SelectedIndex--;
 		}
 
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
+		/// <summary />
 		protected virtual void OnCancelButton()
 		{
 		}
 
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
+		/// <summary />
 		protected virtual void OnHelpButton()
 		{
 		}
@@ -882,19 +707,11 @@ namespace SIL.FieldWorks.Common.Controls
 
 		#region WizardDialog Helper Functions
 
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
+		/// <summary />
 		protected void UpdateStepLabel()
 		{
-			lblSteps.Text = String.Format(m_StepIndicatorFormat,
-				(m_CurrentStepNumber + 1).ToString(),
-				(m_LastStepNumber + 1).ToString());
-
-			lblSteps.Left = this.ClientSize.Width - (lblSteps.Width +
-				(int)kdxpStepsLabelRightPadding);
+			lblSteps.Text = string.Format(m_StepIndicatorFormat, (m_CurrentStepNumber + 1).ToString(), (LastStepNumber + 1).ToString());
+			lblSteps.Left = ClientSize.Width - (lblSteps.Width + (int)kdxpStepsLabelRightPadding);
 
 			panSteps.Invalidate();
 		}

@@ -1,8 +1,7 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2013-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.IO;
 using System.Reflection;
 using System.Xml;
@@ -25,7 +24,7 @@ namespace SIL.FieldWorks.Common.Controls
 		[Test]
 		public void DefaultWritingSystemsFromLift_FindsCorrectWritingSystemsFromDefn()
 		{
-			string input = @"<?xml version='1.0' encoding='utf-8'?>
+			const string input = @"<?xml version='1.0' encoding='utf-8'?>
 <lift
 	version='0.13'
 	producer='SIL.FLEx 7.2.5.41073'>
@@ -56,7 +55,7 @@ namespace SIL.FieldWorks.Common.Controls
 	</entry>
 </lift>";
 			using (var stringReader = new StringReader(input))
-			using (XmlReader reader = XmlReader.Create(stringReader))
+			using (var reader = XmlReader.Create(stringReader))
 			{
 				string vernWs, analysisWs;
 				ObtainProjectMethod.RetrieveDefaultWritingSystemIdsFromLift(reader, out vernWs, out analysisWs);
@@ -72,7 +71,7 @@ namespace SIL.FieldWorks.Common.Controls
 		[Test]
 		public void DefaultWritingSystemsFromLift_FindsCorrectWritingSystemsFromGloss()
 		{
-			string input = @"<?xml version='1.0' encoding='utf-8'?>
+			const string input = @"<?xml version='1.0' encoding='utf-8'?>
 <lift
 	version='0.13'
 	producer='SIL.FLEx 7.2.5.41073'>
@@ -103,7 +102,7 @@ namespace SIL.FieldWorks.Common.Controls
 	</entry>
 </lift>";
 			using (var stringReader = new StringReader(input))
-			using (XmlReader reader = XmlReader.Create(stringReader))
+			using (var reader = XmlReader.Create(stringReader))
 			{
 				string vernWs, analysisWs;
 				ObtainProjectMethod.RetrieveDefaultWritingSystemIdsFromLift(reader, out vernWs, out analysisWs);
@@ -119,13 +118,13 @@ namespace SIL.FieldWorks.Common.Controls
 		[Test]
 		public void DefaultWritingSystemsFromLiftWithNoEntries_ReturnsFrenchAndEnglish()
 		{
-			string input = @"<?xml version='1.0' encoding='utf-8'?>
+			const string input = @"<?xml version='1.0' encoding='utf-8'?>
 <lift
 	version='0.13'
 	producer='SIL.FLEx 7.2.5.41073'>
 </lift>";
 			using (var stringReader = new StringReader(input))
-			using (XmlReader reader = XmlReader.Create(stringReader))
+			using (var reader = XmlReader.Create(stringReader))
 			{
 				string vernWs, analysisWs;
 				ObtainProjectMethod.RetrieveDefaultWritingSystemIdsFromLift(reader, out vernWs, out analysisWs);
@@ -135,21 +134,19 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		/// <summary/>
+		/// <summary />
 		[Test]
 		public void CallPickAnthro_PickAnthroListCanBeFound()
 		{
 			var flags = (BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
-			var type = ReflectionHelper.GetType(ObtainProjectMethod.PickAnthroDll,
-															ObtainProjectMethod.PickAnthroClass);
+			var type = ReflectionHelper.GetType(ObtainProjectMethod.PickAnthroDll, ObtainProjectMethod.PickAnthroClass);
 			Assert.NotNull(type, "Class used for PickAnthroList moved.");
-			var method = type.GetMethod(ObtainProjectMethod.PickAnthroMethod,
-												 new [] { typeof(String), typeof(IHelpTopicProvider) });
+			var method = type.GetMethod(ObtainProjectMethod.PickAnthroMethod, new[] { typeof(string), typeof(IHelpTopicProvider) });
 			Assert.NotNull(method, "Method name changed, or parameters changed.");
 		}
 
 
-		/// <summary/>
+		/// <summary />
 		[Test]
 		public void CallImportLexiconObtained_ImportObtainedLexiconCanBeFound()
 		{

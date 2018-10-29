@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.Common.Controls {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class FwControls {
@@ -109,33 +109,6 @@ namespace SIL.FieldWorks.Common.Controls {
         internal static string ksCreatingLiftProject {
             get {
                 return ResourceManager.GetString("ksCreatingLiftProject", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to None of the above.
-        /// </summary>
-        internal static string kstidLangNoneAbove {
-            get {
-                return ResourceManager.GetString("kstidLangNoneAbove", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No matches were found.{0}You may wish to try a different spelling or word order, or a less specific name.{0}If you are searching for countries, note that USA is used rather than United States, United Kingdom rather than UK or Britain..
-        /// </summary>
-        internal static string kstidLangNotFound {
-            get {
-                return ResourceManager.GetString("kstidLangNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No matches.
-        /// </summary>
-        internal static string kstidLangNotFoundCaption {
-            get {
-                return ResourceManager.GetString("kstidLangNotFoundCaption", resourceCulture);
             }
         }
         

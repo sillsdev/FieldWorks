@@ -1,6 +1,7 @@
 // Copyright (c) 2011-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.ComponentModel;
 using System.IO;
@@ -9,7 +10,7 @@ using Gtk;
 
 namespace SIL.FieldWorks.Common.Controls.FileDialog.Linux
 {
-	internal abstract class FileDialogLinux: IFileDialog, IDisposable
+	internal abstract class FileDialogLinux : IFileDialog, IDisposable
 	{
 		protected FileChooserDialog m_dlg;
 		protected FileChooserAction Action { get; set; }
@@ -20,32 +21,34 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Linux
 		}
 
 		#region Disposable stuff
-#if DEBUG
-		/// <summary>Finalizer</summary>
+
+		/// <summary />
 		~FileDialogLinux()
 		{
 			Dispose(false);
 		}
-#endif
 
-		/// <summary/>
+		/// <inheritdoc />
 		public void Dispose()
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
 
-		/// <summary/>
-		protected virtual void Dispose(bool fDisposing)
+		/// <summary />
+		protected virtual void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + ". *******");
-			if (fDisposing && m_dlg != null)
-			{
-				ResetFilter(m_dlg);
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". *******");
 
-				//Don't forget to call Destroy() or the dialog window won't get closed.
-				m_dlg.Destroy();
-				m_dlg.Dispose();
+			if (disposing)
+			{
+				if (m_dlg != null)
+				{
+					ResetFilter(m_dlg);
+					//Don't forget to call Destroy() or the dialog window won't get closed.
+					m_dlg.Destroy();
+					m_dlg.Dispose();
+				}
 
 				OnDisposed(EventArgs.Empty);
 			}
@@ -53,36 +56,44 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Linux
 		}
 		#endregion
 
-		#pragma warning disable 0067 // The event is never used
+#pragma warning disable 0067 // The event is never used
 		public event EventHandler Disposed;
 		public event CancelEventHandler FileOk;
 		public event EventHandler HelpRequest;
-		#pragma warning restore 0067
+#pragma warning restore 0067
 
 		#region Filter related private methods
 		protected void ApplyFilter(FileChooserDialog dlg)
 		{
 			if (string.IsNullOrEmpty(Filter))
+			{
 				return;
-
+			}
 			var parts = Filter.Split('|');
 			if (parts.Length % 2 != 0)
+			{
 				return;
-
+			}
 			ResetFilter(dlg);
 
-			for (int i = 0; i < parts.Length - 1; i += 2)
+			for (var i = 0; i < parts.Length - 1; i += 2)
 			{
-				var filter = new FileFilter();
-				filter.Name = parts[i];
+				var filter = new FileFilter
+				{
+					Name = parts[i]
+				};
 				var patterns = parts[i + 1].Split(';');
 				foreach (var pattern in patterns)
+				{
 					filter.AddPattern(pattern.Trim());
+				}
 				dlg.AddFilter(filter);
 			}
 
 			if (FilterIndex > 0 && FilterIndex <= dlg.Filters.Length)
+			{
 				dlg.Filter = dlg.Filters[FilterIndex - 1];
+			}
 		}
 
 		private void ResetFilter(FileChooserDialog dlg)
@@ -100,10 +111,12 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Linux
 			get
 			{
 				var currentFilter = m_dlg.Filter;
-				for (int i = 0; i < m_dlg.Filters.Length; i++)
+				for (var i = 0; i < m_dlg.Filters.Length; i++)
 				{
 					if (currentFilter == m_dlg.Filters[i])
+					{
 						return i + 1;
+					}
 				}
 				return 0;
 			}
@@ -123,7 +136,9 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Linux
 					{
 						tmpFileName = Path.ChangeExtension(tmpFileName, DefaultExt);
 						if (File.Exists(tmpFileName))
+						{
 							return tmpFileName;
+						}
 					}
 					else
 					{
@@ -133,14 +148,18 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Linux
 							var ext = Path.GetExtension(pattern);
 							tmpFileName = Path.ChangeExtension(tmpFileName, ext);
 							if (File.Exists(tmpFileName))
+							{
 								return tmpFileName;
+							}
 						}
 					}
 				}
 				else
 				{
 					if (filterParts == null)
+					{
 						return Path.ChangeExtension(tmpFileName, DefaultExt);
+					}
 					var patterns = filterParts[(FilterIndex - 1) * 2 + 1].Split(';');
 					var ext = Path.GetExtension(patterns[0]);
 					return Path.ChangeExtension(tmpFileName, ext);
@@ -151,20 +170,17 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Linux
 
 		protected virtual void OnDisposed(EventArgs e)
 		{
-			if (Disposed != null)
-				Disposed(this, e);
+			Disposed?.Invoke(this, e);
 		}
 
 		protected virtual void OnHelpRequest(EventArgs e)
 		{
-			if (HelpRequest != null)
-				HelpRequest(this, e);
+			HelpRequest?.Invoke(this, e);
 		}
 
 		protected virtual void OnFileOk(CancelEventArgs e)
 		{
-			if (FileOk != null)
-				FileOk(this, e);
+			FileOk?.Invoke(this, e);
 		}
 
 		protected string AcceptButtonText
@@ -183,14 +199,12 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Linux
 			}
 		}
 
-		protected ResponseType ShowMessageBox(string formatMessage, ButtonsType buttons,
-			MessageType msgType, string fileName)
+		protected ResponseType ShowMessageBox(string formatMessage, ButtonsType buttons, MessageType msgType, string fileName)
 		{
-			using (var messageBox = new MessageDialog(m_dlg, DialogFlags.Modal,
-				msgType, buttons, formatMessage, fileName))
+			using (var messageBox = new MessageDialog(m_dlg, DialogFlags.Modal, msgType, buttons, formatMessage, fileName))
 			{
 				messageBox.Title = Title;
-				int retVal = messageBox.Run();
+				var retVal = messageBox.Run();
 				messageBox.Destroy();
 				return (ResponseType)retVal;
 			}
@@ -198,15 +212,7 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Linux
 
 		protected abstract void ReportFileNotFound(string fileName);
 
-		protected string InternalFileName
-		{
-			get
-			{
-				if (m_dlg.Filenames.Length > 0)
-					return GetCurrentFileName(m_dlg.Filenames[0]);
-				return string.Empty;
-			}
-		}
+		protected string InternalFileName => m_dlg.Filenames.Length > 0 ? GetCurrentFileName(m_dlg.Filenames[0]) : string.Empty;
 
 		protected virtual FileChooserDialog CreateFileChooserDialog()
 		{
@@ -215,17 +221,21 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Linux
 			dlg.Response += HandleDlgResponse;
 
 			if (ShowHelp)
+			{
 				dlg.AddButton(FileDialogStrings.Help, ResponseType.Help);
+			}
 			dlg.AddButton(FileDialogStrings.Cancel, ResponseType.Cancel);
 			dlg.AddButton(AcceptButtonText, ResponseType.Accept);
-
 			dlg.LocalOnly = true;
 			dlg.SelectMultiple = Multiselect;
 			if (!string.IsNullOrEmpty(InitialDirectory))
+			{
 				dlg.SetCurrentFolder(InitialDirectory);
+			}
 			if (!string.IsNullOrEmpty(FileName))
+			{
 				dlg.SetFilename(FileName);
-
+			}
 			ApplyFilter(dlg);
 
 			return dlg;
@@ -263,17 +273,15 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Linux
 
 		protected virtual bool OnOk()
 		{
-			for (int i = 0; i < m_dlg.Filenames.Length; i++)
+			foreach (var filename in m_dlg.Filenames)
 			{
-				var fileName = GetCurrentFileName(m_dlg.Filenames[i]);
+				var fileName = GetCurrentFileName(filename);
 				if (CheckFileExists && !File.Exists(fileName))
 				{
 					ReportFileNotFound(fileName);
 					return false;
 				}
-				if (ValidateNames &&
-					(Path.GetFileName(fileName).IndexOfAny(Path.GetInvalidFileNameChars()) >= 0 ||
-					fileName.IndexOfAny(Path.GetInvalidPathChars()) > 0))
+				if (ValidateNames && (Path.GetFileName(fileName).IndexOfAny(Path.GetInvalidFileNameChars()) >= 0 || fileName.IndexOfAny(Path.GetInvalidPathChars()) > 0))
 				{
 					return false;
 				}
@@ -311,7 +319,9 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Linux
 			ValidateNames = true;
 
 			if (m_dlg == null)
+			{
 				return;
+			}
 			ResetFilter(m_dlg);
 		}
 
@@ -335,7 +345,9 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Linux
 			finally
 			{
 				if (RestoreDirectory)
+				{
 					Directory.SetCurrentDirectory(oldDirectory);
+				}
 			}
 		}
 
@@ -351,8 +363,10 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Linux
 				if (m_dlg != null)
 				{
 					var fileNames = new string[m_dlg.Filenames.Length];
-					for (int i = 0; i < m_dlg.Filenames.Length; i++)
+					for (var i = 0; i < m_dlg.Filenames.Length; i++)
+					{
 						fileNames[i] = GetCurrentFileName(m_dlg.Filenames[i]);
+					}
 					return fileNames;
 				}
 				return new string[0];
@@ -367,12 +381,14 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Linux
 			set
 			{
 				if (value == null)
+				{
 					throw new ArgumentException();
-
+				}
 				var parts = value.Split('|');
 				if (parts.Length % 2 != 0)
+				{
 					throw new ArgumentException();
-
+				}
 				m_Filter = value;
 			}
 		}
@@ -380,8 +396,8 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Linux
 		/// <summary>Always returns true with Gtk dialog</summary>
 		public bool CheckPathExists
 		{
-			get { return true;}
-			set {}
+			get { return true; }
+			set { }
 		}
 
 		public bool AddExtension { get; set; }

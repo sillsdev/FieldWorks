@@ -9,27 +9,10 @@ using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
-	/// <summary>Modes supported by the up/down control</summary>
-	public enum DataUpDownMode
-	{
-		/// <summary></summary>
-		Normal,
-		/// <summary></summary>
-		Roman,
-		/// <summary></summary>
-		RomanLowerCase,
-		/// <summary></summary>
-		Letters,
-		/// <summary></summary>
-		LettersLowerCase
-	}
-
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Subclass of the NumericUpDown class to support various number systems
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	public class DataUpDown : UpDownBase
+	public sealed class DataUpDown : UpDownBase
 	{
 		/// <summary>
 		/// Event that indicates when the value has changed.
@@ -38,26 +21,22 @@ namespace SIL.FieldWorks.Common.Controls
 
 		#region Data Members
 		private DataUpDownMode m_mode = DataUpDownMode.Normal;
-		/// <summary></summary>
-		protected int m_currentValue;
-		private int m_minValue;
-		private int m_maxValue;
+		/// <summary />
+		private int m_currentValue;
 		private string m_previousText = string.Empty;
-		private bool m_validating = false;
+		private bool m_validating;
 		#endregion
 
-		/// <summary/>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
 			base.Dispose(disposing);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the mode.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public DataUpDownMode Mode
 		{
 			get
@@ -71,47 +50,19 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the min value.
 		/// </summary>
-		/// <value>The min value.</value>
-		/// ------------------------------------------------------------------------------------
-		public int MinValue
-		{
-			get
-			{
-				return m_minValue;
-			}
-			set
-			{
-				m_minValue = value;
-			}
-		}
+		public int MinValue { get; set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the max value.
 		/// </summary>
-		/// <value>The max value.</value>
-		/// ------------------------------------------------------------------------------------
-		public int MaxValue
-		{
-			get
-			{
-				return m_maxValue;
-			}
-			set
-			{
-				m_maxValue = value;
-			}
-		}
+		public int MaxValue { get; set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets/Sets the current value.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public int Value
 		{
 			get
@@ -120,41 +71,28 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			set
 			{
-				if (value >= m_minValue && value <= m_maxValue)
+				if (value >= MinValue && value <= MaxValue)
 				{
 					m_currentValue = value;
 					UpdateEditText();
-					if (Changed != null)
-						Changed(this, EventArgs.Empty);
+					Changed?.Invoke(this, EventArgs.Empty);
 				}
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Handles the clicking of the down button on the spin box
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		public override void DownButton()
 		{
 			Value--;
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Handles the clicking of the up button on the spin box
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		public override void UpButton()
 		{
 			Value++;
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Updates the text displayed in the spin box
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		protected override void UpdateEditText()
 		{
 			switch(m_mode)
@@ -181,47 +119,45 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Called when the text box contents change.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		protected override void OnTextBoxTextChanged(object source, EventArgs e)
 		{
 			ValidateEditText();
 			base.OnTextBoxTextChanged(source, e);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Validates the text displayed in the spin box
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		protected override void ValidateEditText()
 		{
-			int newValue = 0;
-			string text = Text;
+			var newValue = 0;
+			var text = Text;
 			if (text == string.Empty)
+			{
 				return;
-
+			}
 			// don't allow validation to recurse
 			if (m_validating)
+			{
 				return;
+			}
 			m_validating = true;
 
 			switch (m_mode)
 			{
 				case DataUpDownMode.Normal:
-					foreach (char ch in text)
+					foreach (var ch in text)
 					{
-						if (!Char.IsDigit(ch))
+						if (!char.IsDigit(ch))
 						{
 							newValue = -1;
 							break;
 						}
 					}
 					if (newValue != -1)
-						newValue = Int32.Parse(text);
+					{
+						newValue = int.Parse(text);
+					}
+
 					break;
 
 				case DataUpDownMode.Letters:
@@ -234,11 +170,7 @@ namespace SIL.FieldWorks.Common.Controls
 						newValue = 1;
 						text = AlphaOutline.NumToAlphaOutline(newValue);
 					}
-
-					if (m_mode == DataUpDownMode.Letters)
-						text = text.ToUpper();
-					else
-						text = text.ToLower();
+					text = m_mode == DataUpDownMode.Letters ? text.ToUpper() : text.ToLower();
 					break;
 
 				case DataUpDownMode.Roman:
@@ -251,11 +183,7 @@ namespace SIL.FieldWorks.Common.Controls
 						newValue = 1;
 						text = RomanNumerals.IntToRoman(newValue);
 					}
-
-					if (m_mode == DataUpDownMode.Roman)
-						text = text.ToUpper();
-					else
-						text = text.ToLower();
+					text = m_mode == DataUpDownMode.Roman ? text.ToUpper() : text.ToLower();
 					break;
 			}
 

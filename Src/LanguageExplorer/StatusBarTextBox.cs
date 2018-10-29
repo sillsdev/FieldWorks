@@ -5,43 +5,28 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace SIL.FieldWorks.Common.Controls
+namespace LanguageExplorer
 {
-#if RANDYTODO
-	// TODO: Move StatusBarTextBox into LE after xworks is assimilated.
-#endif
 	/// <summary>
 	/// Allows having a colored background, as for the "filtered" panel.
 	/// </summary>
 	public class StatusBarTextBox : StatusBarPanel
 	{
-		private System.Drawing.Brush m_backBrush;
+		private Brush m_backBrush;
 		private string m_text = string.Empty;
 		private StatusBar m_bar;
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// constructor
-		/// </summary>
-		/// <param name="bar">Needed because the parent attr is null at this point</param>
-		/// ------------------------------------------------------------------------------------
-		public StatusBarTextBox(StatusBar bar): base()
+		/// <summary />
+		public StatusBarTextBox(StatusBar bar)
 		{
-			Style = System.Windows.Forms.StatusBarPanelStyle.OwnerDraw;
-			m_backBrush = System.Drawing.Brushes.Transparent;
-			bar.DrawItem += new StatusBarDrawItemEventHandler(HandleDrawItem);
+			Style = StatusBarPanelStyle.OwnerDraw;
+			m_backBrush = Brushes.Transparent;
+			bar.DrawItem += HandleDrawItem;
 			m_bar = bar;
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		public bool IsDisposed
-		{
-			get { return m_isDisposed; }
-		}
-
-		private bool m_isDisposed = false;
+		/// <summary />
+		private bool IsDisposed { get; set; }
 
 		/// <summary>
 		///
@@ -50,8 +35,11 @@ namespace SIL.FieldWorks.Common.Controls
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if (m_isDisposed)
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
 				return;
+			}
 
 			if (disposing)
 			{
@@ -61,7 +49,9 @@ namespace SIL.FieldWorks.Common.Controls
 				//				if (m_backBrush != null)
 				//					m_backBrush.Dispose();
 				if (m_bar != null)
-					m_bar.DrawItem -= new StatusBarDrawItemEventHandler(HandleDrawItem);
+				{
+					m_bar.DrawItem -= HandleDrawItem;
+				}
 			}
 			m_backBrush = null;
 			m_text = null;
@@ -69,15 +59,13 @@ namespace SIL.FieldWorks.Common.Controls
 
 			base.Dispose(disposing);
 
-			m_isDisposed = true;
+			IsDisposed = true;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// use this to get a background color
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public System.Drawing.Brush BackBrush
+		public Brush BackBrush
 		{
 			set
 			{
@@ -85,7 +73,7 @@ namespace SIL.FieldWorks.Common.Controls
 				//// Using the reflector tool we could see that the static Brush Yellow method is
 				//// returning a Brush that exists in a Thread context and disposing that doesn't
 				//// remove the index entry from the ThreadData so the next one gets an invalid
-				//// object and crashes.  This could be considerd a bug in .NET 2.0.
+				//// object and crashes.  This could be considered a bug in .NET 2.0.
 				//// Just for fun and out of interest to others, here's the property in the
 				//// System.Drawing.Brushes class: (retrieved by Lutz Roeder's .NET Reflector)
 				//// Thanks to Randy for finding this very useful utility: the find of the week!
@@ -113,49 +101,46 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Somehow the normal "Text" attr we inherit was getting cleared.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public  string TextForReal
+		public string TextForReal
 		{
 			set
 			{
 				m_text = value;
 				// But we still need to set the Text property to get autosizing to work.
-				this.Text = m_text;
+				Text = m_text;
 				// Be very careful about taking this out. It will SOMETIMES work without it, and
 				// apparently always if you are stepping through the code in a debugger, but not always.
 				m_bar.Invalidate(); // Enhance JohnT: there should be some way to just invalidate this, but can't find it.
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handle the DrawItem Event from the parent bar
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="sbdevent"></param>
-		/// ------------------------------------------------------------------------------------
 		private void HandleDrawItem(object sender, StatusBarDrawItemEventArgs sbdevent)
 		{
 			if (sbdevent.Panel != this)
+			{
 				return;
-
-			Rectangle rect = sbdevent.Bounds;
+			}
+			var rect = sbdevent.Bounds;
 			if (Application.RenderWithVisualStyles)
+			{
 				rect.Width = rect.Width - SystemInformation.Border3DSize.Width;
-
+			}
 			if (m_text.Trim() != string.Empty)
+			{
 				sbdevent.Graphics.FillRectangle(m_backBrush, rect);
-
-			using (StringFormat sf = new StringFormat())
+			}
+			using (var sf = new StringFormat())
 			{
 				sf.Alignment = StringAlignment.Center;
-				Rectangle centered = rect;
+				var centered = rect;
 				centered.Offset(0, (int)(rect.Height - sbdevent.Graphics.MeasureString(m_text, sbdevent.Font).Height) / 2);
-				using (SolidBrush brush = new SolidBrush(sbdevent.ForeColor))
+				using (var brush = new SolidBrush(sbdevent.ForeColor))
 				{
 					sbdevent.Graphics.DrawString(m_text, sbdevent.Font, brush, centered, sf);
 				}

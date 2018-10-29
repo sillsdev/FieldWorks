@@ -16,67 +16,68 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog
 		/// <summary/>
 		protected IFolderBrowserDialog m_dlg;
 
-		/// <summary/>
+		/// <summary />
 		public FolderBrowserDialogAdapter()
 		{
 			m_dlg = Manager.CreateFolderBrowserDialog();
 		}
 
 		#region IFolderBrowserDialog implementation
-		/// <summary/>
+
+		/// <inheritdoc />
 		public event EventHandler Disposed
 		{
 			add { m_dlg.Disposed += value; }
 			remove { m_dlg.Disposed -= value; }
 		}
 
-		/// <summary/>
+		/// <inheritdoc />
 		public void Reset()
 		{
 			m_dlg.Reset();
 		}
 
-		/// <summary/>
+		/// <inheritdoc />
 		public DialogResult ShowDialog()
 		{
 			return m_dlg.ShowDialog();
 		}
 
-		/// <summary/>
+		/// <inheritdoc />
 		public DialogResult ShowDialog(IWin32Window owner)
 		{
 			return m_dlg.ShowDialog(owner);
 		}
 
-		/// <summary/>
+		/// <inheritdoc />
 		public string Description
 		{
 			get { return m_dlg.Description; }
 			set { m_dlg.Description = value; }
 		}
 
-		/// <summary/>
+		/// <inheritdoc />
 		public Environment.SpecialFolder RootFolder
 		{
 			get { return m_dlg.RootFolder; }
 			set { m_dlg.RootFolder = value; }
 		}
 
-		/// <summary/>
+		/// <inheritdoc />
 		public string SelectedPath
 		{
 			get { return m_dlg.SelectedPath; }
 			set { m_dlg.SelectedPath = value; }
 		}
 
-		/// <summary/>
+		/// <inheritdoc />
 		public bool ShowNewFolderButton
 		{
 			get { return m_dlg.ShowNewFolderButton; }
 			set { m_dlg.ShowNewFolderButton = value; }
 		}
 
-		/// <summary/>
+		/// <inheritdoc />
 		public object Tag
 		{
 			get { return m_dlg.Tag; }
@@ -85,18 +86,17 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog
 		#endregion
 
 		#region Disposable stuff
-#if DEBUG
-		/// <summary/>
+
+		/// <summary />
 		~FolderBrowserDialogAdapter()
 		{
 			Dispose(false);
 		}
-#endif
 
 		/// <summary/>
 		public bool IsDisposed { get; private set; }
 
-		/// <summary/>
+		/// <inheritdoc />
 		public void Dispose()
 		{
 			Dispose(true);
@@ -104,15 +104,19 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog
 		}
 
 		/// <summary/>
-		protected virtual void Dispose(bool fDisposing)
+		protected virtual void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + ". *******");
-			if (fDisposing && !IsDisposed)
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". *******");
+			if (IsDisposed)
 			{
-				// dispose managed and unmanaged objects
+				// No need to run it more than once.
+				return;
+			}
+
+			if (disposing)
+			{
 				var disposable = m_dlg as IDisposable;
-				if (disposable != null)
-					disposable.Dispose();
+				disposable?.Dispose();
 			}
 			m_dlg = null;
 			IsDisposed = true;

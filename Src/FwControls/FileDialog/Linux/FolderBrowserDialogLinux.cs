@@ -1,12 +1,13 @@
 // Copyright (c) 2011-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using Gtk;
 
 namespace SIL.FieldWorks.Common.Controls.FileDialog.Linux
 {
-	internal class FolderBrowserDialogLinux: FileDialogLinux, IFolderBrowserDialog
+	internal class FolderBrowserDialogLinux : FileDialogLinux, IFolderBrowserDialog
 	{
 		public FolderBrowserDialogLinux()
 		{
@@ -25,8 +26,8 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Linux
 
 		public Environment.SpecialFolder RootFolder
 		{
-			get { return InternalRootFolder.GetValueOrDefault();}
-			set { InternalRootFolder = value;}
+			get { return InternalRootFolder.GetValueOrDefault(); }
+			set { InternalRootFolder = value; }
 		}
 
 		public string SelectedPath { get; set; }
@@ -58,11 +59,14 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Linux
 		protected override FileChooserDialog CreateFileChooserDialog()
 		{
 			var dlg = base.CreateFileChooserDialog();
-
 			if (InternalRootFolder.HasValue)
+			{
 				dlg.SetCurrentFolder(Environment.GetFolderPath(RootFolder));
+			}
 			if (!string.IsNullOrEmpty(SelectedPath))
+			{
 				dlg.SetFilename(SelectedPath);
+			}
 			return dlg;
 		}
 

@@ -9,23 +9,21 @@ using System.Windows.Forms;
 
 namespace SIL.FieldWorks.Common.Controls
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// We override ComboBox because of a bug that allows the SelectedIndex of a ComboBox to be
 	/// -1 under certain conditions.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public class FwOverrideComboBox : ComboBox
 	{
 		private int m_lastSelectedIndex;
 
-		/// <summary/>
+		/// <summary />
 		public FwOverrideComboBox()
 		{
 			Enter += OnEnter;
 		}
 
-		/// <summary/>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " *******");
@@ -44,7 +42,9 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			// Items collection cannot be modified when the DataSource property is set.
 			if (DataSource != null)
+			{
 				return;
+			}
 			foreach (var disposable in Items.OfType<IDisposable>())
 			{
 				disposable.Dispose();
@@ -60,84 +60,71 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			// Items collection cannot be modified when the DataSource property is set.
 			if (DataSource != null)
+			{
 				return;
-
+			}
 			DisposeItems();
 
-			if(Text.Length > 0)
+			if (Text.Length > 0)
 			{
-				Text = "";
+				Text = string.Empty;
 			}
 			Items.Clear();
 		}
 
 		private void OnEnter(object sender, EventArgs e)
 		{
-			int maxStringLength = 0;
-			for (int i = 0; i < Items.Count; i++)
+			var maxStringLength = 0;
+			foreach (var item in Items)
 			{
-				if (Items[i].ToString().Length > maxStringLength)
+				if (item.ToString().Length > maxStringLength)
 				{
-					maxStringLength = Items[i].ToString().Length;
+					maxStringLength = item.ToString().Length;
 				}
 			}
-			int factor = 6;
-			int maxwidth = maxStringLength * factor;
+			const int factor = 6;
+			var maxwidth = maxStringLength * factor;
 			if (maxStringLength > 0 && DropDownWidth < maxwidth)
+			{
 				DropDownWidth = maxwidth;
+			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Call this method when you want the space character to be passed into the underlying
 		/// control when the style isn't a DropDown.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public bool AllowSpaceInEditBox { get; set; }
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Raises the <see cref="E:System.Windows.Forms.ComboBox.SelectedIndexChanged"></see>
-		/// event.
-		/// </summary>
-		/// <param name="e">An <see cref="T:System.EventArgs"></see> that contains the event
-		/// data.</param>
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		protected override void OnSelectedIndexChanged(EventArgs e)
 		{
 			base.OnSelectedIndexChanged(e);
 			m_lastSelectedIndex = base.SelectedIndex;
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Raises the <see cref="E:System.Windows.Forms.Control.TextChanged"></see> event.
-		/// </summary>
-		/// <param name="e">An <see cref="T:System.EventArgs"></see> that contains the event data.</param>
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		protected override void OnDropDownClosed(EventArgs e)
 		{
 			base.OnDropDownClosed(e);
-			if (base.SelectedIndex == -1 && DropDownStyle == ComboBoxStyle.DropDownList &&
-				m_lastSelectedIndex >= 0 && m_lastSelectedIndex < base.Items.Count)
+			if (base.SelectedIndex == -1 && DropDownStyle == ComboBoxStyle.DropDownList && m_lastSelectedIndex >= 0 && m_lastSelectedIndex < base.Items.Count)
 			{
 				base.SelectedIndex = m_lastSelectedIndex;
 			}
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="e"></param>
+		/// <inheritdoc />
 		protected override void OnKeyPress(KeyPressEventArgs e)
 		{
 			if (e.KeyChar == ' ')
 			{
-				if (this.DropDownStyle == ComboBoxStyle.DropDownList)
-					this.DroppedDown = true;
+				if (DropDownStyle == ComboBoxStyle.DropDownList)
+				{
+					DroppedDown = true;
+				}
 				e.Handled = true;
 				// DanH - I think the above code is a BUG. As it causes the space character
-				// to get eatten with out ever making it into the base control. That means
+				// to get eaten without ever making it into the base control. That means
 				// one can not enter a space character into the text of the edit box of the
 				// control. This seems like the wrong default action. But, I'm leaving it as
 				// I don't know the history. I'm adding a flag to allow the control to work

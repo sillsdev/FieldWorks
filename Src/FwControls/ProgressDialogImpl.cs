@@ -10,7 +10,6 @@ using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// This implements the real progress dialog that is visible to the user. This dialog is
 	/// displayed as a modal dialog in the main thread so that it can respond to the user
@@ -25,7 +24,6 @@ namespace SIL.FieldWorks.Common.Controls
 	/// a background thread. ProgressDialogWithTask is a wrapper to accomplish that, and it
 	/// also deals with the multi-threading issues when we want to update the progress dialog
 	/// from the background thread.</remarks>
-	/// ----------------------------------------------------------------------------------------
 	internal partial class ProgressDialogImpl : Form, IProgress
 	{
 		#region Member variables
@@ -33,21 +31,12 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Event handler for listening to whether or the cancel button is pressed.
 		/// </summary>
 		public event CancelEventHandler Canceling;
-		/// <summary>
-		/// If true, this allows the progress indicator to restart at 0 if it overflows.
-		/// </summary>
-		private bool m_fRestartable;
 
 		#endregion
 
 		#region Constructors
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ProgressDialogImpl"/> class.
-		/// </summary>
-		/// <param name="owner">The owner (which we also expect to be used as a parameter when
-		/// Show() is called).</param>
-		/// ------------------------------------------------------------------------------------
+
+		/// <summary />
 		public ProgressDialogImpl(Form owner)
 		{
 			InitializeComponent();
@@ -55,34 +44,37 @@ namespace SIL.FieldWorks.Common.Controls
 			Message = string.Empty;
 			lblCancel.AutoSize = false;
 			lblCancel.Text = string.Empty;
-			m_fRestartable = false;
+			Restartable = false;
 			if (owner == null)
+			{
 				StartPosition = FormStartPosition.CenterScreen;
+			}
 			else
 			{
 				//StartPosition = FormStartPosition.CenterParent;
 				// Sadly, just doing CenterParent won't work in this case :-(
 				Left = owner.Left + (owner.Width - Width) / 2;
 				Top = owner.Top + (owner.Height - Height) / 2;
-				Screen primaryScreen = Screen.FromControl(owner);
+				var primaryScreen = Screen.FromControl(owner);
 				Left = Math.Max(Left, primaryScreen.WorkingArea.Left);
 				Top = Math.Max(Top, primaryScreen.WorkingArea.Top);
 				if (Right > primaryScreen.WorkingArea.Right)
+				{
 					Left -= (Right - primaryScreen.WorkingArea.Right);
+				}
 				if (Bottom > primaryScreen.WorkingArea.Bottom)
+				{
 					Top -= (Bottom - primaryScreen.WorkingArea.Bottom);
+				}
 			}
 		}
 		#endregion
 
 		#region Properties
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets a message indicating progress status.
 		/// </summary>
-		/// <returns>The status message</returns>
-		/// ------------------------------------------------------------------------------------
 		public string Message
 		{
 			get
@@ -95,12 +87,10 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the maximum number of steps or increments corresponding to a progress
 		/// bar that's 100% filled.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public int Maximum
 		{
 			get
@@ -113,12 +103,10 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the minimum number of steps or increments corresponding to a progress
 		/// bar that's 100% empty.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public int Minimum
 		{
 			get
@@ -131,12 +119,10 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets a value indicating the number of steps (or increments) having been
 		/// completed.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public int Position
 		{
 			get
@@ -146,30 +132,31 @@ namespace SIL.FieldWorks.Common.Controls
 			set
 			{
 				if (value < progressBar.Minimum)
+				{
 					progressBar.Value = progressBar.Minimum;
-				else if (m_fRestartable)
+				}
+				else if (Restartable)
+				{
 					progressBar.Value = (value > progressBar.Maximum) ? 0 : value;
+				}
 				else
+				{
 					progressBar.Value = (value > progressBar.Maximum) ? progressBar.Maximum : value;
+				}
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Steps the specified step.
 		/// </summary>
-		/// <param name="step">The step.</param>
-		/// ------------------------------------------------------------------------------------
 		public void Step(int step)
 		{
 			Position += step;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Get the title of the progress display window.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public string Title
 		{
 			get
@@ -182,11 +169,9 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Sets the size of the step.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public int StepSize
 		{
 			get
@@ -199,30 +184,15 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets a value indicating whether or not the progress indicator can restart
 		/// at zero if it goes beyond the end.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public bool Restartable
-		{
-			get
-			{
+		public bool Restartable { get; set; }
 
-				return m_fRestartable;
-			}
-			set
-			{
-				m_fRestartable = value;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets a value indicating whether or not the cancel button is visible.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public bool AllowCancel
 		{
 			get
@@ -243,11 +213,9 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the text on the cancel button.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public string CancelButtonText
 		{
 			get
@@ -260,12 +228,9 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets a label for Canceling button.
 		/// </summary>
-		/// <returns>The status message</returns>
-		/// ------------------------------------------------------------------------------------
 		public string CancelLabelText
 		{
 			get
@@ -275,7 +240,7 @@ namespace SIL.FieldWorks.Common.Controls
 			set
 			{
 				lblCancel.Text = value;
-				Size sz = new Size(lblCancel.Width, int.MaxValue);
+				var sz = new Size(lblCancel.Width, int.MaxValue);
 				sz = TextRenderer.MeasureText(lblCancel.Text, lblCancel.Font, sz, TextFormatFlags.WordBreak);
 				lblCancel.Height = sz.Height;
 			}
@@ -285,26 +250,12 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Gets an object to be used for ensuring that required tasks are invoked on the main
 		/// UI thread.
 		/// </summary>
-		public ISynchronizeInvoke SynchronizeInvoke
-		{
-			get
-			{
-				return this;
-			}
-		}
+		public ISynchronizeInvoke SynchronizeInvoke => this;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the form  displaying the progress (used for message box owners, etc).
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public Form Form
-		{
-			get
-			{
-				return this;
-			}
-		}
+		public Form Form => this;
 
 		/// <summary>
 		/// Gets or sets a value indicating whether this progress is indeterminate.
@@ -324,12 +275,10 @@ namespace SIL.FieldWorks.Common.Controls
 
 		#region Misc. Methods
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// If no one has subscribed to the cancel event, then don't bother showing the cancel
 		/// button.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected override void OnVisibleChanged(EventArgs e)
 		{
 			base.OnVisibleChanged(e);
@@ -342,11 +291,9 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Calls subscribers to the cancel event.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected virtual void OnCancel()
 		{
 			if (Canceling != null)
@@ -360,13 +307,10 @@ namespace SIL.FieldWorks.Common.Controls
 		#endregion
 
 		#region Event Handlers
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Occurs when the cancel button is pressed.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
 		protected internal void btnCancel_Click(object sender, EventArgs e)
 		{
 			OnCancel();

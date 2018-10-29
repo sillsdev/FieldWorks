@@ -4,155 +4,105 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Diagnostics;
 using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
-#if RANDYTODO
-// TODO: Move StatusBarProgressPanel into LE after xworks, and friends, are assimilated.
-#endif
 	/// <summary>
 	/// Status Bar Panel that Displays Progress
 	/// </summary>
-	public class StatusBarProgressPanel : StatusBarPanel, IProgressDisplayer
+	public sealed class StatusBarProgressPanel : StatusBarPanel, IProgressDisplayer
 	{
-		//static public StatusBarProgressPanel s_StatusBarProgressPanel;
 		#region Member Variables
 
-		//private RefreshDelegate _refreshDelegate;
 		private TraceSwitch traceSwitch = new TraceSwitch("Common_Controls", "Used for diagnostic output", "Off");
-		private bool _drawEventRegistered=false;
-		private ProgressDisplayStyle _animationStyle;
-		private long _stepSize;
-		private long _startPoint;
-		private long _endPoint;
+		private bool _drawEventRegistered;
 		private Brush _progressBrush;
 		private Brush _textBrush;
 		private Font _textFont;
-		private bool _showText;
 		private Rectangle m_bounds;
-		private TimeSpan _animationTick;
-		/// <summary>
-		///
-		/// </summary>
-		protected ProgressState m_stateProvider;
+		/// <summary />
+		private ProgressState m_stateProvider;
 		/// <summary>
 		/// for double buffering
 		/// </summary>
-		private Bitmap offScreenBmp = null;
+		private Bitmap offScreenBmp;
 		/// <summary>
 		/// for double buffering
 		/// </summary>
-		private Graphics offScreenDC = null;
-		/// <summary>
-		///
-		/// </summary>
-		protected int m_drawPosition;
-
-		private System.Windows.Forms.Timer timer1;
-		private System.ComponentModel.IContainer components;
+		private Graphics offScreenDC;
+		/// <summary />
+		private int m_drawPosition;
+		private Timer timer1;
+		private IContainer components;
 		#endregion
 
 		#region Construction / Destruction
 
-		/// <summary>
-		/// Creates a new StatusBarProgressPanel
-		/// </summary>
+		/// <inheritdoc />
 		public StatusBarProgressPanel(StatusBar bar)
 		{
 			Init();
-			bar.DrawItem +=
-				new StatusBarDrawItemEventHandler(this.OnDrawItem);
+			bar.DrawItem += OnDrawItem;
 		}
+
 		//for designer use only
 		internal StatusBarProgressPanel()
 		{
 			Init();
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		protected void Init()
+		/// <summary />
+		private void Init()
 		{
-//			s_StatusBarProgressPanel = this;
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
 
-
-			_animationStyle = ProgressDisplayStyle.Infinite;
-
-			//			ProgressPosition = 0;
-			_stepSize = 10;
-			_startPoint = 0;
-			_endPoint = 100;
-
-			_showText = true;
+			AnimationStyle = ProgressDisplayStyle.Infinite;
+			StepSize = 10;
+			StartPoint = 0;
+			EndPoint = 100;
+			ShowText = true;
 			_textFont = new Font(MiscUtils.StandardSansSerif, 8);
 			_textBrush = SystemBrushes.ControlText;
-
 			_progressBrush = SystemBrushes.Highlight;
-
-			//			_increasing = true;
-
-			_animationTick = TimeSpan.FromSeconds(0.5);
-			//			InitializeAnimationThread();
-
-			//			_refreshDelegate = new RefreshDelegate( this.Refresh );
-
-			//------
-			this.AnimationStyle = ProgressDisplayStyle.LeftToRight;
-			this.AnimationTick = System.TimeSpan.Parse("00:00:00.5000000");
-			this.EndPoint = ((long)(100));
-			//	this.ProgressPosition = ((long)(0));
-			this.ShowText = true;
-			this.StartPoint = ((long)(0));
-			this.StepSize = ((long)(10));
-			this.Style = System.Windows.Forms.StatusBarPanelStyle.OwnerDraw;
-			this.TextFont = new System.Drawing.Font(MiscUtils.StandardSansSerif, 8F);
-
+			AnimationTick = TimeSpan.FromSeconds(0.5);
+			AnimationStyle = ProgressDisplayStyle.LeftToRight;
+			AnimationTick = System.TimeSpan.Parse("00:00:00.5000000");
+			EndPoint = 100;
+			ShowText = true;
+			StartPoint = 0;
+			StepSize = 10;
+			Style = StatusBarPanelStyle.OwnerDraw;
+			TextFont = new Font(MiscUtils.StandardSansSerif, 8F);
 			const int TIMER_INTERVAL = 1000; //1000 milliseconds
 			timer1.Interval = TIMER_INTERVAL;
 			timer1.Start();
-
-
-			// Create a timer that signals the delegate to invoke
-			// CheckStatus after one second, and every 1/4 second
-			// thereafter.
-			//			Console.WriteLine("{0} Creating timer.\n",
-			//				DateTime.Now.ToString("h:mm:ss.fff"));
-			////			m_outOfThreadTimer = new System.Threading.Timer(new TimerCallback(this.Tick),
-			//				null, 100, 100);
 		}
 
 		/// <summary>
 		///
 		/// </summary>
-		public bool IsDisposed
-		{
-			get { return m_isDisposed; }
-		}
+		private bool IsDisposed { get; set; }
 
-		private bool m_isDisposed = false;
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
-			if (m_isDisposed)
-				return;
-
-			if( disposing )
+			if (IsDisposed)
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
+				// No need to run it more than once.
+				return;
+			}
+
+			if (disposing)
+			{
+				components?.Dispose();
 			}
 
 			timer1.Dispose();
@@ -163,15 +113,13 @@ namespace SIL.FieldWorks.Common.Controls
 			_textBrush = null;
 			_textFont = null;
 
-			base.Dispose( disposing );
-			m_isDisposed = true;
+			base.Dispose(disposing);
+			IsDisposed = true;
 		}
 
 		#endregion
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		/// <remarks>Getting things set up to actually draw in any custom status panel is surprisingly
 		/// difficult. The first problem is, until some magical point, we cannot even figure out who are parent is.
 		/// Apart from that, we cannot even find out what our boundary rectangle is. we can find out
@@ -179,60 +127,49 @@ namespace SIL.FieldWorks.Common.Controls
 		/// kept the nature of this progress bar is that it actually wants to draw on its own agenda, not on the parent's.
 		/// Thus, it is up to some other code to somehow get this event to fire so that we can figure out our boundary.
 		/// </remarks>
-		/// <param name="sender"></param>
-		/// <param name="sbdevent"></param>
 		public void OnDrawItem(object sender, StatusBarDrawItemEventArgs sbdevent)
 		{
 			// It has proved difficult to dispose of all the panels of a status bar without something
 			// at the system level trying to draw one that has already been disposed. The simplest
 			// solution is just to ignore attempts to draw disposed ones.
 			if (IsDisposed)
+			{
 				return;
+			}
 			if (sbdevent.Panel == this)
 			{
 				m_bounds = sbdevent.Bounds;
 				// if we are using visual styles, the progress bar will sometimes overlap the border, so we reduce
 				// the size of the progress bar a little
 				if (Application.RenderWithVisualStyles)
+				{
 					m_bounds.Width = m_bounds.Width - SystemInformation.Border3DSize.Width;
-				//				System.Diagnostics.Debug.WriteLine("");
-				//				System.Diagnostics.Debug.WriteLine("SetBounds");
-
+				}
 			}
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="state"></param>
+		/// <inheritdoc />
 		public void SetStateProvider(ProgressState state)
 		{
 			m_stateProvider = state;
-			this.Reset();
+			Reset();
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <inheritdoc />
 		public void ClearStateProvider()
 		{
 			m_stateProvider = null;
-			this.Reset();
+			Reset();
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="stateInfo"></param>
-		public void Tick(Object stateInfo)
+		/// <summary />
+		public void Tick(object stateInfo)
 		{
 			if (m_stateProvider == null)
+			{
 				return;
+			}
 			RefreshSafely();
-			//this.Step();
-			//			if(this.ProgressPosition >= this.EndPoint)
-			//				this.Reset();
-
 		}
 
 		#region Component Designer generated code
@@ -261,81 +198,31 @@ namespace SIL.FieldWorks.Common.Controls
 		/// The method used when drawing the progress bar
 		/// </summary>
 		[Category("Animation")]
-		public ProgressDisplayStyle AnimationStyle
-		{
-			get
-			{
-				return _animationStyle;
-			}
-			set
-			{
-				_animationStyle = value;
-			}
-		}
+		private ProgressDisplayStyle AnimationStyle { get; set; }
 
 		/// <summary>
-		/// Timespan between infinate progress animation changes
+		/// Timespan between infinite progress animation changes
 		/// </summary>
 		[Category("Animation")]
-		public TimeSpan AnimationTick
-		{
-			get
-			{
-				return _animationTick;
-			}
-			set
-			{
-				_animationTick = value;
-			}
-		}
+		public TimeSpan AnimationTick { get; set; }
 
 		/// <summary>
-		/// Ammount to move on each progress step
+		/// Amount to move on each progress step
 		/// </summary>
 		[Category("Measurement")]
-		public long StepSize
-		{
-			get
-			{
-				return _stepSize;
-			}
-			set
-			{
-				_stepSize = value;
-			}
-		}
+		public long StepSize { get; set; }
 
 		/// <summary>
 		/// Start point of progress
 		/// </summary>
 		[Category("Measurement")]
-		public long StartPoint
-		{
-			get
-			{
-				return _startPoint;
-			}
-			set
-			{
-				_startPoint = value;
-			}
-		}
+		public long StartPoint { get; set; }
 
 		/// <summary>
 		/// Point of progress completion
 		/// </summary>
 		[Category("Measurement")]
-		public long EndPoint
-		{
-			get
-			{
-				return _endPoint;
-			}
-			set
-			{
-				_endPoint = value;
-			}
-		}
+		public long EndPoint { get; set; }
 
 		/// <summary>
 		/// Current Position of the Progress Indicator
@@ -344,49 +231,12 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				if(m_stateProvider ==null)
+				if (m_stateProvider == null)
+				{
 					return 0;
-				int x= m_stateProvider.PercentDone;// ProgressPosition;
-				if(x>100)
-					return 100;
-				else
-					return x;
-			}
-		}
-
-		/// <summary>
-		/// Brush style of the progress indicator
-		/// </summary>
-		[Category("Style")]
-		public Brush ProgressDrawStyle
-		{
-			get
-			{
-				return _progressBrush;
-			}
-			set
-			{
-				if (_progressBrush != null)
-					_progressBrush.Dispose();
-				_progressBrush = value;
-			}
-		}
-
-		/// <summary>
-		/// Brush style of the Text when it is drawn
-		/// </summary>
-		[Category("Style")]
-		public Brush TextDrawStyle
-		{
-			get
-			{
-				return _textBrush;
-			}
-			set
-			{
-				if (_textBrush != null)
-					_textBrush.Dispose();
-				_textBrush = value;
+				}
+				var x = m_stateProvider.PercentDone; // ProgressPosition;
+				return x > 100 ? 100 : x;
 			}
 		}
 
@@ -402,8 +252,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			set
 			{
-				if (_textFont != null)
-					_textFont.Dispose();
+				_textFont?.Dispose();
 				_textFont = value;
 			}
 		}
@@ -412,61 +261,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Optionally Display Text value of the Indicator
 		/// </summary>
 		[Category("Style")]
-		public bool ShowText
-		{
-			get
-			{
-				return _showText;
-			}
-			set
-			{
-				_showText = value;
-			}
-		}
-
-		#endregion
-
-		#region Step
-
-		//		/// <summary>
-		//		/// Promotes the progress bar by one step
-		//		/// </summary>
-		//		public void Step()
-		//		{
-		//			if ( ! _drawEventRegistered )
-		//			{
-		//				this.Parent.DrawItem += new StatusBarDrawItemEventHandler(OnDrawItem);
-		//				_drawEventRegistered = true;
-		//			}
-		//
-		//			if ( this.IsAnimated )
-		//			{
-		//				if ( _increasing )
-		//				{
-		//					ProgressPosition += _stepSize;
-		//
-		//					if (ProgressPosition >= _endPoint)
-		//					{
-		//						_increasing = false;
-		//					}
-		//				}
-		//				else
-		//				{
-		//					ProgressPosition -= _stepSize;
-		//
-		//					if (ProgressPosition <= _startPoint)
-		//					{
-		//						_increasing = true;
-		//					}
-		//				}
-		//			}
-		//			else if (ProgressPosition < _endPoint)
-		//			{
-		//				ProgressPosition += _stepSize;
-		//			}
-		//
-		//			this.Parent.Invoke( _refreshDelegate );
-		//		}
+		public bool ShowText { get; set; }
 
 		#endregion
 
@@ -474,75 +269,65 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			if (m_bounds.Width == 0)
 			{
-//TOO SLOW BY FAR!				System.Diagnostics.Debug.Write(".");
+				//TOO SLOW BY FAR!				System.Diagnostics.Debug.Write(".");
 				return; //not ready yet
 			}
 
-			using (Graphics graphics = this.Parent.CreateGraphics())
+			using (var graphics = Parent.CreateGraphics())
 			{
-				Rectangle eventBounds = m_bounds;
-
+				var eventBounds = m_bounds;
 				if (offScreenBmp == null)
 				{
-					offScreenBmp = new Bitmap(eventBounds.Width,
-						eventBounds.Height);
+					offScreenBmp = new Bitmap(eventBounds.Width, eventBounds.Height);
 					offScreenDC = Graphics.FromImage(offScreenBmp);
 				}
 
-				Rectangle fullBounds = eventBounds;
+				var fullBounds = eventBounds;
 				fullBounds.X = 0;
 				fullBounds.Y = 0;
 				offScreenDC.FillRectangle(SystemBrushes.Control, fullBounds);
 
 				//allow it to 'catch up' smoothly
-				int pos = ProgressPosition;
-
-				//			if(m_drawPosition > pos)
+				var pos = ProgressPosition;
 				m_drawPosition = pos;
-
-				//			if(m_drawPosition < pos)
-				//				++m_drawPosition;
-
-				if (m_drawPosition != _startPoint)
+				if (m_drawPosition != StartPoint)
 				{
-					if ((m_drawPosition <= _endPoint) ||
-						(this.AnimationStyle == ProgressDisplayStyle.Infinite))
+					if ((m_drawPosition <= EndPoint) || AnimationStyle == ProgressDisplayStyle.Infinite)
 					{
-						Rectangle bounds = eventBounds;
-						float percent = ((float) m_drawPosition/
-										 ((float) _endPoint - (float) _startPoint));
+						var bounds = eventBounds;
+						var percent = m_drawPosition / (EndPoint - (float)StartPoint);
 
-						switch (this.AnimationStyle)
+						switch (AnimationStyle)
 						{
 
 							case ProgressDisplayStyle.LeftToRight:
 								{
-									bounds.Width = (int) (percent*(float) eventBounds.Width);
+									bounds.Width = (int)(percent * eventBounds.Width);
 									break;
 								}
 							case ProgressDisplayStyle.RightToLeft:
 								{
-									bounds.Width = (int) (percent*(float) eventBounds.Width);
+									bounds.Width = (int)(percent * eventBounds.Width);
 									bounds.X += eventBounds.Width - bounds.Width;
 									break;
 								}
 							case ProgressDisplayStyle.BottomToTop:
 								{
-									bounds.Height = (int) (percent*(float) eventBounds.Height);
+									bounds.Height = (int)(percent * eventBounds.Height);
 									bounds.Y += eventBounds.Height - bounds.Height;
 									break;
 								}
 							case ProgressDisplayStyle.TopToBottom:
 								{
-									bounds.Height = (int) (percent*(float) eventBounds.Height);
+									bounds.Height = (int)(percent * eventBounds.Height);
 									break;
 								}
 							case ProgressDisplayStyle.Infinite:
 								{
-									bounds.Height = (int) (percent*(float) eventBounds.Height);
-									bounds.Y += (eventBounds.Height - bounds.Height)/2;
-									bounds.Width = (int) (percent*(float) eventBounds.Width);
-									bounds.X += (eventBounds.Width - bounds.Width)/2;
+									bounds.Height = (int)(percent * eventBounds.Height);
+									bounds.Y += (eventBounds.Height - bounds.Height) / 2;
+									bounds.Width = (int)(percent * eventBounds.Width);
+									bounds.X += (eventBounds.Width - bounds.Width) / 2;
 									break;
 								}
 						}
@@ -551,12 +336,10 @@ namespace SIL.FieldWorks.Common.Controls
 						bounds.X = 0;
 						bounds.Y = 0;
 						offScreenDC.FillRectangle(_progressBrush, bounds);
-						if (this.ShowText)
+						if (ShowText)
 						{
 							// draw the text on top of the progress bar
-							//						offScreenDC.DrawString((percent * 100).ToString(),
-							offScreenDC.DrawString(m_stateProvider.Status,
-								_textFont, _textBrush, new PointF(0.0F, 0.0F));
+							offScreenDC.DrawString(m_stateProvider.Status, _textFont, _textBrush, new PointF(0.0F, 0.0F));
 						}
 					}
 				}
@@ -567,12 +350,9 @@ namespace SIL.FieldWorks.Common.Controls
 
 		#region Refresh
 
-		/// <summary>
-		/// Refreshes the progress bar
-		/// </summary>
+		/// <inheritdoc />
 		public void Refresh()
 		{
-			//this.Parent.Refresh();
 			RefreshSafely();
 		}
 
@@ -586,9 +366,6 @@ namespace SIL.FieldWorks.Common.Controls
 		public void Reset()
 		{
 			m_drawPosition = 0;
-//			StopAnimation();
-			//ProgressPosition = _startPoint;
-
 			RefreshSafely();
 		}
 
@@ -596,140 +373,62 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 
 			if (IsDisposed)
+			{
 				return;
-//			if ( ! _drawEventRegistered )
-//			{
-//				this.Parent.DrawItem += new StatusBarDrawItemEventHandler(OnDrawItem);
-//				_drawEventRegistered = true;
-//			}
-//
+			}
 			DrawPanel();
-			//this.Parent.Invoke( _refreshDelegate );
 		}
 
 		#endregion
 
-		#region Animation
-
-		// <summary>
-		// Spawn the progress animation thread
-		// </summary>
-//		public void StartAnimation()
-//		{
-//			StopAnimation();
-//
-//			//			ProgressPosition = 0;
-//
-//			//			InitializeAnimationThread();
-//
-//			_animationThread.Start();
-//		}
-//
-//		/// <summary>
-//		/// Stop the progress animation thread
-//		/// </summary>
-//		public void StopAnimation()
-//		{
-//			if ( _animationThread.IsAlive )
-//			{
-//				_animationThread.Abort();
-//			}
-//		}
-
-		/// <summary>
-		/// ThreadStart Delegate Handler for infinate progress animation
-		/// </summary>
-		//		private void AnimationThreadStartCallback()
-		//		{
-		//			while ( true )
-		//			{
-		//				this.Step();
-		//				Thread.Sleep( _animationTick );
-		//			}
-		//		}
-
-		//		private void InitializeAnimationThread()
-		//		{
-		//			_animationThread = new Thread(new ThreadStart( this.AnimationThreadStartCallback ));
-		//			_animationThread.IsBackground = true;
-		//			_animationThread.Name = "Progress Bar Animation Thread";
-		//		}
-
-		#endregion
-
-
 		private void timer1_Tick(object sender, System.EventArgs e)
 		{
-			if(this.Parent == null)
-				return;
-
-			// don't invoke if parent is yet to be created
-			if(!this.Parent.IsHandleCreated)
-				return;
-
-//			if(m_stateProvider== null || this.Parent ==null)
-//				return;
-
-			if ( ! _drawEventRegistered )
+			if (Parent == null)
 			{
-				System.Diagnostics.Debug.WriteLineIf(traceSwitch.TraceInfo, "reg", traceSwitch.DisplayName);
-//				this.Parent.DrawItem += new StatusBarDrawItemEventHandler(OnDrawItem);
-//				this.Parent.Resize += new EventHandler(Parent_Resize);
-				_drawEventRegistered = true;
-				this.Parent.Invoke(  new RefreshDelegate( this.Refresh ) );
+				return;
 			}
-
+			// don't invoke if parent is yet to be created
+			if (!Parent.IsHandleCreated)
+			{
+				return;
+			}
+			if (!_drawEventRegistered)
+			{
+				Debug.WriteLineIf(traceSwitch.TraceInfo, "reg", traceSwitch.DisplayName);
+				_drawEventRegistered = true;
+				Parent.Invoke(new RefreshDelegate(Refresh));
+			}
 
 			RefreshSafely();
 		}
 
-		#region Delegates
-
 		private delegate void RefreshDelegate();
 
-		#endregion
-
-// The following method is never used and produces a warning (error) when compiled with Mono.
-//		private void Parent_Resize(object sender, EventArgs e)
-//		{
-//		//	if ( e.Panel == this )
-//			{
-//				System.Diagnostics.Debug.WriteLineIf(traceSwitch.TraceInfo, "", traceSwitch.DisplayName);
-//				System.Diagnostics.Debug.WriteLineIf(traceSwitch.TraceInfo, "xx", traceSwitch.DisplayName);
-//			}
-//		}
+		/// <summary>
+		/// Statusbar Progress Display Styles
+		/// </summary>
+		private enum ProgressDisplayStyle
+		{
+			/// <summary>
+			/// A continually moving animation
+			/// </summary>
+			Infinite,
+			/// <summary>
+			/// A progress bar that fills from left to right
+			/// </summary>
+			LeftToRight,
+			/// <summary>
+			/// A progress bar that fills from right to left
+			/// </summary>
+			RightToLeft,
+			/// <summary>
+			/// A progress bar that fills from bottom to top
+			/// </summary>
+			BottomToTop,
+			/// <summary>
+			/// A progress bar that fills from top to bottom
+			/// </summary>
+			TopToBottom
+		}
 	}
-
-	#region ProgressDisplayStyle
-
-	/// <summary>
-	/// Statusbar Progress Display Styles
-	/// </summary>
-	public enum ProgressDisplayStyle
-	{
-		/// <summary>
-		/// A continually moving animation
-		/// </summary>
-		Infinite,
-		/// <summary>
-		/// A progress bar that fills from left to right
-		/// </summary>
-		LeftToRight,
-		/// <summary>
-		/// A progress bar that fills from right to left
-		/// </summary>
-		RightToLeft,
-		/// <summary>
-		/// A progress bar that fills from bottom to top
-		/// </summary>
-		BottomToTop,
-		/// <summary>
-		/// A progress bar that fills from top to bottom
-		/// </summary>
-		TopToBottom
-	}
-
-	#endregion
-
-
 }

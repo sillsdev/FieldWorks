@@ -201,33 +201,12 @@
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
     <Compile Include="CaseSensitiveListBoxTests.cs" />
-    <Compile Include="DummyDerivedForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DummyPersistedFormManual.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DummyPersistedFormWinDef.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="DummyProgressDlg.cs" />
     <Compile Include="ObtainProjectMethodTests.cs" />
-    <Compile Include="FwSplitContainerTests.cs" />
-    <Compile Include="PersistenceTest.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="ProgressDlgTests.cs">
     </Compile>
     <Compile Include="TriStateTreeViewTests.cs">
     </Compile>
-    <EmbeddedResource Include="DummyDerivedForm.resx">
-      <DependentUpon>DummyDerivedForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DummyPersistedFormManual.resx">
-      <DependentUpon>DummyPersistedFormManual.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DummyPersistedFormWinDef.resx">
-      <DependentUpon>DummyPersistedFormWinDef.cs</DependentUpon>
-    </EmbeddedResource>
     <Compile Include="ProgressStateTests.cs" />
   </ItemGroup>
   <ItemGroup>

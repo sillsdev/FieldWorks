@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2013-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,9 +9,9 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
 
@@ -65,8 +65,9 @@ namespace SIL.FieldWorks.Common.Controls
 			// LinkedFiles: main folder in project folder.
 			var linkedFilesDir = Path.Combine(projectFolder, "LinkedFiles");
 			if (!Directory.Exists(linkedFilesDir))
+			{
 				Directory.CreateDirectory(linkedFilesDir);
-
+			}
 			var subfolders = new HashSet<string>
 			{
 				"AudioVisual",
@@ -89,15 +90,13 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			string projectPath;
 			LcmCache cache;
-
 			var anthroListFile = CallPickAnthroList(helpTopicProvider);
 
 			using (var progressDlg = new ProgressDialogWithTask(parent))
 			{
 				progressDlg.Title = FwControls.ksCreatingLiftProject;
 				var cacheReceiver = new LcmCache[1]; // a clumsy way of handling an out parameter, consistent with RunTask
-				projectPath = (string)progressDlg.RunTask(true, CreateProjectTask,
-					new object[] { liftPath, parent, anthroListFile, cacheReceiver });
+				projectPath = (string)progressDlg.RunTask(true, CreateProjectTask, liftPath, parent, anthroListFile, cacheReceiver);
 				cache = cacheReceiver[0];
 			}
 
@@ -121,8 +120,7 @@ namespace SIL.FieldWorks.Common.Controls
 			// the FwCoreDlgs project, nor is there any straightforward way to move the code we need into some project we can
 			// reference, or any obviously suitable project to move it to without creating other References loops.
 			// nasty reflection calls seems less technical debt than creating an otherwise unnecessary project.
-			return (string)ReflectionHelper.CallStaticMethod(PickAnthroDll, PickAnthroClass,
-				PickAnthroMethod, null, helpTopicProvider);
+			return (string)ReflectionHelper.CallStaticMethod(PickAnthroDll, PickAnthroClass, PickAnthroMethod, null, helpTopicProvider);
 		}
 
 		internal const string ImportLexiconDll = @"LanguageExplorer.dll";
@@ -145,40 +143,38 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Method with signature required by ProgressDialogWithTask.RunTask to create the project (and a cache for it)
 		/// as a background task while showing the dialog.
 		/// </summary>
-		/// <param name="progress"></param>
-		/// <param name="parameters">A specific list is required...see the first few lines of the method.</param>
-		/// <returns></returns>
 		private static object CreateProjectTask(IThreadedProgress progress, object[] parameters)
 		{
+			// A specific list is required...see the first few lines of the method.
 			// Get required parameters. Ideally these would just be the signature of the method, but RunTask requires object[].
-			var liftPathname = (string) parameters[0];
-			var synchronizeInvoke = (ISynchronizeInvoke) parameters[1];
-			var anthroFile = (string) parameters[2];
-			var cacheReceiver = (LcmCache[]) parameters[3];
+			var liftPathname = (string)parameters[0];
+			var synchronizeInvoke = (ISynchronizeInvoke)parameters[1];
+			var anthroFile = (string)parameters[2];
+			var cacheReceiver = (LcmCache[])parameters[3];
 
 			CoreWritingSystemDefinition wsVern, wsAnalysis;
 			RetrieveDefaultWritingSystemsFromLift(liftPathname, out wsVern, out wsAnalysis);
 
-			string projectPath = LcmCache.CreateNewLangProj(progress,
+			var projectPath = LcmCache.CreateNewLangProj(progress,
 				Directory.GetParent(Path.GetDirectoryName(liftPathname)).Parent.Name, // Get the new Flex project name from the Lift pathname.
 				FwDirectoryFinder.LcmDirectories, synchronizeInvoke, wsAnalysis, wsVern, null, null, null, anthroFile);
 
 			// This is a temporary cache, just to do the import, and AFAIK we have no access to the current
 			// user WS. So create it as "English". Put it in the array to return to the caller.
-			cacheReceiver[0] = LcmCache.CreateCacheFromLocalProjectFile(projectPath, "en", new SilentLcmUI(synchronizeInvoke),
-				FwDirectoryFinder.LcmDirectories, new LcmSettings(), progress);
+			cacheReceiver[0] = LcmCache.CreateCacheFromLocalProjectFile(projectPath, "en", new SilentLcmUI(synchronizeInvoke), FwDirectoryFinder.LcmDirectories, new LcmSettings(), progress);
 			return projectPath;
 		}
 
-		private static void RetrieveDefaultWritingSystemsFromLift(string liftPath, out CoreWritingSystemDefinition wsVern,
-			out CoreWritingSystemDefinition wsAnalysis)
+		private static void RetrieveDefaultWritingSystemsFromLift(string liftPath, out CoreWritingSystemDefinition wsVern, out CoreWritingSystemDefinition wsAnalysis)
 		{
 			PerformLdmlMigrationInClonedLiftRepo(liftPath);
 			using (var liftReader = new StreamReader(liftPath, Encoding.UTF8))
 			{
 				string vernWsId, analysisWsId;
 				using (var reader = XmlReader.Create(liftReader))
+				{
 					RetrieveDefaultWritingSystemIdsFromLift(reader, out vernWsId, out analysisWsId);
+				}
 				var wsManager = new WritingSystemManager(SingletonsContainer.Get<CoreGlobalWritingSystemRepository>());
 				wsManager.GetOrSet(vernWsId, out wsVern);
 				wsManager.GetOrSet(analysisWsId, out wsAnalysis);
@@ -190,15 +186,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// We get the vernacular WS from the first form element nested in a lexical-unit with a lang attribute,
 		/// and the analysis WS form the first form element nested in a definition or gloss with a lang attribute.
 		/// </summary>
-		/// <param name="reader"></param>
-		/// <param name="vernWs"></param>
-		/// <param name="analysisWs"></param>
-		/// <returns></returns>
 		internal static void RetrieveDefaultWritingSystemIdsFromLift(XmlReader reader, out string vernWs, out string analysisWs)
 		{
 			vernWs = analysisWs = null;
-			bool inLexicalUnit = false;
-			bool inDefnOrGloss = false;
+			var inLexicalUnit = false;
+			var inDefnOrGloss = false;
 			while (reader.Read())
 			{
 				switch (reader.NodeType)
@@ -215,11 +207,17 @@ namespace SIL.FieldWorks.Common.Controls
 								break;
 							case "form":
 								if (inLexicalUnit && string.IsNullOrWhiteSpace(vernWs))
+								{
 									vernWs = reader.GetAttribute("lang"); // pathologically may leave it null, if so keep trying.
+								}
 								if (inDefnOrGloss && string.IsNullOrWhiteSpace(analysisWs))
+								{
 									analysisWs = reader.GetAttribute("lang"); // pathologically may leave it null, if so keep trying.
+								}
 								if (!string.IsNullOrWhiteSpace(vernWs) && !string.IsNullOrWhiteSpace(analysisWs))
+								{
 									return; // got all we need, skip rest of file.
+								}
 								break;
 						}
 						break;
@@ -238,9 +236,13 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 			}
 			if (string.IsNullOrWhiteSpace(vernWs))
+			{
 				vernWs = "fr"; // Arbitrary default (consistent with default creation of new project) if we don't find an entry
+			}
 			if (string.IsNullOrWhiteSpace(analysisWs))
+			{
 				analysisWs = "en"; // Arbitrary default if we don't find a sense
+			}
 		}
 
 		/// <summary>
@@ -248,32 +250,16 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		private static void PerformLdmlMigrationInClonedLiftRepo(string liftPath)
 		{
-			string ldmlFolder = Path.Combine(Path.GetDirectoryName(liftPath), "WritingSystems");
-			var ldmlMigrator = new WritingSystems.Migration.LdmlInFolderWritingSystemRepositoryMigrator(ldmlFolder, null);
+			var ldmlMigrator = new WritingSystems.Migration.LdmlInFolderWritingSystemRepositoryMigrator(Path.Combine(Path.GetDirectoryName(liftPath), "WritingSystems"), null);
 			ldmlMigrator.Migrate();
 		}
 
 		/// <summary>
 		/// Reports to the user that a copy of FLExBridge is already running.
-		/// NB. Also used by LexTextDll.FLExBridgeListener.
 		/// </summary>
 		public static void ReportDuplicateBridge()
 		{
-			MessageBox.Show(FwControls.kBridgeAlreadyRunning, FwControls.kFlexBridge,
-				MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+			MessageBox.Show(FwControls.kBridgeAlreadyRunning, FwControls.kFlexBridge, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
 		}
-	}
-
-	/// <summary>
-	/// Enumeration of possible sources of a new FW project.
-	/// </summary>
-	public enum ObtainedProjectType
-	{
-		/// <summary>Default value for no source</summary>
-		None,
-		/// <summary>Lift repository was the source</summary>
-		Lift,
-		/// <summary>FW repository was the source</summary>
-		FieldWorks
 	}
 }

@@ -1,29 +1,21 @@
 // Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// <remarks>
-//	This class may not actually get used directly, although it should work. The primary use will be
-//	through the subclass PredictiveProgressState. Anyways, this is used with StatusBarProgressPanel.
-// </remarks>
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
-	/// <summary/>
+	/// <summary />
 	public class ProgressState : IDisposable
 	{
-		/// <summary/>
-		protected int m_percentDone;
-
-		private string m_status;
-
-		/// <summary/>
+		/// <summary />
 		protected IProgressDisplayer m_progressBar;
-
 		private WaitCursor m_wait;
 
 		/// <summary/>
@@ -31,7 +23,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			m_wait = new WaitCursor(Form.ActiveForm);
 
-			m_percentDone = 0;
+			PercentDone = 0;
 			m_progressBar = progressBar;
 			m_progressBar?.SetStateProvider(this);
 		}
@@ -41,23 +33,15 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public static ProgressState CreatePredictiveProgressState(StatusBarProgressPanel panel, string taskLabel)
 		{
-			if (panel == null)
-				return new NullProgressState();//not ready to be doing progress bars
-
-			return new PredictiveProgressState(panel, taskLabel);
+			return panel == null ? (ProgressState)new NullProgressState() : new PredictiveProgressState(panel, taskLabel);
 		}
 
 		#region IDisposable & Co. implementation
 
 		/// <summary>
-		/// True, if the object has been disposed.
-		/// </summary>
-		private bool m_isDisposed = false;
-
-		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed => m_isDisposed;
+		private bool IsDisposed { get; set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -72,10 +56,7 @@ namespace SIL.FieldWorks.Common.Controls
 			// The base class finalizer is called automatically.
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <remarks>Must not be virtual.</remarks>
+		/// <inheritdoc />
 		public void Dispose()
 		{
 			Dispose(true);
@@ -110,19 +91,17 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </remarks>
 		protected virtual void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
-			if (m_isDisposed)
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
 				return;
+			}
 
 			if (disposing)
 			{
 				// Dispose managed resources here.
-				if (m_progressBar != null)
-				{
-					m_progressBar.ClearStateProvider();
-					//m_progressBar.Dispose(); // We don't own this!! (JohnT)
-				}
+				m_progressBar?.ClearStateProvider();
 				if (m_wait != null)
 				{
 					m_wait.Dispose();
@@ -132,21 +111,21 @@ namespace SIL.FieldWorks.Common.Controls
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
 			m_progressBar = null;
-			m_status = null;
+			Status = null;
 
-			m_isDisposed = true;
+			IsDisposed = true;
 		}
 
 		#endregion IDisposable & Co. implementation
 
-		/// <summary/>
+		/// <summary />
 		public virtual void SetMilestone(string newStatus)
 		{
-			m_status = newStatus;
+			Status = newStatus;
 		}
 
-		/// <summary/>
-		public virtual void SetMilestone(){}
+		/// <summary />
+		public virtual void SetMilestone() { }
 
 		/// <summary>
 		/// get some time to update to display or whatever
@@ -154,281 +133,267 @@ namespace SIL.FieldWorks.Common.Controls
 		public virtual void Breath()
 		{
 			if (IsDisposed)
+			{
 				return; // harmless, if it's been disposed no longer report progress.
-
+			}
 			m_progressBar.Refresh();
 		}
 
 		/// <summary>
 		/// How much the task is done
 		/// </summary>
-		public virtual int PercentDone
-		{
-			get
-			{
-				return m_percentDone;
-			}
-			set
-			{
-				m_percentDone= value;
-			}
-		}
+		public virtual int PercentDone { get; set; }
 
 		/// <summary>
 		/// a label which describes what we are busy doing
 		/// </summary>
-		public string Status
-		{
-			get
-			{
-				return m_status;
-			}
-		}
-	}
-
-	/// <summary>
-	/// A fairly dumb progress state which knows how to divide progress into a set of milestones.
-	/// </summary>
-	public class MilestoneProgressState: ProgressState
-	{
-		// Progress smoothing
-		private double m_currentStepExpectedFractionOfTotal = 0;
-		private double m_accumulatedFractionOfTotal = 0.0;
-		private double m_currentStepStartFraction = 0.0;
-		private int m_stepIndex = -1;
-		private DateTime m_startTime;
-		private int m_stepsCount=0;
-		private double m_currentStepStartTime = 0;
+		public string Status { get; private set; }
 
 		/// <summary>
-		/// This progress state just knows enough to divide the task into a set of milestones
+		/// This is good to use when the named task is doing roughly the same amount of work each time,
+		/// for example, launching an application.
+		/// If the amount of work needed very is vary widely, it is better to use the dumber MilestoneProgressState.
 		/// </summary>
-		public MilestoneProgressState(IProgressDisplayer progressBar):base(progressBar)
+		/// <remarks>
+		///	This code started from http://www.codeproject.com/csharp/PrettyGoodSplashScreen.asp.
+		///	Running the demo provided there is a great way to see what this is supposed to do.
+		///
+		///	I (JohnH) have separated out the predictive part into this progressState class, so that different processes could have
+		///	their own state (the original code was simply for launching an application).
+		///	Also, this progress state doesn't know anything about UI, so it could be used with any widget.
+		///	I've then written a progress bar widget which uses any progressState class.  -JH
+		///
+		///	future things to add to this:
+		///		It would help the prediction enormously if we added a "size factor" for each milestone; for example, if a list could include
+		///		in its side factor the number of items it was going to display, 10 after showing 50 items, then later when
+		///		we are showing 500 items, the times could be automatically scaled so that we get a good predictions.
+		///
+		///		We could add something so that we get a default prediction the first-time the user runs a task. This might include a "percent suggestion" for each milestone.
+		/// </remarks>
+		private sealed class PredictiveProgressState : ProgressState
 		{
-		}
+			// Status and progress bar
+			private double m_currentStepExpectedFractionOfTotal;
+			// Progress smoothing
+			private double m_acumulatedFractionOfTotal;
+			private double m_currentStepStartFraction;
+			private int m_expectedTotalMilliSeconds;
+			private double m_currentStepExpectedMilliSeconds;
+			// Self-calibration support
+			private DateTime m_startTime;
+			private int m_stepIndex = -1;
+			static string m_taskLabel;
+			private double m_currentStepStartTime;
+			/// <summary>
+			/// # of times timer called during total process
+			/// </summary>
+			private List<double> m_expectedStepDurations;
+			private List<double> m_actualStepDurations = new List<double>();
+			private const string REGVALUE_PB_TOTAL_TIME = "ExpectedTotalTime";
+			private const string REGVALUE_PB_STEP_DURATIONS = "ExpectedStepDurations";
 
-		/// <param name="relativeLength">the relative length of this milestone, in whatever units you want.</param>
-		public void AddMilestone (float relativeLength)
-		{
-			m_stepsCount++;
-		}
-
-		/// <summary/>
-		public override int PercentDone
-		{
-			get
+			/// <summary>
+			/// This progress state tries to remember how long each milestone took last time, and
+			/// thereby give a more smooth and accurate progress progression the next time, to the extent that
+			/// the same amount of work is being done. The times taken last time are stored based on
+			/// the task label parameter.
+			/// </summary>
+			public PredictiveProgressState(StatusBarProgressPanel progressBar, string taskLabel)
+				: base(progressBar)
 			{
-				return (int) (m_accumulatedFractionOfTotal * 100);
+				m_taskLabel = taskLabel;
 			}
-			set
+
+			/// <summary />
+			public override int PercentDone
 			{
-				throw new NotImplementedException();
-			}
-		}
-
-		/// <summary>
-		/// mark a known point in the works that we're doing. kept these are used to get the predictive progress bar
-		/// to both learn how long part of the work takes, as well draw correctly (hard to explain).
-		/// </summary>
-		public override void SetMilestone(string newStatus)
-		{
-			SetMilestoneInternal();
-			base.SetMilestone(newStatus);
-		}
-
-		/// <summary>
-		/// mark a known point in the works that we're doing. kept these are used to get the predictive progress bar
-		/// to both learn how long part of the work takes, as well draw correctly (hard to explain).
-		/// </summary>
-		public override void SetMilestone()
-		{
-			SetMilestoneInternal();
-		}
-
-		private void SetMilestoneInternal()
-		{
-			if( m_stepIndex < 0 )
-			{
-				m_startTime = DateTime.Now;
-			}
-
-			//move us up to the fraction of the progress bar according to what fraction of the time
-			//this step to last time.
-			m_accumulatedFractionOfTotal = m_currentStepExpectedFractionOfTotal;
-
-			//now switch to the next step
-			m_stepIndex++;
-			m_currentStepStartFraction += m_currentStepExpectedFractionOfTotal;
-			m_currentStepStartTime = ElapsedMilliSeconds();
-
-			m_currentStepExpectedFractionOfTotal =(1+ m_stepIndex) /(float)m_stepsCount;
-
-			if (m_currentStepExpectedFractionOfTotal>1)//there were more steps than expected
-				m_currentStepExpectedFractionOfTotal= 1;
-		}
-
-
-		// Utility function to return elapsed Milliseconds since the
-		// SplashScreen was launched.
-		private double ElapsedMilliSeconds()
-		{
-			TimeSpan ts = DateTime.Now - m_startTime;
-			return ts.TotalMilliseconds;
-		}
-
-		/// <summary/>
-		protected double ElapsedTimeDoingThisStep()
-		{
-			return ElapsedMilliSeconds()- m_currentStepStartTime;
-		}
-
-		/// <summary/>
-		protected override void Dispose(bool disposing)
-		{
-			// Must not be run more than once.
-			if (IsDisposed)
-				return;
-
-			if (disposing)
-			{
-				if (m_accumulatedFractionOfTotal < 1)
+				get
 				{
-					m_accumulatedFractionOfTotal = 1;
-					m_progressBar.Refresh();
-					System.Threading.Thread.Sleep(50);
+					return (int)(m_acumulatedFractionOfTotal * 100);
+				}
+				set
+				{
+					throw new NotSupportedException();
 				}
 			}
 
-			base.Dispose(disposing);
-		}
-
-		/// <summary>
-		/// give some time to update to display or whatever
-		/// </summary>
-		public override void Breath()
-		{
-			//System.Diagnostics.Debug.Write("/");
-			if(m_accumulatedFractionOfTotal < (m_accumulatedFractionOfTotal+m_currentStepExpectedFractionOfTotal ))
+			/// <inheritdoc />
+			public override void SetMilestone(string newStatus)
 			{
-				//just add 1 percent since we have no idea how many times Breathe()
-				//will be called during this milestone
-				m_accumulatedFractionOfTotal += 0.01; //TODO: this might be good to be based on how long it has been since we last breathed.
-
-				//Review: this will currently allow us to go past what had been allocated for this milestone
+				SetMilestoneInternal();
+				base.SetMilestone(newStatus);
 			}
-			base.Breath();
 
-			//System.Diagnostics.Debug.WriteLine("**m_accumulatedFractionOfTotal="+m_accumulatedFractionOfTotal.ToString());
+			/// <inheritdoc />
+			public override void SetMilestone()
+			{
+				SetMilestoneInternal();
+			}
+
+			/// <summary>
+			/// Method for setting Milestone points.
+			/// </summary>
+			private void SetMilestoneInternal()
+			{
+				if (m_stepIndex < 0)
+				{
+					m_startTime = DateTime.Now;
+					ReadIncrements();
+				}
+				else
+				{
+					SaveStepInfo();
+				}
+				++m_stepIndex;
+
+				//move us up to the fraction of the progress bar according to what fraction of the time
+				//this step to last time.
+				m_acumulatedFractionOfTotal = m_currentStepExpectedFractionOfTotal;
+
+				//now switch to the next step
+				m_currentStepStartFraction += m_currentStepExpectedFractionOfTotal;
+				m_currentStepStartTime = ElapsedMilliSeconds();
+
+				//if we have seen the step before
+				if ((1 + m_stepIndex) <= m_expectedStepDurations.Count)
+				{
+					m_currentStepExpectedMilliSeconds = m_expectedStepDurations[m_stepIndex];
+					m_currentStepExpectedFractionOfTotal = m_currentStepExpectedMilliSeconds / m_expectedTotalMilliSeconds;
+				}
+				else
+				{
+					m_currentStepExpectedFractionOfTotal = (m_stepIndex > 0) ? 1 : 0;
+				}
+			}
+
+			private void SaveStepInfo()
+			{
+				//Save off current step
+				m_actualStepDurations.Add(ElapsedTimeDoingThisStep());
+			}
+
+			// Utility function to return elapsed Milliseconds since the
+			// SplashScreen was launched.
+			private double ElapsedMilliSeconds()
+			{
+				var ts = DateTime.Now - m_startTime;
+				return ts.TotalMilliseconds;
+			}
+
+			private double ElapsedTimeDoingThisStep()
+			{
+				return ElapsedMilliSeconds() - m_currentStepStartTime;
+			}
+
+			// Function to read the checkpoint intervals from the previous invocation of the
+			// splashscreen from the registry.
+			private void ReadIncrements()
+			{
+				var s = GetStringRegistryValue(REGVALUE_PB_TOTAL_TIME, m_taskLabel, "2");
+				double dblResult;
+				if (double.TryParse(s, System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo, out dblResult))
+				{
+					m_expectedTotalMilliSeconds = (int)dblResult;
+				}
+				else
+				{
+					m_expectedTotalMilliSeconds = 2;
+				}
+
+				var stepTimes = GetStringRegistryValue(REGVALUE_PB_STEP_DURATIONS, m_taskLabel, "");
+
+				m_expectedStepDurations = new List<double>();
+				if (stepTimes != "")
+				{
+					var aTimes = stepTimes.Split(null);
+					foreach (var time in aTimes)
+					{
+						double dblVal;
+						m_expectedStepDurations.Add(double.TryParse(time, System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo, out dblVal) ? dblVal : 1.0);
+					}
+				}
+			}
+
+			// Method to store the intervals (in percent complete) from the current invocation of
+			// the splash screen to the registry.
+			private void StoreIncrements()
+			{
+				var stepTimes = string.Empty;
+				var actualElapsedMilliseconds = ElapsedMilliSeconds();
+				foreach (var actualStepDuration in m_actualStepDurations)
+				{
+					stepTimes += actualStepDuration.ToString("0.####", System.Globalization.NumberFormatInfo.InvariantInfo) + " ";
+				}
+				SetStringRegistryValue(REGVALUE_PB_STEP_DURATIONS, m_taskLabel, stepTimes);
+				SetStringRegistryValue(REGVALUE_PB_TOTAL_TIME, m_taskLabel, actualElapsedMilliseconds.ToString("#.000000", System.Globalization.NumberFormatInfo.InvariantInfo));
+			}
+
+			/// <inheritdoc />
+			protected override void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if (IsDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+
+				if (disposing)
+				{
+					SaveStepInfo();
+					if (m_acumulatedFractionOfTotal < 1)
+					{
+						m_acumulatedFractionOfTotal = 1;
+						m_progressBar.Refresh();
+						System.Threading.Thread.Sleep(50);
+					}
+					StoreIncrements();
+				}
+				m_taskLabel = null;
+				m_expectedStepDurations = null;
+				m_actualStepDurations = null;
+
+				base.Dispose(disposing);
+			}
+
+			/// <summary>
+			/// give some time to update to display or whatever
+			/// </summary>
+			public override void Breath()
+			{
+				if (m_acumulatedFractionOfTotal < (m_acumulatedFractionOfTotal + m_currentStepExpectedFractionOfTotal))
+				{
+					var fractionOfThisStep = (ElapsedTimeDoingThisStep() / m_currentStepExpectedMilliSeconds);
+					if (fractionOfThisStep >= 1.0)
+					{
+						fractionOfThisStep = 1.0;//it is taking longer this time
+					}
+					m_acumulatedFractionOfTotal = m_currentStepStartFraction + (fractionOfThisStep * m_currentStepExpectedFractionOfTotal);
+				}
+				base.Breath();
+			}
+
+			/// <summary />
+			private static string GetStringRegistryValue(string key, string sub, string defaultValue)
+			{
+				using (var rkApplication = RegistryHelper.CompanyKey.CreateSubKey(sub))
+				{
+					if (rkApplication != null)
+					{
+						return (string)rkApplication.GetValue(key, defaultValue);
+					}
+					return defaultValue;
+				}
+			}
+
+			/// <summary />
+			private static void SetStringRegistryValue(string key, string sub, string stringValue)
+			{
+				using (var rkApplication = RegistryHelper.CompanyKey.CreateSubKey(sub))
+				{
+					rkApplication?.SetValue(key, stringValue);
+				}
+			}
 		}
-	}
-
-	/// <summary>
-	/// use this when a colleague is expecting you to pass a progress state
-	/// but you aren't in a position to create a real one.
-	/// </summary>
-	public class NullProgressState:ProgressState
-	{
-		/// <summary>
-		/// just initializes the base class
-		/// </summary>
-		public NullProgressState():base(null)
-		{
-		}
-		/// <summary>
-		/// does nothing
-		/// </summary>
-		/// <param name="newStatus"></param>
-		public override void SetMilestone(string newStatus){}
-		/// <summary>
-		/// does nothing
-		/// </summary>
-		public override void SetMilestone(){}
-
-		/// <summary>
-		/// does nothing
-		/// </summary>
-		public override void Breath(){}
-	}
-
-	/// <summary>
-	/// This class wraps the functionality that a ProgressState expects of the thing
-	/// that actually displays the progress. Originally this was typically a StatusBarProgressPanel,
-	/// but the need developed to support an ordinary ProgressBar as well.
-	/// </summary>
-	public interface IProgressDisplayer
-	{
-		/// <summary>
-		/// Update the display of the control so that in indicates the current amount of
-		/// progress, as determined by the state passed to SetStateProvider.
-		/// </summary>
-		void Refresh();
-		/// <summary>
-		/// Provide the object from which the PercentDone can be obtained.
-		/// </summary>
-		/// <param name="state"></param>
-		void SetStateProvider(ProgressState state);
-		/// <summary>
-		/// Inform the control that the PercentDone can no longer be obtained.
-		/// </summary>
-		void ClearStateProvider();
-	}
-
-#if RANDYTODO
-	// TODO: Why are there two ProgressBarWrapper classes in the Flex repo?
-	// TODO: SIL.FieldWorks.Common.Controls.ProgressBarWrapper : IProgressDisplayer
-	// TODO: LanguageExplorer.LcmUi.ProgressBarWrapper : IProgress
-#endif
-	/// <summary>
-	/// Wrapper class to allow a ProgressBar to function as the progress displayer of a ProgressState.
-	/// The progress Bar's minimum and maximum will be set (to 0 and 100)
-	/// </summary>
-	public class ProgressBarWrapper : IProgressDisplayer
-	{
-		private ProgressBar m_progressBar;
-		private ProgressState m_state;
-
-		/// <summary>
-		/// Make one.
-		/// </summary>
-		/// <param name="progressBar"></param>
-		public ProgressBarWrapper(System.Windows.Forms.ProgressBar progressBar)
-		{
-			m_progressBar = progressBar;
-			m_progressBar.Maximum = 100;
-			m_progressBar.Minimum = 0;
-		}
-
-		#region IProgressDisplayer Members
-
-		/// <summary>
-		/// Make it display.
-		/// </summary>
-		public void Refresh()
-		{
-			int percentDone = 100;
-			if (m_state != null)
-				percentDone = m_state.PercentDone;
-			m_progressBar.Value = Math.Min(percentDone, 100);
-			m_progressBar.Update();
-		}
-
-		/// <summary>
-		/// Remember where to get the state
-		/// </summary>
-		/// <param name="state"></param>
-		public void SetStateProvider(ProgressState state)
-		{
-			m_state = state;
-		}
-
-		/// <summary>
-		/// Stop retrieving state.
-		/// </summary>
-		public void ClearStateProvider()
-		{
-			m_state = null;
-		}
-
-		#endregion
 	}
 }

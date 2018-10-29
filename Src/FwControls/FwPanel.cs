@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,46 +10,29 @@ using SIL.Windows.Forms;
 
 namespace SIL.FieldWorks.Common.Controls
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Encapsulates a simple panel whose border, by default is 3D if visual styles aren't
 	/// enabled and is a single line (painted using visual styles) when visual styles are
 	/// enabled.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public class FwPanel : FwTextPanel
 	{
-		private bool m_overrideBorderDrawing = false;
-		private bool m_paintExplorerBarBackground = false;
+		private bool m_overrideBorderDrawing;
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public FwPanel()
 		{
-			BorderStyle = (Application.VisualStyleState == VisualStyleState.NoneEnabled ?
-				BorderStyle.Fixed3D : BorderStyle.FixedSingle);
+			BorderStyle = (Application.VisualStyleState == VisualStyleState.NoneEnabled ? BorderStyle.Fixed3D : BorderStyle.FixedSingle);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public new bool DoubleBuffered
 		{
 			get { return base.DoubleBuffered; }
 			set { base.DoubleBuffered = value; }
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Catch the non client area paint message so we can paint a border around the
-		/// explorer bar that isn't black.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		protected override void WndProc(ref Message m)
 		{
 			base.WndProc(ref m);
@@ -62,30 +45,21 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// After the panel has been resized, force the border to be repainted. I found that
-		/// often, after resizing the panel at runtime (e.g. when it's docked inside a
-		/// splitter panel and the splitter moved), the portion of the border that was newly
-		/// repainted didn't show the overriden border color handled by the WndProc above.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		protected override void OnClientSizeChanged(EventArgs e)
 		{
 			base.OnClientSizeChanged(e);
 
 			if (m_overrideBorderDrawing)
+			{
 				Win32.SendMessage(Handle, PaintingHelper.WM_NCPAINT, 1, 0);
+			}
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public new BorderStyle BorderStyle
 		{
-			get {return base.BorderStyle;}
+			get { return base.BorderStyle; }
 			set
 			{
 				base.BorderStyle = value;
@@ -96,31 +70,21 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets a value indicating whether or not the background of the panel will
 		/// be painted using the visual style's explorer bar element.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public bool PaintExplorerBarBackground
-		{
-			get { return m_paintExplorerBarBackground; }
-			set { m_paintExplorerBarBackground = value; }
-		}
+		public bool PaintExplorerBarBackground { get; set; } = false;
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		protected override void OnPaintBackground(PaintEventArgs e)
 		{
-			if (!DesignMode && m_paintExplorerBarBackground)
+			if (!DesignMode && PaintExplorerBarBackground)
 			{
-				VisualStyleElement element = VisualStyleElement.ExplorerBar.NormalGroupBackground.Normal;
+				var element = VisualStyleElement.ExplorerBar.NormalGroupBackground.Normal;
 				if (PaintingHelper.CanPaintVisualStyle(element))
 				{
-					VisualStyleRenderer renderer = new VisualStyleRenderer(element);
+					var renderer = new VisualStyleRenderer(element);
 					renderer.DrawBackground(e.Graphics, ClientRectangle);
 					return;
 				}
