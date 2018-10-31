@@ -10,6 +10,7 @@ using System.Globalization;
 using System.Media;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using System.IO;
 using System.Xml;
 using System.Xml.Linq;
 using SIL.LCModel.Core.Text;
@@ -53,7 +54,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static string GeneratePipeHandle(string handle)
 		{
 			const string ksSuiteIdPrefix = ksSuiteName + ":";
-			return (handle.StartsWith(ksSuiteIdPrefix) ? string.Empty : ksSuiteIdPrefix) + handle.Replace('/', ':').Replace('\\', ':');
+			return (handle.StartsWith(ksSuiteIdPrefix) ? String.Empty : ksSuiteIdPrefix) + handle.Replace('/', ':').Replace('\\', ':');
 		}
 
 		// On Linux, the default string output does not choose a font based on the characters in
@@ -180,7 +181,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static void InitializeIcu()
 		{
 			// Set ICU_DATA environment variable
-			if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ICU_DATA")))
+			if (String.IsNullOrEmpty(Environment.GetEnvironmentVariable("ICU_DATA")))
 			{
 				// We read the registry value and set an environment variable ICU_DATA here so that
 				// FwKernelInterfaces.dll is independent of WinForms.
@@ -198,7 +199,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 						dir = machineKey.GetValue(icuDirValueName, dir) as string;
 					}
-					if (!string.IsNullOrEmpty(dir))
+					if (!String.IsNullOrEmpty(dir))
 					{
 						Environment.SetEnvironmentVariable("ICU_DATA", dir);
 					}
@@ -271,7 +272,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns></returns>
 		public static Control FindControl(Control parentControl, string nameOfChildToFocus)
 		{
-			if (string.IsNullOrEmpty(nameOfChildToFocus))
+			if (String.IsNullOrEmpty(nameOfChildToFocus))
 			{
 				return null;
 			}
@@ -296,7 +297,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public static string RemoveUnderline(string guiString)
 		{
-			return guiString.Replace("_", string.Empty);
+			return guiString.Replace("_", String.Empty);
 		}
 
 		/// <summary>
@@ -304,7 +305,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public static string RemoveAmpersand(string guiString)
 		{
-			return guiString.Replace("&", string.Empty);
+			return guiString.Replace("&", String.Empty);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -315,12 +316,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		public static Rectangle GetRcFromString(string str)
 		{
-			str = str.Replace("{", string.Empty);
-			str = str.Replace("}", string.Empty);
-			str = str.Replace("X=", string.Empty);
-			str = str.Replace("Y=", string.Empty);
-			str = str.Replace("Width=", string.Empty);
-			str = str.Replace("Height=", string.Empty);
+			str = str.Replace("{", String.Empty);
+			str = str.Replace("}", String.Empty);
+			str = str.Replace("X=", String.Empty);
+			str = str.Replace("Y=", String.Empty);
+			str = str.Replace("Width=", String.Empty);
+			str = str.Replace("Height=", String.Empty);
 
 			string[] strVals = str.Split(",".ToCharArray(), 4);
 			Rectangle rc = Rectangle.Empty;
@@ -639,7 +640,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static string GetTestLangProjDataBaseName()
 		{
 			string dbName = Environment.GetEnvironmentVariable("TE_DATABASE");
-			if (string.IsNullOrEmpty(dbName))
+			if (String.IsNullOrEmpty(dbName))
 				return "TestLangProj";
 			return dbName;
 		}
@@ -665,6 +666,22 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static LcmStyleSheet StyleSheetFromPropertyTable(IPropertyRetriever propertyTable)
 		{
 			return propertyTable.GetValue<LcmStyleSheet>(FlexStyleSheet);
+		}
+
+		/// <summary>
+		/// If the given folder path is in the "My Documents" folder, trim the "My Documents" portion off the path.
+		/// </summary>
+		/// <param name="sDir">The name of the path to try to shorten.</param>
+		/// <returns>The (potentially) trimmed path name</returns>
+		public static string ShortenMyDocsPath(string sDir)
+		{
+			var sMyDocs = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+			if (sDir.ToLowerInvariant().StartsWith(sMyDocs.ToLowerInvariant()))
+			{
+				var idx = sMyDocs.LastIndexOf(Path.DirectorySeparatorChar);
+				return sDir.Substring(idx + 1);
+			}
+			return sDir;
 		}
 	}
 

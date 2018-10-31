@@ -61,7 +61,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private Button m_morphBreakHelper;
 		private readonly HelpProvider m_helpProvider;
 
-		private MorphBreakHelperMenu m_morphBreakContextMenu;
+		private MorphBreakHelperContextMenu _morphBreakContextContextMenu;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 
 		public EditMorphBreaksDlg(IHelpTopicProvider helpTopicProvider)
@@ -147,7 +147,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				mmtSuprafix.Prefix == null ? "" : " " + mmtSuprafix.Prefix,
 				mmtSuprafix.Postfix == null ? "" : mmtSuprafix.Postfix + " ");
 
-			m_morphBreakContextMenu = new MorphBreakHelperMenu(m_txtMorphs, m_helpTopicProvider, cache);
+			_morphBreakContextContextMenu = new MorphBreakHelperContextMenu(m_txtMorphs, m_helpTopicProvider, cache);
 			m_txtMorphs.AdjustForStyleSheet(this, null, stylesheet);
 			m_morphBreakHelper.Height = m_txtMorphs.Height;
 		}
@@ -432,7 +432,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void MorphBreakHelperClick(object sender, EventArgs e)
 		{
-			m_morphBreakContextMenu.Show(m_morphBreakHelper, new System.Drawing.Point(m_morphBreakHelper.Width,0));
+			_morphBreakContextContextMenu.Show(m_morphBreakHelper, new System.Drawing.Point(m_morphBreakHelper.Width,0));
 		}
 
 		private void MBtnOkClick(object sender, EventArgs e)

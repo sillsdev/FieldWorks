@@ -16,18 +16,18 @@ using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
-		/// <summary>
+	/// <summary>
 	/// Summary description for LocaleMenuButton.
 	/// </summary>
 	public class LocaleMenuButton : Button
 	{
-		private System.ComponentModel.Container components;
+		private Container components;
 
 		// Key - language ID.
 		// Value - collection of locales starting with that language id.
 		private Dictionary<string, List<LocaleMenuItemData>> m_locales;
 
-		// Items are LocaleMenuItemData; an entry is added for each mainmenu
+		// Items are LocaleMenuItemData; an entry is added for each main menu
 		// (name and ID are taken from the unmarked locale for that language);
 		// an entry is also added for each locale where there is no unmarked
 		// locale for its language.
@@ -37,12 +37,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		// Value - LocaleMenuItemData
 		private Dictionary<ToolStripMenuItem, LocaleMenuItemData> m_itemData;
 
-		private string m_selectedLocale;
 		// ID of locale to use for getting display names.
+		private string m_selectedLocale;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LocaleMenuButton"/> class.
-		/// </summary>
+		/// <summary />
 		public LocaleMenuButton()
 		{
 			components = new Container();
@@ -50,15 +48,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			ImageAlign = ContentAlignment.MiddleRight;
 		}
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -120,36 +116,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		}
 
 		/// <summary>
-		/// We are going to be used to choose a 'similar locale' for the specified
-		/// locale. If this is a standard, built-in locale, disable the button and
-		/// set its text to 'built-in'. If it's a custom locale, enable the button,
-		/// and if the text used to be 'built-in' (that is, the previous target locale
-		/// was built-in), change it to 'None'.
-		/// </summary>
-		public void SetupForSimilarLocale(string localeName)
-		{
-			if (IsCustomLocale(localeName))
-			{
-				// Since it's a custom locale the user is allowed to control it.
-				// If it used to say "built in" change it to "none", otherwise,
-				// they are changing from one custom locale to another, leave the
-				// current selection alone.
-				if (Text == FwCoreDlgs.kstidBuiltIn)
-				{
-					Text = Strings.kstid_None;
-				}
-				Enabled = true;
-			}
-			else
-			{
-				Text = FwCoreDlgs.kstidBuiltIn;
-				Enabled = false;
-			}
-		}
-
-		/// <summary>
 		/// The locale to use for getting display names. If this is left blank the
-		/// system defaut locale is used.
+		/// system default locale is used.
 		/// </summary>
 		public string DisplayLocaleId { get; set; }
 
@@ -164,9 +132,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			LocaleSelected?.Invoke(this, ea);
 		}
 
-		/// <summary>
-		/// Raises the click event.
-		/// </summary>
+		/// <inheritdoc />
 		protected override void OnClick(EventArgs e)
 		{
 			var menu = components.ContextMenuStrip("contextMenu");
@@ -203,7 +169,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				if (lmdRootItem == null)
 				{
 					// case 3
-					foreach(var lmd in items)
+					foreach (var lmd in items)
 					{
 						m_mainItems.Add(lmd);
 					}
@@ -213,13 +179,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 					if (items.Count == 1)
 					{
 						// case 1
-						var lmdMenu = new LocaleMenuItemData(lmdRootItem.m_id,lmdRootItem.m_displayName);
+						var lmdMenu = new LocaleMenuItemData(lmdRootItem.m_id, lmdRootItem.m_displayName);
 						m_mainItems.Add(lmdMenu);
 					}
 					else
 					{
 						// case 2
-						var lmdMenu = new LocaleMenuItemData(lmdRootItem.m_id,lmdRootItem.m_displayName) {m_subitems = items};
+						var lmdMenu = new LocaleMenuItemData(lmdRootItem.m_id, lmdRootItem.m_displayName) { m_subitems = items };
 						m_mainItems.Add(lmdMenu);
 					}
 				}
@@ -269,7 +235,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 
 		private void ItemClickHandler(object sender, EventArgs e)
 		{
-			var mi = (ToolStripMenuItem) sender;
+			var mi = (ToolStripMenuItem)sender;
 			if (mi.Text == Strings.kstid_None)
 			{
 				m_selectedLocale = null;

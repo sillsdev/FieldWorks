@@ -1,8 +1,7 @@
-// Copyright (c) 2006-2017 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
 using System.Reflection;
 using NUnit.Framework;
@@ -12,94 +11,63 @@ using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	[TestFixture]
 	public class FwStylesDlgTests
 	{
 		#region Dummy FwStylesDlg class
-		private class DummyFwStylesDlg : FwStylesDlg
+		private sealed class DummyFwStylesDlg : FwStylesDlg
 		{
-			/// --------------------------------------------------------------------------------
-			/// <summary>
-			/// Initializes a new instance of the <see cref="T:DummyFwStylesDlg"/> class.
-			/// </summary>
-			/// --------------------------------------------------------------------------------
-			public DummyFwStylesDlg()
-				: base(null, null, new LcmStyleSheet(), false, false, "TestDefault", 0,
-				MsrSysType.Cm, string.Empty, string.Empty, 0, null, null)
+			/// <summary />
+			internal DummyFwStylesDlg()
+				: base(null, null, new LcmStyleSheet(), false, false, "TestDefault", MsrSysType.Cm, string.Empty, string.Empty, null, null)
 			{
 				m_generalTab.RenamedStyles = m_renamedStyles;
 			}
 
-			/// --------------------------------------------------------------------------------
 			/// <summary>
 			/// Calls the save renamed style.
 			/// </summary>
-			/// <param name="oldName">The old name.</param>
-			/// <param name="newName">The new name.</param>
-			/// --------------------------------------------------------------------------------
-			public void CallSaveRenamedStyle(string oldName, string newName)
+			internal void CallSaveRenamedStyle(string oldName, string newName)
 			{
-				Type t = typeof(FwGeneralTab);
-
-				MethodInfo methodInfo = t.GetMethod("SaveRenamedStyle",
-					BindingFlags.NonPublic | BindingFlags.Instance);
-
+				var t = typeof(FwGeneralTab);
+				var methodInfo = t.GetMethod("SaveRenamedStyle", BindingFlags.NonPublic | BindingFlags.Instance);
 				if (methodInfo != null)
+				{
 					methodInfo.Invoke(m_generalTab, new object[] { oldName, newName });
+				}
 			}
 
-			/// --------------------------------------------------------------------------------
 			/// <summary>
 			/// Calls the save deleted style.
 			/// </summary>
-			/// <param name="styleName">Name of the style.</param>
-			/// --------------------------------------------------------------------------------
-			public void CallSaveDeletedStyle(string styleName)
+			internal void CallSaveDeletedStyle(string styleName)
 			{
-				base.SaveDeletedStyle(styleName);
+				SaveDeletedStyle(styleName);
 			}
 
-			/// --------------------------------------------------------------------------------
 			/// <summary>
 			/// Gets the deleted style names.
 			/// </summary>
-			/// <value>The deleted style names.</value>
-			/// --------------------------------------------------------------------------------
-			public ISet<string> DeletedStyleNames
-			{
-				get { return m_deletedStyleNames; }
-			}
+			internal ISet<string> DeletedStyleNames => m_deletedStyleNames;
 
-			/// --------------------------------------------------------------------------------
 			/// <summary>
 			/// Gets the renamed style names.
 			/// </summary>
-			/// <value>The renamed style names.</value>
-			/// --------------------------------------------------------------------------------
-			public Dictionary<string, string> RenamedStyleNames
-			{
-				get { return m_renamedStyles; }
-			}
+			internal Dictionary<string, string> RenamedStyleNames => m_renamedStyles;
 		}
 		#endregion
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests renaming and deleting styles.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void RenameAndDeleteStyles()
 		{
-			using (DummyFwStylesDlg dlg = new DummyFwStylesDlg())
+			using (var dlg = new DummyFwStylesDlg())
 			{
-				ISet<string> deletedStyles = dlg.DeletedStyleNames;
-				Dictionary<string, string> renamedStyles = dlg.RenamedStyleNames;
+				var deletedStyles = dlg.DeletedStyleNames;
+				var renamedStyles = dlg.RenamedStyleNames;
 
 				// Add a bunch of things to the deleted list
 				dlg.CallSaveDeletedStyle("style 1");

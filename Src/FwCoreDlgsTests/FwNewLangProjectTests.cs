@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,74 +12,14 @@ using SIL.LCModel;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
-	#region DummyFwNewLangProject
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// Subclass of FwNewLangProject core dialog for testing purposes.
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	public class DummyFwNewLangProject : FwNewLangProject
-	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="DummyFwNewLangProject"/> class.
-		/// </summary>
-		public DummyFwNewLangProject()
-			: base(true)
-		{
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		public void CreateNewLangProj()
-		{
-			CreateNewLangProjWithProgress();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets a value indicating whether to display the progress dialog.
-		/// </summary>
-		/// <value>Always <c>false</c> because we don't want to display a progress dialog when
-		/// running tests.</value>
-		/// ------------------------------------------------------------------------------------
-		protected override bool DisplayUi
-		{
-			get { return false; }
-		}
-
-		/// <summary>
-		/// Try out the OK button
-		/// </summary>
-		internal void TestOkButton()
-		{
-			btnOK.PerformClick();
-		}
-
-		/// <summary>
-		/// Sets the project name programmatically (bypasses Windows Forms length checking)
-		/// </summary>
-		internal void setProjectName(string name)
-		{
-			ProjectName = name;
-		}
-	}
-	#endregion // DummyFwNewLangProject
-
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// Summary description for TestFwNewLangProject.
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	[TestFixture]
 	[Platform(Exclude = "Linux", Reason = "Tests time out")]
 	public class FwNewLangProjectTests
 	{
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Make sure a new DB gets created
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		[Category("LongRunning")]
 		public void CreateNewLangProject()
@@ -90,8 +30,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				LcmCache cache = null;
 				if (DbExists(dbName))
+				{
 					DestroyDb(dbName, true);
-
+				}
 				dlg.setProjectName(dbName);
 				try
 				{
@@ -101,8 +42,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 					// despite of the name is DummyProgressDlg no real dialog (doesn't derive from Control), so
 					// we don't need a 'using'
-					cache = LcmCache.CreateCacheFromExistingData(
-						new TestProjectId(BackendProviderType.kXMLWithMemoryOnlyWsMgr, DbFilename(dbName)), "en", new DummyLcmUI(),
+					cache = LcmCache.CreateCacheFromExistingData(new TestProjectId(BackendProviderType.kXMLWithMemoryOnlyWsMgr, DbFilename(dbName)), "en", new DummyLcmUI(),
 						FwDirectoryFinder.LcmDirectories, new LcmSettings(), new DummyProgressDlg());
 					CheckInitialSetOfPartsOfSpeech(cache);
 
@@ -118,20 +58,20 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				finally
 				{
 					// Blow away the database to clean things up
-					if (cache != null)
-						cache.Dispose();
+					cache?.Dispose();
 					DestroyDb(dbName, false);
 				}
 			}
 		}
+
 		private void CheckInitialSetOfPartsOfSpeech(LcmCache cache)
 		{
-			ILangProject lp = cache.LanguageProject;
-			int iCount = 0;
-			bool fAdverbFound = false;
-			bool fNounFound = false;
-			bool fProformFound = false;
-			bool fVerbFound = false;
+			var lp = cache.LanguageProject;
+			var iCount = 0;
+			var fAdverbFound = false;
+			var fNounFound = false;
+			var fProformFound = false;
+			var fVerbFound = false;
 			foreach (IPartOfSpeech pos in lp.PartsOfSpeechOA.PossibilitiesOS)
 			{
 				iCount++;
@@ -150,8 +90,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						fVerbFound = true;
 						break;
 					default:
-						string sFmt = "Unexpected CatalogSourceId ({0}) found in PartOfSpeech {1}.";
-						string sMsg = String.Format(sFmt, pos.CatalogSourceId, pos.Name.AnalysisDefaultWritingSystem);
+						var sFmt = "Unexpected CatalogSourceId ({0}) found in PartOfSpeech {1}.";
+						var sMsg = String.Format(sFmt, pos.CatalogSourceId, pos.Name.AnalysisDefaultWritingSystem);
 						Assert.Fail(sMsg);
 						break;
 				}
@@ -173,40 +113,71 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			return Path.Combine(DbDirectory(dbName), LcmFileHelper.GetXmlDataFileName(dbName));
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// See if the given FW database exists by attempting to establish a connection to it.
 		/// </summary>
 		/// <param name="dbName">Name of the FW database to look for</param>
 		/// <returns>true iff the underlying file exists.</returns>
-		/// ------------------------------------------------------------------------------------
 		private static bool DbExists(string dbName)
 		{
-			string sFile = DbFilename(dbName);
-			return File.Exists(sFile);
+			return File.Exists(DbFilename(dbName));
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Blow away the given FW database.
 		/// </summary>
 		/// <param name="dbName">Name of the FW database to smoke</param>
 		/// <param name="failureIsFatal">If true, then failure to delete will fail tests.</param>
-		/// ------------------------------------------------------------------------------------
 		internal static void DestroyDb(string dbName, bool failureIsFatal)
 		{
 			try
 			{
-				string dir = DbDirectory(dbName);
-				Directory.Delete(dir, true);
+				Directory.Delete(DbDirectory(dbName), true);
 			}
 			catch
 			{
-				string msg = "The test database " + dbName + " could not be deleted.";
+				var msg = "The test database " + dbName + " could not be deleted.";
 				if (failureIsFatal)
+				{
 					Assert.Fail(msg);
+				}
 				else
+				{
 					Debug.WriteLine(msg);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Subclass of FwNewLangProject core dialog for testing purposes.
+		/// </summary>
+		private sealed class DummyFwNewLangProject : FwNewLangProject
+		{
+			/// <summary>
+			/// Initializes a new instance of the <see cref="DummyFwNewLangProject"/> class.
+			/// </summary>
+			internal DummyFwNewLangProject()
+				: base(true)
+			{
+			}
+
+			/// <summary />
+			internal void CreateNewLangProj()
+			{
+				CreateNewLangProjWithProgress();
+			}
+
+			/// <summary>
+			/// Gets a value indicating whether to display the progress dialog.
+			/// </summary>
+			protected override bool DisplayUi => false;
+
+			/// <summary>
+			/// Sets the project name programmatically (bypasses Windows Forms length checking)
+			/// </summary>
+			internal void setProjectName(string name)
+			{
+				ProjectName = name;
 			}
 		}
 	}

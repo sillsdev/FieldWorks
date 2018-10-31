@@ -27,7 +27,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
 	internal partial class ConcordanceControl : ConcordanceControlBase
 	{
-		private RegexHelperMenu m_regexContextMenu;
+		private RegexHelperContextMenu _regexContextContextMenu;
 		private IVwPattern m_vwPattern;
 		private bool m_fObjectConcorded;
 		private int m_hvoMatch;
@@ -92,7 +92,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_chkMatchCase.Checked = false;
 			m_btnSearch.Enabled = false;
 
-			m_regexContextMenu = new RegexHelperMenu(m_tbSearchText, m_helpTopicProvider);
+			_regexContextContextMenu = new RegexHelperContextMenu(m_tbSearchText, m_helpTopicProvider);
 
 			if (m_helpTopicProvider != null)
 			{
@@ -778,7 +778,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void m_btnRegExp_Click(object sender, EventArgs e)
 		{
-			m_regexContextMenu.Show(m_btnRegExp, new System.Drawing.Point(m_btnRegExp.Width, 0));
+			_regexContextContextMenu.Show(m_btnRegExp, new System.Drawing.Point(m_btnRegExp.Width, 0));
 		}
 
 		private void m_lnkSpecify_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

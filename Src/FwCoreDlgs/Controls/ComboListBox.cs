@@ -34,7 +34,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		// This filter captures clicks outside the list box while it is displayed.
 		FwComboMessageFilter m_comboMessageFilter;
 		// This flag determines whether we close the Dropdown List during a selection.
-
 		// Button control that can contain the button that is used to bring up the list
 		// This could be null / empty if not used.
 		ComboBoxState m_state = ComboBoxState.Normal;
@@ -99,10 +98,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public Button LaunchButton { get; set; }
 
-		/// <summary>
-		/// Giving ComboListBox this property is a convenience for clisnts that wish to use
-		/// it somewhat interchangeably with FwComboBox. The style is always DropDownList.
-		/// </summary>
+		/// <inheritdoc />
 		public ComboBoxStyle DropDownStyle
 		{
 			get
@@ -130,11 +126,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		/// <summary>
-		/// Find the width that will display the full width of all items.
-		/// Note that if the height is set to less than the natural height,
-		/// some additional space may be wanted for a scroll bar.
-		/// </summary>
+		/// <inheritdoc />
 		public int NaturalWidth
 		{
 			get
@@ -147,9 +139,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		/// <summary>
-		/// Find the height that will display the full height of all items.
-		/// </summary>
+		/// <inheritdoc />
 		public int NaturalHeight
 		{
 			get
@@ -183,21 +173,17 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		/// <summary />
+		/// <inheritdoc />
 		public Form Form { get; private set; }
 
-		/// <summary>
-		///  Gets or sets the form that the ComboListBox is launched from.
-		/// </summary>
+		/// <inheritdoc />
 		public Form LaunchingForm { get; set; }
 		#endregion Properties
 
 		#region Construction and disposal
 
 
-		/// <summary>
-		/// Make one.
-		/// </summary>
+		/// <summary />
 		public ComboListBox()
 		{
 			m_activateOnShow = true;
@@ -216,15 +202,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 
 		#region IDisposable & Co. implementation
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -407,7 +391,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			// the bug is not seen (and maybe not present...
 			// but that's much like the forest and a falling tree debate.)
 			//
-			// ** Dont change the order of the following two lines **
+			// ** Don't change the order of the following two lines **
 			m_previousForm?.Activate();
 			if (Form != null)
 			{
@@ -522,13 +506,14 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 
 		#endregion Event handlers
 
-		/// <summary>Message filter for detecting events that may hide the compbo </summary>
+		/// <summary>Message filter for detecting events that may hide the combo.</summary>
 		private sealed class FwComboMessageFilter : IMessageFilter, IDisposable
 		{
 			private ComboListBox m_comboListbox;
-			private bool m_fGotMouseDown; // true after a mouse down occurs anywhere at all.
+			// true after a mouse down occurs anywhere at all.
+			private bool m_fGotMouseDown;
 
-			/// <summary>Constructor for filter object</summary>
+			/// <summary />
 			public FwComboMessageFilter(ComboListBox comboListbox)
 			{
 				m_comboListbox = comboListbox;
@@ -553,12 +538,12 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				// The base class finalizer is called automatically.
 			}
 
-			/// <summary />
+			/// <inheritdoc />
 			public void Dispose()
 			{
 				Dispose(true);
 				// This object will be cleaned up by the Dispose method.
-				// Therefore, you should call GC.SupressFinalize to
+				// Therefore, you should call GC.SuppressFinalize to
 				// take this object off the finalization queue
 				// and prevent finalization code for this object
 				// from executing a second time.
@@ -589,9 +574,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			private void Dispose(bool disposing)
 			{
 				Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
-				// Must not be run more than once.
 				if (IsDisposed)
 				{
+					// No need to run it more than once.
 					return;
 				}
 
@@ -650,7 +635,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 									return false; // ignore mouse up until we get mouse down
 								}
 							}
-							var c = Control.FromHandle(m.HWnd);
+							var c = FromHandle(m.HWnd);
 							// Clicking anywhere in an FwListBox, including it's scroll bar,
 							// behaves normally.
 							if ((c == m_comboListbox.InnerListBox || c == m_comboListbox.LaunchButton) && c.Visible)

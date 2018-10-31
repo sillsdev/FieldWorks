@@ -18,9 +18,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		bool m_isHot;
 		bool m_isPressed;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="DropDownButton"/> class.
-		/// </summary>
+		/// <summary />
 		public DropDownButton(FwComboBoxBase comboBox)
 		{
 			m_comboBox = comboBox;
@@ -35,7 +33,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		/// <summary />
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
@@ -106,9 +104,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		/// <summary>
-		/// Raises the <see cref="E:System.Windows.Forms.Control.Paint"/> event.
-		/// </summary>
+		/// <inheritdoc />
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);
@@ -148,26 +144,16 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public int PreferredWidth => 17;
 
-		/// <summary>
-		/// Notifies the <see cref="T:System.Windows.Forms.Button"/> whether it is the default button so that it can adjust its appearance accordingly.
-		/// </summary>
-		/// <PermissionSet>
-		/// 	<IPermission class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Unrestricted="true"/>
-		/// </PermissionSet>
+		/// <inheritdoc />
 		public override void NotifyDefault(bool value)
 		{
 			base.NotifyDefault(false);
 		}
 
-		/// <summary>
-		/// Gets a value indicating whether the control should display focus rectangles.
-		/// </summary>
-		/// <returns>
-		/// true if the control should display focus rectangles; otherwise, false.
-		/// </returns>
+		/// <inheritdoc />
 		protected override bool ShowFocusCues => false;
 
-		/// <summary />
+		/// <inheritdoc />
 		protected override void OnGotFocus(EventArgs e)
 		{
 			base.OnGotFocus(e);
@@ -177,7 +163,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		/// <summary />
+		/// <inheritdoc />
 		protected override void OnLostFocus(EventArgs e)
 		{
 			base.OnLostFocus(e);
@@ -187,9 +173,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		/// <summary>
-		/// Raises the <see cref="E:System.Windows.Forms.Control.MouseEnter"/> event.
-		/// </summary>
+		/// <inheritdoc />
 		protected override void OnMouseEnter(EventArgs e)
 		{
 			base.OnMouseEnter(e);
@@ -200,9 +184,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			m_isHot = true;
 		}
 
-		/// <summary>
-		/// Raises the <see cref="E:System.Windows.Forms.Control.MouseLeave"/> event.
-		/// </summary>
+		/// <inheritdoc />
 		protected override void OnMouseLeave(EventArgs e)
 		{
 			base.OnMouseLeave(e);
@@ -218,9 +200,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		/// <summary>
-		/// Raises the <see cref="E:System.Windows.Forms.Control.MouseUp"/> event.
-		/// </summary>
+		/// <inheritdoc />
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
 			base.OnMouseUp(e);
@@ -235,9 +215,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		/// <summary>
-		/// Raises the <see cref="E:System.Windows.Forms.Control.MouseDown"/> event.
-		/// </summary>
+		/// <inheritdoc />
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
 			base.OnMouseDown(e);

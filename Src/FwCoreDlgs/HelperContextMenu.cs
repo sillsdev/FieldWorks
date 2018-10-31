@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,10 +8,13 @@ using SIL.FieldWorks.FwCoreDlgs.Controls;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
+#if RANDYTODO
+	// TODO: Move to: LanguageExplorer.Controls (At the same time as MorphBreakHelperMenu is moved to LE).
+#endif
 	/// <summary>
 	/// Context menu to help build text expressions. Subclassed to provide regex and morpheme break building help
 	/// </summary>
-	public abstract class HelperMenu : ContextMenu
+	public abstract class HelperContextMenu : ContextMenu
 	{
 		/// <summary>
 		/// The textbox to insert text into
@@ -22,36 +25,27 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		protected IHelpTopicProvider m_helpTopicProvider;
 
-		/// <summary>
-		/// Constructor for Helper Context Menu.
-		/// </summary>
+		/// <summary />
 		/// <param name="textbox">the textbox to insert regex characters into</param>
 		/// <param name="helpTopicProvider">usually IHelpTopicProvider.App</param>
-		protected HelperMenu(FwTextBox textbox, IHelpTopicProvider helpTopicProvider)
+		protected HelperContextMenu(FwTextBox textbox, IHelpTopicProvider helpTopicProvider)
 		{
 			m_helpTopicProvider = helpTopicProvider;
 			m_textbox = textbox;
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		public bool IsDisposed
-		{
-			get { return m_isDisposed; }
-		}
+		/// <summary />
+		private bool IsDisposed { get; set; }
 
-		private bool m_isDisposed;
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="disposing"></param>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
+			{
+				// No need to run it more than once.
 				return;
+			}
 
 			if (disposing)
 			{
@@ -59,7 +53,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			base.Dispose(disposing);
 
-			m_isDisposed = true;
+			IsDisposed = true;
 		}
 
 		/// <summary>
@@ -91,17 +85,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// boundary of the selection instead of the left boundary.</param>
 		protected void InsertText(string text, bool replaceSelection, bool insertAtRight)
 		{
-			int selLen = m_textbox.SelectionLength;
-			int selStart = m_textbox.SelectionStart;
-			int newSelStart = selStart + text.Length;
+			var selLen = m_textbox.SelectionLength;
+			var selStart = m_textbox.SelectionStart;
+			var newSelStart = selStart + text.Length;
 			const int newSelLength = 0;
 			var bldr = m_textbox.Tss.GetBldr();
 
 			if (replaceSelection)
 			{
 				if (selLen > 0)
+				{
 					m_textbox.Text = m_textbox.Text.Remove(selStart, selLen);
-
+				}
 				bldr.Replace(selStart, selStart, text, null);
 				m_textbox.Tss = bldr.GetString();
 			}
@@ -145,8 +140,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// is present, a warning message will be shown and the text will not be altered.</param>
 		protected void GroupText(string leftText, string rightText, bool requireSel)
 		{
-			int selLen = m_textbox.SelectionLength;
-			int selStart = m_textbox.SelectionStart;
+			var selLen = m_textbox.SelectionLength;
+			var selStart = m_textbox.SelectionStart;
 			var bldr = m_textbox.Tss.GetBldr();
 
 			if (selLen > 0)

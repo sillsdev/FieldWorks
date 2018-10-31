@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2017 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,13 +10,13 @@ using SIL.LCModel;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
-	/// <summary></summary>
+	/// <summary />
 	[TestFixture]
 	public class FwFontDialogTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		class FakeFwFontDialog : FwFontDialog
+		private sealed class FakeFwFontDialog : FwFontDialog
 		{
-			public FakeFwFontDialog(IHelpTopicProvider helpTopicProvider) : base(helpTopicProvider)
+			internal FakeFwFontDialog(IHelpTopicProvider helpTopicProvider) : base(helpTopicProvider)
 			{
 			}
 
@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private FwFontDialog m_dialog;
 
 		#region Setup
-		/// <summary></summary>
+		/// <summary />
 		[SetUp]
 		public override void TestSetup()
 		{
@@ -42,7 +42,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dialog = new FakeFwFontDialog(null);
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		[TearDown]
 		public override void TestTearDown()
 		{
@@ -61,31 +61,29 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 		#endregion
 
-		/// ----------------------------------------------------------------------------------------
 		/// <summary>
 		/// Make sure font names are alphabetically sorted.
 		/// Related to FWNX-273: Fonts not in alphabetical order
 		/// </summary>
-		/// ----------------------------------------------------------------------------------------
 		[Test]
 		public void FillFontList_IsAlphabeticallySorted()
 		{
 			const int firstFontInListLocation = 3;
 			m_dialog.FillFontList();
-			ListBox.ObjectCollection fontNames = m_dialog.FontNamesListBox.Items;
-			for (int i = firstFontInListLocation; i + 1 < fontNames.Count; i++)
+			var fontNames = m_dialog.FontNamesListBox.Items;
+			for (var i = firstFontInListLocation; i + 1 < fontNames.Count; i++)
 			{
 				// Check that each font in the list is alphabetically before the next font in the list
 				Assert.LessOrEqual(fontNames[i] as string, fontNames[i + 1] as string, "Font names not alphabetically sorted.");
 			}
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		[Test]
 		public void UpdateFontSizeIfValid_Valid_True()
 		{
-			bool returnValue = m_dialog.UpdateFontSizeIfValid("11");
-			int actual = m_dialog.FontSize;
+			var returnValue = m_dialog.UpdateFontSizeIfValid("11");
+			var actual = m_dialog.FontSize;
 			Assert.That(actual, Is.EqualTo(11));
 			Assert.That(returnValue, Is.True);
 
@@ -95,7 +93,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.That(returnValue, Is.True);
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		[Test]
 		public void UpdateFontSizeIfValid_Null_Unchanged()
 		{
@@ -109,31 +107,31 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			UpdateFontSizeIfValid_VerifyUnchanged("0");
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		[Test]
 		public void UpdateFontSizeIfValid_NegativeNumber_Unchanged()
 		{
 			UpdateFontSizeIfValid_VerifyUnchanged("-23");
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		[Test]
 		public void UpdateFontSizeIfValid_3DigitNumber_Works()
 		{
-			bool returnValue = m_dialog.UpdateFontSizeIfValid("321");
-			int actual = m_dialog.FontSize;
+			var returnValue = m_dialog.UpdateFontSizeIfValid("321");
+			var actual = m_dialog.FontSize;
 			Assert.That(actual, Is.EqualTo(321));
 			Assert.That(returnValue, Is.True);
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		[Test]
 		public void UpdateFontSizeIfValid_BigNumber_Unchanged()
 		{
 			UpdateFontSizeIfValid_VerifyUnchanged("4321");
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		[Test]
 		public void UpdateFontSizeIfValid_NonNumber_Unchanged()
 		{
@@ -159,15 +157,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		private void UpdateFontSizeIfValid_VerifyUnchanged(string size)
 		{
-			var initialFontSize = 17;
+			const int initialFontSize = 17;
 			m_dialog.FontSize = initialFontSize;
-			bool returnValue = m_dialog.UpdateFontSizeIfValid(size);
-			int actual = m_dialog.FontSize;
+			var returnValue = m_dialog.UpdateFontSizeIfValid(size);
+			var actual = m_dialog.FontSize;
 			Assert.That(actual, Is.EqualTo(initialFontSize), "Should not have changed font size.");
 			Assert.That(returnValue, Is.False);
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		[Test]
 		public void UpdateFontSizeIfValid_SameNumber_Unchanged()
 		{
@@ -193,7 +191,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void ApplyNewFontSizeIfValid_ValidChar_InsertionPointChanged()
 		{
 			TextBox fontSizeTextBox;
-			int initialFontSize = 17;
+			const int initialFontSize = 17;
 			ApplyNewFontSizeIfValid_Helper_SetupInsertionPoint(initialFontSize, out fontSizeTextBox);
 
 			// User types "8"
@@ -203,12 +201,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.That(fontSizeTextBox.SelectionStart, Is.EqualTo(3), "Insertion point should have advanced");
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		[Test]
 		public void ApplyNewFontSizeIfValid_AppendInvalidChar_InsertionPointNotChanged()
 		{
 			TextBox fontSizeTextBox;
-			int initialFontSize = 17;
+			const int initialFontSize = 17;
 			ApplyNewFontSizeIfValid_Helper_SetupInsertionPoint(initialFontSize, out fontSizeTextBox);
 
 			// User types "k"
@@ -218,12 +216,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.That(fontSizeTextBox.SelectionStart, Is.EqualTo(2), "Insertion point should have been put  back where it was.");
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		[Test]
 		public void ApplyNewFontSizeIfValid_PrependInvalidChar_InsertionPointNotChanged()
 		{
 			TextBox fontSizeTextBox;
-			int initialFontSize = 17;
+			const int initialFontSize = 17;
 			ApplyNewFontSizeIfValid_Helper_SetupInsertionPoint(initialFontSize, out fontSizeTextBox);
 
 			// User clicks at beginning and types "k"
@@ -236,12 +234,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.That(fontSizeTextBox.SelectionStart, Is.EqualTo(0), "Insertion point should have been put back where it was.");
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		[Test]
 		public void ApplyNewFontSizeIfValid_InsertInvalidCharInMiddle_InsertionPointNotChanged()
 		{
 			TextBox fontSizeTextBox;
-			int initialFontSize = 17;
+			const int initialFontSize = 17;
 			ApplyNewFontSizeIfValid_Helper_SetupInsertionPoint(initialFontSize, out fontSizeTextBox);
 
 			// User clicks in middle and types "k"
@@ -253,12 +251,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.That(fontSizeTextBox.SelectionStart, Is.EqualTo(1), "Insertion point should have been put back where it was.");
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		[Test]
 		public void ApplyNewFontSizeIfValid_Append4thDigit_InsertionPointNotChanged()
 		{
 			TextBox fontSizeTextBox;
-			int initialFontSize = 178;
+			const int initialFontSize = 178;
 			ApplyNewFontSizeIfValid_Helper_SetupInsertionPoint(initialFontSize, out fontSizeTextBox);
 
 			// User clicks at end and types 9
@@ -280,7 +278,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void ApplyNewFontSizeIfValid_UserDeletesOnlyDigit()
 		{
 			TextBox fontSizeTextBox;
-			int initialFontSize = 9;
+			const int initialFontSize = 9;
 			ApplyNewFontSizeIfValid_Helper_SetupInsertionPoint(initialFontSize, out fontSizeTextBox);
 
 			// User clicks at end and types backspace
@@ -292,12 +290,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.That(fontSizeTextBox.SelectionStart, Is.EqualTo(0));
 		}
 
-		/// <summary/>
+		/// <summary />
 		[Test]
 		public void ApplyNewFontSizeIfValid_UserTypesJunkOverSelection_TextUnchanged()
 		{
 			TextBox fontSizeTextBox;
-			int initialFontSize = 123;
+			const int initialFontSize = 123;
 			ApplyNewFontSizeIfValid_Helper_SetupInsertionPoint(initialFontSize, out fontSizeTextBox);
 
 			// User clicks between 1 and 2, drags to between 2 and 3, and types "a".
@@ -306,20 +304,20 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			fontSizeTextBox.Select(2, 0);
 			m_dialog.ApplyNewFontSizeIfValid("1a3");
 
-			int resultingFontSize = m_dialog.FontSize;
+			var resultingFontSize = m_dialog.FontSize;
 			Assert.That(resultingFontSize, Is.EqualTo(initialFontSize), "Should not have changed font size.");
 
 			Assert.That(fontSizeTextBox.SelectionStart, Is.EqualTo(1));
 		}
 
-		/// <summary/>
+		/// <summary />
 		[Test]
 		public void OnSelectedFontSizesIndexChanged_UpdatesFontSizeAndTextBox()
 		{
-			TextBox fontSizeTextBox = m_dialog.FontSizeTextBox;
-			ListBox lbFontSizes = m_dialog.FontSizesListBox;
-			object fourthSize = lbFontSizes.Items[4];
-			object fifthSize = lbFontSizes.Items[5];
+			var fontSizeTextBox = m_dialog.FontSizeTextBox;
+			var lbFontSizes = m_dialog.FontSizesListBox;
+			var fourthSize = lbFontSizes.Items[4];
+			var fifthSize = lbFontSizes.Items[5];
 			Assert.That(fourthSize, Is.Not.EqualTo(fifthSize), "Not a good unit test.");
 
 			lbFontSizes.SelectedIndex = 4;

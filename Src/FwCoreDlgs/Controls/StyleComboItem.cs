@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2011-2018 SIL International
+// Copyright (c) 2011-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,7 +13,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 	/// </summary>
 	public class StyleComboItem : IComparable
 	{
-		/// <summary/>
+		/// <summary />
 		public StyleComboItem(BaseStyleInfo sty)
 		{
 			Style = sty;
@@ -33,15 +33,25 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		{
 			var that = obj as StyleComboItem;
 			if (this == that)
+			{
 				return 0;
+			}
 			if (that == null)
+			{
 				return 1;
+			}
 			if (Style == that.Style)
+			{
 				return 0;
+			}
 			if (that.Style == null)
+			{
 				return 1;
+			}
 			if (Style == null)
+			{
 				return -1;
+			}
 			return Style.Name.CompareTo(that.Style.Name);
 		}
 	}

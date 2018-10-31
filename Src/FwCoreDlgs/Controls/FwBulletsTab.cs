@@ -6,9 +6,9 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.PlatformUtilities;
 
@@ -46,9 +46,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		#endregion
 
 		#region Construction and demolition
-		/// <summary>
-		/// Initializes a new instance of the class.
-		/// </summary>
+
+		/// <summary />
 		public FwBulletsTab()
 		{
 			InitializeComponent();
@@ -58,12 +57,16 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			m_cboNumberScheme.SelectedIndex = m_kDefaultNumberIndex;
 		}
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
 			if (disposing)
 			{
 				components?.Dispose();

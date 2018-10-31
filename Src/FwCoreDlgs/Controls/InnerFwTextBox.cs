@@ -55,9 +55,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		#endregion Data members
 
 		#region Constructor/destructor
-		/// <summary>
-		/// Default constructor
-		/// </summary>
+
+		/// <summary />
 		public InnerFwTextBox()
 		{
 			m_DataAccess = new TextBoxDataAccess();
@@ -98,26 +97,24 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public bool SuppressEnter { get; set; }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
 			if (disposing)
 			{
+				// Must happen before call to base.
 				m_fIsDisposing = true;
 
 				// This disposes m_wsf
 				ShutDownTempWsFactory();
 			}
-			// Must happen before call to base.
 
 			base.Dispose(disposing);
 
@@ -238,8 +235,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// The stylesheet used for the data being displayed.
 		/// </summary>
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public override IVwStylesheet StyleSheet
 		{
 			get
@@ -259,9 +255,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// The real string we are displaying.
 		/// </summary>
-		/// <value>The TSS.</value>
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public ITsString Tss
 		{
 			get
@@ -483,7 +477,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// Gets or sets the selected text.
 		/// </summary>
-		/// <value>The selected text.</value>
 		[Browsable(false)]
 		public string SelectedText
 		{
@@ -1004,12 +997,12 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			// string has something in it.  See LT-9472.
 			// Also don't try if we have no selection; this can produce undesirable scrolling when the
 			// window is just too narrow. LT-11073
-			if (m_rootb == null || m_rootb.Selection == null)
+			if (m_rootb?.Selection == null)
 			{
 				return;
 			}
 			var tss = Tss;
-			if (m_WritingSystem != 0 || (tss != null && tss.Text != null))
+			if (m_WritingSystem != 0 || tss?.Text != null)
 			{
 				MakeSelectionVisible(null);
 			}
@@ -1084,44 +1077,22 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		{
 			private InnerFwTextBox m_innerFwTextBox;
 
-			/// <summary>
-			/// Initializes a new instance of the <see cref="TextBoxEditingHelper"/> class.
-			/// </summary>
-			public TextBoxEditingHelper(InnerFwTextBox innerFwTextBox) :
-				base(innerFwTextBox)
+			/// <summary />
+			public TextBoxEditingHelper(InnerFwTextBox innerFwTextBox)
+				: base(innerFwTextBox)
 			{
 				m_innerFwTextBox = innerFwTextBox;
 			}
 
 			#region IDisposable override
 
-			/// <summary>
-			/// Executes in two distinct scenarios.
-			///
-			/// 1. If disposing is true, the method has been called directly
-			/// or indirectly by a user's code via the Dispose method.
-			/// Both managed and unmanaged resources can be disposed.
-			///
-			/// 2. If disposing is false, the method has been called by the
-			/// runtime from inside the finalizer and you should not reference (access)
-			/// other managed objects, as they already have been garbage collected.
-			/// Only unmanaged resources can be disposed.
-			/// </summary>
-			/// <param name="disposing"></param>
-			/// <remarks>
-			/// If any exceptions are thrown, that is fine.
-			/// If the method is being done in a finalizer, it will be ignored.
-			/// If it is thrown by client code calling Dispose,
-			/// it needs to be handled by fixing the bug.
-			///
-			/// If subclasses override this method, they should call the base implementation.
-			/// </remarks>
+			/// <inheritdoc />
 			protected override void Dispose(bool disposing)
 			{
 				Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
-				// Must not be run more than once.
 				if (IsDisposed)
 				{
+					// No need to run it more than once.
 					return;
 				}
 
@@ -1153,7 +1124,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			{
 				if ((modifiers & Keys.Alt) != Keys.Alt && stuInput == "\r")
 				{
-					stuInput = InnerFwTextBox.LineBreak;
+					stuInput = LineBreak;
 				}
 				base.OnCharAux(stuInput, ss, modifiers);
 			}
@@ -1253,7 +1224,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			/// <summary>
 			///  Convert a .NET color to the type understood by Views code and other Win32 stuff.
 			/// </summary>
-			public static uint RGB(Color c)
+			private static uint RGB(Color c)
 			{
 				return c == Color.Transparent ? 0xC0000000 : RGB(c.R, c.G, c.B);
 			}
@@ -1261,7 +1232,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			/// <summary>
 			/// Make a standard Win32 color from three components.
 			/// </summary>
-			public static uint RGB(int r, int g, int b)
+			private static uint RGB(int r, int g, int b)
 			{
 				return (uint)((byte)r | ((byte)g << 8) | ((byte)b << 16));
 			}

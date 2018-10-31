@@ -7,10 +7,10 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 
 namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
@@ -47,27 +47,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// highlighting the item hovered over. When it is true, changing the selected index does
 		/// not trigger events, but a MouseDown does.</summary>
 		protected int m_highlightedIndex;
-		private bool m_fTracking;
-		// Add if we need them.
-		//public event EventHandler SelectedValueChanged;
-		//public event EventHandler ValueMemberChanged;
 
 		/// <summary>
 		/// This is set true in a combo box, when we want to track mouse movement by highlighting
 		/// the item hovered over. When it is true, changing the selected index does not trigger
 		/// events, but a MouseDown does.
 		/// </summary>
-		public bool Tracking
-		{
-			get
-			{
-				return m_fTracking;
-			}
-			set
-			{
-				m_fTracking = value;
-			}
-		}
+		public bool Tracking { get; set; }
 
 		/// <summary>
 		/// Gets the inner list box.
@@ -96,13 +82,11 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		internal Control TabStopControl { get; set; }
 
-		/// <summary>
-		/// Default Constructor.
-		/// </summary>
+		/// <summary />
 		public FwListBox()
 		{
 			Items = new ObjectCollection(this);
-			InnerListBox = new InnerFwListBox(this) {Dock = DockStyle.Fill, ReadOnlyView = true};
+			InnerListBox = new InnerFwListBox(this) { Dock = DockStyle.Fill, ReadOnlyView = true };
 			// ComboBoxStyle is always DropDownList.
 			BorderStyle = BorderStyle.Fixed3D;
 			Controls.Add(InnerListBox);
@@ -112,7 +96,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 
 			// This makes it, by default if the container's initialization doesn't change it,
 			// the same default size as a standard list box.
-			Size = new Size(120,84);
+			Size = new Size(120, 84);
 			// And, if not changed, it's background color is white.
 			BackColor = SystemColors.Window;
 			m_selectedIndex = -1; // initially nothing selected.
@@ -122,12 +106,12 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -395,7 +379,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// Return the selected ITsString, or null if no string is selected.
 		/// </summary>
-		[BrowsableAttribute(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public ITsString SelectedTss
 		{
 			get
@@ -471,7 +455,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// ITsStrings, or if the UI writing system of the Writing System Factory is correct,
 		/// this need not be set.
 		/// </summary>
-		[BrowsableAttribute(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual int WritingSystemCode
 		{
 			get
@@ -487,7 +471,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// The real WSF of the embedded control.
 		/// </summary>
-		[BrowsableAttribute(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public ILgWritingSystemFactory WritingSystemFactory
 		{
 			get
@@ -526,7 +510,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		internal void RaiseSameItemSelected()
 		{
-			if (SameItemSelected != null )
+			if (SameItemSelected != null)
 			{
 				SameItemSelected(this, EventArgs.Empty);
 			}

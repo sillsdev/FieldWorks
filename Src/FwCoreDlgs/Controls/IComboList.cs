@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// Get or set the writing system factory used to interpret strings. It's important to set this
 		/// if using TsStrings for combo items.
 		/// </summary>
-		ILgWritingSystemFactory WritingSystemFactory { get; set ; }
+		ILgWritingSystemFactory WritingSystemFactory { get; set; }
 		/// <summary>
 		/// Get/Set the selected item from the list; null if none is selected.
 		/// </summary>

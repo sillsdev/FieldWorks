@@ -1,11 +1,9 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwStylesDlg.cs
-// Responsibility: TE Team
-// ---------------------------------------------------------------------------------------------
+
 using SIL.FieldWorks.Common.Controls;
+
 namespace SIL.FieldWorks.FwCoreDlgs
 {
 	partial class FwStylesDlg
@@ -22,19 +20,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
 			if (disposing)
 			{
-				if (components != null)
-					components.Dispose();
-
-				if (m_tbFont != null)
-					m_tbFont.Dispose();
-				if (m_tbParagraph != null)
-					m_tbParagraph.Dispose();
-				if (m_tbBullets != null)
-					m_tbBullets.Dispose();
-				if (m_tbBorder != null)
-					m_tbBorder.Dispose();
+				components?.Dispose();
+				m_tbFont?.Dispose();
+				m_tbParagraph?.Dispose();
+				m_tbBullets?.Dispose();
+				m_tbBorder?.Dispose();
 			}
 			base.Dispose(disposing);
 		}

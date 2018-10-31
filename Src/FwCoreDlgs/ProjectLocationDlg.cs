@@ -16,32 +16,23 @@ using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
-	/// ----------------------------------------------------------------------------------------
+#if RANDYTODO
+	// TODO: Move to Fieldworks
+#endif
 	/// <summary>
 	/// This dialog supports controlling the location and sharing of the project folder.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public partial class ProjectLocationDlg : Form
 	{
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ProjectLocationDlg"/> class.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		private ProjectLocationDlg()
 		{
 			InitializeComponent();
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ProjectLocationDlg"/> class.
-		/// </summary>
-		/// <param name="helpTopicProvider">The help topic provider.</param>
-		/// <param name="cache"></param>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public ProjectLocationDlg(IHelpTopicProvider helpTopicProvider, LcmCache cache = null)
 			: this()
 		{
@@ -80,7 +71,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				}
 				else if (newFolder.StartsWith(oldFolder))
 				{
-					string path = m_tbProjectsFolder.Text;
+					var path = m_tbProjectsFolder.Text;
 					// If it contains a settings directory, assume it's a project settings folder...possibly settings for a remote project.
 					if (Directory.Exists(Path.Combine(path, LcmFileHelper.ksConfigurationSettingsDir)))
 					{
@@ -89,11 +80,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					}
 					while (path.Length > 3)
 					{
-						foreach (string file in Directory.GetFiles(path))
+						foreach (var file in Directory.GetFiles(path))
 						{
-							string filename = file;
+							var filename = file;
 							if (!MiscUtils.IsUnix)
+							{
 								filename = filename.ToLowerInvariant();
+							}
 							if (filename.EndsWith(".fwdata"))
 							{
 								m_btnOK.Enabled = false;
@@ -120,7 +113,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private bool DirectoryIsSuitable(string folderToTest)
 		{
 			// A directory with invalid characters isn't suitable
-			string pathToTest = null;
+			string pathToTest;
 			try
 			{
 				pathToTest = Path.GetFullPath(folderToTest);
@@ -132,8 +125,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// A directory doesn't have to exist yet to be suitable but if the root directory isn't suitable that's not good
 			while (!Directory.Exists(pathToTest))
 			{
-				if (String.IsNullOrEmpty(pathToTest.Trim()))
+				if (string.IsNullOrEmpty(pathToTest.Trim()))
+				{
 					return false;
+				}
 				pathToTest = Path.GetDirectoryName(pathToTest);
 			}
 			if (Platform.IsWindows)
@@ -156,16 +151,24 @@ namespace SIL.FieldWorks.FwCoreDlgs
 							if ((FileSystemRights.Read & rule.FileSystemRights) == FileSystemRights.Read)
 							{
 								if (rule.AccessControlType == AccessControlType.Allow)
+								{
 									readAllowed = true;
+								}
 								if (rule.AccessControlType == AccessControlType.Deny)
+								{
 									return false;
+								}
 							}
 							if ((FileSystemRights.Write & rule.FileSystemRights) == FileSystemRights.Write)
 							{
 								if (rule.AccessControlType == AccessControlType.Allow)
+								{
 									writeAllowed = true;
+								}
 								if (rule.AccessControlType == AccessControlType.Deny)
+								{
 									return false;
+								}
 							}
 						}
 					}
@@ -175,11 +178,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			// Linux
 			var ufi = new UnixDirectoryInfo(pathToTest);
-			return ufi.CanAccess(Mono.Unix.Native.AccessModes.R_OK) &&
-				ufi.CanAccess(Mono.Unix.Native.AccessModes.W_OK); // accessible for writing
+			return ufi.CanAccess(Mono.Unix.Native.AccessModes.R_OK) && ufi.CanAccess(Mono.Unix.Native.AccessModes.W_OK); // accessible for writing
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the Click event of the m_btnBrowseProjectFolder control.
 		/// It launches a FolderBrowserDialog with the initial directory being one of:
@@ -187,45 +188,40 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// - otherwise, the specified default path, if that folder exists
 		/// - otherwise, My Computer (was C:\, but that won't work on Linux).
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void m_btnBrowseProjectFolder_Click(object sender, EventArgs e)
 		{
-			string defaultPath = FwDirectoryFinder.ProjectsDirectory;
-
+			var defaultPath = FwDirectoryFinder.ProjectsDirectory;
 			using (var fldrBrowse = new FolderBrowserDialogAdapter())
 			{
 				fldrBrowse.ShowNewFolderButton = true;
 				fldrBrowse.Description = FwCoreDlgs.ksChooseProjectFolder;
-
-				bool backupDirExists = FileUtils.DirectoryExists(m_tbProjectsFolder.Text);
+				var backupDirExists = FileUtils.DirectoryExists(m_tbProjectsFolder.Text);
 
 				// if the directory exists which is typed in the text box...
 				if (backupDirExists)
+				{
 					fldrBrowse.SelectedPath = m_tbProjectsFolder.Text;
+				}
 				else
 				{
-					// check the last directory used in the registry. If it exists, begin looking
-					// here.
-					if (FileUtils.DirectoryExists(defaultPath))
-						fldrBrowse.SelectedPath = defaultPath;
-					else
-						// Otherwise, begin looking in My Computer
-						fldrBrowse.SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
+					// check the last directory used in the registry. If it exists, begin looking here.
+					fldrBrowse.SelectedPath = FileUtils.DirectoryExists(defaultPath) ? defaultPath : Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
 				}
-
 				// if directory selected, set path to it.
 				if (fldrBrowse.ShowDialog() == DialogResult.OK)
+				{
 					m_tbProjectsFolder.Text = fldrBrowse.SelectedPath;
+				}
 			}
 		}
 
 		/// <summary>
 		/// Answer what the user wants the projects folder to be.
 		/// </summary>
-		public string ProjectsFolder { get { return m_tbProjectsFolder.Text; } }
+		public string ProjectsFolder => m_tbProjectsFolder.Text;
 
 		/// <summary>
-		/// Don't acually do it here; the caller has better access to the necessary methods.
+		/// Don't actually do it here; the caller has better access to the necessary methods.
 		/// </summary>
 		private void m_btnOK_Click(object sender, EventArgs e)
 		{

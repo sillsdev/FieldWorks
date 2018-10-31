@@ -1,29 +1,28 @@
-﻿// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2012-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Tests for FwTextBox.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
 	class FwTextBoxTests
 	{
 		#region Data Members
-		TestFwStylesheet m_stylesheet;
-		WritingSystemManager m_wsManager;
-		int m_hvoEnglishWs;
+		private TestFwStylesheet m_stylesheet;
+		private WritingSystemManager m_wsManager;
+		private int m_hvoEnglishWs;
 		#endregion
 
+		/// <summary />
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
@@ -35,6 +34,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			m_hvoEnglishWs = enWs.Handle;
 		}
 
+		/// <summary />
 		[Test]
 		public void TestFwTextBoxSize()
 		{

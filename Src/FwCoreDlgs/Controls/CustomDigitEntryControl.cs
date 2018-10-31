@@ -17,21 +17,19 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		private TextBox[] _digitControls = new TextBox[10];
 		private Font _font;
 
-		/// <summary>
-		/// Default constructor for designer view
-		/// </summary>
+		/// <summary />
 		public CustomDigitEntryControl()
 		{
 			for (var i = 0; i < 10; ++i)
 			{
-				var digitBox = new TextBox {Size = new Size(30, 30)};
+				var digitBox = new TextBox { Size = new Size(30, 30) };
 				_digitControls[i] = digitBox;
 				digitBox.KeyDown += DigitBoxOnKeyPress;
 				Controls.Add(digitBox);
 			}
 		}
 
-		private void DigitBoxOnKeyPress(object sender, KeyEventArgs keyEventArgs)
+		private static void DigitBoxOnKeyPress(object sender, KeyEventArgs keyEventArgs)
 		{
 			// Reset to the default background color when the user starts editing
 			var digitBox = sender as TextBox;
@@ -41,7 +39,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		/// <summary/>
+		/// <summary />
 		/// <returns>A concatenation of each digit from the control</returns>
 		public string GetDigits()
 		{
@@ -73,7 +71,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				_digitControls[i].Text = (!isEmpty && tee.MoveNext()) ? tee.GetTextElement() : string.Empty;
 			}
 
-			this.ResetColor();
+			ResetColor();
 		}
 
 		private Font DigitFont
@@ -88,12 +86,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		/// <summary/>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing,
-				"****************** Missing Dispose() call for " + GetType().Name +
-				" ******************");
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
 
 			if (IsDisposed)
 			{
@@ -109,7 +105,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			base.Dispose(disposing);
 		}
 
-		/// <summary/>
+		/// <summary />
 		public bool AreAllDigitsValid()
 		{
 			for (var i = 0; i < 10; ++i)
@@ -123,7 +119,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			return true;
 		}
 
-		/// <summary/>
+		/// <summary />
 		public void HighlightProblemDigits()
 		{
 			for (var i = 0; i < 10; ++i)
@@ -145,6 +141,5 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				_digitControls[i].BackColor = Color.Empty;
 			}
 		}
-
 	}
 }

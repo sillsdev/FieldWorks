@@ -30,16 +30,15 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		#endregion
 
 		#region Constructor
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:UpDownMeasureControl"/> class.
-		/// </summary>
+
+		/// <summary />
 		public UpDownMeasureControl()
 		{
 			Name = "UpDownMeasureControl";
 		}
 		#endregion
 
-		/// <summary />
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
@@ -155,7 +154,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			{
 				if (value == 0)
 				{
-					throw new ArgumentOutOfRangeException("MeasureIncrementFactor", "Value can not be 0.");
+					throw new ArgumentOutOfRangeException(@"MeasureIncrementFactor", @"Value can not be 0.");
 				}
 				m_measureIncrementFactor = value;
 			}
@@ -313,13 +312,16 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				switch (m_measureType)
 				{
 					case MsrSysType.Inch:
-						incr = MeasurementUtils.GetMpPerUnitFactor(MsrSysType.Inch) / 10.0; break;
+						incr = MeasurementUtils.GetMpPerUnitFactor(MsrSysType.Inch) / 10.0;
+						break;
 					case MsrSysType.Mm:
 					case MsrSysType.Cm:
-						incr = MeasurementUtils.GetMpPerUnitFactor(MsrSysType.Mm); break;
+						incr = MeasurementUtils.GetMpPerUnitFactor(MsrSysType.Mm);
+						break;
 					default:
 					case MsrSysType.Point:
-						incr = MeasurementUtils.GetMpPerUnitFactor(MsrSysType.Point); break;
+						incr = MeasurementUtils.GetMpPerUnitFactor(MsrSysType.Point);
+						break;
 				}
 				return m_measureIncrementFactor * incr;
 			}

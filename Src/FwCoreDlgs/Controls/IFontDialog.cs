@@ -12,7 +12,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 	/// <summary>
 	/// Interface that allows the FwBulletsTab to bring up the font dialog.
 	/// </summary>
-	public interface IFontDialog: IDisposable
+	public interface IFontDialog : IDisposable
 	{
 		/// <summary>
 		/// Initializes the font dialog with the given font information.

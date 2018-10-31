@@ -3,9 +3,9 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.FwCoreDlgs.Controls
@@ -24,17 +24,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 
 		private StyleListItemType m_itemType = StyleListItemType.RealStyle;
 
-		/// <summary>
-		/// Constructs a StyleListItem (i.e. an StStyle object) based on a real style.
-		/// </summary>
+		/// <summary />
 		public StyleListItem(BaseStyleInfo styleInfo)
 		{
 			StyleInfo = styleInfo;
 		}
 
-		/// <summary>
-		/// Constructs a StyleListItem which is not a real style.
-		/// </summary>
+		/// <summary />
 		protected StyleListItem()
 		{
 		}
@@ -44,10 +40,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// initializes various properties for that.
 		/// </summary>
 		/// <returns>A new StyleListItem for the "Default Paragraph Characters"
-		/// psuedo-style.</returns>
+		/// pseudo-style.</returns>
 		public static StyleListItem CreateDefaultParaCharItem()
 		{
-			return new StyleListItem { m_itemType = StyleListItemType.DefaultParaChars };
+			return new StyleListItem
+			{
+				m_itemType = StyleListItemType.DefaultParaChars
+			};
 		}
 
 		/// <summary>
@@ -116,9 +115,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// Gets a value indicating the list item's style type.
 		/// </summary>
-		public StyleType Type => IsDefaultParaCharsStyle
-			? StyleType.kstCharacter
-			: (StyleInfo.IsCharacterStyle ? StyleType.kstCharacter : StyleType.kstParagraph);
+		public StyleType Type => IsDefaultParaCharsStyle ? StyleType.kstCharacter : (StyleInfo.IsCharacterStyle ? StyleType.kstCharacter : StyleType.kstParagraph);
 
 		/// <summary>
 		/// Gets the user level of the style.

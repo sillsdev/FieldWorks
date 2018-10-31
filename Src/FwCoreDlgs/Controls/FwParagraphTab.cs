@@ -6,8 +6,8 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainServices;
 using SIL.PlatformUtilities;
 
@@ -45,9 +45,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		#endregion
 
 		#region Construction and demolition
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FwParagraphTab"/> class.
-		/// </summary>
+
+		/// <summary />
 		public FwParagraphTab()
 		{
 			InitializeComponent();
@@ -211,9 +210,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			// LTR or RTL
 			m_cboDirection.SetInheritableProp(styleInfo.IRightToLeftStyle);
 			m_cboDirection.AdjustedSelectedIndex = (int)styleInfo.IRightToLeftStyle.Value;
-			ChangeDirectionLabels(styleInfo.IRightToLeftStyle.Value == TriStateBool.triNotSet ||
-				m_fShowBiDiLabels ? m_fShowBiDiLabels :
-				styleInfo.IRightToLeftStyle.Value == TriStateBool.triTrue);
+			ChangeDirectionLabels(styleInfo.IRightToLeftStyle.Value == TriStateBool.triNotSet || m_fShowBiDiLabels ? m_fShowBiDiLabels : styleInfo.IRightToLeftStyle.Value == TriStateBool.triTrue);
 
 			// Paragraph Alignment
 			m_cboAlignment.SetInheritableProp(styleInfo.IAlignment);
@@ -311,8 +308,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			// direction
 			var newInherit = IsInherited(m_cboDirection);
 			if (styleInfo.IRightToLeftStyle.Save(newInherit, (TriStateBool)m_cboDirection.SelectedIndex))
+			{
 				styleInfo.Dirty = true;
-
+			}
 			// alignment
 			newInherit = m_cboAlignment.IsInherited;
 			var newAlignment = FwTextAlign.ktalLeading;
@@ -337,7 +335,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				newInherit = IsInherited(m_cboBackground);
 				var fontInfo = styleInfo.FontInfoForWs(-1); // get default FontInfo
 				if (fontInfo.m_backColor.Save(newInherit, m_cboBackground.ColorValue))
+				{
 					styleInfo.Dirty = true;
+				}
 			}
 
 			// left indent
@@ -350,8 +350,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			// right indent
 			newInherit = IsInherited(m_nudRightIndentation);
 			if (styleInfo.ITrailingIndent.Save(newInherit, m_nudRightIndentation.MeasureValue))
+			{
 				styleInfo.Dirty = true;
-
+			}
 			// special indent
 			newInherit = m_cboSpecialIndentation.IsInherited;
 			var newValue = 0;
@@ -397,7 +398,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 					newLineHeight.m_lineHeight = -m_nudSpacingAt.MeasureValue; break;
 			}
 			if (styleInfo.ILineSpacing.Save(newInherit, newLineHeight))
+			{
 				styleInfo.Dirty = true;
+			}
 		}
 		#endregion
 
@@ -457,9 +460,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// Gets a value indicating whether the direction is right-to-left.
 		/// </summary>
-		private bool RtoL => ((TriStateBool)m_cboDirection.SelectedIndex == TriStateBool.triNotSet &&
-							  DefaultTextDirectionRtoL) ||
-					(TriStateBool)m_cboDirection.SelectedIndex == TriStateBool.triTrue;
+		private bool RtoL => (TriStateBool)m_cboDirection.SelectedIndex == TriStateBool.triNotSet &&
+							 DefaultTextDirectionRtoL || (TriStateBool)m_cboDirection.SelectedIndex == TriStateBool.triTrue;
 		#endregion
 
 		#region Private helper methods
@@ -732,7 +734,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// window text color.</returns>
 		private Color GetCtrlForeColorForProp<T>(InheritableStyleProp<T> inheritableProperty)
 		{
-			return (inheritableProperty.IsInherited && m_currentStyleInfo.Inherits) ? SystemColors.GrayText : SystemColors.WindowText;
+			return inheritableProperty.IsInherited && m_currentStyleInfo.Inherits ? SystemColors.GrayText : SystemColors.WindowText;
 		}
 		#endregion
 	}

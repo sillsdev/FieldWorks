@@ -1222,12 +1222,6 @@ namespace LanguageExplorer.Areas
 					fixCombo?.Invoke();
 				},
 				defaultStyle, m_styleSheet,
-#if RANDYTODO
-				m_mainWindow != null ? m_mainWindow.MaxStyleLevelToShow : 0,
-				m_mainWindow != null ? m_mainWindow.HvoAppRootObject : 0,
-#else
-				0, 0,
-#endif
 				Cache, this, m_propertyTable.GetValue<IApp>(LanguageExplorerConstants.App),
 				m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider),
 				(new FlexStylesXmlAccessor(Cache.LanguageProject.LexDbOA)).SetPropsToFactorySettings);

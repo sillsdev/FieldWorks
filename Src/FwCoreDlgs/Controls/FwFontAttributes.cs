@@ -28,9 +28,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		#endregion
 
 		#region Constructor
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FwFontAttributes"/> class.
-		/// </summary>
+		/// <summary />
 		public FwFontAttributes()
 		{
 			InitializeComponent();
@@ -505,7 +503,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// or somewhere in the inheritance chain for this this character style there is a
 		/// style which has an explicit value for this property.
 		/// </summary>
-		private Color GetColorToDisplay(InheritableStyleProp<Color> colorProp)
+		private static Color GetColorToDisplay(InheritableStyleProp<Color> colorProp)
 		{
 			return (colorProp.ValueIsSet) ? colorProp.Value : Color.Empty;
 		}

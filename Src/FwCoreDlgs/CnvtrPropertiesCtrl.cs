@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,19 +9,13 @@ using System.Windows.Forms;
 using ECInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SilEncConverters40;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.Core.Text;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
-	/// ------------------------------------------------------------------------------------
-	/// <summary>
-	/// Summary description for CnvtrPropertiesCtrl.
-	/// </summary>
-	/// <remarks>Public so we can test it</remarks>
-	/// ------------------------------------------------------------------------------------
+	/// <summary />
 	public class CnvtrPropertiesCtrl : UserControl
 	{
 		// Note: several of these controls are public in order to facilitate testing.
@@ -30,13 +24,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public FwOverrideComboBox cboConversion;
 		/// <summary>name of the converter</summary>
 		public TextBox txtName;
-		/// <summary></summary>
+		/// <summary />
 		public Button btnMapFile;
-		/// <summary></summary>
+		/// <summary />
 		public TextBox txtMapFile;
-		/// <summary></summary>
+		/// <summary />
 		public FwOverrideComboBox cboConverter;
-		/// <summary></summary>
+		/// <summary />
 		public FwOverrideComboBox cboSpec;
 		private OpenFileDialogAdapter ofDlg = new OpenFileDialogAdapter();
 
@@ -51,7 +45,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private bool m_fOnlyUnicode;
 		/// <summary>The Encoding Converter may have changed and may need to be saved.</summary>
-		private bool m_fConverterChanged = false;
+		private bool m_fConverterChanged;
 		private IApp m_app;
 
 		/// <summary>
@@ -59,7 +53,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// find out if we should prevent the user from changing a converter that we are unable to modify.
 		/// </summary>
 		public bool m_supportedConverter = true;
-		private bool m_selectingMapping = false;
+		private bool m_selectingMapping;
 		private int m_mappingWidth;
 
 		/// <summary>List of encoding converters in the list box which are not yet defined.</summary>
@@ -67,8 +61,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// <summary>The actual specs string that will be used to initialize a new converter.</summary>
 		public string m_specs;
-		EncConverters m_encConverters;
-
 		private HelpProvider helpProvider1;
 		private Label lblSpecs;
 		private Button btnModify;
@@ -80,64 +72,36 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		private System.ComponentModel.Container components = null;
+		private System.ComponentModel.Container components;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Sets the application.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public IApp Application
 		{
 			set { m_app = value; }
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the converters.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public EncConverters Converters
-		{
-			get
-			{
-				return m_encConverters;
-			}
-			set
-			{
-				m_encConverters = value;
-			}
-		}
+		public EncConverters Converters { get; set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the current converter name.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string ConverterName
-		{
-			get
-			{
-				return txtName.Text;
-			}
-		}
+		public string ConverterName => txtName.Text;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets a value indicating whether the encoding converter may have changed.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public bool ConverterChanged
 		{
 			get { return DesignMode || m_fConverterChanged || m_undefinedList.ContainsKey(ConverterName); }
 			set { m_fConverterChanged = value; }
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:CnvtrPropertiesCtrl"/> class.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public CnvtrPropertiesCtrl()
 		{
 			// This call is required by the Windows.Forms Form Designer.
@@ -146,11 +110,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_mappingWidth = txtMapFile.Width;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// If true, show and create only Unicode converters (both to and to/from).
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public bool OnlyUnicode
 		{
 			get
@@ -164,35 +126,32 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Sets the list of undefined encoding converters.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		internal Dictionary<string, EncoderInfo> UndefinedConverters
 		{
 			set { m_undefinedList = value; }
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-
-			if (disposing && !IsDisposed)
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
 			{
-				if (components != null)
-					components.Dispose();
+				// No need to run it more than once.
+				return;
+			}
 
-				if (ofDlg != null)
-					ofDlg.Dispose();
+			if (disposing)
+			{
+				components?.Dispose();
+				ofDlg?.Dispose();
 			}
 			ofDlg = null;
 			components = null;
+
 			base.Dispose(disposing);
 		}
 
@@ -338,34 +297,33 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			// EncodingInfo.DisplayName is marked with MonoTODO since it simply returns Name,
 			// but this doesn't matter in this case.
-			int c = x.DisplayName.ToLowerInvariant().CompareTo(y.DisplayName.ToLowerInvariant());
+			var c = x.DisplayName.ToLowerInvariant().CompareTo(y.DisplayName.ToLowerInvariant());
 			if (c == 0)
+			{
 				c = x.CodePage - y.CodePage;
+			}
 			return c;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the SelectedIndexChanged event of the cboConverter control.
 		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event
-		/// data.</param>
-		/// ------------------------------------------------------------------------------------
-		private void cboConverter_SelectedIndexChanged(object sender, System.EventArgs e)
+		private void cboConverter_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			txtMapFile.Text = "";
-			List<FileFilterType> fileTypes = new List<FileFilterType>();
-			fileTypes.Add(FileFilterType.AllFiles);
+			var fileTypes = new List<FileFilterType>
+			{
+				FileFilterType.AllFiles
+			};
 			if (cboConverter.SelectedIndex == -1)
 			{
 				// Nothing is selected; this happens initially and can also happen if the user
 				// selects a mapping of a type we don't recognize. We display the filename box
 				// and file chooser with *.* as the file type since we have no idea what it
 				// should be.
-				this.ofDlg.DefaultExt = "";
-				this.ofDlg.Filter = ResourceHelper.BuildFileFilter(fileTypes);
-				this.ofDlg.Title = AddConverterResources.kstrUnspecifiedTitle;
+				ofDlg.DefaultExt = "";
+				ofDlg.Filter = ResourceHelper.BuildFileFilter(fileTypes);
+				ofDlg.Title = AddConverterResources.kstrUnspecifiedTitle;
 				SetReadyToGiveMapFile();
 			}
 			else // based on the selected item in cboConverter, load their spec options
@@ -373,54 +331,41 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				switch (((CnvtrTypeComboItem)cboConverter.SelectedItem).Type)
 				{
 					case ConverterType.ktypeRegEx:
-						//this.helpProvider1.SetHelpString(this.txtMapFile, AddConverterResources.kstrCCHelp);
-						//this.helpProvider1.SetShowHelp(this.txtMapFile, true);
-						//this.helpProvider1.SetHelpString(this.btnMapFile,
-						//    AddConverterResources.kstrFindMapping);
-						//this.ofDlg.DefaultExt = "cct";
-						//this.ofDlg.Filter = AddConverterResources.kstrCCFileFilter;
-						//this.ofDlg.Title = AddConverterResources.kstrCCTitle;
 						SetReadyToGiveRegEx();
 						break;
 					case ConverterType.ktypeCC:
-						this.helpProvider1.SetHelpString(this.txtMapFile, AddConverterResources.kstrCCHelp);
-						this.helpProvider1.SetShowHelp(this.txtMapFile, true);
-						this.helpProvider1.SetHelpString(this.btnMapFile,
-							AddConverterResources.kstrFindMapping);
-						this.ofDlg.DefaultExt = "cct";
+						helpProvider1.SetHelpString(txtMapFile, AddConverterResources.kstrCCHelp);
+						helpProvider1.SetShowHelp(txtMapFile, true);
+						helpProvider1.SetHelpString(btnMapFile, AddConverterResources.kstrFindMapping);
+						ofDlg.DefaultExt = "cct";
 						fileTypes.Insert(0, FileFilterType.AllCCTable);
-						this.ofDlg.Filter = ResourceHelper.BuildFileFilter(fileTypes);
-						this.ofDlg.Title = AddConverterResources.kstrCCTitle;
+						ofDlg.Filter = ResourceHelper.BuildFileFilter(fileTypes);
+						ofDlg.Title = AddConverterResources.kstrCCTitle;
 						SetReadyToGiveMapFile();
 						break;
 					case ConverterType.ktypeTecKitTec:
-						this.helpProvider1.SetHelpString(this.txtMapFile,
-							AddConverterResources.kstrTecHelp);
-						this.helpProvider1.SetShowHelp(this.txtMapFile, true);
-						this.helpProvider1.SetHelpString(this.btnMapFile,
-							AddConverterResources.kstrFindMapping);
-						this.ofDlg.DefaultExt = "tec";
+						helpProvider1.SetHelpString(txtMapFile, AddConverterResources.kstrTecHelp);
+						helpProvider1.SetShowHelp(txtMapFile, true);
+						helpProvider1.SetHelpString(btnMapFile, AddConverterResources.kstrFindMapping);
+						ofDlg.DefaultExt = "tec";
 						fileTypes.Insert(0, FileFilterType.TECkitCompiled);
-						this.ofDlg.Filter = ResourceHelper.BuildFileFilter(fileTypes);
-						this.ofDlg.Title = AddConverterResources.kstrTecTitle;
+						ofDlg.Filter = ResourceHelper.BuildFileFilter(fileTypes);
+						ofDlg.Title = AddConverterResources.kstrTecTitle;
 						SetReadyToGiveMapFile();
 						break;
 					case ConverterType.ktypeTecKitMap:
-						this.helpProvider1.SetHelpString(this.txtMapFile,
-							AddConverterResources.kstrTecHelp);
-						this.helpProvider1.SetShowHelp(this.txtMapFile, true);
-						this.helpProvider1.SetHelpString(this.btnMapFile,
-							AddConverterResources.kstrFindMapping);
-						this.ofDlg.DefaultExt = "map";
+						helpProvider1.SetHelpString(txtMapFile, AddConverterResources.kstrTecHelp);
+						helpProvider1.SetShowHelp(txtMapFile, true);
+						helpProvider1.SetHelpString(btnMapFile, AddConverterResources.kstrFindMapping);
+						ofDlg.DefaultExt = "map";
 						fileTypes.Insert(0, FileFilterType.TECkitMapping);
-						this.ofDlg.Filter = ResourceHelper.BuildFileFilter(fileTypes);
-						this.ofDlg.Title = AddConverterResources.kstrTecTitle;
+						ofDlg.Filter = ResourceHelper.BuildFileFilter(fileTypes);
+						ofDlg.Title = AddConverterResources.kstrTecTitle;
 						SetReadyToGiveMapFile();
 						break;
 					case ConverterType.ktypeCodePage:
-						this.helpProvider1.SetHelpString(this.cboSpec,
-							AddConverterResources.kstrCPHelp);
-						this.helpProvider1.SetShowHelp(this.cboSpec, true);
+						helpProvider1.SetHelpString(cboSpec, AddConverterResources.kstrCPHelp);
+						helpProvider1.SetShowHelp(cboSpec, true);
 						SetReadyToGiveCodePage();
 						// Fill in combo items. This list should not change, so it's fine to do it
 						// once and save it.
@@ -435,56 +380,52 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						{
 							// TODO-Linux: EncodingInfo.DisplayName simply returns Name on Mono.
 							// Need to review if this is sufficient here.
-							cboSpec.Items.Add(new CnvtrSpecComboItem(String.Format(FwCoreDlgs.ksCodePageDisplay,
-								enc.DisplayName, enc.CodePage), enc.CodePage.ToString()));
+							cboSpec.Items.Add(new CnvtrSpecComboItem(string.Format(FwCoreDlgs.ksCodePageDisplay, enc.DisplayName, enc.CodePage), enc.CodePage.ToString()));
 						}
 						cboSpec.EndUpdate();
 						break;
 					case ConverterType.ktypeIcuConvert:
-						this.helpProvider1.SetHelpString(this.cboSpec,
-							AddConverterResources.kstrIcuConvHelp);
-						this.helpProvider1.SetShowHelp(this.cboSpec, true);
+						helpProvider1.SetHelpString(cboSpec, AddConverterResources.kstrIcuConvHelp);
+						helpProvider1.SetShowHelp(cboSpec, true);
 						SetReadyToGiveSpec();
 						// fill in combo items.
 						cboSpec.BeginUpdate();
 						cboSpec.Items.Clear();
 						try
 						{
-							// TODO: Why does bare "Icu.GetConverterIdsAndNames" not work in the next line?
-							// It picks up icu.net's Icu class instead of FwKernelInterfaces's Icu class. But why?
-							foreach (IcuIdAndName idAndName in LCModel.Core.Text.Icu.GetConverterIdsAndNames())
+							foreach (var idAndName in LCModel.Core.Text.Icu.GetConverterIdsAndNames())
 							{
-								if (!String.IsNullOrEmpty(idAndName.Name))
+								if (!string.IsNullOrEmpty(idAndName.Name))
+								{
 									cboSpec.Items.Add(new CnvtrSpecComboItem(idAndName.Name, idAndName.Id));
+								}
 							}
 						}
 						catch (Exception ee)
 						{
 							Debug.Assert(m_app != null, "Bet you wish you set the Application property!");
 							Debug.WriteLine(ee.Message);
-							MessageBox.Show(String.Format(AddConverterDlgStrings.kstidICUErrorText, Environment.NewLine, m_app.ApplicationName),
+							MessageBox.Show(string.Format(AddConverterDlgStrings.kstidICUErrorText, Environment.NewLine, m_app.ApplicationName),
 								AddConverterDlgStrings.kstidICUErrorTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 						}
 						cboSpec.EndUpdate();
 						break;
 					case ConverterType.ktypeIcuTransduce:
-						this.helpProvider1.SetHelpString(this.cboSpec,
-							AddConverterResources.kstrIcuTransHelp);
-						this.helpProvider1.SetShowHelp(this.cboSpec, true);
+						helpProvider1.SetHelpString(cboSpec, AddConverterResources.kstrIcuTransHelp);
+						helpProvider1.SetShowHelp(cboSpec, true);
 						SetReadyToGiveSpec();
 						// fill in combo items.
 						cboSpec.BeginUpdate();
 						cboSpec.Items.Clear();
-						foreach (IcuIdAndName idAndName in LCModel.Core.Text.Icu.GetTransliteratorIdsAndNames())
+						foreach (var idAndName in LCModel.Core.Text.Icu.GetTransliteratorIdsAndNames())
 						{
 							cboSpec.Items.Add(new CnvtrSpecComboItem(idAndName.Name, idAndName.Id));
 						}
 						cboSpec.EndUpdate();
 						break;
 					default:
-						this.helpProvider1.SetHelpString(this.cboSpec,
-							AddConverterResources.kstrGenericHelp);
-						this.helpProvider1.SetShowHelp(this.cboSpec, true);
+						helpProvider1.SetHelpString(cboSpec, AddConverterResources.kstrGenericHelp);
+						helpProvider1.SetShowHelp(cboSpec, true);
 						Debug.Assert(false, "Invalid main converter type");
 						break;
 				}
@@ -493,8 +434,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Lets pre-populate cboConversion for them, if we aren't loading
 			if (!m_selectingMapping)
 			{
-				ConvType setType = ConvType.Unicode_to_Unicode;
-
+				var setType = ConvType.Unicode_to_Unicode;
 				if (!OnlyUnicode)
 				{
 					switch (((CnvtrTypeComboItem)cboConverter.SelectedItem).Type)
@@ -517,7 +457,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				}
 				else if (((CnvtrTypeComboItem)cboConverter.SelectedItem).Type != ConverterType.ktypeCC)
 				{
-					// if we are in UtU mode, prepopulate all as UtfU
+					// if we are in UtU mode, pre-populate all as UtfU
 					setType = ConvType.Unicode_to_from_Unicode;
 				}
 
@@ -526,16 +466,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_fConverterChanged = true;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Sets the type of the converter in the combobox for the currently selected encoding
 		/// converter.
 		/// </summary>
-		/// <param name="setConvType">Type of the selected converter.</param>
-		/// ------------------------------------------------------------------------------------
 		private void SetConverterType(ConvType setConvType)
 		{
-			for (int i = 0; i < cboConversion.Items.Count; i++)
+			for (var i = 0; i < cboConversion.Items.Count; i++)
 			{
 				if (((CnvtrDataComboItem)cboConversion.Items[i]).Type == setConvType)
 				{
@@ -545,15 +482,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Occurs on loading the Properties Tab
 		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event
-		/// data.</param>
-		/// ------------------------------------------------------------------------------------
-		public void CnvtrPropertiesCtrl_Load(object sender, System.EventArgs e)
+		public void CnvtrPropertiesCtrl_Load(object sender, EventArgs e)
 		{
 			// This is a fall-back if the creator does not have a converters object.
 			// It is generally preferable for the creator to make one and pass it in.
@@ -562,143 +494,118 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// JohnT: note that this ALWAYS happens at least once, because the Load event happens during
 			// the main dialog's InitializeComponent method, before it sets the encConverters
 			// of the control.
-			if (m_encConverters == null)
-				m_encConverters = new EncConverters();
+			if (Converters == null)
+			{
+				Converters = new EncConverters();
+			}
 			cboConverter.Items.Clear();
 			cboConverter.Items.Add(new CnvtrTypeComboItem(AddConverterResources.kstrCc, ConverterType.ktypeCC, EncConverters.strTypeSILcc));
 			if (!m_fOnlyUnicode)
+			{
 				cboConverter.Items.Add(new CnvtrTypeComboItem(AddConverterResources.kstrIcuConv, ConverterType.ktypeIcuConvert, EncConverters.strTypeSILicuConv));
+			}
 			cboConverter.Items.Add(new CnvtrTypeComboItem(AddConverterResources.kstrIcuTransduce, ConverterType.ktypeIcuTransduce, EncConverters.strTypeSILicuTrans));
 			cboConverter.Items.Add(new CnvtrTypeComboItem(AddConverterResources.kstrTecTec, ConverterType.ktypeTecKitTec, EncConverters.strTypeSILtec));
 			cboConverter.Items.Add(new CnvtrTypeComboItem(AddConverterResources.kstrTecMap, ConverterType.ktypeTecKitMap, EncConverters.strTypeSILmap));
 			cboConverter.Items.Add(new CnvtrTypeComboItem(AddConverterResources.kstrRegExpIcu, ConverterType.ktypeRegEx, EncConverters.strTypeSILicuRegex));
 			if (!m_fOnlyUnicode)
+			{
 				cboConverter.Items.Add(new CnvtrTypeComboItem(AddConverterResources.kstrCodePage, ConverterType.ktypeCodePage, EncConverters.strTypeSILcp));
-
+			}
 			cboConversion.Items.Clear();
 			if (OnlyUnicode)
 			{
-				cboConversion.Items.Add(new CnvtrDataComboItem(AddConverterResources.kstrUnicode_to_from_Unicode,
-					ConvType.Unicode_to_from_Unicode));
-				cboConversion.Items.Add(new CnvtrDataComboItem(AddConverterResources.kstrUnicode_to_Unicode,
-					ConvType.Unicode_to_Unicode));
+				cboConversion.Items.Add(new CnvtrDataComboItem(AddConverterResources.kstrUnicode_to_from_Unicode, ConvType.Unicode_to_from_Unicode));
+				cboConversion.Items.Add(new CnvtrDataComboItem(AddConverterResources.kstrUnicode_to_Unicode, ConvType.Unicode_to_Unicode));
 			}
 			else
 			{
-				cboConversion.Items.Add(new CnvtrDataComboItem(AddConverterResources.kstrLegacy_to_from_Legacy,
-					ConvType.Legacy_to_from_Legacy));
-				cboConversion.Items.Add(new CnvtrDataComboItem(AddConverterResources.kstrLegacy_to_from_Unicode,
-					ConvType.Legacy_to_from_Unicode));
-				cboConversion.Items.Add(new CnvtrDataComboItem(AddConverterResources.kstrUnicode_to_from_Legacy,
-					ConvType.Unicode_to_from_Legacy));
-				cboConversion.Items.Add(new CnvtrDataComboItem(AddConverterResources.kstrUnicode_to_from_Unicode,
-					ConvType.Unicode_to_from_Unicode));
-
-				cboConversion.Items.Add(new CnvtrDataComboItem(AddConverterResources.kstrLegacy_to_Unicode,
-					ConvType.Legacy_to_Unicode));
-				cboConversion.Items.Add(new CnvtrDataComboItem(AddConverterResources.kstrLegacy_to_Legacy,
-					ConvType.Legacy_to_Legacy));
-				cboConversion.Items.Add(new CnvtrDataComboItem(AddConverterResources.kstrUnicode_to_Legacy,
-					ConvType.Unicode_to_Legacy));
-				cboConversion.Items.Add(new CnvtrDataComboItem(AddConverterResources.kstrUnicode_to_Unicode,
-					ConvType.Unicode_to_Unicode));
+				cboConversion.Items.Add(new CnvtrDataComboItem(AddConverterResources.kstrLegacy_to_from_Legacy, ConvType.Legacy_to_from_Legacy));
+				cboConversion.Items.Add(new CnvtrDataComboItem(AddConverterResources.kstrLegacy_to_from_Unicode, ConvType.Legacy_to_from_Unicode));
+				cboConversion.Items.Add(new CnvtrDataComboItem(AddConverterResources.kstrUnicode_to_from_Legacy, ConvType.Unicode_to_from_Legacy));
+				cboConversion.Items.Add(new CnvtrDataComboItem(AddConverterResources.kstrUnicode_to_from_Unicode, ConvType.Unicode_to_from_Unicode));
+				cboConversion.Items.Add(new CnvtrDataComboItem(AddConverterResources.kstrLegacy_to_Unicode, ConvType.Legacy_to_Unicode));
+				cboConversion.Items.Add(new CnvtrDataComboItem(AddConverterResources.kstrLegacy_to_Legacy, ConvType.Legacy_to_Legacy));
+				cboConversion.Items.Add(new CnvtrDataComboItem(AddConverterResources.kstrUnicode_to_Legacy, ConvType.Unicode_to_Legacy));
+				cboConversion.Items.Add(new CnvtrDataComboItem(AddConverterResources.kstrUnicode_to_Unicode, ConvType.Unicode_to_Unicode));
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the Click event of the btnMapFile control.
 		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event
-		/// data.</param>
-		/// ------------------------------------------------------------------------------------
-		private void btnMapFile_Click(object sender, System.EventArgs e)
+		private void btnMapFile_Click(object sender, EventArgs e)
 		{
 			txtMapFile.Text = txtMapFile.Text.Trim();
-
 			if (txtMapFile.Text != string.Empty)
+			{
 				ofDlg.FileName = txtMapFile.Text;
-
+			}
 			if (ofDlg.ShowDialog(this) == DialogResult.OK)
+			{
 				txtMapFile.Text = ofDlg.FileName;
-
+			}
 			m_specs = txtMapFile.Text;
 			m_fConverterChanged = true;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the SelectedIndexChanged event of the cboSpec control.
 		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event
-		/// data.</param>
-		/// ------------------------------------------------------------------------------------
-		private void cboSpec_SelectedIndexChanged(object sender, System.EventArgs e)
+		private void cboSpec_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (cboSpec.SelectedItem != null)
+			{
 				m_specs = ((CnvtrSpecComboItem)cboSpec.SelectedItem).Specs;
+			}
 			m_fConverterChanged = true;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Triggered when the text has been changed
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
-		protected void txtMapFile_TextChanged(object sender, System.EventArgs e)
+		protected void txtMapFile_TextChanged(object sender, EventArgs e)
 		{
 			m_specs = txtMapFile.Text;
 			m_fConverterChanged = true;
 			RaiseConverterFileChanged();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the TextChanged event of the txtName control.
 		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event
-		/// data.</param>
-		/// ------------------------------------------------------------------------------------
-		private void txtName_TextChanged(object sender, System.EventArgs e)
+		private void txtName_TextChanged(object sender, EventArgs e)
 		{
 			m_fConverterChanged = true;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the string mapped to the type for the converter.
 		/// </summary>
 		/// <param name="type">The type of the encoder, e.g. CC table.</param>
 		/// <returns>string for the combobox, or string.empty if type not found</returns>
-		/// ------------------------------------------------------------------------------------
 		private string GetConverterStringForType(ConverterType type)
 		{
-			for (int iConverter = 0; iConverter < cboConverter.Items.Count; iConverter++)
+			foreach (var item in cboConverter.Items)
 			{
-				if (((CnvtrTypeComboItem)cboConverter.Items[iConverter]).Type == type)
-					return ((CnvtrTypeComboItem)cboConverter.Items[iConverter]).ImplementType;
+				if (((CnvtrTypeComboItem)item).Type == type)
+				{
+					return ((CnvtrTypeComboItem)item).ImplementType;
+				}
 			}
 
 			return string.Empty;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// In the standard usage, this is called from the selection changed event
 		/// handler of the combo box that shows the installed mappings.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public void SelectMapping(string mapname)
 		{
 			m_selectingMapping = true;
-
 			txtName.Text = mapname;
-			IEncConverter conv = m_encConverters[mapname];
+			var conv = Converters[mapname];
 			ConvType convType;
 			string implType;
 			EncoderInfo undefinedEncoder = null; // in case the current selection is not fully defined
@@ -715,14 +622,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					convType = undefinedEncoder.m_fromToType;
 					implType = GetConverterStringForType(undefinedEncoder.m_method);
 				}
-				else // Passed an invalid mapname. And yes, it does happen occasionally...
+				else
+				{
+					// Passed an invalid mapname. And yes, it does happen occasionally...
 					return;
+				}
 			}
-
-
 			// Find and select the appropriate item in cboConversion
-			bool fMatchedConvType = false;
-			for (int i = 0; i < cboConversion.Items.Count; ++i)
+			var fMatchedConvType = false;
+			for (var i = 0; i < cboConversion.Items.Count; ++i)
 			{
 				if (((CnvtrDataComboItem)cboConversion.Items[i]).Type == convType)
 				{
@@ -732,12 +640,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				}
 			}
 			if (!fMatchedConvType)
+			{
 				cboConversion.SelectedIndex = -1;
-
+			}
 			// Use the implement type to figure which line in typeCombo to select.
 			// Making a selection there enables the right specs controls.
 			m_supportedConverter = false;
-			for (int i = 0; i < cboConverter.Items.Count; ++i)
+			for (var i = 0; i < cboConverter.Items.Count; ++i)
 			{
 				if (((CnvtrTypeComboItem)cboConverter.Items[i]).ImplementType == implType)
 				{
@@ -765,8 +674,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				case ConverterType.ktypeIcuTransduce:
 				case ConverterType.ktypeCodePage:
 					// If it's a combo, try to select the item that corresponds to the old specs.
-					bool fMatchedSpecs = false;
-					for (int i = 0; i < cboSpec.Items.Count; ++i)
+					var fMatchedSpecs = false;
+					for (var i = 0; i < cboSpec.Items.Count; ++i)
 					{
 						// Note that EncConverters seems to convert specs to lower case
 						// but the names we get from ICU often include upper case.
@@ -800,84 +709,52 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_selectingMapping = false;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Raises the converter list changed event.
 		/// </summary>
-		/// <param name="ea">The <see cref="T:System.EventArgs"/> instance containing the event
-		/// data.</param>
-		/// ------------------------------------------------------------------------------------
 		protected virtual void OnConverterListChanged(EventArgs ea)
 		{
-			if (ConverterListChanged != null)
-				ConverterListChanged(this, ea);
+			ConverterListChanged?.Invoke(this, ea);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Something that happened in our control changed the list of mappings.
 		/// Notify anyone who cares.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public void RaiseListChanged()
 		{
 			OnConverterListChanged(new EventArgs());
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// A new converter has been added or a modified one saved.
 		/// The default handler just notifies delegates.
 		/// </summary>
-		/// <param name="ea"></param>
-		/// ------------------------------------------------------------------------------------
 		protected virtual void OnConverterSaved(EventArgs ea)
 		{
-			if (ConverterSaved != null)
-				ConverterSaved(this, ea);
+			ConverterSaved?.Invoke(this, ea);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// We saved a new or modified mapping, notify anyone who cares.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void RaiseConverterSaved()
-		{
-			OnConverterSaved(new EventArgs());
-		}
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// A converter has been modified. The default handler just notifies delegates.
 		/// </summary>
-		/// <param name="ea"></param>
-		/// ------------------------------------------------------------------------------------
 		protected virtual void OnConverterFileChanged(EventArgs ea)
 		{
-			if (ConverterFileChanged != null)
-				ConverterFileChanged(this, ea);
+			ConverterFileChanged?.Invoke(this, ea);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// The coverter has changed. Notify anyone who cares.
+		/// The converter has changed. Notify anyone who cares.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public void RaiseConverterFileChanged()
 		{
 			OnConverterFileChanged(new EventArgs());
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the SelectedIndexChanged event of the cboConversion control.
 		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event
-		/// data.</param>
-		/// ------------------------------------------------------------------------------------
-		private void cboConversion_SelectedIndexChanged(object sender, System.EventArgs e)
+		private void cboConversion_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			m_fConverterChanged = true;
 		}
@@ -916,37 +793,29 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			cboSpec.Visible = true;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the Click event of the btnMore control.
 		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event
-		/// data.</param>
-		/// ------------------------------------------------------------------------------------
 		private void btnMore_Click(object sender, EventArgs e)
 		{
-			Control myParentCtrl = Parent;
+			var myParentCtrl = Parent;
 			while (myParentCtrl != null && !(myParentCtrl is AddCnvtrDlg))
+			{
 				myParentCtrl = myParentCtrl.Parent;
-
+			}
 			if (myParentCtrl != null)
 			{
-				AddCnvtrDlg myParent = myParentCtrl as AddCnvtrDlg;
+				var myParent = (AddCnvtrDlg)myParentCtrl;
 				myParent.launchAddTransduceProcessorDlg();
 			}
 		}
 
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Enable/Disable everything in the pane
 		/// </summary>
 		/// <param name="toState">True if enabling, False if disabling.</param>
-		/// ------------------------------------------------------------------------------------
 		public void EnableEntirePane(bool toState)
 		{
-			//Enabled = toState;
 			if (lblSpecs.Enabled != toState)
 			{
 				lblSpecs.Enabled = toState;
@@ -962,13 +831,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Sets the states.
 		/// </summary>
 		/// <param name="existingConvs"><c>true</c> if enabling existing converters.</param>
 		/// <param name="installedConverter"><c>true</c> if encoding converter is installed.</param>
-		/// ------------------------------------------------------------------------------------
 		internal void SetStates(bool existingConvs, bool installedConverter)
 		{
 			EnableEntirePane(m_supportedConverter && existingConvs);
@@ -976,43 +843,40 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			btnMore.Visible = !installedConverter;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the Click event of the btnModify control.
 		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
-		/// ------------------------------------------------------------------------------------
 		private void btnModify_Click(object sender, EventArgs e)
 		{
 			// call the v2.2 interface to "AutoConfigure" a converter
-			string strFriendlyName = ConverterName;
-			IEncConverter aEC = m_encConverters[strFriendlyName];
+			var strFriendlyName = ConverterName;
+			var aEC = Converters[strFriendlyName];
 #if AUTOCONFIGUREEX_AVAILABLE
 			if (m_encConverters.AutoConfigureEx(aEC, aEC.ConversionType, ref strFriendlyName, aEC.LeftEncodingID, aEC.RightEncodingID))
 #else
 			if (AutoConfigureEx(aEC, aEC.ConversionType, ref strFriendlyName, aEC.LeftEncodingID, aEC.RightEncodingID))
 #endif
 			{
-				Control myParentCtrl = Parent;
+				var myParentCtrl = Parent;
 				while (myParentCtrl != null && !(myParentCtrl is AddCnvtrDlg))
+				{
 					myParentCtrl = myParentCtrl.Parent;
-
+				}
 				if (myParentCtrl != null)
 				{
-					AddCnvtrDlg myParent = myParentCtrl as AddCnvtrDlg;
-
+					var myParent = (AddCnvtrDlg)myParentCtrl;
 					myParent.m_outsideDlgChangedCnvtrs = true;
 					myParent.RefreshListBox();
-					if (!String.IsNullOrEmpty(strFriendlyName))
+					if (!string.IsNullOrEmpty(strFriendlyName))
+					{
 						myParent.SelectedConverter = strFriendlyName;
+					}
 				}
 			}
 		}
 
 #if AUTOCONFIGUREEX_AVAILABLE
 #else
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Automatically configures.
 		/// </summary>
@@ -1021,33 +885,22 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="strFriendlyName">Friendly name of the string.</param>
 		/// <param name="strLhsEncodingID">.</param>
 		/// <param name="strRhsEncodingID">.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		private bool AutoConfigureEx
-			(
-			IEncConverter rIEncConverter,
-			ConvType eConversionTypeFilter,
-			ref string strFriendlyName,
-			string strLhsEncodingID,
-			string strRhsEncodingID
-			)
+		private bool AutoConfigureEx(IEncConverter rIEncConverter, ConvType eConversionTypeFilter, ref string strFriendlyName, string strLhsEncodingID, string strRhsEncodingID)
 		{
-
 			const string strTempConverterPrefix = "Temporary converter: ";
 			try
 			{
 				// get the configuration interface for this type
-				IEncConverterConfig rConfigurator = rIEncConverter.Configurator;
-
+				var rConfigurator = rIEncConverter.Configurator;
 				// call its Configure method to do the UI
-				if (rConfigurator.Configure(m_encConverters, strFriendlyName, eConversionTypeFilter, strLhsEncodingID, strRhsEncodingID))
+				if (rConfigurator.Configure(Converters, strFriendlyName, eConversionTypeFilter, strLhsEncodingID, strRhsEncodingID))
 				{
-					// if this is just a temporary converter (i.e. it isn't being added permanentally to the
-					//  repository), then just make up a name so the caller can use it.
+					// if this is just a temporary converter (i.e. it isn't being added permanently to the
+					// repository), then just make up a name so the caller can use it.
 					if (!rConfigurator.IsInRepository)
 					{
-						DateTime dt = DateTime.Now;
-						strFriendlyName = String.Format(strTempConverterPrefix + "id: '{0}', created on '{1}' at '{2}'", rConfigurator.ConverterIdentifier, dt.ToLongDateString(), dt.ToLongTimeString());
+						var dt = DateTime.Now;
+						strFriendlyName = strTempConverterPrefix + $"id: '{rConfigurator.ConverterIdentifier}', created on '{dt.ToLongDateString()}' at '{dt.ToLongTimeString()}'";
 
 						// in this case, the Configurator didn't update the name
 						rIEncConverter.Name = strFriendlyName;
@@ -1058,13 +911,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					else
 					{
 						// else, if it was in the repository, then it should also be (have been) updated in
-						//  the collection already, so just get its name so we can return it.
+						// the collection already, so just get its name so we can return it.
 						strFriendlyName = rConfigurator.ConverterFriendlyName;
 					}
 
 					return true;
 				}
-				else if (rConfigurator.IsInRepository && !String.IsNullOrEmpty(rConfigurator.ConverterFriendlyName))
+				if (rConfigurator.IsInRepository && !string.IsNullOrEmpty(rConfigurator.ConverterFriendlyName))
 				{
 					// if the user added it to the repository and then *cancelled* it (i.e. so Configure
 					//  returns false), then it *still* is in the repository and we should therefore return
@@ -1083,28 +936,20 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			return false;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Adds the converter to the collection.
 		/// </summary>
-		/// <param name="rConverter">The converter.</param>
-		/// <param name="converterName">Name of the converter.</param>
-		/// ------------------------------------------------------------------------------------
 		private void AddToCollection(IEncConverter rConverter, string converterName)
 		{
-			// now add it to the 'this' collection
-			// converterName.ToLower(); // this does nothing anyway, so get rid of it
-
-			// no sense in allowing this to be added if it already exists because it'll always
-			//  be hidden.
-			if (m_encConverters.ContainsKey(converterName))
+			// No sense in allowing this to be added if it already exists because it'll always
+			// be hidden.
+			if (Converters.ContainsKey(converterName))
 			{
-				//				IEncConverter ecTmp = (IEncConverter)base[converterName];
-				m_encConverters.Remove(converterName); // always overwrite existing ones.
-				//				Marshal.ReleaseComObject(ecTmp);
+				// always overwrite existing ones.
+				Converters.Remove(converterName);
 			}
 
-			m_encConverters.Add(converterName, rConverter);
+			Converters.Add(converterName, rConverter);
 		}
 #endif
 	}

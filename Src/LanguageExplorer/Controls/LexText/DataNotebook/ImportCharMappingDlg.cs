@@ -118,14 +118,11 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				fRTL,
 				m_cache.ServiceLocator.WritingSystems.AllWritingSystems.Any(ws => ws.RightToLeftScript),
 				m_stylesheet.GetDefaultBasedOnStyleName(),
-				0,		// customUserLevel
 				m_app.MeasurementSystem,
 				m_stylesheet.GetDefaultBasedOnStyleName(),
 				string.Empty,
-				0,		// hvoRootObject
 				m_app, m_helpTopicProvider))
 			{
-				dlg.ShowTEStyleTypes = false;
 				dlg.CanSelectParagraphBackgroundColor = false;
 				if (dlg.ShowDialog(this) == DialogResult.OK &&
 					((dlg.ChangeType & StyleChangeType.DefChanged) > 0 ||

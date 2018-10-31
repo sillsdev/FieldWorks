@@ -19,17 +19,12 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 	public partial class FwGeneralTab : UserControl, IStylesTab
 	{
 		#region Member variables
-		// reference from FwStylesDlg
-		// reference from FwStylesDlg
-		// reference from FwStylesDlg
 
-		private bool m_owningDialogCanceled = false;
+		private bool m_owningDialogCanceled;
 		#endregion
 
 		#region Constructor
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FwGeneralTab"/> class.
-		/// </summary>
+		/// <summary />
 		public FwGeneralTab()
 		{
 			InitializeComponent();
@@ -88,7 +83,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			{
 				if (styleInfo.IsCharacterStyle)
 				{
-					m_cboBasedOn.SelectedIndex = 0;	// "default paragraph characters"
+					m_cboBasedOn.SelectedIndex = 0; // "default paragraph characters"
 				}
 				else
 				{
@@ -141,9 +136,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		#endregion
 
 		#region Overrides
-		/// <summary>
-		/// Raises the <see cref="E:System.Windows.Forms.Control.GotFocus"></see> event.
-		/// </summary>
+
+		/// <inheritdoc />
 		protected override void OnGotFocus(EventArgs e)
 		{
 			base.OnGotFocus(e);
@@ -289,8 +283,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			m_txtStyleName.Text = m_txtStyleName.Text.Trim();
 
 			if (StyleListHelper.SelectedStyleName == m_txtStyleName.Text)
+			{
 				return;
-
+			}
 			if (StyleTable.ContainsKey(m_txtStyleName.Text))
 			{
 				e.Cancel = true;
@@ -394,7 +389,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 			// Otherwise, the context, structure and function of the style must match for a
 			// style to be based on it.
-			return (baseStyle.Context == styleInfo.Context && baseStyle.Structure == styleInfo.Structure && baseStyle.Function == baseStyle.Function);
+			return baseStyle.Context == styleInfo.Context && baseStyle.Structure == styleInfo.Structure && baseStyle.Function == styleInfo.Function;
 		}
 
 		/// <summary>

@@ -2034,21 +2034,14 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 					GetStyleNames((SimpleRootSite)ActiveView, ActiveView.EditingHelper.CurrentSelection.Selection, ref paraStyleName, ref charStyleName);
 				}
 			}
-			using (var stylesDlg = new FwStylesDlg(activeViewSite,
-				Cache, _stylesheet, vc?.RightToLeft ?? false,
-				Cache.ServiceLocator.WritingSystems.AllWritingSystems.Any(ws => ws.RightToLeftScript),
-				_stylesheet.GetDefaultBasedOnStyleName(),
-				int.MaxValue, _flexApp.MeasurementSystem, paraStyleName, charStyleName,
-				Cache.LanguageProject.LexDbOA.Hvo, _flexApp, _flexApp))
+			using (var stylesDlg = new FwStylesDlg(activeViewSite, Cache, _stylesheet, vc?.RightToLeft ?? false, Cache.ServiceLocator.WritingSystems.AllWritingSystems.Any(ws => ws.RightToLeftScript),
+				_stylesheet.GetDefaultBasedOnStyleName(), _flexApp.MeasurementSystem, paraStyleName, charStyleName, _flexApp, _flexApp))
 			{
 				stylesDlg.SetPropsToFactorySettings = stylesXmlAccessor.SetPropsToFactorySettings;
 				stylesDlg.StylesRenamedOrDeleted += OnStylesRenamedOrDeleted;
 				stylesDlg.AllowSelectStyleTypes = true;
-				stylesDlg.ShowTEStyleTypes = false;
 				stylesDlg.CanSelectParagraphBackgroundColor = true;
-				refreshAllViews = (stylesDlg.ShowDialog(this) == DialogResult.OK &&
-				        ((stylesDlg.ChangeType & StyleChangeType.DefChanged) > 0 ||
-				         (stylesDlg.ChangeType & StyleChangeType.Added) > 0));
+				refreshAllViews = stylesDlg.ShowDialog(this) == DialogResult.OK && ((stylesDlg.ChangeType & StyleChangeType.DefChanged) > 0 || (stylesDlg.ChangeType & StyleChangeType.Added) > 0);
 			}
 
 			if (refreshAllViews)

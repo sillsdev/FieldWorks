@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -21,10 +21,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			using (var checkBox = new CheckBox())
 			{
 				checkBox.CheckState = CheckState.Unchecked;
-				using (var t = new FwFontAttributes())
+				using (var fontAttributes = new FwFontAttributes())
 				{
-					t.ShowingInheritedProperties = true;
-					Assert.IsFalse(ReflectionHelper.GetBoolResult(t, "IsInherited", checkBox));
+					fontAttributes.ShowingInheritedProperties = true;
+					Assert.IsFalse(ReflectionHelper.GetBoolResult(fontAttributes, "IsInherited", checkBox));
 				}
 			}
 		}
@@ -36,10 +36,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			using (var checkBox = new CheckBox())
 			{
 				checkBox.CheckState = CheckState.Checked;
-				using (var t = new FwFontAttributes())
+				using (var fontAttributes = new FwFontAttributes())
 				{
-					t.ShowingInheritedProperties = true;
-					Assert.IsFalse(ReflectionHelper.GetBoolResult(t, "IsInherited", checkBox));
+					fontAttributes.ShowingInheritedProperties = true;
+					Assert.IsFalse(ReflectionHelper.GetBoolResult(fontAttributes, "IsInherited", checkBox));
 				}
 			}
 		}
@@ -51,10 +51,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			using (var checkBox = new CheckBox())
 			{
 				checkBox.CheckState = CheckState.Indeterminate;
-				using (var t = new FwFontAttributes())
+				using (var fontAttributes = new FwFontAttributes())
 				{
-					t.ShowingInheritedProperties = true;
-					Assert.IsTrue(ReflectionHelper.GetBoolResult(t, "IsInherited", checkBox));
+					fontAttributes.ShowingInheritedProperties = true;
+					Assert.IsTrue(ReflectionHelper.GetBoolResult(fontAttributes, "IsInherited", checkBox));
 				}
 			}
 		}
@@ -66,10 +66,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			using (var checkBox = new CheckBox())
 			{
 				checkBox.CheckState = CheckState.Indeterminate;
-				using (var t = new FwFontAttributes())
+				using (var fontAttributes = new FwFontAttributes())
 				{
-					t.ShowingInheritedProperties = false;
-					Assert.IsFalse(ReflectionHelper.GetBoolResult(t, "IsInherited", checkBox));
+					fontAttributes.ShowingInheritedProperties = false;
+					Assert.IsFalse(ReflectionHelper.GetBoolResult(fontAttributes, "IsInherited", checkBox));
 				}
 			}
 		}
@@ -81,17 +81,17 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			using (var colorCombo = new FwColorCombo())
 			{
 				colorCombo.ColorValue = Color.Red;
-				using (var t = new FwFontAttributes())
+				using (var fontAttributes = new FwFontAttributes())
 				{
-					t.ShowingInheritedProperties = true;
-					Assert.IsFalse(ReflectionHelper.GetBoolResult(t, "IsInherited", colorCombo));
+					fontAttributes.ShowingInheritedProperties = true;
+					Assert.IsFalse(ReflectionHelper.GetBoolResult(fontAttributes, "IsInherited", colorCombo));
 				}
 			}
 		}
 
 		/// <summary>
 		/// This test verifies that the tie between ShowUnspecified and
-		/// IsInherited is maintained. The IsInherited property used to be loosley tied to the ColorValue
+		/// IsInherited is maintained. The IsInherited property used to be loosely tied to the ColorValue
 		/// this is no longer the case.
 		/// </summary>
 		[Test]
@@ -100,14 +100,12 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			using (var colorCombo = new FwColorCombo())
 			{
 				colorCombo.ShowUnspecified = true;
-				//colorCombo.ColorValue = Color.Empty;
-				using (var t = new FwFontAttributes())
+				using (var fontAttributes = new FwFontAttributes())
 				{
-					t.ShowingInheritedProperties = true;
-					Assert.IsTrue(ReflectionHelper.GetBoolResult(t, "IsInherited", colorCombo));
+					fontAttributes.ShowingInheritedProperties = true;
+					Assert.IsTrue(ReflectionHelper.GetBoolResult(fontAttributes, "IsInherited", colorCombo));
 				}
 			}
 		}
-
 	}
 }

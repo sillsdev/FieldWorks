@@ -1,12 +1,12 @@
-﻿// Copyright (c) 2013-2018 SIL International
+// Copyright (c) 2013-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Text;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Resources;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {

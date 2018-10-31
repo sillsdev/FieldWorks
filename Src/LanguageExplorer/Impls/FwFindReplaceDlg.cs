@@ -139,7 +139,7 @@ namespace LanguageExplorer.Impls
 		private Button btnRegexMenuFind;
 		private Button btnRegexMenuReplace;
 
-		private RegexHelperMenu regexContextMenuFind;
+		private RegexHelperContextMenu _regexContextContextMenuFind;
 		/// <summary />
 		private MenuItem mnuWritingSystem;
 		/// <summary />
@@ -161,7 +161,7 @@ namespace LanguageExplorer.Impls
 		private Label lblSearchOptions;
 		/// <summary />
 		private Label lblFindFormat;
-		private RegexHelperMenu regexContextMenuReplace;
+		private RegexHelperContextMenu _regexContextContextMenuReplace;
 
 		#endregion
 
@@ -300,10 +300,10 @@ namespace LanguageExplorer.Impls
 
 			SetCheckboxStates(vwPattern);
 
-			regexContextMenuFind?.Dispose();
-			regexContextMenuFind = new RegexHelperMenu(fweditFindText, m_helpTopicProvider);
-			regexContextMenuReplace?.Dispose();
-			regexContextMenuReplace = new RegexHelperMenu(fweditReplaceText, m_helpTopicProvider, false);
+			_regexContextContextMenuFind?.Dispose();
+			_regexContextContextMenuFind = new RegexHelperContextMenu(fweditFindText, m_helpTopicProvider);
+			_regexContextContextMenuReplace?.Dispose();
+			_regexContextContextMenuReplace = new RegexHelperContextMenu(fweditReplaceText, m_helpTopicProvider, false);
 
 			EnableRegexMenuReplaceButton();
 
@@ -499,8 +499,8 @@ namespace LanguageExplorer.Impls
 				{
 					m_cache?.Dispose();
 				}
-				regexContextMenuFind?.Dispose();
-				regexContextMenuReplace?.Dispose();
+				_regexContextContextMenuFind?.Dispose();
+				_regexContextContextMenuReplace?.Dispose();
 				if (m_messageFilterInstalled)
 				{
 					Application.RemoveMessageFilter(this);
@@ -514,8 +514,8 @@ namespace LanguageExplorer.Impls
 			m_vwRootsite = null;
 			m_vwFindPattern = null;
 			m_cache = null;
-			regexContextMenuReplace = null;
-			regexContextMenuFind = null;
+			_regexContextContextMenuReplace = null;
+			_regexContextContextMenuFind = null;
 			m_findEnvironment = null;
 			base.Dispose(disposing);
 		}
@@ -1481,7 +1481,7 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		private void btnRegexMenuFind_Click(object sender, EventArgs e)
 		{
-			regexContextMenuFind.Show(btnRegexMenuFind, new System.Drawing.Point(btnRegexMenuFind.Width, 0));
+			_regexContextContextMenuFind.Show(btnRegexMenuFind, new System.Drawing.Point(btnRegexMenuFind.Width, 0));
 		}
 
 		/// <summary>
@@ -1489,7 +1489,7 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		private void btnRegexMenuReplace_Click(object sender, EventArgs e)
 		{
-			regexContextMenuReplace.Show(btnRegexMenuReplace, new System.Drawing.Point(btnRegexMenuFind.Width, 0));
+			_regexContextContextMenuReplace.Show(btnRegexMenuReplace, new System.Drawing.Point(btnRegexMenuFind.Width, 0));
 		}
 
 		/// <summary>

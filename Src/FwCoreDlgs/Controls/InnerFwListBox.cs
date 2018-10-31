@@ -40,9 +40,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		// width of the view.
 		bool m_fShowHighlight = true;
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
+		/// <summary />
 		internal InnerFwListBox(FwListBox owner)
 		{
 			Owner = owner;
@@ -119,8 +117,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// the registry). (Note this is kind of overkill, since the constructor does this too.
 		/// But I left it here in case we change our minds about the constructor.)
 		/// </summary>
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public override ILgWritingSystemFactory WritingSystemFactory
 		{
 			get
@@ -146,9 +143,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 
 		protected internal FwListBox Owner { get; protected set; }
 
-		/// <summary>
-		/// Create the root box and initialize it.
-		/// </summary>
+		/// <inheritdoc />
 		public override void MakeRoot()
 		{
 			if (DesignMode)
@@ -168,14 +163,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			EditingHelper.DefaultCursor = Cursors.Arrow;
 		}
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
+		/// <inheritdoc />
+		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -204,7 +198,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		{
 			if (Visible && e.Button == MouseButtons.Left)
 			{
-				base.OnMouseUp (e);
+				base.OnMouseUp(e);
 				if (Owner.SelectedIndex == Owner.HighlightedIndex)
 				{
 					Owner.RaiseSameItemSelected();
@@ -249,12 +243,12 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
-			base.OnMouseMove (e);
+			base.OnMouseMove(e);
 			if (!Owner.Tracking)
 			{
 				return;
 			}
-			using(new HoldGraphics(this))
+			using (new HoldGraphics(this))
 			{
 				Rectangle rcSrcRoot;
 				Rectangle rcDstRoot;
@@ -310,62 +304,62 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
-			base.OnKeyDown (e);
+			base.OnKeyDown(e);
 			switch (e.KeyCode)
 			{
 				case Keys.Right:
 				case Keys.Down:
-				{
-					// Handle Alt-Down
-					if (e.Alt && e.KeyCode == Keys.Down && Owner is ComboListBox)
 					{
-						HandleListItemSelect();
-						e.Handled = true;
-					}
-					else
-					{
-						// If we don't have any items, we certainly can't highlight them!
-						if (Owner.Items.Count == 0)
+						// Handle Alt-Down
+						if (e.Alt && e.KeyCode == Keys.Down && Owner is ComboListBox)
 						{
-							return;
+							HandleListItemSelect();
+							e.Handled = true;
 						}
-						// don't increment if already at the end
-						if (Owner.HighlightedIndex < Owner.Items.Count - 1)
+						else
 						{
-							Owner.HighlightedIndex += 1;
+							// If we don't have any items, we certainly can't highlight them!
+							if (Owner.Items.Count == 0)
+							{
+								return;
+							}
+							// don't increment if already at the end
+							if (Owner.HighlightedIndex < Owner.Items.Count - 1)
+							{
+								Owner.HighlightedIndex += 1;
+							}
 						}
+						break;
 					}
-					break;
-				}
 				case Keys.Left:
 				case Keys.Up:
-				{
-					// Handle Alt-Up
-					if (e.Alt && e.KeyCode == Keys.Up && Owner is ComboListBox)
 					{
-						HandleListItemSelect();
-						e.Handled = true;
-					}
-					else
-					{
-						// If we don't have any items, we certainly can't highlight them!
-						if (Owner.Items.Count == 0)
+						// Handle Alt-Up
+						if (e.Alt && e.KeyCode == Keys.Up && Owner is ComboListBox)
 						{
-							return;
+							HandleListItemSelect();
+							e.Handled = true;
 						}
+						else
+						{
+							// If we don't have any items, we certainly can't highlight them!
+							if (Owner.Items.Count == 0)
+							{
+								return;
+							}
 
-						// don't scroll up past first item
-						if (Owner.HighlightedIndex > 0)
-						{
-							Owner.HighlightedIndex -= 1;
+							// don't scroll up past first item
+							if (Owner.HighlightedIndex > 0)
+							{
+								Owner.HighlightedIndex -= 1;
+							}
+							else if (Owner.HighlightedIndex < 0)
+							{
+								Owner.HighlightedIndex = 0; // reset to first item.
+							}
 						}
-						else if (Owner.HighlightedIndex < 0)
-						{
-							Owner.HighlightedIndex = 0;	// reset to first item.
-						}
+						break;
 					}
-					break;
-				}
 			}
 		}
 
@@ -379,9 +373,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		{
 			private InnerFwListBox m_listbox;
 
-			/// <summary>
-			/// Construct one. Must be part of an InnerFwListBox.
-			/// </summary>
+			/// <summary />
 			internal ListBoxVc(InnerFwListBox listbox)
 			{
 				m_listbox = listbox;
@@ -437,8 +429,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 							// the Windows build, not just the Linux build!)
 							vwenv.AddString(tss);
 						}
-						// REVIEW (DamienD): Why do we add blanks here? I commented this out.
-						//vwenv.AddString(m_tssBlanks);
 						vwenv.CloseParagraph();
 						break;
 				}

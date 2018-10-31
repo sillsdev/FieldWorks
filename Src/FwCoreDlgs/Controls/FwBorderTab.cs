@@ -3,10 +3,10 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-using System.Diagnostics;
 using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.FwCoreDlgs.Controls
@@ -33,14 +33,12 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		private bool m_fShowBiDiLabels;
 		private bool m_fIgnoreCascadingEvents;
 		private static int[] s_borderSizes = { 0, 250, 500, 750, 1000, 1500, 2250, 3000, 4500, 6000 };
-
 		private StyleInfo m_currentStyleInfo;
 		#endregion
 
 		#region Construction and demolition
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FwBorderTab"/> class.
-		/// </summary>
+
+		/// <summary />
 		public FwBorderTab()
 		{
 			InitializeComponent();
@@ -252,7 +250,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		/// <returns>The system gray color if the property is inherited; otherwise the normal
 		/// window text color.</returns>
-		/// ------------------------------------------------------------------------------------
 		private Color GetCtrlForeColorForProp<T>(InheritableStyleProp<T> inheritableProperty)
 		{
 			return inheritableProperty.IsInherited && m_currentStyleInfo.Inherits ? SystemColors.GrayText : SystemColors.WindowText;
@@ -266,7 +263,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <param name="index">The index of the selected item in the width combo</param>
 		/// <param name="g">graphics object to use for DPI info</param>
 		/// <returns>border width in pixels</returns>
-		private int CalcBorderWidth(int index, Graphics g)
+		private static int CalcBorderWidth(int index, Graphics g)
 		{
 			if (index < 0)
 			{
@@ -278,7 +275,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// Draws the text lines inside the borders
 		/// </summary>
-		private void DrawTextLines(Rectangle drawRect, Graphics g)
+		private static void DrawTextLines(Rectangle drawRect, Graphics g)
 		{
 			const int lineHeight = 5;
 			const int lineSpacing = 2;
@@ -454,9 +451,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		#endregion
 
 		#region Public methods
-		/// <summary>
-		/// Updates the form based on a style being selected.
-		/// </summary>
+
+		/// <inheritdoc />
 		public void UpdateForStyle(StyleInfo styleInfo)
 		{
 			m_dontUpdateInheritance = true;
@@ -519,9 +515,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			m_pnlBorderPreview.Refresh();
 		}
 
-		/// <summary>
-		/// Saves border info into a StyleInfo
-		/// </summary>
+		/// <inheritdoc />
 		public void SaveToInfo(StyleInfo styleInfo)
 		{
 			if (styleInfo.IsCharacterStyle)

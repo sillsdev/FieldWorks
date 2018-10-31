@@ -8,11 +8,11 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using SIL.LCModel;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Resources;
+using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainServices;
-using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
@@ -43,9 +43,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 
 		#endregion
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="FwFontTab"/> class.
-		/// </summary>
+		/// <summary />
 		public FwFontTab()
 		{
 			InitializeComponent();

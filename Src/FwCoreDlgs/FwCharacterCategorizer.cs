@@ -1,26 +1,18 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FWCharacterCategorizer.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 
 using System.Collections.Generic;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// FwCharacterCategorizer categorizes characters based on the ICU and user overrides of
 	/// ICU for a particular writing system.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public class FwCharacterCategorizer : CharacterCategorizer
 	{
 		#region Member variables
@@ -28,19 +20,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private readonly ValidCharacters m_validChars;
 		#endregion
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="FwCharacterCategorizer"/> class.
-		/// </summary>
+		/// <summary />
 		/// <param name="validChars">The valid characters. If null, will fall back on the
 		/// specified character property engine.</param>
-		/// ------------------------------------------------------------------------------------
 		public FwCharacterCategorizer(ValidCharacters validChars)
 		{
 			m_validChars = validChars;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Determines whether the specified character is lower.
 		/// </summary>
@@ -48,13 +35,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <returns>
 		/// 	<c>true</c> if the specified character is lower; otherwise, <c>false</c>.
 		/// </returns>
-		/// ------------------------------------------------------------------------------------
 		public override bool IsLower(char ch)
 		{
 			return LCModel.Core.Text.Icu.GetCharType(ch) == LCModel.Core.Text.Icu.UCharCategory.U_LOWERCASE_LETTER;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Determines whether the specified character is upper.
 		/// </summary>
@@ -62,13 +47,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <returns>
 		/// 	<c>true</c> if the specified character is upper; otherwise, <c>false</c>.
 		/// </returns>
-		/// ------------------------------------------------------------------------------------
 		public override bool IsUpper(char ch)
 		{
 			return LCModel.Core.Text.Icu.GetCharType(ch) == LCModel.Core.Text.Icu.UCharCategory.U_UPPERCASE_LETTER;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Determines whether the specified cc is diacritic.
 		/// </summary>
@@ -76,13 +59,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <returns>
 		/// 	<c>true</c> if the specified cc is diacritic; otherwise, <c>false</c>.
 		/// </returns>
-		/// ------------------------------------------------------------------------------------
 		public override bool IsDiacritic(char cc)
 		{
 			return LCModel.Core.Text.Icu.IsDiacritic(cc);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Determines whether the specified character is punctuation.
 		/// </summary>
@@ -90,13 +71,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <returns>
 		/// 	<c>true</c> if the specified character is punctuation; otherwise, <c>false</c>.
 		/// </returns>
-		/// ------------------------------------------------------------------------------------
 		public override bool IsPunctuation(char cc)
 		{
 			return LCModel.Core.Text.Icu.IsPunct(cc);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Determines whether the specified character is title.
 		/// </summary>
@@ -104,13 +83,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <returns>
 		/// 	<c>true</c> if the specified character is title; otherwise, <c>false</c>.
 		/// </returns>
-		/// ------------------------------------------------------------------------------------
 		public override bool IsTitle(char ch)
 		{
 			return LCModel.Core.Text.Icu.GetCharType(ch) == LCModel.Core.Text.Icu.UCharCategory.U_TITLECASE_LETTER;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Determines whether a character is a word forming character.
 		/// </summary>
@@ -118,13 +95,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <returns>
 		/// 	<c>true</c> if the character is a word forming character; otherwise, <c>false</c>.
 		/// </returns>
-		/// ------------------------------------------------------------------------------------
 		public override bool IsWordFormingCharacter(char cc)
 		{
 			return m_validChars != null ? m_validChars.IsWordForming(cc) : TsStringUtils.IsWordForming(cc);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Determines whether a character is word medial punctuation.
 		/// </summary>
@@ -133,7 +108,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// 	<c>true</c> if the character is a word medial punctuation character;
 		/// 	otherwise, <c>false</c>.
 		/// </returns>
-		/// ------------------------------------------------------------------------------------
 		public override bool IsWordMedialPunctuation(char cc)
 		{
 			// Be careful to make sure that zwnj and zwj are included here for
@@ -141,31 +115,26 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			return LCModel.Core.Text.Icu.GetCharType(cc) == LCModel.Core.Text.Icu.UCharCategory.U_CONNECTOR_PUNCTUATION;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets words and punctuation from text.
 		/// </summary>
-		/// <param name="text">The text.</param>
-		/// <returns>a collection of words and punctuation</returns>
-		/// ------------------------------------------------------------------------------------
 		public override List<WordAndPunct> WordAndPuncts(string text)
 		{
-			List<WordAndPunct> waps = new List<WordAndPunct>();
-
-			for (int i = 0; i < text.Length; )
+			var waps = new List<WordAndPunct>();
+			for (var i = 0; i < text.Length;)
 			{
-				WordAndPunct wap = new WordAndPunct();
-
+				var wap = new WordAndPunct();
 				// Ignore any initial separator characters
 				while (i < text.Length && LCModel.Core.Text.Icu.IsSeparator(text[i]))
+				{
 					i++;
-
+				}
 				if (i == text.Length)
+				{
 					return waps;
-
+				}
 				wap.Offset = i;
-				bool isFirstCharacterInWord = true;
-
+				var isFirstCharacterInWord = true;
 				char cc;
 				while (i < text.Length)
 				{
@@ -192,21 +161,22 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						// allow digits in words
 					}
 					else if (!IsWordFormingCharacter(cc))
+					{
 						break;
-
+					}
 					i = i + 1;
 					isFirstCharacterInWord = false;
 				}
 
 				wap.Word = text.Substring(wap.Offset, i - wap.Offset);
-
-				int punctOffset = i;
-
+				var punctOffset = i;
 				while (i < text.Length)
 				{
 					cc = text[i];
 					if (IsWordFormingCharacter(cc) || LCModel.Core.Text.Icu.IsNumeric(cc))
+					{
 						break;
+					}
 					i = i + 1;
 				}
 

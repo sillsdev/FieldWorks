@@ -11,24 +11,22 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
-using SilEncConverters40;
-using SIL.LCModel.Core.SpellChecking;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
+using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Application.ApplicationServices;
+using SIL.LCModel.Core.SpellChecking;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.Resources;
 using SIL.Windows.Forms.WritingSystems;
 using SIL.WritingSystems;
-using MatchedPair = SIL.WritingSystems.MatchedPair;
+using SilEncConverters40;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -114,12 +112,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				dlg.SearchText = defaultName;
 
 				if (dlg.ShowDialog(owner) != DialogResult.OK)
+				{
 					return false;
-
+				}
 				languageTag = dlg.SelectedLanguage.LanguageTag;
 				languageName = dlg.DesiredLanguageName;
 				if (languageTag == WellKnownSubtags.UnlistedLanguage)
+				{
 					languageTag += "-x-" + GetPrivateUseLangCodeForNewLang(wsManager, languageName);
+				}
 			}
 
 			using (new WaitCursor(owner))
@@ -145,12 +146,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			// FW does not have a localization for "zh", only for "zh-CN"
 			if (language.LanguageTag == "zh")
+			{
 				return false;
-
+			}
 			// English is the default localization, so it is hardcoded here.
 			if (language.LanguageTag != "en" && language.LanguageTag.StartsWith("en"))
+			{
 				return false;
-
+			}
 			return !LocalizedLanguages.Any(l => l != language.LanguageTag && language.LanguageTag.StartsWith(l));
 		}
 
@@ -166,28 +169,28 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <param name="app">The app.</param>
 		/// <param name="newWritingSystems">The new writing systems.</param>
-		/// <returns></returns>
 		public static bool ShowModifyDialog(Form owner, CoreWritingSystemDefinition selectedWS, bool addNewForLangOfSelectedWs, LcmCache cache,
 			IWritingSystemContainer wsContainer, IHelpTopicProvider helpTopicProvider, IApp app, out IEnumerable<CoreWritingSystemDefinition> newWritingSystems)
 		{
 			newWritingSystems = null;
 			if (!cache.ServiceLocator.WritingSystemManager.CanSave(selectedWS))
 			{
-				string path = cache.ServiceLocator.WritingSystemManager.GetLdmlFilePath(selectedWS);
+				var path = cache.ServiceLocator.WritingSystemManager.GetLdmlFilePath(selectedWS);
 				MessageBox.Show(owner, string.Format(FwCoreDlgs.ksCannotSaveWritingSystem, path), FwCoreDlgs.ksError, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return false; // nothing changed.
 			}
 			using (new WaitCursor(owner))
-			using (var wsPropsDlg = new WritingSystemPropertiesDialog(cache, cache.ServiceLocator.WritingSystemManager,
-				wsContainer, helpTopicProvider, app))
+			using (var wsPropsDlg = new WritingSystemPropertiesDialog(cache, cache.ServiceLocator.WritingSystemManager, wsContainer, helpTopicProvider, app))
 			{
 				wsPropsDlg.SetupDialog(selectedWS, true);
 				if (addNewForLangOfSelectedWs)
+				{
 					wsPropsDlg.AddNewWsForLanguage();
-
+				}
 				if (!SharedBackendServicesHelper.WarnOnOpeningSingleUserDialog(cache))
+				{
 					return false;
-
+				}
 				if (wsPropsDlg.ShowDialog(owner) == DialogResult.OK)
 				{
 					if (wsPropsDlg.IsChanged)
@@ -208,14 +211,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private CoreWritingSystemDefinition m_prevSelectedWritingSystem;
 
 		private readonly LcmCache m_cache;
-		/// <summary></summary>
+		/// <summary />
 		protected readonly WritingSystemManager m_wsManager;
 		private readonly IWritingSystemContainer m_wsContainer;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private readonly IApp m_app;
-
-		// Change flags
-		private bool m_fChanged;
 
 		// Guards
 		private bool m_userChangedLanguageName = true;
@@ -243,50 +243,50 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		#region Ws ListBox
 
-		/// <summary> </summary>
+		/// <summary />
 		private Label m_writingSystemsFor;
 		private Label lblHiddenWss;
-		/// <summary> </summary>
+		/// <summary />
 		protected ListBox m_listBoxRelatedWSs;
-		/// <summary> </summary>
+		/// <summary />
 		protected Button btnAdd;
-		/// <summary> </summary>
+		/// <summary />
 		protected Button btnCopy;
-		/// <summary> </summary>
+		/// <summary />
 		protected Button m_deleteButton;
 
 		#endregion Ws ListBox
 
 		#region LanguageName and Ethnologue Code
 
-		/// <summary> </summary>
+		/// <summary />
 		protected TextBox m_tbLanguageName;
-		/// <summary> </summary>
+		/// <summary />
 		protected Label m_LanguageCode;
 		private LinkLabel m_linkToEthnologue;
 
 		#endregion LanguageName and Ethnologue Code
 
-		/// <summary> </summary>
+		/// <summary />
 		protected Button btnModifyEthnologueInfo;
-		/// <summary> </summary>
+		/// <summary />
 		protected TabControl tabControl;
-		/// <summary> </summary>
+		/// <summary />
 		protected Button btnOk;
-		/// <summary> </summary>
+		/// <summary />
 		protected Button btnCancel;
-		/// <summary> </summary>
+		/// <summary />
 		private Button btnHelp;
 
 		#region General Tab
 
-		/// <summary> Abbreviation: # </summary>
+		/// <summary>Abbreviation: # </summary>
 		protected TextBox m_ShortWsName;
-		/// <summary> </summary>
+		/// <summary />
 		protected RegionVariantControl m_regionVariantControl;
 		private GroupBox gbDirection;
 		private RadioButton rbLeftToRight;
-		/// <summary> Direction : () (#)</summary>
+		/// <summary>Direction : () (#)</summary>
 		protected RadioButton rbRightToLeft;
 		private FwOverrideComboBox cbDictionaries;
 		private Label lblSpellingDictionary;
@@ -295,22 +295,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		#region Fonts Tab
 
-		/// <summary>
-		/// </summary>
+		/// <summary />
 		protected DefaultFontsControl m_defaultFontsControl;
 
 		#endregion
-
-		#region Keyboard Tab
-
-
-		#endregion Keyboard Tab
 
 		#region Converters Tab
 
 		private Button btnEncodingConverter;
 		private Label m_lblEncodingConverter;
-		/// <summary> </summary>
+		/// <summary />
 		protected FwOverrideComboBox cbEncodingConverter;
 
 		#endregion Converters Tab
@@ -354,16 +348,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		#region Construction, deconstruction, and initialization
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:WritingSystemPropertiesDialog"/> class.
-		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="wsManager">The ws manager.</param>
-		/// <param name="wsContainer">The ws container.</param>
-		/// <param name="helpTopicProvider">The help topic provider.</param>
-		/// <param name="app">The app.</param>
-		public WritingSystemPropertiesDialog(LcmCache cache, WritingSystemManager wsManager, IWritingSystemContainer wsContainer,
-			IHelpTopicProvider helpTopicProvider, IApp app) : this()
+		/// <summary />
+		public WritingSystemPropertiesDialog(LcmCache cache, WritingSystemManager wsManager, IWritingSystemContainer wsContainer, IHelpTopicProvider helpTopicProvider, IApp app)
+			: this()
 		{
 			m_cache = cache;
 			m_wsManager = wsManager;
@@ -372,9 +359,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_app = app;
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:WritingSystemPropertiesDialog"/> class.
-		/// </summary>
+		/// <summary />
 		private WritingSystemPropertiesDialog()
 		{
 			//
@@ -390,20 +375,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			LoadSortLanguageComboBox();
 		}
 
-		/// <summary/>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
-			if (disposing && !IsDisposed)
+			if (IsDisposed)
 			{
-				if (components != null)
-					components.Dispose();
-				if (m_sortRulesTextBox != null && m_sortRulesTextBox.WritingSystemFactory != null)
-				{
-					var disposable = m_sortRulesTextBox.WritingSystemFactory as IDisposable;
-					if (disposable != null)
-						disposable.Dispose();
-				}
+				// No need to run it more than once.
+				return;
+			}
+
+			if (disposing)
+			{
+				components?.Dispose();
+				var disposable = m_sortRulesTextBox?.WritingSystemFactory as IDisposable;
+				disposable?.Dispose();
 			}
 			base.Dispose(disposing);
 		}
@@ -413,10 +399,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var types = new ArrayList();
 			foreach (Enum customSortRulesType in Enum.GetValues(typeof(CollationRulesType)))
 			{
-				FieldInfo fi = customSortRulesType.GetType().GetField(customSortRulesType.ToString());
-
+				var fi = customSortRulesType.GetType().GetField(customSortRulesType.ToString());
 				var descriptions = (DescriptionAttribute[])fi.GetCustomAttributes(typeof(DescriptionAttribute), false);
-				string description = descriptions.Length == 0 ? customSortRulesType.ToString() : descriptions[0].Description;
+				var description = descriptions.Length == 0 ? customSortRulesType.ToString() : descriptions[0].Description;
 				types.Add(new { Id = customSortRulesType.ToString(), Name = description });
 			}
 
@@ -428,9 +413,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void LoadSortLanguageComboBox()
 		{
 			var languages = new ArrayList();
-			foreach (CultureInfo ci in CultureInfo.GetCultures(CultureTypes.AllCultures).OrderBy(curCi => curCi.EnglishName))
+			foreach (var ci in CultureInfo.GetCultures(CultureTypes.AllCultures).OrderBy(curCi => curCi.EnglishName))
+			{
 				languages.Add(new { Id = ci.Name, Name = ci.EnglishName });
-
+			}
 			m_sortLanguageComboBox.ValueMember = "Id";
 			m_sortLanguageComboBox.DataSource = languages;
 			m_sortLanguageComboBox.DisplayMember = "Name";
@@ -459,9 +445,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			RegionSubtag regionSubtag;
 			IEnumerable<VariantSubtag> variantSubtags;
 			if (!IetfLanguageTag.TryGetSubtags(languageTag, out languageSubtag, out scriptSubtag, out regionSubtag, out variantSubtags))
-				throw new ArgumentException("The language tag is invalid.", "languageTag");
+			{
+				throw new ArgumentException("The language tag is invalid.", nameof(languageTag));
+			}
 			languageSubtag = new LanguageSubtag(languageSubtag, languageName);
-			CoreWritingSystemDefinition ws = m_wsManager.Create(languageSubtag, scriptSubtag, regionSubtag, variantSubtags);
+			var ws = m_wsManager.Create(languageSubtag, scriptSubtag, regionSubtag, variantSubtags);
 			SetupDialog(ws, null, displayRelatedWss);
 			SetupNumbersTab(ws);
 		}
@@ -479,15 +467,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					numberSettingsCombo.Items.Add(standardNumberingSystem);
 				}
 			}
-			if (ws.NumberingSystem.IsCustom)
-			{
-				numberSettingsCombo.SelectedItem = Strings.CustomNumberingSystem;
-			}
-			else
-			{
-				numberSettingsCombo.SelectedItem = CLDRNumberingSystems.GetDigitsForID(ws.NumberingSystem.Id);
-			}
-
+			numberSettingsCombo.SelectedItem = ws.NumberingSystem.IsCustom ? Strings.CustomNumberingSystem : CLDRNumberingSystems.GetDigitsForID(ws.NumberingSystem.Id);
 			numberSettingsCombo.Enabled = numberSettingsCombo.Visible = true;
 		}
 
@@ -496,9 +476,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_tempWritingSystems[tempWs] = origWs;
 			if (displayRelatedWss)
 			{
-				foreach (CoreWritingSystemDefinition ws in m_wsManager.WritingSystems.Except(new[] {origWs}).Related(tempWs))
+				foreach (var ws in m_wsManager.WritingSystems.Except(new[] { origWs }).Related(tempWs))
 				{
-					CoreWritingSystemDefinition newWs = m_wsManager.CreateFrom(ws);
+					var newWs = m_wsManager.CreateFrom(ws);
 					m_tempWritingSystems[newWs] = ws;
 				}
 			}
@@ -519,17 +499,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			// ensure SelectedItem happens after all items added to m_listBoxRelatedWSs
 			// This ensures more consistent behaviour across platforms.
-			bool fSetSelectedItem = false;
-			foreach (CoreWritingSystemDefinition tempWs in m_tempWritingSystems.Keys.OrderBy(ws => ws.DisplayLabel))
+			var fSetSelectedItem = false;
+			foreach (var tempWs in m_tempWritingSystems.Keys.OrderBy(ws => ws.DisplayLabel))
 			{
 				m_listBoxRelatedWSs.Items.Add(tempWs);
 				if (selectedWs == tempWs)
+				{
 					fSetSelectedItem = true;
+				}
 			}
-
 			if (fSetSelectedItem)
+			{
 				SelectWritingSystem(selectedWs);
-
+			}
 			m_listBoxRelatedWSs.EndUpdate();
 			// update buttons.
 			UpdateListBoxButtons();
@@ -550,7 +532,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			if (ws != null)
 			{
-				for (int i = 0; i < m_listBoxRelatedWSs.Items.Count; i++)
+				for (var i = 0; i < m_listBoxRelatedWSs.Items.Count; i++)
 				{
 					if (m_listBoxRelatedWSs.Items[i] == ws)
 					{
@@ -565,7 +547,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void SetupDialogFromCurrentWritingSystem()
 		{
-			CoreWritingSystemDefinition ws = CurrentWritingSystem;
+			var ws = CurrentWritingSystem;
 			UpdateListBoxButtons();
 			// Setup General Tab information
 			Set_tbLanguageName(ws.Language.Name ?? string.Empty);
@@ -584,7 +566,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			SetFullNameLabels(ws.DisplayLabel);
 			SetCurrentCollationRulesTypeFromWritingSystem();
 			if (tabControl.SelectedTab == tpSorting)
+			{
 				SetupSortTab(ws);
+			}
 			m_modelForKeyboard = new WritingSystemSetupModel(ws);
 			m_keyboardControl.BindToModel(m_modelForKeyboard);
 		}
@@ -601,11 +585,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			else if (CurrentWritingSystem.DefaultCollation is IcuRulesCollationDefinition)
 			{
-				var icuCollation = (IcuRulesCollationDefinition) CurrentWritingSystem.DefaultCollation;
+				var icuCollation = (IcuRulesCollationDefinition)CurrentWritingSystem.DefaultCollation;
 				if (!string.IsNullOrEmpty(icuCollation.IcuRules) || icuCollation.Imports.Count > 0)
+				{
 					m_currentCollationRulesType = CollationRulesType.CustomIcu;
+				}
 				else
+				{
 					m_currentCollationRulesType = CollationRulesType.DefaultOrdering;
+				}
 			}
 			else if (CurrentWritingSystem.DefaultCollation is SystemCollationDefinition)
 			{
@@ -620,8 +608,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_userChangedSortUsing = true;
 
 			m_userChangedSortRules = false;
-			WritingSystemManager wsManager = FwUtils.CreateWritingSystemManager();
-			string oldId = ws.Id;
+			var wsManager = FwUtils.CreateWritingSystemManager();
+			var oldId = ws.Id;
 			wsManager.Set(ws);
 			// Setting it into the temporary WS manager will set its StoreID. This could cause
 			// problems if we later add it to the real WS manager. So we need to restore it.
@@ -635,35 +623,32 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					m_sortLanguagePanel.Visible = false;
 					m_sortRulesPanel.Visible = false;
 					break;
-
 				case CollationRulesType.CustomIcu:
 					m_sortLanguagePanel.Visible = false;
 					m_sortRulesPanel.Visible = true;
 					m_sortRulesButtonPanel.Visible = true;
 					m_sortRulesLoadPanel.Visible = true;
 					m_sortingHelpLabel.Text = string.Format(FwCoreDlgs.kstidIcuSortingHelp, Environment.NewLine);
-					var icuCollation = (IcuRulesCollationDefinition) ws.DefaultCollation;
+					var icuCollation = (IcuRulesCollationDefinition)ws.DefaultCollation;
 					m_sortRulesTextBox.Tss = TsStringUtils.MakeString(icuCollation.CollationRules.Replace("\t", ""), ws.Handle);
 					break;
-
 				case CollationRulesType.CustomSimple:
 					m_sortLanguagePanel.Visible = false;
 					m_sortRulesPanel.Visible = true;
 					m_sortRulesButtonPanel.Visible = false;
 					m_sortRulesLoadPanel.Visible = false;
 					m_sortingHelpLabel.Text = string.Format(FwCoreDlgs.kstidSimpleSortingHelp, Environment.NewLine);
-					var simpleCollation = (SimpleRulesCollationDefinition) ws.DefaultCollation;
+					var simpleCollation = (SimpleRulesCollationDefinition)ws.DefaultCollation;
 					m_sortRulesTextBox.Tss = TsStringUtils.MakeString(simpleCollation.SimpleRules, ws.Handle);
 					break;
-
 				case CollationRulesType.OtherLanguage:
 					m_sortRulesPanel.Visible = false;
 					m_sortLanguagePanel.Visible = true;
-					var systemCollation = (SystemCollationDefinition) ws.DefaultCollation;
+					var systemCollation = (SystemCollationDefinition)ws.DefaultCollation;
 					if (string.IsNullOrEmpty(systemCollation.LanguageTag))
 					{
 						string message;
-						systemCollation.LanguageTag = SystemCollator.ValidateLanguageTag(ws.LanguageTag, out message) ? ws.LanguageTag : (string) m_sortLanguageComboBox.SelectedValue;
+						systemCollation.LanguageTag = SystemCollator.ValidateLanguageTag(ws.LanguageTag, out message) ? ws.LanguageTag : (string)m_sortLanguageComboBox.SelectedValue;
 					}
 					m_sortLanguageComboBox.SelectedValue = systemCollation.LanguageTag;
 					break;
@@ -689,15 +674,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var dictionaries = new ArrayList { new { Name = FwCoreDlgs.ksWsNoDictionaryMatches, Id = FwCoreDlgs.kstidNone } };
 
-			string spellCheckingDictionary = CurrentWritingSystem.SpellCheckingId;
+			var spellCheckingDictionary = CurrentWritingSystem.SpellCheckingId;
 			if (string.IsNullOrEmpty(spellCheckingDictionary))
 			{
 				dictionaries.Add(new { Name = CurrentWritingSystem.LanguageTag, Id = CurrentWritingSystem.LanguageTag.Replace('-', '_') });
 			}
-
-			bool fDictionaryExistsForLanguage = false;
-			bool fAlternateDictionaryExistsForLanguage = false;
-			string selectComboItem = FwCoreDlgs.kstidNone;
+			var fDictionaryExistsForLanguage = false;
+			var fAlternateDictionaryExistsForLanguage = false;
+			var selectComboItem = FwCoreDlgs.kstidNone;
 			foreach (var languageId in SpellingHelper.GetDictionaryIds().OrderBy(di => GetDictionaryName(di)))
 			{
 				dictionaries.Add(new { Name = GetDictionaryName(languageId), Id = languageId });
@@ -714,8 +698,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					// for 'en', as in our extension SpellingHelper. The second branch of the OR is unused at present
 					// but will help if we extend SpellingHelper to the 'en' dictionary when asked for the 'en_US' one
 					// (when it can't find an exact match).
-					if (!string.IsNullOrEmpty(spellCheckingDictionary) &&
-						(languageId.StartsWith(spellCheckingDictionary) || spellCheckingDictionary.StartsWith(languageId)))
+					if (!string.IsNullOrEmpty(spellCheckingDictionary) && (languageId.StartsWith(spellCheckingDictionary) || spellCheckingDictionary.StartsWith(languageId)))
 					{
 						// Vernacular dictionaries may only be used if they match the requested ID exactly.
 						if (!SpellingHelper.IsVernacular(languageId))
@@ -736,7 +719,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_userChangedSpellCheckDictionary = true;
 		}
 
-		private static string GetDictionaryName(String languageId)
+		private static string GetDictionaryName(string languageId)
 		{
 			LCModel.Core.Text.Icu.UErrorCode err;
 			string country;
@@ -745,9 +728,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			LCModel.Core.Text.Icu.GetDisplayLanguage(languageId, "en", out languageName, out err);
 			var languageAndCountry = new StringBuilder(languageName);
 			if (!string.IsNullOrEmpty(country))
+			{
 				languageAndCountry.AppendFormat(" ({0})", country);
+			}
 			if (languageName != languageId)
+			{
 				languageAndCountry.AppendFormat(" [{0}]", languageId);
+			}
 			return languageAndCountry.ToString();
 		}
 
@@ -756,22 +743,27 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Fix FWNX-563
 			CoreWritingSystemDefinition origWs;
 			if (!m_tempWritingSystems.TryGetValue(ws, out origWs) || origWs == null)
+			{
 				return false;
-
+			}
 			return !m_wsContainer.AllWritingSystems.Contains(origWs);
 		}
 
 		private void m_listBoxRelatedWSs_DrawItem(object sender, DrawItemEventArgs e)
 		{
 			if (e.Index == -1)
+			{
 				return;
-			bool selected = ((e.State & DrawItemState.Selected) != 0);
-			bool isWsHidden = IsWritingSystemHidden((CoreWritingSystemDefinition) m_listBoxRelatedWSs.Items[e.Index]);
+			}
+			var selected = (e.State & DrawItemState.Selected) != 0;
+			var isWsHidden = IsWritingSystemHidden((CoreWritingSystemDefinition)m_listBoxRelatedWSs.Items[e.Index]);
 			using (var drawFont = new Font(e.Font, isWsHidden ? FontStyle.Italic : FontStyle.Regular))
 			{
-				Brush textBrush = isWsHidden ? SystemBrushes.GrayText : SystemBrushes.ControlText;
+				var textBrush = isWsHidden ? SystemBrushes.GrayText : SystemBrushes.ControlText;
 				if (selected)
+				{
 					textBrush = SystemBrushes.HighlightText;
+				}
 				e.DrawBackground();
 				e.Graphics.DrawString(m_listBoxRelatedWSs.Items[e.Index].ToString(), drawFont, textBrush, e.Bounds);
 			}
@@ -785,17 +777,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private bool IsNew(CoreWritingSystemDefinition ws)
 		{
 			CoreWritingSystemDefinition origWs;
-			bool present = m_tempWritingSystems.TryGetValue(ws, out origWs);
-			//IWritingSystem origWs = m_tempWritingSystems[ws];
+			m_tempWritingSystems.TryGetValue(ws, out origWs);
 			return origWs == null || origWs.Handle == 0;
 		}
 
 		/// <summary>
-		/// Select the encoding converty for the currently selected writing system.
+		/// Select the encoding converter for the currently selected writing system.
 		/// </summary>
 		private void Select_cbEncodingConverter()
 		{
-			string strLegacyMapping = string.IsNullOrEmpty(CurrentWritingSystem.LegacyMapping) ? FwCoreDlgs.kstidNone : CurrentWritingSystem.LegacyMapping;
+			var strLegacyMapping = string.IsNullOrEmpty(CurrentWritingSystem.LegacyMapping) ? FwCoreDlgs.kstidNone : CurrentWritingSystem.LegacyMapping;
 			if (!cbEncodingConverter.Items.Contains(strLegacyMapping))
 			{
 				strLegacyMapping = strLegacyMapping + FwCoreDlgs.kstidNotInstalled;
@@ -812,16 +803,22 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Save the old selection so it can be restored after the combo box is filled
 			string oldSelection = null;
 			if (cbEncodingConverter.SelectedIndex != -1)
+			{
 				oldSelection = (string)cbEncodingConverter.SelectedItem;
+			}
 			try
 			{
 				var encConverters = new EncConverters();
 				cbEncodingConverter.Items.Clear();
 				cbEncodingConverter.Items.Add(FwCoreDlgs.kstidNone);
 				foreach (string convName in encConverters.Keys)
+				{
 					cbEncodingConverter.Items.Add(convName);
+				}
 				if (oldSelection != null)
+				{
 					cbEncodingConverter.SelectedItem = oldSelection;
+				}
 			}
 			catch (Exception e)
 			{
@@ -843,52 +840,26 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Gets the current writing system.
 		/// </summary>
-		/// <value>The current writing system.</value>
-		protected CoreWritingSystemDefinition CurrentWritingSystem
-		{
-			get
-			{
-				if (m_overrideCurrentWritingSystem != null)
-					return m_overrideCurrentWritingSystem; // occasionally we need to override this.
-				return (CoreWritingSystemDefinition) m_listBoxRelatedWSs.SelectedItem;
-			}
-		}
+		protected CoreWritingSystemDefinition CurrentWritingSystem => m_overrideCurrentWritingSystem ?? (CoreWritingSystemDefinition)m_listBoxRelatedWSs.SelectedItem;
 
 		/// <summary>
 		/// Gets the new writing systems.
 		/// </summary>
-		/// <value>The new writing systems.</value>
-		public IEnumerable<CoreWritingSystemDefinition> NewWritingSystems
-		{
-			get
-			{
-				return m_tempWritingSystems.Keys.Where(IsNew);
-			}
-		}
+		public IEnumerable<CoreWritingSystemDefinition> NewWritingSystems => m_tempWritingSystems.Keys.Where(IsNew);
 
 		/// <summary>
 		/// Returns <c>true</c> if writing system was changed.
 		/// </summary>
-		/// <value>
-		/// 	<c>true</c> if this instance is changed; otherwise, <c>false</c>.
-		/// </value>
-		public bool IsChanged
-		{
-			get
-			{
-				return m_fChanged;
-			}
-		}
+		public bool IsChanged { get; private set; }
 
 		#endregion
 
 		#region Windows Form Designer generated code
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WritingSystemPropertiesDialog));
@@ -1506,9 +1477,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			try
 			{
-				string prevEC = cbEncodingConverter.Text;
-				using (var dlg = new AddCnvtrDlg(m_helpTopicProvider, m_app, null,
-					cbEncodingConverter.Text, null, false))
+				var prevEC = cbEncodingConverter.Text;
+				using (var dlg = new AddCnvtrDlg(m_helpTopicProvider, m_app, null, cbEncodingConverter.Text, null, false))
 				{
 					dlg.ShowDialog();
 
@@ -1517,9 +1487,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 					// Either select the new one or select the old one
 					if (dlg.DialogResult == DialogResult.OK && !String.IsNullOrEmpty(dlg.SelectedConverter))
+					{
 						cbEncodingConverter.SelectedItem = dlg.SelectedConverter;
+					}
 					else if (cbEncodingConverter.Items.Count > 0)
+					{
 						cbEncodingConverter.SelectedItem = prevEC; // preserve selection if possible
+					}
 				}
 			}
 			catch (Exception ex)
@@ -1534,36 +1508,44 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Handles the Click event of the btnModifyEthnologueInfo control.
 		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
 		protected void btnModifyEthnologueInfo_Click(object sender, EventArgs e)
 		{
 			if (!CheckOkToChangeContext())
+			{
 				return;
-
-			string origLangName = m_tbLanguageName.Text;
+			}
+			var origLangName = m_tbLanguageName.Text;
 			string selectedLanguageTag;
 			string desiredLanguageName;
 			if (!ChooseLanguage(out selectedLanguageTag, out desiredLanguageName))
+			{
 				return;
-
-			var origWsData = m_listBoxRelatedWSs.Items.Cast<CoreWritingSystemDefinition>().Select(ws => new {WritingSystem = ws, ws.Language, ws.IsChanged}).ToArray();
+			}
+			var origWsData = m_listBoxRelatedWSs.Items.Cast<CoreWritingSystemDefinition>().Select(ws => new { WritingSystem = ws, ws.Language, ws.IsChanged }).ToArray();
 			LanguageSubtag languageSubtag;
 			ScriptSubtag scriptSubtag;
 			RegionSubtag regionSubtag;
 			IEnumerable<VariantSubtag> variantSubtags;
 			if (!IetfLanguageTag.TryGetSubtags(selectedLanguageTag, out languageSubtag, out scriptSubtag, out regionSubtag, out variantSubtags))
+			{
 				return;
+			}
 			languageSubtag = new LanguageSubtag(languageSubtag, desiredLanguageName);
 			if (!CheckChangingWSForSRProject(languageSubtag))
+			{
 				return;
+			}
 			foreach (CoreWritingSystemDefinition ws in m_listBoxRelatedWSs.Items)
 			{
 				ws.Language = languageSubtag;
 				if (scriptSubtag != null)
+				{
 					ws.Script = scriptSubtag;
+				}
 				if (regionSubtag != null)
+				{
 					ws.Region = regionSubtag;
+				}
 			}
 
 			if (!CheckWSIetfLanguageTagChange())
@@ -1573,7 +1555,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					wsData.WritingSystem.Language = wsData.Language;
 					if (!wsData.IsChanged)
+					{
 						wsData.WritingSystem.AcceptChanges();
+					}
 				}
 			}
 			else
@@ -1582,7 +1566,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				SetupEthnologueCode(CurrentWritingSystem);
 				if (m_tbLanguageName.Text != origLangName)
 				{
-					int len = Math.Min(3, m_tbLanguageName.Text.Length);
+					var len = Math.Min(3, m_tbLanguageName.Text.Length);
 					m_ShortWsName.Text = m_tbLanguageName.Text.Substring(0, len);
 				}
 
@@ -1606,13 +1590,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <returns></returns>
 		private static string GetPrivateUseLangCodeForNewLang(WritingSystemManager wsManager, string langName)
 		{
-			string nameD = langName.Normalize(NormalizationForm.FormD); // Get the name in NFD format
+			var nameD = langName.Normalize(NormalizationForm.FormD); // Get the name in NFD format
 			var builder = new StringBuilder(nameD.ToLowerInvariant());
-			int index = 0;
+			var index = 0;
 			while (index < builder.Length)
 			{
-				char c = builder[index];
-				bool charValid = (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
+				var c = builder[index];
+				var charValid = c >= 'A' && c <= 'Z' || c >= 'a' && c <= 'z';
 				if (!charValid)
 				{
 					// Found an invalid character, so remove it.
@@ -1621,11 +1605,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				}
 				index++;
 			}
-
-			string isoCode = builder.ToString().Substring(0, Math.Min(3, builder.Length));
+			var isoCode = builder.ToString().Substring(0, Math.Min(3, builder.Length));
 			if (IetfLanguageTag.IsValidLanguageCode(isoCode) && !LangTagInUse(wsManager, "qaa-x-" + isoCode))
+			{
 				return isoCode; // The generated code is valid and not in use by the local or global store
-
+			}
 			// We failed to generate a valid, unused language tag from the language name so
 			// find one that isn't taken starting with 'aaa' and incrementing ('aab', 'aac', etc.)
 			builder.Remove(0, builder.Length); // Clear the builder
@@ -1656,9 +1640,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Determines whether or not the specified language tag is in use by another writing system
 		/// in either the local or global writing system store.
 		/// </summary>
-		/// <param name="wsManager">The writing system manager.</param>
-		/// <param name="identifier">The language tag to check.</param>
-		/// <returns></returns>
 		private static bool LangTagInUse(WritingSystemManager wsManager, string identifier)
 		{
 			return wsManager.AllDistinctWritingSystems.Select(ws => ws.LanguageTag).Contains(identifier);
@@ -1667,9 +1648,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Calls the ShowDialog of the LanguageSelectionDlg. Used for tests.
 		/// </summary>
-		/// <param name="selectedLanguageTag">The selected language tag.</param>
-		/// <param name="desiredLanguageName">The desired language name.</param>
-		/// <returns></returns>
 		protected virtual bool ChooseLanguage(out string selectedLanguageTag, out string desiredLanguageName)
 		{
 			using (var dlg = new LanguageLookupDialog())
@@ -1688,7 +1666,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				selectedLanguageTag = dlg.SelectedLanguage.LanguageTag;
 				desiredLanguageName = dlg.DesiredLanguageName;
 				if (selectedLanguageTag == WellKnownSubtags.UnlistedLanguage)
+				{
 					selectedLanguageTag += "-x-" + GetPrivateUseLangCodeForNewLang(m_wsManager, desiredLanguageName);
+				}
 				return true;
 			}
 		}
@@ -1711,7 +1691,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// so that the TextChanged event handler will return without performing
 		/// any changes.
 		/// </summary>
-		/// <param name="languageName"></param>
 		private void Set_tbLanguageName(string languageName)
 		{
 			m_userChangedLanguageName = false;
@@ -1719,10 +1698,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_userChangedLanguageName = true;
 		}
 
-		private void SetLanguageCodeLabels(String str)
+		private void SetLanguageCodeLabels(string str)
 		{
 			m_LanguageCode.Text = str;
-			m_linkToEthnologue.Text = String.Format(FwCoreDlgs.ksWSPropEthnologueEntryFor, str);
+			m_linkToEthnologue.Text = string.Format(FwCoreDlgs.ksWSPropEthnologueEntryFor, str);
 		}
 
 		private void SetLanguageNameLabels()
@@ -1744,8 +1723,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// User clicked the OK button - persist the changes
 		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
 		private void OnOk(object sender, EventArgs e)
 		{
 			using (new WaitCursor(this))
@@ -1754,7 +1731,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				DialogResult = DialogResult.None;
 
 				if (!CheckOkToChangeContext())
+				{
 					return;
+				}
 				if (numberSettingsCombo.SelectedItem.Equals(Strings.CustomNumberingSystem))
 				{
 					CurrentWritingSystem.NumberingSystem = NumberingSystemDefinition.CreateCustomSystem(customDigits.GetDigits());
@@ -1772,12 +1751,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				foreach (KeyValuePair<CoreWritingSystemDefinition, CoreWritingSystemDefinition> kvp in m_tempWritingSystems)
+				foreach (var kvp in m_tempWritingSystems)
 				{
-					CoreWritingSystemDefinition tempWs = kvp.Key;
-
+					var tempWs = kvp.Key;
 					if (IsNew(tempWs) || tempWs.IsChanged)
+					{
 						return true;
+					}
 				}
 				return false;
 			}
@@ -1792,53 +1772,55 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// but we still need to update the WS manager, so we have to execute the save even if m_cache is null
 			NonUndoableUnitOfWorkHelper uowHelper = null;
 			if (m_cache != null)
+			{
 				uowHelper = new NonUndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor);
+			}
 			try
 			{
-				foreach (KeyValuePair<CoreWritingSystemDefinition, CoreWritingSystemDefinition> kvp in m_tempWritingSystems)
+				foreach (var kvp in m_tempWritingSystems)
 				{
-					CoreWritingSystemDefinition tempWS = kvp.Key;
-					CoreWritingSystemDefinition origWS = kvp.Value;
-
+					var tempWS = kvp.Key;
+					var origWS = kvp.Value;
 					if (IsNew(tempWS))
 					{
 						m_wsManager.Replace(tempWS);
-						m_fChanged = true;
+						IsChanged = true;
 					}
 					else if (tempWS.IsChanged)
 					{
-						string oldId = origWS.Id;
+						var oldId = origWS.Id;
 						origWS.Copy(tempWS);
 						if (oldId != tempWS.LanguageTag)
 						{
 							// update the ID
 							m_wsManager.Set(origWS);
 							if (uowHelper != null)
+							{
 								WritingSystemServices.UpdateWritingSystemId(m_cache, origWS, oldId);
+							}
 						}
-						m_fChanged = true;
+						IsChanged = true;
 					}
 				}
-				if (m_fChanged && uowHelper != null)
+				if (IsChanged && uowHelper != null)
 				{
 					uowHelper.RollBack = false;
 				}
 				m_wsManager.Save();
 				if (uowHelper != null)
+				{
 					uowHelper.RollBack = false;
+				}
 			}
 			finally
 			{
-				if (uowHelper != null)
-					uowHelper.Dispose();
+				uowHelper?.Dispose();
 			}
 		}
 
 		/// <summary>
 		/// Open the appropriate Help file for selected tab (Name or Attributes).
 		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
 		private void btnHelp_Click(object sender, EventArgs e)
 		{
 			string helpTopicKey = null;
@@ -1869,8 +1851,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void btnValidChars_Click(object sender, EventArgs e)
 		{
-			using (var dlg = new ValidCharactersDlg(m_cache, m_wsContainer, m_helpTopicProvider,
-				m_app, CurrentWritingSystem, CurrentWritingSystem.DisplayLabel))
+			using (var dlg = new ValidCharactersDlg(m_cache, m_wsContainer, m_helpTopicProvider, m_app, CurrentWritingSystem, CurrentWritingSystem.DisplayLabel))
 			{
 				dlg.ShowDialog(this);
 			}
@@ -1879,15 +1860,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Handles the Click event of the btnRemove control.
 		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
 		protected void m_deleteButton_Click(object sender, EventArgs e)
 		{
 			// if we're removing from the end of the list, the new index will be the previous one,
 			// otherwise, keep the index the same.
-			int indexNext = m_listBoxRelatedWSs.SelectedIndex == m_listBoxRelatedWSs.Items.Count - 1 ?
-				m_listBoxRelatedWSs.SelectedIndex - 1 : m_listBoxRelatedWSs.SelectedIndex;
-			CoreWritingSystemDefinition ws = CurrentWritingSystem;
+			var indexNext = m_listBoxRelatedWSs.SelectedIndex == m_listBoxRelatedWSs.Items.Count - 1 ? m_listBoxRelatedWSs.SelectedIndex - 1 : m_listBoxRelatedWSs.SelectedIndex;
+			var ws = CurrentWritingSystem;
 			m_tempWritingSystems.Remove(ws);
 			m_listBoxRelatedWSs.Items.RemoveAt(m_listBoxRelatedWSs.SelectedIndex);
 			m_listBoxRelatedWSs.SelectedIndex = indexNext;
@@ -1896,34 +1874,31 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void btnAdd_Click(object sender, EventArgs e)
 		{
 			var cmsAddWs = components.ContextMenuStrip("cmsAddWs");
-				FwProjPropertiesDlg.ShowAddWsContextMenu(cmsAddWs, m_wsManager.AllDistinctWritingSystems, m_listBoxRelatedWSs,
-					sender as Button, btnAddWsItemClicked, null, btnNewWsItemClicked, CurrentWritingSystem);
-			}
+			FwProjPropertiesDlg.ShowAddWsContextMenu(cmsAddWs, m_wsManager.AllDistinctWritingSystems, m_listBoxRelatedWSs, 				sender as Button, btnAddWsItemClicked, null, btnNewWsItemClicked, CurrentWritingSystem);
+		}
 
 		/// <summary>
 		/// Handles the Click event of the add writing system menu item.
 		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
 		protected void btnAddWsItemClicked(object sender, EventArgs e)
 		{
 			if (!CheckOkToChangeContext())
+			{
 				return;
-
-			var mnuItem = (FwProjPropertiesDlg.WsMenuItem)sender;
+			}
+			var mnuItem = (WsMenuItem)sender;
 			AddWritingSystem(m_wsManager.CreateFrom(mnuItem.WritingSystem), mnuItem.WritingSystem, false);
 		}
 
 		/// <summary>
 		/// Handles the Click event of the new writing system menu item.
 		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
 		protected void btnNewWsItemClicked(object sender, EventArgs e)
 		{
 			if (!CheckOkToChangeContext())
+			{
 				return;
-
+			}
 			AddNewWsForLanguage();
 		}
 
@@ -1933,20 +1908,35 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void AddNewWsForLanguage()
 		{
 			// Definitely copy China region for new zh ws. Probably not a bad idea to copy other regions as well if selected.
-			CoreWritingSystemDefinition tempWs = m_wsManager.Create(CurrentWritingSystem.Language, null, CurrentWritingSystem.Region, Enumerable.Empty<VariantSubtag>());
-
-			foreach (CharacterSetDefinition charSet in CurrentWritingSystem.CharacterSets)
-				if (!tempWs.CharacterSets.ToList().Any(e=> e.ValueEquals(charSet)))
+			var tempWs = m_wsManager.Create(CurrentWritingSystem.Language, null, CurrentWritingSystem.Region, Enumerable.Empty<VariantSubtag>());
+			foreach (var charSet in CurrentWritingSystem.CharacterSets)
+			{
+				if (!tempWs.CharacterSets.ToList().Any(e => e.ValueEquals(charSet)))
+				{
 					tempWs.CharacterSets.Add(charSet.Clone());
-			foreach (MatchedPair mp in CurrentWritingSystem.MatchedPairs)
+				}
+			}
+			foreach (var mp in CurrentWritingSystem.MatchedPairs)
+			{
 				if (!tempWs.MatchedPairs.Contains(mp))
+				{
 					tempWs.MatchedPairs.Add(mp);
-			foreach (PunctuationPattern pp in CurrentWritingSystem.PunctuationPatterns)
+				}
+			}
+			foreach (var pp in CurrentWritingSystem.PunctuationPatterns)
+			{
 				if (!tempWs.PunctuationPatterns.Contains(pp))
+				{
 					tempWs.PunctuationPatterns.Add(pp);
-			foreach (QuotationMark qm in CurrentWritingSystem.QuotationMarks)
+				}
+			}
+			foreach (var qm in CurrentWritingSystem.QuotationMarks)
+			{
 				if (!tempWs.QuotationMarks.Contains(qm))
+				{
 					tempWs.QuotationMarks.Add(qm);
+				}
+			}
 			AddWritingSystem(tempWs, null, true);
 		}
 
@@ -1960,7 +1950,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				m_tempWritingSystems[tempWs] = origWs;
 				SelectWritingSystem(tempWs);
 				if (fSwitchToGeneralTab)
+				{
 					SwitchTab(kWsGeneral);
+				}
 				// A revised Palaso WritingSystem implementation changed some message handling
 				// related to changing indexes and the like.  So we now need to explicitly set the
 				// subcontrol's writing system.  See FWNX-999 for details of what went wrong (test
@@ -1977,13 +1969,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Handles the Click event of the btnCopy control.
 		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
 		protected void btnCopy_Click(object sender, EventArgs e)
 		{
 			if (!CheckOkToChangeContext())
+			{
 				return;
-
+			}
 			AddWritingSystem(m_wsManager.CreateFrom(CurrentWritingSystem), null, true);
 		}
 
@@ -1993,22 +1984,23 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void m_similarWsButton_LocaleSelected(object sender, EventArgs e)
 		{
-			string baseLocale = m_similarWsButton.SelectedLocaleId;
-			var icuCollation = (IcuRulesCollationDefinition) CurrentWritingSystem.DefaultCollation;
+			var baseLocale = m_similarWsButton.SelectedLocaleId;
+			var icuCollation = (IcuRulesCollationDefinition)CurrentWritingSystem.DefaultCollation;
 			if (!string.IsNullOrEmpty(icuCollation.IcuRules))
 			{
 				// "Overwrite existing collation rules?";
-				DialogResult res = MessageBox.Show(this, FwCoreDlgs.kstidOverwriteRules,
-					FwCoreDlgs.kstidOverwriteRulesCaption, MessageBoxButtons.YesNo);
+				var res = MessageBox.Show(this, FwCoreDlgs.kstidOverwriteRules, FwCoreDlgs.kstidOverwriteRulesCaption, MessageBoxButtons.YesNo);
 				if (res == DialogResult.No)
+				{
 					return;
+				}
 			}
 			if (baseLocale == null)
-				baseLocale = "";
-
-			string sortRules = LCModel.Core.Text.Icu.GetCollationRules(baseLocale);
-			m_sortRulesTextBox.Tss = TsStringUtils.MakeString(sortRules == null ? "" : sortRules.Replace("&", Environment.NewLine + "&").Trim(),
-				CurrentWritingSystem.Handle);
+			{
+				baseLocale = string.Empty;
+			}
+			var sortRules = LCModel.Core.Text.Icu.GetCollationRules(baseLocale);
+			m_sortRulesTextBox.Tss = TsStringUtils.MakeString(sortRules == null ? string.Empty : sortRules.Replace("&", Environment.NewLine + "&").Trim(), CurrentWritingSystem.Handle);
 
 			var resources = new ComponentResourceManager(typeof(WritingSystemPropertiesDialog));
 			// apply default text
@@ -2032,17 +2024,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// In that case, m_fSkipCheckOkToChangeContext should be set to true, so that switching tabs
 		/// does not prematurely detect we're in an invalid state.
 		/// </summary>
-		/// <returns></returns>
 		protected bool CheckOkToChangeContext()
 		{
 			if (m_fSkipCheckOkToChangeContext)
+			{
 				return true;
-			bool fOkToChangeContext = true;
+			}
+			var fOkToChangeContext = true;
 			// Check the validity of the current tab control.
 			switch (tabControl.SelectedIndex)
 			{
-				default:
-					break;
 				case kWsGeneral:
 					fOkToChangeContext = m_regionVariantControl.CheckValid();
 					break;
@@ -2058,7 +2049,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 
 			if (fOkToChangeContext && !CheckWSIetfLanguageTagChange())
+			{
 				fOkToChangeContext = false;
+			}
 			return fOkToChangeContext;
 		}
 
@@ -2082,27 +2075,29 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			string message;
 			if (CurrentWritingSystem.DefaultCollation.Validate(out message))
+			{
 				return true;
-
+			}
 			// Switch back to the sorting tab so user can see it if CheckValid displays an error.
 			SwitchTab(kWsSorting);
 			tabControl.Update();
 			m_sortRulesTextBox.Select();
 			m_sortRulesTextBox.SelectAll();
-			string error = String.Format(FwCoreDlgs.ksInvalidSortSpec, message);
-			MessageBox.Show(this, error, FwCoreDlgs.ksSortSpecError,
-				MessageBoxButtons.OK, MessageBoxIcon.Error);
+			var error = string.Format(FwCoreDlgs.ksInvalidSortSpec, message);
+			MessageBox.Show(this, error, FwCoreDlgs.ksSortSpecError, MessageBoxButtons.OK, MessageBoxIcon.Error);
 			return false;
 		}
 
 		private bool CheckEncodingConverter()
 		{
-			bool fOkToChangeContext = true;
+			var fOkToChangeContext = true;
 			if (cbEncodingConverter.SelectedIndex >= 0)
 			{
-				string str = cbEncodingConverter.Text;
+				var str = cbEncodingConverter.Text;
 				if (str == FwCoreDlgs.kstidNone)
+				{
 					str = null;
+				}
 				if (str != null && str.Contains(FwCoreDlgs.kstidNotInstalled))
 				{
 					fOkToChangeContext = false;
@@ -2125,10 +2120,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				// out of sync which can happen because of mono/.NET winform event differences.
 				// (ie. SelectedIndexChange event being emitted on a Remove)
 				if (!m_tempWritingSystems.ContainsKey(tempWS))
+				{
 					continue;
-
-				CoreWritingSystemDefinition origWS = m_tempWritingSystems[tempWS];
-
+				}
+				var origWS = m_tempWritingSystems[tempWS];
 				if (origWS == null || tempWS.LanguageTag != origWS.LanguageTag)
 				{
 					// We can't let anyone change the user writing system (or "English"). Too many strings depend on
@@ -2140,8 +2135,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					}
 
 					// Catch case where we are going to overwrite an existing writing system.
-					if (m_wsManager.Exists(tempWS.LanguageTag)
-						|| m_listBoxRelatedWSs.Items.Cast<CoreWritingSystemDefinition>().Any(ws => ws != tempWS && ws.LanguageTag == tempWS.LanguageTag))
+					if (m_wsManager.Exists(tempWS.LanguageTag) || m_listBoxRelatedWSs.Items.Cast<CoreWritingSystemDefinition>().Any(ws => ws != tempWS && ws.LanguageTag == tempWS.LanguageTag))
 					{
 						ShowMsgBoxCantCreateDuplicateWs(tempWS, origWS);
 						return false;
@@ -2156,22 +2150,24 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Check if the writing system is being changed and prompt the user with instructions to successfully perform the change
 		/// </summary>
 		/// <param name="newLangTag">The language tag of the original WritingSystem.</param>
-		/// <returns></returns>
 		private bool CheckChangingWSForSRProject(LanguageSubtag newLangTag)
 		{
-			bool hasFlexOrLiftRepo = FLExBridgeHelper.DoesProjectHaveFlexRepo(m_cache.ProjectId) || FLExBridgeHelper.DoesProjectHaveLiftRepo(m_cache.ProjectId);
-
+			var hasFlexOrLiftRepo = FLExBridgeHelper.DoesProjectHaveFlexRepo(m_cache.ProjectId) || FLExBridgeHelper.DoesProjectHaveLiftRepo(m_cache.ProjectId);
 			if (hasFlexOrLiftRepo)
 			{
 				foreach (CoreWritingSystemDefinition tempWS in m_listBoxRelatedWSs.Items)
 				{
 					// deals with the m_tempWritingSystems and m_listBoxRelatedWSs being out of sync (see CheckIeftLanguageTagChange())
 					if (!m_tempWritingSystems.ContainsKey(tempWS) || m_tempWritingSystems[tempWS] == null)
+					{
 						continue;
+					}
 					if (newLangTag.Name != m_tempWritingSystems[tempWS].Language.Name)
 					{
 						if (AcceptWSChangeWarning(((CoreWritingSystemDefinition)m_listBoxRelatedWSs.Items[0]).Language.Name))
+						{
 							return true;
+						}
 						break;
 					}
 				}
@@ -2183,24 +2179,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Shows the "cannot change user writing system" message.
 		/// </summary>
-		/// <param name="tempWS">The temp writing system.</param>
-		/// <param name="origWS">The original writing system.</param>
 		protected virtual void ShowMsgCantChangeUserWS(CoreWritingSystemDefinition tempWS, CoreWritingSystemDefinition origWS)
 		{
-			string msg = string.Format(FwCoreDlgs.kstidCantChangeUserWS, origWS.LanguageTag);
-			MessageBox.Show(msg, FwCoreDlgs.kstidWspLabel);
+			MessageBox.Show(string.Format(FwCoreDlgs.kstidCantChangeUserWS, origWS.LanguageTag), FwCoreDlgs.kstidWspLabel);
 		}
 
 		/// <summary>
-		/// Shows the "cannnot create duplicate writing system" message.
+		/// Shows the "cannot create duplicate writing system" message.
 		/// </summary>
-		/// <param name="tempWS">The temp writing system.</param>
-		/// <param name="origWS">The original writing system.</param>
 		protected virtual void ShowMsgBoxCantCreateDuplicateWs(CoreWritingSystemDefinition tempWS, CoreWritingSystemDefinition origWS)
 		{
-			string caption = FwCoreDlgs.kstidNwsCaption;
-			string msg = string.Format(FwCoreDlgs.kstidCantCreateDuplicateWS, tempWS.DisplayLabel, Environment.NewLine);
-			MessageBox.Show(msg, caption, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+			MessageBox.Show(string.Format(FwCoreDlgs.kstidCantCreateDuplicateWS, tempWS.DisplayLabel, Environment.NewLine), FwCoreDlgs.kstidNwsCaption, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 		}
 
 		/// <summary>
@@ -2208,9 +2197,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		protected virtual bool AcceptWSChangeWarning(string wsLanguageName)
 		{
-			string caption = FwCoreDlgs.ksPossibleDataLoss;
-			string msg = string.Format(FwCoreDlgs.ksWSChangeWarning, m_listBoxRelatedWSs.Items.Count, wsLanguageName, Environment.NewLine);
-			return MessageBox.Show(msg, caption, MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.OK;
+			return MessageBox.Show(string.Format(FwCoreDlgs.ksWSChangeWarning, m_listBoxRelatedWSs.Items.Count, wsLanguageName, Environment.NewLine), FwCoreDlgs.ksPossibleDataLoss, MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.OK;
 		}
 
 		/// <summary>
@@ -2227,7 +2214,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					case kWsSorting:
 						SetupSortTab(CurrentWritingSystem);
 						break;
-
 					case kWsKeyboard:
 						break;
 				}
@@ -2237,22 +2223,20 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Handles the Deselecting event of the tabControl control.
 		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.Windows.Forms.TabControlCancelEventArgs"/> instance containing the event data.</param>
 		protected void tabControl_Deselecting(object sender, TabControlCancelEventArgs e)
 		{
 			//If we were switching away from the Sorting tab then this check
 			//will ensure we return to it and force the user to correct it
 			//if there is a problem with it.
 			//First ensure we have not just switched to this tab to prevent an infinite loop
-			//Then we want to know if we are swithing away from this tab.
+			//Then we want to know if we are switching away from this tab.
 			//lastly see if the sorting string is valid.
 			e.Cancel = !CheckOkToChangeContext();
 		}
 
 		private void linkToEthnologue_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			string targetURL = String.Format("http://www.ethnologue.com/show_language.asp?code={0}", m_LanguageCode.Text);
+			var targetURL = $"http://www.ethnologue.com/show_language.asp?code={m_LanguageCode.Text}";
 			using (Process.Start(targetURL))
 			{
 			}
@@ -2261,7 +2245,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void m_tbLanguageName_TextChanged(object sender, EventArgs e)
 		{
 			if (m_userChangedLanguageName)
+			{
 				UpdateDialogWithChangesToLanguageName();
+			}
 		}
 
 		private void UpdateDialogWithChangesToLanguageName()
@@ -2275,16 +2261,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void LoadShortWsNameFromCurrentWritingSystem()
 		{
-			string shortAbbr = CurrentWritingSystem.Abbreviation;
-			string langName = CurrentWritingSystem.Language.Name;
-			m_ShortWsName.Text = shortAbbr ?? langName.Substring(0, Math.Min(langName.Length, 3));
+			var langName = CurrentWritingSystem.Language.Name;
+			m_ShortWsName.Text = CurrentWritingSystem.Abbreviation ?? langName.Substring(0, Math.Min(langName.Length, 3));
 		}
 
 		private void UpdateLanguageNameAndWSsFromTextBox()
 		{
 			foreach (CoreWritingSystemDefinition ws in m_listBoxRelatedWSs.Items)
 			{
-				LanguageSubtag languageSubtag = ws.Language;
+				var languageSubtag = ws.Language;
 				ws.Language = new LanguageSubtag(languageSubtag, m_tbLanguageName.Text ?? string.Empty);
 			}
 		}
@@ -2296,8 +2281,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				return;
 			}
-			if (!m_fSkipCheckOkToChangeContext && m_prevSelectedWritingSystem != null
-				&& m_listBoxRelatedWSs.Items.Contains(m_prevSelectedWritingSystem))
+			if (!m_fSkipCheckOkToChangeContext && m_prevSelectedWritingSystem != null && m_listBoxRelatedWSs.Items.Contains(m_prevSelectedWritingSystem))
 			{
 				// Before switching to another writing system it is necessary to
 				// ensure that the various settings the user has chosen for the previous one are validated.
@@ -2324,7 +2308,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 
 			if (CurrentWritingSystem != null)
+			{
 				SetupDialogFromCurrentWritingSystem();
+			}
 			m_prevSelectedWritingSystem = CurrentWritingSystem;
 		}
 
@@ -2334,11 +2320,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// events tabControl_Deselecting() and tabControl_SelectedIndexChanged() since
 		/// for some reason those events aren't getting triggered in the tests.
 		/// </summary>
-		/// <param name="index">The index.</param>
 		public virtual void SwitchTab(int index)
 		{
 			tabControl.SelectedIndex = index;
-			switch(index)
+			switch (index)
 			{
 				case kWsGeneral:
 					{
@@ -2359,7 +2344,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			if (m_userChangedSpellCheckDictionary)
 			{
-				var dictionary = (string) cbDictionaries.SelectedValue;
+				var dictionary = (string)cbDictionaries.SelectedValue;
 				CurrentWritingSystem.SpellCheckingId = string.IsNullOrEmpty(dictionary) ? FwCoreDlgs.kstidNone : dictionary;
 			}
 		}
@@ -2368,18 +2353,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			if (m_userChangedSortRules)
 			{
-				string rules = !string.IsNullOrEmpty(m_sortRulesTextBox.Text.Trim()) ? m_sortRulesTextBox.Text.Trim() : "";
-				CoreWritingSystemDefinition ws = CurrentWritingSystem;
+				var rules = !string.IsNullOrEmpty(m_sortRulesTextBox.Text.Trim()) ? m_sortRulesTextBox.Text.Trim() : "";
+				var ws = CurrentWritingSystem;
 				switch (m_currentCollationRulesType)
 				{
 					case CollationRulesType.CustomIcu:
-						var icuCollation = (IcuRulesCollationDefinition) ws.DefaultCollation;
+						var icuCollation = (IcuRulesCollationDefinition)ws.DefaultCollation;
 						icuCollation.Imports.Clear();
 						icuCollation.IcuRules = rules;
 						break;
-
 					case CollationRulesType.CustomSimple:
-						((SimpleRulesCollationDefinition) ws.DefaultCollation).SimpleRules = rules;
+						((SimpleRulesCollationDefinition)ws.DefaultCollation).SimpleRules = rules;
 						break;
 				}
 			}
@@ -2400,22 +2384,27 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void cbEncodingConverter_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (CurrentWritingSystem == null)
+			{
 				return;
-
+			}
 			// save the selected encoding converter
 			var str = cbEncodingConverter.SelectedItem as string;
 			if (str == FwCoreDlgs.kstidNone)
+			{
 				str = null;
+			}
 			CurrentWritingSystem.LegacyMapping = str;
 		}
 
 		private void m_regionVariantControl_ScriptRegionVariantChanged(object sender, EventArgs e)
 		{
 			if (!m_userChangedVariantControl)
+			{
 				return;
+			}
 			//This next assignment updates the DisplayName so it reflects the changes
 			//made in the regionVariantControl
-			CoreWritingSystemDefinition ws = CurrentWritingSystem;
+			var ws = CurrentWritingSystem;
 			m_FullCode.Text = ws.LanguageTag;
 			SetFullNameLabels(ws.DisplayLabel);
 			PopulateRelatedWSsListBox(CurrentWritingSystem);
@@ -2423,11 +2412,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void m_sortUsingComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			CoreWritingSystemDefinition ws = CurrentWritingSystem;
+			var ws = CurrentWritingSystem;
 			if (!m_userChangedSortUsing || ws == null)
+			{
 				return;
-
-			m_currentCollationRulesType = (CollationRulesType) Enum.Parse(typeof(CollationRulesType), (string) m_sortUsingComboBox.SelectedValue);
+			}
+			m_currentCollationRulesType = (CollationRulesType)Enum.Parse(typeof(CollationRulesType), (string)m_sortUsingComboBox.SelectedValue);
 			switch (m_currentCollationRulesType)
 			{
 				case CollationRulesType.DefaultOrdering:
@@ -2446,11 +2436,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void m_sortLanguageComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			CoreWritingSystemDefinition ws = CurrentWritingSystem;
+			var ws = CurrentWritingSystem;
 			if (ws != null)
 			{
-				var systemCollation = (SystemCollationDefinition) ws.DefaultCollation;
-				systemCollation.LanguageTag = (string) m_sortLanguageComboBox.SelectedValue;
+				var systemCollation = (SystemCollationDefinition)ws.DefaultCollation;
+				systemCollation.LanguageTag = (string)m_sortLanguageComboBox.SelectedValue;
 			}
 		}
 
@@ -2458,8 +2448,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void numberSettingsCombo_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			var digits = (string) numberSettingsCombo.SelectedItem;
-			var selectedNumberingSystem = (string) ((ComboBox) sender).SelectedItem;
+			var digits = (string)numberSettingsCombo.SelectedItem;
+			var selectedNumberingSystem = (string)((ComboBox)sender).SelectedItem;
 			if (!selectedNumberingSystem.Equals(Strings.CustomNumberingSystem))
 			{
 				CurrentWritingSystem.NumberingSystem = new NumberingSystemDefinition(CLDRNumberingSystems.FindNumberingSystemID(selectedNumberingSystem));

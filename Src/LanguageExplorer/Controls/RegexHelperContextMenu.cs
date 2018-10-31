@@ -12,7 +12,7 @@ namespace LanguageExplorer.Controls
 	/// <summary>
 	/// Context menu to help build regular expressions.  To be used in Find dialog boxes with regex support.
 	/// </summary>
-	public class RegexHelperMenu : HelperMenu
+	public class RegexHelperContextMenu : HelperContextMenu
 	{
 		private bool m_isFind;
 
@@ -21,7 +21,7 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		/// <param name="textbox">the textbox to insert regex characters into</param>
 		/// <param name="helpTopicProvider">usually IHelpTopicProvider.App</param>
-		public RegexHelperMenu(FwTextBox textbox, IHelpTopicProvider helpTopicProvider) : this(textbox, helpTopicProvider, true)
+		public RegexHelperContextMenu(FwTextBox textbox, IHelpTopicProvider helpTopicProvider) : this(textbox, helpTopicProvider, true)
 		{
 		}
 
@@ -31,7 +31,7 @@ namespace LanguageExplorer.Controls
 		/// <param name="textbox">the textbox to insert regex characters into</param>
 		/// <param name="helpTopicProvider">usually IHelpTopicProvider.App</param>
 		/// <param name="isFind">True if the menu is for searching, false if it is for replacing (shows the $n options)</param>
-		public RegexHelperMenu(FwTextBox textbox, IHelpTopicProvider helpTopicProvider, bool isFind) : base(textbox, helpTopicProvider)
+		public RegexHelperContextMenu(FwTextBox textbox, IHelpTopicProvider helpTopicProvider, bool isFind) : base(textbox, helpTopicProvider)
 		{
 			m_isFind = isFind;
 			Init();

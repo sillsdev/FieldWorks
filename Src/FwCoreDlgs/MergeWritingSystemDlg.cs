@@ -1,15 +1,15 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Windows.Forms;
 using System.Linq;
+using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
+using SIL.LCModel;
 using SIL.LCModel.Core.WritingSystems;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -20,25 +20,20 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	public class MergeWritingSystemDlg : Form
 	{
 		private const string HelpTopic = "khtpProjPropsMergeWS";
-
 		private readonly CoreWritingSystemDefinition m_ws;
 		private LcmCache m_cache;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
-
 		private Label m_wsLabel;
 		private PictureBox m_infoPictureBox;
 		private Button m_mergeButton;
 		private Button m_cancelButton;
 		private Button m_helpButton;
-
 		private ListBox m_wsListBox;
 		private Label m_mergeLabel;
 		private Button m_backupButton;
 		private HelpProvider m_helpProvider;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MergeWritingSystemDlg"/> class.
-		/// </summary>
+		/// <summary />
 		public MergeWritingSystemDlg(LcmCache cache, CoreWritingSystemDefinition ws, IEnumerable<CoreWritingSystemDefinition> wss, IHelpTopicProvider helpTopicProvider)
 		{
 			m_cache = cache;
@@ -49,26 +44,30 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			InitializeComponent();
 
-			Icon infoIcon = SystemIcons.Information;
+			var infoIcon = SystemIcons.Information;
 			m_infoPictureBox.Image = infoIcon.ToBitmap();
 			m_infoPictureBox.Size = infoIcon.Size;
 
-			foreach (CoreWritingSystemDefinition curWs in wss.Where(x => x.Handle > 0).Except(new[] { ws }))
+			foreach (var curWs in wss.Where(x => x.Handle > 0).Except(new[] { ws }))
+			{
 				m_wsListBox.Items.Add(curWs);
+			}
 			m_wsListBox.SelectedIndex = 0;
 
 			m_helpTopicProvider = helpTopicProvider;
 
 			if (m_helpTopicProvider != null) // m_helpTopicProvider could be null for testing
 			{
-				m_helpProvider = new HelpProvider();
-				m_helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
+				m_helpProvider = new HelpProvider
+				{
+					HelpNamespace = m_helpTopicProvider.HelpFile
+				};
 				m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(HelpTopic));
 				m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			}
 		}
 
-		/// <summary/>
+		/// <summary />
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
@@ -79,13 +78,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Gets the selected writing system.
 		/// </summary>
 		/// <value>The selected writing system.</value>
-		public CoreWritingSystemDefinition SelectedWritingSystem
-		{
-			get
-			{
-				return (CoreWritingSystemDefinition) m_wsListBox.SelectedItem;
-			}
-		}
+		public CoreWritingSystemDefinition SelectedWritingSystem => (CoreWritingSystemDefinition)m_wsListBox.SelectedItem;
 
 		#region Windows Form Designer generated code
 		/// <summary>
@@ -196,8 +189,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void m_backupButton_Click(object sender, EventArgs e)
 		{
 			using (var dlg = new BackupProjectDlg(m_cache, m_helpTopicProvider))
+			{
 				dlg.ShowDialog(this);
-
+			}
 		}
 	}
 }

@@ -7,15 +7,13 @@ using System.Drawing;
 using System.Drawing.Text;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
-	/// <summary>
-	/// Summary description for DefaultFontsControl.
-	/// </summary>
+	/// <summary />
 	public class DefaultFontsControl : UserControl
 	{
 		#region Member variables
@@ -33,9 +31,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		#endregion
 
 		#region Constructor/destructor
-		/// <summary>
-		/// Initializes a new instance of the <see cref="DefaultFontsControl"/> class.
-		/// </summary>
+
+		/// <summary />
 		public DefaultFontsControl()
 		{
 			// This call is required by the Windows.Forms Form Designer.
@@ -62,15 +59,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -203,7 +198,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		{
 			if (m_ws == null)
 			{
-				return;		// can't do anything useful.
+				return;     // can't do anything useful.
 			}
 
 			// setup controls for default font

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,9 +18,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if (disposing && (components != null))
+			if (IsDisposed)
 			{
-				components.Dispose();
+				// No need to run it more than once.
+				return;
+			}
+
+			if (disposing)
+			{
+				components?.Dispose();
 			}
 			base.Dispose(disposing);
 		}

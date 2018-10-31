@@ -238,7 +238,6 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
     <Reference Include="Mono.Posix">
       <HintPath>..\..\packages\Mono.Posix-4.5.4.5.0\lib\net45\Mono.Posix.dll</HintPath>
     </Reference>
@@ -262,9 +261,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>AddConverterResources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="AddNewUserDlg.cs">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="AdvancedEncProps.cs">
       <SubType>UserControl</SubType>
@@ -296,7 +292,6 @@
       <DependentUpon>RestoreProjectDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="BackupRestore\RestoreProjectPresenter.cs" />
-    <Compile Include="Controls\BulletsPreviewVc.cs" />
     <Compile Include="CharContextCtrl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -304,16 +299,19 @@
       <DependentUpon>CharContextCtrl.cs</DependentUpon>
     </Compile>
     <Compile Include="CheckBoxColumnHeaderHandler.cs" />
-    <Compile Include="ChooserTreeView.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="CheckType.cs" />
+    <Compile Include="CnvtrDataComboItem.cs" />
     <Compile Include="CnvtrPropertiesCtrl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="CnvtrSpecComboItem.cs" />
     <Compile Include="CnvtrTypeComboItem.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Controls\BaseStyleListHelper.cs" />
+    <Compile Include="ContextGrid.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ContextInfo.cs" />
     <Compile Include="Controls\ComboListBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -403,7 +401,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\StyleComboItem.cs" />
-    <Compile Include="Controls\StyleComboListHelper.cs" />
     <Compile Include="Controls\StyleInfo.cs" />
     <Compile Include="Controls\StyleListBoxHelper.cs" />
     <Compile Include="Controls\StyleListItem.cs" />
@@ -411,15 +408,19 @@
     <Compile Include="Controls\UpDownMeasureControl.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ConverterTest.cs">
+    <Compile Include="ConverterTrial.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="ConverterType.cs" />
     <Compile Include="DeleteWritingSystemWarningDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="DeleteWritingSystemWarningDialog.Designer.cs">
       <DependentUpon>DeleteWritingSystemWarningDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="EncoderInfo.cs" />
+    <Compile Include="ErrorMessageHandler.cs" />
+    <Compile Include="FileLocationChoice.cs" />
     <Compile Include="FwCharacterCategorizer.cs" />
     <Compile Include="FwCheckAnthroListDlg.cs">
       <SubType>Form</SubType>
@@ -429,18 +430,6 @@
     </Compile>
     <Compile Include="FwLabel.cs">
       <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="FwStylesModifiedDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FwStylesModifiedDlg.Designer.cs">
-      <DependentUpon>FwStylesModifiedDlg.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FwUpdateReportDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FwUpdateReportDlg.Designer.cs">
-      <DependentUpon>FwUpdateReportDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="MergeWritingSystemDlg.cs">
       <SubType>Form</SubType>
@@ -496,10 +485,10 @@
     <Compile Include="FwStylesDlg.Designer.cs">
       <DependentUpon>FwStylesDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="HelperMenu.cs">
+    <Compile Include="HelperContextMenu.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="MorphBreakHelperMenu.cs">
+    <Compile Include="MorphBreakHelperContextMenu.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
@@ -513,6 +502,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
+    <Compile Include="StyleChangeType.cs" />
     <Compile Include="ValidCharactersDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -528,6 +518,9 @@
     <Compile Include="WritingSystemPropertiesDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="WsMenuItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <EmbeddedResource Include="AddCnvtrDlg.resx">
       <DependentUpon>AddCnvtrDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -541,10 +534,6 @@
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>AddConverterResources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="AddNewUserDlg.resx">
-      <DependentUpon>AddNewUserDlg.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="AdvancedEncProps.resx">
       <DependentUpon>AdvancedEncProps.cs</DependentUpon>
@@ -622,8 +611,8 @@
       <DependentUpon>UpDownMeasureControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ConverterTest.resx">
-      <DependentUpon>ConverterTest.cs</DependentUpon>
+    <EmbeddedResource Include="ConverterTrial.resx">
+      <DependentUpon>ConverterTrial.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="DeleteWritingSystemWarningDialog.resx">
@@ -631,14 +620,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FwCheckAnthroListDlg.resx">
       <DependentUpon>FwCheckAnthroListDlg.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FwStylesModifiedDlg.resx">
-      <DependentUpon>FwStylesModifiedDlg.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FwUpdateReportDlg.resx">
-      <DependentUpon>FwUpdateReportDlg.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="MergeWritingSystemDlg.resx">
       <DependentUpon>MergeWritingSystemDlg.cs</DependentUpon>
@@ -725,7 +706,6 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Bullet.png" />
     <None Include="Resources\wait22trans.gif" />
     <Content Include="Resources\Warning.png" />
   </ItemGroup>

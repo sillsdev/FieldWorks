@@ -1,10 +1,7 @@
-﻿// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: IBackupProjectView.cs
-// Responsibility: FW Team
-using System;
+
 using SIL.LCModel.DomainServices.BackupRestore;
 
 namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
@@ -18,6 +15,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		///<summary>
 		/// Folder into which the backup file will be written.
 		///</summary>
-		String DestinationFolder { get; set; }
+		string DestinationFolder { get; set; }
 	}
 }

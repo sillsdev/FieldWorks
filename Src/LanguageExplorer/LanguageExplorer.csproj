@@ -733,7 +733,7 @@
     <Compile Include="Controls\PopupTree.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\RegexHelperMenu.cs">
+    <Compile Include="Controls\RegexHelperContextMenu.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\SilSidePane\ButtonState.cs" />

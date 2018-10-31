@@ -507,8 +507,7 @@ namespace LanguageExplorer.Controls.LexText
 				MessageBox.Show(LexTextControls.ksCannotSoTryAgain, LexTextControls.ksInternalProblem, MessageBoxButtons.OK, MessageBoxIcon.Information);
 				return;
 			}
-			FwStylesDlg.RunStylesDialogForCombo(cbStyle, InitializeStylesComboBox, string.Empty, m_stylesheet as LcmStyleSheet,
-				0, 0, m_cache, this, propertyTable.GetValue<IApp>(LanguageExplorerConstants.App), m_helpTopicProvider, null);
+			FwStylesDlg.RunStylesDialogForCombo(cbStyle, InitializeStylesComboBox, string.Empty, m_stylesheet as LcmStyleSheet, m_cache, this, propertyTable.GetValue<IApp>(LanguageExplorerConstants.App), m_helpTopicProvider, null);
 		}
 
 		private void tbBeginMarker_TextChanged(object sender, EventArgs e)

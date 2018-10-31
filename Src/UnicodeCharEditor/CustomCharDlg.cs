@@ -740,16 +740,16 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// <param name="decompostion">The hexadecimal values separated by spaces.</param>
 		/// <param name="parsedDecomposition">The decomposition as it is represented in actual unicode codepoints.</param>
 		/// <returns>A set of m_errorMessageHandler.ErrorMessages or <c>null</c> if it parses correctly.</returns>
-		private static HashSet<ErrorMessageHandler.ErrorMessage> ParseDecomposition(string decompostion, out string parsedDecomposition)
+		private static HashSet<ErrorMessage> ParseDecomposition(string decompostion, out string parsedDecomposition)
 		{
-			var errorMessages = new HashSet<ErrorMessageHandler.ErrorMessage>();
+			var errorMessages = new HashSet<ErrorMessage>();
 			string[] codepoints = decompostion.Split(new[]{' '});
 			parsedDecomposition = "";
 			foreach(string codepoint in codepoints)
 			{
 				// Check to make sure the codepoint is valid
-				ErrorMessageHandler.ErrorMessage errorMessage = ValidCodepoint(codepoint, true);
-				if (errorMessage != ErrorMessageHandler.ErrorMessage.none)
+				ErrorMessage errorMessage = ValidCodepoint(codepoint, true);
+				if (errorMessage != ErrorMessage.none)
 					errorMessages.Add(errorMessage);
 				// If there are no error yet, add the new character
 				if(errorMessages.Count == 0)
@@ -920,9 +920,9 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			m_errorMessageHandler.RemoveMessage(textBox);
 			ForceCharacterSet(textBox,UnicodePropertyType.codepoint);
 			GrayMatch(textBox);
-			ErrorMessageHandler.ErrorMessage errorMessage =
+			ErrorMessage errorMessage =
 				ValidCodepoint(textBox.Text, true);
-			if(errorMessage == ErrorMessageHandler.ErrorMessage.none)
+			if(errorMessage == ErrorMessage.none)
 			{
 				m_errorMessageHandler.RemoveStar(textBox);
 				characterPreviewLabel.Text = PUACharacter.CodepointAsString(textBox.Text);
@@ -936,9 +936,9 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 		private void UpperLowerTitleLeave(TextBox textBox)
 		{
-			ErrorMessageHandler.ErrorMessage errorMessage =
+			ErrorMessage errorMessage =
 				ValidCodepoint(textBox.Text, true);
-			if(errorMessage != ErrorMessageHandler.ErrorMessage.none)
+			if(errorMessage != ErrorMessage.none)
 				m_errorMessageHandler.AddMessage(textBox, errorMessage);
 		}
 
@@ -967,7 +967,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			if(m_puaChar.NumericType == UcdProperty.GetInstance(Icu.UNumericType.U_NT_NONE) ||
 				m_puaChar.NumericType == UcdProperty.GetInstance(Icu.UNumericType.U_NT_NUMERIC))
 					digit = false;
-				HashSet<ErrorMessageHandler.ErrorMessage> errorMessages = ValidNumeric(m_txtNumericValue.Text, digit);
+				HashSet<ErrorMessage> errorMessages = ValidNumeric(m_txtNumericValue.Text, digit);
 			if( errorMessages.Count != 0)
 				m_errorMessageHandler.AddMessage(m_txtNumericValue, errorMessages);
 		}
@@ -980,22 +980,22 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// <param name="lessStrict">we use less strict rules for Upper/Lower/Title,
 		/// we want this parameter to be false when the topmost codepoint is being passed</param>
 		/// <returns></returns>
-		private static ErrorMessageHandler.ErrorMessage ValidCodepoint(string codepoint, bool lessStrict)
+		private static ErrorMessage ValidCodepoint(string codepoint, bool lessStrict)
 		{
 			if( string.IsNullOrEmpty(codepoint) && lessStrict )
-				return ErrorMessageHandler.ErrorMessage.none;
+				return ErrorMessage.none;
 			if( codepoint.Length < 4)
-				return ErrorMessageHandler.ErrorMessage.shortCodepoint;
+				return ErrorMessage.shortCodepoint;
 			if( codepoint.Length > 6)
-				return ErrorMessageHandler.ErrorMessage.longCodepoint;
+				return ErrorMessage.longCodepoint;
 			var codepointValue = Convert.ToInt32(codepoint, 16);
 			if( codepointValue > 0x10FFFF || codepointValue < 0)
-				return ErrorMessageHandler.ErrorMessage.outsideRange;
+				return ErrorMessage.outsideRange;
 			if (codepointValue == 0)
-				return ErrorMessageHandler.ErrorMessage.zeroCodepoint;
+				return ErrorMessage.zeroCodepoint;
 			if (Icu.IsSurrogate(codepoint))
-				return ErrorMessageHandler.ErrorMessage.inSurrogateRange;
-			return ErrorMessageHandler.ErrorMessage.none;
+				return ErrorMessage.inSurrogateRange;
+			return ErrorMessage.none;
 		}
 
 		/// <summary>
@@ -1004,18 +1004,18 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// <param name="numeric"></param>
 		/// <param name="isDigit">If the character is a digit or decimal digit.</param>
 		/// <returns></returns>
-		private static HashSet<ErrorMessageHandler.ErrorMessage> ValidNumeric(string numeric, bool isDigit)
+		private static HashSet<ErrorMessage> ValidNumeric(string numeric, bool isDigit)
 		{
-			var errorMessages = new HashSet<ErrorMessageHandler.ErrorMessage>();
+			var errorMessages = new HashSet<ErrorMessage>();
 			if(isDigit)
 			{
 				// Don't allow any non-numerics in digit numeric values.
 				if(numeric.IndexOf('.') != -1)
-					errorMessages.Add(ErrorMessageHandler.ErrorMessage.numericDotDigit);
+					errorMessages.Add(ErrorMessage.numericDotDigit);
 				if(numeric.IndexOf('/') != -1)
-					errorMessages.Add(ErrorMessageHandler.ErrorMessage.numericSlashDigit);
+					errorMessages.Add(ErrorMessage.numericSlashDigit);
 				if(numeric.IndexOf('-') != -1)
-					errorMessages.Add(ErrorMessageHandler.ErrorMessage.numericDashDigit);
+					errorMessages.Add(ErrorMessage.numericDashDigit);
 			}
 			else
 			{
@@ -1029,11 +1029,11 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 						int.Parse(numeric.Substring(0,slashIndex));
 						int denominator = int.Parse(numeric.Substring(slashIndex + 1));
 						if (denominator == 0)
-							errorMessages.Add(ErrorMessageHandler.ErrorMessage.numericMalformedFraction);
+							errorMessages.Add(ErrorMessage.numericMalformedFraction);
 					}
 					catch
 					{
-						errorMessages.Add(ErrorMessageHandler.ErrorMessage.numericMalformedFraction);
+						errorMessages.Add(ErrorMessage.numericMalformedFraction);
 					}
 				}
 			}
@@ -1045,16 +1045,16 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// DecompositionType selected is "none"
 		/// </summary>
 		/// <returns></returns>
-		private ErrorMessageHandler.ErrorMessage CheckEmptyDecomposition()
+		private ErrorMessage CheckEmptyDecomposition()
 		{
 			if( m_cbCompatabilityDecomposition.SelectedItem !=
 				UcdProperty.GetInstance(Icu.UDecompositionType.U_DT_NONE) &&
 				CodePointMatches(m_txtDecomposition)
 				)
 			{
-				return ErrorMessageHandler.ErrorMessage.mustEnterDecomp;
+				return ErrorMessage.mustEnterDecomp;
 			}
-			return ErrorMessageHandler.ErrorMessage.none;
+			return ErrorMessage.none;
 		}
 
 		/// <summary>
@@ -1066,9 +1066,9 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			m_errorMessageHandler.RemoveMessage(m_txtDecomposition);
 			// Check to make sure that the decomposition field is not empty unless the
 			// DecompositionType selected is "none"
-			ErrorMessageHandler.ErrorMessage errorMessage = CheckEmptyDecomposition();
+			ErrorMessage errorMessage = CheckEmptyDecomposition();
 			// Display the star
-			if(errorMessage != ErrorMessageHandler.ErrorMessage.none)
+			if(errorMessage != ErrorMessage.none)
 				m_errorMessageHandler.AddStar(m_txtDecomposition);
 			else
 				m_errorMessageHandler.RemoveStar(m_txtDecomposition);
@@ -1081,9 +1081,9 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		{
 			// Check to make sure that the decomposition field is not empty unless the
 			// DecompositionType selected is "none"
-			ErrorMessageHandler.ErrorMessage errorMessage = CheckEmptyDecomposition();
+			ErrorMessage errorMessage = CheckEmptyDecomposition();
 			// Display the star
-			if(errorMessage != ErrorMessageHandler.ErrorMessage.none)
+			if(errorMessage != ErrorMessage.none)
 				m_errorMessageHandler.AddMessage(m_txtDecomposition, errorMessage);
 		}
 		#endregion
@@ -1175,7 +1175,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			//Parse the display string so that the user can see what codepoints they have entered.
 			// Display an error star if any errors are encountered in the process.
 			string parsedDecomposition;
-			HashSet<ErrorMessageHandler.ErrorMessage> errorMessages = ParseDecomposition(m_txtDecomposition.Text,
+			HashSet<ErrorMessage> errorMessages = ParseDecomposition(m_txtDecomposition.Text,
 				out parsedDecomposition);
 			if (errorMessages.Count == 0)
 			{
@@ -1202,7 +1202,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			m_puaChar.Decomposition = m_txtDecomposition.Text;
 			// Display text discribing any errors in the decomposition string syntax.
 			string parsedDecomposition;
-			HashSet<ErrorMessageHandler.ErrorMessage> errorMessages = ParseDecomposition(m_txtDecomposition.Text,
+			HashSet<ErrorMessage> errorMessages = ParseDecomposition(m_txtDecomposition.Text,
 				out parsedDecomposition);
 			m_errorMessageHandler.AddMessage(m_txtDecomposition, errorMessages);
 
@@ -1277,10 +1277,10 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			ForceCharacterSet(m_txtCodepoint, UnicodePropertyType.codepoint);
 			Modify = false;
 			// Check to seee if the codepoint is valid
-			ErrorMessageHandler.ErrorMessage errorMessage = ValidCodepoint(m_txtCodepoint.Text, false);
+			ErrorMessage errorMessage = ValidCodepoint(m_txtCodepoint.Text, false);
 
 			// Only load if the codepoint is valid
-			if(errorMessage == ErrorMessageHandler.ErrorMessage.none)
+			if(errorMessage == ErrorMessage.none)
 			{
 				// Automatically load the values from the cache
 				PUACharacter cachedCharacter = ParentDialog.FindCachedIcuEntry(m_txtCodepoint.Text);
@@ -1312,7 +1312,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			// Show the error star and block all fields if the character is not a valid, unused
 			// character.
 			// This must be done last so that nothing else will enable or disable any of the boxes.
-			if( errorMessage == ErrorMessageHandler.ErrorMessage.none)
+			if( errorMessage == ErrorMessage.none)
 			{
 				// The character is valid, load it
 				m_errorMessageHandler.RemoveStar(m_txtCodepoint);
@@ -1356,7 +1356,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 			if( m_txtName.Text.Length <= 0 )
 				m_errorMessageHandler.AddMessage(m_txtName,
-					ErrorMessageHandler.ErrorMessage.emptyName);
+					ErrorMessage.emptyName);
 		}
 
 		private void m_txtUpperEquiv_TextChanged(object sender, EventArgs e)

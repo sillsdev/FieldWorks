@@ -1,13 +1,7 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwFontDialog.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
-// ---------------------------------------------------------------------------------------------
+
 namespace SIL.FieldWorks.FwCoreDlgs
 {
 	partial class FwFontDialog
@@ -24,9 +18,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if (disposing && (components != null))
+			if (disposing)
 			{
-				components.Dispose();
+				components?.Dispose();
 			}
 			base.Dispose(disposing);
 		}

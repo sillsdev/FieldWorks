@@ -2,9 +2,9 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Windows.Forms;
-using System.Drawing;
 using System.Diagnostics;
+using System.Drawing;
+using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel.DomainServices;
 
@@ -30,9 +30,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		#endregion
 
 		#region Contructor & Initialization
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FwInheritablePropComboBox"/> class.
-		/// </summary>
+
+		/// <summary />
 		public FwInheritablePropComboBox()
 		{
 			DrawMode = DrawMode.OwnerDrawFixed;
@@ -55,8 +54,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			set
 			{
 				var newIndex = (ShowingInheritedProperties ? value : value - 1);
-				Debug.Assert(ShowingInheritedProperties || newIndex >= 0,
-					"We shouldn't try select an unspecified index for non inheritable values");
+				Debug.Assert(ShowingInheritedProperties || newIndex >= 0, "We shouldn't try select an unspecified index for non inheritable values");
 				SelectedIndex = newIndex;
 			}
 		}
@@ -95,8 +93,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				{
 					if (m_sUnspecifiedOption == null)
 					{
-						Debug.Assert(Items.Count > 0,
-							"The 0th item in the Items collection should be the 'unspecified' item. But there is no 0th item. Ouch!");
+						Debug.Assert(Items.Count > 0, "The 0th item in the Items collection should be the 'unspecified' item. But there is no 0th item. Ouch!");
 						m_sUnspecifiedOption = Items[0].ToString();
 					}
 
@@ -128,9 +125,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		#endregion
 
 		#region Drawing code
-		/// <summary>
-		/// Raises the <see cref="E:System.Windows.Forms.ComboBox.DrawItem"></see> event.
-		/// </summary>
+
+		/// <inheritdoc />
 		protected override void OnDrawItem(DrawItemEventArgs e)
 		{
 			if (e.Index < 0 || e.Index >= Items.Count || DesignMode)
@@ -139,8 +135,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				return;
 			}
 
-			var drawColor = ((e.State & DrawItemState.Selected) != 0) ? SystemColors.HighlightText : e.ForeColor;
-			var backColor = ((e.State & DrawItemState.Selected) != 0) ? SystemColors.Highlight : e.BackColor;
+			var drawColor = (e.State & DrawItemState.Selected) != 0 ? SystemColors.HighlightText : e.ForeColor;
+			var backColor = (e.State & DrawItemState.Selected) != 0 ? SystemColors.Highlight : e.BackColor;
 
 			// Make sure we always draw the dropdown list in window text color.
 			if ((e.State & DrawItemState.ComboBoxEdit) == 0)
@@ -169,8 +165,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			else
 			{
 				// Draw it ourselves
-				e.Graphics.DrawString(Items[e.Index].ToString(), e.Font, new SolidBrush(drawColor),
-					new RectangleF(e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height));
+				e.Graphics.DrawString(Items[e.Index].ToString(), e.Font, new SolidBrush(drawColor), new RectangleF(e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height));
 			}
 		}
 		#endregion

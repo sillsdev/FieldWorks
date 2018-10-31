@@ -1,33 +1,26 @@
 // Copyright (c) 2007-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: UpDownMeasureControlTests.cs
-// Responsibility: TE Team
 
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Tests for the <see cref="UpDownMeasureControl"/> class
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
 	[SetCulture("en-US")]
 	public class UpDownMeasureControlTests
 	{
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests ability to set and get positive measure values.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void GetSetPositiveMeasureValue()
 		{
-			using (UpDownMeasureControl c = new UpDownMeasureControl())
+			using (var c = new UpDownMeasureControl())
 			{
 				c.MeasureType = MsrSysType.Point;
 				c.MeasureMin = 0;
@@ -38,15 +31,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests ability to set and get negative measure values.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void GetSetNegativeMeasureValue()
 		{
-			using (UpDownMeasureControl c = new UpDownMeasureControl())
+			using (var c = new UpDownMeasureControl())
 			{
 				c.DisplayAbsoluteValues = false;
 				c.MeasureType = MsrSysType.Point;
@@ -82,15 +73,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests ability to set and get positive measure values using non-default units.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void GetSetMeasureValueWithUnits()
 		{
-			using (UpDownMeasureControl c = new UpDownMeasureControl())
+			using (var c = new UpDownMeasureControl())
 			{
 				c.MeasureType = MsrSysType.Point;
 				c.MeasureMin = 0;
@@ -152,15 +141,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests ability to set unusual measure values (bogus units, extra spaces).
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void SetUnusualMeasureValues()
 		{
-			using (UpDownMeasureControl c = new UpDownMeasureControl())
+			using (var c = new UpDownMeasureControl())
 			{
 				c.MeasureType = MsrSysType.Point;
 				c.MeasureMin = -1000000;
@@ -195,15 +182,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the up button
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void UpButton()
 		{
-			using (UpDownMeasureControl c = new UpDownMeasureControl())
+			using (var c = new UpDownMeasureControl())
 			{
 				c.MeasureType = MsrSysType.Point;
 				c.MeasureMin = -100000;
@@ -281,15 +266,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the down button
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void DownButton()
 		{
-			using (UpDownMeasureControl c = new UpDownMeasureControl())
+			using (var c = new UpDownMeasureControl())
 			{
 				c.MeasureType = MsrSysType.Point;
 				c.MeasureMin = -100000;
@@ -367,15 +350,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests ability to limit values based on the MeasureMax property.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void MaxLimit()
 		{
-			using (UpDownMeasureControl c = new UpDownMeasureControl())
+			using (var c = new UpDownMeasureControl())
 			{
 				c.MeasureType = MsrSysType.Point;
 				c.MeasureMin = -20;
@@ -394,15 +375,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests ability to limit values based on the MeasureMin property.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void MinLimit()
 		{
-			using (UpDownMeasureControl c = new UpDownMeasureControl())
+			using (var c = new UpDownMeasureControl())
 			{
 				c.MeasureType = MsrSysType.Point;
 				c.MeasureMin = -20;
@@ -421,16 +400,14 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests that the down button decrements the underlying value (rather than the
 		/// displayed value) when displaying absolute values.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void DownButton_DisplayingAbsoluteValues()
 		{
-			using (UpDownMeasureControl c = new UpDownMeasureControl())
+			using (var c = new UpDownMeasureControl())
 			{
 				c.DisplayAbsoluteValues = true;
 				c.MeasureType = MsrSysType.Point;
@@ -448,15 +425,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the up button when increment factor is > 1
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void UpDownButtons_IncrementFactor()
 		{
-			using (UpDownMeasureControl c = new UpDownMeasureControl())
+			using (var c = new UpDownMeasureControl())
 			{
 				c.MeasureType = MsrSysType.Point;
 				c.MeasureMin = -10000;

@@ -1,13 +1,6 @@
 // Copyright (c) 2007-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: StyleInfoTests.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
-// ---------------------------------------------------------------------------------------------
 
 using NUnit.Framework;
 using SIL.LCModel;
@@ -16,20 +9,14 @@ using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	[TestFixture]
 	public class StyleInfoTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests saving a new style info to the DB. In this case the context should be gotten
 		/// from the based-on style.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void SaveToDB_NewInfo()
 		{
@@ -39,10 +26,11 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			realStyle.Context = ContextValues.Intro;
 			realStyle.Function = FunctionValues.Table;
 			realStyle.Structure = StructureValues.Heading;
-			StyleInfo basedOn = new StyleInfo(realStyle);
-			basedOn.UserLevel = 1;
-			StyleInfo testInfo = new StyleInfo("New Style", basedOn,
-				StyleType.kstParagraph, Cache);
+			var basedOn = new StyleInfo(realStyle)
+			{
+				UserLevel = 1
+			};
+			var testInfo = new StyleInfo("New Style", basedOn, StyleType.kstParagraph, Cache);
 
 			// simulate a save to the DB for the test style.
 			var style = styleFactory.Create();
@@ -57,16 +45,14 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			Assert.AreEqual(FunctionValues.Table, style.Function);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests saving a copy style info to the DB. In this case the context should be gotten
 		/// from the based-on style.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void SaveToDB_CopyInfo()
 		{
-			StyleInfoTable styleTable = new StyleInfoTable("Normal", Cache.ServiceLocator.WritingSystemManager);
+			var styleTable = new StyleInfoTable("Normal", Cache.ServiceLocator.WritingSystemManager);
 			var styleFactory = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
 			var normalStyle = styleFactory.Create();
 			Cache.LanguageProject.StylesOC.Add(normalStyle);
@@ -74,7 +60,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			normalStyle.Context = ContextValues.Internal;
 			normalStyle.Function = FunctionValues.Prose;
 			normalStyle.Structure = StructureValues.Undefined;
-			StyleInfo normal = new StyleInfo(normalStyle);
+			var normal = new StyleInfo(normalStyle);
 			styleTable.Add("Normal", normal);
 
 			var realStyle = styleFactory.Create();
@@ -84,10 +70,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			realStyle.Function = FunctionValues.Prose;
 			realStyle.Structure = StructureValues.Body;
 			realStyle.BasedOnRA = normalStyle;
-			StyleInfo styleToCopyFrom = new StyleInfo(realStyle);
+			var styleToCopyFrom = new StyleInfo(realStyle);
 			styleTable.Add("Dictionary-Normal", styleToCopyFrom);
 
-			StyleInfo testInfo = new StyleInfo(styleToCopyFrom, "Copy of Dictionary-Normal");
+			var testInfo = new StyleInfo(styleToCopyFrom, "Copy of Dictionary-Normal");
 			styleTable.Add("Copy Dictionary-Normal", testInfo);
 			styleTable.ConnectStyles();
 
@@ -104,16 +90,14 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			Assert.AreEqual(FunctionValues.Prose, style.Function);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests saving a new style info to the DB. In this case the context should be gotten
 		/// from the style of which the new style is a copy, rather than the based-on style.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void SaveToDB_CopyOfStyleBasedOnNormal()
 		{
-			StyleInfoTable styleTable = new StyleInfoTable("Normal", Cache.ServiceLocator.WritingSystemManager);
+			var styleTable = new StyleInfoTable("Normal", Cache.ServiceLocator.WritingSystemManager);
 			var styleFactory = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
 			var normalStyle = styleFactory.Create();
 			Cache.LanguageProject.StylesOC.Add(normalStyle);
@@ -121,7 +105,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			normalStyle.Context = ContextValues.Internal;
 			normalStyle.Function = FunctionValues.Prose;
 			normalStyle.Structure = StructureValues.Undefined;
-			StyleInfo normal = new StyleInfo(normalStyle);
+			var normal = new StyleInfo(normalStyle);
 			styleTable.Add("Normal", normal);
 
 			var realStyle = styleFactory.Create();
@@ -131,10 +115,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			realStyle.Function = FunctionValues.Prose;
 			realStyle.Structure = StructureValues.Body;
 			realStyle.BasedOnRA = normalStyle;
-			StyleInfo styleToCopyFrom = new StyleInfo(realStyle);
+			var styleToCopyFrom = new StyleInfo(realStyle);
 			styleTable.Add("Paragraph", styleToCopyFrom);
 
-			StyleInfo testInfo = new StyleInfo(styleToCopyFrom, "Copy of Paragraph");
+			var testInfo = new StyleInfo(styleToCopyFrom, "Copy of Paragraph");
 			styleTable.Add("Copy of Paragraph", testInfo);
 			styleTable.ConnectStyles();
 
@@ -151,12 +135,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			Assert.AreEqual(FunctionValues.Prose, style.Function);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests saving new style infos to the DB when one style is based on the other one.
 		/// In this case the context should be gotten from the lowest level based-on style.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void SaveToDB_NewInfoAndBasedOnNewInfo()
 		{
@@ -166,12 +148,12 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			realStyle.Context = ContextValues.Intro;
 			realStyle.Function = FunctionValues.Table;
 			realStyle.Structure = StructureValues.Heading;
-			StyleInfo basedOn = new StyleInfo(realStyle);
-			basedOn.UserLevel = 1;
-			StyleInfo testInfo1 = new StyleInfo("New Style 1", basedOn,
-				StyleType.kstParagraph, Cache);
-			StyleInfo testInfo2 = new StyleInfo("New Style 2", testInfo1,
-				StyleType.kstParagraph, Cache);
+			var basedOn = new StyleInfo(realStyle)
+			{
+				UserLevel = 1
+			};
+			var testInfo1 = new StyleInfo("New Style 1", basedOn, StyleType.kstParagraph, Cache);
+			var testInfo2 = new StyleInfo("New Style 2", testInfo1, StyleType.kstParagraph, Cache);
 
 			// simulate a save to the DB for the test styles. Save the second one first for
 			// a better test.

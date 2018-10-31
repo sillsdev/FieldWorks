@@ -28,9 +28,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// the underlying object. If the writing system factory is set, all strings will be removed.
 		/// All rootboxes that use this data access should be reconstructed to remove any references
 		/// to the old factory.
-		///
 		/// </summary>
-		/// <value></value>
 		/// <returns>A ILgWritingSystemFactory</returns>
 		public override ILgWritingSystemFactory WritingSystemFactory
 		{

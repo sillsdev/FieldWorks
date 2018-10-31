@@ -27,25 +27,16 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		#endregion
 
 		#region Constructors
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="BackupProjectDlg"/> class.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+
+		/// <summary />
 		private BackupProjectDlg()
 		{
 			InitializeComponent();
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="BackupProjectDlg"/> class.
-		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="helpTopicProvider">The help topic provider.</param>
-		/// ------------------------------------------------------------------------------------
-		public BackupProjectDlg(LcmCache cache,
-			IHelpTopicProvider helpTopicProvider) : this()
+		/// <summary />
+		public BackupProjectDlg(LcmCache cache, IHelpTopicProvider helpTopicProvider)
+			: this()
 		{
 			m_cache = cache;
 			m_helpTopicProvider = helpTopicProvider;
@@ -59,7 +50,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 			}
 
 			DestinationFolder = FwDirectoryFinder.DefaultBackupDirectory;
-			if (File.Exists(m_presenter.PersistanceFilePath))
+			if (File.Exists(m_presenter.PersistenceFilePath))
 			{
 				// If something bad happens when loading the previous dialog settings (probably just a
 				// pre-7.0 version), just log the error and use the defaults.
@@ -67,7 +58,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 				{
 					//If the dialog settings file does exist then read it in and set the dialog to match
 					//the last values set.
-					using (FileStream fs = new FileStream(m_presenter.PersistanceFilePath, FileMode.Open))
+					using (var fs = new FileStream(m_presenter.PersistenceFilePath, FileMode.Open))
 					{
 						IBackupSettings backupSettings = BackupFileSettings.CreateFromStream(fs);
 						// Per FWR-2748, we do NOT want to copy a previous comment into the dialog.
@@ -92,10 +83,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		{
 			using (var dlg = new FolderBrowserDialogAdapter())
 			{
-				dlg.Description = String.Format(FwCoreDlgs.ksDirectoryLocationForBackup);
+				dlg.Description = string.Format(FwCoreDlgs.ksDirectoryLocationForBackup);
 				dlg.ShowNewFolderButton = true;
 
-				if (String.IsNullOrEmpty(DestinationFolder) || !Directory.Exists(DestinationFolder))
+				if (string.IsNullOrEmpty(DestinationFolder) || !Directory.Exists(DestinationFolder))
 				{
 					dlg.SelectedPath = FwDirectoryFinder.DefaultBackupDirectory;
 				}
@@ -103,7 +94,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 				{
 					dlg.SelectedPath = DestinationFolder;
 				}
-
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					DestinationFolder = dlg.SelectedPath;
@@ -120,13 +110,11 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		{
 			if (!Path.IsPathRooted(DestinationFolder))
 			{
-				MessageBox.Show(this, FwCoreDlgs.ksBackupErrorRelativePath, FwCoreDlgs.ksErrorCreatingBackupDirCaption,
-					MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBox.Show(this, FwCoreDlgs.ksBackupErrorRelativePath, FwCoreDlgs.ksErrorCreatingBackupDirCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				m_destinationFolder.Select();
 				DialogResult = DialogResult.None;
 				return;
 			}
-
 			if (!Directory.Exists(DestinationFolder))
 			{
 				try
@@ -135,26 +123,26 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 				}
 				catch (Exception e1)
 				{
-					MessageBox.Show(this, e1.Message, FwCoreDlgs.ksErrorCreatingBackupDirCaption,
-						MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					MessageBox.Show(this, e1.Message, FwCoreDlgs.ksErrorCreatingBackupDirCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 					m_destinationFolder.Select();
 					DialogResult = DialogResult.None;
 					return;
 				}
 			}
-
 			if (!DestinationFolder.Equals(FwDirectoryFinder.DefaultBackupDirectory))
 			{
 				using (var dlgChangeDefaultBackupLocation = new ChangeDefaultBackupDir(m_helpTopicProvider))
 				{
 					if (dlgChangeDefaultBackupLocation.ShowDialog(this) == DialogResult.Yes)
+					{
 						FwDirectoryFinder.DefaultBackupDirectory = DestinationFolder;
+					}
 				}
 			}
-
 			if (m_presenter.FileNameProblems(this))
+			{
 				return;
-
+			}
 			try
 			{
 				using (new WaitCursor(this))
@@ -165,8 +153,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 			}
 			catch (FwBackupException be)
 			{
-				MessageBox.Show(this, string.Format(FwCoreDlgs.ksBackupErrorCreatingZipfile, be.ProjectName, be.Message),
-					FwCoreDlgs.ksBackupErrorCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBox.Show(this, string.Format(FwCoreDlgs.ksBackupErrorCreatingZipfile, be.ProjectName, be.Message), FwCoreDlgs.ksBackupErrorCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				DialogResult = DialogResult.None;
 			}
 		}
@@ -179,9 +166,11 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 				var fixText = m_destinationFolder.Text;
 				for (; ; )
 				{
-					int index = fixText.IndexOfAny(Path.GetInvalidPathChars());
+					var index = fixText.IndexOfAny(Path.GetInvalidPathChars());
 					if (index == -1)
+					{
 						break;
+					}
 					fixText = fixText.Remove(index, 1);
 				}
 				m_destinationFolder.Text = fixText;
@@ -191,6 +180,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		#endregion
 
 		#region IBackupInfo implementation
+
 		/// <summary>
 		/// Read/Write the comment from/to the dialog text control.
 		/// </summary>

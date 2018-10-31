@@ -31,9 +31,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			m_owner = owner;
 		}
 
-		/// <summary>
-		/// Construct with supplied initial items.
-		/// </summary>
+		/// <summary />
 		public ObjectCollection(FwListBox owner, object[] values)
 		{
 			m_list = new ArrayList(values);
@@ -41,10 +39,11 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		}
 
 		#region IDisposable & Co. implementation
+
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed { get; private set; }
+		private bool IsDisposed { get; set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -59,12 +58,12 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			// The base class finalizer is called automatically.
 		}
 
-		/// <summary />
+		/// <inheritdoc />
 		public void Dispose()
 		{
 			Dispose(true);
 			// This object will be cleaned up by the Dispose method.
-			// Therefore, you should call GC.SupressFinalize to
+			// Therefore, you should call GC.SuppressFinalize to
 			// take this object off the finalization queue
 			// and prevent finalization code for this object
 			// from executing a second time.
@@ -95,9 +94,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		protected virtual void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -118,7 +117,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 
 		bool IList.IsFixedSize => false;
 
-		/// <summary>Number of items. </summary>
+		/// <summary>Number of items.</summary>
 		public virtual int Count => m_list.Count;
 
 		/// <summary>Always false; we don't support the DataSource approach. </summary>
@@ -144,7 +143,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 					m_owner.DataAccess.SetString(hvo, InnerFwListBox.ktagText, newText);
 					if (!m_owner.Updating)
 					{
-						m_owner.DataAccess.PropChanged(null, (int) PropChangeType.kpctNotifyAll, hvo, InnerFwListBox.ktagText, 0, newText.Length, oldText.Length);
+						m_owner.DataAccess.PropChanged(null, (int)PropChangeType.kpctNotifyAll, hvo, InnerFwListBox.ktagText, 0, newText.Length, oldText.Length);
 					}
 				}
 			}
@@ -172,12 +171,12 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			{
 				m_list.Add(item);
 				var hvoNew = m_owner.DataAccess.MakeNewObject(InnerFwListBox.kclsItem, InnerFwListBox.khvoRoot, InnerFwListBox.ktagItems, index + i);
-				m_owner.DataAccess.SetString(hvoNew, InnerFwListBox.ktagText,  m_owner.TextOfItem(item));
+				m_owner.DataAccess.SetString(hvoNew, InnerFwListBox.ktagText, m_owner.TextOfItem(item));
 				i++;
 			}
 			if (!m_owner.Updating)
 			{
-				m_owner.DataAccess.PropChanged(null, (int) PropChangeType.kpctNotifyAll, InnerFwListBox.khvoRoot, InnerFwListBox.ktagItems, index, i, 0);
+				m_owner.DataAccess.PropChanged(null, (int)PropChangeType.kpctNotifyAll, InnerFwListBox.khvoRoot, InnerFwListBox.ktagItems, index, i, 0);
 			}
 		}
 
@@ -199,7 +198,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			cda.CacheVecProp(InnerFwListBox.khvoRoot, InnerFwListBox.ktagItems, new int[0], 0);
 			if (!m_owner.Updating)
 			{
-				m_owner.DataAccess.PropChanged(null, (int) PropChangeType.kpctNotifyAll, InnerFwListBox.khvoRoot, InnerFwListBox.ktagItems, 0, 0, citems);
+				m_owner.DataAccess.PropChanged(null, (int)PropChangeType.kpctNotifyAll, InnerFwListBox.khvoRoot, InnerFwListBox.ktagItems, 0, 0, citems);
 			}
 
 			m_owner.SelectedIndex = -1;
@@ -235,7 +234,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		}
 
 		/// <summary>
-		/// Syncrhonization is not supported.
+		/// Synchronization is not supported.
 		/// </summary>
 		object ICollection.SyncRoot => this;
 
@@ -278,7 +277,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			m_owner.DataAccess.SetString(hvoNew, InnerFwListBox.ktagText, m_owner.TextOfItem(item));
 			if (!m_owner.Updating)
 			{
-				m_owner.DataAccess.PropChanged(null, (int) PropChangeType.kpctNotifyAll, InnerFwListBox.khvoRoot, InnerFwListBox.ktagItems, index, 1, 0);
+				m_owner.DataAccess.PropChanged(null, (int)PropChangeType.kpctNotifyAll, InnerFwListBox.khvoRoot, InnerFwListBox.ktagItems, index, 1, 0);
 			}
 
 			if (m_owner.SelectedIndex >= index)
@@ -307,7 +306,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			m_owner.DataAccess.DeleteObjOwner(InnerFwListBox.khvoRoot, hvoObj, InnerFwListBox.ktagItems, index);
 			if (!m_owner.Updating)
 			{
-				m_owner.DataAccess.PropChanged(null, (int) PropChangeType.kpctNotifyAll, InnerFwListBox.khvoRoot, InnerFwListBox.ktagItems, index, 0, 1);
+				m_owner.DataAccess.PropChanged(null, (int)PropChangeType.kpctNotifyAll, InnerFwListBox.khvoRoot, InnerFwListBox.ktagItems, index, 0, 1);
 			}
 
 			if (m_owner.SelectedIndex >= index)

@@ -1,10 +1,7 @@
-﻿// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: OverwriteExistingProject.cs
-// Responsibility: FW Team
-// --------------------------------------------------------------------------------------------
+
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -25,34 +22,22 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 
 		#endregion
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
+		/// <summary />
 		private OverwriteExistingProject()
 		{
 			InitializeComponent();
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="OverwriteExistingProject"/> class.
-		/// </summary>
-		/// <param name="projectPath">The project path.</param>
-		/// <param name="helpTopicProvider"></param>
-		/// ------------------------------------------------------------------------------------
-		public OverwriteExistingProject(string projectPath, IHelpTopicProvider helpTopicProvider) : this()
+		/// <summary />
+		public OverwriteExistingProject(string projectPath, IHelpTopicProvider helpTopicProvider)
+			: this()
 		{
 			m_helpTopicProvider = helpTopicProvider;
 			m_lblInfo.Text = string.Format(m_lblInfo.Text, projectPath);
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		public bool BackupBeforeOverwritting
-		{
-			get { return m_checkbox_BackupFirst.Checked; }
-		}
+		/// <summary />
+		public bool BackupBeforeOverwriting => m_checkbox_BackupFirst.Checked;
 
 		private void m_btnHelp_Click(object sender, System.EventArgs e)
 		{

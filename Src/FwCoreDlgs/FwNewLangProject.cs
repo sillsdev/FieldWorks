@@ -10,31 +10,27 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel;
-using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Resources;
-using SIL.Reporting;
+using SIL.LCModel;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
+using SIL.Reporting;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// FwNewLangProject dialog.
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+#if RANDYTODO
+	// TODO: Move to Fieldworks
+#endif
+	/// <summary />
 	public class FwNewLangProject : Form
 	{
 		#region Data members
 		private bool m_fIgnoreClose;
-		private bool m_fCreateNew = true;
-		private ProjectInfo m_projInfo;
 		private readonly WritingSystemManager m_wsManager;
-
 		private TextBox m_txtName;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private FwOverrideComboBox m_cbVernWrtSys;
@@ -52,16 +48,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private Label m_lblProjectName;
 		private Label m_lblSpecifyWrtSys;
 		private HelpProvider helpProvider1;
-		private string m_dbFile;
 		private readonly bool m_useMemoryWSManager;
 		#endregion
 
 		#region Properties
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Get/Set the project name from the dialog
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public string ProjectName
 		{
 			get
@@ -74,66 +68,36 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Get the database name from the dialog
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string DatabaseName
-		{
-			get
-			{
-				return m_dbFile;
-			}
-		}
+		public string DatabaseName { get; private set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Get the value indicating whether a new project should be created.
 		/// When there is a project with an identical name, the user has the option of opening
 		/// the existing project. In this case, this property has a value of false.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public bool IsProjectNew
-		{
-			get
-			{
-				return m_fCreateNew;
-			}
-		}
+		public bool IsProjectNew { get; private set; } = true;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the information for an existing project.
 		/// The information in this property should only be used if the user attempted to create
 		/// an existing project and they want to open the existing project instead.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public ProjectInfo Project
-		{
-			get
-			{
-				return m_projInfo;
-			}
-		}
+		public ProjectInfo Project { get; private set; }
 
 		#endregion
 
 		#region Construction, initialization, disposal
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="FwNewLangProject"/> class.
-		/// </summary>
+		/// <summary />
 		public FwNewLangProject()
 			: this(false)
 		{
 		}
 
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Constructs a new instance of the <see cref="FwNewLangProject"/> class.
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
+		/// <summary />
 		public FwNewLangProject(bool useMemoryWSManager)
 		{
 			Logger.WriteEvent("Opening New Language Project dialog");
@@ -171,15 +135,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		/// <summary/>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "********* Missing Dispose() call for " + GetType().Name + ". *******");
-			if (disposing && !IsDisposed)
+			Debug.WriteLineIf(!disposing, "********* Missing Dispose() call for " + GetType().Name + ". *******");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+			if (disposing)
 			{
 				var disposable = m_wsManager as IDisposable;
-				if (disposable != null)
-					disposable.Dispose();
+				disposable?.Dispose();
 			}
 			base.Dispose(disposing);
 		}
@@ -397,12 +365,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion // Construction, initialization, disposal
 
 		#region Overriden Methods
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Ignores the close request if needed
 		/// </summary>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
 		protected override void OnClosing(CancelEventArgs e)
 		{
 			Logger.WriteEvent("Closing new language project dialog with result " + DialogResult);
@@ -411,22 +377,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_fIgnoreClose = false;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Draws the etched lines on the dialog.
 		/// </summary>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);
 
-			SizeF spaceSize = e.Graphics.MeasureString(@"m", Font);
-
-			int x1 = m_lblProjectName.Right + (int)spaceSize.Width;
-			int x2 = btnHelp.Right;
-			int y = (m_lblProjectName.Top + m_lblProjectName.Bottom) / 2;
-
+			var spaceSize = e.Graphics.MeasureString(@"m", Font);
+			var x1 = m_lblProjectName.Right + (int)spaceSize.Width;
+			var x2 = btnHelp.Right;
+			var y = (m_lblProjectName.Top + m_lblProjectName.Bottom) / 2;
 			LineDrawing.Draw(e.Graphics, x1, y, x2, y);
 
 			x1 = m_lblSpecifyWrtSys.Right + (int)spaceSize.Width;
@@ -436,12 +397,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			LineDrawing.Draw(e.Graphics, x1, y, x2, y);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		protected override void OnLoad(EventArgs e)
 		{
 			base.OnLoad(e);
@@ -452,50 +408,46 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			foreach (CoreWritingSystemDefinition ws in m_cbAnalWrtSys.Items)
 			{
 				if (ws.Id == "en")
+				{
 					m_cbAnalWrtSys.SelectedItem = ws;
+				}
 			}
 
 			foreach (CoreWritingSystemDefinition ws in m_cbVernWrtSys.Items)
 			{
 				if (ws.Id == "fr")
+				{
 					m_cbVernWrtSys.SelectedItem = ws;
+				}
 			}
-			return;
 		}
 
 		#endregion
 
 		#region Event handlers
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Show the New Language Project Dialog help topic
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
 		private void btnHelp_Click(object sender, EventArgs e)
 		{
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "khtpFwNewLangProjHelpTopic");
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handle the OK button: Validate input and create new project
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void btnOK_Click(object sender, EventArgs e)
 		{
 			Enabled = false;
 			DialogResult = DialogResult.OK;
 
-			Logger.WriteEvent(string.Format(
-				"Creating new language project: name: {0}, vernacular ws: {1}, anal ws: {2}",
-				ProjectName, m_cbVernWrtSys.Text, m_cbAnalWrtSys.Text));
+			Logger.WriteEvent($"Creating new language project: name: {ProjectName}, vernacular ws: {m_cbVernWrtSys.Text}, anal ws: {m_cbAnalWrtSys.Text}");
 
 			// Project with this name already exists?
 			try
 			{
-				m_projInfo = ProjectInfo.GetProjectInfoByName(FwDirectoryFinder.ProjectsDirectory, ProjectName);
+				Project = ProjectInfo.GetProjectInfoByName(FwDirectoryFinder.ProjectsDirectory, ProjectName);
 			}
 			catch (IOException ex)
 			{
@@ -503,7 +455,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				DialogResult = DialogResult.Cancel;
 				return;
 			}
-			if (m_projInfo != null)
+			if (Project != null)
 			{
 				// Bring up a dialog giving the user the option to open this existing project,
 				// or cancel (return to New Project dialog).
@@ -514,9 +466,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					switch (dlg.DialogResult)
 					{
 						case DialogResult.OK:
-							m_fCreateNew = false;
-							m_dbFile = Path.Combine(FwDirectoryFinder.ProjectsDirectory,
-								ProjectName + LcmFileHelper.ksFwDataXmlFileExtension);
+							IsProjectNew = false;
+							DatabaseName = Path.Combine(FwDirectoryFinder.ProjectsDirectory, ProjectName + LcmFileHelper.ksFwDataXmlFileExtension);
 							break;
 						case DialogResult.Cancel:
 							Enabled = true;
@@ -527,32 +478,20 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				return;
 			}
 
-			//
 			// Create new project
-			//
 			CreateNewLangProjWithProgress();
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		private void m_btnNewVernWrtSys_Click(object sender, EventArgs e)
 		{
 			foreach (var ws in DisplayNewWritingSystemProperties(m_cbVernWrtSys, m_txtName.Text))
+			{
 				m_newVernWss.Add(ws);
+			}
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		private void m_txtName_TextChanged(object sender, EventArgs e)
 		{
 			if (CheckForValidProjectName(m_txtName))
@@ -566,22 +505,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Check whether the given TextBox contains a valid project name.  If not, remove the
 		/// invalid character and complain to the user.
 		/// </summary>
-		/// <param name="tb"></param>
-		/// <returns>true if the project name does not contain any illegal characters</returns>
 		public static bool CheckForValidProjectName(TextBox tb)
 		{
 			// Don't allow illegal characters. () and [] have significance.
 			// [] are typically used as delimiters for file names in SQL queries. () are used in older
 			// backup file names and as such, they can cause grief when trying to restore. Old example:
 			// Jim's (old) backup (Jim_s (old) backup) ....zip. The file name was Jim_s (old) backup.mdf.
-			string sIllegalChars =
-				MiscUtils.GetInvalidProjectNameChars(MiscUtils.FilenameFilterStrength.kFilterProjName);
-			char[] illegalChars = sIllegalChars.ToCharArray();
-			string sProjName = tb.Text;
-			int illegalPos = sProjName.IndexOfAny(illegalChars);
+			var sIllegalChars = MiscUtils.GetInvalidProjectNameChars(MiscUtils.FilenameFilterStrength.kFilterProjName);
+			var illegalChars = sIllegalChars.ToCharArray();
+			var sProjName = tb.Text;
+			var illegalPos = sProjName.IndexOfAny(illegalChars);
 			if (illegalPos < 0)
+			{
 				return true;
-			int selectionPos = illegalPos;
+			}
+			var selectionPos = illegalPos;
 			while (illegalPos >= 0)
 			{
 				sProjName = sProjName.Remove(illegalPos, 1);
@@ -592,41 +530,36 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Remove characters that can not be keyboarded (below code point 32). The
 			// user doesn't need to be warned about these since they can't be entered
 			// via keyboard.
-			string sIllegalCharsKeyboard = sIllegalChars;
-			for (int n = 0; n < 32; n++)
+			var sIllegalCharsKeyboard = sIllegalChars;
+			for (var n = 0; n < 32; n++)
 			{
-				int index = sIllegalCharsKeyboard.IndexOf((char)n);
+				var index = sIllegalCharsKeyboard.IndexOf((char)n);
 				if (index >= 0)
+				{
 					sIllegalCharsKeyboard = sIllegalCharsKeyboard.Remove(index, 1);
+				}
 			}
-			MessageBox.Show(null, String.Format(FwCoreDlgs.ksIllegalNameMsg, sIllegalCharsKeyboard),
-				FwCoreDlgs.ksIllegalChars, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+			MessageBox.Show(null, string.Format(FwCoreDlgs.ksIllegalNameMsg, sIllegalCharsKeyboard), FwCoreDlgs.ksIllegalChars, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 			tb.Text = sProjName;
 			tb.Select(selectionPos, 0);
 			return false;
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		private void m_btnNewAnalWrtSys_Click(object sender, EventArgs e)
 		{
 			foreach (var ws in DisplayNewWritingSystemProperties(m_cbAnalWrtSys, null))
+			{
 				m_newAnalysisWss.Add(ws);
+			}
 		}
 		#endregion
 
 		#region Protected methods
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Create a new language project showing a progress dialog.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected void CreateNewLangProjWithProgress()
 		{
 			try
@@ -648,7 +581,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						using (var threadHelper = new ThreadHelper())
 						{
 
-							m_dbFile = (string)progressDlg.RunTask(DisplayUi, LcmCache.CreateNewLangProj,
+							DatabaseName = (string)progressDlg.RunTask(DisplayUi, LcmCache.CreateNewLangProj,
 																	ProjectName, FwDirectoryFinder.LcmDirectories, threadHelper, m_cbAnalWrtSys.SelectedItem,
 																	m_cbVernWrtSys.SelectedItem,
 																	m_wsManager.UserWritingSystem.Id,
@@ -659,7 +592,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			catch (WorkerThreadException wex)
 			{
-				Exception e = wex.InnerException;
+				var e = wex.InnerException;
 				if (e is UnauthorizedAccessException)
 				{
 					if (MiscUtils.IsUnix)
@@ -669,8 +602,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					}
 					else
 					{
-						MessageBox.Show(string.Format(FwCoreDlgs.kstidErrorNewDb, e.Message),
-							FwUtils.ksSuiteName);
+						MessageBox.Show(string.Format(FwCoreDlgs.kstidErrorNewDb, e.Message), FwUtils.ksSuiteName);
 					}
 					m_fIgnoreClose = true;
 					DialogResult = DialogResult.Cancel;
@@ -679,21 +611,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					Show();
 					m_fIgnoreClose = true;
-					MessageBox.Show(String.Format(FwCoreDlgs.kstidErrorProjectNameTooLong, ProjectName),
-						FwUtils.ksSuiteName);
+					MessageBox.Show(string.Format(FwCoreDlgs.kstidErrorProjectNameTooLong, ProjectName), FwUtils.ksSuiteName);
 				}
 				else if (e is ApplicationException)
 				{
-					MessageBox.Show(string.Format(FwCoreDlgs.kstidErrorNewDb, e.Message),
-						FwUtils.ksSuiteName);
+					MessageBox.Show(string.Format(FwCoreDlgs.kstidErrorNewDb, e.Message), FwUtils.ksSuiteName);
 
 					m_fIgnoreClose = true;
 					DialogResult = DialogResult.Cancel;
 				}
 				else if (e is LcmInitializationException)
 				{
-					MessageBox.Show(string.Format(FwCoreDlgs.kstidErrorNewDb, e.Message),
-						FwUtils.ksSuiteName);
+					MessageBox.Show(string.Format(FwCoreDlgs.kstidErrorNewDb, e.Message), FwUtils.ksSuiteName);
 
 					DialogResult = DialogResult.Cancel;
 				}
@@ -708,41 +637,34 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		void RemoveWs(HashSet<CoreWritingSystemDefinition> wss, object target)
+		private static void RemoveWs(HashSet<CoreWritingSystemDefinition> wss, object target)
 		{
 			var realTarget = (from item in wss where item.IcuLocale == ((CoreWritingSystemDefinition)target).IcuLocale select item).FirstOrDefault();
 			if (realTarget == null)
+			{
 				return;
+			}
 			wss.Remove(realTarget);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets a value indicating whether to display the progress dialog.
 		/// </summary>
-		/// <value>Always <c>true</c> (will be overridden in tests).</value>
-		/// ------------------------------------------------------------------------------------
-		protected virtual bool DisplayUi
-		{
-			get { return true; }
-		}
-
+		protected virtual bool DisplayUi => true;
 		#endregion
 
 		#region Interface methods
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Shows the dialog as a modal dialog
 		/// </summary>
-		/// <returns>A DialogResult value</returns>
-		/// ------------------------------------------------------------------------------------
 		public DialogResult DisplayDialog(Form f)
 		{
 			// We can't create a new database if the folder where it will go is
 			// Encrypted or compressed or nonexistent, so check for these first:
 			if (!CheckProjectDirectory(f, m_helpTopicProvider))
+			{
 				return 0; // can't go on.
-
+			}
 			return ShowDialog(f);
 		}
 
@@ -754,90 +676,74 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public static bool CheckProjectDirectory(Form f, IHelpTopicProvider helpTopicProvider)
 		{
 			string warning = null;
-			string dataDirectory = FwDirectoryFinder.ProjectsDirectory;
-
+			var dataDirectory = FwDirectoryFinder.ProjectsDirectory;
 			// Get the database directory attributes:
 			var dir = new DirectoryInfo(dataDirectory);
 
-			// See if the dirctory is missing, compressed or encrypted:
+			// See if the directory is missing, compressed or encrypted:
 			while (!dir.Exists)
 			{
-				if (MessageBox.Show(string.Format(FwCoreDlgs.ksNLPFolderDoesNotExist, dataDirectory),
-									FwCoreDlgs.ksNLPFolderError, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
+				if (MessageBox.Show(string.Format(FwCoreDlgs.ksNLPFolderDoesNotExist, dataDirectory), FwCoreDlgs.ksNLPFolderError, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
+				{
 					return false; // can't go on.
+				}
+
 				using (var dlg = new ProjectLocationDlg(helpTopicProvider))
 				{
 					if (dlg.ShowDialog(f) != DialogResult.OK)
+					{
 						return false; // can't go on.
-					if (FwDirectoryFinder.ProjectsDirectoryLocalMachine == dlg.ProjectsFolder)
-					{
-						//Remove the user override since they reset to the default.
-						FwDirectoryFinder.ProjectsDirectory = null;
 					}
-					else
-					{
-						FwDirectoryFinder.ProjectsDirectory = dlg.ProjectsFolder;
-					}
+					FwDirectoryFinder.ProjectsDirectory = FwDirectoryFinder.ProjectsDirectoryLocalMachine == dlg.ProjectsFolder ? null : dlg.ProjectsFolder;
 				}
 				dataDirectory = FwDirectoryFinder.ProjectsDirectory;
 				dir = new DirectoryInfo(dataDirectory);
-				// loop on the offchance it didn't get created.
+				// loop on the off chance it didn't get created.
 			}
 			if ((dir.Attributes & FileAttributes.Compressed) == FileAttributes.Compressed)
+			{
 				warning = FwCoreDlgs.ksNLPFolderCompressed;
+			}
 			else if ((dir.Attributes & FileAttributes.Encrypted) == FileAttributes.Encrypted)
+			{
 				warning = FwCoreDlgs.ksNLPFolderEncrypted;
-
+			}
 			if (warning != null)
 			{
-				MessageBox.Show(string.Format(warning, dataDirectory),
-								FwCoreDlgs.ksNLPFolderError, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
+				MessageBox.Show(string.Format(warning, dataDirectory), FwCoreDlgs.ksNLPFolderError, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return false; // Cannot continue from here.
 			}
 			return true; // all is well.
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Shows the dialog as a modal dialog
 		/// </summary>
-		/// <returns>A DialogResult value</returns>
-		/// ------------------------------------------------------------------------------------
 		public int DisplayDialog()
 		{
 			return (int)DisplayDialog(null);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Set the dialog properties object for dialogs that are created.
 		/// </summary>
-		/// <param name="helpTopicProvider"></param>
-		/// ------------------------------------------------------------------------------------
 		public void SetDialogProperties(IHelpTopicProvider helpTopicProvider)
 		{
 			m_helpTopicProvider = helpTopicProvider;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Retrieve the name of the database created for the new language project.
 		/// </summary>
-		/// <returns>string containing the database name</returns>
-		/// ------------------------------------------------------------------------------------
 		public string GetDatabaseFile()
 		{
-			return m_dbFile;
+			return DatabaseName;
 		}
 		#endregion // Interface methods
 
 		#region misc. methods
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+
+		/// <summary />
 		private void UpdateLanguageCombos()
 		{
 			var wsSaveVern = (CoreWritingSystemDefinition)m_cbVernWrtSys.SelectedItem;
@@ -850,7 +756,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			// Make sure our manager knows about any writing systems in the template folder.
 			// In pathological cases where no projects have been installed these might not be in the global store.
-			foreach (string templateLangFile in Directory.GetFiles(FwDirectoryFinder.TemplateDirectory, @"*.ldml"))
+			foreach (var templateLangFile in Directory.GetFiles(FwDirectoryFinder.TemplateDirectory, @"*.ldml"))
 			{
 				var id = Path.GetFileNameWithoutExtension(templateLangFile);
 				CoreWritingSystemDefinition dummy;
@@ -858,7 +764,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			m_wsManager.Save();
 
-			foreach (CoreWritingSystemDefinition ws in m_wsManager.WritingSystems)
+			foreach (var ws in m_wsManager.WritingSystems)
 			{
 				m_cbAnalWrtSys.Items.Add(ws);
 				m_cbVernWrtSys.Items.Add(ws);
@@ -887,15 +793,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_cbAnalWrtSys.EndUpdate();
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		/// <param name="comboWS">Combo box containing the list of writing systems</param>
 		/// <param name="defaultName">project name, or null</param>
-		/// ------------------------------------------------------------------------------------
-		private CoreWritingSystemDefinition[] DisplayNewWritingSystemProperties(ComboBox comboWS,
-			string defaultName)
+		private CoreWritingSystemDefinition[] DisplayNewWritingSystemProperties(ComboBox comboWS, string defaultName)
 		{
 			IWritingSystemContainer wsContainer = new MemoryWritingSystemContainer(m_wsManager.WritingSystems, m_wsManager.WritingSystems,
 				Enumerable.Empty<CoreWritingSystemDefinition>(), Enumerable.Empty<CoreWritingSystemDefinition>(), Enumerable.Empty<CoreWritingSystemDefinition>());
@@ -904,7 +805,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				false, defaultName, out newWritingSystems))
 			{
 				UpdateLanguageCombos();
-				string selectedWsId = newWritingSystems.First().Id;
+				var selectedWsId = newWritingSystems.First().Id;
 				comboWS.SelectedItem = comboWS.Items.Cast<CoreWritingSystemDefinition>().First(ws => ws.Id == selectedWsId);
 				return newWritingSystems.ToArray();
 			}

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,12 +9,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// <summary>
 	/// A warning dialog that we can't quite do with MessageBox because custom text is required for the "Yes" button.
 	/// </summary>
-	public partial class DeleteWritingSystemWarningDialog : Form
+	internal sealed partial class DeleteWritingSystemWarningDialog : Form
 	{
-		/// <summary>
-		/// Grrr....make one.
-		/// </summary>
-		public DeleteWritingSystemWarningDialog()
+		/// <summary />
+		internal DeleteWritingSystemWarningDialog()
 		{
 			InitializeComponent();
 			warningIconBox.BackgroundImageLayout = ImageLayout.Center;

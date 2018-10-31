@@ -7,9 +7,9 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -20,10 +20,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	{
 		#region Data members
 		/// <summary>
-		/// Use this to do the Add/RemoveNotifications, since it can be used in the unmanged
+		/// Use this to do the Add/RemoveNotifications, since it can be used in the unmanaged
 		/// section of Dispose. (If m_sda is COM, that is.)
 		/// Doing it there will be safer, since there was a risk of it not being removed
-		/// in the mananged section, as when disposing was done by the Finalizer.
+		/// in the managed section, as when disposing was done by the Finalizer.
 		/// </summary>
 		private ISilDataAccess m_sda;
 
@@ -34,9 +34,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		#region Construction
-		/// <summary>
-		/// Default Constructor
-		/// </summary>
+
+		/// <summary />
 		public FwLabel()
 		{
 			m_innerFwTextBox = new InnerFwTextBox { ReadOnlyView = true };
@@ -55,9 +54,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		#region Overrides
-		/// <summary>
-		/// Raises the <see cref="E:System.Windows.Forms.Control.Paint"></see> event.
-		/// </summary>
+
+		/// <inheritdoc />
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);
@@ -71,18 +69,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			renderer.DrawBackground(e.Graphics, ClientRectangle, e.ClipRectangle);
 		}
 
-		/// <summary>
-		/// Raises the <see cref="E:System.Windows.Forms.Control.TextChanged"></see> event.
-		/// </summary>
+		/// <inheritdoc />
 		protected override void OnTextChanged(EventArgs e)
 		{
 			base.OnTextChanged(e);
 			AlignText();
 		}
 
-		/// <summary>
-		/// Raises the <see cref="E:System.Windows.Forms.Control.Resize"/> event.
-		/// </summary>
+		/// <inheritdoc />
 		protected override void OnResize(EventArgs e)
 		{
 			base.OnResize(e);
@@ -101,31 +95,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		#region IDisposable Members
 
-		/// <summary>
-		/// Executes in two distinct scenarios.
-		/// 1. If disposing is true, the method has been called directly
-		/// or indirectly by a user's code via the Dispose method.
-		/// Both managed and unmanaged resources can be disposed.
-		/// 2. If disposing is false, the method has been called by the
-		/// runtime from inside the finalizer and you should not reference (access)
-		/// other managed objects, as they already have been garbage collected.
-		/// Only unmanaged resources can be disposed.
-		/// </summary>
-		/// <param name="disposing">true to release both managed and unmanaged resources; false
-		/// to release only unmanaged resources.</param>
-		/// <remarks>
-		/// If any exceptions are thrown, that is fine.
-		/// If the method is being done in a finalizer, it will be ignored.
-		/// If it is thrown by client code calling Dispose,
-		/// it needs to be handled by fixing the bug.
-		/// If subclasses override this method, they should call the base implementation.
-		/// </remarks>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -262,8 +238,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Generally it is preferred to use the Tss property, giving access to the full
 		/// styled string.
 		/// </summary>
-		[BrowsableAttribute(true)]
-		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Visible)]
+		[Browsable(true), DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
 		public override string Text
 		{
 			get
@@ -334,8 +309,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// The stylesheet used for the data being displayed.
 		/// </summary>
-		[Browsable(true)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(true), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public IVwStylesheet StyleSheet
 		{
 			get
@@ -364,27 +338,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 		#endregion // Properties
-
-		#region Other public methods
-		/// <summary>
-		/// Creates a bitmap and renders the text in this FwTextBox in the bitmap.
-		/// </summary>
-		/// <param name="rect">The rectangle that specifies the width and height of the bitmap.
-		/// </param>
-		/// <returns>A bitmap representation of the text in this FwTextBox.</returns>
-		public Bitmap CreateBitmapOfText(Rectangle rect)
-		{
-			var bitmap = new Bitmap(rect.Width, rect.Height);
-			var selState = m_innerFwTextBox.RootBox.SelectionState;
-			m_innerFwTextBox.RootBox.Activate(VwSelectionState.vssDisabled);
-
-			DrawToBitmap(bitmap, rect);
-
-			m_innerFwTextBox.RootBox.Activate(selState);
-
-			return bitmap;
-		}
-		#endregion
 
 		#region Helper methods
 		/// <summary>

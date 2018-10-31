@@ -1,13 +1,15 @@
-// Copyright (c) 2014 SIL International
+// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Windows.Forms;
 using SIL.LCModel;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
+#if RANDYTODO
+	// TODO: Move to: LanguageExplorer.Areas
+#endif
 	/// <summary>Class for core dialogs that can be implemented using a simple MessageBox</summary>
 	public static class MessageBoxes
 	{
@@ -20,8 +22,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var itemString = target is ILexEntry ? FwCoreDlgs.ksEntry : FwCoreDlgs.ksSense;
 			var msgTemplate = startedFromComplex ? FwCoreDlgs.ksComponentIsComponent : FwCoreDlgs.ksComplexFormIsComponent;
-			var startedFrom = startedFromComplex ? ((ILexEntry) parent).HeadWord.Text : target.ShortName;
-			var msg = String.Format(msgTemplate, itemString, startedFrom);
+			var startedFrom = startedFromComplex ? ((ILexEntry)parent).HeadWord.Text : target.ShortName;
+			var msg = string.Format(msgTemplate, itemString, startedFrom);
 			MessageBox.Show(Form.ActiveForm, msg, FwCoreDlgs.ksWhichIsComponent, MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
 	}

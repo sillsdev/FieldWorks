@@ -8,9 +8,7 @@ using SilEncConverters40;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
-	/// <summary>
-	/// Summary description for AdvancedEncProps.
-	/// </summary>
+	/// <summary />
 	public class AdvancedEncProps : UserControl
 	{
 		private System.Windows.Forms.ListView lvConverterInfo;
@@ -18,50 +16,31 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.Container components = null;
+		/// <summary />
+		public EncConverters Converters { get; set; }
 
-		EncConverters m_encConverters;
-
-		/// <summary></summary>
-		public EncConverters Converters
-		{
-			get
-			{
-				return m_encConverters;
-			}
-			set
-			{
-				m_encConverters = value;
-			}
-		}
-
-		/// <summary></summary>
+		/// <summary />
 		public AdvancedEncProps()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
-
-			// TODO: Add any initialization after the InitializeComponent call
-
 		}
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
+		/// <inheritdoc />
+		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
 			if (IsDisposed)
-				return;
-
-			if( disposing )
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
+				// No need to run it more than once.
+				return;
 			}
-			base.Dispose( disposing );
+
+			if (disposing)
+			{
+				components?.Dispose();
+			}
+			base.Dispose(disposing);
 		}
 
 		#region Component Designer generated code
@@ -114,26 +93,25 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 		#endregion
 
-		/// <summary></summary>
+		/// <summary />
 		public void SelectMapping(string mapname)
 		{
-			IEncConverter ec =  (IEncConverter)m_encConverters[mapname];
-
+			var ec = (IEncConverter)Converters[mapname];
 			lvConverterInfo.Items.Clear();
 
-			lvConverterInfo.Items.Add(new ListViewItem(new string[] {"CodePageInput", ec.CodePageInput.ToString()}));
-			lvConverterInfo.Items.Add(new ListViewItem(new string[] {"CodePageOutput", ec.CodePageOutput.ToString()}));
-			lvConverterInfo.Items.Add(new ListViewItem(new string[] {"Type", ec.ConversionType.ToString()}));
-			lvConverterInfo.Items.Add(new ListViewItem(new string[] {"Identifier", ec.ConverterIdentifier}));
-			lvConverterInfo.Items.Add(new ListViewItem(new string[] {"DirectionForward", ec.DirectionForward.ToString()}));
-			lvConverterInfo.Items.Add(new ListViewItem(new string[] {"EncodingIn", ec.EncodingIn.ToString()}));
-			lvConverterInfo.Items.Add(new ListViewItem(new string[] {"EncodingOut", ec.EncodingOut.ToString()}));
-			lvConverterInfo.Items.Add(new ListViewItem(new string[] {"ImplementType", ec.ImplementType}));
-			lvConverterInfo.Items.Add(new ListViewItem(new string[] {"ProcessType", ec.ProcessType.ToString()}));
-			lvConverterInfo.Items.Add(new ListViewItem(new string[] {"LeftEncodingID", ec.LeftEncodingID}));
-			lvConverterInfo.Items.Add(new ListViewItem(new string[] {"RightEncodingID", ec.RightEncodingID}));
-			lvConverterInfo.Items.Add(new ListViewItem(new string[] {"NormalizeOutput", ec.NormalizeOutput.ToString()}));
-			lvConverterInfo.Items.Add(new ListViewItem(new string[] {"ProgramID", ec.ProgramID}));
+			lvConverterInfo.Items.Add(new ListViewItem(new[] { "CodePageInput", ec.CodePageInput.ToString() }));
+			lvConverterInfo.Items.Add(new ListViewItem(new[] { "CodePageOutput", ec.CodePageOutput.ToString() }));
+			lvConverterInfo.Items.Add(new ListViewItem(new[] { "Type", ec.ConversionType.ToString() }));
+			lvConverterInfo.Items.Add(new ListViewItem(new[] { "Identifier", ec.ConverterIdentifier }));
+			lvConverterInfo.Items.Add(new ListViewItem(new[] { "DirectionForward", ec.DirectionForward.ToString() }));
+			lvConverterInfo.Items.Add(new ListViewItem(new[] { "EncodingIn", ec.EncodingIn.ToString() }));
+			lvConverterInfo.Items.Add(new ListViewItem(new[] { "EncodingOut", ec.EncodingOut.ToString() }));
+			lvConverterInfo.Items.Add(new ListViewItem(new[] { "ImplementType", ec.ImplementType }));
+			lvConverterInfo.Items.Add(new ListViewItem(new[] { "ProcessType", ec.ProcessType.ToString() }));
+			lvConverterInfo.Items.Add(new ListViewItem(new[] { "LeftEncodingID", ec.LeftEncodingID }));
+			lvConverterInfo.Items.Add(new ListViewItem(new[] { "RightEncodingID", ec.RightEncodingID }));
+			lvConverterInfo.Items.Add(new ListViewItem(new[] { "NormalizeOutput", ec.NormalizeOutput.ToString() }));
+			lvConverterInfo.Items.Add(new ListViewItem(new[] { "ProgramID", ec.ProgramID }));
 		}
 	}
 }

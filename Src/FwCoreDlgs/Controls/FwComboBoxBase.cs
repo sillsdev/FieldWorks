@@ -32,10 +32,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		#region Data members
 
 		/// <summary>
-		/// Use this to do the Add/RemoveNotifications, since it can be used in the unmanged section of Dispose.
+		/// Use this to do the Add/RemoveNotifications, since it can be used in the unmanaged section of Dispose.
 		/// (If m_sda is COM, that is.)
 		/// Doing it there will be safer, since there was a risk of it not being removed
-		/// in the mananged section, as when disposing was done by the Finalizer.
+		/// in the managed section, as when disposing was done by the Finalizer.
 		/// </summary>
 		private ISilDataAccess m_sda;
 
@@ -153,13 +153,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
-			// m_sda COM object block removed due to crash in Finializer thread LT-6124
+			// m_sda COM object block removed due to crash in Finalizer thread LT-6124
 
 			if (disposing)
 			{
@@ -202,8 +202,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// Gets the state.
 		/// </summary>
-		[Browsable(false),
-		 DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public ComboBoxState State
 		{
 			get
@@ -229,17 +228,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// Gets a value indicating whether a combo box can be rendered as a button.
 		/// </summary>
-		internal static bool SupportsButtonStyle
-		{
-			get
-			{
-				if (!Application.RenderWithVisualStyles)
-				{
-					return false;
-				}
-				return VisualStyleRenderer.IsElementDefined(VisualStyleElement.CreateElement(COMBOBOX_CLASS, CP_READONLY, (int)ComboBoxState.Normal));
-			}
-		}
+		internal static bool SupportsButtonStyle => Application.RenderWithVisualStyles && VisualStyleRenderer.IsElementDefined(VisualStyleElement.CreateElement(COMBOBOX_CLASS, CP_READONLY, (int)ComboBoxState.Normal));
 
 		private Rectangle ContentRectangle
 		{
@@ -289,7 +278,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// Gets or sets the border style of the tree view control.
 		/// </summary>
-		/// <value></value>
 		/// <returns>
 		/// One of the <see cref="T:System.Windows.Forms.BorderStyle"/> values. The default is <see cref="F:System.Windows.Forms.BorderStyle.Fixed3D"/>.
 		/// </returns>
@@ -299,8 +287,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <PermissionSet>
 		/// 	<IPermission class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Unrestricted="true"/>
 		/// </PermissionSet>
-		[Browsable(false),
-		 DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public new BorderStyle BorderStyle
 		{
 			get
@@ -321,15 +308,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// Gets or sets padding within the control. This adjusts the padding around the text.
 		/// </summary>
-		/// <value></value>
 		/// <returns>
 		/// A <see cref="T:System.Windows.Forms.Padding"/> representing the control's internal spacing characteristics.
 		/// </returns>
 		/// <PermissionSet>
 		/// 	<IPermission class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Unrestricted="true"/>
 		/// </PermissionSet>
-		[Browsable(false),
-		 DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public new Padding Padding
 		{
 			get
@@ -435,9 +420,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		/// <summary>
-		/// Raises the <see cref="E:System.Windows.Forms.Control.Paint"/> event.
-		/// </summary>
+		/// <inheritdoc />
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);
@@ -467,8 +450,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// Gets or sets the style sheet.
 		/// </summary>
-		[Browsable(false),
-		 DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual IVwStylesheet StyleSheet
 		{
 			get
@@ -484,7 +466,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary />
 		public static int ComboHeight => 21;
 
-		/// <summary />
+		/// <inheritdoc />
 		protected override Size DefaultSize => new Size(100, ComboHeight);
 
 		/// <summary>
@@ -493,11 +475,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public abstract object SelectedItem { get; set; }
 
-		/// <summary>
-		/// Changes the default on BackColor, and copies it to the embedded window.
-		/// </summary>
-		// Doesn't work because value is not a constant.
-		//[ DefaultValueAttribute(SystemColors.Window) ]
+		/// <inheritdoc />
 		public override Color BackColor
 		{
 			get
@@ -515,9 +493,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		/// <summary>
-		/// Copy this to the embedded window.
-		/// </summary>
+		/// <inheritdoc />
 		public override Color ForeColor
 		{
 			get
@@ -542,8 +518,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// Generally it is preferred to use the Tss property, giving access to the full
 		/// styled string.
 		/// </summary>
-		[Browsable(true),
-		 DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+		[Browsable(true), DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
 		public override string Text
 		{
 			get
@@ -891,7 +866,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				if (m_dropDownBox.LaunchingForm == null)
 				{
 					Control parent = this;
-					Form launcher = parent as Form;
+					var launcher = parent as Form;
 					while (parent != null && launcher == null)
 					{
 						parent = parent.Parent;
@@ -929,7 +904,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			DropDown?.Invoke(this, new EventArgs());
 		}
 
-		void SetTextBoxHighlight()
+		private void SetTextBoxHighlight()
 		{
 			// change control to highlight state.
 			if (m_dropDownStyle == ComboBoxStyle.DropDownList)
@@ -954,7 +929,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			Invalidate(true);
 		}
 
-		void RemoveTextBoxHighlight()
+		private void RemoveTextBoxHighlight()
 		{
 			if (m_dropDownStyle == ComboBoxStyle.DropDownList)
 			{
@@ -1048,10 +1023,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			RemoveTextBoxHighlight();
 		}
 
-		/// <summary>
-		/// Raises the <see cref="E:System.Windows.Forms.Control.EnabledChanged"/> event.
-		/// </summary>
-		/// <param name="e">An <see cref="T:System.EventArgs"/> that contains the event data.</param>
+		/// <inheritdoc />
 		protected override void OnEnabledChanged(EventArgs e)
 		{
 			base.OnEnabledChanged(e);

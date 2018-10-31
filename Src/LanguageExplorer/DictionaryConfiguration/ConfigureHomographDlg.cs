@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -141,14 +141,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 				m_cache.WritingSystemFactory.get_EngineOrNull(m_cache.DefaultUserWs).RightToLeftScript,
 				m_cache.ServiceLocator.WritingSystems.AllWritingSystems.Any(ws => ws.RightToLeftScript),
 				m_stylesheet.GetDefaultBasedOnStyleName(),
-				0,		// customUserLevel
 				m_app.MeasurementSystem,
 				styleName, //m_stylesheet.GetDefaultBasedOnStyleName(),
 				styleName,
-				0,		// hvoRootObject
 				m_app, m_helpTopicProvider))
 			{
-				dlg.ShowTEStyleTypes = false;
 				dlg.CanSelectParagraphBackgroundColor = false;
 				if (dlg.ShowDialog(this) == DialogResult.OK && dlg.ChangeType != StyleChangeType.None)
 				{

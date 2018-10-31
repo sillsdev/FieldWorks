@@ -7,18 +7,16 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.WritingSystems;
-using System.Text.RegularExpressions;
 
 namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
-	/// <summary>
-	/// Summary description for RegionVariantControl.
-	/// </summary>
+	/// <summary />
 	public class RegionVariantControl : UserControl
 	{
 		private Label m_variantNameLabel;
@@ -60,23 +58,19 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		private bool m_enableLangTagSideEffects = true;
 
-
-
 		/// <summary>
 		/// We need an event to let the parents control know when comboBox values have changed
 		/// </summary>
 		public event EventHandler ScriptRegionVariantChanged;
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
+		/// <summary />
 		public RegionVariantControl()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
 		}
 
-		/// <summary/>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
@@ -245,11 +239,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		}
 
 		/// <summary>
-		/// Indicates whether the Region or Variant or Script name has changed in the control since initialization.
-		/// </summary>
-		public bool RegionOrVariantOrScriptChanged => m_ws.Region != m_origRegionSubtag || !m_ws.Variants.SequenceEqual(m_origVariantSubtags) || m_ws.Script != m_origScriptSubtag;
-
-		/// <summary>
 		/// Gets or sets the script subtag.
 		/// </summary>
 		public ScriptSubtag ScriptSubtag
@@ -308,7 +297,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// Gets or sets the region subtag.
 		/// </summary>
-		/// <value>The region subtag.</value>
 		public RegionSubtag RegionSubtag
 		{
 			get
@@ -320,7 +308,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 					if (!string.IsNullOrEmpty(code))
 					{
 						subtag = new RegionSubtag(code, m_regionName.Text.Trim());
-				}
+					}
 				}
 				else
 				{
@@ -377,8 +365,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 						foreach (var variantSubtag in variantSubtags)
 						{
 							yield return variantSubtag;
+						}
 					}
-				}
 				}
 				else
 				{
@@ -411,13 +399,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 						switch (variantSubtags.Length)
 						{
 							case 1:
-							variantSubtag = variantSubtags[0];
+								variantSubtag = variantSubtags[0];
 								break;
 							case 2:
 								if (variantSubtags[1] == WellKnownSubtags.IpaPhonemicPrivateUse || variantSubtags[1] == WellKnownSubtags.IpaPhoneticPrivateUse)
-						{
-								variantSubtag = variantSubtags[1];
-						}
+								{
+									variantSubtag = variantSubtags[1];
+								}
 								break;
 						}
 					}
@@ -511,7 +499,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			if (!directed)
 			{
 				SelectNextControl(null, forward, true, true, false);
-		}
+			}
 		}
 
 		/// <summary>
@@ -712,20 +700,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			if (m_enableLangTagSideEffects)
 			{
 				DoSideEffectsOfChangingScriptTag();
-		}
-		}
-
-		/// <summary>
-		/// Turn on or off certain side effects of changing the various components of the language tag.
-		/// Turning on runs the code that normally does the side effects at once.
-		/// </summary>
-		void EnableLangTagSideEffects(bool enable)
-		{
-			m_enableLangTagSideEffects = enable;
-			if (enable)
-			{
-				DoSideEffectsOfChangingScriptTag();
-		}
+			}
 		}
 
 		private void DoSideEffectsOfChangingScriptTag()
@@ -776,7 +751,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			if (m_enableLangTagSideEffects)
 			{
 				DoSideEffectsOfChangingScriptTag();
-		}
+			}
 		}
 
 		/// <summary>
@@ -861,7 +836,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				m_ws.IsVoice = false;
 
 				// Safest to set AFTER we turn off IsVoice, but BEFORE we change the script, to avoid
-				// a tempoarty invalid state. But we can't, too bad, it's invalid until this line.
+				// a temporary invalid state. But we can't, too bad, it's invalid until this line.
 				m_ws.Variants.Clear();
 				foreach (var variantSubtag in variantSubtags)
 				{
@@ -922,8 +897,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 					if (sb.Length == maxLen)
 					{
 						break;
+					}
 				}
-			}
 			}
 			return sb.ToString();
 		}
@@ -935,7 +910,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		private static bool IsValidAbbrChar(char ch)
 		{
-			return (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || ch == '-' || (ch >= 'a' && ch <= 'z');
+			return ch >= 'A' && ch <= 'Z' || ch >= '0' && ch <= '9' || ch == '-' || ch >= 'a' && ch <= 'z';
 		}
 
 		private void m_scriptCode_TextChanged(object sender, EventArgs e)
@@ -945,7 +920,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			if (m_enableLangTagSideEffects)
 			{
 				DoSideEffectsOfChangingScriptTag();
-		}
+			}
 		}
 
 		private void m_regionCode_TextChanged(object sender, EventArgs e)
@@ -955,7 +930,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			if (m_enableLangTagSideEffects)
 			{
 				DoSideEffectsOfChangingScriptTag();
-		}
+			}
 		}
 
 		private void m_variantCode_TextChanged(object sender, EventArgs e)

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!--
 	Microsoft ResX Schema
@@ -321,31 +321,31 @@
   <data name="&gt;&gt;m_addCnvtrTabCtrl.ZOrder" xml:space="preserve">
 	<value>6</value>
   </data>
-  <data name="m_converterTest.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+  <data name="_converterTrial.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
 	<value>Fill</value>
   </data>
-  <data name="m_converterTest.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="_converterTrial.Location" type="System.Drawing.Point, System.Drawing">
 	<value>0, 0</value>
   </data>
-  <data name="m_converterTest.ShowHelp" type="System.Boolean, mscorlib">
+  <data name="_converterTrial.ShowHelp" type="System.Boolean, mscorlib">
 	<value>False</value>
   </data>
-  <data name="m_converterTest.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="_converterTrial.Size" type="System.Drawing.Size, System.Drawing">
 	<value>342, 260</value>
   </data>
-  <data name="m_converterTest.TabIndex" type="System.Int32, mscorlib">
+  <data name="_converterTrial.TabIndex" type="System.Int32, mscorlib">
 	<value>0</value>
   </data>
-  <data name="&gt;&gt;m_converterTest.Name" xml:space="preserve">
-	<value>m_converterTest</value>
+  <data name="&gt;&gt;_converterTrial.Name" xml:space="preserve">
+	<value>_converterTrial</value>
   </data>
-  <data name="&gt;&gt;m_converterTest.Type" xml:space="preserve">
+  <data name="&gt;&gt;_converterTrial.Type" xml:space="preserve">
 	<value>SIL.FieldWorks.FwCoreDlgs.ConverterTest, FwCoreDlgs, Version=7.0.6.26928, Culture=neutral, PublicKeyToken=null</value>
   </data>
-  <data name="&gt;&gt;m_converterTest.Parent" xml:space="preserve">
+  <data name="&gt;&gt;_converterTrial.Parent" xml:space="preserve">
 	<value>testTab</value>
   </data>
-  <data name="&gt;&gt;m_converterTest.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;_converterTrial.ZOrder" xml:space="preserve">
 	<value>0</value>
   </data>
   <data name="testTab.Location" type="System.Drawing.Point, System.Drawing">

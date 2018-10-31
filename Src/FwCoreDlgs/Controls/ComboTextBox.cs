@@ -33,9 +33,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			BackColor = SystemColors.Window;
 		}
 
-		/// <summary>
-		/// Override to prevent scrolling in DropDownList mode.
-		/// </summary>
+		/// <inheritdoc />
 		public override bool ScrollSelectionIntoView(IVwSelection sel, VwScrollSelOpts scrollOption)
 		{
 			if (m_comboBox != null && m_comboBox.DropDownStyle == ComboBoxStyle.DropDownList)
@@ -89,9 +87,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			DataAccess.AddNotification(m_comboBox);
 		}
 
-		/// <summary>
-		/// Raises the <see cref="E:Paint"/> event.
-		/// </summary>
+		/// <inheritdoc />
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			if (Application.RenderWithVisualStyles)
@@ -111,9 +107,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			PerformLayout();
 		}
 
-		/// <summary>
-		/// Raises the <see cref="E:System.Windows.Forms.Control.MouseEnter"/> event.
-		/// </summary>
+		/// <inheritdoc />
 		protected override void OnMouseEnter(EventArgs e)
 		{
 			base.OnMouseEnter(e);
@@ -123,9 +117,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		/// <summary>
-		/// Raises the <see cref="E:System.Windows.Forms.Control.MouseLeave"/> event.
-		/// </summary>
+		/// <inheritdoc />
 		protected override void OnMouseLeave(EventArgs e)
 		{
 			base.OnMouseLeave(e);
@@ -135,9 +127,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		/// <summary>
-		/// Raises the <see cref="E:System.Windows.Forms.Control.MouseUp"/> event.
-		/// </summary>
+		/// <inheritdoc />
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
 			base.OnMouseUp(e);

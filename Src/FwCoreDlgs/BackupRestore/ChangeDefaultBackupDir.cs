@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -21,20 +21,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 
 		#endregion
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
+		/// <summary />
 		private ChangeDefaultBackupDir()
 		{
 			InitializeComponent();
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ChangeDefaultBackupDir"/> class.
-		/// </summary>
-		/// <param name="helpTopicProvider"></param>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public ChangeDefaultBackupDir(IHelpTopicProvider helpTopicProvider)
 			: this()
 		{

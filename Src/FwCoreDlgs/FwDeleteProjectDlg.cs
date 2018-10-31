@@ -2,23 +2,17 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Resources;
 using SIL.LCModel;
-using System.IO;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
-	#region FwDeleteProjectDlg class
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// Summary description for FwDeleteProjectDlg.
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	public class FwDeleteProjectDlg : Form
 	{
 		private ListBox m_lstProjects;
@@ -31,28 +25,27 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="FwDeleteProjectDlg"/> class.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public FwDeleteProjectDlg(ICollection<string> projectsOpen)
 		{
 			AccessibleName = GetType().Name;
 			InitializeComponent();
 
 			// Get information on all the projects in the current server.
-			IEnumerable<ProjectInfo> projectList = GetLocalProjects(projectsOpen);
-
+			var projectList = GetLocalProjects(projectsOpen);
 			// Fill in the list controls
 			m_lstProjects.Items.Clear();
 			m_lstProjectsInUse.Items.Clear();
-			foreach (ProjectInfo info in projectList)
+			foreach (var info in projectList)
 			{
 				if (info.InUse)
+				{
 					m_lstProjectsInUse.Items.Add(info);
+				}
 				else
+				{
 					m_lstProjects.Items.Add(info);
+				}
 			}
 		}
 
@@ -60,55 +53,44 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			// ProjectInfo.AllProjects doesn't set the InUse flag, which is why we
 			// pass a list of open projects to the dialog constructor.
-			List<ProjectInfo> projectList = ProjectInfo.GetAllProjects(FwDirectoryFinder.ProjectsDirectory);
-			foreach (ProjectInfo info in projectList.Where(info => projectsOpen.Contains(info.DatabaseName)))
+			var projectList = ProjectInfo.GetAllProjects(FwDirectoryFinder.ProjectsDirectory);
+			foreach (var info in projectList.Where(info => projectsOpen.Contains(info.DatabaseName)))
+			{
 				info.InUse = true;
+			}
 			return projectList;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Set the dialog properties object for dialogs that are created.
 		/// </summary>
-		/// <param name="helpTopicProvider"></param>
-		/// ------------------------------------------------------------------------------------
 		public void SetDialogProperties(IHelpTopicProvider helpTopicProvider)
 		{
 			m_helpTopicProvider = helpTopicProvider;
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		/// <param name="disposing"><c>true</c> to release both managed and unmanaged
-		/// resources; <c>false</c> to release only unmanaged resources.
-		/// </param>
-		/// ------------------------------------------------------------------------------------
-		protected override void Dispose( bool disposing )
+		/// <inheritdoc />
+		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
 			if (IsDisposed)
-				return;
-
-			if( disposing )
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
+				// No need to run it more than once.
+				return;
 			}
-			base.Dispose( disposing );
+
+			if (disposing)
+			{
+				components?.Dispose();
+			}
+			base.Dispose(disposing);
 		}
 
 		#region Windows Form Designer generated code
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void InitializeComponent()
 		{
 			System.Windows.Forms.Button m_btnExit;
@@ -202,51 +184,40 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 		#endregion
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		private void m_lstProjects_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			m_btnDelete.Enabled = (((ListBox)sender).SelectedItems.Count > 0);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Display help for this dialog box.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
 		private void m_btnHelp_Click(object sender, System.EventArgs e)
 		{
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "khtpDeleteProj");
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handle a click on the Delete button - delete a project.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
 		private void m_btnDelete_Click(object sender, System.EventArgs e)
 		{
 			if (m_lstProjects.SelectedItems.Count == 0)
+			{
 				return;
-
+			}
 			// Make a copy of the selected items so we can iterate through them, deleting
 			// from the list box and maintaining the integrity of the collection being iterated.
-			List<ProjectInfo> itemsToDelete = new List<ProjectInfo>();
+			var itemsToDelete = new List<ProjectInfo>();
 			foreach (ProjectInfo info in m_lstProjects.SelectedItems)
-				itemsToDelete.Add(info);
-			foreach (ProjectInfo info in itemsToDelete)
 			{
-				string folder = Path.Combine(FwDirectoryFinder.ProjectsDirectory, info.DatabaseName);
-				bool fExtraData = CheckForExtraData(info, folder);
+				itemsToDelete.Add(info);
+			}
+			foreach (var info in itemsToDelete)
+			{
+				var folder = Path.Combine(FwDirectoryFinder.ProjectsDirectory, info.DatabaseName);
+				var fExtraData = CheckForExtraData(info, folder);
 				string msg;
 				MessageBoxButtons buttons;
 				if (fExtraData)
@@ -259,11 +230,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					msg = ResourceHelper.FormatResourceString("kstidConfirmDeleteProject", info.DatabaseName);
 					buttons = MessageBoxButtons.OKCancel;
 				}
-				DialogResult result = MessageBox.Show(msg,
-					ResourceHelper.GetResourceString("kstidDeleteProjCaption"),
-					buttons);
+				var result = MessageBox.Show(msg, ResourceHelper.GetResourceString("kstidDeleteProjCaption"), buttons);
 				if (result == DialogResult.Cancel)
+				{
 					continue;
+				}
 				try
 				{
 					if (result == DialogResult.Yes || result == DialogResult.OK)
@@ -272,38 +243,50 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					}
 					else
 					{
-						string path = Path.Combine(folder, info.DatabaseName + LcmFileHelper.ksFwDataXmlFileExtension);
+						var path = Path.Combine(folder, info.DatabaseName + LcmFileHelper.ksFwDataXmlFileExtension);
 						if (File.Exists(path))
+						{
 							File.Delete(path);
+						}
 						path = Path.ChangeExtension(path, LcmFileHelper.ksFwDataFallbackFileExtension);
 						if (File.Exists(path))
+						{
 							File.Delete(path);
+						}
 						path = Path.Combine(folder, LcmFileHelper.ksWritingSystemsDir);
 						if (Directory.Exists(path))
+						{
 							Directory.Delete(path, true);
+						}
 						path = Path.Combine(folder, LcmFileHelper.ksBackupSettingsDir);
 						if (Directory.Exists(path))
+						{
 							Directory.Delete(path, true);
+						}
 						path = Path.Combine(folder, LcmFileHelper.ksConfigurationSettingsDir);
 						if (Directory.Exists(path))
+						{
 							Directory.Delete(path, true);
+						}
 						path = Path.Combine(folder, LcmFileHelper.ksSortSequenceTempDir);
 						if (Directory.Exists(path))
+						{
 							Directory.Delete(path, true);
-						string[] folders = Directory.GetDirectories(folder);
-						foreach (string dir in folders)
+						}
+						var folders = Directory.GetDirectories(folder);
+						foreach (var dir in folders)
 						{
 							if (!FolderContainsFiles(dir))
+							{
 								Directory.Delete(dir, true);
+							}
 						}
 					}
 				}
 				catch
 				{
-					MessageBox.Show(this,
-						String.Format(ResourceHelper.GetResourceString("kstidDeleteProjError"), info.DatabaseName),
-						ResourceHelper.GetResourceString("kstidDeleteProjCaption"),
-						MessageBoxButtons.OK);
+					MessageBox.Show(this, string.Format(ResourceHelper.GetResourceString("kstidDeleteProjError"), info.DatabaseName),
+						ResourceHelper.GetResourceString("kstidDeleteProjCaption"), MessageBoxButtons.OK);
 				}
 				m_lstProjects.Items.Remove(info);
 			}
@@ -311,10 +294,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private static bool CheckForExtraData(ProjectInfo info, string folder)
 		{
-			string[] folders = Directory.GetDirectories(folder);
-			foreach (string dir in folders)
+			var folders = Directory.GetDirectories(folder);
+			foreach (var dir in folders)
 			{
-				string name = Path.GetFileName(dir);
+				var name = Path.GetFileName(dir);
 				if (name == LcmFileHelper.ksWritingSystemsDir ||
 					name == LcmFileHelper.ksBackupSettingsDir ||
 					name == LcmFileHelper.ksConfigurationSettingsDir ||
@@ -323,16 +306,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					continue;
 				}
 				if (FolderContainsFiles(dir))
+				{
 					return true;
+				}
 			}
-			string[] files = Directory.GetFiles(folder);
+			var files = Directory.GetFiles(folder);
 			if (files.Length > 3)
-				return true;
-			foreach (string filepath in files)
 			{
-				string file = Path.GetFileName(filepath);
-				if (file != info.DatabaseName + LcmFileHelper.ksFwDataXmlFileExtension &&
-					file != info.DatabaseName + LcmFileHelper.ksFwDataFallbackFileExtension)
+				return true;
+			}
+			foreach (var filepath in files)
+			{
+				var file = Path.GetFileName(filepath);
+				if (file != info.DatabaseName + LcmFileHelper.ksFwDataXmlFileExtension && file != info.DatabaseName + LcmFileHelper.ksFwDataFallbackFileExtension)
 				{
 					return true;
 				}
@@ -342,17 +328,20 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private static bool FolderContainsFiles(string folder)
 		{
-			string[] files = Directory.GetFiles(folder);
+			var files = Directory.GetFiles(folder);
 			if (files.Length > 0)
+			{
 				return true;
-			string[] folders = Directory.GetDirectories(folder);
-			foreach (string dir in folders)
+			}
+			var folders = Directory.GetDirectories(folder);
+			foreach (var dir in folders)
 			{
 				if (FolderContainsFiles(dir))
+				{
 					return true;
+				}
 			}
 			return false;
 		}
 	}
-	#endregion
 }

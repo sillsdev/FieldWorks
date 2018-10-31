@@ -4,12 +4,12 @@
 
 using System;
 using System.Diagnostics;
-using System.Text;
 using System.Drawing;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
+using System.Text;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.FwCoreDlgs.Controls
@@ -22,10 +22,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		#endregion
 
 		#region Constructors
-		/// <summary>
-		/// Initializes a new instance of the <see cref="StyleInfo"/> class, representing an
-		/// existing style.
-		/// </summary>
+
+		/// <summary />
 		public StyleInfo(IStStyle style)
 			: base(style)
 		{
@@ -63,7 +61,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 			else if (styleType == StyleType.kstParagraph)
 			{
-				throw new ArgumentNullException(nameof(basedOnStyle), "New paragraph styles are required to be based on an existing style.");
+				throw new ArgumentNullException(nameof(basedOnStyle), @"New paragraph styles are required to be based on an existing style.");
 			}
 			m_nextStyleName = name;
 		}
@@ -430,9 +428,11 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			switch (m_rtl.Value)
 			{
 				case TriStateBool.triTrue:
-					AppendItem(text, Strings.ksRightToLeft); break;
+					AppendItem(text, Strings.ksRightToLeft);
+					break;
 				case TriStateBool.triFalse:
-					AppendItem(text, Strings.ksLeftToRight); break;
+					AppendItem(text, Strings.ksLeftToRight);
+					break;
 			}
 		}
 
@@ -470,7 +470,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <param name="text">description to append to</param>
 		/// <param name="name">name of the item</param>
 		/// <param name="value">value, or null if none</param>
-		private void AppendItem(StringBuilder text, string name, string value = null)
+		private static void AppendItem(StringBuilder text, string name, string value = null)
 		{
 			if (text.Length > 2 && text[text.Length - 2] != '+')
 			{

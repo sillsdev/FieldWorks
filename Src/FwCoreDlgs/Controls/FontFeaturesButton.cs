@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,9 +7,9 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs.Controls
@@ -20,28 +20,41 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 	public class FontFeaturesButton : Button
 	{
 		#region Member variables and constants
-		/// <summary />
-		public const int kGrLangFeature = 1; // See FmtFntDlg.h for real defn.
-		/// <summary />
-		public const int kMaxValPerFeat = 32; // See FmtFntDlg.h for real defn.
-		// This is copied from nLang in FmtFntDlg.cpp, FmtFntDlg::CreateFeaturesMenu.
-		/// <summary></summary>
-		public const int kUiCodePage = 0x00000409;	// for now the UI language is US English
-		// If this ever changes, some constant strings below may need to change also.
+		/// <summary>
+		/// See FmtFntDlg.h for real defn.
+		/// </summary>
+		public const int kGrLangFeature = 1;
+		/// <summary>
+		/// See FmtFntDlg.h for real defn.
+		/// </summary>
+		public const int kMaxValPerFeat = 32;
+		/// <summary>
+		/// This is copied from nLang in FmtFntDlg.cpp, FmtFntDlg::CreateFeaturesMenu.
+		/// for now the UI language is US English
+		/// If this ever changes, some constant strings below may need to change also.
+		/// </summary>
+		public const int kUiCodePage = 0x00000409;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.Container components;
-		private string m_fontName; // The font for which we are editing the features.
+		/// <summary>
+		/// The font for which we are editing the features.
+		/// </summary>
+		private string m_fontName;
 		private IRenderingFeatures m_featureEngine;
-		private int[] m_values;	// The actual list of values we're editing.
-		private int[] m_ids;		// The corresponding ids.
+		/// <summary>
+		/// The actual list of values we're editing.
+		/// </summary>
+		private int[] m_values;
+		/// <summary>
+		/// The corresponding ids.
+		/// </summary>
+		private int[] m_ids;
 		#endregion
 
 		#region Constructor and dispose stuff
-		/// <summary>
-		/// Initializes a new instance of the <see cref="FontFeaturesButton"/> class.
-		/// </summary>
+		/// <summary />
 		public FontFeaturesButton()
 		{
 			// This call is required by the Windows.Forms Form Designer.
@@ -53,15 +66,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			Enabled = false;
 		}
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -77,12 +88,12 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		#region Class HoldDummyGraphics
 
 		/// <summary />
-		private sealed class HoldDummyGraphics: IDisposable
+		private sealed class HoldDummyGraphics : IDisposable
 		{
 			/// <summary />
-			public IVwGraphics m_vwGraphics;
+			internal IVwGraphics m_vwGraphics;
 			/// <summary />
-			public Graphics m_graphics;
+			private Graphics m_graphics;
 			/// <summary />
 			private IntPtr m_hdc;
 
@@ -93,7 +104,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			/// <param name="fBold">if set to <c>true</c> [f bold].</param>
 			/// <param name="fItalic">if set to <c>true</c> [f italic].</param>
 			/// <param name="ctrl">The parent control</param>
-			public HoldDummyGraphics(string fontName, bool fBold, bool fItalic, Control ctrl)
+			internal HoldDummyGraphics(string fontName, bool fBold, bool fItalic, Control ctrl)
 			{
 				// Make a VwGraphics and initialize it.
 				IVwGraphicsWin32 vwGraphics32 = VwGraphicsWin32Class.Create();
@@ -109,7 +120,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 					if (ich < 32)
 					{
 						chrp.szFaceName[ich] = fontName[ich];
-				}
+					}
 				}
 
 				if (fontName.Length < 32)
@@ -127,20 +138,20 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 
 			#region Disposable stuff
 
-			/// <summary/>
+			/// <summary />
 			~HoldDummyGraphics()
 			{
 				Dispose(false);
 			}
 
-			/// <summary/>
+			/// <summary />
 			private bool IsDisposed
 			{
 				get;
 				set;
 			}
 
-			/// <summary/>
+			/// <inheritdoc />
 			public void Dispose()
 			{
 				Dispose(true);
@@ -148,17 +159,16 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 
 			/// <summary/>
-			private void Dispose(bool fDisposing)
+			private void Dispose(bool disposing)
 			{
-				Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 				if (IsDisposed)
 				{
 					// No need to run it more than once.
 					return;
 				}
-				if (fDisposing && !IsDisposed)
+				if (disposing)
 				{
-					// dispose managed and unmanaged objects
 					m_vwGraphics?.ReleaseDC();
 					if (m_graphics != null)
 					{
@@ -173,7 +183,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 			#endregion
 		}
-		#endregion // class HoldDummyGraphics
+		#endregion
 
 		#region Component Designer generated code
 		/// <summary>
@@ -268,21 +278,21 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				switch (cfid)
 				{
 					case 0:
-					Enabled = false;
-					return;
+						Enabled = false;
+						return;
 					case 1:
-					// What if it's the dummy built-in graphite feature that we ignore?
-					// Get the list of features (only 1).
+						// What if it's the dummy built-in graphite feature that we ignore?
+						// Get the list of features (only 1).
 						using (var idsM = MarshalEx.ArrayToNative<int>(cfid))
-					{
-						m_featureEngine.GetFeatureIDs(cfid, idsM, out cfid);
-							var ids = MarshalEx.NativeToArray<int>(idsM, cfid);
-						if (ids[0] == kGrLangFeature)
 						{
-							Enabled = false;
-							return;
+							m_featureEngine.GetFeatureIDs(cfid, idsM, out cfid);
+							var ids = MarshalEx.NativeToArray<int>(idsM, cfid);
+							if (ids[0] == kGrLangFeature)
+							{
+								Enabled = false;
+								return;
+							}
 						}
-					}
 
 						break;
 				}
@@ -322,7 +332,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				fid = fid * 10 + (stFeatures[ich] - '0');
 			}
 			// Skip any trailing spaces after the field id.
-			for ( ; ich < stFeatures.Length && stFeatures[ich] == ' '; ++ich)
+			for (; ich < stFeatures.Length && stFeatures[ich] == ' '; ++ich)
 			{
 			}
 			// Check for the mandatory equal sign.
@@ -349,7 +359,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <returns>
 		/// The parsed value, or Int32.MaxValue if an error occurs.
 		/// </returns>
-		static private int ParseQuotedValue(string stFeatures, int ichMin, out int ichLim)
+		private static int ParseQuotedValue(string stFeatures, int ichMin, out int ichLim)
 		{
 			if (stFeatures[ichMin] != '"')
 			{
@@ -369,7 +379,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				if (ib < 4)
 				{
 					bVals[ib] = (byte)stFeatures[ich];
-			}
+				}
 			}
 			if (ich >= stFeatures.Length)
 			{
@@ -391,7 +401,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </returns>
 		private static int ParseNumericValue(string stFeatures, int ichMin, out int ichLim)
 		{
-			ichLim = stFeatures.IndexOfAny(new[] { ',', ' '}, ichMin);
+			ichLim = stFeatures.IndexOfAny(new[] { ',', ' ' }, ichMin);
 			if (ichLim < 0)
 			{
 				ichLim = stFeatures.Length;
@@ -422,7 +432,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				else if (stFeatures[ich] == ',' && !fInQuote)
 				{
 					return ich + 1;
-			}
+				}
 			}
 			return ich;
 		}
@@ -452,7 +462,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			{
 				return result;
 			}
-			for (var ich = 0; ich < stFeatures.Length; )
+			for (var ich = 0; ich < stFeatures.Length;)
 			{
 				// Parse the next feature id.
 				var fid = ParseNextFid(stFeatures, ich, out ich);
@@ -477,8 +487,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 						if (ifeatFound > -1)
 						{
 							result[ifeatFound] = val;
+						}
 					}
-				}
 				}
 				ich = FindNextFeature(stFeatures, ich);
 			}
@@ -514,30 +524,26 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			return stFeatures;
 		}
 
-		static private string ConvertFontFeatureIdToCode(int fontFeatureId)
+		private static string ConvertFontFeatureIdToCode(int fontFeatureId)
 		{
-			byte[] bytes = BitConverter.GetBytes(fontFeatureId);
-			string result = String.Empty;
-			foreach (int value in bytes.Reverse())
-			{
-				result += Convert.ToChar(value);
-			}
-			return result;
+			var bytes = BitConverter.GetBytes(fontFeatureId);
+			return bytes.Reverse().Cast<int>().Aggregate(string.Empty, (current, value) => current + Convert.ToChar(value));
 		}
 
-		static private int ConvertFontFeatureCodeToId(string fontFeature)
+		private static int ConvertFontFeatureCodeToId(string fontFeature)
 		{
 			fontFeature = new string(fontFeature.ToCharArray().Reverse().ToArray());
-			byte[] numbers = fontFeature.Select(x => Convert.ToByte(x)).ToArray();
-			int fontFeatureId = BitConverter.ToInt32(numbers, 0);
-			return fontFeatureId;
+			var numbers = fontFeature.Select(x => Convert.ToByte(x)).ToArray();
+			return BitConverter.ToInt32(numbers, 0);
 		}
 
-		static private string ConvertFontFeatureCodesToIds(string features)
+		private static string ConvertFontFeatureCodesToIds(string features)
 		{
 			// If the feature is empty or has already been converted just return
-			if (features.Length < 1 || !Char.IsLetter(features[0]))
+			if (features.Length < 1 || !char.IsLetter(features[0]))
+			{
 				return features;
+			}
 			var feature = features.Split(',');
 			foreach (var value in feature)
 			{
@@ -560,7 +566,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				FeatureIndex = featureIndex;
 			}
 
-			/// <summary />
+			/// <inheritdoc />
 			protected override void Dispose(bool disposing)
 			{
 				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
@@ -573,9 +579,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			internal int FeatureIndex { get; }
 		}
 
-		/// <summary>
-		/// Raises the click event.
-		/// </summary>
+		/// <inheritdoc />
 		protected override void OnClick(EventArgs e)
 		{
 			var menu = components.ContextMenu("ContextMenu");
@@ -608,7 +612,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				}
 				int cValueIds;
 				int nDefault;
-				int [] valueIds;
+				int[] valueIds;
 				using (var valueIdsM = MarshalEx.ArrayToNative<int>(kMaxValPerFeat))
 				{
 					m_featureEngine.GetFeatureValues(id, kMaxValPerFeat, valueIdsM, out cValueIds, out nDefault);
@@ -641,17 +645,17 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 						case "yes":
 						case "on":
 						case "":
-						{
-							switch (valueLabelF.ToLowerInvariant())
 							{
-								case "false":
-								case "no":
-								case "off":
-								case "":
-									fBinary = true;
-									break;
+								switch (valueLabelF.ToLowerInvariant())
+								{
+									case "false":
+									case "no":
+									case "off":
+									case "":
+										fBinary = true;
+										break;
+								}
 							}
-						}
 							break;
 					}
 				}
@@ -684,14 +688,14 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// Items the click handler.
 		/// </summary>
-		private void ItemClickHandler(Object sender, EventArgs e)
+		private void ItemClickHandler(object sender, EventArgs e)
 		{
-			var item = (FontFeatureMenuItem) sender;
+			var item = (FontFeatureMenuItem)sender;
 			var parent = item.Parent as FontFeatureMenuItem;
 			if (parent == null)
 			{
 				// top-level (checked) item
-				item.Checked = ! item.Checked;
+				item.Checked = !item.Checked;
 				m_values[item.FeatureIndex] = item.Checked ? 1 : 0;
 			}
 			else

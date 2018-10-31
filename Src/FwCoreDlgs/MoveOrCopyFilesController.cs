@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,15 +8,17 @@ using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.Reporting;
 using SIL.LCModel.Utils;
+using SIL.Reporting;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
+#if RANDYTODO
+	// TODO: Move to: LanguageExplorer.Controls
+#endif
 	/// <summary>Used to move or copy media files when they are linked to a FieldWorks project</summary>
 	public static class MoveOrCopyFilesController
 	{
-		#region Static methods
 		/// <summary>
 		/// Checks to see whether the given files are located in the given root directory (or any subfolder of it), and if not, prompts the user to
 		/// allow FW to move, copy, or leave the files. If anything unexpected happens, the default is to leave the files where they are.
@@ -28,10 +30,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// in its new location under the LinkedFiles folder if the user elected to move or copy it.</returns>
 		public static string[] MoveCopyOrLeaveMediaFiles(string[] files, string sRootDirLinkedFiles, IHelpTopicProvider helpTopicProvider)
 		{
-			return MoveCopyOrLeaveFiles(files,
-				Path.Combine(sRootDirLinkedFiles, LcmFileHelper.ksMediaDir),
-				sRootDirLinkedFiles,
-				helpTopicProvider);
+			return MoveCopyOrLeaveFiles(files, Path.Combine(sRootDirLinkedFiles, LcmFileHelper.ksMediaDir), sRootDirLinkedFiles, helpTopicProvider);
 		}
 
 		/// <summary>
@@ -43,43 +42,40 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <returns>The fully specified path name of the file to use, which might be the same as the given path or it could be
 		/// in its new location under the LinkedFiles folder if the user elected to move or copy it.</returns>
-		public static string MoveCopyOrLeaveExternalFile(string sFile, string sRootDirLinkedFiles,
-			IHelpTopicProvider helpTopicProvider)
+		public static string MoveCopyOrLeaveExternalFile(string sFile, string sRootDirLinkedFiles, IHelpTopicProvider helpTopicProvider)
 		{
-			return MoveCopyOrLeaveFiles(new[] {sFile},
-				Path.Combine(sRootDirLinkedFiles, LcmFileHelper.ksOtherLinkedFilesDir),
-				sRootDirLinkedFiles,
-				helpTopicProvider).FirstOrDefault();
+			return MoveCopyOrLeaveFiles(new[] { sFile }, Path.Combine(sRootDirLinkedFiles, LcmFileHelper.ksOtherLinkedFilesDir), sRootDirLinkedFiles, helpTopicProvider).FirstOrDefault();
 		}
 
-		private static string[] MoveCopyOrLeaveFiles(string[] files, string subFolder, string sRootDirExternalLinks,
-			IHelpTopicProvider helpTopicProvider)
+		private static string[] MoveCopyOrLeaveFiles(string[] files, string subFolder, string sRootDirExternalLinks, IHelpTopicProvider helpTopicProvider)
 		{
 			try
 			{
 				if (!Directory.Exists(subFolder))
+				{
 					Directory.CreateDirectory(subFolder);
+				}
 			}
 			catch (Exception e)
 			{
-				Logger.WriteEvent(string.Format("Error creating the directory: '{0}'", subFolder));
+				Logger.WriteEvent($"Error creating the directory: '{subFolder}'");
 				Logger.WriteError(e);
 				return files;
 			}
 
 			// Check whether the file is found within the directory.
 			if (files.All(f => FileIsInExternalLinksFolder(f, sRootDirExternalLinks)))
+			{
 				return files;
-
+			}
 			using (var dlg = new MoveOrCopyFilesDlg())
 			{
 				dlg.Initialize2(subFolder, helpTopicProvider);
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
-					FileLocationChoice choice = dlg.Choice;
+					var choice = dlg.Choice;
 					return files.Select(f => PerformMoveCopyOrLeaveFile(f, subFolder, choice)).ToArray();
 				}
-
 				return files;
 			}
 		}
@@ -94,17 +90,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		internal static string PerformMoveCopyOrLeaveFile(string sFile, string sRootDir, FileLocationChoice action)
 		{
 			if (action == FileLocationChoice.Leave)
+			{
 				return sFile; // use original location.
-
-			string sNewFile = Path.Combine(sRootDir, Path.GetFileName(sFile));
+			}
+			var sNewFile = Path.Combine(sRootDir, Path.GetFileName(sFile));
 			if (FileUtils.PathsAreEqual(sFile, sNewFile))
+			{
 				return sFile;
-
+			}
 			if (File.Exists(sNewFile))
 			{
-				if (MessageBox.Show(string.Format(FwCoreDlgs.ksAlreadyExists, sNewFile),
-						FwCoreDlgs.kstidWarning, MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
-					== DialogResult.No)
+				if (MessageBox.Show(String.Format(FwCoreDlgs.ksAlreadyExists, sNewFile), FwCoreDlgs.kstidWarning, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
 				{
 					return sFile;
 				}
@@ -134,8 +130,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			catch (Exception e)
 			{
-				var sAction = (action == FileLocationChoice.Copy ? "copy" : "mov");
-				Logger.WriteEvent(string.Format("Error {0}ing file '{1}' to '{2}'", sAction, sFile, sNewFile));
+				var sAction = action == FileLocationChoice.Copy ? "copy" : "mov";
+				Logger.WriteEvent($"Error {sAction}ing file '{sFile}' to '{sNewFile}'");
 				Logger.WriteError(e);
 				return sFile;
 			}
@@ -149,17 +145,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <returns><c>true</c> if the given file is located in the given root directory.</returns>
 		internal static bool FileIsInExternalLinksFolder(string sFile, string sRootDir)
 		{
-			if(sFile.ToLowerInvariant().StartsWith(sRootDir.ToLowerInvariant()))
+			if (sFile.ToLowerInvariant().StartsWith(sRootDir.ToLowerInvariant()))
 			{
 				var cchDir = sRootDir.Length;
-				if(cchDir > 0 && sRootDir[cchDir - 1] == Path.DirectorySeparatorChar)
+				if (cchDir > 0 && sRootDir[cchDir - 1] == Path.DirectorySeparatorChar)
+				{
 					return true; // the root directory path ends with '/' or '\'
-				if(sFile.Length > cchDir && sFile[cchDir] == Path.DirectorySeparatorChar)
+				}
+				if (sFile.Length > cchDir && sFile[cchDir] == Path.DirectorySeparatorChar)
+				{
 					return true; // the first char in the file's path after the root directory path is '/' or '\'
+				}
 			}
 			return false;
 		}
-		#endregion
-
 	}
 }

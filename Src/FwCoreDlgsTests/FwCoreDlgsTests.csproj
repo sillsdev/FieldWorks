@@ -274,9 +274,7 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CnvtrPropertiesCtrlTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="CnvtrPropertiesCtrlTests.cs" />
     <Compile Include="CharContextCtrlTests.cs" />
     <Compile Include="Controls\DefaultFontsControlTests.cs" />
     <Compile Include="Controls\FwAttributesTests.cs" />
@@ -284,22 +282,15 @@
     <Compile Include="Controls\FwListBoxTests.cs" />
     <Compile Include="Controls\FwTextBoxTests.cs" />
     <Compile Include="Controls\StyleInfoTests.cs" />
-    <Compile Include="Controls\StylesComboTests.cs" />
     <Compile Include="Controls\TestFontFeaturesButton.cs" />
     <Compile Include="Controls\UpDownMeasureControlTests.cs" />
     <Compile Include="FwCharacterCategorizerTests.cs" />
     <Compile Include="RestoreProjectPresenterTests.cs" />
     <Compile Include="ValidCharactersDlgTests.cs" />
-    <Compile Include="FwNewLangProjectTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FwProjPropertiesDlgTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="FwNewLangProjectTests.cs" />
+    <Compile Include="FwProjPropertiesDlgTests.cs" />
     <Compile Include="FwStylesDlgTests.cs" />
-    <Compile Include="WritingSystemPropertiesDialogTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="WritingSystemPropertiesDialogTests.cs" />
     <Compile Include="FwFontDialogTests.cs" />
     <Compile Include="..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfo.cs</Link>

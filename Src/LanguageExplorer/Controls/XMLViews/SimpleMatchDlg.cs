@@ -40,7 +40,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private HelpProvider helpProvider;
 		private CheckBox m_MatchCasecheckBox;
 
-		private RegexHelperMenu regexContextMenu;
+		private RegexHelperContextMenu _regexContextContextMenu;
 		private CheckBox m_MatchDiacriticscheckBox;
 		private IHelpTopicProvider m_helpTopicProvider;
 
@@ -79,7 +79,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			AccessibleName = "SimpleMatchDlg";
 			m_helpTopicProvider = helpTopicProvider;
 
-			regexContextMenu = new RegexHelperMenu(m_textBox, m_helpTopicProvider);
+			_regexContextContextMenu = new RegexHelperContextMenu(m_textBox, m_helpTopicProvider);
 
 			m_ivwpattern = VwPatternClass.Create();
 
@@ -380,7 +380,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void regexHelper_Click(object sender, EventArgs e)
 		{
-			regexContextMenu.Show(regexHelper, new System.Drawing.Point(regexHelper.Width,0));
+			_regexContextContextMenu.Show(regexHelper, new System.Drawing.Point(regexHelper.Width,0));
 		}
 	}
 }

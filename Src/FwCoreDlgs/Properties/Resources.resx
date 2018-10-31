@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -133,10 +133,6 @@ To make changes, open project {2} on computer {3}.</value>
   <data name="kstidQuotationMarksIncompleteMsg" xml:space="preserve">
     <value>Both the Opening and Closing quotation marks must be specified for level {0}.</value>
     <comment>Message for message box that is displayed when user enters an incomplete pair of quotation marks.</comment>
-  </data>
-  <data name="kstidNoPossibilitySelectedText" xml:space="preserve">
-    <value>None</value>
-    <comment>Displays in the label associated with the ChooserTreeView</comment>
   </data>
   <data name="kstidValidCharsOtherHdg" xml:space="preserve">
     <value>&amp;Punctuation, Symbols &amp;&amp; Spaces</value>

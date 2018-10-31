@@ -1,26 +1,22 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwCheckAnthroList.cs
-// Responsibility: mcconnel
+
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using System.IO;
-using System.Diagnostics;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// This dialog presents the user with a choice of the available anthropology category
 	/// lists.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public partial class FwCheckAnthroListDlg : Form
 	{
 		/// <summary>choice value for custom, user defined list</summary>
@@ -29,17 +25,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public const int kralOCM = -2;
 		/// <summary>choice value for enhanced OCM list ("FRAME")</summary>
 		public const int kralFRAME = -1;
-
 		private string m_sDescription;
-
 		private IHelpTopicProvider m_helpTopicProvider;
-		private String m_helpTopic = "khtpFwCheckAnthroListDlg";
+		private string m_helpTopic = "khtpFwCheckAnthroListDlg";
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="FwCheckAnthroListDlg"/> class.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public FwCheckAnthroListDlg()
 		{
 			InitializeComponent();
@@ -48,8 +38,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Initialize the dialog.
 		/// </summary>
-		public void SetValues(bool fHaveOCM, bool fHaveFRAME, List<string> rgsAnthroFiles,
-			IHelpTopicProvider helpTopicProvider)
+		public void SetValues(bool fHaveOCM, bool fHaveFRAME, List<string> rgsAnthroFiles, IHelpTopicProvider helpTopicProvider)
 		{
 			m_radioOCM.Enabled = fHaveOCM;
 			m_radioFRAME.Enabled = fHaveFRAME;
@@ -67,8 +56,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			else
 			{
-				for (int i = 0; i < rgsAnthroFiles.Count; ++i)
-					m_cbOther.Items.Add(rgsAnthroFiles[i]);
+				foreach (var anthroFile in rgsAnthroFiles)
+				{
+					m_cbOther.Items.Add(anthroFile);
+				}
 				m_cbOther.SelectedIndex = 0;
 			}
 		}
@@ -86,8 +77,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		protected override void OnHandleCreated(EventArgs e)
 		{
-			if (!String.IsNullOrEmpty(m_sDescription))
+			if (!string.IsNullOrEmpty(m_sDescription))
+			{
 				m_tbDescription.Text = m_sDescription;
+			}
 			base.OnHandleCreated(e);
 		}
 
@@ -100,24 +93,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				return kralFRAME;
 			}
-			else if (m_radioOCM.Checked)
+			if (m_radioOCM.Checked)
 			{
 				return kralOCM;
 			}
-			else if (m_radioCustom.Checked)
+			if (m_radioCustom.Checked)
 			{
 				return kralUserDef;
 			}
-			else
-			{
-				Debug.Assert(m_radioOther.Checked);
-				return m_cbOther.SelectedIndex;
-			}
+			Debug.Assert(m_radioOther.Checked);
+			return m_cbOther.SelectedIndex;
 		}
 
 		private void m_btnOK_Click(object sender, EventArgs e)
 		{
-			this.DialogResult = DialogResult.OK;
+			DialogResult = DialogResult.OK;
 			Close();
 		}
 
@@ -148,40 +138,43 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public static string PickAnthroList(string description, IHelpTopicProvider helpTopicProvider)
 		{
 			// Figure out what lists are available (in {FW}/Templates/*.xml).
-
-			var sFilePattern = Path.Combine(FwDirectoryFinder.TemplateDirectory, "*.xml");
 			var fHaveOCM = false;
 			var fHaveFRAME = false;
 			var rgsAnthroFiles = new List<string>();
 			var rgsXmlFiles = Directory.GetFiles(FwDirectoryFinder.TemplateDirectory, "*.xml", SearchOption.TopDirectoryOnly);
 			string sFile;
-			for (var i = 0; i < rgsXmlFiles.Length; ++i)
+			foreach (var xmlFile in rgsXmlFiles)
 			{
-				sFile = Path.GetFileName(rgsXmlFiles[i]);
+				sFile = Path.GetFileName(xmlFile);
 				if (Path.GetFileName(sFile) == "OCM.xml")
+				{
 					fHaveOCM = true;
+				}
 				else if (Path.GetFileName(sFile) == "OCM-Frame.xml")
+				{
 					fHaveFRAME = true;
-				else if (sFile != "NewLangProj.xml" && IsAnthroList(rgsXmlFiles[i]))
+				}
+				else if (sFile != "NewLangProj.xml" && IsAnthroList(xmlFile))
+				{
 					rgsAnthroFiles.Add(sFile);
+				}
 			}
 
 			// display a dialog for the user to select a list.
-
 			sFile = null;
 			if (fHaveOCM || fHaveFRAME || rgsAnthroFiles.Count > 0)
 			{
-				using (FwCheckAnthroListDlg dlg = new FwCheckAnthroListDlg())
+				using (var dlg = new FwCheckAnthroListDlg())
 				{
 					dlg.SetValues(fHaveOCM, fHaveFRAME, rgsAnthroFiles, helpTopicProvider);
-					if (!String.IsNullOrEmpty(description))
+					if (!string.IsNullOrEmpty(description))
+					{
 						dlg.SetDescription(description);
-					//EnableRelatedWindows(hwnd, false);
-					DialogResult res = dlg.ShowDialog();
-					//EnableRelatedWindows(hwnd, true);
+					}
+					var res = dlg.ShowDialog();
 					if (res == DialogResult.OK)
 					{
-						int nChoice = dlg.GetChoice();
+						var nChoice = dlg.GetChoice();
 						switch (nChoice)
 						{
 							case kralUserDef:
@@ -200,14 +193,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					}
 				}
 			}
-
 			return sFile;
 		}
 
 		private static bool IsAnthroList(string sFilePath)
 		{
 			if (!File.Exists(sFilePath))
+			{
 				return false;
+			}
 			using (TextReader rdr = new StreamReader(sFilePath, Encoding.UTF8))
 			{
 				try

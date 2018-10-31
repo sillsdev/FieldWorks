@@ -9,9 +9,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
@@ -38,10 +37,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		#region Data Members
 
 		/// <summary>
-		/// Use this to do the Add/RemoveNotifications, since it can be used in the unmanged section of Dispose.
+		/// Use this to do the Add/RemoveNotifications, since it can be used in the unmanaged section of Dispose.
 		/// (If m_sda is COM, that is.)
 		/// Doing it there will be safer, since there was a risk of it not being removed
-		/// in the mananged section, as when disposing was done by the Finalizer.
+		/// in the managed section, as when disposing was done by the Finalizer.
 		/// </summary>
 		/// <remarks>This is strictly a sandbox cache.</remarks>
 		private ISilDataAccess m_sda;
@@ -56,9 +55,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		#endregion Data Members
 
 		#region Construction and destruction
-		/// <summary>
-		/// Default Constructor
-		/// </summary>
+
+		/// <summary />
 		public FwTextBox()
 		{
 			var inDesigner = LicenseManager.UsageMode == LicenseUsageMode.Designtime;
@@ -288,12 +286,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		}
 
 		/// <summary>
-		/// Gets the height of the text.
-		/// </summary>
-		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public int TextHeight => DesignMode ? -1 : m_innerFwTextBox.TextHeight;
-
-		/// <summary>
 		/// Get the preferred width given the current stylesheet and string.
 		/// </summary>
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -444,9 +436,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -571,7 +563,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-#endregion Methods for applying styles and writing systems
+		#endregion Methods for applying styles and writing systems
 
 		#region Selection methods that are for a text box.
 		/// <summary>
@@ -794,7 +786,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// Generally it is preferred to use the Tss property, giving access to the full
 		/// styled string.
 		/// </summary>
-		[ Browsable(true)]
+		[Browsable(true)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
 		public override string Text
 		{
@@ -912,47 +904,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			m_innerFwTextBox.RootBox.Activate(VwSelectionState.vssDisabled);
 		}
 
-		/// <summary>
-		/// Scrolls the current selection into view.
-		/// </summary>
-		public void ScrollSelectionIntoView()
-		{
-			if (m_innerFwTextBox.RootBox != null)
-			{
-				m_innerFwTextBox.ScrollSelectionIntoView(m_innerFwTextBox.RootBox.Selection, VwScrollSelOpts.kssoDefault);
-			}
-		}
-
 		#endregion Helper methods to expose base-class and/or inner class methods
-
-		#region Other public methods
-		/// <summary>
-		/// Creates a bitmap and renders the text in this FwTextBox in the bitmap.
-		/// </summary>
-		/// <param name="margins">Rectangle with the margins.</param>
-		/// <param name="content">The rectangle that specifies the width and height of the content.
-		/// </param>
-		/// <returns>A bitmap representation of the text in this FwTextBox.</returns>
-		public Bitmap CreateBitmapOfText(Padding margins, Rectangle content)
-		{
-			if (m_innerFwTextBox.RootBox == null)
-			{
-				return null;
-			}
-
-			var bitmap = new Bitmap(margins.Left + content.Width + margins.Right, margins.Top + content.Height + margins.Bottom);
-			var selState = m_innerFwTextBox.RootBox.SelectionState;
-			m_innerFwTextBox.RootBox.Activate(VwSelectionState.vssDisabled);
-
-			content.Offset(margins.Left, margins.Top);
-
-			DrawToBitmap(bitmap, content);
-
-			m_innerFwTextBox.RootBox.Activate(selState);
-
-			return bitmap;
-		}
-		#endregion
 
 		#region IVwNotifyChange implementation
 

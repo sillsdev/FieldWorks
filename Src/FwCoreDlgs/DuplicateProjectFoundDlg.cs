@@ -8,23 +8,15 @@ using SIL.Reporting;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Dialog that is shown if user tries to create a new project but a project with that name
 	/// already exists
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	internal class DuplicateProjectFoundDlg : Form
+	internal sealed class DuplicateProjectFoundDlg : Form
 	{
-		#region Member variables
-		#endregion
-
 		#region Construction, Initialization and Deconstruction
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="DuplicateProjectFoundDlg"/> class.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+
+		/// <summary />
 		public DuplicateProjectFoundDlg()
 		{
 			AccessibleName = GetType().Name;
@@ -32,35 +24,28 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			InitializeComponent();
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		/// <param name="disposing"><c>true</c> to release both managed and unmanaged
-		/// resources; <c>false</c> to release only unmanaged resources.
-		/// </param>
-		/// ------------------------------------------------------------------------------------
-		protected override void Dispose( bool disposing )
+		/// <inheritdoc />
+		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
 			if (IsDisposed)
+			{
+				// No need to run it more than once.
 				return;
+			}
 
-			if(disposing)
+			if (disposing)
 			{
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 		#endregion
 
 		#region Windows Form Designer generated code
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		private void InitializeComponent()
 		{
 			System.Windows.Forms.Button btnOpen;
@@ -125,13 +110,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		#region Button click handlers
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Handle the event when the user clicks on the Open button.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
 		private void OnOpenClick(object sender, System.EventArgs e)
 		{
 			DialogResult = DialogResult.OK;
@@ -140,17 +122,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		#region Overriden methods
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Log the closing of the dialog.
-		/// </summary>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		protected override void OnClosing(CancelEventArgs e)
 		{
-			Logger.WriteEvent(string.Format("Closing 'duplicate project found' dialog with result {0}",
-				DialogResult));
-			base.OnClosing (e);
+			Logger.WriteEvent($"Closing 'duplicate project found' dialog with result {DialogResult}");
+			base.OnClosing(e);
 		}
 
 		#endregion

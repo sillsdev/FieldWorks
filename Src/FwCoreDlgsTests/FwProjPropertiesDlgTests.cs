@@ -1,318 +1,23 @@
 // Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: TestFwProjPropertiesDlg.cs
-// Responsibility:
 
 using System;
 using System.Linq;
 using System.Windows.Forms;
 using NUnit.Framework;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel;
+using SIL.LCModel.Core.WritingSystems;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
-	#region DummyFwProjPropertiesDlg Class
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	public class DummyFwProjPropertiesDlg : FwProjPropertiesDlg
-	{
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="DummyFwProjPropertiesDlg"/> class.
-		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// ------------------------------------------------------------------------------------
-		public DummyFwProjPropertiesDlg(LcmCache cache)
-			: base(cache, null, null)
-		{
-		}
-
-		#region Properties
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public Button OkButton
-		{
-			get
-			{
-				return m_btnOK;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public CheckedListBox VernWsList
-		{
-			get
-			{
-				return m_lstVernWs;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public CheckedListBox AnalWsList
-		{
-			get
-			{
-				return m_lstAnalWs;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public Button VernWsMoveDownButton
-		{
-			get
-			{
-				return m_btnVernMoveDown;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public Button VernWsMoveUpButton
-		{
-			get
-			{
-				return m_btnVernMoveUp;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public Button VernWsDeleteButton
-		{
-			get
-			{
-				return m_btnDelVernWs;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public Button VernWsModifyButton
-		{
-			get
-			{
-				return m_btnModifyVernWs;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public Button AnalWsMoveDownButton
-		{
-			get
-			{
-				return m_btnAnalMoveDown;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public Button AnalWsMoveUpButton
-		{
-			get
-			{
-				return m_btnAnalMoveUp;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public Button AnalWsDeleteButton
-		{
-			get
-			{
-				return m_btnDelAnalWs;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public Button AnalWsModifyButton
-		{
-			get
-			{
-				return m_btnModifyAnalWs;
-			}
-		}
-		#endregion
-
-		#region Button press simulations
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void SimulateOKButtonPress()
-		{
-			SaveInternal();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void SimulateVernDownButtonPress()
-		{
-			m_btnVernMoveDown_Click(null, null);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void SimulateVernUpButtonPress()
-		{
-			m_btnVernMoveUp_Click(null, null);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void SimulateAnalDownButtonPress()
-		{
-			m_btnAnalMoveDown_Click(null, null);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void SimulateAnalUpButtonPress()
-		{
-			m_btnAnalMoveUp_Click(null, null);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void SimulateAnalDeletePress()
-		{
-			m_btnDelAnalWs_Click(null, null);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void SimulateVernDeletePress()
-		{
-			m_btnDelVernWs_Click(null, null);
-		}
-		#endregion
-
-		#region Other simulations
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void SimulateAnalAddingWs(CoreWritingSystemDefinition ws)
-		{
-			AddWsToList(ws, m_lstAnalWs);
-			UpdateButtons(m_lstAnalWs);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void SimulateVernAddingWs(CoreWritingSystemDefinition ws)
-		{
-			AddWsToList(ws, m_lstVernWs);
-			UpdateButtons(m_lstVernWs);
-		}
-		#endregion
-
-		#region Overridden methods
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Brings the up english warning MSG.
-		/// </summary>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		protected override DialogResult BringUpEnglishWarningMsg()
-		{
-			return DialogResult.Yes;
-		}
-		#endregion
-	}
-
-	#endregion
-
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// Summary description for TestFwProjPropertiesDlg.
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	[TestFixture]
-	public class FwProjPropertiesDlgTests: MemoryOnlyBackendProviderRestoredForEachTestTestBase
+	public class FwProjPropertiesDlgTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private DummyFwProjPropertiesDlg m_dlg;
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public ILangProject LangProj
-		{
-			get {return Cache.LanguageProject;}
-		}
-
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
@@ -322,7 +27,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("fr", out ws);
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		[TearDown]
 		public override void TestTearDown()
 		{
@@ -342,15 +47,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		#region Setup Helpers
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+
+		/// <summary />
 		private void SetupVernWss()
 		{
-			IWritingSystemContainer wsContainer = Cache.ServiceLocator.WritingSystems;
-			WritingSystemManager wsManager = Cache.ServiceLocator.WritingSystemManager;
+			var wsContainer = Cache.ServiceLocator.WritingSystems;
+			var wsManager = Cache.ServiceLocator.WritingSystemManager;
 			//wsContainer.VernacularWritingSystems.Clear();
 			//wsContainer.CurrentVernacularWritingSystems.Clear();
 			// Setup so the CurVernWssRS returns the proper sequence.
@@ -362,18 +64,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			wsContainer.CurrentVernacularWritingSystems.Add(wsManager.Get("en"));
 
 			if (m_dlg == null)
+			{
 				m_dlg = new DummyFwProjPropertiesDlg(Cache);
+			}
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		private void SetupAnalysisWss()
 		{
-			IWritingSystemContainer wsContainer = Cache.ServiceLocator.WritingSystems;
-			WritingSystemManager wsManager = Cache.ServiceLocator.WritingSystemManager;
+			var wsContainer = Cache.ServiceLocator.WritingSystems;
+			var wsManager = Cache.ServiceLocator.WritingSystemManager;
 			//wsContainer.AnalysisWritingSystems.Clear();
 			wsContainer.AnalysisWritingSystems.Add(wsManager.Get("en"));
 			wsContainer.AnalysisWritingSystems.Add(wsManager.Get("en-fonipa-x-etic"));
@@ -383,70 +83,60 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			wsContainer.CurrentAnalysisWritingSystems.Add(wsManager.Get("en-fonipa-x-etic"));
 
 			if (m_dlg == null)
+			{
 				m_dlg = new DummyFwProjPropertiesDlg(Cache);
+			}
 		}
 
 		#endregion
 
 		#region Helper Methods
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Verifies the writing system order.
 		/// </summary>
-		/// <param name="list">The list.</param>
-		/// <param name="wsnames">The wsnames.</param>
-		/// ------------------------------------------------------------------------------------
 		private static void VerifyWritingSystemOrder(CheckedListBox list, string[] wsnames)
 		{
-			Assert.AreEqual(wsnames.Length, list.Items.Count,
-				"Number of writing systems in list is incorrect.");
+			Assert.AreEqual(wsnames.Length, list.Items.Count, "Number of writing systems in list is incorrect.");
 
-			for (int i = 0; i < wsnames.Length; i++)
+			for (var i = 0; i < wsnames.Length; i++)
+			{
 				Assert.AreEqual(wsnames[i], list.Items[i].ToString());
+			}
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="list"></param>
-		/// <param name="wsnames"></param>
-		/// <param name="shouldBeChecked"></param>
-		/// ------------------------------------------------------------------------------------
-		private static void VerifyCheckedWritingSystems(CheckedListBox list, string[] wsnames,
-			bool shouldBeChecked)
+		/// <summary />
+		private static void VerifyCheckedWritingSystems(CheckedListBox list, string[] wsnames, bool shouldBeChecked)
 		{
 			if (shouldBeChecked)
 			{
-				Assert.AreEqual(wsnames.Length, list.CheckedItems.Count,
-					"Number of checked writing systems is incorrect.");
+				Assert.AreEqual(wsnames.Length, list.CheckedItems.Count, "Number of checked writing systems is incorrect.");
 			}
 			else
 			{
-				Assert.AreEqual(wsnames.Length, list.Items.Count - list.CheckedItems.Count,
-					"Number of unchecked writing systems is incorrect.");
+				Assert.AreEqual(wsnames.Length, list.Items.Count - list.CheckedItems.Count, "Number of unchecked writing systems is incorrect.");
 			}
 
-			foreach (string name in wsnames)
+			foreach (var name in wsnames)
 			{
-				bool found = list.CheckedItems.Cast<CoreWritingSystemDefinition>().Any(ws => name == ws.ToString());
-
+				var found = list.CheckedItems.Cast<CoreWritingSystemDefinition>().Any(ws => name == ws.ToString());
 				if (shouldBeChecked)
+				{
 					Assert.IsTrue(found, name + " not found in checked items list.");
+				}
 				else
+				{
 					Assert.IsFalse(found, name + " found in checked items list.");
+				}
 			}
 		}
 
 		#endregion
 
 		#region Tests
+
 		// See comment on AnalysisWsListAdd
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		[Test]
 		public void VernacularWsListContent()
 		{
@@ -457,23 +147,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			Assert.AreEqual(0, m_dlg.VernWsList.SelectedIndex, "First item is not selected.");
 
-			VerifyWritingSystemOrder(m_dlg.VernWsList,
-				new[] { "French", "English", "English (Phonetic)", "Spanish" });
+			VerifyWritingSystemOrder(m_dlg.VernWsList, new[] { "French", "English", "English (Phonetic)", "Spanish" });
 
 			// Verify that the correct items are checked.
-			VerifyCheckedWritingSystems(m_dlg.VernWsList,
-				new[] { "English", "French" }, true);
+			VerifyCheckedWritingSystems(m_dlg.VernWsList, new[] { "English", "French" }, true);
 
 			// Verify that the correct items are not checked.
-			VerifyCheckedWritingSystems(m_dlg.VernWsList,
-				new[] { "English (Phonetic)", "Spanish" }, false);
+			VerifyCheckedWritingSystems(m_dlg.VernWsList, new[] { "English (Phonetic)", "Spanish" }, false);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		[Test]
 		public void VernacularWsListMoveContentDown()
 		{
@@ -485,25 +168,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.VernWsList.SelectedIndex = 1;
 			m_dlg.SimulateVernDownButtonPress();
 
-			VerifyWritingSystemOrder(m_dlg.VernWsList,
-				new[] { "French", "English (Phonetic)", "English", "Spanish"});
+			VerifyWritingSystemOrder(m_dlg.VernWsList, new[] { "French", "English (Phonetic)", "English", "Spanish" });
 
 			Assert.AreEqual(2, m_dlg.VernWsList.SelectedIndex);
 
 			// Verify that the correct items are checked.
-			VerifyCheckedWritingSystems(m_dlg.VernWsList,
-				new[] { "English", "French" }, true);
+			VerifyCheckedWritingSystems(m_dlg.VernWsList, new[] { "English", "French" }, true);
 
 			// Verify that the correct items are not checked.
-			VerifyCheckedWritingSystems(m_dlg.VernWsList,
-				new[] { "English (Phonetic)", "Spanish" }, false);
+			VerifyCheckedWritingSystems(m_dlg.VernWsList, new[] { "English (Phonetic)", "Spanish" }, false);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		[Test]
 		public void VernacularWsListSelectionAtBottom()
 		{
@@ -515,11 +191,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.IsFalse(m_dlg.VernWsMoveDownButton.Enabled);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		[Test]
 		public void VernacularWsListSelectionAtTop()
 		{
@@ -531,11 +203,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.IsFalse(m_dlg.VernWsMoveUpButton.Enabled);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		[Test]
 		public void VernacularWsListMoveContentUp()
 		{
@@ -547,25 +215,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.VernWsList.SelectedIndex = 1;
 			m_dlg.SimulateVernUpButtonPress();
 
-			VerifyWritingSystemOrder(m_dlg.VernWsList,
-				new[] { "English", "French", "English (Phonetic)", "Spanish" });
+			VerifyWritingSystemOrder(m_dlg.VernWsList, new[] { "English", "French", "English (Phonetic)", "Spanish" });
 
 			Assert.AreEqual(0, m_dlg.VernWsList.SelectedIndex);
 
 			// Verify that the correct items are checked.
-			VerifyCheckedWritingSystems(m_dlg.VernWsList,
-				new[] { "English", "French" }, true);
+			VerifyCheckedWritingSystems(m_dlg.VernWsList, new[] { "English", "French" }, true);
 
 			// Verify that the correct items are not checked.
-			VerifyCheckedWritingSystems(m_dlg.VernWsList,
-				new[] { "English (Phonetic)", "Spanish" }, false);
+			VerifyCheckedWritingSystems(m_dlg.VernWsList, new[] { "English (Phonetic)", "Spanish" }, false);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		[Test]
 		public void VernacularWsListDelete()
 		{
@@ -577,25 +238,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.VernWsList.SelectedIndex = 1;
 			m_dlg.SimulateVernDeletePress();
 
-			VerifyWritingSystemOrder(m_dlg.VernWsList,
-				new[] { "French", "English (Phonetic)", "Spanish" });
+			VerifyWritingSystemOrder(m_dlg.VernWsList, new[] { "French", "English (Phonetic)", "Spanish" });
 
 			Assert.AreEqual(1, m_dlg.VernWsList.SelectedIndex);
 
 			// Verify that the correct items are checked.
-			VerifyCheckedWritingSystems(m_dlg.VernWsList,
-				new[] { "French" }, true);
+			VerifyCheckedWritingSystems(m_dlg.VernWsList, new[] { "French" }, true);
 
 			// Verify that the correct items are not checked.
-			VerifyCheckedWritingSystems(m_dlg.VernWsList,
-				new[] { "English (Phonetic)", "Spanish" }, false);
+			VerifyCheckedWritingSystems(m_dlg.VernWsList, new[] { "English (Phonetic)", "Spanish" }, false);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		[Test]
 		public void VernacularWsListDeleteAllWs()
 		{
@@ -619,11 +273,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.IsFalse(m_dlg.VernWsMoveDownButton.Enabled);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		[Test]
 		public void VernacularWsListAdd()
 		{
@@ -640,24 +290,20 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.VernWsMoveDownButton.Enabled = false;
 
 			// Add a new writing system to the cache.
-			CoreWritingSystemDefinition ws = Cache.ServiceLocator.WritingSystemManager.Set("en-US");
+			var ws = Cache.ServiceLocator.WritingSystemManager.Set("en-US");
 
 			m_dlg.SimulateVernAddingWs(ws);
 
-			VerifyWritingSystemOrder(m_dlg.VernWsList,
-				new[] { "French", "English", "English (Phonetic)", "Spanish", "English (United States)"});
+			VerifyWritingSystemOrder(m_dlg.VernWsList, new[] { "French", "English", "English (Phonetic)", "Spanish", "English (United States)" });
 
 			// Verify that the new writing system is the selected one.
-			Assert.AreEqual(ws, m_dlg.VernWsList.SelectedItem,
-				"New writing system is not selected.");
+			Assert.AreEqual(ws, m_dlg.VernWsList.SelectedItem, "New writing system is not selected.");
 
 			// Verify that the correct items are checked.
-			VerifyCheckedWritingSystems(m_dlg.VernWsList,
-				new[] { "English", "French", "English (United States)" }, true);
+			VerifyCheckedWritingSystems(m_dlg.VernWsList, new[] { "English", "French", "English (United States)" }, true);
 
 			// Verify that the correct items are not checked.
-			VerifyCheckedWritingSystems(m_dlg.VernWsList,
-				new[] { "English (Phonetic)", "Spanish" }, false);
+			VerifyCheckedWritingSystems(m_dlg.VernWsList, new[] { "English (Phonetic)", "Spanish" }, false);
 
 			Assert.IsTrue(m_dlg.OkButton.Enabled);
 			Assert.IsTrue(m_dlg.VernWsDeleteButton.Enabled);
@@ -666,11 +312,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.IsTrue(m_dlg.VernWsMoveDownButton.Enabled);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		[Test]
 		public void AnalysisWsListContent()
 		{
@@ -680,23 +322,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			Assert.AreEqual(0, m_dlg.AnalWsList.SelectedIndex, "First item is not selected.");
 
-			VerifyWritingSystemOrder(m_dlg.AnalWsList,
-				new[] { "English", "English (Phonetic)", "French", "Spanish" });
+			VerifyWritingSystemOrder(m_dlg.AnalWsList, new[] { "English", "English (Phonetic)", "French", "Spanish" });
 
 			// Verify that the correct items are checked.
-			VerifyCheckedWritingSystems(m_dlg.AnalWsList,
-				new[] { "English (Phonetic)", "English" }, true);
+			VerifyCheckedWritingSystems(m_dlg.AnalWsList, new[] { "English (Phonetic)", "English" }, true);
 
 			// Verify that the correct items are not checked.
-			VerifyCheckedWritingSystems(m_dlg.AnalWsList,
-				new[] { "Spanish", "French" }, false);
+			VerifyCheckedWritingSystems(m_dlg.AnalWsList, new[] { "Spanish", "French" }, false);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		[Test]
 		public void AnalysisWsListMoveContentDown()
 		{
@@ -708,25 +343,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.AnalWsList.SelectedIndex = 1;
 			m_dlg.SimulateAnalDownButtonPress();
 
-			VerifyWritingSystemOrder(m_dlg.AnalWsList,
-				new[] { "English", "French", "English (Phonetic)", "Spanish" });
+			VerifyWritingSystemOrder(m_dlg.AnalWsList, new[] { "English", "French", "English (Phonetic)", "Spanish" });
 
 			Assert.AreEqual(2, m_dlg.AnalWsList.SelectedIndex);
 
 			// Verify that the correct items are checked.
-			VerifyCheckedWritingSystems(m_dlg.AnalWsList,
-				new[] { "English (Phonetic)", "English" }, true);
+			VerifyCheckedWritingSystems(m_dlg.AnalWsList, new[] { "English (Phonetic)", "English" }, true);
 
 			// Verify that the correct items are not checked.
-			VerifyCheckedWritingSystems(m_dlg.AnalWsList,
-				new[] { "Spanish", "French" }, false);
+			VerifyCheckedWritingSystems(m_dlg.AnalWsList, new[] { "Spanish", "French" }, false);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		[Test]
 		public void AnalysisWsListMoveContentUp()
 		{
@@ -738,25 +366,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.AnalWsList.SelectedIndex = 1;
 			m_dlg.SimulateAnalUpButtonPress();
 
-			VerifyWritingSystemOrder(m_dlg.AnalWsList,
-				new[] { "English (Phonetic)", "English", "French", "Spanish" });
+			VerifyWritingSystemOrder(m_dlg.AnalWsList, new[] { "English (Phonetic)", "English", "French", "Spanish" });
 
 			Assert.AreEqual(0, m_dlg.AnalWsList.SelectedIndex);
 
 			// Verify that the correct items are checked.
-			VerifyCheckedWritingSystems(m_dlg.AnalWsList,
-				new[] { "English (Phonetic)", "English" }, true);
+			VerifyCheckedWritingSystems(m_dlg.AnalWsList, new[] { "English (Phonetic)", "English" }, true);
 
 			// Verify that the correct items are not checked.
-			VerifyCheckedWritingSystems(m_dlg.AnalWsList,
-				new[] { "spanish", "French" }, false);
+			VerifyCheckedWritingSystems(m_dlg.AnalWsList, new[] { "spanish", "French" }, false);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		[Test]
 		public void AnalysisWsListSelectionAtBottom()
 		{
@@ -768,11 +389,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.IsFalse(m_dlg.AnalWsMoveDownButton.Enabled);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		[Test]
 		public void AnalysisWsListSelectionAtTop()
 		{
@@ -784,11 +401,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.IsFalse(m_dlg.AnalWsMoveUpButton.Enabled);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		[Test]
 		public void AnalysisWsListDelete()
 		{
@@ -800,25 +413,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.AnalWsList.SelectedIndex = 1;
 			m_dlg.SimulateAnalDeletePress();
 
-			VerifyWritingSystemOrder(m_dlg.AnalWsList,
-				new[] { "English", "French", "Spanish" });
+			VerifyWritingSystemOrder(m_dlg.AnalWsList, new[] { "English", "French", "Spanish" });
 
 			Assert.AreEqual(1, m_dlg.AnalWsList.SelectedIndex);
 
 			// Verify that the correct items are checked.
-			VerifyCheckedWritingSystems(m_dlg.AnalWsList,
-				new[] { "English" }, true);
+			VerifyCheckedWritingSystems(m_dlg.AnalWsList, new[] { "English" }, true);
 
 			// Verify that the correct items are not checked.
-			VerifyCheckedWritingSystems(m_dlg.AnalWsList,
-				new[] { "Spanish", "French" }, false);
+			VerifyCheckedWritingSystems(m_dlg.AnalWsList, new[] { "Spanish", "French" }, false);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		[Test]
 		public void AnalysisWsListDeleteAllWs()
 		{
@@ -842,11 +448,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.IsFalse(m_dlg.AnalWsMoveDownButton.Enabled);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		[Test]
 		public void AnalysisWsListAdd()
 		{
@@ -863,23 +465,20 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.AnalWsMoveDownButton.Enabled = false;
 
 			// Add a new writing system to the cache.
-			CoreWritingSystemDefinition ws = Cache.ServiceLocator.WritingSystemManager.Set("zh-CN");
+			var ws = Cache.ServiceLocator.WritingSystemManager.Set("zh-CN");
 
 			m_dlg.SimulateAnalAddingWs(ws);
 
-			VerifyWritingSystemOrder(m_dlg.AnalWsList,
-				new[] { "English", "English (Phonetic)", "French", "Spanish", "Chinese (China)" });
+			VerifyWritingSystemOrder(m_dlg.AnalWsList, new[] { "English", "English (Phonetic)", "French", "Spanish", "Chinese (China)" });
 
 			// Verify that the new writing system is the selected one.
 			Assert.AreEqual(ws, m_dlg.AnalWsList.SelectedItem, "New writing system is not selected.");
 
 			// Verify that the correct items are checked.
-			VerifyCheckedWritingSystems(m_dlg.AnalWsList,
-				new[] { "English (Phonetic)", "Chinese (China)", "English" }, true);
+			VerifyCheckedWritingSystems(m_dlg.AnalWsList, new[] { "English (Phonetic)", "Chinese (China)", "English" }, true);
 
 			// Verify that the correct items are not checked.
-			VerifyCheckedWritingSystems(m_dlg.AnalWsList,
-				new[] { "Spanish", "French" }, false);
+			VerifyCheckedWritingSystems(m_dlg.AnalWsList, new[] { "Spanish", "French" }, false);
 
 			Assert.IsTrue(m_dlg.OkButton.Enabled);
 			Assert.IsTrue(m_dlg.AnalWsDeleteButton.Enabled);
@@ -888,11 +487,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.IsTrue(m_dlg.AnalWsMoveDownButton.Enabled);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		[Test]
 		public void SavingVernWritingSystems()
 		{
@@ -924,13 +519,116 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.AreEqual("English (Phonetic)", Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems[2].ToString());
 
 			// Verify the list of cached writing systems.
-			foreach (CoreWritingSystemDefinition ws in Cache.ServiceLocator.WritingSystems.VernacularWritingSystems)
+			foreach (var ws in Cache.ServiceLocator.WritingSystems.VernacularWritingSystems)
 			{
-				Assert.IsTrue(ws.ToString() == "French" || ws.ToString() == "English" ||
-					ws.ToString() == "Spanish" || ws.ToString() == "English (Phonetic)");
+				Assert.IsTrue(ws.ToString() == "French" || ws.ToString() == "English" || ws.ToString() == "Spanish" || ws.ToString() == "English (Phonetic)");
 			}
 		}
 
 		#endregion
+
+		/// <summary />
+		private sealed class DummyFwProjPropertiesDlg : FwProjPropertiesDlg
+		{
+			/// <summary />
+			internal DummyFwProjPropertiesDlg(LcmCache cache)
+				: base(cache, null, null)
+			{
+			}
+
+			/// <summary />
+			internal Button OkButton => m_btnOK;
+
+			/// <summary />
+			internal CheckedListBox VernWsList => m_lstVernWs;
+
+			/// <summary />
+			internal CheckedListBox AnalWsList => m_lstAnalWs;
+
+			/// <summary />
+			internal Button VernWsMoveDownButton => m_btnVernMoveDown;
+
+			/// <summary />
+			internal Button VernWsMoveUpButton => m_btnVernMoveUp;
+
+			/// <summary />
+			internal Button VernWsDeleteButton => m_btnDelVernWs;
+
+			/// <summary />
+			internal Button VernWsModifyButton => m_btnModifyVernWs;
+
+			/// <summary />
+			public Button AnalWsMoveDownButton => m_btnAnalMoveDown;
+
+			/// <summary />
+			internal Button AnalWsMoveUpButton => m_btnAnalMoveUp;
+
+			/// <summary />
+			internal Button AnalWsDeleteButton => m_btnDelAnalWs;
+
+			/// <summary />
+			internal Button AnalWsModifyButton => m_btnModifyAnalWs;
+
+			/// <summary />
+			internal void SimulateOKButtonPress()
+			{
+				SaveInternal();
+			}
+
+			/// <summary />
+			internal void SimulateVernDownButtonPress()
+			{
+				m_btnVernMoveDown_Click(null, null);
+			}
+
+			/// <summary />
+			internal void SimulateVernUpButtonPress()
+			{
+				m_btnVernMoveUp_Click(null, null);
+			}
+
+			/// <summary />
+			internal void SimulateAnalDownButtonPress()
+			{
+				m_btnAnalMoveDown_Click(null, null);
+			}
+
+			/// <summary />
+			internal void SimulateAnalUpButtonPress()
+			{
+				m_btnAnalMoveUp_Click(null, null);
+			}
+
+			/// <summary />
+			internal void SimulateAnalDeletePress()
+			{
+				m_btnDelAnalWs_Click(null, null);
+			}
+
+			/// <summary />
+			internal void SimulateVernDeletePress()
+			{
+				m_btnDelVernWs_Click(null, null);
+			}
+
+			/// <summary />
+			internal void SimulateAnalAddingWs(CoreWritingSystemDefinition ws)
+			{
+				AddWsToList(ws, m_lstAnalWs);
+				UpdateButtons(m_lstAnalWs);
+			}
+
+			/// <summary />
+			internal void SimulateVernAddingWs(CoreWritingSystemDefinition ws)
+			{
+				AddWsToList(ws, m_lstVernWs);
+				UpdateButtons(m_lstVernWs);
+			}
+
+			protected override DialogResult BringUpEnglishWarningMsg()
+			{
+				return DialogResult.Yes;
+			}
+		}
 	}
 }

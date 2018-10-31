@@ -4,41 +4,38 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Drawing;
 using System.Runtime.InteropServices;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Common.RootSites;
 
 namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
 	/// <summary>
 	/// Preview view in the Bullets and Numbering tab
 	/// </summary>
-	internal class BulletsPreview : SimpleRootSite
+	internal sealed class BulletsPreview : SimpleRootSite
 	{
 		#region Data members
 
-		// This 'view' displays the string m_tssData by pretending it is property ktagText of
-		// object khvoRoot.
-		protected internal const int ktagText = 9001; // completely arbitrary, but recognizable.
-		protected const int kfragRoot = 8002; // likewise.
-		protected const int khvoRoot = 7003; // likewise.
-
+		private const int kfragRoot = 8002; // completely arbitrary, but recognizable.
+		private const int khvoRoot = 7003; // likewise.
 		// Neither of these caches are used by LcmCache.
 		// They are only used here.
-		protected IVwCacheDa m_CacheDa; // Main cache object
-		protected ISilDataAccess m_DataAccess; // Another interface on m_CacheDa.
+		private IVwCacheDa m_CacheDa; // Main cache object
+		private ISilDataAccess m_DataAccess; // Another interface on m_CacheDa.
 		BulletsPreviewVc m_vc;
-		protected bool m_fUsingTempWsFactory;
+		private bool m_fUsingTempWsFactory;
 		private int m_WritingSystem;
 		#endregion // Data members
 
 		#region Constructor/destructor
-		/// <summary>
-		/// Default constructor
-		/// </summary>
+
+		/// <summary />
 		public BulletsPreview()
 		{
 			m_CacheDa = VwCacheDaClass.Create();
@@ -54,14 +51,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			AutoScroll = false; // not even if the root box is bigger than the window.
 		}
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -120,7 +116,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// The writing system that should be used to construct a TsString out of a string in Text.set.
 		/// If one has not been supplied use the User interface writing system from the factory.
 		/// </summary>
-		[BrowsableAttribute(false), DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int WritingSystemCode
 		{
 			get
@@ -142,8 +138,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// the registry). (Note this is kind of overkill, since the constructor does this too.
 		/// But I left it here in case we change our minds about the constructor.)
 		/// </summary>
-		[BrowsableAttribute(false)]
-		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public override ILgWritingSystemFactory WritingSystemFactory
 		{
 			get
@@ -191,18 +186,14 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		#endregion
 
 		#region Overridden rootsite methods
-		/// <summary>
-		/// Simulate infinite width if needed.
-		/// </summary>
+
+		/// <inheritdoc />
 		public override int GetAvailWidth(IVwRootBox prootb)
 		{
 			return ClientRectangle.Width - (HorizMargin * 2);
 		}
 
-		/// <summary>
-		/// Create the root box and initialize it. We want this one to work even in design mode,
-		/// and since we supply the cache and data ourselves, that's possible.
-		/// </summary>
+		/// <inheritdoc />
 		public override void MakeRoot()
 		{
 			base.MakeRoot();
@@ -211,9 +202,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			m_rootb.SetRootObject(khvoRoot, m_vc, kfragRoot, null);
 		}
 
-		/// <summary>
-		/// Gets a value indicating whether the root can be constructed in design mode.
-		/// </summary>
+		/// <inheritdoc />
 		protected override bool AllowPaintingInDesigner => true;
 		#endregion
 
@@ -227,6 +216,73 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				m_vc.SetProps(propertiesForFirstPreviewParagraph, propertiesForFollowingPreviewParagraph);
 				RefreshDisplay();
 			}
+		}
+
+		/// <summary>
+		/// View constructor for the bullets preview view
+		/// </summary>
+		private sealed class BulletsPreviewVc : FwBaseVc
+		{
+			#region Data members
+			private const int kdmpFakeHeight = 5000; // height for the "fake text" rectangles
+			private ITsTextProps m_propertiesForFirstPreviewParagraph;
+			private ITsTextProps m_propertiesForFollowingPreviewParagraph;
+			#endregion
+
+			/// <inheritdoc />
+			public override void Display(IVwEnv vwenv, int hvo, int frag)
+			{
+				// Make a "context" paragraph before the numbering starts.
+				vwenv.set_IntProperty((int)FwTextPropType.ktptSpaceBefore, (int)FwTextPropVar.ktpvMilliPoint, 10000);
+				AddPreviewPara(vwenv, null, false);
+
+				// Make the first numbered paragraph.
+				// (It's not much use if we don't have properties, but that may happen while we're starting
+				// up so we need to cover it.)
+				AddPreviewPara(vwenv, m_propertiesForFirstPreviewParagraph, true);
+
+				// Make two more numbered paragraphs.
+				AddPreviewPara(vwenv, m_propertiesForFollowingPreviewParagraph, true);
+				AddPreviewPara(vwenv, m_propertiesForFollowingPreviewParagraph, true);
+
+				// Make a "context" paragraph after the numbering ends.
+				AddPreviewPara(vwenv, null, true);
+			}
+
+			/// <summary>
+			/// Adds a paragraph (gray line) to the  preview.
+			/// </summary>
+			private void AddPreviewPara(IVwEnv vwenv, ITsTextProps props, bool fAddSpaceBefore)
+			{
+				// (width is -1, meaning "use the rest of the line")
+				if (props != null)
+				{
+					vwenv.Props = props;
+				}
+				else if (fAddSpaceBefore)
+				{
+					vwenv.set_IntProperty((int)FwTextPropType.ktptSpaceBefore, (int)FwTextPropVar.ktpvMilliPoint, 6000);
+				}
+
+				vwenv.set_IntProperty((int)FwTextPropType.ktptRightToLeft, (int)FwTextPropVar.ktpvEnum, IsRightToLeft ? -1 : 0);
+				vwenv.OpenParagraph();
+				vwenv.AddSimpleRect(Color.LightGray.ToArgb(), -1, kdmpFakeHeight, 0);
+				vwenv.CloseParagraph();
+			}
+
+			/// <summary>
+			/// Sets the text properties.
+			/// </summary>
+			internal void SetProps(ITsTextProps propertiesForFirstPreviewParagraph, ITsTextProps propertiesForFollowingPreviewParagraph)
+			{
+				m_propertiesForFirstPreviewParagraph = propertiesForFirstPreviewParagraph;
+				m_propertiesForFollowingPreviewParagraph = propertiesForFollowingPreviewParagraph;
+			}
+
+			/// <summary>
+			/// Gets or sets a value indicating whether this instance is right to left.
+			/// </summary>
+			internal bool IsRightToLeft { get; set; }
 		}
 	}
 }

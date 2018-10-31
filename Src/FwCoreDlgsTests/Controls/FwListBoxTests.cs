@@ -1,27 +1,25 @@
-﻿// Copyright (c) 2010-2017 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Tests for FwListBox.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
 	public class FwListBoxTests
 	{
 		#region Data Members
-		TestFwStylesheet m_stylesheet;
-		WritingSystemManager m_wsManager;
-		int m_hvoEnglishWs;
+		private TestFwStylesheet m_stylesheet;
+		private WritingSystemManager m_wsManager;
+		private int m_hvoEnglishWs;
+		private FwListBox _fwListBox;
 		#endregion
 
 		/// <summary />
@@ -36,65 +34,69 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			m_hvoEnglishWs = enWs.Handle;
 		}
 
+		/// <summary />
+		[SetUp]
+		public void TestSetup()
+		{
+			_fwListBox = new FwListBox();
+		}
+
+		/// <summary />
+		[TearDown]
+		public void TearDown()
+		{
+			_fwListBox?.Dispose();
+			_fwListBox = null;
+		}
+
 		#region ObjectCollection Collection tests.
 
 		/// <summary />
 		[Test]
 		public void Add_EmptyObjectCollection_CollectionContainsSingleElement()
 		{
-
-			using (var listBox = new FwListBox())
+			using (var collection = new ObjectCollection(_fwListBox))
 			{
+				var testString = TsStringUtils.MakeString("test", m_hvoEnglishWs);
 
-				using (var collection = new ObjectCollection(listBox))
-				{
-					ITsString testString = TsStringUtils.MakeString("test", m_hvoEnglishWs);
+				// The Test
+				collection.Add(testString);
 
-					// The Test
-					collection.Add(testString);
-
-					Assert.AreEqual(1, collection.Count);
-					Assert.IsTrue(collection.Contains(testString));
-				}
+				Assert.AreEqual(1, collection.Count);
+				Assert.IsTrue(collection.Contains(testString));
 			}
-	}
+		}
 
 		/// <summary />
 		[Test]
 		public void Remove_CollectionWithSingleElement_CollectionShouldBeEmpty()
 		{
-			using (var listBox = new FwListBox())
+			using (var collection = new ObjectCollection(_fwListBox))
 			{
-				using (var collection = new ObjectCollection(listBox))
-				{
-					ITsString testString = TsStringUtils.MakeString("test", m_hvoEnglishWs);
-					collection.Add(testString);
+				var testString = TsStringUtils.MakeString("test", m_hvoEnglishWs);
+				collection.Add(testString);
 
-					// The Test
-					collection.Remove(testString);
+				// The Test
+				collection.Remove(testString);
 
-					Assert.AreEqual(0, collection.Count);
-					Assert.IsFalse(collection.Contains(testString));
-				}
+				Assert.AreEqual(0, collection.Count);
+				Assert.IsFalse(collection.Contains(testString));
 			}
 		}
 		/// <summary />
 		[Test]
 		public void Clear_CollectionWithSingleElement_CollectionShouldBeEmpty()
 		{
-			using (var listBox = new FwListBox())
+			using (var collection = new ObjectCollection(_fwListBox))
 			{
-				using (var collection = new ObjectCollection(listBox))
-				{
-					ITsString testString = TsStringUtils.MakeString("test", m_hvoEnglishWs);
-					collection.Add(testString);
+				var testString = TsStringUtils.MakeString("test", m_hvoEnglishWs);
+				collection.Add(testString);
 
-					// The Test
-					collection.Clear();
+				// The Test
+				collection.Clear();
 
-					Assert.AreEqual(0, collection.Count);
-					Assert.IsFalse(collection.Contains(testString));
-				}
+				Assert.AreEqual(0, collection.Count);
+				Assert.IsFalse(collection.Contains(testString));
 			}
 		}
 
@@ -102,21 +104,18 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		[Test]
 		public void SetIndex_CollectionWithSingleElement_ValueShouldHaveChanged()
 		{
-			using (var listBox = new FwListBox())
+			using (var collection = new ObjectCollection(_fwListBox))
 			{
-				using (var collection = new ObjectCollection(listBox))
-				{
-					ITsString testString1 = TsStringUtils.MakeString("test1", m_hvoEnglishWs);
-					ITsString testString2 = TsStringUtils.MakeString("test2", m_hvoEnglishWs);
-					collection.Add(testString1);
+				var testString1 = TsStringUtils.MakeString("test1", m_hvoEnglishWs);
+				var testString2 = TsStringUtils.MakeString("test2", m_hvoEnglishWs);
+				collection.Add(testString1);
 
-					// The Test
-					collection[0] = testString2;
+				// The Test
+				collection[0] = testString2;
 
-					Assert.AreEqual(1, collection.Count);
-					Assert.IsFalse(collection.Contains(testString1));
-					Assert.IsTrue(collection.Contains(testString2));
-				}
+				Assert.AreEqual(1, collection.Count);
+				Assert.IsFalse(collection.Contains(testString1));
+				Assert.IsTrue(collection.Contains(testString2));
 			}
 		}
 		#endregion
@@ -127,13 +126,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		[Test]
 		public void WritingSystemCode_EmptyFwListBox_DoesNotThrowException()
 		{
-			using (var listBox = new FwListBox())
+			using (var innerFwListBox = new InnerFwListBox(_fwListBox))
 			{
-				using (var innerFwListBox = new InnerFwListBox(listBox))
-				{
-					// The Test
-					Assert.GreaterOrEqual(innerFwListBox.WritingSystemCode, 0);
-				}
+				// The Test
+				Assert.GreaterOrEqual(innerFwListBox.WritingSystemCode, 0);
 			}
 		}
 
@@ -142,12 +138,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		public void ShowHighlight_EmptyFwListBox_ReturnsTrue()
 		{
 			using (var listBox = new FwListBox())
+			using (var innerFwListBox = new InnerFwListBox(listBox))
 			{
-				using (var innerFwListBox = new InnerFwListBox(listBox))
-				{
-					// The Test
-					Assert.AreEqual(true, innerFwListBox.ShowHighlight);
-				}
+				// The Test
+				Assert.AreEqual(true, innerFwListBox.ShowHighlight);
 			}
 		}
 
@@ -155,14 +149,11 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		[Test]
 		public void SetShowHighlight_EmptyFwListBox_ShouldBeSetToFalse()
 		{
-			using (var listBox = new FwListBox())
+			using (var innerFwListBox = new InnerFwListBox(_fwListBox))
 			{
-				using (var innerFwListBox = new InnerFwListBox(listBox))
-				{
-					// The Test
-					innerFwListBox.ShowHighlight = false;
-					Assert.AreEqual(false, innerFwListBox.ShowHighlight);
-				}
+				// The Test
+				innerFwListBox.ShowHighlight = false;
+				Assert.AreEqual(false, innerFwListBox.ShowHighlight);
 			}
 		}
 
@@ -170,13 +161,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		[Test]
 		public void IsHighlighted_EmptyFwListBox_ReturnsFalse()
 		{
-			using (var listBox = new FwListBox())
+			using (var innerFwListBox = new InnerFwListBox(_fwListBox))
 			{
-				using (var innerFwListBox = new InnerFwListBox(listBox))
-				{
-					// The Test
-					Assert.AreEqual(false, innerFwListBox.IsHighlighted(0));
-				}
+				// The Test
+				Assert.AreEqual(false, innerFwListBox.IsHighlighted(0));
 			}
 		}
 
@@ -184,21 +172,17 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		[Test]
 		public void IsHighlighted_CollectionWithSingleElement_ReturnsTrue()
 		{
-			using (var listBox = new FwListBox())
+			using (var innerFwListBox = new InnerFwListBox(_fwListBox))
 			{
-					using (var innerFwListBox = new InnerFwListBox(listBox))
-					{
-						ITsString testString1 = TsStringUtils.MakeString("test1", m_hvoEnglishWs);
-						listBox.Items.Add(testString1);
-						innerFwListBox.MakeRoot();
-						listBox.HighlightedIndex = 0;
+				var testString1 = TsStringUtils.MakeString("test1", m_hvoEnglishWs);
+				_fwListBox.Items.Add(testString1);
+				innerFwListBox.MakeRoot();
+				_fwListBox.HighlightedIndex = 0;
 
-						// The Test
-						Assert.AreEqual(true, innerFwListBox.IsHighlighted(0));
-					}
+				// The Test
+				Assert.AreEqual(true, innerFwListBox.IsHighlighted(0));
 			}
 		}
 		#endregion
 	}
-
 }
