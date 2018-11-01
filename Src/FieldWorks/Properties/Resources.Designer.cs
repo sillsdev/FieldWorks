@@ -156,6 +156,15 @@ namespace SIL.FieldWorks.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Projects Folder.
+        /// </summary>
+        internal static string ksChooseProjectFolder {
+            get {
+                return ResourceManager.GetString("ksChooseProjectFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Corrupt Settings File Detected.
         /// </summary>
         internal static string ksCorruptSettingsFileCaption {

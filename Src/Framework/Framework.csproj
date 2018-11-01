@@ -247,7 +247,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ExportStyleInfo.cs" />
-    <Compile Include="ExternalSettingsAccessorBase.cs" />
     <Compile Include="FrameworkStrings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -264,9 +263,7 @@
     <Compile Include="ScrollListBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="SettingsXmlAccessorBase.cs" />
     <Compile Include="StatusBarProgressHandler.cs" />
-    <Compile Include="StylesXmlAccessor.cs" />
     <Compile Include="UndoRedoDropDown.cs">
       <SubType>UserControl</SubType>
     </Compile>

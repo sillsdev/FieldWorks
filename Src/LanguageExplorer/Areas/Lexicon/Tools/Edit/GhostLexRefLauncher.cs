@@ -9,7 +9,6 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FwCoreDlgs;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.PlatformUtilities;

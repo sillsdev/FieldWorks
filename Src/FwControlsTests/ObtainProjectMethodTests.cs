@@ -139,7 +139,7 @@ namespace SIL.FieldWorks.Common.Controls
 		public void CallPickAnthro_PickAnthroListCanBeFound()
 		{
 			var flags = (BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
-			var type = ReflectionHelper.GetType(ObtainProjectMethod.PickAnthroDll, ObtainProjectMethod.PickAnthroClass);
+			var type = ReflectionHelper.GetType(ObtainProjectMethod.PickAnthroAssembly, ObtainProjectMethod.PickAnthroClass);
 			Assert.NotNull(type, "Class used for PickAnthroList moved.");
 			var method = type.GetMethod(ObtainProjectMethod.PickAnthroMethod, new[] { typeof(string), typeof(IHelpTopicProvider) });
 			Assert.NotNull(method, "Method name changed, or parameters changed.");

@@ -112,6 +112,9 @@
     <LangVersion>6</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Mono.Posix">
+      <HintPath>..\..\packages\Mono.Posix-4.5.4.5.0\lib\net45\Mono.Posix.dll</HintPath>
+    </Reference>
     <Reference Include="LanguageExplorer, Version=10.0.0.37221, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\LanguageExplorer.dll</HintPath>
@@ -248,8 +251,20 @@
       <DependentUpon>ChooseLangProjectDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="ComposablePartCatalogExtensions.cs" />
+    <Compile Include="DuplicateProjectFoundDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="FieldWorksManager.cs" />
     <Compile Include="FwApplicationSettings.cs" />
+    <Compile Include="FwCheckAnthroListDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FwCheckAnthroListDlg.Designer.cs">
+      <DependentUpon>FwCheckAnthroListDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FwNewLangProject.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="FwRestoreProjectSettings.cs" />
     <Compile Include="FwSplashScreen.cs" />
     <Compile Include="LexicalProvider\EntryType.cs" />
@@ -287,6 +302,12 @@
     <Compile Include="PaObjects\PaWritingSystem.cs" />
     <Compile Include="LexicalProvider\ILexicalProvider.cs" />
     <Compile Include="FieldWorks.cs" />
+    <Compile Include="ProjectLocationDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ProjectLocationDlg.Designer.cs">
+      <DependentUpon>ProjectLocationDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="RealSplashScreen.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -343,6 +364,17 @@
     <EmbeddedResource Include="ChooseLangProjectDialog.resx">
       <DependentUpon>ChooseLangProjectDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="DuplicateProjectFoundDlg.resx">
+      <DependentUpon>DuplicateProjectFoundDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FwCheckAnthroListDlg.resx">
+      <DependentUpon>FwCheckAnthroListDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FwNewLangProject.resx">
+      <DependentUpon>FwNewLangProject.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="MissingOldFieldWorksDlg.resx">
       <DependentUpon>MissingOldFieldWorksDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -350,6 +382,9 @@
     <EmbeddedResource Include="MoveProjectsDlg.resx">
       <DependentUpon>MoveProjectsDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProjectLocationDlg.resx">
+      <DependentUpon>ProjectLocationDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

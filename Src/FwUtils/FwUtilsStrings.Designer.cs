@@ -178,6 +178,25 @@ namespace SIL.FieldWorks.Common.FwUtils {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Illegal characters.
+        /// </summary>
+        internal static string ksIllegalChars {
+            get {
+                return ResourceManager.GetString("ksIllegalChars", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The name cannot contain these characters:
+        ///{0}.
+        /// </summary>
+        internal static string ksIllegalNameMsg {
+            get {
+                return ResourceManager.GetString("ksIllegalNameMsg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The help topic is not available for topic: {0}.
         /// </summary>
         internal static string ksNoHelpTopicX {

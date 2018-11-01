@@ -395,13 +395,6 @@ your account write access to the appropriate directories, or else modify the wri
   <data name="ksFwWsSyncProblem" xml:space="preserve">
     <value>FieldWorks Project synchronization problem</value>
   </data>
-  <data name="ksIllegalChars" xml:space="preserve">
-    <value>Illegal characters</value>
-  </data>
-  <data name="ksIllegalNameMsg" xml:space="preserve">
-    <value>The name cannot contain these characters:
-{0}</value>
-  </data>
   <data name="ksInfixMenuCmd" xml:space="preserve">
     <value>{0} Infix</value>
     <comment>Menu Command: {0} is an example of an Infix</comment>
@@ -795,10 +788,6 @@ Enter a shorter name.</value>
   <data name="ksWarning" xml:space="preserve">
     <value>Warning</value>
     <comment>Caption for warning message box</comment>
-  </data>
-  <data name="ksChooseProjectFolder" xml:space="preserve">
-    <value>Projects Folder</value>
-    <comment>label for folder chooser dialog</comment>
   </data>
   <data name="ksNetworkNeighborhood" xml:space="preserve">
     <value>Network Neighborhood</value>

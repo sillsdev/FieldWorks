@@ -5,6 +5,7 @@
 using System;
 using System.Windows.Forms;
 using System.Linq;
+using LanguageExplorer.Controls.Styles;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;

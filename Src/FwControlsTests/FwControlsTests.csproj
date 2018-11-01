@@ -200,7 +200,6 @@
     <Compile Include="..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
-    <Compile Include="CaseSensitiveListBoxTests.cs" />
     <Compile Include="DummyProgressDlg.cs" />
     <Compile Include="ObtainProjectMethodTests.cs" />
     <Compile Include="ProgressDlgTests.cs">

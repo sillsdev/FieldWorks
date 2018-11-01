@@ -1635,7 +1635,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		private void m_txtProjName_TextChanged(object sender, EventArgs e)
 		{
-			FwNewLangProject.CheckForValidProjectName(m_txtProjName);
+			FwUtils.CheckForValidProjectName(m_txtProjName);
 			m_txtProjName.Text = m_txtProjName.Text.Normalize();
 			m_btnOK.Enabled = m_txtProjName.Text.Trim().Length > 0;
 			m_lblProjName.Text = m_txtProjName.Text;

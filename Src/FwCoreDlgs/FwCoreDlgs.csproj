@@ -330,67 +330,22 @@
     <Compile Include="Controls\FontFeaturesButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\FontInfoExtensions.cs" />
-    <Compile Include="Controls\FwBorderTab.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\FwBorderTab.Designer.cs">
-      <DependentUpon>FwBorderTab.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\FwBulletsPreview.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\FwBulletsTab.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\FwBulletsTab.Designer.cs">
-      <DependentUpon>FwBulletsTab.cs</DependentUpon>
-    </Compile>
     <Compile Include="Controls\FwComboBoxBase.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\FwFontAttributes.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\FwFontAttributes.Designer.cs">
-      <DependentUpon>FwFontAttributes.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\FwFontTab.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\FwFontTab.Designer.cs">
-      <DependentUpon>FwFontTab.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\FwGeneralTab.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\FwGeneralTab.Designer.cs">
-      <DependentUpon>FwGeneralTab.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\FwInheritablePropComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Controls\FwListBox.cs">
       <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Controls\FwParagraphTab.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\FwParagraphTab.Designer.cs">
-      <DependentUpon>FwParagraphTab.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\FwTextBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\IComboList.cs" />
-    <Compile Include="Controls\IFontDialog.cs" />
     <Compile Include="Controls\InnerFwListBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\InnerFwTextBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\IStylesTab.cs" />
     <Compile Include="Controls\LocaleMenuButton.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -400,14 +355,7 @@
     <Compile Include="Controls\RegionVariantControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\StyleComboItem.cs" />
-    <Compile Include="Controls\StyleInfo.cs" />
-    <Compile Include="Controls\StyleListBoxHelper.cs" />
-    <Compile Include="Controls\StyleListItem.cs" />
     <Compile Include="Controls\TextBoxDataAccess.cs" />
-    <Compile Include="Controls\UpDownMeasureControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="ConverterTrial.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -420,35 +368,11 @@
     </Compile>
     <Compile Include="EncoderInfo.cs" />
     <Compile Include="ErrorMessageHandler.cs" />
-    <Compile Include="FileLocationChoice.cs" />
     <Compile Include="FwCharacterCategorizer.cs" />
-    <Compile Include="FwCheckAnthroListDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FwCheckAnthroListDlg.Designer.cs">
-      <DependentUpon>FwCheckAnthroListDlg.cs</DependentUpon>
-    </Compile>
     <Compile Include="FwLabel.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="MergeWritingSystemDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MessageBoxes.cs" />
-    <Compile Include="MoveOrCopyFilesController.cs" />
-    <Compile Include="MoveOrCopyFilesDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MoveOrCopyFilesDlg.Designer.cs">
-      <DependentUpon>MoveOrCopyFilesDlg.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ProjectLocationDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ProjectLocationDlg.Designer.cs">
-      <DependentUpon>ProjectLocationDlg.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DuplicateProjectFoundDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ErrorMessage.cs">
@@ -467,29 +391,8 @@
     <Compile Include="FwDeleteProjectDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FwFontDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FwFontDialog.Designer.cs">
-      <DependentUpon>FwFontDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FwNewLangProject.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="FwProjPropertiesDlg.cs">
       <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FwStylesDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FwStylesDlg.Designer.cs">
-      <DependentUpon>FwStylesDlg.cs</DependentUpon>
-    </Compile>
-    <Compile Include="HelperContextMenu.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="MorphBreakHelperContextMenu.cs">
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -502,7 +405,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
-    <Compile Include="StyleChangeType.cs" />
     <Compile Include="ValidCharactersDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -567,32 +469,8 @@
       <DependentUpon>FontFeaturesButton.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\FwBorderTab.resx">
-      <DependentUpon>FwBorderTab.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\FwBulletsTab.resx">
-      <DependentUpon>FwBulletsTab.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\FwFontAttributes.resx">
-      <DependentUpon>FwFontAttributes.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\FwFontTab.resx">
-      <DependentUpon>FwFontTab.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\FwGeneralTab.resx">
-      <DependentUpon>FwGeneralTab.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Controls\FwListBox.resx">
       <DependentUpon>FwListBox.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\FwParagraphTab.resx">
-      <DependentUpon>FwParagraphTab.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\FwTextBox.resx">
@@ -607,10 +485,6 @@
       <DependentUpon>RegionVariantControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\UpDownMeasureControl.resx">
-      <DependentUpon>UpDownMeasureControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="ConverterTrial.resx">
       <DependentUpon>ConverterTrial.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -618,22 +492,8 @@
     <EmbeddedResource Include="DeleteWritingSystemWarningDialog.resx">
       <DependentUpon>DeleteWritingSystemWarningDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FwCheckAnthroListDlg.resx">
-      <DependentUpon>FwCheckAnthroListDlg.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="MergeWritingSystemDlg.resx">
       <DependentUpon>MergeWritingSystemDlg.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MoveOrCopyFilesDlg.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>MoveOrCopyFilesDlg.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ProjectLocationDlg.resx">
-      <DependentUpon>ProjectLocationDlg.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DuplicateProjectFoundDlg.resx">
-      <DependentUpon>DuplicateProjectFoundDlg.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="FwCoreDlgs.resx">
       <SubType>Designer</SubType>
@@ -649,21 +509,9 @@
       <DependentUpon>FwDeleteProjectDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="FwFontDialog.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>FwFontDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FwNewLangProject.resx">
-      <DependentUpon>FwNewLangProject.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="FwProjPropertiesDlg.resx">
       <DependentUpon>FwProjPropertiesDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FwStylesDlg.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>FwStylesDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

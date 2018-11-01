@@ -203,18 +203,6 @@
     <Compile Include="CharacterGrid.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ColorPickerStrings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ColorPickerStrings.resx</DependentUpon>
-    </Compile>
-    <Compile Include="CaseSensitiveListBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="DataUpDown.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="DataUpDownMode.cs" />
     <Compile Include="Design\FwButtonDesigner.cs" />
     <Compile Include="Design\FwHelpButtonDesigner.cs" />
     <Compile Include="Design\ProgressLineDesigner.cs" />
@@ -229,9 +217,6 @@
     <Compile Include="ObtainProjectMethod.cs" />
     <Compile Include="FwButton.cs">
       <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="FwColorCombo.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="FwControls.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -305,17 +290,8 @@
       <DependentUpon>CharacterGrid.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ColorPickerStrings.resx">
-      <SubType>Designer</SubType>
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>ColorPickerStrings.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <EmbeddedResource Include="FwButton.resx">
       <DependentUpon>FwButton.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FwColorCombo.resx">
-      <DependentUpon>FwColorCombo.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="FwControls.resx">

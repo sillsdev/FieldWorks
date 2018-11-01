@@ -228,6 +228,13 @@
     <Compile Include="ArchivingTests.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\TextsTriStateTreeViewTests.cs" />
     <Compile Include="Controls\DetailControls\InnerLabeledMultiStringViewTests.cs" />
+    <Compile Include="Controls\Styles\CaseSensitiveListBoxTests.cs" />
+    <Compile Include="Controls\Styles\FwAttributesTests.cs" />
+    <Compile Include="Controls\Styles\FwFontDialogTests.cs" />
+    <Compile Include="Controls\Styles\FwFontTabTests.cs" />
+    <Compile Include="Controls\Styles\FwStylesDlgTests.cs" />
+    <Compile Include="Controls\Styles\StyleInfoTests.cs" />
+    <Compile Include="Controls\Styles\UpDownMeasureControlTests.cs" />
     <Compile Include="Controls\XMLViews\XmlViewsResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -326,6 +333,7 @@
     <Compile Include="Controls\SilSidePane\TabTests.cs" />
     <Compile Include="Controls\SilSidePane\TestUtilities.cs" />
     <Compile Include="SimpleLoggerTests.cs" />
+    <Compile Include="StylesXmlAccessorTests.cs" />
     <Compile Include="TestSetupServices.cs" />
     <Compile Include="Repository\TextAndWordsAreaTests.cs" />
     <Compile Include="Areas\TextsAndWords\RespellingTests.cs" />

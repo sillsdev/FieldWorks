@@ -7,13 +7,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using LanguageExplorer.Controls.Styles;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
 using LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView;
-using SIL.FieldWorks.FwCoreDlgs.Controls;
 
 namespace LanguageExplorer.DictionaryConfiguration
 {

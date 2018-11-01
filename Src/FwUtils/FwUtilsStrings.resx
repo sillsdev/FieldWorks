@@ -244,4 +244,11 @@ If you want to use Paratext with this project, make a change in this project (so
     <value>A deleted object</value>
     <comment>displayed in status bar</comment>
   </data>
+  <data name="ksIllegalChars" xml:space="preserve">
+    <value>Illegal characters</value>
+  </data>
+  <data name="ksIllegalNameMsg" xml:space="preserve">
+    <value>The name cannot contain these characters:
+{0}</value>
+  </data>
 </root>

@@ -1,10 +1,10 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using SIL.FieldWorks.FwCoreDlgs.Controls;
+using LanguageExplorer.Controls.Styles;
 
 namespace LanguageExplorer.DictionaryConfiguration
 {

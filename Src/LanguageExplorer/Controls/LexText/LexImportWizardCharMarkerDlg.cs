@@ -3,16 +3,16 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Drawing;
 using System.Collections;
 using System.Diagnostics;
+using System.Drawing;
 using System.Windows.Forms;
+using LanguageExplorer.Controls.Styles;
 using Sfm2Xml;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainServices;
-using SIL.FieldWorks.FwCoreDlgs;
 
 namespace LanguageExplorer.Controls.LexText
 {

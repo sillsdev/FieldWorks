@@ -211,7 +211,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="StylesXmlAccessorTests.cs" />
     <None Include="App.config" />
     <Compile Include="..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>

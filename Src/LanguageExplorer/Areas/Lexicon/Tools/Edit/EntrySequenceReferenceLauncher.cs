@@ -10,11 +10,10 @@ using System.Windows.Forms;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.XMLViews;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.FwCoreDlgs;
 using SIL.Xml;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit

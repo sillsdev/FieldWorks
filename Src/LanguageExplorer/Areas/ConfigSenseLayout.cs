@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using System.Drawing.Text;
 using System.Text.RegularExpressions;
 using LanguageExplorer.Controls;
-using SIL.FieldWorks.FwCoreDlgs.Controls;
+using LanguageExplorer.Controls.Styles;
 
 namespace LanguageExplorer.Areas
 {

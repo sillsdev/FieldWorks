@@ -6,10 +6,9 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FwCoreDlgs;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {

@@ -8,19 +8,19 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
-using SIL.LCModel;
-using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Resources;
-using SIL.Reporting;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
+using SIL.Reporting;
 
 namespace LanguageExplorer.Controls.DetailControls
 {

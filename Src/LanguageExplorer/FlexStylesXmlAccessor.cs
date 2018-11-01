@@ -16,7 +16,7 @@ using SIL.LCModel;
 using SIL.LCModel.Utils;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Core.KernelInterfaces;
-using StyleInfo = SIL.FieldWorks.FwCoreDlgs.Controls.StyleInfo;
+using StyleInfo = LanguageExplorer.Controls.Styles.StyleInfo;
 
 namespace LanguageExplorer
 {

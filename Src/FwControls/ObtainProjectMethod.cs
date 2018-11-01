@@ -110,8 +110,8 @@ namespace SIL.FieldWorks.Common.Controls
 
 		#region Reflective Methods And Supporting Constants
 
-		internal const string PickAnthroDll = @"FwCoreDlgs.dll";
-		internal const string PickAnthroClass = @"SIL.FieldWorks.FwCoreDlgs.FwCheckAnthroListDlg";
+		internal const string PickAnthroAssembly = @"FieldWorks.exe";
+		internal const string PickAnthroClass = @"SIL.FieldWorks.FwCheckAnthroListDlg";
 		internal const string PickAnthroMethod = @"PickAnthroList";
 
 		internal static string CallPickAnthroList(IHelpTopicProvider helpTopicProvider)
@@ -120,7 +120,7 @@ namespace SIL.FieldWorks.Common.Controls
 			// the FwCoreDlgs project, nor is there any straightforward way to move the code we need into some project we can
 			// reference, or any obviously suitable project to move it to without creating other References loops.
 			// nasty reflection calls seems less technical debt than creating an otherwise unnecessary project.
-			return (string)ReflectionHelper.CallStaticMethod(PickAnthroDll, PickAnthroClass, PickAnthroMethod, null, helpTopicProvider);
+			return (string)ReflectionHelper.CallStaticMethod(PickAnthroAssembly, PickAnthroClass, PickAnthroMethod, null, helpTopicProvider);
 		}
 
 		internal const string ImportLexiconDll = @"LanguageExplorer.dll";

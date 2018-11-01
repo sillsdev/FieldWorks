@@ -362,6 +362,7 @@
     <Compile Include="Areas\Lists\Tools\ExtNoteTypeEdit\ExtNoteTypeEditTool.cs" />
     <Compile Include="Areas\Lists\Tools\LanguagesListEdit\LanguagesListEditTool.cs" />
     <Compile Include="Areas\MainEntryFromSubEntryTargetAdjuster.cs" />
+    <Compile Include="Areas\MessageBoxes.cs" />
     <Compile Include="Areas\Notebook\Tools\NotebookDocument\NotebookDocumentToolMenuHelper.cs" />
     <Compile Include="Areas\Notebook\Tools\NotebookBrowse\NotebookBrowseToolMenuHelper.cs" />
     <Compile Include="Areas\Notebook\Tools\NotebookEdit\NotebookEditToolMenuHelper.cs" />
@@ -375,6 +376,101 @@
     <Compile Include="Areas\RightClickContextMenuManager.cs" />
     <Compile Include="Areas\RuleInsertType.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\IInterlinConfigurable.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\MorphBreakHelperContextMenu.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\FileLocationChoice.cs" />
+    <Compile Include="Controls\HelperContextMenu.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\MoveOrCopyFilesController.cs" />
+    <Compile Include="Controls\MoveOrCopyFilesDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\MoveOrCopyFilesDlg.Designer.cs">
+      <DependentUpon>MoveOrCopyFilesDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Styles\CaseSensitiveListBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\Styles\ColorPickerStrings.Designer.cs">
+      <DependentUpon>ColorPickerStrings.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Controls\Styles\DataUpDown.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\Styles\DataUpDownMode.cs" />
+    <Compile Include="Controls\Styles\FontInfoExtensions.cs" />
+    <Compile Include="Controls\Styles\FwBorderTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Styles\FwBorderTab.Designer.cs">
+      <DependentUpon>FwBorderTab.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Styles\FwBulletsPreview.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Styles\FwBulletsTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Styles\FwBulletsTab.Designer.cs">
+      <DependentUpon>FwBulletsTab.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Styles\FwColorCombo.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Styles\FwFontAttributes.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Styles\FwFontAttributes.Designer.cs">
+      <DependentUpon>FwFontAttributes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Styles\FwFontDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\Styles\FwFontDialog.Designer.cs">
+      <DependentUpon>FwFontDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Styles\FwFontTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Styles\FwFontTab.Designer.cs">
+      <DependentUpon>FwFontTab.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Styles\FwGeneralTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Styles\FwGeneralTab.Designer.cs">
+      <DependentUpon>FwGeneralTab.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Styles\FwInheritablePropComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\Styles\FwParagraphTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Styles\FwParagraphTab.Designer.cs">
+      <DependentUpon>FwParagraphTab.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Styles\FwStylesDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\Styles\FwStylesDlg.Designer.cs">
+      <DependentUpon>FwStylesDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Styles\IFontDialog.cs" />
+    <Compile Include="Controls\Styles\IStylesTab.cs" />
+    <Compile Include="Controls\Styles\StyleChangeType.cs" />
+    <Compile Include="Controls\Styles\StyleComboItem.cs" />
+    <Compile Include="Controls\Styles\StyleInfo.cs" />
+    <Compile Include="Controls\Styles\StyleListBoxHelper.cs" />
+    <Compile Include="Controls\Styles\StyleListItem.cs" />
+    <Compile Include="Controls\Styles\UpDownMeasureControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ExternalSettingsAccessorBase.cs" />
     <Compile Include="Impls\SharedEventHandlers.cs" />
     <Compile Include="Areas\StringRepSliceVc.cs" />
     <Compile Include="Areas\StringRepSliceView.cs">
@@ -904,10 +1000,10 @@
       <DependentUpon>ArchiveWithRamp.cs</DependentUpon>
     </Compile>
     <Compile Include="Impls\FindCollectorEnv.cs" />
-    <Compile Include="Impls\FwApplyStyleDlg.cs">
+    <Compile Include="Controls\Styles\FwApplyStyleDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Impls\FwApplyStyleDlg.Designer.cs">
+    <Compile Include="Controls\Styles\FwApplyStyleDlg.Designer.cs">
       <DependentUpon>FwApplyStyleDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="Impls\FwFindReplaceDlg.cs">
@@ -1235,9 +1331,11 @@
     <Compile Include="MGA\MasterItemCitation.cs" />
     <Compile Include="RecordFilterParameterObject.cs" />
     <Compile Include="SendReceive\ImportFailureStatus.cs" />
+    <Compile Include="SettingsXmlAccessorBase.cs" />
     <Compile Include="StatusBarTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="StylesXmlAccessor.cs" />
     <Compile Include="ToolbarServices.cs" />
     <Compile Include="UtilityTools\FixErrorsDlg.cs">
       <SubType>Form</SubType>
@@ -2011,8 +2109,57 @@
       <DependentUpon>UserInterfaceChooser.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\MoveOrCopyFilesDlg.resx">
+      <DependentUpon>MoveOrCopyFilesDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\PopupTree.resx">
       <DependentUpon>PopupTree.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Styles\ColorPickerStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ColorPickerStrings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Styles\FwBorderTab.resx">
+      <DependentUpon>FwBorderTab.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Styles\FwBulletsTab.resx">
+      <DependentUpon>FwBulletsTab.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Styles\FwColorCombo.resx">
+      <DependentUpon>FwColorCombo.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Styles\FwFontAttributes.resx">
+      <DependentUpon>FwFontAttributes.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Styles\FwFontDialog.resx">
+      <DependentUpon>FwFontDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Styles\FwFontTab.resx">
+      <DependentUpon>FwFontTab.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Styles\FwGeneralTab.resx">
+      <DependentUpon>FwGeneralTab.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Styles\FwParagraphTab.resx">
+      <DependentUpon>FwParagraphTab.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Styles\FwStylesDlg.resx">
+      <DependentUpon>FwStylesDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Styles\UpDownMeasureControl.resx">
+      <DependentUpon>UpDownMeasureControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\TreeCombo.resx">
@@ -2091,7 +2238,7 @@
     <EmbeddedResource Include="Impls\ArchiveWithRamp.resx">
       <DependentUpon>ArchiveWithRamp.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Impls\FwApplyStyleDlg.resx">
+    <EmbeddedResource Include="Controls\Styles\FwApplyStyleDlg.resx">
       <DependentUpon>FwApplyStyleDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>

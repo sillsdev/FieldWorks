@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.FwCoreDlgs {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class FwCoreDlgs {
@@ -285,15 +285,6 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Projects Folder.
-        /// </summary>
-        public static string ksChooseProjectFolder {
-            get {
-                return ResourceManager.GetString("ksChooseProjectFolder", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to {0} [{1}].
         /// </summary>
         public static string ksCodePageDisplay {
@@ -481,25 +472,6 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         public static string ksFwWsSyncProblem {
             get {
                 return ResourceManager.GetString("ksFwWsSyncProblem", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Illegal characters.
-        /// </summary>
-        public static string ksIllegalChars {
-            get {
-                return ResourceManager.GetString("ksIllegalChars", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The name cannot contain these characters:
-        ///{0}.
-        /// </summary>
-        public static string ksIllegalNameMsg {
-            get {
-                return ResourceManager.GetString("ksIllegalNameMsg", resourceCulture);
             }
         }
         
