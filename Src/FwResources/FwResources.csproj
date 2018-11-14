@@ -198,6 +198,7 @@
       <LastGenOutput>ToolBarSystemStrings.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <Compile Include="FileFilterType.cs" />
     <Compile Include="FwFileExtensions.cs">
     </Compile>
     <Compile Include="FwStrings.Designer.cs">
