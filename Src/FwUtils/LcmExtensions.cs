@@ -25,6 +25,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				return FwUtilsStrings.ksDeletedObject;
 			}
+			const string dateFomat = "dd/MMM/yyyy";
 			DateTime dt;
 			var created = string.Empty;
 			var modified = string.Empty;
@@ -33,13 +34,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 			if (pi != null)
 			{
 				dt = (DateTime)pi.GetValue(me, null);
-				created = dt.ToString("dd/MMM/yyyy", DateTimeFormatInfo.InvariantInfo);
+				created = dt.ToString(dateFomat, DateTimeFormatInfo.InvariantInfo);
 			}
 			pi = myType.GetProperty("DateModified");
 			if (pi != null)
 			{
 				dt = (DateTime)pi.GetValue(me, null);
-				modified = dt.ToString("dd/MMM/yyyy", DateTimeFormatInfo.InvariantInfo);
+				modified = dt.ToString(dateFomat, DateTimeFormatInfo.InvariantInfo);
 			}
 			return $"{created} {modified}";
 		}

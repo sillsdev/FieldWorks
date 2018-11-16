@@ -11,50 +11,42 @@ using SIL.LCModel.Core.KernelInterfaces;
 namespace SIL.FieldWorks.Common.FwUtils
 {
 #if DEBUG
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Tests for DebugProcs
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <remarks>
+	/// can't derive from BaseTest because of dependencies.
+	/// If necessary we could explicitly instantiate a DebugProcs
+	/// object but that might not be necessary because we're testing it.
+	/// </remarks>
 	[TestFixture]
 	public class DebugProcsTests
-								// can't derive from BaseTest because of dependencies.
-	{							// If necessary we could explicitly instantiate a DebugProcs
-								// object but that might not be necessary because we're testing it.
+	{
 		#region DummyDebugProcs
-		internal class DummyDebugProcs : DebugProcs
-		{
-			internal bool m_fHandlerCalled;
 
-			/// ------------------------------------------------------------------------------------
-			/// <summary>
-			/// Callback method that gets all debug output from unmanaged FieldWorks code.
-			/// </summary>
-			/// <param name="nReportType">Type of report</param>
-			/// <param name="szMsg">Message</param>
-			/// ------------------------------------------------------------------------------------
+		private sealed class DummyDebugProcs : DebugProcs
+		{
+			private bool m_fHandlerCalled;
+
+			/// <inheritdoc />
 			public override void Report(CrtReportType nReportType, string szMsg)
 			{
 				m_fHandlerCalled = true;
 			}
 
-			/// --------------------------------------------------------------------------------
 			/// <summary>
 			/// Exposes the GetMessage method for testing
 			/// </summary>
-			/// --------------------------------------------------------------------------------
-			public string CallGetMessage(string expression, string filename, int nLine)
+			internal static string CallGetMessage(string expression, string filename, int nLine)
 			{
 				return GetMessage(expression, filename, nLine);
 			}
 		}
 		#endregion // DummyDebugProcs
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the name of the executable truncated to the correct length
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private static string ExecutableName
 		{
 			get
@@ -70,11 +62,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the GetMessage method when everything fits
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void GetMessage_AllFit()
 		{
@@ -93,26 +83,22 @@ failure, see the Visual C++ documentation on asserts
 (Press Retry to debug the application - JIT must be enabled)",
 					ExecutableName);
 
-			using (var debugProcs = new DummyDebugProcs())
+			using (new DummyDebugProcs())
 			{
-				Assert.AreEqual(expectedMsg,
-					debugProcs.CallGetMessage("The expression that failed", "bla.cpp", 583));
+				Assert.AreEqual(expectedMsg, DummyDebugProcs.CallGetMessage("The expression that failed", "bla.cpp", 583));
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the GetMessage method if the complete path is to long
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void GetMessage_PathToLong()
 		{
-			var expectedMsg = string.Format(
-@"Assertion failed!
+			var expectedMsg = $@"Assertion failed!
 
-Program: {0}
-File: /this/is/a/very/long/path/that/extends...{1}truncate.cpp
+Program: {ExecutableName}
+File: /this/is/a/very/long/path/that/extends...{Path.DirectorySeparatorChar}truncate.cpp
 Line: 583
 
 Expression: The expression that failed
@@ -120,29 +106,23 @@ Expression: The expression that failed
 For information on how your program can cause an assertion
 failure, see the Visual C++ documentation on asserts
 
-(Press Retry to debug the application - JIT must be enabled)",
-					ExecutableName, Path.DirectorySeparatorChar);
+(Press Retry to debug the application - JIT must be enabled)";
 
-			using (var debugProcs = new DummyDebugProcs())
+			using (new DummyDebugProcs())
 			{
-				Assert.AreEqual(expectedMsg,
-					debugProcs.CallGetMessage("The expression that failed",
-					"/this/is/a/very/long/path/that/extends/beyond/sixty/characters/so/that/we/have/to/truncate.cpp", 583));
+				Assert.AreEqual(expectedMsg, DummyDebugProcs.CallGetMessage("The expression that failed", "/this/is/a/very/long/path/that/extends/beyond/sixty/characters/so/that/we/have/to/truncate.cpp", 583));
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the GetMessage method if the filename is to long
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void GetMessage_FilenameToLong()
 		{
-			var expectedMsg = string.Format(
-@"Assertion failed!
+			var expectedMsg = $@"Assertion failed!
 
-Program: {0}
+Program: {ExecutableName}
 File: /path/with_a_ver...have_to_truncate_before_it_fits.cpp
 Line: 583
 
@@ -151,29 +131,23 @@ Expression: The expression that failed
 For information on how your program can cause an assertion
 failure, see the Visual C++ documentation on asserts
 
-(Press Retry to debug the application - JIT must be enabled)",
-					ExecutableName);
+(Press Retry to debug the application - JIT must be enabled)";
 
-			using (var debugProcs = new DummyDebugProcs())
+			using (new DummyDebugProcs())
 			{
-				Assert.AreEqual(expectedMsg,
-					debugProcs.CallGetMessage("The expression that failed",
-					"/path/with_a_very_long_filename_that_we_have_to_truncate_before_it_fits.cpp", 583));
+				Assert.AreEqual(expectedMsg, DummyDebugProcs.CallGetMessage("The expression that failed", "/path/with_a_very_long_filename_that_we_have_to_truncate_before_it_fits.cpp", 583));
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the GetMessage method if the path and filename are to long
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void GetMessage_PathAndFilenameToLong()
 		{
-			var expectedMsg = string.Format(
-@"Assertion failed!
+			var expectedMsg = $@"Assertion failed!
 
-Program: {0}
+Program: {ExecutableName}
 File: /path/that/has/too/many/character...with_lon...ame.cpp
 Line: 123
 
@@ -182,14 +156,11 @@ Expression: The expression that failed
 For information on how your program can cause an assertion
 failure, see the Visual C++ documentation on asserts
 
-(Press Retry to debug the application - JIT must be enabled)",
-					ExecutableName);
+(Press Retry to debug the application - JIT must be enabled)";
 
-			using (var debugProcs = new DummyDebugProcs())
+			using (new DummyDebugProcs())
 			{
-				Assert.AreEqual(expectedMsg,
-					debugProcs.CallGetMessage("The expression that failed",
-					"/path/that/has/too/many/characters/in/it/with_long_filename.cpp", 123));
+				Assert.AreEqual(expectedMsg, DummyDebugProcs.CallGetMessage("The expression that failed", "/path/that/has/too/many/characters/in/it/with_long_filename.cpp", 123));
 			}
 		}
 	}

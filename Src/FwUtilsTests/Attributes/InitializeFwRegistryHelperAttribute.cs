@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017 SIL International
+// Copyright (c) 2012-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,7 +7,6 @@ using NUnit.Framework;
 
 namespace SIL.FieldWorks.Common.FwUtils.Attributes
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// NUnit helper attribute that sets the company and product name for use in tests.
 	/// </summary>
@@ -19,11 +18,10 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 	/// to a single unit test class.
 	/// (see http://www.nunit.org/index.php?p=actionAttributes&amp;r=2.6.4)
 	/// </remarks>
-	/// ----------------------------------------------------------------------------------------
 	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class)]
-	public class InitializeFwRegistryHelperAttribute: TestActionAttribute
+	public class InitializeFwRegistryHelperAttribute : TestActionAttribute
 	{
-		/// <summary/>
+		/// <inheritdoc />
 		public override void BeforeTest(TestDetails testDetails)
 		{
 			base.BeforeTest(testDetails);

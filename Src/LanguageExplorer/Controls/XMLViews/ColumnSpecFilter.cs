@@ -45,22 +45,22 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// eg. persist the column specification
 		/// </summary>
-		/// <param name="node"></param>
-		public override void PersistAsXml(XElement node)
+		/// <param name="element"></param>
+		public override void PersistAsXml(XElement element)
 		{
-			base.PersistAsXml(node);
+			base.PersistAsXml(element);
 			if (m_colSpec != null)
 			{
-				node.Add(m_colSpec.Clone());
+				element.Add(m_colSpec.Clone());
 			}
 		}
 
 		/// <summary />
-		public override void InitXml(XElement node)
+		public override void InitXml(XElement element)
 		{
-			base.InitXml(node);
+			base.InitXml(element);
 			// Review: How do we validate this columnSpec is still valid?
-			var colSpec = node.XPathSelectElement("./column");
+			var colSpec = element.XPathSelectElement("./column");
 			if (colSpec != null)
 			{
 				m_colSpec = colSpec.Clone();

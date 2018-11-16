@@ -142,6 +142,7 @@
     <Compile Include="ParatextLexiconPluginProjectId.cs" />
     <Compile Include="ParatextLexiconPluginLcmUI.cs" />
     <Compile Include="ParatextLexiconPluginRegistryHelper.cs" />
+    <None Include="ParatextLexiconPluginRegistryHelper.template.cs" />
     <Compile Include="ParatextLexiconPluginThreadedProgress.cs" />
     <Compile Include="ProjectExistsForm.cs">
       <SubType>Form</SubType>

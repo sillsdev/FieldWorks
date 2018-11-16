@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -54,7 +54,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 					// GetKeyboardState doesn't exist in Mono.
 					var keys = new byte[256];
 					if (GetKeyboardState(keys) >= 0 && keys.Any(k => (k & Keydown) > 0))
+					{
 						return DateTime.Now; // If the user is holding down e.g. the Backspace key, that counts as current activity
+					}
 				}
 
 				return m_lastActivityTime;
@@ -73,8 +75,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 				}
 				return false;
 			}
-			if ((m.Msg >= (int)Win32.WinMsgs.WM_MOUSE_Min && m.Msg <= (int)Win32.WinMsgs.WM_MOUSE_Max)
-				|| (m.Msg >= (int)Win32.WinMsgs.WM_KEY_Min && m.Msg <= (int)Win32.WinMsgs.WM_KEY_Max))
+			if (m.Msg >= (int)Win32.WinMsgs.WM_MOUSE_Min && m.Msg <= (int)Win32.WinMsgs.WM_MOUSE_Max
+				|| m.Msg >= (int)Win32.WinMsgs.WM_KEY_Min && m.Msg <= (int)Win32.WinMsgs.WM_KEY_Max)
 			{
 				m_lastActivityTime = DateTime.Now;
 			}

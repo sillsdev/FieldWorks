@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2011-2018 SIL International
+// Copyright (c) 2011-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -696,7 +696,7 @@ namespace LanguageExplorerTests.Controls.LexText
 		public void TestLiftImport1()
 		{
 			var messageCapture = new MessageCapture();
-			MessageBoxUtils.Manager.SetMessageBoxAdapter(messageCapture);
+			MessageBoxUtils.SetMessageBoxAdapter(messageCapture);
 			SetWritingSystems("es");
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
@@ -1454,7 +1454,7 @@ namespace LanguageExplorerTests.Controls.LexText
 		{
 			// Setup
 			var messageCapture = new MessageCapture();
-			MessageBoxUtils.Manager.SetMessageBoxAdapter(messageCapture);
+			MessageBoxUtils.SetMessageBoxAdapter(messageCapture);
 			// ReSharper disable InconsistentNaming
 			const string LINE_SEPARATOR = "\u2028";
 			var s_newLine = Environment.NewLine;

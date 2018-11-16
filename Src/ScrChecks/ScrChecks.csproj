@@ -138,6 +138,9 @@
     <Compile Include="PunctuationCheck.cs" />
     <Compile Include="QuotationCheck.cs" />
     <Compile Include="RepeatedWordsCheck.cs" />
+    <Compile Include="StandardCheckIds.cs" />
+    <Compile Include="StyleInfo.cs" />
+    <Compile Include="StylePropsInfo.cs" />
     <Compile Include="TextInventory.cs" />
     <Compile Include="CapitalizationCheck.cs" />
     <Compile Include="VerseTextToken.cs" />

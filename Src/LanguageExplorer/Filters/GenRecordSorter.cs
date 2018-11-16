@@ -167,25 +167,25 @@ namespace LanguageExplorer.Filters
 		/// re-created sorter.
 		/// This default implementation does nothing.
 		/// </summary>
-		public override void PersistAsXml(XElement node)
+		public override void PersistAsXml(XElement element)
 		{
-			base.PersistAsXml(node); // does nothing, but in case needed later...
+			base.PersistAsXml(element); // does nothing, but in case needed later...
 			var persistComparer = Comparer as IPersistAsXml;
 			if (persistComparer == null)
 			{
 				throw new Exception($"cannot persist GenRecSorter with comparer class {Comparer.GetType().AssemblyQualifiedName}");
 			}
-			DynamicLoader.PersistObject(persistComparer, node, "comparer");
+			DynamicLoader.PersistObject(persistComparer, element, "comparer");
 		}
 
 		/// <summary>
 		/// Initialize an instance into the state indicated by the node, which was
 		/// created by a call to PersistAsXml.
 		/// </summary>
-		public override void InitXml(XElement node)
+		public override void InitXml(XElement element)
 		{
-			base.InitXml (node);
-			var compNode = node.Elements().First();
+			base.InitXml (element);
+			var compNode = element.Elements().First();
 			if (compNode.Name != "comparer")
 			{
 				throw new Exception("persist info for GenRecordSorter must have comparer child element");

@@ -87,14 +87,12 @@ namespace SIL.FieldWorks
 			set { alwaysOpenLastProjectCheckBox.Text = string.Format(Properties.Resources.ksWelcomeDialogCheckboxText, value); }
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		/// <param name="disposing"><c>true</c> to release both managed and unmanaged
 		/// resources; <c>false</c> to release only unmanaged resources.
 		/// </param>
-		/// ------------------------------------------------------------------------------------
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");

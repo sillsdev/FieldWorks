@@ -15,7 +15,7 @@ using System.Text;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Utils;
 
-namespace SIL.FieldWorks.Common.FwUtils
+namespace ParatextImport
 {
 	/// -----------------------------------------------------------------------------------
 	/// <summary>

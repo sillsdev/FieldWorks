@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Xml;
@@ -30,7 +31,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			var dynLoaderNode = parentConfigNode.Element("dynamicloaderinfo");
 			if (dynLoaderNode == null)
-				throw new ArgumentException(@"Required 'dynamicloaderinfo' XML node not found.", "parentConfigNode");
+			{
+				throw new ArgumentException(@"Required 'dynamicloaderinfo' XML node not found.", nameof(parentConfigNode));
+			}
 
 			return CreateObject(dynLoaderNode);
 		}
@@ -41,11 +44,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			var configuration = parentConfigNode.Element("dynamicloaderinfo");
 			if (configuration == null)
+			{
 				return null;
-			string assemblyPath = XmlUtils.GetMandatoryAttributeValue(configuration, "assemblyPath");
+			}
+			var assemblyPath = XmlUtils.GetMandatoryAttributeValue(configuration, "assemblyPath");
 			if (assemblyPath == "null")
+			{
 				return null;
-			string className = XmlUtils.GetMandatoryAttributeValue(configuration, "class");
+			}
+			var className = XmlUtils.GetMandatoryAttributeValue(configuration, "class");
 			Assembly assembly;
 			GetAssembly(assemblyPath, out assembly);
 			return assembly.GetType(className.Trim());
@@ -68,18 +75,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		private static object[] CreateArgs(XmlNode configuration)
 		{
-			List<object> argList = new List<object>();
+			var argList = new List<object>();
 			// see if we can find "args" children that specify arguments to pass in.
 			if (configuration != null && configuration.HasChildNodes)
 			{
-				XmlNodeList argNodes = configuration.SelectNodes("args/arg");
+				var argNodes = configuration.SelectNodes("args/arg");
 				if (argNodes.Count > 0)
 				{
-					Dictionary<string, string> argDict = new Dictionary<string, string>();
+					var argDict = new Dictionary<string, string>();
 					foreach (XmlNode argNode in argNodes)
 					{
-						string argName = XmlUtils.GetMandatoryAttributeValue(argNode, "name");
-						string argVal = XmlUtils.GetMandatoryAttributeValue(argNode, "value");
+						var argName = XmlUtils.GetMandatoryAttributeValue(argNode, "name");
+						var argVal = XmlUtils.GetMandatoryAttributeValue(argNode, "value");
 						argDict.Add(argName, argVal);
 					}
 					string argValue;
@@ -88,9 +95,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 						// "xpathToConfigurationNode" is a special argument for passing the nodes
 						// that the object we're creating knows how to process.
 						// NOTE: assume the xpath is with respect to the dynamicloaderinfo "configuration" node
-						XmlNode configNodeForObject = configuration.SelectSingleNode(argValue);
+						var configNodeForObject = configuration.SelectSingleNode(argValue);
 						if (configNodeForObject != null)
+						{
 							argList.Add(configNodeForObject);
+						}
 					}
 				}
 			}
@@ -108,10 +117,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var assemblyPath = XmlUtils.GetMandatoryAttributeValue(configuration, "assemblyPath");
 			// JohnT: see AddAssemblyPathInfo. We use this when the object we're trying to persist
 			// as a child of another object is null.
-			if (assemblyPath == "null")
-				return null;
-			var className = XmlUtils.GetMandatoryAttributeValue(configuration, "class");
-			return CreateObject(assemblyPath, className, args);
+			return assemblyPath == "null" ? null : CreateObject(assemblyPath, XmlUtils.GetMandatoryAttributeValue(configuration, "class"), args);
 		}
 
 		/// <summary>
@@ -122,13 +128,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns></returns>
 		public static object CreateObject(XmlNode configuration, params object[] args)
 		{
-			string  assemblyPath = XmlUtils.GetMandatoryAttributeValue(configuration, "assemblyPath");
+			var assemblyPath = XmlUtils.GetMandatoryAttributeValue(configuration, "assemblyPath");
 			// JohnT: see AddAssemblyPathInfo. We use this when the object we're trying to persist
 			// as a child of another object is null.
-			if (assemblyPath == "null")
-				return null;
-			string className = XmlUtils.GetMandatoryAttributeValue(configuration, "class");
-			return CreateObject(assemblyPath, className, args);
+			return assemblyPath == "null" ? null : CreateObject(assemblyPath, XmlUtils.GetMandatoryAttributeValue(configuration, "class"), args);
 		}
 		/// <summary>
 		/// Dynamically find an assembly and create an object of the name to class.
@@ -140,34 +143,26 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		private static string CouldNotCreateObjectMsg(string assemblyPath, string className)
 		{
-			return "Found the DLL "
-				+ assemblyPath
-				+ " but could not create the class: "
-				+ className
-				+ ". If there are no 'InnerExceptions' below, then make sure capitalization is correct and that you include the name space.";
+			return $"Found the DLL {assemblyPath} but could not create the class: {className}. If there are no 'InnerExceptions' below, then make sure capitalization is correct and that you include the name space.";
 		}
 
 		private static object CreateObject(string assemblyPath1, string className1, BindingFlags flags, params object[] args)
 		{
 			Assembly assembly;
-			string assemblyPath = GetAssembly(assemblyPath1, out assembly);
+			var assemblyPath = GetAssembly(assemblyPath1, out assembly);
 
-			string className = className1.Trim();
-			Object thing = null;
+			var className = className1.Trim();
+			object thing;
 			try
 			{
 				//make the object
-				//Object thing = assembly.CreateInstance(className);
-				thing = assembly.CreateInstance(className, false, flags,
-					null, args, null, null);
+				thing = assembly.CreateInstance(className, false, flags, null, args, null, null);
 			}
 			catch (Exception err)
 			{
 				Debug.WriteLine(err.Message);
 				var bldr = new StringBuilder(CouldNotCreateObjectMsg(assemblyPath, className));
-
-				Exception inner = err;
-
+				var inner = err;
 				while (inner != null)
 				{
 					bldr.AppendLine();
@@ -194,36 +189,25 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Dynamically find an assembly and create an object of the name to class.
 		/// </summary>
-		/// <param name="assemblyPath1"></param>
-		/// <param name="className1"></param>
-		/// <param name="args">args to the constructor</param>
-		/// <returns></returns>
 		public static object CreateObject(string assemblyPath1, string className1, params object[] args)
 		{
 			return CreateObject(assemblyPath1, className1, BindingFlags.Instance | BindingFlags.Public, args);
 		}
 
-		public static List<T> GetPlugins<T>(string pattern) where T: class
+		public static List<T> GetPlugins<T>(string pattern) where T : class
 		{
-			var codeBasePath = FileLocationUtilities.DirectoryOfTheApplicationExecutable;
-			return GetPlugins<T>(codeBasePath, pattern);
+			return GetPlugins<T>(FileLocationUtilities.DirectoryOfTheApplicationExecutable, pattern);
 		}
 		/// <summary>
 		/// Return a newly created instance of every type in every DLL in the specified directory which implements the indicated type.
 		/// Typically type is an interface, but I think it would work if it is a base class.
 		/// (Adapted from http://blogs.msdn.com/b/abhinaba/archive/2005/11/14/492458.aspx)
 		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="folder"></param>
-		/// <param name="pattern">Pattern for interesting DLLs in folder. Should end in .dll </param>
-		/// <returns></returns>
 		private static List<T> GetPlugins<T>(string folder, string pattern) where T : class
 		{
-			string[] files = Directory.GetFiles(folder, pattern);
-
+			var files = Directory.GetFiles(folder, pattern);
 			var tList = new List<T>();
-
-			foreach (string file in files)
+			foreach (var file in files)
 			{
 				try
 				{
@@ -231,18 +215,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 					// This is necessary to let our test pass, since otherwise the interface is defined in one copy of the assembly, while
 					// the class we load is considered to implement the other copy of that interface in the second copy of the assembly.
 					// In real use, this would be a problem if the DLL defining the interface was also one of the ones providing implementations.
-					Assembly assembly = Assembly.LoadFrom(file);
-					foreach (Type type in assembly.GetTypes())
-					{
-						if (!type.IsClass || type.IsNotPublic)
-							continue;
-						if (typeof(T).IsAssignableFrom(type))
-						{
-							object obj = Activator.CreateInstance(type);
-							T t = (T) obj;
-							tList.Add(t);
-						}
-					}
+					var assembly = Assembly.LoadFrom(file);
+					tList.AddRange(assembly.GetTypes().Where(type => type.IsClass && !type.IsNotPublic)
+						.Where(type => typeof(T).IsAssignableFrom(type)).Select(type => Activator.CreateInstance(type)).Select(obj => (T)obj));
 				}
 				catch (Exception)
 				{
@@ -255,11 +230,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private static string GetAssembly(string assemblyPath1, out Assembly assembly)
 		{
 			// Whitespace will cause failures.
-			string assemblyPath = assemblyPath1.Trim();
-			//allow us to say "assemblyPath="%fwroot%\Src\Foo....  , at least during testing
-			// RR: It may allow it, but it crashes, when it can't find the dll.
-			//assemblyPath = System.Environment.ExpandEnvironmentVariables(assemblyPath);
-			string baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+			var assemblyPath = assemblyPath1.Trim();
+			var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
 			try
 			{
@@ -287,14 +259,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Create the object specified by the assemblyPath and class attributes of node,
 		/// and if the resulting object implements IPersistAsXml, call InitXml.
 		/// </summary>
-		/// <param name="node"></param>
-		/// <returns></returns>
 		public static object RestoreObject(XmlNode node)
 		{
-			object obj = CreateObject(node);
-			IPersistAsXml persistObj = obj as IPersistAsXml;
-			if (persistObj != null)
-				persistObj.InitXml(XElement.Parse(node.OuterXml));
+			var obj = CreateObject(node);
+			var persistObj = obj as IPersistAsXml;
+			persistObj?.InitXml(XElement.Parse(node.OuterXml));
 			return obj;
 		}
 
@@ -302,22 +271,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Create the object specified by the assemblyPath and class attributes of node,
 		/// and if the resulting object implements IPersistAsXml, call InitXml.
 		/// </summary>
-		/// <param name="node"></param>
-		/// <returns></returns>
 		public static object RestoreObject(XElement node)
 		{
-			object obj = CreateObject(node);
-			IPersistAsXml persistObj = obj as IPersistAsXml;
-			if (persistObj != null)
-				persistObj.InitXml(node.Clone());
+			var obj = CreateObject(node);
+			var persistObj = obj as IPersistAsXml;
+			persistObj?.InitXml(node.Clone());
 			return obj;
 		}
 
 		/// <summary>
 		/// Create an XmlNode out of the source, and use it to recreate an object.
 		/// </summary>
-		/// <param name="source"></param>
-		/// <returns></returns>
 		public static object RestoreObject(string source)
 		{
 			return RestoreObject(XDocument.Parse(source).Root);
@@ -327,45 +291,44 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Return the object obtained by calling RestoreObject on the element
 		/// selected from node by xpath.
 		/// </summary>
-		/// <param name="node"></param>
-		/// <param name="xpath"></param>
-		/// <returns></returns>
 		public static object RestoreFromChild(XElement node, string xpath)
 		{
 			var child = node.XPathSelectElement(xpath);
 			if (child == null)
-				throw new Exception("expected child " + xpath);
+			{
+				throw new Exception($"expected child {xpath}");
+			}
 			return RestoreObject(child);
 		}
 
 		/// <summary>
 		/// Creates a string representation of the supplied object, an XML string
 		/// containing the required assemblyPath and class attributes needed to create an
-		/// instance using CreateObject, plus whatever gets added to the node by passsing
+		/// instance using CreateObject, plus whatever gets added to the node by passing
 		/// it to the PersistAsXml method of the object. The root element name is supplied
 		/// as the elementName argument.
 		/// </summary>
 		public static string PersistObject(object src, string elementName)
 		{
 			if (src == null)
+			{
 				return null;
+			}
 			var obj = src as IPersistAsXml;
-			var doc = XDocument.Parse("<" + elementName + "/>");
+			var doc = XDocument.Parse($"<{elementName}/>");
 			var root = doc.Root;
 			AddAssemblyClassInfoTo(root, src);
-			if (obj != null)
-				obj.PersistAsXml(root);
+			obj?.PersistAsXml(root);
 			return root.ToString();
 		}
 
 		public static XElement PersistObject(object src, XElement parent, string elementName)
 		{
-			IPersistAsXml obj = src as IPersistAsXml;
+			var obj = src as IPersistAsXml;
 			var node = new XElement(elementName);
 			parent.Add(node);
 			AddAssemblyClassInfoTo(node, obj);
-			if (obj != null)
-				obj.PersistAsXml(node);
+			obj?.PersistAsXml(node);
 			return node;
 		}
 
@@ -383,23 +346,4 @@ namespace SIL.FieldWorks.Common.FwUtils
 			node.Add(new XAttribute("class", obj.GetType().FullName));
 		}
 	}
-
-	public interface IPersistAsXml
-	{
-		/// <summary>
-		/// Add to the specified XML node information required to create a new
-		/// object equivalent to yourself. The node already contains information
-		/// sufficient to create an instance of the proper class.
-		/// </summary>
-		/// <param name="node"></param>
-		void PersistAsXml(XElement node);
-
-		/// <summary>
-		/// Initialize an instance into the state indicated by the node, which was
-		/// created by a call to PersistAsXml.
-		/// </summary>
-		/// <param name="node"></param>
-		void InitXml(XElement node);
-	}
-
 }

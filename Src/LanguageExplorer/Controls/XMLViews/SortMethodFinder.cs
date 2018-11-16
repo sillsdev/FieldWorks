@@ -300,24 +300,24 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		public override void PersistAsXml(XElement node)
+		public override void PersistAsXml(XElement element)
 		{
-			base.PersistAsXml(node);
-			XmlUtils.SetAttribute(node, "sortmethod", m_sMethodName);
+			base.PersistAsXml(element);
+			XmlUtils.SetAttribute(element, "sortmethod", m_sMethodName);
 			if (!string.IsNullOrEmpty(m_wsName))
 			{
-				XmlUtils.SetAttribute(node, "ws", m_wsName);
+				XmlUtils.SetAttribute(element, "ws", m_wsName);
 			}
 		}
 
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public override void InitXml(XElement node)
+		public override void InitXml(XElement element)
 		{
-			base.InitXml(node);
-			SortMethod = XmlUtils.GetMandatoryAttributeValue(node, "sortmethod");
-			WritingSystemName = XmlUtils.GetOptionalAttributeValue(node, "ws", null);
+			base.InitXml(element);
+			SortMethod = XmlUtils.GetMandatoryAttributeValue(element, "sortmethod");
+			WritingSystemName = XmlUtils.GetOptionalAttributeValue(element, "ws", null);
 			// Enhance JohnT: if we start using string tables for browse views,
 			// we will need a better way to provide one to the Vc we make here.
 			// Note: we don't need a top-level spec because we're only going to process one

@@ -8,11 +8,10 @@ using NUnit.Framework;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
-	#region DummyFwRegistryHelper class
 	/// <summary>
 	/// Alternative implementation for unit tests
 	/// </summary>
-	public class DummyFwRegistryHelper : IFwRegistryHelper
+	internal class DummyFwRegistryHelper : IFwRegistryHelper
 	{
 		internal const string FlexKeyName = "Language Explorer";
 		internal const string DirName = "TestDir";
@@ -30,25 +29,25 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		#region IFwRegistryHelper implementation
 
-		/// <inheritdoc/>
+		/// <inheritdoc />
 		public bool Paratext7Installed()
 		{
 			throw new NotSupportedException();
 		}
 
-		/// <inheritdoc/>
+		/// <inheritdoc />
 		public RegistryKey FieldWorksRegistryKeyLocalMachine => GetTestKey("FieldWorksRegistryKLM");
 
-		/// <inheritdoc/>
+		/// <inheritdoc />
 		public RegistryKey LocalMachineHive => GetTestKey("HKLM");
 
-		/// <summary/>
+		/// <summary />
 		private RegistryKey GetTestKey(string keyName)
 		{
 			return Registry.CurrentUser.CreateSubKey(@"Software\SIL\FieldWorks\UnitTests\HelperFW\" + keyName);
 		}
 
-		/// <remarks>not supported</remarks>
+		/// <inheritdoc />
 		public RegistryKey FieldWorksBridgeRegistryKeyLocalMachine
 		{
 			get
@@ -57,7 +56,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
-		/// <remarks>not supported</remarks>
+		/// <inheritdoc />
 		public RegistryKey FieldWorksRegistryKeyLocalMachineForWriting
 		{
 			get
@@ -66,13 +65,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
-		/// <inheritdoc/>
+		/// <inheritdoc />
 		public RegistryKey FieldWorksRegistryKey => FieldWorksVersionlessRegistryKey.CreateSubKey(FwRegistryHelper.FieldWorksRegistryKeyName);
 
-		/// <inheritdoc/>
+		/// <inheritdoc />
 		public RegistryKey FieldWorksVersionlessRegistryKey => Registry.CurrentUser.CreateSubKey(@"Software\SIL\FieldWorks\UnitTests");
 
-		/// <inheritdoc/>
+		/// <inheritdoc />
 		public RegistryKey FieldWorksVersionlessOld32BitRegistryKey => FieldWorksVersionlessRegistryKey.OpenSubKey("WOW6432Node");
 
 		/// <summary>
@@ -80,7 +79,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public RegistryKey FieldWorksVersionlessOld32BitRegistryKeyForWriting => FieldWorksVersionlessRegistryKey.CreateSubKey("WOW6432Node");
 
-		/// <remarks>not supported</remarks>
+		/// <inheritdoc />
 		public string UserLocaleValueName
 		{
 			get
@@ -142,24 +141,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
-		/// For testing key migration on upgrade.
-		/// </summary>
-		public RegistryKey SetupVersion7ProjectSharedSettingInHKLM()
-		{
-			var hklmFw7 = SetupVersion7ProjectSharedSettingLocation();
-			hklmFw7.SetValue(ProjectShared, "True");
-			return hklmFw7;
-		}
-
-		/// <summary>
-		/// For testing key migration on upgrade.
-		/// </summary>
-		public RegistryKey SetupVersion7ProjectSharedSettingLocation()
-		{
-			return LocalMachineHive.CreateSubKey(@"SOFTWARE\SIL\FieldWorks\" + FwRegistryHelper.OldFieldWorksRegistryKeyNameVersion7);
-		}
-
-		/// <summary>
 		/// For testing upgrade of user settings where some version 8 keys already exist.
 		/// </summary>
 		public RegistryKey SetupVersion8Settings()
@@ -200,24 +181,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// For testing upgrade of user settings where some version 9 keys already exist.
 		/// </summary>
-		public RegistryKey SetupVersion9Settings()
-		{
-			Assert.AreEqual("9", FwRegistryHelper.FieldWorksRegistryKeyName,
-				$"Please update the migration code and tests to handle migration to version {FwRegistryHelper.FieldWorksRegistryKey}");
-			var version9Key = CreateSettingsSubKeyForVersion(FwRegistryHelper.FieldWorksRegistryKeyName);
-
-			version9Key.SetValue(UserWs, "sp");
-
-			return version9Key;
-		}
-
-		/// <summary>
-		/// For testing upgrade of user settings where some version 9 keys already exist.
-		/// </summary>
 		public RegistryKey SetupVersion10Settings()
 		{
-			Assert.AreEqual("10", FwRegistryHelper.FieldWorksRegistryKeyName,
-				$"Please update the migration code and tests to handle migration to version {FwRegistryHelper.FieldWorksRegistryKey}");
+			Assert.AreEqual("10", FwRegistryHelper.FieldWorksRegistryKeyName, $"Please update the migration code and tests to handle migration to version {FwRegistryHelper.FieldWorksRegistryKey}");
 			var version10Key = CreateSettingsSubKeyForVersion(FwRegistryHelper.FieldWorksRegistryKeyName);
 
 			version10Key.SetValue(UserWs, "sp");
@@ -237,5 +203,4 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 	}
-	#endregion
 }

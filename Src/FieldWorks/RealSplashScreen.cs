@@ -25,8 +25,8 @@ namespace SIL.FieldWorks
 		#region Events
 		event CancelEventHandler IProgress.Canceling
 		{
-			add { throw new NotImplementedException(); }
-			remove { throw new NotImplementedException(); }
+			add { throw new NotSupportedException(); }
+			remove { throw new NotSupportedException(); }
 		}
 		#endregion
 

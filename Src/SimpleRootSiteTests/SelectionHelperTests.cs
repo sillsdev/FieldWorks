@@ -106,7 +106,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			base.TestSetup();
 			m_basicView.AutoScroll = true;
 
-			ClipboardUtils.Manager.SetClipboardAdapter(new ClipboardStub());
+			ClipboardUtils.SetClipboardAdapter(new ClipboardStub());
 		}
 
 		/// ------------------------------------------------------------------------------------

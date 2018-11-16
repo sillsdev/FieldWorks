@@ -31,19 +31,19 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		public override void PersistAsXml(XElement node)
+		public override void PersistAsXml(XElement element)
 		{
-			base.PersistAsXml(node);
-			XmlUtils.SetAttribute(node, "classIds", XmlUtils.MakeStringFromList(ClassIds));
+			base.PersistAsXml(element);
+			XmlUtils.SetAttribute(element, "classIds", XmlUtils.MakeStringFromList(ClassIds));
 		}
 
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public override void InitXml(XElement node)
+		public override void InitXml(XElement element)
 		{
-			base.InitXml(node);
-			ClassIds = new List<int>(XmlUtils.GetMandatoryIntegerListAttributeValue(node, "classIds"));
+			base.InitXml(element);
+			ClassIds = new List<int>(XmlUtils.GetMandatoryIntegerListAttributeValue(element, "classIds"));
 		}
 
 		/// <summary>

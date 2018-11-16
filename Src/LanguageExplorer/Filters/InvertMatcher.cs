@@ -52,19 +52,19 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		public override void PersistAsXml(XElement node)
+		public override void PersistAsXml(XElement element)
 		{
-			base.PersistAsXml(node);
-			DynamicLoader.PersistObject(MatcherToInvert, node, "invertMatcher");
+			base.PersistAsXml(element);
+			DynamicLoader.PersistObject(MatcherToInvert, element, "invertMatcher");
 		}
 
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public override void InitXml(XElement node)
+		public override void InitXml(XElement element)
 		{
-			base.InitXml(node);
-			MatcherToInvert = DynamicLoader.RestoreFromChild(node, "invertMatcher") as IMatcher;
+			base.InitXml(element);
+			MatcherToInvert = DynamicLoader.RestoreFromChild(element, "invertMatcher") as IMatcher;
 		}
 
 		#region IStoresLcmCache Members

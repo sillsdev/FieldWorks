@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 SIL International
+// Copyright (c) 2011-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,18 +12,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 	[TestFixture]
 	public class DisposableObjectsSetTests
 	{
-		private class DummyDisposableObjectsSet<T> : DisposableObjectsSet<T> where T : class
+		private sealed class DummyDisposableObjectsSet<T> : DisposableObjectsSet<T> where T : class
 		{
-			public int Count
-			{
-				get { return m_ObjectsToDispose.Count; }
-			}
+			internal int Count => m_ObjectsToDispose.Count;
 		}
 
 		#region Simple class that we can use for our tests
 		private sealed class A : IDisposable
 		{
-			public A(string name)
+			internal A(string name)
 			{
 				Name = name;
 			}
@@ -33,6 +30,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				Dispose(false);
 			}
 
+			/// <inheritdoc />
 			public void Dispose()
 			{
 				Dispose(true);
@@ -45,16 +43,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 				IsDisposed = true;
 			}
 
-			public bool IsDisposed { get; private set; }
+			internal bool IsDisposed { get; private set; }
 
-			public string Name { get; set; }
+			internal string Name { private get; set; }
 
 			public override bool Equals(object obj)
 			{
 				var other = obj as A;
-				if (other == null)
-					return false;
-				return Name == other.Name;
+				return other != null && Name == other.Name;
 			}
 
 			public override int GetHashCode()
@@ -69,20 +65,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void TwoDifferentObjectsWithSameNameGetBothDisposed()
 		{
 			using (var one = new A("name"))
+			using (var two = new A("name"))
 			{
-				using (var two = new A("name"))
+				using (var sut = new DummyDisposableObjectsSet<A>())
 				{
-					using (var sut = new DummyDisposableObjectsSet<A>())
-					{
-						sut.Add(one);
-						sut.Add(two);
+					sut.Add(one);
+					sut.Add(two);
 
-						Assert.AreEqual(2, sut.Count);
-					}
-
-					Assert.IsTrue(one.IsDisposed);
-					Assert.IsTrue(two.IsDisposed);
+					Assert.AreEqual(2, sut.Count);
 				}
+
+				Assert.IsTrue(one.IsDisposed);
+				Assert.IsTrue(two.IsDisposed);
 			}
 		}
 
@@ -91,20 +85,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void TwoDifferentObjectsWithDifferentNameGetBothDisposed()
 		{
 			using (var one = new A("one"))
+			using (var two = new A("two"))
 			{
-				using (var two = new A("two"))
+				using (var sut = new DummyDisposableObjectsSet<A>())
 				{
-					using (var sut = new DummyDisposableObjectsSet<A>())
-					{
-						sut.Add(one);
-						sut.Add(two);
+					sut.Add(one);
+					sut.Add(two);
 
-						Assert.AreEqual(2, sut.Count);
-					}
-
-					Assert.IsTrue(one.IsDisposed);
-					Assert.IsTrue(two.IsDisposed);
+					Assert.AreEqual(2, sut.Count);
 				}
+
+				Assert.IsTrue(one.IsDisposed);
+				Assert.IsTrue(two.IsDisposed);
 			}
 		}
 
@@ -115,7 +107,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			using (var one = new A("name"))
 			{
 				var two = one;
-
 				using (var sut = new DummyDisposableObjectsSet<A>())
 				{
 					sut.Add(one);
@@ -135,7 +126,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			using (var one = new A("name"))
 			{
 				var two = one;
-
 				using (var sut = new DummyDisposableObjectsSet<A>())
 				{
 					sut.Add(one);

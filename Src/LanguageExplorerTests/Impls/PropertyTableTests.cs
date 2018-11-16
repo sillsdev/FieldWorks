@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Linq;
+using LanguageExplorer;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 

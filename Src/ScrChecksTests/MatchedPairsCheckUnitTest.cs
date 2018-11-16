@@ -51,7 +51,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("MatchedPairs", kMatchedPairXml1);
 			m_dataSource.SetParameterValue("IntroductionOutlineStyles", "io");
 			m_dataSource.SetParameterValue("PoeticStyles",
-				"q1" + CheckUtils.kStyleNamesDelimiter.ToString() + "q2");
+				"q1" + FwUtils.kStyleNamesDelimiter.ToString() + "q2");
 			m_check = new MatchedPairsCheck(m_dataSource);
 		}
 
@@ -65,7 +65,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.Text = text;
 
 			List<TextTokenSubstring> tts =
-				CheckInventory.GetReferences(m_dataSource.TextTokens(), string.Empty);
+				CheckInventory.GetReferences(m_dataSource.TextTokens, string.Empty);
 
 			Assert.AreEqual(result.GetUpperBound(0) + 1, tts.Count,
 				"A different number of results was returned than what was expected.");
@@ -352,7 +352,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource = new TestChecksDataSource();
 			m_check = new MatchedPairsCheck(m_dataSource);
 			m_dataSource.SetParameterValue("PoeticStyles", "Citation Line1" +
-				CheckUtils.kStyleNamesDelimiter.ToString() + "Citation Line2");
+				FwUtils.kStyleNamesDelimiter.ToString() + "Citation Line2");
 		}
 		#endregion
 
@@ -374,7 +374,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken(" really, super nice). Amen?",
 				TextType.Verse, false, false, "Paragraph"));
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(2, m_errors.Count);
 			CheckError(0, m_dataSource.m_tokens[0].Text, 13, "(", "Unmatched punctuation");
@@ -401,7 +401,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("really, super nice). Amen?",
 				TextType.Verse, true, false, "Citation Line1"));
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(0, m_errors.Count);
 		}

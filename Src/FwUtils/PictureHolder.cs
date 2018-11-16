@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2011-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -29,12 +29,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			IPicture comPicture;
 			if (m_previousPictures == null)
+			{
 				m_previousPictures = new Dictionary<string, IPicture>();
+			}
 			if (m_previousPictures.TryGetValue(imagePath, out comPicture))
+			{
 				return comPicture;
+			}
 			try
 			{
-				string actualFilePath = FileUtils.ActualFilePath(imagePath);
+				var actualFilePath = FileUtils.ActualFilePath(imagePath);
 				using (var image = Image.FromFile(actualFilePath))
 				{
 					comPicture = (IPicture)OLEConvert.ToOLE_IPictureDisp(image);
@@ -58,7 +62,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			IPicture comPicture;
 			if (m_previousPictures == null)
+			{
 				m_previousPictures = new Dictionary<string, IPicture>();
+			}
 			if (!m_previousPictures.TryGetValue(key, out comPicture))
 			{
 				comPicture = (IPicture)OLEConvert.ToOLE_IPictureDisp(source);
@@ -67,18 +73,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return comPicture;
 		}
 
-#if DEBUG
-		/// <summary/>
+		/// <summary />
 		~PictureHolder()
 		{
 			Dispose(false);
 		}
-#endif
 
 		/// <summary/>
-		public bool IsDisposed { get; private set; }
+		private bool IsDisposed { get; set; }
 
-		/// <summary/>
+		/// <inheritdoc />
 		public void Dispose()
 		{
 			Dispose(true);
@@ -88,14 +92,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// As a special case, this class does not HAVE to be disposed if it does not allow pictures.
 		/// </summary>
-		/// <param name="disposing"></param>
 		protected virtual void Dispose(bool disposing)
 		{
-			Debug.WriteLineIf(!disposing,
-							  "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
 			if (IsDisposed)
+			{
+				// No need to run it more than once.
 				return;
+			}
 
 			if (disposing)
 			{
@@ -115,22 +119,27 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Release any data that might prevent deleting the specified picture file
 		/// </summary>
-		/// <param name="key"></param>
 		public void ReleasePicture(string key)
 		{
 			IPicture val;
 			if (m_previousPictures == null || !m_previousPictures.TryGetValue(key, out val))
+			{
 				return;
+			}
 			ReleasePicture(val);
 			m_previousPictures.Remove(key);
 		}
 
-		private void ReleasePicture(IPicture picture)
+		private static void ReleasePicture(IPicture picture)
 		{
 			if (picture is IDisposable)
-				((IDisposable) picture).Dispose(); // typically Linux
+			{
+				((IDisposable)picture).Dispose(); // typically Linux
+			}
 			else if (picture != null && Marshal.IsComObject(picture))
+			{
 				Marshal.ReleaseComObject(picture); // typically Windows
+			}
 		}
 	}
 }

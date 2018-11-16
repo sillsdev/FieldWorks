@@ -71,24 +71,24 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		public override void PersistAsXml(XElement node)
+		public override void PersistAsXml(XElement element)
 		{
-			base.PersistAsXml(node);
+			base.PersistAsXml(element);
 			foreach (RecordFilter rf in Filters)
 			{
-				DynamicLoader.PersistObject(rf, node, "filter");
+				DynamicLoader.PersistObject(rf, element, "filter");
 			}
 		}
 
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public override void InitXml(XElement node)
+		public override void InitXml(XElement element)
 		{
-			base.InitXml (node);
+			base.InitXml (element);
 			Debug.Assert(Filters != null && Filters.Count == 0);
-			Filters = new ArrayList(node.Elements().Count());
-			foreach (var child in node.Elements())
+			Filters = new ArrayList(element.Elements().Count());
+			foreach (var child in element.Elements())
 			{
 				Filters.Add(DynamicLoader.RestoreFromChild(child, "."));
 			}

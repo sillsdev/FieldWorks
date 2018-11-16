@@ -4,7 +4,7 @@
 
 using NUnit.Framework;
 
-namespace SIL.FieldWorks.Common.FwUtils
+namespace ParatextImport
 {
 	/// <summary>
 	/// </summary>

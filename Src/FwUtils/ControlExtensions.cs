@@ -11,22 +11,25 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Find a control
 		/// </summary>
-		/// <typeparam name="T">A Control instacne, or a subclass of Control.</typeparam>
+		/// <typeparam name="T">A Control instance, or a subclass of Control.</typeparam>
 		/// <param name="me">The control that we want to get the parent from.</param>
 		/// <returns>The parent of the given class, or null, if there is none.</returns>
 		public static T ParentOfType<T>(this Control me) where T : Control
 		{
-			if (me?.Parent == null)
+			while (true)
 			{
-				// 'me' is null, or Parent of 'me' is null.
-				return null;
+				if (me?.Parent == null)
+				{
+					// 'me' is null, or Parent of 'me' is null.
+					return null;
+				}
+				var myParent = me.Parent;
+				if (myParent is T)
+				{
+					return (T)myParent;
+				}
+				me = myParent;
 			}
-			var myParent = me.Parent;
-			if (myParent is T)
-			{
-				return (T)myParent;
-			}
-			return ParentOfType<T>(myParent);
 		}
 	}
 }

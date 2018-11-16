@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			base.FixtureSetup();
 			m_origLocalWss.UnionWith(Cache.ServiceLocator.WritingSystemManager.WritingSystems);
 			m_origGlobalWss.UnionWith(Cache.ServiceLocator.WritingSystemManager.OtherWritingSystems);
-			MessageBoxUtils.Manager.SetMessageBoxAdapter(new MessageBoxStub());
+			MessageBoxUtils.SetMessageBoxAdapter(new MessageBoxStub());
 		}
 
 		/// <summary>

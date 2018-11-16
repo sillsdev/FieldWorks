@@ -3,29 +3,28 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
-using System.Windows.Forms;
-using System.Drawing;
 using System.Globalization;
+using System.IO;
+using System.Linq;
 using System.Media;
 using System.Runtime.InteropServices;
-using System.Collections.Generic;
-using System.IO;
+using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
+using SIL.Reporting;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Collection of miscellaneous utility methods needed for FieldWorks
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public static partial class FwUtils
 	{
 		/// <summary>
@@ -46,15 +45,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary />
 		public const string window = "window";
 
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
+		public const char kStyleNamesDelimiter = '\uFFFD';
+
 		/// <summary>
 		/// Generates a name suitable for use as a pipe name from the specified project handle.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public static string GeneratePipeHandle(string handle)
 		{
 			const string ksSuiteIdPrefix = ksSuiteName + ":";
-			return (handle.StartsWith(ksSuiteIdPrefix) ? String.Empty : ksSuiteIdPrefix) + handle.Replace('/', ':').Replace('\\', ':');
+			return (handle.StartsWith(ksSuiteIdPrefix) ? string.Empty : ksSuiteIdPrefix) + handle.Replace('/', ':').Replace('\\', ':');
 		}
 
 		// On Linux, the default string output does not choose a font based on the characters in
@@ -64,15 +64,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 		// correct font in such situations.  See FWNX-1069 for the obvious place this is needed.
 
 		// These constants and enums are borrowed from fontconfig.h
-		const string FC_FAMILY = "family";			/* String */
-		const string FC_LANG = "lang";				/* String - RFC 3066 langs */
-		enum FcMatchKind
+		const string FC_FAMILY = "family";          /* String */
+		const string FC_LANG = "lang";              /* String - RFC 3066 langs */
+
+		private enum FcMatchKind
 		{
 			FcMatchPattern,
 			FcMatchFont,
 			FcMatchScan
 		};
-		enum FcResult
+
+		private enum FcResult
 		{
 			FcResultMatch,
 			FcResultNoMatch,
@@ -80,21 +82,21 @@ namespace SIL.FieldWorks.Common.FwUtils
 			FcResultNoId,
 			FcResultOutOfMemory
 		}
-		[DllImport ("libfontconfig.so.1")]
+		[DllImport("libfontconfig.so.1")]
 		static extern IntPtr FcPatternCreate();
-		[DllImport ("libfontconfig.so.1")]
+		[DllImport("libfontconfig.so.1")]
 		static extern int FcPatternAddString(IntPtr pattern, string fcObject, string stringValue);
-		[DllImport ("libfontconfig.so.1")]
+		[DllImport("libfontconfig.so.1")]
 		static extern void FcDefaultSubstitute(IntPtr pattern);
-		[DllImport ("libfontconfig.so.1")]
+		[DllImport("libfontconfig.so.1")]
 		static extern void FcPatternDestroy(IntPtr pattern);
-		[DllImport ("libfontconfig.so.1")]
+		[DllImport("libfontconfig.so.1")]
 		static extern int FcConfigSubstitute(IntPtr config, IntPtr pattern, FcMatchKind kind);
-		[DllImport ("libfontconfig.so.1")]
+		[DllImport("libfontconfig.so.1")]
 		static extern IntPtr FcFontMatch(IntPtr config, IntPtr pattern, out FcResult result);
 		// Note that the output string from this method must NOT be freed, so we have to play games
 		// with deferred marshalling.
-		[DllImport ("libfontconfig.so.1")]
+		[DllImport("libfontconfig.so.1")]
 		static extern FcResult FcPatternGetString(IntPtr pattern, string fcObject, int index, out IntPtr stringValue);
 
 		/// <summary>
@@ -110,13 +112,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static string GetFontNameForLanguage(string lang)
 		{
 			if (MiscUtils.IsWindows)
+			{
 				throw new PlatformNotSupportedException();
-
+			}
 			string fontName;
 			if (m_mapLangToFont.TryGetValue(lang, out fontName))
+			{
 				return fontName;
-			IntPtr pattern = FcPatternCreate();
-			int isOk = FcPatternAddString(pattern, FC_LANG, lang);
+			}
+			var pattern = FcPatternCreate();
+			var isOk = FcPatternAddString(pattern, FC_LANG, lang);
 			if (isOk == 0)
 			{
 				FcPatternDestroy(pattern);
@@ -130,7 +135,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 			FcDefaultSubstitute(pattern);
 			FcResult result;
-			IntPtr fullPattern = FcFontMatch(IntPtr.Zero, pattern, out result);
+			var fullPattern = FcFontMatch(IntPtr.Zero, pattern, out result);
 			if (result != FcResult.FcResultMatch)
 			{
 				FcPatternDestroy(pattern);
@@ -139,7 +144,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 			FcPatternDestroy(pattern);
 			IntPtr res;
-			FcResult fcRes = FcPatternGetString(fullPattern, FC_FAMILY, 0, out res);
+			var fcRes = FcPatternGetString(fullPattern, FC_FAMILY, 0, out res);
 			if (fcRes == FcResult.FcResultMatch)
 			{
 				fontName = Marshal.PtrToStringAuto(res);
@@ -172,7 +177,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns></returns>
 		public static WritingSystemManager CreateWritingSystemManager()
 		{
-			return new WritingSystemManager {TemplateFolder = FwDirectoryFinder.TemplateDirectory};
+			return new WritingSystemManager { TemplateFolder = FwDirectoryFinder.TemplateDirectory };
 		}
 
 		/// <summary>
@@ -181,7 +186,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static void InitializeIcu()
 		{
 			// Set ICU_DATA environment variable
-			if (String.IsNullOrEmpty(Environment.GetEnvironmentVariable("ICU_DATA")))
+			if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ICU_DATA")))
 			{
 				// We read the registry value and set an environment variable ICU_DATA here so that
 				// FwKernelInterfaces.dll is independent of WinForms.
@@ -199,7 +204,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 						dir = machineKey.GetValue(icuDirValueName, dir) as string;
 					}
-					if (!String.IsNullOrEmpty(dir))
+					if (!string.IsNullOrEmpty(dir))
 					{
 						Environment.SetEnvironmentVariable("ICU_DATA", dir);
 					}
@@ -208,54 +213,56 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Icu.InitIcuDataDir();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Translate mouse buttons received from a Win API mouse message to .NET mouse buttons
 		/// </summary>
 		/// <param name="winMouseButtons">Windows mouse buttons</param>
 		/// <returns>.NET mouse buttons</returns>
-		/// ------------------------------------------------------------------------------------
 		public static MouseButtons TranslateMouseButtons(Win32.MouseButtons winMouseButtons)
 		{
-			MouseButtons mouseButton = MouseButtons.None;
+			var mouseButton = MouseButtons.None;
 			if ((winMouseButtons & Win32.MouseButtons.MK_LBUTTON) == Win32.MouseButtons.MK_LBUTTON)
+			{
 				mouseButton |= MouseButtons.Left;
+			}
 			if ((winMouseButtons & Win32.MouseButtons.MK_RBUTTON) == Win32.MouseButtons.MK_RBUTTON)
+			{
 				mouseButton |= MouseButtons.Right;
+			}
 			if ((winMouseButtons & Win32.MouseButtons.MK_MBUTTON) == Win32.MouseButtons.MK_MBUTTON)
+			{
 				mouseButton |= MouseButtons.Middle;
+			}
 			if ((winMouseButtons & Win32.MouseButtons.MK_XBUTTON1) == Win32.MouseButtons.MK_XBUTTON1)
+			{
 				mouseButton |= MouseButtons.XButton1;
+			}
 			if ((winMouseButtons & Win32.MouseButtons.MK_XBUTTON2) == Win32.MouseButtons.MK_XBUTTON2)
+			{
 				mouseButton |= MouseButtons.XButton2;
-
+			}
 			return mouseButton;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Determines whether the window handle is a child window of the specified parent form.
 		/// </summary>
-		/// <param name="parent">The parent.</param>
-		/// <param name="hWnd">The window handle.</param>
-		/// <returns><c>true</c> if the window is a child window of the parent form; otherwise,
-		/// <c>false</c>.
-		/// </returns>
-		/// ------------------------------------------------------------------------------------
 		public static bool IsChildWindowOfForm(Form parent, IntPtr hWnd)
 		{
 			if (parent == null)
+			{
 				return false;
-
+			}
 			// Try to get the managed window for the handle. We will get one only if hWnd is
 			// a child window of this application, so we can return true.
 			if (Control.FromHandle(hWnd) != null)
+			{
 				return true;
-
+			}
 			// Otherwise hWnd might be the handle of an unmanaged window. We look at all
 			// parents and grandparents... to see if we eventually belong to the application
 			// window.
-			IntPtr hWndParent = hWnd;
+			var hWndParent = hWnd;
 			while (hWndParent != IntPtr.Zero)
 			{
 				hWnd = hWndParent;
@@ -267,12 +274,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Finds the first control of the given name under the parentControl.
 		/// </summary>
-		/// <param name="parentControl"></param>
-		/// <param name="nameOfChildToFocus"></param>
-		/// <returns></returns>
 		public static Control FindControl(Control parentControl, string nameOfChildToFocus)
 		{
-			if (String.IsNullOrEmpty(nameOfChildToFocus))
+			if (string.IsNullOrEmpty(nameOfChildToFocus))
 			{
 				return null;
 			}
@@ -297,49 +301,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public static string RemoveUnderline(string guiString)
 		{
-			return guiString.Replace("_", String.Empty);
-		}
-
-		/// <summary>
-		/// Remove ampersand character.
-		/// </summary>
-		public static string RemoveAmpersand(string guiString)
-		{
-			return guiString.Replace("&", String.Empty);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Takes a string in the form "{X=l,Y=t,Width=w,Height=h}" (where l, t, w, and h are
-		/// X, Y, width and height values) and returns a corresponding rectangle.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static Rectangle GetRcFromString(string str)
-		{
-			str = str.Replace("{", String.Empty);
-			str = str.Replace("}", String.Empty);
-			str = str.Replace("X=", String.Empty);
-			str = str.Replace("Y=", String.Empty);
-			str = str.Replace("Width=", String.Empty);
-			str = str.Replace("Height=", String.Empty);
-
-			string[] strVals = str.Split(",".ToCharArray(), 4);
-			Rectangle rc = Rectangle.Empty;
-
-			if (strVals != null)
-			{
-				int val;
-				if (strVals.Length > 0 && Int32.TryParse(strVals[0], out val))
-					rc.X = val;
-				if (strVals.Length > 1 && Int32.TryParse(strVals[1], out val))
-					rc.Y = val;
-				if (strVals.Length > 2 && Int32.TryParse(strVals[2], out val))
-					rc.Width = val;
-				if (strVals.Length > 3 && Int32.TryParse(strVals[3], out val))
-					rc.Height = val;
-			}
-
-			return rc;
+			return guiString.Replace("_", string.Empty);
 		}
 
 		/// <summary>
@@ -349,9 +311,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static void DisposeOnGuiThread(this Control control)
 		{
 			if (control.InvokeRequired)
+			{
 				control.SafeBeginInvoke(new MethodInvoker(control.Dispose));
+			}
 			else
+			{
 				control.Dispose();
+			}
 		}
 
 		/// <summary>
@@ -381,15 +347,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				return control.BeginInvoke(method, args);
 			}
-
-			else if (control.Handle != IntPtr.Zero) // will typically create the handle, since it doesn't already have one.
-			{
-				// now the handle is created in THIS thread!
-				return control.BeginInvoke(method, args);
-			}
-
-			// this should never happen.
-			return null;
+			// Will typically create the handle, since it doesn't already have one.
+			return control.Handle != IntPtr.Zero ? control.BeginInvoke(method, args) : null /* this should never happen. */;
 		}
 
 #if RANDYTODO
@@ -412,20 +371,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public static bool SuppressErrorBeep { get; set; }
 
-		/// ------------------------------------------------------------------------------------
 		public static void ErrorBeep()
 		{
 			if (!SuppressErrorBeep)
+			{
 				SystemSounds.Beep.Play();
+			}
 		}
 
-#region Advapi32.dll
+		#region Advapi32.dll
 		// Requires Windows NT 3.1 or later
 		// From http://www.codeproject.com/useritems/processownersid.asp
 
 		private const int TOKEN_QUERY = 0X00000008;
-
-		private const int ERROR_NO_MORE_ITEMS = 259;
 
 		private enum TOKEN_INFORMATION_CLASS
 		{
@@ -450,22 +408,24 @@ namespace SIL.FieldWorks.Common.FwUtils
 			/// <summary>Specifies a SID_AND_ATTRIBUTES structure representing the user
 			/// associated with the access token. There are currently no attributes defined for
 			/// user security identifiers (SIDs).</summary>
-			public SID_AND_ATTRIBUTES User;
+			public readonly SID_AND_ATTRIBUTES User;
 		}
 
 		/// <summary>The SID_AND_ATTRIBUTES structure represents a security identifier (SID) and
 		/// its attributes. SIDs are used to uniquely identify users or groups.</summary>
+		/// <remarks>
+		/// Only used by TOKEN_USER private struct.
+		/// </remarks>
 		[StructLayout(LayoutKind.Sequential)]
 		private struct SID_AND_ATTRIBUTES
 		{
 			/// <summary>Pointer to a SID structure. </summary>
-			public IntPtr Sid;
+			public readonly IntPtr Sid;
 			/// <summary>Specifies attributes of the SID. This value contains up to 32 one-bit
 			/// flags. Its meaning depends on the definition and use of the SID.</summary>
 			public int Attributes;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The OpenProcessToken function opens the access token associated with a process.
 		/// </summary>
@@ -480,14 +440,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns>If the function succeeds, the return value is <c>true</c>.
 		/// If the function fails, the return value is <c>false</c>. To get extended error
 		/// information, call GetLastError.</returns>
-		/// ------------------------------------------------------------------------------------
 		[DllImport("advapi32")]
-		private static extern bool OpenProcessToken(
-			IntPtr processHandle, // handle to process
-			int desiredAccess, // desired access to process
-			out IntPtr tokenHandle); // handle to open access token
+		private static extern bool OpenProcessToken(IntPtr processHandle, int desiredAccess, out IntPtr tokenHandle);
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The GetTokenInformation function retrieves a specified type of information about an
 		/// access token. The calling process must have appropriate access rights to obtain the
@@ -516,27 +471,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns>If the function succeeds, the return value is <c>true</c>.
 		/// If the function fails, the return value is <c>false</c>. To get extended error
 		/// information, call GetLastError.</returns>
-		/// ------------------------------------------------------------------------------------
 		[DllImport("advapi32", CharSet = CharSet.Auto)]
-		private static extern bool GetTokenInformation(
-			IntPtr hToken,
-			TOKEN_INFORMATION_CLASS tokenInfoClass,
-			IntPtr tokenInformation,
-			int tokeInfoLength,
-			out int returnLength);
+		private static extern bool GetTokenInformation(IntPtr hToken, TOKEN_INFORMATION_CLASS tokenInfoClass, IntPtr tokenInformation, int tokeInfoLength, out int returnLength);
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The CloseHandle function closes an open object handle.
 		/// </summary>
 		/// <param name="handle">[in] Handle to an open object. This parameter can be a pseudo
 		/// handle or INVALID_HANDLE_VALUE. </param>
 		/// <returns><c>true</c> if the function succeeds, otherwise <c>false</c>.</returns>
-		/// ------------------------------------------------------------------------------------
 		[DllImport("kernel32")]
 		private static extern bool CloseHandle(IntPtr handle);
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The ConvertSidToStringSid function converts a security identifier (SID) to a string
 		/// format suitable for display, storage, or transmission.
@@ -544,17 +490,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="sid">[in] Pointer to the SID structure to convert.</param>
 		/// <param name="stringSid">[out] The SID string.</param>
 		/// <returns><c>true</c> if the function succeeds, otherwise <c>false</c>.</returns>
-		/// ------------------------------------------------------------------------------------
 		[DllImport("advapi32", CharSet = CharSet.Auto)]
-		private static extern bool ConvertSidToStringSid(
-			IntPtr sid,
-			[MarshalAs(UnmanagedType.LPTStr)] out string stringSid);
+		private static extern bool ConvertSidToStringSid(IntPtr sid, [MarshalAs(UnmanagedType.LPTStr)] out string stringSid);
 
-#endregion
+		#endregion
 
-#region Helper methods
+		#region Helper methods
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the user SID for the given process token.
 		/// </summary>
@@ -562,23 +504,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns>The SID of the user that owns the process, or <c>IntPtr.Zero</c> if we
 		/// can't get the user information (e.g. insufficient permissions to retrieve this
 		/// information)</returns>
-		/// ------------------------------------------------------------------------------------
 		private static IntPtr GetSidForProcessToken(IntPtr hToken)
 		{
-			int bufferLen = 256;
-			IntPtr buffer = Marshal.AllocHGlobal(bufferLen);
+			var bufferLen = 256;
+			var buffer = Marshal.AllocHGlobal(bufferLen);
 
 			try
 			{
 				int returnLen;
-				if (GetTokenInformation(hToken, TOKEN_INFORMATION_CLASS.TokenUser, buffer,
-					bufferLen, out returnLen))
-				{
-					TOKEN_USER tokUser;
-					tokUser = (TOKEN_USER)Marshal.PtrToStructure(buffer, typeof(TOKEN_USER));
-					return tokUser.User.Sid;
-				}
-				return IntPtr.Zero;
+				return GetTokenInformation(hToken, TOKEN_INFORMATION_CLASS.TokenUser, buffer, bufferLen, out returnLen) ? ((TOKEN_USER)Marshal.PtrToStructure(buffer, typeof(TOKEN_USER))).User.Sid : IntPtr.Zero;
 			}
 			catch (Exception ex)
 			{
@@ -592,15 +526,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
-#endregion
+		#endregion
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the user for the given process.
 		/// </summary>
-		/// <param name="process">The process.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		public static string GetUserForProcess(Process process)
 		{
 			try
@@ -611,10 +541,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 					string sidString = null;
 					if (OpenProcessToken(process.Handle, TOKEN_QUERY, out procToken))
 					{
-						IntPtr sid = GetSidForProcessToken(procToken);
+						var sid = GetSidForProcessToken(procToken);
 						if (sid != IntPtr.Zero)
+						{
 							ConvertSidToStringSid(sid, out sidString);
-
+						}
 						CloseHandle(procToken);
 					}
 					return sidString;
@@ -625,36 +556,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 			catch (Exception ex)
 			{
 				Debug.WriteLine("GetUserForProcess failed: " + ex.Message);
-				return "";
+				return string.Empty;
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Returns the name of the TestLangProj database.
-		/// This is to allow multiple users to test with same database server and different
-		/// named TestLangProj files.
-		/// </summary>
-		/// <returns>TestLangProj name</returns>
-		/// ------------------------------------------------------------------------------------
-		public static string GetTestLangProjDataBaseName()
-		{
-			string dbName = Environment.GetEnvironmentVariable("TE_DATABASE");
-			if (String.IsNullOrEmpty(dbName))
-				return "TestLangProj";
-			return dbName;
-		}
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Determines whether the exception <paramref name="e"/> is caused by an unsupported
 		/// culture, i.e. a culture that neither Windows nor .NET support and there is no
 		/// custom culture (see LT-8248).
 		/// </summary>
-		/// <param name="e">The exception.</param>
-		/// <returns><c>true</c> if the exception is caused by an unsupported culture;
-		/// otherwise, <c>false</c>.</returns>
-		/// ------------------------------------------------------------------------------------
 		public static bool IsUnsupportedCultureException(Exception e)
 		{
 			return e is CultureNotFoundException;
@@ -725,6 +635,69 @@ namespace SIL.FieldWorks.Common.FwUtils
 			MessageBox.Show(null, string.Format(FwUtilsStrings.ksIllegalNameMsg, sIllegalCharsKeyboard), FwUtilsStrings.ksIllegalChars, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 			tb.Text = sProjName;
 			tb.Select(selectionPos, 0);
+			return false;
+		}
+
+		/// <summary>
+		/// Gets the boot drive, based on the location of the system directory. (Note: This
+		/// includes the colon and backslash in the return value.)
+		/// </summary>
+		/// <remarks>This returns an empty string on Linux (unless environment variable
+		/// 'windir' happens to be set).</remarks>
+		public static string BootDrive => Path.GetPathRoot(Environment.GetEnvironmentVariable("windir"));
+
+		/// <summary>
+		/// Migrates the old CoreImpl config section to the new settings if necessary.
+		/// </summary>
+		public static bool MigrateIfNecessary(Stream stream, IFwApplicationSettings applicationSettings)
+		{
+			var configDoc = XDocument.Load(stream);
+			stream.Position = 0;
+			var userSettingsGroupElem = configDoc.Root?.Element("configSections")?.Elements("sectionGroup").FirstOrDefault(e => (string)e.Attribute("name") == "userSettings");
+			var coreImplSectionElem = userSettingsGroupElem?.Elements("section").FirstOrDefault(e => (string)e.Attribute("name") == "SIL.CoreImpl.Properties.Settings");
+			if (coreImplSectionElem != null)
+			{
+				var coreImplElem = configDoc.Root.Element("userSettings")?.Element("SIL.CoreImpl.Properties.Settings");
+				if (coreImplElem != null)
+				{
+					foreach (var settingElem in coreImplElem.Elements("setting"))
+					{
+						var valueElem = settingElem.Element("value");
+						if (valueElem == null)
+						{
+							continue;
+						}
+						switch ((string)settingElem.Attribute("name"))
+						{
+							case "UpdateGlobalWSStore":
+								applicationSettings.UpdateGlobalWSStore = (bool)valueElem;
+								break;
+							case "WebonaryUser":
+								applicationSettings.WebonaryUser = (string)valueElem;
+								break;
+							case "WebonaryPass":
+								applicationSettings.WebonaryPass = (string)valueElem;
+								break;
+							case "Reporting":
+								var reader = valueElem.CreateReader();
+								reader.MoveToContent();
+								var xml = reader.ReadInnerXml();
+								applicationSettings.Reporting = Xml.XmlSerializationHelper.DeserializeFromString<ReportingSettings>(xml);
+								break;
+							case "LocalKeyboards":
+								applicationSettings.LocalKeyboards = (string)valueElem;
+								break;
+						}
+					}
+					coreImplElem.Remove();
+				}
+				coreImplSectionElem.Remove();
+
+				stream.SetLength(0);
+				configDoc.Save(stream);
+				stream.Position = 0;
+				return true;
+			}
 			return false;
 		}
 	}

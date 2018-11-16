@@ -91,7 +91,7 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Windows
 
 			if (fDisposing)
 			{
-				// dispose managed and unmanaged objects
+				// dispose managed objects
 				m_dlg?.Dispose();
 			}
 			m_dlg = null;

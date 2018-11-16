@@ -129,18 +129,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 
 			/// <summary />
-			protected virtual void Dispose(bool fDisposing)
+			protected virtual void Dispose(bool disposing)
 			{
-				Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 				if (IsDisposed)
 				{
 					// No need to run it more than once.
 					return;
 				}
 
-				if (fDisposing)
+				if (disposing)
 				{
-					// dispose managed and unmanaged objects
+					// dispose managed objects
 					if (m_gridWordForming != null)
 					{
 						m_gridWordForming.CellPainting -= HandleGridCellPainting;

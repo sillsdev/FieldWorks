@@ -377,7 +377,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 	{
 		protected virtual void SetClipboardAdapter()
 		{
-			ClipboardUtils.Manager.SetClipboardAdapter(new ClipboardStub());
+			ClipboardUtils.SetClipboardAdapter(new ClipboardStub());
 		}
 
 		/// ------------------------------------------------------------------------------------

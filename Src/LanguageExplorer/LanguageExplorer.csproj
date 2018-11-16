@@ -1329,7 +1329,10 @@
     <Compile Include="LcmUi\WfiGlossUi.cs" />
     <Compile Include="MGA\MGAImageKind.cs" />
     <Compile Include="MGA\MasterItemCitation.cs" />
+    <Compile Include="ReadOnlyPropertyTable.cs" />
+    <Compile Include="IRecordFilterListProvider.cs" />
     <Compile Include="RecordFilterParameterObject.cs" />
+    <Compile Include="SelectionEvents.cs" />
     <Compile Include="SendReceive\ImportFailureStatus.cs" />
     <Compile Include="SettingsXmlAccessorBase.cs" />
     <Compile Include="StatusBarTextBox.cs">

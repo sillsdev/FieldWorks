@@ -61,18 +61,18 @@ namespace LanguageExplorer.Filters
 		/// object equivalent to yourself. The node already contains information
 		/// sufficient to create an instance of the proper class.
 		/// </summary>
-		public void PersistAsXml(XElement node)
+		public void PersistAsXml(XElement element)
 		{
-			XmlUtils.SetAttribute(node, "property", PropertyName);
+			XmlUtils.SetAttribute(element, "property", PropertyName);
 		}
 
 		/// <summary>
 		/// Initialize an instance into the state indicated by the node, which was
 		/// created by a call to PersistAsXml.
 		/// </summary>
-		public void InitXml(XElement node)
+		public void InitXml(XElement element)
 		{
-			PropertyName = XmlUtils.GetMandatoryAttributeValue(node, "property");
+			PropertyName = XmlUtils.GetMandatoryAttributeValue(element, "property");
 		}
 
 		/// <summary>

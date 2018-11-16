@@ -224,7 +224,7 @@ namespace SIL.FieldWorks.Test.ProjectUnpacker
 		{
 			try
 			{
-				Directory.SetCurrentDirectory(DriveUtil.BootDrive);
+				Directory.SetCurrentDirectory(FwUtils.BootDrive);
 				Directory.Delete(folder.TrimEnd(Path.DirectorySeparatorChar), true);
 			}
 			catch(Exception e)

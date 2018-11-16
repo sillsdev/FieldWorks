@@ -84,7 +84,7 @@ namespace SILUBS.ScriptureChecks
 
 			QuotationCheck check = new QuotationCheck(m_source);
 			List<TextTokenSubstring> tts =
-				check.GetReferences(m_source.TextTokens(), "");
+				check.GetReferences(m_source.TextTokens, "");
 
 			for (int i = 0; i < tts.Count; i++)
 			{

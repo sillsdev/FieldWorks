@@ -72,17 +72,17 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		public void PersistAsXml(XElement node)
+		public void PersistAsXml(XElement element)
 		{
-			XmlUtils.SetAttribute(node, "ws", WsId);
+			XmlUtils.SetAttribute(element, "ws", WsId);
 		}
 
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public void InitXml(XElement node)
+		public void InitXml(XElement element)
 		{
-			WsId = XmlUtils.GetMandatoryAttributeValue(node, "ws");
+			WsId = XmlUtils.GetMandatoryAttributeValue(element, "ws");
 		}
 
 		#endregion

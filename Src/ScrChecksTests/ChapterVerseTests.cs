@@ -278,7 +278,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.VerseNumber, false, false, "Paragraph"));
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
 				TextType.Verse, true, false, "Paragraph"));
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(0, m_errors.Count);
 		}
 
@@ -321,7 +321,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.VerseNumber, false, false, "Paragraph"));
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
 				TextType.Verse, true, false, "Paragraph"));
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(0, m_errors.Count);
 		}
 
@@ -365,7 +365,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(badToken2);
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
 				TextType.Verse, true, false, "Paragraph"));
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(2, m_errors.Count);
 			CheckError(0, badToken1.Text, 0, badToken1.Text, "Invalid chapter number");
 			CheckError(1, badToken2.Text, 0, badToken2.Text, "Invalid verse number");
@@ -411,7 +411,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(badToken2);
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
 				TextType.Verse, true, false, "Paragraph"));
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(2, m_errors.Count);
 			CheckError(0, badToken1.Text, 0, badToken1.Text, "Invalid chapter number");
 			CheckError(1, badToken2.Text, 0, badToken2.Text, "Invalid verse number");
@@ -445,7 +445,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(badToken);
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
 				TextType.Verse, true, false, "Paragraph"));
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(1, m_errors.Count);
 			CheckError(0, badToken.Text, 0, badToken.Text, "Invalid verse number");
 		}
@@ -476,7 +476,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(badToken);
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
 				TextType.Verse, true, false, "Paragraph"));
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(1, m_errors.Count);
 			CheckError(0, badToken.Text, 0, badToken.Text, "Invalid verse number");
 		}
@@ -504,7 +504,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(badToken);
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
 				TextType.Verse, true, false, "Paragraph"));
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(1, m_errors.Count);
 			CheckError(0, badToken.Text, 0, badToken.Text, "Invalid verse number");
 		}
@@ -544,14 +544,14 @@ namespace SILUBS.ScriptureChecks
 				TextType.VerseNumber, false, false, "Paragraph"));
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
 				TextType.Verse, true, false, "Paragraph"));
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(0, m_errors.Count);
 
 			m_dataSource.SetParameterValue("Versification Scheme", "Septuagint");
 
 			((DummyTextToken)TempTok).Text = "1-14";
 			((DummyTextToken)TempTok2).Text = "1-14";
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(0, m_errors.Count);
 		}
 
@@ -590,7 +590,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.VerseNumber, false, false, "Paragraph"));
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
 				TextType.Verse, true, false, "Paragraph"));
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(0, m_errors.Count);
 		}
 
@@ -627,7 +627,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.VerseNumber, false, false, "Paragraph"));
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
 				TextType.Verse, true, false, "Paragraph"));
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(2, m_errors.Count);
 			CheckError(0, m_dataSource.m_tokens[0].Text, 0, m_dataSource.m_tokens[0].Text, "Invalid chapter number");
@@ -667,7 +667,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.VerseNumber, false, false, "Paragraph"));
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
 				TextType.Verse, true, false, "Paragraph"));
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(2, m_errors.Count);
 			CheckError(0, m_dataSource.m_tokens[0].Text, 0, m_dataSource.m_tokens[0].Text, "Invalid chapter number");
@@ -704,7 +704,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.VerseNumber, false, false, "Paragraph"));
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
 				TextType.Verse, true, false, "Paragraph"));
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(0, m_errors.Count);
 		}
@@ -744,7 +744,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(TempTok);
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
 				TextType.Verse, true, false, "Paragraph"));
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(2, m_errors.Count);
 			CheckError(0, TempTok.Text, 0, TempTok.Text, "Duplicate verse numbers");
@@ -776,7 +776,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(TempTok);
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
 				TextType.Verse, true, false, "Paragraph"));
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(2, m_errors.Count);
 			CheckError(0, TempTok.Text, 0, TempTok.Text, "Duplicate verse numbers");
@@ -815,7 +815,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.Verse, true, false, "Paragraph"));
 			// Missing entire chapter 2
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(1, m_errors.Count);
 			CheckError(0, m_dataSource.m_tokens[0].Text, 1, String.Empty, "Missing chapter number 2");
 		}
@@ -848,7 +848,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
 				TextType.Verse, true, false, "Paragraph"));
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(2, m_errors.Count);
 			CheckError(1, "1", 1, String.Empty, "Missing chapter number 2");
 			Assert.AreEqual(m_errors[1].Tts.MissingStartRef.BBCCCVVV, 2000);
@@ -893,7 +893,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.ChapterNumber, true, false, "Paragraph");
 			m_dataSource.m_tokens.Add(dupChapter);
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(1, m_errors.Count);
 			CheckError(0, dupChapter.Text, 0, dupChapter.Text, "Duplicate chapter number");
@@ -933,7 +933,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
 				TextType.Verse, true, false, "Paragraph"));
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(1, m_errors.Count);
 			CheckError(0, "2", 0, String.Empty, "Missing chapter number 1");
 			Assert.AreEqual(m_errors[0].Tts.MissingStartRef.BBCCCVVV, 1000);
@@ -979,7 +979,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.Verse, true, false, "Paragraph"));
 			// Missing verse 23
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(4, m_errors.Count);
 			CheckError(0, m_dataSource.m_tokens[1].Text, 1, String.Empty, "Missing verse number 2");
 			CheckError(1, TempTok.Text, 4, String.Empty, "Missing verse number 15");
@@ -1023,7 +1023,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.VerseNumber, true, false, "Paragraph"));
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
 				TextType.Verse, true, false, "Paragraph"));
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(2, m_errors.Count);
 			CheckError(0, TempTok.Text, 0, TempTok.Text, "Chapter number out of range");
@@ -1067,7 +1067,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(TempTok2);
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
 				TextType.Verse, true, false, "Paragraph"));
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(2, m_errors.Count);
 			CheckError(0, TempTok.Text, 0, TempTok.Text, "Verse number out of range");
@@ -1111,7 +1111,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.VerseNumber, false, false, "Paragraph"));
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
 				TextType.Verse, true, false, "Paragraph"));
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(1, m_errors.Count);
 			CheckError(0, TempTok.Text, 0, TempTok.Text, "Invalid verse number");
@@ -1152,7 +1152,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.Verse, true, false, "Paragraph"));
 			// Missing verses 21-23
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(2, m_errors.Count);
 
@@ -1212,7 +1212,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
 				TextType.Verse, true, false, "Paragraph"));
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(3, m_errors.Count);
 
@@ -1271,7 +1271,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
 				TextType.Verse, true, false, "Paragraph"));
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(2, m_errors.Count);
 
@@ -1319,7 +1319,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.VerseNumber, false, false, "Paragraph"));
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
 				TextType.Verse, true, false, "Paragraph"));
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(2, m_errors.Count);
 
@@ -1378,7 +1378,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
 				TextType.Verse, true, false, "Paragraph"));
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(0, m_errors.Count);
 		}
 
@@ -1492,7 +1492,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.VerseNumber, false, false, "Paragraph"));
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
 				TextType.Verse, true, false, "Paragraph"));
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(6, m_errors.Count);
 
@@ -1545,7 +1545,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(tempTok2);
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
 				TextType.Verse, true, false, "Paragraph"));
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(2, m_errors.Count);
 
@@ -1593,7 +1593,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.VerseNumber, false, false, "Paragraph"));
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
 				TextType.Verse, true, false, "Paragraph"));
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(1, m_errors.Count);
 			CheckError(0, m_dataSource.m_tokens[0].Text, 0, String.Empty, "Missing verse number 1");
@@ -1648,7 +1648,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(TempTok2);
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
 				TextType.Verse, true, false, "Paragraph"));
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(3, m_errors.Count);
 
@@ -1698,7 +1698,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.VerseNumber, false, false, "Paragraph"));
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
 				TextType.Verse, true, false, "Paragraph"));
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(2, m_errors.Count);
 
@@ -1758,7 +1758,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.VerseNumber, false, false, "Paragraph"));
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
 				TextType.Verse, true, false, "Paragraph"));
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(7, m_errors.Count);
 
@@ -1803,7 +1803,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.VerseNumber, false, false, "Paragraph"));
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
 				TextType.Verse, true, false, "Paragraph"));
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(2, m_errors.Count);
 
@@ -1838,7 +1838,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(TempTok);
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
 				TextType.Verse, true, false, "Paragraph"));
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(3, m_errors.Count);
 
@@ -1874,7 +1874,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
 				TextType.Verse, true, false, "Paragraph"));
 			// Missing chapters 3-5
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(5, m_errors.Count);
 
@@ -1919,7 +1919,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("1-18",
 				TextType.VerseNumber, true, false, "Paragraph"));
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(4, m_errors.Count);
 		}
@@ -1971,7 +1971,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken(" ",
 				TextType.Verse, true, false, "Paragraph"));
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(4, m_errors.Count);
 		}
@@ -2020,7 +2020,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
 				TextType.Verse, true, false, "Paragraph"));
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(0, m_errors.Count);
 		}
@@ -2070,7 +2070,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
 				TextType.Verse, true, false, "Paragraph"));
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(0, m_errors.Count);
 		}
@@ -2126,7 +2126,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
 				TextType.Verse, true, false, "Paragraph"));
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(0, m_errors.Count);
 		}

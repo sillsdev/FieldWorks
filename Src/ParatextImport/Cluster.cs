@@ -8,7 +8,6 @@ using SIL.LCModel;
 using System.Diagnostics;
 using SIL.LCModel.Utils;
 using SIL.LCModel.Core.Scripture;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.DomainServices;
 using SIL.PlatformUtilities;
 

@@ -7,17 +7,15 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Debugging helper methods. Accesses the unmanaged C++ DebugProcs.dll
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public class DebugProcs : IDisposable
 #if DEBUG
 		, IDebugReportSink
@@ -29,11 +27,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		private const int MaxLineLength = 60;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Creates a new object
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public DebugProcs()
 		{
 #if DEBUG
@@ -47,7 +43,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed { get; private set; }
+		private bool IsDisposed { get; set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -62,15 +58,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 			// The base class finalizer is called automatically.
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <remarks>Must not be virtual.</remarks>
+		/// <inheritdoc />
 		public void Dispose()
 		{
 			Dispose(true);
 			// This object will be cleaned up by the Dispose method.
-			// Therefore, you should call GC.SupressFinalize to
+			// Therefore, you should call GC.SuppressFinalize to
 			// take this object off the finalization queue
 			// and prevent finalization code for this object
 			// from executing a second time.
@@ -101,16 +94,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 		protected virtual void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
 			if (IsDisposed)
+			{
+				// No need to run it more than once.
 				return;
+			}
 
 			if (disposing)
 			{
 				// Dispose managed resources here.
 #if DEBUG
-				if (m_DebugReport != null)
-					m_DebugReport.ClearSink();
+				m_DebugReport?.ClearSink();
 #endif
 			}
 
@@ -130,19 +124,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		#region IDebugReportSink Members
 #if DEBUG
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Callback method that gets all debug output from unmanaged FieldWorks code.
 		/// </summary>
-		/// <param name="nReportType">Type of report</param>
-		/// <param name="szMsg">Message</param>
-		/// ------------------------------------------------------------------------------------
 		public virtual void Report(CrtReportType nReportType, string szMsg)
 		{
 			Trace.WriteLine(szMsg, nReportType.ToString());
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Managed assert method. This method gets called when an assert fails
 		/// in unmanaged code.
@@ -150,49 +140,47 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="expression">the expression of the assertion that failed</param>
 		/// <param name="filename">the filename of the failed assertion</param>
 		/// <param name="nLine">the line number of the failed assertion</param>
-		/// ------------------------------------------------------------------------------------
 		public virtual void AssertProc(string expression, string filename, int nLine)
 		{
 			Debug.Fail(GetMessage(expression, filename, nLine));
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the name of the executable
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[DllImport("kernel32.dll", SetLastError = true, EntryPoint = "GetModuleFileName")]
 		[PreserveSig]
-		private static extern uint GetModuleFileNameWindows(IntPtr hModule, [Out]StringBuilder lpFilename,
-			[MarshalAs(UnmanagedType.U4)]int nSize);
+		private static extern uint GetModuleFileNameWindows(IntPtr hModule, [Out]StringBuilder lpFilename, [MarshalAs(UnmanagedType.U4)]int nSize);
 
-		private static uint GetModuleFileName(IntPtr hModule, StringBuilder lpFilename,
-			int nSize)
+		private static void GetModuleFileName(IntPtr hModule, StringBuilder lpFilename, int nSize)
 		{
 			if (Platform.IsWindows)
-				return GetModuleFileNameWindows(hModule, lpFilename, nSize);
-
+			{
+				GetModuleFileNameWindows(hModule, lpFilename, nSize);
+				return;
+			}
 			if (hModule != IntPtr.Zero)
-				return 0; // not supported (yet)
-
-			byte[] buf = new byte[nSize];
-			int ret = readlink("/proc/self/exe", buf, buf.Length);
+			{
+				return; // not supported (yet)
+			}
+			var buf = new byte[nSize];
+			var ret = readlink("/proc/self/exe", buf, buf.Length);
 			if (ret == -1)
-				return 0;
-			char[] cbuf = new char[nSize];
-			int nChars = Encoding.Default.GetChars(buf, 0, ret, cbuf, 0);
-			lpFilename.Append(new String(cbuf, 0, nChars));
-			return (uint)nChars;
+			{
+				return;
+			}
+			var cbuf = new char[nSize];
+			var nChars = Encoding.Default.GetChars(buf, 0, ret, cbuf, 0);
+			lpFilename.Append(new string(cbuf, 0, nChars));
+			return;
 		}
 
 		[DllImport("libc")]
 		private static extern int readlink(string path, byte[] buffer, int buflen);
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the message.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected static string GetMessage(string expression, string filePath, int nLine)
 		{
 			var bldr = new StringBuilder();
@@ -225,15 +213,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 				// Determine where to put the ...
 				var nameOnly = Path.DirectorySeparatorChar + Path.GetFileName(filePath);
-				if ((availLength - availLength / 3) < (filePath.Length - nameOnly.Length) &&
-					availLength / 3 > nameOnly.Length)
+				if (availLength - availLength / 3 < filePath.Length - nameOnly.Length && availLength / 3 > nameOnly.Length)
 				{
 					// path too long. Using first part of path and the filename string
 					bldr.Append(filePath.Substring(0, availLength - 3 - nameOnly.Length));
 					bldr.Append("...");
 					bldr.AppendLine(nameOnly);
 				}
-				else if ((availLength - availLength / 3) > (filePath.Length - nameOnly.Length))
+				else if (availLength - availLength / 3 > filePath.Length - nameOnly.Length)
 				{
 					// path is smaller. keeping full path and putting ... in the
 					// middle of filename
@@ -253,7 +240,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 				}
 			}
 			else
+			{
 				bldr.AppendLine(filePath);
+			}
 
 			// Line 4: line line
 			bldr.AppendFormat("Line: {0}", nLine);

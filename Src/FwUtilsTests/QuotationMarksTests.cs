@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2015 SIL International
+// Copyright (c) 2008-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,32 +6,24 @@ using NUnit.Framework;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Tests for the QuotationMark class
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
 	public class QuotationMarkTests
 	{
 		private QuotationMarksList m_qmList;
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		[SetUp]
 		public void Setup()
 		{
 			m_qmList = QuotationMarksList.NewList();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the DistinctLevels property when there is only one level (Simple case)
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestDistinctLevels_1Level()
 		{
@@ -41,11 +33,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(1, m_qmList.DistinctLevels);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the DistinctLevels property when there is only two levels (Simple case)
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestDistinctLevels_2Levels()
 		{
@@ -56,11 +46,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(2, m_qmList.DistinctLevels);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the DistinctLevels property when there is only three levels
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestDistinctLevels_3Levels_repeated1()
 		{
@@ -74,11 +62,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(2, m_qmList.DistinctLevels);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the DistinctLevels property when there is only three levels
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestDistinctLevels_3Levels_diffOpen()
 		{
@@ -92,11 +78,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(3, m_qmList.DistinctLevels);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the DistinctLevels property when there is only three levels
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestDistinctLevels_3Levels_diffClose()
 		{
@@ -110,11 +94,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(3, m_qmList.DistinctLevels);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the DistinctLevels property when there is only three levels
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestDistinctLevels_3Levels()
 		{
@@ -128,11 +110,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(3, m_qmList.DistinctLevels);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the DistinctLevels property when there is four levels
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestDistinctLevels_4Levels_repeated1And2()
 		{
@@ -148,11 +128,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(2, m_qmList.DistinctLevels);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the DistinctLevels property when there is four levels
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestDistinctLevels_4Levels_repeated2()
 		{
@@ -168,11 +146,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(4, m_qmList.DistinctLevels);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the DistinctLevels property when there is four levels
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestDistinctLevels_4Levels_repeated1To3()
 		{
@@ -188,11 +164,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(3, m_qmList.DistinctLevels);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the DistinctLevels property when there is four levels
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestDistinctLevels_4Levels_diffOpen()
 		{
@@ -208,11 +182,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(4, m_qmList.DistinctLevels);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the DistinctLevels property when there is four levels
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestDistinctLevels_4Levels_diffClose()
 		{
@@ -228,11 +200,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(4, m_qmList.DistinctLevels);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the DistinctLevels property when there is four levels
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestDistinctLevels_4Levels()
 		{
@@ -248,11 +218,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(4, m_qmList.DistinctLevels);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the DistinctLevels property when there are five levels
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestDistinctLevels_5Levels_repeated1And2()
 		{
@@ -270,11 +238,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(2, m_qmList.DistinctLevels);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the DistinctLevels property when there are five levels
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestDistinctLevels_5Levels_repeated1To3()
 		{
@@ -292,11 +258,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(3, m_qmList.DistinctLevels);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the DistinctLevels property when there are five levels
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestDistinctLevels_5Levels_repeated1To4()
 		{
@@ -314,11 +278,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(4, m_qmList.DistinctLevels);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the DistinctLevels property when there are five levels
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestDistinctLevels_5Levels_repeated2()
 		{
@@ -336,11 +298,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(5, m_qmList.DistinctLevels);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the DistinctLevels property when there are five levels
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestDistinctLevels_5Levels_repeated3()
 		{
@@ -358,11 +318,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(5, m_qmList.DistinctLevels);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the DistinctLevels property when there are five levels
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestDistinctLevels_5Levels_diffOpen()
 		{
@@ -380,11 +338,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(4, m_qmList.DistinctLevels);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the DistinctLevels property when there are five levels
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestDistinctLevels_5Levels_diffClose()
 		{
@@ -402,11 +358,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(4, m_qmList.DistinctLevels);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the DistinctLevels property when there are five levels
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestDistinctLevels_5Levels()
 		{
@@ -424,11 +378,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(5, m_qmList.DistinctLevels);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the InvalidOpenerCloserCombinations property
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestInvalidOpenerCloserCombinations_1()
 		{
@@ -442,11 +394,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.IsNull(m_qmList.InvalidOpenerCloserCombinations);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the InvalidOpenerCloserCombinations property
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestInvalidOpenerCloserCombinations_2()
 		{
@@ -457,7 +407,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[1].Closing = ">";
 			m_qmList[2].Opening = ">>";
 			m_qmList[2].Closing = "]";
-			QuotationMarksList.InvalidComboInfo result = m_qmList.InvalidOpenerCloserCombinations;
+			var result = m_qmList.InvalidOpenerCloserCombinations;
 			Assert.IsNotNull(result);
 			Assert.AreEqual(0, result.LowerLevel);
 			Assert.IsFalse(result.LowerLevelIsOpener);
@@ -466,11 +416,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(">>", result.QMark);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the InvalidOpenerCloserCombinations property
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestInvalidOpenerCloserCombinations_3()
 		{
@@ -481,7 +429,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[1].Closing = ">";
 			m_qmList[2].Opening = "[";
 			m_qmList[2].Closing = "<<";
-			QuotationMarksList.InvalidComboInfo result = m_qmList.InvalidOpenerCloserCombinations;
+			var result = m_qmList.InvalidOpenerCloserCombinations;
 			Assert.IsNotNull(result);
 			Assert.AreEqual(0, result.LowerLevel);
 			Assert.IsTrue(result.LowerLevelIsOpener);
@@ -490,11 +438,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual("<<", result.QMark);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the InvalidOpenerCloserCombinations property
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestInvalidOpenerCloserCombinations_4()
 		{
@@ -508,11 +454,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.IsNull(m_qmList.InvalidOpenerCloserCombinations);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the InvalidOpenerCloserCombinations property
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestInvalidOpenerCloserCombinations_5()
 		{
@@ -523,7 +467,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[1].Closing = "!";
 			m_qmList[2].Opening = "[";
 			m_qmList[2].Closing = "]";
-			QuotationMarksList.InvalidComboInfo result = m_qmList.InvalidOpenerCloserCombinations;
+			var result = m_qmList.InvalidOpenerCloserCombinations;
 			Assert.IsNotNull(result);
 			Assert.AreEqual(0, result.LowerLevel);
 			Assert.IsTrue(result.LowerLevelIsOpener);
@@ -532,11 +476,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual("!", result.QMark);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the InvalidOpenerCloserCombinations property
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestInvalidOpenerCloserCombinations_6()
 		{
@@ -547,7 +489,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[1].Closing = "!";
 			m_qmList[2].Opening = "!";
 			m_qmList[2].Closing = "!";
-			QuotationMarksList.InvalidComboInfo result = m_qmList.InvalidOpenerCloserCombinations;
+			var result = m_qmList.InvalidOpenerCloserCombinations;
 			Assert.IsNotNull(result);
 			Assert.AreEqual(0, result.LowerLevel);
 			Assert.IsTrue(result.LowerLevelIsOpener);
@@ -556,11 +498,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual("!", result.QMark);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the InvalidOpenerCloserCombinations property
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestInvalidOpenerCloserCombinations_7()
 		{
@@ -574,11 +514,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.IsNull(m_qmList.InvalidOpenerCloserCombinations);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the AddLevel method
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestAddLevelToEmptyList()
 		{
@@ -589,11 +527,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.IsTrue(string.IsNullOrEmpty(m_qmList[0].Closing));
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the AddLevel method
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestAddLevelToListWith1Level()
 		{
@@ -607,11 +543,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.IsTrue(string.IsNullOrEmpty(m_qmList[1].Closing));
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the AddLevel method
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestAddLevelToListWith2Levels()
 		{
@@ -636,11 +570,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(">>", m_qmList[4].Closing);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the AddLevel method
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestAddLevelToListWith2Levels_1empty()
 		{
@@ -656,11 +588,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the AddLevel method
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestAddLevelToListWith3Levels()
 		{
@@ -683,11 +613,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(">", m_qmList[4].Closing);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the AddLevel method
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestAddLevelToListWith4Levels()
 		{
@@ -707,11 +635,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(">>", m_qmList[4].Closing);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		[Test]
 		public void TestIsEmpty()
 		{
@@ -734,11 +658,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.IsFalse(m_qmList.IsEmpty);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		[Test]
 		public void TestIsComplete()
 		{
@@ -759,11 +679,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.IsTrue(m_qmList[0].IsComplete);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		[Test]
 		public void TestFindGap()
 		{
@@ -785,11 +701,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(2, m_qmList.FindGap());
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		[Test]
 		public void TestTrimmedList()
 		{

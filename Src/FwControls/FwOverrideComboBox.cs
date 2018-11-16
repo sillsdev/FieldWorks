@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.Common.Controls
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " *******");
 			if (disposing)
 			{
-				// dispose managed and unmanaged objects
+				// dispose managed objects
 				DisposeItems();
 			}
 			base.Dispose(disposing);

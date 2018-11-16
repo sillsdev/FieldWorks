@@ -1,41 +1,37 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Runtime.InteropServices;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Test the C++ VwCacheDa implementation of the IVwCacheDa interface (this should really be
 	/// done in C++)
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
 	public class IVwCacheDaCppTests
 	{
 		// NB: m_ISilDataAccess and m_IVwCacheDa are exactly the same object.
-		// they could be C# or C++, depeding on if the main is is IVwCacheDaCppTests
+		// they could be C# or C++, depending on if the main is is IVwCacheDaCppTests
 		// or IVwCacheDaCSharpTests, however.
 		/// <summary>The ISilDataAccess object</summary>
 		protected ISilDataAccess m_ISilDataAccess;
 		/// <summary>The IVwCacheDa object</summary>
 		protected IVwCacheDa m_IVwCacheDa;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Setup done before each test.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[SetUp]
 		public void TestSetup()
 		{
@@ -47,21 +43,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_IVwCacheDa = cda;
 		}
 
-		/// <summary/>
+		/// <summary />
 		[TearDown]
 		public void TestTeardown()
 		{
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test setting/getting an object property
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void ObjectProp()
 		{
-			int hvo = m_ISilDataAccess.get_ObjectProp(1000, 2000);
+			var hvo = m_ISilDataAccess.get_ObjectProp(1000, 2000);
 			Assert.AreEqual(0, hvo);
 
 			m_IVwCacheDa.CacheObjProp(1000, 2000, 7777);
@@ -73,39 +67,41 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(8888, hvo);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test getting/setting a vector of hvos
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void VecProp()
 		{
 			// test VecProp
-			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(10))
+			using (var arrayPtr = MarshalEx.ArrayToNative<int>(10))
 			{
-				int chvo = 99;
+				int chvo;
 				m_ISilDataAccess.VecProp(1001, 2001, 10, out chvo, arrayPtr);
 				Assert.AreEqual(0, chvo);
 
 				chvo = m_ISilDataAccess.get_VecSize(1001, 2001);
 				Assert.AreEqual(0, chvo);
 
-				int[] rgHvo = new int[] { 33, 44, 55 };
+				var rgHvo = new[] { 33, 44, 55 };
 				m_IVwCacheDa.CacheVecProp(1001, 2001, rgHvo, rgHvo.Length);
 				m_ISilDataAccess.VecProp(1001, 2001, 10, out chvo, arrayPtr);
-				int[] rgHvoNew = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
+				var rgHvoNew = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
 				Assert.AreEqual(rgHvo.Length, rgHvoNew.Length);
-				for (int i = 0; i < rgHvoNew.Length; i++)
+				for (var i = 0; i < rgHvoNew.Length; i++)
+				{
 					Assert.AreEqual(rgHvo[i], rgHvoNew[i]);
+				}
 
-				int[] rgHvo2 = new int[] { 66, 77, 88, 99 };
+				var rgHvo2 = new[] { 66, 77, 88, 99 };
 				m_IVwCacheDa.CacheVecProp(1001, 2001, rgHvo2, rgHvo2.Length);
 				m_ISilDataAccess.VecProp(1001, 2001, 10, out chvo, arrayPtr);
 				rgHvoNew = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
 				Assert.AreEqual(rgHvo2.Length, rgHvoNew.Length);
-				for (int i = 0; i < rgHvoNew.Length; i++)
+				for (var i = 0; i < rgHvoNew.Length; i++)
+				{
 					Assert.AreEqual(rgHvo2[i], rgHvoNew[i]);
+				}
 
 				Exception ex = null;
 				try
@@ -120,13 +116,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 				Assert.AreEqual(typeof(ArgumentException), ex.GetType());
 
 				// test VecItem
-				int hvo = m_ISilDataAccess.get_VecItem(1001, 2001, 2);
+				var hvo = m_ISilDataAccess.get_VecItem(1001, 2001, 2);
 				Assert.AreEqual(88, hvo);
 
 				ex = null;
 				try
 				{
-					hvo = m_ISilDataAccess.get_VecItem(1001, 2001, 10);
+					m_ISilDataAccess.get_VecItem(1001, 2001, 10);
 				}
 				catch (Exception e)
 				{
@@ -141,88 +137,83 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test getting/setting binary data
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void BinaryProp()
 		{
-			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(10))
+			using (var arrayPtr = MarshalEx.ArrayToNative<int>(10))
 			{
-				int chvo = 99;
+				int chvo;
 				m_ISilDataAccess.BinaryPropRgb(1112, 2221, ArrayPtr.Null, 0, out chvo);
 				Assert.AreEqual(0, chvo);
 
-				byte[] prgb = new byte[] { 3, 4, 5 };
+				var prgb = new byte[] { 3, 4, 5 };
 				m_IVwCacheDa.CacheBinaryProp(1112, 2221, prgb, prgb.Length);
 				m_ISilDataAccess.BinaryPropRgb(1112, 2221, arrayPtr, 10, out chvo);
-				byte[] prgbNew = MarshalEx.NativeToArray<byte>(arrayPtr, chvo);
+				var prgbNew = MarshalEx.NativeToArray<byte>(arrayPtr, chvo);
 				Assert.AreEqual(prgb.Length, prgbNew.Length);
-				for (int i = 0; i < prgbNew.Length; i++)
+				for (var i = 0; i < prgbNew.Length; i++)
+				{
 					Assert.AreEqual(prgb[i], prgbNew[i]);
+				}
 
-				byte[] prgb2 = new byte[] { 6, 7, 8, 9 };
+				var prgb2 = new byte[] { 6, 7, 8, 9 };
 				m_IVwCacheDa.CacheBinaryProp(1112, 2221, prgb2, prgb2.Length);
 				m_ISilDataAccess.BinaryPropRgb(1112, 2221, arrayPtr, 10, out chvo);
 				prgbNew = MarshalEx.NativeToArray<byte>(arrayPtr, chvo);
 				Assert.AreEqual(prgb2.Length, prgbNew.Length);
-				for (int i = 0; i < prgbNew.Length; i++)
+				for (var i = 0; i < prgbNew.Length; i++)
+				{
 					Assert.AreEqual(prgb2[i], prgbNew[i]);
+				}
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test getting/setting binary data
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		[ExpectedException(typeof(COMException))]
 		public void BinaryProp_BufferToSmall()
 		{
-			byte[] prgb2 = new byte[] { 6, 7, 8, 9 };
+			var prgb2 = new byte[] { 6, 7, 8, 9 };
 			m_IVwCacheDa.CacheBinaryProp(1112, 2221, prgb2, prgb2.Length);
-			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(10))
+			using (var arrayPtr = MarshalEx.ArrayToNative<int>(10))
 			{
 				int chvo;
 				m_ISilDataAccess.BinaryPropRgb(1112, 2221, arrayPtr, 2, out chvo);
 			}
 		}
 
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests getting/setting a Guid property
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void GuidProp()
 		{
-			Guid guidNew = m_ISilDataAccess.get_GuidProp(1113, 2223);
+			var guidNew = m_ISilDataAccess.get_GuidProp(1113, 2223);
 			Assert.AreEqual(Guid.Empty, guidNew);
 
-			Guid guid = new Guid(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
+			var guid = new Guid(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
 			m_IVwCacheDa.CacheGuidProp(1113, 2223, guid);
 			guidNew = m_ISilDataAccess.get_GuidProp(1113, 2223);
 			Assert.AreEqual(guid, guidNew);
 
-			Guid guid2 = new Guid(10, 12, 13, 14, 15, 16, 17, 18, 19, 110, 111);
+			var guid2 = new Guid(10, 12, 13, 14, 15, 16, 17, 18, 19, 110, 111);
 			m_IVwCacheDa.CacheGuidProp(1113, 2223, guid2);
 			guidNew = m_ISilDataAccess.get_GuidProp(1113, 2223);
 			Assert.AreEqual(guid2, guidNew);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests getting/setting a Int64 property
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void Int64Prop()
 		{
-			long valNew = m_ISilDataAccess.get_Int64Prop(1114, 2224);
+			var valNew = m_ISilDataAccess.get_Int64Prop(1114, 2224);
 			Assert.AreEqual(0, valNew);
 
 			m_IVwCacheDa.CacheInt64Prop(1114, 2224, long.MaxValue);
@@ -234,15 +225,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(long.MinValue, valNew);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests getting/setting a int property
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void IntProp()
 		{
-			int valNew = m_ISilDataAccess.get_IntProp(1115, 2225);
+			var valNew = m_ISilDataAccess.get_IntProp(1115, 2225);
 			Assert.AreEqual(0, valNew);
 
 			bool f;
@@ -265,15 +254,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(int.MinValue, valNew);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests getting/setting a Time property
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TimeProp()
 		{
-			long valNew = m_ISilDataAccess.get_TimeProp(1116, 2226);
+			var valNew = m_ISilDataAccess.get_TimeProp(1116, 2226);
 			Assert.AreEqual(0, valNew);
 
 			m_IVwCacheDa.CacheTimeProp(1116, 2226, DateTime.MaxValue.Ticks);
@@ -285,24 +272,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(DateTime.MinValue.Ticks, valNew);
 		}
 
-		/// ------------------------------------------------------------------------------------
+#if JASONTODO // Jason added the ignores in 2016
 		/// <summary>
 		/// Tests getting/setting the MultiStringAlt property
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		[Ignore("Writing System 'missing' problem that I decline to track down just yet.")]
 		public void MultiStringAlt()
 		{
-			ITsString tsStringNew = m_ISilDataAccess.get_MultiStringAlt(1117, 2227, 7);
+			var tsStringNew = m_ISilDataAccess.get_MultiStringAlt(1117, 2227, 7);
 			Assert.IsNotNull(tsStringNew);
 			Assert.AreEqual(0, tsStringNew.Length);
 
-			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
-			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
+			var propsBldr = TsStringUtils.MakePropsBldr();
+			var strBldr = TsStringUtils.MakeStrBldr();
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Verse");
 			strBldr.Replace(0, 0, "Test", propsBldr.GetTextProps());
-			ITsString tsString = strBldr.GetString();
+			var tsString = strBldr.GetString();
 			m_IVwCacheDa.CacheStringAlt(1117, 2227, 7, tsString);
 			tsStringNew = m_ISilDataAccess.get_MultiStringAlt(1117, 2227, 7);
 			Assert.AreEqual(tsString, tsStringNew);
@@ -318,56 +304,50 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(0, tsStringNew.Length);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests getting a string that is not in the cache
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		[Ignore("Writing System 'missing' problem that I decline to track down just yet.")]
 		public void StringProp_EmptyString()
 		{
 			// Test StringProp
-			ITsString tsStringNew = m_ISilDataAccess.get_StringProp(1118, 2228);
+			var tsStringNew = m_ISilDataAccess.get_StringProp(1118, 2228);
 			Assert.AreEqual(0, tsStringNew.Length);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests getting/setting String properties and StringFields properties
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		[Ignore("Writing System 'missing' problem that I decline to track down just yet.")]
 		public void StringProp_SimpleString()
 		{
 			// Test StringProp
-			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
-			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
+			var propsBldr = TsStringUtils.MakePropsBldr();
+			var strBldr = TsStringUtils.MakeStrBldr();
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Verse");
 			strBldr.Replace(0, 0, "StringPropTest", propsBldr.GetTextProps());
-			ITsString tsString = strBldr.GetString();
+			var tsString = strBldr.GetString();
 			m_IVwCacheDa.CacheStringProp(1118, 2228, tsString);
 
-			ITsString tsStringNew = m_ISilDataAccess.get_StringProp(1118, 2228);
+			var tsStringNew = m_ISilDataAccess.get_StringProp(1118, 2228);
 
 			Assert.AreEqual(tsString, tsStringNew);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests replacing a string in the cache and retrieveing it again
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		[Ignore("Writing System 'missing' problem that I decline to track down just yet.")]
 		public void StringProp_ReplaceStringInCache()
 		{
-			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
-			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
+			var propsBldr = TsStringUtils.MakePropsBldr();
+			var strBldr = TsStringUtils.MakeStrBldr();
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Verse");
 			strBldr.Replace(0, 0, "StringPropTest", propsBldr.GetTextProps());
-			ITsString tsString = strBldr.GetString();
+			var tsString = strBldr.GetString();
 			m_IVwCacheDa.CacheStringProp(1118, 2228, tsString);
 			strBldr.Replace(0, 0, "Second", propsBldr.GetTextProps());
 			tsString = strBldr.GetString();
@@ -375,19 +355,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 			ITsString tsStringNew = m_ISilDataAccess.get_StringProp(1118, 2228);
 			Assert.AreEqual(tsString, tsStringNew);
 		}
+#endif
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests getting/setting the unicode prop
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void UnicodeProp()
 		{
-			string strNew = m_ISilDataAccess.get_UnicodeProp(1119, 2229);
+			var strNew = m_ISilDataAccess.get_UnicodeProp(1119, 2229);
 			Assert.IsNull(strNew);
 
-			string str = "UnicodeTest";
+			var str = "UnicodeTest";
 			m_IVwCacheDa.CacheUnicodeProp(1119, 2229, str, str.Length);
 			strNew = m_ISilDataAccess.get_UnicodeProp(1119, 2229);
 			Assert.AreEqual(str, strNew);
@@ -398,25 +377,22 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(str, strNew);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests getting/setting the unknown property
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void UnknownProp()
 		{
-			object obj = m_ISilDataAccess.get_UnknownProp(1120, 2220);
+			var obj = m_ISilDataAccess.get_UnknownProp(1120, 2220);
 			Assert.IsNull(obj);
 
-			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
-			ITsTextProps ttp = propsBldr.GetTextProps();
+			var propsBldr = TsStringUtils.MakePropsBldr();
+			var ttp = propsBldr.GetTextProps();
 			m_IVwCacheDa.CacheUnknown(1120, 2220, ttp);
 			obj = m_ISilDataAccess.get_UnknownProp(1120, 2220);
 			Assert.AreEqual(ttp, obj);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Retrieve properties for all data types and verify that we only get the expected
 		/// values, i.e. the expected data type that we put in the cache.
@@ -424,77 +400,80 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="hvo">HVO part of the key</param>
 		/// <param name="tag">tag part of the key</param>
 		/// <param name="expValues">Expected values</param>
-		/// ------------------------------------------------------------------------------------
 		private void VerifyCache(int hvo, int tag, object[] expValues)
 		{
-			int hvoVal = m_ISilDataAccess.get_ObjectProp(hvo, tag);
+			var hvoVal = m_ISilDataAccess.get_ObjectProp(hvo, tag);
 			Assert.AreEqual(expValues[0], hvoVal);
 
-			int chvo = 99;
-			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(10))
+			int chvo;
+			using (var arrayPtr = MarshalEx.ArrayToNative<int>(10))
 			{
 				m_ISilDataAccess.VecProp(hvo, tag, 10, out chvo, arrayPtr);
 				if (expValues[1] is int[])
+				{
 					Assert.AreEqual(((int[])expValues[1]).Length, chvo);
+				}
 				else
+				{
 					Assert.AreEqual(expValues[1], chvo);
+				}
 
 				m_ISilDataAccess.BinaryPropRgb(hvo, tag, arrayPtr, 10, out chvo);
 				if (expValues[2] is byte[])
+				{
 					Assert.AreEqual(((byte[])expValues[2]).Length, chvo);
+				}
 				else
+				{
 					Assert.AreEqual(expValues[2], chvo);
+				}
 
-				Guid guidNew = m_ISilDataAccess.get_GuidProp(hvo, tag);
+				var guidNew = m_ISilDataAccess.get_GuidProp(hvo, tag);
 				Assert.AreEqual(expValues[3], guidNew);
 
-				long valLong = m_ISilDataAccess.get_Int64Prop(hvo, tag);
+				var valLong = m_ISilDataAccess.get_Int64Prop(hvo, tag);
 				Assert.AreEqual(expValues[4], valLong);
 
 				// Int64 and TimeProp use the same cache
 				valLong = m_ISilDataAccess.get_TimeProp(hvo, tag);
 				Assert.AreEqual(expValues[4], valLong);
 
-				int valInt = m_ISilDataAccess.get_IntProp(hvo, tag);
+				var valInt = m_ISilDataAccess.get_IntProp(hvo, tag);
 				Assert.AreEqual(expValues[5], valInt);
 
-				ITsString tsStringNew = m_ISilDataAccess.get_MultiStringAlt(hvo, tag, 12345);
+				var tsStringNew = m_ISilDataAccess.get_MultiStringAlt(hvo, tag, 12345);
 				Assert.AreEqual(expValues[6], tsStringNew.Text);
 
 				tsStringNew = m_ISilDataAccess.get_StringProp(hvo, tag);
 				Assert.AreEqual(expValues[7], tsStringNew.Text);
 
-				string strNew = m_ISilDataAccess.get_UnicodeProp(hvo, tag);
+				var strNew = m_ISilDataAccess.get_UnicodeProp(hvo, tag);
 				Assert.AreEqual(expValues[8], strNew);
 
-				object obj = m_ISilDataAccess.get_UnknownProp(hvo, tag);
+				var obj = m_ISilDataAccess.get_UnknownProp(hvo, tag);
 				Assert.AreEqual(expValues[9], obj);
 
 				CheckIsPropInCache(hvo, tag, expValues);
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Check the IsPropInCache method.
 		/// </summary>
 		/// <param name="hvo">HVO part of the key</param>
 		/// <param name="tag">tag part of the key</param>
 		/// <param name="expValues">Expected values</param>
-		/// ------------------------------------------------------------------------------------
 		private void CheckIsPropInCache(int hvo, int tag, object[] expValues)
 		{
-			for (CellarPropertyType cpt = CellarPropertyType.Nil;
-				cpt <= CellarPropertyType.ReferenceSequence; cpt++)
+			for (var cpt = CellarPropertyType.Nil; cpt <= CellarPropertyType.ReferenceSequence; cpt++)
 			{
-				bool flag = false;
+				var flag = false;
 				switch (cpt)
 				{
 					case CellarPropertyType.Nil:
 						try
 						{
-							Assert.IsFalse(m_ISilDataAccess.get_IsPropInCache(hvo, tag,
-								(int)cpt, 0));
+							Assert.IsFalse(m_ISilDataAccess.get_IsPropInCache(hvo, tag, (int)cpt, 0));
 						}
 						catch (ArgumentException)
 						{
@@ -550,97 +529,82 @@ namespace SIL.FieldWorks.Common.FwUtils
 					default:
 						continue;
 				}
-				Assert.AreEqual(flag, m_ISilDataAccess.get_IsPropInCache(hvo, tag, (int)cpt, 12345),
-					string.Format("IsPropInCache for property type '{0}' failed;", cpt));
+				Assert.AreEqual(flag, m_ISilDataAccess.get_IsPropInCache(hvo, tag, (int)cpt, 12345), $"IsPropInCache for property type '{cpt}' failed;");
 			}
 		}
 
-
-		/// ------------------------------------------------------------------------------------
+#if JASONTODO // Jason added the ignores in 2016
 		/// <summary>
 		/// Test that the cache returns only object types that we put in, and the IsPropInCache
 		/// method
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		[Ignore("Writing System 'missing' problem that I decline to track down just yet.")]
 		public void KeyCheck()
 		{
 			m_IVwCacheDa.CacheObjProp(1121, 2221, 7777);
-			VerifyCache(1121, 2221,
-				new object[] { 7777, 0, 0, Guid.Empty, 0, 0, null, null, null, null });
+			VerifyCache(1121, 2221, new object[] { 7777, 0, 0, Guid.Empty, 0, 0, null, null, null, null });
 
-			int[] rgHvo = new int[] { 33, 44, 55 };
+			var rgHvo = new[] { 33, 44, 55 };
 			m_IVwCacheDa.CacheVecProp(1122, 2222, rgHvo, rgHvo.Length);
-			VerifyCache(1122, 2222,
-				new object[] { 0, rgHvo, 0, Guid.Empty, 0, 0, null, null, null, null });
+			VerifyCache(1122, 2222, new object[] { 0, rgHvo, 0, Guid.Empty, 0, 0, null, null, null, null });
 
-			byte[] prgb = new byte[] { 3, 4, 5 };
+			var prgb = new byte[] { 3, 4, 5 };
 			m_IVwCacheDa.CacheBinaryProp(1123, 2223, prgb, prgb.Length);
-			VerifyCache(1123, 2223,
-				new object[] { 0, 0, prgb, Guid.Empty, 0, 0, null, null, null, null });
+			VerifyCache(1123, 2223, new object[] { 0, 0, prgb, Guid.Empty, 0, 0, null, null, null, null });
 
-			Guid guid = new Guid(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
+			var guid = new Guid(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
 			m_IVwCacheDa.CacheGuidProp(1124, 2224, guid);
-			VerifyCache(1124, 2224,
-				new object[] { 0, 0, 0, guid, 0, 0, null, null, null, null });
+			VerifyCache(1124, 2224, new object[] { 0, 0, 0, guid, 0, 0, null, null, null, null });
 
 			m_IVwCacheDa.CacheInt64Prop(1125, 2225, 123456789);
-			VerifyCache(1125, 2225,
-				new object[] { 0, 0, 0, Guid.Empty, 123456789, 0, null, null, null, null });
+			VerifyCache(1125, 2225, new object[] { 0, 0, 0, Guid.Empty, 123456789, 0, null, null, null, null });
 
 			// TimeProp uses the same cache as Int64
-			long ticks = DateTime.Now.Ticks;
+			var ticks = DateTime.Now.Ticks;
 			m_IVwCacheDa.CacheTimeProp(1127, 2227, ticks);
-			VerifyCache(1127, 2227,
-				new object[] { 0, 0, 0, Guid.Empty, ticks, 0, null, null, null, null });
+			VerifyCache(1127, 2227, new object[] { 0, 0, 0, Guid.Empty, ticks, 0, null, null, null, null });
 
 			m_IVwCacheDa.CacheIntProp(1126, 2226, 987654);
-			VerifyCache(1126, 2226,
-				new object[] { 0, 0, 0, Guid.Empty, 0, 987654, null, null, null, null });
+			VerifyCache(1126, 2226, new object[] { 0, 0, 0, Guid.Empty, 0, 987654, null, null, null, null });
 
-			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
-			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
+			var propsBldr = TsStringUtils.MakePropsBldr();
+			var strBldr = TsStringUtils.MakeStrBldr();
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Verse");
 			strBldr.Replace(0, 0, "KeyTestMulti", propsBldr.GetTextProps());
-			ITsString tsString = strBldr.GetString();
+			var tsString = strBldr.GetString();
 			m_IVwCacheDa.CacheStringAlt(1128, 2228, 12345, tsString);
-			VerifyCache(1128, 2228,
-				new object[] { 0, 0, 0, Guid.Empty, 0, 0, tsString.Text, null, null, null });
+			VerifyCache(1128, 2228, new object[] { 0, 0, 0, Guid.Empty, 0, 0, tsString.Text, null, null, null });
 
 			strBldr.Replace(0, 0, "String", propsBldr.GetTextProps());
 			tsString = strBldr.GetString();
 			m_IVwCacheDa.CacheStringProp(1129, 2229, tsString);
-			VerifyCache(1129, 2229,
-				new object[] { 0, 0, 0, Guid.Empty, 0, 0, null, tsString.Text, null, null });
+			VerifyCache(1129, 2229, new object[] { 0, 0, 0, Guid.Empty, 0, 0, null, tsString.Text, null, null });
 
-			string str = "KeyTestUnicode";
+			var str = "KeyTestUnicode";
 			m_IVwCacheDa.CacheUnicodeProp(1130, 2230, str, str.Length);
-			VerifyCache(1130, 2230,
-				new object[] { 0, 0, 0, Guid.Empty, 0, 0, null, null, str, null });
+			VerifyCache(1130, 2230, new object[] { 0, 0, 0, Guid.Empty, 0, 0, null, null, str, null });
 
-			ITsTextProps ttp = propsBldr.GetTextProps();
+			var ttp = propsBldr.GetTextProps();
 			m_IVwCacheDa.CacheUnknown(1131, 2230, ttp);
-			VerifyCache(1131, 2230,
-				new object[] { 0, 0, 0, Guid.Empty, 0, 0, null, null, null, ttp});
+			VerifyCache(1131, 2230, new object[] { 0, 0, 0, Guid.Empty, 0, 0, null, null, null, ttp });
 		}
+#endif
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test that the cache does not cache guid properties (in its internal hash table of
 		/// object guids) that are not object guids. To do this, two guid properties are cached
 		/// with one being specified as an object guid (i.e. CmObjectFields.kflidCmObject_Guid)
 		/// and the other being specified as not an object guid (i.e. dummyFlid).
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestCacheGuidProp_ForNonCmObjectGuid()
 		{
-			int objFlid = (int)CmObjectFields.kflidCmObject_Guid;
-			int nonObjFlid = 9005; //CmFilterTags.kflidApp
-			int objHvo1 = 1124;
-			int objHvo2 = 1125;
-			Guid guid = Guid.NewGuid();
+			var objFlid = (int)CmObjectFields.kflidCmObject_Guid;
+			var nonObjFlid = 9005; //CmFilterTags.kflidApp
+			var objHvo1 = 1124;
+			var objHvo2 = 1125;
+			var guid = Guid.NewGuid();
 
 			// Cache the guids in this order. When this test failed, caching the
 			// guid for the hvo objHvo2 clobbered the cached guid for object objHvo1
@@ -662,22 +626,20 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(objHvo1, m_ISilDataAccess.get_ObjFromGuid(guid));
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test that the cache does not save guid properties in its internal hash table of
 		/// object guids when the guid property is not an object guid. To do this, two guid
 		/// properties are sent to the cache using the SetGuid method. One is an object guid
 		/// (i.e. CmObjectFields.kflidCmObject_Guid) and the other is not (i.e. dummyFlid).
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestSetGuid_ForNonCmObjectGuid()
 		{
-			int objFlid = (int)CmObjectFields.kflidCmObject_Guid;
-			int nonObjFlid = 9005; //CmFilterTags.kflidApp
-			int objHvo1 = 1124;
-			int objHvo2 = 1125;
-			Guid guid = Guid.NewGuid();
+			var objFlid = (int)CmObjectFields.kflidCmObject_Guid;
+			var nonObjFlid = 9005; //CmFilterTags.kflidApp
+			var objHvo1 = 1124;
+			var objHvo2 = 1125;
+			var guid = Guid.NewGuid();
 
 			// Save the guids. When this test failed, the saved guid for object objHvo2
 			// clobbered the saved guid for object objHvo1 so there was no longer longer
@@ -699,20 +661,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(objHvo1, m_ISilDataAccess.get_ObjFromGuid(guid));
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test that the cache does not remove guid properties (from its internal
 		/// hash table of object guids) that are not object guids.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestRemoveObjRef_ForNonCmObjectGuid()
 		{
-			int objFlid = (int)CmObjectFields.kflidCmObject_Guid;
-			int nonObjFlid = 9005; //CmFilterTags.kflidApp
-			int objHvo1 = 1124;
-			int objHvo2 = 1125;
-			Guid guid = Guid.NewGuid();
+			var objFlid = (int)CmObjectFields.kflidCmObject_Guid;
+			var nonObjFlid = 9005; //CmFilterTags.kflidApp
+			var objHvo1 = 1124;
+			var objHvo2 = 1125;
+			var guid = Guid.NewGuid();
 
 			// Cache the guids in this order. When this test failed, caching
 			// the guid for objHvo2 clobbered the cached guid for object objHvo1

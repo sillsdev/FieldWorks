@@ -10,11 +10,9 @@ using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.FwUtils.Attributes
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// NUnit helper class that allows to create COM objects from a manifest file
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Interface)]
 	[SuppressUnmanagedCodeSecurity]
 	public class CreateComObjectsFromManifestAttribute : TestActionAttribute
@@ -23,10 +21,10 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 		private IDisposable m_currentActivation;
 		private DebugProcs m_debugProcs;
 
-		/// <summary/>
+		/// <inheritdoc />
 		public override ActionTargets Targets => ActionTargets.Suite;
 
-		/// <summary/>
+		/// <inheritdoc />
 		public override void BeforeTest(TestDetails testDetails)
 		{
 			base.BeforeTest(testDetails);
@@ -46,8 +44,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 						// PTRACE. This prevents call stacks and assertions from working properly.
 						// However, we can set a flag on the currently running process to allow
 						// it. See also the similar code in Generic/ModuleEntry.cpp
-						prctl(PR_SET_PTRACER, (IntPtr)process.Id, IntPtr.Zero, IntPtr.Zero,
-							IntPtr.Zero);
+						prctl(PR_SET_PTRACER, (IntPtr)process.Id, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 					}
 				}
 				catch (Exception e)
@@ -57,7 +54,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 			}
 		}
 
-		/// <summary/>
+		/// <inheritdoc />
 		public override void AfterTest(TestDetails testDetails)
 		{
 			m_debugProcs.Dispose();
@@ -77,8 +74,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 		private static extern void CoFreeUnusedLibraries();
 
 		[DllImport("libc")] // Linux
-		private static extern int prctl(int option, IntPtr arg2, IntPtr arg3, IntPtr arg4,
-			IntPtr arg5);
+		private static extern int prctl(int option, IntPtr arg2, IntPtr arg3, IntPtr arg4, IntPtr arg5);
 
 		private const int PR_SET_PTRACER = 0x59616d61;
 	}

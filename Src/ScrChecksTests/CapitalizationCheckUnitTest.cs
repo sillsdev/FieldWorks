@@ -70,7 +70,7 @@ namespace SILUBS.ScriptureChecks
 			source.SetParameterValue("SentenceFinalPunctuation", ".!?");
 			CapitalizationCheck check = new CapitalizationCheck(source);
 			List<TextTokenSubstring> tts =
-				check.GetReferences(source.TextTokens());
+				check.GetReferences(source.TextTokens);
 
 			Assert.AreEqual(result.Length, tts.Count,
 				"A different number of results was returned from what was expected." );

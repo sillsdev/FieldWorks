@@ -84,7 +84,7 @@ namespace LanguageExplorer.Impls
 
 		private void LoadFromSettings()
 		{
-				var appSettings = PropertyTable.GetValue<FwApplicationSettingsBase>("AppSettings");
+				var appSettings = PropertyTable.GetValue<IFwApplicationSettings>("AppSettings");
 				if (!string.IsNullOrEmpty(appSettings.WebonaryPass))
 				{
 					RememberPassword = true;
@@ -100,7 +100,7 @@ namespace LanguageExplorer.Impls
 
 		internal void SaveToSettings()
 		{
-			var appSettings = PropertyTable.GetValue<FwApplicationSettingsBase>("AppSettings");
+			var appSettings = PropertyTable.GetValue<IFwApplicationSettings>("AppSettings");
 			appSettings.WebonaryPass = RememberPassword ? EncryptPassword(Password) : null;
 			appSettings.WebonaryUser = UserName;
 

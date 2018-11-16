@@ -202,9 +202,6 @@
     <Compile Include="M3ParserDumpTests.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="M3SketchDumpTests.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="SimpleTests.cs">
       <SubType>Code</SubType>
     </Compile>

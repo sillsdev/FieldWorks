@@ -41,7 +41,7 @@ namespace SILUBS.ScriptureChecks
 
 			MixedCapitalizationCheck check = new MixedCapitalizationCheck(m_source);
 			List<TextTokenSubstring> tts =
-				check.GetReferences(m_source.TextTokens(), desiredKey);
+				check.GetReferences(m_source.TextTokens, desiredKey);
 
 			Assert.AreEqual(result.GetUpperBound(0)+1, tts.Count,
 				"A different number of results was returned than what was expected." );
@@ -303,13 +303,13 @@ namespace SILUBS.ScriptureChecks
 
 			m_source.Text = @"\p \v 1 w!Forming";
 
-			List<TextTokenSubstring> tts = check.GetReferences(m_source.TextTokens(), null);
+			List<TextTokenSubstring> tts = check.GetReferences(m_source.TextTokens, null);
 
 			Assert.AreEqual(0, tts.Count);
 
 			m_source.m_extraWordFormingCharacters = "!";
 
-			tts = check.GetReferences(m_source.TextTokens(), null);
+			tts = check.GetReferences(m_source.TextTokens, null);
 
 			Assert.AreEqual(1, tts.Count);
 			Assert.AreEqual("w!Forming", tts[0].Text);

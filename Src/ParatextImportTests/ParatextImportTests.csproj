@@ -236,6 +236,7 @@
     <Compile Include="ImportTests\ParatextImportTests.cs" />
     <Compile Include="ImportTests\ParatextImportTestsBase.cs" />
     <Compile Include="MockScriptureProvider.cs" />
+    <Compile Include="ParagraphCorrelationTests.cs" />
     <Compile Include="SCTextEnumTests.cs" />
     <Compile Include="SegmentedBtMergeTests.cs" />
     <Compile Include="VerseIteratorTests.cs" />

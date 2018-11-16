@@ -172,17 +172,17 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		public virtual void PersistAsXml(XElement node)
+		public virtual void PersistAsXml(XElement element)
 		{
-			XmlUtils.SetAttribute(node, "name", Name);
+			XmlUtils.SetAttribute(element, "name", Name);
 		}
 
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public virtual void InitXml(XElement node)
+		public virtual void InitXml(XElement element)
 		{
-			Name = XmlUtils.GetMandatoryAttributeValue(node, "name");
+			Name = XmlUtils.GetMandatoryAttributeValue(element, "name");
 		}
 
 		#endregion

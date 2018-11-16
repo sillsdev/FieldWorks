@@ -1,4 +1,7 @@
-//From:http://www.codeproject.com/cs/miscctrl/MessageBoxEx.asp
+// Copyright (c) 2005-2018 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+// From:http://www.codeproject.com/cs/miscctrl/MessageBoxEx.asp
 
 using System;
 using System.Collections.Generic;
@@ -14,7 +17,7 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 	/// An advanced MessageBox that supports customizations like Font, Icon,
 	/// Buttons and Saved Responses
 	/// </summary>
-	internal class MessageBoxExForm : Form
+	internal sealed class MessageBoxExForm : Form
 	{
 		#region Constants
 		private const int LEFT_PADDING = 12;
@@ -36,46 +39,29 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		private const int BUTTON_PADDING = 5;
 
 		private const int CHECKBOX_WIDTH = 20;
-
-		private const int IMAGE_INDEX_EXCLAMATION = 0;
-		private const int IMAGE_INDEX_QUESTION = 1;
-		private const int IMAGE_INDEX_STOP = 2;
-		private const int IMAGE_INDEX_INFORMATION = 3;
 		#endregion
 
 		#region Fields
 
-		private System.ComponentModel.IContainer components;
-		private System.Windows.Forms.CheckBox chbSaveResponse;
-		private System.Windows.Forms.ImageList imageListIcons;
-		private System.Windows.Forms.ToolTip buttonToolTip;
-
-		private List<MessageBoxExButton> _buttons = new List<MessageBoxExButton>();
-		private bool _allowSaveResponse;
-		private bool _playAlert = true;
-		private MessageBoxExButton _cancelButton = null;
-		private Button _defaultButtonControl = null;
-
+		private IContainer components;
+		private CheckBox chbSaveResponse;
+		private ImageList imageListIcons;
+		private ToolTip buttonToolTip;
+		private MessageBoxExButton _cancelButton;
+		private Button _defaultButtonControl;
 		private int _maxLayoutWidth;
-		//private int _maxLayoutHeight;
-
 		private int _maxWidth;
 		private int _maxHeight;
-
 		private bool _allowCancel = true;
-		private string _result = null;
 
 		/// <summary>
 		/// Used to determine the alert sound to play
 		/// </summary>
 		private MessageBoxIcon _standardIcon = MessageBoxIcon.None;
-		private Icon _iconImage = null;
-
-		private Timer timerTimeout = null;
-		private int _timeout = 0;
-		private TimeoutResult _timeoutResult = TimeoutResult.Default;
-		private System.Windows.Forms.Panel panelIcon;
-		private System.Windows.Forms.RichTextBox rtbMessage;
+		private Icon _iconImage;
+		private Timer timerTimeout;
+		private Panel panelIcon;
+		private RichTextBox rtbMessage;
 
 		/// <summary>
 		/// Maps MessageBoxEx buttons to Button controls
@@ -102,57 +88,24 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		{
 			set
 			{
-				this.Text = value;
-			}
-		}
-
-		/// <summary>
-		/// Set a custom font for the message box.
-		/// </summary>
-		public Font CustomFont
-		{
-			set
-			{
-				this.Font = value;
+				Text = value;
 			}
 		}
 
 		/// <summary>
 		/// Get the message box buttons.
 		/// </summary>
-		public List<MessageBoxExButton> Buttons
-		{
-			get
-			{
-				return _buttons;
-			}
-		}
+		public List<MessageBoxExButton> Buttons { get; } = new List<MessageBoxExButton>();
 
 		/// <summary>
 		/// Get/Set if message box allows a save response.
 		/// </summary>
-		public bool AllowSaveResponse
-		{
-			get
-			{
-				return _allowSaveResponse;
-			}
-			set
-			{
-				_allowSaveResponse = value;
-			}
-		}
+		public bool AllowSaveResponse { get; set; }
 
 		/// <summary>
-		/// Get value of save repsonse check box.
+		/// Get value of save response check box.
 		/// </summary>
-		public bool SaveResponse
-		{
-			get
-			{
-				return chbSaveResponse.Checked;
-			}
-		}
+		public bool SaveResponse => chbSaveResponse.Checked;
 
 		/// <summary>
 		/// Set the save response text.
@@ -202,64 +155,101 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		/// <summary>
 		/// Get the result.
 		/// </summary>
-		public string Result
-		{
-			get
-			{
-				return _result;
-			}
-		}
+		public string Result { get; private set; }
 
 		/// <summary>
 		/// Set/Set value to play an alert sound.
 		/// </summary>
-		public bool PlayAlertSound
-		{
-			get
-			{
-				return _playAlert;
-			}
-			set
-			{
-				_playAlert = value;
-			}
-		}
+		public bool PlayAlertSound { get; set; } = true;
 
 		/// <summary>
 		/// Set/Set a timeout value.
 		/// </summary>
-		public int Timeout
-		{
-			get
-			{
-				return _timeout;
-			}
-			set
-			{
-				_timeout = value;
-			}
-		}
+		public int Timeout { get; set; } = 0;
 
 		/// <summary>
 		/// Get/Set a timeout result.
 		/// </summary>
-		public TimeoutResult TimeoutResult
+		public TimeoutResult TimeoutResult { get; set; } = TimeoutResult.Default;
+
+		/// <summary>
+		/// Gets the longest button text
+		/// </summary>
+		private string LongestButtonText
 		{
 			get
 			{
-				return _timeoutResult;
+				var maxLen = 0;
+				string maxStr = null;
+				foreach (var button in Buttons)
+				{
+					if (button.Text != null && button.Text.Length > maxLen)
+					{
+						maxLen = button.Text.Length;
+						maxStr = button.Text;
+					}
+				}
+
+				return maxStr;
 			}
-			set
+		}
+
+		/// <summary>
+		/// Calculates the button size based on the text of the longest
+		/// button text
+		/// </summary>
+		private Size ButtonSize
+		{
+			get
 			{
-				_timeoutResult = value;
+				var longestButtonText = LongestButtonText;
+				if (longestButtonText == null)
+				{
+					//TODO:Handle this case
+				}
+				var buttonTextSize = MeasureString(longestButtonText, _maxLayoutWidth);
+				var buttonSize = new Size(buttonTextSize.Width + BUTTON_LEFT_PADDING + BUTTON_RIGHT_PADDING, buttonTextSize.Height + BUTTON_TOP_PADDING + BUTTON_BOTTOM_PADDING);
+
+				if (buttonSize.Width < MIN_BUTTON_WIDTH)
+				{
+					buttonSize.Width = MIN_BUTTON_WIDTH;
+				}
+				if (buttonSize.Height < MIN_BUTTON_HEIGHT)
+				{
+					buttonSize.Height = MIN_BUTTON_HEIGHT;
+				}
+
+				return buttonSize;
+			}
+		}
+
+		/// <summary>
+		/// Returns the width that will be occupied by all buttons including
+		/// the inter-button padding
+		/// </summary>
+		private int WidthOfAllButtons => ButtonSize.Width * Buttons.Count + BUTTON_PADDING * (Buttons.Count - 1);
+
+		/// <summary>
+		/// Gets the width of the caption
+		/// </summary>
+		private Size CaptionSize
+		{
+			get
+			{
+				using (var captionFont = Win32.GetCaptionFont() ?? new Font("Tahoma", 11) /* some error occured while determining system font */)
+				{
+					var availableWidth = _maxWidth - SystemInformation.CaptionButtonSize.Width - SystemInformation.Border3DSize.Width * 2;
+					var captionSize = MeasureString(this.Text, availableWidth, captionFont);
+					captionSize.Width += SystemInformation.CaptionButtonSize.Width + SystemInformation.Border3DSize.Width * 2;
+					return captionSize;
+				}
 			}
 		}
 		#endregion
 
 		#region Ctor/Dtor
-		/// <summary>
-		/// Constructor.
-		/// </summary>
+
+		/// <summary />
 		public MessageBoxExForm()
 		{
 			//
@@ -270,26 +260,39 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 
 			_maxWidth = (int)(SystemInformation.WorkingArea.Width * 0.60);
 			_maxHeight = (int)(SystemInformation.WorkingArea.Height * 0.90);
+
+#if DEBUG
+			MouseMove += MessageBoxExForm_MouseMove;
+#endif
 		}
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
 			if (IsDisposed)
+			{
+				// No need to run it more than once.
 				return;
+			}
 
 			if (disposing)
 			{
-				if (components != null)
-					components.Dispose();
+				components?.Dispose();
+#if DEBUG
+				MouseMove -= MessageBoxExForm_MouseMove;
+#endif
 				foreach (var button in _buttonControlsTable.Values)
+				{
+#if DEBUG
+					button.MouseHover -= buttonCtrl_MouseHover;
+#endif
 					button.Dispose();
+				}
 			}
 			components = null;
+			_buttonControlsTable = null;
+
 			base.Dispose(disposing);
 		}
 		#endregion
@@ -360,27 +363,23 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 			this.MinimizeBox = false;
 			this.Name = "MessageBoxExForm";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-			this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MessageBoxExForm_MouseMove);
 			this.ResumeLayout(false);
 
 		}
 		#endregion
 
 		#region Overrides
-		/// <summary>
-		/// This will get called everytime we call ShowDialog on the form
-		/// </summary>
-		/// <param name="e"></param>
+
+		/// <inheritdoc />
 		protected override void OnLoad(EventArgs e)
 		{
 			//Reset result
-			_result = null;
+			Result = null;
 
-			this.Size = new Size(_maxWidth, _maxHeight);
+			Size = new Size(_maxWidth, _maxHeight);
 
-			//This is the rectangle in which all items will be layed out
-			_maxLayoutWidth = this.ClientSize.Width - LEFT_PADDING - RIGHT_PADDING;
-			//_maxLayoutHeight = this.ClientSize.Height - TOP_PADDING - BOTTOM_PADDING;
+			//This is the rectangle in which all items will be laid out
+			_maxLayoutWidth = ClientSize.Width - LEFT_PADDING - RIGHT_PADDING;
 
 			AddOkButtonIfNoButtonsPresent();
 			DisableCloseIfMultipleButtonsAndNoCancelButton();
@@ -404,12 +403,7 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 			base.OnLoad(e);
 		}
 
-		/// <summary>
-		/// Process comand key.
-		/// </summary>
-		/// <param name="msg"></param>
-		/// <param name="keyData"></param>
-		/// <returns></returns>
+		/// <inheritdoc />
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
 		{
 			if ((int)keyData == (int)(Keys.Alt | Keys.F4) && !_allowCancel)
@@ -420,17 +414,14 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 			return base.ProcessCmdKey(ref msg, keyData);
 		}
 
-		/// <summary>
-		/// Closing the message box.
-		/// </summary>
-		/// <param name="e"></param>
+		/// <inheritdoc />
 		protected override void OnClosing(CancelEventArgs e)
 		{
-			if (_result == null)
+			if (Result == null)
 			{
 				if (_allowCancel)
 				{
-					_result = _cancelButton.Value;
+					Result = _cancelButton.Value;
 				}
 				else
 				{
@@ -439,18 +430,12 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 				}
 			}
 
-			if (timerTimeout != null)
-			{
-				timerTimeout.Stop();
-			}
+			timerTimeout?.Stop();
 
 			base.OnClosing(e);
 		}
 
-		/// <summary>
-		/// Paint special stuff.
-		/// </summary>
-		/// <param name="e"></param>
+		/// <inheritdoc />
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);
@@ -474,9 +459,9 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		/// <returns></returns>
 		private Size MeasureString(string str, int maxWidth, Font font)
 		{
-			using (Graphics g = this.CreateGraphics())
+			using (var g = this.CreateGraphics())
 			{
-				SizeF strRectSizeF = g.MeasureString(str, font, maxWidth);
+				var strRectSizeF = g.MeasureString(str, font, maxWidth);
 
 				return new Size((int)Math.Ceiling(strRectSizeF.Width), (int)Math.Ceiling(strRectSizeF.Height));
 			}
@@ -486,32 +471,9 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		/// Measures a string using the Graphics object for this form and the
 		/// font of this form
 		/// </summary>
-		/// <param name="str"></param>
-		/// <param name="maxWidth"></param>
-		/// <returns></returns>
 		private Size MeasureString(string str, int maxWidth)
 		{
-			return MeasureString(str, maxWidth, this.Font);
-		}
-
-		/// <summary>
-		/// Gets the longest button text
-		/// </summary>
-		/// <returns></returns>
-		private string GetLongestButtonText()
-		{
-			int maxLen = 0;
-			string maxStr = null;
-			foreach (MessageBoxExButton button in _buttons)
-			{
-				if (button.Text != null && button.Text.Length > maxLen)
-				{
-					maxLen = button.Text.Length;
-					maxStr = button.Text;
-				}
-			}
-
-			return maxStr;
+			return MeasureString(str, maxWidth, Font);
 		}
 
 		/// <summary>
@@ -532,7 +494,7 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 					maxWidth = maxWidth - (panelIcon.Size.Width + ICON_MESSAGE_PADDING);
 				}
 
-				Size messageRectSize = MeasureString(rtbMessage.Text, maxWidth);
+				var messageRectSize = MeasureString(rtbMessage.Text, maxWidth);
 				rtbMessage.Size = messageRectSize;
 				rtbMessage.Height = Math.Max(panelIcon.Height, rtbMessage.Height);
 
@@ -569,7 +531,7 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 			}
 			else
 			{
-				Size saveResponseTextSize = MeasureString(chbSaveResponse.Text, _maxLayoutWidth);
+				var saveResponseTextSize = MeasureString(chbSaveResponse.Text, _maxLayoutWidth);
 				saveResponseTextSize.Width += CHECKBOX_WIDTH;
 				chbSaveResponse.Size = saveResponseTextSize;
 				chbSaveResponse.Visible = true;
@@ -577,34 +539,8 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		}
 
 		/// <summary>
-		/// Calculates the button size based on the text of the longest
-		/// button text
-		/// </summary>
-		/// <returns></returns>
-		private Size GetButtonSize()
-		{
-			string longestButtonText = GetLongestButtonText();
-			if (longestButtonText == null)
-			{
-				//TODO:Handle this case
-			}
-
-			Size buttonTextSize = MeasureString(longestButtonText, _maxLayoutWidth);
-			Size buttonSize = new Size(buttonTextSize.Width + BUTTON_LEFT_PADDING + BUTTON_RIGHT_PADDING,
-				buttonTextSize.Height + BUTTON_TOP_PADDING + BUTTON_BOTTOM_PADDING);
-
-			if (buttonSize.Width < MIN_BUTTON_WIDTH)
-				buttonSize.Width = MIN_BUTTON_WIDTH;
-			if (buttonSize.Height < MIN_BUTTON_HEIGHT)
-				buttonSize.Height = MIN_BUTTON_HEIGHT;
-
-			return buttonSize;
-		}
-
-		/// <summary>
 		/// Set the icon
 		/// </summary>
-		/// <param name="icon"></param>
 		private void SetStandardIcon(MessageBoxIcon icon)
 		{
 			_standardIcon = icon;
@@ -620,22 +556,9 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 				case MessageBoxIcon.Exclamation:
 					_iconImage = SystemIcons.Exclamation;
 					break;
-				//				case MessageBoxIcon.Hand:
-				//					_iconImage = SystemIcons.Hand;
-				//					break;
-				//				case MessageBoxIcon.Information:
-				//					_iconImage = SystemIcons.Information;
-				//					break;
 				case MessageBoxIcon.Question:
 					_iconImage = SystemIcons.Question;
 					break;
-				//				case MessageBoxIcon.Stop:
-				//					_iconImage = SystemIcons.Stop;
-				//					break;
-				//				case MessageBoxIcon.Warning:
-				//					_iconImage = SystemIcons.Warning;
-				//					break;
-
 				case MessageBoxIcon.None:
 					_iconImage = null;
 					break;
@@ -644,13 +567,15 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 
 		private void AddOkButtonIfNoButtonsPresent()
 		{
-			if (_buttons.Count == 0)
+			if (Buttons.Count == 0)
 			{
-				MessageBoxExButton okButton = new MessageBoxExButton();
-				okButton.Text = MessageBoxExButtons.OK.ToString();
-				okButton.Value = MessageBoxExButtons.OK.ToString();
+				var okButton = new MessageBoxExButton
+				{
+					Text = MessageBoxExButtons.OK.ToString(),
+					Value = MessageBoxExButtons.OK.ToString()
+				};
 
-				_buttons.Add(okButton);
+				Buttons.Add(okButton);
 			}
 		}
 
@@ -660,10 +585,9 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		/// </summary>
 		private void CenterForm()
 		{
-			int x = (SystemInformation.WorkingArea.Width - this.Width) / 2;
-			int y = (SystemInformation.WorkingArea.Height - this.Height) / 2;
-
-			this.Location = new Point(x, y);
+			var x = (SystemInformation.WorkingArea.Width - Width) / 2;
+			var y = (SystemInformation.WorkingArea.Height - Height) / 2;
+			Location = new Point(x, y);
 		}
 
 		/// <summary>
@@ -672,63 +596,31 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		/// </summary>
 		private void SetOptimumSize()
 		{
-			int ncWidth = this.Width - this.ClientSize.Width;
-			int ncHeight = this.Height - this.ClientSize.Height;
-
-			int iconAndMessageRowWidth = rtbMessage.Width + ICON_MESSAGE_PADDING + panelIcon.Width;
-			int saveResponseRowWidth = chbSaveResponse.Width + (int)(panelIcon.Width / 2);
-			int buttonsRowWidth = GetWidthOfAllButtons();
-			int captionWidth = GetCaptionSize().Width;
-
-			int maxItemWidth = Math.Max(saveResponseRowWidth, Math.Max(iconAndMessageRowWidth, buttonsRowWidth));
-
-			int requiredWidth = LEFT_PADDING + maxItemWidth + RIGHT_PADDING + ncWidth;
+			var ncWidth = Width - ClientSize.Width;
+			var ncHeight = Height - ClientSize.Height;
+			var iconAndMessageRowWidth = rtbMessage.Width + ICON_MESSAGE_PADDING + panelIcon.Width;
+			var saveResponseRowWidth = chbSaveResponse.Width + panelIcon.Width / 2;
+			var buttonsRowWidth = WidthOfAllButtons;
+			var captionWidth = CaptionSize.Width;
+			var maxItemWidth = Math.Max(saveResponseRowWidth, Math.Max(iconAndMessageRowWidth, buttonsRowWidth));
+			var requiredWidth = LEFT_PADDING + maxItemWidth + RIGHT_PADDING + ncWidth;
 			//Since Caption width is not client width, we do the check here
 			if (requiredWidth < captionWidth)
+			{
 				requiredWidth = captionWidth;
-
-			int requiredHeight = TOP_PADDING + Math.Max(rtbMessage.Height, panelIcon.Height) + ITEM_PADDING + chbSaveResponse.Height + ITEM_PADDING + GetButtonSize().Height + BOTTOM_PADDING + ncHeight;
+			}
+			var requiredHeight = TOP_PADDING + Math.Max(rtbMessage.Height, panelIcon.Height) + ITEM_PADDING + chbSaveResponse.Height + ITEM_PADDING + ButtonSize.Height + BOTTOM_PADDING + ncHeight;
 
 			//Fix the bug where if the message text is huge then the buttons are overwritten.
-			//Incase the required height is more than the max height then adjust that in the
+			//In case the required height is more than the max height then adjust that in the
 			//message height
 			if (requiredHeight > _maxHeight)
 			{
 				rtbMessage.Height -= requiredHeight - _maxHeight;
 			}
-
-			int height = Math.Min(requiredHeight, _maxHeight);
-			int width = Math.Min(requiredWidth, _maxWidth);
-			this.Size = new Size(width, height);
-		}
-
-		/// <summary>
-		/// Returns the width that will be occupied by all buttons including
-		/// the inter-button padding
-		/// </summary>
-		private int GetWidthOfAllButtons()
-		{
-			Size buttonSize = GetButtonSize();
-			int allButtonsWidth = buttonSize.Width * _buttons.Count + BUTTON_PADDING * (_buttons.Count - 1);
-
-			return allButtonsWidth;
-		}
-
-		/// <summary>
-		/// Gets the width of the caption
-		/// </summary>
-		private Size GetCaptionSize()
-		{
-			using (Font captionFont = Win32.GetCaptionFont()
-				//some error occured while determining system font
-				?? new Font("Tahoma", 11))
-			{
-				int availableWidth = _maxWidth - SystemInformation.CaptionButtonSize.Width - SystemInformation.Border3DSize.Width * 2;
-				Size captionSize = MeasureString(this.Text, availableWidth, captionFont);
-
-				captionSize.Width += SystemInformation.CaptionButtonSize.Width + SystemInformation.Border3DSize.Width * 2;
-				return captionSize;
-			}
+			var height = Math.Min(requiredHeight, _maxHeight);
+			var width = Math.Min(requiredWidth, _maxWidth);
+			Size = new Size(width, height);
 		}
 
 		/// <summary>
@@ -739,21 +631,19 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 			panelIcon.Location = new Point(LEFT_PADDING, TOP_PADDING);
 			rtbMessage.Location = new Point(LEFT_PADDING + panelIcon.Width + ICON_MESSAGE_PADDING * (panelIcon.Width == 0 ? 0 : 1), TOP_PADDING);
 
-			chbSaveResponse.Location = new Point(LEFT_PADDING + (int)(panelIcon.Width / 2),
-				TOP_PADDING + Math.Max(panelIcon.Height, rtbMessage.Height) + ITEM_PADDING);
+			chbSaveResponse.Location = new Point(LEFT_PADDING + panelIcon.Width / 2, TOP_PADDING + Math.Max(panelIcon.Height, rtbMessage.Height) + ITEM_PADDING);
 
-			Size buttonSize = GetButtonSize();
-			int allButtonsWidth = GetWidthOfAllButtons();
+			var buttonSize = ButtonSize;
+			var allButtonsWidth = WidthOfAllButtons;
 
-			int firstButtonX = ((int)(this.ClientSize.Width - allButtonsWidth) / 2);
-			int firstButtonY = this.ClientSize.Height - BOTTOM_PADDING - buttonSize.Height;
-			Point nextButtonLocation = new Point(firstButtonX, firstButtonY);
+			var firstButtonX = ((ClientSize.Width - allButtonsWidth) / 2);
+			var firstButtonY = ClientSize.Height - BOTTOM_PADDING - buttonSize.Height;
+			var nextButtonLocation = new Point(firstButtonX, firstButtonY);
 
-			bool foundDefaultButton = false;
-			foreach (MessageBoxExButton button in _buttons)
+			var foundDefaultButton = false;
+			foreach (var button in Buttons)
 			{
-				Button buttonCtrl = GetButton(button, buttonSize, nextButtonLocation);
-
+				var buttonCtrl = GetButton(button, buttonSize, nextButtonLocation);
 				if (!foundDefaultButton)
 				{
 					_defaultButtonControl = buttonCtrl;
@@ -763,20 +653,16 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 				nextButtonLocation.X += buttonSize.Width + BUTTON_PADDING;
 			}
 
-			this.ShowInTaskbar = true;//hatton added
+			ShowInTaskbar = true;//hatton added
 		}
 
 		/// <summary>
 		/// Gets the button control for the specified MessageBoxExButton, if the
 		/// control has not been created this method creates the control
 		/// </summary>
-		/// <param name="button"></param>
-		/// <param name="size"></param>
-		/// <param name="location"></param>
-		/// <returns></returns>
 		private Button GetButton(MessageBoxExButton button, Size size, Point location)
 		{
-			Button buttonCtrl = null;
+			Button buttonCtrl;
 			if (_buttonControlsTable.ContainsKey(button))
 			{
 				buttonCtrl = _buttonControlsTable[button];
@@ -787,7 +673,7 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 			{
 				buttonCtrl = CreateButton(button, size, location);
 				_buttonControlsTable[button] = buttonCtrl;
-				this.Controls.Add(buttonCtrl);
+				Controls.Add(buttonCtrl);
 			}
 
 			return buttonCtrl;
@@ -796,38 +682,39 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		/// <summary>
 		/// Creates a button control based on info from MessageBoxExButton
 		/// </summary>
-		/// <param name="button"></param>
-		/// <param name="size"></param>
-		/// <param name="location"></param>
-		/// <returns></returns>
 		private Button CreateButton(MessageBoxExButton button, Size size, Point location)
 		{
-			Button buttonCtrl = new Button();
-			buttonCtrl.Size = size;
-			buttonCtrl.Text = button.Text;
-			buttonCtrl.TextAlign = ContentAlignment.MiddleCenter;
-			buttonCtrl.FlatStyle = FlatStyle.System;
+			var buttonCtrl = new Button
+			{
+				Size = size,
+				Text = button.Text,
+				TextAlign = ContentAlignment.MiddleCenter,
+				FlatStyle = FlatStyle.System,
+				Location = location,
+				Tag = button.Value,
+				Name = Text // for nunitforms support
+			};
 			if (button.HelpText != null && button.HelpText.Trim().Length != 0)
 			{
 				buttonToolTip.SetToolTip(buttonCtrl, button.HelpText);
 			}
-			buttonCtrl.Location = location;
-			buttonCtrl.Click += new EventHandler(OnButtonClicked);
-			buttonCtrl.MouseHover += new EventHandler(buttonCtrl_MouseHover);
-			buttonCtrl.Tag = button.Value;
-			buttonCtrl.Name = buttonCtrl.Text;//for nunitforms support
+			buttonCtrl.Click += OnButtonClicked;
+#if DEBUG
+			buttonCtrl.MouseHover += buttonCtrl_MouseHover;
+#endif
 			return buttonCtrl;
 		}
 
 		private void DisableCloseIfMultipleButtonsAndNoCancelButton()
 		{
-			if (_buttons.Count > 1)
+			if (Buttons.Count > 1)
 			{
 				if (_cancelButton != null)
+				{
 					return;
-
+				}
 				//See if standard cancel button is present
-				foreach (MessageBoxExButton button in _buttons)
+				foreach (var button in Buttons)
 				{
 					if (button.Text == MessageBoxExButtons.Cancel.ToString() && button.Value == MessageBoxExButtons.Cancel.ToString())
 					{
@@ -842,9 +729,9 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 				_allowCancel = false;
 
 			}
-			else if (_buttons.Count == 1)
+			else if (Buttons.Count == 1)
 			{
-				_cancelButton = _buttons[0];
+				_cancelButton = Buttons[0];
 			}
 			else
 			{
@@ -858,7 +745,7 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		/// </summary>
 		private void PlayAlert()
 		{
-			if (_playAlert)
+			if (PlayAlertSound)
 			{
 				if (_standardIcon != MessageBoxIcon.None)
 				{
@@ -873,25 +760,22 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 
 		private void SelectDefaultButton()
 		{
-			if (_defaultButtonControl != null)
-			{
-				_defaultButtonControl.Select();
-			}
+			_defaultButtonControl?.Select();
 		}
 
 		private void StartTimerIfTimeoutGreaterThanZero()
 		{
-			if (_timeout > 0)
+			if (Timeout > 0)
 			{
 				if (timerTimeout == null)
 				{
-					timerTimeout = new Timer(this.components);
-					timerTimeout.Tick += new EventHandler(timerTimeout_Tick);
+					timerTimeout = new Timer(components);
+					timerTimeout.Tick += timerTimeout_Tick;
 				}
 
 				if (!timerTimeout.Enabled)
 				{
-					timerTimeout.Interval = _timeout;
+					timerTimeout.Interval = Timeout;
 					timerTimeout.Start();
 				}
 			}
@@ -899,8 +783,8 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 
 		private void SetResultAndClose(string result)
 		{
-			_result = result;
-			this.DialogResult = DialogResult.OK;
+			Result = result;
+			DialogResult = DialogResult.OK;
 		}
 
 		#endregion
@@ -908,11 +792,12 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		#region Event Handlers
 		private void OnButtonClicked(object sender, EventArgs e)
 		{
-			Button btn = sender as Button;
-			if (btn == null || btn.Tag == null)
+			var btn = sender as Button;
+			if (btn?.Tag == null)
+			{
 				return;
-
-			string result = btn.Tag as string;
+			}
+			var result = btn.Tag as string;
 			SetResultAndClose(result);
 		}
 
@@ -920,7 +805,7 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		{
 			timerTimeout.Stop();
 
-			switch (_timeoutResult)
+			switch (TimeoutResult)
 			{
 				case TimeoutResult.Default:
 					_defaultButtonControl.PerformClick();
@@ -945,7 +830,6 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		#endregion
 
 		#region P/Invoke - SystemParametersInfo, GetSystemMenu, EnableMenuItem, MessageBeep
-		private const int LF_FACESIZE = 32;
 
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
 		private static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
@@ -957,9 +841,8 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		private const int SC_CLOSE = 0xF060;
 		private const int MF_BYCOMMAND = 0x0;
 		private const int MF_GRAYED = 0x1;
-		private const int MF_ENABLED = 0x0;
 
-		private void DisableCloseButton(Form form)
+		private static void DisableCloseButton(Form form)
 		{
 			try
 			{
@@ -974,27 +857,25 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		[DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "MessageBeep")]
 		private static extern bool MessageBeepWindows(uint type);
 
-		private static bool MessageBeep(uint type)
+		private static void MessageBeep(uint type)
 		{
 			if (Platform.IsWindows)
 			{
-				return MessageBeepWindows(type);
+				MessageBeepWindows(type);
 			}
-
-			Console.WriteLine("Warning using unimplemented method MessageBeep");
-			// TODO-Linux: make a beep somehow using managed code
-			return true;
 		}
 		#endregion
 
-		private void MessageBoxExForm_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
+#if DEBUG
+		private void MessageBoxExForm_MouseMove(object sender, MouseEventArgs e)
 		{
-			System.Console.WriteLine("Move" + DateTime.Now.Millisecond);
+			Console.WriteLine("Move" + DateTime.Now.Millisecond);
 		}
 
 		private void buttonCtrl_MouseHover(object sender, EventArgs e)
 		{
-			System.Console.WriteLine("Move b" + DateTime.Now.Millisecond);
+			Console.WriteLine("Move b" + DateTime.Now.Millisecond);
 		}
+#endif
 	}
 }

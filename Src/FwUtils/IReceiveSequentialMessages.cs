@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2015 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,13 +14,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Minimal implementation is base.WndProc(ref m);
 		/// </summary>
-		/// <param name="m"></param>
 		void OriginalWndProc(ref Message m);
 
 		/// <summary>
 		/// Minimal implementation is nothing, if you don't override OnPaint.
 		/// </summary>
-		/// <param name="e"></param>
 		void OriginalOnPaint(PaintEventArgs e);
 
 		/// <summary>

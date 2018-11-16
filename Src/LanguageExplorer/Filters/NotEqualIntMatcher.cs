@@ -57,19 +57,19 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		public override void PersistAsXml(XElement node)
+		public override void PersistAsXml(XElement element)
 		{
-			base.PersistAsXml (node);
-			XmlUtils.SetAttribute(node, "val", NotEqualValue.ToString());
+			base.PersistAsXml (element);
+			XmlUtils.SetAttribute(element, "val", NotEqualValue.ToString());
 		}
 
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public override void InitXml(XElement node)
+		public override void InitXml(XElement element)
 		{
-			base.InitXml (node);
-			NotEqualValue = XmlUtils.GetMandatoryIntegerAttributeValue(node, "val");
+			base.InitXml (element);
+			NotEqualValue = XmlUtils.GetMandatoryIntegerAttributeValue(element, "val");
 		}
 	}
 }

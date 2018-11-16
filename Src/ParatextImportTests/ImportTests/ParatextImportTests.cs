@@ -68,7 +68,7 @@ namespace ParatextImport.ImportTests
 			settings.ImportTypeEnum = TypeOfImport.Other;
 
 			// add a bogus file to the project
-			settings.AddFile(DriveUtil.BootDrive + @"IDontExist.txt", ImportDomain.Main, null, null);
+			settings.AddFile(FwUtils.BootDrive + @"IDontExist.txt", ImportDomain.Main, null, null);
 
 			// Set up the mappings
 			SetUpMappings(settings);

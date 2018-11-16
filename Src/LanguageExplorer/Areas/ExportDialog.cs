@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -22,7 +23,6 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.FwUtils.Pathway;
 using SIL.FieldWorks.Common.FXT;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
@@ -98,7 +98,7 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		private System.ComponentModel.Container components = null;
+		private Container components = null;
 
 		private List<ListViewItem> m_exportItems;
 
@@ -257,47 +257,47 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ExportDialog));
-			this.btnExport = new System.Windows.Forms.Button();
-			this.btnCancel = new System.Windows.Forms.Button();
-			this.m_exportList = new System.Windows.Forms.ListView();
-			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-			this.m_description = new System.Windows.Forms.RichTextBox();
-			this.label1 = new System.Windows.Forms.Label();
-			this.buttonHelp = new System.Windows.Forms.Button();
-			this.m_chkExportPictures = new System.Windows.Forms.CheckBox();
-			this.m_chkShowInFolder = new System.Windows.Forms.CheckBox();
+			ComponentResourceManager resources = new ComponentResourceManager(typeof(ExportDialog));
+			this.btnExport = new Button();
+			this.btnCancel = new Button();
+			this.m_exportList = new ListView();
+			this.columnHeader1 = new ColumnHeader();
+			this.columnHeader2 = new ColumnHeader();
+			this.m_description = new RichTextBox();
+			this.label1 = new Label();
+			this.buttonHelp = new Button();
+			this.m_chkExportPictures = new CheckBox();
+			this.m_chkShowInFolder = new CheckBox();
 			this.SuspendLayout();
 			//
 			// btnExport
 			//
 			resources.ApplyResources(this.btnExport, "btnExport");
 			this.btnExport.Name = "btnExport";
-			this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
+			this.btnExport.Click += new EventHandler(this.btnExport_Click);
 			//
 			// btnCancel
 			//
 			resources.ApplyResources(this.btnCancel, "btnCancel");
-			this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.btnCancel.DialogResult = DialogResult.Cancel;
 			this.btnCancel.Name = "btnCancel";
-			this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+			this.btnCancel.Click += new EventHandler(this.btnCancel_Click);
 			//
 			// m_exportList
 			//
 			resources.ApplyResources(this.m_exportList, "m_exportList");
-			this.m_exportList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+			this.m_exportList.Columns.AddRange(new ColumnHeader[] {
 			this.columnHeader1,
 			this.columnHeader2});
 			this.m_exportList.FullRowSelect = true;
 			this.m_exportList.HideSelection = false;
-			this.m_exportList.MinimumSize = new System.Drawing.Size(256, 183);
+			this.m_exportList.MinimumSize = new Size(256, 183);
 			this.m_exportList.MultiSelect = false;
 			this.m_exportList.Name = "m_exportList";
-			this.m_exportList.Sorting = System.Windows.Forms.SortOrder.Ascending;
+			this.m_exportList.Sorting = SortOrder.Ascending;
 			this.m_exportList.UseCompatibleStateImageBehavior = false;
-			this.m_exportList.View = System.Windows.Forms.View.Details;
-			this.m_exportList.SelectedIndexChanged += new System.EventHandler(this.m_exportList_SelectedIndexChanged);
+			this.m_exportList.View = View.Details;
+			this.m_exportList.SelectedIndexChanged += new EventHandler(this.m_exportList_SelectedIndexChanged);
 			//
 			// columnHeader1
 			//
@@ -312,7 +312,7 @@ namespace LanguageExplorer.Areas
 			resources.ApplyResources(this.m_description, "m_description");
 			this.m_description.Name = "m_description";
 			this.m_description.ReadOnly = true;
-			this.m_description.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.m_description_LinkClicked);
+			this.m_description.LinkClicked += new LinkClickedEventHandler(this.m_description_LinkClicked);
 			//
 			// label1
 			//
@@ -323,20 +323,20 @@ namespace LanguageExplorer.Areas
 			//
 			resources.ApplyResources(this.buttonHelp, "buttonHelp");
 			this.buttonHelp.Name = "buttonHelp";
-			this.buttonHelp.Click += new System.EventHandler(this.buttonHelp_Click);
+			this.buttonHelp.Click += new EventHandler(this.buttonHelp_Click);
 			//
 			// m_chkExportPictures
 			//
 			resources.ApplyResources(this.m_chkExportPictures, "m_chkExportPictures");
 			this.m_chkExportPictures.Name = "m_chkExportPictures";
 			this.m_chkExportPictures.UseVisualStyleBackColor = true;
-			this.m_chkExportPictures.CheckedChanged += new System.EventHandler(this.m_chkExportPictures_CheckedChanged);
+			this.m_chkExportPictures.CheckedChanged += new EventHandler(this.m_chkExportPictures_CheckedChanged);
 			//
 			// m_chkShowInFolder
 			//
 			resources.ApplyResources(this.m_chkShowInFolder, "m_chkShowInFolder");
 			this.m_chkShowInFolder.Checked = true;
-			this.m_chkShowInFolder.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.m_chkShowInFolder.CheckState = CheckState.Checked;
 			this.m_chkShowInFolder.Name = "m_chkShowInFolder";
 			this.m_chkShowInFolder.UseVisualStyleBackColor = true;
 			//
@@ -357,8 +357,8 @@ namespace LanguageExplorer.Areas
 			this.MinimizeBox = false;
 			this.Name = "ExportDialog";
 			this.ShowIcon = false;
-			this.Load += new System.EventHandler(this.ExportDialog_Load);
-			this.Closed += new System.EventHandler(this.ExportDialog_Closed);
+			this.Load += new EventHandler(this.ExportDialog_Load);
+			this.Closed += new EventHandler(this.ExportDialog_Closed);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -448,7 +448,7 @@ namespace LanguageExplorer.Areas
 					using (var dlg = new FolderBrowserDialogAdapter())
 					{
 						dlg.Tag = AreaResources.ksChooseLIFTFolderTitle; // can't set title !!??
-						dlg.Description = string.Format(AreaResources.ksChooseLIFTExportFolder, m_exportItems[0].SubItems[1].Text);
+						dlg.Description = String.Format(AreaResources.ksChooseLIFTExportFolder, m_exportItems[0].SubItems[1].Text);
 						dlg.ShowNewFolderButton = true;
 						dlg.RootFolder = Environment.SpecialFolder.Desktop;
 						dlg.SelectedPath = PropertyTable.GetValue("ExportDir", Environment.GetFolderPath(Environment.SpecialFolder.Personal));
@@ -476,7 +476,7 @@ namespace LanguageExplorer.Areas
 							btns = MessageBoxButtons.YesNo;
 						}
 					}
-					if (!string.IsNullOrEmpty(sMsg))
+					if (!String.IsNullOrEmpty(sMsg))
 					{
 						using (var dlg = new LiftExportMessageDlg(sMsg, btns))
 						{
@@ -550,7 +550,7 @@ namespace LanguageExplorer.Areas
 								dlg.AddExtension = true;
 								dlg.DefaultExt = m_exportItems[0].SubItems[2].Text;
 								dlg.Filter = m_exportItems[0].SubItems[3].Text;
-								dlg.Title = string.Format(AreaResources.ExportTo0, m_exportItems[0].SubItems[1].Text);
+								dlg.Title = String.Format(AreaResources.ExportTo0, m_exportItems[0].SubItems[1].Text);
 								dlg.InitialDirectory = PropertyTable.GetValue("ExportDir", Environment.GetFolderPath(Environment.SpecialFolder.Personal));
 								if (dlg.ShowDialog(this) != DialogResult.OK)
 								{
@@ -622,7 +622,7 @@ namespace LanguageExplorer.Areas
 				{
 					program = @"C:\windows\explorer.exe";
 				}
-				processInfo = string.IsNullOrEmpty(sFileName) ? new ProcessStartInfo(program, $" /select,{sDirectory}") : new ProcessStartInfo(program, $" /select,{sFileName}");
+				processInfo = String.IsNullOrEmpty(sFileName) ? new ProcessStartInfo(program, $" /select,{sDirectory}") : new ProcessStartInfo(program, $" /select,{sFileName}");
 			}
 			if (processInfo != null)
 			{
@@ -823,7 +823,7 @@ namespace LanguageExplorer.Areas
 #if DEBUG
 			var dtExport = DateTime.Now;
 #endif
-			progress.Message = string.Format(AreaResources.ksValidatingOutputFile, Path.GetFileName(outPath));
+			progress.Message = String.Format(AreaResources.ksValidatingOutputFile, Path.GetFileName(outPath));
 			Validator.CheckLiftWithPossibleThrow(outPath);
 #if DEBUG
 			var dtValidate = DateTime.Now;
@@ -862,7 +862,7 @@ namespace LanguageExplorer.Areas
 #endif
 			if (fLiftOutput)
 			{
-				progressDialog.Message = string.Format(AreaResources.ksValidatingOutputFile, Path.GetFileName(outPath));
+				progressDialog.Message = String.Format(AreaResources.ksValidatingOutputFile, Path.GetFileName(outPath));
 				Validator.CheckLiftWithPossibleThrow(outPath);
 			}
 #if DEBUG
@@ -911,7 +911,7 @@ namespace LanguageExplorer.Areas
 				s = $"Finished Configured Export Dump at {DateTime.Now.ToLongTimeString()}";
 				Debug.WriteLine(s);
 #endif
-				if (!string.IsNullOrEmpty(ft.m_sXsltFiles))
+				if (!String.IsNullOrEmpty(ft.m_sXsltFiles))
 				{
 					var rgsXslts = ft.m_sXsltFiles.Split(';');
 					var cXslts = rgsXslts.GetLength(0);
@@ -1062,7 +1062,7 @@ namespace LanguageExplorer.Areas
 				var filter = XmlUtils.GetOptionalAttributeValue(node,"filter", sDefaultFilter);
 				var description = node.InnerText;
 				description = description.Trim();
-				if (string.IsNullOrEmpty(description))
+				if (String.IsNullOrEmpty(description))
 				{
 					description = AreaResources.NoDescriptionForItem;
 				}
@@ -1206,7 +1206,7 @@ namespace LanguageExplorer.Areas
 		{
 			//enable unless the type is pathway & pathway is not installed, or if the type is lift and it is filtered, but there is no filter available, or if the filter excludes all items
 			var fFilterAvailable = DetermineIfFilterIsAvailable();
-			return (ft == FxtTypes.kftPathway && !PathwayUtils.IsPathwayInstalled) ||
+			return (ft == FxtTypes.kftPathway && !IsPathwayInstalled) ||
 				   (ft == FxtTypes.kftLift && isFiltered && fFilterAvailable) ||
 				   (ft == FxtTypes.kftConfigured && (formatType == "htm" || formatType == "sfm")) ||
 				   (ft == FxtTypes.kftReversal && formatType == "sfm");
@@ -1230,7 +1230,7 @@ namespace LanguageExplorer.Areas
 		{
 			Debug.Assert(m_progressDlg != null);
 			var sMsg = DictionaryConfigurationStrings.ResourceManager.GetString(e.MessageId, DictionaryConfigurationStrings.Culture);
-			if (!string.IsNullOrEmpty(sMsg))
+			if (!String.IsNullOrEmpty(sMsg))
 			{
 				m_progressDlg.Message = sMsg;
 			}
@@ -1374,7 +1374,7 @@ namespace LanguageExplorer.Areas
 		private void ProcessPathwayExport()
 		{
 			var app = PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
-			var cssDialog = Path.Combine(PathwayUtils.PathwayInstallDirectory, "CssDialog.dll");
+			var cssDialog = Path.Combine(PathwayInstallDirectory, "CssDialog.dll");
 			var sf = ReflectionHelper.CreateObject(cssDialog, "SIL.PublishingSolution.Contents", null);
 			Debug.Assert(sf != null);
 			var cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
@@ -1414,7 +1414,7 @@ namespace LanguageExplorer.Areas
 				var inputPath = (string)ReflectionHelper.GetProperty(sf, "ExistingDirectoryLocationPath");
 				if (inputPath != outPath)
 				{
-					var dirFilter = string.Empty;
+					var dirFilter = String.Empty;
 					if (strOutputPath == inputPath)
 					{
 						dirFilter = strDictionaryName;
@@ -1444,12 +1444,12 @@ namespace LanguageExplorer.Areas
 			var revFullXhtml = Path.Combine(outPath, RevXhtml);
 			if (!(bool) ReflectionHelper.GetProperty(sf, "ExportMain"))
 			{
-				mainFullName = string.Empty;
+				mainFullName = String.Empty;
 			}
 
 			if (!(bool) ReflectionHelper.GetProperty(sf, "ExportReversal"))
 			{
-				revFullXhtml = string.Empty;
+				revFullXhtml = String.Empty;
 			}
 
 			switch (result)
@@ -1467,7 +1467,7 @@ namespace LanguageExplorer.Areas
 					break;
 			}
 
-			var psExport = Path.Combine(PathwayUtils.PathwayInstallDirectory, "PsExport.dll");
+			var psExport = Path.Combine(PathwayInstallDirectory, "PsExport.dll");
 			var exporter = ReflectionHelper.CreateObject(psExport, "SIL.PublishingSolution.PsExport", null);
 			Debug.Assert(exporter != null);
 			ReflectionHelper.SetProperty(exporter, "DataType", "Dictionary");
@@ -1487,7 +1487,7 @@ namespace LanguageExplorer.Areas
 				"1. Do you have suggestions to improve the program?%0A%0A2. What are you happy with?",
 				false, 10, assembly);
 			UsageEmailDialog.DoTrivialUsageReport(utilityLabel, applicationKey, FeedbackEmailAddress,
-				string.Format("1. What would you like to say to others about {0}?%0A%0A2. What languages have you used with {0}", utilityLabel),
+				String.Format("1. What would you like to say to others about {0}?%0A%0A2. What languages have you used with {0}", utilityLabel),
 				false, 40, assembly);
 
 			Close();
@@ -1538,15 +1538,15 @@ namespace LanguageExplorer.Areas
 				File.Delete(revFullXhtml);
 			}
 
-			var currInput = string.Empty;
+			var currInput = String.Empty;
 			try
 			{
-				if (mainFullName != string.Empty)
+				if (mainFullName != String.Empty)
 				{
 					ExportFor("ConfiguredXHTML", mainFullName);
 				}
 
-				if (revFullXhtml != string.Empty)
+				if (revFullXhtml != String.Empty)
 				{
 					ExportFor("ReversalIndexXHTML", revFullXhtml);
 				}
@@ -1688,5 +1688,47 @@ namespace LanguageExplorer.Areas
 		}
 
 		#endregion
+
+		/// <summary>
+		/// Gets the directory for the Pathway application or string.Empty if the directory name
+		/// is not in the registry.
+		/// </summary>
+		private static string PathwayInstallDirectory
+		{
+			get
+			{
+				const string installDirValue = "PathwayDir46";
+				object regObj;
+				if (RegistryHelper.RegEntryValueExists(RegistryHelper.CompanyKey, "Pathway", installDirValue, out regObj))
+				{
+					return (string)regObj;
+				}
+
+				// Some broken Windows machines can have trouble accessing HKLM (LT-15158).
+				if (RegistryHelper.CompanyKeyLocalMachine == null)
+				{
+					var defaultDir = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "SIL"), "Pathway7");
+					return Directory.Exists(defaultDir) ? defaultDir : String.Empty;
+				}
+
+				if (RegistryHelper.RegEntryValueExists(RegistryHelper.CompanyKeyLocalMachine, "Pathway", installDirValue, out regObj))
+				{
+					return (string)regObj;
+				}
+				return String.Empty;
+			}
+		}
+
+		/// <summary>
+		/// Gets a value indicating whether SIL Pathway is installed.
+		/// </summary>
+		private static bool IsPathwayInstalled
+		{
+			get
+			{
+				var pathwayDirectory = PathwayInstallDirectory;
+				return !string.IsNullOrEmpty(pathwayDirectory) && File.Exists(Path.Combine(pathwayDirectory, "PsExport.dll"));
+			}
+		}
 	}
 }

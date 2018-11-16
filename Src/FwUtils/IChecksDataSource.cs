@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2012-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,11 +6,6 @@ using System.Collections.Generic;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
-	public static class CheckUtils
-	{
-		public const char kStyleNamesDelimiter = '\uFFFD';
-	}
-
 	public interface IChecksDataSource
 	{
 		/// <summary>
@@ -26,7 +21,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Set the named checking parameter value. This is normally done by
 		/// the inventory display associated with the check.
 		/// </summary>
-		/// <param name="key">Parmameter name</param>
+		/// <param name="key">Parameter name</param>
 		/// <param name="value">Parameter value</param>
 		void SetParameterValue(string key, string value);
 
@@ -53,9 +48,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Enumerate all the ITextToken's from the most recent GetText call.
 		/// </summary>
-		/// <returns></returns>
-		// REVIEW: Why isn't this a property instead of a method?
-		IEnumerable<ITextToken> TextTokens();
+		IEnumerable<ITextToken> TextTokens { get; }
 
 		/// <summary>
 		/// Return a list of the book numbers present.

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -28,18 +28,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Create configuration file for analysis writing systems in Reversal Index
 		/// </summary>
-		/// <param name="wsMgr">IWritingSystemManager</param>
-		/// <param name="cache">The LCM cache</param>
-		/// <param name="defaultConfigDir">Default Configuration directory</param>
-		/// <param name="projectsDir">Projects directory</param>
-		/// <param name="originalProjectName">Project Name</param>
-		public static void CreateOrRemoveReversalIndexConfigurationFiles(WritingSystemManager wsMgr, LcmCache cache, string defaultConfigDir,
-			string projectsDir, string originalProjectName)
+		public static void CreateOrRemoveReversalIndexConfigurationFiles(WritingSystemManager wsMgr, LcmCache cache, string defaultConfigDir, string projectsDir, string originalProjectName)
 		{
-			var defaultWsFilePath = Path.Combine(defaultConfigDir, RevIndexDir,
-				AllIndexesFileName + ConfigFileExtension);
-			var newWsFilePath = Path.Combine(projectsDir, originalProjectName, ConfigDir,
-				RevIndexDir);
+			var defaultWsFilePath = Path.Combine(defaultConfigDir, RevIndexDir, AllIndexesFileName + ConfigFileExtension);
+			var newWsFilePath = Path.Combine(projectsDir, originalProjectName, ConfigDir, RevIndexDir);
 			var analysisWsArray = cache.LangProject.AnalysisWss.Trim().Replace("  ", " ").Split(' ');
 			if (Directory.Exists(newWsFilePath))
 			{
@@ -64,8 +56,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			foreach (var curWs in analysisWsArray)
 			{
 				if (curWs.ToLower().Contains("audio"))
+				{
 					continue;
-
+				}
 				var curWsLabel = wsMgr.Get(curWs).DisplayLabel;
 				var newWsCompleteFilePath = Path.Combine(newWsFilePath, curWs + ConfigFileExtension);
 				if (File.Exists(newWsCompleteFilePath))
@@ -77,7 +70,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 						// How did we get here??? Only AllReversalIndexes should have no WS! Best I can figure, this is a pre-wsAtt config
 						var config = configDoc.Element(DictConfigElement);
 						if (config == null || !config.HasAttributes)
+						{
 							File.Delete(newWsCompleteFilePath); // the file is corrupt; delete it and start over
+						}
 						else
 						{
 							config.SetAttributeValue(WsAttribute, curWs);
@@ -95,7 +90,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 						continue;
 					}
 					else
+					{
 						continue; // the file was already in the correct state; nothing to do
+					}
 				}
 
 				File.Copy(defaultWsFilePath, newWsCompleteFilePath, false);
@@ -111,8 +108,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				if (wsObj != null && wsObj.DisplayLabel.ToLower().IndexOf("audio", StringComparison.Ordinal) == -1)
 				{
 					UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo Adding reversal Guid", "Redo Adding reversal Guid",
-						cache.ActionHandlerAccessor,
-						() => GetOrCreateWsGuid(wsObj, cache));
+						cache.ActionHandlerAccessor, () => GetOrCreateWsGuid(wsObj, cache));
 				}
 			}
 		}
@@ -125,17 +121,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return doc;
 		}
 
-		internal static string GetConfigPathForWs(WritingSystemManager wsMgr, string configDir, string ws)
-		{
-			return Path.Combine(configDir, wsMgr.Get(ws).LanguageTag + ConfigFileExtension);
-		}
-
 		/// <summary>
 		/// Method returns Guid of existing or created writing system
 		/// </summary>
-		/// <param name="wsObj">Writing system Object</param>
-		/// <param name="cache">The LCM cache</param>
-		/// <returns>returns Guid</returns>
 		public static Guid GetOrCreateWsGuid(CoreWritingSystemDefinition wsObj, LcmCache cache)
 		{
 			var riRepo = cache.ServiceLocator.GetInstance<IReversalIndexRepository>();

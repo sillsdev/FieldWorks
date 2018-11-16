@@ -220,6 +220,7 @@
     <Compile Include="DebugProcsTests.cs" />
     <Compile Include="DynamicLoaderTests.cs" />
     <Compile Include="FontHeightAdjusterTests.cs" />
+    <Compile Include="FontOverride.cs" />
     <Compile Include="FwApplicationSettingsTests.cs" />
     <Compile Include="InterfacesTests.cs" />
     <Compile Include="DisposableObjectsSetTests.cs" />
@@ -246,7 +247,6 @@
     <Compile Include="FwRegistryHelperTests.cs" />
     <Compile Include="MatchedPairsTests.cs" />
     <Compile Include="MeasurementUtilsTest.cs" />
-    <Compile Include="ParagraphCorrelationTests.cs" />
     <Compile Include="QuotationMarksTests.cs" />
     <Compile Include="ClipboardStub.cs" />
     <Compile Include="ImagePictureTest.cs" />

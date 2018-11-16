@@ -44,21 +44,21 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		public override void PersistAsXml(XElement node)
+		public override void PersistAsXml(XElement element)
 		{
-			base.PersistAsXml (node);
-			XmlUtils.SetAttribute(node, "min", Min.ToString());
-			XmlUtils.SetAttribute(node, "max", Max.ToString());
+			base.PersistAsXml (element);
+			XmlUtils.SetAttribute(element, "min", Min.ToString());
+			XmlUtils.SetAttribute(element, "max", Max.ToString());
 		}
 
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public override void InitXml(XElement node)
+		public override void InitXml(XElement element)
 		{
-			base.InitXml (node);
-			Min = XmlUtils.GetMandatoryIntegerAttributeValue(node, "min");
-			Max = XmlUtils.GetMandatoryIntegerAttributeValue(node, "max");
+			base.InitXml (element);
+			Min = XmlUtils.GetMandatoryIntegerAttributeValue(element, "min");
+			Max = XmlUtils.GetMandatoryIntegerAttributeValue(element, "max");
 		}
 
 		#region Matcher Members

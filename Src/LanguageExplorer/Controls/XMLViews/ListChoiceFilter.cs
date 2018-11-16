@@ -132,26 +132,26 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		public override void PersistAsXml(XElement node)
+		public override void PersistAsXml(XElement element)
 		{
-			base.PersistAsXml(node);
-			XmlUtils.SetAttribute(node, "mode", ((int)Mode).ToString());
-			XmlUtils.SetAttribute(node, "targets", XmlUtils.MakeIntegerListValue(m_originalTargets));
+			base.PersistAsXml(element);
+			XmlUtils.SetAttribute(element, "mode", ((int)Mode).ToString());
+			XmlUtils.SetAttribute(element, "targets", XmlUtils.MakeIntegerListValue(m_originalTargets));
 			if (m_fIsUserVisible)
 			{
-				XmlUtils.SetAttribute(node, "visible", "true");
+				XmlUtils.SetAttribute(element, "visible", "true");
 			}
 		}
 
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public override void InitXml(XElement node)
+		public override void InitXml(XElement element)
 		{
-			base.InitXml(node);
-			Mode = (ListMatchOptions)XmlUtils.GetMandatoryIntegerAttributeValue(node, "mode");
-			Targets = XmlUtils.GetMandatoryIntegerListAttributeValue(node, "targets");
-			m_fIsUserVisible = XmlUtils.GetBooleanAttributeValue(node, "visible");
+			base.InitXml(element);
+			Mode = (ListMatchOptions)XmlUtils.GetMandatoryIntegerAttributeValue(element, "mode");
+			Targets = XmlUtils.GetMandatoryIntegerListAttributeValue(element, "targets");
+			m_fIsUserVisible = XmlUtils.GetBooleanAttributeValue(element, "visible");
 		}
 
 		/// <summary>

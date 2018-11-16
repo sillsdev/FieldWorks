@@ -1,3 +1,7 @@
+// Copyright (c) 2018 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -20,20 +24,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// convert an Image to an OLE Picture IPictureDisp interface
 		/// </summary>
-		/// <param name="image"></param>
-		/// <returns></returns>
 		public static IPictureDisp ToOLE_IPictureDisp(Image image)
 		{
 			if (Platform.IsWindows)
-				return AxHost.GetIPictureDispFromPicture(image) as IPictureDisp;
+			{
+				return GetIPictureDispFromPicture(image) as IPictureDisp;
+			}
 			return ImagePicture.FromImage(image);
 		}
 
 		/// <summary>
 		/// Converts the image to (an OLECvt) IPicture picture and wraps it with a disposable object.
 		/// </summary>
-		/// <param name="image">The image.</param>
-		/// <returns></returns>
 		public static ComPictureWrapper ConvertImageToComPicture(Image image)
 		{
 			return new ComPictureWrapper((IPicture)ToOLE_IPictureDisp(image));

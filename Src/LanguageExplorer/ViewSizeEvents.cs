@@ -10,9 +10,8 @@ namespace LanguageExplorer
 	/// Type declaration for FwViewSizeChangedEventHandler, which is used to handle changes in
 	/// the size used by a view.
 	/// </summary>
-	internal delegate void FwViewSizeChangedEventHandler (object sender, FwViewSizeEventArgs e);
+	internal delegate void FwViewSizeChangedEventHandler(object sender, FwViewSizeEventArgs e);
 
-	#region FwViewSizeEventArgs
 	/// <remarks>
 	/// This event argument class is used for events relating to a view changing its underlying
 	/// size.
@@ -26,7 +25,7 @@ namespace LanguageExplorer
 		/// <param name="width">new width of the view</param>
 		internal FwViewSizeEventArgs(int height, int width)
 		{
-			Height= height;
+			Height = height;
 			Width = width;
 		}
 
@@ -40,5 +39,4 @@ namespace LanguageExplorer
 		/// </summary>
 		public int Width { get; }
 	}
-	#endregion // FwViewSizeEventArgs
 }

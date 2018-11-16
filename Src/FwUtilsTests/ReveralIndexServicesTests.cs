@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2018 SIL International
+// Copyright (c) 2016-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -32,8 +32,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			const string nonExtantWs = "es";
 			var analWss = new[] { "en", "fr", "de" };
-			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor,
-				() => Cache.LangProject.AnalysisWss = string.Join(" ", analWss));
+			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor, () => Cache.LangProject.AnalysisWss = string.Join(" ", analWss));
 			using (var tfProject = new TemporaryFolder("ProjForDontDeleteRealReversals"))
 			{
 				var projectsDir = Path.GetDirectoryName(tfProject.Path);
@@ -65,8 +64,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				Assert.AreEqual(analWss[0], GetWsFromFile(crazyFilename), "WS in custom-named file should not have been changed");
 				Assert.That(!File.Exists(nonExtantWsFilename));
 				Assert.That(File.Exists(wrongWsFilename));
-				Assert.AreEqual(analWss[1], GetWsFromFile(wrongWsFilename),
-					"WS in wrong ws-named file should have been changed (we think)");
+				Assert.AreEqual(analWss[1], GetWsFromFile(wrongWsFilename), "WS in wrong ws-named file should have been changed (we think)");
 				Assert.That(File.Exists(allReversalsFilename));
 				Assert.AreEqual(string.Empty, GetWsFromFile(allReversalsFilename), "All reversals should not have a writing system");
 				foreach (var ws in analWss)

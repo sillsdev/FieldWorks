@@ -314,29 +314,29 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		public void PersistAsXml(XElement node)
+		public void PersistAsXml(XElement element)
 		{
-			DynamicLoader.PersistObject(Finder, node, "finder");
-			DynamicLoader.PersistObject(SubComparer, node, "comparer");
+			DynamicLoader.PersistObject(Finder, element, "finder");
+			DynamicLoader.PersistObject(SubComparer, element, "comparer");
 			if (SortedFromEnd)
 			{
-				XmlUtils.SetAttribute(node, "sortFromEnd", "true");
+				XmlUtils.SetAttribute(element, "sortFromEnd", "true");
 			}
 			if (SortedByLength)
 			{
-				XmlUtils.SetAttribute(node, "sortByLength", "true");
+				XmlUtils.SetAttribute(element, "sortByLength", "true");
 			}
 		}
 
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public void InitXml(XElement node)
+		public void InitXml(XElement element)
 		{
-			Finder = DynamicLoader.RestoreFromChild(node, "finder") as IStringFinder;
-			SubComparer = DynamicLoader.RestoreFromChild(node, "comparer") as IComparer;
-			SortedFromEnd = XmlUtils.GetOptionalBooleanAttributeValue(node, "sortFromEnd", false);
-			SortedByLength = XmlUtils.GetOptionalBooleanAttributeValue(node, "sortByLength", false);
+			Finder = DynamicLoader.RestoreFromChild(element, "finder") as IStringFinder;
+			SubComparer = DynamicLoader.RestoreFromChild(element, "comparer") as IComparer;
+			SortedFromEnd = XmlUtils.GetOptionalBooleanAttributeValue(element, "sortFromEnd", false);
+			SortedByLength = XmlUtils.GetOptionalBooleanAttributeValue(element, "sortByLength", false);
 		}
 
 		#endregion

@@ -3,18 +3,12 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics;
-using System.IO;
-using System.Text;
 using System.Collections.Generic;
+using System.Text;
 using System.Web;
-using SIL.LCModel;
-using SIL.PlatformUtilities;
-using SIL.Reporting;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
-	#region FwLinkArgs class
 	/// <summary>
 	/// provides a message object specifically for asking a FieldWorks application
 	/// to do various navigation activities.
@@ -83,11 +77,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		#endregion
 
 		#region Member variables
-		/// <summary></summary>
+		/// <summary />
 		protected string m_toolName = string.Empty;
-		/// <summary></summary>
-		protected string m_tag = string.Empty;
-		private readonly List<LinkProperty> m_linkProperties = new List<LinkProperty>();
 		#endregion
 
 		#region Properties
@@ -104,34 +95,24 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Properties used by the link
 		/// </summary>
-		public List<LinkProperty> LinkProperties => m_linkProperties;
+		public List<LinkProperty> LinkProperties { get; } = new List<LinkProperty>();
 
 		/// <summary>
 		/// An additional tag to differentiate between other FwLinkArgs entries between the
 		/// same core ApplicationName, Database, Guid values. Will never be null.
 		/// (cf. LT-7847)
 		/// </summary>
-		public string Tag
-		{
-			get
-			{
-				Debug.Assert(m_tag != null);
-				return m_tag;
-			}
-		}
+		public string Tag { get; protected set; } = string.Empty;
 		#endregion  Properties
 
 		#region Construction and Initialization
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FwLinkArgs"/> class.
-		/// </summary>
+
+		/// <summary />
 		protected FwLinkArgs()
 		{
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FwLinkArgs"/> class.
-		/// </summary>
+		/// <summary />
 		/// <param name="toolName">Name/path of the tool or view within the specific application.</param>
 		/// <param name="targetGuid">The GUID of the object which is the target of this link.</param>
 		/// <param name="tag">The tag.</param>
@@ -139,24 +120,26 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			m_toolName = toolName;
 			TargetGuid = targetGuid;
-			m_tag = tag ?? string.Empty;
+			Tag = tag ?? string.Empty;
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FwLinkArgs"/> class.
-		/// </summary>
+		/// <summary />
 		/// <param name="url">a URL string like that produced by ToString().</param>
 		public FwLinkArgs(string url)
 		{
 			if (!url.StartsWith(kFwUrlPrefix))
+			{
 				throw new ArgumentException($"unrecognized FwLinkArgs URL string: {url}");
+			}
 			var query = HttpUtility.UrlDecode(url.Substring(23));
 			var rgsProps = query.Split('&');
 			foreach (var prop in rgsProps)
 			{
 				var propPair = prop.Split('=');
 				if (propPair.Length != 2)
+				{
 					throw new ArgumentException($"invalid FwLinkArgs URL string: {url}");
+				}
 				switch (propPair[0])
 				{
 					case kTool:
@@ -166,16 +149,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 						TargetGuid = new Guid(propPair[1]);
 						break;
 					case kTag:
-						m_tag = propPair[1];
+						Tag = propPair[1];
 						break;
 					default:
 						LinkProperties.Add(new LinkProperty(propPair[0], propPair[1]));
 						break;
 				}
 			}
-			if (string.IsNullOrEmpty(m_toolName) || TargetGuid == Guid.Empty || m_tag == null)
+			if (string.IsNullOrEmpty(m_toolName) || TargetGuid == Guid.Empty || Tag == null)
+			{
 				throw new ArgumentException($"invalid FwLinkArgs URL string: {url}");
-
+			}
 		}
 
 		/// <summary>
@@ -184,8 +168,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public FwLinkArgs CopyLinkArgs()
 		{
-			var result = new FwLinkArgs(m_toolName, TargetGuid, m_tag);
-			result.m_linkProperties.AddRange(m_linkProperties);
+			var result = new FwLinkArgs(m_toolName, TargetGuid, Tag);
+			result.LinkProperties.AddRange(LinkProperties);
 			return result;
 		}
 		#endregion
@@ -207,13 +191,21 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public virtual bool EssentiallyEquals(FwLinkArgs lnk)
 		{
 			if (lnk == null)
+			{
 				return false;
+			}
 			if (lnk == this)
+			{
 				return true;
+			}
 			if (lnk.ToolName != ToolName)
+			{
 				return false;
+			}
 			if (lnk.TargetGuid != TargetGuid)
+			{
 				return false;
+			}
 			// tag is optional, but if a tool uses it with content, it should consistently provide content.
 			// therefore if one of these links does not have content, and the other does then
 			// we'll assume they refer to the same link
@@ -235,9 +227,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			var link = obj as FwLinkArgs;
 			if (link == null)
+			{
 				return false;
+			}
 			if (link == this)
+			{
 				return true;
+			}
 			//just compare the URLs
 			return (ToString() == link.ToString());
 		}
@@ -258,7 +254,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			AddProperties(query);
 
 			foreach (var property in LinkProperties)
+			{
 				query.AppendFormat("&{0}={1}", property.Name, Encode(property.Value));
+			}
 
 			//make it safe to represent as a url string (e.g., convert spaces)
 			uriBuilder.Query = HttpUtility.UrlEncode(query.ToString());
@@ -272,8 +270,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		protected virtual void AddProperties(StringBuilder bldr)
 		{
-			bldr.AppendFormat("{0}={1}&{2}={3}&{4}={5}", kTool, ToolName, kGuid,
-				(TargetGuid == Guid.Empty) ? "null" : TargetGuid.ToString(), kTag, Tag);
+			bldr.AppendFormat("{0}={1}&{2}={3}&{4}={5}", kTool, ToolName, kGuid, (TargetGuid == Guid.Empty) ? "null" : TargetGuid.ToString(), kTag, Tag);
 		}
 		#endregion
 
@@ -320,12 +317,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static string FixSilfwUrlForCurrentProject(string url, string project)
 		{
 			if (!url.StartsWith(kFwUrlPrefix))
+			{
 				return url;
-			string query = HttpUtility.UrlDecode(url.Substring(kFwUrlPrefix.Length));
-			string[] properties = query.Split(new char[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
-			int idxDatabase = -1;
+			}
+			var query = HttpUtility.UrlDecode(url.Substring(kFwUrlPrefix.Length));
+			var properties = query.Split(new char[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
+			var idxDatabase = -1;
 			string urlDatabase = null;
-			for (int i = 0; i < properties.Length; ++i)
+			for (var i = 0; i < properties.Length; ++i)
 			{
 				if (properties[i].StartsWith("database="))
 				{
@@ -334,542 +333,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 				}
 			}
 			if (idxDatabase < 0)
+			{
 				return url;
+			}
 			if (urlDatabase == project)
 			{
 				properties[idxDatabase] = "database=this$";
-				string fixedUrl = kFwUrlPrefix + HttpUtility.UrlEncode(string.Join("&", properties));
+				var fixedUrl = kFwUrlPrefix + HttpUtility.UrlEncode(string.Join("&", properties));
 				return fixedUrl;
 			}
-			else
-			{
-				return url;
-			}
+			return url;
 		}
 		#endregion
 	}
-	#endregion
-
-	#region FwAppArgs class
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// Class representing the arguments necessary for starting up a FieldWorks application
-	/// (from the command line or from a URI).
-	/// See the class comment on FwLinkArgs for details on how all the parts of hyperlinking work.
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	[Serializable]
-	public class FwAppArgs : FwLinkArgs
-	{
-		#region Command-line switch constants
-		/// <summary>Command-line argument: Command-line usage help</summary>
-		public const string kHelp = "help";
-		/// <summary>Command-line argument: Culture abbreviation</summary>
-		public const string kLocale = "locale";
-		/// <summary>Command-line argument: The project name (or file)</summary>
-		public const string kProject = "db";
-		/// <summary>URI argument: The project name (or file)</summary>
-		public const string kProjectUri = "database";
-		/// <summary>Command-line argument: </summary>
-		public const string kFlexConfigFile = "x";
-		/// <summary>Command-line argument: The fwbackup file</summary>
-		public const string kRestoreFile = "restore";
-		/// <summary>Command-line argument: String indicating optional files to restore</summary>
-		public const string kRestoreOptions = "include";
-		/// <summary>Command-line argument: flag that keeps FW from showing UI.</summary>
-		public const string kNoUserInterface = "noui";
-		/// <summary>Command-line argument: flag that causes FW to come up in a server mode for other applications.</summary>
-		public const string kAppServerMode = "appServerMode";
-		/// <summary>Command-line argument: flag that tells FW to bring up a dialog to set an associated project.</summary>
-		public const string kChooseProject = "chooseProject";
-		#endregion
-
-		#region Member variables
-		private string m_database = string.Empty;
-		private string m_dbType = string.Empty;
-		private string m_locale = string.Empty;
-		private string m_configFile = string.Empty;
-		private string m_backupFile = string.Empty;
-		private string m_restoreOptions = string.Empty;
-		private string m_chooseProjectFile = string.Empty;
-		#endregion
-
-		#region Properties
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the database/project name (possibly/probably a file path/name.
-		/// Will never return null.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string Database
-		{
-			get
-			{
-				Debug.Assert(m_database != null);
-				return m_database;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the type of the database/backend. (e.g. XML, MySql, etc.) Will never return null.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string DatabaseType
-		{
-			get
-			{
-				Debug.Assert(m_dbType != null);
-				return m_dbType;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the locale for the user interface.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string Locale
-		{
-			get
-			{
-				Debug.Assert(m_locale != null);
-				return m_locale;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Flag indicating whether to show help (if true, all other arguments can be ignored)
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public bool ShowHelp { get; private set; }
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Flag indicating whether or not to hide the UI.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public bool NoUserInterface { get; private set; }
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Flag indicating whether or not to run in a server mode for other applications.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public bool AppServerMode { get; private set; }
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the config file. Will never return null.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string ConfigFile
-		{
-			get
-			{
-				Debug.Assert(m_configFile != null);
-				return m_configFile;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the backup file used for a restore. Will never return null.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string BackupFile
-		{
-			get
-			{
-				Debug.Assert(m_backupFile != null);
-				return m_backupFile;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the restore options user chose for creating RestoreProjectSettings. Will
-		/// never return null.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string RestoreOptions
-		{
-			get
-			{
-				Debug.Assert(m_restoreOptions != null);
-				return m_restoreOptions;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets a value indicating whether this FwAppArgs also contains information pertaining
-		/// to a link request.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public bool HasLinkInformation
-		{
-			get
-			{
-				bool hasInfo = !string.IsNullOrEmpty(ToolName);
-				return hasInfo;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the full path of the file that the handle for a chosen project will be
-		/// written to.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string ChooseProjectFile
-		{
-			get { return m_chooseProjectFile; }
-		}
-		#endregion
-
-		#region Constructor
-		// NOTE: Don't make constructor overloads that take only varying numbers of string
-		// parameters. That would conflict with the string params constructor causing a bunch
-		// of stuff to break (which, thankfully, we have tests for)
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FwAppArgs"/> class.
-		/// </summary>
-		/// <param name="database">The name of the database.</param>
-		/// <param name="toolName">Name/path of the tool or view within the specific application.</param>
-		/// <param name="targetGuid">The GUID of the object which is the target of this link.</param>
-		/// ------------------------------------------------------------------------------------
-		public FwAppArgs(string database,
-			string toolName, Guid targetGuid) : base(toolName, targetGuid)
-		{
-			ProcessArg(kProject, database);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FwAppArgs"/> class.
-		/// </summary>
-		/// <param name="rgArgs">The command-line arguments.</param>
-		/// ------------------------------------------------------------------------------------
-		public FwAppArgs(params string[] rgArgs)
-		{
-			if (rgArgs.Length == 1 && rgArgs[0].StartsWith(kSilScheme + ":"))
-			{
-				// The only argument was a link so let FwLink parse it for us
-				if (!InitializeFromUrl(rgArgs[0]))
-					ShowHelp = true; // Badly formed link
-				return;
-			}
-
-			// The command wasn't a link request.
-			Dictionary<string, string> commandLineArgs = null;
-			try
-			{
-				commandLineArgs = ParseCommandLine(rgArgs);
-				if (commandLineArgs.ContainsKey(kHelp))
-					ProcessArg(kHelp, string.Empty);
-			}
-			catch (ArgumentException argEx)
-			{
-				Logger.WriteEvent(argEx.Message);
-				ShowHelp = true;
-			}
-
-			if (commandLineArgs == null || ShowHelp)
-				return; // Not much we can do
-
-			if (commandLineArgs.ContainsKey(kLink))
-			{
-				if (!InitializeFromUrl(commandLineArgs[kLink]))
-					ShowHelp = true;
-			}
-			else
-			{
-				foreach (var kvp in commandLineArgs)
-					ProcessArg(kvp.Key, kvp.Value);
-			}
-		}
-		#endregion
-
-		#region Overridden methods
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Adds the properties as named arguments in a format that can be used to produce a
-		/// URI query.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected override void AddProperties(StringBuilder bldr)
-		{
-			bldr.AppendFormat("{0}={1}", kProjectUri, Database);
-			base.AddProperties(bldr);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Some comparisons don't care about the content of the property table, so we provide a
-		/// method similar to Equals but not quite as demanding.
-		/// </summary>
-		/// <param name="lnk">The link to compare.</param>
-		/// ------------------------------------------------------------------------------------
-		public override bool EssentiallyEquals(FwLinkArgs lnk)
-		{
-			FwAppArgs appArgs = lnk as FwAppArgs;
-			if (appArgs == null || !base.EssentiallyEquals(lnk))
-				return false;
-			return (appArgs.Database == Database);
-		}
-		#endregion
-
-		#region Command-line Handling Methods
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Parse the command line, and return the results in a hashtable. The hash key is the
-		/// option tag. The hashtable value holds the parameter value.
-		/// The value may be null for cases where the option tag is all there is (e.g.,
-		/// -help). If an argument is supplied on the command line that does not match any
-		/// switch, it is assumed to be the project name.
-		///
-		/// Current set of options:
-		/// -app Application name (TE or FLEx)
-		/// -db Database (BEP) Type (xml)
-		/// -proj Project Name (usually a file name)
-		/// -help (also -? and -h Command line usage help
-		/// -link URL (as composed at some point by FwLink)
-		/// -locale CultureAbbr
-		/// </summary>
-		/// <param name="rgArgs">Array of strings containing the command-line arguments. In
-		/// general, the command-line will be parsed into whitespace-separated tokens, but
-		/// double-quotes (") can be used to create a multiple-word token that will appear in
-		/// the array as a single argument. One argument in this array can represent either a
-		/// key, a value, or both (since whitespace is not required between keys and values.
-		/// </param>
-		/// <exception cref="T:ArgumentException">Incorrectly formed command line. Caller should
-		/// alert user to correct command-line structure.
-		/// </exception>
-		///	-----------------------------------------------------------------------------------
-		private static Dictionary<string, string> ParseCommandLine(string[] rgArgs)
-		{
-			Dictionary<string, string> dictArgs = new Dictionary<string, string>();
-			if (rgArgs == null || rgArgs.Length == 0)
-				return dictArgs;
-
-			string sKey = string.Empty;
-			string value = string.Empty;
-
-			foreach (string sArg in rgArgs)
-			{
-				if (string.IsNullOrEmpty(sArg))
-					continue;
-
-				int iCurrChar = 0;
-				if (sArg[iCurrChar] == '-' || Platform.IsWindows && sArg[iCurrChar] == '/') // Start of option
-				{
-					// Start of a new argument key
-					if (!String.IsNullOrEmpty(value))
-					{
-						// Save the previous values to the previous key
-						if (dictArgs.ContainsKey(sKey))
-							throw new ArgumentException(sKey + " was passed in more then once");
-						dictArgs[sKey] = value;
-						value = string.Empty;
-					}
-					else if (sKey.Length > 0)
-					{
-						// Found a tag in the previous pass, but it has no argument, so save it in
-						// the map with a value of an empty vector, before processing current tag.
-						dictArgs.Add(sKey, string.Empty);
-					}
-					++iCurrChar; // Increment counter
-
-					// The user may have just put an argument right next to the marker,
-					// so we need to split the tag from the argument at this point.
-					sKey = CommandLineSwitch(sArg, ref iCurrChar);
-				}
-				if (iCurrChar < sArg.Length)
-				{
-					// Check for a second value for the current key
-					string newValue = sArg.Substring(iCurrChar);
-					if (!string.IsNullOrEmpty(value))
-						throw new ArgumentException(newValue + " added as second value for " + sKey);
-					value = newValue;
-					// There may not be a key, if this is the first argument, as when opening a file directly.
-					if (sKey.Length == 0)
-					{
-						sKey = (Path.GetExtension(value) == LcmFileHelper.ksFwBackupFileExtension) ? kRestoreFile : kProject;
-					}
-				}
-			}
-
-			// Save final tag.
-			if (sKey.Length > 0)
-				dictArgs.Add(sKey, value);
-
-			return dictArgs;
-		}
-
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Checks given string argument, starting at position iCurrChar for one of the
-		/// standard approved multi-character command line switches. If not found, it assumes
-		/// this is a single-character switch.
-		/// </summary>
-		///
-		/// <param name='sArg'>Command-line argument being processed</param>
-		/// <param name='iCurrChar'>Zero-based index indicating first character in sArg to be
-		/// considered when looking for switch. Typically, the initial value will be 1, since
-		/// character 0 will usually be a - or /. This parameter is returned to the caller
-		/// incremented by the number of characters in the switch.</param>
-		/// -----------------------------------------------------------------------------------
-		private static string CommandLineSwitch(string sArg, ref int iCurrChar)
-		{
-			if (FindCommandLineArgument(sArg, ref iCurrChar, kAppServerMode))
-				return kAppServerMode;
-			if (FindCommandLineArgument(sArg, ref iCurrChar, kProject)) // (old) project name
-				return kProject;
-			if (FindCommandLineArgument(sArg, ref iCurrChar, "proj")) // project name
-				return kProject;
-			if (FindCommandLineArgument(sArg, ref iCurrChar, kHelp))
-				return kHelp;
-			if (FindCommandLineArgument(sArg, ref iCurrChar, kChooseProject))
-				return kChooseProject;
-			if (FindCommandLineArgument(sArg, ref iCurrChar, kLink))
-				return kLink;
-			if (FindCommandLineArgument(sArg, ref iCurrChar, kLocale))
-				return kLocale;
-			if (FindCommandLineArgument(sArg, ref iCurrChar, kRestoreFile))
-				return kRestoreFile;
-			if (FindCommandLineArgument(sArg, ref iCurrChar, kRestoreOptions))
-				return kRestoreOptions;
-			if (FindCommandLineArgument(sArg, ref iCurrChar, kNoUserInterface))
-				return kNoUserInterface;
-
-			if (sArg.Length > iCurrChar)
-			{
-				// It is a single character tag.
-				string sKey = sArg.Substring(iCurrChar, 1).ToLowerInvariant();
-				if (sKey == "?" || sKey == "h") // Variants of help.
-				{
-					++iCurrChar;
-					return kHelp;
-				}
-				sKey = sArg.Substring(iCurrChar).ToLowerInvariant();
-				iCurrChar += sArg.Length - 1;
-				return sKey;
-			}
-			throw new ArgumentException();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Finds the specified argument key in the specified argument string.
-		/// </summary>
-		/// <param name="sArg">The argument string</param>
-		/// <param name="iCurrChar">Index of the current character to start looking.</param>
-		/// <param name="key">The argument to look for</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		private static bool FindCommandLineArgument(string sArg, ref int iCurrChar, string key)
-		{
-			if (string.Compare(sArg, iCurrChar, key, 0, key.Length, true) == 0)
-			{
-				iCurrChar += key.Length;
-				return true;
-			}
-			return false;
-		}
-
-		#endregion
-
-		#region Public methods
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Clears any link information from this FwAppArgs.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void ClearLinkInformation()
-		{
-			m_tag = string.Empty;
-			m_toolName = string.Empty;
-			TargetGuid = Guid.Empty;
-		}
-		#endregion
-
-		#region Private helper methods
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes from the given URL.
-		/// </summary>
-		/// <param name="url">The URL.</param>
-		/// <returns><c>true</c> if successfully initialized from the URL; <c>false</c>
-		/// otherwise</returns>
-		/// ------------------------------------------------------------------------------------
-		private bool InitializeFromUrl(string url)
-		{
-			try
-			{
-				if (!url.StartsWith(kFwUrlPrefix))
-					throw new UriFormatException("FieldWorks link must begin with " + kFwUrlPrefix);
-
-				Uri destination = new Uri(url);
-				string decodedQuery = HttpUtility.UrlDecode(destination.Query);
-				foreach (string pair in decodedQuery.Split('?', '&'))
-				{
-					int i = pair.IndexOf("=");
-					if (i < 0)
-						continue;
-					string name = pair.Substring(0, i);
-					string value = pair.Substring(i + 1);
-					ProcessArg(name, value);
-				}
-
-				if (String.IsNullOrEmpty(Database))
-					throw new UriFormatException("FieldWorks link must include a project name.");
-			}
-			catch (UriFormatException e)
-			{
-				Logger.WriteError(new Exception("Invalid link passed on FieldWorks command line: " + url, e));
-				return false;
-			}
-			return true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Processes a URL or command-line argument represented by the given name and value pair.
-		/// </summary>
-		/// <param name="name">The name.</param>
-		/// <param name="value">The value.</param>
-		/// ------------------------------------------------------------------------------------
-		private void ProcessArg(string name, string value)
-		{
-			Debug.Assert(value != null || name == kHelp);
-			switch (name)
-			{
-				case kProject:
-				case kProjectUri: m_database = value; break;
-				case kLocale: m_locale = value; break;
-				case kHelp: ShowHelp = true; break;
-				case kChooseProject: m_chooseProjectFile = value; break;
-				case kFlexConfigFile: m_configFile = value; break;
-				case kRestoreFile: m_backupFile = value; break;
-				case kRestoreOptions: m_restoreOptions = value; break;
-				case kNoUserInterface: NoUserInterface = true; break;
-				case kAppServerMode: AppServerMode = true; break;
-				case kTag: m_tag = value; break;
-				case kTool: m_toolName = value; break;
-				case kGuid:
-					if (value != "null")
-						TargetGuid = new Guid(value);
-					break;
-				default:
-					LinkProperties.Add(new LinkProperty(name, Decode(value)));
-					break;
-			}
-		}
-		#endregion
-	}
-	#endregion
 }

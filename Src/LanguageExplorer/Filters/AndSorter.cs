@@ -189,12 +189,12 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		public override void PersistAsXml(XElement node)
+		public override void PersistAsXml(XElement element)
 		{
-			base.PersistAsXml(node);
+			base.PersistAsXml(element);
 			foreach (RecordSorter rs in Sorters)
 			{
-				DynamicLoader.PersistObject(rs, node, "sorter");
+				DynamicLoader.PersistObject(rs, element, "sorter");
 			}
 		}
 
@@ -261,11 +261,11 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public override void InitXml(XElement node)
+		public override void InitXml(XElement element)
 		{
-			base.InitXml (node);
-			Sorters = new ArrayList(node.Elements().Count());
-			foreach (var child in node.Elements())
+			base.InitXml (element);
+			Sorters = new ArrayList(element.Elements().Count());
+			foreach (var child in element.Elements())
 			{
 				var obj = DynamicLoader.RestoreFromChild(child, ".");
 				Sorters.Add(obj);

@@ -1,11 +1,12 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2012-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-
-// Copyright Copyright © 2002 CyberbrineDreams; for permission to use this fragment contact webmaster@cyberbrinedreams.com
+// Copyright Â© 2002 CyberbrineDreams; for permission to use this fragment contact webmaster@cyberbrinedreams.com
 // Very slightly adapted (comments only changed) from http://www.cyberbrinedreams.com/version2/projects/code/stable_sort/
+
+using System;
+using System.Collections;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -24,7 +25,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Implementation for Arrays
 		/// </summary>
-		private Array secondary = null;
+		private Array secondary;
 
 		#endregion Data members
 
@@ -35,9 +36,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="array">array to be sorted</param>
 		public static void Sort(ref Array array)
 		{
-			using (MergeSort mergeSort = new MergeSort())
+			using (var mergeSort = new MergeSort())
 			{
-				mergeSort.InternalSort(ref array, 0, array.Length - 1, System.Collections.Comparer.Default);
+				mergeSort.InternalSort(ref array, 0, array.Length - 1, Comparer.Default);
 			}
 		}
 
@@ -46,9 +47,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		/// <param name="array">array to be sorted</param>
 		/// <param name="compare">comparer to use for sorting</param>
-		public static void Sort(ref Array array, System.Collections.IComparer compare)
+		public static void Sort(ref Array array, IComparer compare)
 		{
-			using (MergeSort mergeSort = new MergeSort())
+			using (var mergeSort = new MergeSort())
 			{
 				mergeSort.InternalSort(ref array, 0, array.Length - 1, compare);
 			}
@@ -58,11 +59,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Sort an ArrayList using the default comparer
 		/// </summary>
 		/// <param name="array">ArrayList to sort</param>
-		public static void Sort(ref System.Collections.ArrayList array)
+		public static void Sort(ref ArrayList array)
 		{
-			using (MergeSort mergeSort = new MergeSort())
+			using (var mergeSort = new MergeSort())
 			{
-				mergeSort.InternalSort(ref array, 0, array.Count - 1, System.Collections.Comparer.Default);
+				mergeSort.InternalSort(ref array, 0, array.Count - 1, Comparer.Default);
 			}
 		}
 
@@ -71,9 +72,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		/// <param name="array">ArrayList to sort</param>
 		/// <param name="compare">Comparer to used for sorting</param>
-		public static void Sort(ref System.Collections.ArrayList array, System.Collections.IComparer compare)
+		public static void Sort(ref ArrayList array, IComparer compare)
 		{
-			using (MergeSort mergeSort = new MergeSort())
+			using (var mergeSort = new MergeSort())
 			{
 				mergeSort.InternalSort(ref array, 0, array.Count - 1, compare);
 			}
@@ -88,20 +89,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 		}
 
-		#region IDisposable & Co. implementation
-
-		/// <summary>
-		/// True, if the object has been disposed.
-		/// </summary>
-		private bool m_isDisposed = false;
-
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed
-		{
-			get { return m_isDisposed; }
-		}
+		private bool IsDisposed { get; set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -124,7 +115,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			Dispose(true);
 			// This object will be cleaned up by the Dispose method.
-			// Therefore, you should call GC.SupressFinalize to
+			// Therefore, you should call GC.SuppressFinalize to
 			// take this object off the finalization queue
 			// and prevent finalization code for this object
 			// from executing a second time.
@@ -155,19 +146,21 @@ namespace SIL.FieldWorks.Common.FwUtils
 		protected virtual void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
-			if (m_isDisposed)
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
 				return;
+			}
 
 			if (disposing)
 			{
 				// Dispose managed resources here.
 				if (secondary != null)
 				{
-					foreach (Object obj in secondary)
+					foreach (var obj in secondary)
 					{
-						if (obj is IDisposable)
-							(obj as IDisposable).Dispose();
+						var asDisposable = obj as IDisposable;
+						asDisposable?.Dispose();
 					}
 				}
 			}
@@ -175,7 +168,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			// Dispose unmanaged resources here, whether disposing is true or false.
 			secondary = null;
 
-			m_isDisposed = true;
+			IsDisposed = true;
 		}
 
 		#endregion IDisposable & Co. implementation
@@ -183,74 +176,69 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// The actual implementation
 		/// </summary>
-		/// <param name="primary"></param>
-		/// <param name="left"></param>
-		/// <param name="right"></param>
-		/// <param name="compare"></param>
-		protected void InternalSort(
-		ref Array primary,
-		int left,
-		int right,
-		System.Collections.IComparer compare)
+		protected void InternalSort(ref Array primary, int left, int right, IComparer compare)
 		{
 			if (secondary == null || secondary.Length != primary.Length)
+			{
 				secondary = (Array)primary.Clone();
-
+			}
 			if (right > left)
 			{
-				int middle = (left + right) / 2;
+				var middle = (left + right) / 2;
 				InternalSort(ref primary, left, middle, compare);
 				InternalSort(ref primary, middle + 1, right, compare);
 
-				int i, j, k;
+				int i;
 				for (i = middle + 1; i > left; i--)
+				{
 					secondary.SetValue(primary.GetValue(i - 1), i - 1);
+				}
+				int j;
 				for (j = middle; j < right; j++)
+				{
 					secondary.SetValue(primary.GetValue(j + 1), right + middle - j);
-				for (k = left; k <= right; k++)
-					primary.SetValue(
-					(compare.Compare(secondary.GetValue(i), secondary.GetValue(j)) < 0) ?
-					secondary.GetValue(i++) :
-					secondary.GetValue(j--), k);
+				}
+				for (var k = left; k <= right; k++)
+				{
+					primary.SetValue((compare.Compare(secondary.GetValue(i), secondary.GetValue(j)) < 0) ? secondary.GetValue(i++) : secondary.GetValue(j--), k);
+				}
 			}
 		}
 
 		/// <summary>
 		/// Implementation for ArrayLists
 		/// </summary>
-		private System.Collections.ArrayList secondaryList = null;
+		private ArrayList secondaryList;
 		/// <summary>
 		/// The actual implementation
 		/// </summary>
-		/// <param name="primary"></param>
-		/// <param name="left"></param>
-		/// <param name="right"></param>
-		/// <param name="compare"></param>
-		protected void InternalSort(
-		ref System.Collections.ArrayList primary,
-		int left,
-		int right,
-		System.Collections.IComparer compare)
+		protected void InternalSort(ref ArrayList primary, int left, int right, IComparer compare)
 		{
 			if (secondaryList == null || secondaryList.Count != primary.Count)
-				secondaryList = (System.Collections.ArrayList)primary.Clone();
-
+			{
+				secondaryList = (ArrayList)primary.Clone();
+			}
 			if (right > left)
 			{
-				int middle = (left + right) / 2;
+				var middle = (left + right) / 2;
 				InternalSort(ref primary, left, middle, compare);
 				InternalSort(ref primary, middle + 1, right, compare);
 
-				int i, j, k;
+				int i;
 				for (i = middle + 1; i > left; i--)
+				{
 					secondaryList[i - 1] = primary[i - 1];
+				}
+				int j;
 				for (j = middle; j < right; j++)
+				{
 					secondaryList[right + middle - j] = primary[j + 1];
-				for (k = left; k <= right; k++)
-					primary[k] = (compare.Compare(secondaryList[i], secondaryList[j]) < 0) ?
-					secondaryList[i++] : secondaryList[j--];
+				}
+				for (var k = left; k <= right; k++)
+				{
+					primary[k] = (compare.Compare(secondaryList[i], secondaryList[j]) < 0) ? secondaryList[i++] : secondaryList[j--];
+				}
 			}
 		}
-		#endregion
 	}
 }

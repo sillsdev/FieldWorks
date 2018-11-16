@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -6,31 +6,22 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
-
 	/// <summary>
 	/// A IPicture Implementation using C# image class (mainly for use on Linux)
 	/// </summary>
 	/// <remarks>NOTE: only the methods that are currently used are implemented.</remarks>
-	//[ComImport()]
-	[Guid("1bd4d91c-124b-11de-96cb-0019dbf4566e"),
-	ClassInterface(ClassInterfaceType.None),
-	TypeLibType(TypeLibTypeFlags.FCanCreate)]
-	public class ImagePicture : IPicture, IDisposable, IPictureDisp, IComDisposable
+	[Guid("1bd4d91c-124b-11de-96cb-0019dbf4566e"), ClassInterface(ClassInterfaceType.None), TypeLibType(TypeLibTypeFlags.FCanCreate)]
+	public sealed class ImagePicture : IPicture, IDisposable, IPictureDisp, IComDisposable
 	{
 		/// <summary>
 		/// Contains the image this is Rendered.
 		/// </summary>
-		protected Image m_img;
-
-		// TODO-Linux: Currently using fixed dpi this is not ideal as images will be wrong size
-		// on monitors with different dpis.
-		private int dpiX = 96;
-		private int dpiY = 96;
+		private Image m_img;
 
 		/// <summary>
 		/// Whether the ImagePicture is owned by native or managed code, to specify
@@ -43,8 +34,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public static ImagePicture FromImage(Image img)
 		{
-			ImagePicture ret = new ImagePicture();
-			ret.m_img = (Image)img.Clone();
+			var ret = new ImagePicture
+			{
+				m_img = (Image)img.Clone()
+			};
 
 			return ret;
 		}
@@ -56,67 +49,58 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			using (var s = new MemoryStream(pbData, 0, cbData))
 			{
-				ImagePicture ret = new ImagePicture();
-				ret.m_img = Image.FromStream(s);
+				var ret = new ImagePicture
+				{
+					m_img = Image.FromStream(s)
+				};
 				return ret;
 			}
 		}
 
-		/// <summary/>
-		public ImagePicture()
-		{
-		}
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Releases unmanaged resources and performs other cleanup operations before the
 		/// <see cref="ImagePicture"/> is reclaimed by garbage collection.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		~ImagePicture()
 		{
 			Dispose(false);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Releases unmanaged and - optionally - managed resources
 		/// </summary>
-		/// <param name="fDisposing"><c>true</c> to release both managed and unmanaged
-		/// resources; <c>false</c> to release only unmanaged resources.</param>
-		/// ------------------------------------------------------------------------------------
-		protected virtual void Dispose(bool fDisposing)
+		private void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if (fDisposing)
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (disposing)
 			{
-				if (m_img != null)
-					m_img.Dispose();
+				m_img?.Dispose();
 			}
 			m_img = null;
 		}
 
 		#region IDisposable Members
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Performs application-defined tasks associated with freeing, releasing, or resetting
 		/// unmanaged resources.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		void IComDisposable.Dispose()
 		{
 			if (ReferenceOwnedByNative == false)
+			{
 				return;
-
+			}
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
 
 		void IDisposable.Dispose()
 		{
-			if (ReferenceOwnedByNative == true)
+			if (ReferenceOwnedByNative)
+			{
 				return;
+			}
 
 			Dispose(true);
 			GC.SuppressFinalize(this);
@@ -124,63 +108,29 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		#endregion
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the horizontal dpi.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public int DpiX
-		{
-			get { return dpiX; }
-			set { dpiX = value; }
-		}
+		public int DpiX { get; set; } = 96;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the vertical dpi.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public int DpiY
-		{
-			get { return dpiY; }
-			set { dpiY = value; }
-		}
+		public int DpiY { get; set; } = 96;
 
 		#region IPicture Members
 
 		/// <summary> return the width in himetric</summary>
-		public int Width
-		{
-			get
-			{
-				return new HiMetric(m_img.Width, dpiX).Value;
-			}
-		}
+		public int Width => new HiMetric(m_img.Width, DpiX).Value;
 
 		/// <summary> return the height in himetric</summary>
-		public int Height
-		{
-			get
-			{
-				return new HiMetric(m_img.Height, dpiY).Value;
-			}
-		}
+		public int Height => new HiMetric(m_img.Height, DpiY).Value;
 
-		/// <summary></summary>
-		/// prcWBounds not used
-		public void Render(
-			IntPtr hdc,
-			int x,
-			int y,
-			int cx,
-			int cy,
-			int xSrc,
-			int ySrc,
-			int cxSrc,
-			int cySrc,
-			IntPtr prcWBounds)
+		/// <summary />
+		/// <remarks>prcWBounds not used</remarks>
+		public void Render(IntPtr hdc, int x, int y, int cx, int cy, int xSrc, int ySrc, int cxSrc, int cySrc, IntPtr prcWBounds)
 		{
-			using (Graphics gr = Graphics.FromHdc(hdc))
+			using (var gr = Graphics.FromHdc(hdc))
 			{
 
 				// Sometimes width or height is negative and we are expected to draw backwards (which DrawImage doesn't seem to do)
@@ -196,94 +146,89 @@ namespace SIL.FieldWorks.Common.FwUtils
 					xSrc -= cxSrc;
 				}
 
-				gr.DrawImage(m_img, new Rectangle(x, y, cx, cy),
-							 new Rectangle(
-									  new HiMetric(xSrc).GetPixels(dpiX),
-									  new HiMetric(ySrc).GetPixels(dpiY),
-									  new HiMetric(cxSrc).GetPixels(dpiX),
-									  new HiMetric(cySrc).GetPixels(dpiY)), GraphicsUnit.Pixel);
+				gr.DrawImage(m_img, new Rectangle(x, y, cx, cy), new Rectangle(new HiMetric(xSrc).GetPixels(DpiX), new HiMetric(ySrc).GetPixels(DpiY), new HiMetric(cxSrc).GetPixels(DpiX), new HiMetric(cySrc).GetPixels(DpiY)), GraphicsUnit.Pixel);
 			}
 		}
 
-		/// <summary/>
+		/// <summary />
 		public int Attributes
 		{
-			get { throw new NotImplementedException(); }
+			get { throw new NotSupportedException(); }
 		}
 
-		/// <summary/>
+		/// <summary />
 		public int CurDC
 		{
-			get { throw new NotImplementedException(); }
+			get { throw new NotSupportedException(); }
 		}
 
-		/// <summary/>
+		/// <summary />
 		public int Handle
 		{
-			get { throw new NotImplementedException(); }
+			get { throw new NotSupportedException(); }
 		}
 
-		/// <summary/>
+		/// <summary />
 		public bool KeepOriginalFormat
 		{
 			get
 			{
-				throw new NotImplementedException();
+				throw new NotSupportedException();
 			}
 			set
 			{
-				throw new NotImplementedException();
+				throw new NotSupportedException();
 			}
 		}
 
-		/// <summary/>
+		/// <summary />
 		public void PictureChanged()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
-		/// <summary/>
+		/// <summary />
 		public void Render(int hdc, int x, int y, int cx, int cy, int xSrc, int ySrc, int cxSrc, int cySrc, IntPtr prcWBounds)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
-		/// <summary/>
+		/// <summary />
 		public void SaveAsFile(IntPtr pstm, bool fSaveMemCopy, out int pcbSize)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
-		/// <summary/>
+		/// <summary />
 		public void SelectPicture(int hdcIn, out int phdcOut, out int phbmpOut)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
-		/// <summary/>
+		/// <summary />
 		public void SetHdc(int hdc)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
-		/// <summary/>
+		/// <summary />
 		public short Type
 		{
-			get { throw new NotImplementedException(); }
+			get { throw new NotSupportedException(); }
 		}
 
-		/// <summary/>
+		/// <summary />
 		public int hPal
 		{
-			get { throw new NotImplementedException(); }
+			get { throw new NotSupportedException(); }
 		}
-		/// <summary/>
+
+		/// <summary />
 		public void put_hPal(int val)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		#endregion
 	}
-
 }

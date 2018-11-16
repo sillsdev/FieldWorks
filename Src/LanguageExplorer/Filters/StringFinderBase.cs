@@ -96,7 +96,7 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		public virtual void PersistAsXml(XElement node)
+		public virtual void PersistAsXml(XElement element)
 		{
 			// nothing to do in base class
 		}
@@ -104,7 +104,7 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public virtual void InitXml(XElement node)
+		public virtual void InitXml(XElement element)
 		{
 			// nothing to do in base class
 		}

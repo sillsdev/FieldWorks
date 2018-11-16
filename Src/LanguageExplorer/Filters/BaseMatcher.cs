@@ -79,21 +79,21 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		public virtual void PersistAsXml(XElement node)
+		public virtual void PersistAsXml(XElement element)
 		{
 			if (Label != null)
 			{
 				var contents = TsStringUtils.GetXmlRep(Label, WritingSystemFactory, 0, false);
-				XmlUtils.SetAttribute(node, "label", contents);
+				XmlUtils.SetAttribute(element, "label", contents);
 			}
 		}
 
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public virtual void InitXml(XElement node)
+		public virtual void InitXml(XElement element)
 		{
-			m_xmlLabel = XmlUtils.GetOptionalAttributeValue(node, "label");
+			m_xmlLabel = XmlUtils.GetOptionalAttributeValue(element, "label");
 		}
 
 		#endregion

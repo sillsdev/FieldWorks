@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2017 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,36 +13,35 @@ using NUnit.Framework;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	[TestFixture]
 	public class TestBaseForTestsThatCreateTempFilesBasedOnResources
 	{
 		private static List<string> s_foldersToDelete = new List<string>();
 
 		/// <summary />
+		[TestFixtureSetUp]
 		public virtual void FixtureSetup()
 		{ /* Do nothing here. */ }
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		[TestFixtureTearDown]
 		public virtual void FixtureTearDown()
 		{
 			CleanUpTempFolders();
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
+		[SetUp]
+		public virtual void TestSetup()
+		{ /* Do nothing here. */ }
+
+		/// <summary />
+		[TearDown]
+		public virtual void TestTeardown()
+		{ /* Do nothing here. */ }
+
+		/// <summary />
 		protected string CreateTempTestFiles(Type resourcesType, string folderName)
 		{
 			var folderPath = Path.Combine(Path.GetTempPath(), folderName);
@@ -57,38 +56,25 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return folderPath;
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected virtual ResourceManager ResourceMgr
-		{
-			get { return Properties.Resources.ResourceManager; }
-		}
+		/// <summary />
+		protected virtual ResourceManager ResourceMgr => Properties.Resources.ResourceManager;
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		private void CreateSingleTempTestFile(string resName)
 		{
-			string path = resName.Replace("__", Path.DirectorySeparatorChar.ToString());
+			var path = resName.Replace("__", Path.DirectorySeparatorChar.ToString());
 			path = path.Replace("_DASH_", "-");
 			path = path.Replace("_", ".");
 			path = Path.Combine(Path.GetTempPath(), path);
-			string folder = Path.GetDirectoryName(path);
+			var folder = Path.GetDirectoryName(path);
 			if (!Directory.Exists(folder))
+			{
 				Directory.CreateDirectory(folder);
+			}
 			File.WriteAllText(path, ResourceMgr.GetString(resName), Encoding.UTF8);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		internal static void CleanUpTempFolders()
 		{
 			foreach (string folder in s_foldersToDelete)

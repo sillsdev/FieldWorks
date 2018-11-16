@@ -73,17 +73,17 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		public void PersistAsXml(XElement node)
+		public void PersistAsXml(XElement element)
 		{
-			DynamicLoader.PersistObject(SubComp, node, "comparer");
+			DynamicLoader.PersistObject(SubComp, element, "comparer");
 		}
 
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public void InitXml(XElement node)
+		public void InitXml(XElement element)
 		{
-			SubComp = DynamicLoader.RestoreFromChild(node, "comparer") as IComparer;
+			SubComp = DynamicLoader.RestoreFromChild(element, "comparer") as IComparer;
 		}
 
 		#endregion

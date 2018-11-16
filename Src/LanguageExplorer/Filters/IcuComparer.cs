@@ -171,22 +171,22 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
+		/// <param name="element">The node.</param>
 		/// ------------------------------------------------------------------------------------------
-		public void PersistAsXml(XElement node)
+		public void PersistAsXml(XElement element)
 		{
-			XmlUtils.SetAttribute(node, "ws", WsCode);
+			XmlUtils.SetAttribute(element, "ws", WsCode);
 		}
 
 		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
+		/// <param name="element">The node.</param>
 		/// ------------------------------------------------------------------------------------------
-		public void InitXml(XElement node)
+		public void InitXml(XElement element)
 		{
-			WsCode = XmlUtils.GetMandatoryAttributeValue(node, "ws");
+			WsCode = XmlUtils.GetMandatoryAttributeValue(element, "ws");
 		}
 
 		#endregion

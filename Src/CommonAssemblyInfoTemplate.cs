@@ -1,19 +1,18 @@
-﻿/*----------------------------------------------------------------------------------------------
-Copyright (c) 2002-2018 SIL International
-This software is licensed under the LGPL, version 2.1 or later
-(http://www.gnu.org/licenses/lgpl-2.1.html)
 
-If this file is CommonAssemblyInfo.cs, it is a generated file, and should not be hand edited.
-If it is CommonAssemblyInfoTemplate.cs, it is the template from which CommonAssemblyInfo.cs
-is generated.
+// Copyright (c) 2002-2018 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-CommonAssemblyInfo.cs should be included in every FieldWorks project.
-It holds common directives that are usually part of AssemblyInfo.cs.
-Some are kept here so that certain symbols (starting with $ in the template) can be replaced
-with appropriate values, typically version numbers, by a custom build task
-(Currently VersionEx in Nant, Substitute in the new MSBuild/XBuild approach).
-Other directives are merely here because we want them to be the same for all FieldWorks projects.
-----------------------------------------------------------------------------------------------*/
+// If this file is CommonAssemblyInfo.cs, it is a generated file, and should not be hand edited.
+// If it is CommonAssemblyInfoTemplate.cs, it is the template from which CommonAssemblyInfo.cs
+// is generated, and can be edited.
+
+// CommonAssemblyInfo.cs should be included in every FieldWorks project.
+// It holds common directives that are usually part of AssemblyInfo.cs.
+// Some are kept here so that certain symbols (starting with $ in the template) can be replaced
+// with appropriate values, typically version numbers, by a custom build task
+// (Currently VersionEx in Nant, Substitute in the new MSBuild/XBuild approach).
+// Other directives are merely here because we want them to be the same for all FieldWorks projects.
 using System.Reflection;
 
 [assembly: AssemblyConfiguration("")]

@@ -40,16 +40,16 @@ namespace LanguageExplorer.Controls.XMLViews
 			return false;
 		}
 
-		public override void PersistAsXml(XElement node)
+		public override void PersistAsXml(XElement element)
 		{
-			base.PersistAsXml(node);
-			XmlUtils.SetAttribute(node, "flid", Flid.ToString());
+			base.PersistAsXml(element);
+			XmlUtils.SetAttribute(element, "flid", Flid.ToString());
 		}
 
-		public override void InitXml(XElement node)
+		public override void InitXml(XElement element)
 		{
-			base.InitXml(node);
-			Flid = XmlUtils.GetMandatoryIntegerAttributeValue(node, "flid");
+			base.InitXml(element);
+			Flid = XmlUtils.GetMandatoryIntegerAttributeValue(element, "flid");
 		}
 
 		public override bool CompatibleFilter(XElement colSpec)

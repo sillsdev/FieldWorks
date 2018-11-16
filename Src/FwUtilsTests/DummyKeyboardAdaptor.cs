@@ -1,4 +1,4 @@
-// Copyright (c) 2017 SIL International
+// Copyright (c) 2017-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,101 +10,75 @@ using SIL.Windows.Forms.Keyboarding;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
-	/// <summary/>
+	/// <summary />
 	public class DummyKeyboardAdaptor : DisposableBase, IKeyboardRetrievingAdaptor, IKeyboardSwitchingAdaptor
 	{
-		private readonly KeyboardDescription m_defaultKeyboard;
-
-		/// <summary/>
+		/// <summary />
 		public DummyKeyboardAdaptor()
 		{
-			m_defaultKeyboard = new KeyboardDescription("en_US", "US", "US", "en", true, this);
+			DefaultKeyboard = new KeyboardDescription("en_US", "US", "US", "en", true, this);
 		}
 
-		/// <summary/>
+		/// <summary />
 		public void Initialize()
 		{
 		}
 
-		/// <summary/>
+		/// <summary />
 		public void UpdateAvailableKeyboards()
 		{
 		}
 
-		/// <summary/>
+		/// <summary />
 		public bool ActivateKeyboard(KeyboardDescription keyboard)
 		{
 			return true;
 		}
 
-		/// <summary/>
+		/// <summary />
 		public void DeactivateKeyboard(KeyboardDescription keyboard)
 		{
 		}
 
-		/// <summary/>
-		public KeyboardDescription GetKeyboardForInputLanguage(IInputLanguage inputLanguage)
-		{
-			return null;
-		}
-
-		/// <summary/>
+		/// <summary />
 		public KeyboardDescription CreateKeyboardDefinition(string id)
 		{
-			string[] parts = id.Split('_');
+			var parts = id.Split('_');
 			return new KeyboardDescription(id, parts[1], parts[1], parts[0], false, this);
 		}
 
-		/// <summary/>
+		/// <summary />
 		public bool CanHandleFormat(KeyboardFormat format)
 		{
 			return true;
 		}
 
-		/// <summary/>
+		/// <summary />
 		public Action GetKeyboardSetupAction()
 		{
-			return ()=>
+			return () =>
 			{
-				throw new NotImplementedException();
+				throw new NotSupportedException();
 			};
 		}
 
-		/// <summary/>
-		public KeyboardDescription DefaultKeyboard
-		{
-			get { return m_defaultKeyboard; }
-		}
+		/// <summary />
+		public KeyboardDescription DefaultKeyboard { get; }
 
-		/// <summary/>
-		public KeyboardDescription ActiveKeyboard
-		{
-			get { return null; }
-		}
+		/// <summary />
+		public KeyboardDescription ActiveKeyboard => null;
 
-		/// <summary/>
-		public KeyboardAdaptorType Type
-		{
-			get { return KeyboardAdaptorType.System; }
-		}
+		/// <summary />
+		public KeyboardAdaptorType Type => KeyboardAdaptorType.System;
 
-		/// <summary/>
-		public bool IsApplicable
-		{
-			get { return true; }
-		}
+		/// <summary />
+		public bool IsApplicable => true;
 
-		/// <summary/>
-		public IKeyboardSwitchingAdaptor SwitchingAdaptor
-		{
-			get { return this; }
-		}
+		/// <summary />
+		public IKeyboardSwitchingAdaptor SwitchingAdaptor => this;
 
-		/// <summary/>
-		public bool IsSecondaryKeyboardSetupApplication
-		{
-			get { return false; }
-		}
+		/// <summary />
+		public bool IsSecondaryKeyboardSetupApplication => false;
 
 		/// <inheritdoc />
 		protected override void Dispose(bool disposing)

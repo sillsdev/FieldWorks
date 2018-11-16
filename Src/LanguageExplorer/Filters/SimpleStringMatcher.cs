@@ -264,15 +264,15 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		public override void PersistAsXml(XElement node)
+		public override void PersistAsXml(XElement element)
 		{
-			base.PersistAsXml(node);
-			XmlUtils.SetAttribute(node, "pattern", Pattern.Pattern.Text);
+			base.PersistAsXml(element);
+			XmlUtils.SetAttribute(element, "pattern", Pattern.Pattern.Text);
 			int var;
 			var ws = Pattern.Pattern.get_PropertiesAt(0).GetIntPropValues((int)FwTextPropType.ktptWs, out var);
-			XmlUtils.SetAttribute(node, "ws", ws.ToString());
-			XmlUtils.SetAttribute(node, "matchCase", Pattern.MatchCase.ToString());
-			XmlUtils.SetAttribute(node, "matchDiacritics", Pattern.MatchDiacritics.ToString());
+			XmlUtils.SetAttribute(element, "ws", ws.ToString());
+			XmlUtils.SetAttribute(element, "matchCase", Pattern.MatchCase.ToString());
+			XmlUtils.SetAttribute(element, "matchDiacritics", Pattern.MatchDiacritics.ToString());
 			// NOTE!! if any more properties of the matcher become significant, they should be
 			// accounted for also in SameMatcher!
 		}
@@ -280,11 +280,11 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public override void InitXml(XElement node)
+		public override void InitXml(XElement element)
 		{
-			base.InitXml(node);
+			base.InitXml(element);
 
-			m_persistNode = node;
+			m_persistNode = element;
 		}
 
 		/// <summary>

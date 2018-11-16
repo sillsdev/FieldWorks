@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2015 SIL International
+// Copyright (c) 2008-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,11 +7,9 @@ using NUnit.Framework;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Tests for the VersificationTable class
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
 	public class MatchedPairsTests
 	{
@@ -25,22 +23,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		private MatchedPairList m_pairList;
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
 			m_pairList = MatchedPairList.Load(kXml, "Test WS");
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the Load method.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void LoadTest()
 		{
@@ -60,15 +52,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.IsTrue(m_pairList[2].PermitParaSpanning);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the XmlString property.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void XmlStringTest()
 		{
-			string xml = m_pairList.XmlString;
+			var xml = m_pairList.XmlString;
 			xml = xml.Replace(Environment.NewLine + "    ", string.Empty);
 			xml = xml.Replace(Environment.NewLine + "   ", string.Empty);
 			xml = xml.Replace(Environment.NewLine + "  ", string.Empty);
@@ -78,11 +68,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(kXml, xml);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the BelongsToPair method.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void BelongsToPairTest()
 		{
@@ -96,11 +84,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.IsFalse(m_pairList.BelongsToPair("."));
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the IsMatchedPair method.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void IsMatchedPairTest()
 		{
@@ -113,11 +99,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.IsFalse(m_pairList.IsMatchedPair(".", "]"));
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the GetPairForOpen method.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void GetPairForOpenTest()
 		{
@@ -131,11 +115,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.IsNull(m_pairList.GetPairForOpen(")"));
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the GetPairForClose method.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void GetPairForCloseTest()
 		{
@@ -149,11 +131,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.IsNull(m_pairList.GetPairForClose("("));
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the IsOpen method.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void IsOpenTest()
 		{
@@ -169,11 +149,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.IsFalse(m_pairList.IsOpen(";"));
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the IsClose method.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void IsCloseTest()
 		{

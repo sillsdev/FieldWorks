@@ -76,7 +76,7 @@ namespace SILUBS.ScriptureChecks
 
 			PunctuationCheck check = new PunctuationCheck(m_dataSource);
 			List<TextTokenSubstring> tts =
-				check.GetReferences(m_dataSource.TextTokens(), String.Empty);
+				check.GetReferences(m_dataSource.TextTokens, String.Empty);
 
 			Assert.AreEqual(expectedPunctPatterns.Length, tts.Count, "Unexpected number of punctuation patterns." );
 
@@ -145,7 +145,7 @@ namespace SILUBS.ScriptureChecks
 			dataSource.m_tokens.Add(new DummyTextToken("\"Word",
 				TextType.Verse, false, false, "Paragraph"));
 			List<TextTokenSubstring> tokens =
-				check.GetReferences(dataSource.TextTokens(), string.Empty);
+				check.GetReferences(dataSource.TextTokens, string.Empty);
 			Assert.AreEqual(2, tokens.Count);
 
 			Assert.AreEqual("._", tokens[0].InventoryText);
@@ -171,7 +171,7 @@ namespace SILUBS.ScriptureChecks
 			dataSource.m_tokens.Add(new DummyTextToken("\"Word",
 				TextType.Verse, false, false, "Paragraph"));
 			List<TextTokenSubstring> tokens =
-				check.GetReferences(dataSource.TextTokens(), string.Empty);
+				check.GetReferences(dataSource.TextTokens, string.Empty);
 			Assert.AreEqual(2, tokens.Count);
 
 			Assert.AreEqual("._", tokens[0].InventoryText);
@@ -197,7 +197,7 @@ namespace SILUBS.ScriptureChecks
 			dataSource.m_tokens.Add(new DummyTextToken("\"Word",
 				TextType.Verse, false, false, "Paragraph"));
 			List<TextTokenSubstring> tokens =
-				check.GetReferences(dataSource.TextTokens(), string.Empty);
+				check.GetReferences(dataSource.TextTokens, string.Empty);
 			Assert.AreEqual(2, tokens.Count);
 
 			Assert.AreEqual("._", tokens[0].InventoryText);
@@ -225,7 +225,7 @@ namespace SILUBS.ScriptureChecks
 			dataSource.m_tokens.Add(new DummyTextToken("\"I am a quote note!\"",
 				TextType.Note, true, true, "Note General Paragraph"));
 			List<TextTokenSubstring> tokens =
-				check.GetReferences(dataSource.TextTokens(), string.Empty);
+				check.GetReferences(dataSource.TextTokens, string.Empty);
 			Assert.AreEqual(4, tokens.Count);
 
 			Assert.AreEqual("._", tokens[0].InventoryText);
@@ -261,7 +261,7 @@ namespace SILUBS.ScriptureChecks
 			dataSource.m_tokens.Add(new DummyTextToken("\"I am a quote note!\"",
 				TextType.Note, true, true, "Note General Paragraph"));
 			List<TextTokenSubstring> tokens =
-				check.GetReferences(dataSource.TextTokens(), string.Empty);
+				check.GetReferences(dataSource.TextTokens, string.Empty);
 			Assert.AreEqual(3, tokens.Count);
 
 			Assert.AreEqual("._", tokens[0].InventoryText);
@@ -293,7 +293,7 @@ namespace SILUBS.ScriptureChecks
 			dataSource.m_tokens.Add(new DummyTextToken("\"I am a quote note!\"",
 				TextType.Note, true, true, "Note General Paragraph"));
 			List<TextTokenSubstring> tokens =
-				check.GetReferences(dataSource.TextTokens(), string.Empty);
+				check.GetReferences(dataSource.TextTokens, string.Empty);
 			Assert.AreEqual(3, tokens.Count);
 
 			Assert.AreEqual("._", tokens[0].InventoryText);
@@ -737,7 +737,7 @@ namespace SILUBS.ScriptureChecks
 
 			m_dataSource.Text = "\\p This is nice. By nice,I mean really nice!";
 
-			check.Check(m_dataSource.TextTokens(), RecordError);
+			check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(2, m_errors.Count);
 			CheckError(0, "This is nice. By nice,I mean really nice!", 21, ",", "Invalid punctuation pattern");
@@ -760,7 +760,7 @@ namespace SILUBS.ScriptureChecks
 
 			m_dataSource.Text = "\\p This _> is!?.";
 
-			check.Check(m_dataSource.TextTokens(), RecordError);
+			check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(2, m_errors.Count);
 			CheckError(0, "This _> is!?.", 5, "_>", "Unspecified use of punctuation pattern");
@@ -800,7 +800,7 @@ namespace SILUBS.ScriptureChecks
 
 			m_dataSource.Text = "\\p Tom replied, \u201CBill said, \u2018Yes!\u2019\u202F\u201D";
 
-			check.Check(m_dataSource.TextTokens(), RecordError);
+			check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(1, m_errors.Count);
 			CheckError(0, "Tom replied, \u201CBill said, \u2018Yes!\u2019\u202F\u201D", 29, "!\u2019\u202F\u201D", "Unspecified use of punctuation pattern");
@@ -827,7 +827,7 @@ namespace SILUBS.ScriptureChecks
 			PunctuationCheck check = new PunctuationCheck(m_dataSource);
 			m_dataSource.Text = "\\p wow\u201D\\p \u2019";
 
-			check.Check(m_dataSource.TextTokens(), RecordError);
+			check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(2, m_errors.Count);
 			CheckError(0, "wow\u201D", 3, "\u201D", "Unspecified use of punctuation pattern");

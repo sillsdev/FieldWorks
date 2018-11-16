@@ -353,19 +353,19 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		public virtual void PersistAsXml(XElement node)
+		public virtual void PersistAsXml(XElement element)
 		{
-			XmlUtils.SetAttribute(node, "layout", m_layoutName ?? string.Empty);
-			node.Add(m_colSpec);
+			XmlUtils.SetAttribute(element, "layout", m_layoutName ?? string.Empty);
+			element.Add(m_colSpec);
 		}
 
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public virtual void InitXml(XElement node)
+		public virtual void InitXml(XElement element)
 		{
-			m_layoutName = XmlUtils.GetMandatoryAttributeValue(node, "layout");
-			m_colSpec = node.Element("column");
+			m_layoutName = XmlUtils.GetMandatoryAttributeValue(element, "layout");
+			m_colSpec = element.Element("column");
 		}
 
 		#endregion

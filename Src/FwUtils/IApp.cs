@@ -12,25 +12,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// <summary>
 	/// Interface for application.
 	/// </summary>
-	public interface IApp : IDisposable, IHelpTopicProvider, IFeedbackInfoProvider, ISettings, IMessageFilter, IProjectSpecificSettingsKeyProvider
+	public interface IApp : IDisposable, IHelpTopicProvider, IFeedbackInfoProvider, ISettings, IMessageFilter
 	{
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Return a string from a resource ID.
 		/// </summary>
 		/// <param name="stid">String resource id</param>
-		/// <returns>String</returns>
-		/// -----------------------------------------------------------------------------------
 		string ResourceString(string stid);
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets/Sets the measurement system used in the application
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		MsrSysType MeasurementSystem { get; set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Get the active form. This is usually the same as Form.ActiveForm, but sometimes
 		/// the official active form is something other than one of our main windows, for
@@ -38,14 +32,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// which should be something that has a taskbar icon. It is often useful as the
 		/// appropriate parent window for a dialog that otherwise doesn't have one.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		Form ActiveMainWindow { get; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the name of the application.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		string ApplicationName { get; }
 
 		/// <summary>
@@ -58,11 +49,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		PictureHolder PictureHolder { get; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Refreshes all the views in all of the Main Windows of the app.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		void RefreshAllViews();
 
 		/// <summary>
@@ -70,7 +59,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		void RestartSpellChecking();
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Cycle through the applications main windows and synchronize them with database
 		/// changes.
@@ -78,36 +66,21 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="sync">synchronization information record</param>
 		/// <returns><c>true</c> to continue processing; set to <c>false</c> to prevent
 		/// processing of subsequent sync messages. </returns>
-		/// ------------------------------------------------------------------------------------
 		bool Synchronize(SyncMsg sync);
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// To participate in automatic synchronization from the database (calling SyncFromDb
-		/// in a useful manner) and application must override this, providing a unique Guid.
-		/// Typically this is the Guid defined by a static AppGuid method.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		Guid SyncGuid { get; }
-
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Enable or disable all top-level windows. This allows nesting. In other words,
 		/// calling EnableMainWindows(false) twice requires 2 calls to EnableMainWindows(true)
 		/// before the top level windows are actually enabled.
 		/// </summary>
 		/// <param name="fEnable">Enable (true) or disable (false).</param>
-		/// -----------------------------------------------------------------------------------
 		void EnableMainWindows(bool fEnable);
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Closes and disposes of the find replace dialog.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		void RemoveFindReplaceDialog();
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Display the Find/Replace modeless dialog
 		/// </summary>
@@ -116,7 +89,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="cache"></param>
 		/// <param name="mainForm"></param>
 		/// <returns><c>true</c> if the dialog is successfully displayed</returns>
-		/// ------------------------------------------------------------------------------------
 		bool ShowFindReplaceDialog(bool fReplace, IVwRootSite rootsite, LcmCache cache, Form mainForm);
 
 		/// <summary>
@@ -131,19 +103,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </remarks>
 		void HandleIncomingLink(FwLinkArgs link);
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles an outgoing link request from this application.
 		/// </summary>
-		/// <param name="link">The link.</param>
-		/// ------------------------------------------------------------------------------------
 		void HandleOutgoingLink(FwAppArgs link);
 
 		/// <summary>
 		/// Handle changes to the LinkedFiles root directory for a language project.
 		/// </summary>
 		/// <param name="oldLinkedFilesRootDir">The old LinkedFiles root directory.</param>
-		/// <returns></returns>
 		bool UpdateExternalLinks(string oldLinkedFilesRootDir);
 	}
 }

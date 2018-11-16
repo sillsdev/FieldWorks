@@ -15,41 +15,34 @@ using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Helper class for accessing FieldWorks-specific registry settings
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public static class FwRegistryHelper
 	{
-		/// <summary/>
+		/// <summary />
 		public static readonly string TranslationEditor = "Translation Editor";
 		private static IFwRegistryHelper RegistryHelperImpl = new FwRegistryHelperImpl();
-
-		/// <summary/>
-		public static class Manager
+		/// <summary>
+		/// Resets the registry helper. NOTE: should only be used from unit tests!
+		/// </summary>
+		public static void Reset()
 		{
-			/// <summary>
-			/// Resets the registry helper. NOTE: should only be used from unit tests!
-			/// </summary>
-			public static void Reset()
-			{
-				RegistryHelperImpl = new FwRegistryHelperImpl();
-			}
+			RegistryHelperImpl = new FwRegistryHelperImpl();
+		}
 
-			/// <summary>
-			/// Sets the registry helper. NOTE: Should only be used from unit tests!
-			/// </summary>
-			public static void SetRegistryHelper(IFwRegistryHelper helper)
-			{
-				RegistryHelperImpl = helper;
-			}
+		/// <summary>
+		/// Sets the registry helper. NOTE: Should only be used from unit tests!
+		/// </summary>
+		public static void SetRegistryHelper(IFwRegistryHelper helper)
+		{
+			RegistryHelperImpl = helper;
 		}
 
 		/// <summary>Default implementation of registry helper</summary>
-		private class FwRegistryHelperImpl : IFwRegistryHelper
+		private sealed class FwRegistryHelperImpl : IFwRegistryHelper
 		{
-			public FwRegistryHelperImpl()
+			internal FwRegistryHelperImpl()
 			{
 				// FWNX-1235 Mono's implementation of the "Windows Registry" on Unix uses XML files in separate folders for
 				// each user and each software publisher.  We need to read Paratext's entries, so we copy theirs into ours.
@@ -59,8 +52,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 #if DEBUG
 					// On a developer Linux machine these are kept under output/registry. Since the program is running at output/{debug|release},
 					// one level up should find the registry folder.
-					var fwRegLoc = Path.Combine(
-						Path.GetDirectoryName(FileUtils.StripFilePrefix(System.Reflection.Assembly.GetExecutingAssembly().CodeBase)) ?? ".", "../registry");
+					var fwRegLoc = Path.Combine(Path.GetDirectoryName(FileUtils.StripFilePrefix(System.Reflection.Assembly.GetExecutingAssembly().CodeBase)) ?? ".", "../registry");
 #else
 					var fwRegLoc = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), ".config/fieldworks/registry");
 #endif
@@ -73,11 +65,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 					foreach (var ptRegKey in ptRegKeys)
 					{
-						var ptRegKeyLoc = Path.Combine(
-							Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), ".config/paratext/registry", ptRegKey);
+						var ptRegKeyLoc = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), ".config/paratext/registry", ptRegKey);
 
 						if (Directory.Exists(ptRegKeyLoc))
+						{
 							DirectoryUtils.CopyDirectory(ptRegKeyLoc, Path.Combine(fwRegLoc, ptRegKey), true, true);
+						}
 					}
 				}
 			}
@@ -98,8 +91,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				get
 				{
 					var flexBridgeKey = $@"FLEx Bridge\{FwUtils.SuiteVersion}";
-					return RegistryHelper.CompanyKeyLocalMachine?.OpenSubKey(flexBridgeKey)
-						?? RegistryHelper.CompanyKeyLocalMachineOld32Bit?.OpenSubKey(flexBridgeKey);
+					return RegistryHelper.CompanyKeyLocalMachine?.OpenSubKey(flexBridgeKey) ?? RegistryHelper.CompanyKeyLocalMachineOld32Bit?.OpenSubKey(flexBridgeKey);
 				}
 			}
 
@@ -121,14 +113,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 			/// <inheritdoc />
 			public bool Paratext7Installed()
 			{
-				using (var ParatextKey = Registry.LocalMachine.OpenSubKey("Software\\ScrChecks\\1.0"))
+				using (var paratextKey = Registry.LocalMachine.OpenSubKey("Software\\ScrChecks\\1.0"))
 				{
 					if (Platform.IsWindows)
-						return ParatextKey != null && RegistryHelper.KeyExists(ParatextKey, "Program_Files_Directory_Ptw7");
-
+					{
+						return paratextKey != null && RegistryHelper.KeyExists(paratextKey, "Program_Files_Directory_Ptw7");
+					}
 					// Unfortunately on Linux Paratext 7.5 does not produce all the same registry keys as it does on Windows
 					// we can't actually tell the version of Paratext from these keys, so assume 7 if Settings_Directory is found
-					return ParatextKey != null && RegistryHelper.KeyExists(ParatextKey, "Settings_Directory");
+					return paratextKey != null && RegistryHelper.KeyExists(paratextKey, "Settings_Directory");
 				}
 			}
 		}
@@ -142,13 +135,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 			RegistryHelper.ProductName = "FieldWorks";
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the read-only local machine Registry key for FieldWorks.
 		/// NOTE: This key is not opened for write access because it will fail on
 		/// non-administrator logins.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public static RegistryKey FieldWorksRegistryKeyLocalMachine => RegistryHelperImpl.FieldWorksRegistryKeyLocalMachine;
 
 		/// <summary>
@@ -156,90 +147,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public static RegistryKey LocalMachineHive => RegistryHelperImpl.LocalMachineHive;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the read-only local machine Registry key for FieldWorksBridge.
 		/// NOTE: This key is not opened for write access because it will fail on
 		/// non-administrator logins.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public static RegistryKey FieldWorksBridgeRegistryKeyLocalMachine => RegistryHelperImpl.FieldWorksBridgeRegistryKeyLocalMachine;
-
-		/// <summary>
-		/// Returns a read-only subkey of HKLM\Software using the company name, the product name, and, if necessary, WOW6432Node.
-		/// </summary>
-		public static RegistryKey SettingsKeyLocalMachineForCurrentOr32BitApp(params string[] subkeys)
-		{
-			return RegistryHelper.SettingsKeyLocalMachine(subkeys) ??
-				Registry.LocalMachine.OpenSubKey($@"Software\WOW6432Node\{RegistryHelper.CompanyName}\{RegistryHelper.ProductName}\{string.Join("\\", subkeys)}");
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the local machine Registry key for FieldWorks.
-		/// NOTE: This will throw with non-administrative logons! Be ready for that.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static RegistryKey FieldWorksRegistryKeyLocalMachineForWriting => RegistryHelperImpl.FieldWorksRegistryKeyLocalMachineForWriting;
-
-		/// <summary>
-		/// Extension method to write a registry key to somewhere in HKLM hopfully with
-		/// eleverating privileges. This method can cause the UAC dialog to be shown to the user
-		/// (on Vista or later).
-		/// Can throw SecurityException on permissions problems.
-		/// </summary>
-		public static void SetValueAsAdmin(this RegistryKey key, string name, string value)
-		{
-			Debug.Assert(key.Name.Substring(0, key.Name.IndexOf("\\", StringComparison.Ordinal)) == "HKEY_LOCAL_MACHINE",
-				"SetValueAsAdmin should only be used for writing hklm values.");
-
-			if (MiscUtils.IsUnix)
-			{
-				key.SetValue(name, value);
-				return;
-			}
-
-			int startOfKey = key.Name.IndexOf("\\", StringComparison.Ordinal) + "\\".Length;
-			string location = key.Name.Substring(startOfKey, key.Name.Length - startOfKey);
-			location = location.Trim('\\');
-
-			// .NET cmd processing treats \" as a single ", not part of a delimiter.
-			// This can mess up closing " delimiters when the string ends with backslash.
-			// To get around this, you need to add an extra \ to the end.  "D:\"  -> D:"	 "D:\\" -> D:\
-			// Cmd line with 4 args: "Software\SIL\"8" "Projects\\Dir\" "I:\" "e:\\"
-			// Interpreted as 3 args: 1)"Software\\SIL\\FieldWorks\"8"  2)"Projects\\\\Dir\" I:\""  3)"e:\\"
-			// We'll hack the final value here to put in an extra \ for final \. "c:\\" will come through as c:\.
-			string path = value;
-			if (value.EndsWith("\\"))
-				path = value + "\\";
-
-			using (var process = new Process())
-			{
-				// Have to show window to get UAC message to allow admin action.
-				//process.StartInfo.CreateNoWindow = true;
-				process.StartInfo.FileName = "WriteKey.exe";
-				process.StartInfo.Arguments = $"LM \"{location}\" \"{name}\" \"{path}\"";
-				// NOTE: According to information I found, these last 2 values have to be set as they are
-				// (Verb='runas' and UseShellExecute=true) in order to get the UAC dialog to show.
-				// On Xp (Verb='runas' and UseShellExecute=true) causes crash.
-				if (MiscUtils.IsWinVistaOrNewer)
-				{
-					process.StartInfo.Verb = "runas";
-					process.StartInfo.UseShellExecute = true;
-				}
-				else
-				{
-					process.StartInfo.UseShellExecute = false;
-				}
-				// Make sure the shell window is not shown (FWR-3361)
-				process.StartInfo.CreateNoWindow = true;
-				process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-
-				// Can throw a SecurityException.
-				process.Start();
-				process.WaitForExit();
-			}
-		}
 
 		/// <summary>
 		/// Gets the default (current user) Registry key for FieldWorks.
@@ -278,7 +191,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public static string UserLocaleValueName => RegistryHelperImpl.UserLocaleValueName;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Determines the installation or absence of version 7 of the Paratext program by checking for the
 		/// existence of the registry key that that application uses to store its program files
@@ -287,7 +199,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// NOTE: This key is not opened for write access because it will fail on
 		/// non-administrator logins.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public static bool Paratext7Installed()
 		{
 			return RegistryHelperImpl.Paratext7Installed();
@@ -309,11 +220,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 				using (var fwCurrentArchKey = FieldWorksVersionlessRegistryKey)
 				using (var fwOld32BitKey = FieldWorksVersionlessOld32BitRegistryKey)
 				// Keys for versions 7 & 8 will be either 32-bit or 64-bit
-				using (var version7Key = fwCurrentArchKey.OpenSubKey(OldFieldWorksRegistryKeyNameVersion7)
-										?? fwOld32BitKey?.OpenSubKey(OldFieldWorksRegistryKeyNameVersion7))
-				using (var version8Key = fwCurrentArchKey.OpenSubKey(OldFieldWorksRegistryKeyNameVersion8, true)
-										?? fwOld32BitKey?.OpenSubKey(OldFieldWorksRegistryKeyNameVersion8, true))
 				// Keys for version 9 could be both 32-bit and 64-bit; our final target is the current architecture
+				using (var version7Key = fwCurrentArchKey.OpenSubKey(OldFieldWorksRegistryKeyNameVersion7) ?? fwOld32BitKey?.OpenSubKey(OldFieldWorksRegistryKeyNameVersion7))
+				using (var version8Key = fwCurrentArchKey.OpenSubKey(OldFieldWorksRegistryKeyNameVersion8, true) ?? fwOld32BitKey?.OpenSubKey(OldFieldWorksRegistryKeyNameVersion8, true))
 				using (var version9Old32Key = fwOld32BitKey?.OpenSubKey(FieldWorksRegistryKeyName, true))
 				using (var currentKey = fwCurrentArchKey.CreateSubKey(FieldWorksRegistryKeyName))
 				{
@@ -359,8 +268,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			foreach (var subKeyName in srcSubKey.GetSubKeyNames())
 			{
 				if (subkeysToRemove.Contains(subKeyName.ToLowerInvariant()))
+				{
 					continue;
-
+				}
 				using (var srcKey = srcSubKey.OpenSubKey(subKeyName))
 				using (var newDestKey = destSubKey.CreateSubKey(subKeyName))
 				{
@@ -399,13 +309,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				var lcValueName = valueName.ToLowerInvariant();
 				if (lcValueName.StartsWith(NumberPrefix) || valuesToBeRemoved.Contains(lcValueName))
+				{
 					continue;
-
+				}
 				// Don't overwrite the value if it exists already!
 				object dummyValue;
 				if (RegistryHelper.RegEntryValueExists(destSubKey, string.Empty, valueName, out dummyValue))
+				{
 					continue;
-
+				}
 				var valueObject = srcSubKey.GetValue(valueName);
 				destSubKey.SetValue(valueName, valueObject);
 			}

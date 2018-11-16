@@ -232,11 +232,9 @@ namespace SIL.FieldWorks.Common.Controls
 
 		#region WizardDialog Properties
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the width of the steps panel.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		[Browsable(true)]
 		[Localizable(true)]
 		[Category("Layout")]

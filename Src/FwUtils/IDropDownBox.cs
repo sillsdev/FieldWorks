@@ -16,7 +16,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Gets the drop down form.
 		/// </summary>
-		/// <value>The form.</value>
 		Form Form { get; }
 		/// <summary>
 		/// Gets or sets the form that the dropdown box is launched from.

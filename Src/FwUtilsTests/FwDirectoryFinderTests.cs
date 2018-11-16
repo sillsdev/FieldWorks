@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2017 SIL International
+// Copyright (c) 2008-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,12 +9,9 @@ using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
-
-	///-----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Tests for the FwDirectoryFinder class
 	/// </summary>
-	///-----------------------------------------------------------------------------------------
 	[TestFixture]
 	public class FwDirectoryFinderTests
 	{
@@ -24,7 +21,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[TestFixtureTearDown]
 		public void TearDown()
 		{
-			FwRegistryHelper.Manager.Reset();
+			FwRegistryHelper.Reset();
 		}
 
 		/// <summary>
@@ -33,31 +30,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[TestFixtureSetUp]
 		public void TestFixtureSetup()
 		{
-			//FwDirectoryFinder.CompanyName = "SIL";
-			FwRegistryHelper.Manager.SetRegistryHelper(new DummyFwRegistryHelper());
+			FwRegistryHelper.SetRegistryHelper(new DummyFwRegistryHelper());
 			FwRegistryHelper.FieldWorksRegistryKey.SetValue("RootDataDir", Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "../../DistFiles")));
 			FwRegistryHelper.FieldWorksRegistryKey.SetValue("RootCodeDir", Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "../../DistFiles")));
 		}
 
-		///-------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the directory where the Utils assembly is
 		/// </summary>
-		///-------------------------------------------------------------------------------------
-		private string UtilsAssemblyDir
-		{
-			get
-			{
-				return Path.GetDirectoryName(typeof(FwDirectoryFinder).Assembly.CodeBase
-					.Substring(MiscUtils.IsUnix ? 7 : 8));
-			}
-		}
+		private string UtilsAssemblyDir => Path.GetDirectoryName(typeof(FwDirectoryFinder).Assembly.CodeBase.Substring(MiscUtils.IsUnix ? 7 : 8));
 
-		///-------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the CodeDirectory property. This should return the DistFiles directory.
 		/// </summary>
-		///-------------------------------------------------------------------------------------
 		[Test]
 		public void CodeDirectory()
 		{
@@ -112,11 +97,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
-		///-------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the DataDirectory property. This should return the DistFiles directory.
 		/// </summary>
-		///-------------------------------------------------------------------------------------
 		[Test]
 		public void DataDirectory()
 		{
@@ -124,24 +107,20 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.That(FwDirectoryFinder.DataDirectory, Is.SamePath(currentDir));
 		}
 
-		///-------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the SourceDirectory property. This should return the DistFiles directory.
 		/// </summary>
-		///-------------------------------------------------------------------------------------
 		[Test]
 		public void SourceDirectory()
 		{
-			string expectedDir = Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "../../Src"));
+			var expectedDir = Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "../../Src"));
 			Assert.That(FwDirectoryFinder.SourceDirectory, Is.SamePath(expectedDir));
 		}
 
-		///-------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the GetCodeSubDirectory method when we pass a subdirectory without a
 		/// leading directory separator
 		/// </summary>
-		///-------------------------------------------------------------------------------------
 		[Test]
 		public void GetCodeSubDirectory_NoLeadingSlash()
 		{
@@ -149,12 +128,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 				Is.SamePath(Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer/Configuration")));
 		}
 
-		///-------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the GetCodeSubDirectory method when we pass a subdirectory with a
 		/// leading directory separator
 		/// </summary>
-		///-------------------------------------------------------------------------------------
 		[Test]
 		public void GetCodeSubDirectory_LeadingSlash()
 		{
@@ -162,11 +139,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 				Is.SamePath(Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer/Configuration")));
 		}
 
-		///-------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the GetCodeSubDirectory method when we pass an invalid subdirectory
 		/// </summary>
-		///-------------------------------------------------------------------------------------
 		[Test]
 		public void GetCodeSubDirectory_InvalidDir()
 		{
@@ -174,12 +149,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 				Is.SamePath("NotExisting"));
 		}
 
-		///-------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the GetDataSubDirectory method when we pass a subdirectory without a
 		/// leading directory separator
 		/// </summary>
-		///-------------------------------------------------------------------------------------
 		[Test]
 		public void GetDataSubDirectory_NoLeadingSlash()
 		{
@@ -187,12 +160,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 				Is.SamePath(Path.Combine(FwDirectoryFinder.DataDirectory, "Language Explorer/Configuration")));
 		}
 
-		///-------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the GetDataSubDirectory method when we pass a subdirectory with a
 		/// leading directory separator
 		/// </summary>
-		///-------------------------------------------------------------------------------------
 		[Test]
 		public void GetDataSubDirectory_LeadingSlash()
 		{
@@ -200,11 +171,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 				Is.SamePath(Path.Combine(FwDirectoryFinder.DataDirectory, "Language Explorer/Configuration")));
 		}
 
-		///-------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the GetDataSubDirectory method when we pass an invalid subdirectory
 		/// </summary>
-		///-------------------------------------------------------------------------------------
 		[Test]
 		public void GetDataSubDirectory_InvalidDir()
 		{
@@ -216,7 +185,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Tests the DefaultBackupDirectory property for use on Windows.
 		/// </summary>
 		[Test]
-		[Platform(Exclude="Linux", Reason="Test is Windows specific")]
+		[Platform(Exclude = "Linux", Reason = "Test is Windows specific")]
 		public void DefaultBackupDirectory_Windows()
 		{
 			Assert.AreEqual(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
@@ -227,7 +196,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Tests the DefaultBackupDirectory property for use on Linux
 		/// </summary>
 		[Test]
-		[Platform(Include="Linux", Reason="Test is Linux specific")]
+		[Platform(Include = "Linux", Reason = "Test is Linux specific")]
 		public void DefaultBackupDirectory_Linux()
 		{
 			// SpecialFolder.MyDocuments returns $HOME on Linux!

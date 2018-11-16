@@ -68,7 +68,7 @@ namespace SIL.FieldWorks
 			}
 			if (fDisposing)
 			{
-				// dispose managed and unmanaged objects
+				// dispose managed objects
 				Close();
 				var disposable = m_waitHandle as IDisposable;
 				disposable?.Dispose();

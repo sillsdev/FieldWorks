@@ -4,7 +4,7 @@
 
 using System;
 
-namespace SIL.FieldWorks.Common.FwUtils
+namespace SILUBS.ScriptureChecks
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

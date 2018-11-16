@@ -101,7 +101,7 @@ namespace SIL.FieldWorks
 		// supports usage reporting has been run.
 		private static bool s_noPreviousReportingSettings;
 		private static ILcmUI s_ui;
-		private static FwApplicationSettings s_appSettings;
+		private static IFwApplicationSettings s_appSettings;
 		private static CompositionContainer s_compositionContainer;
 		#endregion
 

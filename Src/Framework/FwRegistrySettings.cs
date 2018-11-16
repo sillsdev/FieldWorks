@@ -118,7 +118,7 @@ namespace SIL.FieldWorks.Common.Framework
 
 			if (fDisposing)
 			{
-				// dispose managed and unmanaged objects
+				// dispose managed objects
 				m_firstTimeAppHasBeenRun.Dispose();
 				m_showSideBar.Dispose();
 				m_showStatusBar.Dispose();

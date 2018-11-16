@@ -26,8 +26,8 @@ namespace LanguageExplorer.Filters
 		/// re-created sorter.
 		/// This default implementation does nothing.
 		/// </summary>
-		/// <param name="node"></param>
-		public virtual void PersistAsXml(XElement node)
+		/// <param name="element"></param>
+		public virtual void PersistAsXml(XElement element)
 		{
 		}
 
@@ -35,7 +35,7 @@ namespace LanguageExplorer.Filters
 		/// Initialize an instance into the state indicated by the node, which was
 		/// created by a call to PersistAsXml.
 		/// </summary>
-		public virtual void InitXml(XElement node)
+		public virtual void InitXml(XElement element)
 		{
 		}
 

@@ -91,6 +91,7 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Ethnologue.cs" />
+    <None Include="Ethnologue.template.cs" />
     <Compile Include="GeneratedEthnologue.cs" />
     <Compile Include="Names.cs" />
     <Compile Include="OtherNames.cs" />

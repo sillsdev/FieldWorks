@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,9 +9,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// </summary>
 	public enum SettingsGroup
 	{
-#if RANDYTODO
-		// TODO: Are there other setting types to add, such as to support minimal UI for select users?
-#endif
 		/// <summary>
 		/// GlobalSettings -- typically application wide settings.
 		/// This is the default group to store a setting, without further specification.
@@ -31,5 +28,5 @@ namespace SIL.FieldWorks.Common.FwUtils
 		///	(giving preference to LocalSettings over GlobalSettings).
 		/// </summary>
 		BestSettings
-	};
+	}
 }

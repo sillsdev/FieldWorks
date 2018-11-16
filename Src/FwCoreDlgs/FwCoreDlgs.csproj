@@ -405,6 +405,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
+    <Compile Include="TextFileDataSource.cs" />
     <Compile Include="ValidCharactersDlg.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2012-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,11 +9,11 @@ using System.IO;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading;
+using IPCFramework;
+using SIL.IO;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
-using IPCFramework;
 using SIL.PlatformUtilities;
-using SIL.IO;
 using FileUtils = SIL.LCModel.Utils.FileUtils;
 
 namespace SIL.FieldWorks.Common.FwUtils
@@ -131,13 +131,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string LIFT = @"LIFT";
 
 		/// <summary>
-		/// Event handler delegate that passes a jump URL.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		public delegate void JumpEventHandler(object sender, FLExJumpEventArgs e);
-
-		/// <summary>
 		/// Event to enabled FLExBridgeListener to find out when the Conflict Report title was clicked.
 		/// </summary>
 		public static event JumpEventHandler FLExJumpUrlChanged;
@@ -169,18 +162,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="projectName">Name of the project to be opened after launch returns.</param>
 		/// <returns>true if successful, false otherwise</returns>
 		public static bool LaunchFieldworksBridge(string projectFolder, string userName, string command, string projectGuid,
-			int fwmodelVersionNumber, string liftModelVersionNumber, string writingSystemId, Action onNonBlockerCommandComplete,
-			out bool changesReceived, out string projectName)
+			int fwmodelVersionNumber, string liftModelVersionNumber, string writingSystemId, Action onNonBlockerCommandComplete, out bool changesReceived, out string projectName)
 		{
-			_pipeID = string.Format(@"SendReceive{0}{1}", projectFolder, command);
+			_pipeID = $"SendReceive{projectFolder}{command}";
 			_flexBridgeTerminated = false;
 			changesReceived = false;
-			var args = "";
-			projectName = "";
-			_projectName = "";
+			var args = string.Empty;
+			projectName = string.Empty;
+			_projectName = string.Empty;
 			var userNameActual = userName;
 			if (string.IsNullOrEmpty(userName))
+			{
 				userNameActual = Environment.UserName; // default so we can always pass something.
+			}
 			if (userNameActual != null) // Paranoia, hopefully never null
 			{
 				AddArg(ref args, "-u", userNameActual);
@@ -197,7 +191,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				AddArg(ref args, "-f", FixItAppPathname);
 			}
 
-			if (!String.IsNullOrEmpty(projectGuid))
+			if (!string.IsNullOrEmpty(projectGuid))
 			{
 				AddArg(ref args, "-g", projectGuid);
 			}
@@ -223,7 +217,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				return false;
 			}
 			AddArg(ref args, "-pipeID", _pipeID);
-			if (!String.IsNullOrEmpty(writingSystemId))
+			if (!string.IsNullOrEmpty(writingSystemId))
 			{
 				AddArg(ref args, "-ws", writingSystemId);
 			}
@@ -232,17 +226,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var host = IPCHostFactory.Create();
 			host.VerbosityLevel = 1;
 			if (!host.Initialize<FLExBridgeService, IFLExBridgeService>("FLExBridgeEndpoint" + _pipeID, AlertFlex, CleanupHost))
+			{
 				return false;
-
+			}
 			LaunchFlexBridge(host, command, args, onNonBlockerCommandComplete, ref changesReceived, ref projectName);
 
 			return true;
 		}
 
-		private static void LaunchFlexBridge(IIPCHost host, string command, string args, Action onNonBlockerCommandComplete,
-			ref bool changesReceived, ref string projectName)
+		private static void LaunchFlexBridge(IIPCHost host, string command, string args, Action onNonBlockerCommandComplete, ref bool changesReceived, ref string projectName)
 		{
-			string flexbridgeLauncher = FullFieldWorksBridgePath();
+			var flexbridgeLauncher = FullFieldWorksBridgePath();
 			if (MiscUtils.IsUnix)
 			{
 				flexbridgeLauncher = FwDirectoryFinder.FlexBridgeFolder + "/flexbridge";
@@ -258,12 +252,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 
 			var nonFlexblockers = new HashSet<string>
-				{
-					ConflictViewer,
-					LiftConflictViewer,
-					AboutFLExBridge,
-					CheckForUpdates
-				};
+			{
+				ConflictViewer,
+				LiftConflictViewer,
+				AboutFLExBridge,
+				CheckForUpdates
+			};
 			if (nonFlexblockers.Contains(command))
 			{
 				// This skips the piping and doesn't pause the Flex UI thread for the
@@ -279,7 +273,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 					// Pause UI thread until FLEx Bridge terminates:
 					Monitor.Enter(_waitObject);
 					if (_flexBridgeTerminated == false)
+					{
 						Monitor.Wait(_waitObject, -1);
+					}
 					Monitor.Exit(_waitObject);
 
 					projectName = _projectName;
@@ -298,8 +294,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				{
 					host.Close();
 					var disposableHost = host as IDisposable;
-					if (disposableHost != null)
-						disposableHost.Dispose();
+					disposableHost?.Dispose();
 				}
 				catch (Exception)
 				{
@@ -336,7 +331,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			if (!string.IsNullOrEmpty(value))
 			{
 				bool hasWhitespace;
-				if (value.Any(Char.IsWhiteSpace))
+				if (value.Any(char.IsWhiteSpace))
 				{
 					extant += " \"" + value + "\"";
 				}
@@ -350,7 +345,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Returns the full path and filename of the FieldWorksBridge executable
 		/// </summary>
-		/// <returns></returns>
 		public static string FullFieldWorksBridgePath()
 		{
 			return Path.Combine(FwDirectoryFinder.FlexBridgeFolder, FLExBridgeName);
@@ -359,7 +353,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Returns the full path and filename of the FieldWorksBridge executable
 		/// </summary>
-		/// <returns></returns>
 		public static bool FixItAppExists
 		{
 			get
@@ -375,14 +368,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns><c>true</c> if is flex bridge installed; otherwise, <c>false</c>.</returns>
 		public static bool IsFlexBridgeInstalled()
 		{
-			string fullName = FullFieldWorksBridgePath();
+			var fullName = FullFieldWorksBridgePath();
 			return FileUtils.FileExists(fullName); // Flex Bridge exe has to exist
 		}
 
 		/// <summary>
 		/// Answer whether the project appears to have a FLEx repo. This is currently determined by its having a .hg folder.
 		/// </summary>
-		/// <returns></returns>
 		public static bool DoesProjectHaveFlexRepo(IProjectIdentifier projectId)
 		{
 			return IsMercurialRepo(projectId.ProjectFolder);
@@ -391,14 +383,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Answer whether the project appears to have a LIFT repo.
 		/// </summary>
-		/// <returns></returns>
 		public static bool DoesProjectHaveLiftRepo(IProjectIdentifier projectId)
 		{
-			string otherRepoPath = Path.Combine(projectId.ProjectFolder, LcmFileHelper.OtherRepositories);
+			var otherRepoPath = Path.Combine(projectId.ProjectFolder, LcmFileHelper.OtherRepositories);
 			if (!Directory.Exists(otherRepoPath))
+			{
 				return false;
-			string liftFolder = Directory.EnumerateDirectories(otherRepoPath, "*_LIFT").FirstOrDefault();
-			return !String.IsNullOrEmpty(liftFolder) && IsMercurialRepo(liftFolder);
+			}
+			var liftFolder = Directory.EnumerateDirectories(otherRepoPath, "*_LIFT").FirstOrDefault();
+			return !string.IsNullOrEmpty(liftFolder) && IsMercurialRepo(liftFolder);
 		}
 
 		private static bool IsMercurialRepo(string path)
@@ -409,14 +402,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Returns the full path and filename of the FixFwData executable
 		/// </summary>
-		/// <returns></returns>
-		public static string FixItAppPathname
-		{
-			get
-			{
-				return Path.Combine(FileLocationUtilities.DirectoryOfTheApplicationExecutable, "FixFwData.exe");
-			}
-		}
+		public static string FixItAppPathname => Path.Combine(FileLocationUtilities.DirectoryOfTheApplicationExecutable, "FixFwData.exe");
 
 		#region Service classes and methods For Bridge calls to FLEx
 
@@ -424,7 +410,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// The service class
 		/// </summary>
 		[ServiceBehavior(UseSynchronizationContext = false)] //Create new threads for the services, don't tie them into the main UI thread.
-		private class FLExBridgeService : IFLExBridgeService
+		private sealed class FLExBridgeService : IFLExBridgeService
 		{
 			#region Implementation of IFLExBridgeService
 
@@ -455,8 +441,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			/// <param name="jumpUrl">Url of the FLEx object to jump to.</param>
 			public void BridgeSentJumpUrl(string jumpUrl)
 			{
-				if (FLExJumpUrlChanged != null)
-					FLExJumpUrlChanged(this, new FLExJumpEventArgs(jumpUrl));
+				FLExJumpUrlChanged?.Invoke(this, new FLExJumpEventArgs(jumpUrl));
 			}
 			#endregion
 		}
@@ -512,8 +497,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			if (_noBlockerHostAndCallback != null)
 			{
 				KillTheHost(_noBlockerHostAndCallback.Item1);
-				if (_noBlockerHostAndCallback.Item2 != null)
-					_noBlockerHostAndCallback.Item2();
+				_noBlockerHostAndCallback.Item2?.Invoke();
 				_noBlockerHostAndCallback = null;
 			}
 		}
@@ -527,23 +511,26 @@ namespace SIL.FieldWorks.Common.FwUtils
 	}
 
 	/// <summary>
+	/// Event handler delegate that passes a jump URL.
+	/// </summary>
+	public delegate void JumpEventHandler(object sender, FLExJumpEventArgs e);
+
+	/// <summary>
 	/// Event args plus jump URL
 	/// </summary>
 	public class FLExJumpEventArgs : EventArgs
 	{
-		private readonly string _jumpUrl;
-
 		/// <summary>
 		/// Set up event args with a URL to jump to.
 		/// </summary>
 		public FLExJumpEventArgs(string jumpUrl)
 		{
-			_jumpUrl = jumpUrl;
+			JumpUrl = jumpUrl;
 		}
 
 		/// <summary>
 		/// URL that FLEx should jump to when processing this event.
 		/// </summary>
-		public string JumpUrl => _jumpUrl;
+		public string JumpUrl { get; }
 	}
 }

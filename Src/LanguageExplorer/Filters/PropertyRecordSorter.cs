@@ -49,18 +49,18 @@ namespace LanguageExplorer.Filters
 		/// record sorter equivalent to yourself.
 		/// In this case we just need to add the sortProperty attribute.
 		/// </summary>
-		public override void PersistAsXml(XElement node)
+		public override void PersistAsXml(XElement element)
 		{
-			node.Add(new XAttribute("sortProperty", PropertyName));
+			element.Add(new XAttribute("sortProperty", PropertyName));
 		}
 
 		/// <summary>
 		/// Initialize an instance into the state indicated by the node, which was
 		/// created by a call to PersistAsXml.
 		/// </summary>
-		public override void InitXml(XElement node)
+		public override void InitXml(XElement element)
 		{
-			Init(node);
+			Init(element);
 		}
 
 		public override LcmCache Cache

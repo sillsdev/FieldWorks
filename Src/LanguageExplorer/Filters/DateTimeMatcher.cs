@@ -309,31 +309,31 @@ namespace LanguageExplorer.Filters
 				(!HandleGenDate || (IsStartAD == dtOther.IsStartAD && IsEndAD == dtOther.IsEndAD && UnspecificMatching == dtOther.UnspecificMatching));
 		}
 
-		public override void PersistAsXml(XElement node)
+		public override void PersistAsXml(XElement element)
 		{
-			base.PersistAsXml(node);
-			XmlUtils.SetAttribute(node, "start", Start.ToString("s", DateTimeFormatInfo.InvariantInfo));
-			XmlUtils.SetAttribute(node, "end", End.ToString("s", DateTimeFormatInfo.InvariantInfo));
-			XmlUtils.SetAttribute(node, "type", ((int)MatchType).ToString());
-			XmlUtils.SetAttribute(node, "genDate", HandleGenDate.ToString());
+			base.PersistAsXml(element);
+			XmlUtils.SetAttribute(element, "start", Start.ToString("s", DateTimeFormatInfo.InvariantInfo));
+			XmlUtils.SetAttribute(element, "end", End.ToString("s", DateTimeFormatInfo.InvariantInfo));
+			XmlUtils.SetAttribute(element, "type", ((int)MatchType).ToString());
+			XmlUtils.SetAttribute(element, "genDate", HandleGenDate.ToString());
 			if (HandleGenDate)
 			{
-				XmlUtils.SetAttribute(node, "startAD", IsStartAD.ToString());
-				XmlUtils.SetAttribute(node, "endAD", IsEndAD.ToString());
-				XmlUtils.SetAttribute(node, "unspecific", UnspecificMatching.ToString());
+				XmlUtils.SetAttribute(element, "startAD", IsStartAD.ToString());
+				XmlUtils.SetAttribute(element, "endAD", IsEndAD.ToString());
+				XmlUtils.SetAttribute(element, "unspecific", UnspecificMatching.ToString());
 			}
 		}
 
-		public override void InitXml(XElement node)
+		public override void InitXml(XElement element)
 		{
-			base.InitXml(node);
-			Start = DateTime.Parse(XmlUtils.GetMandatoryAttributeValue(node, "start"), DateTimeFormatInfo.InvariantInfo);
-			End = DateTime.Parse(XmlUtils.GetMandatoryAttributeValue(node, "end"), DateTimeFormatInfo.InvariantInfo);
-			MatchType = (DateMatchType)XmlUtils.GetMandatoryIntegerAttributeValue(node, "type");
-			HandleGenDate = XmlUtils.GetOptionalBooleanAttributeValue(node, "genDate", false);
-			IsStartAD = XmlUtils.GetOptionalBooleanAttributeValue(node, "startAD", true);
-			IsEndAD = XmlUtils.GetOptionalBooleanAttributeValue(node, "endAD", true);
-			UnspecificMatching = XmlUtils.GetOptionalBooleanAttributeValue(node, "unspecific", false);
+			base.InitXml(element);
+			Start = DateTime.Parse(XmlUtils.GetMandatoryAttributeValue(element, "start"), DateTimeFormatInfo.InvariantInfo);
+			End = DateTime.Parse(XmlUtils.GetMandatoryAttributeValue(element, "end"), DateTimeFormatInfo.InvariantInfo);
+			MatchType = (DateMatchType)XmlUtils.GetMandatoryIntegerAttributeValue(element, "type");
+			HandleGenDate = XmlUtils.GetOptionalBooleanAttributeValue(element, "genDate", false);
+			IsStartAD = XmlUtils.GetOptionalBooleanAttributeValue(element, "startAD", true);
+			IsEndAD = XmlUtils.GetOptionalBooleanAttributeValue(element, "endAD", true);
+			UnspecificMatching = XmlUtils.GetOptionalBooleanAttributeValue(element, "unspecific", false);
 		}
 	}
 }

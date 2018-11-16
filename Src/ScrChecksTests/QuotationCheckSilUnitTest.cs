@@ -93,7 +93,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("<<this is my verse two text>>", TextType.Verse,
 				true, false, "Paragraph"));
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(1, m_errors.Count);
 			Assert.AreEqual(m_dataSource.m_tokens[2], m_errors[0].Tts.FirstToken);
 		}
@@ -124,7 +124,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken(">>verse two>>", TextType.Verse,
 				false, false, "Paragraph"));
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(0, m_errors.Count);
 		}
 
@@ -156,7 +156,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("<<verse two>>", TextType.Verse,
 				false, false, "Paragraph"));
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(0, m_errors.Count);
 		}
 
@@ -186,7 +186,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("Para3 three", TextType.Verse,
 				true, false, "Paragraph"));
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(0, m_errors.Count);
 		}
 
@@ -216,7 +216,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("Para3 three", TextType.Verse,
 				true, false, "Paragraph"));
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(1, m_errors.Count);
 			Assert.AreEqual(m_dataSource.m_tokens[2], m_errors[0].Tts.FirstToken);
 			Assert.AreEqual("Para2", m_errors[0].Tts.Text);
@@ -252,7 +252,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("qux quxs> >>", TextType.Verse,
 				false, false, "Paragraph"));
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(1, m_errors.Count);
 			Assert.AreEqual(m_dataSource.m_tokens[5], m_errors[0].Tts.FirstToken);
 			Assert.AreEqual("qux", m_errors[0].Tts.Text);
@@ -288,7 +288,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("qux> >>", TextType.Verse,
 				false, false, "Line1"));
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(0, m_errors.Count);
 		}
 
@@ -316,7 +316,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("1", TextType.VerseNumber,
 				false, false, "Paragraph", "Verse Number"));
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(0, m_errors.Count);
 		}
 
@@ -354,7 +354,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("«Continue and close level one.»", TextType.Verse,
 				false, false, "Paragraph"));
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(0, m_errors.Count);
 		}
 
@@ -393,7 +393,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("«Continue level one.»", TextType.Verse,
 				false, false, "Paragraph"));
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(0, m_errors.Count);
 		}
 
@@ -431,7 +431,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("both levels end.\u203A »", TextType.Verse,
 				true, false, "Line2"));
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(0, m_errors.Count);
 		}
 
@@ -459,7 +459,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("»Paragraph two\u203A, the end»",
 				TextType.Verse, true, false, "Paragraph"));
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(3, m_errors.Count);
 			Assert.AreEqual("»", m_errors[0].Tts.Text);
 			Assert.AreEqual("\u203A", m_errors[1].Tts.Text);
@@ -510,7 +510,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("\u201C \u2018Continuation into prose, and then into lines again.\u2019 \u201D", TextType.Verse,
 				false, false, "Paragraph"));
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(0, m_errors.Count);
 		}
 
@@ -562,7 +562,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("« \u201CContinuation into prose, and then into lines again.\u201D »", TextType.Verse,
 				false, false, "Paragraph"));
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(0, m_errors.Count);
 		}
 
@@ -591,7 +591,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("1", TextType.VerseNumber,
 				false, false, "Paragraph", "Verse Number"));
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(2, m_errors.Count);
 			Assert.AreEqual(m_dataSource.m_tokens[2], m_errors[0].Tts.FirstToken);
 			Assert.AreEqual("1", m_errors[0].Tts.Text);
@@ -648,7 +648,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("«Continuation, and then close level one.»", TextType.Verse,
 				false, false, "Paragraph"));
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(0, m_errors.Count);
 		}
 
@@ -699,7 +699,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("«Continuation, and then close level one.»", TextType.Verse,
 				false, false, "Paragraph"));
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(1, m_errors.Count);
 			Assert.AreEqual(m_dataSource.m_tokens[8], m_errors[0].Tts.FirstToken);
 			Assert.AreEqual("\u2018", m_errors[0].Tts.Text);
@@ -752,7 +752,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("«Continuation, and then close level one.»", TextType.Verse,
 				false, false, "Paragraph"));
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(1, m_errors.Count);
 			Assert.AreEqual(m_dataSource.m_tokens[8], m_errors[0].Tts.FirstToken);
 			Assert.AreEqual("\u2019", m_errors[0].Tts.Text);
@@ -805,7 +805,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("\u201CContinuation, and then close level one.\u201D", TextType.Verse,
 				false, false, "Paragraph"));
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(0, m_errors.Count);
 		}
 
@@ -856,7 +856,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("\u201CContinuation, and then close level one.\u201D", TextType.Verse,
 				false, false, "Paragraph"));
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(1, m_errors.Count);
 			Assert.AreEqual(m_dataSource.m_tokens[8], m_errors[0].Tts.FirstToken);
 			Assert.AreEqual("\u201C", m_errors[0].Tts.Text);
@@ -909,7 +909,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("Close level one.\u201D", TextType.Verse,
 				false, false, "Paragraph"));
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(1, m_errors.Count);
 			Assert.AreEqual(m_dataSource.m_tokens[8], m_errors[0].Tts.FirstToken);
 			Assert.AreEqual("\u201C", m_errors[0].Tts.Text);
@@ -959,7 +959,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("\u201CHe has sent saying, \u2018Level four.\u2019\u201D\u2019\u201D", TextType.Verse,
 				false, false, "Paragraph"));
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(0, m_errors.Count);
 		}
 
@@ -994,7 +994,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("qux> >>", TextType.Verse,
 				false, false, "Line1"));
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 			Assert.AreEqual(6, m_errors.Count);
 			Assert.AreEqual(m_dataSource.m_tokens[1], m_errors[0].Tts.FirstToken);
 			Assert.AreEqual("<<", m_errors[0].Tts.Text);

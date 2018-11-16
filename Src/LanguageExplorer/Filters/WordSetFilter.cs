@@ -54,21 +54,21 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		public override void PersistAsXml(XElement node)
+		public override void PersistAsXml(XElement element)
 		{
-			base.PersistAsXml (node);
-			XmlUtils.SetAttribute(node, "id", id);
-			XmlUtils.SetAttribute(node, "wordlist", XmlUtils.MakeStringFromList(m_hvos.ToList()));
+			base.PersistAsXml (element);
+			XmlUtils.SetAttribute(element, "id", id);
+			XmlUtils.SetAttribute(element, "wordlist", XmlUtils.MakeStringFromList(m_hvos.ToList()));
 		}
 
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public override void InitXml(XElement node)
+		public override void InitXml(XElement element)
 		{
-			base.InitXml (node);
-			id = XmlUtils.GetMandatoryAttributeValue(node, "id");
-			m_hvos = XmlUtils.GetMandatoryIntegerListAttributeValue(node, "wordlist");
+			base.InitXml (element);
+			id = XmlUtils.GetMandatoryAttributeValue(element, "id");
+			m_hvos = XmlUtils.GetMandatoryIntegerListAttributeValue(element, "wordlist");
 		}
 
 		/// <summary>

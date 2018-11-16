@@ -60,18 +60,20 @@ namespace SILUBS.ScriptureChecks
 			}
 		}
 
-		public IEnumerable<ITextToken> TextTokens()
+		public IEnumerable<ITextToken> TextTokens
 		{
-			foreach (UnitTestUSFMTextToken tok in tokens2)
+			get
 			{
-				yield return (ITextToken)tok;
+				foreach (UnitTestUSFMTextToken tok in tokens2)
+				{
+					yield return (ITextToken)tok;
+				}
 			}
 		}
 
 		public CharacterCategorizer CharacterCategorizer
 		{
-			get { return new CharacterCategorizer(m_extraWordFormingCharacters, "-",
-				String.Empty);
+			get { return new CharacterCategorizer(m_extraWordFormingCharacters, String.Empty);
 			}
 		}
 

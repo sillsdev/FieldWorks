@@ -11,139 +11,108 @@ using SIL.Reporting;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Used to keep track of references to a VwGraphics object. Also handles the setting of the
 	/// HDC in the VwGraphics.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	public class GraphicsManager : IDisposable
+	public sealed class GraphicsManager : IDisposable
 	{
 		private volatile int m_cactInitGraphics;
 		private Graphics m_graphics;
-		/// <summary></summary>
-		protected IVwGraphicsWin32 m_vwGraphics;
+		private IVwGraphicsWin32 m_vwGraphics;
 		private Control m_parent;
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:GraphicsManager"/> class.
-		/// </summary>
-		/// <param name="parent">The parent.</param>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public GraphicsManager(Control parent)
 		{
 			if (parent == null)
-				throw new ArgumentNullException("parent");
+			{
+				throw new ArgumentNullException(nameof(parent));
+			}
+
 			m_parent = parent;
 		}
 
 		#region Disposed stuff
 
-		private bool m_fDisposed;
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Add the public property for knowing if the object has been disposed of yet
 		/// </summary>
 		/// <remarks>This property is thread safe.</remarks>
-		/// ------------------------------------------------------------------------------------
-		public bool IsDisposed
-		{
-			get { return m_fDisposed; }
-		}
+		private bool IsDisposed { get; set; }
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Performs application-defined tasks associated with freeing, releasing, or resetting
-		/// unmanaged resources.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		public void Dispose()
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Releases unmanaged resources and performs other cleanup operations before the
 		/// GraphicsManager is reclaimed by garbage collection.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		~GraphicsManager()
 		{
 			Dispose(false);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="disposing"></param>
-		/// ------------------------------------------------------------------------------------
-		protected virtual void Dispose(bool disposing)
+		/// <summary />
+		private void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
 			if (disposing)
 			{
 				Debug.Assert(m_cactInitGraphics == 0, "We should release the HDC before disposing");
-				if (m_graphics != null)
-					m_graphics.Dispose();
+				m_graphics?.Dispose();
 			}
 
 			m_graphics = null;
 			m_vwGraphics = null;
 			m_parent = null;
-			m_fDisposed = true;
+			IsDisposed = true;
 		}
 		#endregion
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the VwGraphics object
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public IVwGraphics VwGraphics
-		{
-			get { return m_vwGraphics; }
-		}
+		public IVwGraphics VwGraphics => m_vwGraphics;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Make sure the graphics object has a DC. If it already has, increment a count,
 		/// so we know when to really free the DC.
 		/// </summary>
-		/// <param name="zoom">The zoom percentage.</param>
-		/// ------------------------------------------------------------------------------------
-		public void Init(float zoom)
+		public void Init(float zoomPercentage)
 		{
-			Init(0, 0, zoom);
+			Init(0, 0, zoomPercentage);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Make sure the graphics object has a DC. If it already has, increment a count,
 		/// so we know when to really free the DC.
 		/// </summary>
 		/// <param name="dpix">The DPI in the x direction.</param>
 		/// <param name="dpiy">The DPI in the y direction.</param>
-		/// ------------------------------------------------------------------------------------
 		public void Init(int dpix, int dpiy)
 		{
 			Init(dpix, dpiy, 1.0f);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Make sure the graphics object has a DC. If it already has, increment a count,
 		/// so we know when to really free the DC.
 		/// </summary>
 		/// <param name="dpix">The DPI in the x direction.</param>
 		/// <param name="dpiy">The DPI in the y direction.</param>
-		/// <param name="zoom">The zoom percentage.</param>
-		/// ------------------------------------------------------------------------------------
-		private void Init(int dpix, int dpiy, float zoom)
+		/// <param name="zoomPercentage">The zoom percentage.</param>
+		private void Init(int dpix, int dpiy, float zoomPercentage)
 		{
 			if (m_cactInitGraphics == 0)
 			{
@@ -152,15 +121,20 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// TODO: we might want a graphics appropriate for our printer.
 				m_graphics = m_parent.CreateGraphics();
 				if (m_vwGraphics == null)
+				{
 					m_vwGraphics = VwGraphicsWin32Class.Create();
-
+				}
 				if (m_graphics != null)
 				{
 					if (dpix <= 0)
-						dpix = (int) (m_graphics.DpiX*zoom);
+					{
+						dpix = (int)(m_graphics.DpiX * zoomPercentage);
+					}
 					if (dpiy <= 0)
-						dpiy = (int) (m_graphics.DpiY*zoom);
-					IntPtr hdc = m_graphics.GetHdc();
+					{
+						dpiy = (int)(m_graphics.DpiY * zoomPercentage);
+					}
+					var hdc = m_graphics.GetHdc();
 					m_vwGraphics.Initialize(hdc);
 				}
 				else
@@ -168,10 +142,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 					// we think m_graphics should never be null. But it has happened (see e.g. LTB-708).
 					// So provide a desperate fall-back.
 					if (dpix <= 0)
+					{
 						dpix = 96;
+					}
 					if (dpiy <= 0)
+					{
 						dpiy = 96;
-					Logger.WriteEvent(String.Format("WARNING: failed to create m_graphics in GraphicsManager.Init({0}, {1}, {2})", dpix, dpiy, zoom));
+					}
+					Logger.WriteEvent($"WARNING: failed to create m_graphics in GraphicsManager.Init({dpix}, {dpiy}, {zoomPercentage})");
 				}
 				m_vwGraphics.XUnitsPerInch = dpix;
 				m_vwGraphics.YUnitsPerInch = dpiy;
@@ -179,11 +157,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_cactInitGraphics++;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Uninitialize the graphics object by releasing the DC.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public void Uninit()
 		{
 			if (m_cactInitGraphics > 0)
@@ -197,11 +173,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 				{
 					// We have released as often as we init'd. The device context must have been
 					// made in InitGraphics. Release it.
-					IntPtr hdc = m_vwGraphics.GetDeviceContext();
+					var hdc = m_vwGraphics.GetDeviceContext();
 					m_vwGraphics.ReleaseDC();
 					if (hdc != IntPtr.Zero)
+					{
 						m_graphics.ReleaseHdc(hdc);
-
+					}
 					m_graphics.Dispose();
 					m_graphics = null;
 				}

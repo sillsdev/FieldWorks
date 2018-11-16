@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
@@ -20,11 +20,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Name of the property.
 		/// </summary>
-		public string name = null;
+		public string name;
 		/// <summary>
 		/// Value of the property.
 		/// </summary>
-		public object value = null;
+		public object value;
 
 		/// <summary>
 		/// it is not clear yet what to do about default persistence;
@@ -54,8 +54,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Normally used constructor.
 		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="value"></param>
 		public Property(string name, object value)
 		{
 			this.name = name;

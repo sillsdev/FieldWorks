@@ -54,23 +54,23 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		public override void PersistAsXml(XElement node)
+		public override void PersistAsXml(XElement element)
 		{
-			base.PersistAsXml(node);
-			XmlUtils.SetAttribute(node, "flidVec", XmlUtils.MakeIntegerListValue(VecFlids));
-			XmlUtils.SetAttribute(node, "flidString", FlidString.ToString());
-			XmlUtils.SetAttribute(node, "ws", Ws.ToString());
+			base.PersistAsXml(element);
+			XmlUtils.SetAttribute(element, "flidVec", XmlUtils.MakeIntegerListValue(VecFlids));
+			XmlUtils.SetAttribute(element, "flidString", FlidString.ToString());
+			XmlUtils.SetAttribute(element, "ws", Ws.ToString());
 		}
 
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public override void InitXml(XElement node)
+		public override void InitXml(XElement element)
 		{
-			base.InitXml(node);
-			VecFlids = XmlUtils.GetMandatoryIntegerListAttributeValue(node, "flidVec");
-			FlidString = XmlUtils.GetMandatoryIntegerAttributeValue(node, "flidString");
-			Ws = XmlUtils.GetMandatoryIntegerAttributeValue(node, "ws");
+			base.InitXml(element);
+			VecFlids = XmlUtils.GetMandatoryIntegerListAttributeValue(element, "flidVec");
+			FlidString = XmlUtils.GetMandatoryIntegerAttributeValue(element, "flidString");
+			Ws = XmlUtils.GetMandatoryIntegerAttributeValue(element, "ws");
 		}
 
 		// Return the number of values in the tree rooted at hvo, where index (into m_flidVec)

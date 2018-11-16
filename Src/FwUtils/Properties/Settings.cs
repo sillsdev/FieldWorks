@@ -23,8 +23,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Properties
 		{
 			foreach (SettingsProperty property in Properties)
 			{
-				Debug.Assert(property.Provider is CrossPlatformSettingsProvider,
-					"Property '" + property.Name + "' Needs the Provider string set to CrossPlatformSettingsProvider");
+				Debug.Assert(property.Provider is CrossPlatformSettingsProvider, $"Property '{property.Name}' Needs the Provider string set to CrossPlatformSettingsProvider.");
 			}
 		}
 	}

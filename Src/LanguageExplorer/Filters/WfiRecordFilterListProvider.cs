@@ -8,61 +8,80 @@ using SIL.LCModel;
 
 namespace LanguageExplorer.Filters
 {
-	public  class WfiRecordFilterListProvider : RecordFilterListProvider
+	public class WfiRecordFilterListProvider :  IRecordFilterListProvider
+
 	{
 		/// <summary />
-		protected LcmCache m_cache;
-		/// <summary>Collection of WordSetFilter objects.</summary>
-		protected ArrayList m_filters;
+		protected LcmCache _cache;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:WfiRecordFilterListProvider"/> class.
-		/// </summary>
+		/// <summary />
 		public WfiRecordFilterListProvider()
 		{
-			m_filters = new ArrayList();
+			Filters = new ArrayList();
 		}
 
-		/// <summary>
-		/// Initialize the filter list. this is called because we are an IFlexComponent
-		/// </summary>
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		public override void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
-		{
-			base.InitializeFlexComponent(flexComponentParameters);
+		#region Implementation of IPropertyTableProvider
 
-			m_cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <inheritdoc />
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <inheritdoc />
+		public ISubscriber Subscriber { get; private set; }
+
+		#endregion
+
+		#region Implementation of IFlexComponent
+
+		/// <inheritdoc />
+		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
+		{
+			FlexComponentParameters.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+
+			PropertyTable = flexComponentParameters.PropertyTable;
+			Publisher = flexComponentParameters.Publisher;
+			Subscriber = flexComponentParameters.Subscriber;
+
+			_cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 			ReLoad();
 		}
 
-		/// <summary>
-		/// reload the data items
-		/// </summary>
-		public override void ReLoad()
-		{
-			m_filters.Clear();
+		#endregion
 
-			foreach(var words in m_cache.LangProject.MorphologicalDataOA.TestSetsOC)
+		/// <summary>
+		/// Reload the data items
+		/// </summary>
+		public void ReLoad()
+		{
+			Filters.Clear();
+
+			foreach(var words in _cache.LangProject.MorphologicalDataOA.TestSetsOC)
 			{
-				m_filters.Add(new WordSetFilter(words));
+				Filters.Add(new WordSetFilter(words));
 			}
 		}
 
-		/// <summary>
-		/// the list of filters.
-		/// </summary>
-		public override ArrayList Filters => m_filters;
+		/// <inheritdoc />
+		public ArrayList Filters { get; }
 
-		/// <summary>
-		/// Gets the filter.
-		/// </summary>
-		public override object GetFilter(string id)
+		/// <inheritdoc />
+		public RecordFilter GetFilter(string filterName)
 		{
-			foreach (RecordFilter filter in m_filters)
+			foreach (RecordFilter filter in Filters)
 			{
-				if (filter.id == id)
+				if (filter.id == filterName)
 				{
 					return filter;
 				}
@@ -70,18 +89,14 @@ namespace LanguageExplorer.Filters
 			return null;
 		}
 
-		/// <summary>
-		/// if current filter contains one of our items, then make sure we have
-		/// a WordSetNullFilter() in our Filters, otherwise remove our WordSetNullFilter();
-		/// We also make sure the current filter has a valid set of word references loaded.
-		/// </summary>
-		public override bool OnAdjustFilterSelection(object argument)
+		/// <inheritdoc />
+		public bool OnAdjustFilterSelection(RecordFilter argument)
 		{
 			if (Filters.Count == 0)
 			{
 				return false;	// we aren't providing any items.
 			}
-			var currentFilter = argument as RecordFilter;
+			var currentFilter = argument;
 			RecordFilter matchingFilter;
 			if (ContainsOurFilter(currentFilter, out matchingFilter))
 			{
@@ -92,7 +107,7 @@ namespace LanguageExplorer.Filters
 				}
 				// make sure the current filter has a valid set of wordform references.
 				var wordSetFilter = matchingFilter as WordSetFilter;
-				wordSetFilter.ReloadWordSet(m_cache);
+				wordSetFilter.ReloadWordSet(_cache);
 			}
 			else if (Filters[0] is WordSetNullFilter)
 			{

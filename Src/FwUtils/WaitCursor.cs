@@ -1,23 +1,13 @@
-// --------------------------------------------------------------------------------------------
 // Copyright (c) 2002-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: WaitCursor.cs
-// Responsibility: Eberhard Beilharz
-// Last reviewed:
-//
-// <remarks>
-// Helper class to display a wait cursor
-// </remarks>
-// --------------------------------------------------------------------------------------------
+
 //#define DEBUG_WAITCURSOR
 using System;
 using System.Windows.Forms;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Display a wait cursor while object exists.
 	/// </summary>
@@ -31,7 +21,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// </code>
 	/// This displays the wait cursor inside of the using block.
 	/// </example>
-	/// ----------------------------------------------------------------------------------------
 	public class WaitCursor : IDisposable
 	{
 #if DEBUG_WAITCURSOR
@@ -42,48 +31,35 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private bool m_fOldWaitCursor;
 		private delegate void VoidMethodWithBool(bool f);
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:WaitCursor"/> class.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public WaitCursor() : this(null, false)
 		{
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="parent">Parent control</param>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public WaitCursor(Control parent) : this(parent, false)
 		{
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Constructor
-		/// </summary>
+		/// <summary />
 		/// <param name="parent">Parent control (can be null if displaying a normal wait cursor)</param>
 		/// <param name="showBusyCursor">True to show a busy cursor (arrow with an
 		/// hourglass) instead of the hourglass by itself.</param>
-		/// ------------------------------------------------------------------------------------
 		public WaitCursor(Control parent, bool showBusyCursor)
 		{
 			if (parent == null && showBusyCursor)
+			{
 				throw new ArgumentException("Can't show a busy cursor without having a parent control");
+			}
 			m_parent = parent;
 			SetWaitCursor(showBusyCursor);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Sets the wait cursor.
 		/// </summary>
 		/// <param name="showBusyCursor">set to <c>true</c> to display the busy cursor,
 		/// set to <c>false</c> to display the normal wait cursor.</param>
-		/// ------------------------------------------------------------------------------------
 		private void SetWaitCursor(bool showBusyCursor)
 		{
 			if (m_parent != null && m_parent.InvokeRequired)
@@ -91,7 +67,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 				m_parent.Invoke(new VoidMethodWithBool(SetWaitCursor), showBusyCursor);
 				return;
 			}
-
 			if (m_parent != null)
 			{
 				m_oldCursor = m_parent.Cursor;
@@ -107,25 +82,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 #if DEBUG_WAITCURSOR
 			++s_depth;
-			Debug.WriteLine(String.Format("{0}: WaitCursor.Create({1}): m_parent={2}; m_oldCursor={3}; m_fOldWaitCursor={4}",
-				s_depth, showBusyCursor, m_parent, m_oldCursor, m_fOldWaitCursor));
+			Debug.WriteLine(String.Format("{0}: WaitCursor.Create({1}): m_parent={2}; m_oldCursor={3}; m_fOldWaitCursor={4}", s_depth, showBusyCursor, m_parent, m_oldCursor, m_fOldWaitCursor));
 #endif
 		}
 
 		#region IDisposable & Co. implementation
 
 		/// <summary>
-		/// True, if the object has been disposed.
-		/// </summary>
-		private bool m_isDisposed = false;
-
-		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed
-		{
-			get { return m_isDisposed; }
-		}
+		private bool IsDisposed { get; set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -140,15 +106,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 			// The base class finalizer is called automatically.
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <remarks>Must not be virtual.</remarks>
+		/// <inheritdoc />
 		public void Dispose()
 		{
 			Dispose(true);
 			// This object will be cleaned up by the Dispose method.
-			// Therefore, you should call GC.SupressFinalize to
+			// Therefore, you should call GC.SuppressFinalize to
 			// take this object off the finalization queue
 			// and prevent finalization code for this object
 			// from executing a second time.
@@ -179,9 +142,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		protected virtual void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
-			if (m_isDisposed)
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
 				return;
+			}
 
 			if (disposing)
 			{
@@ -193,16 +158,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_parent = null;
 			m_oldCursor = null;
 
-			m_isDisposed = true;
+			IsDisposed = true;
 		}
 
 		#endregion IDisposable & Co. implementation
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Restore the previous cursor
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public void Restore()
 		{
 			if (m_parent != null && m_parent.InvokeRequired)
@@ -212,8 +175,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 
 #if DEBUG_WAITCURSOR
-			Debug.WriteLine(String.Format("{0}: WaitCursor.Dispose(): m_parent={1}; m_oldCursor={2}; m_fOldWaitCursor={3}",
-				s_depth, m_parent, m_oldCursor, m_fOldWaitCursor));
+			Debug.WriteLine(String.Format("{0}: WaitCursor.Dispose(): m_parent={1}; m_oldCursor={2}; m_fOldWaitCursor={3}", s_depth, m_parent, m_oldCursor, m_fOldWaitCursor));
 			--s_depth;
 #endif
 			if (m_oldCursor != null)

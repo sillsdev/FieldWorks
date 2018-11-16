@@ -16,7 +16,7 @@ namespace SIL.FieldWorks
 	/// <summary>
 	/// This class encapsulates the application settings for FW.
 	/// </summary>
-	public class FwApplicationSettings : FwApplicationSettingsBase
+	public class FwApplicationSettings : IFwApplicationSettings
 	{
 		private readonly Common.FwUtils.Properties.Settings m_settings;
 
@@ -27,42 +27,42 @@ namespace SIL.FieldWorks
 		}
 
 		/// <inheritdoc />
-		public override bool UpdateGlobalWSStore
+		public bool UpdateGlobalWSStore
 		{
 			get { return m_settings.UpdateGlobalWSStore; }
 			set { m_settings.UpdateGlobalWSStore = value; }
 		}
 
 		/// <inheritdoc />
-		public override ReportingSettings Reporting
+		public ReportingSettings Reporting
 		{
 			get { return m_settings.Reporting; }
 			set { m_settings.Reporting = value; }
 		}
 
 		/// <inheritdoc />
-		public override string LocalKeyboards
+		public string LocalKeyboards
 		{
 			get { return m_settings.LocalKeyboards; }
 			set { m_settings.LocalKeyboards = value; }
 		}
 
 		/// <inheritdoc />
-		public override string WebonaryUser
+		public string WebonaryUser
 		{
 			get { return m_settings.WebonaryUser; }
 			set { m_settings.WebonaryUser = value; }
 		}
 
 		/// <inheritdoc />
-		public override string WebonaryPass
+		public string WebonaryPass
 		{
 			get { return m_settings.WebonaryPass; }
 			set { m_settings.WebonaryPass = value; }
 		}
 
 		/// <inheritdoc />
-		public override void UpgradeIfNecessary()
+		public void UpgradeIfNecessary()
 		{
 			if (m_settings.CallUpgrade)
 			{
@@ -79,7 +79,7 @@ namespace SIL.FieldWorks
 					var pathToPreviousSettingsFile = Path.Combine(directoryList[directoryList.Count - 1], "user.config");
 					using (var stream = new FileStream(pathToPreviousSettingsFile, FileMode.Open))
 					{
-						MigrateIfNecessary(stream);
+						FwUtils.MigrateIfNecessary(stream, this);
 					}
 				}
 				m_settings.CallUpgrade = false;
@@ -88,12 +88,12 @@ namespace SIL.FieldWorks
 		}
 
 		/// <inheritdoc />
-		public override void Save()
+		public void Save()
 		{
 			m_settings.Save();
 		}
 
-		/// <summary />
+		/// <inheritdoc />
 		public void DeleteCorruptedSettingsFilesIfPresent()
 		{
 			var pathToConfigFiles = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), Application.CompanyName, Application.ProductName);

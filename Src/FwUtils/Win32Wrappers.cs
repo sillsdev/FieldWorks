@@ -3,26 +3,25 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms.VisualStyles;
-using System.Runtime.InteropServices;
-using System.Collections.Generic;
-using System.Linq;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
-	internal delegate int BrowseCallBackProc(IntPtr hwnd, int msg, IntPtr lp, IntPtr wp);
-
+#if RANDYTODO
+	// TODO: Far too many classes, structs, and enums, and deadwood, so I'll just sew the patient back up with only a minimal code cleaning operation.
+#endif
 	#region Static class Win32
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Wrappers for Win32 methods
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public static class Win32
 	{
 		/// <summary></summary>
@@ -30,11 +29,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary></summary>
 		public const string REBARCLASSNAME = "ReBarWindow32";
 
-		/// --------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// --------------------------------------------------------------------------------------
+		/// <summary />
 		[StructLayout(LayoutKind.Sequential)]
 		public struct POINT
 		{
@@ -122,11 +117,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		#endregion
 
 		#region Mouse Buttons
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Defines mouse buttons
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Flags]
 		public enum MouseButtons
 		{
@@ -816,11 +809,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		#endregion
 
 		#region Win32 Menu Flags Enumeration
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Menu flags for Add/Check/EnableMenuItem()
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Flags]
 		public enum MenuFlags
 		{
@@ -888,11 +879,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		#endregion
 
 		#region Win32 Hit test enumeration
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// WM_NCHITTEST and MOUSEHOOKSTRUCT Mouse Position Codes
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public enum HitTest
 		{
 			/// <summary></summary>
@@ -1710,7 +1699,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary></summary>
 		public const int TVS_NOTOOLTIPS = 0x80;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The GetWindowLongPtr function retrieves information about the specified window.
 		/// </summary>
@@ -1719,7 +1707,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </param>
 		/// <returns>If the function succeeds, the return value is the requested value. If the
 		/// function fails, the return value is zero.</returns>
-		/// ------------------------------------------------------------------------------------
 		public static int GetWindowLong(HandleRef hWnd, int nIndex)
 		{
 			if (Platform.IsWindows)
@@ -1733,7 +1720,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "GetWindowLong")]
 		private static extern int GetWindowLongWindows(HandleRef hWnd, int nIndex);
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The SetWindowLongPtr function changes an attribute of the specified window.
 		/// </summary>
@@ -1742,7 +1728,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="dwNewLong">Specifies the replacement value. </param>
 		/// <returns>If the function succeeds, the return value the previous value of the
 		/// specified offset. If the function fails, the return value is zero. </returns>
-		/// ------------------------------------------------------------------------------------
 		public static int SetWindowLong(HandleRef hWnd, int nIndex, int dwNewLong)
 		{
 			if (Platform.IsWindows)
@@ -1801,7 +1786,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			SB_BOTH = 3
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The SetScrollPos function sets the position of the scroll box (thumb) in the
 		/// specified scroll bar and, if requested, redraws the scroll bar to reflect the
@@ -1817,11 +1801,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// redrawn. If it is <c>false</c>, the scroll bar is not redrawn. </param>
 		/// <returns>If the function succeeds, the return value is the previous position of
 		/// the scroll box. If the function fails, the return value is 0.</returns>
-		/// ------------------------------------------------------------------------------------
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
 		public static extern short SetScrollPos(IntPtr hWnd, WhichScrollBar nBar, short nPos, bool fRedraw);
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The GetScrollPos function retrieves the current position of the scroll box (thumb)
 		/// in the specified scroll bar. The current position is a relative value that depends
@@ -1833,11 +1815,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="nBar">Specifies the scroll bar to be examined. </param>
 		/// <returns>If the function succeeds, the return value is the current position of
 		/// the scroll box. If the function fails, the return value is 0. </returns>
-		/// ------------------------------------------------------------------------------------
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
 		public static extern short GetScrollPos(IntPtr hWnd, WhichScrollBar nBar);
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The SetScrollRange function sets the minimum and maximum scroll box positions for
 		/// the specified scroll bar.
@@ -1852,12 +1832,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// redrawn. If it is <c>false</c>, the scroll bar is not redrawn. </param>
 		/// <returns>If the function succeeds, the return value is <c>true</c>. If the function
 		/// fails, the return value is <c>false</c>.</returns>
-		/// ------------------------------------------------------------------------------------
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
 		public static extern bool SetScrollRange(IntPtr hWnd, WhichScrollBar nBar, short nMinPos,
 			short nMaxPos, bool fRedraw);
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The GetScrollRange function retrieves the current minimum and maximum scroll box
 		/// (thumb) positions for the specified scroll bar.
@@ -1870,7 +1848,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="nMaxPos">Receives the maximum scrolling position.</param>
 		/// <returns>If the function succeeds, the return value is <c>true</c>. If the function
 		/// fails, the return value is <c>false</c>.</returns>
-		/// ------------------------------------------------------------------------------------
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
 		public static extern bool GetScrollRange(IntPtr hWnd, WhichScrollBar nBar,
 			out short nMinPos, out short nMaxPos);
@@ -1971,11 +1948,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[DllImport("libc")]
 		private static extern int readlink(string path, byte[] buffer, int buflen);
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the name of the executable
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public static uint GetModuleFileName(IntPtr hModule, StringBuilder lpFilename, int nSize)
 		{
 			if (Platform.IsWindows)
@@ -2006,9 +1981,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		#region Synchronization
-		/// ------------------------------------------------------------------------------------
 		/// <summary></summary>
-		/// ------------------------------------------------------------------------------------
 		public struct SecurityAttributes
 		{
 			/// <summary>length of the structure</summary>
@@ -2018,18 +1991,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 			/// <summary>true to allow the handle to be inherited</summary>
 			public bool inheritHandle;
 		}
-		/// ------------------------------------------------------------------------------------
 		/// <summary></summary>
-		/// ------------------------------------------------------------------------------------
 		public const UInt32 WAIT_TIMEOUT = 258;
-		/// ------------------------------------------------------------------------------------
 		/// <summary></summary>
-		/// ------------------------------------------------------------------------------------
 		public const UInt32 WAIT_OBJECT_0 = 0;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary></summary>
-		/// ------------------------------------------------------------------------------------
 		public static uint WaitForSingleObject(IntPtr handle, uint milliseconds)
 		{
 			if (Platform.IsWindows)
@@ -2221,18 +2188,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			public POINT ptMaxPosition;
 			/// <summary></summary>
 			public RECT rcNormalPosition;
-
-			///// --------------------------------------------------------------------------------
-			///// <summary>
-			///// Initializes a new instance of the <see cref="T:WINDOWPLACEMENT"/> class.
-			///// </summary>
-			///// <param name="showCmd">Specifies the current show state of the window.</param>
-			///// --------------------------------------------------------------------------------
-			//public WINDOWPLACEMENT(ShowWindowCommands showCmd)
-			//{
-			//    length = (uint)System.Runtime.InteropServices.Marshal.SizeOf(typeof(WINDOWPLACEMENT));
-			//    this.showCmd = (uint)showCmd;
-			//}
 		}
 
 		/// <summary></summary>
@@ -3386,18 +3341,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 			FIXED = 0x0800,
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Determines if the specified input locale has an IME.
 		/// </summary>
 		/// <param name="hKL">Input locale identifier.</param>
 		/// <returns>Returns a <c>true</c> if the specified locale has an IME, or <c>false</c>
 		/// otherwise.</returns>
-		/// ------------------------------------------------------------------------------------
 		[DllImport("imm32.dll", CharSet = CharSet.Auto)]
 		public static extern bool ImmIsIME(HandleRef hKL);
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Retrieve the input context associated with the specified window.
 		/// </summary>
@@ -3407,11 +3359,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// input context before attempting to access information in the context.
 		/// The application must call ImmReleaseContext when it is finished with the input
 		/// context.</remarks>
-		/// ------------------------------------------------------------------------------------
 		[DllImport("imm32.dll", CharSet = CharSet.Auto)]
 		public static extern IntPtr ImmGetContext(HandleRef hWnd);
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Releases the input context and unlocks the memory associated in the input context.
 		/// An application must call this function for each call to the ImmGetContext function.
@@ -3420,11 +3370,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// retrieved.</param>
 		/// <param name="hIMC">Handle to the input context.</param>
 		/// <returns>Returns <c>true</c> if successful, otherwise <c>false</c>.</returns>
-		/// ------------------------------------------------------------------------------------
 		[DllImport("imm32.dll", CharSet = CharSet.Auto)]
 		public static extern bool ImmReleaseContext(HandleRef hWnd, HandleRef hIMC);
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Retrieves the current conversion status.
 		/// </summary>
@@ -3433,13 +3381,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="conversionMode">A combination of conversion mode values.</param>
 		/// <param name="sentenceMode">The sentence mode value.</param>
 		/// <returns><c>true</c> if the method succeeded, otherwise <c>false</c>.</returns>
-		/// ------------------------------------------------------------------------------------
 		[DllImport("imm32.dll", CharSet = CharSet.Auto)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		public static extern bool ImmGetConversionStatus(HandleRef context, out int conversionMode,
 			out int sentenceMode);
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Sets the current conversion status.
 		/// </summary>
@@ -3448,7 +3394,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="conversionMode">A combination of conversion mode values.</param>
 		/// <param name="sentenceMode">The sentence mode value.</param>
 		/// <returns><c>true</c> if the method succeeded, otherwise <c>false</c>.</returns>
-		/// ------------------------------------------------------------------------------------
 		[DllImport("imm32.dll", CharSet = CharSet.Auto)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		public static extern bool ImmSetConversionStatus(HandleRef context, int conversionMode,
@@ -3458,11 +3403,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary></summary>
 		public const int SPI_GETNONCLIENTMETRICS = 41;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the Windows system font.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public static Font GetCaptionFont()
 		{
 			NONCLIENTMETRICS ncm = new NONCLIENTMETRICS();
@@ -3489,11 +3432,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[DllImport("gdi32.dll")]
 		internal static extern bool DeleteObject(IntPtr hObject);
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public struct FontRange
 		{
 			/// <summary></summary>
@@ -3502,11 +3441,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			public ushort High;
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public static List<FontRange> GetUnicodeRangesForFont(Font font)
 		{
 			IntPtr hdc, hFont, old, glyphSet;
@@ -3540,12 +3475,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return fontRanges;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Returns a value indicating whether or not all the characters in the specified
 		/// string have glyphs defined in the specified font.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public static bool AreCharGlyphsInFont(string str, Font fnt)
 		{
 			if (str == null)
@@ -3567,24 +3500,20 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return true;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Returns a value indicating whether or not the character represented by the
 		/// specified string has a glyph defined in the specified font. It's assumed the
 		/// string's length is only one character.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public static bool IsCharGlyphInFont(string str, Font fnt)
 		{
 			return !string.IsNullOrEmpty(str) && fnt != null && IsCharGlyphInFont(str[0], fnt);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Returns a value indicating whether or not the specified character has a glyph
 		/// defined in the specified font.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public static bool IsCharGlyphInFont(char chr, Font fnt)
 		{
 			if ((int)chr <= 0 || fnt == null)
@@ -3601,11 +3530,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 	#endregion
 
 	#region class LogicalFont
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Defines a class for holding info about a logical font.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
 	public class LogicalFont
 	{
@@ -3639,7 +3566,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
 		public string lfFaceName;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="LogicalFont"/> class.
 		/// </summary>
@@ -3648,21 +3574,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// is a symbol font, see the Dr. Gui article entitled
 		/// <see href="http://msdn.microsoft.com/archive/default.asp?url=/archive/en-us/dnaraskdr/html/askgui12302003.asp">
 		/// Determining the Character Set Used by a Font</see></remarks>
-		/// ------------------------------------------------------------------------------------
 		public LogicalFont(Font createFrom)
 		{
 			createFrom.ToLogFont(this);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets a value indicating whether this is a symbol font.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public Boolean IsSymbolCharSet
 		{
 			get { return lfCharSet == (byte)TextMetricsCharacterSet.Symbol; }
 		}
 	}
+
 	#endregion
 }

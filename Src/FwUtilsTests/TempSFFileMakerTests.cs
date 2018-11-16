@@ -1,57 +1,50 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.IO;
 using System.Text;
 using NUnit.Framework;
 using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Unit tests for methods of the <see cref="TempSFFileMaker"/> class.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
 	public class TempSFFileMakerTests
 	{
 		private const int s_cr = 13;
 		private const int s_lf = 10;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the <see cref="TempSFFileMaker.CreateFile(string,string[])"/> method with a
 		/// null SIL book id
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void TestCreateFileNullSILBookId()
 		{
-			TempSFFileMaker testFileMaker = new TempSFFileMaker();
+			var testFileMaker = new TempSFFileMaker();
 			testFileMaker.CreateFile(null, null);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the <see cref="TempSFFileMaker.CreateFile(string,string[])"/> method with only
 		/// the \id line
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestCreateFileIdLineOnly_ASCII()
 		{
-			TempSFFileMaker testFileMaker = new TempSFFileMaker();
-			string filename = testFileMaker.CreateFile("EPH", null);
+			var testFileMaker = new TempSFFileMaker();
+			var filename = testFileMaker.CreateFile("EPH", null);
 
 			// Check the file contents.
-			using (BinaryReader file = FileUtils.OpenFileForBinaryRead(filename, Encoding.ASCII))
+			using (var file = FileUtils.OpenFileForBinaryRead(filename, Encoding.ASCII))
 			{
-				byte[] fileContents = file.ReadBytes((int)file.BaseStream.Length);
-				int i = 0;
+				var fileContents = file.ReadBytes((int)file.BaseStream.Length);
+				var i = 0;
 				Assert.AreEqual(92, fileContents[i++]);
 				Assert.AreEqual(105, fileContents[i++]);
 				Assert.AreEqual(100, fileContents[i++]);
@@ -64,23 +57,20 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the <see cref="TempSFFileMaker.CreateFile(string,string[])"/> method with the
 		/// \id line and 2 additional lines
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestCreateFileThreeLines_ASCII()
 		{
-			TempSFFileMaker testFileMaker = new TempSFFileMaker();
-			string filename = testFileMaker.CreateFile("EPH", new string[] {@"\mt test", @"\p"});
-
+			var testFileMaker = new TempSFFileMaker();
+			var filename = testFileMaker.CreateFile("EPH", new[] { @"\mt test", @"\p" });
 			// Check the file contents.
-			using (BinaryReader file = FileUtils.OpenFileForBinaryRead(filename, Encoding.ASCII))
+			using (var file = FileUtils.OpenFileForBinaryRead(filename, Encoding.ASCII))
 			{
-				byte[] fileContents = file.ReadBytes((int)file.BaseStream.Length);
-				int i = 0;
+				var fileContents = file.ReadBytes((int)file.BaseStream.Length);
+				var i = 0;
 				Assert.AreEqual(92, fileContents[i++]);
 				Assert.AreEqual(105, fileContents[i++]);
 				Assert.AreEqual(100, fileContents[i++]);
@@ -109,23 +99,20 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the <see cref="TempSFFileMaker.CreateFile(string,string[])"/> method with the
 		/// \id line and 2 additional lines
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestCreateFile_UnicodeNoBOM()
 		{
-			TempSFFileMaker testFileMaker = new TempSFFileMaker();
-			string filename = testFileMaker.CreateFile("EPH", null, Encoding.Unicode, false);
-
+			var testFileMaker = new TempSFFileMaker();
+			var filename = testFileMaker.CreateFile("EPH", null, Encoding.Unicode, false);
 			// Check the file contents.
-			using (BinaryReader file = FileUtils.OpenFileForBinaryRead(filename, Encoding.Unicode))
+			using (var file = FileUtils.OpenFileForBinaryRead(filename, Encoding.Unicode))
 			{
-				byte[] fileContents = file.ReadBytes((int)file.BaseStream.Length);
-				int i = 0;
+				var fileContents = file.ReadBytes((int)file.BaseStream.Length);
+				var i = 0;
 				Assert.AreEqual(92, fileContents[i++]);
 				Assert.AreEqual(0, fileContents[i++]);
 				Assert.AreEqual(105, fileContents[i++]);
@@ -147,23 +134,20 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the <see cref="TempSFFileMaker.CreateFile(string,string[])"/> method with the
 		/// \id line and 2 additional lines
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestCreateFile_UnicodeBOM()
 		{
-			TempSFFileMaker testFileMaker = new TempSFFileMaker();
-			string filename = testFileMaker.CreateFile("EPH", null, Encoding.Unicode, true);
-
+			var testFileMaker = new TempSFFileMaker();
+			var filename = testFileMaker.CreateFile("EPH", null, Encoding.Unicode, true);
 			// Check the file contents.
-			using (BinaryReader file = FileUtils.OpenFileForBinaryRead(filename, Encoding.Unicode))
+			using (var file = FileUtils.OpenFileForBinaryRead(filename, Encoding.Unicode))
 			{
-				byte[] fileContents = file.ReadBytes((int)file.BaseStream.Length);
-				int i = 0;
+				var fileContents = file.ReadBytes((int)file.BaseStream.Length);
+				var i = 0;
 				Assert.AreEqual(0xff, fileContents[i++]);
 				Assert.AreEqual(0xfe, fileContents[i++]);
 				Assert.AreEqual(92, fileContents[i++]);
@@ -187,18 +171,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the <see cref="TempSFFileMaker.EncodeLine"/> method to create a Unicode byte
 		/// sequence
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void EncodeLine_Unicode()
 		{
-			byte[] line = TempSFFileMaker.EncodeLine("abc" + '\u1234', Encoding.Unicode);
+			var line = TempSFFileMaker.EncodeLine("abc" + '\u1234', Encoding.Unicode);
 			Assert.AreEqual(12, line.Length);
-			int i = 0;
+			var i = 0;
 			Assert.AreEqual(97, line[i++]);
 			Assert.AreEqual(0, line[i++]);
 			Assert.AreEqual(98, line[i++]);
@@ -213,18 +195,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(0, line[i++]);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the <see cref="TempSFFileMaker.EncodeLine"/> method to create a
 		/// big endian Unicode byte sequence
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void EncodeLine_BigEndianUnicode()
 		{
-			byte[] line = TempSFFileMaker.EncodeLine("abc" + '\u1234', Encoding.BigEndianUnicode);
+			var line = TempSFFileMaker.EncodeLine("abc" + '\u1234', Encoding.BigEndianUnicode);
 			Assert.AreEqual(12, line.Length);
-			int i = 0;
+			var i = 0;
 			Assert.AreEqual(0, line[i++]);
 			Assert.AreEqual(97, line[i++]);
 			Assert.AreEqual(0, line[i++]);
@@ -239,18 +219,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(s_lf, line[i++]);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the <see cref="TempSFFileMaker.EncodeLine"/> method to create an
 		/// ASCII byte sequence
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void EncodeLine_ASCII()
 		{
-			byte[] line = TempSFFileMaker.EncodeLine("abcd", Encoding.ASCII);
+			var line = TempSFFileMaker.EncodeLine("abcd", Encoding.ASCII);
 			Assert.AreEqual(6, line.Length);
-			int i = 0;
+			var i = 0;
 			Assert.AreEqual(97, line[i++]);
 			Assert.AreEqual(98, line[i++]);
 			Assert.AreEqual(99, line[i++]);
@@ -259,18 +237,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(s_lf, line[i++]);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the <see cref="TempSFFileMaker.EncodeLine"/> method to create a
 		/// UTF8 byte sequence
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void EncodeLine_UTF8()
 		{
-			byte[] line = TempSFFileMaker.EncodeLine("abc" + '\u1234', Encoding.UTF8);
+			var line = TempSFFileMaker.EncodeLine("abc" + '\u1234', Encoding.UTF8);
 			Assert.AreEqual(8, line.Length);
-			int i = 0;
+			var i = 0;
 			Assert.AreEqual(97, line[i++]);
 			Assert.AreEqual(98, line[i++]);
 			Assert.AreEqual(99, line[i++]);
@@ -281,18 +257,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(s_lf, line[i++]);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the <see cref="TempSFFileMaker.EncodeLine"/> method to create a
 		/// sequence with multiple backslash characters
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void EncodeLine_Backslashes()
 		{
-			byte[] line = TempSFFileMaker.EncodeLine("abc" + @"\\" + "def", Encoding.ASCII);
+			var line = TempSFFileMaker.EncodeLine("abc" + @"\\" + "def", Encoding.ASCII);
 			Assert.AreEqual(10, line.Length);
-			int i = 0;
+			var i = 0;
 			Assert.AreEqual('a', line[i++]);
 			Assert.AreEqual('b', line[i++]);
 			Assert.AreEqual('c', line[i++]);
@@ -304,9 +278,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(s_cr, line[i++]);
 			Assert.AreEqual(s_lf, line[i++]);
 
-			TempSFFileMaker testFileMaker = new TempSFFileMaker();
-			string filename = testFileMaker.CreateFile("EPH", new[] { @"\v 1 c:\abc\def" }, Encoding.UTF8, false);
-			using (TextReader reader = FileUtils.OpenFileForRead(filename, Encoding.UTF8))
+			var testFileMaker = new TempSFFileMaker();
+			var filename = testFileMaker.CreateFile("EPH", new[] { @"\v 1 c:\abc\def" }, Encoding.UTF8, false);
+			using (var reader = FileUtils.OpenFileForRead(filename, Encoding.UTF8))
 			{
 				Assert.AreEqual(@"\id EPH", reader.ReadLine());
 				Assert.AreEqual(@"\v 1 c:\abc\def", reader.ReadLine());

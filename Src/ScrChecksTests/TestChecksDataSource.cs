@@ -124,10 +124,7 @@ namespace SILUBS.ScriptureChecks
 		/// Gets an enumarable thingy to enumerate the tokens.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public IEnumerable<ITextToken> TextTokens()
-		{
-			return m_tokens;
-		}
+		public IEnumerable<ITextToken> TextTokens => m_tokens;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

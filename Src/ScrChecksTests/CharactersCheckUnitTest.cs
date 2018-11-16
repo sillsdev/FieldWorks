@@ -52,7 +52,7 @@ namespace SILUBS.ScriptureChecks
 
 			m_dataSource.m_tokens.Add(new DummyTextToken("gha bcdefi",
 				TextType.Verse, true, false, "Paragraph"));
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(4, m_errors.Count);
 			CheckError(0, m_dataSource.m_tokens[0].Text, 0, "g", "Invalid or unknown character");
@@ -72,7 +72,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("AlwaysValidCharacters", "12345\u2028");
 			m_dataSource.m_tokens.Add(new DummyTextToken("ej53427\u20281fi",
 				TextType.Verse, true, false, "Paragraph"));
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(5, m_errors.Count);
 			CheckError(0, m_dataSource.m_tokens[0].Text, 0, "e", "Invalid or unknown character");
@@ -97,7 +97,7 @@ namespace SILUBS.ScriptureChecks
 
 			m_dataSource.m_tokens.Add(new DummyTextToken("aa\u0301bcdea\u0302e\u0303",
 				TextType.Verse, true, false, "Paragraph"));
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(2, m_errors.Count);
 			CheckError(0, m_dataSource.m_tokens[0].Text, 7, "a\u0302",
@@ -127,7 +127,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("aopqrstu",
 				TextType.Verse, true, false, "Paragraph", string.Empty, "fr"));
 
-			m_check.Check(m_dataSource.TextTokens(), RecordError);
+			m_check.Check(m_dataSource.TextTokens, RecordError);
 
 			Assert.AreEqual(3, m_errors.Count);
 			CheckError(0, m_dataSource.m_tokens[0].Text, 7, "h", "Invalid or unknown character");
@@ -148,7 +148,7 @@ namespace SILUBS.ScriptureChecks
 
 			// This should not crash, even if the valid characters list has not been set.
 			List<TextTokenSubstring> refs =
-				CheckInventory.GetReferences(m_dataSource.TextTokens(), string.Empty);
+				CheckInventory.GetReferences(m_dataSource.TextTokens, string.Empty);
 
 			Assert.AreEqual(8, refs.Count);
 		}
@@ -167,7 +167,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.Verse, true, false, "Paragraph"));
 
 			List<TextTokenSubstring> refs =
-				CheckInventory.GetReferences(m_dataSource.TextTokens(), string.Empty);
+				CheckInventory.GetReferences(m_dataSource.TextTokens, string.Empty);
 
 			// We requested only the default vernacular.
 			// Should only get references from the second token.
@@ -229,7 +229,7 @@ namespace SILUBS.ScriptureChecks
 
 			CharactersCheck check = new CharactersCheck(m_UsfmDataSource);
 			List<TextTokenSubstring> tts =
-				check.GetReferences(m_UsfmDataSource.TextTokens(), desiredKey);
+				check.GetReferences(m_UsfmDataSource.TextTokens, desiredKey);
 
 			Assert.AreEqual(result.GetUpperBound(0)+1, tts.Count,
 				"A different number of results was returned than what was expected." );

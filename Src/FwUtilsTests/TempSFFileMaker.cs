@@ -1,10 +1,6 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// <remarks>
-// Class to manage creation (and retiring) of temp SF files
-// </remarks>
 
 using System;
 using System.Text;
@@ -12,11 +8,10 @@ using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// TempSFFileMaker.
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+#if RANDYTODO
+	// TODO: Create a new Test utilities project for classes that are shared among several test projects.
+#endif
+	/// <summary />
 	public class TempSFFileMaker
 	{
 		private static readonly MockFileOS s_fileOs = new MockFileOS();
@@ -27,7 +22,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			FileUtils.Manager.SetFileAdapter(s_fileOs);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Creates a temp file containing a single book
 		/// </summary>
@@ -36,13 +30,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="dataLines">Array of lines of SF text to write following the ID line.
 		/// This text should not include line-break characters.</param>
 		/// <returns>Name of file that was created</returns>
-		/// ------------------------------------------------------------------------------------
 		public string CreateFile(string sSILBookId, string[] dataLines)
 		{
 			return CreateFile(sSILBookId, dataLines, Encoding.ASCII, false);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Creates a temp file containing a single book
 		/// </summary>
@@ -54,32 +46,38 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="fWriteByteOrderMark">Pass <c>true</c> to have the BOM written at the
 		/// beginning of a Unicode file (ignored if encoding is ASCII).</param>
 		/// <returns>Name of file that was created</returns>
-		/// ------------------------------------------------------------------------------------
 		public string CreateFile(string sSILBookId, string[] dataLines, Encoding encoding, bool fWriteByteOrderMark)
 		{
 			if (sSILBookId == null)
-				throw new ArgumentNullException("sSILBookId");
+			{
+				throw new ArgumentNullException(nameof(sSILBookId));
+			}
 
 			// Create a temporary file.
-			string fileName = FileUtils.GetTempFile("tmp");
+			var fileName = FileUtils.GetTempFile("tmp");
 			if (!FileUtils.FileExists(fileName))
+			{
 				s_fileOs.AddFile(fileName, string.Empty, encoding);
-
+			}
 			using (var file = FileUtils.OpenFileForBinaryWrite(fileName, encoding))
 			{
 				// write the byte order marker
 				if (fWriteByteOrderMark && encoding != Encoding.ASCII)
+				{
 					file.Write('\ufeff');
-
+				}
 				// Write the id line to the file, IF it's length is > 0
 				if (sSILBookId.Length > 0)
+				{
 					file.Write(EncodeLine(@"\id " + sSILBookId, encoding));
-
+				}
 				// write out the file contents
 				if (dataLines != null)
 				{
 					foreach (string sLine in dataLines)
+					{
 						file.Write(EncodeLine(sLine, encoding));
+					}
 				}
 				file.Close();
 
@@ -87,25 +85,24 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Creates a temp file that does not have an ID line.
 		/// </summary>
 		/// <param name="dataLines">Array of lines of SF text to write.
 		/// This text should not include line-break characters.</param>
 		/// <returns>Name of file that was created</returns>
-		/// ------------------------------------------------------------------------------------
 		public string CreateFileNoID(string[] dataLines)
 		{
 			// Create a temporary file.
-			string fileName = FileUtils.GetTempFile("tmp");
-
+			var fileName = FileUtils.GetTempFile("tmp");
 			using (var file = FileUtils.OpenFileForBinaryWrite(fileName, Encoding.ASCII))
 			{
 				if (dataLines != null)
 				{
 					foreach (string sLine in dataLines)
+					{
 						file.Write(EncodeLine(sLine, Encoding.ASCII));
+					}
 				}
 				file.Close();
 
@@ -113,7 +110,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Creates a temp file that does not have an ID line, but does have a specified
 		/// extension.
@@ -122,18 +118,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// This text should not include line-break characters.</param>
 		/// <param name="extension">The extension.</param>
 		/// <returns>Name of file that was created</returns>
-		/// ------------------------------------------------------------------------------------
 		public string CreateFileNoID(string[] dataLines, string extension)
 		{
 			// Create a temporary file.
-			string fileName = FileUtils.GetTempFile(extension);
-
+			var fileName = FileUtils.GetTempFile(extension);
 			using (var file = FileUtils.OpenFileForBinaryWrite(fileName, Encoding.ASCII))
 			{
 				if (dataLines != null)
 				{
 					foreach (string sLine in dataLines)
+					{
 						file.Write(EncodeLine(sLine, Encoding.ASCII));
+					}
 				}
 				file.Close();
 
@@ -141,7 +137,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Encodes the characters of the given string according to the specified
 		/// <see cref="Encoding"/> and returns the results as a byte array, including a final
@@ -152,12 +147,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="encoding">The type of <see cref="Encoding"/> to be done</param>
 		/// <returns>The encoded characters as a byte array, including a final CR/LF sequence
 		/// </returns>
-		/// ------------------------------------------------------------------------------------
 		public static byte[] EncodeLine(string sLine, Encoding encoding)
 		{
-			string sIn = sLine + (char)13 + (char)10;
-			byte[] bytes = new byte[sIn.Length * 2];
-			int i = 0;
+			var sIn = sLine + (char)13 + (char)10;
+			var bytes = new byte[sIn.Length * 2];
+			var i = 0;
 			foreach (char ch in sIn)
 			{
 				bytes[i++] = (byte)(ch & 0xff);

@@ -46,7 +46,7 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		public void PersistAsXml(XElement node)
+		public void PersistAsXml(XElement element)
 		{
 			// nothing to do.
 		}
@@ -54,7 +54,7 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public void InitXml(XElement node)
+		public void InitXml(XElement element)
 		{
 			// Nothing to do
 		}

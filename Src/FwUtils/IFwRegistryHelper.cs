@@ -13,13 +13,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// </summary>
 	public interface IFwRegistryHelper
 	{
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the read-only local machine Registry key for FieldWorks.
 		/// NOTE: This key is not opened for write access because it will fail on
 		/// non-administrator logins.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		RegistryKey FieldWorksRegistryKeyLocalMachine { get; }
 
 		/// <summary>
@@ -27,36 +25,28 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		RegistryKey LocalMachineHive { get; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the read-only local machine Registry key for FieldWorksBridge.
 		/// NOTE: This key is not opened for write access because it will fail on
 		/// non-administrator logins.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		RegistryKey FieldWorksBridgeRegistryKeyLocalMachine { get; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the local machine Registry key for FieldWorks.
 		/// NOTE: This will throw with non-administrative logons! Be ready for that.
 		/// </summary>
 		/// <exception cref="SecurityException"/>
-		/// ------------------------------------------------------------------------------------
 		RegistryKey FieldWorksRegistryKeyLocalMachineForWriting { get; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the default (current user) Registry key for FieldWorks.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		RegistryKey FieldWorksRegistryKey { get; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the default (current user) Registry key for FieldWorks without the version number.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		RegistryKey FieldWorksVersionlessRegistryKey { get; }
 
 		/// <summary>

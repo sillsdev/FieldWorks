@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017 SIL International
+// Copyright (c) 2017-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -32,8 +32,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 				PreviousVersion = "Version 1.0.0"
 			};
 
-			XDocument oldConfigXml = CreateOldConfig(reportingSettings, true, "keyboards", "username", "password");
-			var appSettings = new TestFwApplicationSettings {ConfigXml = oldConfigXml};
+			var oldConfigXml = CreateOldConfig(reportingSettings, true, "keyboards", "username", "password");
+			var appSettings = new TestFwApplicationSettings { ConfigXml = oldConfigXml };
 			appSettings.UpgradeIfNecessary();
 			Assert.That(appSettings.Reporting.Launches, Is.EqualTo(reportingSettings.Launches));
 			Assert.That(appSettings.Reporting.FirstLaunchDate, Is.EqualTo(reportingSettings.FirstLaunchDate));
@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.That(appSettings.WebonaryPass, Is.EqualTo("password"));
 			// check if the old config sections were removed
 			Assert.That(appSettings.ConfigXml.Root?.Element("configSections")?.Elements("sectionGroup")
-				.First(e => (string) e.Attribute("name") == "userSettings").HasElements, Is.False);
+				.First(e => (string)e.Attribute("name") == "userSettings").HasElements, Is.False);
 			Assert.That(appSettings.ConfigXml.Root?.Element("userSettings")?.HasElements, Is.False);
 		}
 
@@ -59,7 +59,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 					new XElement("configSections",
 						new XElement("sectionGroup", new XAttribute("name", "userSettings"))),
 					new XElement("userSettings")));
-			var appSettings = new TestFwApplicationSettings {ConfigXml = oldConfigXml};
+			var appSettings = new TestFwApplicationSettings { ConfigXml = oldConfigXml };
 			appSettings.UpgradeIfNecessary();
 			Assert.That(appSettings.Reporting, Is.Null);
 			Assert.That(appSettings.UpdateGlobalWSStore, Is.False);
@@ -74,7 +74,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void UpgradeIfNecessary_OldConfigReportingMissing_OldConfigMigrated()
 		{
-			XDocument oldConfigXml = CreateOldConfig(null, true, "keyboards", "username", "password");
+			var oldConfigXml = CreateOldConfig(null, true, "keyboards", "username", "password");
 			var appSettings = new TestFwApplicationSettings { ConfigXml = oldConfigXml };
 			appSettings.UpgradeIfNecessary();
 			Assert.That(appSettings.Reporting, Is.Null);
@@ -84,7 +84,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.That(appSettings.WebonaryPass, Is.EqualTo("password"));
 			// check if the old config sections were removed
 			Assert.That(appSettings.ConfigXml.Root?.Element("configSections")?.Elements("sectionGroup")
-				.First(e => (string) e.Attribute("name") == "userSettings").HasElements, Is.False);
+				.First(e => (string)e.Attribute("name") == "userSettings").HasElements, Is.False);
 			Assert.That(appSettings.ConfigXml.Root?.Element("userSettings")?.HasElements, Is.False);
 		}
 
@@ -104,7 +104,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				PreviousVersion = "Version 1.0.0"
 			};
 
-			XDocument oldConfigXml = CreateOldConfig(reportingSettings, true, "keyboards", null, "password");
+			var oldConfigXml = CreateOldConfig(reportingSettings, true, "keyboards", null, "password");
 			var appSettings = new TestFwApplicationSettings { ConfigXml = oldConfigXml };
 			appSettings.UpgradeIfNecessary();
 			Assert.That(appSettings.Reporting.Launches, Is.EqualTo(reportingSettings.Launches));
@@ -116,12 +116,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.That(appSettings.WebonaryPass, Is.EqualTo("password"));
 			// check if the old config sections were removed
 			Assert.That(appSettings.ConfigXml.Root?.Element("configSections")?.Elements("sectionGroup")
-				.First(e => (string) e.Attribute("name") == "userSettings").HasElements, Is.False);
+				.First(e => (string)e.Attribute("name") == "userSettings").HasElements, Is.False);
 			Assert.That(appSettings.ConfigXml.Root?.Element("userSettings")?.HasElements, Is.False);
 		}
 
-		private static XDocument CreateOldConfig(ReportingSettings reportingSettings, bool? updateGlobalWSStore, string localKeyboards,
-			string webonaryUser, string webonaryPass)
+		private static XDocument CreateOldConfig(ReportingSettings reportingSettings, bool? updateGlobalWSStore, string localKeyboards, string webonaryUser, string webonaryPass)
 		{
 			var settingsElem = new XElement("SIL.CoreImpl.Properties.Settings",
 				CreateStringSettingElement("IsBTE", false),
@@ -132,19 +131,22 @@ namespace SIL.FieldWorks.Common.FwUtils
 				settingsElem.Add(new XElement("setting", new XAttribute("name", "Reporting"), new XAttribute("serializeAs", "Xml"),
 					new XElement("value", XElement.Parse(XmlSerializationHelper.SerializeToString(reportingSettings)))));
 			}
-
 			if (updateGlobalWSStore != null)
+			{
 				settingsElem.Add(CreateStringSettingElement("UpdateGlobalWSStore", updateGlobalWSStore));
-
+			}
 			if (localKeyboards != null)
+			{
 				settingsElem.Add(CreateStringSettingElement("LocalKeyboards", localKeyboards));
-
+			}
 			if (webonaryUser != null)
+			{
 				settingsElem.Add(CreateStringSettingElement("WebonaryUser", webonaryUser));
-
+			}
 			if (webonaryPass != null)
+			{
 				settingsElem.Add(CreateStringSettingElement("WebonaryPass", webonaryPass));
-
+			}
 			return new XDocument(new XDeclaration("1.0", "utf-8", "yes"),
 				new XElement("configuration",
 					new XElement("configSections",

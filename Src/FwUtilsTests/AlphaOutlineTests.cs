@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2017 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,19 +6,13 @@ using NUnit.Framework;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	[TestFixture]
 	public class AlphaOutlineTests // can't derive from BaseTest because of dependencies
 	{
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the NumToAlphaOutline method
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void NumToAlphaOutline()
 		{
@@ -29,11 +23,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual("AAA", AlphaOutline.NumToAlphaOutline(53));
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the AlphaToOutlineNum method with valid values
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void AlphaToOutlineNum_Valid()
 		{
@@ -45,11 +37,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(53, AlphaOutline.AlphaOutlineToNum("AAA"));
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the AlphaToOutlineNum method with invalid values
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void AlphaToOutlineNum_Invalid()
 		{

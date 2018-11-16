@@ -51,23 +51,23 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		public override void PersistAsXml(XElement node)
+		public override void PersistAsXml(XElement element)
 		{
-			base.PersistAsXml(node);
-			XmlUtils.SetAttribute(node, "flidVec", FlidVec.ToString());
-			XmlUtils.SetAttribute(node, "flidString", FlidString.ToString());
-			XmlUtils.SetAttribute(node, "ws", Ws.ToString());
+			base.PersistAsXml(element);
+			XmlUtils.SetAttribute(element, "flidVec", FlidVec.ToString());
+			XmlUtils.SetAttribute(element, "flidString", FlidString.ToString());
+			XmlUtils.SetAttribute(element, "ws", Ws.ToString());
 		}
 
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public override void InitXml(XElement node)
+		public override void InitXml(XElement element)
 		{
-			base.InitXml(node);
-			FlidVec = XmlUtils.GetMandatoryIntegerAttributeValue(node, "flidVec");
-			FlidString = XmlUtils.GetMandatoryIntegerAttributeValue(node, "flidString");
-			Ws = XmlUtils.GetMandatoryIntegerAttributeValue(node, "ws");
+			base.InitXml(element);
+			FlidVec = XmlUtils.GetMandatoryIntegerAttributeValue(element, "flidVec");
+			FlidString = XmlUtils.GetMandatoryIntegerAttributeValue(element, "flidString");
+			Ws = XmlUtils.GetMandatoryIntegerAttributeValue(element, "ws");
 		}
 
 		#region StringFinder Members

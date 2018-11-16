@@ -1,4 +1,7 @@
-//From:http://www.codeproject.com/cs/miscctrl/MessageBoxEx.asp
+// Copyright (c) 2005-2018 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+// From:http://www.codeproject.com/cs/miscctrl/MessageBoxEx.asp
 
 namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 {
@@ -34,7 +37,7 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		}
 
 		/// <summary>
-		/// Gets or Sets wether this button is a cancel button. i.e. the button
+		/// Gets or Sets whether this button is a cancel button. i.e. the button
 		/// that will be assumed to have been clicked if the user closes the message box
 		/// without pressing any button.
 		/// </summary>

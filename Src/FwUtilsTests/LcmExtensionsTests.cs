@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var confidenceLevels = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().CreateUnowned("ConfidenceLevels", Cache.DefaultUserWs);
 			var originalParentPossibility = factory.Create(Guid.NewGuid(), testList);
 			originalParentPossibility.Name.set_String(Cache.DefaultUserWs, "testing");
-			ICmPossibility conf = factory.Create(Guid.NewGuid(), confidenceLevels);
+			var conf = factory.Create(Guid.NewGuid(), confidenceLevels);
 			conf.Name.set_String(Cache.DefaultUserWs, "confidence");
 			originalParentPossibility.ConfidenceRA = conf;
 			var originalChildPossibility = factory.Create(Guid.NewGuid(), originalParentPossibility);

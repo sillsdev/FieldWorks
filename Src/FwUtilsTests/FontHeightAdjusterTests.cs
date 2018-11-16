@@ -6,23 +6,19 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using NUnit.Framework;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
-
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Tests for FontHeightAdjuster.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
 	public class FontHeightAdjusterTests
 	{
-
 		#region Data Members
 		TestFwStylesheet m_stylesheet;
 		WritingSystemManager m_wsManager;
@@ -30,11 +26,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		int m_hvoEnglishWs;
 		#endregion
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Set up some dummy styles for testing purposes
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
@@ -66,7 +60,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				propsBldr.GetTextProps());
 
 			// Override the font size for each writing system and each style.
-			List<FontOverride> fontOverrides = new List<FontOverride>(2);
+			var fontOverrides = new List<FontOverride>(2);
 			FontOverride fo;
 			fo.writingSystem = m_hvoEnglishWs;
 			fo.fontSize = 21;
@@ -86,32 +80,28 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_stylesheet.OverrideFontsForWritingSystems("StyleB", fontOverrides);
 		}
 
-		/// -------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the GetFontHeightForStyle method.
 		/// </summary>
-		/// -------------------------------------------------------------------------------------
 		[Test]
 		public void TestGetFontHeightForStyle()
 		{
-			Assert.AreEqual(13000, FontHeightAdjuster.GetFontHeightForStyle("StyleA",
-				m_stylesheet, m_hvoGermanWs, m_wsManager));
-			Assert.AreEqual(21000, FontHeightAdjuster.GetFontHeightForStyle("StyleA",
-				m_stylesheet, m_hvoEnglishWs, m_wsManager));
-			Assert.AreEqual(56000, FontHeightAdjuster.GetFontHeightForStyle("StyleB",
-				m_stylesheet, m_hvoGermanWs, m_wsManager));
-			Assert.AreEqual(20000, FontHeightAdjuster.GetFontHeightForStyle("StyleB",
-				m_stylesheet, m_hvoEnglishWs, m_wsManager));
+			Assert.AreEqual(13000, FontHeightAdjuster.GetFontHeightForStyle("StyleA", m_stylesheet, m_hvoGermanWs, m_wsManager));
+			Assert.AreEqual(21000, FontHeightAdjuster.GetFontHeightForStyle("StyleA", m_stylesheet, m_hvoEnglishWs, m_wsManager));
+			Assert.AreEqual(56000, FontHeightAdjuster.GetFontHeightForStyle("StyleB", m_stylesheet, m_hvoGermanWs, m_wsManager));
+			Assert.AreEqual(20000, FontHeightAdjuster.GetFontHeightForStyle("StyleB", m_stylesheet, m_hvoEnglishWs, m_wsManager));
 		}
 
 		private static int GetUbuntuVersion()
 		{
 			if (!MiscUtils.IsUnix)
+			{
 				return 0;
-
+			}
 			try
 			{
-				var startInfo = new ProcessStartInfo {
+				var startInfo = new ProcessStartInfo
+				{
 					RedirectStandardOutput = true,
 					UseShellExecute = false,
 					FileName = "lsb_release",
@@ -122,7 +112,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 					var value = proc.StandardOutput.ReadToEnd().TrimEnd();
 					proc.WaitForExit();
 					if (value.Contains("."))
+					{
 						return int.Parse(value.Split('.')[0]);
+					}
 				}
 			}
 			catch (Exception)
@@ -134,18 +126,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		private const int ExpectedFontHeightForArial = 20750;
 
-		/// -------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the GetAdjustedTsString method.
 		/// </summary>
-		/// -------------------------------------------------------------------------------------
 		[Test]
 		[Platform(Exclude = "Linux", Reason = "Test is Windows specific")]
 		public void TestGetAdjustedTsString()
 		{
-			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
-			ITsStrBldr strBldrExpected = TsStringUtils.MakeStrBldr();
-			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
+			var strBldr = TsStringUtils.MakeStrBldr();
+			var strBldrExpected = TsStringUtils.MakeStrBldr();
+			var propsBldr = TsStringUtils.MakePropsBldr();
 
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "StyleA");
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_hvoGermanWs);
@@ -156,16 +146,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_hvoEnglishWs);
 			strBldr.ReplaceRgch(0, 0, "Hello numero dos", 16, propsBldr.GetTextProps());
 			var propsBldrExpected = propsBldr;
-			propsBldrExpected.SetIntPropValues((int)FwTextPropType.ktptFontSize,
-				(int)FwTextPropVar.ktpvMilliPoint, 20500);
+			propsBldrExpected.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, 20500);
 			strBldrExpected.ReplaceRgch(0, 0, "Hello numero dos", 16, propsBldrExpected.GetTextProps());
 
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "StyleB");
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_hvoGermanWs);
 			strBldr.ReplaceRgch(0, 0, "3 Hello", 7, propsBldr.GetTextProps());
 			propsBldrExpected = propsBldr;
-			propsBldrExpected.SetIntPropValues((int)FwTextPropType.ktptFontSize,
-				(int)FwTextPropVar.ktpvMilliPoint, ExpectedFontHeightForArial);
+			propsBldrExpected.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, ExpectedFontHeightForArial);
 			strBldrExpected.ReplaceRgch(0, 0, "3 Hello", 7, propsBldrExpected.GetTextProps());
 
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "StyleB");
@@ -176,7 +164,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var tss = FontHeightAdjuster.GetAdjustedTsString(strBldr.GetString(), 23000, m_stylesheet, m_wsManager);
 			var propsWithWiggleRoom = new Dictionary<int, int>();
 			if (GetUbuntuVersion() == 14)
+			{
 				propsWithWiggleRoom[(int)FwTextPropType.ktptFontSize] = 1000; // millipoints. for some reason, the result is sometimes a point smaller on Trusty
+			}
 			AssertEx.AreTsStringsEqual(strBldrExpected.GetString(), tss, propsWithWiggleRoom);
 		}
 	}

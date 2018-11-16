@@ -140,7 +140,7 @@ namespace LanguageExplorer
 		/// this is an object which gives us the list of filters which we should offer to the user from the UI.
 		/// this does not include the filters they can get that by using the FilterBar.
 		/// </summary>
-		protected RecordFilterListProvider _filterProvider;
+		protected IRecordFilterListProvider _filterProvider;
 		private RecordFilter _defaultFilter;
 		private string _defaultSortLabel;
 		private bool _suppressSaveOnChangeRecord; // true during delete and insert and ShowRecord calls caused by them.
@@ -348,13 +348,13 @@ namespace LanguageExplorer
 			var setFilterMenu = false;
 			if (_filterProvider != null)
 			{
-				// There is only one record list (concordanceWords) that sets m_filterProvider to a provider.
+				// There is only one record list (concordanceWords) that sets _filterProvider to a provider.
 				// That provider is the class WfiRecordFilterListProvider.
 				// That record list is used in these tools: AnalysesTool, BulkEditWordformsTool, & WordListConcordanceTool
 				// That WfiRecordFilterListProvider instance is (ok: "will be") provided in one of the RecordList contructor overloads.
 				if (Filter != null)
 				{
-					// There is only one record list (concordanceWords) that sets m_filterProvider to a provider.
+					// There is only one record list (concordanceWords) that sets _filterProvider to a provider.
 					// That record list is used in these tools: AnalysesTool, BulkEditWordformsTool, & WordListConcordanceTool
 					// find any matching persisted menubar filter
 					// NOTE: for now assume we can only set/persist one such menubar filter at a time.
@@ -2303,7 +2303,7 @@ namespace LanguageExplorer
 
 			if (_filterProvider != null)
 			{
-				addf = (RecordFilter)_filterProvider.GetFilter(filterName);
+				addf = _filterProvider.GetFilter(filterName);
 				if (addf == null || addf is NullFilter)
 				{
 					// If we have no filter defined for this name, it is effectively another way to turn
@@ -2313,7 +2313,7 @@ namespace LanguageExplorer
 				}
 				// If we have a menu-type filter active, remove it. Otherwise don't remove anything.
 				remf = _activeMenuBarFilter;
-				_activeMenuBarFilter = addf is NullFilter ? null : addf;
+				_activeMenuBarFilter = addf;
 			}
 			OnChangeFilter(new FilterChangeEventArgs(addf, remf));
 		}

@@ -115,11 +115,17 @@ namespace LanguageExplorer.Impls
 		///		this app.
 		/// </summary>
 		private static Guid AppGuid => new Guid("E716C901-3171-421f-83E1-3E012DEC9489");
+		/// <summary>
+		/// The name of the Language Explorer registry subkey (Even though this is the same as
+		/// FwDirectoryFinder.ksFlexFolderName and FwUtils.ksFlexAppName, PLEASE do not use them interchangeably.
+		/// Use the one that is correct for your context, in case they need to be changed later.)
+		/// </summary>
+		private const string LexText = "Language Explorer";
 
 		/// <summary>
 		/// Gets the registry settings key name for the application.
 		/// </summary>
-		private static string SettingsKeyName => FwSubKey.LexText;
+		private static string SettingsKeyName => LexText;
 
 		/// <summary>
 		/// Gets the FwFindReplaceDlg
@@ -174,25 +180,6 @@ namespace LanguageExplorer.Impls
 		private IVwPattern FindPattern => m_findPattern ?? (m_findPattern = VwPatternClass.Create());
 
 #endregion non-interface properties
-
-#region IProjectSpecificSettingsKeyProvider interface implementation
-
-		/// <summary>
-		/// Gets the project specific settings key.
-		/// </summary>
-		public RegistryKey ProjectSpecificSettingsKey
-		{
-			get
-			{
-				Debug.Assert(Cache != null, "The app's cache has not been created yet.");
-				using (var regKey = SettingsKey)
-				{
-					return regKey.CreateSubKey(Cache.ProjectId.Name);
-				}
-			}
-		}
-
-#endregion IProjectSpecificSettingsKeyProvider interface implementation
 
 #region IMessageFilter interface implementation
 
@@ -596,11 +583,6 @@ namespace LanguageExplorer.Impls
 			RefreshAllViews();
 			return false;
 		}
-
-		/// <summary>
-		/// This application processes DB sync records.
-		/// </summary>
-		public Guid SyncGuid { get; } = AppGuid;
 
 		/// <summary>
 		/// Enable or disable all top-level windows. This allows nesting. In other words,

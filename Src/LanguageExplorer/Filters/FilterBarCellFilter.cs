@@ -87,22 +87,22 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		public override void PersistAsXml(XElement node)
+		public override void PersistAsXml(XElement element)
 		{
-			base.PersistAsXml(node);
-			DynamicLoader.PersistObject(Finder, node, "finder");
-			DynamicLoader.PersistObject(Matcher, node, "matcher");
+			base.PersistAsXml(element);
+			DynamicLoader.PersistObject(Finder, element, "finder");
+			DynamicLoader.PersistObject(Matcher, element, "matcher");
 		}
 
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public override void InitXml(XElement node)
+		public override void InitXml(XElement element)
 		{
-			base.InitXml(node);
+			base.InitXml(element);
 			Debug.Assert(Finder == null);
-			Finder = DynamicLoader.RestoreFromChild(node, "finder") as IStringFinder;
-			Matcher = DynamicLoader.RestoreFromChild(node, "matcher") as IMatcher;
+			Finder = DynamicLoader.RestoreFromChild(element, "finder") as IStringFinder;
+			Matcher = DynamicLoader.RestoreFromChild(element, "matcher") as IMatcher;
 		}
 
 		#endregion

@@ -8,7 +8,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
 using System.Diagnostics;
 using SIL.LCModel.DomainServices;

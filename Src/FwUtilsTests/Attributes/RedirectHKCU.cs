@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017 SIL International
+// Copyright (c) 2012-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -23,13 +23,13 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 		private static readonly UIntPtr HKEY_CURRENT_USER = new UIntPtr(0x80000001);
 
 		[DllImport("Advapi32.dll")]
-		private extern static int RegOverridePredefKey(UIntPtr hKey, UIntPtr hNewKey);
+		private static extern int RegOverridePredefKey(UIntPtr hKey, UIntPtr hNewKey);
 
 		[DllImport("Advapi32.dll")]
-		private extern static int RegCreateKey(UIntPtr hKey, string lpSubKey, out UIntPtr phkResult);
+		private static extern int RegCreateKey(UIntPtr hKey, string lpSubKey, out UIntPtr phkResult);
 
 		[DllImport("Advapi32.dll")]
-		private extern static int RegCloseKey(UIntPtr hKey);
+		private static extern int RegCloseKey(UIntPtr hKey);
 
 		private static string KeyPart
 		{

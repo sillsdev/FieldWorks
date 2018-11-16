@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017 SIL International
+// Copyright (c) 2017-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,13 +10,10 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 	/// <summary>
 	/// Suppresses error beeps.
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.Method,
-		AllowMultiple = true)]
+	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.Method, AllowMultiple = true)]
 	public class SuppressErrorBeepsAttribute : TestActionAttribute
 	{
-		/// <summary>
-		/// Method called before each test
-		/// </summary>
+		/// <inheritdoc />
 		public override void BeforeTest(TestDetails testDetails)
 		{
 			base.BeforeTest(testDetails);
@@ -24,9 +21,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 			FwUtils.SuppressErrorBeep = true;
 		}
 
-		/// <summary>
-		/// Method called after each test
-		/// </summary>
+		/// <inheritdoc />
 		public override void AfterTest(TestDetails testDetails)
 		{
 			base.AfterTest(testDetails);
