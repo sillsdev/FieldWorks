@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -269,112 +269,7 @@ namespace LanguageExplorerTests.Impls
 			}
 		}
 
-		[Test]
-		[Ignore("Until get working. Doesn't seem to put together the right kind of data to not get an error yet.")]
-		public void UploadToWebonaryCanCompleteWithoutError()
-		{
-			using (var controller = SetUpController())
-			{
-				var mockView = SetUpView();
-				var model = mockView.Model;
-				model.UserName = "webonary";
-				model.Password = "webonary";
-				//SUT
-				Assert.DoesNotThrow(() => controller.UploadToWebonary(model, mockView));
-				mockView.StatusStrings.ForEach(Console.WriteLine); // Remove this output line once this test works.
-				Assert.That(String.IsNullOrEmpty(mockView.StatusStrings.Find(s => s.Contains("Error") || s.Contains("ERROR") || s.Contains("error"))));
-			}
-		}
-
 	#region Test connection to local Webonary instance
-		[Test]
-		[Category("ByHand")]
-		[Ignore("Used for manual testing against a real Webonary instance")]
-		public void CanConnectAtAll()
-		{
-			using (var client = new WebClient())
-			{
-				string responseText = null;
-				Assert.DoesNotThrow(()=>{responseText = ConnectAndUpload(client);});
-				Assert.That(responseText, Contains.Substring("username"),"Should get some sort of response from server, like an error message about authenticating.");
-			}
-		}
-
-		[Test]
-		[Category("ByHand")]
-		[Ignore("Used for manual testing against a real Webonary instance")]
-		public void CanAuthenticate()
-		{
-			using (var client = new WebClient())
-			{
-				client.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(new UTF8Encoding().GetBytes("webonary:webonary")));
-				var responseText = ConnectAndUpload(client);
-				Assert.That(responseText, Is.Not.StringContaining("authentication failed"));
-				Assert.That(responseText, Is.Not.StringContaining("Wrong username or password"));
-			}
-		}
-
-		[Test]
-		[Category("ByHand")]
-		[Ignore("Used for manual testing against a real Webonary instance")]
-		public void ZipFileExtracts()
-		{
-			using (var client = new WebClient())
-			{
-				client.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(new UTF8Encoding().GetBytes("webonary:webonary")));
-				var responseText = ConnectAndUpload(client);
-				Assert.That(responseText, Is.StringContaining("extracted successfully"));
-			}
-		}
-
-		[Test]
-		[Category("ByHand")]
-		[Ignore("Used for manual testing against a real Webonary instance")]
-		public void RealUploadWithBadDataReportsErrorInProcessing()
-		{
-			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator))
-			{
-				var view = new MockWebonaryDlg
-				{
-					Model = new UploadToWebonaryModel(m_propertyTable)
-					{
-						UserName = "webonary",
-						Password = "webonary"
-					}
-				};
-				// Contains a filename in the zip that isn't correct, so no data will be found by webonary.
-				controller.UploadToWebonary("../../Src/LanguageExplorerTests/Works/lubwisi-d-new-bad.zip", view.Model, view);
-				//view.StatusStrings.ForEach(Console.WriteLine); // Debugging output
-				Assert.That(view.StatusStrings.Any(s => s.IndexOf("Error", StringComparison.OrdinalIgnoreCase) >= 0), "Should be an error reported");
-			}
-		}
-
-		/// <summary>
-		/// Does not crash. Reports error in upload.
-		/// Marked ByHand since I don't want the build servers poking around on
-		/// places on the network like this, and it also takes a few minutes to timeout.
-		/// </summary>
-		[Test]
-		[Category("ByHand")]
-		[Ignore("Takes too long to timeout. Enable if want to test.")]
-		public void RealUploadToWebonaryHandlesNetworkErrors()
-		{
-			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator))
-			{
-				var view = new MockWebonaryDlg();
-				var filepath = "../../Src/LanguageExplorerTests/Works/lubwisi-d-new.zip";
-
-				controller.UploadURI = "http://nameresolutionfailure.local/import.php";
-				Assert.DoesNotThrow(() => controller.UploadToWebonary(filepath, view.Model, view));
-				Assert.That(view.StatusStrings.Any(s => s.Contains("An error occurred uploading your data:")));
-				controller.UploadURI = "http://localhost:12345/import/connectfailure.php";
-				Assert.DoesNotThrow(() => controller.UploadToWebonary(filepath, view.Model, view));
-				Assert.That(view.StatusStrings.Any(s => s.Contains("An error occurred uploading your data:")));
-				controller.UploadURI = "http://192.168.0.1/import/requesttimedout.php";
-				Assert.DoesNotThrow(() => controller.UploadToWebonary(filepath, view.Model, view));
-				Assert.That(view.StatusStrings.Any(s => s.Contains("An error occurred uploading your data:")));
-			}
-		}
 
 		/// <summary>
 		/// Helper

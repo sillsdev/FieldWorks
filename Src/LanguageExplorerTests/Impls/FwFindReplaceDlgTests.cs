@@ -1179,27 +1179,6 @@ namespace LanguageExplorerTests.Impls
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Test an initial search when finding a previous match.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		[Ignore("Need to finish the find previous for this to work")]
-		public void InitialFindPrevWithMatch()
-		{
-			m_vwRootsite.RootBox.MakeSimpleSel(false, true, false, true);
-			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, false, false,
-				null, null, null);
-
-			m_dlg.FindText = TsStringUtils.MakeString("Blah", Cache.WritingSystemFactory.GetWsFromStr("fr"));
-
-			m_dlg.PrevPatternText = null;
-			m_dlg.SimulateFindPrevButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
-			m_dlg.VerifySelection(0, 0, 2, 12, 16);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Test an initial search when using an invalid regular expression (TE-4866).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -1318,40 +1297,6 @@ namespace LanguageExplorerTests.Impls
 			m_dlg.SimulateFindButtonClick();
 			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
 			m_dlg.VerifySelection(0, 0, 0, 12, 17);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Test an initial backward search when finding a match after wrapping around
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		[Ignore("Need to finish the find previous for this to work")]
-		public void InitialFindPrevWithMatchAfterWrap()
-		{
-			IStTxtPara para = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
-			m_text.ParagraphsOS.Insert(0, para);
-			AddRunToMockedPara(para, "Waldo", Cache.WritingSystemFactory.GetWsFromStr("fr"));
-			m_vwRootsite.RootBox.Reconstruct();
-			SelLevInfo[] levInfo = new SelLevInfo[1];
-			levInfo[0] = new SelLevInfo
-			{
-				ihvo = 0,
-				tag = StTextTags.kflidParagraphs
-			};
-			Assert.IsNotNull(m_vwRootsite.RootBox.MakeTextSelection(0, 1, levInfo,
-				StTxtParaTags.kflidContents, 1, 0, 0, Cache.WritingSystemFactory.GetWsFromStr("fr"),
-				false, -1, null, true));
-
-			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, false, false,
-				null, null, null);
-
-			m_dlg.FindText = TsStringUtils.MakeString("Blah!", Cache.WritingSystemFactory.GetWsFromStr("fr"));
-
-			m_dlg.PrevPatternText = null;
-			m_dlg.SimulateFindPrevButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
-			m_dlg.VerifySelection(0, 1, 2, 12, 17);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1761,52 +1706,6 @@ namespace LanguageExplorerTests.Impls
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Test replace with an empty find text but a writing system specified (TE-1658).
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		[Ignore("TE-1658. Needs analyst decision")]
-		public void ReplaceWithMatchWs_EmptyFindText()
-		{
-			IStTxtPara para = m_text[0];
-			ITsStrBldr bldr = para.Contents.GetBldr();
-			bldr.SetIntPropValues(3, 7, (int)FwTextPropType.ktptWs,
-				(int)FwTextPropVar.ktpvDefault, Cache.WritingSystemFactory.GetWsFromStr("de"));
-			para.Contents = bldr.GetString();
-
-			m_vwPattern.MatchOldWritingSystem = true;
-			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, false, false,
-				null, null, null);
-			Assert.IsTrue(m_dlg.MatchWsCheckboxChecked);
-			m_dlg.ApplyWS(m_dlg.FindTextControl, Cache.WritingSystemFactory.GetWsFromStr("de"));
-
-			m_dlg.FindText = TsStringUtils.MakeString(string.Empty, Cache.WritingSystemFactory.GetWsFromStr("de"));
-			// This behavior is what is specified in TE-1658. However, there are some usability
-			// issues with this. See comment on TE-1658 for details.
-			Assert.IsFalse(m_dlg.ReplaceTextControl.Enabled,
-				"Replace Text box should be disabled when searching for a WS without text specified");
-
-			// Simulate setting the writing system for the replace string
-			m_dlg.ReplaceText = TsStringUtils.MakeString(string.Empty, Cache.WritingSystemFactory.GetWsFromStr("en-fonipa-x-etic"));
-
-			m_dlg.MatchWsCheckboxChecked = true;
-			m_dlg.PrevPatternText = null;
-			m_dlg.SimulateReplaceButtonClick();
-			m_dlg.SimulateReplaceButtonClick();
-			m_dlg.VerifySelection(0, 0, 0, 3, 7);
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
-
-			// Create string with expected results
-			bldr = para.Contents.GetBldr();
-			bldr.SetIntPropValues(3, 7, (int)FwTextPropType.ktptWs,
-				(int)FwTextPropVar.ktpvDefault, Cache.WritingSystemFactory.GetWsFromStr("en-fonipa-x-etic"));
-			ITsString expectedTssReplace = bldr.GetString();
-
-			AssertEx.AreTsStringsEqual(expectedTssReplace, m_text[0].Contents);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Test a replace all when finding a match using the replace all button. The selection
 		/// is already set to a match, and there's one other match in the document.
 		/// </summary>
@@ -1970,39 +1869,6 @@ namespace LanguageExplorerTests.Impls
 			Assert.AreEqual("Finished searching the document and made 3 replacements.", m_dlg.m_matchMsg);
 		}
 #endif
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Test the ability to replace an occurence of a string after a footnote.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		/// <remarks>Fails (I think) because NFD-ing removes the footnote anchor, throwing off the index, before we verify the selection</remarks>
-		[Test]
-		[Ignore("This appears to be a bug in DummyBasicView; works fine in the GUI")]
-		public void ReplaceTextAfterFootnote()
-		{
-			SetupStylesheet();
-
-			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, true, false,
-				null, null, null);
-
-			IStTxtPara para = m_text[0];
-			AddFootnote(m_genesis, para, 0);
-			ITsStrBldr bldr = para.Contents.GetBldr();
-			bldr.Replace(4, 14, "Q", null);
-			ITsString expectedTss = bldr.GetString();
-
-			m_dlg.FindText = TsStringUtils.MakeString("h, blah, b", Cache.WritingSystemFactory.GetWsFromStr("fr"));
-			m_dlg.ReplaceText = TsStringUtils.MakeString("Q", Cache.WritingSystemFactory.GetWsFromStr("fr"));
-
-			m_dlg.PrevPatternText = null;
-			m_dlg.SimulateReplaceAllButtonClick();
-			m_dlg.VerifySelection(0, 0, 0, 0, 0);
-			AssertEx.AreTsStringsEqual(expectedTss, para.Contents);
-
-			// the cancel button should say "close"
-			Assert.AreEqual("Close", m_dlg.CloseButton.Text);
-		}
 #endregion
 
 #region Match style tests

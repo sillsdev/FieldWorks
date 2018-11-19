@@ -202,16 +202,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				sDisplayWs = "analysis vernacular";		// very general default.
 			}
 			const int flid = 0;
-			if (!string.IsNullOrEmpty(m_displayNameProperty))
-			{
-#if WANTPORT //  (FWR-2786 to investigate this)(FLEx) Needs replacement for virtual property handler
-				CmObject obj = m_cache.GetObject(Hvo);
-				string className = m_cache.MetaDataCache.GetClassName(obj.ClassID);
-				IVwVirtualHandler vh = m_cache.VwCacheDaAccessor.GetVirtualHandlerName(className, m_displayNameProperty);
-				if (vh != null)
-					flid = vh.Tag;
-#endif
-			}
 			m_writingSystemIds = WritingSystemServices.GetWritingSystemIdsFromLabel(Cache,
 				sDisplayWs,
 				Cache.ServiceLocator.WritingSystemManager.UserWritingSystem,

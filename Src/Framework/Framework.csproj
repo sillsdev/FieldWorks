@@ -199,7 +199,7 @@
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <HintPath>..\..\Output\Debug\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="Reporting, Version=1.0.3490.18153, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\Output\Debug\Reporting.dll</HintPath>

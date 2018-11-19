@@ -463,31 +463,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			lexSense = newEntry.SensesOS[0];
 		}
 
-		[Test]
-		[Ignore("Not sure what we're supposed to do with glossing on a polymorphemic guess. Need analyst input")]
-		public void NewGlossForFocusBoxWithPolymorphemicGuess()
-		{
-			var cba0_0 = GetNewAnalysisOccurence(m_text1, 0, 0, 0);
-			m_sandbox.SwitchWord(cba0_0);
-			// build polymorphemic guess
-			ILexEntry lexEntry1_Entry;
-			ILexSense lexEntry1_Sense1;
-			ILexEntry lexEntry2_Entry;
-			ILexSense lexEntry2_Sense1;
-			SetupLexEntryAndSense("xx", "xx.existingsense1", out lexEntry1_Entry, out lexEntry1_Sense1);
-			SetupLexEntryAndSense("xa", "xa.ExistingSense1", out lexEntry2_Entry, out lexEntry2_Sense1);
-			// setup another morph bundle
-			IWfiWordform wf;
-			IWfiAnalysis analysis = SetupAnalysisForEntry(cba0_0, "0.0.xxxa", lexEntry1_Sense1, out wf);
-			AppendMorphBundleToAnalysis(lexEntry1_Entry, lexEntry1_Sense1, analysis);
-			AppendMorphBundleToAnalysis(lexEntry2_Entry, lexEntry2_Sense1, analysis);
-			// load sandbox with a polymonomorphemic guess.
-			m_sandbox.SwitchWord(cba0_0);
-			Assert.IsTrue(m_sandbox.UsingGuess);
-
-			// begin testing.
-		}
-
 		private IWfiMorphBundle SetupMorphBundleForEntry(AnalysisOccurrence cba0_0, string gloss, ILexEntry lexEntry1_Entry, ILexSense lexEntry1_Sense1, out IWfiWordform wf)
 		{
 			IWfiAnalysis analysis = SetupAnalysisForEntry(cba0_0, gloss, lexEntry1_Sense1, out wf);
@@ -532,9 +507,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			var morphBundle2 = SetupMorphBundleForEntry (cba0_0, "xxxa.AlternativeGloss", lexEntry2_Entry, lexEntry2_Sense1, out wf);
 			// load sandbox with a guess.
 			m_sandbox.SwitchWord(cba0_0);
-#if WANTTESTPORT
-				Assert.IsTrue(m_sandbox.UsingGuess);
-#endif
 
 			// mark the count of LexEntries
 			int cEntriesOrig = Cache.LangProject.LexDbOA.Entries.Count();

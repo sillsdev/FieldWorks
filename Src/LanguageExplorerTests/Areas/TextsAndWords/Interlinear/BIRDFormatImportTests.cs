@@ -149,21 +149,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		}
 
 		[Test]
-		[Ignore("EricP: Add valid ScrBook values to the schema? (e.g. GEN, MAT)...or reference an external schema for those?")]
-		public void InvalidScrBookAttributeValue()
-		{
-			const string xml = "<document>" +
-							"<interlinear-text scrBook='invalid'/>" +
-						 "</document>";
-
-			XmlReader xmlReader = GetXmlReaderForTest(xml);
-			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
-			// TODO-Linux: The message on Mono doesn't state the failing attribute
-			if (!MiscUtils.IsMono)
-				Assert.That(ex.Message, Is.EqualTo("The 'scrSectionType' attribute is invalid - The value 'invalid' is invalid according to its datatype 'scrSectionTypes' - The Enumeration constraint failed."));
-		}
-
-		[Test]
 		public void ValidateScrSectionTypeAttributes()
 		{
 			const string xml = "<document>" +

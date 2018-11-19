@@ -322,31 +322,4 @@ namespace LanguageExplorerTests.Filters
 			Assert.IsTrue(fMatch, "After 1900 possibly between 2/15/90 and 2/17/92");
 		}
 	}
-
-	/// <summary>
-	/// Test the logic in the DateTimeMatcher with foreign locale. This tests comparing a date
-	/// stored in English on a system with a different locale. The tricky thing here is that
-	/// we specify the month in English ("January") which starts with the German name ("Januar"),
-	/// but doesn't match completely.
-	/// </summary>
-	[TestFixture]
-	[SetCulture("de-DE")]
-	[Ignore("This test demonstrates FWR-2942")]
-	public class DateTimeMatcherTests_German
-	{
-		/// <summary>
-		/// Tests the method Matches() with DateMatchType.Before and GenDate data when system
-		/// locale is German.
-		/// </summary>
-		[Test]
-		public void MatchBefore()
-		{
-			var matchBefore = new DateTimeMatcher(new DateTime(1990, 1, 17, 0, 0, 0),
-				new DateTime(1990, 1, 17, 23, 59, 59), DateMatchType.Before)
-				{ HandleGenDate = true };
-
-			var fMatch = matchBefore.Matches(TsStringUtils.MakeString("January, 1990", DateTimeMatcherTests.WsDummy));
-			Assert.IsFalse(fMatch, "January, 1990 not before 1/17/90");
-		}
-	}
 }

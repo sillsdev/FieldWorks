@@ -1040,76 +1040,6 @@ namespace ParatextImport
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the <see cref="ClusterListHelper.DetermineScrVerseOverlapClusters"/> method for
-		/// ScrVerses when the revision repeats verse 1 two times out of order.
-		/// </summary>
-		/// <remarks> Here is a diagram of which ScrVerses will match.
-		///  Revision      Current
-		///  0 Gen 1:1 --- 0 Gen 1:1
-		///  1 Gen 1:2 --- 1 Gen 1:2
-		///	 2 Gen 1:1   /-2 Gen 1:3
-		///	 3 Gen 1:3 -/  3 Gen 1:4
-		///	 4 Gen 1:1     4 Gen 1:5
-		///	</remarks>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		//[Ignore("Fix needs to be implemented")]
-		public void ScrVerseOverlap_RepeatedFirstVerseRev()
-		{
-			// Create ScrVerses for the revision version of Genesis
-			List<ScrVerse> scrVersesRev = new List<ScrVerse>(5);
-			scrVersesRev.Add(new ScrVerse(01001001, 01001001, m_tssVerse, null, null, null, 0, 0, false, false));
-			scrVersesRev.Add(new ScrVerse(01001002, 01001002, m_tssVerse, null, null, null, 0, 0, false, false));
-			scrVersesRev.Add(new ScrVerse(01001001, 01001001, m_tssVerse, null, null, null, 0, 0, false, false));
-			scrVersesRev.Add(new ScrVerse(01001003, 01001003, m_tssVerse, null, null, null, 0, 0, false, false));
-			scrVersesRev.Add(new ScrVerse(01001001, 01001001, m_tssVerse, null, null, null, 0, 0, false, false));
-
-			// Create ScrVerses for the current version of Genesis
-			List<ScrVerse> scrVersesCur = new List<ScrVerse>(5);
-			scrVersesCur.Add(new ScrVerse(01001001, 01001001, m_tssVerse, null, null, null, 0, 0, false, false));
-			scrVersesCur.Add(new ScrVerse(01001002, 01001002, m_tssVerse, null, null, null, 0, 0, false, false));
-			scrVersesCur.Add(new ScrVerse(01001003, 01001003, m_tssVerse, null, null, null, 0, 0, false, false));
-			scrVersesCur.Add(new ScrVerse(01001004, 01001004, m_tssVerse, null, null, null, 0, 0, false, false));
-			scrVersesCur.Add(new ScrVerse(01001005, 01001005, m_tssVerse, null, null, null, 0, 0, false, false));
-
-			// Run the method under test
-			List<Cluster> clusterList = ClusterListHelper.DetermineScrVerseOverlapClusters(
-				scrVersesCur, scrVersesRev, Cache);
-
-			// Verify the list size
-			Assert.AreEqual(7, clusterList.Count);
-
-			// Verify cluster 0: Current ScrVerse 0 matches Revision ScrVerse 0
-			VerifyScrVerseCluster(clusterList[0],
-				01001001, 01001001, ClusterType.MatchedItems, scrVersesCur[0], scrVersesRev[0]);
-
-			// Verify cluster 1: Current ScrVerse 1 matches Revision ScrVerse 1
-			VerifyScrVerseCluster(clusterList[1],
-				01001002, 01001002, ClusterType.MatchedItems, scrVersesCur[1], scrVersesRev[1]);
-
-			// Verify cluster 2: Current ScrVerse missing, Revision ScrVerse 2 added
-			VerifyScrVerseCluster(clusterList[2],
-				01001001, 01001001, ClusterType.MissingInCurrent, null, scrVersesRev[2], 2);
-
-			// Verify cluster 3: Current ScrVerse 2 matches Revision ScrVerse 3
-			VerifyScrVerseCluster(clusterList[3],
-				01001003, 01001003, ClusterType.MatchedItems, scrVersesCur[2], scrVersesRev[3]);
-
-			// Verify cluster 4: Current ScrVerse missing, Revision ScrVerse 4 added
-			VerifyScrVerseCluster(clusterList[4],
-				01001001, 01001001, ClusterType.MissingInCurrent, null, scrVersesRev[4], 3);
-
-			// Verify cluster 5: Current ScrVerse 3 missing in Revision
-			VerifyScrVerseCluster(clusterList[5],
-				01001004, 01001004, ClusterType.AddedToCurrent, scrVersesCur[3], null, 5);
-
-			// Verify cluster 6: Current ScrVerse 4 missing in Revision
-			VerifyScrVerseCluster(clusterList[6],
-				01001005, 01001005, ClusterType.AddedToCurrent, scrVersesCur[4], null, 5);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests the <see cref="ClusterListHelper.DetermineScrVerseOverlapClusters"/> method for
 		/// ScrVerses when the current repeats verse 4 two times out of order.
 		/// </summary>
 		/// <remarks> Here is a diagram of which ScrVerses will match.
@@ -1688,51 +1618,6 @@ namespace ParatextImport
 			// Verify cluster 3: Current ScrVerse 3 added
 			VerifyScrVerseCluster(clusterList[3],
 				01001003, 01001003, ClusterType.AddedToCurrent, scrVersesCur[2], null, 2);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests the <see cref="ClusterListHelper.DetermineScrVerseOverlapClusters"/> method for
-		/// ScrVerses when the current ends with an added stanza break and is missing a verse.
-		/// </summary>
-		/// <remarks> Here is a diagram of which ScrVerses will match.
-		///  Revision      Current
-		///	 0 Gen 1:1	--  0 Gen 1:1
-		///	 1 Gen 1:2		[Stanza Break]
-		///	</remarks>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		[Ignore("REVIEW: The empty para is associated with verse 1 so the clustering (putting verse two in a different paragraph is not unreasonable).")]
-		public void ScrVerseOverlap_AddedEmptyAtEndAndMissingScrVerse()
-		{
-			// Create ScrVerses for the revision version of Genesis
-			List<ScrVerse> scrVersesRev = new List<ScrVerse>(3);
-			scrVersesRev.Add(new ScrVerse(01001001, 01001001, m_tssVerse, null, null, null, 0, 0, false, false, false, false));
-			scrVersesRev.Add(new ScrVerse(01001002, 01001002, m_tssVerse, null, null, null, 0, 0, false, false, false, false));
-
-			// Create ScrVerses for the current version of Genesis
-			List<ScrVerse> scrVersesCur = new List<ScrVerse>(3);
-			scrVersesCur.Add(new ScrVerse(01001001, 01001001, m_tssVerse, null, null, null, 0, 0, false, false, false, false));
-			scrVersesCur.Add(new ScrVerse(01001001, 01001001, null, null, null, null, true));
-
-			// Run the method under test
-			List<Cluster> clusterList = ClusterListHelper.DetermineScrVerseOverlapClusters(
-				scrVersesCur, scrVersesRev, Cache);
-
-			// Verify the list size
-			Assert.AreEqual(3, clusterList.Count);
-
-			// Verify cluster 0: Current ScrVerse 0 matches Revision ScrVerse 0
-			VerifyScrVerseCluster(clusterList[0],
-				01001001, 01001001, ClusterType.MatchedItems, scrVersesCur[0], scrVersesRev[0]);
-
-			// Verify cluster 1: Current ScrVerse 1 added
-			VerifyScrVerseCluster(clusterList[1],
-				01001001, 01001001, ClusterType.AddedToCurrent, scrVersesCur[1], null, 2);
-
-			// Verify cluster 2: Revision ScrVerse 2 missing
-			VerifyScrVerseCluster(clusterList[2],
-				01001002, 01001002, ClusterType.MissingInCurrent, null, scrVersesRev[1], 1);
 		}
 	#endregion
 

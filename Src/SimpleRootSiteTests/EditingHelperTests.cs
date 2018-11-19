@@ -167,7 +167,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			Assert.AreEqual(hvoTitlePara2, m_cache.get_VecItem(hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas, 3));
 
 			Assert.IsNotNull(m_basicView.RequestedSelectionAtEndOfUow);
-			// WANTTESTPORT: (Common) FWR-1649 Check properties of RequestedSelectionAtEndOfUow
 		}
 		#endregion
 

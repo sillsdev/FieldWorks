@@ -667,32 +667,6 @@ namespace ParatextImport
 				new[] { 1, "paragraph to restore from the revision.".Length }, new[] { 0, 1}, "insert para");
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Test the <see cref="BookMerger.ReplaceCurrentWithRevision"/> method when the
-		/// text difference range contains a footnote in both books.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		[Ignore("WANTTESTPORT (TE-8699) Need to figure out what to do about footnotes in the segmented BT")]
-		public void ReplaceCurWithRev_SimpleText_WithFootnote_ParseIsCurrent()
-		{
-			ReplaceCurWithRev_SimpleText_WithFootnote(true);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Test the <see cref="BookMerger.ReplaceCurrentWithRevision"/> method when the
-		/// text difference range contains a footnote in both books.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		[Ignore("WANTTESTPORT (TE-8699) Need to figure out what to do about footnotes in the segmented BT")]
-		public void ReplaceCurWithRev_SimpleText_WithFootnote()
-		{
-			ReplaceCurWithRev_SimpleText_WithFootnote(false);
-		}
-
 		private void ReplaceCurWithRev_SimpleText_WithFootnote(bool fParseIsCurrent)
 		{
 			// build Current section
@@ -739,32 +713,6 @@ namespace ParatextImport
 
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Test the <see cref="BookMerger.ReplaceCurrentWithRevision"/> method when the
-		/// Revision adds a footnote.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		[Ignore("WANTTESTPORT (TE-8699) Need to figure out what to do about footnotes in the segmented BT")]
-		public void ReplaceCurWithRev_SimpleText_InsertFootnote_ParseIsCurrent()
-		{
-			ReplaceCurWithRev_SimpleText_InsertFootnote(true);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Test the <see cref="BookMerger.ReplaceCurrentWithRevision"/> method when the
-		/// Revision adds a footnote.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		[Ignore("WANTTESTPORT (TE-8699) Need to figure out what to do about footnotes in the segmented BT")]
-		public void ReplaceCurWithRev_SimpleText_InsertFootnote()
-		{
-			ReplaceCurWithRev_SimpleText_InsertFootnote(false);
-		}
-
 		private void ReplaceCurWithRev_SimpleText_InsertFootnote(bool fParseIsCurrent)
 		{
 			// build Current section
@@ -804,32 +752,6 @@ namespace ParatextImport
 				new[] { 1, "Before fn. ".Length, 1, "After fn".Length }, new[] { 0, 1 }, "restore footnote");
 			VerifyTranslations(paraFn, new []{ "New footnote trans" },
 				new[] { "New footnote text".Length }, new[] { 1 }, "footnote itself");
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Test the <see cref="BookMerger.ReplaceCurrentWithRevision"/> method when the
-		/// Revision adds a footnote and some surrounding text.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		[Ignore("WANTTESTPORT (TE-8699) Need to figure out what to do about footnotes in the segmented BT")]
-		public void ReplaceCurWithRev_SimpleText_InsertFnAndSegs_ParseIsCurrent()
-		{
-			ReplaceCurWithRev_SimpleText_InsertFnAndSegs(true);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Test the <see cref="BookMerger.ReplaceCurrentWithRevision"/> method when the
-		/// Revision adds a footnote and some surrounding text.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		[Ignore("WANTTESTPORT (TE-8699) Need to figure out what to do about footnotes in the segmented BT")]
-		public void ReplaceCurWithRev_SimpleText_InsertFnAndSegs()
-		{
-			ReplaceCurWithRev_SimpleText_InsertFnAndSegs(false);
 		}
 
 		private void ReplaceCurWithRev_SimpleText_InsertFnAndSegs(bool fParseIsCurrent)
@@ -873,32 +795,6 @@ namespace ParatextImport
 				new[] { 1, "Before fn. ".Length, "Inserted before. ".Length, 1, "Inserted after. ".Length, "After fn".Length }, new[] { 0, 1, 1, 1, 1 }, "insert fn + text");
 			VerifyTranslations(paraFn, new []{ "New footnote trans" },
 				new[] { "New footnote text".Length }, new[] { 1 }, "footnote itself");
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Test the <see cref="BookMerger.ReplaceCurrentWithRevision"/> method when the
-		/// Revision adds a footnote which divides a previous single segment.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		[Ignore("WANTTESTPORT (TE-8699) Need to figure out what to do about footnotes in the segmented BT")]
-		public void ReplaceCurWithRev_SimpleText_InsertFootnote_BreakingSeg_ParseIsCurrent()
-		{
-			ReplaceCurWithRev_SimpleText_InsertFootnote_BreakingSeg(true);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Test the <see cref="BookMerger.ReplaceCurrentWithRevision"/> method when the
-		/// Revision adds a footnote which divides a previous single segment.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		[Ignore("WANTTESTPORT (TE-8699) Need to figure out what to do about footnotes in the segmented BT")]
-		public void ReplaceCurWithRev_SimpleText_InsertFootnote_BreakingSeg()
-		{
-			ReplaceCurWithRev_SimpleText_InsertFootnote_BreakingSeg(false);
 		}
 
 		private void ReplaceCurWithRev_SimpleText_InsertFootnote_BreakingSeg(bool fParseIsCurrent)
@@ -1635,21 +1531,6 @@ namespace ParatextImport
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Ignore("TE-9820 - We don't correctly get the gloses back from the revision like we should")]
-		public void ReplaceCurWithRev_MultiParasInVerse_OneToThreeParas_TextChanges_ParseIsCurrent()
-		{
-			ReplaceCurWithRev_MultiParasInVerse_OneToThreeParas_TextChanges(true);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Test the <see cref="BookMerger.ReplaceCurrentWithRevision"/> method when the current
-		/// has one verse in three paragraphs and when the corresponding revision verse has only one paragraph.
-		/// There is a text change in the first and last parts of the verse. This test exercises a special
-		/// case in calling StTxtPara.MergeParaWithNext.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
 		public void ReplaceCurWithRev_MultiParasInVerse_OneToThreeParas_TextChanges()
 		{
 			ReplaceCurWithRev_MultiParasInVerse_OneToThreeParas_TextChanges(false);
@@ -1871,48 +1752,6 @@ namespace ParatextImport
 			ReplaceCurWithRev_ParaMergeAtVerseStart(false);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Test the <see cref="BookMerger.ReplaceCurrentWithRevision"/> method when the
-		/// current book has a paragraph merge at a verse boundary.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		/// It seems that the code branch this test exercises was intended for the merging of two paragraphs and therefore has
-		/// unexpected side affects when triggered in scripture merging. This test was added to document the discovery in case we need
-		/// to handle this in the future, but ignored since it fails currently. Naylor, Thompson, Oct-2011
-		[Ignore("Fails because the code falls into a branch which re-analyzes the last word. This behavior seems wrong, might deserve investigation.")]
-		[Test]
-		public void ReplaceCurWithRev_ParaMergeAtVerseEnd()
-		{
-
-			// Build Current section - a single para with three verses
-			IScrSection sectionCur = CreateSection(m_genesis, "My aching head!");
-			IScrTxtPara para1Curr = AddParaToMockedSectionContent(sectionCur, ScrStyleNames.NormalParagraph);
-			AddVerseSegment(para1Curr, 0, 1, "verse one. ", "verse one trans");
-			AddVerseSegment(para1Curr, 0, 2, "verse two. ", "verse two trans");
-			AddVerseSegment(para1Curr, 0, 3, "verse three", "verse three trans");
-			para1Curr.ParseIsCurrent = true;
-
-			// Build Revision section - two paragraphs with verses 1, 2 and 3 and split after verse 1
-			IScrSection sectionRev = CreateSection(m_genesisRevision, "My aching head!");
-			IScrTxtPara para1Rev = AddParaToMockedSectionContent(sectionRev, ScrStyleNames.NormalParagraph);
-			AddVerseSegment(para1Rev, 0, 1, "verse one. ", "verse one trans");
-			AddVerseSegment(para1Rev, 0, 2, "verse two. ", "verse two trans");
-			AddVerseSegment(para1Rev, 0, 3, "verse threeeee", "verse threeee trans");
-			para1Rev.ParseIsCurrent = true;
-
-			// Detect differences
-			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
-			Assert.AreEqual(1, m_bookMerger.Differences.Count);
-
-			// Revert
-			Difference diff = m_bookMerger.Differences.MoveFirst();
-			m_bookMerger.ReplaceCurrentWithRevision(diff); // we expect this to split the current para
-			// NOTE: the two appended free translations are probably undesired behavior in addition to the failure.
-			VerifyTranslations(para1Curr, new[] { null, "verse one trans", null, "verse two trans", null, "verse three trans verse threeee trans" },
-				new[] { 1, "verse one. ".Length, 1, "verse two. ".Length, 1, "verse threeeee".Length }, new[] { 0, 1, 0, 1, 0, 1 }, "modify text of final verse in a paragraph");
-		}
-
 		private void ReplaceCurWithRev_ParaMergeAtVerseStart(bool fParseIsCurrent)
 		{
 			// Build Current section - a single para with three verses
@@ -1951,34 +1790,6 @@ namespace ParatextImport
 			VerifyTranslations(para2Curr, new []{ null, "verse two trans", null, "verse three trans" },
 				new []{ 1, "verse two. ".Length, 1, "verse three.".Length },
 				new[] { 0, 1, 0, 1 }, "split para");
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Test the <see cref="BookMerger.ReplaceCurrentWithRevision"/> method when the
-		/// current book has a paragraph merge at a verse boundary. This tests the call to
-		/// CopyFt from ReplaceCurrentWithRevision_CopyParaStructure.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		[Ignore("This fails because of the way that reverts are done in the diff code (i.e. they don't copy segment information from the revision).")]
-		public void ReplaceCurWithRev_ParaMergeInMidVerse_ParseIsCurrent()
-		{
-			ReplaceCurWithRev_ParaMergeInMidVerse(true);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Test the <see cref="BookMerger.ReplaceCurrentWithRevision"/> method when the
-		/// current book has a paragraph merge at a verse boundary. This tests the call to
-		/// CopyFt from ReplaceCurrentWithRevision_CopyParaStructure.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		[Ignore("This fails because of the way that reverts are done in the diff code (i.e. they don't copy segment information from the revision).")]
-		public void ReplaceCurWithRev_ParaMergeInMidVerse()
-		{
-			ReplaceCurWithRev_ParaMergeInMidVerse(false);
 		}
 
 		private void ReplaceCurWithRev_ParaMergeInMidVerse(bool fParseIsCurrent)

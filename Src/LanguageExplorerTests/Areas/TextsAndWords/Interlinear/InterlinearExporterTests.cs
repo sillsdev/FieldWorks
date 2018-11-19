@@ -918,40 +918,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				Assert.That(transformedDocWord.SelectNodes("//w:rStyle[starts-with(@w:val, '\n') or starts-with(@w:val, ' ')]", nsmgr), Has.Count.EqualTo(0), "style values should not start with whitespace");
 			}
 
-			[Test]
-			[Ignore("This is a bug that might need to be fixed if users notice it. low priority since the user could just not display lines with same ws")]
-			public void ExportIrrInflVariantTypeInformation_LT7581_gls_multiEngWss()
-			{
-				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get(QaaXKal);
-				var wsEn = Cache.ServiceLocator.WritingSystemManager.Get("en");
-				m_choices.Add(InterlinLineChoices.kflidWord);
-				m_choices.Add(InterlinLineChoices.kflidMorphemes);
-				m_choices.Add(InterlinLineChoices.kflidLexEntries, wsXkal.Handle);
-				m_choices.Add(InterlinLineChoices.kflidLexGloss, wsEn.Handle);
-				m_choices.Add(InterlinLineChoices.kflidLexGloss, wsEn.Handle);
-				m_choices.Add(InterlinLineChoices.kflidLexPos);
-
-				IStTxtPara para1 = m_text1.ContentsOA.ParagraphsOS[1] as IStTxtPara;
-				ParagraphAnnotator pa = new ParagraphAnnotator(para1);
-				pa.ReparseParagraph();
-				var exportedDoc = ExportToXml();
-
-				string formLexEntry = "go";
-
-				ITsString tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, wsXkal.Handle);
-				int clsidForm;
-				ILexEntry leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
-					MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "glossgo", null);
-				pa.BreakIntoMorphs(0, 1, new ArrayList() { leGo.LexemeFormOA });
-				pa.SetMorphSense(0, 1, 0, leGo.SensesOS[0]);
-
-				pa.ReparseParagraph();
-				exportedDoc = ExportToXml();
-				var transformedDocWord = TransformDocXml2Word(exportedDoc);
-				XmlNamespaceManager nsmgr = LoadNsmgrForDoc(transformedDocWord);
-
-				Assert.That(transformedDocWord.SelectNodes("//*[text()='glossgo']", nsmgr), Has.Count.EqualTo(2), "Should only have one LexGloss per line");
-			}
 			private string CombineFilenameWithExportFolders(string filename)
 			{
 				string p = Path.Combine(FwDirectoryFinder.FlexFolder, Path.Combine("Export Templates", "Interlinear"));

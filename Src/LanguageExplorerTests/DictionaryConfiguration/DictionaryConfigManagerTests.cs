@@ -371,39 +371,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 		///--------------------------------------------------------------------------------------
 		/// <summary>
-		/// Tests the method RenameConfigItem in the case where that item is a protected view.
-		/// (Renaming should not be allowed.)
-		/// </summary>
-		///--------------------------------------------------------------------------------------
-		[Test]
-		[Ignore("This is now checked before the edit is allowed! Nevermind!")]
-		public void RenameConfigItem_Protected()
-		{
-			// Setup
-			const string sname2 = "Name2";
-			const string sid2 = "C2";
-			// Tuple is <uniqueCode, dispName, protected?>
-			var configs = new List<Tuple<string, string, bool>> {
-				new Tuple<string, string, bool>("C1", "BetaName1", true),
-				new Tuple<string, string, bool>(sid2, sname2, true),
-				new Tuple<string, string, bool>("C3", "AlphaName3", false)};
-			var cnt = LoadConfigListAndTest(configs, sid2);
-			const string newName = "A Glorious New Name!";
-
-			// SUT1
-			m_testPresenter.RenameConfigItem(sid2, newName);
-
-			// Verify1
-			Assert.AreEqual(cnt, m_testPresenter.StubConfigDict.Count,
-				"Should have the same number of items.");
-			DictionaryConfigManager.DictConfigItem item;
-			m_testPresenter.StubConfigDict.TryGetValue(sid2, out item);
-			Assert.AreEqual(sname2, item.DispName,
-				"Should not have renamed protected config item.");
-		}
-
-		///--------------------------------------------------------------------------------------
-		/// <summary>
 		/// Tests the method RenameConfigItem where the name is changed to the same as
 		/// an existing name.
 		/// </summary>

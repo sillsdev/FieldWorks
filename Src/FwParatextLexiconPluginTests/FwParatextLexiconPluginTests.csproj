@@ -69,7 +69,7 @@
       <HintPath>..\..\Output\Debug\FwParatextLexiconPlugin.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
-      <HintPath>..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <HintPath>..\..\Output\Debug\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>

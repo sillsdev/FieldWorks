@@ -208,14 +208,6 @@ namespace SILUBS.ScriptureChecks
 		}
 
 		[Test]
-		[Ignore("Text needs to be normalized to NFC (or maybe NFD) before check is run.")]
-		public void FindingDifferentNormalization()
-		{
-			Test(new string[] { "a\u0210at", "a\u0210at" },
-				"\\p \\v 1 aR\u030Fat aNd a\u0210at", "a\u0210at");
-		}
-
-		[Test]
 		public void UncapitalizedPrefixTitleCase()
 		{
 			Test(new string[] { "a\u01C5at" }, "\\p \\v 1 a\u01C5at");

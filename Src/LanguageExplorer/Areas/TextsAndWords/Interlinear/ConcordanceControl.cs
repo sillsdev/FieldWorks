@@ -556,18 +556,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return FindMatchingItems();
 			}
 			List<IParaFragment> occurrences = null;
-#if WANTPORT // FWR-2830 we should display progress somehow...
-			bool fCreatedProgressState = false;
-#endif
 			using (new WaitCursor(this))
 			{
-#if WANTPORT // FWR-2830 ConcordanceItemsVh no longer exists, we should display progress somehow though.
-				if (ConcordanceItemsVh.Progress is NullProgressState)
-				{
-					ConcordanceItemsVh.Progress = FwXWindow.CreateMilestoneProgressState(m_mediator);
-					fCreatedProgressState = true;
-				}
-#endif
 				string sMatch = m_tbSearchText.Visible ? m_tbSearchText.Text.Trim() : m_cbSearchText.SelectedItem.ToString();
 				if (sMatch.Length == 0)
 					return new List<IParaFragment>();
@@ -623,13 +613,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						break;
 				}
 			}
-#if WANTPORT // FWR-2830 clean up after whatever we now do to get a progress state.
-			if (fCreatedProgressState)
-			{
-				ConcordanceItemsVh.Progress.Dispose();
-				ConcordanceItemsVh.Progress = null;
-			}
-#endif
 			return occurrences;
 		}
 

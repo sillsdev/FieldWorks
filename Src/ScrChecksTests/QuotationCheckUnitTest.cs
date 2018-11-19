@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -1234,25 +1234,6 @@ namespace SILUBS.ScriptureChecks
 		}
 		#endregion
 
-		#region Level 1 to continue within lines
-		// Continuation at PSA 81:8 and 11 in NIV and NLT; also at 13 in NIV but not NLT.
-		// Continuation occurs in PSA 82 in NIV and NLT (not at same verses).
-		// Continuation occurs in PSA 39:4,12; 50:22; 89:30; 132:17 in NIV, but not NLT.
-		// No continuation following interlude without stanza break at PSA 39:6 in NIV.
-		// Interlude withoug stanza break might not occur in NLT.
-
-		// Level1_LinesContinuationFollowingStanzaBreak is based on PSA 81:6-16 (NLT and especially NIV) but the marks differ
-
-		[Test]
-		[Ignore("This is better tested (because of the other used styles) in QuotationCheckSilUnitTest.cs")]
-		public void Level1_LinesContinuationFollowingStanzaBreak_Correct()
-		{
-			SetupEuropean1();
-			SetupContinuationAllOpening();
-			Test(new string[0, 0], "\\id PSA \\c 81 \\q1 \\v 6 He says, «Level one. \\q2 line two \\q1 \\v 7 line 1 \\qs \\b \\q1 \\v 8 «Continuation \\v 9 \\v 10 \\b \\q1 \\v 11 «Continuation \\v 12 to \\v 13 the \\v 14 end \\v 15 of \\v 16 the quotation and psalm.»");
-		}
-		#endregion
-
 		#region Not to continue within lines
 
 		// Level12_NoContinuationWithinLines_Correct is based on MAT 3:3-4 (NIV) but the marks differ
@@ -1262,40 +1243,6 @@ namespace SILUBS.ScriptureChecks
 		{
 			SetupSwiss2();
 			Test(new string[0, 0], "\\id MAT \\c 3 \\p \\v 3 He said, \\q1 «Level one: \\q1 \\v6 \u2039Level two. \\q2 Both levels end.\u203A » \\p \\v 4 Following.");
-		}
-		#endregion
-
-		#region Level 1 quotation dash has no closing mark
-
-		// QuotationDash_Level2 is based on JDG 11:13-19 (RVE95 for the first level, but NIV the second level)
-
-		[Test]
-		[Ignore("We currently don't correctly support this functionality (quotation dashes)")]
-		public void QuotationDash_Level2_Correct()
-		{
-			SetupSpanish2_QuotationDash();
-			Test(new string[0, 0], "\\id JDG \\c 11 \\p \\v 13 Ammon answered. \\p \u2014Answer. \\p \\v 14 Jepthah sent messages \\v 15 saying: \\p \u2014Jepthah says: \\v 17 to Edom: \u201Clevel two.\u201D \\v 19 To Amorites: \u201Clevel two.\u201D End of message.");
-		}
-
-		[Test]
-		[Ignore("We currently don't correctly support this functionality (quotation dashes)")]
-		public void QuotationDash_Level2_InappropriateProperties_UnexpectedOpeningMark()
-		{
-			SetupSpanish2();
-			Test(new string[,] {
-				{ "\u201C", FormatMessage(kUnexpectedOpeningMark, 2), "11:15" }
-				// The check does not find a second inconsistency for 11:17, should it?
-			}, "\\id JDG \\c 11 \\p \\v 13 Ammon answered. \\p \u2014Answer. \\p \\v 14 Jepthah sent messages \\v 15 saying: \\p \u2014Jepthah says: \\v 17 to Edom: \u201Clevel two.\u201D \\v 19 To Amorites: \u201Clevel two.\u201D End of message.");
-		}
-
-		// QuotationDash_Level3 is based on JDG 11:13-19 (RVE95)
-
-		[Test]
-		[Ignore("We currently don't correctly support this functionality (quotation dashes)")]
-		public void QuotationDash_Level3_Correct()
-		{
-			SetupSpanish3_QuotationDash();
-			Test(new string[0, 0], "\\id JDG \\c 11 \\p \\v 13 Ammon answered. \\p \u2014Answer. \\p \\v 14 Jepthah sent messages \\v 15 saying: \\p \u2014Jepthah says: \u201Clevel two \\v 17 to Edom: \u2018Level three.\u2019 \\v 19 To Amorites: \u2018Level three.\u2019 End of message.\u201D");
 		}
 		#endregion
 	}

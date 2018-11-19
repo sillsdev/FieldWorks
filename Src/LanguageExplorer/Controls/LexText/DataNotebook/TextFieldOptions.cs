@@ -32,12 +32,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			m_tbShortLength.Enabled = m_chkAfterShortLine.Checked;
 		}
 
-		private void m_btnStyles_Click(object sender, EventArgs e)
-		{
-			//WANTPORT  FWR-2846
-			MessageBox.Show(this, "This is not yet implemented.", "Please be patient");
-		}
-
 		internal void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app, IVwStylesheet stylesheet, RnSfMarker rsfm)
 		{
 			m_cache = cache;

@@ -261,17 +261,6 @@ namespace LanguageExplorerTests.Controls.DetailControls
 
 		/// <summary />
 		[Test]
-		[Ignore("Collapsed nodes are currently not implemented")]
-		public void NestedCollapsedPart()
-		{
-			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
-			m_dtree.ShowObject(m_entry, "Nested-Collapsed", null, m_entry, false);
-			Assert.AreEqual(1, m_dtree.Controls.Count);
-			Assert.AreEqual("Header", (m_dtree.Controls[0] as Slice).Label);
-		}
-
-		/// <summary />
-		[Test]
 		public void OwnedObjects()
 		{
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);

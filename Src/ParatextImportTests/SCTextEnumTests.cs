@@ -327,35 +327,6 @@ namespace ParatextImport
 	#endregion
 
 	#region Tests for normal operation
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// This test reads a portion of a book
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		[Ignore("We do not support reading parts of books yet")]
-		public void Read_GEN_partial()
-		{
-			string filename = m_fileOs.MakeSfFile("GEN",
-				@"\c 1",
-				@"\v 1 In the beginning",
-				@"\v 2 And the earth was formless and void",
-				@"\c 2",
-				@"\v 1 Le ciel, la terre et tous leurs lments furent achevs.",
-				@"\v 2 This should not be read.");
-
-			m_settings.AddFile(filename, ImportDomain.Main, null, null);
-
-			ScrReference expectedRef = new ScrReference(1, 2, 1, ScrVers.English);
-			ISCTextEnum textEnum = GetTextEnum(ImportDomain.Main, expectedRef, expectedRef);
-			Assert.IsNotNull(textEnum, "No TextEnum object was returned");
-
-			ISCTextSegment textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read GEN 2:1.");
-			Assert.AreEqual(expectedRef, textSeg.FirstReference, "Incorrect reference returned");
-			Assert.AreEqual(" Le ciel, la terre et tous leurs lments furent achevs. ",
-				textSeg.Text, "Incorrect data found at GEN 2:1");
-		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -552,64 +523,6 @@ namespace ParatextImport
 			Assert.AreEqual(" here is verse 2 ", textSeg.Text);
 
 			Assert.IsNull(textEnum.Next());
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Test handling an inline verse number that follows a paragraph marker. This should
-		/// be legal Paratext 6 data. (TE-8424)
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void InlineVerseNumberAfterParaMarker()
-		{
-			TempSFFileMaker fileMaker = new TempSFFileMaker();
-			// WANTTESTPORT: (TE) Remove braces once no more integrations needed from FW_6.0 (indentation will force merge conflicts to prevent unintended changes)
-			{
-				string fileName = fileMaker.CreateFileNoID(
-					new string[] {
-									 @"\id EPH",
-									 @"\mt Ephesians",
-									 @"\c 1",
-									 @"\p \v 1 hello there"});
-				// The import type for Individual Paratext 6 files is Paratext 5.
-				m_settings.ImportTypeEnum = TypeOfImport.Paratext5;
-				m_settings.AddFile(fileName, ImportDomain.Main, null, null);
-
-				ISCTextEnum textEnum = GetTextEnum(ImportDomain.Main,
-					new ScrReference(49, 0, 0, ScrVers.English), new ScrReference(49, 1, 1, ScrVers.English));
-
-				ISCTextSegment textSeg = textEnum.Next();
-				Assert.IsNotNull(textSeg, "Unable to read first segment");
-				Assert.AreEqual(@"\id", textSeg.Marker);
-				Assert.AreEqual("EPH ", textSeg.Text);
-
-				textSeg = textEnum.Next();
-				Assert.IsNotNull(textSeg);
-				Assert.AreEqual(@"\mt", textSeg.Marker);
-				Assert.AreEqual("Ephesians ", textSeg.Text);
-				Assert.AreEqual(49001000, textSeg.FirstReference.BBCCCVVV);
-
-				textSeg = textEnum.Next();
-				Assert.IsNotNull(textSeg);
-				Assert.AreEqual(@"\c", textSeg.Marker);
-				Assert.AreEqual(" ", textSeg.Text);
-				Assert.AreEqual(49001001, textSeg.FirstReference.BBCCCVVV);
-
-				textSeg = textEnum.Next();
-				Assert.IsNotNull(textSeg);
-				Assert.AreEqual(@"\p", textSeg.Marker);
-				Assert.AreEqual(string.Empty, textSeg.Text);
-				Assert.AreEqual(49001001, textSeg.FirstReference.BBCCCVVV);
-
-				textSeg = textEnum.Next();
-				Assert.IsNotNull(textSeg);
-				Assert.AreEqual(@"\v", textSeg.Marker);
-				Assert.AreEqual(49001001, textSeg.FirstReference.BBCCCVVV);
-				Assert.AreEqual(" hello there ", textSeg.Text);
-
-				Assert.IsNull(textEnum.Next());
-			}
 		}
 
 		/// ------------------------------------------------------------------------------------

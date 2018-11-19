@@ -1012,21 +1012,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			VerifyParagraphBorderInCss(BorderColor, 0, BorderTrailing, BorderBottom, BorderTop, cssResult);
 		}
 
-		[Ignore("Won't pass yet.")]
-		[Test]
-		public void GenerateCssForConfiguration_DefaultRootConfigGeneratesResult()
-		{
-			GenerateStyle("Dictionary-Headword");
-			string defaultRoot =
-				Path.Combine(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary"), "Root" + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
-			var model = new DictionaryConfigurationModel(defaultRoot, Cache);
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, Cache, _lcmStyleSheet);
-			var parser = new Parser();
-			var styleSheet = parser.Parse(cssResult);
-			Debug.WriteLine(cssResult);
-			Assert.AreEqual(0, styleSheet.Errors.Count);
-		}
-
 		[Test]
 		public void GenerateCssForConfiguration_FwStyleInheritanceWorks()
 		{

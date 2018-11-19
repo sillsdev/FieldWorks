@@ -268,52 +268,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			CheckAnalysisSize("catsTEST", 2, false);
 		}
 
-		[Test]
-		[Ignore("Is it ever possible for a parser to return more than one wordform parse?")]
-		public void TwoWordforms()
-		{
-			IWfiWordform snake = CheckAnalysisSize("snakeTEST", 0, true);
-			IWfiWordform bull = CheckAnalysisSize("bullTEST", 0, true);
-			ILexDb ldb = Cache.LanguageProject.LexDbOA;
-
-			ParseResult result = null;
-			UndoableUnitOfWorkHelper.Do("Undo stuff", "Redo stuff", m_actionHandler, () =>
-			{
-				// Snake
-				ILexEntry snakeN = m_entryFactory.Create();
-				IMoStemAllomorph snakeNForm = m_stemAlloFactory.Create();
-				snakeN.AlternateFormsOS.Add(snakeNForm);
-				snakeNForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("snakeNTEST", m_vernacularWS.Handle);
-				IMoStemMsa snakeNMsa = m_stemMsaFactory.Create();
-				snakeN.MorphoSyntaxAnalysesOC.Add(snakeNMsa);
-
-				// Bull
-				ILexEntry bullN = m_entryFactory.Create();
-				IMoStemAllomorph bullNForm = m_stemAlloFactory.Create();
-				bullN.AlternateFormsOS.Add(bullNForm);
-				bullNForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("bullNTEST", m_vernacularWS.Handle);
-				IMoStemMsa bullNMsa = m_stemMsaFactory.Create();
-				bullN.MorphoSyntaxAnalysesOC.Add(bullNMsa);
-
-				result = new ParseResult(new[]
-					{
-						new ParseAnalysis(new[]
-							{
-								new ParseMorph(snakeNForm, snakeNMsa)
-							}),
-						new ParseAnalysis(new[]
-							{
-								new ParseMorph(bullNForm, bullNMsa)
-							})
-					});
-			});
-
-			m_filer.ProcessParse(snake, ParserPriority.Low, result);
-			ExecuteIdleQueue();
-			CheckAnalysisSize("snakeTEST", 1, false);
-			CheckAnalysisSize("bullTEST", 1, false);
-		}
-
 		/// <summary>
 		/// Ensure analyses with 'duplicate' analyses are both approved.
 		/// "Duplicate" means the MSA and MoForm IDs are the same in two different analyses.

@@ -151,44 +151,6 @@ namespace ParatextImport
 
 			Assert.AreEqual("1:1-50:25", ImportedBooks.GetBookInfo(m_importedVersion.BooksOS[0]));
 		}
-
-		///--------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests getting book name when the first portion is missing and their is an introduction.
-		/// </summary>
-		///--------------------------------------------------------------------------------------
-		[Test]
-		// To whoever "we" is: MarkP said that, for the user, knowing that the intro material is present is as important as a range of Scripture.
-		//[Ignore("We don't think it's very useful to indicate whether or not the imported book has an introduction.")]
-		public void GetBookInfo_FirstPartMissingWithIntro()
-		{
-#pragma warning disable 219
-			var introSection = AddSectionToMockedBook(m_importedVersion.BooksOS[0], true);
-#pragma warning restore 219
-			var section = AddSectionToMockedBook(m_importedVersion.BooksOS[0]);
-			var para = AddParaToMockedSectionContent(section, ScrStyleNames.NormalParagraph);
-			AddVerse(para, 1, 2, "NOT the first verse in Genesis");
-			AddVerse(para, 50, 25, "NOT the last verse in Genesis");
-
-			Assert.AreEqual("1:2-50:25 (with intro)", ImportedBooks.GetBookInfo(m_importedVersion.BooksOS[0]));
-		}
-
-		///--------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests getting book name when their is only an introduction.
-		/// </summary>
-		///--------------------------------------------------------------------------------------
-		[Test]
-		// To whoever "we" is: MarkP said that, for the user, knowing that the intro material is present is as important as a range of Scripture.
-		//[Ignore("We don't think it's very useful to indicate whether or not the imported book has an introduction.")]
-		public void GetBookInfo_IntroOnly()
-		{
-#pragma warning disable 219
-			var introSection = AddSectionToMockedBook(m_importedVersion.BooksOS[0], true);
-#pragma warning restore 219
-
-			Assert.AreEqual("(intro only)", ImportedBooks.GetBookInfo(m_importedVersion.BooksOS[0]));
-		}
 	#endregion
 
 	#region Helper methods

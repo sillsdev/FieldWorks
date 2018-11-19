@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -95,75 +95,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			// Various possibilities could be valid for the arguments...for now just verify we got something.
 			Assert.That(m_lastTextsChangedArgs, Is.Not.Null);
 		}
-		[Test]
-		[Ignore("Temporary until we figure out propchanged for unowned Texts.")]
-		public void AddAndRemoveScripture()
-		{
-			List<IStText> expectedScripture;
-			List<IStText> expected;
-			InterestingTextList testObj = SetupTwoMockTextsAndOneScriptureSection(true, out expectedScripture, out expected);
-			MakeMockScriptureSection();
-			testObj.PropChanged(m_sections[1].Hvo, ScrSectionTags.kflidContent, 0, 1, 0);
-			testObj.PropChanged(m_sections[1].Hvo, ScrSectionTags.kflidHeading, 0, 1, 0);
-			VerifyList(expected, testObj.InterestingTexts, "new Scripture objects are not added automatically");
-			VerifyScriptureList(testObj, expectedScripture, "new Scripture objects are not added automatically to ScriptureTexts");
-			Assert.IsTrue(testObj.IsInterestingText(expectedScripture[0]));
-			Assert.IsTrue(testObj.IsInterestingText(expectedScripture[1]));
-
-			var remove = ((MockStText) m_sections[0].ContentOA);
-			remove.IsValidObject = false;
-			expected.Remove(m_sections[0].ContentOA); // before we clear ContentsOA!
-			expectedScripture.Remove(m_sections[0].ContentOA);
-			m_sections[0].ContentOA = null; // not normally valid, but makes things somewhat more consistent for test.
-			testObj.PropChanged(m_sections[0].Hvo, ScrSectionTags.kflidContent, 0, 0, 1);
-			VerifyList(expected, testObj.InterestingTexts, "deleted Scripture texts are removed (ContentsOA)");
-			VerifyScriptureList(testObj, expectedScripture, "deleted Scripture texts are removed from ScriptureTexts (ContentsOA");
-			VerifyTextsChangedArgs(2, 0, 1);
-			Assert.IsFalse(testObj.IsInterestingText(remove));
-			Assert.IsTrue(testObj.IsInterestingText(expectedScripture[0]));
-
-			((MockStText)m_sections[0].HeadingOA).IsValidObject = false;
-			expected.Remove(m_sections[0].HeadingOA); // before we clear ContentsOA!
-			m_sections[0].HeadingOA = null; // not normally valid, but makes things somewhat more consistent for test.
-			testObj.PropChanged(m_sections[0].Hvo, ScrSectionTags.kflidHeading, 0, 0, 1);
-			VerifyList(expected, testObj.InterestingTexts, "deleted Scripture texts are removed (HeadingOA)");
-
-			m_sections[0].ContentOA = new MockStText();
-			var newTexts = new IStText[] {expected[0], expected[1], m_sections[0].ContentOA, m_sections[1].ContentOA, m_sections[1].HeadingOA};
-			testObj.SetInterestingTexts(newTexts);
-			VerifyTextsChangedArgs(2, 3, 0);
-			expected.AddRange(new[] { m_sections[0].ContentOA, m_sections[1].ContentOA, m_sections[1].HeadingOA });
-			VerifyList(expected, testObj.InterestingTexts, "deleted Scripture texts are removed (HeadingOA)");
-			// Unfortunately, I don't think we actually get PropChanged on the direct owning property,
-			// if the owning object (Text or ScrSection) gets deleted. We need to detect deleted objects
-			// if things are deleted from any of the possible owning properties.
-			// This is also a chance to verify that being owned by an ScrDraft does not count as valid.
-			// It's not a very realistic test, as we aren't trying to make everything about the test data consistent.
-			((MockStText) m_sections[0].ContentOA).m_mockOwnerOfClass = new MockScrDraft(); // not allowed in list.
-			testObj.PropChanged(m_sections[0].Hvo, ScrBookTags.kflidSections, 0, 0, 1);
-			expected.RemoveAt(2);
-			VerifyList(expected, testObj.InterestingTexts, "deleted Scripture texts are removed (ScrBook.SectionsOS)");
-			VerifyTextsChangedArgs(2, 0, 1);
-
-			((MockStText)expected[3]).IsValidObject = false;
-			expected.RemoveAt(3);
-			testObj.PropChanged(m_sections[0].Hvo, ScriptureTags.kflidScriptureBooks, 0, 0, 1);
-			VerifyList(expected, testObj.InterestingTexts, "deleted Scripture texts are removed (Scripture.ScriptureBooks)");
-			VerifyTextsChangedArgs(3, 0, 1);
-
-			((MockStText)expected[2]).IsValidObject = false;
-			expected.RemoveAt(2);
-			testObj.PropChanged(m_sections[0].Hvo, ScrBookTags.kflidTitle, 0, 0, 1);
-			VerifyList(expected, testObj.InterestingTexts, "deleted Scripture texts are removed (ScrBookTags.Title)");
-			VerifyTextsChangedArgs(2, 0, 1);
-			Assert.AreEqual(0, testObj.ScriptureTexts.Count(), "by now we've removed all ScriptureTexts");
-
-			((MockStText)expected[1]).IsValidObject = false;
-			expected.RemoveAt(1);
-			//testObj.PropChanged(1, LangProjectTags.kflidTexts, 0, 0, 1);
-			VerifyList(expected, testObj.InterestingTexts, "deleted texts are removed (LangProject.Texts)");
-			VerifyTextsChangedArgs(1, 0, 1);
-		}
 
 		private InterestingTextList SetupTwoMockTextsAndOneScriptureSection(bool fIncludeScripture, out List<IStText> expectedScripture,
 			out List<IStText> expected)
@@ -204,35 +135,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			VerifyList(expectedScripture, testObj.ScriptureTexts, "Just two valid Guids");
 		}
 
-		/// <summary>
-		/// The same method sets things up here and in another test, the only difference being
-		/// that here Scripture is not to be included.
-		/// </summary>
-		[Test]
-		[Ignore("Temporary until we figure out propchanged for unowned Texts.")]
-		public void ShouldIncludeScripture()
-		{
-			List<IStText> expectedScripture;
-			List<IStText> expected;
-			var testObj = SetupTwoMockTextsAndOneScriptureSection(false, out expectedScripture, out expected);
-			Assert.IsFalse(testObj.IsInterestingText(expectedScripture[1]), "in this mode no Scripture is interesting");
-
-			// Invalidating a Scripture book should NOT generate PropChanged etc. when Scripture is not included.
-			((MockStText)m_sections[0].ContentOA).IsValidObject = false;
-			expectedScripture.Remove(m_sections[0].ContentOA);
-			m_sections[0].ContentOA = null; // not normally valid, but makes things somewhat more consistent for test.
-			m_lastTextsChangedArgs = null;
-			testObj.PropChanged(m_sections[0].Hvo, ScrSectionTags.kflidContent, 0, 0, 1);
-			VerifyList(expected, testObj.InterestingTexts, "deleted Scripture texts are removed (ContentsOA)");
-			VerifyScriptureList(testObj, expectedScripture, "deleted Scripture texts are removed from ScriptureTexts (ContentsOA");
-			Assert.IsNull(m_lastTextsChangedArgs, "should NOT get change notification deleting Scripture when not included");
-
-			((MockStText)expected[1]).IsValidObject = false;
-			expected.RemoveAt(1);
-			//testObj.PropChanged(1, LangProjectTags.kflidTexts, 0, 0, 1);
-			VerifyList(expected, testObj.InterestingTexts, "deleted texts are removed (LangProject.Texts)");
-			VerifyTextsChangedArgs(1, 0, 1); // but, we still get PropChanged when deleting non-Scripture texts.
-		}
 		private void VerifyScriptureList(InterestingTextList testObj, List<IStText> expectedScripture, string comment)
 		{
 			VerifyList(expectedScripture, testObj.ScriptureTexts, comment);

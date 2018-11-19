@@ -78,7 +78,7 @@
       <HintPath>..\..\Output\Debug\SIL.LCModel.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
-      <HintPath>..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <HintPath>..\..\Output\Debug\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="Paratext.LexicalContracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9a5af29a0e638a7b, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

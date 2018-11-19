@@ -2023,39 +2023,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 	#endregion MaintainCheckboxesSwitchingTargetListOwners_LT8986
 	}
-
-
-	/// <summary>
-	/// Add a layer of complexity to certain BulkEditCheckBoxBehaviorTests by performing a filter
-	/// before switching list classes (e.g. entries to senses).
-	/// </summary>
-	[TestFixture]
-	public class BulkEditCheckBoxBehaviorTestsWithFilterChanges : BulkEditCheckBoxBehaviorTests
-	{
-		/// <summary>
-		///
-		/// </summary>
-		[Ignore("no need to test again.")]
-		[Test]
-		public override void CheckboxBehavior_AllItemsShouldBeInitiallyCheckedPlusRefreshBehavior()
-		{
-			// no need to test again, when subclass has already done so.
-		}
-
-		[Ignore("no need to test again.")]
-		[Test]
-		public override void CheckboxBehavior_ChangingFilterShouldRestoreSelectedStateOfItemsThatBecomeVisible_Selected()
-		{
-			// no need to test again, when subclass has already done so.
-		}
-
-		[Ignore("no need to test again.")]
-		[Test]
-		public override void CheckboxBehavior_ChangingFilterShouldRestoreSelectedStateOfItemsThatBecomeVisible_Unselected()
-		{
-			// no need to test again, when subclass has already done so.
-		}
-	}
 #endif
 #endif
 }
