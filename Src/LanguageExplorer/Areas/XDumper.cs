@@ -24,11 +24,8 @@ using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 using SIL.Xml;
 
-namespace SIL.FieldWorks.Common.FXT
+namespace LanguageExplorer.Areas
 {
-#if RANDYTODO
-	// TODO: Move to: LanguageExplorer.Areas, so its only user (ExportDialog), doesn't have look look so far for it.
-#endif
 	/// <summary>
 	/// JohnT: filling in the little I know...XDumper is part of the implementation of FXT XML export.
 	/// I have optimized by adding various caches, such as one that knows all the custom fields for each class,

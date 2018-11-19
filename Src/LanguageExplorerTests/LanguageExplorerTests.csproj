@@ -226,6 +226,7 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ArchivingTests.cs" />
+    <Compile Include="Areas\StandFormatExportTests.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\TextsTriStateTreeViewTests.cs" />
     <Compile Include="Controls\DetailControls\InnerLabeledMultiStringViewTests.cs" />
     <Compile Include="Controls\Styles\CaseSensitiveListBoxTests.cs" />

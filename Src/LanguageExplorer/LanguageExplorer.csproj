@@ -379,6 +379,7 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\MorphBreakHelperContextMenu.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Areas\XDumper.cs" />
     <Compile Include="Controls\FileLocationChoice.cs" />
     <Compile Include="Controls\HelperContextMenu.cs">
       <SubType>Component</SubType>
