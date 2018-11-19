@@ -146,8 +146,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
@@ -168,14 +166,9 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ChangedDataItem.cs" />
-    <Compile Include="FilterStrategy.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="XDumper.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="XUpdater.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

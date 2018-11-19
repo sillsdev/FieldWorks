@@ -149,10 +149,6 @@
     <LangVersion>6</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="SIL.LCModel">
-      <Name>SIL.LCModel</Name>
-      <HintPath>..\..\Output\Debug\SIL.LCModel.dll</HintPath>
-    </Reference>
     <Reference Include="SIL.LCModel.Tests, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.LCModel.Tests.dll</HintPath>
@@ -194,16 +190,6 @@
     <None Include="App.config" />
     <Compile Include="..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>
-    </Compile>
-    <Compile Include="DumperTests.cs" />
-    <Compile Include="FxtTestBase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="M3ParserDumpTests.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="SimpleTests.cs">
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="StandFormatExportTests.cs">
       <SubType>Code</SubType>
