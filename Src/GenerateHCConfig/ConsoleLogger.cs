@@ -1,47 +1,43 @@
-﻿using System;
+// Copyright (c) 2016-2018 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.ComponentModel;
-using SIL.LCModel;
 using SIL.FieldWorks.WordWorks.Parser;
+using SIL.LCModel;
 
 namespace GenerateHCConfig
 {
 	internal class ConsoleLogger : ILcmUI, IHCLoadErrorLogger
 	{
-		private readonly ISynchronizeInvoke m_synchronizeInvoke;
-
 		public ConsoleLogger(ISynchronizeInvoke synchronizeInvoke)
 		{
-			m_synchronizeInvoke = synchronizeInvoke;
+			SynchronizeInvoke = synchronizeInvoke;
 		}
 
-		public ISynchronizeInvoke SynchronizeInvoke
-		{
-			get { return m_synchronizeInvoke; }
-		}
+		public ISynchronizeInvoke SynchronizeInvoke { get; }
 
 		public bool ConflictingSave()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
-		public DateTime LastActivityTime
-		{
-			get { return DateTime.Now; }
-		}
+		public DateTime LastActivityTime => DateTime.Now;
 
 		public FileSelection ChooseFilesToUse()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public bool RestoreLinkedFilesInProjectFolder()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public YesNoCancel CannotRestoreLinkedFilesToOriginalLocation()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public void DisplayMessage(MessageType type, string message, string caption, string helpTopic)
@@ -66,12 +62,12 @@ namespace GenerateHCConfig
 
 		public bool Retry(string msg, string caption)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public bool OfferToRestore(string projectPath, string backupPath)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public void InvalidShape(string str, int errorPos, IMoMorphSynAnalysis msa)

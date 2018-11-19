@@ -1,4 +1,8 @@
-﻿using System;
+// Copyright (c) 2016-2018 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.ComponentModel;
 using SIL.LCModel.Utils;
 
@@ -6,11 +10,9 @@ namespace GenerateHCConfig
 {
 	internal class NullThreadedProgress : IThreadedProgress
 	{
-		private readonly ISynchronizeInvoke m_synchronizeInvoke;
-
 		public NullThreadedProgress(ISynchronizeInvoke synchronizeInvoke)
 		{
-			m_synchronizeInvoke = synchronizeInvoke;
+			SynchronizeInvoke = synchronizeInvoke;
 		}
 
 		public void Step(int amount)
@@ -30,19 +32,13 @@ namespace GenerateHCConfig
 
 		public int Maximum { get; set; }
 
-		public ISynchronizeInvoke SynchronizeInvoke
-		{
-			get { return m_synchronizeInvoke; }
-		}
+		public ISynchronizeInvoke SynchronizeInvoke { get; }
 
 		public bool IsIndeterminate { get; set; }
 
 		public bool AllowCancel { get; set; }
 
-		public bool IsCanceling
-		{
-			get { return false; }
-		}
+		public bool IsCanceling => false;
 
 		public event CancelEventHandler Canceling;
 
