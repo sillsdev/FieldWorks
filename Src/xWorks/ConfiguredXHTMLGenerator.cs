@@ -642,7 +642,7 @@ namespace SIL.FieldWorks.XWorks
 			if (firstLetter != lastHeader && !string.IsNullOrEmpty(firstLetter))
 			{
 				var headerTextBuilder = new StringBuilder();
-				var upperCase = Icu.ToTitle(firstLetter, wsString);
+				var upperCase = Icu.UnicodeString.ToTitle(firstLetter, wsString);
 				var lowerCase = firstLetter.Normalize();
 				headerTextBuilder.Append(upperCase);
 				if (lowerCase != upperCase)
@@ -771,7 +771,7 @@ namespace SIL.FieldWorks.XWorks
 				pieces.ForEach(xw.WriteRaw);
 				xw.WriteEndElement(); // </div>
 				xw.Flush();
-				return Icu.Normalize(bldr.ToString(), Icu.UNormalizationMode.UNORM_NFC); // All content should be in NFC (LT-18177)
+				return CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC).Normalize(bldr.ToString()); // All content should be in NFC (LT-18177)
 			}
 		}
 
@@ -1388,7 +1388,7 @@ namespace SIL.FieldWorks.XWorks
 			if (Common.FwUtils.Unicode.CheckForNonAsciiCharacters(filePath))
 			{
 				// Flex keeps the filename as NFD in memory because it is unicode. We need NFC to actually link to the file
-				filePath = Icu.Normalize(filePath, Icu.UNormalizationMode.UNORM_NFC);
+				filePath = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC).Normalize(filePath);
 			}
 			if (!FileUtils.IsFilePathValid(filePath))
 			{

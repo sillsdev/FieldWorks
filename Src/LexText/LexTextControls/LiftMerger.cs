@@ -2169,7 +2169,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				int clsid = 0;
 				if (mf == null)
 				{
-					string form = Icu.Normalize(XmlUtils.DecodeXml(entry.LexicalForm.FirstValue.Value.Text), Icu.UNormalizationMode.UNORM_NFD);
+					string form = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD)
+						.Normalize(XmlUtils.DecodeXml(entry.LexicalForm.FirstValue.Value.Text));
 					IMoMorphType mmt = FindMorphType(ref form, out clsid,
 						le.Guid, LexEntryTags.kflidLexemeForm);
 					if (mmt.IsAffixType)
@@ -4259,8 +4260,8 @@ namespace SIL.FieldWorks.LexText.Controls
 //			}
 //			else
 //			{
-//				string sOldNorm = Icu.Normalize(sOld, Icu.UNormalizationMode.UNORM_NFD);
-//				string sNewNorm = Icu.Normalize(sNew, Icu.UNormalizationMode.UNORM_NFD);
+//				string sOldNorm = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sOld);
+//				string sNewNorm = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sNew);
 //				return sOldNorm == sNewNorm;
 //			}
 //		}
@@ -6018,13 +6019,12 @@ namespace SIL.FieldWorks.LexText.Controls
 				int ws = GetWsFromLiftLang(key);
 				string sNew = form[key].Text; // safe XML
 				string sNewNorm; // safe XML (NFD)
-				if (String.IsNullOrEmpty(sNew))
-					sNewNorm = sNew;
-				else
-					sNewNorm = Icu.Normalize(sNew, Icu.UNormalizationMode.UNORM_NFD);
+				var icuNormalizer = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD);
+				sNewNorm = string.IsNullOrEmpty(sNew) ? string.Empty : icuNormalizer.Normalize(sNew);
+
 				// LiftMultiText parameter may have come in with escaped characters which need to be
 				// converted to plain text before comparing with existing entries
-				MuElement mue = new MuElement(ws, Icu.Normalize(XmlUtils.DecodeXml(sNewNorm), Icu.UNormalizationMode.UNORM_NFD));
+				MuElement mue = new MuElement(ws, icuNormalizer.Normalize(XmlUtils.DecodeXml(sNewNorm)));
 				if (rie == null && mapToRIEs.TryGetValue(mue, out rgrie))
 				{
 					foreach (IReversalIndexEntry rieT in rgrie)

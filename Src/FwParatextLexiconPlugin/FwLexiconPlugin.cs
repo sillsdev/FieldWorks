@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 				// update ICU_DATA to location of ICU data files
 				if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ICU_DATA")))
 				{
-					string codeIcuDataPath = Path.Combine(ParatextLexiconPluginDirectoryFinder.CodeDirectory, "Icu" + Icu.Version);
+					string codeIcuDataPath = Path.Combine(ParatextLexiconPluginDirectoryFinder.CodeDirectory, "Icu" + CustomIcu.Version);
 #if DEBUG
 					string icuDataPath = codeIcuDataPath;
 #else

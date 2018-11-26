@@ -129,7 +129,8 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		private static void DeleteTemporaryFiles()
 		{
 			// Delete the files we previously renamed. Couldn't do that before because they were locked.
-			var tempFilesToDelete = Path.Combine(Icu.DefaultDirectory, $"icudt{Icu.Version}l", "TempFilesToDelete");
+			var tempFilesToDelete = Path.Combine(CustomIcu.DefaultDataDirectory,
+				$"icudt{CustomIcu.Version}l", "TempFilesToDelete");
 
 			if (!File.Exists(tempFilesToDelete))
 				return;

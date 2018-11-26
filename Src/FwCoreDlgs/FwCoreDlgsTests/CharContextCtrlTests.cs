@@ -10,6 +10,7 @@ using System;
 using NUnit.Framework;
 using SIL.LCModel.Utils;
 using System.Collections.Generic;
+using System.Text;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
@@ -128,16 +129,48 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				// First string is the normalized order that ICU produces.
 				// Second string is the normalized order that .Net produces.
-				ReflectionHelper.SetField(ctrl, "m_fileData", new[] { "\u05E9\u05c1\u05b4\u0596",
-				"\u05E9\u05b4\u05c1\u0596" });
+				var icuStyleNormalizationOrder = "\u05E9\u05c1\u05b4\u0596";
+				var dotnetStyleNormalizationOrder = "\u05E9\u05b4\u05c1\u0596";
+				ReflectionHelper.SetField(ctrl, "m_fileData",
+					new[] { icuStyleNormalizationOrder, dotnetStyleNormalizationOrder });
 
+				// SUT
 				ReflectionHelper.CallMethod(ctrl, "NormalizeFileData");
 
+				// Verify
 				var results = (string[])ReflectionHelper.GetField(ctrl, "m_fileData");
-				Assert.AreEqual(2, results.Length);
-				Assert.AreEqual("\u05E9\u05c1\u05b4\u0596", results[0], "Expect ICU-style normalization");
-				Assert.AreEqual("\u05E9\u05c1\u05b4\u0596", results[1], "Expect ICU-style normalization");
+				Assert.That(results.Length, Is.EqualTo(2));
+				Assert.That(results[0], Is.EqualTo(icuStyleNormalizationOrder),
+					GetMessage("Expect ICU-style normalization (from ICU order)",
+						icuStyleNormalizationOrder,
+						results[0]));
+				Assert.That(results[1], Is.EqualTo(icuStyleNormalizationOrder),
+					GetMessage("Expect ICU-style normalization (from .NET order)",
+						icuStyleNormalizationOrder,
+						results[1]));
 			}
+		}
+
+		private string GetMessage(string message, string expected, string actual)
+		{
+			var bldr = new StringBuilder(message);
+			bldr.AppendLine();
+			bldr.AppendFormat("  Expected: \"{0}\"", GetStringAsUnicodeCodepoints(expected));
+			bldr.AppendLine();
+			bldr.AppendFormat("  Actual:   \"{0}\"", GetStringAsUnicodeCodepoints(actual));
+			bldr.AppendLine();
+			return bldr.ToString();
+		}
+
+		private string GetStringAsUnicodeCodepoints(string s)
+		{
+			var bldr = new StringBuilder();
+			foreach (var c in s.ToCharArray())
+			{
+				bldr.AppendFormat("\\u{0:x4}", Convert.ToInt32(c));
+			}
+
+			return bldr.ToString();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -155,15 +188,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				ctrl.Initialize(Cache, Cache.ServiceLocator.WritingSystems,
 					null, null, null, null);
 
-				// First string is the normalized order that ICU produces.
-				// Second string is the normalized order that .Net produces.
 				ReflectionHelper.SetField(ctrl, "m_fileData", new[] { "\u2074" });
 
+				// SUT
 				ReflectionHelper.CallMethod(ctrl, "NormalizeFileData");
 
+				// Verify
 				var results = (string[])ReflectionHelper.GetField(ctrl, "m_fileData");
-				Assert.AreEqual(1, results.Length);
-				Assert.AreEqual("\u2074", results[0], "Expect ICU-style normalization");
+				Assert.That(results.Length, Is.EqualTo(1));
+				Assert.That(results[0], Is.EqualTo("\u2074"), "Expect ICU-style normalization");
 			}
 		}
 	}

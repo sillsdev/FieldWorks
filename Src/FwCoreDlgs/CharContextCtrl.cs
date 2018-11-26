@@ -10,6 +10,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using Icu;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
@@ -18,6 +19,8 @@ using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 using SIL.FieldWorks.Resources;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.Utils;
 using SIL.Windows.Forms;
 
@@ -628,7 +631,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					if (m_fileData[i].IndexOfAny(controlChars) >= 0)
 						throw new Exception(FWCoreDlgsErrors.ksInvalidControlCharacterFound);
-					m_fileData[i] = LCModel.Core.Text.Icu.Normalize(m_fileData[i], LCModel.Core.Text.Icu.UNormalizationMode.UNORM_NFD);
+					m_fileData[i] = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD)
+						.Normalize(m_fileData[i]);
 				}
 			}
 		}

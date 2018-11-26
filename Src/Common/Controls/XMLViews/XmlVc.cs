@@ -10,6 +10,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml;
+using Icu.Collation;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
@@ -5699,7 +5700,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	class CmObjectComparer : DisposableBase, IComparer<int>
 	{
-		private IntPtr m_col = IntPtr.Zero;
+		private Collator m_col;
 		private readonly LcmCache m_cache;
 
 		public CmObjectComparer(LcmCache cache)
@@ -5723,17 +5724,17 @@ namespace SIL.FieldWorks.Common.Controls
 			if (string.IsNullOrEmpty(ykeyStr))
 				return 1;
 
-			if (m_col == IntPtr.Zero)
+			if (m_col == null)
 			{
 				string ws = xobj.SortKeyWs;
 				if (string.IsNullOrEmpty(ws))
 					ws = yobj.SortKeyWs;
-				string icuLocale = Icu.GetName(ws);
-				m_col = Icu.OpenCollator(icuLocale);
+				string icuLocale = new Icu.Locale(ws).Name;
+				m_col = Collator.Create(icuLocale);
 			}
 
-			byte[] xkey = Icu.GetSortKey(m_col, xkeyStr);
-			byte[] ykey = Icu.GetSortKey(m_col, ykeyStr);
+			byte[] xkey = m_col.GetSortKey(xkeyStr).KeyData;
+			byte[] ykey = m_col.GetSortKey(ykeyStr).KeyData;
 			// Simulate strcmp on the two NUL-terminated byte strings.
 			// This avoids marshalling back and forth.
 			// JohnT: but apparently the strings are not null-terminated if the input was empty.
@@ -5765,10 +5766,10 @@ namespace SIL.FieldWorks.Common.Controls
 
 		protected override void DisposeUnmanagedResources()
 		{
-			if (m_col != IntPtr.Zero)
+			if (m_col != null)
 			{
-				Icu.CloseCollator(m_col);
-				m_col = IntPtr.Zero;
+				m_col.Dispose();
+				m_col = null;
 			}
 		}
 	}

@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Diagnostics;
+using Icu.Collation;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
@@ -283,9 +284,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			CurrentContext ccOld = WriteFieldStartTag(tag);
 			string sText = DataAccess.get_UnicodeProp(CurrentObject(), tag);
+			var icuNormalizer = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC);
 			// Need to ensure that sText is NFC for export.
-			if (!Icu.IsNormalized(sText, Icu.UNormalizationMode.UNORM_NFC))
-				sText = Icu.Normalize(sText, Icu.UNormalizationMode.UNORM_NFC);
+			if (!icuNormalizer.IsNormalized(sText))
+				sText = icuNormalizer.Normalize(sText);
 			string sWs = WritingSystemId(ws);
 			IndentLine();
 			if (String.IsNullOrEmpty(sWs))
@@ -547,8 +549,8 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private void WriteLetterHeadIfNeeded(string sEntry, string sWs)
 		{
-			string sLower = GetLeadChar(Icu.Normalize(sEntry, Icu.UNormalizationMode.UNORM_NFD), sWs);
-			string sTitle = Icu.ToTitle(sLower, sWs);
+			string sLower = GetLeadChar(CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sEntry), sWs);
+			string sTitle = Icu.UnicodeString.ToTitle(sLower, sWs);
 			if (sTitle != m_schCurrent)
 			{
 				if (m_schCurrent.Length > 0)
@@ -598,7 +600,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			if (string.IsNullOrEmpty(sEntryNFD))
 				return "";
-			string sEntryPre = Icu.ToLower(sEntryNFD, sWs);
+			string sEntryPre = Icu.UnicodeString.ToLower(sEntryNFD, sWs);
 			Dictionary<string, string> mapChars;
 			// List of characters to ignore in creating letter heads.
 			ISet<string> chIgnoreList;
@@ -654,19 +656,19 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			// We don't want sFirst for an ignored first character or digraph.
 
-			IntPtr col;
+			Collator col;
 			try
 			{
-				string icuLocale = Icu.GetName(sWs);
-				col = Icu.OpenCollator(icuLocale);
+				string icuLocale = new Icu.Locale(sWs).Name;
+				col = Collator.Create(icuLocale);
 			}
-			catch (IcuException)
+			catch (Exception)
 			{
 				return sFirst;
 			}
 			try
 			{
-				byte[] ka = Icu.GetSortKey(col, sFirst);
+				byte[] ka = col.GetSortKey(sFirst).KeyData;
 				if (ka.Length > 0 && ka[0] == 1)
 				{
 					string sT = sEntry.Substring(sFirst.Length);
@@ -675,7 +677,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			finally
 			{
-				Icu.CloseCollator(col);
+				col.Dispose();
 			}
 			return sFirst;
 		}
@@ -869,7 +871,7 @@ namespace SIL.FieldWorks.Common.Controls
 				var sGraph = character.Trim();
 				if (String.IsNullOrEmpty(sGraph))
 					continue;
-				sGraph = Icu.Normalize(sGraph, Icu.UNormalizationMode.UNORM_NFD);
+				sGraph = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sGraph);
 				if (primaryPart == null)
 				{
 					primaryPart = sGraph;
@@ -894,10 +896,10 @@ namespace SIL.FieldWorks.Common.Controls
 				var sGraph = character.Trim();
 				if (String.IsNullOrEmpty(sGraph))
 					continue;
-				sGraph = Icu.Normalize(sGraph, Icu.UNormalizationMode.UNORM_NFD);
+				sGraph = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sGraph);
 				if (sGraph.Length > 1)
 				{
-					sGraph = Icu.ToLower(sGraph, ws);
+					sGraph = Icu.UnicodeString.ToLower(sGraph, ws);
 					if (!wsDigraphsMap.ContainsKey(ws))
 					{
 						wsDigraphsMap.Add(ws, new HashSet<string> { sGraph });

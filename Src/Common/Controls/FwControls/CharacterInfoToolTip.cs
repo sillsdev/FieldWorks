@@ -190,7 +190,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (UnicodeValueTextConstructed != null)
 				UnicodeValueTextConstructed(this, m_ctrl, ref m_text);
 
-			string name = Icu.GetPrettyICUCharName(chr);
+			string name = Icu.Character.GetPrettyICUCharName(chr);
 
 			// Get the name of the character if its length is 1.
 			if (!string.IsNullOrEmpty(name))

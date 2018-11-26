@@ -14,6 +14,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using Icu;
+using Icu.Collation;
 using SilEncConverters40;
 using SIL.LCModel.Core.SpellChecking;
 using SIL.LCModel.Core.Text;
@@ -754,13 +756,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_userChangedSpellCheckDictionary = true;
 		}
 
-		private static string GetDictionaryName(String languageId)
+		private static string GetDictionaryName(string languageId)
 		{
-			LCModel.Core.Text.Icu.UErrorCode err;
-			string country;
-			LCModel.Core.Text.Icu.GetDisplayCountry(languageId, "en", out country, out err);
-			string languageName;
-			LCModel.Core.Text.Icu.GetDisplayLanguage(languageId, "en", out languageName, out err);
+			var locale = new Locale(languageId);
+			var country = locale.GetDisplayCountry("en");
+			var languageName = locale.GetDisplayLanguage("en");
 			var languageAndCountry = new StringBuilder(languageName);
 			if (!string.IsNullOrEmpty(country))
 				languageAndCountry.AppendFormat(" ({0})", country);
@@ -2043,7 +2043,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (baseLocale == null)
 				baseLocale = "";
 
-			string sortRules = LCModel.Core.Text.Icu.GetCollationRules(baseLocale);
+			string sortRules = Collator.GetCollationRules(baseLocale);
 			m_sortRulesTextBox.Tss = TsStringUtils.MakeString(sortRules == null ? "" : sortRules.Replace("&", Environment.NewLine + "&").Trim(),
 				CurrentWritingSystem.Handle);
 

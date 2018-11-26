@@ -611,7 +611,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			if (string.IsNullOrEmpty(inputString))
 				return inputString;
-			var normalizedString = Icu.Normalize(inputString, Icu.UNormalizationMode.UNORM_NFC);
+			var normalizedString = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC).Normalize(inputString);
 			return XmlUtils.MakeSafeXml(normalizedString);
 		}
 
@@ -619,7 +619,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			if (string.IsNullOrEmpty(inputString))
 				return inputString;
-			var normalizedString = Icu.Normalize(inputString, Icu.UNormalizationMode.UNORM_NFC);
+			var normalizedString = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC).Normalize(inputString);
 			return XmlUtils.MakeSafeXmlAttribute(normalizedString);
 		}
 
@@ -882,7 +882,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				return m_filesCreated[actualPath].Item2; //return the file we wrote last time we saw this path
 			}
 			// We are going to export the text of this to XML as NFC, so we want to write the file using a matching NFC name.
-			var safeWritePath = Icu.Normalize(writePath, Icu.UNormalizationMode.UNORM_NFC);
+			var safeWritePath = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC).Normalize(writePath);
 			// Use as source any similar file that exists.
 			var safeSourcePath = FileUtils.ActualFilePath(actualPath);
 			if (ExportPicturesAndMedia && !String.IsNullOrEmpty(FolderPath) && FileUtils.FileExists(safeSourcePath))

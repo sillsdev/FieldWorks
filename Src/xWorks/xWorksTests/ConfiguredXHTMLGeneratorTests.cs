@@ -5224,8 +5224,8 @@ namespace SIL.FieldWorks.XWorks
 			Cache.LangProject.MediaOC.Add(folder);
 			folder.FilesOC.Add(pic);
 			const string pathWithUtf8Char = "cave\u00E7on";
-			var decomposedPath = Icu.Normalize(pathWithUtf8Char, Icu.UNormalizationMode.UNORM_NFD);
-			var composedPath = Icu.Normalize(pathWithUtf8Char, Icu.UNormalizationMode.UNORM_NFC);
+			var decomposedPath = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(pathWithUtf8Char);
+			var composedPath = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC).Normalize(pathWithUtf8Char);
 			// Set the internal path to decomposed (which is what FLEx does when it loads data)
 			pic.InternalPath = decomposedPath;
 			sensePic.PictureFileRA = pic;

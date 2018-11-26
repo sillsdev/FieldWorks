@@ -62,14 +62,14 @@
   <ItemGroup>
     <Reference Include="Paratext.LexicalContracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9a5af29a0e638a7b, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\ParatextData.8.1.6\lib\net461\Paratext.LexicalContracts.dll</HintPath>
+      <HintPath>..\..\Output\Debug\Paratext.LexicalContracts.dll</HintPath>
     </Reference>
     <Reference Include="ParatextData">
-      <HintPath>..\..\packages\ParatextData.8.1.6\lib\net461\ParatextData.dll</HintPath>
+      <HintPath>..\..\Output\Debug\ParatextData.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="PtxUtils">
-      <HintPath>..\..\packages\ParatextData.8.1.6\lib\net461\PtxUtils.dll</HintPath>
+      <HintPath>..\..\Output\Debug\PtxUtils.dll</HintPath>
     </Reference>
     <Reference Include="ScriptureUtils">
       <HintPath>..\..\Output\Debug\ScriptureUtils.dll</HintPath>

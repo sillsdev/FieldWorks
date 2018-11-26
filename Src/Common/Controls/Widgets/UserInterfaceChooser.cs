@@ -19,6 +19,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using Icu;
 using SIL.LCModel.Core.Text;
 using SIL.PlatformUtilities;
 
@@ -326,8 +327,7 @@ namespace SIL.FieldWorks.Common.Widgets
 				}
 				catch
 				{
-					Icu.UErrorCode uerr;
-					Icu.GetDisplayName(sLocale, sLocale, out sName, out uerr);
+					sName = new Locale(sLocale).GetDisplayName(sLocale);
 				}
 				return sName;
 			}

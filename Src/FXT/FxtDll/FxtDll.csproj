@@ -81,7 +81,7 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>  
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <OutputPath>..\..\..\Output\Debug\</OutputPath>
     <BaseAddress>285212672</BaseAddress>
@@ -152,6 +152,11 @@
     </Reference>
     <Reference Include="SIL.LCModel.Core">
       <HintPath>..\..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="icu.net, Version=2.5.1.0, Culture=neutral, PublicKeyToken=416fdd914afa6b66">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\icu.net.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="FwUtils">
       <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>

@@ -108,7 +108,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			CheckNeedsUpdate();
 			using (var task = new TaskReport(string.Format(ParserCoreStrings.ksTraceWordformX, sForm), m_taskUpdateHandler))
 			{
-				string normForm = Icu.Normalize(sForm, Icu.UNormalizationMode.UNORM_NFD);
+				string normForm = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sForm);
 				task.Details = fDoTrace ? m_parser.TraceWordXml(normForm, sSelectTraceMorphs) : m_parser.ParseWordXml(normForm);
 			}
 		}
@@ -134,7 +134,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				return false;
 
 			CheckNeedsUpdate();
-			ParseResult result = m_parser.ParseWord(Icu.Normalize(form.Text.Replace(' ', '.'), Icu.UNormalizationMode.UNORM_NFD));
+			ParseResult result = m_parser.ParseWord(
+				CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD)
+				.Normalize(form.Text.Replace(' ', '.')));
 			if (wordformHash == result.GetHashCode())
 				return false;
 

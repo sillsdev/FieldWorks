@@ -1537,7 +1537,7 @@ namespace SIL.FieldWorks.XWorks
 					if (sValue == null)
 						sValue = String.Empty;
 					else
-						sValue = Icu.Normalize(sValue, Icu.UNormalizationMode.UNORM_NFC);
+						sValue = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC).Normalize(sValue);
 					w.WriteLine("<AUni ws=\"{0}\">{1}</AUni>", m_mapWsCode[ws], XmlUtils.MakeSafeXml(sValue));
 				}
 				w.WriteLine("</{0}>", sField);

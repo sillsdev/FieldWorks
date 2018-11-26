@@ -26,7 +26,6 @@
 		<PalasoFileNamesForLL Include="SIL.WritingSystems.pdb" />
 		<PalasoFileNamesForLL Include="SIL.TestUtilities.dll" />
 		<PalasoFileNamesForLL Include="Newtonsoft.Json.dll" />
-		<PalasoFileNamesForLL Include="icu.net.dll" />
 		<PalasoFileNamesForLL Include="Spart.dll" />
 		<IcuFileNamesForLL Include="gennorm2.exe" />
 		<IcuFileNamesForLL Include="icudt54.dll" />

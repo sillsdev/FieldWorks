@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Icu;
 using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
@@ -102,8 +103,9 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				// This gets called during initialization with null.
 				if (value == null)
 					return; // Probably initialization.
+
 				string displayName;
-				if (Icu.TryGetDisplayName(value, out displayName))
+				if (TryGetDisplayName(value, out displayName))
 				{
 					Text = displayName;
 					m_selectedLocale = value;
@@ -116,6 +118,20 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			}
 		}
 
+		private bool TryGetDisplayName(string locale, out string displayName)
+		{
+			try
+			{
+				displayName = new Locale().GetDisplayName(locale);
+				return true;
+			}
+			catch
+			{
+				displayName = string.Empty;
+				return false;
+			}
+		}
+
 		/// <summary>
 		/// Determine whether the specified locale is a custom one the user is allowed to modify.
 		/// </summary>
@@ -123,9 +139,9 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// <returns></returns>
 		public bool IsCustomLocale(string localeId)
 		{
-			using (var rbroot = new IcuResourceBundle(null, "en"))
-			using (IcuResourceBundle rbCustom = rbroot.GetSubsection("Custom"))
-			using (IcuResourceBundle rbCustomLocales = rbCustom.GetSubsection("LocalesAdded"))
+			using (var rbroot = new ResourceBundle(null, "en"))
+			using (var rbCustom = rbroot["Custom"])
+			using (var rbCustomLocales = rbCustom["LocalesAdded"])
 			{
 				if (rbCustomLocales.GetStringContents().Contains(localeId))
 					return true;
@@ -133,7 +149,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 			// Next, check if ICU knows about this locale. If ICU doesn't know about it, it is considered custom.
 			string displayNameIgnored;
-			if (Icu.TryGetDisplayName(localeId, out displayNameIgnored))
+			if (TryGetDisplayName(localeId, out displayNameIgnored))
 				return false;
 			return true;
 		}
@@ -202,6 +218,31 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				LocaleSelected(this, ea);
 		}
 
+		/// <summary>
+		/// Get a dictionary, keyed by language ID, with values being a list of locale IDs and names.
+		/// This allows "en-GB" and "en-US" to be grouped together under "English" in a menu, for example.
+		/// </summary>
+		/// <param name="displayLocale">Locale ID in which to display the locale names (e.g., if this is "fr", then the "en" locale will have the display name "anglais").</param>
+		/// <returns>A dictionary whose keys are language IDs (2- or 3-letter ISO codes) and whose values are a list of the IcuIdAndName objects that GetLocaleIdsAndNames returns.</returns>
+		private static IDictionary<string, IList<IcuIdAndName>> GetLocalesByLanguage(
+			string displayLocale = null)
+		{
+			var result = new Dictionary<string, IList<IcuIdAndName>>();
+			foreach (var locale in Locale.AvailableLocales)
+			{
+				var name = locale.GetDisplayName(displayLocale);
+				IList<IcuIdAndName> entries;
+				if (!result.TryGetValue(locale.Language, out entries))
+				{
+					entries = new List<IcuIdAndName>();
+					result[locale.Language] = entries;
+				}
+				entries.Add(new IcuIdAndName(locale.Id, name));
+			}
+			return result;
+		}
+
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Raises the click event.
@@ -218,11 +259,11 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			m_mainItems = new List<LocaleMenuItemData>();
 			m_itemData = new Dictionary<ToolStripMenuItem, LocaleMenuItemData>();
 
-			var localeDataByLanguage = Icu.GetLocalesByLanguage(m_displayLocaleId);
-			foreach (KeyValuePair<string, IList<IcuIdAndName>> localeData in localeDataByLanguage)
+			var localeDataByLanguage = GetLocalesByLanguage(m_displayLocaleId);
+			foreach (var localeData in localeDataByLanguage)
 			{
 				string langid = localeData.Key;
-				IList<IcuIdAndName> items = localeData.Value;
+				var items = localeData.Value;
 				m_locales[langid] = items.Select(idAndName => new LocaleMenuItemData(idAndName.Id, idAndName.Name)).ToList();
 			}
 

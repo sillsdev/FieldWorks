@@ -51,7 +51,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public override bool IsLower(char ch)
 		{
-			return LCModel.Core.Text.Icu.GetCharType(ch) == LCModel.Core.Text.Icu.UCharCategory.U_LOWERCASE_LETTER;
+			return Icu.Character.GetCharType(ch) == Icu.Character.UCharCategory.LOWERCASE_LETTER;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -65,7 +65,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public override bool IsUpper(char ch)
 		{
-			return LCModel.Core.Text.Icu.GetCharType(ch) == LCModel.Core.Text.Icu.UCharCategory.U_UPPERCASE_LETTER;
+			return Icu.Character.GetCharType(ch) == Icu.Character.UCharCategory.UPPERCASE_LETTER;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -79,7 +79,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public override bool IsDiacritic(char cc)
 		{
-			return LCModel.Core.Text.Icu.IsDiacritic(cc);
+			return Icu.Character.IsDiacritic(cc);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -93,7 +93,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public override bool IsPunctuation(char cc)
 		{
-			return LCModel.Core.Text.Icu.IsPunct(cc);
+			return Icu.Character.IsPunct(cc);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -107,7 +107,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public override bool IsTitle(char ch)
 		{
-			return LCModel.Core.Text.Icu.GetCharType(ch) == LCModel.Core.Text.Icu.UCharCategory.U_TITLECASE_LETTER;
+			return Icu.Character.GetCharType(ch) == Icu.Character.UCharCategory.TITLECASE_LETTER;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -138,7 +138,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			// Be careful to make sure that zwnj and zwj are included here for
 			// indic scripts since they should not break words.
-			return LCModel.Core.Text.Icu.GetCharType(cc) == LCModel.Core.Text.Icu.UCharCategory.U_CONNECTOR_PUNCTUATION;
+			return Icu.Character.GetCharType(cc) == Icu.Character.UCharCategory.CONNECTOR_PUNCTUATION;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -157,7 +157,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				WordAndPunct wap = new WordAndPunct();
 
 				// Ignore any initial separator characters
-				while (i < text.Length && LCModel.Core.Text.Icu.IsSeparator(text[i]))
+				while (i < text.Length && Icu.Character.IsSeparator(text[i]))
 					i++;
 
 				if (i == text.Length)
@@ -187,7 +187,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						}
 						break;
 					}
-					if (LCModel.Core.Text.Icu.IsNumeric(cc))
+					if (Icu.Character.IsNumeric(cc))
 					{
 						// allow digits in words
 					}
@@ -205,7 +205,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				while (i < text.Length)
 				{
 					cc = text[i];
-					if (IsWordFormingCharacter(cc) || LCModel.Core.Text.Icu.IsNumeric(cc))
+					if (IsWordFormingCharacter(cc) || Icu.Character.IsNumeric(cc))
 						break;
 					i = i + 1;
 				}
