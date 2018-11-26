@@ -482,18 +482,18 @@ namespace SIL.FieldWorks.IText
 			bool spaceAfter = false;
 			bool spaceHere = false;
 			char quote = '"';
-			var charType = Icu.GetCharType(punctChar);
+			var charType = Icu.Character.GetCharType(punctChar);
 			switch (charType)
 			{
-				case Icu.UCharCategory.U_END_PUNCTUATION:
-				case Icu.UCharCategory.U_FINAL_PUNCTUATION:
+				case Icu.Character.UCharCategory.END_PUNCTUATION:
+				case Icu.Character.UCharCategory.FINAL_PUNCTUATION:
 					spaceAfter = true;
 					break;
-				case Icu.UCharCategory.U_START_PUNCTUATION:
-				case Icu.UCharCategory.U_INITIAL_PUNCTUATION:
+				case Icu.Character.UCharCategory.START_PUNCTUATION:
+				case Icu.Character.UCharCategory.INITIAL_PUNCTUATION:
 					spaceBefore = true;
 					break;
-				case Icu.UCharCategory.U_OTHER_PUNCTUATION: //handle special characters
+				case Icu.Character.UCharCategory.OTHER_PUNCTUATION: //handle special characters
 					if(wordString.Text.LastIndexOfAny(new[] {',','.',';',':','?','!',quote}) == wordString.Length - 1) //treat as ending characters
 					{
 						spaceAfter = punctChar != '"' || wordString.Length > 1; //quote characters are extra special, if we find them on their own
@@ -1608,7 +1608,7 @@ namespace SIL.FieldWorks.IText
 					{
 						for (int i = 0; i < s.Length; ++i)
 						{
-							if (Icu.IsNumeric(s[i]))
+							if (Icu.Character.IsNumeric(s[i]))
 							{
 								rgwfDel.Add(wf);
 								break;

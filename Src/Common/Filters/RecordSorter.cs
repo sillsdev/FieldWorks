@@ -1506,13 +1506,13 @@ namespace SIL.FieldWorks.Filters
 				{
 					ch = (int)ch1;
 				}
-				if (Icu.IsAlphabetic(ch))
+				if (Icu.Character.IsAlphabetic(ch))
 				{
 					++cchOrtho;		// Seems not to include UCHAR_DIACRITIC.
 				}
 				else
 				{
-					if (Icu.IsIdeographic(ch))
+					if (Icu.Character.IsIdeographic(ch))
 						++cchOrtho;
 				}
 			}

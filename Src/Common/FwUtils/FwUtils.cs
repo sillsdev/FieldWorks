@@ -166,7 +166,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// We read the registry value and set an environment variable ICU_DATA here so that
 				// FwKernelInterfaces.dll is independent of WinForms.
 				string icuDirValueName = string.Format("Icu{0}DataDir",
-					LCModel.Core.Text.Icu.Version);
+					CustomIcu.Version);
 				using (var userKey = RegistryHelper.CompanyKey)
 				using (var machineKey = RegistryHelper.CompanyKeyLocalMachine)
 				{
@@ -184,7 +184,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 						Environment.SetEnvironmentVariable("ICU_DATA", dir);
 				}
 			}
-			Icu.InitIcuDataDir();
+			CustomIcu.InitIcuDataDir();
 		}
 
 		/// ------------------------------------------------------------------------------------

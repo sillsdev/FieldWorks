@@ -68,7 +68,10 @@
       <HintPath>..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="ParatextData">
-      <HintPath>..\..\..\packages\ParatextData.8.1.6\lib\net461\ParatextData.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\ParatextData.dll</HintPath>
+    </Reference>
+    <Reference Include="PtxUtils">
+      <HintPath>..\..\..\Output\Debug\PtxUtils.dll</HintPath>
     </Reference>
     <Reference Include="ScriptureUtils">
       <HintPath>..\..\..\Output\Debug\ScriptureUtils.dll</HintPath>
@@ -105,7 +108,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

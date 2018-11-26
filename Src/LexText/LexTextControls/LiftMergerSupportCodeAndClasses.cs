@@ -598,8 +598,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				return false;
 			if (sNew == null)
 				return false;
-			string sNewNorm = Icu.Normalize(sNew, Icu.UNormalizationMode.UNORM_NFD);
-			string sOldNorm = Icu.Normalize(sOld, Icu.UNormalizationMode.UNORM_NFD);
+			string sNewNorm = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sNew);
+			string sOldNorm = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sOld);
 			return sNewNorm != sOldNorm;
 		}
 
@@ -640,8 +640,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (tssOld == null || tssOld.Length == 0)
 					continue;
 				string sOld = tssOld.Text;
-				string sNewNorm = Icu.Normalize(sNew, Icu.UNormalizationMode.UNORM_NFD);
-				string sOldNorm = Icu.Normalize(sOld, Icu.UNormalizationMode.UNORM_NFD);
+				string sNewNorm = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sNew);
+				string sOldNorm = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sOld);
 				if (sNewNorm != sOldNorm)
 					return true;
 			}
@@ -705,8 +705,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				string sNew = XmlUtils.DecodeXml(lmt[key].Text);
 				if (fStripMarkers)
 					sNew = StripAlloForm(sNew, 0, guidEntry, flid);
-				string sNewNorm = Icu.Normalize(sNew, Icu.UNormalizationMode.UNORM_NFD);
-				string sOldNorm = Icu.Normalize(sOld, Icu.UNormalizationMode.UNORM_NFD);
+				string sNewNorm = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sNew);
+				string sOldNorm = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sOld);
 				if (sNewNorm == sOldNorm)
 					++cMatches;
 			}
@@ -763,8 +763,8 @@ namespace SIL.FieldWorks.LexText.Controls
 					return false;
 				// LiftMultiText parameter may have come in with escaped characters which need to be
 				// converted to plain text before comparing with existing entries
-				string sNewNorm = XmlUtils.DecodeXml(Icu.Normalize(sNew, Icu.UNormalizationMode.UNORM_NFD));
-				string sOldNorm = Icu.Normalize(tssOld.Text, Icu.UNormalizationMode.UNORM_NFD);
+				string sNewNorm = XmlUtils.DecodeXml(CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sNew));
+				string sOldNorm = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(tssOld.Text);
 				if (sNewNorm != sOldNorm)
 					return false;
 			}
@@ -1786,11 +1786,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		private static int FindAbbevOrLabelInDict(LiftMultiText abbrev, LiftMultiText label,
 			Dictionary<string, ICmPossibility> dict)
 		{
+			var normalizer = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD);
 			if (abbrev != null && abbrev.Keys != null)
 			{
 				foreach (string key in abbrev.Keys)
 				{
-					var text = Icu.Normalize(XmlUtils.DecodeXml(abbrev[key].Text), Icu.UNormalizationMode.UNORM_NFD);
+					var text = normalizer.Normalize(XmlUtils.DecodeXml(abbrev[key].Text));
 					if (dict.ContainsKey(text))
 						return dict[text].Hvo;
 				}
@@ -1799,7 +1800,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				foreach (string key in label.Keys)
 				{
-					var text = Icu.Normalize(XmlUtils.DecodeXml(label[key].Text), Icu.UNormalizationMode.UNORM_NFD);
+					var text = normalizer.Normalize(XmlUtils.DecodeXml(label[key].Text));
 					if (dict.ContainsKey(text))
 						return dict[text].Hvo;
 				}
@@ -2216,7 +2217,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				foreach (string key in text.Keys)
 				{
 					int wsHvo = GetWsFromLiftLang(key);
-					string sValue = Icu.Normalize(XmlUtils.DecodeXml(text[key].Text), Icu.UNormalizationMode.UNORM_NFD);
+					string sValue = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD)
+						.Normalize(XmlUtils.DecodeXml(text[key].Text));
 					ITsString tssAlt = tsm.get_String(wsHvo);
 					if (String.IsNullOrEmpty(sValue) || (tssAlt == null || tssAlt.Length == 0))
 						continue;

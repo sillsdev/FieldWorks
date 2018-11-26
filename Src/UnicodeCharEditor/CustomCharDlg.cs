@@ -757,7 +757,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			DontDisplayHiddenData(m_chBidiMirrored, m_puaChar.BidiMirrored, false);
 
 			DontDisplayHiddenData(m_cbNumericType, m_puaChar.NumericType,
-				UcdProperty.GetInstance(Icu.UNumericType.U_NT_NONE));
+				UcdProperty.GetInstance(Icu.Character.UNumericType.NONE));
 
 			DontDisplayHiddenData(m_cbCanonicalCombClass, m_puaChar.CanonicalCombiningClass ,
 				UcdProperty.GetInstance(0));
@@ -767,7 +767,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				case 'N':
 					if( subClass == 'd' )
 					{
-						m_cbNumericType.SelectedItem = UcdProperty.GetInstance(Icu.UNumericType.U_NT_DECIMAL);
+						m_cbNumericType.SelectedItem = UcdProperty.GetInstance(Icu.Character.UNumericType.DECIMAL);
 						m_cbNumericType.Enabled = false;
 					}
 					break;
@@ -990,8 +990,8 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		{
 			m_errorMessageHandler.RemoveMessage(m_txtNumericValue);
 			bool digit = true;
-			if(m_cbNumericType.SelectedItem == UcdProperty.GetInstance(Icu.UNumericType.U_NT_NONE) ||
-				m_cbNumericType.SelectedItem == UcdProperty.GetInstance(Icu.UNumericType.U_NT_NUMERIC))
+			if(m_cbNumericType.SelectedItem == UcdProperty.GetInstance(Icu.Character.UNumericType.NONE) ||
+				m_cbNumericType.SelectedItem == UcdProperty.GetInstance(Icu.Character.UNumericType.NUMERIC))
 				digit = false;
 			if(ValidNumeric(m_txtNumericValue.Text, digit).Count != 0)
 				m_errorMessageHandler.AddStar(m_txtNumericValue);
@@ -1004,8 +1004,8 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		private void CheckNumericLeave()
 		{
 			bool digit = true;
-			if(m_puaChar.NumericType == UcdProperty.GetInstance(Icu.UNumericType.U_NT_NONE) ||
-				m_puaChar.NumericType == UcdProperty.GetInstance(Icu.UNumericType.U_NT_NUMERIC))
+			if(m_puaChar.NumericType == UcdProperty.GetInstance(Icu.Character.UNumericType.NONE) ||
+				m_puaChar.NumericType == UcdProperty.GetInstance(Icu.Character.UNumericType.NUMERIC))
 					digit = false;
 				HashSet<ErrorMessageHandler.ErrorMessage> errorMessages = ValidNumeric(m_txtNumericValue.Text, digit);
 			if( errorMessages.Count != 0)
@@ -1033,7 +1033,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				return ErrorMessageHandler.ErrorMessage.outsideRange;
 			if (codepointValue == 0)
 				return ErrorMessageHandler.ErrorMessage.zeroCodepoint;
-			if (Icu.IsSurrogate(codepoint))
+			if (CustomIcu.IsSurrogate(codepoint))
 				return ErrorMessageHandler.ErrorMessage.inSurrogateRange;
 			return ErrorMessageHandler.ErrorMessage.none;
 		}
@@ -1088,7 +1088,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		private ErrorMessageHandler.ErrorMessage CheckEmptyDecomposition()
 		{
 			if( m_cbCompatabilityDecomposition.SelectedItem !=
-				UcdProperty.GetInstance(Icu.UDecompositionType.U_DT_NONE) &&
+				UcdProperty.GetInstance(Icu.Character.UDecompositionType.NONE) &&
 				CodePointMatches(m_txtDecomposition)
 				)
 			{

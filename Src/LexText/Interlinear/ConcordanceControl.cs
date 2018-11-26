@@ -1264,7 +1264,7 @@ namespace SIL.FieldWorks.IText
 				// every nondiacritic character in the string.
 				for (int ich = sb.Length - 1; ich > 0; --ich)
 				{
-					if (Icu.IsDiacritic(sb[ich]))
+					if (Icu.Character.IsDiacritic(sb[ich]))
 						sb[ich] = '%';
 					else
 						sb.Insert(ich, '%');

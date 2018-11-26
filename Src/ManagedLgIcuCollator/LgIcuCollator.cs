@@ -4,7 +4,8 @@
 
 using System;
 using System.Runtime.InteropServices;
-
+using Icu;
+using Icu.Collation;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -24,7 +25,7 @@ namespace SIL.FieldWorks.Language
 
 		private ILgWritingSystemFactory m_qwsf;
 		private string m_stuLocale;
-		private IntPtr m_pCollator;
+		private Collator m_collator;
 
 		#endregion
 
@@ -62,19 +63,19 @@ namespace SIL.FieldWorks.Language
 
 		protected void EnsureCollator()
 		{
-			if (m_pCollator != IntPtr.Zero)
+			if (m_collator != null)
 				return;
 
-			string icuLocale = Icu.GetName(m_stuLocale);
-			m_pCollator = Icu.OpenCollator(icuLocale);
+			string icuLocale = new Locale(m_stuLocale).Name;
+			m_collator = Collator.Create(icuLocale);
 		}
 
 		internal void DoneCleanup()
 		{
-			if (m_pCollator != IntPtr.Zero)
+			if (m_collator != null)
 			{
-				Icu.CloseCollator(m_pCollator);
-				m_pCollator = IntPtr.Zero;
+				m_collator.Dispose();
+				m_collator = null;
 			}
 		}
 
@@ -93,19 +94,19 @@ namespace SIL.FieldWorks.Language
 		public int Compare(string bstrValue1, string bstrValue2, LgCollatingOptions colopt)
 		{
 			EnsureCollator();
-			byte[] pbKey1 = Icu.GetSortKey(m_pCollator, bstrValue1);
-			byte[] pbKey2 = Icu.GetSortKey(m_pCollator, bstrValue2);
+			var key1 = m_collator.GetSortKey(bstrValue1).KeyData;
+			var key2 = m_collator.GetSortKey(bstrValue2).KeyData;
 
-			return CompareVariant(pbKey1, pbKey2, colopt);
+			return CompareVariant(key1, key2, colopt);
 		}
 
 
 		public object get_SortKeyVariant(string bstrValue, LgCollatingOptions colopt)
 		{
 			EnsureCollator();
-			byte[] pbKey = Icu.GetSortKey(m_pCollator, bstrValue);
+			var sortKey = m_collator.GetSortKey(bstrValue).KeyData;
 
-			return pbKey;
+			return sortKey;
 		}
 
 
@@ -145,7 +146,7 @@ namespace SIL.FieldWorks.Language
 
 		public void Open(string bstrLocale)
 		{
-			if (m_pCollator != IntPtr.Zero)
+			if (m_collator != null)
 				DoneCleanup();
 
 			m_stuLocale = bstrLocale;
@@ -156,7 +157,7 @@ namespace SIL.FieldWorks.Language
 
 		public void Close()
 		{
-			if (m_pCollator != IntPtr.Zero)
+			if (m_collator != null)
 			{
 				DoneCleanup();
 			}

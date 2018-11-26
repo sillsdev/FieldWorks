@@ -387,7 +387,7 @@ namespace SIL.FieldWorks.Common.Controls
 				if (m_charsWithMissingGlyphs.Contains(chr))
 					m_charsWithMissingGlyphs.Remove(chr);
 			}
-			else if (!Icu.IsControl(chr[0]))
+			else if (!Icu.Character.IsControl(chr[0]))
 			{
 				if (!m_charsWithMissingGlyphs.Contains(chr))
 					m_charsWithMissingGlyphs.Add(chr);
@@ -396,7 +396,7 @@ namespace SIL.FieldWorks.Common.Controls
 			// If we're dealing with a type of space or control character, then figure out
 			// display text that is slightly more readable than whatever glyph the font
 			// contains for the character, which may not be a glyph at all.
-			if ((Icu.IsSpace(chr[0]) || Icu.IsControl(chr[0])) &&
+			if ((Icu.Character.IsSpace(chr[0]) || Icu.Character.IsControl(chr[0])) &&
 				!m_specialCharStrings.ContainsKey(chr))
 			{
 				m_specialCharStrings[chr] = GetSpecialCharDisplayText(chr);
@@ -893,7 +893,8 @@ namespace SIL.FieldWorks.Common.Controls
 			if (ch == StringUtils.kChObject || ch == StringUtils.kchReplacement)
 				return false;
 
-			return Icu.IsSymbol(ch) || Icu.IsPunct(ch) || (m_fSymbolCharSet && (Icu.IsLetter(ch) || Icu.IsNumeric(ch)));
+			return Icu.Character.IsSymbol(ch) || Icu.Character.IsPunct(ch) ||
+				m_fSymbolCharSet && (Icu.Character.IsLetter(ch) || Icu.Character.IsNumeric(ch));
 		}
 
 		/// ------------------------------------------------------------------------------------

@@ -17,6 +17,7 @@ using System.Text;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.DomainServices;
 using System.Linq;
+using Icu.Normalization;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
@@ -60,7 +61,7 @@ namespace SIL.FieldWorks.Common.FXT
 		protected IFilterStrategy[] m_filters;
 		protected bool m_cancelNow = false;
 		protected Dictionary<string, XmlNode> m_classNameToclassNode = new Dictionary<string, XmlNode>(100);
-		protected Icu.UNormalizationMode m_eIcuNormalizationMode = Icu.UNormalizationMode.UNORM_NFD;
+		protected Normalizer2 m_normalizer;
 		private WritingSystemAttrStyles m_writingSystemAttrStyle = WritingSystemAttrStyles.FieldWorks;
 		private StringFormatOutputStyle m_eStringFormatOutput = StringFormatOutputStyle.None;
 		private readonly ICmObjectRepository m_cmObjectRepository;
@@ -148,7 +149,7 @@ namespace SIL.FieldWorks.Common.FXT
 		/// Initializes a new instance of the <see cref="XDumper"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public XDumper(LcmCache cache)
+		public XDumper(LcmCache cache): this()
 		{
 			m_cache = cache;
 			m_mdc = m_cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
@@ -159,7 +160,7 @@ namespace SIL.FieldWorks.Common.FXT
 
 		public XDumper()
 		{
-
+			m_normalizer = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD);
 		}
 		/// <summary>
 		///
@@ -318,9 +319,9 @@ namespace SIL.FieldWorks.Common.FXT
 			m_templateRootNode = node;
 			string sIcuNormalizationMode = XmlUtils.GetOptionalAttributeValue(m_templateRootNode, "normalization", "NFC");
 			if (sIcuNormalizationMode == "NFD")
-				m_eIcuNormalizationMode = Icu.UNormalizationMode.UNORM_NFD;
+				m_normalizer = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD);
 			else
-				m_eIcuNormalizationMode = Icu.UNormalizationMode.UNORM_NFC;
+				m_normalizer = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC);
 			string style = XmlUtils.GetOptionalAttributeValue(m_templateRootNode, "writingSystemAttributeStyle", WritingSystemAttrStyles.FieldWorks.ToString());
 			m_writingSystemAttrStyle = (WritingSystemAttrStyles) System.Enum.Parse(typeof(WritingSystemAttrStyles), style);
 			string sFormatOutput = XmlUtils.GetOptionalAttributeValue(m_templateRootNode, "stringFormatOutputStyle", StringFormatOutputStyle.None.ToString());
@@ -1349,7 +1350,7 @@ namespace SIL.FieldWorks.Common.FXT
 		{
 			if (s != null && s.Trim().Length > 0)
 			{
-				s = Icu.Normalize(s, m_eIcuNormalizationMode);
+				s = m_normalizer.Normalize(s);
 				string elname = name;
 				if (ws != null)
 				{
@@ -1376,7 +1377,7 @@ namespace SIL.FieldWorks.Common.FXT
 
 			using (var writer = XmlWriter.Create(contentsStream, new XmlWriterSettings { OmitXmlDeclaration = true, ConformanceLevel = ConformanceLevel.Fragment }))
 			{
-				s = Icu.Normalize(s, m_eIcuNormalizationMode);
+				s = m_normalizer.Normalize(s);
 				WriteStringStartElements(writer, name, ws, internalElementName);
 				writer.WriteString(s);
 				WriteStringEndElements(writer, internalElementName);
@@ -1555,12 +1556,12 @@ namespace SIL.FieldWorks.Common.FXT
 					string after = XmlUtils.GetOptionalAttributeValue(node, "after");
 					if (!String.IsNullOrEmpty(before))
 					{
-						before = Icu.Normalize(before, m_eIcuNormalizationMode);
+						before = m_normalizer.Normalize(before);
 						writer.WriteString(before);
 					}
 					if (sVal != null)
 					{
-						sVal = Icu.Normalize(sVal, m_eIcuNormalizationMode);
+						sVal = m_normalizer.Normalize(sVal);
 						writer.WriteString(sVal);
 					}
 					else if (tssVal != null)
@@ -1577,7 +1578,7 @@ namespace SIL.FieldWorks.Common.FXT
 					}
 					if (!String.IsNullOrEmpty(after))
 					{
-						after = Icu.Normalize(after, m_eIcuNormalizationMode);
+						after = m_normalizer.Normalize(after);
 						writer.WriteString(after);
 					}
 					if (!String.IsNullOrEmpty(sInternalName))
@@ -1640,7 +1641,7 @@ namespace SIL.FieldWorks.Common.FXT
 				if (sbComment.Length > 0)
 					writer.WriteComment(sbComment.ToString());
 				string sRun = tssVal.get_RunText(irun);
-				writer.WriteString(Icu.Normalize(sRun, m_eIcuNormalizationMode));
+				writer.WriteString(m_normalizer.Normalize(sRun));
 				writer.WriteEndElement();
 			}
 		}
@@ -1714,7 +1715,7 @@ namespace SIL.FieldWorks.Common.FXT
 					}
 				}
 				string sRun = tssVal.get_RunText(irun);
-				writer.WriteString(Icu.Normalize(sRun, m_eIcuNormalizationMode));
+				writer.WriteString(m_normalizer.Normalize(sRun));
 				if (fSpan)
 					writer.WriteEndElement();
 			}
@@ -1869,8 +1870,7 @@ namespace SIL.FieldWorks.Common.FXT
 					// Try ShortName.  (See LT-
 					int hvo = Int32.Parse(obj.ToString());
 					var cmo = m_cmObjectRepository.GetObject(hvo);
-					string s = Icu.Normalize(cmo.ShortName, m_eIcuNormalizationMode);
-					//string s = Icu.Normalize(obj.ToString(), m_eIcuNormalizationMode);
+					string s = m_normalizer.Normalize(cmo.ShortName);
 					contentsStream.WriteLine("{2}\\{0} {1}", name, s, Environment.NewLine);
 				}
 			}
@@ -1981,7 +1981,7 @@ namespace SIL.FieldWorks.Common.FXT
 				x = x + sAfter;
 			if (fOptional && String.IsNullOrEmpty(x))
 				return;
-			x = Icu.Normalize(x, m_eIcuNormalizationMode);
+			x = m_normalizer.Normalize(x);
 			x = XmlUtils.MakeSafeXmlAttribute(x);
 			rgsAttrs.Add(String.Format(" {0}=\"{1}\"", attrName.Trim(), x));
 		}
@@ -2056,17 +2056,17 @@ namespace SIL.FieldWorks.Common.FXT
 				bool fIsXml = XmlUtils.GetOptionalBooleanAttributeValue(node, "isXml", false);
 				if (before != null)
 				{
-					before = Icu.Normalize(before, m_eIcuNormalizationMode);
+					before = m_normalizer.Normalize(before);
 					writer.WriteString(before);
 				}
-				x = Icu.Normalize(x, m_eIcuNormalizationMode);
+				x = m_normalizer.Normalize(x);
 				if (fIsXml)
 					writer.WriteRaw(x);
 				else
 					writer.WriteString(x);
 				if (after != null)
 				{
-					after = Icu.Normalize(after, m_eIcuNormalizationMode);
+					after = m_normalizer.Normalize(after);
 					writer.WriteString(after);
 				}
 			}
@@ -2172,7 +2172,7 @@ namespace SIL.FieldWorks.Common.FXT
 			{
 				// we want the real xml deal for things like MoMorphData:ParserParameters
 				// outputStream.Write(MakeXmlSafe(x));
-				x = Icu.Normalize(x, m_eIcuNormalizationMode);
+				x = m_normalizer.Normalize(x);
 				outputStream.Write(x);
 			}
 		}
@@ -2282,7 +2282,7 @@ namespace SIL.FieldWorks.Common.FXT
 					object obj = GetProperty(co, property);
 					if (obj == null)
 						continue;
-					string s = Icu.Normalize(obj.ToString(), m_eIcuNormalizationMode);
+					string s = m_normalizer.Normalize(obj.ToString());
 					string separator = "";
 					if (wsProp != null)
 					{
@@ -2473,7 +2473,7 @@ namespace SIL.FieldWorks.Common.FXT
 			object obj = GetProperty(co, property);
 			if (obj == null)
 				return false;
-			sData = Icu.Normalize(obj.ToString(), m_eIcuNormalizationMode);
+			sData = m_normalizer.Normalize(obj.ToString());
 			if (!string.IsNullOrEmpty(wsProp))
 			{
 				obj = GetProperty(co, wsProp);
@@ -2935,14 +2935,14 @@ namespace SIL.FieldWorks.Common.FXT
 				case "#comment":
 					break;
 				case "#text":
-					s = Icu.Normalize(node.InnerText, m_eIcuNormalizationMode);
+					s = m_normalizer.Normalize(node.InnerText);
 					contentsStream.Write(s);
 					break;
 				case "comment":
 					DoCommentOutput(contentsStream, node);
 					break;
 				case "text":
-					s = Icu.Normalize(node.InnerText, m_eIcuNormalizationMode);
+					s = m_normalizer.Normalize(node.InnerText);
 					contentsStream.Write(s);
 					break;
 				case "template":

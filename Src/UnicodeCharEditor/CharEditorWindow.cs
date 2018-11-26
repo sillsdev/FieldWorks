@@ -122,7 +122,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 		private void ReadDataFromUnicodeFiles()
 		{
-			var icuDir = Icu.DefaultDirectory;
+			var icuDir = CustomIcu.DefaultDataDirectory;
 			if (string.IsNullOrEmpty(icuDir))
 				throw new Exception("An error occurred: ICU directory not found. Registry value for ICU not set?");
 			var unicodeDataFilename = Path.Combine(icuDir, "UnicodeDataOverrides.txt");
@@ -392,7 +392,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		{
 			get
 			{
-				var icuDir = Icu.DefaultDirectory;
+				var icuDir = CustomIcu.DefaultDataDirectory;
 				if (string.IsNullOrEmpty(icuDir))
 					throw new Exception("An error occurred: ICU directory not found. Registry value for ICU not set?");
 				// Must handle registry setting with or without final \  LT-11766.

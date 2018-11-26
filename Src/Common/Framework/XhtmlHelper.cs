@@ -655,11 +655,10 @@ namespace SIL.FieldWorks.Common.Framework
 					ch32 = ch1;
 					sChar = ch1.ToString();
 				}
-				if (ch32 != '_'  && ch32 != '-' && !Icu.IsAlphabetic(ch32) && !Icu.IsNumeric(ch32) && !Icu.IsDiacritic(ch32))
+				if (ch32 != '_'  && ch32 != '-' && !Icu.Character.IsAlphabetic(ch32) &&
+					!Icu.Character.IsNumeric(ch32) && !Icu.Character.IsDiacritic(ch32))
 				{
-					string sCharName;
-					Icu.UErrorCode error;
-					Icu.u_CharName(ch32, Icu.UCharNameChoice.U_UNICODE_CHAR_NAME, out sCharName, out error);
+					var sCharName = Icu.Character.GetCharName(ch32);
 					sCharName = sCharName.Replace('-', '_');
 					sCharName = sCharName.Replace(' ', '_');
 					sCssClassName = sCssClassName.Replace(sChar, sCharName);

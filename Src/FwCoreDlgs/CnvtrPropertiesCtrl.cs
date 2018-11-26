@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using ECInterfaces;
+using Icu;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.RootSites;
@@ -469,12 +470,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						cboSpec.Items.Clear();
 						try
 						{
-							// TODO: Why does bare "Icu.GetConverterIdsAndNames" not work in the next line?
-							// It picks up icu.net's Icu class instead of FwKernelInterfaces's Icu class. But why?
-							foreach (IcuIdAndName idAndName in LCModel.Core.Text.Icu.GetConverterIdsAndNames())
+							foreach (var idAndName in CodepageConversion.GetIdsAndNames("IANA"))
 							{
-								if (!String.IsNullOrEmpty(idAndName.Name))
-									cboSpec.Items.Add(new CnvtrSpecComboItem(idAndName.Name, idAndName.Id));
+								// TODO: Once we switch to Mono 5 we can replace the next two lines with:
+								// var name = idAndName.name;
+								// var id = idAndName.id;
+								var name = idAndName.Item2;
+								var id = idAndName.Item1;
+								if (!String.IsNullOrEmpty(name))
+									cboSpec.Items.Add(new CnvtrSpecComboItem(name, id));
 							}
 						}
 						catch (Exception ee)
@@ -494,9 +498,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						// fill in combo items.
 						cboSpec.BeginUpdate();
 						cboSpec.Items.Clear();
-						foreach (IcuIdAndName idAndName in LCModel.Core.Text.Icu.GetTransliteratorIdsAndNames())
+						foreach (var idAndName in Transliterator.GetIdsAndNames())
 						{
-							cboSpec.Items.Add(new CnvtrSpecComboItem(idAndName.Name, idAndName.Id));
+							// TODO: Once we switch to Mono 5 we can replace the next two lines with:
+							// var name = idAndName.name;
+							// var id = idAndName.id;
+							var name = idAndName.Item2;
+							var id = idAndName.Item1;
+							cboSpec.Items.Add(new CnvtrSpecComboItem(name, id));
 						}
 						cboSpec.EndUpdate();
 						break;

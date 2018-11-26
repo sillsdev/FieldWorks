@@ -70,7 +70,8 @@ namespace SIL.FieldWorks.XWorks
 				GenerateCssFromConfigurationNode(configNode, styleSheet, null, propertyTable);
 			}
 			// Pretty-print the stylesheet
-			return Icu.Normalize(styleSheet.ToString(true, 1), Icu.UNormalizationMode.UNORM_NFC);
+			return CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC)
+				.Normalize(styleSheet.ToString(true, 1));
 		}
 
 		private static void GenerateCssForDefaultStyles(ReadOnlyPropertyTable propertyTable, LcmStyleSheet propStyleSheet,
@@ -852,7 +853,8 @@ namespace SIL.FieldWorks.XWorks
 				singularBase = classNameBase.Remove(classNameBase.Length - 2);
 			else
 				singularBase = classNameBase.Remove(classNameBase.Length - 1);
-			return Icu.Normalize(singularBase + GetClassAttributeDupSuffix(configNode).ToLower(), Icu.UNormalizationMode.UNORM_NFC);
+			return CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC).Normalize(
+				singularBase + GetClassAttributeDupSuffix (configNode).ToLower());
 		}
 
 		/// <summary>
@@ -878,8 +880,8 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal static string GetClassAttributeForConfig(ConfigurableDictionaryNode configNode)
 		{
-			string classAtt = Icu.Normalize((GetClassAttributeBase(configNode) + GetClassAttributeDupSuffix(configNode)).ToLower(),
-				Icu.UNormalizationMode.UNORM_NFC);
+			string classAtt = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC)
+				.Normalize((GetClassAttributeBase(configNode) + GetClassAttributeDupSuffix(configNode)).ToLower());
 			// Custom field names might begin with a digit which would cause invalid css, so we prepend 'cf' to those class names.
 			classAtt = Char.IsDigit(Convert.ToChar(classAtt.Substring(0, 1))) ? "cf" + classAtt : classAtt;
 			return classAtt;

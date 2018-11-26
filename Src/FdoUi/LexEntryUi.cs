@@ -214,7 +214,7 @@ namespace SIL.FieldWorks.FdoUi
 					int wsWf = TsStringUtils.GetWsAtOffset(tssWf, 0);
 					//use that to get the locale for the WS, which is used for
 					string wsLocale = cache.ServiceLocator.WritingSystemManager.Get(wsWf).IcuLocale;
-					string sLower = Icu.ToLower(tssWf.Text, wsLocale);
+					string sLower = Icu.UnicodeString.ToLower(tssWf.Text, wsLocale);
 					ITsTextProps ttp = tssWf.get_PropertiesAt(0);
 					tssWf = TsStringUtils.MakeString(sLower, ttp);
 					leui = FindEntryForWordform(cache, tssWf);
