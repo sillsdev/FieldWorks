@@ -18,7 +18,7 @@ indent_style = tab
 tab_width = 4
 
 # Settings Visual Studio uses for generated files
-[*.{csproj,resx,settings,vcxproj*,vdproj,xml}]
+[*.{csproj,resx,settings,vcxproj*,vdproj,xml,json}]
 indent_style = space
 indent_size = 2
 
