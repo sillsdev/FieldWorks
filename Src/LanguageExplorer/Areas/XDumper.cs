@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
+using Icu.Normalization;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application.ApplicationServices;
@@ -53,7 +54,7 @@ namespace LanguageExplorer.Areas
 		protected bool m_outputGuids;
 		protected bool m_cancelNow;
 		protected Dictionary<string, XmlNode> m_classNameToclassNode = new Dictionary<string, XmlNode>(100);
-		protected Icu.UNormalizationMode m_eIcuNormalizationMode = Icu.UNormalizationMode.UNORM_NFD;
+		protected Normalizer2 m_normalizer;
 		private WritingSystemAttrStyles m_writingSystemAttrStyle = WritingSystemAttrStyles.FieldWorks;
 		private StringFormatOutputStyle m_eStringFormatOutput = StringFormatOutputStyle.None;
 		private readonly ICmObjectRepository m_cmObjectRepository;
@@ -123,14 +124,19 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// Initializes a new instance of the <see cref="XDumper"/> class.
 		/// </summary>
-		public XDumper(LcmCache cache)
+		public XDumper(LcmCache cache) : this()
 		{
 			m_cache = cache;
-			m_doUseBaseClassTemplatesIfNeeded = false;
 			m_mdc = m_cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
 			m_cmObjectRepository = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 			m_wsManager = m_cache.ServiceLocator.WritingSystemManager;
 			m_wsContainer = m_cache.ServiceLocator.WritingSystems;
+		}
+
+		/// <summary />
+		public XDumper()
+		{
+			m_normalizer = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD);
 		}
 
 		/// <summary />
@@ -288,7 +294,7 @@ namespace LanguageExplorer.Areas
 		{
 			m_templateRootNode = node;
 			var sIcuNormalizationMode = XmlUtils.GetOptionalAttributeValue(m_templateRootNode, "normalization", "NFC");
-			m_eIcuNormalizationMode = sIcuNormalizationMode == "NFD" ? Icu.UNormalizationMode.UNORM_NFD : Icu.UNormalizationMode.UNORM_NFC;
+			m_normalizer = sIcuNormalizationMode == "NFD" ? CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD) : CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC);
 			var style = XmlUtils.GetOptionalAttributeValue(m_templateRootNode, "writingSystemAttributeStyle", WritingSystemAttrStyles.FieldWorks.ToString());
 			m_writingSystemAttrStyle = (WritingSystemAttrStyles)System.Enum.Parse(typeof(WritingSystemAttrStyles), style);
 			var sFormatOutput = XmlUtils.GetOptionalAttributeValue(m_templateRootNode, "stringFormatOutputStyle", StringFormatOutputStyle.None.ToString());
@@ -856,7 +862,7 @@ namespace LanguageExplorer.Areas
 					}
 					var cpt = (CellarPropertyType)m_mdc.GetFieldType(flid);
 					if (sType == "simplestring" && cpt != CellarPropertyType.Unicode && cpt != CellarPropertyType.String
-					    || sType == "mlstring" && cpt != CellarPropertyType.MultiString && cpt != CellarPropertyType.MultiUnicode)
+						|| sType == "mlstring" && cpt != CellarPropertyType.MultiString && cpt != CellarPropertyType.MultiUnicode)
 					{
 						continue;
 					}
@@ -1127,35 +1133,35 @@ namespace LanguageExplorer.Areas
 			{
 				case "all":
 				case "all vernacular":
-				{
-					foreach (var ws in m_wsContainer.CurrentVernacularWritingSystems)
 					{
-						if (possibleWss == null || possibleWss.Contains(ws.Handle))
+						foreach (var ws in m_wsContainer.CurrentVernacularWritingSystems)
 						{
-							if (!wsList.Contains(ws))
+							if (possibleWss == null || possibleWss.Contains(ws.Handle))
 							{
-								wsList.Add(ws);
+								if (!wsList.Contains(ws))
+								{
+									wsList.Add(ws);
+								}
 							}
 						}
-					}
 
-					break;
-				}
+						break;
+					}
 				case "every":
-				{
-					foreach (var ws in m_wsContainer.AllWritingSystems)
 					{
-						if (possibleWss == null || possibleWss.Contains(ws.Handle))
+						foreach (var ws in m_wsContainer.AllWritingSystems)
 						{
-							if (!wsList.Contains(ws))
+							if (possibleWss == null || possibleWss.Contains(ws.Handle))
 							{
-								wsList.Add(ws);
+								if (!wsList.Contains(ws))
+								{
+									wsList.Add(ws);
+								}
 							}
 						}
-					}
 
-					break;
-				}
+						break;
+					}
 			}
 
 			return wsList;
@@ -1303,7 +1309,7 @@ namespace LanguageExplorer.Areas
 		{
 			if (s != null && s.Trim().Length > 0)
 			{
-				s = Icu.Normalize(s, m_eIcuNormalizationMode);
+				s = m_normalizer.Normalize(s);
 				var elname = name;
 				if (ws != null)
 				{
@@ -1325,7 +1331,7 @@ namespace LanguageExplorer.Areas
 			}
 			using (var writer = XmlWriter.Create(contentsStream, new XmlWriterSettings { OmitXmlDeclaration = true, ConformanceLevel = ConformanceLevel.Fragment }))
 			{
-				s = Icu.Normalize(s, m_eIcuNormalizationMode);
+				s = m_normalizer.Normalize(s);
 				WriteStringStartElements(writer, name, ws, internalElementName);
 				writer.WriteString(s);
 				WriteStringEndElements(writer, internalElementName);
@@ -1509,12 +1515,12 @@ namespace LanguageExplorer.Areas
 					var after = XmlUtils.GetOptionalAttributeValue(node, "after");
 					if (!string.IsNullOrEmpty(before))
 					{
-						before = Icu.Normalize(before, m_eIcuNormalizationMode);
+						before = m_normalizer.Normalize(before);
 						writer.WriteString(before);
 					}
 					if (sVal != null)
 					{
-						sVal = Icu.Normalize(sVal, m_eIcuNormalizationMode);
+						sVal = m_normalizer.Normalize(sVal);
 						writer.WriteString(sVal);
 					}
 					else if (tssVal != null)
@@ -1531,7 +1537,7 @@ namespace LanguageExplorer.Areas
 					}
 					if (!string.IsNullOrEmpty(after))
 					{
-						after = Icu.Normalize(after, m_eIcuNormalizationMode);
+						after = m_normalizer.Normalize(after);
 						writer.WriteString(after);
 					}
 					if (!string.IsNullOrEmpty(sInternalName))
@@ -1604,7 +1610,7 @@ namespace LanguageExplorer.Areas
 					writer.WriteComment(sbComment.ToString());
 				}
 				var sRun = tssVal.get_RunText(irun);
-				writer.WriteString(Icu.Normalize(sRun, m_eIcuNormalizationMode));
+				writer.WriteString(m_normalizer.Normalize(sRun));
 				writer.WriteEndElement();
 			}
 		}
@@ -1676,7 +1682,7 @@ namespace LanguageExplorer.Areas
 					}
 				}
 				var sRun = tssVal.get_RunText(irun);
-				writer.WriteString(Icu.Normalize(sRun, m_eIcuNormalizationMode));
+				writer.WriteString(m_normalizer.Normalize(sRun));
 				if (fSpan)
 				{
 					writer.WriteEndElement();
@@ -1828,7 +1834,7 @@ namespace LanguageExplorer.Areas
 					// Try ShortName.  (See LT-
 					var hvo = int.Parse(obj.ToString());
 					var cmo = m_cmObjectRepository.GetObject(hvo);
-					var s = Icu.Normalize(cmo.ShortName, m_eIcuNormalizationMode);
+					var s = m_normalizer.Normalize(cmo.ShortName);
 					contentsStream.WriteLine("{2}\\{0} {1}", name, s, Environment.NewLine);
 				}
 			}
@@ -1945,7 +1951,7 @@ namespace LanguageExplorer.Areas
 			{
 				return;
 			}
-			x = Icu.Normalize(x, m_eIcuNormalizationMode);
+			x = m_normalizer.Normalize(x);
 			x = XmlUtils.MakeSafeXmlAttribute(x);
 			rgsAttrs.Add($" {attrName.Trim()}=\"{x}\"");
 		}
@@ -2026,10 +2032,10 @@ namespace LanguageExplorer.Areas
 				var fIsXml = XmlUtils.GetOptionalBooleanAttributeValue(node, "isXml", false);
 				if (before != null)
 				{
-					before = Icu.Normalize(before, m_eIcuNormalizationMode);
+					before = m_normalizer.Normalize(before);
 					writer.WriteString(before);
 				}
-				x = Icu.Normalize(x, m_eIcuNormalizationMode);
+				x = m_normalizer.Normalize(x);
 				if (fIsXml)
 				{
 					writer.WriteRaw(x);
@@ -2040,7 +2046,7 @@ namespace LanguageExplorer.Areas
 				}
 				if (after != null)
 				{
-					after = Icu.Normalize(after, m_eIcuNormalizationMode);
+					after = m_normalizer.Normalize(after);
 					writer.WriteString(after);
 				}
 			}
@@ -2049,10 +2055,8 @@ namespace LanguageExplorer.Areas
 		protected string GetSimplePropertyString(XmlNode node, ICmObject currentObject)
 		{
 			var propertyName = XmlUtils.GetMandatoryAttributeValue(node, "simpleProperty");
-			string x;
-			x = PropertyIsVirtual(currentObject, propertyName) ? GetVirtualString(currentObject, propertyName, GetSingleWritingSystemDescriptor(node))
+			return PropertyIsVirtual(currentObject, propertyName) ? GetVirtualString(currentObject, propertyName, GetSingleWritingSystemDescriptor(node))
 				: GetStringOfProperty(GetProperty(currentObject, propertyName), node);
-			return x;
 		}
 
 		private ITsString GetSimplePropertyTsString(XmlNode node, ICmObject currentObject)
@@ -2129,7 +2133,7 @@ namespace LanguageExplorer.Areas
 			{
 				// we want the real xml deal for things like MoMorphData:ParserParameters
 				// outputStream.Write(MakeXmlSafe(x));
-				x = Icu.Normalize(x, m_eIcuNormalizationMode);
+				x = m_normalizer.Normalize(x);
 				outputStream.Write(x);
 			}
 		}
@@ -2232,7 +2236,7 @@ namespace LanguageExplorer.Areas
 					{
 						continue;
 					}
-					var s = Icu.Normalize(obj.ToString(), m_eIcuNormalizationMode);
+					var s = m_normalizer.Normalize(obj.ToString());
 					var separator = string.Empty;
 					if (wsProp != null)
 					{
@@ -2419,7 +2423,7 @@ namespace LanguageExplorer.Areas
 			{
 				return false;
 			}
-			sData = Icu.Normalize(obj.ToString(), m_eIcuNormalizationMode);
+			sData = m_normalizer.Normalize(obj.ToString());
 			if (!string.IsNullOrEmpty(wsProp))
 			{
 				obj = GetProperty(co, wsProp);
@@ -2876,14 +2880,14 @@ namespace LanguageExplorer.Areas
 					case "#comment":
 						break;
 					case "#text":
-						s = Icu.Normalize(node.InnerText, m_eIcuNormalizationMode);
+						s = m_normalizer.Normalize(node.InnerText);
 						contentsStream.Write(s);
 						break;
 					case "comment":
 						DoCommentOutput(contentsStream, node);
 						break;
 					case "text":
-						s = Icu.Normalize(node.InnerText, m_eIcuNormalizationMode);
+						s = m_normalizer.Normalize(node.InnerText);
 						contentsStream.Write(s);
 						break;
 					case "template":
@@ -2967,13 +2971,13 @@ namespace LanguageExplorer.Areas
 				case "IndexInOwner":
 					return target.IndexInOwner.ToString();
 				default:
-				{
-					if (IsCustomField(target, property))
 					{
-						return GetCustomFieldValue(target, property);
+						if (IsCustomField(target, property))
+						{
+							return GetCustomFieldValue(target, property);
+						}
+						break;
 					}
-					break;
-				}
 			}
 			var type = target.GetType();
 			var info = type.GetProperty(property, BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy);

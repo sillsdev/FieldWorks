@@ -117,7 +117,7 @@ namespace LanguageExplorer.Areas
 			foreach (var ws in m_mapWsCode.Keys)
 			{
 				var sValue = mu.get_String(ws).Text;
-				sValue = sValue == null ? string.Empty : Icu.Normalize(sValue, Icu.UNormalizationMode.UNORM_NFC);
+				sValue = sValue == null ? string.Empty : CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC).Normalize(sValue);
 				w.WriteLine("<AUni ws=\"{0}\">{1}</AUni>", m_mapWsCode[ws], XmlUtils.MakeSafeXml(sValue));
 			}
 			w.WriteLine("</{0}>", sField);

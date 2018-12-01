@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,13 +8,13 @@ using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
 using ExCSS;
-using SIL.FieldWorks.Common.Framework;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel;
-using SIL.LCModel.DomainServices;
 using LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView;
+using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
+using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using Property = ExCSS.Property;
 
@@ -63,12 +63,13 @@ namespace LanguageExplorer.DictionaryConfiguration
 			MakeLinksLookLikePlainText(styleSheet);
 			GenerateBidirectionalCssShim(styleSheet);
 			GenerateCssForAudioWs(styleSheet, cache);
-			foreach(var configNode in model.Parts.Where(x => x.IsEnabled).Concat(model.SharedItems.Where(x => x.Parent != null)))
+			foreach (var configNode in model.Parts.Where(x => x.IsEnabled).Concat(model.SharedItems.Where(x => x.Parent != null)))
 			{
 				GenerateCssFromConfigurationNode(configNode, styleSheet, null, cache, fwStyleSheet);
 			}
 			// Pretty-print the stylesheet
-			return Icu.Normalize(styleSheet.ToString(true, 1), Icu.UNormalizationMode.UNORM_NFC);
+			return CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC)
+				.Normalize(styleSheet.ToString(true, 1));
 		}
 
 		private static void GenerateCssForDefaultStyles(LcmCache cache, LcmStyleSheet fwStyleSheet, StyleSheet styleSheet, DictionaryConfigurationModel model)
@@ -99,7 +100,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private static void MakeLinksLookLikePlainText(StyleSheet styleSheet)
 		{
 			var rule = new StyleRule { Value = "a" };
-			rule.Declarations.Properties.AddRange(new []
+			rule.Declarations.Properties.AddRange(new[]
 			{
 				new Property("text-decoration") { Term = new PrimitiveTerm(UnitType.Attribute, "inherit") },
 				new Property("color") { Term = new PrimitiveTerm(UnitType.Attribute, "inherit") }
@@ -114,7 +115,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private static void GenerateBidirectionalCssShim(StyleSheet styleSheet)
 		{
 			var rule = new StyleRule { Value = "*[dir='ltr'], *[dir='rtl']" };
-			rule.Declarations.Properties.AddRange(new []
+			rule.Declarations.Properties.AddRange(new[]
 			{
 				new Property("unicode-bidi") { Term = new PrimitiveTerm(UnitType.Attribute, "isolate") },
 				new Property("unicode-bidi") { Term = new PrimitiveTerm(UnitType.Attribute, "-ms-isolate") },
@@ -164,7 +165,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 					styleName = DictionaryMinor;
 				}
 				var dictionaryMinorStyle = GenerateCssStyleFromLcmStyleSheet(styleName, 0, fwStyleSheet, cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(0));
-				var minorRule = new StyleRule { Value = $"div.{GetClassAttributeForConfig(minorEntryNode)}"};
+				var minorRule = new StyleRule { Value = $"div.{GetClassAttributeForConfig(minorEntryNode)}" };
 				minorRule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(dictionaryMinorStyle));
 				styleSheet.Rules.Add(minorRule);
 				// Then generate the rules for all the writing system overrides
@@ -179,7 +180,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				// We want only the character type settings from the styleName style since we're applying them
 				// to a span.
-				var wsRule = new StyleRule { Value = selector + $"[lang|=\"{aws.LanguageTag}\"]"};
+				var wsRule = new StyleRule { Value = selector + $"[lang|=\"{aws.LanguageTag}\"]" };
 				var styleDecls = GenerateCssStyleFromLcmStyleSheet(styleName, aws.Handle, fwStyleSheet, cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(aws.Handle));
 				wsRule.Declarations.Properties.AddRange(GetOnlyCharacterStyle(styleDecls));
 				styleSheet.Rules.Add(wsRule);
@@ -194,13 +195,13 @@ namespace LanguageExplorer.DictionaryConfiguration
 				{
 					continue;
 				}
-				var wsaudioRule = new StyleRule {Value = $"a.{aws.LanguageTag}:after"};
+				var wsaudioRule = new StyleRule { Value = $"a.{aws.LanguageTag}:after" };
 				wsaudioRule.Declarations.Properties.Add(new Property("content")
 				{
 					Term = new PrimitiveTerm(UnitType.String, ConfiguredXHTMLGenerator.LoudSpeaker)
 				});
 				styleSheet.Rules.Add(wsaudioRule);
-				wsaudioRule = new StyleRule {Value = $"a.{aws.LanguageTag}"};
+				wsaudioRule = new StyleRule { Value = $"a.{aws.LanguageTag}" };
 				wsaudioRule.Declarations.Properties.Add(new Property("text-decoration")
 				{
 					Term = new PrimitiveTerm(UnitType.Attribute, "none")
@@ -266,7 +267,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				}
 				styleSheet.Rules.AddRange(CheckRangeOfRulesForEmpties(selectors));
 				if (!IsEmptyRule(rule))
-				styleSheet.Rules.Add(rule);
+					styleSheet.Rules.Add(rule);
 			}
 
 			if (configNode.Children == null)
@@ -274,7 +275,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				return;
 			}
 			//Recurse into each child
-			foreach(var child in configNode.Children.Where(x => x.IsEnabled))
+			foreach (var child in configNode.Children.Where(x => x.IsEnabled))
 			{
 				GenerateCssFromConfigurationNode(child, styleSheet, baseSelection, cache, fwStyleSheet);
 			}
@@ -318,12 +319,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 			var senseNumberSelector = $"{senseContentSelector} .sensenumber";
 
 			senseNumberRule.Value = senseNumberSelector;
-			if(!string.IsNullOrEmpty(senseOptions.NumberStyle))
+			if (!string.IsNullOrEmpty(senseOptions.NumberStyle))
 			{
 				senseNumberRule.Declarations.Properties.AddRange(GenerateCssStyleFromLcmStyleSheet(senseOptions.NumberStyle, DefaultStyle, fwStyleSheet, cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(DefaultStyle)));
 			}
 			if (!IsEmptyRule(senseNumberRule))
-			styleSheet.Rules.Add(senseNumberRule);
+				styleSheet.Rules.Add(senseNumberRule);
 			if (!string.IsNullOrEmpty(senseOptions.BeforeNumber))
 			{
 				var beforeDeclaration = new StyleDeclaration
@@ -380,7 +381,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 					Value = baseSelection
 				};
 				if (!IsEmptyRule(senseContentRule))
-				styleSheet.Rules.Add(senseContentRule);
+					styleSheet.Rules.Add(senseContentRule);
 			}
 
 			if (senseOptions.ShowSharedGrammarInfoFirst)
@@ -447,7 +448,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			List<StyleDeclaration> blockDeclarations;
 			if (string.IsNullOrEmpty(configNode.Style))
 			{
-				blockDeclarations = new List<StyleDeclaration> {new StyleDeclaration()};
+				blockDeclarations = new List<StyleDeclaration> { new StyleDeclaration() };
 			}
 			else
 			{
@@ -522,7 +523,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				bulletParentSelector = baseSelection.Substring(0, baseSelection.LastIndexOf(' '));
 			}
-			var resetRule = new StyleRule {Value = bulletParentSelector};
+			var resetRule = new StyleRule { Value = bulletParentSelector };
 			resetRule.Declarations.Add(new Property("counter-reset")
 			{
 				Term = new PrimitiveTerm(UnitType.Attribute, resetSection)
@@ -578,24 +579,24 @@ namespace LanguageExplorer.DictionaryConfiguration
 				// if the writing system isn't a magic name just use it otherwise find the right one from the magic list
 				var wsIdString = possiblyMagic == 0 ? ws.Id : WritingSystemServices.GetWritingSystemList(cache, possiblyMagic, true).First().Id;
 				var wsId = cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(wsIdString);
-				var wsRule = new StyleRule {Value = baseSelection + $"[lang|=\"{wsIdString}\"]"};
+				var wsRule = new StyleRule { Value = baseSelection + $"[lang|=\"{wsIdString}\"]" };
 				if (!string.IsNullOrEmpty(configNode.Style))
 				{
 					wsRule.Declarations.Properties.AddRange(GenerateCssStyleFromLcmStyleSheet(configNode.Style, wsId, fwStyleSheet, cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(wsId)));
 				}
 				if (!IsEmptyRule(wsRule))
-				styleSheet.Rules.Add(wsRule);
+					styleSheet.Rules.Add(wsRule);
 			}
 		}
 
 		private static void GenerateCssForWritingSystemPrefix(ConfigurableDictionaryNode configNode, StyleSheet styleSheet, string baseSelection, LcmCache cache, LcmStyleSheet fwStyleSheet)
 		{
-			var wsRule1 = new StyleRule { Value = $"{baseSelection}.{WritingSystemPrefix}"};
+			var wsRule1 = new StyleRule { Value = $"{baseSelection}.{WritingSystemPrefix}" };
 			const int wsId = 0;
 			wsRule1.Declarations.Properties.AddRange(GetOnlyCharacterStyle(GenerateCssStyleFromLcmStyleSheet(WritingSystemStyleName, wsId, configNode, fwStyleSheet, cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(wsId))));
 			styleSheet.Rules.Add(wsRule1);
-			var wsRule2 = new StyleRule { Value = $"{baseSelection}.{WritingSystemPrefix}:after"};
-			wsRule2.Declarations.Properties.Add(new Property("content"){Term = new PrimitiveTerm(UnitType.String, " ")});
+			var wsRule2 = new StyleRule { Value = $"{baseSelection}.{WritingSystemPrefix}:after" };
+			wsRule2.Declarations.Properties.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, " ") });
 			styleSheet.Rules.Add(wsRule2);
 		}
 
@@ -619,29 +620,29 @@ namespace LanguageExplorer.DictionaryConfiguration
 			});
 			styleSheet.Rules.Add(pictureAndCaptionRule);
 
-			var pictureRule = new StyleRule {Value = pictureAndCaptionRule.Value + " img"};
-			if(pictureOptions.MinimumHeight > 0)
+			var pictureRule = new StyleRule { Value = pictureAndCaptionRule.Value + " img" };
+			if (pictureOptions.MinimumHeight > 0)
 			{
 				pictureRule.Declarations.Properties.Add(new Property("min-height")
 				{
 					Term = new PrimitiveTerm(UnitType.Inch, pictureOptions.MinimumHeight)
 				});
 			}
-			if(pictureOptions.MaximumHeight > 0)
+			if (pictureOptions.MaximumHeight > 0)
 			{
 				pictureRule.Declarations.Properties.Add(new Property("max-height")
 				{
 					Term = new PrimitiveTerm(UnitType.Inch, pictureOptions.MaximumHeight)
 				});
 			}
-			if(pictureOptions.MinimumWidth > 0)
+			if (pictureOptions.MinimumWidth > 0)
 			{
 				pictureRule.Declarations.Properties.Add(new Property("min-width")
 				{
 					Term = new PrimitiveTerm(UnitType.Inch, pictureOptions.MinimumWidth)
 				});
 			}
-			if(pictureOptions.MaximumWidth > 0)
+			if (pictureOptions.MaximumWidth > 0)
 			{
 				pictureRule.Declarations.Properties.Add(new Property("max-width")
 				{
@@ -649,7 +650,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				});
 			}
 			if (!IsEmptyRule(pictureRule))
-			styleSheet.Rules.Add(pictureRule);
+				styleSheet.Rules.Add(pictureRule);
 		}
 
 		/// <summary>
@@ -658,7 +659,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private static IEnumerable<StyleRule> GenerateSelectorsFromNode(
 			string parentSelector, ConfigurableDictionaryNode configNode,
 			out string baseSelection, LcmCache cache, LcmStyleSheet fwStyleSheet)
-			// REVIEW (Hasso) 2016.10: parentSelector and baseSelector could be combined into a single `ref` parameter
+		// REVIEW (Hasso) 2016.10: parentSelector and baseSelector could be combined into a single `ref` parameter
 		{
 			// TODO: REFACTOR this method to handle certain nodes more specifically. The options type should be used to branch into node specific code.
 			var analWsId = cache.DefaultAnalWs;
@@ -716,7 +717,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 								for (var i = enabledWsOptions.Count() - 1; i > 0; i--)
 								{
 									betweenSelector = (i == enabledWsOptions.Count() - 1 ? string.Empty : betweenSelector + ",") +
-									                  $"{parentSelector}> {collectionSelector}> span+span[lang|='{enabledWsOptions[i].Id}']:before";
+													  $"{parentSelector}> {collectionSelector}> span+span[lang|='{enabledWsOptions[i].Id}']:before";
 								}
 							}
 						}
@@ -754,7 +755,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 					simpleSelector = parentSelector + "> " + SelectBareClassName(configNode, metaDataCacheAccessor);
 				}
 			}
-			if(!string.IsNullOrEmpty(configNode.Before))
+			if (!string.IsNullOrEmpty(configNode.Before))
 			{
 				var dec = new StyleDeclaration();
 				dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, SpecialCharacterHandling.MakeSafeCss(configNode.Before)) });
@@ -834,7 +835,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			var flowResetRule = new StyleRule();
 			flowResetRule.Value = baseSelection;
-			flowResetRule.Declarations.Properties.Add(new Property("clear") { Term = new PrimitiveTerm(UnitType.Ident, "both")});
+			flowResetRule.Declarations.Properties.Add(new Property("clear") { Term = new PrimitiveTerm(UnitType.Ident, "both") });
 			flowResetRule.Declarations.Properties.Add(new Property("white-space") { Term = new PrimitiveTerm(UnitType.Ident, "pre-wrap") });
 			rules.Add(flowResetRule);
 		}
@@ -852,32 +853,32 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		private static string SelectClassName(ConfigurableDictionaryNode configNode, PropertyType type)
 		{
-			switch(type)
+			switch (type)
 			{
 				case PropertyType.CollectionType:
-				{
-					// for collections we generate a css selector to match each item e.g '.senses .sense'
-					return $".{GetClassAttributeForConfig(configNode)} .{GetClassAttributeForCollectionItem(configNode)}";
-				}
+					{
+						// for collections we generate a css selector to match each item e.g '.senses .sense'
+						return $".{GetClassAttributeForConfig(configNode)} .{GetClassAttributeForCollectionItem(configNode)}";
+					}
 				case PropertyType.CmPictureType:
-				{
-					return " img"; // Pictures are written out as img tags
-				}
+					{
+						return " img"; // Pictures are written out as img tags
+					}
 				case PropertyType.PrimitiveType:
 				case PropertyType.MoFormType:
-				{
-					// for multi-lingual strings each language's string will have the contents generated in a span
-					if(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions)
 					{
-						var spanStyle = string.Empty;
-						if (!DictionaryConfigurationModel.NoteInParaStyles.Contains(configNode.FieldDescription))
+						// for multi-lingual strings each language's string will have the contents generated in a span
+						if (configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions)
 						{
-							spanStyle = "> span";
+							var spanStyle = string.Empty;
+							if (!DictionaryConfigurationModel.NoteInParaStyles.Contains(configNode.FieldDescription))
+							{
+								spanStyle = "> span";
+							}
+							return "." + GetClassAttributeForConfig(configNode) + spanStyle;
 						}
-						return "." + GetClassAttributeForConfig(configNode) + spanStyle;
+						goto default;
 					}
-					goto default;
-				}
 				default:
 					return "." + GetClassAttributeForConfig(configNode);
 			}
@@ -907,7 +908,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				singularBase = classNameBase.Remove(classNameBase.Length - 1);
 			}
-			return Icu.Normalize(singularBase + GetClassAttributeDupSuffix(configNode).ToLower(), Icu.UNormalizationMode.UNORM_NFC);
+			return CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC).Normalize(singularBase + GetClassAttributeDupSuffix(configNode).ToLower());
 		}
 
 		/// <summary>
@@ -935,7 +936,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		internal static string GetClassAttributeForConfig(ConfigurableDictionaryNode configNode)
 		{
-			var classAtt = Icu.Normalize((GetClassAttributeBase(configNode) + GetClassAttributeDupSuffix(configNode)).ToLower(), Icu.UNormalizationMode.UNORM_NFC);
+			var classAtt = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC).Normalize((GetClassAttributeBase(configNode) + GetClassAttributeDupSuffix(configNode)).ToLower());
 			// Custom field names might begin with a digit which would cause invalid css, so we prepend 'cf' to those class names.
 			return char.IsDigit(Convert.ToChar(classAtt.Substring(0, 1))) ? "cf" + classAtt : classAtt;
 		}
@@ -968,7 +969,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		internal static StyleDeclaration GetOnlyCharacterStyle(StyleDeclaration fullStyleDeclaration)
 		{
 			var declaration = new StyleDeclaration();
-			foreach(var prop in fullStyleDeclaration.Where(prop => prop.Name.Contains("font") || prop.Name.Contains("color")))
+			foreach (var prop in fullStyleDeclaration.Where(prop => prop.Name.Contains("font") || prop.Name.Contains("color")))
 			{
 				declaration.Add(prop);
 			}
@@ -978,7 +979,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		internal static StyleDeclaration GetOnlyParagraphStyle(StyleDeclaration fullStyleDeclaration)
 		{
 			var declaration = new StyleDeclaration();
-			foreach(var prop in fullStyleDeclaration.Where(prop => !prop.Name.Contains("font") && !prop.Name.Contains("color") && !prop.Name.Contains("content") && !prop.Name.Contains("counter-increment")))
+			foreach (var prop in fullStyleDeclaration.Where(prop => !prop.Name.Contains("font") && !prop.Name.Contains("color") && !prop.Name.Contains("content") && !prop.Name.Contains("counter-increment")))
 			{
 				declaration.Add(prop);
 			}
@@ -1028,9 +1029,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 		internal static List<StyleDeclaration> GenerateCssStyleFromLcmStyleSheet(string styleName, int wsId, ConfigurableDictionaryNode node, LcmStyleSheet styleSheet, ILgWritingSystem lgWritingSysytem, bool calculateFirstSenseStyle)
 		{
 			var declaration = new StyleDeclaration();
-			if(styleSheet == null || !styleSheet.Styles.Contains(styleName))
+			if (styleSheet == null || !styleSheet.Styles.Contains(styleName))
 			{
-				return new List<StyleDeclaration> {declaration};
+				return new List<StyleDeclaration> { declaration };
 			}
 			var projectStyle = styleSheet.Styles[styleName];
 			var exportStyleInfo = new ExportStyleInfo(projectStyle);
@@ -1043,19 +1044,19 @@ namespace LanguageExplorer.DictionaryConfiguration
 				ancestorIndents = CalculateParagraphIndentsFromAncestors(node, styleSheet, ancestorIndents);
 			}
 
-			if(exportStyleInfo.HasAlignment)
+			if (exportStyleInfo.HasAlignment)
 			{
 				declaration.Add(new Property("text-align") { Term = new PrimitiveTerm(UnitType.Ident, exportStyleInfo.Alignment.AsCssString()) });
 			}
-			if(exportStyleInfo.HasBorder)
+			if (exportStyleInfo.HasBorder)
 			{
-				if(exportStyleInfo.HasBorderColor)
+				if (exportStyleInfo.HasBorderColor)
 				{
 					var borderColor = new Property("border-color")
 					{
 						Term = new HtmlColor(exportStyleInfo.BorderColor.A,
-							exportStyleInfo.BorderColor.R,
-							exportStyleInfo.BorderColor.G,
+																exportStyleInfo.BorderColor.R,
+																exportStyleInfo.BorderColor.G,
 							exportStyleInfo.BorderColor.B)
 					};
 					declaration.Add(borderColor);
@@ -1073,7 +1074,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				declaration.Add(borderTop);
 				declaration.Add(borderBottom);
 			}
-			if(exportStyleInfo.HasFirstLineIndent)
+			if (exportStyleInfo.HasFirstLineIndent)
 			{
 				// Handles both first-line and hanging indent, hanging-indent will result in a negative text-indent value
 				var firstLineIndentValue = MilliPtToPt(exportStyleInfo.FirstLineIndent);
@@ -1083,17 +1084,17 @@ namespace LanguageExplorer.DictionaryConfiguration
 					hangingIndent = firstLineIndentValue;
 				}
 
-				declaration.Add(new Property("text-indent") { Term = new PrimitiveTerm(UnitType.Point, firstLineIndentValue) } );
+				declaration.Add(new Property("text-indent") { Term = new PrimitiveTerm(UnitType.Point, firstLineIndentValue) });
 			}
-			if(exportStyleInfo.HasKeepTogether)
+			if (exportStyleInfo.HasKeepTogether)
 			{
 				throw new NotImplementedException("Keep Together style export not yet implemented.");
 			}
-			if(exportStyleInfo.HasKeepWithNext)
+			if (exportStyleInfo.HasKeepWithNext)
 			{
 				throw new NotImplementedException("Keep With Next style export not yet implemented.");
 			}
-			if(exportStyleInfo.HasLeadingIndent || hangingIndent < 0.0f || ancestorIndents.TextIndent < 0.0f)
+			if (exportStyleInfo.HasLeadingIndent || hangingIndent < 0.0f || ancestorIndents.TextIndent < 0.0f)
 			{
 				var leadingIndent = CalculateMarginLeft(exportStyleInfo, ancestorIndents, hangingIndent);
 				var marginDirection = "margin-left";
@@ -1103,7 +1104,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				}
 				declaration.Add(new Property(marginDirection) { Term = new PrimitiveTerm(UnitType.Point, leadingIndent) });
 			}
-			if(exportStyleInfo.HasLineSpacing)
+			if (exportStyleInfo.HasLineSpacing)
 			{
 				var lineHeight = new Property("line-height");
 				if (!exportStyleInfo.LineSpacing.m_relative && exportStyleInfo.LineSpacing.m_lineHeight >= 0)
@@ -1123,15 +1124,15 @@ namespace LanguageExplorer.DictionaryConfiguration
 				}
 				declaration.Add(lineHeight);
 			}
-			if(exportStyleInfo.HasSpaceAfter)
+			if (exportStyleInfo.HasSpaceAfter)
 			{
 				declaration.Add(new Property("padding-bottom") { Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(exportStyleInfo.SpaceAfter)) });
 			}
-			if(exportStyleInfo.HasSpaceBefore)
+			if (exportStyleInfo.HasSpaceBefore)
 			{
 				declaration.Add(new Property("padding-top") { Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(exportStyleInfo.SpaceBefore)) });
 			}
-			if(exportStyleInfo.HasTrailingIndent)
+			if (exportStyleInfo.HasTrailingIndent)
 			{
 				var paddingDirection = "padding-right";
 				if (exportStyleInfo.DirectionIsRightToLeft == TriStateBool.triTrue)
@@ -1166,7 +1167,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 					}
 				}
 			}
-			var styleList = new List<StyleDeclaration> {declaration};
+			var styleList = new List<StyleDeclaration> { declaration };
 			if (calculateFirstSenseStyle && ancestorIndents.Ancestor != null)
 			{
 				var senseOptions = ancestorIndents.Ancestor.DictionaryNodeOptions as DictionaryNodeSenseOptions;
@@ -1444,63 +1445,63 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				return;
 			}
-			switch(underlineType)
+			switch (underlineType)
 			{
-				case(FwUnderlineType.kuntDouble):
-				{
-					// use border to generate second underline then generate the standard underline
-					var fontProp = new Property("border-bottom");
-					var termList = new TermList();
-					termList.AddTerm(new PrimitiveTerm(UnitType.Pixel, 1));
-					termList.AddSeparator(TermList.TermSeparator.Space);
-					termList.AddTerm(new PrimitiveTerm(UnitType.Ident, "solid"));
-					fontProp.Term = termList;
-					declaration.Add(fontProp);
+				case (FwUnderlineType.kuntDouble):
+					{
+						// use border to generate second underline then generate the standard underline
+						var fontProp = new Property("border-bottom");
+						var termList = new TermList();
+						termList.AddTerm(new PrimitiveTerm(UnitType.Pixel, 1));
+						termList.AddSeparator(TermList.TermSeparator.Space);
+						termList.AddTerm(new PrimitiveTerm(UnitType.Ident, "solid"));
+						fontProp.Term = termList;
+						declaration.Add(fontProp);
 
-					// The wsFontInfo is publicly accessible InheritableStyleProp value if set, checks for explicit overrides.
-					// Otherwise the defaultFontInfo if set, or null.
-					AddInfoFromWsOrDefaultValue(wsFont.m_underlineColor, defaultFont.UnderlineColor, "border-bottom-color", declaration);
-					goto case FwUnderlineType.kuntSingle; //fall through to single
-				}
-				case(FwUnderlineType.kuntSingle):
-				{
-					var fontProp = new Property("text-decoration");
-					fontProp.Term = new PrimitiveTerm(UnitType.Ident, "underline");
-					declaration.Add(fontProp);
+						// The wsFontInfo is publicly accessible InheritableStyleProp value if set, checks for explicit overrides.
+						// Otherwise the defaultFontInfo if set, or null.
+						AddInfoFromWsOrDefaultValue(wsFont.m_underlineColor, defaultFont.UnderlineColor, "border-bottom-color", declaration);
+						goto case FwUnderlineType.kuntSingle; //fall through to single
+					}
+				case (FwUnderlineType.kuntSingle):
+					{
+						var fontProp = new Property("text-decoration");
+						fontProp.Term = new PrimitiveTerm(UnitType.Ident, "underline");
+						declaration.Add(fontProp);
 
-					// The wsFontInfo is publicly accessible InheritableStyleProp value if set, checks for explicit overrides.
-					// Otherwise the defaultFontInfo if set, or null.
-					AddInfoFromWsOrDefaultValue(wsFont.m_underlineColor, defaultFont.UnderlineColor, "text-decoration-color", declaration);
-					break;
-				}
-				case(FwUnderlineType.kuntStrikethrough):
-				{
-					var fontProp = new Property("text-decoration");
-					fontProp.Term = new PrimitiveTerm(UnitType.Ident, "line-through");
-					declaration.Add(fontProp);
+						// The wsFontInfo is publicly accessible InheritableStyleProp value if set, checks for explicit overrides.
+						// Otherwise the defaultFontInfo if set, or null.
+						AddInfoFromWsOrDefaultValue(wsFont.m_underlineColor, defaultFont.UnderlineColor, "text-decoration-color", declaration);
+						break;
+					}
+				case (FwUnderlineType.kuntStrikethrough):
+					{
+						var fontProp = new Property("text-decoration");
+						fontProp.Term = new PrimitiveTerm(UnitType.Ident, "line-through");
+						declaration.Add(fontProp);
 
-					// The wsFontInfo is publicly accessible InheritableStyleProp value if set, checks for explicit overrides.
-					// Otherwise the defaultFontInfo if set, or null.
-					AddInfoFromWsOrDefaultValue(wsFont.m_underlineColor, defaultFont.UnderlineColor, "text-decoration-color", declaration);
-					break;
-				}
+						// The wsFontInfo is publicly accessible InheritableStyleProp value if set, checks for explicit overrides.
+						// Otherwise the defaultFontInfo if set, or null.
+						AddInfoFromWsOrDefaultValue(wsFont.m_underlineColor, defaultFont.UnderlineColor, "text-decoration-color", declaration);
+						break;
+					}
 				case (FwUnderlineType.kuntDashed):
 				case (FwUnderlineType.kuntDotted):
-				{
-					// use border to generate a dotted or dashed underline
-					var fontProp = new Property("border-bottom");
-					var termList = new TermList();
-					termList.AddTerm(new PrimitiveTerm(UnitType.Pixel, 1));
-					termList.AddSeparator(TermList.TermSeparator.Space);
-					termList.AddTerm(new PrimitiveTerm(UnitType.Ident, underlineType == FwUnderlineType.kuntDashed ? "dashed" : "dotted"));
-					fontProp.Term = termList;
-					declaration.Add(fontProp);
+					{
+						// use border to generate a dotted or dashed underline
+						var fontProp = new Property("border-bottom");
+						var termList = new TermList();
+						termList.AddTerm(new PrimitiveTerm(UnitType.Pixel, 1));
+						termList.AddSeparator(TermList.TermSeparator.Space);
+						termList.AddTerm(new PrimitiveTerm(UnitType.Ident, underlineType == FwUnderlineType.kuntDashed ? "dashed" : "dotted"));
+						fontProp.Term = termList;
+						declaration.Add(fontProp);
 
-					// The wsFontInfo is publicly accessible InheritableStyleProp value if set, checks for explicit overrides.
-					// Otherwise the defaultFontInfo if set, or null.
-					AddInfoFromWsOrDefaultValue(wsFont.m_underlineColor, defaultFont.UnderlineColor, "border-bottom-color", declaration);
-					break;
-				}
+						// The wsFontInfo is publicly accessible InheritableStyleProp value if set, checks for explicit overrides.
+						// Otherwise the defaultFontInfo if set, or null.
+						AddInfoFromWsOrDefaultValue(wsFont.m_underlineColor, defaultFont.UnderlineColor, "border-bottom-color", declaration);
+						break;
+					}
 			}
 		}
 
@@ -1536,7 +1537,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		public static string AsCssString(this FwTextAlign align)
 		{
-			switch(align)
+			switch (align)
 			{
 				case (FwTextAlign.ktalJustify):
 					return "justify";
@@ -1600,7 +1601,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				new PrimitiveTerm(UnitType.Ident, "solid"), new PrimitiveTerm(UnitType.RGB, "#dcdcdc"));
 			pageButton.Declarations.Properties.Add(new Property("border") { Term = borderTerms });
 			pageButton.Declarations.Properties.Add(new Property("border-radius") { Term = new PrimitiveTerm(UnitType.Pixel, 6) });
-			pageButton.Declarations.Properties.Add(new Property("background-color") { Term = new PrimitiveTerm(UnitType.RGB, "#ededed")});
+			pageButton.Declarations.Properties.Add(new Property("background-color") { Term = new PrimitiveTerm(UnitType.RGB, "#ededed") });
 			var currentButtonRule = new StyleRule { Value = "#currentPageButton" };
 			currentButtonRule.Declarations.Properties.Add(new Property("background") { Term = new PrimitiveTerm(UnitType.Grad, "linear-gradient(to bottom, #dfdfdf 5%, #ededed 100%)") });
 			currentButtonRule.Declarations.Properties.Add(new Property("background-color") { Term = new PrimitiveTerm(UnitType.RGB, "#cdcdcd") });
@@ -1645,7 +1646,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private static TermList BuildTermList(TermList.TermSeparator separator, params Term[] terms)
 		{
 			var termList = new TermList();
-			for(var i = 0; i < terms.Length; ++i)
+			for (var i = 0; i < terms.Length; ++i)
 			{
 				if (i > 0)
 				{
@@ -1658,7 +1659,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		private sealed class AncestorIndents
 		{
-			internal AncestorIndents(float margin, float textIndent): this(null, margin, textIndent)
+			internal AncestorIndents(float margin, float textIndent) : this(null, margin, textIndent)
 			{
 			}
 

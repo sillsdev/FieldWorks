@@ -13,6 +13,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Icu;
+using Icu.Collation;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
@@ -721,11 +723,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private static string GetDictionaryName(string languageId)
 		{
-			LCModel.Core.Text.Icu.UErrorCode err;
-			string country;
-			LCModel.Core.Text.Icu.GetDisplayCountry(languageId, "en", out country, out err);
-			string languageName;
-			LCModel.Core.Text.Icu.GetDisplayLanguage(languageId, "en", out languageName, out err);
+			var locale = new Locale(languageId);
+			var country = locale.GetDisplayCountry("en");
+			var languageName = locale.GetDisplayLanguage("en");
 			var languageAndCountry = new StringBuilder(languageName);
 			if (!string.IsNullOrEmpty(country))
 			{
@@ -1874,7 +1874,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void btnAdd_Click(object sender, EventArgs e)
 		{
 			var cmsAddWs = components.ContextMenuStrip("cmsAddWs");
-			FwProjPropertiesDlg.ShowAddWsContextMenu(cmsAddWs, m_wsManager.AllDistinctWritingSystems, m_listBoxRelatedWSs, 				sender as Button, btnAddWsItemClicked, null, btnNewWsItemClicked, CurrentWritingSystem);
+			FwProjPropertiesDlg.ShowAddWsContextMenu(cmsAddWs, m_wsManager.AllDistinctWritingSystems, m_listBoxRelatedWSs, sender as Button, btnAddWsItemClicked, null, btnNewWsItemClicked, CurrentWritingSystem);
 		}
 
 		/// <summary>
@@ -1999,7 +1999,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				baseLocale = string.Empty;
 			}
-			var sortRules = LCModel.Core.Text.Icu.GetCollationRules(baseLocale);
+			var sortRules = Collator.GetCollationRules(baseLocale);
 			m_sortRulesTextBox.Tss = TsStringUtils.MakeString(sortRules == null ? string.Empty : sortRules.Replace("&", Environment.NewLine + "&").Trim(), CurrentWritingSystem.Handle);
 
 			var resources = new ComponentResourceManager(typeof(WritingSystemPropertiesDialog));

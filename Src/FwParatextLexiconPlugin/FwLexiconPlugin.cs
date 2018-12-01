@@ -13,10 +13,10 @@ using System.Windows.Forms;
 using Microsoft.Win32;
 using Paratext.LexicalContracts;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.Core.Text;
 using SIL.LCModel;
-using SIL.ObjectModel;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.Utils;
+using SIL.ObjectModel;
 using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 				// update ICU_DATA to location of ICU data files
 				if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ICU_DATA")))
 				{
-					string codeIcuDataPath = Path.Combine(ParatextLexiconPluginDirectoryFinder.CodeDirectory, "Icu" + Icu.Version);
+					string codeIcuDataPath = Path.Combine(ParatextLexiconPluginDirectoryFinder.CodeDirectory, "Icu" + CustomIcu.Version);
 #if DEBUG
 					string icuDataPath = codeIcuDataPath;
 #else
@@ -196,12 +196,12 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 					return LexicalProjectValidationResult.ProjectDoesNotExist;
 				}
 
-				var settings = new LcmSettings {DisableDataMigration = true};
+				var settings = new LcmSettings { DisableDataMigration = true };
 				using (RegistryKey fwKey = ParatextLexiconPluginRegistryHelper.FieldWorksRegistryKeyLocalMachine)
 				{
 					if (fwKey != null)
 					{
-						var sharedXMLBackendCommitLogSize = (int) fwKey.GetValue("SharedXMLBackendCommitLogSize", 0);
+						var sharedXMLBackendCommitLogSize = (int)fwKey.GetValue("SharedXMLBackendCommitLogSize", 0);
 						if (sharedXMLBackendCommitLogSize > 0)
 							settings.SharedXMLBackendCommitLogSize = sharedXMLBackendCommitLogSize;
 					}

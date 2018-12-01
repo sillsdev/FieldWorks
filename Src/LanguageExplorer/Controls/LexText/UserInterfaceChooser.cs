@@ -3,14 +3,14 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
 using System.Diagnostics;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Linq;
+using System.Windows.Forms;
+using Icu;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.Core.Text;
 using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.Controls.LexText
@@ -309,8 +309,7 @@ namespace LanguageExplorer.Controls.LexText
 				}
 				catch
 				{
-					Icu.UErrorCode uerr;
-					Icu.GetDisplayName(sLocale, sLocale, out sName, out uerr);
+					sName = new Locale(sLocale).GetDisplayName(sLocale);
 				}
 				return sName;
 			}

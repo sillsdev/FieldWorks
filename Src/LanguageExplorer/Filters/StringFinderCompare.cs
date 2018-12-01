@@ -9,7 +9,6 @@ using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel.Core.Text;
 using SIL.LCModel.Utils;
 using SIL.Xml;
 
@@ -40,7 +39,7 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// For use with IPersistAsXml
 		/// </summary>
-		public StringFinderCompare(): this(null, null)
+		public StringFinderCompare() : this(null, null)
 		{
 		}
 
@@ -171,7 +170,7 @@ namespace LanguageExplorer.Filters
 					return result;
 				}
 				var item = key as IManyOnePathSortItem;
-				result =  Finder.SortStrings(item, sortedFromEnd);
+				result = Finder.SortStrings(item, sortedFromEnd);
 				m_objToKey[key] = result;
 				return result;
 			}
@@ -196,7 +195,7 @@ namespace LanguageExplorer.Filters
 		/// <exception cref="T:System.ArgumentException">Neither x nor y implements the
 		/// <see cref="T:System.IComparable"></see> interface.-or- x and y are of different
 		/// types and neither one can handle comparisons with the other. </exception>
-		public int Compare(object x,object y)
+		public int Compare(object x, object y)
 		{
 			ComparisonNoter?.ComparisonOccurred(); // for progress reporting.
 
@@ -293,13 +292,13 @@ namespace LanguageExplorer.Filters
 				{
 					ch = ch1;
 				}
-				if (Icu.IsAlphabetic(ch))
+				if (Icu.Character.IsAlphabetic(ch))
 				{
-					++cchOrtho;		// Seems not to include UCHAR_DIACRITIC.
+					++cchOrtho;     // Seems not to include UCHAR_DIACRITIC.
 				}
 				else
 				{
-					if (Icu.IsIdeographic(ch))
+					if (Icu.Character.IsIdeographic(ch))
 					{
 						++cchOrtho;
 					}

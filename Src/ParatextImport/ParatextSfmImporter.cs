@@ -2236,7 +2236,7 @@ namespace ParatextImport
 						ich < m_sSegmentText.Length;
 						ich++)
 					{
-						if (!Icu.IsPunct(m_sSegmentText[ich]))
+						if (!Icu.Character.IsPunct(m_sSegmentText[ich]))
 						{
 							continue;
 						}
@@ -2839,7 +2839,7 @@ namespace ParatextImport
 			if (ichMarker > 0)
 			{
 				var s = strbldr.GetChars(ichMarker - 1, ichMarker);
-				if (Icu.IsSeparator(s[0]))
+				if (Icu.Character.IsSeparator(s[0]))
 				{
 					ichMarker--;
 				}
@@ -3215,7 +3215,7 @@ namespace ParatextImport
 			{
 				// First trim trailing space if necessary
 				var s = bldr.Text;
-				if (Icu.IsSeparator(s[s.Length - 1]))
+				if (Icu.Character.IsSeparator(s[s.Length - 1]))
 				{
 					bldr.Replace(s.Length - 1, s.Length, null, null);
 				}
@@ -3590,10 +3590,10 @@ namespace ParatextImport
 			}
 			var cchLength = strbldr.Length;
 			// Remove extra space.
-			if (cchLength > 0 && Icu.IsSeparator(sText[0]))
+			if (cchLength > 0 && Icu.Character.IsSeparator(sText[0]))
 			{
 				var s = strbldr.GetChars(cchLength - 1, cchLength);
-				if (Icu.IsSeparator(s[0]))
+				if (Icu.Character.IsSeparator(s[0]))
 				{
 					sText = sText.Substring(1);
 				}
@@ -3956,7 +3956,7 @@ namespace ParatextImport
 				return;
 			}
 			var s = bldr.GetChars(length - 1, length);
-			if (Icu.IsSeparator(s[0]))
+			if (Icu.Character.IsSeparator(s[0]))
 			{
 				// remove the trailing space from the builder
 				bldr.Replace(length - 1, length, null, null);
@@ -3985,7 +3985,7 @@ namespace ParatextImport
 			var strbldr = m_ParaBldr.StringBuilder;
 			var ichMarker = m_ParaBldr.Length;
 			var fInsertSpaceAfterCaller = false;
-			if (Icu.IsSeparator(m_ParaBldr.FinalCharInPara))
+			if (Icu.Character.IsSeparator(m_ParaBldr.FinalCharInPara))
 			{
 				ichMarker--;
 			}

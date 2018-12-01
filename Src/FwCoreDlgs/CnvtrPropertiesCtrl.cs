@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using ECInterfaces;
+using Icu;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
@@ -393,13 +394,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						cboSpec.Items.Clear();
 						try
 						{
-							foreach (var idAndName in LCModel.Core.Text.Icu.GetConverterIdsAndNames())
+							foreach (var idAndName in CodepageConversion.GetIdsAndNames("IANA"))
 							{
-								if (!string.IsNullOrEmpty(idAndName.Name))
-								{
-									cboSpec.Items.Add(new CnvtrSpecComboItem(idAndName.Name, idAndName.Id));
-								}
+								// TODO: Once we switch to Mono 5 we can replace the next two lines with:
+								// var name = idAndName.name;
+								// var id = idAndName.id;
+								var name = idAndName.Item2;
+								var id = idAndName.Item1;
+								if (!string.IsNullOrEmpty(name))
+{
+								cboSpec.Items.Add(new CnvtrSpecComboItem(name, id));
 							}
+						}
 						}
 						catch (Exception ee)
 						{
@@ -417,9 +423,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						// fill in combo items.
 						cboSpec.BeginUpdate();
 						cboSpec.Items.Clear();
-						foreach (var idAndName in LCModel.Core.Text.Icu.GetTransliteratorIdsAndNames())
+						foreach (var idAndName in Transliterator.GetIdsAndNames())
 						{
-							cboSpec.Items.Add(new CnvtrSpecComboItem(idAndName.Name, idAndName.Id));
+							// TODO: Once we switch to Mono 5 we can replace the next two lines with:
+							// var name = idAndName.name;
+							// var id = idAndName.id;
+							var name = idAndName.Item2;
+							var id = idAndName.Item1;
+							cboSpec.Items.Add(new CnvtrSpecComboItem(name, id));
 						}
 						cboSpec.EndUpdate();
 						break;
@@ -626,7 +637,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					// Passed an invalid mapname. And yes, it does happen occasionally...
 					return;
-				}
+			}
 			}
 			// Find and select the appropriate item in cboConversion
 			var fMatchedConvType = false;
@@ -870,9 +881,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					if (!string.IsNullOrEmpty(strFriendlyName))
 					{
 						myParent.SelectedConverter = strFriendlyName;
-					}
 				}
 			}
+		}
 		}
 
 #if AUTOCONFIGUREEX_AVAILABLE
@@ -896,7 +907,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				if (rConfigurator.Configure(Converters, strFriendlyName, eConversionTypeFilter, strLhsEncodingID, strRhsEncodingID))
 				{
 					// if this is just a temporary converter (i.e. it isn't being added permanently to the
-					// repository), then just make up a name so the caller can use it.
+					//  repository), then just make up a name so the caller can use it.
 					if (!rConfigurator.IsInRepository)
 					{
 						var dt = DateTime.Now;
@@ -911,7 +922,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					else
 					{
 						// else, if it was in the repository, then it should also be (have been) updated in
-						// the collection already, so just get its name so we can return it.
+						//  the collection already, so just get its name so we can return it.
 						strFriendlyName = rConfigurator.ConverterFriendlyName;
 					}
 
@@ -942,7 +953,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void AddToCollection(IEncConverter rConverter, string converterName)
 		{
 			// No sense in allowing this to be added if it already exists because it'll always
-			// be hidden.
+			//  be hidden.
 			if (Converters.ContainsKey(converterName))
 			{
 				// always overwrite existing ones.

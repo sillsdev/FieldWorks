@@ -472,7 +472,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			{
 				string phonemesFoundSoFar = ise.String.Substring(0, ise.Position);
 				string rest = ise.String.Substring(ise.Position);
-				if (Icu.GetCharType(rest[0]) == Icu.UCharCategory.U_NON_SPACING_MARK)
+				if (Icu.Character.GetCharType(rest[0]) == Icu.Character.UCharCategory.NON_SPACING_MARK)
 				{
 					// the first character is a diacritic, combining type of character
 					// insert a space so it does not show on top of a single quote in the message string

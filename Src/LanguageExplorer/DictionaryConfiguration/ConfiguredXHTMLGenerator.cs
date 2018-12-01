@@ -13,14 +13,14 @@ using System.Text;
 using System.Threading;
 using System.Xml;
 using LanguageExplorer.Controls.XMLViews;
-using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
 using LanguageExplorer.Filters;
 using SIL.FieldWorks.Common.Framework;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
@@ -656,7 +656,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				return;
 			}
 			var headerTextBuilder = new StringBuilder();
-			var upperCase = Icu.ToTitle(firstLetter, wsString);
+			var upperCase = Icu.UnicodeString.ToTitle(firstLetter, wsString);
 			var lowerCase = firstLetter.Normalize();
 			headerTextBuilder.Append(upperCase);
 			if (lowerCase != upperCase)
@@ -796,7 +796,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				pieces.ForEach(xw.WriteRaw);
 				xw.WriteEndElement(); // </div>
 				xw.Flush();
-				return Icu.Normalize(bldr.ToString(), Icu.UNormalizationMode.UNORM_NFC); // All content should be in NFC (LT-18177)
+				return CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC).Normalize(bldr.ToString()); // All content should be in NFC (LT-18177)
 			}
 		}
 
@@ -1456,7 +1456,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			if (Unicode.CheckForNonAsciiCharacters(filePath))
 			{
 				// Flex keeps the filename as NFD in memory because it is unicode. We need NFC to actually link to the file
-				filePath = Icu.Normalize(filePath, Icu.UNormalizationMode.UNORM_NFC);
+				filePath = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC).Normalize(filePath);
 			}
 			return !FileUtils.IsFilePathValid(filePath) ? "__INVALID_FILE_NAME__" : filePath;
 		}

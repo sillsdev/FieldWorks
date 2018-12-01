@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Icu;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.Core.Text;
@@ -82,7 +83,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 					return; // Probably initialization.
 				}
 				string displayName;
-				if (LCModel.Core.Text.Icu.TryGetDisplayName(value, out displayName))
+				if (TryGetDisplayName(value, out displayName))
 				{
 					Text = displayName;
 					m_selectedLocale = value;
@@ -95,14 +96,28 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
+		private bool TryGetDisplayName(string locale, out string displayName)
+		{
+			try
+			{
+				displayName = new Locale().GetDisplayName(locale);
+				return true;
+			}
+			catch
+			{
+				displayName = string.Empty;
+				return false;
+			}
+		}
+
 		/// <summary>
 		/// Determine whether the specified locale is a custom one the user is allowed to modify.
 		/// </summary>
 		public bool IsCustomLocale(string localeId)
 		{
-			using (var rbroot = new IcuResourceBundle(null, "en"))
-			using (var rbCustom = rbroot.GetSubsection("Custom"))
-			using (var rbCustomLocales = rbCustom.GetSubsection("LocalesAdded"))
+			using (var rbroot = new ResourceBundle(null, "en"))
+			using (var rbCustom = rbroot["Custom"])
+			using (var rbCustomLocales = rbCustom["LocalesAdded"])
 			{
 				if (rbCustomLocales.GetStringContents().Contains(localeId))
 				{
@@ -112,7 +127,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 
 			// Next, check if ICU knows about this locale. If ICU doesn't know about it, it is considered custom.
 			string dummyDisplayName;
-			return !LCModel.Core.Text.Icu.TryGetDisplayName(localeId, out dummyDisplayName);
+			return !TryGetDisplayName(localeId, out dummyDisplayName);
 		}
 
 		/// <summary>
@@ -132,6 +147,29 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			LocaleSelected?.Invoke(this, ea);
 		}
 
+		/// <summary>
+		/// Get a dictionary, keyed by language ID, with values being a list of locale IDs and names.
+		/// This allows "en-GB" and "en-US" to be grouped together under "English" in a menu, for example.
+		/// </summary>
+		/// <param name="displayLocale">Locale ID in which to display the locale names (e.g., if this is "fr", then the "en" locale will have the display name "anglais").</param>
+		/// <returns>A dictionary whose keys are language IDs (2- or 3-letter ISO codes) and whose values are a list of the IcuIdAndName objects that GetLocaleIdsAndNames returns.</returns>
+		private static IDictionary<string, IList<IcuIdAndName>> GetLocalesByLanguage(string displayLocale = null)
+		{
+			var result = new Dictionary<string, IList<IcuIdAndName>>();
+			foreach (var locale in Locale.AvailableLocales)
+			{
+				var name = locale.GetDisplayName(displayLocale);
+				IList<IcuIdAndName> entries;
+				if (!result.TryGetValue(locale.Language, out entries))
+				{
+					entries = new List<IcuIdAndName>();
+					result[locale.Language] = entries;
+				}
+				entries.Add(new IcuIdAndName(locale.Id, name));
+			}
+			return result;
+		}
+
 		/// <inheritdoc />
 		protected override void OnClick(EventArgs e)
 		{
@@ -143,10 +181,12 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			m_mainItems = new List<LocaleMenuItemData>();
 			m_itemData = new Dictionary<ToolStripMenuItem, LocaleMenuItemData>();
 
-			var localeDataByLanguage = LCModel.Core.Text.Icu.GetLocalesByLanguage(DisplayLocaleId);
+			var localeDataByLanguage = GetLocalesByLanguage(DisplayLocaleId);
 			foreach (var localeData in localeDataByLanguage)
 			{
-				m_locales[localeData.Key] = localeData.Value.Select(idAndName => new LocaleMenuItemData(idAndName.Id, idAndName.Name)).ToList();
+				var langid = localeData.Key;
+				var items = localeData.Value;
+				m_locales[langid] = items.Select(idAndName => new LocaleMenuItemData(idAndName.Id, idAndName.Name)).ToList();
 			}
 
 			// Generate the secondary items. For each key in m_locales,

@@ -3625,6 +3625,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateCssForConfiguration_ContentNormalizedComposed()
 		{
+			var icuNormalizer = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD);
 			var model = new DictionaryConfigurationModel
 			{
 				Parts = new List<ConfigurableDictionaryNode>
@@ -3632,15 +3633,15 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 					new ConfigurableDictionaryNode
 					{
 						FieldDescription = "LexEntry",
-						CSSClassNameOverride = Icu.Normalize("자ㄱㄴ시", Icu.UNormalizationMode.UNORM_NFD),
+						CSSClassNameOverride = icuNormalizer.Normalize("자ㄱㄴ시"),
 						Children = new List<ConfigurableDictionaryNode>
 						{
 							new ConfigurableDictionaryNode
 							{
 								FieldDescription = "MLHeadWord",
-								Before = Icu.Normalize("garçon", Icu.UNormalizationMode.UNORM_NFD),
-								Between = Icu.Normalize("자ㄱㄴ시", Icu.UNormalizationMode.UNORM_NFD),
-								After = Icu.Normalize("Brötchen", Icu.UNormalizationMode.UNORM_NFD)
+								Before = icuNormalizer.Normalize("garçon"),
+								Between = icuNormalizer.Normalize("자ㄱㄴ시"),
+								After = icuNormalizer.Normalize("Brötchen")
 							}
 						}
 					}

@@ -14,6 +14,8 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Utils;
 using SIL.Utils;
@@ -190,7 +192,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary />
 		public void RefreshContextGrid()
 		{
-			m_tokenGrid_RowEnter(null, 				new DataGridViewCellEventArgs(m_tokenGrid.CurrentCellAddress.X, m_tokenGrid.CurrentCellAddress.Y));
+			m_tokenGrid_RowEnter(null, new DataGridViewCellEventArgs(m_tokenGrid.CurrentCellAddress.X, m_tokenGrid.CurrentCellAddress.Y));
 		}
 
 		/// <summary />
@@ -294,13 +296,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var info = m_currContextInfoList[e.RowIndex];
 			switch (e.ColumnIndex)
 			{
-				case kiColRef: e.Value = info.Reference;
+				case kiColRef:
+					e.Value = info.Reference;
 					break;
-				case kiColContextBefore: e.Value = info.Before;
+				case kiColContextBefore:
+					e.Value = info.Before;
 					break;
-				case kiColContextItem: e.Value = info.Character;
+				case kiColContextItem:
+					e.Value = info.Character;
 					break;
-				case kiColContextAfter: e.Value = info.After;
+				case kiColContextAfter:
+					e.Value = info.After;
 					break;
 			}
 		}
@@ -445,7 +451,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			catch (Exception e)
 			{
-				MessageBox.Show(string.Format(FwCoreDlgs.kstidNonUnicodeFileError, e.Message), m_app.ApplicationName, MessageBoxButtons.OK,MessageBoxIcon.Information);
+				MessageBox.Show(string.Format(FwCoreDlgs.kstidNonUnicodeFileError, e.Message), m_app.ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Information);
 				return null;
 			}
 
@@ -472,7 +478,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					{
 						throw new Exception(FWCoreDlgsErrors.ksInvalidControlCharacterFound);
 					}
-					m_fileData[i] = LCModel.Core.Text.Icu.Normalize(m_fileData[i], LCModel.Core.Text.Icu.UNormalizationMode.UNORM_NFD);
+					m_fileData[i] = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(m_fileData[i]);
 				}
 			}
 		}

@@ -46,7 +46,7 @@ namespace LanguageExplorer.Controls.LexText
 	{
 		readonly LcmCache m_cache;
 		ITsString m_tssEmpty;
-		public const string LiftDateTimeFormat = "yyyy-MM-ddTHH:mm:ssK";	// wants UTC, but works with Local
+		public const string LiftDateTimeFormat = "yyyy-MM-ddTHH:mm:ssK";    // wants UTC, but works with Local
 		private readonly WritingSystemManager m_wsManager;
 		readonly Regex m_regexGuid = new Regex("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 		private ConflictingData m_cdConflict;
@@ -55,7 +55,7 @@ namespace LanguageExplorer.Controls.LexText
 		private string m_sLiftFile;
 		// TODO WS: how should this be used in the new world?
 		private string m_sLiftDir;
-		private string m_sLiftProducer;		// the producer attribute in the lift element.
+		private string m_sLiftProducer;     // the producer attribute in the lift element.
 		private DateTime m_defaultDateTime = default(DateTime);
 		private bool m_fCreatingNewEntry;
 		private bool m_fCreatingNewSense;
@@ -334,7 +334,7 @@ namespace LanguageExplorer.Controls.LexText
 				}
 				if (posNames.Count == 0)
 				{
-					posNames.Add(string.Empty);		// should never happen!
+					posNames.Add(string.Empty);     // should never happen!
 				}
 				foreach (var stem in pos.AllStemNames)
 				{
@@ -437,7 +437,7 @@ namespace LanguageExplorer.Controls.LexText
 			if (tss.Length > 0)
 			{
 				var s = tss.Text;
-				if(!m_dictRevLexRefTypes.ContainsKey(s.ToLowerInvariant()))
+				if (!m_dictRevLexRefTypes.ContainsKey(s.ToLowerInvariant()))
 				{
 					m_dictRevLexRefTypes.Add(s.ToLowerInvariant(), lrt);
 				}
@@ -466,7 +466,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		private void LoadCategoryNode(XmlNode node, string id, string parent)
 		{
-			var cat = new EticCategory {Id = id, ParentId = parent};
+			var cat = new EticCategory { Id = id, ParentId = parent };
 			if (node != null)
 			{
 				foreach (XmlNode xn in node.SelectNodes("abbrev"))
@@ -709,7 +709,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		private bool IsVoiceWritingSystem(int wsString)
 		{
-			var wsEngine = (CoreWritingSystemDefinition) m_wsManager.get_EngineOrNull(wsString);
+			var wsEngine = (CoreWritingSystemDefinition)m_wsManager.get_EngineOrNull(wsString);
 			return wsEngine.IsVoice;
 		}
 
@@ -724,7 +724,7 @@ namespace LanguageExplorer.Controls.LexText
 				return;
 			}
 			var cmo = GetObjectForGuid(guid);
-			if (cmo is ILexEntry)	// make sure it's a LexEntry!
+			if (cmo is ILexEntry)   // make sure it's a LexEntry!
 			{
 				// We need to collect the deleted objects' guids so that they won't be
 				// reused.  See FWR-3290 for what can happen if we don't do this.
@@ -813,7 +813,7 @@ namespace LanguageExplorer.Controls.LexText
 				{
 					m_setUnchangedEntry.Add(guid);
 				}
-				return null;	// assume nothing has changed.
+				return null;    // assume nothing has changed.
 			}
 			var entry = new CmLiftEntry(info, guid, order, this);
 			if (m_msImport == MergeStyle.MsKeepOnlyNew)
@@ -1368,7 +1368,7 @@ namespace LanguageExplorer.Controls.LexText
 			}
 			if (m_factFsClosedFeature == null)
 			{
-				m_factFsClosedFeature = m_cache.ServiceLocator.GetInstance <IFsClosedFeatureFactory>();
+				m_factFsClosedFeature = m_cache.ServiceLocator.GetInstance<IFsClosedFeatureFactory>();
 			}
 			if (m_repoFsFeatDefn == null)
 			{
@@ -1510,7 +1510,7 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			if (sComplexType == null)
 			{
-				return;		// The user didn't give a type -- see LT-15112.
+				return;     // The user didn't give a type -- see LT-15112.
 			}
 			if (featComplex.TypeRA == null || m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew)
 			{
@@ -1588,7 +1588,7 @@ namespace LanguageExplorer.Controls.LexText
 				if (rgsMissing.Count > 0)
 				{
 					List<string> missingItems;
-					if(!m_mapClosedFeatMissingValueAbbrs.TryGetValue(featClosed, out missingItems))
+					if (!m_mapClosedFeatMissingValueAbbrs.TryGetValue(featClosed, out missingItems))
 					{
 						m_mapClosedFeatMissingValueAbbrs.Add(featClosed, rgsMissing);
 					}
@@ -2075,20 +2075,20 @@ namespace LanguageExplorer.Controls.LexText
 		private bool IsCustomField(string tag, LiftMultiText description, out int typeFlid)
 		{
 			LiftString lstr;
-			if(description.TryGetValue("qaa-x-spec", out lstr))
+			if (description.TryGetValue("qaa-x-spec", out lstr))
 			{
 				var value = lstr.Text;
-				var items = value.Split(new char[]{'=',';'});
-				for(var i = 0; i < items.Length; ++i)
+				var items = value.Split(new char[] { '=', ';' });
+				for (var i = 0; i < items.Length; ++i)
 				{
-					if(items[i].Equals("Class") && items.Length >= i + 1)
+					if (items[i].Equals("Class") && items.Length >= i + 1)
 					{
 						try
 						{
 							typeFlid = m_cache.DomainDataByFlid.MetaDataCache.GetClassId(items[i + 1].Trim());
 							return true;
 						}
-						catch(Exception e)
+						catch (Exception e)
 						{
 							//we can't deal with this class, but no need to give up now
 							//we won't create a custom field for it, but let's not crash (our bogus cache in the tests crashed here)
@@ -2146,7 +2146,7 @@ namespace LanguageExplorer.Controls.LexText
 				}
 				StoreEntryId(le, entry);
 				le.HomographNumber = entry.Order;
-				CreateLexemeForm(le, entry);		// also sets CitationForm if it exists.
+				CreateLexemeForm(le, entry);        // also sets CitationForm if it exists.
 				if (fNeedNewId)
 				{
 					var xdEntryResidue = FindOrCreateResidue(le, entry.Id, LexEntryTags.kflidLiftResidue);
@@ -2229,7 +2229,7 @@ namespace LanguageExplorer.Controls.LexText
 		private void FinishProcessingEntry(ILexEntry le)
 		{
 			// We don't create/assign MSAs to senses if <grammatical-info> doesn't exist.
-			EnsureValidMSAsForSenses(le);;
+			EnsureValidMSAsForSenses(le); ;
 		}
 
 		private void WriteAccumulatedResidue()
@@ -2291,7 +2291,7 @@ namespace LanguageExplorer.Controls.LexText
 			var le = entry.CmObject as ILexEntry;
 			StoreEntryId(le, entry);
 			le.HomographNumber = entry.Order;
-			MergeLexemeForm(le, entry);		// also sets CitationForm if it exists.
+			MergeLexemeForm(le, entry);     // also sets CitationForm if it exists.
 			ProcessEntryTraits(le, entry);
 			ProcessEntryNotes(le, entry);
 			ProcessEntryFields(le, entry);
@@ -2440,7 +2440,7 @@ namespace LanguageExplorer.Controls.LexText
 				var clsid = 0;
 				if (mf == null)
 				{
-					var form = Icu.Normalize(XmlUtils.DecodeXmlAttribute(entry.LexicalForm.FirstValue.Value.Text), Icu.UNormalizationMode.UNORM_NFD);
+					var form = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(XmlUtils.DecodeXmlAttribute(entry.LexicalForm.FirstValue.Value.Text));
 					var mmt = FindMorphType(ref form, out clsid, le.Guid, LexEntryTags.kflidLexemeForm);
 					mf = mmt.IsAffixType ? (IMoForm)CreateNewMoAffixAllomorph() : CreateNewMoStemAllomorph();
 					le.LexemeFormOA = mf;
@@ -2488,12 +2488,12 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				switch (lt.Name.ToLowerInvariant())
 				{
-					case "entrytype":	// original FLEX export = EntryType
+					case "entrytype":   // original FLEX export = EntryType
 					case "entry-type":
 						// Save this for use with a <relation type="main" ...> to create LexEntryRef later.
 						entry.EntryType = lt.Value;
 						break;
-					case RangeNames.sDbMorphTypesOAold:	// original FLEX export = MorphType
+					case RangeNames.sDbMorphTypesOAold: // original FLEX export = MorphType
 					case RangeNames.sDbMorphTypesOA:
 						ProcessEntryMorphType(le, lt.Value);
 						break;
@@ -2501,16 +2501,16 @@ namespace LanguageExplorer.Controls.LexText
 					case RangeNames.sDbPublicationTypesOA:
 						ProcessEntryPublicationSettings(le, lt.Value);
 						break;
-					case "minorentrycondition":		// original FLEX export = MinorEntryCondition
+					case "minorentrycondition":     // original FLEX export = MinorEntryCondition
 					case "minor-entry-condition":
 						// Save this for use with a <relation type="main" ...> to create LexEntryRef later.
 						entry.MinorEntryCondition = lt.Value;
 						break;
-					case "excludeasheadword":	// original FLEX export = ExcludeAsHeadword
+					case "excludeasheadword":   // original FLEX export = ExcludeAsHeadword
 					case "exclude-as-headword":
 						entry.ExcludeAsHeadword = false; // MDL: replace when Lift interface is updated for ShowHeadwordIn
 						break;
-					case "donotuseforparsing":	// original FLEX export = DoNotUseForParsing
+					case "donotuseforparsing":  // original FLEX export = DoNotUseForParsing
 					case "do-not-use-for-parsing":
 						var fDontUse = XmlUtils.GetBooleanAttributeValue(lt.Value);
 						if (le.DoNotUseForParsing != fDontUse && (m_fCreatingNewEntry || m_msImport != MergeStyle.MsKeepOld))
@@ -2673,11 +2673,11 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				switch (lt.Name.ToLowerInvariant())
 				{
-					case "entrytype":	// original FLEX export = EntryType
+					case "entrytype":   // original FLEX export = EntryType
 					case "entry-type":
 						// This trait is no longer used by FLEX.
 						break;
-					case RangeNames.sDbMorphTypesOAold:	// original FLEX export = MorphType
+					case RangeNames.sDbMorphTypesOAold: // original FLEX export = MorphType
 					case RangeNames.sDbMorphTypesOA:
 						if (le.LexemeFormOA != null && le.LexemeFormOA.MorphTypeRA != null)
 						{
@@ -2689,15 +2689,15 @@ namespace LanguageExplorer.Controls.LexText
 							}
 						}
 						break;
-					case "minorentrycondition":		// original FLEX export = MinorEntryCondition
+					case "minorentrycondition":     // original FLEX export = MinorEntryCondition
 					case "minor-entry-condition":
 						// This trait is no longer used by FLEX.
 						break;
-					case "excludeasheadword":	// original FLEX export = ExcludeAsHeadword
+					case "excludeasheadword":   // original FLEX export = ExcludeAsHeadword
 					case "exclude-as-headword":
 						// MDL: Remove when Lift interface is updated for ShowHeadwordIn
 						break;
-					case "donotuseforparsing":	// original FLEX export = DoNotUseForParsing
+					case "donotuseforparsing":  // original FLEX export = DoNotUseForParsing
 					case "do-not-use-for-parsing":
 						var fDontUse = XmlUtils.GetBooleanAttributeValue(lt.Value);
 						if (le.DoNotUseForParsing != fDontUse)
@@ -2725,8 +2725,8 @@ namespace LanguageExplorer.Controls.LexText
 					case "bibliography":
 						MergeInMultiString(le.Bibliography, LexEntryTags.kflidBibliography, note.Content, le.Guid);
 						break;
-					case "":		// WeSay uses untyped notes in entries; LIFT now exports like this.
-					case "comment":	// older Flex exported LIFT files have this type value.
+					case "":        // WeSay uses untyped notes in entries; LIFT now exports like this.
+					case "comment": // older Flex exported LIFT files have this type value.
 						MergeInMultiString(le.Comment, LexEntryTags.kflidComment, note.Content, le.Guid);
 						break;
 					case RangeNames.sRestrictionsOA:
@@ -2787,11 +2787,11 @@ namespace LanguageExplorer.Controls.LexText
 					case "import-residue":
 						le.ImportResidue = StoreTsStringValue(m_fCreatingNewEntry, le.ImportResidue, lf.Content);
 						break;
-					case "literal_meaning":	// original FLEX export
+					case "literal_meaning": // original FLEX export
 					case "literal-meaning":
 						MergeInMultiString(le.LiteralMeaning, LexEntryTags.kflidLiteralMeaning, lf.Content, le.Guid);
 						break;
-					case "summary_definition":	// original FLEX export
+					case "summary_definition":  // original FLEX export
 					case "summary-definition":
 						MergeInMultiString(le.SummaryDefinition, LexEntryTags.kflidSummaryDefinition, lf.Content, le.Guid);
 						break;
@@ -2827,7 +2827,7 @@ namespace LanguageExplorer.Controls.LexText
 							}
 						}
 						break;
-					case "literal_meaning":	// original FLEX export
+					case "literal_meaning": // original FLEX export
 					case "literal-meaning":
 						AddNewWsToAnalysis();
 						if (MultiTsStringsConflict(le.LiteralMeaning, lf.Content))
@@ -2836,7 +2836,7 @@ namespace LanguageExplorer.Controls.LexText
 							return true;
 						}
 						break;
-					case "summary_definition":	// original FLEX export
+					case "summary_definition":  // original FLEX export
 					case "summary-definition":
 						AddNewWsToAnalysis();
 						if (MultiTsStringsConflict(le.SummaryDefinition, lf.Content))
@@ -3062,7 +3062,7 @@ namespace LanguageExplorer.Controls.LexText
 			ParaData para = null;
 			var fNewPara = true;
 			var tisb = TsStringUtils.MakeIncStrBldr();
-			tisb.SetIntPropValues((int) FwTextPropType.ktptWs, 0, wsText);
+			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, wsText);
 			var wsCurrent = wsText;
 			string styleCurrent = null;
 			foreach (var span in text.Spans)
@@ -3080,7 +3080,7 @@ namespace LanguageExplorer.Controls.LexText
 					else
 					{
 						tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, wsText);
-						tisb.SetStrPropValue((int) FwTextPropType.ktptNamedStyle, null);
+						tisb.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, null);
 						tisb.Append(XmlUtils.DecodeXmlAttribute(data));
 					}
 				}
@@ -3100,7 +3100,7 @@ namespace LanguageExplorer.Controls.LexText
 						if (IsParaStyle(span.Class))
 						{
 							para.StyleName = span.Class;
-							tisb.SetIntPropValues((int) FwTextPropType.ktptWs, 0, wsText);
+							tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, wsText);
 							fParaStyle = true;
 						}
 					}
@@ -3204,21 +3204,21 @@ namespace LanguageExplorer.Controls.LexText
 				case WritingSystemServices.kwsAnal:
 				case WritingSystemServices.kwsAnals:
 				case WritingSystemServices.kwsFirstAnal:
-					AddNewWsToAnalysis();		// if new ws, add to analysis list
+					AddNewWsToAnalysis();       // if new ws, add to analysis list
 					break;
 				case WritingSystemServices.kwsVern:
 				case WritingSystemServices.kwsVerns:
 				case WritingSystemServices.kwsFirstVern:
-					AddNewWsToVernacular();		// if new ws, add to vernacular list
+					AddNewWsToVernacular();     // if new ws, add to vernacular list
 					break;
 				case WritingSystemServices.kwsAnalVerns:
 				case WritingSystemServices.kwsVernAnals:
 				case WritingSystemServices.kwsFirstAnalOrVern:
 				case WritingSystemServices.kwsFirstVernOrAnal:
-					AddNewWsToBothVernAnal();		// if new ws, add to both vernacular and analysis lists
+					AddNewWsToBothVernAnal();       // if new ws, add to both vernacular and analysis lists
 					break;
 				default:
-					IgnoreNewWs();	// if new ws, don't add to either vernacular or analysis lists
+					IgnoreNewWs();  // if new ws, don't add to either vernacular or analysis lists
 					break;
 			}
 		}
@@ -3439,7 +3439,7 @@ namespace LanguageExplorer.Controls.LexText
 					return fAffix ? MoAffixAllomorphTags.kClassId : MoStemAllomorphTags.kClassId;
 				}
 			}
-			return 0;	// no subclass info in the traits
+			return 0;   // no subclass info in the traits
 		}
 
 		private void ProcessMoFormTraits(IMoForm form, CmLiftVariant variant, out IMoForm newForm, out bool fTypeSpecified)
@@ -3449,7 +3449,7 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				switch (lt.Name.ToLowerInvariant())
 				{
-					case RangeNames.sDbMorphTypesOAold:	// original FLEX export = MorphType
+					case RangeNames.sDbMorphTypesOAold: // original FLEX export = MorphType
 					case RangeNames.sDbMorphTypesOA:
 						if (!m_fCreatingNewEntry && m_msImport == MergeStyle.MsKeepOld && form.MorphTypeRA != null)
 						{
@@ -3526,7 +3526,7 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				switch (lt.Name.ToLowerInvariant())
 				{
-					case RangeNames.sDbMorphTypesOAold:	// original FLEX export = MorphType
+					case RangeNames.sDbMorphTypesOAold: // original FLEX export = MorphType
 					case RangeNames.sDbMorphTypesOA:
 						if (mf.MorphTypeRA != null)
 						{
@@ -3745,7 +3745,7 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				if (media.MediaFileRA == null)
 				{
-					continue;	// should NEVER happen!
+					continue;   // should NEVER happen!
 				}
 				if (media.MediaFileRA.InternalPath == sFile || Path.GetFileName(media.MediaFileRA.InternalPath) == sFile)
 				{
@@ -4983,7 +4983,7 @@ namespace LanguageExplorer.Controls.LexText
 					MsaInflClassInfoMatches(dictPosInflClasses, null, msaStem) &&
 					MsaExceptionFeatsMatch(rgpossProdRestrict, null, msaStem) &&
 					MsaInflFeatureMatches(sInflectionFeature, null, msaStem))
-					// Don't bother comparing residue -- it's not that important!
+				// Don't bother comparing residue -- it's not that important!
 				{
 					msaSense = msa;
 					return false;
@@ -5050,7 +5050,7 @@ namespace LanguageExplorer.Controls.LexText
 					msaAffix.PartOfSpeechRA == pos &&
 					MsaSlotInfoMatches(dictPosSlots, msaAffix) &&
 					MsaInflClassInfoMatches(dictPosInflClasses, null, msaAffix))
-					// Don't bother comparing residue -- it's not that important!
+				// Don't bother comparing residue -- it's not that important!
 				{
 					msaSense = msa;
 					return false;
@@ -5084,7 +5084,7 @@ namespace LanguageExplorer.Controls.LexText
 					msaAffix.PartOfSpeechRA == pos &&
 					MsaSlotInfoMatches(dictPosSlots, msaAffix) &&
 					MsaInflClassInfoMatches(dictPosInflClasses, null, msaAffix))
-					// Don't bother comparing residue -- it's not that important!
+				// Don't bother comparing residue -- it's not that important!
 				{
 					msaSense = msa;
 					return false;
@@ -5127,7 +5127,7 @@ namespace LanguageExplorer.Controls.LexText
 					MsaExceptionFeatsMatch(rgpossProdRestrict, rgpossFromProdRestrict, msaAffix) &&
 					MsaInflFeatureMatches(sInflectionFeature, sFromInflFeature, msaAffix) &&
 					MsaStemNameMatches(sFromStemName, msaAffix))
-					// Don't bother comparing residue -- it's not that important!
+				// Don't bother comparing residue -- it's not that important!
 				{
 					msaSense = msa;
 					return false;
@@ -5164,9 +5164,9 @@ namespace LanguageExplorer.Controls.LexText
 					msaAffix.PartOfSpeechRA == pos &&
 					MsaSlotInfoMatches(dictPosSlots, msaAffix) &&
 					MsaInflClassInfoMatches(dictPosInflClasses, null, msaAffix) &&
-					MsaExceptionFeatsMatch(rgpossProdRestrict, null,  msaAffix) &&
+					MsaExceptionFeatsMatch(rgpossProdRestrict, null, msaAffix) &&
 					MsaInflFeatureMatches(sFeatureString, null, msaAffix))
-					// Don't bother comparing residue -- it's not that important!
+				// Don't bother comparing residue -- it's not that important!
 				{
 					msaSense = msa;
 					return false;
@@ -5257,7 +5257,7 @@ namespace LanguageExplorer.Controls.LexText
 						foreach (var sInflClass in rgsInflClasses)
 						{
 							var incl = FindOrCreateInflectionClass(pos, sInflClass);
-							msaDeriv.FromInflectionClassRA = incl;		// last one wins...
+							msaDeriv.FromInflectionClassRA = incl;      // last one wins...
 						}
 					}
 				}
@@ -6294,7 +6294,7 @@ namespace LanguageExplorer.Controls.LexText
 			Dictionary<MuElement, List<IReversalIndexEntry>> mapToRIEs;
 			IReversalIndexEntry rie;
 			// Do not import blank reversal entries
-			if(rev.Form.IsEmpty)
+			if (rev.Form.IsEmpty)
 			{
 				return null;
 			}
@@ -6314,7 +6314,7 @@ namespace LanguageExplorer.Controls.LexText
 			}
 			else
 			{
-				var rieOwner = ProcessReversal(rev.Main);	// recurse!
+				var rieOwner = ProcessReversal(rev.Main);   // recurse!
 				if (!m_mapToMapToRie.TryGetValue(rieOwner, out mapToRIEs))
 				{
 					mapToRIEs = new Dictionary<MuElement, List<IReversalIndexEntry>>();
@@ -6353,10 +6353,11 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				var ws = GetWsFromLiftLang(key);
 				var sNew = form[key].Text; // safe XML
-				var sNewNorm = string.IsNullOrEmpty(sNew) ? sNew : Icu.Normalize(sNew, Icu.UNormalizationMode.UNORM_NFD);
+				var icuNormalizer = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD);
+				var sNewNorm = string.IsNullOrEmpty(sNew) ? string.Empty : icuNormalizer.Normalize(sNew);
 				// LiftMultiText parameter may have come in with escaped characters which need to be
 				// converted to plain text before comparing with existing entries
-				var mue = new MuElement(ws, Icu.Normalize(XmlUtils.DecodeXmlAttribute(sNewNorm), Icu.UNormalizationMode.UNORM_NFD));
+				var mue = new MuElement(ws, icuNormalizer.Normalize(XmlUtils.DecodeXmlAttribute(sNewNorm)));
 				List<IReversalIndexEntry> rgrie;
 				if (rie == null && mapToRIEs.TryGetValue(mue, out rgrie))
 				{
@@ -6412,8 +6413,8 @@ namespace LanguageExplorer.Controls.LexText
 				ws = GetWsFromLiftLang(sWs);
 				if (GetWsFromStr(sWs) == 0)
 				{
-					sWs = GetExistingWritingSystem(ws).Id;	// Must be old-style ICU Locale.
-					// REVIEW Jason/Hasso): Nobody uses the newly reset 'sWs'. Can we remove the check code?
+					sWs = GetExistingWritingSystem(ws).Id;  // Must be old-style ICU Locale.
+															// REVIEW Jason/Hasso): Nobody uses the newly reset 'sWs'. Can we remove the check code?
 				}
 			}
 			return FindOrCreateReversalIndex(ws);
@@ -6538,8 +6539,8 @@ namespace LanguageExplorer.Controls.LexText
 					case "encyclopedic":
 						MergeInMultiString(ls.EncyclopedicInfo, LexSenseTags.kflidEncyclopedicInfo, note.Content, ls.Guid);
 						break;
-					case "":		// WeSay uses untyped notes in senses; LIFT now exports like this.
-					case "general":	// older Flex exported LIFT files have this type value.
+					case "":        // WeSay uses untyped notes in senses; LIFT now exports like this.
+					case "general": // older Flex exported LIFT files have this type value.
 						MergeInMultiString(ls.GeneralNote, LexSenseTags.kflidGeneralNote, note.Content, ls.Guid);
 						break;
 					case "grammar":
@@ -6679,7 +6680,7 @@ namespace LanguageExplorer.Controls.LexText
 					case "import-residue":
 						ls.ImportResidue = StoreTsStringValue(m_fCreatingNewSense, ls.ImportResidue, field.Content);
 						break;
-					case "scientific_name":	// original FLEX export
+					case "scientific_name": // original FLEX export
 					case "scientific-name":
 						ls.ScientificName = StoreTsStringValue(m_fCreatingNewSense, ls.ScientificName, field.Content);
 						break;
@@ -6759,7 +6760,7 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				if (TsStringIsNullOrEmpty(tssOld))
 				{
-					tssOld= tss;
+					tssOld = tss;
 				}
 			}
 			else
@@ -6794,7 +6795,7 @@ namespace LanguageExplorer.Controls.LexText
 							}
 						}
 						break;
-					case "scientific_name":	// original FLEX export
+					case "scientific_name": // original FLEX export
 					case "scientific-name":
 						if (StringsConflict(ls.ScientificName, GetFirstLiftTsString(field.Content)))
 						{
@@ -6919,7 +6920,7 @@ namespace LanguageExplorer.Controls.LexText
 						FindOrCreateAnthroCode(lt.Value);
 						// how do you detect conflicts in a reference list?
 						break;
-					case RangeNames.sSemanticDomainListOAold1:	// for WeSay 0.4 compatibility
+					case RangeNames.sSemanticDomainListOAold1:  // for WeSay 0.4 compatibility
 					case RangeNames.sSemanticDomainListOAold2:
 					case RangeNames.sSemanticDomainListOAold3:
 					case RangeNames.sSemanticDomainListOA:
@@ -6929,12 +6930,12 @@ namespace LanguageExplorer.Controls.LexText
 					case RangeNames.sDbDialectLabelsOA:
 						FindOrCreateDialect(lt.Value);
 						break;
-					case RangeNames.sDbDomainTypesOAold1:	// original FLEX export = DomainType
+					case RangeNames.sDbDomainTypesOAold1:   // original FLEX export = DomainType
 					case RangeNames.sDbDomainTypesOA:
 						FindOrCreateDomainType(lt.Value);
 						// how do you detect conflicts in a reference list?
 						break;
-					case RangeNames.sDbSenseTypesOAold1:	// original FLEX export = SenseType
+					case RangeNames.sDbSenseTypesOAold1:    // original FLEX export = SenseType
 					case RangeNames.sDbSenseTypesOA:
 						poss = FindOrCreateSenseType(lt.Value);
 						if (ls.SenseTypeRA != null && ls.SenseTypeRA != poss)
@@ -6951,7 +6952,7 @@ namespace LanguageExplorer.Controls.LexText
 							return true;
 						}
 						break;
-					case RangeNames.sDbUsageTypesOAold:	// original FLEX export = UsageType
+					case RangeNames.sDbUsageTypesOAold: // original FLEX export = UsageType
 					case RangeNames.sDbUsageTypesOA:
 						FindOrCreateUsageType(lt.Value);
 						// how do you detect conflicts in a reference list?
@@ -7045,7 +7046,7 @@ namespace LanguageExplorer.Controls.LexText
 					++cTypes;
 				}
 			}
-			return cTypes > 0;		// assume stem if no type information.
+			return cTypes > 0;      // assume stem if no type information.
 		}
 
 		private IMoMorphSynAnalysis FindEmptyAffixMsa(ILexEntry le)
@@ -8152,8 +8153,8 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				return false;
 			}
-			var sNewNorm = Icu.Normalize(sNew, Icu.UNormalizationMode.UNORM_NFD);
-			var sOldNorm = Icu.Normalize(sOld, Icu.UNormalizationMode.UNORM_NFD);
+			var sNewNorm = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sNew);
+			var sOldNorm = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sOld);
 			return sNewNorm != sOldNorm;
 		}
 
@@ -8198,8 +8199,8 @@ namespace LanguageExplorer.Controls.LexText
 					continue;
 				}
 				var sOld = tssOld.Text;
-				var sNewNorm = Icu.Normalize(sNew, Icu.UNormalizationMode.UNORM_NFD);
-				var sOldNorm = Icu.Normalize(sOld, Icu.UNormalizationMode.UNORM_NFD);
+				var sNewNorm = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sNew);
+				var sOldNorm = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sOld);
 				if (sNewNorm != sOldNorm)
 				{
 					return true;
@@ -8269,8 +8270,8 @@ namespace LanguageExplorer.Controls.LexText
 				{
 					sNew = StripAlloForm(sNew, 0, guidEntry, flid);
 				}
-				var sNewNorm = Icu.Normalize(sNew, Icu.UNormalizationMode.UNORM_NFD);
-				var sOldNorm = Icu.Normalize(sOld, Icu.UNormalizationMode.UNORM_NFD);
+				var sNewNorm = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sNew);
+				var sOldNorm = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sOld);
 				if (sNewNorm == sOldNorm)
 				{
 					++cMatches;
@@ -8335,8 +8336,8 @@ namespace LanguageExplorer.Controls.LexText
 				}
 				// LiftMultiText parameter may have come in with escaped characters which need to be
 				// converted to plain text before comparing with existing entries
-				var sNewNorm = XmlUtils.DecodeXmlAttribute(Icu.Normalize(sNew, Icu.UNormalizationMode.UNORM_NFD));
-				var sOldNorm = Icu.Normalize(tssOld.Text, Icu.UNormalizationMode.UNORM_NFD);
+				var sNewNorm = XmlUtils.DecodeXmlAttribute(CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sNew));
+				var sOldNorm = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(tssOld.Text);
 				if (sNewNorm != sOldNorm)
 				{
 					return false;
@@ -9419,11 +9420,12 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary />
 		private static int FindAbbevOrLabelInDict(LiftMultiText abbrev, LiftMultiText label, Dictionary<string, ICmPossibility> dict)
 		{
+			var normalizer = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD);
 			if (abbrev?.Keys != null)
 			{
 				foreach (var key in abbrev.Keys)
 				{
-					var text = Icu.Normalize(XmlUtils.DecodeXmlAttribute(abbrev[key].Text), Icu.UNormalizationMode.UNORM_NFD);
+					var text = normalizer.Normalize(XmlUtils.DecodeXmlAttribute(abbrev[key].Text));
 					if (dict.ContainsKey(text))
 					{
 						return dict[text].Hvo;
@@ -9434,7 +9436,7 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				foreach (var key in label.Keys)
 				{
-					var text = Icu.Normalize(XmlUtils.DecodeXmlAttribute(label[key].Text), Icu.UNormalizationMode.UNORM_NFD);
+					var text = normalizer.Normalize(XmlUtils.DecodeXmlAttribute(label[key].Text));
 					if (dict.ContainsKey(text))
 					{
 						return dict[text].Hvo;
@@ -9746,7 +9748,7 @@ namespace LanguageExplorer.Controls.LexText
 				foreach (var key in text.Keys)
 				{
 					var wsHvo = GetWsFromLiftLang(key);
-					var sValue = Icu.Normalize(XmlUtils.DecodeXmlAttribute(text[key].Text), Icu.UNormalizationMode.UNORM_NFD);
+					var sValue = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(XmlUtils.DecodeXmlAttribute(text[key].Text));
 					var tssAlt = tsm.get_String(wsHvo);
 					if (string.IsNullOrEmpty(sValue) || (tssAlt == null || tssAlt.Length == 0))
 					{

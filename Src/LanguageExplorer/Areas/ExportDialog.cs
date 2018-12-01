@@ -15,21 +15,21 @@ using System.Xml;
 using System.Xml.Xsl;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.XMLViews;
-using LanguageExplorer.Dumpster;
 using LanguageExplorer.DictionaryConfiguration;
+using LanguageExplorer.Dumpster;
 using Microsoft.Win32;
-using SIL.Reporting;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.LCModel;
-using SIL.LCModel.DomainImpl;
 using SIL.FieldWorks.Resources;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainImpl;
+using SIL.LCModel.Utils;
 using SIL.Lift;
 using SIL.Lift.Validation;
-using SIL.LCModel.Utils;
+using SIL.Reporting;
 using SIL.Utils;
 using SIL.Windows.Forms;
 using SIL.Xml;
@@ -212,7 +212,7 @@ namespace LanguageExplorer.Areas
 
 			if (control is XmlBrowseView)
 			{
-				return (XmlBrowseView) control;
+				return (XmlBrowseView)control;
 			}
 			foreach (Control c in control.Controls)
 			{
@@ -228,7 +228,7 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
@@ -237,7 +237,7 @@ namespace LanguageExplorer.Areas
 				return;
 			}
 
-			if( disposing )
+			if (disposing)
 			{
 				components?.Dispose();
 			}
@@ -246,7 +246,7 @@ namespace LanguageExplorer.Areas
 			Publisher = null;
 			Subscriber = null;
 
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#region Windows Form Designer generated code
@@ -382,7 +382,7 @@ namespace LanguageExplorer.Areas
 			{
 				if (ft != FxtTypes.kftConfigured) // Different from Configured Dictionary; Notebook uses a subclass of ExportDialog
 				{
-					return null; // nothing to do.
+					return null;    // nothing to do.
 				}
 				area = m_areaOrig;
 				tool = AreaServices.NotebookDocumentToolMachineName;
@@ -493,7 +493,7 @@ namespace LanguageExplorer.Areas
 					// See FWR-2506.
 					if (m_rgFxtTypes.Count > 0)
 					{
-						var fxtPath = (string) m_exportItems[0].Tag;
+						var fxtPath = (string)m_exportItems[0].Tag;
 						ft = m_rgFxtTypes[FxtIndex(fxtPath)];
 					}
 					else
@@ -753,7 +753,7 @@ namespace LanguageExplorer.Areas
 
 		private object ExportConfiguredXhtml(IThreadedProgress progress, object[] args)
 		{
-			if(args.Length < 1)
+			if (args.Length < 1)
 			{
 				return null;
 			}
@@ -773,8 +773,8 @@ namespace LanguageExplorer.Areas
 		private object ExportGrammarSketch(IThreadedProgress progress, object[] args)
 		{
 			var outPath = (string)args[0];
-			var sDataType = (string) args[1];
-			var sXslts = (string) args[2];
+			var sDataType = (string)args[1];
+			var sXslts = (string)args[2];
 			m_progressDlg = progress;
 			var parameter = new Tuple<string, string, string>(sDataType, outPath, sXslts);
 			Publisher.Publish("SaveAsWebpage", parameter);
@@ -809,7 +809,7 @@ namespace LanguageExplorer.Areas
 				}
 			}
 			var outPathRanges = Path.ChangeExtension(outPath, ".lift-ranges");
-			using (var w =  new StringWriter())
+			using (var w = new StringWriter())
 			{
 				exporter.ExportLiftRanges(w);
 				using (var sw = new StreamWriter(outPathRanges))
@@ -885,10 +885,10 @@ namespace LanguageExplorer.Areas
 				return null;
 			}
 
-			var outPath = (string) parameters[0];
-			var fxtPath = (string) parameters[1];
-			var ft = (FxtType) parameters[2];
-			var vss = (IVwStylesheet) parameters[3];
+			var outPath = (string)parameters[0];
+			var fxtPath = (string)parameters[1];
+			var ft = (FxtType)parameters[2];
+			var vss = (IVwStylesheet)parameters[3];
 
 			using (TextWriter w = new StreamWriter(outPath))
 			{
@@ -1037,7 +1037,7 @@ namespace LanguageExplorer.Areas
 			{
 				if (path.EndsWith(".xml~"))
 				{
-					continue;	// ignore editor backup files.
+					continue;   // ignore editor backup files.
 				}
 				var document = new XmlDocument();
 				// If we have an xml file that can't be loaded, ignore it.
@@ -1054,11 +1054,11 @@ namespace LanguageExplorer.Areas
 				{
 					continue;
 				}
-				var dataLabel = XmlUtils.GetOptionalAttributeValue(node,"dataLabel", "unknown");
-				var formatLabel = XmlUtils.GetOptionalAttributeValue(node,"formatLabel", "unknown");
-				var defaultExtension = XmlUtils.GetOptionalAttributeValue(node,"defaultExtension", "txt");
+				var dataLabel = XmlUtils.GetOptionalAttributeValue(node, "dataLabel", "unknown");
+				var formatLabel = XmlUtils.GetOptionalAttributeValue(node, "formatLabel", "unknown");
+				var defaultExtension = XmlUtils.GetOptionalAttributeValue(node, "defaultExtension", "txt");
 				var sDefaultFilter = ResourceHelper.FileFilter(FileFilterType.AllFiles);
-				var filter = XmlUtils.GetOptionalAttributeValue(node,"filter", sDefaultFilter);
+				var filter = XmlUtils.GetOptionalAttributeValue(node, "filter", sDefaultFilter);
 				var description = node.InnerText;
 				description = description.Trim();
 				if (String.IsNullOrEmpty(description))
@@ -1066,7 +1066,7 @@ namespace LanguageExplorer.Areas
 					description = AreaResources.NoDescriptionForItem;
 				}
 
-				var item = new ListViewItem(new[] {dataLabel, formatLabel, defaultExtension, filter, description}) {Tag = path};
+				var item = new ListViewItem(new[] { dataLabel, formatLabel, defaultExtension, filter, description }) { Tag = path };
 				m_exportList.Items.Add(item);
 				ConfigureItem(document, item, node);
 			}
@@ -1295,10 +1295,10 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		internal object ExportSemanticDomains(IThreadedProgress progressDlg, object[] parameters)
 		{
-			var outPath = (string) parameters[0];
-			var ft = (FxtType) parameters[1];
-			var fxtPath = (string) parameters[2];
-			var allQuestions = (bool) parameters[3];
+			var outPath = (string)parameters[0];
+			var ft = (FxtType)parameters[1];
+			var fxtPath = (string)parameters[2];
+			var allQuestions = (bool)parameters[3];
 			m_progressDlg = progressDlg;
 			var lists = new List<ICmPossibilityList>();
 			lists.Add(m_cache.LangProject.SemanticDomainListOA);
@@ -1313,7 +1313,7 @@ namespace LanguageExplorer.Areas
 			progressDlg.Minimum = 0;
 			progressDlg.Maximum = 1;
 			progressDlg.Message = AreaResources.ProcessingIntoFinalForm;
-			var idx = fxtPath.LastIndexOfAny(new[] {'/', '\\'});
+			var idx = fxtPath.LastIndexOfAny(new[] { '/', '\\' });
 			if (idx < 0)
 			{
 				idx = 0;
@@ -1441,12 +1441,12 @@ namespace LanguageExplorer.Areas
 
 			var mainFullName = Path.Combine(outPath, MainXhtml);
 			var revFullXhtml = Path.Combine(outPath, RevXhtml);
-			if (!(bool) ReflectionHelper.GetProperty(sf, "ExportMain"))
+			if (!(bool)ReflectionHelper.GetProperty(sf, "ExportMain"))
 			{
 				mainFullName = String.Empty;
 			}
 
-			if (!(bool) ReflectionHelper.GetProperty(sf, "ExportReversal"))
+			if (!(bool)ReflectionHelper.GetProperty(sf, "ExportReversal"))
 			{
 				revFullXhtml = String.Empty;
 			}
@@ -1707,14 +1707,14 @@ namespace LanguageExplorer.Areas
 				if (RegistryHelper.CompanyKeyLocalMachine == null)
 				{
 					var defaultDir = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "SIL"), "Pathway7");
-					return Directory.Exists(defaultDir) ? defaultDir : String.Empty;
+					return Directory.Exists(defaultDir) ? defaultDir : string.Empty;
 				}
 
 				if (RegistryHelper.RegEntryValueExists(RegistryHelper.CompanyKeyLocalMachine, "Pathway", installDirValue, out regObj))
 				{
 					return (string)regObj;
 				}
-				return String.Empty;
+				return string.Empty;
 			}
 		}
 

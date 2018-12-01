@@ -11,12 +11,11 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.Framework;
-using SIL.LCModel.Utils;
 using SIL.LCModel;
-using SIL.LCModel.DomainServices;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
 using SIL.Xml;
 
 namespace LanguageExplorer.Controls.XMLViews
@@ -47,7 +46,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private TextWriter m_writer;
 		private LcmCache m_cache;
 		private bool m_fRTL;
-		private int m_cColumns = 2;		// default for dictionary output.
+		private int m_cColumns = 2;     // default for dictionary output.
 
 		/// <summary>
 		/// Constructor.
@@ -265,7 +264,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						WriteHeaderFooterBlock("top-" + sOutside, pub.DivisionsOS[0].HFSetOA.DefaultHeaderOA.OutsideAlignedText);
 						WriteHeaderFooterBlock("bottom-" + sInside, pub.DivisionsOS[0].HFSetOA.DefaultFooterOA.InsideAlignedText);
 						WriteHeaderFooterBlock("bottom-center", pub.DivisionsOS[0].HFSetOA.DefaultFooterOA.CenteredText);
-						WriteHeaderFooterBlock("bottom-"+sOutside, pub.DivisionsOS[0].HFSetOA.DefaultFooterOA.OutsideAlignedText);
+						WriteHeaderFooterBlock("bottom-" + sOutside, pub.DivisionsOS[0].HFSetOA.DefaultFooterOA.OutsideAlignedText);
 						WriteFootnotesBlock(type);
 						if (pub.DivisionsOS[0].DifferentEvenHF)
 						{
@@ -296,42 +295,42 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					switch (type)
 					{
-					case CssType.Dictionary:
-						m_writer.WriteLine("    margin: 2cm 2cm 2cm 2cm;");
-						m_writer.WriteLine("    @top-left {");
-						m_writer.WriteLine("        content: string(guideword, first);");
-						WriteSansSerifFontFamilyForWs(m_cache.DefaultVernWs, true);
-						m_writer.WriteLine("        font-weight: bold;");
-						m_writer.WriteLine("        font-size: 12pt;");
-						m_writer.WriteLine("        margin-top: 1em;");
-						m_writer.WriteLine("    }");
-						m_writer.WriteLine("    @top-center {");
-						m_writer.WriteLine("        content: counter(page);");
-						m_writer.WriteLine("        margin-top: 1em");
-						m_writer.WriteLine("    }");
-						m_writer.WriteLine("    @top-right {");
-						m_writer.WriteLine("        content: string(guideword, last);");
-						WriteSansSerifFontFamilyForWs(m_cache.DefaultVernWs, true);
-						m_writer.WriteLine("        font-weight: bold;");
-						m_writer.WriteLine("        font-size: 12pt;");
-						m_writer.WriteLine("        margin-top: 1em;");
-						m_writer.WriteLine("    }");
-						WriteFootnotesBlock(type);
-						m_writer.WriteLine("}");
-						m_writer.WriteLine("@page :first {");
-						m_writer.WriteLine("    @top-left { content: ''; }");
-						m_writer.WriteLine("    @top-center { content: ''; }");
-						m_writer.WriteLine("    @top-right { content: ''; }");
-						break;
-					case CssType.Scripture:
-						m_writer.WriteLine("    margin: 2cm 2cm 2cm 2cm;");
-						m_writer.WriteLine("    counter-increment: page;");
-						WriteFootnotesBlock(type);
-						break;
-					case CssType.Notebook:
-						m_writer.WriteLine("    margin: 2cm 2cm 2cm 2cm;");
-						m_writer.WriteLine("    counter-increment: page;");
-						break;
+						case CssType.Dictionary:
+							m_writer.WriteLine("    margin: 2cm 2cm 2cm 2cm;");
+							m_writer.WriteLine("    @top-left {");
+							m_writer.WriteLine("        content: string(guideword, first);");
+							WriteSansSerifFontFamilyForWs(m_cache.DefaultVernWs, true);
+							m_writer.WriteLine("        font-weight: bold;");
+							m_writer.WriteLine("        font-size: 12pt;");
+							m_writer.WriteLine("        margin-top: 1em;");
+							m_writer.WriteLine("    }");
+							m_writer.WriteLine("    @top-center {");
+							m_writer.WriteLine("        content: counter(page);");
+							m_writer.WriteLine("        margin-top: 1em");
+							m_writer.WriteLine("    }");
+							m_writer.WriteLine("    @top-right {");
+							m_writer.WriteLine("        content: string(guideword, last);");
+							WriteSansSerifFontFamilyForWs(m_cache.DefaultVernWs, true);
+							m_writer.WriteLine("        font-weight: bold;");
+							m_writer.WriteLine("        font-size: 12pt;");
+							m_writer.WriteLine("        margin-top: 1em;");
+							m_writer.WriteLine("    }");
+							WriteFootnotesBlock(type);
+							m_writer.WriteLine("}");
+							m_writer.WriteLine("@page :first {");
+							m_writer.WriteLine("    @top-left { content: ''; }");
+							m_writer.WriteLine("    @top-center { content: ''; }");
+							m_writer.WriteLine("    @top-right { content: ''; }");
+							break;
+						case CssType.Scripture:
+							m_writer.WriteLine("    margin: 2cm 2cm 2cm 2cm;");
+							m_writer.WriteLine("    counter-increment: page;");
+							WriteFootnotesBlock(type);
+							break;
+						case CssType.Notebook:
+							m_writer.WriteLine("    margin: 2cm 2cm 2cm 2cm;");
+							m_writer.WriteLine("    counter-increment: page;");
+							break;
 					}
 				}
 				m_writer.WriteLine("}");
@@ -340,7 +339,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				foreach (var ws in langProj.CurrentAnalysisWritingSystems.Union(langProj.CurrentPronunciationWritingSystems).Union(langProj.CurrentVernacularWritingSystems))
 				{
 					var dir = ws.RightToLeftScript;
-					m_writer.WriteLine(":lang(" + ws.IcuLocale+ ") {direction:" + (dir ? "rtl" : "ltr") + "}");
+					m_writer.WriteLine(":lang(" + ws.IcuLocale + ") {direction:" + (dir ? "rtl" : "ltr") + "}");
 				}
 				m_writer.WriteLine();
 				switch (type)
@@ -367,13 +366,13 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-			m_writer.WriteLine("    @footnotes {");		// Prince XML
+			m_writer.WriteLine("    @footnotes {");     // Prince XML
 			m_writer.WriteLine("        border-top: thin solid black;");
 			m_writer.WriteLine("        padding: 0.3em 0;");
 			m_writer.WriteLine("        margin-top: 0.6em;");
 			m_writer.WriteLine("        margin-left: 2pi;");
 			m_writer.WriteLine("    }");
-			m_writer.WriteLine("    @footnote {");		// CSS3
+			m_writer.WriteLine("    @footnote {");      // CSS3
 			m_writer.WriteLine("        border-top: thin solid black;");
 			m_writer.WriteLine("        padding: 0.3em 0;");
 			m_writer.WriteLine("        margin-top: 0.6em;");
@@ -414,7 +413,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				if (sRun.Length == 1 && sRun[0] == StringUtils.kChObject)
 				{
 					var objData = ttp.GetStrPropValue((int)FwTextPropType.ktptObjData);
-					if (string.IsNullOrEmpty(objData) || objData[0] != (char) FwObjDataTypes.kodtContextString)
+					if (string.IsNullOrEmpty(objData) || objData[0] != (char)FwObjDataTypes.kodtContextString)
 					{
 						continue;
 					}
@@ -515,7 +514,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					WriteCssEmptyDefinition("pictureCaption");
 					break;
 				case "scrFootnote":
-					WriteCssEmptyDefinition("scrFootnote");	// shouldn't be used, but just in case...
+					WriteCssEmptyDefinition("scrFootnote"); // shouldn't be used, but just in case...
 					break;
 				case "scrFootnoteMarker":
 					WriteCssScrFootnoteMarker();
@@ -532,7 +531,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			string sStyleName;
 			if (!m_mapCssClassToFwStyle.TryGetValue(sCssStyleName, out sStyleName))
 			{
-				sStyleName = sStyle.Replace('_', ' ');		// just in case...
+				sStyleName = sStyle.Replace('_', ' ');      // just in case...
 			}
 			m_writer.WriteLine(".{0} {{", sCssStyleName);
 			var esi = WriteFontInfoToCss(m_cache.DefaultVernWs, sStyleName, null);
@@ -633,7 +632,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					}
 					else
 					{
-						break;	// invalid data, but we can't fix it!
+						break;  // invalid data, but we can't fix it!
 					}
 				}
 				else
@@ -641,11 +640,10 @@ namespace LanguageExplorer.Controls.XMLViews
 					ch32 = ch1;
 					sChar = ch1.ToString();
 				}
-				if (ch32 != '_'  && ch32 != '-' && !Icu.IsAlphabetic(ch32) && !Icu.IsNumeric(ch32) && !Icu.IsDiacritic(ch32))
+				if (ch32 != '_' && ch32 != '-' && !Icu.Character.IsAlphabetic(ch32) &&
+					!Icu.Character.IsNumeric(ch32) && !Icu.Character.IsDiacritic(ch32))
 				{
-					string sCharName;
-					Icu.UErrorCode error;
-					Icu.u_CharName(ch32, Icu.UCharNameChoice.U_UNICODE_CHAR_NAME, out sCharName, out error);
+					var sCharName = Icu.Character.GetCharName(ch32);
 					sCharName = sCharName.Replace('-', '_');
 					sCharName = sCharName.Replace(' ', '_');
 					sCssClassName = sCssClassName.Replace(sChar, sCharName);
@@ -1290,7 +1288,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						break;
 					case "":
 					case null:
-						ws = m_cache.DefaultUserWs;	// need something!
+						ws = m_cache.DefaultUserWs; // need something!
 						break;
 					default:
 						var rgsWs = sWs.Split(',');
@@ -1312,7 +1310,7 @@ namespace LanguageExplorer.Controls.XMLViews
 									ws = m_cache.DefaultPronunciationWs;
 									break;
 								default:
-									ws = m_cache.DefaultUserWs;		// need something!
+									ws = m_cache.DefaultUserWs;     // need something!
 									break;
 							}
 						}
@@ -1432,37 +1430,37 @@ namespace LanguageExplorer.Controls.XMLViews
 			string bullet = null;
 			switch (scheme)
 			{
-				case VwBulNum.kvbnArabic:	type = ", decimal";	break;
-				case VwBulNum.kvbnArabic01:	type = ", decimal-leading-zero";	break;
-				case VwBulNum.kvbnRomanLower:	type = ", lower-roman";	break;
-				case VwBulNum.kvbnRomanUpper:	type = ", upper-roman";	break;
-				case VwBulNum.kvbnLetterLower:	type = ", lower-latin";	break;
-				case VwBulNum.kvbnLetterUpper:	type = ", upper-latin";	break;
-				case VwBulNum.kvbnBulletBase + 0: bullet = "\\00B7"; break;		// MIDDLE DOT
-				case VwBulNum.kvbnBulletBase + 1: bullet = "\\2022"; break;		// BULLET (note: in a list item, consider using 'disc' somehow?)
-				case VwBulNum.kvbnBulletBase + 2: bullet = "\\25CF"; break;		// BLACK CIRCLE
-				case VwBulNum.kvbnBulletBase + 3: bullet = "\\274D"; break;		// SHADOWED WHITE CIRCLE
-				case VwBulNum.kvbnBulletBase + 4: bullet = "\\25AA"; break;		// BLACK SMALL SQUARE (note: in a list item, consider using 'square' somehow?)
-				case VwBulNum.kvbnBulletBase + 5: bullet = "\\25A0"; break;		// BLACK SQUARE
-				case VwBulNum.kvbnBulletBase + 6: bullet = "\\25AB"; break;		// WHITE SMALL SQUARE
-				case VwBulNum.kvbnBulletBase + 7: bullet = "\\25A1"; break;		// WHITE SQUARE
-				case VwBulNum.kvbnBulletBase + 8: bullet = "\\2751"; break;		// LOWER RIGHT SHADOWED WHITE SQUARE
-				case VwBulNum.kvbnBulletBase + 9: bullet = "\\2752"; break;		// UPPER RIGHT SHADOWED WHITE SQUARE
-				case VwBulNum.kvbnBulletBase + 10: bullet = "\\2B27"; break;	// BLACK MEDIUM LOZENGE
-				case VwBulNum.kvbnBulletBase + 11: bullet = "\\29EB"; break;	// BLACK LOZENGE
-				case VwBulNum.kvbnBulletBase + 12: bullet = "\\25C6"; break;	// BLACK DIAMOND
-				case VwBulNum.kvbnBulletBase + 13: bullet = "\\2756"; break;	// BLACK DIAMOND MINUS WHITE X
-				case VwBulNum.kvbnBulletBase + 14: bullet = "\\2318"; break;	// PLACE OF INTEREST SIGN
-				case VwBulNum.kvbnBulletBase + 15: bullet = "\\261E"; break;	// WHITE RIGHT POINTING INDEX
-				case VwBulNum.kvbnBulletBase + 16: bullet = "\\271D"; break;	// LATIN CROSS
-				case VwBulNum.kvbnBulletBase + 17: bullet = "\\271E"; break;	// SHADOWED WHITE LATIN CROSS
-				case VwBulNum.kvbnBulletBase + 18: bullet = "\\2730"; break;	// SHADOWED WHITE STAR
-				case VwBulNum.kvbnBulletBase + 19: bullet = "\\27A2"; break;	// THREE-D TOP-LIGHTED RIGHTWARDS ARROWHEAD
-				case VwBulNum.kvbnBulletBase + 20: bullet = "\\27B2"; break;	// CIRCLED HEAVY WHITE RIGHTWARDS ARROW
-				case VwBulNum.kvbnBulletBase + 21: bullet = "\\2794"; break;	// HEAVY WIDE-HEADED RIGHTWARDS ARROW
-				case VwBulNum.kvbnBulletBase + 22: bullet = "\\2794"; break;	// HEAVY WIDE-HEADED RIGHTWARDS ARROW
-				case VwBulNum.kvbnBulletBase + 23: bullet = "\\21E8"; break;	// RIGHTWARDS WHITE ARROW
-				case VwBulNum.kvbnBulletBase + 24: bullet = "\\2713"; break;	// CHECK MARK
+				case VwBulNum.kvbnArabic: type = ", decimal"; break;
+				case VwBulNum.kvbnArabic01: type = ", decimal-leading-zero"; break;
+				case VwBulNum.kvbnRomanLower: type = ", lower-roman"; break;
+				case VwBulNum.kvbnRomanUpper: type = ", upper-roman"; break;
+				case VwBulNum.kvbnLetterLower: type = ", lower-latin"; break;
+				case VwBulNum.kvbnLetterUpper: type = ", upper-latin"; break;
+				case VwBulNum.kvbnBulletBase + 0: bullet = "\\00B7"; break;     // MIDDLE DOT
+				case VwBulNum.kvbnBulletBase + 1: bullet = "\\2022"; break;     // BULLET (note: in a list item, consider using 'disc' somehow?)
+				case VwBulNum.kvbnBulletBase + 2: bullet = "\\25CF"; break;     // BLACK CIRCLE
+				case VwBulNum.kvbnBulletBase + 3: bullet = "\\274D"; break;     // SHADOWED WHITE CIRCLE
+				case VwBulNum.kvbnBulletBase + 4: bullet = "\\25AA"; break;     // BLACK SMALL SQUARE (note: in a list item, consider using 'square' somehow?)
+				case VwBulNum.kvbnBulletBase + 5: bullet = "\\25A0"; break;     // BLACK SQUARE
+				case VwBulNum.kvbnBulletBase + 6: bullet = "\\25AB"; break;     // WHITE SMALL SQUARE
+				case VwBulNum.kvbnBulletBase + 7: bullet = "\\25A1"; break;     // WHITE SQUARE
+				case VwBulNum.kvbnBulletBase + 8: bullet = "\\2751"; break;     // LOWER RIGHT SHADOWED WHITE SQUARE
+				case VwBulNum.kvbnBulletBase + 9: bullet = "\\2752"; break;     // UPPER RIGHT SHADOWED WHITE SQUARE
+				case VwBulNum.kvbnBulletBase + 10: bullet = "\\2B27"; break;    // BLACK MEDIUM LOZENGE
+				case VwBulNum.kvbnBulletBase + 11: bullet = "\\29EB"; break;    // BLACK LOZENGE
+				case VwBulNum.kvbnBulletBase + 12: bullet = "\\25C6"; break;    // BLACK DIAMOND
+				case VwBulNum.kvbnBulletBase + 13: bullet = "\\2756"; break;    // BLACK DIAMOND MINUS WHITE X
+				case VwBulNum.kvbnBulletBase + 14: bullet = "\\2318"; break;    // PLACE OF INTEREST SIGN
+				case VwBulNum.kvbnBulletBase + 15: bullet = "\\261E"; break;    // WHITE RIGHT POINTING INDEX
+				case VwBulNum.kvbnBulletBase + 16: bullet = "\\271D"; break;    // LATIN CROSS
+				case VwBulNum.kvbnBulletBase + 17: bullet = "\\271E"; break;    // SHADOWED WHITE LATIN CROSS
+				case VwBulNum.kvbnBulletBase + 18: bullet = "\\2730"; break;    // SHADOWED WHITE STAR
+				case VwBulNum.kvbnBulletBase + 19: bullet = "\\27A2"; break;    // THREE-D TOP-LIGHTED RIGHTWARDS ARROWHEAD
+				case VwBulNum.kvbnBulletBase + 20: bullet = "\\27B2"; break;    // CIRCLED HEAVY WHITE RIGHTWARDS ARROW
+				case VwBulNum.kvbnBulletBase + 21: bullet = "\\2794"; break;    // HEAVY WIDE-HEADED RIGHTWARDS ARROW
+				case VwBulNum.kvbnBulletBase + 22: bullet = "\\2794"; break;    // HEAVY WIDE-HEADED RIGHTWARDS ARROW
+				case VwBulNum.kvbnBulletBase + 23: bullet = "\\21E8"; break;    // RIGHTWARDS WHITE ARROW
+				case VwBulNum.kvbnBulletBase + 24: bullet = "\\2713"; break;    // CHECK MARK
 				default:
 					if (scheme >= VwBulNum.kvbnBulletBase && scheme <= VwBulNum.kvbnBulletMax)
 					{
@@ -1559,7 +1557,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				m_writer.WriteLine("    direction: {0};", esi.DirectionIsRightToLeft == TriStateBool.triTrue ? "rtl" : "ltr");
 			}
-			return bsi as ExportStyleInfo;		// in case someone else needs it.
+			return bsi as ExportStyleInfo;      // in case someone else needs it.
 		}
 
 		private bool WriteFontAttr(int ws, string sAttr, ExportStyleInfo esi, string sCss, bool fTopLevel)
@@ -1597,7 +1595,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						var pointSize = fi.m_fontSize.Value;
 						if (superSub)
 						{
-							pointSize = pointSize*55/100;
+							pointSize = pointSize * 55 / 100;
 						}
 						m_writer.WriteLine("    font-size: {0}pt;{1}", ConvertMptToPt(pointSize), sInheritance);
 						return true;
@@ -1651,7 +1649,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						{
 							m_writer.WriteLine("    background-color: rgb({0},{1},{2});{3}", fi.m_backColor.Value.R, fi.m_backColor.Value.G, fi.m_backColor.Value.B, sInheritance);
 						}
-					return true;
+						return true;
 					}
 					fInherited = fi.m_backColor.IsInherited;
 					break;
@@ -1767,7 +1765,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					var firstLineIndentAdjusted = esi.FirstLineIndent;
 					if (entryOrMinorEntry) //LT-14757 Need to reduce indent for cell phone devices.
 					{
-						firstLineIndentAdjusted = firstLineIndentAdjusted/3;
+						firstLineIndentAdjusted = firstLineIndentAdjusted / 3;
 					}
 					m_writer.WriteLine("    text-indent: {0}pt;", ConvertMptToPt(firstLineIndentAdjusted));
 					m_writer.Write("    margin-{0}: ", sLeading);
@@ -1800,7 +1798,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 				else
 				{
-					m_writer.WriteLine("    line-height: normal;");	// "at least" semantics??
+					m_writer.WriteLine("    line-height: normal;"); // "at least" semantics??
 				}
 			}
 			if (esi.HasSpaceAfter)
@@ -1986,7 +1984,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						break;
 					case "":
 					case null:
-						ws = m_cache.DefaultUserWs;	// need something!
+						ws = m_cache.DefaultUserWs; // need something!
 						break;
 					default:
 						var rgsWs = sWs.Split(',');
@@ -2008,7 +2006,7 @@ namespace LanguageExplorer.Controls.XMLViews
 									ws = m_cache.DefaultPronunciationWs;
 									break;
 								default:
-									ws = m_cache.DefaultUserWs;		// need something!
+									ws = m_cache.DefaultUserWs;     // need something!
 									break;
 							}
 						}
@@ -2164,7 +2162,7 @@ namespace LanguageExplorer.Controls.XMLViews
 							string sFwStyle;
 							if (!m_mapCssClassToFwStyle.TryGetValue(sClass, out sFwStyle))
 							{
-								sFwStyle = sClass.Replace('_', ' ');		// just in case...
+								sFwStyle = sClass.Replace('_', ' ');        // just in case...
 							}
 							if (!m_dictClassData.TryGetValue(GetValidCssClassName(sFwStyle), out rgsLangs))
 							{
@@ -2174,13 +2172,13 @@ namespace LanguageExplorer.Controls.XMLViews
 								{
 									if (!string.IsNullOrEmpty(before))
 									{
-										var rgsBefores = new List<string> {before};
+										var rgsBefores = new List<string> { before };
 										// sorry, literal text not a language
 										MapCssToLangs(sClass, rgsBefores);
 									}
 									if (!string.IsNullOrEmpty(after))
 									{
-										var rgsAfters = new List<string> {after};
+										var rgsAfters = new List<string> { after };
 										// sorry, literal text not a language
 										MapCssToLangs(sClass, rgsAfters);
 									}

@@ -3,24 +3,25 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Globalization;
-using System.IO;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Diagnostics;
 using System.Xml.Linq;
+using Icu.Collation;
 using SIL.FieldWorks.Common.Controls;
-using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.Text;
-using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.LCModel.Utils;
-using SIL.LCModel;
-using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
 using SIL.WritingSystems;
 using SIL.Xml;
 
@@ -48,7 +49,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private CurrentContext m_cc = CurrentContext.unknown;
 		private string m_sTimeField;
 
-		Dictionary<int, string> m_dictWsStr = new Dictionary<int,string>();
+		Dictionary<int, string> m_dictWsStr = new Dictionary<int, string>();
 		/// <summary>The current lead (sort) character being written.</summary>
 		private string m_schCurrent = string.Empty;
 		/// <summary>
@@ -172,7 +173,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			var ccOld = WriteFieldStartTag(tag);
 			OpenProp(tag);
-			var cobj = DataAccess.get_VecSize(CurrentObject(),tag);
+			var cobj = DataAccess.get_VecSize(CurrentObject(), tag);
 
 			for (var i = 0; i < cobj; i++)
 			{
@@ -247,10 +248,11 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			var ccOld = WriteFieldStartTag(tag);
 			var sText = DataAccess.get_UnicodeProp(CurrentObject(), tag);
+			var icuNormalizer = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC);
 			// Need to ensure that sText is NFC for export.
-			if (!Icu.IsNormalized(sText, Icu.UNormalizationMode.UNORM_NFC))
+			if (!icuNormalizer.IsNormalized(sText))
 			{
-				sText = Icu.Normalize(sText, Icu.UNormalizationMode.UNORM_NFC);
+				sText = icuNormalizer.Normalize(sText);
 			}
 			var sWs = WritingSystemId(ws);
 			IndentLine();
@@ -277,7 +279,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// See if the string uses any styles that require us to export some more data.
 			for (var irun = 0; irun < tss.RunCount; irun++)
 			{
-				var style = tss.get_StringProperty(irun, (int) FwTextPropType.ktptNamedStyle);
+				var style = tss.get_StringProperty(irun, (int)FwTextPropType.ktptNamedStyle);
 				var wsRun = tss.get_WritingSystem(irun);
 				if (style == "Sense-Reference-Number")
 				{
@@ -308,7 +310,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		public override void AddTimeProp(int tag, uint flags)
 		{
 			var sField = m_sda.MetaDataCache.GetFieldName(tag);
-			m_sTimeField = GetFieldXmlElementName(sField, tag/1000);
+			m_sTimeField = GetFieldXmlElementName(sField, tag / 1000);
 		}
 
 		/// <summary>
@@ -401,7 +403,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public override void set_StringProperty(int sp, string bstrValue)
 		{
-			if (sp != (int) FwTextPropType.ktptNamedStyle)
+			if (sp != (int)FwTextPropType.ktptNamedStyle)
 			{
 				return;
 			}
@@ -516,15 +518,15 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void WriteLetterHeadIfNeeded(string sEntry, string sWs)
 		{
-			var sLower = GetLeadChar(Icu.Normalize(sEntry, Icu.UNormalizationMode.UNORM_NFD), sWs);
-			var sTitle = Icu.ToTitle(sLower, sWs);
+			var sLower = GetLeadChar(CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sEntry), sWs);
+			var sTitle = Icu.UnicodeString.ToTitle(sLower, sWs);
 			if (sTitle == m_schCurrent)
 			{
 				return;
 			}
 			if (m_schCurrent.Length > 0)
 			{
-				m_writer.WriteLine("</div>");	// for letData
+				m_writer.WriteLine("</div>");   // for letData
 			}
 			m_writer.WriteLine("<div class=\"letHead\">");
 			var sb = new StringBuilder();
@@ -573,7 +575,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return string.Empty;
 			}
-			var sEntryPre = Icu.ToLower(sEntryNFD, sWs);
+			var sEntryPre = Icu.UnicodeString.ToLower(sEntryNFD, sWs);
 			Dictionary<string, string> mapChars;
 			// List of characters to ignore in creating letter heads.
 			ISet<string> chIgnoreList;
@@ -641,19 +643,19 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			// We don't want sFirst for an ignored first character or digraph.
 
-			IntPtr col;
+			Collator col;
 			try
 			{
-				var icuLocale = Icu.GetName(sWs);
-				col = Icu.OpenCollator(icuLocale);
+				var icuLocale = new Icu.Locale(sWs).Name;
+				col = Collator.Create(icuLocale);
 			}
-			catch (IcuException)
+			catch (Exception)
 			{
 				return sFirst;
 			}
 			try
 			{
-				var ka = Icu.GetSortKey(col, sFirst);
+				var ka = col.GetSortKey(sFirst).KeyData;
 				if (ka.Length > 0 && ka[0] == 1)
 				{
 					var sT = sEntry.Substring(sFirst.Length);
@@ -662,7 +664,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			finally
 			{
-				Icu.CloseCollator(col);
+				col.Dispose();
 			}
 			return sFirst;
 		}
@@ -732,7 +734,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				if (!string.IsNullOrEmpty(simpleCollation.SimpleRules))
 				{
 					var rules = simpleCollation.SimpleRules.Replace(" ", "=");
-					var primaryParts = rules.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
+					var primaryParts = rules.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 					foreach (var part in primaryParts)
 					{
 						BuildDigraphSet(part, sWs, wsDigraphMap);
@@ -853,11 +855,11 @@ namespace LanguageExplorer.Controls.XMLViews
 			const string beforeBegin = "[before ";
 			// parse out the ignorables and add them to the ignore list
 			var ignorableBracketEnd = rule.IndexOf(ignorableEndMarker);
-			if(ignorableBracketEnd > -1)
+			if (ignorableBracketEnd > -1)
 			{
 				ignorableBracketEnd += ignorableEndMarker.Length; // skip over the search target
 				var chars = rule.Substring(ignorableBracketEnd).Split(new[] { " = " }, StringSplitOptions.RemoveEmptyEntries);
-				if(chars.Length > 0)
+				if (chars.Length > 0)
 				{
 					foreach (var ch in chars)
 					{
@@ -869,13 +871,13 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			// check for before rules
 			var beforeBeginLoc = rule.IndexOf(beforeBegin);
-			if(beforeBeginLoc != -1)
+			if (beforeBeginLoc != -1)
 			{
 				const string primaryBeforeEnd = "1]";
 				// [before 1] is for handling of primary characters which this code is concerned with
 				// so we just strip it off and let the rest of the rule get processed.
 				var beforeEndLoc = rule.IndexOf(primaryBeforeEnd, beforeBeginLoc);
-				if(beforeEndLoc == -1)
+				if (beforeEndLoc == -1)
 				{
 					// Either [before 2|3] which don't affect primary charactors or it's an invalid rule.
 					// In each case we should ignore this rule
@@ -896,7 +898,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					continue;
 				}
-				sGraph = Icu.Normalize(sGraph, Icu.UNormalizationMode.UNORM_NFD);
+				sGraph = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sGraph);
 				if (primaryPart == null)
 				{
 					primaryPart = sGraph;
@@ -923,12 +925,12 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					continue;
 				}
-				sGraph = Icu.Normalize(sGraph, Icu.UNormalizationMode.UNORM_NFD);
+				sGraph = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sGraph);
 				if (sGraph.Length <= 1)
 				{
 					continue;
 				}
-				sGraph = Icu.ToLower(sGraph, ws);
+				sGraph = Icu.UnicodeString.ToLower(sGraph, ws);
 				if (!wsDigraphsMap.ContainsKey(ws))
 				{
 					wsDigraphsMap.Add(ws, new HashSet<string> { sGraph });
@@ -958,7 +960,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private static void ReplaceICUUnicodeEscapeChars(ref string sRule)
 		{
-			sRule = Regex.Replace(sRule,@"\\u(?<Value>[a-zA-Z0-9]{4})", m => ((char)int.Parse(m.Groups["Value"].Value, NumberStyles.HexNumber)).ToString(CultureInfo.InvariantCulture));
+			sRule = Regex.Replace(sRule, @"\\u(?<Value>[a-zA-Z0-9]{4})", m => ((char)int.Parse(m.Groups["Value"].Value, NumberStyles.HexNumber)).ToString(CultureInfo.InvariantCulture));
 		}
 
 		private void WriteReversalLetterHeadIfNeeded(int hvoItem)
@@ -967,11 +969,11 @@ namespace LanguageExplorer.Controls.XMLViews
 			var objOwner = obj.Owner;
 			if (!(objOwner is IReversalIndex))
 			{
-				return;		// subentries shouldn't trigger letter head change!
+				return;     // subentries shouldn't trigger letter head change!
 			}
 
-			var entry = (IReversalIndexEntry) obj;
-			var idx = (IReversalIndex) objOwner;
+			var entry = (IReversalIndexEntry)obj;
+			var idx = (IReversalIndex)objOwner;
 			var ws = m_cache.ServiceLocator.WritingSystemManager.Get(idx.WritingSystem);
 			var sEntry = entry.ReversalForm.get_String(ws.Handle).Text;
 			if (string.IsNullOrEmpty(sEntry))
@@ -1031,7 +1033,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						m_cc = CurrentContext.insideProperty;
 						break;
 				}
-				sXml = GetFieldXmlElementName(sField, flid/1000);
+				sXml = GetFieldXmlElementName(sField, flid / 1000);
 				if (sXml == "_")
 				{
 					sXml = string.Empty;
@@ -1151,7 +1153,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				+ @"\u00B7\u0300-\u036F\u203F-\u2040])"
 				+ @"(.*)$");
 			var result = input;
-			for (; ;)
+			for (; ; )
 			{
 				var match = pattern.Match(result);
 				if (!match.Success)
@@ -1216,7 +1218,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			try
 			{
-				if (m_sda.MetaDataCache.get_IsVirtual((int) flid))
+				if (m_sda.MetaDataCache.get_IsVirtual((int)flid))
 				{
 					return string.Empty;
 				}
@@ -1249,7 +1251,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				if (m_schCurrent.Length > 0)
 				{
-					m_writer.WriteLine("</div>");	// for letData
+					m_writer.WriteLine("</div>");   // for letData
 				}
 				m_xhtml.WriteXhtmlEnding();
 			}

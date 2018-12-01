@@ -112,7 +112,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 		private void ReadDataFromUnicodeFiles()
 		{
-			var icuDir = Icu.DefaultDirectory;
+			var icuDir = CustomIcu.DefaultDataDirectory;
 			if (string.IsNullOrEmpty(icuDir))
 			{
 				throw new Exception("An error occurred: ICU directory not found. Registry value for ICU not set?");
@@ -424,7 +424,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		{
 			get
 			{
-				var icuDir = Icu.DefaultDirectory;
+				var icuDir = CustomIcu.DefaultDataDirectory;
 				if (string.IsNullOrEmpty(icuDir))
 				{
 					throw new Exception("An error occurred: ICU directory not found. Registry value for ICU not set?");

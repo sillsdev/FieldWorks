@@ -5,22 +5,22 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
 using System.Xml.XPath;
 using System.Xml.Xsl;
 using ECInterfaces;
-using SilEncConverters40;
 using SIL.LCModel;
+using SIL.LCModel.Application.ApplicationServices;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
-using SIL.LCModel.Application.ApplicationServices;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
+using SilEncConverters40;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -189,7 +189,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal void ImportWordsFrag(Word[] words, ImportAnalysesLevel analysesLevel)
 		{
-			s_importOptions = new ImportInterlinearOptions {AnalysesLevel = analysesLevel};
+			s_importOptions = new ImportInterlinearOptions { AnalysesLevel = analysesLevel };
 			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 			{
 				foreach (var word in words)
@@ -210,7 +210,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			var retValue = false;
 			Debug.Assert(parameters.Length == 1);
-			using (var stream = new FileStream((string) parameters[0], FileMode.Open, FileAccess.Read))
+			using (var stream = new FileStream((string)parameters[0], FileMode.Open, FileAccess.Read))
 			{
 				IText firstNewText = null;
 				retValue = ImportInterlinear(dlg, stream, 100, ref firstNewText);
@@ -298,7 +298,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						{
 							break;
 						}
-						progress.Position = initialProgress + allottedProgress/2 + allottedProgress*step/2/doc.interlineartext.Length;
+						progress.Position = initialProgress + allottedProgress / 2 + allottedProgress * step / 2 / doc.interlineartext.Length;
 						if (firstNewText == null)
 						{
 							firstNewText = newText;
@@ -441,19 +441,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var spaceAfter = false;
 			var spaceHere = false;
 			const char quote = '"';
-			var charType = Icu.GetCharType(punctChar);
+			var charType = Icu.Character.GetCharType(punctChar);
 			switch (charType)
 			{
-				case Icu.UCharCategory.U_END_PUNCTUATION:
-				case Icu.UCharCategory.U_FINAL_PUNCTUATION:
+				case Icu.Character.UCharCategory.END_PUNCTUATION:
+				case Icu.Character.UCharCategory.FINAL_PUNCTUATION:
 					spaceAfter = true;
 					break;
-				case Icu.UCharCategory.U_START_PUNCTUATION:
-				case Icu.UCharCategory.U_INITIAL_PUNCTUATION:
+				case Icu.Character.UCharCategory.START_PUNCTUATION:
+				case Icu.Character.UCharCategory.INITIAL_PUNCTUATION:
 					spaceBefore = true;
 					break;
-				case Icu.UCharCategory.U_OTHER_PUNCTUATION: //handle special characters
-					if(wordString.Text.LastIndexOfAny(new[] {',','.',';',':','?','!',quote}) == wordString.Length - 1) //treat as ending characters
+				case Icu.Character.UCharCategory.OTHER_PUNCTUATION: //handle special characters
+					if (wordString.Text.LastIndexOfAny(new[] { ',', '.', ';', ':', '?', '!', quote }) == wordString.Length - 1) //treat as ending characters
 					{
 						//quote characters are extra special, if we find them on their own
 						//it is near impossible to know what to do, but it's usually nothing.
@@ -470,7 +470,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					break;
 			}
 			var wordBuilder = wordString.GetBldr();
-			if(spaceBefore) //put a space to the left of the punct
+			if (spaceBefore) //put a space to the left of the punct
 			{
 				ILgWritingSystem wsEngine;
 				if (TryGetWsEngine(wsFactory, item.lang, out wsEngine))
@@ -610,13 +610,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (converter != null)
 			{
 				// Replace any make sure the &lt; &gt; &amp; and &quot;
-				var specialEntities = new[] { "&lt;", "&gt;", "&quot;", "&amp;"};
-				var actualXML = new[] { "<", ">", "\"", "&"};
+				var specialEntities = new[] { "&lt;", "&gt;", "&quot;", "&amp;" };
+				var actualXML = new[] { "<", ">", "\"", "&" };
 				var replaced = new[] { false, false, false, false };
 				var anyReplaced = false;
 				Debug.Assert(specialEntities.Length == actualXML.Length && actualXML.Length == replaced.Length, "Programming error...");
 
-				var sb = new StringBuilder(buffer);	// use a string builder for performance
+				var sb = new StringBuilder(buffer); // use a string builder for performance
 				for (var i = 0; i < specialEntities.Length; i++)
 				{
 					if (!buffer.Contains(specialEntities[i]))
@@ -627,11 +627,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					sb = sb.Replace(specialEntities[i], actualXML[i]);
 				}
 
-				var len = sb.Length;	// buffer.Length;
+				var len = sb.Length;    // buffer.Length;
 				var subData = new byte[len];
 				for (var j = 0; j < len; j++)
 				{
-					subData[j] = (byte)sb[j];	// buffer[j];
+					subData[j] = (byte)sb[j];   // buffer[j];
 				}
 
 				try
@@ -644,10 +644,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 
 				// now put any of the four back to the Special Entity notation
-				if (anyReplaced)	// only if we changed on input
+				if (anyReplaced)    // only if we changed on input
 				{
 					sb = new StringBuilder(result);
-					for (var i = specialEntities.Length-1; i >= 0; i--)
+					for (var i = specialEntities.Length - 1; i >= 0; i--)
 					{
 						if (replaced[i])
 						{
@@ -1543,7 +1543,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					}
 					foreach (var character in s)
 					{
-						if (Icu.IsNumeric(character))
+						if (Icu.Character.IsNumeric(s[character]))
 						{
 							rgwfDel.Add(wf);
 							break;

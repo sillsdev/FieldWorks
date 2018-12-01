@@ -11,16 +11,16 @@ using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.LexText;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel;
-using SIL.LCModel.DomainServices;
-using SIL.LCModel.Infrastructure;
 using LanguageExplorer.Filters;
 using SIL.Code;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -41,7 +41,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		internal ConcordanceControl(ISharedEventHandlers sharedEventHandlers, MatchingConcordanceItems recordList)
-			:base(recordList)
+			: base(recordList)
 		{
 			Guard.AgainstNull(sharedEventHandlers, nameof(sharedEventHandlers));
 
@@ -110,7 +110,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			if (m_recordList.SuspendLoadingRecordUntilOnJumpToRecord)
 			{
-				return;	// we're bound to process OnJumpToRecord, so skip any further initialization.
+				return; // we're bound to process OnJumpToRecord, so skip any further initialization.
 			}
 			// Load any saved settings.
 			LoadSettings();
@@ -160,7 +160,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (sWs != null)
 			{
 				ws = m_cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(sWs);
-				if (ws != 0) // could be obsolete data.
+				if (ws != 0)    // could be obsolete data.
 				{
 					SetWritingSystem(ws);
 				}
@@ -297,8 +297,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void SaveSettings()
 		{
 			// Save our settings for later.
-			PropertyTable.SetProperty("ConcordanceLine", ((ConcordLine) m_cbLine.SelectedItem).Line.ToString(), true, settingsGroup: SettingsGroup.LocalSettings);
-			PropertyTable.SetProperty("ConcordanceWs", ((CoreWritingSystemDefinition) m_cbWritingSystem.SelectedItem).Id, true, settingsGroup: SettingsGroup.LocalSettings);
+			PropertyTable.SetProperty("ConcordanceLine", ((ConcordLine)m_cbLine.SelectedItem).Line.ToString(), true, settingsGroup: SettingsGroup.LocalSettings);
+			PropertyTable.SetProperty("ConcordanceWs", ((CoreWritingSystemDefinition)m_cbWritingSystem.SelectedItem).Id, true, settingsGroup: SettingsGroup.LocalSettings);
 			PropertyTable.SetProperty("ConcordanceText", m_tbSearchText.Text.Trim(), true, settingsGroup: SettingsGroup.LocalSettings);
 			PropertyTable.SetProperty("ConcordanceMatchCase", m_chkMatchCase.Checked, true, settingsGroup: SettingsGroup.LocalSettings);
 			PropertyTable.SetProperty("ConcordanceMatchDiacritics", m_chkMatchDiacritics.Checked, true, settingsGroup: SettingsGroup.LocalSettings);
@@ -309,7 +309,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		#region Internal types
 
-		private enum ConcordanceSearchOption { Anywhere, WholeItem, AtEnd, AtStart, UseRegExp } ;
+		private enum ConcordanceSearchOption { Anywhere, WholeItem, AtEnd, AtStart, UseRegExp };
 
 		private enum ConcordanceLines
 		{
@@ -393,7 +393,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected void SyncWritingSystemComboToSelectedLine()
 		{
-			SyncWritingSystemComboToSelectedLine((ConcordLine) m_cbLine.SelectedItem);
+			SyncWritingSystemComboToSelectedLine((ConcordLine)m_cbLine.SelectedItem);
 		}
 
 		private void SyncWritingSystemComboToSelectedLine(ConcordLine sel)
@@ -484,7 +484,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void FillSearchComboList(ConcordanceLines line)
 		{
 			m_pOSPopupTreeManager?.Dispose();
-			switch(line)
+			switch (line)
 			{
 				case ConcordanceLines.kTags:
 					m_pOSPopupTreeManager = new POSComboController(m_cbSearchText,
@@ -494,7 +494,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 											false,
 											PropertyTable,
 											Publisher,
-											PropertyTable.GetValue<Form>(FwUtils.window)) { Sorted = false };
+											PropertyTable.GetValue<Form>(FwUtils.window))
+					{ Sorted = false };
 					break;
 				default: //Lex. Gram. Info and Word Cat. both work the same, and are handled here in the default option
 					m_pOSPopupTreeManager = new POSComboController(m_cbSearchText,
@@ -567,9 +568,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					MessageBox.Show(ITextStrings.ksMatchStringTooLong, ITextStrings.ksWarning);
 					m_tbSearchText.Text = sMatch;
 				}
-				int ws = ((CoreWritingSystemDefinition) m_cbWritingSystem.SelectedItem).Handle;
+				int ws = ((CoreWritingSystemDefinition)m_cbWritingSystem.SelectedItem).Handle;
 
-				var conc = (ConcordLine) m_cbLine.SelectedItem;
+				var conc = (ConcordLine)m_cbLine.SelectedItem;
 				switch (conc.Line)
 				{
 					case ConcordanceLines.kBaseline:
@@ -633,7 +634,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				case WfiGlossTags.kClassId:
 					{
-						var targetGloss = (IWfiGloss) target;
+						var targetGloss = (IWfiGloss)target;
 						analyses.Add(targetGloss);
 						foreach (var gloss in m_cache.ServiceLocator.GetInstance<IWfiGlossRepository>().AllInstances().Where(g => g != targetGloss))
 						{
@@ -977,7 +978,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				if (mb.Analysis?.CategoryRA != null && hvoPossToMatch == mb.Analysis.CategoryRA.Hvo)
 				{
-						analyses.Add(mb);
+					analyses.Add(mb);
 				}
 			}
 			return GetOccurrencesOfAnalyses(analyses);
@@ -1251,7 +1252,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					var target = m_vwPattern.Pattern.Text;
 					int nVar;
-					var wsMatch = m_vwPattern.Pattern.get_Properties(0).GetIntPropValues((int) FwTextPropType.ktptWs, out nVar);
+					var wsMatch = m_vwPattern.Pattern.get_Properties(0).GetIntPropValues((int)FwTextPropType.ktptWs, out nVar);
 					return m_vwPattern.MatchCase ? new ExactLiteralMatcher(target, wsMatch) : new ExactCaseInsensitiveLiteralMatcher(target, wsMatch);
 				}
 				matcher = new ExactMatcher(m_vwPattern);
@@ -1406,7 +1407,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				foreach (var seg in para.SegmentsOS)
 				{
-					result.AddRange(seg.NotesOS.Where(note => matcher.Matches(note.Content.get_String(ws))) .Select(note => MakeOccurrence(para, seg.BeginOffset, seg.EndOffset)));
+					result.AddRange(seg.NotesOS.Where(note => matcher.Matches(note.Content.get_String(ws))).Select(note => MakeOccurrence(para, seg.BeginOffset, seg.EndOffset)));
 				}
 			}
 			return result;

@@ -318,7 +318,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				int ch = tss.CharAt(ich);
 				ILgWritingSystem ws = wsf.get_EngineOrNull(tss.get_WritingSystemAt(ich));
-				if (!ws.get_IsWordForming(ch) && !Icu.IsNumeric(ch) && ch != 0xfffc)
+				if (!ws.get_IsWordForming(ch) && !Icu.Character.IsNumeric(ch) && ch != 0xfffc)
 					break;
 			}
 			return ich;

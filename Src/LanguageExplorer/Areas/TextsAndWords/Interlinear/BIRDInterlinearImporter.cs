@@ -8,14 +8,14 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.LCModel.DomainServices;
 using SIL.LCModel.Application.ApplicationServices;
 using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -299,7 +299,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			offset += phraseText.Length;
 			var oldText = (bldr.Text ?? "").Trim();
-			if (oldText.Length > 0 && !TsStringUtils.IsEndOfSentenceChar(oldText[oldText.Length - 1], Icu.UCharCategory.U_OTHER_PUNCTUATION))
+			if (oldText.Length > 0 && !TsStringUtils.IsEndOfSentenceChar(oldText[oldText.Length - 1], Icu.Character.UCharCategory.OTHER_PUNCTUATION))
 			{
 				// 'segment' does not end with recognizable EOS character. Add our special one.
 				bldr.Replace(bldr.Length, bldr.Length, "\x00A7", null);
@@ -739,7 +739,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				    {
 				        //fill in morpheme's stuff
 			}
-				}
+			}
 			}*/
 			return analysis;
 		}

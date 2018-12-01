@@ -135,8 +135,8 @@ namespace ParatextImport
 
 			for (int iChar = 0; iChar < para.Length; iChar++)
 			{
-				if (!Icu.IsNumeric(para[iChar]) &&
-					!Icu.IsPunct(para[iChar]))
+				if (!Icu.Character.IsNumeric(para[iChar]) &&
+					!Icu.Character.IsPunct(para[iChar]))
 				{
 					strBldr.Append(para[iChar]);
 				}

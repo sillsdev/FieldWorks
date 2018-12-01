@@ -2,11 +2,10 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Icu.Collation;
 using SIL.LCModel;
-using SIL.LCModel.Core.Text;
 using SIL.ObjectModel;
 
 namespace LanguageExplorer.Controls.XMLViews
@@ -16,7 +15,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	internal class CmObjectComparer : DisposableBase, IComparer<int>
 	{
-		private IntPtr m_col = IntPtr.Zero;
+		private Collator m_col;
 		private readonly LcmCache m_cache;
 
 		public CmObjectComparer(LcmCache cache)
@@ -48,19 +47,19 @@ namespace LanguageExplorer.Controls.XMLViews
 				return 1;
 			}
 
-			if (m_col == IntPtr.Zero)
+			if (m_col == null)
 			{
 				var ws = xobj.SortKeyWs;
 				if (string.IsNullOrEmpty(ws))
 				{
 					ws = yobj.SortKeyWs;
 				}
-				var icuLocale = Icu.GetName(ws);
-				m_col = Icu.OpenCollator(icuLocale);
+				var icuLocale = new Icu.Locale(ws).Name;
+				m_col = Collator.Create(icuLocale);
 			}
 
-			var xkey = Icu.GetSortKey(m_col, xkeyStr);
-			var ykey = Icu.GetSortKey(m_col, ykeyStr);
+			var xkey = m_col.GetSortKey(xkeyStr).KeyData;
+			var ykey = m_col.GetSortKey(ykeyStr).KeyData;
 			// Simulate strcmp on the two NUL-terminated byte strings.
 			// This avoids marshalling back and forth.
 			// JohnT: but apparently the strings are not null-terminated if the input was empty.
@@ -96,12 +95,12 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		protected override void DisposeUnmanagedResources()
 		{
-			if (m_col == IntPtr.Zero)
+			if (m_col == null)
 			{
 				return;
 			}
-			Icu.CloseCollator(m_col);
-			m_col = IntPtr.Zero;
+			m_col.Dispose();
+			m_col = null;
 		}
 
 		/// <inheritdoc />

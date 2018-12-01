@@ -20,6 +20,7 @@ using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.FieldWorks.Resources;
 using SIL.Keyboarding;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Utils;
@@ -270,9 +271,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					switch (retType)
 					{
-						case ValidCharacterType.WordForming: CurrentGrid = m_gridWordForming;
+						case ValidCharacterType.WordForming:
+							CurrentGrid = m_gridWordForming;
 							break;
-						case ValidCharacterType.Other: CurrentGrid = m_gridOther;
+						case ValidCharacterType.Other:
+							CurrentGrid = m_gridOther;
 							break;
 						default:
 							return;
@@ -888,7 +891,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				var fClearText = false;
 				if (txt == txtManualCharEntry)
 				{
-					chr = LCModel.Core.Text.Icu.Normalize(txtManualCharEntry.Text, LCModel.Core.Text.Icu.UNormalizationMode.UNORM_NFD);
+					chr = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(txtManualCharEntry.Text);
 					fClearText = true;
 				}
 				else
@@ -898,7 +901,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					if (int.TryParse(txt.Text, NumberStyles.HexNumber, null, out codepoint))
 					{
 						chr = ((char)codepoint).ToString(CultureInfo.InvariantCulture);
-						if (LCModel.Core.Text.Icu.IsMark(chr[0]))
+						if (Character.IsMark(chr[0]))
 						{
 							ShowMessageBox(FwCoreDlgs.kstidLoneDiacriticNotValid);
 							return;
@@ -955,7 +958,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					{
 						if (!string.IsNullOrEmpty(chr))
 						{
-							chr = LCModel.Core.Text.Icu.Normalize(chr, LCModel.Core.Text.Icu.UNormalizationMode.UNORM_NFD);
+							chr = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(chr);
 						}
 					}
 					catch
@@ -1064,14 +1067,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			if (txtManualCharEntry.Text.Length > 0)
 			{
-				var origCharsKd = LCModel.Core.Text.Icu.Normalize(txtManualCharEntry.Text, LCModel.Core.Text.Icu.UNormalizationMode.UNORM_NFD);
+				var origCharsKd = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(txtManualCharEntry.Text);
 				var savSelStart = txtManualCharEntry.SelectionStart;
 				var newChars = TsStringUtils.ValidateCharacterSequence(origCharsKd);
 
 				if (newChars.Length == 0)
 				{
 					var s = origCharsKd.Trim();
-					if (s.Length > 0 && LCModel.Core.Text.Icu.IsMark(s[0]))
+					if (s.Length > 0 && Character.IsMark(s[0]))
 					{
 						ShowMessageBox(FwCoreDlgs.kstidLoneDiacriticNotValid);
 					}
@@ -1114,9 +1117,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		private void VerifyCharInRange(FwTextBox textbox, Label lbl)
 		{
-			var txt = textbox.Text.Length >= 1 ? LCModel.Core.Text.Icu.Normalize(textbox.Text, LCModel.Core.Text.Icu.UNormalizationMode.UNORM_NFD) : string.Empty;
+			var txt = textbox.Text.Length >= 1 ? CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(textbox.Text) : string.Empty;
 			var chrCode = txt.Length >= 1 ? txt[0] : 0;
-			if (txt.Length > 1 || (chrCode > 0 && LCModel.Core.Text.Icu.IsMark(chrCode)))
+			if (txt.Length > 1 || (chrCode > 0 && Character.IsMark(chrCode)))
 			{
 				IssueBeep();
 				lbl.ForeColor = Color.Red;
@@ -1144,10 +1147,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				return;
 			}
 			var chars = new List<string>();
-			foreach (var c in UnicodeSet.ToCharacters(LCModel.Core.Text.Icu.GetExemplarCharacters(icuLocale)))
+			foreach (var c in UnicodeSet.ToCharacters(CustomIcu.GetExemplarCharacters(icuLocale)))
 			{
 				chars.Add(c.Normalize(NormalizationForm.FormD));
-				chars.Add(LCModel.Core.Text.Icu.ToUpper(c, icuLocale).Normalize(NormalizationForm.FormD));
+				chars.Add(UnicodeString.ToUpper(c, icuLocale).Normalize(NormalizationForm.FormD));
 			}
 			m_validCharsGridMngr.AddCharacters(chars);
 		}
@@ -1307,13 +1310,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			switch (SortedInventoryColumn)
 			{
-				case 0: m_inventoryRows.Sort(InventoryCharComparer);
+				case 0:
+					m_inventoryRows.Sort(InventoryCharComparer);
 					break;
-				case 1: m_inventoryRows.Sort(InventoryCharCodeComparer);
+				case 1:
+					m_inventoryRows.Sort(InventoryCharCodeComparer);
 					break;
-				case 2: m_inventoryRows.Sort(InventoryCountComparer);
+				case 2:
+					m_inventoryRows.Sort(InventoryCountComparer);
 					break;
-				case 3: m_inventoryRows.Sort(InventoryIsValidComparer);
+				case 3:
+					m_inventoryRows.Sort(InventoryIsValidComparer);
 					break;
 			}
 
@@ -1345,7 +1352,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					case kiCharCol:
 						var chr = m_inventoryRows[i].Character;
-						if (!LCModel.Core.Text.Icu.IsSpace(chr[0]) && !LCModel.Core.Text.Icu.IsControl(chr[0]))
+						if (!Character.IsSpace(chr[0]) && !Character.IsControl(chr[0]))
 						{
 							e.Value = chr;
 							gridCharInventory[e.ColumnIndex, e.RowIndex].Tag = null;
@@ -1533,7 +1540,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					string chr;
 					if (!normalizedChars.TryGetValue(txtTokSub.Text, out chr))
 					{
-						chr = LCModel.Core.Text.Icu.Normalize(txtTokSub.Text, LCModel.Core.Text.Icu.UNormalizationMode.UNORM_NFD);
+						chr = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(txtTokSub.Text);
 						if (chr == "\n" || chr == "\r" || !TsStringUtils.IsCharacterDefined(chr) || !TsStringUtils.IsValidChar(chr))
 						{
 							chr = string.Empty;

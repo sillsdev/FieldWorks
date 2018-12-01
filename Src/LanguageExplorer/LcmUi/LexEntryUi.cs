@@ -9,11 +9,11 @@ using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.LcmUi.Dialogs;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 
 namespace LanguageExplorer.LcmUi
 {
@@ -166,12 +166,12 @@ namespace LanguageExplorer.LcmUi
 				// words which are capitalized at the beginning of sentences.  LT-7444 RickM
 				if (leui == null)
 				{
-					//We need to be careful when converting to lowercase therefore use Icu.ToLower()
+					//We need to be careful when converting to lowercase therefore use Icu.UnicodeString.ToLower()
 					//get the WS of the tsString
 					var wsWf = TsStringUtils.GetWsAtOffset(tssWf, 0);
 					//use that to get the locale for the WS, which is used for
 					var wsLocale = cache.ServiceLocator.WritingSystemManager.Get(wsWf).IcuLocale;
-					var sLower = Icu.ToLower(tssWf.Text, wsLocale);
+					var sLower = Icu.UnicodeString.ToLower(tssWf.Text, wsLocale);
 					var ttp = tssWf.get_PropertiesAt(0);
 					tssWf = TsStringUtils.MakeString(sLower, ttp);
 					leui = FindEntryForWordform(cache, tssWf);
@@ -210,7 +210,7 @@ namespace LanguageExplorer.LcmUi
 					return;
 				}
 
-				entries = new List<ILexEntry>(1) {entry};
+				entries = new List<ILexEntry>(1) { entry };
 			}
 			DisplayEntriesRecursive(cache, owner, propertyTable, publisher, subscriber, styleSheet, helpProvider, helpFileKey, entries, tssWf);
 		}
@@ -248,7 +248,7 @@ namespace LanguageExplorer.LcmUi
 					{
 						// We need a list that contains the entry we found to display on the
 						// next go around of this loop.
-						entries = new List<ILexEntry> {entry};
+						entries = new List<ILexEntry> { entry };
 						tssWf = entry.HeadWord;
 					}
 				}

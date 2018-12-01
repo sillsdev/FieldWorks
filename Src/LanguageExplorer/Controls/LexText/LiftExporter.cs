@@ -8,20 +8,20 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Xml;
 using System.Text;
+using System.Windows.Forms;
+using System.Xml;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
+using SIL.LCModel.Application.ApplicationServices;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
-using SIL.LCModel.Application.ApplicationServices;
-using System.Windows.Forms;
-using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.Xml;
 
 namespace LanguageExplorer.Controls.LexText
@@ -444,7 +444,7 @@ namespace LanguageExplorer.Controls.LexText
 				}
 				else
 				{
-					w.Write("\u2029");	// flag end of preceding paragraph with 'Paragraph Separator'.
+					w.Write("\u2029");  // flag end of preceding paragraph with 'Paragraph Separator'.
 				}
 				if (!string.IsNullOrEmpty(para.StyleName))
 				{
@@ -649,7 +649,7 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				return inputString;
 			}
-			var normalizedString = Icu.Normalize(inputString, Icu.UNormalizationMode.UNORM_NFC);
+			var normalizedString = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC).Normalize(inputString);
 			return XmlUtils.MakeSafeXml(normalizedString);
 		}
 
@@ -659,7 +659,7 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				return inputString;
 			}
-			var normalizedString = Icu.Normalize(inputString, Icu.UNormalizationMode.UNORM_NFC);
+			var normalizedString = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC).Normalize(inputString);
 			return XmlUtils.MakeSafeXmlAttribute(normalizedString);
 		}
 
@@ -938,8 +938,8 @@ namespace LanguageExplorer.Controls.LexText
 			// Typically internalPath is something like "Pictures\MyFile.jpg".
 			// If it starts with the expected folder, we want to make the LIFT path omit that element.
 			var writePath = Path.GetFileName(internalPath); // the path to store in the lift file (by default).
-			// Try a few ways stripping off the expected root folder. I'm not sure what separator we actually store,
-			// especially if the FW project has lived on both Linux and Windows.
+															// Try a few ways stripping off the expected root folder. I'm not sure what separator we actually store,
+															// especially if the FW project has lived on both Linux and Windows.
 			if (internalPath.StartsWith(expectRootFolder + Path.PathSeparator))
 			{
 				writePath = internalPath.Substring((expectRootFolder + Path.PathSeparator).Length);
@@ -964,12 +964,12 @@ namespace LanguageExplorer.Controls.LexText
 		private string ExportFile(string writePath, string actualPath, string liftFolderName)
 		{
 			//If the source file is the same and we already wrote it, there is no reason to make a copy with a mangled name
-			if(m_filesCreated.ContainsKey(actualPath))
+			if (m_filesCreated.ContainsKey(actualPath))
 			{
 				return m_filesCreated[actualPath].Item2; //return the file we wrote last time we saw this path
 			}
 			// We are going to export the text of this to XML as NFC, so we want to write the file using a matching NFC name.
-			var safeWritePath = Icu.Normalize(writePath, Icu.UNormalizationMode.UNORM_NFC);
+			var safeWritePath = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC).Normalize(writePath);
 			// Use as source any similar file that exists.
 			var safeSourcePath = FileUtils.ActualFilePath(actualPath);
 			if (ExportPicturesAndMedia && !string.IsNullOrEmpty(FolderPath) && FileUtils.FileExists(safeSourcePath))
@@ -980,7 +980,7 @@ namespace LanguageExplorer.Controls.LexText
 				var affix = 1;
 				var pathWithoutExt = Path.Combine(Path.GetDirectoryName(safeWritePath), Path.GetFileNameWithoutExtension(safeWritePath));
 				var ext = Path.GetExtension(safeWritePath) ?? "";
-				while(m_filesCreated.Values.Any(i => i.Item1 == destFilePath))
+				while (m_filesCreated.Values.Any(i => i.Item1 == destFilePath))
 				{
 					// generate a new name
 					safeWritePath = Path.ChangeExtension(pathWithoutExt + "_" + affix++, ext);
@@ -1743,7 +1743,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		private bool IsVoiceWritingSystem(int wsString)
 		{
-			var wsEngine = (CoreWritingSystemDefinition) m_wsManager.get_EngineOrNull(wsString);
+			var wsEngine = (CoreWritingSystemDefinition)m_wsManager.get_EngineOrNull(wsString);
 			return wsEngine.IsVoice;
 		}
 
@@ -1796,7 +1796,7 @@ namespace LanguageExplorer.Controls.LexText
 		protected object GetProperty(ICmObject target, string property)
 		{
 			if (target == null)
-			{ return null;}
+			{ return null; }
 
 			var fWantHvo = false;
 			var type = target.GetType();
@@ -2597,7 +2597,7 @@ namespace LanguageExplorer.Controls.LexText
 			var cmPossibilityListsReferencedByFields = new Dictionary<Guid, string>();
 			foreach (var flid in m_mdc.GetFields(obj.ClassID, true, (int)CellarPropertyTypeFilter.All))
 			{
-				var type = (CellarPropertyType) m_mdc.GetFieldType(flid);
+				var type = (CellarPropertyType)m_mdc.GetFieldType(flid);
 
 				//First of all only fields which have the following types will have references to data in lists.
 				if (type == CellarPropertyType.ReferenceAtomic ||

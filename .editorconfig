@@ -25,7 +25,7 @@ csharp_new_line_before_open_brace = all
 csharp_space_after_cast = false
 
 # Settings Visual Studio uses for generated files
-[*.{csproj,resx,settings,vcxproj*,vdproj,xml}]
+[*.{csproj,resx,settings,vcxproj*,vdproj,xml,json}]
 indent_style = space
 indent_size = 2
 
