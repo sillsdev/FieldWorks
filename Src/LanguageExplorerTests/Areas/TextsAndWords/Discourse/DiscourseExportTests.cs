@@ -7,6 +7,7 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using LanguageExplorer.Areas.TextsAndWords.Discourse;
+using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;

@@ -5,7 +5,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace SIL.FieldWorks.Common.FwUtils.Attributes
+namespace FieldWorks.TestUtilities.Attributes
 {
 	/// <summary>
 	/// NUnit helper attribute that optionally redirects HKCU to a subkey so that multiple

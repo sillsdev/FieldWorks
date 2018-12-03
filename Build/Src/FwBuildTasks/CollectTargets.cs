@@ -299,14 +299,14 @@ namespace FwBuildTasks
 							writer.WriteLine("\t\t<When Condition=\" '$(config-capital)' == '{0}' \">", configuration);
 							writer.WriteLine("\t\t\t<PropertyGroup>");
 							writer.WriteLine("\t\t\t\t<{0}Defines>{1} CODE_ANALYSIS</{0}Defines>",
-								project, configs[configuration]);
+								project.Replace(".", string.Empty), configs[configuration]);
 							writer.WriteLine("\t\t\t</PropertyGroup>");
 							writer.WriteLine("\t\t</When>");
 							if (condition.Contains("Debug") && !otherwiseAdded)
 							{
 								otherwiseBldr.AppendLine("\t\t<Otherwise>");
 								otherwiseBldr.AppendLine("\t\t\t<PropertyGroup>");
-								otherwiseBldr.AppendLine(string.Format("\t\t\t\t<{0}Defines>{1} CODE_ANALYSIS</{0}Defines>", project,
+								otherwiseBldr.AppendLine(string.Format("\t\t\t\t<{0}Defines>{1} CODE_ANALYSIS</{0}Defines>", project.Replace(".", string.Empty),
 									node.SelectSingleNode("c:DefineConstants", m_namespaceMgr).InnerText.Replace(";", " ")));
 								otherwiseBldr.AppendLine("\t\t\t</PropertyGroup>");
 								otherwiseBldr.AppendLine("\t\t</Otherwise>");
@@ -317,7 +317,7 @@ namespace FwBuildTasks
 						writer.WriteLine("\t</Choose>");
 						writer.WriteLine();
 
-						writer.Write("\t<Target Name=\"{0}\"", project);
+						writer.Write("\t<Target Name=\"{0}\"", project.Replace(".", string.Empty));
 						var bldr = new StringBuilder();
 						bldr.Append("Initialize"); // ensure the output directories and version files exist.
 						if (project == "ParatextImportTests" || project == "FwCoreDlgsTests")
@@ -331,7 +331,7 @@ namespace FwBuildTasks
 						foreach (var dep in dependencies)
 						{
 							if (m_mapProjFile.ContainsKey(dep))
-								bldr.AppendFormat(";{0}", dep);
+								bldr.AppendFormat(";{0}", dep.Replace(".", string.Empty));
 						}
 						writer.Write(" DependsOnTargets=\"{0}\"", bldr);
 
@@ -349,7 +349,7 @@ namespace FwBuildTasks
 						writer.WriteLine("\t\t<MSBuild Projects=\"{0}\"", m_mapProjFile[project].Replace(m_fwroot, "$(fwrt)"));
 						writer.WriteLine("\t\t\tTargets=\"$(msbuild-target)\"");
 						writer.WriteLine("\t\t\tProperties=\"$(msbuild-props);IntermediateOutputPath=$(dir-fwobj){0}{1}{0};DefineConstants=$({2}Defines);$(warningsAsErrors);WarningLevel=4;LcmArtifactsDir=$(LcmArtifactsDir)\"",
-							Path.DirectorySeparatorChar, GetProjectSubDir(project), project);
+							Path.DirectorySeparatorChar, GetProjectSubDir(project), project.Replace(".", string.Empty));
 						writer.WriteLine("\t\t\tToolsVersion=\"{0}\"/>", toolsVersion);
 						// <Clouseau> verification task
 						writer.WriteLine("\t\t<Clouseau Condition=\"'$(Configuration)' == 'Debug'\" AssemblyPathname=\"$(dir-outputBase)/{0}\"/>", AssemblyName);
@@ -396,7 +396,7 @@ namespace FwBuildTasks
 						if (first)
 							writer.Write(project);
 						else
-							writer.Write(";{0}", project);
+							writer.Write(";{0}", project.Replace(".", string.Empty));
 						first = false;
 					}
 					writer.WriteLine("\"/>");
@@ -414,7 +414,7 @@ namespace FwBuildTasks
 						if (first)
 							writer.Write(project);
 						else
-							writer.Write(";{0}", project);
+							writer.Write(";{0}", project.Replace(".", string.Empty));
 						first = false;
 					}
 					writer.WriteLine("\"/>");

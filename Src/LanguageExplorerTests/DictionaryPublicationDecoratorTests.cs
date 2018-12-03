@@ -6,6 +6,7 @@ using System.Linq;
 using LanguageExplorer;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;

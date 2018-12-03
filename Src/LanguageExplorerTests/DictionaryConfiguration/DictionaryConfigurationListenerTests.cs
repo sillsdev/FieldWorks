@@ -5,6 +5,7 @@
 using System.IO;
 using LanguageExplorer;
 using LanguageExplorer.Areas;
+using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;

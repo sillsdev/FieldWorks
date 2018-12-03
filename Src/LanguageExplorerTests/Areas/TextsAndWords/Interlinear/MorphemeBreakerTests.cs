@@ -5,6 +5,7 @@
 using System;
 using LanguageExplorer;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
+using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;

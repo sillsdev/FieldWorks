@@ -4,8 +4,9 @@
 
 using System;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwUtils;
 
-namespace SIL.FieldWorks.Common.FwUtils
+namespace FieldWorks.TestUtilities
 {
 	/// <summary>
 	/// Stub for tests that display message boxes

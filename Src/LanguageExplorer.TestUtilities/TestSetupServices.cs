@@ -4,7 +4,6 @@
 
 using System.Collections.Generic;
 using System.IO;
-using LanguageExplorer;
 using LanguageExplorer.Impls;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
@@ -12,7 +11,7 @@ using SIL.IO;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 
-namespace LanguageExplorerTests
+namespace LanguageExplorer.TestUtilities
 {
 	public static class TestSetupServices
 	{
@@ -40,7 +39,7 @@ namespace LanguageExplorerTests
 					Directory.Delete(gonerDir, true);
 				}
 			}
-			DirectoryUtilities.CopyDirectoryContents(Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "DictionaryConfiguration", "TestData"), baseDir);
+			DirectoryUtilities.CopyDirectoryContents(Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorer.TestUtilities", "DictionaryConfiguration", "TestData"), baseDir);
 
 			ISubscriber subscriber;
 			IPublisher publisher;

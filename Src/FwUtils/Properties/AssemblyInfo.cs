@@ -4,10 +4,11 @@
 
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("FieldWorks Helper Methods")]
 
-[assembly: System.Runtime.InteropServices.ComVisible(false)]
+[assembly: ComVisible(false)]
 
 [assembly: InternalsVisibleTo("FieldWorks")]
 [assembly: InternalsVisibleTo("FwUtilsTests")]

@@ -156,6 +156,10 @@
     <LangVersion>6</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FieldWorks.TestUtilities">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\FieldWorks.TestUtilities.dll</HintPath>
+    </Reference>
     <Reference Include="SIL.LCModel.Core.Tests, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.LCModel.Core.Tests.dll</HintPath>
@@ -167,10 +171,6 @@
     <Reference Include="SIL.LCModel.Utils.Tests, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.LCModel.Utils.Tests.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.Windows.Forms.Keyboarding, Version=4.1.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SIL.Windows.Forms.Keyboarding.dll</HintPath>
     </Reference>
     <Reference Include="ViewsInterfaces">
       <Name>ViewsInterfaces</Name>
@@ -208,7 +208,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FwCoreDlgs.dll</HintPath>
     </Reference>
-    <Reference Include="FwResources, Version=5.5.0.24947, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="FwResources">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FwResources.dll</HintPath>
     </Reference>
@@ -217,11 +217,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
-    <Reference Include="FwUtilsTests">
-      <Name>FwUtilsTests</Name>
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\FwUtilsTests.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\Microsoft.Practices.ServiceLocation.dll</HintPath>
@@ -229,15 +224,6 @@
     <Reference Include="nunit.framework, Version=2.5.3.9345, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
       <HintPath>..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="RootSite">
-      <Name>RootSite</Name>
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\RootSite.dll</HintPath>
-    </Reference>
-    <Reference Include="RootSiteTests, Version=3.3.0.9, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\RootSiteTests.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>

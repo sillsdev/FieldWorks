@@ -147,6 +147,10 @@
     <LangVersion>6</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FieldWorks.TestUtilities">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\FieldWorks.TestUtilities.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\Microsoft.Practices.ServiceLocation.dll</HintPath>
@@ -211,16 +215,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AlphaOutlineTests.cs" />
-    <Compile Include="Attributes\CreateComObjectsFromManifestAttribute.cs" />
-    <Compile Include="Attributes\HandleApplicationThreadExceptionAttribute.cs" />
-    <Compile Include="Attributes\RedirectHKCU.cs" />
-    <Compile Include="Attributes\RequiresSTAOnWindowsAttribute.cs" />
-    <Compile Include="Attributes\SuppressErrorBeepsAttribute.cs" />
     <Compile Include="CharEnumeratorForByteArrayTests.cs" />
     <Compile Include="DebugProcsTests.cs" />
     <Compile Include="DynamicLoaderTests.cs" />
     <Compile Include="FontHeightAdjusterTests.cs" />
-    <Compile Include="FontOverride.cs" />
     <Compile Include="FwApplicationSettingsTests.cs" />
     <Compile Include="InterfacesTests.cs" />
     <Compile Include="DisposableObjectsSetTests.cs" />
@@ -235,11 +233,7 @@
     <Compile Include="StringTableTests.cs" />
     <Compile Include="TempSFFileMaker.cs" />
     <Compile Include="TempSFFileMakerTests.cs" />
-    <Compile Include="TestBaseForTestsThatCreateTempFilesBasedOnResources.cs" />
     <Compile Include="TestFwApplicationSettings.cs" />
-    <Compile Include="TestFwStylesheet.cs" />
-    <Compile Include="TestFwStylesheetTests.cs" />
-    <Compile Include="XmlHelper.cs" />
     <None Include="App.config" />
     <Compile Include="FwDirectoryFinderTests.cs" />
     <Compile Include="DummyFwRegistryHelper.cs" />
@@ -248,14 +242,7 @@
     <Compile Include="MatchedPairsTests.cs" />
     <Compile Include="MeasurementUtilsTest.cs" />
     <Compile Include="QuotationMarksTests.cs" />
-    <Compile Include="ClipboardStub.cs" />
     <Compile Include="ImagePictureTest.cs" />
-    <Compile Include="MessageBoxStub.cs" />
-    <Compile Include="Attributes\InitializeNoOpKeyboardControllerAttribute.cs" />
-    <Compile Include="Attributes\InitializeRealKeyboardControllerAttribute.cs" />
-    <Compile Include="Attributes\SetMessageBoxAdapterAttribute.cs" />
-    <Compile Include="DummyKeyboardAdaptor.cs" />
-    <Compile Include="Attributes\InitializeFwRegistryHelperAttribute.cs" />
     <Compile Include="..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
@@ -298,6 +285,7 @@
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

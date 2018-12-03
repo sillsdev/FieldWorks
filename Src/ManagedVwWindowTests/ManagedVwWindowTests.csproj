@@ -84,7 +84,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.LCModel.Core.Tests.dll</HintPath>
     </Reference>
-    <Reference Include="ManagedVwWindow, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ManagedVwWindow">
       <HintPath>..\..\Output\Debug\ManagedVwWindow.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
@@ -106,8 +106,9 @@
     <Reference Include="ViewsInterfaces">
       <HintPath>..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="FwUtilsTests">
-      <HintPath>..\..\Output\Debug\FwUtilsTests.dll</HintPath>
+    <Reference Include="FieldWorks.TestUtilities">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\FieldWorks.TestUtilities.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

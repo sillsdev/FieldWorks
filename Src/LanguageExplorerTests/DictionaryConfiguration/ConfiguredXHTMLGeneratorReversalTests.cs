@@ -10,6 +10,7 @@ using System.Xml;
 using LanguageExplorer;
 using LanguageExplorer.Areas;
 using LanguageExplorer.DictionaryConfiguration;
+using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
 using SIL.LCModel.Core.Text;
 using SIL.TestUtilities;

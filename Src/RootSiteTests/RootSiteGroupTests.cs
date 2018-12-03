@@ -5,7 +5,7 @@
 using Rhino.Mocks;
 using System.Drawing;
 using System.Windows.Forms;
-using LanguageExplorerTests;
+using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;

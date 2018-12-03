@@ -81,13 +81,9 @@
     <Reference Include="Accessibility">
       <Name>Accessibility</Name>
     </Reference>
-    <Reference Include="CacheLight, Version=10.0.0.25441, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="CacheLight">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\CacheLight.dll</HintPath>
-    </Reference>
-    <Reference Include="CacheLightTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\CacheLightTests.dll</HintPath>
     </Reference>
     <Reference Include="DotNetZip, Version=1.10.1.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -97,9 +93,17 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\ExCSS.dll</HintPath>
     </Reference>
-    <Reference Include="Framework, Version=10.0.0.14012, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="FieldWorks.TestUtilities">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\FieldWorks.TestUtilities.dll</HintPath>
+    </Reference>
+    <Reference Include="Framework">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="LanguageExplorer.TestUtilities">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\LanguageExplorer.TestUtilities.dll</HintPath>
     </Reference>
     <Reference Include="ParserCore">
       <SpecificVersion>False</SpecificVersion>
@@ -169,10 +173,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\FwUtils.dll</HintPath>
     </Reference>
-    <Reference Include="FwUtilsTests">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\FwUtilsTests.dll</HintPath>
-    </Reference>
     <Reference Include="LanguageExplorer">
       <HintPath>..\..\Output\Release\LanguageExplorer.dll</HintPath>
     </Reference>
@@ -219,7 +219,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>/usr/lib/fieldworks/SilEncConverters40.dll</HintPath>
     </Reference>
-    <Reference Include="Sfm2Xml, Version=9.0.0.39651, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="Sfm2Xml">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\Sfm2Xml.dll</HintPath>
     </Reference>
@@ -352,7 +352,6 @@
     <Compile Include="Controls\SilSidePane\TestUtilities.cs" />
     <Compile Include="SimpleLoggerTests.cs" />
     <Compile Include="StylesXmlAccessorTests.cs" />
-    <Compile Include="TestSetupServices.cs" />
     <Compile Include="Repository\TextAndWordsAreaTests.cs" />
     <Compile Include="Areas\TextsAndWords\RespellingTests.cs" />
     <Compile Include="Areas\TextsAndWords\WordGrammarDebuggingTests.cs" />
@@ -455,8 +454,6 @@
     <None Include="Controls\XMLViews\Resources\Parts.xml" />
     <None Include="Controls\XMLViews\Resources\TextCacheModel_LanguageExplorer.xml" />
     <None Include="DictionaryConfiguration\TestData\AudioFiles\abu2.wav" />
-    <None Include="DictionaryConfiguration\TestData\ConfigurationSettings\Dictionary\ProjectDictionaryOverrides.css" />
-    <None Include="DictionaryConfiguration\TestData\ConfigurationSettings\ReversalIndex\ProjectReversalOverrides.css" />
     <None Include="Areas\TextsAndWords\Interlinear\ExportTestFiles\Phase1-KalabaTest.xml" />
     <None Include="Areas\TextsAndWords\Interlinear\ExportTestFiles\Phase1-KalabaTestPunctuation.xml" />
     <None Include="Areas\TextsAndWords\Interlinear\ExportTestFiles\Phase1-KalabaTestPunctuationWordAlignedXLingPap.xml" />

@@ -80,6 +80,10 @@
     <LangVersion>6</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FieldWorks.TestUtilities">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\FieldWorks.TestUtilities.dll</HintPath>
+    </Reference>
     <Reference Include="SIL.LCModel.Core.Tests, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.LCModel.Core.Tests.dll</HintPath>
@@ -101,13 +105,10 @@
       <Name>nunit.framework</Name>
       <HintPath>..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="FwUtilsTests">
-      <HintPath>..\..\Output\Debug\FwUtilsTests.dll</HintPath>
-    </Reference>
     <Reference Include="ManagedLgIcuCollator">
       <HintPath>..\..\Output\Debug\ManagedLgIcuCollator.dll</HintPath>
     </Reference>
-    <Reference Include="ViewsInterfaces, Version=9.0.0.21201, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="ViewsInterfaces">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>

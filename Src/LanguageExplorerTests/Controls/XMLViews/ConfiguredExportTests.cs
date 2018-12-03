@@ -8,6 +8,7 @@ using System.Globalization;
 using System.IO;
 using System.Xml.Linq;
 using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;

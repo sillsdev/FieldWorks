@@ -8,6 +8,7 @@ using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
+using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
 using Rhino.Mocks;
 using SIL.FieldWorks.Common.FwUtils;

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using LanguageExplorer.Areas.Lists;
+using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;

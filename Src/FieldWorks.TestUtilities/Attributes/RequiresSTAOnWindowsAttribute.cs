@@ -7,7 +7,7 @@ using System.Threading;
 using NUnit.Framework;
 using SIL.PlatformUtilities;
 
-namespace SIL.FieldWorks.Common.FwUtils.Attributes
+namespace FieldWorks.TestUtilities.Attributes
 {
 	/// <summary>
 	/// Marks a test that must run in the STA if running on Windows, causing it to run in a

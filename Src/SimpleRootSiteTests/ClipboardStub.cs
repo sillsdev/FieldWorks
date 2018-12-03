@@ -3,8 +3,9 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwUtils;
 
-namespace SIL.FieldWorks.Common.FwUtils
+namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 {
 	/// <summary>
 	/// Stub for tests that access the clipboard

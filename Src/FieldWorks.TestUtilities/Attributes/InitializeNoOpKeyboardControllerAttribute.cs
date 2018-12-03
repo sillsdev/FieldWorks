@@ -7,7 +7,7 @@ using NUnit.Framework;
 using SIL.Keyboarding;
 using SIL.Windows.Forms.Keyboarding;
 
-namespace SIL.FieldWorks.Common.FwUtils.Attributes
+namespace FieldWorks.TestUtilities.Attributes
 {
 	/// <summary>
 	/// NUnit helper attribute that creates a dummy keyboard controller. This is suitable for

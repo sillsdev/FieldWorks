@@ -6,6 +6,7 @@ using System;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Xml;

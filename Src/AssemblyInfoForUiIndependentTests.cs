@@ -1,9 +1,9 @@
-// Copyright (c) 2012-2017 SIL International
+// Copyright (c) 2012-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using FieldWorks.TestUtilities.Attributes;
 using SIL.LCModel.Core.Attributes;
-using SIL.FieldWorks.Common.FwUtils.Attributes;
 using SIL.LCModel.Utils.Attributes;
 using SIL.TestUtilities;
 

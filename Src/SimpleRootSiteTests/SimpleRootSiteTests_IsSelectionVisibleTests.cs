@@ -7,10 +7,10 @@
 
 using Rhino.Mocks;
 using System.Drawing;
-using LanguageExplorerTests;
+using FieldWorks.TestUtilities.Attributes;
+using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Common.FwUtils.Attributes;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests

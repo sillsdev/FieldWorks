@@ -14,6 +14,7 @@ using System.Xml;
 using ExCSS;
 using LanguageExplorer;
 using LanguageExplorer.DictionaryConfiguration;
+using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;

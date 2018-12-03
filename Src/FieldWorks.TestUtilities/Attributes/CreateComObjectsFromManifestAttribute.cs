@@ -6,9 +6,10 @@ using System;
 using System.Runtime.InteropServices;
 using System.Security;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.PlatformUtilities;
 
-namespace SIL.FieldWorks.Common.FwUtils.Attributes
+namespace FieldWorks.TestUtilities.Attributes
 {
 	/// <summary>
 	/// NUnit helper class that allows to create COM objects from a manifest file

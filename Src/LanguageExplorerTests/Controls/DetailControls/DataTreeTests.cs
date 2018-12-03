@@ -10,6 +10,7 @@ using System.Xml.Linq;
 using LanguageExplorer;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Impls;
+using LanguageExplorer.TestUtilities;
 using LanguageExplorerTests.Impls;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;

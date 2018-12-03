@@ -91,9 +91,29 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\Ethnologue.dll</HintPath>
     </Reference>
+    <Reference Include="FieldWorks.TestUtilities">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\FieldWorks.TestUtilities.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework, Version=2.4.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.LCModel.Core.Tests, Version=10.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.Core.Tests.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.LCModel.Utils, Version=10.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.LCModel.Utils.Tests, Version=10.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.Utils.Tests.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.TestUtilities, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\SIL.TestUtilities.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -101,8 +121,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\FwUtilsTests\Attributes\RedirectHKCU.cs">
-      <Link>RedirectHKCU.cs</Link>
+    <Compile Include="..\AssemblyInfoForUiIndependentTests.cs">
+      <Link>AssemblyInfoForUiIndependentTests.cs</Link>
     </Compile>
     <Compile Include="EthnologueTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

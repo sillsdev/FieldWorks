@@ -10,6 +10,7 @@ using LanguageExplorer;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Areas.TextsAndWords;
 using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
 using Rhino.Mocks;
 using SIL.LCModel.Core.Text;

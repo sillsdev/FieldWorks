@@ -11,7 +11,7 @@ namespace SIL.FieldWorks.CacheLightTests
 	/// <summary>
 	/// Base class for testing the field, class, and virtual methods.
 	/// </summary>
-	public class MetaDataCacheBase
+	public abstract class MetaDataCacheBase
 	{
 		/// <summary></summary>
 		protected IFwMetaDataCache m_metaDataCache;

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using LanguageExplorer;
 using LanguageExplorer.Impls;
+using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;

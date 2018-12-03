@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using FieldWorks.TestUtilities;
 using NUnit.Framework;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;

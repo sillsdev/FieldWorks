@@ -7,6 +7,7 @@ using System.Linq;
 using LanguageExplorer;
 using LanguageExplorer.Areas;
 using LanguageExplorer.DictionaryConfiguration;
+using LanguageExplorer.TestUtilities;
 using LanguageExplorerTests.DictionaryConfiguration;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;

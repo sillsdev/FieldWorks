@@ -4,8 +4,9 @@
 
 using System;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 
-namespace SIL.FieldWorks.Common.FwUtils.Attributes
+namespace FieldWorks.TestUtilities.Attributes
 {
 	/// <summary>
 	/// NUnit helper attribute that sets the company and product name for use in tests.

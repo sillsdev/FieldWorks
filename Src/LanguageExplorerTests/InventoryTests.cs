@@ -2,14 +2,15 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Resources;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using FieldWorks.TestUtilities;
 using LanguageExplorer;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.Xml;
 
 namespace LanguageExplorerTests
@@ -22,9 +23,9 @@ namespace LanguageExplorerTests
 	{
 		Inventory _inventory;
 
-		/// <summary>
-		/// Initialize everything...individual tests check what we got.
-		/// </summary>
+		#region Overrides of TestBaseForTestsThatCreateTempFilesBasedOnResources
+
+		/// <inheritdoc />
 		[TestFixtureSetUp]
 		public override void FixtureSetup()
 		{
@@ -41,6 +42,11 @@ namespace LanguageExplorerTests
 
 			base.FixtureSetup();
 		}
+
+		/// <inheritdoc />
+		protected override ResourceManager ResourceMgr => LanguageExplorerTestsResources.ResourceManager;
+
+		#endregion
 
 		private XElement CheckNode(string name, string[] keyvals, string target)
 		{
@@ -246,9 +252,8 @@ namespace LanguageExplorerTests
 	public class CreateOverrideTests : TestBaseForTestsThatCreateTempFilesBasedOnResources
 	{
 		XElement _root;
-		/// <summary>
-		/// Initialize everything...load a set of fragments from a file.
-		/// </summary>
+
+		/// <inheritdoc />
 		[TestFixtureSetUp]
 		public override void FixtureSetup()
 		{
@@ -258,6 +263,9 @@ namespace LanguageExplorerTests
 
 			base.FixtureSetup();
 		}
+
+		/// <inheritdoc />
+		protected override ResourceManager ResourceMgr => LanguageExplorerTestsResources.ResourceManager;
 
 		[Test]
 		public void SimpleOverride()

@@ -147,15 +147,15 @@
     <LangVersion>6</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LanguageExplorerTests, Version=10.0.0.24109, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="FieldWorks.TestUtilities">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\LanguageExplorerTests.dll</HintPath>
+      <HintPath>..\..\Output\Debug\FieldWorks.TestUtilities.dll</HintPath>
     </Reference>
     <Reference Include="SIL.LCModel.Core.Tests, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.LCModel.Core.Tests.dll</HintPath>
     </Reference>
-    <Reference Include="FwResources, Version=9.0.0.19234, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="FwResources">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FwResources.dll</HintPath>
     </Reference>
@@ -220,9 +220,6 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="FwUtils">
       <HintPath>..\..\Output\Debug\FwUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="FwUtilsTests">
-      <HintPath>..\..\Output\Debug\FwUtilsTests.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -298,6 +295,12 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LanguageExplorer.TestUtilities\LanguageExplorer.TestUtilities.csproj">
+      <Project>{59B0A394-A373-4004-983A-CBD0437BF645}</Project>
+      <Name>LanguageExplorer.TestUtilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

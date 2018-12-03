@@ -6,7 +6,7 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using LanguageExplorerTests;
+using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;

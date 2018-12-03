@@ -8,9 +8,6 @@ using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
-#if RANDYTODO
-	// TODO: Create a new Test utilities project for classes that are shared among several test projects.
-#endif
 	/// <summary />
 	public class TempSFFileMaker
 	{

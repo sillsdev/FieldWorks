@@ -5,9 +5,7 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
-using System.Text;
-using LanguageExplorerTests;
+using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;

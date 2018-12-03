@@ -4,8 +4,9 @@
 
 using System;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 
-namespace SIL.FieldWorks.Common.FwUtils.Attributes
+namespace FieldWorks.TestUtilities.Attributes
 {
 	/// <summary>
 	/// Suppresses error beeps.

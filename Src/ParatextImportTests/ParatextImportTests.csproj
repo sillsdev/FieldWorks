@@ -96,6 +96,10 @@
     <LangVersion>6</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FieldWorks.TestUtilities">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\FieldWorks.TestUtilities.dll</HintPath>
+    </Reference>
     <Reference Include="SIL.LCModel.Core, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
@@ -116,11 +120,11 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.LCModel.Tests.dll</HintPath>
     </Reference>
-    <Reference Include="Framework, Version=5.5.0.21859, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Framework">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\Framework.dll</HintPath>
     </Reference>
-    <Reference Include="FwControls, Version=5.5.0.19438, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="FwControls">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FwControls.dll</HintPath>
     </Reference>
@@ -128,17 +132,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.LCModel.Core.Tests.dll</HintPath>
     </Reference>
-    <Reference Include="FwResources, Version=6.1.0.16191, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="FwResources">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FwResources.dll</HintPath>
     </Reference>
-    <Reference Include="FwUtils, Version=5.5.0.19431, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="FwUtils">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FwUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="FwUtilsTests, Version=7.0.1.16580, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\FwUtilsTests.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -148,7 +148,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="Paratext8Plugin, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="Paratext8Plugin">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\Paratext8Plugin.dll</HintPath>
     </Reference>
@@ -164,15 +164,15 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Bin\Rhino\Rhino.Mocks.dll</HintPath>
     </Reference>
-    <Reference Include="RootSite, Version=5.5.0.19483, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="RootSite">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\RootSite.dll</HintPath>
     </Reference>
-    <Reference Include="ScriptureUtils, Version=5.5.0.19446, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ScriptureUtils">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\ScriptureUtils.dll</HintPath>
     </Reference>
-    <Reference Include="ScriptureUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="ScriptureUtilsTests">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\ScriptureUtilsTests.dll</HintPath>
     </Reference>
@@ -206,7 +206,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="ParatextImport">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\ParatextImport.dll</HintPath>

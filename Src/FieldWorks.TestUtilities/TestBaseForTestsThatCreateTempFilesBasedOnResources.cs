@@ -9,35 +9,29 @@ using System.Linq;
 using System.Reflection;
 using System.Resources;
 using System.Text;
-using NUnit.Framework;
 
-namespace SIL.FieldWorks.Common.FwUtils
+namespace FieldWorks.TestUtilities
 {
 	/// <summary />
-	[TestFixture]
-	public class TestBaseForTestsThatCreateTempFilesBasedOnResources
+	public abstract class TestBaseForTestsThatCreateTempFilesBasedOnResources
 	{
 		private static List<string> s_foldersToDelete = new List<string>();
 
 		/// <summary />
-		[TestFixtureSetUp]
 		public virtual void FixtureSetup()
 		{ /* Do nothing here. */ }
 
 		/// <summary />
-		[TestFixtureTearDown]
 		public virtual void FixtureTearDown()
 		{
 			CleanUpTempFolders();
 		}
 
 		/// <summary />
-		[SetUp]
 		public virtual void TestSetup()
 		{ /* Do nothing here. */ }
 
 		/// <summary />
-		[TearDown]
 		public virtual void TestTeardown()
 		{ /* Do nothing here. */ }
 
@@ -57,7 +51,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary />
-		protected virtual ResourceManager ResourceMgr => Properties.Resources.ResourceManager;
+		protected abstract ResourceManager ResourceMgr { get; }
 
 		/// <summary />
 		private void CreateSingleTempTestFile(string resName)
@@ -75,7 +69,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary />
-		internal static void CleanUpTempFolders()
+		private static void CleanUpTempFolders()
 		{
 			foreach (string folder in s_foldersToDelete)
 			{

@@ -4,7 +4,7 @@
 
 using System;
 using System.Diagnostics;
-using LanguageExplorerTests;
+using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.KernelInterfaces;

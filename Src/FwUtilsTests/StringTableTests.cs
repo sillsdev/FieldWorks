@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Resources;
 using System.Text;
 using System.Xml.Linq;
+using FieldWorks.TestUtilities;
 using NUnit.Framework;
 
 namespace SIL.FieldWorks.Common.FwUtils
@@ -17,22 +18,22 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// Summary description for StringTableTests.
 	/// </summary>
 	[TestFixture]
-	public class StringTableTests
+	public class StringTableTests : TestBaseForTestsThatCreateTempFilesBasedOnResources
 	{
 		private string m_tempFolder;
 		private StringTable m_table;
 
-		/// <summary />
+		/// <inheritdoc />
 		[TestFixtureSetUp]
-		public void FixtureInit()
+		public override void FixtureSetup()
 		{
 			m_tempFolder = CreateTestResourceFiles(typeof(Properties.Resources), "food");
 			m_table = new StringTable(Path.Combine(m_tempFolder, "fruit", "citrus"));
 		}
 
-		/// <summary />
+		/// <inheritdoc />
 		[TestFixtureTearDown]
-		public void FixtureCleanup()
+		public override void FixtureTearDown()
 		{
 			try
 			{
@@ -42,6 +43,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 			}
 		}
+
+		/// <inheritdoc />
+		protected override ResourceManager ResourceMgr => Properties.Resources.ResourceManager;
 
 		/// <summary />
 		[Test]

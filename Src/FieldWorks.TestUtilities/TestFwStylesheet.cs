@@ -8,7 +8,7 @@ using System.Diagnostics;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 
-namespace SIL.FieldWorks.Common.FwUtils
+namespace FieldWorks.TestUtilities
 {
 	/// <summary>
 	/// TestFwStylesheet class is based on a mocked IVwStylesheet, with some simple real

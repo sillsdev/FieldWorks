@@ -7,7 +7,7 @@ using System.Threading;
 using System.Windows.Forms;
 using NUnit.Framework;
 
-namespace SIL.FieldWorks.Common.FwUtils.Attributes
+namespace FieldWorks.TestUtilities.Attributes
 {
 	/// <summary>
 	/// Handles unhandled exceptions that occur in Windows Forms threads. This avoids the display of unhandled exception dialogs when

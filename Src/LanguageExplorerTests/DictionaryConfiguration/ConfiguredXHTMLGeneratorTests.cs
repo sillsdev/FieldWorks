@@ -30,6 +30,7 @@ using SIL.IO;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.Impls;
+using LanguageExplorer.TestUtilities;
 using SIL.LCModel.Application;
 
 namespace LanguageExplorerTests.DictionaryConfiguration

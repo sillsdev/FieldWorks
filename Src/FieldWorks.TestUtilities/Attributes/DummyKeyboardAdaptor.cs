@@ -8,7 +8,7 @@ using SIL.Keyboarding;
 using SIL.ObjectModel;
 using SIL.Windows.Forms.Keyboarding;
 
-namespace SIL.FieldWorks.Common.FwUtils
+namespace FieldWorks.TestUtilities.Attributes
 {
 	/// <summary />
 	public class DummyKeyboardAdaptor : DisposableBase, IKeyboardRetrievingAdaptor, IKeyboardSwitchingAdaptor

@@ -9,12 +9,12 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace SIL.FieldWorks.Common.FwUtils
+namespace FieldWorks.TestUtilities
 {
 	/// <summary>
 	/// XmlHelper contains methods to help when testing with XmlDocuments.
 	/// </summary>
-	public class XmlHelper
+	public static class XmlHelper
 	{
 		/// <summary>
 		/// Compares the XML documents and reports where the actual XML document differs from
@@ -248,7 +248,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 						match = attrActual.Value == attrExpect.Value || attrActual.IsNamespaceDeclaration && attrExpect.IsNamespaceDeclaration;
 						if (!match && sb != null)
 						{
-							badmatch = string.Format("    but actual {1}=\"{2}\"", attrActual.Name, attrActual.Value);
+							badmatch = string.Format("    but actual {0}=\"{1}\"", attrActual.Name, attrActual.Value);
 						}
 						break;
 					}
