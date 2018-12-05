@@ -20,7 +20,6 @@ namespace FieldWorks.TestUtilities.Attributes
 	{
 		private ActivationContextHelper m_activationContext;
 		private IDisposable m_currentActivation;
-		private DebugProcs m_debugProcs;
 
 		/// <inheritdoc />
 		public override ActionTargets Targets => ActionTargets.Suite;
@@ -32,7 +31,6 @@ namespace FieldWorks.TestUtilities.Attributes
 
 			m_activationContext = new ActivationContextHelper("FieldWorks.Tests.manifest");
 			m_currentActivation = m_activationContext.Activate();
-			m_debugProcs = new DebugProcs();
 
 			if (!Platform.IsWindows)
 			{
@@ -58,7 +56,6 @@ namespace FieldWorks.TestUtilities.Attributes
 		/// <inheritdoc />
 		public override void AfterTest(TestDetails testDetails)
 		{
-			m_debugProcs.Dispose();
 			CoFreeUnusedLibraries();
 
 			m_currentActivation.Dispose();

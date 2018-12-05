@@ -239,7 +239,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CharacterCategorizer.cs" />
     <Compile Include="CharEnumeratorForByteArray.cs" />
-    <Compile Include="DebugProcs.cs" />
     <Compile Include="DisposableObjectsSet.cs" />
     <Compile Include="DynamicLoader.cs" />
     <Compile Include="FLExBridgeHelper.cs" />

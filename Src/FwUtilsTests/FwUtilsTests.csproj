@@ -216,7 +216,6 @@
   <ItemGroup>
     <Compile Include="AlphaOutlineTests.cs" />
     <Compile Include="CharEnumeratorForByteArrayTests.cs" />
-    <Compile Include="DebugProcsTests.cs" />
     <Compile Include="DynamicLoaderTests.cs" />
     <Compile Include="FontHeightAdjusterTests.cs" />
     <Compile Include="FwApplicationSettingsTests.cs" />
