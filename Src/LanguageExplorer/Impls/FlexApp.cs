@@ -1803,7 +1803,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				Path.DirectorySeparatorChar);
 
 			OpenDocument(path, (e) => {
-				MessageBox.Show(null, string.Format(FrameworkStrings.ksCannotShowX, path),
+				MessageBox.Show(null, string.Format(LanguageExplorerResources.ksCannotShowX, path),
 					LexTextStrings.ksError);
 			});
 			return true;

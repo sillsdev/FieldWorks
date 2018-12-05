@@ -484,7 +484,6 @@
     <Compile Include="Controls\Styles\UpDownMeasureControl.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ExternalSettingsAccessorBase.cs" />
     <Compile Include="Impls\SharedEventHandlers.cs" />
     <Compile Include="Areas\StringRepSliceVc.cs" />
     <Compile Include="Areas\StringRepSliceView.cs">
@@ -1348,11 +1347,9 @@
     <Compile Include="RecordFilterParameterObject.cs" />
     <Compile Include="SelectionEvents.cs" />
     <Compile Include="SendReceive\ImportFailureStatus.cs" />
-    <Compile Include="SettingsXmlAccessorBase.cs" />
     <Compile Include="StatusBarTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="StylesXmlAccessor.cs" />
     <Compile Include="ToolbarServices.cs" />
     <Compile Include="UtilityTools\FixErrorsDlg.cs">
       <SubType>Form</SubType>

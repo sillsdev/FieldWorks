@@ -351,7 +351,7 @@
     <Compile Include="Controls\SilSidePane\TabTests.cs" />
     <Compile Include="Controls\SilSidePane\TestUtilities.cs" />
     <Compile Include="SimpleLoggerTests.cs" />
-    <Compile Include="StylesXmlAccessorTests.cs" />
+    <Compile Include="FlexStylesXmlAccessorTests.cs" />
     <Compile Include="Repository\TextAndWordsAreaTests.cs" />
     <Compile Include="Areas\TextsAndWords\RespellingTests.cs" />
     <Compile Include="Areas\TextsAndWords\WordGrammarDebuggingTests.cs" />

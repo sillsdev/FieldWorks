@@ -14,10 +14,10 @@ using SIL.LCModel.Core.Text;
 namespace LanguageExplorerTests
 {
 	/// <summary>
-	/// Partial test of the StylesXmlAccessor.
+	/// Partial test of FlexStylesXmlAccessor.
 	/// </summary>
 	[TestFixture]
-	public class StylesXmlAccessorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
+	public class FlexStylesXmlAccessorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		/// <summary>
 		/// This is not a very comprehensive test. There are important behaviors it does not test, such as the renaming
@@ -63,7 +63,7 @@ namespace LanguageExplorerTests
 			var factoryGuid1 = Guid.NewGuid();
 			var factoryGuid2 = Guid.NewGuid();
 
-			var sut = new TestAccessorForFindOrCreateStyle(Cache);
+			var sut = new FlexStylesXmlAccessor(Cache.LanguageProject.LexDbOA, prepareForTests: true);
 
 			sut.FindOrCreateStyle("testA", StyleType.kstParagraph, ContextValues.General, StructureValues.Undefined, FunctionValues.Prose, factoryGuid1);
 			sut.FindOrCreateStyle("testB", StyleType.kstParagraph, ContextValues.General, StructureValues.Undefined, FunctionValues.Prose, factoryGuid2);
@@ -130,7 +130,7 @@ namespace LanguageExplorerTests
 			var factoryGuid1 = Guid.NewGuid();
 			var factoryGuid2 = Guid.NewGuid();
 
-			var sut = new TestAccessorForFindOrCreateStyle(Cache);
+			var sut = new FlexStylesXmlAccessor(Cache.LanguageProject.LexDbOA, prepareForTests: true);
 
 			sut.FindOrCreateStyle("testA", StyleType.kstParagraph, ContextValues.Text, StructureValues.Heading, FunctionValues.Prose, factoryGuid1);
 			sut.FindOrCreateStyle("testB", StyleType.kstParagraph, ContextValues.Text, StructureValues.Body, FunctionValues.Prose, factoryGuid2);
@@ -180,7 +180,7 @@ namespace LanguageExplorerTests
 			var userGuid = userStyle.Guid;
 			var factoryGuid = Guid.NewGuid();
 
-			var sut = new TestAccessorForFindOrCreateStyle(Cache);
+			var sut = new FlexStylesXmlAccessor(Cache.LanguageProject.LexDbOA, prepareForTests: true);
 
 			sut.FindOrCreateStyle(styleName, StyleType.kstCharacter, ContextValues.General, StructureValues.Undefined, FunctionValues.Prose, factoryGuid);
 
@@ -226,7 +226,7 @@ namespace LanguageExplorerTests
 			scriptureStyle.UserLevel = 5;
 
 			var scrStyleGuid = scriptureStyle.Guid;
-			var sut = new TestAccessorForFindOrCreateStyle(Cache);
+			var sut = new FlexStylesXmlAccessor(Cache.LanguageProject.LexDbOA, prepareForTests: true);
 			Assert.That(scr.StylesOC.Count, Is.EqualTo(0), "Style should have been removed from Scripture.");
 			Assert.That(Cache.LangProject.StylesOC.Count, Is.EqualTo(1), "Style should have been added to language project.");
 			Assert.That(Cache.LangProject.StylesOC.First().Name, Is.EqualTo(styleName), "Style name should not have changed.");
@@ -235,51 +235,6 @@ namespace LanguageExplorerTests
 			Assert.That(movedStyle, Is.EqualTo(scriptureStyle));
 			Assert.That(movedStyle.Name, Is.EqualTo(styleName), "Style name should not have changed.");
 			Assert.That(movedStyle.Owner, Is.EqualTo(Cache.LangProject), "The style owner should be the language project.");
-		}
-	}
-
-	/// <summary>
-	/// StylesXmlAccessor is an abstract class designed to be subclassed for a specific stylesheet.
-	/// Here, so far, we just want to test one method of the base class, so we make a trivial subclass which trivially
-	/// implements (by throwing) abstract methods not needed by the one we want to test.
-	/// The FindOrCreateStyle method is normally called (indirectly) by CreateStyles(), which initializes m_databaseStyles
-	/// to contain all the pre-existing styles. For this test we just do this in the constructor of our private subclass.
-	/// </summary>
-	internal class TestAccessorForFindOrCreateStyle : StylesXmlAccessor
-	{
-		public TestAccessorForFindOrCreateStyle(LcmCache cache) : base(cache)
-		{
-			m_databaseStyles = cache.LangProject.StylesOC;
-			if (cache.LangProject.TranslatedScriptureOA != null)
-			{
-				MoveStylesFromScriptureToLangProject();
-			}
-			// see class comment. This would not be normal behavior for a StylesXmlAccessor subclass constructor.
-			foreach (var sty in m_databaseStyles)
-			{
-				m_htOrigStyles[sty.Name] = sty;
-			}
-		}
-		protected override string ResourceFilePathFromFwInstall
-		{
-			get { throw new NotSupportedException(); }
-		}
-
-		protected override string ResourceName
-		{
-			get { throw new NotSupportedException(); }
-		}
-
-		protected override LcmCache Cache => m_cache;
-
-		protected override ILcmOwningCollection<ICmResource> ResourceList
-		{
-			get { throw new NotSupportedException(); }
-		}
-
-		protected override ILcmOwningCollection<IStStyle> StyleCollection
-		{
-			get { throw new NotSupportedException(); }
 		}
 	}
 }

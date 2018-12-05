@@ -1372,4 +1372,91 @@ Do you want to continue with the export?</value>
   <data name="MoveDown" xml:space="preserve">
     <value>Move Down</value>
   </data>
+  <data name="ksCannotCreateShortcut" xml:space="preserve">
+    <value>FieldWorks cannot automatically create a shortcut to a project with this file name, due to a bug in Windows. You can however manually create a shortcut. It should have the target {0}</value>
+  </data>
+  <data name="ksCannotCreateShortcutCaption" xml:space="preserve">
+    <value>Cannot create shortcut</value>
+  </data>
+  <data name="ksCannotLoadFile" xml:space="preserve">
+    <value>File {0} could not be loaded.
+{1}</value>
+  </data>
+  <data name="ksCannotRedefineFactoryStyle" xml:space="preserve">
+    <value>Cannot redefine factory style {0} to have a different Type, Context, Structure, or Function in {1}</value>
+    <comment>Error message when processing an XML file to create factory styles.</comment>
+  </data>
+  <data name="ksCannotReplaceXwithY" xml:space="preserve">
+    <value>Style {0} cannot be replaced with {1} because their contexts are incompatible. Error in &lt;replacements&gt; tag in {2}.</value>
+    <comment>Error message when processing an XML file to create factory styles.</comment>
+  </data>
+  <data name="ksCannotShowX" xml:space="preserve">
+    <value>Sorry, could not show {0}.</value>
+  </data>
+  <data name="ksErrorCannotLaunchMovies" xml:space="preserve">
+    <value>An error occurred trying to launch the movies. You could try to launch them yourself. They are located in this folder: {0}</value>
+  </data>
+  <data name="ksInvalidFirstLineHanging" xml:space="preserve">
+    <value>Illegal specification of both 'firstLine' and 'hanging' attributes for {0} style in {1}</value>
+    <comment>Error message when processing an XML file to create factory styles.</comment>
+  </data>
+  <data name="ksInvalidResourceFileVersion" xml:space="preserve">
+    <value>Invalid version attribute in {0}</value>
+    <comment>Error message when processing an XML file to initialize factory settings, such as styles.</comment>
+  </data>
+  <data name="ksMissingBasedOnStyle" xml:space="preserve">
+    <value>The basedOn style for {0} style must be specified in {1}</value>
+    <comment>Error message when processing an XML file to create factory styles.</comment>
+  </data>
+  <data name="ksMissingParagraphElement" xml:space="preserve">
+    <value>Paragraph style {0} must have a paragraph element in {1}</value>
+    <comment>Error message when processing an XML file to create factory styles.</comment>
+  </data>
+  <data name="ksNegativeLineSpacing" xml:space="preserve">
+    <value>Negative value is not valid for paragraph 'lineSpacing' attribute of {0} style in {1}</value>
+    <comment>Error message when processing an XML file to create factory styles.</comment>
+  </data>
+  <data name="ksNoBasedOnSelf" xml:space="preserve">
+    <value>Style {0} cannot be based on itself (as defined in {1}).</value>
+    <comment>Error message when processing an XML file to create factory styles.</comment>
+  </data>
+  <data name="kstidIncompatibleDTDVersion" xml:space="preserve">
+    <value>{0} conforms to a DTD which is incompatible with this version of the program.
+This version of the program requires version {1}.</value>
+    <comment>Error message when processing an XML file to create factory settings (styles, publications, etc.).</comment>
+  </data>
+  <data name="ksUnknownAlignmentValue" xml:space="preserve">
+    <value>Unrecognized value for paragraph 'alignment' attribute of {0} style in {1}</value>
+    <comment>Error message when processing an XML file to create factory styles.</comment>
+  </data>
+  <data name="ksUnknownAttrUnits" xml:space="preserve">
+    <value>Unrecognized units specified for '{0}' attribute of {1} style in {2}</value>
+    <comment>Error message when processing an XML file to create factory styles.</comment>
+  </data>
+  <data name="ksUnknownBasedOnStyle" xml:space="preserve">
+    <value>Unrecognized basedOn style for {0} style in {2}: {1}</value>
+    <comment>Error message when processing an XML file to create factory styles.</comment>
+  </data>
+  <data name="ksUnknownBorderValue" xml:space="preserve">
+    <value>Unrecognized value for paragraph 'border' attribute of {0} style in {1}</value>
+    <comment>Error message when processing an XML file to create factory styles.</comment>
+  </data>
+  <data name="ksUnknownBulNumSchemeValue" xml:space="preserve">
+    <value>Unrecognized value for paragraph 'bulNumScheme' attribute of {0} style in {1}</value>
+  </data>
+  <data name="ksUnknownBulNumStartAtValue" xml:space="preserve">
+    <value>Unrecognized value for paragraph 'bulNumStartAt' attribute of {0} style in {1}</value>
+  </data>
+  <data name="ksUnknownLineSpacingValue" xml:space="preserve">
+    <value>Unrecognized value for paragraph 'lineSpacingType' attribute of {0} style in {1}</value>
+  </data>
+  <data name="ksUnknownNextStyle" xml:space="preserve">
+    <value>Unrecognized next style for {0} style in {2}: {1}</value>
+  </data>
+  <data name="ksUnknownStyleAttribute" xml:space="preserve">
+    <value>Unrecognized '{0}' attribute for style {1} in {2}</value>
+  </data>
+  <data name="ksUnknownUnderlineColor" xml:space="preserve">
+    <value>Unrecognized value for 'underlineColor' attribute of {0} style in {1}</value>
+  </data>
 </root>

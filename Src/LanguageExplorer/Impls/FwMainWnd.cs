@@ -1217,7 +1217,7 @@ namespace LanguageExplorer.Impls
 			catch (Exception)
 			{
 				// Some other unforeseen error:
-				MessageBox.Show(null, string.Format(FrameworkStrings.ksErrorCannotLaunchMovies, Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "Movies")), LanguageExplorerResources.ksError);
+				MessageBox.Show(null, string.Format(LanguageExplorerResources.ksErrorCannotLaunchMovies, Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "Movies")), LanguageExplorerResources.ksError);
 			}
 		}
 
@@ -1510,8 +1510,8 @@ namespace LanguageExplorer.Impls
 				var link = (IWshShortcut)shell.CreateShortcut(linkPath);
 				if (link.FullName != linkPath)
 				{
-					var msg = string.Format(FrameworkStrings.ksCannotCreateShortcut, _flexApp.ProductExecutableFile + " " + applicationArguments);
-					MessageBox.Show(ActiveForm, msg, FrameworkStrings.ksCannotCreateShortcutCaption, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+					var msg = string.Format(LanguageExplorerResources.ksCannotCreateShortcut, _flexApp.ProductExecutableFile + " " + applicationArguments);
+					MessageBox.Show(ActiveForm, msg, LanguageExplorerResources.ksCannotCreateShortcutCaption, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
 					return;
 				}
 				link.TargetPath = _flexApp.ProductExecutableFile;
@@ -1617,7 +1617,7 @@ namespace LanguageExplorer.Impls
 			var pathnameToWritingSystemHelpFile = Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "Training", "Technical Notes on Writing Systems.pdf");
 			OpenDocument(pathnameToWritingSystemHelpFile, err =>
 			{
-				MessageBox.Show(this, string.Format(FrameworkStrings.ksCannotShowX, pathnameToWritingSystemHelpFile), LanguageExplorerResources.ksError);
+				MessageBox.Show(this, string.Format(LanguageExplorerResources.ksCannotShowX, pathnameToWritingSystemHelpFile), LanguageExplorerResources.ksError);
 			});
 		}
 
@@ -1627,7 +1627,7 @@ namespace LanguageExplorer.Impls
 
 			OpenDocument(xLingPaperPathname, err =>
 			{
-				MessageBox.Show(this, string.Format(FrameworkStrings.ksCannotShowX, xLingPaperPathname), LanguageExplorerResources.ksError);
+				MessageBox.Show(this, string.Format(LanguageExplorerResources.ksCannotShowX, xLingPaperPathname), LanguageExplorerResources.ksError);
 			});
 		}
 

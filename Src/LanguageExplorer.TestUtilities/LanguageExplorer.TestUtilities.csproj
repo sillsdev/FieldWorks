@@ -100,6 +100,7 @@
     <Compile Include="TestSetupServices.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="DictionaryConfiguration\TestData\AudioFiles\abu2.wav" />
   </ItemGroup>
   <ItemGroup />

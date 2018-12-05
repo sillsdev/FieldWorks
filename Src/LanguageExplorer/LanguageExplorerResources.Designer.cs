@@ -725,6 +725,24 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to FieldWorks cannot automatically create a shortcut to a project with this file name, due to a bug in Windows. You can however manually create a shortcut. It should have the target {0}.
+        /// </summary>
+        internal static string ksCannotCreateShortcut {
+            get {
+                return ResourceManager.GetString("ksCannotCreateShortcut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot create shortcut.
+        /// </summary>
+        internal static string ksCannotCreateShortcutCaption {
+            get {
+                return ResourceManager.GetString("ksCannotCreateShortcutCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sorry, could not launch {0}..
         /// </summary>
         internal static string ksCannotLaunchX {
@@ -734,11 +752,30 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to File {0} could not be loaded.
+        ///{1}.
+        /// </summary>
+        internal static string ksCannotLoadFile {
+            get {
+                return ResourceManager.GetString("ksCannotLoadFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Merging wordforms needs serious definition, before it can be done. Sorry..
         /// </summary>
         internal static string ksCannotMergeWordformsYet {
             get {
                 return ResourceManager.GetString("ksCannotMergeWordformsYet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot redefine factory style {0} to have a different Type, Context, Structure, or Function in {1}.
+        /// </summary>
+        internal static string ksCannotRedefineFactoryStyle {
+            get {
+                return ResourceManager.GetString("ksCannotRedefineFactoryStyle", resourceCulture);
             }
         }
         
@@ -757,6 +794,24 @@ namespace LanguageExplorer {
         internal static string ksCannotRedoConvertVariants {
             get {
                 return ResourceManager.GetString("ksCannotRedoConvertVariants", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Style {0} cannot be replaced with {1} because their contexts are incompatible. Error in &lt;replacements&gt; tag in {2}..
+        /// </summary>
+        internal static string ksCannotReplaceXwithY {
+            get {
+                return ResourceManager.GetString("ksCannotReplaceXwithY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sorry, could not show {0}..
+        /// </summary>
+        internal static string ksCannotShowX {
+            get {
+                return ResourceManager.GetString("ksCannotShowX", resourceCulture);
             }
         }
         
@@ -1229,6 +1284,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An error occurred trying to launch the movies. You could try to launch them yourself. They are located in this folder: {0}.
+        /// </summary>
+        internal static string ksErrorCannotLaunchMovies {
+            get {
+                return ResourceManager.GetString("ksErrorCannotLaunchMovies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error.
         /// </summary>
         internal static string ksErrorCaption {
@@ -1531,11 +1595,29 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Illegal specification of both &apos;firstLine&apos; and &apos;hanging&apos; attributes for {0} style in {1}.
+        /// </summary>
+        internal static string ksInvalidFirstLineHanging {
+            get {
+                return ResourceManager.GetString("ksInvalidFirstLineHanging", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid Internal Constituent Chart Data.
         /// </summary>
         internal static string ksInvalidInternalConstituentChartData {
             get {
                 return ResourceManager.GetString("ksInvalidInternalConstituentChartData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid version attribute in {0}.
+        /// </summary>
+        internal static string ksInvalidResourceFileVersion {
+            get {
+                return ResourceManager.GetString("ksInvalidResourceFileVersion", resourceCulture);
             }
         }
         
@@ -1657,11 +1739,29 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The basedOn style for {0} style must be specified in {1}.
+        /// </summary>
+        internal static string ksMissingBasedOnStyle {
+            get {
+                return ResourceManager.GetString("ksMissingBasedOnStyle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ---.
         /// </summary>
         internal static string ksMissingMarker {
             get {
                 return ResourceManager.GetString("ksMissingMarker", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Paragraph style {0} must have a paragraph element in {1}.
+        /// </summary>
+        internal static string ksMissingParagraphElement {
+            get {
+                return ResourceManager.GetString("ksMissingParagraphElement", resourceCulture);
             }
         }
         
@@ -1747,6 +1847,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Negative value is not valid for paragraph &apos;lineSpacing&apos; attribute of {0} style in {1}.
+        /// </summary>
+        internal static string ksNegativeLineSpacing {
+            get {
+                return ResourceManager.GetString("ksNegativeLineSpacing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to charttempEdit.
         /// </summary>
         internal static string ksNewTemplateLink {
@@ -1797,6 +1906,15 @@ namespace LanguageExplorer {
         internal static string ksNoAnalysis {
             get {
                 return ResourceManager.GetString("ksNoAnalysis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Style {0} cannot be based on itself (as defined in {1})..
+        /// </summary>
+        internal static string ksNoBasedOnSelf {
+            get {
+                return ResourceManager.GetString("ksNoBasedOnSelf", resourceCulture);
             }
         }
         
@@ -2548,6 +2666,16 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} conforms to a DTD which is incompatible with this version of the program.
+        ///This version of the program requires version {1}..
+        /// </summary>
+        internal static string kstidIncompatibleDTDVersion {
+            get {
+                return ResourceManager.GetString("kstidIncompatibleDTDVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Memory and disk usage information..
         /// </summary>
         internal static string kstidMemoryDiskUsageInformation {
@@ -2974,6 +3102,96 @@ namespace LanguageExplorer {
         internal static string ksUndoVariantOf {
             get {
                 return ResourceManager.GetString("ksUndoVariantOf", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unrecognized value for paragraph &apos;alignment&apos; attribute of {0} style in {1}.
+        /// </summary>
+        internal static string ksUnknownAlignmentValue {
+            get {
+                return ResourceManager.GetString("ksUnknownAlignmentValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unrecognized units specified for &apos;{0}&apos; attribute of {1} style in {2}.
+        /// </summary>
+        internal static string ksUnknownAttrUnits {
+            get {
+                return ResourceManager.GetString("ksUnknownAttrUnits", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unrecognized basedOn style for {0} style in {2}: {1}.
+        /// </summary>
+        internal static string ksUnknownBasedOnStyle {
+            get {
+                return ResourceManager.GetString("ksUnknownBasedOnStyle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unrecognized value for paragraph &apos;border&apos; attribute of {0} style in {1}.
+        /// </summary>
+        internal static string ksUnknownBorderValue {
+            get {
+                return ResourceManager.GetString("ksUnknownBorderValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unrecognized value for paragraph &apos;bulNumScheme&apos; attribute of {0} style in {1}.
+        /// </summary>
+        internal static string ksUnknownBulNumSchemeValue {
+            get {
+                return ResourceManager.GetString("ksUnknownBulNumSchemeValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unrecognized value for paragraph &apos;bulNumStartAt&apos; attribute of {0} style in {1}.
+        /// </summary>
+        internal static string ksUnknownBulNumStartAtValue {
+            get {
+                return ResourceManager.GetString("ksUnknownBulNumStartAtValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unrecognized value for paragraph &apos;lineSpacingType&apos; attribute of {0} style in {1}.
+        /// </summary>
+        internal static string ksUnknownLineSpacingValue {
+            get {
+                return ResourceManager.GetString("ksUnknownLineSpacingValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unrecognized next style for {0} style in {2}: {1}.
+        /// </summary>
+        internal static string ksUnknownNextStyle {
+            get {
+                return ResourceManager.GetString("ksUnknownNextStyle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unrecognized &apos;{0}&apos; attribute for style {1} in {2}.
+        /// </summary>
+        internal static string ksUnknownStyleAttribute {
+            get {
+                return ResourceManager.GetString("ksUnknownStyleAttribute", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unrecognized value for &apos;underlineColor&apos; attribute of {0} style in {1}.
+        /// </summary>
+        internal static string ksUnknownUnderlineColor {
+            get {
+                return ResourceManager.GetString("ksUnknownUnderlineColor", resourceCulture);
             }
         }
         
