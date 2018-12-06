@@ -210,12 +210,6 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Icon1.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\BookOnCube.ico" />
-  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <DistFiles>../../DistFiles</DistFiles>

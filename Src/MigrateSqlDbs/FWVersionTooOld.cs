@@ -1,9 +1,6 @@
-// Copyright (c) 2011-2013 SIL International
+// Copyright (c) 2011-20138 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FWVersionTooOld.cs
-// Responsibility: mcconnel
 
 using System;
 using System.Diagnostics;
@@ -11,19 +8,13 @@ using System.Windows.Forms;
 
 namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Warn the user that the old version of FieldWorks is too old, and provide links for
 	/// downloading the appropriate installers.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public partial class FWVersionTooOld : Form
 	{
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FWVersionTooOld"/> class.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public FWVersionTooOld(string version)
 		{
 			InitializeComponent();
