@@ -156,10 +156,12 @@
     </Compile>
     <Compile Include="CustomFields.cs" />
     <Compile Include="GenericInspectorObject.cs" />
+    <Compile Include="GenericInspectorObjectList.cs" />
+    <Compile Include="IInspectorObject.cs" />
     <Compile Include="InspectorGrid.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="InspectorInterfaces.cs" />
+    <Compile Include="IInspectorList.cs" />
     <Compile Include="InspectorWnd.cs">
       <SubType>Form</SubType>
     </Compile>

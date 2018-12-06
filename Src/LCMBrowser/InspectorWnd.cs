@@ -1,34 +1,25 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace LCMBrowser
 {
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	public partial class InspectorWnd : DockContent
 	{
-		/// <summary></summary>
+		/// <summary />
 		public delegate bool WillObjDisappearOnRefreshHandler(object sender, IInspectorObject io);
-		/// <summary></summary>
+		/// <summary />
 		public event WillObjDisappearOnRefreshHandler WillObjDisappearOnRefresh;
 
-		private IInspectorList m_list;
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="InspectorWnd"/> class.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public InspectorWnd()
 		{
 			InitializeComponent();
@@ -36,227 +27,161 @@ namespace LCMBrowser
 			gridInspector.ShadingColor = Properties.Settings.Default.UseShading ? Properties.Settings.Default.ShadeColor : Color.Empty;
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing && (components != null))
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+
+			if (disposing)
 			{
-				if (m_list != null)
+				if (InspectorList != null)
 				{
-					m_list.BeginItemExpanding -= m_list_BeginItemExpanding;
-					m_list.EndItemExpanding -= m_list_EndItemExpanding;
+					InspectorList.BeginItemExpanding -= m_list_BeginItemExpanding;
+					InspectorList.EndItemExpanding -= m_list_EndItemExpanding;
 				}
 
-				components.Dispose();
+				components?.Dispose();
 			}
 
 			base.Dispose(disposing);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the current inspector object.
 		/// </summary>
-		/// <value>The current inspector object.</value>
-		/// ------------------------------------------------------------------------------------
-		public IInspectorObject CurrentInspectorObject
-		{
-			get
-			{
-				if (m_list != null && m_list.Count > 0 && gridInspector.CurrentCellAddress.Y >= 0)
-					return m_list[gridInspector.CurrentCellAddress.Y];
+		public IInspectorObject CurrentInspectorObject => InspectorList != null && InspectorList.Count > 0
+				&& gridInspector.CurrentCellAddress.Y >= 0 ? InspectorList[gridInspector.CurrentCellAddress.Y] : null;
 
-				return null;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the top level object.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public object TopLevelObject
-		{
-			get { return m_list.TopLevelObject; }
-		}
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Sets the top level object.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public void SetTopLevelObject(object obj, IInspectorList list)
 		{
-			if (m_list != null)
+			if (InspectorList != null)
 			{
-				m_list.BeginItemExpanding -= m_list_BeginItemExpanding;
-				m_list.EndItemExpanding -= m_list_EndItemExpanding;
+				InspectorList.BeginItemExpanding -= m_list_BeginItemExpanding;
+				InspectorList.EndItemExpanding -= m_list_EndItemExpanding;
 			}
 
-			m_list = list;
-			m_list.Initialize(obj);
-			gridInspector.List = m_list;
+			InspectorList = list;
+			InspectorList.Initialize(obj);
+			gridInspector.List = InspectorList;
 
-			m_list.BeginItemExpanding += m_list_BeginItemExpanding;
-			m_list.EndItemExpanding += m_list_EndItemExpanding;
+			InspectorList.BeginItemExpanding += m_list_BeginItemExpanding;
+			InspectorList.EndItemExpanding += m_list_EndItemExpanding;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the BeginItemExpanding event of the m_list control.
 		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		/// ------------------------------------------------------------------------------------
 		void m_list_BeginItemExpanding(object sender, EventArgs e)
 		{
 			Cursor = Cursors.WaitCursor;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the EndItemExpanding event of the m_list control.
 		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		/// ------------------------------------------------------------------------------------
 		void m_list_EndItemExpanding(object sender, EventArgs e)
 		{
 			Cursor = Cursors.Default;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the inspector list.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public IInspectorList InspectorList
-		{
-			get { return m_list; }
-		}
+		public IInspectorList InspectorList { get; private set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the inspector grid.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public InspectorGrid InspectorGrid
-		{
-			get { return gridInspector; }
-		}
+		public InspectorGrid InspectorGrid => gridInspector;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the CellMouseDown event of the gridInspector control.
 		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="System.Windows.Forms.DataGridViewCellMouseEventArgs"/> instance containing the event data.</param>
-		/// ------------------------------------------------------------------------------------
 		private void gridInspector_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
 		{
-			if (e.Button == MouseButtons.Right && e.RowIndex >= 0 && e.RowIndex < m_list.Count)
+			if (e.Button == MouseButtons.Right && e.RowIndex >= 0 && e.RowIndex < InspectorList.Count)
+			{
 				gridInspector.CurrentCell = gridInspector[e.ColumnIndex, e.RowIndex];
+			}
 		}
 
-		///// ------------------------------------------------------------------------------------
-		///// <summary>
-		///// Handles the KeyPress event of the tstxtSearch control.
-		///// </summary>
-		///// <param name="sender">The source of the event.</param>
-		///// <param name="e">The <see cref="System.Windows.Forms.KeyPressEventArgs"/> instance containing the event data.</param>
-		///// ------------------------------------------------------------------------------------
-		//private void tstxtSearch_KeyPress(object sender, KeyPressEventArgs e)
-		//{
-		//    if (e.KeyChar != (char)Keys.Enter)
-		//        return;
-
-		//    Guid guid = new Guid(tstxtSearch.Text.Trim());
-		//    int i = m_list.GotoGuid(guid);
-		//    if (i >= 0)
-		//    {
-		//        gridInspector.RowCount = m_list.Count;
-		//        gridInspector.Invalidate();
-		//        gridInspector.CurrentCell = gridInspector[0, i];
-		//    }
-		//}
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Refreshes the view.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public void RefreshView()
 		{
 			// Get the object that's displayed in the first visible row of the grid.
-			IInspectorObject firstDisplayedObj =
-				m_list[gridInspector.FirstDisplayedScrollingRowIndex];
+			var firstDisplayedObj = InspectorList[gridInspector.FirstDisplayedScrollingRowIndex];
 
 			// Get the current, selected row in the grid.
-			IInspectorObject currSelectedObj = gridInspector.CurrentObject;
+			var currSelectedObj = gridInspector.CurrentObject;
 			if (currSelectedObj != null && WillObjDisappearOnRefresh != null)
 			{
 				// Check if the selected object will disappear after refreshing the grid.
 				// If so, then save a reference to the selected object's parent object.
 				if (WillObjDisappearOnRefresh(this, currSelectedObj))
-					currSelectedObj = m_list.GetParent(gridInspector.CurrentCellAddress.Y);
+				{
+					currSelectedObj = InspectorList.GetParent(gridInspector.CurrentCellAddress.Y);
+				}
 			}
 
-			int keyFirstDisplayedObj = (firstDisplayedObj != null ? firstDisplayedObj.Key : -1);
-			int keyCurrSelectedObj = (currSelectedObj != null ? currSelectedObj.Key : -1);
+			var keyFirstDisplayedObj = (firstDisplayedObj != null ? firstDisplayedObj.Key : -1);
+			var keyCurrSelectedObj = (currSelectedObj != null ? currSelectedObj.Key : -1);
 
 			// Save all the expanded objects.
-			List<int> expandedObjects = new List<int>();
+			var expandedObjects = new List<int>();
 
-			for (int i = 0; i < m_list.Count; i++)
+			for (var i = 0; i < InspectorList.Count; i++)
 			{
-				if (m_list.IsExpanded(i))
-					expandedObjects.Add(m_list[i].Key);
+				if (InspectorList.IsExpanded(i))
+				{
+					expandedObjects.Add(InspectorList[i].Key);
+				}
 			}
 
-			m_list.Initialize(m_list.TopLevelObject);
+			InspectorList.Initialize(InspectorList.TopLevelObject);
 
 			// Now that the list is rebuilt, go through the list of objects that
 			// were previously expanded and expand them again.
-			int firstRow = 0;
-			int currRow = 0;
-			int irow = 0;
+			var firstRow = 0;
+			var currRow = 0;
+			var irow = 0;
 
-			while (++irow < m_list.Count)
+			while (++irow < InspectorList.Count)
 			{
-				IInspectorObject io = m_list[irow];
-				int key = io.Key;
-				int index = expandedObjects.IndexOf(key);
+				var io = InspectorList[irow];
+				var key = io.Key;
+				var index = expandedObjects.IndexOf(key);
 				if (index >= 0)
 				{
-					m_list.ExpandObject(irow);
+					InspectorList.ExpandObject(irow);
 					expandedObjects.RemoveAt(index);
 				}
-
 				if (key == keyFirstDisplayedObj)
+				{
 					firstRow = irow;
-
+				}
 				if (key == keyCurrSelectedObj)
+				{
 					currRow = irow;
+				}
 			}
 
 			gridInspector.SuspendLayout();
-			gridInspector.List = m_list;
+			gridInspector.List = InspectorList;
 			gridInspector.FirstDisplayedScrollingRowIndex = firstRow;
 			gridInspector.CurrentCell = gridInspector[0, currRow];
 			gridInspector.ResumeLayout();
 		}
-			/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Refreshes the view.
 		/// This overload specifies the type of action that triggered this method.
 		/// This is needed because the key changes during adds, updates, and moves.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public void RefreshView(string type)
 		{
 			int mFirstDisplayIndex = 0, mCurrentDisplayIndex = 0;
@@ -264,18 +189,19 @@ namespace LCMBrowser
 			mFirstDisplayIndex = gridInspector.FirstDisplayedScrollingRowIndex;
 
 			// Get the current, selected row in the grid.
-			IInspectorObject currSelectedObj = gridInspector.CurrentObject;
+			var currSelectedObj = gridInspector.CurrentObject;
 
 			// If type is "Up", "Down", or "Delete", use parent as the selected/current row.
 			// If so, then save a reference to the selected object's parent object.
-			if (type == "Up" || type == "Down" || type == "Delete" && (currSelectedObj != null))
+			if (type == "Up" || type == "Down" || type == "Delete" && currSelectedObj != null)
+			{
 				currSelectedObj = currSelectedObj.ParentInspectorObject;
-
+			}
 			if (currSelectedObj != null)
 			{
-				for (int i = 0; i < m_list.Count; i++)
+				for (var i = 0; i < InspectorList.Count; i++)
 				{
-					if (m_list[i].Key == currSelectedObj.Key)
+					if (InspectorList[i].Key == currSelectedObj.Key)
 					{
 						mCurrentDisplayIndex = i;
 						break;
@@ -283,47 +209,51 @@ namespace LCMBrowser
 				}
 			}
 
-
 			// Save all the expanded objects.
-			List<int> expandedObjects = new List<int>();
+			var expandedObjects = new List<int>();
 
-			for (int i = 0; i < m_list.Count; i++)
+			for (var i = 0; i < InspectorList.Count; i++)
 			{
-				if (m_list.IsExpanded(i))
+				if (InspectorList.IsExpanded(i))
+				{
 					expandedObjects.Add(i);
+				}
 			}
 			if (type == "Add")
+			{
 				expandedObjects.Add(mCurrentDisplayIndex);
-
-			m_list.Initialize(m_list.TopLevelObject);
+			}
+			InspectorList.Initialize(InspectorList.TopLevelObject);
 
 			// Now that the list is rebuilt, go through the list of objects that
 			// were previously expanded and expand them again.
-			int firstRow = 0;
-			int currRow = 0;
-			int irow = 0;
+			var firstRow = 0;
+			var currRow = 0;
+			int irow;
 
-			for (irow = 0; irow < m_list.Count; irow++)
+			for (irow = 0; irow < InspectorList.Count; irow++)
 			{
-				int index = expandedObjects.IndexOf(irow);
+				var index = expandedObjects.IndexOf(irow);
 				if (index >= 0)
 				{
-					m_list.ExpandObject(irow);
+					InspectorList.ExpandObject(irow);
 					expandedObjects.RemoveAt(index);
 				}
-
 				if (irow == mFirstDisplayIndex)
+				{
 					firstRow = irow;
-
+				}
 				if (irow == mCurrentDisplayIndex)
+				{
 					currRow = irow;
+				}
 			}
 
 			gridInspector.SuspendLayout();
-			gridInspector.List = m_list;
+			gridInspector.List = InspectorList;
 			gridInspector.FirstDisplayedScrollingRowIndex = firstRow;
 			gridInspector.CurrentCell = gridInspector[0, currRow];
 			gridInspector.ResumeLayout();
 		}
-}
+	}
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,19 +7,16 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using WeifenLuo.WinFormsUI.Docking;
 using SIL.LCModel;
-using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Infrastructure;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace LCMBrowser
 {
 	/// <summary />
 	public partial class ModelWnd : DockContent
 	{
-		private readonly Stack<ICmObject> m_backLCM = new Stack<ICmObject>();
-		private readonly Stack<ICmObject> m_forwardLCM = new Stack<ICmObject>();
-		private ToolStripStatusLabel m_statuslabel = null;
 		private LcmCache m_cache;
 		private readonly IFwMetaDataCacheManaged m_mdc;
 		private int m_sortCol;
@@ -44,45 +41,31 @@ namespace LCMBrowser
 			{
 				m_splitter.SplitterDistance = Properties.Settings.Default.ModelWndSplitterLocation;
 			}
-
 			if (Properties.Settings.Default.ModelWndCol0Width > 0)
 			{
 				m_hdrImplementor.Width = Properties.Settings.Default.ModelWndCol0Width;
 			}
-
 			if (Properties.Settings.Default.ModelWndCol1Width > 0)
 			{
 				m_hdrId.Width = Properties.Settings.Default.ModelWndCol1Width;
 			}
-
 			if (Properties.Settings.Default.ModelWndCol2Width > 0)
 			{
 				m_hdrName.Width = Properties.Settings.Default.ModelWndCol2Width;
 			}
-
 			if (Properties.Settings.Default.ModelWndCol3Width > 0)
 			{
 				m_hdrType.Width = Properties.Settings.Default.ModelWndCol3Width;
 			}
-
 			if (Properties.Settings.Default.ModelWndCol4Width > 0)
 			{
 				m_hdrSig.Width = Properties.Settings.Default.ModelWndCol4Width;
 			}
-
 			m_hdrImplementor.Tag = true;
 			m_hdrId.Tag = true;
 			m_hdrName.Tag = true;
 			m_hdrSig.Tag = true;
 			m_hdrType.Tag = true;
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ModelWnd"/> class.
-		/// </summary>
-		public ModelWnd(ToolStripStatusLabel statuslabel) : this()
-		{
-			m_statuslabel = statuslabel;
 		}
 
 		/// <summary>
@@ -134,12 +117,10 @@ namespace LCMBrowser
 					break;
 				}
 			}
-
 			if (!fAdded)
 			{
 				parentNodeCollection.Add(node);
 			}
-
 			AddSubNodes(node.Nodes, clid);
 		}
 

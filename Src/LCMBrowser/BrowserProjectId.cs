@@ -2,8 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 
 namespace LCMBrowser
 {
@@ -13,14 +13,10 @@ namespace LCMBrowser
 	/// </summary>
 	public class BrowserProjectId : IProjectIdentifier
 	{
-		private readonly BackendProviderType m_type;
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="BrowserProjectId"/> class.
-		/// </summary>
+		/// <summary />
 		public BrowserProjectId(BackendProviderType type, string name)
 		{
-			m_type = type;
+			Type = type;
 			Path = name;
 		}
 
@@ -74,7 +70,7 @@ namespace LCMBrowser
 		/// <summary>
 		/// Gets the type of back-end used for storing the project.
 		/// </summary>
-		public BackendProviderType Type => m_type;
+		public BackendProviderType Type { get; }
 
 		/// <summary>
 		/// Gets the UI name of the project (this will typically be formatted as [Name]

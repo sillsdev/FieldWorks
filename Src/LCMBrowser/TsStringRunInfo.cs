@@ -10,14 +10,12 @@ namespace LCMBrowser
 	/// <summary />
 	public class TsStringRunInfo
 	{
-		/// <summary></summary>
+		/// <summary />
 		public string Text { get; set; }
-		/// <summary></summary>
+		/// <summary />
 		public TextProps TextProps { get; set; }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:TsStringRunInfo"/> class.
-		/// </summary>
+		/// <summary />
 		public TsStringRunInfo(int irun, ITsString tss, LcmCache cache)
 		{
 			Text = "\"" + (tss.get_RunText(irun) ?? string.Empty) + "\"";

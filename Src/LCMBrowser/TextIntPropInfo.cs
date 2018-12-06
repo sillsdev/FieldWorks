@@ -4,7 +4,6 @@
 
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel.Core.WritingSystems;
 
 namespace LCMBrowser
 {

@@ -9,14 +9,12 @@ namespace LCMBrowser
 	/// <summary />
 	public class TextStrPropInfo
 	{
-		/// <summary></summary>
+		/// <summary />
 		public FwTextPropType Type { get; set; }
-		/// <summary></summary>
+		/// <summary />
 		public string Value { get; set; }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:TextStrPropInfo"/> class.
-		/// </summary>
+		/// <summary />
 		public TextStrPropInfo(ITsTextProps props, int iprop)
 		{
 			int tpt;

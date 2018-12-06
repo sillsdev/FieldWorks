@@ -4,15 +4,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
-using WeifenLuo.WinFormsUI.Docking;
-using System.Drawing;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Resources;
+using System.Windows.Forms;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.LcmUi;
@@ -25,6 +24,7 @@ using SIL.LCModel.Application;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Infrastructure;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace LCMBrowser
 {
@@ -46,28 +46,22 @@ namespace LCMBrowser
 		/// Specifies whether you want to see all properties of a class (true)
 		/// or exclude the virtual properties (false).
 		/// </summary>
-		public static bool m_virtualFlag = false;
+		public static bool m_virtualFlag;
 
 		/// <summary>
 		/// Specifies whether you want to be able to update class properties here (true)
 		/// or not (false).
 		/// </summary>
 		public static bool m_updateFlag = true;
-
-		/// <summary></summary>
+		/// <summary />
 		private string m_appCaption;
-		/// <summary></summary>
+		/// <summary />
 		protected string m_currOpenedProject;
-		/// <summary></summary>
+		/// <summary />
 		protected readonly DockPanel m_dockPanel;
-		/// <summary></summary>
+		/// <summary />
 		private List<string> m_ruFiles;
-
 		private InspectorWnd m_InspectorWnd;
-		/// <summary>
-		/// Specifies whether the class was selected on the dialog (true) or not (false).
-		/// </summary>
-		public static bool m_dlgChanged;
 		private LcmCache m_cache;
 		private ILangProject m_lp;
 		private ICmObjectRepository m_repoCmObject;
@@ -82,17 +76,13 @@ namespace LCMBrowser
 		private ToolStripLabel m_tslblGuidSrch;
 		private ISilDataAccessManaged m_silDataAccessManaged;
 		private static ResourceManager s_helpResources;
-
 		private string m_sHelpTopic = "khtpMainLCMBrowser";
 
 		#endregion Data members
 
 		#region Construction
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+
+		/// <summary />
 		public LCMBrowserForm()
 		{
 			InitializeComponent();
@@ -101,9 +91,11 @@ namespace LCMBrowser
 			m_sblblLoadTime.Text = string.Empty;
 			m_appCaption = Text;
 
-			m_dockPanel = new DockPanel();
-			m_dockPanel.Dock = DockStyle.Fill;
-			m_dockPanel.DefaultFloatWindowSize = new Size(600, 600);
+			m_dockPanel = new DockPanel
+			{
+				Dock = DockStyle.Fill,
+				DefaultFloatWindowSize = new Size(600, 600)
+			};
 			m_dockPanel.ActiveDocumentChanged += m_dockPanel_ActiveDocumentChanged;
 			m_dockPanel.ContentRemoved += DockPanelContentRemoved;
 			m_dockPanel.ContentAdded += DockPanelContentAdded;
@@ -112,9 +104,10 @@ namespace LCMBrowser
 			m_dockPanel.BringToFront();
 
 			m_ruFiles = new List<string>();
-			for (int i = 1; i <= 9; i++)
+			for (var i = 1; i <= 9; i++)
+			{
 				m_ruFiles.Add(Settings.Default["RUFile" + i] as string);
-
+			}
 			BuildRecentlyUsedFilesMenus();
 			m_fmtAddObjectMenuText = cmnuAddObject.Text;
 		}
@@ -147,43 +140,42 @@ namespace LCMBrowser
 
 		#endregion
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Raises the <see cref="E:System.Windows.Forms.Form.Load"/> event.
 		/// </summary>
-		/// <param name="e">An <see cref="T:System.EventArgs"/> that contains the event data.</param>
-		/// ------------------------------------------------------------------------------------
 		protected override void OnLoad(EventArgs e)
 		{
-			Point pt = Settings.Default.MainWndLocation;
+			var pt = Settings.Default.MainWndLocation;
 			if (pt != Point.Empty)
+			{
 				Location = pt;
-
-			Size sz = Settings.Default.MainWndSize;
+			}
+			var sz = Settings.Default.MainWndSize;
 			if (!sz.IsEmpty)
+			{
 				Size = sz;
+			}
 
 			base.OnLoad(e);
 
 			OpenModelWindow();
-			var showThem = Properties.Settings.Default.ShowCmObjectProperties;
+			var showThem = Settings.Default.ShowCmObjectProperties;
 			LCMClassList.ShowCmObjectProperties = showThem;
 			m_tsbShowCmObjectProps.Checked = LCMClassList.ShowCmObjectProperties;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Raises the <see cref="E:System.Windows.Forms.Form.FormClosing"/> event.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected override void OnFormClosing(FormClosingEventArgs e)
 		{
 			base.OnFormClosing(e);
 
-			int i = 1;
-			foreach (string file in m_ruFiles)
+			var i = 1;
+			foreach (var file in m_ruFiles)
+			{
 				Settings.Default["RUFile" + i++] = file;
-
+			}
 			Settings.Default.MainWndLocation = Location;
 			Settings.Default.MainWndSize = Size;
 			Settings.Default.Save();
@@ -191,88 +183,85 @@ namespace LCMBrowser
 			Settings.Default.Save();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Puts the specified file path at the top of recently used file list.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void PutFileAtTopOfRUFileList(string newfile)
 		{
 			// Check if it's already at the top of the stack.
 			if (newfile == m_ruFiles[0])
+			{
 				return;
-
+			}
 			// Either remove the file from list or remove the last file from the list.
-			int index = m_ruFiles.IndexOf(newfile);
+			var index = m_ruFiles.IndexOf(newfile);
 			if (index >= 0)
+			{
 				m_ruFiles.RemoveAt(index);
+			}
 			else
+			{
 				m_ruFiles.RemoveAt(m_ruFiles.Count - 1);
-
+			}
 			// Insert the file at the top of the list and rebuild the menus.
 			m_ruFiles.Insert(0, newfile);
 			BuildRecentlyUsedFilesMenus();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Builds the recently used files menus.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void BuildRecentlyUsedFilesMenus()
 		{
 			// Remove old recently used file menu items.
-			for (int i = 0; i <= 8; i++)
+			for (var i = 0; i <= 8; i++)
 			{
-				int index = mnuFile.DropDownItems.IndexOfKey("RUF" + i);
+				var index = mnuFile.DropDownItems.IndexOfKey("RUF" + i);
 				if (index >= 0)
+				{
 					mnuFile.DropDownItems.RemoveAt(index);
+				}
 			}
-
 			// Get the index where to add recently used file names.
-			int insertIndex = mnuFile.DropDownItems.IndexOf(mnuFileSep1) + 1;
-
+			var insertIndex = mnuFile.DropDownItems.IndexOf(mnuFileSep1) + 1;
 			// Add the recently used file names to the file menu.
-			for (int i = 8; i >= 0; i--)
+			for (var i = 8; i >= 0; i--)
 			{
-				string file = m_ruFiles[i];
-				if (!String.IsNullOrEmpty(file))
+				var file = m_ruFiles[i];
+				if (!string.IsNullOrEmpty(file))
 				{
 					mnuFileSep1.Visible = true;
-					ToolStripMenuItem mnu = new ToolStripMenuItem();
-					mnu.Name = "RUF" + i;
-					mnu.Text = String.Format("&{0} {1}", i + 1, file);
-					mnu.Tag = file;
+					var mnu = new ToolStripMenuItem
+					{
+						Name = "RUF" + i,
+						Text = $"&{i + 1} {file}",
+						Tag = file
+					};
 					mnu.Click += HandleRUFileMenuClick;
 					mnuFile.DropDownItems.Insert(insertIndex, mnu);
 				}
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the user clicking on one of the recently used file menu items.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		void HandleRUFileMenuClick(object sender, EventArgs l)
 		{
-			ToolStripMenuItem mnu = sender as ToolStripMenuItem;
+			var mnu = (ToolStripMenuItem)sender;
 			try
 			{
 				OpenFile(mnu.Tag as string);
 			}
 			catch (Exception e)
 			{
-				MessageBox.Show("Exception caught:" + e.Message + mnu.Tag +
-					". Open up Flex for this project to create the necessary writing systems.");
+				MessageBox.Show($"Exception caught: {e.Message} {mnu.Tag}. Open up Flex for this project to create the necessary writing systems.");
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Opens the specified file.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void OpenFile(string fileName)
 		{
 			if (fileName == null || !File.Exists(fileName) || m_currOpenedProject == fileName)
@@ -348,33 +337,28 @@ namespace LCMBrowser
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Makes the application's caption.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected void MakeAppCaption(string text)
 		{
-			Text = String.Format(kAppCaptionFmt, text, m_appCaption);
+			Text = string.Format(kAppCaptionFmt, text, m_appCaption);
 		}
 
 		#region Dock Panel event handlers
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Handles the ActiveDocumentChanged event of the m_dockPanel control.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		void m_dockPanel_ActiveDocumentChanged(object sender, EventArgs e)
 		{
-			InspectorWnd wnd = m_dockPanel.ActiveDocument as InspectorWnd;
-			m_statuslabel.Text = (wnd == null ? String.Empty : wnd.InspectorList.Count + " Top Level Items");
+			var wnd = m_dockPanel.ActiveDocument as InspectorWnd;
+			m_statuslabel.Text = (wnd == null ? string.Empty : $"{wnd.InspectorList.Count} Top Level Items");
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the ContentAdded event of the m_dockPanel control.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void DockPanelContentAdded(object sender, DockContentEventArgs e)
 		{
 			if (e.Content is InspectorWnd)
@@ -383,34 +367,25 @@ namespace LCMBrowser
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the ContentRemoved event of the m_dockPanel control.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void DockPanelContentRemoved(object sender, DockContentEventArgs e)
 		{
-			foreach (var dc in m_dockPanel.DocumentsToArray())
+			if (m_dockPanel.DocumentsToArray().OfType<InspectorWnd>().Any())
 			{
-				if (dc is InspectorWnd)
-				{
-					return;
-				}
+				return;
 			}
-
 			m_tsbShowCmObjectProps.Enabled = false;
 		}
 
 		#endregion
 
 		#region Event handlers
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Handles the Click event of the openToolStripMenuItem control.
 		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		/// ------------------------------------------------------------------------------------
 		protected virtual void HandleFileOpenClick(object sender, EventArgs e)
 		{
 			using (var dlg = new OpenFileDialog())
@@ -422,61 +397,52 @@ namespace LCMBrowser
 				dlg.Multiselect = false;
 				dlg.Filter = OpenFileDlgFilter;
 				if (dlg.ShowDialog(this) == DialogResult.OK)
+				{
 					OpenFile(dlg.FileName);
+				}
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the title for the open file dialog box.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private string OpenFileDlgTitle => "Open FieldWorks Language Project";
+		private static string OpenFileDlgTitle => "Open FieldWorks Language Project";
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the file filter for the open file dialog box.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private string OpenFileDlgFilter => ResourceHelper.FileFilter(FileFilterType.FieldWorksProjectFiles);
+		private static string OpenFileDlgFilter => ResourceHelper.FileFilter(FileFilterType.FieldWorksProjectFiles);
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the Click event of the mnuExit control.
 		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		/// ------------------------------------------------------------------------------------
 		private void mnuExit_Click(object sender, EventArgs e)
 		{
 			Close();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the DropDownOpening event of the mnuWindow control.
 		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		/// ------------------------------------------------------------------------------------
 		private void mnuWindow_DropDownOpening(object sender, EventArgs e)
 		{
 			// Remove all the windows names at the end of the Windows menu list.
-			ToolStripItemCollection wndMenus = mnuWindow.DropDownItems;
-			for (int i = wndMenus.Count - 1; wndMenus[i] != mnuWindowsSep; i--)
+			var wndMenus = mnuWindow.DropDownItems;
+			for (var i = wndMenus.Count - 1; wndMenus[i] != mnuWindowsSep; i--)
 			{
 				wndMenus[i].Click -= HandleWindowMenuItemClick;
 				wndMenus.RemoveAt(i);
 			}
-
 			// Now add a menu item for each document in the dock panel.
-			foreach (IDockContent dc in m_dockPanel.Documents)
+			foreach (var dc in m_dockPanel.Documents)
 			{
-				DockContent wnd = dc as DockContent;
-				ToolStripMenuItem mnu = new ToolStripMenuItem();
-				mnu.Text = wnd.Text;
-				mnu.Tag = wnd;
-				mnu.Checked = (m_dockPanel.ActiveContent == wnd);
+				var wnd = dc as DockContent;
+				var mnu = new ToolStripMenuItem
+				{
+					Text = wnd.Text,
+					Tag = wnd,
+					Checked = m_dockPanel.ActiveContent == wnd
+				};
 				mnu.Click += HandleWindowMenuItemClick;
 				mnuWindow.DropDownItems.Add(mnu);
 			}
@@ -486,14 +452,10 @@ namespace LCMBrowser
 			mnuArrangeInline.Enabled = (m_dockPanel.DocumentsCount > 1);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the window menu item click.
 		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		/// ------------------------------------------------------------------------------------
-		void HandleWindowMenuItemClick(object sender, EventArgs e)
+		private void HandleWindowMenuItemClick(object sender, EventArgs e)
 		{
 			var mnu = sender as ToolStripMenuItem;
 			(mnu?.Tag as DockContent)?.Show(m_dockPanel);
@@ -501,32 +463,10 @@ namespace LCMBrowser
 
 		#endregion Event handlers
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Creates the new inspector window for the specified object.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected virtual InspectorWnd ShowNewInspectorWindow(object obj)
-		{
-			return ShowNewInspectorWindow(obj, null, null);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Creates the new inspector window for the specified object.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected virtual InspectorWnd ShowNewInspectorWindow(object obj, string text)
-		{
-			return ShowNewInspectorWindow(obj, text, null);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Creates the new inspector window for the specified object.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected virtual InspectorWnd ShowNewInspectorWindow(object obj, string text, string toolTipText)
+		protected virtual InspectorWnd ShowNewInspectorWindow(object obj, string text = null, string toolTipText = null)
 		{
 			var wnd = ShowNewInspectorWndOne();
 			if (m_updateFlag)
@@ -547,18 +487,17 @@ namespace LCMBrowser
 			return wnd;
 		}
 
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public InspectorWnd ShowNewInspectorWndOne()
 		{
-			InspectorWnd wnd = new InspectorWnd();
-			return wnd;
+			return new InspectorWnd();
 		}
 
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public InspectorWnd ShowNewInspectorWndTwo(object obj, string text, string toolTipText, InspectorWnd wnd)
 		{
-			wnd.Text = (!String.IsNullOrEmpty(text) ? text : GetNewInspectorWndTitle(obj));
-			wnd.ToolTipText = (String.IsNullOrEmpty(toolTipText) ? wnd.Text : toolTipText);
+			wnd.Text = !string.IsNullOrEmpty(text) ? text : GetNewInspectorWndTitle(obj);
+			wnd.ToolTipText = (string.IsNullOrEmpty(toolTipText) ? wnd.Text : toolTipText);
 			wnd.SetTopLevelObject(obj, GetNewInspectorList());
 			wnd.InspectorGrid.ContextMenuStrip = m_cmnuGrid;
 			wnd.InspectorGrid.Enter += InspectorGrid_Enter;
@@ -568,11 +507,9 @@ namespace LCMBrowser
 			return wnd;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the title for a new inspector window being built for the specified object.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private string GetNewInspectorWndTitle(object obj)
 		{
 			if (obj == null)
@@ -597,57 +534,44 @@ namespace LCMBrowser
 			return title;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the new inspector list.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private IInspectorList GetNewInspectorList()
 		{
 			return new LCModelInspectorList(m_cache);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the Leave event of the InspectorGrid control.
 		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		/// ------------------------------------------------------------------------------------
-		void InspectorGrid_Leave(object sender, EventArgs e)
+		private void InspectorGrid_Leave(object sender, EventArgs e)
 		{
 			tsbShowObjInNewWnd.Enabled = false;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the Enter event of the InspectorGrid control.
 		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		/// ------------------------------------------------------------------------------------
-		void InspectorGrid_Enter(object sender, EventArgs e)
+		private void InspectorGrid_Enter(object sender, EventArgs e)
 		{
 			tsbShowObjInNewWnd.Enabled = true;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the inspector window closed.
 		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="System.Windows.Forms.FormClosedEventArgs"/>
-		/// instance containing the event data.</param>
-		/// ------------------------------------------------------------------------------------
 		private void HandleWindowClosed(object sender, FormClosedEventArgs e)
 		{
 			if (sender is DockContent)
+			{
 				((DockContent)sender).FormClosed -= HandleWindowClosed;
-
+			}
 			if (sender is InspectorWnd)
 			{
-				((InspectorWnd)sender).InspectorGrid.Enter -= InspectorGrid_Enter;
-				((InspectorWnd)sender).InspectorGrid.Leave -= InspectorGrid_Leave;
+				var asInspectorWnd = (InspectorWnd)sender;
+				asInspectorWnd.InspectorGrid.Enter -= InspectorGrid_Enter;
+				asInspectorWnd.InspectorGrid.Leave -= InspectorGrid_Leave;
 			}
 
 			tsbShowObjInNewWnd.Enabled = false;
@@ -656,7 +580,6 @@ namespace LCMBrowser
 			{
 				((InspectorWnd)sender).WillObjDisappearOnRefresh -= HandleWillObjDisappearOnRefresh;
 			}
-
 			if (sender == m_modelWnd)
 			{
 				m_modelWnd = null;
@@ -671,41 +594,35 @@ namespace LCMBrowser
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the Click event of the mnuTileVertically control.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void mnuTileVertically_Click(object sender, EventArgs e)
 		{
 			TileWindows(DockAlignment.Right);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the Click event of the mnuTileHorizontally control.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void mnuTileHorizontally_Click(object sender, EventArgs e)
 		{
 			TileWindows(DockAlignment.Bottom);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the Click event of the mnuArrangeInline control.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void mnuArrangeInline_Click(object sender, EventArgs e)
 		{
 			m_dockPanel.SuspendLayout();
 
-			IDockContent currentWnd = m_dockPanel.ActiveDocument;
-			IDockContent[] documents = m_dockPanel.DocumentsToArray();
-			DockContent wndAnchor = documents[0] as DockContent;
-			for (int i = documents.Length - 1; i >= 0; i--)
+			var currentWnd = m_dockPanel.ActiveDocument;
+			var documents = m_dockPanel.DocumentsToArray();
+			var wndAnchor = documents[0] as DockContent;
+			for (var i = documents.Length - 1; i >= 0; i--)
 			{
-				DockContent wnd = documents[i] as DockContent;
+				var wnd = documents[i] as DockContent;
 				wnd.DockTo(wndAnchor.Pane, DockStyle.Fill, 0);
 			}
 
@@ -713,79 +630,72 @@ namespace LCMBrowser
 			m_dockPanel.ResumeLayout();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tiles the windows.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void TileWindows(DockAlignment alignment)
 		{
 			m_dockPanel.SuspendLayout();
 
-			IDockContent[] documents = m_dockPanel.DocumentsToArray();
-			DockContent wndAnchor = documents[0] as DockContent;
+			var documents = m_dockPanel.DocumentsToArray();
+			var wndAnchor = documents[0] as DockContent;
 			if (wndAnchor == null)
-				return;
-
-			IDockContent currentWnd = m_dockPanel.ActiveDocument;
-
-			for (int i = documents.Length - 1; i > 0; i--)
 			{
-				double proportion = 1.0 / (i + 1);
-				DockContent wnd = documents[i] as DockContent;
-				if (wnd != null)
-					wnd.Show(m_dockPanel.Panes[0], alignment, proportion);
+				return;
+			}
+			var currentWnd = m_dockPanel.ActiveDocument;
+			for (var i = documents.Length - 1; i > 0; i--)
+			{
+				var proportion = 1.0 / (i + 1);
+				var wnd = documents[i] as DockContent;
+				wnd?.Show(m_dockPanel.Panes[0], alignment, proportion);
 			}
 
 			((DockContent)currentWnd).Activate();
 			m_dockPanel.ResumeLayout();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the Click event of the m_tsbShowObjInNewWnd control.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void m_tsbShowObjInNewWnd_Click(object sender, EventArgs e)
 		{
-			InspectorWnd wnd = m_dockPanel.ActiveContent as InspectorWnd;
-			if (wnd == null)
+			var wnd = m_dockPanel.ActiveContent as InspectorWnd;
+			var io = wnd?.CurrentInspectorObject;
+			if (io?.Object == null)
+			{
 				return;
-
-			IInspectorObject io = wnd.CurrentInspectorObject;
-			if (io == null || io.Object == null)
-				return;
-
-			string text = io.DisplayName;
+			}
+			var text = io.DisplayName;
 			if (text.StartsWith("[") && text.EndsWith("]"))
 			{
 				text = text.Trim('[', ']');
 				int i;
-				if (Int32.TryParse(text, out i))
+				if (int.TryParse(text, out i))
+				{
 					text = null;
+				}
 			}
-
 			if (text != null && text != io.DisplayType)
+			{
 				text += (": " + io.DisplayType);
-
+			}
 			m_InspectorWnd = ShowNewInspectorWindow(io.Object, text);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the Opening event of the grid's context menu.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected void HandleOpenObjectInNewWindowContextMenuClick(object sender, CancelEventArgs e)
 		{
 			saveClid = 0;
-			InspectorWnd wnd = m_dockPanel.ActiveContent as InspectorWnd;
+			var wnd = m_dockPanel.ActiveContent as InspectorWnd;
 			if (wnd == null)
 			{
 				return;
 			}
-			IInspectorObject io = wnd.CurrentInspectorObject;
-			cmnuShowInNewWindow.Enabled = (io != null && io.Object != null);
+			var io = wnd.CurrentInspectorObject;
+			cmnuShowInNewWindow.Enabled = io?.Object != null;
 			cmnuAddObject.Enabled = io != null && AddObjectFromHere(io);
 			cmnuDeleteObject.Enabled = io?.Object is ICmObject;
 			cmnuMoveObjectUp.Enabled = io != null && MoveObjectUpFromHere(io);
@@ -844,7 +754,7 @@ namespace LCMBrowser
 						}
 						catch
 						{
-							MessageBox.Show("No class name for clid: " + clid);
+							MessageBox.Show($"No class name for clid: {clid}");
 							return;
 						}
 						break;
@@ -872,7 +782,6 @@ namespace LCMBrowser
 						case "LexEntryRef_PrimaryLexemes":
 						case "LexReference_Targets":
 							return "LexEntry or LexSense";
-
 						case "Segment_Analyses":
 							return "IAnalysis";
 						// No work here yet since the following two areas are unimplemented so far.
@@ -892,18 +801,14 @@ namespace LCMBrowser
 							if (!dispFlag)
 							{
 								var classes = mdc.GetAllSubclasses(sclid);
-								foreach (var cl in classes)
-								{
-									if (cl != sclid)
-									{
-										list.Add(mdc.GetClassName(cl));
-									}
-								}
-
+								list.AddRange(classes.Where(cl => cl != sclid).Select(cl => mdc.GetClassName(cl)));
 								using (var dlg1 = new RealListChooser("ClassName", list))
 								{
-									if (dlg1.m_chosenClass == "Cancel")
+									dlg1.ShowDialog(this);
+									if (dlg1.DialogResult == DialogResult.Cancel)
+									{
 										break;
+									}
 									if (mdc.GetClassId(dlg1.m_chosenClass) == 0)
 									{
 										MessageBox.Show($"No clid for selected class: {dlg1.m_chosenClass}");
@@ -918,7 +823,7 @@ namespace LCMBrowser
 					break;
 				case "CmPossibility":
 					{
-						switch (mdc.GetClassName(clid) + "_" + mdc.GetFieldName(flid))
+						switch ($"{mdc.GetClassName(clid)}_{mdc.GetFieldName(flid)}")
 						{
 							case "CmOverlay_PossItems":
 							case "RnGenericRec_PhraseTags":
@@ -986,23 +891,22 @@ namespace LCMBrowser
 			return false;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the Click event of the mnuOptions control.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void mnuOptions_Click(object sender, EventArgs e)
 		{
-			using (OptionsDlg dlg = new OptionsDlg(Settings.Default.ShadeColor))
+			using (var dlg = new OptionsDlg(Settings.Default.ShadeColor))
 			{
 				dlg.ShadingEnabled = Settings.Default.UseShading;
 				dlg.SelectedColor = Settings.Default.ShadeColor;
 
 				if (dlg.ShowDialog(this) != DialogResult.OK)
+				{
 					return;
-
+				}
 				Settings.Default.UseShading = dlg.ShadingEnabled;
-				Color clrNew = Color.Empty;
+				var clrNew = Color.Empty;
 
 				if (dlg.ShadingEnabled)
 				{
@@ -1010,10 +914,12 @@ namespace LCMBrowser
 					Settings.Default.ShadeColor = clrNew;
 				}
 
-				foreach (IDockContent dc in m_dockPanel.DocumentsToArray())
+				foreach (var dc in m_dockPanel.DocumentsToArray())
 				{
 					if (dc is InspectorWnd)
+					{
 						((InspectorWnd)dc).InspectorGrid.ShadingColor = clrNew;
+					}
 				}
 			}
 		}
@@ -1052,29 +958,23 @@ namespace LCMBrowser
 						ord = 0;
 						break;
 					default:
-						MessageBox.Show("The parent of an added object must be OA, OC, or OS.  It's " + type);
+						MessageBox.Show($"The parent of an added object must be OA, OC, or OS.  It is: '{type}'");
 						break;
 				}
 			}
-
 			var owner = io.ParentInspectorObject.Object as ICmObject ?? ((ICmObject)io.ParentInspectorObject.OwningObject);
-
 			if (owner == null)
 			{
 				MessageBox.Show(@"owner for add is null");
 				return;
 			}
-
 			var currentObj = io.Object as ICmObject ?? io.ParentInspectorObject.Object as ICmObject;
-
 			if (currentObj == null)
 			{
 				MessageBox.Show("currentObj for add is null");
 				return;
 			}
-
 			var mdc = m_cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
-
 			try
 			{
 				var work = StripOffTypeChars(io.DisplayName);
@@ -1082,15 +982,14 @@ namespace LCMBrowser
 			}
 			catch
 			{
-				MessageBox.Show(@"No Flid for clicked line: " + io.DisplayValue);
+				MessageBox.Show($"No Flid for clicked line: {io.DisplayValue}");
 				return;
 			}
-
 			var clid = m_cache.MetaDataCacheAccessor.GetDstClsId(flid);
-
 			if (type == "RS" || type == "RC" || type == "RA")
 			{
 				if (DisplayReferenceObjectsToAdd(flid, type, currentObj, out refTarget))
+				{
 					if (refTarget != null)
 					{
 						switch (type)
@@ -1112,6 +1011,7 @@ namespace LCMBrowser
 								break;
 						}
 					}
+				}
 			}
 			else
 			{
@@ -1161,7 +1061,6 @@ namespace LCMBrowser
 		{
 			// if the chosen classname is abstract, we need to get concrete classes and let the user choose
 			var list = new List<string>();
-
 			if (!mdc.GetAbstract(clid))
 			{
 				return true;
@@ -1170,7 +1069,6 @@ namespace LCMBrowser
 			{
 				return true;
 			}
-
 			var clidSubs = mdc.GetAllSubclasses(clid);
 			list.AddRange(clidSubs.Where(t => !mdc.GetAbstract(t)).Select(t => mdc.GetClassName(t)));
 
@@ -1178,7 +1076,8 @@ namespace LCMBrowser
 			{
 				using (var dlg = new RealListChooser("ClassName", list))
 				{
-					if (dlg.m_chosenClass == "Cancel")
+					dlg.ShowDialog(this);
+					if (dlg.DialogResult == DialogResult.Cancel)
 					{
 						return false;
 					}
@@ -1187,7 +1086,7 @@ namespace LCMBrowser
 					{
 						return true;
 					}
-					MessageBox.Show("No clid for selected class: " + dlg.m_chosenClass);
+					MessageBox.Show($"No clid for selected class: {dlg.m_chosenClass}");
 					return false;
 				}
 			}
@@ -1208,7 +1107,6 @@ namespace LCMBrowser
 			if (m_cache.MetaDataCacheAccessor != null)
 			{
 				var sclid = m_cache.MetaDataCacheAccessor.GetDstClsId(flid); //signature clid of field
-
 				if (type != "RA")
 				{
 					int count;
@@ -1230,10 +1128,7 @@ namespace LCMBrowser
 							{
 								refObjs.Add(m_cache.DomainDataByFlid.get_VecItem(currObject.Hvo, flid, i));
 							}
-							catch
-							{
-								//MessageBox.Show("Can't add index i " + i.ToString() + " to refObjs.");
-							}
+							catch {}
 						}
 					}
 				}
@@ -1342,12 +1237,10 @@ namespace LCMBrowser
 							{
 								classList1.Add(cid);
 							}
-
 							foreach (var cid in mdc.GetAllSubclasses(mdc.GetClassId("WfiWordform")))
 							{
 								classList1.Add(cid);
 							}
-
 							foreach (var cid in mdc.GetAllSubclasses(mdc.GetClassId("PunctuationForm")))
 							{
 								classList1.Add(cid);
@@ -1374,17 +1267,11 @@ namespace LCMBrowser
 							if (saveClid == 0)
 							{
 								var classes = mdc.GetAllSubclasses(sclid);
-								foreach (var cl in classes)
-								{
-									if (cl != sclid)
-									{
-										list.Add(mdc.GetClassName(cl));
-									}
-								}
-
+								list.AddRange(classes.Where(cl => cl != sclid).Select(cl => mdc.GetClassName(cl)));
 								using (var dlg = new RealListChooser("ClassName", list))
 								{
-									if (dlg.m_chosenClass == "Cancel")
+									dlg.ShowDialog(this);
+									if (dlg.DialogResult == DialogResult.Cancel)
 									{
 										return classList1;
 									}
@@ -1509,7 +1396,7 @@ namespace LCMBrowser
 		/// <summary>
 		/// See if an object can be added under the current object.
 		/// </summary>
-		private bool AddObjectFromHere(IInspectorObject node)
+		private static bool AddObjectFromHere(IInspectorObject node)
 		{
 			return node.DisplayName.Substring(node.DisplayName.Length - 2, 2) == "OC" ||
 				   node.DisplayName.Substring(node.DisplayName.Length - 2, 2) == "OS" ||
@@ -1522,7 +1409,7 @@ namespace LCMBrowser
 		/// <summary>
 		/// See if an object can be moved up in the current list.
 		/// </summary>
-		private bool MoveObjectUpFromHere(IInspectorObject node)
+		private static bool MoveObjectUpFromHere(IInspectorObject node)
 		{
 			var nodePos = (node.DisplayName.Contains("[") ? int.Parse(node.DisplayName.Substring(1, node.DisplayName.IndexOf("]") - 1)) : 0);
 			if (node.ParentInspectorObject != null)
@@ -1535,9 +1422,9 @@ namespace LCMBrowser
 		}
 
 		/// <summary>
-		/// See if an object can be moved downin the current list.
+		/// See if an object can be moved down into the current list.
 		/// </summary>
-		private bool MoveObjectDownFromHere(IInspectorObject node)
+		private static bool MoveObjectDownFromHere(IInspectorObject node)
 		{
 			var nodePos = (node.DisplayName.Contains("[") ? int.Parse(node.DisplayName.Substring(1, node.DisplayName.IndexOf("]") - 1)) : 0);
 			if (node.ParentInspectorObject != null)
@@ -1556,7 +1443,7 @@ namespace LCMBrowser
 		{
 			if (m_modelWnd == null)
 			{
-				m_modelWnd = new ModelWnd(m_statuslabel);
+				m_modelWnd = new ModelWnd();
 				m_modelWnd.FormClosed += HandleWindowClosed;
 			}
 
@@ -1569,16 +1456,13 @@ namespace LCMBrowser
 		private void CmnuDeleteObjectClick(object sender, EventArgs e)
 		{
 			var mWnd = m_dockPanel.ActiveContent as InspectorWnd;
-
 			var io = mWnd?.CurrentInspectorObject;
 			if (!(io?.Object is ICmObject))
 			{
 				return;
 			}
-
 			var objToDelete = (ICmObject)io.Object;
-			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
-				m_cache.DomainDataByFlid.DeleteObj(objToDelete.Hvo));
+			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () => m_cache.DomainDataByFlid.DeleteObj(objToDelete.Hvo));
 
 			//Refresh the display
 			foreach (var dc in m_dockPanel.DocumentsToArray())
@@ -1593,27 +1477,22 @@ namespace LCMBrowser
 		private void CmnuMoveObjectUpClick(object sender, EventArgs e)
 		{
 			int inx;
-
 			var mWnd = m_dockPanel.ActiveContent as InspectorWnd;
-
 			var io = mWnd?.CurrentInspectorObject;
 			if (io == null)
 			{
 				return;
 			}
-
 			if (!io.ParentInspectorObject.DisplayName.EndsWith("OS") && !io.ParentInspectorObject.DisplayName.EndsWith("RS"))
 			{
 				return;
 			}
-
 			var objToMove = io.Object as ICmObject ?? io.OriginalObject as ICmObject;
 			if (objToMove == null) // we're on a field
 			{
 				MessageBox.Show("owner object couldn't be created.");
 				return;
 			}
-
 			var owner = (io.ParentInspectorObject.Object as ICmObject ?? io.ParentInspectorObject.OriginalObject as ICmObject) ??
 						io.ParentInspectorObject.OwningObject as ICmObject;
 			if (owner == null) // we're on a field
@@ -1621,16 +1500,16 @@ namespace LCMBrowser
 				MessageBox.Show("owner object couldn't be created.");
 				return;
 			}
-
 			var work = StripOffTypeChars(io.ParentInspectorObject.DisplayName);
 			var mdc = m_cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
 			var flid = mdc.GetFieldId2(owner.ClassID, work, true);
-
 			if (io.ParentInspectorObject.DisplayName.EndsWith("OS"))
+			{
 				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 				{
 					m_cache.DomainDataByFlid.MoveOwn(owner.Hvo, flid, objToMove.Hvo, owner.Hvo, objToMove.OwningFlid, objToMove.OwnOrd - 1);
 				});
+			}
 			else //for reference objects, add the reference to the new location, then delete it.
 			{
 
@@ -1645,7 +1524,6 @@ namespace LCMBrowser
 				);
 			}
 
-
 			//Refresh the display
 			foreach (var dc in m_dockPanel.DocumentsToArray().OfType<InspectorWnd>())
 			{
@@ -1658,17 +1536,12 @@ namespace LCMBrowser
 		/// </summary>
 		private void CmnuMoveObjectDownClick(object sender, EventArgs e)
 		{
-			int inx;
-			int inx2;
-			string work;
-
 			var mWnd = m_dockPanel.ActiveContent as InspectorWnd;
 			var io = mWnd?.CurrentInspectorObject;
 			if (io == null)
 			{
 				return;
 			}
-
 			var objToMove = io.Object as ICmObject ?? io.OriginalObject as ICmObject;
 			if (objToMove == null) // we're on a field
 			{
@@ -1688,37 +1561,29 @@ namespace LCMBrowser
 			{
 				return;
 			}
-
-			if (io.ParentInspectorObject.DisplayName.EndsWith("OS") || io.ParentInspectorObject.DisplayName.EndsWith("RS"))
-			{
-				work = io.ParentInspectorObject.DisplayName.Substring(0, io.ParentInspectorObject.DisplayName.Length - 2);
-			}
-			else
-			{
-				work = io.DisplayName;
-			}
+			var work = io.ParentInspectorObject.DisplayName.EndsWith("OS") || io.ParentInspectorObject.DisplayName.EndsWith("RS")
+				? io.ParentInspectorObject.DisplayName.Substring(0, io.ParentInspectorObject.DisplayName.Length - 2)
+				: io.DisplayName;
 
 			var mdc = m_cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
 			var flid = mdc.GetFieldId2(owner.ClassID, work, true);
 
 			if (io.ParentInspectorObject.DisplayName.EndsWith("OS"))
+			{
 				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 				{
 					m_cache.DomainDataByFlid.MoveOwn(owner.Hvo, flid, objToMove.Hvo, owner.Hvo, objToMove.OwningFlid, objToMove.OwnOrd + 2);
 				});
+			}
 			else //for reference objects, add the reference to the new location, then delete it.
 			{
 				// index of object to move
-				inx = m_cache.DomainDataByFlid.GetObjIndex(owner.Hvo, flid, objToMove.Hvo);
+				var inx = m_cache.DomainDataByFlid.GetObjIndex(owner.Hvo, flid, objToMove.Hvo);
 				var cnt = m_cache.DomainDataByFlid.get_VecSize(owner.Hvo, flid);
-				inx2 = Math.Min(cnt, inx + 2);
-
-
+				var inx2 = Math.Min(cnt, inx + 2);
 				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
-					m_cache.DomainDataByFlid.Replace(owner.Hvo, flid, inx2,
-					   inx2, new[] { objToMove.Hvo }, 1)
+					m_cache.DomainDataByFlid.Replace(owner.Hvo, flid, inx2, inx2, new[] { objToMove.Hvo }, 1)
 				);
-
 				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 					m_cache.DomainDataByFlid.Replace(owner.Hvo, flid, inx, inx + 1, null, 0)
 				);
@@ -1787,12 +1652,10 @@ namespace LCMBrowser
 			{
 				return;
 			}
-
 			if (m_cache == null)
 			{
 				return;
 			}
-
 			var guid = new Guid(m_tstxtGuidSrch.Text.Trim());
 			ICmObject obj;
 			if (m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(guid, out obj))
@@ -1990,7 +1853,7 @@ namespace LCMBrowser
 					list.Add(cf);
 				}
 			}
-			return (list.Count > 0 ? list : null);
+			return list.Count > 0 ? list : null;
 		}
 
 		/// <summary>
@@ -2026,14 +1889,12 @@ namespace LCMBrowser
 			{
 				throw new ApplicationException("The necessary Info to update the LCM wasn't obtained.");
 			}
-
 			var intNewVal = 0;
 			var dtNewVal = new DateTime();
 			var guidNewVal = new Guid();
 			var genDate = new GenDate();
 			GenDate genDate1;
 			string strNewVal;
-
 			var node = mWnd.CurrentInspectorObject;
 			switch (dType)
 			{
@@ -2255,8 +2116,7 @@ namespace LCMBrowser
 					});
 					break;
 				case "DateTime":
-					NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor,
-					() =>
+					NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 					{
 						if (node != null && node.Flid > 0)
 						{
@@ -2276,8 +2136,7 @@ namespace LCMBrowser
 					});
 					break;
 				case "Boolean":
-					NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor,
-					() =>
+					NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 					{
 						if (node != null && node.Flid > 0)
 						{
@@ -2297,8 +2156,7 @@ namespace LCMBrowser
 					});
 					break;
 				case "Integer":
-					NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor,
-				   () =>
+					NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 				   {
 					   if (node != null && node.Flid > 0)
 					   {
@@ -2318,8 +2176,7 @@ namespace LCMBrowser
 				   });
 					break;
 				case "Guid":
-					NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor,
-				   () =>
+					NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 				   {
 					   if (node != null && node.Flid > 0)
 					   {
@@ -2350,10 +2207,7 @@ namespace LCMBrowser
 
 			if (!(node != null && node.Flid > 0))  //custom properties don't have PropertyInfo
 			{
-				pi = type.GetProperty(fieldName,
-					BindingFlags.Instance |
-					BindingFlags.Public |
-					BindingFlags.FlattenHierarchy);
+				pi = type.GetProperty(fieldName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy);
 				if (pi == null)
 				{
 					MessageBox.Show("The PI Object to get property info from is null.");
@@ -2374,7 +2228,6 @@ namespace LCMBrowser
 		{
 			var fieldName = string.Empty;
 			hvo = 0;
-
 			for (var l = node.Level; l > 0; l--)
 			{
 				if (GetHvoNode(ref node, ref hvo, ref fieldName))
@@ -2403,7 +2256,7 @@ namespace LCMBrowser
 		/// <summary>
 		/// Gets the hvo node and column name if it's available at this level
 		/// </summary>
-		private bool GetHvoNode(ref IInspectorObject node, ref int hvo, ref string fieldName)
+		private static bool GetHvoNode(ref IInspectorObject node, ref int hvo, ref string fieldName)
 		{
 			try
 			{
@@ -2421,7 +2274,7 @@ namespace LCMBrowser
 		/// <summary>
 		/// Checks if the parent of the current node is of a certain type
 		/// </summary>
-		private bool ParentIsType(ref IInspectorObject node, string type)
+		private static bool ParentIsType(ref IInspectorObject node, string type)
 		{
 			if (node.DisplayType.IndexOf(type) > 0)
 			{
@@ -2436,7 +2289,7 @@ namespace LCMBrowser
 		/// view it's in is refresh. For our purposes here, we assume that properties that
 		/// are part of the CmObject base class will disappear (unless the property is a guid).
 		/// </summary>
-		static bool HandleWillObjDisappearOnRefresh(object sender, IInspectorObject io)
+		private static bool HandleWillObjDisappearOnRefresh(object sender, IInspectorObject io)
 		{
 			// Check if the selected object will disappear after refreshing the grid.
 			return (io.DisplayName != "Guid" && LCMClassList.IsCmObjectProperty(io.DisplayName));
@@ -2457,7 +2310,6 @@ namespace LCMBrowser
 			{
 				genDate1 = (GenDate)pi.GetValue(obj, null);
 			}
-
 			switch (io.DisplayName)
 			{
 				case "Day":
@@ -2512,7 +2364,7 @@ namespace LCMBrowser
 		/// <summary>
 		/// Looks through the grid display and update the display integers of the current GenDate to 0.
 		/// </summary>
-		private void ResetDisplayDates(IInspectorObject node, InspectorWnd mWnd, string type, string value, int hvo)
+		private static void ResetDisplayDates(IInspectorObject node, InspectorWnd mWnd, string type, string value, int hvo)
 		{
 			var genDateFlag = false;
 
@@ -2547,12 +2399,10 @@ namespace LCMBrowser
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the Repository CellValueChanged event of the DataGrid control in the Inspector object.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		void RepositoryInspectorGrid_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+		private void RepositoryInspectorGrid_CellValueChanged(object sender, DataGridViewCellEventArgs e)
 		{
 			UpdateLcmProp(sender, m_repositoryWnd);
 		}

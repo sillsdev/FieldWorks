@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,10 +14,8 @@ namespace LCMBrowser
 	{
 		private string m_fmtMsg;
 		private bool m_showCmObjProps = true;
+		/// <summary />
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ClassPropertySelector"/> class.
-		/// </summary>
 		public ClassPropertySelector()
 		{
 			InitializeComponent();
@@ -27,11 +25,9 @@ namespace LCMBrowser
 			cboClass.SelectedIndex = 0;
 			cboClass_SelectionChangeCommitted(null, null);
 		}
+		/// <summary />
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ClassPropertySelector"/> class.
-		/// </summary>
-		public ClassPropertySelector(ICmObject obj)	: this()
+		public ClassPropertySelector(ICmObject obj) : this()
 		{
 			if (obj == null)
 			{

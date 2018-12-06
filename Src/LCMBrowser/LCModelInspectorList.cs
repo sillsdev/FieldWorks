@@ -3,17 +3,17 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
-using SIL.LCModel;
 using System.Reflection;
-using SIL.LCModel.Infrastructure;
-using System.Collections;
+using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Infrastructure;
 
 namespace LCMBrowser
 {
@@ -33,9 +33,7 @@ namespace LCMBrowser
 		/// </summary>
 		public bool UseMetaDataCache { get; set; }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:LCM_InspectorList"/> class.
-		/// </summary>
+		/// <summary />
 		public LCModelInspectorList(LcmCache cache)
 		{
 			m_cache = cache;
@@ -107,46 +105,38 @@ namespace LCMBrowser
 			{
 				tmpObj = io.Object;
 			}
-
 			if (tmpObj == null)
 			{
 				return BaseGetInspectorObjects(obj, level);
 			}
-
 			if (tmpObj.GetType().GetInterface("IRepository`1") != null)
 			{
 				return GetInspectorObjectsForRepository(tmpObj, io, level);
 			}
-
 			if (tmpObj is IMultiAccessorBase)
 			{
 				return GetInspectorObjectsForMultiString(tmpObj as IMultiAccessorBase, io, level);
 			}
-
 			if (LCMBrowserForm.m_virtualFlag == false && io != null && io.ParentInspectorObject != null &&
 				io.ParentInspectorObject.DisplayName == "Values" &&
 				io.ParentInspectorObject.ParentInspectorObject.DisplayType == "MultiUnicodeAccessor")
 			{
 				return GetInspectorObjectsForUniRuns(tmpObj as ITsString, io as IInspectorObject, level);
 			}
-
 			if (tmpObj is ITsString)
 			{
 				return GetInspectorObjectsForTsString(tmpObj as ITsString, io, level);
 			}
-
 			if (LCMBrowserForm.m_virtualFlag == false && tmpObj is TextProps)
 			{
 				return GetInspectorObjectsForTextProps(tmpObj as TextProps, io, level);
 			}
-
 			if (LCMBrowserForm.m_virtualFlag == false && io != null && io.DisplayName == "Values" &&
 				(io.ParentInspectorObject.DisplayType == "MultiUnicodeAccessor" ||
 				 io.ParentInspectorObject.DisplayType == "MultiStringAccessor"))
 			{
 				return GetInspectorObjectsForValues(tmpObj, io as IInspectorObject, level);
 			}
-
 			return io != null && io.DisplayName.EndsWith("RC") && io.Flid > 0 && m_mdc.IsCustom(io.Flid)
 				? GetInspectorObjectsForCustomRC(tmpObj, io, level)
 				: BaseGetInspectorObjects(obj, level);
@@ -162,14 +152,13 @@ namespace LCMBrowser
 			foreach (var instance in GetRepositoryInstances(obj))
 			{
 				var io = CreateInspectorObject(instance, obj, ioParent, level);
-
 				if (LCMBrowserForm.m_virtualFlag == false && obj.ToString().IndexOf("LexSenseRepository") > 0)
 				{
 					var tmpObj = io.Object as ILexSense;
 					io.DisplayValue = tmpObj.FullReferenceName.Text;
 					io.DisplayName = $"[{i++}]: {GetObjectOnly(tmpObj.ToString())}";
 				}
-				else if (LCMBrowserForm.m_virtualFlag == false && obj.ToString().IndexOf("LexEntryRepository") > 0 )
+				else if (LCMBrowserForm.m_virtualFlag == false && obj.ToString().IndexOf("LexEntryRepository") > 0)
 				{
 					var tmpObj = io.Object as ILexEntry;
 					io.DisplayValue = tmpObj.HeadWord.Text;
@@ -179,7 +168,6 @@ namespace LCMBrowser
 				{
 					io.DisplayName = $"[{i++}]";
 				}
-
 				list.Add(io);
 			}
 
@@ -250,7 +238,6 @@ namespace LCMBrowser
 			{
 				obj = ioParent.Object;
 			}
-
 			var list = new List<IInspectorObject>();
 			var collection = obj as ICollection;
 			if (collection != null)
@@ -271,20 +258,20 @@ namespace LCMBrowser
 				try
 				{
 					var propObj = pi.GetValue(obj, null);
-					var Itmp = CreateInspectorObject(pi, propObj, obj, ioParent, level);
+					var inspectorObject = CreateInspectorObject(pi, propObj, obj, ioParent, level);
 
-					if ((obj.ToString().IndexOf("MultiUnicodeAccessor") > 0 && Itmp.DisplayName != "Values") ||
-						(obj.ToString().IndexOf("MultiStringAccessor") > 0 && Itmp.DisplayName != "Values"))
+					if ((obj.ToString().IndexOf("MultiUnicodeAccessor") > 0 && inspectorObject.DisplayName != "Values") ||
+						(obj.ToString().IndexOf("MultiStringAccessor") > 0 && inspectorObject.DisplayName != "Values"))
 					{
 						continue;
 					}
-					var itmp4 = Itmp.Object as ICollection;
+					var itmp4 = inspectorObject.Object as ICollection;
 					if (itmp4 != null)
 					{
-						Itmp.DisplayValue = $"Count = {itmp4.Count}";
-						Itmp.HasChildren = (itmp4.Count > 0);
+						inspectorObject.DisplayValue = $"Count = {itmp4.Count}";
+						inspectorObject.HasChildren = (itmp4.Count > 0);
 					}
-					list.Add(Itmp);
+					list.Add(inspectorObject);
 				}
 				catch (Exception e)
 				{
@@ -307,7 +294,6 @@ namespace LCMBrowser
 			{
 				tssriList.Add(new TsStringRunInfo(i, tss, m_cache));
 			}
-
 			var io = CreateInspectorObject(tssriList, tss, ioParent, level);
 			io.DisplayName = "Runs";
 			io.DisplayValue = FormatCountString(tssriList.Count);
@@ -337,7 +323,6 @@ namespace LCMBrowser
 			{
 				txp = ioParent.Object as TextProps;
 			}
-
 			var list = new List<IInspectorObject>();
 			var txp1 = txp as ICollection;
 
@@ -402,7 +387,6 @@ namespace LCMBrowser
 			{
 				obj = ioParent.Object;
 			}
-
 			var list = new List<IInspectorObject>();
 			var multiStr = ioParent.OwningObject as IMultiAccessorBase;
 			if (multiStr != null)
@@ -442,20 +426,17 @@ namespace LCMBrowser
 		protected virtual List<IInspectorObject> GetInspectorObjectsForUniRuns(ITsString obj, IInspectorObject ioParent, int level)
 		{
 			var list = new List<IInspectorObject>();
-
 			if (obj == null)
 			{
 				return list;
 			}
 			var ino = CreateInspectorObject(obj, ioParent.OwningObject, ioParent, level);
-
 			ino.DisplayName = "Writing System";
 			ino.DisplayValue = obj.get_WritingSystemAt(0).ToString();
 			ino.HasChildren = false;
 			list.Add(ino);
 
 			var tss = new TsStringRunInfo(0, obj, m_cache);
-
 			ino = CreateInspectorObject(tss, obj, ioParent, level);
 			ino.DisplayName = "Text";
 			ino.DisplayValue = tss.Text;
@@ -465,7 +446,7 @@ namespace LCMBrowser
 		}
 
 		/// <summary>
-		/// Create the reference collectiomn list for ther custom reference collection.,
+		/// Create the reference collection list for the custom reference collection.
 		/// </summary>
 		protected virtual List<IInspectorObject> GetInspectorObjectsForCustomRC(object obj, IInspectorObject ioParent, int level)
 		{
@@ -473,7 +454,6 @@ namespace LCMBrowser
 			{
 				return null;
 			}
-
 			// Inspectors for custom reference collections are supposed to be configured with
 			// obj being an array of the HVOs.
 			var collection = obj as ICollection;
@@ -568,11 +548,9 @@ namespace LCMBrowser
 			{
 				return GetFieldsFromMetaDataCache(obj as ICmObject);
 			}
-
 			var propArray = base.GetPropsForObj(obj);
 			var cmObj = obj as ICmObject;
 			var props = new List<PropertyInfo>(propArray);
-
 			if (m_mdc == null || cmObj == null)
 			{
 				return propArray;
@@ -592,11 +570,10 @@ namespace LCMBrowser
 				return base.GetPropsForObj(cmObj);
 			}
 			var props = new List<PropertyInfo>();
-			var flids = m_mdc.GetFields(cmObj.ClassID, true, (int)CellarPropertyTypeFilter.All);
 			var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.GetProperty;
 
 			// Get only the fields for the object that are specified in the meta data cache.
-			foreach (var flid in flids)
+			foreach (var flid in m_mdc.GetFields(cmObj.ClassID, true, (int)CellarPropertyTypeFilter.All))
 			{
 				var fieldName = m_mdc.GetFieldName(flid);
 				var fieldType = (CellarPropertyType)m_mdc.GetFieldType(flid);
@@ -613,7 +590,7 @@ namespace LCMBrowser
 				}
 			}
 
-			return (props.Count > 0 ? props.ToArray() : base.GetPropsForObj(cmObj));
+			return props.Count > 0 ? props.ToArray() : base.GetPropsForObj(cmObj);
 		}
 
 		/// <summary>
@@ -652,7 +629,7 @@ namespace LCMBrowser
 						io.HasChildren = true;
 						io.DisplayName = cf.Name;
 						break;
-					case "LcmReferenceCollection<ICmPossibility>":	// ReferenceCollection
+					case "LcmReferenceCollection<ICmPossibility>":  // ReferenceCollection
 						var count = m_cache.DomainDataByFlid.get_VecSize(to.Hvo, fieldId);
 						iValue = $"Count = {count}";
 						var objects = m_cache.GetManagedSilDataAccess().VecProp(to.Hvo, fieldId);
@@ -661,19 +638,19 @@ namespace LCMBrowser
 						io.HasChildren = count > 0;
 						io.DisplayName = $"{cf.Name}RC";
 						break;
-					case "ICmPossibility":	// ReferenceAtomic
+					case "ICmPossibility":  // ReferenceAtomic
 						var rValue = m_cache.DomainDataByFlid.get_ObjectProp(to.Hvo, fieldId);
-						var posObj = (rValue == 0? null: (ICmPossibility)m_cache.ServiceLocator.GetObject(rValue));
+						var posObj = (rValue == 0 ? null : (ICmPossibility)m_cache.ServiceLocator.GetObject(rValue));
 						io = base.CreateInspectorObject(null, posObj, obj, parentIo, level);
-						iValue = (posObj == null? "null": posObj.NameHierarchyString);
+						iValue = (posObj == null ? "null" : posObj.NameHierarchyString);
 						io.HasChildren = posObj != null;
 						io.DisplayName = $"{cf.Name}RA";
 						break;
-					case "IStText":	//    multi-paragraph text (OA) StText)
+					case "IStText": //    multi-paragraph text (OA) StText)
 						var mValue = m_cache.DomainDataByFlid.get_ObjectProp(to.Hvo, fieldId);
-						var paraObj = (mValue == 0? null: (IStText)m_cache.ServiceLocator.GetObject(mValue));
+						var paraObj = (mValue == 0 ? null : (IStText)m_cache.ServiceLocator.GetObject(mValue));
 						io = base.CreateInspectorObject(null, paraObj, obj, parentIo, level);
-						iValue = (paraObj == null? "null": "StText: " + paraObj.Hvo.ToString());
+						iValue = (paraObj == null ? "null" : "StText: " + paraObj.Hvo.ToString());
 						io.HasChildren = mValue > 0;
 						io.DisplayName = $"{cf.Name}OA";
 						break;
@@ -700,22 +677,18 @@ namespace LCMBrowser
 			{
 				return;
 			}
-
 			for (var i = props.Count - 1; i >= 0; i--)
 			{
 				if (props[i].Name == "Guid")
 				{
 					continue;
 				}
-
 				if (!LCMClassList.IsPropertyDisplayed(cmObj, props[i].Name))
 				{
 					props.RemoveAt(i);
 					continue;
 				}
-
 				var work = LCMBrowserForm.StripOffTypeChars(props[i].Name);
-
 				var flid = 0;
 				if (m_mdc.FieldExists(cmObj.ClassID, work, true))
 				{
@@ -729,13 +702,11 @@ namespace LCMBrowser
 						continue;
 					}
 				}
-
 				if (LCMBrowserForm.m_virtualFlag == false && flid >= 20000000 && flid < 30000000)
 				{
 					props.RemoveAt(i);
 					continue;
 				}
-
 				if (LCMBrowserForm.m_virtualFlag == false && m_mdc.get_IsVirtual(flid))
 				{
 					props.RemoveAt(i);
@@ -750,34 +721,28 @@ namespace LCMBrowser
 		protected override IInspectorObject CreateInspectorObject(PropertyInfo pi, object obj, object owningObj, IInspectorObject ioParent, int level)
 		{
 			var io = base.CreateInspectorObject(pi, obj, owningObj, ioParent, level);
-
 			if (pi == null && io != null)
 			{
 				io.DisplayType = StripOffLCMNamespace(io.DisplayType);
 			}
-
 			else if (pi != null && io == null)
 			{
 				io.DisplayType = pi.PropertyType.Name;
 			}
-
 			else if (pi != null && io != null)
 			{
 				io.DisplayType = (io.DisplayType == "System.__ComObject" ?
 				pi.PropertyType.Name : StripOffLCMNamespace(io.DisplayType));
 			}
-
 			if (obj == null)
 			{
 				return io;
 			}
-
 			if (obj is char)
 			{
-				io.DisplayValue = $"'{io.DisplayValue}'   (U+{(int) (char) obj:X4})";
+				io.DisplayValue = $"'{io.DisplayValue}'   (U+{(int)(char)obj:X4})";
 				return io;
 			}
-
 			if (obj is ILcmVector)
 			{
 				var mi = obj.GetType().GetMethod("ToArray");
@@ -859,12 +824,10 @@ namespace LCMBrowser
 			{
 				return string.Empty;
 			}
-
 			if (!type.StartsWith("SIL.LCModel"))
 			{
 				return type;
 			}
-
 			type = type.Replace("SIL.LCModel.Infrastructure.Impl.", string.Empty);
 			type = type.Replace("SIL.LCModel.Infrastructure.", string.Empty);
 			type = type.Replace("SIL.LCModel.DomainImpl.", string.Empty);
@@ -883,27 +846,16 @@ namespace LCMBrowser
 			try
 			{
 				// Get an object that represents all the repository's collection of instances
-				object repoInstances = null;
-				foreach (var mi in repository.GetType().GetMethods())
-				{
-					if (mi.Name == "AllInstances")
-					{
-						repoInstances = mi.Invoke(repository, null);
-						break;
-					}
-				}
-
+				var repoInstances = (repository.GetType().GetMethods().Where(mi => mi.Name == "AllInstances").Select(mi => mi.Invoke(repository, null))).FirstOrDefault();
 				if (repoInstances == null)
 				{
 					throw new MissingMethodException($"Repository {repository.GetType().Name} is missing 'AllInstances' method.");
 				}
-
 				var ienum = repoInstances as IEnumerable;
 				if (ienum == null)
 				{
 					throw new NullReferenceException($"Repository {repository.GetType().Name} is not an IEnumerable");
 				}
-
 				var enumerator = ienum.GetEnumerator();
 				while (enumerator.MoveNext())
 				{
@@ -937,7 +889,6 @@ namespace LCMBrowser
 				obj = obj.Owner;
 				ownerTree.Add(obj);
 			}
-
 			var index = -1;
 			for (var i = ownerTree.Count - 2; i >= 0; i--)
 			{

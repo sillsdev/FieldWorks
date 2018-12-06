@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,16 +15,12 @@ namespace LCMBrowser
 		private Type m_classType;
 		private string m_className;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:LCMClass"/> class.
-		/// </summary>
+		/// <summary />
 		public LCMClass()
 		{
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:LCMClass"/> class.
-		/// </summary>
+		/// <summary />
 		public LCMClass(string className) : this()
 		{
 			ClassName = className;
@@ -101,7 +97,7 @@ namespace LCMBrowser
 
 			foreach (var pi in props)
 			{
-				Properties.Add(new LCMClassProperty {Name = pi.Name, Displayed = true});
+				Properties.Add(new LCMClassProperty { Name = pi.Name, Displayed = true });
 			}
 
 			Properties.Sort((p1, p2) => p1.Name.CompareTo(p2.Name));

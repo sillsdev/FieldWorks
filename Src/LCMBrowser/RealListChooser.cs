@@ -18,9 +18,7 @@ namespace LCMBrowser
 		/// </summary>
 		public string m_chosenClass = string.Empty;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:RealListChooser"/> class.
-		/// </summary>
+		/// <summary />
 		/// <param name="name">The name of the listBox.</param>
 		/// <param name="list">The list of strings to be displayed inb the listBox.</param>
 		public RealListChooser(string name, List<string> list)
@@ -28,20 +26,20 @@ namespace LCMBrowser
 			InitializeComponent();
 			listBox.DataSource = list;
 			listBox.Text = name;
-
-			ShowDialog();
 		}
 
 		private void btnOK_Click(object sender, EventArgs e)
 		{
 			m_chosenClass = listBox.SelectedItem.ToString();
 			// Make an object of class newClassName and put it somewhere.
-			this.Close();
+			DialogResult = DialogResult.OK;
+			Close();
 		}
 
 		private void btnCancel_Click(object sender, EventArgs e)
 		{
 			m_chosenClass = "Cancel";
+			DialogResult = DialogResult.Cancel;
 			Close();
 		}
 	}

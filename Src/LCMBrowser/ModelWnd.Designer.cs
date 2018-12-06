@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,10 +19,8 @@ namespace LCMBrowser
 		{
 			if (disposing)
 			{
-				if (m_cache != null)
-					m_cache.Dispose();
-				if (components != null)
-					components.Dispose();
+				m_cache?.Dispose();
+				components?.Dispose();
 			}
 			m_cache = null;
 			components = null;

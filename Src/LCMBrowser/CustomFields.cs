@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,24 +11,24 @@ namespace LCMBrowser
 	public class CustomFields
 	{
 		///<summary />
-		public string Name = "";
+		public string Name;
 
 		///<summary />
-		public int ClassID = 0;
+		public int ClassID;
 
 		///<summary />
-		public int FieldID = 0;
+		public int FieldID;
 
 		///<summary />
-		public string Type = "";
+		public string Type;
 
 		///<summary/>
 		public CustomFields(string name, int classID, int fieldID, string type)
 		{
-			this.Name = name;
-			this.ClassID = classID;
-			this.FieldID = fieldID;
-			this.Type = type;
+			Name = name;
+			ClassID = classID;
+			FieldID = fieldID;
+			Type = type;
 		}
 	}
 }

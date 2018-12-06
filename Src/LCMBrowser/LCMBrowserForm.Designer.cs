@@ -1,10 +1,11 @@
-using System;
+// Copyright (c) 2009-2018 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using LCMBrowser.Properties;
 using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LCMBrowser
