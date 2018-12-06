@@ -131,7 +131,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				//store this for clients which just want to poll us, instead of wiring up to the event
 				m_activity = args.Task.Description;
 				//keeps us from getting the notification at the end of the task.
-				if (args.Task.NotificationMessage != null && args.Task.Phase != TaskReport.TaskPhase.Finished)
+				if (args.Task.NotificationMessage != null && args.Task.Phase != TaskPhase.Finished)
 				{
 					m_notificationMessage = args.Task.NotificationMessage;
 				}

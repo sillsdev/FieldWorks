@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -22,7 +22,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	public class XAmpleParser : DisposableBase, IParser
 	{
 		private static readonly char[] Digits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
-
 		private XAmpleWrapper m_xample;
 		private readonly string m_dataDir;
 		private readonly LcmCache m_cache;
@@ -52,14 +51,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		internal static string ConvertNameToUseAnsiCharacters(string originalName)
 		{
 			var sb = new StringBuilder();
-			char[] letters = originalName.ToCharArray();
+			var letters = originalName.ToCharArray();
 			foreach (var letter in letters)
 			{
-				int value = Convert.ToInt32(letter);
+				var value = Convert.ToInt32(letter);
 				if (value > 255)
 				{
-					string hex = value.ToString("X4");
-					sb.Append(hex);
+					sb.Append(value.ToString("X4"));
 				}
 				else
 				{
@@ -82,7 +80,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				// According to the fxt template files, GAFAWS is NFC, all others are NFD.
 				using (new WorkerThreadReadHelper(m_cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
 				{
-					ILangProject lp = m_cache.LanguageProject;
+					var lp = m_cache.LanguageProject;
 					// 1. Export lexicon and/or grammar.
 					model = M3ModelExportServices.ExportGrammarAndLexicon(lp);
 
@@ -95,13 +93,15 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 				m_transformer.MakeAmpleFiles(model);
 
-				int maxAnalCount = 20;
-				XElement maxAnalCountElem = model.Elements("M3Dump").Elements("ParserParameters").Elements("ParserParameters").Elements("XAmple").Elements("MaxAnalysesToReturn").FirstOrDefault();
+				var maxAnalCount = 20;
+				var maxAnalCountElem = model.Elements("M3Dump").Elements("ParserParameters").Elements("ParserParameters").Elements("XAmple").Elements("MaxAnalysesToReturn").FirstOrDefault();
 				if (maxAnalCountElem != null)
 				{
-					maxAnalCount = (int) maxAnalCountElem;
+					maxAnalCount = (int)maxAnalCountElem;
 					if (maxAnalCount < 1)
+					{
 						maxAnalCount = -1;
+					}
 				}
 
 				m_xample.SetParameter("MaxAnalysesToReturn", maxAnalCount.ToString(CultureInfo.InvariantCulture));
@@ -126,33 +126,31 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			var exceptionElem = wordformElem.Element("Exception");
 			if (exceptionElem != null)
 			{
-				var totalAnalysesValue = (string) exceptionElem.Attribute("totalAnalyses");
-				switch ((string) exceptionElem.Attribute("code"))
+				var totalAnalysesValue = (string)exceptionElem.Attribute("totalAnalyses");
+				switch ((string)exceptionElem.Attribute("code"))
 				{
 					case "ReachedMaxAnalyses":
-						errorMessage = String.Format(ParserCoreStrings.ksReachedMaxAnalysesAllowed,
-							totalAnalysesValue);
+						errorMessage = String.Format(ParserCoreStrings.ksReachedMaxAnalysesAllowed, totalAnalysesValue);
 						break;
 					case "ReachedMaxBufferSize":
-						errorMessage = String.Format(ParserCoreStrings.ksReachedMaxInternalBufferSize,
-							totalAnalysesValue);
+						errorMessage = String.Format(ParserCoreStrings.ksReachedMaxInternalBufferSize, totalAnalysesValue);
 						break;
 				}
 			}
 			else
 			{
-				errorMessage = (string) wordformElem.Element("Error");
+				errorMessage = (string)wordformElem.Element("Error");
 			}
 
 			ParseResult result;
 			using (new WorkerThreadReadHelper(m_cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
 			{
 				var analyses = new List<ParseAnalysis>();
-				foreach (XElement analysisElem in wordformElem.Descendants("WfiAnalysis"))
+				foreach (var analysisElem in wordformElem.Descendants("WfiAnalysis"))
 				{
 					var morphs = new List<ParseMorph>();
-					bool skip = false;
-					foreach (XElement morphElem in analysisElem.Descendants("Morph"))
+					var skip = false;
+					foreach (var morphElem in analysisElem.Descendants("Morph"))
 					{
 						ParseMorph morph;
 						if (!TryCreateParseMorph(m_cache, morphElem, out morph))
@@ -161,11 +159,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 							break;
 						}
 						if (morph != null)
+						{
 							morphs.Add(morph);
+						}
 					}
-
 					if (!skip && morphs.Count > 0)
+					{
 						analyses.Add(new ParseAnalysis(morphs));
+					}
 				}
 				result = new ParseResult(analyses, errorMessage);
 			}
@@ -175,13 +176,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private static bool TryCreateParseMorph(LcmCache cache, XElement morphElem, out ParseMorph morph)
 		{
-			XElement formElement = morphElem.Element("MoForm");
+			var formElement = morphElem.Element("MoForm");
 			Debug.Assert(formElement != null);
-			var formHvo = (string) formElement.Attribute("DbRef");
-
-			XElement msiElement = morphElem.Element("MSI");
+			var formHvo = (string)formElement.Attribute("DbRef");
+			var msiElement = morphElem.Element("MSI");
 			Debug.Assert(msiElement != null);
-			var msaHvo = (string) msiElement.Attribute("DbRef");
+			var msaHvo = (string)msiElement.Attribute("DbRef");
 
 			// Normally, the hvo for MoForm is a MoForm and the hvo for MSI is an MSA
 			// There are four exceptions, though, when an irregularly inflected form is involved:
@@ -211,8 +211,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				return true;
 			}
 
-			// Irregulary inflected forms can have a combination MSA hvo: the LexEntry hvo, a period, and an index to the LexEntryRef
-			Tuple<int, int> msaTuple = ProcessMsaHvo(msaHvo);
+			// Irregularly inflected forms can have a combination MSA hvo: the LexEntry hvo, a period, and an index to the LexEntryRef
+			var msaTuple = ProcessMsaHvo(msaHvo);
 			ICmObject objMsa;
 			if (!cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(msaTuple.Item1, out objMsa))
 			{
@@ -233,8 +233,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				// get the MoStemMsa of its variant
 				if (msaAsLexEntry.EntryRefsOS.Count > 0)
 				{
-					ILexEntryRef lexEntryRef = msaAsLexEntry.EntryRefsOS[msaTuple.Item2];
-					ILexSense sense = MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
+					var lexEntryRef = msaAsLexEntry.EntryRefsOS[msaTuple.Item2];
+					var sense = MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
 					var inflType = lexEntryRef.VariantEntryTypesRS[0] as ILexEntryInflType;
 					morph = new ParseMorph(form, sense.MorphoSyntaxAnalysisRA, inflType);
 					return true;
@@ -248,7 +248,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private static Tuple<int, int> ProcessMsaHvo(string msaHvo)
 		{
-			string[] msaHvoParts = msaHvo.Split('.');
+			var msaHvoParts = msaHvo.Split('.');
 			return Tuple.Create(int.Parse(msaHvoParts[0]), msaHvoParts.Length == 2 ? int.Parse(msaHvoParts[1]) : 0);
 		}
 
@@ -258,30 +258,34 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			sb.Replace("DB_REF_HERE", "'0'");
 			sb.Replace("<...>", "[...]");
 			while (sb[sb.Length - 1] == '\x0')
+			{
 				sb.Remove(sb.Length - 1, 1);
-
-			XDocument doc = XDocument.Parse(sb.ToString());
+			}
+			var doc = XDocument.Parse(sb.ToString());
 			using (new WorkerThreadReadHelper(m_cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
 			{
-				foreach (XElement morphElem in doc.Descendants("Morph"))
+				foreach (var morphElem in doc.Descendants("Morph"))
 				{
-					var type = (string) morphElem.Attribute("type");
-					var props = (string) morphElem.Element("props");
+					var type = (string)morphElem.Attribute("type");
+					var props = (string)morphElem.Element("props");
 
-					XElement formElem = morphElem.Element("MoForm");
+					var formElem = morphElem.Element("MoForm");
 					Debug.Assert(formElem != null);
-					var formID = (string) formElem.Attribute("DbRef");
-					var wordType = (string) formElem.Attribute("wordType");
+					var formID = (string)formElem.Attribute("DbRef");
+					var wordType = (string)formElem.Attribute("wordType");
 
-					XElement msaElem = morphElem.Element("MSI");
+					var msaElem = morphElem.Element("MSI");
 					Debug.Assert(msaElem != null);
-					var msaID = (string) msaElem.Attribute("DbRef");
+					var msaID = (string)msaElem.Attribute("DbRef");
 
-					using (XmlWriter writer = morphElem.CreateWriter())
+					using (var writer = morphElem.CreateWriter())
+					{
 						writer.WriteMorphInfoElements(m_cache, formID, msaID, wordType, props);
-
-					using (XmlWriter writer = msaElem.CreateWriter())
+					}
+					using (var writer = msaElem.CreateWriter())
+					{
 						writer.WriteMsaElement(m_cache, formID, msaID, type, wordType);
+					}
 				}
 			}
 
@@ -294,20 +298,20 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			sb.Remove(0, 47);
 			sb.Replace("&rsqb;", "]");
 			while (sb[sb.Length - 1] == '\x0')
+			{
 				sb.Remove(sb.Length - 1, 1);
-
-			XDocument doc = XDocument.Parse(sb.ToString());
+			}
+			var doc = XDocument.Parse(sb.ToString());
 			using (new WorkerThreadReadHelper(m_cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
 			{
-				foreach (XElement morphElem in doc.Descendants("morph"))
+				foreach (var morphElem in doc.Descendants("morph"))
 				{
-					var formID = (string) morphElem.Attribute("alloid");
-					var msaID = (string) morphElem.Attribute("morphname");
-					var type = (string) morphElem.Attribute("type");
-					var props = (string) morphElem.Element("props");
-					var wordType = (string) morphElem.Attribute("wordType");
-
-					using (XmlWriter writer = morphElem.CreateWriter())
+					var formID = (string)morphElem.Attribute("alloid");
+					var msaID = (string)morphElem.Attribute("morphname");
+					var type = (string)morphElem.Attribute("type");
+					var props = (string)morphElem.Element("props");
+					var wordType = (string)morphElem.Attribute("wordType");
+					using (var writer = morphElem.CreateWriter())
 					{
 						writer.WriteMorphInfoElements(m_cache, formID, msaID, wordType, props);
 						writer.WriteMsaElement(m_cache, formID, msaID, type, wordType);
@@ -322,30 +326,29 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		internal static void ConvertFailures(XDocument doc, Func<int, int, string> strRepSelector)
 		{
-			int wordGrammarFailureCount = 1;
-			foreach (XElement failureElem in doc.Descendants("failure"))
+			var wordGrammarFailureCount = 1;
+			foreach (var failureElem in doc.Descendants("failure"))
 			{
-				var test = (string) failureElem.Attribute("test");
-
+				var test = (string)failureElem.Attribute("test");
 				if ((test.StartsWith("SEC_ST") || test.StartsWith("InfixEnvironment")) && test.Contains("["))
 				{
-					int i = test.IndexOf('/');
-					string[] sa = test.Substring(i).Split('[', ']'); // split into hunks using brackets
+					var i = test.IndexOf('/');
+					var sa = test.Substring(i).Split('[', ']'); // split into hunks using brackets
 					var sb = new StringBuilder();
-					foreach (string str in sa)  // for each hunk
+					foreach (var str in sa)  // for each hunk
 					{
 						if (str.IndexOfAny(Digits) >= 0)
 						{
 							// assume it is an hvo
 							sb.Append("[");
-							string sHvo = str;
+							var sHvo = str;
 							// check for any reduplication pattern index (indicated by ^1, ^2, etc.)
-							int iCaretPosition = str.IndexOf('^');
+							var iCaretPosition = str.IndexOf('^');
 							if (iCaretPosition > -1)
 							{ // ignore the index
 								sHvo = str.Substring(0, iCaretPosition);
 							}
-							int hvo = Convert.ToInt32(sHvo);
+							var hvo = Convert.ToInt32(sHvo);
 							sb.Append(strRepSelector(PhNaturalClassTags.kClassId, hvo));
 							sb.Append("]");
 						}
@@ -359,21 +362,19 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				else if ((test.StartsWith("ANCC_FT") || test.StartsWith("MCC_FT")) && !test.Contains("ExcpFeat") && !test.Contains("StemName")
 					&& !test.Contains("IrregInflForm"))
 				{
-					int index = test.IndexOf(":", StringComparison.Ordinal);
-					string testName = test.Substring(0, index);
-
-					int iStartingPos = test.IndexOf("::", StringComparison.Ordinal) + 2; // skip to the double colon portion
-					string[] sa = test.Substring(iStartingPos).Split(' ');
-
+					var index = test.IndexOf(":", StringComparison.Ordinal);
+					var testName = test.Substring(0, index);
+					var iStartingPos = test.IndexOf("::", StringComparison.Ordinal) + 2; // skip to the double colon portion
+					var sa = test.Substring(iStartingPos).Split(' ');
 					var sb = new StringBuilder();
 					sb.Append(testName);
 					sb.Append(":");
-					foreach (string str in sa)
+					foreach (var str in sa)
 					{
 						sb.Append(" ");
 						if (str.IndexOfAny(Digits) >= 0)
 						{
-							int hvo = Convert.ToInt32(str);
+							var hvo = Convert.ToInt32(str);
 							sb.Append(strRepSelector(testName == "ANCC_FT" ? MoFormTags.kClassId : MoMorphSynAnalysisTags.kClassId, hvo));
 						}
 						else
@@ -393,43 +394,44 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private string GetStrRep(int classID, int hvo)
 		{
-			ICmObject obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
+			var obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
 			switch (classID)
 			{
 				case MoFormTags.kClassId:
 					var form = obj as IMoForm;
 					if (form != null)
+					{
 						return form.ShortName;
+					}
 					throw new ApplicationException(ParserCoreStrings.ksUnknownAllomorph);
 
 				case MoMorphSynAnalysisTags.kClassId:
 					var msa = obj as IMoMorphSynAnalysis;
 					if (msa != null)
+					{
 						return msa.LongName;
+					}
 					throw new ApplicationException(ParserCoreStrings.ksUnknownMorpheme);
 
 				case PhNaturalClassTags.kClassId:
 					var nc = obj as IPhNCSegments;
 					if (nc != null)
+					{
 						return nc.Name.BestAnalysisAlternative.Text;
+					}
 					throw new ApplicationException(ParserCoreStrings.ksUnknownNaturalClass);
 			}
 			return null;
 		}
 
+		/// <inheritdoc />
 		protected override void DisposeManagedResources()
 		{
-			if (m_xample != null)
-			{
-				m_xample.Dispose();
-				m_xample = null;
-			}
+			m_xample?.Dispose();
+			m_changeListener?.Dispose();
 
-			if (m_changeListener != null)
-			{
-				m_changeListener.Dispose();
-				m_changeListener = null;
-			}
+			m_xample = null;
+			m_changeListener = null;
 		}
 
 		/// <inheritdoc />

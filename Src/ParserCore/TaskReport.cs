@@ -9,34 +9,21 @@ using System.Xml.Linq;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
-	/// <summary>
-	/// Summary description for TaskReport.
-	/// </summary>
+	/// <summary />
 	public sealed class TaskReport : IDisposable
 	{
-		public enum TaskPhase {Started, Working, Finished, ErrorEncountered};
-
 		private readonly Action<TaskReport> m_taskUpdate;
-		private List<TaskReport> m_subTasks;
 		private string m_description;
 		private readonly long m_start;
 		private long m_finish;
-		private TaskPhase m_phase;
 		private TaskReport m_owningTask;
 		private string m_notificationMessage;
-		private bool m_isInDispose;		// ture if we're in the dispose method
-		/// <summary>
-		/// this was added to hold the results of a trace request
-		/// </summary>
-		private XDocument m_details;
+		// true if we're in the dispose method
+		private bool m_isInDispose;
 
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="TaskReport"/> class.
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
+		/// <summary />
 		public TaskReport(string description, Action<TaskReport> eventReceiver)
-			: this(description, (TaskReport) null)
+			: this(description, (TaskReport)null)
 		{
 			m_taskUpdate = eventReceiver;
 			InformListeners(TaskPhase.Started); // don't move this down to the other constructor
@@ -45,25 +32,15 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		internal TaskReport(string description, TaskReport owningTask)
 		{
 			m_owningTask = owningTask;
-			m_phase = TaskPhase.Started;
+			Phase = TaskPhase.Started;
 			m_description = description;
 			m_start = DateTime.Now.Ticks;
 		}
 
-		#region IDisposable & Co. implementation
-
-		/// <summary>
-		/// True, if the object has been disposed.
-		/// </summary>
-		private bool m_isDisposed;
-
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed
-		{
-			get { return m_isDisposed; }
-		}
+		private bool IsDisposed { get; set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -78,15 +55,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			// The base class finalizer is called automatically.
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <remarks>Must not be virtual.</remarks>
+		/// <inheritdoc />
 		public void Dispose()
 		{
 			Dispose(true);
 			// This object will be cleaned up by the Dispose method.
-			// Therefore, you should call GC.SupressFinalize to
+			// Therefore, you should call GC.SuppressFinalize to
 			// take this object off the finalization queue
 			// and prevent finalization code for this object
 			// from executing a second time.
@@ -117,122 +91,70 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
-			// Must not be run more than once.
-			if (m_isDisposed)
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
 				return;
+			}
 
 			if (disposing)
 			{
 				m_isInDispose = true;
 				// handle the case where the child is disposed of before the parent and not by the parent directly
-				if (m_owningTask != null)
-					m_owningTask.RemoveChildTaskReport(this);	// break assocations before disposing
+				m_owningTask?.RemoveChildTaskReport(this);   // break associations before disposing
 
 				// Dispose managed resources here.
-				if (m_subTasks != null)
+				if (SubTasks != null)
 				{
-					foreach (TaskReport task in m_subTasks)
+					foreach (var task in SubTasks)
+					{
 						task.Dispose();
+					}
 				}
 				Finish();
-				if (m_subTasks != null)
-					m_subTasks.Clear();
+				SubTasks?.Clear();
 				m_isInDispose = false;
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
 			m_owningTask = null;
-			m_details = null;
+			Details = null;
 			m_description = null;
 			m_notificationMessage = null;
-			m_subTasks = null;
+			SubTasks = null;
 
-			m_isDisposed = true;
-		}
-
-		#endregion IDisposable & Co. implementation
-
-		internal TaskReport AddSubTask(string description)
-		{
-			Debug.Assert(m_phase != TaskPhase.Finished);
-			var t = new TaskReport(description, this);
-			if (m_subTasks == null)
-				m_subTasks = new List<TaskReport>();
-			else
-			{	//a new set task should not be added until the previous one is finished.
-				TaskPhase phase = m_subTasks[m_subTasks.Count - 1].Phase;
-				Debug.Assert(phase == TaskPhase.Finished);// || phase == TaskPhase.ErrorEncountered);
-			}
-			m_subTasks.Add(t);
-			//this cannot be in the constructor because if the listener asks
-			//for the most recent task, it will not get this one until after
-			//this has been added to the subtasks list.
-			t.InformListeners(TaskPhase.Started);
-			return t;
+			IsDisposed = true;
 		}
 
 		internal void Finish()
 		{
 			//this is called when we are disposed; it is possible that we were explicitly finished already.
-			if (m_phase == TaskPhase.Finished || m_phase == TaskPhase.ErrorEncountered)
+			if (Phase == TaskPhase.Finished || Phase == TaskPhase.ErrorEncountered)
+			{
 				return;
-
+			}
 			m_finish = DateTime.Now.Ticks;
 			InformListeners(TaskPhase.Finished);
 		}
 
-		public string Description
-		{
-			get
-			{
-				return m_phase == TaskPhase.ErrorEncountered
-						? string.Format(ParserCoreStrings.ksX_error, m_description)
-						: m_description;
-			}
-		}
+		public string Description => Phase == TaskPhase.ErrorEncountered
+			? string.Format(ParserCoreStrings.ksX_error, m_description)
+			: m_description;
 
 		/// <summary>
 		/// this is used to hold the results of a trace request
 		/// </summary>
-		public XDocument Details
-		{
-			set
-			{
-				 m_details = value;
-			}
-			get
-			{
-				return m_details;
-			}
-		}
+		public XDocument Details { set; get; }
 
-		public long DurationTicks
-		{
-			get
-			{
-				return m_finish - m_start;
-			}
-		}
+		public long DurationTicks => m_finish - m_start;
 
-		public float DurationSeconds
-		{
-			get
-			{
-				return (float) (DurationTicks / 10000000.0);
-			}
-		}
+		public float DurationSeconds => (float)(DurationTicks / 10000000.0);
 
-		public List<TaskReport> SubTasks
-		{
-			get
-			{
-				return m_subTasks;
-			}
-		}
+		public List<TaskReport> SubTasks { get; private set; }
 
 		internal void InformListeners(TaskPhase phase)
 		{
-			m_phase = phase;
+			Phase = phase;
 			InformListeners(this);
 		}
 
@@ -240,10 +162,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			//the root task executes this
 			if (m_taskUpdate != null)
+			{
 				m_taskUpdate(task);
+			}
 			//all children tasks execute this
-			else if (m_owningTask != null)
-				m_owningTask.InformListeners(this);
+			else
+			{
+				m_owningTask?.InformListeners(this);
+			}
 		}
 
 		/// <summary>
@@ -260,29 +186,25 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			{
 				m_notificationMessage = value;
 				if (value != null)
+				{
 					InformListeners(TaskPhase.Working);
+				}
 			}
 		}
 
-		public TaskPhase Phase
-		{
-			get
-			{
-				return m_phase;
-			}
-		}
+		public TaskPhase Phase { get; private set; }
 
 		public string PhaseDescription
 		{
 			get
 			{
-				switch (m_phase)
+				switch (Phase)
 				{
 					case TaskPhase.Started:
 						return ParserCoreStrings.ksStarted;
 					case TaskPhase.Finished:
 						return ParserCoreStrings.ksFinished;
-					case TaskPhase.ErrorEncountered :
+					case TaskPhase.ErrorEncountered:
 						return ParserCoreStrings.ksErrorEncountered;
 					default:
 						return ParserCoreStrings.ksQuestions;
@@ -291,24 +213,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 		}
 
-		public TaskReport MostRecentTask
-		{
-			get
-			{
-				if (m_phase == TaskPhase.ErrorEncountered || m_phase==TaskPhase.Finished || m_subTasks== null)
-					return this;
+		public TaskReport MostRecentTask => Phase == TaskPhase.ErrorEncountered || Phase == TaskPhase.Finished || SubTasks == null
+				? this : SubTasks[SubTasks.Count - 1].MostRecentTask;
 
-				return m_subTasks[m_subTasks.Count -1].MostRecentTask;
-			}
-		}
-
-		public int Depth
-		{
-			get
-			{
-				return m_owningTask == null ? 0 : m_owningTask.Depth + 1;
-			}
-		}
+		public int Depth => m_owningTask?.Depth + 1 ?? 0;
 
 		/// <summary>
 		/// This method was added because child TaskReport objects were
@@ -318,19 +226,19 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// have been disposed.  the child
 		/// would be attempted to dispose
 		/// </summary>
-		/// <param name="report"></param>
 		private void RemoveChildTaskReport(TaskReport report)
 		{
 			// If we're in the Dispose, part of it will call dispose on the child
 			// objects which will call back here to let the parent break the ties,
 			// but when we're in the dispose we don't want that to happen as we're
 			// most likely walking the subtask list and this isn't needed.
-			if (m_isInDispose == false && m_subTasks != null)
+			if (m_isInDispose == false && SubTasks != null)
 			{
-//				Debug.WriteLine("** Disposing subtask <"+report.GetHashCode()+"> owned by " + GetHashCode().ToString());
-				m_subTasks.Remove(report);
-				if (m_subTasks.Count == 0)	// other places in the code expect a non null value to mean data, so set it to null when empty.
-					m_subTasks = null;
+				SubTasks.Remove(report);
+				if (SubTasks.Count == 0)  // other places in the code expect a non null value to mean data, so set it to null when empty.
+				{
+					SubTasks = null;
+				}
 			}
 		}
 	}

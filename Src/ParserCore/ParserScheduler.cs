@@ -1,55 +1,21 @@
-// Copyright (c) 2002-2017 SIL International
+// Copyright (c) 2002-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// <remarks>
-//	this class implements a worker thread.
-// </remarks>
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.Utils;
 using SIL.LCModel;
+using SIL.LCModel.Utils;
 using SIL.ObjectModel;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
-	/// <summary>
-	/// The parser queue priority
-	/// </summary>
-	public enum ParserPriority
-	{
-		ReloadGrammarAndLexicon = 0,
-		TryAWord = 1,
-		High = 2,
-		Medium = 3,
-		Low = 4
-	};
-
-	/// <summary>
-	/// The event args for the ParserUpdate events.
-	/// </summary>
-	public class ParserUpdateEventArgs : EventArgs
-	{
-		public ParserUpdateEventArgs(TaskReport task)
-		{
-			Task = task;
-		}
-
-		public TaskReport Task
-		{
-			get; private set;
-		}
-	}
-
-	/// <summary>
-	///
-	/// </summary>
+	/// <summary />
 	public sealed class ParserScheduler : DisposableBase
 	{
-		abstract class ParserWork
+		private abstract class ParserWork
 		{
 			protected readonly ParserScheduler m_scheduler;
 			protected readonly ParserPriority m_priority;
@@ -67,7 +33,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 		}
 
-		class TryAWordWork : ParserWork
+		private sealed class TryAWordWork : ParserWork
 		{
 			private readonly string m_tryAWord;
 			private readonly bool m_doTrace;
@@ -84,12 +50,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			public override void DoWork()
 			{
 				if (m_scheduler.m_tryAWordDialogRunning)
+				{
 					m_scheduler.m_parserWorker.TryAWord(m_tryAWord, m_doTrace, m_selectTraceMorphs);
+				}
 				base.DoWork();
 			}
 		}
 
-		class UpdateWordformWork : ParserWork
+		private sealed class UpdateWordformWork : ParserWork
 		{
 			private readonly IWfiWordform m_wordform;
 
@@ -109,7 +77,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 		}
 
-		class ReloadGrammarAndLexiconWork : ParserWork
+		private sealed class ReloadGrammarAndLexiconWork : ParserWork
 		{
 			public ReloadGrammarAndLexiconWork(ParserScheduler scheduler)
 				: base(scheduler, ParserPriority.ReloadGrammarAndLexicon)
@@ -128,16 +96,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private readonly ConsumerThread<ParserPriority, ParserWork> m_thread;
 		private ParserWorker m_parserWorker;
-		private readonly object m_syncRoot = new object();
 		private readonly int[] m_queueCounts = new int[5];
 		private volatile bool m_tryAWordDialogRunning;
 		private TaskReport m_TaskReport;
 
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ParserScheduler"/> class.
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
+		/// <summary />
 		public ParserScheduler(LcmCache cache, IdleQueue idleQueue, string dataDir)
 		{
 			m_parserWorker = new ParserWorker(cache, HandleTaskUpdate, idleQueue, dataDir);
@@ -152,26 +115,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// Gets the unhandled exception.
 		/// </summary>
 		/// <value>The unhandled exception.</value>
-		public Exception UnhandledException
-		{
-			get
-			{
-				return m_thread.UnhandledException;
-			}
-		}
+		public Exception UnhandledException => m_thread.UnhandledException;
 
 		/// <summary>
 		/// Gets the synchronization root. This is the object that should be
 		/// used for all locking in this scheduler.
 		/// </summary>
 		/// <value>The synchronization root.</value>
-		private object SyncRoot
-		{
-			get
-			{
-				return m_syncRoot;
-			}
-		}
+		private object SyncRoot { get; } = new object();
 
 		/// <summary>
 		/// Get or Set state for the try A Word dialog running
@@ -186,8 +137,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			{
 				m_tryAWordDialogRunning = value;
 				if (!value)
+				{
 					// wake up the thread so that it can process any queued wordforms
 					m_thread.WakeUp();
+				}
 			}
 		}
 
@@ -229,7 +182,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			ParserWork work;
 			if (queueAccessor.GetNextWorkItem(out work))
+			{
 				work.DoWork();
+			}
 		}
 
 		/// <summary>
@@ -238,13 +193,17 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public int GetQueueSize(ParserPriority priority)
 		{
 			lock (SyncRoot)
-				return m_queueCounts[(int) priority];
+			{
+				return m_queueCounts[(int)priority];
+			}
 		}
 
 		private void IncrementQueueCount(ParserPriority priority)
 		{
 			lock (SyncRoot)
-				m_queueCounts[(int) priority]++;
+			{
+				m_queueCounts[(int)priority]++;
+			}
 		}
 
 		private void DecrementQueueCount(ParserPriority priority)
@@ -252,7 +211,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			bool isIdle;
 			lock (SyncRoot)
 			{
-				m_queueCounts[(int) priority]--;
+				m_queueCounts[(int)priority]--;
 				isIdle = m_queueCounts[(int)ParserPriority.TryAWord] == 0
 						 && m_queueCounts[(int)ParserPriority.Low] == 0
 						 && m_queueCounts[(int)ParserPriority.Medium] == 0
@@ -260,21 +219,15 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 			if (isIdle && (m_TaskReport == null || m_TaskReport.Description == ParserCoreStrings.ksIdle_))
 			{
-				if (m_TaskReport != null)
-					m_TaskReport.Dispose();
+				m_TaskReport?.Dispose();
 				m_TaskReport = new TaskReport(ParserCoreStrings.ksIdle_, HandleTaskUpdate);
 			}
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		/// <remarks> this is done with a string rather than an hvo so that we can use it
 		/// when the user is just testing different things, which might not even be real words,
 		/// and certainly might not be in the WordformInventory yet.</remarks>
-		/// <param name="form"></param>
-		/// <param name="fDoTrace">whether or not to trace the parse</param>
-		/// <param name="sSelectTraceMorphs">list of msa hvos to limit trace to </param>
 		public void ScheduleOneWordformForTryAWord(string form, bool fDoTrace, int[] sSelectTraceMorphs)
 		{
 			m_thread.EnqueueWork(ParserPriority.TryAWord, new TryAWordWork(this, form, fDoTrace, sSelectTraceMorphs));
@@ -288,25 +241,25 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public void ScheduleWordformsForUpdate(IEnumerable<IWfiWordform> wordforms, ParserPriority priority)
 		{
 			foreach (var wordform in wordforms)
+			{
 				ScheduleOneWordformForUpdate(wordform, priority);
+			}
 		}
 
 		private void HandleTaskUpdate(TaskReport task)
 		{
 			if (IsDisposed)
+			{
 				return;
-
+			}
 			if (ParserUpdateNormal != null && ((task.Depth == 0) || (task.NotificationMessage != null)))
 			{
 				//notify any delegates
 				ParserUpdateNormal(this, new ParserUpdateEventArgs(task));
 			}
 
-			if (ParserUpdateVerbose != null)
-			{
-				//notify any delegates
-				ParserUpdateVerbose(this, new ParserUpdateEventArgs(task.MostRecentTask)/*not sure this is right*/);
-			}
+			//notify any delegates
+			ParserUpdateVerbose?.Invoke(this, new ParserUpdateEventArgs(task.MostRecentTask)/*not sure this is right*/);
 		}
 
 		private void ParseFiler_WordformUpdated(object sender, WordformUpdatedEventArgs e)
@@ -321,7 +274,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// <returns>true if a single word; false otherwise</returns>
 		public static bool IsOneWord(string sWord)
 		{
-			var acSpaceTab = new[]{ ' ', '	' };
+			var acSpaceTab = new[] { ' ', '	' };
 			var i = sWord.IndexOfAny(acSpaceTab);
 			return (i <= -1) || (i >= sWord.Length);
 		}

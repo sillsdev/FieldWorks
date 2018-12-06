@@ -4,15 +4,14 @@
 
 using System;
 using System.Diagnostics;
-using SIL.LCModel.Core.KernelInterfaces;
+using SIL.Code;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.ObjectModel;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
-	/// <summary>
-	/// Summary description for M3ParserModelRetriever.
-	/// </summary>
+	/// <summary />
 	/// <remarks>Is public for testing purposes</remarks>
 	public class ParserModelChangeListener : DisposableBase, IVwNotifyChange
 	{
@@ -20,14 +19,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private readonly object m_syncRoot = new object();
 		private bool m_changed;
 
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ParserModelChangeListener"/> class.
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
+		/// <summary />
 		public ParserModelChangeListener(LcmCache cache)
 		{
-			if (cache == null) throw new ArgumentNullException("cache");
+			Guard.AgainstNull(cache, nameof(cache));
 
 			m_cache = cache;
 			m_cache.DomainDataByFlid.AddNotification(this);
@@ -51,19 +46,21 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			get
 			{
 				lock (m_syncRoot)
+				{
 					return m_changed;
+				}
 			}
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		public bool Reset()
 		{
 			lock (m_syncRoot)
 			{
 				if (!m_changed)
+				{
 					return false;
+				}
 				m_changed = false;
 			}
 			return true;
@@ -73,7 +70,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		void IVwNotifyChange.PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			int clsid = m_cache.ServiceLocator.GetObject(hvo).ClassID;
+			var clsid = m_cache.ServiceLocator.GetObject(hvo).ClassID;
 			switch (clsid)
 			{
 				case LexDbTags.kClassId:
@@ -131,7 +128,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				case PhVariableTags.kClassId:
 				case PhEnvironmentTags.kClassId:
 					lock (m_syncRoot)
+					{
 						m_changed = true;
+					}
 					break;
 			}
 		}

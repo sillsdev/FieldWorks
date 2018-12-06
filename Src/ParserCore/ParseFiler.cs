@@ -1,11 +1,11 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -13,31 +13,7 @@ using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
-	/// <summary>
-	/// The event args for the WordformUpdated event.
-	/// </summary>
-	public class WordformUpdatedEventArgs : EventArgs
-	{
-		public WordformUpdatedEventArgs(IWfiWordform wordform, ParserPriority priority)
-		{
-			Wordform = wordform;
-			Priority = priority;
-		}
-
-		public IWfiWordform Wordform
-		{
-			get; private set;
-		}
-
-		public ParserPriority Priority
-		{
-			get; private set;
-		}
-	}
-
-	/// <summary>
-	/// Summary description for ParseFiler.
-	/// </summary>
+	/// <summary />
 	public class ParseFiler
 	{
 		/// <summary>
@@ -62,25 +38,15 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		#endregion Data members
 
-		#region Properties
-
-		#endregion Properties
-
 		#region Construction and Disposal
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ParseFiler"/> class.
-		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="taskUpdateHandler">The task update handler.</param>
-		/// <param name="idleQueue">The idle queue.</param>
-		/// <param name="parserAgent">The parser agent.</param>
+		/// <summary />
 		public ParseFiler(LcmCache cache, Action<TaskReport> taskUpdateHandler, IdleQueue idleQueue, ICmAgent parserAgent)
 		{
-			Debug.Assert(cache != null);
-			Debug.Assert(taskUpdateHandler != null);
-			Debug.Assert(idleQueue != null);
-			Debug.Assert(parserAgent != null);
+			Guard.AgainstNull(cache, nameof(cache));
+			Guard.AgainstNull(taskUpdateHandler, nameof(taskUpdateHandler));
+			Guard.AgainstNull(idleQueue, nameof(idleQueue));
+			Guard.AgainstNull(parserAgent, nameof(parserAgent));
 
 			m_cache = cache;
 			m_taskUpdateHandler = taskUpdateHandler;
@@ -89,7 +55,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_workQueue = new Queue<WordformUpdateWork>();
 			m_syncRoot = new object();
 
-			ILcmServiceLocator servLoc = cache.ServiceLocator;
+			var servLoc = cache.ServiceLocator;
 			m_analysisFactory = servLoc.GetInstance<IWfiAnalysisFactory>();
 			m_mbFactory = servLoc.GetInstance<IWfiMorphBundleFactory>();
 			m_baseAnnotationRepository = servLoc.GetInstance<ICmBaseAnnotationRepository>();
@@ -103,13 +69,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		///  <summary>
 		///  Process the parse result.
 		///  </summary>
-		/// <param name="wordform">The wordform.</param>
-		/// <param name="priority">The priority.</param>
-		///  <param name="parseResult">The parse result.</param>
 		public bool ProcessParse(IWfiWordform wordform, ParserPriority priority, ParseResult parseResult)
 		{
 			lock (m_syncRoot)
+			{
 				m_workQueue.Enqueue(new WordformUpdateWork(wordform, priority, parseResult));
+			}
 			m_idleQueue.Add(IdleQueuePriority.Low, UpdateWordforms);
 			return true;
 		}
@@ -122,16 +87,15 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// Updates the wordform. This will be run in the UI thread when the application is idle. If it can't be done right now,
 		/// it returns false, and the caller should try again later.
 		/// </summary>
-		/// <param name="parameter">The parameter.</param>
-		/// <returns></returns>
 		private bool UpdateWordforms(object parameter)
 		{
 			// If a UOW is in progress, the application isn't really idle, so try again later. One case where this used
 			// to be true was the dialog in IText for choosing the writing system of a new text, which was run while
 			// the UOW was active.
-			if (!((IActionHandlerExtensions) m_cache.ActionHandlerAccessor).CanStartUow)
+			if (!((IActionHandlerExtensions)m_cache.ActionHandlerAccessor).CanStartUow)
+			{
 				return false;
-
+			}
 			// update all of the wordforms in a batch, this might slow down the UI thread a little, if it causes too much unresponsiveness
 			// we can bail out early if there is a message in the Win32 message queue
 			IEnumerable<WordformUpdateWork> results;
@@ -143,7 +107,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 			{
-				foreach (WordformUpdateWork work in results)
+				foreach (var work in results)
 				{
 					if (!work.IsValid)
 					{
@@ -151,24 +115,23 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						FireWordformUpdated(work.Wordform, work.Priority);
 						continue;
 					}
-					string form = work.Wordform.Form.BestVernacularAlternative.Text;
-					using (new TaskReport(String.Format(ParserCoreStrings.ksUpdateX, form), m_taskUpdateHandler))
+					var form = work.Wordform.Form.BestVernacularAlternative.Text;
+					using (new TaskReport(string.Format(ParserCoreStrings.ksUpdateX, form), m_taskUpdateHandler))
 					{
 						// delete old problem annotations
-						IEnumerable<ICmBaseAnnotation> problemAnnotations =
-							from ann in m_baseAnnotationRepository.AllInstances()
-							where ann.BeginObjectRA == work.Wordform && ann.SourceRA == m_parserAgent
-							select ann;
-						foreach (ICmBaseAnnotation problem in problemAnnotations)
+						var problemAnnotations = m_baseAnnotationRepository.AllInstances().Where(ann => ann.BeginObjectRA == work.Wordform && ann.SourceRA == m_parserAgent);
+						foreach (var problem in problemAnnotations)
+						{
 							m_cache.DomainDataByFlid.DeleteObj(problem.Hvo);
-
-						foreach (IWfiAnalysis analysis in work.Wordform.AnalysesOC)
+						}
+						foreach (var analysis in work.Wordform.AnalysesOC)
+						{
 							m_parserAgent.SetEvaluation(analysis, Opinions.noopinion);
-
+						}
 						if (work.ParseResult.ErrorMessage != null)
 						{
 							// there was an error, so create a problem annotation
-							ICmBaseAnnotation problemReport = m_baseAnnotationFactory.Create();
+							var problemReport = m_baseAnnotationFactory.Create();
 							m_cache.LangProject.AnnotationsOC.Add(problemReport);
 							problemReport.CompDetails = work.ParseResult.ErrorMessage;
 							problemReport.SourceRA = m_parserAgent;
@@ -179,8 +142,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						else
 						{
 							// update the wordform
-							foreach (ParseAnalysis analysis in work.ParseResult.Analyses)
+							foreach (var analysis in work.ParseResult.Analyses)
+							{
 								ProcessAnalysis(work.Wordform, analysis);
+							}
 							SetUnsuccessfulParseEvals(work.Wordform, Opinions.disapproves);
 						}
 						work.Wordform.Checksum = work.ParseResult.GetHashCode();
@@ -194,8 +159,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private void FireWordformUpdated(IWfiWordform wordform, ParserPriority priority)
 		{
-			if (WordformUpdated != null)
-				WordformUpdated(this, new WordformUpdatedEventArgs(wordform, priority));
+			WordformUpdated?.Invoke(this, new WordformUpdatedEventArgs(wordform, priority));
 		}
 
 		/// <summary>
@@ -217,14 +181,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			*/
 			// Find matching analysis/analyses, if any exist.
 			var matches = new HashSet<IWfiAnalysis>();
-			foreach (IWfiAnalysis anal in wordform.AnalysesOC)
+			foreach (var anal in wordform.AnalysesOC)
 			{
 				if (anal.MorphBundlesOS.Count == analysis.Morphs.Count)
 				{
 					// Meets match condition (1), above.
-					bool mbMatch = false; //Start pessimistically.
-					int i = 0;
-					foreach (IWfiMorphBundle mb in anal.MorphBundlesOS)
+					var mbMatch = false; //Start pessimistically.
+					var i = 0;
+					foreach (var mb in anal.MorphBundlesOS)
 					{
 						var current = analysis.Morphs[i++];
 						if (mb.MorphRA == current.Form && mb.MsaRA == current.Msa && mb.InflTypeRA == current.InflType)
@@ -252,20 +216,24 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				var newAnal = m_analysisFactory.Create();
 				wordform.AnalysesOC.Add(newAnal);
 				// Make WfiMorphBundle(s).
-				foreach (ParseMorph morph in analysis.Morphs)
+				foreach (var morph in analysis.Morphs)
 				{
-					IWfiMorphBundle mb = m_mbFactory.Create();
+					var mb = m_mbFactory.Create();
 					newAnal.MorphBundlesOS.Add(mb);
 					mb.MorphRA = morph.Form;
 					mb.MsaRA = morph.Msa;
 					if (morph.InflType != null)
+					{
 						mb.InflTypeRA = morph.InflType;
+					}
 				}
 				matches.Add(newAnal);
 			}
 			// (Re)set evaluations.
-			foreach (IWfiAnalysis matchingAnal in matches)
+			foreach (var matchingAnal in matches)
+			{
 				m_parserAgent.SetEvaluation(matchingAnal, Opinions.approves);
+			}
 		}
 
 		#region Wordform Preparation methods
@@ -273,19 +241,27 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private void SetUnsuccessfulParseEvals(IWfiWordform wordform, Opinions opinion)
 		{
 			var segmentAnalyses = new HashSet<IAnalysis>();
-			foreach (ISegment seg in wordform.OccurrencesBag)
+			foreach (var seg in wordform.OccurrencesBag)
+			{
 				segmentAnalyses.UnionWith(seg.AnalysesRS);
-			foreach (IWfiAnalysis analysis in wordform.AnalysesOC)
+			}
+			foreach (var analysis in wordform.AnalysesOC)
 			{
 				// ensure that used analyses have a user evaluation
 				if (segmentAnalyses.Contains(analysis) || analysis.MeaningsOC.Any(gloss => segmentAnalyses.Contains(gloss)))
+				{
 					m_userAgent.SetEvaluation(analysis, Opinions.approves);
+				}
 				if (analysis.GetAgentOpinion(m_parserAgent) == Opinions.noopinion)
 				{
 					if (analysis.GetAgentOpinion(m_userAgent) == Opinions.noopinion)
+					{
 						analysis.Delete();
+					}
 					else if (opinion != Opinions.noopinion)
+					{
 						m_parserAgent.SetEvaluation(analysis, opinion);
+					}
 				}
 			}
 		}
@@ -294,38 +270,22 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		#endregion Private methods
 
-		private class WordformUpdateWork
+		private sealed class WordformUpdateWork
 		{
-			private readonly IWfiWordform m_wordform;
-			private readonly ParserPriority m_priority;
-			private readonly ParseResult m_parseResult;
-
-			public WordformUpdateWork(IWfiWordform wordform, ParserPriority priority, ParseResult parseResult)
+			internal WordformUpdateWork(IWfiWordform wordform, ParserPriority priority, ParseResult parseResult)
 			{
-				m_wordform = wordform;
-				m_priority = priority;
-				m_parseResult = parseResult;
+				Wordform = wordform;
+				Priority = priority;
+				ParseResult = parseResult;
 			}
 
-			public IWfiWordform Wordform
-			{
-				get { return m_wordform; }
-			}
+			internal IWfiWordform Wordform { get; }
 
-			public ParserPriority Priority
-			{
-				get { return m_priority; }
-			}
+			internal ParserPriority Priority { get; }
 
-			public ParseResult ParseResult
-			{
-				get { return m_parseResult; }
-			}
+			internal ParseResult ParseResult { get; }
 
-			public bool IsValid
-			{
-				get { return m_wordform.IsValidObject && m_parseResult.IsValid; }
-			}
+			internal bool IsValid => Wordform.IsValidObject && ParseResult.IsValid;
 		}
 	}
 }

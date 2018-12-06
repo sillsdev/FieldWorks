@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -27,31 +27,25 @@ no exception: Create an infl affix slot with no affixes in it and then use this 
 
 using System;
 using System.Diagnostics;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel;
-using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
+using SIL.LCModel.Infrastructure;
 using SIL.ObjectModel;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
-	/// <summary>
-	/// Summary description for ParserWorker.
-	/// </summary>
+	/// <summary />
 	public class ParserWorker : DisposableBase
 	{
 		private readonly LcmCache m_cache;
 		private readonly Action<TaskReport> m_taskUpdateHandler;
-		private readonly ParseFiler m_parseFiler;
 		private int m_numberOfWordForms;
 		private IParser m_parser;
 
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ParserWorker"/> class.
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
+		/// ------------
+		/// <summary />
 		public ParserWorker(LcmCache cache, Action<TaskReport> taskUpdateHandler, IdleQueue idleQueue, string dataDir)
 		{
 			m_cache = cache;
@@ -70,7 +64,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				default:
 					throw new InvalidOperationException("The language project is set to use an unrecognized parser.");
 			}
-			m_parseFiler = new ParseFiler(cache, taskUpdateHandler, idleQueue, agent);
+			ParseFiler = new ParseFiler(cache, taskUpdateHandler, idleQueue, agent);
 		}
 
 		protected override void DisposeManagedResources()
@@ -89,13 +83,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			base.Dispose(disposing);
 		}
 
-		public ParseFiler ParseFiler
-		{
-			get
-			{
-				return m_parseFiler;
-			}
-		}
+		public ParseFiler ParseFiler { get; }
 
 		/// <summary>
 		/// Try parsing a wordform, optionally getting a trace of the parse
@@ -106,23 +94,26 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public void TryAWord(string sForm, bool fDoTrace, int[] sSelectTraceMorphs)
 		{
 			if (sForm == null)
+			{
 				throw new ArgumentNullException("sForm", "TryAWord cannot trace a Null string.");
-			if (sForm == String.Empty)
+			}
+			if (sForm == string.Empty)
+			{
 				throw new ArgumentException("Can't try a word with no content.", "sForm");
-
+			}
 			CheckNeedsUpdate();
 			using (var task = new TaskReport(string.Format(ParserCoreStrings.ksTraceWordformX, sForm), m_taskUpdateHandler))
 			{
-				string normForm = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sForm);
+				var normForm = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sForm);
 				task.Details = fDoTrace ? m_parser.TraceWordXml(normForm, sSelectTraceMorphs) : m_parser.ParseWordXml(normForm);
 			}
 		}
 
 		public bool UpdateWordform(IWfiWordform wordform, ParserPriority priority)
 		{
-			int wordformHash = 0;
+			var wordformHash = 0;
 			ITsString form = null;
-			int hvo = 0;
+			var hvo = 0;
 			using (new WorkerThreadReadHelper(m_cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
 			{
 				if (wordform.IsValidObject)
@@ -134,24 +125,22 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			// 'form' will now be null, if it could not find the wordform for whatever reason.
 			// uiCRCWordform will also now be 0, if 'form' is null.
 			if (form == null || string.IsNullOrEmpty(form.Text))
+			{
 				return false;
-
+			}
 			CheckNeedsUpdate();
-			ParseResult result = m_parser.ParseWord(
-				CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD)
-				.Normalize(form.Text.Replace(' ', '.')));
-			if (wordformHash == result.GetHashCode())
-				return false;
-
-			return m_parseFiler.ProcessParse(wordform, priority, result);
+			var result = m_parser.ParseWord(CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(form.Text.Replace(' ', '.')));
+			return wordformHash != result.GetHashCode() && ParseFiler.ProcessParse(wordform, priority, result);
 		}
 
 		private void CheckNeedsUpdate()
 		{
-			using (var task = new TaskReport(ParserCoreStrings.ksUpdatingGrammarAndLexicon, m_taskUpdateHandler))
+			using (new TaskReport(ParserCoreStrings.ksUpdatingGrammarAndLexicon, m_taskUpdateHandler))
 			{
 				if (!m_parser.IsUpToDate())
+				{
 					m_parser.Update();
+				}
 			}
 		}
 

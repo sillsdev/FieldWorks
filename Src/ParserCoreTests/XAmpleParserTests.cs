@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,26 +11,23 @@ using SIL.LCModel;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
-	/// <summary>
-	/// Summary description for XAmpleParserTests.
-	/// </summary>
+	/// <summary />
 	[TestFixture]
 	public class XAmpleParserTests
 	{
 		[Test]
 		public void ConvertFailures()
 		{
-			string testPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "ParserCoreTests", "Failures.xml");
-			XDocument doc = XDocument.Load(testPath);
-
-			XElement[] failures = doc.Descendants("failure").ToArray();
-			XElement[] anccFailures = failures.Where(e => ((string) e.Attribute("test")).StartsWith("ANCC_FT")).ToArray();
+			var testPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "ParserCoreTests", "Failures.xml");
+			var doc = XDocument.Load(testPath);
+			var failures = doc.Descendants("failure").ToArray();
+			var anccFailures = failures.Where(e => ((string)e.Attribute("test")).StartsWith("ANCC_FT")).ToArray();
 			Assert.That(anccFailures.Length, Is.EqualTo(2), "Two ANCC failures");
-			XElement[] mccFailures = failures.Where(e => ((string) e.Attribute("test")).StartsWith("MCC_FT")).ToArray();
+			var mccFailures = failures.Where(e => ((string)e.Attribute("test")).StartsWith("MCC_FT")).ToArray();
 			Assert.That(mccFailures.Length, Is.EqualTo(2), "Two MCC failures");
-			XElement[] secFailures = failures.Where(e => ((string) e.Attribute("test")).StartsWith("SEC_ST") && ((string) e.Attribute("test")).Contains("[")).ToArray();
+			var secFailures = failures.Where(e => ((string)e.Attribute("test")).StartsWith("SEC_ST") && ((string)e.Attribute("test")).Contains("[")).ToArray();
 			Assert.That(secFailures.Length, Is.EqualTo(8), "Eight SEC failures with classes");
-			XElement[] infixFailures = failures.Where(e => ((string) e.Attribute("test")).StartsWith("InfixEnvironment") && ((string) e.Attribute("test")).Contains("[")).ToArray();
+			var infixFailures = failures.Where(e => ((string)e.Attribute("test")).StartsWith("InfixEnvironment") && ((string)e.Attribute("test")).Contains("[")).ToArray();
 			Assert.That(infixFailures.Length, Is.EqualTo(8), "Eight Infix Environment failures with classes");
 
 			XAmpleParser.ConvertFailures(doc, (classID, hvo) =>
@@ -48,7 +45,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						className = "NC";
 						break;
 				}
-				return string.Format("{0}-{1}", className, hvo);
+				return $"{className}-{hvo}";
 			});
 
 			AssertTestEquals(anccFailures[0], "ANCC_FT:  Form-6213   -/ _ ... Form-6279");
@@ -76,18 +73,17 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			AssertTestEquals(infixFailures[7], "InfixEnvironment: migel __ ximura   / [NC-7405][NC-7405] _ [NC-7405][NC-7405]");
 		}
 
-		private void AssertTestEquals(XElement elem, string expected)
+		private static void AssertTestEquals(XElement elem, string expected)
 		{
-			var test = (string) elem.Attribute("test");
-			Assert.That(test, Is.EqualTo(expected));
+			Assert.That((string)elem.Attribute("test"), Is.EqualTo(expected));
 		}
 
 		[Test]
 		public void ConvertNameToUseAnsiCharactersTest()
 		{
 			// plain, simple ASCII
-			string name = "abc 123";
-			string convertedName = XAmpleParser.ConvertNameToUseAnsiCharacters(name);
+			var name = "abc 123";
+			var convertedName = XAmpleParser.ConvertNameToUseAnsiCharacters(name);
 			Assert.AreEqual("abc 123", convertedName);
 			// Using upper ANSI characters as well as ASCII
 			name = "ÿýúadctl";

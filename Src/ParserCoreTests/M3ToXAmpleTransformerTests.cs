@@ -1,10 +1,6 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// <remarks>
-// Implements the M3ToXAmpleTransformerTests unit tests.
-// </remarks>
 
 using System;
 using System.Collections.Generic;
@@ -13,14 +9,12 @@ using System.Text;
 using System.Xml.XPath;
 using System.Xml.Xsl;
 using NUnit.Framework;
-using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
-	/// <summary>
-	/// Summary description for M3ToXAmpleTransformerTests.
-	/// </summary>
+	/// <summary />
 	public class M3ToXAmpleTransformerTests
 	{
 		string m_sM3FXTDump;
@@ -50,9 +44,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// </summary>
 		protected string m_sTestPath;
 		protected string m_sTransformPath;
-		protected string m_sADTransform;
-		protected string m_sLexTransform;
-		protected string m_sGramTransform;
 
 		[TestFixtureSetUp]
 		public void FixtureSetup()
@@ -99,8 +90,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private void SetupXmlDocument(string filepath)
 		{
-			var xdoc = new XPathDocument(filepath);
-			m_mapXmlDocs.Add(filepath, xdoc);
+			m_mapXmlDocs.Add(filepath, new XPathDocument(filepath));
 		}
 
 		private void SetUpXAmpleTransforms()
@@ -110,7 +100,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			SetUpTransform("FxtM3ParserToToXAmpleGrammar", out m_gramTransform);
 		}
 
-		private void SetUpTransform(string name, out XslCompiledTransform transform)
+		private static void SetUpTransform(string name, out XslCompiledTransform transform)
 		{
 			transform = M3ToXAmpleTransformer.CreateTransform(name, "ApplicationTransforms");
 		}
@@ -137,9 +127,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public void CreateXAmpleLexiconFile()
 		{
 			ApplyTransform(m_sM3FXTDump, m_lexTransform, "TestLexicon.txt");
-#if OnHoldUntilGetDBFixed
-			ApplyTransform(m_sM3FXTCircumfixDump, m_lexTransform, "IndonCircumfixLexicon.txt");
-#endif
 			ApplyTransform(m_sM3FXTCircumfixInfixDump, m_lexTransform, "CircumfixInfixLexicon.txt");
 			ApplyTransform(m_sM3FXTFullRedupDump, m_lexTransform, "FullRedupLexicon.txt");
 			ApplyTransform(m_sM3FXTConceptualIntroDump, m_lexTransform, "ConceptualIntroTestlex.txt");
@@ -170,14 +157,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		}
 		private void ApplyTransform(string sInput, XslCompiledTransform transform, string sExpectedOutput)
 		{
-			XPathDocument fxtDump = m_mapXmlDocs[sInput];
-			string sOutput = FileUtils.GetTempFile("txt");
+			var fxtDump = m_mapXmlDocs[sInput];
+			var sOutput = FileUtils.GetTempFile("txt");
 			using (var result = new StreamWriter(sOutput))
 			{
 				transform.Transform(fxtDump, null, result);
 				result.Close();
 			}
-			string sExpectedResult = Path.Combine(m_sTestPath, sExpectedOutput);
+			var sExpectedResult = Path.Combine(m_sTestPath, sExpectedOutput);
 			CheckOutputEquals(sExpectedResult, sOutput);
 			// by deleting it here instead of a finally block, when it fails, we can see what the result is.
 			File.Delete(sOutput);
@@ -187,12 +174,18 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			string sExpected, sActual;
 			using (var expected = new StreamReader(sExpectedResultFile))
+			{
 				sExpected = expected.ReadToEnd();
+			}
 			using (var actual = new StreamReader(sActualResultFile))
+			{
 				sActual = actual.ReadToEnd();
+			}
 			// A non-empty last line in a file from git always ends with '\n' character
 			if (sActual.Substring(sActual.Length - 1) != "\n")
+			{
 				sActual += Environment.NewLine;
+			}
 			var sb = new StringBuilder();
 			sb.Append("Expected file was ");
 			sb.AppendLine(sExpectedResultFile);

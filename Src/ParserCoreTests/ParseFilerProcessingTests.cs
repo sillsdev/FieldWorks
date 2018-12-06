@@ -1,26 +1,20 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// <remarks>
-// Implements the ParseFilerProcessingTests unit tests.
-// </remarks>
 
 using System;
 using System.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
-	/// <summary>
-	/// Summary description for ParseFilerProcessingTests.
-	/// </summary>
+	/// <summary />
 	[TestFixture]
 	public class ParseFilerProcessingTests : MemoryOnlyBackendProviderTestBase
 	{
@@ -42,40 +36,25 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		#region Non-test methods
 
-		protected ICmAgent ParserAgent
-		{
-			get
-			{
-				return Cache.LanguageProject.DefaultParserAgent;
-			}
-		}
+		protected ICmAgent ParserAgent => Cache.LanguageProject.DefaultParserAgent;
 
-		protected ICmAgent HumanAgent
-		{
-			get
-			{
-				return Cache.LanguageProject.DefaultUserAgent;
-			}
-		}
+		protected ICmAgent HumanAgent => Cache.LanguageProject.DefaultUserAgent;
 
 		protected IWfiWordform CheckAnnotationSize(string form, int expectedSize, bool isStarting)
 		{
-			ILcmServiceLocator servLoc = Cache.ServiceLocator;
-			IWfiWordform wf = FindOrCreateWordform(form);
-			int actualSize =
-				(from ann in servLoc.GetInstance<ICmBaseAnnotationRepository>().AllInstances()
-				 where ann.BeginObjectRA == wf
-				 select ann).Count();
-				// wf.RefsFrom_CmBaseAnnotation_BeginObject.Count;
-			string msg = String.Format("Wrong number of {0} annotations for: {1}", isStarting ? "starting" : "ending", form);
+			var servLoc = Cache.ServiceLocator;
+			var wf = FindOrCreateWordform(form);
+			var actualSize = servLoc.GetInstance<ICmBaseAnnotationRepository>().AllInstances().Count(ann => ann.BeginObjectRA == wf);
+			// wf.RefsFrom_CmBaseAnnotation_BeginObject.Count;
+			var msg = string.Format("Wrong number of {0} annotations for: {1}", isStarting ? "starting" : "ending", form);
 			Assert.AreEqual(expectedSize, actualSize, msg);
 			return wf;
 		}
 
 		private IWfiWordform FindOrCreateWordform(string form)
 		{
-			ILcmServiceLocator servLoc = Cache.ServiceLocator;
-			IWfiWordform wf = servLoc.GetInstance<IWfiWordformRepository>().GetMatchingWordform(m_vernacularWS.Handle, form);
+			var servLoc = Cache.ServiceLocator;
+			var wf = servLoc.GetInstance<IWfiWordformRepository>().GetMatchingWordform(m_vernacularWS.Handle, form);
 			if (wf == null)
 			{
 				UndoableUnitOfWorkHelper.Do("Undo create", "Redo create", m_actionHandler,
@@ -86,24 +65,22 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		protected IWfiWordform CheckAnalysisSize(string form, int expectedSize, bool isStarting)
 		{
-			IWfiWordform wf = FindOrCreateWordform(form);
-			int actualSize = wf.AnalysesOC.Count;
-			string msg = String.Format("Wrong number of {0} analyses for: {1}", isStarting ? "starting" : "ending", form);
-			Assert.AreEqual(expectedSize, actualSize, msg);
+			var wf = FindOrCreateWordform(form);
+			Assert.AreEqual(expectedSize, wf.AnalysesOC.Count, $"Wrong number of {(isStarting ? "starting" : "ending")} analyses for: {form}");
 			return wf;
 		}
 
 		protected void CheckEvaluationSize(IWfiAnalysis analysis, int expectedSize, bool isStarting, string additionalMessage)
 		{
-			int actualSize = analysis.EvaluationsRC.Count;
-			string msg = String.Format("Wrong number of {0} evaluations for analysis: {1} ({2})", isStarting ? "starting" : "ending", analysis.Hvo, additionalMessage);
-			Assert.AreEqual(expectedSize, actualSize, msg);
+			Assert.AreEqual(expectedSize, analysis.EvaluationsRC.Count, $"Wrong number of {(isStarting ? "starting" : "ending")} evaluations for analysis: {analysis.Hvo} ({additionalMessage})");
 		}
 
 		protected void ExecuteIdleQueue()
 		{
 			foreach (var task in m_idleQueue)
+			{
 				task.Delegate(task.Parameter);
+			}
 			m_idleQueue.Clear();
 		}
 
@@ -115,8 +92,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			base.FixtureSetup();
 			m_vernacularWS = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
-			m_idleQueue = new IdleQueue {IsPaused = true};
-			m_filer = new ParseFiler(Cache, task => {}, m_idleQueue, Cache.LanguageProject.DefaultParserAgent);
+			m_idleQueue = new IdleQueue { IsPaused = true };
+			m_filer = new ParseFiler(Cache, task => { }, m_idleQueue, Cache.LanguageProject.DefaultParserAgent);
 			m_entryFactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			m_senseFactory = Cache.ServiceLocator.GetInstance<ILexSenseFactory>();
 			m_stemAlloFactory = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>();
@@ -170,17 +147,16 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// End the undoable UOW and Undo everything.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected void UndoAll()
 		{
 			// Undo the UOW (or more than one of them, if the test made new ones).
 			while (m_actionHandler.CanUndo())
+			{
 				m_actionHandler.Undo();
-
+			}
 			// Need to 'Commit' to clear out redo stack,
 			// since nothing is really saved.
 			m_actionHandler.Commit();
@@ -193,7 +169,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		[Test]
 		public void TooManyAnalyses()
 		{
-			IWfiWordform bearsTest = CheckAnnotationSize("bearsTEST", 0, true);
+			var bearsTest = CheckAnnotationSize("bearsTEST", 0, true);
 			var result = new ParseResult("Maximum permitted analyses (448) reached.");
 			m_filer.ProcessParse(bearsTest, ParserPriority.Low, result);
 			ExecuteIdleQueue();
@@ -203,7 +179,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		[Test]
 		public void BufferOverrun()
 		{
-			IWfiWordform dogsTest = CheckAnnotationSize("dogsTEST", 0, true);
+			var dogsTest = CheckAnnotationSize("dogsTEST", 0, true);
 			var result = new ParseResult("Maximum internal buffer size (117) reached.");
 			m_filer.ProcessParse(dogsTest, ParserPriority.Low, result);
 			ExecuteIdleQueue();
@@ -213,54 +189,53 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		[Test]
 		public void TwoAnalyses()
 		{
-			IWfiWordform catsTest = CheckAnalysisSize("catsTEST", 0, true);
-			ILexDb ldb = Cache.LanguageProject.LexDbOA;
-
+			var catsTest = CheckAnalysisSize("catsTEST", 0, true);
+			var ldb = Cache.LanguageProject.LexDbOA;
 			ParseResult result = null;
 			UndoableUnitOfWorkHelper.Do("Undo stuff", "Redo stuff", m_actionHandler, () =>
 			{
 				// Noun
-				ILexEntry catN = m_entryFactory.Create();
-				IMoStemAllomorph catNForm = m_stemAlloFactory.Create();
+				var catN = m_entryFactory.Create();
+				var catNForm = m_stemAlloFactory.Create();
 				catN.AlternateFormsOS.Add(catNForm);
 				catNForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("catNTEST", m_vernacularWS.Handle);
-				IMoStemMsa catNMsa = m_stemMsaFactory.Create();
+				var catNMsa = m_stemMsaFactory.Create();
 				catN.MorphoSyntaxAnalysesOC.Add(catNMsa);
 
-				ILexEntry sPl = m_entryFactory.Create();
-				IMoAffixAllomorph sPlForm = m_afxAlloFactory.Create();
+				var sPl = m_entryFactory.Create();
+				var sPlForm = m_afxAlloFactory.Create();
 				sPl.AlternateFormsOS.Add(sPlForm);
 				sPlForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("sPLTEST", m_vernacularWS.Handle);
-				IMoInflAffMsa sPlMsa = m_inflAffMsaFactory.Create();
+				var sPlMsa = m_inflAffMsaFactory.Create();
 				sPl.MorphoSyntaxAnalysesOC.Add(sPlMsa);
 
 				// Verb
-				ILexEntry catV = m_entryFactory.Create();
-				IMoStemAllomorph catVForm = m_stemAlloFactory.Create();
+				var catV = m_entryFactory.Create();
+				var catVForm = m_stemAlloFactory.Create();
 				catV.AlternateFormsOS.Add(catVForm);
 				catVForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("catVTEST", m_vernacularWS.Handle);
-				IMoStemMsa catVMsa = m_stemMsaFactory.Create();
+				var catVMsa = m_stemMsaFactory.Create();
 				catV.MorphoSyntaxAnalysesOC.Add(catVMsa);
 
-				ILexEntry sAgr = m_entryFactory.Create();
-				IMoAffixAllomorph sAgrForm = m_afxAlloFactory.Create();
+				var sAgr = m_entryFactory.Create();
+				var sAgrForm = m_afxAlloFactory.Create();
 				sAgr.AlternateFormsOS.Add(sAgrForm);
 				sAgrForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("sAGRTEST", m_vernacularWS.Handle);
-				IMoInflAffMsa sAgrMsa = m_inflAffMsaFactory.Create();
+				var sAgrMsa = m_inflAffMsaFactory.Create();
 				sAgr.MorphoSyntaxAnalysesOC.Add(sAgrMsa);
 
-			result = new ParseResult(new[]
+				result = new ParseResult(new[]
 				{
 					new ParseAnalysis(new[]
-						{
-							new ParseMorph(catNForm, catNMsa),
-							new ParseMorph(sPlForm, sPlMsa)
-						}),
+					{
+						new ParseMorph(catNForm, catNMsa),
+						new ParseMorph(sPlForm, sPlMsa)
+					}),
 					new ParseAnalysis(new[]
-						{
-							new ParseMorph(catVForm, catVMsa),
-							new ParseMorph(sAgrForm, sAgrMsa)
-						})
+					{
+						new ParseMorph(catVForm, catVMsa),
+						new ParseMorph(sAgrForm, sAgrMsa)
+					})
 				});
 			});
 			m_filer.ProcessParse(catsTest, ParserPriority.Low, result);
@@ -275,29 +250,28 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		[Test]
 		public void DuplicateAnalysesApproval()
 		{
-			IWfiWordform pigs = CheckAnalysisSize("pigsTEST", 0, true);
-
+			var pigs = CheckAnalysisSize("pigsTEST", 0, true);
 			ParseResult result = null;
 			IWfiAnalysis anal1 = null, anal2 = null, anal3 = null;
 			UndoableUnitOfWorkHelper.Do("Undo stuff", "Redo stuff", m_actionHandler, () =>
 			{
 				// Bear entry
-				ILexEntry pigN = m_entryFactory.Create();
-				IMoStemAllomorph pigNForm = m_stemAlloFactory.Create();
+				var pigN = m_entryFactory.Create();
+				var pigNForm = m_stemAlloFactory.Create();
 				pigN.AlternateFormsOS.Add(pigNForm);
 				pigNForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("pigNTEST", m_vernacularWS.Handle);
-				IMoStemMsa pigNMsa = m_stemMsaFactory.Create();
+				var pigNMsa = m_stemMsaFactory.Create();
 				pigN.MorphoSyntaxAnalysesOC.Add(pigNMsa);
-				ILexSense pigNSense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				var pigNSense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 				pigN.SensesOS.Add(pigNSense);
 
 				var analFactory = Cache.ServiceLocator.GetInstance<IWfiAnalysisFactory>();
 				var mbFactory = Cache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>();
 				// First of two duplicate analyses
-				IWfiAnalysis anal = analFactory.Create();
+				var anal = analFactory.Create();
 				pigs.AnalysesOC.Add(anal);
 				anal1 = anal;
-				IWfiMorphBundle mb = mbFactory.Create();
+				var mb = mbFactory.Create();
 				anal.MorphBundlesOS.Add(mb);
 				mb.MorphRA = pigNForm;
 				mb.MsaRA = pigNMsa;
@@ -324,12 +298,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				CheckAnalysisSize("pigsTEST", 3, false);
 
 				result = new ParseResult(new[]
+				{
+					new ParseAnalysis(new[]
 					{
-						new ParseAnalysis(new[]
-							{
-								new ParseMorph(pigNForm, pigNMsa)
-							})
-					});
+						new ParseMorph(pigNForm, pigNMsa)
+					})
+				});
 			});
 
 			m_filer.ProcessParse(pigs, ParserPriority.Low, result);
@@ -342,20 +316,19 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		[Test]
 		public void HumanApprovedParserPreviouslyApprovedButNowRejectedAnalysisSurvives()
 		{
-			IWfiWordform theThreeLittlePigs = CheckAnalysisSize("theThreeLittlePigsTEST", 0, true);
-
+			var theThreeLittlePigs = CheckAnalysisSize("theThreeLittlePigsTEST", 0, true);
 			ParseResult result = null;
 			IWfiAnalysis anal = null;
 			UndoableUnitOfWorkHelper.Do("Undo stuff", "Redo stuff", m_actionHandler, () =>
 			{
 				// Pig entry
-				ILexEntry pigN = m_entryFactory.Create();
-				IMoStemAllomorph pigNForm = m_stemAlloFactory.Create();
+				var pigN = m_entryFactory.Create();
+				var pigNForm = m_stemAlloFactory.Create();
 				pigN.AlternateFormsOS.Add(pigNForm);
 				pigNForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("pigNTEST", m_vernacularWS.Handle);
-				IMoStemMsa pigNMsa = m_stemMsaFactory.Create();
+				var pigNMsa = m_stemMsaFactory.Create();
 				pigN.MorphoSyntaxAnalysesOC.Add(pigNMsa);
-				ILexSense pigNSense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				var pigNSense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 				pigN.SensesOS.Add(pigNSense);
 
 				// Human approved anal. Start with parser approved, but then it failed.
@@ -364,7 +337,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				// Only analysis: human approved, previously parser approved but no longer produced.
 				anal = analFactory.Create();
 				theThreeLittlePigs.AnalysesOC.Add(anal);
-				IWfiMorphBundle mb = mbFactory.Create();
+				var mb = mbFactory.Create();
 				anal.MorphBundlesOS.Add(mb);
 				mb.MorphRA = pigNForm;
 				mb.MsaRA = pigNMsa;
@@ -385,20 +358,19 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		[Test]
 		public void HumanHasNoopinionParserHadApprovedButNoLongerApprovesRemovesAnalysis()
 		{
-			IWfiWordform threeLittlePigs = CheckAnalysisSize("threeLittlePigsTEST", 0, true);
-
+			var threeLittlePigs = CheckAnalysisSize("threeLittlePigsTEST", 0, true);
 			ParseResult result = null;
 			IWfiAnalysis anal = null;
 			UndoableUnitOfWorkHelper.Do("Undo stuff", "Redo stuff", m_actionHandler, () =>
 			{
 				// Pig entry
-				ILexEntry pigN = m_entryFactory.Create();
-				IMoStemAllomorph pigNForm = m_stemAlloFactory.Create();
+				var pigN = m_entryFactory.Create();
+				var pigNForm = m_stemAlloFactory.Create();
 				pigN.AlternateFormsOS.Add(pigNForm);
 				pigNForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("pigNTEST", m_vernacularWS.Handle);
-				IMoStemMsa pigNMsa = m_stemMsaFactory.Create();
+				var pigNMsa = m_stemMsaFactory.Create();
 				pigN.MorphoSyntaxAnalysesOC.Add(pigNMsa);
-				ILexSense pigNSense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				var pigNSense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 				pigN.SensesOS.Add(pigNSense);
 
 				// Human no-opinion anal. Parser had approved, but then it failed to produce it.
@@ -407,7 +379,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				// Human no-opinion anal. Parser had approved, but then it failed to produce it.
 				anal = analFactory.Create();
 				threeLittlePigs.AnalysesOC.Add(anal);
-				IWfiMorphBundle mb = mbFactory.Create();
+				var mb = mbFactory.Create();
 				anal.MorphBundlesOS.Add(mb);
 				mb.MorphRA = pigNForm;
 				mb.MsaRA = pigNMsa;
@@ -427,46 +399,44 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		[Test]
 		public void LexEntryInflTypeTwoAnalyses()
 		{
-			IWfiWordform creb = CheckAnalysisSize("crebTEST", 0, true);
-			ILexDb ldb = Cache.LanguageProject.LexDbOA;
-
+			var creb = CheckAnalysisSize("crebTEST", 0, true);
+			var ldb = Cache.LanguageProject.LexDbOA;
 			ParseResult result = null;
 			UndoableUnitOfWorkHelper.Do("Undo stuff", "Redo stuff", m_actionHandler, () =>
 			{
 				// Verb creb which is a past tense, plural irregularly inflected form of 'believe' and also 'seek'
 				// with automatically generated null Tense slot and an automatically generated null Number slot filler
 				// (This is not supposed to be English, in case you're wondering....)
-
-				ILexEntryInflType pastTenseLexEntryInflType = m_lexEntryInflTypeFactory.Create();
-				ILexEntryInflType pluralTenseLexEntryInflType = m_lexEntryInflTypeFactory.Create();
+				var pastTenseLexEntryInflType = m_lexEntryInflTypeFactory.Create();
+				var pluralTenseLexEntryInflType = m_lexEntryInflTypeFactory.Create();
 				Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Add(pastTenseLexEntryInflType);
 				Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Add(pluralTenseLexEntryInflType);
 
-				ILexEntry believeV = m_entryFactory.Create();
-				IMoStemAllomorph believeVForm = m_stemAlloFactory.Create();
+				var believeV = m_entryFactory.Create();
+				var believeVForm = m_stemAlloFactory.Create();
 				believeV.AlternateFormsOS.Add(believeVForm);
 				believeVForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("believeVTEST", m_vernacularWS.Handle);
-				IMoStemMsa believeVMsa = m_stemMsaFactory.Create();
+				var believeVMsa = m_stemMsaFactory.Create();
 				believeV.MorphoSyntaxAnalysesOC.Add(believeVMsa);
-				ILexSense believeVSense = m_senseFactory.Create();
+				var believeVSense = m_senseFactory.Create();
 				believeV.SensesOS.Add(believeVSense);
 				believeVSense.MorphoSyntaxAnalysisRA = believeVMsa;
 
-				ILexEntry seekV = m_entryFactory.Create();
-				IMoStemAllomorph seekVForm = m_stemAlloFactory.Create();
+				var seekV = m_entryFactory.Create();
+				var seekVForm = m_stemAlloFactory.Create();
 				believeV.AlternateFormsOS.Add(seekVForm);
 				seekVForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("seekVTEST", m_vernacularWS.Handle);
-				IMoStemMsa seekVMsa = m_stemMsaFactory.Create();
+				var seekVMsa = m_stemMsaFactory.Create();
 				seekV.MorphoSyntaxAnalysesOC.Add(seekVMsa);
-				ILexSense seekVSense = m_senseFactory.Create();
+				var seekVSense = m_senseFactory.Create();
 				seekV.SensesOS.Add(seekVSense);
 				seekVSense.MorphoSyntaxAnalysisRA = seekVMsa;
 
-				ILexEntry crebV = m_entryFactory.Create();
-				IMoStemAllomorph crebVForm = m_stemAlloFactory.Create();
+				var crebV = m_entryFactory.Create();
+				var crebVForm = m_stemAlloFactory.Create();
 				crebV.AlternateFormsOS.Add(crebVForm);
 				crebVForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("crebVTEST", m_vernacularWS.Handle);
-				ILexEntryRef lexEntryref = m_lexEntryRefFactory.Create();
+				var lexEntryref = m_lexEntryRefFactory.Create();
 				crebV.EntryRefsOS.Add(lexEntryref);
 				lexEntryref.ComponentLexemesRS.Add(believeV);
 				lexEntryref.VariantEntryTypesRS.Add(pastTenseLexEntryInflType);
@@ -477,33 +447,33 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				lexEntryref.VariantEntryTypesRS.Add(pastTenseLexEntryInflType);
 				lexEntryref.VariantEntryTypesRS.Add(pluralTenseLexEntryInflType);
 
-				ILexEntry nullPast = m_entryFactory.Create();
-				IMoAffixAllomorph nullPastForm = m_afxAlloFactory.Create();
+				var nullPast = m_entryFactory.Create();
+				var nullPastForm = m_afxAlloFactory.Create();
 				nullPast.AlternateFormsOS.Add(nullPastForm);
 				nullPastForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("nullPASTTEST", m_vernacularWS.Handle);
-				IMoInflAffMsa nullPastMsa = m_inflAffMsaFactory.Create();
+				var nullPastMsa = m_inflAffMsaFactory.Create();
 				nullPast.MorphoSyntaxAnalysesOC.Add(nullPastMsa);
 
-				ILexEntry nullPlural = m_entryFactory.Create();
-				IMoAffixAllomorph nullPluralForm = m_afxAlloFactory.Create();
+				var nullPlural = m_entryFactory.Create();
+				var nullPluralForm = m_afxAlloFactory.Create();
 				nullPlural.AlternateFormsOS.Add(nullPluralForm);
 				nullPluralForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("nullPLURALTEST", m_vernacularWS.Handle);
-				IMoInflAffMsa nullPluralMsa = m_inflAffMsaFactory.Create();
+				var nullPluralMsa = m_inflAffMsaFactory.Create();
 				nullPlural.MorphoSyntaxAnalysesOC.Add(nullPluralMsa);
 
 				result = new ParseResult(new[]
+				{
+					new ParseAnalysis(new[]
 					{
-						new ParseAnalysis(new[]
-							{
-								new ParseMorph(crebVForm, MorphServices.GetMainOrFirstSenseOfVariant(crebV.EntryRefsOS[1]).MorphoSyntaxAnalysisRA,
-									(ILexEntryInflType) crebV.EntryRefsOS[1].VariantEntryTypesRS[0])
-							}),
-						new ParseAnalysis(new[]
-							{
-								new ParseMorph(crebVForm, MorphServices.GetMainOrFirstSenseOfVariant(crebV.EntryRefsOS[0]).MorphoSyntaxAnalysisRA,
-									(ILexEntryInflType) crebV.EntryRefsOS[0].VariantEntryTypesRS[0])
-							})
-					});
+						new ParseMorph(crebVForm, MorphServices.GetMainOrFirstSenseOfVariant(crebV.EntryRefsOS[1]).MorphoSyntaxAnalysisRA,
+							(ILexEntryInflType) crebV.EntryRefsOS[1].VariantEntryTypesRS[0])
+					}),
+					new ParseAnalysis(new[]
+					{
+						new ParseMorph(crebVForm, MorphServices.GetMainOrFirstSenseOfVariant(crebV.EntryRefsOS[0]).MorphoSyntaxAnalysisRA,
+							(ILexEntryInflType) crebV.EntryRefsOS[0].VariantEntryTypesRS[0])
+					})
+				});
 			});
 
 			m_filer.ProcessParse(creb, ParserPriority.Low, result);
@@ -522,61 +492,58 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		[Test]
 		public void LexEntryInflTypeAnalysisWithNullForSlotFiller()
 		{
-			IWfiWordform brubs = CheckAnalysisSize("brubsTEST", 0, true);
-			ILexDb ldb = Cache.LanguageProject.LexDbOA;
-
+			var brubs = CheckAnalysisSize("brubsTEST", 0, true);
+			var ldb = Cache.LanguageProject.LexDbOA;
 			ParseResult result = null;
 			UndoableUnitOfWorkHelper.Do("Undo stuff", "Redo stuff", m_actionHandler, () =>
 			{
 				// Verb brub which is a present tense irregularly inflected form of 'believe'
 				// with automatically generated null Tense slot and an -s Plural Number slot filler
 				// (This is not supposed to be English, in case you're wondering....)
-
-				ILexEntryInflType presentTenseLexEntryInflType = m_lexEntryInflTypeFactory.Create();
+				var presentTenseLexEntryInflType = m_lexEntryInflTypeFactory.Create();
 				Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Add(presentTenseLexEntryInflType);
 
-				ILexEntry believeV = m_entryFactory.Create();
-				IMoStemAllomorph believeVForm = m_stemAlloFactory.Create();
+				var believeV = m_entryFactory.Create();
+				var believeVForm = m_stemAlloFactory.Create();
 				believeV.AlternateFormsOS.Add(believeVForm);
 				believeVForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("believeVTEST", m_vernacularWS.Handle);
-				IMoStemMsa believeVMsa = m_stemMsaFactory.Create();
+				var believeVMsa = m_stemMsaFactory.Create();
 				believeV.MorphoSyntaxAnalysesOC.Add(believeVMsa);
-				ILexSense believeVSense = m_senseFactory.Create();
+				var believeVSense = m_senseFactory.Create();
 				believeV.SensesOS.Add(believeVSense);
 				believeVSense.MorphoSyntaxAnalysisRA = believeVMsa;
 
-				ILexEntry brubV = m_entryFactory.Create();
-				IMoStemAllomorph brubVForm = m_stemAlloFactory.Create();
+				var brubV = m_entryFactory.Create();
+				var brubVForm = m_stemAlloFactory.Create();
 				brubV.AlternateFormsOS.Add(brubVForm);
 				brubVForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("brubVTEST", m_vernacularWS.Handle);
-				ILexEntryRef lexEntryref = m_lexEntryRefFactory.Create();
+				var lexEntryref = m_lexEntryRefFactory.Create();
 				brubV.EntryRefsOS.Add(lexEntryref);
 				lexEntryref.ComponentLexemesRS.Add(believeV);
 				lexEntryref.VariantEntryTypesRS.Add(presentTenseLexEntryInflType);
 
-				ILexEntry nullPresent = m_entryFactory.Create();
-				IMoAffixAllomorph nullPresentForm = m_afxAlloFactory.Create();
+				var nullPresent = m_entryFactory.Create();
+				var nullPresentForm = m_afxAlloFactory.Create();
 				nullPresent.AlternateFormsOS.Add(nullPresentForm);
 				nullPresentForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("nullPRESENTTEST", m_vernacularWS.Handle);
-				IMoInflAffMsa nullPresentMsa = m_inflAffMsaFactory.Create();
+				var nullPresentMsa = m_inflAffMsaFactory.Create();
 				nullPresent.MorphoSyntaxAnalysesOC.Add(nullPresentMsa);
 
-				ILexEntry sPlural = m_entryFactory.Create();
-				IMoAffixAllomorph sPluralForm = m_afxAlloFactory.Create();
+				var sPlural = m_entryFactory.Create();
+				var sPluralForm = m_afxAlloFactory.Create();
 				sPlural.AlternateFormsOS.Add(sPluralForm);
 				sPluralForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("sPLURALTEST", m_vernacularWS.Handle);
-				IMoInflAffMsa sPluralMsa = m_inflAffMsaFactory.Create();
+				var sPluralMsa = m_inflAffMsaFactory.Create();
 				sPlural.MorphoSyntaxAnalysesOC.Add(sPluralMsa);
 
 				result = new ParseResult(new[]
+				{
+					new ParseAnalysis(new[]
 					{
-						new ParseAnalysis(new[]
-							{
-								new ParseMorph(brubVForm, MorphServices.GetMainOrFirstSenseOfVariant(brubV.EntryRefsOS[0]).MorphoSyntaxAnalysisRA,
-									(ILexEntryInflType) brubV.EntryRefsOS[0].VariantEntryTypesRS[0]),
-								new ParseMorph(sPluralForm, sPluralMsa)
-							})
-					});
+						new ParseMorph(brubVForm, MorphServices.GetMainOrFirstSenseOfVariant(brubV.EntryRefsOS[0]).MorphoSyntaxAnalysisRA, (ILexEntryInflType) brubV.EntryRefsOS[0].VariantEntryTypesRS[0]),
+						new ParseMorph(sPluralForm, sPluralMsa)
+					})
+				});
 			});
 
 			m_filer.ProcessParse(brubs, ParserPriority.Low, result);
