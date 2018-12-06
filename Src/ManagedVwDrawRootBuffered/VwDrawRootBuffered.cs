@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,84 +10,75 @@ using SIL.LCModel.Core.Text;
 
 namespace SIL.FieldWorks.Views
 {
-
 	/// <summary>
 	/// This class is a Managed port of VwDrawRootBuffered defined in VwRootBox.cpp
 	/// </summary>
 	[Guid("97199458-10C7-49da-B3AE-EA922EA64859")]
 	public class VwDrawRootBuffered : IVwDrawRootBuffered
 	{
-		private class MemoryBuffer: IDisposable
+		private sealed class MemoryBuffer : IDisposable
 		{
-			private Graphics m_graphics;
-			private Bitmap m_bitmap;
-
-			public MemoryBuffer(int width, int height)
+			internal MemoryBuffer(int width, int height)
 			{
-				m_bitmap = new Bitmap(width, height);
+				Bitmap = new Bitmap(width, height);
 				// create graphics memory buffer
-				m_graphics = Graphics.FromImage(m_bitmap);
-				m_graphics.GetHdc();
+				Graphics = Graphics.FromImage(Bitmap);
+				Graphics.GetHdc();
 			}
 
 			#region Disposable stuff
-			#if DEBUG
-			/// <summary/>
+
+			/// <summary />
 			~MemoryBuffer()
 			{
 				Dispose(false);
 			}
-			#endif
 
-			/// <summary/>
-			public bool IsDisposed { get; private set; }
+			/// <summary />
+			private bool IsDisposed { get; set; }
 
-			/// <summary/>
+			/// <inheritdoc />
 			public void Dispose()
 			{
 				Dispose(true);
 				GC.SuppressFinalize(this);
 			}
 
-			/// <summary/>
-			protected virtual void Dispose(bool fDisposing)
+			private void Dispose(bool disposing)
 			{
-				System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-				if (fDisposing && !IsDisposed)
+				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if (IsDisposed)
 				{
-					// dispose managed and unmanaged objects
-					if (m_graphics != null)
-					{
-						m_graphics.ReleaseHdc();
-						m_graphics.Dispose();
-					}
-					if (m_bitmap != null)
-						m_bitmap.Dispose();
+					// No need to run it more than once.
+					return;
 				}
-				m_bitmap = null;
-				m_graphics = null;
+				if (disposing)
+				{
+					// dispose managed objects
+					if (Graphics != null)
+					{
+						Graphics.ReleaseHdc();
+						Graphics.Dispose();
+					}
+					Bitmap?.Dispose();
+				}
+				Bitmap = null;
+				Graphics = null;
 				IsDisposed = true;
 			}
 			#endregion
 
-			public Bitmap Bitmap
-			{
-				get { return m_bitmap; }
-			}
+			internal Bitmap Bitmap { get; private set; }
 
-			public Graphics Graphics
-			{
-				get { return m_graphics; }
-			}
+			internal Graphics Graphics { get; private set; }
 		}
 
 		/// <summary>
 		/// See C++ documentation
 		/// </summary>
-		public void DrawTheRoot(IVwRootBox prootb, IntPtr hdc, Rect rcpDraw, uint bkclr,
-			bool fDrawSel, IVwRootSite pvrs)
+		public void DrawTheRoot(IVwRootBox prootb, IntPtr hdc, Rect rcpDraw, uint bkclr, bool fDrawSel, IVwRootSite pvrs)
 		{
-			IVwSynchronizer synchronizer = prootb.Synchronizer;
+			var synchronizer = prootb.Synchronizer;
 			if (synchronizer != null)
 			{
 				try
@@ -105,13 +96,12 @@ namespace SIL.FieldWorks.Views
 
 			IVwGraphicsWin32 qvg = VwGraphicsWin32Class.Create();
 			Rectangle rcp = rcpDraw;
-			using (Graphics screen = Graphics.FromHdc(hdc))
+			using (var screen = Graphics.FromHdc(hdc))
 			using (var memoryBuffer = new MemoryBuffer(rcp.Width, rcp.Height))
 			{
-				memoryBuffer.Graphics.FillRectangle(new SolidBrush(ColorUtil.ConvertBGRtoColor(bkclr)), 0, 0,
-					rcp.Width, rcp.Height);
+				memoryBuffer.Graphics.FillRectangle(new SolidBrush(ColorUtil.ConvertBGRtoColor(bkclr)), 0, 0, rcp.Width, rcp.Height);
 				qvg.Initialize(memoryBuffer.Graphics.GetHdc());
-				VwPrepDrawResult xpdr = VwPrepDrawResult.kxpdrAdjust;
+				var xpdr = VwPrepDrawResult.kxpdrAdjust;
 				IVwGraphics qvgDummy = null;
 
 				try
@@ -160,7 +150,9 @@ namespace SIL.FieldWorks.Views
 				catch (Exception)
 				{
 					if (qvgDummy != null)
+					{
 						pvrs.ReleaseGraphics(prootb, qvgDummy);
+					}
 					qvg.ReleaseDC();
 					throw;
 				}
@@ -176,18 +168,16 @@ namespace SIL.FieldWorks.Views
 
 		public void ReDrawLastDraw(IntPtr hdc, Rect rcpDraw)
 		{
-			// TODO-Linux: implement
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		/// <summary>
 		/// See C++ documentation
 		/// </summary>
-		public void DrawTheRootAt(IVwRootBox prootb, IntPtr hdc, Rect rcpDraw, uint bkclr,
-			bool fDrawSel, IVwGraphics pvg, Rect rcSrc, Rect rcDst, int ysTop, int dysHeight)
+		public void DrawTheRootAt(IVwRootBox prootb, IntPtr hdc, Rect rcpDraw, uint bkclr, bool fDrawSel, IVwGraphics pvg, Rect rcSrc, Rect rcDst, int ysTop, int dysHeight)
 		{
 			IVwGraphicsWin32 qvg32 = VwGraphicsWin32Class.Create();
-			using (Graphics screen = Graphics.FromHdc(hdc))
+			using (var screen = Graphics.FromHdc(hdc))
 			{
 				Rectangle rcp = rcpDraw;
 				Rectangle rcFill = new Rect(0, 0, rcp.Width, rcp.Height);
@@ -222,13 +212,12 @@ namespace SIL.FieldWorks.Views
 		/// the memory buffer to the screen.
 		/// See C++ documentation for more info.
 		/// </summary>
-		public void DrawTheRootRotated(IVwRootBox rootb, IntPtr hdc, Rect rcpDraw, uint bkclr,
-			bool fDrawSel, IVwRootSite vrs, int nHow)
+		public void DrawTheRootRotated(IVwRootBox rootb, IntPtr hdc, Rect rcpDraw, uint bkclr, bool fDrawSel, IVwRootSite vrs, int nHow)
 		{
 			IVwGraphicsWin32 qvg32 = VwGraphicsWin32Class.Create();
-			Rectangle rcp = new Rectangle(rcpDraw.top, rcpDraw.left, rcpDraw.bottom, rcpDraw.right);
+			var rcp = new Rectangle(rcpDraw.top, rcpDraw.left, rcpDraw.bottom, rcpDraw.right);
 			Rectangle rcFill = new Rect(0, 0, rcp.Width, rcp.Height);
-			using (Graphics screen = Graphics.FromHdc(hdc))
+			using (var screen = Graphics.FromHdc(hdc))
 			using (var memoryBuffer = new MemoryBuffer(rcp.Width, rcp.Height))
 			{
 				memoryBuffer.Graphics.FillRectangle(new SolidBrush(ColorUtil.ConvertBGRtoColor(bkclr)), rcFill);
@@ -253,12 +242,14 @@ namespace SIL.FieldWorks.Views
 				catch (Exception)
 				{
 					if (qvgDummy != null)
+					{
 						vrs.ReleaseGraphics(rootb, qvgDummy);
+					}
 					qvg32.ReleaseDC();
 					throw;
 				}
 
-				Point[] rgptTransform = new Point[3];
+				var rgptTransform = new Point[3];
 				rgptTransform[0] = new Point(rcpDraw.right, rcpDraw.top); // upper left of actual drawing maps to top right of rotated drawing
 
 				rgptTransform[1] = new Point(rcpDraw.right, rcpDraw.bottom); // upper right of actual drawing maps to bottom right of rotated drawing.
@@ -270,5 +261,4 @@ namespace SIL.FieldWorks.Views
 			}
 		}
 	}
-
-} // end namespace SIL.FieldWorks.Views
+}
