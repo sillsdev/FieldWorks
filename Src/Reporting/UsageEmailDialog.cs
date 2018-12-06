@@ -1,20 +1,18 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
-using System.Diagnostics;
 using Microsoft.Win32;
 using SIL.LCModel.Utils;
 
 namespace SIL.Utils
 {
-	/// <summary>
-	/// Summary description for UsageEmailDialog.
-	/// </summary>
+	/// <summary />
 	public class UsageEmailDialog : Form
 	{
 		private TabControl tabControl1;
@@ -23,14 +21,13 @@ namespace SIL.Utils
 		private RichTextBox richTextBox2;
 		private Button btnSend;
 		private LinkLabel btnNope;
-
-		/// <summary></summary>
-		protected string m_emailAddress= "";
-		/// <summary></summary>
-		protected string m_emailBody= "";
-		/// <summary></summary>
-		protected string m_emailSubject= "Automated Usage Report";
-		private System.Windows.Forms.RichTextBox m_topLineText;
+		/// <summary />
+		protected string m_emailAddress = string.Empty;
+		/// <summary />
+		protected string m_emailBody = string.Empty;
+		/// <summary />
+		protected string m_emailSubject = "Automated Usage Report";
+		private RichTextBox m_topLineText;
 
 		/// <summary>
 		/// Required designer variable.
@@ -39,9 +36,6 @@ namespace SIL.Utils
 
 		private UsageEmailDialog()
 		{
-			//
-			// Required for Windows Form Designer support
-			//
 			InitializeComponent();
 			AccessibleName = GetType().Name;
 		}
@@ -51,35 +45,33 @@ namespace SIL.Utils
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
-				return;
-
-			if( disposing )
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
+				// No need to run it more than once.
+				return;
 			}
-			base.Dispose( disposing );
+
+			if (disposing)
+			{
+				components?.Dispose();
+			}
+			base.Dispose(disposing);
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		public string EmailAddress
 		{
 			set
 			{
-				m_emailAddress= value;
+				m_emailAddress = value;
 			}
 			get
 			{
 				return m_emailAddress;
 			}
 		}
+
 		/// <summary>
 		/// the  e-mail subject
 		/// </summary>
@@ -94,9 +86,8 @@ namespace SIL.Utils
 				return m_emailSubject;
 			}
 		}
-		/// <summary>
-		///
-		/// </summary>
+
+		/// <summary />
 		public string Body
 		{
 			set
@@ -108,14 +99,13 @@ namespace SIL.Utils
 				return m_emailBody;
 			}
 		}
-		/// <summary>
-		///
-		/// </summary>
+
+		/// <summary />
 		public string TopLineText
 		{
 			set
 			{
-				 m_topLineText.Text = value;
+				m_topLineText.Text = value;
 			}
 			get
 			{
@@ -215,71 +205,34 @@ namespace SIL.Utils
 		{
 			try
 			{
-				string body = m_emailBody.Replace(System.Environment.NewLine, "%0A").Replace("\"", "%22").Replace("&", "%26");
-
-				using (Process p = new Process())
+				var body = m_emailBody.Replace(System.Environment.NewLine, "%0A").Replace("\"", "%22").Replace("&", "%26");
+				using (var p = new Process())
 				{
-					p.StartInfo.FileName = String.Format("mailto:{0}?subject={1}&body={2}", m_emailAddress, m_emailSubject, body);
+					p.StartInfo.FileName = $"mailto:{m_emailAddress}?subject={m_emailSubject}&body={body}";
 					p.Start();
 				}
 			}
-			catch(Exception)
+			catch (Exception)
 			{
 				//swallow it
 			}
-			this.DialogResult = DialogResult.OK;
-			this.Close();
+			DialogResult = DialogResult.OK;
+			Close();
 		}
 
 		private void btnNope_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			this.DialogResult = DialogResult.No;
-			this.Close();
+			DialogResult = DialogResult.No;
+			Close();
 		}
 
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// call this each time the application is launched if you have launch count-based reporting
 		/// </summary>
-		/// <param name="applicationKey">The application registry key.</param>
-		/// ------------------------------------------------------------------------------------
 		public static void IncrementLaunchCount(RegistryKey applicationKey)
 		{
-			int launchCount = int.Parse((string)applicationKey.GetValue("launches", "0")) + 1;
+			var launchCount = int.Parse((string)applicationKey.GetValue("launches", "0")) + 1;
 			applicationKey.SetValue("launches", launchCount.ToString());
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// used for testing purposes
-		/// </summary>
-		/// <param name="applicationKey">The application registry key.</param>
-		/// ------------------------------------------------------------------------------------
-		public static void ClearLaunchCount(RegistryKey applicationKey)
-		{
-			applicationKey.SetValue("launches", "0");
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// if you call this every time the application starts, it will send reports on the
-		/// specified launch number.  It will get version number and name out of the application.
-		/// </summary>
-		/// <param name="applicationName">Name of the application.</param>
-		/// <param name="applicationKey">The application registry key.</param>
-		/// <param name="emailAddress">The e-mail address.</param>
-		/// <param name="topMessage">The message at the top of the e-mail.</param>
-		/// <param name="addStats">True to add crash and application runtime statistics to the
-		/// report.</param>
-		/// <param name="launchNumber">The needed launch count to show the dialog and ask for
-		/// an e-mail.</param>
-		/// ------------------------------------------------------------------------------------
-		public static void DoTrivialUsageReport(string applicationName, RegistryKey applicationKey,
-			string emailAddress, string topMessage, bool addStats, int launchNumber)
-		{
-			DoTrivialUsageReport(applicationName, applicationKey, emailAddress, topMessage,
-				addStats, launchNumber, null);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -299,41 +252,39 @@ namespace SIL.Utils
 		/// <c>null</c>).</param>
 		/// ------------------------------------------------------------------------------------
 		public static void DoTrivialUsageReport(string applicationName, RegistryKey applicationKey,
-			string emailAddress, string topMessage, bool addStats, int launchNumber, Assembly assembly)
+			string emailAddress, string topMessage, bool addStats, int launchNumber, Assembly assembly = null)
 		{
-			int launchCount = int.Parse((string)applicationKey.GetValue("launches", "0"));
+			var launchCount = int.Parse((string)applicationKey.GetValue("launches", "0"));
 			if (launchNumber == launchCount)
 			{
 				// Set the Application label to the name of the app
 				if (assembly == null)
+				{
 					assembly = Assembly.GetEntryAssembly();
-				string version = Application.ProductVersion;
+				}
+				var version = Application.ProductVersion;
 				if (assembly != null)
 				{
-					object[] attributes = assembly.GetCustomAttributes(typeof(AssemblyFileVersionAttribute), false);
-					version = (attributes != null && attributes.Length > 0) ?
-						((AssemblyFileVersionAttribute)attributes[0]).Version : Application.ProductVersion;
+					var attributes = assembly.GetCustomAttributes(typeof(AssemblyFileVersionAttribute), false);
+					version = attributes.Length > 0 ? ((AssemblyFileVersionAttribute)attributes[0]).Version : Application.ProductVersion;
 				}
-
-				using (UsageEmailDialog d = new UsageEmailDialog())
+				using (var d = new UsageEmailDialog())
 				{
 					d.TopLineText = topMessage;
 					d.EmailAddress = emailAddress;
 					d.EmailSubject = string.Format("{0} {1} Report {2} Launches", applicationName, version, launchCount);
-					StringBuilder bldr = new StringBuilder();
-					bldr.AppendFormat("<report app='{0}' version='{1}' linux='{2}'>", applicationName,
-						version, MiscUtils.IsUnix);
+					var bldr = new StringBuilder();
+					bldr.AppendFormat("<report app='{0}' version='{1}' linux='{2}'>", applicationName, version, MiscUtils.IsUnix);
 					bldr.AppendFormat("<stat type='launches' value='{0}'/>", launchCount);
 					if (launchCount > 1)
 					{
-						int val = (int)applicationKey.GetValue("NumberOfSeriousCrashes", 0);
+						var val = (int)applicationKey.GetValue("NumberOfSeriousCrashes", 0);
 						bldr.AppendFormat("<stat type='NumberOfSeriousCrashes' value='{0}'/>", val);
 						val = (int)applicationKey.GetValue("NumberOfAnnoyingCrashes", 0);
 						bldr.AppendFormat("<stat type='NumberOfAnnoyingCrashes' value='{0}'/>", val);
-						int csec = (int)applicationKey.GetValue("TotalAppRuntime", 0);
-						int cmin = csec / 60;
-						string sRuntime = String.Format("{0}:{1:d2}:{2:d2}",
-							cmin / 60, cmin % 60, csec % 60);
+						var csec = (int)applicationKey.GetValue("TotalAppRuntime", 0);
+						var cmin = csec / 60;
+						var sRuntime = $"{cmin / 60}:{cmin % 60:d2}:{csec % 60:d2}";
 						bldr.AppendFormat("<stat type='TotalAppRuntime' value='{0}'/>", sRuntime);
 					}
 					bldr.AppendFormat("</report>");
