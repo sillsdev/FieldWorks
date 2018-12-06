@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,9 +6,8 @@ using System;
 using System.Runtime.InteropServices;
 using Icu;
 using Icu.Collation;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Language
@@ -21,52 +20,49 @@ namespace SIL.FieldWorks.Language
 	[Guid("e771361c-ff54-4120-9525-98a0b7a9accf")]
 	public class ManagedLgIcuCollator : ILgCollatingEngine, IDisposable
 	{
-		#region Member variables
-
-		private ILgWritingSystemFactory m_qwsf;
 		private string m_stuLocale;
 		private Collator m_collator;
 
-		#endregion
-
-		#region Disposable stuff
-		#if DEBUG
-		/// <summary/>
+		/// <summary />
 		~ManagedLgIcuCollator()
 		{
 			Dispose(false);
 		}
-		#endif
 
-		/// <summary/>
-		public bool IsDisposed { get; private set; }
+		/// <summary />
+		private bool IsDisposed { get; set; }
 
-		/// <summary/>
+		/// <inheritdoc />
 		public void Dispose()
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
 
-		/// <summary/>
-		protected virtual void Dispose(bool fDisposing)
+		/// <summary />
+		protected virtual void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if (fDisposing && !IsDisposed)
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
 			{
-				// dispose managed and unmanaged objects
+				// No need to run it more than once.
+				return;
+			}
+			if (disposing)
+			{
+				// dispose managed objects
 				DoneCleanup();
 			}
 			IsDisposed = true;
 		}
-		#endregion
 
 		protected void EnsureCollator()
 		{
 			if (m_collator != null)
+			{
 				return;
-
-			string icuLocale = new Locale(m_stuLocale).Name;
+			}
+			var icuLocale = new Locale(m_stuLocale).Name;
 			m_collator = Collator.Create(icuLocale);
 		}
 
@@ -80,14 +76,15 @@ namespace SIL.FieldWorks.Language
 		}
 
 		#region ILgCollatingEngine implementation
+
 		public string get_SortKey(string bstrValue, LgCollatingOptions colopt)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public void SortKeyRgch(string _ch, int cchIn, LgCollatingOptions colopt, int cchMaxOut, ArrayPtr _chKey, out int _cchOut)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 
@@ -112,8 +109,8 @@ namespace SIL.FieldWorks.Language
 
 		public int CompareVariant(object saValue1, object saValue2, LgCollatingOptions colopt)
 		{
-			byte[] key1 = saValue1 as byte[];
-			byte[] key2 = saValue2 as byte[];
+			var key1 = saValue1 as byte[];
+			var key2 = saValue2 as byte[];
 
 			EnsureCollator();
 
@@ -125,21 +122,26 @@ namespace SIL.FieldWorks.Language
 			{
 				return -1;
 			}
-
-			int maxlen = key1.Length > key2.Length ? key1.Length : key2.Length;
-			for (int i = 0; i < maxlen; ++i)
+			var maxlen = key1.Length > key2.Length ? key1.Length : key2.Length;
+			for (var i = 0; i < maxlen; ++i)
 			{
 				if (key1[i] > key2[i])
+				{
 					return 1;
+				}
 				if (key2[i] > key1[i])
+				{
 					return -1;
+				}
 			}
-
 			if (key1.Length > key2.Length)
+			{
 				return 1;
+			}
 			if (key2.Length > key1.Length)
+			{
 				return -1;
-
+			}
 			return 0;
 		}
 
@@ -147,8 +149,9 @@ namespace SIL.FieldWorks.Language
 		public void Open(string bstrLocale)
 		{
 			if (m_collator != null)
+			{
 				DoneCleanup();
-
+			}
 			m_stuLocale = bstrLocale;
 
 			EnsureCollator();
@@ -161,15 +164,10 @@ namespace SIL.FieldWorks.Language
 			{
 				DoneCleanup();
 			}
-			m_stuLocale = String.Empty;
+			m_stuLocale = string.Empty;
 		}
 
-
-		public ILgWritingSystemFactory WritingSystemFactory
-		{
-			get { return m_qwsf; }
-			set { m_qwsf = value; }
-		}
+		public ILgWritingSystemFactory WritingSystemFactory { get; set; }
 
 		#endregion
 	}

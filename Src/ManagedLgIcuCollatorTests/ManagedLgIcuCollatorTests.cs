@@ -1,9 +1,9 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using NUnit.Framework;
 using System;
+using NUnit.Framework;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.Language
@@ -23,7 +23,9 @@ namespace SIL.FieldWorks.Language
 		public void OpenTest()
 		{
 			using (var icuCollator = ManagedLgIcuCollatorInitializerHelper())
+			{
 				Assert.IsNotNull(icuCollator);
+			}
 		}
 
 		[Test()]
@@ -34,11 +36,11 @@ namespace SIL.FieldWorks.Language
 			{
 				icuCollator1.Open("en");
 				var options = new LgCollatingOptions();
-				object result1 = icuCollator1.get_SortKeyVariant("test", options);
+				icuCollator1.get_SortKeyVariant("test", options);
 				using (var icuCollator2 = new ManagedLgIcuCollator())
 				{
 					icuCollator2.Open("fr");
-					object result2 = icuCollator2.get_SortKeyVariant("test", options);
+					icuCollator2.get_SortKeyVariant("test", options);
 				}
 			}
 		}
@@ -50,14 +52,13 @@ namespace SIL.FieldWorks.Language
 			using (var icuCollator = ManagedLgIcuCollatorInitializerHelper())
 			{
 				Assert.IsNotNull(icuCollator);
-
 				icuCollator.Close();
 			}
 		}
 
 		[Test()]
 		[Category("ByHand")]
-		[ExpectedException(typeof(NotImplementedException))]
+		[ExpectedException(typeof(NotSupportedException))]
 		public void GetSortKeyTest()
 		{
 			using (var icuCollator = ManagedLgIcuCollatorInitializerHelper())
@@ -66,7 +67,7 @@ namespace SIL.FieldWorks.Language
 
 				var options = new LgCollatingOptions();
 
-				string result = icuCollator.get_SortKey("abc", options);
+				var result = icuCollator.get_SortKey("abc", options);
 				Assert.IsNotEmpty(result);
 
 				icuCollator.Close();
@@ -77,13 +78,13 @@ namespace SIL.FieldWorks.Language
 		[Category("ByHand")]
 		public void GetSortKeyVariantTest()
 		{
-			using (var icuCollator= ManagedLgIcuCollatorInitializerHelper())
+			using (var icuCollator = ManagedLgIcuCollatorInitializerHelper())
 			{
 				Assert.IsNotNull(icuCollator);
 
 				var options = new LgCollatingOptions();
 
-				object obj = icuCollator.get_SortKeyVariant("abc", options);
+				var obj = icuCollator.get_SortKeyVariant("abc", options);
 				Assert.IsNotNull(obj);
 
 				icuCollator.Close();
@@ -92,7 +93,7 @@ namespace SIL.FieldWorks.Language
 
 		[Test()]
 		[Category("ByHand")]
-		[ExpectedException(typeof(NotImplementedException))]
+		[ExpectedException(typeof(NotSupportedException))]
 		public void GetSortKeyRgchTest()
 		{
 			using (var icuCollator = ManagedLgIcuCollatorInitializerHelper())
@@ -141,9 +142,9 @@ namespace SIL.FieldWorks.Language
 
 				var options = new LgCollatingOptions();
 
-				object obj1 = icuCollator.get_SortKeyVariant("abc", options);
-				object obj2 = obj1;
-				object obj3 = icuCollator.get_SortKeyVariant("def", options);
+				var obj1 = icuCollator.get_SortKeyVariant("abc", options);
+				var obj2 = obj1;
+				var obj3 = icuCollator.get_SortKeyVariant("def", options);
 
 				Assert.IsTrue(icuCollator.CompareVariant(obj1, obj2, options) == 0, " obj1 == obj2");
 				Assert.IsTrue(icuCollator.CompareVariant(obj1, obj3, options) != 0, " obj1 != obj3");
