@@ -7,10 +7,10 @@ using System.Diagnostics;
 using System.Xml;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Common.RootSites;
 using System.Collections.Generic;
 using System.Linq;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
+using LanguageExplorer.Controls;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 
@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 	/// or move common code down to CollectorEnv. This has been postponed in the interests
 	/// of being able to release FW 5.2.1 without requiring changes to DLLs other than Discourse.
 	/// </summary>
-	public class DiscourseExporter : CollectorEnv, IDisposable
+	internal class DiscourseExporter : CollectorEnv, IDisposable
 	{
 		private readonly XmlWriter m_writer;
 		private readonly LcmCache m_cache;

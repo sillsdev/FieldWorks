@@ -1,32 +1,22 @@
-// Copyright (c) 2005-2017 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using Rhino.Mocks;
 using System.Drawing;
 using System.Windows.Forms;
 using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.ViewsInterfaces;
+using Rhino.Mocks;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
-	/// <summary>
-	/// Summary description for RootSiteGroupTests.
-	/// </summary>
+	/// <summary />
 	[TestFixture]
 	public class RootSiteGroupTests
 	{
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="rootSite"></param>
-		/// <param name="width"></param>
-		/// <param name="height"></param>
-		/// <param name="rootb"></param>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		private void PrepareView(DummyBasicView rootSite, int width, int height, IVwRootBox rootb)
 		{
 			rootSite.Visible = false;
@@ -35,12 +25,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			rootSite.SetRootBox(rootb);
 		}
 
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the adjusting the scroll range
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void AdjustScrollRange()
 		{
@@ -61,7 +48,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					stylePane.InitializeFlexComponent(flexComponentParameterObject);
 					draftPane.InitializeFlexComponent(flexComponentParameterObject);
 					btPane.InitializeFlexComponent(flexComponentParameterObject);
-					using (RootSiteGroup group = new RootSiteGroup())
+					using (var group = new RootSiteGroup())
 					{
 						PrepareView(stylePane, 50, 300, rootBox);
 						PrepareView(draftPane, 150, 300, rootBox);
@@ -96,16 +83,14 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests that CastAsIVwRootSite returns null (and doesn't crash) when the
 		/// group is empty (i.e., no rootsites have been added yet).
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void TestCastAsIVwRootSiteWhenGroupIsEmpty()
 		{
-			using (RootSiteGroup group = new RootSiteGroup())
+			using (var group = new RootSiteGroup())
 			{
 				Assert.IsNull(group.CastAsIVwRootSite());
 			}

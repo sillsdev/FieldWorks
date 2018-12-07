@@ -1944,7 +1944,7 @@ namespace LanguageExplorer.Impls
 		/// <param name="sel">Starting position</param>
 		private void FindFrom(IVwSelection sel)
 		{
-			CollectorEnv.LocationInfo startLocation = null;
+			LocationInfo startLocation = null;
 			var rootSite = ActiveView;
 			if (rootSite == null)
 			{
@@ -1952,7 +1952,7 @@ namespace LanguageExplorer.Impls
 			}
 			if (sel != null)
 			{
-				startLocation = new CollectorEnv.LocationInfo(SelectionHelper.Create(sel, rootSite));
+				startLocation = new LocationInfo(SelectionHelper.Create(sel, rootSite));
 			}
 			var locationInfo = m_findEnvironment.FindNext(startLocation);
 			if (locationInfo != null)

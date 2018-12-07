@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,64 +7,22 @@ using NUnit.Framework;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
-	#region DummyPrintRootSite
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// Instantiate a print root site for testing.
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	internal class DummyPrintRootSite : PrintRootSite
-	{
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="totalPages"></param>
-		/// <param name="psettings"></param>
-		/// ------------------------------------------------------------------------------------
-		public DummyPrintRootSite(int totalPages, PrinterSettings psettings) :
-			base(totalPages, psettings)
-		{
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public new void Advance()
-		{
-			base.Advance();
-		}
-	}
-	#endregion
-
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// Summary description for PrintRootSiteTests.
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	[TestFixture]
 	public class PrintRootSiteTests
 	{
 		PrinterSettings m_pSettings;
 
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="PrintRootSiteTests"/> class.
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
-		public PrintRootSiteTests()
+		[TestFixtureSetUp]
+		public void FixtureSetup()
 		{
 			m_pSettings = new PrinterSettings();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the simple case of one copy, collation on and the page range is within the
 		/// total number of possible pages.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void CollationTest_OneCopy()
 		{
@@ -74,7 +32,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_pSettings.ToPage = 7;
 			m_pSettings.Copies = 1;
 
-			DummyPrintRootSite pRootSite = new DummyPrintRootSite(10, m_pSettings);
+			var pRootSite = new DummyPrintRootSite(10, m_pSettings);
 
 			Assert.AreEqual(5, pRootSite.NextPageToPrint);
 			Assert.IsTrue(pRootSite.HasMorePages);
@@ -91,12 +49,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			Assert.IsFalse(pRootSite.HasMorePages);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the simple case of one copy, collation on and the page range crosses the range
 		/// of total available pages to print.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void CollationTest_OneCopy_InvalidRange1()
 		{
@@ -106,7 +62,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_pSettings.ToPage = 7;
 			m_pSettings.Copies = 1;
 
-			DummyPrintRootSite pRootSite = new DummyPrintRootSite(5, m_pSettings);
+			var pRootSite = new DummyPrintRootSite(5, m_pSettings);
 
 			Assert.AreEqual(3, pRootSite.NextPageToPrint);
 			Assert.IsTrue(pRootSite.HasMorePages);
@@ -123,12 +79,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			Assert.IsFalse(pRootSite.HasMorePages);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the simple case of one copy, collation on and the page range is outside the
 		/// the range of total available pages to print.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void CollationTest_OneCopy_InvalidRange2()
 		{
@@ -138,16 +92,14 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_pSettings.ToPage = 9;
 			m_pSettings.Copies = 1;
 
-			DummyPrintRootSite pRootSite = new DummyPrintRootSite(5, m_pSettings);
+			var pRootSite = new DummyPrintRootSite(5, m_pSettings);
 			Assert.IsFalse(pRootSite.HasMorePages);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the case of multiple copies, collation on and the page range crosses the range
 		/// of total available pages to print.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void CollationTest_MultipleCopy()
 		{
@@ -157,31 +109,27 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_pSettings.ToPage = 4;
 			m_pSettings.Copies = 3;
 
-			DummyPrintRootSite pRootSite = new DummyPrintRootSite(10, m_pSettings);
+			var pRootSite = new DummyPrintRootSite(10, m_pSettings);
 
 			// printing handles the multiple copies automatically, so they just need
 			// to be printed once.
-			int[] ExpectedPages = new int []{2, 3, 4};
-			int iteration = 1;
+			var expectedPages = new[] { 2, 3, 4 };
+			var iteration = 1;
 
-			foreach(int i in ExpectedPages)
+			foreach (var i in expectedPages)
 			{
-				Assert.AreEqual(i, pRootSite.NextPageToPrint,
-					"this failed in iteration: " + iteration);
-				Assert.IsTrue(pRootSite.HasMorePages,
-					"this failed in iteration: " + iteration);
+				Assert.AreEqual(i, pRootSite.NextPageToPrint, "this failed in iteration: " + iteration);
+				Assert.IsTrue(pRootSite.HasMorePages, "this failed in iteration: " + iteration);
 				pRootSite.Advance();
 				iteration++;
 			}
 			Assert.IsFalse(pRootSite.HasMorePages);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the case of multiple copies, collation on and the page range crosses the range
 		/// of total available pages to print.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void NonCollationTest_MultipleCopy()
 		{
@@ -190,21 +138,37 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_pSettings.FromPage = 2;
 			m_pSettings.ToPage = 4;
 			m_pSettings.Copies = 3;
-			int[] ExpectedPages = new int []{2, 2, 2, 3, 3, 3, 4, 4, 4};
-			int iteration = 1;
+			var expectedPages = new[] { 2, 2, 2, 3, 3, 3, 4, 4, 4 };
+			var iteration = 1;
 
-			DummyPrintRootSite pRootSite = new DummyPrintRootSite(10, m_pSettings);
+			var pRootSite = new DummyPrintRootSite(10, m_pSettings);
 
-			foreach(int i in ExpectedPages)
+			foreach (var i in expectedPages)
 			{
-				Assert.AreEqual(i, pRootSite.NextPageToPrint,
-					"this failed in iteration: " + iteration);
-				Assert.IsTrue(pRootSite.HasMorePages,
-					"this failed in iteration: " + iteration);
+				Assert.AreEqual(i, pRootSite.NextPageToPrint, "this failed in iteration: " + iteration);
+				Assert.IsTrue(pRootSite.HasMorePages, "this failed in iteration: " + iteration);
 				pRootSite.Advance();
 				iteration++;
 			}
 			Assert.IsFalse(pRootSite.HasMorePages);
+		}
+
+		/// <summary>
+		/// Instantiate a print root site for testing.
+		/// </summary>
+		private sealed class DummyPrintRootSite : PrintRootSite
+		{
+			/// <summary />
+			public DummyPrintRootSite(int totalPages, PrinterSettings psettings)
+				: base(totalPages, psettings)
+			{
+			}
+
+			/// <summary />
+			public new void Advance()
+			{
+				base.Advance();
+			}
 		}
 	}
 }

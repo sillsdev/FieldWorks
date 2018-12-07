@@ -245,7 +245,9 @@
     <Compile Include="ArchivingTests.cs" />
     <Compile Include="Areas\StandFormatExportTests.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\TextsTriStateTreeViewTests.cs" />
+    <Compile Include="Controls\CollectorEnvTests.cs" />
     <Compile Include="Controls\DetailControls\InnerLabeledMultiStringViewTests.cs" />
+    <Compile Include="Controls\StVcTests.cs" />
     <Compile Include="Controls\Styles\CaseSensitiveListBoxTests.cs" />
     <Compile Include="Controls\Styles\FwAttributesTests.cs" />
     <Compile Include="Controls\Styles\FwFontDialogTests.cs" />

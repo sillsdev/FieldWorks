@@ -29,7 +29,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary>
 	/// Main class for displaying the PhoneEnvReferenceSlice.
 	/// </summary>
-	public class PhoneEnvReferenceView : RootSiteControl
+	internal class PhoneEnvReferenceView : RootSiteControl
 	{
 		#region Constants and data members
 

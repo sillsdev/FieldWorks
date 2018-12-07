@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Runtime.InteropServices;
+using LanguageExplorer.Controls;
 using LanguageExplorer.Impls;
 using NUnit.Framework;
 using SIL.LCModel.Core.Scripture;
@@ -30,7 +31,7 @@ namespace LanguageExplorerTests.Impls
 		private IVwPattern m_pattern;
 
 		// Member that simulates our current "selection"
-		private CollectorEnv.LocationInfo m_sel;
+		private LocationInfo m_sel;
 		#endregion
 
 		#region Setup/Teardown/Initialize
@@ -113,7 +114,7 @@ namespace LanguageExplorerTests.Impls
 				SelLevInfo[] levInfo = new SelLevInfo[1];
 				levInfo[0].hvo = m_para1.Hvo;
 				levInfo[0].tag = StTextTags.kflidParagraphs;
-				m_sel = new CollectorEnv.LocationInfo(levInfo, StTxtParaTags.kflidContents, 0);
+				m_sel = new LocationInfo(levInfo, StTxtParaTags.kflidContents, 0);
 
 				VerifyFindNext(collectorEnv, m_para1.Hvo, 23, 24);
 				VerifyFindNext(collectorEnv, m_para1.Hvo, 30, 31);
@@ -152,7 +153,7 @@ namespace LanguageExplorerTests.Impls
 				SelLevInfo[] levInfo = new SelLevInfo[1];
 				levInfo[0].hvo = m_para2.Hvo;
 				levInfo[0].tag = StTextTags.kflidParagraphs;
-				m_sel = new CollectorEnv.LocationInfo(levInfo, StTxtParaTags.kflidContents, 5);
+				m_sel = new LocationInfo(levInfo, StTxtParaTags.kflidContents, 5);
 
 				VerifyFindNext(collectorEnv, m_para2.Hvo, 20, 21);
 				VerifyFindNext(collectorEnv, m_para2.Hvo, 27, 28);
@@ -183,7 +184,7 @@ namespace LanguageExplorerTests.Impls
 		private void VerifyFindNext(FindCollectorEnv collectorEnv, int hvoExpected,
 			int ichMinExpected, int ichLimExpected)
 		{
-			CollectorEnv.LocationInfo foundLocation = collectorEnv.FindNext(m_sel);
+			LocationInfo foundLocation = collectorEnv.FindNext(m_sel);
 			Assert.IsNotNull(foundLocation);
 			Assert.AreEqual(1, foundLocation.m_location.Length);
 			Assert.AreEqual(hvoExpected, foundLocation.TopLevelHvo);

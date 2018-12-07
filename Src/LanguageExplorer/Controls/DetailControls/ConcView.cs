@@ -2,12 +2,11 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-	public class ConcView : RootSiteControl
+	internal class ConcView : RootSiteControl
 	{
 		IVwViewConstructor m_vc;
 		public ConcView(IConcSliceInfo info)

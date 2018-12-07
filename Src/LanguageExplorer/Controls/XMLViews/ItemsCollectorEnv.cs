@@ -14,7 +14,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// By default, we'll assume the objects being displayed in the cell are of the same
 	/// basic class.
 	/// </summary>
-	public class ItemsCollectorEnv : CollectorEnv
+	internal class ItemsCollectorEnv : CollectorEnv
 	{
 		private readonly HashSet<int> m_hvosInCell = new HashSet<int>();
 
@@ -43,7 +43,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary />
-		protected override void AddResultString(string s)
+		public override void AddResultString(string s)
 		{
 			base.AddResultString(s);
 			AddOwnerOfBasicPropToCellHvos();

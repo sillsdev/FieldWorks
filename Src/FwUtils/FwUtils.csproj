@@ -223,6 +223,7 @@
     <Compile Include="IdleQueueTask.cs" />
     <Compile Include="IDropDownBox.cs" />
     <Compile Include="IFwApplicationSettings.cs" />
+    <Compile Include="IIdleQueueProvider.cs" />
     <Compile Include="IMessageBox.cs" />
     <Compile Include="InvalidComboInfo.cs" />
     <Compile Include="IPersistAsXml.cs" />

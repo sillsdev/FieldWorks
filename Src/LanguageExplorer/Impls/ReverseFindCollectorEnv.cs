@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
+using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel.Core.KernelInterfaces;
 
@@ -11,7 +12,7 @@ namespace LanguageExplorer.Impls
 	/// <summary />
 	/// <remarks>The current implementation doesn't work for different styles, tags, and WSs
 	/// that are applied by the VC.</remarks>
-	public class ReverseFindCollectorEnv : FindCollectorEnv
+	internal class ReverseFindCollectorEnv : FindCollectorEnv
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:ReverseFindCollectorEnv"/> class.

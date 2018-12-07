@@ -393,10 +393,13 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Areas\XDumper.cs" />
+    <Compile Include="Controls\CollectorEnv.cs" />
     <Compile Include="Controls\FileLocationChoice.cs" />
     <Compile Include="Controls\HelperContextMenu.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\LocationInfo.cs" />
+    <Compile Include="Controls\MaxStringWidthForColumnEnv.cs" />
     <Compile Include="Controls\MoveOrCopyFilesController.cs" />
     <Compile Include="Controls\MoveOrCopyFilesDlg.cs">
       <SubType>Form</SubType>
@@ -404,6 +407,13 @@
     <Compile Include="Controls\MoveOrCopyFilesDlg.Designer.cs">
       <DependentUpon>MoveOrCopyFilesDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\PrevPropCounter.cs" />
+    <Compile Include="Controls\RootSiteControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\StackItem.cs" />
+    <Compile Include="Controls\StTextFrags.cs" />
+    <Compile Include="Controls\StVc.cs" />
     <Compile Include="Controls\Styles\CaseSensitiveListBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -484,6 +494,11 @@
     <Compile Include="Controls\Styles\UpDownMeasureControl.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\StringMeasureEnv.cs" />
+    <Compile Include="Controls\TsStringCollectorEnv.cs" />
+    <Compile Include="Controls\XMLViews\ICollectPicturePathsOnly.cs" />
+    <Compile Include="Controls\XMLViews\StringCollectorEnv.cs" />
+    <Compile Include="Controls\XMLViews\TestCollectorEnv.cs" />
     <Compile Include="Impls\SharedEventHandlers.cs" />
     <Compile Include="Areas\StringRepSliceVc.cs" />
     <Compile Include="Areas\StringRepSliceView.cs">
@@ -1657,7 +1672,6 @@
     <Compile Include="IFlexApp.cs" />
     <Compile Include="IFocusablePanePortion.cs" />
     <Compile Include="IFwMainWnd.cs" />
-    <Compile Include="IIdleQueueProvider.cs" />
     <Compile Include="IMainContentControl.cs" />
     <Compile Include="IMainUserControl.cs" />
     <Compile Include="Inventory.cs" />
@@ -2129,6 +2143,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\PopupTree.resx">
       <DependentUpon>PopupTree.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\RootSiteControl.resx">
+      <DependentUpon>RootSiteControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\Styles\ColorPickerStrings.resx">

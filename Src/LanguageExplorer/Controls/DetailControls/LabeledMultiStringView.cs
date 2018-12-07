@@ -71,7 +71,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Provide access to the inner view to set delegates.
 		/// </summary>
-		public InnerLabeledMultiStringView InnerView { get; private set; }
+		internal InnerLabeledMultiStringView InnerView { get; private set; }
 
 		/// <summary>
 		/// Call this on initialization when all properties (e.g., ConfigurationNode) are set.

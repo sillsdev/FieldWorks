@@ -4,7 +4,7 @@
 
 using System.Diagnostics;
 using System.Drawing;
-using SIL.FieldWorks.Common.RootSites;
+using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;

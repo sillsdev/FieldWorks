@@ -4,8 +4,8 @@
 
 using System;
 using System.Drawing;
+using LanguageExplorer.Controls;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.RootSites;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 {
@@ -42,7 +42,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				m_paraWidths[i] = 0;
 			}
 			// Update member variable with widest line's width in current bundle
-			m_width += maxWidth;
+			Width += maxWidth;
 
 		}
 

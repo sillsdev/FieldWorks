@@ -3,15 +3,15 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using System.Diagnostics;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.LCModel.Application;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
-using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Application;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.Xml;
 

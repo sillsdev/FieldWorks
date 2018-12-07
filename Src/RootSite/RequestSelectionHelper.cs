@@ -1,16 +1,15 @@
-﻿// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel.Application;
-using System.Runtime.InteropServices;
 using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
-	#region RequestSelectionHelper
 	/// <summary>
 	/// This class is a helper for implementing the RequestSelectionAtEndOfUow method.
 	/// </summary>
@@ -27,14 +26,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		private readonly bool m_fAssocPrev;
 		private readonly ITsTextProps m_selProps;
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Make one and hook it up to be called at the appropriate time.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
-		public RequestSelectionHelper(IActionHandlerExtensions hookup, IVwRootBox rootb, int ihvoRoot,
-			SelLevInfo[] rgvsli, int tagTextProp, int cpropPrevious, int ich, int wsAlt, bool fAssocPrev,
-			ITsTextProps selProps)
+		public RequestSelectionHelper(IActionHandlerExtensions hookup, IVwRootBox rootb, int ihvoRoot, SelLevInfo[] rgvsli, int tagTextProp, int cpropPrevious, int ich, int wsAlt, bool fAssocPrev, ITsTextProps selProps)
 		{
 			m_hookup = hookup;
 			m_rootb = rootb;
@@ -55,8 +50,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				if (m_rootb.Site != null)
 				{
-					m_rootb.MakeTextSelection(m_ihvoRoot, m_rgvsli.Length, m_rgvsli, m_tagTextProp,
-						m_cpropPrevious, m_ich, m_ich, m_wsAlt, m_fAssocPrev, -1, m_selProps, true);
+					m_rootb.MakeTextSelection(m_ihvoRoot, m_rgvsli.Length, m_rgvsli, m_tagTextProp, m_cpropPrevious, m_ich, m_ich, m_wsAlt, m_fAssocPrev, -1, m_selProps, true);
 				}
 			}
 			catch (COMException)
@@ -64,8 +58,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				try
 				{
 					// Try again making the selection in a prompt
-					m_rootb.MakeTextSelection(m_ihvoRoot, m_rgvsli.Length, m_rgvsli, SimpleRootSite.kTagUserPrompt,
-						m_cpropPrevious, m_ich, m_ich, m_wsAlt, m_fAssocPrev, -1, m_selProps, true);
+					m_rootb.MakeTextSelection(m_ihvoRoot, m_rgvsli.Length, m_rgvsli, SimpleRootSite.kTagUserPrompt, m_cpropPrevious, m_ich, m_ich, m_wsAlt, m_fAssocPrev, -1, m_selProps, true);
 				}
 				catch (COMException)
 				{
@@ -73,72 +66,6 @@ namespace SIL.FieldWorks.Common.RootSites
 					// Ignore any errors that happen when trying to set the selection. We really don't
 					// want a program to crash if it fails.
 				}
-			}
-		}
-	}
-	#endregion
-
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// Another way to request a selection at the end of the UOW.
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	public class RequestSelectionByHelper
-	{
-		private readonly IActionHandlerExtensions m_hookup;
-		private readonly SelectionHelper m_helper;
-		private readonly IVwSelection m_sel;
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Make one to establish the selection indicated by the helper when the current UOW on
-		/// the action handler completes.
-		/// </summary>
-		/// <param name="hookup">The hookup.</param>
-		/// <param name="helper">The selection helper to use.</param>
-		/// ------------------------------------------------------------------------------------
-		public RequestSelectionByHelper(IActionHandlerExtensions hookup, SelectionHelper helper) :
-			this(hookup, null, helper)
-		{
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Make one to establish the selection indicated by the helper when the current UOW on
-		/// the action handler completes, if the selection has been made invalid.
-		/// </summary>
-		/// <param name="hookup">The hookup.</param>
-		/// <param name="sel">The selection.</param>
-		/// <param name="helper">The selection helper to use if the selection has been
-		/// invalidated.</param>
-		/// ------------------------------------------------------------------------------------
-		public RequestSelectionByHelper(IActionHandlerExtensions hookup, IVwSelection sel, SelectionHelper helper)
-		{
-			m_hookup = hookup;
-			m_helper = helper;
-			m_sel = sel;
-			if (helper != null)
-				m_hookup.DoAtEndOfPropChanged(m_hookup_PropChangedCompleted);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Conditionally restores the selection and scroll position based on the selection
-		/// helper.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void m_hookup_PropChangedCompleted()
-		{
-			try
-			{
-				if (m_sel == null || !m_sel.IsValid)
-					m_helper.RestoreSelectionAndScrollPos();
-			}
-			catch (COMException)
-			{
-				Debug.Assert(false);
-				// Ignore any errors that happen when trying to set the selection. We really don't
-				// want a program to crash if it fails.
 			}
 		}
 	}

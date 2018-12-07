@@ -18,7 +18,7 @@ namespace LanguageExplorer.Controls.LexText
 	/// This class represents a Views rootsite control that is used to display a pattern.
 	/// It notifies the pattern control about key presses and right clicks.
 	/// </summary>
-	public class PatternView : RootSiteControl
+	internal class PatternView : RootSiteControl
 	{
 		public new event EventHandler SelectionChanged;
 		public event EventHandler<RemoveItemsRequestedEventArgs> RemoveItemsRequested;

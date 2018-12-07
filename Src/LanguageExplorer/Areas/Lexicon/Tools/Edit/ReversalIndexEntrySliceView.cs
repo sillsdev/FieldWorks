@@ -12,6 +12,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using System.Linq;
+using LanguageExplorer.Controls;
 using SIL.Extensions;
 using SIL.LCModel;
 using SIL.LCModel.Application;

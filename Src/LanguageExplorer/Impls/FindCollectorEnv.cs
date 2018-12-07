@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
+using LanguageExplorer.Controls;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
@@ -17,7 +18,7 @@ namespace LanguageExplorer.Impls
 	/// </summary>
 	/// <remarks>The current implementation doesn't work for different styles, tags, and WSs
 	/// that are applied by the VC.</remarks>
-	public class FindCollectorEnv : CollectorEnv, IDisposable
+	internal class FindCollectorEnv : CollectorEnv, IDisposable
 	{
 		#region Data members
 		/// <summary>Found match location</summary>

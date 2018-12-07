@@ -15,7 +15,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary>
 	/// Base class for handling things common to ReferenceView classes.
 	/// </summary>
-	public class ReferenceViewBase : RootSiteControl
+	internal class ReferenceViewBase : RootSiteControl
 	{
 		protected ICmObject m_rootObj;
 		protected int m_rootFlid;

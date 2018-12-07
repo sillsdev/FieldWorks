@@ -230,13 +230,14 @@
     <Compile Include="BasicViewTestsBase.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CollectorEnvTests.cs" />
+    <Compile Include="DisplayType.cs" />
     <Compile Include="DummyBasicView.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DummyBasicViewVc.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DummyEditingHelper.cs" />
     <Compile Include="MoreRootSiteTests.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -251,13 +252,12 @@
     <Compile Include="RootsiteBasicViewTestsBase.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="RootsiteDummyViewTestsBase.cs" />
     <Compile Include="RootSiteEditingHelperTests.cs" />
     <Compile Include="RootSiteGroupTests.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="StVcTests.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="TestLanguages.cs" />
     <Compile Include="UndoTaskHelperTests.cs">
       <SubType>Code</SubType>
     </Compile>

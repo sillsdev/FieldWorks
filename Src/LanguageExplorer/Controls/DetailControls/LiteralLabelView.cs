@@ -4,7 +4,6 @@
 
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.RootSites;
 
 namespace LanguageExplorer.Controls.DetailControls
 {

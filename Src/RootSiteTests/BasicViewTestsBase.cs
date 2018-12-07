@@ -12,16 +12,14 @@ using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Base class for tests that use <see cref="DummyBasicView"/>
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public class BasicViewTestsBase : ScrInMemoryLcmTestBase
 	{
 		/// <summary>The draft form</summary>
 		protected DummyBasicView m_basicView;
-		/// <summary></summary>
+		/// <summary />
 		protected int m_hvoRoot;
 		/// <summary>Derived class needs to initialize this with something useful</summary>
 		protected int m_flidContainingTexts;
@@ -34,22 +32,15 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary />
 		protected ISubscriber m_subscriber;
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		protected virtual DummyBasicView CreateDummyBasicView()
 		{
 			return new DummyBasicView(m_hvoRoot, m_flidContainingTexts);
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Create a new basic view
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		[SetUp]
 		public override void TestSetup()
 		{
@@ -61,8 +52,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			Debug.Assert(m_basicView == null, "m_basicView is not null.");
 			TestSetupServices.SetupTestTriumvirate(out m_propertyTable, out m_publisher, out m_subscriber);
 
-			//if (m_basicView != null)
-			//	m_basicView.Dispose();
 			m_basicView = CreateDummyBasicView();
 			m_basicView.Cache = Cache;
 			m_basicView.Visible = false;
@@ -70,12 +59,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_basicView.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Shuts down the view
 		/// </summary>
 		/// <remarks>This method is called after each test</remarks>
-		/// ------------------------------------------------------------------------------------
 		[TearDown]
 		public override void TestTearDown()
 		{
@@ -85,42 +72,28 @@ namespace SIL.FieldWorks.Common.RootSites
 			// This m_basicView needs to be disposed after LcmTestBase::TestTeardown is called.
 			base.TestTearDown();
 
-			if (m_basicView != null)
-			{
-				m_basicView.Dispose();
-			}
+			m_basicView?.Dispose();
 			m_basicView = null;
-			if (m_propertyTable != null)
-			{
-				m_propertyTable.Dispose();
-			}
+			m_propertyTable?.Dispose();
 			m_propertyTable = null;
 			m_publisher = null;
 			m_subscriber = null;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Set up the test form.
 		/// </summary>
 		/// <param name="display"></param>
-		/// ------------------------------------------------------------------------------------
-		protected virtual void ShowForm(DummyBasicViewVc.DisplayType display)
+		protected virtual void ShowForm(DisplayType display)
 		{
 			// TODO-Linux: This value works better, given mono differences. Possibly look into this further.
-			int height = Platform.IsMono ? 300 : 307 - 25;
-
-			ShowForm(display, height);
+			ShowForm(display, Platform.IsMono ? 300 : 307 - 25);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Set up the test form.
 		/// </summary>
-		/// <param name="display"></param>
-		/// <param name="height"></param>
-		/// ------------------------------------------------------------------------------------
-		protected virtual void ShowForm(DummyBasicViewVc.DisplayType display, int height)
+		protected virtual void ShowForm(DisplayType display, int height)
 		{
 			Assert.IsTrue(m_flidContainingTexts != 0, "Need to initialize m_flidContainingTexts");
 

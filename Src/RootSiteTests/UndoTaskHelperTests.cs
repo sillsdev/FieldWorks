@@ -1,131 +1,20 @@
-// Copyright (c) 2003-2016 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using NUnit.Framework;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
-using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
-	#region DummyUndoTaskHelper class
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	internal class DummyUndoTaskHelper: UndoTaskHelper
-	{
-		public static bool m_fRollbackAction = true;
-		public static bool m_fRollbackCalled = false;
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Start the undo task
-		/// </summary>
-		/// <param name="actionHandler">The action handler.</param>
-		/// <param name="rootSite">The view</param>
-		/// <param name="stid">String resource id used for Undo/Redo labels</param>
-		/// ------------------------------------------------------------------------------------
-		public DummyUndoTaskHelper(IActionHandler actionHandler, RootSite rootSite, string stid)
-			: base(actionHandler, rootSite, stid)
-		{
-		}
-
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Start the undo task
-		/// </summary>
-		/// <param name="rootSite">The view</param>
-		/// <param name="stid">String resource id used for Undo/Redo labels</param>
-		/// -----------------------------------------------------------------------------------
-		public DummyUndoTaskHelper(RootSite rootSite, string stid) : base(rootSite, stid)
-		{
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// End the undo task and call commit on root site
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected override void EndUndoTask()
-		{
-			base.EndUndoTask();
-			m_fRollbackAction = false;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Rollback to the save point
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected override void RollBackChanges()
-		{
-			base.RollBackChanges();
-			m_fRollbackCalled = true;
-		}
-	}
-	#endregion
-
-	#region UndoSelectionAction
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// Undo action for setting the selection
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	public class DummyUndoAction: UndoActionBase
-	{
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Returns <c>true</c> so that the ActionHandler will think something usefull is
-		/// going on.
-		/// </summary>
-		/// <returns>always <c>true</c></returns>
-		/// ------------------------------------------------------------------------------------
-		public override bool IsDataChange
-		{
-			get { return true; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Reverses (or "un-does") an action.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public override bool Undo()
-		{
-			// Do nothing
-			return true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Re-applies (or "re-does") an action.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public override bool Redo()
-		{
-			// Do nothing
-			return true;
-		}
-	}
-	#endregion
-
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Tests the UndoTaskHelperTests class
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
 	public class UndoTaskHelperTests : RootsiteDummyViewTestsBase
 	{
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initialize test
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public override void TestSetup()
 		{
 			base.TestSetup();
@@ -136,11 +25,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_actionHandler.EndUndoTask();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests that UndoTaskHelper begins and ends a undo task
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void BeginAndEndUndoTask()
 		{
@@ -149,16 +36,16 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_basicView.RootBox.MakeSimpleSel(true, true, false, true);
 
 			// this should begin an outer undo task, so we will have only one undoable task!
-			using(UndoTaskHelper helper = new UndoTaskHelper(m_actionHandler, m_basicView, "kstidUndoStyleChanges"))
+			using (var helper = new UndoTaskHelper(m_actionHandler, m_basicView, "kstidUndoStyleChanges"))
 			{
-				IScrBook book = Cache.ServiceLocator.GetInstance<IScrBookFactory>().Create(6);
+				var book = Cache.ServiceLocator.GetInstance<IScrBookFactory>().Create(6);
 				Cache.LanguageProject.TranslatedScriptureOA.ScriptureBooksOS.Add(book);
 
 				book = Cache.ServiceLocator.GetInstance<IScrBookFactory>().Create(7);
 				Cache.LanguageProject.TranslatedScriptureOA.ScriptureBooksOS.Add(book);
 				helper.RollBack = false;
 			}
-			int nUndoTasks = 0;
+			var nUndoTasks = 0;
 			while (m_actionHandler.CanUndo())
 			{
 				Assert.AreEqual(UndoResult.kuresSuccess, m_actionHandler.Undo());
@@ -167,12 +54,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			Assert.AreEqual(1, nUndoTasks);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests that Dispose gets called after we get an unhandled exception and that the
 		/// action is rolled back.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void EndUndoCalledAfterUnhandledException()
 		{
@@ -182,8 +67,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			try
 			{
-				using(DummyUndoTaskHelper helper = new DummyUndoTaskHelper(m_actionHandler,
-					m_basicView, "kstidUndoStyleChanges"))
+				using (new DummyUndoTaskHelper(m_actionHandler, m_basicView, "kstidUndoStyleChanges"))
 				{
 					throw new Exception(); // this throws us out of the using statement
 				}
@@ -197,11 +81,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			Assert.IsTrue(DummyUndoTaskHelper.m_fRollbackCalled);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test that Dispose gets not called after handled exception
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void EndUndoNotCalledAfterHandledException()
 		{
@@ -211,8 +93,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			try
 			{
-				using (DummyUndoTaskHelper helper = new DummyUndoTaskHelper(m_basicView,
-					"kstidUndoStyleChanges"))
+				using (new DummyUndoTaskHelper(m_basicView, "kstidUndoStyleChanges"))
 				{
 					throw new Exception();
 				}
@@ -226,11 +107,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			Assert.IsTrue(DummyUndoTaskHelper.m_fRollbackCalled);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests that a save point gets set and rolled back after exception
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void AutomaticRollbackAfterException()
 		{
@@ -240,8 +119,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			try
 			{
-				using (DummyUndoTaskHelper helper = new DummyUndoTaskHelper(m_basicView,
-					"kstidUndoStyleChanges"))
+				using (new DummyUndoTaskHelper(m_basicView, "kstidUndoStyleChanges"))
 				{
 					throw new Exception();
 				}
@@ -259,8 +137,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			DummyUndoTaskHelper.m_fRollbackCalled = false;
 			try
 			{
-				using(DummyUndoTaskHelper helper = new DummyUndoTaskHelper(m_basicView,
-					"kstidUndoStyleChanges"))
+				using (new DummyUndoTaskHelper(m_basicView, "kstidUndoStyleChanges"))
 				{
 					throw new Exception();
 				}
@@ -273,11 +150,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			Assert.IsTrue(DummyUndoTaskHelper.m_fRollbackCalled);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests that a save point gets set and not rolled back when no exception happens
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void NoRollbackAfterNoException()
 		{
@@ -285,8 +160,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			// we need a selection
 			m_basicView.RootBox.MakeSimpleSel(true, true, false, true);
 
-			using(DummyUndoTaskHelper helper = new DummyUndoTaskHelper(m_actionHandler,
-				m_basicView, "kstidUndoStyleChanges"))
+			using (var helper = new DummyUndoTaskHelper(m_actionHandler, m_basicView, "kstidUndoStyleChanges"))
 			{
 				// we have to explicitly indicate that the action not be rolled back at the end
 				// of the statements
@@ -295,6 +169,46 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			Assert.IsFalse(DummyUndoTaskHelper.m_fRollbackAction);
 			Assert.IsFalse(DummyUndoTaskHelper.m_fRollbackCalled);
+		}
+
+		/// <summary />
+		private sealed class DummyUndoTaskHelper : UndoTaskHelper
+		{
+			public static bool m_fRollbackAction = true;
+			public static bool m_fRollbackCalled = false;
+
+			/// <summary>
+			/// Start the undo task
+			/// </summary>
+			public DummyUndoTaskHelper(IActionHandler actionHandler, RootSite rootSite, string stid)
+				: base(actionHandler, rootSite, stid)
+			{
+			}
+
+			/// <summary>
+			/// Start the undo task
+			/// </summary>
+			public DummyUndoTaskHelper(RootSite rootSite, string stid) : base(rootSite, stid)
+			{
+			}
+
+			/// <summary>
+			/// End the undo task and call commit on root site
+			/// </summary>
+			protected override void EndUndoTask()
+			{
+				base.EndUndoTask();
+				m_fRollbackAction = false;
+			}
+
+			/// <summary>
+			/// Rollback to the save point
+			/// </summary>
+			protected override void RollBackChanges()
+			{
+				base.RollBackChanges();
+				m_fRollbackCalled = true;
+			}
 		}
 	}
 }

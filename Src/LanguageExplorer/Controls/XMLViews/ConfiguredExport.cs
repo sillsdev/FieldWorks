@@ -14,7 +14,6 @@ using System.Xml.Linq;
 using Icu.Collation;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
@@ -30,7 +29,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// <summary>
 	/// Summary description for ConfiguredExport.
 	/// </summary>
-	public class ConfiguredExport : CollectorEnv, ICollectPicturePathsOnly
+	internal class ConfiguredExport : CollectorEnv, ICollectPicturePathsOnly
 	{
 		private TextWriter m_writer;
 		private LcmCache m_cache;

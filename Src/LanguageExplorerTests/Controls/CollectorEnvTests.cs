@@ -3,20 +3,22 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using LanguageExplorer.Controls;
 using NUnit.Framework;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 
-namespace SIL.FieldWorks.Common.RootSites
+namespace LanguageExplorerTests.Controls
 {
 	// -----------------------------------------------------------------------------------------
 	/// <summary>
 	/// TODO: Replace DummyCollectorEnv with a Rhino Mock
 	/// </summary>
 	// -----------------------------------------------------------------------------------------
-	public class DummyCollectorEnv : CollectorEnv
+	internal class DummyCollectorEnv : CollectorEnv
 	{
 		private int m_index;
 		internal string[] m_expectedStringContents;

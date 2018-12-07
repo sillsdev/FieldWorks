@@ -5,8 +5,8 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using LanguageExplorer.Controls;
 using SIL.LCModel;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel.DomainServices;
 
@@ -15,7 +15,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// <summary>
 	/// This is a pane which shows the title and Description of the current record.
 	/// </summary>
-	public class TitleContentsPane : RootSiteControl, IInterlinearTabControl, IStyleSheet
+	internal class TitleContentsPane : RootSiteControl, IInterlinearTabControl, IStyleSheet
 	{
 		private int m_hvoRoot; // The Text.
 		private TitleContentsVc m_vc;

@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Xml.Linq;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Common.RootSites;
 
 namespace LanguageExplorer.Controls.XMLViews
 {

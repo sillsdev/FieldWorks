@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Windows.Forms;		// controls and etc...
+using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
@@ -23,7 +23,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// InnerLabeledMultiStringView displays one or more writing system alternatives of a string property.
 	/// It simply edits that property.
 	/// </summary>
-	public class InnerLabeledMultiStringView : RootSiteControl
+	internal class InnerLabeledMultiStringView : RootSiteControl
 	{
 		bool m_forceIncludeEnglish;
 		bool m_editable;

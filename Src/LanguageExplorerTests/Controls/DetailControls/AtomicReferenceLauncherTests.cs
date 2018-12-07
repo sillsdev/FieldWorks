@@ -167,7 +167,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 	/// Functions with MockAtomicReferenceLauncher to eliminate views from
 	/// these AtomicReferenceLauncher tests.
 	/// </summary>
-	public class MockAtomicReferenceView : AtomicReferenceView
+	internal class MockAtomicReferenceView : AtomicReferenceView
 	{
 		#region overrides
 

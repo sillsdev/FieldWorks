@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Controls.DetailControls
@@ -10,7 +9,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary>
 	/// The display of the media original file pathname.
 	/// </summary>
-	public class AudioVisualView : RootSiteControl
+	internal class AudioVisualView : RootSiteControl
 	{
 		internal const int kfragPathname = 0;
 

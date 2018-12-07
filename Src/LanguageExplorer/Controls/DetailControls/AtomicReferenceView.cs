@@ -14,7 +14,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary>
 	/// Main class for displaying the AtomicReferenceSlice.
 	/// </summary>
-	public class AtomicReferenceView : ReferenceViewBase
+	internal class AtomicReferenceView : ReferenceViewBase
 	{
 		#region Constants and data members
 

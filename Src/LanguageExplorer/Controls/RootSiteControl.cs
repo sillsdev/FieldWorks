@@ -1,27 +1,26 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Windows.Forms;
 using System.Diagnostics;
+using System.Windows.Forms;
+using SIL.FieldWorks.Common.RootSites;
 
-namespace SIL.FieldWorks.Common.RootSites
+namespace LanguageExplorer.Controls
 {
 	/// <summary>
 	/// This class provides for required behavior when a RootSite class is used as a control on a form.
 	/// Specifically, it deals with Tabbing issues.
 	/// </summary>
-	public class RootSiteControl : RootSite
+	internal class RootSiteControl : RootSite
 	{
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		private System.ComponentModel.Container components = null;
+		private System.ComponentModel.Container components;
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
+		/// <summary />
 		public RootSiteControl() : base(null)
 		{
 			// This call is required by the Windows.Forms Form Designer.
@@ -29,24 +28,19 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			// RootSiteControl should handle tabs like a control
 			AcceptsTab = false;
-			//this.VScroll = false; // no vertical scroll bar visible.
-			//this.AutoScroll = false; // not even if the root box is bigger than the window.
 			SuppressPrintHandling = true; // Controls shouldn't handle OnPrint.
 		}
 
 		#region Control handling methods
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// When we get focus, start filtering messages to catch characters
 		/// </summary>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
 		protected override void OnGotFocus(EventArgs e)
 		{
 			if (Parent is IContainerControl)
 			{
-				IContainerControl uc = (IContainerControl)Parent;
+				var uc = (IContainerControl)Parent;
 				uc.ActiveControl = this;
 			}
 			base.OnGotFocus(e);
@@ -64,26 +58,23 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		#endregion Control Handling methods
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
-			// Must not be run more than once.
 			if (IsDisposed)
-				return;
-
-			base.Dispose( disposing );
-
-			if( disposing )
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
+				// No need to run it more than once.
+				return;
+			}
+
+			base.Dispose(disposing);
+
+			if (disposing)
+			{
+				components?.Dispose();
 			}
 		}
 

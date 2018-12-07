@@ -6,38 +6,30 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.Core.SpellChecking;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.SpellChecking;
+using SIL.LCModel.Core.Text;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Class to facilitate adding spell-check items to menus and handling their events.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public class SpellCheckHelper
 	{
 		/// <summary>The Cache</summary>
 		protected LcmCache m_cache;
 
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
+		/// <summary />
 		public SpellCheckHelper(LcmCache cache)
 		{
 			m_cache = cache;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Creates and shows a context menu with spelling suggestions.
 		/// </summary>
@@ -46,7 +38,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="rootsite">The focused rootsite</param>
 		/// <returns><c>true</c> if a menu was created and shown (with at least one item);
 		/// <c>false</c> otherwise</returns>
-		/// -----------------------------------------------------------------------------------
 		public bool ShowContextMenu(Point pt, SimpleRootSite rootsite)
 		{
 			using (var menu = new ContextMenuStrip())
@@ -82,7 +73,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// If the mousePos is part of a word that is not properly spelled, add to the menu
 		/// options for correcting it.
@@ -92,30 +82,32 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="rootsite">The focused rootsite</param>
 		/// <param name="menu">to add items to.</param>
 		/// <returns>the number of menu items added (not counting a possible separator line)</returns>
-		/// -----------------------------------------------------------------------------------
 		public virtual int MakeSpellCheckMenuOptions(Point pt, SimpleRootSite rootsite, ContextMenuStrip menu)
 		{
 			int hvoObj, tag, wsAlt, wsText;
 			string word;
 			ISpellEngine dict;
 			bool nonSpellingError;
-			ICollection<SpellCorrectMenuItem> suggestions = GetSuggestions(pt, rootsite, out hvoObj, out tag, out wsAlt, out wsText, out word, out dict, out nonSpellingError);
+			var suggestions = GetSuggestions(pt, rootsite, out hvoObj, out tag, out wsAlt, out wsText, out word, out dict, out nonSpellingError);
 			if (suggestions == null)
+			{
 				return 0;
+			}
 			// no detectable spelling problem.
 
 			// Note that items are inserted in order starting at the beginning, rather than
 			// added to the end.  This is to support TE-6901.
 			// If the menu isn't empty, add a separator.
 			if (menu.Items.Count > 0)
+			{
 				menu.Items.Insert(0, new ToolStripSeparator());
-
+			}
 			// Make the menu option.
 			ToolStripMenuItem itemExtras = null;
-			int cSuggestions = 0;
-			int iMenuItem = 0;
-			IVwRootBox rootb = rootsite.RootBox;
-			foreach (SpellCorrectMenuItem subItem in suggestions)
+			var cSuggestions = 0;
+			var iMenuItem = 0;
+			var rootb = rootsite.RootBox;
+			foreach (var subItem in suggestions)
 			{
 				subItem.Click += spellingMenuItemClick;
 				if (cSuggestions++ < RootSiteEditingHelper.kMaxSpellingSuggestionsInRootMenu)
@@ -123,23 +115,18 @@ namespace SIL.FieldWorks.Common.RootSites
 					Font createdFont = null;
 					try
 					{
-					Font font = subItem.Font;
-					if (wsText != 0)
-					{
+						var font = subItem.Font;
+						if (wsText != 0)
+						{
 							font = createdFont = FontHeightAdjuster.GetFontForNormalStyle(wsText, rootb.Stylesheet,
 							rootb.DataAccess.WritingSystemFactory);
-						//string familyName = rootb.DataAccess.WritingSystemFactory.get_EngineOrNull(wsText).DefaultBodyFont;
-						//font = new Font(familyName, font.Size, FontStyle.Bold);
+						}
+						subItem.Font = new Font(font, FontStyle.Bold);
+						menu.Items.Insert(iMenuItem++, subItem);
 					}
-
-					subItem.Font = new Font(font, FontStyle.Bold);
-
-					menu.Items.Insert(iMenuItem++, subItem);
-				}
 					finally
 					{
-						if (createdFont != null)
-							createdFont.Dispose();
+						createdFont?.Dispose();
 					}
 				}
 				else
@@ -154,31 +141,30 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			if (suggestions.Count == 0)
 			{
-				ToolStripMenuItem noSuggestItems = new ToolStripMenuItem(RootSiteStrings.ksNoSuggestions);
+				var noSuggestItems = new ToolStripMenuItem(RootSiteStrings.ksNoSuggestions);
 				menu.Items.Insert(iMenuItem++, noSuggestItems);
 				noSuggestItems.Enabled = false;
 			}
-			ToolStripMenuItem itemAdd = new AddToDictMenuItem(dict, word, rootb,
-				hvoObj, tag, wsAlt, wsText, RootSiteStrings.ksAddToDictionary, m_cache);
+			ToolStripMenuItem itemAdd = new AddToDictMenuItem(dict, word, rootb, hvoObj, tag, wsAlt, wsText, RootSiteStrings.ksAddToDictionary, m_cache);
 			if (nonSpellingError)
+			{
 				itemAdd.Enabled = false;
+			}
 			menu.Items.Insert(iMenuItem++, itemAdd);
 			itemAdd.Image = Resources.ResourceHelper.SpellingIcon;
 			itemAdd.Click += spellingMenuItemClick;
 			return iMenuItem;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handler for the Click event for items on the spelling context menu.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		void spellingMenuItemClick(object sender, EventArgs e)
+		private static void spellingMenuItemClick(object sender, EventArgs e)
 		{
-			SpellCorrectMenuItem item = sender as SpellCorrectMenuItem;
+			var item = sender as SpellCorrectMenuItem;
 			if (item == null)
 			{
-				AddToDictMenuItem dict = sender as AddToDictMenuItem;
+				var dict = sender as AddToDictMenuItem;
 				Debug.Assert(dict != null, "invalid sender of spell check item");
 				dict.AddWordToDictionary();
 			}
@@ -188,7 +174,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Get a list of suggested corrections if the selection is a spelling or similar error.
 		/// Returns null if there is no problem at the selection location.
@@ -204,7 +189,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// spelling engine. Much of this information is already known to the
 		/// SpellCorrectMenuItems returned, but some clients use it in creating other menu options.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public ICollection<SpellCorrectMenuItem> GetSuggestions(Point mousePos,
 			SimpleRootSite rootsite, out int hvoObj, out int tag, out int wsAlt, out int wsText,
 			out string word, out ISpellEngine dict, out bool nonSpellingError)
@@ -214,19 +198,21 @@ namespace SIL.FieldWorks.Common.RootSites
 			dict = null;
 			nonSpellingError = true;
 
-			IVwRootBox rootb = rootsite != null ? rootsite.RootBox : null;
+			var rootb = rootsite?.RootBox;
 			if (rootb == null)
+			{
 				return null;
-
+			}
 			// Get a selection at the indicated point.
-			IVwSelection sel = rootsite.GetSelectionAtPoint(mousePos, false);
+			var sel = rootsite.GetSelectionAtPoint(mousePos, false);
 
 			// Get the selected word and verify that it is a single run within a single
 			// editable string.
-			if (sel != null)
-				sel = sel.GrowToWord();
+			sel = sel?.GrowToWord();
 			if (sel == null || !sel.IsRange || sel.SelType != VwSelType.kstText || !SelectionHelper.IsEditable(sel))
+			{
 				return null;
+			}
 			ITsString tss;
 			bool fAssocPrev;
 			int ichAnchor;
@@ -234,101 +220,112 @@ namespace SIL.FieldWorks.Common.RootSites
 			int ichEnd, hvoObjE, tagE, wsE;
 			sel.TextSelInfo(true, out tss, out ichEnd, out fAssocPrev, out hvoObjE, out tagE, out wsE);
 			if (hvoObj != hvoObjE || tag != tagE || wsAlt != wsE)
+			{
 				return null;
-
-			int ichMin = Math.Min(ichEnd, ichAnchor);
-			int ichLim = Math.Max(ichEnd, ichAnchor);
-
-			ILgWritingSystemFactory wsf = rootsite.RootBox.DataAccess.WritingSystemFactory;
+			}
+			var ichMin = Math.Min(ichEnd, ichAnchor);
+			var ichLim = Math.Max(ichEnd, ichAnchor);
+			var wsf = rootsite.RootBox.DataAccess.WritingSystemFactory;
 
 			// May need to enlarge the word beyond what GrowToWord does, if there is adjacent wordforming material.
-			int ichMinAdjust = AdjustWordBoundary(wsf, tss, false, ichMin, 0) + 1; // further expanded start of word.
-			int ichLimAdjust = AdjustWordBoundary(wsf, tss, true, ichLim - 1, tss.Length); // further expanded lim of word.
+			var ichMinAdjust = AdjustWordBoundary(wsf, tss, false, ichMin, 0) + 1; // further expanded start of word.
+			// further expanded lim of word.
+			var ichLimAdjust = AdjustWordBoundary(wsf, tss, true, ichLim - 1, tss.Length);
 			// From the ends we can strip stuff with different spell-checking properties.
-			IVwStylesheet styles = rootsite.RootBox.Stylesheet;
-			int spellProps = SpellCheckProps(tss, ichMin, styles);
+			var styles = rootsite.RootBox.Stylesheet;
+			var spellProps = SpellCheckProps(tss, ichMin, styles);
 			while (ichMinAdjust < ichMin && SpellCheckProps(tss, ichMinAdjust, styles) != spellProps)
+			{
 				ichMinAdjust++;
+			}
 			while (ichLimAdjust > ichLim && SpellCheckProps(tss, ichLimAdjust - 1, styles) != spellProps)
+			{
 				ichLimAdjust--;
+			}
 			ichMin = ichMinAdjust;
 			ichLim = ichLimAdjust;
 
 			// Now we have the specific range we will check. Get the actual string.
-			ITsStrBldr bldr = tss.GetBldr();
+			var bldr = tss.GetBldr();
 			if (ichLim < bldr.Length)
+			{
 				bldr.ReplaceTsString(ichLim, bldr.Length, null);
+			}
 			if (ichMin > 0)
+			{
 				bldr.ReplaceTsString(0, ichMin, null);
-			ITsString tssWord = bldr.GetString();
-
+			}
+			var tssWord = bldr.GetString();
 			// See whether we need the special blue underline, which is used mainly for adjacent words in different writing systems.
-			List<int> wss = TsStringUtils.GetWritingSystems(tssWord);
+			var wss = TsStringUtils.GetWritingSystems(tssWord);
 			if (wss.Count > 1)
+			{
 				return MakeWssSuggestions(tssWord, wss, rootb, hvoObj, tag, wsAlt, ichMin, ichLim);
+			}
 			ITsString keepOrcs; // holds any ORCs we found in the original word that we need to keep rather than reporting.
-			IList<SpellCorrectMenuItem> result = MakeEmbeddedNscSuggestion(ref tssWord, styles, rootb,
-				hvoObj, tag, wsAlt, ichMin, ichLim, out keepOrcs);
+			var result = MakeEmbeddedNscSuggestion(ref tssWord, styles, rootb, hvoObj, tag, wsAlt, ichMin, ichLim, out keepOrcs);
 			if (result.Count > 0)
+			{
 				return result;
-
+			}
 			// Determine whether it is a spelling problem.
 			wsText = TsStringUtils.GetWsOfRun(tssWord, 0);
 			dict = SpellingHelper.GetSpellChecker(wsText, wsf);
 			if (dict == null)
+			{
 				return null;
+			}
 			word = tssWord.get_NormalizedForm(FwNormalizationMode.knmNFC).Text;
 			if (word == null)
+			{
 				return null; // don't think this can happen, but...
+			}
 			if (dict.Check(word))
+			{
 				return null; // not mis-spelled.
-
+			}
 			// Get suggestions. Make sure to return an empty collection rather than null, even if no suggestions,
 			// to indicate an error.
-			ICollection<string> suggestions = dict.Suggest(word);
-			foreach (string suggest in suggestions)
+			var suggestions = dict.Suggest(word);
+			foreach (var suggest in suggestions)
 			{
-				ITsString replacement = TsStringUtils.MakeString(suggest, wsText);
+				var replacement = TsStringUtils.MakeString(suggest, wsText);
 				if (keepOrcs != null)
 				{
-					ITsStrBldr bldrRep = keepOrcs.GetBldr();
+					var bldrRep = keepOrcs.GetBldr();
 					bldrRep.ReplaceTsString(0, 0, replacement);
 					replacement = bldrRep.GetString();
 				}
-				result.Add(new SpellCorrectMenuItem(rootb, hvoObj, tag, wsAlt, ichMin, ichLim, suggest,
-					replacement));
+				result.Add(new SpellCorrectMenuItem(rootb, hvoObj, tag, wsAlt, ichMin, ichLim, suggest, replacement));
 			}
 			nonSpellingError = false; // it IS a spelling problem.
 			return result;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Given a start character position that is within a word, and a direction
 		/// return the index of the first non-wordforming (and non-number) character in that direction,
 		/// or -1 if the start of the string is reached, or string.Length if the end is reached.
 		/// For our purposes here, ORC (0xfffc) is considered word-forming.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private int AdjustWordBoundary(ILgWritingSystemFactory wsf, ITsString tss, bool forward,
-			int ichStart, int lim)
+		private int AdjustWordBoundary(ILgWritingSystemFactory wsf, ITsString tss, bool forward, int ichStart, int lim)
 		{
 			int ich;
 			for (ich = NextCharIndex(tss, forward, ichStart); !BeyondLim(forward, ich, lim); ich = NextCharIndex(tss, forward, ich))
 			{
-				int ch = tss.CharAt(ich);
-				ILgWritingSystem ws = wsf.get_EngineOrNull(tss.get_WritingSystemAt(ich));
+				var ch = tss.CharAt(ich);
+				var ws = wsf.get_EngineOrNull(tss.get_WritingSystemAt(ich));
 				if (!ws.get_IsWordForming(ch) && !Icu.Character.IsNumeric(ch) && ch != 0xfffc)
+				{
 					break;
+				}
 			}
 			return ich;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Determins whether ich has passed the limit
+		/// Determines whether ich has passed the limit
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private static bool BeyondLim(bool forward, int ich, int lim)
 		{
 			return forward ? ich >= lim : ich < lim;
@@ -339,7 +336,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			return forward ? tss.NextCharIndex(ich) : tss.PrevCharIndex(ich);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Answer the spelling status of the indicated character in the string, unless it is an
 		/// ORC, in which case, for each ORC we answer a different value (that is not any of the
@@ -347,8 +343,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Enhance JohnT: we don't want to consider embedded-picture ORCs to count as
 		/// different; we may strip them out before we start checking the word.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		int SpellCheckProps(ITsString tss, int ich, IVwStylesheet styles)
+		private static int SpellCheckProps(ITsString tss, int ich, IVwStylesheet styles)
 		{
 			// For our purposes here, ORC (0xfffc) is considered to have a different spelling status from everything else,
 			// even from every other ORC in the string. This means we always offer to insert spaces adjacent to them.
@@ -356,27 +351,25 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				return -50 - ich;
 			}
-			ITsTextProps props = tss.get_PropertiesAt(ich);
-			string style = props.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
+			var props = tss.get_PropertiesAt(ich);
+			var style = props.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
 			int var, val;
 			if (styles != null && !string.IsNullOrEmpty(style))
 			{
-				ITsTextProps styleProps = styles.GetStyleRgch(style.Length, style);
+				var styleProps = styles.GetStyleRgch(style.Length, style);
 				if (styleProps != null)
 				{
 					val = styleProps.GetIntPropValues((int)FwTextPropType.ktptSpellCheck, out var);
 					if (var != -1)
+					{
 						return val; // style overrides
+					}
 				}
 			}
 			val = props.GetIntPropValues((int)FwTextPropType.ktptSpellCheck, out var);
-			if (var == -1)
-				return 0; // treat unspecified the same as default.
-			else
-				return val;
+			return var == -1 ? 0 : val;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Make 'suggestion' menu items for the case where the 'word' contains embedded stuff that we don't spell-check
 		/// (typically CV numbers) or ORCs. The current suggestion inserts spaces adjacent to the embedded stuff.
@@ -388,31 +381,30 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// affect the menu options offered, but they must not be replaced by a new spelling. If these are found, we update
 		/// tssWord to something that does not contain them, and retain the orcs to append to any substitutions (returned in tssKeepOrcs).
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private IList<SpellCorrectMenuItem> MakeEmbeddedNscSuggestion(ref ITsString tssWord, IVwStylesheet styles, IVwRootBox rootb,
 			int hvoObj, int tag, int wsAlt, int ichMin, int ichLim, out ITsString tssKeepOrcs)
 		{
-			List<SpellCorrectMenuItem> result = new List<SpellCorrectMenuItem>();
+			var result = new List<SpellCorrectMenuItem>();
 			// Make an item with inserted spaces.
-			ITsStrBldr bldr = tssWord.GetBldr();
-			int spCur = SpellCheckProps(tssWord, 0, styles);
-			int offset = 0;
-			bool foundDiff = false;
-			bool fHasOrc = false;
+			var bldr = tssWord.GetBldr();
+			var spCur = SpellCheckProps(tssWord, 0, styles);
+			var offset = 0;
+			var foundDiff = false;
+			var fHasOrc = false;
 			ITsStrBldr bldrWord = null;
 			ITsStrBldr bldrKeepOrcs = null;
-			int bldrWordOffset = 0;
+			var bldrWordOffset = 0;
 			// Start at 0 even though we already got its props, because it just might be an ORC.
-			for (int ich = 0; ich < tssWord.Length; ich++)
+			for (var ich = 0; ich < tssWord.Length; ich++)
 			{
 				if (tssWord.GetChars(ich, ich + 1) == "\xfffc")
 				{
-					ITsTextProps ttp = tssWord.get_PropertiesAt(ich);
-					string objData = ttp.GetStrPropValue((int)FwTextPropType.ktptObjData);
+					var ttp = tssWord.get_PropertiesAt(ich);
+					var objData = ttp.GetStrPropValue((int)FwTextPropType.ktptObjData);
 					if (objData.Length == 0 || objData[0] != Convert.ToChar((int)FwObjDataTypes.kodtGuidMoveableObjDisp))
 					{
 						fHasOrc = true;
-						int ichInsert = ich + offset;
+						var ichInsert = ich + offset;
 						bldr.Replace(ichInsert, ichInsert, " ", null);
 						spCur = -50 - ich; // Same trick as SpellCheckProps to ensure won't match anything following.
 						offset++;
@@ -437,10 +429,10 @@ namespace SIL.FieldWorks.Common.RootSites
 				}
 				else // not an orc, see if props changed.
 				{
-					int spNew = SpellCheckProps(tssWord, ich, styles);
+					var spNew = SpellCheckProps(tssWord, ich, styles);
 					if (spNew != spCur)
 					{
-						int ichInsert = ich + offset;
+						var ichInsert = ich + offset;
 						bldr.Replace(ichInsert, ichInsert, " ", null);
 						spCur = spNew;
 						offset++;
@@ -458,297 +450,62 @@ namespace SIL.FieldWorks.Common.RootSites
 				tssKeepOrcs = null;
 			}
 			if (!foundDiff)
+			{
 				return result;
-			ITsString suggest = bldr.GetString();
+			}
+			var suggest = bldr.GetString();
 			// There might still be an ORC in the string, in the pathological case of a picture anchor and embedded verse number
 			// in the same word(!). Leave it in the replacement, but not in the menu item.
-			string menuItemText = suggest.Text.Replace("\xfffc", "");
+			var menuItemText = suggest.Text.Replace("\xfffc", "");
 			if (fHasOrc)
+			{
 				menuItemText = RootSiteStrings.ksInsertMissingSpaces;
+			}
 			result.Add(new SpellCorrectMenuItem(rootb, hvoObj, tag, wsAlt, ichMin, ichLim, menuItemText, suggest));
 			return result;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets a collection of suggestions for what to do when a "word" consists of multiple
 		/// writing systems
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private ICollection<SpellCorrectMenuItem> MakeWssSuggestions(ITsString tssWord,
-			List<int> wss, IVwRootBox rootb, int hvoObj, int tag, int wsAlt,
-			int ichMin, int ichLim)
+			List<int> wss, IVwRootBox rootb, int hvoObj, int tag, int wsAlt, int ichMin, int ichLim)
 		{
-			List<SpellCorrectMenuItem> result = new List<SpellCorrectMenuItem>(wss.Count + 1);
-
+			var result = new List<SpellCorrectMenuItem>(wss.Count + 1);
 			// Make an item with inserted spaces.
-			ITsStrBldr bldr = tssWord.GetBldr();
-			int wsFirst = TsStringUtils.GetWsOfRun(tssWord, 0);
-			int offset = 0;
-			for (int irun = 1; irun < tssWord.RunCount; irun++)
+			var bldr = tssWord.GetBldr();
+			var wsFirst = TsStringUtils.GetWsOfRun(tssWord, 0);
+			var offset = 0;
+			for (var irun = 1; irun < tssWord.RunCount; irun++)
 			{
-				int wsNew = TsStringUtils.GetWsOfRun(tssWord, irun);
+				var wsNew = TsStringUtils.GetWsOfRun(tssWord, irun);
 				if (wsNew != wsFirst)
 				{
-					int ichInsert = tssWord.get_MinOfRun(irun) + offset;
+					var ichInsert = tssWord.get_MinOfRun(irun) + offset;
 					bldr.Replace(ichInsert, ichInsert, " ", null);
 					wsFirst = wsNew;
 					offset++;
 				}
 			}
-			ITsString suggest = bldr.GetString();
-			string menuItemText = suggest.Text;
+			var suggest = bldr.GetString();
+			var menuItemText = suggest.Text;
 			result.Add(new SpellCorrectMenuItem(rootb, hvoObj, tag, wsAlt, ichMin, ichLim, menuItemText, suggest));
 
 			// And items for each writing system.
-			foreach (int ws in wss)
+			foreach (var ws in wss)
 			{
 				bldr = tssWord.GetBldr();
 				bldr.SetIntPropValues(0, bldr.Length, (int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, ws);
 				suggest = bldr.GetString();
-				ILgWritingSystemFactory wsf = rootb.DataAccess.WritingSystemFactory;
-				ILgWritingSystem engine = wsf.get_EngineOrNull(ws);
-				string wsName = engine.LanguageName;
-				string itemText = string.Format(RootSiteStrings.ksMlStringIsMono, tssWord.Text, wsName);
+				var wsf = rootb.DataAccess.WritingSystemFactory;
+				var engine = wsf.get_EngineOrNull(ws);
+				var wsName = engine.LanguageName;
+				var itemText = string.Format(RootSiteStrings.ksMlStringIsMono, tssWord.Text, wsName);
 				result.Add(new SpellCorrectMenuItem(rootb, hvoObj, tag, wsAlt, ichMin, ichLim, itemText, suggest));
 			}
 
 			return result;
 		}
-	}
-
-	/// <summary>
-	/// Menu item subclass containing the information needed to correct a spelling error.
-	/// </summary>
-	public class SpellCorrectMenuItem : ToolStripMenuItem
-	{
-		private readonly IVwRootBox m_rootb;
-		private readonly int m_hvoObj;
-		private readonly int m_tag;
-		private readonly int m_wsAlt; // 0 if not multilingual--not yet implemented.
-		private readonly int m_ichMin; // where to make the change.
-		private readonly int m_ichLim; // end of string to replace
-		private readonly ITsString m_tssReplacement;
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public SpellCorrectMenuItem(IVwRootBox rootb, int hvoObj, int tag, int wsAlt, int ichMin, int ichLim, string text, ITsString tss)
-			: base(text)
-		{
-			m_rootb = rootb;
-			m_hvoObj = hvoObj;
-			m_tag = tag;
-			m_wsAlt = wsAlt;
-			m_ichMin = ichMin;
-			m_ichLim = ichLim;
-			m_tssReplacement = tss;
-		}
-
-		/// <summary/>
-		protected override void Dispose(bool disposing)
-		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
-			base.Dispose(disposing);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void DoIt()
-		{
-			m_rootb.DataAccess.BeginUndoTask(RootSiteStrings.ksUndoCorrectSpelling, RootSiteStrings.ksRedoSpellingChange);
-			ITsString tssInput;
-			if (m_wsAlt == 0)
-				tssInput = m_rootb.DataAccess.get_StringProp(m_hvoObj, m_tag);
-			else
-				tssInput = m_rootb.DataAccess.get_MultiStringAlt(m_hvoObj, m_tag, m_wsAlt);
-			ITsStrBldr bldr = tssInput.GetBldr();
-			bldr.ReplaceTsString(m_ichMin, m_ichLim, m_tssReplacement);
-			if (m_wsAlt == 0)
-				m_rootb.DataAccess.SetString(m_hvoObj, m_tag, bldr.GetString());
-			else
-				m_rootb.DataAccess.SetMultiStringAlt(m_hvoObj, m_tag, m_wsAlt, bldr.GetString());
-			m_rootb.PropChanged(m_hvoObj, m_tag, m_wsAlt, 1, 1);
-			m_rootb.DataAccess.EndUndoTask();
-		}
-	}
-
-	/// ------------------------------------------------------------------------------------
-	/// <summary>
-	/// Menu item subclass containing the information needed to add an item to a dictionary.
-	/// </summary>
-	/// ------------------------------------------------------------------------------------
-	public class AddToDictMenuItem : ToolStripMenuItem
-	{
-		private readonly ISpellEngine m_dict;
-		private readonly string m_word;
-		private readonly IVwRootBox m_rootb;
-		private readonly int m_hvoObj;
-		private readonly int m_tag;
-		private readonly int m_wsAlt; // 0 if not multilingual--not yet implemented.
-		private readonly int m_wsText; // ws of actual word
-		private readonly LcmCache m_cache;
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		internal AddToDictMenuItem(ISpellEngine dict, string word, IVwRootBox rootb,
-			int hvoObj, int tag, int wsAlt, int wsText, string text, LcmCache cache)
-			: base(text)
-		{
-			m_rootb = rootb;
-			m_dict = dict;
-			m_word = word;
-			m_hvoObj = hvoObj;
-			m_tag = tag;
-			m_wsAlt = wsAlt;
-			m_wsText = wsText;
-			m_cache = cache;
-		}
-
-		/// <summary/>
-		protected override void Dispose(bool disposing)
-		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
-			base.Dispose(disposing);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Add the current word to the dictionary.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void AddWordToDictionary()
-		{
-			m_rootb.DataAccess.BeginUndoTask(RootSiteStrings.ksUndoAddToSpellDictionary,
-				RootSiteStrings.ksRedoAddToSpellDictionary);
-			if (m_rootb.DataAccess.GetActionHandler() != null)
-				m_rootb.DataAccess.GetActionHandler().AddAction(new UndoAddToSpellDictAction(m_wsText, m_word, m_rootb,
-				m_hvoObj, m_tag, m_wsAlt));
-			AddToSpellDict(m_dict, m_word, m_wsText);
-			m_rootb.PropChanged(m_hvoObj, m_tag, m_wsAlt, 1, 1);
-			m_rootb.DataAccess.EndUndoTask();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// This information is useful for an override of MakeSpellCheckMenuOptions in TeEditingHelper.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string Word
-		{
-			get { return m_word; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// The writing system of the actual mis-spelled word.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public int WritingSystem
-		{
-			get { return m_wsText; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Add the word to the spelling dictionary.
-		/// Overrides to also add to the wordform inventory.
-		/// </summary>
-		/// <param name="dict"></param>
-		/// <param name="word"></param>
-		/// <param name="ws"></param>
-		/// ------------------------------------------------------------------------------------
-		private void AddToSpellDict(ISpellEngine dict, string word, int ws)
-		{
-			dict.SetStatus(word, true);
-
-			if (m_cache == null)
-				return; // bizarre, but means we just can't do it.
-
-			// If it's in a current vernacular writing system, we want to update the WFI as well.
-			if (!m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Any(wsObj => wsObj.Handle == ws))
-				return;
-			// Now get matching wordform (create if needed).
-			var servLoc = m_cache.ServiceLocator;
-			var wf = servLoc.GetInstance<IWfiWordformRepository>().GetMatchingWordform(ws, word);
-			if (wf == null)
-			{
-				// Create it. (Caller has already started the UOW.)
-				wf = servLoc.GetInstance<IWfiWordformFactory>().Create(
-								TsStringUtils.MakeString(word, ws));
-			}
-			wf.SpellingStatus = (int)SpellingStatusStates.correct;
-		}
-	}
-
-	/// ------------------------------------------------------------------------------------
-	/// <summary>
-	/// Supports undoing and redoing adding an item to a dictionary
-	/// </summary>
-	/// ------------------------------------------------------------------------------------
-	class UndoAddToSpellDictAction : IUndoAction
-	{
-		private readonly int m_wsText;
-		private readonly string m_word;
-		private readonly int m_hvoObj;
-		private readonly int m_tag;
-		private readonly int m_wsAlt;
-		private readonly IVwRootBox m_rootb;
-
-		public UndoAddToSpellDictAction(int wsText, string word, IVwRootBox rootb,
-			int hvoObj, int tag, int wsAlt)
-		{
-			m_wsText = wsText;
-			m_word = word;
-			m_hvoObj = hvoObj;
-			m_tag = tag;
-			m_wsAlt = wsAlt;
-			m_rootb = rootb;
-		}
-
-		#region IUndoAction Members
-
-		public void Commit()
-		{
-		}
-
-		public bool IsDataChange
-		{
-			get { return true; }
-		}
-
-		public bool IsRedoable
-		{
-			get { return true; }
-		}
-
-		public bool Redo()
-		{
-			SpellingHelper.SetSpellingStatus(m_word, m_wsText, m_rootb.DataAccess.WritingSystemFactory, true);
-			m_rootb.PropChanged(m_hvoObj, m_tag, m_wsAlt, 1, 1);
-			return true;
-		}
-
-		public bool SuppressNotification
-		{
-			set { }
-		}
-
-		public bool Undo()
-		{
-			SpellingHelper.SetSpellingStatus(m_word, m_wsText, m_rootb.DataAccess.WritingSystemFactory, false);
-			m_rootb.PropChanged(m_hvoObj, m_tag, m_wsAlt, 1, 1);
-			return true;
-		}
-
-		#endregion
 	}
 }
