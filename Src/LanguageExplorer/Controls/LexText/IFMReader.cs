@@ -4,7 +4,7 @@
 
 using System.Collections;
 using System.Xml;
-using Sfm2Xml;
+using LanguageExplorer.SfmToXml;
 
 namespace LanguageExplorer.Controls.LexText
 {
@@ -22,7 +22,7 @@ namespace LanguageExplorer.Controls.LexText
 				foreach(DictionaryEntry entry in languages)
 				{
 					var lang = entry.Value as LanguageInfoUI;
-					m_Languages.Add(lang.Key, lang.ClsLanguage);
+					LanguagesHashTable.Add(lang.Key, lang.ClsLanguage);
 				}
 				xmlMap.Load(mapFile);
 				ReadInFieldMarkers(xmlMap);

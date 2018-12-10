@@ -29,7 +29,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			m_sConverter = sConverter;
 			if (string.IsNullOrEmpty(m_sConverter))
 			{
-				m_sConverter = Sfm2Xml.STATICS.AlreadyInUnicode;
+				m_sConverter = SfmToXml.SfmToXmlServices.AlreadyInUnicode;
 			}
 			wsManager.GetOrSet(sWs, out m_ws);
 		}
@@ -50,7 +50,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				m_sConverter = value;
 				if (string.IsNullOrEmpty(m_sConverter))
 				{
-					m_sConverter = Sfm2Xml.STATICS.AlreadyInUnicode;
+					m_sConverter = SfmToXml.SfmToXmlServices.AlreadyInUnicode;
 				}
 				Converter = null;
 			}

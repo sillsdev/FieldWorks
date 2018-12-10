@@ -3,7 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using Sfm2Xml;
+using LanguageExplorer.SfmToXml;
 
 namespace LanguageExplorer.Controls.LexText
 {
@@ -14,15 +14,13 @@ namespace LanguageExplorer.Controls.LexText
 	/// </summary>
 	public class ContentMapping
 	{
-		private string m_marker;            // marker
-
-		private Sfm2Xml.ClsFieldDescription m_clsFieldDescription;
-		private Sfm2Xml.LexImportField m_LexImportField;
+		private ClsFieldDescription m_clsFieldDescription;
+		private LexImportField m_LexImportField;
 
 		public static string Ignore() { return LexTextControls.ksIgnore; }
 		public static string Unknown() { return LexTextControls.ksUnknown; }
 
-		public string Marker => m_marker;
+		public string Marker { get; }
 
 		public string Description { get; set; }
 
@@ -44,9 +42,9 @@ namespace LanguageExplorer.Controls.LexText
 
 		public bool IsBeginMarker { get; set; }
 
-		public void UpdateLangaugeValues(string writingsystemName, string shortName, string langDescriptor)
+		public void UpdateLanguageValues(string writingSystemName, string shortName, string langDescriptor)
 		{
-			WritingSystem = writingsystemName;
+			WritingSystem = writingSystemName;
 			LanguageDescriptorRaw = langDescriptor;
 			m_clsFieldDescription.UpdateLanguageValues(LanguageDescriptorRaw, shortName);
 		}
@@ -56,7 +54,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		public int Order { get; set; }
 
-		public void AddLexImportCustomField(Sfm2Xml.ILexImportField field, string uiClass)
+		public void AddLexImportCustomField(ILexImportField field, string uiClass)
 		{
 			AddLexImportField(field);
 			((ILexImportCustomField)m_LexImportField).UIClass = uiClass;
@@ -64,7 +62,7 @@ namespace LanguageExplorer.Controls.LexText
 			m_clsFieldDescription = xyz;
 		}
 
-		public void AddLexImportField(Sfm2Xml.ILexImportField field)
+		public void AddLexImportField(ILexImportField field)
 		{
 			m_LexImportField = field as LexImportField;
 			m_clsFieldDescription.Type = field != null ? field.DataType : "string";
@@ -157,9 +155,9 @@ namespace LanguageExplorer.Controls.LexText
 		}
 
 		public ContentMapping(string marker, string desc, string className, string fwDest,
-			string ws, string langDescriptor, int count, int order, Sfm2Xml.ClsFieldDescription fdesc, bool isCustom)
+			string ws, string langDescriptor, int count, int order, ClsFieldDescription fdesc, bool isCustom)
 		{
-			m_marker = marker;
+			Marker = marker;
 			Description = desc;
 			RawDestinationField = fwDest;
 			WritingSystem = ws;
@@ -178,7 +176,7 @@ namespace LanguageExplorer.Controls.LexText
 				else
 				{
 					m_clsFieldDescription = new ClsCustomFieldDescription(string.Empty, string.Empty, /*System.Guid.NewGuid(),*/ 0, false, 0,
-						m_marker, " ", "string", LanguageDescriptorRaw, IsAbbrvField, RawDestinationField);
+						Marker, " ", "string", LanguageDescriptorRaw, IsAbbrvField, RawDestinationField);
 				}
 			}
 			IsBeginMarker = false;
@@ -199,7 +197,7 @@ namespace LanguageExplorer.Controls.LexText
 					dataType = m_LexImportField.DataType;
 				}
 
-				return new ClsFieldDescriptionWrapper(m_marker, " ", dataType, LanguageDescriptorRaw, IsAbbrvField, RawDestinationField);
+				return new ClsFieldDescription(Marker, " ", dataType, LanguageDescriptorRaw, IsAbbrvField, RawDestinationField);
 			}
 		}
 

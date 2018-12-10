@@ -8,7 +8,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.Styles;
-using Sfm2Xml;
+using LanguageExplorer.SfmToXml;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -123,7 +123,7 @@ namespace LanguageExplorer.Controls.LexText
 
 			foreach (DictionaryEntry lang in m_uiLangs)
 			{
-				LanguageInfoUI langInfo = lang.Value as Sfm2Xml.LanguageInfoUI;
+				LanguageInfoUI langInfo = lang.Value as SfmToXml.LanguageInfoUI;
 				// make sure there is only one entry for each writing system (especially 'ignore')
 				if (cbLangDesc.FindStringExact(langInfo.ToString()) < 0)
 				{
@@ -570,7 +570,7 @@ namespace LanguageExplorer.Controls.LexText
 			else
 			{
 				var list = new ArrayList();
-				STATICS.SplitString(tbEndMarker.Text.Trim(), delim, ref list);
+				SfmToXmlServices.SplitString(tbEndMarker.Text.Trim(), delim, ref list);
 				foreach (string s in list)
 				{
 					if (m_existingBeginMarkers.ContainsKey(s) || tbBeginMarker.Text == s)

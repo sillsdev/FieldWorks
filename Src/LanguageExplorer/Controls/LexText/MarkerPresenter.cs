@@ -6,7 +6,8 @@ using System.Collections;
 using System.IO;
 using System.Linq;
 using System.Xml;
-using Sfm2Xml;
+using LanguageExplorer.Controls.DetailControls;
+using LanguageExplorer.SfmToXml;
 
 namespace LanguageExplorer.Controls.LexText
 {
@@ -44,7 +45,7 @@ namespace LanguageExplorer.Controls.LexText
 			return false;
 		}
 
-		public LexImportFields LexImportFields { get; private set; }
+		internal LexImportFields LexImportFields { get; private set; }
 
 		public bool GetAndChangeColumnSortOrder(int col)
 		{
@@ -105,7 +106,7 @@ namespace LanguageExplorer.Controls.LexText
 					langDesc = uiLang.Key as string;
 					return;
 				}
-				if (notIgnore.Key as string == "" && (uiLang.Value as LanguageInfoUI).ICUName != STATICS.Ignore)
+				if (notIgnore.Key as string == "" && (uiLang.Value as LanguageInfoUI).ICUName != SfmToXmlServices.Ignore)
 				{
 					notIgnore = uiLang;
 				}
@@ -128,7 +129,7 @@ namespace LanguageExplorer.Controls.LexText
 			}
 		}
 
-		public CFChanges GetCustomFieldChangeStatus(LexImportCustomField oldlexCustomField)
+		internal CFChanges GetCustomFieldChangeStatus(LexImportCustomField oldlexCustomField)
 		{
 			var containsKEY = LexImportFields.ContainsCustomField(oldlexCustomField.CustomKey);
 			if (!containsKEY)
@@ -138,7 +139,7 @@ namespace LanguageExplorer.Controls.LexText
 			return LexImportFields.GetCustomField(oldlexCustomField).CRC == oldlexCustomField.CRC ? CFChanges.NoChanges : CFChanges.ASD;
 		}
 
-		public bool IsValidCustomField(LexImportCustomField lexCustomField)
+		internal bool IsValidCustomField(LexImportCustomField lexCustomField)
 		{
 			// first make sure if it's a custom field, that the field exists in the database
 			return LexImportFields.ContainsCustomField(lexCustomField.CustomKey);
@@ -298,7 +299,7 @@ namespace LanguageExplorer.Controls.LexText
 						var mapWS = mapField.Language;
 						if (m_htUILangInfo.ContainsKey(mapWS))
 						{
-							ws = (m_htUILangInfo[mapWS] as Sfm2Xml.LanguageInfoUI).FwName;
+							ws = (m_htUILangInfo[mapWS] as SfmToXml.LanguageInfoUI).FwName;
 							langDesc = mapWS;
 						}
 
@@ -315,7 +316,7 @@ namespace LanguageExplorer.Controls.LexText
 						else
 						{
 							startMapFieldData = licf.ClsFieldDescriptionWith(startMapFieldData);
-							licf.UIClass = (startMapFieldData as Sfm2Xml.ClsCustomFieldDescription).ClassNameUI;
+							licf.UIClass = (startMapFieldData as SfmToXml.ClsCustomFieldDescription).ClassNameUI;
 						}
 						isCustom = true;
 					}

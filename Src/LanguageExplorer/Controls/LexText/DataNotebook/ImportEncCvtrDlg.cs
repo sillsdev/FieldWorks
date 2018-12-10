@@ -15,7 +15,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 	/// </summary>
 	public partial class ImportEncCvtrDlg : Form
 	{
-		private string m_sBlankEC = Sfm2Xml.STATICS.AlreadyInUnicode;
+		private string m_sBlankEC = SfmToXml.SfmToXmlServices.AlreadyInUnicode;
 		private string m_sDescriptionFmt;
 		private string m_sEncConverter;
 		private IHelpTopicProvider m_helpTopicProvider;

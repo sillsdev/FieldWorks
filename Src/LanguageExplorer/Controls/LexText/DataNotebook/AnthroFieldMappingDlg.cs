@@ -37,7 +37,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		private IPublisher m_publisher;
 
 		Point m_locSubCtrl = new Point(2, 20);
-		Sfm2Xml.SfmFile m_sfmFile;
+		SfmFile m_sfmFile;
 
 		string m_sContentsGroupFmt;
 		string m_sContentsLabelFmt;
@@ -57,7 +57,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		}
 
 		public void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app,
-			RnSfMarker rsf, Sfm2Xml.SfmFile sfmFile,
+			RnSfMarker rsf, SfmFile sfmFile,
 			Dictionary<int, string> mapFlidName, IVwStylesheet stylesheet,
 			IPropertyTable propertyTable, IPublisher publisher)
 		{
@@ -94,7 +94,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			}
 		}
 
-		private void FillInContentsPane(RnSfMarker rsf, Sfm2Xml.SfmFile sfmFile)
+		private void FillInContentsPane(RnSfMarker rsf, SfmFile sfmFile)
 		{
 			m_groupContents.Text = string.Format(m_sContentsGroupFmt, rsf.m_sMkr);
 			m_lvContents.Items.Clear();

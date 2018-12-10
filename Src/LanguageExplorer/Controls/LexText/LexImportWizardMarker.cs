@@ -12,7 +12,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Xsl;
 using Gecko;
-using Sfm2Xml;
+using LanguageExplorer.SfmToXml;
 using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel.Core.KernelInterfaces;

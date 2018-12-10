@@ -4,7 +4,7 @@
 
 using System.Collections;
 using System.Xml;
-using Sfm2Xml;
+using LanguageExplorer.SfmToXml;
 
 namespace LanguageExplorer.Controls.LexText
 {

@@ -5,7 +5,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Xml;
-using Sfm2Xml;
+using LanguageExplorer.SfmToXml;
 
 namespace LanguageExplorer.Controls.LexText
 {

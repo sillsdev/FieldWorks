@@ -13,7 +13,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
-using Sfm2Xml;
+using LanguageExplorer.SfmToXml;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.LCModel;
@@ -215,7 +215,7 @@ namespace LanguageExplorer.Controls.LexText
 			SetDatabaseNameIntoLabel();
 
 			// read in the Lex Import Fields
-			m_LexFields = new Sfm2Xml.LexImportFields();
+			m_LexFields = new LexImportFields();
 			m_LexFields.ReadLexImportFields(m_sImportFields);
 
 			// now read in any custom fields
@@ -540,7 +540,7 @@ namespace LanguageExplorer.Controls.LexText
 
 			foreach (DictionaryEntry languageEntry in langs)
 			{
-				var lang = languageEntry.Value as Sfm2Xml.ClsLanguage;
+				var lang = languageEntry.Value as SfmToXml.ClsLanguage;
 				var encodingconverter = lang.EncCvtrMap;
 				var langkey = lang.KEY;
 				var xmlLang = lang.XmlLang;
@@ -557,13 +557,13 @@ namespace LanguageExplorer.Controls.LexText
 					}
 					else
 					{
-						fwName = STATICS.Ignore;
+						fwName = SfmToXmlServices.Ignore;
 					}
 				}
 				// make sure if there is no encoding converter, show it as already in unicode
 				if (string.IsNullOrEmpty(encodingconverter))
 				{
-					encodingconverter = STATICS.AlreadyInUnicode;
+					encodingconverter = SfmToXmlServices.AlreadyInUnicode;
 				}
 
 				AddLanguage(langkey, fwName, encodingconverter, xmlLang);
@@ -762,7 +762,7 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			var lvItem = new ListViewItem(new[] { langDesc, ws, ec });
 			var langInfo = new LanguageInfoUI(langDesc, ws, ec, wsId);
-			if (langInfo.FwName == STATICS.Ignore)  // this is ignored due to lang
+			if (langInfo.FwName == SfmToXmlServices.Ignore)  // this is ignored due to lang
 			{
 				lvItem.UseItemStyleForSubItems = false;
 				lvItem.SubItems[1].ForeColor = Color.Blue;
@@ -859,7 +859,7 @@ namespace LanguageExplorer.Controls.LexText
 					{
 						continue;
 					}
-					info.UpdateLangaugeValues(ws, wsId, langDesc);
+					info.UpdateLanguageValues(ws, wsId, langDesc);
 					anyUpdated = true;
 				}
 				if (anyUpdated)
@@ -922,7 +922,7 @@ namespace LanguageExplorer.Controls.LexText
 				item.UseItemStyleForSubItems = false;
 				item.SubItems[4].ForeColor = Color.Blue;
 			}
-			if (info.WritingSystem == STATICS.Ignore)   // this is ignored due to lang
+			if (info.WritingSystem == SfmToXmlServices.Ignore)   // this is ignored due to lang
 			{
 				item.UseItemStyleForSubItems = false;
 				item.SubItems[5].ForeColor = Color.Blue;
@@ -1065,7 +1065,7 @@ namespace LanguageExplorer.Controls.LexText
 
 						var langInfo = (LanguageInfoUI)langDescs[userKey];
 						var shortName = langInfo.ICUName;
-						contentMapping.UpdateLangaugeValues(ws, shortName, userKey);
+						contentMapping.UpdateLanguageValues(ws, shortName, userKey);
 
 						if (!contentMapping.AutoImport) // auto import only allows lang so skip the following
 						{
@@ -1344,7 +1344,7 @@ namespace LanguageExplorer.Controls.LexText
 			var topAnalysisWs = m_cache.DefaultAnalWs;
 			var topAnalysis = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(topAnalysisWs);
 
-			if (STATICS.MapFileVersion != "6.0")
+			if (SfmToXmlServices.MapFileVersion != "6.0")
 			{
 				return;
 			}
@@ -1404,7 +1404,7 @@ namespace LanguageExplorer.Controls.LexText
 			foreach (ListViewItem lvItem in listViewContentMapping.Items)
 			{
 				var info = (ContentMapping)lvItem.Tag;
-				if (info == null || info.DestinationField == STATICS.Unknown)
+				if (info == null || info.DestinationField == SfmToXmlServices.Unknown)
 				{
 					continue;   // skip these from output
 				}
@@ -1420,7 +1420,7 @@ namespace LanguageExplorer.Controls.LexText
 					var destClass = string.Empty;
 					if (info.LexImportField is LexImportCustomField)
 					{
-						destClass = info.DestinationClass;  // (info.LexImportField as Sfm2Xml.LexImportCustomField).UIClass;
+						destClass = info.DestinationClass;  // (info.LexImportField as SfmToXml.LexImportCustomField).UIClass;
 					}
 
 					data = new FieldHierarchyInfo(info.Marker, info.FwId, info.LanguageDescriptor, info.IsBeginMarker, destClass);
@@ -1459,7 +1459,7 @@ namespace LanguageExplorer.Controls.LexText
 			};
 
 			// this is the external way through common objects to create the map file
-			STATICS.NewMapFileBuilder(uiLangsNew, m_LexFields, m_CustomFields, sfmInfo, ifMarker, m_SaveAsFileName.Text, options);
+			SfmToXmlServices.NewMapFileBuilder(uiLangsNew, m_LexFields, m_CustomFields, sfmInfo, ifMarker, m_SaveAsFileName.Text, options);
 
 		}
 

@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using Gecko;

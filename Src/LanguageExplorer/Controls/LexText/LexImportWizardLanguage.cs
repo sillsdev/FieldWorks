@@ -67,7 +67,7 @@ namespace LanguageExplorer.Controls.LexText
 		}
 
 		private readonly Dictionary<string, WsInfo> m_wsInfo;	// hash of wsInfo
-		private string m_blankEC = Sfm2Xml.STATICS.AlreadyInUnicode;
+		private string m_blankEC = SfmToXml.SfmToXmlServices.AlreadyInUnicode;
 		private string m_LangDesc;
 		private string m_wsName;
 		private string m_encConverter;

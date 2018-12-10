@@ -8,7 +8,7 @@ using System.Text;
 using System.IO;
 
 // This tool was created mainly for KenZ as he is the 'Import Wizard'!   :-)
-// It uses the underlying classes in Sfm2Xml to give additional information about
+// It uses the underlying classes in SfmToXml to give additional information about
 // sfms used in a file:
 // - it will give a byte count for all data in the file excluding the sfms
 //   ex:
@@ -123,13 +123,13 @@ namespace SfmStats
 		}
 
 		/// <summary>
-		/// Simple wraper over a converter in the Sfm2Xml namespace
+		/// Simple wraper over a converter in the SfmToXml namespace
 		/// </summary>
 		/// <param name="dataIn">string data in</param>
 		/// <returns>byte array out</returns>
 		static byte[] MakeBytes(string dataIn)
 		{
-			return Sfm2Xml.Converter.WideToMulti(dataIn, System.Text.Encoding.ASCII);
+			return SfmToXml.Converter.WideToMulti(dataIn, System.Text.Encoding.ASCII);
 		}
 
 		/// <summary>
@@ -160,11 +160,11 @@ namespace SfmStats
 
 				// now write out the formated line
 				w.Write(a);
-				w.Write(Sfm2Xml.Converter.WideToMulti(i.ToString("X2"), System.Text.Encoding.ASCII));
+				w.Write(SfmToXml.Converter.WideToMulti(i.ToString("X2"), System.Text.Encoding.ASCII));
 				w.Write(b);
 				w.Write(value);
 				w.Write(c);
-				w.Write(Sfm2Xml.Converter.WideToMulti(byteCounts[i].ToString("N0"), System.Text.Encoding.ASCII));
+				w.Write(SfmToXml.Converter.WideToMulti(byteCounts[i].ToString("N0"), System.Text.Encoding.ASCII));
 				w.Write(m_NL);
 			}
 		}
@@ -175,7 +175,7 @@ namespace SfmStats
 		/// <param name="sfmSorted"></param>
 		/// <param name="w"></param>
 		/// <param name="reader"></param>
-		static void OutputSfmInfo(System.Collections.ArrayList sfmSorted, BinaryWriter w, Sfm2Xml.SfmFileReaderEx reader)
+		static void OutputSfmInfo(System.Collections.ArrayList sfmSorted, BinaryWriter w, SfmToXml.SfmFileReaderEx reader)
 		{
 			StringBuilder sb = new StringBuilder();
 			sb.Append(nl);
@@ -199,7 +199,7 @@ namespace SfmStats
 		/// <param name="sfmSorted"></param>
 		/// <param name="w"></param>
 		/// <param name="reader"></param>
-		static void OutputFollowedByInfo(System.Collections.ArrayList sfmSorted, BinaryWriter w, Sfm2Xml.SfmFileReaderEx reader)
+		static void OutputFollowedByInfo(System.Collections.ArrayList sfmSorted, BinaryWriter w, SfmToXml.SfmFileReaderEx reader)
 		{
 			StringBuilder sb = new StringBuilder();
 			sb.AppendFormat("{0}{1}{2}{3}{4}", nl, "SFM Followed by Info:", nl, "--------------------------------------", nl);
@@ -238,7 +238,7 @@ namespace SfmStats
 		/// <param name="byteCounts">int counts for each byte index</param>
 		/// <param name="sfms">list of sfms</param>
 		/// <param name="reader">actual reader object</param>
-		static void RemoveSFMsFromByteCount(ref int[] byteCounts, System.Collections.ArrayList sfms, Sfm2Xml.SfmFileReaderEx reader)
+		static void RemoveSFMsFromByteCount(ref int[] byteCounts, System.Collections.ArrayList sfms, SfmToXml.SfmFileReaderEx reader)
 		{
 			foreach (string sfm in sfms)
 			{
@@ -258,7 +258,7 @@ namespace SfmStats
 		/// <returns></returns>
 		static int DoTheWork()
 		{
-			m_NL = Sfm2Xml.Converter.WideToMulti(System.Environment.NewLine, System.Text.Encoding.ASCII);
+			m_NL = SfmToXml.Converter.WideToMulti(System.Environment.NewLine, System.Text.Encoding.ASCII);
 
 			if (m_OutputFileName == null)// || File.Exists
 			{
@@ -273,7 +273,7 @@ namespace SfmStats
 			try
 			{
 				// collect the statistics from the file
-				Sfm2Xml.SfmFileReaderEx reader = new Sfm2Xml.SfmFileReaderEx(m_FileName);
+				SfmToXml.SfmFileReaderEx reader = new SfmToXml.SfmFileReaderEx(m_FileName);
 				int[] byteCounts = reader.GetByteCounts;
 
 				// get a sorted list of sfm values

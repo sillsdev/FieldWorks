@@ -12,11 +12,10 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using LanguageExplorer.Areas;
-using Sfm2Xml;
+using LanguageExplorer.SfmToXml;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.LCModel;
-using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.Resources;
@@ -123,7 +122,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		int m_cRecordsDeleted;
 
 		private Dictionary<int, string> m_mapFlidName = new Dictionary<int, string>();
-		private Sfm2Xml.SfmFile m_SfmFile;
+		private SfmFile m_SfmFile;
 
 		private string m_recMkr;
 		private string m_sInputMapFile;
@@ -339,7 +338,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private ListViewItem CreateListViewItemForWS(CoreWritingSystemDefinition ws)
 		{
-			var sEncCnv = string.IsNullOrEmpty(ws.LegacyMapping) ? Sfm2Xml.STATICS.AlreadyInUnicode : ws.LegacyMapping;
+			var sEncCnv = string.IsNullOrEmpty(ws.LegacyMapping) ? SfmToXml.SfmToXmlServices.AlreadyInUnicode : ws.LegacyMapping;
 			EncConverterChoice ecc;
 			if (m_mapWsEncConv.TryGetValue(ws.Id, out ecc))
 			{
@@ -447,7 +446,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 							break;
 						case OFType.Project:
 							sFileType = LexTextControls.ksShoeboxProject;
-							var validFile = new Sfm2Xml.IsSfmFile(openFileDialog.FileName);
+							var validFile = new IsSfmFile(openFileDialog.FileName);
 							isValid = validFile.IsValid;
 							break;
 						case OFType.SaveAs:
@@ -727,7 +726,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 							xw.WriteWhitespace(Environment.NewLine);
 							xw.WriteStartElement("EncodingConverter");
 							xw.WriteAttributeString("ws", ecc.WritingSystem.Id);
-							if (!string.IsNullOrEmpty(ecc.ConverterName) && ecc.ConverterName != Sfm2Xml.STATICS.AlreadyInUnicode)
+							if (!string.IsNullOrEmpty(ecc.ConverterName) && ecc.ConverterName != SfmToXml.SfmToXmlServices.AlreadyInUnicode)
 							{
 								xw.WriteAttributeString("converter", ecc.ConverterName);
 							}
@@ -1188,7 +1187,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			var fInDataDefs = false;
 			while (prjRdr.GetNextSfmMarkerAndData(out sMkr, out sfmData, out badSfmData))
 			{
-				Converter.MultiToWideError mwError;
+				MultiToWideError mwError;
 				byte[] badData;
 				switch (sMkr)
 				{
@@ -1196,7 +1195,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						if (sfmData.Length > 0)
 						{
 							var sData = Converter.MultiToWideWithERROR(sfmData, 0, sfmData.Length - 1, Encoding.UTF8, out mwError, out badData);
-							if (mwError == Converter.MultiToWideError.None)
+							if (mwError == MultiToWideError.None)
 							{
 								var sFile = Path.GetFileName(sData.Trim());
 								fInDataDefs = sFile.ToLowerInvariant() == sDataFile;
@@ -1210,7 +1209,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						if (fInDataDefs && sfmData.Length > 0)
 						{
 							var sData = Converter.MultiToWideWithERROR(sfmData, 0, sfmData.Length - 1, Encoding.UTF8, out mwError, out badData);
-							if (mwError == Sfm2Xml.Converter.MultiToWideError.None)
+							if (mwError == MultiToWideError.None)
 							{
 								m_recMkr = sData.Trim();
 							}
@@ -2279,7 +2278,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			ECInterfaces.IEncConverters encConverters = new EncConverters();
 			foreach (var ecc in m_mapWsEncConv.Values)
 			{
-				if (!string.IsNullOrEmpty(ecc.ConverterName) && ecc.ConverterName != STATICS.AlreadyInUnicode)
+				if (!string.IsNullOrEmpty(ecc.ConverterName) && ecc.ConverterName != SfmToXmlServices.AlreadyInUnicode)
 				{
 					foreach (string convName in encConverters.Keys)
 					{
@@ -2536,7 +2535,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		/// <summary>
 		/// Store the data for a multi-paragraph text field.
 		/// </summary>
-		private void SetTextContent(IRnGenericRec rec, RnSfMarker rsf, Sfm2Xml.SfmField field)
+		private void SetTextContent(IRnGenericRec rec, RnSfMarker rsf, SfmField field)
 		{
 			// REVIEW: SHOULD WE WORRY ABOUT EMBEDDED CHAR MAPPINGS THAT CHANGE THE WRITING SYSTEM
 			// WHEN IT COMES TO ENCODING CONVERSION???
@@ -2908,7 +2907,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		/// possible, since this value is typed by hand.  The user may have substituted
 		/// question marks for the date, and may even the month.
 		/// </summary>
-		private void SetGenDateValue(IRnGenericRec rec, RnSfMarker rsf, Sfm2Xml.SfmField field)
+		private void SetGenDateValue(IRnGenericRec rec, RnSfMarker rsf, SfmField field)
 		{
 			var sData = field.Data.Trim();
 			if (sData.Length == 0)
@@ -3304,7 +3303,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		/// "kcptGenDate" values, because they are generally created by a computer program instead
 		/// of typed by a user.
 		/// </summary>
-		private void SetDateTimeValue(IRnGenericRec rec, RnSfMarker rsf, Sfm2Xml.SfmField field)
+		private void SetDateTimeValue(IRnGenericRec rec, RnSfMarker rsf, SfmField field)
 		{
 			var sData = field.Data.Trim();
 			if (sData.Length == 0)
@@ -3337,7 +3336,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		/// Store the information needed to make any cross reference links after all the records
 		/// have been created.
 		/// </summary>
-		private void StoreLinkData(IRnGenericRec rec, RnSfMarker rsf, Sfm2Xml.SfmField field)
+		private void StoreLinkData(IRnGenericRec rec, RnSfMarker rsf, SfmField field)
 		{
 			if (string.IsNullOrEmpty(field.Data))
 			{
@@ -3429,7 +3428,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		/// Store the data for a field that contains one or more references to a possibility
 		/// list.
 		/// </summary>
-		private void SetListReference(IRnGenericRec rec, RnSfMarker rsf, Sfm2Xml.SfmField field)
+		private void SetListReference(IRnGenericRec rec, RnSfMarker rsf, SfmField field)
 		{
 			ReconvertEncodedDataIfNeeded(field, rsf.m_tlo.m_wsId);
 			var sData = field.Data ?? string.Empty;
@@ -3554,7 +3553,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			}
 		}
 
-		private void LogCannotFindListItem(string sItem, Sfm2Xml.SfmField field)
+		private void LogCannotFindListItem(string sItem, SfmField field)
 		{
 			LogMessage(string.Format(LexTextControls.ksCannotFindMatchingListItem, sItem, field.Marker), field.LineNumber);
 		}

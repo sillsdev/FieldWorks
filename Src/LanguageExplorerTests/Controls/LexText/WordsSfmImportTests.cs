@@ -10,7 +10,7 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using LanguageExplorer.Controls.LexText;
 using NUnit.Framework;
-using Sfm2Xml;
+using LanguageExplorer.SfmToXml;
 using SIL.LCModel.Core.WritingSystems;
 
 namespace LanguageExplorerTests.Controls.LexText

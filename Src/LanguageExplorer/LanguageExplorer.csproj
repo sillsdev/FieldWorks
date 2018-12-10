@@ -231,10 +231,6 @@
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\..\Output\Release\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
-    <Reference Include="Sfm2Xml">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\Sfm2Xml.dll</HintPath>
-    </Reference>
     <Reference Include="SIL.Collections">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.Collections.dll</HintPath>
@@ -394,10 +390,16 @@
     </Compile>
     <Compile Include="Areas\XDumper.cs" />
     <Compile Include="Controls\CollectorEnv.cs" />
+    <Compile Include="Controls\DetailControls\SfmFileReader.cs" />
     <Compile Include="Controls\FileLocationChoice.cs" />
     <Compile Include="Controls\HelperContextMenu.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\IsSfmFile.cs" />
+    <Compile Include="Controls\LexText\DataNotebook\SfmFile.cs" />
+    <Compile Include="Controls\LexText\LexImportCustomField.cs" />
+    <Compile Include="Controls\LexText\LexImportField.cs" />
+    <Compile Include="Controls\LexText\LexImportFields.cs" />
     <Compile Include="Controls\LocationInfo.cs" />
     <Compile Include="Controls\MaxStringWidthForColumnEnv.cs" />
     <Compile Include="Controls\MoveOrCopyFilesController.cs" />
@@ -1362,6 +1364,30 @@
     <Compile Include="RecordFilterParameterObject.cs" />
     <Compile Include="SelectionEvents.cs" />
     <Compile Include="SendReceive\ImportFailureStatus.cs" />
+    <Compile Include="SfmToXml\ByteReader.cs" />
+    <Compile Include="SfmToXml\ClsCustomFieldDescription.cs" />
+    <Compile Include="SfmToXml\ClsFieldDescription.cs" />
+    <Compile Include="SfmToXml\ClsHierarchyEntry.cs" />
+    <Compile Include="SfmToXml\ClsInFieldMarker.cs" />
+    <Compile Include="SfmToXml\ClsLanguage.cs" />
+    <Compile Include="SfmToXml\ClsLog.cs" />
+    <Compile Include="SfmToXml\Converter.cs" />
+    <Compile Include="SfmToXml\CRC.cs" />
+    <Compile Include="SfmToXml\FieldHierarchyInfo.cs" />
+    <Compile Include="SfmToXml\ILexImportCustomField.cs" />
+    <Compile Include="SfmToXml\ILexImportField.cs" />
+    <Compile Include="SfmToXml\ILexImportFields.cs" />
+    <Compile Include="SfmToXml\ILexImportOption.cs" />
+    <Compile Include="SfmToXml\LanguageInfoUI.cs" />
+    <Compile Include="SfmToXml\LexImportOption.cs" />
+    <Compile Include="SfmToXml\MultiToWideError.cs" />
+    <Compile Include="SfmToXml\SfmField.cs" />
+    <Compile Include="SfmToXml\SfmToXmlServices.cs" />
+    <Compile Include="SfmToXml\SfmToXmlStrings.Designer.cs">
+      <DependentUpon>SfmToXmlStrings.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="StatusBarTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -2715,6 +2741,11 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Areas\ViewBase.resx">
       <DependentUpon>ViewBase.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SfmToXml\SfmToXmlStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SfmToXmlStrings.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="UtilityTools\FixErrorsDlg.resx">

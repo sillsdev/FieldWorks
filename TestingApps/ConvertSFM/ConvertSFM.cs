@@ -3,7 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using Sfm2Xml;
+using SfmToXml;
 
 namespace ConvertSFM
 {
@@ -21,7 +21,7 @@ namespace ConvertSFM
 			// 4: Vern     "code:key"  Ex; "en:encoding KEY"
 			// 5: Regional "code:key"  Ex; "fr:encoding KEY"
 			// 6: National "code:key"  Ex; "tg:encoding KEY"
-			Sfm2Xml.Converter conv = new Sfm2Xml.Converter();
+			SfmToXml.Converter conv = new SfmToXml.Converter();
 			string arg3 = args.Length==4 ? args[3] : "";
 			string arg4 = args.Length==5 ? args[4] : "";
 			string arg5 = args.Length==6 ? args[5] : "";

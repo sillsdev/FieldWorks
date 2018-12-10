@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using LanguageExplorer.Controls.LexText;
 using NUnit.Framework;
-using Sfm2Xml;
+using LanguageExplorer.SfmToXml;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
@@ -260,7 +260,7 @@ namespace LanguageExplorerTests.Controls.LexText
 				var ifMarker = new List<ClsInFieldMarker>();
 				string mapFile = Path.GetTempFileName();
 
-				STATICS.NewMapFileBuilder(uiLangsNew, lexFields, customFields, sfmInfo, ifMarker, mapFile);
+				SfmToXmlServices.NewMapFileBuilder(uiLangsNew, lexFields, customFields, sfmInfo, ifMarker, mapFile);
 
 				var phase1Output = Path.Combine(tempDir, LexImport.s_sPhase1FileName);
 

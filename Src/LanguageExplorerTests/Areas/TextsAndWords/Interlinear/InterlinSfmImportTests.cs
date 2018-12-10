@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,7 +11,7 @@ using System.Xml.XPath;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls.LexText;
 using NUnit.Framework;
-using Sfm2Xml;
+using LanguageExplorer.SfmToXml;
 using SilEncConverters40;
 using SIL.LCModel.Core.WritingSystems;
 

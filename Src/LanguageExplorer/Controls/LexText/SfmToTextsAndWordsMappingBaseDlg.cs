@@ -22,7 +22,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		private LcmCache m_cache;
 		private string m_orginalLabel;
-		private readonly string m_blankEC = Sfm2Xml.STATICS.AlreadyInUnicode;
+		private readonly string m_blankEC = SfmToXml.SfmToXmlServices.AlreadyInUnicode;
 		private Sfm2FlexTextMappingBase m_mapping; // the object we are editing.
 		private IEnumerable<InterlinDestination> m_destinationsToDisplay; // applied filter for Destinations
 		private IHelpTopicProvider m_helpTopicProvider;

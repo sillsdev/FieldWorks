@@ -9,8 +9,10 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Serialization;
+using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.LexText;
-using Sfm2Xml;
+using LanguageExplorer.SfmToXml;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
@@ -313,7 +315,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					foreach (var pathName in InputFiles)
 					{
 						var reader = new SfmFileReaderEx(pathName);
-						followedBy = reader.GetFollowedByInfo();
+						followedBy = reader.MyFollowedByInfo;
 						foreach (string marker in reader.SfmInfo)
 						{
 							int oldVal;
@@ -803,6 +805,154 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void m_useDefaultSettingsLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			m_loadSettingsFileBox.Text = GetDefaultInputSettingsPath();
+		}
+
+		private sealed class SfmFileReaderEx : SfmFileReader
+		{
+			private Dictionary<string, FollowedByInfo> m_innerFollowedByInfo;
+
+			internal Dictionary<string, Dictionary<string, int>> MyFollowedByInfo
+			{
+				get;
+				private set;
+			}
+
+			public SfmFileReaderEx(string filename) : base(filename)
+			{
+				GetByteCounts = new int[256];
+				CountBytes();
+			}
+
+			/// <summary>
+			/// property that returns an array 0-255 with counts for each occurence
+			/// </summary>
+			private int[] GetByteCounts { get; }
+
+			/// <summary>
+			/// read the internal file data and save the byte counts
+			/// </summary>
+			private void CountBytes()
+			{
+				foreach (var b in m_FileData)
+				{
+					GetByteCounts[b]++; // bump the count at this byte index
+				}
+			}
+
+			private static string BuildKey(string first, string last)
+			{
+				return $"{first}-{last}";
+			}
+
+			/// <summary>
+			/// Called by the base class in it's constructor, this is the method that
+			/// reads the contents and gathers the sfm information.
+			/// </summary>
+			protected override void Init()
+			{
+				MyFollowedByInfo = new Dictionary<string, Dictionary<string, int>>();
+				m_innerFollowedByInfo = new Dictionary<string, FollowedByInfo>();
+				try
+				{
+					string sfm;
+					string sfmLast = null;
+					byte[] sfmData;
+					byte[] badSfmData;
+					while (GetNextSfmMarkerAndData(out sfm, out sfmData, out badSfmData))
+					{
+						if (sfm.Length == 0)
+						{
+							continue; // no action if empty sfm - case where data before first marker
+						}
+						if (m_sfmUsage.ContainsKey(sfm))
+						{
+							var val = m_sfmUsage[sfm] + 1;
+							m_sfmUsage[sfm] = val;
+						}
+						else
+						{
+							if (sfm.Length > m_longestSfmSize)
+							{
+								m_longestSfmSize = sfm.Length;
+							}
+							//// LT-1926 Ignore all markers that start with underscore (shoebox markers)
+							m_sfmUsage.Add(sfm, 1);
+							m_sfmOrder.Add(sfm);
+						}
+
+						// handle the marker and following counts
+						if (sfmLast != null)
+						{
+							Dictionary<string, int> markerHash;
+							if (MyFollowedByInfo.TryGetValue(sfmLast, out markerHash))
+							{
+								int count;
+								if (markerHash.TryGetValue(sfm, out count))
+								{
+									count++;
+									markerHash[sfm] = count;
+								}
+								else
+								{
+									markerHash[sfm] = 1;
+								}
+							}
+							else
+							{
+								markerHash = new Dictionary<string, int>
+								{
+									[sfm] = 1
+								};
+								MyFollowedByInfo[sfmLast] = markerHash;
+							}
+
+							// new logic with List container
+							var key = BuildKey(sfmLast, sfm);
+							FollowedByInfo fbi;
+							if (m_innerFollowedByInfo.TryGetValue(key, out fbi))
+							{
+								fbi.IncCount();
+								m_innerFollowedByInfo[key] = fbi;
+							}
+							else
+							{
+								m_innerFollowedByInfo[key] = new FollowedByInfo(sfmLast, sfm);
+							}
+
+						}
+						sfmLast = sfm;
+					}
+				}
+				catch
+				{
+					// just eat the exception sense the data members will be empty
+				}
+			}
+
+			private struct FollowedByInfo
+			{
+				internal FollowedByInfo(string a, string b)
+				{
+					First = a;
+					Last = b;
+					Count = 1;
+				}
+				private int Count { get; set; }
+
+				internal void IncCount()
+				{
+					Count++;
+				}
+
+				private string First { get; }
+
+				private string Last { get; }
+
+				public override string ToString()
+				{
+					return First + $"{First}-{Last}-{Count}";
+				}
+			}
 		}
 	}
 }
