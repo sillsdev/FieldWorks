@@ -99,13 +99,6 @@ namespace FwBuildTasks
 		private void ProcessCsProjFile(string filename)
 		{
 			var project = Path.GetFileNameWithoutExtension(filename);
-			if (project == "ICSharpCode.SharpZLib" ||
-				project == "VwGraphicsReplayer" ||
-				project == "SfmStats" ||
-				project == "ConvertSFM")
-			{
-				return; // Skip these apps - they are are sample or support apps
-			}
 			if (m_mapProjFile.ContainsKey(project) || m_mapProjDepends.ContainsKey(project))
 			{
 				Log.LogWarning("Project '{0}' has already been found elsewhere!", project);
