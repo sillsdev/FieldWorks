@@ -195,7 +195,7 @@
     <Reference Include="SIL.Windows.Forms">
       <HintPath>..\..\..\..\Output\Debug\SIL.Windows.Forms.dll</HintPath>
     </Reference>
-    <Reference Include="icu.net, Version=2.5.1.0, Culture=neutral, PublicKeyToken=416fdd914afa6b66">
+    <Reference Include="icu.net, Version=2.5.0.0, Culture=neutral, PublicKeyToken=416fdd914afa6b66">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\icu.net.dll</HintPath>
       <Private>True</Private>
