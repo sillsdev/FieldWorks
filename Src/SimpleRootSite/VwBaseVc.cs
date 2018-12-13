@@ -1,33 +1,24 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: VwBaseVc.cs
-// Responsibility: Eberhard Beilharz
-// Last reviewed:
-//
-// <remarks>
-// This provides a base class for implementing IVwViewConstructor.
-// It raises a NotImplementedException for all methods (which returns E_NOTIMPL to the COM
-// object).
-// </remarks>
 
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// This provides a base class for implementing IVwViewConstructor
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <remarks>
+	/// It raises a NotImplementedException for all methods (which returns E_NOTIMPL to the COM object).
+	/// </remarks>
 	public abstract class VwBaseVc : IVwViewConstructor
 	{
 		/// <summary>
@@ -42,113 +33,77 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// The GenDate sort format frag
 		/// </summary>
 		public const int kfragGenDateSort = 783459847;
-
-		private string m_sName = "Unknown VC";
 		/// <summary>Default writing system used in this view.</summary>
-		protected int m_wsDefault = 0;
+		protected int m_wsDefault;
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Creates a new VwBaseVc
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public VwBaseVc()
+		/// <summary />
+		protected VwBaseVc()
 		{
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:VwBaseVc"/> class.
-		/// </summary>
+		/// <summary />
 		/// <param name="wsDefault">The default ws.</param>
-		/// ------------------------------------------------------------------------------------
-		public VwBaseVc(int wsDefault)
+		protected VwBaseVc(int wsDefault)
 		{
 			m_wsDefault = wsDefault;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the ITsTextProps to apply to the caption of pictures
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public virtual ITsTextProps CaptionProps
 		{
 			get
 			{
-				throw new NotImplementedException("Derived classes that support pictures should implement this.");
+				throw new NotSupportedException("Derived classes that support pictures should implement this.");
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets/Sets a name for this VC for debugging purposes.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string Name
-		{
-			get { return m_sName; }
-			set { m_sName = value; }
-		}
+		public string Name { get; set; } = "Unknown VC";
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the default writing system id for the view constructor.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public virtual int DefaultWs
 		{
 			get { return m_wsDefault; }
 			set { m_wsDefault = value; }
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// This is the main interesting method of displaying objects and fragments of them. Most
 		/// subclasses should override.
 		/// </summary>
-		/// <param name="vwenv"></param>
-		/// <param name="hvo"></param>
-		/// <param name="frag"></param>
-		/// -----------------------------------------------------------------------------------
 		public abstract void Display(IVwEnv vwenv, int hvo, int frag);
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Display (usually basic) properties as a string in custom ways. Often not used.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public virtual ITsString DisplayVariant(IVwEnv vwenv, int tag, int frag)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// This is used for displaying vectors in complex ways. Often not used.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public virtual void DisplayVec(IVwEnv vwenv, int hvo, int tag, int frag)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		/// <summary>
 		/// This returns a picture representing the value of property tag of hvo (which is val).
 		/// Needed if a call to AddIntPropPic is made.
 		/// </summary>
-		/// <param name="vwenv"></param>
-		/// <param name="hvo"></param>
-		/// <param name="tag"></param>
-		/// <param name="val"></param>
-		/// <param name="frag"></param>
-		/// <returns></returns>
 		public virtual IPicture DisplayPicture(IVwEnv vwenv, int hvo, int tag, int val, int frag)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// This routine is used to estimate the height of an item. The item will be one of
 		/// those you have added to the environment using AddLazyItems. Note that the calling
@@ -157,59 +112,37 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// estimate how much vertical space is needed to display this item in the available
 		/// width.
 		/// </summary>
-		/// <param name="hvo"></param>
-		/// <param name="frag"></param>
-		/// <param name="dxAvailWidth"></param>
-		/// <returns></returns>
-		/// -----------------------------------------------------------------------------------
 		public virtual int EstimateHeight(int hvo, int frag, int dxAvailWidth)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Get the string that should be displayed in place of an object character associated
 		/// with the specified GUID. No reasonable base implementation exists.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public virtual ITsString GetStrForGuid(string bstrGuid)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Load data needed to display the specified objects using the specified fragment.
 		/// This is called before attempting to Display an item that has been listed for lazy
-		/// displayusing AddLazyItems. It may be used to load the necessary data into the
+		/// display using AddLazyItems. It may be used to load the necessary data into the
 		/// DataAccess object. If you are not using AddLazyItems this method may be left
 		/// unimplemented.
 		/// If you pre-load all the data, it should trivially succeed (i.e., without doing
 		/// anything). This is the default behavior.
 		/// </summary>
-		/// <param name="vwenv"></param>
-		/// <param name="rghvo"></param>
-		/// <param name="chvo"></param>
-		/// <param name="hvoParent"></param>
-		/// <param name="tag"></param>
-		/// <param name="frag"></param>
-		/// <param name="ihvoMin"></param>
-		/// -----------------------------------------------------------------------------------
-		public virtual void LoadDataFor(IVwEnv vwenv, int[] rghvo, int chvo, int hvoParent,
-			int tag, int frag, int ihvoMin)
+		public virtual void LoadDataFor(IVwEnv vwenv, int[] rghvo, int chvo, int hvoParent, int tag, int frag, int ihvoMin)
 		{
 		}
 
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Not implemented.
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
-		public virtual ITsString UpdateProp(IVwSelection vwsel, int hvo, int tag, int frag,
-			ITsString tssVal)
+		/// <summary />
+		public virtual ITsString UpdateProp(IVwSelection vwsel, int hvo, int tag, int frag, ITsString tssVal)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		/// <summary>
@@ -217,55 +150,53 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		internal IPublisher Publisher { get; set; }
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Perform whatever action is appropriate when the user clicks on a hot link
 		/// See the class comment on FwLinkArgs for details on how all the parts of (internal)
 		/// hyperlinking work.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public virtual void DoHotLinkAction(string strData, ISilDataAccess sda)
 		{
-			if (strData.Length > 0 && (int)strData[0] == (int)FwObjDataTypes.kodtExternalPathName)
+			if (strData.Length <= 0 || strData[0] != (int)FwObjDataTypes.kodtExternalPathName)
 			{
-				string url = strData.Substring(1).Trim(); // may also be just a file name, launches default app.
+				return;
+			}
 
-				// If the file path is saved as a non rooted path, then it is relative to the project's
-				// LinkedFilesRootDir.  In this case get the full path.
-				// We also need to deal with url's like the following ( http:// silfw:// http:\ silfw:\ which are considered Not rooted).
-				// thus the check for FileUtils.IsFilePathValid(url)
-				// Added check IsFileUriOrPath since paths starting with silfw: are valid paths on Linux.
-				if (FileUtils.IsFileUriOrPath(url) && FileUtils.IsFilePathValid(url) && !Path.IsPathRooted(url))
-				{
-					string linkedFilesFolder = GetLinkedFilesRootDir(sda);
-					url = Path.Combine(linkedFilesFolder, url);
-				}
+			var url = strData.Substring(1).Trim(); // may also be just a file name, launches default app.
+			// If the file path is saved as a non rooted path, then it is relative to the project's
+			// LinkedFilesRootDir.  In this case get the full path.
+			// We also need to deal with url's like the following ( http:// silfw:// http:\ silfw:\ which are considered Not rooted).
+			// thus the check for FileUtils.IsFilePathValid(url)
+			// Added check IsFileUriOrPath since paths starting with silfw: are valid paths on Linux.
+			if (FileUtils.IsFileUriOrPath(url) && FileUtils.IsFilePathValid(url) && !Path.IsPathRooted(url))
+			{
+				var linkedFilesFolder = GetLinkedFilesRootDir(sda);
+				url = Path.Combine(linkedFilesFolder, url);
+			}
 
-				// See if we can handle it (via our own LinkListener) without starting a process.
-				var args = new LocalLinkArgs() {Link = url};
-				if (Publisher != null)
+			// See if we can handle it (via our own LinkListener) without starting a process.
+			var args = new LocalLinkArgs() { Link = url };
+			if (Publisher != null)
+			{
+				Publisher.Publish("HandleLocalHotlink", args);
+				if (args.LinkHandledLocally)
 				{
-					Publisher.Publish("HandleLocalHotlink", args);
-					if (args.LinkHandledLocally)
-						return;
+					return;
 				}
+			}
 
-				// Review JohnT: do we need to do some validation here?
-				// C++ version uses URLIs, and takes another approach to launching files if not.
-				// But no such function in .NET that I can find.
-
-				try
+			// Review JohnT: do we need to do some validation here?
+			// C++ version uses URLIs, and takes another approach to launching files if not.
+			// But no such function in .NET that I can find.
+			try
+			{
+				using (Process.Start(url))
 				{
-					using (Process.Start(url))
-					{
-					}
 				}
-				catch (Exception e)
-				{
-					MessageBox.Show(null,
-						String.Format(Properties.Resources.ksMissingLinkTarget, url, e.Message),
-						Properties.Resources.ksCannotFollowLink);
-				}
+			}
+			catch (Exception e)
+			{
+				MessageBox.Show(null, string.Format(Properties.Resources.ksMissingLinkTarget, url, e.Message), Properties.Resources.ksCannotFollowLink);
 			}
 		}
 
@@ -275,9 +206,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		protected string GetLinkedFilesRootDir(ISilDataAccess sda)
 		{
-			var linkedFilesRootDirID = sda.MetaDataCache.GetFieldId("LangProject", "LinkedFilesRootDir", false);
-			int hvo = GetHvoOfProject(sda);
-			return sda.get_UnicodeProp(hvo, linkedFilesRootDirID);
+			return sda.get_UnicodeProp(GetHvoOfProject(sda), sda.MetaDataCache.GetFieldId("LangProject", "LinkedFilesRootDir", false));
 		}
 
 		/// <summary>
@@ -287,11 +216,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		private int GetHvoOfProject(ISilDataAccess sda)
 		{
 			// fixed guid of a possibility eventually owned by LangProject
-			Guid guid = new Guid("d7f713e4-e8cf-11d3-9764-00c04f186933");	// MoMorphType: bound root
-			int hvoPoss = GetIdFromGuid(sda, ref guid);
-			int flidOwner = sda.MetaDataCache.GetFieldId("CmObject", "Owner", false);
-			int hvoNewOwner = sda.get_ObjectProp(hvoPoss, flidOwner);
-			int hvoOwner = 0;
+			var guid = new Guid("d7f713e4-e8cf-11d3-9764-00c04f186933");   // MoMorphType: bound root
+			var hvoPoss = GetIdFromGuid(sda, ref guid);
+			var flidOwner = sda.MetaDataCache.GetFieldId("CmObject", "Owner", false);
+			var hvoNewOwner = sda.get_ObjectProp(hvoPoss, flidOwner);
+			var hvoOwner = 0;
 			while (hvoNewOwner != 0)
 			{
 				hvoOwner = hvoNewOwner;
@@ -300,28 +229,20 @@ namespace SIL.FieldWorks.Common.RootSites
 			return hvoOwner;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Get the object ID (HVO) that corresponds to the specified GUID.
 		/// </summary>
-		/// <param name="guid"></param>
-		/// <param name="sda"></param>
-		/// <returns></returns>
-		/// -----------------------------------------------------------------------------------
 		public int GetIdFromGuid(ISilDataAccess sda, ref System.Guid guid)
 		{
 			return sda.get_ObjFromGuid(guid);
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Display the specified object (from an ORC embedded in a string). The default
 		/// implementation doesn't know how to do this.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public virtual void DisplayEmbeddedObject(IVwEnv vwenv, int hvo)
 		{
-			return;
 		}
 
 		/// <summary>

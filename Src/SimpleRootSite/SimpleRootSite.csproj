@@ -217,8 +217,15 @@
     </Compile>
     <Compile Include="AccessibilityWrapper.cs">
     </Compile>
+    <Compile Include="CkBehavior.cs" />
+    <Compile Include="FwPasteFixTssEventArgs.cs" />
+    <Compile Include="IEditingCallbacks.cs" />
+    <Compile Include="IPrintRootSite.cs" />
+    <Compile Include="IRefreshableRoot.cs" />
     <Compile Include="ISelectionChangeNotifier.cs" />
+    <Compile Include="ISuppressDefaultKeyboardOnKillFocus.cs" />
     <Compile Include="LocalLinkArgs.cs" />
+    <Compile Include="PasteStatus.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -226,6 +233,8 @@
     </Compile>
     <Compile Include="RenderEngineFactory.cs" />
     <Compile Include="SelectionRestorer.cs" />
+    <Compile Include="SelInfo.cs" />
+    <Compile Include="SelLimitType.cs" />
     <Compile Include="TsStringWrapper.cs" />
     <Compile Include="VwSelectionArgs.cs">
     </Compile>
@@ -241,7 +250,6 @@
     <Compile Include="FwRightMouseClickEventArgs.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="IControl.cs" />
     <Compile Include="IRootSite.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -250,9 +258,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SelectionHelper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="SelPositionInfo.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SimpleRootSite.cs">

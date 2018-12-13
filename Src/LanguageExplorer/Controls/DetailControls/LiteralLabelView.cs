@@ -76,10 +76,10 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			m_vc = new LiteralLabelVc(m_text, m_cache.WritingSystemFactory.UserWs);
 
-			m_rootb.DataAccess = m_cache.DomainDataByFlid;
+			RootBox.DataAccess = m_cache.DomainDataByFlid;
 
 			// Since the VC just displays a literal, both the root HVO and the root frag are arbitrary.
-			m_rootb.SetRootObject(1, m_vc, 2, StyleSheet);
+			RootBox.SetRootObject(1, m_vc, 2, StyleSheet);
 			// pathologically (mainly during Refresh, it seems) the slice width may get set before
 			// the root box is created, and no further size adjustment may take place, in which case,
 			// when we have made the root, we need to adjust the width it occupies in the parent slice.

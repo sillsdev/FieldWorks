@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -122,7 +122,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// required property will have been re-established by various PropChanged calls).
 			RootSite.RequestSelectionAtEndOfUow(RootSite.RootBox, 0, helper.LevelInfo.Length, helper.LevelInfo, ActiveFreeformFlid,
 				m_cpropActiveFreeform, helper.IchAnchor, helper.Ws, helper.AssocPrev,
-				helper.GetSelProps(SelectionHelper.SelLimitType.Anchor));
+				helper.GetSelProps(SelLimitType.Anchor));
 			SetActiveFreeform(0, 0, 0, 0); // AFTER request selection, since it clears ActiveFreeformFlid.
 			return tssVal;
 		}

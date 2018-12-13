@@ -188,8 +188,8 @@ namespace LanguageExplorerTests.Controls
 				m_footnoteVc = new DummyFootnoteVc(m_cache);
 				m_footnoteVc.DisplayTranslation = m_displayTranslation;
 
-				m_rootb.DataAccess = Cache.DomainDataByFlid;
-				m_rootb.SetRootObject(Cache.LanguageProject.TranslatedScriptureOA.Hvo,
+				RootBox.DataAccess = Cache.DomainDataByFlid;
+				RootBox.SetRootObject(Cache.LanguageProject.TranslatedScriptureOA.Hvo,
 					m_footnoteVc, (int)FootnoteFrags.kfrScripture, m_styleSheet);
 
 				m_fRootboxMade = true;
@@ -197,7 +197,7 @@ namespace LanguageExplorerTests.Controls
 
 				try
 				{
-					m_rootb.MakeSimpleSel(true, false, false, true);
+					RootBox.MakeSimpleSel(true, false, false, true);
 				}
 				catch(COMException)
 				{
@@ -314,10 +314,10 @@ namespace LanguageExplorerTests.Controls
 					selHelper.IchAnchor = 0;
 					selHelper.IchEnd = 5;
 					SelLevInfo[] selLevInfo = new SelLevInfo[3];
-					Assert.AreEqual(4, selHelper.GetNumberOfLevels(SelectionHelper.SelLimitType.End));
-					Array.Copy(selHelper.GetLevelInfo(SelectionHelper.SelLimitType.End), 1, selLevInfo, 0, 3);
-					selHelper.SetLevelInfo(SelectionHelper.SelLimitType.End, selLevInfo);
-					selHelper.SetTextPropId(SelectionHelper.SelLimitType.End,
+					Assert.AreEqual(4, selHelper.GetNumberOfLevels(SelLimitType.End));
+					Array.Copy(selHelper.GetLevelInfo(SelLimitType.End), 1, selLevInfo, 0, 3);
+					selHelper.SetLevelInfo(SelLimitType.End, selLevInfo);
+					selHelper.SetTextPropId(SelLimitType.End,
 						StTxtParaTags.kflidContents);
 					selHelper.SetSelection(true);
 

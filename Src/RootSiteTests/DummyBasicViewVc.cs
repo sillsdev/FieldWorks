@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using FieldWorks.TestUtilities;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -51,11 +52,11 @@ namespace SIL.FieldWorks.Common.RootSites
 			switch (frag)
 			{
 				case 1: // the root; display the subitems, first using non-lazy view, then lazy one.
-					if ((m_displayType & DisplayType.kBookFootnoteDetailsSeparateParas) == DisplayType.kBookFootnoteDetailsSeparateParas)
+					if ((m_displayType & DisplayType.kFootnoteDetailsSeparateParas) == DisplayType.kFootnoteDetailsSeparateParas)
 					{
 						vwenv.AddObjVecItems(m_flid, this, 10);
 					}
-					if ((m_displayType & DisplayType.kBookFootnoteDetailsSinglePara) == DisplayType.kBookFootnoteDetailsSinglePara)
+					if ((m_displayType & DisplayType.kFootnoteDetailsSeparateParas) == DisplayType.kFootnoteDetailsSeparateParas)
 					{
 						vwenv.AddObjVecItems(m_flid, this, 11);
 					}

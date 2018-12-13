@@ -80,14 +80,14 @@ namespace LanguageExplorer.Controls.LexText
 			m_vc = vc;
 			m_sda = sda;
 			m_rootFrag = rootFrag;
-			if (m_rootb == null)
+			if (RootBox == null)
 			{
 				MakeRoot();
 			}
 			else if (m_hvo != 0)
 			{
-				m_rootb.SetRootObject(m_hvo, m_vc, m_rootFrag, FwUtils.StyleSheetFromPropertyTable(PropertyTable));
-				m_rootb.Reconstruct();
+				RootBox.SetRootObject(m_hvo, m_vc, m_rootFrag, FwUtils.StyleSheetFromPropertyTable(PropertyTable));
+				RootBox.Reconstruct();
 			}
 		}
 
@@ -102,11 +102,11 @@ namespace LanguageExplorer.Controls.LexText
 			// the default value of 4 for MaxParasToScan isn't high enough when using the arrow keys to move
 			// the cursor between items in a rule when the number of lines in the rule is high, since there might
 			// be a large number of non-editable empty lines in a pile
-			m_rootb.MaxParasToScan = 10;
-			m_rootb.DataAccess = m_sda;
+			RootBox.MaxParasToScan = 10;
+			RootBox.DataAccess = m_sda;
 			if (m_hvo != 0)
 			{
-				m_rootb.SetRootObject(m_hvo, m_vc, m_rootFrag, FwUtils.StyleSheetFromPropertyTable(PropertyTable));
+				RootBox.SetRootObject(m_hvo, m_vc, m_rootFrag, FwUtils.StyleSheetFromPropertyTable(PropertyTable));
 			}
 		}
 
@@ -157,32 +157,32 @@ namespace LanguageExplorer.Controls.LexText
 					if (sel.IsRange)
 					{
 						// ensure that a range selection only occurs within one context
-						var topCtxt = m_patternControl.GetContext(sel, SelectionHelper.SelLimitType.Top);
-						var bottomCtxt = m_patternControl.GetContext(sel, SelectionHelper.SelLimitType.Bottom);
-						var limit = SelectionHelper.SelLimitType.Top;
+						var topCtxt = m_patternControl.GetContext(sel, SelLimitType.Top);
+						var bottomCtxt = m_patternControl.GetContext(sel, SelLimitType.Bottom);
+						var limit = SelLimitType.Top;
 						if (topCtxt != null)
 						{
-							limit = SelectionHelper.SelLimitType.Top;
+							limit = SelLimitType.Top;
 							ctxt = topCtxt;
 						}
 						else if (bottomCtxt != null)
 						{
-							limit = SelectionHelper.SelLimitType.Bottom;
+							limit = SelLimitType.Bottom;
 							ctxt = bottomCtxt;
 						}
 
 						if (ctxt != null)
 						{
-							var newSel = SelectCell(ctxt, limit == SelectionHelper.SelLimitType.Bottom, false);
+							var newSel = SelectCell(ctxt, limit == SelLimitType.Bottom, false);
 							sel.ReduceToIp(limit);
 							var otherSel = sel.SetSelection(this, false, false);
 							if (sel.Selection.EndBeforeAnchor)
 							{
-								RootBox.MakeRangeSelection(limit == SelectionHelper.SelLimitType.Top ? newSel : otherSel, limit == SelectionHelper.SelLimitType.Top ? otherSel : newSel, true);
+								RootBox.MakeRangeSelection(limit == SelLimitType.Top ? newSel : otherSel, limit == SelLimitType.Top ? otherSel : newSel, true);
 							}
 							else
 							{
-								RootBox.MakeRangeSelection(limit == SelectionHelper.SelLimitType.Top ? otherSel : newSel, limit == SelectionHelper.SelLimitType.Top ? newSel : otherSel, true);
+								RootBox.MakeRangeSelection(limit == SelLimitType.Top ? otherSel : newSel, limit == SelLimitType.Top ? newSel : otherSel, true);
 							}
 						}
 
@@ -203,7 +203,7 @@ namespace LanguageExplorer.Controls.LexText
 			IVwSelection anchorSel;
 			int curHvo, curIch, curTag;
 			// anchor IP
-			if (!GetSelectionInfo(sel, SelectionHelper.SelLimitType.Anchor, out anchorSel, out curHvo, out curIch, out curTag))
+			if (!GetSelectionInfo(sel, SelLimitType.Anchor, out anchorSel, out curHvo, out curIch, out curTag))
 			{
 				return;
 			}
@@ -211,7 +211,7 @@ namespace LanguageExplorer.Controls.LexText
 			IVwSelection endSel;
 			int curEndHvo, curEndIch, curEndTag;
 			// end IP
-			if (!GetSelectionInfo(sel, SelectionHelper.SelLimitType.End, out endSel, out curEndHvo, out curEndIch, out curEndTag))
+			if (!GetSelectionInfo(sel, SelLimitType.End, out endSel, out curEndHvo, out curEndIch, out curEndTag))
 			{
 				return;
 			}
@@ -239,7 +239,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Creates a selection IP for the specified limit.
 		/// </summary>
-		private bool GetSelectionInfo(SelectionHelper sel, SelectionHelper.SelLimitType limit, out IVwSelection vwSel, out int curHvo, out int curIch, out int curTag)
+		private bool GetSelectionInfo(SelectionHelper sel, SelLimitType limit, out IVwSelection vwSel, out int curHvo, out int curIch, out int curTag)
 		{
 			vwSel = null;
 			curHvo = 0;
@@ -256,7 +256,7 @@ namespace LanguageExplorer.Controls.LexText
 			int ws;
 			bool prev;
 
-			sel.Selection.TextSelInfo(limit == SelectionHelper.SelLimitType.End, out curTss, out curIch, out prev, out curHvo, out curTag, out ws);
+			sel.Selection.TextSelInfo(limit == SelLimitType.End, out curTss, out curIch, out prev, out curHvo, out curTag, out ws);
 
 			var ctxt = m_patternControl.GetContext(sel);
 			var index = m_patternControl.GetItemContextIndex(ctxt, obj);
@@ -357,7 +357,7 @@ namespace LanguageExplorer.Controls.LexText
 
 				// if we are the beginning of the current item, and the current selection is a range, and the end is before the anchor,
 				// then do not include the current item in the adjusted range selection
-				if (sel.Selection.EndBeforeAnchor && limit == SelectionHelper.SelLimitType.Anchor)
+				if (sel.Selection.EndBeforeAnchor && limit == SelLimitType.Anchor)
 				{
 					selCellIndex = index - 1;
 				}
@@ -378,13 +378,13 @@ namespace LanguageExplorer.Controls.LexText
 
 					// if we are the end of the current item, and the current selection is a range, and the anchor is before the end,
 					// then do not include the current item in the adjusted range selection
-					if (!sel.Selection.EndBeforeAnchor && limit == SelectionHelper.SelLimitType.Anchor)
+					if (!sel.Selection.EndBeforeAnchor && limit == SelLimitType.Anchor)
 					{
 						selCellIndex = index + 1;
 					}
 				}
 			}
-			vwSel = SelectAt(ctxt, selCellIndex, limit == SelectionHelper.SelLimitType.Anchor ? !sel.Selection.EndBeforeAnchor : sel.Selection.EndBeforeAnchor, false, false);
+			vwSel = SelectAt(ctxt, selCellIndex, limit == SelLimitType.Anchor ? !sel.Selection.EndBeforeAnchor : sel.Selection.EndBeforeAnchor, false, false);
 			return vwSel != null;
 		}
 
@@ -430,7 +430,7 @@ namespace LanguageExplorer.Controls.LexText
 				if (count == 0)
 				{
 					var newSel = new SelectionHelper();
-					newSel.SetTextPropId(SelectionHelper.SelLimitType.Anchor, m_patternControl.GetFlid(ctxt));
+					newSel.SetTextPropId(SelLimitType.Anchor, m_patternControl.GetFlid(ctxt));
 					return newSel.SetSelection(this, install, false);
 				}
 				levels = m_patternControl.GetLevelInfo(ctxt, initial ? 0 : count - 1);

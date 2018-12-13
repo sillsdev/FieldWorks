@@ -557,8 +557,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				};
 
 				Clear(false);
-				m_rootb.DataAccess = m_sda;
-				m_rootb.SetRootObject(HvoRoot, m_svc, (int)SampleFrags.kfrText, null);
+				RootBox.DataAccess = m_sda;
+				RootBox.SetRootObject(HvoRoot, m_svc, (int)SampleFrags.kfrText, null);
 				m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
 			}
 

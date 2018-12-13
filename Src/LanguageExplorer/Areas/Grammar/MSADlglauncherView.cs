@@ -31,14 +31,14 @@ namespace LanguageExplorer.Areas.Grammar
 			Debug.Assert(msa != null);
 			m_msa = msa;
 			m_cache = cache;
-			if (m_rootb == null)
+			if (RootBox == null)
 			{
 				MakeRoot();
 			}
 			else
 			{
-				m_rootb.SetRootObject(m_msa.Hvo, Vc, (int)VcFrags.kfragFullMSAInterlinearname, m_rootb.Stylesheet);
-				m_rootb.Reconstruct();
+				RootBox.SetRootObject(m_msa.Hvo, Vc, (int)VcFrags.kfragFullMSAInterlinearname, RootBox.Stylesheet);
+				RootBox.Reconstruct();
 			}
 			m_cache.DomainDataByFlid.AddNotification(this);
 		}
@@ -78,8 +78,8 @@ namespace LanguageExplorer.Areas.Grammar
 
 			base.MakeRoot();
 
-			m_rootb.DataAccess = m_cache.DomainDataByFlid;
-			m_rootb.SetRootObject(m_msa.Hvo, Vc, (int)VcFrags.kfragFullMSAInterlinearname, m_rootb.Stylesheet);
+			RootBox.DataAccess = m_cache.DomainDataByFlid;
+			RootBox.SetRootObject(m_msa.Hvo, Vc, (int)VcFrags.kfragFullMSAInterlinearname, RootBox.Stylesheet);
 		}
 
 		#endregion // RootSite required methods
@@ -106,7 +106,7 @@ namespace LanguageExplorer.Areas.Grammar
 		{
 			if (m_msa.Hvo == hvo)
 			{
-				m_rootb.Reconstruct();
+				RootBox.Reconstruct();
 			}
 		}
 

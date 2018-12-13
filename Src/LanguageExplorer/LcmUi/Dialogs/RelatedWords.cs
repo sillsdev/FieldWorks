@@ -592,9 +592,9 @@ namespace LanguageExplorer.LcmUi.Dialogs
 
 				m_vc = new RelatedWordsVc(m_wsUser, m_headword);
 
-				m_rootb.DataAccess = m_sda;
+				RootBox.DataAccess = m_sda;
 
-				m_rootb.SetRootObject(m_hvoRoot, m_vc, RelatedWordsVc.kfragRoot, m_styleSheet);
+				RootBox.SetRootObject(m_hvoRoot, m_vc, RelatedWordsVc.kfragRoot, m_styleSheet);
 				m_fRootboxMade = true;
 			}
 			internal void SetEntry(int hvoEntry)
@@ -603,7 +603,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 				m_headword = entry.HeadWord;
 				m_hvoRoot = hvoEntry;
 				m_vc = new RelatedWordsVc(m_wsUser, m_headword);
-				m_rootb.SetRootObject(m_hvoRoot, m_vc, RelatedWordsVc.kfragRoot, m_styleSheet);
+				RootBox.SetRootObject(m_hvoRoot, m_vc, RelatedWordsVc.kfragRoot, m_styleSheet);
 			}
 
 			/// <summary>

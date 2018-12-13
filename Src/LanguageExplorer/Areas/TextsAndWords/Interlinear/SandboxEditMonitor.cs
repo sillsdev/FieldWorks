@@ -51,7 +51,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// The following two variables are used to overcome an infelicity of interacting with TSF
 		// on Windows for keyboard input.
 		private bool m_needDelayedSelection;
-		private SelectionHelper.SelInfo m_infoDelayed;
+		private SelInfo m_infoDelayed;
 
 		private bool m_propChangesOccurredWhileNotMonitoring;
 
@@ -327,7 +327,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 				// Gather up the information needed to recreate the current selection at idle time.
 				var vwsel = m_sandbox.RootBox.Selection;
-				m_infoDelayed = new SelectionHelper.SelInfo();
+				m_infoDelayed = new SelInfo();
 				var cvsli = vwsel.CLevels(false);
 				cvsli--; // CLevels includes the string property itself, but AllTextSelInfo doesn't need it.
 				int ichEnd;

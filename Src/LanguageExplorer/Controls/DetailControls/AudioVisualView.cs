@@ -65,14 +65,14 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 			m_file = obj;
 			m_flid = flid;
-			if (m_rootb == null)
+			if (RootBox == null)
 			{
 				MakeRoot();
 			}
 			else if (m_file != null)
 			{
-				m_rootb.SetRootObject(m_file.Hvo, m_vc, kfragPathname, m_rootb.Stylesheet);
-				m_rootb.Reconstruct();
+				RootBox.SetRootObject(m_file.Hvo, m_vc, kfragPathname, RootBox.Stylesheet);
+				RootBox.Reconstruct();
 			}
 		}
 
@@ -87,11 +87,11 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			base.MakeRoot();
 
-			m_rootb.DataAccess = m_cache.DomainDataByFlid;
+			RootBox.DataAccess = m_cache.DomainDataByFlid;
 			m_vc = new AudioVisualVc(m_cache, m_flid, "InternalPath");
 			if (m_file != null)
 			{
-				m_rootb.SetRootObject(m_file.Hvo, m_vc, kfragPathname, m_rootb.Stylesheet);
+				RootBox.SetRootObject(m_file.Hvo, m_vc, kfragPathname, RootBox.Stylesheet);
 			}
 
 		}

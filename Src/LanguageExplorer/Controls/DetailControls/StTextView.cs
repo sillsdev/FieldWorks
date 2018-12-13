@@ -30,9 +30,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				var oldText = m_text;
 				m_text = value;
-				if (m_rootb != null && m_text != null && oldText != m_text)
+				if (RootBox != null && m_text != null && oldText != m_text)
 				{
-					m_rootb.SetRootObject(m_text.Hvo, m_vc, (int)StTextFrags.kfrText, m_styleSheet);
+					RootBox.SetRootObject(m_text.Hvo, m_vc, (int)StTextFrags.kfrText, m_styleSheet);
 				}
 			}
 		}
@@ -66,14 +66,14 @@ namespace LanguageExplorer.Controls.DetailControls
 				Editable = true
 			};
 			DoSpellCheck = true;
-			if (m_rootb == null)
+			if (RootBox == null)
 			{
 				MakeRoot();
 			}
 			else if (m_text != null)
 			{
-				m_rootb.SetRootObject(m_text.Hvo, m_vc, (int)StTextFrags.kfrText, m_styleSheet);
-				m_rootb.Reconstruct();
+				RootBox.SetRootObject(m_text.Hvo, m_vc, (int)StTextFrags.kfrText, m_styleSheet);
+				RootBox.Reconstruct();
 			}
 		}
 
@@ -130,10 +130,10 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			base.MakeRoot();
 
-			m_rootb.DataAccess = m_cache.DomainDataByFlid;
+			RootBox.DataAccess = m_cache.DomainDataByFlid;
 			if (m_text != null)
 			{
-				m_rootb.SetRootObject(m_text.Hvo, m_vc, (int)StTextFrags.kfrText, m_styleSheet);
+				RootBox.SetRootObject(m_text.Hvo, m_vc, (int)StTextFrags.kfrText, m_styleSheet);
 			}
 
 			m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.

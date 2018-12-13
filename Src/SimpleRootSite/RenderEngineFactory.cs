@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2016-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,10 +7,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.ObjectModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Utils;
+using SIL.ObjectModel;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -39,8 +39,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public IRenderEngine get_Renderer(ILgWritingSystem ws, IVwGraphics vg)
 		{
-			LgCharRenderProps chrp = vg.FontCharProperties;
-			string fontName = MarshalEx.UShortToString(chrp.szFaceName);
+			var chrp = vg.FontCharProperties;
+			var fontName = MarshalEx.UShortToString(chrp.szFaceName);
 			if (fontName == "<default font>")
 			{
 				fontName = ws.DefaultFontName;
@@ -56,17 +56,12 @@ namespace SIL.FieldWorks.Common.RootSites
 					wsGraphiteEngines = new Dictionary<Tuple<string, bool, bool>, GraphiteEngine>();
 					m_graphiteEngines[ws] = wsGraphiteEngines;
 				}
-
-				Tuple<string, bool, bool> key = Tuple.Create(fontName, chrp.ttvBold == (int) FwTextToggleVal.kttvForceOn,
-					chrp.ttvItalic == (int) FwTextToggleVal.kttvForceOn);
+				var key = Tuple.Create(fontName, chrp.ttvBold == (int)FwTextToggleVal.kttvForceOn, chrp.ttvItalic == (int)FwTextToggleVal.kttvForceOn);
 				GraphiteEngine graphiteEngine;
 				if (!wsGraphiteEngines.TryGetValue(key, out graphiteEngine))
 				{
 					graphiteEngine = GraphiteEngineClass.Create();
-
-					string fontFeatures = null;
-					if (fontName == ws.DefaultFontName)
-						fontFeatures = ws.DefaultFontFeatures;
+					var fontFeatures = fontName == ws.DefaultFontName ? ws.DefaultFontFeatures : null;
 					graphiteEngine.InitRenderer(vg, fontFeatures);
 					// check if the font is a valid Graphite font
 					if (graphiteEngine.FontIsValid)
@@ -81,9 +76,10 @@ namespace SIL.FieldWorks.Common.RootSites
 						graphiteEngine = null;
 					}
 				}
-
 				if (graphiteEngine != null)
+				{
 					return graphiteEngine;
+				}
 			}
 			else
 			{
@@ -94,7 +90,6 @@ namespace SIL.FieldWorks.Common.RootSites
 					m_graphiteEngines.Remove(ws);
 				}
 			}
-
 			IRenderEngine nonGraphiteEngine;
 			if (!m_nonGraphiteEngines.TryGetValue(ws.WritingSystemFactory, out nonGraphiteEngine))
 			{
@@ -105,10 +100,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				else
 				{
 					// default to the UniscribeEngine unless ROMAN environment variable is set.
-					if (Environment.GetEnvironmentVariable("ROMAN") == null)
-						nonGraphiteEngine = UniscribeEngineClass.Create();
-					else
-						nonGraphiteEngine = RomRenderEngineClass.Create();
+					nonGraphiteEngine = Environment.GetEnvironmentVariable("ROMAN") == null ? (IRenderEngine)UniscribeEngineClass.Create() : RomRenderEngineClass.Create();
 				}
 				nonGraphiteEngine.InitRenderer(vg, null);
 				nonGraphiteEngine.RenderEngineFactory = this;
@@ -124,8 +116,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public void ClearRenderEngines()
 		{
-			foreach (Dictionary<Tuple<string, bool, bool>, GraphiteEngine> wsGraphiteEngines in m_graphiteEngines.Values)
+			foreach (var wsGraphiteEngines in m_graphiteEngines.Values)
+			{
 				ReleaseRenderEngines(wsGraphiteEngines.Values);
+			}
 			m_graphiteEngines.Clear();
 
 			ReleaseRenderEngines(m_nonGraphiteEngines.Values);
@@ -137,13 +131,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public void ClearRenderEngines(ILgWritingSystemFactory wsf)
 		{
-			foreach (KeyValuePair<ILgWritingSystem, Dictionary<Tuple<string, bool, bool>, GraphiteEngine>> kvp in m_graphiteEngines
-				.Where(kvp => kvp.Key.WritingSystemFactory == wsf).ToArray())
+			foreach (var kvp in m_graphiteEngines.Where(kvp => kvp.Key.WritingSystemFactory == wsf).ToArray())
 			{
 				ReleaseRenderEngines(kvp.Value.Values);
 				m_graphiteEngines.Remove(kvp.Key);
 			}
-
 			IRenderEngine nonGraphiteRenderEngine;
 			if (m_nonGraphiteEngines.TryGetValue(wsf, out nonGraphiteRenderEngine))
 			{
@@ -154,8 +146,10 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		private void ReleaseRenderEngines(IEnumerable<IRenderEngine> renderEngines)
 		{
-			foreach (IRenderEngine renderEngine in renderEngines)
+			foreach (var renderEngine in renderEngines)
+			{
 				Marshal.ReleaseComObject(renderEngine);
+			}
 		}
 
 		/// <inheritdoc/>

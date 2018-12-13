@@ -253,7 +253,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			};
 
 			// let it use the decorator if any.
-			m_rootb.DataAccess = DecoratedDataAccess;
+			RootBox.DataAccess = DecoratedDataAccess;
 			RootObjectHvo = m_hvoRoot;
 		}
 
@@ -265,7 +265,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			set
 			{
 				m_hvoRoot = value;
-				m_rootb.SetRootObject(m_hvoRoot, m_xmlVc, 1 /* magic number ALWAYS used for root fragment in this type of view. */, m_styleSheet);
+				RootBox.SetRootObject(m_hvoRoot, m_xmlVc, 1 /* magic number ALWAYS used for root fragment in this type of view. */, m_styleSheet);
 			}
 		}
 
@@ -317,12 +317,12 @@ namespace LanguageExplorer.Controls.XMLViews
 					// to indicate which command icons should be visible.
 					foreach (var hvo in changed)
 					{
-						m_rootb.PropChanged(hvo, XmlVc.IsObjectSelectedTag, 0, 1, 1);
+						RootBox.PropChanged(hvo, XmlVc.IsObjectSelectedTag, 0, 1, 1);
 					}
 					if (sel != null && !sel.IsValid)
 					{
 						// we wiped it out by regenerating parts of the display in our PropChanged calls! Restore it if we can.
-						sel = m_rootb.MakeTextSelection(ihvoRoot, cvsli, rgvsli, tagTextProp, cpropPrevious, ichAnchor, ichEnd, ws, fAssocPrev, ihvoEnd, ttpBogus, true);
+						sel = RootBox.MakeTextSelection(ihvoRoot, cvsli, rgvsli, tagTextProp, cpropPrevious, ichAnchor, ichEnd, ws, fAssocPrev, ihvoEnd, ttpBogus, true);
 					}
 				}
 			}
@@ -374,7 +374,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// code is not apparent.
 			// This causes the critical part of the view to redraw to hide or show the icon,
 			// because the XmlVc.AddCommandIcon method made the icon 'depend on' this fake property.
-			m_rootb?.PropChanged(XmlVc.FocusHvo, XmlVc.IsObjectSelectedTag, 0, 1, 1);
+			RootBox?.PropChanged(XmlVc.FocusHvo, XmlVc.IsObjectSelectedTag, 0, 1, 1);
 		}
 
 		/// <summary>
@@ -392,11 +392,11 @@ namespace LanguageExplorer.Controls.XMLViews
 			// a WM_ACTIVATE message is handled, and its call chain can get to here when m_rootb is null.
 			// This simple fix is a band-aid, and the code still smells, although the origin of the
 			// code is not apparent.
-			if (m_rootb != null)
+			if (RootBox != null)
 			{
 				foreach (var hvo in oldSelectedObjects)
 				{
-					m_rootb.PropChanged(hvo, XmlVc.IsObjectSelectedTag, 0, 1, 1);
+					RootBox.PropChanged(hvo, XmlVc.IsObjectSelectedTag, 0, 1, 1);
 				}
 			}
 			base.OnLostFocus(e);

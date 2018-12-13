@@ -397,8 +397,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var ichEnd = helper.IchEnd;
 			var hvoParaAnchor = 0;
 			var hvoParaEnd = 0;
-			var sliAnchor = helper.GetLevelInfo(SelectionHelper.SelLimitType.Anchor);
-			var sliEnd = helper.GetLevelInfo(SelectionHelper.SelLimitType.End);
+			var sliAnchor = helper.GetLevelInfo(SelLimitType.Anchor);
+			var sliEnd = helper.GetLevelInfo(SelLimitType.End);
 			if (sliAnchor.Length != sliEnd.Length)
 			{
 				ichEnd = ichAnchor;

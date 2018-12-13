@@ -691,7 +691,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				return null; // off somewhere in white space, tooltip is confusing
 			}
 			var helper = SelectionHelper.Create(sel, view);
-			var levels = helper.GetLevelInfo(SelectionHelper.SelLimitType.Anchor);
+			var levels = helper.GetLevelInfo(SelLimitType.Anchor);
 			ICmObject firstMatch = null;
 			ICmObject lastMatch = null;
 			foreach (var info in levels)

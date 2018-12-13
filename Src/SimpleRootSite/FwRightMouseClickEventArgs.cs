@@ -1,17 +1,14 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Drawing;
 using System.Diagnostics;
-
+using System.Drawing;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
-	/// <summary>
-	///
-	/// </summary>
+	/// <summary />
 	public delegate void FwRightMouseClickEventHandler(SimpleRootSite sender, FwRightMouseClickEventArgs e);
 
 	/// <summary>
@@ -20,45 +17,29 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// </summary>
 	public class FwRightMouseClickEventArgs
 	{
-		private bool m_eventHandled = false;
-		private IVwSelection m_selection;
-		private Point m_pt;
-
-		/// <summary>
-		/// Constructor.
-		/// </summary>
+		/// <summary />
 		/// <param name="pt">The point of the right click.</param>
 		/// <param name="selection">The selection at the right click point.</param>
 		public FwRightMouseClickEventArgs(Point pt, IVwSelection selection)
 		{
 			Debug.Assert(selection != null);
-			m_selection = selection;
-			m_pt = pt;
+			Selection = selection;
+			MouseLocation = pt;
 		}
 
 		/// <summary>
 		/// Gets or sets whether the event was handled or not. Defaults to false.
 		/// </summary>
-		public bool EventHandled
-		{
-			get { return m_eventHandled; }
-			set { m_eventHandled = value; }
-		}
+		public bool EventHandled { get; set; } = false;
 
 		/// <summary>
 		/// Get the selection from the sender.
 		/// </summary>
-		public IVwSelection Selection
-		{
-			get { return m_selection; }
-		}
+		public IVwSelection Selection { get; }
 
 		/// <summary>
-		/// Get the mouse pointer loaction.
+		/// Get the mouse pointer location.
 		/// </summary>
-		public Point MouseLocation
-		{
-			get { return m_pt; }
-		}
+		public Point MouseLocation { get; }
 	}
 }

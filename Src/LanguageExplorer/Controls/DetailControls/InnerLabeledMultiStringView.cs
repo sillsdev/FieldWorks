@@ -111,7 +111,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				RootSiteEditingHelper.PasteFixTssEvent -= OnPasteFixTssEvent;
 			}
-			if (m_rootb != null)
+			if (RootBox != null)
 			{
 				WritingSystems = WritingSystemOptions;
 				VC.Reuse(Flid, WritingSystems, m_editable);
@@ -144,7 +144,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public void FinishInit()
 		{
-			m_rootb?.SetRootObject(HvoObj, VC, 1, m_styleSheet);
+			RootBox?.SetRootObject(HvoObj, VC, 1, m_styleSheet);
 		}
 
 		/// <summary>
@@ -251,7 +251,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			base.OnKeyDown(e);
 			if (!e.Handled && (e.KeyCode == Keys.Up || e.KeyCode == Keys.Down))
 			{
-				MultiStringSelectionUtils.HandleUpDownArrows(e, m_rootb, RootSiteEditingHelper.CurrentSelection, WritingSystemsToDisplay, Flid);
+				MultiStringSelectionUtils.HandleUpDownArrows(e, RootBox, RootSiteEditingHelper.CurrentSelection, WritingSystemsToDisplay, Flid);
 			}
 		}
 
@@ -280,16 +280,16 @@ namespace LanguageExplorer.Controls.DetailControls
 				if (fRange)
 				{
 					var fAnchorEditable = vwselNew.IsEditable;
-					hlpr.GetIch(SelectionHelper.SelLimitType.Anchor);
-					var tagAnchor = hlpr.GetTextPropId(SelectionHelper.SelLimitType.Anchor);
-					hlpr.GetIch(SelectionHelper.SelLimitType.End);
-					var tagEnd = hlpr.GetTextPropId(SelectionHelper.SelLimitType.End);
+					hlpr.GetIch(SelLimitType.Anchor);
+					var tagAnchor = hlpr.GetTextPropId(SelLimitType.Anchor);
+					hlpr.GetIch(SelLimitType.End);
+					var tagEnd = hlpr.GetTextPropId(SelLimitType.End);
 					if (vwselNew.EndBeforeAnchor)
 					{
 						if (fAnchorEditable && tagAnchor > 0 && tagEnd < 0)
 						{
-							hlpr.SetTextPropId(SelectionHelper.SelLimitType.End, tagAnchor);
-							hlpr.SetIch(SelectionHelper.SelLimitType.End, 0);
+							hlpr.SetTextPropId(SelLimitType.End, tagAnchor);
+							hlpr.SetIch(SelLimitType.End, 0);
 							fChangeRange = true;
 						}
 					}
@@ -297,8 +297,8 @@ namespace LanguageExplorer.Controls.DetailControls
 					{
 						if (!fAnchorEditable && tagAnchor < 0 && tagEnd > 0)
 						{
-							hlpr.SetTextPropId(SelectionHelper.SelLimitType.Anchor, tagEnd);
-							hlpr.SetIch(SelectionHelper.SelLimitType.Anchor, 0);
+							hlpr.SetTextPropId(SelLimitType.Anchor, tagEnd);
+							hlpr.SetIch(SelLimitType.Anchor, 0);
 							fChangeRange = true;
 						}
 					}
@@ -336,8 +336,8 @@ namespace LanguageExplorer.Controls.DetailControls
 
 				// We only want to allow applying styles in this type of control if the whole selection is in
 				// the same writing system.
-				var wsAnchor = EditingHelper.CurrentSelection.GetWritingSystem(SelectionHelper.SelLimitType.Anchor);
-				var wsEnd = EditingHelper.CurrentSelection.GetWritingSystem(SelectionHelper.SelLimitType.End);
+				var wsAnchor = EditingHelper.CurrentSelection.GetWritingSystem(SelLimitType.Anchor);
+				var wsEnd = EditingHelper.CurrentSelection.GetWritingSystem(SelLimitType.End);
 				return wsAnchor == wsEnd;
 			}
 		}
@@ -391,7 +391,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public override void MakeRoot()
 		{
-			m_rootb = null;
+			RootBox = null;
 
 			if (m_cache == null || DesignMode)
 			{
@@ -403,13 +403,13 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			base.MakeRoot();
 
-			Debug.Assert(m_rootb != null);
+			Debug.Assert(RootBox != null);
 			// And maybe this too, at least by default?
-			m_rootb.DataAccess = m_cache.DomainDataByFlid;
+			RootBox.DataAccess = m_cache.DomainDataByFlid;
 
 			// arg3 is a meaningless initial fragment, since this VC only displays one thing.
 			// arg4 could be used to supply a stylesheet.
-			m_rootb.SetRootObject(HvoObj, VC, 1, m_styleSheet);
+			RootBox.SetRootObject(HvoObj, VC, 1, m_styleSheet);
 			SetupOtherControls?.Invoke(this, new EventArgs());
 		}
 

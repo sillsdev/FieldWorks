@@ -269,7 +269,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				slot.Optional = !slot.Optional;
 				helper.RollBack = false;
 			}
-			m_rootb.Reconstruct();
+			RootBox.Reconstruct();
 			return true;	//we handled this.
 		}
 		public bool OnInflTemplateRemoveSlot(object cmd)
@@ -324,7 +324,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 							inflMsa.SlotsRC.Clear();
 						}
 					});
-			m_rootb.Reconstruct();  // work around because <choice> is not smart enough to remember its dependencies
+			RootBox.Reconstruct();  // work around because <choice> is not smart enough to remember its dependencies
 			return true;	//we handled this.
 		}
 
@@ -571,7 +571,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 						HandleInsertAroundStem(fBefore, chosenSlot, out flid, out ihvo);
 						break;
 				}
-				m_rootb.Reconstruct(); // Ensure that the table gets redrawn
+				RootBox.Reconstruct(); // Ensure that the table gets redrawn
 				if (!chooser.LinkExecuted)
 				{
 					return;
@@ -583,7 +583,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				rgvsli[0].ich = -1;
 				rgvsli[0].ihvo = ihvo;
 				rgvsli[0].tag = flid;
-				m_rootb.MakeTextSelInObj(0, 1, rgvsli, 0, null, true, true, true, false, true);
+				RootBox.MakeTextSelInObj(0, 1, rgvsli, 0, null, true, true, true, false, true);
 #if CausesDebugAssertBecauseOnlyWorksOnStTexts
 				RefreshDisplay();
 #endif

@@ -198,8 +198,8 @@ namespace LanguageExplorer.Controls.Styles
 		{
 			base.MakeRoot();
 
-			m_rootb.DataAccess = m_DataAccess;
-			m_rootb.SetRootObject(khvoRoot, m_vc, kfragRoot, null);
+			RootBox.DataAccess = m_DataAccess;
+			RootBox.SetRootObject(khvoRoot, m_vc, kfragRoot, null);
 		}
 
 		/// <inheritdoc />

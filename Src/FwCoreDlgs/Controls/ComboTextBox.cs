@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				{
 					// But, if it is RTL, we need to scroll, typically only once, to make it as visible as possible.
 					// Right alignment otherwise puts the string way off to the right.
-					var initialSel = m_rootb.MakeSimpleSel(true, false, false, false);
+					var initialSel = RootBox.MakeSimpleSel(true, false, false, false);
 					base.ScrollSelectionIntoView(initialSel, VwScrollSelOpts.kssoDefault);
 				}
 				return false;
@@ -63,14 +63,14 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
-			if (m_rootb == null || !Rtl)
+			if (RootBox == null || !Rtl)
 			{
 				return;
 			}
 			// To get the text aligned as well as we readily can, first scroll to show all of it,
 			// then if need be again to see the start.
-			BaseMakeSelectionVisible(m_rootb.MakeSimpleSel(true, false, true, false));
-			BaseMakeSelectionVisible(m_rootb.MakeSimpleSel(true, false, false, false));
+			BaseMakeSelectionVisible(RootBox.MakeSimpleSel(true, false, true, false));
+			BaseMakeSelectionVisible(RootBox.MakeSimpleSel(true, false, false, false));
 		}
 
 		internal override void RemoveNonRootNotifications()

@@ -150,7 +150,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void OnShowInReversalIndex(object sender, EventArgs e)
 		{
-			var tsi = new TextSelInfo(m_rootb);
+			var tsi = new TextSelInfo(RootBox);
 			var hvo = tsi.HvoAnchor;
 			if (hvo == 0)
 			{
@@ -495,10 +495,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		internal void ResetEntries()
 		{
-			if (m_rootb != null)
+			if (RootBox != null)
 			{
 				LoadDummyCache(true);
-				m_rootb.Reconstruct();
+				RootBox.Reconstruct();
 			}
 			else
 			{
@@ -528,15 +528,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			LoadDummyCache(false);
 
 			// And maybe this too, at least by default?
-			m_rootb.DataAccess = m_sdaRev;
+			RootBox.DataAccess = m_sdaRev;
 			m_vc = new ReversalIndexEntryVc(m_usedIndices, m_cache);
 
 			// arg4 could be used to supply a stylesheet.
-			m_rootb.SetRootObject(m_hvoObj,
+			RootBox.SetRootObject(m_hvoObj,
 				m_vc,
 				kFragMainObject,
-				m_rootb.Stylesheet);
-			m_heightView = m_rootb.Height;
+				RootBox.Stylesheet);
+			m_heightView = RootBox.Height;
 		}
 
 		private void LoadDummyCache(bool doFullReload)
@@ -734,7 +734,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			rgvsli[1].ihvo = ihvoIndex;
 			try
 			{
-				m_rootb.MakeTextSelection(0, rgvsli.Length, rgvsli, tag, 0, ichAnchor, ichEnd, ws, fAssocPrev, -1, null, true);
+				RootBox.MakeTextSelection(0, rgvsli.Length, rgvsli, tag, 0, ichAnchor, ichEnd, ws, fAssocPrev, -1, null, true);
 			}
 			catch (Exception e)
 			{
@@ -748,17 +748,17 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void CheckHeight()
 		{
-			if (m_rootb == null)
+			if (RootBox == null)
 			{
 				return;
 			}
-			var hNew = m_rootb.Height;
+			var hNew = RootBox.Height;
 			if (m_heightView == hNew)
 			{
 				return;
 			}
 
-			ViewSizeChanged?.Invoke(this, new FwViewSizeEventArgs(hNew, m_rootb.Width));
+			ViewSizeChanged?.Invoke(this, new FwViewSizeEventArgs(hNew, RootBox.Width));
 			m_heightView = hNew;
 		}
 

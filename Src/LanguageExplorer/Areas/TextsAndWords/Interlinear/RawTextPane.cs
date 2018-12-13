@@ -171,7 +171,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return false; // don't interfere with right clicks or shifr-clicks.
 			}
 			var helper = SelectionHelper.Create(sel, this);
-			var text = helper.GetTss(SelectionHelper.SelLimitType.Anchor).Text;
+			var text = helper.GetTss(SelLimitType.Anchor).Text;
 			if (string.IsNullOrEmpty(text))
 			{
 				return false;
@@ -180,7 +180,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// is always on, which means they are spaces in the string we retrieve.
 			// If we don't want to suppress inserting one next to a regular space, we'll need to check the chararacter properties
 			// to distinguish the magic spaces from regular ones.
-			var ich = helper.GetIch(SelectionHelper.SelLimitType.Anchor);
+			var ich = helper.GetIch(SelLimitType.Anchor);
 			if (ich > 0 && ich <= text.Length && text[ich - 1] == ' ')
 			{
 				return false; // don't insert second ZWS following existing one (or normal space).
@@ -190,15 +190,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return false; // don't insert second ZWS before existing one (or normal space).
 			}
 			int nVar;
-			var ws = helper.GetSelProps(SelectionHelper.SelLimitType.Anchor).GetIntPropValues((int) FwTextPropType.ktptWs, out nVar);
+			var ws = helper.GetSelProps(SelLimitType.Anchor).GetIntPropValues((int) FwTextPropType.ktptWs, out nVar);
 			if (ws != 0)
 			{
 				UndoableUnitOfWorkHelper.Do(ITextStrings.ksUndoInsertInvisibleSpace, ITextStrings.ksRedoInsertInvisibleSpace,
 					Cache.ActionHandlerAccessor,
 					() => sel.ReplaceWithTsString(TsStringUtils.MakeString(AnalysisOccurrence.KstrZws, ws)));
 			}
-			helper.SetIch(SelectionHelper.SelLimitType.Anchor, ich + 1);
-			helper.SetIch(SelectionHelper.SelLimitType.End, ich + 1);
+			helper.SetIch(SelLimitType.Anchor, ich + 1);
+			helper.SetIch(SelLimitType.End, ich + 1);
 			helper.SetSelection(true, true);
 			return true; // we already made an appropriate selection.
 		}
@@ -294,7 +294,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					{
 						m_showSpaceDa.ShowSpaces = newVal;
 						var saveSelection = SelectionHelper.Create(this);
-						m_rootb.Reconstruct();
+						RootBox.Reconstruct();
 						saveSelection.SetSelection(true);
 					}
 					if (!newVal && ClickInvisibleSpace)
@@ -323,19 +323,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected override void ReallyHandleWritingSystemHvo_Changed(object newValue)
 		{
 			var wsBefore = 0;
-			if (RootObject != null && m_rootb != null && m_rootb.Selection.IsValid)
+			if (RootObject != null && RootBox != null && RootBox.Selection.IsValid)
 		{
 				// We want to know below whether a base class changed the ws or not.
-				wsBefore = SelectionHelper.GetWsOfEntireSelection(m_rootb.Selection);
+				wsBefore = SelectionHelper.GetWsOfEntireSelection(RootBox.Selection);
 		}
 
 			base.ReallyHandleWritingSystemHvo_Changed(newValue);
 
-			if (RootObject == null || m_rootb == null || !m_rootb.Selection.IsValid)
+			if (RootObject == null || RootBox == null || !RootBox.Selection.IsValid)
 		{
 				return;
 			}
-			var ws = SelectionHelper.GetWsOfEntireSelection(m_rootb.Selection);
+			var ws = SelectionHelper.GetWsOfEntireSelection(RootBox.Selection);
 			if (ws == wsBefore)
 			{
 				// No change, so bail out.
@@ -345,7 +345,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			int tag;
 			int ichMin;
 			int ichLim;
-			if (!GetSelectedWordPos(m_rootb.Selection, out hvo, out tag, out ws, out ichMin, out ichLim) || tag != StTxtParaTags.kflidContents)
+			if (!GetSelectedWordPos(RootBox.Selection, out hvo, out tag, out ws, out ichMin, out ichLim) || tag != StTxtParaTags.kflidContents)
 			{
 				return;
 		}
@@ -390,16 +390,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			base.MakeRoot();
 
 			var wsFirstPara = GetWsOfFirstWordOfFirstTextPara();
-			Vc = new RawTextVc(m_rootb, m_cache, wsFirstPara);
+			Vc = new RawTextVc(RootBox, m_cache, wsFirstPara);
 			SetupVc();
 
 			m_showSpaceDa = new ShowSpaceDecorator(m_cache.GetManagedSilDataAccess())
 			{
 				ShowSpaces = ShowInvisibleSpaces
 			};
-			m_rootb.DataAccess = m_showSpaceDa;
+			RootBox.DataAccess = m_showSpaceDa;
 
-			m_rootb.SetRootObject(RootHvo, Vc, (int)StTextFrags.kfrText, m_styleSheet);
+			RootBox.SetRootObject(RootHvo, Vc, (int)StTextFrags.kfrText, m_styleSheet);
 		}
 
 		/// <summary>
@@ -463,7 +463,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			Publisher.Publish("TextSelectedWord", wordform);
 
 			var helper = SelectionHelper.Create(vwselNew, this);
-			if (helper != null && helper.GetTextPropId(SelectionHelper.SelLimitType.Anchor) == RawTextVc.kTagUserPrompt)
+			if (helper != null && helper.GetTextPropId(SelLimitType.Anchor) == RawTextVc.kTagUserPrompt)
 			{
 				vwselNew.ExtendToStringBoundaries();
 				EditingHelper.SetKeyboardForSelection(vwselNew);
@@ -513,7 +513,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		protected override void Draw(PaintEventArgs e)
 		{
-			if (m_rootb != null && (m_dxdLayoutWidth > 0) && !DesignMode)
+			if (RootBox != null && (m_dxdLayoutWidth > 0) && !DesignMode)
 			{
 				base.Draw(e);
 			}
@@ -560,7 +560,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			try
 			{
 				IWfiWordform wordform;
-				if (GetSelectedWordform(m_rootb.Selection, out wordform))
+				if (GetSelectedWordform(RootBox.Selection, out wordform))
 				{
 					ui = CmObjectUi.MakeLcmModelUiObject(Cache, wordform.Hvo);
 					ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
@@ -633,7 +633,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public bool OnLexiconLookup(object argument)
 		{
 			int ichMin, ichLim, hvo, tag, ws;
-			if (GetSelectedWordPos(m_rootb.Selection, out hvo, out tag, out ws, out ichMin, out ichLim))
+			if (GetSelectedWordPos(RootBox.Selection, out hvo, out tag, out ws, out ichMin, out ichLim))
 			{
 				LexEntryUi.DisplayOrCreateEntry(m_cache, hvo, tag, ws, ichMin, ichLim, this, PropertyTable, Publisher, Subscriber, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), "UserHelpFile");
 			}
@@ -649,7 +649,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public bool LexiconLookupEnabled()
 		{
-			var sel = m_rootb?.Selection;
+			var sel = RootBox?.Selection;
 			if (sel == null || !sel.IsValid)
 			{
 				return false;

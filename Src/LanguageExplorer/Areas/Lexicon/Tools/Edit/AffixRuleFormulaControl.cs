@@ -300,7 +300,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		#endregion
 
-		protected override int GetCell(SelectionHelper sel, SelectionHelper.SelLimitType limit)
+		protected override int GetCell(SelectionHelper sel, SelLimitType limit)
 		{
 			if (sel == null)
 			{
@@ -329,7 +329,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			return -1;
 		}
 
-		protected override ICmObject GetCmObject(SelectionHelper sel, SelectionHelper.SelLimitType limit)
+		protected override ICmObject GetCmObject(SelectionHelper sel, SelLimitType limit)
 		{
 			if (sel == null)
 			{

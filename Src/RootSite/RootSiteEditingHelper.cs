@@ -326,7 +326,7 @@ namespace SIL.FieldWorks.Common.RootSites
 						SelLevInfo paraLevInfo;
 						helper.GetLevelInfoForTag(StTextTags.kflidParagraphs, out paraLevInfo);
 						var para = cache.ServiceLocator.GetInstance<IStTxtParaRepository>().GetObject(paraLevInfo.hvo);
-						segment = para.GetSegmentForOffsetInFreeTranslation(helper.GetIch(SelectionHelper.SelLimitType.Top), helper.Ws);
+						segment = para.GetSegmentForOffsetInFreeTranslation(helper.GetIch(SelLimitType.Top), helper.Ws);
 					}
 					var tssVernSegment = segment.BaselineText;
 					foreach (var guid in tssVernSegment.GetAllEmbeddedObjectGuids(FwObjDataTypes.kodtOwnNameGuidHot))
@@ -586,9 +586,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// <returns>A selection helper representing an IP, or <c>null</c> if the given
 		/// selection cannot be reduced to an IP</returns>
-		public SelectionHelper GetSelectionReducedToIp(SelectionHelper.SelLimitType selLimit)
+		public SelectionHelper GetSelectionReducedToIp(SelLimitType selLimit)
 		{
-			var selHelper = CurrentSelection.ReduceSelectionToIp(SelectionHelper.SelLimitType.Top, false, false);
+			var selHelper = CurrentSelection.ReduceSelectionToIp(SelLimitType.Top, false, false);
 			if (selHelper == null)
 			{
 				HandleFootnoteAnchorIconSelected(CurrentSelection.Selection, (hvo, flid, ws, ich) =>

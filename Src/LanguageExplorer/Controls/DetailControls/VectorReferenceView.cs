@@ -93,7 +93,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public virtual void ReloadVector()
 		{
-			m_rootb.SetRootObject(m_rootObj?.Hvo ?? 0, m_VectorReferenceVc, kfragTargetVector, m_rootb.Stylesheet);
+			RootBox.SetRootObject(m_rootObj?.Hvo ?? 0, m_VectorReferenceVc, kfragTargetVector, RootBox.Stylesheet);
 		}
 
 		/// <summary>
@@ -127,7 +127,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			m_VectorReferenceVc = CreateVectorReferenceVc();
 			base.MakeRoot();
-			m_rootb.DataAccess = GetDataAccess();
+			RootBox.DataAccess = GetDataAccess();
 			SetupRoot();
 		}
 
@@ -163,7 +163,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (cvsli == 0)
 			{
 				// No objects in selection: don't allow a selection.
-				m_rootb.DestroySelection();
+				RootBox.DestroySelection();
 				// Enhance: invoke launcher's selection dialog.
 				return;
 			}
@@ -190,10 +190,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			var rgvsli = SelLevInfo.AllTextSelInfo(vwselNew, cvsli,
 				out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd,
 				out ws, out fAssocPrev, out ihvoEnd, out ttp);
-			Debug.Assert(m_rootb != null);
+			Debug.Assert(RootBox != null);
 			// Create a selection that covers the entire target object.  If it differs from
 			// the new selection, we'll install it (which will recurse back to this method).
-			var vwselWhole = m_rootb.MakeTextSelInObj(ihvoRoot, cvsli, rgvsli, 0, null, false, false, false, true, false);
+			var vwselWhole = RootBox.MakeTextSelInObj(ihvoRoot, cvsli, rgvsli, 0, null, false, false, false, true, false);
 			if (vwselWhole == null)
 			{
 				return;
@@ -211,7 +211,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (hvoObj == hvoObjWhole && hvoObjEnd == hvoObjEndWhole && (ichAnchor != ichAnchorWhole || ichEnd != ichEndWhole))
 				{
 					// Install it this time!
-				m_rootb.MakeTextSelInObj(ihvoRoot, cvsli, rgvsli, 0, null, false, false, false, true, true);
+				RootBox.MakeTextSelInObj(ihvoRoot, cvsli, rgvsli, 0, null, false, false, false, true, true);
 			}
 		}
 
@@ -289,7 +289,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			var rgvsli = new SelLevInfo[1];
 			rgvsli[0].ihvo = ihvo;
 			rgvsli[0].tag = m_rootFlid;
-			m_rootb.MakeTextSelInObj(0, 1, rgvsli, 0, null, false, false, false, true, true);
+			RootBox.MakeTextSelInObj(0, 1, rgvsli, 0, null, false, false, false, true, true);
 		}
 
 		private void ReorderItems(List<ICmObject> vals)
@@ -336,11 +336,11 @@ namespace LanguageExplorer.Controls.DetailControls
 				return false;
 			}
 			visible = true; // Command makes sense even if we can't actually do it now.
-			if (m_rootb.Selection == null)
+			if (RootBox.Selection == null)
 			{
 				return false;
 			}
-			var cvsli = m_rootb.Selection.CLevels(false);
+			var cvsli = RootBox.Selection.CLevels(false);
 			// CLevels includes the string property itself, but AllTextSelInfo doesn't need it.
 			cvsli--;
 			if (cvsli <= 0)
@@ -351,7 +351,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			int hvoObj, flid, cpropPrevious;
 			IVwPropertyStore vps;
 			//the index (ihvo) set by this method is the index of the visible items, any logic using this index must also deal with only the visible items
-			m_rootb.Selection.PropInfo(false, cvsli, out hvoObj, out flid, out ihvo, out cpropPrevious, out vps);
+			RootBox.Selection.PropInfo(false, cvsli, out hvoObj, out flid, out ihvo, out cpropPrevious, out vps);
 			Debug.Assert(hvoObj == m_rootObj.Hvo);
 			Debug.Assert(flid == m_rootFlid);
 			//set vals to the visible items
@@ -394,7 +394,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected virtual List<ICmObject> GetVisibleItemList()
 		{
 			var objRepo = Cache.ServiceLocator.ObjectRepository;
-			return (m_rootb.DataAccess as ISilDataAccessManaged)?.VecProp(m_rootObj.Hvo, m_rootFlid).Where(i => objRepo.GetObject(i) != null).Select(i => objRepo.GetObject(i)).ToList();
+			return (RootBox.DataAccess as ISilDataAccessManaged)?.VecProp(m_rootObj.Hvo, m_rootFlid).Where(i => objRepo.GetObject(i) != null).Select(i => objRepo.GetObject(i)).ToList();
 		}
 		/// <summary>
 		/// This method will return the list of items in this vector which are hidden from the user, the base class version returns an empty list.
@@ -428,7 +428,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected void Delete(string undoText, string redoText)
 		{
-			var sel = m_rootb.Selection;
+			var sel = RootBox.Selection;
 			int cvsli;
 			int hvoObj;
 			if (CheckForValidDelete(sel, out cvsli, out hvoObj))
@@ -452,10 +452,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			var rgvsli = SelLevInfo.AllTextSelInfo(sel, cvsli,
 				out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd,
 				out ws, out fAssocPrev, out ihvoEnd, out ttp);
-			Debug.Assert(m_rootb != null);
+			Debug.Assert(RootBox != null);
 			// Create a selection that covers the entire target object.  If it differs from
 			// the new selection, we'll install it (which will recurse back to this method).
-			var vwselWhole = m_rootb.MakeTextSelInObj(ihvoRoot, cvsli, rgvsli, 0, null, false, false, false, true, false);
+			var vwselWhole = RootBox.MakeTextSelInObj(ihvoRoot, cvsli, rgvsli, 0, null, false, false, false, true, false);
 			if (vwselWhole == null)
 			{
 				return;
@@ -554,17 +554,17 @@ namespace LanguageExplorer.Controls.DetailControls
 		private void RemoveObjectFromEditableList(int ihvo, string undoText, string redoText)
 		{
 			var startHeight = 0;
-			if (m_rootb != null)
+			if (RootBox != null)
 			{
-				startHeight = m_rootb.Height;
+				startHeight = RootBox.Height;
 			}
 
 			UndoableUnitOfWorkHelper.Do(undoText, redoText, m_rootObj, () => m_cache.DomainDataByFlid.Replace(m_rootObj.Hvo, m_rootFlid, ihvo, ihvo + 1, new int[0], 0));
-			if (m_rootb != null)
+			if (RootBox != null)
 			{
-				CheckViewSizeChanged(startHeight, m_rootb.Height);
+				CheckViewSizeChanged(startHeight, RootBox.Height);
 				// Redisplay (?) the vector property.
-				m_rootb.SetRootObject(m_rootObj.Hvo, m_VectorReferenceVc, kfragTargetVector, m_rootb.Stylesheet);
+				RootBox.SetRootObject(m_rootObj.Hvo, m_VectorReferenceVc, kfragTargetVector, RootBox.Stylesheet);
 			}
 		}
 
@@ -574,14 +574,14 @@ namespace LanguageExplorer.Controls.DetailControls
 		internal void UpdateRootObject(ICmObject root)
 		{
 			m_rootObj = root;
-			m_rootb.SetRootObject(m_rootObj.Hvo, m_VectorReferenceVc, kfragTargetVector, m_rootb.Stylesheet);
+			RootBox.SetRootObject(m_rootObj.Hvo, m_VectorReferenceVc, kfragTargetVector, RootBox.Stylesheet);
 		}
 
 		protected void CheckViewSizeChanged(int startHeight, int endHeight)
 		{
 			if (startHeight != endHeight)
 			{
-				ViewSizeChanged?.Invoke(this, new FwViewSizeEventArgs(endHeight, m_rootb.Width));
+				ViewSizeChanged?.Invoke(this, new FwViewSizeEventArgs(endHeight, RootBox.Width));
 			}
 		}
 
@@ -607,7 +607,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			get
 			{
-				var sel = m_rootb.Selection;
+				var sel = RootBox.Selection;
 				if (sel == null)
 				{
 					return null; // nothing selected, give up.
@@ -635,7 +635,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				if (value == null)
 				{
-					m_rootb.MakeSimpleSel(true, true, true, true);
+					RootBox.MakeSimpleSel(true, true, true, true);
 				}
 				else
 				{
@@ -652,7 +652,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					var levels = new SelLevInfo[1];
 					levels[0].ihvo = i;
 					levels[0].tag = m_rootFlid;
-					m_rootb.MakeTextSelInObj(0, levels.Length, levels, 0, null, true, true, true, true, true);
+					RootBox.MakeTextSelInObj(0, levels.Length, levels, 0, null, true, true, true, true, true);
 				}
 			}
 		}

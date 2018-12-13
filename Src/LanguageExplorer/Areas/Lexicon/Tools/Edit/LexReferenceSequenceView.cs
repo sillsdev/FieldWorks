@@ -77,7 +77,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		protected override void Delete()
 		{
-			var sel = m_rootb.Selection;
+			var sel = RootBox.Selection;
 			int cvsli;
 			int hvoObj;
 			if (!CheckForValidDelete(sel, out cvsli, out hvoObj))

@@ -142,10 +142,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			m_vc.LineChoices.Add(InterlinLineChoices.kflidLexGloss); //3
 			m_vc.LineChoices.Add(InterlinLineChoices.kflidLexPos); //4
 
-			m_rootb.DataAccess = m_cache.MainCacheAccessor;
+			RootBox.DataAccess = m_cache.MainCacheAccessor;
 
 			const int selectorId = InterlinVc.kfragSingleInterlinearAnalysisWithLabelsLeftAlign;
-			m_rootb.SetRootObject(m_wfiAnalysis.Hvo, m_vc, selectorId, m_styleSheet);
+			RootBox.SetRootObject(m_wfiAnalysis.Hvo, m_vc, selectorId, m_styleSheet);
 
 			if (!IsEditable)
 			{
@@ -349,12 +349,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		{
 			get
 			{
-				if (m_rootb == null)
+				if (RootBox == null)
 				{
 					return PreferredSize;
 				}
-				var desiredWidth = m_rootb.Width;
-				var desiredHeight = m_rootb.Height;
+				var desiredWidth = RootBox.Width;
+				var desiredHeight = RootBox.Height;
 				if (Controls.Contains(m_oneAnalSandbox))
 				{
 					desiredWidth = Math.Max(desiredWidth, m_oneAnalSandbox.Left + m_oneAnalSandbox.Width);
@@ -369,7 +369,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			SetSandboxSize();
 
 			m_vc.LeftPadding = 0;
-			m_rootb.Reconstruct();
+			RootBox.Reconstruct();
 			using (new HoldGraphics(this))
 			{
 				Rectangle rcSrcRoot;
@@ -421,7 +421,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				dpiX = (int)g.DpiX;
 			}
 			m_vc.LeftPadding = ((m_oneAnalSandbox.Width - m_rcPrimary.right) * 72000) / dpiX;
-			m_rootb.Reconstruct();
+			RootBox.Reconstruct();
 		}
 
 		#endregion

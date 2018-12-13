@@ -230,7 +230,6 @@
     <Compile Include="BasicViewTestsBase.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DisplayType.cs" />
     <Compile Include="DummyBasicView.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -244,10 +243,10 @@
     <Compile Include="PrintRootSiteTests.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
+    <Compile Include="Properties\RootSiteTestsResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
+      <DependentUpon>RootSiteTestsResources.resx</DependentUpon>
     </Compile>
     <Compile Include="RootsiteBasicViewTestsBase.cs">
       <SubType>Code</SubType>
@@ -267,9 +266,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>DummyBasicView.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
+    <EmbeddedResource Include="Properties\RootSiteTestsResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <LastGenOutput>RootSiteTestsResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

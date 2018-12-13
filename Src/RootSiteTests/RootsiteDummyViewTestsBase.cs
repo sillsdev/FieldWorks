@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
+using FieldWorks.TestUtilities;
 using LanguageExplorer.TestUtilities;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -77,7 +78,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		protected void ShowForm()
 		{
-			m_basicView.DisplayType = DisplayType.kBookTitle;
+			m_basicView.MyDisplayType = DisplayType.kBookTitle;
 
 			// We don't actually want to show it, but we need to force the view to create the root
 			// box and lay it out so that various test stuff can happen properly.

@@ -339,7 +339,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 		internal IVwRootBox MockedRootBox
 		{
-			set { m_rootb = value; }
+			set { RootBox = value; }
 		}
 
 		/// ------------------------------------------------------------------------------------

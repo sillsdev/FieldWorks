@@ -122,10 +122,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			{
 				m_DataAccess.RemoveNotification(this);
 				m_editingHelper?.Dispose();
-				m_rootb?.Close();
+				RootBox?.Close();
 				m_fIsDisposing = false;
 			}
-			m_rootb = null;
+			RootBox = null;
 			m_editingHelper = null;
 			m_vc = null;
 			m_controlID = null;
@@ -197,7 +197,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 					if (m_DataAccess != null)
 					{
 						m_DataAccess.WritingSystemFactory = value;
-						m_rootb?.Reconstruct();
+						RootBox?.Reconstruct();
 					}
 
 				}
@@ -247,7 +247,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				if (base.StyleSheet != value)
 				{
 					base.StyleSheet = value;
-					m_rootb?.SetRootObject(khvoRoot, m_vc, kfragRoot, value);
+					RootBox?.SetRootObject(khvoRoot, m_vc, kfragRoot, value);
 				}
 			}
 		}
@@ -289,9 +289,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 					m_DataAccess.SetString(khvoRoot, ktagText, tss);
 				}
 
-				if (m_rootb != null && tss != null)
+				if (RootBox != null && tss != null)
 				{
-					var sel = m_rootb.MakeSimpleSel(true, true, true, true);
+					var sel = RootBox.MakeSimpleSel(true, true, true, true);
 					ScrollSelectionIntoView(sel, VwScrollSelOpts.kssoDefault);
 				}
 			}
@@ -551,8 +551,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 
 			base.MakeRoot();
 
-			m_rootb.DataAccess = m_DataAccess;
-			m_rootb.SetRootObject(khvoRoot, m_vc, kfragRoot, StyleSheet);
+			RootBox.DataAccess = m_DataAccess;
+			RootBox.SetRootObject(khvoRoot, m_vc, kfragRoot, StyleSheet);
 			m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
 			m_DataAccess.AddNotification(this);
 		}
@@ -571,11 +571,11 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		{
 			get
 			{
-				if (m_rootb == null)
+				if (RootBox == null)
 				{
 					return null;
 				}
-				return m_rootb.Selection ?? m_rootb.MakeSimpleSel(true, false, true, false);
+				return RootBox.Selection ?? RootBox.MakeSimpleSel(true, false, true, false);
 			}
 		}
 
@@ -591,7 +591,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		protected override bool MakeSelectionVisible(IVwSelection sel, bool fWantOneLineSpace)
 		{
 			// Select everything (but don't install it).
-			var wholeSel = m_rootb.MakeSimpleSel(true, false, true, false);
+			var wholeSel = RootBox.MakeSimpleSel(true, false, true, false);
 			if (wholeSel != null)
 			{
 				Rectangle rcPrimary;
@@ -611,12 +611,12 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				if (sel == null || !sel.IsValid)
 				{
 					Logger.WriteError(new InvalidOperationException("MakeSelectionVisible called when no valid selection could be made."));
-					Logger.WriteEvent("m_rootb.Height = " + m_rootb.Height);
-					Logger.WriteEvent("m_rootb.Width = " + m_rootb.Width);
+					Logger.WriteEvent("m_rootb.Height = " + RootBox.Height);
+					Logger.WriteEvent("m_rootb.Width = " + RootBox.Width);
 					int hvoRoot, frag;
 					IVwViewConstructor vc;
 					IVwStylesheet stylesheet;
-					m_rootb.GetRootObject(out hvoRoot, out vc, out frag, out stylesheet);
+					RootBox.GetRootObject(out hvoRoot, out vc, out frag, out stylesheet);
 					Logger.WriteEvent("Root object = " + hvoRoot);
 					Logger.WriteEvent("Root fragment = " + frag);
 				}
@@ -624,7 +624,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 			// And, in case it really is longer than the box (or was null!), make sure we really can see the actual selection;
 			// but ONLY if we had one, otherwise, it tries again to make everything visible
-			if (m_rootb.Selection != null && m_rootb.Selection.IsValid)
+			if (RootBox.Selection != null && RootBox.Selection.IsValid)
 			{
 				return base.MakeSelectionVisible(sel, fWantOneLineSpace);
 			}
@@ -703,7 +703,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			set
 			{
 				base.BackColor = value;
-				m_rootb?.Reconstruct();
+				RootBox?.Reconstruct();
 			}
 		}
 
@@ -719,7 +719,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			set
 			{
 				base.ForeColor = value;
-				m_rootb?.Reconstruct();
+				RootBox?.Reconstruct();
 			}
 		}
 
@@ -783,14 +783,14 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			{
 				throw new ArgumentException("Length is less than zero.", nameof(length));
 			}
-			if (m_rootb == null)
+			if (RootBox == null)
 			{
 				return;
 			}
 
 			var intStart = ExtToIntIndex(start);
 			var intEnd = ExtToIntIndex(start + length);
-			var sel = m_rootb.Selection;
+			var sel = RootBox.Selection;
 			if (sel != null)
 			{
 				// See if the desired thing is already selected. If so do nothing. This can prevent stack overflow!
@@ -806,7 +806,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 			try
 			{
-				m_rootb.MakeTextSelection(0, 0, null, ktagText, 0, intStart, intEnd, -1, false, -1, null, true);
+				RootBox.MakeTextSelection(0, 0, null, ktagText, 0, intStart, intEnd, -1, false, -1, null, true);
 			}
 			catch
 			{
@@ -959,7 +959,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 
 		internal virtual void RestoreNonRootNotifications()
 		{
-			if (m_rootb != null)
+			if (RootBox != null)
 			{
 				DataAccess.AddNotification(this);
 			}
@@ -991,13 +991,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			m_mpEditHeight = FwTextBox.GetDympMaxHeight(this);
 			if (AdjustHeight())
 			{
-				m_rootb.Reconstruct();
+				RootBox.Reconstruct();
 			}
 			// Don't bother making selection visible until our writing system is set, or the
 			// string has something in it.  See LT-9472.
 			// Also don't try if we have no selection; this can produce undesirable scrolling when the
 			// window is just too narrow. LT-11073
-			if (m_rootb?.Selection == null)
+			if (RootBox?.Selection == null)
 			{
 				return;
 			}

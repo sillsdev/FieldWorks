@@ -26,14 +26,14 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			base.MakeRoot();
 
-			m_rootb.DataAccess = m_cache.DomainDataByFlid;
+			RootBox.DataAccess = m_cache.DomainDataByFlid;
 
 			m_cvc = new TwoLevelConcVc(m_cp, m_gni, m_index);
 
 			// The root object is the one, if any, that the policy gives us for this slice.
 			// If it doesn't give us one the vc will obtain a key string from the policy
 			// directly. The frag argument is arbitrary.
-			m_rootb.SetRootObject(m_cp.Item(m_index), m_cvc, 1, m_styleSheet);
+			RootBox.SetRootObject(m_cp.Item(m_index), m_cvc, 1, m_styleSheet);
 		}
 	}
 }

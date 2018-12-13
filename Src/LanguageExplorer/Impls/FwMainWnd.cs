@@ -2093,7 +2093,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			}
 			// Look at the paragraph (if there is one) to get the paragraph style.
 			var helper = SelectionHelper.GetSelectionInfo(sel, rootsite);
-			var info = helper.GetLevelInfo(SelectionHelper.SelLimitType.End);
+			var info = helper.GetLevelInfo(SelLimitType.End);
 			if (info.Length == 0)
 			{
 				return;

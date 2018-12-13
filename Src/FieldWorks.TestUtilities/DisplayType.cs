@@ -4,7 +4,7 @@
 
 using System;
 
-namespace SIL.FieldWorks.Common.RootSites
+namespace FieldWorks.TestUtilities
 {
 	/// <summary>How to display the text</summary>
 	[Flags]
@@ -17,7 +17,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>Display paragraphs with top-margin</summary>
 		kWithTopMargin = 4,
 		/// <summary>Display lazy and non-lazy boxes (this isn't really "all", because it
-		/// doesn't include outer object details or literal sring labels)</summary>
+		/// doesn't include outer object details or literal string labels)</summary>
 		kAll = 7,
 		/// <summary>Display outer object details (for testing GetOuterObject)</summary>
 		kOuterObjDetails = 8,
@@ -33,11 +33,16 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// object is a ScrBook.)</summary>
 		kBookTitle = 128,
 		/// <summary>Display a Footnote by displaying its "FootnoteMarker" in a paragraph
-		/// by itself, followed by the sequence of StTexts.</summary>
-		kBookFootnoteDetailsSeparateParas = 256,
+		/// by itself, followed by its sequence of paragraphs.</summary>
+		kFootnoteDetailsSeparateParas = 256,
 		/// <summary>Display a Footnote by displaying its "FootnoteMarker" followed by the
 		/// contents of its first paragraph (similar to the way footnotes are displayed in
 		/// real life.</summary>
-		kBookFootnoteDetailsSinglePara = 512,
+		kFootnoteDetailsSinglePara = 512,
+		/// <summary>When displaying normal (non-tagged) paragraphs, apply the properties</summary>
+		kUseParaProperties = 1024,
+		/// <summary>Strangely enough, the "normal" behavior of this VC is to display paragraph
+		/// contents three times. use this flag to suppress this.</summary>
+		kOnlyDisplayContentsOnce = 2048,
 	}
 }

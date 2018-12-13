@@ -10,7 +10,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 	/// <summary>
 	/// Stub for tests that access the clipboard
 	/// </summary>
-	public class ClipboardStub : IClipboard
+	internal sealed class ClipboardStub : IClipboard
 	{
 		private IDataObject m_DataObject = new DataObject();
 

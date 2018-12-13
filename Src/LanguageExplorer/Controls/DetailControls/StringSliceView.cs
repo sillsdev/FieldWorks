@@ -214,11 +214,11 @@ namespace LanguageExplorer.Controls.DetailControls
 			base.MakeRoot();
 
 			// And maybe this too, at least by default?
-			m_rootb.DataAccess = m_cache.DomainDataByFlid;
+			RootBox.DataAccess = m_cache.DomainDataByFlid;
 
 			// arg3 is a meaningless initial fragment, since this VC only displays one thing.
 			// arg4 could be used to supply a stylesheet.
-			m_rootb.SetRootObject(m_hvoObj, m_vc, 1, m_styleSheet);
+			RootBox.SetRootObject(m_hvoObj, m_vc, 1, m_styleSheet);
 		}
 
 		private static bool s_fProcessingSelectionChanged;
@@ -250,17 +250,17 @@ namespace LanguageExplorer.Controls.DetailControls
 					if (fRange)
 					{
 						var fAnchorEditable = vwselNew.IsEditable;
-						hlpr.GetIch(SelectionHelper.SelLimitType.Anchor);
-						var tagAnchor = hlpr.GetTextPropId(SelectionHelper.SelLimitType.Anchor);
-						hlpr.GetIch(SelectionHelper.SelLimitType.End);
-						var tagEnd = hlpr.GetTextPropId(SelectionHelper.SelLimitType.End);
+						hlpr.GetIch(SelLimitType.Anchor);
+						var tagAnchor = hlpr.GetTextPropId(SelLimitType.Anchor);
+						hlpr.GetIch(SelLimitType.End);
+						var tagEnd = hlpr.GetTextPropId(SelLimitType.End);
 						var fEndBeforeAnchor = vwselNew.EndBeforeAnchor;
 						if (fEndBeforeAnchor)
 						{
 							if (fAnchorEditable && tagAnchor > 0 && tagEnd < 0)
 							{
-								hlpr.SetTextPropId(SelectionHelper.SelLimitType.End, tagAnchor);
-								hlpr.SetIch(SelectionHelper.SelLimitType.End, 0);
+								hlpr.SetTextPropId(SelLimitType.End, tagAnchor);
+								hlpr.SetIch(SelLimitType.End, 0);
 								fChangeRange = true;
 							}
 						}
@@ -268,8 +268,8 @@ namespace LanguageExplorer.Controls.DetailControls
 						{
 							if (!fAnchorEditable && tagAnchor < 0 && tagEnd > 0)
 							{
-								hlpr.SetTextPropId(SelectionHelper.SelLimitType.Anchor, tagEnd);
-								hlpr.SetIch(SelectionHelper.SelLimitType.Anchor, 0);
+								hlpr.SetTextPropId(SelLimitType.Anchor, tagEnd);
+								hlpr.SetIch(SelLimitType.Anchor, 0);
 								fChangeRange = true;
 							}
 						}
@@ -289,13 +289,13 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					return;
 				}
-				var tss = m_rootb.DataAccess.get_StringProp(m_hvoObj, m_flid);
+				var tss = RootBox.DataAccess.get_StringProp(m_hvoObj, m_flid);
 				var ttp = tss.get_Properties(0);
 				int var;
 				var ws = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out var);
 				if (ws != 0 && m_vc is StringSliceVc && ws != ((StringSliceVc)m_vc).MostRecentlyDisplayedWritingSystemHandle)
 				{
-					m_rootb.Reconstruct();
+					RootBox.Reconstruct();
 					hlpr.SetSelection(true);
 				}
 			}

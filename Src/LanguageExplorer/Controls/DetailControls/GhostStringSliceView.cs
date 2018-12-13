@@ -134,14 +134,14 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			m_sda = new GhostDaDecorator(m_cache.DomainDataByFlid as ISilDataAccessManaged, TsStringUtils.EmptyString(m_wsToCreate), m_clidDst);
 
-			m_rootb.DataAccess = m_sda;
+			RootBox.DataAccess = m_sda;
 
 			m_vc = new GhostStringSliceVc();
 
 			// arg1 is a meaningless root HVO, since this VC only displays one dummy property and gets it from the ghostDA,
 			// which ignores the HVO.
 			// arg3 is a meaningless initial fragment, since this VC only displays one thing.
-			m_rootb.SetRootObject(GhostStringSlice.khvoFake, m_vc, 1, m_styleSheet);
+			RootBox.SetRootObject(GhostStringSlice.khvoFake, m_vc, 1, m_styleSheet);
 		}
 
 		/// <summary>
@@ -372,7 +372,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				return false;       // wait until we're fully set up.
 			}
 			// Converting to real while doing a composition messes up the IME. (LT-9932).
-			if (m_rootb.IsCompositionInProgress)
+			if (RootBox.IsCompositionInProgress)
 			{
 				return false;
 			}

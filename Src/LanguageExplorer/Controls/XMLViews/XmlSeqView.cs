@@ -236,8 +236,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		public void ResetRoot(int hvoRoot)
 		{
 			m_hvoRoot = hvoRoot;
-			m_rootb.SetRootObject(m_hvoRoot, Vc, RootFrag, m_styleSheet);
-			m_rootb.Reconstruct();
+			RootBox.SetRootObject(m_hvoRoot, Vc, RootFrag, m_styleSheet);
+			RootBox.Reconstruct();
 		}
 
 		/// <summary>
@@ -282,15 +282,15 @@ namespace LanguageExplorer.Controls.XMLViews
 			ReadOnlyView = !fEditable;
 			if (!fEditable)
 			{
-				m_rootb.MaxParasToScan = 0;
+				RootBox.MaxParasToScan = 0;
 			}
 			Vc.Cache = m_cache;
 			Vc.MainSeqFlid = m_mainFlid;
 
-			m_rootb.DataAccess = sda;
+			RootBox.DataAccess = sda;
 			Vc.DataAccess = sda;
 
-			m_rootb.SetRootObject(m_hvoRoot, Vc, RootFrag, m_styleSheet);
+			RootBox.SetRootObject(m_hvoRoot, Vc, RootFrag, m_styleSheet);
 		}
 
 		private ISilDataAccess GetSda()
@@ -338,7 +338,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				EditingHelper.DefaultCursor = Cursors.WaitCursor;
 				using (new WaitCursor(TopLevelControl))
 				{
-					m_rootb.Reconstruct();
+					RootBox.Reconstruct();
 					Invalidate();
 					Update(); // most of the time is the painting, we want the watch cursor till it's done.
 				}

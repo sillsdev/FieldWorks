@@ -46,11 +46,11 @@ namespace LanguageExplorer.Controls
 			base.OnGotFocus(e);
 			try
 			{
-				if (m_rootb.Selection == null)
+				if (RootBox.Selection == null)
 					//!!!!!!!!!!!!! if you stop here on an exception, it's
 					//just because you have the "break into debugger" set in the Debug:exceptions menu.
 					//!!!!!!!!!!!!!!!
-					m_rootb.MakeSimpleSel(true, true, false, true); // Add IP.
+					RootBox.MakeSimpleSel(true, true, false, true); // Add IP.
 			}
 			catch
 			{ /* Do nothing, if there isn't a selection. */ }

@@ -126,14 +126,14 @@ namespace SIL.FieldWorks.Common.Framework
 			var currSel = CurrentSelection;
 			if (modifiers != Keys.Control && modifiers != Keys.Alt && currSel != null)
 			{
-				var ttpTop = currSel.GetSelProps(SelectionHelper.SelLimitType.Top);
+				var ttpTop = currSel.GetSelProps(SelLimitType.Top);
 				if (ttpTop != null)
 				{
 					var sObjData = ttpTop.GetStrPropValue((int)FwTextPropType.ktptObjData);
 					var urlTop = TsStringUtils.GetURL(sObjData);
 					if (urlTop != null)
 					{
-						var ttpBottom = currSel.GetSelProps(SelectionHelper.SelLimitType.Bottom);
+						var ttpBottom = currSel.GetSelProps(SelLimitType.Bottom);
 						if (ttpBottom != null)
 						{
 							sObjData = ttpBottom.GetStrPropValue((int)FwTextPropType.ktptObjData);
@@ -302,12 +302,12 @@ namespace SIL.FieldWorks.Common.Framework
 				ich = 0;
 				tss = TsStringUtils.EmptyString(m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle);
 				propTag = StTxtParaTags.kflidContents;
-				helper.SetTextPropId(SelectionHelper.SelLimitType.Anchor, StTxtParaTags.kflidContents);
-				helper.SetTextPropId(SelectionHelper.SelLimitType.End, StTxtParaTags.kflidContents);
+				helper.SetTextPropId(SelLimitType.Anchor, StTxtParaTags.kflidContents);
+				helper.SetTextPropId(SelLimitType.End, StTxtParaTags.kflidContents);
 			}
 			else if (tss == null)
 			{
-				helper = GetSelectionReducedToIp(SelectionHelper.SelLimitType.Top);
+				helper = GetSelectionReducedToIp(SelLimitType.Top);
 				if (helper != null)
 				{
 					helper.Selection.TextSelInfo(true, out tss, out ich, out fAssocPrev, out hvoObj, out propTag, out ws);

@@ -123,6 +123,7 @@
     <Compile Include="Attributes\SetMessageBoxAdapterAttribute.cs" />
     <Compile Include="Attributes\SuppressErrorBeepsAttribute.cs" />
     <Compile Include="Attributes\DummyKeyboardAdaptor.cs" />
+    <Compile Include="DisplayType.cs" />
     <Compile Include="FontOverride.cs" />
     <Compile Include="MessageBoxStub.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

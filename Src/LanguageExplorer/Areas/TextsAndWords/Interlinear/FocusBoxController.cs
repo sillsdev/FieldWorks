@@ -22,7 +22,7 @@ using SIL.ObjectModel;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
-	internal partial class FocusBoxController : UserControl, IFlexComponent, ISelectOccurrence, SimpleRootSite.ISuppressDefaultKeyboardOnKillFocus
+	internal partial class FocusBoxController : UserControl, IFlexComponent, ISelectOccurrence, ISuppressDefaultKeyboardOnKillFocus
 	{
 		// Set by the constructor, this determines whether 'move right' means 'move next' or 'move previous' and similar things.
 		private readonly bool m_fRightToLeft;

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2018 SIL International
+// Copyright (c) 2016-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,12 +12,12 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Gets the currently selected context.
 		/// </summary>
-		object GetContext(SelectionHelper sel, SelectionHelper.SelLimitType limit = SelectionHelper.SelLimitType.Anchor);
+		object GetContext(SelectionHelper sel, SelLimitType limit = SelLimitType.Anchor);
 
 		/// <summary>
 		/// Gets the currently selected item.
 		/// </summary>
-		object GetItem(SelectionHelper sel, SelectionHelper.SelLimitType limit);
+		object GetItem(SelectionHelper sel, SelLimitType limit);
 
 		/// <summary>
 		/// Gets the index of an item in the specified context.

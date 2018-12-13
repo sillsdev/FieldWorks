@@ -231,7 +231,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			InterlinLineChoices = choices;
 			m_vc?.UpdateLineChoices(choices);
-			m_rootb.Reconstruct();
+			RootBox.Reconstruct();
 		}
 
 		/// <summary>
@@ -564,13 +564,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_fHaveUndone = false;
 			HideCombos(); // Usually redundant, but MUST not have one around hooked to old data.
 			LoadForWordBundleAnalysis(hvoWag);
-			if (m_rootb == null)
+			if (RootBox == null)
 			{
 				MakeRoot();
 			}
 			else
 			{
-				m_rootb.Reconstruct();
+				RootBox.Reconstruct();
 			}
 		}
 
@@ -844,7 +844,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			if (MiscUtils.IsMono)
 			{
-				var ibusRootSiteEventHandler = m_rootSiteEventHandler as IbusRootSiteEventHandler;
+				var ibusRootSiteEventHandler = RootSiteEventHandler as IbusRootSiteEventHandler;
 				if (ibusRootSiteEventHandler != null)
 				{
 					ibusRootSiteEventHandler.PreeditOpened += OnPreeditOpened;
@@ -1650,7 +1650,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			Caches.DataAccess.SetMultiStringAlt(hvoEntry, ktagSbNamedObjName, RawWordformWs, tssName);
 			Caches.DataAccess.SetObjProp(hvoMorph, ktagSbMorphEntry, hvoEntry);
 			Caches.DataAccess.SetInt(hvoEntry, ktagSbNamedObjGuess, 1);
-			Caches.DataAccess.PropChanged(m_rootb, (int)PropChangeType.kpctNotifyAll, hvoMorph, ktagSbMorphGloss, 0, 1, 0);
+			Caches.DataAccess.PropChanged(RootBox, (int)PropChangeType.kpctNotifyAll, hvoMorph, ktagSbMorphGloss, 0, 1, 0);
 			// Establish the link between the SbNamedObj that represents the MoForm, and the
 			// selected MoForm.  (This is used when building the real WfiAnalysis.)
 			Caches.Map(hvoFormSec, defFormReal.Hvo);
@@ -1734,7 +1734,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					hvoInflType = Caches.FindOrCreateSec(inflType.Hvo, kclsidSbNamedObj, kSbWord, ktagSbWordDummy);
 				}
 				cda.CacheObjProp(hvoMorph, ktagSbNamedObjInflType, hvoInflType);
-				Caches.DataAccess.PropChanged(m_rootb, (int)PropChangeType.kpctNotifyAll, hvoMorph, ktagSbNamedObjInflType, 0, 1, 0);
+				Caches.DataAccess.PropChanged(RootBox, (int)PropChangeType.kpctNotifyAll, hvoMorph, ktagSbNamedObjInflType, 0, 1, 0);
 			}
 			else
 			{
@@ -1747,7 +1747,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			Caches.DataAccess.SetInt(hvoDefSense, ktagSbNamedObjGuess, senseReal == null ? 1 : 0);
 
 			Caches.DataAccess.SetObjProp(hvoMorph, ktagSbMorphGloss, hvoDefSense);
-			Caches.DataAccess.PropChanged(m_rootb, (int)PropChangeType.kpctNotifyAll, hvoMorph, ktagSbMorphGloss, 0, 1, 0);
+			Caches.DataAccess.PropChanged(RootBox, (int)PropChangeType.kpctNotifyAll, hvoMorph, ktagSbMorphGloss, 0, 1, 0);
 
 			// Now if the sense has an MSA, set that up as a default too.
 			var defMsaReal = defSenseReal.MorphoSyntaxAnalysisRA;
@@ -1769,14 +1769,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 				Caches.DataAccess.SetInt(hvoNewPos, ktagSbNamedObjGuess, senseReal == null ? 1 : 0);
 				Caches.DataAccess.SetObjProp(hvoMorph, ktagSbMorphPos, hvoNewPos);
-				Caches.DataAccess.PropChanged(m_rootb, (int)PropChangeType.kpctNotifyAll, hvoMorph, ktagSbMorphPos, 0, 1, cOldMsa);
+				Caches.DataAccess.PropChanged(RootBox, (int)PropChangeType.kpctNotifyAll, hvoMorph, ktagSbMorphPos, 0, 1, cOldMsa);
 			}
 			else
 			{
 				// Going to null MSA, we still need to record the value and propagate the
 				// change!  See LT-4246.
 				Caches.DataAccess.SetObjProp(hvoMorph, ktagSbMorphPos, 0);
-				Caches.DataAccess.PropChanged(m_rootb, (int)PropChangeType.kpctNotifyAll, hvoMorph, ktagSbMorphPos, 0, 0, cOldMsa);
+				Caches.DataAccess.PropChanged(RootBox, (int)PropChangeType.kpctNotifyAll, hvoMorph, ktagSbMorphPos, 0, 0, cOldMsa);
 			}
 			return defSenseReal;
 		}
@@ -2083,7 +2083,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					Rectangle rcSrcRoot;
 					Rectangle rcDstRoot;
 					GetCoordRects(out rcSrcRoot, out rcDstRoot);
-					sel = m_rootb.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, false);
+					sel = RootBox.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, false);
 					if (sel != null && sel.SelType == selType)
 					{
 						break;
@@ -3172,7 +3172,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			LoadRealDataIntoSec(fLookForDefaults, false, false);
 			OnUpdateEdited();
 			ShowAnalysisCombo = true; // we must want this icon, because we were previously showing it!
-			m_rootb.Reconstruct();
+			RootBox.Reconstruct();
 			// if the user has selected a special item, such as "New word gloss",
 			// set our selection in the most helpful location, if it is available.
 			var selectedItem = handler.SelectedItem;
@@ -3434,9 +3434,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			};
 			// Pass through value to VC.
 
-			m_rootb.DataAccess = Caches.DataAccess;
+			RootBox.DataAccess = Caches.DataAccess;
 
-			m_rootb.SetRootObject(kSbWord, m_vc, SandboxVc.kfragBundle, m_stylesheet);
+			RootBox.SetRootObject(kSbWord, m_vc, SandboxVc.kfragBundle, m_stylesheet);
 
 			m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
 											 // For some reason, we don't always initialize our control size to be the same as our rootbox.
@@ -3721,7 +3721,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			// Save the position to be used by hover.
 			m_LastMouseMovePos = new Point(e.X, e.Y);
-			if (m_rootb == null)
+			if (RootBox == null)
 				return;
 #if TraceMouseCalls
 			Debug.WriteLine("Sandbox.OnMouseMove(e.X,Y = {" + e.X +", " + e.Y + "})" +
@@ -3736,7 +3736,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				Debug.WriteLine("SandboxBase.OnMouseMove(" + m_LastMouseMovePos.ToString() + "): rcSrcRoot = " + rcSrcRoot.ToString() + ", rcDstRoot = " + rcDstRoot.ToString());
 #endif
 				var pt = PixelToView(m_LastMouseMovePos);
-				var vwsel = m_rootb.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, false);
+				var vwsel = RootBox.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, false);
 				if (vwsel != null)
 				{
 #if TraceMouseCalls
@@ -3773,14 +3773,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return true; //discard this event
 			}
 
-			if (m_rootb == null)
+			if (RootBox == null)
 			{
 				return false;
 			}
 			try
 			{
 				// Create a selection where we right clicked
-				var sel = m_rootb.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, false);
+				var sel = RootBox.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, false);
 				// Figure what property is selected and create a suitable class if
 				// appropriate.  (CLevels includes the string property itself, but
 				// AllTextSelInfo doesn't need it.)
@@ -4101,7 +4101,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected override void CallMouseDown(Point point, Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
 			m_fInMouseDrag = false;
-			if (m_rootb == null)
+			if (RootBox == null)
 			{
 				return;
 			}
@@ -4109,11 +4109,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				Debug.WriteLine("Sandbox.CallMouseDown(pt = {"+ point.X +", "+ point.Y +"})" +
 					" - fInDrag = " + m_fInMouseDrag + ", fNewSel = " + m_fNewSelection);
 #endif
-			m_wsPending = -1;
+			WsPending = -1;
 			try
 			{
 				m_fSuppressShowCombo = false;
-				m_rootb.MakeSelAt(point.X, point.Y, rcSrcRoot, rcDstRoot, true);
+				RootBox.MakeSelAt(point.X, point.Y, rcSrcRoot, rcDstRoot, true);
 				m_fSuppressShowCombo = true;
 			}
 			catch (Exception e)
@@ -4130,7 +4130,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		protected override void CallMouseDownExtended(Point pt, Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
-			if (m_rootb == null)
+			if (RootBox == null)
 			{
 				return;
 			}
@@ -4138,19 +4138,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				Debug.WriteLine("Sandbox.CallMouseDownExtended(pt = {"+pt.X+", "+pt.Y+"})" +
 					" - fInDrag = " + m_fInMouseDrag + ", fNewSel = " + m_fNewSelection);
 #endif
-			m_wsPending = -1;
-			var vwsel = m_rootb.Selection;
+			WsPending = -1;
+			var vwsel = RootBox.Selection;
 			if (vwsel == null)
 			{
-				m_rootb.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, true);
+				RootBox.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, true);
 				EditingHelper.HandleMouseDown();
 			}
 			else
 			{
-				var vwsel2 = m_rootb.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, true);
+				var vwsel2 = RootBox.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, true);
 				if (vwsel.SelType == vwsel2.SelType && vwsel.SelType == VwSelType.kstText)
 				{
-					m_rootb.MakeRangeSelection(vwsel, vwsel2, true);
+					RootBox.MakeRangeSelection(vwsel, vwsel2, true);
 				}
 			}
 		}
@@ -4160,7 +4160,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		protected override void CallMouseMoveDrag(Point pt, Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
-			if (m_rootb == null || m_fMouseInProcess || m_fMouseDownActivatedCombo)
+			if (RootBox == null || m_fMouseInProcess || m_fMouseDownActivatedCombo)
 			{
 				return;
 			}
@@ -4197,7 +4197,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		protected override void CallMouseUp(Point pt, Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
-			if (m_rootb != null && m_fInMouseDrag)
+			if (RootBox != null && m_fInMouseDrag)
 			{
 #if TraceMouseCalls
 				Debug.WriteLine("Sandbox.CallMouseUp(pt = {" + pt.X +", " + pt.Y + "})" +

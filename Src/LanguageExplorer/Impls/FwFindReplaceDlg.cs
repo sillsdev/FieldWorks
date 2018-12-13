@@ -1958,14 +1958,14 @@ namespace LanguageExplorer.Impls
 			if (locationInfo != null)
 			{
 				var selHelper = SelectionHelper.Create(rootSite);
-				selHelper.SetLevelInfo(SelectionHelper.SelLimitType.Anchor, locationInfo.m_location);
-				selHelper.SetLevelInfo(SelectionHelper.SelLimitType.End, locationInfo.m_location);
+				selHelper.SetLevelInfo(SelLimitType.Anchor, locationInfo.m_location);
+				selHelper.SetLevelInfo(SelLimitType.End, locationInfo.m_location);
 				selHelper.IchAnchor = locationInfo.m_ichMin;
 				selHelper.IchEnd = locationInfo.m_ichLim;
-				selHelper.SetNumberOfPreviousProps(SelectionHelper.SelLimitType.Anchor, locationInfo.m_cpropPrev);
-				selHelper.SetNumberOfPreviousProps(SelectionHelper.SelLimitType.End, locationInfo.m_cpropPrev);
-				selHelper.SetTextPropId(SelectionHelper.SelLimitType.Anchor, locationInfo.m_tag);
-				selHelper.SetTextPropId(SelectionHelper.SelLimitType.End, locationInfo.m_tag);
+				selHelper.SetNumberOfPreviousProps(SelLimitType.Anchor, locationInfo.m_cpropPrev);
+				selHelper.SetNumberOfPreviousProps(SelLimitType.End, locationInfo.m_cpropPrev);
+				selHelper.SetTextPropId(SelLimitType.Anchor, locationInfo.m_tag);
+				selHelper.SetTextPropId(SelLimitType.End, locationInfo.m_tag);
 				m_vwSelectionForPattern = selHelper.SetSelection(rootSite, true, true, VwScrollSelOpts.kssoDefault);
 				Debug.Assert(m_vwSelectionForPattern != null, "We need a selection after a find!");
 				rootSite.RootBox.Activate(VwSelectionState.vssOutOfFocus);
@@ -2038,8 +2038,8 @@ namespace LanguageExplorer.Impls
 			var selHelper = SelectionHelper.Create(rootSite);
 			selHelper.IchAnchor = 0;
 			selHelper.IchEnd = 0;
-			selHelper.SetNumberOfPreviousProps(SelectionHelper.SelLimitType.Anchor, 0);
-			selHelper.SetNumberOfPreviousProps(SelectionHelper.SelLimitType.End, 0);
+			selHelper.SetNumberOfPreviousProps(SelLimitType.Anchor, 0);
+			selHelper.SetNumberOfPreviousProps(SelLimitType.End, 0);
 			m_vwSelectionForPattern = selHelper.SetSelection(rootSite, true, true, VwScrollSelOpts.kssoDefault);
 
 			var rootBox = rootSite.RootBox;

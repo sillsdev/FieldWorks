@@ -89,7 +89,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected override void OnLostFocus(EventArgs e)
 		{
-			m_vc.TasVc.OnLostFocus(m_rootb);
+			m_vc.TasVc.OnLostFocus(RootBox);
 			base.OnLostFocus(e);
 		}
 
@@ -109,10 +109,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			base.MakeRoot();
 
 			m_vc = new AtomicRefTypeAheadVc(m_flid, m_cache);
-			m_rootb.DataAccess = m_cache.DomainDataByFlid;
+			RootBox.DataAccess = m_cache.DomainDataByFlid;
 
 			// arg3 is a meaningless initial fragment, since this VC only displays one thing.
-			m_rootb.SetRootObject(m_hvoObj, m_vc, 1, m_styleSheet);
+			RootBox.SetRootObject(m_hvoObj, m_vc, 1, m_styleSheet);
 		}
 	}
 }

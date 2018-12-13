@@ -92,8 +92,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 							{
 								return false;
 							}
-							var beginObj = GetCmObject(sel, SelectionHelper.SelLimitType.Top);
-							var endObj = GetCmObject(sel, SelectionHelper.SelLimitType.Bottom);
+							var beginObj = GetCmObject(sel, SelLimitType.Top);
+							var endObj = GetCmObject(sel, SelLimitType.Bottom);
 
 							IPhSimpleContext lastCtxt;
 							if (Rule.MiddleIndex != -1 && Rule.IsMiddleWithLeftSwitch)
@@ -131,8 +131,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 							{
 								return false;
 							}
-							var beginObj = GetCmObject(sel, SelectionHelper.SelLimitType.Top);
-							var endObj = GetCmObject(sel, SelectionHelper.SelLimitType.Bottom);
+							var beginObj = GetCmObject(sel, SelLimitType.Top);
+							var endObj = GetCmObject(sel, SelLimitType.Bottom);
 
 							IPhSimpleContext firstCtxt;
 							if (Rule.MiddleIndex != -1 && !Rule.IsMiddleWithLeftSwitch)
@@ -293,7 +293,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			return -1;
 		}
 
-		protected override int GetCell(SelectionHelper sel, SelectionHelper.SelLimitType limit)
+		protected override int GetCell(SelectionHelper sel, SelLimitType limit)
 		{
 			var tag = sel.GetTextPropId(limit);
 			switch (tag)
@@ -315,7 +315,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			return Rule.GetStrucChangeIndex((IPhSimpleContext) obj);
 		}
 
-		protected override ICmObject GetCmObject(SelectionHelper sel, SelectionHelper.SelLimitType limit)
+		protected override ICmObject GetCmObject(SelectionHelper sel, SelLimitType limit)
 		{
 			if (Rule.StrucDescOS.Count == 0 || sel.GetNumberOfLevels(limit) == 0)
 			{
@@ -512,11 +512,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 		protected override int GetInsertionIndex(ICmObject[] objs, SelectionHelper sel)
 		{
-			if (sel.GetNumberOfLevels(SelectionHelper.SelLimitType.Top) != 0)
+			if (sel.GetNumberOfLevels(SelLimitType.Top) != 0)
 			{
 				return base.GetInsertionIndex(objs, sel);
 			}
-			var cellId = GetCell(sel, SelectionHelper.SelLimitType.Top);
+			var cellId = GetCell(sel, SelLimitType.Top);
 			switch (cellId)
 			{
 				case PhMetathesisRuleTags.kidxLeftEnv:

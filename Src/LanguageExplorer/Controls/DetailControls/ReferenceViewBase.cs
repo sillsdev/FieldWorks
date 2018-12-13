@@ -57,7 +57,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_rootObj = rootObj;
 			m_rootFlid = rootFlid;
 			m_rootFieldName = rootFieldName;
-			if (m_rootb == null)
+			if (RootBox == null)
 			{
 				MakeRoot();
 			}

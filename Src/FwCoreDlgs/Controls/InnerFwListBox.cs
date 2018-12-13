@@ -136,7 +136,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 					// Enhance JohnT: this should probably be done by the base class.
 					DataAccess.WritingSystemFactory = value;
 					m_writingSystem = 0; // gets reloaded if used.
-					m_rootb?.Reconstruct();
+					RootBox?.Reconstruct();
 				}
 			}
 		}
@@ -153,12 +153,12 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 
 			base.MakeRoot();
 
-			m_rootb.DataAccess = DataAccess;
+			RootBox.DataAccess = DataAccess;
 			if (ViewConstructor == null)
 			{
 				ViewConstructor = new ListBoxVc(this);
 			}
-			m_rootb.SetRootObject(khvoRoot, ViewConstructor, kfragRoot, m_styleSheet);
+			RootBox.SetRootObject(khvoRoot, ViewConstructor, kfragRoot, m_styleSheet);
 			m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
 			EditingHelper.DefaultCursor = Cursors.Arrow;
 		}
@@ -217,7 +217,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			{
 				return;
 			}
-			var sel = m_rootb.MakeSelAt(pt.X, pt.Y, new Rect(rcSrcRoot.Left, rcSrcRoot.Top, rcSrcRoot.Right, rcSrcRoot.Bottom),
+			var sel = RootBox.MakeSelAt(pt.X, pt.Y, new Rect(rcSrcRoot.Left, rcSrcRoot.Top, rcSrcRoot.Right, rcSrcRoot.Bottom),
 				new Rect(rcDstRoot.Left, rcDstRoot.Top, rcDstRoot.Right, rcDstRoot.Bottom), false);
 			if (sel == null)
 			{

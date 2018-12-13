@@ -1,10 +1,10 @@
-﻿// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using NUnit.Framework;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.Keyboarding;
+using SIL.LCModel.Core.WritingSystems;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 {
@@ -16,9 +16,9 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			var wsEn = new CoreWritingSystemDefinition("en");
 			var wsFr = new CoreWritingSystemDefinition("fr");
-			DefaultKeyboardDefinition kbdEn = CreateKeyboard("English", "en-US");
+			var kbdEn = CreateKeyboard("English", "en-US");
 			wsEn.LocalKeyboard = kbdEn;
-			DefaultKeyboardDefinition kbdFr = CreateKeyboard("French", "fr-FR");
+			var kbdFr = CreateKeyboard("French", "fr-FR");
 			wsFr.LocalKeyboard = kbdFr;
 
 			Assert.That(SimpleRootSite.GetWSForInputMethod(kbdEn, wsEn, new[] { wsEn, wsFr }), Is.EqualTo(wsEn));
@@ -35,11 +35,11 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			var wsEn = new CoreWritingSystemDefinition("en");
 			var wsFr = new CoreWritingSystemDefinition("fr");
-			DefaultKeyboardDefinition kbdEn = CreateKeyboard("English", "en-US");
+			var kbdEn = CreateKeyboard("English", "en-US");
 			wsEn.LocalKeyboard = kbdEn;
-			DefaultKeyboardDefinition kbdFr = CreateKeyboard("French", "fr-FR");
+			var kbdFr = CreateKeyboard("French", "fr-FR");
 			wsFr.LocalKeyboard = kbdFr;
-			DefaultKeyboardDefinition kbdDe = CreateKeyboard("German", "de-DE");
+			var kbdDe = CreateKeyboard("German", "de-DE");
 
 			Assert.That(SimpleRootSite.GetWSForInputMethod(kbdDe, wsEn, new[] { wsEn, wsFr }), Is.EqualTo(wsEn));
 			Assert.That(SimpleRootSite.GetWSForInputMethod(kbdDe, wsFr, new[] { wsEn, wsFr }), Is.EqualTo(wsFr));
@@ -54,16 +54,16 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			var wsEnIpa = new CoreWritingSystemDefinition("en-fonipa");
 			var wsFr = new CoreWritingSystemDefinition("fr");
 			var wsDe = new CoreWritingSystemDefinition("de");
-			DefaultKeyboardDefinition kbdEn = CreateKeyboard("English", "en-US");
+			var kbdEn = CreateKeyboard("English", "en-US");
 			wsEn.LocalKeyboard = kbdEn;
-			DefaultKeyboardDefinition kbdEnIpa = CreateKeyboard("English-IPA", "en-US");
+			var kbdEnIpa = CreateKeyboard("English-IPA", "en-US");
 			wsEnIpa.LocalKeyboard = kbdEnIpa;
-			DefaultKeyboardDefinition kbdFr = CreateKeyboard("French", "fr-FR");
+			var kbdFr = CreateKeyboard("French", "fr-FR");
 			wsFr.LocalKeyboard = kbdFr;
-			DefaultKeyboardDefinition kbdDe = CreateKeyboard("German", "de-DE");
+			var kbdDe = CreateKeyboard("German", "de-DE");
 			wsDe.LocalKeyboard = kbdDe;
 
-			CoreWritingSystemDefinition[] wss = {wsEn, wsFr, wsDe, wsEnIpa};
+			CoreWritingSystemDefinition[] wss = { wsEn, wsFr, wsDe, wsEnIpa };
 
 			// Exact match selects correct one, even though there are other matches for layout and/or culture
 			Assert.That(SimpleRootSite.GetWSForInputMethod(kbdEn, wsFr, wss), Is.EqualTo(wsEn));
@@ -80,17 +80,17 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			var wsEnIpa = new CoreWritingSystemDefinition("en-fonipa");
 			var wsFr = new CoreWritingSystemDefinition("fr");
 			var wsDe = new CoreWritingSystemDefinition("de");
-			DefaultKeyboardDefinition kbdEn = CreateKeyboard("English", "en-US");
+			var kbdEn = CreateKeyboard("English", "en-US");
 			wsEn.LocalKeyboard = kbdEn;
-			DefaultKeyboardDefinition kbdEnIpa = CreateKeyboard("English-IPA", "en-US");
+			var kbdEnIpa = CreateKeyboard("English-IPA", "en-US");
 			wsEnIpa.LocalKeyboard = kbdEnIpa;
 			wsEnUS.LocalKeyboard = kbdEn; // exact same keyboard used!
-			DefaultKeyboardDefinition kbdFr = CreateKeyboard("French", "fr-FR");
+			var kbdFr = CreateKeyboard("French", "fr-FR");
 			wsFr.LocalKeyboard = kbdFr;
-			DefaultKeyboardDefinition kbdDe = CreateKeyboard("German", "de-DE");
+			var kbdDe = CreateKeyboard("German", "de-DE");
 			wsDe.LocalKeyboard = kbdDe;
 
-			CoreWritingSystemDefinition[] wss = {wsEn, wsFr, wsDe, wsEnIpa, wsEnUS};
+			CoreWritingSystemDefinition[] wss = { wsEn, wsFr, wsDe, wsEnIpa, wsEnUS };
 
 			// Exact matches
 			Assert.That(SimpleRootSite.GetWSForInputMethod(kbdEn, wsFr, wss), Is.EqualTo(wsEn)); // first of 2
@@ -103,11 +103,11 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			var wsEn = new CoreWritingSystemDefinition("en");
 			var wsFr = new CoreWritingSystemDefinition("fr");
-			DefaultKeyboardDefinition kbdEn = CreateKeyboard("English", "en-US");
+			var kbdEn = CreateKeyboard("English", "en-US");
 			wsEn.LocalKeyboard = kbdEn;
-			DefaultKeyboardDefinition kbdFr = CreateKeyboard("French", "fr-FR");
+			var kbdFr = CreateKeyboard("French", "fr-FR");
 			wsFr.LocalKeyboard = kbdFr;
-			DefaultKeyboardDefinition kbdDe = CreateKeyboard("German", "de-DE");
+			var kbdDe = CreateKeyboard("German", "de-DE");
 
 			Assert.That(SimpleRootSite.GetWSForInputMethod(kbdDe, wsEn, new[] { wsEn, wsFr }), Is.EqualTo(wsEn));
 			Assert.That(SimpleRootSite.GetWSForInputMethod(kbdDe, wsFr, new[] { wsEn, wsFr }), Is.EqualTo(wsFr));
@@ -118,7 +118,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		private static DefaultKeyboardDefinition CreateKeyboard(string layout, string locale)
 		{
-			return new DefaultKeyboardDefinition(string.Format("{1}_{0}", layout, locale), layout, layout, locale, true);
+			return new DefaultKeyboardDefinition($"{locale}_{layout}", layout, layout, locale, true);
 		}
 	}
 }

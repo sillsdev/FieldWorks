@@ -126,8 +126,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_vc = new TitleContentsVc(m_cache);
 			SetupVc();
 
-			m_rootb.DataAccess = m_cache.MainCacheAccessor;
-			m_rootb.SetRootObject(m_hvoRoot, m_vc, TitleContentsVc.kfragRoot, m_styleSheet);
+			RootBox.DataAccess = m_cache.MainCacheAccessor;
+			RootBox.SetRootObject(m_hvoRoot, m_vc, TitleContentsVc.kfragRoot, m_styleSheet);
 
 			//TODO:
 			//ptmw->RegisterRootBox(qrootb);

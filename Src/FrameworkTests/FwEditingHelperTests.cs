@@ -456,9 +456,9 @@ namespace SIL.FieldWorks.Common.Framework
 			var bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Google", m_ttpHyperlink);
 			bldr.Replace(bldr.Length, bldr.Length, "some more text", ttpFollowingText);
-			selHelper.Stub(selH => selH.GetTss(Arg<SelectionHelper.SelLimitType>.Is.Anything)).Return(bldr.GetString());
+			selHelper.Stub(selH => selH.GetTss(Arg<SelLimitType>.Is.Anything)).Return(bldr.GetString());
 
-			selHelper.Stub(selH => selH.GetSelProps(Arg<SelectionHelper.SelLimitType>.Is.Equal(SelectionHelper.SelLimitType.Top))).Return(m_ttpHyperlink);
+			selHelper.Stub(selH => selH.GetSelProps(Arg<SelLimitType>.Is.Equal(SelLimitType.Top))).Return(m_ttpHyperlink);
 
 			var ichStart = 0;
 			var ichEnd = 0;
@@ -469,16 +469,16 @@ namespace SIL.FieldWorks.Common.Framework
 			switch (end)
 			{
 				case IchPosition.EndOfString:
-					selHelper.Stub(selH => selH.GetSelProps(Arg<SelectionHelper.SelLimitType>.Is.Equal(SelectionHelper.SelLimitType.Bottom))).Return(ttpFollowingText);
+					selHelper.Stub(selH => selH.GetSelProps(Arg<SelLimitType>.Is.Equal(SelLimitType.Bottom))).Return(ttpFollowingText);
 					ichEnd = bldr.Length;
 					break;
 				case IchPosition.EndOfHyperlink:
-					selHelper.Stub(selH => selH.GetSelProps(Arg<SelectionHelper.SelLimitType>.Is.Equal(SelectionHelper.SelLimitType.Bottom))).Return(m_ttpHyperlink);
+					selHelper.Stub(selH => selH.GetSelProps(Arg<SelLimitType>.Is.Equal(SelLimitType.Bottom))).Return(m_ttpHyperlink);
 					ichEnd = "Google".Length;
 					break;
 			}
-			selHelper.Stub(selH => selH.GetIch(SelectionHelper.SelLimitType.Top)).Return(ichStart);
-			selHelper.Stub(selH => selH.GetIch(SelectionHelper.SelLimitType.Bottom)).Return(ichEnd);
+			selHelper.Stub(selH => selH.GetIch(SelLimitType.Top)).Return(ichStart);
+			selHelper.Stub(selH => selH.GetIch(SelLimitType.Bottom)).Return(ichEnd);
 			selHelper.Stub(selH => selH.IsRange).Return(ichStart != ichEnd);
 		}
 
@@ -502,17 +502,17 @@ namespace SIL.FieldWorks.Common.Framework
 			var bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(bldr.Length, bldr.Length, "some plain text", ttpPrecedingText);
 			bldr.Replace(0, 0, "Google", m_ttpHyperlink);
-			selHelper.Stub(selH => selH.GetTss(Arg<SelectionHelper.SelLimitType>.Is.Anything)).Return(bldr.GetString());
+			selHelper.Stub(selH => selH.GetTss(Arg<SelLimitType>.Is.Anything)).Return(bldr.GetString());
 
 			var ichStart = 0;
 			var ichEnd = bldr.Length;
 			switch (start)
 			{
 				case IchPosition.StartOfString:
-					selHelper.Stub(selH => selH.GetSelProps(Arg<SelectionHelper.SelLimitType>.Is.Equal(SelectionHelper.SelLimitType.Top))).Return(ttpPrecedingText);
+					selHelper.Stub(selH => selH.GetSelProps(Arg<SelLimitType>.Is.Equal(SelLimitType.Top))).Return(ttpPrecedingText);
 					break;
 				case IchPosition.StartOfHyperlink:
-					selHelper.Stub(selH => selH.GetSelProps(Arg<SelectionHelper.SelLimitType>.Is.Equal(SelectionHelper.SelLimitType.Top))).Return(m_ttpHyperlink);
+					selHelper.Stub(selH => selH.GetSelProps(Arg<SelLimitType>.Is.Equal(SelLimitType.Top))).Return(m_ttpHyperlink);
 					ichStart = "some plain text".Length;
 					break;
 			}
@@ -520,9 +520,9 @@ namespace SIL.FieldWorks.Common.Framework
 			{
 				case IchPosition.StartOfHyperlink: ichEnd = "some plain text".Length; break;
 			}
-			selHelper.Stub(selH => selH.GetSelProps(Arg<SelectionHelper.SelLimitType>.Is.Equal(SelectionHelper.SelLimitType.Bottom))).Return(m_ttpHyperlink);
-			selHelper.Stub(selH => selH.GetIch(SelectionHelper.SelLimitType.Top)).Return(ichStart);
-			selHelper.Stub(selH => selH.GetIch(SelectionHelper.SelLimitType.Bottom)).Return(ichEnd);
+			selHelper.Stub(selH => selH.GetSelProps(Arg<SelLimitType>.Is.Equal(SelLimitType.Bottom))).Return(m_ttpHyperlink);
+			selHelper.Stub(selH => selH.GetIch(SelLimitType.Top)).Return(ichStart);
+			selHelper.Stub(selH => selH.GetIch(SelLimitType.Bottom)).Return(ichEnd);
 			selHelper.Stub(selH => selH.IsRange).Return(ichStart != ichEnd);
 		}
 
@@ -534,9 +534,9 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 			var bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Google", m_ttpHyperlink);
-			selHelper.Stub(selH => selH.GetTss(Arg<SelectionHelper.SelLimitType>.Is.Anything)).Return(bldr.GetString());
+			selHelper.Stub(selH => selH.GetTss(Arg<SelLimitType>.Is.Anything)).Return(bldr.GetString());
 
-			selHelper.Stub(selH => selH.GetSelProps(Arg<SelectionHelper.SelLimitType>.Is.Anything)).Return(m_ttpHyperlink);
+			selHelper.Stub(selH => selH.GetSelProps(Arg<SelLimitType>.Is.Anything)).Return(m_ttpHyperlink);
 
 			var ichStart = 0;
 			var ichEnd = 0;
@@ -552,8 +552,8 @@ namespace SIL.FieldWorks.Common.Framework
 				case IchPosition.EndOfString:
 				case IchPosition.EndOfHyperlink: ichEnd = bldr.Length; break;
 			}
-			selHelper.Stub(selH => selH.GetIch(SelectionHelper.SelLimitType.Top)).Return(ichStart);
-			selHelper.Stub(selH => selH.GetIch(SelectionHelper.SelLimitType.Bottom)).Return(ichEnd);
+			selHelper.Stub(selH => selH.GetIch(SelLimitType.Top)).Return(ichStart);
+			selHelper.Stub(selH => selH.GetIch(SelLimitType.Bottom)).Return(ichEnd);
 			selHelper.Stub(selH => selH.IsRange).Return(ichStart != ichEnd);
 		}
 		#endregion

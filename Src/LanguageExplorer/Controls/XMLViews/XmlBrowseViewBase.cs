@@ -273,7 +273,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					var hvoObjOldSel = SpecialCache.get_VecItem(m_hvoRoot, MainTag, oldIndex);
 					try
 					{
-						m_rootb.PropChanged(hvoObjOldSel, m_tagMe, 0, 0, 0);
+						RootBox.PropChanged(hvoObjOldSel, m_tagMe, 0, 0, 0);
 					}
 					catch (Exception)
 					{
@@ -283,7 +283,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				// Turn on the highlighting of the new item.
 				try
 				{
-					m_rootb?.PropChanged(hvoObjNewSel, m_tagMe, 0, 0, 0);
+					RootBox?.PropChanged(hvoObjNewSel, m_tagMe, 0, 0, 0);
 				}
 				catch (Exception)
 				{
@@ -322,7 +322,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private bool FireSelectionChanged(object parameter)
 		{
-			if (IsDisposed || m_rootb == null)
+			if (IsDisposed || RootBox == null)
 			{
 				return true; // presumably we've been disposed; this happens (at least) in tests where a later test may simulate idle events.
 			}
@@ -485,7 +485,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				GetCoordRects(out rcSrcRoot, out rcDstRoot);
 				// This can legitimately return null,
 				// e.g. because they selected beyond the last item.
-				return m_rootb.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, false);
+				return RootBox.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, false);
 			}
 		}
 
@@ -664,7 +664,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			GetCurrentTableCellInfo(vwsel, out iLevel, out iBox, out iTableBox,
 									out cTableBoxes, out iTableLevel, out iCellBox, out cCellBoxes,
 									out iCellLevel);
-			var vwsel2 = m_rootb.MakeSelInBox(vwsel, true, iCellLevel, iCellBox, true, true, false);
+			var vwsel2 = RootBox.MakeSelInBox(vwsel, true, iCellLevel, iCellBox, true, true, false);
 			if (vwsel2 == null)
 			{
 				return; // can't do anything, so give up.  See LT-9706.
@@ -766,10 +766,10 @@ namespace LanguageExplorer.Controls.XMLViews
 
 				m_fSelectedRowHighlighting = value;
 				// Turn on or off the highlighting of the current row.
-				if (m_selectedIndex >= 0 && m_rootb != null)
+				if (m_selectedIndex >= 0 && RootBox != null)
 				{
 					var hvoObjSel = SpecialCache.get_VecItem(m_hvoRoot, MainTag, m_selectedIndex);
-					m_rootb.PropChanged(hvoObjSel, m_tagMe, 0, 0, 0);
+					RootBox.PropChanged(hvoObjSel, m_tagMe, 0, 0, 0);
 				}
 			}
 		}
@@ -816,7 +816,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					return; // No sense getting all worked up, if it is the same as before.
 				}
 				m_hvoRoot = value;
-				m_rootb.SetRootObject(m_hvoRoot, m_xbvvc, XmlBrowseViewBaseVc.kfragRoot, m_styleSheet);
+				RootBox.SetRootObject(m_hvoRoot, m_xbvvc, XmlBrowseViewBaseVc.kfragRoot, m_styleSheet);
 				m_rootObjectHasBeenSet = true;
 				// This seems to be necessary to get the data entry row to resize even if the new
 				// list is the same length as the old. Must NOT remember new positions, because
@@ -1396,7 +1396,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			IVwSelection selRow = null;
 			try
 			{
-				selRow = m_rootb.MakeTextSelInObj(0, 1, rgvsli, 0, null, false, false, false, true, false);
+				selRow = RootBox.MakeTextSelInObj(0, 1, rgvsli, 0, null, false, false, false, true, false);
 			}
 			catch
 			{
@@ -1415,7 +1415,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_ydSelBottom = 0;
 			m_ydSelScrollPos = 0;
 			m_ydSelTop = 0;
-			if (m_rootb == null)
+			if (RootBox == null)
 			{
 				return;
 			}
@@ -1429,7 +1429,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-			var vwSel = m_rootb.Selection;
+			var vwSel = RootBox.Selection;
 			var fWantNewIp = true;
 			if (vwSel != null)
 			{
@@ -1487,7 +1487,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				try
 				{
 					// Try to get an IP in an editable area.
-					vwselNew = m_rootb.MakeTextSelInObj(0,
+					vwselNew = RootBox.MakeTextSelInObj(0,
 						1, rgvsli, 0, null,	//1, rgvsli,
 						true, // fInitial
 						true, // fEdit
@@ -1521,7 +1521,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (!fInstalledNewSelection)
 			{
 				// Try something else.
-				vwselNew = m_rootb.MakeTextSelInObj(0,
+				vwselNew = RootBox.MakeTextSelInObj(0,
 					1, rgvsli, 0, null,	//1, rgvsli,
 					true, // fInitial
 					false, // fEdit
@@ -1628,7 +1628,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// This is where the 'Decorator' SDA is added.
 			// This SDA can handle fake stuff, if the SDA overrides are all implemented properly.
 			SpecialCache = m_bv.SpecialCache;
-			m_rootb.DataAccess = SpecialCache;
+			RootBox.DataAccess = SpecialCache;
 
 			RootObjectHvo = m_hvoRoot;
 			m_bv.SpecialCache.AddNotification(this);
@@ -1686,7 +1686,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		bool RemoveRootBoxSelectionOnIdle(object parameter)
 		{
-			if (IsDisposed || m_rootb == null)
+			if (IsDisposed || RootBox == null)
 			{
 				return true;
 			}
@@ -1694,7 +1694,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// This is a good time to check that we don't have a useless IP selection.
 			// Right after we make it is too soon, because the current row's editing properties
 			// aren't set until we paint it.
-			var sel = m_rootb.Selection;
+			var sel = RootBox.Selection;
 			if (sel != null && !sel.IsRange)
 			{
 				// an insertion point where you can't edit is just confusing.
@@ -1703,11 +1703,11 @@ namespace LanguageExplorer.Controls.XMLViews
 				var idxFromSel = GetRowIndexFromSelection(sel, true);
 				if (m_fSelectedRowHighlighting != SelectionHighlighting.none && idxFromSel != m_selectedIndex)
 				{
-					m_rootb.DestroySelection();
+					RootBox.DestroySelection();
 				}
 				else if (!sel.IsEditable)
 				{
-					m_rootb.DestroySelection();
+					RootBox.DestroySelection();
 					if (idxFromSel == m_selectedIndex)
 					{
 						SetDefaultInsertionPointInRow(idxFromSel);
@@ -1851,7 +1851,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private bool UpdateSelectedRow(object args)
 		{
-			if (IsDisposed || m_rootb == null)
+			if (IsDisposed || RootBox == null)
 			{
 				return true; // presumably we've been disposed; this happens (at least) in tests where a later test may simulate idle events.
 			}
@@ -1876,7 +1876,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void PostLayoutInit()
 		{
-			if (m_rootb == null || SelectedIndex < 0)
+			if (RootBox == null || SelectedIndex < 0)
 			{
 				return;
 			}

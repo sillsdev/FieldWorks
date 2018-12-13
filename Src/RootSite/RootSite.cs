@@ -122,10 +122,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				return;
 			}
-			if (m_rootb != null)
+			if (RootBox != null)
 			{
 				CloseRootBox();
-				m_rootb = null;
+				RootBox = null;
 			}
 
 			base.Dispose(disposing);
@@ -238,7 +238,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				if (DesignMode || m_rootb == null)
+				if (DesignMode || RootBox == null)
 				{
 					return false;
 				}
@@ -253,13 +253,13 @@ namespace SIL.FieldWorks.Common.RootSites
 				}
 				//todo: in some complex selection, we will want to just "say no". For now, we just
 				//look at the start (anchor) of the selection.
-				var flid = EditingHelper.CurrentSelection.GetTextPropId(SelectionHelper.SelLimitType.Anchor);
+				var flid = EditingHelper.CurrentSelection.GetTextPropId(SelLimitType.Anchor);
 				if (flid == 0) // can happen for e.g. icons
 				{
 					return false;
 				}
 				// Don't use LcmCache here, it doesn't know about decorators.
-				var mdc = m_rootb.DataAccess.GetManagedMetaDataCache() ?? Cache.GetManagedMetaDataCache();
+				var mdc = RootBox.DataAccess.GetManagedMetaDataCache() ?? Cache.GetManagedMetaDataCache();
 				if (!mdc.FieldExists(flid))
 				{
 					return false; // some sort of special field; if it ought to be formattable, make a decorator MDC that recognizes it.
@@ -274,7 +274,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public override string Style_Changed(BaseStyleInfo newValue)
 		{
-			if (DesignMode || m_rootb == null || EditingHelper == null)
+			if (DesignMode || RootBox == null || EditingHelper == null)
 			{
 				// In these cases, don't try to update the "BestStyleName" property.
 				return string.Empty;
@@ -311,28 +311,28 @@ namespace SIL.FieldWorks.Common.RootSites
 					}
 					else
 					{
-						var flidAnchor = EditingHelper.CurrentSelection.GetTextPropId(SelectionHelper.SelLimitType.Anchor);
+						var flidAnchor = EditingHelper.CurrentSelection.GetTextPropId(SelLimitType.Anchor);
 						if (flidAnchor == 0) // can happen for e.g. icons
 						{
 							bestStyle = string.Empty;
 						}
 						else
 						{
-							var flidEnd = EditingHelper.CurrentSelection.GetTextPropId(SelectionHelper.SelLimitType.End);
+							var flidEnd = EditingHelper.CurrentSelection.GetTextPropId(SelLimitType.End);
 							if (flidEnd != flidAnchor)
 							{
 								bestStyle = string.Empty;
 							}
 							else
 							{
-								var mdc = m_rootb.DataAccess.GetManagedMetaDataCache();
+								var mdc = RootBox.DataAccess.GetManagedMetaDataCache();
 								if (!mdc.FieldExists(flidAnchor))
 								{
 									bestStyle = string.Empty;
 								}
 								else
 								{
-									var type = (CellarPropertyType)m_rootb.DataAccess.MetaDataCache.GetFieldType(flidAnchor);
+									var type = (CellarPropertyType)RootBox.DataAccess.MetaDataCache.GetFieldType(flidAnchor);
 									if (type != CellarPropertyType.String && type != CellarPropertyType.MultiString)
 									{
 										bestStyle = string.Empty;
@@ -376,7 +376,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				if (DesignMode || m_rootb == null)
+				if (DesignMode || RootBox == null)
 				{
 					return false;
 				}
@@ -389,12 +389,12 @@ namespace SIL.FieldWorks.Common.RootSites
 				{
 					return false;
 				}
-				var flidAnchor = EditingHelper.CurrentSelection.GetTextPropId(SelectionHelper.SelLimitType.Anchor);
+				var flidAnchor = EditingHelper.CurrentSelection.GetTextPropId(SelLimitType.Anchor);
 				if (flidAnchor == 0) // can happen for e.g. icons
 				{
 					return false;
 				}
-				var flidEnd = EditingHelper.CurrentSelection.GetTextPropId(SelectionHelper.SelLimitType.End);
+				var flidEnd = EditingHelper.CurrentSelection.GetTextPropId(SelLimitType.End);
 				if (flidEnd != flidAnchor)
 				{
 					return false;
@@ -624,9 +624,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public void RestartSpellChecking()
 		{
-			if (DoSpellCheck && m_rootb != null)
+			if (DoSpellCheck && RootBox != null)
 			{
-				m_rootb.RestartSpellChecking();
+				RootBox.RestartSpellChecking();
 				StartSpellingIfNeeded();
 			}
 		}
@@ -638,10 +638,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		private void StartSpellingIfNeeded()
 		{
-			if (DoSpellCheck && m_rootb != null)
+			if (DoSpellCheck && RootBox != null)
 			{
-				m_rootb.SetSpellingRepository(SpellingHelper.GetCheckerInstance);
-				if (!m_rootb.IsSpellCheckComplete())
+				RootBox.SetSpellingRepository(SpellingHelper.GetCheckerInstance);
+				if (!RootBox.IsSpellCheckComplete())
 				{
 					PropertyTable?.GetValue<IIdleQueueProvider>("window").IdleQueue.Add(IdleQueuePriority.Low, SpellCheckOnIdle);
 				}
@@ -663,14 +663,14 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			base.OnPaint(e);
 
-			m_fInPaint = true;
+			PaintInProgress = true;
 			try
 			{
 				StartSpellingIfNeeded();
 			}
 			finally
 			{
-				m_fInPaint = false;
+				PaintInProgress = false;
 			}
 		}
 
@@ -697,7 +697,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		private bool SpellCheckOnIdle(object parameter)
 		{
-			return IsDisposed || m_rootb == null || m_rootb.DoSpellCheckStep();
+			return IsDisposed || RootBox == null || RootBox.DoSpellCheckStep();
 		}
 
 		/// <summary>
@@ -751,7 +751,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					{
 						continue;
 					}
-					if (slave.m_dxdLayoutWidth != slave.GetAvailWidth(m_rootb))
+					if (slave.m_dxdLayoutWidth != slave.GetAvailWidth(RootBox))
 					{
 						slave.m_dxdLayoutWidth = kForceLayout;
 					}

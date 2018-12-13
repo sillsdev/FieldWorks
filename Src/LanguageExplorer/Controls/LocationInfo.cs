@@ -51,10 +51,10 @@ namespace LanguageExplorer.Controls
 		/// </param>
 		public LocationInfo(SelectionHelper helper)
 		{
-			m_location = helper.GetLevelInfo(SelectionHelper.SelLimitType.Bottom);
-			m_tag = helper.GetTextPropId(SelectionHelper.SelLimitType.Bottom);
-			m_ichMin = m_ichLim = helper.GetIch(SelectionHelper.SelLimitType.Bottom);
-			m_cpropPrev = helper.GetNumberOfPreviousProps(SelectionHelper.SelLimitType.Bottom);
+			m_location = helper.GetLevelInfo(SelLimitType.Bottom);
+			m_tag = helper.GetTextPropId(SelLimitType.Bottom);
+			m_ichMin = m_ichLim = helper.GetIch(SelLimitType.Bottom);
+			m_cpropPrev = helper.GetNumberOfPreviousProps(SelLimitType.Bottom);
 			m_ws = SelectionHelper.GetFirstWsOfSelection(helper.Selection);
 		}
 

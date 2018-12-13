@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
+using FieldWorks.TestUtilities;
 using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -97,7 +98,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			Assert.IsTrue(m_flidContainingTexts != 0, "Need to initialize m_flidContainingTexts");
 
-			m_basicView.DisplayType = display;
+			m_basicView.MyDisplayType = display;
 
 			// We don't actually want to show it, but we need to force the view to create the root
 			// box and lay it out so that various test stuff can happen properly.

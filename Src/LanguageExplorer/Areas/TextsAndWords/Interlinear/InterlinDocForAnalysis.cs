@@ -851,7 +851,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal override AnalysisOccurrence OccurrenceContainingSelection()
 		{
-			if (m_rootb == null)
+			if (RootBox == null)
 				return null;
 
 			// This works fine for non-Sandbox panes,
@@ -1653,7 +1653,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					RootBox.DataAccess.SetMultiStringAlt(seg.Hvo, flid, ws, bldr.GetString());
 				});
 			helper.TextPropId = flid;
-			helper.SetTextPropId(SelectionHelper.SelLimitType.End, flid);
+			helper.SetTextPropId(SelLimitType.End, flid);
 			helper.IchAnchor = bldr.Length;
 			helper.IchEnd = bldr.Length;
 			helper.NumberOfPreviousProps = m_cpropPrevForInsert;
@@ -1714,7 +1714,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-			var rgsli = helper.GetLevelInfo(SelectionHelper.SelLimitType.Anchor);
+			var rgsli = helper.GetLevelInfo(SelLimitType.Anchor);
 			var itagSegments = -1;
 			for (var i = rgsli.Length; --i >= 0;)
 			{
@@ -1788,13 +1788,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// Check whether the selection is on the proper line of a multilingual
 				// annotation and, if not, fix it.  See LT-9421.
 				if (m_cpropPrevForInsert > 0 && !sel.IsRange &&
-					(helper.GetNumberOfPreviousProps(SelectionHelper.SelLimitType.Anchor) == 0 ||
-					 helper.GetNumberOfPreviousProps(SelectionHelper.SelLimitType.End) == 0))
+					(helper.GetNumberOfPreviousProps(SelLimitType.Anchor) == 0 ||
+					 helper.GetNumberOfPreviousProps(SelLimitType.End) == 0))
 				{
 					try
 					{
-						helper.SetNumberOfPreviousProps(SelectionHelper.SelLimitType.Anchor, m_cpropPrevForInsert);
-						helper.SetNumberOfPreviousProps(SelectionHelper.SelLimitType.End, m_cpropPrevForInsert);
+						helper.SetNumberOfPreviousProps(SelLimitType.Anchor, m_cpropPrevForInsert);
+						helper.SetNumberOfPreviousProps(SelLimitType.End, m_cpropPrevForInsert);
 						helper.MakeBest(true);
 						m_cpropPrevForInsert = -1;  // we've used this the one time it was needed.
 					}
@@ -1803,7 +1803,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						Debug.WriteLine($"InterlinDocChild.SelectionChanged() trying to display prompt in proper line of annotation: {exc.Message}");
 					}
 				}
-				var flid = helper.GetTextPropId(SelectionHelper.SelLimitType.Anchor);
+				var flid = helper.GetTextPropId(SelLimitType.Anchor);
 				//If the flid is -2 and it is an insertion point then we may have encountered a case where the selection has landed at the boundary between our (possibly empty)
 				//translation field and a literal string containing our magic Bidi marker character that helps keep things in the right order.
 				//Sometimes AssocPrev gets set so that we read the (non-existent) flid of the literal string and miss the fact that on the other side
@@ -1816,7 +1816,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					{
 						var newSel = helper.MakeRangeSelection(this.RootBox, false);
 						helper = SelectionHelper.Create(newSel, this);
-						flid = helper.GetTextPropId(SelectionHelper.SelLimitType.Anchor);
+						flid = helper.GetTextPropId(SelLimitType.Anchor);
 					}
 					catch (COMException)
 					{
@@ -1831,7 +1831,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				var hvo = helper.LevelInfo[0].hvo;
 
 				// If the selection is in a freeform or literal translation that is empty, display the prompt.
-				if (SelIsInEmptyTranslation(helper, flid, hvo) && !m_rootb.IsCompositionInProgress)
+				if (SelIsInEmptyTranslation(helper, flid, hvo) && !RootBox.IsCompositionInProgress)
 				{
 					var handlerExtensions = Cache.ActionHandlerAccessor as IActionHandlerExtensions;
 					if (handlerExtensions != null && handlerExtensions.IsUndoTaskActive)
@@ -1853,7 +1853,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 				// do not extend the selection for a user prompt if the user is currently entering an IME composition,
 				// since we are about to switch the prompt to a real comment field
-				else if (helper.GetTextPropId(SelectionHelper.SelLimitType.End) == kTagUserPrompt && !m_rootb.IsCompositionInProgress)
+				else if (helper.GetTextPropId(SelLimitType.End) == kTagUserPrompt && !RootBox.IsCompositionInProgress)
 				{
 					// If the selection is entirely in a user prompt then extend the selection to cover the
 					// entire prompt. This covers changes within the prompt, like clicking within it or continuing
@@ -1876,10 +1876,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void SetupTranslationPrompt(SelectionHelper helper, int flid)
 		{
 			Vc.SetActiveFreeform(helper.LevelInfo[0].hvo, flid, helper.Ws, helper.NumberOfPreviousProps);
-			helper.SetTextPropId(SelectionHelper.SelLimitType.Anchor, kTagUserPrompt);
-			helper.SetTextPropId(SelectionHelper.SelLimitType.End, kTagUserPrompt);
+			helper.SetTextPropId(SelLimitType.Anchor, kTagUserPrompt);
+			helper.SetTextPropId(SelLimitType.End, kTagUserPrompt);
 			helper.NumberOfPreviousProps = 0; // only ever one occurrence of prompt.
-			helper.SetNumberOfPreviousProps(SelectionHelper.SelLimitType.End, 0);
+			helper.SetNumberOfPreviousProps(SelLimitType.End, 0);
 			// Even though the helper method is called MakeRangeSelection, it will initially make
 			// an IP, because we haven't set any different offset for the end.
 			// Since it's at the start of the prompt, we need it to associate with the prompt,
@@ -1887,7 +1887,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			helper.AssocPrev = false;
 			try
 			{
-				var sel = helper.MakeRangeSelection(m_rootb, true);
+				var sel = helper.MakeRangeSelection(RootBox, true);
 				sel.ExtendToStringBoundaries();
 			}
 			// Prevent the crash described in LT-9399 by swallowing the exception.
@@ -1907,7 +1907,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return false; // translation is always a comment.
 			}
-			return helper.GetTss(SelectionHelper.SelLimitType.Anchor).Length == 0;
+			return helper.GetTss(SelLimitType.Anchor).Length == 0;
 		}
 
 		#endregion
@@ -2043,7 +2043,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			if (SetFocusBoxSizeForVc())
 			{
-				m_rootb.PropChanged(FocusBox.SelectedOccurrence.Segment.Hvo, SegmentTags.kflidAnalyses, FocusBox.SelectedOccurrence.Index, 1, 1);
+				RootBox.PropChanged(FocusBox.SelectedOccurrence.Segment.Hvo, SegmentTags.kflidAnalyses, FocusBox.SelectedOccurrence.Index, 1, 1);
 			}
 		}
 
@@ -2089,7 +2089,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return;
 			}
 
-			if (m_rootb == null || DataUpdateMonitor.IsUpdateInProgress())
+			if (RootBox == null || DataUpdateMonitor.IsUpdateInProgress())
 				return;
 
 			// Convert to box coords and see what selection it produces.

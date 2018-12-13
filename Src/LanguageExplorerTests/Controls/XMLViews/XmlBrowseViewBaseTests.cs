@@ -55,14 +55,14 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		internal FakeXmlBrowseViewBase(BrowseViewer bv)
 		{
 			m_bv = bv;
-			m_rootb = new FakeRootBox();
-			((FakeRootBox)m_rootb).m_xmlBrowseViewBase = this;
+			RootBox = new FakeRootBox();
+			((FakeRootBox)RootBox).m_xmlBrowseViewBase = this;
 		}
 
 		/// <summary>Unit test helper</summary>
 		public void SetRootBox(IVwRootBox newRootBox)
 		{
-			m_rootb = newRootBox;
+			RootBox = newRootBox;
 		}
 
 		/// <summary>Unit test helper</summary>

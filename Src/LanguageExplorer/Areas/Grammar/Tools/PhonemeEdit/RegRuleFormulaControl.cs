@@ -50,8 +50,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 					return false;
 				}
 
-				var obj = GetCmObject(sel, SelectionHelper.SelLimitType.Anchor);
-				var endObj = GetCmObject(sel, SelectionHelper.SelLimitType.End);
+				var obj = GetCmObject(sel, SelLimitType.Anchor);
+				var endObj = GetCmObject(sel, SelLimitType.End);
 				if (obj != endObj || obj == null || endObj == null)
 				{
 					return false;
@@ -478,7 +478,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 			seqCtxt.MembersRS.Add(ctxt);
 		}
 
-		protected override int GetCell(SelectionHelper sel, SelectionHelper.SelLimitType limit)
+		protected override int GetCell(SelectionHelper sel, SelLimitType limit)
 		{
 			if (sel == null)
 			{
@@ -540,7 +540,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 			return -1;
 		}
 
-		protected override ICmObject GetCmObject(SelectionHelper sel, SelectionHelper.SelLimitType limit)
+		protected override ICmObject GetCmObject(SelectionHelper sel, SelLimitType limit)
 		{
 			if (sel == null)
 			{
@@ -871,7 +871,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		{
 			var sel = SelectionHelper.Create(_view);
 			var cellId = GetCell(sel);
-			var obj = GetCmObject(sel, SelectionHelper.SelLimitType.Anchor);
+			var obj = GetCmObject(sel, SelLimitType.Anchor);
 			var ctxt = (IPhPhonContext) obj;
 			var index = -1;
 			UndoableUnitOfWorkHelper.Do(AreaResources.ksRegRuleUndoSetOccurrence, AreaResources.ksRegRuleRedoSetOccurrence, ctxt, () =>
@@ -978,7 +978,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		public void GetContextOccurrence(out int min, out int max)
 		{
 			var sel = SelectionHelper.Create(_view);
-			var obj = GetCmObject(sel, SelectionHelper.SelLimitType.Anchor);
+			var obj = GetCmObject(sel, SelLimitType.Anchor);
 			if (obj.ClassID == PhIterationContextTags.kClassId)
 			{
 				var iterCtxt = (IPhIterationContext) obj;

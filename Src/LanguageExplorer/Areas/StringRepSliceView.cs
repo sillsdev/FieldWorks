@@ -74,7 +74,7 @@ namespace LanguageExplorer.Areas
 				// has been partially cleared out and thus would certainly fail the constraint
 				// check, then try to instantiate an error annotation which wouldn't have an
 				// owner, causing bad things to happen.
-				if (DesignMode || m_rootb == null || !m_env.IsValidObject)
+				if (DesignMode || RootBox == null || !m_env.IsValidObject)
 				{
 					return;
 				}
@@ -146,11 +146,11 @@ namespace LanguageExplorer.Areas
 			base.MakeRoot();
 
 			// And maybe this too, at least by default?
-			m_rootb.DataAccess = m_cache.MainCacheAccessor;
+			RootBox.DataAccess = m_cache.MainCacheAccessor;
 
 			// arg3 is a meaningless initial fragment, since this VC only displays one thing.
 			// arg4 could be used to supply a stylesheet.
-			m_rootb.SetRootObject(m_hvoObj, m_vc, StringRepSliceVc.Flid, null);
+			RootBox.SetRootObject(m_hvoObj, m_vc, StringRepSliceVc.Flid, null);
 		}
 
 		internal bool CanShowEnvironmentError()
@@ -190,7 +190,7 @@ namespace LanguageExplorer.Areas
 
 		private int GetSelectionEndPoint(bool fEnd)
 		{
-			var vwsel = m_rootb.Selection;
+			var vwsel = RootBox.Selection;
 			if (vwsel == null)
 			{
 				return -1;

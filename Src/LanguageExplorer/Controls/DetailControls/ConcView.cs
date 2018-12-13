@@ -24,7 +24,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			base.MakeRoot();
 
-			m_rootb.DataAccess = m_cache.DomainDataByFlid;
+			RootBox.DataAccess = m_cache.DomainDataByFlid;
 
 			m_vc = SliceInfo.Vc;
 			if (m_vc == null)
@@ -43,7 +43,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			// If it doesn't give us one the vc will obtain a key string from the policy
 			// directly. The frag argument is arbitrary. Note that we have to use a non-zero
 			// HVO, even when it doesn't mean anything, to avoid triggering an Assert in the Views code.
-			m_rootb.SetRootObject(SliceInfo.Hvo == 0 ? 1 : SliceInfo.Hvo, m_vc, 1, m_styleSheet);
+			RootBox.SetRootObject(SliceInfo.Hvo == 0 ? 1 : SliceInfo.Hvo, m_vc, 1, m_styleSheet);
 		}
 	}
 }

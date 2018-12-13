@@ -13,31 +13,27 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Accessibility;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.Keyboarding;
+using SIL.LCModel.Application;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.Application;
-using SIL.Keyboarding;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
 using SIL.Windows.Forms.Keyboarding;
-using Win32 = SIL.FieldWorks.Common.FwUtils.Win32;
 using SIL.Windows.Forms.Keyboarding.Windows;
+using Win32 = SIL.FieldWorks.Common.FwUtils.Win32;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
-	#region SimpleRootSite class
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Base class for hosting a view in an application.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public class SimpleRootSite : UserControl, IVwRootSite, IRootSite, IFlexComponent, IEditingCallbacks, IReceiveSequentialMessages, IMessageFilter
 	{
-		#region Events
 		/// <summary>
 		/// This event notifies you that the right mouse button was clicked,
 		/// and gives you the click location, and the selection at that point.
@@ -46,67 +42,6 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		/// <summary>This event gets fired when the AutoScrollPosition value changes</summary>
 		public event ScrollPositionChanged VerticalScrollPositionChanged;
-		#endregion Events
-
-		#region WindowsLanguageProfileSink class
-
-		// NOTE: we implement the IWIndowsLanguageProfileSink interface in a private class
-		// so that we don't introduce an otherwise unnecessary dependency on
-		// PalasoUIWindowsForms which would require to add a reference to all projects that
-		// use a SimpleRootSite.
-		private class WindowsLanguageProfileSink : IWindowsLanguageProfileSink
-		{
-			private SimpleRootSite Parent { get; set; }
-
-			public WindowsLanguageProfileSink(SimpleRootSite parent)
-			{
-				Parent = parent;
-			}
-
-			/// <summary>
-			/// Called after the language profile has changed.
-			/// </summary>
-			/// <param name="previousKeyboard">The previous input method</param>
-			/// <param name="newKeyboard">The new input method</param>
-			public void OnInputLanguageChanged(IKeyboardDefinition previousKeyboard, IKeyboardDefinition newKeyboard)
-			{
-				if (Parent.IsDisposed || Parent.m_rootb == null || DataUpdateMonitor.IsUpdateInProgress())
-					return;
-
-				var manager = Parent.WritingSystemFactory as WritingSystemManager;
-				if (manager == null)
-					return;
-
-				// JT: apparently this comes to all the views, but only the active keyboard
-				// needs to handle it.
-				// SMc: furthermore, this is not really focused until OnGotFocus() has run.
-				// Responding before that causes a nasty bug in language/keyboard selection.
-				if (!Parent.Focused || g_focusRootSite.Target != Parent)
-					return;
-
-				// If possible, adjust the language of the selection to be one that matches
-				// the keyboard just selected.
-
-				var vwsel = Parent.m_rootb.Selection; // may be null
-				int wsSel = SelectionHelper.GetFirstWsOfSelection(vwsel); // may be zero
-				CoreWritingSystemDefinition wsSelDefn = null;
-				if (wsSel != 0)
-					wsSelDefn = manager.Get(wsSel);
-
-				CoreWritingSystemDefinition wsNewDefn = GetWSForInputMethod(newKeyboard, wsSelDefn, Parent.PlausibleWritingSystems);
-				if (wsNewDefn == null || wsNewDefn.Equals(wsSelDefn))
-					return;
-
-				Parent.HandleKeyboardChange(vwsel, wsNewDefn.Handle);
-
-				// The following line is needed to get Chinese IMEs to fully initialize.
-				// This causes Text Services to set its focus, which is the crucial bit
-				// of behavior.  See LT-7488 and LT-5345.
-				Parent.Activate(VwSelectionState.vssEnabled);
-			}
-
-		}
-		#endregion
 
 		#region Member variables
 		/// <summary>Value for the available width to tell the view that we want to do a
@@ -149,7 +84,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// <remarks>Access to this variable should only be done through the property
 		/// AllowPaint.</remarks>
-		private int m_nAllowPaint = 0;
+		private int m_nAllowPaint;
 
 		/// <summary>
 		/// Subclasses can set this flag to keep SimpleRootSite from handling OnPrint.
@@ -160,15 +95,15 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// This allows storing of the AutoScrollPosition when AllowPainting == false
 		/// as on Mono Setting AutoScrollPosition causes a redraw even when AllowPainting == false
 		/// </summary>
-		private Point? cachedAutoScrollPosition = null;
+		private Point? cachedAutoScrollPosition;
 
 		/// <summary>Used to draw the rootbox</summary>
 		private IVwDrawRootBuffered m_vdrb;
-		private bool m_haveCachedDrawForDisabledView = false;
+		private bool m_haveCachedDrawForDisabledView;
 
 		//The message filter is a major kludge to prevent a spurious WM_KEYUP for VK_CONTROL from
 		// interrupting a mouse click.  We remember when it is installed with this bool.
-		private bool m_messageFilterInstalled = false;
+		private bool m_messageFilterInstalled;
 
 		/// <summary>
 		/// This variable is set at the start of OnGotFocus, and thus notes the root site that
@@ -187,21 +122,18 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		/// <summary>True if we are waiting to do a refresh on the view (will be done when the view
 		/// becomes visible); false otherwise</summary>
-		protected bool m_fRefreshPending = false;
+		protected bool m_fRefreshPending;
 
 		/// <summary>True to show range selections when focus is lost; false otherwise</summary>
-		protected bool m_fShowRangeSelAfterLostFocus = false;
+		protected bool m_fShowRangeSelAfterLostFocus;
 		/// <summary>True if this is a "text box" (or "combo box"); false otherwise</summary>
-		protected bool m_fIsTextBox = false;
+		protected bool m_fIsTextBox;
 
 		/// <summary>True if <see cref="MakeRoot"/> was called</summary>
-		protected bool m_fRootboxMade = false;
+		protected bool m_fRootboxMade;
 
-		/// <summary>Manages the VwGraphics creation and useage</summary>
+		/// <summary>Manages the VwGraphics creation and usage</summary>
 		protected GraphicsManager m_graphicsManager;
-
-		/// <summary>The root box</summary>
-		protected IVwRootBox m_rootb = null;
 
 		/// <summary>handler for typing and other edit requests</summary>
 		protected EditingHelper m_editingHelper;
@@ -222,14 +154,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>The zoom ratio</summary>
 		protected float m_Zoom = 1;
 
-		/// <summary>Contains horizontal and vertical dpi</summary>
-		protected Point m_Dpi = new Point(96, 96);
-
-		/// <summary>
-		/// See <see cref="WsPending"/>.
-		/// </summary>
-		protected int m_wsPending;
-
 		/// <summary>height of an optional fixed header at the top of the client window.</summary>
 		protected int m_dyHeader;
 
@@ -239,7 +163,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		// This is used for the LinkedFiles Link tooltip.
 		//HWND m_hwndExtLinkTool;
 
-		private System.Windows.Forms.Timer m_Timer;
+		private Timer m_Timer;
 		private int m_nHorizMargin = 2;
 
 		/// <summary>The style sheet</summary>
@@ -253,23 +177,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// times before prior ones have exited.  Otherwise we get lines displayed multiple
 		/// times while scrolling during a selection.
 		/// </summary>
-		private bool m_fMouseInProcess = false;
-
-		/// <summary>
-		/// This is set true during processing of the OnPaint message. It serves to suppress
-		/// certain behavior that ought not to happen during a paint.
-		/// For example, when this root site is part of a group, and expanding lazy boxes
-		/// changes the scroll range, we change the AutoScrollMinSize of the RootSiteGroup.
-		/// This causes a Layout() of the RootSiteGroup, which among other things sends
-		/// an OnSizeChanged to the original root site, which tries to make the selection
-		/// visible, and can produce a recursive call to OnPaint.
-		/// </summary>
-		protected bool m_fInPaint;
-		/// <summary>
-		/// This is set true during processing of the OnLayout message. This is used to
-		/// deal with re-entrant Window messages.
-		/// </summary>
-		protected bool m_fInLayout;
+		private bool m_fMouseInProcess;
 
 		/// <summary>We seem to get spurious OnSizeChanged messages when the size didn't
 		/// really change... ignore them.</summary>
@@ -279,7 +187,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// message with the previous language value when we want to set our own that we know.
 		/// If the user causes this message, we do want to change language/keyboard, but not
 		/// if OnGotFocus causes the message.</summary>
-		private bool m_fHandlingOnGotFocus = false;
+		private bool m_fHandlingOnGotFocus;
 
 		/// <summary>
 		/// This tells the rootsite whether to attempt to construct the rootbox automatically
@@ -290,26 +198,13 @@ namespace SIL.FieldWorks.Common.RootSites
 		protected bool m_fMakeRootWhenHandleIsCreated = true;
 
 		private int m_lastVerticalScrollPosition = 1;
-		// Used to force certain events to occur sequentially. See comments on the class.
-		private MessageSequencer m_messageSequencer;
 		private bool m_fDisposed;
 
 		private OrientationManager m_orientationManager;
 		private ISubscriber m_subscriber;
 
-		/// <summary>
-		/// The keyboarding rootsite event handler
-		/// </summary>
-		protected object m_rootSiteEventHandler;
-
-		/// <summary/>
-		protected bool IsVertical
-		{
-			get { return m_orientationManager.IsVertical; }
-		}
-
-		private bool m_acceptsTab;
-		private bool m_acceptsReturn;
+		/// <summary />
+		protected bool IsVertical => m_orientationManager.IsVertical;
 
 		/// <summary>
 		/// We suppress MouseMove when a paint is pending, since we don't want mousemoved to ask
@@ -328,10 +223,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			InitializeComponent();
 
 			m_dxdLayoutWidth = kForceLayout; // Unlikely to be real current window width!
-			m_wsPending = -1;
+			WsPending = -1;
 			BackColor = SystemColors.Window;
-			//AllowScrolling = true;
-			m_messageSequencer = new MessageSequencer(this);
+			Sequencer = new MessageSequencer(this);
 			m_graphicsManager = CreateGraphicsManager();
 			m_orientationManager = CreateOrientationManager();
 			if (LicenseManager.UsageMode != LicenseUsageMode.Designtime)
@@ -340,47 +234,40 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-#if DEBUG
-		/// <summary>
-		/// Finalizer, in case client doesn't dispose it.
-		/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
-		/// </summary>
-		~SimpleRootSite()
-		{
-			Dispose(false);
-			// The base class finalizer is called automatically.
-		}
-#endif
-
 		/// <summary>
 		/// Creates the root site event handler.
 		/// </summary>
 		private void SubscribeToRootSiteEventHandlerEvents()
 		{
-			if (!KeyboardController.IsInitialized || m_rootSiteEventHandler != null)
+			if (!KeyboardController.IsInitialized || RootSiteEventHandler != null)
+			{
 				return;
-
+			}
 			if (Platform.IsWindows)
-				m_rootSiteEventHandler = new WindowsLanguageProfileSink(this);
+			{
+				RootSiteEventHandler = new WindowsLanguageProfileSink(this);
+			}
 			else
-				m_rootSiteEventHandler = new IbusRootSiteEventHandler(this);
-
-			KeyboardController.RegisterControl(this, m_rootSiteEventHandler);
+			{
+				RootSiteEventHandler = new IbusRootSiteEventHandler(this);
+			}
+			KeyboardController.RegisterControl(this, RootSiteEventHandler);
 		}
 
 		private void UnsubscribeFromRootSiteEventHandlerEvents()
 		{
-			if (!KeyboardController.IsInitialized || m_rootSiteEventHandler == null)
+			if (!KeyboardController.IsInitialized || RootSiteEventHandler == null)
+			{
 				return;
-
+			}
 			KeyboardController.UnregisterControl(this);
-			m_rootSiteEventHandler = null;
+			RootSiteEventHandler = null;
 		}
 
 		/// <summary>
 		/// Gets the root site event handler.
 		/// </summary>
-		internal object RootSiteEventHandler { get { return m_rootSiteEventHandler; } }
+		protected internal object RootSiteEventHandler { get; protected set; }
 
 		/// <summary>
 		/// The default creates a normal horizontal orientation manager. Override to create one of the other
@@ -392,17 +279,27 @@ namespace SIL.FieldWorks.Common.RootSites
 			return new OrientationManager(this);
 		}
 
-		/// -----------------------------------------------------------------------------------
+		/// <summary>
+		/// Finalizer, in case client doesn't dispose it.
+		/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
+		/// </summary>
+		~SimpleRootSite()
+		{
+			Dispose(false);
+			// The base class finalizer is called automatically.
+		}
+
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
-			// Must not be run more than once.
 			if (IsDisposed)
+			{
+				// No need to run it more than once.
 				return;
+			}
 
 			if (disposing)
 			{
@@ -437,130 +334,104 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				UnsubscribeFromRootSiteEventHandlerEvents();
 
-				if (m_rootb != null)
+				if (RootBox != null)
+				{
 					CloseRootBox();
-
+				}
 				if (m_Timer != null)
 				{
 					m_Timer.Stop();
 					m_Timer.Tick -= OnTimer;
 					m_Timer.Dispose();
 				}
-
 				// Remove the filter when we are disposed now.
 				if (m_messageFilterInstalled)
 				{
 					Application.RemoveMessageFilter(this);
 					m_messageFilterInstalled = false;
 				}
-
-				if (m_editingHelper != null)
-					m_editingHelper.Dispose();
-				if (m_messageSequencer != null)
-					m_messageSequencer.Dispose();
+				m_editingHelper?.Dispose();
+				Sequencer?.Dispose();
 				if (m_graphicsManager != null)
 				{
 					// Uninit() first in case we're in the middle of displaying something.  See LT-7365.
 					m_graphicsManager.Uninit();
 					m_graphicsManager.Dispose();
 				}
-				if (components != null)
-					components.Dispose();
+				components?.Dispose();
 			}
 
 			if (m_vdrb != null && Marshal.IsComObject(m_vdrb))
+			{
 				Marshal.ReleaseComObject(m_vdrb);
+			}
 			m_vdrb = null;
 			if (m_styleSheet != null && Marshal.IsComObject(m_styleSheet))
+			{
 				Marshal.ReleaseComObject(m_styleSheet);
-			if (m_rootb != null && Marshal.IsComObject(m_rootb))
-				Marshal.ReleaseComObject(m_rootb);
-			m_rootb = null;
+			}
+			if (RootBox != null && Marshal.IsComObject(RootBox))
+			{
+				Marshal.ReleaseComObject(RootBox);
+			}
+			RootBox = null;
 			m_styleSheet = null;
 			m_graphicsManager = null;
 			m_editingHelper = null;
 			m_Timer = null;
 			m_wsf = null;
-			m_messageSequencer = null;
+			Sequencer = null;
 
 			PropertyTable = null;
 			Publisher = null;
 			Subscriber = null;
 
-			// Don't do it here.
-			//base.Dispose( disposing );
-
 			m_fDisposed = true;
 		}
 
-		#region Component Designer generated code
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
-			this.m_Timer = new System.Windows.Forms.Timer(this.components);
-			//
-			// RootSite
-			//
-			this.Name = "SimpleRootSite";
+			components = new Container();
+			m_Timer = new Timer(components);
+			Name = "SimpleRootSite";
 		}
 		#endregion
 
-		#endregion
-
 		#region Properties
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets an image that can be used to represent graphically an image that cannot be
 		/// found (similar to what IE does).
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static Bitmap ImageNotFoundX
-		{
-			get { return Properties.Resources.ImageNotFoundX; }
-		}
+		public static Bitmap ImageNotFoundX => Properties.Resources.ImageNotFoundX;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Creates the graphics manager.
 		/// </summary>
 		/// <remarks>We do this in a method for testing.</remarks>
 		/// <returns>A new graphics manager.</returns>
-		/// ------------------------------------------------------------------------------------
 		protected virtual GraphicsManager CreateGraphicsManager()
 		{
 			return new GraphicsManager(this);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Determines whether it's possible to do meaningful layout.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected virtual bool OkayToLayOut
-		{
-			get { return OkayToLayOutAtCurrentWidth; }
-		}
+		protected virtual bool OkayToLayOut => OkayToLayOutAtCurrentWidth;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// If layout width is less than 2 pixels, probably the window has not received its
 		/// initial OnSize message yet, and we can't do a meaningful layout.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected bool OkayToLayOutAtCurrentWidth
-		{
-			get { return m_dxdLayoutWidth >= 2 || m_dxdLayoutWidth == kForceLayout; }
-		}
+		protected bool OkayToLayOutAtCurrentWidth => m_dxdLayoutWidth >= 2 || m_dxdLayoutWidth == kForceLayout;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets/sets whether or not to show range selections when focus is lost
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public virtual bool ShowRangeSelAfterLostFocus
 		{
 			get
@@ -570,8 +441,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			set
 			{
 				m_fShowRangeSelAfterLostFocus = value;
-				if (!Focused && m_rootb != null)
+				if (!Focused && RootBox != null)
+				{
 					UpdateSelectionEnabledState(null);
+				}
 			}
 		}
 
@@ -587,18 +460,18 @@ namespace SIL.FieldWorks.Common.RootSites
 			set
 			{
 				m_fIsTextBox = value;
-				if (!Focused && m_rootb != null)
+				if (!Focused && RootBox != null)
+				{
 					UpdateSelectionEnabledState(null);
+				}
 			}
 		}
-		/// -----------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Gets or sets the horizontal margin.
 		/// Note: this is always considered the margin to either SIDE of the text; thus, in
 		/// effect it becomes a vertical margin when displaying vertical text.
 		/// </summary>
-		/// <value>A <c>int</c> that represents the horizontal margin.</value>
-		/// -----------------------------------------------------------------------------------
 		[DefaultValue(2)]
 		protected internal virtual int HorizMargin
 		{
@@ -612,29 +485,14 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The paragraph style name for the current selection.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public virtual string CurrentParagraphStyle
-		{
-			get
-			{
-				if (DesignMode)
-					return string.Empty;
+		public virtual string CurrentParagraphStyle => DesignMode ? string.Empty : EditingHelper.GetParaStyleNameFromSelection();
 
-				return EditingHelper.GetParaStyleNameFromSelection();
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual bool AllowLayout
@@ -647,11 +505,12 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				m_fAllowLayout = value;
 				if (m_fAllowLayout)
+				{
 					PerformLayout();
+				}
 			}
 		}
 
-		/// --------------------------------------------------------------------------------
 		/// <summary>
 		/// If we need to make a selection, but we can't because edits haven't been updated in the
 		/// view, this method requests creation of a selection after the unit of work is complete.
@@ -669,15 +528,12 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="fAssocPrev">Flag indicating whether to associate the insertion point
 		/// with the preceding character or the following character</param>
 		/// <param name="selProps">The selection properties.</param>
-		/// --------------------------------------------------------------------------------
-		public virtual void RequestSelectionAtEndOfUow(IVwRootBox rootb, int ihvoRoot,
-			int cvlsi, SelLevInfo[] rgvsli, int tagTextProp, int cpropPrevious, int ich,
-			int wsAlt, bool fAssocPrev, ITsTextProps selProps)
+		public virtual void RequestSelectionAtEndOfUow(IVwRootBox rootb, int ihvoRoot, int cvlsi, SelLevInfo[] rgvsli,
+			int tagTextProp, int cpropPrevious, int ich, int wsAlt, bool fAssocPrev, ITsTextProps selProps)
 		{
-			throw new NotImplementedException("Method RequestSelectionAtEndOfUow is not implemented.");
+			throw new NotSupportedException("Method RequestSelectionAtEndOfUow is not supported in the base class.");
 		}
 
-		/// --------------------------------------------------------------------------------
 		/// <summary>
 		/// If we need to make a selection, but we can't because edits haven't been updated in
 		/// the view, this method requests creation of a selection after the unit of work is
@@ -686,34 +542,21 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// paragraph editing.
 		/// </summary>
 		/// <param name="helper">The selection to restore</param>
-		/// --------------------------------------------------------------------------------
 		public virtual void RequestVisibleSelectionAtEndOfUow(SelectionHelper helper)
 		{
-			throw new NotImplementedException("Method RequestSelectionAtEndOfUow is not implemented.");
+			throw new NotSupportedException("Method RequestSelectionAtEndOfUow is not supported in the base class.");
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the root box
 		/// </summary>
-		/// <value>A <c>IVwRootBox</c> object</value>
-		/// <remarks>Used to implement IVwRootSite::get_RootBox</remarks>
-		/// -----------------------------------------------------------------------------------
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public IVwRootBox RootBox
-		{
-			get
-			{
-				return m_rootb;
-			}
-		}
+		public IVwRootBox RootBox { get; set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the associated style sheet
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual IVwStylesheet StyleSheet
@@ -725,9 +568,13 @@ namespace SIL.FieldWorks.Common.RootSites
 			set
 			{
 				if (m_styleSheet == value)
+				{
 					return;
+				}
 				if (m_styleSheet != null && Marshal.IsComObject(m_styleSheet))
+				{
 					Marshal.ReleaseComObject(m_styleSheet);
+				}
 				m_styleSheet = value;
 				if (RootBox != null)
 				{
@@ -742,59 +589,49 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the location of the insertion point.
 		/// NOTE: This is the point relative to the top of visible area not the location with
 		/// in the rootsite.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public Point IPLocation
 		{
 			get
 			{
-				Point pt = Point.Empty;
-
-				if (m_rootb != null && !DesignMode)
+				if (RootBox != null && !DesignMode)
 				{
-					IVwSelection vwsel = m_rootb.Selection;
+					var vwsel = RootBox.Selection;
 					if (vwsel != null)
 					{
 						// insertion point location is actually the endpoint of a span
-						if (vwsel.IsRange == true)
+						if (vwsel.IsRange)
 						{
 							vwsel = vwsel.EndPoint(true);
 							Debug.Assert(vwsel != null);
 						}
-
 						using (new HoldGraphics(this))
 						{
 							Rectangle rcSrcRoot, rcDstRoot;
 							Rect rcSec, rcPrimary;
 							bool fSplit, fEndBeforeAnchor;
 							GetCoordRects(out rcSrcRoot, out rcDstRoot);
-							vwsel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary,
-								out rcSec, out fSplit, out fEndBeforeAnchor);
-
-							pt = new Point((rcPrimary.right + rcPrimary.left) / 2,
-								(rcPrimary.top + rcPrimary.bottom) / 2);
+							vwsel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary, out rcSec, out fSplit, out fEndBeforeAnchor);
+							return new Point((rcPrimary.right + rcPrimary.left) / 2, (rcPrimary.top + rcPrimary.bottom) / 2);
 						}
 					}
 				}
 
-				return pt;
+				return Point.Empty;
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets a value that tells this view that it is entirely read-only or not.
 		/// If you call this before m_rootb is set (e.g., during an override of MakeRoot) and
 		/// set it to false, consider setting MaxParasToScan to zero on the root box.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public bool ReadOnlyView
 		{
 			get
@@ -805,8 +642,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				// check if this property will actually change
 				if (EditingHelper.Editable == !value)
+				{
 					return;
-
+				}
 				// If this is read-only, it should not try to handle keyboard input in general.
 				if (EditingHelper.Editable && value)
 				{
@@ -820,32 +658,29 @@ namespace SIL.FieldWorks.Common.RootSites
 				// If the view is read-only, we don't want to waste time looking for an
 				// editable insertion point when moving the cursor with the cursor movement
 				// keys.  Setting this value to 0 accomplishes this.
-				if (value && m_rootb != null)
-					m_rootb.MaxParasToScan = 0;
+				if (value && RootBox != null)
+				{
+					RootBox.MaxParasToScan = 0;
+				}
 				// This allows read-only simple root sites embedded in dialogs not to trap tab keys that should move focus
 				// elsewhere and return keys that should close the dialog.
 				// It's not obvious, however, that every editable view should accept return; some may be one-liners.
 				// So only mess with it when set true.
 				if (value)
+				{
 					AcceptsReturn = AcceptsTab = false;
+				}
 			}
 		}
 
 		/// <summary>
 		/// Indicates that we expect the view to have an editable field.
 		/// </summary>
-		internal bool IsEditable
-		{
-			get { return !ReadOnlyView; }
+		internal bool IsEditable => !ReadOnlyView;
 
-			// Note: if you add a set{}, make sure is compatible with ReadOnlyView state.
-		}
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the zoom multiplier that magnifies (or shrinks) the view.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public virtual float Zoom
 		{
 			get
@@ -859,7 +694,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets a value indicating whether the root can be constructed in design mode.
 		/// </summary>
@@ -867,36 +701,23 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// derived class to allow MakeRoot being called when the view is opened in designer in
 		/// Visual Studio.
 		/// </value>
-		/// ------------------------------------------------------------------------------------
-		protected virtual bool AllowPaintingInDesigner
-		{
-			get { return false; }
-		}
+		protected virtual bool AllowPaintingInDesigner => false;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// (For internal use only.) Determine whether or not client posted a "FollowLink"
 		/// message, in which case we are about to switch tools.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private bool IsFollowLinkMsgPending { get; set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the data access (corresponds to a DB connection) for the rootbox of this
 		/// rootsite.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public virtual ISilDataAccess DataAccess
-		{
-			get { return (m_rootb == null) ? null : m_rootb.DataAccess; }
-		}
+		public virtual ISilDataAccess DataAccess => RootBox?.DataAccess;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Helper used for processing editing requests.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public EditingHelper EditingHelper
 		{
 			get
@@ -910,85 +731,54 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Called when the editing helper is created.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected virtual void OnEditingHelperCreated()
 		{
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Creates a new EditingHelper of the proper type.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected virtual EditingHelper CreateEditingHelper()
 		{
 			return new EditingHelper(this);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the dpi.
+		/// Gets/sets the dpi.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected internal Point Dpi
-		{
-			get { return m_Dpi; }
-			set { m_Dpi = value; }
-		}
+		protected internal Point Dpi { get; set; } = new Point(96, 96);
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Usually Cursors.IBeam; overridden in vertical windows.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		internal Cursor IBeamCursor
-		{
-			get { return m_orientationManager.IBeamCursor; }
-		}
+		internal Cursor IBeamCursor => m_orientationManager.IBeamCursor;
 		#endregion // Properties
 
 		#region Implementation of IVwRootSite
-		/// -----------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Adjust the scroll range when some lazy box got expanded. Needs to be done for both
 		/// panes if we have more than one.
 		/// </summary>
-		/// <param name="prootb"></param>
-		/// <param name="dxdSize"></param>
-		/// <param name="dxdPosition"></param>
-		/// <param name="dydSize"></param>
-		/// <param name="dydPosition"></param>
-		/// <returns></returns>
-		/// -----------------------------------------------------------------------------------
-		public bool AdjustScrollRange(IVwRootBox prootb, int dxdSize, int dxdPosition,
-			int dydSize, int dydPosition)
+		public bool AdjustScrollRange(IVwRootBox prootb, int dxdSize, int dxdPosition, int dydSize, int dydPosition)
 		{
 			return AdjustScrollRange1(dxdSize, dxdPosition, dydSize, dydPosition);
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Cause the immediate update of the display of the root box. This should cause all pending
 		/// paint operations to be done immediately, at least for the screen area occupied by the
 		/// root box. It is typically called after processing key strokes, to ensure that the updated
 		/// text is displayed before trying to process any subsequent keystrokes.
 		/// </summary>
-		/// <param name="prootb"></param>
-		/// -----------------------------------------------------------------------------------
 		public virtual void DoUpdates(IVwRootBox prootb)
 		{
-			//	Console.WriteLine("DoUpdates");
-
-			//Removed PerformLayout to reduce flashing
-			//PerformLayout();
 			Update();
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Get the width available for laying things out in the view.
 		/// Return the layout width for the window, depending on whether or not there is a
@@ -1002,33 +792,24 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// N.B. If it is necessary to override this, it is not advisable to use Int32.MaxValue
 		/// for fear of overflow caused by VwSelection::InvalidateSel() adjustments.
 		/// </summary>
-		/// <param name="prootb"></param>
-		/// <returns>Width available for layout</returns>
-		/// -----------------------------------------------------------------------------------
 		public virtual int GetAvailWidth(IVwRootBox prootb)
 		{
 			// The default -4 allows two pixels right and left to keep data clear of the margins.
 			return m_orientationManager.GetAvailWidth() - HorizMargin * 2;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Invalidate rectangle
 		/// </summary>
-		/// <param name="root">The sender</param>
-		/// <param name="xsLeft">Relative to top left of root box</param>
-		/// <param name="ysTop"></param>
-		/// <param name="xsWidth"></param>
-		/// <param name="ysHeight"></param>
-		/// -----------------------------------------------------------------------------------
-		public virtual void InvalidateRect(IVwRootBox root, int xsLeft, int ysTop, int xsWidth,
-			int ysHeight)
+		public virtual void InvalidateRect(IVwRootBox root, int xsLeft, int ysTop, int xsWidth, int ysHeight)
 		{
 			if (xsWidth <= 0 || ysHeight <= 0)
-				return; // empty rectangle, may not produce paint.
-						// REVIEW: We found that InvalidateRect was being called twice with the same rectangle for
-						// every keystroke.  We assume that this problem is originating within the rootbox code.
-
+			{
+				// empty rectangle, may not produce paint.
+				// REVIEW: We found that InvalidateRect was being called twice with the same rectangle for
+				// every keystroke.  We assume that this problem is originating within the rootbox code.
+				return;
+			}
 			// Convert from coordinates relative to the root box to coordinates relative to
 			// the current client rectangle.
 			Rectangle rcSrcRoot, rcDstRoot;
@@ -1036,15 +817,13 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				GetCoordRects(out rcSrcRoot, out rcDstRoot);
 			}
-			int left = MapXTo(xsLeft, rcSrcRoot, rcDstRoot);
-			int top = MapYTo(ysTop, rcSrcRoot, rcDstRoot);
-			int right = MapXTo(xsLeft + xsWidth, rcSrcRoot, rcDstRoot);
-			int bottom = MapYTo(ysTop + ysHeight, rcSrcRoot, rcDstRoot);
-			Rectangle rect = new Rectangle(left, top, right - left, bottom - top);
-			CallInvalidateRect(m_orientationManager.RotateRectDstToPaint(rect), true);
+			var left = MapXTo(xsLeft, rcSrcRoot, rcDstRoot);
+			var top = MapYTo(ysTop, rcSrcRoot, rcDstRoot);
+			var right = MapXTo(xsLeft + xsWidth, rcSrcRoot, rcDstRoot);
+			var bottom = MapYTo(ysTop + ysHeight, rcSrcRoot, rcDstRoot);
+			CallInvalidateRect(m_orientationManager.RotateRectDstToPaint(new Rectangle(left, top, right - left, bottom - top)), true);
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Get a graphics object in an appropriate state for drawing and measuring in the view.
 		/// The calling method should pass the IVwGraphics back to ReleaseGraphics() before
@@ -1060,13 +839,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// be that we just need to allocate a copy in this method, leaving the member variable
 		/// alone. Or, the current strategy may prove adequate.
 		/// </remarks>
-		/// <param name="prootb"></param>
-		/// <param name="pvg"></param>
-		/// <param name="rcSrcRoot"></param>
-		/// <param name="rcDstRoot"></param>
-		/// -----------------------------------------------------------------------------------
-		public virtual void GetGraphics(IVwRootBox prootb, out IVwGraphics pvg, out Rect rcSrcRoot,
-			out Rect rcDstRoot)
+		public virtual void GetGraphics(IVwRootBox prootb, out IVwGraphics pvg, out Rect rcSrcRoot, out Rect rcDstRoot)
 		{
 			InitGraphics();
 			pvg = m_graphicsManager.VwGraphics;
@@ -1077,34 +850,24 @@ namespace SIL.FieldWorks.Common.RootSites
 			rcSrcRoot = rcSrc;
 			rcDstRoot = rcDst;
 		}
-		/// -----------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Get a graphics object in an appropriate state for drawing and measuring in the view.
 		/// The calling method should pass the IVwGraphics back to ReleaseGraphics() before
 		/// it returns. In particular, problems will arise if OnPaint() gets called before the
 		/// ReleaseGraphics() method.
 		/// </summary>
-		/// <param name="prootb"></param>
-		/// <returns></returns>
-		/// -----------------------------------------------------------------------------------
 		IVwGraphics IVwRootSite.get_LayoutGraphics(IVwRootBox prootb)
 		{
 			InitGraphics();
 			return m_graphicsManager.VwGraphics;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Get a transform for a given destination point...same for all points in this
 		/// simple case.
 		/// </summary>
-		/// <param name="root"></param>
-		/// <param name="pt"></param>
-		/// <param name="rcSrcRoot"></param>
-		/// <param name="rcDstRoot"></param>
-		/// -----------------------------------------------------------------------------------
-		public void GetTransformAtDst(IVwRootBox root, Point pt, out Rect rcSrcRoot,
-			out Rect rcDstRoot)
+		public void GetTransformAtDst(IVwRootBox root, Point pt, out Rect rcSrcRoot, out Rect rcDstRoot)
 		{
 			using (new HoldGraphics(this))
 			{
@@ -1116,36 +879,24 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Get a transform for a given layout point...same for all points in this
 		/// simple case.
 		/// </summary>
-		/// <param name="root"></param>
-		/// <param name="pt"></param>
-		/// <param name="rcSrcRoot"></param>
-		/// <param name="rcDstRoot"></param>
-		/// -----------------------------------------------------------------------------------
-		public void GetTransformAtSrc(IVwRootBox root, Point pt, out Rect rcSrcRoot,
-			out Rect rcDstRoot)
+		public void GetTransformAtSrc(IVwRootBox root, Point pt, out Rect rcSrcRoot, out Rect rcDstRoot)
 		{
 			GetTransformAtDst(root, pt, out rcSrcRoot, out rcDstRoot);
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Real drawing VG same as layout one for simple view.
 		/// </summary>
-		/// <param name="_Root"></param>
-		/// <returns></returns>
-		/// -----------------------------------------------------------------------------------
-		public IVwGraphics get_ScreenGraphics(IVwRootBox _Root)
+		public IVwGraphics get_ScreenGraphics(IVwRootBox root)
 		{
 			InitGraphics();
 			return m_graphicsManager.VwGraphics;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Inform the container when done with the graphics object.
 		/// </summary>
@@ -1154,23 +905,18 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// of the IVwGraphics? But that method does not know anything about the status or
 		/// source of its hdc.
 		/// </remarks>
-		/// <param name="prootb"></param>
-		/// <param name="pvg"></param>
-		/// -----------------------------------------------------------------------------------
 		public virtual void ReleaseGraphics(IVwRootBox prootb, IVwGraphics pvg)
 		{
 			Debug.Assert(pvg == m_graphicsManager.VwGraphics);
 			UninitGraphics();
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Notifies the site that something about the selection has changed.
 		/// </summary>
 		/// <param name="rootb">The rootbox whose selection changed</param>
 		/// <param name="vwselNew">The new selection</param>
 		/// <remarks>Don't you dare make this virtual!</remarks>
-		/// -----------------------------------------------------------------------------------
 		public void SelectionChanged(IVwRootBox rootb, IVwSelection vwselNew)
 		{
 			Debug.Assert(rootb == EditingHelper.EditedRootBox);
@@ -1179,7 +925,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			EditingHelper.SelectionChanged();
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Notifies the site that the size of the root box changed; scroll ranges and/or
 		/// window size may need to be updated. The standard response is to update the scroll range.
@@ -1189,112 +934,80 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Should we try to preserve the scroll position (at least the top left corner, say) even
 		/// if the selection is not visible? Which should take priority?
 		/// </remarks>
-		/// <param name="prootb"></param>
-		/// -----------------------------------------------------------------------------------
 		public virtual void RootBoxSizeChanged(IVwRootBox prootb)
 		{
 			if (!AllowLayout)
+			{
 				return;
+			}
 			UpdateScrollRange();
 
 			OnLayoutSizeChanged(new EventArgs());
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Required method to implement the LayoutSizeChanged event.
 		/// </summary>
-		/// <param name="e"></param>
-		/// -----------------------------------------------------------------------------------
 		protected virtual void OnLayoutSizeChanged(EventArgs e)
 		{
-			if (LayoutSizeChanged != null)
-			{
-				//Invokes the delegates.
-				LayoutSizeChanged(this, e);
-			}
+			//Invokes the delegates.
+			LayoutSizeChanged?.Invoke(this, e);
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// When the state of the overlays changes, it propagates this to its site.
 		/// </summary>
-		/// <param name="prootb"></param>
-		/// <param name="vo"></param>
-		/// -----------------------------------------------------------------------------------
 		public virtual void OverlayChanged(IVwRootBox prootb, IVwOverlay vo)
 		{
 			// do nothing
 		}
 
-
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Return true if this kind of window uses semi-tagging.
 		/// </summary>
-		/// <param name="prootb"></param>
-		/// -----------------------------------------------------------------------------------
 		public virtual bool get_SemiTagging(IVwRootBox prootb)
 		{
 			return false;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Member ScreenToClient
 		/// </summary>
-		/// <param name="prootb"></param>
-		/// <param name='pt'>Pont to convert</param>
-		/// -----------------------------------------------------------------------------------
-		public virtual void ScreenToClient(IVwRootBox prootb, ref System.Drawing.Point pt)
+		public virtual void ScreenToClient(IVwRootBox prootb, ref Point pt)
 		{
 			pt = PointToClient(pt);
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Member ClientToScreen
 		/// </summary>
-		/// <param name="prootb"></param>
-		/// <param name='pt'>Point to convert</param>
-		/// -----------------------------------------------------------------------------------
-		public virtual void ClientToScreen(IVwRootBox prootb, ref System.Drawing.Point pt)
+		public virtual void ClientToScreen(IVwRootBox prootb, ref Point pt)
 		{
 			pt = PointToScreen(pt);
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>If there is a pending writing system that should be applied to typing,
 		/// return it; also clear the state so that subsequent typing will not have a pending
 		/// writing system until something sets it again.  (This is mainly used so that
 		/// keyboard-change commands can be applied while the selection is a range.)</summary>
-		/// <param name="prootb"></param>
-		/// <returns>Pending writing system</returns>
-		/// -----------------------------------------------------------------------------------
 		public virtual int GetAndClearPendingWs(IVwRootBox prootb)
 		{
-			int ws = m_wsPending;
-			m_wsPending = -1;
+			var ws = WsPending;
+			WsPending = -1;
 			return ws;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Answer whether boxes in the specified range of destination coordinates
 		/// may usefully be converted to lazy boxes. Should at least answer false
 		/// if any part of the range is visible. The default implementation avoids
 		/// converting stuff within about a screen's height of the visible part(s).
 		/// </summary>
-		/// <param name="prootb"></param>
-		/// <param name="ydBottom"></param>
-		/// <param name="ydTop"></param>
-		/// -----------------------------------------------------------------------------------
 		public virtual bool IsOkToMakeLazy(IVwRootBox prootb, int ydTop, int ydBottom)
 		{
 			return false; // Todo JohnT or TE team: make similar to AfVwWnd impl.
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The user has attempted to delete something which the system does not inherently
 		/// know how to delete. The dpt argument indicates the type of problem.
@@ -1302,57 +1015,35 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="sel">The selection</param>
 		/// <param name="dpt">Problem type</param>
 		/// <returns><c>true</c> to abort</returns>
-		/// ------------------------------------------------------------------------------------
-		public virtual VwDelProbResponse OnProblemDeletion(IVwSelection sel,
-			VwDelProbType dpt)
+		public virtual VwDelProbResponse OnProblemDeletion(IVwSelection sel, VwDelProbType dpt)
 		{
-			return VwDelProbResponse.kdprFail; // give up quietly.
-											   // Review team (JohnT): a previous version threw NotImplementedException. This seems
-											   // overly drastic.
+			// give up quietly.
+			// Review team (JohnT): a previous version threw NotImplementedException. This seems
+			// overly drastic.
+			return VwDelProbResponse.kdprFail;
 		}
 
-		/// ----------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="ttpDest"></param>
-		/// <param name="cPara"></param>
-		/// <param name="ttpSrc"></param>
-		/// <param name="tssParas"></param>
-		/// <param name="tssTrailing"></param>
-		/// <param name="prootb"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		public virtual VwInsertDiffParaResponse OnInsertDiffParas(IVwRootBox prootb,
-			ITsTextProps ttpDest, int cPara, ITsTextProps[] ttpSrc, ITsString[] tssParas,
-			ITsString tssTrailing)
+		/// <summary />
+		public virtual VwInsertDiffParaResponse OnInsertDiffParas(IVwRootBox prootb, ITsTextProps ttpDest, int cPara, ITsTextProps[] ttpSrc, ITsString[] tssParas, ITsString tssTrailing)
 		{
 			return VwInsertDiffParaResponse.kidprDefault;
 		}
 
 		/// <summary> see OnInsertDiffParas </summary>
-		public virtual VwInsertDiffParaResponse OnInsertDiffPara(IVwRootBox prootb,
-			ITsTextProps ttpDest, ITsTextProps ttpSrc, ITsString tssParas,
-			ITsString tssTrailing)
+		public virtual VwInsertDiffParaResponse OnInsertDiffPara(IVwRootBox prootb, ITsTextProps ttpDest, ITsTextProps ttpSrc, ITsString tssParas, ITsString tssTrailing)
 		{
 			return VwInsertDiffParaResponse.kidprDefault;
 		}
 
-		/// ----------------------------------------------------------------------------------
 		/// <summary>
 		/// Needs a cache in order to provide a meaningful implementation. SimpleRootsite
 		/// should never have objects cut, copied, pasted.
 		/// </summary>
-		/// <returns>An empty string so that the caller will just discard the run containing
-		/// the ORC</returns>
-		/// ------------------------------------------------------------------------------------
 		public virtual string get_TextRepOfObj(ref Guid guid)
 		{
-			Debug.Fail("This should never get called for a simple rootsite.");
-			return string.Empty;
+			throw new NotSupportedException("This should never get called for a simple rootsite.");
 		}
 
-		/// ----------------------------------------------------------------------------------
 		/// <summary>
 		/// Needs a cache in order to provide a meaningful implementation. SimpleRootsite does
 		/// not know how to handle GUIDs so just return an empty GUID which will cause the
@@ -1364,15 +1055,12 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// letter)</param>
 		/// <param name="kodt">The object data type to use for embedding the new object
 		/// </param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		public virtual Guid get_MakeObjFromText(string bstrText, IVwSelection _selDst, out int kodt)
 		{
 			kodt = -1;
 			return Guid.Empty;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Scrolls the selection into view, positioning it as requested
 		/// </summary>
@@ -1380,9 +1068,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="scrollOption">The VwScrollSelOpts specification.</param>
 		/// <returns>True if the selection was moved into view, false if this function did
 		/// nothing</returns>
-		/// ------------------------------------------------------------------------------------
-		public virtual bool ScrollSelectionIntoView(IVwSelection sel,
-			VwScrollSelOpts scrollOption)
+		public virtual bool ScrollSelectionIntoView(IVwSelection sel, VwScrollSelOpts scrollOption)
 		{
 			switch (scrollOption)
 			{
@@ -1399,42 +1085,23 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the root box
 		/// </summary>
-		/// <value>A <c>IVwRootBox</c> object</value>
-		/// -----------------------------------------------------------------------------------
-		IVwRootBox IVwRootSite.RootBox
-		{
-			get
-			{
-				return m_rootb;
-			}
-		}
+		IVwRootBox IVwRootSite.RootBox => RootBox;
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the HWND.
 		/// </summary>
-		/// <value>A <c>HWND</c> handle</value>
-		/// -----------------------------------------------------------------------------------
-		uint IVwRootSite.Hwnd
-		{
-			get
-			{
-				return (uint)this.Handle;
-			}
-		}
+		uint IVwRootSite.Hwnd => (uint)Handle;
 		#endregion
 
 		#region Implementation of IEditingCallbacks
-		/// -----------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Use this instead of AutoScrollPosition, which works only for Rootsites with scroll
 		/// bars, for some reason.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public virtual Point ScrollPosition
 		{
 			get
@@ -1443,8 +1110,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			set
 			{
-				Point newPos = value;
-				if (this.AutoScroll)
+				var newPos = value;
+				if (AutoScroll)
 				{
 					newPos.X = Math.Abs(newPos.X);
 					newPos.Y = Math.Abs(newPos.Y);
@@ -1458,22 +1125,26 @@ namespace SIL.FieldWorks.Common.RootSites
 
 				if (Platform.IsMono)
 				{
-					if (AllowPainting == true) // FWNX-235
+					if (AllowPainting) // FWNX-235
+					{
 						AutoScrollPosition = newPos;
+					}
 					else
+					{
 						cachedAutoScrollPosition = newPos;
+					}
 				}
 				else
+				{
 					AutoScrollPosition = newPos;
+				}
 			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// We'd like to be able to override the setter for AutoScrollMinSize, but
 		/// it isn't virtual so we use this instead.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public virtual Size ScrollMinSize
 		{
 			get
@@ -1490,15 +1161,13 @@ namespace SIL.FieldWorks.Common.RootSites
 					// although there are probably other problems.
 					// possibly causes other unit test issues
 					// Don't adjust this unless it's needed.  See FWNX-561.
-					AutoScrollMinSize = value - new Size(
-						VScroll ? SystemInformation.VerticalScrollBarWidth : 0,
-					HScroll ? SystemInformation.HorizontalScrollBarHeight : 0);
+					AutoScrollMinSize = value - new Size(VScroll ? SystemInformation.VerticalScrollBarWidth : 0, HScroll ? SystemInformation.HorizontalScrollBarHeight : 0);
 
 					try
 					{
 						AdjustFormScrollbars(HScroll || VScroll);
 					}
-					catch (System.ArgumentOutOfRangeException)
+					catch (ArgumentOutOfRangeException)
 					{
 						// TODO-Linux: Investigate real cause of this.
 						// I think it caused by mono setting ScrollPosition to 0 when Scrollbar isn't visible
@@ -1520,16 +1189,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// We want to allow clients to tell whether we are showing the horizontal scroll bar.
 		/// </summary>
-		public bool IsHScrollVisible
-		{
-			get { return WantHScroll && AutoScrollMinSize.Width > Width; }
-		}
+		public bool IsHScrollVisible => WantHScroll && AutoScrollMinSize.Width > Width;
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Root site slaves sometimes need to suppress the effects of OnSizeChanged.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public virtual bool SizeChangedSuppression
 		{
 			get
@@ -1541,73 +1205,44 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Typically the client rectangle height, but this gives a bizarre value for
 		/// root sites in a group, so it is overridden.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
-		public virtual int ClientHeight
-		{
-			get
-			{
-				return ClientRectangle.Height;
-			}
-		}
+		public virtual int ClientHeight => ClientRectangle.Height;
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// This returns the client rectangle that we want the selection to be inside.
 		/// For a normal root site this is just its client rectangle.
 		/// RootSite overrides.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
-		public virtual Rectangle AdjustedClientRectangle
-		{
-			get
-			{
-				return ClientRectangle;
-			}
-		}
+		public virtual Rectangle AdjustedClientRectangle => ClientRectangle;
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>Pending writing system</summary>
 		/// <remarks>This gets set when there was a switch in the system keyboard,
 		/// and at that point there was no insertion point on which to change the writing system.
 		/// We store the information here until either they get an IP and start typing
 		/// (the writing system is set using these) or the selection changes (throw the
-		/// informtion away and reset the keyboard).
+		/// information away and reset the keyboard).
 		/// </remarks>
-		/// -----------------------------------------------------------------------------------
-		public int WsPending
-		{
-			get
-			{
-				return m_wsPending;
-			}
-			set
-			{
-				m_wsPending = value;
-			}
-		}
-		/// -----------------------------------------------------------------------------------
+		public int WsPending { get; set; }
+
 		/// <summary>
 		/// Scroll to the top
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public virtual void ScrollToTop()
 		{
 			if (DoingScrolling)
+			{
 				ScrollPosition = new Point(0, 0);
+			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Scroll to the bottom. This is somewhat tricky because after scrolling to the bottom of
 		/// the range as we currently estimate it, expanding a closure may change things.
 		/// <seealso cref="GoToEnd"/>
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public virtual void ScrollToEnd()
 		{
 			if (DoingScrolling && !DesignMode)
@@ -1615,16 +1250,15 @@ namespace SIL.FieldWorks.Common.RootSites
 				// dy gets added to the scroll offset. This means a positive dy causes there to be more
 				// of the view hidden above the top of the screen. This is the same effect as clicking a
 				// down arrow, which paradoxically causes the window contents to move up.
-				int dy = 0;
-				int ydCurr = -ScrollPosition.Y; // Where the window thinks it is now.
-
+				int dy;
+				var ydCurr = -ScrollPosition.Y; // Where the window thinks it is now.
 				using (new HoldGraphics(this))
 				{
 					// This loop repeats until we have figured out a scroll distance AND confirmed
 					// that we can draw that location without messing things up.
 					for (; ; )
 					{
-						int ydMax = DisplayRectangle.Height - ClientHeight + 1;
+						var ydMax = DisplayRectangle.Height - ClientHeight + 1;
 						dy = ydMax - ydCurr;
 						// OK, we need to move by dy. But, we may have to expand a lazy box there in order
 						// to display a whole screen full. If the size estimate is off (which it usually is),
@@ -1636,25 +1270,28 @@ namespace SIL.FieldWorks.Common.RootSites
 						GetCoordRects(out rcSrcRoot, out rcDstRoot);
 						rcDstRoot.Offset(0, -dy);
 
-						int dyRange = m_rootb.Height;
-						Rectangle r = AdjustedClientRectangle;
-						Rect clipRect = new Rect(r.Left, r.Top, r.Right, r.Bottom);
+						var dyRange = RootBox.Height;
+						var r = AdjustedClientRectangle;
+						var clipRect = new Rect(r.Left, r.Top, r.Right, r.Bottom);
 
 						if (m_graphicsManager.VwGraphics is IVwGraphicsWin32)
+						{
 							((IVwGraphicsWin32)m_graphicsManager.VwGraphics).SetClipRect(ref clipRect);
-
-						if (m_rootb != null && (m_dxdLayoutWidth > 0))
+						}
+						if (RootBox != null && m_dxdLayoutWidth > 0)
+						{
 							PrepareToDraw(rcSrcRoot, rcDstRoot);
-
+						}
 						ydCurr = -ScrollPosition.Y; // Where the window thinks it is now. (May have changed expanding.)
 													// If PrepareToDraw didn't change the scroll range, it didn't mess anything up and we
 													// can use the dy we figured. Otherwise, loop and figure it again with more complete
 													// information, because something at a relevant point has been expanded to real boxes.
-						if (m_rootb.Height == dyRange)
+						if (RootBox.Height == dyRange)
+						{
 							break;
+						}
 						dy = 0; // Back to initial state.
 					}
-
 					if (dy != 0)
 					{
 						// Update the scroll bar.
@@ -1666,19 +1303,15 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Show the context menu for the specified root box at the location of
 		/// its selection (typically an IP).
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public virtual void ShowContextMenuAtIp(IVwRootBox rootb)
 		{
-			if (ContextMenu != null)
-				ContextMenu.Show(this, IPLocation);
+			ContextMenu?.Show(this, IPLocation);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the (estimated) height of one line in pixels
 		/// </summary>
@@ -1686,17 +1319,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Should we use the selection text properties and stylesheet to get a more specific value?
 		/// (font height + 4pt?)
 		/// </remarks>
-		/// ------------------------------------------------------------------------------------
-		public int LineHeight
-		{
-			get
-			{
-				// use Math.Ceiling to make sure sure the height doesn't round down inappropriately
-				return (int)(14 * Math.Ceiling(Dpi.Y / (float)72)); // 14 points is typically about a line. 72 points/inch.
-			}
-		}
+		public int LineHeight => (int)(14 * Math.Ceiling(Dpi.Y / (float)72));
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Return an indication of the behavior of some of the special keys (arrows, home,
 		/// end).
@@ -1715,25 +1339,15 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// of upstream text, logical behavior will jump almost to the other end of the
 		/// segment and then move the 'wrong' way through it.
 		/// </remarks>
-		/// -----------------------------------------------------------------------------------
-		public virtual EditingHelper.CkBehavior ComplexKeyBehavior(int chw,
-			VwShiftStatus ss)
+		public virtual CkBehavior ComplexKeyBehavior(int chw, VwShiftStatus ss)
 		{
-			return EditingHelper.CkBehavior.Logical;
+			return CkBehavior.Logical;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// RootBox being edited.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public IVwRootBox EditedRootBox
-		{
-			get
-			{
-				return m_rootb;
-			}
-		}
+		public IVwRootBox EditedRootBox => RootBox;
 
 		/// <summary>
 		/// This tests whether the class has a cache (in the common RootSite subclass) or
@@ -1741,33 +1355,21 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// we are sufficiently initialized to go ahead with some operation that may get called
 		/// prematurely by something in the .NET framework.
 		/// </summary>
-		public virtual bool GotCacheOrWs
-		{
-			get
-			{
-				return m_wsf != null;
-			}
-		}
+		public virtual bool GotCacheOrWs => m_wsf != null;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the writing system for the HVO. This could either be the vernacular or
 		/// analysis writing system.
 		/// </summary>
-		/// <param name="hvo">HVO</param>
-		/// <returns>Writing system</returns>
-		/// ------------------------------------------------------------------------------------
 		public virtual int GetWritingSystemForHvo(int hvo)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Perform any processing needed immediately prior to a paste operation.  This is very
 		/// rarely implemented, but always called by EditingHelper.PasteClipboard.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public virtual void PrePasteProcessing()
 		{
 		}
@@ -1779,10 +1381,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public virtual bool RefreshDisplay()
 		{
-			if (m_rootb?.Site == null)
+			if (RootBox?.Site == null)
+			{
 				return false;
-
-			var decorator = m_rootb.DataAccess as DomainDataByFlidDecoratorBase;
+			}
+			var decorator = RootBox.DataAccess as DomainDataByFlidDecoratorBase;
 			decorator?.Refresh();
 
 			// If we aren't visible or don't belong to a form, then set a flag to do a refresh
@@ -1792,14 +1395,13 @@ namespace SIL.FieldWorks.Common.RootSites
 				m_fRefreshPending = true;
 				return false;
 			}
-
 			// Rebuild the display... the drastic way.
-			SelectionRestorer restorer = CreateSelectionRestorer();
+			var restorer = CreateSelectionRestorer();
 			try
 			{
 				using (new SuspendDrawing(this))
 				{
-					m_rootb.Reconstruct();
+					RootBox.Reconstruct();
 					m_fRefreshPending = false;
 				}
 			}
@@ -1834,10 +1436,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public virtual List<IVwRootBox> AllRootBoxes()
 		{
-			List<IVwRootBox> result = new List<IVwRootBox>();
-			if (m_rootb != null)
-				result.Add(m_rootb);
-
+			var result = new List<IVwRootBox>();
+			if (RootBox != null)
+			{
+				result.Add(RootBox);
+			}
 			return result;
 		}
 
@@ -1845,8 +1448,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <c>false</c> to prevent OnPaint from happening, <c>true</c> to perform
 		/// OnPaint. This is used to prevent redraws from happening while we do a RefreshDisplay.
 		/// </summary>
-		[BrowsableAttribute(false)]
-		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool AllowPainting
 		{
 			get
@@ -1862,19 +1464,22 @@ namespace SIL.FieldWorks.Common.RootSites
 				if (value)
 				{   // allow painting
 					if (m_nAllowPaint > 0)
+					{
 						m_nAllowPaint--;
-
+					}
 					if (m_nAllowPaint == 0 && Visible && IsHandleCreated)
 					{
 						if (Platform.IsMono)
 						{
-							this.ResumeLayout();
+							ResumeLayout();
 							Update();
 							Invalidate();
 
 							// FWNX-235
 							if (cachedAutoScrollPosition != null)
+							{
 								AutoScrollPosition = (Point)cachedAutoScrollPosition;
+							}
 							cachedAutoScrollPosition = null;
 						}
 						else
@@ -1890,11 +1495,14 @@ namespace SIL.FieldWorks.Common.RootSites
 					if (m_nAllowPaint == 0 && Visible && IsHandleCreated)
 					{
 						if (Platform.IsMono)
-							this.SuspendLayout();
+						{
+							SuspendLayout();
+						}
 						else
+						{
 							Win32.SendMessage(Handle, (int)Win32.WinMsgs.WM_SETREDRAW, 0, 0);
+						}
 					}
-
 					m_nAllowPaint++;
 				}
 			}
@@ -1927,10 +1535,9 @@ namespace SIL.FieldWorks.Common.RootSites
 				{
 					return;
 				}
-
 				if (MiscUtils.IsUnix)
 				{
-					using (PageSetupDialog pageDlg = new PageSetupDialog())
+					using (var pageDlg = new PageSetupDialog())
 					{
 						pageDlg.Document = dlg.Document;
 						pageDlg.AllowPrinter = false;
@@ -1953,7 +1560,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// By default this does nothing. Override to, for example, enable the 'Selection' button.
 		/// See XmlSeqView for an example.
 		/// </summary>
-		/// <param name="dlg"></param>
 		protected virtual void AdjustPrintDialog(PrintDialog dlg)
 		{
 		}
@@ -1963,7 +1569,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// and add an event handler that can display some help.
 		/// See DraftView in TeDll for an example.
 		/// </summary>
-		/// <param name="dlg"></param>
 		protected virtual void SetupPrintHelp(PrintDialog dlg)
 		{
 			dlg.ShowHelp = false;
@@ -1973,24 +1578,18 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Default is to print the exact same thing as displayed in the view, but
 		/// subclasses (e.g., ConstChartBody) can override.
 		/// </summary>
-		/// <param name="hvo"></param>
-		/// <param name="vc"></param>
-		/// <param name="frag"></param>
-		/// <param name="ss"></param>
 		protected virtual void GetPrintInfo(out int hvo, out IVwViewConstructor vc, out int frag, out IVwStylesheet ss)
 		{
-			m_rootb.GetRootObject(out hvo, out vc, out frag, out ss);
+			RootBox.GetRootObject(out hvo, out vc, out frag, out ss);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// SimpleRootSite Print(pd) method, overridden by e.g. XmlSeqView.
 		/// Note: this does not implement the lower level IPrintRootSite.Print(pd).
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public virtual void Print(PrintDocument printDoc)
 		{
-			if (m_rootb == null || DataAccess == null)
+			if (RootBox == null || DataAccess == null)
 			{
 				return;
 			}
@@ -2020,22 +1619,22 @@ namespace SIL.FieldWorks.Common.RootSites
 		#region Scrolling-related methods
 		// We don't need AfVwScrollWnd::ScrollBy - can be done directly in .NET
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Finds the distance between the scroll position and the IP (i.e. the distance
 		/// between the top of the window and the IP).
 		/// </summary>
 		/// <param name="sel">The selection used to get the IP's location. If
 		/// this value is null, the rootsite's current selection will be used.</param>
-		/// -----------------------------------------------------------------------------------
 		public int IPDistanceFromWindowTop(IVwSelection sel)
 		{
-			if (sel == null && m_rootb != null)
-				sel = m_rootb.Selection;
-
+			if (sel == null && RootBox != null)
+			{
+				sel = RootBox.Selection;
+			}
 			if (sel == null)
+			{
 				return 0;
-
+			}
 			using (new HoldGraphics(this))
 			{
 				Rectangle rcSrcRoot;
@@ -2047,53 +1646,51 @@ namespace SIL.FieldWorks.Common.RootSites
 				bool fSplit;
 				bool fEndBeforeAnchor;
 
-				sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot,
-					out rcPrimary, out rcSecondary, out fSplit, out fEndBeforeAnchor);
+				sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary, out rcSecondary, out fSplit, out fEndBeforeAnchor);
 
 				return rcPrimary.top;
 			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Invalidate the pane because some lazy box expansion messed up the scroll position.
 		/// Made a separate method so we can override.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public virtual void InvalidateForLazyFix()
 		{
 			Invalidate();
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Scroll by the specified amount (positive is down, that is, added to the scroll offset).
 		/// If this would exceed the scroll range, move as far as possible. Update both actual display
 		/// and scroll bar position. (Can also scroll up, if dy is negative. Name is just to indicate
 		/// positive direction.)
 		/// </summary>
-		/// <param name="dy"></param>
-		/// -----------------------------------------------------------------------------------
 		protected internal virtual void ScrollDown(int dy)
 		{
 			int xd, yd;
 			GetScrollOffsets(out xd, out yd);
-			int ydNew = yd + dy;
+			var ydNew = yd + dy;
 			if (ydNew < 0)
+			{
 				ydNew = 0;
+			}
 			if (ydNew > DisplayRectangle.Height)
+			{
 				ydNew = DisplayRectangle.Height;
+			}
 			if (ydNew != yd)
+			{
 				ScrollPosition = new Point(xd, ydNew);
+			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Use this method instead of <see cref="ScrollToEnd"/> if you need to go to the end
 		/// of the view programmatically (not in response to a Ctrl-End). The code for handling
 		/// Ctrl-End uses CallOnExtendedKey() in OnKeyDown() to handle setting the IP.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public void GoToEnd()
 		{
 			ScrollToEnd();
@@ -2102,34 +1699,21 @@ namespace SIL.FieldWorks.Common.RootSites
 			// This method is not used ... possibly move to DummyFootnoteView ??
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Determines whether automatic horizontal scrolling to show the selection should
 		/// occur. Normally this is the case only if showing a horizontal scroll bar,
 		/// but FwTextBox is an exception.
 		/// </summary>
-		/// <returns></returns>
-		/// -----------------------------------------------------------------------------------
-		protected virtual bool DoAutoHScroll
-		{
-			get { return DoingScrolling && HScroll; }
-		}
+		protected virtual bool DoAutoHScroll => DoingScrolling && HScroll;
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Determines whether automatic vertical scrolling to show the selection should
 		/// occur. Usually this is only appropriate if the window autoscrolls and has a
 		/// vertical scroll bar, but TE's draft view needs to allow it anyway, because in
-		/// syncrhonized scrolling only one of the sync'd windows has a scroll bar.
+		/// synchronized scrolling only one of the sync'd windows has a scroll bar.
 		/// </summary>
-		/// <returns></returns>
-		/// -----------------------------------------------------------------------------------
-		protected virtual bool DoAutoVScroll
-		{
-			get { return DoingScrolling && VScroll; }
-		}
+		protected virtual bool DoAutoVScroll => DoingScrolling && VScroll;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the rectangle of the selection. If it is a split selection we combine the
 		/// two rectangles.
@@ -2138,9 +1722,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="rcIdeal">Contains the rectangle of the selection on return</param>
 		/// <param name="fEndBeforeAnchor">[Out] <c>true</c> if the end is before the anchor,
 		/// otherwise <c>false</c>.</param>
-		/// ------------------------------------------------------------------------------------
-		protected internal void SelectionRectangle(IVwSelection vwsel, out Rectangle rcIdeal,
-			out bool fEndBeforeAnchor)
+		protected internal void SelectionRectangle(IVwSelection vwsel, out Rectangle rcIdeal, out bool fEndBeforeAnchor)
 		{
 			Debug.Assert(vwsel != null);
 			Debug.Assert(m_graphicsManager.VwGraphics != null);
@@ -2152,15 +1734,13 @@ namespace SIL.FieldWorks.Common.RootSites
 			Rectangle rcDstRoot;
 			GetCoordRects(out rcSrcRoot, out rcDstRoot);
 
-			vwsel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary, out rcSecondary,
-				out fSplit, out fEndBeforeAnchor);
+			vwsel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary, out rcSecondary, out fSplit, out fEndBeforeAnchor);
 			rcIdeal = rcPrimary;
 
 			if (fSplit)
 			{
 				rcIdeal = Rectangle.Union(rcIdeal, rcSecondary);
-				if ((AutoScroll && VScroll && rcIdeal.Height > ClientHeight) ||
-					(DoAutoHScroll && rcIdeal.Width > ClientRectangle.Width))
+				if (AutoScroll && VScroll && rcIdeal.Height > ClientHeight || DoAutoHScroll && rcIdeal.Width > ClientRectangle.Width)
 				{
 					rcIdeal = rcPrimary; // Revert to just showing main IP.
 				}
@@ -2182,7 +1762,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		protected void EnsureDefaultSelection(bool fMakeSelInEditable)
 		{
 			if (RootBox == null)
+			{
 				return;
+			}
 			if (RootBox.Selection == null)
 			{
 				try
@@ -2196,7 +1778,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Scroll to make the selection visible.
 		/// In general, scroll the minimum distance to make it entirely visible.
@@ -2210,7 +1791,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// If <paramref name="sel"/> is null, make the current selection visible.
 		/// </remarks>
 		/// <returns>True if the selection was made visible, false if it did nothing</returns>
-		/// -----------------------------------------------------------------------------------
 		protected bool MakeSelectionVisible(IVwSelection sel)
 		{
 			return MakeSelectionVisible(sel, false);
@@ -2221,12 +1801,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// MakeSelectionVisible. FwTextBox overrides to pass a selection that is the whole
 		/// range, if nothing is selected.
 		/// </summary>
-		protected virtual IVwSelection SelectionToMakeVisible
-		{
-			get { return m_rootb.Selection; }
-		}
+		protected virtual IVwSelection SelectionToMakeVisible => RootBox.Selection;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Scroll to make the selection visible.
 		/// In general, scroll the minimum distance to make it entirely visible.
@@ -2240,17 +1816,16 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="sel">The sel.</param>
 		/// <param name="fWantOneLineSpace">if set to <c>true</c> [f want one line space].</param>
 		/// <returns>Flag indicating whether the selection was made visible</returns>
-		/// ------------------------------------------------------------------------------------
 		protected virtual bool MakeSelectionVisible(IVwSelection sel, bool fWantOneLineSpace)
 		{
-			if (m_rootb == null)
+			if (RootBox == null)
+			{
 				return false;
-			IVwSelection vwsel = (sel ?? SelectionToMakeVisible);
-			return (vwsel != null &&
-				MakeSelectionVisible(vwsel, fWantOneLineSpace, DefaultWantBothEnds(vwsel), false));
+			}
+			var vwsel = (sel ?? SelectionToMakeVisible);
+			return vwsel != null && MakeSelectionVisible(vwsel, fWantOneLineSpace, DefaultWantBothEnds(vwsel), false);
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Scroll to make the selection visible.
 		/// In general, scroll the minimum distance to make it entirely visible.
@@ -2275,16 +1850,15 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// If the selection is invalid, return false.
 		/// </remarks>
 		/// <returns>True if the selection was made visible, false if it did nothing</returns>
-		/// -----------------------------------------------------------------------------------
-		protected virtual bool MakeSelectionVisible(IVwSelection vwsel, bool fWantOneLineSpace,
-			bool fWantBothEnds, bool fForcePrepareToDraw)
+		protected virtual bool MakeSelectionVisible(IVwSelection vwsel, bool fWantOneLineSpace, bool fWantBothEnds, bool fForcePrepareToDraw)
 		{
 			// TODO: LT-2268,2508 - Why is this selection going bad...?  Also LT-13374 in the case vwsel == null.
 			// The if will handle the crash, but there is still the problem
 			// of the selections getting invalid.
 			if (vwsel == null || !vwsel.IsValid)
+			{
 				return false; // can't work with an invalid selection
-
+			}
 			if (fWantOneLineSpace && ClientHeight < LineHeight * 3)
 			{
 				// The view is too short to have a line at the top and/or bottom of the line
@@ -2293,11 +1867,11 @@ namespace SIL.FieldWorks.Common.RootSites
 				// even try.
 				fWantOneLineSpace = false;
 			}
-
 			// if we're not forcing prepare to draw and the entire selection is visible then there is nothing to do
 			if (!fForcePrepareToDraw && IsSelectionVisible(vwsel, fWantOneLineSpace, fWantBothEnds))
+			{
 				return false;
-
+			}
 			using (new HoldGraphics(this))
 			{
 				bool fEndBeforeAnchor;
@@ -2309,8 +1883,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				// dy gets added to the scroll offset. This means a positive dy causes there to be more
 				// of the view hidden above the top of the screen. This is the same effect as clicking a
 				// down arrow, which paradoxically causes the window contents to move up.
-				int dy = 0;
-				int dyRange = 0;
+				var dy = 0;
 				int ydTop;
 
 				#region DoAutoVScroll
@@ -2325,26 +1898,33 @@ namespace SIL.FieldWorks.Common.RootSites
 						ydTop = -ScrollPosition.Y; // Where the window thinks it is now.
 												   // Adjust for that and also the height of the (optional) header.
 						rcIdeal.Offset(0, ydTop - m_dyHeader); // Was in drawing coords, adjusted by top.
-						int ydBottom = ydTop + ClientHeight - m_dyHeader;
-
+						var ydBottom = ydTop + ClientHeight - m_dyHeader;
 						// Is the end of the selection partly off the top of the screen?
-						int extraSpacing = fWantOneLineSpace ? LineHeight : 0;
+						var extraSpacing = fWantOneLineSpace ? LineHeight : 0;
 						if (!fWantBothEnds)
 						{
 							// For a range (that is not a picture) we scroll just far enough to show the end.
 							if (fEndBeforeAnchor)
 							{
 								if (rcIdeal.Top < ydTop + extraSpacing)
+								{
 									dy = rcIdeal.Top - (ydTop + extraSpacing);
+								}
 								else if (rcIdeal.Top > ydBottom - extraSpacing)
+								{
 									dy = rcIdeal.Top - (ydBottom - extraSpacing) + LineHeight;
+								}
 							}
 							else
 							{
 								if (rcIdeal.Bottom < ydTop + extraSpacing)
+								{
 									dy = rcIdeal.Bottom - (ydTop + extraSpacing) - LineHeight;
+								}
 								else if (rcIdeal.Bottom > ydBottom - extraSpacing)
+								{
 									dy = rcIdeal.Bottom - (ydBottom - extraSpacing);
+								}
 							}
 						}
 						else
@@ -2383,12 +1963,11 @@ namespace SIL.FieldWorks.Common.RootSites
 
 						// Get the whole range we are scrolling over. We use this later to see whether
 						// PrepareToDraw messed anything up.
-						dyRange = m_rootb.Height;
-
-						if (m_rootb != null && m_dxdLayoutWidth > 0)
+						var dyRange = RootBox.Height;
+						if (RootBox != null && m_dxdLayoutWidth > 0)
 						{
 							SaveSelectionInfo(rcIdeal, ydTop);
-							VwPrepDrawResult xpdr = VwPrepDrawResult.kxpdrAdjust;
+							var xpdr = VwPrepDrawResult.kxpdrAdjust;
 							// I'm not sure this loop is necessary because we repeat the outer loop until no
 							// change in the root box height (therefore presumably no adjustment of scroll position)
 							// happens. But it's harmless and makes it more obvious that the code is correct.
@@ -2398,7 +1977,7 @@ namespace SIL.FieldWorks.Common.RootSites
 								// When the window is invisible, the default clip rectangle is empty, and we don't
 								// 'prepare to draw' very much. We want to be sure that we can draw everything in the window
 								// without somehow affecting the position of this selection.
-								Rect clipRect = new Rect(0, 0, ClientRectangle.Width, ClientHeight);
+								var clipRect = new Rect(0, 0, ClientRectangle.Width, ClientHeight);
 								((IVwGraphicsWin32)m_graphicsManager.VwGraphics).SetClipRect(ref clipRect);
 								xpdr = PrepareToDraw(rcSrc, rcDst);
 								GetCoordRects(out rcSrc, out rcDst);
@@ -2409,9 +1988,10 @@ namespace SIL.FieldWorks.Common.RootSites
 						// anything up and we can use the dy we figured. Otherwise, loop and
 						// figure it again with more complete information, because something at a
 						// relevant point has been expanded to real boxes.
-						if (m_rootb.Height == dyRange)
+						if (RootBox.Height == dyRange)
+						{
 							break;
-
+						}
 						// Otherwise we need another iteration, we need to recompute the
 						// selection location in view of the changes to layout.
 						SelectionRectangle(vwsel, out rcIdeal, out fEndBeforeAnchor);
@@ -2423,14 +2003,15 @@ namespace SIL.FieldWorks.Common.RootSites
 				SaveSelectionInfo(rcIdeal, ydTop);
 
 				if (dy - ScrollPosition.Y < 0)
+				{
 					dy = ScrollPosition.Y; // make offset 0 if it would have been less than that
-
+				}
 				// dx gets added to the scroll offset. This means a positive dx causes there to
-				// be moreof the view hidden left of the screen. This is the same effect as
+				// be more of the view hidden left of the screen. This is the same effect as
 				// clicking a right arrow, which paradoxically causes the window contents to
 				// move left.
-				int dx = 0;
-				int xdLeft = -ScrollPosition.X; // Where the window thinks it is now.
+				var dx = 0;
+				var xdLeft = -ScrollPosition.X; // Where the window thinks it is now.
 				#region DoAutoHScroll
 				if (DoAutoHScroll)
 				{
@@ -2441,8 +2022,8 @@ namespace SIL.FieldWorks.Common.RootSites
 						// possible effects of expanding lazy boxes that become visible.
 						// In this case, rcPrimary's top is the distance from the right of the ClientRect to the
 						// right of the selection, and the height of rcPrimary is a distance further left.
-						int right = rcIdeal.Top; // distance to left of right edge of window
-						int left = right + rcIdeal.Height;
+						var right = rcIdeal.Top; // distance to left of right edge of window
+						var left = right + rcIdeal.Height;
 						if (fWantOneLineSpace)
 						{
 							right -= LineHeight;
@@ -2460,15 +2041,14 @@ namespace SIL.FieldWorks.Common.RootSites
 					}
 					else // not a vertical window, normal case
 					{
-
 						rcIdeal.Offset(xdLeft, 0); // Was in drawing coords, adjusted by left.
 												   // extra 4 pixels so Ip doesn't disappear at right.
-						int xdRight = xdLeft + ClientRectangle.Width;
-
+						var xdRight = xdLeft + ClientRectangle.Width;
 						// Is the selection right of the right side of the screen?
 						if (rcIdeal.Right > xdRight)
+						{
 							dx = rcIdeal.Right - xdRight;
-
+						}
 						// Is the selection partly off the left of the screen?
 						if (rcIdeal.Left < xdLeft)
 						{
@@ -2476,7 +2056,7 @@ namespace SIL.FieldWorks.Common.RootSites
 							if (rcIdeal.Width > ClientRectangle.Width && !fEndBeforeAnchor)
 							{
 								// Is it bigger than the screen?
-								if (rcIdeal.Width > ClientRectangle.Width && !fEndBeforeAnchor)
+								if (rcIdeal.Width > ClientRectangle.Width)
 								{
 									// Left is off, and though it is too big to show entirely, we can show
 									// more. Move the window contents right (negative dx).
@@ -2516,17 +2096,21 @@ namespace SIL.FieldWorks.Common.RootSites
 								dx = Width - ClientRectangle.Width - 1 + ScrollPosition.X;
 							}
 							if (dx - ScrollPosition.X < 0)
+							{
 								dx = ScrollPosition.X; // make offset 0 if it would have been less than that
+							}
 						}
 					}
-					int ScrollRangeX = ScrollRange.Width;
-					if (dx > ScrollRangeX - ClientRectangle.Width - 1 + ScrollPosition.X)
+					var scrollRangeX = ScrollRange.Width;
+					if (dx > scrollRangeX - ClientRectangle.Width - 1 + ScrollPosition.X)
 					{
 						// This value makes it the maximum it can be, except this may make it negative
-						dx = ScrollRangeX - ClientRectangle.Width - 1 + ScrollPosition.X;
+						dx = scrollRangeX - ClientRectangle.Width - 1 + ScrollPosition.X;
 					}
 					if (dx - ScrollPosition.X < 0)
+					{
 						dx = ScrollPosition.X; // make offset 0 if it would have been less than that
+					}
 				}
 				#endregion
 				if (dx != 0 || dy != 0)
@@ -2535,7 +2119,6 @@ namespace SIL.FieldWorks.Common.RootSites
 					ScrollPosition = new Point(xdLeft + dx, ydTop + dy);
 				}
 				Invalidate();
-				//Update();
 			}
 
 			return true;
@@ -2544,77 +2127,71 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Save some selection location information if needed.
 		/// </summary>
-		/// <param name="rcIdeal"></param>
-		/// <param name="ydTop"></param>
 		protected virtual void SaveSelectionInfo(Rectangle rcIdeal, int ydTop)
 		{
 			// Some subclasses (XmlBrowseViewBase to be exact) need to store some of this information.
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>Position the insertion point at the page top</summary>
 		/// <param name="fIsShiftPressed">True if the shift key is pressed and selection is
 		/// desired</param>
-		/// -----------------------------------------------------------------------------------
 		protected void GoToPageTop(bool fIsShiftPressed)
 		{
 			// commented the content of this method out as it isn't working correctly. This may be a good starting point :)
+			var newX = ClientRectangle.Left;
+			var newY = ClientRectangle.Top;
 
-			int newX = this.ClientRectangle.Left;
-			int newY = this.ClientRectangle.Top;
-
-			Debug.Assert(m_rootb != null);
-			if (m_rootb == null)
+			Debug.Assert(RootBox != null);
+			if (RootBox == null)
+			{
 				return;
-
+			}
 			Rectangle rcSrcRoot;
 			Rectangle rcDstRoot;
 			using (new HoldGraphics(this))
 			{
 				GetCoordRects(out rcSrcRoot, out rcDstRoot);
 			}
-
 			if (fIsShiftPressed)
 			{
-				m_rootb.MouseDownExtended(newX, newY, rcSrcRoot, rcDstRoot);
+				RootBox.MouseDownExtended(newX, newY, rcSrcRoot, rcDstRoot);
 			}
 			else
 			{
-				m_rootb.MouseDown(newX, newY, rcSrcRoot, rcDstRoot);
+				RootBox.MouseDown(newX, newY, rcSrcRoot, rcDstRoot);
 			}
-
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>Position the insertion point at the page bottom</summary>
 		/// <param name="fIsShiftPressed">True if the shift key is pressed and selection is
 		/// desired</param>
-		/// -----------------------------------------------------------------------------------
 		protected void GoToPageBottom(bool fIsShiftPressed)
 		{
 			// commented the content of this method out as it isn't working correctly. This may be a good starting point :)
+			var newX = ClientRectangle.Right;
+			var newY = ClientRectangle.Bottom;
 
-			int newX = this.ClientRectangle.Right;
-			int newY = this.ClientRectangle.Bottom;
-
-			Debug.Assert(m_rootb != null);
-			if (m_rootb == null)
+			Debug.Assert(RootBox != null);
+			if (RootBox == null)
+			{
 				return;
-
+			}
 			Rectangle rcSrcRoot;
 			Rectangle rcDstRoot;
 			using (new HoldGraphics(this))
 			{
 				GetCoordRects(out rcSrcRoot, out rcDstRoot);
 			}
-
 			if (fIsShiftPressed)
-				m_rootb.MouseDownExtended(newX, newY, rcSrcRoot, rcDstRoot);
+			{
+				RootBox.MouseDownExtended(newX, newY, rcSrcRoot, rcDstRoot);
+			}
 			else
-				m_rootb.MouseDown(newX, newY, rcSrcRoot, rcDstRoot);
+			{
+				RootBox.MouseDown(newX, newY, rcSrcRoot, rcDstRoot);
+			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Scroll the selection in to the given client position.
 		/// </summary>
@@ -2622,17 +2199,20 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="dyPos">Position from top of client window where sel should be scrolled</param>
 		/// <returns>True if the selection was scrolled into view, false if this function did
 		/// nothing</returns>
-		/// ------------------------------------------------------------------------------------
 		public bool ScrollSelectionToLocation(IVwSelection sel, int dyPos)
 		{
-			if (m_rootb == null)
+			if (RootBox == null)
+			{
 				return false;
-
+			}
 			if (sel == null)
-				sel = m_rootb.Selection;
+			{
+				sel = RootBox.Selection;
+			}
 			if (sel == null)
+			{
 				return false;
-
+			}
 			using (new HoldGraphics(this))
 			{
 				// Put IP at top of window.
@@ -2658,9 +2238,8 @@ namespace SIL.FieldWorks.Common.RootSites
 				bool fSplit;
 				bool fEndBeforeAnchor;
 				GetCoordRects(out rcSrcRoot, out rcDstRoot);
-				sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary,
-					out rcSecondary, out fSplit, out fEndBeforeAnchor);
-				int difference = dyPos - rcPrimary.top;
+				sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary, out rcSecondary, out fSplit, out fEndBeforeAnchor);
+				var difference = dyPos - rcPrimary.top;
 
 				// Now move the scroll position so the IP will be where we want it.
 				ScrollPosition = new Point(-ScrollPosition.X, -ScrollPosition.Y - difference);
@@ -2670,8 +2249,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			// we're at the end of the view), just take whatever MakeSelectionVisible()
 			// gives us).
 			if (!IsSelectionVisible(sel) && dyPos >= 0 && dyPos <= ClientHeight)
+			{
 				MakeSelectionVisible(sel);
-			//Update();
+			}
 			return true;
 		}
 
@@ -2679,100 +2259,83 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Wraps PrepareToDraw calls so as to suppress attempts to paint or any similar re-entrant call
 		/// we might make while getting ready to do it.
 		/// </summary>
-		/// <param name="rcDstRoot"></param>
-		/// <param name="rcSrcRoot"></param>
 		protected VwPrepDrawResult PrepareToDraw(Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
-			if (m_fInPaint || m_fInLayout)
+			if (PaintInProgress || LayoutInProgress)
+			{
 				return VwPrepDrawResult.kxpdrNormal; // at least prevent loops
-
-			m_fInPaint = true;
+			}
+			PaintInProgress = true;
 			try
 			{
-				return m_rootb.PrepareToDraw(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot);
+				return RootBox.PrepareToDraw(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot);
 			}
 			finally
 			{
-				m_fInPaint = false;
+				PaintInProgress = false;
 			}
 		}
 
-		// Translation help between SCROLLINFO and .NET:
-		// sinfo.nMax	- DisplayRectangle.Height
-		// sinfo.nPage - Height or ClientHeight
-		// sinfo.nPos  - ScrollPosition.Y
 		#endregion
 
 		#region Event handling methods
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Flash the insertion point.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// -----------------------------------------------------------------------------------
 		protected virtual void OnTimer(object sender, EventArgs e)
 		{
-			if (m_rootb != null && Focused)
-				m_rootb.FlashInsertionPoint(); // Ignore any error code.
+			if (RootBox != null && Focused)
+			{
+				RootBox.FlashInsertionPoint(); // Ignore any error code.
+			}
 		}
 
 		/// <summary>
 		/// Allow the orientation manager to convert arrow key codes.
 		/// </summary>
-		/// <param name="keyValue"></param>
-		/// <returns></returns>
 		internal int ConvertKeyValue(int keyValue)
 		{
 			return m_orientationManager.ConvertKeyValue(keyValue);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Set the accessible name that the root box will return for this root site.
 		/// </summary>
-		/// <param name="name"></param>
-		/// ------------------------------------------------------------------------------------
 		public void SetAccessibleName(string name)
 		{
-			IAccessible acc = AccessibleRootObject as IAccessible;
-			if (acc != null)
-				acc.set_accName(null, name);
-			// TODO:
-			// After review with JT, this symptom is likely a problem with a DataTreeView not
-			// not removing it's Slices / views.  This should be investigated further.
-			//			else
-			//				Debug.WriteLine("IAccessible name Crash: " + name);
+			var acc = AccessibleRootObject as IAccessible;
+			acc?.set_accName(null, name);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Get the accessible object from the root box (implements IAccessible)
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public object AccessibleRootObject
 		{
 			get
 			{
 				if (Platform.IsMono)
+				{
 					return null; // TODO-Linux IOleServiceProvider not listed in QueryInterface issue.
-
-				Guid guid = Marshal.GenerateGuidForType(typeof(IOleServiceProvider));
-				if (m_rootb == null)
+				}
+				if (RootBox == null)
 				{
 					return null;
 				}
 				object obj = null;
-				if (m_rootb is IOleServiceProvider)
+#if JASONTODO
+				TODO: There doesn't appear to be any implementors or users of IOleServiceProvider, other than this code, which really does nothing.
+#endif
+				if (RootBox is IOleServiceProvider)
 				{
-					IOleServiceProvider sp = (IOleServiceProvider)m_rootb;
+					var sp = (IOleServiceProvider)RootBox;
 					if (sp == null)
 					{
 						// REVIEW (TomB): Shouldn't this just throw an exception?
 						MessageBox.Show("Null IServiceProvider from root");
 						Debug.Fail("Null IServiceProvider from root");
 					}
-					Guid guidAcc = Marshal.GenerateGuidForType(typeof(IAccessible));
+					var guidAcc = Marshal.GenerateGuidForType(typeof(IAccessible));
 					// 1st guid currently ignored.
 					sp.QueryService(ref guidAcc, ref guidAcc, out obj);
 				}
@@ -2780,7 +2343,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Override the WndProc to handle WM_GETOBJECT so we can return the
 		/// IAccessible implementation from the root box, rather than wrapping it
@@ -2790,34 +2352,30 @@ namespace SIL.FieldWorks.Common.RootSites
 		///
 		/// This override is now delegated through the message sequencer; see OriginalWndProc.
 		/// </summary>
-		/// <param name="m"></param>
-		/// ------------------------------------------------------------------------------------
 		protected override void WndProc(ref Message m)
 		{
-			m_messageSequencer.SequenceWndProc(ref m);
+			Sequencer.SequenceWndProc(ref m);
 		}
 
 		#endregion // Event handling methods
 
 		#region Overriden methods (of UserControl)
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// When we go visible and we are waiting to refresh the display (do a rebuild) then
 		/// call RefreshDisplay()
 		/// </summary>
-		/// <param name="e"></param>
-		/// -----------------------------------------------------------------------------------
 		protected override void OnVisibleChanged(EventArgs e)
 		{
 			base.OnVisibleChanged(e);
-			if (Visible && m_fRootboxMade && m_rootb != null && m_fRefreshPending)
+			if (Visible && m_fRootboxMade && RootBox != null && m_fRefreshPending)
+			{
 				RefreshDisplay();
+			}
 		}
 
 		/// <summary>
 		/// Return a wrapper around the COM IAccessible for the root box.
 		/// </summary>
-		/// <returns></returns>
 		protected override AccessibleObject CreateAccessibilityInstance()
 		{
 			AccessibleObject result = new AccessibilityWrapper(this, AccessibleRootObject as Accessibility.IAccessible);
@@ -2828,33 +2386,21 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// This provides an override opportunity for non-read-only views which do NOT
 		/// want an initial selection made in OnLoad (e.g., InterlinDocForAnalysis) or OnGotFocus().
 		/// </summary>
-		public virtual bool WantInitialSelection
-		{
-			get
-			{
-				return IsEditable;
-			}
-		}
+		public virtual bool WantInitialSelection => IsEditable;
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		protected override void OnLoad(EventArgs e)
 		{
 			base.OnLoad(e);
 
-			if (m_fRootboxMade && m_rootb != null && m_fAllowLayout)
+			if (m_fRootboxMade && RootBox != null && m_fAllowLayout)
 			{
 				PerformLayout();
-
-				if (m_rootb.Selection == null && WantInitialSelection && m_dxdLayoutWidth > 0)
+				if (RootBox.Selection == null && WantInitialSelection && m_dxdLayoutWidth > 0)
 				{
 					try
 					{
-						m_rootb.MakeSimpleSel(true, IsEditable, false, true);
+						RootBox.MakeSimpleSel(true, IsEditable, false, true);
 					}
 					catch (COMException)
 					{
@@ -2864,22 +2410,20 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// The window is first being created.
 		/// </summary>
-		/// <param name="e"></param>
-		/// -----------------------------------------------------------------------------------
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			base.OnHandleCreated(e);
 
 			if (LicenseManager.UsageMode == LicenseUsageMode.Designtime && !AllowPaintingInDesigner)
+			{
 				return;
-
+			}
 			// If it is the second pane of a split window, it may have been given a copy of the
 			// first child's root box before the window gets created.
-			if (m_rootb == null && m_fMakeRootWhenHandleIsCreated)
+			if (RootBox == null && m_fMakeRootWhenHandleIsCreated)
 			{
 				using (new HoldGraphics(this))
 				{
@@ -2894,23 +2438,20 @@ namespace SIL.FieldWorks.Common.RootSites
 			// We flash every half second (500 ms).
 			// Note that the timer is not started until we get focus.
 			m_Timer.Interval = 500;
-			m_Timer.Tick += new EventHandler(OnTimer);
+			m_Timer.Tick += OnTimer;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Do cleaning up when handle gets destroyed
 		/// </summary>
-		/// <param name="e"></param>
-		/// <remarks>Formerly AfVwRootSite::OnReleasePtr()</remarks>
-		/// -----------------------------------------------------------------------------------
 		protected override void OnHandleDestroyed(EventArgs e)
 		{
 			base.OnHandleDestroyed(e);
 
 			if (DesignMode)
+			{
 				return;
-
+			}
 			// We generally need to close the rootbox here or we get memory leaks all over. But
 			// if we always do it, we break switching fields in DE views, and anywhere else a
 			// root box is shared.
@@ -2923,30 +2464,23 @@ namespace SIL.FieldWorks.Common.RootSites
 			// NOTE: ReleaseComObject() returned a high number of references. These are
 			// references to the RCW (Runtime Callable Wrapper), not to the C++ COM object,
 			// and the GC handles that.
-			m_rootb = null;
+			RootBox = null;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// We intercept WM_SETFOCUS in our WndProc and call this because we need the
 		/// information about the previous focus window, which .NET does not provide.
 		/// </summary>
-		/// <param name="m"></param>
-		/// -----------------------------------------------------------------------------------
 		protected void OnSetFocus(Message m)
 		{
 			// Can't set/get focus if we don't have a rootbox.  For some reason we may try
 			// to process this message under those circumstances during an Undo() in IText (LT-2663).
-			if (IsDisposed || m_rootb == null)
+			if (IsDisposed || RootBox == null)
+			{
 				return;
+			}
 			try
 			{
-				//Control lost = Control.FromHandle(m.WParam);
-				//Debug.WriteLine(string.Format("SimpleRootSite.OnSetFocus:\n\t\t\tlost {0} ({1}), Name={2}\n\t\t\tnew {3} ({4}), Name={5}",
-				//    lost != null ? lost.ToString() : "<null>",
-				//    lost != null ? lost.Handle.ToInt32() : -1,
-				//    lost != null ? lost.Name : "<empty>",
-				//    this, Handle, Name));
 				m_fHandlingOnGotFocus = true;
 				OnGotFocus(EventArgs.Empty);
 
@@ -2968,22 +2502,25 @@ namespace SIL.FieldWorks.Common.RootSites
 				if (Platform.IsMono)
 				{
 					// REVIEW: do we have to compare the process the old and new window belongs to?
-					if (m_rootb != null && EditingHelper != null)
-						EditingHelper.SetKeyboardForSelection(m_rootb.Selection);
+					if (RootBox != null && EditingHelper != null)
+					{
+						EditingHelper.SetKeyboardForSelection(RootBox.Selection);
+					}
 				}
 				else
 				{
-					IntPtr hwndOld = m.WParam;
+					var hwndOld = m.WParam;
 					int procIdOld, procIdThis;
 					Win32.GetWindowThreadProcessId(hwndOld, out procIdOld);
 					Win32.GetWindowThreadProcessId(Handle, out procIdThis);
-					if (procIdOld == procIdThis && m_rootb != null && EditingHelper != null)
-						EditingHelper.SetKeyboardForSelection(m_rootb.Selection);
+					if (procIdOld == procIdThis && RootBox != null && EditingHelper != null)
+					{
+						EditingHelper.SetKeyboardForSelection(RootBox.Selection);
+					}
 				}
 
 				// Start the blinking cursor timer here and stop it in the OnKillFocus handler later.
-				if (m_Timer != null)
-					m_Timer.Start();
+				m_Timer?.Start();
 			}
 			finally
 			{
@@ -3004,7 +2541,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			g_focusRootSite.Target = this;
 			base.OnGotFocus(e);
-			if (DesignMode || !m_fRootboxMade || m_rootb == null)
+			if (DesignMode || !m_fRootboxMade || RootBox == null)
 			{
 				return;
 			}
@@ -3019,8 +2556,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			EditingHelper.GotFocus();
 		}
 
-		/// <summary>Raises the <see cref="E:System.Windows.Forms.Control.LostFocus" /> event.</summary>
-		/// <param name="e">An <see cref="T:System.EventArgs" /> that contains the event data. </param>
+		/// <summary />
 		protected override void OnLostFocus(EventArgs e)
 		{
 			base.OnLostFocus(e);
@@ -3032,19 +2568,16 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 		#endregion
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Called when the focus is lost to another window.
 		/// </summary>
 		/// <param name="newWindow">The new window. Might be <c>null</c>.</param>
 		/// <param name="fIsChildWindow"><c>true</c> if the <paramref name="newWindow"/> is
 		/// a child window of the current application.</param>
-		/// ------------------------------------------------------------------------------------
 		protected virtual void OnKillFocus(Control newWindow, bool fIsChildWindow)
 		{
 			// If we have a timer (used for making the insertion point blink), then we want to stop it.
-			if (m_Timer != null)
-				m_Timer.Stop();
+			m_Timer?.Stop();
 
 			SimpleRootSite newFocusRootSite = null;
 			// If g_focusRootSite is something other than this (or null), then some other root
@@ -3052,12 +2585,14 @@ namespace SIL.FieldWorks.Common.RootSites
 			// as the current focus root site. If this is still the focus root site, then
 			// focus has not yet switched to another root site, so there is currently none.
 			if (g_focusRootSite.Target != this)
+			{
 				newFocusRootSite = g_focusRootSite.Target as SimpleRootSite;
+			}
 			else
 			{
 				// This is not a nice kludge, but it takes care of the special case where
 				// a Windows ComboBox grabs focus willy-nilly, and will allow tests for the
-				// 'real' focus + maintaing g_focusRootSite in sensible manner.
+				// 'real' focus + maintaining g_focusRootSite in sensible manner.
 				if (newWindow != null && (newWindow.GetType().Name != "ToolStripComboBoxControl"))
 				{
 					// We can't set g_focusRootSite.Target to null, so instead we create a new
@@ -3065,24 +2600,23 @@ namespace SIL.FieldWorks.Common.RootSites
 					g_focusRootSite = new WeakReference(null);
 				}
 			}
-			//Debug.WriteLine("SimpleRootSite.OnKillFocus() - hwnd = " + this.Handle +
-			//    ", newFocusRootSite = " + (newFocusRootSite == null ? "null" : "this"));
-
-			if (DesignMode || m_rootb == null)
+			if (DesignMode || RootBox == null)
+			{
 				return;
-			//Debug.WriteLine("Losing focus");
+			}
 			// This event may occur while a large EditPaste is inserting text,
 			// and if so we need to bail out to avoid a crash.
 			if (DataUpdateMonitor.IsUpdateInProgress())
+			{
 				return;
-
+			}
 			// NOTE: Do not call RemoveCmdHandler or SetActiveRootBox(NULL) here. There are many
 			// cases where the view window loses focus, but we still want to keep track of the
 			// last view window.  If it is necessary to forget about the view window, do it
 			// somewhere else.  If nothing else sets the last view window to NULL, it will be
 			// cleared when the view window gets destroyed.
 
-			m_rootb.LoseFocus();
+			RootBox.LoseFocus();
 
 			UpdateSelectionEnabledState(newWindow);
 
@@ -3092,11 +2626,6 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			if (newFocusRootSite == null)
 			{
-				//Debug.WriteLine("SimpleRootSite.OnLostFocus() - set keyboard to default - for " + Name);
-				//Debug.WriteLine("SimpleRootSite.OnLostFocus() - newWindow = " + (newWindow == null ? "<null>" : newWindow.Name));
-				// Not switching to another root site...or at least, we haven't told that root
-				// site about it yet, so it will have a chance to fix things up when it gets focus.
-
 				//This is a major kludge to prevent a spurious WM_KEYUP for VK_CONTROL from
 				// interrupting a mouse click.
 				// If mouse button was pressed elsewhere causing this loss of focus,
@@ -3112,31 +2641,20 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		/// <summary>
-		/// Marker interface which a window (e.g., FocusBoxController) may implement to indicate
-		/// that when focus switches there from a root box, we should NOT restore the default keyboard.
-		/// </summary>
-		public interface ISuppressDefaultKeyboardOnKillFocus
-		{
-		}
-
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
 		/// Process mouse move
 		/// </summary>
-		/// <param name="e"></param>
-		/// -----------------------------------------------------------------------------------
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
 			base.OnMouseMove(e);
 
 			if (DataUpdateMonitor.IsUpdateInProgress() || MouseMoveSuppressed)
+			{
 				return;
-
+			}
 			// REVIEW: Do we need the stuff implemented in AfVwWnd::OnMouseMove?
-
 			// Convert to box coords and pass to root box (if any)
-			Point mousePos = new Point(e.X, e.Y);
-			if (m_rootb != null)
+			var mousePos = new Point(e.X, e.Y);
+			if (RootBox != null)
 			{
 				using (new HoldGraphics(this))
 				{
@@ -3146,77 +2664,10 @@ namespace SIL.FieldWorks.Common.RootSites
 
 					// For now at least we care only if the mouse is down.
 					if (e.Button == MouseButtons.Left)
-						CallMouseMoveDrag(PixelToView(mousePos), rcSrcRoot, rcDstRoot);
-				}
-
-				// TODO (TE-8540, LT-10281): Implement tooltips for hyperlinks
-				bool fFoundLinkStyle = false;
-				if (fFoundLinkStyle) //fInObject &&
-									 //(FwObjDataTypes)odt == FwObjDataTypes.kodtExternalPathName)
-				{
-					IVwSelection vwsel;
-					string strbFile;
-					if (GetExternalLinkSel(out fFoundLinkStyle, out vwsel, out strbFile, mousePos)
-						&& fFoundLinkStyle)
 					{
-						//						if (!m_hwndExtLinkTool)
-						//						{
-						//							m_hwndExtLinkTool = ::CreateWindow(TOOLTIPS_CLASS, NULL, TTS_ALWAYSTIP,
-						//													  0, 0, 0, 0, Window()->Hwnd(), 0, ModuleEntry::GetModuleHandle(), NULL);
-						//						}
-						//
-						//						// Adjust the filename if needed.
-						//						if (AfApp::Papp())
-						//										 {
-						//											 LpMainWnd * pwnd = dynamic_cast<LpMainWnd *>(AfApp::Papp()->GetCurMainWnd());
-						//											 if (pwnd)
-						//											 {
-						//												 AfLpInfo * plpi = pwnd->GetLpInfo();
-						//												 AssertPtr(plpi);
-						//												 plpi->MapExternalLink(strbFile);
-						//											 }
-						//										 }
-						//
-						//						HoldGraphics hg(this);
-						//						Rect rcPrimary;
-						//						Rect rcSecondary;
-						//						ComBool fSplit;
-						//						ComBool fEndBeforeAnchor;
-						//						CheckHr(qvwsel->Location(hg.m_pvg, hg.m_rcSrcRoot, hg.m_rcDstRoot, &rcPrimary,
-						//							&rcSecondary, &fSplit, &fEndBeforeAnchor));
-						//
-						//						// See if this LinkedFiles Link has already been added to the tooltip control.
-						//						// We use the top left corner of the LinkedFiles Link as its ID.
-						//						TOOLINFO ti = { TTTOOLINFOA_V2_SIZE, TTF_TRANSPARENT | TTF_SUBCLASS};
-						//						ti.hwnd = Window()->Hwnd();
-						//						ti.uId = MAKELPARAM(rcPrimary.left, rcPrimary.top);
-						//						ti.rect = rcPrimary;
-						//						ti.hinst = ModuleEntry::GetModuleHandle();
-						//						ti.lpszText = (LPSTR)strbFile.Chars();
-						//						if (!::SendMessage(m_hwndExtLinkTool, TTM_GETTOOLINFO, 0, (LPARAM)&ti))
-						//																							  {
-						//																								  // Add this LinkedFiles Link rectangle to the tooltip.
-						//																								  ::SendMessage(m_hwndExtLinkTool, TTM_ADDTOOL, 0, (LPARAM)&ti);
-						//
-						//																								  // Remove any other tools in the tooltip.
-						//																								  if (::SendMessage(m_hwndExtLinkTool, TTM_GETTOOLCOUNT, 0, 0) > 1)
-						//																																								  {
-						//																																									  ::SendMessage(m_hwndExtLinkTool, TTM_ENUMTOOLS, 0, (LPARAM)&ti);
-						//																																									  ::SendMessage(m_hwndExtLinkTool, TTM_DELTOOL, 0, (LPARAM)&ti);
-						//																																								  }
-						//																							  }
+						CallMouseMoveDrag(PixelToView(mousePos), rcSrcRoot, rcDstRoot);
 					}
 				}
-				//				if (!fFoundLinkStyle)
-				//				{
-				//					// Remove all tools in the tooltip.
-				//					if (::SendMessage(m_hwndExtLinkTool, TTM_GETTOOLCOUNT, 0, 0) == 1)
-				//																					 {
-				//																						 TOOLINFO ti = { TTTOOLINFOA_V2_SIZE };
-				//																						 ::SendMessage(m_hwndExtLinkTool, TTM_ENUMTOOLS, 0, (LPARAM)&ti);
-				//																						 ::SendMessage(m_hwndExtLinkTool, TTM_DELTOOL, 0, (LPARAM)&ti);
-				//																					 }
-				//				}
 			}
 
 			OnMouseMoveSetCursor(mousePos);
@@ -3225,10 +2676,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Allow clients to override cursor type during OnMouseMove.
 		/// </summary>
-		/// <param name="mousePos"></param>
 		protected virtual void OnMouseMoveSetCursor(Point mousePos)
 		{
-			EditingHelper.SetCursor(mousePos, m_rootb);
+			EditingHelper.SetCursor(mousePos, RootBox);
 		}
 
 		/// <summary>
@@ -3237,10 +2687,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Some things should not happen while the paint is in progress and the view may be
 		/// under construction.)
 		/// </summary>
-		public bool PaintInProgress
-		{
-			get { return m_fInPaint; }
-		}
+		public bool PaintInProgress { get; protected set; }
 
 		/// <summary>
 		/// Return true if a layout of the view is in progress.
@@ -3248,10 +2695,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Some things should not happen while the paint is in progress and the view may be
 		/// under construction.)
 		/// </summary>
-		public bool LayoutInProgress
-		{
-			get { return m_fInLayout; }
-		}
+		public bool LayoutInProgress { get; protected set; }
 
 		/// <summary>
 		/// Return true if a paint needs to be aborted because something like a paint or layout
@@ -3259,7 +2703,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		protected bool CheckForRecursivePaint()
 		{
-			if (m_fInPaint || m_fInLayout || m_rootb != null && m_rootb.IsPropChangedInProgress)
+			if (PaintInProgress || LayoutInProgress || RootBox != null && RootBox.IsPropChangedInProgress)
 			{
 				// Somehow, typically some odd side effect of expanding lazy boxes, we
 				// got a recursive OnPaint call. This can produce messy results, even
@@ -3269,7 +2713,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				// with unpredictably disastrous results. So don't do the recursive paint...
 				// on the other hand, the paint that is in progress may have been
 				// messed up, so request another one.
-				Debug.WriteLine(String.Format("Recursive OnPaint call for {0}", this));
+				Debug.WriteLine($"Recursive OnPaint call for {this}");
 				// Calling Invalidate directly can cause an infinite loop of paint calls in certain
 				// circumstances.  But we don't want to leave the window incorrectly painted.
 				// Postponing the new Invalidate until the application is idle seems a good compromise.
@@ -3279,23 +2723,20 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			return false;
 		}
-		/// -----------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Call Draw() which does all the real painting
 		/// </summary>
-		/// <param name="e"></param>
-		/// -----------------------------------------------------------------------------------
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			if (!AllowPainting)
-				return;
-
-			// Inform subscribers that the view changed.
-			if (VerticalScrollPositionChanged != null &&
-				m_lastVerticalScrollPosition != -AutoScrollPosition.Y)
 			{
-				VerticalScrollPositionChanged(this, m_lastVerticalScrollPosition,
-					-AutoScrollPosition.Y);
+				return;
+			}
+			// Inform subscribers that the view changed.
+			if (VerticalScrollPositionChanged != null && m_lastVerticalScrollPosition != -AutoScrollPosition.Y)
+			{
+				VerticalScrollPositionChanged(this, m_lastVerticalScrollPosition, -AutoScrollPosition.Y);
 				m_lastVerticalScrollPosition = -AutoScrollPosition.Y;
 			}
 
@@ -3306,27 +2747,18 @@ namespace SIL.FieldWorks.Common.RootSites
 				base.OnPaint(e);
 				return;
 			}
-
 			if (CheckForRecursivePaint())
+			{
 				return;
-
-			m_fInPaint = true;
+			}
+			PaintInProgress = true;
 			try
 			{
-				//long ticks = DateTime.Now.Ticks;
 				Draw(e);
-				//int elapsed = (int)(DateTime.Now.Ticks - ticks);
-				//totalPaintTime += elapsed;
-				//if (++cPaint == 10)
-				//{
-				//    cPaint = 0;
-				//    Debug.WriteLine("Last ten paints averaged " + (totalPaintTime / 100) + " microseconds");
-				//    totalPaintTime = 0;
-				//}
 			}
 			finally
 			{
-				m_fInPaint = false;
+				PaintInProgress = false;
 			}
 			MouseMoveSuppressed = false; // successful paint, display is stable to do MouseMoved.
 		}
@@ -3350,32 +2782,27 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 #endif
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
-		/// Ignore the PaintBackground event because we do it ourself (in the views code).
+		/// Ignore the PaintBackground event because we do it our self (in the views code).
 		/// </summary>
-		/// <param name="e"></param>
-		/// -----------------------------------------------------------------------------------
 		protected override void OnPaintBackground(PaintEventArgs e)
 		{
 #pragma warning disable 219
-			Form parent = FindForm();
+			var parent = FindForm();
 #pragma warning restore 219
 			// Not everything has a form, when it is being designed.
 			if (!m_fAllowLayout && AllowPainting)
+			{
 				base.OnPaintBackground(e);
+			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Recompute the layout
 		/// </summary>
-		/// <param name="levent"></param>
-		/// -----------------------------------------------------------------------------------
 		protected override void OnLayout(LayoutEventArgs levent)
 		{
-			if ((!DesignMode || AllowPaintingInDesigner) && m_fRootboxMade && m_fAllowLayout &&
-				IsHandleCreated && !m_fInLayout)
+			if ((!DesignMode || AllowPaintingInDesigner) && m_fRootboxMade && m_fAllowLayout && IsHandleCreated && !LayoutInProgress)
 			{
 				// Recompute your layout and redraw completely, unless the width has not
 				// actually changed.
@@ -3386,10 +2813,11 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				using (new HoldGraphics(this))
 				{
 					if (DoLayout())
+					{
 						Invalidate();
+					}
 				}
 			}
-
 			if (Platform.IsMono)
 			{
 				// TODO-Linux: Create simple test case for this and fix mono bug
@@ -3397,7 +2825,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				{
 					base.OnLayout(levent);
 				}
-				catch (System.ArgumentOutOfRangeException)
+				catch (ArgumentOutOfRangeException)
 				{
 					// TODO-Linux: Investigate real cause of this.
 					// I think it caused by mono setting ScrollPosition to 0 when Scrollbar isn't visible
@@ -3406,7 +2834,9 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				}
 			}
 			else
+			{
 				base.OnLayout(levent);
+			}
 		}
 
 		/// <summary>
@@ -3418,13 +2848,11 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			return GetSelectionAtViewPoint(PixelToView(position), fInstall);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Get a selection at the indicated point.
 		/// </summary>
 		/// <param name="position">Point where the selection is to be made</param>
-		/// <param name="fInstall">Indicates whether or not to "install" the seleciton</param>
-		/// ------------------------------------------------------------------------------------
+		/// <param name="fInstall">Indicates whether or not to "install" the selection</param>
 		public IVwSelection GetSelectionAtViewPoint(Point position, bool fInstall)
 		{
 			Rectangle rcSrcRoot, rcDstRoot;
@@ -3440,23 +2868,23 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Process left or right mouse button down
 		/// </summary>
-		/// <param name="e"></param>
-		/// -----------------------------------------------------------------------------------
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
 			base.OnMouseDown(e);
 
-			if (m_rootb == null || DataUpdateMonitor.IsUpdateInProgress())
+			if (RootBox == null || DataUpdateMonitor.IsUpdateInProgress())
+			{
 				return;
+			}
 			// If we have posted a FollowLink message, then don't process any other
 			// mouse event, since will be changing areas, invalidating our MouseEventArgs.
 			if (IsFollowLinkMsgPending)
+			{
 				return;
-
+			}
 			SwitchFocusHere();
 
 			// Convert to box coords and pass to root box (if any).
@@ -3475,20 +2903,16 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			if (e.Button == MouseButtons.Right)
 			{
 				if (DataUpdateMonitor.IsUpdateInProgress())
+				{
 					return; //discard this event
+				}
 				if (IsFollowLinkMsgPending)
 				{
-					// REVIEW (TimS): This uninit graphics doesn't appear to be needed... is there
-					// a reason it was put in? It could cause problems because we init the graphics
-					// outside of this method and have no idea what might happen if this method and
-					// the method that calls this method both uninit the graphics object. Although
-					// no known problems have been seen, it was commented out.
-					//UninitGraphics();
 					return; //discard this event
 				}
 				using (new HoldGraphics(this))
 				{
-					IVwSelection sel = (IVwSelection)m_rootb.Selection;
+					var sel = (IVwSelection)RootBox.Selection;
 					// Use the existing selection if it covers the point clicked, and if it's
 					// either a range or editable.
 					if (sel != null && (sel.IsRange || SelectionHelper.IsEditable(sel)))
@@ -3505,12 +2929,9 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 
 						Debug.Assert(m_graphicsManager.VwGraphics != null);
 
-						sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot,
-							out rcPrimary, out rcSecondary, out fSplit,
-							out fEndBeforeAnchor);
+						sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary, out rcSecondary, out fSplit, out fEndBeforeAnchor);
 
-						if (pt.X >= rcPrimary.left && pt.X < rcPrimary.right
-							&& pt.Y >= rcPrimary.top && pt.Y < rcPrimary.bottom)
+						if (pt.X >= rcPrimary.left && pt.X < rcPrimary.right && pt.Y >= rcPrimary.top && pt.Y < rcPrimary.bottom)
 						{
 							return;
 						}
@@ -3519,12 +2940,12 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 					try
 					{
 						// Make an invisible selection to see if we are in editable text.
-						sel = m_rootb.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, false);
+						sel = RootBox.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, false);
 						if (sel != null && SelectionHelper.IsEditable(sel))
 						{
 							// Make a simple text selection without executing a mouse click. This is
 							// needed in order to not launch a hot link when we right+click.
-							m_rootb.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, true);
+							RootBox.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, true);
 							return;
 						}
 					}
@@ -3535,40 +2956,39 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			}
 
 			if ((ModifierKeys & Keys.Shift) == Keys.Shift)
+			{
 				CallMouseDownExtended(pt, rcSrcRoot, rcDstRoot);
+			}
 			else
+			{
 				CallMouseDown(pt, rcSrcRoot, rcDstRoot);
+			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Process right mouse button up (typically show a context menu).
 		/// Was mouse Down in an earlier life, but we concluded that the usual convention
 		/// is context menu on mouse up. There may be vestiges.
 		/// </summary>
-		/// <param name="pt"></param>
-		/// <param name="rcSrcRoot"></param>
-		/// <param name="rcDstRoot"></param>
-		/// <returns>true if handled, false otherwise</returns>
-		/// -----------------------------------------------------------------------------------
-		protected virtual bool OnRightMouseUp(Point pt, Rectangle rcSrcRoot,
-			Rectangle rcDstRoot)
+		protected virtual bool OnRightMouseUp(Point pt, Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
 			IVwSelection invSel = null;
 			try
 			{
 				// Make an invisible selection to see if we are in editable text, also it may
 				// be useful to DoContextMenu.
-				invSel = m_rootb.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, false);
+				invSel = RootBox.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, false);
 				// Notify any delegates.
 				if (RightMouseClickedEvent != null)
 				{
 					if (invSel != null)
 					{
-						FwRightMouseClickEventArgs args = new FwRightMouseClickEventArgs(pt, invSel);
+						var args = new FwRightMouseClickEventArgs(pt, invSel);
 						RightMouseClickedEvent(this, args);
 						if (args.EventHandled)
+						{
 							return true;
+						}
 					}
 				}
 			}
@@ -3576,20 +2996,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			{
 			}
 
-			if (DataUpdateMonitor.IsUpdateInProgress())
-				return true; //discard this event
-			if (IsFollowLinkMsgPending)
-			{
-				// REVIEW (TimS): This uninit graphics doesn't appear to be needed... is there
-				// a reason it was put in? It could cause problems because we init the graphics
-				// outside of this method and have no idea what might happen if this method and
-				// the method that calls this method both uninit the graphics object. Although
-				// no known problems have been seen, it was commented out.
-				//UninitGraphics();
-				return true; //discard this event
-			}
-
-			return DoContextMenu(invSel, pt, rcSrcRoot, rcDstRoot);
+			return DataUpdateMonitor.IsUpdateInProgress() || (IsFollowLinkMsgPending || DoContextMenu(invSel, pt, rcSrcRoot, rcDstRoot));
 		}
 
 		/// <summary>
@@ -3600,10 +3007,12 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		{
 			if (RightMouseClickedEvent != null)
 			{
-				FwRightMouseClickEventArgs args = new FwRightMouseClickEventArgs(center, vwsel);
+				var args = new FwRightMouseClickEventArgs(center, vwsel);
 				RightMouseClickedEvent(this, args);
 				if (args.EventHandled)
+				{
 					return true;
+				}
 			}
 			return false;
 		}
@@ -3615,7 +3024,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		{
 			if (keyData == Keys.Apps || keyData == (Keys.F10 | Keys.Shift))
 			{
-				if (RootBox != null && RootBox.Selection != null)
+				if (RootBox?.Selection != null)
 				{
 					Point pt;
 					// Set point to somewhere around the middle of the selection in window coords.
@@ -3625,17 +3034,19 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 						Rect rcSec, rcPrimary;
 						bool fSplit, fEndBeforeAnchor;
 						GetCoordRects(out rcSrcRoot, out rcDstRoot);
-						RootBox.Selection.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary,
-							out rcSec, out fSplit, out fEndBeforeAnchor);
+						RootBox.Selection.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary, out rcSec, out fSplit, out fEndBeforeAnchor);
 
-						pt = new Point((rcPrimary.right + rcPrimary.left) / 2,
-							(rcPrimary.top + rcPrimary.bottom) / 2);
+						pt = new Point((rcPrimary.right + rcPrimary.left) / 2, (rcPrimary.top + rcPrimary.bottom) / 2);
 					}
 					if (HandleContextMenuFromKeyboard(RootBox.Selection, pt))
+					{
 						return true;
+					}
 					// These two checks are copied from OnRightMouseUp; not sure why (or whether) they are needed.
 					if (DataUpdateMonitor.IsUpdateInProgress())
+					{
 						return true; //discard this event
+					}
 					if (IsFollowLinkMsgPending)
 					{
 						return true; //discard this event
@@ -3653,41 +3064,28 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			return base.ProcessCmdKey(ref msg, keyData);
 		}
 
-
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
-		/// Overide this to provide a context menu for some subclass.
+		/// Override this to provide a context menu for some subclass.
 		/// </summary>
-		/// <param name="invSel"></param>
-		/// <param name="pt"></param>
-		/// <param name="rcSrcRoot"></param>
-		/// <param name="rcDstRoot"></param>
-		/// <returns></returns>
-		/// -----------------------------------------------------------------------------------
-		protected virtual bool DoContextMenu(IVwSelection invSel, Point pt, Rectangle rcSrcRoot,
-			Rectangle rcDstRoot)
+		protected virtual bool DoContextMenu(IVwSelection invSel, Point pt, Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
 			return false;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Process mouse double click
 		/// </summary>
-		/// <param name="e"></param>
-		/// -----------------------------------------------------------------------------------
 		protected override void OnDoubleClick(EventArgs e)
 		{
 			base.OnDoubleClick(e);
 
 			// Convert to box coords and pass to root box (if any).
-			if (m_rootb != null && !DataUpdateMonitor.IsUpdateInProgress())
+			if (RootBox != null && !DataUpdateMonitor.IsUpdateInProgress())
 			{
 				SwitchFocusHere();
 				using (new HoldGraphics(this))
 				{
-					Point pt = PointToClient(Cursor.Position);
-
+					var pt = PointToClient(Cursor.Position);
 					Rectangle rcSrcRoot;
 					Rectangle rcDstRoot;
 					GetCoordRects(out rcSrcRoot, out rcDstRoot);
@@ -3697,24 +3095,22 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Process mouse button up event
 		/// </summary>
-		/// <param name="e"></param>
-		/// -----------------------------------------------------------------------------------
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
 			base.OnMouseUp(e);
 			if (DataUpdateMonitor.IsUpdateInProgress())
+			{
 				return;
-
+			}
 			// Convert to box coords and pass to root box (if any).
-			if (m_rootb != null)
+			if (RootBox != null)
 			{
 				using (new HoldGraphics(this))
 				{
-					Point pt = PixelToView(new Point(e.X, e.Y));
+					var pt = PixelToView(new Point(e.X, e.Y));
 					Rectangle rcSrcRoot;
 					Rectangle rcDstRoot;
 					GetCoordRects(out rcSrcRoot, out rcDstRoot);
@@ -3722,9 +3118,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 
 					if (e.Button == MouseButtons.Right)
 					{
-						bool fHandled = OnRightMouseUp(pt, rcSrcRoot, rcDstRoot);
-						if (fHandled)
-							return;
+						OnRightMouseUp(pt, rcSrcRoot, rcDstRoot);
 					}
 				}
 			}
@@ -3733,7 +3127,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// <summary>
 		/// Handles OnKeyPress. Passes most things to EditingHelper.OnKeyPress
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnKeyPress(KeyPressEventArgs e)
 		{
 			base.OnKeyPress(e);
@@ -3743,38 +3136,34 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				using (new HoldGraphics(this))
 				{
 					Debug.Assert(m_graphicsManager.VwGraphics != null);
-					Keys modifiers = ModifierKeys;
+					var modifiers = ModifierKeys;
 					// Ctrl-Backspace actually comes to us having the same key code as Delete, so we fix it here.
 					// (Ctrl-Delete doesn't come through this code path at all.)
 					if (modifiers == Keys.Control && e.KeyChar == '\u007f')
+					{
 						e.KeyChar = '\b';
+					}
 					EditingHelper.OnKeyPress(e, modifiers);
 				}
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Checks input characters to see if they should be processsed. Static to allow
 		/// function to be shared with PublicationControl.
 		/// </summary>
-		/// <param name="e"></param>
-		/// <param name="modifiers">Control.ModifierKeys</param>
-		/// <returns><code>true</code> if character should be ignored on input</returns>
-		/// ------------------------------------------------------------------------------------
 		public static bool IsIgnoredKey(KeyPressEventArgs e, Keys modifiers)
 		{
-			bool ignoredKey = false;
-
+			var ignoredKey = false;
 			if ((modifiers & Keys.Shift) == Keys.Shift && e.KeyChar == '\r')
+			{
 				ignoredKey = true;
+			}
 			else if ((modifiers & Keys.Control) == Keys.Control)
 			{
 				// only backspace, forward delete and control-M (same as return key) will be
 				// passed on for processing
-				ignoredKey = !((int)e.KeyChar == (int)VwSpecialChars.kscBackspace ||
-					(int)e.KeyChar == (int)VwSpecialChars.kscDelForward ||
-					e.KeyChar == '\r');
+				ignoredKey = !(e.KeyChar == (int)VwSpecialChars.kscBackspace || e.KeyChar == (int)VwSpecialChars.kscDelForward || e.KeyChar == '\r');
 			}
 
 			return ignoredKey;
@@ -3784,62 +3173,35 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// Gets or sets a value indicating whether pressing the TAB key will be handled by this control
 		/// instead of moving the focus to the next control in the tab order.
 		/// </summary>
-		public bool AcceptsTab
-		{
-			get
-			{
-				return m_acceptsTab;
-			}
-
-			set
-			{
-				m_acceptsTab = value;
-			}
-		}
+		public bool AcceptsTab { get; set; }
 
 		/// <summary>
 		/// Gets or sets a value indicating whether pressing the ENTER key will be handled by this control
 		/// instead of activating the default button for the form.
 		/// </summary>
-		public bool AcceptsReturn
-		{
-			get
-			{
-				return m_acceptsReturn;
-			}
+		public bool AcceptsReturn { get; set; }
 
-			set
-			{
-				m_acceptsReturn = value;
-			}
-		}
-
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Clean up after page scrolling.
 		/// </summary>
-		/// <param name="e"></param>
-		/// -----------------------------------------------------------------------------------
 		protected override void OnKeyUp(KeyEventArgs e)
 		{
 			if (DataUpdateMonitor.IsUpdateInProgress())
+			{
 				return; //throw this event away
-
+			}
 			base.OnKeyUp(e);
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// User pressed a key.
 		/// </summary>
-		/// <param name="e"></param>
-		/// -----------------------------------------------------------------------------------
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
 			if (DataUpdateMonitor.IsUpdateInProgress())
+			{
 				return; //throw this event away
-
-
+			}
 			using (new HoldGraphics(this))
 			{
 				if (e.KeyCode == Keys.PageUp && ((e.Modifiers & Keys.Control) == Keys.Control))
@@ -3858,22 +3220,12 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				Debug.Assert(m_graphicsManager.VwGraphics != null);
 
 				if (!e.Handled)
+				{
 					EditingHelper.OnKeyDown(e);
+				}
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Allow derived classes to override this to control showing context menus.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Obsolete("Assign the context menu to the ContextMenu property and override the popup " +
-			 "event for any additional initializations")]
-		protected virtual void OnContextMenu(Point pt)
-		{
-		}
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Determines whether the specified key is a regular input key or a special key that
 		/// requires preprocessing.
@@ -3884,7 +3236,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// true if the specified key is a regular input key; otherwise, false.
 		/// </returns>
 		/// <remarks>IsInputKey gets called while processing WM_KEYDOWN or WM_SYSKEYDOWN.</remarks>
-		/// ------------------------------------------------------------------------------------
 		protected override bool IsInputKey(Keys keyData)
 		{
 			if ((keyData & Keys.Alt) != Keys.Alt)
@@ -3892,19 +3243,18 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				switch (keyData & Keys.KeyCode)
 				{
 					case Keys.Return:
-						return m_acceptsReturn;
+						return AcceptsReturn;
 
 					case Keys.Escape:
 						return false;
 
 					case Keys.Tab:
-						return m_acceptsTab && (keyData & Keys.Control) == Keys.None;
+						return AcceptsTab && (keyData & Keys.Control) == Keys.None;
 				}
 			}
 			return true;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// This also helps us handle all input keys...the documentation doesn't make very
 		/// clear the distinction between this and IsInputKey, but failing to override this
@@ -3918,11 +3268,9 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// otherwise, false.
 		/// </returns>
 		/// <remarks>IsInputChar gets called while processing WM_CHAR or WM_SYSCHAR.</remarks>
-		/// ------------------------------------------------------------------------------------
 		protected override bool IsInputChar(char charCode)
 		{
 			return true;
-			//return base.IsInputChar (charCode);
 		}
 
 		/// <summary>
@@ -3937,23 +3285,17 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// <summary>
 		/// Subclasses can override if they handle the scrolling for OnSizeChanged().
 		/// </summary>
-		protected virtual bool ScrollToSelectionOnSizeChanged
-		{
-			get { return true; }
-		}
+		protected virtual bool ScrollToSelectionOnSizeChanged => true;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Size changed. Ensure that the selection is still visible.
 		/// </summary>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			// Ignore if our size didn't really change, also if we're in the middle of a paint.
 			// (But, don't ignore if not previously laid out successfully...this can suppress
 			// a necessary Layout after the root box is made.)
-			if (m_fInPaint || m_fInLayout || m_rootb == null || (Size == m_sizeLast && m_dxdLayoutWidth >= 0))
+			if (PaintInProgress || LayoutInProgress || RootBox == null || (Size == m_sizeLast && m_dxdLayoutWidth >= 0))
 			{
 				// This is needed to handle .Net layout for the Control.
 				base.OnSizeChanged(e);
@@ -3971,11 +3313,13 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 					Rectangle rcSrc;
 					Rectangle rcDst;
 					GetCoordRects(out rcSrc, out rcDst);
-					m_fInLayout = true;
+					LayoutInProgress = true;
 					try
 					{
 						using (new SuspendDrawing(this))
-							selToScroll = m_rootb.MakeSelAt(5, 5, rcSrc, rcDst, false);
+						{
+							selToScroll = RootBox.MakeSelAt(5, 5, rcSrc, rcDst, false);
+						}
 					}
 					catch
 					{
@@ -3984,7 +3328,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 					}
 					finally
 					{
-						m_fInLayout = false;
+						LayoutInProgress = false;
 					}
 				}
 			}
@@ -3995,7 +3339,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				{
 					base.OnSizeChanged(e);
 				}
-				catch (System.ArgumentOutOfRangeException)
+				catch (ArgumentOutOfRangeException)
 				{
 					// TODO-Linux: Investigate real cause of this.
 					// I think it caused by mono setting ScrollPosition to 0 when Scrollbar isn't visible
@@ -4004,13 +3348,16 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				}
 			}
 			else
+			{
 				base.OnSizeChanged(e);
+			}
 
 			// Sometimes (e.g., I tried this in InterlinDocChild), we destroy the root box when
 			// the pane is collapsed below a workable size.
-			if (m_rootb == null)
+			if (RootBox == null)
+			{
 				return;
-
+			}
 			// This was moved down here because the actual size change happens in
 			// base.OnSizeChanged() so our size property could be wrong before that call
 			m_sizeLast = Size;
@@ -4018,16 +3365,15 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			// REVIEW: We don't think it makes sense to do anything more if our width is 0.
 			// Is this right?
 			if (m_sizeLast.Width <= 0)
+			{
 				return;
-
-
-			if (ScrollToSelectionOnSizeChanged &&
-				!SizeChangedSuppression &&
-				!m_fRefreshPending &&
-				IsHandleCreated)
+			}
+			if (ScrollToSelectionOnSizeChanged && !SizeChangedSuppression && !m_fRefreshPending && IsHandleCreated)
 			{
 				if (selToScroll == null)
+				{
 					ScrollSelectionIntoView(null, VwScrollSelOpts.kssoDefault);
+				}
 				else
 				{
 					// we want to scroll the selection into view at the top of the window
@@ -4041,7 +3387,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		// ENHANCE (EberhardB): implement passing of System characters to rootbox. Since the
 		// rootbox doesn't do anything with that at the moment, I left that for later.
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets a value indicating whether the <see cref="P:System.Windows.Forms.Control.ImeMode"/>
 		/// property can be set to an active value, to enable IME support.
@@ -4049,20 +3394,15 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// <returns>true in all cases.</returns>
 		/// <remarks>This fixes part of LT-7487. This property requires .NET 2.0 SP1 or higher.
 		/// </remarks>
-		/// ------------------------------------------------------------------------------------
-		protected override bool CanEnableIme
-		{
-			get { return true; }
-		}
+		protected override bool CanEnableIme => true;
 		#endregion
 
 		#region Other virtual methods
-		/// -----------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Set/Get the writing system factory used by this root site. The main RootSite
 		/// subclass obtains this from the LcmCache if it has not been set.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public virtual ILgWritingSystemFactory WritingSystemFactory
 		{
 			get
@@ -4075,20 +3415,15 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Returns the scroll position. Values are positive.
 		/// </summary>
-		/// <param name="dxd"></param>
-		/// <param name="dyd"></param>
-		/// -----------------------------------------------------------------------------------
 		protected internal virtual void GetScrollOffsets(out int dxd, out int dyd)
 		{
 			dxd = -ScrollPosition.X;
 			dyd = -ScrollPosition.Y;
 		}
 
-		///------------------------------------------------------------------------------------
 		/// <summary>
 		/// Adjust the scroll range when some lazy box got expanded.
 		/// This is rather similar to SizeChanged, but is used when the size changed
@@ -4115,28 +3450,23 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// To set it, you have to set <see cref="ScrollableControl.AutoScrollMinSize"/> and do
 		/// a PerformLayout.
 		/// </remarks>
-		///------------------------------------------------------------------------------------
-		protected virtual bool AdjustScrollRange1(int dxdSize, int dxdPosition, int dydSize,
-			int dydPosition)
+		protected virtual bool AdjustScrollRange1(int dxdSize, int dxdPosition, int dydSize, int dydPosition)
 		{
-			int dydRangeNew = AdjustedScrollRange.Height;
-			int dydPosNew = -ScrollPosition.Y;
-
+			var dydRangeNew = AdjustedScrollRange.Height;
+			var dydPosNew = -ScrollPosition.Y;
 			// Remember: ScrollPosition returns negative values!
-
 			// If the current position is after where the change occurred, it needs to
 			// be adjusted by the same amount.
 			if (dydPosNew > dydPosition)
+			{
 				dydPosNew += dydSize;
-
-			int dxdRangeNew = AutoScrollMinSize.Width + dxdSize;
-			int dxdPosNew = -ScrollPosition.X;
-
-			if (HScroll)
+			}
+			var dxdRangeNew = AutoScrollMinSize.Width + dxdSize;
+			var dxdPosNew = -ScrollPosition.X;
+			if (HScroll && dxdPosNew > dxdPosition)
 			{
 				// Similarly for horizontal scroll bar.
-				if (dxdPosNew > dxdPosition)
-					dxdPosNew += dxdSize;
+				dxdPosNew += dxdSize;
 			}
 
 			// We don't want to change the location of any child controls (e.g., a focus box).
@@ -4147,39 +3477,36 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				oldLocations.Add(new Tuple<Control, Point>(c, c.Location));
 			}
 			var result = UpdateScrollRange(dxdRangeNew, dxdPosNew, dydRangeNew, dydPosNew);
-			foreach (var t in oldLocations)
+			foreach (var locationTuple in oldLocations)
 			{
-				t.Item1.Location = t.Item2;
+				locationTuple.Item1.Location = locationTuple.Item2;
 			}
 			return result;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Draw to the given clip rectangle.
 		/// </summary>
 		/// <remarks>OPTIMIZE JohnT: pass clip rect to VwGraphics and make use of it.</remarks>
-		/// <param name="e"></param>
-		/// -----------------------------------------------------------------------------------
 		protected virtual void Draw(PaintEventArgs e)
 		{
-			if (m_rootb != null && m_dxdLayoutWidth > 0 &&
-				(!DesignMode || AllowPaintingInDesigner))
+			if (RootBox != null && m_dxdLayoutWidth > 0 && (!DesignMode || AllowPaintingInDesigner))
 			{
 				Debug.Assert(m_vdrb != null, "Need to call MakeRoot() before drawing");
-				IntPtr hdc = e.Graphics.GetHdc();
+				var hdc = e.Graphics.GetHdc();
 
 				try
 				{
-					Form parent = FindForm();
+					var parent = FindForm();
 					if (parent != null && !parent.Enabled)
 					{
 						if (m_haveCachedDrawForDisabledView)
+						{
 							m_vdrb.ReDrawLastDraw(hdc, e.ClipRectangle);
+						}
 						else
 						{
-							m_orientationManager.DrawTheRoot(m_vdrb, m_rootb, hdc, ClientRectangle,
-								ColorUtil.ConvertColorToBGR(BackColor), true, ClientRectangle);
+							m_orientationManager.DrawTheRoot(m_vdrb, RootBox, hdc, ClientRectangle, ColorUtil.ConvertColorToBGR(BackColor), true, ClientRectangle);
 							m_haveCachedDrawForDisabledView = true;
 						}
 					}
@@ -4188,30 +3515,9 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 						m_haveCachedDrawForDisabledView = false;
 						// NOT (uint)(BackColor.ToArgb() & 0xffffff); this orders the components
 						// as RRGGBB where C++ View code using the RGB() function requires BBGGRR.
-						uint rgbBackColor = ColorUtil.ConvertColorToBGR(BackColor);
-						//Debug.WriteLine("Drawing " + this.Handle + " " + e.ClipRectangle + " " + this.RectangleToScreen(e.ClipRectangle));
-						//Debug.WriteLine("  Offset is " + this.ScrollPosition);
-
-						if (Platform.IsMono)
-						{
-							// TODO-Linux: FWNX-449: cairo 1.10.0 has a maximum size limitation of 32767.
-
-							// The following code is a work around for a cairo limitation.
-							// when the ClipRectangle Height exceeded 32767
-							// (cairo is only use with mono)
-							// This has the added benefit of increasing the scrolling speed in TE.
-
-							m_orientationManager.DrawTheRoot(m_vdrb, m_rootb, hdc,
-								ClientRectangle,
-							rgbBackColor, true,
-							Rectangle.Intersect(e.ClipRectangle, ClientRectangle));
-						}
-						else
-						{
-							m_orientationManager.DrawTheRoot(m_vdrb, m_rootb, hdc,
-								ClientRectangle,
-							rgbBackColor, true, e.ClipRectangle);
-						}
+						var rgbBackColor = ColorUtil.ConvertColorToBGR(BackColor);
+						m_orientationManager.DrawTheRoot(m_vdrb, RootBox, hdc, ClientRectangle, rgbBackColor, true,
+							Platform.IsMono ? Rectangle.Intersect(e.ClipRectangle, ClientRectangle) : e.ClipRectangle);
 					}
 				}
 				catch
@@ -4225,7 +3531,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				try
 				{
 					InitGraphics();
-					m_rootb.DrawingErrors(m_graphicsManager.VwGraphics);
+					RootBox.DrawingErrors(m_graphicsManager.VwGraphics);
 				}
 				catch (Exception ex)
 				{
@@ -4239,45 +3545,41 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			else
 			{
 				e.Graphics.FillRectangle(SystemBrushes.Window, ClientRectangle);
-				e.Graphics.DrawString("Empty " + GetType(),
-					SystemInformation.MenuFont, SystemBrushes.WindowText, ClientRectangle);
+				e.Graphics.DrawString("Empty " + GetType(), SystemInformation.MenuFont, SystemBrushes.WindowText, ClientRectangle);
 			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Set focus to our window
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		private void SwitchFocusHere()
 		{
 			if (FindForm() == Form.ActiveForm)
+			{
 				Focus();
+			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Override this method in your subclass.
 		/// It should make a root box and initialize it with appropriate data and
 		/// view constructor, etc.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public virtual void MakeRoot()
 		{
 			if (!GotCacheOrWs || (DesignMode && !AllowPaintingInDesigner))
+			{
 				return;
-
+			}
 			SetAccessibleName(Name);
 
 			// Managed object on Linux
-			m_vdrb = Platform.IsMono
-				? new SIL.FieldWorks.Views.VwDrawRootBuffered()
-				: (IVwDrawRootBuffered)VwDrawRootBufferedClass.Create();
+			m_vdrb = Platform.IsMono ? new Views.VwDrawRootBuffered() : (IVwDrawRootBuffered)VwDrawRootBufferedClass.Create();
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.RenderEngineFactory = SingletonsContainer.Get<RenderEngineFactory>();
-			m_rootb.TsStrFactory = TsStringUtils.TsStrFactory;
-			m_rootb.SetSite(this);
+			RootBox = VwRootBoxClass.Create();
+			RootBox.RenderEngineFactory = SingletonsContainer.Get<RenderEngineFactory>();
+			RootBox.TsStrFactory = TsStringUtils.TsStrFactory;
+			RootBox.SetSite(this);
 
 			m_fRootboxMade = true;
 		}
@@ -4290,18 +3592,20 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// -----------------------------------------------------------------------------------
 		public virtual void CloseRootBox()
 		{
-			if (DesignMode || m_rootb == null)
+			if (DesignMode || RootBox == null)
+			{
 				return;
-
-			if (m_Timer != null)
-				m_Timer.Stop();
+			}
+			m_Timer?.Stop();
 			// Can't flash IP, if the root box is toast.
 
-			m_rootb.Close();
+			RootBox.Close();
 			// After the rootbox is closed its useless...
-			if (Marshal.IsComObject(m_rootb))
-				Marshal.ReleaseComObject(m_rootb);
-			m_rootb = null;
+			if (Marshal.IsComObject(RootBox))
+			{
+				Marshal.ReleaseComObject(RootBox);
+			}
+			RootBox = null;
 		}
 
 		/// <summary>
@@ -4317,10 +3621,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// <summary>
 		/// Show the writing system choices?
 		/// </summary>
-		public virtual bool IsSelectionFormattable
-		{
-			get { return true; }
-		}
+		public virtual bool IsSelectionFormattable => true;
 
 		/// <summary>
 		/// Answer true if the Apply Styles menu option should be enabled.
@@ -4338,25 +3639,20 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		public virtual bool IsSelectionInParagraph => false;
 
 		#region Methods that delegate events to the rootbox
-		/// -----------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Call MouseDown on the rootbox
 		/// </summary>
-		/// <param name="point"></param>
-		/// <param name="rcSrcRoot"></param>
-		/// <param name="rcDstRoot"></param>
-		/// -----------------------------------------------------------------------------------
-		protected virtual void CallMouseDown(Point point, Rectangle rcSrcRoot,
-			Rectangle rcDstRoot)
+		protected virtual void CallMouseDown(Point point, Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
-			if (m_rootb != null)
+			if (RootBox != null)
 			{
-				IVwSelection oldSel = m_rootb.Selection;
-				m_wsPending = -1;
+				var oldSel = RootBox.Selection;
+				WsPending = -1;
 
 				try
 				{
-					m_rootb.MouseDown(point.X, point.Y, rcSrcRoot, rcDstRoot);
+					RootBox.MouseDown(point.X, point.Y, rcSrcRoot, rcDstRoot);
 				}
 				catch
 				{
@@ -4369,61 +3665,45 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				}
 
 				EditingHelper.HandleMouseDown();
-				IVwSelection newSel = m_rootb.Selection;
+				var newSel = RootBox.Selection;
 				// Some clicks (e.g., on a selection check box in a bulk edit view) don't result in
 				// a new selection. If something old is selected, it can be bad to scroll away from
 				// the user's focus to the old selection.
 				if (newSel != null && newSel != oldSel)
+				{
 					MakeSelectionVisible(null);
+				}
 			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Call MouseDblClk on rootbox
 		/// </summary>
-		/// <param name="pt"></param>
-		/// <param name="rcSrcRoot"></param>
-		/// <param name="rcDstRoot"></param>
-		/// -----------------------------------------------------------------------------------
-		protected virtual void CallMouseDblClk(Point pt, Rectangle rcSrcRoot,
-			Rectangle rcDstRoot)
+		protected virtual void CallMouseDblClk(Point pt, Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
-			if (m_rootb != null)
-				m_rootb.MouseDblClk(pt.X, pt.Y, rcSrcRoot, rcDstRoot);
+			RootBox?.MouseDblClk(pt.X, pt.Y, rcSrcRoot, rcDstRoot);
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Call MouseDownExtended on the rootbox
 		/// </summary>
-		/// <param name="pt"></param>
-		/// <param name="rcSrcRoot"></param>
-		/// <param name="rcDstRoot"></param>
-		/// -----------------------------------------------------------------------------------
-		protected virtual void CallMouseDownExtended(Point pt, Rectangle rcSrcRoot,
-			Rectangle rcDstRoot)
+		protected virtual void CallMouseDownExtended(Point pt, Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
-			if (m_rootb != null)
+			if (RootBox != null)
 			{
-				m_wsPending = -1;
+				WsPending = -1;
 
-				m_rootb.MouseDownExtended(pt.X, pt.Y, rcSrcRoot, rcDstRoot);
+				RootBox.MouseDownExtended(pt.X, pt.Y, rcSrcRoot, rcDstRoot);
 				MakeSelectionVisible(null);
 			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Call MouseMoveDrag on the rootbox
 		/// </summary>
-		/// <param name="pt"></param>
-		/// <param name="rcSrcRoot"></param>
-		/// <param name="rcDstRoot"></param>
-		/// -----------------------------------------------------------------------------------
 		protected virtual void CallMouseMoveDrag(Point pt, Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
-			if (m_rootb != null && m_fMouseInProcess == false)
+			if (RootBox != null && m_fMouseInProcess == false)
 			{
 				// various scrolling speeds, i.e. 10 pixels per mousemovedrag event when
 				// dragging beyond the top or bottom of of the rootbox
@@ -4431,75 +3711,62 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				const int HISPEED = 30;
 				int speed;
 				const int SLOW_BUFFER_ZONE = 30;
-
 				m_fMouseInProcess = true;
-
 				if (DoAutoVScroll && pt.Y < 0)  // if drag above the top of rootbox
 				{
 					// if mouse is within 30 pixels of top of rootbox
-					if (pt.Y > -SLOW_BUFFER_ZONE)
-						speed = LOSPEED;
-					else
-						speed = HISPEED;
+					speed = pt.Y > -SLOW_BUFFER_ZONE ? LOSPEED : HISPEED;
 					// regardless of where pt.Y is, select only to top minus "speed",
 					// then scroll up by "speed" number of pixels, so top of selection is
 					// always at top of rootbox
-					m_rootb.MouseMoveDrag(pt.X, -speed, rcSrcRoot, rcDstRoot);
+					RootBox.MouseMoveDrag(pt.X, -speed, rcSrcRoot, rcDstRoot);
 					ScrollPosition = new Point(-ScrollPosition.X, -ScrollPosition.Y - speed);
 					Refresh();
 				}
 				else if (DoAutoVScroll && pt.Y > Bottom)  // if drag below bottom of rootbox
 				{
 					// if mouse is within 30 pixels of bottom of rootbox
-					if ((pt.Y - Bottom) < SLOW_BUFFER_ZONE)
-						speed = LOSPEED;
-					else
-						speed = HISPEED;
+					speed = (pt.Y - Bottom) < SLOW_BUFFER_ZONE ? LOSPEED : HISPEED;
 					// regardless of where pt.Y is, select only to bottom plus "speed",
 					// then scroll down by "speed" number of pixels, so bottom of selection
 					// is always at bottom of rootbox
-					m_rootb.MouseMoveDrag(pt.X, Bottom + speed, rcSrcRoot, rcDstRoot);
+					RootBox.MouseMoveDrag(pt.X, Bottom + speed, rcSrcRoot, rcDstRoot);
 					ScrollPosition = new Point(-ScrollPosition.X, -ScrollPosition.Y + speed);
 					Refresh();
 				}
 				else  // selection and drag is occuring all within window boundaries
 				{
-					m_rootb.MouseMoveDrag(pt.X, pt.Y, rcSrcRoot, rcDstRoot);
+					RootBox.MouseMoveDrag(pt.X, pt.Y, rcSrcRoot, rcDstRoot);
 				}
 				m_fMouseInProcess = false;
 			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Call MouseUp on the rootbox
 		/// </summary>
-		/// <param name="pt"></param>
-		/// <param name="rcSrcRoot"></param>
-		/// <param name="rcDstRoot"></param>
-		/// -----------------------------------------------------------------------------------
 		protected virtual void CallMouseUp(Point pt, Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
-			int y = pt.Y;
-
-			if (m_rootb != null)
+			var y = pt.Y;
+			if (RootBox != null)
 			{
 				if (Parent is ScrollableControl)
+				{
 					y += ((ScrollableControl)Parent).AutoScrollPosition.Y;
-
+				}
 				// if we're dragging to create or extend a selection
 				// don't select text that is currently above or below current viewable area
 				if (y < 0)  // if mouse is above viewable area
 				{
-					m_rootb.MouseUp(pt.X, 0, rcSrcRoot, rcDstRoot);
+					RootBox.MouseUp(pt.X, 0, rcSrcRoot, rcDstRoot);
 				}
 				else if (y > Bottom)  // if mouse is below viewable area
 				{
-					m_rootb.MouseUp(pt.X, Bottom, rcSrcRoot, rcDstRoot);
+					RootBox.MouseUp(pt.X, Bottom, rcSrcRoot, rcDstRoot);
 				}
 				else  // mouse is inside viewable area
 				{
-					m_rootb.MouseUp(pt.X, pt.Y, rcSrcRoot, rcDstRoot);
+					RootBox.MouseUp(pt.X, pt.Y, rcSrcRoot, rcDstRoot);
 				}
 			}
 		}
@@ -4514,9 +3781,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			get
 			{
 				var manager = (WritingSystemManager)WritingSystemFactory;
-				if (manager == null)
-					return new CoreWritingSystemDefinition[0];
-				return manager.WritingSystemStore.AllWritingSystems.ToArray();
+				return manager == null ? new CoreWritingSystemDefinition[0] : manager.WritingSystemStore.AllWritingSystems.ToArray();
 			}
 		}
 
@@ -4529,23 +3794,23 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		public virtual void HandleKeyboardChange(IVwSelection vwsel, int wsMatch)
 		{
 			// Get the writing system factory associated with the root box.
-			if (m_rootb == null || !GotCacheOrWs)
+			if (RootBox == null || !GotCacheOrWs)
+			{
 				return; // For paranoia.
-
+			}
 			if (vwsel == null)
 			{
 				// Delay handling it until we get a selection.
-				m_wsPending = wsMatch;
+				WsPending = wsMatch;
 				return;
 			}
-			bool fRange = vwsel.IsRange;
+			var fRange = vwsel.IsRange;
 			if (fRange)
 			{
 				// Delay handling it until we get an insertion point.
-				m_wsPending = wsMatch;
+				WsPending = wsMatch;
 				return;
 			}
-
 			ITsTextProps[] vttp;
 			IVwPropertyStore[] vvps;
 			int cttp;
@@ -4553,7 +3818,9 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			SelectionHelper.GetSelectionProps(vwsel, out vttp, out vvps, out cttp);
 
 			if (cttp == 0)
+			{
 				return;
+			}
 			Debug.Assert(cttp == 1);
 
 			// If nothing changed, avoid the infinite loop that happens when we change the selection
@@ -4563,27 +3830,25 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			int var;
 			wsTmp = vttp[0].GetIntPropValues((int)FwTextPropType.ktptWs, out var);
 			if (wsTmp == wsMatch)
+			{
 				return;
-
-			ITsPropsBldr tpb = vttp[0].GetBldr();
-			tpb.SetIntPropValues((int)FwTextPropType.ktptWs,
-				(int)FwTextPropVar.ktpvDefault, wsMatch);
+			}
+			var tpb = vttp[0].GetBldr();
+			tpb.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, wsMatch);
 			vttp[0] = tpb.GetTextProps();
 			vwsel.SetSelectionProps(cttp, vttp);
-			SelectionChanged(m_rootb, m_rootb.Selection); // might NOT be vwsel any more
+			SelectionChanged(RootBox, RootBox.Selection); // might NOT be vwsel any more
 		}
 
 		/// <summary>
 		/// get the writing systems we should consider as candidates to be selected whent the user makes an
 		/// external choice of keyboard. overridden in root site to use only active ones.
 		/// </summary>
-		/// <param name="wsf"></param>
-		/// <returns></returns>
 		protected virtual int[] GetPossibleWritingSystemsToSelectByInputLanguage(ILgWritingSystemFactory wsf)
 		{
-			int cws = wsf.NumberOfWs;
-			int[] vwsTemp = new int[0];
-			using (ArrayPtr ptr = MarshalEx.ArrayToNative<int>(cws))
+			var cws = wsf.NumberOfWs;
+			var vwsTemp = new int[0];
+			using (var ptr = MarshalEx.ArrayToNative<int>(cws))
 			{
 				wsf.GetWritingSystems(ptr, cws);
 				vwsTemp = MarshalEx.NativeToArray<int>(ptr, cws);
@@ -4607,29 +3872,24 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				GetCoordRects(out rcSrcRoot, out rcDstRoot);
 				Rect rcSec;
 				bool fSplit, fEndBeforeAnchor;
-				sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary,
-							 out rcSec, out fSplit, out fEndBeforeAnchor);
+				sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary, out rcSec, out fSplit, out fEndBeforeAnchor);
 			}
 			return rcPrimary;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Updates the state of the selection (enabled/disabled).
 		/// </summary>
 		/// <param name="newWindow">The window about to receive focus</param>
-		/// ------------------------------------------------------------------------------------
 		private void UpdateSelectionEnabledState(Control newWindow)
 		{
-			m_rootb.Activate(GetNonFocusedSelectionState(newWindow));
+			RootBox.Activate(GetNonFocusedSelectionState(newWindow));
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Unless overridden, this will return a value indicating that range selections
 		/// should be hidden.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected virtual VwSelectionState GetNonFocusedSelectionState(Control windowGainingFocus)
 		{
 			// If the selection exists, disable it.  This fixes LT-1203 and LT-1488.  (At one
@@ -4642,9 +3902,8 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			// in a different view window we want to hide it (TE-3977). If user clicked on a
 			// different app the selection should be hidden. If the user clicked on a second
 			// window of our app we want to hide the selection.
-			if ((m_fIsTextBox || windowGainingFocus == null || windowGainingFocus is SimpleRootSite ||
-				ParentForm == null || !ParentForm.Contains(windowGainingFocus)) &&
-				!ShowRangeSelAfterLostFocus)
+			if ((m_fIsTextBox || windowGainingFocus == null || windowGainingFocus is SimpleRootSite
+			     || ParentForm == null || !ParentForm.Contains(windowGainingFocus)) && !ShowRangeSelAfterLostFocus)
 			{
 				return VwSelectionState.vssDisabled;
 			}
@@ -4652,7 +3911,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			return VwSelectionState.vssOutOfFocus;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// This method is designed to be used by classes whose root object may be
 		/// determined after the window's handle is created (when MakeRoot is normally
@@ -4663,13 +3921,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// be laid out, since it is possible that we have 'missed our chance'
 		/// to have this happen when the window gets its initial OnSizeChanged message.
 		/// </summary>
-		/// <param name="hvoRoot"></param>
-		/// <param name="vc"></param>
-		/// <param name="frag"></param>
-		/// <param name="styleSheet"></param>
-		/// ------------------------------------------------------------------------------------
-		public void ChangeOrMakeRoot(int hvoRoot, IVwViewConstructor vc, int frag,
-			IVwStylesheet styleSheet)
+		public void ChangeOrMakeRoot(int hvoRoot, IVwViewConstructor vc, int frag, IVwStylesheet styleSheet)
 		{
 			if (RootBox == null)
 			{
@@ -4680,7 +3932,9 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				}
 			}
 			else
-				this.RootBox.SetRootObject(hvoRoot, vc, frag, styleSheet);
+			{
+				RootBox.SetRootObject(hvoRoot, vc, frag, styleSheet);
+			}
 		}
 
 		/// <summary>
@@ -4697,73 +3951,51 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			m_fMakeRootWhenHandleIsCreated = false;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Make a selection that includes all the text.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public void SelectAll()
 		{
 			EditingHelper.SelectAll();
 		}
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Find out if this RootSite had Focus before being grabbed by some other entity (such as a Windows ComboBox)
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-
 		public bool WasFocused()
 		{
 			return g_focusRootSite.Target == this;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Some situations lead to invalidating very large rectangles. Something seems to go wrong
 		/// if they are way bigger than the client rectangle. Finding the intersection makes it more
 		/// reliable.
 		/// </summary>
-		/// <param name="rect"></param>
-		/// <param name="fErase"></param>
-		/// -----------------------------------------------------------------------------------
 		private void CallInvalidateRect(Rectangle rect, bool fErase)
 		{
 			rect.Intersect(ClientRectangle);
 			if (rect.Height <= 0 || rect.Width <= 0)
+			{
 				return; // no overlap, may not produce paint.
+			}
 			MouseMoveSuppressed = true; // until we paint and have a stable display.
 			Invalidate(rect, fErase);
-
-			//			Console.WriteLine("CallInvalidateRect: rect={0}, fErase={1}", rect, fErase);
-
-			//			InitGraphics();
-			//			Rect r = rect;
-			//			((IVwGraphicsWin32)m_graphicsManager.VwGraphics).SetClipRect(ref r);
-			//			UninitGraphics();
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Construct coord transformation rectangles. Height and width are dots per inch.
 		/// src origin is 0, dest origin is controlled by scrolling.
 		/// </summary>
-		/// <param name="rcSrcRoot"></param>
-		/// <param name="rcDstRoot"></param>
-		/// -----------------------------------------------------------------------------------
 		protected internal void GetCoordRects(out Rectangle rcSrcRoot, out Rectangle rcDstRoot)
 		{
 			m_orientationManager.GetCoordRects(out rcSrcRoot, out rcDstRoot);
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Allows RootSite to override, and still access the non-overridden ranges.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
-		protected virtual Size AdjustedScrollRange
-		{
-			get { return ScrollRange; }
-		}
+		protected virtual Size AdjustedScrollRange => ScrollRange;
 
 		/// <summary>
 		/// To make sure ScrollRange is enough.
@@ -4771,13 +4003,11 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// Add 8 to get well clear of the descenders of the last line;
 		/// about 4 is needed but we add a few more for good measure
 		/// </summary>
-		protected virtual int ScrollRangeFudgeFactor { get { return 8; } }
+		protected virtual int ScrollRangeFudgeFactor => 8;
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the scroll ranges in both directions.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		protected virtual Size ScrollRange
 		{
 			get
@@ -4787,14 +4017,12 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 
 				try
 				{
-					dysHeight = m_rootb.Height;
-					dxsWidth = m_rootb.Width;
+					dysHeight = RootBox.Height;
+					dxsWidth = RootBox.Width;
 				}
 				catch (COMException e)
 				{
-					System.Diagnostics.Debug.WriteLine(string.Format("RootSite.UpdateScrollRange()" +
-						": Unable to get height/width of rootbox. Source={0}, Method={1}, Message={2}",
-						e.Source, e.TargetSite, e.Message));
+					Debug.WriteLine($"RootSite.UpdateScrollRange(): Unable to get height/width of rootbox. Source={e.Source}, Method={e.TargetSite}, Message={e.Message}");
 					m_dxdLayoutWidth = kForceLayout; // No drawing until we get successful layout.
 					return new Size(0, 0);
 				}
@@ -4802,7 +4030,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				if (IsVertical)
 				{
 					//swap and add margins to height
-					int temp = dysHeight;
+					var temp = dysHeight;
 					dysHeight = dxsWidth;
 					dxsWidth = temp;
 					dysHeight += HorizMargin * 2;
@@ -4819,52 +4047,44 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 					GetCoordRects(out rcSrcRoot, out rcDstRoot);
 				}
 
-				Size result = new Size(0, 0);
-
-				// 32 bits should be enough for a scroll range but it may not be enough for
-				// the intermediate result scroll range * 96 or so.
-				// Review JohnT: should we do this adjustment differently if vertical?
-				result.Height = (int)(((long)dysHeight) * rcDstRoot.Height / rcSrcRoot.Height);
-
-				result.Width = (int)((long)dxsWidth * rcDstRoot.Width / rcSrcRoot.Width);
-
+				var result = new Size(0, 0)
+				{
+					// 32 bits should be enough for a scroll range but it may not be enough for
+					// the intermediate result scroll range * 96 or so.
+					// Review JohnT: should we do this adjustment differently if vertical?
+					Height = (int)((long)dysHeight * rcDstRoot.Height / rcSrcRoot.Height),
+					Width = (int)((long)dxsWidth * rcDstRoot.Width / rcSrcRoot.Width)
+				};
 				if (IsVertical)
+				{
 					result.Width += ScrollRangeFudgeFactor;
+				}
 				else
+				{
 					result.Height += ScrollRangeFudgeFactor;
-
+				}
 				return result;
 			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// True if the control is being scrolled and should have its ScrollMinSize
 		/// adjusted and its AutoScrollPosition modified. For example, an XmlBrowseViewBase
 		/// scrolls, but using a separate scroll bar.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
-		public virtual bool DoingScrolling
-		{
-			get
-			{
-				return AutoScroll;
-			}
-		}
+		public virtual bool DoingScrolling => AutoScroll;
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Update your scroll range to reflect current conditions.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		protected void UpdateScrollRange()
 		{
-			if (!DoingScrolling || m_rootb == null)
+			if (!DoingScrolling || RootBox == null)
+			{
 				return;
-
-			Size range = AdjustedScrollRange;
-
-			Point scrollpos = ScrollPosition;
+			}
+			var range = AdjustedScrollRange;
+			var scrollpos = ScrollPosition;
 			UpdateScrollRange(range.Width, -scrollpos.X, range.Height, -scrollpos.Y);
 		}
 
@@ -4875,21 +4095,14 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// scroll bar, HScroll is set false by setting ScrollMinSize. If we use it as a flag,
 		/// we will never after set a non-zero horizontal scroll min size.
 		/// </summary>
-		protected virtual bool WantHScroll
-		{
-			get { return IsVertical; }
-		}
+		protected virtual bool WantHScroll => IsVertical;
 
 		/// <summary>
 		/// Indicates whether we want a vertical scroll bar. For example, in a slice, we
 		/// do not, even if we are autoscrolling to produce a horizontal one when needed.
 		/// </summary>
-		protected virtual bool WantVScroll
-		{
-			get { return true; }
-		}
+		protected virtual bool WantVScroll => true;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Update the scroll range with the new range and position.
 		/// </summary>
@@ -4899,13 +4112,11 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// <param name="dydPos">The new vertical scroll position</param>
 		/// <returns><c>true</c> if the scroll position had to be changed because it ended up
 		/// below the scroll range.</returns>
-		/// ------------------------------------------------------------------------------------
 		protected bool UpdateScrollRange(int dxdRange, int dxdPos, int dydRange, int dydPos)
 		{
-			bool fRet = false;
-			int dydWindHeight = ClientHeight;
-			int dxdWindWidth = ClientRectangle.Width;
-
+			var fRet = false;
+			var dydWindHeight = ClientHeight;
+			var dxdWindWidth = ClientRectangle.Width;
 			if (WantVScroll)
 			{
 				// If it is now too big, adjust it. Also, this means we must be in the
@@ -4924,9 +4135,8 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 					InvalidateForLazyFix();
 					fRet = true;
 				}
-
-				bool fOldSizeChangedSuppression = SizeChangedSuppression;
-				bool fOldInLayout = m_fInLayout;
+				var fOldSizeChangedSuppression = SizeChangedSuppression;
+				var fOldInLayout = LayoutInProgress;
 				try
 				{
 					// If setting the scroll range causes OnSizeChanged, which it does
@@ -4941,7 +4151,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 					// In any case it is a waste: we change the scroll position and range as a result of
 					// laying out our contents; changing the scroll range and position do not affect
 					// our contents.
-					m_fInLayout = true;
+					LayoutInProgress = true;
 					// Make the actual adjustment. Note we need to reset the page, because
 					// Windows does not allow nPage to be more than the scroll range, so if we
 					// ever (even temporarily) compute a smaller scroll range, something has to
@@ -4968,7 +4178,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 					// We have to remember the old value because setting the autoscrollminsize
 					// in a root site slave can produce a recursive call as our own size is changed.
 					SizeChangedSuppression = fOldSizeChangedSuppression;
-					m_fInLayout = fOldInLayout;
+					LayoutInProgress = fOldInLayout;
 				}
 			}
 
@@ -5005,7 +4215,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			return fRet;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Lay out your root box. If nothing significant has changed since the last layout, answer
 		/// false; if it has, return true. Assumes that m_graphicsManager.VwGraphics is in a
@@ -5014,22 +4223,21 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// <remarks>We assume that the VwGraphics object has already been setup for us
 		/// </remarks>
 		/// <returns>true if significant change since last layout, otherwise false</returns>
-		/// -----------------------------------------------------------------------------------
 		protected virtual bool DoLayout()
 		{
 			if (DesignMode && !AllowPaintingInDesigner)
+			{
 				return false;
-
+			}
 			Debug.Assert(m_graphicsManager.VwGraphics != null);
 
-			if (m_rootb == null || Height == 0)
+			if (RootBox == null || Height == 0)
 			{
 				// Make sure we don't think we have a scroll range if we have no data!
 				UpdateScrollRange();
 				return false; // Nothing to do.
 			}
-
-			int dxdAvailWidth = GetAvailWidth(m_rootb);
+			var dxdAvailWidth = GetAvailWidth(RootBox);
 			if (dxdAvailWidth != m_dxdLayoutWidth)
 			{
 				m_dxdLayoutWidth = dxdAvailWidth;
@@ -5037,19 +4245,23 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				{
 					// No drawing until we get reasonable size.
 					if (!OkayToLayOutAtCurrentWidth)
+					{
 						m_dxdLayoutWidth = kForceLayout; // REVIEW (TomB): Not really sure why we have to do this.
+					}
 					return true;
 				}
 				SetupVc();
 
-				m_fInLayout = true;
+				LayoutInProgress = true;
 				try
 				{
 					using (new SuspendDrawing(this))
-						m_rootb.Layout(m_graphicsManager.VwGraphics, dxdAvailWidth);
+					{
+						RootBox.Layout(m_graphicsManager.VwGraphics, dxdAvailWidth);
+					}
 					MoveChildWindows();
 				}
-				catch (System.Runtime.InteropServices.ExternalException objException)
+				catch (ExternalException objException)
 				{
 					// In one case, a user in India got this failure whenever starting Flex. He was
 					// using a Tibetan font, but after reformatting his drive and reinstalling FW
@@ -5059,7 +4271,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				}
 				finally
 				{
-					m_fInLayout = false;
+					LayoutInProgress = false;
 				}
 			}
 
@@ -5075,11 +4287,13 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		private void SetupVc()
 		{
 			if (Publisher == null)
+			{
 				return;
+			}
 			int hvo, frag;
 			IVwViewConstructor vc;
 			IVwStylesheet ss;
-			m_rootb.GetRootObject(out hvo, out vc, out frag, out ss);
+			RootBox.GetRootObject(out hvo, out vc, out frag, out ss);
 			if (vc is VwBaseVc)
 			{
 				// This really only needs to be done once but I can't find another reliable way to do it.
@@ -5099,7 +4313,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		{
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// This function returns a selection that includes the entire LinkedFile link at the current
 		/// insertion point. It doesn't actually make the selection active.
@@ -5111,22 +4324,15 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// If ppt is not NULL, it will look for an LinkedFiles Link at that point. Otherwise,
 		/// the current insertion point will be used.
 		/// </summary>
-		/// <param name="fFoundLinkStyle"></param>
-		/// <param name="vwselParam"></param>
-		/// <param name="strbFile"></param>
-		/// <param name="pt"></param>
-		/// <returns></returns>
-		/// -----------------------------------------------------------------------------------
-		protected bool GetExternalLinkSel(out bool fFoundLinkStyle, out IVwSelection vwselParam,
-			out string strbFile, Point pt)
+		protected bool GetExternalLinkSel(out bool fFoundLinkStyle, out IVwSelection vwselParam, out string strbFile, Point pt)
 		{
-			Debug.WriteLine("WARNING: RootSite.GetExternalLinkSel() hasn't been tested yet!");
 			fFoundLinkStyle = false;
 			vwselParam = null;
 			strbFile = null;
-
-			if (m_rootb == null)
+			if (RootBox == null)
+			{
 				return false;
+			}
 			IVwSelection vwsel;
 			if (!pt.IsEmpty)
 			{
@@ -5136,49 +4342,52 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				{
 					GetCoordRects(out rcSrcRoot, out rcDstRoot);
 				}
-				vwsel = m_rootb.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, false);
+				vwsel = RootBox.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, false);
 			}
 			else
 			{
-				vwsel = m_rootb.Selection;
+				vwsel = RootBox.Selection;
 			}
 			if (vwsel == null)
+			{
 				return false;
-
+			}
 			ITsString tss;
 			int ich;
 			bool fAssocPrev;
-			//HVO hvoObj;
 			int hvoObj;
-			//PropTag tag;
 			int propTag;
 			int ws;
-			int irun;
-			int crun;
-			int irunMin;
-			int irunLim;
 			TsRunInfo tri;
 			ITsTextProps ttp;
-			string sbstr;
-			string sbstrMain = "";
 			vwsel.TextSelInfo(false, out tss, out ich, out fAssocPrev, out hvoObj, out propTag, out ws);
+			// The following test is covering a bug in TextSelInfo until JohnT fixes it. If you right+click
+			// to the right of a tags field (with one tag), TextSelInfo returns a qtss with a null
+			// string and returns ich = length of the entire string. As a result get_RunAt fails
+			// below because it is asking for a run at a non-existent location.
 			if (tss == null)
-				return false; // No string to check.
-							  // The following test is covering a bug in TextSelInfo until JohnT fixes it. If you right+click
-							  // to the right of a tags field (with one tag), TextSelInfo returns a qtss with a null
-							  // string and returns ich = length of the entire string. As a result get_RunAt fails
-							  // below because it is asking for a run at a non-existent location.
-			int cch = tss.Length;
+			{
+				return false;
+			}
+			var cch = tss.Length;
 			if (ich >= cch)
+			{
 				return false; // No string to check.
-			crun = tss.RunCount;
-			irun = tss.get_RunAt(ich);
+			}
+			string sbstr;
+			var sbstrMain = string.Empty;
+			var crun = tss.RunCount;
+			var irun = tss.get_RunAt(ich);
+			int irunMin;
+			int irunLim;
 			for (irunMin = irun; irunMin >= 0; irunMin--)
 			{
 				ttp = tss.FetchRunInfo(irunMin, out tri);
 				sbstr = ttp.GetStrPropValue((int)FwTextPropType.ktptObjData);
 				if (sbstr.Length == 0 || sbstr[0] != (byte)FwObjDataTypes.kodtExternalPathName)
+				{
 					break;
+				}
 				if (!fFoundLinkStyle)
 				{
 					fFoundLinkStyle = true;
@@ -5197,14 +4406,17 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			// If fFoundLinkStyle is false, there's no point in looking at
 			// following runs.
 			if (!fFoundLinkStyle)
+			{
 				return true;
-
+			}
 			for (irunLim = irun + 1; irunLim < crun; irunLim++)
 			{
 				ttp = tss.FetchRunInfo(irunLim, out tri);
 				sbstr = ttp.GetStrPropValue((int)FwTextPropType.ktptObjData);
 				if (sbstr.Length == 0 || sbstr[0] != (byte)FwObjDataTypes.kodtExternalPathName)
+				{
 					break;
+				}
 				if (!sbstr.Equals(sbstrMain))
 				{
 					// This LinkedFiles Link is different from the other one, so
@@ -5215,14 +4427,12 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 
 			// We can now calculate the character range of this TsString that has
 			// the LinkedFiles Link style applied to it.
-			int ichMin;
-			int ichLim;
-			ichMin = tss.get_MinOfRun(irunMin);
-			ichLim = tss.get_LimOfRun(irunLim - 1);
+			var ichMin = tss.get_MinOfRun(irunMin);
+			var ichLim = tss.get_LimOfRun(irunLim - 1);
 
 			MessageBox.Show("This code needs work! I don't think that it works like it should!");
 
-			int cvsli = vwsel.CLevels(false);
+			var cvsli = vwsel.CLevels(false);
 			cvsli--; // CLevels includes the string property itself, but AllTextSelInfo doesn't need it.
 
 			int ihvoRoot;
@@ -5231,28 +4441,23 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			int ichAnchor;
 			int ichEnd;
 			int ihvoEnd;
-			SelLevInfo[] rgvsli = SelLevInfo.AllTextSelInfo(vwsel, cvsli,
-				out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd,
-				out ws, out fAssocPrev, out ihvoEnd, out ttp);
+			var rgvsli = SelLevInfo.AllTextSelInfo(vwsel, cvsli, out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor,
+				out ichEnd, out ws, out fAssocPrev, out ihvoEnd, out ttp);
 
 			// This does not actually make the selection active.
-			m_rootb.MakeTextSelection(ihvoRoot, cvsli, rgvsli, tagTextProp,
-				cpropPrevious, ichMin, ichLim, ws, fAssocPrev, ihvoEnd, ttp, false);
+			RootBox.MakeTextSelection(ihvoRoot, cvsli, rgvsli, tagTextProp, cpropPrevious, ichMin, ichLim, ws, fAssocPrev, ihvoEnd, ttp, false);
 
 			strbFile = sbstrMain.Substring(1);
 			return true;
 		}
 
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="vss"></param>
-		/// -----------------------------------------------------------------------------------
+		/// <summary />
 		protected virtual void Activate(VwSelectionState vss)
 		{
-			if (m_rootb != null && AllowDisplaySelection)
-				m_rootb.Activate(vss);
+			if (RootBox != null && AllowDisplaySelection)
+			{
+				RootBox.Activate(vss);
+			}
 		}
 
 		/// <summary>
@@ -5260,13 +4465,8 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// By default, we don't do this when ReadOnlyView is set to true.
 		/// So, ReadOnlyView subclasses should override when they want Selections to be displayed.
 		/// </summary>
-		protected virtual bool AllowDisplaySelection
-		{
-			get { return IsEditable; }
-		}
+		protected virtual bool AllowDisplaySelection => IsEditable;
 
-
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Adjust a point to view coords from device coords. This is the translation from a
 		/// point obtained from a windows message like WM_LBUTTONDOWN to a point that can be
@@ -5274,41 +4474,28 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// by the source and destination rectangles passed to the mouse routines. It is
 		/// retained for possible future use.
 		/// </summary>
-		/// <param name="pt"></param>
-		/// -----------------------------------------------------------------------------------
 		protected Point PixelToView(Point pt)
 		{
 			return m_orientationManager.RotatePointPaintToDst(pt);
 		}
 
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Returns the ShiftStatus that shows if Ctrl and/or Shift keys were pressed
-		/// </summary>
-		/// <returns>The shift status</returns>
-		/// -----------------------------------------------------------------------------------
-		protected VwShiftStatus GetShiftStatus()
-		{
-			return EditingHelper.GetShiftStatus(ModifierKeys);
-		}
-
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// An error has occurred during drawing, and the component in which it occurred should
 		/// have recorded a system error information object describing the problem
 		/// </summary>
-		/// <param name="e"></param>
-		/// -----------------------------------------------------------------------------------
 		public static void ReportDrawErrMsg(Exception e)
 		{
 			if (e == null)
-				return;
-
-			// Look through the list to see if we've already given this message before.
-			for (int i = 0; i < s_vstrDrawErrMsgs.Count; i++)
 			{
-				if ((string)s_vstrDrawErrMsgs[i] == e.Message)
+				return;
+			}
+			// Look through the list to see if we've already given this message before.
+			foreach (var msg in s_vstrDrawErrMsgs)
+			{
+				if (msg == e.Message)
+				{
 					return;
+				}
 			}
 
 			s_vstrDrawErrMsgs.Add(e.Message);
@@ -5316,52 +4503,47 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			throw new ContinuableErrorException("Drawing Error", e);
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Add or remove the tag in the given overlay of the current string.
 		/// </summary>
 		/// <param name="fApplyTag">True to add the tag, false to remove it</param>
 		/// <param name="pvo">Overlay</param>
 		/// <param name="itag">Index of tag</param>
-		/// -----------------------------------------------------------------------------------
 		public void ModifyOverlay(bool fApplyTag, IVwOverlay pvo, int itag)
 		{
-			if (m_rootb == null)
-				return;
-
-			Debug.WriteLine("WARNING: RootSite.ModifyOverlay() isn't tested yet");
-			int hvo;
-			uint clrFore;
-			uint clrBack;
-			uint clrUnder;
-			int unt;
-			bool fHidden;
-			string uid;
-			using (ArrayPtr arrayPtr = MarshalEx.StringToNative((int)VwConst1.kcchGuidRepLength + 1, true))
+			if (RootBox == null)
 			{
-				pvo.GetDbTagInfo(itag, out hvo, out clrFore, out clrBack, out clrUnder, out unt,
-					out fHidden, arrayPtr);
-				uid = MarshalEx.NativeToString(arrayPtr,
-					(int)VwConst1.kcchGuidRepLength, false);
+				return;
 			}
-
+			Debug.WriteLine("WARNING: RootSite.ModifyOverlay() isn't tested yet");
+			string uid;
+			using (var arrayPtr = MarshalEx.StringToNative((int)VwConst1.kcchGuidRepLength + 1, true))
+			{
+				int hvo;
+				uint clrFore;
+				uint clrBack;
+				uint clrUnder;
+				int unt;
+				bool fHidden;
+				pvo.GetDbTagInfo(itag, out hvo, out clrFore, out clrBack, out clrUnder, out unt, out fHidden, arrayPtr);
+				uid = MarshalEx.NativeToString(arrayPtr, (int)VwConst1.kcchGuidRepLength, false);
+			}
 			IVwSelection vwsel;
 			ITsTextProps[] vttp;
 			IVwPropertyStore[] vvps;
 			if (EditingHelper.GetCharacterProps(out vwsel, out vttp, out vvps))
 			{
-				int cttp = vttp.Length;
-				for (int ittp = 0; ittp < cttp; ittp++)
+				var cttp = vttp.Length;
+				for (var ittp = 0; ittp < cttp; ittp++)
 				{
-					string strGuid = vttp[ittp].GetStrPropValue(
-						(int)FwTextPropType.ktptTags);
-
+					var strGuid = vttp[ittp].GetStrPropValue((int)FwTextPropType.ktptTags);
 					// REVIEW (EberhardB): I'm not sure if this works
-					int cGuids = strGuid.Length / Marshal.SizeOf(typeof(Guid));
-					List<string> guids = new List<string>();
-					for (int i = 0; i < cGuids; i++)
+					var cGuids = strGuid.Length / Marshal.SizeOf(typeof(Guid));
+					var guids = new List<string>();
+					for (var i = 0; i < cGuids; i++)
+					{
 						guids.Add(strGuid.Substring(i, Marshal.SizeOf(typeof(Guid))));
-
+					}
 					if (fApplyTag)
 					{
 						// Add the tag if it does not exist
@@ -5372,78 +4554,27 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 							vttp[ittp] = null;
 							continue;
 						}
-						else
-						{
-							// We need to add the tag to the textprop.
-							guids.Add(uid);
-							guids.Sort();
-						}
+						// We need to add the tag to the textprop.
+						guids.Add(uid);
+						guids.Sort();
 					}
 					else
 					{
 						// Remove the tag from the textprop.
 						guids.Remove(uid);
 					}
-
-					ITsPropsBldr tpb = vttp[ittp].GetBldr();
-					tpb.SetStrPropValue((int)FwTextPropType.ktptTags,
-						guids.ToString());
-
+					var tpb = vttp[ittp].GetBldr();
+					tpb.SetStrPropValue((int)FwTextPropType.ktptTags, guids.ToString());
 					vttp[ittp] = tpb.GetTextProps();
 				}
 				vwsel.SetSelectionProps(cttp, vttp);
-
-				/*
-				 * ENHANCE (EberhardB): Implement this if we need it. It probably should be
-				 * implemented in a derived class (view class for DataNotebook?)
-				// Update the RnGenericRec_PhraseTags table as necessary.
-				// (Yes, this is special case code!)
-
-				AfDbInfo * pdbi = NULL;
-				AfMainWnd * pamw = m_pwndSubclass->MainWindow();
-				if (pamw)
-				{
-					AfMdiMainWnd * pammw = dynamic_cast<AfMdiMainWnd *>(pamw);
-					AfLpInfo * plpi = NULL;
-					if (pammw)
-					{
-						plpi = pammw->GetLpInfo();
-						if (plpi)
-							pdbi = plpi->GetDbInfo();
-					}
-				}
-				if (pdbi)
-				{
-					int clevEnd;
-					int clevAnchor;
-					HVO hvoEnd;
-					HVO hvoAnchor;
-					PropTag tagEnd;
-					PropTag tagAnchor;
-					int ihvo;
-					int cpropPrev;
-					IVwPropertyStorePtr qvps;
-					CheckHr(qvwsel->CLevels(true, &clevEnd));
-					Assert(clevEnd >= 1);
-					CheckHr(qvwsel->CLevels(false, &clevAnchor));
-					Assert(clevAnchor >= 1);
-					CheckHr(qvwsel->PropInfo(true, clevEnd - 1, &hvoEnd, &tagEnd, &ihvo,
-						&cpropPrev, &qvps));
-					CheckHr(qvwsel->PropInfo(false, clevAnchor - 1, &hvoAnchor, &tagAnchor, &ihvo,
-						&cpropPrev, &qvps));
-
-					IOleDbEncapPtr qode;
-					pdbi->GetDbAccess(&qode);
-				DbStringCrawler::UpdatePhraseTagsTable(kflidRnGenericRec_PhraseTags, fApplyTag, qode,
-									 hvo, hvoEnd, hvoAnchor);
-				}
-				*/
 			}
 			if (FindForm() == Form.ActiveForm)
+			{
 				Focus();
+			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Checks if selection is visible. For a range selection we check the end of the
 		/// selection, for an IP the entire selection must be visible.
@@ -5452,9 +4583,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// This version doesn't test the secondary part of the selection if the combined
 		/// primary and secondary selection is higher or wider then the ClientRectangle.
 		/// </remarks>
-		/// <param name="sel">The selection</param>
-		/// <returns>Returns true if selection is visible</returns>
-		/// -----------------------------------------------------------------------------------
 		public bool IsSelectionVisible(IVwSelection sel)
 		{
 			return IsSelectionVisible(sel, false);
@@ -5466,21 +4594,19 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// </summary>
 		public bool IsSelectionVisible(IVwSelection sel, bool fWantOneLineSpace)
 		{
-			if (m_rootb == null)
+			if (RootBox == null)
+			{
 				return false; // For paranoia.
-			IVwSelection vwsel = (sel == null ? SelectionToMakeVisible : sel);
-			if (vwsel == null)
-				return false; // Nothing we can test.
-			return IsSelectionVisible(vwsel, fWantOneLineSpace, DefaultWantBothEnds(vwsel));
+			}
+			var vwsel = sel ?? SelectionToMakeVisible;
+			return vwsel != null && IsSelectionVisible(vwsel, fWantOneLineSpace, DefaultWantBothEnds(vwsel));
 		}
 
-		private bool DefaultWantBothEnds(IVwSelection vwsel)
+		private static bool DefaultWantBothEnds(IVwSelection vwsel)
 		{
-			if (vwsel.SelType == VwSelType.kstPicture)
-				return true; // We'd like to see all of a picture.
-			return !vwsel.IsRange; // by default we want an IP but not a range wholly visible
+			return vwsel.SelType == VwSelType.kstPicture || !vwsel.IsRange;
 		}
-		/// -----------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Checks if selection is visible, according to the parameters.
 		/// </summary>
@@ -5496,13 +4622,11 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// <param name="fWantBothEnds">true if both ends must be visible; otherwise, it's
 		/// good enough if the end is.</param>
 		/// <returns>Returns true if selection is visible</returns>
-		/// -----------------------------------------------------------------------------------
 		public bool IsSelectionVisible(IVwSelection vwsel, bool fWantOneLineSpace, bool fWantBothEnds)
 		{
 			Rectangle rcPrimary;
 			bool fEndBeforeAnchor;
 			int ydTop;
-
 			// make sure we have a m_graphicsManager.VwGraphics
 			using (new HoldGraphics(this))
 			{
@@ -5514,8 +4638,8 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				// to consider horizontal.
 				// In this case, rcPrimary's top is the distance from the right of the ClientRect to the
 				// right of the selection, and the height of rcPrimary is a distance further left.
-				int right = rcPrimary.Top; // distance to left of right of window
-				int left = right + rcPrimary.Height;
+				var right = rcPrimary.Top; // distance to left of right of window
+				var left = right + rcPrimary.Height;
 				if (fWantOneLineSpace)
 				{
 					right -= LineHeight;
@@ -5523,22 +4647,18 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				}
 				return right >= 0 && left <= ClientRectangle.Width;
 			}
-
-			ydTop = -ScrollPosition.Y; // Where the window thinks it is now.
-									   // Adjust for that and also the height of the (optional) header.
+			// Where the window thinks it is now.
+			ydTop = -ScrollPosition.Y;
+			// Adjust for that and also the height of the (optional) header.
 			rcPrimary.Offset(0, ydTop - m_dyHeader); // Was in drawing coords, adjusted by top.
-
 			// OK, we want rcIdealPrimary to be visible.
-			int ydBottom = ydTop + ClientHeight - m_dyHeader;
-
+			var ydBottom = ydTop + ClientHeight - m_dyHeader;
 			if (fWantOneLineSpace)
 			{
 				ydTop += LineHeight;
 				ydBottom -= LineHeight;
 			}
-
-			bool isVisible = false;
-
+			var isVisible = false;
 			// Does the selection rectangle overlap the screen one?
 			// Note that for insertion points and pictures we want the selection to be
 			// entirely visible.
@@ -5549,29 +4669,29 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			}
 			else
 			{
-				if (fEndBeforeAnchor)
-					isVisible = (rcPrimary.Top > ydTop && rcPrimary.Top < ydBottom - LineHeight);
-				else
-					isVisible = (rcPrimary.Bottom > ydTop + LineHeight && rcPrimary.Bottom < ydBottom);
+				isVisible = fEndBeforeAnchor
+					? rcPrimary.Top > ydTop && rcPrimary.Top < ydBottom - LineHeight
+					: rcPrimary.Bottom > ydTop + LineHeight && rcPrimary.Bottom < ydBottom;
 			}
-
 			// If not visible vertically, we don't care about horizontally.
 			if (!isVisible)
+			{
 				return false;
+			}
 			// If not scrolling horizontally, vertically is good enough.
 			if (!DoAutoHScroll)
+			{
 				return isVisible;
-			int ydLeft = -ScrollPosition.X + HorizMargin;
-			int ydRight = ydLeft + ClientRectangle.Width - (HorizMargin * 2);
+			}
+			var ydLeft = -ScrollPosition.X + HorizMargin;
+			var ydRight = ydLeft + ClientRectangle.Width - (HorizMargin * 2);
 			return rcPrimary.Left >= ydLeft && rcPrimary.Right <= ydRight;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Make sure the graphics object has a DC. If it already has, increment a count,
 		/// so we know when to really free the DC.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		internal void InitGraphics()
 		{
 			// EberhardB: we used to check for HandleCreated, but if we do this it is
@@ -5584,22 +4704,20 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			// handle was disposed of, thus causing a crash when CreateGraphics() was called.
 			// I (RandyR) added a call to DestroyHandle() very early on in the Dispose method,
 			// so that should take care of re-entrant events.
-			if (DesignMode && !AllowPaintingInDesigner) // || IsDisposed) //  || !IsHandleCreated
+			if (DesignMode && !AllowPaintingInDesigner)
+			{
 				return;
-
+			}
 			lock (m_graphicsManager)
 			{
 				m_graphicsManager.Init(Zoom);
-				Dpi = new Point(m_graphicsManager.VwGraphics.XUnitsPerInch,
-					m_graphicsManager.VwGraphics.YUnitsPerInch);
+				Dpi = new Point(m_graphicsManager.VwGraphics.XUnitsPerInch, m_graphicsManager.VwGraphics.YUnitsPerInch);
 			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Uninitialize the graphics object by releasing the DC.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		internal void UninitGraphics()
 		{
 			lock (m_graphicsManager)
@@ -5610,48 +4728,27 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		#endregion // Other non-virtual methods
 
 		#region static methods
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Performs the same coordinate transformation as C++ UtilRect rcSrc.MapXTo(x, rcDst).
 		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="rcSrc"></param>
-		/// <param name="rcDst"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		public static int MapXTo(int x, Rectangle rcSrc, Rectangle rcDst)
 		{
-			int dxs = rcSrc.Width;
+			var dxs = rcSrc.Width;
 			Debug.Assert(dxs > 0);
-
-			int dxd = rcDst.Width;
-
-			if (dxs == dxd)
-				return x + rcDst.Left - rcSrc.Left;
-
-			return rcDst.Left + (x - rcSrc.Left) * dxd / dxs;
+			var dxd = rcDst.Width;
+			return dxs == dxd ? x + rcDst.Left - rcSrc.Left : rcDst.Left + (x - rcSrc.Left) * dxd / dxs;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Performs the same coordinate transformation as C++ UtilRect rcSrc.MapYTo(y, rcDst).
 		/// </summary>
-		/// <param name="y"></param>
-		/// <param name="rcSrc"></param>
-		/// <param name="rcDst"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		public static int MapYTo(int y, Rectangle rcSrc, Rectangle rcDst)
 		{
-			int dys = rcSrc.Height;
+			var dys = rcSrc.Height;
 			Debug.Assert(dys > 0);
-
-			int dyd = rcDst.Height;
-
-			if (dys == dyd)
-				return y + rcDst.Top - rcSrc.Top;
-
-			return rcDst.Top + (y - rcSrc.Top) * dyd / dys;
+			var dyd = rcDst.Height;
+			return dys == dyd ? y + rcDst.Top - rcSrc.Top : rcDst.Top + (y - rcSrc.Top) * dyd / dys;
 		}
 
 		/// <summary>
@@ -5673,57 +4770,39 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// <returns>The best writing system for <paramref name="inputMethod"/>.</returns>
 		/// <remarks>This method replaces IWritingSystemRepository.GetWsForInputLanguage and
 		/// should preferably be used.</remarks>
-		internal static CoreWritingSystemDefinition GetWSForInputMethod(IKeyboardDefinition inputMethod,
-			CoreWritingSystemDefinition wsCurrent, CoreWritingSystemDefinition[] candidates)
+		internal static CoreWritingSystemDefinition GetWSForInputMethod(IKeyboardDefinition inputMethod, CoreWritingSystemDefinition wsCurrent, CoreWritingSystemDefinition[] candidates)
 		{
 			if (inputMethod == null)
-				throw new ArgumentNullException("inputMethod");
-
+			{
+				throw new ArgumentNullException(nameof(inputMethod));
+			}
 			// See if the default is suitable.
-			if (wsCurrent != null && inputMethod.Equals(wsCurrent.LocalKeyboard))
-				return wsCurrent;
-
-			return candidates.FirstOrDefault(ws => inputMethod.Equals(ws.LocalKeyboard)) ?? wsCurrent;
+			return wsCurrent != null && inputMethod.Equals(wsCurrent.LocalKeyboard) ? wsCurrent
+				: candidates.FirstOrDefault(ws => inputMethod.Equals(ws.LocalKeyboard)) ?? wsCurrent;
 		}
 
 		#endregion
 
 		#region implementation of IReceiveSequentialMessages
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public MessageSequencer Sequencer
-		{
-			get
-			{
-				return m_messageSequencer;
-			}
-		}
+		/// <summary />
+		public MessageSequencer Sequencer { get; private set; }
 
 		//		LRESULT LresultFromObject(
 		//			REFIID riid,
 		//			WPARAM wParam,
 		//			LPUNKNOWN pAcc
-		//			);
-		/// ------------------------------------------------------------------------------------
+		//
 		/// <summary>
 		/// Entry point we are required to call in response to WM_GETOBJECT
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[DllImport("oleacc.DLL", EntryPoint = "LresultFromObject", SetLastError = true,
-			 CharSet = CharSet.Unicode)]
-		public static extern IntPtr LresultFromObject(ref Guid riid, IntPtr wParam,
-			[MarshalAs(UnmanagedType.Interface)] object pAcc);
+		[DllImport("oleacc.DLL", EntryPoint = "LresultFromObject", SetLastError = true, CharSet = CharSet.Unicode)]
+		public static extern IntPtr LresultFromObject(ref Guid riid, IntPtr wParam, [MarshalAs(UnmanagedType.Interface)] object pAcc);
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Processes Windows messages.
 		/// </summary>
 		/// <param name="msg">The Windows Message to process.</param>
-		/// ------------------------------------------------------------------------------------
 		public virtual void OriginalWndProc(ref Message msg)
 		{
 			switch (msg.Msg)
@@ -5731,19 +4810,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				case 61: // WM_GETOBJECT
 					if (!Platform.IsMono)
 					{
-						// Disable use of UIAutomationProvider.dll on Linux
-						// FWR-2874, FWR-3045: This code was commented out to prevent a crash
-						// that can happen when using the Windows 7 On-Screen Keyboard.
-						//if (msg.LParam.ToInt32() == AutomationInteropProvider.RootObjectId)
-						//{
-						//    msg.Result = AutomationInteropProvider.ReturnRawElementProvider(
-						//            this.Handle, msg.WParam, msg.LParam,
-						//            UIAutomationServerProviderFactory());
-						//    return;
-						//}
-
-						object obj = AccessibleRootObject;
-						//IAccessible acc = (IAccessible)obj;
+						var obj = AccessibleRootObject;
 						if (obj == null)
 						{
 							// If for some reason the root site isn't sufficiently initialized
@@ -5753,10 +4820,9 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 						}
 						else
 						{
-							Guid guidAcc = Marshal.GenerateGuidForType(typeof(IAccessible));
+							var guidAcc = Marshal.GenerateGuidForType(typeof(IAccessible));
 							msg.Result = LresultFromObject(ref guidAcc, msg.WParam, obj);
 						}
-
 						return;
 					}
 					break;
@@ -5770,7 +4836,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 					}
 				case (int)Win32.WinMsgs.WM_SETFOCUS:
 					OnSetFocus(msg);
-
 					if (Platform.IsMono)
 					{
 						// In Linux+Mono, if you .Focus() a SimpleRootSite, checking .Focused reports false unless
@@ -5780,14 +4845,12 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 						// Affects six unit tests in FwCoreDlgsTests FwFindReplaceDlgTests: eg ApplyStyle_ToEmptyTextBox.
 						//
 						// Intercepting WM_SETFOCUS in Windows relates to focus switching with respect to Keyman.
-
 						base.WndProc(ref msg);
 					}
 					return;
 				case (int)Win32.WinMsgs.WM_KILLFOCUS:
 					base.WndProc(ref msg);
-					OnKillFocus(Control.FromHandle(msg.WParam),
-						SIL.FieldWorks.Common.FwUtils.FwUtils.IsChildWindowOfForm(ParentForm, msg.WParam));
+					OnKillFocus(Control.FromHandle(msg.WParam), FwUtils.FwUtils.IsChildWindowOfForm(ParentForm, msg.WParam));
 					return;
 			}
 			base.WndProc(ref msg);
@@ -5797,7 +4860,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// Required by interface, but not used, because we don't user the MessageSequencer
 		/// to sequence OnPaint calls.
 		/// </summary>
-		/// <param name="e"></param>
 		public void OriginalOnPaint(PaintEventArgs e)
 		{
 			Debug.Assert(false);
@@ -5814,7 +4876,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 #if RANDYTODO
 			// TODO: parent is really IFwMainWnd, but as of this writing, that interface
 			// TODO: isn't available in this assembly, so use Form until
-			// TODO: a better solution for IFwMainWnd is found and caller can use the inerface directly.
+			// TODO: a better solution for IFwMainWnd is found and caller can use the interface directly.
 #endif
 				if (parent is Form)
 				{
@@ -5831,7 +4893,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// EndSequentialBlock must be called without fail (use try...finally) at the end
 		/// of the block that needs protection.
 		/// </summary>
-		/// <returns></returns>
 		public void BeginSequentialBlock()
 		{
 #if RANDYTODO
@@ -5887,7 +4948,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		#endregion
 
 		#region IMessageFilter Members
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// This is a major kludge to prevent a spurious WM_KEYUP for VK_CONTROL from
 		/// interrupting a mouse click.
@@ -5901,7 +4962,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// true to filter the message and stop it from being dispatched; false to allow the
 		/// message to continue to the next filter or control.
 		/// </returns>
-		/// ------------------------------------------------------------------------------------
 		public bool PreFilterMessage(ref Message m)
 		{
 			switch (m.Msg)
@@ -5986,7 +5046,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 
 		#endregion
 
-
 		private void AboutToFollowLink(object newValue)
 		{
 			IsFollowLinkMsgPending = true;
@@ -6015,124 +5074,167 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		{
 			return EditingHelper.BestStyleNameChanged(newValue);
 		}
-	}
-	#endregion
 
-	#region SuspendDrawing class
-	/// ------------------------------------------------------------------------------------
-	/// <summary>
-	/// Suspends drawing the parent object
-	/// </summary>
-	/// <example>
-	/// REQUIRED usage:
-	/// using(new SuspendDrawing(Handle)) // this sends the WM_SETREDRAW message to the window
-	/// {
-	///		doStuff();
-	/// } // this resumes drawing the parent object
-	/// </example>
-	/// ------------------------------------------------------------------------------------
-	public class SuspendDrawing : IDisposable
-	{
-		private IRootSite m_parent;
-
-		/// --------------------------------------------------------------------------------
-		/// <summary>
-		/// Suspend drawing of the parent.
-		/// </summary>
-		/// <param name="parent">Containing rootsite</param>
-		/// --------------------------------------------------------------------------------
-		public SuspendDrawing(IRootSite parent)
+		// NOTE: we implement the IWIndowsLanguageProfileSink interface in a private class
+		// so that we don't introduce an otherwise unnecessary dependency on
+		// PalasoUIWindowsForms which would require to add a reference to all projects that
+		// use a SimpleRootSite.
+		private sealed class WindowsLanguageProfileSink : IWindowsLanguageProfileSink
 		{
-			m_parent = parent;
-			m_parent.AllowPainting = false;
-		}
+			private SimpleRootSite Parent { get; set; }
 
-		#region IDisposable & Co. implementation
-		// Region last reviewed: never
-
-		/// <summary>
-		/// True, if the object has been disposed.
-		/// </summary>
-		private bool m_isDisposed;
-
-		/// <summary>
-		/// See if the object has been disposed.
-		/// </summary>
-		public bool IsDisposed
-		{
-			get { return m_isDisposed; }
-		}
-
-		/// <summary>
-		/// Finalizer, in case client doesn't dispose it.
-		/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
-		/// </summary>
-		/// <remarks>
-		/// In case some clients forget to dispose it directly.
-		/// </remarks>
-		~SuspendDrawing()
-		{
-			Dispose(false);
-			// The base class finalizer is called automatically.
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <remarks>Must not be virtual.</remarks>
-		public void Dispose()
-		{
-			Dispose(true);
-			// This object will be cleaned up by the Dispose method.
-			// Therefore, you should call GC.SupressFinalize to
-			// take this object off the finalization queue
-			// and prevent finalization code for this object
-			// from executing a second time.
-			GC.SuppressFinalize(this);
-		}
-
-		/// <summary>
-		/// Executes in two distinct scenarios.
-		///
-		/// 1. If disposing is true, the method has been called directly
-		/// or indirectly by a user's code via the Dispose method.
-		/// Both managed and unmanaged resources can be disposed.
-		///
-		/// 2. If disposing is false, the method has been called by the
-		/// runtime from inside the finalizer and you should not reference (access)
-		/// other managed objects, as they already have been garbage collected.
-		/// Only unmanaged resources can be disposed.
-		/// </summary>
-		/// <param name="disposing"></param>
-		/// <remarks>
-		/// If any exceptions are thrown, that is fine.
-		/// If the method is being done in a finalizer, it will be ignored.
-		/// If it is thrown by client code calling Dispose,
-		/// it needs to be handled by fixing the bug.
-		///
-		/// If subclasses override this method, they should call the base implementation.
-		/// </remarks>
-		protected virtual void Dispose(bool disposing)
-		{
-			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
-			// Must not be run more than once.
-			if (m_isDisposed)
-				return;
-
-			if (disposing)
+			public WindowsLanguageProfileSink(SimpleRootSite parent)
 			{
-				// Dispose managed resources here.
-				if (m_parent != null)
-					m_parent.AllowPainting = true;
+				Parent = parent;
 			}
 
-			// Dispose unmanaged resources here, whether disposing is true or false.
-			m_parent = null;
-
-			m_isDisposed = true;
+			/// <summary>
+			/// Called after the language profile has changed.
+			/// </summary>
+			/// <param name="previousKeyboard">The previous input method</param>
+			/// <param name="newKeyboard">The new input method</param>
+			public void OnInputLanguageChanged(IKeyboardDefinition previousKeyboard, IKeyboardDefinition newKeyboard)
+			{
+				if (Parent.IsDisposed || Parent.RootBox == null || DataUpdateMonitor.IsUpdateInProgress())
+				{
+					return;
+				}
+				var manager = Parent.WritingSystemFactory as WritingSystemManager;
+				if (manager == null)
+				{
+					return;
+				}
+				// JT: apparently this comes to all the views, but only the active keyboard
+				// needs to handle it.
+				// SMc: furthermore, this is not really focused until OnGotFocus() has run.
+				// Responding before that causes a nasty bug in language/keyboard selection.
+				if (!Parent.Focused || g_focusRootSite.Target != Parent)
+				{
+					return;
+				}
+				// If possible, adjust the language of the selection to be one that matches
+				// the keyboard just selected.
+				var vwsel = Parent.RootBox.Selection; // may be null
+				var wsSel = SelectionHelper.GetFirstWsOfSelection(vwsel); // may be zero
+				CoreWritingSystemDefinition wsSelDefn = null;
+				if (wsSel != 0)
+				{
+					wsSelDefn = manager.Get(wsSel);
+				}
+				var wsNewDefn = GetWSForInputMethod(newKeyboard, wsSelDefn, Parent.PlausibleWritingSystems);
+				if (wsNewDefn == null || wsNewDefn.Equals(wsSelDefn))
+				{
+					return;
+				}
+				Parent.HandleKeyboardChange(vwsel, wsNewDefn.Handle);
+				// The following line is needed to get Chinese IMEs to fully initialize.
+				// This causes Text Services to set its focus, which is the crucial bit
+				// of behavior.  See LT-7488 and LT-5345.
+				Parent.Activate(VwSelectionState.vssEnabled);
+			}
 		}
 
-		#endregion IDisposable & Co. implementation
+		/// <summary>
+		/// Suspends drawing the parent object
+		/// </summary>
+		/// <example>
+		/// REQUIRED usage:
+		/// using(new SuspendDrawing(Handle)) // this sends the WM_SETREDRAW message to the window
+		/// {
+		///		doStuff();
+		/// } // this resumes drawing the parent object
+		/// </example>
+		private sealed class SuspendDrawing : IDisposable
+		{
+			private IRootSite m_parent;
+
+			/// <summary>
+			/// Suspend drawing of the parent.
+			/// </summary>
+			/// <param name="parent">Containing rootsite</param>
+			public SuspendDrawing(IRootSite parent)
+			{
+				m_parent = parent;
+				m_parent.AllowPainting = false;
+			}
+
+			/// <summary>
+			/// See if the object has been disposed.
+			/// </summary>
+			private bool IsDisposed { get; set; }
+
+			/// <summary>
+			/// Finalizer, in case client doesn't dispose it.
+			/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
+			/// </summary>
+			/// <remarks>
+			/// In case some clients forget to dispose it directly.
+			/// </remarks>
+			~SuspendDrawing()
+			{
+				Dispose(false);
+				// The base class finalizer is called automatically.
+			}
+
+			/// <summary>
+			///
+			/// </summary>
+			/// <remarks>Must not be virtual.</remarks>
+			public void Dispose()
+			{
+				Dispose(true);
+				// This object will be cleaned up by the Dispose method.
+				// Therefore, you should call GC.SuppressFinalize to
+				// take this object off the finalization queue
+				// and prevent finalization code for this object
+				// from executing a second time.
+				GC.SuppressFinalize(this);
+			}
+
+			/// <summary>
+			/// Executes in two distinct scenarios.
+			///
+			/// 1. If disposing is true, the method has been called directly
+			/// or indirectly by a user's code via the Dispose method.
+			/// Both managed and unmanaged resources can be disposed.
+			///
+			/// 2. If disposing is false, the method has been called by the
+			/// runtime from inside the finalizer and you should not reference (access)
+			/// other managed objects, as they already have been garbage collected.
+			/// Only unmanaged resources can be disposed.
+			/// </summary>
+			/// <param name="disposing"></param>
+			/// <remarks>
+			/// If any exceptions are thrown, that is fine.
+			/// If the method is being done in a finalizer, it will be ignored.
+			/// If it is thrown by client code calling Dispose,
+			/// it needs to be handled by fixing the bug.
+			///
+			/// If subclasses override this method, they should call the base implementation.
+			/// </remarks>
+			private void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
+				if (IsDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+
+				if (disposing)
+				{
+					// Dispose managed resources here.
+					if (m_parent != null)
+					{
+						m_parent.AllowPainting = true;
+					}
+				}
+
+				// Dispose unmanaged resources here, whether disposing is true or false.
+				m_parent = null;
+
+				IsDisposed = true;
+			}
+		}
 	}
-	#endregion
 }

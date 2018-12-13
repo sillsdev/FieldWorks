@@ -3,9 +3,9 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Runtime.InteropServices;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.Keyboarding;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.Windows.Forms.Keyboarding;
 
 namespace SIL.FieldWorks.Common.RootSites
@@ -19,26 +19,19 @@ namespace SIL.FieldWorks.Common.RootSites
 	{
 		private IVwRootBox m_rootb;
 
-		private IbusRootSiteEventHandler RootSiteEventHandler
-		{
-			get
-			{
-				var simpleRootSite = m_rootb.Site as SimpleRootSite;
-				return simpleRootSite == null ? null :
-					simpleRootSite.RootSiteEventHandler as IbusRootSiteEventHandler;
-			}
-		}
+		private IbusRootSiteEventHandler RootSiteEventHandler => (m_rootb.Site as SimpleRootSite)?.RootSiteEventHandler as IbusRootSiteEventHandler;
 
 		#region IViewInputMgr methods
+
 		/// <summary>
-		/// Inititialize the input manager
+		/// Initialize the input manager
 		/// </summary>
 		public void Init(IVwRootBox rootb)
 		{
 			m_rootb = rootb;
 		}
 
-		/// <summary/>
+		/// <summary />
 		public void Close()
 		{
 		}
@@ -67,19 +60,13 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Gets a value indicating whether a composition window is active.
 		/// </summary>
-		public bool IsCompositionActive
-		{
-			get { return RootSiteEventHandler != null && RootSiteEventHandler.IsPreeditActive; }
-		}
+		public bool IsCompositionActive => RootSiteEventHandler != null && RootSiteEventHandler.IsPreeditActive;
 
 		/// <summary>
 		/// Gets a value indicating if the input method is in the process of closing a composition
 		/// window.
 		/// </summary>
-		public bool IsEndingComposition
-		{
-			get { return false; }
-		}
+		public bool IsEndingComposition => false;
 
 		/// <summary>
 		/// Called before a property gets updated.
@@ -100,7 +87,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		public bool OnMouseEvent(int xd, int yd, Rect rcSrc, Rect rcDst, VwMouseEvent me)
 		{
 			if (me == VwMouseEvent.kmeDown)
+			{
 				Keyboard.Activate();
+			}
 			return false;
 		}
 
@@ -130,16 +119,14 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				IVwSelection sel = m_rootb.Selection;
-				int nWs = SelectionHelper.GetFirstWsOfSelection(sel);
+				var sel = m_rootb.Selection;
+				var nWs = SelectionHelper.GetFirstWsOfSelection(sel);
 				if (nWs == 0)
+				{
 					return null;
-
+				}
 				var wsf = m_rootb.DataAccess.WritingSystemFactory;
-				if (wsf == null)
-					return null;
-
-				return (CoreWritingSystemDefinition)wsf.get_EngineOrNull(nWs);
+				return (CoreWritingSystemDefinition)wsf?.get_EngineOrNull(nWs);
 			}
 		}
 
@@ -152,12 +139,12 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				var manager = (WritingSystemManager)m_rootb.DataAccess.WritingSystemFactory;
-				CoreWritingSystemDefinition ws = CurrentWritingSystem;
+				var ws = CurrentWritingSystem;
 				if (ws == null)
+				{
 					return KeyboardController.NullKeyboard;
-
-				CoreWritingSystemDefinition wsd = manager.Get(ws.Handle);
+				}
+				var wsd = ((WritingSystemManager)m_rootb.DataAccess.WritingSystemFactory).Get(ws.Handle);
 				return wsd.LocalKeyboard ?? KeyboardController.NullKeyboard;
 			}
 		}

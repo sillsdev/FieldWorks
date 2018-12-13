@@ -32,7 +32,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				return;
 			}
-			var startHeight = m_rootb.Height;
+			var startHeight = RootBox.Height;
 			UndoableUnitOfWorkHelper.Do(undoText, redoText, m_rootObj,
 				() =>
 				{
@@ -44,11 +44,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					ler.ShowComplexFormsInRS.Remove(m_rootObj);
 					ler.ComponentLexemesRS.Remove(m_rootObj);
 				});
-			if (m_rootb != null)
+			if (RootBox != null)
 			{
-				CheckViewSizeChanged(startHeight, m_rootb.Height);
+				CheckViewSizeChanged(startHeight, RootBox.Height);
 				// Redisplay (?) the vector property.
-				m_rootb.SetRootObject(m_rootObj.Hvo, m_VectorReferenceVc, kfragTargetVector, m_rootb.Stylesheet);
+				RootBox.SetRootObject(m_rootObj.Hvo, m_VectorReferenceVc, kfragTargetVector, RootBox.Stylesheet);
 			}
 		}
 
@@ -89,7 +89,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				return base.OnProblemDeletion(sel, dpt);
 			}
-			var startHeight = m_rootb.Height;
+			var startHeight = RootBox.Height;
 			if (Cache.MetaDataCacheAccessor.get_IsVirtual(m_rootFlid))
 			{
 				var obj = m_cache.ServiceLocator.GetObject(rghvos[ihvo]);
@@ -139,11 +139,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				sda.Replace(m_rootObj.Hvo, m_rootFlid, ihvo, ihvo + 1, new int[0], 0);
 			}
-			if (m_rootb != null)
+			if (RootBox != null)
 			{
-				CheckViewSizeChanged(startHeight, m_rootb.Height);
+				CheckViewSizeChanged(startHeight, RootBox.Height);
 				// Redisplay (?) the vector property.
-				m_rootb.SetRootObject(m_rootObj.Hvo, m_VectorReferenceVc, kfragTargetVector, m_rootb.Stylesheet);
+				RootBox.SetRootObject(m_rootObj.Hvo, m_VectorReferenceVc, kfragTargetVector, RootBox.Stylesheet);
 			}
 			return VwDelProbResponse.kdprDone;
 		}

@@ -38,7 +38,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 
 			var wasRange = m_savedSelection.IsRange; // may change during RestoreSelection (ugh!)
-			var oldLevels = m_savedSelection.GetLevelInfo(SelectionHelper.SelLimitType.Anchor);
+			var oldLevels = m_savedSelection.GetLevelInfo(SelLimitType.Anchor);
 			var originalRestore = RestoreSelection();
 			if (originalRestore != null && IsGoodRestore(originalRestore, wasRange))
 			{

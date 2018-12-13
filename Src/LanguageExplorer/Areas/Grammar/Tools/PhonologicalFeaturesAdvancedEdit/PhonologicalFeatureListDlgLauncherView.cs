@@ -50,14 +50,14 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 
 		private void UpdateRootObject()
 		{
-			if (m_rootb == null)
+			if (RootBox == null)
 			{
 				MakeRoot();
 			}
 			else if (m_fs != null)
 			{
-				m_rootb.SetRootObject(m_fs.Hvo, m_vc, (int)VcFrags.kfragName, m_rootb.Stylesheet);
-				m_rootb.Reconstruct();
+				RootBox.SetRootObject(m_fs.Hvo, m_vc, (int)VcFrags.kfragName, RootBox.Stylesheet);
+				RootBox.Reconstruct();
 			}
 		}
 
@@ -76,12 +76,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 
 			base.MakeRoot();
 
-			m_rootb.DataAccess = m_cache.MainCacheAccessor;
+			RootBox.DataAccess = m_cache.MainCacheAccessor;
 			m_vc = new CmAnalObjectVc(m_cache);
 
 			if (m_fs != null)
 			{
-				m_rootb.SetRootObject(m_fs.Hvo, m_vc, (int)VcFrags.kfragName, m_rootb.Stylesheet);
+				RootBox.SetRootObject(m_fs.Hvo, m_vc, (int)VcFrags.kfragName, RootBox.Stylesheet);
 			}
 		}
 
@@ -116,11 +116,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 				m_fs = Phoneme.FeaturesOA;
 				if (m_fs != null)
 				{
-					m_rootb?.SetRootObject(m_fs.Hvo, m_vc, (int)VcFrags.kfragName, m_rootb.Stylesheet);
+					RootBox?.SetRootObject(m_fs.Hvo, m_vc, (int)VcFrags.kfragName, RootBox.Stylesheet);
 				}
 			}
 
-			m_rootb?.Reconstruct();
+			RootBox?.Reconstruct();
 		}
 	}
 }

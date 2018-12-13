@@ -328,8 +328,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				LineChoices = LineChoices
 			};
-			m_rootb.DataAccess = Cache.MainCacheAccessor;
-			m_rootb.SetRootObject(m_hvoChart, Vc, ConstChartVc.kfragChart, StyleSheet);
+			RootBox.DataAccess = Cache.MainCacheAccessor;
+			RootBox.SetRootObject(m_hvoChart, Vc, ConstChartVc.kfragChart, StyleSheet);
 		}
 
 		/// <summary>

@@ -87,7 +87,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				if (cvsli == 0)
 				{
 					// No objects in selection: don't allow a selection.
-					m_rootb.DestroySelection();
+					RootBox.DestroySelection();
 					// Enhance: invoke launcher's selection dialog.
 					return;
 				}
@@ -119,7 +119,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			{
 				return;		// must be selecting multiple objects!  (See LT-5724.)
 			}
-			var h1 = m_rootb.Height;
+			var h1 = RootBox.Height;
 			var sense = (ILexSense)m_cache.ServiceLocator.GetObject(m_selectedSenseHvo);
 			using (var helper = new UndoableUnitOfWorkHelper(
 				m_cache.ActionHandlerAccessor,
@@ -129,7 +129,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				((IReversalIndexEntry)m_rootObj).SensesRS.Remove(sense);
 				helper.RollBack = false;
 			}
-			CheckViewSizeChanged(h1, m_rootb.Height);
+			CheckViewSizeChanged(h1, RootBox.Height);
 		}
 
 		#endregion other overrides and related methods

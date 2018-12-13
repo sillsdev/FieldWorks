@@ -6,6 +6,7 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using FieldWorks.TestUtilities;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -112,7 +113,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		public override void ScrollToEnd()
 		{
 			base.ScrollToEnd();
-			m_rootb.MakeSimpleSel(false, true, false, true);
+			RootBox.MakeSimpleSel(false, true, false, true);
 			PerformLayout();
 		}
 
@@ -124,7 +125,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			base.ScrollToTop();
 			// The actual DraftView code for handling Ctrl-Home doesn't contain this method call.
 			// The call to CallOnExtendedKey() in OnKeyDown() handles setting the IP.
-			m_rootb.MakeSimpleSel(true, true, false, true);
+			RootBox.MakeSimpleSel(true, true, false, true);
 		}
 
 		/// <summary>
@@ -282,8 +283,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_basicViewVc = CreateVc(flid);
 			m_basicViewVc.DefaultWs = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
 
-			m_rootb.DataAccess = m_cache.DomainDataByFlid;
-			m_rootb.SetRootObject(hvoRoot, m_basicViewVc, frag, m_styleSheet);
+			RootBox.DataAccess = m_cache.DomainDataByFlid;
+			RootBox.SetRootObject(hvoRoot, m_basicViewVc, frag, m_styleSheet);
 
 			m_fRootboxMade = true;
 			m_dxdLayoutWidth = kForceLayout;
@@ -293,7 +294,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			// before clicking into it to place the insertion point.
 			try
 			{
-				m_rootb.MakeSimpleSel(true, true, false, true);
+				RootBox.MakeSimpleSel(true, true, false, true);
 			}
 			catch (COMException)
 			{
@@ -307,7 +308,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		protected virtual VwBaseVc CreateVc(int flid)
 		{
-			return new DummyBasicViewVc(DisplayType, flid);
+			return new DummyBasicViewVc(MyDisplayType, flid);
 		}
 
 		/// <summary>
@@ -331,7 +332,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Gets or sets the type of boxes to display: lazy or non-lazy or both
 		/// </summary>
-		public DisplayType DisplayType { get; set; }
+		public DisplayType MyDisplayType { get; set; }
 
 		/// <summary>
 		/// Gets the draft view's selection helper object
@@ -473,7 +474,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					Rect rdSecondary;
 					bool fSplit;
 					bool fEndBeforeAnchor;
-					var vwsel = m_rootb.Selection;
+					var vwsel = RootBox.Selection;
 					if (vwsel != null)
 					{
 						vwsel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rdIP, out rdSecondary, out fSplit, out fEndBeforeAnchor);
@@ -503,7 +504,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					Rect rdSecondary;
 					bool fSplit;
 					bool fEndBeforeAnchor;
-					var vwsel = m_rootb.Selection;
+					var vwsel = RootBox.Selection;
 					if (vwsel != null)
 					{
 						vwsel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rdIP, out rdSecondary, out fSplit, out fEndBeforeAnchor);
@@ -542,7 +543,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary />
 		public void SetRootBox(IVwRootBox rootb)
 		{
-			m_rootb = rootb;
+			RootBox = rootb;
 		}
 	}
 }

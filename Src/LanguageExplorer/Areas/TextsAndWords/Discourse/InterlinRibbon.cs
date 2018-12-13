@@ -237,7 +237,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		protected override void AddDecorator()
 		{
-			m_rootb.DataAccess = Decorator;
+			RootBox.DataAccess = Decorator;
 		}
 
 		public override void SetRoot(int hvoStText)
@@ -272,10 +272,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			Vc.LineChoices = LineChoices;
 			SetRootInternal(HvoRoot);
 
-			m_rootb.DataAccess = Decorator;
-			m_rootb.SetRootObject(HvoRoot, Vc, kfragRibbonWordforms, this.StyleSheet);
+			RootBox.DataAccess = Decorator;
+			RootBox.SetRootObject(HvoRoot, Vc, kfragRibbonWordforms, this.StyleSheet);
 
-			m_rootb.Activate(VwSelectionState.vssOutOfFocus); // Makes selection visible even before ever got focus.
+			RootBox.Activate(VwSelectionState.vssOutOfFocus); // Makes selection visible even before ever got focus.
 			MakeInitialSelection();
 		}
 

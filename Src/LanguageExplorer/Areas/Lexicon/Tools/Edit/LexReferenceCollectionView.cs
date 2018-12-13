@@ -53,7 +53,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary />
 		protected override List<ICmObject> GetVisibleItemList()
 		{
-			var sda = m_rootb.DataAccess as ISilDataAccessManaged;
+			var sda = RootBox.DataAccess as ISilDataAccessManaged;
 			var objRepo = Cache.ServiceLocator.ObjectRepository;
 			if (sda != null) //sda should never be null
 			{
@@ -68,7 +68,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary />
 		protected override List<ICmObject> GetHiddenItemList()
 		{
-			var sda = m_rootb.DataAccess as ISilDataAccessManaged;
+			var sda = RootBox.DataAccess as ISilDataAccessManaged;
 			var objRepo = Cache.ServiceLocator.ObjectRepository;
 			if (sda != null) //sda should never be null
 			{

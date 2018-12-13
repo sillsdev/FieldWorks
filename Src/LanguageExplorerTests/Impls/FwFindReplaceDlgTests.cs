@@ -402,13 +402,13 @@ namespace LanguageExplorerTests.Impls
 			int ichAnchor, int ichEnd)
 		{
 			SelectionHelper helper = ((DummyBasicView)m_vwRootsite).EditingHelper.CurrentSelection;
-			SelLevInfo[] selLevels = helper.GetLevelInfo(SelectionHelper.SelLimitType.Anchor);
+			SelLevInfo[] selLevels = helper.GetLevelInfo(SelLimitType.Anchor);
 			Assert.AreEqual(1, selLevels.Length);
 			Assert.AreEqual(iPara, selLevels[0].ihvo);
 			Assert.AreEqual(14001, selLevels[0].tag);
 			Assert.AreEqual(iInstancePara, selLevels[0].cpropPrevious);
 
-			selLevels = helper.GetLevelInfo(SelectionHelper.SelLimitType.End);
+			selLevels = helper.GetLevelInfo(SelLimitType.End);
 			Assert.AreEqual(1, selLevels.Length);
 			Assert.AreEqual(iPara, selLevels[0].ihvo);
 			Assert.AreEqual(14001, selLevels[0].tag);
@@ -416,12 +416,12 @@ namespace LanguageExplorerTests.Impls
 
 			Assert.AreEqual(ichAnchor, helper.IchAnchor);
 			Assert.AreEqual(ichEnd, helper.IchEnd);
-			Assert.AreEqual(16002, helper.GetTextPropId(SelectionHelper.SelLimitType.Anchor));
-			Assert.AreEqual(16002, helper.GetTextPropId(SelectionHelper.SelLimitType.End));
+			Assert.AreEqual(16002, helper.GetTextPropId(SelLimitType.Anchor));
+			Assert.AreEqual(16002, helper.GetTextPropId(SelLimitType.End));
 			Assert.AreEqual(iInstanceString,
-				helper.GetNumberOfPreviousProps(SelectionHelper.SelLimitType.Anchor));
+				helper.GetNumberOfPreviousProps(SelLimitType.Anchor));
 			Assert.AreEqual(iInstanceString,
-				helper.GetNumberOfPreviousProps(SelectionHelper.SelLimitType.End));
+				helper.GetNumberOfPreviousProps(SelLimitType.End));
 		}
 	}
 #endregion

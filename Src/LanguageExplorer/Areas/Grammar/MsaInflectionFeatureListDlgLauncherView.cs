@@ -29,14 +29,14 @@ namespace LanguageExplorer.Areas.Grammar
 			m_fs = fs;
 			m_cache = cache;
 
-			if (m_rootb == null)
+			if (RootBox == null)
 			{
 				MakeRoot();
 			}
 			else
 			{
-				m_rootb.SetRootObject(m_fs?.Hvo ?? 0, m_vc, (int)VcFrags.kfragName, m_rootb.Stylesheet);
-				m_rootb.Reconstruct();
+				RootBox.SetRootObject(m_fs?.Hvo ?? 0, m_vc, (int)VcFrags.kfragName, RootBox.Stylesheet);
+				RootBox.Reconstruct();
 			}
 		}
 
@@ -71,12 +71,12 @@ namespace LanguageExplorer.Areas.Grammar
 
 			base.MakeRoot();
 
-			m_rootb.DataAccess = m_cache.DomainDataByFlid;
+			RootBox.DataAccess = m_cache.DomainDataByFlid;
 			m_vc = new CmAnalObjectVc(m_cache);
 
 			if (m_fs != null)
 			{
-				m_rootb.SetRootObject(m_fs.Hvo, m_vc, (int)VcFrags.kfragName, m_rootb.Stylesheet);
+				RootBox.SetRootObject(m_fs.Hvo, m_vc, (int)VcFrags.kfragName, RootBox.Stylesheet);
 			}
 		}
 

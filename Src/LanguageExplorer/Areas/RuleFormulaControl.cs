@@ -153,8 +153,8 @@ namespace LanguageExplorer.Areas
 			get
 			{
 				var sel = SelectionHelper.Create(_view);
-				var obj = GetCmObject(sel, SelectionHelper.SelLimitType.Anchor);
-				var endObj = GetCmObject(sel, SelectionHelper.SelLimitType.End);
+				var obj = GetCmObject(sel, SelLimitType.Anchor);
+				var endObj = GetCmObject(sel, SelLimitType.End);
 				if (obj != endObj || obj == null || endObj == null)
 				{
 					return null;
@@ -212,12 +212,12 @@ namespace LanguageExplorer.Areas
 			return cellId;
 		}
 
-		object IPatternControl.GetContext(SelectionHelper sel, SelectionHelper.SelLimitType limit)
+		object IPatternControl.GetContext(SelectionHelper sel, SelLimitType limit)
 		{
 			return ToContextObject(GetCell(sel, limit));
 		}
 
-		object IPatternControl.GetItem(SelectionHelper sel, SelectionHelper.SelLimitType limit)
+		object IPatternControl.GetItem(SelectionHelper sel, SelLimitType limit)
 		{
 			return GetCmObject(sel, limit);
 		}
@@ -259,11 +259,11 @@ namespace LanguageExplorer.Areas
 				return -1;
 			}
 
-			var cellId = GetCell(sel, SelectionHelper.SelLimitType.Anchor);
+			var cellId = GetCell(sel, SelLimitType.Anchor);
 
 			if (sel.IsRange && cellId != -1)
 			{
-				var endCellId = GetCell(sel, SelectionHelper.SelLimitType.End);
+				var endCellId = GetCell(sel, SelLimitType.End);
 				if (cellId != endCellId)
 				{
 					return -1;
@@ -272,12 +272,12 @@ namespace LanguageExplorer.Areas
 			return cellId;
 		}
 
-		protected virtual int GetCell(SelectionHelper sel, SelectionHelper.SelLimitType limit)
+		protected virtual int GetCell(SelectionHelper sel, SelLimitType limit)
 		{
 			throw new NotSupportedException();
 		}
 
-		protected virtual ICmObject GetCmObject(SelectionHelper sel, SelectionHelper.SelLimitType limit)
+		protected virtual ICmObject GetCmObject(SelectionHelper sel, SelLimitType limit)
 		{
 			throw new NotSupportedException();
 		}
@@ -661,8 +661,8 @@ namespace LanguageExplorer.Areas
 			{
 				return 0;
 			}
-			var curObj = GetCmObject(sel, SelectionHelper.SelLimitType.Top);
-			var ich = sel.GetIch(SelectionHelper.SelLimitType.Top);
+			var curObj = GetCmObject(sel, SelLimitType.Top);
+			var ich = sel.GetIch(SelLimitType.Top);
 			for (var i = 0; i < objs.Length; i++)
 			{
 				// if the current ich is 0, then we can safely assume we are at the beginning of
@@ -814,8 +814,8 @@ namespace LanguageExplorer.Areas
 
 		protected int[] GetIndicesToRemove(ICmObject[] objs, SelectionHelper sel)
 		{
-			var beginObj = GetCmObject(sel, SelectionHelper.SelLimitType.Top);
-			var endObj = GetCmObject(sel, SelectionHelper.SelLimitType.Bottom);
+			var beginObj = GetCmObject(sel, SelLimitType.Top);
+			var endObj = GetCmObject(sel, SelLimitType.Bottom);
 
 			var remove = new List<int>();
 			var inRange = false;
@@ -845,14 +845,14 @@ namespace LanguageExplorer.Areas
 
 		protected int GetIndexToRemove(ICmObject[] objs, SelectionHelper sel, bool forward)
 		{
-			var obj = GetCmObject(sel, SelectionHelper.SelLimitType.Top);
+			var obj = GetCmObject(sel, SelLimitType.Top);
 			for (var i = 0; i < objs.Length; i++)
 			{
 				if (objs[i] != obj)
 				{
 					continue;
 				}
-				var tss = sel.GetTss(SelectionHelper.SelLimitType.Anchor);
+				var tss = sel.GetTss(SelLimitType.Anchor);
 				// if the current ich is at the end of the current string, then we can safely assume
 				// we are at the end of the current item, so remove it or the next item based on what
 				// key was pressed, otherwise we are in the middle in which

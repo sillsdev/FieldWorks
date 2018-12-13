@@ -110,14 +110,14 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			base.MakeRoot();
 
-			m_rootb.DataAccess = m_sda;
+			RootBox.DataAccess = m_sda;
 
 			var wsUser = m_realCache.ServiceLocator.WritingSystemManager.UserWs;
 			var wsEn = m_realCache.ServiceLocator.WritingSystemManager.GetWsFromStr("en");
 			m_vc = new LabeledMultiStringVc(kflid, WritingSystems, wsUser, true, wsEn);
 
 			// arg3 is a meaningless initial fragment, since this VC only displays one thing.
-			m_rootb.SetRootObject(khvoRoot, m_vc, 1, m_styleSheet);
+			RootBox.SetRootObject(khvoRoot, m_vc, 1, m_styleSheet);
 			m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
 		}
 

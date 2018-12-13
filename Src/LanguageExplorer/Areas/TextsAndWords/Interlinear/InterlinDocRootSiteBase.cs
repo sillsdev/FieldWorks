@@ -86,7 +86,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// several read-only paragraphs  contained in a word bundle.  Make sure that
 			// procedures that use this limit do not move the cursor from an editable to a
 			// non-editable field.
-			m_rootb.MaxParasToScan = 2000;
+			RootBox.MaxParasToScan = 2000;
 
 			EnsureVc();
 
@@ -98,8 +98,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			Vc.LineChoices = LineChoices;
 			Vc.ShowDefaultSense = true;
 
-			m_rootb.DataAccess = m_cache.MainCacheAccessor;
-			m_rootb.SetRootObject(m_hvoRoot, Vc, InterlinVc.kfragStText, m_styleSheet);
+			RootBox.DataAccess = m_cache.MainCacheAccessor;
+			RootBox.SetRootObject(m_hvoRoot, Vc, InterlinVc.kfragStText, m_styleSheet);
 			m_objRepo = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 		}
 
@@ -210,7 +210,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-			m_rootb.Activate(VwSelectionState.vssEnabled);
+			RootBox.Activate(VwSelectionState.vssEnabled);
 			// Don't steal the focus from another window.  See FWR-1795.
 			if (!Focused && ParentForm == Form.ActiveForm)
 			{
@@ -300,7 +300,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			// This works fine for non-Sandbox panes,
 			// Sandbox panes' selection may be in the Sandbox.
-			var sel = m_rootb?.Selection;
+			var sel = RootBox?.Selection;
 			return sel == null ? null : GetAnalysisFromSelection(sel);
 		}
 
@@ -492,7 +492,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					GetCoordRects(out rcSrcRoot, out rcDstRoot);
 				}
 				// Make an invisible selection to see if we are in editable text.
-				selTest = m_rootb.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, false);
+				selTest = RootBox.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, false);
 			}
 			catch
 			{
@@ -906,7 +906,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		private void UpdateDisplayForNewLineChoices()
 		{
-			m_rootb?.Reconstruct();
+			RootBox?.Reconstruct();
 		}
 
 		/// <summary>
@@ -954,7 +954,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// Simluate replacing the wordform in the relevant segment with itself. This lets the VC Display method run again, this
 			// time possibly getting a different answer about whether hvoAnnotation is the current annotation, or about the
 			// size of the Sandbox.
-			m_rootb.PropChanged(occurrence.Segment.Hvo, SegmentTags.kflidAnalyses, occurrence.Index, 1, 1);
+			RootBox.PropChanged(occurrence.Segment.Hvo, SegmentTags.kflidAnalyses, occurrence.Index, 1, 1);
 		}
 
 		internal InterlinMaster GetMaster()
@@ -999,9 +999,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected virtual void AddDecorator()
 		{
 			// by default, just use the InterinVc decorator.
-			if (m_rootb != null)
+			if (RootBox != null)
 			{
-				m_rootb.DataAccess = Vc.Decorator;
+				RootBox.DataAccess = Vc.Decorator;
 			}
 		}
 

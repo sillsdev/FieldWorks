@@ -67,7 +67,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		protected override void AddDecorator()
 		{
-			m_rootb.DataAccess = ((InterlinTaggingVc)Vc).Decorator;
+			RootBox.DataAccess = ((InterlinTaggingVc)Vc).Decorator;
 		}
 
 		#region SelectionMethods

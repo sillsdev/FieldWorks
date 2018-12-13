@@ -97,7 +97,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_wsVern = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
 			m_rootObj = rootObj;
 			m_rootFlid = rootFlid;
-			if (m_rootb == null)
+			if (RootBox == null)
 			{
 				MakeRoot();
 			}
@@ -161,8 +161,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_realEnvs[m_id] = env;
 			var count = m_sda.get_VecSize(m_rootObj.Hvo, kMainObjEnvironments);
 			InsertPhoneEnv(m_id++, env.StringRepresentation, count - 1);
-			m_rootb.PropChanged(m_rootObj.Hvo, kMainObjEnvironments, count, 1, 0);
-			m_heightView = m_rootb.Height;
+			RootBox.PropChanged(m_rootObj.Hvo, kMainObjEnvironments, count, 1, 0);
+			m_heightView = RootBox.Height;
 		}
 
 		/// <summary>
@@ -203,9 +203,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				m_sda.CacheReplace(m_rootObj.Hvo, kMainObjEnvironments, loc, loc + 1, new int[0], 0);
 				m_sda.DeleteObj(dummyHvo);
-				m_rootb.PropChanged(m_rootObj.Hvo, kMainObjEnvironments, loc, 0, 1);
+				RootBox.PropChanged(m_rootObj.Hvo, kMainObjEnvironments, loc, 0, 1);
 			}
-			m_heightView = m_rootb.Height;
+			m_heightView = RootBox.Height;
 		}
 
 		private void AppendPhoneEnv(int dummyHvo, ITsString rep)
@@ -243,9 +243,9 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			base.MakeRoot();
 
-			m_rootb.DataAccess = m_sda;
-			m_rootb.SetRootObject(m_rootObj.Hvo, m_PhoneEnvReferenceVc, kFragEnvironments, null);
-			m_heightView = m_rootb.Height;
+			RootBox.DataAccess = m_sda;
+			RootBox.SetRootObject(m_rootObj.Hvo, m_PhoneEnvReferenceVc, kFragEnvironments, null);
+			m_heightView = RootBox.Height;
 		}
 
 		#endregion // RootSite required methods
@@ -358,7 +358,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			// if this is NOT the first pass for the original PropChanged
 			// and the ts string is empty (tss.Text == null) then quit
-			if (m_rootb.IsPropChangedInProgress && tss.Length == 0)
+			if (RootBox.IsPropChangedInProgress && tss.Length == 0)
 			{
 				CheckHeight();
 				return;
@@ -379,13 +379,13 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_sda.SetString(hvoNew, kEnvStringRep, tss); // set the last env to the pattern
 			m_sda.SetString(kDummyPhoneEnvID, kEnvStringRep, DummyString); // set a new empty env
 			// Refresh to create a new view box for the DummyString? (doesn't seem to work)
-			m_rootb.PropChanged(m_rootObj.Hvo, kMainObjEnvironments, count - 1, 2, 1);
+			RootBox.PropChanged(m_rootObj.Hvo, kMainObjEnvironments, count - 1, 2, 1);
 			// Set selection after the just added character or on the right side of the separator bar.
 			var rgvsli = new SelLevInfo[1];
 			rgvsli[0].cpropPrevious = 0;
 			rgvsli[0].tag = kMainObjEnvironments;
 			rgvsli[0].ihvo = count - 1;
-			m_rootb.MakeTextSelection(0, rgvsli.Length, rgvsli, tag, 0, ichAnchor, ichEnd, ws, fAssocPrev, -1, null, true);
+			RootBox.MakeTextSelection(0, rgvsli.Length, rgvsli, tag, 0, ichAnchor, ichEnd, ws, fAssocPrev, -1, null, true);
 			m_hvoOldSelection = hvoNew;
 			CheckHeight();
 		}
@@ -400,17 +400,17 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void CheckHeight()
 		{
-			if (m_rootb == null)
+			if (RootBox == null)
 			{
 				return;
 			}
-			var hNew = m_rootb.Height;
+			var hNew = RootBox.Height;
 			if (m_heightView == hNew)
 			{
 				return;
 			}
 
-			ViewSizeChanged?.Invoke(this, new FwViewSizeEventArgs(hNew, m_rootb.Width));
+			ViewSizeChanged?.Invoke(this, new FwViewSizeEventArgs(hNew, RootBox.Width));
 			m_heightView = hNew;
 		}
 
@@ -418,7 +418,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			m_realEnvs.Remove(m_hvoOldSelection);
 			m_sda.CacheReplace(m_rootObj.Hvo, kMainObjEnvironments, index, index + 1, new int[0], 0);
-			m_rootb?.PropChanged(m_rootObj.Hvo, kMainObjEnvironments, index, 0, 1);
+			RootBox?.PropChanged(m_rootObj.Hvo, kMainObjEnvironments, index, 0, 1);
 		}
 
 
@@ -447,7 +447,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 			}
 			m_sda.SetString(hvoDummyObj, kEnvStringRep, bldr.GetString());
-			m_rootb?.PropChanged(hvoDummyObj, kEnvStringRep, 0, tss.Length, tss.Length);
+			RootBox?.PropChanged(hvoDummyObj, kEnvStringRep, 0, tss.Length, tss.Length);
 			CheckHeight();
 		}
 
@@ -506,7 +506,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		public void ResynchListToDatabaseAndRedisplay()
 		{
 			ResynchListToDatabase();
-			m_rootb.Reconstruct();
+			RootBox.Reconstruct();
 			CheckHeight();
 		}
 
@@ -586,7 +586,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				// [NB: m_silCache is the same cache as m_vwCache, but is is a different cache than
 				// m_cache.  m_cache has access to the database, and updates it, but
 				// m_silCache does not.]
-				if (DesignMode || m_rootb == null
+				if (DesignMode || RootBox == null
 					// It may not be valid by now, since it may have been deleted.
 					|| !m_rootObj.IsValidObject)
 				{
@@ -659,7 +659,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 					// Refresh
 					m_sda.SetString(localDummyHvoOfAnEnvironmentInEntry, kEnvStringRep, bldr.GetString());
-					m_rootb.PropChanged(localDummyHvoOfAnEnvironmentInEntry, kEnvStringRep, 0, envTssRep.Length, envTssRep.Length);
+					RootBox.PropChanged(localDummyHvoOfAnEnvironmentInEntry, kEnvStringRep, 0, envTssRep.Length, envTssRep.Length);
 				}
 
 				// Only reset the main property, if it has changed.
@@ -814,7 +814,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				bool fAssocPrev;
 				int tag1;
 				int ws1;
-				vwsel = m_rootb.Selection;
+				vwsel = RootBox.Selection;
 				vwsel.TextSelInfo(false, out tss, out ichAnchor, out fAssocPrev, out hvoDummyObj, out tag1, out ws1);
 				ITsString tss2;
 				int hvoObjEnd;

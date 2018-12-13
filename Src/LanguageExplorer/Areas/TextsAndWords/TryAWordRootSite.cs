@@ -132,11 +132,11 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			m_vc.LineChoices.Add(InterlinLineChoices.kflidLexGloss); //4
 			m_vc.LineChoices.Add(InterlinLineChoices.kflidLexPos); //5
 
-			m_rootb.DataAccess = m_cache.MainCacheAccessor;
+			RootBox.DataAccess = m_cache.MainCacheAccessor;
 
 			if (m_wordform != null)
 			{
-				m_rootb.SetRootObject(m_wordform.Hvo, m_vc, m_kfragSingleInterlinearAnalysisWithLabels, m_styleSheet);
+				RootBox.SetRootObject(m_wordform.Hvo, m_vc, m_kfragSingleInterlinearAnalysisWithLabels, m_styleSheet);
 			}
 
 			SetSandboxSize(); // in case we already have a current annotation.
@@ -213,7 +213,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		}
 		private void SetSandboxLocation()
 		{
-			m_rootb.Reconstruct();
+			RootBox.Reconstruct();
 			using (new HoldGraphics(this))
 			{
 				Rectangle rcSrcRoot;
@@ -236,7 +236,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				if (m_vc.RightToLeft)
 				{
 					m_tryAWordSandbox.Left = rcPrimary.right - m_tryAWordSandbox.Width;
-					m_labelWidth = m_rootb.Width - rcPrimary.right;
+					m_labelWidth = RootBox.Width - rcPrimary.right;
 				}
 				else
 				{
@@ -255,7 +255,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				return;
 			}
 			// skip if it's before we've set up the rootsite control
-			if (m_rootb == null)
+			if (RootBox == null)
 			{
 				return;
 			}
@@ -275,7 +275,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				analysis = m_wordform;
 			}
 
-			m_rootb.SetRootObject(analysis.Hvo, m_vc, m_kfragSingleInterlinearAnalysisWithLabels, m_styleSheet);
+			RootBox.SetRootObject(analysis.Hvo, m_vc, m_kfragSingleInterlinearAnalysisWithLabels, m_styleSheet);
 			m_tryAWordSandbox = new TryAWordSandbox(_sharedEventHandlers, m_cache, StyleSheet, m_vc.LineChoices, analysis)
 			{
 				Visible = false

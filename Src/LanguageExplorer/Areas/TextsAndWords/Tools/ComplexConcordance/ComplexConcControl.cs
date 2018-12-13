@@ -136,8 +136,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 				return true;
 			}
 
-			var anchorNode = GetNode(sel, SelectionHelper.SelLimitType.Anchor);
-			var endNode = GetNode(sel, SelectionHelper.SelLimitType.End);
+			var anchorNode = GetNode(sel, SelLimitType.Anchor);
+			var endNode = GetNode(sel, SelLimitType.End);
 			return anchorNode != null && endNode != null && anchorNode.Parent == endNode.Parent;
 		}
 
@@ -149,8 +149,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			}
 
 			var sel = SelectionHelper.Create(m_view);
-			var anchorNode = GetNode(sel, SelectionHelper.SelLimitType.Anchor);
-			var endNode = GetNode(sel, SelectionHelper.SelLimitType.End);
+			var anchorNode = GetNode(sel, SelLimitType.Anchor);
+			var endNode = GetNode(sel, SelLimitType.End);
 			if (anchorNode == null || endNode == null || anchorNode.Parent != endNode.Parent)
 			{
 				return false;
@@ -266,7 +266,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			return matches;
 		}
 
-		private ComplexConcPatternNode GetNode(SelectionHelper sel, SelectionHelper.SelLimitType limit)
+		private ComplexConcPatternNode GetNode(SelectionHelper sel, SelLimitType limit)
 		{
 			if (sel == null || PatternModel.Root.IsLeaf)
 			{
@@ -288,8 +288,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			get
 			{
 				var sel = SelectionHelper.Create(m_view);
-				var anchorNode = GetNode(sel, SelectionHelper.SelLimitType.Anchor);
-				var endNode = GetNode(sel, SelectionHelper.SelLimitType.End);
+				var anchorNode = GetNode(sel, SelLimitType.Anchor);
+				var endNode = GetNode(sel, SelLimitType.End);
 				if (anchorNode == null || endNode == null || anchorNode.Parent != endNode.Parent)
 				{
 					return new ComplexConcPatternNode[0];
@@ -344,10 +344,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			}
 			else
 			{
-				var n = GetNode(sel, SelectionHelper.SelLimitType.Top);
+				var n = GetNode(sel, SelLimitType.Top);
 				parent = n.Parent;
 				index = GetNodeIndex(n);
-				var tss = sel.GetTss(SelectionHelper.SelLimitType.Anchor);
+				var tss = sel.GetTss(SelLimitType.Anchor);
 				// if the current ich is at the end of the current string, then we can safely assume
 				// we are at the end of the current item, so remove it or the next item based on what
 				// key was pressed, otherwise we are in the middle in which
@@ -510,7 +510,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 		private void ContextMenuRequested(object sender, ContextMenuRequestedEventArgs e)
 		{
 			var sh = SelectionHelper.Create(e.Selection, m_view);
-			var node = GetNode(sh, SelectionHelper.SelLimitType.Anchor);
+			var node = GetNode(sh, SelLimitType.Anchor);
 			var nodes = new HashSet<ComplexConcPatternNode>(CurrentNodes.SelectMany(GetAllNodes));
 			if (!nodes.Contains(node))
 			{
@@ -729,7 +729,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 
 		private void GetInsertionIndex(SelectionHelper sel, out ComplexConcPatternNode parent, out int index)
 		{
-			var curNode = GetNode(sel, SelectionHelper.SelLimitType.Top);
+			var curNode = GetNode(sel, SelLimitType.Top);
 			if (PatternModel.Root.IsLeaf || curNode == null)
 			{
 				parent = PatternModel.Root;
@@ -738,7 +738,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			}
 
 			parent = curNode.Parent;
-			var ich = sel.GetIch(SelectionHelper.SelLimitType.Top);
+			var ich = sel.GetIch(SelLimitType.Top);
 			index = GetNodeIndex(curNode);
 			if (ich != 0)
 			{
@@ -888,13 +888,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 
 		public bool IsFocusedPane { get; set; }
 
-		object IPatternControl.GetContext(SelectionHelper sel, SelectionHelper.SelLimitType limit)
+		object IPatternControl.GetContext(SelectionHelper sel, SelLimitType limit)
 		{
 			var node = GetNode(sel, limit);
 			return node?.Parent;
 		}
 
-		object IPatternControl.GetItem(SelectionHelper sel, SelectionHelper.SelLimitType limit)
+		object IPatternControl.GetItem(SelectionHelper sel, SelLimitType limit)
 		{
 			return GetNode(sel, limit);
 		}

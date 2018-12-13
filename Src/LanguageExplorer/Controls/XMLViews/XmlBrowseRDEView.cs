@@ -176,7 +176,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </remarks>
 		protected override void DoSelectAndScroll(int hvo, int index)
 		{
-			if (m_rootb == null)
+			if (RootBox == null)
 				MakeRoot();
 
 			SetSelection();
@@ -185,7 +185,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private void SetSelection()
 		{
 			// if we haven't already made a selection, make one in the new row.
-			if (m_rootb.Selection == null)
+			if (RootBox.Selection == null)
 			{
 				SetSelectionToFirstColumnInNewRow();
 			}
@@ -315,7 +315,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <returns>true if the key press has been handled, otherwise false.</returns>
 		private bool ProcessRDEKeyPress(char keyPressed)
 		{
-			var vwsel = m_rootb.Selection;
+			var vwsel = RootBox.Selection;
 			if (vwsel == null)
 			{
 				return false;
@@ -443,7 +443,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				var rgvsli = new SelLevInfo[1];
 				rgvsli[0].hvo = XmlRDEBrowseViewVc.khvoNewItem;
 				rgvsli[0].tag = -1;
-				var vwsel = m_rootb.MakeTextSelection(0, rgvsli.Length, rgvsli, flidNew, 0, 0, 0, wsNew, false, -1, null, false);
+				var vwsel = RootBox.MakeTextSelection(0, rgvsli.Length, rgvsli, flidNew, 0, 0, 0, wsNew, false, -1, null, false);
 				if (m_xbvvc.ShowColumnsRTL)
 				{
 					int iLevel;
@@ -457,7 +457,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					GetCurrentTableCellInfo(vwsel, out iLevel, out iBox, out iTableBox,
 						out cTableBoxes, out iTableLevel, out iCellBox, out cCellBoxes,
 						out iCellLevel);
-					m_rootb.MakeSelInBox(vwsel, true, iCellLevel, cCellBoxes - 1, true, false, true);
+					RootBox.MakeSelInBox(vwsel, true, iCellLevel, cCellBoxes - 1, true, false, true);
 				}
 				else
 				{
@@ -474,16 +474,16 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void ScrollToCurrentSelection()
 		{
-			if (m_rootb == null)
+			if (RootBox == null)
 			{
 				MakeRoot();
 			}
 
-			if (m_rootb.Selection == null)
+			if (RootBox.Selection == null)
 			{
 				return;
 			}
-			ScrollSelectionIntoView(m_rootb.Selection, VwScrollSelOpts.kssoDefault);
+			ScrollSelectionIntoView(RootBox.Selection, VwScrollSelOpts.kssoDefault);
 		}
 
 		#region Implementation of IUndoRedoHandler
@@ -810,7 +810,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			bool fCanDelete = false;
 			// This crashed once on exiting program, so m_rootb may not be set at that point.
-			IVwSelection vwsel = m_rootb != null ? m_rootb.Selection: null;
+			IVwSelection vwsel = RootBox != null ? RootBox.Selection: null;
 			if (vwsel != null)
 			{
 				int ihvoRoot;
@@ -853,12 +853,12 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void DeleteRecord()
 		{
-			if (m_rootb == null)
+			if (RootBox == null)
 			{
 				MakeRoot();
 			}
 
-			var vwsel = m_rootb.Selection;
+			var vwsel = RootBox.Selection;
 			if (vwsel == null)
 			{
 				return;
@@ -869,7 +869,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				return; // Something is broken!
 			}
 
-			var tsi = new TextSelInfo(m_rootb.Selection);
+			var tsi = new TextSelInfo(RootBox.Selection);
 			if (tsi.ContainingObject(0) == XmlRDEBrowseViewVc.khvoNewItem)
 			{
 				ClearColumnStringsFromNewRow();

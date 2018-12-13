@@ -75,18 +75,18 @@ namespace LanguageExplorer.Controls.DetailControls
 		public void SetObject(ICmObject obj)
 		{
 			m_rootObj = obj;
-			if (m_rootb == null)
+			if (RootBox == null)
 			{
 				return;
 			}
 			SetRootBoxObj();
-			var h2 = m_rootb.Height;
+			var h2 = RootBox.Height;
 			if (m_hOld == h2)
 			{
 				return;
 			}
 			m_hOld = h2;
-			ViewSizeChanged?.Invoke(this, new FwViewSizeEventArgs(h2, m_rootb.Width));
+			ViewSizeChanged?.Invoke(this, new FwViewSizeEventArgs(h2, RootBox.Width));
 		}
 
 		public ICmObject Object => m_rootObj;
@@ -99,14 +99,14 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			// The ViewSizeChanged logic should be triggered automatically by a notification
 			// from the rootbox.
-			var h1 = m_rootb.Height;
-			m_rootb.SetRootObject(m_rootObj.Hvo, m_atomicReferenceVc, kFragAtomicRef, m_rootb.Stylesheet);
-			if (h1 == m_rootb.Height)
+			var h1 = RootBox.Height;
+			RootBox.SetRootObject(m_rootObj.Hvo, m_atomicReferenceVc, kFragAtomicRef, RootBox.Stylesheet);
+			if (h1 == RootBox.Height)
 			{
 				return;
 			}
 
-			ViewSizeChanged?.Invoke(this, new FwViewSizeEventArgs(m_rootb.Height, m_rootb.Width));
+			ViewSizeChanged?.Invoke(this, new FwViewSizeEventArgs(RootBox.Height, RootBox.Width));
 		}
 
 		/// <summary>
@@ -140,7 +140,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 
 			SetReferenceVc();
-			m_rootb.DataAccess = GetDataAccess();
+			RootBox.DataAccess = GetDataAccess();
 			SetRootBoxObj();
 		}
 
@@ -180,7 +180,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (cvsli == 0)
 			{
 				// No objects in selection: don't allow a selection.
-				m_rootb.DestroySelection();
+				RootBox.DestroySelection();
 				// Enhance: invoke launcher's selection dialog.
 				return;
 			}
@@ -204,10 +204,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			int ihvoEnd;
 			ITsTextProps ttp;
 			var rgvsli = SelLevInfo.AllTextSelInfo(vwselNew, cvsli, out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd, out ttp);
-			Debug.Assert(m_rootb != null);
+			Debug.Assert(RootBox != null);
 			// Create a selection that covers the entire target object.  If it differs from
 			// the new selection, we'll install it (which will recurse back to this method).
-			var vwselWhole = m_rootb.MakeTextSelInObj(ihvoRoot, cvsli, rgvsli, 0, null, false, false, false, true, false);
+			var vwselWhole = RootBox.MakeTextSelInObj(ihvoRoot, cvsli, rgvsli, 0, null, false, false, false, true, false);
 			if (vwselWhole == null)
 			{
 				return;
@@ -225,7 +225,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (hvoObj == hvoObjWhole && hvoObjEnd == hvoObjEndWhole && (ichAnchor != ichAnchorWhole || ichEnd != ichEndWhole))
 			{
 				// Install it this time!
-				m_rootb.MakeTextSelInObj(ihvoRoot, cvsli, rgvsli, 0, null, false, false, false, true, true);
+				RootBox.MakeTextSelInObj(ihvoRoot, cvsli, rgvsli, 0, null, false, false, false, true, true);
 			}
 		}
 

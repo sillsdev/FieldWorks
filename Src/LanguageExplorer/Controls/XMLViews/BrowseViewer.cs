@@ -1652,8 +1652,8 @@ namespace LanguageExplorer.Controls.XMLViews
 
 				ReadOnlyView = ReadOnlySelect;
 				Vc.Cache = Cache;
-				m_rootb.SetRootObject(m_hvoRoot, Vc, XmlBrowseViewBaseVc.kfragRoot, m_styleSheet);
-				m_rootb.DataAccess = m_cache.MainCacheAccessor;
+				RootBox.SetRootObject(m_hvoRoot, Vc, XmlBrowseViewBaseVc.kfragRoot, m_styleSheet);
+				RootBox.DataAccess = m_cache.MainCacheAccessor;
 				m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
 			}
 

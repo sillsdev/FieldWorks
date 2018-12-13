@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using FieldWorks.TestUtilities;
 using NUnit.Framework;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;

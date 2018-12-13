@@ -7,7 +7,6 @@ using System.Diagnostics;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
-	/// ------------------------------------------------------------------------------------
 	/// <summary>
 	/// Wraps the (un)initialization of the graphics object
 	/// </summary>
@@ -18,40 +17,26 @@ namespace SIL.FieldWorks.Common.RootSites
 	///		doStuff();
 	/// } // this uninitializes the graphics object
 	/// </example>
-	/// ------------------------------------------------------------------------------------
 	public class HoldGraphics : IDisposable
 	{
-		private SimpleRootSite m_Parent;
+		private SimpleRootSite m_parent;
 
-		/// --------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes the graphics object
-		/// </summary>
+		/// <summary />
 		/// <param name="parent">Containing rootsite</param>
-		/// --------------------------------------------------------------------------------
 		public HoldGraphics(SimpleRootSite parent)
 		{
 			if (parent.Disposing || parent.IsDisposed)
-				return;	// don't do anything if the parent is disposing or already disposed
-			m_Parent = parent;
-			m_Parent.InitGraphics();
+			{
+				return; // don't do anything if the parent is disposing or already disposed
+			}
+			m_parent = parent;
+			m_parent.InitGraphics();
 		}
-
-		#region IDisposable & Co. implementation
-		// Region last reviewed: never
-
-		/// <summary>
-		/// True, if the object has been disposed.
-		/// </summary>
-		private bool m_isDisposed = false;
 
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed
-		{
-			get { return m_isDisposed; }
-		}
+		private bool IsDisposed { get; set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -66,15 +51,12 @@ namespace SIL.FieldWorks.Common.RootSites
 			// The base class finalizer is called automatically.
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <remarks>Must not be virtual.</remarks>
+		/// <inheritdoc />
 		public void Dispose()
 		{
 			Dispose(true);
 			// This object will be cleaned up by the Dispose method.
-			// Therefore, you should call GC.SupressFinalize to
+			// Therefore, you should call GC.SuppressFinalize to
 			// take this object off the finalization queue
 			// and prevent finalization code for this object
 			// from executing a second time.
@@ -104,28 +86,27 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </remarks>
 		protected virtual void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
-			if (m_isDisposed)
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
 				return;
+			}
 
 			if (disposing)
 			{
 				// Dispose managed resources here.
 				// The previous comment was not correct, as this code was indeed being executed when
 				// the parent was null.  A DestroyHandle has been added to help with the re-entrant processing.
-				Debug.Assert(m_Parent != null && !m_Parent.IsDisposed && !m_Parent.Disposing);
+				Debug.Assert(m_parent != null && !m_parent.IsDisposed && !m_parent.Disposing);
 
-				if (m_Parent != null)
-					m_Parent.UninitGraphics();
+				m_parent?.UninitGraphics();
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
-			m_Parent = null;
+			m_parent = null;
 
-			m_isDisposed = true;
+			IsDisposed = true;
 		}
-
-		#endregion IDisposable & Co. implementation
 	}
 }

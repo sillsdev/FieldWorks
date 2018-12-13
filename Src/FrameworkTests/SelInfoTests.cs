@@ -10,13 +10,13 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 namespace SIL.FieldWorks.Common.Framework
 {
 	/// <summary>
-	/// Tests the compare methods of SelectionHelper.SelInfo
+	/// Tests the compare methods of SelInfo
 	/// </summary>
 	[TestFixture]
 	public class SelInfo_Compare
 	{
-		private SelectionHelper.SelInfo s1;
-		private SelectionHelper.SelInfo s2;
+		private SelInfo s1;
+		private SelInfo s2;
 
 		/// <summary>
 		/// Initialize the selection helper objects
@@ -24,11 +24,11 @@ namespace SIL.FieldWorks.Common.Framework
 		[SetUp]
 		public void Setup()
 		{
-			s1 = new SelectionHelper.SelInfo
+			s1 = new SelInfo
 			{
 				rgvsli = new SelLevInfo[2]
 			};
-			s2 = new SelectionHelper.SelInfo
+			s2 = new SelInfo
 			{
 				rgvsli = new SelLevInfo[2]
 			};

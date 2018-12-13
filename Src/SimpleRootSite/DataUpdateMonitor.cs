@@ -9,38 +9,6 @@ using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
-	#region UpdateSemaphore class
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// This class represents the data update status for a given database connection.
-	/// Objects of this class are kept in DataUpdateMonitor's static hashtable.
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	public class UpdateSemaphore
-	{
-		/// <summary></summary>
-		public bool fDataUpdateInProgress;
-		/// <summary></summary>
-		public string sDescr;
-
-		/// --------------------------------------------------------------------------------
-		/// <summary>
-		/// Contructor for UpdateSemaphore
-		/// </summary>
-		/// <param name="fUpdateInProgress">Probably always going to be true.</param>
-		/// <param name="sDescription">description of the data update being done,
-		/// for debugging.</param>
-		/// --------------------------------------------------------------------------------
-		public UpdateSemaphore(bool fUpdateInProgress, string sDescription)
-		{
-			fDataUpdateInProgress = fUpdateInProgress;
-			sDescr = sDescription;
-		}
-	}
-	#endregion
-
-	#region DataUpdateMonitor class
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Create an instance of this class for the duration of a possibly substantial data update.
 	/// The DataUpdateMonitor will properly handle all requests to Commit for the duration of
@@ -52,34 +20,32 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// </summary>
 	/// <remarks>The purpose of the DataUpdateMonitor is to fix real and potential crashes
 	/// resulting from processing windows messages when a data operation is in progress.</remarks>
-	/// ----------------------------------------------------------------------------------------
 	public class DataUpdateMonitor : IDisposable
 	{
 		// Keys are ISilDataAccess objects, values are UpdateSemaphore objects
 		private static UpdateSemaphore s_updateSemaphore;
 		private WaitCursor m_wait;
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="DataUpdateMonitor"/> class.
-		/// </summary>
+		/// <summary />
 		/// <param name="owner">An optional owner (A wait cursor will be put on it if not null).
 		/// </param>
 		/// <param name="updateDescription">A simple description of what is being done.</param>
-		/// ------------------------------------------------------------------------------------
 		public DataUpdateMonitor(Control owner, string updateDescription)
 		{
 			if (s_updateSemaphore == null)
+			{
 				s_updateSemaphore = new UpdateSemaphore(true, updateDescription);
+			}
 			else
 			{
 				if (s_updateSemaphore.fDataUpdateInProgress)
+				{
 					throw new Exception("Concurrent access on Database detected. Previous access: " + s_updateSemaphore.sDescr);
+				}
 				// Set ((static semaphore) members) for this data update
 				s_updateSemaphore.fDataUpdateInProgress = true;
 				s_updateSemaphore.sDescr = updateDescription;
 			}
-
 			// Set wait cursor
 			if (owner != null)
 			{
@@ -87,28 +53,11 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-		#region IDisposable & Co. implementation
-		// Region last reviewed: never
-
-		/// <summary>
-		/// True, if the object has been disposed.
-		/// </summary>
-		private bool m_isDisposed = false;
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		/// <value>
-		/// 	<c>true</c> if this instance is disposed; otherwise, <c>false</c>.
-		/// </value>
-		/// ------------------------------------------------------------------------------------
-		public bool IsDisposed
-		{
-			get { return m_isDisposed; }
-		}
+		private bool IsDisposed { get; set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
 		/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
@@ -116,32 +65,24 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <remarks>
 		/// In case some clients forget to dispose it directly.
 		/// </remarks>
-		/// ------------------------------------------------------------------------------------
 		~DataUpdateMonitor()
 		{
 			Dispose(false);
 			// The base class finalizer is called automatically.
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Performs application-defined tasks associated with freeing, releasing, or resetting
-		/// unmanaged resources.
-		/// </summary>
-		/// <remarks>Must not be virtual.</remarks>
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		public void Dispose()
 		{
 			Dispose(true);
 			// This object will be cleaned up by the Dispose method.
-			// Therefore, you should call GC.SupressFinalize to
+			// Therefore, you should call GC.SuppressFinalize to
 			// take this object off the finalization queue
 			// and prevent finalization code for this object
 			// from executing a second time.
 			GC.SuppressFinalize(this);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Executes in two distinct scenarios.
 		/// 1. If disposing is true, the method has been called directly
@@ -160,20 +101,21 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// it needs to be handled by fixing the bug.
 		/// If subclasses override this method, they should call the base implementation.
 		/// </remarks>
-		/// ------------------------------------------------------------------------------------
 		protected virtual void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
-			// Must not be run more than once.
-			if (m_isDisposed)
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
 				return;
+			}
 
 			if (disposing)
 			{
 				try
 				{
 					// Dispose managed resources here.
-					UpdateSemaphore semaphore = s_updateSemaphore;
+					var semaphore = s_updateSemaphore;
 					Debug.Assert(semaphore.fDataUpdateInProgress);
 					semaphore.fDataUpdateInProgress = false;
 					semaphore.sDescr = string.Empty;
@@ -184,43 +126,57 @@ namespace SIL.FieldWorks.Common.RootSites
 					// Since it needs m_wait, this must be done when 'disposing' is true,
 					// as that is a disposable object, which may be gone in
 					// Finalizer mode.
-					if (m_wait != null)
-						m_wait.Dispose();
+					m_wait?.Dispose();
 				}
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
 			m_wait = null;
 
-			m_isDisposed = true;
+			IsDisposed = true;
 		}
 
-		#endregion IDisposable & Co. implementation
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// If true, a data update is in progress.
 		/// </summary>
 		/// <returns><c>true</c> if a data update is in progress, otherwise <c>false</c>.</returns>
-		/// ------------------------------------------------------------------------------------
 		public static bool IsUpdateInProgress()
 		{
-			return (s_updateSemaphore != null && s_updateSemaphore.fDataUpdateInProgress);
+			return s_updateSemaphore != null && s_updateSemaphore.fDataUpdateInProgress;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Remove knowledge of a particular SilDataAccess (DB connection). This is used both
 		/// for testing and also whenever a database connection is being closed but the app is
 		/// not being destroyed (e.g., during backup, or when the last window connected to a
 		/// particular DB is closed).
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public static void ClearSemaphore()
 		{
 			Debug.Assert(!IsUpdateInProgress());
 			s_updateSemaphore = null;
 		}
+
+		/// <summary>
+		/// This class represents the data update status for a given database connection.
+		/// Objects of this class are kept in DataUpdateMonitor's static hashtable.
+		/// </summary>
+		private sealed class UpdateSemaphore
+		{
+			/// <summary />
+			internal bool fDataUpdateInProgress;
+			/// <summary />
+			internal string sDescr;
+
+			/// <summary />
+			/// <param name="fUpdateInProgress">Probably always going to be true.</param>
+			/// <param name="sDescription">description of the data update being done,
+			/// for debugging.</param>
+			internal UpdateSemaphore(bool fUpdateInProgress, string sDescription)
+			{
+				fDataUpdateInProgress = fUpdateInProgress;
+				sDescr = sDescription;
+			}
+		}
 	}
-	#endregion
 }
