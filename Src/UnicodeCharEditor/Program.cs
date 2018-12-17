@@ -8,8 +8,8 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Core.Text;
 using SIL.Utils;
 
 // ReSharper disable LocalizableElement -- Justification: we're cheap, and the messages in this file are displayed only in an error state.
@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 	/// </summary>
 	static class Program
 	{
-		/// <summary/>
+		/// <summary />
 		[STAThread]
 		static void Main(string[] args)
 		{
@@ -73,8 +73,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 						break;
 					default:
 						// An unrecognized argument was passed
-						MessageBox.Show("Only one command line argument is recognized:" + Environment.NewLine +
-										"\t-i means to install the custom character definitions (as a command line program).",
+						MessageBox.Show("Only one command line argument is recognized:" + Environment.NewLine + "\t-i means to install the custom character definitions (as a command line program).",
 							"Unicode Character Editor");
 						break;
 				}
@@ -129,20 +128,21 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		private static void DeleteTemporaryFiles()
 		{
 			// Delete the files we previously renamed. Couldn't do that before because they were locked.
-			var tempFilesToDelete = Path.Combine(CustomIcu.DefaultDataDirectory,
-				$"icudt{CustomIcu.Version}l", "TempFilesToDelete");
-
+			var tempFilesToDelete = Path.Combine(CustomIcu.DefaultDataDirectory, $"icudt{CustomIcu.Version}l", "TempFilesToDelete");
 			if (!File.Exists(tempFilesToDelete))
+			{
 				return;
-
+			}
 			var filesToDelete = File.ReadAllText(tempFilesToDelete);
-			var lines = filesToDelete.Split(new[] {'\r', '\n'}, StringSplitOptions.RemoveEmptyEntries);
+			var lines = filesToDelete.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 			foreach (var line in lines)
 			{
 				try
 				{
 					if (File.Exists(line))
+					{
 						File.Delete(line);
+					}
 				}
 				catch
 				{

@@ -10,8 +10,8 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
-using SIL.LCModel.Utils;
 using SIL.LCModel.Core.Text;
+using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.UnicodeCharEditor
@@ -31,9 +31,13 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				{
 					m_icuDir = CustomIcu.DefaultDataDirectory;
 					if (string.IsNullOrEmpty(m_icuDir))
+					{
 						throw new DirectoryNotFoundException("ICU directory not found. Registry value for ICU not set?");
+					}
 					if (!Directory.Exists(m_icuDir))
+					{
 						throw new DirectoryNotFoundException($"ICU directory does not exist at {m_icuDir}. Registry value for ICU set incorrectly?");
+					}
 				}
 				return m_icuDir;
 			}
@@ -47,7 +51,9 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				{
 					m_icuDataDir = Path.Combine(IcuDir, "data");
 					if (!Directory.Exists(m_icuDataDir))
+					{
 						throw new DirectoryNotFoundException($"ICU data directory does not exist at {m_icuDataDir}.");
+					}
 				}
 				return m_icuDataDir;
 			}
@@ -105,45 +111,49 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 				// 5. Generate the modified normalization file inputs.
 				using (var reader = new StreamReader(outputUnicodeDataFilename, Encoding.ASCII))
+				using (var writeNfc = new StreamWriter(nfcOverridesFileName, false, Encoding.ASCII))
+				using (var writeNfkc = new StreamWriter(nfkcOverridesFileName, false, Encoding.ASCII))
 				{
-					using (var writeNfc = new StreamWriter(nfcOverridesFileName, false, Encoding.ASCII))
-					using (var writeNfkc = new StreamWriter(nfkcOverridesFileName, false, Encoding.ASCII))
+					// ReSharper disable ReturnValueOfPureMethodIsNotUsed -- Justification: force autodetection of encoding.
+					reader.Peek();
+					// ReSharper restore ReturnValueOfPureMethodIsNotUsed
+					string line;
+					while ((line = reader.ReadLine()) != null)
 					{
-						// ReSharper disable ReturnValueOfPureMethodIsNotUsed -- Justification: force autodetection of encoding.
-						reader.Peek();
-						// ReSharper restore ReturnValueOfPureMethodIsNotUsed
-						string line;
-						while ((line = reader.ReadLine()) != null)
+						if (line.StartsWith("Code") || line.StartsWith("block")) // header line or special instruction
 						{
-							if (line.StartsWith("Code") || line.StartsWith("block")) // header line or special instruction
-								continue;
-							// Extract the first, fourth, and sixth fields.
-							var match = new Regex("^([^;]*);[^;]*;[^;]*;([^;]*);[^;]*;([^;]*);").Match(line);
-							if (!match.Success)
-								continue;
-							var codePoint = match.Groups[1].Value.Trim();
-							var combiningClass = match.Groups[2].Value.Trim();
-							var decomp = match.Groups[3].Value.Trim();
-							if (!string.IsNullOrEmpty(combiningClass) && combiningClass != "0")
+							continue;
+						}
+						// Extract the first, fourth, and sixth fields.
+						var match = new Regex("^([^;]*);[^;]*;[^;]*;([^;]*);[^;]*;([^;]*);").Match(line);
+						if (!match.Success)
+						{
+							continue;
+						}
+						var codePoint = match.Groups[1].Value.Trim();
+						var combiningClass = match.Groups[2].Value.Trim();
+						var decomp = match.Groups[3].Value.Trim();
+						if (!string.IsNullOrEmpty(combiningClass) && combiningClass != "0")
+						{
+							writeNfc.WriteLine(codePoint + ":" + combiningClass);
+						}
+						if (!string.IsNullOrEmpty(decomp))
+						{
+							if (decomp.StartsWith("<"))
 							{
-								writeNfc.WriteLine(codePoint + ":" + combiningClass);
-							}
-							if (!string.IsNullOrEmpty(decomp))
-							{
-								if (decomp.StartsWith("<"))
+								var index = decomp.IndexOf(">", StringComparison.InvariantCulture);
+								if (index < 0)
 								{
-									var index = decomp.IndexOf(">", StringComparison.InvariantCulture);
-									if (index < 0)
-										continue; // badly formed, ignore it.
-									decomp = decomp.Substring(index + 1).Trim();
+									continue; // badly formed, ignore it.
 								}
-								// otherwise we should arguably write to nfc.txt
-								// If exactly two code points write codePoint=decomp
-								// otherwise write codePoint>decomp
-								// However, we should not be modifying standard normalization.
-								// For now treat them all as compatibility only.
-								writeNfkc.WriteLine(codePoint + ">" + decomp);
+								decomp = decomp.Substring(index + 1).Trim();
 							}
+							// otherwise we should arguably write to nfc.txt
+							// If exactly two code points write codePoint=decomp
+							// otherwise write codePoint>decomp
+							// However, we should not be modifying standard normalization.
+							// For now treat them all as compatibility only.
+							writeNfkc.WriteLine(codePoint + ">" + decomp);
 						}
 					}
 				}
@@ -178,13 +188,16 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			{
 				var xaCode = xe.Attribute("code");
 				if (string.IsNullOrEmpty(xaCode?.Value))
+				{
 					continue;
+				}
 				var xaData = xe.Attribute("data");
 				if (string.IsNullOrEmpty(xaData?.Value))
+				{
 					continue;
+				}
 				int code;
-				if (int.TryParse(xaCode.Value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out code) &&
-					!m_dictCustomChars.ContainsKey(code))
+				if (int.TryParse(xaCode.Value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out code) && !m_dictCustomChars.ContainsKey(code))
 				{
 					var spec = new PUACharacter(xaCode.Value, xaData.Value);
 					m_dictCustomChars.Add(code, spec);
@@ -196,12 +209,12 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 		#region Undo File Stack
 
-		///<summary/>
-		public struct UndoFiles
+		///<summary />
+		private struct UndoFiles
 		{
-			///<summary></summary>
+			///<summary />
 			public string m_backupFile;
-			///<summary></summary>
+			///<summary />
 			public string m_originalFile;
 		}
 
@@ -229,7 +242,9 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			{
 				var frame = m_undoFileStack[i];
 				if (File.Exists(frame.m_backupFile))
+				{
 					DeleteFile(frame.m_backupFile);
+				}
 			}
 
 			LogFile.AddVerboseLine("Removing Undo Files --- Finish");
@@ -246,7 +261,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				var frame = m_undoFileStack[i];
 				var fi = new FileInfo(frame.m_backupFile);
 				if (fi.Exists)
-				//				if (File.Exists(frame.backupFile))
 				{
 					// Use the safe versions of the methods so that the process can continue
 					// even if there are errors.
@@ -347,7 +361,9 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 						LogFile.AddErrorLine(stdError);
 					}
 					if (ret == (int)IcuErrorCodes.FILE_ACCESS_ERROR)
+					{
 						throw new IcuLockedException(ErrorCodes.Gennorm, stdError);
+					}
 					throw new PuaException(ErrorCodes.Gennorm, stdError);
 				}
 			}
@@ -360,7 +376,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				// TODO-Linux: Review - is the approach of expecting executable location to be in PATH ok?
 				return exeName;
 			}
-
 			var codeBaseUri = typeof(PUAInstaller).Assembly.CodeBase;
 			var path = Path.GetDirectoryName(FileUtils.StripFilePrefix(codeBaseUri));
 
@@ -428,13 +443,14 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 					{
 						// skip entirely blank lines
 						if (line.Length <= 0)
+						{
 							continue;
+						}
 						if (line.StartsWith("Code") || line.StartsWith("block")) // header line or special instruction
 						{
 							writer.WriteLine(line);
 							continue;
 						}
-
 						//Grab codepoint
 						var strFileCode = line.Substring(0, line.IndexOf(';')).Trim(); // current code in file
 						var fileCode = Convert.ToInt32(strFileCode, 16);
@@ -461,13 +477,17 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 										writer.WriteLine(line);
 									}
 									while ((line = reader.ReadLine()) != null)
+									{
 										writer.WriteLine(line);
+									}
 									break;
 								}
 								newCode = Convert.ToInt32(puaDefinitions[codeIndex].CodePoint, 16);
 							}
 							if (codeIndex >= puaDefinitions.Count)
+							{
 								break;
+							}
 							// Write out the original top of the section if it hasn't been replaced.
 							if (fileCode != lastCode)
 							{
@@ -494,147 +514,15 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			}
 		}
 
-		/*
-		Character Decomposition Mapping
-
-		The tags supplied with certain decomposition mappings generally indicate formatting
-		information. Where no such tag is given, the mapping is canonical. Conversely, the
-		presence of a formatting tag also indicates that the mapping is a compatibility mapping
-		and not a canonical mapping. In the absence of other formatting information in a
-		compatibility mapping, the tag is used to distinguish it from canonical mappings.
-
-		In some instances a canonical mapping or a compatibility mapping may consist of a single
-		character. For a canonical mapping, this indicates that the character is a canonical
-		equivalent of another single character. For a compatibility mapping, this indicates that
-		the character is a compatibility equivalent of another single character. The compatibility
-		formatting tags used are:
-
-			Tag 		Description
-			----------	-----------------------------------------
-			<font>		A font variant (e.g. a blackletter form).
-			<noBreak>	A no-break version of a space or hyphen.
-			<initial>	An initial presentation form (Arabic).
-			<medial>	A medial presentation form (Arabic).
-			<final>		A final presentation form (Arabic).
-			<isolated>	An isolated presentation form (Arabic).
-			<circle>	An encircled form.
-			<super>		A superscript form.
-			<sub>		A subscript form.
-			<vertical>	A vertical layout presentation form.
-			<wide>		A wide (or zenkaku) compatibility character.
-			<narrow>	A narrow (or hankaku) compatibility character.
-			<small>		A small variant form (CNS compatibility).
-			<square>	A CJK squared font variant.
-			<fraction>	A vulgar fraction form.
-			<compat>	Otherwise unspecified compatibility character.
-
-		Reminder: There is a difference between decomposition and decomposition mapping. The
-		decomposition mappings are defined in the UnicodeData, while the decomposition (also
-		termed "full decomposition") is defined in Chapter 3 to use those mappings recursively.
-
-			* The canonical decomposition is formed by recursively applying the canonical
-			  mappings, then applying the canonical reordering algorithm.
-
-			* The compatibility decomposition is formed by recursively applying the canonical and
-			  compatibility mappings, then applying the canonical reordering algorithm.
-
-
-		Decompositions and Normalization
-
-		Decomposition is specified in Chapter 3. UAX #15: Unicode Normalization Forms [Norm]
-		specifies the interaction between decomposition and normalization. That report specifies
-		how the decompositions defined in UnicodeData.txt are used to derive normalized forms of
-		Unicode text.
-
-		Note that as of the 2.1.9 update of the Unicode Character Database, the decompositions in
-		the UnicodeData.txt file can be used to recursively derive the full decomposition in
-		canonical order, without the need to separately apply canonical reordering. However,
-		canonical reordering of combining character sequences must still be applied in
-		decomposition when normalizing source text which contains any combining marks.
-
-		The QuickCheck property values are as follows:
-
-		Value 	Property	 	Description
-		-----	--------		-----------------------------------
-		No		NF*_QC			Characters that cannot ever occur in the respective normalization
-								form.  See Decompositions and Normalization.
-		Maybe 	NFC_QC,NFKC_QC	Characters that may occur in in the respective normalization,
-								depending on the context. See Decompositions and Normalization.
-		Yes		n/a				All other characters. This is the default value, and is not
-								explicitly listed in the file.
-
-
-
-		/// <summary>
-		/// Write a codepoint block, inserting the necessary codepoints properly.
-		/// </summary>
-		/// <param name="writer">UnicodeData.txt file to write lines to/</param>
-		/// <param name="blockName">The name of the block (e.g. "Private Use")</param>
-		/// <param name="beginning">First codepoint in the block</param>
-		/// <param name="end">Last codepoint in the free block</param>
-		/// <param name="puaCharacters">An array of codepoints within the block, including the ends.
-		///		DO NOT pass in points external to the free block.</param>
-		///	<param name="data">A string that contains all of our properties and such for the character range</param>
-		///	<param name="addToBidi">A list of UCD Characters to remove from the DerivedBidiClass.txt file</param>
-		///	<param name="removeFromBidi">A list of UCD Characters to add to the DerivedBidiClass.txt file</param>
-		///	<param name="addToNorm">A list of UCD Characters to remove</param>
-		///	<param name="removeFromNorm">A list of UCD Characters to add</param>
-		private void WriteCodepointBlock(StreamWriter writer, string blockName, string beginning, string end,
-			IEnumerable<IPuaCharacter> puaCharacters, string data, List<IUcdCharacter> addToBidi, List<IUcdCharacter> removeFromBidi,
-			List<IUcdCharacter> addToNorm, List<IUcdCharacter> removeFromNorm)
-		{
-			//Write each entry
-			foreach (var puaCharacter in puaCharacters)
-			{
-				LogCodepoint(puaCharacter.CodePoint);
-
-				// Construct an equivelant UnicodeData.txt line
-				var line = puaCharacter.CodePoint + ";" + blockName
-					+ data.Substring(data.IndexOf(';'));
-				AddToLists(line, puaCharacter, addToBidi, removeFromBidi, addToNorm, removeFromNorm);
-
-				//If the current xmlCodepoint is the same as the beginning codepoint
-				if (puaCharacter.CompareTo(beginning) == 0)
-				{
-					//Shift the beginning down one
-					beginning = AddHex(beginning, 1);
-					WriteUnicodeDataLine(puaCharacter, writer);
-				}
-				//If the current xmlCodepoint is between the beginning and end
-				else if (puaCharacter.CompareTo(end) != 0)
-				{
-					//We're writing a range block below the current xmlCodepoint
-					WriteRange(writer, beginning, AddHex(puaCharacter.CodePoint, -1), blockName, data);
-					//Writes the current xmlCodepoint line
-					WriteUnicodeDataLine(puaCharacter, writer);
-					//Increment the beginning by one
-					beginning = AddHex(puaCharacter.CodePoint, 1);
-				}
-				//If the current xmlCodepoint is the same as the end codepoint
-				else
-				{
-					//Moves the end down a codepoint address
-					end = AddHex(end, -1);
-					//Write our range of data
-					WriteRange(writer, beginning, end, blockName, data);
-					//Writes the current line
-					WriteUnicodeDataLine(puaCharacter, writer);
-					return;
-				}
-			}
-			//Write our range of data
-			WriteRange(writer, beginning, end, blockName, data);
-		}
-
-		*/
-
 		/// <summary>
 		/// Prints a message to the console when storing a Unicode character.
 		/// </summary>
 		private static void LogCodepoint(string code)
 		{
 			if (LogFile.IsLogging())
+			{
 				LogFile.AddErrorLine("Storing definition for Unicode character: " + code);
+			}
 		}
 
 		#endregion
@@ -642,7 +530,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		private const string ksOriginal = "_ORIGINAL";
 		private const string ksBackupFileSuffix = "_BAK";
 
-		///<summary/>
+		///<summary />
 		public static void SafeFileCopyWithLogging(string inName, string outName, bool overwrite)
 		{
 			try
@@ -655,7 +543,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			}
 		}
 
-		///<summary/>
+		///<summary />
 		public static void FileCopyWithLogging(string inName, string outName, bool overwrite)
 		{
 			var fi = new FileInfo(inName);
@@ -673,8 +561,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			}
 		}
 
-
-
+		///<summary />
 		///<returns>whether the file was found and successfully deleted</returns>
 		public static bool SafeDeleteFile(string file)
 		{
@@ -689,19 +576,24 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			}
 		}
 
+		///<summary />
 		///<returns>whether the file was found and successfully deleted</returns>
 		public static bool DeleteFile(string file)
 		{
 			if (!File.Exists(file))
 			{
 				if (LogFile.IsLogging())
+				{
 					LogFile.AddVerboseLine($"Tried to delete file that didn't exist:<{file}>");
+				}
 				return false;
 			}
 			File.SetAttributes(file, FileAttributes.Normal);
 			File.Delete(file);
 			if (LogFile.IsLogging())
+			{
 				LogFile.AddVerboseLine($"Removed file:<{file}>");
+			}
 			return true;
 		}
 
@@ -711,8 +603,9 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		private static void RemoveFile(string inputFilespec)
 		{
 			if (!File.Exists(inputFilespec))
+			{
 				return;
-
+			}
 			// First try to remove the file immediately
 			try
 			{

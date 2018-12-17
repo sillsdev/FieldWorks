@@ -87,7 +87,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
-    <LangVersion>6</LangVersion>	
+    <LangVersion>6</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Reporting, Version=9.0.0.28124, Culture=neutral, processorArchitecture=MSIL">
@@ -141,6 +141,7 @@
       <DependentUpon>CharEditorWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="ErrorCodes.cs" />
+    <Compile Include="ErrorCodesExtensionMethods.cs" />
     <Compile Include="IcuErrorCodes.cs" />
     <Compile Include="IcuLockedException.cs" />
     <Compile Include="LogFile.cs" />

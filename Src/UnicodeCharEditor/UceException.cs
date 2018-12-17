@@ -6,11 +6,11 @@ using System.Text;
 namespace SIL.FieldWorks.UnicodeCharEditor
 {
 	/// <inheritdoc />
-	public abstract class UceException: Exception
+	public abstract class UceException : Exception
 	{
-		/// <summary/>
+		/// <summary />
 		protected readonly ErrorCodes m_errorCode;
-		/// <summary/>
+		/// <summary />
 		protected readonly string m_msg;
 
 		/// <inheritdoc />
@@ -28,7 +28,9 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				var bldr = new StringBuilder();
 				bldr.AppendLine(m_errorCode.GetDescription());
 				if (!string.IsNullOrEmpty(m_msg))
+				{
 					bldr.Append(m_msg);
+				}
 				return bldr.ToString();
 			}
 		}

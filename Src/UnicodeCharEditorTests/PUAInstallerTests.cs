@@ -1,39 +1,34 @@
 // Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// <remarks>
-// Since these tests modify the ICU data files, run the ICU data compilers, and then use ICU
-// methods to check values, they run rather slowly.  The single InstallPUACharacters test takes
-// over 10 seconds to run.  This turns it from being a Unit Test into being an Acceptance Test.
-// Therefore, the whole fixture is marked as "LongRunning".
-// </remarks>
 
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
+using ICSharpCode.SharpZipLib.Zip;
 using Icu;
 using NUnit.Framework;
-using ICSharpCode.SharpZipLib.Zip;
-using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Core.Text;
 
 namespace SIL.FieldWorks.UnicodeCharEditor
 {
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
+	/// <remarks>
+	/// Since these tests modify the ICU data files, run the ICU data compilers, and then use ICU
+	/// methods to check values, they run rather slowly.  The single InstallPUACharacters test takes
+	/// over 10 seconds to run.  This turns it from being a Unit Test into being an Acceptance Test.
+	/// Therefore, the whole fixture is marked as "LongRunning".
+	/// </remarks>
 	[TestFixture]
 	[Category("LongRunning")]
 	public class PUAInstallerTests
 	{
-		const int kChar1 = 0xE000;	// unused PUA char.
-		const int kChar2 = 0xE001;	// unused PUA char.
-		const int kChar3 = 0xD7FD;	// unused char (as of 6.2).
+		const int kChar1 = 0xE000;  // unused PUA char.
+		const int kChar2 = 0xE001;  // unused PUA char.
+		const int kChar3 = 0xD7FD;  // unused char (as of 6.2).
 		private const string kChar3S = "D7FD"; // keep in sync with kChar3.
-		const int kChar4 = 0xDDDDD;	// unused char. (0xEEEEE fails in running genprops)
+		const int kChar4 = 0xDDDDD; // unused char. (0xEEEEE fails in running genprops)
 
 		string m_sCustomCharsFile;
 		string m_sCustomCharsBackup;
@@ -51,7 +46,9 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			if (File.Exists(m_sCustomCharsFile))
 			{
 				if (File.Exists(m_sCustomCharsBackup))
+				{
 					File.Delete(m_sCustomCharsBackup);
+				}
 				File.Move(m_sCustomCharsFile, m_sCustomCharsBackup);
 			}
 		}
@@ -65,12 +62,9 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			RestoreIcuData(m_sCustomCharsFile, m_sCustomCharsBackup);
 		}
 
-
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the method InstallPUACharacters.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void InstallPUACharacters()
 		{
@@ -96,12 +90,10 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			VerifyNewlyCreatedChars();
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// LT-12051...had problems installing this one character in isolation.
 		/// Not a problem when we insert it as one of a group.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void InstallAA6B()
 		{
@@ -119,43 +111,43 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		{
 			FwUtils.InitializeIcu();
 
-			Assert.IsFalse(Icu.Character.IsAlphabetic(kChar1));
-			Assert.IsFalse(Icu.Character.IsAlphabetic(kChar2));
-			Assert.IsFalse(Icu.Character.IsAlphabetic(kChar3));
-			Assert.IsFalse(Icu.Character.IsAlphabetic(kChar4));
-			Assert.IsFalse(Icu.Character.IsControl(kChar1));
-			Assert.IsFalse(Icu.Character.IsControl(kChar2));
-			Assert.IsFalse(Icu.Character.IsControl(kChar3));
-			Assert.IsFalse(Icu.Character.IsControl(kChar4));
-			Assert.IsFalse(Icu.Character.IsDiacritic(kChar1));
-			Assert.IsFalse(Icu.Character.IsDiacritic(kChar2));
-			Assert.IsFalse(Icu.Character.IsDiacritic(kChar3));
-			Assert.IsFalse(Icu.Character.IsDiacritic(kChar4));
-			Assert.IsFalse(Icu.Character.IsIdeographic(kChar1));
-			Assert.IsFalse(Icu.Character.IsIdeographic(kChar2));
-			Assert.IsFalse(Icu.Character.IsIdeographic(kChar3));
-			Assert.IsFalse(Icu.Character.IsIdeographic(kChar4));
-			Assert.IsFalse(Icu.Character.IsNumeric(kChar1));
-			Assert.IsFalse(Icu.Character.IsNumeric(kChar2));
-			Assert.IsFalse(Icu.Character.IsNumeric(kChar3));
-			Assert.IsFalse(Icu.Character.IsNumeric(kChar4));
-			Assert.IsFalse(Icu.Character.IsPunct(kChar1));
-			Assert.IsFalse(Icu.Character.IsPunct(kChar2));
-			Assert.IsFalse(Icu.Character.IsPunct(kChar3));
-			Assert.IsFalse(Icu.Character.IsPunct(kChar4));
-			Assert.IsFalse(Icu.Character.IsSpace(kChar1));
-			Assert.IsFalse(Icu.Character.IsSpace(kChar2));
-			Assert.IsFalse(Icu.Character.IsSpace(kChar3));
-			Assert.IsFalse(Icu.Character.IsSpace(kChar4));
-			Assert.IsFalse(Icu.Character.IsSymbol(kChar1));
-			Assert.IsFalse(Icu.Character.IsSymbol(kChar2));
-			Assert.IsFalse(Icu.Character.IsSymbol(kChar3));
-			Assert.IsFalse(Icu.Character.IsSymbol(kChar4));
+			Assert.IsFalse(Character.IsAlphabetic(kChar1));
+			Assert.IsFalse(Character.IsAlphabetic(kChar2));
+			Assert.IsFalse(Character.IsAlphabetic(kChar3));
+			Assert.IsFalse(Character.IsAlphabetic(kChar4));
+			Assert.IsFalse(Character.IsControl(kChar1));
+			Assert.IsFalse(Character.IsControl(kChar2));
+			Assert.IsFalse(Character.IsControl(kChar3));
+			Assert.IsFalse(Character.IsControl(kChar4));
+			Assert.IsFalse(Character.IsDiacritic(kChar1));
+			Assert.IsFalse(Character.IsDiacritic(kChar2));
+			Assert.IsFalse(Character.IsDiacritic(kChar3));
+			Assert.IsFalse(Character.IsDiacritic(kChar4));
+			Assert.IsFalse(Character.IsIdeographic(kChar1));
+			Assert.IsFalse(Character.IsIdeographic(kChar2));
+			Assert.IsFalse(Character.IsIdeographic(kChar3));
+			Assert.IsFalse(Character.IsIdeographic(kChar4));
+			Assert.IsFalse(Character.IsNumeric(kChar1));
+			Assert.IsFalse(Character.IsNumeric(kChar2));
+			Assert.IsFalse(Character.IsNumeric(kChar3));
+			Assert.IsFalse(Character.IsNumeric(kChar4));
+			Assert.IsFalse(Character.IsPunct(kChar1));
+			Assert.IsFalse(Character.IsPunct(kChar2));
+			Assert.IsFalse(Character.IsPunct(kChar3));
+			Assert.IsFalse(Character.IsPunct(kChar4));
+			Assert.IsFalse(Character.IsSpace(kChar1));
+			Assert.IsFalse(Character.IsSpace(kChar2));
+			Assert.IsFalse(Character.IsSpace(kChar3));
+			Assert.IsFalse(Character.IsSpace(kChar4));
+			Assert.IsFalse(Character.IsSymbol(kChar1));
+			Assert.IsFalse(Character.IsSymbol(kChar2));
+			Assert.IsFalse(Character.IsSymbol(kChar3));
+			Assert.IsFalse(Character.IsSymbol(kChar4));
 
-			Assert.AreEqual(Icu.Character.UCharCategory.PRIVATE_USE_CHAR, Icu.Character.GetCharType(kChar1));
-			Assert.AreEqual(Icu.Character.UCharCategory.PRIVATE_USE_CHAR, Icu.Character.GetCharType(kChar2));
-			Assert.AreEqual(Icu.Character.UCharCategory.UNASSIGNED, Icu.Character.GetCharType(kChar3));
-			Assert.AreEqual(Icu.Character.UCharCategory.UNASSIGNED, Icu.Character.GetCharType(kChar4));
+			Assert.AreEqual(Character.UCharCategory.PRIVATE_USE_CHAR, Character.GetCharType(kChar1));
+			Assert.AreEqual(Character.UCharCategory.PRIVATE_USE_CHAR, Character.GetCharType(kChar2));
+			Assert.AreEqual(Character.UCharCategory.UNASSIGNED, Character.GetCharType(kChar3));
+			Assert.AreEqual(Character.UCharCategory.UNASSIGNED, Character.GetCharType(kChar4));
 			var decompositionType = CustomIcu.GetDecompositionTypeInfo(kChar1);
 			Assert.AreEqual("[none]", decompositionType.Description);
 			decompositionType = CustomIcu.GetDecompositionTypeInfo(kChar2);
@@ -172,13 +164,13 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			Assert.AreEqual("[none]", numericType.Description);
 			numericType = CustomIcu.GetNumericTypeInfo(kChar4);
 			Assert.AreEqual("[none]", numericType.Description);
-			var prettyName = Icu.Character.GetPrettyICUCharName("\xE000");
+			var prettyName = Character.GetPrettyICUCharName("\xE000");
 			Assert.IsNull(prettyName);
-			prettyName = Icu.Character.GetPrettyICUCharName("\xE001");
+			prettyName = Character.GetPrettyICUCharName("\xE001");
 			Assert.IsNull(prettyName);
-			prettyName = Icu.Character.GetPrettyICUCharName(kChar3S);
+			prettyName = Character.GetPrettyICUCharName(kChar3S);
 			Assert.IsNull(prettyName);
-			prettyName = Icu.Character.GetPrettyICUCharName("\xDDDDD");
+			prettyName = Character.GetPrettyICUCharName("\xDDDDD");
 			Assert.IsNull(prettyName);
 		}
 
@@ -188,47 +180,47 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 			// The commented out methods below use u_getIntPropertyValue(), which doesn't
 			// work reliably with the limited number of data files that we modify.
-			//Assert.IsTrue(Icu.Character.IsAlphabetic(kChar1));	// now true
-			//Assert.IsTrue(Icu.Character.IsAlphabetic(kChar2));	// now true
-			//Assert.IsFalse(Icu.Character.IsAlphabetic(kChar3));
-			//Assert.IsFalse(Icu.Character.IsAlphabetic(kChar4));
-			Assert.IsFalse(Icu.Character.IsControl(kChar1));
-			Assert.IsFalse(Icu.Character.IsControl(kChar2));
-			Assert.IsFalse(Icu.Character.IsControl(kChar3));
-			Assert.IsFalse(Icu.Character.IsControl(kChar4));
-			//Assert.IsFalse(Icu.Character.IsDiacritic(kChar1));
-			//Assert.IsFalse(Icu.Character.IsDiacritic(kChar2));
-			//Assert.IsFalse(Icu.Character.IsDiacritic(kChar3));
-			//Assert.IsFalse(Icu.Character.IsDiacritic(kChar4));
-			//Assert.IsFalse(Icu.Character.IsIdeographic(kChar1));
-			//Assert.IsFalse(Icu.Character.IsIdeographic(kChar2));
-			//Assert.IsFalse(Icu.Character.IsIdeographic(kChar3));
-			//Assert.IsFalse(Icu.Character.IsIdeographic(kChar4));
-			//Assert.IsFalse(Icu.Character.IsNumeric(kChar1));
-			//Assert.IsFalse(Icu.Character.IsNumeric(kChar2));
-			//Assert.IsFalse(Icu.Character.IsNumeric(kChar3));
-			//Assert.IsTrue(Icu.Character.IsNumeric(kChar4));		// now true
-			Assert.IsFalse(Icu.Character.IsPunct(kChar1));
-			Assert.IsFalse(Icu.Character.IsPunct(kChar2));
-			Assert.IsTrue(Icu.Character.IsPunct(kChar3));			// now true
-			Assert.IsFalse(Icu.Character.IsPunct(kChar4));
-			Assert.IsFalse(Icu.Character.IsSpace(kChar1));
-			Assert.IsFalse(Icu.Character.IsSpace(kChar2));
-			Assert.IsFalse(Icu.Character.IsSpace(kChar3));
-			Assert.IsFalse(Icu.Character.IsSpace(kChar4));
-			Assert.IsFalse(Icu.Character.IsSymbol(kChar1));
-			Assert.IsFalse(Icu.Character.IsSymbol(kChar2));
-			Assert.IsFalse(Icu.Character.IsSymbol(kChar3));
-			Assert.IsFalse(Icu.Character.IsSymbol(kChar4));
+			//Assert.IsTrue(Character.IsAlphabetic(kChar1));	// now true
+			//Assert.IsTrue(Character.IsAlphabetic(kChar2));	// now true
+			//Assert.IsFalse(Character.IsAlphabetic(kChar3));
+			//Assert.IsFalse(Character.IsAlphabetic(kChar4));
+			Assert.IsFalse(Character.IsControl(kChar1));
+			Assert.IsFalse(Character.IsControl(kChar2));
+			Assert.IsFalse(Character.IsControl(kChar3));
+			Assert.IsFalse(Character.IsControl(kChar4));
+			//Assert.IsFalse(Character.IsDiacritic(kChar1));
+			//Assert.IsFalse(Character.IsDiacritic(kChar2));
+			//Assert.IsFalse(Character.IsDiacritic(kChar3));
+			//Assert.IsFalse(Character.IsDiacritic(kChar4));
+			//Assert.IsFalse(Character.IsIdeographic(kChar1));
+			//Assert.IsFalse(Character.IsIdeographic(kChar2));
+			//Assert.IsFalse(Character.IsIdeographic(kChar3));
+			//Assert.IsFalse(Character.IsIdeographic(kChar4));
+			//Assert.IsFalse(Character.IsNumeric(kChar1));
+			//Assert.IsFalse(Character.IsNumeric(kChar2));
+			//Assert.IsFalse(Character.IsNumeric(kChar3));
+			//Assert.IsTrue(Character.IsNumeric(kChar4));		// now true
+			Assert.IsFalse(Character.IsPunct(kChar1));
+			Assert.IsFalse(Character.IsPunct(kChar2));
+			Assert.IsTrue(Character.IsPunct(kChar3));           // now true
+			Assert.IsFalse(Character.IsPunct(kChar4));
+			Assert.IsFalse(Character.IsSpace(kChar1));
+			Assert.IsFalse(Character.IsSpace(kChar2));
+			Assert.IsFalse(Character.IsSpace(kChar3));
+			Assert.IsFalse(Character.IsSpace(kChar4));
+			Assert.IsFalse(Character.IsSymbol(kChar1));
+			Assert.IsFalse(Character.IsSymbol(kChar2));
+			Assert.IsFalse(Character.IsSymbol(kChar3));
+			Assert.IsFalse(Character.IsSymbol(kChar4));
 
-			var cat = Icu.Character.GetCharType(kChar1);
-			Assert.AreEqual(Icu.Character.UCharCategory.LOWERCASE_LETTER, cat);
-			cat = Icu.Character.GetCharType(kChar2);
-			Assert.AreEqual(Icu.Character.UCharCategory.UPPERCASE_LETTER, cat);
-			cat = Icu.Character.GetCharType(kChar3);
-			Assert.AreEqual(Icu.Character.UCharCategory.OTHER_PUNCTUATION, cat);
-			cat = Icu.Character.GetCharType(kChar4);
-			Assert.AreEqual(Icu.Character.UCharCategory.DECIMAL_DIGIT_NUMBER, cat);
+			var cat = Character.GetCharType(kChar1);
+			Assert.AreEqual(Character.UCharCategory.LOWERCASE_LETTER, cat);
+			cat = Character.GetCharType(kChar2);
+			Assert.AreEqual(Character.UCharCategory.UPPERCASE_LETTER, cat);
+			cat = Character.GetCharType(kChar3);
+			Assert.AreEqual(Character.UCharCategory.OTHER_PUNCTUATION, cat);
+			cat = Character.GetCharType(kChar4);
+			Assert.AreEqual(Character.UCharCategory.DECIMAL_DIGIT_NUMBER, cat);
 			var decompositionType = CustomIcu.GetDecompositionTypeInfo(kChar1);
 			Assert.AreEqual("[none]", decompositionType.Description);
 			decompositionType = CustomIcu.GetDecompositionTypeInfo(kChar2);
@@ -305,52 +297,58 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				}
 				catch (Exception e1)
 				{
-					Assert.Fail("Something is wrong with the file you chose." + Environment
-					.NewLine +
-						" The file could not be opened. " + Environment.NewLine + Environment.NewLine +
-						"   The error message was: '" + e1.Message);
+					Assert.Fail("Something is wrong with the file you chose." + Environment.NewLine + " The file could not be opened. " + Environment.NewLine + Environment.NewLine + "   The error message was: '" + e1.Message);
 				}
 				if (zipIn == null)
-					return false;
-				Wrapper.Cleanup();
-				foreach (string dir in Directory.GetDirectories(icuDir))
 				{
-					string subdir = Path.GetFileName(dir);
-					if (subdir.Equals(string.Format("icudt{0}l", CustomIcu.Version),
-					StringComparison.OrdinalIgnoreCase))
+					return false;
+				}
+				Wrapper.Cleanup();
+				foreach (var dir in Directory.GetDirectories(icuDir))
+				{
+					var subdir = Path.GetFileName(dir);
+					if (subdir.Equals($"icudt{CustomIcu.Version}l", StringComparison.OrdinalIgnoreCase))
+					{
 						Directory.Delete(dir, true);
+					}
 				}
 				ZipEntry entry;
 				while ((entry = zipIn.GetNextEntry()) != null)
 				{
-					string dirName = Path.GetDirectoryName(entry.Name);
-					Match match = Regex.Match(dirName, @"^ICU\d\d[\\/]?(.*)$", RegexOptions.IgnoreCase);
+					var dirName = Path.GetDirectoryName(entry.Name);
+					var match = Regex.Match(dirName, @"^ICU\d\d[\\/]?(.*)$", RegexOptions.IgnoreCase);
 					if (match.Success) // Zip file was built in a way that includes the root directory name.
+					{
 						dirName = match.Groups[1].Value; // Strip it off. May leave empty string.
-					string fileName = Path.GetFileName(entry.Name);
-					bool fOk = UnzipFile(zipIn, fileName, entry.Size, Path.Combine(icuDir, dirName));
+					}
+					var fileName = Path.GetFileName(entry.Name);
+					var fOk = UnzipFile(zipIn, fileName, entry.Size, Path.Combine(icuDir, dirName));
 					if (!fOk)
+					{
 						return false;
+					}
 				}
 				return true;
 			}
 			finally
 			{
-				if (zipIn != null)
-					zipIn.Dispose();
+				zipIn?.Dispose();
 			}
 		}
 
-		private static bool UnzipFile(ZipInputStream zipIn, string fileName, long filesize,
-			string directoryName)
+		private static bool UnzipFile(ZipInputStream zipIn, string fileName, long filesize, string directoryName)
 		{
 			if (zipIn == null)
-				throw new ArgumentNullException("zipIn");
+			{
+				throw new ArgumentNullException(nameof(zipIn));
+			}
 			try
 			{
 				if (!Directory.Exists(directoryName))
+				{
 					Directory.CreateDirectory(directoryName);
-				if (String.IsNullOrEmpty(fileName))
+				}
+				if (string.IsNullOrEmpty(fileName))
 				{
 					Assert.AreEqual(0, filesize);
 					return true;
@@ -363,9 +361,13 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 					{
 						filesize = zipIn.Read(data, 0, data.Length);
 						if (filesize > 0)
+						{
 							streamWriter.Write(data, 0, (int)filesize);
+						}
 						else
+						{
 							break;
+						}
 					}
 					streamWriter.Close();
 					return true;
@@ -385,9 +387,13 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		private static void RestoreIcuData(string sCustomCharsFile, string sCustomCharsBackup)
 		{
 			if (File.Exists(sCustomCharsFile))
+			{
 				File.Delete(sCustomCharsFile);
+			}
 			if (File.Exists(sCustomCharsBackup))
+			{
 				File.Move(sCustomCharsBackup, sCustomCharsFile);
+			}
 			InitializeIcuData();
 			if (File.Exists(sCustomCharsFile))
 			{

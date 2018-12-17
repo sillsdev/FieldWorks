@@ -1,20 +1,10 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: Form1.cs
-// Responsibility: mcconnel
-//
-// <remarks>
-// </remarks>
-// ---------------------------------------------------------------------------------------------
+
 namespace SIL.FieldWorks.UnicodeCharEditor
 {
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	partial class CharEditorWindow
 	{
 		/// <summary>
@@ -29,9 +19,9 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if (disposing && (components != null))
+			if (disposing)
 			{
-				components.Dispose();
+				components?.Dispose();
 			}
 			base.Dispose(disposing);
 		}

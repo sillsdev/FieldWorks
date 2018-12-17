@@ -13,8 +13,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Core.Text;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.UnicodeCharEditor
@@ -28,12 +28,12 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 		private string m_sHelpTopic = "khtpUnicodeEditorCharTab";
 		bool m_fDirty;
-		// Characters that have overrides by this user (from CustomChars.xml)
+		/// <summary>Characters that have overrides by this user (from CustomChars.xml)</summary>
 		readonly Dictionary<int, PUACharacter> m_dictCustomChars = new Dictionary<int, PUACharacter>();
-		// Characters that have overrides from standard Unicode (from UnicodeDataOverrides.txt)
+		/// <summary>Characters that have overrides from standard Unicode (from UnicodeDataOverrides.txt)</summary>
 		readonly Dictionary<int, PUACharacter> m_dictModifiedChars = new Dictionary<int, PUACharacter>();
 
-		internal class PuaListItem : ListViewItem
+		private sealed class PuaListItem : ListViewItem
 		{
 			readonly int m_code;
 			internal PuaListItem(PUACharacter spec)
@@ -59,7 +59,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				int code1;
 				int code2;
 				if (int.TryParse(x.ToString(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out code1) &&
-				    int.TryParse(y.ToString(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out code2))
+					int.TryParse(y.ToString(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out code2))
 				{
 					return code1.CompareTo(code2);
 				}
@@ -161,7 +161,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 					if (dataProperties.Length == PUACharacter.ExectedPropCount + 1)
 					{
 						// One extra is OK...I think it comes from a comment in the SIL PUA properties.
-						// But the PUACharacter contsructor doesn't like it, so strip it off.
+						// But the PUACharacter constructor doesn't like it, so strip it off.
 						var ich = sProps.LastIndexOf(';');
 						sProps = sProps.Substring(0, ich);
 					}
@@ -216,13 +216,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				sLine = sLine.Trim();
 			}
 			return sLine.Trim();
-		}
-
-		private static bool IsPUA(int code)
-		{
-			return (code >= 0xE000 && code <= 0xF8FF) ||
-				(code >= 0xF0000 && code <= 0xFFFFD) ||
-				(code >= 0x100000 && code <= 0x10FFFD);
 		}
 
 		private void ReadCustomCharData()
@@ -348,8 +341,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			{
 				return;
 			}
-			var msg = $"Deleting the character definition for {spec.CodePoint} cannot be undone.  Do you want to continue?";
-			var ret = MessageBox.Show(msg, "Warning", MessageBoxButtons.YesNo);
+			var ret = MessageBox.Show($"Deleting the character definition for {spec.CodePoint} cannot be undone.  Do you want to continue?", "Warning", MessageBoxButtons.YesNo);
 			if (ret != DialogResult.Yes)
 			{
 				return;
@@ -434,7 +426,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				{
 					icuDir = icuDir.Substring(0, icuDir.Length - 1);
 				}
-				return Path.GetDirectoryName(icuDir);	// strip the ICU specific subdirectory (FWR-2803)
+				return Path.GetDirectoryName(icuDir);   // strip the ICU specific subdirectory (FWR-2803)
 			}
 		}
 
@@ -463,7 +455,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				}
 			}
 			// Loop until you succeed or cancel.
-			for (;;)
+			for (; ; )
 			{
 				try
 				{

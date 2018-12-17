@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2017 SIL International
+// Copyright (c) 2013-2018 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 
 namespace SIL.FieldWorks.UnicodeCharEditor
@@ -175,9 +175,9 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		INVALID_FUNCTION,
 		/// <summary>The limit for Transliterator errors</summary>
 		PARSE_ERROR_LIMIT,
-		 /*
-		 * the error code range 0x10100 0x10200 are reserved for formatting API parsing error
-		 */
+		/*
+		* the error code range 0x10100 0x10200 are reserved for formatting API parsing error
+		*/
 		/// <summary>Syntax error in format pattern</summary>
 		UNEXPECTED_TOKEN = 0x10100,
 		/// <summary>Start of format library errors</summary>
@@ -214,9 +214,9 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		DEFAULT_KEYWORD_MISSING,
 		/// <summary>The limit for format library errors</summary>
 		FMT_PARSE_ERROR_LIMIT,
-				/*
-		 * the error code range 0x10200 0x102ff are reserved for Break Iterator related error
-		 */
+		/*
+ * the error code range 0x10200 0x102ff are reserved for Break Iterator related error
+ */
 		/// <summary>An internal error (bug) was detected.</summary>
 		BRK_INTERNAL_ERROR = 0x10200,
 		/// <summary>Start of codes indicating Break Iterator failures</summary>
@@ -249,9 +249,9 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		BRK_MALFORMED_RULE_TAG,
 		/// <summary>This must always be the last value to indicate the limit for Break Iterator failures</summary>
 		BRK_ERROR_LIMIT,
-				/*
-		 * The error codes in the range 0x10300-0x103ff are reserved for regular expression related errrs
-		 */
+		/*
+ * The error codes in the range 0x10300-0x103ff are reserved for regular expression related errrs
+ */
 		/// <summary>An internal error (bug) was detected.</summary>
 		REGEX_INTERNAL_ERROR = 0x10300,
 		/// <summary>Start of codes indicating Regexp failures</summary>
@@ -300,36 +300,36 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/*
 		 * The error code in the range 0x10400-0x104ff are reserved for IDNA related error codes
 		 */
-		/// <summary></summary>
+		/// <summary />
 		IDNA_PROHIBITED_ERROR = 0x10400,
 		/// <summary>Start of codes indicating IDNA failures</summary>
 		IDNA_ERROR_START = 0x10400,
-		/// <summary></summary>
+		/// <summary />
 		IDNA_UNASSIGNED_ERROR,
-		/// <summary></summary>
+		/// <summary />
 		IDNA_CHECK_BIDI_ERROR,
-		/// <summary></summary>
+		/// <summary />
 		IDNA_STD3_ASCII_RULES_ERROR,
-		/// <summary></summary>
+		/// <summary />
 		IDNA_ACE_PREFIX_ERROR,
-		/// <summary></summary>
+		/// <summary />
 		IDNA_VERIFICATION_ERROR,
-		/// <summary></summary>
+		/// <summary />
 		IDNA_LABEL_TOO_LONG_ERROR,
-		/// <summary></summary>
+		/// <summary />
 		IDNA_ZERO_LENGTH_LABEL_ERROR,
-		/// <summary></summary>
+		/// <summary />
 		IDNA_DOMAIN_NAME_TOO_LONG_ERROR,
 		/// <summary>This must always be the last value to indicate the limit for IDNA errors</summary>
 		IDNA_ERROR_LIMIT,
 		/*
 		 * Aliases for StringPrep
 		 */
-		/// <summary></summary>
+		/// <summary />
 		STRINGPREP_PROHIBITED_ERROR = IDNA_PROHIBITED_ERROR,
-		/// <summary></summary>
+		/// <summary />
 		STRINGPREP_UNASSIGNED_ERROR = IDNA_UNASSIGNED_ERROR,
-		/// <summary></summary>
+		/// <summary />
 		STRINGPREP_CHECK_BIDI_ERROR = IDNA_CHECK_BIDI_ERROR,
 
 		/// <summary>This must always be the last value to indicate the limit for UErrorCode (last error code +1)</summary>
