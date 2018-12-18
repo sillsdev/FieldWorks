@@ -17,9 +17,7 @@ using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
-	/// <summary>
-	/// Summary description for DynamicLoader.
-	/// </summary>
+	/// <summary />
 	public static class DynamicLoader
 	{
 		/// <summary>

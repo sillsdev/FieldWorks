@@ -10,17 +10,13 @@ using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-	/// <summary>
-	/// Summary description for IntegerSlice.
-	/// </summary>
+	/// <summary />
 	internal class IntegerSlice : FieldSlice
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="IntegerSlice"/> class.
-		/// </summary>
 		TextBox m_tb;
 		int m_previousValue;
 
+		/// <summary />
 		public IntegerSlice(LcmCache cache, ICmObject obj, int flid)
 			: base(new TextBox(), cache, obj, flid)
 		{

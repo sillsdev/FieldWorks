@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,7 +19,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			ComboList.Items.Add(ITextStrings.ksAcceptEntireAnalysis);
 			ComboList.Items.Add(ITextStrings.ksEditThisWordform);
 			ComboList.Items.Add(ITextStrings.ksDeleteThisWordform);
-
 			ComboList.DropDownStyle = ComboBoxStyle.DropDownList; // Prevents direct editing.
 		}
 
@@ -28,7 +27,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			switch (index)
 			{
 				case 0: // Accept entire analysis
-					// Todo: figure how to implement.
+						// Todo: figure how to implement.
 					break;
 				case 1: // Edit this wordform.
 					// Allows direct editing.
@@ -38,11 +37,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					break;
 				case 2: // Delete this wordform.
 					// Todo: figure implementation
-					//					int ihvoTwfic = m_rgvsli[m_iRoot].ihvo;
-					//					int [] itemsToInsert = new int[0];
-					//					m_cache.ReplaceReferenceProperty(m_hvoSbWord,
-					//						StTxtParaTags.kflidAnalyzedTextObjects,
-					//						ihvoTwfic, ihvoTwfic + 1, ref itemsToInsert);
 					// Enhance JohnT: consider removing the WfiWordform, if there are no
 					// analyses and no other references.
 					// Comment: RandyR: Please don't delete it.
@@ -58,8 +52,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return true;
 			}
-			// Todo JohnT: clean out old analysis, come up with new defaults.
-			//SetAnalysisTo(DbOps.FindOrCreateWordform(m_cache, tssWord));
 			// Enhance JohnT: consider removing the old WfiWordform, if there are no
 			// analyses and no other references.
 			return true;

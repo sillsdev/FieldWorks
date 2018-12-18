@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -47,25 +47,24 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				var offsetY = m_sda.get_IntProp(y.KeyObject, ConcDecorator.kflidBeginOffset);
 				return offsetX - offsetY;
 			}
-
 			// While owning objects are the same type, get the owner of each, if they are the same,
 			// compare their position in owner. Special case to put heading before body.
 			// If owners are not the same type, do some trick that will make FLEx texts come before Scripture.
 			var paraRepo = m_cache.ServiceLocator.GetInstance<IStTxtParaRepository>();
 			ICmObject objX = paraRepo.GetObject(hvoX);
 			ICmObject objY = paraRepo.GetObject(hvoY);
-			for (;;)
+			for (; ; )
 			{
 				var ownerX = objX.Owner;
 				var ownerY = objY.Owner;
 				if (ownerX == null)
 				{
-					if (ownerY == null)
-						return hvoY - hvoX; // totally arbitrary but at least consistent
-					return -1; // also arbitrary
+					return ownerY == null ? hvoY - hvoX : -1;
 				}
 				if (ownerY == null)
+				{
 					return 1; // arbitrary, object with shorter chain comes first.
+				}
 				if (ownerX == ownerY)
 				{
 					var flidX = objX.OwningFlid;

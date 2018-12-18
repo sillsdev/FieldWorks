@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -23,6 +23,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private SandboxEditMonitor EditMonitor { get; set; }
 		private bool SuspendedMonitor { get; set; }
 
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+			base.Dispose(disposing);
+		}
+
 		protected override void DisposeManagedResources()
 		{
 			if (!SuspendedMonitor)
@@ -32,12 +38,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// re-enable monitor if we had suspended it.
 			EditMonitor.StartMonitoring();
 			SuspendedMonitor = false;
-		}
-
-		protected override void Dispose(bool disposing)
-		{
-			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
-			base.Dispose(disposing);
 		}
 
 		protected override void DisposeUnmanagedResources()

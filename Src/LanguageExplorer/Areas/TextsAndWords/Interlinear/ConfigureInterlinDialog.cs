@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,31 +13,26 @@ using System.Xml;
 using Gecko;
 using Gecko.DOM;
 using LanguageExplorer.Controls.XMLViews;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.Windows.Forms.HtmlBrowser;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
-	/// <summary>
-	/// Summary description for ConfigureInterlinDialog.
-	/// </summary>
+	/// <summary />
 	internal class ConfigureInterlinDialog : Form
 	{
 		private Label label1;
 		private Button helpButton;
 		private Button cancelButton;
 		private Button okButton;
-
 		private const string s_helpTopic = "khtpConfigureInterlinearLines";
 		private HelpProvider helpProvider;
-
 		private Dictionary<WsComboContent, ComboBox.ObjectCollection> m_cachedComboContentForColumns;
 		private IContainer components;
-
-		bool m_fUpdatingWsCombo = false; // true during UpdateWsCombo
+		private bool m_fUpdatingWsCombo = false; // true during UpdateWsCombo
 		private LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private ComboBox wsCombo;
@@ -73,7 +68,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-
 			var browser = (GeckoWebBrowser)mainBrowser.NativeBrowser;
 			var htmlPath = SaveHtmlToTemp();
 			mainBrowser.Url = new Uri(htmlPath);
@@ -187,7 +181,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			var basePath = Path.Combine(Path.GetTempPath(), "ConfigureInterlinear", m_cache.ProjectId.Name);
 			FileUtils.EnsureDirectoryExists(basePath);
-
 			return Path.Combine(basePath, "ConfigureInterlinear");
 		}
 
@@ -201,14 +194,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				throw new ArgumentNullException();
 			}
-
 			// Make the HTML write nicely
 			var htmlWriterSettings = new XmlWriterSettings()
 			{
 				Indent = true,
 				IndentChars = "    "
 			};
-
 			var cssPath = Path.Combine(FwDirectoryFinder.TemplateDirectory, "ConfigureInterlinear", "ConfigureInterlinear.css");
 			using (var htmlWriter = XmlWriter.Create(htmlPath, htmlWriterSettings))
 			{
@@ -236,7 +227,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			htmlWriter.WriteFullEndElement(); // </head>
 			htmlWriter.WriteStartElement("body");
 			htmlWriter.WriteStartElement("div");
-
 			//Warning for having dechecked all the checkboxes
 			htmlWriter.WriteAttributeString("class", "center");
 			htmlWriter.WriteStartElement("span");
@@ -244,8 +234,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			htmlWriter.WriteRaw("You must have at least one option selected before continuing.");
 			htmlWriter.WriteFullEndElement(); // </span>
 			htmlWriter.WriteEndElement(); // </div>
-
-
 			htmlWriter.WriteStartElement("div");
 			htmlWriter.WriteAttributeString("id", "container");
 		}
@@ -261,7 +249,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-
 			htmlWriter.WriteStartElement("link");
 			htmlWriter.WriteAttributeString("rel", "stylesheet");
 			htmlWriter.WriteAttributeString("type", "text/css");
@@ -280,7 +267,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-
 			htmlWriter.WriteStartElement("script");
 			htmlWriter.WriteAttributeString("type", "text/javascript");
 			htmlWriter.WriteAttributeString("src", "file:\\" + scriptPath);
@@ -296,7 +282,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void GenerateHtmlTable(XmlWriter htmlWriter, InterlinMode mode)
 		{
 			var rowChoicesList = InitRowChoices();
-
 			htmlWriter.WriteStartElement("table");
 			htmlWriter.WriteStartElement("thead");
 			// The first th is for the outer .grab elements
@@ -314,7 +299,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			htmlWriter.WriteFullEndElement(); // </tr>
 			htmlWriter.WriteFullEndElement(); // </thead>
 			htmlWriter.WriteStartElement("tbody");
-
 			if (mode != InterlinMode.Chart)
 			{
 				// The UI needs to enforce the way morpheme-level options are ordered, so morpheme-level options are linked
@@ -331,9 +315,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						GenerateNormalTableRow(htmlWriter, currentRow.First.Value, true);
 					}
 				}
-				htmlWriter.WriteFullEndElement(); // </tbody>
-				htmlWriter.WriteFullEndElement(); // </table>
-												  // The Literal Translation, Free Translation, and Note options are grouped in a separate table.
+				// </tbody>
+				htmlWriter.WriteFullEndElement();
+				// </table>
+				htmlWriter.WriteFullEndElement();
+				// The Literal Translation, Free Translation, and Note options are grouped in a separate table.
 				GenerateNonWordLevelLineOptions(htmlWriter, "specialTable", "clusterTable", rowChoicesList.Last.Value, 3);
 			}
 			else
@@ -352,7 +338,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				htmlWriter.WriteFullEndElement(); // </tbody>
 				htmlWriter.WriteFullEndElement(); // </table>
 			}
-
 			htmlWriter.WriteFullEndElement(); // </div>
 		}
 
@@ -369,7 +354,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			htmlWriter.WriteStartElement("td");
 			htmlWriter.WriteAttributeString("class", "specialTD");
 			htmlWriter.WriteAttributeString("colspan", (m_columns.Count + 2).ToString());
-
 			htmlWriter.WriteStartElement("table");
 			htmlWriter.WriteAttributeString("class", "clusterTable");
 			htmlWriter.WriteStartElement("thead");
@@ -383,7 +367,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			htmlWriter.WriteFullEndElement(); // </tr>
 			htmlWriter.WriteFullEndElement(); // </thead>
 			htmlWriter.WriteStartElement("tbody");
-
 			var morphemesOrLexGlossWasDrawn = false;
 			foreach (var row in tableRowData)
 			{
@@ -421,7 +404,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					GenerateNormalTableRow(htmlWriter, row, false);
 				}
 			}
-
 			htmlWriter.WriteFullEndElement(); // </tr>
 			htmlWriter.WriteFullEndElement(); // </tbody>
 			htmlWriter.WriteFullEndElement(); // </table>
@@ -458,21 +440,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					var currentRowChoiceList = new LinkedList<Tuple<LineOption, InterlinLineSpec>>();
 					var rowChoice = new LinkedListNode<Tuple<LineOption, InterlinLineSpec>>(new Tuple<LineOption, InterlinLineSpec>(Choices.AllLineOptions[choiceIndex], Choices.AllLineSpecs[choiceIndex]));
 					currentRowChoiceList.AddLast(rowChoice);
-					if (Choices.AllLineSpecs[choiceIndex].MorphemeLevel && Choices.AllLineSpecs[choiceIndex].WordLevel
-						|| !Choices.AllLineSpecs[choiceIndex].WordLevel) // Either Morphemes, Lex. Gloss, etc. OR Notes, Literal Translation, etc...
+					if (Choices.AllLineSpecs[choiceIndex].MorphemeLevel && Choices.AllLineSpecs[choiceIndex].WordLevel || !Choices.AllLineSpecs[choiceIndex].WordLevel)
 					{
 						var incremented = choiceIndex + 1;
 						if (incremented < Choices.AllLineSpecs.Count)
 						{
-							var isNextChoiceValid = (Choices.AllLineSpecs[incremented].MorphemeLevel && Choices.AllLineSpecs[incremented].WordLevel)
+							var isNextChoiceValid = Choices.AllLineSpecs[incremented].MorphemeLevel && Choices.AllLineSpecs[incremented].WordLevel
 													|| !Choices.AllLineSpecs[incremented].WordLevel;
-
 							while (isNextChoiceValid)
 							{
 								currentRowChoiceList.AddLast(new Tuple<LineOption, InterlinLineSpec>(Choices.AllLineOptions[incremented], Choices.AllLineSpecs[incremented++]));
-								if (incremented >= Choices.AllLineOptions.Count ||
-									!Choices.AllLineSpecs[incremented].MorphemeLevel &&
-									Choices.AllLineSpecs[incremented].WordLevel)
+								if (incremented >= Choices.AllLineOptions.Count || !Choices.AllLineSpecs[incremented].MorphemeLevel && Choices.AllLineSpecs[incremented].WordLevel)
 								{
 									isNextChoiceValid = false;
 								}
@@ -500,17 +478,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						var incremented = choiceIndex + 1;
 						if (incremented < Choices.AllLineSpecs.Count)
 						{
-							var initialOptionIsWordLevel = Choices.AllLineSpecs[choiceIndex].WordLevel &&
-															!Choices.AllLineSpecs[choiceIndex].MorphemeLevel;
-
+							var initialOptionIsWordLevel = Choices.AllLineSpecs[choiceIndex].WordLevel && !Choices.AllLineSpecs[choiceIndex].MorphemeLevel;
 							var isNextChoiceValid = Choices.AllLineSpecs[incremented].WordLevel;
-
 							while (isNextChoiceValid)
 							{
 								currentRowChoiceList.AddLast(new Tuple<LineOption, InterlinLineSpec>(Choices.AllLineOptions[incremented], Choices.AllLineSpecs[incremented++]));
-								if (incremented >= Choices.AllLineSpecs.Count ||
-									initialOptionIsWordLevel && Choices.AllLineSpecs[incremented].MorphemeLevel ||
-									!Choices.AllLineSpecs[incremented].WordLevel)
+								if (incremented >= Choices.AllLineSpecs.Count || initialOptionIsWordLevel && Choices.AllLineSpecs[incremented].MorphemeLevel || !Choices.AllLineSpecs[incremented].WordLevel)
 								{
 									isNextChoiceValid = false;
 								}
@@ -637,12 +610,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void GenerateCheckboxes(XmlWriter htmlWriter, InterlinLineSpec spec)
 		{
 			ComboBox.ObjectCollection objectCollection = null;
-
 			if (m_cachedComboContentForColumns.ContainsKey(spec.ComboContent))
 			{
 				objectCollection = m_cachedComboContentForColumns[spec.ComboContent];
 			}
-
 			if (objectCollection != null)
 			{
 				foreach (var column in m_columns)
@@ -685,18 +656,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			htmlWriter.WriteStartElement("td");
 			htmlWriter.WriteAttributeString("class", className);
-
 			if (!isEmptyTd)
 			{
-				var flid = int.Parse(id.Split('%')[0]);
-				var ws = int.Parse(id.Split('%')[1]);
-
 				htmlWriter.WriteStartElement("input");
 				htmlWriter.WriteAttributeString("type", "checkbox");
 				htmlWriter.WriteAttributeString("id", id);
 				htmlWriter.WriteAttributeString("class", "checkBox");
 				htmlWriter.WriteAttributeString("name", id.Split('%')[0] + "[]");
-				if (Choices.IndexOf(flid, ws, true) != -1) // If the option is in m_choices, check it
+				if (Choices.IndexOf(int.Parse(id.Split('%')[0]), int.Parse(id.Split('%')[1]), true) != -1) // If the option is in m_choices, check it
 				{
 					htmlWriter.WriteAttributeString("checked", "checked");
 				}
@@ -726,10 +693,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// Navigates to the path where all of the required JavaScript files are stored and then returns the paths in a string array.
 		/// </summary>
 		/// <returns>A string array with the paths of each JavaScript file needed</returns>
-		private string[] GetFilePaths()
+		private static string[] GetFilePaths()
 		{
-			var pathToFiles = FwDirectoryFinder.TemplateDirectory + Path.DirectorySeparatorChar + "ConfigureInterlinear" + Path.DirectorySeparatorChar;
-			return Directory.GetFiles(pathToFiles);
+			return Directory.GetFiles(Path.Combine(FwDirectoryFinder.TemplateDirectory, "ConfigureInterlinear"));
 		}
 
 		private static string GetPathFromFile(string[] filePaths, string fileName)
@@ -741,7 +707,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					return path;
 				}
 			}
-
 			return string.Empty;
 		}
 
@@ -751,8 +716,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <param name="lineChoicesFlids">The array containing the flids of the line choices</param>
 		private void ReorderLineChoices(int[] lineChoicesFlids)
 		{
-			var newOrderOfLineOptions = lineChoicesFlids.Select(choice => Choices.AllLineOptions.Find(x => x.Flid == choice)).Where(optionToMove => optionToMove != null).ToList();
-			Choices.AllLineOptions = newOrderOfLineOptions;
+			Choices.AllLineOptions = lineChoicesFlids.Select(choice => Choices.AllLineOptions.Find(x => x.Flid == choice)).Where(optionToMove => optionToMove != null).ToList();
 		}
 
 		/// <summary>
@@ -761,6 +725,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
 			if (disposing)
 			{
 				components?.Dispose();
@@ -783,10 +753,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (Choices.Mode != InterlinMode.Chart)
 			{
 				var vernacularInParaWss = m_cachedComboContentForColumns[WsComboContent.kwccVernacularInParagraph];
-				var bestAnalysisWss =
-					m_cachedComboContentForColumns[WsComboContent.kwccBestAnalysis];
+				var bestAnalysisWss = m_cachedComboContentForColumns[WsComboContent.kwccBestAnalysis];
 				var vernacularAndAnalysisWss = new List<WsComboItem>();
-
 				// We need Baseline and the remaining vernacular writing systems
 				foreach (WsComboItem ws in vernacularInParaWss)
 				{
@@ -800,13 +768,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					}
 					m_columns.Add(ws);
 				}
-
 				// Ensure that the ones that are in both display in the middle
 				foreach (var ws in vernacularAndAnalysisWss)
 				{
 					m_columns.Add(ws);
 				}
-
 				// Next, we need the analysis writing systems
 				foreach (WsComboItem ws in bestAnalysisWss)
 				{
@@ -829,7 +795,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				var vernacularWss = m_cache.LangProject.CurrentVernacularWritingSystems;
 				var analysisWss = m_cache.LangProject.CurrentAnalysisWritingSystems;
 				var vernacularAndAnalysisWss = new List<WsComboItem>();
-
 				foreach (var ws in vernacularWss)
 				{
 					var item = new WsComboItem(ws.DisplayLabel, ws.Id) { WritingSystem = ws.Handle, WritingSystemType = "vernacular" };
@@ -841,19 +806,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					}
 					m_columns.Add(item);
 				}
-
 				foreach (var ws in vernacularAndAnalysisWss)
 				{
 					m_columns.Add(ws);
 				}
-
 				foreach (var ws in analysisWss)
 				{
 					if (vernacularWss.Contains(ws))
 					{
 						continue;
 					}
-
 					var item = new WsComboItem(ws.DisplayLabel, ws.Id)
 					{
 						WritingSystem = ws.Handle,
@@ -879,14 +841,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		///
 		/// This version is visible to InterlinDocRootSiteBase for its context menu.
 		/// </summary>
-		internal static ComboBox.ObjectCollection WsComboItemsInternal(LcmCache cache, ComboBox owner,
-			Dictionary<WsComboContent, ComboBox.ObjectCollection> cachedBoxes, WsComboContent comboContent)
+		internal static ComboBox.ObjectCollection WsComboItemsInternal(LcmCache cache, ComboBox owner, Dictionary<WsComboContent, ComboBox.ObjectCollection> cachedBoxes, WsComboContent comboContent)
 		{
 			ComboBox.ObjectCollection objectCollection;
 			if (!cachedBoxes.ContainsKey(comboContent))
 			{
 				objectCollection = new ComboBox.ObjectCollection(owner);
-
 				// The final argument here restricts writing systems that will be added to the combo box to
 				// only be "real" writing systems.  So, English will be added, but not "Default Analysis".
 				// This functionality should eventually go away.  See LT-4740.
@@ -898,7 +858,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				objectCollection = cachedBoxes[comboContent];
 			}
-
 			return objectCollection;
 		}
 
@@ -912,9 +871,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				case "vern in para":
 					return WritingSystemServices.kwsVernInParagraph;
 			}
-
 			Debug.Assert(!XmlViewsUtils.GetWsRequiresObject(id), "Writing system is magic.  These should never be used in the Interlinear area.");
-
 			var ws = -50;
 			try
 			{
@@ -964,19 +921,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void OkButton_Click(object sender, EventArgs e)
 		{
 			var checkBoxes = (mainBrowser.NativeBrowser as GeckoWebBrowser)?.Document.GetElementsByClassName("checkBox");
-
 			if (checkBoxes == null)
 			{
 				return;
 			}
-
 			using (var context = new AutoJSContext(((GeckoWebBrowser)mainBrowser.NativeBrowser).Window.DomWindow))
 			{
 				string rows;
 				context.EvaluateScript(@"getRows()", out rows);
 				ReorderLineChoices(Array.ConvertAll(rows.Split(','), int.Parse));
 			}
-
 			Choices.m_specs.Clear();
 			foreach (var checkBox in checkBoxes)
 			{

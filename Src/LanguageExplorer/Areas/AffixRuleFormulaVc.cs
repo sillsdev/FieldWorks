@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,10 +6,10 @@ using System;
 using System.Drawing;
 using System.Linq;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Areas
@@ -19,21 +19,16 @@ namespace LanguageExplorer.Areas
 		public const int kfragRule = 200;
 		public const int kfragInput = 201;
 		public const int kfragRuleMapping = 202;
-
 		public const int kfragSpace = 203;
-
 		public const int ktagLeftEmpty = -300;
 		public const int ktagRightEmpty = -301;
 		public const int ktagIndex = -302;
-
 		private IMoAffixProcess m_rule;
-
 		private readonly ITsTextProps m_headerProps;
 		private readonly ITsTextProps m_arrowProps;
 		private readonly ITsTextProps m_ctxtProps;
 		private readonly ITsTextProps m_indexProps;
 		private readonly ITsTextProps m_resultProps;
-
 		private readonly ITsString m_inputStr;
 		private readonly ITsString m_indexStr;
 		private readonly ITsString m_resultStr;
@@ -92,17 +87,7 @@ namespace LanguageExplorer.Areas
 
 		protected override int GetMaxNumLines()
 		{
-			var maxNumLines = 1;
-			foreach (var ctxtOrVar in m_rule.InputOS)
-			{
-				var numLines = GetNumLines(ctxtOrVar);
-				if (numLines > maxNumLines)
-				{
-					maxNumLines = numLines;
-				}
-			}
-
-			return maxNumLines;
+			return m_rule.InputOS.Select(ctxtOrVar => GetNumLines(ctxtOrVar)).Concat(new[] { 1 }).Max();
 		}
 
 		private int GetOutputMaxNumLines()
@@ -136,32 +121,26 @@ namespace LanguageExplorer.Areas
 			{
 				case kfragRule:
 					m_rule = m_cache.ServiceLocator.GetInstance<IMoAffixProcessRepository>().GetObject(hvo);
-
 					var maxNumLines = GetMaxNumLines();
-
 					VwLength tableLen;
 					tableLen.nVal = 10000;
 					tableLen.unit = VwUnit.kunPercent100;
 					vwenv.OpenTable(3, tableLen, 0, VwAlignment.kvaLeft, VwFramePosition.kvfpVoid, VwRule.kvrlNone, 0, 0, false);
-
 					VwLength inputLen;
 					inputLen.nVal = 0;
 					inputLen.unit = VwUnit.kunPoint1000;
-
 					var indexWidth = GetStrWidth(m_indexStr, m_headerProps, vwenv);
 					var inputWidth = GetStrWidth(m_inputStr, m_headerProps, vwenv);
 					VwLength headerLen;
 					headerLen.nVal = Math.Max(indexWidth, inputWidth) + 8000;
 					headerLen.unit = VwUnit.kunPoint1000;
 					inputLen.nVal += headerLen.nVal;
-
 					VwLength leftEmptyLen;
 					leftEmptyLen.nVal = 8000 + (PileMargin * 2) + 2000;
 					leftEmptyLen.unit = VwUnit.kunPoint1000;
 					inputLen.nVal += leftEmptyLen.nVal;
-
 					var ctxtLens = new VwLength[m_rule.InputOS.Count];
-					vwenv.NoteDependency(new[] {m_rule.Hvo}, new[] {MoAffixProcessTags.kflidInput}, 1 );
+					vwenv.NoteDependency(new[] { m_rule.Hvo }, new[] { MoAffixProcessTags.kflidInput }, 1);
 					for (var i = 0; i < m_rule.InputOS.Count; i++)
 					{
 						var idxWidth = GetStrWidth(TsStringUtils.MakeString(Convert.ToString(i + 1), userWs), m_indexProps, vwenv);
@@ -170,27 +149,21 @@ namespace LanguageExplorer.Areas
 						ctxtLens[i].unit = VwUnit.kunPoint1000;
 						inputLen.nVal += ctxtLens[i].nVal;
 					}
-
 					VwLength rightEmptyLen;
 					rightEmptyLen.nVal = 8000 + (PileMargin * 2) + 1000;
 					rightEmptyLen.unit = VwUnit.kunPoint1000;
 					inputLen.nVal += rightEmptyLen.nVal;
-
 					vwenv.MakeColumns(1, inputLen);
-
 					VwLength arrowLen;
 					arrowLen.nVal = GetStrWidth(m_doubleArrow, m_arrowProps, vwenv) + 8000;
 					arrowLen.unit = VwUnit.kunPoint1000;
 					vwenv.MakeColumns(1, arrowLen);
-
 					VwLength outputLen;
 					outputLen.nVal = 1;
 					outputLen.unit = VwUnit.kunRelative;
 					vwenv.MakeColumns(1, outputLen);
-
 					vwenv.OpenTableBody();
 					vwenv.OpenTableRow();
-
 					// input table cell
 					vwenv.OpenTableCell(1, 1);
 					vwenv.OpenTable(m_rule.InputOS.Count + 3, tableLen, 0, VwAlignment.kvaCenter, VwFramePosition.kvfpVoid, VwRule.kvrlNone, 0, 4000, false);
@@ -201,16 +174,13 @@ namespace LanguageExplorer.Areas
 						vwenv.MakeColumns(1, ctxtLen);
 					}
 					vwenv.MakeColumns(1, rightEmptyLen);
-
 					vwenv.OpenTableBody();
 					vwenv.OpenTableRow();
-
 					// input header cell
 					vwenv.Props = m_headerProps;
 					vwenv.OpenTableCell(1, 1);
 					vwenv.AddString(m_inputStr);
 					vwenv.CloseTableCell();
-
 					// input left empty cell
 					vwenv.Props = m_ctxtProps;
 					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderLeading, (int)FwTextPropVar.ktpvMilliPoint, 1000);
@@ -222,10 +192,8 @@ namespace LanguageExplorer.Areas
 					CloseSingleLinePile(vwenv, false);
 					vwenv.CloseParagraph();
 					vwenv.CloseTableCell();
-
 					// input context cells
 					vwenv.AddObjVec(MoAffixProcessTags.kflidInput, this, kfragInput);
-
 					// input right empty cell
 					vwenv.Props = m_ctxtProps;
 					vwenv.OpenTableCell(1, 1);
@@ -236,22 +204,18 @@ namespace LanguageExplorer.Areas
 					CloseSingleLinePile(vwenv, false);
 					vwenv.CloseParagraph();
 					vwenv.CloseTableCell();
-
 					vwenv.CloseTableRow();
 					vwenv.OpenTableRow();
-
 					// index header cell
 					vwenv.Props = m_headerProps;
 					vwenv.OpenTableCell(1, 1);
 					vwenv.AddString(m_indexStr);
 					vwenv.CloseTableCell();
-
 					// index left empty cell
 					vwenv.Props = m_indexProps;
 					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderLeading, (int)FwTextPropVar.ktpvMilliPoint, 1000);
 					vwenv.OpenTableCell(1, 1);
 					vwenv.CloseTableCell();
-
 					// index cells
 					for (var i = 0; i < m_rule.InputOS.Count; i++)
 					{
@@ -260,40 +224,32 @@ namespace LanguageExplorer.Areas
 						vwenv.AddString(TsStringUtils.MakeString(Convert.ToString(i + 1), userWs));
 						vwenv.CloseTableCell();
 					}
-
 					// index right empty cell
 					vwenv.Props = m_indexProps;
 					vwenv.OpenTableCell(1, 1);
 					vwenv.CloseTableCell();
-
 					vwenv.CloseTableRow();
 					vwenv.CloseTableBody();
 					vwenv.CloseTable();
 					vwenv.CloseTableCell();
-
 					// double arrow cell
 					vwenv.Props = m_arrowProps;
 					vwenv.OpenTableCell(1, 1);
 					vwenv.AddString(m_doubleArrow);
 					vwenv.CloseTableCell();
-
 					// result table cell
 					vwenv.OpenTableCell(1, 1);
 					vwenv.OpenTable(1, tableLen, 0, VwAlignment.kvaLeft, VwFramePosition.kvfpVoid, VwRule.kvrlNone, 0, 4000, false);
 					vwenv.MakeColumns(1, outputLen);
-
 					vwenv.OpenTableBody();
 					vwenv.OpenTableRow();
-
 					// result header cell
 					vwenv.Props = m_headerProps;
 					vwenv.OpenTableCell(1, 1);
 					vwenv.AddString(m_resultStr);
 					vwenv.CloseTableCell();
-
 					vwenv.CloseTableRow();
 					vwenv.OpenTableRow();
-
 					// result cell
 					vwenv.Props = m_resultProps;
 					vwenv.OpenTableCell(1, 1);
@@ -308,23 +264,20 @@ namespace LanguageExplorer.Areas
 					}
 					vwenv.CloseParagraph();
 					vwenv.CloseTableCell();
-
 					vwenv.CloseTableRow();
 					vwenv.CloseTableBody();
 					vwenv.CloseTable();
-
 					vwenv.CloseTableCell();
 					vwenv.CloseTableRow();
 					vwenv.CloseTableBody();
 					vwenv.CloseTable();
 					break;
-
 				case kfragRuleMapping:
 					var mapping = m_cache.ServiceLocator.GetInstance<IMoRuleMappingRepository>().GetObject(hvo);
 					switch (mapping.ClassID)
 					{
 						case MoCopyFromInputTags.kClassId:
-							var copy = (IMoCopyFromInput) mapping;
+							var copy = (IMoCopyFromInput)mapping;
 							OpenSingleLinePile(vwenv, GetOutputMaxNumLines());
 							if (copy.ContentRA == null)
 							{
@@ -336,18 +289,15 @@ namespace LanguageExplorer.Areas
 							}
 							CloseSingleLinePile(vwenv);
 							break;
-
 						case MoInsertPhonesTags.kClassId:
 							OpenSingleLinePile(vwenv, GetOutputMaxNumLines());
 							vwenv.AddObjVecItems(MoInsertPhonesTags.kflidContent, this, kfragTerminalUnit);
 							CloseSingleLinePile(vwenv);
 							break;
-
 						case MoModifyFromInputTags.kClassId:
-							var modify = (IMoModifyFromInput) mapping;
+							var modify = (IMoModifyFromInput)mapping;
 							var outputMaxNumLines = GetOutputMaxNumLines();
 							var numLines = modify.ModificationRA.FeaturesOA.FeatureSpecsOC.Count;
-
 							// index pile
 							vwenv.set_IntProperty((int)FwTextPropType.ktptMarginLeading, (int)FwTextPropVar.ktpvMilliPoint, PileMargin);
 							vwenv.OpenInnerPile();
@@ -365,7 +315,6 @@ namespace LanguageExplorer.Areas
 							}
 							vwenv.CloseParagraph();
 							vwenv.CloseInnerPile();
-
 							// left bracket pile
 							// right align brackets in left bracket pile, since the index could have a greater width, then the bracket
 							if (numLines == 1)
@@ -393,7 +342,6 @@ namespace LanguageExplorer.Areas
 								vwenv.AddProp(ktagLeftNonBoundary, this, kfragLeftBracketLowHook);
 								vwenv.CloseInnerPile();
 							}
-
 							// feature pile
 							vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalLeft);
 							vwenv.OpenInnerPile();
@@ -407,7 +355,6 @@ namespace LanguageExplorer.Areas
 								vwenv.AddObjProp(MoModifyFromInputTags.kflidModification, this, kfragFeatNC);
 							}
 							vwenv.CloseInnerPile();
-
 							// right bracket pile
 							if (numLines == 1)
 							{
@@ -436,7 +383,6 @@ namespace LanguageExplorer.Areas
 							break;
 					}
 					break;
-
 				default:
 					base.Display(vwenv, hvo, frag);
 					break;
@@ -454,7 +400,6 @@ namespace LanguageExplorer.Areas
 			{
 				case kfragSpace:
 					return m_space;
-
 				default:
 					return base.DisplayVariant(vwenv, tag, frag);
 			}
@@ -476,7 +421,6 @@ namespace LanguageExplorer.Areas
 						vwenv.CloseTableCell();
 					}
 					break;
-
 				default:
 					base.DisplayVec(vwenv, hvo, tag, frag);
 					break;

@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,11 +11,11 @@ using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
-	/// <summary>
-	/// Summary description for LexReferenceSequenceLauncher.
-	/// TODO: how similar is this class to LexReferenceTreeBranchesLauncher and
-	/// LexReferenceCollectionLauncher? Could they all inherit from the same class?
-	/// </summary>
+#if RANDYTODO
+	// TODO: how similar is this class to LexReferenceTreeBranchesLauncher and
+	// TODO: LexReferenceCollectionLauncher? Could they all inherit from the same class?
+#endif
+	/// <summary />
 	internal sealed class LexReferenceSequenceLauncher : VectorReferenceLauncher
 	{
 		/// <summary />
@@ -73,7 +73,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				{
 					return;
 				}
-
 				if (!(m_obj as ILexReference).TargetsRS.Contains(dlg.SelectedObject))
 				{
 					AddItem(dlg.SelectedObject);

@@ -1,10 +1,10 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
-using SIL.LCModel;
 using LanguageExplorer.Controls.DetailControls;
+using SIL.LCModel;
 using SIL.Xml;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
@@ -15,11 +15,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	/// </summary>
 	internal sealed class LexReferencePairSlice : CustomAtomicReferenceSlice, ILexReferenceSlice
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LexReferencePairSlice"/> class.
-		/// Constructor must be public (and with no arguments) for creation by reflection
-		/// based on mention in XML configuration files.
-		/// </summary>
+		/// <summary />
 		public LexReferencePairSlice()
 			: base(new LexReferencePairLauncher())
 		{
@@ -36,15 +32,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			base.FinishInit();
 
 			var hvoDisplayParent = XmlUtils.GetMandatoryIntegerAttributeValue(ConfigurationNode, "hvoDisplayParent");
-			((LexReferencePairLauncher)Control).DisplayParent = hvoDisplayParent != 0
-				? Cache.ServiceLocator.GetObject(hvoDisplayParent) : null;
+			ControlAsLexReferencePairLauncher.DisplayParent = hvoDisplayParent != 0 ? Cache.ServiceLocator.GetObject(hvoDisplayParent) : null;
 		}
 
 		#region ILexReferenceSlice Members
 
 		public override bool HandleDeleteCommand()
 		{
-			((LexReferenceMultiSlice)ParentSlice).DeleteReference(GetObjectForMenusToOperateOn() as ILexReference);
+			ParentSliceAsLexReferenceMultiSlice.DeleteReference(GetObjectForMenusToOperateOn() as ILexReference);
 			return true; // delete was done
 		}
 
@@ -54,15 +49,19 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		public override void HandleLaunchChooser()
 		{
-			((LexReferencePairLauncher)Control).LaunchChooser();
+			ControlAsLexReferencePairLauncher.LaunchChooser();
 		}
 
 		/// <summary />
 		public override void HandleEditCommand()
 		{
-			((LexReferenceMultiSlice)ParentSlice).EditReferenceDetails(GetObjectForMenusToOperateOn() as ILexReference);
+			ParentSliceAsLexReferenceMultiSlice.EditReferenceDetails(GetObjectForMenusToOperateOn() as ILexReference);
 		}
 
 		#endregion
+
+		private LexReferencePairLauncher ControlAsLexReferencePairLauncher => (LexReferencePairLauncher)Control;
+
+		private LexReferenceMultiSlice ParentSliceAsLexReferenceMultiSlice => (LexReferenceMultiSlice)ParentSlice;
 	}
 }

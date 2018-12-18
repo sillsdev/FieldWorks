@@ -65,8 +65,7 @@ namespace LanguageExplorer.Controls.Styles
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FwStylesDlg"/> class. This version
-		/// can be used by C# clients. There is no need for the client to call Init if this
+		/// This version can be used by C# clients. There is no need for the client to call Init if this
 		/// constructor is used.
 		/// </summary>
 		/// <param name="rootSite">The root site.</param>

@@ -1,4 +1,4 @@
-// Copyright (c) 2018 SIL International
+// Copyright (c) 2018-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -87,7 +87,7 @@ namespace LanguageExplorer.Areas.Lists
 		{
 			Dispose(true);
 			// This object will be cleaned up by the Dispose method.
-			// Therefore, you should call GC.SupressFinalize to
+			// Therefore, you should call GC.SuppressFinalize to
 			// take this object off the finalization queue
 			// and prevent finalization code for this object
 			// from executing a second time.
@@ -97,7 +97,6 @@ namespace LanguageExplorer.Areas.Lists
 		private void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-
 			if (_isDisposed)
 			{
 				// No need to do it more than once.
@@ -272,7 +271,7 @@ namespace LanguageExplorer.Areas.Lists
 					    </command>
 					*/
 					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, _sharedEventHandlers.Get(AreaServices.InsertCategory), AreaResources.Category, image: AreaResources.AddItem.ToBitmap(), shortcutKeys: Keys.Control | Keys.I, insertIndex: insertIndex++);
-					menu.Tag = new List<object> {currentPossibilityList, MyRecordList };
+					menu.Tag = new List<object> { currentPossibilityList, MyRecordList };
 					/*
 					    <command id="CmdDataTree-Insert-POS-SubPossibilities" label="Insert Subcategory..." message="DataTreeInsert" icon="AddSubItem">
 					      <parameters field="SubPossibilities" className="PartOfSpeech" slice="owner" />
@@ -338,7 +337,6 @@ namespace LanguageExplorer.Areas.Lists
 					}
 					break;
 			}
-
 			if (activeListTool.MachineName != AreaServices.FeatureTypesAdvancedEditMachineName)
 			{
 				// Add "Entry" menu to all other tools.
@@ -367,13 +365,11 @@ namespace LanguageExplorer.Areas.Lists
 					menu.Enabled = currentPossibilityList.PossibilitiesOS.Any(); // Visbile, but only enabled, if there are possible owners for the new sub item.
 				}
 			}
-
 			if (insertIndex > 0)
 			{
 				// <item label="-" translate="do not translate" />
 				_toolStripSeparator = ToolStripMenuItemFactory.CreateToolStripSeparatorForToolStripMenuItem(_insertMenu, insertIndex++);
 			}
-
 			// <item command="CmdAddCustomList" defaultVisible="false" />
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, AddCustomList_Click, ListResources.AddCustomList, ListResources.AddCustomListTooltip, insertIndex: insertIndex);
 

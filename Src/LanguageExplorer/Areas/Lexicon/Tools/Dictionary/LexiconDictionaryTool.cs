@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -85,7 +85,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LexiconArea.Entries, majorFlexComponentParameters.StatusBar, LexiconArea.EntriesFactoryMethod);
 			}
-
 			var root = XDocument.Parse(LexiconResources.LexiconDictionaryToolParameters).Root;
 			_configureObjectName = root.Attribute("configureObjectName").Value;
 			_xhtmlDocView = new XhtmlDocView(root, majorFlexComponentParameters.LcmCache, _recordList, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
@@ -93,7 +92,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			var docViewPaneBar = new PaneBar();
 			var img = LanguageExplorerResources.MenuWidget;
 			img.MakeTransparent(Color.Magenta);
-
 			var rightSpacer = new Spacer
 			{
 				Width = 10,
@@ -105,7 +103,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 				BackgroundImage = img,
 				BackgroundImageLayout = ImageLayout.Center
 			};
-
 			var leftSpacer = new Spacer
 			{
 				Width = 10,
@@ -118,12 +115,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 				BackgroundImageLayout = ImageLayout.Center
 			};
 			docViewPaneBar.AddControls(new List<Control> { leftPanelMenu, leftSpacer, rightPanelMenu, rightSpacer });
-
-			_paneBarContainer = PaneBarContainerFactory.Create(
-				majorFlexComponentParameters.FlexComponentParameters,
-				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				_xhtmlDocView,
-				docViewPaneBar);
+			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
+				_xhtmlDocView, docViewPaneBar);
 
 			_paneBarContainer.ResumeLayout(true);
 			_xhtmlDocView.FinishInitialization();
@@ -157,7 +150,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		{
 		}
 
-#endregion
+		#endregion
 
 		#region Implementation of IMajorFlexUiComponent
 
@@ -186,7 +179,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		/// </summary>
 		public Image Icon => Images.DocumentView.SetBackgroundColor(Color.Magenta);
 
-#endregion
+		#endregion
 
 		private void RegisterContextMenuMethods()
 		{

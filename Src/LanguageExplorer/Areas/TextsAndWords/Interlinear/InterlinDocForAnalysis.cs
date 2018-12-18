@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,13 +11,13 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Application;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
@@ -64,7 +64,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-
 			// whenever we change this mode, we may also
 			// need to show the proper line choice labels, so put the lineChoices in the right mode.
 			var newMode = GetSelectedLineChoiceMode();
@@ -72,7 +71,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-
 			var saved = SelectedOccurrence;
 			TryHideFocusBoxAndUninstall();
 			LineChoices.Mode = newMode;
@@ -97,13 +95,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					// Add spelling items if any (i.e., if we clicked a squiggle word).
 					int hvoObj, tagAnchor;
-					if (GetTagAndObjForOnePropSelection(e.Selection, out hvoObj, out tagAnchor) &&
-						(tagAnchor == SegmentTags.kflidFreeTranslation || tagAnchor == SegmentTags.kflidLiteralTranslation ||
-						tagAnchor == NoteTags.kflidContent))
+					if (GetTagAndObjForOnePropSelection(e.Selection, out hvoObj, out tagAnchor) && (tagAnchor == SegmentTags.kflidFreeTranslation || tagAnchor == SegmentTags.kflidLiteralTranslation || tagAnchor == NoteTags.kflidContent))
 					{
 						helper.MakeSpellCheckMenuOptions(e.MouseLocation, this, menu);
 					}
-
 					int hvoNote;
 					if (CanDeleteNote(e.Selection, out hvoNote))
 					{
@@ -148,8 +143,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public override void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
 			base.PropChanged(hvo, tag, ivMin, cvIns, cvDel);
-			if (!IsFocusBoxInstalled || FocusBox.SelectedOccurrence == null || tag != SegmentTags.kflidAnalyses ||
-				FocusBox.SelectedOccurrence.Segment.Hvo != hvo)
+			if (!IsFocusBoxInstalled || FocusBox.SelectedOccurrence == null || tag != SegmentTags.kflidAnalyses || FocusBox.SelectedOccurrence.Segment.Hvo != hvo)
 			{
 				return;
 			}
@@ -177,9 +171,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// be null (if it's punctuation), the focus box shouldn't be pointing at punctuation. However, we've had reported
 			// null ref exceptions in the absence of testing for this (LT-13702), and we certainly don't need to update the focus box
 			// because its wordform has been updated if we can't find an actual wordform associated with the focus box.
-			if (!IsFocusBoxInstalled || FocusBox.SelectedOccurrence == null ||
-				FocusBox.SelectedOccurrence.Analysis?.Wordform == null ||
-				!wordforms.Contains(FocusBox.SelectedOccurrence.Analysis.Wordform) || FocusBox.IsDirty)
+			if (!IsFocusBoxInstalled || FocusBox.SelectedOccurrence == null || FocusBox.SelectedOccurrence.Analysis?.Wordform == null || !wordforms.Contains(FocusBox.SelectedOccurrence.Analysis.Wordform) || FocusBox.IsDirty)
 			{
 				return;
 			}
@@ -191,8 +183,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void OnDeleteNote(object sender, EventArgs e)
 		{
 			var item = (ToolStripMenuItem)sender;
-			UndoableUnitOfWorkHelper.Do(string.Format(ITextStrings.ksUndoCommand, item.Text),
-				string.Format(ITextStrings.ksRedoCommand, item.Text), Cache.ActionHandlerAccessor,
+			UndoableUnitOfWorkHelper.Do(string.Format(ITextStrings.ksUndoCommand, item.Text), string.Format(ITextStrings.ksRedoCommand, item.Text), Cache.ActionHandlerAccessor,
 				() => DeleteNote(RootBox.Selection));
 		}
 
@@ -210,7 +201,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		///  Answer true if the indicated selection is within a single note we can delete.
 		/// </summary>
-		private bool CanDeleteNote(IVwSelection sel, out int hvoNote)
+		private static bool CanDeleteNote(IVwSelection sel, out int hvoNote)
 		{
 			hvoNote = 0;
 			int tagAnchor, hvoObj;
@@ -251,9 +242,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return true;
 		}
 
-		/// <summary>
-		/// factory
-		/// </summary>
+		/// <summary />
 		protected override void MakeVc()
 		{
 			Vc = new InterlinDocForAnalysisVc(m_cache);
@@ -370,7 +359,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			FocusBox.SelectOccurrence(target);
 			SetFocusBoxSizeForVc();
 			SelectedOccurrence = target;
-
 			if (fShow)
 			{
 				SimulateReplaceAnalysis(target);
@@ -381,9 +369,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// if we edit something that deletes the current wordform in a concordance view.
 				// In that case we don't want to steal the focus.
 				if (ParentForm == Form.ActiveForm)
+				{
 					FocusBox.FocusSandbox();
+				}
 			}
-
 #if RANDYTODO
 			if (fMakeDefaultSelection)
 				m_mediator.IdleQueue.Add(IdleQueuePriority.Medium, FocusBox.MakeDefaultSelection);
@@ -402,7 +391,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return false; // testing only? Anyway nothing can change.
 			}
-			//FocusBox.PerformLayout();
 			int dpiX, dpiY;
 			using (var g = CreateGraphics())
 			{
@@ -412,16 +400,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var width = FocusBox.Width;
 			if (width > 10000)
 			{
-				//				Debug.Assert(width < 10000); // Is something taking the full available width of MaxInt/2?
 				width = 500; // arbitrary, may allow something to work more or less
 			}
 			var newSize = new Size(width * 72000 / dpiX, FocusBox.Height * 72000 / dpiY);
-			if (newSize.Width == interlinDocForAnalysisVc.FocusBoxSize.Width &&
-				newSize.Height == interlinDocForAnalysisVc.FocusBoxSize.Height)
+			if (newSize.Width == interlinDocForAnalysisVc.FocusBoxSize.Width && newSize.Height == interlinDocForAnalysisVc.FocusBoxSize.Height)
 			{
 				return false;
 			}
-
 			interlinDocForAnalysisVc.FocusBoxSize = newSize;
 			return true;
 		}
@@ -553,7 +538,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-
 			// FWNX-419
 			if (!MouseMoveSuppressed && IsFocusBoxInstalled)
 			{
@@ -564,7 +548,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Return the selection that corresponds to the SandBox position.
 		/// </summary>
-		/// <returns></returns>
 		internal IVwSelection MakeSandboxSel()
 		{
 			if (m_hvoRoot == 0 || SelectedOccurrence == null)
@@ -685,14 +668,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		/// <summary>
 		/// Select the first non-null translation or note in the current segment
-		/// of the current analysis occurance.
+		/// of the current analysis occurence.
 		/// </summary>
 		/// <returns>true if successful, false if there is no real translation or note</returns>
 		internal bool SelectFirstTranslationOrNote()
 		{
 			int ws;
 			var annotationFlid = GetFirstVisibleTranslationOrNoteFlid(SelectedOccurrence.Segment, out ws);
-			if (annotationFlid == 0) return false;
+			if (annotationFlid == 0)
+			{
+				return false;
+			}
 			var sel = MakeSandboxSel();
 			var clev = sel.CLevels(true);
 			clev--; // result it returns is one more than what the AllTextSelInfo routine wants.
@@ -852,17 +838,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		internal override AnalysisOccurrence OccurrenceContainingSelection()
 		{
 			if (RootBox == null)
+			{
 				return null;
-
+			}
 			// This works fine for non-Sandbox panes,
 			// Sandbox panes' selection may be in the Sandbox.
-			if (ExistingFocusBox != null &&
-				ExistingFocusBox.SelectedOccurrence != null &&
-				ExistingFocusBox.SelectedOccurrence.IsValid)
+			if (ExistingFocusBox != null && ExistingFocusBox.SelectedOccurrence != null && ExistingFocusBox.SelectedOccurrence.IsValid)
 			{
 				return ExistingFocusBox.SelectedOccurrence;
 			}
-
 			// If the above didn't work, this probably won't either, but try anyway...
 			return base.OccurrenceContainingSelection();
 		}
@@ -914,8 +898,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (hvoAnchor != 0)
 				{
 					var coAnchor = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoAnchor);
-					if ((coAnchor is ISegment && (tsi.TagAnchor == SegmentTags.kflidFreeTranslation || tsi.TagAnchor == SegmentTags.kflidLiteralTranslation))
-						|| (coAnchor is INote && tsi.TagAnchor == NoteTags.kflidContent))
+					if (coAnchor is ISegment && (tsi.TagAnchor == SegmentTags.kflidFreeTranslation || tsi.TagAnchor == SegmentTags.kflidLiteralTranslation)
+						|| coAnchor is INote && tsi.TagAnchor == NoteTags.kflidContent)
 					{
 						// we are in a segment-level annotation.
 						if (e.KeyCode == Keys.Home)
@@ -936,7 +920,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				OnAddWordGlossesToFreeTrans(null);
 			}
-
 			// LT-4029 Capture arrow keys from inside the translation lines and notes.
 			var change = HandleArrowKeys(e);
 			// LT-12097 Right and left arrow keys from an empty translation line (part of the issue)
@@ -949,10 +932,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			switch (change)
 			{   // might need to change the key event so the base method will handle it right.
 				case ArrowChange.Down:
-					e2 = new System.Windows.Forms.KeyEventArgs(Keys.Down);
+					e2 = new KeyEventArgs(Keys.Down);
 					break;
 				case ArrowChange.Up:
-					e2 = new System.Windows.Forms.KeyEventArgs(Keys.Up);
+					e2 = new KeyEventArgs(Keys.Up);
 					break;
 				case ArrowChange.None:
 					e2 = e;
@@ -973,10 +956,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// two directions of concern for Left to Right(LTR) and Right To Left(RTL):
 		/// 1: up from the first translation or note in a paragraph after a word line possibly
 		///  in another paragraph via up arrow or a left (right if RTL) arrow from the first (last)
-		///  character of the annotaton
+		///  character of the annotation
 		/// 2: down from the last translation or note in a paragraph before a word line possibly
 		///  in another paragraph via down arrow or a right (left if RTL) arrow from the last (right)
-		///  character of the annotaton
+		///  character of the annotation
 		/// The following logic accounts for the configured position of notes and whether the user added them.
 		/// The idea here is to eliminate as many default cases as possible as early as possible to be handled by
 		/// the old annotation OnKeyDown() method.
@@ -986,10 +969,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// when that is what's needed from the base method.</returns>
 		private ArrowChange HandleArrowKeys(KeyEventArgs e)
 		{
-			if (SelectedOccurrence == null &&
-				(e.KeyCode == Keys.Down || e.KeyCode == Keys.Up ||
-				 e.KeyCode == Keys.Right || e.KeyCode == Keys.Left) &&
-				((e.KeyCode & Keys.Shift) != Keys.Shift) && ((e.KeyCode & Keys.Control) != Keys.Control))
+			if (SelectedOccurrence == null && (e.KeyCode == Keys.Down || e.KeyCode == Keys.Up || e.KeyCode == Keys.Right || e.KeyCode == Keys.Left)
+			                               && (e.KeyCode & Keys.Shift) != Keys.Shift && ((e.KeyCode & Keys.Control) != Keys.Control))
 			{
 				// It's an arrow key, but is it in a translation line or note?
 				// Get the current selection so we can obtain the actual translation or note objects
@@ -1000,13 +981,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					return ArrowChange.None;
 				}
-
 				// get the text, paragraph, segment and note, if there is one
 				int curSegIndex, curParaIndex, curNoteIndex;
 				ISegment curSeg;
 				INote curNote;
 				GetCurrentTextObjects(clev, rgvsli, tag, out curParaIndex, out curSegIndex, out curNoteIndex, out curSeg, out curNote);
-
 				// what kind of line is it and where is the selection (ie., IP) in the text?
 				int id, lineNum;
 				WhichEnd where;
@@ -1017,7 +996,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					return ArrowChange.None;
 				}
-
 				var lines = LineChoices.m_specs as IEnumerable<InterlinLineSpec>; // so we can use linq
 				Debug.Assert(lines != null, "Interlinear line configurations not enumerable");
 				bool isUpNewSeg;
@@ -1062,10 +1040,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					SelectOccurrence(new AnalysisOccurrence(curSeg, curSeg.AnalysesRS.Count - index));
 					return ArrowChange.Handled;
 				}
-				if (hasPrompt && (id == InterlinLineChoices.kflidFreeTrans ||
-								  id == InterlinLineChoices.kflidLitTrans)
-							  && (e.KeyCode == Keys.Left || e.KeyCode == Keys.Right))
-				{   // moving from an empty translation line to right or left
+				if (hasPrompt && (id == InterlinLineChoices.kflidFreeTrans || id == InterlinLineChoices.kflidLitTrans) && (e.KeyCode == Keys.Left || e.KeyCode == Keys.Right))
+				{
+					// moving from an empty translation line to right or left
 					if (TextIsRightToLeft ? e.KeyCode == Keys.Right : e.KeyCode == Keys.Left)
 					{
 						return ArrowChange.Up;
@@ -1135,22 +1112,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <returns>true if the segment has at least one visible translation or note.</returns>
 		private static bool HasVisibleTranslationOrNote(ISegment seg, IEnumerable<InterlinLineSpec> lines)
 		{
-			return lines.Any(line =>
-							 line.Flid == InterlinLineChoices.kflidFreeTrans ||
-							 line.Flid == InterlinLineChoices.kflidLitTrans ||
-							 line.Flid == InterlinLineChoices.kflidNote && seg.NotesOS.Count > 0);
+			return lines.Any(line => line.Flid == InterlinLineChoices.kflidFreeTrans || line.Flid == InterlinLineChoices.kflidLitTrans || line.Flid == InterlinLineChoices.kflidNote && seg.NotesOS.Count > 0);
 		}
 
 		/// <summary>
 		/// Detect that upward movement out of this segment or to an analysis
 		/// in this same segment is needed.
 		/// Considerations:
-		/// Configured analysis lines preceed translation or note lines (currently).
-		/// Analyses are stored as a sequence in the segement.
+		/// Configured analysis lines precede translation or note lines (currently).
+		/// Analyses are stored as a sequence in the segment.
 		/// Some analyses are punctuation that are skipped by the IP.
 		/// Only analyses that have a word in them are considered "real".
 		/// "Annotation" lines include translation lines (free and literal) and notes.
-		/// Each translation or note in a diffeerent ws is a different line.
+		/// Each translation or note in a different ws is a different line.
 		/// Translations are stored in a segment as a multistring while notes are
 		/// in a sequence of multistrings.
 		/// Each note is repeated in each note line of a different ws.
@@ -1165,9 +1139,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <param name="isRightToLeft">true if the current line is RTL</param>
 		/// <param name="isUpNewSeg">Output set to true if moving out of this segment.</param>
 		/// <returns>true if the IP should be moved upward to an analysis in this segment.</returns>
-		private bool DetectUpMove(KeyEventArgs e, IEnumerable<InterlinLineSpec> lines, int lineNum,
-			ISegment curSeg, int curNoteIndex, WhichEnd where, bool isRightToLeft,
-			out bool isUpNewSeg)
+		private bool DetectUpMove(KeyEventArgs e, IEnumerable<InterlinLineSpec> lines, int lineNum, ISegment curSeg, int curNoteIndex, WhichEnd where, bool isRightToLeft, out bool isUpNewSeg)
 		{
 			var linesBefore = lines.Take(lineNum);
 			var annotationsBefore = linesBefore;
@@ -1188,12 +1160,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				var noteIsFirstAnnotation = lines.ToArray()[lineNum].Flid == InterlinLineChoices.kflidNote;
 				hasPrevAnnotation = noteIsFirstAnnotation && curNoteIndex > 0; // can have notes or empty notes before it
 			}
-			var hasUpMotion = (e.KeyCode == Keys.Up) ||
-				(TextIsRightToLeft ?
-					(e.KeyCode == Keys.Right && (where == WhichEnd.Right || where == WhichEnd.Both)) :
-					(e.KeyCode == Keys.Left && (where == WhichEnd.Left || where == WhichEnd.Both)));
+			var hasUpMotion = (e.KeyCode == Keys.Up) || (TextIsRightToLeft ? e.KeyCode == Keys.Right && (@where == WhichEnd.Right || @where == WhichEnd.Both) : e.KeyCode == Keys.Left
+			                                                                                                   && (@where == WhichEnd.Left || @where == WhichEnd.Both));
 			var isUpMove = hasUpMotion && !hasPrevAnnotation;
-			isUpNewSeg = isUpMove && !isThereRealAnalysisInSegment(curSeg); // no puctuation, or analysis ws
+			isUpNewSeg = isUpMove && !isThereRealAnalysisInSegment(curSeg); // no punctuation, or analysis ws
 			return isUpMove;
 		}
 
@@ -1202,7 +1172,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// Considerations:
 		/// Configured analysis lines preceed translation or note lines (currently).
 		/// "Annotation" lines include translation lines (free and literal) and notes.
-		/// Each translation or note in a diffeerent ws is a different line.
+		/// Each translation or note in a different ws is a different line.
 		/// Translations are stored in a segment as a multistring while notes are
 		/// in a sequence of multistrings.
 		/// Each note is repeated in each note line of a different ws.
@@ -1216,8 +1186,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <param name="isRightToLeft"></param>
 		/// <param name="where">Indicates where the IP is in the selected text if any.</param>
 		/// <returns>true if the IP should be moved upward to an analysis in this segment.</returns>
-		private bool DetectDownMove(KeyEventArgs e, IEnumerable<InterlinLineSpec> lines, int lineNum,
-			ISegment curSeg, int curNoteIndex, bool isRightToLeft, WhichEnd where)
+		private bool DetectDownMove(KeyEventArgs e, IEnumerable<InterlinLineSpec> lines, int lineNum, ISegment curSeg, int curNoteIndex, bool isRightToLeft, WhichEnd where)
 		{
 			var annotationsAfter = lines.Skip(lineNum + 1);
 			bool hasFollowingAnnotation;
@@ -1231,10 +1200,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				var noteIsLastAnnotation = LineChoices[LineChoices.Count - 1].Flid == InterlinLineChoices.kflidNote;
 				hasFollowingAnnotation = noteIsLastAnnotation && curNoteIndex < curSeg.NotesOS.Count - 1;
 			}
-			var hasDownMotion = (e.KeyCode == Keys.Down) ||
-								 (TextIsRightToLeft ?
-									(e.KeyCode == Keys.Left && (where == WhichEnd.Left || where == WhichEnd.Both)) :
-									(e.KeyCode == Keys.Right && (where == WhichEnd.Right || where == WhichEnd.Both)));
+			var hasDownMotion = e.KeyCode == Keys.Down || (TextIsRightToLeft
+				                    ? e.KeyCode == Keys.Left && (@where == WhichEnd.Left || @where == WhichEnd.Both)
+									: e.KeyCode == Keys.Right && (@where == WhichEnd.Right || @where == WhichEnd.Both));
 			return hasDownMotion && !hasFollowingAnnotation;
 		}
 
@@ -1259,8 +1227,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// true if the information was found, false otherwise.
 		/// </returns>
 		/// <remarks>If a tag specifies a translation, but curSeg is null this will return false. Similar for curNote.</remarks>
-		private bool GetLineInfo(ISegment curSeg, INote curNote, int tag, int ichAnchor, int ichEnd, int wid,
-						out int id, out int lineNum, out WhichEnd where, out bool isRightToLeft, out bool hasPrompt)
+		private bool GetLineInfo(ISegment curSeg, INote curNote, int tag, int ichAnchor, int ichEnd, int wid, out int id, out int lineNum, out WhichEnd where,
+			out bool isRightToLeft, out bool hasPrompt)
 		{
 			isRightToLeft = false;
 			hasPrompt = false;
@@ -1270,7 +1238,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				isRightToLeft = ws.RightToLeftScript;
 			}
-
 			id = 0;
 			lineNum = -1;
 			where = WhichEnd.Neither;
@@ -1280,7 +1247,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					id = InterlinLineChoices.kflidFreeTrans;
 					if (curSeg == null)
 					{
-						Debug.WriteLine("Moving from a non-exisiting segment in interlinear Doc.");
+						Debug.WriteLine("Moving from a non-existing segment in interlinear Doc.");
 						return false;
 					}
 					where = ExtremePositionInString(ichAnchor, ichEnd, curSeg.FreeTranslation.get_String(wid).Length, isRightToLeft);
@@ -1289,7 +1256,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					id = InterlinLineChoices.kflidLitTrans;
 					if (curSeg == null)
 					{
-						Debug.WriteLine("Moving from a non-exisiting segment in interlinear Doc.");
+						Debug.WriteLine("Moving from a non-existing segment in interlinear Doc.");
 						return false;
 					}
 					where = ExtremePositionInString(ichAnchor, ichEnd, curSeg.LiteralTranslation.get_String(wid).Length, isRightToLeft);
@@ -1297,7 +1264,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				case NoteTags.kflidContent:
 					if (curNote == null)
 					{
-						Debug.WriteLine("Moving from a non-exisiting note in interlinear Doc.");
+						Debug.WriteLine("Moving from a non-existing note in interlinear Doc.");
 						return false;
 					}
 					id = InterlinLineChoices.kflidNote;
@@ -1307,8 +1274,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 									 // Is this free or literal?
 					hasPrompt = true;
 					id = Vc.ActiveFreeformFlid;
-					id = (id == SegmentTags.kflidLiteralTranslation) ?
-						InterlinLineChoices.kflidLitTrans : InterlinLineChoices.kflidFreeTrans;
+					id = (id == SegmentTags.kflidLiteralTranslation) ? InterlinLineChoices.kflidLitTrans : InterlinLineChoices.kflidFreeTrans;
 					if (wid == 0)
 					{
 						wid = Vc.ActiveFreeformWs;
@@ -1318,12 +1284,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				default: // not expected
 					return false;
 			}
-
 			if (wid > 0)
 			{
 				lineNum = LineChoices.IndexOf(id, wid);
 			}
-
 			if (lineNum == -1)
 			{
 				lineNum = LineChoices.IndexOf(id);
@@ -1346,10 +1310,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			curParaIndex = rgvsli[clev - 2].ihvo;
 			var curPara = (IStTxtPara)RootStText.ParagraphsOS[curParaIndex];
-			Debug.WriteLineIf(curPara != null, "Moving from a non-exisiting paragraph in interlinear Doc.");
+			Debug.WriteLineIf(curPara != null, "Moving from a non-existing paragraph in interlinear Doc.");
 			curSegIndex = rgvsli[clev - 3].ihvo;
 			curSeg = curSegIndex < curPara.SegmentsOS.Count && curSegIndex >= 0 ? curPara.SegmentsOS[curSegIndex] : null;
-			Debug.WriteLineIf(curSeg != null, "Moving from a non-exisiting segment in interlinear Doc.");
+			Debug.WriteLineIf(curSeg != null, "Moving from a non-existing segment in interlinear Doc.");
 			curNote = null;
 			curNoteIndex = -1;
 			if (tag != NoteTags.kflidContent)
@@ -1397,8 +1361,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				int cpropPrevious;
 				bool fAssocPrev;
 				ITsTextProps ttp;
-				sel.AllTextSelInfo(out ihvoRoot, clev, rgvsliTemp, out tag, out cpropPrevious,
-								   out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd1, out ttp);
+				sel.AllTextSelInfo(out ihvoRoot, clev, rgvsliTemp, out tag, out cpropPrevious, out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd1, out ttp);
 				rgvsli = MarshalEx.NativeToArray<SelLevInfo>(rgvsliTemp, clev);
 			}
 			return true;
@@ -1413,7 +1376,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <param name="paragraphInd">The index of the current paragraph in the text.</param>
 		/// <param name="segmentInd">The index of the current section in the paragraph.</param>
 		/// <param name="moveUpward">true if moving up and left, false otherwise</param>
-		/// <returns>A segment contatining an analysis or translation or note or null if none was found.</returns>
+		/// <returns>A segment containing an analysis or translation or note or null if none was found.</returns>
 		private AnalysisOccurrence MoveVerticallyToNextAnalysis(int paragraphInd, int segmentInd, bool moveUpward)
 		{
 			var para = (IStTxtPara)RootStText.ParagraphsOS[paragraphInd];
@@ -1452,7 +1415,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var found = false;
 			foreach (var dummy in seg.AnalysesRS)
 			{
-				// need to count to create occurances
+				// need to count to create occurences
 				index++;
 				var ind = forward ? index : seg.AnalysesRS.Count - index;
 				realAnalysis = new AnalysisOccurrence(seg, ind);
@@ -1487,7 +1450,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return WhichEnd.Both;
 			}
-
 			if (selStart <= 0)
 			{
 				return WhichEnd.Left;
@@ -1523,7 +1485,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return false;
 			}
-
 			if (!Focused)
 			{
 				return false;
@@ -1543,7 +1504,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return false; // And must be a property of a segment (we only use these prompts for the two translation props)
 			}
-
 			if (ws == 0) // a prompt, use ws of first character.
 			{
 				int dummy;
@@ -1574,7 +1534,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (analysis.Wordform == null)
 				{
 					// PunctForm...insert its text.
-					ITsStrBldr puncBldr = analysis.GetForm(ws).GetBldr();
+					var puncBldr = analysis.GetForm(ws).GetBldr();
 					fOpenPunc = false;
 					if (puncBldr.Length > 0)
 					{
@@ -1620,14 +1580,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					{
 						continue;
 					}
-
 					if (bldr.Length > 0 && insert != null && insert.Length > 0 && !fOpenPunc)
 					{
 						bldr.ReplaceTsString(bldr.Length, bldr.Length, space);
 					}
 					fOpenPunc = false;
 				}
-
 				if (insert == null || insert.Length == 0)
 				{
 					continue;
@@ -1645,13 +1603,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			SetCpropPreviousForInsert();
 			var helper = SelectionHelper.Create(this);
 			var flid = Vc.ActiveFreeformFlid;
-			UndoableUnitOfWorkHelper.Do(ITextStrings.ksUndoSetTransFromWordGlosses,
-				ITextStrings.ksRedoSetTransFromWordGlosses,
-				Cache.ActionHandlerAccessor,
-				() =>
-				{
-					RootBox.DataAccess.SetMultiStringAlt(seg.Hvo, flid, ws, bldr.GetString());
-				});
+			UndoableUnitOfWorkHelper.Do(ITextStrings.ksUndoSetTransFromWordGlosses, ITextStrings.ksRedoSetTransFromWordGlosses, Cache.ActionHandlerAccessor, () =>
+			{
+				RootBox.DataAccess.SetMultiStringAlt(seg.Hvo, flid, ws, bldr.GetString());
+			});
 			helper.TextPropId = flid;
 			helper.SetTextPropId(SelLimitType.End, flid);
 			helper.IchAnchor = bldr.Length;
@@ -1700,12 +1655,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			var co = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(tsi.HvoAnchor);
 			var freeAnn = co as ICmIndirectAnnotation;
-			if (tsi.TagAnchor != SimpleRootSite.kTagUserPrompt || freeAnn == null)
+			if (tsi.TagAnchor != kTagUserPrompt || freeAnn == null)
 			{
 				return;
 			}
 			var helper = SelectionHelper.GetSelectionInfo(tsi.Selection, this);
-			var wsField = 0;
+			int wsField;
 			if (tsi.TssAnchor != null && tsi.TssAnchor.Length > 0)
 			{
 				wsField = TsStringUtils.GetWsAtOffset(tsi.TssAnchor, 0);
@@ -1724,7 +1679,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					break;
 				}
 			}
-
 			if (itagSegments < 0)
 			{
 				return;
@@ -1779,7 +1733,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					sel = prootb.Selection;
 				}
-
 				if (sel == null)
 				{
 					return;
@@ -1787,9 +1740,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				var helper = SelectionHelper.Create(sel, prootb.Site);
 				// Check whether the selection is on the proper line of a multilingual
 				// annotation and, if not, fix it.  See LT-9421.
-				if (m_cpropPrevForInsert > 0 && !sel.IsRange &&
-					(helper.GetNumberOfPreviousProps(SelLimitType.Anchor) == 0 ||
-					 helper.GetNumberOfPreviousProps(SelLimitType.End) == 0))
+				if (m_cpropPrevForInsert > 0 && !sel.IsRange && (helper.GetNumberOfPreviousProps(SelLimitType.Anchor) == 0 || helper.GetNumberOfPreviousProps(SelLimitType.End) == 0))
 				{
 					try
 					{
@@ -2055,8 +2006,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// lazy boxes. This has bad effects (LT-LT-11692). Returning the control's current location prevents
 		/// ScrollControlIntoView from making any changes. However, in some cases we may want to make it visible.
 		/// </summary>
-		/// <param name="activeControl"></param>
-		/// <returns></returns>
 		protected override Point ScrollToControl(Control activeControl)
 		{
 			return m_fEnableScrollControlIntoView ? base.ScrollToControl(activeControl) : DisplayRectangle.Location;
@@ -2088,10 +2037,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				base.OnMouseDown(e);
 				return;
 			}
-
 			if (RootBox == null || DataUpdateMonitor.IsUpdateInProgress())
+			{
 				return;
-
+			}
 			// Convert to box coords and see what selection it produces.
 			using (new HoldGraphics(this))
 			{
@@ -2159,7 +2108,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// The basic idea is to find the level at which we are displaying the TagAnalysis property.
 			var cvsli = vwselNew.CLevels(false);
 			cvsli--; // CLevels includes the string property itself, but AllTextSelInfo doesn't need it.
-
 			// Out variables for AllTextSelInfo.
 			int ihvoRoot;
 			int tagTextProp;
@@ -2170,13 +2118,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			bool fAssocPrev;
 			int ihvoEnd;
 			ITsTextProps ttpBogus;
-			// Main array of information retrived from sel that made combo.
-			var rgvsli = SelLevInfo.AllTextSelInfo(vwselNew, cvsli,
-				out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd,
-				out ws, out fAssocPrev, out ihvoEnd, out ttpBogus);
-
-			if (tagTextProp == SegmentTags.kflidFreeTranslation || tagTextProp == SegmentTags.kflidLiteralTranslation
-				|| tagTextProp == NoteTags.kflidContent)
+			// Main array of information retrieved from sel that made combo.
+			var rgvsli = SelLevInfo.AllTextSelInfo(vwselNew, cvsli, out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd, out ttpBogus);
+			if (tagTextProp == SegmentTags.kflidFreeTranslation || tagTextProp == SegmentTags.kflidLiteralTranslation || tagTextProp == NoteTags.kflidContent)
 			{
 				var fWasFocusBoxInstalled = IsFocusBoxInstalled;
 				var oldSelLoc = GetPrimarySelRect(vwselNew);
@@ -2188,7 +2132,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					}
 					TryHideFocusBoxAndUninstall();
 				}
-
 				// If the selection resulting from the click is still valid, and we just closed the focus box, go ahead and install it;
 				// continuing to process the click may not produce the intended result, because
 				// removing the focus box can re-arrange things substantially (LT-9220).
@@ -2213,7 +2156,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				ScrollSelectionIntoView(this.RootBox.Selection, VwScrollSelOpts.kssoDefault);
 				return true;
 			}
-
 			// Identify the analysis, and the position in m_rgvsli of the property holding it.
 			// It is also possible that the analysis is the root object.
 			// This is important because although we are currently displaying just an StTxtPara,
@@ -2350,8 +2292,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal void RecordGuessIfNotKnown(AnalysisOccurrence selected)
 		{
-			if (Vc != null) // I think this only happens in tests.
-				Vc.RecordGuessIfNotKnown(selected);
+			Vc?.RecordGuessIfNotKnown(selected);
 		}
 
 		internal IAnalysis GetGuessForWordform(IWfiWordform wf, int ws)

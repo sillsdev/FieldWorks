@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2016-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,11 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using LanguageExplorer.Controls.LexText;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Areas
@@ -36,18 +36,13 @@ namespace LanguageExplorer.Areas
 		public const int kfragIterCtxtMin = 110;
 		public const int kfragNC = 111;
 		public const int kfragTerminalUnit = 112;
-
 		// variant frags
 		public const int kfragXVariable = 113;
-
 		// fake flids
 		public const int ktagFeature = -200;
 		public const int ktagVariable = -201;
 		public const int ktagXVariable = -202;
-
-		private static readonly string[] VariableNames = { "α", "β", "γ", "δ", "ε", "ζ", "η", "θ", "ι", "κ", "λ", "μ", "ν", "ξ",
-														   "ο", "π", "ρ", "σ", "τ", "υ", "φ", "χ", "ψ", "ω" };
-
+		private static readonly string[] VariableNames = { "α", "β", "γ", "δ", "ε", "ζ", "η", "θ", "ι", "κ", "λ", "μ", "ν", "ξ", "ο", "π", "ρ", "σ", "τ", "υ", "φ", "χ", "ψ", "ω" };
 		protected ITsString m_infinity;
 		protected ITsString m_x;
 
@@ -77,7 +72,7 @@ namespace LanguageExplorer.Areas
 			{
 				case kfragContext:
 					var ctxtOrVar = m_cache.ServiceLocator.GetInstance<IPhContextOrVarRepository>().GetObject(hvo);
-					bool isOuterIterCtxt = false;
+					var isOuterIterCtxt = false;
 					// are we inside an iteration context? this is important since we only open a context pile if we are not
 					// in an iteration context, since an iteration context does it for us
 					if (vwenv.EmbeddingLevel > 0)
@@ -87,11 +82,10 @@ namespace LanguageExplorer.Areas
 						var outerObj = m_cache.ServiceLocator.GetObject(outerHvo);
 						isOuterIterCtxt = outerObj.ClassID == PhIterationContextTags.kClassId;
 					}
-
 					switch (ctxtOrVar.ClassID)
 					{
 						case PhSequenceContextTags.kClassId:
-							var seqCtxt = (IPhSequenceContext) ctxtOrVar;
+							var seqCtxt = (IPhSequenceContext)ctxtOrVar;
 							if (seqCtxt.MembersRS.Count > 0)
 							{
 								vwenv.AddObjVecItems(PhSequenceContextTags.kflidMembers, this, kfragContext);
@@ -104,14 +98,12 @@ namespace LanguageExplorer.Areas
 								CloseSingleLinePile(vwenv, false);
 							}
 							break;
-
 						case PhSimpleContextNCTags.kClassId:
-							var ncCtxt = (IPhSimpleContextNC) ctxtOrVar;
+							var ncCtxt = (IPhSimpleContextNC)ctxtOrVar;
 							if (ncCtxt.FeatureStructureRA != null && ncCtxt.FeatureStructureRA.ClassID == PhNCFeaturesTags.kClassId)
 							{
 								// Natural class simple context with a feature-based natural class
-								var natClass = (IPhNCFeatures) ncCtxt.FeatureStructureRA;
-
+								var natClass = (IPhNCFeatures)ncCtxt.FeatureStructureRA;
 								var numLines = GetNumLines(ncCtxt);
 								switch (numLines)
 								{
@@ -120,11 +112,9 @@ namespace LanguageExplorer.Areas
 										{
 											OpenSingleLinePile(vwenv, GetMaxNumLines());
 										}
-
 										vwenv.AddProp(ktagInnerNonBoundary, this, kfragLeftBracket);
 										vwenv.AddProp(PhSimpleContextNCTags.kflidFeatureStructure, this, kfragQuestions);
 										vwenv.AddProp(ktagInnerNonBoundary, this, kfragRightBracket);
-
 										if (!isOuterIterCtxt)
 										{
 											CloseSingleLinePile(vwenv);
@@ -135,10 +125,8 @@ namespace LanguageExplorer.Areas
 										{
 											OpenSingleLinePile(vwenv, GetMaxNumLines());
 										}
-
 										// use normal brackets for a single line context
 										vwenv.AddProp(ktagInnerNonBoundary, this, kfragLeftBracket);
-
 										// special consonant and vowel natural classes only display the abbreviation
 										if (natClass.Abbreviation.AnalysisDefaultWritingSystem.Text == "C" || natClass.Abbreviation.AnalysisDefaultWritingSystem.Text == "V")
 										{
@@ -160,7 +148,6 @@ namespace LanguageExplorer.Areas
 											}
 										}
 										vwenv.AddProp(ktagInnerNonBoundary, this, kfragRightBracket);
-
 										if (!isOuterIterCtxt)
 										{
 											CloseSingleLinePile(vwenv);
@@ -168,7 +155,6 @@ namespace LanguageExplorer.Areas
 										break;
 									default:
 										// multiline context
-
 										// left bracket pile
 										var maxNumLines = GetMaxNumLines();
 										vwenv.Props = m_bracketProps;
@@ -182,7 +168,6 @@ namespace LanguageExplorer.Areas
 										}
 										vwenv.AddProp(ktagLeftBoundary, this, kfragLeftBracketLowHook);
 										vwenv.CloseInnerPile();
-
 										// feature and variable pile
 										vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalLeft);
 										vwenv.OpenInnerPile();
@@ -191,7 +176,6 @@ namespace LanguageExplorer.Areas
 										vwenv.AddObjVecItems(PhSimpleContextNCTags.kflidPlusConstr, this, kfragPlusVariable);
 										vwenv.AddObjVecItems(PhSimpleContextNCTags.kflidMinusConstr, this, kfragMinusVariable);
 										vwenv.CloseInnerPile();
-
 										// right bracket pile
 										vwenv.Props = m_bracketProps;
 										if (!isOuterIterCtxt)
@@ -217,7 +201,6 @@ namespace LanguageExplorer.Areas
 								{
 									OpenSingleLinePile(vwenv, GetMaxNumLines());
 								}
-
 								vwenv.AddProp(ktagInnerNonBoundary, this, kfragLeftBracket);
 								if (ncCtxt.FeatureStructureRA != null)
 								{
@@ -228,7 +211,6 @@ namespace LanguageExplorer.Areas
 									vwenv.AddProp(PhSimpleContextNCTags.kflidFeatureStructure, this, kfragQuestions);
 								}
 								vwenv.AddProp(ktagInnerNonBoundary, this, kfragRightBracket);
-
 								if (!isOuterIterCtxt)
 								{
 									CloseSingleLinePile(vwenv);
@@ -237,7 +219,7 @@ namespace LanguageExplorer.Areas
 							break;
 
 						case PhIterationContextTags.kClassId:
-							var iterCtxt = (IPhIterationContext) ctxtOrVar;
+							var iterCtxt = (IPhIterationContext)ctxtOrVar;
 							if (iterCtxt.MemberRA != null)
 							{
 								var numLines = GetNumLines(iterCtxt.MemberRA as IPhSimpleContext);
@@ -272,14 +254,12 @@ namespace LanguageExplorer.Areas
 								CloseSingleLinePile(vwenv);
 							}
 							break;
-
 						case PhSimpleContextSegTags.kClassId:
 							if (!isOuterIterCtxt)
 							{
 								OpenSingleLinePile(vwenv, GetMaxNumLines());
 							}
-
-							var segCtxt = (IPhSimpleContextSeg) ctxtOrVar;
+							var segCtxt = (IPhSimpleContextSeg)ctxtOrVar;
 							if (segCtxt.FeatureStructureRA != null)
 							{
 								vwenv.AddObjProp(PhSimpleContextSegTags.kflidFeatureStructure, this, kfragTerminalUnit);
@@ -288,20 +268,17 @@ namespace LanguageExplorer.Areas
 							{
 								vwenv.AddProp(PhSimpleContextSegTags.kflidFeatureStructure, this, kfragQuestions);
 							}
-
 							if (!isOuterIterCtxt)
 							{
 								CloseSingleLinePile(vwenv);
 							}
 							break;
-
 						case PhSimpleContextBdryTags.kClassId:
 							if (!isOuterIterCtxt)
 							{
 								OpenSingleLinePile(vwenv, GetMaxNumLines());
 							}
-
-							var bdryCtxt = (IPhSimpleContextBdry) ctxtOrVar;
+							var bdryCtxt = (IPhSimpleContextBdry)ctxtOrVar;
 							if (bdryCtxt.FeatureStructureRA != null)
 							{
 								vwenv.AddObjProp(PhSimpleContextBdryTags.kflidFeatureStructure, this, kfragTerminalUnit);
@@ -310,13 +287,11 @@ namespace LanguageExplorer.Areas
 							{
 								vwenv.AddProp(PhSimpleContextBdryTags.kflidFeatureStructure, this, kfragQuestions);
 							}
-
 							if (!isOuterIterCtxt)
 							{
 								CloseSingleLinePile(vwenv);
 							}
 							break;
-
 						case PhVariableTags.kClassId:
 							OpenSingleLinePile(vwenv, GetMaxNumLines());
 							vwenv.AddProp(ktagXVariable, this, kfragXVariable);
@@ -324,7 +299,6 @@ namespace LanguageExplorer.Areas
 							break;
 					}
 					break;
-
 				case kfragNC:
 					var ncWs = WritingSystemServices.ActualWs(m_cache, WritingSystemServices.kwsFirstAnal, hvo, PhNaturalClassTags.kflidAbbreviation);
 					if (ncWs != 0)
@@ -344,7 +318,6 @@ namespace LanguageExplorer.Areas
 						}
 					}
 					break;
-
 				case kfragTerminalUnit:
 					var tuWs = WritingSystemServices.ActualWs(m_cache, WritingSystemServices.kwsFirstVern, hvo, PhTerminalUnitTags.kflidName);
 					if (tuWs != 0)
@@ -356,23 +329,18 @@ namespace LanguageExplorer.Areas
 						vwenv.AddProp(PhTerminalUnitTags.kflidName, this, kfragQuestions);
 					}
 					break;
-
 				case kfragFeatNC:
 					vwenv.AddObjProp(PhNCFeaturesTags.kflidFeatures, this, kfragFeats);
 					break;
-
 				case kfragFeats:
 					vwenv.AddObjVecItems(FsFeatStrucTags.kflidFeatureSpecs, this, kfragFeature);
 					break;
-
 				case kfragFeature:
 					vwenv.AddProp(ktagFeature, this, kfragFeatureLine);
 					break;
-
 				case kfragPlusVariable:
 					vwenv.AddProp(ktagVariable, this, kfragPlusVariableLine);
 					break;
-
 				case kfragMinusVariable:
 					vwenv.AddProp(ktagVariable, this, kfragMinusVariableLine);
 					break;
@@ -389,23 +357,19 @@ namespace LanguageExplorer.Areas
 					var value = m_cache.ServiceLocator.GetInstance<IFsClosedValueRepository>().GetObject(vwenv.CurrentObject());
 					tss = CreateFeatureLine(value);
 					break;
-
 				case kfragPlusVariableLine:
 				case kfragMinusVariableLine:
 					var var = m_cache.ServiceLocator.GetInstance<IPhFeatureConstraintRepository>().GetObject(vwenv.CurrentObject());
 					tss = CreateVariableLine(var, frag == kfragPlusVariableLine);
 					break;
-
 				case kfragIterCtxtMax:
 					// if the max value is -1, it indicates that it is infinite
 					var i = m_cache.DomainDataByFlid.get_IntProp(vwenv.CurrentObject(), tag);
 					tss = i == -1 ? m_infinity : TsStringUtils.MakeString(Convert.ToString(i), m_cache.DefaultUserWs);
 					break;
-
 				case kfragXVariable:
 					tss = m_x;
 					break;
-
 				default:
 					tss = base.DisplayVariant(vwenv, tag, frag);
 					break;
@@ -434,7 +398,6 @@ namespace LanguageExplorer.Areas
 			{
 				return m_questions;
 			}
-
 			var varLine = TsStringUtils.MakeIncStrBldr();
 			if (!polarity)
 			{
@@ -487,7 +450,7 @@ namespace LanguageExplorer.Areas
 		/// <returns></returns>
 		protected int GetNumLines(IEnumerable<IPhSimpleContext> seq)
 		{
-			return seq.Select(ctxt => GetNumLines(ctxt)).Concat(new[] {1}).Max();
+			return seq.Select(ctxt => GetNumLines(ctxt)).Concat(new[] { 1 }).Max();
 		}
 
 		/// <summary>
@@ -499,11 +462,10 @@ namespace LanguageExplorer.Areas
 			{
 				return 1;
 			}
-
 			switch (ctxtOrVar.ClassID)
 			{
 				case PhSequenceContextTags.kClassId:
-					var seqCtxt = (IPhSequenceContext) ctxtOrVar;
+					var seqCtxt = (IPhSequenceContext)ctxtOrVar;
 					var maxNumLines = 1;
 					foreach (var cur in seqCtxt.MembersRS)
 					{
@@ -514,17 +476,15 @@ namespace LanguageExplorer.Areas
 						}
 					}
 					return maxNumLines;
-
 				case PhIterationContextTags.kClassId:
-					var iterCtxt = (IPhIterationContext) ctxtOrVar;
+					var iterCtxt = (IPhIterationContext)ctxtOrVar;
 					return GetNumLines(iterCtxt.MemberRA);
-
 				case PhSimpleContextNCTags.kClassId:
 					var numFeats = 0;
-					var ncCtxt = (IPhSimpleContextNC) ctxtOrVar;
+					var ncCtxt = (IPhSimpleContextNC)ctxtOrVar;
 					if (ncCtxt.FeatureStructureRA != null && ncCtxt.FeatureStructureRA.ClassID == PhNCFeaturesTags.kClassId)
 					{
-						var natClass = (IPhNCFeatures) ncCtxt.FeatureStructureRA;
+						var natClass = (IPhNCFeatures)ncCtxt.FeatureStructureRA;
 						if (natClass.FeaturesOA != null)
 						{
 							numFeats = natClass.FeaturesOA.FeatureSpecsOC.Count;
@@ -544,7 +504,6 @@ namespace LanguageExplorer.Areas
 			{
 				return 0;
 			}
-
 			switch (ctxtOrVar.ClassID)
 			{
 				case PhSequenceContextTags.kClassId:
@@ -555,15 +514,12 @@ namespace LanguageExplorer.Areas
 						totalLen += GetWidth(cur, vwenv);
 					}
 					return totalLen;
-
 				case PhIterationContextTags.kClassId:
-					return GetIterCtxtWidth(ctxtOrVar as IPhIterationContext, vwenv) + (PileMargin * 2);
-
+					return GetIterCtxtWidth(ctxtOrVar as IPhIterationContext, vwenv) + PileMargin * 2;
 				case PhVariableTags.kClassId:
-					return GetStrWidth(m_x, null, vwenv) + (PileMargin * 2);
-
+					return GetStrWidth(m_x, null, vwenv) + PileMargin * 2;
 				default:
-					return GetSimpleCtxtWidth(ctxtOrVar as IPhSimpleContext, vwenv) + (PileMargin * 2);
+					return GetSimpleCtxtWidth(ctxtOrVar as IPhSimpleContext, vwenv) + PileMargin * 2;
 			}
 		}
 
@@ -611,17 +567,14 @@ namespace LanguageExplorer.Areas
 			{
 				return 0;
 			}
-
 			switch (ctxt.ClassID)
 			{
 				case PhSimpleContextBdryTags.kClassId:
-					var bdryCtxt = (IPhSimpleContextBdry) ctxt;
+					var bdryCtxt = (IPhSimpleContextBdry)ctxt;
 					return GetTermUnitWidth(bdryCtxt.FeatureStructureRA, vwenv);
-
 				case PhSimpleContextSegTags.kClassId:
-					var segCtxt = (IPhSimpleContextSeg) ctxt;
+					var segCtxt = (IPhSimpleContextSeg)ctxt;
 					return GetTermUnitWidth(segCtxt.FeatureStructureRA, vwenv);
-
 				case PhSimpleContextNCTags.kClassId:
 					return GetNCCtxtWidth(ctxt as IPhSimpleContextNC, vwenv);
 			}
@@ -686,13 +639,11 @@ namespace LanguageExplorer.Areas
 					}
 				}
 			}
-
 			var plusLen = GetVariablesWidth(ctxt, vwenv, true);
 			if (plusLen > maxLen)
 			{
 				maxLen = plusLen;
 			}
-
 			var minusLen = GetVariablesWidth(ctxt, vwenv, false);
 			if (minusLen > maxLen)
 			{

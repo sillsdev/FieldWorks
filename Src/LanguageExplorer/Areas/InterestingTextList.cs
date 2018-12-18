@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,8 +10,8 @@ using LanguageExplorer.Areas.TextsAndWords;
 using LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance;
 using LanguageExplorer.Areas.TextsAndWords.Tools.Concordance;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.Utils;
 
@@ -38,6 +38,8 @@ namespace LanguageExplorer.Areas
 		/// tested efficiently.
 		/// </summary>
 		private HashSet<IStText> m_interestingTests;
+		private List<IStText> m_coreTexts;
+		private List<IStText> m_scriptureTexts;
 #if RANDYTODO
 		// TODO: Pay attention to the comment and behavior of 'RelatedRecordListsIds'.
 #endif
@@ -80,21 +82,18 @@ namespace LanguageExplorer.Areas
 			Cache = m_propertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 		}
 
-		private List<IStText> m_coreTexts;
 		public List<IStText> CoreTexts
 		{
 
 			get { return m_coreTexts ?? (m_coreTexts = GetCoreTexts()); }
 			set { m_coreTexts = value; }
 		}
-		private List<IStText> m_scriptureTexts;
 
 		public bool IncludeScripture { get; private set; }
 
 		/// <summary>
 		/// Get the "core" (non-scripture) texts that we want to display. This is all the ones not on the excluded list.
 		/// </summary>
-		/// <returns></returns>
 		private List<IStText> GetCoreTexts()
 		{
 			var result = AllCoreTexts.ToList();
@@ -132,14 +131,12 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// The core (non-Scripture) texts that might be selected to display and concord.
 		/// </summary>
-		public IEnumerable<IStText> AllCoreTexts => m_textRepository.AllInstances()
-			.Where(text => text.ContentsOA != null)
-			.Select(text => text.ContentsOA);
+		public IEnumerable<IStText> AllCoreTexts => m_textRepository.AllInstances().Where(text => text.ContentsOA != null).Select(text => text.ContentsOA);
 
 		private List<IStText> GetScriptureTexts()
 		{
 			var result = new List<IStText>();
-			var idList = m_propertyTable.GetValue(PersistPropertyName, "");
+			var idList = m_propertyTable.GetValue(PersistPropertyName, string.Empty);
 			foreach (var id in idList.Split(','))
 			{
 				if (id.Length == 0)
@@ -193,9 +190,9 @@ namespace LanguageExplorer.Areas
 					foreach (var st in m_scriptureTexts)
 					{
 						yield return st;
+					}
 				}
 			}
-		}
 		}
 
 		/// <summary>
@@ -248,8 +245,8 @@ namespace LanguageExplorer.Areas
 					{
 						if (ClearInvalidObjects(m_scriptureTexts, CoreTexts.Count, IncludeScripture))
 						{
-								UpdatePropertyTable();
-					}
+							UpdatePropertyTable();
+						}
 					}
 					break;
 				default:
@@ -266,7 +263,7 @@ namespace LanguageExplorer.Areas
 			// Need to add the new text(s). Have to find which ones to add.
 			var coreTextsSet = new HashSet<IStText>(CoreTexts);
 			var count = 0;
-			foreach (var newText in (GetCoreTexts().Where(sttext => !coreTextsSet.Contains(sttext))))
+			foreach (var newText in GetCoreTexts().Where(sttext => !coreTextsSet.Contains(sttext)))
 			{
 				count++;
 				CoreTexts.Add(newText);
@@ -292,14 +289,12 @@ namespace LanguageExplorer.Areas
 			{
 				return;
 			}
-
 			// We won't keep track of the record list between calls since it could change from time to time.
 			var recordList = m_propertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList;
 			if (recordList == null)
 			{
 				return;
 			}
-
 			if (!RelatedRecordListsIds.Contains(recordList.Id))
 			{
 				Debug.Fail("We may need to add a new RelatedRecordListId.");
@@ -351,6 +346,7 @@ namespace LanguageExplorer.Areas
 		{
 			return string.Join(",", objects.Select(obj => Convert.ToBase64String(obj.Guid.ToByteArray())));
 		}
+
 		/// <summary>
 		/// Make a string that corresponds to a list of guids.
 		/// </summary>
@@ -382,7 +378,7 @@ namespace LanguageExplorer.Areas
 				else
 				{
 					m_scriptureTexts.Add(obj);
-			}
+				}
 			}
 			UpdatePropertyTable();
 			UpdateExcludedCoreTexts(excludedGuids);
@@ -443,13 +439,13 @@ namespace LanguageExplorer.Areas
 				{
 					return false; // not a text in current Scripture.
 				}
-					CoreTexts.Add(newText);
+				CoreTexts.Add(newText);
 				m_interestingTests?.Add(newText);
-					excludedCoreTextIdList.Remove(newText.Guid);
-					UpdateExcludedCoreTexts(excludedCoreTextIdList);
-					RaiseInterestingTextsChanged(CoreTexts.Count - 1, 1, 0);
-					return true; // added sucessfully
-				}
+				excludedCoreTextIdList.Remove(newText.Guid);
+				UpdateExcludedCoreTexts(excludedCoreTextIdList);
+				RaiseInterestingTextsChanged(CoreTexts.Count - 1, 1, 0);
+				return true; // added successfully
+			}
 			int index;
 			for (index = 0; index < m_scriptureTexts.Count; index++)
 			{
@@ -472,14 +468,14 @@ namespace LanguageExplorer.Areas
 					else
 					{
 						index--; // move index to point at heading
-				}
+					}
 				}
 				else if (sec.ContentOA != null)
 				{
 					if (index >= m_scriptureTexts.Count - 1 || m_scriptureTexts[index + 1] != sec.ContentOA)
 					{
 						m_scriptureTexts.Insert(index + 1, sec.ContentOA);
-				}
+					}
 				}
 				// At this point the heading and contents of the section for the inserted text
 				// are at index. We look for adjacent sections in the same chapter and if necessary
@@ -527,15 +523,14 @@ namespace LanguageExplorer.Areas
 			{
 				return index; // nothing to add
 			}
-
 			if (index != 0 && m_scriptureTexts[index - 1] == item)
 			{
 				return index - 1; // next earlier item goes before one already present.
 			}
-				// Not present, add it.
-				m_scriptureTexts.Insert(index, item);
-				return index; // no change, things moved up.
-			}
+			// Not present, add it.
+			m_scriptureTexts.Insert(index, item);
+			return index; // no change, things moved up.
+		}
 
 		private int AddAfter(int indexAfter, IStText item)
 		{
@@ -565,19 +560,16 @@ namespace LanguageExplorer.Areas
 			{
 				return -1;
 			}
-
 			if (flid == ScrBookTags.kflidTitle)
 			{
 				return BookPosition((IScrBook)owner);
 			}
 			var section = (IScrSection)owner;
 			var book = (IScrBook)section.Owner;
-			return BookPosition(book)
-				   + section.IndexInOwner * 2 + 2
-				   + (flid == ScrSectionTags.kflidContent ? 1 : 0);
+			return BookPosition(book) + section.IndexInOwner * 2 + 2 + (flid == ScrSectionTags.kflidContent ? 1 : 0);
 		}
 
-		private int BookPosition(IScrBook book)
+		private static int BookPosition(IScrBook book)
 		{
 			return book.IndexInOwner * 10000;
 		}

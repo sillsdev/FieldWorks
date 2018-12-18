@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -64,17 +64,14 @@ namespace LanguageExplorer.Areas
 		/// Store the pathname of the output file, if there is one.
 		/// </summary>
 		private string m_sOutputFilePath;
-
 		/// <summary>
 		/// When true, if and object *would* be output but is missing a matching "class", an exception is thrown
 		/// </summary>
 		protected bool m_requireClassTemplatesForEverything;
-
 		/// <summary>
 		/// This is another one that should be true by default, but it breaks some old templates (mdf.xml in Nov 2006)
 		/// </summary>
 		protected bool m_doUseBaseClassTemplatesIfNeeded;
-
 		/// <summary>
 		/// This stores the filename of an auxiliary FXT file in case a secondary file must be
 		/// written.  This is done to support LIFT 0.11 export.
@@ -89,41 +86,35 @@ namespace LanguageExplorer.Areas
 		/// This stores the filename of the secondary file (if any).
 		/// </summary>
 		protected string m_sAuxiliaryFilename;
-
 		/// <summary>
 		/// When processing virtual properties like lexical relations, we need to keep track of
 		/// the original object being referenced in order to know how to handle the relation.
 		/// </summary>
 		protected Stack<int> m_openForRefStack = new Stack<int>(4);
-
 		///// <summary>
 		///// Map from the "ClassName_FieldName" of custom fields to their ids.
 		///// </summary>
-		Dictionary<string, int> m_customFlidMap = new Dictionary<string, int>();
+		private Dictionary<string, int> m_customFlidMap = new Dictionary<string, int>();
 		/// <summary>
 		/// Cache standard format markers for each custom flid.
 		/// </summary>
-		Dictionary<int, string> m_customSfms = new Dictionary<int, string>();
+		private Dictionary<int, string> m_customSfms = new Dictionary<int, string>();
 		/// <summary>
 		/// Count the number of custom fields encountered.  This is used for generating unique SF markers.
 		/// </summary>
-		int m_cCustom;
-
+		private int m_cCustom;
 		/// <summary>
 		/// Map from real flids to virtual flids to allow various niceties in output.
 		/// Inspired by LT-9741.
 		/// </summary>
 		private Dictionary<int, int> m_mapFlids = new Dictionary<int, int>();
-
 		/// <summary>
 		/// Maintain a list of boolean variables that can be set by the caller, and tested
 		/// by the FXT file.  If a variable doesn't exist, its "value" is false.
 		/// </summary>
 		protected Dictionary<string, bool> m_dictTestVars = new Dictionary<string, bool>();
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="XDumper"/> class.
-		/// </summary>
+		/// <summary />
 		public XDumper(LcmCache cache) : this()
 		{
 			m_cache = cache;
@@ -194,14 +185,12 @@ namespace LanguageExplorer.Areas
 						m_sOutputFilePath = (sw.BaseStream as FileStream).Name;
 					}
 				}
-
 				Go(writer);
 			}
 			finally
 			{
 				writer.Close();
 			}
-
 			if (!SkipAuxFileOutput && !string.IsNullOrEmpty(m_sAuxiliaryFxtFile) && !string.IsNullOrEmpty(m_sAuxiliaryFilename))
 			{
 				using (TextWriter innerWriter = new StreamWriter(m_sAuxiliaryFilename))
@@ -229,14 +218,12 @@ namespace LanguageExplorer.Areas
 						m_sOutputFilePath = (sw.BaseStream as FileStream).Name;
 					}
 				}
-
 				Go(writer);
 			}
 			finally
 			{
 				writer.Close();
 			}
-
 			if (!SkipAuxFileOutput && !string.IsNullOrEmpty(m_sAuxiliaryFxtFile) && !string.IsNullOrEmpty(m_sAuxiliaryFilename))
 			{
 				using (TextWriter w = new StreamWriter(m_sAuxiliaryFilename))
@@ -301,7 +288,6 @@ namespace LanguageExplorer.Areas
 			m_eStringFormatOutput = (StringFormatOutputStyle)System.Enum.Parse(typeof(StringFormatOutputStyle), sFormatOutput);
 			m_requireClassTemplatesForEverything = XmlUtils.GetBooleanAttributeValue(node, "requireClassTemplatesForEverything");
 			m_doUseBaseClassTemplatesIfNeeded = XmlUtils.GetBooleanAttributeValue(node, "doUseBaseClassTemplatesIfNeeded");
-
 			UpdateProgress?.Invoke(this);
 			var sProgressMsgId = XmlUtils.GetOptionalAttributeValue(m_templateRootNode, "messageId");
 			if (!string.IsNullOrEmpty(sProgressMsgId) && SetProgressMessage != null)
@@ -354,7 +340,6 @@ namespace LanguageExplorer.Areas
 			 *
 			 * In addition, I'm going to make it try to find a class template for the super class.
 			 */
-
 			var searchType = type;
 			string sSearchKey;
 			do
@@ -378,10 +363,8 @@ namespace LanguageExplorer.Areas
 				}
 			} while (m_doUseBaseClassTemplatesIfNeeded && searchType != typeof(object) && !m_classNameToclassNode.ContainsKey(sSearchKey));
 
-
 			if (!m_classNameToclassNode.ContainsKey(sSearchKey))
 			{
-
 				if (m_requireClassTemplatesForEverything)
 				{
 					var sbldr = new StringBuilder("Did not find a <class> element matching the type or any ancestor type of ");
@@ -430,7 +413,6 @@ namespace LanguageExplorer.Areas
 			{
 				return; // would have thrown an exception if that's what the template wanted
 			}
-
 			DoChildren(contentsStream, currentObject, classNode, null);
 		}
 
@@ -829,7 +811,7 @@ namespace LanguageExplorer.Areas
 		/// Cache results of looking up custom flids for a given class (and prop type) so we only do each query once per dump,
 		/// not once per object!
 		/// </summary>
-		Dictionary<string, int[]> m_customFlids = new Dictionary<string, int[]>();
+		private Dictionary<string, int[]> m_customFlids = new Dictionary<string, int[]>();
 
 		protected void DoCustomElements(TextWriter contentsStream, ICmObject currentObject, XmlNode node)
 		{
@@ -861,8 +843,8 @@ namespace LanguageExplorer.Areas
 						continue;
 					}
 					var cpt = (CellarPropertyType)m_mdc.GetFieldType(flid);
-					if (sType == "simplestring" && cpt != CellarPropertyType.Unicode && cpt != CellarPropertyType.String
-						|| sType == "mlstring" && cpt != CellarPropertyType.MultiString && cpt != CellarPropertyType.MultiUnicode)
+					if (sType == "simplestring" && cpt != CellarPropertyType.Unicode && cpt != CellarPropertyType.String || sType == "mlstring"
+					    && cpt != CellarPropertyType.MultiString && cpt != CellarPropertyType.MultiUnicode)
 					{
 						continue;
 					}
@@ -1144,7 +1126,6 @@ namespace LanguageExplorer.Areas
 								}
 							}
 						}
-
 						break;
 					}
 				case "every":
@@ -1159,11 +1140,9 @@ namespace LanguageExplorer.Areas
 								}
 							}
 						}
-
 						break;
 					}
 			}
-
 			return wsList;
 		}
 
@@ -1315,7 +1294,6 @@ namespace LanguageExplorer.Areas
 				{
 					elname = $"{name}_{LabelString(ws)}";  //e.g. lxEn
 				}
-
 				WriteOpeningOfStartOfComplexElementTag(contentsStream, elname);
 				WriteClosingOfStartOfComplexElementTag(contentsStream);
 				contentsStream.Write(s);
@@ -1615,19 +1593,19 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
-		private void AddIntPropToBuilder(int tpt, int nProp, int nVar, StringBuilder sbComment)
+		private static void AddIntPropToBuilder(int tpt, int nProp, int nVar, StringBuilder sbComment)
 		{
 			var sTpt = DecodeTpt(tpt);
 			sbComment.AppendFormat(" {0}=\"{1}/{2}\" ", sTpt, nProp, nVar);
 		}
 
-		private void AddStrPropToBuilder(int tpt, string sProp, StringBuilder sbComment)
+		private static void AddStrPropToBuilder(int tpt, string sProp, StringBuilder sbComment)
 		{
 			var sTpt = DecodeTpt(tpt);
 			sbComment.AppendFormat(" {0}=\"{1}\" ", sTpt, sProp);
 		}
 
-		private string DecodeTpt(int tpt)
+		private static string DecodeTpt(int tpt)
 		{
 			return Enum.IsDefined(typeof(FwTextPropType), tpt) ? Enum.GetName(typeof(FwTextPropType), tpt) : tpt.ToString();
 		}
@@ -1779,7 +1757,7 @@ namespace LanguageExplorer.Areas
 				//add any literal attributes of the tag
 				foreach (XmlAttribute attr in node.Attributes) // for Larry and PA
 				{
-					rgsAttrs.Add(string.Format(" {0}", attr.OuterXml));
+					rgsAttrs.Add($" {attr.OuterXml}");
 				}
 				CollectAttributes(rgsAttrs, currentObject, node, null);
 				if (rgsAttrs.Count > 0)
@@ -1810,7 +1788,7 @@ namespace LanguageExplorer.Areas
 			//fix up the property name (should be fooOA.Hvo or fooRA.Hvo)
 			if (property != "Owner" && property.LastIndexOf(".Hvo") < 0)
 			{
-				property = string.Format("{0}.Hvo", property);
+				property = $"{property}.Hvo";
 			}
 			// Andy's hack to make it work:
 			// GetProperty returns the hvo as a string if there is a reference
@@ -1842,7 +1820,7 @@ namespace LanguageExplorer.Areas
 			{
 				var itemLabel = XmlUtils.GetOptionalAttributeValue(node, "itemLabel");
 				var itemProperty = XmlUtils.GetOptionalAttributeValue(node, "itemProperty");
-				if (!string.IsNullOrEmpty(itemLabel) && !String.IsNullOrEmpty(itemProperty))
+				if (!string.IsNullOrEmpty(itemLabel) && !string.IsNullOrEmpty(itemProperty))
 				{
 					var x = GetProperty(obj as ICmObject, itemProperty);
 					contentsStream.Write(m_format == "xml" ? "<{0} value=\"{1}\"/>" : "\\{0} {1}", itemLabel, x);
@@ -1869,7 +1847,6 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		protected void DoAttributeIndirectElement(List<string> rgsAttrs, ICmObject currentObject, XmlNode node)
 		{
-
 			var targetProperty = XmlUtils.GetMandatoryAttributeValue(node, "target");
 			var target = GetProperty(currentObject, targetProperty) as ICmObject;
 			if (target != null)
@@ -1924,8 +1901,8 @@ namespace LanguageExplorer.Areas
 				{
 					attrName = propertyName;
 				}
-
-				var obj = PropertyIsVirtual(currentObject, propertyName) ? GetVirtualString(currentObject, propertyName, GetSingleWritingSystemDescriptor(node))
+				var obj = PropertyIsVirtual(currentObject, propertyName)
+					? GetVirtualString(currentObject, propertyName, GetSingleWritingSystemDescriptor(node))
 					: GetProperty(currentObject, propertyName);
 				if (fOptional && IsEmptyObject(obj))
 				{
@@ -2015,12 +1992,13 @@ namespace LanguageExplorer.Areas
 		/// Just output the property as a string, without any regard to elements or attributes.
 		/// Useful when just building an XHtml page.
 		/// </summary>
-		protected void DoStringOutput(TextWriter outputStream, ICmObject currentObject,
-			XmlNode node)
+		protected void DoStringOutput(TextWriter outputStream, ICmObject currentObject, XmlNode node)
 		{
-			string x = GetSimplePropertyString(node, currentObject);
+			var x = GetSimplePropertyString(node, currentObject);
 			if (x != null)
+			{
 				WriteStringOutput(outputStream, node, x);
+			}
 		}
 
 		private void WriteStringOutput(TextWriter outputStream, XmlNode node, string x)
@@ -2055,17 +2033,17 @@ namespace LanguageExplorer.Areas
 		protected string GetSimplePropertyString(XmlNode node, ICmObject currentObject)
 		{
 			var propertyName = XmlUtils.GetMandatoryAttributeValue(node, "simpleProperty");
-			return PropertyIsVirtual(currentObject, propertyName) ? GetVirtualString(currentObject, propertyName, GetSingleWritingSystemDescriptor(node))
+			return PropertyIsVirtual(currentObject, propertyName)
+				? GetVirtualString(currentObject, propertyName, GetSingleWritingSystemDescriptor(node))
 				: GetStringOfProperty(GetProperty(currentObject, propertyName), node);
 		}
 
 		private ITsString GetSimplePropertyTsString(XmlNode node, ICmObject currentObject)
 		{
 			var propertyName = XmlUtils.GetMandatoryAttributeValue(node, "simpleProperty");
-			ITsString x;
-			x = PropertyIsVirtual(currentObject, propertyName) ? GetVirtualTsString(currentObject, propertyName, GetSingleWritingSystemDescriptor(node))
+			return PropertyIsVirtual(currentObject, propertyName)
+				? GetVirtualTsString(currentObject, propertyName, GetSingleWritingSystemDescriptor(node))
 				: GetTsStringOfProperty(GetProperty(currentObject, propertyName), node);
-			return x;
 		}
 
 		/// <summary>
@@ -2077,25 +2055,22 @@ namespace LanguageExplorer.Areas
 			string x = null;
 			if (currentObject is SingleLexReference)
 			{
-				if (propertyName == "TypeAbbreviation")
+				switch (propertyName)
 				{
-					x = (currentObject as SingleLexReference).TypeAbbreviation(ws, m_openForRefStack.Peek());
-				}
-				else if (propertyName == "TypeName")
-				{
-					x = (currentObject as SingleLexReference).TypeName(ws, m_openForRefStack.Peek());
-				}
-				else if (propertyName == "CrossReference")
-				{
-					x = (currentObject as SingleLexReference).CrossReference(ws);
-				}
-				else if (propertyName == "CrossReferenceGloss")
-				{
-					x = (currentObject as SingleLexReference).CrossReferenceGloss(ws);
-				}
-				else
-				{
-					throw new RuntimeConfigurationException("'" + propertyName + "' is not handled by the code.");
+					case "TypeAbbreviation":
+						x = (currentObject as SingleLexReference).TypeAbbreviation(ws, m_openForRefStack.Peek());
+						break;
+					case "TypeName":
+						x = (currentObject as SingleLexReference).TypeName(ws, m_openForRefStack.Peek());
+						break;
+					case "CrossReference":
+						x = (currentObject as SingleLexReference).CrossReference(ws);
+						break;
+					case "CrossReferenceGloss":
+						x = (currentObject as SingleLexReference).CrossReferenceGloss(ws);
+						break;
+					default:
+						throw new RuntimeConfigurationException($"'{propertyName}' is not handled by the code.");
 				}
 			}
 			else
@@ -2105,7 +2080,7 @@ namespace LanguageExplorer.Areas
 			return x;
 		}
 
-		private ITsString GetVirtualTsString(ICmObject currentObject, string propertyName, int p)
+		private static ITsString GetVirtualTsString(ICmObject currentObject, string propertyName, int p)
 		{
 			return null;
 		}
@@ -2115,11 +2090,7 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		protected void DoCommentOutput(TextWriter outputStream, XmlNode node)
 		{
-			var x = node.InnerText;
-			if (x != null)
-			{
-				outputStream.Write("<!--" + x + "-->");
-			}
+			outputStream.Write($"<!-- {node.InnerText} -->");
 		}
 
 		/// <summary>
@@ -2144,7 +2115,6 @@ namespace LanguageExplorer.Areas
 		protected void DoDateAttributeOutput(List<string> rgsAttrs, ICmObject currentObject, XmlNode node)
 		{
 			Debug.Assert(m_format == "xml");
-
 			var attrName = XmlUtils.GetMandatoryAttributeValue(node, "name");
 			var format = XmlUtils.GetMandatoryAttributeValue(node, "format");
 			var propertyName = XmlUtils.GetMandatoryAttributeValue(node, "property");
@@ -2166,7 +2136,6 @@ namespace LanguageExplorer.Areas
 				hvos[0] = (int)obj;
 				return hvos;
 			}
-
 			return new int[0];
 		}
 
@@ -2262,7 +2231,7 @@ namespace LanguageExplorer.Areas
 		}
 
 		// Used to optimize certain virtual sequence properties.
-		Dictionary<int, Dictionary<int, List<int>>> m_fastVirtuals = new Dictionary<int, Dictionary<int, List<int>>>();
+		private Dictionary<int, Dictionary<int, List<int>>> m_fastVirtuals = new Dictionary<int, Dictionary<int, List<int>>>();
 
 		/// <summary>
 		/// The &lt;refVector&gt; element is used when you just want to make a list of
@@ -2359,12 +2328,12 @@ namespace LanguageExplorer.Areas
 					{
 						if (ordered)
 						{
-							contentsStream.WriteLine("<{0} dst=\"{1}\" ord=\"{2}\"/>", label, GetIdString(hvo), index);
+							contentsStream.WriteLine($"<{label} dst=\"{GetIdString(hvo)}\" ord=\"{index}\"/>");
 							++index;
 						}
 						else
 						{
-							contentsStream.WriteLine("<{0} dst=\"{1}\"/>", label, GetIdString(hvo));
+							contentsStream.WriteLine($"<{label} dst=\"{GetIdString(hvo)}\"/>");
 						}
 					}
 				}
@@ -2395,7 +2364,7 @@ namespace LanguageExplorer.Areas
 
 		private Dictionary<int, List<int>> GetCachedVirtuals(XmlNode node, int flid)
 		{
-			Dictionary<int, List<int>> values = null;
+			Dictionary<int, List<int>> values;
 			// Some of these have an optimized way of loading.
 			if (!m_fastVirtuals.TryGetValue(flid, out values))
 			{
@@ -2456,9 +2425,7 @@ namespace LanguageExplorer.Areas
 			{
 				// If the LexReference vector element is the currently open object, ignore
 				// it unless it's a sequence type relation.
-				if (nMappingType != (int)LexRefTypeTags.MappingTypes.kmtSenseSequence &&
-					nMappingType != (int)LexRefTypeTags.MappingTypes.kmtEntrySequence &&
-					nMappingType != (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseSequence)
+				if (nMappingType != (int)LexRefTypeTags.MappingTypes.kmtSenseSequence && nMappingType != (int)LexRefTypeTags.MappingTypes.kmtEntrySequence && nMappingType != (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseSequence)
 				{
 					if (currentHvo == hvoOpen)
 					{
@@ -2467,9 +2434,7 @@ namespace LanguageExplorer.Areas
 				}
 				// If this is a unidirectional type relation, only process elements if the
 				//  first element is the currently open object.
-				if (nMappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseUnidirectional ||
-					nMappingType == (int)LexRefTypeTags.MappingTypes.kmtEntryUnidirectional ||
-					nMappingType == (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional)
+				if (nMappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseUnidirectional || nMappingType == (int)LexRefTypeTags.MappingTypes.kmtEntryUnidirectional || nMappingType == (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional)
 				{
 					if (hvoOpen != rghvo[0])
 					{
@@ -2478,12 +2443,9 @@ namespace LanguageExplorer.Areas
 				}
 				slr.CrossRefHvo = currentHvo;
 				DoChildren(contentsStream, slr, classNode, null);
-
 				// If this is a tree type relation, show only the first element if the
 				// currently open object is not the first element.
-				if (nMappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseTree ||
-					nMappingType == (int)LexRefTypeTags.MappingTypes.kmtEntryTree ||
-					nMappingType == (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree)
+				if (nMappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseTree || nMappingType == (int)LexRefTypeTags.MappingTypes.kmtEntryTree || nMappingType == (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree)
 				{
 					if (hvoOpen != rghvo[0])
 					{
@@ -2498,7 +2460,7 @@ namespace LanguageExplorer.Areas
 		/// low-level property of currentObject, return true (and indicate the property ID).
 		/// Otherwise return false.
 		/// </summary>
-		bool PropertyIsRealSeqOrCollection(ICmObject currentObject, string property, out int flid)
+		private bool PropertyIsRealSeqOrCollection(ICmObject currentObject, string property, out int flid)
 		{
 			flid = 0; // in case we return false, makes compiler happy
 			if (property != null && property.Length > 2 && (property.EndsWith("OC") || property.EndsWith("OS")))
@@ -2767,7 +2729,7 @@ namespace LanguageExplorer.Areas
 		{
 			var property = XmlUtils.GetMandatoryAttributeValue(node, "objProperty");
 			var ownedObject = GetObjectFromProperty(currentObject, property);
-			if (ownedObject == null)    //nb: this code a late addition
+			if (ownedObject == null)
 			{
 				return;
 			}
@@ -2806,7 +2768,9 @@ namespace LanguageExplorer.Areas
 					case "if":
 					case "ifnull":
 						if (TestPasses(currentObject, node))
+						{
 							CollectAttributes(rgsAttrs, currentObject, node, flags);
+						}
 						break;
 					case "ifnot":
 					case "ifnotnull":
@@ -2971,13 +2935,11 @@ namespace LanguageExplorer.Areas
 				case "IndexInOwner":
 					return target.IndexInOwner.ToString();
 				default:
+					if (IsCustomField(target, property))
 					{
-						if (IsCustomField(target, property))
-						{
-							return GetCustomFieldValue(target, property);
-						}
-						break;
+						return GetCustomFieldValue(target, property);
 					}
+					break;
 			}
 			var type = target.GetType();
 			var info = type.GetProperty(property, BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy);
@@ -3079,7 +3041,6 @@ namespace LanguageExplorer.Areas
 			{
 				return GetStringOfProperty(propertyObject, GetSingleWritingSystemDescriptor(node));
 			}
-
 			return GetStringOfProperty(propertyObject, -1);
 		}
 

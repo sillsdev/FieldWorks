@@ -11,9 +11,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	public class CheckBoxChangedEventArgs : EventArgs
 	{
-		/// <summary>
-		/// Initializes a new instance of the class.
-		/// </summary>
+		/// <summary />
 		public CheckBoxChangedEventArgs(int[] hvosChanged)
 		{
 			HvosChanged = hvosChanged;

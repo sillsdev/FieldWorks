@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,9 +9,9 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
-using SIL.LCModel.DomainServices;
-using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -24,24 +24,23 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// </summary>
 	internal class MorphemeBreaker
 	{
-		string m_input; // string being processed into morphemes.
-		ISilDataAccess m_sda; // cache to update with new objects etc (m_caches.DataAccess).
-		IVwCacheDa m_cda; // another interface on same cache.
-		CachePair m_caches; // Both the caches we are working with.
-		int m_hvoSbWord; // HVO of the Sandbox word that will own the new morphs
-		int m_cOldMorphs;
-		int m_cNewMorphs;
-		int m_wsVern = 0;
-		IMoMorphTypeRepository m_types;
-		int m_imorph = 0;
-		SandboxBase m_sandbox;
-
+		private string m_input; // string being processed into morphemes.
+		private ISilDataAccess m_sda; // cache to update with new objects etc (m_caches.DataAccess).
+		private IVwCacheDa m_cda; // another interface on same cache.
+		private CachePair m_caches; // Both the caches we are working with.
+		private int m_hvoSbWord; // HVO of the Sandbox word that will own the new morphs
+		private int m_cOldMorphs;
+		private int m_cNewMorphs;
+		private int m_wsVern;
+		private IMoMorphTypeRepository m_types;
+		private int m_imorph;
+		private SandboxBase m_sandbox;
 		// These variables are used to re-establish a selection in the morpheme break line
 		// after rebuilding the morphemes.
-		int m_tagSel = -1; // The property we want the selection in (or -1 for none).
-		int m_ihvoSelMorph; // The index of the morpheme we want the selection in.
-		int m_ichSelOutput; // The character offset where we want the selection to be made.
-		int m_cchPrevMorphemes; // Total length of morphemes before m_imorph.
+		private int m_tagSel = -1; // The property we want the selection in (or -1 for none).
+		private int m_ihvoSelMorph; // The index of the morpheme we want the selection in.
+		private int m_ichSelOutput; // The character offset where we want the selection to be made.
+		private int m_cchPrevMorphemes; // Total length of morphemes before m_imorph.
 
 		public MorphemeBreaker(CachePair caches, string input, int hvoSbWord, int wsVern, SandboxBase sandbox)
 		{
@@ -124,8 +123,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 				else
 				{
-					fCanReuseOldMorphData = m_sda.get_StringProp(hvoSbMorph, SandboxBase.ktagSbMorphPrefix).Text == mmt.Prefix
-						&& m_sda.get_StringProp(hvoSbMorph, SandboxBase.ktagSbMorphPostfix).Text == mmt.Postfix;
+					fCanReuseOldMorphData = m_sda.get_StringProp(hvoSbMorph, SandboxBase.ktagSbMorphPrefix).Text == mmt.Prefix && m_sda.get_StringProp(hvoSbMorph, SandboxBase.ktagSbMorphPostfix).Text == mmt.Postfix;
 				}
 			}
 			else
@@ -199,7 +197,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// the morphBreakSpace should be the last item.
 			var morphBreakSpace = breakMarkers[breakMarkers.Length - 1];
 			Debug.Assert(morphBreakSpace == " " || morphBreakSpace == "  ", "expected a morphbreak space at last index");
-
 			// First, find the segment boundaries.
 			var vichMin = new List<int>();
 			var vichLim = new List<int>();
@@ -215,9 +212,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 				vichLim.Add(ichBrk);
 				// Skip over consecutive markers
-				for (ichBrk += breakMarkers[iMatched].Length;
-					ichBrk < fullForm.Length;
-					ichBrk += breakMarkers[iMatched].Length)
+				for (ichBrk += breakMarkers[iMatched].Length; ichBrk < fullForm.Length; ichBrk += breakMarkers[iMatched].Length)
 				{
 					if (fullForm.IndexOfAnyString(breakMarkers, ichBrk, out iMatched) != ichBrk)
 					{
@@ -325,7 +320,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							}
 							continue;   // we can't match the substring (yet)
 						}
-
 						if (fullForm.Substring(ich, morphBreakSpace.Length) != morphBreakSpace)
 						{
 							continue;
@@ -339,7 +333,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						}
 						break;
 					}
-
 					indexPrefix = fullForm.IndexOfAnyString(prefixMarkers, ichNext, out iMatchedPrefix);
 					indexPostfix = fullForm.IndexOfAnyString(postfixMarkers, ichNext, out iMatchedPostfix);
 					int index2;
@@ -359,7 +352,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					{
 						index2 = Math.Min(indexPrefix, indexPostfix);
 					}
-
 					var cchWordFollowing = 0;
 					for (var ich = ichNext; ich < index2; ++ich, ++cchWordFollowing)
 					{
@@ -435,13 +427,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				var morph = morphFormWithMarkers.Substring(prevEndOffset, morphEndOffset - prevEndOffset);
 				morph = morph.Trim();
-				// figure the trailing characters following the previous morph by the difference betweeen
+				// figure the trailing characters following the previous morph by the difference between
 				// the current morphEndOffset the length of the trimmed morph and prevEndOffset
 				if (prevEndOffset > 0)
 				{
 					ccTrailingMorphs.Add(morphEndOffset - prevEndOffset - morph.Length);
 				}
-
 				if (!string.IsNullOrEmpty(morph))
 				{
 					morphs.Add(morph);
@@ -470,7 +461,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					morphEndOffsets.Remove(offset);
 				}
-
 				if (fBaseWordIsPhrase)
 				{
 					// for a phrase, we always want to remove previous offsets
@@ -482,7 +472,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 				prevOffset = offset;
 			}
-			// finally add the end of the sourcestring to the offsets.
+			// finally add the end of the sourceString to the offsets.
 			morphEndOffsets.Add(sourceString.Length);
 			return morphEndOffsets;
 		}
@@ -533,7 +523,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				allMarkers.Add(prefixmarker);
 			}
-
 			foreach (var postfixmarker in postfixMarkers)
 			{
 				if (!allMarkers.Contains(postfixmarker))
@@ -545,7 +534,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// for phrases, the breaking character is a double-space. for normal words, it's simply a space.
 			var fBaseWordIsPhrase = SandboxBase.IsPhrase(tssBaseWordform.Text);
 			allMarkers.Add(fBaseWordIsPhrase ? "  " : " ");
-
 			var breakMarkers = new string[allMarkers.Count];
 			allMarkers.CopyTo(breakMarkers, 0);
 			// If we trim our input string or add spaces, be sure to readjust our selection pointer, m_ichSelInput.
@@ -553,7 +541,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// For trimming, it is adjusted in TrimInputString().
 			var fullForm = DoBasicFinding(TrimInputString(), breakMarkers, prefixMarkers, postfixMarkers);
 			AdjustIpForInsertions(fullForm);
-
 			List<int> ccTrailingMorphs;
 			var morphs = BreakIntoMorphs(fullForm, tssBaseWordform.Text, out ccTrailingMorphs);
 			var imorph = 0;
@@ -570,7 +557,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				oldMorphHvos.Add(m_sda.get_VecItem(m_hvoSbWord, SandboxBase.ktagSbWordMorphs, m_imorph));
 			}
-
 			foreach (var hvo in oldMorphHvos)
 			{
 				m_sda.DeleteObjOwner(m_hvoSbWord, hvo, SandboxBase.ktagSbWordMorphs, imorph);
@@ -592,7 +578,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					break;
 				}
 			}
-
 			if (ch >= m_input.Length && ch >= fullForm.Length)
 			{
 				return;
@@ -656,23 +641,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				rgsli[0].tag = SandboxBase.ktagSbMorphForm; // leave other slots zero
 			}
-
 			// Set writing system of the selection (LT-16593).
 			var propsBuilder = TsStringUtils.MakePropsBldr();
 			propsBuilder.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, m_wsVern);
 			try
 			{
-				m_sandbox.RootBox.MakeTextSelection(
-					m_sandbox.IndexOfCurrentItem, // which root,
-					clev, rgsli,
-					m_tagSel,
-					0, // no previous occurrence
-					m_ichSelOutput, m_ichSelOutput, m_wsVern,
-					false, // needs to be false here to associate with trailing character
-						   // esp. for when the cursor is at the beginning of the morpheme (LT-7773)
-					-1, // end not in different object
-					propsBuilder.GetTextProps(),
-					true); // install it.
+				m_sandbox.RootBox.MakeTextSelection(m_sandbox.IndexOfCurrentItem, clev, rgsli, m_tagSel, 0,
+					m_ichSelOutput, m_ichSelOutput, m_wsVern, false, -1, propsBuilder.GetTextProps(), true);
 			}
 			catch (Exception)
 			{

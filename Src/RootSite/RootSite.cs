@@ -117,9 +117,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary />
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 			if (RootBox != null)

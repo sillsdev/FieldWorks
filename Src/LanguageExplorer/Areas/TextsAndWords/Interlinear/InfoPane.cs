@@ -1,4 +1,4 @@
-// Copyright (c) 20105-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,16 +12,13 @@ using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
-	/// <summary>
-	/// Summary description for InfoPane.
-	/// </summary>
+	/// <summary />
 	public class InfoPane : UserControl, IFlexComponent, IInterlinearTabControl
 	{
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
 		private Container components = null;
-
 		// Local variables.
 		RecordEditView m_xrev;
 
@@ -107,16 +104,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
-			if( disposing )
+			if (disposing)
 			{
 				components?.Dispose();
 				m_xrev?.Dispose();
@@ -127,7 +124,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			Publisher = null;
 			Subscriber = null;
 
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#endregion // Constructors, destructors, and suchlike methods.

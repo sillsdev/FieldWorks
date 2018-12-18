@@ -9,9 +9,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	public class CheckBoxActiveChangedEventArgs : CheckBoxChangedEventArgs
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see><cref>T:CheckBoxChangedEventArgs</cref></see> class.
-		/// </summary>
+		/// <summary />
 		public CheckBoxActiveChangedEventArgs(int[] hvosChanged, string undoMessage, string redoMessage)
 			: base(hvosChanged)
 		{

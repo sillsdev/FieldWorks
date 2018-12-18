@@ -25,9 +25,7 @@ namespace LanguageExplorer.Filters
 		protected Hashtable m_objToKey = new Hashtable();
 		internal INoteComparision ComparisonNoter { get; set; }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:StringFinderCompare"/> class.
-		/// </summary>
+		/// <summary />
 		public StringFinderCompare(IStringFinder finder, IComparer subComp)
 		{
 			Finder = finder;

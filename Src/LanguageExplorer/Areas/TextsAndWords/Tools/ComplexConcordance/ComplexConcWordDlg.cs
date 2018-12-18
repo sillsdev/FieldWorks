@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2018 SIL International
+// Copyright (c) 2013-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -20,8 +20,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 {
 	public class ComplexConcWordDlg : Form
 	{
-		const string s_helpTopic = "khtpComplexConcWordDlg";
-
+		private const string s_helpTopic = "khtpComplexConcWordDlg";
 		private Button m_btnHelp;
 		private Button m_btnCancel;
 		private Button m_btnOK;
@@ -45,9 +44,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 		private NodeIcon m_featureIcon;
 		private ImageList m_imageList;
 		private CheckBox m_categoryNotCheckBox;
-
 		private System.ComponentModel.IContainer components;
-
 		private LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private ComplexConcWordNode m_node;
@@ -64,41 +61,26 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 		{
 			m_cache = cache;
 			m_node = node;
-
 			m_formTextBox.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
 			m_formTextBox.AdjustForStyleSheet(FwUtils.StyleSheetFromPropertyTable(propertyTable));
-
 			m_glossTextBox.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
 			m_glossTextBox.AdjustForStyleSheet(FwUtils.StyleSheetFromPropertyTable(propertyTable));
-
 			m_categoryComboBox.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
-
 			foreach (var ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
 			{
 				m_formWsComboBox.Items.Add(ws);
 			}
-
 			foreach (var ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
 			{
 				m_glossWsComboBox.Items.Add(ws);
 			}
-
 			m_inflModel = new InflFeatureTreeModel(m_cache.LangProject.MsFeatureSystemOA, m_node.InflFeatures, m_imageList.Images[0], m_imageList.Images[1]);
 			m_inflFeatsTreeView.Model = m_inflModel;
 			m_inflFeatsTreeView.ExpandAll();
-
 			SetTextBoxValue(m_node.Form, m_formTextBox, m_formWsComboBox, true);
 			SetTextBoxValue(m_node.Gloss, m_glossTextBox, m_glossWsComboBox, false);
-
-			m_catPopupTreeManager = new PossibilityComboController(m_categoryComboBox,
-									m_cache,
-									m_cache.LanguageProject.PartsOfSpeechOA,
-									m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle,
-									false,
-									propertyTable,
-									publisher,
-									propertyTable.GetValue<Form>(FwUtils.window));
-
+			m_catPopupTreeManager = new PossibilityComboController(m_categoryComboBox, m_cache, m_cache.LanguageProject.PartsOfSpeechOA,
+				m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle, false, propertyTable, publisher, propertyTable.GetValue<Form>(FwUtils.window));
 			if (m_node.Category != null)
 			{
 				m_categoryNotCheckBox.Checked = m_node.NegateCategory;
@@ -108,10 +90,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			{
 				m_catPopupTreeManager.LoadPopupTree(0);
 			}
-
 			m_helpTopicProvider = propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
-
-			 m_helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
+			m_helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
 			m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
 			m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 		}
@@ -134,10 +114,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 		{
 			m_node.Form = string.IsNullOrEmpty(m_formTextBox.Text) ? null : m_formTextBox.Tss;
 			m_node.Gloss = string.IsNullOrEmpty(m_glossTextBox.Text) ? null : m_glossTextBox.Tss;
-
 			m_inflModel.AddInflFeatures(m_node.InflFeatures);
-
-			var node = (HvoTreeNode) m_categoryComboBox.SelectedNode;
+			var node = (HvoTreeNode)m_categoryComboBox.SelectedNode;
 			if (node.Hvo != 0)
 			{
 				m_node.Category = m_cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(node.Hvo);
@@ -148,7 +126,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 				m_node.Category = null;
 				m_node.NegateCategory = false;
 			}
-
 			DialogResult = DialogResult.OK;
 		}
 
@@ -186,8 +163,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 
 		private void m_valueComboBox_CreatingEditor(object sender, EditEventArgs e)
 		{
-			var comboBox = (ComboBox) e.Control;
-			var closedFeatNode = (ClosedFeatureNode) e.Node.Tag;
+			var comboBox = (ComboBox)e.Control;
+			var closedFeatNode = (ClosedFeatureNode)e.Node.Tag;
 			comboBox.Items.Add(new SymbolicValue(null));
 			comboBox.Items.AddRange(closedFeatNode.Feature.ValuesOC.OrderBy(v => v.Abbreviation.BestAnalysisAlternative.Text).Select(v => new SymbolicValue(v)).Cast<object>().ToArray());
 			comboBox.SelectedItem = closedFeatNode.Value;
@@ -203,13 +180,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			e.Value = e.Node.Tag is ClosedFeatureNode;
 		}
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
 
 			if (disposing)
 			{

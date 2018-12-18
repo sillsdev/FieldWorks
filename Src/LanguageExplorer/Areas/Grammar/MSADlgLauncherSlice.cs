@@ -1,12 +1,13 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Drawing;
-using SIL.FieldWorks.Common.RootSites;
 using LanguageExplorer.Controls.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.Xml;
 
@@ -27,19 +28,20 @@ namespace LanguageExplorer.Areas.Grammar
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
-			if( disposing )
+			if (disposing)
 			{
 				components?.Dispose();
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#region Designer generated code
@@ -68,13 +70,8 @@ namespace LanguageExplorer.Areas.Grammar
 				ctrl.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			}
 			Size = new Size(208, 32);
-			ctrl.Initialize(PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache),
-				MyCmObject,
-				1, // Maybe need a real flid?
-				"InterlinearName",
-				ContainingDataTree.PersistenceProvder,
-				"InterlinearName",
-				XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "ws", "analysis")); // TODO: Get better default 'best ws'.
+			ctrl.Initialize(PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache), MyCmObject, 1, "InterlinearName", ContainingDataTree.PersistenceProvder,
+				"InterlinearName", XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "ws", "analysis")); // TODO: Get better default 'best ws'.
 			var view = (MSADlglauncherView)ctrl.MainControl;
 			view.StyleSheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable);
 		}

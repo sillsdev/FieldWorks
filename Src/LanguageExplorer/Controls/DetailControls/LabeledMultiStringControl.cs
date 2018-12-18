@@ -30,20 +30,14 @@ namespace LanguageExplorer.Controls.DetailControls
 		bool m_hasBorder;
 		Padding m_textPadding;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LabeledMultiStringControl"/> class.
-		/// </summary>
+		/// <summary />
 		public LabeledMultiStringControl(LcmCache cache, int wsMagic, IVwStylesheet vss)
 		{
 			m_innerControl = new InnerLabeledMultiStringControl(cache, wsMagic);
 			InternalInit(cache, vss);
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LabeledMultiStringControl"/> class.
-		/// For use with a non-standard list of wss (like available UI languages).
-		/// (See CustomListDlg)
-		/// </summary>
+		/// <summary />
 		public LabeledMultiStringControl(LcmCache cache, List<CoreWritingSystemDefinition> nonStandardWritingSystemList, IVwStylesheet vss)
 		{
 

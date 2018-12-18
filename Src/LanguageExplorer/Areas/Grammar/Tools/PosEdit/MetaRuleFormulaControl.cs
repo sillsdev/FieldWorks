@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,8 +8,8 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
@@ -59,14 +59,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 		private bool DisplayOption(object option)
 		{
-			var type = ((InsertOption) option).Type;
+			var type = ((InsertOption)option).Type;
 			var sel = SelectionHelper.Create(_view);
 			var cellId = GetCell(sel);
 			if (cellId == -1 || cellId == -2)
 			{
 				return false;
 			}
-
 			switch (cellId)
 			{
 				case PhMetathesisRuleTags.kidxLeftSwitch:
@@ -87,7 +86,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 							{
 								return true;
 							}
-
 							if (!sel.IsRange)
 							{
 								return false;
@@ -126,7 +124,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 							{
 								return true;
 							}
-
 							if (!sel.IsRange)
 							{
 								return false;
@@ -154,7 +151,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 					{
 						first = Rule.StrucDescOS[0];
 					}
-
 					if (type == RuleInsertType.WordBoundary)
 					{
 						// only display the word boundary option if we are at the beginning of the left context and
@@ -310,9 +306,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 			var obj = GetCmObject(sel, limit);
 			if (obj == null)
+			{
 				return -1;
-
-			return Rule.GetStrucChangeIndex((IPhSimpleContext) obj);
+			}
+			return Rule.GetStrucChangeIndex((IPhSimpleContext)obj);
 		}
 
 		protected override ICmObject GetCmObject(SelectionHelper sel, SelLimitType limit)
@@ -321,7 +318,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			{
 				return null;
 			}
-
 			var levels = sel.GetLevelInfo(limit);
 			return m_cache.ServiceLocator.GetObject(levels[levels.Length - 1].hvo);
 		}
@@ -389,7 +385,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			{
 				return null;
 			}
-
 			switch (cellId)
 			{
 				case PhMetathesisRuleTags.kidxLeftSwitch:

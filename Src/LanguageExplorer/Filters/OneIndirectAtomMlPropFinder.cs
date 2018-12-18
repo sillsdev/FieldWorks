@@ -15,9 +15,7 @@ namespace LanguageExplorer.Filters
 	/// </summary>
 	public class OneIndirectAtomMlPropFinder : StringFinderBase
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:OneIndirectAtomMlPropFinder"/> class.
-		/// </summary>
+		/// <summary />
 		public OneIndirectAtomMlPropFinder(ISilDataAccess sda, int flidAtom, int flidString, int ws)
 			: base(sda)
 		{
@@ -26,9 +24,7 @@ namespace LanguageExplorer.Filters
 			Ws = ws;
 		}
 
-		/// <summary>
-		/// For use with IPersistAsXml
-		/// </summary>
+		/// <summary />
 		public OneIndirectAtomMlPropFinder()
 		{
 		}

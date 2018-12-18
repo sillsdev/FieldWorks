@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2018 SIL International
+// Copyright (c) 2002-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,8 +9,8 @@ using System.IO;
 using System.Threading;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel;
 using SIL.FieldWorks.WordWorks.Parser;
+using SIL.LCModel;
 using SIL.ObjectModel;
 
 namespace LanguageExplorer.Areas.TextsAndWords
@@ -21,16 +21,12 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	internal sealed class ParserConnection : DisposableBase, IAsyncResult
 	{
 		private readonly ParserScheduler m_scheduler;
-
 		private string m_activity;
 		private string m_notificationMessage;
 		private XDocument m_traceResult;
 		private readonly ManualResetEvent m_event = new ManualResetEvent(false);
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ParserConnection"/> class.
-		/// This will attempt to connect to an existing parser or start a new one if necessary.
-		/// </summary>
+		/// <summary />
 		public ParserConnection(LcmCache cache, IdleQueue idleQueue)
 		{
 			m_activity = string.Empty;
@@ -120,6 +116,12 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
 			base.Dispose(disposing);
 		}
 
@@ -135,7 +137,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				{
 					m_notificationMessage = args.Task.NotificationMessage;
 				}
-
 				//will have to do something more smart something when details is used for something else
 				if (args.Task.Details != null)
 				{

@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -67,16 +67,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.DialectsListEdit
 
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
 			_listsAreaMenuHelper = new ListsAreaMenuHelper(majorFlexComponentParameters, dataTree, (IListArea)_area, _recordList);
-			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(
-				majorFlexComponentParameters.FlexComponentParameters,
-				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				true,
-				XDocument.Parse(ListResources.DialectsListEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters),
-				MachineName,
-				majorFlexComponentParameters.LcmCache,
-				_recordList,
-				dataTree,
-				MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
+			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
+				true, XDocument.Parse(ListResources.DialectsListEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters), MachineName,
+				majorFlexComponentParameters.LcmCache, _recordList, dataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 
 			// Too early before now.
 			_listsAreaMenuHelper.Initialize();
@@ -156,10 +149,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.DialectsListEdit
               </sortMethods>
             </clerk>
 			*/
-			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
-				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
-				cache.LanguageProject.LexDbOA.DialectLabelsOA,
-				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, false, "best vernoranal"));
+			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
+				cache.LanguageProject.LexDbOA.DialectLabelsOA, new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, false, "best vernoranal"));
 		}
 	}
 }

@@ -21,9 +21,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Value = (int)Math.Round(pixels*HIMETRIC_INCH / dpi);
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="HiMetric"/> class.
-		/// </summary>
+		/// <summary />
 		public HiMetric(int hiMetrix)
 		{
 			Value = hiMetrix;

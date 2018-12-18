@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -17,10 +17,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 	/// </summary>
 	internal sealed class ParserAnalysisRemover : IUtility
 	{
-		#region Data members
-
 		private UtilityDlg m_dlg;
-		const string kPath = "/group[@id='Linguistics']/group[@id='Morphology']/group[@id='RemoveParserAnalyses']/";
+		private const string kPath = "/group[@id='Linguistics']/group[@id='Morphology']/group[@id='RemoveParserAnalyses']/";
 
 		/// <summary />
 		internal ParserAnalysisRemover(UtilityDlg utilityDlg)
@@ -31,8 +29,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			}
 			m_dlg = utilityDlg;
 		}
-
-		#endregion Data members
 
 		/// <summary>
 		/// Override method to return the Label property.
@@ -70,15 +66,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			{
 				return;
 			}
-
 			// Set up progress bar.
 			m_dlg.ProgressBar.Minimum = 0;
 			m_dlg.ProgressBar.Maximum = analyses.Length;
 			m_dlg.ProgressBar.Step = 1;
-
 			// stop parser if it's running.
 			m_dlg.Publisher.Publish("StopParser", null);
-
 			NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () =>
 			{
 				foreach (var analysis in analyses)
@@ -88,18 +81,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 					{
 						analysis.EvaluationsRC.Remove(parserEval);
 					}
-
 					var wordform = analysis.Wordform;
 					if (analysis.EvaluationsRC.Count == 0)
 					{
 						wordform.AnalysesOC.Remove(analysis);
 					}
-
 					if (parserEvals.Length > 0)
 					{
 						wordform.Checksum = 0;
 					}
-
 					m_dlg.ProgressBar.PerformStep();
 				}
 			});

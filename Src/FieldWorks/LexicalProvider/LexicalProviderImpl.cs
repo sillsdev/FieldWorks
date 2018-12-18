@@ -29,10 +29,7 @@ namespace SIL.FieldWorks.LexicalProvider
 		private const string kAnalysisPrefix = "Analysis:";
 		private readonly LcmCache m_cache;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LexicalProviderImpl"/> class for the
-		/// specified cache.
-		/// </summary>
+		/// <summary />
 		public LexicalProviderImpl(LcmCache cache)
 		{
 			m_cache = cache;

@@ -18,9 +18,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		DateTime m_dtExample = new DateTime(1999, 3, 29, 15, 30, 45);
 		bool m_fGenDate;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:DateFieldOptions"/> class.
-		/// </summary>
+		/// <summary />
 		public DateFieldOptions()
 		{
 			InitializeComponent();

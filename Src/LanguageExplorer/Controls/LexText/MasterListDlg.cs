@@ -13,9 +13,7 @@ using SIL.Windows.Forms;
 
 namespace LanguageExplorer.Controls.LexText
 {
-	/// <summary>
-	/// Summary description for MasterListDlg.
-	/// </summary>
+	/// <summary />
 	internal class MasterListDlg : Form
 	{
 		protected ILcmOwningCollection<IFsFeatDefn> m_featureList;

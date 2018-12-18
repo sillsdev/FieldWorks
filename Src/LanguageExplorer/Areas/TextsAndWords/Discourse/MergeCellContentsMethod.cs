@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2018 SIL International
+// Copyright (c) 2008-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -101,16 +101,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				return; // no words to move!!
 			}
-
 			// If the destination contains a missing marker get rid of it! Don't try to 'merge' with it.
 			m_logic.RemoveMissingMarker(m_dstCell);
-
 			// Get markers and WordGroups from destination
 			int indexDest; // This will keep track of where we are in rowDst.CellsOS
 			m_cellPartsDest = m_logic.CellPartsInCell(m_dstCell, out indexDest);
 			// indexDest is now the index in the destination row's CellsOS of the first WordGroup in the destination cell.
 			m_wordGroupsDest = ConstituentChartLogic.CollectCellWordGroups(m_cellPartsDest);
-
 			// Here is where we need to check to see if the destination cell contains any movedText markers
 			// for text in the source cell. If it does, the marker goes away, the movedText feature goes away,
 			// and that MAY leave us ready to do a PreMerge in the source cell prior to merging the cells.
@@ -118,7 +115,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				indexDest = TryPreMerge(indexDest);
 			}
-
 			// The above check for MTMarkers may cause this 'if' to be true, but we may still need to delete objects
 			if (m_cellPartsDest.Count == 0)
 			{
@@ -147,26 +143,21 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					{
 						m_logic.ChangeColumnInternal(m_wordGroupsSrc.ToArray(), m_logic.AllMyColumns[DstColIndex]);
 					}
-
 					// Enhance GordonM: If we ever allow markers between WordGroups, this [& ChangeRow()] will need to change.
 					MoveCellPartsToDestRow(indexDest);
 				}
 				return;
 			}
-
 			if (m_logic.IsPreposedMarker(m_cellPartsDest[0]))
 			{
 				indexDest++; // Insertion point should be after preposed marker
 			}
-
 			// Set up possible coalescence of WordGroups.
 			PrepareForMerge();
-
 			// At this point 'm_wordGroupToMerge' and 'm_wordGroupToMergeWith' are the only WordGroups that might actually
 			// coalesce. Neither is guaranteed to be non-null (either one could be movedText, which is not mergeable).
 			// If either is null, there will be no coalescence.
 			// But there may well be other word groups in 'm_wordGroupsSrc' that will need to move.
-
 			if (m_wordGroupToMerge != null)
 			{
 				if (m_wordGroupToMergeWith != null)
@@ -182,27 +173,22 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					// where in the destination cell to put it?
 				}
 			}
-
 			if (m_wordGroupsSrc.Count == 0)
 			{
 				return;
 			}
-
 			// Change column of any surviving items in m_wordGroupsSrc.
 			if (SrcColIndex != DstColIndex)
 			{
 				m_logic.ChangeColumnInternal(m_wordGroupsSrc.ToArray(), m_logic.AllMyColumns[DstColIndex]);
 			}
-
 			// If we're on the same row and there aren't any intervening markers, we're done.
 			if (SrcRow.Hvo == DstRow.Hvo && (indexDest == m_wordGroupsSrc[0].IndexInOwner + m_wordGroupsSrc.Count))
 			{
 				return;
 			}
-
 			indexDest = FindWhereToInsert(indexDest); // Needs an accurate 'm_wordGroupsDest'
 			MoveCellPartsToDestRow(indexDest);
-
 			// Review: what should we do about dependent clause markers pointing at the destination row?
 		}
 
@@ -213,7 +199,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private int MergeTwoWordGroups(int indexDest)
 		{
 			m_logic.MoveAnalysesBetweenWordGroups(m_wordGroupToMerge, m_wordGroupToMergeWith);
-
 			// remove WordGroup from source lists and delete, keeping accurate destination index
 			return RemoveSourceWordGroup(m_wordGroupToMerge, indexDest);
 		}
@@ -274,7 +259,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private bool CheckForRedundantMTMarkers(ref int indexDest)
 		{
 			var found = false;
-			for (var iDes = 0; iDes < m_cellPartsDest.Count; )
+			for (var iDes = 0; iDes < m_cellPartsDest.Count;)
 			{
 				// Not foreach because we might delete from m_cellPartsDest
 				var part = m_cellPartsDest[iDes];
@@ -282,11 +267,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				// The source cell part is still in its old row and column, so we can detect this directly.
 				if (IsMarkerForCell(part, m_srcCell))
 				{
-					var part1 = part as IConstChartMovedTextMarker;
-					// Turn off feature in source
-					//TurnOffMovedTextFeatureFromMarker(part1, SrcRow);
 					// Take out movedText marker, keep accurate destination index
-					RemoveRedundantMTMarker(part1, ref indexDest);
+					RemoveRedundantMTMarker((IConstChartMovedTextMarker)part, ref indexDest);
 					found = true;
 					continue;
 				}
@@ -305,7 +287,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			var istart = m_wordGroupsSrc[0].IndexInOwner;
 			var iend = m_wordGroupsSrc[m_wordGroupsSrc.Count - 1].IndexInOwner;
 			SrcRow.CellsOS.MoveTo(istart, iend, DstRow.CellsOS, indexDest);
-			if (SrcRow.Hvo == (int) SpecialHVOValues.kHvoObjectDeleted)
+			if (SrcRow.Hvo == (int)SpecialHVOValues.kHvoObjectDeleted)
 			{
 				RenumberRowsFromDeletedRow(irow);
 			}
@@ -321,16 +303,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			else
 			{
 				m_wordGroupToMergeWith = m_forward ? m_wordGroupsDest[0] : m_wordGroupsDest[m_wordGroupsDest.Count - 1];
-
 				if (ConstituentChartLogic.IsMovedText(m_wordGroupToMergeWith))
 				{
 					// Can't merge with movedText, must append/insert merging WordGroup instead.
 					m_wordGroupToMergeWith = null;
 				}
 			}
-
 			m_wordGroupToMerge = m_forward ? m_wordGroupsSrc[m_wordGroupsSrc.Count - 1] : m_wordGroupsSrc[0];
-
 			if (ConstituentChartLogic.IsMovedText(m_wordGroupToMerge))
 			{
 				// Can't merge with movedText, must append/insert merging WordGroup instead.
@@ -395,7 +374,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				return indexDest; // If indexDest == Cells.Count, we should take this branch.
 			}
-
 			// Enhance GordonM: If we ever allow other markers before the first WordGroup or
 			// we allow markers between WordGroups, this will need to change.
 			if (m_forward)

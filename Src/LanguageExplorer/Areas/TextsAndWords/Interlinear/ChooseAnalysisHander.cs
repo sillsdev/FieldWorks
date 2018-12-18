@@ -1,18 +1,19 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
 using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
 using Rect = SIL.FieldWorks.Common.ViewsInterfaces.Rect;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -23,13 +24,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// </summary>
 	internal class ChooseAnalysisHandler : IComboHandler
 	{
-		int m_hvoAnalysis; // The current 'analysis', may be wordform, analysis, gloss.
-		bool m_fInitializing = false; // true to suppress AnalysisChosen while setting up combo.
-		LcmCache m_cache;
-		IComboList m_combo;
-		const string ksMissingString = "---";
-		const string ksPartSeparator = "   ";
-
+		private int m_hvoAnalysis; // The current 'analysis', may be wordform, analysis, gloss.
+		private bool m_fInitializing; // true to suppress AnalysisChosen while setting up combo.
+		private LcmCache m_cache;
+		private IComboList m_combo;
+		private const string ksMissingString = "---";
+		private const string ksPartSeparator = "   ";
 		/// <summary>
 		/// this is something of a hack until we convert to using a style sheet
 		/// </summary>
@@ -58,13 +58,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public AnalysisTree GetAnalysisTree()
 		{
-				var analysisTree = new AnalysisTree();
-				if (m_hvoAnalysis != 0)
-				{
-					var analysisObj = (IAnalysis)m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_hvoAnalysis);
-					analysisTree.Analysis = analysisObj;
-				}
-				return analysisTree;
+			var analysisTree = new AnalysisTree();
+			if (m_hvoAnalysis != 0)
+			{
+				var analysisObj = (IAnalysis)m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_hvoAnalysis);
+				analysisTree.Analysis = analysisObj;
+			}
+			return analysisTree;
 		}
 
 		/// <summary>
@@ -108,15 +108,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// The base class finalizer is called automatically.
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <remarks>Must not be virtual.</remarks>
+		/// <inheritdoc />
 		public void Dispose()
 		{
 			Dispose(true);
 			// This object will be cleaned up by the Dispose method.
-			// Therefore, you should call GC.SupressFinalize to
+			// Therefore, you should call GC.SuppressFinalize to
 			// take this object off the finalization queue
 			// and prevent finalization code for this object
 			// from executing a second time.
@@ -146,10 +143,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </remarks>
 		protected virtual void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -208,7 +205,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			//review
 			var builder = TsStringUtils.MakeStrBldr();
-			builder.Replace(0,0,"-------", null);
+			builder.Replace(0, 0, "-------", null);
 			builder.SetIntPropValues(0, builder.Length, (int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, m_cache.DefaultUserWs);
 			var newItem = new HvoTssComboItem(-1, builder.GetString()); //hack todo
 			m_combo.Items.Add(newItem);
@@ -264,7 +261,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			bldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, m_cache.DefaultUserWs);
 			bldr.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, s_baseFontSize * 800);
 			bldr.SetStrPropValue((int)FwTextStringProp.kstpFontFamily, MiscUtils.StandardSansSerif);
-			builder.Replace(0,0,str , bldr.GetTextProps());
+			builder.Replace(0, 0, str, bldr.GetTextProps());
 			return builder.GetString();
 		}
 
@@ -277,18 +274,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var category = wa.CategoryRA;
 			if (category != null)
 			{
-				var tssPos = category.Abbreviation.get_String( lcmCache.DefaultAnalWs);
-				tsb.Replace(0, 0, tssPos.Text, PartOfSpeechTextProperties(lcmCache,false, fUseStyleSheet));
+				var tssPos = category.Abbreviation.get_String(lcmCache.DefaultAnalWs);
+				tsb.Replace(0, 0, tssPos.Text, PartOfSpeechTextProperties(lcmCache, false, fUseStyleSheet));
 			}
 			else
 			{
-				tsb.Replace(0, 0, ksMissingString, PartOfSpeechTextProperties(lcmCache,false, fUseStyleSheet));
+				tsb.Replace(0, 0, ksMissingString, PartOfSpeechTextProperties(lcmCache, false, fUseStyleSheet));
 			}
 			tsb.Replace(tsb.Length, tsb.Length, " ", null);
 			tsb.Replace(tsb.Length, tsb.Length, wg.Form.get_String(lcmCache.DefaultAnalWs).Text, GlossTextProperties(lcmCache, false, fUseStyleSheet));
 
 			//indent
-			tsb.Replace(0,0, "    ", null);
+			tsb.Replace(0, 0, "    ", null);
 			return tsb.GetString();
 		}
 
@@ -344,7 +341,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 				var ichForm = tsb.Length;
 				tsb.ReplaceTsString(ichForm, ichForm, tssForm);
-				tsb.SetProperties(ichForm, tsb.Length,formTextProperties);
+				tsb.SetProperties(ichForm, tsb.Length, formTextProperties);
 
 				// add category (part of speech)
 				var msa = mb.MsaRA;
@@ -386,7 +383,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary />
 		public static ITsTextProps FormTextProperties(LcmCache lcmCache, bool fUseStyleSheet, int wsVern)
 		{
-			var color =(int) CmObjectUi.RGB(Color.DarkBlue);
+			var color = (int)CmObjectUi.RGB(Color.DarkBlue);
 			var bldr = TsStringUtils.MakePropsBldr();
 			if (!fUseStyleSheet)
 			{
@@ -399,7 +396,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public static ITsTextProps GlossTextProperties(LcmCache lcmCache, bool inAnalysisLine, bool fUseStyleSheet)
 		{
-			var color =(int) CmObjectUi.RGB(Color.DarkRed);
+			var color = (int)CmObjectUi.RGB(Color.DarkRed);
 			var bldr = TsStringUtils.MakePropsBldr();
 			if (!fUseStyleSheet)
 			{
@@ -419,11 +416,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary />
 		public static ITsTextProps PartOfSpeechTextProperties(LcmCache lcmCache, bool inAnalysisLine, bool fUseStyleSheet)
 		{
-			var color =(int) CmObjectUi.RGB(Color.Green);
+			var color = (int)CmObjectUi.RGB(Color.Green);
 			var bldr = TsStringUtils.MakePropsBldr();
 			if (!fUseStyleSheet)
 			{
-				bldr.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, (int)( s_baseFontSize * 1000* .8));
+				bldr.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, (int)(s_baseFontSize * 1000 * .8));
 			}
 			bldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, lcmCache.DefaultAnalWs);
 
@@ -454,7 +451,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 				combo.Location = new Point(loc.left, loc.top);
 				// 21 is the default height of a combo, the smallest reasonable size.
-				combo.Size = new Size(Math.Max(loc.right - loc.left + 30, 200), Math.Max( loc.bottom - loc.top, 50));
+				combo.Size = new Size(Math.Max(loc.right - loc.left + 30, 200), Math.Max(loc.bottom - loc.top, 50));
 				if (!Owner.Controls.Contains(combo))
 				{
 					Owner.Controls.Add(combo);
@@ -494,7 +491,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				m_hvoAnalysis = x;
 			}
-			Hide();	// Moved here from the end as the 'AnalysisChosen' method can
+			Hide(); // Moved here from the end as the 'AnalysisChosen' method can
 					// cause the current object to be disposed of.  Not very nice...
 					// if there are other calls yet to be invoked on the object.
 					// LT-5775: this is no real fix, as a real fix would understand

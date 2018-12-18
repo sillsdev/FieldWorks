@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2018 SIL International
+// Copyright (c) 2013-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using SIL.Collections;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
 using SIL.Machine.Matching;
@@ -18,7 +18,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 	public abstract class ComplexConcPatternNode
 	{
 		private static int s_nextHvo = -1000;
-
 		private ComplexConcPatternNode m_parent;
 		private ComplexConcPatternSda m_sda;
 
@@ -118,19 +117,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			{
 				if (kvp.Key is IFsComplexFeature)
 				{
-					var childValues = (IDictionary<IFsFeatDefn, object>) kvp.Value;
+					var childValues = (IDictionary<IFsFeatDefn, object>)kvp.Value;
 					fs.AddValue(featSys.GetFeature(kvp.Key.Hvo.ToString(CultureInfo.InvariantCulture)), GetFeatureStruct(featSys, childValues));
 				}
 				else if (kvp.Key is IFsClosedFeature)
 				{
-					var value = (ClosedFeatureValue) kvp.Value;
+					var value = (ClosedFeatureValue)kvp.Value;
 					var symFeat = featSys.GetFeature<SymbolicFeature>(kvp.Key.Hvo.ToString(CultureInfo.InvariantCulture));
 
 					var symbol = symFeat.PossibleSymbols[value.Symbol.Hvo.ToString(CultureInfo.InvariantCulture)];
 					fs.AddValue(symFeat, value.Negate ? new SymbolicFeatureValue(symFeat.PossibleSymbols.Except(symbol.ToEnumerable())) : new SymbolicFeatureValue(symbol));
 				}
 			}
-
 			return fs;
 		}
 	}

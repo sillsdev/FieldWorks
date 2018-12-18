@@ -1,8 +1,9 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.LexText;
@@ -42,7 +43,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 		protected override void HandleChooser()
 		{
 			// grammar/phonemes/phonological features/[...] (click chooser button)
-			using (PhonologicalFeatureChooserDlg dlg = new PhonologicalFeatureChooserDlg())
+			using (var dlg = new PhonologicalFeatureChooserDlg())
 			{
 				IFsFeatStruc originalFs = null;
 				var parentSlice = Slice;
@@ -74,7 +75,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 				{
 					dlg.SetDlgInfo(m_cache, PropertyTable, Publisher, originalFs);
 				}
-
 				var result = dlg.ShowDialog(parentSlice.FindForm());
 				if (result == DialogResult.OK)
 				{
@@ -86,7 +86,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 				}
 				else if (result != DialogResult.Cancel)
 				{
-						dlg.HandleJump();
+					dlg.HandleJump();
 				}
 			}
 		}
@@ -100,19 +100,21 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
-			if( disposing )
+			if (disposing)
 			{
 				components?.Dispose();
 			}
-			base.Dispose( disposing );
+
+			base.Dispose(disposing);
 		}
 
 		#region Designer generated code

@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2018 SIL International
+// Copyright (c) 2013-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,9 +12,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 {
 	internal class PossibilityComboController : POSPopupTreeManager
 	{
-		/// <summary>
-		/// Constructor.
-		/// </summary>
+		/// <summary />
 		public PossibilityComboController(TreeCombo treeCombo, LcmCache cache, ICmPossibilityList list, int ws, bool useAbbr, IPropertyTable propertyTable, IPublisher publisher, Form parent) :
 			base(treeCombo, cache, list, ws, useAbbr, propertyTable, publisher, parent)
 		{

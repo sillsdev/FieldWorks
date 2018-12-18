@@ -25,9 +25,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private readonly IPropertyTable m_propertyTable;
 		private readonly string m_objType;
 
-		/// <summary>
-		/// Initializes a new instance of the class.
-		/// </summary>
+		/// <summary />
 		public DictionaryConfigMgrDlg(IPropertyTable propertyTable, string objType, List<XElement> configViews, XElement current)
 		{
 			InitializeComponent();

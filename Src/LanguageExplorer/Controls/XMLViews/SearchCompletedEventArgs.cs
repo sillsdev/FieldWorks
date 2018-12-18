@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -16,9 +16,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private readonly List<SearchField> m_fields;
 		private readonly List<int> m_results;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="SearchCompletedEventArgs"/> class.
-		/// </summary>
+		/// <summary />
 		public SearchCompletedEventArgs(IEnumerable<SearchField> fields, IEnumerable<int> results)
 			: base(null, false, null)
 		{

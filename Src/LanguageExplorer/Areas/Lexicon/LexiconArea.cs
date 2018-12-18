@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,9 +9,9 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.Lexicon.Tools.Edit;
+using LanguageExplorer.Filters;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
-using LanguageExplorer.Filters;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.DomainImpl;
@@ -111,11 +111,9 @@ namespace LanguageExplorer.Areas.Lexicon
 		public void EnsurePropertiesAreCurrent()
 		{
 			_propertyTable.SetProperty(AreaServices.InitialArea, MachineName, true, settingsGroup: SettingsGroup.LocalSettings);
-
 			var serviceLocator = _propertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache).ServiceLocator;
 			var hc = serviceLocator.GetInstance<HomographConfiguration>();
 			_propertyTable.SetProperty(khomographconfiguration, hc.PersistData, true);
-
 			PersistedOrDefaultTool.EnsurePropertiesAreCurrent();
 		}
 

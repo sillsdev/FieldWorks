@@ -1,11 +1,11 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 {
@@ -54,6 +54,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			private readonly IMoFormRepository m_moFormRepos;
 			private readonly ILexSenseRepository m_senseRepos;
 			private readonly IMoMorphSynAnalysisRepository m_msaRepos;
+
 			/// <summary />
 			internal UpdateRealAnalysisMethod(SandboxBase owner, CachePair caches, InterlinLineChoices choices, IWfiAnalysis anal)
 			{
@@ -80,14 +81,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				var isDirty = false;
 				BuildMorphLists();
 				m_sdaMain.BeginUndoTask(TextAndWordsResources.ksUndoEditAnalysis, TextAndWordsResources.ksRedoEditAnalysis);
-
 				try
 				{
 					Debug.Assert(m_anal.MorphBundlesOS.Count == m_cmorphs); // Better be the same.
 					for (var imorph = 0; imorph < m_cmorphs; imorph++)
 					{
 						var mb = m_anal.MorphBundlesOS[imorph];
-
 						// Process Morph.
 						var oldHvo = mb.MorphRA?.Hvo ?? 0;
 						var newHvo = m_analysisMorphs[imorph];
@@ -109,7 +108,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 							}
 							isDirty = true;
 						}
-
 						// Process Sense.
 						oldHvo = mb.SenseRA?.Hvo ?? 0;
 						newHvo = m_analysisSenses[imorph];
@@ -118,7 +116,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 							mb.SenseRA = newHvo == 0 ? null : m_senseRepos.GetObject(newHvo);
 							isDirty = true;
 						}
-
 						// Process MSA.
 						oldHvo = mb.MsaRA?.Hvo ?? 0;
 						newHvo = m_analysisMsas[imorph];

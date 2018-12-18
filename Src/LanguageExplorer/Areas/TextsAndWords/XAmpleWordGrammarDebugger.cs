@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -21,12 +21,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	{
 		private static ParserTraceUITransform s_pageTransform;
 		private static ParserTraceUITransform PageTransform => s_pageTransform ?? (s_pageTransform = new ParserTraceUITransform("FormatXAmpleWordGrammarDebuggerResult"));
-
 		/// <summary>
 		/// Word Grammar step stack
 		/// </summary>
 		private readonly Stack<Tuple<XDocument, string>> m_xmlHtmlStack;
-
 		/// <summary>
 		/// the latest word grammar debugging step xml document
 		/// </summary>
@@ -56,7 +54,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <returns>temporary html file showing the results of the first step</returns>
 		public string SetUpWordGrammarDebuggerPage(string nodeId, string form, string lastUrl)
 		{
-			m_xmlHtmlStack.Push(Tuple.Create((XDocument) null, lastUrl));
+			m_xmlHtmlStack.Push(Tuple.Create((XDocument)null, lastUrl));
 			var doc = new XDocument();
 			using (var writer = doc.CreateWriter())
 			{
@@ -100,9 +98,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			writer.WriteStartElement("word");
 			writer.WriteElementString("form", form);
 			writer.WriteStartElement("seq");
-
 			WriteMorphNodes(writer, nodeId);
-
 			writer.WriteEndElement();
 			writer.WriteEndElement();
 		}
@@ -111,7 +107,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			writer.WriteStartElement("word");
 			writer.WriteElementString("form", form);
-
 			// Find the sNode'th seq node
 			Debug.Assert(m_wordGrammarDebuggerXml.Root != null);
 			var selectedSeqNode = m_wordGrammarDebuggerXml.Root.Elements("seq").ElementAt(int.Parse(nodeId, CultureInfo.InvariantCulture) - 1);
@@ -142,7 +137,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		private void WriteMorphNodes(XmlWriter writer, string nodeId)
 		{
-			var failureElem = m_parseResult.Descendants("failure").FirstOrDefault(e => ((string) e.Attribute("id")) == nodeId);
+			var failureElem = m_parseResult.Descendants("failure").FirstOrDefault(e => ((string)e.Attribute("id")) == nodeId);
 			if (failureElem == null)
 			{
 				return;

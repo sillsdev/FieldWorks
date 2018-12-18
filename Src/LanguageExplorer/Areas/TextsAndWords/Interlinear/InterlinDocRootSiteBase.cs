@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,11 +10,11 @@ using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.XMLViews;
-using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 
@@ -33,28 +33,23 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected ICmObjectRepository m_objRepo;
 		private ToolStripMenuItem _fileMenu;
 		private ToolStripMenuItem _exportMenu;
-
 		/// <summary>
 		/// Context menu for use when user right-clicks on Interlinear segment labels.
 		/// </summary>
 		private ContextMenuStrip m_labelContextMenu;
-
 		/// <summary>
 		/// Blue circle button to alert user to the presence of the Configure Interlinear context menu.
 		/// </summary>
 		private BlueCircleButton m_contextButton;
-
 		/// <summary>
 		/// Index of Interlinear line clicked on to generate above blue button.
 		/// Allows context menu to be context-sensitive.
 		/// </summary>
 		private int m_iLineChoice;
-
 		/// <summary>
 		/// Helps determine if a rt-click is opening or closing the context menu.
 		/// </summary>
 		private long m_ticksWhenContextMenuClosed;
-
 		private readonly HashSet<IWfiWordform> m_wordformsToUpdate;
 
 		public InterlinVc Vc { get; set; }
@@ -72,7 +67,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-
 			base.MakeRoot();
 			MakeRootInternal();
 		}
@@ -87,17 +81,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// procedures that use this limit do not move the cursor from an editable to a
 			// non-editable field.
 			RootBox.MaxParasToScan = 2000;
-
 			EnsureVc();
-
 			// We want to get notified when anything changes.
 			m_sda = m_cache.MainCacheAccessor;
 			m_sda.AddNotification(this);
-
 			Vc.ShowMorphBundles = PropertyTable.GetValue("ShowMorphBundles", true);
 			Vc.LineChoices = LineChoices;
 			Vc.ShowDefaultSense = true;
-
 			RootBox.DataAccess = m_cache.MainCacheAccessor;
 			RootBox.SetRootObject(m_hvoRoot, Vc, InterlinVc.kfragStText, m_styleSheet);
 			m_objRepo = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();
@@ -194,7 +184,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// This base version is used by 'read-only' tabs that need to select an
 		/// occurrence in IText from the analysis occurrence. Override for Sandbox-type selections.
 		/// </summary>
-		/// <param name="point"></param>
 		public virtual void SelectOccurrence(AnalysisOccurrence point)
 		{
 			if (point == null)
@@ -202,7 +191,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return;
 			}
 			Debug.Assert(point.HasWordform, $"Given annotation type should have wordform but was {point}.");
-
 			// The following will select the occurrence, ... I hope!
 			// Scroll to selection into view
 			var sel = SelectOccurrenceInIText(point);
@@ -261,7 +249,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			Debug.Assert(point != null);
 			Debug.Assert(m_hvoRoot != 0);
-
 			var rgvsli = new SelLevInfo[3];
 			rgvsli[0].ihvo = point.Index; // 0 specifies where wf is in segment.
 			rgvsli[0].tag = SegmentTags.kflidAnalyses;
@@ -269,7 +256,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			rgvsli[1].tag = StTxtParaTags.kflidSegments;
 			rgvsli[2].ihvo = point.Segment.Paragraph.IndexInOwner; // 2 specifies were para is in IStText.
 			rgvsli[2].tag = StTextTags.kflidParagraphs;
-
 			return MakeWordformSelection(rgvsli);
 		}
 
@@ -309,7 +295,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			AnalysisOccurrence result = null;
 			var cvsli = sel.CLevels(false);
 			cvsli--; // CLevels includes the string property itself, but AllTextSelInfo doesn't need it.
-
 			// Out variables for AllTextSelInfo.
 			int ihvoRoot;
 			int tagTextProp;
@@ -321,10 +306,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			int ihvoEnd;
 			ITsTextProps ttpBogus;
 			// Main array of information retrieved from sel.
-			var rgvsli = SelLevInfo.AllTextSelInfo(sel, cvsli,
-						   out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd,
-						   out ws, out fAssocPrev, out ihvoEnd, out ttpBogus);
-
+			var rgvsli = SelLevInfo.AllTextSelInfo(sel, cvsli, out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd, out ttpBogus);
 			if (rgvsli.Length <= 1)
 			{
 				return null;
@@ -340,7 +322,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					return null; // may fail, e.g., trying to get bookmark for text just deleted.
 				}
-
 				seg = container as ISegment;
 				if (seg != null)
 				{
@@ -356,7 +337,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					var indexInContainer = rgvsli[i - 1].ihvo;
 					result = new AnalysisOccurrence(seg, indexInContainer);
 				}
-
 				if (result == null || !result.IsValid)
 				{
 					result = new AnalysisOccurrence(seg, 0);
@@ -384,7 +364,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
 			RemoveContextButtonIfPresent();
-			var ilineChoice = -1;
+			int ilineChoice;
 			var sel = GrabMousePtSelectionToTest(e);
 			if (UserClickedOnLabels(sel, out ilineChoice))
 			{
@@ -508,7 +488,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return -1;
 			}
-
 			var props = helper.SelProps;
 			int dummyvar;
 			return props.GetIntPropValues((int)FwTextPropType.ktptBulNumStartAt, out dummyvar);
@@ -537,7 +516,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// (separator)
 			// 5) Add Line > (submenu of currently hidden lines)
 			// 6) Configure Interlinear...
-
 			if (Vc?.LineChoices != null && !isRibbonMenu) // just to be safe; shouldn't happen
 			{
 				var curLineChoices = Vc.LineChoices.Clone() as InterlinLineChoices;
@@ -545,13 +523,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					return menu;
 				}
-
 				// 1) Hide [name of clicked line]
 				if (curLineChoices.OkToRemove(ilineChoice))
 				{
 					AddHideLineMenuItem(menu, curLineChoices, ilineChoice);
 				}
-
 				// 2) Add Writing System > (submenu of other wss for this line)
 				var addWsSubMenu = new ToolStripMenuItem(ITextStrings.ksAddWS);
 				AddAdditionalWsMenuItem(addWsSubMenu, curLineChoices, ilineChoice);
@@ -559,22 +535,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					menu.Items.Add(addWsSubMenu);
 				}
-
 				// 3) Move Up
 				if (curLineChoices.OkToMoveUp(ilineChoice))
 				{
 					AddMoveUpMenuItem(menu, ilineChoice);
 				}
-
 				// 4) Move Down
 				if (curLineChoices.OkToMoveDown(ilineChoice))
 				{
 					AddMoveDownMenuItem(menu, ilineChoice);
 				}
-
 				// Add menu separator here
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(menu);
-
 				// 5) Add Line > (submenu of currently hidden lines)
 				var addLineSubMenu = new ToolStripMenuItem(ITextStrings.ksAddLine);
 				AddNewLineMenuItem(addLineSubMenu, curLineChoices);
@@ -583,12 +555,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					menu.Items.Add(addLineSubMenu);
 				}
 			}
-
 			// 6) Last, but not least, add a link to the Configure Interlinear dialog
 			var configLink = new ToolStripMenuItem(ITextStrings.ksConfigureLinkText);
 			configLink.Click += configLink_Click; // TODO: Figure out how to pass more parameters
 			menu.Items.Add(configLink);
-
 			return menu;
 		}
 
@@ -631,7 +601,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					continue;
 				}
-
 				var menuItem = new AddWritingSystemMenuItem(curSpec.Flid, itemRealWs)
 				{
 					Text = item.ToString()
@@ -668,7 +637,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				case WritingSystemServices.kwsVernInParagraph:
 					return Cache.LangProject.DefaultVernacularWritingSystem.Handle; // REVIEW (Hasso) 2018.01: this is frequently the case, but not always
 			}
-
 			var ws = -50;
 			try
 			{
@@ -735,7 +703,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return; // Impossible?
 			}
-
 			var flid = menuItem.Flid;
 			var wsToAdd = menuItem.Ws;
 			var newLineChoices = Vc.LineChoices.Clone() as InterlinLineChoices;
@@ -775,7 +742,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return; // Impossible?
 			}
-
 			var flid = menuItem.Flid;
 			var newLineChoices = Vc.LineChoices.Clone() as InterlinLineChoices;
 			if (newLineChoices != null && m_cache.GetManagedMetaDataCache().FieldExists(flid))
@@ -912,7 +878,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Update any necessary guesses when the specified wordforms change.
 		/// </summary>
-		/// <param name="wordforms"></param>
 		internal virtual void UpdateGuesses(HashSet<IWfiWordform> wordforms)
 		{
 			UpdateGuesses(wordforms, true);
@@ -950,8 +915,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-
-			// Simluate replacing the wordform in the relevant segment with itself. This lets the VC Display method run again, this
+			// Simulate replacing the wordform in the relevant segment with itself. This lets the VC Display method run again, this
 			// time possibly getting a different answer about whether hvoAnnotation is the current annotation, or about the
 			// size of the Sandbox.
 			RootBox.PropChanged(occurrence.Segment.Hvo, SegmentTags.kflidAnalyses, occurrence.Index, 1, 1);
@@ -978,7 +942,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				Vc.LineChoices = LineChoices;
 			}
-
 			SetRootInternal(hvo);
 			AddDecorator();
 			RemoveContextButtonIfPresent(); // Don't want to keep the context button for a different text!
@@ -1077,7 +1040,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return true;
 			}
-
 			Vc.GuessServices.ClearGuessData();
 			UpdateWordforms(m_wordformsToUpdate);
 			m_wordformsToUpdate.Clear();
@@ -1126,8 +1088,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		internal AnalysisOccurrence ConvertBookmarkToAnalysis(IStTextBookmark bookmark, out bool fExactMatch)
 		{
 			fExactMatch = false;
-			if (RootStText == null || RootStText.ParagraphsOS.Count == 0 || bookmark.IndexOfParagraph < 0 ||
-				bookmark.BeginCharOffset < 0 || bookmark.IndexOfParagraph >= RootStText.ParagraphsOS.Count)
+			if (RootStText == null || RootStText.ParagraphsOS.Count == 0 || bookmark.IndexOfParagraph < 0 || bookmark.BeginCharOffset < 0 || bookmark.IndexOfParagraph >= RootStText.ParagraphsOS.Count)
 			{
 				return null;
 			}
@@ -1136,7 +1097,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return null;
 			}
-
 			var point = SegmentServices.FindNearestAnalysis(para, bookmark.BeginCharOffset, bookmark.EndCharOffset, out fExactMatch);
 			if (point == null || !(point.Analysis is IPunctuationForm))
 			{

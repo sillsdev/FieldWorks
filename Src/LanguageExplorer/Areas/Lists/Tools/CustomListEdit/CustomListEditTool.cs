@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -73,16 +73,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.CustomListEdit
 #endif
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
 			_listsAreaMenuHelper = new ListsAreaMenuHelper(majorFlexComponentParameters, dataTree, (IListArea)_area, _recordList);
-			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(
-				majorFlexComponentParameters.FlexComponentParameters,
-				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				true,
-				XDocument.Parse(ListResources.PositionsEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters),
-				MachineName,
-				majorFlexComponentParameters.LcmCache,
-				_recordList,
-				dataTree,
-				MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
+			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
+				true, XDocument.Parse(ListResources.PositionsEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters), MachineName,
+				majorFlexComponentParameters.LcmCache, _recordList, dataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 
 			// Too early before now.
 			_listsAreaMenuHelper.Initialize();
@@ -160,10 +153,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.CustomListEdit
 			var customListRecordListName = GetMachineName(customList);
 			Require.That(recordListId == customListRecordListName, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{customListRecordListName}'.");
 
-			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
-				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
-				customList,
-				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, customList.Depth > 1, customList.DisplayOption == (int)PossNameType.kpntName, customList.GetWsString()));
+			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
+				customList, new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, customList.Depth > 1, customList.DisplayOption == (int)PossNameType.kpntName, customList.GetWsString()));
 		}
 	}
 }

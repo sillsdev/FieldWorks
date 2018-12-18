@@ -21,9 +21,8 @@ namespace LanguageExplorer.Controls.XMLViews
 	public class LeafChooser : ReallySimpleListChooser
 	{
 		private readonly int m_leafFlid;
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LeafChooser"/> class.
-		/// </summary>
+
+		/// <summary />
 		public LeafChooser(IPersistenceProvider persistProvider, IEnumerable<ObjectLabel> labels, string fieldName, LcmCache cache, IEnumerable<ICmObject> chosenObjs, int leafFlid, IHelpTopicProvider helpTopicProvider)
 			: base (persistProvider, fieldName, cache, chosenObjs, helpTopicProvider)
 		{
@@ -76,13 +75,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			private readonly int m_leafFlid;
 
-			/// <summary>
-			/// Initializes a new instance of the <see cref="LeafLabelNode"/> class.
-			/// </summary>
-			/// <param name="label">The label.</param>
-			/// <param name="stylesheet">The stylesheet.</param>
-			/// <param name="displayUsage"><c>true</c> if usage statistics will be displayed; otherwise, <c>false</c>.</param>
-			/// <param name="leafFlid">The leaf flid.</param>
+			/// <summary />
 			public LeafLabelNode(ObjectLabel label, IVwStylesheet stylesheet, bool displayUsage, int leafFlid)
 				: base(label, stylesheet, displayUsage)
 			{

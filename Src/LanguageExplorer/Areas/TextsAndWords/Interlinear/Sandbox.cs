@@ -1,10 +1,10 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Linq;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -19,24 +19,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// </summary>
 	internal class Sandbox : SandboxBase, IAnalysisControlInternal
 	{
-		#region Data members
-
 		InterlinDocForAnalysis m_interlinDoc;
-
-		#endregion Data members
 
 		#region Construction and initialization
 
-		/// <summary>
-		/// Default Constructor.
-		/// </summary>
+		/// <summary />
 		public Sandbox()
 		{
 		}
 
-		/// <summary>
-		/// Create a new one.
-		/// </summary>
+		/// <summary />
 		public Sandbox(ISharedEventHandlers sharedEventHandlers, LcmCache cache, IVwStylesheet ss, InterlinLineChoices choices, AnalysisOccurrence selected, FocusBoxController focusBox)
 			: this(sharedEventHandlers, cache, ss, choices)
 		{
@@ -102,16 +94,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 
 			if (disposing)
 			{
@@ -140,10 +132,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					var gloss = glossRepository.GetObject(WordGlossHvo);
 					glossReferenceCount = SegmentServices.SegmentsContainingWag(new AnalysisTree(gloss)).Count();
 				}
-				// if FocusBox.InterlinWordControl.WordGlossHvo != m_hvoAnalysis
-				//		then we are editing a different WordGloss, whose count is not reflected in
-				//		the present state of the database for WfiGlosses.
-				//		So, add it to the WfiGloss count before we return.
 				if (WordGlossHvo != m_hvoInitialWag)
 				{
 					++glossReferenceCount;
@@ -165,7 +153,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 #if RANDYTODO
 			if (FocusBox is FocusBoxControllerForDisplay)
+			{
 				(FocusBox as FocusBoxControllerForDisplay).OnApproveAndMoveNext();
+			}
 #endif
 		}
 

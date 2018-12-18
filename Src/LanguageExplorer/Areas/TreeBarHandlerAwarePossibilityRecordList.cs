@@ -1,7 +1,8 @@
-// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
@@ -16,11 +17,9 @@ namespace LanguageExplorer.Areas
 	internal sealed class TreeBarHandlerAwarePossibilityRecordList : PossibilityRecordList
 	{
 		private static IRecordList s_lastRecordListToLoadTreeBar;
-
 		private PossibilityTreeBarHandler _possibilityTreeBarHandler;
-		/// <summary>
-		/// Constructor for a list that is owned or not.
-		/// </summary>
+
+		/// <summary />
 		internal TreeBarHandlerAwarePossibilityRecordList(string id, StatusBar statusBar, ISilDataAccessManaged decorator, ICmPossibilityList ownedPossibilityList, PossibilityTreeBarHandler possibilityTreeBarHandler, RecordFilterParameterObject recordFilterParameterObject = null)
 			: base(id, statusBar, decorator, ownedPossibilityList, recordFilterParameterObject)
 		{
@@ -68,6 +67,13 @@ namespace LanguageExplorer.Areas
 
 		protected override void Dispose(bool disposing)
 		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
 			if (disposing)
 			{
 				_possibilityTreeBarHandler.Dispose();
@@ -96,7 +102,6 @@ namespace LanguageExplorer.Areas
 		{
 			if (actions == ListChangedActions.UpdateListItemName)
 			{
-				// ******************************************************************************
 				// In the case where there are no other items and the Current object isn't valid,
 				// then just don't do anything.  LT-5849.
 				// A more robust solution would be to have in our design a way to produce
@@ -108,7 +113,6 @@ namespace LanguageExplorer.Areas
 				// not yet been thought of.
 				// In the meantime, this fixed the crash .. <sigh> but doesn't help at all
 				// for the other cases where this can happen.
-				// ******************************************************************************
 				if (CurrentObject != null && (CurrentObject.Cache != null || SortedObjects.Count != 1))
 				{
 					// all we need to do is replace the currently selected item in the tree.

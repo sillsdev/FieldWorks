@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,9 +11,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 	/// </summary>
 	internal sealed class RevEntrySensesCollectionReferenceSlice : CustomReferenceVectorSlice
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="RevEntrySensesCollectionReferenceSlice"/> class.
-		/// </summary>
+		/// <summary />
 		public RevEntrySensesCollectionReferenceSlice()
 			: base(new RevEntrySensesCollectionReferenceLauncher())
 		{

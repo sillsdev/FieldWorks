@@ -1,11 +1,11 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections;
-using SIL.FieldWorks.Common.FwUtils;
 using LanguageExplorer.Filters;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 
@@ -14,6 +14,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	internal sealed class OccurrenceSorter : RecordSorter
 	{
 		private LcmCache m_cache;
+
 		public override LcmCache Cache
 		{
 			set
@@ -21,16 +22,12 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				m_cache = value;
 			}
 		}
-		private ISilDataAccessManaged m_sdaSpecial;
-		public ISilDataAccessManaged SpecialDataAccess
-		{
-			get { return m_sdaSpecial; }
-			set { m_sdaSpecial = value; }
-		}
+
+		public ISilDataAccessManaged SpecialDataAccess { get; set; }
 
 		protected internal override IComparer getComparer()
 		{
-			return new OccurrenceComparer(m_cache, m_sdaSpecial);
+			return new OccurrenceComparer(m_cache, SpecialDataAccess);
 		}
 
 		/// <summary>
@@ -38,7 +35,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public override void Sort(ArrayList records)
 		{
-			var comp = new OccurrenceComparer(m_cache, m_sdaSpecial);
+			var comp = new OccurrenceComparer(m_cache, SpecialDataAccess);
 			MergeSort.Sort(ref records, comp);
 		}
 

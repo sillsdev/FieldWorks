@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,17 +11,14 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
-using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
+using SIL.LCModel;
 using SIL.Utils;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {
-
-	/// <summary>
-	/// Summary description for TryAWordDlg.
-	/// </summary>
+	/// <summary />
 	internal sealed class TryAWordDlg : Form, IFlexComponent
 	{
 		private const string PersistProviderID = "TryAWord";
@@ -32,7 +29,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private ParserMenuManager m_parserMenuManager;
 		private IPersistenceProvider m_persistProvider;
 		private HelpProvider m_helpProvider;
-
 		private Label m_wordToTryLabel;
 		private IContainer components;
 		private FwTextBox m_wordformTextBox;
@@ -50,13 +46,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private Label m_resultsLabel;
 		private Panel m_sandboxPanel;
 		private CheckBox m_doSelectMorphsCheckBox;
-
 		private bool m_parserCanDoSelectMorphs = true;
-
 		private bool m_procesingTextChange;
-
 		private IAsyncResult m_tryAWordResult;
-
 		private WebPageInteractor m_webPageInteractor;
 		private IParserTrace m_trace;
 		private ISharedEventHandlers _sharedEventHandlers;
@@ -141,9 +133,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				SetWordToUse(wordform.Form.VernacularDefaultWritingSystem.Text);
 			}
-
 			m_webPageInteractor = new WebPageInteractor(m_htmlControl, Publisher, m_cache, m_wordformTextBox);
-
 			var helpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
 			if (helpTopicProvider != null) // trying this
 			{
@@ -151,7 +141,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				m_helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(HelpTopicID));
 				m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			}
-
 			if (m_parserMenuManager.Connection != null)
 			{
 				m_parserMenuManager.Connection.TryAWordDialogIsRunning = true;
@@ -235,12 +224,12 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -581,10 +570,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				ErrorReporter.ReportException(ex, app.SettingsKey, app.SupportEmailAddress, this, false);
 				return;
 			}
-
 			if (m_tryAWordResult != null && m_tryAWordResult.IsCompleted)
 			{
-				var result = (XDocument) m_tryAWordResult.AsyncState;
+				var result = (XDocument)m_tryAWordResult.AsyncState;
 				CreateResultPage(result);
 				m_tryAWordResult = null;
 				// got result so enable Try It button
@@ -674,7 +662,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary>
 		/// Prevent magic expanding dialog box for 120dpi fonts.  See LT-7446.
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnLoad(EventArgs e)
 		{
 			var szOld = Size;

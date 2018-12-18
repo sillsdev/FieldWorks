@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -20,17 +20,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	internal class TitleContentsVc : FwBaseVc
 	{
 		public const int kfragRoot = 6789;
-
-		ITsString m_tssTitle;
-		int m_vtagStTextTitle;
-		int m_dxLabWidth;
-		int m_dxWsLabWidth; // width of writing system labels.
-		ITsTextProps m_ttpBold;
-		ITsTextProps m_ttpDataCellProps;
-		CoreWritingSystemDefinition[] m_writingSystems;
-		ITsString[] m_WsLabels;
-		ITsTextProps m_ttpWsLabel;
-		int m_editBackColor = (int)ColorUtil.ConvertColorToBGR(Color.FromKnownColor(KnownColor.Window));
+		private ITsString m_tssTitle;
+		private int m_vtagStTextTitle;
+		private int m_dxLabWidth;
+		private int m_dxWsLabWidth; // width of writing system labels.
+		private ITsTextProps m_ttpBold;
+		private ITsTextProps m_ttpDataCellProps;
+		private CoreWritingSystemDefinition[] m_writingSystems;
+		private ITsString[] m_WsLabels;
+		private ITsTextProps m_ttpWsLabel;
+		private int m_editBackColor = (int)ColorUtil.ConvertColorToBGR(Color.FromKnownColor(KnownColor.Window));
 
 		public TitleContentsVc(LcmCache cache)
 		{
@@ -48,7 +47,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			tpb.SetIntPropValues((int)FwTextPropType.ktptMarginTrailing, (int)FwTextPropVar.ktpvMilliPoint, 11000); // 10000 clips right border.
 			m_ttpDataCellProps = tpb.GetTextProps();
 			m_vtagStTextTitle = cache.MetaDataCacheAccessor.GetFieldId("StText", "Title", false);
-
 			// Set up the array of writing systems we will display for title.
 			SetupWritingSystemsForTitle(cache);
 		}
@@ -60,7 +58,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_writingSystems[0] = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			m_writingSystems[1] = cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 			m_WsLabels = new ITsString[m_writingSystems.Length];
-
 			for (var i = 0; i < m_writingSystems.Length; i++)
 			{
 				// For now (August 2008), try English abbreviation before UI writing system.
@@ -90,13 +87,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-
-			switch(frag)
+			switch (frag)
 			{
 				case kfragRoot:
 					if (m_dxLabWidth == 0)
 					{
-						int dmpx1, dmpy;	//, dmpx2;
+						int dmpx1, dmpy;    //, dmpx2;
 						vwenv.get_StringWidth(m_tssTitle, m_ttpBold, out dmpx1, out dmpy);
 						m_dxLabWidth = dmpx1 + 13000; // add 3 pt spacing to box, 10 to margin.
 						m_dxWsLabWidth = 0;
@@ -129,7 +125,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					vlColPadding.nVal = 10000;
 					vlColPadding.unit = VwUnit.kunPoint1000;
 
-					vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTop, (int) FwTextPropVar.ktpvMilliPoint, 5000);
+					vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTop, (int)FwTextPropVar.ktpvMilliPoint, 5000);
 					vwenv.OpenTable(4, // Four columns.
 						vlTable, // Table uses 100% of available width.
 						0, // Border thickness.
@@ -143,17 +139,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					vwenv.MakeColumns(1, vlColWsLabels);
 					vwenv.MakeColumns(1, vlColMain);
 					vwenv.MakeColumns(1, vlColPadding);
-
 					vwenv.OpenTableBody();
-
 					for (var i = 0; i < m_writingSystems.Length; i++)
 					{
 						vwenv.OpenTableRow();
-
 						// First cell has 'Title' label in bold.
 						vwenv.Props = m_ttpBold;
-						vwenv.OpenTableCell(1,1);
-						vwenv.set_IntProperty((int)FwTextPropType.ktptMarginLeading, (int) FwTextPropVar.ktpvMilliPoint, 10000);
+						vwenv.OpenTableCell(1, 1);
+						vwenv.set_IntProperty((int)FwTextPropType.ktptMarginLeading, (int)FwTextPropVar.ktpvMilliPoint, 10000);
 						if (i == 0) // only on the first row
 						{
 							// We want this fixed at 10 point, since it's considered a UI component, not data.
@@ -162,15 +155,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							vwenv.AddString(m_tssTitle);
 						}
 						vwenv.CloseTableCell();
-
 						// Second cell has ws labels.
-						vwenv.set_IntProperty((int)FwTextPropType.ktptBackColor, (int) FwTextPropVar.ktpvDefault, m_editBackColor);
+						vwenv.set_IntProperty((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, m_editBackColor);
 						vwenv.set_IntProperty((int)FwTextPropType.ktptBorderLeading, (int)FwTextPropVar.ktpvMilliPoint, 1000);
 						if (i == 0)
+						{
 							vwenv.set_IntProperty((int)FwTextPropType.ktptBorderTop, (int)FwTextPropVar.ktpvMilliPoint, 1000);
+						}
 						if (i == m_writingSystems.Length - 1)
+						{
 							vwenv.set_IntProperty((int)FwTextPropType.ktptBorderBottom, (int)FwTextPropVar.ktpvMilliPoint, 1000);
-						vwenv.OpenTableCell(1,1);
+						}
+						vwenv.OpenTableCell(1, 1);
 						vwenv.Props = m_ttpDataCellProps;
 
 						vwenv.Props = m_ttpWsLabel;
@@ -178,7 +174,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						vwenv.CloseTableCell();
 
 						// Third cell has the Title property, in a box.
-
 						vwenv.set_IntProperty((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, m_editBackColor);
 						// Set the underlying directionality so that arrow keys work properly.
 						var fRTL = m_writingSystems[i].RightToLeftScript;
@@ -188,12 +183,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						{
 							vwenv.set_IntProperty((int)FwTextPropType.ktptBorderTop, (int)FwTextPropVar.ktpvMilliPoint, 1000);
 						}
-
 						if (i == m_writingSystems.Length - 1)
 						{
 							vwenv.set_IntProperty((int)FwTextPropType.ktptBorderBottom, (int)FwTextPropVar.ktpvMilliPoint, 1000);
 						}
-						vwenv.OpenTableCell(1,1);
+						vwenv.OpenTableCell(1, 1);
 						vwenv.OpenParagraph();
 						vwenv.Props = m_ttpDataCellProps;
 						vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, Editable ? (int)TptEditable.ktptIsEditable : (int)TptEditable.ktptNotEditable);
@@ -208,11 +202,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 						vwenv.CloseTableRow();
 					}
-
 					vwenv.CloseTableBody();
-
 					vwenv.CloseTable();
-
 					break;
 				default:
 					throw new Exception("Bad frag id in TitleContentsVc");

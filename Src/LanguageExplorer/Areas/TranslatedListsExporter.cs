@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -20,12 +20,12 @@ namespace LanguageExplorer.Areas
 	/// </summary>
 	internal class TranslatedListsExporter
 	{
-		LcmCache m_cache;
-		List<ICmPossibilityList> m_lists;
-		Dictionary<int, string> m_mapWsCode = new Dictionary<int, string>();
-		IProgress m_progress;
-		int m_wsEn = 0;
-		Dictionary<int, bool> m_flidsForGuids = new Dictionary<int, bool>();
+		private LcmCache m_cache;
+		private List<ICmPossibilityList> m_lists;
+		private Dictionary<int, string> m_mapWsCode = new Dictionary<int, string>();
+		private IProgress m_progress;
+		private int m_wsEn;
+		private Dictionary<int, bool> m_flidsForGuids = new Dictionary<int, bool>();
 
 		/// <summary />
 		public TranslatedListsExporter(List<ICmPossibilityList> lists, List<int> writingSystems, IProgress progress)
@@ -45,9 +45,7 @@ namespace LanguageExplorer.Areas
 				Debug.Assert(m_wsEn != 0);
 			}
 			m_progress = progress;
-
-			// These flids for List fields indicate lists that use fixed guids for their
-			// (predefined) items.
+			// These flids for List fields indicate lists that use fixed guids for their (predefined) items.
 			m_flidsForGuids.Add(LangProjectTags.kflidTranslationTags, true);
 			m_flidsForGuids.Add(LangProjectTags.kflidAnthroList, true);
 			m_flidsForGuids.Add(LangProjectTags.kflidSemanticDomainList, true);
@@ -256,8 +254,7 @@ namespace LanguageExplorer.Areas
 
 		private void ExportPartOfSpeechFields(TextWriter w, IPartOfSpeech item)
 		{
-			// TODO: handle any other part of speech fields that we decide need to
-			// be localizable.
+			// TODO: handle any other part of speech fields that we decide need to be localizable.
 		}
 	}
 }

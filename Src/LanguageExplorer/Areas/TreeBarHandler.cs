@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,10 +10,10 @@ using System.Drawing;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.Filters;
 using LanguageExplorer.LcmUi;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
-using LanguageExplorer.Filters;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
@@ -28,7 +28,6 @@ namespace LanguageExplorer.Areas
 		protected bool m_hierarchical;
 		protected bool m_includeAbbr;
 		protected string m_bestWS;
-
 		// This gets set when we skipped populating the tree bar because it wasn't visible.
 		protected bool m_fOutOfDate;
 		protected Dictionary<int, TreeNode> m_hvoToTreeNodeTable = new Dictionary<int, TreeNode>();
@@ -36,9 +35,10 @@ namespace LanguageExplorer.Areas
 		private TreeNode m_clickNode; // node the user mouse-downed on
 		protected ICmObjectRepository m_objRepo;
 		protected ICmPossibilityRepository m_possRepo;
-		TreeView m_tree;
-		int m_typeSize;	// font size for the tree's fonts.
-						// map from writing system to font.
+		private TreeView m_tree;
+		// font size for the tree's fonts.
+		private int m_typeSize;
+		// map from writing system to font.
 		readonly Dictionary<int, Font> m_wsToFontTable = new Dictionary<int, Font>();
 
 		/// <summary />
@@ -107,13 +107,11 @@ namespace LanguageExplorer.Areas
 				m_clickNode = null; // otherwise we can try to promote a deleted one etc.
 				return;
 			}
-
 			TreeNode node = null;
 			if (m_hvoToTreeNodeTable.ContainsKey(currentObject.Hvo))
 			{
 				node = m_hvoToTreeNodeTable[currentObject.Hvo];
 			}
-			//Debug.Assert(node != null);
 			// node.EnsureVisible() throws an exception if tree != node.TreeView, and this can
 			// happen somehow.  (see LT-986)
 			if (node != null && tree != null && node.TreeView == tree && (tree.SelectedNode != node))
@@ -130,7 +128,6 @@ namespace LanguageExplorer.Areas
 				return;
 			}
 			m_fOutOfDate = false;
-
 			var node = m_hvoToTreeNodeTable[currentObject.Hvo];
 			if (node == null)
 			{
@@ -138,7 +135,6 @@ namespace LanguageExplorer.Areas
 			}
 			Font font;
 			var text = GetTreeNodeLabel(currentObject, out font);
-			// ReSharper disable RedundantCheckBeforeAssignment
 			if (text != node.Text)
 			{
 				node.Text = text;
@@ -147,7 +143,6 @@ namespace LanguageExplorer.Areas
 			{
 				node.NodeFont = font;
 			}
-			// ReSharper restore RedundantCheckBeforeAssignment
 		}
 
 		public virtual void ReleaseRecordBar()
@@ -162,7 +157,7 @@ namespace LanguageExplorer.Areas
 			m_tree.DragDrop -= tree_DragDrop;
 			m_tree.DragOver -= tree_DragOver;
 			m_tree.GiveFeedback -= tree_GiveFeedback;
-	}
+		}
 
 		#endregion IRecordBarHandler implementation
 
@@ -183,13 +178,12 @@ namespace LanguageExplorer.Areas
 			// The base class finalizer is called automatically.
 		}
 
-		/// <summary />
-		/// <remarks>Must not be virtual.</remarks>
+		/// <inheritdoc />
 		public void Dispose()
 		{
 			Dispose(true);
 			// This object will be cleaned up by the Dispose method.
-			// Therefore, you should call GC.SupressFinalize to
+			// Therefore, you should call GC.SuppressFinalize to
 			// take this object off the finalization queue
 			// and prevent finalization code for this object
 			// from executing a second time.
@@ -220,10 +214,9 @@ namespace LanguageExplorer.Areas
 		protected virtual void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-
-			// No need to run it more than once.
 			if (_isDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -254,9 +247,7 @@ namespace LanguageExplorer.Areas
 				return; // Been here. Done that.
 			}
 			m_fOutOfDate = false;
-
 			MyRecordList = recordList;
-
 			var window = m_propertyTable.GetValue<IFwMainWnd>(FwUtils.window);
 			var recordBarControl = window.RecordBarControl;
 			if (recordBarControl == null)
@@ -272,12 +263,10 @@ namespace LanguageExplorer.Areas
 					GetExpandedItems(m_tree.Nodes, expandedItems);
 				}
 				m_tree = tree;
-
 				// Removing the handlers first seems to be necessary because multiple tree handlers are
 				// working with one treeview. Only this active one should have handlers connected.
 				// If we fail to do this, switching to a different list causes drag and drop to stop working.
 				ReleaseRecordBar();
-
 				tree.NodeMouseClick += tree_NodeMouseClick;
 				if (editable)
 				{
@@ -297,14 +286,11 @@ namespace LanguageExplorer.Areas
 				tree.BeginUpdate();
 				recordBarControl.Clear();
 				m_hvoToTreeNodeTable.Clear();
-
 				// type size must be set before AddTreeNodes is called
 				m_typeSize = recordList.TypeSize;
 				AddTreeNodes(recordList.SortedObjects, tree);
-
 				tree.Font = new Font(recordList.FontName, m_typeSize);
 				tree.ShowRootLines = m_hierarchical;
-
 				if (m_expand)
 				{
 					tree.ExpandAll();
@@ -314,7 +300,6 @@ namespace LanguageExplorer.Areas
 					tree.CollapseAll();
 					ExpandItems(tree.Nodes, expandedItems);
 				}
-
 				// Set the selection after expanding/collapsing the tree.  This allows the true
 				// selection to be visible even when the tree is collapsed but the selection is
 				// an internal node.  (See LT-4508.)
@@ -372,7 +357,7 @@ namespace LanguageExplorer.Areas
 			m_clickNode = e.Node;
 		}
 
-		void tree_GiveFeedback(object sender, GiveFeedbackEventArgs e)
+		private void tree_GiveFeedback(object sender, GiveFeedbackEventArgs e)
 		{
 		}
 
@@ -390,7 +375,6 @@ namespace LanguageExplorer.Areas
 			{
 				return;
 			}
-
 			var source = m_clickNode;
 			// destination for promote is two levels up, or null to move all the way to the top.
 			var destNode = source.Parent;
@@ -455,7 +439,6 @@ namespace LanguageExplorer.Areas
 			{
 				return;
 			}
-
 			TreeNode destNode;
 			e.Effect = OkToDrop(sender, e, out destNode) ? DragDropEffects.Move : DragDropEffects.None;
 			if (destNode == m_dragHiliteNode)
@@ -508,7 +491,6 @@ namespace LanguageExplorer.Areas
 			{
 				return;
 			}
-
 			if (e.Effect != DragDropEffects.Move)
 			{
 				return;
@@ -538,7 +520,6 @@ namespace LanguageExplorer.Areas
 					hvoDest = dest.Hvo;
 					break;
 				}
-
 				if (dest == null)
 				{
 					return;
@@ -552,18 +533,15 @@ namespace LanguageExplorer.Areas
 				flidDest = CmPossibilityTags.kflidSubPossibilities;
 				newSiblings = destNode.Nodes;
 			}
-
 			if (CheckAndReportForbiddenMove(hvoMove, hvoDest))
 			{
 				return;
 			}
-
 			var hvoOldOwner = move.Owner.Hvo;
 			if (hvoOldOwner == hvoDest)
 			{
 				return; // nothing to do.
 			}
-
 			var flidSrc = move.OwningFlid;
 			var srcIndex = cache.DomainDataByFlid.GetObjIndex(hvoOldOwner, flidSrc, hvoMove);
 			var ihvoDest = 0;
@@ -577,8 +555,8 @@ namespace LanguageExplorer.Areas
 			using (new WaitCursor(tree.TopLevelControl))
 			using (new ListUpdateHelper(new ListUpdateHelperParameterObject { MyRecordList = MyRecordList }))
 			{
-				UndoableUnitOfWorkHelper.Do(AreaResources.UndoMoveItem, AreaResources.RedoMoveItem, cache.ActionHandlerAccessor, () =>
-						cache.DomainDataByFlid.MoveOwnSeq(hvoOldOwner, flidSrc, srcIndex, srcIndex, hvoDest, flidDest, ihvoDest));
+				UndoableUnitOfWorkHelper.Do(AreaResources.UndoMoveItem, AreaResources.RedoMoveItem, cache.ActionHandlerAccessor,
+					() => cache.DomainDataByFlid.MoveOwnSeq(hvoOldOwner, flidSrc, srcIndex, srcIndex, hvoDest, flidDest, ihvoDest));
 			}
 		}
 
@@ -600,7 +578,6 @@ namespace LanguageExplorer.Areas
 			var rootPoss = movingPossItem.MainPossibility;
 			var hvoRootItem = rootPoss.Hvo;
 			var hvoPossList = rootPoss.OwningList.Hvo;
-
 			// If we get here hvoPossList is a possibility list and hvoRootItem is a top level item in that list
 			// and movingPossItem is, or is a subpossibility of, that top level item.
 			switch (m_objRepo.GetObject(hvoPossList).OwningFlid)
@@ -632,7 +609,6 @@ namespace LanguageExplorer.Areas
 				{
 					return false;
 				}
-
 				// The moving item is a top-level Tag Type, it cannot be demoted.
 				MessageBox.Show(m_tree, AreaResources.ksCantDemoteTagList, AreaResources.ksProhibitedMovement, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return true;
@@ -756,9 +732,9 @@ namespace LanguageExplorer.Areas
 		/// Save the mouse down location, because it's a better choice than the mouse move
 		/// location for selecting a drag item.  See LT-10295.
 		/// </summary>
-		Point m_mouseDownLocation;
+		private Point m_mouseDownLocation;
 
-		void tree_MouseDown(object sender, MouseEventArgs e)
+		private void tree_MouseDown(object sender, MouseEventArgs e)
 		{
 			var tree = (TreeView)sender;
 			if (e.Button != MouseButtons.Left)
@@ -780,7 +756,6 @@ namespace LanguageExplorer.Areas
 		/// The only way I (JohnT) have found to suppress this is to temporarily give the node a narrow
 		/// label while calling EnsureVisible.
 		/// </summary>
-		/// <param name="tree"></param>
 		public void EnsureSelectedNodeVisible(TreeView tree)
 		{
 			if (tree.SelectedNode == null)
@@ -788,8 +763,9 @@ namespace LanguageExplorer.Areas
 				return;
 			}
 			var node = tree.SelectedNode;
-			m_clickNode = node; // use the current selection just incase the
-								// user clicks off the list.  LT-5652
+			// use the current selection just in case the
+			m_clickNode = node;
+			// user clicks off the list.  LT-5652
 			var label = node.Text;
 			try
 			{
@@ -836,7 +812,7 @@ namespace LanguageExplorer.Areas
 			if (!m_hvoToTreeNodeTable.ContainsKey(keyHvo))
 			{
 				m_hvoToTreeNodeTable.Add(keyHvo, node);
-		}
+			}
 		}
 
 		protected virtual string GetDisplayPropertyName => "ShortNameTSS";

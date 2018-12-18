@@ -13,9 +13,7 @@ namespace SIL.FieldWorks.LexicalProvider
 	[DataContract(Namespace = "LexicalData")]
 	public sealed class LexSense
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LexSense"/> class.
-		/// </summary>
+		/// <summary />
 		public LexSense(string id)
 		{
 			Id = id;

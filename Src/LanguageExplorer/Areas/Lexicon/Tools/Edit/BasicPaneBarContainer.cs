@@ -1,8 +1,9 @@
-// Copyright (c) 2002-2018 SIL International
+// Copyright (c) 2002-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -35,7 +36,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				throw new ArgumentException("Mis-matched property tables being set for this object.");
 			}
-
 			PropertyTable = propertyTable;
 			PaneBar = paneBar;
 			Controls.Add((Control)PaneBar);
@@ -70,7 +70,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 
 			if (disposing)
 			{

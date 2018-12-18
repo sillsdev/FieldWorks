@@ -23,13 +23,7 @@ namespace LanguageExplorerTests.Controls
 		private int m_index;
 		internal string[] m_expectedStringContents;
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:DummyCollectorEnv"/> class.
-		/// </summary>
-		/// <param name="sda">The sda.</param>
-		/// <param name="rootHvo">The root hvo.</param>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public DummyCollectorEnv(ISilDataAccess sda, int rootHvo) : base(null, sda, rootHvo)
 		{
 			m_index = 0;

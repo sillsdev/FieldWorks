@@ -22,9 +22,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		private readonly Dictionary<ILgWritingSystem, Dictionary<Tuple<string, bool, bool>, GraphiteEngine>> m_graphiteEngines;
 		private readonly Dictionary<ILgWritingSystemFactory, IRenderEngine> m_nonGraphiteEngines;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="RenderEngineFactory"/> class.
-		/// </summary>
+		/// <summary />
 		public RenderEngineFactory()
 		{
 			m_graphiteEngines = new Dictionary<ILgWritingSystem, Dictionary<Tuple<string, bool, bool>, GraphiteEngine>>();

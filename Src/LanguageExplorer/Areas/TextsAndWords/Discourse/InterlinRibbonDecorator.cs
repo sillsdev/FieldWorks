@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -58,12 +58,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		public override int get_VecItem(int hvo, int tag, int index)
 		{
-			if (tag == m_myFlid)
-			{
-				var cvalues = m_ribbonValues.Count;
-				return (cvalues > index) ? m_ribbonValues[index] : 0;
-			}
-			return base.get_VecItem(hvo, tag, index);
+			return tag == m_myFlid ? m_ribbonValues.Count > index ? m_ribbonValues[index] : 0 : base.get_VecItem(hvo, tag, index);
 		}
 
 		/// <summary>
@@ -96,7 +91,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			m_nextId = kBaseDummyId;
 			m_cachedRibbonWords = new Dictionary<int, LocatedAnalysisOccurrence>();
 			m_ribbonValues = new List<int>();
-
 			foreach (var wordForm in wordFormArray)
 			{
 				var hvoOcc = m_nextId--;

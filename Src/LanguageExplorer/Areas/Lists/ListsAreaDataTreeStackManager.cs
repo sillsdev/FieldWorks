@@ -1,4 +1,4 @@
-// Copyright (c) 2018 SIL International
+// Copyright (c) 2018-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -76,7 +76,7 @@ namespace LanguageExplorer.Areas.Lists
 		{
 			Dispose(true);
 			// This object will be cleaned up by the Dispose method.
-			// Therefore, you should call GC.SupressFinalize to
+			// Therefore, you should call GC.SuppressFinalize to
 			// take this object off the finalization queue
 			// and prevent finalization code for this object
 			// from executing a second time.
@@ -86,7 +86,6 @@ namespace LanguageExplorer.Areas.Lists
 		private void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-
 			if (_isDisposed)
 			{
 				// No need to do it more than once.
@@ -475,7 +474,7 @@ namespace LanguageExplorer.Areas.Lists
 			// <item label="-" translate="do not translate" />
 			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 
-		    // <item command="CmdDataTree-Merge-MergeReversalPOS" />
+			// <item command="CmdDataTree-Merge-MergeReversalPOS" />
 			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MergeReversalPOS_Clicked, enabled ? ListResources.Merge_Category_into : $"{ListResources.Merge_Category_into} {StringTable.Table.GetString("(cannot merge this)")}");
 			menu.Enabled = enabled;
 			menu.Tag = currentPartOfSpeech;
@@ -541,14 +540,8 @@ namespace LanguageExplorer.Areas.Lists
 			}
 			var currentPartOfSpeech = (IPartOfSpeech)slice.MyCmObject;
 			var cache = MyDataTree.Cache;
-			var labels = new List<ObjectLabel>();
-			foreach (var pos in MergeOrMoveCandidates(currentPartOfSpeech))
-			{
-				if (!pos.SubPossibilitiesOS.Contains(currentPartOfSpeech))
-				{
-					labels.Add(ObjectLabel.CreateObjectLabelOnly(cache, pos, "ShortNameTSS", "best analysis"));
-				}
-			}
+			var labels = MergeOrMoveCandidates(currentPartOfSpeech).Where(pos => !pos.SubPossibilitiesOS.Contains(currentPartOfSpeech))
+				.Select(pos => ObjectLabel.CreateObjectLabelOnly(cache, pos, "ShortNameTSS", "best analysis")).ToList();
 			using (var dlg = new SimpleListChooser(cache, null, _propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), labels, null, AreaResources.Category_to_move_to, null))
 			{
 				dlg.SetHelpTopic("khtpChoose-CategoryToMoveTo");
@@ -556,7 +549,7 @@ namespace LanguageExplorer.Areas.Lists
 				{
 					var currentPOS = currentPartOfSpeech;
 					var newOwner = (IPartOfSpeech)dlg.ChosenOne.Object;
-					AreaServices.UndoExtension(AreaResources.Move_Reversal_Category, cache.ActionHandlerAccessor, ()=>
+					AreaServices.UndoExtension(AreaResources.Move_Reversal_Category, cache.ActionHandlerAccessor, () =>
 					{
 						newOwner.MoveIfNeeded(currentPOS); //important when an item is moved into it's own subcategory
 						if (!newOwner.SubPossibilitiesOS.Contains(currentPOS)) //this is also prevented in the interface, but I'm paranoid
@@ -564,9 +557,12 @@ namespace LanguageExplorer.Areas.Lists
 							newOwner.SubPossibilitiesOS.Add(currentPOS);
 						}
 					});
+#if RANDYTODO
+					// TODO: Does the Jump broadcast still need to be done?
 					// Note: PropChanged should happen on the old owner and the new in the 'Add" method call.
 					// Have to jump to a main PartOfSpeech, as RecordClerk doesn't know anything about subcategories.
 					//m_mediator.BroadcastMessageUntilHandled("JumpToRecord", newOwner.MainPossibility.Hvo);
+#endif
 				}
 			}
 		}
@@ -589,10 +585,13 @@ namespace LanguageExplorer.Areas.Lists
 					var currentPOS = currentPartOfSpeech;
 					var survivor = (IPartOfSpeech)dlg.ChosenOne.Object;
 					// Pass false to MergeObject, since we really don't want to merge the string info.
-					AreaServices.UndoExtension(AreaResources.Merge_Reversal_Category, cache.ActionHandlerAccessor, ()=> survivor.MergeObject(currentPOS, false));
+					AreaServices.UndoExtension(AreaResources.Merge_Reversal_Category, cache.ActionHandlerAccessor, () => survivor.MergeObject(currentPOS, false));
+#if RANDYTODO
+					// TODO: Does the Jump broadcast still need to be done?
 					// Note: PropChanged should happen on the old owner and the new in the 'Add" method call.
 					// Have to jump to a main PartOfSpeech, as RecordList doesn't know anything about subcategories.
 					//m_mediator.BroadcastMessageUntilHandled("JumpToRecord", survivor.MainPossibility.Hvo);
+#endif
 				}
 			}
 		}

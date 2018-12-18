@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,7 +7,6 @@ using LanguageExplorer.Controls.XMLViews;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
 
@@ -21,11 +20,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// </summary>
 	public class InterlinLineSpec : ICloneable
 	{
-		int m_ws;
-		bool m_fMorpheme;
-		bool m_fWord;
-		int m_flidString; // the string property to use with m_ws
-		ITsString m_tssWsLabel;
+		private int m_ws;
+		private bool m_fMorpheme;
+		private bool m_fWord;
+		private int m_flidString; // the string property to use with m_ws
+		private ITsString m_tssWsLabel;
 
 		public InterlinLineSpec()
 		{
@@ -34,7 +33,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Compare the public property getters to the given spec.
 		/// </summary>
-		/// <param name="spec"></param>
 		/// <returns>true if all the public getter values match.</returns>
 		public bool SameSpec(InterlinLineSpec spec)
 		{
@@ -95,7 +93,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// While displaying the morph bundle, we need the ws used by the Form. If we can't get the Form from the MoForm, we
 			// substitute with the Form stored in the WfiMorphBundle. But our system incorrectly assumes that this object
 			// is a MoForm, so we specify that if our object is a WfiMorphBundle, use the relevant flid.
-			int flid = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo) is IWfiMorphBundle ? WfiMorphBundleTags.kflidForm : StringFlid;
+			var flid = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo) is IWfiMorphBundle ? WfiMorphBundleTags.kflidForm : StringFlid;
 			WritingSystemServices.TryWs(cache, WritingSystem, wsFallback, hvo, flid, out wsActual, out dummy);
 			return wsActual;
 		}

@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -135,7 +135,6 @@ namespace LanguageExplorer.Areas.Notebook
 				progress.Step(3);
 				writer.WriteLine("</Notebook>");
 			}
-
 			if (string.IsNullOrEmpty(ft.m_sXsltFiles))
 			{
 				return null;
@@ -266,8 +265,6 @@ namespace LanguageExplorer.Areas.Notebook
 					m_customFlids.Add(flid);
 				}
 			}
-
-
 			writer.WriteLine("<Entries docRightToLeft=\"{0}\">", m_fRightToLeft ? "true" : "false");
 			foreach (var record in m_cache.LangProject.ResearchNotebookOA.RecordsOC)
 			{
@@ -279,10 +276,9 @@ namespace LanguageExplorer.Areas.Notebook
 
 		ITsString m_tssSpace = null;
 		ITsString m_tssCommaSpace = null;
-		string m_wsUserTag = null;
+		string m_wsUserTag;
 		private string UserWsTag => m_wsUserTag ?? (m_wsUserTag = m_cache.WritingSystemFactory.GetStrFromWs(m_cache.DefaultUserWs));
-
-		string m_wsAnalTag = null;
+		string m_wsAnalTag;
 		private string AnalWsTag => m_wsAnalTag ?? (m_wsAnalTag = m_cache.WritingSystemFactory.GetStrFromWs(m_cache.DefaultAnalWs));
 
 		private void ExportRecord(TextWriter writer, IRnGenericRec record, int level)
@@ -304,7 +300,6 @@ namespace LanguageExplorer.Areas.Notebook
 				writer.WriteLine("<Item ws=\"{0}\">{1}</Item>", UserWsTag, XmlUtils.MakeSafeXml(record.DateOfEvent.ToXMLExportShortString()));
 				writer.WriteLine("</Field>");
 			}
-
 			collection.AddRange(record.TimeOfEventRC);
 			ExportReferenceList(writer, collection, "TimeOfEvent", "CmPossibility", CellarPropertyType.ReferenceCollection);
 			collection.Clear();
@@ -337,14 +332,12 @@ namespace LanguageExplorer.Areas.Notebook
 					collection.Clear();
 				}
 			}
-
 			if (record.LocationsRC != null && record.LocationsRC.Count > 0)
 			{
 				collection.AddRange(record.LocationsRC.ToArray());
 				ExportReferenceList(writer, collection, "Locations", "CmLocation", CellarPropertyType.ReferenceCollection);
 				collection.Clear();
 			}
-
 			ExportStText(writer, record.DescriptionOA, "Description");
 
 			ExportStText(writer, record.HypothesisOA, "Hypothesis");
@@ -362,7 +355,6 @@ namespace LanguageExplorer.Areas.Notebook
 				}
 				writer.WriteLine("</Field>");
 			}
-
 			ExportStText(writer, record.ConclusionsOA, "Conclusions");
 
 			if (record.SupportingEvidenceRS != null && record.SupportingEvidenceRS.Count > 0)
@@ -630,8 +622,7 @@ namespace LanguageExplorer.Areas.Notebook
 		/// <summary>
 		/// Export an atomic list reference field.
 		/// </summary>
-		private void ExportAtomicReference(TextWriter writer, ICmPossibility poss,
-			string fieldName, string targetType)
+		private void ExportAtomicReference(TextWriter writer, ICmPossibility poss, string fieldName, string targetType)
 		{
 			if (poss == null)
 			{
@@ -653,11 +644,7 @@ namespace LanguageExplorer.Areas.Notebook
 			{
 				return;
 			}
-
-			writer.WriteLine(
-				cpt == CellarPropertyType.ReferenceCollection
-					? "<Field name=\"{0}\" type=\"{1}\" card=\"collection\">"
-					: "<Field name=\"{0}\" type=\"{1}\" card=\"sequence\">", fieldName, targetType);
+			writer.WriteLine(cpt == CellarPropertyType.ReferenceCollection ? "<Field name=\"{0}\" type=\"{1}\" card=\"collection\">" : "<Field name=\"{0}\" type=\"{1}\" card=\"sequence\">", fieldName, targetType);
 			foreach (var item in collection)
 			{
 				int ws;
@@ -706,7 +693,6 @@ namespace LanguageExplorer.Areas.Notebook
 					break;
 				}
 			}
-
 			if (cch == 0)
 			{
 				return;
@@ -749,7 +735,7 @@ namespace LanguageExplorer.Areas.Notebook
 				clidRoot = notebk.ClassID;
 				return notebk.Hvo;
 			}
-			// just for saftey
+			// just for safety
 			return base.SetRoot(cmo, out clidRoot);
 		}
 	}

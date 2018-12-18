@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using Gecko;
 using LanguageExplorer.DictionaryConfiguration;
@@ -39,7 +40,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 		/// <summary>
 		/// Create the dlg and show it.
 		/// </summary>
-		/// <returns>'true', if caller needs to refesh the main window, otherwise 'false'.</returns>
+		/// <returns>'true', if caller needs to refresh the main window, otherwise 'false'.</returns>
 		internal static bool ShowDialog(FlexComponentParameters flexComponentParameters, Form mainWindow, ICmObject currentObject, string helpTopic, string titleCore, List<string> classList = null)
 		{
 			bool refreshNeeded;
@@ -180,7 +181,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			{
 				return;
 			}
-			foreach(var choice in choices)
+			foreach (var choice in choices)
 			{
 				m_cbDictConfig.Items.Add(choice);
 			}
@@ -194,7 +195,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		public void SelectConfiguration(DictionaryConfigurationModel configuration)
 		{
 			m_cbDictConfig.SelectedItem = configuration;
-			if(treeControl.Tree.Nodes.Count > 0)
+			if (treeControl.Tree.Nodes.Count > 0)
 			{
 				treeControl.Tree.Nodes[0].Expand();
 			}
@@ -204,7 +205,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// Remember which elements are highlighted so that we can turn the highlighting off later.
 		/// </summary>
 		private List<GeckoElement> _highlightedElements;
-		private const string HighlightStyle = "background-color:Yellow ";	// LightYellow isn't really bold enough marking to my eyes for this feature.
+		private const string HighlightStyle = "background-color:Yellow ";   // LightYellow isn't really bold enough marking to my eyes for this feature.
 
 		public void HighlightContent(ConfigurableDictionaryNode configNode, IFwMetaDataCacheManaged metaDataCacheAccessor)
 		{
@@ -241,7 +242,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				}
 				else
 				{
-					style = HighlightStyle + style;	// note trailing space in string constant
+					style = HighlightStyle + style; // note trailing space in string constant
 				}
 				element.SetAttribute("style", style);
 			}
@@ -292,21 +293,14 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 
 		private static IEnumerable<GeckoElement> FindMatchingSpans(ConfigurableDictionaryNode selectedNode, GeckoElement parent, ConfigurableDictionaryNode topLevelNode, IFwMetaDataCacheManaged metaDataCacheAccessor)
 		{
-			var elements = new List<GeckoElement>();
 			var desiredClass = CssGenerator.GetClassAttributeForConfig(selectedNode);
 			if (ConfiguredXHTMLGenerator.IsCollectionNode(selectedNode, metaDataCacheAccessor))
 			{
 				desiredClass = CssGenerator.GetClassAttributeForCollectionItem(selectedNode);
 			}
-			foreach (var span in parent.GetElementsByTagName("span"))
-			{
-				if (span.GetAttribute("class") != null && span.GetAttribute("class").Split(' ')[0] == desiredClass &&
-					DoesGeckoElementOriginateFromConfigNode(selectedNode, span, topLevelNode))
-				{
-					elements.Add(span);
-				}
-			}
-			return elements;
+			return parent.GetElementsByTagName("span").Where(span => span.GetAttribute("class") != null
+			                                                         && span.GetAttribute("class").Split(' ')[0] == desiredClass
+																	 && DoesGeckoElementOriginateFromConfigNode(selectedNode, span, topLevelNode)).ToList();
 		}
 
 		private void m_buttonManageConfigurations_Click(object sender, EventArgs e)

@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,13 +15,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
 	internal class InterlinDocForAnalysisVc : InterlinVc
 	{
+		private AnalysisOccurrence m_focusBoxOccurrence;
+
 		public InterlinDocForAnalysisVc(LcmCache cache)
 			: base(cache)
 		{
 			FocusBoxSize = new Size(100000, 50000); // If FocusBoxAnnotation is set, this gives the size of box to make. (millipoints)
 		}
 
-		AnalysisOccurrence m_focusBoxOccurrence;
 		/// <summary>
 		/// Set the annotation that is displayed as a fix-size box on top of which the SandBox is overlayed.
 		/// Client must also do PropChanged to produce visual effect.
@@ -46,11 +47,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// Set the size of the space reserved for the Sandbox. Client must also do a Propchanged to trigger
 		/// visual effect.
 		/// </summary>
-		internal Size FocusBoxSize
-		{
-			get;
-			set;
-		}
+		internal Size FocusBoxSize { get; set; }
 
 		protected override void AddWordBundleInternal(int hvo, IVwEnv vwenv)
 		{
@@ -72,7 +69,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					var wsSeg = TsStringUtils.GetWsAtOffset(FocusBoxOccurrence.Segment.BaselineText, 0);
 					var dympBaseline = FontHeightAdjuster.GetFontHeightForStyle("Normal", StyleSheet, wsSeg, m_cache.LanguageWritingSystemFactoryAccessor) * 9 / 10;
 					var transparent = 0xC0000000; // FwTextColor.kclrTransparent won't convert to uint
-					vwenv.AddSimpleRect((int)transparent, FocusBoxSize.Width, FocusBoxSize.Height, - (FocusBoxSize.Height - dympBaseline));
+					vwenv.AddSimpleRect((int)transparent, FocusBoxSize.Width, FocusBoxSize.Height, -(FocusBoxSize.Height - dympBaseline));
 					return;
 				}
 			}
@@ -90,14 +87,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return tssVal;
 			}
-
 			// wait until an IME composition is completed before switching the user prompt to a comment
 			// field, otherwise setting the comment will terminate the composition (LT-9929)
 			if (RootSite.RootBox.IsCompositionInProgress)
 			{
 				return tssVal;
 			}
-
 			if (tssVal.Length == 0)
 			{
 				// User typed something (return?) which didn't actually put any text over the prompt.
@@ -105,7 +100,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// able to make our new selection.
 				return tssVal;
 			}
-
 			// Get information about current selection
 			var helper = SelectionHelper.Create(vwsel, RootSite);
 			var seg = (ISegment)m_coRepository.GetObject(hvo);
@@ -113,16 +107,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// Clear special prompt properties
 			bldr.SetIntPropValues(0, bldr.Length, SimpleRootSite.ktptUserPrompt, -1, -1);
 			bldr.SetIntPropValues(0, bldr.Length, (int)FwTextPropType.ktptSpellCheck, -1, -1);
-
 			// Add the text the user just typed to the translatin - this destroys the selection
 			// because we replace the user prompt. We use the frag to note the WS of interest.
 			RootSite.RootBox.DataAccess.SetMultiStringAlt(seg.Hvo, ActiveFreeformFlid, frag, bldr.GetString());
-
 			// arrange to restore the selection (in the new property) at the end of the UOW (when the
 			// required property will have been re-established by various PropChanged calls).
-			RootSite.RequestSelectionAtEndOfUow(RootSite.RootBox, 0, helper.LevelInfo.Length, helper.LevelInfo, ActiveFreeformFlid,
-				m_cpropActiveFreeform, helper.IchAnchor, helper.Ws, helper.AssocPrev,
-				helper.GetSelProps(SelLimitType.Anchor));
+			RootSite.RequestSelectionAtEndOfUow(RootSite.RootBox, 0, helper.LevelInfo.Length, helper.LevelInfo, ActiveFreeformFlid, m_cpropActiveFreeform, helper.IchAnchor, helper.Ws,
+				helper.AssocPrev, helper.GetSelProps(SelLimitType.Anchor));
 			SetActiveFreeform(0, 0, 0, 0); // AFTER request selection, since it clears ActiveFreeformFlid.
 			return tssVal;
 		}

@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2018 SIL International
+// Copyright (c) 2008-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -52,8 +52,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		#region PropertiesAndConstants
 
-		private LcmCache Cache => m_logic.Cache;
-
 		private IConstChartRow MTRow => m_movedTextCell.Row;
 
 		private IConstChartRow MarkerRow => m_markerCell.Row;
@@ -76,7 +74,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			// Not real sure why everything still works!
 			// Get rid of any empty marker in the cell where we will insert the marker.
 			m_logic.RemoveMissingMarker(m_markerCell);
-
 			if (m_wordformsToMark == null || m_wordformsToMark.Length == 0)
 			{
 				return MarkEntireCell();
@@ -96,7 +93,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		///		Case 4: the new WordGroup IS the old WordGroup, just set the feature and marker
 		///			(actually this last case should be handled by the dialog; it'll return no hvos)
 		/// </summary>
-		/// <returns></returns>
 		private IConstChartMovedTextMarker MarkPartialCell()
 		{
 			// find the first WordGroup in this cell
@@ -161,7 +157,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				throw new ArgumentOutOfRangeException(nameof(ifirstWord));
 			}
-
 			var oldSrcEnd = srcWordforms[srcWordforms.Count - 1]; // EndPoint of source becomes endPoint of new WordGroup
 			var dstBegin = srcWordforms[ifirstWord];
 			var newSrcEnd = dstBegin.PreviousWordform();
@@ -232,10 +227,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			var wordGroupMovedText = (IConstChartWordGroup)m_logic.FindCellPartInColumn(m_movedTextCell, true);
 			Debug.Assert(wordGroupMovedText != null);
 
-			// Now figure out where to insert the MTmarker
-			var icellPartInsertAt = FindWhereToInsertMTMarker();
-
-			return m_logic.MakeMTMarker(m_markerCell, wordGroupMovedText, icellPartInsertAt);
+			return m_logic.MakeMTMarker(m_markerCell, wordGroupMovedText, FindWhereToInsertMTMarker());
 		}
 
 		/// <summary>
@@ -244,8 +236,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <returns></returns>
 		private int FindWhereToInsertMTMarker()
 		{
-			var markerCell = new ChartLocation(MarkerRow, (m_fPrepose ? MarkerColIndex - 1: MarkerColIndex));
-			return m_logic.FindIndexOfCellPartInLaterColumn(markerCell);
+			return m_logic.FindIndexOfCellPartInLaterColumn(new ChartLocation(MarkerRow, m_fPrepose ? MarkerColIndex - 1 : MarkerColIndex));
 		}
 
 		internal void RemoveMovedFrom()
@@ -258,7 +249,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				m_markerCell.Row.CellsOS.Remove(m_existingMarker);
 			}
-
 			// Handle cases where after removing, there are multiple WordGroups that can be merged.
 			// If the removed movedFeature was part of the cell,
 			// there could easily be 3 WordGroups to merge after removing.
@@ -277,10 +267,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private void CollapseRedundantWordGroups()
 		{
 			// Enhance GordonM: May need to do something different here if we can put markers between WordGroups.
-
 			// Get ALL the cellParts
 			var cellPartList = m_logic.PartsInCell(m_movedTextCell);
-
 			for (var icellPart = 0; icellPart < cellPartList.Count - 1; icellPart++)
 			{
 				var currCellPart = cellPartList[icellPart];
@@ -309,7 +297,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private void SwallowRedundantWordGroup(List<IConstituentChartCellPart> cellPartList, int icellPart)
 		{
 			// Move all analyses from cellPartList[icellPart+1] to end of cellPartList[icellPart].
-			var srcWordGrp = cellPartList[icellPart+1] as IConstChartWordGroup;
+			var srcWordGrp = cellPartList[icellPart + 1] as IConstChartWordGroup;
 			var dstWordGrp = cellPartList[icellPart] as IConstChartWordGroup;
 			m_logic.MoveAnalysesBetweenWordGroups(srcWordGrp, dstWordGrp);
 

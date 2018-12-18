@@ -65,9 +65,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 			InitializeComponent();
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="RestoreProjectDlg"/> class.
-		/// </summary>
+		/// <summary />
 		/// <param name="backupFileSettings">Specific backup file settings to use (dialog
 		/// controls to select a backup file will be disabled)</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
@@ -82,11 +80,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 			SetOriginalNameFromSettings();
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="RestoreProjectDlg"/> class.
-		/// </summary>
-		/// <param name="defaultProjectName">Default project to show existing backups for.</param>
-		/// <param name="helpTopicProvider">The help topic provider.</param>
+		/// <summary />
 		public RestoreProjectDlg(string defaultProjectName, IHelpTopicProvider helpTopicProvider)
 			: this(helpTopicProvider)
 		{
@@ -95,10 +89,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 			PopulateProjectList(m_presenter.DefaultProjectName);
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="RestoreProjectDlg"/> class.
-		/// </summary>
-		/// <param name="helpTopicProvider">The help topic provider.</param>
+		/// <summary />
 		private RestoreProjectDlg(IHelpTopicProvider helpTopicProvider)
 			: this()
 		{

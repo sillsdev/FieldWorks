@@ -1,9 +1,10 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -23,9 +24,7 @@ using SIL.Xml;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 {
-	/// <summary>
-	/// Summary description for GrammarSketchHtmlViewer.
-	/// </summary>
+	/// <summary />
 	internal sealed class GrammarSketchHtmlViewer : UserControl, IMainContentControl
 	{
 		#region Data Members
@@ -58,8 +57,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		private Button m_ForwardBtn;
 		private ToolTip toolTip1;
 		private System.ComponentModel.IContainer components;
-
-		private const string m_skExtensionUri = "urn:xsltExtension-DateTime";
 
 		/// <summary>
 		/// Back/Forward counter to keep track of state and control enable/disable of back adn forward buttons
@@ -238,10 +235,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
+			{
+				// No need to run it more than once.
 				return;
+			}
 
 			if (disposing)
 			{

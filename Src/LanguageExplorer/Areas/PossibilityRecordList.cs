@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -75,7 +75,6 @@ namespace LanguageExplorer.Areas
 			{
 				return null;
 			}
-
 			return m_insertableClasses.FirstOrDefault(cpi => cpi.signatureClassName == className);
 		}
 
@@ -89,7 +88,6 @@ namespace LanguageExplorer.Areas
 			// and then do another reload here, if the tags are matching, below.
 			// base.PropChanged (hvo, tag, ivMin, cvIns, cvDel);
 			// We'll call the base code, only if we don't deal with the change here.
-
 			if (tag == CmPossibilityTags.kflidSubPossibilities || tag == CmPossibilityListTags.kflidPossibilities && (cvIns > 0 || cvDel > 0))
 			{
 				// Reload the whole list, since a deleted/added node may have owned sub-possibilities.
@@ -98,9 +96,7 @@ namespace LanguageExplorer.Areas
 				// That would then cause the crash seen in LT-6036,
 				// when the dead objects had a class of 0, which was right for a dead object.
 				// At least it was "right" for the current state of the cache code.
-
 				// They will need to be added to the sorted list on an insert, as well.
-
 				// So, whether an item was added or deleted, we need to reload the whole thing.
 				ReloadList();
 			}
@@ -154,7 +150,7 @@ namespace LanguageExplorer.Areas
 					return -1;
 				}
 				var lastTopIndex = -1;
-				for (var i = m_sortedObjects.Count; --i >= 0 ;)
+				for (var i = m_sortedObjects.Count; --i >= 0;)
 				{
 					var poss = PossibilityAt(i);
 					if (poss.OwningFlid != CmPossibilityTags.kflidSubPossibilities)
@@ -201,15 +197,13 @@ namespace LanguageExplorer.Areas
 						return index;
 					}
 				}
-
-				for (;;)
+				for (; ; )
 				{
 					// look for a sibling of hvoCurrentBeforeGetObjectSet coming after the starting point.
 					var currentObj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoCurrent);
 					var hvoOwner = currentObj.Owner.Hvo;
 					var flidOwner = currentObj.OwningFlid;
 					var fGotCurrent = false;
-
 					foreach (var hvoChild in VirtualListPublisher.VecProp(hvoOwner, flidOwner))
 					{
 						if (hvoChild == hvoCurrent)
@@ -261,7 +255,6 @@ namespace LanguageExplorer.Areas
 				var hvoCurrent = pss.Hvo;
 				var hvoOwner = pss.Owner.Hvo;
 				// Look for a previous sibling in the list.
-
 				var flidOwner = pss.OwningFlid;
 				if (flidOwner == 0)
 				{
@@ -288,7 +281,6 @@ namespace LanguageExplorer.Areas
 						return LastChild(hvoChild, index);
 					}
 				}
-
 				// OK, no sibling. Return owner if it's in the list.
 				var index1 = IndexOf(hvoOwner);
 				return (index1 >= 0) ? index1 : CurrentIndex;
@@ -322,9 +314,8 @@ namespace LanguageExplorer.Areas
 			{
 				return index; // no children
 			}
-
 			// Find the last child that occurs in the list.
-			for (var ichild = count; --ichild >= 0; )
+			for (var ichild = count; --ichild >= 0;)
 			{
 				var hvoChild = pss.SubPossibilitiesOS[ichild].Hvo;
 				var index1 = IndexOf(hvoChild);

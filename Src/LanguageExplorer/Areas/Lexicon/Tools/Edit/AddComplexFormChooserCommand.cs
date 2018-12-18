@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -25,8 +25,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private readonly Form m_parentWindow;
 
 		/// <summary />
-		public AddComplexFormChooserCommand(LcmCache cache, bool fCloseBeforeExecuting,
-			string sLabel, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, ICmObject lexEntry, Form parentWindow)
+		public AddComplexFormChooserCommand(LcmCache cache, bool fCloseBeforeExecuting, string sLabel, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, ICmObject lexEntry, Form parentWindow)
 			: base(cache, fCloseBeforeExecuting, sLabel, propertyTable, publisher, subscriber)
 		{
 			m_lexEntry = lexEntry as ILexEntry;
@@ -63,14 +62,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				{
 					if (m_lexSense != null)
 					{
-						UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoAddComplexForm, LanguageExplorerResources.ksRedoAddComplexForm,
-							m_lexEntry.Cache.ActionHandlerAccessor,
+						UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoAddComplexForm, LanguageExplorerResources.ksRedoAddComplexForm, m_lexEntry.Cache.ActionHandlerAccessor,
 							() => ((ILexEntry)dlg.SelectedObject).AddComponent((ICmObject)m_lexSense ?? m_lexEntry));
 					}
 					else
 					{
-						UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoAddComplexForm, LanguageExplorerResources.ksRedoAddComplexForm,
-							m_lexEntry.Cache.ActionHandlerAccessor,
+						UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoAddComplexForm, LanguageExplorerResources.ksRedoAddComplexForm, m_lexEntry.Cache.ActionHandlerAccessor,
 							() => ((ILexEntry)dlg.SelectedObject).AddComponent(m_lexEntry));
 					}
 				}

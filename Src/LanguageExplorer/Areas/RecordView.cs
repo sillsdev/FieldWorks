@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -37,16 +37,11 @@ namespace LanguageExplorer.Areas
 	/// </summary>
 	internal abstract class RecordView : ViewBase
 	{
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
 		private System.ComponentModel.Container components = null;
 
 		#region Consruction and disposal
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="RecordView"/> class.
-		/// </summary>
+		/// <summary />
 		protected RecordView()
 		{
 			Init();
@@ -62,12 +57,8 @@ namespace LanguageExplorer.Areas
 		{
 			//it is up to the subclass to change this when it is finished Initializing.
 			m_fullyInitialized = false;
-
-			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
-
-			AccNameDefault = "RecordView"; // default accessibility name
-
+			AccNameDefault = "RecordView";
 			MyRecordList.RecordChanged += RecordList_RecordChanged_Handler;
 		}
 
@@ -77,7 +68,6 @@ namespace LanguageExplorer.Areas
 			{
 				return;
 			}
-
 			var options = new ListUpdateHelperParameterObject
 			{
 				MyRecordList = MyRecordList,
@@ -94,19 +84,20 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
-			if( disposing )
+			if (disposing)
 			{
 				MyRecordList.RecordChanged -= RecordList_RecordChanged_Handler;
 				components?.Dispose();
 			}
 
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#endregion // Consruction and disposal
@@ -166,17 +157,15 @@ namespace LanguageExplorer.Areas
 		protected override void SetupDataContext()
 		{
 			TriggerMessageBoxIfAppropriate();
-
 			if (m_treebarAvailability != TreebarAvailability.NotMyBusiness)
 			{
 				MyRecordList.ActivateUI(); // NB: optional would be a bug here
 			}
-
 			m_madeUpFieldIdentifier = MyRecordList.VirtualFlid;
 		}
 
 		/// <summary>
-		/// Initialize this as an IxCoreColleague
+		/// Initialize this
 		/// </summary>
 		/// <remarks> subclasses must call this from their Init.
 		/// This was done, rather than providing an Init() here in the normal way,
@@ -187,7 +176,6 @@ namespace LanguageExplorer.Areas
 			Debug.Assert(m_fullyInitialized == false, "No way we are fully initialized yet!");
 
 			ReadParameters();
-
 			if (MyRecordList == null)
 			{
 				Debug.Assert(MyRecordList != null);
@@ -196,12 +184,11 @@ namespace LanguageExplorer.Areas
 			// If so, then pass the buck on to ListUpdateHelper and suspend any loading of the record list's list items until after a
 			// subclass (possibly) initializes sorters/filters
 			// in SetupDataContext()
-			using (new ListUpdateHelper(new ListUpdateHelperParameterObject { MyRecordList = MyRecordList, ClearBrowseListUntilReload =  true}))
+			using (new ListUpdateHelper(new ListUpdateHelperParameterObject { MyRecordList = MyRecordList, ClearBrowseListUntilReload = true }))
 			{
 				MyRecordList.UpdateOwningObjectIfNeeded();
 				SetTreebarAvailability();
 				AddPaneBar();
-
 				// Historical comments here indicated that MyRecordList should be processed by the mediator before the
 				// view. This is handled by Priority now, RecordView is by default just after RecordList in the processing.
 				SetupDataContext();
@@ -209,7 +196,8 @@ namespace LanguageExplorer.Areas
 			// In case it hasn't yet been loaded, load it!  See LT-10185.
 			if (!MyRecordList.ListLoadingSuppressed && MyRecordList.RequestedLoadWhileSuppressed)
 			{
-				MyRecordList.UpdateList(true, true); // sluggishness culprit for LT-12844 was in here
+				// sluggishness culprit for LT-12844 was in here
+				MyRecordList.UpdateList(true, true);
 			}
 		}
 
@@ -285,16 +273,16 @@ namespace LanguageExplorer.Areas
 			{
 				case "":
 					m_treebarAvailability = DefaultTreeBarAvailability;
-						break;
+					break;
 				case "Required":
 					m_treebarAvailability = TreebarAvailability.Required;
-						break;
+					break;
 				case "NotAllowed":
 					m_treebarAvailability = TreebarAvailability.NotAllowed;
-						break;
+					break;
 				case "NotMyBusiness":
 					m_treebarAvailability = TreebarAvailability.NotMyBusiness;
-						break;
+					break;
 				default:
 					throw new NotImplementedException(string.Format("TreebarAvailability '{0}' is not recognized.", treeBarAvailability));
 			}
@@ -308,7 +296,7 @@ namespace LanguageExplorer.Areas
 
 		#endregion // Other methods
 
-#region Component Designer generated code
+		#region Component Designer generated code
 
 		/// <summary>
 		/// Required method for Designer support - do not modify
@@ -323,6 +311,6 @@ namespace LanguageExplorer.Areas
 			this.Size = new System.Drawing.Size(752, 150);
 
 		}
-#endregion
+		#endregion
 	}
 }

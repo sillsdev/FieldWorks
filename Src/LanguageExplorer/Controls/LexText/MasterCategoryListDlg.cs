@@ -19,9 +19,7 @@ using SIL.Windows.Forms;
 
 namespace LanguageExplorer.Controls.LexText
 {
-	/// <summary>
-	/// Summary description for MasterCategoryListDlg.
-	/// </summary>
+	/// <summary />
 	public class MasterCategoryListDlg : Form
 	{
 		private ICmPossibilityList m_posList;

@@ -8,14 +8,10 @@ using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-	/// <summary>
-	/// Summary description for ImageSlice.
-	/// </summary>
+	/// <summary />
 	internal class ImageSlice : Slice
 	{
-		/// <summary>
-		/// Constructor.
-		/// </summary>
+		/// <summary />
 		/// <param name="distFilesPath">the path to the distfiles Directory</param>
 		/// <param name="relativeImagePath">they path to the image, relative to the distfiles Directory</param>
 		/// <remarks>Will throw an exception if the image is not found.</remarks>

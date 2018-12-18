@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2012-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,8 +12,8 @@ using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel;
-using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 
 namespace LanguageExplorer.Areas.Lexicon
 {
@@ -50,7 +50,6 @@ namespace LanguageExplorer.Areas.Lexicon
 			{
 				return;
 			}
-
 			if (!_recordBar.HasHeaderControl)
 			{
 				var headerPanel = new Panel { Visible = false };
@@ -124,18 +123,17 @@ namespace LanguageExplorer.Areas.Lexicon
 			{
 				var searchString = m_textSearch.Tss.Text ?? string.Empty;
 				// if string is only whitespace (especially <Enter>), reset to avoid spurious searches with no results.
-				if (string.IsNullOrEmpty(searchString) || !string.IsNullOrWhiteSpace(searchString))
+				if (string.IsNullOrWhiteSpace(searchString))
 				{
-					return searchString.Trim();
+					// We must be careful about setting the textbox string, because each time you set it
+					// triggers a new search timer iteration. We want to avoid a "continual" reset.
+					// We could just ignore whitespace, but if <Enter> gets in there, somehow it makes the
+					// rest of the string invisible on the screen. So this special case is handled by resetting
+					// the search string to empty if it only contains whitespace.
+					m_textSearch.Tss = TsStringUtils.EmptyString(m_cache.DefaultAnalWs);
+					return string.Empty;
 				}
-
-				// We must be careful about setting the textbox string, because each time you set it
-				// triggers a new search timer iteration. We want to avoid a "continual" reset.
-				// We could just ignore whitespace, but if <Enter> gets in there, somehow it makes the
-				// rest of the string invisible on the screen. So this special case is handled by resetting
-				// the search string to empty if it only contains whitespace.
-				m_textSearch.Tss = TsStringUtils.EmptyString(m_cache.DefaultAnalWs);
-				return string.Empty;
+				return searchString.Trim();
 			}
 		}
 
@@ -191,7 +189,9 @@ namespace LanguageExplorer.Areas.Lexicon
 			// if they specified an altTitleId, but it wasn't found, they need to do something,
 			// so just return *titleId*
 			if (titleStr == null)
+			{
 				titleStr = titleId;
+			}
 			m_titleBar.Text = titleStr;
 		}
 
@@ -205,7 +205,6 @@ namespace LanguageExplorer.Areas.Lexicon
 			{
 				return;
 			}
-
 			window.RecordBarControl.ShowHeaderControl = true;
 			HandleChangeInSearchText(); // in case we already have a search active when we enter
 		}
@@ -223,11 +222,7 @@ namespace LanguageExplorer.Areas.Lexicon
 				return baseName; // pathological defensive programming
 			}
 			var senseCount = SemanticDomainSelectionServices.SenseReferenceCount(sd);
-			if (senseCount == 0)
-			{
-				return baseName;
-			}
-			return baseName + " (" + senseCount + ")";
+			return senseCount == 0 ? baseName : $"{baseName} ({senseCount})";
 		}
 	}
 }

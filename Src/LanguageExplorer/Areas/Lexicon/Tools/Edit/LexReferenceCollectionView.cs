@@ -1,19 +1,17 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using SIL.LCModel;
 using LanguageExplorer.Controls.DetailControls;
+using SIL.LCModel;
 using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
-	/// <summary>
-	/// Summary description for LexReferenceCollectionView.
-	/// </summary>
+	/// <summary />
 	internal class LexReferenceCollectionView : VectorReferenceView
 	{
 		/// <summary />
@@ -57,9 +55,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var objRepo = Cache.ServiceLocator.ObjectRepository;
 			if (sda != null) //sda should never be null
 			{
-				return (sda.VecProp(m_rootObj.Hvo, m_rootFlid)
-					.Where(i => objRepo.GetObject(i) != m_displayParent)
-					.Select(i => objRepo.GetObject(i))).ToList();
+				return (sda.VecProp(m_rootObj.Hvo, m_rootFlid).Where(i => objRepo.GetObject(i) != m_displayParent).Select(i => objRepo.GetObject(i))).ToList();
 			}
 			Debug.Assert(false, "Error retrieving DataAccess, crash imminent.");
 			return null;
@@ -72,9 +68,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var objRepo = Cache.ServiceLocator.ObjectRepository;
 			if (sda != null) //sda should never be null
 			{
-				return (sda.VecProp(m_rootObj.Hvo, m_rootFlid)
-					.Where(i => objRepo.GetObject(i) == m_displayParent)
-					.Select(i => objRepo.GetObject(i))).ToList();
+				return (sda.VecProp(m_rootObj.Hvo, m_rootFlid).Where(i => objRepo.GetObject(i) == m_displayParent).Select(i => objRepo.GetObject(i))).ToList();
 			}
 			Debug.Assert(false, "Error retrieving DataAccess, crash imminent.");
 			return null;
@@ -84,18 +78,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		protected override void Delete()
 		{
 			Delete(AreaResources.ksUndoDeleteRef, AreaResources.ksRedoDeleteRef);
-		}
-
-		/// <summary />
-		protected override void UpdateTimeStampsIfNeeded(int[] hvos)
-		{
-#if WANTPORTMULTI
-			for (int i = 0; i < hvos.Length; ++i)
-			{
-				ICmObject cmo = ICmObject.CreateFromDBObject(m_cache, hvos[i]);
-				(cmo as ICmObject).UpdateTimestampForVirtualChange();
-			}
-#endif
 		}
 
 		#region Component Designer generated code

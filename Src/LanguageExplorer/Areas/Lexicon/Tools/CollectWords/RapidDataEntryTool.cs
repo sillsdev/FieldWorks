@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -193,7 +193,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			_propertyTable.SetProperty("RecordListWidthGlobal", _collapsingSplitContainer.SplitterDistance, true, settingsGroup: SettingsGroup.GlobalSettings);
 		}
 
-#endregion
+		#endregion
 
 		#region Implementation of IMajorFlexUiComponent
 
@@ -233,8 +233,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
               <sortMethods />
             </clerk>
 			*/
-			return new SubservientRecordList(recordListId, statusBar,
-				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,
+			return new SubservientRecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,
 				new VectorPropertyParameterObject(cache.LanguageProject.SemanticDomainListOA, "ReferringSenses", cache.MetaDataCacheAccessor.GetFieldId2(CmSemanticDomainTags.kClassId, "ReferringSenses", false)),
 				flexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LexiconArea.SemanticDomainList_LexiconArea, statusBar, LexiconArea.SemanticDomainList_LexiconAreaFactoryMethod));
 		}

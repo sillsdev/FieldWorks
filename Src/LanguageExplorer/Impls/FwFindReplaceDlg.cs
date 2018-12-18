@@ -166,9 +166,7 @@ namespace LanguageExplorer.Impls
 		#endregion
 
 		#region Construction, initialization, destruction
-		/// <summary>
-		/// Initializes a new instance of the <see cref="FwFindReplaceDlg"/> class.
-		/// </summary>
+		/// <summary />
 		public FwFindReplaceDlg()
 		{
 			m_inFind = false;

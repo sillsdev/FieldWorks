@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -24,21 +24,19 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 				{
 					return null;
 				}
-
 				ICmPossibilityList list = null;
 				IReversalIndex ri;
 				if (m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().TryGetObject(riGuid, out ri))
 				{
 					list = ri.PartsOfSpeechOA;
 				}
-
 				// Will be null, if the reversal index was not found.
 				return list;
 			}
 		}
 
 		/// <summary />
-		public override List<int> FieldPath => new List<int>(new[] { ReversalIndexEntryTags.kflidPartOfSpeech, CmPossibilityTags.kflidName});
+		public override List<int> FieldPath => new List<int>(new[] { ReversalIndexEntryTags.kflidPartOfSpeech, CmPossibilityTags.kflidName });
 
 		/// <summary>
 		/// Execute the change requested by the current selection in the combo.

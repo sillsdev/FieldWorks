@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2018 SIL International
+// Copyright (c) 2013-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -62,7 +62,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 					{
 						return false;
 					}
-
 					var wordform = analysis.Item1 as IWfiWordform;
 					if (wordform != null)
 					{
@@ -87,7 +86,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 							annotations.Add(null);
 							continue;
 						}
-
 						FeatureStruct wordInflFS = null;
 						var wanalysis = analysis.Item1.Analysis;
 						ShapeNode analysisStart = null;
@@ -102,25 +100,22 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 								{
 									continue;
 								}
-
 								var forms = Enumerable.Empty<string>();
 								var mbForm = mb.Form.StringOrNull(ws);
 								if (mbForm != null)
 								{
 									forms = forms.Concat(mbForm.Text);
 								}
-
 								var morphForm = mb.MorphRA?.Form.StringOrNull(ws);
 								if (morphForm != null)
 								{
 									forms = forms.Concat(morphForm.Text);
 								}
-
 								morphFS.AddValue(strFeat, forms.Distinct());
 							}
 							if (mb.SenseRA != null)
 							{
-								foreach (int ws in mb.SenseRA.Gloss.AvailableWritingSystemIds)
+								foreach (var ws in mb.SenseRA.Gloss.AvailableWritingSystemIds)
 								{
 									StringFeature strFeat;
 									if (featSys.TryGetFeature($"gloss-{ws}", out strFeat))
@@ -129,11 +124,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 									}
 								}
 							}
-
 							if (mb.MorphRA != null)
 							{
-								var entry = (ILexEntry) mb.MorphRA.Owner;
-								foreach (int ws in entry.LexemeFormOA.Form.AvailableWritingSystemIds)
+								var entry = (ILexEntry)mb.MorphRA.Owner;
+								foreach (var ws in entry.LexemeFormOA.Form.AvailableWritingSystemIds)
 								{
 									StringFeature strFeat;
 									if (featSys.TryGetFeature($"entry-{ws}", out strFeat))
@@ -142,7 +136,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 									}
 								}
 							}
-
 							if (mb.MsaRA?.ComponentsRS != null)
 							{
 								var catSymbols = GetHvoOfMsaPartOfSpeech(mb.MsaRA).Select(hvo => catFeat.PossibleSymbols[hvo.ToString(CultureInfo.InvariantCulture)]).ToArray();
@@ -164,21 +157,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 									}
 								}
 							}
-
 							var node = Shape.Add(morphFS);
 							if (analysisStart == null)
 							{
 								analysisStart = node;
 							}
 						}
-
 						var wordFS = new FeatureStruct();
 						wordFS.AddValue(typeFeat, typeFeat.PossibleSymbols["word"]);
 						if (wanalysis.CategoryRA != null)
 						{
 							wordFS.AddValue(catFeat, catFeat.PossibleSymbols[wanalysis.CategoryRA.Hvo.ToString(CultureInfo.InvariantCulture)]);
 						}
-
 						if (wordInflFS != null && !wordInflFS.IsEmpty)
 						{
 							wordFS.AddValue(inflFeat, wordInflFS);
@@ -219,23 +209,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 						annotations.Add(ann);
 					}
 				}
-
 				segments[segment] = annotations;
 				Shape.Add(FeatureStruct.New(featSys).Symbol("bdry").Symbol("segBdry").Value);
 			}
 
-			foreach (ITextTag tag in Paragraph.OwnerOfClass<IStText>().TagsOC)
+			foreach (var tag in Paragraph.OwnerOfClass<IStText>().TagsOC)
 			{
 				// skip invalid tags
 				// TODO: should these tags be cleaned up somewhere?
-				if (tag.BeginAnalysisIndex >= tag.BeginSegmentRA.AnalysesRS.Count || tag.EndAnalysisIndex >= tag.EndSegmentRA.AnalysesRS.Count
-					|| tag.BeginAnalysisIndex > tag.EndAnalysisIndex)
+				if (tag.BeginAnalysisIndex >= tag.BeginSegmentRA.AnalysesRS.Count || tag.EndAnalysisIndex >= tag.EndSegmentRA.AnalysesRS.Count || tag.BeginAnalysisIndex > tag.EndAnalysisIndex)
 				{
 					continue;
 				}
 				List<Annotation<ShapeNode>> beginSegment, endSegment;
-				if (!segments.TryGetValue(tag.BeginSegmentRA, out beginSegment) ||
-				    !segments.TryGetValue(tag.EndSegmentRA, out endSegment))
+				if (!segments.TryGetValue(tag.BeginSegmentRA, out beginSegment) || !segments.TryGetValue(tag.EndSegmentRA, out endSegment))
 				{
 					continue;
 				}
@@ -252,7 +239,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 				};
 				Shape.Annotations.Add(tagAnn, false);
 			}
-
 			return true;
 		}
 
@@ -349,13 +335,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 					}
 				}
 			}
-
-			if (fs != null && !fs.IsEmpty)
-			{
-				return GetFeatureStruct(featSys, fs);
-			}
-
-			return null;
+			return fs != null && !fs.IsEmpty ? GetFeatureStruct(featSys, fs) : null;
 		}
 
 		private static FeatureStruct GetFeatureStruct(FeatureSystem featSys, IFsFeatStruc fs)

@@ -17,9 +17,7 @@ using SIL.Xml;
 
 namespace LanguageExplorer.Controls.XMLViews
 {
-	/// <summary>
-	/// Summary description for ColumnConfigureDialg.
-	/// </summary>
+	/// <summary />
 	public class ColumnConfigureDialog : Form
 	{
 		private const string s_helpTopic = "khtpConfigureColumns";

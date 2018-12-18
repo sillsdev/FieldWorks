@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2011-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,13 +13,13 @@ using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.SfmToXml;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel;
-using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Resources;
+using SIL.LCModel;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -33,7 +33,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// Maps from writing system name to most recently selected encoding converter for that WS.
 		// Map of the information about which tags follow others, needed to count the number of resulting interlinear texts
 		// after the users mapping has been applied.
-		Dictionary<string, Dictionary<string, int>> followedBy = new Dictionary<string, Dictionary<string, int>>();
+		private Dictionary<string, Dictionary<string, int>> followedBy = new Dictionary<string, Dictionary<string, int>>();
 		private bool m_firstTimeInMappingsPane = true;
 
 		public InterlinearSfmImportWizard()
@@ -127,8 +127,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void m_browseLoadSettingsFileButon_Click(object sender, EventArgs e)
 		{
-			// Enahnce JohnT: possibly some validation of a mapping file?
-			m_loadSettingsFileBox.Text = GetFile(m_loadSettingsFileBox.Text, FirstInputFile, new[] { FileFilterType.ImportMapping, FileFilterType.AllFiles }, true,
+			// Enhance JohnT: possibly some validation of a mapping file?
+			m_loadSettingsFileBox.Text = GetFile(m_loadSettingsFileBox.Text, FirstInputFile, new[]{ FileFilterType.ImportMapping, FileFilterType.AllFiles }, true,
 				ITextStrings.ksSelectMapFile, path => true);
 		}
 
@@ -139,7 +139,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				openFileDialog.Filter = ResourceHelper.BuildFileFilter(FileFilterType.InterlinearSfm, FileFilterType.AllFiles);
 				openFileDialog.CheckFileExists = true;
 				openFileDialog.Multiselect = true; // can import multiple files
-
 				var files = SplitPaths(currentFiles);
 				var dir = string.Empty;
 				var initialFileName = string.Empty;
@@ -201,7 +200,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// path that contains spaces or commas. Paths can NOT contain quotes.
 		internal static string JoinPaths(string[] paths)
 		{
-			return string.Join(", ", paths.Select(x=> x.IndexOf(',') >= 0  || x.IndexOf(' ') >= 0? "\"" + x + "\"" : x));
+			return string.Join(", ", paths.Select(x => x.IndexOf(',') >= 0 || x.IndexOf(' ') >= 0 ? "\"" + x + "\"" : x));
 		}
 
 		// Split up a list in the format produced by JoinPaths. We need to handle pathological strings that could NOT be
@@ -214,7 +213,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			var results = new List<string>();
 			var remaining = input;
-			for (;;)
+			for (; ; )
 			{
 				var index = remaining.IndexOf('"');
 				if (index < 0)
@@ -232,7 +231,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					return results.ToArray();
 				}
 				results.Add(remaining.Substring(index + 1, nextQuote - index - 1));
-				remaining = remaining.Substring(nextQuote+1);
+				remaining = remaining.Substring(nextQuote + 1);
 			}
 		}
 
@@ -242,7 +241,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-			results.AddRange(remaining.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).Where(x => !string.IsNullOrWhiteSpace(x)));
+			results.AddRange(remaining.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).Where(x => !string.IsNullOrWhiteSpace(x)));
 		}
 
 		private string GetFile(string currentFile, string pathForInitialDirectory, FileFilterType[] types, bool checkFileExists, string title, Func<string, bool> isValidFile)
@@ -252,7 +251,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				openFileDialog.Filter = ResourceHelper.BuildFileFilter(types);
 				openFileDialog.CheckFileExists = checkFileExists;
 				openFileDialog.Multiselect = false;
-
 				var done = false;
 				while (!done)
 				{
@@ -278,7 +276,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					{
 						openFileDialog.FileName = string.Empty;
 					}
-
 					openFileDialog.Title = title;
 					if (openFileDialog.ShowDialog() == DialogResult.OK)
 					{
@@ -295,7 +292,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							case DialogResult.No:
 								continue;
 						}
-						break;	// exit with current still
+						break;  // exit with current still
 					}
 					done = true;
 				}
@@ -361,7 +358,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						}
 						else
 						{
-							mapping = new InterlinearMapping() {Marker = marker};
+							mapping = new InterlinearMapping() { Marker = marker };
 						}
 						mapping.Count = sfmcounts[marker].ToString();
 						m_mappings.Add(mapping);
@@ -389,7 +386,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					var vernToAdd = new ArrayList();
 					var analysToAdd = new ArrayList();
 					var textCount = CalculateTextCount(m_mappings, followedBy);
-					foreach(var mapping in m_mappings)
+					foreach (var mapping in m_mappings)
 					{
 						if (mapping.Destination == InterlinDestination.Ignored)
 						{
@@ -405,7 +402,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							}
 							//Show creation dialog for Vernacular
 							var result = MessageBox.Show(this, string.Format(ITextStrings.ksImportSFMInterlinNewVernac, ws), string.Format(ITextStrings.ksImportSFMInterlinNewWSTitle, ws), MessageBoxButtons.YesNo);
-							if(result == DialogResult.Yes)
+							if (result == DialogResult.Yes)
 							{
 								vernToAdd.Add(ws);
 							}
@@ -478,11 +475,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var headers = new HashSet<string>();
 			foreach (var interlinearMapping in mMappings)
 			{
-				if(interlinearMapping.Destination == InterlinDestination.Id ||
-				   interlinearMapping.Destination == InterlinDestination.Source ||
-				   interlinearMapping.Destination == InterlinDestination.Comment ||
-				   interlinearMapping.Destination == InterlinDestination.Title ||
-				   interlinearMapping.Destination == InterlinDestination.Abbreviation)
+				if (interlinearMapping.Destination == InterlinDestination.Id || interlinearMapping.Destination == InterlinDestination.Source
+					|| interlinearMapping.Destination == InterlinDestination.Comment || interlinearMapping.Destination == InterlinDestination.Title
+					|| interlinearMapping.Destination == InterlinDestination.Abbreviation)
 				{
 					headers.Add(interlinearMapping.Marker);
 				}
@@ -492,7 +487,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return 1;
 			}
-
 			//iterate through the data of markers and the counts of markers that follow them
 			foreach (var markerAndFollowing in dictionary)
 			{
@@ -502,7 +496,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					continue;
 				}
 				//every time a header marker is followed by a non header it is the start of a text.
-
 				//for every non header that follows a header marker add the occurence count to count.
 				foreach (var followingMarker in markerAndFollowing.Value)
 				{
@@ -734,8 +727,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal static string GetDestinationName(InterlinDestination dest)
 		{
-			var stid = "ksFld" + dest;
-			return ITextStrings.ResourceManager.GetString(stid) ?? dest.ToString();
+			return ITextStrings.ResourceManager.GetString("ksFld" + dest) ?? dest.ToString();
 		}
 
 		private void m_modifyMappingButton_Click(object sender, EventArgs e)
@@ -764,9 +756,21 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <returns></returns>
 		protected virtual IEnumerable<InterlinDestination> GetDestinationsFilter()
 		{
-			return new[] {InterlinDestination.Abbreviation, InterlinDestination.Baseline, InterlinDestination.Comment,
-						  InterlinDestination.FreeTranslation,InterlinDestination.Id, InterlinDestination.Ignored, InterlinDestination.LiteralTranslation,
-						  InterlinDestination.Note, InterlinDestination.ParagraphBreak, InterlinDestination.Reference, InterlinDestination.Source, InterlinDestination.Title };
+			return new[]
+			{
+				InterlinDestination.Abbreviation,
+				InterlinDestination.Baseline,
+				InterlinDestination.Comment,
+				InterlinDestination.FreeTranslation,
+				InterlinDestination.Id,
+				InterlinDestination.Ignored,
+				InterlinDestination.LiteralTranslation,
+				InterlinDestination.Note,
+				InterlinDestination.ParagraphBreak,
+				InterlinDestination.Reference,
+				InterlinDestination.Source,
+				InterlinDestination.Title
+			};
 		}
 
 		private void m_btnCancel_Click(object sender, EventArgs e)
@@ -879,7 +883,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							m_sfmUsage.Add(sfm, 1);
 							m_sfmOrder.Add(sfm);
 						}
-
 						// handle the marker and following counts
 						if (sfmLast != null)
 						{
@@ -905,7 +908,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 								};
 								MyFollowedByInfo[sfmLast] = markerHash;
 							}
-
 							// new logic with List container
 							var key = BuildKey(sfmLast, sfm);
 							FollowedByInfo fbi;
@@ -950,7 +952,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 				public override string ToString()
 				{
-					return First + $"{First}-{Last}-{Count}";
+					return $"{First}-{Last}-{Count}";
 				}
 			}
 		}

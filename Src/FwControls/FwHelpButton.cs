@@ -18,9 +18,7 @@ namespace SIL.FieldWorks.Common.Controls
 	[Designer(typeof(FwHelpButtonDesigner))]
 	public partial class FwHelpButton : UserControl
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FwHelpButton"/> class.
-		/// </summary>
+		/// <summary />
 		public FwHelpButton()
 		{
 			InitializeComponent();

@@ -12,9 +12,7 @@ using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-	/// <summary>
-	/// Summary description for SummaryCommandControl.
-	/// </summary>
+	/// <summary />
 	internal class SummaryCommandControl : UserControl
 	{
 		/// <summary>

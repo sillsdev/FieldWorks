@@ -9,9 +9,7 @@ namespace LanguageExplorer.images.Morphology
 #if RANDYTODO
 	// Q: Do I need to keep this? Nobody is directly using it.
 #endif
-	/// <summary>
-	/// Summary description for ImageHolder.
-	/// </summary>
+	/// <summary />
 	public class ImageHolder : UserControl
 	{
 		public ImageList largeImages;
@@ -20,18 +18,11 @@ namespace LanguageExplorer.images.Morphology
 		private Button button1;
 		private System.ComponentModel.IContainer components;
 
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ImageHolder"/> class.
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
+		/// <summary />
 		public ImageHolder()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
-
-			// TODO: Add any initialization after the InitForm call
-
 		}
 
 		/// -----------------------------------------------------------------------------------

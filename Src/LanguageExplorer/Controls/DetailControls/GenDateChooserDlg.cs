@@ -39,9 +39,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		private bool m_changingDate;
 		private string m_helpTopic = "khtpGenDateChooserDlg";
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="GenDateChooserDlg"/> class.
-		/// </summary>
+		/// <summary />
 		private GenDateChooserDlg()
 		{
 			InitializeComponent();
@@ -61,9 +59,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="GenDateChooserDlg"/> class.
-		/// </summary>
+		/// <summary />
 		public GenDateChooserDlg(IHelpTopicProvider helpTopicProvider) : this()
 		{
 			m_helpTopicProvider = helpTopicProvider;

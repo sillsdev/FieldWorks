@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,14 +12,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 {
 	public class LinkMSADlg : EntryGoDlg
 	{
-		#region Data members
-
 		private Label label3;
 		private FwComboBox m_fwcbFunctions;
 		private GroupBox groupBox1;
 		private GroupBox groupBox2;
-
-		#endregion Data members
 
 		#region Properties
 
@@ -43,7 +39,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 		{
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
-			ShowControlsBasedOnPanel1Position();	// used for sizing and display of some controls
+			ShowControlsBasedOnPanel1Position();    // used for sizing and display of some controls
 
 			m_btnInsert.Enabled = false;
 			m_btnHelp.Enabled = true;
@@ -56,9 +52,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 

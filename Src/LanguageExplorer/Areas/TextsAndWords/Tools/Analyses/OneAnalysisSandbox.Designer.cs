@@ -1,6 +1,8 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System.Diagnostics;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 {
@@ -9,9 +11,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-// ReSharper disable InconsistentNaming
 		private System.ComponentModel.IContainer components;
-// ReSharper restore InconsistentNaming
 
 		/// <summary>
 		/// Clean up any resources being used.
@@ -19,9 +19,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing && (components != null))
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
 			{
-				components.Dispose();
+				// No need to run it more than once.
+				return;
+			}
+
+			if (disposing)
+			{
+				components?.Dispose();
 			}
 			base.Dispose(disposing);
 		}

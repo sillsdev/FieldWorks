@@ -1,8 +1,9 @@
-// Copyright (c) 2013-2018 SIL International
+// Copyright (c) 2013-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
@@ -12,14 +13,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 {
 	public class ComplexConcTagDlg : Form
 	{
-		const string s_helpTopic = "khtpComplexConcTagDlg";
-
+		private const string s_helpTopic = "khtpComplexConcTagDlg";
 		private Button m_btnHelp;
 		private Button m_btnCancel;
 		private Button m_btnOK;
 		private HelpProvider m_helpProvider;
 		private TreeCombo m_tagComboBox;
-
 		private LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private ComplexConcTagNode m_node;
@@ -31,10 +30,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			AccessibleName = GetType().Name;
 		}
 
-		/// <summary/>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
 			base.Dispose(disposing);
 		}
 
@@ -42,18 +47,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 		{
 			m_cache = cache;
 			m_node = node;
-
 			m_tagComboBox.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
-
-			m_posPopupTreeManager = new PossibilityComboController(m_tagComboBox,
-									m_cache,
-									m_cache.LanguageProject.TextMarkupTagsOA,
-									m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle,
-									false,
-									propertyTable,
-									publisher,
-									propertyTable.GetValue<Form>(FwUtils.window));
-
+			m_posPopupTreeManager = new PossibilityComboController(m_tagComboBox, m_cache, m_cache.LanguageProject.TextMarkupTagsOA,
+				m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle, false, propertyTable, publisher, propertyTable.GetValue<Form>(FwUtils.window));
 			m_posPopupTreeManager.LoadPopupTree(m_node.Tag?.Hvo ?? 0);
 			m_helpTopicProvider = propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
 			m_helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;

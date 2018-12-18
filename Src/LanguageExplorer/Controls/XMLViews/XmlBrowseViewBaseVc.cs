@@ -25,9 +25,7 @@ using SIL.Xml;
 
 namespace LanguageExplorer.Controls.XMLViews
 {
-	/// <summary>
-	/// Summary description for XmlBrowseViewBaseVc.
-	/// </summary>
+	/// <summary />
 	internal class XmlBrowseViewBaseVc : XmlVc
 	{
 		#region Constants
@@ -136,9 +134,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			XmlBrowseViewBaseVcInit(cache, sda);
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:XmlBrowseViewBaseVc"/> class.
-		/// </summary>
+		/// <summary />
 		internal XmlBrowseViewBaseVc(XElement xnSpec, int madeUpFieldIdentifier, XmlBrowseViewBase xbv)
 			: this(xbv)
 		{

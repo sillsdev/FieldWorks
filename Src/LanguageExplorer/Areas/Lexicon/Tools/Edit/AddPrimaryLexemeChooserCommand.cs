@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,9 +18,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private readonly Form m_parentWindow;
 
 		/// <summary />
-		public AddPrimaryLexemeChooserCommand(LcmCache cache, bool fCloseBeforeExecuting,
-			string sLabel, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, ICmObject lexEntryRef, /* Why ICmObject? */
-			Form parentWindow)
+		public AddPrimaryLexemeChooserCommand(LcmCache cache, bool fCloseBeforeExecuting, string sLabel, IPropertyTable propertyTable,
+			IPublisher publisher, ISubscriber subscriber, ICmObject lexEntryRef, Form parentWindow)
 			: base(cache, fCloseBeforeExecuting, sLabel, propertyTable, publisher, subscriber)
 		{
 			m_lexEntryRef = lexEntryRef as ILexEntryRef;
@@ -55,16 +54,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					}
 					try
 					{
-						UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
-							LanguageExplorerResources.ksUndoCreatingEntry,
-							LanguageExplorerResources.ksRedoCreatingEntry,
-							Cache.ActionHandlerAccessor,
-							() =>
+						UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(LanguageExplorerResources.ksUndoCreatingEntry, LanguageExplorerResources.ksRedoCreatingEntry,
+							Cache.ActionHandlerAccessor, () =>
+						{
+							if (!m_lexEntryRef.ComponentLexemesRS.Contains(obj))
 							{
-								if (!m_lexEntryRef.ComponentLexemesRS.Contains(obj))
-									m_lexEntryRef.ComponentLexemesRS.Add(obj);
-								m_lexEntryRef.PrimaryLexemesRS.Add(obj);
-							});
+								m_lexEntryRef.ComponentLexemesRS.Add(obj);
+							}
+							m_lexEntryRef.PrimaryLexemesRS.Add(obj);
+						});
 					}
 					catch (ArgumentException)
 					{

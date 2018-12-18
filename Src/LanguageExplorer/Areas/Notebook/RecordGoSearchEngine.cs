@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -25,7 +25,7 @@ namespace LanguageExplorer.Areas.Notebook
 
 		protected override IEnumerable<ITsString> GetStrings(SearchField field, ICmObject obj)
 		{
-			var rec = (IRnGenericRec) obj;
+			var rec = (IRnGenericRec)obj;
 			switch (field.Flid)
 			{
 				case RnGenericRecTags.kflidTitle:
@@ -74,6 +74,11 @@ namespace LanguageExplorer.Areas.Notebook
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
 			base.Dispose(disposing);
 		}
 	}

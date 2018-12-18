@@ -9,9 +9,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 	/// <summary />
 	public partial class DiscardOptions : UserControl
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:DiscardOptions"/> class.
-		/// </summary>
+		/// <summary />
 		public DiscardOptions()
 		{
 			InitializeComponent();

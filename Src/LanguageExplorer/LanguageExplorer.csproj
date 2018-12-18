@@ -621,7 +621,6 @@
     <Compile Include="Areas\TextsAndWords\ParaChangeInfo.cs" />
     <Compile Include="Areas\TextsAndWords\RespellingMdc.cs" />
     <Compile Include="Areas\TextsAndWords\RespellingSda.cs" />
-    <Compile Include="Areas\TextsAndWords\RespellOccurrence.cs" />
     <Compile Include="Areas\TextsAndWords\RespellUndoAction.cs" />
     <Compile Include="Areas\TextsAndWords\TextAndWordsAreaMenuHelper.cs" />
     <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcordanceResources.Designer.cs">
@@ -2922,7 +2921,6 @@
     <Compile Include="Areas\TextsAndWords\ImportWordSetDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\BIRDInterlinearImporter.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\ChooseAnalysisHander.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\ChooseTextWritingSystemDlg.cs">
       <SubType>Form</SubType>
@@ -3090,7 +3088,7 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\SandboxBase.designer.cs">
       <DependentUpon>SandboxBase.cs</DependentUpon>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\GetRealAnalysisMethod.GetRealAnalysisMethod.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\GetRealAnalysisMethod.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\MorphemeBreaker.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\SandboxVc.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\Sfm2FlexText.cs" />

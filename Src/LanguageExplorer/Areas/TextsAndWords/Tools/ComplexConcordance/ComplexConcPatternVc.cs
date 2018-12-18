@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2018 SIL International
+// Copyright (c) 2013-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -21,14 +21,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 		// normal frags
 		public const int kfragPattern = 100;
 		public const int kfragNode = 101;
-
 		// variant frags
 		public const int kfragFeatureLine = 103;
 		public const int kfragNodeMax = 104;
 		public const int kfragNodeMin = 105;
 		public const int kfragOR = 106;
 		public const int kfragHash = 107;
-
 		// fake flids
 		public const int ktagType = -200;
 		public const int ktagForm = -201;
@@ -37,11 +35,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 		public const int ktagEntry = -204;
 		public const int ktagTag = -205;
 		public const int ktagInfl = -206;
-
 		private readonly ITsString m_infinity;
 		private readonly ITsString m_or;
 		private readonly ITsString m_hash;
-
 		private IDictionary<IFsFeatDefn, object> m_curInflFeatures;
 
 		public ComplexConcPatternVc(LcmCache cache, IPropertyTable propertyTable)
@@ -68,14 +64,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 					vwenv.MakeColumns(1, patternLen);
 					vwenv.OpenTableBody();
 					vwenv.OpenTableRow();
-
 					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderBottom, (int)FwTextPropVar.ktpvMilliPoint, 1000);
 					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.Gray));
 					vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalCenter);
 					vwenv.set_IntProperty((int)FwTextPropType.ktptPadBottom, (int)FwTextPropVar.ktpvMilliPoint, 2000);
 					vwenv.OpenTableCell(1, 1);
 					vwenv.OpenParagraph();
-					if (((ComplexConcPatternSda) vwenv.DataAccess).Root.IsLeaf)
+					if (((ComplexConcPatternSda)vwenv.DataAccess).Root.IsLeaf)
 					{
 						OpenSingleLinePile(vwenv, GetMaxNumLines(vwenv), false);
 						vwenv.Props = m_bracketProps;
@@ -88,12 +83,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 					}
 					vwenv.CloseParagraph();
 					vwenv.CloseTableCell();
-
 					vwenv.CloseTableRow();
 					vwenv.CloseTableBody();
 					vwenv.CloseTable();
 					break;
-
 				case kfragNode:
 					var node = ((ComplexConcPatternSda)vwenv.DataAccess).Nodes[hvo];
 					var maxNumLines = GetMaxNumLines(vwenv);
@@ -118,9 +111,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 							OpenSingleLinePile(vwenv, maxNumLines, false);
 							// use normal parentheses for a single line group
 							vwenv.AddProp(ktagLeftBoundary, this, kfragLeftParen);
-
 							vwenv.AddObjVecItems(ComplexConcPatternSda.ktagChildren, this, kfragNode);
-
 							vwenv.AddProp(hasMinMax ? ktagInnerNonBoundary : ktagRightBoundary, this, kfragRightParen);
 							if (hasMinMax)
 							{
@@ -141,9 +132,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 							}
 							vwenv.AddProp(ktagLeftBoundary, this, kfragLeftParenLowHook);
 							vwenv.CloseInnerPile();
-
 							vwenv.AddObjVecItems(ComplexConcPatternSda.ktagChildren, this, kfragNode);
-
 							vwenv.Props = m_bracketProps;
 							vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing, (int)FwTextPropVar.ktpvMilliPoint, PileMargin);
 							vwenv.OpenInnerPile();
@@ -170,9 +159,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 							OpenSingleLinePile(vwenv, maxNumLines, false);
 							// use normal brackets for a single line constraint
 							vwenv.AddProp(ktagLeftBoundary, this, kfragLeftBracket);
-
 							DisplayFeatures(vwenv, node);
-
 							vwenv.AddProp(hasMinMax ? ktagInnerNonBoundary : ktagRightBoundary, this, kfragRightBracket);
 							if (hasMinMax)
 							{
@@ -184,7 +171,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 						{
 							// left bracket pile
 							vwenv.Props = m_bracketProps;
-							vwenv.set_IntProperty((int) FwTextPropType.ktptMarginLeading, (int) FwTextPropVar.ktpvMilliPoint, PileMargin);
+							vwenv.set_IntProperty((int)FwTextPropType.ktptMarginLeading, (int)FwTextPropVar.ktpvMilliPoint, PileMargin);
 							vwenv.OpenInnerPile();
 							AddExtraLines(maxNumLines - numLines, ktagLeftNonBoundary, vwenv);
 							vwenv.AddProp(ktagLeftNonBoundary, this, kfragLeftBracketUpHook);
@@ -194,17 +181,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 							}
 							vwenv.AddProp(ktagLeftBoundary, this, kfragLeftBracketLowHook);
 							vwenv.CloseInnerPile();
-
 							// feature pile
-							vwenv.set_IntProperty((int) FwTextPropType.ktptAlign, (int) FwTextPropVar.ktpvEnum, (int) FwTextAlign.ktalLeft);
+							vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalLeft);
 							vwenv.OpenInnerPile();
 							AddExtraLines(maxNumLines - numLines, ktagInnerNonBoundary, vwenv);
 							DisplayFeatures(vwenv, node);
 							vwenv.CloseInnerPile();
-
 							// right bracket pile
 							vwenv.Props = m_bracketProps;
-							vwenv.set_IntProperty((int) FwTextPropType.ktptMarginTrailing, (int) FwTextPropVar.ktpvMilliPoint, PileMargin);
+							vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing, (int)FwTextPropVar.ktpvMilliPoint, PileMargin);
 							vwenv.OpenInnerPile();
 							AddExtraLines(maxNumLines - numLines, hasMinMax ? ktagInnerNonBoundary : ktagRightNonBoundary, vwenv);
 							vwenv.AddProp(hasMinMax ? ktagInnerNonBoundary : ktagRightNonBoundary, this, kfragRightBracketUpHook);
@@ -284,7 +269,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 							}
 							tss = CreateFeatureLine(ComplexConcordanceResources.ksComplexConcType, typeStr, m_cache.DefaultUserWs);
 							break;
-
 						case ktagForm:
 							ITsString form = null;
 							var formMorphNode = node as ComplexConcMorphNode;
@@ -303,7 +287,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 							Debug.Assert(form != null);
 							tss = CreateFeatureLine(ComplexConcordanceResources.ksComplexConcForm, form, false);
 							break;
-
 						case ktagEntry:
 							ITsString entry = null;
 							var entryMorphNode = node as ComplexConcMorphNode;
@@ -314,7 +297,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 							Debug.Assert(entry != null);
 							tss = CreateFeatureLine(ComplexConcordanceResources.ksComplexConcEntry, entry, false);
 							break;
-
 						case ktagGloss:
 							ITsString gloss = null;
 							var glossMorphNode = node as ComplexConcMorphNode;
@@ -333,7 +315,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 							Debug.Assert(gloss != null);
 							tss = CreateFeatureLine(ComplexConcordanceResources.ksComplexConcGloss, gloss, false);
 							break;
-
 						case ktagCategory:
 							IPartOfSpeech category = null;
 							var catNegated = false;
@@ -355,7 +336,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 							Debug.Assert(category != null);
 							tss = CreateFeatureLine(ComplexConcordanceResources.ksComplexConcCategory, category.Abbreviation.BestAnalysisAlternative, catNegated);
 							break;
-
 						case ktagTag:
 							ICmPossibility tagPoss = null;
 							var tagNode = node as ComplexConcTagNode;
@@ -366,11 +346,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 							Debug.Assert(tagPoss != null);
 							tss = CreateFeatureLine(ComplexConcordanceResources.ksComplexConcTag, tagPoss.Abbreviation.BestAnalysisAlternative, false);
 							break;
-
 						case ktagInfl:
 							tss = CreateFeatureLine(ComplexConcordanceResources.ksComplexConcInflFeatures, null, false);
 							break;
-
 						default:
 							var feature = m_curInflFeatures.Keys.Single(f => f.Hvo == tag);
 							if (feature is IFsComplexFeature)
@@ -391,20 +369,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 					var node1 = ((ComplexConcPatternSda)vwenv.DataAccess).Nodes[vwenv.CurrentObject()];
 					tss = node1.Maximum == -1 ? m_infinity : TsStringUtils.MakeString(node1.Maximum.ToString(CultureInfo.InvariantCulture), m_cache.DefaultUserWs);
 					break;
-
 				case kfragNodeMin:
 					var node2 = ((ComplexConcPatternSda)vwenv.DataAccess).Nodes[vwenv.CurrentObject()];
 					tss = TsStringUtils.MakeString(node2.Minimum.ToString(CultureInfo.InvariantCulture), m_cache.DefaultUserWs);
 					break;
-
 				case kfragOR:
 					tss = m_or;
 					break;
-
 				case kfragHash:
 					tss = m_hash;
 					break;
-
 				default:
 					tss = base.DisplayVariant(vwenv, tag, frag);
 					break;
@@ -493,7 +467,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 						vwenv.OpenParagraph();
 					}
 					vwenv.AddProp(kvp.Key.Hvo, this, kfragFeatureLine);
-					DisplayInflFeatures(vwenv, (IDictionary<IFsFeatDefn, object>) kvp.Value);
+					DisplayInflFeatures(vwenv, (IDictionary<IFsFeatDefn, object>)kvp.Value);
 					if (openPara)
 					{
 						vwenv.CloseParagraph();
@@ -530,13 +504,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 				}
 				vwenv.AddProp(ktagLeftBoundary, this, kfragLeftBracketLowHook);
 				vwenv.CloseInnerPile();
-
 				// feature pile
 				vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalLeft);
 				vwenv.OpenInnerPile();
 				DisplayInflFeatureLines(vwenv, inflFeatures, true);
 				vwenv.CloseInnerPile();
-
 				// right bracket pile
 				vwenv.Props = m_bracketProps;
 				vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing, (int)FwTextPropVar.ktpvMilliPoint, PileMargin);
@@ -592,17 +564,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 				{
 					numLines++;
 				}
-
 				if (morphNode.Entry != null)
 				{
 					numLines++;
 				}
-
 				if (morphNode.Gloss != null)
 				{
 					numLines++;
 				}
-
 				if (morphNode.Category != null)
 				{
 					numLines++;
@@ -610,7 +579,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 				numLines += GetNumLines(morphNode.InflFeatures);
 				return numLines;
 			}
-
 			var wordNode = node as ComplexConcWordNode;
 			if (wordNode != null)
 			{
@@ -619,12 +587,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 				{
 					numLines++;
 				}
-
 				if (wordNode.Gloss != null)
 				{
 					numLines++;
 				}
-
 				if (wordNode.Category != null)
 				{
 					numLines++;
@@ -632,7 +598,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 				numLines += GetNumLines(wordNode.InflFeatures);
 				return numLines;
 			}
-
 			var tagNode = node as ComplexConcTagNode;
 			if (tagNode != null)
 			{
@@ -644,22 +609,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 				return numLines;
 			}
 
-			if (!node.IsLeaf)
-			{
-				return node.Children.Max(n => GetNumLines(n));
-			}
-
-			return 1;
+			return !node.IsLeaf ? node.Children.Max(n => GetNumLines(n)) : 1;
 		}
 
-		private int GetNumLines(IDictionary<IFsFeatDefn, object> inflFeatures)
+		private static int GetNumLines(IDictionary<IFsFeatDefn, object> inflFeatures)
 		{
 			var num = 0;
 			foreach (var kvp in inflFeatures)
 			{
 				if (kvp.Key is IFsComplexFeature)
 				{
-					num += GetNumLines((IDictionary<IFsFeatDefn, object>) kvp.Value);
+					num += GetNumLines((IDictionary<IFsFeatDefn, object>)kvp.Value);
 				}
 				else
 				{

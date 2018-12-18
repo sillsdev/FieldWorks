@@ -49,9 +49,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public event FilterChangeHandler FilterChanged;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FilterBar"/> class.
-		/// </summary>
+		/// <summary />
 		public FilterBar(BrowseViewer bv, IApp app)
 		{
 			m_bv = bv;

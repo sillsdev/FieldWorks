@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,15 +7,13 @@ using System.Xml.XPath;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {
-	/// <summary>
-	/// Summary description for WordformGoDlg.
-	/// </summary>
+	/// <summary />
 	internal sealed class WordformGoDlg : BaseGoDlg
 	{
 		#region	Data members
@@ -85,7 +83,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			m_matchingObjectsBrowser.Initialize(m_cache, FwUtils.StyleSheetFromPropertyTable(PropertyTable), configNode, searchEngine);
 
 			// start building index
-			var wsObj = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
+			var wsObj = (CoreWritingSystemDefinition)m_cbWritingSystems.SelectedItem;
 			if (wsObj == null)
 			{
 				return;
@@ -100,7 +98,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		protected override void ResetMatches(string searchKey)
 		{
-			var wsObj = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
+			var wsObj = (CoreWritingSystemDefinition)m_cbWritingSystems.SelectedItem;
 			var wsSelHvo = wsObj?.Handle ?? 0;
 
 			string form;

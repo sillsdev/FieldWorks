@@ -1,3 +1,7 @@
+// Copyright (c) 2018-2019 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Diagnostics;
 using SIL.Code;
@@ -61,7 +65,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 
 			_lexiconAreaMenuHelper.Initialize();
 			_lexiconAreaMenuHelper.MyAreaWideMenuHelper.SetupToolsCustomFieldsMenu();
-			//MyBrowseViewContextMenuFactory.RegisterBrowseViewContextMenuCreatorMethod(AreaServices.mnuBrowseView, BrowseViewContextMenuCreatorMethod);
 		}
 		#endregion
 
@@ -79,7 +82,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 		{
 			Dispose(true);
 			// This object will be cleaned up by the Dispose method.
-			// Therefore, you should call GC.SupressFinalize to
+			// Therefore, you should call GC.SuppressFinalize to
 			// take this object off the finalization queue
 			// and prevent finalization code for this object
 			// from executing a second time.
@@ -91,17 +94,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (_isDisposed)
 			{
-				return; // No need to do it more than once.
+				// No need to run it more than once.
+				return;
 			}
 
 			if (disposing)
 			{
-				//_notebookAreaMenuHelper?.Dispose();
 				MyBrowseViewContextMenuFactory?.Dispose();
 			}
 			MyBrowseViewContextMenuFactory = null;
 			_majorFlexComponentParameters = null;
-			//_notebookAreaMenuHelper = null;
 
 			_isDisposed = true;
 		}

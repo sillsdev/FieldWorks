@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2018 SIL International
+// Copyright (c) 2013-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -55,7 +55,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 						group.Children.Add(alternation);
 						alternation = null;
 					}
-
 					var newNode = child.GeneratePattern(featSys);
 					if (inAlternation)
 					{
@@ -68,10 +67,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 					}
 				}
 			}
-
 			if (alternation != null)
-				group.Children.Add(alternation.Children.Count == 1 ? alternation.Children.First : alternation);
-
+			{
+				@group.Children.Add(alternation.Children.Count == 1 ? alternation.Children.First : alternation);
+			}
 			return AddQuantifier(group);
 		}
 
@@ -82,16 +81,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 				case NotifyCollectionChangedAction.Add:
 					AddNodes(e.NewItems.Cast<ComplexConcPatternNode>());
 					break;
-
 				case NotifyCollectionChangedAction.Remove:
 					RemoveNodes(e.OldItems.Cast<ComplexConcPatternNode>());
 					break;
-
 				case NotifyCollectionChangedAction.Replace:
 					RemoveNodes(e.OldItems.Cast<ComplexConcPatternNode>());
 					AddNodes(e.NewItems.Cast<ComplexConcPatternNode>());
 					break;
-
 				case NotifyCollectionChangedAction.Reset:
 					break;
 			}
@@ -105,7 +101,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			}
 		}
 
-		private void RemoveNodes(IEnumerable<ComplexConcPatternNode> nodes)
+		private static void RemoveNodes(IEnumerable<ComplexConcPatternNode> nodes)
 		{
 			foreach (var node in nodes)
 			{

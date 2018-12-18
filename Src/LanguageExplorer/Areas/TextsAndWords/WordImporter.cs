@@ -1,12 +1,12 @@
-// Copyright (c) 2002-2018 SIL International
+// Copyright (c) 2002-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
+using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Areas.TextsAndWords
@@ -42,7 +42,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			var wordforms = new Dictionary<string, IWfiWordform>();
 			using (TextReader reader = File.OpenText(path))
 			{
-// do timing tests; try doing readtoend() to one string and then parsing that; see if more efficient
+				// do timing tests; try doing readtoend() to one string and then parsing that; see if more efficient
 				// While there is a line to be read in the file
 				// REVIEW: can this be broken by a very long line?
 				// RR answer: Yes it can.
@@ -68,7 +68,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			var start = -1; // -1 means we're still looking for a word to start.
 			var length = 0;
 			var totalLengh = buffer.Length;
-			for(var i = 0; i < totalLengh; i++)
+			for (var i = 0; i < totalLengh; i++)
 			{
 				var isWordforming = m_ws.get_IsWordForming(buffer[i]);
 				if (isWordforming)
@@ -79,7 +79,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 						start = i;
 					}
 				}
-
 				if ((start <= -1) || (isWordforming && i != totalLengh - 1))
 				{
 					continue;

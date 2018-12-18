@@ -16,17 +16,13 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// </summary>
 	internal abstract class ReferenceSlice : FieldSlice
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ReferenceSlice"/> class.
-		/// </summary>
+		/// <summary />
 		protected ReferenceSlice(Control control)
 			: base(control)
 		{
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ReferenceSlice"/> class.
-		/// </summary>
+		/// <summary />
 		protected ReferenceSlice(Control control, LcmCache cache, ICmObject obj, int flid)
 			: base(control, cache, obj, flid)
 		{

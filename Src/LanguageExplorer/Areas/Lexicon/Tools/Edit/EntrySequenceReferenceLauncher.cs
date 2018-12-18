@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -36,8 +36,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
-
-			// TODO: Add any initialization after the InitializeComponent call
 		}
 
 		/// <summary />
@@ -49,20 +47,21 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
-			if( disposing )
+			if (disposing)
 			{
 				// Do this first, before setting m_fDisposing to true.
 				components?.Dispose();
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		/// <summary />
@@ -102,7 +101,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 							AddItem(dlg.SelectedObject);
 						}
 					}
-
 					break;
 				case LexEntryRefTags.kflidPrimaryLexemes:
 					var displayWs = "analysis vernacular";
@@ -117,7 +115,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					using (var chooser = new ReallySimpleListChooser(null, labels, "PrimaryLexemes", m_cache, ler.PrimaryLexemesRS, false, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 					{
 						chooser.HideDisplayUsageCheckBox();
-						chooser.SetObjectAndFlid(m_obj.Hvo, m_flid);	// may set TextParamHvo
+						chooser.SetObjectAndFlid(m_obj.Hvo, m_flid);    // may set TextParamHvo
 						chooser.Text = LanguageExplorerResources.ksChooseWhereToShowSubentry;
 						chooser.SetHelpTopic(Slice.GetChooserHelpTopicID());
 						chooser.InitializeExtras(null, PropertyTable, Publisher, Subscriber);
@@ -127,18 +125,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						{
 							return;
 						}
-
 						if (chooser.ChosenObjects != null)
 						{
 							SetItems(chooser.ChosenObjects);
 						}
 					}
-
 					break;
 				default:
 					var fieldName = m_obj.Cache.MetaDataCacheAccessor.GetFieldName(m_flid);
 					Debug.Assert(m_obj is ILexEntry || m_obj is ILexSense);
-					switch(fieldName)
+					switch (fieldName)
 					{
 						case "ComplexFormEntries":
 							using (var dlg = new EntryGoDlg())
@@ -154,8 +150,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 									try
 									{
 										UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoAddComplexForm, LanguageExplorerResources.ksRedoAddComplexForm,
-											m_obj.Cache.ActionHandlerAccessor,
-											() => ((ILexEntry)dlg.SelectedObject).AddComponent(m_obj));
+											m_obj.Cache.ActionHandlerAccessor, () => ((ILexEntry)dlg.SelectedObject).AddComponent(m_obj));
 									}
 									catch (ArgumentException)
 									{
@@ -182,23 +177,19 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void HandleChooserForBackRefs(string fieldName, bool fPropContainsEntryRefs)
 		{
-			var displayWs = "analysis vernacular";
+			const string displayWs = "analysis vernacular";
 			IEnumerable<ICmObject> options = m_obj is ILexEntry ? ((ILexEntry)m_obj).ComplexFormEntries : ((ILexSense)m_obj).ComplexFormEntries;
-			var oldValue = m_cache.GetManagedSilDataAccess().VecProp(m_obj.Hvo, m_flid)
-				.Select(hvo => m_cache.ServiceLocator.GetObject(hvo));
+			var oldValue = m_cache.GetManagedSilDataAccess().VecProp(m_obj.Hvo, m_flid).Select(hvo => m_cache.ServiceLocator.GetObject(hvo));
 			// We want a collection of LexEntries as the current values. If we're displaying lex entry refs we want their owners.
 			if (fPropContainsEntryRefs)
 			{
 				oldValue = from obj in oldValue select obj.Owner;
 			}
-
 			var labels = ObjectLabel.CreateObjectLabels(m_cache, options, m_displayNameProperty, displayWs);
-			using (var chooser = new ReallySimpleListChooser(null,
-				labels, fieldName, m_cache, oldValue,
-				false, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
+			using (var chooser = new ReallySimpleListChooser(null, labels, fieldName, m_cache, oldValue, false, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 			{
 				chooser.HideDisplayUsageCheckBox();
-				chooser.SetObjectAndFlid(m_obj.Hvo, m_flid);	// may set TextParamHvo
+				chooser.SetObjectAndFlid(m_obj.Hvo, m_flid);    // may set TextParamHvo
 				chooser.Text = fieldName == "Subentries" ? LanguageExplorerResources.ksChooseSubentries : LanguageExplorerResources.ksChooseVisibleComplexForms;
 				chooser.SetHelpTopic(Slice.GetChooserHelpTopicID() + "-CFChooser");
 				chooser.InitializeExtras(null, PropertyTable, Publisher, Subscriber);
@@ -214,10 +205,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				{
 					if (fPropContainsEntryRefs)
 					{
-						chosenObjects = from ILexEntry le in chosenObjects
-							from ler in le.EntryRefsOS
-							where ler.RefType == LexEntryRefTags.krtComplexForm
-							select (ICmObject) ler;
+						chosenObjects = chosenObjects.Cast<ILexEntry>().SelectMany(le => le.EntryRefsOS, (le, ler) => new { le, ler })
+							.Where(@t => @t.ler.RefType == LexEntryRefTags.krtComplexForm).Select(@t => (ICmObject)@t.ler);
 					}
 					SetItems(chosenObjects);
 				}
@@ -227,11 +216,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary>
 		/// Special means of adding objects to backref properties.
 		/// </summary>
-		/// <param name="objectsToAdd"></param>
 		protected override void AddNewObjectsToProperty(IEnumerable<ICmObject> objectsToAdd)
 		{
 			var fieldName = m_obj.Cache.MetaDataCacheAccessor.GetFieldName(m_flid);
-			// Note that the attempt to add to compoments may fail, due to creating a circular reference.
+			// Note that the attempt to add to components may fail, due to creating a circular reference.
 			// This is caught further out, outside the UOW, so the UOW will be properly rolled back.
 			switch (fieldName)
 			{
@@ -271,7 +259,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					{
 						// Don't add it twice!  See LT-12285.
 						if (!ler.ShowComplexFormsInRS.Contains(item))
+						{
 							ler.ShowComplexFormsInRS.Add(item);
+						}
 					}
 				}
 			}
@@ -284,13 +274,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			switch (fieldName)
 			{
 				case "VisibleComplexFormEntries":
-					ChangeItemsInLexEntryRefs(new [] {oldObj}, ler => ler.ShowComplexFormsInRS.Remove(m_obj));
+					ChangeItemsInLexEntryRefs(new[] { oldObj }, ler => ler.ShowComplexFormsInRS.Remove(m_obj));
 					break;
 				case "Subentries":
 					ChangeItemsInLexEntryRefs(new[] { oldObj }, ler => ler.PrimaryLexemesRS.Remove(m_obj));
 					break;
 				case "VisibleComplexFormBackRefs":
-					((ILexEntryRef) oldObj).ShowComplexFormsInRS.Remove(m_obj);
+					((ILexEntryRef)oldObj).ShowComplexFormsInRS.Remove(m_obj);
 					break;
 				default:
 					base.RemoveFromPropertyAt(index, oldObj);
@@ -308,10 +298,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				// We expect that item is a LexEntry which has a complex lex entry ref pointing at our
 				// m_obj. Find that LER and add item to the appropriate property using addItem.
-				var target = (from ler in ((ILexEntry) item).EntryRefsOS
-							  where ler.ComponentLexemesRS.Contains(m_obj) && ler.RefType == LexEntryRefTags.krtComplexForm
-							  select ler).First();
-					handleItem(target);
+				handleItem(((ILexEntry)item).EntryRefsOS.First(ler => ler.ComponentLexemesRS.Contains(m_obj) && ler.RefType == LexEntryRefTags.krtComplexForm));
 			}
 		}
 

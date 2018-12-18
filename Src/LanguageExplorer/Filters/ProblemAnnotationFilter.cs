@@ -18,11 +18,8 @@ namespace LanguageExplorer.Filters
 	{
 		private LcmCache m_cache;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ProblemAnnotationFilter"/> class.
-		/// </summary>
-		/// <remarks>must have a constructor with no parameters, to use with the dynamic loader
-		/// or IPersistAsXml</remarks>
+		/// <summary />
+		/// <remarks>must have a constructor with no parameters, to use with the dynamic loader or IPersistAsXml</remarks>
 		public ProblemAnnotationFilter()
 		{
 			ClassIds = new List<int>();

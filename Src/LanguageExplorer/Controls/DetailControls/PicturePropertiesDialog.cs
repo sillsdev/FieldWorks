@@ -68,9 +68,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		#endregion
 
 		#region Construction, initialization, and disposal
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:PicturePropertiesDialog"/> class.
-		/// </summary>
+		/// <summary />
 		/// <param name="cache">The LcmCache to use</param>
 		/// <param name="initialPicture">The CmPicture object to set all of the dialog
 		/// properties to, or null to edit a new picture</param>
@@ -81,9 +79,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:PicturePropertiesDialog"/> class.
-		/// </summary>
+		/// <summary />
 		/// <param name="cache">The LcmCache to use</param>
 		/// <param name="initialPicture">The CmPicture object to set all of the dialog
 		/// properties to, or null to edit a new picture</param>

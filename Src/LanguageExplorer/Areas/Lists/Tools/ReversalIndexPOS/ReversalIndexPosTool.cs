@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -118,12 +118,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			};
 			recordEditViewPaneBar.AddControls(new List<Control> { panelButton });
 
-			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(
-				majorFlexComponentParameters.FlexComponentParameters,
-				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				mainMultiPaneParameters,
-				_recordBrowseView, "Browse", browseViewPaneBar,
-				recordEditView, "Details", recordEditViewPaneBar);
+			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
+				mainMultiPaneParameters, _recordBrowseView, "Browse", browseViewPaneBar, recordEditView, "Details", recordEditViewPaneBar);
 
 			panelButton.MyDataTree = recordEditView.MyDataTree;
 
@@ -202,7 +198,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			var contextMenuStrip = new ContextMenuStrip();
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>();
 			var retVal = new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
-
 			if (_reversalIndexRepository == null)
 			{
 				_reversalIndexRepository = _cache.ServiceLocator.GetInstance<IReversalIndexRepository>();

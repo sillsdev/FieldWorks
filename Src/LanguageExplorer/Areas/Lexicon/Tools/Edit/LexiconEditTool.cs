@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -106,11 +106,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				ToolMachineName = MachineName,
 				FirstControlParameters = new SplitterChildControlParameters
 				{
-					Control = new XhtmlRecordDocView(XDocument.Parse(LexiconResources.LexiconEditRecordDocViewParameters).Root, majorFlexComponentParameters.LcmCache, _recordList, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip)), Label = "Dictionary"
+					Control = new XhtmlRecordDocView(XDocument.Parse(LexiconResources.LexiconEditRecordDocViewParameters).Root, majorFlexComponentParameters.LcmCache, _recordList, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip)),
+					Label = "Dictionary"
 				},
 				SecondControlParameters = new SplitterChildControlParameters
 				{
-					Control = recordEditView, Label = "Details"
+					Control = recordEditView,
+					Label = "Details"
 				}
 			};
 			var mainMultiPaneParameters = new MultiPaneParameters
@@ -137,9 +139,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			};
 			paneBar.AddControls(new List<Control> { panelMenu, panelButton });
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters,
-				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				mainMultiPaneParameters,
-				_recordBrowseView, "Browse", new PaneBar(),
+				majorFlexComponentParameters.MainCollapsingSplitContainer, mainMultiPaneParameters, _recordBrowseView, "Browse", new PaneBar(),
 				_innerMultiPane = MultiPaneFactory.CreateNestedMultiPane(majorFlexComponentParameters.FlexComponentParameters, nestedMultiPaneParameters), "Dictionary & Details", paneBar);
 			_innerMultiPane.Panel1Collapsed = !_propertyTable.GetValue<bool>(LexiconEditToolConstants.Show_DictionaryPubPreview);
 			_lexiconEditToolMenuHelper.InnerMultiPane = _innerMultiPane;
@@ -179,7 +179,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 		}
 
-#endregion
+		#endregion
 
 		#region Implementation of IMajorFlexUiComponent
 

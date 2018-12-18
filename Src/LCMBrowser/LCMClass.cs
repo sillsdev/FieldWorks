@@ -27,9 +27,7 @@ namespace LCMBrowser
 			InitPropsForType(m_classType);
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:LCMClass"/> class.
-		/// </summary>
+		/// <summary />
 		public LCMClass(Type type) : this(type.Name)
 		{
 			InitPropsForType(type);

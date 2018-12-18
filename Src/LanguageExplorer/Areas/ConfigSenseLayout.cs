@@ -1,13 +1,13 @@
-// Copyright (c) 2011-2018 SIL International
+// Copyright (c) 2011-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Windows.Forms;
 using System.Drawing.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.Styles;
 
@@ -38,9 +38,7 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		public event DisplaySenseInParaCheckedHandler DisplaySenseInParaChecked;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ConfigSenseLayout"/> class.
-		/// </summary>
+		/// <summary />
 		public ConfigSenseLayout()
 		{
 			InitializeComponent();
@@ -70,7 +68,7 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		private void FillNumberStyleComboList()
 		{
-			m_cbNumberStyle.Items.Add(new NumberingStyleComboItem(AreaResources.ksNone, ""));
+			m_cbNumberStyle.Items.Add(new NumberingStyleComboItem(AreaResources.ksNone, string.Empty));
 			m_cbNumberStyle.Items.Add(new NumberingStyleComboItem("1  1.2  1.2.3", "%O"));
 			m_cbNumberStyle.Items.Add(new NumberingStyleComboItem("1  b  iii", "%z"));
 		}
@@ -224,7 +222,6 @@ namespace LanguageExplorer.Areas
 		}
 
 		#region Event Handlers
-		// ReSharper disable InconsistentNaming
 
 		private void m_chkSenseParagraphStyle_CheckedChanged(object sender, EventArgs e)
 		{
@@ -288,7 +285,6 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
-		// ReSharper restore InconsistentNaming
 		#endregion
 	}
 }

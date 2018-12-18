@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -20,20 +20,17 @@ namespace LanguageExplorer.Areas
 	public partial class ExportTranslatedListsDlg : Form
 	{
 		private IPropertyTable m_propertyTable;
-		LcmCache m_cache;
-		string m_titleFrag;
-		string m_defaultExt;
-		string m_filter;
-		Dictionary<int, bool> m_excludedListFlids = new Dictionary<int, bool>();
+		private LcmCache m_cache;
+		private string m_titleFrag;
+		private string m_defaultExt;
+		private string m_filter;
+		private Dictionary<int, bool> m_excludedListFlids = new Dictionary<int, bool>();
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ExportTranslatedListsDlg"/> class.
-		/// </summary>
+		/// <summary />
 		public ExportTranslatedListsDlg()
 		{
 			InitializeComponent();
 			m_btnExport.Enabled = false;
-
 			// We don't want to deal with these lists, at least for now.
 			m_excludedListFlids.Add(MoMorphDataTags.kflidProdRestrict, true);
 			m_excludedListFlids.Add(ReversalIndexTags.kflidPartsOfSpeech, true);
@@ -55,7 +52,6 @@ namespace LanguageExplorer.Areas
 			m_titleFrag = titleFrag;
 			m_defaultExt = defaultExt;
 			m_filter = filter;
-
 			FillInLists();
 			FillInWritingSystems();
 		}
@@ -78,7 +74,7 @@ namespace LanguageExplorer.Areas
 					Debug.Assert(item is ListViewItem);
 					var lvi = item as ListViewItem;
 					Debug.Assert(lvi.Tag is CoreWritingSystemDefinition);
-					list.Add(((CoreWritingSystemDefinition) lvi.Tag).Handle);
+					list.Add(((CoreWritingSystemDefinition)lvi.Tag).Handle);
 				}
 				return list;
 			}

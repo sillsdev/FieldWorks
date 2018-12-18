@@ -15,9 +15,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private const string s_helpTopic = "khtpFilterRestrict";
 		private IHelpTopicProvider m_helpTopicProvider;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:SimpleDateMatchDlg"/> class.
-		/// </summary>
+		/// <summary />
 		public SimpleDateMatchDlg(IHelpTopicProvider helpTopicProvider)
 		{
 			InitializeComponent();

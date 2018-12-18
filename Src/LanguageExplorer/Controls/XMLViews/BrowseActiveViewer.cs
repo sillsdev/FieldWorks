@@ -25,13 +25,11 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// (the one the user clicked on); in this case, client should generate PropChanged as needed
 		/// to update the display. When the user does something like CheckAll, a list is sent; in this case,
 		/// AFTER invoking the event, the browse view does a Reconstruct, so generating PropChanged is not
-		/// necessary (or helpul, unless some other view also needs updating).
+		/// necessary (or helpful, unless some other view also needs updating).
 		/// </summary>
 		public event CheckBoxActiveChangedEventHandler CheckBoxActiveChanged;
 
-		/// <summary>
-		/// Initializes a new instance of the <see><cref>T:BrowseActiveViewer</cref></see> class.
-		/// </summary>
+		/// <summary />
 		public BrowseActiveViewer(XElement configParamsElement, int hvoRoot, LcmCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 			: base(configParamsElement, hvoRoot, cache, sortItemProvider, sda)
 		{

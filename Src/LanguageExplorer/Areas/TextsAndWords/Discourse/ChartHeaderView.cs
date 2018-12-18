@@ -1,8 +1,9 @@
-// Copyright (c) 2008-2018 SIL International
+// Copyright (c) 2008-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
@@ -37,10 +38,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -82,7 +83,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					return i;
 				}
 			}
-
 			return -1;
 		}
 
@@ -95,7 +95,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				return;
 			}
-
 			if (Controls.Count < 2)
 			{
 				return;
@@ -113,7 +112,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private void UpdatePositionsExceptNotes()
 		{
 			Controls[1].Left = NotesOnRight ? 1 : Controls[0].Width;
-
 			for (var i = 2; i < Controls.Count; i++)
 			{
 				Controls[i].Left = Controls[i - 1].Right;
@@ -166,7 +164,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				return;
 			}
-
 			var leftHeader = IndexOf(header);
 			if (m_origMouseLeft < 3)
 			{
@@ -185,7 +182,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				m_isResizingColumn = true;
 			}
-
 			m_origHeaderLeft = header.Left;
 			m_origMouseLeft = e.X;
 			m_notesWasOnRight = NotesOnRight;
@@ -199,7 +195,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private void OnColumnMouseMove(object sender, MouseEventArgs e)
 		{
 			var header = (Control)sender;
-			if ((e.X < 3 && header != this[0]) || (e.X > header.Width - 3))
+			if (e.X < 3 && header != this[0] || e.X > header.Width - 3)
 			{
 				header.Cursor = Cursors.VSplit;
 			}
@@ -207,7 +203,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				header.Cursor = DefaultCursor;
 			}
-
 			if (e.Button != MouseButtons.Left)
 			{
 				return;
@@ -229,19 +224,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private void ResizeColumn(Control header, MouseEventArgs e)
 		{
 			Control prevHeader;
-			int X;
+			int x;
 			if (m_origMouseLeft < 3)
 			{
 				prevHeader = this[IndexOf(header) - 1];
-				X = e.X + header.Left - prevHeader.Left;
+				x = e.X + header.Left - prevHeader.Left;
 			}
 			else
 			{
 				prevHeader = header;
-				X = e.X;
+				x = e.X;
 			}
-
-			prevHeader.Width = X;
+			prevHeader.Width = x;
 			if (prevHeader.Width < kColMinimumWidth)
 			{
 				prevHeader.Width = kColMinimumWidth;
@@ -290,11 +284,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				header.Left = m_origHeaderLeft;
 			}
-
 			m_isDraggingNotes = false;
 			m_isResizingColumn = false;
-
-
 			UpdatePositions();
 			if (m_notesWasOnRight != NotesOnRight)
 			{
@@ -302,7 +293,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				ColumnWidthChanged?.Invoke(this, new ColumnWidthChangedEventArgs(0));
 				m_chart.RefreshRoot();
 			}
-
 			header.ResumeLayout(false);
 			ResumeLayout(false);
 		}
@@ -324,12 +314,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
 			Cursor = e.X < this[Controls.Count - 1].Right + 3 ? Cursors.VSplit : Cursors.Default;
-
 			if (!m_isResizingColumn)
 			{
 				return;
 			}
-
 			var header = this[Controls.Count - 1];
 			header.Width = e.X - header.Left;
 			if (header.Width < kColMinimumWidth)

@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2018 SIL International
+// Copyright (c) 2013-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -55,7 +55,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 				var inflFeat = featSys.GetFeature<ComplexFeature>("infl");
 				fs.AddValue(inflFeat, GetFeatureStruct(featSys, m_inflFeatures));
 			}
-
 			var wordBdryFS = FeatureStruct.New(featSys).Symbol("bdry").Symbol("wordBdry").Value;
 			var group = new Group<ComplexConcParagraphData, ShapeNode>();
 			group.Children.Add(new Quantifier<ComplexConcParagraphData, ShapeNode>(0, 1, new Constraint<ComplexConcParagraphData, ShapeNode>(wordBdryFS))
@@ -67,7 +66,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			{
 				IsGreedy = false
 			});
-
 			return AddQuantifier(group);
 		}
 	}

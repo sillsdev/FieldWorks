@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,9 +10,7 @@ using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 {
-	/// <summary>
-	/// Summary description for ListExtension.
-	/// </summary>
+	/// <summary />
 	internal sealed class ReversalIndexPOSRecordList : ReversalListBase
 	{
 		internal const string ReversalEntriesPOS = "ReversalEntriesPOS";
@@ -39,7 +37,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			{
 				return null;
 			}
-
 			// A possibility list only allows one type of possibility to be owned in the list.
 			return m_cache.DomainDataByFlid.MetaDataCache.GetClassName(((ICmPossibilityList)m_owningObject).ItemClsid) != className ? null : m_insertableClasses.FirstOrDefault(cpi => cpi.signatureClassName == className);
 		}
@@ -49,7 +46,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		{
 			if (m_owningObject != null && m_owningObject.Hvo != hvo)
 			{
-				return;		// This PropChanged doesn't really apply to us.
+				return;     // This PropChanged doesn't really apply to us.
 			}
 			if (tag == m_flid)
 			{

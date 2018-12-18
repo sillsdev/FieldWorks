@@ -1,10 +1,10 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.LCModel;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using LanguageExplorer.Controls.DetailControls;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
@@ -17,7 +17,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private ICmObject m_displayParent;
 
 		public LexReferencePairVc(LcmCache cache, int flid, string displayNameProperty)
-			: base (cache, flid, displayNameProperty)
+			: base(cache, flid, displayNameProperty)
 		{
 		}
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -94,25 +94,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 #endif
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
 			var recordEditView = new RecordEditView(XElement.Parse(TextAndWordsResources.AnalysesRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordList, dataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
-			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(
-				majorFlexComponentParameters.FlexComponentParameters,
-				majorFlexComponentParameters.MainCollapsingSplitContainer,
+			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
 				new MultiPaneParameters
 				{
 					Orientation = Orientation.Vertical,
 					Area = _area,
 					Id = "WordsAndAnalysesMultiPane",
 					ToolMachineName = MachineName
-				},
-				_recordBrowseView, "WordList", new PaneBar(),
-				recordEditView, "SingleWord", new PaneBar());
-
+				}, _recordBrowseView, "WordList", new PaneBar(), recordEditView, "SingleWord", new PaneBar());
 			using (var gr = _multiPane.CreateGraphics())
 			{
-				_multiPane.Panel2MinSize = Math.Max((int)(180000 * gr.DpiX) / MiscUtils.kdzmpInch,
-						CollapsingSplitContainer.kCollapseZone);
+				_multiPane.Panel2MinSize = Math.Max((int)(180000 * gr.DpiX) / MiscUtils.kdzmpInch, CollapsingSplitContainer.kCollapseZone);
 			}
-
 			// Too early before now.
 			recordEditView.FinishInitialization();
 			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), false, SettingsGroup.LocalSettings))

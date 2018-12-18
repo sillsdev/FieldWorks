@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -46,7 +46,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				m_caches.DataAccess.SetInt(m_hvoSbWord, SandboxBase.ktagSbWordGlossGuess, 0);
 				m_caches.DataAccess.PropChanged(m_rootb, (int)PropChangeType.kpctNotifyAll, m_hvoSbWord, SandboxBase.ktagSbWordGlossGuess, 0, 1, 1);
 			}
-
 			m_sandbox.SelectAtEndOfWordGloss(-1);
 		}
 
@@ -64,13 +63,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				AddComboItems(ref hvoEmptyGloss, tsb, wa);
 			}
-			// TODO: Maybe this should merge invisibly with the current top of the undo stack? or start an
-			// invisible top?
+			// TODO: Maybe this should merge invisibly with the current top of the undo stack? Or start an invisible top?
 			using (var helper = new NonUndoableUnitOfWorkHelper(m_caches.MainCache.ActionHandlerAccessor))
 			{
 				var analMethod = m_sandbox.CreateRealWfiAnalysisMethod();
 				var anal = analMethod.Run();
-
 				helper.RollBack = false;
 				if (anal is IWfiAnalysis && anal.Guid != wa.Guid)
 				{
@@ -81,7 +78,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			ComboList.Items.Add(new HvoTssComboItem(hvoEmptyGloss, TsStringUtils.MakeString(ITextStrings.ksNewWordGloss2, m_caches.MainCache.DefaultUserWs)));
 			// Set combo selection to current selection.
 			ComboList.SelectedIndex = IndexOfCurrentItem;
-
 			// Enhance JohnT: if the analysts decide so, here we add all the other glosses from other analyses.
 		}
 
@@ -103,7 +99,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					{
 						tsb.Replace(tsb.Length, tsb.Length, ", ", null);
 					}
-
 					// Append a Ws label if there are more than one Ws.
 					if (wsids.Count > 1)
 					{
@@ -124,7 +119,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					tpbUserWs.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_wsUser);
 					tsb.Replace(tsb.Length, tsb.Length, ITextStrings.ksEmpty, tpbUserWs.GetTextProps());
 				}
-
 				ComboList.Items.Add(new HvoTssComboItem(gloss.Hvo, tsb.GetString()));
 				tsb.Clear();
 			}

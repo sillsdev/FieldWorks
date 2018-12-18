@@ -1,8 +1,9 @@
-// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.LexText;
@@ -59,8 +60,7 @@ namespace LanguageExplorer.Areas.Notebook
 
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
-
+			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
 			if (IsDisposed)
 			{
 				// No need to run more than once.
@@ -69,12 +69,9 @@ namespace LanguageExplorer.Areas.Notebook
 
 			if (disposing)
 			{
-				if (m_typePopupTreeManager != null)
-				{
-					m_typePopupTreeManager.Dispose();
-					m_typePopupTreeManager = null;
-				}
+				m_typePopupTreeManager?.Dispose();
 			}
+			m_typePopupTreeManager = null;
 
 			base.Dispose(disposing);
 		}
@@ -94,7 +91,6 @@ namespace LanguageExplorer.Areas.Notebook
 				m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(m_helpTopic));
 				m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			}
-
 			IVwStylesheet stylesheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable);
 			m_titleTextBox.StyleSheet = stylesheet;
 			m_titleTextBox.WritingSystemFactory = m_cache.WritingSystemFactory;
@@ -111,7 +107,6 @@ namespace LanguageExplorer.Areas.Notebook
 			m_typePopupTreeManager.LoadPopupTree(m_cache.ServiceLocator.GetObject(RnResearchNbkTags.kguidRecObservation).Hvo);
 			// Ensure that we start out focused in the Title text box.  See FWR-2731.
 			m_titleTextBox.Select();
-
 			if (tssTitle != null)
 			{
 				m_titleTextBox.Tss = tssTitle;
@@ -135,7 +130,6 @@ namespace LanguageExplorer.Areas.Notebook
 					MessageBox.Show(this, LexTextControls.ksFillInTitle, LexTextControls.ksMissingInformation, MessageBoxButtons.OK, MessageBoxIcon.Information);
 					return;
 				}
-
 				using (new WaitCursor(this))
 				{
 					UndoableUnitOfWorkHelper.Do(LexTextControls.ksUndoCreateRecord, LexTextControls.ksRedoCreateRecord, m_cache.ActionHandlerAccessor, () =>
@@ -148,7 +142,6 @@ namespace LanguageExplorer.Areas.Notebook
 							case RnResearchNbkTags.kClassId:
 								NewRecord = recFactory.Create((IRnResearchNbk)m_owner, m_titleTextBox.Tss, type);
 								break;
-
 							case RnGenericRecTags.kClassId:
 								NewRecord = recFactory.Create((IRnGenericRec)m_owner, m_titleTextBox.Tss, type);
 								break;

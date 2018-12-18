@@ -28,9 +28,7 @@ namespace LanguageExplorer.Controls
 		/// <summary> ws for multistring </summary>
 		public int m_ws;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LocationInfo"/> class.
-		/// </summary>
+		/// <summary />
 		/// <param name="location">The levels that indicate the view constructor hierarchy
 		/// leading to the location represented by this object.</param>
 		/// <param name="tag">The tag.</param>
@@ -43,9 +41,7 @@ namespace LanguageExplorer.Controls
 			m_cpropPrev = 0;
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LocationInfo"/> class.
-		/// </summary>
+		/// <summary />
 		/// <param name="helper">
 		/// The selection helper used to initialize this location.
 		/// </param>
@@ -58,9 +54,7 @@ namespace LanguageExplorer.Controls
 			m_ws = SelectionHelper.GetFirstWsOfSelection(helper.Selection);
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LocationInfo"/> class.
-		/// </summary>
+		/// <summary />
 		/// <param name="locationStack">The levels that indicate the view constructor
 		/// hierarchy leading to the location represented by this object.</param>
 		/// <param name="cPropPrev">The count of previous occurrences of the base item
@@ -77,9 +71,7 @@ namespace LanguageExplorer.Controls
 			m_location = CollectorEnv.ConvertVwEnvStackToSelLevInfo(locationStack, cPropPrev);
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LocationInfo"/> class.
-		/// </summary>
+		/// <summary />
 		/// <param name="locationStack">The levels that indicate the view constructor
 		/// hierarchy leading to the location represented by this object.</param>
 		/// <param name="cPropPrev">The count of previous occurrences of the base item

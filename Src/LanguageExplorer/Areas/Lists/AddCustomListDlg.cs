@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,9 +13,7 @@ namespace LanguageExplorer.Areas.Lists
 {
 	public class AddCustomListDlg : CustomListDlg
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:AddCustomListDlg"/> class.
-		/// </summary>
+		/// <summary />
 		public AddCustomListDlg(IPropertyTable propertyTable, IPublisher publisher, LcmCache cache)
 			: base(propertyTable, publisher, cache)
 		{
@@ -48,7 +46,6 @@ namespace LanguageExplorer.Areas.Lists
 			{
 				throw new ArgumentException("Don't call this without a publisher and a cache.");
 			}
-
 			// This checks that we aren't creating a list with the same name as another list
 			// but it doesn't always look like it because the name in the list and on FLEx (in Lists area)
 			// aren't necessarily the same (e.g. Text Chart Markers is actually Chart Markers in the file).
@@ -64,7 +61,6 @@ namespace LanguageExplorer.Areas.Lists
 				var listName = m_lmscListName.Value(ws);
 				NewList = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().CreateUnowned(listName.Text, ws);
 				SetAllMultiAlternatives(NewList.Name, m_lmscListName);
-
 				// Set various properties of CmPossibilityList
 				NewList.DisplayOption = (int)DisplayBy;
 				NewList.PreventDuplicates = !AllowDuplicate;

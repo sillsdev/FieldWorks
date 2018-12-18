@@ -1,15 +1,17 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.Code;
 using SIL.FieldWorks.Common.Controls;
-using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
+using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -33,27 +35,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected TextsTriStateTreeView m_treeTexts;
 		/// <summary>Label for the tree view.</summary>
 		protected Label m_treeViewLabel;
-		//		private IContainer components;
 		/// <remarks>protected because of testing</remarks>
 		protected Button m_btnOK;
-		private System.ComponentModel.IContainer components;
+		private IContainer components;
 		#endregion
 
 		#region Constructor/Destructor
-		/// <summary>
-		/// Initializes a new instance of the <see cref="FilterAllTextsDialog"/> class.
-		/// </summary>
+
+		/// <summary />
 		protected FilterAllTextsDialog()
 		{
-			//
-			// Required for Windows Form Designer support
-			//
 			InitializeComponent();
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the FilterAllTextsDialog class.
-		/// </summary>
+		/// <summary />
 		protected FilterAllTextsDialog(IApp app, LcmCache cache, IStText[] objList, IHelpTopicProvider helpTopicProvider) : this()
 		{
 			Guard.AgainstNull(app, nameof(app));
@@ -72,7 +67,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary/>
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
 			if (disposing)
 			{
 				components?.Dispose();
@@ -85,6 +86,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// Load whatever texts this control is managing
 		/// </summary>
 		protected abstract void LoadTexts();
+
 		/// <summary>
 		/// Load settings for the dialog
 		/// </summary>
@@ -97,7 +99,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			LoadTexts();
 			m_treeTexts.ExpandToBooks();
 			m_treeTexts.EndUpdate();
-
 			if (m_btnOK == null || m_objList == null)
 			{
 				return;
@@ -107,7 +108,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				m_treeTexts.CheckNodeByTag(obj, TriStateTreeViewCheckState.Checked);
 			}
-
 			if (prevSeqCount != m_cache.ActionHandlerAccessor.UndoableSequenceCount)
 			{
 				// Selecting node(s) changed something, so save it so that the UI doesn't become
@@ -124,7 +124,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					});
 				}
 			}
-
 			UpdateButtonState();
 		}
 

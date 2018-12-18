@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,11 +15,11 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
-using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Utils;
 using Rect = SIL.FieldWorks.Common.ViewsInterfaces.Rect;
 
@@ -263,7 +263,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		internal ISharedEventHandlers SharedEventHandlers => _sharedEventHandlers;
+		internal ISharedEventHandlers SharedEventHandlers { get; private set; }
 
 		internal InterlinLineChoices InterlinLineChoices { get; set; }
 
@@ -751,8 +751,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// for example, automatically setting the correct keyboard.
 			WritingSystemFactory = cache.LanguageWritingSystemFactoryAccessor;
 			Caches.CreateSecCache();
-			_sharedEventHandlers = sharedEventHandlers;
-			_sharedEventHandlers.Add(AreaServices.SandboxJumpToTool, SandboxJumpToTool_Clicked);
+			SharedEventHandlers = sharedEventHandlers;
+			SharedEventHandlers.Add(AreaServices.SandboxJumpToTool, SandboxJumpToTool_Clicked);
 			InterlinLineChoices = choices;
 			m_stylesheet = ss; // this is really redundant now it inherits a StyleSheet property.
 			StyleSheet = ss;
@@ -3223,7 +3223,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private bool _undoEnabled;
 		private string _redoText;
 		private bool _redoEnabled;
-		private ISharedEventHandlers _sharedEventHandlers;
 
 		protected override void Select(bool directed, bool forward)
 		{

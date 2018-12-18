@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -67,7 +67,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				UndoableUnitOfWorkHelper.Do(sUndo, sRedo, m_obj, () =>
 				{
 					var ent = m_obj as ILexEntry;
-
 					// Adapted from part of DtMenuHandler.AddNewLexEntryRef.
 					var ler = ent.Services.GetInstance<ILexEntryRefFactory>().Create();
 					ent.EntryRefsOS.Add(ler);
@@ -84,9 +83,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						// The slice this is part of should only be displayed for lex entries with no ComplexEntryRefs.
 						Debug.Assert(!ent.ComplexFormEntryRefs.Any());
 						ler.RefType = LexEntryRefTags.krtComplexForm;
-						ler.HideMinorEntry = 0; // LT-10928
-												// Logic similar to this is in EntrySequenceReferenceLauncher.AddNewObjectsToProperty()
-												// (when LER already exists so slice is not ghost)
+						// LT-10928
+						ler.HideMinorEntry = 0;
+						// Logic similar to this is in EntrySequenceReferenceLauncher.AddNewObjectsToProperty()
+						// (when LER already exists so slice is not ghost)
 						ler.PrimaryLexemesRS.Add(newObj);
 						// Since it's a new LER, we can't know it to be a derivative, so by default it is visible.
 						// but do NOT do that here, it's now built into the process of adding it to PrimaryLexemes,

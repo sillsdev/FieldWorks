@@ -21,9 +21,7 @@ namespace LCMBrowser
 		private readonly IFwMetaDataCacheManaged m_mdc;
 		private int m_sortCol;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ModelWnd"/> class.
-		/// </summary>
+		/// <summary />
 		public ModelWnd()
 		{
 			InitializeComponent();

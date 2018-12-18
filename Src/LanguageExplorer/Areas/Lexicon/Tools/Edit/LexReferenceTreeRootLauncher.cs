@@ -1,19 +1,18 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Windows.Forms;
 using System.Diagnostics;
-using SIL.LCModel;
+using System.Linq;
+using System.Windows.Forms;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.LexText;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
-	/// <summary>
-	/// Summary description for LexReferenceTreeRootLauncher.
-	/// </summary>
+	/// <summary />>
 	/// <remarks>
 	/// A test derives from this class, so it can't be made sealed.
 	/// </remarks>
@@ -41,15 +40,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				var lrt = lr.Owner as ILexRefType;
 				var objToLink = GetChildObject();
 				// See if there is another existing relation of the same type with the desired 'whole'.
-				ILexReference newRef = null;
-				foreach (var lr1 in lrt.MembersOC)
-				{
-					if (lr1.TargetsRS.Count > 0 && lr1.TargetsRS[0] == value)
-					{
-						newRef = lr1;
-						break;
-					}
-				}
+				var newRef = lrt.MembersOC.FirstOrDefault(lr1 => lr1.TargetsRS.Count > 0 && lr1.TargetsRS[0] == value);
 				if (newRef == null)
 				{
 					// No existing relationship to join
@@ -65,7 +56,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						return; // must not try to insert into newRef.
 					}
 					// There are other parts in the relation.
-					// We need to remove ourself from the relation and create a new one for the new relationship.
+					// We need to remove our self from the relation and create a new one for the new relationship.
 					lr.TargetsRS.Remove(objToLink);
 					newRef = lrt.Services.GetInstance<ILexReferenceFactory>().Create();
 					lrt.MembersOC.Add(newRef);
@@ -111,7 +102,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				owningSlice = parent as LexReferenceTreeRootSlice;
 			}
-
 			if (owningSlice == null)
 			{
 				throw new FwConfigurationException("LexReferenceTreeRootLauncher must be a child of a LexReferenceTreeRootSlice");
@@ -177,18 +167,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary />
 		public override void AddItem(ICmObject obj)
 		{
-			string undoStr, redoStr;
-			if (Target == null)
-			{
-				undoStr = LanguageExplorerResources.ksUndoAddRef;
-				redoStr = LanguageExplorerResources.ksRedoAddRef;
-			}
-			else
-			{
-				undoStr = LexiconResources.ksUndoReplaceRef;
-				redoStr = LexiconResources.ksRedoReplaceRef;
-			}
-			AddItem(obj, undoStr, redoStr);
+			AddItem(obj, Target == null ? LanguageExplorerResources.ksUndoAddRef : LexiconResources.ksUndoReplaceRef, Target == null ? LanguageExplorerResources.ksRedoAddRef : LexiconResources.ksRedoReplaceRef);
 		}
 
 		#region Component Designer generated code

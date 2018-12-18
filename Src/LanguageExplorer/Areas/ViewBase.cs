@@ -1,10 +1,11 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -37,8 +38,10 @@ namespace LanguageExplorer.Areas
 		/// Optional information bar above the main control.
 		/// </summary>
 		protected UserControl m_informationBar;
-		/// <summary/>
-		protected int m_madeUpFieldIdentifier; // the list
+		/// <summary>
+		/// the list
+		/// </summary>
+		protected int m_madeUpFieldIdentifier;
 		/// <summary>
 		/// This is used to keep us from responding to messages that we get while
 		/// we are still trying to get initialized.
@@ -52,24 +55,7 @@ namespace LanguageExplorer.Areas
 		/// Last known parent that is a MultiPane.
 		/// </summary>
 		private MultiPane m_mpParent;
-		///// <summary>
-		///// Right-click menu for deleting Custom lists.
-		///// </summary>
-		//private ContextMenuStrip m_contextMenu;
-		///// <summary>
-		///// Keeps track of when the context menu last closed.
-		///// </summary>
-		//private long m_ticksWhenContextMenuClosed = 0;
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
-
-		/// <summary>
-		/// Caches the RecordList.
-		/// </summary>
-		private IRecordList m_recordList;
-
+		private Container components = null;
 		/// <summary>
 		/// Sometimes an active record list (eg., in a view) is repurposed (eg., in a dialog for printing).
 		/// When finished, recordList.BecomeInactive() is called, but that causes records not to be shown
@@ -124,23 +110,15 @@ namespace LanguageExplorer.Areas
 		#endregion
 
 		#region Consruction and disposal
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ViewBase"/> class.
-		/// </summary>
+		/// <summary />
 		protected ViewBase()
 		{
 			m_fullyInitialized = false;
-
-			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
-
-
-			AccNameDefault = "ViewBase";		// default accessibility name
+			AccNameDefault = "ViewBase";
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ViewBase"/> class.
-		/// </summary>
+		/// <summary />
 		protected ViewBase(XElement configurationParametersElement, LcmCache cache, IRecordList recordList)
 			: this()
 		{
@@ -152,37 +130,40 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
-			if( disposing )
+			if (disposing)
 			{
 				components?.Dispose();
-				if (m_recordList != null && !m_haveActiveRecordList)
+				if (MyRecordList != null && !m_haveActiveRecordList)
 				{
 					m_haveActiveRecordList = false;
 				}
 #if RANDYTODO
 				// Block for now.
 				if (m_mpParent != null)
+				{
 					m_mpParent.ShowFirstPaneChanged -= mp_ShowFirstPaneChanged;
+				}
 #endif
 			}
 			m_informationBar = null; // Should be disposed automatically, since it is in the Controls collection.
 			m_mpParent = null;
-			m_recordList = null;
+			MyRecordList = null;
 
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
-#endregion // Consruction and disposal
+		#endregion // Consruction and disposal
 
-#region Properties
+		#region Properties
 
 		/// <summary>
 		/// LCM cache.
@@ -194,18 +175,7 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public IRecordList MyRecordList
-		{
-			get
-			{
-				return m_recordList;
-			}
-			set
-			{
-				// allow parent controls to pass in the record list we want this control to use.
-				m_recordList = value;
-			}
-		}
+		public IRecordList MyRecordList { get; set; }
 
 		public IPaneBar MainPaneBar
 		{
@@ -228,9 +198,9 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
-#endregion Properties
+		#endregion Properties
 
-#region IMainContentControl implementation
+		#region IMainContentControl implementation
 
 		/// <summary>
 		/// From IMainContentControl
@@ -244,20 +214,19 @@ namespace LanguageExplorer.Areas
 		public string AreaName => PropertyTable.GetValue<string>(AreaServices.AreaChoice);
 		#endregion // IMainContentControl implementation
 
-#region ICtrlTabProvider implementation
+		#region ICtrlTabProvider implementation
 
 		public virtual Control PopulateCtrlTabTargetCandidateList(List<Control> targetCandidates)
 		{
 			Guard.AgainstNull(targetCandidates, nameof(targetCandidates));
 
 			targetCandidates.Add(this);
-
 			return ContainsFocus ? this : null;
 		}
 
-#endregion  ICtrlTabProvider implementation
+		#endregion  ICtrlTabProvider implementation
 
-#region Component Designer generated code
+		#region Component Designer generated code
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
@@ -273,9 +242,9 @@ namespace LanguageExplorer.Areas
 			this.ResumeLayout(false);
 
 		}
-#endregion
+		#endregion
 
-#region Other methods
+		#region Other methods
 
 		protected virtual void AddPaneBar()
 		{
@@ -288,7 +257,6 @@ namespace LanguageExplorer.Areas
 			{
 				return sToTrim;
 			}
-
 			var sPixelWidth = GetWidthOfStringInPixels(sToTrim);
 			var avgPxPerChar = sPixelWidth / Convert.ToSingle(sToTrim.Length);
 			var charsAllowed = Convert.ToInt32(pixelWidthAllowed / avgPxPerChar);
@@ -296,12 +264,12 @@ namespace LanguageExplorer.Areas
 			{
 				return string.Empty;
 			}
-			return sPixelWidth < pixelWidthAllowed ? sToTrim : sToTrim.Substring(0, charsAllowed-4) + kEllipsis;
+			return sPixelWidth < pixelWidthAllowed ? sToTrim : sToTrim.Substring(0, charsAllowed - 4) + kEllipsis;
 		}
 
 		private int GetWidthOfStringInPixels(string sInput)
 		{
-			using(var g = Graphics.FromHwnd(Handle))
+			using (var g = Graphics.FromHwnd(Handle))
 			{
 				return Convert.ToInt32(g.MeasureString(sInput, TitleBarFont).Width);
 			}
@@ -329,7 +297,7 @@ namespace LanguageExplorer.Areas
 			var titleStr = string.Empty;
 			// See if we have an AlternativeTitle string table id for an alternate title.
 			var titleId = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "altTitleId");
-			if(titleId != null)
+			if (titleId != null)
 			{
 				titleStr = StringTable.Table.GetString(titleId, "AlternativeTitles");
 				if (MyRecordList.OwningObject != null && XmlUtils.GetBooleanAttributeValue(m_configurationParametersElement, "ShowOwnerShortname"))
@@ -339,7 +307,7 @@ namespace LanguageExplorer.Areas
 					titleStr = string.Format(AreaResources.ksXReversalIndex, MyRecordList.OwningObject.ShortName, titleStr);
 				}
 			}
-			else if(MyRecordList.OwningObject != null)
+			else if (MyRecordList.OwningObject != null)
 			{
 				if (XmlUtils.GetBooleanAttributeValue(m_configurationParametersElement, "ShowOwnerShortname"))
 				{
@@ -352,23 +320,18 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// When our parent changes, we may need to re-evaluate whether to show our info bar.
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnParentChanged(EventArgs e)
 		{
-			base.OnParentChanged (e);
-
+			base.OnParentChanged(e);
 			if (Parent == null)
 			{
 				return;
 			}
-
 			var mp = Parent as MultiPane ?? Parent.Parent as MultiPane;
-
 			if (mp == null)
 			{
 				return;
 			}
-
 			var suppress = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "suppressInfoBar", "false");
 			if (suppress == "ifNotFirst")
 			{
@@ -449,13 +412,13 @@ namespace LanguageExplorer.Areas
 			((IPaneBar)m_informationBar).Text = className;
 		}
 
-#endregion Other methods
+		#endregion Other methods
 
-#region Event handlers
+		#region Event handlers
 
 		private void mp_ShowFirstPaneChanged(object sender, EventArgs e)
 		{
-			var mpSender = (MultiPane) sender;
+			var mpSender = (MultiPane)sender;
 
 			var fWantInfoBar = (this == mpSender.FirstVisibleControl);
 			if (fWantInfoBar && m_informationBar == null)
@@ -483,8 +446,7 @@ namespace LanguageExplorer.Areas
 			return true;//we handled this, no need to ask anyone else.
 		}
 
-		public bool OnDisplayExport(object commandObject,
-			ref UIItemDisplayProperties display)
+		public bool OnDisplayExport(object commandObject, ref UIItemDisplayProperties display)
 		{
 			string areaChoice = m_propertyTable.GetValue<string>(AreaServices.AreaChoice);
 			bool inFriendlyTerritory = (areaChoice == AreaServices.InitialAreaMachineName

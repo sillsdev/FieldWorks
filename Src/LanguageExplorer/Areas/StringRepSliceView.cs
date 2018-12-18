@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,14 +19,13 @@ namespace LanguageExplorer.Areas
 {
 	internal class StringRepSliceView : RootSiteControl, INotifyControlInCurrentSlice
 	{
-		IPhEnvironment m_env;
-		int m_hvoObj;
-		StringRepSliceVc m_vc = null;
+		private IPhEnvironment m_env;
+		private int m_hvoObj;
+		private StringRepSliceVc m_vc;
 		private PhonEnvRecognizer m_validator;
 		private ISharedEventHandlers _sharedEventHandlers;
 		private ContextMenuStrip _mnuEnvChoices;
 		private List<Tuple<ToolStripMenuItem, EventHandler>> _menuItems;
-
 
 		public StringRepSliceView(ISharedEventHandlers sharedEventHandlers, int hvo)
 		{
@@ -44,9 +43,10 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -58,7 +58,7 @@ namespace LanguageExplorer.Areas
 
 			m_env = null;
 			m_vc = null;
-			m_validator = null; // TODO: Make m_validator disposable?
+			m_validator = null;
 		}
 
 		#region INotifyControlInCurrentSlice implementation
@@ -78,7 +78,6 @@ namespace LanguageExplorer.Areas
 				{
 					return;
 				}
-
 				if (!value)
 				{
 					DoValidation(true); // JohnT: do we really always want a Refresh? Trying to preserve the previous behavior...
@@ -138,16 +137,12 @@ namespace LanguageExplorer.Areas
 			{
 				return;
 			}
-
 			// A crude way of making sure the property we want is loaded into the cache.
 			m_env = m_cache.ServiceLocator.GetInstance<IPhEnvironmentRepository>().GetObject(m_hvoObj);
 			m_vc = new StringRepSliceVc();
-
 			base.MakeRoot();
-
 			// And maybe this too, at least by default?
 			RootBox.DataAccess = m_cache.MainCacheAccessor;
-
 			// arg3 is a meaningless initial fragment, since this VC only displays one thing.
 			// arg4 could be used to supply a stylesheet.
 			RootBox.SetRootObject(m_hvoObj, m_vc, StringRepSliceVc.Flid, null);
@@ -275,10 +270,8 @@ namespace LanguageExplorer.Areas
 				{
 					popupMenuItemTuple.Item1.Click -= popupMenuItemTuple.Item2;
 				}
-
 				_menuItems.Clear();
 				_mnuEnvChoices.Dispose();
-
 				_menuItems = null;
 				_mnuEnvChoices = null;
 			}
@@ -291,13 +284,9 @@ namespace LanguageExplorer.Areas
 				Name = AreaServices.mnuEnvChoices
 			};
 			_menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(7);
-
 			AreaWideMenuHelper.CreateShowEnvironmentErrorMessageMenus(_sharedEventHandlers, MySlice, _menuItems, _mnuEnvChoices);
-
 			AreaWideMenuHelper.CreateCommonEnvironmentMenus(_sharedEventHandlers, MySlice, _menuItems, _mnuEnvChoices);
-
 			_mnuEnvChoices.Show(new Point(Cursor.Position.X, Cursor.Position.Y));
-
 			return true;
 		}
 		#endregion

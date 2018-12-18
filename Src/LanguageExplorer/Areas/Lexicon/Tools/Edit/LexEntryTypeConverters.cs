@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,9 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using LanguageExplorer.UtilityTools;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.UtilityTools;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
@@ -111,12 +111,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var contents = m_cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities.Where(lexEntryType => lexEntryType.ClassID == classId);
 			var persistProvider = m_dlg.PropertyTable.GetValue<IPersistenceProvider>("persistProvider");
 			var fieldName = StringTable.Table.GetString("VariantEntryTypes", "PossibilityListItemTypeNames");
-			return new SimpleListChooser(persistProvider,
-				labels,
-				fieldName,
-				m_cache,
-				contents,
-				m_dlg.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider));
+			return new SimpleListChooser(persistProvider, labels, fieldName, m_cache, contents, m_dlg.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider));
 		}
 
 		/// <summary />
@@ -131,10 +126,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			entry.EntryRefsOS.Add(ler);
 			m_flid = LexEntryRefTags.kflidVariantEntryTypes;
 			m_obj = ler;
-			var labels = ObjectLabel.CreateObjectLabels(m_cache,
-				m_obj.ReferenceTargetCandidates(m_flid),
-				"LexEntryType" /*"m_displayNameProperty*/,
-				"best analysis");
+			var labels = ObjectLabel.CreateObjectLabels(m_cache, m_obj.ReferenceTargetCandidates(m_flid), "LexEntryType", "best analysis");
 			using (var chooser = GetChooser(labels, targetClassId))
 			{
 				chooser.Cache = m_cache;

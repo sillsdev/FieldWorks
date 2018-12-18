@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -92,12 +92,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 			};
 			paneBar.AddControls(new List<Control> { panelButton });
 
-			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(
-				majorFlexComponentParameters.FlexComponentParameters,
-				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				mainMultiPaneParameters,
-				_recordBrowseView, "Browse", new PaneBar(),
-				recordEditView, "Details", paneBar);
+			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
+				mainMultiPaneParameters, _recordBrowseView, "Browse", new PaneBar(), recordEditView, "Details", paneBar);
 
 			panelButton.MyDataTree = recordEditView.MyDataTree;
 
@@ -179,9 +175,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
               <recordList owner="MsFeatureSystem" property="FeatureTypes" />
             </clerk>
 			*/
-			return new RecordList(recordListId, statusBar,
-				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,
-				new VectorPropertyParameterObject(cache.LanguageProject.MsFeatureSystemOA, "FeatureTypes", FsFeatureSystemTags.kflidFeatures));
+			return new RecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, new VectorPropertyParameterObject(cache.LanguageProject.MsFeatureSystemOA, "FeatureTypes", FsFeatureSystemTags.kflidFeatures));
 		}
 	}
 }

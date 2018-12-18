@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2018 SIL International
+// Copyright (c) 2008-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,7 +12,7 @@ using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 {
-	internal class AdvancedMTDialogLogic: IDisposable
+	internal class AdvancedMTDialogLogic : IDisposable
 	{
 		private IConstChartWordGroup m_wordGroup;
 
@@ -22,18 +22,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			Prepose = fPrepose;
 			SentElem = ccSentElem;
 
-			DlgRibbon = new DialogInterlinRibbon(Cache) {Dock = DockStyle.Fill};
+			DlgRibbon = new DialogInterlinRibbon(Cache) { Dock = DockStyle.Fill };
 		}
 
 		#region Disposable stuff
-#if DEBUG
+
 		~AdvancedMTDialogLogic()
 		{
 			Dispose(false);
 		}
-#endif
 
-		public bool IsDisposed { get; private set; }
+		private bool IsDisposed { get; set; }
 
 		/// <summary/>
 		public void Dispose()
@@ -43,12 +42,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		}
 
 		/// <summary/>
-		protected virtual void Dispose(bool fDisposing)
+		protected virtual void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if (fDisposing && !IsDisposed)
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
 			{
-				// dispose managed and unmanaged objects
+				// No need to run it more than once.
+				return;
+			}
+
+			if (disposing)
+			{
+				// dispose managed objects
 				DlgRibbon.Dispose();
 			}
 
@@ -102,7 +107,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				CollectAllColumnsToCombo();
 			}
-
 			// TODO GordonM: Eventually we want to check and see if AffectedWordGroups has more than one
 			// and put them all in the Ribbon!
 			// Review: Perhaps we need to build a temporary/dummy WordGroup with all the occurrences of
@@ -200,7 +204,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		{
 			var selWords = new HashSet<AnalysisOccurrence>(selectedWords);
 			var affectedWordGrps = SentElem.AffectedWordGroups
-				.Select(wordGroup => new {wordGroup, wordGrpPoints = wordGroup.GetOccurrences()})
+				.Select(wordGroup => new { wordGroup, wordGrpPoints = wordGroup.GetOccurrences() })
 				.Where(@t => selWords.Intersect(@t.wordGrpPoints).Any())
 				.Select(@t => @t.wordGroup).ToList();
 			SentElem.AffectedWordGroups = affectedWordGrps;

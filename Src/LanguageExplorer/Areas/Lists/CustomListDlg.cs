@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -32,9 +32,7 @@ namespace LanguageExplorer.Areas.Lists
 		private IVwStylesheet m_stylesheet;
 		protected List<CoreWritingSystemDefinition> m_uiWss;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:CustomListDlg"/> class.
-		/// </summary>
+		/// <summary />
 		public CustomListDlg(IPropertyTable propertyTable, IPublisher publisher, LcmCache cache)
 		{
 			Guard.AgainstNull(propertyTable, nameof(propertyTable));
@@ -102,30 +100,25 @@ namespace LanguageExplorer.Areas.Lists
 		{
 			// protected for testing. N.B. if testing, set test cache first!
 			m_uiWss = GetUiWritingSystemAndEnglish();
-			//m_delta = 0;
-			m_lmscListName = ReplaceTextBoxWithMultiStringBox(m_tboxListName,
-				m_stylesheet);
-			m_lmscDescription = ReplaceTextBoxWithMultiStringBox(m_tboxDescription,
-				m_stylesheet);
+			m_lmscListName = ReplaceTextBoxWithMultiStringBox(m_tboxListName, m_stylesheet);
+			m_lmscDescription = ReplaceTextBoxWithMultiStringBox(m_tboxDescription, m_stylesheet);
 		}
 
 		/// <summary>
 		/// Gets the current User Writing System and (if it's not English)
 		/// also gets the English Writing System.
 		/// </summary>
-		/// <returns></returns>
 		protected List<CoreWritingSystemDefinition> GetUiWritingSystemAndEnglish()
 		{
 			// Protected for testing
 			Debug.Assert(Cache != null, "Can't install languages without a cache!");
 			var wsMgr = Cache.ServiceLocator.WritingSystemManager;
 			var userWs = wsMgr.UserWritingSystem;
-			var result = new List<CoreWritingSystemDefinition> {userWs};
+			var result = new List<CoreWritingSystemDefinition> { userWs };
 			if (userWs.Language.Code == "en")
 			{
 				return result;
 			}
-
 			// If English is not the DefaultUserWs, add it to the list.
 			CoreWritingSystemDefinition engWs;
 			if (wsMgr.TryGet("en", out engWs))
@@ -140,7 +133,9 @@ namespace LanguageExplorer.Areas.Lists
 			Debug.Assert(Cache != null, "Need a cache to setup a MultiStringBox.");
 			tb.Hide();
 			if (m_uiWss.Count == 0)
+			{
 				return null;
+			}
 			var ms = new LabeledMultiStringControl(Cache, m_uiWss, stylesheet)
 			{
 				Location = tb.Location,
@@ -148,10 +143,9 @@ namespace LanguageExplorer.Areas.Lists
 				Anchor = tb.Anchor,
 				AccessibleName = tb.AccessibleName
 			};
-
 			// Grow the dialog and move all lower controls down to make room.
 			Controls.Remove(tb);
-			ms.TabIndex = tb.TabIndex;	// assume the same tab order as the 'designed' control
+			ms.TabIndex = tb.TabIndex;  // assume the same tab order as the 'designed' control
 			Controls.Add(ms);
 			FontHeightAdjuster.GrowDialogAndAdjustControls(this, ms.Height - tb.Height, ms);
 			return ms;
@@ -200,7 +194,7 @@ namespace LanguageExplorer.Areas.Lists
 			m_wsCombo.LostFocus += m_wsCombo_LostFocus;
 		}
 
-		void m_wsCombo_LostFocus(object sender, EventArgs e)
+		private void m_wsCombo_LostFocus(object sender, EventArgs e)
 		{
 			var newIndex = m_wsCombo.FindString(m_wsCombo.Text);
 			if (newIndex < 0)
@@ -236,7 +230,6 @@ namespace LanguageExplorer.Areas.Lists
 					break;
 				}
 			}
-
 			if (newIndex < 0)
 			{
 				newIndex = 0;
@@ -346,9 +339,9 @@ namespace LanguageExplorer.Areas.Lists
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -408,7 +401,7 @@ namespace LanguageExplorer.Areas.Lists
 			{
 				for (var i = 0; i < m_wsCombo.Items.Count; i++)
 				{
-					if (((IdAndString<int>) m_wsCombo.Items[i]).Id != value)
+					if (((IdAndString<int>)m_wsCombo.Items[i]).Id != value)
 					{
 						continue;
 					}

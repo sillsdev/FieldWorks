@@ -1,9 +1,9 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.LexText;
@@ -42,7 +42,7 @@ namespace LanguageExplorer.Areas.Grammar
 		protected override void HandleChooser()
 		{
 			VectorReferenceLauncher vrl = null;
-			using (MsaInflectionFeatureListDlg dlg = new MsaInflectionFeatureListDlg())
+			using (var dlg = new MsaInflectionFeatureListDlg())
 			{
 				var originalFs = m_obj as IFsFeatStruc;
 				var parentSlice = Slice;
@@ -68,7 +68,6 @@ namespace LanguageExplorer.Areas.Grammar
 				{
 					dlg.SetDlgInfo(m_cache, PropertyTable, originalFs, (parentSlice as MsaInflectionFeatureListDlgLauncherSlice).Flid);
 				}
-
 				const string ksPath = "/group[@id='Linguistics']/group[@id='Morphology']/group[@id='FeatureChooser']/";
 				dlg.Text = StringTable.Table.GetStringWithXPath("InflectionFeatureTitle", ksPath);
 				dlg.Prompt = StringTable.Table.GetStringWithXPath("InflectionFeaturePrompt", ksPath);
@@ -117,7 +116,6 @@ namespace LanguageExplorer.Areas.Grammar
 						{
 							vrl.HandleExternalChooser();
 						}
-
 						break;
 				}
 			}
@@ -132,19 +130,20 @@ namespace LanguageExplorer.Areas.Grammar
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
-			if( disposing )
+			if (disposing)
 			{
 				components?.Dispose();
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#region Designer generated code

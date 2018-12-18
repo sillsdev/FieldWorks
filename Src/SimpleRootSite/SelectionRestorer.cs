@@ -1,9 +1,6 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: SelectionRestorer.cs
-// Responsibility: FW Team
 
 using System;
 using System.Runtime.InteropServices;
@@ -12,15 +9,13 @@ using System.Drawing;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// Helps saving and restoring a selecton around code that could possibly destroy the
+	/// Helps saving and restoring a selection around code that could possibly destroy the
 	/// selection (or even the location where the selection was located). This is mostly
 	/// used around a RefreshDisplay which will reconstruct the whole view from scratch and
 	/// will destroy the selection and could, possibly, destroy the text where the selection
 	/// was located.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public class SelectionRestorer : IDisposable
 	{
 		/// <summary>The selection that will be restored</summary>
@@ -31,11 +26,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>The rootsite that will get the selection when restored</summary>
 		protected readonly SimpleRootSite m_rootSite;
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="SelectionRestorer"/> class.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public SelectionRestorer(SimpleRootSite rootSite)
 		{
 			// we can't use EditingHelper.CurrentSelection here because the scroll position
@@ -47,7 +38,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			rootSite.GetCoordRects(out rcSrc, out rcDst);
 			try
 			{
-				IVwSelection sel = rootSite.RootBox.MakeSelAt(5, 5, rcSrc, rcDst, false);
+				var sel = rootSite.RootBox.MakeSelAt(5, 5, rcSrc, rcDst, false);
 				m_topOfViewSelection = SelectionHelper.Create(sel, rootSite);
 			}
 			catch (COMException)
@@ -57,36 +48,34 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		#region Disposable stuff
-		#if DEBUG
-		/// <summary/>
+		/// <summary />
 		~SelectionRestorer()
 		{
 			Dispose(false);
 		}
-		#endif
 
-		/// <summary/>
+		/// <summary />
 		public bool IsDisposed { get; private set; }
 
-		/// <summary/>
+		/// <summary />
 		public void Dispose()
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Performs application-defined tasks associated with freeing, releasing, or resetting
 		/// unmanaged resources. In this case, attempt to restore the selection we originally
 		/// saved.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected virtual void Dispose(bool fDisposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (!fDisposing || IsDisposed || m_savedSelection == null || m_rootSite.RootBox.Height <= 0)
+			{
 				return;
+			}
 
 			if (m_rootSite.ReadOnlyView)
 			{

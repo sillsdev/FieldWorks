@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,21 +15,12 @@ namespace LanguageExplorer.Areas
 {
 	public class LinkEntryOrSenseDlg : EntryGoDlg
 	{
-		#region	Data members
-
 		private readonly List<ILexSense> m_senses;
-
-		#region	Designer data members
-
 		private RadioButton m_rbEntry;
 		private RadioButton m_rbSense;
 		private FwComboBox m_fwcbSenses;
 		protected GroupBox grplbl;
 		protected GroupBox groupBox1;
-
-		#endregion	Designer data members
-
-		#endregion	Data members
 
 		#region Properties
 
@@ -85,11 +76,9 @@ namespace LanguageExplorer.Areas
 						// or let this class override something to keep the dlg open.
 						return ((ILexEntry)m_selObject).SensesOS[0];
 					}
-
 					// Don't crash here.  (See LT-9387.)  Let somebody else crash...  :-)
 					return null;
 				}
-
 				return m_senses[m_fwcbSenses.SelectedIndex];
 			}
 		}
@@ -102,12 +91,9 @@ namespace LanguageExplorer.Areas
 		{
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
-			ShowControlsBasedOnPanel1Position();	// used for sizing and display of some controls
-
+			ShowControlsBasedOnPanel1Position();    // used for sizing and display of some controls
 			m_senses = new List<ILexSense>();
-
 			m_btnHelp.Enabled = false; // Not until we know what kind of window it is
-
 			// adjust btnInsert ("Create") and btnOK ("Set Relation"?)
 			var ptOK = new Point(m_btnOK.Left, m_btnOK.Top);
 			var ptInsert = new Point(m_btnOK.Left, m_btnOK.Top);
@@ -121,9 +107,10 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -146,11 +133,9 @@ namespace LanguageExplorer.Areas
 		public override void SetDlgInfo(LcmCache cache, WindowParams wp)
 		{
 			m_fwcbSenses.WritingSystemFactory = cache.LanguageWritingSystemFactoryAccessor;
-
 			base.SetDlgInfo(cache, wp);
 			// This is needed to make the replacement MatchingEntriesBrowser visible:
 			Controls.SetChildIndex(m_matchingObjectsBrowser, 0);
-
 			//Set the senses control so that it conforms to the size of the
 			//DefaultAnalysisWritingSystem
 			var defAnalWs = cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
@@ -159,7 +144,6 @@ namespace LanguageExplorer.Areas
 			// this becomes a limit.
 			m_fwcbSenses.StyleSheet = m_tbForm.StyleSheet;
 			m_fwcbSenses.AdjustForStyleSheet(this, grplbl, m_fwcbSenses.StyleSheet);
-
 			if (wp != null)
 			{
 				switch (wp.m_title)
@@ -182,7 +166,6 @@ namespace LanguageExplorer.Areas
 			m_fwcbSenses.Items.Clear();
 			m_fwcbSenses.Text = string.Empty;
 			m_senses.Clear();
-
 			var okBtnEnabled = false;
 			var senseControlsEnabled = false;
 			if (m_selObject != null)
@@ -221,7 +204,6 @@ namespace LanguageExplorer.Areas
 			// If no entry is selected, nothing new need happen here, since the relevant controls will
 			// already be disabled. Indeed, the OK button will have been disabled in the m_tbForm_TextChanged
 			// event handler, and this 'code' will never even be called.
-
 			m_btnOK.Enabled = okBtnEnabled;
 			m_fwcbSenses.Enabled = senseControlsEnabled;
 		}

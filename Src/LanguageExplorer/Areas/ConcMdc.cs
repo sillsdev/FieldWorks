@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -27,59 +27,59 @@ namespace LanguageExplorer.Areas
 			switch (luClid)
 			{
 				case WfiWordformTags.kClassId:
-				{
-					switch (bstrFieldName)
 					{
-						case "ExactOccurrences":
-							return ConcDecorator.kflidWfExactOccurrences;
-						case "Occurrences":
-							return ConcDecorator.kflidWfOccurrences;
-						case "ConcOccurrences":
-							return ConcDecorator.kflidConcOccurrences;
-						case "OccurrenceCount":
-							return ConcDecorator.kflidOccurrenceCount;
+						switch (bstrFieldName)
+						{
+							case "ExactOccurrences":
+								return ConcDecorator.kflidWfExactOccurrences;
+							case "Occurrences":
+								return ConcDecorator.kflidWfOccurrences;
+							case "ConcOccurrences":
+								return ConcDecorator.kflidConcOccurrences;
+							case "OccurrenceCount":
+								return ConcDecorator.kflidOccurrenceCount;
+						}
 					}
-				}
 					break;
 				case WfiAnalysisTags.kClassId:
-				{
-					switch (bstrFieldName)
 					{
-						case "ExactOccurrences":
-							return ConcDecorator.kflidWaExactOccurrences;
-						case "Occurrences":
-							return ConcDecorator.kflidWaOccurrences;
+						switch (bstrFieldName)
+						{
+							case "ExactOccurrences":
+								return ConcDecorator.kflidWaExactOccurrences;
+							case "Occurrences":
+								return ConcDecorator.kflidWaOccurrences;
+						}
 					}
-				}
 					break;
 				case WfiGlossTags.kClassId:
-				{
-					switch (bstrFieldName)
 					{
-						case "ExactOccurrences":
-							return ConcDecorator.kflidWgExactOccurrences;
-						case "Occurrences":
-							return ConcDecorator.kflidWgOccurrences;
+						switch (bstrFieldName)
+						{
+							case "ExactOccurrences":
+								return ConcDecorator.kflidWgExactOccurrences;
+							case "Occurrences":
+								return ConcDecorator.kflidWgOccurrences;
+						}
 					}
-				}
 					break;
 				case LexSenseTags.kClassId:
-				{
-					switch (bstrFieldName)
 					{
-						case "Occurrences":
-							return ConcDecorator.kflidSenseOccurrences;
+						switch (bstrFieldName)
+						{
+							case "Occurrences":
+								return ConcDecorator.kflidSenseOccurrences;
+						}
 					}
-				}
 					break;
 				case LangProjectTags.kClassId:
-				{
-					switch (bstrFieldName)
 					{
-						case "ConcOccurrences":
-							return ConcDecorator.kflidConcOccurrences;
+						switch (bstrFieldName)
+						{
+							case "ConcOccurrences":
+								return ConcDecorator.kflidConcOccurrences;
+						}
 					}
-				}
 					break;
 				case ConcDecorator.kclidFakeOccurrence:
 					switch (bstrFieldName)
@@ -156,7 +156,6 @@ namespace LanguageExplorer.Areas
 				case "WfiGloss":
 					return GetFieldId2(WfiGlossTags.kClassId, bstrFieldName, fIncludeBaseClasses);
 			}
-
 			return base.GetFieldId(bstrClassName, bstrFieldName, fIncludeBaseClasses);
 		}
 
@@ -175,11 +174,6 @@ namespace LanguageExplorer.Areas
 				case ConcDecorator.kflidTextSource: return "FakeOccurrence";
 				case ConcDecorator.kflidTextTitle: return "FakeOccurrence";
 				case ConcDecorator.kflidTextComment: return "FakeOccurrence";
-				//case ConcDecorator.kflidOccurrenceCount: return "WfiWordform";
-				//case ConcDecorator.kflidReference: return "FakeOccurrence";
-				//case ConcDecorator.kflidBeginOffset: return "FakeOccurrence";
-				//case ConcDecorator.kflidEndOffset: return "FakeOccurrence";
-				// And several other FakeOccurrence properties.
 			}
 			return base.GetOwnClsName(flid);
 		}
@@ -253,11 +247,6 @@ namespace LanguageExplorer.Areas
 				case ConcDecorator.kflidWgOccurrences: return "Occurrences";
 				case ConcDecorator.kflidSenseOccurrences: return "Occurrences";
 				case ConcDecorator.kflidConcOccurrences: return "ConcOccurrences";
-				//case ConcDecorator.kflidOccurrenceCount: return "OccurrenceCount";
-				//case ConcDecorator.kflidReference: return "Reference";
-				//case ConcDecorator.kflidBeginOffset: return "BeginOffset";
-				//case ConcDecorator.kflidEndOffset: return "EndOffset";
-				// and several other FakeObject properties
 			}
 			return base.GetFieldName(flid);
 		}

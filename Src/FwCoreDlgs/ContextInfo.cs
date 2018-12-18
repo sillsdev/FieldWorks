@@ -54,9 +54,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Initialize(chr, offset, context, reference);
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ContextInfo"/> class.
-		/// </summary>
+		/// <summary />
 		/// <param name="chr">The character or pattern to which this context applies.</param>
 		/// <param name="offset">The offset (can be negative!).</param>
 		/// <param name="context">The context (a string with the line contents).</param>

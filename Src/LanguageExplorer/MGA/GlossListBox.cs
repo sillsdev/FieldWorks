@@ -7,9 +7,7 @@ using System.Windows.Forms;
 
 namespace LanguageExplorer.MGA
 {
-	/// <summary>
-	/// Summary description for GlossListBox.
-	/// </summary>
+	/// <summary />
 	public class GlossListBox : ListBox
 	{
 		private MGADialog m_MGAForm;

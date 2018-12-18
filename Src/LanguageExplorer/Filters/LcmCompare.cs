@@ -26,9 +26,7 @@ namespace LanguageExplorer.Filters
 
 		private LcmCache m_cache;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:LcmCompare"/> class.
-		/// </summary>
+		/// <summary />
 		public LcmCompare(string propertyName, LcmCache cache)
 		{
 			m_cache = cache;

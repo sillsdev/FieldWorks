@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,7 +10,6 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -25,12 +24,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private bool m_fAnalRtl;
 		private ITsString m_emptyAnalysisStr;
 		private ITextTagRepository m_tagRepo;
-
 		private Dictionary<Tuple<ISegment, int>, ITsString[]> m_tagStrings; // Cache tag strings by ISegment and index
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="InterlinTaggingVc"/> class.
-		/// </summary>
+		/// <summary />
 		public InterlinTaggingVc(LcmCache cache)
 			: base(cache)
 		{
@@ -76,14 +72,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return; // Hmm... this could be a problem, but we'll just skip it for now.
 			}
-
 			// Get all AnalysisOccurrences in this Segment
-			// Resharper says the following LINQ is equivalent. OK, I guess!
-			//var segWords = new List<AnalysisOccurrence>();
-			//for (int i = 0; i < curSeg.AnalysesRS.Count; i++)
-			//	segWords.Add(new AnalysisOccurrence(curSeg, i));
 			var segWords = curSeg.AnalysesRS.Select((t, i) => new AnalysisOccurrence(curSeg, i)).ToList();
-
 			// Find all the tags for this Segment's AnalysisOccurrences and cache them
 			var textTagList = InterlinTaggingChild.GetTaggingReferencingTheseWords(segWords);
 			var occurrencesTagged = new HashSet<AnalysisOccurrence>();
@@ -92,7 +82,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				occurrencesTagged.UnionWith(tag.GetOccurrences());
 				CacheTagString(tag);
 			}
-
 			// now go through the list of occurrences that didn't have tags cached, and make sure they have empty strings cached
 			var occurrencesWithoutTags = new HashSet<AnalysisOccurrence>(occurrencesTagged);
 			occurrencesWithoutTags.SymmetricExceptWith(segWords);
@@ -110,13 +99,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return; // No words tagged! Again... shouldn't happen. :)
 			}
-
 			var tagPossibility = ttag.TagRA;
 			var label = tagPossibility == null ? m_emptyAnalysisStr : tagPossibility.Abbreviation.BestAnalysisAlternative;
-
 			// use 'for' loop because we need to know when we're at the beginning
 			// and end of the loop
-			for(var i=0; i < cwordArray; i++)
+			for (var i = 0; i < cwordArray; i++)
 			{
 				// TODO: Someday when we handle more than one layer of tagging, this may change!
 				var current = occurrences[i];
@@ -142,7 +129,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					EndTagSetup(strBldr);
 				}
 				var key = GetDictKey(current);
-				var markupTags = (ICmPossibilityList) tagPossibility.Owner.Owner;
+				var markupTags = (ICmPossibilityList)tagPossibility.Owner.Owner;
 				var possibilityCount = markupTags.PossibilitiesOS.Count;
 				var row = tagPossibility.Owner.IndexInOwner;
 				ITsString[] myList;
@@ -274,7 +261,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		internal void ClearTagStringForRow(IEnumerable<AnalysisOccurrence> occurrencesToApply, int row)
 		{
 			if (occurrencesToApply == null)
+			{
 				return;
+			}
 			foreach (var occurrence in occurrencesToApply)
 			{
 				var key = GetDictKey(occurrence);
@@ -286,7 +275,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					{
 						tagList[i] = m_tagStrings[key][i];
 					}
-
 					m_tagStrings[key] = tagList;
 				}
 			}
@@ -299,7 +287,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				LoadDataForTextTags(hvo);
 			}
-			//LoadDataForTextTags(rghvo[0]); // seems to only ever have one element anyway!
 		}
 
 		/// <summary>
@@ -315,8 +302,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			var stText = analysis.Segment.Owner.Owner;
 			// If either the Segment's analyses sequence or the tags on the text change, we want to redraw this
-			vwenv.NoteDependency(new [] { analysis.Segment.Hvo, stText.Hvo }, new [] { SegmentTags.kflidAnalyses, StTextTags.kflidTags }, 2);
-			for (int i = 0; i < tss.Length; i++)
+			vwenv.NoteDependency(new[] { analysis.Segment.Hvo, stText.Hvo }, new[] { SegmentTags.kflidAnalyses, StTextTags.kflidTags }, 2);
+			for (var i = 0; i < tss.Length; i++)
 			{
 				if (tss[i] == null)
 				{
@@ -356,7 +343,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var clen = ttagLabel.Length;
 			if (clen >= m_lenEndTag)
 			{
-				return ttagLabel.Substring(clen-m_lenEndTag, m_lenEndTag) == ITextStrings.ksEndTagSymbol;
+				return ttagLabel.Substring(clen - m_lenEndTag, m_lenEndTag) == ITextStrings.ksEndTagSymbol;
 			}
 			return false;
 		}

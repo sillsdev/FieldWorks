@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2011-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -23,9 +23,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public override IStText Create()
 		{
-			// Don't inline this, it launches a dialog and should be done BEFORE starting the UOW.
+			// NB: Don't inline this, it launches a dialog and should be done BEFORE starting the UOW.
 			var wsText = List.GetWsForNewText();
-
 			UndoableUnitOfWorkHelper.Do(UndoText, RedoText, Cache.ActionHandlerAccessor, () => CreateNewTextWithEmptyParagraph(wsText));
 			return NewStText;
 		}

@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2018 SIL International
+// Copyright (c) 2013-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -58,7 +58,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 				var inflFeat = featSys.GetFeature<ComplexFeature>("infl");
 				fs.AddValue(inflFeat, GetFeatureStruct(featSys, m_inflFeatures));
 			}
-
 			return AddQuantifier(new Constraint<ComplexConcParagraphData, ShapeNode>(fs));
 		}
 	}

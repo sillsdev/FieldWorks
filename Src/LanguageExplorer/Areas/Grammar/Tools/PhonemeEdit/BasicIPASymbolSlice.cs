@@ -1,8 +1,9 @@
-﻿// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Xml.Linq;
 using System.Xml.XPath;
@@ -37,6 +38,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 
 		protected override void Dispose(bool disposing)
 		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (disposing)
 			{
 				var phoneme = (IPhPhoneme)MyCmObject;
@@ -57,12 +59,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		/// </summary>
 		private void SetDescriptionBasedOnIPA()
 		{
-			var phoneme = (IPhPhoneme) MyCmObject;
+			var phoneme = (IPhPhoneme)MyCmObject;
 			if (!m_justChangedDescription && phoneme.BasicIPASymbol.Length == 0)
 			{
 				return;
 			}
-
 			var fADescriptionChanged = false;
 			foreach (var writingSystem in Cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
 			{
@@ -103,13 +104,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		public void SetFeaturesBasedOnIPA()
 		{
 			var phoneme = (IPhPhoneme)MyCmObject;
-
 			if (phoneme.BasicIPASymbol.Length > 0 && (m_justChangedFeatures || phoneme.FeaturesOA == null || phoneme.FeaturesOA.FeatureSpecsOC.Count == 0))
 			{
 				// Mono XPath processing crashes when the expression starts out with // here.  See FWNX-730.
-				var sXPath = "/SegmentDefinitions/SegmentDefinition[Representations/Representation[.='" +
-					XmlUtils.MakeSafeXmlAttribute(phoneme.BasicIPASymbol.Text) +
-					"']]/Features";
+				var sXPath = $"/SegmentDefinitions/SegmentDefinition[Representations/Representation[.='{XmlUtils.MakeSafeXmlAttribute(phoneme.BasicIPASymbol.Text)}']]/Features";
 				var features = s_ipaInfoDocument.XPathSelectElement(sXPath);
 				if (features == null)
 				{
@@ -124,7 +122,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 					{
 						continue;
 					}
-
 					var symVal = Cache.LanguageProject.PhFeatureSystemOA.GetSymbolicValue(sValue);
 					if (symVal == null)
 					{

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -40,7 +40,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// the annotations that have changed, or their analysis, in the cache
 		/// and for which we need to do propchanges to update the display
 		/// </summary>
-		internal IList<AnalysisOccurrence> ChangedAnnotations => m_annotationsChanged.ToArray();
+		internal IList<AnalysisOccurrence> ChangedAnnotations => m_annotationsChanged.ToList();
 
 		protected override void SetObjProp(int hvo, int flid, int newObjValue)
 		{

@@ -16,9 +16,7 @@ using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Controls.LexText
 {
-	/// <summary>
-	/// Summary description for LexImportWizardLanguage.
-	/// </summary>
+	/// <summary />
 	public class LexImportWizardLanguage : Form
 	{
 		private Label lblComment;
@@ -79,9 +77,7 @@ namespace LanguageExplorer.Controls.LexText
 		private AddWritingSystemButton btnAddWS;
 		private HelpProvider helpProvider;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LexImportWizardLanguage"/> class.
-		/// </summary>
+		/// <summary />
 		private LexImportWizardLanguage()
 		{
 			//
@@ -96,9 +92,7 @@ namespace LanguageExplorer.Controls.LexText
 			btnOK.Enabled = false;
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LexImportWizardLanguage"/> class.
-		/// </summary>
+		/// <summary />
 		public LexImportWizardLanguage(LcmCache cache, Hashtable existingLangDesc,
 			IHelpTopicProvider helpTopicProvider, IApp app) : this()
 		{
@@ -109,9 +103,7 @@ namespace LanguageExplorer.Controls.LexText
 			setupHelp(helpTopicProvider);
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LexImportWizardLanguage"/> class.
-		/// </summary>
+		/// <summary />
 		public LexImportWizardLanguage(LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app) : this(cache, new Hashtable(), helpTopicProvider, app)
 		{
 			m_LinguaLinksImport = true;

@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -51,6 +51,13 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
 			if (disposing)
 			{
 				m_printMenu.Click -= PrintMenu_Click;
@@ -210,8 +217,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			// TODO: There is no OnDisplayJumpToRecord method, which would make the menu item not be visible at all, so no need for the area check.
 #endif
 			var hvoTarget = (int)argument;
-			if (hvoTarget <= 0 || PropertyTable.GetValue<string>(AreaServices.ToolChoice) !=
-				AreaServices.LexiconDictionaryMachineName)
+			if (hvoTarget <= 0 || PropertyTable.GetValue<string>(AreaServices.ToolChoice) != AreaServices.LexiconDictionaryMachineName)
 			{
 				return false;
 			}
@@ -245,7 +251,6 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			{
 				throw new ArgumentException("Target is not a LexEntry.");
 			}
-
 			// Now we have our LexEntry
 			// First deal with whether the active Publication excludes it.
 			var m_currentPublication = PropertyTable.GetValue<string>("SelectedPublication", null);
@@ -364,8 +369,9 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			var entriesToPublish = PublicationDecorator.GetEntriesToPublish(PropertyTable, MyRecordList.VirtualFlid);
 			// Right-to-Left for the overall layout is determined by Dictionary-Normal
 			var dictionaryNormalStyle = new ExportStyleInfo(FwUtils.StyleSheetFromPropertyTable(PropertyTable).Styles["Dictionary-Normal"]);
-			var isNormalRightToLeft = dictionaryNormalStyle.DirectionIsRightToLeft == TriStateBool.triTrue; // default is LTR
-																											// Get the current page
+			// default is LTR
+			var isNormalRightToLeft = dictionaryNormalStyle.DirectionIsRightToLeft == TriStateBool.triTrue;
+			// Get the current page
 			if (goingUp)
 			{
 				// Use the up/down info to select the adjacentPage
@@ -476,7 +482,6 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			{
 				return false;
 			}
-
 			if (!element.HasAttribute("firstEntryGuid"))
 			{
 				throw new ArgumentException(@"The element passed to this method should have a firstEntryGuid.", nameof(element));
@@ -494,9 +499,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 		/// <remarks>
 		/// This is static so that the method can be shared with XhtmlRecordDocView.
 		/// </remarks>
-		internal static void HandleDomRightClick(GeckoWebBrowser browser, DomMouseEventArgs e,
-			GeckoElement element, FlexComponentParameters flexComponentParameters, string configObjectName,
-			LcmCache cache, IRecordList activeRecordList)
+		internal static void HandleDomRightClick(GeckoWebBrowser browser, DomMouseEventArgs e, GeckoElement element, FlexComponentParameters flexComponentParameters, string configObjectName, LcmCache cache, IRecordList activeRecordList)
 		{
 			Guid topLevelGuid;
 			GeckoElement entryElement;
@@ -644,9 +647,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		{
 			List<string> inConfig;
 			List<string> notInConfig;
-			SplitPublicationsByConfiguration(Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS,
-														GetCurrentConfiguration(false),
-														out inConfig, out notInConfig);
+			SplitPublicationsByConfiguration(Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS, GetCurrentConfiguration(false), out inConfig, out notInConfig);
 			foreach(var pub in inConfig)
 			{
 				display.List.Add(pub, pub, null, null);
@@ -683,9 +684,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			IDictionary<string, string> hasPub;
 			IDictionary<string, string> doesNotHavePub;
 			var allConfigurations = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(Cache, m_configObjectName);
-			SplitConfigurationsByPublication(allConfigurations,
-														GetCurrentPublication(),
-														out hasPub, out doesNotHavePub);
+			SplitConfigurationsByPublication(allConfigurations, GetCurrentPublication(), out hasPub, out doesNotHavePub);
 			// Add menu items that display the configuration name and send PropChanges with
 			// the configuration path.
 			foreach(var config in hasPub)
@@ -740,8 +739,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// <summary>
 		/// Handle the 'Edit Publications' menu item click (defined in the Lexicon areaConfiguration.xml)
 		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <returns></returns>
 		public virtual bool OnJumpToTool(object commandObject)
 		{
 #if RANDYTODO
@@ -764,10 +761,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// All publications which the given configuration apply to will be placed in the inConfig collection.
 		/// All publications which the configuration does not apply to will be placed in the notInConfig collection.
 		/// </summary>
-		internal void SplitPublicationsByConfiguration(ILcmOwningSequence<ICmPossibility> publications,
-																	  string configurationPath,
-																	  out List<string> inConfig,
-																	  out List<string> notInConfig)
+		internal void SplitPublicationsByConfiguration(ILcmOwningSequence<ICmPossibility> publications, string configurationPath, out List<string> inConfig, out List<string> notInConfig)
 		{
 			inConfig = new List<string>();
 			notInConfig = new List<string>();
@@ -790,18 +784,14 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// All the configurations which apply to the given publication will be placed in the hasPub dictionary.
 		/// All that do not apply to it will be placed in the doesNotHavePub dictionary.
 		/// </summary>
-		internal void SplitConfigurationsByPublication(IDictionary<string, string> configurations,
-																	  string publication,
-																	  out IDictionary<string, string> hasPub,
-																	  out IDictionary<string, string> doesNotHavePub)
+		internal void SplitConfigurationsByPublication(IDictionary<string, string> configurations, string publication, out IDictionary<string, string> hasPub, out IDictionary<string, string> doesNotHavePub)
 		{
 			hasPub = new SortedDictionary<string, string>();
 			doesNotHavePub = new SortedDictionary<string, string>();
 			foreach (var config in configurations)
 			{
 				var model = new DictionaryConfigurationModel(config.Value, Cache);
-				if (model.AllPublications || publication.Equals(LanguageExplorerResources.AllEntriesPublication)
-												 || model.Publications.Contains(publication))
+				if (model.AllPublications || publication.Equals(LanguageExplorerResources.AllEntriesPublication) || model.Publications.Contains(publication))
 				{
 					hasPub[config.Key] = config.Value;
 				}
@@ -815,25 +805,23 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		internal string GetValidPublicationForConfiguration(string configuration)
 		{
 			var currentPub = GetCurrentPublication();
-			List<string> inConfinguration;
-			List<string> notInConfinguration;
-			SplitPublicationsByConfiguration(Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS,
-														configuration,
-														out inConfinguration, out notInConfinguration);
-			return inConfinguration.Contains(currentPub) ? currentPub : inConfinguration.FirstOrDefault();
+			List<string> inConfiguration;
+			List<string> notInConfiguration;
+			SplitPublicationsByConfiguration(Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS, configuration, out inConfiguration, out notInConfiguration);
+			return inConfiguration.Contains(currentPub) ? currentPub : inConfiguration.FirstOrDefault();
 		}
 
 		internal string GetValidConfigurationForPublication(string publication)
 		{
 			if (publication == LanguageExplorerResources.AllEntriesPublication)
+			{
 				return GetCurrentConfiguration(false);
+			}
 			var currentConfig = GetCurrentConfiguration(false);
 			var allConfigurations = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(Cache, m_configObjectName);
 			IDictionary<string, string> hasPub;
 			IDictionary<string, string> doesNotHavePub;
-			SplitConfigurationsByPublication(allConfigurations,
-														publication,
-														out hasPub, out doesNotHavePub);
+			SplitConfigurationsByPublication(allConfigurations, publication, out hasPub, out doesNotHavePub);
 			// If the current configuration is already valid use it otherwise return
 			// the first valid one or null if no configurations have the publication.
 			if (hasPub.Values.Contains(currentConfig))
@@ -932,7 +920,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			{
 				return;
 			}
-
 			if (MyRecordList.Id == "AllReversalEntries")
 			{
 				var reversalentry = MyRecordList.CurrentObject as IReversalIndexEntry;
@@ -960,19 +947,16 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			{
 				return;
 			}
-
 			// Adjust active item to be lower down on the page.
 			var currElementRect = currSelectedByGuid.GetBoundingClientRect();
 			var currElementTop = currElementRect.Top + browser.Window.ScrollY;
 			var currElementBottom = currElementRect.Bottom + browser.Window.ScrollY;
-			var yPosition = currElementTop - (browser.Height / 4);
-
+			var yPosition = currElementTop - browser.Height / 4;
 			// Scroll only if current element is not visible on browser window
 			if (currElementTop < browser.Window.ScrollY || currElementBottom > (browser.Window.ScrollY + browser.Height))
 			{
 				browser.Window.ScrollTo(0, yPosition);
 			}
-
 			AddClassToHtmlElement(currSelectedByGuid, DictionaryConfigurationServices.CurrentSelectedEntryClass);
 			m_selectedObjectID = currentObjectGuid;
 		}
@@ -1167,9 +1151,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			var maxViewWidth = Width / 2 - kSpaceForMenuButton;
 			var allConfigurations = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(Cache, m_configObjectName);
 			var currentConfig = GetCurrentConfiguration(false);
-			var curViewName = allConfigurations.ContainsValue(currentConfig)
-				? allConfigurations.First(item => item.Value == currentConfig).Key
-				: allConfigurations.First().Key;
+			var curViewName = allConfigurations.ContainsValue(currentConfig) ? allConfigurations.First(item => item.Value == currentConfig).Key : allConfigurations.First().Key;
 			// Limit length of View title to remaining available width
 			curViewName = TrimToMaxPixelWidth(Math.Max(2, maxViewWidth), curViewName);
 			var isReversalIndex = DictionaryConfigurationServices.GetDictionaryConfigurationType(PropertyTable) == LanguageExplorerResources.ReversalIndex;
@@ -1207,7 +1189,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			{
 				pubNameTitlePiece = AreaResources.ksAllEntries;
 			}
-			titleStr = pubNameTitlePiece + " " + titleStr;
+			titleStr = $"{pubNameTitlePiece} {titleStr}";
 			var isReversalIndex = DictionaryConfigurationServices.GetDictionaryConfigurationType(PropertyTable) == LanguageExplorerResources.ReversalIndex;
 			if (isReversalIndex)
 			{

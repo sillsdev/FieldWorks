@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2011-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,7 +11,7 @@ using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
-   /// <summary>
+	/// <summary>
 	/// This class is responsible for converting SFM files to the FlexText interlinear XML format that we
 	/// know how to import.
 	/// The importer is designed to import a single text per operation. Therefore, we produce the output
@@ -28,8 +28,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// set emptied when we open a new text recording non-repeatable item-type/writing system combinations that have already occurred.
 		private HashSet<Tuple<InterlinDestination, string>> m_itemsInThisText = new HashSet<Tuple<InterlinDestination, string>>();
 
-		internal Sfm2FlexText() : base (new List<string>(new [] { "document", "interlinear-text",
-			"paragraphs", "paragraph", "phrases", "phrase", "words", "word" }))
+		internal Sfm2FlexText() : base(new List<string>(new[] { "document", "interlinear-text", "paragraphs", "paragraph", "phrases", "phrase", "words", "word" }))
 		{
 		}
 
@@ -37,9 +36,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			switch (mapping.Destination)
 			{
-					// Todo: many cases need more checks for correct state.
-				default: // Ignored
-					break;
 				case InterlinDestination.Source:
 					MakeRootItem(mapping, data, "source");
 					break;
@@ -70,38 +66,38 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				case InterlinDestination.Note:
 					MakeItem(mapping, data, "note", "phrase");
 					break;
+				// Todo: many cases need more checks for correct state.
+				default: // Ignored
+					break;
 			}
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="mapping"></param>
-		/// <param name="data"></param>
-		/// <param name="itemType"></param>
+		/// <summary />
 		protected override void MakeRootItem(InterlinearMapping mapping, byte[] data, string itemType)
 		{
 			if (m_textHasContent)
+			{
 				WriteStartElementIn("interlinear-text", "document");
+			}
 			MakeRepeatableItem(mapping, data, itemType, "interlinear-text", m_itemsInThisText);
 		}
 
 		protected override void WriteStartElement(string marker)
 		{
 			base.WriteStartElement(marker);
-			if (marker == "phrase")
+			switch (marker)
 			{
-				m_phraseHasWords = false;
-				m_itemsInThisPhrase.Clear();
-			}
-			else if (marker == "words")
-			{
-				m_phraseHasWords = true;
-			}
-			else if (marker == "interlinear-text")
-			{
-				m_textHasContent = false;
-				m_itemsInThisText.Clear();
+				case "phrase":
+					m_phraseHasWords = false;
+					m_itemsInThisPhrase.Clear();
+					break;
+				case "words":
+					m_phraseHasWords = true;
+					break;
+				case "interlinear-text":
+					m_textHasContent = false;
+					m_itemsInThisText.Clear();
+					break;
 			}
 		}
 
@@ -109,28 +105,36 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			m_textHasContent = true;
 			var text = GetString(data, mapping).Trim();
-
 			var ws = m_wsManager.get_Engine(mapping.WritingSystem).Handle; // don't use GetWsFromStr, fails if not a known WS
 			var tss = TsStringUtils.MakeString(text, ws);
 			var wordmaker = new WordMaker(tss, m_wsManager);
-			int ichLast = 0;
-			int ichMin, ichLim;
+			var ichLast = 0;
 			while (true)
 			{
+				int ichMin;
+				int ichLim;
 				var word = wordmaker.NextWord(out ichMin, out ichLim);
 				if (word == null)
+				{
 					ichMin = text.Length;
+				}
 				if (ichLast < ichMin)
 				{
 					var punct = text.Substring(ichLast, ichMin - ichLast).Trim();
 					if (punct.Length > 0)
-					MakeWord(mapping, punct, "punct");
+					{
+						MakeWord(mapping, punct, "punct");
+					}
 				}
 				ichLast = ichLim;
 				if (word != null)
+				{
 					MakeWord(mapping, word.Text, "txt");
+				}
 				else
+				{
 					break;
+				}
 			}
 		}
 
@@ -152,7 +156,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// A phrase is currently open and already has a (completed) <words> element;
 				// we need a new phrase.
 				// We can accomplish this simply by terminating the current one;
-				//the new one is automatically opened by WriteStartElementIn
+				// the new one is automatically opened by WriteStartElementIn
 				WriteEndElement();
 			}
 			WriteStartElementIn("word", "words");

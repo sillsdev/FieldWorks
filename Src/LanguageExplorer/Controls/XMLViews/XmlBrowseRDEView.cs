@@ -45,9 +45,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			SetSelection();
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:XmlBrowseRDEView"/> class.
-		/// </summary>
+		/// <summary />
 		public XmlBrowseRDEView()
 		{
 			// This call is required by the Windows Form Designer.

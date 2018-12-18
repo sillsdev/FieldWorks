@@ -24,9 +24,7 @@ namespace SIL.FieldWorks.Common.Framework
 		private readonly ToolStripProgressBar m_progressBar;
 		private Control m_control;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="StatusBarProgressHandler"/> class.
-		/// </summary>
+		/// <summary />
 		public StatusBarProgressHandler(ToolStripStatusLabel label, ToolStripProgressBar progressBar)
 		{
 			m_label = label;

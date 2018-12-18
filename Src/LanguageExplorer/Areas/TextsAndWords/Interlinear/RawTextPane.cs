@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,12 +9,12 @@ using System.Windows.Forms;
 using System.Xml;
 using LanguageExplorer.Controls;
 using LanguageExplorer.LcmUi;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.Xml;
@@ -31,7 +31,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private ShowSpaceDecorator m_showSpaceDa;
 		private bool m_fClickInsertsZws; // true for the special mode where click inserts a zero-width space
 
-		public RawTextPane() : base(null)
+		public RawTextPane()
+			: base(null)
 		{
 			BackColor = Color.FromKnownColor(KnownColor.Window);
 			DoSpellCheck = true;
@@ -44,32 +45,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		#region IDisposable override
 
-		/// <summary>
-		/// Executes in two distinct scenarios.
-		///
-		/// 1. If disposing is true, the method has been called directly
-		/// or indirectly by a user's code via the Dispose method.
-		/// Both managed and unmanaged resources can be disposed.
-		///
-		/// 2. If disposing is false, the method has been called by the
-		/// runtime from inside the finalizer and you should not reference (access)
-		/// other managed objects, as they already have been garbage collected.
-		/// Only unmanaged resources can be disposed.
-		/// </summary>
-		/// <param name="disposing"></param>
-		/// <remarks>
-		/// If any exceptions are thrown, that is fine.
-		/// If the method is being done in a finalizer, it will be ignored.
-		/// If it is thrown by client code calling Dispose,
-		/// it needs to be handled by fixing the bug.
-		///
-		/// If subclasses override this method, they should call the base implementation.
-		/// </remarks>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -110,13 +92,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-				if (InterlinMaster.HasParagraphNeedingParse(RootObject))
+			if (InterlinMaster.HasParagraphNeedingParse(RootObject))
+			{
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 				{
-					NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
-												   () =>
-													   { InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(RootObject, false); });
-				}
+					InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(RootObject, false);
+				});
 			}
+		}
 
 		/// <summary>
 		/// We can't set the style for Scripture...that has to follow some very specific rules implemented in TE.
@@ -153,7 +136,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (InsertInvisibleSpace(e))
 				{
 					return;
-			}
+				}
 			}
 			base.OnMouseDown(e);
 		}
@@ -168,7 +151,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			if (e.Button == MouseButtons.Right || (ModifierKeys & Keys.Shift) == Keys.Shift)
 			{
-				return false; // don't interfere with right clicks or shifr-clicks.
+				return false; // don't interfere with right clicks or shift+clicks.
 			}
 			var helper = SelectionHelper.Create(sel, this);
 			var text = helper.GetTss(SelLimitType.Anchor).Text;
@@ -178,7 +161,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			// We test for space (rather than zwsp) because when in this mode, the option to make the ZWS's visible
 			// is always on, which means they are spaces in the string we retrieve.
-			// If we don't want to suppress inserting one next to a regular space, we'll need to check the chararacter properties
+			// If we don't want to suppress inserting one next to a regular space, we'll need to check the character properties
 			// to distinguish the magic spaces from regular ones.
 			var ich = helper.GetIch(SelLimitType.Anchor);
 			if (ich > 0 && ich <= text.Length && text[ich - 1] == ' ')
@@ -190,11 +173,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return false; // don't insert second ZWS before existing one (or normal space).
 			}
 			int nVar;
-			var ws = helper.GetSelProps(SelLimitType.Anchor).GetIntPropValues((int) FwTextPropType.ktptWs, out nVar);
+			var ws = helper.GetSelProps(SelLimitType.Anchor).GetIntPropValues((int)FwTextPropType.ktptWs, out nVar);
 			if (ws != 0)
 			{
-				UndoableUnitOfWorkHelper.Do(ITextStrings.ksUndoInsertInvisibleSpace, ITextStrings.ksRedoInsertInvisibleSpace,
-					Cache.ActionHandlerAccessor,
+				UndoableUnitOfWorkHelper.Do(ITextStrings.ksUndoInsertInvisibleSpace, ITextStrings.ksRedoInsertInvisibleSpace, Cache.ActionHandlerAccessor,
 					() => sel.ReplaceWithTsString(TsStringUtils.MakeString(AnalysisOccurrence.KstrZws, ws)));
 			}
 			helper.SetIch(SelLimitType.Anchor, ich + 1);
@@ -203,9 +185,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return true; // we already made an appropriate selection.
 		}
 
-		protected override void  OnKeyPress(KeyPressEventArgs e)
+		protected override void OnKeyPress(KeyPressEventArgs e)
 		{
-			if (e.KeyChar == (int) Keys.Escape)
+			if (e.KeyChar == (int)Keys.Escape)
 			{
 				TurnOffClickInvisibleSpace();
 			}
@@ -222,13 +204,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-
-				if (m_invisibleSpaceCursor == null)
+			if (m_invisibleSpaceCursor == null)
 			{
-					m_invisibleSpaceCursor = new Cursor(GetType(), "InvisibleSpaceCursor.cur");
+				m_invisibleSpaceCursor = new Cursor(GetType(), "InvisibleSpaceCursor.cur");
 			}
-				Cursor = m_invisibleSpaceCursor;
-			}
+			Cursor = m_invisibleSpaceCursor;
+		}
 
 		protected override void OnLostFocus(EventArgs e)
 		{
@@ -249,10 +230,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				ITsString tss;
 				int ichLim, hvo, tag, ws;
 				bool fAssocPrev;
-				RootBox.Selection.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvo, out tag,
-					out ws);
+				RootBox.Selection.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvo, out tag, out ws);
 				if (ichLim == 0 && tss.Length == 0) //nope, no text.
+				{
 					isTextPresent = false;
+				}
 			}
 			display.Enabled = isTextPresent;
 			return true; //we've handled this
@@ -270,10 +252,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				ITsString tss;
 				int ichLim, hvo, tag, ws;
 				bool fAssocPrev;
-				RootBox.Selection.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvo, out tag,
-					out ws);
+				RootBox.Selection.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvo, out tag, out ws);
 				if (ichLim == 0 && tss.Length == 0) //nope, no text.
+				{
 					isTextPresent = false;
+				}
 			}
 			display.Enabled = isTextPresent;
 			return true; //we've handled this
@@ -284,7 +267,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// Receives the broadcast message "PropertyChanged"
 		/// </summary>
 		public void OnPropertyChanged(string name)
-			{
+		{
 			bool newVal; // used in two cases below
 			switch (name)
 			{
@@ -298,7 +281,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						saveSelection.SetSelection(true);
 					}
 					if (!newVal && ClickInvisibleSpace)
+					{
 						TurnOffClickInvisibleSpace();
+					}
 					break;
 				case "ClickInvisibleSpace":
 					newVal = ClickInvisibleSpace;
@@ -324,15 +309,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			var wsBefore = 0;
 			if (RootObject != null && RootBox != null && RootBox.Selection.IsValid)
-		{
+			{
 				// We want to know below whether a base class changed the ws or not.
 				wsBefore = SelectionHelper.GetWsOfEntireSelection(RootBox.Selection);
-		}
+			}
 
 			base.ReallyHandleWritingSystemHvo_Changed(newValue);
 
 			if (RootObject == null || RootBox == null || !RootBox.Selection.IsValid)
-		{
+			{
 				return;
 			}
 			var ws = SelectionHelper.GetWsOfEntireSelection(RootBox.Selection);
@@ -348,12 +333,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (!GetSelectedWordPos(RootBox.Selection, out hvo, out tag, out ws, out ichMin, out ichLim) || tag != StTxtParaTags.kflidContents)
 			{
 				return;
-		}
-
+			}
 			// Force this paragraph to recognize it might need reparsing.
 			var para = m_cache.ServiceLocator.GetInstance<IStTxtParaRepository>().GetObject(hvo);
 			if (Cache.ActionHandlerAccessor.CurrentDepth > 0)
-		{
+			{
 				para.ParseIsCurrent = false;
 			}
 			else
@@ -392,13 +376,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var wsFirstPara = GetWsOfFirstWordOfFirstTextPara();
 			Vc = new RawTextVc(RootBox, m_cache, wsFirstPara);
 			SetupVc();
-
 			m_showSpaceDa = new ShowSpaceDecorator(m_cache.GetManagedSilDataAccess())
 			{
 				ShowSpaces = ShowInvisibleSpaces
 			};
 			RootBox.DataAccess = m_showSpaceDa;
-
 			RootBox.SetRootObject(RootHvo, Vc, (int)StTextFrags.kfrText, m_styleSheet);
 		}
 
@@ -415,9 +397,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return wsFirstPara;
 			}
-
-			var firstPara = ((IStTxtPara) txt.ParagraphsOS[0]);
-			return firstPara.Contents.get_WritingSystem(0);
+			return ((IStTxtPara)txt.ParagraphsOS[0]).Contents.get_WritingSystem(0);
 		}
 
 		private void SetupVc()
@@ -426,7 +406,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-
 			var wsFirstPara = GetWsOfFirstWordOfFirstTextPara();
 			if (wsFirstPara == -1)
 			{
@@ -454,14 +433,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-
 			IWfiWordform wordform;
 			if (!GetSelectedWordform(vwselNew, out wordform))
 			{
 				wordform = null;
 			}
 			Publisher.Publish("TextSelectedWord", wordform);
-
 			var helper = SelectionHelper.Create(vwselNew, this);
 			if (helper != null && helper.GetTextPropId(SelLimitType.Anchor) == RawTextVc.kTagUserPrompt)
 			{
@@ -494,15 +471,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			switch (dpt)
 			{
-			case VwDelProbType.kdptBsAtStartPara:
-			case VwDelProbType.kdptDelAtEndPara:
-			case VwDelProbType.kdptNone:
-				return VwDelProbResponse.kdprDone;
-			case VwDelProbType.kdptBsReadOnly:
-			case VwDelProbType.kdptComplexRange:
-			case VwDelProbType.kdptDelReadOnly:
-			case VwDelProbType.kdptReadOnly:
-				return VwDelProbResponse.kdprFail;
+				case VwDelProbType.kdptBsAtStartPara:
+				case VwDelProbType.kdptDelAtEndPara:
+				case VwDelProbType.kdptNone:
+					return VwDelProbResponse.kdprDone;
+				case VwDelProbType.kdptBsReadOnly:
+				case VwDelProbType.kdptComplexRange:
+				case VwDelProbType.kdptDelReadOnly:
+				case VwDelProbType.kdptReadOnly:
+					return VwDelProbResponse.kdprFail;
 			}
 			return VwDelProbResponse.kdprAbort;
 		}
@@ -536,13 +513,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (key != Keys.Delete)
 			{
 				OnKeyPress(new KeyPressEventArgs((char)kea.KeyValue));
-		}
+			}
 		}
 
 		/// <summary>
 		/// Handle a right mouse up, invoking an appropriate context menu.
 		/// </summary>
-		/// <returns></returns>
 		protected override bool DoContextMenu(IVwSelection sel, Point pt, Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
 			// Allow base method to handle spell check problems, if any.
@@ -550,7 +526,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return true;
 			}
-
 			var mainWind = ParentForm as IFwMainWnd;
 			if (mainWind == null || sel == null)
 			{
@@ -566,10 +541,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				}
 #if RANDYTODO
-				mainWind.ShowContextMenu("mnuIText-RawText", new Point(Cursor.Position.X, Cursor.Position.Y),
-					tempColleague, null);
+				mainWind.ShowContextMenu("mnuIText-RawText", new Point(Cursor.Position.X, Cursor.Position.Y), tempColleague, null);
 #endif
-
 				return true;
 			}
 			finally
@@ -596,13 +569,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// entry 1 says to use the Contents of the Text.
 			try
 			{
-				RootBox.MakeTextSelection(0, rgsli.Length, rgsli,
-					StTxtParaTags.kflidContents, 0, ichMin,
-					ichLim, ws,
-					false, // Range, arbitrary assoc prev.
-					ihvoEnd,
-					null, // don't set any special text props for typing
-					true); // install it
+				RootBox.MakeTextSelection(0, rgsli.Length, rgsli, StTxtParaTags.kflidContents, 0, ichMin, ichLim, ws, false, ihvoEnd, null, true);
 				// Don't steal the focus from another window.  See FWR-1795.
 				if (ParentForm == Form.ActiveForm)
 				{
@@ -659,7 +626,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return GetSelectedWordPos(sel, out hvoDummy, out tagDummy, out wsDummy, out ichMinDummy, out ichLimDummy);
 		}
 
-		private bool GetSelectedWordPos(IVwSelection sel, out int hvo, out int tag, out int ws, out int ichMin, out int ichLim)
+		private static bool GetSelectedWordPos(IVwSelection sel, out int hvo, out int tag, out int ws, out int ichMin, out int ichLim)
 		{
 			IVwSelection wordsel = null;
 			if (sel != null)
@@ -688,12 +655,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return false;
 			}
-
 			if (tag != StTxtParaTags.kflidContents)
 			{
 				return false;
 			}
-
 			var para = m_cache.ServiceLocator.GetInstance<IStTxtParaRepository>().GetObject(hvo);
 			if (!para.ParseIsCurrent)
 			{
@@ -724,10 +689,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			else
 			{
 				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () => ReparseParagraph(para));
-		}
+			}
 		}
 
-		private void ReparseParagraph(IStTxtPara para)
+		private static void ReparseParagraph(IStTxtPara para)
 		{
 			using (var parser = new ParagraphParser(para))
 			{
@@ -765,10 +730,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				ITsString tss;
 				int ichLim, hvo, tag, ws;
 				bool fAssocPrev;
-				RootBox.Selection.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvo, out tag,
-					out ws);
+				RootBox.Selection.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvo, out tag, out ws);
 				if (ichLim == 0 && tss.Length == 0) //nope, no text.
+				{
 					isTextPresent = false;
+				}
 			}
 			display.Enabled = isTextPresent;
 			return true;

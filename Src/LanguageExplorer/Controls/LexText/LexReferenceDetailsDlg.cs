@@ -7,9 +7,7 @@ using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Controls.LexText
 {
-	/// <summary>
-	/// Summary description for LexReferenceDetailsDlg.
-	/// </summary>
+	/// <summary />
 	public class LexReferenceDetailsDlg : Form
 	{
 		private Label label1;
@@ -30,9 +28,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 
-		/// <summary>
-		/// Initializes a new instance of the class.
-		/// </summary>
+		/// <summary />
 		private LexReferenceDetailsDlg()
 		{
 			//
@@ -42,9 +38,7 @@ namespace LanguageExplorer.Controls.LexText
 			AccessibleName = GetType().Name;
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LexReferenceDetailsDlg"/> class.
-		/// </summary>
+		/// <summary />
 		public LexReferenceDetailsDlg(IHelpTopicProvider helpTopicProvider) : this()
 		{
 			m_helpTopicProvider = helpTopicProvider;

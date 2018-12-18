@@ -13,9 +13,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	public class NodeDisplayCommand : DisplayCommand
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="NodeDisplayCommand"/> class.
-		/// </summary>
+		/// <summary />
 		public NodeDisplayCommand(XElement node)
 		{
 			Node = node;

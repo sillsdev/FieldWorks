@@ -6,9 +6,7 @@ using System.Windows.Forms;
 
 namespace LanguageExplorer.DictionaryConfiguration
 {
-	/// <summary>
-	/// Summary description for ImageHolder.
-	/// </summary>
+	/// <summary />
 	public class ImageHolder : UserControl
 	{
 		public System.Windows.Forms.ImageList largeImages;
@@ -17,16 +15,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private System.Windows.Forms.Button button1;
 		private System.ComponentModel.IContainer components;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ImageHolder"/> class.
-		/// </summary>
+		/// <summary />
 		public ImageHolder()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
-
-			// TODO: Add any initialization after the InitForm call
-
 		}
 
 		/// <summary>

@@ -23,9 +23,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		private IApp m_app;
 		IVwStylesheet m_stylesheet;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ImportCharMappingDlg"/> class.
-		/// </summary>
+		/// <summary />
 		public ImportCharMappingDlg()
 		{
 			InitializeComponent();

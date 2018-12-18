@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,15 +8,15 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using ParatextImport;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.Core.Scripture;
-using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.LCModel;
 using SIL.FieldWorks.Language;
 using SIL.FieldWorks.Resources;
+using SIL.LCModel;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 
@@ -33,9 +33,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private IScrText m_associatedPtText;
 		internal const string ksDummyName = "dummy"; // used for Name of dummy nodes.
 
-		/// <summary>
-		/// Make one.
-		/// </summary>
+		/// <summary />
 		public TextsTriStateTreeView()
 		{
 			BeforeExpand += TriStateTreeView_BeforeExpand;
@@ -93,8 +91,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		private void LoadScriptureTexts()
 		{
-			if (!m_cache.ServiceLocator.GetInstance<IScrBookRepository>().AllInstances().Any() &&
-				(m_associatedPtText == null || !m_associatedPtText.AssociatedLexicalProject.ProjectId.Any()))
+			if (!m_cache.ServiceLocator.GetInstance<IScrBookRepository>().AllInstances().Any() && (m_associatedPtText == null || !m_associatedPtText.AssociatedLexicalProject.ProjectId.Any()))
 			{
 				return; // Nobody home, so skip them.
 			}
@@ -115,7 +112,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						continue;
 					}
 				}
-
 				var node = new TreeNode(bookName)
 				{
 					Tag = book,
@@ -131,12 +127,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					ntBooks.Add(node);
 				}
 			}
-
 			var bibleNode = new TreeNode(ITextStrings.kstidBibleNode)
 			{
 				Name = "Bible"
 			};
-			if (otBooks.Count > 0)
+			if (otBooks.Any())
 			{
 				var testamentNode = new TreeNode(ITextStrings.kstidOtNode, otBooks.ToArray())
 				{
@@ -145,8 +140,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// help us query for Testaments
 				bibleNode.Nodes.Add(testamentNode);
 			}
-
-			if (ntBooks.Count > 0)
+			if (ntBooks.Any())
 			{
 				var testamentNode = new TreeNode(ITextStrings.kstidNtNode, ntBooks.ToArray())
 				{
@@ -172,23 +166,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return null;
 			}
-
 			// Title node for all texts, Biblical and otherwise
 			var textsNode = new TreeNode("All Texts in Genres and not in Genres")
 			{
 				Name = "Texts"
 			};
-
 			// For each genre, find the texts that claim it
 			LoadTextsFromGenres(textsNode, genreList, allTexts);
-
 			var textsWithNoGenre = new List<TreeNode>(); // and get the ones with no genre
 			// LT-12179: Create a List for collecting selected tree nodes which we will later sort
 			// before actually adding them to the tree:
 			var foundFirstText = false;
 			// Create a collator ready for sorting:
 			var collator = new ManagedLgIcuCollator();
-
 			foreach (var tex in allTexts)
 			{
 				if (tex.GenresRC.Any())
@@ -201,7 +191,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					Name = "Text"
 				};
 				textsWithNoGenre.Add(texItem);
-
 				// LT-12179: If this is the first tex we've added, establish the collator's details
 				// according to the writing system at the start of the tex:
 				if (foundFirstText)
@@ -213,7 +202,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				var wsEngine = m_cache.WritingSystemFactory.get_EngineOrNull(ws1);
 				collator.Open(wsEngine.Id);
 			}
-
 			if (!textsWithNoGenre.Any())
 			{
 				return textsNode;
@@ -250,16 +238,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				// This tree node is added to genreTreeNodes if there are texts or children
 				var genItem = new TreeNode(gen.ChooserNameTS.Text);
-
 				// LT-12179: Create a List for collecting selected tree nodes which we will later sort
 				// before actually adding them to the tree:
 				var sortedNodes = new List<TreeNode>();
 				var foundFirstText = false;
 				// Create a collator ready for sorting:
 				var collator = new ManagedLgIcuCollator();
-
 				foreach (var tex in allTexts)
-				{   // This tex may not have a genre or it may claim to be in more than one
+				{
+					// This tex may not have a genre or it may claim to be in more than one
 					if (!Enumerable.Contains(tex.GenresRC, gen))
 					{
 						continue;
@@ -269,10 +256,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						Tag = tex.ContentsOA,
 						Name = "Text"
 					};
-
 					// LT-12179: Add the new TreeNode to the (not-yet-)sorted list:
 					sortedNodes.Add(texItem);
-
 					// LT-12179: If this is the first tex we've added, establish the collator's details
 					// according to the writing system at the start of the tex:
 					if (foundFirstText)
@@ -284,7 +269,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					var wsEngine = gen.Cache.WritingSystemFactory.get_EngineOrNull(ws1);
 					collator.Open(wsEngine.Id);
 				}
-
 				// LT-12179:
 				if (foundFirstText)
 				{
@@ -293,36 +277,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					// Add the TreeNodes to the tree:
 					genItem.Nodes.AddRange(sortedNodes.ToArray());
 				}
-
 				if (gen.SubPossibilitiesOS.Count > 0)
 				{   // Descend to the child genres regardless if there were texts assigned to this genre
 					LoadTextsFromGenres(genItem, gen.SubPossibilitiesOS, allTexts);
 				}
-
 				//Add the node even if there are no texts that point to this genre.
 				genItem.Tag = gen;  // ICmPossibility
 				genItem.Name = "Genre";
 				parent.Nodes.Add(genItem);
 			}
-		}
-
-		// Class to sort the Genre's before they are displayed.
-		private sealed class CmPossibilitySorter : IComparer<ICmPossibility>
-		{
-			internal CmPossibilitySorter()
-			{
-			}
-
-			#region IComparer<T> Members
-
-			public int Compare(ICmPossibility x, ICmPossibility y)
-			{
-				var xString = x.ChooserNameTS.Text;
-				var yString = y.ChooserNameTS.Text;
-				return xString.CompareTo(yString);
-			}
-
-			#endregion
 		}
 
 		/// <summary>
@@ -425,27 +388,23 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			Nodes.Clear();
 			LoadGeneralTexts();
 			LoadScriptureTexts();
-
 			if (Nodes.Count == 0)
 			{
 				return;
 			}
-
 			//This requires the Bible node be loaded last.
-			var bibleNode = Nodes[Nodes.Count-1];
+			var bibleNode = Nodes[Nodes.Count - 1];
 			//If there was no Bible node loaded then just return. This might be the case for the SE version of FLEx.
 			if (bibleNode.Name != "Bible")
 			{
 				return;
 			}
-
 			if (bibleNode.Nodes.Count == 0)
 			{
 				// There are no Bible book nodes, but we don't need to crash or show the Bible node.
 				bibleNode.Remove();
 				return;
 			}
-
 			foreach (TreeNode testament in bibleNode.Nodes)
 			{
 				foreach (TreeNode bookNode in testament.Nodes)
@@ -482,7 +441,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				owningForm = Form.ActiveForm ?? Application.OpenForms[0];
 			}
-
 			if (m_associatedPtText != null)
 			{
 				// Update main text, if possible/needed.
@@ -506,7 +464,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					// No book, so don't fret about a back translation
 					return false;
 				}
-
 				// Update back translation
 				var btProject = ParatextHelper.GetBtsForProject(m_associatedPtText).FirstOrDefault();
 				if (btProject != null && btProject.BookPresent(book.CanonicalNum) && !btProject.IsCheckSumCurrent(book.CanonicalNum, book.ImportedBtCheckSum.get_String(book.Cache.DefaultAnalWs).Text))
@@ -527,7 +484,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				};
 				bookNode.Nodes.Add(titleNode);
 			}
-
 			// Add Sections.
 			foreach (var section in book.SectionsOS)
 			{
@@ -551,7 +507,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				};
 				bookNode.Nodes.Add(sectionNode);
 			}
-
 			// Add Footnotes in reverse order, so we can insert them in the proper order.
 			var footnotes = new List<IScrFootnote>(book.FootnotesOS);
 			footnotes.Reverse();
@@ -570,7 +525,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					Tag = scrFootnote,
 					Name = "Footnote"
 				};
-
 				// see if we can lookup the node of this section.
 				var nodeIndex = bookNode.Nodes.IndexOfKey(containingSection?.ToString() ?? containingTitle.ToString());
 				if (nodeIndex >= 0)
@@ -579,7 +533,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 				else
 				{
-					bookNode.Nodes.Add(footnoteNode);	// insert at end.
+					bookNode.Nodes.Add(footnoteNode);   // insert at end.
 				}
 			}
 			return true;
@@ -636,7 +590,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				importSettings.SaveSettings();
 				return true;
 			});
-
 			if (haveSomethingToImport && ParatextImportManager.ImportParatext(owningForm, m_cache, importSettings, m_scriptureStylesheet, App))
 			{
 				return m_scr.FindBook(bookNum);
@@ -666,7 +619,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				importSettings.ParatextBTProj = btProject.Name;
 				importSettings.ImportTranslation = false;
 				importSettings.ImportBackTranslation = true;
-
 				ParatextHelper.LoadProjectMappings(importSettings);
 				var importMap = importSettings.GetMappingListForDomain(ImportDomain.Main);
 				var figureInfo = importMap[@"\fig"];
@@ -676,8 +628,26 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 				importSettings.SaveSettings();
 			});
-
 			ParatextImportManager.ImportParatext(owningForm, m_cache, importSettings, m_scriptureStylesheet, App);
+		}
+
+		// Class to sort the Genre's before they are displayed.
+		private sealed class CmPossibilitySorter : IComparer<ICmPossibility>
+		{
+			internal CmPossibilitySorter()
+			{
+			}
+
+			#region IComparer<T> Members
+
+			public int Compare(ICmPossibility x, ICmPossibility y)
+			{
+				var xString = x.ChooserNameTS.Text;
+				var yString = y.ChooserNameTS.Text;
+				return xString.CompareTo(yString);
+			}
+
+			#endregion
 		}
 	}
 }

@@ -1,14 +1,14 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Drawing;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Areas
@@ -17,14 +17,11 @@ namespace LanguageExplorer.Areas
 	{
 		public const int kfragRHS = 200;
 		public const int kfragRule = 201;
-
 		private readonly ITsTextProps m_ctxtProps;
 		private readonly ITsTextProps m_charProps;
-
 		private readonly ITsString m_arrow;
 		private readonly ITsString m_slash;
 		private readonly ITsString m_underscore;
-
 		private IPhSegRuleRHS m_rhs;
 
 		public RegRuleFormulaVc(LcmCache cache, IPropertyTable propertyTable)
@@ -35,7 +32,6 @@ namespace LanguageExplorer.Areas
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.Gray));
 			tpb.SetIntPropValues((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalCenter);
 			m_ctxtProps = tpb.GetTextProps();
-
 			tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, 20000);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.Gray));
@@ -45,8 +41,7 @@ namespace LanguageExplorer.Areas
 			tpb.SetStrPropValue((int)FwTextPropType.ktptFontFamily, MiscUtils.StandardSansSerif);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
 			m_charProps = tpb.GetTextProps();
-
-			int userWs = m_cache.DefaultUserWs;
+			var userWs = m_cache.DefaultUserWs;
 			m_arrow = TsStringUtils.MakeString("\u2192", userWs);
 			m_slash = TsStringUtils.MakeString("/", userWs);
 			m_underscore = TsStringUtils.MakeString("__", userWs);
@@ -99,7 +94,6 @@ namespace LanguageExplorer.Areas
 					{
 						vwenv.set_StringProperty((int)FwTextPropType.ktptNamedStyle, "Disabled Text");
 					}
-
 					int arrowWidth, slashWidth, underscoreWidth, charHeight;
 					vwenv.get_StringWidth(m_arrow, m_charProps, out arrowWidth, out charHeight);
 					var maxCharHeight = charHeight;
@@ -107,47 +101,34 @@ namespace LanguageExplorer.Areas
 					maxCharHeight = Math.Max(charHeight, maxCharHeight);
 					vwenv.get_StringWidth(m_underscore, m_charProps, out underscoreWidth, out charHeight);
 					maxCharHeight = Math.Max(charHeight, maxCharHeight);
-
 					int dmpx, spaceHeight;
 					vwenv.get_StringWidth(m_zwSpace, m_bracketProps, out dmpx, out spaceHeight);
-
 					var maxNumLines = GetMaxNumLines();
 					var maxCtxtHeight = maxNumLines * spaceHeight;
-
 					var maxHeight = Math.Max(maxCharHeight, maxCtxtHeight);
 					var charOffset = maxHeight;
 					var ctxtPadding = maxHeight - maxCtxtHeight;
-
 					VwLength tableLen;
 					tableLen.nVal = 10000;
 					tableLen.unit = VwUnit.kunPercent100;
 					vwenv.OpenTable(7, tableLen, 0, VwAlignment.kvaCenter, VwFramePosition.kvfpVoid, VwRule.kvrlNone, 0, 0, false);
-
 					VwLength ctxtLen;
 					ctxtLen.nVal = 1;
 					ctxtLen.unit = VwUnit.kunRelative;
 					VwLength charLen;
 					charLen.unit = VwUnit.kunPoint1000;
 					vwenv.MakeColumns(1, ctxtLen);
-
 					charLen.nVal = arrowWidth + 4000;
 					vwenv.MakeColumns(1, charLen);
-
 					vwenv.MakeColumns(1, ctxtLen);
-
 					charLen.nVal = slashWidth + 4000;
 					vwenv.MakeColumns(1, charLen);
-
 					vwenv.MakeColumns(1, ctxtLen);
-
 					charLen.nVal = underscoreWidth + 4000;
 					vwenv.MakeColumns(1, charLen);
-
 					vwenv.MakeColumns(1, ctxtLen);
-
 					vwenv.OpenTableBody();
 					vwenv.OpenTableRow();
-
 					// LHS cell
 					vwenv.Props = m_ctxtProps;
 					vwenv.set_IntProperty((int)FwTextPropType.ktptPadTop, (int)FwTextPropVar.ktpvMilliPoint, ctxtPadding);
@@ -156,14 +137,12 @@ namespace LanguageExplorer.Areas
 					vwenv.AddObjProp(m_cache.MetaDataCacheAccessor.GetFieldId2(PhSegRuleRHSTags.kClassId, "OwningRule", false), this, kfragRule);
 					vwenv.CloseParagraph();
 					vwenv.CloseTableCell();
-
 					// arrow cell
 					vwenv.Props = m_charProps;
 					vwenv.set_IntProperty((int)FwTextPropType.ktptOffset, (int)FwTextPropVar.ktpvMilliPoint, -charOffset);
 					vwenv.OpenTableCell(1, 1);
 					vwenv.AddString(m_arrow);
 					vwenv.CloseTableCell();
-
 					// RHS cell
 					vwenv.Props = m_ctxtProps;
 					vwenv.set_IntProperty((int)FwTextPropType.ktptPadTop, (int)FwTextPropVar.ktpvMilliPoint, ctxtPadding);
@@ -175,7 +154,7 @@ namespace LanguageExplorer.Areas
 					}
 					else
 					{
-						vwenv.NoteDependency(new[] {hvo}, new[] {PhSegRuleRHSTags.kflidStrucChange}, 1);
+						vwenv.NoteDependency(new[] { hvo }, new[] { PhSegRuleRHSTags.kflidStrucChange }, 1);
 						OpenSingleLinePile(vwenv, maxNumLines, false);
 						vwenv.Props = m_bracketProps;
 						vwenv.AddProp(PhSegRuleRHSTags.kflidStrucChange, this, kfragEmpty);
@@ -183,14 +162,12 @@ namespace LanguageExplorer.Areas
 					}
 					vwenv.CloseParagraph();
 					vwenv.CloseTableCell();
-
 					// slash cell
 					vwenv.Props = m_charProps;
 					vwenv.set_IntProperty((int)FwTextPropType.ktptOffset, (int)FwTextPropVar.ktpvMilliPoint, -charOffset);
 					vwenv.OpenTableCell(1, 1);
 					vwenv.AddString(m_slash);
 					vwenv.CloseTableCell();
-
 					// left context cell
 					vwenv.Props = m_ctxtProps;
 					vwenv.set_IntProperty((int)FwTextPropType.ktptPadTop, (int)FwTextPropVar.ktpvMilliPoint, ctxtPadding);
@@ -210,14 +187,12 @@ namespace LanguageExplorer.Areas
 					}
 					vwenv.CloseParagraph();
 					vwenv.CloseTableCell();
-
 					// underscore cell
 					vwenv.Props = m_charProps;
 					vwenv.set_IntProperty((int)FwTextPropType.ktptOffset, (int)FwTextPropVar.ktpvMilliPoint, -charOffset);
 					vwenv.OpenTableCell(1, 1);
 					vwenv.AddString(m_underscore);
 					vwenv.CloseTableCell();
-
 					// right context cell
 					vwenv.Props = m_ctxtProps;
 					vwenv.set_IntProperty((int)FwTextPropType.ktptPadTop, (int)FwTextPropVar.ktpvMilliPoint, ctxtPadding);
@@ -237,12 +212,10 @@ namespace LanguageExplorer.Areas
 					}
 					vwenv.CloseParagraph();
 					vwenv.CloseTableCell();
-
 					vwenv.CloseTableRow();
 					vwenv.CloseTableBody();
 					vwenv.CloseTable();
 					break;
-
 				case kfragRule:
 					if (m_rhs.OwningRule.StrucDescOS.Count > 0)
 					{
@@ -256,7 +229,6 @@ namespace LanguageExplorer.Areas
 						CloseSingleLinePile(vwenv, false);
 					}
 					break;
-
 				default:
 					base.Display(vwenv, hvo, frag);
 					break;

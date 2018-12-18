@@ -13,9 +13,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 	{
 		IHelpTopicProvider m_helpTopicProvider;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ImportMatchReplace"/> class.
-		/// </summary>
+		/// <summary />
 		public ImportMatchReplaceDlg()
 		{
 			InitializeComponent();

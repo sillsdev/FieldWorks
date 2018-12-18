@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2018 SIL International
+// Copyright (c) 2008-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,9 +13,9 @@ using System.Xml;
 using System.Xml.Linq;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.Xml;
@@ -23,8 +23,8 @@ using SIL.Xml;
 namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 {
 	/// <summary>
-	/// A constituent chart is used to organize words (and perhaps eventally somehow morphemes)
-	/// into a table where rows roughtly correspond to clauses and columns to key parts of a clause.
+	/// A constituent chart is used to organize words (and perhaps eventually somehow morphemes)
+	/// into a table where rows roughly correspond to clauses and columns to key parts of a clause.
 	/// A typical chart has two pre-nuclear columns, three or four nuclear ones (SVO and perhaps indirect
 	/// object) and one or two post-nuclear ones.
 	///
@@ -36,7 +36,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 	{
 		#region Member Variables
 		private InterlinRibbon m_ribbon;
-
 		private List<Button> m_MoveHereButtons = new List<Button>();
 		// Buttons for moving ribbon text into a specific column
 		private List<Button> m_ContextMenuButtons = new List<Button>();
@@ -76,9 +75,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		{
 		}
 
-		/// <summary>
-		/// Make one. This variant is used in testing (to plug in a known logic class).
-		/// </summary>
+		/// <summary />
+		/// <remarks>This variant is used in testing (to plug in a known logic class).</remarks>
 		internal ConstituentChart(LcmCache cache, ConstituentChartLogic logic)
 		{
 			Cache = cache;
@@ -182,14 +180,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			LineChoices = GetLineChoices();
 			Vc.LineChoices = LineChoices;
 
-			using (var dlg = new ConfigureInterlinDialog(Cache, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider),
-				m_ribbon.Vc.LineChoices.Clone() as InterlinLineChoices))
+			using (var dlg = new ConfigureInterlinDialog(Cache, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), m_ribbon.Vc.LineChoices.Clone() as InterlinLineChoices))
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					UpdateForNewLineChoices(dlg.Choices);
 				}
-
 				return true; // We handled this
 			}
 		}
@@ -237,7 +233,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			BuildTopStuffUI();
 			m_topBottomSplit.Orientation = Orientation.Horizontal;
 			Controls.Add(m_topBottomSplit);
-
 			Dock = DockStyle.Fill;
 
 			ResumeLayout();
@@ -277,8 +272,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		private void BuildTopStuffUI()
 		{
-			Body = new ConstChartBody(m_logic, this) { Cache = Cache, Dock = DockStyle.Fill };
-
+			Body = new ConstChartBody(m_logic, this)
+			{
+				Cache = Cache,
+				Dock = DockStyle.Fill
+			};
 			// Seems to be right (cf BrowseViewer) but not ideal.
 			m_headerMainCols = new ChartHeaderView(this)
 			{
@@ -288,16 +286,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			m_headerMainCols.Layout += m_headerMainCols_Layout;
 			m_headerMainCols.SizeChanged += m_headerMainCols_SizeChanged;
 
-			m_templateSelectionPanel = new Panel() { Height = new Button().Height, Dock = DockStyle.Top, Width = 0 };
+			m_templateSelectionPanel = new Panel()
+			{
+				Height = new Button().Height,
+				Dock = DockStyle.Top,
+				Width = 0
+			};
 			m_templateSelectionPanel.Layout += TemplateSelectionPanel_Layout;
-
 			m_topStuff = m_topBottomSplit.Panel1;
 			m_topStuff.Controls.AddRange(new Control[] { Body, m_headerMainCols, m_templateSelectionPanel });
 		}
 
 		private void TemplateSelectionPanel_Layout(object sender, EventArgs e)
 		{
-			var panel = sender as Panel;
+			var panel = (Panel)sender;
 			if (panel.Controls.Count != 0)
 			{
 				var templateButton = panel.Controls[0];
@@ -355,9 +357,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Enable the command and make visible when relevant
 		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
 		public virtual bool OnDisplayRepeatLastMoveLeft(object commandObject, ref UIItemDisplayProperties display)
 		{
 			if (m_logic.CanRepeatLastMove)
@@ -378,9 +377,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Enable the command and make visible when relevant
 		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
 		public virtual bool OnDisplayRepeatLastMoveRight(object commandObject, ref UIItemDisplayProperties display)
 		{
 			if (m_logic.CanRepeatLastMove)
@@ -402,8 +398,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Implements repeat move left.
 		/// </summary>
-		/// <param name="args"></param>
-		/// <returns></returns>
 		public virtual bool OnRepeatLastMoveLeft(object args)
 		{
 			if (ChartIsRtL)
@@ -433,7 +427,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			return true;
 		}
 
-		void m_headerMainCols_ColumnWidthChanged(object sender, ColumnWidthChangedEventArgs e)
+		private void m_headerMainCols_ColumnWidthChanged(object sender, ColumnWidthChangedEventArgs e)
 		{
 			if (m_fInColWidthChanged)
 			{
@@ -464,7 +458,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 						remainingCols--;
 					}
 				}
-
 				if (m_columnWidths == null)
 				{
 					m_columnWidths = new int[m_allColumns.Length + 1];
@@ -483,27 +476,26 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			m_headerMainCols.UpdatePositions();
 		}
 
-		void m_headerMainCols_SizeChanged(object sender, EventArgs e)
+		private void m_headerMainCols_SizeChanged(object sender, EventArgs e)
 		{
 			SetHeaderColAndButtonWidths();
 		}
 
-		void m_headerMainCols_Layout(object sender, LayoutEventArgs e)
+		private void m_headerMainCols_Layout(object sender, LayoutEventArgs e)
 		{
 			SetHeaderColAndButtonWidths();
 		}
 
-		/// <summary/>
+		/// <summary />
 		protected virtual void SetHeaderColAndButtonWidths()
 		{
 			// Do not change column widths until positions have been updated to represent template change
-			// ColumnPositions should be one longer due to fenceposting
+			// ColumnPositions should be one longer due to fence posting
 			if (ColumnPositions != null && ColumnPositions.Length == m_headerMainCols.Controls.Count + 1)
 			{
 				m_fInColWidthChanged = true;
 				try
 				{
-					//GetColumnWidths();
 					for (var i = 0; i < m_headerMainCols.Controls.Count; i++)
 					{
 						var width = ColumnPositions[i + 1] - ColumnPositions[i];
@@ -553,7 +545,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		protected override void OnSizeChanged(EventArgs e)
 		{
-			if (m_columnWidths != null && m_chart != null && !HasPersistantColWidths)
+			if (m_columnWidths != null && m_chart != null && !HasPersistentColWidths)
 			{
 				SetDefaultColumnWidths();
 				SetHeaderColAndButtonWidths();
@@ -596,7 +588,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			var numColWidth = MpToPixelX(numColWidthMp);
 			ColumnPositions[0] = 0;
 			var maxWidth = MaxUseableWidth();
-
 			var remainingWidth = maxWidth - numColWidth;
 			var totalColumns = m_allColumns.Length + ConstituentChartLogic.NumberOfExtraColumns;
 			// Evenly space all but the row number column.
@@ -635,7 +626,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				return; // no cols, can't do anything useful.
 			}
-
 			if (m_headerMainCols != null && m_headerMainCols.Controls.Count == m_allColumns.Length + ConstituentChartLogic.NumberOfExtraColumns)
 			{
 				return;
@@ -657,7 +647,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Temporary layout thing until we make it align properly with the chart.
 		/// </summary>
-		void m_buttonRow_Layout(object sender, LayoutEventArgs e)
+		private void m_buttonRow_Layout(object sender, LayoutEventArgs e)
 		{
 			ComputeButtonWidths();
 		}
@@ -734,13 +724,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			if (m_hvoRoot > 0)
 			{
 				DetectAndReportTemplateProblem();
-
 				// Make sure text is parsed!
 				if (InterlinMaster.HasParagraphNeedingParse(RootStText))
 				{
 					NonUndoableUnitOfWorkHelper.Do(RootStText.Cache.ActionHandlerAccessor, () => InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(RootStText, false));
 				}
-
 				// We need to make or set the chart before calling NextUnusedInput.
 				FindAndCleanUpMyChart(m_hvoRoot);
 				// Sets m_chart if it finds one for hvoStText
@@ -749,8 +737,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					CreateChartInNonUndoableUOW();
 				}
 				m_logic.Chart = m_chart;
-				var unchartedWordforms = m_logic.NextUnchartedInput(RootStText, kmaxWordforms).ToList();
-				m_ribbon.CacheRibbonItems(unchartedWordforms);
+				m_ribbon.CacheRibbonItems(m_logic.NextUnchartedInput(RootStText, kmaxWordforms).ToList());
 				// Don't need PropChanged here, CacheRibbonItems handles it.
 				if (m_logic.StTextHvo != 0 && m_hvoRoot != m_logic.StTextHvo)
 				{
@@ -810,9 +797,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				SetupMoveHereButtonsToMatchTemplate();
 			}
 			SetHeaderColAndButtonWidths();
-
 			BuildTemplatePanel();
-
 			if (m_chart != null)
 			{
 				Body.SetRoot(m_chart.Hvo, m_allColumns, ChartIsRtL);
@@ -853,7 +838,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		{
 			var selection = sender as ComboBox;
 			var template = selection.SelectedItem as ICmPossibility;
-
 			// If user chooses to add a new template then navigate them to the Text Constituent Chart Template list view
 			if (selection.SelectedItem as string == LanguageExplorerResources.ksCreateNewTemplate)
 			{
@@ -861,20 +845,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				selection.SelectedItem = m_template;
 				return;
 			}
-
 			//Return if user selects current template
 			if (template == m_template)
 			{
 				return;
 			}
-
 			// Detect if there is already a chart created for the given text and template
 			IDsConstChart selectedChart = null;
 			foreach (var chart in Cache.LangProject.DiscourseDataOA.ChartsOC.Cast<IDsConstChart>().Where(chart => chart.BasedOnRA != null && chart.BasedOnRA == RootStText && chart.TemplateRA == template))
 			{
 				selectedChart = chart;
 			}
-
 			//If there is no such chart, then create one
 			if (selectedChart == null)
 			{
@@ -883,15 +864,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					selectedChart = m_serviceLocator.GetInstance<IDsConstChartFactory>().Create(Cache.LangProject.DiscourseDataOA, RootStText, selection.SelectedItem as ICmPossibility);
 				});
 			}
-
-
 			m_chartHvo = selectedChart.Hvo;
 			SetRoot(m_hvoRoot);
 		}
 
 		private void TemplateDropDownMenu_Layout(object sender, EventArgs e)
 		{
-			var button = sender as ComboBox;
+			var button = (ComboBox)sender;
 			button.Left = m_templateSelectionPanel.Width - button.Width;
 		}
 
@@ -914,7 +893,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				return;
 			}
-
 			if (m_bookmark != null && m_bookmark.IndexOfParagraph >= 0)
 			{
 				Body.SelectAndScrollToBookmark(m_bookmark);
@@ -947,7 +925,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				m_buttonRow.Controls.Remove(lastBtnContextMenu);
 				m_ContextMenuButtons.Remove(lastBtnContextMenu);
 			}
-
 			while (m_MoveHereButtons.Count < m_allColumns.Length)
 			{
 				// Install MoveHere button
@@ -1016,16 +993,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private void PrepareForChOrphInsert(int iPara, int offset)
 		{
 			IConstChartRow rowPrec;
-			var goodCols = m_logic.PrepareForChOrphInsert(iPara, offset, out rowPrec);
 			// disable ineligible MoveHere buttons
-			SetEligibleButtons(goodCols);
+			SetEligibleButtons(m_logic.PrepareForChOrphInsert(iPara, offset, out rowPrec));
 			// disable dropdown context buttons (next to MoveHere buttons)
 			DisableAllContextButtons();
 			// create a ChartLocation for scrolling and scroll to first row
 			Body.SelectAndScrollToLoc(new ChartLocation(rowPrec, 0), false);
 			bool fExactMatch;
-			var occurrenceToMark = SegmentServices.FindNearestAnalysis(GetTextParagraphByIndex(iPara), offset, offset, out fExactMatch);
-			m_bookmark.Save(occurrenceToMark, false, m_bookmark.TextIndex); // bookmark this location, but don't persist.
+			// bookmark this location, but don't persist.
+			m_bookmark.Save(SegmentServices.FindNearestAnalysis(GetTextParagraphByIndex(iPara), offset, offset, out fExactMatch), false, m_bookmark.TextIndex);
 		}
 
 		private IStTxtPara GetTextParagraphByIndex(int iPara)
@@ -1068,16 +1044,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private static InterAreaBookmark GetAncestorBookmark(Control curLevelControl, IStText basedOnRa)
 		{
 			object myParent = curLevelControl.Parent;
-			if (myParent == null)
-			{
-				return null;
-			}
-
-			if (!(myParent is InterlinMaster))
-			{
-				return GetAncestorBookmark(myParent as Control, basedOnRa);
-			}
-			return InterlinMaster.m_bookmarks[new Tuple<string, Guid>((myParent as InterlinMaster).MyRecordList.Id, basedOnRa.Guid)];
+			return myParent == null ? null
+				: !(myParent is InterlinMaster) ? GetAncestorBookmark(myParent as Control, basedOnRa)
+					: InterlinMaster.m_bookmarks[new Tuple<string, Guid>((myParent as InterlinMaster).MyRecordList.Id, basedOnRa.Guid)];
 		}
 
 		public void SelectOccurrence(AnalysisOccurrence point)
@@ -1135,7 +1104,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				return strName;
 			}
-
 			if (pxUseable < GetWidth(strName.Substring(0, 1), Font))
 			{
 				return string.Empty;
@@ -1151,7 +1119,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			return strName;
 		}
 
-		private bool HasPersistantColWidths => PropertyTable.GetValue<string>(ColWidthId()) != null;
+		private bool HasPersistentColWidths => PropertyTable.GetValue<string>(ColWidthId()) != null;
 
 		/// <summary>
 		/// Restore column widths if any are persisted for this chart
@@ -1174,12 +1142,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				// If anything is wrong with the saved data, ignore it.
 				return false;
 			}
-
 			if (doc.Root == null || doc.Root.Elements().Count() != m_columnWidths.Length)
 			{
 				return false; // prevents crash on deleting a chart-internal template column.
 			}
-
 			var i = 0;
 			ColumnPositions[0] = 0;
 			foreach (var element in doc.Root.Elements())
@@ -1223,9 +1189,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private void btnMoveHere_Click(object sender, EventArgs e)
 		{
 			// find the index in the button row.
-			var btn = sender as Button;
-			var icol = GetColumnOfButton(btn);
-			m_logic.MoveToColumnInUOW(icol);
+			m_logic.MoveToColumnInUOW(GetColumnOfButton((Button)sender));
 		}
 
 		private int GetColumnOfButton(Button btn)
@@ -1240,7 +1204,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		}
 
 		// Event handler to run if Ribbon changes
-		void m_logic_Ribbon_Changed(object sender, EventArgs e)
+		private void m_logic_Ribbon_Changed(object sender, EventArgs e)
 		{
 			int iPara, offset;
 			// 'out' vars for NextInputIsChOrph()
@@ -1330,10 +1294,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private void btnContextMenu_Click(object sender, EventArgs e)
 		{
 			// find the index in the button row.
-			var btn = (Button)sender;
-			var icol = GetColumnOfButton(btn);
 			DisposeContextMenu(this, new EventArgs());
-			m_contextMenuStrip = m_logic.InsertIntoChartContextMenu(icol);
+			var btn = (Button)sender;
+			m_contextMenuStrip = m_logic.InsertIntoChartContextMenu(GetColumnOfButton(btn));
 			m_contextMenuStrip.Closed += contextMenuStrip_Closed; // dispose when no longer needed (but not sooner! needed after this returns)
 			m_contextMenuStrip.Show(btn, new Point(0, btn.Height));
 		}
@@ -1377,9 +1340,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// <summary>
 		///  If this control is a colleague, export Discourse should be available.
 		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
 		public bool OnDisplayExportDiscourse(object commandObject, ref UIItemDisplayProperties display)
 		{
 			display.Enabled = m_chart != null;

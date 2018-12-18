@@ -35,9 +35,7 @@ namespace LanguageExplorer
 		private FwLinkArgs _linkActive;
 		private bool _usingHistory;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LinkHandler"/> class.
-		/// </summary>
+		/// <summary />
 		internal LinkHandler(IFwMainWnd mainWindow, LcmCache cache, ToolStripButton toolStripButtonHistoryBack, ToolStripButton toolStripButtonHistoryForward, ToolStripMenuItem copyLocationAsHyperlinkToolStripMenuItem)
 		{
 			Guard.AgainstNull(mainWindow, nameof(mainWindow));
@@ -123,7 +121,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		{
 			Dispose(true);
 			// This object will be cleaned up by the Dispose method.
-			// Therefore, you should call GC.SupressFinalize to
+			// Therefore, you should call GC.SuppressFinalize to
 			// take this object off the finalization queue
 			// and prevent finalization code for this object
 			// from executing a second time.

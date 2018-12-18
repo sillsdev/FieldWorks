@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,9 +7,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using LanguageExplorer.Controls.XMLViews;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainImpl;
 
 namespace LanguageExplorer.Areas.TextsAndWords
@@ -29,8 +29,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		protected override IEnumerable<ITsString> GetStrings(SearchField field, ICmObject obj)
 		{
-			var wf = (IWfiWordform) obj;
-
+			var wf = (IWfiWordform)obj;
 			var ws = field.String.get_WritingSystemAt(0);
 			switch (field.Flid)
 			{
@@ -41,7 +40,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 						yield return form;
 					}
 					break;
-
 				default:
 					throw new ArgumentException(@"Unrecognized field.", nameof(field));
 			}
@@ -72,6 +70,12 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
 			base.Dispose(disposing);
 		}
 	}

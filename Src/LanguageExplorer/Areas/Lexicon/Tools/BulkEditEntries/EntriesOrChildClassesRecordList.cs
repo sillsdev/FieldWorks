@@ -1,15 +1,16 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls.XMLViews;
-using SIL.FieldWorks.Common.FwUtils;
 using LanguageExplorer.Filters;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.DomainImpl;
@@ -51,7 +52,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 
 		/// <summary />
 		internal EntriesOrChildClassesRecordList(string id, StatusBar statusBar, ISilDataAccessManaged decorator, ILexDb owner)
-			:base(id, statusBar, decorator, false, new VectorPropertyParameterObject(owner, "Entries", decorator.MetaDataCache.GetFieldId("LexDb", "Entries", false)), new Dictionary<string, PropertyRecordSorter>
+			: base(id, statusBar, decorator, false, new VectorPropertyParameterObject(owner, "Entries", decorator.MetaDataCache.GetFieldId("LexDb", "Entries", false)), new Dictionary<string, PropertyRecordSorter>
 				{
 					{ AreaServices.Default, new PropertyRecordSorter(AreaServices.ShortName) },
 					{ "PrimaryGloss", new PropertyRecordSorter("PrimaryGloss") }
@@ -81,8 +82,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 		{
 			base.InitializeFlexComponent(flexComponentParameters);
 
-			// suspend loading the property until given a class by RecordBrowseView via
-			// RecordList.OnChangeListItemsClass();
+			// suspend loading the property until given a class by RecordBrowseView via RecordList.OnChangeListItemsClass();
 			m_suspendReloadUntilOnChangeListItemsClass = true;
 
 			// Used for finding first relative of corresponding current object
@@ -91,6 +91,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 
 		protected override void Dispose(bool disposing)
 		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
 			if (disposing)
 			{
 				m_pot?.Dispose();
@@ -104,9 +111,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 		{
 			if (UpdatingList || m_reloadingList)
 			{
-				return;	// we're already in the process of changing our list.
+				return; // we're already in the process of changing our list.
 			}
-
 			var fLoadSuppressed = m_requestedLoadWhileSuppressed;
 			using (var luh = new ListUpdateHelper(new ListUpdateHelperParameterObject { MyRecordList = this }))
 			{
@@ -120,7 +126,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 				{
 					TryHandleUpdateOrMarkPendingReload(hvo, tag, ivMin, cvIns, cvDel);
 				}
-
 				// If we edited the list of entries, all our properties are in doubt.
 				if (tag == m_cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries)
 				{
@@ -312,7 +317,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 						}
 					};
 					var relatives = FindCorrespondingItemsInCurrentList(dictOneOldItem, pot);
-
 					// remove the old item if we found relatives we could convert over to.
 					if (relatives.Count > 0)
 					{
@@ -322,11 +326,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 				}
 			}
 
-			foreach (int itemToRemove in oldItemsToRemove)
+			foreach (var itemToRemove in oldItemsToRemove)
 			{
 				oldItems.Remove(itemToRemove);
 			}
-
 			// complete any conversions by adding its relatives.
 			var sourceTag = ListSourceToken;
 			foreach (var relativeToAdd in itemsToAdd)
@@ -344,7 +347,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 		{
 			// create a reverse index of classes to a list of items
 			var sourceFlidsToItems = MapSourceFlidsToItems(itemAndListSourceTokenPairs);
-
 			var relativesInCurrentList = new HashSet<int>();
 			foreach (var sourceFlidToItems in sourceFlidsToItems)
 			{

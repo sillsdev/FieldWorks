@@ -22,9 +22,7 @@ using SIL.Windows.Forms;
 
 namespace LanguageExplorer.LcmUi.Dialogs
 {
-	/// <summary>
-	/// Summary description for MergeObjectDlg.
-	/// </summary>
+	/// <summary />
 	public class MergeObjectDlg : Form, IFlexComponent
 	{
 		private FwTextBox m_fwTextBoxBottomMsg;

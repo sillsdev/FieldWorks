@@ -26,17 +26,13 @@ namespace LanguageExplorer.Controls.LexText
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IApp m_app;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="AddWritingSystemButton"/> class.
-		/// </summary>
+		/// <summary />
 		public AddWritingSystemButton()
 		{
 			InitializeComponent();
 		}
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
+		/// <summary />
 		public AddWritingSystemButton(IContainer container)
 		{
 			if (container == null)

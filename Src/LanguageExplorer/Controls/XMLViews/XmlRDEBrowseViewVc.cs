@@ -15,9 +15,7 @@ using SIL.Xml;
 
 namespace LanguageExplorer.Controls.XMLViews
 {
-	/// <summary>
-	/// Summary description for XmlRDEBrowseViewVc.
-	/// </summary>
+	/// <summary />
 	internal class XmlRDEBrowseViewVc : XmlBrowseViewBaseVc
 	{
 		#region Constants

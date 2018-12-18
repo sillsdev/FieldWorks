@@ -427,11 +427,7 @@ namespace LanguageExplorerTests.Impls
 #endregion
 
 #region class FwFindReplaceDlgBaseTests
-	/// -----------------------------------------------------------------------------------------
-	/// <summary>
-	/// Summary description for FwFindReplaceDlgBaseTests.
-	/// </summary>
-	/// -----------------------------------------------------------------------------------------
+	/// <summary />
 	public class FwFindReplaceDlgBaseTests : ScrInMemoryLcmTestBase
 	{
 #region Data members
@@ -546,11 +542,7 @@ namespace LanguageExplorerTests.Impls
 #endregion class FwFindReplaceDlgBaseTests
 
 #region class FwFindReplaceDlgTests
-	/// -----------------------------------------------------------------------------------------
-	/// <summary>
-	/// Summary description for TestFwFindReplaceDlg.
-	/// </summary>
-	/// -----------------------------------------------------------------------------------------
+	/// <summary />
 	[TestFixture]
 	public class FwFindReplaceDlgTests : FwFindReplaceDlgBaseTests
 	{

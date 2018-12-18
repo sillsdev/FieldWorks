@@ -16,9 +16,7 @@ using SIL.Reporting;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
-	/// <summary>
-	/// Summary description for FontHeightAdjuster.
-	/// </summary>
+	/// <summary />
 	public static class FontHeightAdjuster
 	{
 		/// <summary>

@@ -414,7 +414,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			xmlCache.Stub(c => c.get_ObjectProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int>(publisher.get_ObjectProp));
 			xmlCache.Stub(c => c.get_IntProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int>(publisher.get_IntProp));
 
-			var respellUndoaction = new RespellUndoAction(xmlCache, Cache, Cache.DefaultVernWs, sWordToReplace, sNewWord);
+			var respellUndoaction = new RespellUndoAction(xmlCache, Cache, sWordToReplace, sNewWord);
 			foreach (int hvoFake in rsda.VecProp(0, ConcDecorator.kflidConcOccurrences))
 				respellUndoaction.AddOccurrence(hvoFake);
 
@@ -498,7 +498,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			xmlCache.Stub(c => c.get_ObjectProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int>(publisher.get_ObjectProp));
 			xmlCache.Stub(c => c.get_IntProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int>(publisher.get_IntProp));
 
-			var respellUndoaction = new RespellUndoAction(xmlCache, Cache, Cache.DefaultVernWs, sWordToReplace, sNewWord);
+			var respellUndoaction = new RespellUndoAction(xmlCache, Cache, sWordToReplace, sNewWord);
 			foreach (int hvoFake in rsda.VecProp(0, ConcDecorator.kflidConcOccurrences))
 				respellUndoaction.AddOccurrence(hvoFake);
 

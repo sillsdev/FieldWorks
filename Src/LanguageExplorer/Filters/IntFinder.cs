@@ -24,9 +24,7 @@ namespace LanguageExplorer.Filters
 			Flid = flid;
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:OwnIntPropFinder"/> class.
-		/// </summary>
+		/// <summary />
 		public OwnIntPropFinder()
 		{
 		}

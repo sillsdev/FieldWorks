@@ -14,9 +14,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// <summary />
 	internal class XmlBrowseView : XmlBrowseViewBase
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:XmlBrowseView"/> class.
-		/// </summary>
+		/// <summary />
 		internal XmlBrowseView()
 		{
 			AccessibleName = "XmlBrowseView";

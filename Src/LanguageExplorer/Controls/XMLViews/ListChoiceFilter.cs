@@ -32,9 +32,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		HashSet<int> m_targets;
 		int[] m_originalTargets;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ListChoiceFilter"/> class.
-		/// </summary>
+		/// <summary />
 		protected ListChoiceFilter(LcmCache cache, ListMatchOptions mode, int[] targets)
 		{
 			m_cache = cache;

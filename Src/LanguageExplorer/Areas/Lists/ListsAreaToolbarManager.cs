@@ -1,4 +1,4 @@
-// Copyright (c) 2018 SIL International
+// Copyright (c) 2018-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -81,7 +81,7 @@ namespace LanguageExplorer.Areas.Lists
 		{
 			Dispose(true);
 			// This object will be cleaned up by the Dispose method.
-			// Therefore, you should call GC.SupressFinalize to
+			// Therefore, you should call GC.SuppressFinalize to
 			// take this object off the finalization queue
 			// and prevent finalization code for this object
 			// from executing a second time.
@@ -91,7 +91,6 @@ namespace LanguageExplorer.Areas.Lists
 		private void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-
 			if (_isDisposed)
 			{
 				// No need to do it more than once.
@@ -143,10 +142,11 @@ namespace LanguageExplorer.Areas.Lists
 				AreaServices.CharttempEditMachineName,
 				AreaServices.TextMarkupTagsEditMachineName
 			};
-			var currentPossibility = MyRecordList.CurrentObject as ICmPossibility; // May be a subclass of ICmPossibility. Will be null, if nothing is in the list.
+			// May be a subclass of ICmPossibility. Will be null, if nothing is in the list.
+			var currentPossibility = MyRecordList.CurrentObject as ICmPossibility;
 			// The first one will be the main Insert item button
 			// The second is optional for lists that allow inserting subitems.
-			// The third is option for lists that allow dulicating top level items.
+			// The third is option for lists that allow duplicating top level items.
 			// If the third is added, but not the second, then null must be added to hold the place of the third.
 			var toolbarButtonCreationData = new Dictionary<string, Tuple<EventHandler, string, Dictionary<string, string>>>(3);
 			switch (activeListTool.MachineName)
@@ -319,7 +319,6 @@ namespace LanguageExplorer.Areas.Lists
 					}
 					break;
 			}
-
 			if (activeListTool.MachineName != AreaServices.FeatureTypesAdvancedEditMachineName)
 			{
 				// Add "Entry" menu to all other tools.
@@ -344,7 +343,6 @@ namespace LanguageExplorer.Areas.Lists
 					_insertSubItemToolStripButton.Tag = new List<object> { currentPossibility, MyDataTree, MyRecordList, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable, currentMenuTuple.Item3 };
 					_insertSubItemToolStripButton.Enabled = currentPossibilityList.PossibilitiesOS.Any(); // Visbile, but only enabled, if there are possible owners for the new sub item.
 				}
-
 				// The Duplicate item button is optionally present .
 				if (toolbarButtonCreationData.TryGetValue(duplicateMainItem, out currentMenuTuple))
 				{
@@ -352,7 +350,6 @@ namespace LanguageExplorer.Areas.Lists
 					_duplicateItemToolStripButton.ImageTransparentColor = Color.Magenta;
 					_duplicateItemToolStripButton.Tag = new List<object> { currentPossibility, MyDataTree, MyRecordList, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable, currentMenuTuple.Item3 };
 				}
-
 				var itemsToAdd = new List<ToolStripItem>(4);
 				if (_insertEntryToolStripButton != null)
 				{
@@ -407,7 +404,7 @@ Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}'
 				_duplicateItemToolStripButton.Enabled = MyRecordList.CurrentObject != null && MyRecordList.CurrentObject.Owner.ClassID == CmPossibilityListTags.kClassId;
 			}
 			var currentSliceAsStTextSlice = AreaWideMenuHelper.DataTreeCurrentSliceAsStTextSlice(MyDataTree);
-			if (_insertEntryToolStripButton != null && _insertEntryToolStripButton.Visible &&  currentSliceAsStTextSlice != null)
+			if (_insertEntryToolStripButton != null && _insertEntryToolStripButton.Visible && currentSliceAsStTextSlice != null)
 			{
 				AreaWideMenuHelper.Set_CmdAddToLexicon_State(_majorFlexComponentParameters.LcmCache, _insertEntryToolStripButton, currentSliceAsStTextSlice.RootSite.RootBox.Selection);
 			}

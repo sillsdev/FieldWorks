@@ -13,9 +13,7 @@ namespace LanguageExplorer.Filters
 	/// </summary>
 	public class NullFilter : RecordFilter
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:NullFilter"/> class.
-		/// </summary>
+		/// <summary />
 		public NullFilter()
 		{
 			Name = FiltersStrings.ksNoFilter;
@@ -25,7 +23,6 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Gets the name of the image.
 		/// </summary>
-		/// <value>The name of the image.</value>
 		public override string imageName => "NoFilter";
 
 		/// <summary>

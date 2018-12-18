@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,14 +6,14 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using LanguageExplorer.Controls;
+using SIL.Extensions;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using System.Linq;
-using LanguageExplorer.Controls;
-using SIL.Extensions;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -41,15 +41,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		// We will add some dummy flids and IDS to the special cache,
 		// so the VC will need to understand all of that.
 
-		// Fake flids.
-		/// <summary />
-		public const int kFlidIndices = 5001; // "owner" will be the sense, and its ID.
-		/// <summary />
-		public const int kFlidEntries = 5002; // A dummy flid for the reversal index, which holds the entries for the main sense.
-		//Fake Ids.
+		/// <summary>
+		/// "owner" will be the sense, and its ID.
+		/// </summary>
+		public const int kFlidIndices = 5001;
+		/// <summary>
+		/// A dummy flid for the reversal index, which holds the entries for the main sense.
+		/// </summary>
+		public const int kFlidEntries = 5002;
 		/// <summary />
 		public const int kDummyEntry = -10000;
-		// View frags.
 		/// <summary />
 		public const int kFragMainObject = 1;
 		/// <summary />
@@ -102,9 +103,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -209,11 +211,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// should have lost focus and saved before doing anything that would cause a regenerate.
 			// But let's not crash.
 			var extensions = Cache.ActionHandlerAccessor as IActionHandlerExtensions;
-			if ((extensions != null && !extensions.CanStartUow) || !m_sense.IsValidObject) //users might quickly realize a mistake and delete the sense before we have converted our dummy.
+			if (extensions != null && !extensions.CanStartUow || !m_sense.IsValidObject) //users might quickly realize a mistake and delete the sense before we have converted our dummy.
 			{
 				return 0;
 			}
-
 			var currentEntries = new List<int>();
 			var countIndices = m_sdaRev.get_VecSize(m_sense.Hvo, kFlidIndices);
 			var hvoReal = 0;
@@ -223,7 +224,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				var hvoIndex = m_sdaRev.get_VecItem(m_sense.Hvo, kFlidIndices, i);
 				var revIndex = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>().GetObject(hvoIndex);
 				writingSystemsModified.Add(Cache.ServiceLocator.WritingSystemManager.GetWsFromStr(revIndex.WritingSystem));
-				var countRealEntries = m_sdaRev.get_VecSize(hvoIndex, kFlidEntries) - 1; // Skip the dummy entry at the end.
+				// Skip the dummy entry at the end.
+				var countRealEntries = m_sdaRev.get_VecSize(hvoIndex, kFlidEntries) - 1;
 				// Go through it from the far end, since we may be deleting empty items.
 				for (var j = countRealEntries - 1; j >= 0; --j)
 				{
@@ -320,12 +322,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				fromDummyCache = tss.Text;
 			}
-
 			if (fromDummyCache != null)
 			{
 				GetFormList(fromDummyCache, rgsFromDummy);
 			}
-			if (rgsFromDummy.Count == 0)
+			if (!rgsFromDummy.Any())
 			{
 				// The entry at 'irieSense' is being deleted, so
 				// remove it from the dummy cache.
@@ -333,7 +334,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				//fNeedPropChange = true;
 				return true;
 			}
-
 			if (hvoEntry <= 0)
 			{
 				return false;
@@ -390,8 +390,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					rgrieMatching[idx].Add(rie);
 				}
 			}
-			var rghvoOwners = new List<int>(rgsForms.Count);
-			rghvoOwners.Add(revIndex.Hvo);
+			var rghvoOwners = new List<int>(rgsForms.Count) { revIndex.Hvo };
 			// The next two variables record the best partial match, if any.
 			var maxLevel = 0;
 			var maxOwner = revIndex.Hvo;
@@ -426,9 +425,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			return hvo;
 		}
 
-		private static int FindMatchingReversalEntry(List<string> rgsForms,
-			List<int> rghvoOwners, List<List<IReversalIndexEntry>> rgrieMatching,
-			int idxForms, ref int maxLevel, ref int maxOwner)
+		private static int FindMatchingReversalEntry(List<string> rgsForms, List<int> rghvoOwners, List<List<IReversalIndexEntry>> rgrieMatching, int idxForms, ref int maxLevel, ref int maxOwner)
 		{
 			foreach (var rie in rgrieMatching[idxForms])
 			{
@@ -470,7 +467,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		/// <summary>
 		/// Given a string purporting to be the LongName of a reversal index entry,
-		/// split it into the sequence of individial RIE forms that it represents
+		/// split it into the sequence of individual RIE forms that it represents
 		/// (from the top of the hierarchy down).
 		/// </summary>
 		public static void GetFormList(string longNameIn, List<string> forms)
@@ -514,7 +511,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				return;
 			}
-
 			// A crude way of making sure the property we want is loaded into the cache.
 			m_sense = (ILexSense)m_cache.ServiceLocator.GetObject(m_hvoObj);
 
@@ -524,7 +520,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				m_sdaRev = new ReversalEntryDataAccess(m_cache.DomainDataByFlid as ISilDataAccessManaged) { TsStrFactory = TsStringUtils.TsStrFactory };
 			}
-
 			LoadDummyCache(false);
 
 			// And maybe this too, at least by default?
@@ -532,10 +527,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			m_vc = new ReversalIndexEntryVc(m_usedIndices, m_cache);
 
 			// arg4 could be used to supply a stylesheet.
-			RootBox.SetRootObject(m_hvoObj,
-				m_vc,
-				kFragMainObject,
-				RootBox.Stylesheet);
+			RootBox.SetRootObject(m_hvoObj, m_vc, kFragMainObject, RootBox.Stylesheet);
 			m_heightView = RootBox.Height;
 		}
 
@@ -549,30 +541,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				m_sdaRev.ClearAllData();
 				m_usedIndices.Clear();
 			}
-
 			// Display the reversal indexes for the current set of analysis writing systems.
-			var entries = new List<IReversalIndexEntry>();
-			foreach (var ide in m_sense.ReferringReversalIndexEntries)
-			{
-				entries.Add(ide);
-			}
-
+			var entries = m_sense.ReferringReversalIndexEntries.ToList();
 			foreach (var ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
 			{
-				IReversalIndex idx = null;
-				foreach (var idxInner in m_cache.LanguageProject.LexDbOA.ReversalIndexesOC)
-				{
-					if (idxInner.WritingSystem == ws.Id)
-					{
-						idx = idxInner;
-						break;
-					}
-				}
+				var idx = m_cache.LanguageProject.LexDbOA.ReversalIndexesOC.FirstOrDefault(idxInner => idxInner.WritingSystem == ws.Id);
 				if (idx == null)
 				{
 					continue;   // User must explicitly request another IReversalIndex (LT-4480).
 				}
-
 				m_usedIndices.Add(idx);
 				// Cache the WS for the index.
 				m_sdaRev.CacheUnicodeProp(idx.Hvo, ReversalIndexTags.kflidWritingSystem, idx.WritingSystem, idx.WritingSystem.Length);
@@ -648,7 +625,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				return;
 			}
-
 			base.HandleSelectionChange(rootb, vwselNew);
 
 			ITsString tss;
@@ -683,7 +659,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var wsIndex = Cache.ServiceLocator.WritingSystemManager.GetWsFromStr(wsString);
 			var tssEntry = m_sdaRev.get_MultiStringAlt(m_hvoOldSelection, ReversalIndexEntryTags.kflidReversalForm, wsIndex);
 			if (tssEntry != null)
+			{
 				oldForm = tssEntry.Text;
+			}
 			if (m_hvoOldSelection != 0 && hvoObj != m_hvoOldSelection && string.IsNullOrEmpty(oldForm))
 			{
 				// Remove the old string from the dummy cache, since its length is 0.
@@ -757,7 +735,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				return;
 			}
-
 			ViewSizeChanged?.Invoke(this, new FwViewSizeEventArgs(hNew, RootBox.Width));
 			m_heightView = hNew;
 		}

@@ -41,9 +41,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		#region Construction and Initialization
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="FlatListView"/> class.
-		/// </summary>
+		/// <summary />
 		public FlatListView()
 		{
 			InitializeComponent();

@@ -86,9 +86,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		#endregion // Properties
 
 		#region Construction, Initialization, and Disposing
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ReferenceLauncher"/> class.
-		/// </summary>
+		/// <summary />
 		public ButtonLauncher()
 		{
 			// This call is required by the Windows.Forms Form Designer.

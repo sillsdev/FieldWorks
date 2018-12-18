@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,10 +10,10 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Areas.Lexicon;
 using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.Filters;
 using LanguageExplorer.LcmUi;
 using LanguageExplorer.LcmUi.Dialogs;
 using SIL.FieldWorks.Common.FwUtils;
-using LanguageExplorer.Filters;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.WritingSystems;
@@ -94,7 +94,7 @@ namespace LanguageExplorer.Areas
 			if (window != null)
 			{
 #if RANDYTODO
-// TODO: add to interface?
+				// TODO: add to interface?
 				window.ClearInvalidatedStoredData();
 #endif
 			}
@@ -117,12 +117,9 @@ namespace LanguageExplorer.Areas
 		#endregion
 
 #if RANDYTODO
-/// <summary>
-/// This is enabled whenever the ReversalList is active.
-/// </summary>
-/// <param name="commandObject"></param>
-/// <param name="display"></param>
-/// <returns></returns>
+		/// <summary>
+		/// This is enabled whenever the ReversalList is active.
+		/// </summary>
 		public virtual bool OnDisplayInsertReversalIndex(object commandObject, ref UIItemDisplayProperties display)
 		{
 			if (Cache == null)
@@ -162,7 +159,6 @@ namespace LanguageExplorer.Areas
 			{
 				return Guid.Empty;
 			}
-
 			IReversalIndex newReversalIndex = null;
 			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 			{
@@ -204,12 +200,9 @@ namespace LanguageExplorer.Areas
 		}
 
 #if RANDYTODO
-	/// <summary>
-	/// This is enabled whenever the ReversalList is active.
-	/// </summary>
-	/// <param name="commandObject"></param>
-	/// <param name="display"></param>
-	/// <returns></returns>
+		/// <summary>
+		/// This is enabled whenever the ReversalList is active.
+		/// </summary>
 		public virtual bool OnDisplayDeleteReversalIndex(object commandObject, ref UIItemDisplayProperties display)
 		{
 			if (Cache == null)
@@ -247,18 +240,16 @@ namespace LanguageExplorer.Areas
 		{
 			var mainWindow = PropertyTable.GetValue<Form>(FwUtils.window);
 			using (new WaitCursor(mainWindow))
+			using (var dlg = new ConfirmDeleteObjectDlg(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
+			using (var ui = CmObjectUi.MakeLcmModelUiObject(ri))
 			{
-				using (var dlg = new ConfirmDeleteObjectDlg(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
-				using (var ui = CmObjectUi.MakeLcmModelUiObject(ri))
+				ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+				dlg.SetDlgInfo(ui, m_cache, PropertyTable);
+				dlg.TopMessage = LanguageExplorerResources.ksDeletingThisRevIndex;
+				dlg.BottomQuestion = LanguageExplorerResources.ksReallyWantToDeleteRevIndex;
+				if (DialogResult.Yes == dlg.ShowDialog(mainWindow))
 				{
-					ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-					dlg.SetDlgInfo(ui, m_cache, PropertyTable);
-					dlg.TopMessage = LanguageExplorerResources.ksDeletingThisRevIndex;
-					dlg.BottomQuestion = LanguageExplorerResources.ksReallyWantToDeleteRevIndex;
-					if (DialogResult.Yes == dlg.ShowDialog(mainWindow))
-					{
-						ReallyDeleteReversalIndex(ri);
-					}
+					ReallyDeleteReversalIndex(ri);
 				}
 			}
 		}
@@ -274,12 +265,12 @@ namespace LanguageExplorer.Areas
 				// We're about to do a MasterRefresh which clobbers the Undo stack,
 				// so we might as well make this UOW not undoable
 				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
-					{
-						m_cache.DomainDataByFlid.DeleteObj(ri.Hvo);
-						int cobjNew;
-						var idxNew = ReversalIndexAfterDeletion(m_cache, out cobjNew);
-						SetReversalIndexGuid(idxNew.Guid);
-					});
+				{
+					m_cache.DomainDataByFlid.DeleteObj(ri.Hvo);
+					int cobjNew;
+					var idxNew = ReversalIndexAfterDeletion(m_cache, out cobjNew);
+					SetReversalIndexGuid(idxNew.Guid);
+				});
 				ChangeOwningObjectIfPossible();
 			}
 			finally
@@ -302,7 +293,6 @@ namespace LanguageExplorer.Areas
 				return lastValidIndex;
 			}
 			var parentIndex = IndexOfParentOf(item.KeyObject);
-
 			return parentIndex == -1 ? lastValidIndex : GetRootIndex(parentIndex);
 		}
 
@@ -338,21 +328,17 @@ namespace LanguageExplorer.Areas
 				newGuid = m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances().First().Guid;
 				PropertyTable.SetProperty("ReversalIndexGuid", newGuid.ToString(), true, true);
 			}
-
 			var ri = m_cache.ServiceLocator.GetObject(newGuid) as IReversalIndex;
 			if (ri == null)
 			{
 				return;
 			}
-
 			// This looks like our best chance to update a global "Current Reversal Index Writing System" value.
 			WritingSystemServices.CurrentReversalWsId = m_cache.WritingSystemFactory.GetWsFromStr(ri.WritingSystem);
-
 			// Generate and store the expected path to a configuration file specific to this reversal index.  If it doesn't
 			// exist, code elsewhere will make up for it.
 			var layoutName = Path.Combine(LcmFileHelper.GetConfigSettingsDir(m_cache.ProjectId.ProjectFolder), "ReversalIndex", ri.ShortName + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 			PropertyTable.SetProperty("ReversalIndexPublicationLayout", layoutName, true, true);
-
 			var newOwningObj = NewOwningObject(ri);
 			if (ReferenceEquals(newOwningObj, OwningObject))
 			{

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -155,8 +155,7 @@ namespace LanguageExplorer.Areas.Grammar
               <recordList owner="MorphologicalData" property="Phonemes" />
             </clerk>
 			*/
-			return new RecordList(recordListId, statusBar,
-				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,
+			return new RecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,
 				new VectorPropertyParameterObject(cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS[0], "Phonemes", PhPhonemeSetTags.kflidPhonemes));
 		}
 	}

@@ -12,9 +12,7 @@ namespace SIL.FieldWorks.LexicalProvider
 	[DataContract(Namespace = "LexicalData")]
 	public sealed class LexGloss
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LexGloss"/> class.
-		/// </summary>
+		/// <summary />
 		public LexGloss(string language, string text)
 		{
 			Language = language;

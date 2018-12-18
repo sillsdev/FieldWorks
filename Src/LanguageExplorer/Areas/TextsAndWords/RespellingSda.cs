@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,22 +15,21 @@ using SIL.LCModel.Infrastructure;
 namespace LanguageExplorer.Areas.TextsAndWords
 {
 	/// <summary>
-	/// Entend the ConcDecorator with a few more properties needed for respelling.
+	/// Extend the ConcDecorator with a few more properties needed for respelling.
 	/// </summary>
 	internal class RespellingSda : ConcDecorator
 	{
-		internal class RespellInfo
+		private sealed class RespellInfo
 		{
 			public int AdjustedBeginOffset;
 			public int AdjustedEndOffset;
 			public ITsString SpellingPreview;
 		}
 
-		public const int kflidAdjustedBeginOffset = 9909101;	// on occurrence, int
-		public const int kflidAdjustedEndOffset = 9909102;		// on occurrence, int
-		public const int kflidSpellingPreview = 9909103;		// on occurrence, string
-		public const int kflidOccurrencesInCaptions = 9909104;	// on WfiWordform, reference seq
-
+		public const int kflidAdjustedBeginOffset = 9909101;    // on occurrence, int
+		public const int kflidAdjustedEndOffset = 9909102;      // on occurrence, int
+		public const int kflidSpellingPreview = 9909103;        // on occurrence, string
+		public const int kflidOccurrencesInCaptions = 9909104;  // on WfiWordform, reference seq
 		Dictionary<int, RespellInfo> m_mapRespell = new Dictionary<int, RespellInfo>();
 
 		public RespellingSda(LcmCache cache, ILcmServiceLocator services)
@@ -66,33 +65,17 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		public override int[] VecProp(int hvo, int tag)
 		{
-			switch (tag)
-			{
-				case kflidOccurrencesInCaptions:
-					return new int[0];
-
-			}
-			return base.VecProp(hvo, tag);
+			return tag == kflidOccurrencesInCaptions ? new int[0] : base.VecProp(hvo, tag);
 		}
 
 		public override int get_VecItem(int hvo, int tag, int index)
 		{
-			switch (tag)
-			{
-				case kflidOccurrencesInCaptions:
-					return 0;
-			}
-			return base.get_VecItem(hvo, tag, index);
+			return tag == kflidOccurrencesInCaptions ? 0 : base.get_VecItem(hvo, tag, index);
 		}
 
 		public override int get_VecSize(int hvo, int tag)
 		{
-			switch (tag)
-			{
-				case kflidOccurrencesInCaptions:
-					return 0;
-			}
-			return base.get_VecSize(hvo, tag);
+			return tag == kflidOccurrencesInCaptions ? 0 : base.get_VecSize(hvo, tag);
 		}
 
 		public override void SetInt(int hvo, int tag, int n)
@@ -201,7 +184,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				done++;
 				foreach (var stPara in text.ParagraphsOS)
 				{
-					var para = (IStTxtPara) stPara;
+					var para = (IStTxtPara)stPara;
 					if (!(para is IScrTxtPara))
 					{
 						continue; // currently only these have embedded pictures.
@@ -226,7 +209,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 						{
 							continue; // bizarre, just for defensiveness.
 						}
-						var picture = (ICmPicture) obj;
+						var picture = (ICmPicture)obj;
 						var caption = picture.Caption.get_String(Cache.DefaultVernWs);
 						var wordMaker = new WordMaker(caption, Cache.ServiceLocator.WritingSystemManager);
 						for (; ; )
@@ -238,7 +221,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 							{
 								break;
 							}
-
 							if (tssTxtWord.Text != wordform)
 							{
 								continue;
@@ -258,7 +240,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				}
 				if (state != null)
 				{
-					state.PercentDone = 50 + 50*done/total;
+					state.PercentDone = 50 + 50 * done / total;
 					state.Breath();
 				}
 			}

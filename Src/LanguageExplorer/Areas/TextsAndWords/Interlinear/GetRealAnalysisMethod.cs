@@ -1,13 +1,13 @@
-﻿// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -21,29 +21,26 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	{
 		protected CachePair m_caches;
 		protected int m_hvoSbWord;
-		IWfiWordform m_wf;
-		IWfiGloss m_wg;
+		private IWfiWordform m_wf;
+		private IWfiGloss m_wg;
 		private AnalysisTree m_oldAnalysis;
-		protected SandboxBase m_sandbox; // The sandbox we're working from.
-
+		// The sandbox we're working from.
+		protected SandboxBase m_sandbox;
 		protected int[] m_analysisMorphs;
 		protected int[] m_analysisMsas;
 		protected int[] m_analysisSenses;
-
-		int m_hvoCategoryReal;
+		private int m_hvoCategoryReal;
 		protected IWfiAnalysis m_wa;
 		protected bool m_fWantOnlyWfiAnalysis;
 		protected InterlinLineChoices m_choices;
 		protected IHelpTopicProvider m_helpTopicProvider;
 		protected ISilDataAccess m_sda;
 		protected ISilDataAccess m_sdaMain;
-		protected int m_cmorphs;
-
-		ITsString m_tssForm; // the form to use if we have to create a new WfiWordform.
-
+		protected int m_cmorphs;// the form to use if we have to create a new WfiWordform.
+		private ITsString m_tssForm;
 		// These variables get filled in by CheckItOut. The Long message is suitable for a
 		// MessageBox, the short one should fit in a status line. Currently always null.
-		string m_LongMessage;
+		private string m_LongMessage;
 
 		/// <summary>
 		/// Only used to make the UpdateRealAnalysisMethod constructor happy. Do not use directly.
@@ -52,10 +49,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 		}
 
-		public GetRealAnalysisMethod(IHelpTopicProvider helpTopicProvider, SandboxBase owner,
-			CachePair caches, int hvoSbWord, AnalysisTree oldAnalysis, IWfiAnalysis wa,
-			IWfiGloss gloss, InterlinLineChoices choices, ITsString tssForm,
-			bool fWantOnlyWfiAnalysis) : this()
+		public GetRealAnalysisMethod(IHelpTopicProvider helpTopicProvider, SandboxBase owner, CachePair caches, int hvoSbWord, AnalysisTree oldAnalysis, IWfiAnalysis wa,
+			IWfiGloss gloss, InterlinLineChoices choices, ITsString tssForm, bool fWantOnlyWfiAnalysis)
+			: this()
 		{
 			m_helpTopicProvider = helpTopicProvider;
 			m_sandbox = owner;
@@ -84,7 +80,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Run the algorithm, returning the 'analysis' hvo (WfiWordform, WfiAnalysis, or WfiGloss).
 		/// </summary>
-		/// <returns></returns>
 		public IAnalysis Run()
 		{
 			CheckItOut();
@@ -133,7 +128,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return m_wf;
 			}
-
 			// Update the wordform with any additional wss.
 			var wordformWss = m_choices.OtherWritingSystemsForFlid(InterlinLineChoices.kflidWord, 0);
 			// we need another way to detect the static ws for kflidWord.
@@ -141,7 +135,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				UpdateMlaIfDifferent(m_hvoSbWord, SandboxBase.ktagSbWordForm, wsId, m_wf.Hvo, WfiWordformTags.kflidForm);
 			}
-
 			// (LT-7807 later refined by FWR-3536)
 			// if we're in a special mode for adding monomorphemic words to lexicon and the user's proposed analysis is monomorphemic,
 			// if there is an existing possible analysis that matches on form, gloss, and POS, use it.
@@ -157,7 +150,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// go through the combo options for lex entries / senses to see if we can find any existing matches.
 				using (var handler = InterlinComboHandler.MakeCombo(m_helpTopicProvider, SandboxBase.ktagWordGlossIcon, m_sandbox, 0) as IhMorphEntry)
 				{
-					List<MorphItem> morphItems = handler.MorphItems;
+					var morphItems = handler.MorphItems;
 					// see if we can use an existing Sense, if it matches the word gloss and word MSA
 					foreach (var morphItem in morphItems)
 					{
@@ -166,7 +159,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						{
 							continue;
 						}
-
 						if (!SbWordPosMatchesSenseMsaPos(morphItem))
 						{
 							continue;
@@ -258,7 +250,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							bestMorphItem = morphItem;
 							break;
 						}
-
 						bestEntry = bestMorphItem.GetPrimaryOrOwningEntry(m_caches.MainCache);
 						// lookup this entry;
 						matchingMorphItem = FindLexEntryMorphItem(morphItems, bestEntry);
@@ -293,10 +284,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					}
 				}
 			}
-
 			BuildMorphLists(); // Used later on in the code.
 			m_hvoCategoryReal = m_caches.RealHvo(m_sda.get_ObjectProp(m_hvoSbWord, SandboxBase.ktagSbWordPos));
-
 			// We may need to create a new WfiAnalysis based on whether we have any sandbox gloss content.
 			var fNeedGloss = false;
 			var fWordGlossLineIsShowing = false; // Set to 'true' if the wrod gloss line is included in the m_choices fields.
@@ -320,7 +309,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					}
 				}
 			}
-
 			// OK, we have some information that corresponds to an analysis. Find or create
 			// an analysis that matches.
 			var wsVern = m_sandbox.RawWordformWs;
@@ -343,10 +331,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					foreach (var ana in m_wf.AnalysesOC)
 					{
-						if (m_oldAnalysis != null &&
-							ana == m_oldAnalysis.WfiAnalysis &&
-							OnlyUsedThisOnce(ana) &&
-						    SandboxBase.IsAnalysisHumanApproved(m_caches.MainCache, ana))
+						if (m_oldAnalysis != null && ana == m_oldAnalysis.WfiAnalysis && OnlyUsedThisOnce(ana) && SandboxBase.IsAnalysisHumanApproved(m_caches.MainCache, ana))
 						{
 							ObsoleteAnalysis = ana;
 							break;
@@ -436,10 +421,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				var cGloss = m_wa.MeaningsOC.Count;
 				fNeedGloss = cGloss > 0 || m_wg != null || fSbGlossContent;
 			}
-
 			if (m_wa != null)
+			{
 				EnsureCorrectMorphForms();
-
+			}
 			if (!fNeedGloss || m_fWantOnlyWfiAnalysis)
 			{
 				return m_wa;
@@ -539,7 +524,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				gloss = m_wg; // update the existing gloss.
 			}
-
 			if (gloss == null)
 			{
 				// Create one.
@@ -586,7 +570,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					var stem = msaOther as IMoStemMsa;
 					if (stem == null)
+					{
 						continue;
+					}
 					if (stem.PartOfSpeechRA == pos)
 					{
 						sense.MorphoSyntaxAnalysisRA = msaOther; // also updates WfiMorphBundle and deletes old obsolete MSA if obsolete.
@@ -645,7 +631,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		// Answer true if the sense is only used in one WfiAnalysis.
-		private bool OnlyUsedThisOnce(ILexSense sense)
+		private static bool OnlyUsedThisOnce(ILexSense sense)
 		{
 			return sense.ReferringObjects.Where(obj => obj is IWfiMorphBundle).Take(2).Count() <= 1;
 		}
@@ -714,7 +700,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					}
 				}
 			}
-
 			var mainPosTarget = targetPos?.MainPossibility;
 			if (mainPosTarget != null)
 			{
@@ -791,7 +776,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// of the morpheme line except the default vernacular one in deciding to use it.
 		/// If additional WS information has been supplied, save it.
 		/// </summary>
-		void EnsureCorrectMorphForms()
+		private void EnsureCorrectMorphForms()
 		{
 			var otherWss = m_choices.OtherWritingSystemsForFlid(InterlinLineChoices.kflidMorphemes, 0);
 			foreach (var wsId in otherWss)
@@ -868,9 +853,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// - it has more matches
 				// - it has as many matches and more relevant empty alternatives
 				// - it is as good otherwise and has fewer non-relevant alternatives.
-				if (cMatch > cBestMatch
-					|| cMatch == cBestMatch && cBlanks > cBestBlanks
-					|| cMatch == cBestMatch && cBlanks == cBestBlanks && best != null && AdditionalAlternatives(possibleGloss, wsIds) < AdditionalAlternatives(best, wsIds))
+				if (cMatch > cBestMatch || cMatch == cBestMatch && cBlanks > cBestBlanks || cMatch == cBestMatch && cBlanks == cBestBlanks && best != null
+				    && AdditionalAlternatives(possibleGloss, wsIds) < AdditionalAlternatives(best, wsIds))
 				{
 					cBestMatch = cMatch;
 					cBestBlanks = cBlanks;
@@ -914,7 +898,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					}
 				}
 			}
-
 			if (fExactMatch)
 			{
 				return null;
@@ -934,7 +917,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						continue;
 					}
 					// We want to reuse this gloss. If possible we will reuse and modify this
-					// analalysis. However, if it has other glosses, we don't want to change them.
+					// analysis. However, if it has other glosses, we don't want to change them.
 					if (possibleAnalysis.MeaningsOC.Count == 1)
 					{
 						return possibleAnalysis;
@@ -970,17 +953,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		private bool IsTrivialAnalysis(IWfiAnalysis possibleAnalysis)
 		{
-			if (possibleAnalysis.CategoryRA != null && possibleAnalysis.CategoryRA !=
-			    m_caches.RealObject(m_sda.get_ObjectProp(m_hvoSbWord, SandboxBase.ktagSbWordPos)) as IPartOfSpeech)
+			if (possibleAnalysis.CategoryRA != null && possibleAnalysis.CategoryRA != m_caches.RealObject(m_sda.get_ObjectProp(m_hvoSbWord, SandboxBase.ktagSbWordPos)) as IPartOfSpeech)
 			{
 				return false;
 			}
-
 			if (possibleAnalysis.MorphBundlesOS.Count == 0)
 			{
 				return true;
 			}
-
 			if (possibleAnalysis.MorphBundlesOS.Count > 1)
 			{
 				return false;

@@ -16,11 +16,7 @@ using SIL.LCModel.Utils;
 
 namespace LanguageExplorerTests.Areas.TextsAndWords
 {
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// Summary description for WordGrammarDebuggingTests.
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	[TestFixture]
 	public class WordGrammarDebuggingTests
 	{
@@ -59,11 +55,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 		private readonly bool m_fDebug;
 		/// <summary>path to the standard directory for temporary files.</summary>
 		private readonly string m_sTempPath;
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:WordGrammarDebuggingTests"/> class.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+
+		/// <summary />
 		public WordGrammarDebuggingTests()
 		{
 #if DEBUG

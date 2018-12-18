@@ -10,9 +10,7 @@ using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Controls.XMLViews
 {
-	/// <summary>
-	/// Summary description for SimpleIntegerMatchDlg.
-	/// </summary>
+	/// <summary />
 	public class SimpleIntegerMatchDlg : Form
 	{
 		private FwOverrideComboBox m_comboMatchType;
@@ -41,9 +39,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:SimpleIntegerMatchDlg"/> class.
-		/// </summary>
+		/// <summary />
 		private SimpleIntegerMatchDlg()
 		{
 			//
@@ -57,9 +53,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_nudVal1.Minimum = m_nudVal2.Minimum = int.MinValue;
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="SimpleIntegerMatchDlg"/> class.
-		/// </summary>
+		/// <summary />
 		public SimpleIntegerMatchDlg(IHelpTopicProvider helpTopicProvider) : this()
 		{
 			m_helpTopicProvider = helpTopicProvider;

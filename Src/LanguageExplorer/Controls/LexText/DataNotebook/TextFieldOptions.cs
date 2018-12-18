@@ -19,9 +19,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		string m_sValidShortLim;
 		bool m_fHandlingTextChanged;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="TextFieldOptions"/> class.
-		/// </summary>
+		/// <summary />
 		public TextFieldOptions()
 		{
 			InitializeComponent();

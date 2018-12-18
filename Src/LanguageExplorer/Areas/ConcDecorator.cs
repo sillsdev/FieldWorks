@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -34,7 +34,7 @@ namespace LanguageExplorer.Areas
 		/// Maps from wf hvo to array of dummy HVOs generated to represent occurrences.
 		/// </summary>
 		private Dictionary<int, int[]> m_values = new Dictionary<int, int[]>();
-		Dictionary<int, IParaFragment> m_occurrences = new Dictionary<int, IParaFragment>();
+		private Dictionary<int, IParaFragment> m_occurrences = new Dictionary<int, IParaFragment>();
 		private ILcmServiceLocator m_services;
 		// This variable supports kflidConcOccurrences, the root list for the Concordance view (as opposed to the various word list views).
 		// The value is determined by the concordance control and inserted into this class.
@@ -143,7 +143,6 @@ namespace LanguageExplorer.Areas
 		/// changes to the collection of interesting texts.
 		/// Review JohnT: could it ever happen that we regain our interest in those changes, getting a new notifiee after we lost our last one?
 		/// </summary>
-		/// <param name="nchng"></param>
 		public override void AddNotification(IVwNotifyChange nchng)
 		{
 			m_interestingTexts.InterestingTextsChanged += m_interestingTexts_InterestingTextsChanged;
@@ -277,7 +276,6 @@ namespace LanguageExplorer.Areas
 				default:
 					return;
 			}
-
 			SendPropChanged(hvo, includeChildren ? flidAll : flidExact, 0, newvalues.Length, values.Length);
 			SendPropChanged(hvo, kflidOccurrenceCount, 0, 0, 0);
 		}
@@ -385,7 +383,6 @@ namespace LanguageExplorer.Areas
 						return (from poss in text.GenreCategories select poss.Hvo).ToArray();
 					}
 					return new int[0];
-
 			}
 			return base.VecProp(hvo, tag);
 		}
@@ -446,7 +443,7 @@ namespace LanguageExplorer.Areas
 
 		public override bool get_BooleanProp(int hvo, int tag)
 		{
-			switch(tag)
+			switch (tag)
 			{
 				case kflidTextIsTranslation:
 					var text = GetStText(hvo);
@@ -455,7 +452,6 @@ namespace LanguageExplorer.Areas
 						return text.IsTranslation;
 					}
 					return false;
-
 			}
 			return base.get_BooleanProp(hvo, tag);
 		}
@@ -494,7 +490,7 @@ namespace LanguageExplorer.Areas
 			return base.get_IntProp(hvo, tag);
 		}
 
-		ITsString EmptyUserString()
+		private ITsString EmptyUserString()
 		{
 			return TsStringUtils.EmptyString(BaseSda.WritingSystemFactory.UserWs);
 		}
@@ -510,7 +506,7 @@ namespace LanguageExplorer.Areas
 
 		public override ITsString get_MultiStringAlt(int hvo, int tag, int ws)
 		{
-			switch(tag)
+			switch (tag)
 			{
 				case kflidTextTitle:
 					{
@@ -553,7 +549,9 @@ namespace LanguageExplorer.Areas
 					{
 						IParaFragment occurrence;
 						if (m_occurrences.TryGetValue(hvo, out occurrence) && occurrence.IsValid && occurrence.Segment != null)
+						{
 							return occurrence.Segment.Hvo;
+						}
 						return 0;
 					}
 				case kflidAnalysis:
@@ -569,7 +567,9 @@ namespace LanguageExplorer.Areas
 					{
 						IParaFragment occurrence;
 						if (m_occurrences.TryGetValue(hvo, out occurrence) && occurrence.IsValid)
+						{
 							return occurrence.Paragraph.Hvo;
+						}
 						return 0;
 					}
 			}
@@ -591,7 +591,6 @@ namespace LanguageExplorer.Areas
 			const int flid = ObjectListPublisher.OwningFlid;
 			var langProj = m_services.GetInstance<ILangProjectRepository>().AllInstances().First();
 			var oldSize = m_services.GetInstance<IWfiWordformRepository>().AllInstances().Count();
-
 			// Force everything to be redisplayed by pretending all the wordforms were replaced.
 			SendPropChanged(langProj.Hvo, flid, 0, oldSize, oldSize);
 		}

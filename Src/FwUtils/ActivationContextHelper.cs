@@ -52,9 +52,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		private IntPtr m_activationContext;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ActivationContextHelper"/> class.
-		/// </summary>
+		/// <summary />
 		public ActivationContextHelper(string manifestFile)
 		{
 			if (!Platform.IsWindows)

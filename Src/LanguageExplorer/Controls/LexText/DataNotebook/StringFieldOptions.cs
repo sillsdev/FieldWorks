@@ -15,9 +15,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 	{
 		LcmCache m_cache;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="StringFieldOptions"/> class.
-		/// </summary>
+		/// <summary />
 		public StringFieldOptions()
 		{
 			InitializeComponent();

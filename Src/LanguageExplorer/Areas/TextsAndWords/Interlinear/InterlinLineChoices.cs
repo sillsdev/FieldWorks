@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,10 +14,9 @@ using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.LCModel.DomainServices;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel.Infrastructure;
+using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -43,7 +42,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		internal ILangProject m_proj;   // provides more ws info.
 		internal LcmCache m_cache;
 		private readonly Dictionary<int, string> m_fieldNames = new Dictionary<int, string>();
-		InterlinMode m_mode = InterlinMode.Analyze;
+		private InterlinMode m_mode = InterlinMode.Analyze;
 
 		public InterlinLineChoices(ILangProject proj, int defaultVernacularWs, int defaultAnalysisWs)
 			: this(proj, defaultVernacularWs, defaultAnalysisWs, InterlinMode.Analyze)
@@ -73,7 +72,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		/// <summary>
 		/// The mode that the configured lines are in.
-		/// If the mode changes, we'll reinitialze the fieldname (label) info.
+		/// If the mode changes, we'll reinitialize the fieldname (label) info.
 		/// </summary>
 		internal InterlinMode Mode
 		{
@@ -206,7 +205,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			InterlinLineChoices result;
 			var parts = data.Split(',');
-
 			switch (parts[0])
 			{
 				case "InterlinLineChoices":
@@ -296,10 +294,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// Even if otherwise OK, if we're inserting something morpheme level
 				// and there's already morpheme-level stuff present it must follow
 				// the existing morpheme-level stuff.
-				if (fGotMorpheme && spec.MorphemeLevel && i >= firstMorphemeIndex &&
-					(!this[i].MorphemeLevel ||
-					spec.Flid == kflidMorphemes ||
-					spec.Flid == kflidLexEntries && this[i].Flid != kflidMorphemes))
+				if (fGotMorpheme && spec.MorphemeLevel && i >= firstMorphemeIndex && (!this[i].MorphemeLevel || spec.Flid == kflidMorphemes || spec.Flid == kflidLexEntries
+				                                                                      && this[i].Flid != kflidMorphemes))
 				{
 					continue;
 				}
@@ -387,7 +383,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// These constants are defined for brevity here and convenience in testing. They use real field
 		/// IDs where that is possible. The names correspond to what we see by default in the dialog.
 		public const int kflidWord = WfiWordformTags.kflidForm;
-		/// <summary></summary>
+		/// <summary />
 		public const int kflidMorphemes = WfiMorphBundleTags.kflidMorph;
 		/// <summary>
 		/// We get the lex entry by following the owner of the morpheme. So rather arbitrarily we
@@ -467,7 +463,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					}
 					break;
 			}
-
 			return customLineOptions;
 		}
 
@@ -494,7 +489,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return kMorphLevelColor;
 			}
-
 			if (spec.WordLevel && spec.Flid != kflidWord)
 			{
 				return kWordLevelColor;
@@ -758,7 +752,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					return spec;
 				}
 			}
-
 			// search for the first spec that is a default spec.
 			foreach (var spec in matchingSpecs)
 			{
@@ -767,7 +760,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					return spec;
 				}
 			}
-
 			// lastly return the first matchingSpec
 			return matchingSpecs[0];
 		}
@@ -839,7 +831,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					comboContent = WsComboContent.kwccAnalAndVern;
 					break;
 			}
-
 			return new InterlinLineSpec
 			{
 				ComboContent = comboContent,
@@ -872,7 +863,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// first try to find an exact match.
 				index = IndexOf(flid, ws, true);
 			}
-
 			if (index == -1)
 			{
 				index = IndexOf(flid, ws, false);
@@ -905,12 +895,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return true;
 			}
-
 			if (fExact)
 			{
 				return false;
 			}
-
 			if (m_proj == null)
 			{
 				return false;
@@ -920,28 +908,22 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				case WritingSystemServices.kwsAnal:
 					return ws == m_cache.DefaultAnalWs;
-
 				case WritingSystemServices.kwsPronunciation:
 					return ws == m_cache.DefaultPronunciationWs;
-
 				case WritingSystemServices.kwsVern:
 					return ws == m_cache.DefaultVernWs;
-
 				case WritingSystemServices.kwsAnals:
 				case WritingSystemServices.kwsFirstAnal:
 					return m_cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Contains(wsObj);
-
 				case WritingSystemServices.kwsAnalVerns:
 				case WritingSystemServices.kwsFirstAnalOrVern:
 				case WritingSystemServices.kwsVernAnals:
 				case WritingSystemServices.kwsFirstVernOrAnal:
 					return m_cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Contains(wsObj) || m_cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Contains(wsObj);
-
 				case WritingSystemServices.kwsFirstVern:
 				case WritingSystemServices.kwsVernInParagraph:
 				case WritingSystemServices.kwsVerns:
 					return m_cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Contains(wsObj);
-
 				case WritingSystemServices.kwsFirstPronunciation:
 				case WritingSystemServices.kwsPronunciations:
 				case WritingSystemServices.kwsReversalIndex:
@@ -1006,7 +988,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				for (; newPos > 0 && this[newPos - 1].MorphemeLevel; newPos--)
 				{/* Move past them to update 'newPos'. */}
 			}
-
 			if (spec.Flid != kflidNote && this[newPos].Flid == kflidNote)
 			{
 				for (; newPos > 0 && this[newPos - 1].Flid == kflidNote; newPos--)
@@ -1017,7 +998,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return -1;
 			}
-
 			if (!CanFollow(spec, this[newPos]))
 			{
 				return -1;

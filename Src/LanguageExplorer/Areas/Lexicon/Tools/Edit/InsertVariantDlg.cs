@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -41,29 +41,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void ApplySomeResources(ComponentResourceManager resources)
 		{
-			//
-			// m_btnClose
-			//
 			resources.ApplyResources(m_btnClose, "m_btnClose");
-			//
-			// m_btnOK
-			//
 			resources.ApplyResources(m_btnOK, "m_btnOK");
-			//
-			// m_btnInsert
-			//
 			resources.ApplyResources(m_btnInsert, "m_btnInsert");
-			//
-			// m_btnHelp
-			//
 			resources.ApplyResources(m_btnHelp, "m_btnHelp");
-			//
-			// m_matchingObjectsBrowser
-			//
 			resources.ApplyResources(m_matchingObjectsBrowser, "m_matchingObjectsBrowser");
-			////
-			//// GoDlg
-			////
 			resources.ApplyResources(this, "$this");
 
 			if (MiscUtils.IsUnix)
@@ -106,7 +88,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				yloc = desiredY;
 			}
-
 			if (xloc != button.Location.X || yloc != button.Location.Y)
 			{
 				button.Location = new Point(xloc, yloc);

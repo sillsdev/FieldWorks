@@ -17,9 +17,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		int m_ws;
 		private IHelpTopicProvider m_helpTopicProvider;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:RestrictComboItem"/> class.
-		/// </summary>
+		/// <summary />
 		public RestrictComboItem(ITsString tssName, IHelpTopicProvider helpTopicProvider, FilterSortItem fsi, int ws, FwComboBox combo) : base(tssName, null, fsi)
 		{
 			m_helpTopicProvider = helpTopicProvider;

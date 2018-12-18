@@ -15,9 +15,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	{
 		private readonly byte[] m_data;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="CharEnumeratorForByteArray"/> class.
-		/// </summary>
+		/// <summary />
 		public CharEnumeratorForByteArray(byte[] data)
 		{
 			if (data == null)

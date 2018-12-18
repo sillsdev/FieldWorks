@@ -1,14 +1,14 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel;
 using Gecko;
 using LanguageExplorer.Controls;
 using LanguageExplorer.LcmUi;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
+using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {
@@ -28,7 +28,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			m_htmlControl.Browser.DomClick += HandleDomClick;
 		}
 
-		private bool TryGetHvo(GeckoElement element, out int hvo)
+		private static bool TryGetHvo(GeckoElement element, out int hvo)
 		{
 			while (element != null)
 			{
@@ -47,7 +47,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				}
 				element = element.ParentElement;
 			}
-
 			hvo = 0;
 			return false;
 		}
@@ -58,16 +57,13 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				return;
 			}
-
 			var elem = e.Target.CastToGeckoElement();
 			int hvo;
 			if (TryGetHvo(elem, out hvo))
 			{
 				JumpToToolBasedOnHvo(hvo);
 			}
-
-			if (!elem.TagName.Equals("input", StringComparison.InvariantCultureIgnoreCase) || !elem.GetAttribute("type")
-				    .Equals("button", StringComparison.InvariantCultureIgnoreCase))
+			if (!elem.TagName.Equals("input", StringComparison.InvariantCultureIgnoreCase) || !elem.GetAttribute("type").Equals("button", StringComparison.InvariantCultureIgnoreCase))
 			{
 				return;
 			}
@@ -76,11 +72,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				case "ShowWordGrammarDetail":
 					ShowWordGrammarDetail(elem.GetAttribute("id"));
 					break;
-
 				case "TryWordGrammarAgain":
 					TryWordGrammarAgain(elem.GetAttribute("id"));
 					break;
-
 				case "GoToPreviousWordGrammarPage":
 					GoToPreviousWordGrammarPage();
 					break;
@@ -107,32 +101,32 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			var cmo = m_cache.ServiceLocator.GetObject(hvo);
 			switch (cmo.ClassID)
 			{
-				case MoFormTags.kClassId:					// fall through
-				case MoAffixAllomorphTags.kClassId:			// fall through
-				case MoStemAllomorphTags.kClassId:			// fall through
-				case MoInflAffMsaTags.kClassId:				// fall through
-				case MoDerivAffMsaTags.kClassId:			// fall through
-				case MoUnclassifiedAffixMsaTags.kClassId:	// fall through
-				case MoStemMsaTags.kClassId:				// fall through
-				case MoMorphSynAnalysisTags.kClassId:		// fall through
+				case MoFormTags.kClassId:                   // fall through
+				case MoAffixAllomorphTags.kClassId:         // fall through
+				case MoStemAllomorphTags.kClassId:          // fall through
+				case MoInflAffMsaTags.kClassId:             // fall through
+				case MoDerivAffMsaTags.kClassId:            // fall through
+				case MoUnclassifiedAffixMsaTags.kClassId:   // fall through
+				case MoStemMsaTags.kClassId:                // fall through
+				case MoMorphSynAnalysisTags.kClassId:       // fall through
 				case MoAffixProcessTags.kClassId:
 					sTool = AreaServices.LexiconEditMachineName;
 					parentClassId = LexEntryTags.kClassId;
 					break;
-				case MoInflAffixSlotTags.kClassId:		// fall through
-				case MoInflAffixTemplateTags.kClassId:	// fall through
+				case MoInflAffixSlotTags.kClassId:      // fall through
+				case MoInflAffixTemplateTags.kClassId:  // fall through
 				case PartOfSpeechTags.kClassId:
 					sTool = AreaServices.PosEditMachineName;
 					parentClassId = PartOfSpeechTags.kClassId;
 					break;
 				// still need to test compound rule ones
-				case MoCoordinateCompoundTags.kClassId:	// fall through
-				case MoEndoCompoundTags.kClassId:		// fall through
+				case MoCoordinateCompoundTags.kClassId: // fall through
+				case MoEndoCompoundTags.kClassId:       // fall through
 				case MoExoCompoundTags.kClassId:
 					sTool = AreaServices.CompoundRuleAdvancedEditMachineName;
 					parentClassId = cmo.ClassID;
 					break;
-				case PhRegularRuleTags.kClassId:		// fall through
+				case PhRegularRuleTags.kClassId:        // fall through
 				case PhMetathesisRuleTags.kClassId:
 					sTool = AreaServices.PhonologicalRuleEditMachineName;
 					parentClassId = cmo.ClassID;
@@ -163,6 +157,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			var sForm = AdjustForm(m_tbWordForm.Text);
 			m_htmlControl.URL = WordGrammarDebugger.SetUpWordGrammarDebuggerPage(sNodeId, sForm, m_htmlControl.URL);
 		}
+
 		/// <summary>
 		/// Try another pass in the Word Grammar Debugger
 		/// </summary>
@@ -172,6 +167,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			var sForm = AdjustForm(m_tbWordForm.Text);
 			m_htmlControl.URL = WordGrammarDebugger.PerformAnotherWordGrammarDebuggerStepPage(sNodeId, sForm, m_htmlControl.URL);
 		}
+
 		/// <summary>
 		/// Back up a page in the Word Grammar Debugger
 		/// </summary>
@@ -184,6 +180,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			m_htmlControl.URL = WordGrammarDebugger.PopWordGrammarStack();
 		}
+
 		/// <summary>
 		/// Modify the content of the form to use entities when needed
 		/// </summary>

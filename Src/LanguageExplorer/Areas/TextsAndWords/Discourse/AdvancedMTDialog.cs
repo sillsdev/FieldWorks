@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2018 SIL International
+// Copyright (c) 2008-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -122,7 +122,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// Sets the dialog combobox for columns according to what the logic filled in the parameter object.
 		/// Also selects the first column as selected initially, since we have no idea what might be wanted.
 		/// </summary>
-		/// <param name="items"></param>
 		internal void SetColumns(ColumnMenuItem[] items)
 		{
 			m_columnsCombo.Items.Clear();
@@ -161,8 +160,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Display AnotherClause dialog help here.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		private void m_helpButton_Click(object sender, EventArgs e)
 		{
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, s_helpTopic);

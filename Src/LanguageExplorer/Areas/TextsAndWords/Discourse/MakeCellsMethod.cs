@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2018 SIL International
+// Copyright (c) 2008-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -26,7 +26,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Column for which cell is currently open (initially not for any column)
 		/// </summary>
-		private int m_hvoCurCellCol = 0;
+		private int m_hvoCurCellCol;
 		/// <summary>
 		/// Index (display) of last column for which we have made (at least opened) a cell.
 		/// </summary>
@@ -42,7 +42,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Number of cellparts output in current cell.
 		/// </summary>
-		private int m_cCellPartsInCurrentCell = 0;
+		private int m_cCellPartsInCurrentCell;
 		private int m_icellpart = 0;
 		/// <summary>
 		/// Index of last column where automatic missing markers are put.
@@ -60,9 +60,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		#endregion
 
-		/// <summary>
-		/// Make one.
-		/// </summary>
+		/// <summary />
 		public MakeCellsMethod(ConstChartVc baseObj, LcmCache cache, IVwEnv vwenv, int hvo)
 		{
 			m_this = baseObj;
@@ -90,28 +88,26 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		{
 			SetupMissingMarker();
 			// If the CellsOS of the row changes, we need to regenerate.
-			var rowFlidArray = new[] { ConstChartRowTags.kflidCells,
+			var rowFlidArray = new[]
+			{
+				ConstChartRowTags.kflidCells,
 				ConstChartRowTags.kflidClauseType,
 				ConstChartRowTags.kflidEndParagraph,
-				ConstChartRowTags.kflidEndSentence };
+				ConstChartRowTags.kflidEndSentence
+			};
 			NoteRowDependencies(rowFlidArray);
 
 			m_vwenv.IsRtL = fRtL;
-
 			if (!(m_chartBody.Chart.NotesColumnOnRight ^ fRtL))
 			{
 				MakeNoteCell();
 			}
-
 			MakeRowLabelCell();
-
 			MakeMainCellParts(); // Make all the cell parts between row label and note.
-
 			if (m_chartBody.Chart.NotesColumnOnRight ^ fRtL)
 			{
 				MakeNoteCell();
 			}
-
 			FlushDecorator();
 		}
 
@@ -130,22 +126,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private void MakeMainCellParts()
 		{
 			m_cellparts = m_row.CellsOS.ToHvoArray();
-
 			if (m_row.StartDependentClauseGroup)
 			{
 				FindCellPartToStartDependentClause();
 			}
-
 			if (m_row.EndDependentClauseGroup)
 			{
 				FindCellPartToEndDependentClause();
 			}
-
 			// Main loop over CellParts in this row
 			for (m_icellpart = 0; m_icellpart < m_cellparts.Length; m_icellpart++)
 			{
 				var hvoCellPart = m_cellparts[m_icellpart];
-
 				// If the column or merge properties of the cell changes, we need to regenerate.
 				var cellPartFlidArray = new[]
 				{
@@ -154,7 +146,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					ConstituentChartCellPartTags.kflidMergesAfter
 				};
 				NoteCellDependencies(cellPartFlidArray, hvoCellPart);
-
 				ProcessCurrentCellPart(hvoCellPart);
 			}
 			CloseCurrentlyOpenCell();
@@ -193,7 +184,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				AddCellPartToCell(cellPart);
 				return;
 			}
-
 			// changed column (or started first column). Close the current cell if one is open, and figure out
 			// how many cells wide the new one needs to be.
 			CloseCurrentlyOpenCell();
@@ -205,7 +195,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				// If in fact merging is occurring, align it in the appropriate cell.
 				if (ccolsAvailableUpToCurrent > 1)
 				{
-					m_vwenv.set_IntProperty((int) FwTextPropType.ktptAlign, (int) FwTextPropVar.ktpvEnum, (int) FwTextAlign.ktalTrailing);
+					m_vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalTrailing);
 				}
 				MakeDataCell(ccolsAvailableUpToCurrent);
 				m_iLastColForWhichCellExists = ihvoNewCol;
@@ -256,9 +246,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				icellPart--;
 			}
-
 			m_icellPartCloseClause = icellPart >= 0 ? icellPart : m_cellparts.Length - 1;
-
 			// Find the index of the column with the CellPart before the close bracket (plus 1), or if none, start at col 0.
 			var icol = 0;
 			if (0 <= m_icellPartCloseClause && m_icellPartCloseClause < m_cellparts.Length)
@@ -325,9 +313,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		{
 			if (!m_chartBody.BadChart)
 			{
-				MessageBox.Show(LanguageExplorerResources.ksFoundAndFixingInvalidDataCells,
-					LanguageExplorerResources.ksInvalidInternalConstituentChartData,
-					MessageBoxButtons.OK, MessageBoxIcon.Information);
+				MessageBox.Show(LanguageExplorerResources.ksFoundAndFixingInvalidDataCells, LanguageExplorerResources.ksInvalidInternalConstituentChartData, MessageBoxButtons.OK, MessageBoxIcon.Information);
 				m_chartBody.BadChart = true;
 			}
 
@@ -380,7 +366,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				AddCloseBracketAfterDepClause();
 			}
-
 			if (ConstituentChartLogic.IsMovedText(cellPart))
 			{
 				m_vwenv.AddObj(cellPart.Hvo, m_this, ConstChartVc.kfragMovedTextCellPart);
@@ -488,7 +473,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			// Row decorator reverses this if chart is RTL.
 			vwenv.set_IntProperty((int)FwTextPropType.ktptBorderTrailing, (int)FwTextPropVar.ktpvMilliPoint, 500);
 			vwenv.set_IntProperty((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.Black));
-
 			vwenv.OpenTableCell(1, 1);
 		}
 
@@ -527,7 +511,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				AddOpenBracketBeforeDepClause();
 				m_icellPartOpenClause = -1; // suppresses normal open and in any subsequent auto-missing cells.
 			}
-
 			if (icol == m_icolLastAutoMissing && !m_chartBody.IsRightToLeft)
 			{
 				AddCloseBracketAfterDepClause();

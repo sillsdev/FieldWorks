@@ -6,9 +6,7 @@ using System.Windows.Forms;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-	/// <summary>
-	/// Summary description for LiteralMessageSlice.
-	/// </summary>
+	/// <summary />
 	internal class LiteralMessageSlice : Slice
 	{
 		/// <summary> Constructor.</summary>

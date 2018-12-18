@@ -26,9 +26,7 @@ namespace LanguageExplorer.Controls.LexText
 		private string m_sUserWs;
 		private string m_sNewUserWs;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="UserInterfaceChooser"/> class.
-		/// </summary>
+		/// <summary />
 		public UserInterfaceChooser()
 		{
 			InitializeComponent();
@@ -44,7 +42,7 @@ namespace LanguageExplorer.Controls.LexText
 		}
 
 		/// <summary>
-		/// Initilizess the control, setting the specified user interface writing
+		/// Initializes the control, setting the specified user interface writing
 		/// system as the current one.
 		/// </summary>
 		public void Init(string sUserWs)
@@ -287,9 +285,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary />
 		private sealed class LanguageDisplayItem
 		{
-			/// <summary>
-			/// Initializes a new instance of the <see cref="LanguageDisplayItem"/> class.
-			/// </summary>
+			/// <summary />
 			public LanguageDisplayItem(string sLocale)
 			{
 				Locale = sLocale;

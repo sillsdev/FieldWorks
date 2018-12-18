@@ -1,14 +1,15 @@
-// Copyright (c) 2002-2018 SIL International
+// Copyright (c) 2002-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {
@@ -31,7 +32,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed { get; private set; }
+		private bool IsDisposed { get; set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -51,7 +52,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			Dispose(true);
 			// This object will be cleaned up by the Dispose method.
-			// Therefore, you should call GC.SupressFinalize to
+			// Therefore, you should call GC.SuppressFinalize to
 			// take this object off the finalization queue
 			// and prevent finalization code for this object
 			// from executing a second time.
@@ -81,10 +82,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </remarks>
 		protected virtual void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -117,6 +118,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			m_SdaToLcm.Clear();
 			m_lcmToSda.Clear();
 		}
+
 		/// <summary />
 		public LcmCache MainCache
 		{
@@ -130,7 +132,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				{
 					return;
 				}
-
 				m_cache = value;
 				// Forget any existing relationships.
 				m_lcmToSda = new Dictionary<int, int>();
@@ -152,7 +153,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				{
 					return;
 				}
-
 				if (m_sda != null)
 				{
 					Marshal.ReleaseComObject(m_sda);
@@ -279,7 +279,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			return FindOrCreateSec(hvoReal, clid, hvoOwner, flidOwn, flidName, TsStringUtils.MakeString(name, ws));
 		}
 		/// <summary>
-		/// Like FindOrCreateSec, except the ws is taken automaticaly as the default analysis ws of the main cache.
+		/// Like FindOrCreateSec, except the ws is taken automatically as the default analysis ws of the main cache.
 		/// </summary>
 		public int FindOrCreateSecAnalysis(int hvoReal, int clid, int hvoOwner, int flidOwn, string name, int flidName)
 		{
@@ -287,7 +287,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		}
 
 		/// <summary>
-		/// Like FindOrCreateSec, except the ws is taken automaticaly as the default vernacular ws of the main cache.
+		/// Like FindOrCreateSec, except the ws is taken automatically as the default vernacular ws of the main cache.
 		/// </summary>
 		public int FindOrCreateSecVern(int hvoReal, int clid, int hvoOwner, int flidOwn, string name, int flidName)
 		{

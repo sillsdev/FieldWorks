@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -51,9 +51,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -94,6 +94,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// Handle AfterSelect events through POSPopupTreeManager in m_tree_Load().
 			Tree.Load += m_tree_Load;
 		}
+
 		public override void Activate(Rect loc)
 		{
 			if (Tree == null)
@@ -132,7 +133,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			m_tree_Load(null, null);
 			m_items = null;
-			// not sure if this is guarranteed to be in the same order each time, but worth a try.
+			// not sure if this is guaranteed to be in the same order each time, but worth a try.
 			items.AddRange(m_caches.MainCache.LangProject.PartsOfSpeechOA.ReallyReallyAllPossibilities.Select(possibility => possibility.Hvo));
 			m_items = items;
 		}
@@ -153,7 +154,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			var hvoPos = Items[index];
 			var possibility = m_caches.MainCache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(hvoPos);
-
 			// Called only if it's a combo box.
 			SelectItem(Items[index], possibility.Name.BestVernacularAnalysisAlternative.Text);
 		}

@@ -34,14 +34,7 @@ namespace LanguageExplorer.Controls.Styles
 			InitializeComponent();
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FwApplyStyleDlg"/> class.
-		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="styleSheet">The style sheet.</param>
-		/// <param name="paraStyleName">Name of the currently selected paragraph style.</param>
-		/// <param name="charStyleName">Name of the currently selected character style.</param>
-		/// <param name="helpTopicProvider">The help topic provider.</param>
+		/// <summary />
 		public FwApplyStyleDlg(LcmCache cache, LcmStyleSheet styleSheet, string paraStyleName, string charStyleName, IHelpTopicProvider helpTopicProvider) : this()
 		{
 			m_helpTopicProvider = helpTopicProvider;

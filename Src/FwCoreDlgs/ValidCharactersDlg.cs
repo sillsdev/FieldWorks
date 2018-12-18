@@ -580,9 +580,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			gridCharInventory.DefaultCellStyle.SelectionForeColor = SystemColors.WindowText;
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ValidCharactersDlg"/> class.
-		/// </summary>
+		/// <summary />
 		/// <param name="cache">The cache. Can be <c>null</c> if called from New Project
 		/// dialog.</param>
 		/// <param name="wsContainer">The LCM writing system container. Can't be

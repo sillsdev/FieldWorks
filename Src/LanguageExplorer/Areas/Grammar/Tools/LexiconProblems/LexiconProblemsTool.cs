@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,9 +8,9 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
+using LanguageExplorer.Filters;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
-using LanguageExplorer.Filters;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -68,16 +68,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
-			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters,
-				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				true,
-				root.Element("parameters"),
-				null,
-				MachineName,
-				majorFlexComponentParameters.LcmCache,
-				_recordList,
-				dataTree,
-				MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
+			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
+				true, root.Element("parameters"), null, MachineName, majorFlexComponentParameters.LcmCache, _recordList, dataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 			if (majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), false, SettingsGroup.LocalSettings))
 			{
 				majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish("ShowHiddenFields", true);
@@ -153,10 +145,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 			*/
 			var probAnnFilter = new ProblemAnnotationFilter();
 			probAnnFilter.Init(cache, XDocument.Parse(GrammarResources.LexiconProblemsParameters).Root.Element("filterElement"));
-			return new RecordList(recordListId, statusBar,
-				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,
-				new VectorPropertyParameterObject(cache.LanguageProject, "Problems", LangProjectTags.kflidAnnotations),
-				new RecordFilterParameterObject(probAnnFilter));
+			return new RecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,
+				new VectorPropertyParameterObject(cache.LanguageProject, "Problems", LangProjectTags.kflidAnnotations), new RecordFilterParameterObject(probAnnFilter));
 		}
 	}
 }

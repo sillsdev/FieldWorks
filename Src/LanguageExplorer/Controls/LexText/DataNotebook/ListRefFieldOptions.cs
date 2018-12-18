@@ -22,9 +22,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		LcmCache m_cache;
 		IHelpTopicProvider m_helpTopicProvider;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ListRefFieldOptions"/> class.
-		/// </summary>
+		/// <summary />
 		public ListRefFieldOptions()
 		{
 			InitializeComponent();

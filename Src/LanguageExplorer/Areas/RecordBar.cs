@@ -1,16 +1,15 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Areas
 {
-	/// <summary>
-	/// Summary description for RecordBar.
-	/// </summary>
+	/// <summary />
 	internal sealed class RecordBar : UserControl, IRecordBar
 	{
 		private TreeView m_treeView;
@@ -18,28 +17,18 @@ namespace LanguageExplorer.Areas
 		private ColumnHeader m_columnHeader;
 		private Control m_optionalHeaderControl;
 		private IPropertyTable m_propertyTable;
-
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
 		private System.ComponentModel.Container components = null;
 
 		/// <summary />
 		public RecordBar(IPropertyTable propertyTable)
 		{
-			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
-
 			m_propertyTable = propertyTable;
-
 			m_treeView.HideSelection = false;
 			m_listView.HideSelection = false;
-
 			m_treeView.Dock = DockStyle.Fill;
 			m_listView.Dock = DockStyle.Fill;
-
 			IsFlatList = true;
-
 			Clear();
 		}
 
@@ -88,7 +77,6 @@ namespace LanguageExplorer.Areas
 			{
 				return;
 			}
-
 			m_optionalHeaderControl = c;
 			Controls.Add(c);
 			c.Dock = DockStyle.Top;
@@ -113,7 +101,6 @@ namespace LanguageExplorer.Areas
 			m_treeView.AfterSelect -= OnTreeBarAfterSelect;
 			m_treeView.Nodes.Clear();
 			m_treeView.AfterSelect += OnTreeBarAfterSelect;
-
 			m_listView.SelectedIndexChanged -= OnListBarSelect;
 			m_listView.Items.Clear();
 			m_listView.SelectedIndexChanged += OnListBarSelect;
@@ -129,15 +116,13 @@ namespace LanguageExplorer.Areas
 			m_propertyTable.SetProperty("SelectedTreeBarNode", e.Node, doBroadcastIfChanged: true);
 		}
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
+		/// <inheritdoc />
+		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -207,12 +192,12 @@ namespace LanguageExplorer.Areas
 		public bool ShowHeaderControl
 		{
 			set
-		{
-			if (HasHeaderControl)
+			{
+				if (HasHeaderControl)
 				{
 					m_optionalHeaderControl.Visible = value;
 				}
-		}
+			}
 		}
 	}
 }

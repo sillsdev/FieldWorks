@@ -44,14 +44,10 @@ using SIL.Xml;
 
 namespace LanguageExplorer.Filters
 {
-	/// <summary>
-	/// Summary description for RecordFilter.
-	/// </summary>
+	/// <summary />
 	public abstract class RecordFilter : IPersistAsXml, IStoresLcmCache, IStoresDataAccess
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:RecordFilter"/> class.
-		/// </summary>
+		/// <summary />
 		protected RecordFilter()
 		{
 			Name = FiltersStrings.ksUnknown;

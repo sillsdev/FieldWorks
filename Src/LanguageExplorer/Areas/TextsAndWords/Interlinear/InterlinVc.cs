@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,13 +11,13 @@ using System.Text;
 using LanguageExplorer.Controls;
 using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -84,8 +84,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// Constants used to identify 'fake' properties to DisplayVariant.
 		internal const int ktagGlossAppend = -50;
 		internal const int ktagGlossPrepend = -49;
-		//internal const int ktagAnalysisMissing = -51;
-		//internal const int ktagSummary = -52;
 		internal const int ktagBundleMissingSense = -53;
 		//internal const int ktagMissingGloss = -54;
 		internal const int ktagAnalysisMissingPos = -55;
@@ -110,7 +108,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected IWfiMorphBundleRepository m_wmbRepository;
 		protected IWfiAnalysisRepository m_analRepository;
 		protected int m_wsVernForDisplay;
-
 		protected int m_wsAnalysis;
 		protected int m_wsUi;
 		private ITsString m_tssMissingVernacular; // A string in a Vernacular WS is missing
@@ -124,7 +121,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private ITsString m_tssCommaSpace;
 		private ITsString m_tssPendingGlossAffix; // LexGloss line GlossAppend or GlossPrepend
 		private int m_mpBundleHeight; // millipoint height of interlinear bundle.
-
 		private readonly IDictionary<ILgWritingSystem, ITsString> m_mapWsDirTss = new Dictionary<ILgWritingSystem, ITsString>();
 		// AnnotationDefns we need
 		private int m_hvoAnnDefNote;
@@ -134,9 +130,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private readonly int m_selfFlid;
 		#endregion Data members
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="InterlinVc"/> class.
-		/// </summary>
+		/// <summary />
 		/// <remarks>We use the default analysis writing system as the default, even though
 		/// this view displays data in multiple writing systems. It's pretty arbitrary in this
 		/// case, but we need a valid WS because if we get an ORC, we have to create a Ts String
@@ -208,14 +202,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected internal IVwStylesheet StyleSheet { get; set; }
 
 		#region Disposable stuff
-		/// <summary/>
+		/// <summary />
 		~InterlinVc()
 		{
 			Dispose(false);
 		}
 
-		/// <summary/>
-		public bool IsDisposed { get; private set; }
+		/// <summary />
+		private bool IsDisposed { get; set; }
 
 		/// <inheritdoc />
 		public void Dispose()
@@ -224,7 +218,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			GC.SuppressFinalize(this);
 		}
 
-		/// <summary/>
+		/// <summary />
 		protected virtual void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " *******");
@@ -233,6 +227,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// No need to do it more than once.
 				return;
 			}
+
 			if (disposing)
 			{
 				// Dispose managed resources here.
@@ -242,7 +237,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// Dispose unmanaged resources here, whether disposing is true or false.
 			m_msaVc = null;
 			m_cache = null;
-
 			m_tssMissingVernacular = null;
 			m_tssMissingAnalysis = null;
 			m_tssMissingGlossAppend = null;
@@ -420,7 +414,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;     // Can't do anything without an hvo (except crash -- see LT-9348).
 			}
-
 			switch (frag)
 			{
 				case kfragStText:   // new root object for InterlinDocChild.
@@ -567,7 +560,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				case kfragPossibiltyAnalysisName:
 					vwenv.AddStringAltMember(CmPossibilityTags.kflidName, m_cache.DefaultAnalWs, this);
 					break;
-
 				case kfragMorphBundle:
 					// the lines of morpheme information (hvo is a WfiMorphBundle)
 					// Make an 'inner pile' to contain the bundle of morph information.
@@ -851,13 +843,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					AddFreeformComment(vwenv, hvoSeg, wssAnalysis[i], flid);
 				}
 			}
-
-
 			vwenv.CloseParagraph();
 			vwenv.CloseDiv();
 		}
 
-		/// <summary/>
+		/// <summary />
 		private int GetWsForSeg(int hvoSeg)
 		{
 			var wsSeg = PreferredVernWs;
@@ -950,7 +940,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-
 			ITsString tssDirWs;
 			if (!m_mapWsDirTss.TryGetValue(wsObj, out tssDirWs))
 			{
@@ -1011,7 +1000,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				var flidSelf = Cache.MetaDataCacheAccessor.GetFieldId2(CmObjectTags.kClassId, "Self", false);
 				RootSite.RootBox.PropChanged(m_hvoActiveFreeform, flidSelf, 0, 1, 1);
 			}
-
 			helper?.SetSelection(true, false);
 		}
 
@@ -1111,9 +1099,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		internal int GetRealWsOrBestWsForContext(int hvo, InterlinLineSpec spec)
 		{
-			return spec.WritingSystem == WritingSystemServices.kwsVernInParagraph
-				? PreferredVernWs
-				: spec.GetActualWs(Cache, hvo, spec.WritingSystem);
+			return spec.WritingSystem == WritingSystemServices.kwsVernInParagraph ? PreferredVernWs : spec.GetActualWs(Cache, hvo, spec.WritingSystem);
 		}
 
 		/// <summary>
@@ -1204,7 +1190,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 							}
 						}
-
 						if (flid == 0)
 						{
 							vwenv.AddString(m_tssMissingAnalysis);
@@ -1254,7 +1239,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			using (var vcLexGlossFrag = new InterlinVc(possibleVariant.Cache))
 			{
 				vcLexGlossFrag.LineChoices = lineChoices;
-
 				result = null;
 				var collector = new TsStringCollectorEnv(null, vcLexGlossFrag.Cache.MainCacheAccessor, possibleVariant.Hvo)
 				{
@@ -1294,7 +1278,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			vwenv.OpenParagraph();
 			// see if we have an irregularly inflected form type reference
 			var leitFirst = ler.VariantEntryTypesRS.FirstOrDefault(let => @let.ClassID == LexEntryInflTypeTags.kClassId);
-
 			// add any GlossPrepend info
 			if (leitFirst != null)
 			{
@@ -1448,10 +1431,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// The form of an MoForm. Hvo is some sort of MoMorph. Display includes its prefix
 			// and suffix.
 			// Todo: make prefix and suffix read-only.
-			vwenv.OpenParagraph(); // group prefix, form, suffix on one line.
-								   // It may not have a morph type at all.
-								   // RBR says: "So why take the chance of a null ref exception (which I ran into, in my ZPI data, of course)? :-)
-								   // int typeID = mf.MorphTypeRA.Hvo;
+			// group prefix, form, suffix on one line.
+			vwenv.OpenParagraph();
+			// It may not have a morph type at all.
 			var morphType = mf.MorphTypeRA;
 			if (morphType != null)
 			{
@@ -1470,16 +1452,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		private sealed class DisplayWordBundleMethod
 		{
-			int m_hvoWordform;
-			int m_hvoWfiAnalysis;
-			int m_hvoDefault;
-			ICmObject m_defaultObj;
-			readonly IVwEnv m_vwenv;
-			readonly AnalysisOccurrence m_analysisOccurrence;
-			readonly int m_hvoWordBundleAnalysis;
-			readonly InterlinVc m_this;
-			readonly LcmCache m_cache;
-			readonly InterlinLineChoices m_choices;
+			private int m_hvoWordform;
+			private int m_hvoWfiAnalysis;
+			private int m_hvoDefault;
+			private ICmObject m_defaultObj;
+			private readonly IVwEnv m_vwenv;
+			private readonly AnalysisOccurrence m_analysisOccurrence;
+			private readonly int m_hvoWordBundleAnalysis;
+			private readonly InterlinVc m_this;
+			private readonly LcmCache m_cache;
+			private readonly InterlinLineChoices m_choices;
 			private bool m_fshowMultipleAnalyses;
 
 			private DisplayWordBundleMethod(IVwEnv vwenv1, int hvoWordBundleAnalysis, InterlinVc owner)
@@ -1564,8 +1546,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (tssRealForm != null && tssRealForm.Length > 0)
 				{
 					m_this.IsDoingRealWordForm = true;
-					m_this.PreferredVernWs = TsStringUtils.GetWsAtOffset(tssRealForm, 0); // Cache the baseline WS for display of other specs
-																						  // LT-12203 Text chart doesn't want multiple analyses highlighting
+					// Cache the baseline WS for display of other specs
+					m_this.PreferredVernWs = TsStringUtils.GetWsAtOffset(tssRealForm, 0);
+					// LT-12203 Text chart doesn't want multiple analyses highlighting
 					if (m_fshowMultipleAnalyses)
 					{
 						//identify those words the user has yet to approve which have multiple possible
@@ -1609,15 +1592,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							{
 								// Real analysis isn't what we're displaying, so morph breakdown
 								// is a guess. Is it a human-approved guess?
-								var isHumanGuess = m_this.Decorator.get_IntProp(m_hvoDefault, InterlinViewDataCache.OpinionAgentFlid) !=
-																				(int)AnalysisGuessServices.OpinionAgent.Parser;
+								var isHumanGuess = m_this.Decorator.get_IntProp(m_hvoDefault, InterlinViewDataCache.OpinionAgentFlid) != (int)AnalysisGuessServices.OpinionAgent.Parser;
 								m_this.SetGuessing(m_vwenv, isHumanGuess ? ApprovedGuessColor : MachineGuessColor);
 							}
 							m_vwenv.AddObj(m_hvoDefault, m_this, kfragAnalysisMorphs);
 						}
 						break;
 					case WfiGlossTags.kClassId:
-
 						if (m_this.ShowMorphBundles)
 						{
 							m_hvoWfiAnalysis = m_defaultObj.Owner.Hvo;
@@ -1726,7 +1707,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				case kfragSegFf: // freeform annotations. (Cf override in InterlinPrintVc)
 					{
-						// Note that changes here may need to be refleced in FreeformAdder's code
+						// Note that changes here may need to be reflected in FreeformAdder's code
 						// for selecting a newly created annotation.
 						AddFreeformAnnotations(vwenv, hvo);
 						break;
@@ -1783,7 +1764,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							AddCustomFreeFormComment(vwenv, hvoSeg, ispec);
 						}
 						break; // unknown type, ignore it.
-
 				}
 			}
 		}
@@ -1795,7 +1775,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-
 			var exporter = vwenv as InterlinearExporter;
 			if (exporter != null)
 			{
@@ -2008,7 +1987,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					LoadDataForSegments(rghvo, hvoParent);
 				}
-
 				if (tag != StTextTags.kflidParagraphs)
 				{
 					return;

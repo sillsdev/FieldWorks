@@ -1,18 +1,18 @@
-// Copyright (c) 2008-2018 SIL International
+// Copyright (c) 2008-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics;
-using System.Xml;
-using SIL.LCModel;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Xml;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls;
-using SIL.LCModel.Core.Text;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 {
@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 	/// or move common code down to CollectorEnv. This has been postponed in the interests
 	/// of being able to release FW 5.2.1 without requiring changes to DLLs other than Discourse.
 	/// </summary>
-	internal class DiscourseExporter : CollectorEnv, IDisposable
+	internal sealed class DiscourseExporter : CollectorEnv, IDisposable
 	{
 		private readonly XmlWriter m_writer;
 		private readonly LcmCache m_cache;
@@ -46,7 +46,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		// 4 = ended that got first real row (and later).
 		private TitleStage m_titleStage = TitleStage.ktsStart;
 		private bool m_fNextCellReversed;
-
 		private readonly int m_wsLineNumber; // ws to use for line numbers.
 
 		public DiscourseExporter(LcmCache cache, XmlWriter writer, int hvoRoot, IVwViewConstructor vc, int wsLineNumber)
@@ -61,33 +60,34 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		}
 
 		#region Disposable stuff
-#if DEBUG
+
 		~DiscourseExporter()
 		{
 			Dispose(false);
 		}
-#endif
-		public bool IsDisposed { get; private set;}
 
-		/// <summary/>
+		private bool IsDisposed { get; set; }
+
+		/// <inheritdoc />
 		public void Dispose()
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
 
-		/// <summary/>
-		protected virtual void Dispose(bool fDisposing)
+		/// <summary />
+		private void Dispose(bool disposing)
 		{
-			Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
 				// No need to run it more than once.
 				return;
 			}
-			if (fDisposing)
+
+			if (disposing)
 			{
-				// dispose managed and unmanaged objects
+				// dispose managed objects
 				m_writer.Dispose();
 			}
 
@@ -125,16 +125,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				{
 					m_writer.WriteAttributeString("vernacular", "true");
 				}
-
 				if (ws.RightToLeftScript)
 				{
 					m_writer.WriteAttributeString("RightToLeft", "true");
 				}
 				m_writer.WriteEndElement();
 			}
-			m_writer.WriteEndElement();	// languages
+			m_writer.WriteEndElement(); // languages
 		}
-
 
 		public override void AddStringProp(int tag, IVwViewConstructor _vwvc)
 		{
@@ -204,7 +202,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			}
 		}
 
-		private void WriteWordForm (string elementTag, ITsString tss, int ws, string extraAttr)
+		private void WriteWordForm(string elementTag, ITsString tss, int ws, string extraAttr)
 		{
 			WriteStringVal(elementTag, ws, tss, extraAttr, (extraAttr == null) ? null : "true");
 		}
@@ -228,7 +226,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		public override void set_IntProperty(int tpt, int tpv, int nValue)
 		{
-			if (tpt == (int) FwTextPropType.ktptAlign && nValue == (int) FwTextAlign.ktalTrailing)
+			if (tpt == (int)FwTextPropType.ktptAlign && nValue == (int)FwTextAlign.ktalTrailing)
 			{
 				m_fNextCellReversed = true;
 			}
@@ -270,7 +268,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		public override void AddObj(int hvoItem, IVwViewConstructor vc, int frag)
 		{
 			m_frags.Add(frag);
-			base.AddObj (hvoItem, vc, frag);
+			base.AddObj(hvoItem, vc, frag);
 			m_frags.RemoveAt(m_frags.Count - 1);
 		}
 
@@ -288,7 +286,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				return;
 			}
-			if ((m_vc as InterlinVc)!= null && (m_vc as InterlinVc).IsDoingRealWordForm)
+			if ((m_vc as InterlinVc)?.IsDoingRealWordForm == true)
 			{
 				var ws = GetWsFromTsString(tss);
 				WriteWordForm("word", tss, ws, m_frags.Contains(ConstChartVc.kfragMovedTextCellPart) ? "moved" : null);
@@ -301,7 +299,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				m_writer.WriteStartElement("lit");
 				MarkNeedsSpace(tss.Text);
-
 				WriteLangAndContent(GetWsFromTsString(tss), tss);
 				m_writer.WriteEndElement();
 				base.AddString(tss);
@@ -336,7 +333,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				m_writer.WriteAttributeString("noSpaceBefore", "true");
 			}
-
 			if (lit.EndsWith("[") || lit.EndsWith("(") || lit.EndsWith("-"))
 			{
 				m_writer.WriteAttributeString("noSpaceAfter", "true");
@@ -346,17 +342,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		public override void AddObjProp(int tag, IVwViewConstructor vc, int frag)
 		{
 			m_frags.Add(frag);
-			switch (frag)
-			{
-				default:
-					break;
-			}
 			base.AddObjProp(tag, vc, frag);
-			switch (frag)
-			{
-				default:
-					break;
-			}
 			m_frags.RemoveAt(m_frags.Count - 1);
 		}
 
@@ -411,7 +397,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					m_writer.WriteEndElement(); // gloss
 				}
 				m_writer.WriteEndElement(); // glosses
-				// Ready to start collecting for the next cell.
+											// Ready to start collecting for the next cell.
 				m_glossesInCellCollector.Clear();
 			}
 
@@ -424,13 +410,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		public override void AddObjVecItems(int tag, IVwViewConstructor vc, int frag)
 		{
 			m_frags.Add(frag);
-			base.AddObjVecItems (tag, vc, frag);
+			base.AddObjVecItems(tag, vc, frag);
 			m_frags.RemoveAt(m_frags.Count - 1);
 		}
 
 		/// <summary>
 		/// Called whenever we start the display of an object, we currently use it to catch the start of
-		/// a row, basedon the frag. Overriding OpenTableRow() might be more natural, but I was trying to
+		/// a row, based on the frag. Overriding OpenTableRow() might be more natural, but I was trying to
 		/// minimize changes to other DLLs, and those routines are not currently virtual in the base class.
 		/// </summary>
 		protected override void OpenTheObject(int hvo, int ihvo)
@@ -456,7 +442,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					{
 						m_writer.WriteAttributeString("endSent", "true");
 					}
-					//ConstChartVc vc = m_vc as ConstChartVc;
 					var clauseType = ConstChartVc.GetRowStyleName(row);
 					m_writer.WriteAttributeString("type", clauseType);
 					var label = row.Label.Text;

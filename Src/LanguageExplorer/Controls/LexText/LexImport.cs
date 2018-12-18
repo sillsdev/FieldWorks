@@ -39,9 +39,7 @@ namespace LanguageExplorer.Controls.LexText
 		public static readonly string s_sPhase3FileName = "Phase3Output.xml";
 		public static readonly string s_sPhase4FileName = "Phase4Output.xml";
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LexImport"/> class.
-		/// </summary>
+		/// <summary />
 		public LexImport(LcmCache cache, string tempDir, string transformDir)
 		{
 			m_cache = cache;

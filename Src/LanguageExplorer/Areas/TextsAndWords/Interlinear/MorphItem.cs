@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -107,7 +107,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			var miX = (MorphItem)x;
 			var miY = (MorphItem)y;
-
 			// first compare the lex and sense names.
 			if (miX.m_name == null || miY.m_name == null) //handle sort under null conditions
 			{
@@ -122,13 +121,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			else
 			{
-				var compareLexNames = string.Compare(miX.m_name.Text, miY.m_name.Text);
+				var compareLexNames = string.CompareOrdinal(miX.m_name.Text, miY.m_name.Text);
 				if (compareLexNames != 0)
 				{
 					return compareLexNames;
 				}
 			}
-
 			// otherwise if the hvo's are the same, then we want the ones with senses to be higher.
 			// when m_hvoSense equals '0' we want to insert "Add New Sense" for that lexEntry,
 			// following all the other senses for that lexEntry.
@@ -138,7 +136,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					return 1;
 				}
-
 				if (miY.m_hvoSense == 0)
 				{
 					return -1;
@@ -147,7 +144,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// only compare sense names for the same morph
 			if (miX.m_hvoMorph == miY.m_hvoMorph)
 			{
-				var compareSenseNames = string.Compare(miX.m_nameSense, miY.m_nameSense);
+				var compareSenseNames = string.CompareOrdinal(miX.m_nameSense, miY.m_nameSense);
 				if (compareSenseNames != 0)
 				{
 					// if we have inflectional affix information, order them according to their order in LexEntryRef.VariantEntryTypes.
@@ -175,7 +172,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						{
 							return 1;
 						}
-
 						if (iX < iY)
 						{
 							return -1;
@@ -183,8 +179,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					}
 					return compareSenseNames;
 				}
-
-				var msaCompare = string.Compare(miX.m_nameMsa, miY.m_nameMsa);
+				var msaCompare = string.CompareOrdinal(miX.m_nameMsa, miY.m_nameMsa);
 				if (msaCompare != 0)
 				{
 					return msaCompare;

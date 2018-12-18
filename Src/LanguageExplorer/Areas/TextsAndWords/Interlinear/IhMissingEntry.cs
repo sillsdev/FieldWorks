@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,13 +9,13 @@ using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.LcmUi;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Application;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 
@@ -37,14 +37,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Determines if the two MorphItems are based on the same objects, ignoring string values.
 		/// </summary>
-		static bool HaveSameObjs(MorphItem x, MorphItem y)
+		private static bool HaveSameObjs(MorphItem x, MorphItem y)
 		{
-			return x.m_hvoSense == y.m_hvoSense &&
-				   x.m_hvoMainEntryOfVariant == y.m_hvoMainEntryOfVariant &&
-				   x.m_hvoMorph == y.m_hvoMorph &&
-				   x.m_hvoMsa == y.m_hvoMsa &&
-				   x.m_inflType == y.m_inflType &&
-				   x.m_entryRef == y.m_entryRef;
+			return x.m_hvoSense == y.m_hvoSense && x.m_hvoMainEntryOfVariant == y.m_hvoMainEntryOfVariant && x.m_hvoMorph == y.m_hvoMorph && x.m_hvoMsa == y.m_hvoMsa
+			       && x.m_inflType == y.m_inflType && x.m_entryRef == y.m_entryRef;
 		}
 
 		private static int HvoOrZero(ICmObject co)
@@ -85,14 +81,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					realEntry?.IsVariantOfSenseOrOwnerEntry(realSense, out ler);
 				}
 			}
-
-			var mi = GetMorphItem(mf, null, realSense, null, ler, HvoOrZero(realEntry), inflType);
-			return mi;
+			return GetMorphItem(mf, null, realSense, null, ler, HvoOrZero(realEntry), inflType);
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="IhMissingEntry"/> class.
-		/// </summary>
+		/// <summary />
 		internal IhMissingEntry(IHelpTopicProvider helpTopicProvider)
 		{
 			m_helpTopicProvider = helpTopicProvider;
@@ -124,9 +116,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -246,7 +238,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				tssName = mf.Form.GetAlternativeOrBestTss(m_wsVern, out wsActual);
 			}
 			var wsAnalysis = m_caches.MainCache.ServiceLocator.WritingSystemManager.Get(m_caches.MainCache.DefaultAnalWs);
-
 			// Populate morphItems with Sense/Msa level specifics
 			if (le != null)
 			{
@@ -303,7 +294,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					msaText = msa.InterlinearName;
 				}
 			}
-
 			var options = new MorphItemOptions
 			{
 				HvoMoForm = HvoOrZero(mf),
@@ -338,30 +328,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				disabledItemProperties = DisabledItemProperties();
 			}
-			AddItemToComboList(ITextStrings.ksCreateNewEntry_,
-				OnSelectCreateNewEntry,
-				disabledItemProperties,
-				disabledItemProperties == null);
-			AddItemToComboList(ITextStrings.ksVariantOf_,
-				OnSelectVariantOf,
-				disabledItemProperties,
-				disabledItemProperties == null);
-
+			AddItemToComboList(ITextStrings.ksCreateNewEntry_, OnSelectCreateNewEntry, disabledItemProperties, disabledItemProperties == null);
+			AddItemToComboList(ITextStrings.ksVariantOf_, OnSelectVariantOf, disabledItemProperties, disabledItemProperties == null);
 			// If morphemes line is empty then make the allomorph selection,
 			// appear disabled (cf. LT-1621). If user tries to select this index,
 			// we prevent the selection in our HandleComboSelChange override.
-			AddItemToComboList(ITextStrings.ksAllomorphOf_,
-				OnSelectAllomorphOf,
-				disabledItemProperties,
-				disabledItemProperties == null);
-
+			AddItemToComboList(ITextStrings.ksAllomorphOf_, OnSelectAllomorphOf, disabledItemProperties, disabledItemProperties == null);
 			// If the morpheme line is hidden, give the user the option to edit morph breaks.
 			if (m_sandbox.InterlinLineChoices.IndexOf(InterlinLineChoices.kflidMorphemes) < 0)
 			{
 				AddItemToComboList("-------", null, null, false);
 				AddItemToComboList(ITextStrings.ksEditMorphBreaks_, OnSelectEditMorphBreaks, null, true);
 			}
-
 			// Set combo selection to current selection.
 			ComboList.SelectedIndex = IndexOfCurrentItem;
 		}
@@ -377,7 +355,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				ITsString tssToDisplay;
 				int hvoPrimary; // the key hvo associated with the combo item.
 				tisb.Clear();
-
 				var morph = coRepository.GetObject(mi.m_hvoMorph);
 				var le = morph.Owner as ILexEntry;
 				if (mi.m_hvoSense > 0)
@@ -391,11 +368,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					var sPos = mi.m_nameMsa ?? ITextStrings.ksQuestions;
 					tisb.Append(sPos);
 					tisb.Append(", ");
-
 					// append lex entry form info
 					tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_wsVern);
 					tisb.AppendTsString(mi.m_name);
-
 					tssToDisplay = tisb.GetString();
 					hvoPrimary = mi.m_hvoSense;
 					tisb.Clear();
@@ -415,7 +390,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_wsUser);
 						tisb.Append(ITextStrings.ksAddNewSense_);
 						tssToDisplay = tisb.GetString();
-
 					}
 					else
 					{
@@ -481,7 +455,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					return base.IndexOfCurrentItem;
 				}
-				//int index = ReturnIndexOfMorphItemMatchingCurrentAnalysisLevel(realHvo); // Debug only.
 				var miCurrentSb = CreateCoreMorphItemBasedOnSandboxCurrentState();
 				// Look through our relevant list items to see if we find a match.
 				for (var i = 0; i < MorphItems.Count; ++i)
@@ -492,7 +465,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						return i;
 					}
 				}
-
 				// save the class id
 				return base.IndexOfCurrentItem;
 			}
@@ -518,7 +490,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						{
 							return i;
 						}
-
 						break;
 					case LexEntryTags.kClassId:
 						// Otherwise, see if our LexEntry matches MoForm's owner (also a LexEntry)
@@ -598,7 +569,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						dlg.SetInitialGloss(TsStringUtils.GetWsAtOffset(tss, 0), tss);
 					}
 					dlg.ChangeUseSimilarToCreateAllomorph();
-
 					// bring up the dialog so the user can make further decisions.
 					var mainWnd = m_sandbox.FindForm();
 					// Making the form active fixes LT-2344 & LT-2345.
@@ -620,12 +590,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					}
 				}
 			}
-
 			if (fCreateAllomorph && le.SensesOS.Any())
 			{
 				sense = le.SensesOS[0];
 			}
-
 			allomorph = MorphServices.FindMatchingAllomorph(le, tssForm);
 			var fCreatedAllomorph = false;
 			if (allomorph == null)
@@ -650,8 +618,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				// If we've created something, then updating the sandbox needs to be undone as a unit with it,
 				// so the sandbox isn't left showing something uncreated.
-				UndoableUnitOfWorkHelper.Do("join me up", "join me up", mainCache.ActionHandlerAccessor,
-					() => UpdateMorphEntry(allomorph1, le1, sense1));
+				UndoableUnitOfWorkHelper.Do("join me up", "join me up", mainCache.ActionHandlerAccessor, () => UpdateMorphEntry(allomorph1, le1, sense1));
 				((IActionHandlerExtensions)mainCache.ActionHandlerAccessor).MergeLastTwoUnitsOfWork();
 			}
 			else
@@ -732,7 +699,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					{
 						entryForm = tssHeadword.Text;
 					}
-
 					if (string.IsNullOrEmpty(entryForm))
 					{
 						entryForm = ITextStrings.ksNoForm;
@@ -763,7 +729,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 									{
 										haveStemMSA = true;
 									}
-
 									if (msa is IMoUnclassifiedAffixMsa)
 									{
 										haveUnclassifiedMSA = true;
@@ -785,23 +750,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 										if (!haveStemMSA)
 										{
 											UndoableUnitOfWorkHelper.Do(ITextStrings.ksUndoAddAllomorph,
-												ITextStrings.ksRedoAddAllomorph, actionHandler, () =>
-												{
-													le.MorphoSyntaxAnalysesOC.Add(
-														mainCache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create());
-												});
+											ITextStrings.ksRedoAddAllomorph, actionHandler, () =>
+											{
+												le.MorphoSyntaxAnalysesOC.Add(mainCache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create());
+											});
 										}
 										break;
 									default:
 										// Add a MoUnclassifiedAffixMsa, if needed.
 										if (!haveUnclassifiedMSA)
 										{
-											UndoableUnitOfWorkHelper.Do(ITextStrings.ksUndoAddAllomorph,
-												ITextStrings.ksRedoAddAllomorph, actionHandler, () =>
-												{
-													le.MorphoSyntaxAnalysesOC.Add(
-														mainCache.ServiceLocator.GetInstance<IMoUnclassifiedAffixMsaFactory>().Create());
-												});
+											UndoableUnitOfWorkHelper.Do(ITextStrings.ksUndoAddAllomorph, ITextStrings.ksRedoAddAllomorph, actionHandler, () =>
+											{
+												le.MorphoSyntaxAnalysesOC.Add(mainCache.ServiceLocator.GetInstance<IMoUnclassifiedAffixMsaFactory>().Create());
+											});
 										}
 										break;
 								}
@@ -818,7 +780,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					}
 				}
 				IMoForm allomorph = null;
-
 				if (dlg.MatchingForm && !dlg.InconsistentType)
 				{
 					allomorph = MorphServices.FindMatchingAllomorph(le, tssForm);
@@ -888,7 +849,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				var hvoForm = m_caches.DataAccess.get_ObjectProp(SelectedMorphHvo, SandboxBase.ktagSbMorphForm);
 				tssForm = m_caches.DataAccess.get_MultiStringAlt(hvoForm, SandboxBase.ktagSbNamedObjName, m_sandbox.RawWordformWs);
 			}
-			int newSenseID = 0;
+			var newSenseID = 0;
 			// This 'using' system is important,
 			// because it calls Dispose on the dlg,
 			// when it goes out of scope.
@@ -984,7 +945,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-
 			var morphIndex = GetMorphIndex();
 			// NOTE: m_comboList.SelectedItem does not get automatically set in (some) tests.
 			// so we use index here.
@@ -1082,12 +1042,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				senseReal = m_caches.MainCache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(mi.m_hvoSense);
 			}
-
 			if (mi.m_inflType != null)
 			{
 				inflType = mi.m_inflType;
 			}
-
 			if (!fUpdateMorphEntry)
 			{
 				return;
@@ -1106,7 +1064,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// focus box action in a new UOW, then merge the two.
 				UndoableUnitOfWorkHelper.Do(ITextStrings.ksUndoAddSense, ITextStrings.ksRedoAddSense, m_caches.MainCache.ActionHandlerAccessor,
 					() => UpdateMorphEntry(morphReal, morphEntryReal, senseReal, inflType));
-
 				if (fCreatedSense)
 				{
 					((IActionHandlerExtensions)m_caches.MainCache.ActionHandlerAccessor).MergeLastTwoUnitsOfWork();
@@ -1177,14 +1134,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					{
 						return; // odd. nothing more to do.
 					}
-
 					var variantEntryRef = dlg.VariantEntryRefResult;
 					// if we didn't have a starting entry, create one now.
 					var variantResult = variantEntryRef.Owner as ILexEntry;
 					var hvoVariantType = dlg.SelectedVariantEntryTypeHvo;
 					ILexEntryInflType inflType;
 					m_caches.MainCache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().TryGetObject(hvoVariantType, out inflType);
-
 					// we need to create a new LexEntryRef.
 					var morphBundleEntry = dlg.SelectedObject as ILexEntry;
 					var morphBundleSense = dlg.SelectedObject as ILexSense;
@@ -1218,14 +1173,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var fHasApprovedWordGloss = m_sandbox.HasWordGloss() && (fDirty || fApproved);
 			var fHasApprovedWordCat = m_sandbox.HasWordCat && (fDirty || fApproved);
 			var undoAction = new UpdateMorphEntryAction(m_sandbox, SelectedMorphHvo); // before changes.
-
 			// Make a new morph, if one does not already exist, corresponding to the
 			// selected item.  Its form must match what is already displayed.  Store it as
 			// the new value.
 			var hvoMorph = m_sandbox.CreateSecondaryAndCopyStrings(InterlinLineChoices.kflidMorphemes, moFormReal.Hvo, MoFormTags.kflidForm);
 			m_caches.DataAccess.SetObjProp(SelectedMorphHvo, SandboxBase.ktagSbMorphForm, hvoMorph);
 			m_caches.DataAccess.PropChanged(m_rootb, (int)PropChangeType.kpctNotifyAll, SelectedMorphHvo, SandboxBase.ktagSbMorphForm, 0, 1, 1);
-
 			// Try to establish the sense.  Call this before SetSelectedEntry and LoadSecDataForEntry.
 			// reset cached gloss, since we should establish the sense according to the real sense or real entry.
 			m_caches.DataAccess.SetObjProp(SelectedMorphHvo, SandboxBase.ktagSbMorphGloss, 0);
@@ -1235,7 +1188,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// (The zero says we are not guessing any more, since the user selected this entry.)
 			m_sandbox.LoadSecDataForEntry(morphEntry, senseReal ?? realDefaultSense, m_hvoSbWord, m_caches.DataAccess as IVwCacheDa, m_wsVern, SelectedMorphHvo, 0, m_caches.MainCache.MainCacheAccessor);
 			m_caches.DataAccess.PropChanged(m_rootb, (int)PropChangeType.kpctNotifyAll, SelectedMorphHvo, SandboxBase.ktagSbMorphEntry, 0, 1, WasReal());
-
 			// Notify any delegates that the selected Entry changed.
 			m_sandbox.SetSelectedEntry(entryReal);
 			// fHasApprovedWordGloss: if an approved word gloss already exists -- don't replace it
@@ -1248,7 +1200,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				m_caches.MainCache.ActionHandlerAccessor.AddAction(undoAction);
 			}
-			return;
 		}
 		protected virtual void CopyLexEntryInfoToMonomorphemicWordGlossAndPos()
 		{

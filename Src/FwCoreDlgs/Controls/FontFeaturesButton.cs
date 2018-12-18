@@ -97,9 +97,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			/// <summary />
 			private IntPtr m_hdc;
 
-			/// <summary>
-			/// Initializes a new instance of the <see cref="T:HoldDummyGraphics"/> class.
-			/// </summary>
+			/// <summary />
 			/// <param name="fontName">Name of the font.</param>
 			/// <param name="fBold">if set to <c>true</c> [f bold].</param>
 			/// <param name="fItalic">if set to <c>true</c> [f italic].</param>
@@ -557,9 +555,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary />
 		private sealed class FontFeatureMenuItem : MenuItem
 		{
-			/// <summary>
-			/// Initializes a new instance of the class.
-			/// </summary>
+			/// <summary />
 			internal FontFeatureMenuItem(string label, int featureIndex, FontFeaturesButton ffbtn)
 				: base(label, ffbtn.ItemClickHandler)
 			{

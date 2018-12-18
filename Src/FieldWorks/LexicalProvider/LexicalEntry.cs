@@ -13,9 +13,7 @@ namespace SIL.FieldWorks.LexicalProvider
 	[DataContract(Namespace = "LexicalData")]
 	public sealed class LexicalEntry
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LexicalEntry"/> class.
-		/// </summary>
+		/// <summary />
 		public LexicalEntry(LexemeType type, string form, int homograph)
 		{
 			Type = type;

@@ -14,16 +14,14 @@ using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-	/// <summary>
-	/// Summary description for AtomicReferencePOSSlice.
-	/// </summary>
+	/// <summary />
 	internal class AtomicReferencePOSSlice : FieldSlice, IVwNotifyChange
 	{
 		/// <summary>
-		/// Use this to do the Add/RemoveNotifications, since it can be used in the unmanged section of Dispose.
+		/// Use this to do the Add/RemoveNotifications, since it can be used in the unmanaged section of Dispose.
 		/// (If m_sda is COM, that is.)
 		/// Doing it there will be safer, since there was a risk of it not being removed
-		/// in the mananged section, as when disposing was done by the Finalizer.
+		/// in the managed section, as when disposing was done by the Finalizer.
 		/// </summary>
 		private ISilDataAccess m_sda;
 		private POSPopupTreeManager m_pOSPopupTreeManager;

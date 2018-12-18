@@ -8,14 +8,10 @@ using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-	/// <summary>
-	/// Summary description for DerivMSAReferenceSlice.
-	/// </summary>
+	/// <summary />
 	internal class DerivMSAReferenceSlice : AtomicReferenceSlice
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="AtomicReferenceSlice"/> class.
-		/// </summary>
+		/// <summary />
 		internal DerivMSAReferenceSlice(LcmCache cache, ICmObject obj, int flid)
 			: base(cache, obj, flid)
 		{

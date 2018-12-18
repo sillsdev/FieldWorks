@@ -1,14 +1,15 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Xml.Linq;
 using LanguageExplorer.Controls.DetailControls;
-using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.Xml;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
@@ -29,17 +30,18 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
 			if (disposing)
 			{
-				if (m_fs != null && m_fs.IsValidObject && ((m_fs.FeatureSpecsOC == null) || (m_fs.FeatureSpecsOC.Count < 1)) )
+				if (m_fs != null && m_fs.IsValidObject && ((m_fs.FeatureSpecsOC == null) || (m_fs.FeatureSpecsOC.Count < 1)))
 				{
 					// At some point we will hopefully be able to convert this slice to a true ghost slice
 					// so that we aren't creating and deleting database objects unless needed. At that
@@ -77,7 +79,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 			base.Install(parentDataTree);
 
 			var ctrl = (PhonologicalFeatureListDlgLauncher)Control;
-
 			m_flid = GetFlid(ConfigurationNode, MyCmObject);
 			if (m_flid != 0)
 			{
@@ -88,15 +89,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 				m_fs = MyCmObject as IFsFeatStruc;
 				m_flid = FsFeatStrucTags.kflidFeatureSpecs;
 			}
-
 			ctrl.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-			ctrl.Initialize(PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache),
-				m_fs,
-				m_flid,
-				"Name",
-				PersistenceProvider,
-				"Name",
-				XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "ws", "analysis")); // TODO: Get better default 'best ws'.
+			ctrl.Initialize(PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache), m_fs, m_flid, "Name", PersistenceProvider,
+				"Name", XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "ws", "analysis")); // TODO: Get better default 'best ws'.
 		}
 
 		/// <summary />

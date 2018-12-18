@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2018 SIL International
+// Copyright (c) 2013-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,7 +15,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 	public class ComplexConcPatternSda : DomainDataByFlidDecoratorBase
 	{
 		public const int ktagChildren = -1000;
-
 		private readonly Dictionary<int, ComplexConcPatternNode> m_nodes;
 
 		public ComplexConcPatternSda(ISilDataAccessManaged domainDataByFlid, ComplexConcPatternNode root)
@@ -37,7 +36,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			{
 				case ktagChildren:
 					return m_nodes[hvo].Children[index].Hvo;
-
 				default:
 					return base.get_VecItem(hvo, tag, index);
 			}
@@ -54,7 +52,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 						return 0;
 					}
 					return node.Children.Count;
-
 				default:
 					return base.get_VecSize(hvo, tag);
 			}
@@ -71,7 +68,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 						return new int[0];
 					}
 					return node.Children.Select(n => n.Hvo).ToArray();
-
 				default:
 					return base.VecProp(hvo, tag);
 			}
@@ -99,8 +95,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 				switch (luFlid)
 				{
 					case ktagChildren:
-						return (int) CellarPropertyType.OwningSequence;
-
+						return (int)CellarPropertyType.OwningSequence;
 					default:
 						return base.GetFieldType(luFlid);
 				}

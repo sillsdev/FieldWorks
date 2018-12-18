@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,9 +12,9 @@ using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
-	#if RANDYTODO
+#if RANDYTODO
 	// TODO: there is no need now for the FilterAllTextsDialog superclass, so merge it into this class.
-	#endif
+#endif
 	/// <summary>
 	/// FilterTextsDialog bundles both ordinary and Scripture texts, when appropriate.
 	/// </summary>
@@ -25,7 +25,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// then the tree must be pruned to show only those texts (and scripture books)
 		/// that were previously selected for interlinearization. The following
 		/// three variables allow this pruning to take place at the appropriate time.
-		/// The m_selectedText variable indicates which text should be intially checked,
+		/// The m_selectedText variable indicates which text should be initially checked,
 		/// as per LT-12177.
 		/// </summary>
 		private IEnumerable<IStText> m_textsToShow;
@@ -33,9 +33,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		#region Constructor/Destructor
 
-		/// <summary>
-		/// Initializes a new instance of the ChooseScriptureDialog class.
-		/// </summary>
+		/// <summary />
 		public FilterTextsDialog(IApp app, LcmCache cache, IStText[] objList, IHelpTopicProvider helpTopicProvider) : base(app, cache, objList, helpTopicProvider)
 		{
 			m_helpTopicId = "khtpChooseTexts";
@@ -69,8 +67,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			DialogResult = DialogResult.OK;
 			var showWarning = false;
 			var message = ITextStrings.kOkbtnEmptySelection;
-			var checkedList = m_treeTexts.GetCheckedNodeList();
 #if RANDYTODO
+			var checkedList = m_treeTexts.GetCheckedNodeList();
 			var own = Owner as IFwMainWnd;
 			if (own != null && OnlyGenresChecked(checkedList))
 			{

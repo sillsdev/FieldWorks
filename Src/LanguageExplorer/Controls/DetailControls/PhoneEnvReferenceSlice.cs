@@ -14,9 +14,7 @@ using SIL.Xml;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-	/// <summary>
-	/// Summary description for PhoneEnvReferenceSlice.
-	/// </summary>
+	/// <summary />
 	internal class PhoneEnvReferenceSlice : ReferenceSlice, IPhEnvSliceCommon
 	{
 		private int m_dxLastWidth; // width last time OnSizeChanged was called.

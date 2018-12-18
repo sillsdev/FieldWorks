@@ -1,21 +1,21 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2007-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using System.Diagnostics;
 using System.Drawing;
+using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls;
-using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.LCModel.Infrastructure;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainServices;
-using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Infrastructure;
 using Rect = SIL.FieldWorks.Common.ViewsInterfaces.Rect;
 
 namespace LanguageExplorer.Areas.TextsAndWords
@@ -64,9 +64,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -74,14 +75,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 			if (disposing)
 			{
-				if (m_tryAWordSandbox != null)
+				if (m_tryAWordSandbox != null && !Controls.Contains(m_tryAWordSandbox))
 				{
-					if (!Controls.Contains(m_tryAWordSandbox))
-					{
-						m_tryAWordSandbox.Dispose();
-					}
+					m_tryAWordSandbox.Dispose();
 				}
-
 				m_vc?.Dispose();
 			}
 			m_tryAWordSandbox = null;
@@ -114,9 +111,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				return;
 			}
-
 			base.MakeRoot();
-
 			// Theory has it that the slices that have 'true' in this attribute will allow the sandbox to be used.
 			// We'll see how the theory goes, when I get to the point of wanting to see the sandbox.
 			m_vc = new InterlinVc(m_cache)
@@ -125,20 +120,16 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				ShowDefaultSense = true,
 				LineChoices = new EditableInterlinLineChoices(m_cache.LanguageProject, WritingSystemServices.kwsFirstVern, m_cache.DefaultAnalWs)
 			};
-
 			m_vc.LineChoices.Add(InterlinLineChoices.kflidWord); // 1
 			m_vc.LineChoices.Add(InterlinLineChoices.kflidMorphemes); // 2
 			m_vc.LineChoices.Add(InterlinLineChoices.kflidLexEntries); //3
 			m_vc.LineChoices.Add(InterlinLineChoices.kflidLexGloss); //4
 			m_vc.LineChoices.Add(InterlinLineChoices.kflidLexPos); //5
-
 			RootBox.DataAccess = m_cache.MainCacheAccessor;
-
 			if (m_wordform != null)
 			{
 				RootBox.SetRootObject(m_wordform.Hvo, m_vc, m_kfragSingleInterlinearAnalysisWithLabels, m_styleSheet);
 			}
-
 			SetSandboxSize(); // in case we already have a current annotation.
 			SetBackgroundColor();
 			m_fRootMade = true;
@@ -178,11 +169,11 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		}
 
 		// Set the VC size to match the sandbox. Return true if it changed.
-		private bool SetSandboxSizeForVc()
+		private void SetSandboxSizeForVc()
 		{
 			if (m_vc == null || m_tryAWordSandbox == null)
 			{
-				return false;
+				return;
 			}
 			if (!Controls.Contains(m_tryAWordSandbox))
 			{
@@ -190,27 +181,11 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			}
 			if (m_tryAWordSandbox.RootBox == null)
 			{
-				m_tryAWordSandbox.MakeRoot();	// adding sandbox to Controls doesn't make rootbox.
+				m_tryAWordSandbox.MakeRoot();   // adding sandbox to Controls doesn't make rootbox.
 			}
 			m_tryAWordSandbox.PerformLayout();
-			int dpiX, dpiY;
-			using (var g = CreateGraphics())
-			{
-				dpiX = (int)g.DpiX;
-				dpiY = (int)g.DpiY;
-			}
-			var width = m_tryAWordSandbox.RootBox.Width;
-			if (width > 10000)
-			{
-				width = 500; // arbitrary, may allow something to work more or less
-			}
-#if RANDYTODO
-			// TODO: Creating a new Size instance and not using it appears to not help much.
-			// Removing it then lets a fair bit of the above code to be removed as also not used/doing anything.
-#endif
-			var newSize = new Size(width * 72000 / dpiX, m_tryAWordSandbox.RootBox.Height * 72000 / dpiY);
-			return true;
 		}
+
 		private void SetSandboxLocation()
 		{
 			RootBox.Reconstruct();
@@ -231,8 +206,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				}
 				Rect rcPrimary, rcSec;
 				bool fSplit, fEndBeforeAnchor;
-				sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary, out rcSec,
-					out fSplit, out fEndBeforeAnchor);
+				sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary, out rcSec, out fSplit, out fEndBeforeAnchor);
 				if (m_vc.RightToLeft)
 				{
 					m_tryAWordSandbox.Left = rcPrimary.right - m_tryAWordSandbox.Width;
@@ -268,13 +242,11 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				m_wordform = WfiWordformServices.FindOrCreateWordform(m_cache, m_sWordForm);
 			});
-
 			var analysis = m_vc.GetGuessForWordform(m_wordform, m_cache.DefaultVernWs);
 			if (analysis is NullWAG)
 			{
 				analysis = m_wordform;
 			}
-
 			RootBox.SetRootObject(analysis.Hvo, m_vc, m_kfragSingleInterlinearAnalysisWithLabels, m_styleSheet);
 			m_tryAWordSandbox = new TryAWordSandbox(_sharedEventHandlers, m_cache, StyleSheet, m_vc.LineChoices, analysis)
 			{

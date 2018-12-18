@@ -1069,14 +1069,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			/// <summary/>
 			public int NumTimesDlgShown { get; private set; }
 
-			/// ------------------------------------------------------------------------------------
-			/// <summary>
-			/// Initializes a new instance of the <see cref="LinguaLinksImport"/> class.
-			/// </summary>
-			/// <param name="cache">The LCM cache.</param>
-			/// <param name="tempDir">The temp directory.</param>
-			/// <param name="rootDir">The root directory.</param>
-			/// ------------------------------------------------------------------------------------
+			/// <summary />
 			public LLIMergeExtension(LcmCache cache, string tempDir, string rootDir) : base(cache, tempDir, rootDir)
 			{
 				NumTimesDlgShown = 0;

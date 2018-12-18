@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,9 +12,9 @@ using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
@@ -189,10 +189,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			};
 			sandbox.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			// Layout will ignore size.
-			//sandbox.Mediator = Mediator;
-			panelSandbox.Controls.Add(sandbox); // Makes it real and may give it a root box.
-												// Note: adding sandbox to Controls doesn't always MakeRoot(), because OnHandleCreated happens
-												// only when the parent control is Visible.
+			// Makes it real and may give it a root box.
+			panelSandbox.Controls.Add(sandbox);
+			// Note: adding sandbox to Controls doesn't always MakeRoot(), because OnHandleCreated happens
+			// only when the parent control is Visible.
 			if (sandbox.RootBox == null)
 			{
 				sandbox.MakeRoot();
@@ -216,7 +216,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// NOTE: currently needs to get called after sandbox.MakeRoot, since that's when RightToLeftWritingSystem is valid.
 		/// </summary>
-		/// <param name="sandbox"></param>
 		private void AdjustControlsForRightToLeftWritingSystem(Sandbox sandbox)
 		{
 			if (!sandbox.RightToLeftWritingSystem || btnConfirmChanges.Location.X == 0)
@@ -242,7 +241,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			AdjustSizeAndLocationForControls(this.Visible);
 		}
 
-		bool m_fAdjustingSize;
+		private bool m_fAdjustingSize;
 		internal void AdjustSizeAndLocationForControls(bool fAdjustOverallSize)
 		{
 			if (m_fAdjustingSize)
@@ -259,19 +258,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					{
 						panelSandbox.Width = sandbox.Width;
 					}
-
 					if (sandbox.Location.X != panelSandbox.Width - sandbox.Width)
 					{
 						sandbox.Location = new Point(panelSandbox.Width - sandbox.Width, sandbox.Location.Y);
 					}
 				}
-
 				if (InterlinWordControl == null || !fAdjustOverallSize)
 				{
 					return;
 				}
-				panelControlBar.Width = panelSandbox.Width; // if greater than min width.
-															// move control panel to bottom of sandbox panel.
+				// if greater than min width.
+				panelControlBar.Width = panelSandbox.Width;
+				// move control panel to bottom of sandbox panel.
 				panelControlBar.Location = new Point(panelControlBar.Location.X, panelSandbox.Height - 1);
 				// move side bar to right of sandbox panel.
 				if (InterlinWordControl.RightToLeftWritingSystem)
@@ -341,7 +339,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			if (IsDisposed)
 			{
-				return false; // result is not currently used, not sure what it should be.
+				throw new InvalidOperationException("Thou shalt not call methods after I am disposed!");
 			}
 			InterlinWordControl.MakeDefaultSelection();
 			return true;
@@ -349,7 +347,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		#endregion InterlinDoc interface
 
-		void m_sandbox_SandboxChangedEvent(object sender, SandboxChangedEventArgs e)
+		private void m_sandbox_SandboxChangedEvent(object sender, SandboxChangedEventArgs e)
 		{
 			UpdateButtonState_Undo();
 		}
@@ -398,7 +396,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// this should make it select the default location.
 			m_mediator.IdleQueue.Add(IdleQueuePriority.Medium, MakeDefaultSelection);
 #endif
-
 		}
 
 		private void UpdateButtonState_Undo()
@@ -515,12 +512,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private string ShortcutText(Keys shortcut)
 		{
-			var shortcutText = "";
-			if (shortcut != Keys.None)
-			{
-				shortcutText = TypeDescriptor.GetConverter(typeof(Keys)).ConvertToString(null, CultureInfo.InvariantCulture, shortcut);
-			}
-			return shortcutText;
+			return shortcut != Keys.None ? TypeDescriptor.GetConverter(typeof(Keys)).ConvertToString(null, CultureInfo.InvariantCulture, shortcut) : string.Empty;
 		}
 
 #if RANDYTODO
@@ -619,7 +611,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					return true;
 				}
 			}
-
 			if (nextWordform == null)
 			{
 				return true;
@@ -634,7 +625,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				var nextSeg = InterlinDoc.GetNextSegment(SelectedOccurrence.Segment.Owner.IndexInOwner, SelectedOccurrence.Segment.IndexInOwner, false, out realAnalysis); // downward move
 				if (nextSeg != null && nextSeg != nextWordform.Segment)
 				{
-					// This is a segment before the one contaning the next wordform.
+					// This is a segment before the one containing the next wordform.
 					if (nextSeg.AnalysesRS.Any(an => an.HasWordform))
 					{
 						// Set it as the current segment and recurse
@@ -648,7 +639,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					}
 				}
 			}
-
 			if (dealtWith)
 			{
 				return true;
@@ -667,7 +657,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-
 			var origWordform = SelectedOccurrence;
 			if (!origWordform.IsValid)
 			{
@@ -714,10 +703,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="fSaveGuess"></param>
+		/// <summary />
 		protected virtual void ApproveAnalysis(bool fSaveGuess)
 		{
 			IWfiAnalysis obsoleteAna;
@@ -734,7 +720,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-			var msaHvoList = new List<int>();
 			// Collecting for the new analysis is probably overkill, since the MissingEntries combo will only have MSAs
 			// that are already referenced outside of the focus box (namely by the Senses). It's unlikely, therefore,
 			// that we could configure the Focus Box in such a state as to remove the last link to an MSA in the
@@ -747,24 +732,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		private void SaveAnalysisForAnnotation(AnalysisOccurrence occurrence, AnalysisTree newAnalysisTree)
+		private static void SaveAnalysisForAnnotation(AnalysisOccurrence occurrence, AnalysisTree newAnalysisTree)
 		{
 			Debug.Assert(occurrence != null);
 			// Record the old wordform before we alter InstanceOf.
-			var oldWf = occurrence.Analysis.Wordform;
 			var wfToTryDeleting = occurrence.Analysis as IWfiWordform;
-
 			// This is the property that each 'in context' object has that points at one of the WfiX classes as the
 			// analysis of the word.
 			occurrence.Analysis = newAnalysisTree.Analysis;
-
-			// In case the wordform we point at has a form that doesn't match, we may need to set up an overidden form for the annotation.
+			// In case the wordform we point at has a form that doesn't match, we may need to set up an overridden form for the annotation.
 			var targetWordform = newAnalysisTree.Wordform;
 			if (targetWordform != null)
 			{
 				TryCacheRealWordForm(occurrence);
 			}
-
 			// It's possible if the new analysis is a different case form that the old wordform is now
 			// unattested and should be removed.
 			if (wfToTryDeleting != null && wfToTryDeleting != occurrence.Analysis.Wordform)
@@ -776,7 +757,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private static bool BaselineFormDiffersFromAnalysisWord(AnalysisOccurrence occurrence, out ITsString baselineForm)
 		{
 			baselineForm = occurrence.BaselineText; // Review JohnT: does this work if the text might have changed??
-			var wsBaselineForm = TsStringUtils.GetWsAtOffset(baselineForm, 0);
 			// We've updated the annotation to have InstanceOf set to the NEW analysis, so what we now derive from
 			// that is the NEW wordform.
 			var wfNew = occurrence.Analysis as IWfiWordform;
@@ -784,8 +764,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return false; // punctuation variations not significant.
 			}
-			var tssWfNew = wfNew.Form.get_String(wsBaselineForm);
-			return !baselineForm.Equals(tssWfNew);
+			return !baselineForm.Equals(wfNew.Form.get_String(TsStringUtils.GetWsAtOffset(baselineForm, 0)));
 		}
 
 		private static void TryCacheRealWordForm(AnalysisOccurrence occurrence)
@@ -829,8 +808,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private AnalysisOccurrence GetNextOccurrenceToAnalyze(bool fForward, bool skipFullyAnalyzedWords)
 		{
 			var navigator = new SegmentServices.StTextAnnotationNavigator(SelectedOccurrence);
-			var options = fForward ? navigator.GetWordformOccurrencesAdvancingIncludingStartingOccurrence()
-							  : navigator.GetWordformOccurrencesBackwardsIncludingStartingOccurrence();
+			var options = fForward ? navigator.GetWordformOccurrencesAdvancingIncludingStartingOccurrence() : navigator.GetWordformOccurrencesBackwardsIncludingStartingOccurrence();
 			if (options.First() == SelectedOccurrence)
 			{
 				options = options.Skip(1);
@@ -859,7 +837,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var wf = analysis.Wordform;
 			// analysis is either a WfiAnalysis or WfiGloss; find the actual analysis.
 			var wa = (IWfiAnalysis)(analysis is IWfiAnalysis ? analysis : analysis.Owner);
-
 			foreach (InterlinLineSpec spec in m_lineChoices)
 			{
 				// see if the information required for this linespec is present.
@@ -1335,8 +1312,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Move to the first bundle
 		/// </summary>
-		/// <param name="arg"></param>
-		/// <returns></returns>
 		public bool OnFirstBundle(object arg)
 		{
 			var navigator = new SegmentServices.StTextAnnotationNavigator(SelectedOccurrence);
@@ -1353,7 +1328,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				FocusBox = focusBox;
 				OccurrenceBeforeApproveAndMove = occBeforeApproveAndMove;
 				OccurrenceAfterApproveAndMove = occAfterApproveAndMove;
-
 				// add the undo action
 				AddUndoRedoAction(OccurrenceBeforeApproveAndMove, null);
 			}

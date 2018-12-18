@@ -1,18 +1,16 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.LCModel;
 using LanguageExplorer.Controls.DetailControls;
+using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
 	/// <summary />
 	internal sealed class LexReferenceTreeBranchesSlice : CustomReferenceVectorSlice, ILexReferenceSlice
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LexReferenceTreeBranchesSlice"/> class.
-		/// </summary>
+		/// <summary />
 		public LexReferenceTreeBranchesSlice()
 			: base(new LexReferenceTreeBranchesLauncher())
 		{

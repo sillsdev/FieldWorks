@@ -133,9 +133,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private ToolStripButton m_printButton;
 
-		/// <summary>
-		/// Constructor for use with designer
-		/// </summary>
+		/// <summary />
 		public ReallySimpleListChooser()
 		{
 			m_cLinksShown = 0;
@@ -157,9 +155,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			Init(null, helpTopicProvider, persistProvider, fieldName, labels, currentObj, XMLViewsStrings.ksEmpty, null);
 		}
 
-		/// <summary>
-		/// constructor for use with changing or setting a value
-		/// </summary>
+		/// <summary />
 		/// <param name="cache">The cache.</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <param name="persistProvider">optional, if you want to preserve the size and
@@ -194,9 +190,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			Init(cache, helpTopicProvider, persistProvider, fieldName, labels, currentObj, nullLabel, null);
 		}
 
-		/// <summary>
-		/// constructor for use with changing or setting a value
-		/// </summary>
+		/// <summary />
 		/// <param name="cache">The cache.</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <param name="persistProvider">optional, if you want to preserve the size and
@@ -212,9 +206,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			Init(cache, helpTopicProvider, persistProvider, fieldName, labels, currentObj, XMLViewsStrings.ksEmpty, null);
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ReallySimpleListChooser"/> class.
-		/// </summary>
+		/// <summary />
 		private void Init(LcmCache cache, IHelpTopicProvider helpTopicProvider,
 			IPersistenceProvider persistProvider, string fieldName,
 			IEnumerable<ObjectLabel> labels, ICmObject currentObj, string nullLabel,
@@ -2367,9 +2359,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary />
 		private sealed class ChooserCommandNode : TreeNode
 		{
-			/// <summary>
-			/// Initializes a new instance of the <see cref="ChooserCommandNode"/> class.
-			/// </summary>
+			/// <summary />
 			public ChooserCommandNode(ChooserCommand cmd)
 			{
 				Tag = cmd;

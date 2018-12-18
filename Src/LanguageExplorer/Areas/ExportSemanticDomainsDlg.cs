@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2013-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -20,7 +20,7 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// Initialize the dialog with all needed information.
 		/// </summary>
-		public void Initialize( LcmCache cache)
+		public void Initialize(LcmCache cache)
 		{
 			m_cache = cache;
 			FillInWritingSystems();
@@ -30,7 +30,7 @@ namespace LanguageExplorer.Areas
 		{
 			foreach (var xws in m_cache.LangProject.AnalysisWritingSystems)
 			{
-					m_writingSystemsListBox.Items.Add(CreateItemForWs(xws));
+				m_writingSystemsListBox.Items.Add(CreateItemForWs(xws));
 			}
 			foreach (var xws in m_cache.LangProject.VernacularWritingSystems)
 			{
@@ -39,7 +39,7 @@ namespace LanguageExplorer.Areas
 			m_writingSystemsListBox.SelectedIndex = 0;
 		}
 
-		private object CreateItemForWs(CoreWritingSystemDefinition xws)
+		private static object CreateItemForWs(CoreWritingSystemDefinition xws)
 		{
 			return new Item
 			{
@@ -52,6 +52,12 @@ namespace LanguageExplorer.Areas
 
 		public bool AllQuestions => m_EnglishInRedCheckBox.Enabled && m_EnglishInRedCheckBox.Checked;
 
+		private void m_writingSystemsListBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			m_EnglishInRedCheckBox.Enabled =
+				SelectedWs != m_cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr("en");
+		}
+
 		private sealed class Item
 		{
 			public string Label;
@@ -60,12 +66,6 @@ namespace LanguageExplorer.Areas
 			{
 				return Label;
 			}
-		}
-
-		private void m_writingSystemsListBox_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			m_EnglishInRedCheckBox.Enabled =
-				SelectedWs != m_cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr("en");
 		}
 	}
 }

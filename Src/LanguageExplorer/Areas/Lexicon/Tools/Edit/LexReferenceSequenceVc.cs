@@ -1,11 +1,10 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using LanguageExplorer.Controls.DetailControls;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
-using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
@@ -15,13 +14,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	internal sealed class LexReferenceSequenceVc : VectorReferenceVc
 	{
 		/// <summary />
-		private ICmObject m_displayParent;
-
-		/// <summary>
-		/// Constructor for the Vector Reference View Constructor Class.
-		/// </summary>
 		public LexReferenceSequenceVc(LcmCache cache, int flid, string displayNameProperty, string displayWs)
-			: base (cache, flid, displayNameProperty, displayWs)
+			: base(cache, flid, displayNameProperty, displayWs)
 		{
 		}
 
@@ -38,15 +32,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			for (var i = 0; i < count; ++i)
 			{
 				var hvoItem = da.get_VecItem(hvo, tag, i);
-				vwenv.AddObj(hvoItem, this,	VectorReferenceView.kfragTargetObj);
+				vwenv.AddObj(hvoItem, this, VectorReferenceView.kfragTargetObj);
 				vwenv.AddSeparatorBar();
 			}
 		}
 
 		/// <summary />
-		public ICmObject DisplayParent
-		{
-			set { m_displayParent = value; }
-		}
+		public ICmObject DisplayParent { get; set; }
 	}
 }

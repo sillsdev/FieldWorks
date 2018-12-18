@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2011-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,16 +13,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// </summary>
 	public class AddWritingSystemMenuItem : ToolStripMenuItem
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="AddWritingSystemMenuItem"/> class
-		/// used for context (right-click) menus.
-		/// </summary>
-		/// <param name="flid">
-		/// 	The flid of the InterlinLineSpec we might add.
-		/// </param>
-		/// <param name="ws">
-		/// 	The writing system int id of the InterlinLineSpec we might add.
-		/// </param>
+		/// <summary />
 		public AddWritingSystemMenuItem(int flid, int ws)
 		{
 			Flid = flid;

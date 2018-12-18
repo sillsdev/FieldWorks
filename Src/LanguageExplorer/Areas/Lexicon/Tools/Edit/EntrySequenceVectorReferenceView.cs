@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -17,7 +17,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	/// <summary>
 	/// Subclass VectorReferenceView to support deleting from the (virtual) Complex Forms property and similar.
 	/// </summary>
-	internal class EntrySequenceVectorReferenceView: VectorReferenceView
+	internal class EntrySequenceVectorReferenceView : VectorReferenceView
 	{
 		/// <summary />
 		protected override void RemoveObjectFromList(int[] hvosOld, int ihvo, string undoText, string redoText)
@@ -27,23 +27,21 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				base.RemoveObjectFromList(hvosOld, ihvo, undoText, redoText);
 				return;
 			}
-
 			if (Cache.MetaDataCacheAccessor.GetFieldName(m_rootFlid) != "ComplexFormEntries")
 			{
 				return;
 			}
 			var startHeight = RootBox.Height;
-			UndoableUnitOfWorkHelper.Do(undoText, redoText, m_rootObj,
-				() =>
-				{
-					var complex = m_rootObj.Services.GetInstance<ILexEntryRepository>().GetObject(hvosOld[ihvo]);
-					// the selected object in the list is a complex entry which has this as one of its components.
-					// We want to remove this from its components.
-					var ler = complex.EntryRefsOS.First(item => item.RefType == LexEntryRefTags.krtComplexForm);
-					ler.PrimaryLexemesRS.Remove(m_rootObj);
-					ler.ShowComplexFormsInRS.Remove(m_rootObj);
-					ler.ComponentLexemesRS.Remove(m_rootObj);
-				});
+			UndoableUnitOfWorkHelper.Do(undoText, redoText, m_rootObj, () =>
+			{
+				var complex = m_rootObj.Services.GetInstance<ILexEntryRepository>().GetObject(hvosOld[ihvo]);
+				// the selected object in the list is a complex entry which has this as one of its components.
+				// We want to remove this from its components.
+				var ler = complex.EntryRefsOS.First(item => item.RefType == LexEntryRefTags.krtComplexForm);
+				ler.PrimaryLexemesRS.Remove(m_rootObj);
+				ler.ShowComplexFormsInRS.Remove(m_rootObj);
+				ler.ComponentLexemesRS.Remove(m_rootObj);
+			});
 			if (RootBox != null)
 			{
 				CheckViewSizeChanged(startHeight, RootBox.Height);
@@ -84,7 +82,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					break;
 				}
 			}
-
 			if (ihvo < 0)
 			{
 				return base.OnProblemDeletion(sel, dpt);

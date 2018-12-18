@@ -26,9 +26,7 @@ using SIL.Xml;
 
 namespace LanguageExplorer.Controls.XMLViews
 {
-	/// <summary>
-	/// Summary description for ConfiguredExport.
-	/// </summary>
+	/// <summary />
 	internal class ConfiguredExport : CollectorEnv, ICollectPicturePathsOnly
 	{
 		private TextWriter m_writer;
@@ -78,9 +76,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		public event ProgressHandler UpdateProgress;
 
 		#region construction and initialization
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ConfiguredExport"/> class.
-		/// </summary>
+		/// <summary />
 		/// <param name="baseEnv">The base env.</param>
 		/// <param name="sda">Data access to get prop values etc.</param>
 		/// <param name="hvoRoot">The root object to display, if m_baseEnv is null.

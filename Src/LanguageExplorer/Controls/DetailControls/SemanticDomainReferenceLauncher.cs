@@ -16,9 +16,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	{
 		#region Construction, Initialization, and Disposing
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ReferenceLauncher"/> class.
-		/// </summary>
+		/// <summary />
 		public SemanticDomainReferenceLauncher()
 		{
 		}

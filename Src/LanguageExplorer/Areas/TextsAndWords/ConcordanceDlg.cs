@@ -1,24 +1,25 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Drawing;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.Filters;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
-using SIL.FieldWorks.Common.FwUtils;
-using LanguageExplorer.Filters;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
 namespace LanguageExplorer.Areas.TextsAndWords
@@ -33,7 +34,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	///
 	/// The browse view is to only show text instances from the selected source,
 	/// which will not include text instances form any of its child objects.
-	/// That is, for a selected wordform (top-most soruce object),
+	/// That is, for a selected wordform (top-most source object),
 	/// the displayed text instances will not include those that have been assigned to
 	/// an analysis or to a word gloss.
 	/// </summary>
@@ -52,13 +53,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private XMLViewsDataCache _specialSda;
 		private int _currentSourceMadeUpFieldIdentifier;
 
-		private ConcDecorator ConcSda
-		{
-			get
-			{
-				return ((DomainDataByFlidDecoratorBase)_specialSda.BaseSda).BaseSda as ConcDecorator;
-			}
-		}
+		private ConcDecorator ConcSda => ((DomainDataByFlidDecoratorBase)_specialSda.BaseSda).BaseSda as ConcDecorator;
 
 		#region Data Members (designer managed)
 
@@ -109,9 +104,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			}
 			else
 			{
-				var anal = sourceObject is IWfiAnalysis
-										? (IWfiAnalysis)sourceObject
-										: sourceObject.OwnerOfClass<IWfiAnalysis>();
+				var anal = sourceObject is IWfiAnalysis ? (IWfiAnalysis)sourceObject : sourceObject.OwnerOfClass<IWfiAnalysis>();
 				_wordform = anal.OwnerOfClass<IWfiWordform>();
 			}
 			_cache = _wordform.Cache;
@@ -257,11 +250,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			_recordLists[WfiGlossTags.kClassId] = recordList;
 			m_configurationNodes[WfiGlossTags.kClassId] = configNode;
 #endif
-
-
 			tvSource.Font = new Font(MiscUtils.StandardSansSerif, 9);
 			tvTarget.Font = new Font(MiscUtils.StandardSansSerif, 9);
-
 			var srcTnWf = new TreeNode();
 			var tarTnWf = new TreeNode
 			{
@@ -322,7 +312,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			tvSource.ExpandAll();
 			tvSource.SelectedNode.EnsureVisible();
 			tvTarget.ExpandAll();
-
 			Subscriber.Subscribe("DialogFilterStatus", DialogFilterStatus_Handler);
 		}
 
@@ -333,23 +322,20 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		#endregion
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
-			if( disposing )
+			if (disposing)
 			{
 				components?.Dispose();
-
 				Subscriber.Unsubscribe("DialogFilterStatus", DialogFilterStatus_Handler);
-
 				foreach (var recordList in _recordLists.Values)
 				{
 					recordList.Dispose();
@@ -415,10 +401,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			/// Gets an object to be used for ensuring that required tasks are invoked on the main
 			/// UI thread.
 			/// </summary>
-			public ISynchronizeInvoke SynchronizeInvoke
-			{
-				get { return _progressBar.Control; }
-			}
+			public ISynchronizeInvoke SynchronizeInvoke => _progressBar.Control;
 
 			public Form Form => _progressBar.Control.FindForm();
 
@@ -465,7 +448,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			#endregion
 		}
 
-		private ProgressReporting _progAdvInd = null;
+		private ProgressReporting _progAdvInd;
 
 		#region Windows Form Designer generated code
 		/// <summary>
@@ -627,9 +610,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		private void CheckAssignBtnEnabling()
 		{
-			btnAssign.Enabled = (tvSource.SelectedNode != null && tvTarget.SelectedNode != null
-				&& (tvSource.SelectedNode.Tag != tvTarget.SelectedNode.Tag)
-				&& _currentBrowseView.CheckedItems.Any());
+			btnAssign.Enabled = tvSource.SelectedNode != null && tvTarget.SelectedNode != null && tvSource.SelectedNode.Tag != tvTarget.SelectedNode.Tag && _currentBrowseView.CheckedItems.Any();
 		}
 
 		#endregion Other methods
@@ -649,7 +630,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					_currentBrowseView.Dispose();
 					_currentBrowseView = null;
 				}
-
 				IRecordList recordList;
 				var selObj = (IAnalysis)tvSource.SelectedNode.Tag;
 				switch (selObj.ClassID)
@@ -667,7 +647,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 						break;
 				}
 				recordList.OwningObject = selObj;
-
 				_currentBrowseView = new RecordBrowseView();
 				_currentBrowseView.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				// Ensure that the list gets updated whenever it's reloaded.  See LT-8661.
@@ -679,7 +658,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				_currentBrowseView.BrowseViewer.SelectionChanged += BrowseViewer_SelectionChanged;
 				_currentBrowseView.BrowseViewer.FilterChanged += BrowseViewer_FilterChanged;
 				SetRecordStatus();
-
 				_specialSda = _currentBrowseView.BrowseViewer.SpecialCache;
 				var specialMdc = _specialSda.MetaDataCache;
 				int[] concordanceItems;
@@ -702,8 +680,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				}
 				// (Re)set selected state in cache, so default behavior of checked is used.
 				foreach (var concId in concordanceItems)
+				{
 					_specialSda.SetInt(concId, XMLViewsDataCache.ktagItemSelected, 1);
-
+				}
 				// Set the initial value for the filtering status.
 				SetFilterStatus(!string.IsNullOrWhiteSpace(_filterMessage));
 				CheckAssignBtnEnabling();
@@ -738,13 +717,12 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private void SetRecordStatus()
 		{
 			var cobj = _currentBrowseView.MyRecordList.ListSize;
-			var idx = _currentBrowseView.BrowseViewer.SelectedIndex;
-			var sMsg = cobj == 0 ? LanguageExplorerResources.ksNoRecords : $"{idx + 1}/{cobj}";
+			var sMsg = cobj == 0 ? LanguageExplorerResources.ksNoRecords : $"{_currentBrowseView.BrowseViewer.SelectedIndex + 1}/{cobj}";
 			_toolStripRecordStatusLabel.Text = sMsg;
-			_toolStripProgressBar.Value = _toolStripProgressBar.Minimum;	// clear the progress bar
+			_toolStripProgressBar.Value = _toolStripProgressBar.Minimum;    // clear the progress bar
 		}
 
-		void CurrentBrowseView_CheckBoxChanged(object sender, CheckBoxChangedEventArgs e)
+		private void CurrentBrowseView_CheckBoxChanged(object sender, CheckBoxChangedEventArgs e)
 		{
 			CheckAssignBtnEnabling();
 		}
@@ -763,15 +741,11 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					_toolStripProgressBar.Step = 1;
 					_toolStripProgressBar.Value = 0;
 				}
-
 				UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoAssignAnalyses, LanguageExplorerResources.ksRedoAssignAnalyses, _specialSda.GetActionHandler(), () =>
 				{
 					var concSda = ConcSda;
-					var originalValues = new Dictionary<int, IParaFragment>();
-					foreach (var originalHvo in concSda.VecProp(src.Hvo, _currentSourceMadeUpFieldIdentifier))
-					{
-						originalValues.Add(originalHvo, concSda.OccurrenceFromHvo(originalHvo));
-					}
+					var originalValues = concSda.VecProp(src.Hvo, _currentSourceMadeUpFieldIdentifier)
+						.ToDictionary(originalHvo => originalHvo, originalHvo => concSda.OccurrenceFromHvo(originalHvo));
 					foreach (var fakeHvo in checkedItems)
 					{
 						originalValues.Remove(fakeHvo);
@@ -787,7 +761,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					var recordListSda = (ConcDecorator)((DomainDataByFlidDecoratorBase)recordList.VirtualListPublisher).BaseSda;
 					recordListSda.UpdateExactAnalysisOccurrences(newTarget);
 				});
-
 				CheckAssignBtnEnabling();
 				_toolStripProgressBar.Value = 0;
 				SetRecordStatus();

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,11 +13,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	/// </summary>
 	internal sealed class LexReferenceTreeBranchesVc : VectorReferenceVc
 	{
-		/// <summary>
-		/// Constructor for the Vector Reference View Constructor Class.
-		/// </summary>
+		/// <summary />
 		public LexReferenceTreeBranchesVc(LcmCache cache, int flid, string displayNameProperty, string displayWs)
-			: base (cache, flid, displayNameProperty, displayWs)
+			: base(cache, flid, displayNameProperty, displayWs)
 		{
 		}
 

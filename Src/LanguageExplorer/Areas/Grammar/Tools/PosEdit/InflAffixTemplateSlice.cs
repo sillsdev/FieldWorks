@@ -1,23 +1,23 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Diagnostics;
 using LanguageExplorer.Controls.DetailControls;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 {
-	/// <summary>
-	/// Summary description for InflAffixTemplateSlice.
-	/// </summary>
+	/// <summary />
 	internal class InflAffixTemplateSlice : ViewSlice
 	{
 		/// <summary>
 		/// handles creating the context menus for the inflectional affix template and funneling commands to the control.
 		/// </summary>
 		InflAffixTemplateMenuHandler m_menuHandler;
+
 		/// <summary>
 		/// This must have a zero-argument constructor, because it is designed to be created
 		/// from a custom XDE node by reflection.
@@ -28,32 +28,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 		#region IDisposable override
 
-		/// <summary>
-		/// Executes in two distinct scenarios.
-		///
-		/// 1. If disposing is true, the method has been called directly
-		/// or indirectly by a user's code via the Dispose method.
-		/// Both managed and unmanaged resources can be disposed.
-		///
-		/// 2. If disposing is false, the method has been called by the
-		/// runtime from inside the finalizer and you should not reference (access)
-		/// other managed objects, as they already have been garbage collected.
-		/// Only unmanaged resources can be disposed.
-		/// </summary>
-		/// <param name="disposing"></param>
-		/// <remarks>
-		/// If any exceptions are thrown, that is fine.
-		/// If the method is being done in a finalizer, it will be ignored.
-		/// If it is thrown by client code calling Dispose,
-		/// it needs to be handled by fixing the bug.
-		///
-		/// If subclasses override this method, they should call the base implementation.
-		/// </remarks>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -92,7 +73,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				}
 				if (!xa.Value.EndsWith("RTL"))
 				{
-					xa.Value += "RTL";		// both vern and anal are RTL
+					xa.Value += "RTL";      // both vern and anal are RTL
 				}
 			}
 			else if (fVernRTL)
@@ -107,7 +88,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				}
 				if (!xa.Value.EndsWith("LTRinRTL"))
 				{
-					xa.Value += "LTRinRTL";		// LTR anal name in RTL vern table
+					xa.Value += "LTRinRTL";     // LTR anal name in RTL vern table
 				}
 			}
 			else if (fAnalRTL)
@@ -122,7 +103,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				}
 				if (!xa.Value.EndsWith("RTLinLTR"))
 				{
-					xa.Value += "RTLinLTR";		// RTL anal name in LTR vern table
+					xa.Value += "RTLinLTR";     // RTL anal name in LTR vern table
 				}
 			}
 			else
@@ -157,7 +138,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			}
 		}
 
-		public InflAffixTemplateSlice(SimpleRootSite ctrlT): base(ctrlT)
+		public InflAffixTemplateSlice(SimpleRootSite ctrlT) : base(ctrlT)
 		{
 		}
 	}

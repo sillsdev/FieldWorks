@@ -10,11 +10,7 @@ using SIL.LCModel.Core.Scripture;
 namespace ParatextImport
 {
 #if RANDYTODO
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// Summary description for DifferenceTests.
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	[TestFixture]
 	public class DifferenceTests : ScrInMemoryLcmTestBase
 	{

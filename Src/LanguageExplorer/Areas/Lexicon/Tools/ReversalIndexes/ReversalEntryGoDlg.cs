@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,14 +11,14 @@ using System.Xml.XPath;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 {
-	/// <summary/>
+	/// <summary />
 	internal sealed class ReversalEntryGoDlg : BaseGoDlg
 	{
 		private readonly HashSet<int> m_FilteredReversalEntryHvos = new HashSet<int>();
@@ -33,7 +33,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		/// <summary>
 		/// Gets or sets the reversal index.
 		/// </summary>
-		/// <value>The reversal index.</value>
 		public IReversalIndex ReversalIndex { get; set; }
 
 		/// <summary />
@@ -89,7 +88,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			m_matchingObjectsBrowser.Initialize(m_cache, FwUtils.StyleSheetFromPropertyTable(PropertyTable), configNode, searchEngine, m_cache.ServiceLocator.WritingSystemManager.Get(ReversalIndex.WritingSystem));
 
 			// start building index
-			var wsObj = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
+			var wsObj = (CoreWritingSystemDefinition)m_cbWritingSystems.SelectedItem;
 			if (wsObj != null)
 			{
 				var tss = TsStringUtils.EmptyString(wsObj.Handle);
@@ -123,28 +122,24 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			{
 				return; // Nothing new to do, so skip it.
 			}
-
 			// disable Go button until we rebuild our match list.
 			m_btnOK.Enabled = false;
 			m_oldSearchKey = searchKey;
-
-			var wsObj = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
+			var wsObj = (CoreWritingSystemDefinition)m_cbWritingSystems.SelectedItem;
 			if (wsObj == null)
 			{
 				return;
 			}
-
 			if (m_oldSearchKey != string.Empty || searchKey != string.Empty)
 			{
 				StartSearchAnimation();
 			}
-
 			var tss = TsStringUtils.MakeString(searchKey, wsObj.Handle);
 			var field = new SearchField(ReversalIndexEntryTags.kflidReversalForm, tss);
 			m_matchingObjectsBrowser.SearchAsync(new[] { field });
 		}
 
-#region Windows Form Designer generated code
+		#region Windows Form Designer generated code
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
@@ -186,7 +181,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			this.PerformLayout();
 
 		}
-#endregion
+		#endregion
 
 		private sealed class ReversalEntrySearchEngine : SearchEngine
 		{

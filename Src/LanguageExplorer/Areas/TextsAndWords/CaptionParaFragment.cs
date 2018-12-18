@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -41,15 +41,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		public ICmPicture Picture { get; set; }
 
-		public ITsString Reference
-		{
-			get
-			{
-				return Paragraph.Reference(Paragraph.SegmentsOS.Last(seg => seg.BeginOffset <= ContainingParaOffset), ContainingParaOffset);
-			}
-		}
+		public ITsString Reference => Paragraph.Reference(Paragraph.SegmentsOS.Last(seg => seg.BeginOffset <= ContainingParaOffset), ContainingParaOffset);
 
-		public IStTxtPara Paragraph { get; set;}
+		public IStTxtPara Paragraph { get; set; }
 
 		public ICmObject TextObject => Picture;
 

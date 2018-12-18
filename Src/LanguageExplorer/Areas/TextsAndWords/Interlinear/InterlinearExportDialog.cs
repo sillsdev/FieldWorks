@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -20,16 +20,14 @@ using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
-	/// <summary>
-	/// Summary description for InterlinearExportDialog.
-	/// </summary>
+	/// <summary />
 	internal class InterlinearExportDialog : ExportDialog
 	{
 		private List<XmlNode> m_ddNodes = new List<XmlNode>(8); // Saves XML nodes used to configure items.
-		ICmObject m_objRoot;
-		InterlinVc m_vc;
-		IText m_text;
-		List<ICmObject> m_objs = new List<ICmObject>();
+		private ICmObject m_objRoot;
+		private InterlinVc m_vc;
+		private IText m_text;
+		private List<ICmObject> m_objs = new List<ICmObject>();
 		private event EventHandler OnLaunchFilterScrScriptureSectionsDialog;
 
 		public InterlinearExportDialog(ICmObject objRoot, InterlinVc vc)
@@ -137,12 +135,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			var outPath = (string)args[0];
 			var fxtPath = (string)args[1];
-
 			if (m_objs.Count == 0)
 			{
 				m_objs.Add(m_objRoot);
 			}
-
 			var ddNode = m_ddNodes[NodeIndex(fxtPath)];
 			var mode = XmlUtils.GetOptionalAttributeValue(ddNode, "mode", "xml");
 			using (new WaitCursor(this))
@@ -156,14 +152,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					var sTransformPath = Path.Combine(rootDir, "Language Explorer", "Export Templates", "Interlinear");
 					switch (mode)
 					{
-						// ReSharper disable RedundantCaseLabel
 						default:
 						case "doNothing":
 						case "xml":
 						case "elan":
 							// no further processing needed.
 							break;
-						// ReSharper restore RedundantCaseLabel
 						case "applySingleTransform":
 							var sTransform = Path.Combine(sTransformPath, transform);
 							exporter.PostProcess(sTransform, outPath, 1);
@@ -187,16 +181,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 								}
 								xsl.Load(Path.Combine(sTransformPath, styleFileTransform));
 								xsl.Transform(outPath, Path.Combine(tempDir, "styles.xml"));
-
 								// Now generate the content. Do this after using outPath as the source above, because it renames the file.
 								var contentFileTransform = "xml2OO.xsl";
 								if (implementation != null)
 								{
 									contentFileTransform = XmlUtils.GetOptionalAttributeValue(implementation, "contentTransform", contentFileTransform);
 								}
-#pragma warning disable 219 // ReSharper disable UnusedVariable
 								var xsl2 = new XslCompiledTransform();
-#pragma warning restore 219 // ReSharper restore UnusedVariable
 								xsl.Load(Path.Combine(sTransformPath, contentFileTransform));
 								xsl.Transform(outPath, Path.Combine(tempDir, "content.xml"));
 								var mimetypePath = Path.Combine(tempDir, "mimetype");

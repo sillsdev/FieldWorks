@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -55,8 +55,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// Note that this guid may well not be unique in the file, since it refers to a
 			// WfiWordform, WfiAnalysis, WfiGloss, or PunctuationForm (the last is not output),
 			// any of which may be referred to repeatedly in an analyzed text.
-			var clid = m_repoObj.GetClsid(hvo);
-			if (clid != PunctuationFormTags.kClassId)
+			if (m_repoObj.GetClsid(hvo) != PunctuationFormTags.kClassId)
 			{
 				WriteGuidAttributeForObj(hvo);
 			}

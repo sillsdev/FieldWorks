@@ -8,9 +8,7 @@ using SIL.LCModel;
 
 namespace LanguageExplorer.Controls.LexText
 {
-	/// <summary>
-	/// Summary description for FeatureStructureTreeView.
-	/// </summary>
+	/// <summary />
 	public class FeatureStructureTreeView : TreeView
 	{
 		private ImageList imageList1;

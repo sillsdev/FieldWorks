@@ -1,16 +1,15 @@
-// Copyright (c) 2011-2018 SIL International
+// Copyright (c) 2011-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 {
-
 	/// <summary>
 	/// This decorator provides the chart body (in particular the MakeCellsMethod method object)
 	/// the ability to store up a right to left generation of a chart row and spit it out to the
@@ -60,7 +59,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				return;
 			}
-
 			InternalFlush();
 
 			ResetVariables();
@@ -94,8 +92,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			// call, but don't go back as far as a CloseTableCell call or AddObjProp.
 			for (var i = index - 1; i > -1; i--)
 			{
-				if (m_calledMethods[i].MethodType == DecoratorMethodTypes.SetIntProperty ||
-				    m_calledMethods[i].MethodType == DecoratorMethodTypes.NoteDependency)
+				if (m_calledMethods[i].MethodType == DecoratorMethodTypes.SetIntProperty || m_calledMethods[i].MethodType == DecoratorMethodTypes.NoteDependency)
 				{
 					continue;
 				}
@@ -119,44 +116,25 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		private void RegurgitateIVwEnvCall(StoredMethod storedMethod)
 		{
-			int tag;
-			int frag;
-			IVwViewConstructor vc;
-
 			switch (storedMethod.MethodType)
 			{
 				case DecoratorMethodTypes.AddObj:
-					var hvo = (int)storedMethod.ParamArray[0];
-					vc  = (IVwViewConstructor)storedMethod.ParamArray[1];
-					frag = (int) storedMethod.ParamArray[2];
-					m_vwEnv.AddObj(hvo, vc, frag);
+					m_vwEnv.AddObj((int)storedMethod.ParamArray[0], (IVwViewConstructor)storedMethod.ParamArray[1], (int)storedMethod.ParamArray[2]);
 					break;
 				case DecoratorMethodTypes.AddObjProp:
-					tag = (int)storedMethod.ParamArray[0];
-					vc = (IVwViewConstructor)storedMethod.ParamArray[1];
-					frag = (int)storedMethod.ParamArray[2];
-					m_vwEnv.AddObjProp(tag, vc, frag);
+					m_vwEnv.AddObjProp((int)storedMethod.ParamArray[0], (IVwViewConstructor)storedMethod.ParamArray[1], (int)storedMethod.ParamArray[2]);
 					break;
 				case DecoratorMethodTypes.AddObjVec:
-					tag = (int) storedMethod.ParamArray[0];
-					vc = (IVwViewConstructor) storedMethod.ParamArray[1];
-					frag = (int)storedMethod.ParamArray[2];
-					m_vwEnv.AddObjVec(tag, vc, frag);
+					m_vwEnv.AddObjVec((int)storedMethod.ParamArray[0], (IVwViewConstructor)storedMethod.ParamArray[1], (int)storedMethod.ParamArray[2]);
 					break;
 				case DecoratorMethodTypes.AddObjVecItems:
-					tag = (int)storedMethod.ParamArray[0];
-					vc = (IVwViewConstructor)storedMethod.ParamArray[1];
-					frag = (int)storedMethod.ParamArray[2];
-					m_vwEnv.AddObjVecItems(tag, vc, frag);
+					m_vwEnv.AddObjVecItems((int)storedMethod.ParamArray[0], (IVwViewConstructor)storedMethod.ParamArray[1], (int)storedMethod.ParamArray[2]);
 					break;
 				case DecoratorMethodTypes.AddString:
-					var tsStr = (ITsString)storedMethod.ParamArray[0];
-					m_vwEnv.AddString(tsStr);
+					m_vwEnv.AddString((ITsString)storedMethod.ParamArray[0]);
 					break;
 				case DecoratorMethodTypes.AddStringProp:
-					tag = (int)storedMethod.ParamArray[0];
-					vc = (IVwViewConstructor)storedMethod.ParamArray[1];
-					m_vwEnv.AddStringProp(tag, vc);
+					m_vwEnv.AddStringProp((int)storedMethod.ParamArray[0], (IVwViewConstructor)storedMethod.ParamArray[1]);
 					break;
 				case DecoratorMethodTypes.CloseParagraph:
 					m_vwEnv.CloseParagraph();
@@ -165,28 +143,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					m_vwEnv.CloseTableCell();
 					break;
 				case DecoratorMethodTypes.NoteDependency:
-					var rghvo = (int[])storedMethod.ParamArray[0];
-					var rgtag = (int[])storedMethod.ParamArray[1];
-					var chvo = (int) storedMethod.ParamArray[2];
-					m_vwEnv.NoteDependency(rghvo, rgtag, chvo);
+					m_vwEnv.NoteDependency((int[])storedMethod.ParamArray[0], (int[])storedMethod.ParamArray[1], (int)storedMethod.ParamArray[2]);
 					break;
 				case DecoratorMethodTypes.OpenParagraph:
 					m_vwEnv.OpenParagraph();
 					break;
 				case DecoratorMethodTypes.OpenTableCell:
-					var nRows = (int) storedMethod.ParamArray[0];
-					var nCols = (int)storedMethod.ParamArray[1];
-					m_vwEnv.OpenTableCell(nRows, nCols);
+					m_vwEnv.OpenTableCell((int)storedMethod.ParamArray[0], (int)storedMethod.ParamArray[1]);
 					break;
 				case DecoratorMethodTypes.SetIntProperty:
-					var tpt = (int)storedMethod.ParamArray[0];
-					var tpv = (int)storedMethod.ParamArray[1];
-					var nValue = (int)storedMethod.ParamArray[2];
-					m_vwEnv.set_IntProperty(tpt, tpv, nValue);
+					m_vwEnv.set_IntProperty((int)storedMethod.ParamArray[0], (int)storedMethod.ParamArray[1], (int)storedMethod.ParamArray[2]);
 					break;
 				case DecoratorMethodTypes.PropsSetter:
-					var value = (ITsTextProps) storedMethod.ParamArray[0];
-					m_vwEnv.Props = value;
+					m_vwEnv.Props = (ITsTextProps)storedMethod.ParamArray[0];
 					break;
 				default:
 					Debug.Assert(false, "Unknown DecoratorMethodType!");
@@ -294,7 +263,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Current flow object is a paragraph. (But being in a span it will still be true.)
 		/// </summary>
-		/// <returns></returns>
 		public bool IsParagraphOpen()
 		{
 			throw new NotSupportedException();
@@ -312,13 +280,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				m_numOfCalls += 3;
 				m_calledMethods.Add(new StoredMethod(DecoratorMethodTypes.SetIntProperty,
-									new object[] {
+									new object[]
+									{
 										(int) FwTextPropType.ktptRightToLeft,
 										(int) FwTextPropVar.ktpvEnum,
 										(int) FwTextToggleVal.kttvForceOn
 									}));
 				m_calledMethods.Add(new StoredMethod(DecoratorMethodTypes.SetIntProperty,
-									new object[] {
+									new object[]
+									{
 										(int) FwTextPropType.ktptAlign,
 										(int) FwTextPropVar.ktpvEnum,
 										(int) FwTextAlign.ktalRight
@@ -328,7 +298,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				m_numOfCalls++;
 			}
-			m_calledMethods.Add(new StoredMethod(DecoratorMethodTypes.OpenParagraph, new object[] { }));
+			m_calledMethods.Add(new StoredMethod(DecoratorMethodTypes.OpenParagraph, new object[]{}));
 		}
 
 		public virtual void CloseParagraph()
@@ -350,7 +320,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				m_vwEnv.OpenInnerPile();
 				return;
 			}
-			m_calledMethods.Add(new StoredMethod(DecoratorMethodTypes.OpenInnerPile, new object[] {}));
+			m_calledMethods.Add(new StoredMethod(DecoratorMethodTypes.OpenInnerPile, new object[] { }));
 			m_numOfCalls++;
 		}
 
@@ -372,7 +342,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				m_vwEnv.OpenSpan();
 				return;
 			}
-			m_calledMethods.Add(new StoredMethod(DecoratorMethodTypes.OpenSpan, new object[] {}));
+			m_calledMethods.Add(new StoredMethod(DecoratorMethodTypes.OpenSpan, new object[] { }));
 			m_numOfCalls++;
 		}
 
@@ -395,10 +365,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				return;
 			}
 			// Table cells need to be opened in LTR ('display'; reverse of 'logical') order.
-
 			// Record index of each OpenTableCell
 			m_iStartEmbedding.Add(m_numOfCalls);
-			m_calledMethods.Add(new StoredMethod(DecoratorMethodTypes.OpenTableCell, new object[] {nRowSpan, nColSpan}));
+			m_calledMethods.Add(new StoredMethod(DecoratorMethodTypes.OpenTableCell, new object[] { nRowSpan, nColSpan }));
 			m_numOfCalls++;
 		}
 
@@ -421,16 +390,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				return;
 			}
 			// Right to Left modifications
-			if (tpt == (int) FwTextPropType.ktptBorderTrailing)
+			if (tpt == (int)FwTextPropType.ktptBorderTrailing)
 			{
-				tpt = (int) FwTextPropType.ktptBorderLeading;
+				tpt = (int)FwTextPropType.ktptBorderLeading;
 			}
-
-			if (tpt == (int) FwTextPropType.ktptMarginTrailing)
+			if (tpt == (int)FwTextPropType.ktptMarginTrailing)
 			{
-				tpt = (int) FwTextPropType.ktptMarginLeading;
+				tpt = (int)FwTextPropType.ktptMarginLeading;
 			}
-
 			m_calledMethods.Add(new StoredMethod(DecoratorMethodTypes.SetIntProperty, new object[] { tpt, tpv, nValue }));
 			m_numOfCalls++;
 		}
@@ -457,7 +424,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		public void AddReversedObjVecItems(int tag, IVwViewConstructor vwvc, int frag)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public void AddLazyVecItems(int tag, IVwViewConstructor vwvc, int frag)
@@ -686,6 +653,5 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		}
 
 		#endregion
-
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2018 SIL International
+// Copyright (c) 2007-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -57,7 +57,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			helpProvider.SetShowHelp(this, true);
 			m_tbSearchText.SuppressEnter = true;
-
 			_sharedEventHandlers.Add(AreaServices.JumpToConcordance, JumpToConcordance_Clicked);
 		}
 
@@ -85,7 +84,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_fwtbItem.Visible = false; // Needed to prevent LT-12162 unneeded text box.
 
 			// Set some default values.
-
 			m_rbtnAnywhere.Checked = true;
 			m_btnRegExp.Enabled = false;
 			m_chkMatchDiacritics.Checked = false;
@@ -105,9 +103,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				helpProvider.SetHelpKeyword(this, "khtpSpecConcordanceCrit");
 				m_btnHelp.Enabled = true;
 			}
-
 			m_cbSearchText.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
-
 			if (m_recordList.SuspendLoadingRecordUntilOnJumpToRecord)
 			{
 				return; // we're bound to process OnJumpToRecord, so skip any further initialization.
@@ -121,20 +117,25 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
 			if (disposing)
 			{
 				components?.Dispose();
 				if (m_recordList != null)
 				{
+					// Don't dispose of the record list, since it can monitor relevant PropChanges
+					// that affect the NeedToReloadVirtualProperty.
 					m_recordList.ConcordanceControl = null;
 				}
 				m_pOSPopupTreeManager?.Dispose();
-				// Don't dispose of the record list, since it can monitor relevant PropChanges
-				// that affect the NeedToReloadVirtualProperty.
 			}
 			m_recordList = null;
 			m_pOSPopupTreeManager = null;
@@ -154,9 +155,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				line = ConcordanceLines.kBaseline;
 			}
 			SetConcordanceLine(line);
-
 			var sWs = PropertyTable.GetValue<string>("ConcordanceWs", SettingsGroup.LocalSettings);
-			var ws = 0;
+			int ws;
 			if (sWs != null)
 			{
 				ws = m_cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(sWs);
@@ -167,19 +167,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			ws = CurrentSelectedWs();
 			m_tbSearchText.WritingSystemCode = ws;
-
 			var sText = PropertyTable.GetValue<string>("ConcordanceText", SettingsGroup.LocalSettings);
 			if (sText != null)
 			{
 				m_tbSearchText.Text = sText;
 			}
-
 			var fMatchCase = PropertyTable.GetValue("ConcordanceMatchCase", m_chkMatchCase.Checked, SettingsGroup.LocalSettings);
 			m_chkMatchCase.Checked = fMatchCase;
-
 			var fMatchDiacritics = PropertyTable.GetValue("ConcordanceMatchDiacritics", m_chkMatchDiacritics.Checked, SettingsGroup.LocalSettings);
 			m_chkMatchDiacritics.Checked = fMatchDiacritics;
-
 			var sConcordanceOption = PropertyTable.GetValue<string>("ConcordanceOption", SettingsGroup.LocalSettings);
 			SetConcordanceOption(sConcordanceOption);
 		}
@@ -243,22 +239,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		/// <summary>
-		/// Gets selected radio box option for the search.
-		/// </summary>
-		private ConcordanceSearchOption SearchOption
-		{
-			get
-			{
-				return (ConcordanceSearchOption)Enum.Parse(typeof(ConcordanceSearchOption), GetConcordanceOption());
-			}
-			set
-			{
-				SetConcordanceOption(value.ToString());
-			}
-		}
-
-		void m_tbSearchText_KeyDown(object sender, KeyEventArgs e)
+		private void m_tbSearchText_KeyDown(object sender, KeyEventArgs e)
 		{
 			if (e.KeyCode == Keys.Enter && m_tbSearchText.Text.Length > 0)
 			{
@@ -286,7 +267,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		#region Overrides
 
-
 		protected override void OnLeave(EventArgs e)
 		{
 			base.OnLeave(e);
@@ -309,8 +289,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		#region Internal types
 
-		private enum ConcordanceSearchOption { Anywhere, WholeItem, AtEnd, AtStart, UseRegExp };
-
 		private enum ConcordanceLines
 		{
 			kBaseline,
@@ -332,9 +310,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		private sealed class POSComboController : POSPopupTreeManager
 		{
-			/// <summary>
-			/// Constructor.
-			/// </summary>
+			/// <summary />
 			public POSComboController(TreeCombo treeCombo, LcmCache cache, ICmPossibilityList list, int ws, bool useAbbr, IPropertyTable propertyTable, IPublisher publisher, Form parent) :
 				base(treeCombo, cache, list, ws, useAbbr, propertyTable, publisher, parent)
 			{
@@ -343,14 +319,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			protected override TreeNode MakeMenuItems(PopupTree popupTree, int hvoTarget)
 			{
-				var tagName = UseAbbr ?
-					CmPossibilityTags.kflidAbbreviation :
-					CmPossibilityTags.kflidName;
 				popupTree.Sorted = Sorted;
 				TreeNode match = null;
 				if (List != null)
 				{
-					match = AddNodes(popupTree.Nodes, List.Hvo, CmPossibilityListTags.kflidPossibilities, hvoTarget, tagName);
+					match = AddNodes(popupTree.Nodes, List.Hvo, CmPossibilityListTags.kflidPossibilities, hvoTarget, UseAbbr ? CmPossibilityTags.kflidAbbreviation : CmPossibilityTags.kflidName);
 				}
 				return match ?? popupTree.Nodes[0];
 			}
@@ -487,25 +460,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			switch (line)
 			{
 				case ConcordanceLines.kTags:
-					m_pOSPopupTreeManager = new POSComboController(m_cbSearchText,
-											m_cache,
-											InterlinTaggingChild.GetTaggingLists(m_cache.LangProject),
-											m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle,
-											false,
-											PropertyTable,
-											Publisher,
-											PropertyTable.GetValue<Form>(FwUtils.window))
-					{ Sorted = false };
+					m_pOSPopupTreeManager = new POSComboController(m_cbSearchText, m_cache, InterlinTaggingChild.GetTaggingLists(m_cache.LangProject),
+							m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle, false, PropertyTable, Publisher, PropertyTable.GetValue<Form>(FwUtils.window))
+					{
+						Sorted = false
+					};
 					break;
 				default: //Lex. Gram. Info and Word Cat. both work the same, and are handled here in the default option
-					m_pOSPopupTreeManager = new POSComboController(m_cbSearchText,
-											m_cache,
-											m_cache.LanguageProject.PartsOfSpeechOA,
-											m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle,
-											false,
-											PropertyTable,
-											Publisher,
-											PropertyTable.GetValue<Form>(FwUtils.window));
+					m_pOSPopupTreeManager = new POSComboController(m_cbSearchText, m_cache, m_cache.LanguageProject.PartsOfSpeechOA,
+						m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle, false, PropertyTable, Publisher, PropertyTable.GetValue<Form>(FwUtils.window));
 					break;
 			}
 			m_pOSPopupTreeManager.AfterSelect += POSAfterSelect;
@@ -559,19 +522,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			List<IParaFragment> occurrences = null;
 			using (new WaitCursor(this))
 			{
-				string sMatch = m_tbSearchText.Visible ? m_tbSearchText.Text.Trim() : m_cbSearchText.SelectedItem.ToString();
+				var sMatch = m_tbSearchText.Visible ? m_tbSearchText.Text.Trim() : m_cbSearchText.SelectedItem.ToString();
 				if (sMatch.Length == 0)
+				{
 					return new List<IParaFragment>();
+				}
 				if (sMatch.Length > 1000)
 				{
 					sMatch = sMatch.Substring(0, 1000);
 					MessageBox.Show(ITextStrings.ksMatchStringTooLong, ITextStrings.ksWarning);
 					m_tbSearchText.Text = sMatch;
 				}
-				int ws = ((CoreWritingSystemDefinition)m_cbWritingSystem.SelectedItem).Handle;
-
-				var conc = (ConcordLine)m_cbLine.SelectedItem;
-				switch (conc.Line)
+				var ws = ((CoreWritingSystemDefinition)m_cbWritingSystem.SelectedItem).Handle;
+				switch (((ConcordLine)m_cbLine.SelectedItem).Line)
 				{
 					case ConcordanceLines.kBaseline:
 						occurrences = UpdateConcordanceForBaseline(ws);
@@ -617,7 +580,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return occurrences;
 		}
 
-
 		private List<IParaFragment> FindMatchingItems()
 		{
 			var result = new List<IParaFragment>();
@@ -638,15 +600,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						analyses.Add(targetGloss);
 						foreach (var gloss in m_cache.ServiceLocator.GetInstance<IWfiGlossRepository>().AllInstances().Where(g => g != targetGloss))
 						{
-							foreach (var ws in targetGloss.Form.AvailableWritingSystemIds)
+							if (targetGloss.Form.AvailableWritingSystemIds.Any(ws => targetGloss.Form.get_String(ws).Equals(gloss.Form.get_String(ws))))
 							{
-								var targetTss = targetGloss.Form.get_String(ws);
-								var tss = gloss.Form.get_String(ws);
-								if (targetTss.Equals(tss))
-								{
-									analyses.Add(gloss);
-									break;
-								}
+								analyses.Add(gloss);
 							}
 						}
 						return GetOccurrencesOfAnalyses(analyses);
@@ -710,8 +666,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				default:
 					if (m_cache.ClassIsOrInheritsFrom((int)clid, (int)MoFormTags.kClassId))
 					{
-						foreach (
-							var mb in m_cache.ServiceLocator.GetInstance<IWfiMorphBundleRepository>().AllInstances())
+						foreach (var mb in m_cache.ServiceLocator.GetInstance<IWfiMorphBundleRepository>().AllInstances())
 						{
 							if (mb.MorphRA == target)
 							{
@@ -755,7 +710,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			LoadMatches(true);
 		}
 
-		void m_tbSearchText_TextChanged(object sender, EventArgs e)
+		private void m_tbSearchText_TextChanged(object sender, EventArgs e)
 		{
 			m_btnSearch.Enabled = m_tbSearchText.Text.Length > 0;
 		}
@@ -780,7 +735,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					// enhance JohnT: if we aren't concording on an analysis, we could still get the BeginOffset
 					// from the ParaFragment, and figure which analysis that is part of or closest to.
 				}
-
 				ITsString tss = null;
 				var ws = 0;
 				var wordform = (IWfiWordform)cmCurrent?.OwnerOfClass(WfiWordformTags.kClassId);
@@ -821,9 +775,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void FillLineComboList()
 		{
 			m_cbLine.Items.Clear();
-			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksBaseline,
-				WritingSystemServices.kwsVerns,
-				ConcordanceLines.kBaseline));
+			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksBaseline, WritingSystemServices.kwsVerns, ConcordanceLines.kBaseline));
 			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksWord, WritingSystemServices.kwsVerns, ConcordanceLines.kWord));
 			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksMorphemes, WritingSystemServices.kwsVerns, ConcordanceLines.kMorphemes));
 			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksLexEntry, WritingSystemServices.kwsVerns, ConcordanceLines.kLexEntry));
@@ -835,8 +787,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksLiteralTranslation, WritingSystemServices.kwsAnals, ConcordanceLines.kLiteralTranslation));
 			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksNote, WritingSystemServices.kwsAnals, ConcordanceLines.kNote));
 			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksTagging, WritingSystemServices.kwsAnals, ConcordanceLines.kTags));
-
-
 			m_cbLine.SelectedIndex = 0;
 		}
 
@@ -852,7 +802,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 			}
 			if (m_cbLine.SelectedIndex != idx)
+			{
 				m_cbLine.SelectedIndex = idx;
+			}
 		}
 
 		private void FillWritingSystemCombo(int wsMagic)
@@ -911,7 +863,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					}
 				}
 			}
-
 			if (idx != -1 && m_cbWritingSystem.SelectedIndex != idx)
 			{
 				m_cbWritingSystem.SelectedIndex = idx;
@@ -942,7 +893,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return new List<IParaFragment>();
 			}
-
 			var occurrences = new List<IParaFragment>();
 			var cPara = 0;
 			foreach (var para in ParagraphsToSearch)
@@ -953,14 +903,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					// Create occurrences for each match.
 					var results = matcher.GetAllResults();
-					foreach (MatchRangePair range in results)
+					foreach (var range in results)
 					{
 						occurrences.Add(MakeOccurrence(para, range.IchMin, range.IchLim));
 						if (occurrences.Count >= MaxConcordanceMatches())
 						{
-							MessageBox.Show(string.Format(ITextStrings.ksShowingOnlyTheFirstXXXMatches,
-								occurrences.Count, cPara, ParagraphsToSearch.Count), ITextStrings.ksNotice,
-								MessageBoxButtons.OK, MessageBoxIcon.Information);
+							MessageBox.Show(string.Format(ITextStrings.ksShowingOnlyTheFirstXXXMatches, occurrences.Count, cPara, ParagraphsToSearch.Count), ITextStrings.ksNotice, MessageBoxButtons.OK, MessageBoxIcon.Information);
 							return occurrences;
 						}
 					}
@@ -998,8 +946,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				if (mb.MsaRA?.ComponentsRS != null)
 				{
-					var myHvos = GetHvoOfMsaPartOfSpeech(mb.MsaRA);
-					if (myHvos.Contains(hvoPossToMatch))
+					if (GetHvoOfMsaPartOfSpeech(mb.MsaRA).Contains(hvoPossToMatch))
 					{
 						analyses.Add(mb.Owner as IWfiAnalysis);
 					}
@@ -1128,20 +1075,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					AddUnparsedParagraphs(sttext, needsParsing, result);
 				}
-				if (needsParsing.Count > 0)
+				if (needsParsing.Any())
 				{
-					NonUndoableUnitOfWorkHelper.DoSomehow(m_cache.ActionHandlerAccessor,
-						() =>
+					NonUndoableUnitOfWorkHelper.DoSomehow(m_cache.ActionHandlerAccessor, () =>
+					{
+						foreach (var para in needsParsing)
 						{
-							foreach (var para in needsParsing)
+							ParagraphParser.ParseParagraph(para);
+							if (para.SegmentsOS.Count > 0)
 							{
-								ParagraphParser.ParseParagraph(para);
-								if (para.SegmentsOS.Count > 0)
-								{
-									result.Add(para);
-								}
+								result.Add(para);
 							}
-						});
+						}
+					});
 				}
 				return result;
 			}
@@ -1237,7 +1183,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			IMatcher matcher;
 			SetupSearchPattern(ws);
-
 			if (m_rbtnUseRegExp.Checked)
 			{
 				matcher = new RegExpMatcher(m_vwPattern);
@@ -1245,10 +1190,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			else if (m_rbtnWholeItem.Checked)
 			{
 				// See whether we can use the MUCH more efficient ExactLiteralMatcher
-				if (!m_vwPattern.UseRegularExpressions
-					&& m_vwPattern.MatchDiacritics
-					&& m_vwPattern.MatchOldWritingSystem
-					&& m_vwPattern.Pattern.RunCount == 1)
+				if (!m_vwPattern.UseRegularExpressions && m_vwPattern.MatchDiacritics && m_vwPattern.MatchOldWritingSystem && m_vwPattern.Pattern.RunCount == 1)
 				{
 					var target = m_vwPattern.Pattern.Text;
 					int nVar;
@@ -1269,7 +1211,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				matcher = new AnywhereMatcher(m_vwPattern);
 			}
-
 			if (!matcher.IsValid())
 			{
 				if (matcher is RegExpMatcher)
@@ -1303,8 +1244,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private ITsString GetSearchText()
 		{
-			return m_tbSearchText.Visible ?
-				m_tbSearchText.Tss : ((HvoTreeNode)m_cbSearchText.SelectedItem).Tss;
+			return m_tbSearchText.Visible ? m_tbSearchText.Tss : ((HvoTreeNode)m_cbSearchText.SelectedItem).Tss;
 		}
 
 		/// <summary>
@@ -1376,7 +1316,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				foreach (var seg in para.SegmentsOS)
 				{
 					if (matcher.Matches(seg.FreeTranslation.get_String(ws)))
+					{
 						result.Add(MakeOccurrence(para, seg.BeginOffset, seg.EndOffset));
+					}
 				}
 			}
 			return result;
@@ -1499,7 +1441,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-
 			var partOfSpeech = (IPartOfSpeech)target;
 			SetConcordanceLine(ConcordanceLines.kWordCategory);
 			m_pOSPopupTreeManager.LoadPopupTree(partOfSpeech.Hvo);

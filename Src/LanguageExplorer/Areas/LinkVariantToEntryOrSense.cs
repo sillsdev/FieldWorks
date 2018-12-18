@@ -1,9 +1,10 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.LexText;
@@ -18,32 +19,36 @@ namespace LanguageExplorer.Areas
 {
 	public partial class LinkVariantToEntryOrSense : LinkEntryOrSenseDlg
 	{
-		PopupTreeManager m_tcManager;
+		private PopupTreeManager m_tcManager;
 		/// <summary>
 		/// when calling the dialog from "Variant Of" context...without an existing variant used as
 		/// m_startingEntry, we need to pass in the lexeme form of the variant to create the variant
 		/// in order to link it to an entry. Mutually exclusive with m_startingEntry.
 		/// </summary>
-		ITsString m_tssVariantLexemeForm;
+		private ITsString m_tssVariantLexemeForm;
 		/// <summary>
 		/// TODO: refactor all related logic to InsertVariantDlg or GoDlg.
 		/// when calling the dialog from an "Insert Variant" context this
 		/// flag is used to indicate that m_startingEntry is a componentLexeme
 		/// rather than the variant
 		/// </summary>
-		bool m_fBackRefToVariant;
+		private bool m_fBackRefToVariant;
 
 		public LinkVariantToEntryOrSense()
 		{
 			InitializeComponent();
 		}
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
 			if (disposing)
 			{
 				components?.Dispose();
@@ -88,7 +93,6 @@ namespace LanguageExplorer.Areas
 			lblVariantType.Visible = false;
 			m_fGetVariantEntryTypeFromTreeCombo = false;
 			lblCreateEntry.Visible = false;
-
 			// The dialog title and other labels need to reflect "Insert Variant" context.
 			m_formLabel.Text = LexTextControls.ks_Variant;
 			Text = LexTextControls.ksFindVariant;
@@ -96,7 +100,6 @@ namespace LanguageExplorer.Areas
 			// We disable the "Create" button when we don't have text in the Find textbox.
 			UpdateButtonCreateNew();
 		}
-
 
 		protected override void SetDlgInfo(LcmCache cache, WindowParams wp, int ws)
 		{
@@ -183,12 +186,10 @@ namespace LanguageExplorer.Areas
 			{
 				return; // odd. nothing more to do.
 			}
-
 			ILexEntry variant;
 			IVariantComponentLexeme componentLexeme;
 			ILexEntryType selectedEntryType;
 			GetVariantAndComponentAndSelectedEntryType(out variant, out componentLexeme, out selectedEntryType);
-
 			var matchingEntryRef = FindMatchingEntryRef(variant, componentLexeme, selectedEntryType);
 			try
 			{
@@ -210,14 +211,7 @@ namespace LanguageExplorer.Areas
 					{
 						// otherwise we need to create a new LexEntryRef.
 						NewlyCreatedVariantEntryRefResult = true;
-						if (variant != null)
-						{
-							VariantEntryRefResult = variant.MakeVariantOf(componentLexeme, selectedEntryType);
-						}
-						else
-						{
-							VariantEntryRefResult = componentLexeme.CreateVariantEntryAndBackRef(selectedEntryType, m_tssVariantLexemeForm);
-						}
+						VariantEntryRefResult = variant != null ? variant.MakeVariantOf(componentLexeme, selectedEntryType) : componentLexeme.CreateVariantEntryAndBackRef(selectedEntryType, m_tssVariantLexemeForm);
 					}
 				});
 			}
@@ -252,10 +246,7 @@ namespace LanguageExplorer.Areas
 
 		private ILexEntryRef FindMatchingEntryRef(ILexEntry variant, IVariantComponentLexeme componentLexeme, ILexEntryType selectedEntryType)
 		{
-			var matchingEntryRef = variant != null
-				? variant.FindMatchingVariantEntryRef(componentLexeme, selectedEntryType)
-				: componentLexeme.FindMatchingVariantEntryBackRef(selectedEntryType, m_tssVariantLexemeForm);
-			return matchingEntryRef;
+			return variant != null ? variant.FindMatchingVariantEntryRef(componentLexeme, selectedEntryType) : componentLexeme.FindMatchingVariantEntryBackRef(selectedEntryType, m_tssVariantLexemeForm);
 		}
 
 		/// <summary>
@@ -264,7 +255,6 @@ namespace LanguageExplorer.Areas
 		protected override void ResetMatches(string searchKey)
 		{
 			base.ResetMatches(searchKey);
-
 			// update CreateNew button when the Find textbox or WritingSystems combo changes.
 			UpdateButtonCreateNew();
 		}
@@ -282,7 +272,6 @@ namespace LanguageExplorer.Areas
 			{
 				// detect whether SelectedID already matches an existing EntryRef relationship.
 				// If so, we want to "Use" it rather than say "Add" when clicking OK.
-
 				ILexEntry variant;
 				IVariantComponentLexeme componentLexeme;
 				ILexEntryType selectedEntryType;
@@ -320,7 +309,6 @@ namespace LanguageExplorer.Areas
 			{
 				base.m_btnInsert_Click(sender, e);
 			}
-
 			// the user wants to try to create a variant with a lexeme form
 			// built from the current state of our Find text box and WritingSystem combo.
 			var tssNewVariantLexemeForm = CreateVariantTss();
@@ -328,7 +316,6 @@ namespace LanguageExplorer.Areas
 			{
 				return;
 			}
-
 			// we need to create the new LexEntryRef and its variant from the starting entry.
 			UndoableUnitOfWorkHelper.Do(LexTextControls.ksUndoCreateVarEntry, LexTextControls.ksRedoCreateVarEntry, m_startingEntry, () =>
 			{
@@ -351,7 +338,6 @@ namespace LanguageExplorer.Areas
 					// return the owner of the variant ref to get the new variant.
 					return VariantEntryRefResult.Owner;
 				}
-
 				return base.SelectedObject;
 			}
 		}
@@ -359,7 +345,6 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// try to create a tss based upon the state of the Find text box and WritingSystems combo.
 		/// </summary>
-		/// <returns></returns>
 		private ITsString CreateVariantTss()
 		{
 			// only create a variant tss when we're calling the dialog up from an entry
@@ -372,7 +357,7 @@ namespace LanguageExplorer.Areas
 			var trimmed = m_tbForm.Text.Trim();
 			if (trimmed.Length > 0 && m_cbWritingSystems.SelectedItem != null)
 			{
-				var ws = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
+				var ws = (CoreWritingSystemDefinition)m_cbWritingSystems.SelectedItem;
 				if (m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Contains(ws))
 				{
 					tssNewVariantLexemeForm = TsStringUtils.MakeString(trimmed, ws.Handle);

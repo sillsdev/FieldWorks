@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -42,7 +42,6 @@ namespace LanguageExplorer.Areas
 		/// Mode string for DataTree to use at top level.
 		/// </summary>
 		protected string m_rootMode;
-
 		/// <summary>
 		/// indicates that when descendant objects are displayed they should be displayed within the context
 		/// of its root object
@@ -72,11 +71,8 @@ namespace LanguageExplorer.Areas
 			m_printMenu = printMenu;
 			m_printMenu.Click += PrintMenu_Click;
 			m_printMenu.Enabled = true;
-
-			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
-
-			AccNameDefault = "RecordEditView";		// default accessibility name
+			AccNameDefault = "RecordEditView";
 		}
 
 		#region Overrides of ViewBase
@@ -100,9 +96,7 @@ namespace LanguageExplorer.Areas
 		public void FinishInitialization()
 		{
 			InitBase();
-
 			m_showDescendantInRoot = XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParametersElement, "showDescendantInRoot", false);
-
 			// retrieve persisted record list index and set it.
 			var idx = PropertyTable.GetValue(MyRecordList.PersistedIndexProperty, -1, SettingsGroup.LocalSettings);
 			var lim = MyRecordList.ListSize;
@@ -121,31 +115,27 @@ namespace LanguageExplorer.Areas
 					}
 				}
 			}
-
 			// If possible make it use the style sheet appropriate for its main window.
 			MyDataTree.StyleSheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable);
 			ShowRecord();
 			m_fullyInitialized = true;
 		}
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
 			if (disposing)
 			{
 				components?.Dispose();
-
 				m_printMenu.Click -= PrintMenu_Click;
 				m_printMenu.Enabled = false;
-
 				if (MyDataTree != null)
 				{
 					MyDataTree.CurrentSliceChanged -= DataTreeCurrentSliceChanged;
@@ -174,13 +164,12 @@ namespace LanguageExplorer.Areas
 			}
 
 #if RANDYTODO
-// As of 21JUL17 nobody cares about that 'propName' changing, so skip the broadcast.
+			// TODO: As of 21JUL17 nobody cares about that 'propName' changing, so skip the broadcast.
 #endif
 			// persist record lists's CurrentIndex in a db specific way
 			var propName = MyRecordList.PersistedIndexProperty;
 			PropertyTable.SetProperty(propName, MyRecordList.CurrentIndex, true, settingsGroup: SettingsGroup.LocalSettings);
 			var window = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window);
-
 			using (new IdleProcessingHelper(window))
 			{
 				ShowRecord(e.RecordNavigationInfo);
@@ -209,7 +198,6 @@ namespace LanguageExplorer.Areas
 			{
 				return;
 			}
-
 			if (MyDataTree.Descendant != null && MyRecordList.CurrentObject != MyDataTree.Descendant)
 			{
 				// if the user has clicked on a different descendant's slice, update the currently
@@ -229,7 +217,6 @@ namespace LanguageExplorer.Areas
 			{
 				return;
 			}
-
 			// See if we have an AlternativeTitle string table id for an alternate title.
 			string titleStr = null;
 			if (!string.IsNullOrEmpty(m_titleStr))
@@ -293,22 +280,19 @@ namespace LanguageExplorer.Areas
 			{
 				return;
 			}
-
 			base.ShowRecord();
 #if DEBUG
 			var msStart = Environment.TickCount;
 			Debug.Assert(MyDataTree != null);
 #endif
-
 			var oldSuppressSaveOnChangeRecord = MyRecordList.SuppressSaveOnChangeRecord;
 			MyRecordList.SuppressSaveOnChangeRecord = rni.SuppressSaveOnChangeRecord;
 			PrepCacheForNewRecord();
 			MyRecordList.SuppressSaveOnChangeRecord = oldSuppressSaveOnChangeRecord;
-
 			if (MyRecordList.CurrentObject == null || MyRecordList.SuspendLoadingRecordUntilOnJumpToRecord)
 			{
 				MyDataTree.Hide();
-				MyDataTree.Reset();	// in case user deleted the object it was based upon.
+				MyDataTree.Reset(); // in case user deleted the object it was based upon.
 				return;
 			}
 			try
@@ -327,7 +311,6 @@ namespace LanguageExplorer.Areas
 							obj = obj.Owner;
 						}
 					}
-
 					MyDataTree.ShowObject(obj, m_layoutName, m_layoutChoiceField, MyRecordList.CurrentObject, ShouldSuppressFocusChange(rni));
 				}
 			}
@@ -367,7 +350,6 @@ namespace LanguageExplorer.Areas
 		protected override void ReadParameters()
 		{
 			base.ReadParameters();
-
 			m_layoutName = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "layout");
 			m_layoutChoiceField = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "layoutChoiceField");
 			m_titleField = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "titleField");
@@ -388,9 +370,7 @@ namespace LanguageExplorer.Areas
 			Debug.Assert(m_configurationParametersElement != null);
 
 			base.SetupDataContext();
-
 			MyDataTree.PersistenceProvder = PersistenceProviderFactory.CreatePersistenceProvider(PropertyTable);
-
 			MyRecordList.UpdateRecordTreeBarIfNeeded();
 			MyDataTree.SliceFilter = m_sliceFilterDocument != null ? new SliceFilter(m_sliceFilterDocument) : new SliceFilter();
 			// Already done: m_dataEntryForm.Dock = DockStyle.Fill;
@@ -404,7 +384,6 @@ namespace LanguageExplorer.Areas
 			{
 				MyDataTree.AccessibilityObject.Name = "RecordEditView.DataTree";
 			}
-
 			Controls.Clear();
 			Controls.Add(m_informationBar);
 			Controls.Add(MyDataTree);
@@ -431,7 +410,6 @@ namespace LanguageExplorer.Areas
 				targetCandidates.Add(MyDataTree.CurrentSlice);
 				return MyDataTree.CurrentSlice.ContainsFocus ? MyDataTree.CurrentSlice : null;
 			}
-
 			return base.PopulateCtrlTabTargetCandidateList(targetCandidates);
 		}
 
@@ -522,7 +500,6 @@ namespace LanguageExplorer.Areas
 			{
 				return; // Don't bother; this edit view does not specify a print layout, or there's nothing to print.
 			}
-
 			var area = PropertyTable.GetValue<string>(AreaServices.AreaChoice);
 			string toolId;
 			switch (area)

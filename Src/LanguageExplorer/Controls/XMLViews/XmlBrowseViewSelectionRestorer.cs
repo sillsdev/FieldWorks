@@ -12,9 +12,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	internal class XmlBrowseViewSelectionRestorer : SelectionRestorer
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="XmlBrowseViewSelectionRestorer"/> class.
-		/// </summary>
+		/// <summary />
 		public XmlBrowseViewSelectionRestorer(XmlBrowseViewBase browseView) : base(browseView)
 		{
 		}

@@ -1,23 +1,21 @@
-// Copyright (c) 2008-2018 SIL International
+// Copyright (c) 2008-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Diagnostics;
-using SIL.LCModel;
-using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
-using SIL.LCModel.Core.Text;
+using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Areas.Lexicon
 {
-	/// <summary>
-	/// Summary description for SwapLexemeWithAllomorphDlg.
-	/// </summary>
+	/// <summary />
 	internal sealed class SwapLexemeWithAllomorphDlg : Form
 	{
 		private FwTextBox m_fwTextBoxBottomMsg;
@@ -35,7 +33,6 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.Container components = null;
-
 		private string m_helpTopic;
 		private HelpProvider helpProvider;
 
@@ -44,18 +41,12 @@ namespace LanguageExplorer.Areas.Lexicon
 
 		public SwapLexemeWithAllomorphDlg()
 		{
-			//
-			// Required for Windows Form Designer support
-			//
 			InitializeComponent();
 			AccessibleName = GetType().Name;
 
 			SuspendLayout();
 			m_fwTextBoxBottomMsg = new FwTextBox();
 			((System.ComponentModel.ISupportInitialize)(m_fwTextBoxBottomMsg)).BeginInit();
-			//
-			// m_fwTextBoxBottomMsg
-			//
 			m_fwTextBoxBottomMsg.BackColor = SystemColors.Control;
 			m_fwTextBoxBottomMsg.HasBorder = false;
 			m_fwTextBoxBottomMsg.CausesValidation = false;
@@ -67,9 +58,6 @@ namespace LanguageExplorer.Areas.Lexicon
 			m_fwTextBoxBottomMsg.SelectionStart = 0;
 			m_fwTextBoxBottomMsg.Size = new Size(386, 45);
 			m_fwTextBoxBottomMsg.TabIndex = 1;
-			// Can't do this yet as m_cache is not set until SetDlgInfo() is run.
-			//m_fwTextBoxBottomMsg.WritingSystemFactory = m_cache.WritingSystemFactory;
-			//m_fwTextBoxBottomMsg.WritingSystemCode = 1;
 			Controls.Add(m_fwTextBoxBottomMsg);
 
 			m_lvAlloOptions.TabIndex = 0;
@@ -131,10 +119,10 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -147,7 +135,7 @@ namespace LanguageExplorer.Areas.Lexicon
 			m_fwTextBoxBottomMsg = null;
 			m_cache = null;
 
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#region	Other methods

@@ -1,9 +1,9 @@
-// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Diagnostics;
 using System.Windows.Forms;
-using LanguageExplorer.Controls.XMLViews;
 using SIL.Code;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -31,9 +31,6 @@ namespace LanguageExplorer.Areas
 		}
 
 		/// <summary />
-		/// <remarks>
-		/// This constructor uses the default (parameterless) constructor of RecordList.
-		/// </remarks>
 		internal SubservientRecordList(string id, StatusBar statusBar, ISilDataAccessManaged decorator, bool usingAnalysisWs, int flid, IRecordList recordListProvidingRootObject)
 			: base(decorator)
 		{
@@ -107,6 +104,13 @@ namespace LanguageExplorer.Areas
 
 		protected override void Dispose(bool disposing)
 		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
 			if (disposing)
 			{
 			}

@@ -29,9 +29,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected int m_targetClass;
 		// the property from which the objects whose properties we want come.
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:NeededPropertyInfo"/> class.
-		/// </summary>
+		/// <summary />
 		/// <param name="listItemsClass">the class of objects at the root parent of the NeedPropertyInfo tree.
 		/// Typically the destination class of flidSource</param>
 		public NeededPropertyInfo(int listItemsClass)
@@ -42,9 +40,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			IsSequence = true;
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:NeededPropertyInfo"/> class.
-		/// </summary>
+		/// <summary />
 		protected NeededPropertyInfo(int flidSource, NeededPropertyInfo parent, bool fSeq)
 		{
 			Source = flidSource;

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,9 +10,9 @@ using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.Application;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
+using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit
 {
@@ -67,16 +67,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit
 
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers);
 			_listsAreaMenuHelper = new ListsAreaMenuHelper(majorFlexComponentParameters, dataTree, (IListArea)_area, _recordList);
-			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(
-				majorFlexComponentParameters.FlexComponentParameters,
-				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				true,
-				XDocument.Parse(ListResources.DomainTypeEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters),
-				MachineName,
-				majorFlexComponentParameters.LcmCache,
-				_recordList,
-				dataTree,
-				MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
+			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
+				true, XDocument.Parse(ListResources.DomainTypeEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters), MachineName,
+				majorFlexComponentParameters.LcmCache, _recordList, dataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 
 			// Too early before now.
 			_listsAreaMenuHelper.Initialize();
@@ -161,10 +154,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit
               </sortMethods>
             </clerk>
 			*/
-			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
-				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
-				cache.LanguageProject.LexDbOA.DomainTypesOA,
-				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, false, "best analysis"));
+			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
+				cache.LanguageProject.LexDbOA.DomainTypesOA, new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, false, "best analysis"));
 		}
 	}
 }

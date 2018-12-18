@@ -1,12 +1,12 @@
-// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.FwUtils;
 using LanguageExplorer.Filters;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.Text;
@@ -116,7 +116,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		internal List<int> GetScriptureIds()
 		{
-			return (GetInterestingTextList().ScriptureTexts.Select(st => st.Hvo)).ToList();
+			return GetInterestingTextList().ScriptureTexts.Select(st => st.Hvo).ToList();
 		}
 
 		private InterestingTextList GetInterestingTextList()
@@ -138,7 +138,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Add a new text (but don't make it undoable)
 		/// </summary>
-		/// <returns></returns>
 		internal bool AddNewTextNonUndoable()
 		{
 			return AddNewText(new NonUndoableCreateAndInsertStText(m_cache, this));
@@ -161,7 +160,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			SaveOnChangeRecord(); // commit any changes before we create a new text.
 			var newText = DoCreateAndInsert(createAndInsertMethodObj);
-
 			// Check to if a genre was assigned to this text
 			// (when selected from the text list: ie a genre w/o a text was selected)
 			var property = GetCorrespondingPropertyName("DelayedGenreAssignment");
@@ -175,7 +173,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 				PropertyTable.RemoveProperty(property);
 			}
-
 			if (CurrentObject == null || CurrentObject.Hvo == 0)
 			{
 				return false;

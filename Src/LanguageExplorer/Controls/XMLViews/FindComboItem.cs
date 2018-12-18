@@ -15,9 +15,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		FwComboBox m_combo;
 		BrowseViewer m_bv;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="FindComboItem"/> class.
-		/// </summary>
+		/// <summary />
 		public FindComboItem(ITsString tssName, FilterSortItem fsi, int ws, FwComboBox combo, BrowseViewer bv)
 			: base(tssName, null, fsi)
 		{

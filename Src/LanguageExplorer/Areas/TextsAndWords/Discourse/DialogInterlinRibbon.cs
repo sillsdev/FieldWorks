@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2018 SIL International
+// Copyright (c) 2008-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,7 +14,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 	/// </summary>
 	public class DialogInterlinRibbon : InterlinRibbon
 	{
-		// In this subclass, we set the root later.
+		/// <summary>
+		/// In this subclass, we set the root later.
+		/// </summary>
 		public DialogInterlinRibbon(LcmCache cache) : base(cache, 0)
 		{
 			m_occurenceListId = -2012; // use a different flid for this subclass

@@ -20,9 +20,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	public partial class VSTabControl : TabControl
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:VSTabControl"/> class.
-		/// </summary>
+		/// <summary />
 		public VSTabControl()
 		{
 			InitializeComponent();

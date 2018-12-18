@@ -1,19 +1,19 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
-using System.Drawing;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
+using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.Xml;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
@@ -28,7 +28,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		// These variables are used for the popup menus.
 		private ComboListBox m_clb;
 		private bool m_fConstructingMenu;
-		private System.Collections.Generic.List<FwMenuItem> m_rgfmi;
+		private List<FwMenuItem> m_rgfmi;
 
 		#region Implementation of IPropertyTableProvider
 
@@ -94,15 +94,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			// The base class finalizer is called automatically.
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <remarks>Must not be virtual.</remarks>
+		/// <summary />
 		public void Dispose()
 		{
 			Dispose(true);
 			// This object will be cleaned up by the Dispose method.
-			// Therefore, you should call GC.SupressFinalize to
+			// Therefore, you should call GC.SuppressFinalize to
 			// take this object off the finalization queue
 			// and prevent finalization code for this object
 			// from executing a second time.
@@ -123,22 +120,17 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// </summary>
 		protected virtual void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
 			if (disposing)
 			{
 				// Dispose managed resources here.
-				if (m_clb != null)
-				{
-					m_clb.Dispose();
-					m_clb = null;
-				}
-				m_rgfmi = null;
+				m_clb?.Dispose();
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
@@ -146,6 +138,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			PropertyTable = null;
 			Publisher = null;
 			Subscriber = null;
+			m_clb = null;
+			m_rgfmi = null;
 
 			IsDisposed = true;
 		}
@@ -163,7 +157,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			{
 				h = (InflAffixTemplateMenuHandler)DynamicLoader.CreateObject(node);
 			}
-
 			if (h == null) //no class specified, so just returned a generic InflAffixTemplateControl
 			{
 				h = new InflAffixTemplateMenuHandler();
@@ -190,16 +183,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			HandleInsertCommand(field, className);
 #endif
 #endif
-			return true;	//we handled this.
+			return true;    //we handled this.
 		}
 
 #if RANDYTODO
 		/// <summary>
 		/// decide whether to display this Menu Item
 		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
 		public virtual bool OnDisplayInflTemplateInsertSlot(object commandObject, ref UIItemDisplayProperties display)
 		{
 			display.Enabled = true;
@@ -223,17 +213,15 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			{
 				return;
 			}
-
 			//a missing menu attribute means "figure out a default"
 			if (menuId == null)
 			{
-				menuId="mnuInflAffixTemplate-Error"; // this is our default
+				menuId = "mnuInflAffixTemplate-Error"; // this is our default
 			}
 			if (menuId == string.Empty)
 			{
-				return;	//explicitly stated that there should not be a menu
+				return; //explicitly stated that there should not be a menu
 			}
-
 			m_rgfmi = BuildMenu(menuId);
 			LaunchFwContextMenu(new Point(Cursor.Position.X, Cursor.Position.Y));
 		}
@@ -266,7 +254,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			AdjustListBoxSize();
 			m_clb.AdjustSize(500, 400); // these are maximums!
 			m_clb.SelectedIndex = 0;
-			var boundsLauncher = new Rectangle(ptLoc, new Size(10,10));
+			var boundsLauncher = new Rectangle(ptLoc, new Size(10, 10));
 			var boundsScreen = Screen.GetWorkingArea(InflAffixTemplate);
 			m_fConstructingMenu = false;
 			m_clb.Launch(boundsLauncher, boundsScreen);
@@ -274,7 +262,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 		private void AdjustListBoxSize()
 		{
-			using (Graphics g = InflAffixTemplate.CreateGraphics())
+			using (var g = InflAffixTemplate.CreateGraphics())
 			{
 				var nMaxWidth = 0;
 				var nHeight = 0;
@@ -340,7 +328,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				{
 					continue;
 				}
-
 				if (iSel == 0)
 				{
 					return menuItem;
@@ -371,7 +358,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 					continue;
 				}
 				var xn = xnWindow.XPathSelectElement("commands/command[@id=\"" + sCmd + "\"]");
-				Debug.Assert(xn != null);
 				if (xn == null)
 				{
 					continue;
@@ -419,7 +405,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 						break;
 				}
 				if (tssLabel != null)
+				{
 					rgfmi.Add(new FwMenuItem(tssLabel, xn, fEnabled));
+				}
 			}
 			return rgfmi;
 		}

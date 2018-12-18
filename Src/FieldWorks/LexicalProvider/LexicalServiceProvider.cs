@@ -21,9 +21,7 @@ namespace SIL.FieldWorks.LexicalProvider
 
 		private LcmCache m_cache;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LexicalServiceProvider"/> class.
-		/// </summary>
+		/// <summary />
 		public LexicalServiceProvider(LcmCache cache)
 		{
 			m_cache = cache;

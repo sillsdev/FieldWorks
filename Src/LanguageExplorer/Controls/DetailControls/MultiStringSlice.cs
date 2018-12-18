@@ -20,9 +20,7 @@ using SIL.Xml;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-	/// <summary>
-	/// Summary description for ViewPropertyItem.
-	/// </summary>
+	/// <summary />
 	internal class MultiStringSlice : ViewPropertySlice
 	{
 		private ToolStripMenuItem _writingSystemsMenu;

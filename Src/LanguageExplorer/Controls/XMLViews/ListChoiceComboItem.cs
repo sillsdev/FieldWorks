@@ -41,9 +41,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </remarks>
 		protected string GetDisplayPropertyName => m_includeAbbr ? "LongName" : "ShortNameTSS";
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ListChoiceComboItem"/> class.
-		/// </summary>
+		/// <summary />
 		public ListChoiceComboItem(ITsString tssName, FilterSortItem fsi, LcmCache cache, IPropertyTable propertyTable, FwComboBox combo, bool fAtomic, Type filterType)
 			: base(tssName, null, fsi)
 		{

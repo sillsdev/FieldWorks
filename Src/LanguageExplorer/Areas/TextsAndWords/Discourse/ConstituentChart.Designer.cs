@@ -1,8 +1,8 @@
-// Copyright (c) 2008-2015 SIL International
+// Copyright (c) 2008-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
+using System.Diagnostics;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 {
@@ -19,10 +19,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+
 			if (disposing)
 			{
 				components?.Dispose();
-
 				m_toolTip?.Dispose();
 			}
 

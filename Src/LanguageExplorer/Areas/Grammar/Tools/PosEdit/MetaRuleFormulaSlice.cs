@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,7 +7,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 	internal sealed class MetaRuleFormulaSlice : RuleFormulaSlice
 	{
 		public MetaRuleFormulaSlice(ISharedEventHandlers sharedEventHandlers)
-			:base(sharedEventHandlers)
+			: base(sharedEventHandlers)
 		{
 		}
 
@@ -15,6 +15,5 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		{
 			Control = new MetaRuleFormulaControl(_sharedEventHandlers, ConfigurationNode);
 		}
-
 	}
 }

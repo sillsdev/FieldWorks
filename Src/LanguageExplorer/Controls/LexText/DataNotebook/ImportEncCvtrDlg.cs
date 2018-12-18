@@ -21,9 +21,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IApp m_app;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ImportEncCvtrDlg"/> class.
-		/// </summary>
+		/// <summary />
 		public ImportEncCvtrDlg()
 		{
 			InitializeComponent();

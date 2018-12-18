@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,9 +7,9 @@ using System.Diagnostics;
 using System.Linq;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -23,11 +23,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// </summary>
 	public class WsListManager : IDisposable
 	{
-		ILangProject m_lp;
-		ITsString m_tssColon;
-		ITsString[] m_labels;
-		int[] m_labelBasis; // Array of HVOs that m_labels was based on.
-		ITsTextProps m_ttpLabelStyle;
+		private ILangProject m_lp;
+		private ITsString m_tssColon;
+		private ITsString[] m_labels;
+		private int[] m_labelBasis; // Array of HVOs that m_labels was based on.
+		private ITsTextProps m_ttpLabelStyle;
 
 		/// <summary>
 		/// Create one starting from a language project.
@@ -50,7 +50,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed { get; private set; }
+		private bool IsDisposed { get; set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -65,15 +65,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// The base class finalizer is called automatically.
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <remarks>Must not be virtual.</remarks>
+		/// <inheritdoc />
 		public void Dispose()
 		{
 			Dispose(true);
 			// This object will be cleaned up by the Dispose method.
-			// Therefore, you should call GC.SupressFinalize to
+			// Therefore, you should call GC.SuppressFinalize to
 			// take this object off the finalization queue
 			// and prevent finalization code for this object
 			// from executing a second time.
@@ -104,9 +101,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected virtual void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -157,6 +154,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			return hvos.Select(ws => m_lp.Services.WritingSystemManager.Get(ws)).ToArray();
 		}
+
 		/// <summary>
 		/// Return an array of the analysis writing systems the user wants.
 		/// </summary>
@@ -164,12 +162,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private bool equalArrays(int[] v1, int[] v2)
 		{
-			if (v1.Length != v2.Length)
-			{
-				return false;
-			}
-
-			return !v1.Where((t, i) => t != v2[i]).Any();
+			return v1.Length == v2.Length && !v1.Where((t, i) => t != v2[i]).Any();
 		}
 
 		/// <summary>
@@ -268,7 +261,5 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 
 		}
-		// Enhance JohnT: eventually we need similar stuff for vernacular writing systems, and
-		// perhaps for combined lists such as vernacular and analysis.
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -92,11 +92,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 			};
 			recordEditViewPaneBar.AddControls(new List<Control> { panelButton });
 
-			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(
-				majorFlexComponentParameters.FlexComponentParameters,
-				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				mainMultiPaneParameters,
-				_recordBrowseActiveView, "Browse", new PaneBar(),
+			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters,
+				majorFlexComponentParameters.MainCollapsingSplitContainer, mainMultiPaneParameters, _recordBrowseActiveView, "Browse", new PaneBar(),
 				recordEditView, "Details", recordEditViewPaneBar);
 
 			panelButton.MyDataTree = recordEditView.MyDataTree;
@@ -171,8 +168,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
               <recordList owner="MorphologicalData" property="PhonologicalRules" />
             </clerk>
 			*/
-			return new RecordList(recordListId, statusBar,
-				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,
+			return new RecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,
 				new VectorPropertyParameterObject(cache.LanguageProject.PhonologicalDataOA, "PhonologicalRules", PhPhonDataTags.kflidPhonRules));
 		}
 	}

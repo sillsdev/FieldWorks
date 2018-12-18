@@ -47,9 +47,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private IVwPattern m_ivwpattern;
 		private LcmCache m_cache;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:SimpleMatchDlg"/> class.
-		/// </summary>
+		/// <summary />
 		public SimpleMatchDlg(ILgWritingSystemFactory wsf, IHelpTopicProvider helpTopicProvider, int ws, IVwStylesheet ss, LcmCache cache)
 		{
 			//

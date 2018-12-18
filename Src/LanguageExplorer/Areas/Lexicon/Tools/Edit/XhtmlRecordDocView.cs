@@ -1,8 +1,9 @@
-// Copyright (c) 2016-2018 SIL International
+// Copyright (c) 2016-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -35,15 +36,17 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			m_printMenu.Enabled = true;
 		}
 
-#region Overrides of RecordView
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		/// <param name="disposing"><c>true</c> to release both managed and unmanaged
-		/// resources; <c>false</c> to release only unmanaged resources.
-		/// </param>
+		#region Overrides of RecordView
+		/// <summary />
 		protected override void Dispose(bool disposing)
 		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
 			if (disposing)
 			{
 				m_printMenu.Click -= PrintMenu_Click;
@@ -54,7 +57,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			m_printMenu = null;
 		}
-#endregion
+		#endregion
 
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
@@ -160,7 +163,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					return;
 				}
 				var configuration = new DictionaryConfigurationModel(configurationFile, Cache);
-				var xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(new [] { cmo.Hvo }, null, configuration, PropertyTable, Cache, MyRecordList);
+				var xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(new[] { cmo.Hvo }, null, configuration, PropertyTable, Cache, MyRecordList);
 				m_mainView.Url = new Uri(xhtmlPath);
 				m_mainView.Refresh(WebBrowserRefreshOption.Completely);
 			}
@@ -183,8 +186,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 #if RANDYTODO
 			if (MyRecordList == null || m_mainView == null || m_mediator == null || hvo != MyRecordList.CurrentObjectHvo)
+			{
 				return;
-
+			}
 			var gb = m_mainView.NativeBrowser as GeckoWebBrowser;
 			if (gb != null && gb.Document != null)
 			{

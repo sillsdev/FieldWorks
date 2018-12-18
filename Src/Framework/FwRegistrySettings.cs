@@ -64,9 +64,7 @@ namespace SIL.FieldWorks.Common.Framework
 			s_disableSplashScreen = new RegistryBoolSetting(false, "DisableSplashScreen");
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="FwRegistrySettings"/> class.
-		/// </summary>
+		/// <summary />
 		public FwRegistrySettings(IApp app)
 		{
 			if (app == null)

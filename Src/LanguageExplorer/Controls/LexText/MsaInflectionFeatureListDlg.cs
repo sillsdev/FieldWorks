@@ -17,9 +17,7 @@ using SIL.Windows.Forms;
 
 namespace LanguageExplorer.Controls.LexText
 {
-	/// <summary>
-	/// Summary description for MsaInflectionFeatureListDlg.
-	/// </summary>
+	/// <summary />
 	public class MsaInflectionFeatureListDlg : Form
 	{
 		private IPropertyTable m_propertyTable;

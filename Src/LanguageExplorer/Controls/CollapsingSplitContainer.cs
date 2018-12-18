@@ -53,9 +53,7 @@ namespace LanguageExplorer.Controls
 
 		#region Construction
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:CollapsingSplitContainer"/> class.
-		/// </summary>
+		/// <summary />
 		public CollapsingSplitContainer()
 		{
 			InitializeComponent();

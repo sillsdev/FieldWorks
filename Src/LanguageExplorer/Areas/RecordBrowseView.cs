@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,11 +8,11 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.Filters;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using LanguageExplorer.Filters;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.Xml;
@@ -27,19 +27,12 @@ namespace LanguageExplorer.Areas
 	{
 		public event CheckBoxChangedEventHandler CheckBoxChanged;
 
-		#region Data members
-
 		private bool m_suppressRecordNavigation;
 		protected bool m_suppressShowRecord;
 		private bool m_fHandlingFilterChangedByRecordList;
 		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> _browseViewContextMenuTuple;
-
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
 		private readonly System.ComponentModel.Container components;
-		#endregion // Data members
 
 		#region Construction and disposal
 
@@ -52,14 +45,13 @@ namespace LanguageExplorer.Areas
 			: base(browseViewDefinitions, cache, recordList)
 		{
 			Init();
-
 			_browseViewContextMenuFactory = browseViewContextMenuFactory;
 		}
 
 		private void Init()
 		{
 			InitializeComponent();
-			AccNameDefault = "RecordBrowseView";	// default accessibility name
+			AccNameDefault = "RecordBrowseView";
 			Name = "RecordBrowseView";
 		}
 
@@ -112,7 +104,6 @@ namespace LanguageExplorer.Areas
 					}
 				}
 			}
-
 			// We're seeing an odd crash occurring during Init.ShowRecord() (see LT-9498)
 			// where the Display is getting updated in RestoreSelectionAndScrollPos
 			// after ShowRecord() below sets m_browseViewer.CurrentIndex.
@@ -132,12 +123,9 @@ namespace LanguageExplorer.Areas
 			{
 				//Debug.Fail("Not sure how/why we have a RootBox.Selection at this point in initialization. " +
 				//	"Please comment in LT-9498 how you reproduced this. Perhaps it would indicate how to reproduce this crash.");
-
 				BrowseViewer.BrowseView.RootBox.DestroySelection();
 			}
-
 			Subscriber.Subscribe("RecordListOwningObjChanged", RecordListOwningObjChanged_Message_Handler);
-
 			ShowRecord();
 		}
 
@@ -148,9 +136,10 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -161,7 +150,6 @@ namespace LanguageExplorer.Areas
 				PersistSortSequence();
 				MyRecordList.FilterChangedByList -= RecordList_FilterChangedByList;
 				MyRecordList.SorterChangedByList -= RecordList_SorterChangedByList;
-
 				if (BrowseViewer != null)
 				{
 					BrowseViewer.SelectionChanged -= OnSelectionChanged;
@@ -193,7 +181,7 @@ namespace LanguageExplorer.Areas
 
 		#region Message Handlers
 
-		private bool AreSortersCompatible(RecordSorter first, RecordSorter second)
+		private static bool AreSortersCompatible(RecordSorter first, RecordSorter second)
 		{
 			return first.CompatibleSorter(second);
 		}
@@ -284,7 +272,6 @@ namespace LanguageExplorer.Areas
 			{
 				return;
 			}
-
 			if (MyRecordList.OwningObject == null)
 			{
 				//this happens, for example, when they user sets a filter on the
@@ -367,7 +354,6 @@ namespace LanguageExplorer.Areas
 			// This is mainly to handle the possibility that one of our objects in a virtual
 			// property has been deleted, either by some other tool, or by another client altogether.
 			// Enhance: it would be very nice not to do this any time we can be sure it isn't needed.
-
 			// The second 'true' here is to make it skip the sort.  The sort has to be skipped at this
 			// point because our VC has been disposed, and we haven't made a new one yet.  The sort
 			// will happen later in the sequence of Init when InitSorter is called
@@ -386,7 +372,6 @@ namespace LanguageExplorer.Areas
 				// will get cleared to prevent these views from accessing invalid objects.
 				MyRecordList.UpdateList(false, true);
 			}
-
 			BrowseViewer = CreateBrowseViewer(m_configurationParametersElement, hvo, Cache, MyRecordList, MyRecordList.VirtualListPublisher);
 			BrowseViewer.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			BrowseViewer.FinishInitialization(hvo, m_madeUpFieldIdentifier);
@@ -405,7 +390,8 @@ namespace LanguageExplorer.Areas
 				MyRecordList.ResetFilterToDefault();
 			}
 			BrowseViewer.UpdateFilterBar(MyRecordList.Filter);
-			var fSortChanged = BrowseViewer.InitSorter(MyRecordList.Sorter); // true if we had to change sorter
+			// true if we had to change sorter
+			var fSortChanged = BrowseViewer.InitSorter(MyRecordList.Sorter);
 			// Do this AFTER we init the sorter and filter, so if any changes are made to the
 			// sorter or filter as we install, we still get the right load.
 			if (fSortChanged)
@@ -438,7 +424,7 @@ namespace LanguageExplorer.Areas
 			base.OnParentChanged(e);
 		}
 
-		protected virtual BrowseViewer CreateBrowseViewer(XElement nodeSpec, int hvoRoot, LcmCache cache, ISortItemProvider sortItemProvider,ISilDataAccessManaged sda)
+		protected virtual BrowseViewer CreateBrowseViewer(XElement nodeSpec, int hvoRoot, LcmCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 		{
 			return new BrowseViewer(nodeSpec, hvoRoot, cache, sortItemProvider, sda);
 		}
@@ -459,7 +445,7 @@ namespace LanguageExplorer.Areas
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			SetStyleSheet();
-			base.OnHandleCreated (e);
+			base.OnHandleCreated(e);
 		}
 
 		/// <summary>
@@ -478,7 +464,6 @@ namespace LanguageExplorer.Areas
 			{
 				return;
 			}
-
 			var titleStr = string.Empty;
 			// See if we have an AlternativeTitle string table id for an alternate title.
 			var titleId = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "altTitleId");
@@ -507,13 +492,11 @@ namespace LanguageExplorer.Areas
 			{
 				XmlViewsUtils.TryFindPluralFormFromFlid(MyRecordList.VirtualListPublisher.MetaDataCache, MyRecordList.OwningFlid, out titleStr);
 			}
-
 			var fBaseCalled = false;
 			if (string.IsNullOrEmpty(titleStr))
 			{
 				base.SetInfoBarText();
 				fBaseCalled = true;
-//				titleStr = ((IPaneBar)m_informationBar).Text;	// can't get to work.
 				// (EricP) For some reason I can't provide an IPaneBar get-accessor to return
 				// the new Text value. If it's desirable to allow TitleFormat to apply to
 				// RecordList.CurrentObject, then we either have to duplicate what the
@@ -524,14 +507,12 @@ namespace LanguageExplorer.Areas
 					return;
 				}
 			}
-
 			// If we have a format attribute, format the title accordingly.
 			var sFmt = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "TitleFormat");
 			if (sFmt != null)
 			{
-				 titleStr = string.Format(sFmt, titleStr);
+				titleStr = string.Format(sFmt, titleStr);
 			}
-
 			// if we haven't already set the text through the base,
 			// or if we had some formatting to do, then set the infoBar text.
 			if (!fBaseCalled || sFmt != null)
@@ -552,7 +533,6 @@ namespace LanguageExplorer.Areas
 				return;
 			}
 			Debug.Assert(BrowseViewer != null, "RecordBrowseView.SetupDataContext() has to be called before RecordBrowseView.ShowRecord().");
-
 			// This is a bizarre situation that occurs when the root object is changing and
 			// notifications get sent in non-optimal order. There will be another
 			// ShowRecord call after the two get synchronized.
@@ -585,7 +565,6 @@ namespace LanguageExplorer.Areas
 				// or greater than the number of objects in the vector,
 				// SelectedIndex will assert in a debug build,
 				// and throw an exception in a release build.
-
 				// The call to m_browseViewer.SelectedIndex will trigger an event,
 				// which will run the OnRecordNavigation method,
 				// which will again try and set m_browseViewer.SelectedIndex,
@@ -614,14 +593,11 @@ namespace LanguageExplorer.Areas
 			{
 				return;
 			}
-
 			Debug.Assert(BrowseViewer != null, "RecordBrowseView.SetupDataContext() has to be called before RecordBrowseView.OnRecordNavigation().");
-
 			if (BrowseViewer == null || BrowseViewer.BrowseView == null || BrowseViewer.BrowseView.RootBox == null)
 			{
 				return; // can't do anything useful without a root box to select in.
 			}
-
 			m_suppressShowRecord = e.RecordNavigationInfo.SkipShowRecord;
 			m_suppressRecordNavigation = e.RecordNavigationInfo.SuppressSaveOnChangeRecord;
 			var bvEnabled = BrowseViewer.Enabled;
@@ -701,16 +677,9 @@ namespace LanguageExplorer.Areas
 		#endregion  ICtrlTabProvider implementation
 
 		#region Component Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
+		/// <summary />
 		private void InitializeComponent()
 		{
-			/*
-			this.SuspendLayout();
-			this.Controls.Add((UserControl)this.m_informationBar);
-			this.ResumeLayout(false);*/
 		}
 		#endregion
 

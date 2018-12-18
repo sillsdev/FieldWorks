@@ -1,18 +1,16 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Windows.Forms;
-using SIL.LCModel;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.LexText;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
-	/// <summary>
-	/// Summary description for LexReferenceCollectionLauncher.
-	/// </summary>
+	/// <summary />
 	internal sealed class LexReferenceCollectionLauncher : VectorReferenceLauncher
 	{
 		/// <summary />
@@ -66,7 +64,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				dlg.SetHelpTopic("khtpChooseLexicalRelationAdd");
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK && dlg.SelectedObject != null)
 				{
-					if (!((ILexReference) m_obj).TargetsRS.Contains(dlg.SelectedObject))
+					if (!((ILexReference)m_obj).TargetsRS.Contains(dlg.SelectedObject))
 					{
 						AddItem(dlg.SelectedObject);
 					}

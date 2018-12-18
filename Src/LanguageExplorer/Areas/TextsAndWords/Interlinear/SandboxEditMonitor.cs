@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -41,18 +41,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// </summary>
 	internal class SandboxEditMonitor : DisposableBase, IVwNotifyChange
 	{
-		SandboxBase m_sandbox; // The sandbox we're working from.
-		string m_morphString; // The representation of the current morphemes as a simple string.
-		int m_ichSel = -1; // The index of the selection within that string, or -1 if we don't know it.
-		ISilDataAccess m_sda;
-		int m_hvoSbWord;
-		int m_hvoMorph;
-
+		private SandboxBase m_sandbox; // The sandbox we're working from.
+		private string m_morphString; // The representation of the current morphemes as a simple string.
+		private int m_ichSel = -1; // The index of the selection within that string, or -1 if we don't know it.
+		private ISilDataAccess m_sda;
+		private int m_hvoSbWord;
+		private int m_hvoMorph;
 		// The following two variables are used to overcome an infelicity of interacting with TSF
 		// on Windows for keyboard input.
 		private bool m_needDelayedSelection;
 		private SelInfo m_infoDelayed;
-
 		private bool m_propChangesOccurredWhileNotMonitoring;
 
 		internal SandboxEditMonitor(SandboxBase sandbox)
@@ -331,16 +329,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				var cvsli = vwsel.CLevels(false);
 				cvsli--; // CLevels includes the string property itself, but AllTextSelInfo doesn't need it.
 				int ichEnd;
-				m_infoDelayed.rgvsli = SelLevInfo.AllTextSelInfo(vwsel, cvsli,
-					out m_infoDelayed.ihvoRoot,
-					out m_infoDelayed.tagTextProp,
-					out m_infoDelayed.cpropPrevious,
-					out m_infoDelayed.ich,
-					out ichEnd,
-					out m_infoDelayed.ws,
-					out m_infoDelayed.fAssocPrev,
-					out m_infoDelayed.ihvoEnd,
-					out m_infoDelayed.ttpSelProps);
+				m_infoDelayed.rgvsli = SelLevInfo.AllTextSelInfo(vwsel, cvsli, out m_infoDelayed.ihvoRoot, out m_infoDelayed.tagTextProp, out m_infoDelayed.cpropPrevious,
+					out m_infoDelayed.ich, out ichEnd, out m_infoDelayed.ws, out m_infoDelayed.fAssocPrev, out m_infoDelayed.ihvoEnd, out m_infoDelayed.ttpSelProps);
 				Debug.Assert(ichEnd == m_infoDelayed.ich);
 				Application.Idle += RecreateDelayedSelection;
 			}
@@ -363,19 +353,8 @@ Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}'
 			Application.Idle -= RecreateDelayedSelection;
 			if (m_sandbox != null && m_infoDelayed != null && m_sandbox.RootBox != null)
 			{
-				m_sandbox.RootBox.MakeTextSelection(
-					m_infoDelayed.ihvoRoot,
-					m_infoDelayed.rgvsli.Length,
-					m_infoDelayed.rgvsli,
-					m_infoDelayed.tagTextProp,
-					m_infoDelayed.cpropPrevious,
-					m_infoDelayed.ich,
-					m_infoDelayed.ich,
-					m_infoDelayed.ws,
-					m_infoDelayed.fAssocPrev,
-					m_infoDelayed.ihvoEnd,
-					m_infoDelayed.ttpSelProps,
-					true);
+				m_sandbox.RootBox.MakeTextSelection(m_infoDelayed.ihvoRoot, m_infoDelayed.rgvsli.Length, m_infoDelayed.rgvsli, m_infoDelayed.tagTextProp, m_infoDelayed.cpropPrevious,
+					m_infoDelayed.ich, m_infoDelayed.ich, m_infoDelayed.ws, m_infoDelayed.fAssocPrev, m_infoDelayed.ihvoEnd, m_infoDelayed.ttpSelProps, true);
 			}
 			m_infoDelayed = null;
 			m_needDelayedSelection = false;
@@ -409,16 +388,16 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 
 		#region DisposableBase
 
-		protected override void DisposeManagedResources()
-		{
-			// Dispose managed resources here.
-			m_sda?.RemoveNotification(this);
-		}
-
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
 			base.Dispose(disposing);
+		}
+
+		protected override void DisposeManagedResources()
+		{
+			// Dispose managed resources here.
+			m_sda?.RemoveNotification(this);
 		}
 
 		protected override void DisposeUnmanagedResources()

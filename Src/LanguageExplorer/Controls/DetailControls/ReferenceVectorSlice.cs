@@ -18,27 +18,19 @@ namespace LanguageExplorer.Controls.DetailControls
 	{
 		int m_dxLastWidth; // remember width when OnSizeChanged called.
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ReferenceVectorSlice"/> class.
-		/// Used by custom slices that extend this class.
-		/// </summary>
+		/// <summary />
 		protected ReferenceVectorSlice(Control control)
 			: base(control)
 		{
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ReferenceVectorSlice"/> class.
-		/// Used by slices that extend this class.
-		/// </summary>
+		/// <summary />
 		protected ReferenceVectorSlice(Control control, LcmCache cache, ICmObject obj, int flid)
 			: base(control, cache, obj, flid)
 		{
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ReferenceVectorSlice"/> class.
-		/// </summary>
+		/// <summary />
 		public ReferenceVectorSlice(LcmCache cache, ICmObject obj, int flid)
 			: this(new VectorReferenceLauncher(), cache, obj, flid)
 		{

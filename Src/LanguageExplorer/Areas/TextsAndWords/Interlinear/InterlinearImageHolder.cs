@@ -1,50 +1,44 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Windows.Forms;
 using System.Diagnostics;
+using System.Windows.Forms;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
-	/// <summary>
-	/// Summary description for InterlinearImageHolder.
-	/// </summary>
+	/// <summary />
 	public class InterlinearImageHolder : UserControl
 	{
-		private System.Windows.Forms.Button button1;
+		private Button button1;
 		public ImageList buttonImages;
 		private System.ComponentModel.IContainer components;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="InterlinearImageHolder"/> class.
-		/// </summary>
+		/// <summary />
 		public InterlinearImageHolder()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
-
-			// TODO: Add any initialization after the InitForm call
-
 		}
 
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType() + ". ******************");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
-			if( disposing )
+
+			if (disposing)
 			{
 				components?.Dispose();
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#region Component Designer generated code

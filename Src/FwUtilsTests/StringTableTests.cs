@@ -14,9 +14,7 @@ using NUnit.Framework;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
-	/// <summary>
-	/// Summary description for StringTableTests.
-	/// </summary>
+	/// <summary />
 	[TestFixture]
 	public class StringTableTests : TestBaseForTestsThatCreateTempFilesBasedOnResources
 	{

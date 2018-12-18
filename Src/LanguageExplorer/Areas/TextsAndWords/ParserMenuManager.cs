@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2018 SIL International
+// Copyright (c) 2002-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -22,12 +22,13 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	/// </summary>
 	internal sealed class ParserMenuManager : IFlexComponent, IDisposable, IVwNotifyChange
 	{
-		private LcmCache m_cache; //a pointer to the one owned by from the form
+		//a pointer to the one owned by from the form
+		private LcmCache m_cache;
 		/// <summary>
 		/// Use this to do the Add/RemoveNotifications, since it can be used in the unmanaged section of Dispose.
 		/// (If m_sda is COM, that is.)
 		/// Doing it there will be safer, since there was a risk of it not being removed
-		/// in the mananged section, as when disposing was done by the Finalizer.
+		/// in the managed section, as when disposing was done by the Finalizer.
 		/// </summary>
 		private ISilDataAccess m_sda;
 		/// <summary>
@@ -171,12 +172,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				_currentStText = (IStText)currentObject;
 				return;
 			}
-
 			if (!(currentObject is IWfiWordform))
 			{
 				return;
 			}
-
 			_currentWordform = (IWfiWordform)currentObject;
 			Connection?.UpdateWordform(_currentWordform, ParserPriority.High);
 		}
@@ -206,7 +205,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		internal ParserConnection Connection { get; set; }
 
-#region IVwNotifyChange Members
+		#region IVwNotifyChange Members
 
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
@@ -218,9 +217,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			}
 		}
 
-#endregion
+		#endregion
 
-#region Timer Related
+		#region Timer Related
 
 		private const int TIMER_INTERVAL = 250; // every 1/4 second
 
@@ -247,7 +246,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			UpdateStatusPanelProgress();
 		}
 
-#endregion
+		#endregion
 
 		public bool ConnectToParser()
 		{
@@ -324,10 +323,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		//We will thus missed some events but not get slowed down with too many.
 		public string ParserActivityString => Connection == null ? ParserUIStrings.ksNoParserLoaded : Connection.Activity;
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <returns></returns>
+		/// <summary />
 		public string ParserQueueString
 		{
 			get
@@ -341,17 +337,16 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					med = Connection.GetQueueSize(ParserPriority.Medium).ToString();
 					high = Connection.GetQueueSize(ParserPriority.High).ToString();
 				}
-
 				return string.Format(ParserUIStrings.ksQueueXYZ, low, med, high);
 			}
 		}
 
-#region IDisposable & Co. implementation
+		#region IDisposable & Co. implementation
 
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed { get; private set; }
+		private bool IsDisposed { get; set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -366,15 +361,12 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			// The base class finalizer is called automatically.
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <remarks>Must not be virtual.</remarks>
+		/// <inheritdoc />
 		public void Dispose()
 		{
 			Dispose(true);
 			// This object will be cleaned up by the Dispose method.
-			// Therefore, you should call GC.SupressFinalize to
+			// Therefore, you should call GC.SuppressFinalize to
 			// take this object off the finalization queue
 			// and prevent finalization code for this object
 			// from executing a second time.
@@ -405,13 +397,11 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
-
-			// m_sda COM object block removed due to crash in Finializer thread LT-6124
 
 			if (disposing)
 			{
@@ -465,7 +455,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			IsDisposed = true;
 		}
 
-#endregion IDisposable & Co. implementation
+		#endregion IDisposable & Co. implementation
 
 		private IStText CurrentText => InInterlinearText ? _currentStText : null;
 
@@ -507,23 +497,21 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				return;
 			}
 			UndoableUnitOfWorkHelper.Do(ParserUIStrings.ksUndoClearParserAnalyses, ParserUIStrings.ksRedoClearParserAnalyses, m_cache.ActionHandlerAccessor, () =>
+			{
+				foreach (var analysis in wf.AnalysesOC.ToArray())
 				{
-					foreach (var analysis in wf.AnalysesOC.ToArray())
+					var parserEvals = analysis.EvaluationsRC.Where(evaluation => !evaluation.Human).ToArray();
+					foreach (var parserEval in parserEvals)
 					{
-						var parserEvals = analysis.EvaluationsRC.Where(evaluation => !evaluation.Human).ToArray();
-						foreach (var parserEval in parserEvals)
-						{
-							analysis.EvaluationsRC.Remove(parserEval);
-						}
-
-						if (analysis.EvaluationsRC.Count == 0)
-						{
-							wf.AnalysesOC.Remove(analysis);
-						}
-
-						wf.Checksum = 0;
+						analysis.EvaluationsRC.Remove(parserEval);
 					}
-				});
+					if (analysis.EvaluationsRC.Count == 0)
+					{
+						wf.AnalysesOC.Remove(analysis);
+					}
+					wf.Checksum = 0;
+				}
+			});
 		}
 
 		private void ParseCurrentWord_Click(object sender, EventArgs e)
@@ -532,7 +520,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				return;
 			}
-
 			Connection.UpdateWordform(CurrentWordform, ParserPriority.High);
 		}
 
@@ -542,7 +529,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				return;
 			}
-
 			Connection.UpdateWordforms(CurrentText.UniqueWordforms(), ParserPriority.Medium);
 		}
 
@@ -569,9 +555,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			get
 			{
-				var toolChoice = PropertyTable.GetValue<string>(AreaServices.ToolChoice);
 				var tabName = PropertyTable.GetValue("InterlinearTab", string.Empty);
-				return InTextsWordsArea && toolChoice == AreaServices.InterlinearEditMachineName && (tabName == "RawText" || tabName == "Interlinearizer" || tabName == "Gloss");
+				return InTextsWordsArea && PropertyTable.GetValue<string>(AreaServices.ToolChoice) == AreaServices.InterlinearEditMachineName && (tabName == "RawText" || tabName == "Interlinearizer" || tabName == "Gloss");
 			}
 		}
 
@@ -608,7 +593,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				return;
 			}
-
 			DisconnectFromParser();
 			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 			{
@@ -651,28 +635,30 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			}
 		}
 
-#region TraceSwitch methods
+		#region TraceSwitch methods
 
 		private void TraceVerbose(string s)
 		{
-			if(m_traceSwitch.TraceVerbose)
+			if (m_traceSwitch.TraceVerbose)
+			{
 				Trace.Write(s);
+			}
 		}
 		private void TraceVerboseLine(string s)
 		{
 			if (m_traceSwitch.TraceVerbose)
 			{
-				Trace.WriteLine("PLID="+System.Threading.Thread.CurrentThread.GetHashCode()+": "+s);
+				Trace.WriteLine("PLID=" + System.Threading.Thread.CurrentThread.GetHashCode() + ": " + s);
 			}
 		}
 		private void TraceInfoLine(string s)
 		{
 			if (m_traceSwitch.TraceInfo || m_traceSwitch.TraceVerbose)
 			{
-				Trace.WriteLine("PLID="+System.Threading.Thread.CurrentThread.GetHashCode()+": "+s);
+				Trace.WriteLine("PLID=" + System.Threading.Thread.CurrentThread.GetHashCode() + ": " + s);
 			}
 		}
 
-#endregion TraceSwitch methods
+		#endregion TraceSwitch methods
 	}
 }

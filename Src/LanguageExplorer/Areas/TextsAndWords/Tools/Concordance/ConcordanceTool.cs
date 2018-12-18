@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -22,9 +22,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(ITool))]
 	internal sealed class ConcordanceTool : ITool
 	{
+		internal const string OccurrencesOfSelectedUnit = "OccurrencesOfSelectedUnit";
 		private PartiallySharedMenuHelper _partiallySharedMenuHelper;
 		private BrowseViewContextMenuFactory _browseViewContextMenuFactory;
-		internal const string OccurrencesOfSelectedUnit = "OccurrencesOfSelectedUnit";
 		private MultiPane _concordanceContainer;
 		private ConcordanceControl _concordanceControl;
 		private RecordBrowseView _recordBrowseView;

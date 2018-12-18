@@ -1,27 +1,26 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.LexText;
-using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel;
 using SIL.FieldWorks.Resources;
+using SIL.LCModel;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.Utils;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
-	/// <summary>
-	/// Summary description for IFwImportDialog.
-	/// </summary>
+	/// <summary />
 	public class LinguaLinksImportDlg : Form, IFwExtension
 	{
 		public const int kLlName = 0;
@@ -30,39 +29,34 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public const int kLlCode = 3;
 		public const int kFwCode = 4;
 
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
-
+		private Container components = null;
 		protected LcmCache m_cache;
-		private System.Windows.Forms.LinkLabel linkLabel2;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.TextBox m_LinguaLinksXmlFileName;
-		private System.Windows.Forms.Button btn_LinguaLinksXmlBrowse;
+		private LinkLabel linkLabel2;
+		private Label label1;
+		private TextBox m_LinguaLinksXmlFileName;
+		private Button btn_LinguaLinksXmlBrowse;
 		private OpenFileDialogAdapter openFileDialog;
-		private System.Windows.Forms.ColumnHeader columnHeader1;
-		private System.Windows.Forms.ColumnHeader columnHeader2;
-		private System.Windows.Forms.ColumnHeader columnHeader3;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.ListView listViewMapping;
-		private System.Windows.Forms.Button btnModifyMapping;
-		private System.Windows.Forms.Button btnImport;
+		private ColumnHeader columnHeader1;
+		private ColumnHeader columnHeader2;
+		private ColumnHeader columnHeader3;
+		private Label label2;
+		private ListView listViewMapping;
+		private Button btnModifyMapping;
+		private Button btnImport;
 		protected IPropertyTable m_propertyTable;
 		protected IPublisher m_publisher;
-		private System.Windows.Forms.Button btn_Cancel;
+		private Button btn_Cancel;
 		private string m_sTempDir;
 		private string m_sRootDir;
 		private string m_sLastXmlFileName;
-		private System.Windows.Forms.Label lblFinishWOImport;
-		private System.Windows.Forms.Button m_btnHelp;
-		private System.Windows.Forms.Label lblMappingLanguages;
+		private Label lblFinishWOImport;
+		private Button m_btnHelp;
+		private Label lblMappingLanguages;
 		private int m_startPhase = 1;
-		private System.Windows.Forms.Label label3;
+		private Label label3;
 		private string m_nextInput;
-
 		private const string s_helpTopic = "khtpLinguaLinksImport";
-		private System.Windows.Forms.HelpProvider helpProvider;
+		private HelpProvider helpProvider;
 
 		public LinguaLinksImportDlg()
 		{
@@ -75,18 +69,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// for Western European languages)
 			var encConv = new SilEncConverters40.EncConverters();
 			var de = encConv.GetEnumerator();
-			var sEncConvName = "Windows1252<>Unicode";	// REVIEW: SHOULD THIS NAME BE LOCALIZED?
+			var sEncConvName = "Windows1252<>Unicode";  // REVIEW: SHOULD THIS NAME BE LOCALIZED?
 			var fMustCreateEncCnv = true;
 			while (de.MoveNext())
 			{
-				if ((string) de.Key == null || (string) de.Key != sEncConvName)
+				if ((string)de.Key == null || (string)de.Key != sEncConvName)
 				{
 					continue;
 				}
 				fMustCreateEncCnv = false;
 				break;
 			}
-
 			if (!fMustCreateEncCnv)
 			{
 				return;
@@ -101,9 +94,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		/// <summary>
-		/// From IFwExtension
-		/// </summary>
+		/// <summary />
 		void IFwExtension.Init(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher)
 		{
 			m_cache = cache;
@@ -115,14 +106,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				m_sRootDir += "\\";
 			}
 			m_sRootDir += "Language Explorer\\Import\\";
-
 			m_sTempDir = Path.Combine(Path.GetTempPath(), "LanguageExplorer\\");
 			if (!Directory.Exists(m_sTempDir))
 			{
 				Directory.CreateDirectory(m_sTempDir);
 			}
 			m_sLastXmlFileName = string.Empty;
-
 			var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
 			if (helpTopicProvider == null)
 			{
@@ -343,9 +332,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private static string BaseName(string fullName)
 		{
-			var result = string.Empty;
-			var temp = fullName.ToUpperInvariant();
-			return temp.Where(t => (t >= 'A') && (t <= 'Z')).Aggregate(result, (current, t) => current + t);
+			return fullName.ToUpperInvariant().Where(t => t >= 'A' && t <= 'Z').Aggregate(string.Empty, (current, t) => current + t);
 		}
 
 		private void UpdateLanguageCodes()
@@ -361,10 +348,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_nextInput = m_LinguaLinksXmlFileName.Text;
 			if (!File.Exists(m_nextInput))
 			{
-				MessageBox.Show(
-					string.Format(ITextStrings.ksLLFileNotFound, m_nextInput),
-					ITextStrings.ksLLImport,
-					MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+				MessageBox.Show(string.Format(ITextStrings.ksLLFileNotFound, m_nextInput), ITextStrings.ksLLImport, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
 				return;
 			}
 
@@ -405,7 +389,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					var wsName = string.Empty;
 					//getting name for a writing system given the ICU code.
 					var wsInfo = m_cache.ServiceLocator.WritingSystemManager.WritingSystems.Select(ws => new WsInfo(ws.DisplayLabel, ws.Id, string.IsNullOrEmpty(ws.LegacyMapping) ? "Windows1252<>Unicode" : ws.LegacyMapping)).ToDictionary(wsi => wsi.Id);
-
 					while ((input = streamReader.ReadLine()) != null)
 					{
 						var lineDone = false;
@@ -422,7 +405,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 									wsName = string.Empty;
 									input = input.Length >= pos + 21 ? input.Substring(pos + 21, input.Length - pos - 21) : input.Substring(pos + 16);
 								}
-
 								else
 								{
 									lineDone = true;
@@ -444,12 +426,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 									{
 										if (wsName == string.Empty)
 										{
-											wsName = "<" + wsLLCode + ">";
+											wsName = $"<{wsLLCode}>";
 										}
 										var wsFWName = string.Empty;
 										var wsEC = string.Empty;
 										var wsFWCode = string.Empty;
-
 										foreach (var kvp in wsInfo)
 										{
 											var wsi = kvp.Value;
@@ -461,7 +442,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 											wsEC = TsStringUtils.NormalizeToNFC(wsi.Map);
 											wsFWCode = TsStringUtils.NormalizeToNFC(wsi.Id);
 										}
-
 										if (wsFWName == string.Empty)
 										{
 											foreach (var kvp in wsInfo)
@@ -476,8 +456,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 												wsFWCode = TsStringUtils.NormalizeToNFC(wsi.Id);
 											}
 										}
-
-										var lvItem = new ListViewItem(new[] {TsStringUtils.NormalizeToNFC(wsName), wsFWName, wsEC, TsStringUtils.NormalizeToNFC(wsLLCode), wsFWCode})
+										var lvItem = new ListViewItem(new[] { TsStringUtils.NormalizeToNFC(wsName), wsFWName, wsEC, TsStringUtils.NormalizeToNFC(wsLLCode), wsFWCode })
 										{
 											Tag = wsName
 										};
@@ -538,10 +517,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					{
 						ShowFinishLabel();
 						// update the button before showing the msg box just in case...
-						MessageBox.Show(
-							string.Format(ITextStrings.ksInvalidLLFile, m_nextInput),
-							ITextStrings.ksLLImport,
-							MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+						MessageBox.Show(string.Format(ITextStrings.ksInvalidLLFile, m_nextInput), ITextStrings.ksLLImport, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
 						return;
 					}
 				}
@@ -553,21 +529,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			ShowFinishLabel();
 		}
 
-		private void btn_LinguaLinksXmlBrowse_Click(object sender, System.EventArgs e)
+		private void btn_LinguaLinksXmlBrowse_Click(object sender, EventArgs e)
 		{
 			var currentFile = m_LinguaLinksXmlFileName.Text;
-
 			openFileDialog.Filter = ResourceHelper.BuildFileFilter(FileFilterType.XML, FileFilterType.AllFiles);
 			openFileDialog.FilterIndex = 1;
 			openFileDialog.CheckFileExists = true;
 			openFileDialog.Multiselect = false;
-
 			if (currentFile != null)
 			{
 				openFileDialog.InitialDirectory = currentFile;
 				openFileDialog.FileName = currentFile;
 			}
-
 			openFileDialog.Title = ITextStrings.ksSelectLLXMLFile;
 			if (openFileDialog.ShowDialog() == DialogResult.OK)
 			{
@@ -594,7 +567,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void listViewMapping_DoubleClick(object sender, System.EventArgs e)
 		{
-			btnModifyMapping.PerformClick();	// same as pressing the modify button
+			btnModifyMapping.PerformClick();    // same as pressing the modify button
 		}
 
 		private void btnModifyMapping_Click(object sender, System.EventArgs e)
@@ -611,30 +584,25 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var app = m_propertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
 			using (var dlg = new LexImportWizardLanguage(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), app))
 			{
-				var llName = lvItem.Text;
-				var fwName = lvItem.SubItems[1].Text;
-				var ec = lvItem.SubItems[2].Text;
-				var llCode = lvItem.SubItems[3].Text;
-				dlg.LangToModify(llName, fwName, ec);
-
+				dlg.LangToModify(lvItem.Text, lvItem.SubItems[1].Text, lvItem.SubItems[2].Text);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					// retrieve the new WS information from the dlg
+					string llName;
+					string fwName;
+					string ec;
 					string fwCode;
 					dlg.GetCurrentLangInfo(out llName, out fwName, out ec, out fwCode);
-
 					// remove the one that was modified
 					listViewMapping.Items.Remove(lvItem);
-
 					// now add the modified one
-					lvItem = new ListViewItem(new string[] {llName, fwName, ec, llCode, fwCode})
+					lvItem = new ListViewItem(new[] { llName, fwName, ec, lvItem.SubItems[3].Text, fwCode })
 					{
 						Tag = llName
 					};
 					listViewMapping.Items.Add(lvItem);
 					listViewMapping.Items[listViewMapping.Items.IndexOf(lvItem)].Selected = true;
 				}
-
 				CheckImportEnabled();
 			}
 		}
@@ -642,10 +610,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void CheckImportEnabled()
 		{
 			var allSpecified = true;
-
-			foreach(ListViewItem lvItem2 in listViewMapping.Items)
+			foreach (ListViewItem lvItem2 in listViewMapping.Items)
 			{
-				if (lvItem2.SubItems[2].Text == "")
+				if (lvItem2.SubItems[2].Text == string.Empty)
 				{
 					allSpecified = false;
 				}
@@ -660,27 +627,22 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void btnImport_Click(object sender, EventArgs e)
 		{
 			// if the shift key is down, then just build the phaseNoutput files
-			var runToCompletion = ((ModifierKeys & Keys.Shift) != Keys.Shift);
 			using (var dlg = new ProgressDialogWithTask(this))
 			{
 				dlg.AllowCancel = true;
-
 				var languageMappings = new LanguageMapping[listViewMapping.Items.Count];
 				for (var i = 0; i < listViewMapping.Items.Count; i++)
 				{
 					languageMappings[i] = new LanguageMapping(listViewMapping.Items[i].SubItems);
 				}
-
 				dlg.Minimum = 0;
 				dlg.Maximum = 500;
-
 				using (new WaitCursor(this, true))
 				{
 					// This needs to be reset when cancel is pressed with out clicking the
 					// browse button.  This resolves a noted issue in the code where an exception
 					// is processed when run a second time...
 					m_nextInput = m_LinguaLinksXmlFileName.Text;
-
 					var import = new LinguaLinksImport(m_cache, m_sTempDir, m_sRootDir)
 					{
 						NextInput = m_nextInput
@@ -698,21 +660,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							fSuppressedSave = recordList.SuppressSaveOnChangeRecord;
 							recordList.SuppressSaveOnChangeRecord = true;
 						}
-						var fSuccess = (bool)dlg.RunTask(true, import.Import, runToCompletion, languageMappings, m_startPhase);
-
+						var fSuccess = (bool)dlg.RunTask(true, import.Import, (ModifierKeys & Keys.Shift) != Keys.Shift, languageMappings, m_startPhase);
 						if (fSuccess)
 						{
-							MessageBox.Show(this,
-								string.Format(ITextStrings.ksSuccessLoadingLL, Path.GetFileName(m_LinguaLinksXmlFileName.Text), m_cache.ProjectId.Name, Environment.NewLine, import.LogFile),
-								ITextStrings.ksLLImportSucceeded,
-								MessageBoxButtons.OK, MessageBoxIcon.Information);
-							DialogResult = DialogResult.OK;	// only 'OK' if not exception
+							MessageBox.Show(this, string.Format(ITextStrings.ksSuccessLoadingLL, Path.GetFileName(m_LinguaLinksXmlFileName.Text), m_cache.ProjectId.Name, Environment.NewLine, import.LogFile),
+								ITextStrings.ksLLImportSucceeded, MessageBoxButtons.OK, MessageBoxIcon.Information);
+							DialogResult = DialogResult.OK; // only 'OK' if not exception
 						}
 						else
 						{
 							DialogResult = DialogResult.Abort; // unsuccessful import
 						}
-
 						Close();
 						m_nextInput = import.NextInput;
 					}
@@ -727,11 +685,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						else
 						{
 							Debug.WriteLine("Error: " + ex.InnerException.Message);
-
-							MessageBox.Show(string.Format(import.ErrorMessage, ex.InnerException.Message),
-								ITextStrings.ksUnhandledError,
-								MessageBoxButtons.OK, MessageBoxIcon.Error);
-							DialogResult = DialogResult.Cancel;	// only 'OK' if not exception
+							MessageBox.Show(string.Format(import.ErrorMessage, ex.InnerException.Message), ITextStrings.ksUnhandledError, MessageBoxButtons.OK, MessageBoxIcon.Error);
+							DialogResult = DialogResult.Cancel; // only 'OK' if not exception
 							Close();
 						}
 					}

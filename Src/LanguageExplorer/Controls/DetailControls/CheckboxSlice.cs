@@ -15,25 +15,21 @@ using SIL.Xml;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-	/// <summary>
-	/// Summary description for Checkbox.
-	/// </summary>
+	/// <summary />
 	internal class CheckboxSlice : FieldSlice, IVwNotifyChange
 	{
 		/// <summary>
-		/// Use this to do the Add/RemoveNotifications, since it can be used in the unmanged section of Dispose.
+		/// Use this to do the Add/RemoveNotifications, since it can be used in the unmanaged section of Dispose.
 		/// (If m_sda is COM, that is.)
 		/// Doing it there will be safer, since there was a risk of it not being removed
-		/// in the mananged section, as when disposing was done by the Finalizer.
+		/// in the managed section, as when disposing was done by the Finalizer.
 		/// </summary>
 		private ISilDataAccess m_sda;
-		/// <summary>
-		/// Initializes a new instance of the <see cref="CheckboxSlice"/> class.
-		/// </summary>
 		private CheckBox m_cb;
 		protected XElement m_node;
 		bool m_fToggleValue;
 
+		/// <summary />
 		public CheckboxSlice(LcmCache cache, ICmObject obj, int flid, XElement node)
 			: base(new CheckBox(), cache, obj, flid)
 		{

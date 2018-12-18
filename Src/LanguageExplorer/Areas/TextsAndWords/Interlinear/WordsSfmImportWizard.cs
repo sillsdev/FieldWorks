@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2012-2018 SIL International
+// Copyright (c) 2012-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -27,9 +27,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		/// <summary>
 		/// Don't care about checking the baseline in this dialog.
-		/// TODO: Maybe check that their are words to import?
+		/// TODO: Maybe check that there are words to import?
 		/// </summary>
-		/// <returns></returns>
 		protected override bool ValidateReadyToImport()
 		{
 			return true;
@@ -47,7 +46,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected override void DoStage2Conversion(byte[] stage1, IThreadedProgress dlg)
 		{
-		   var stage2Converter = new LinguaLinksImport(m_cache, null, null);
+			var stage2Converter = new LinguaLinksImport(m_cache, null, null);
 			// Until we have a better idea, assume we're half done with the import when we've produced the intermediate.
 			// TODO: we could do progress based on number of words to import.
 			dlg.Position += 50;

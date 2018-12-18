@@ -39,9 +39,7 @@ namespace LanguageExplorer.Impls
 		private IPropertyRetriever AsIPropertyRetriever => this;
 		private IPropertyTable AsIPropertyTable => this;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="PropertyTable"/> class.
-		/// </summary>
+		/// <summary />
 		internal PropertyTable()
 		{
 			m_properties = new ConcurrentDictionary<string, Property>();
@@ -80,7 +78,7 @@ namespace LanguageExplorer.Impls
 		{
 			Dispose(true);
 			// This object will be cleaned up by the Dispose method.
-			// Therefore, you should call GC.SupressFinalize to
+			// Therefore, you should call GC.SuppressFinalize to
 			// take this object off the finalization queue
 			// and prevent finalization code for this object
 			// from executing a second time.

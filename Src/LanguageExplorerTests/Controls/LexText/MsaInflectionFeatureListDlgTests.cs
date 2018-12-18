@@ -13,9 +13,7 @@ using SIL.LCModel;
 
 namespace LanguageExplorerTests.Controls.LexText
 {
-	/// <summary>
-	/// Summary description for MsaInflectionFeatureListDlgTests.
-	/// </summary>
+	/// <summary />
 	[TestFixture]
 	public class MsaInflectionFeatureListDlgTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{

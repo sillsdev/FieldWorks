@@ -12,9 +12,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	public class ClickCopyEventArgs : EventArgs
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ClickCopyEventArgs"/> class.
-		/// </summary>
+		/// <summary />
 		public ClickCopyEventArgs(ITsString tssWord, int hvo, ITsString tssSource, int ichStartWord)
 		{
 			Word = tssWord;

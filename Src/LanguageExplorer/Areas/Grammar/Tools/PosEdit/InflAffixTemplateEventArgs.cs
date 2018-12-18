@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,7 +10,7 @@ using System.Xml.Linq;
 namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 {
 	/// <summary />
-	public delegate void InflAffixTemplateEventHandler (object sender, InflAffixTemplateEventArgs e);
+	public delegate void InflAffixTemplateEventHandler(object sender, InflAffixTemplateEventArgs e);
 
 	/// <summary />
 	public class InflAffixTemplateEventArgs : EventArgs

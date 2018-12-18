@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -40,7 +40,7 @@ namespace LanguageExplorer.Areas.Notebook
 			var searchEngine = SearchEngine.Get(PropertyTable, "RecordGoSearchEngine", () => new RecordGoSearchEngine(m_cache));
 			m_matchingObjectsBrowser.Initialize(m_cache, FwUtils.StyleSheetFromPropertyTable(PropertyTable), configParamsElement, searchEngine);
 			// start building index
-			var ws = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
+			var ws = (CoreWritingSystemDefinition)m_cbWritingSystems.SelectedItem;
 			if (ws != null)
 			{
 				var tss = TsStringUtils.MakeString(string.Empty, ws.Handle);
@@ -55,11 +55,9 @@ namespace LanguageExplorer.Areas.Notebook
 			{
 				return; // Nothing new to do, so skip it.
 			}
-
 			// disable Go button until we rebuild our match list.
 			m_btnOK.Enabled = false;
 			m_oldSearchKey = searchKey;
-
 			var ws = (CoreWritingSystemDefinition)m_cbWritingSystems.SelectedItem;
 			var wsSelHvo = ws?.Handle ?? 0;
 			if (wsSelHvo == 0)

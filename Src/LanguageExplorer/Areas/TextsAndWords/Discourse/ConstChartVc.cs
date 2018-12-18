@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2018 SIL International
+// Copyright (c) 2008-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -68,12 +68,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			// TODO: Move ConstituentChartStyleInfo.xml into the Resources folder, and make it a resource.
 			// TODO: Then, change this code to: 1) use the resource, and 2) use XDocument.
 #endif
-			var doc = new XmlDocument();
-			var path = Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer/Configuration/ConstituentChartStyleInfo.xml");
+			var path = Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "Configuration", "ConstituentChartStyleInfo.xml");
 			if (!File.Exists(path))
 			{
 				return;
 			}
+			var doc = new XmlDocument();
 			doc.Load(path);
 			m_formatProps = new Dictionary<string, ITsTextProps>();
 			m_brackets = new Dictionary<string, string>();
@@ -219,7 +219,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Set the column widths (in millipoints).
 		/// </summary>
-		/// <param name="widths"></param>
 		public void SetColWidths(VwLength[] widths)
 		{
 			m_colWidths = widths;
@@ -242,7 +241,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				case kfragTemplateHeader: // Display the template as group headers.
 					vwenv.AddObjVecItems(CmPossibilityTags.kflidSubPossibilities, this, kfragColumnGroupHeader);
 					break;
-
 				// This is only used for printing, the headers in the screen version are a separate control.
 				case kfragColumnGroupHeader:
 					var ccols = vwenv.DataAccess.get_VecSize(hvo, CmPossibilityTags.kflidSubPossibilities);
@@ -252,7 +250,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					{
 						// It's a group, include its name
 						var possGroup = m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(hvo);
-						vwenv.set_IntProperty((int) FwTextPropType.ktptAlign, (int) FwTextPropVar.ktpvEnum, (int) FwTextAlign.ktalCenter);
+						vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalCenter);
 						vwenv.OpenParagraph();
 						vwenv.AddString(possGroup.Name.BestAnalysisAlternative);
 						vwenv.CloseParagraph();
@@ -267,12 +265,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					DisplayChartBody(vwenv);
 					break;
 				case kfragChartRow: // one row, a ConstChartRow
-				{
-					MakeTableAndRowWithStdWidths(vwenv, hvo, false);
-					MakeCells(vwenv, hvo);
-					vwenv.CloseTableRow();
-					vwenv.CloseTable();
-				}
+					{
+						MakeTableAndRowWithStdWidths(vwenv, hvo, false);
+						MakeCells(vwenv, hvo);
+						vwenv.CloseTableRow();
+						vwenv.CloseTable();
+					}
 					break;
 				case kfragCellPart: // a single group of words, the contents of one cell.
 					if (m_chart.Logic.IsWordGroup(hvo))
@@ -293,7 +291,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 						}
 					}
 					break;
-				case kfragMovedTextCellPart: // a single group of words (ConstChartWordGroup),
+				case kfragMovedTextCellPart:
+					// a single group of words (ConstChartWordGroup),
 					// the contents of one cell, which is considered moved-within-line.
 					// Can't be a placeholder.
 					var formatTag = m_chart.Logic.MovedTextTag(hvo);
@@ -304,7 +303,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					InsertCloseBracket(vwenv, formatTag);
 					vwenv.CloseSpan();
 					break;
-				case kfragChartListItem: // a single ConstChartTag, referring to a list item.
+				case kfragChartListItem:
+					// a single ConstChartTag, referring to a list item.
 					// can't be a placeholder.
 					ApplyFormatting(vwenv, "marker");
 					vwenv.OpenSpan();
@@ -313,7 +313,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					InsertCloseBracket(vwenv, "marker");
 					vwenv.CloseSpan();
 					break;
-				case kfragPossibility: // A CmPossibility, show it's abbreviation
+				case kfragPossibility:
+					// A CmPossibility, show it's abbreviation
 					var flid = CmPossibilityTags.kflidAbbreviation;
 					var retWs = WritingSystemServices.ActualWs(m_cache, WritingSystemServices.kwsFirstAnal, hvo, flid);
 					if (retWs == 0)
@@ -328,7 +329,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 						vwenv.AddStringAltMember(flid, retWs, this);
 					}
 					break;
-				case kfragBundle: // One annotated word bundle; hvo is IAnalysis object. Overrides behavior of InterlinVc
+				case kfragBundle:
+					// One annotated word bundle; hvo is IAnalysis object. Overrides behavior of InterlinVc
 					AddWordBundleInternal(hvo, vwenv);
 					break;
 				case kfragNotesString: // notes text
@@ -342,7 +344,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					Debug.Assert(mtt != null, "Invalid MovedTextMarker?");
 					vwenv.AddString(mtt.Preposed ? m_sMovedTextBefore : m_sMovedTextAfter);
 					// Need to regenerate this if the row my WordGroup is in changes.
-					vwenv.NoteDependency(new[] {mtt.WordGroupRA.Owner.Hvo}, new int[] {ConstChartRowTags.kflidCells}, 1);
+					vwenv.NoteDependency(new[] { mtt.WordGroupRA.Owner.Hvo }, new int[] { ConstChartRowTags.kflidCells }, 1);
 					break;
 				default:
 					base.Display(vwenv, hvo, frag);
@@ -353,14 +355,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private void DisplayWordforms(IVwEnv vwenv, int hvoWordGrp)
 		{
 			// If the WordGroup reference parameters change, we need to regenerate.
-			var wordGrpFlidArray = new[] { ConstChartWordGroupTags.kflidBeginSegment,
+			var wordGrpFlidArray = new[]
+			{
+				ConstChartWordGroupTags.kflidBeginSegment,
 				ConstChartWordGroupTags.kflidEndSegment,
 				ConstChartWordGroupTags.kflidBeginAnalysisIndex,
-				ConstChartWordGroupTags.kflidEndAnalysisIndex};
+				ConstChartWordGroupTags.kflidEndAnalysisIndex
+			};
 			NoteWordGroupDependencies(vwenv, hvoWordGrp, wordGrpFlidArray);
-
 			var wordGrp = m_wordGrpRepo.GetObject(hvoWordGrp);
-
 			foreach (var point in wordGrp.GetOccurrences())
 			{
 				SetupAndOpenInnerPile(vwenv);
@@ -376,7 +379,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				hvoArray[i] = hvoWordGrp;
 			}
-
 			vwenv.NoteDependency(hvoArray, wordGrpFlidArray, cArray);
 		}
 
@@ -415,16 +417,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		{
 			var analWs = m_cache.DefaultAnalWs;
 			var oldEnv = vwenv;
-
 			MakeTableAndRowWithStdWidths(vwenv, hvo, true);
 			vwenv = new ChartRowEnvDecorator(vwenv); // in case this is a RTL chart
-			(vwenv as ChartRowEnvDecorator).IsRtL = m_chart.IsRightToLeft;
+			((ChartRowEnvDecorator)vwenv).IsRtL = m_chart.IsRightToLeft;
 			MakeCellsMethod.OpenRowNumberCell(vwenv); // blank cell under header for row numbers
 			vwenv.CloseTableCell();
 			PrintTemplateColumnHeaders(vwenv, analWs);
 			MakeCellsMethod.OpenStandardCell(vwenv, 1, false); // blank cell below Notes header
 			vwenv.CloseTableCell();
-			(vwenv as ChartRowEnvDecorator).FlushDecorator(); // if RTL, put out headers reversed
+			((ChartRowEnvDecorator)vwenv).FlushDecorator(); // if RTL, put out headers reversed
 			vwenv = oldEnv; // remove Decorator
 			vwenv.CloseTableRow();
 			vwenv.CloseTable();
@@ -525,12 +526,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				}
 				tableWidth.unit = VwUnit.kunPoint1000;
 			}
-
 			if (!fHeader)
 			{
 				SetRowStyle(vwenv, row);
 			}
-
 			var fpos = VwFramePosition.kvfpVsides;
 			if (fHeader)
 			{
@@ -554,18 +553,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			// cells entirely cover the row (LT-9068). So force the back color to be transparent, and allow
 			// the row border to show through the cell.
 			var fRtL = m_chart.IsRightToLeft;
-			vwenv.set_IntProperty((int)FwTextPropType.ktptBackColor,
-				(int)FwTextPropVar.ktpvDefault,
-				(int)FwTextColor.kclrTransparent);
-			vwenv.OpenTable(m_chart.AllColumns.Length + ConstituentChartLogic.NumberOfExtraColumns,
-				tableWidth,
-				1500, // borderWidth
-				fRtL ? VwAlignment.kvaRight : VwAlignment.kvaLeft, // Handle RTL
-				fpos,
-				VwRule.kvrlNone,
-				0, // cell spacing
-				2000, // cell padding
-				true); // selections limited to one cell.
+			vwenv.set_IntProperty((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, (int)FwTextColor.kclrTransparent);
+			vwenv.OpenTable(m_chart.AllColumns.Length + ConstituentChartLogic.NumberOfExtraColumns, tableWidth, 1500, fRtL ? VwAlignment.kvaRight : VwAlignment.kvaLeft, fpos, VwRule.kvrlNone, 0, 2000, true);
 			if (m_colWidths == null)
 			{
 				if (fRtL)
@@ -634,7 +623,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		{
 			switch (frag)
 			{
-				case kfragClauseLabels: // hvo is ConstChartClauseMarker pointing at a group of rows (at least one).
+				case kfragClauseLabels:
+					// hvo is ConstChartClauseMarker pointing at a group of rows (at least one).
 					// Enhance JohnT: this assumes it is always a contiguous list.
 					var sda = vwenv.DataAccess;
 					var chvo = sda.get_VecSize(hvo, kflidDepClauses);
@@ -757,8 +747,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					index = 1;
 				}
 			}
-			var sbracket = TsStringUtils.MakeString(string.Format(sFormat, bracket.Substring(index, 1)), m_cache.DefaultAnalWs);
-			vwenv.AddString(sbracket);
+			vwenv.AddString(TsStringUtils.MakeString(string.Format(sFormat, bracket.Substring(index, 1)), m_cache.DefaultAnalWs));
 		}
 
 		internal void InsertCloseBracket(IVwEnv vwenv, string key)
@@ -793,9 +782,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					index = 0;
 				}
 			}
-			var sbracket = TsStringUtils.MakeString(
-				string.Format(sFormat, bracket.Substring(index, 1)), m_cache.DefaultAnalWs);
-			vwenv.AddString(sbracket);
+			vwenv.AddString(TsStringUtils.MakeString(string.Format(sFormat, bracket.Substring(index, 1)), m_cache.DefaultAnalWs));
 		}
 	}
 }

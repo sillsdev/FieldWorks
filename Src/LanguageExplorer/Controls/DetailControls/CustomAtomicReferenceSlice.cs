@@ -11,9 +11,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// </summary>
 	internal abstract class CustomAtomicReferenceSlice : AtomicReferenceSlice
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="CustomAtomicReferenceSlice"/> class.
-		/// </summary>
+		/// <summary />
 		protected CustomAtomicReferenceSlice(Control control)
 			: base(control)
 		{

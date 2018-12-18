@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -36,7 +36,8 @@ namespace LanguageExplorer.Areas
 	/// </summary>
 	internal class XmlDocView : ViewBase, IFindAndReplaceContext, IPostLayoutInit
 	{
-		protected int m_hvoOwner; // the root HVO.
+		// the root HVO.
+		protected int m_hvoOwner;
 		/// <summary>
 		/// Object currently being edited.
 		/// </summary>
@@ -47,25 +48,18 @@ namespace LanguageExplorer.Areas
 		private string m_titleStr; // Helps avoid running through SetInfoBarText 4x!
 		private string m_currentPublication;
 		private string m_currentConfigView; // used when this is a Dictionary view to store which view is active.
-
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 
 		#region Consruction and disposal
-		/// <summary>
-		/// Initializes a new instance of the <see cref="XmlDocView"/> class.
-		/// </summary>
+		/// <summary />
 		public XmlDocView()
 		{
 			m_fullyInitialized = false;
-
-			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
-
-
-			AccNameDefault = "XmlDocView";		// default accessibility name
+			AccNameDefault = "XmlDocView";
 		}
 
 		public XmlDocView(XElement configurationParametersElement, LcmCache cache, IRecordList recordList)
@@ -79,9 +73,6 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// Populate the list of layout views for the second dictionary titlebar menu.
 		/// </summary>
-		/// <param name="parameter">The parameter.</param>
-		/// <param name="display">The display.</param>
-		/// <returns></returns>
 		public bool OnDisplayLayouts(object parameter, ref UIListDisplayProperties display)
 		{
 			var layoutList = GatherBuiltInAndUserLayouts();
@@ -118,8 +109,7 @@ namespace LanguageExplorer.Areas
 
 		private static IEnumerable<Tuple<string, string>> ExtractLayoutsFromLayoutTypeList(IEnumerable<XElement> layouts)
 		{
-			return layouts.Select(layout => new Tuple<string, string>(XmlUtils.GetOptionalAttributeValue(layout, "label"),
-					XmlUtils.GetOptionalAttributeValue(layout, "layout")));
+			return layouts.Select(layout => new Tuple<string, string>(XmlUtils.GetOptionalAttributeValue(layout, "label"), XmlUtils.GetOptionalAttributeValue(layout, "layout")));
 		}
 
 		private static IEnumerable<Tuple<string, string>> GetUserDefinedDictLayouts(IEnumerable<string> builtInLayouts, IEnumerable<XElement> layouts)
@@ -182,7 +172,6 @@ namespace LanguageExplorer.Areas
 					// Not sure what other properties might change, but I'm not doing anything.
 					break;
 			}
-			return;
 		}
 
 
@@ -200,7 +189,7 @@ namespace LanguageExplorer.Areas
 		// If we don't have any record of what publication is selected (typically, first-time startup),
 		// pick the first one as a default.
 		// If the selected one is not found (typically it is $$all_entries$$), or there are none (pathological), return null.
-		ICmPossibility Publication
+		private ICmPossibility Publication
 		{
 			get
 			{
@@ -240,11 +229,12 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -256,7 +246,7 @@ namespace LanguageExplorer.Areas
 			}
 			m_currentObject = null;
 
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#endregion // Consruction and disposal
@@ -269,7 +259,6 @@ namespace LanguageExplorer.Areas
 			{
 				return;
 			}
-
 			var context = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "persistContext", "");
 			// SetInfoBarText() was getting run about 4 times just creating one XmlDocView!
 			// To prevent that, add the following guards:
@@ -278,13 +267,11 @@ namespace LanguageExplorer.Areas
 				return;
 			}
 			var titleStr = GetBaseTitleStringFromConfig();
-
 			var fBaseCalled = false;
 			if (titleStr == string.Empty)
 			{
 				base.SetInfoBarText();
 				fBaseCalled = true;
-				//				titleStr = ((IPaneBar)m_informationBar).Text;	// can't get to work.
 				// (EricP) For some reason I can't provide an IPaneBar get-accessor to return
 				// the new Text value. If it's desirable to allow TitleFormat to apply to
 				// MyrecordList.CurrentObject, then we either have to duplicate what the
@@ -302,14 +289,12 @@ namespace LanguageExplorer.Areas
 				titleStr = MakePublicationTitlePart(titleStr);
 				SetConfigViewTitle();
 			}
-
 			// If we have a format attribute, format the title accordingly.
 			var sFmt = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "TitleFormat");
 			if (sFmt != null)
 			{
 				titleStr = string.Format(sFmt, titleStr);
 			}
-
 			// If we find that the title is something like ClassifiedDictionary ({SelectedPublication})
 			// replace the {} with the name of the selected publication.
 			// Enhance: by removing the Debug.Fail, this could be made to insert the value of any
@@ -334,9 +319,10 @@ namespace LanguageExplorer.Areas
 					replacement = PropertyTable.GetValue<string>(match.Groups[0].Value);
 				}
 				if (replacement != null)
+				{
 					titleStr = propertyFinder.Replace(titleStr, replacement);
+				}
 			}
-
 			// if we haven't already set the text through the base,
 			// or if we had some formatting to do, then set the infoBar text.
 			if (!fBaseCalled || sFmt != null)
@@ -356,7 +342,7 @@ namespace LanguageExplorer.Areas
 			{
 				return;
 			}
-			var maxLayoutViewWidth = Width/2 - kSpaceForMenuButton;
+			var maxLayoutViewWidth = Width / 2 - kSpaceForMenuButton;
 			var result = GatherBuiltInAndUserLayouts();
 			var curViewName = FindViewNameInList(result);
 			// Limit length of View title to remaining available width
@@ -390,7 +376,7 @@ namespace LanguageExplorer.Areas
 		{
 			// titleStr to start is localized equivalent of 'Entries'
 			// Limit length of Publication title to half of available width
-			var maxPublicationTitleWidth = Math.Max(2, Width/2 - kSpaceForMenuButton);
+			var maxPublicationTitleWidth = Math.Max(2, Width / 2 - kSpaceForMenuButton);
 			if (string.IsNullOrEmpty(m_currentPublication) || m_currentPublication == LanguageExplorerResources.AllEntriesPublication)
 			{
 				m_currentPublication = LanguageExplorerResources.AllEntriesPublication;
@@ -439,9 +425,7 @@ namespace LanguageExplorer.Areas
 		{
 			if (m_currentObject != null && m_currentObject.IsValidObject)
 			{
-				return WritingSystemServices
-					.GetReversalIndexEntryWritingSystem(Cache, m_currentObject.Hvo, Cache.LangProject.CurrentAnalysisWritingSystems[0])
-					.LanguageName;
+				return WritingSystemServices.GetReversalIndexEntryWritingSystem(Cache, m_currentObject.Hvo, Cache.LangProject.CurrentAnalysisWritingSystems[0]).LanguageName;
 			}
 			return m_hvoOwner < 1 ? string.Empty : WritingSystemServices.GetReversalIndexWritingSystems(Cache, m_hvoOwner, false)[0].LanguageName;
 		}
@@ -479,14 +463,12 @@ namespace LanguageExplorer.Areas
 				// Don't pretend to have handled it if it is not fully initialzed, or isn't our record list.
 				return false;
 			}
-
 			// persist record list's CurrentIndex in a db specific way
 #if RANDYTODO
-// As of 21JUL17 nobody cares about that 'propName' changing, so skip the broadcast.
+			TODO: // As of 21JUL17 nobody cares about that 'propName' changing, so skip the broadcast.
 #endif
 			var propName = MyRecordList.PersistedIndexProperty;
 			PropertyTable.SetProperty(propName, MyRecordList.CurrentIndex, true, settingsGroup: SettingsGroup.LocalSettings);
-
 			MyRecordList.SuppressSaveOnChangeRecord = (argument as RecordNavigationInfo).SuppressSaveOnChangeRecord;
 			using (new WaitCursor(this))
 			{
@@ -499,7 +481,7 @@ namespace LanguageExplorer.Areas
 					MyRecordList.SuppressSaveOnChangeRecord = false;
 				}
 			}
-			return true;	//we handled this.
+			return true;    //we handled this.
 		}
 
 		protected override void OnMouseClick(MouseEventArgs e)
@@ -519,14 +501,13 @@ namespace LanguageExplorer.Areas
 				{
 					return; // view is not configurable, don't show menu option.
 				}
-
 				int hvo, tag, ihvo, cpropPrevious;
 				IVwPropertyStore propStore;
 				sel.PropInfo(false, 0, out hvo, out tag, out ihvo, out cpropPrevious, out propStore);
 				string nodePath = null;
 				if (propStore != null)
 				{
-					nodePath = propStore.get_StringProperty((int) FwTextPropType.ktptBulNumTxtBef);
+					nodePath = propStore.get_StringProperty((int)FwTextPropType.ktptBulNumTxtBef);
 				}
 				if (string.IsNullOrEmpty(nodePath))
 				{
@@ -535,7 +516,7 @@ namespace LanguageExplorer.Areas
 					int ich, ws;
 					bool fAssocPrev;
 					sel.TextSelInfo(false, out tss, out ich, out fAssocPrev, out hvo, out tag, out ws);
-					nodePath = tss.get_Properties(0).GetStrPropValue((int) FwTextPropType.ktptBulNumTxtBef);
+					nodePath = tss.get_Properties(0).GetStrPropValue((int)FwTextPropType.ktptBulNumTxtBef);
 				}
 				if (m_contextMenu == null)
 				{
@@ -583,8 +564,8 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 
 		private void RunConfigureDialogAt(object sender, EventArgs e)
 		{
-			var item = (ToolStripMenuItem) sender;
-			var nodePath = (string) item.Tag;
+			var item = (ToolStripMenuItem)sender;
+			var nodePath = (string)item.Tag;
 			RunConfigureDialog(nodePath);
 		}
 
@@ -604,9 +585,9 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// </summary>
 		internal ICmObject SubitemClicked(Point where, int clsid)
 		{
-			var adjuster = (m_currentConfigView != null && m_currentConfigView.StartsWith("publishRoot")) ?
-				(IPreferedTargetAdjuster)new MainEntryFromSubEntryTargetAdjuster() :
-				new NullTargetAdjuster();
+			var adjuster = m_currentConfigView != null && m_currentConfigView.StartsWith("publishRoot")
+				? (IPreferedTargetAdjuster)new MainEntryFromSubEntryTargetAdjuster()
+				: new NullTargetAdjuster();
 			return SubitemClicked(where, clsid, m_mainView, Cache, MyRecordList, adjuster);
 		}
 
@@ -667,7 +648,9 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		private void DisposeTooltip()
 		{
 			if (m_tooltip == null)
+			{
 				return;
+			}
 			m_tooltip.Active = false;
 			m_tooltip.Dispose();
 			m_tooltip = null;
@@ -677,15 +660,16 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// Return an item of the specified class that is indicated by a click at the specified position,
 		/// but only if it is part of a different object also of that class.
 		/// </summary>
-		internal static ICmObject SubitemClicked(Point where, int clsid, SimpleRootSite view, LcmCache cache, ISortItemProvider sortItemProvider,
-			IPreferedTargetAdjuster adjuster)
+		internal static ICmObject SubitemClicked(Point where, int clsid, SimpleRootSite view, LcmCache cache, ISortItemProvider sortItemProvider, IPreferedTargetAdjuster adjuster)
 		{
 			var sel = view.GetSelectionAtPoint(where, false);
 			if (sel == null)
+			{
 				return null;
+			}
 			var rcPrimary = view.GetPrimarySelRect(sel);
 			var selRect = new Rectangle(rcPrimary.left, rcPrimary.top, rcPrimary.right - rcPrimary.left, rcPrimary.bottom - rcPrimary.top);
-			selRect.Inflate(8,2);
+			selRect.Inflate(8, 2);
 			if (!selRect.Contains(where))
 			{
 				return null; // off somewhere in white space, tooltip is confusing
@@ -735,11 +719,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 
 		static ICmObject GetTarget(ICmObject obj, int clsid)
 		{
-			if (obj.ClassID == clsid)
-			{
-				return obj;
-			}
-			return obj.OwnerOfClass(clsid);
+			return obj.ClassID == clsid ? obj : obj.OwnerOfClass(clsid);
 		}
 
 		private void RecordListOwningObjChanged_Message_Handler(object newValue)
@@ -748,7 +728,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			{
 				return;
 			}
-
 			if (MyRecordList.OwningObject == null)
 			{
 				//this happens, for example, when they user sets a filter on the
@@ -776,7 +755,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			{
 				return MyRecordList.CurrentIndex; // no tricks.
 			}
-
 			if (MyRecordList.CurrentObjectHvo == 0)
 			{
 				return -1;
@@ -802,28 +780,22 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		protected override void ShowRecord()
 		{
 			var currentIndex = AdjustedRecordListIndex();
-
 			// See if it is showing the same record, as before.
-			if (m_currentObject != null && MyRecordList.CurrentObject != null
-				&& m_currentIndex == currentIndex
-				&& m_currentObject.Hvo == MyRecordList.CurrentObject.Hvo)
+			if (m_currentObject != null && MyRecordList.CurrentObject != null && m_currentIndex == currentIndex && m_currentObject.Hvo == MyRecordList.CurrentObject.Hvo)
 			{
 				SetInfoBarText();
 				return;
 			}
-
 			// See if the main owning object has changed.
 			if (MyRecordList.OwningObject != null && MyRecordList.OwningObject.Hvo != m_hvoOwner)
 			{
 				m_hvoOwner = MyRecordList.OwningObject.Hvo;
 				m_mainView.ResetRoot(m_hvoOwner);
 			}
-
 			m_currentObject = MyRecordList.CurrentObject;
 			m_currentIndex = currentIndex;
 			//add our current state to the history system
 			PropertyTable.GetValue<LinkHandler>(LanguageExplorerConstants.LinkHandler).AddLinkToHistory(new FwLinkArgs(PropertyTable.GetValue<string>(AreaServices.ToolChoice), MyRecordList.CurrentObject?.Guid ?? Guid.Empty));
-
 			SelectAndScrollToCurrentRecord();
 			base.ShowRecord();
 		}
@@ -865,7 +837,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			{
 				throw new ArgumentException("Target is not a LexEntry.");
 			}
-
 			// Now we have our LexEntry
 			// First deal with whether the active Publication excludes it.
 			if (m_currentPublication != LanguageExplorerResources.AllEntriesPublication)
@@ -904,8 +875,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				{
 					return false;
 				}
-
-				return m_currentConfigView.Split(new[] {"#"}, StringSplitOptions.None)[0] == ksRootBasedPrefix;
+				return m_currentConfigView.Split(new[] { "#" }, StringSplitOptions.None)[0] == ksRootBasedPrefix;
 			}
 		}
 
@@ -924,8 +894,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// <summary>
 		/// Pass command (from RecordEditView) on to printing view.
 		/// </summary>
-		/// <param name="pd">PrintDocument</param>
-		/// <param name="recordHvo"></param>
 		public void PrintFromDetail(PrintDocument pd, int recordHvo)
 		{
 			m_mainView.PrintFromDetail(pd, recordHvo);
@@ -986,10 +954,9 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 					rgvsli[i].ihvo = indexes[i];
 					rgvsli[i].tag = levelFlid;
 				}
-				rgvsli[rgvsli.Length-1].tag = m_madeUpFieldIdentifier;
+				rgvsli[rgvsli.Length - 1].tag = m_madeUpFieldIdentifier;
 				rootb.MakeTextSelInObj(0, rgvsli.Length, rgvsli, rgvsli.Length, rgvsli, false, false, false, true, true);
 				m_mainView.ScrollSelectionIntoView(rootb.Selection, VwScrollSelOpts.kssoBoth);
-
 				// It's a pity this next step is needed!
 				rootb.Activate(VwSelectionState.vssEnabled);
 			}
@@ -1030,11 +997,8 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				{
 					m_hvoOwner = MyRecordList.OwningObject.Hvo;
 				}
-
 				MyRecordList.IsDefaultSort = false;
-
 				// Create the main view
-
 				// Review JohnT: should it be m_configurationParametersElement or .FirstChild?
 				var app = PropertyTable.GetValue<IFlexApp>(LanguageExplorerConstants.App);
 				m_mainView = new XmlSeqView(Cache, m_hvoOwner, m_madeUpFieldIdentifier, m_configurationParametersElement, MyRecordList.VirtualListPublisher, app, Publication);
@@ -1045,7 +1009,8 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				m_mainView.MouseClick += m_mainView_MouseClick;
 				m_mainView.MouseMove += m_mainView_MouseMove;
 				m_mainView.MouseLeave += m_mainView_MouseLeave;
-				m_mainView.ShowRangeSelAfterLostFocus = true;	// This makes selections visible.
+				// This makes selections visible.
+				m_mainView.ShowRangeSelAfterLostFocus = true;
 				// If the rootsite doesn't have a rootbox, we can't display the record!
 				// Calling ShowRecord() from InitBase() sets the state to appear that we have
 				// displayed (and scrolled), even though we haven't.  See LT-7588 for the effect.
@@ -1057,22 +1022,21 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 					Controls.SetChildIndex(m_mainView, 1);
 					m_mainView.BringToFront();
 				}
-
 				m_fullyInitialized = true; // Review JohnT: was this really the crucial last step?
 			}
 		}
 
-		void m_mainView_MouseLeave(object sender, EventArgs e)
+		private void m_mainView_MouseLeave(object sender, EventArgs e)
 		{
 			DisposeTooltip();
 		}
 
-		void m_mainView_MouseMove(object sender, MouseEventArgs e)
+		private void m_mainView_MouseMove(object sender, MouseEventArgs e)
 		{
 			OnMouseMove(e);
 		}
 
-		void m_mainView_MouseClick(object sender, MouseEventArgs e)
+		private void m_mainView_MouseClick(object sender, MouseEventArgs e)
 		{
 			OnMouseClick(e);
 		}
@@ -1114,13 +1078,13 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 
 		private void RunConfigureDialog(string nodePath)
 		{
-			using(var dlg = new XmlDocConfigureDlg())
+			using (var dlg = new XmlDocConfigureDlg())
 			{
 				var sProp = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "layoutProperty", "DictionaryPublicationLayout");
 				var mainWindow = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window);
 				dlg.SetConfigDlgInfo(m_configurationParametersElement, Cache, StyleSheet, mainWindow, PropertyTable, Publisher, sProp);
 				dlg.SetActiveNode(nodePath);
-				if(dlg.ShowDialog(this) == DialogResult.OK)
+				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					m_mainView.ResetTables(PropertyTable.GetValue<string>(sProp));
 					SelectAndScrollToCurrentRecord();
@@ -1142,9 +1106,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		protected void InitBase()
 		{
 			Debug.Assert(m_fullyInitialized == false, "No way we are fully initialized yet!");
-
 			ReadParameters();
-
 			SetupDataContext();
 			ShowRecord();
 		}
@@ -1173,7 +1135,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			base.InitializeFlexComponent(flexComponentParameters);
 
 			InitBase();
-
 			Subscriber.Subscribe("RecordListOwningObjChanged", RecordListOwningObjChanged_Message_Handler);
 		}
 

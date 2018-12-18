@@ -143,10 +143,7 @@ namespace LanguageExplorer
 		/// </summary>
 		private const string ksUnderscore = "_";
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Inventory"/> class, giving a list
-		/// of directories to search after the default one.
-		/// </summary>
+		/// <summary />
 		/// <param name="customInventoryPaths">A list of paths to custom inventory files,
 		/// leave empty if defaults are fine.</param>
 		/// <param name="filePattern">The pattern to select files from each directory</param>
@@ -176,7 +173,6 @@ namespace LanguageExplorer
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="Inventory"/> class, with no items.
 		/// Caller should call LoadElements(input) to initialize. This is used for tests.
 		/// </summary>
 		/// <param name="filePattern">The pattern to select files from each directory</param>

@@ -68,9 +68,7 @@ namespace SIL.FieldWorks
 			pictureBox1.Visible = File.Exists(FLExBridgeHelper.FullFieldWorksBridgePath());
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ChooseLangProjectDialog"/> class.
-		/// </summary>
+		/// <summary />
 		/// <param name="bounds">The initial client bounds of the dialog.</param>
 		/// <param name="splitterPosition">The initial splitter position.</param>
 		public ChooseLangProjectDialog(Rectangle bounds, int splitterPosition)
@@ -82,9 +80,7 @@ namespace SIL.FieldWorks
 			StartPosition = (m_initialBounds == Rectangle.Empty ? FormStartPosition.CenterParent : FormStartPosition.Manual);
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ChooseLangProjectDialog"/> class.
-		/// </summary>
+		/// <summary />
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <param name="openToAssosiateFwProject">If set to <c>true</c> the dialog will be
 		/// used to associate a FieldWorks project with another application (e.g. Paratext).

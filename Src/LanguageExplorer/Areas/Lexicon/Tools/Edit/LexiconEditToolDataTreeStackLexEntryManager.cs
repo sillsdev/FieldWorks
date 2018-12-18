@@ -1,16 +1,16 @@
-// Copyright (c) 2018 SIL International
+// Copyright (c) 2018-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using LanguageExplorer.Controls;
-using LanguageExplorer.Controls.DetailControls;
-using SIL.Code;
-using SIL.LCModel;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
+using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.DetailControls;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
@@ -111,7 +111,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			Dispose(true);
 			// This object will be cleaned up by the Dispose method.
-			// Therefore, you should call GC.SupressFinalize to
+			// Therefore, you should call GC.SuppressFinalize to
 			// take this object off the finalization queue
 			// and prevent finalization code for this object
 			// from executing a second time.
@@ -121,7 +121,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-
 			if (_isDisposed)
 			{
 				// No need to do it more than once.
@@ -204,7 +203,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveReferencedTargetDownInSequence_Clicked, AreaResources.Move_Left);
 				menu.Enabled = enabled;
 			}
-
 			enabled = referenceVectorSlice.CanDisplayMoveTargetUpInSequence(out visible);
 			if (visible)
 			{
@@ -212,13 +210,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveReferencedTargetUpInSequence_Clicked, AreaResources.Move_Right);
 				menu.Enabled = enabled;
 			}
-
 			if (referenceVectorSlice.CanAlphabetize)
 			{
 				// <command id="CmdAlphabeticalOrder" label="Alphabetical Order" message="AlphabeticalOrder"/>
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Referenced_AlphabeticalOrder_Clicked, LexiconResources.Alphabetical_Order);
 			}
-
 			// End: <menu id="mnuReorderVector">
 
 			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
@@ -246,7 +242,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInOwningSequence_Clicked, LexiconResources.Move_Variant_Info_Up, image: imageHolder.smallCommandImages.Images[AreaServices.MoveUp]);
 					menu.Enabled = enabled;
 				}
-
 				enabled = AreaServices.CanMoveDownObjectInOwningSequence(MyDataTree, _cache, out visible);
 				if (visible)
 				{
@@ -340,7 +335,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInOwningSequence_Clicked, LexiconResources.Move_Pronunciation_Up, image: imageHolder.smallCommandImages.Images[AreaServices.MoveUp]);
 					menu.Enabled = enabled;
 				}
-
 				enabled = AreaServices.CanMoveDownObjectInOwningSequence(MyDataTree, _cache, out visible);
 				if (visible)
 				{
@@ -521,7 +515,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void Create_Edit_LexReferenceMenu(List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, ContextMenuStrip contextMenuStrip, Slice slice)
 		{
-			var menu =ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, DataTree_Edit_LexReference_Clicked, LexiconResources.ksRedoEditRefSetDetails);
+			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, DataTree_Edit_LexReference_Clicked, LexiconResources.ksRedoEditRefSetDetails);
 			menu.Enabled = slice.CanEditNow;
 		}
 

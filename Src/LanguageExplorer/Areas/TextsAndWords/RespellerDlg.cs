@@ -1,22 +1,22 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Diagnostics;
 using System.Xml.Linq;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls.XMLViews;
-using SIL.LCModel.Core.SpellChecking;
-using SIL.LCModel.DomainServices;
-using SIL.LCModel;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
+using SIL.LCModel;
+using SIL.LCModel.Core.SpellChecking;
+using SIL.LCModel.DomainServices;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
 namespace LanguageExplorer.Areas.TextsAndWords
@@ -33,26 +33,23 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private string m_sMoreButtonText; // original text of More button
 		private Size m_moreMinSize; // minimum size when 'more' options shown (=original size, minus a bit on height)
 		private Size m_lessMinSize; // minimum size when 'less' options shown.
-
 		// Preview related
 		private bool m_previewOn;
-		private XElement m_oldOccurrenceColumn = null; // original display of occurrences, when preview off
+		// original display of occurrences, when preview off
+		private XElement m_oldOccurrenceColumn = null;
 		// special preview display of occurrences, with string truncated after occurrence
 		private XElement m_previewOccurrenceColumn;
 		private string m_previewButtonText = null; // original text of the button (before changed to e.g. Clear).
 		RespellUndoAction m_respellUndoaction; // created when we do a preview, used when check boxes change.
-
-		readonly HashSet<int> m_enabledItems = new HashSet<int>(); // items still enabled.
+		// items still enabled.
+		readonly HashSet<int> m_enabledItems = new HashSet<int>();
 		// Flag set true if there are other known occurrences so AllChanged should always return false.
 		bool m_fOtherOccurrencesExist;
-
 		string m_lblExplainText; // original text of m_lblExplainDisabled
-
 		// Typically the record list of the calling Words/Analysis view that manages a list of wordforms.
 		// May be null when called from TE change spelling dialog.
 		IRecordList m_wordformRecordList;
 		int m_hvoNewWordform; // if we made a new wordform and changed all instances, this gets set.
-
 		ISegmentRepository m_repoSeg;
 
 		public RespellerDlg()
@@ -129,13 +126,13 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
 			if (disposing)
 			{
 				components?.Dispose();
-
 				if (m_cbNewSpelling != null)
 				{
 					m_cbNewSpelling.TextChanged -= m_dstWordform_TextChanged;
@@ -144,7 +141,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				{
 					m_sourceSentences.CheckBoxChanged -= sentences_CheckBoxChanged;
 				}
-
 				if (m_srcRecordList != null)
 				{
 					PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).RemoveRecordList(m_srcRecordList);
@@ -200,7 +196,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			m_wordformRecordList.SuppressSaveOnChangeRecord = true; // various things trigger change record and would prevent Undo
 
 			//We need to re-parse the interesting texts so that the rows in the dialog show all the occurrences (make sure it is up to date)
-			if(m_wordformRecordList is InterlinearTextsRecordList)
+			if (m_wordformRecordList is InterlinearTextsRecordList)
 			{
 				//Un-suppress to allow for the list to be reloaded during ParseInterestingTextsIfNeeded()
 				//(this record list and its list are not visible in this dialog, so there will be no future reload)
@@ -216,19 +212,16 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			using (new WaitCursor(this))
 			{
 				m_btnRefresh.Image = ResourceHelper.RefreshIcon;
-
 				m_rbDiscardAnalyses.Checked = PropertyTable.GetValue<bool>("RemoveAnalyses");
 				m_rbKeepAnalyses.Checked = !m_rbDiscardAnalyses.Checked;
 				m_rbDiscardAnalyses.Click += m_rbDiscardAnalyses_Click;
 				m_rbKeepAnalyses.Click += m_rbDiscardAnalyses_Click;
-
 				m_cbUpdateLexicon.Checked = PropertyTable.GetValue<bool>("UpdateLexiconIfPossible");
 				m_cbCopyAnalyses.Checked = PropertyTable.GetValue<bool>("CopyAnalysesToNewSpelling");
 				m_cbCopyAnalyses.Click += m_cbCopyAnalyses_Click;
 				m_cbMaintainCase.Checked = PropertyTable.GetValue<bool>("MaintainCaseOnChangeSpelling");
 				m_cbMaintainCase.Click += m_cbMaintainCase_Click;
 				m_cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
-
 				// We need to use the 'best vern' ws,
 				// since that is what is showing in the Words-Analyses detail edit control.
 				// Access to this respeller dlg is currently (Jan. 2008) only via a context menu in the detail edit pane.
@@ -248,7 +241,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				{
 					return false;
 				}
-
 				m_cbNewSpelling.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
 				m_cbNewSpelling.WritingSystemCode = m_vernWs;
 				m_cbNewSpelling.StyleSheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable);
@@ -263,9 +255,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				{
 					m_cbNewSpelling.Padding = new Padding(1, 2, 1, 1);
 				}
-
 				SetSuggestions();
-
 				m_btnApply.Enabled = false;
 				m_cbNewSpelling.TextChanged += m_dstWordform_TextChanged;
 
@@ -300,7 +290,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				m_sMoreButtonText = m_btnMore.Text;
 				m_optionsPanel.Paint += m_optionsPanel_Paint;
 				m_btnPreviewClear.Click += m_btnPreviewClear_Click;
-
 				var specialMdc = m_specialSda.MetaDataCache;
 				var madeUpFieldIdentifier = specialMdc.GetFieldId2(WfiWordformTags.kClassId, "Occurrences", false);
 				var concordanceItems = m_specialSda.VecProp(m_srcwfiWordform.Hvo, madeUpFieldIdentifier);
@@ -315,11 +304,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				{
 					m_enabledItems.Add(hvo);
 				}
-
-				// no good...code in MakeRoot of XmlBrowseView happens later and overrides. Control with
-				// selectionType attr in Xml configuration.
-				//m_sourceSentences.BrowseViewer.SelectedRowHighlighting = XmlBrowseViewBase.SelectionHighlighting.none;
-
 				m_lblExplainText = m_lblExplainDisabled.Text;
 				// We only reload the list when refresh is pressed.
 				m_srcRecordList.ListLoadingSuppressed = true;
@@ -329,7 +313,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			return true;
 		}
 
-		void CheckForOtherOccurrences()
+		private void CheckForOtherOccurrences()
 		{
 			var allAnalysesCandidatesOfWordform = new List<IAnalysis>
 			{
@@ -362,7 +346,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			m_fOtherOccurrencesExist = allUsedSegments.Union(enabledSegments).Count() != allUsedSegments.Count();
 		}
 
-		void m_btnPreviewClear_Click(object sender, EventArgs e)
+		private void m_btnPreviewClear_Click(object sender, EventArgs e)
 		{
 			if (m_previewOn)
 			{
@@ -378,13 +362,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				var previewTag = m_sourceSentences.BrowseViewer.PreviewValuesTag;
 				// Initialize PrecedingContext etc for each occurrence (text up to and including old spelling)
 				MakeUndoAction();
-				m_respellUndoaction.SetupPreviews(RespellingSda.kflidSpellingPreview,
-					previewTag,
-					RespellingSda.kflidAdjustedBeginOffset,
-					RespellingSda.kflidAdjustedEndOffset,
-					m_sourceSentences.BrowseViewer.PreviewEnabledTag,
-					m_sourceSentences.BrowseViewer.AllItems,
-					m_sourceSentences.BrowseViewer.BrowseView.RootBox);
+				m_respellUndoaction.SetupPreviews(RespellingSda.kflidSpellingPreview, previewTag, RespellingSda.kflidAdjustedBeginOffset, RespellingSda.kflidAdjustedEndOffset,
+					m_sourceSentences.BrowseViewer.PreviewEnabledTag, m_sourceSentences.BrowseViewer.AllItems, m_sourceSentences.BrowseViewer.BrowseView.RootBox);
 				// Create m_previewOccurrenceColumn if needed
 				EnsurePreviewColumn();
 				m_oldOccurrenceColumn = m_sourceSentences.BrowseViewer.ReplaceColumn("Occurrence", m_previewOccurrenceColumn);
@@ -395,12 +374,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		private void MakeUndoAction()
 		{
-			m_respellUndoaction = new RespellUndoAction(
-				m_specialSda,
-				m_cache,
-				m_vernWs,
-				m_srcwfiWordform.Form.get_String(m_vernWs).Text,
-				m_cbNewSpelling.Text)
+			m_respellUndoaction = new RespellUndoAction(m_specialSda, m_cache, m_srcwfiWordform.Form.get_String(m_vernWs).Text, m_cbNewSpelling.Text, m_vernWs)
 			{
 				PreserveCase = m_cbMaintainCase.Checked
 			};
@@ -429,11 +403,11 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			}
 			var doc = XDocument.Parse(
 				  "<column label=\"Occurrence\" width=\"415000\" multipara=\"true\" doNotPersist=\"true\">"
-				+     "<concpara min=\"FakeOccurrence.AdjustedBeginOffset\" lim=\"FakeOccurrence.AdjustedEndOffset\" align=\"144000\">"
-				+         "<properties><editable value=\"false\"/>" + insert + "</properties>"
-				+         "<string class=\"FakeOccurrence\" field=\"SpellingPreview\"/>"
-				+         "<preview ws=\"vernacular\"/>"
-				+     "</concpara>"
+				+ "<concpara min=\"FakeOccurrence.AdjustedBeginOffset\" lim=\"FakeOccurrence.AdjustedEndOffset\" align=\"144000\">"
+				+ "<properties><editable value=\"false\"/>" + insert + "</properties>"
+				+ "<string class=\"FakeOccurrence\" field=\"SpellingPreview\"/>"
+				+ "<preview ws=\"vernacular\"/>"
+				+ "</concpara>"
 				+ "</column>");
 			m_previewOccurrenceColumn = doc.Root;
 		}
@@ -469,7 +443,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			SuspendLayout();
 			foreach (Control c in Controls)
 			{
-				if (((int) c.Anchor & (int) AnchorStyles.Bottom) == 0)
+				if (((int)c.Anchor & (int)AnchorStyles.Bottom) == 0)
 				{
 					continue;
 				}
@@ -507,18 +481,23 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					// Single check box clicked, update with PropChanged
 					var hvo = e.HvosChanged[0];
 					// We only consider it 'checked' if both checked AND enabled.
-					bool itemChecked = GetItemChecked(hvo);
-					if (m_respellUndoaction != null)
-						m_respellUndoaction.UpdatePreview(hvo, itemChecked);
+					var itemChecked = GetItemChecked(hvo);
+					m_respellUndoaction?.UpdatePreview(hvo, itemChecked);
 				}
 				else
 				{
 					// Update the status of items
 					foreach (var hvo in e.HvosChanged)
+					{
 						if (GetItemChecked(hvo))
+						{
 							m_respellUndoaction.AddOccurrence(hvo);
+						}
 						else
+						{
 							m_respellUndoaction.RemoveOccurrence(hvo);
+						}
+					}
 					// the regenerate all the previews.
 					m_respellUndoaction.UpdatePreviews(true);
 				}
@@ -531,20 +510,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			return m_sourceSentences.BrowseViewer.IsItemChecked(hvo) && m_specialSda.get_IntProp(hvo, m_sourceSentences.BrowseViewer.PreviewEnabledTag) == 1;
 		}
 
-		private bool WordformHasMonomorphemicAnalyses
-		{
-			get
-			{
-				return m_srcwfiWordform.IsValidObject && m_srcwfiWordform.AnalysesOC.Any(analysis => analysis.MorphBundlesOS.Count == 1);
-			}
-		}
-		private bool WordformHasMultimorphemicAnalyses
-		{
-			get
-			{
-				return m_srcwfiWordform.IsValidObject && m_srcwfiWordform.AnalysesOC.Any(analysis => analysis.MorphBundlesOS.Count > 1);
-			}
-		}
+		private bool WordformHasMonomorphemicAnalyses => m_srcwfiWordform.IsValidObject && m_srcwfiWordform.AnalysesOC.Any(analysis => analysis.MorphBundlesOS.Count == 1);
+
+		private bool WordformHasMultimorphemicAnalyses => m_srcwfiWordform.IsValidObject && m_srcwfiWordform.AnalysesOC.Any(analysis => analysis.MorphBundlesOS.Count > 1);
 
 		private void SetEnabledState()
 		{
@@ -570,7 +538,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			}
 		}
 
-	#region Event handlers
+		#region Event handlers
 
 		private void m_cbUpdateLexicon_Click(object sender, EventArgs e)
 		{
@@ -637,7 +605,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				return;
 			}
-
 			using (new WaitCursor(this))
 			{
 				// NB: occurrence may ref. wf, anal, or gloss.
@@ -661,23 +628,11 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				{
 					m_respellUndoaction.CopyAnalyses = m_cbCopyAnalyses.Checked;
 				}
-
 				m_respellUndoaction.DoIt(Publisher);
-
 				// On the other hand, we don't want to update the new wordform until after DoIt...it might not exist before,
 				// and we won't be messing up any existing occurrences.
 				Publisher.Publish("ItemDataModified", m_cache.ServiceLocator.GetObject(m_respellUndoaction.NewWordform));
-
 				ChangesWereMade = true;
-
-
-				// Reloads the conc. virtual prop for the old wordform,
-				// so the old values are removed.
-				// This will allow .CanDelete' to return true.
-				// Otherwise, it won't be deletable,
-				// as it will still have those occurrences pointing at it.
-				//FirePropChanged(m_srcwfiWordform.Hvo);
-				//UpdateDisplay();
 				m_respellUndoaction.RemoveChangedItems(m_enabledItems, m_sourceSentences.BrowseViewer.PreviewEnabledTag);
 				// If everything changed remember the new wordform.
 				if (m_respellUndoaction.AllChanged)
@@ -702,7 +657,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// are no known items that aren't listed at all (e.g., Scripture not currently included).
 		/// </summary>
 		/// <param name="someWillChange">Set true if some item will change, that is, some checked item is enabled</param>
-		/// <returns></returns>
 		private bool AllWillChange(out bool someWillChange)
 		{
 			var checkedItems = new HashSet<int>(m_sourceSentences.CheckedItems);
@@ -779,7 +733,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				return;
 			}
-
 			m_respellUndoaction.PreserveCase = m_cbMaintainCase.Checked;
 			m_respellUndoaction.UpdatePreviews(false);
 			m_sourceSentences.BrowseViewer.ReconstructView();

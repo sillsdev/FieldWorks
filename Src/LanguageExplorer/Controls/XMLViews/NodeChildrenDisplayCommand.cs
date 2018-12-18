@@ -12,9 +12,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	public class NodeChildrenDisplayCommand : NodeDisplayCommand
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="NodeChildrenDisplayCommand"/> class.
-		/// </summary>
+		/// <summary />
 		public NodeChildrenDisplayCommand(XElement node)
 			: base(node)
 		{

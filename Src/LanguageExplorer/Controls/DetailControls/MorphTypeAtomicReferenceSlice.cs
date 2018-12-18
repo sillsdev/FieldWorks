@@ -6,14 +6,10 @@ using SIL.LCModel;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-	/// <summary>
-	/// Summary description for MorphTypeAtomicReferenceSlice.
-	/// </summary>
+	/// <summary />
 	internal class MorphTypeAtomicReferenceSlice : PossibilityAtomicReferenceSlice
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MorphTypeAtomicReferenceSlice"/> class.
-		/// </summary>
+		/// <summary />
 		public MorphTypeAtomicReferenceSlice(LcmCache cache, ICmObject obj, int flid)
 			: base(new MorphTypeAtomicLauncher(), cache, obj, flid)
 		{

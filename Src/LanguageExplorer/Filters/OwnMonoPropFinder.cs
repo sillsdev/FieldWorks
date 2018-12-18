@@ -14,18 +14,14 @@ namespace LanguageExplorer.Filters
 	/// </summary>
 	public class OwnMonoPropFinder : StringFinderBase
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:OwnMonoPropFinder"/> class.
-		/// </summary>
+		/// <summary />
 		public OwnMonoPropFinder(ISilDataAccess sda, int flid)
 			: base(sda)
 		{
 			Flid = flid;
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:OwnMonoPropFinder"/> class.
-		/// </summary>
+		/// <summary />
 		public OwnMonoPropFinder()
 		{
 		}

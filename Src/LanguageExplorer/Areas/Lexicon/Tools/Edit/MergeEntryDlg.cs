@@ -1,22 +1,22 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
-using System.Xml.Linq;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.LCModel.Utils;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
@@ -40,7 +40,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
-			ShowControlsBasedOnPanel1Position();	// used for sizing and display of some controls
+			ShowControlsBasedOnPanel1Position();    // used for sizing and display of some controls
 
 			var infoIcon = SystemIcons.Information;
 			m_pictureBox.Image = infoIcon.ToBitmap();
@@ -52,13 +52,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
-
-			if( disposing )
+			if (disposing)
 			{
 			}
 			base.Dispose(disposing);
@@ -124,7 +124,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				tsb.ReplaceTsString(ich, ich + 3, tssFrom);
 				tsb.SetIntPropValues(ich, ich + cch, (int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
 				sTmp = tsb.Text;
-				ich = sTmp.IndexOf("{0}", StringComparison.Ordinal);	// in case localization needs more than one.
+				ich = sTmp.IndexOf("{0}", StringComparison.Ordinal);    // in case localization needs more than one.
 			}
 			if (m_selObject != null)
 			{
@@ -188,7 +188,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 			}
 
-			protected override IEnumerable<int>  FilterResults(IEnumerable<int> results)
+			protected override IEnumerable<int> FilterResults(IEnumerable<int> results)
 			{
 				return results?.Where(hvo => hvo != CurrentEntryHvo);
 			}

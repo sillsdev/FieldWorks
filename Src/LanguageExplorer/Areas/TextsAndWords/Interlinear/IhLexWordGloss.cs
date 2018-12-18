@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -43,7 +43,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				var sda = m_caches.DataAccess;
 				foreach (var wsId in m_sandbox.InterlinLineChoices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
 				{
-					var tssGloss = TsStringUtils.MakeString("", wsId);
+					var tssGloss = TsStringUtils.MakeString(string.Empty, wsId);
 					sda.SetMultiStringAlt(m_hvoSbWord, SandboxBase.ktagSbWordGloss, wsId, tssGloss);
 					sda.PropChanged(null, (int)PropChangeType.kpctNotifyAll, m_hvoSbWord, SandboxBase.ktagSbWordGloss, wsId, 0, 0);
 				}
@@ -69,7 +69,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				hvoPos = m_sandbox.CreateSecondaryAndCopyStrings(InterlinLineChoices.kflidWordPos, hvoLexPos, CmPossibilityTags.kflidAbbreviation);
 				var hvoSbWordPos = m_caches.DataAccess.get_ObjectProp(m_hvoSbWord, SandboxBase.ktagSbWordPos);
 				m_caches.DataAccess.SetObjProp(m_hvoSbWord, SandboxBase.ktagSbWordPos, hvoPos);
-				m_caches.DataAccess.PropChanged(m_rootb, (int)PropChangeType.kpctNotifyAll, m_hvoSbWord, SandboxBase.ktagSbWordPos, 0, 1, (hvoSbWordPos == 0 ? 0 : 1));
+				m_caches.DataAccess.PropChanged(m_rootb, (int)PropChangeType.kpctNotifyAll, m_hvoSbWord, SandboxBase.ktagSbWordPos, 0, 1, hvoSbWordPos == 0 ? 0 : 1);
 			}
 			else
 			{

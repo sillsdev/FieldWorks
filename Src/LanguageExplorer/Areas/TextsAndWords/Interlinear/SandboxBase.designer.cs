@@ -1,8 +1,9 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -19,17 +20,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ******");
-
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ******");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
 			if (disposing)
 			{
-				_sharedEventHandlers.Remove(AreaServices.SandboxJumpToTool);
+				SharedEventHandlers.Remove(AreaServices.SandboxJumpToTool);
 				PropertyTable.RemoveProperty("FirstControlToHandleMessages", SettingsGroup.LocalSettings);
 			}
 
@@ -57,7 +57,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_vc = null;
 			m_rawWordform = null;
 			FormOfWordform = null;
-			_sharedEventHandlers = null;
+			SharedEventHandlers = null;
 		}
 
 		#region Component Designer generated code

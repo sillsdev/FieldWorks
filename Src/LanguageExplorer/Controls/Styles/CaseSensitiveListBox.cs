@@ -11,9 +11,7 @@ namespace LanguageExplorer.Controls.Styles
 	/// </summary>
 	public class CaseSensitiveListBox : ListBox
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="CaseSensitiveListBox"/> class.
-		/// </summary>
+		/// <summary />
 		public CaseSensitiveListBox()
 		{
 			Sorted = true;

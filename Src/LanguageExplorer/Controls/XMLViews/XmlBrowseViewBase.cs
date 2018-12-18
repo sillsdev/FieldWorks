@@ -872,9 +872,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		#region Construction, Initialization and disposal
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:XmlBrowseViewBase"/> class.
-		/// </summary>
+		/// <summary />
 		internal XmlBrowseViewBase() : base(null)
 		{
 			// This call is required by the Windows Form Designer.

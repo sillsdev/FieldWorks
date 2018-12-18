@@ -153,9 +153,7 @@ namespace SIL.FieldWorks
 		/// </summary>
 		private sealed class DummyFwNewLangProject : FwNewLangProject
 		{
-			/// <summary>
-			/// Initializes a new instance of the <see cref="DummyFwNewLangProject"/> class.
-			/// </summary>
+			/// <summary />
 			internal DummyFwNewLangProject()
 				: base(true)
 			{

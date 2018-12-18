@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,7 +8,7 @@ using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 {
-	/// <summary/>
+	/// <summary />
 	internal class ReversalIndexEntryChangeHandler : IRecordChangeHandler
 	{
 		#region Data members
@@ -17,25 +17,21 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		protected IReversalIndexEntry m_rie;
 		/// <summary>original citation form</summary>
 		protected string m_originalForm;
-		/// <summary></summary>
+		/// <summary />
 		protected IRecordListUpdater m_rlu;
 
 		#endregion Data members
 
-		#region Construction
-
 		public ReversalIndexEntryChangeHandler()
 		{
 		}
-
-		#endregion Construction
 
 		#region IDisposable & Co. implementation
 
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed { get; private set; }
+		private bool IsDisposed { get; set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -48,12 +44,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		}
 
 		/// <summary />
-		/// <remarks>Must not be virtual.</remarks>
 		public void Dispose()
 		{
 			Dispose(true);
 			// This object will be cleaned up by the Dispose method.
-			// Therefore, you should call GC.SupressFinalize to
+			// Therefore, you should call GC.SuppressFinalize to
 			// take this object off the finalization queue
 			// and prevent finalization code for this object
 			// from executing a second time.
@@ -84,9 +79,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		protected virtual void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -123,7 +118,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		/// </summary>
 		public bool HasRecordListUpdater => m_rlu != null;
 
-		/// <summary></summary>
+		/// <summary />
 		public void Setup(object record, IRecordListUpdater rlu, LcmCache cache)
 		{
 			Debug.Assert(record is IReversalIndexEntry);
@@ -168,13 +163,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			var ws = m_rie.Services.WritingSystemManager.GetWsFromStr(m_rie.ReversalIndex.WritingSystem);
 			var currentForm = m_rie.ReversalForm.get_String(ws).Text;
 			if (currentForm == m_originalForm)
+			{
 				return; // No relevant changes, so do nothing.
-
+			}
 			// Fix it so that another call will do the right thing.
 			m_originalForm = currentForm;
-
-			if (fRefreshList && m_rlu != null)
-				m_rlu.UpdateList(false);
+			if (fRefreshList)
+			{
+				m_rlu?.UpdateList(false);
+			}
 		}
 
 		#endregion IRecordChangeHandler implementation

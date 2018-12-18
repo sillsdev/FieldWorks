@@ -1,10 +1,11 @@
-// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -36,8 +37,10 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		/// <summary />
 		protected override void Dispose(bool disposing)
 		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -68,9 +71,8 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 					return defaultRoledPartic;
 				};
 			}
-
 			// this slice displays the default roled participants
-			var vrl = (VectorReferenceLauncher) Control;
+			var vrl = (VectorReferenceLauncher)Control;
 			if (vrl.PropertyTable == null)
 			{
 				vrl.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
@@ -147,7 +149,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			return true;
 		}
 
-		void contextMenuStrip_Closed(object sender, ToolStripDropDownClosedEventArgs e)
+		private void contextMenuStrip_Closed(object sender, ToolStripDropDownClosedEventArgs e)
 		{
 			// It's apparently still needed by the menu handling code in .NET.
 			// So we can't dispose it yet.
@@ -155,7 +157,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			Application.Idle += DisposeContextMenu;
 		}
 
-		void DisposeContextMenu(object sender, EventArgs e)
+		private void DisposeContextMenu(object sender, EventArgs e)
 		{
 #if RANDYTODO_TEST_Application_Idle
 // TODO: Remove when finished sorting out idle issues.
@@ -183,11 +185,10 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				if (!existingRoles.Contains(role))
 				{
 					var label = string.Format(LanguageExplorerResources.ksAddParticipants, role.Name.BestAnalysisAlternative.Text);
-					var item = new ToolStripMenuItem(label, null, AddParticipants) {Tag = role};
+					var item = new ToolStripMenuItem(label, null, AddParticipants) { Tag = role };
 					contextMenuStrip.Items.Add(item);
 				}
 			}
-
 			// display the standard visibility and help menu items
 			var tsdropdown = new ToolStripDropDownMenu();
 			var itemAlways = new ToolStripMenuItem(LanguageExplorerResources.ksAlwaysVisible, null, ShowFieldAlwaysVisible);
@@ -216,8 +217,8 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 
 		private void AddParticipants(object sender, EventArgs e)
 		{
-			var item = (ToolStripMenuItem) sender;
-			var role = (ICmPossibility) item.Tag;
+			var item = (ToolStripMenuItem)sender;
+			var role = (ICmPossibility)item.Tag;
 			var roleName = role.Name.BestAnalysisAlternative.Text;
 			var displayWs = "analysis vernacular";
 			var node = ConfigurationNode?.Element("deParams");
@@ -225,9 +226,8 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			{
 				displayWs = XmlUtils.GetOptionalAttributeValue(node, "ws", "analysis vernacular").ToLower();
 			}
-			var labels = ObjectLabel.CreateObjectLabels(Cache, Cache.LanguageProject.PeopleOA.PossibilitiesOS, DisplayNameProperty, displayWs);
-
-			using (var chooser = new SimpleListChooser(PersistenceProvider, labels, m_fieldName, Cache, null, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
+			using (var chooser = new SimpleListChooser(PersistenceProvider, ObjectLabel.CreateObjectLabels(Cache, Cache.LanguageProject.PeopleOA.PossibilitiesOS, DisplayNameProperty, displayWs),
+				m_fieldName, Cache, null, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 			{
 				chooser.TextParamHvo = Cache.LanguageProject.PeopleOA.Hvo;
 				chooser.SetHelpTopic(GetChooserHelpTopicID());
@@ -235,33 +235,29 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				{
 					chooser.InitializeExtras(ConfigurationNode, PropertyTable, Publisher, Subscriber);
 				}
-
 				if (DialogResult.Cancel == chooser.ShowDialog())
 				{
 					return;
 				}
-
 				if (ConfigurationNode != null)
 				{
 					chooser.HandleAnyJump();
 				}
-
 				if (chooser.ChosenObjects == null)
 				{
 					return;
 				}
 				IRnRoledPartic roledPartic = null;
-				UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerResources.ksUndoAddParticipants, roleName),
-					string.Format(LanguageExplorerResources.ksRedoAddParticipants, roleName), role, () =>
+				UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerResources.ksUndoAddParticipants, roleName), string.Format(LanguageExplorerResources.ksRedoAddParticipants, roleName), role, () =>
+				{
+					roledPartic = Cache.ServiceLocator.GetInstance<IRnRoledParticFactory>().Create();
+					Record.ParticipantsOC.Add(roledPartic);
+					roledPartic.RoleRA = role;
+					foreach (ICmPerson person in chooser.ChosenObjects)
 					{
-						roledPartic = Cache.ServiceLocator.GetInstance<IRnRoledParticFactory>().Create();
-						Record.ParticipantsOC.Add(roledPartic);
-						roledPartic.RoleRA = role;
-						foreach (ICmPerson person in chooser.ChosenObjects)
-						{
-							roledPartic.ParticipantsRC.Add(person);
-						}
-					});
+						roledPartic.ParticipantsRC.Add(person);
+					}
+				});
 				ExpandNewNode(roledPartic);
 			}
 		}
@@ -300,7 +296,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				Expand();
 				return true;
 			}
-
 			return false;
 		}
 

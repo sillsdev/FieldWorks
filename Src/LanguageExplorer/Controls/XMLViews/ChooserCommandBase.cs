@@ -23,9 +23,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected string m_sHelp;
 #endif
 
-		/// <summary>
-		/// Initializes a new instance of the class.
-		/// </summary>
+		/// <summary />
 		protected ChooserCommand(LcmCache cache, bool fCloseBeforeExecuting, string sLabel, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
 			Cache = cache;

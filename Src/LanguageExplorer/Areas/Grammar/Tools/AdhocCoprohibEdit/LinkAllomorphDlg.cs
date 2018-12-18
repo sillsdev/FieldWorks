@@ -1,9 +1,10 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Diagnostics;
+using System.Windows.Forms;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.LexText;
 using SIL.LCModel;
@@ -12,14 +13,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 {
 	public class LinkAllomorphDlg : EntryGoDlg
 	{
-		#region Data members
-
-		private System.Windows.Forms.Label label3;
+		private Label label3;
 		private FwComboBox m_fwcbAllomorphs;
-		private System.Windows.Forms.GroupBox groupBox1;
-		private System.Windows.Forms.GroupBox grplbl;
-
-		#endregion Data members
+		private GroupBox groupBox1;
+		private GroupBox grplbl;
 
 		#region Properties
 
@@ -46,8 +43,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 		{
 			if (m_tbForm.Text.Length == 0)
 			{
-				m_fwcbAllomorphs.Text = "";		// clear the text box
-				m_fwcbAllomorphs.Items.Clear();	// clear the drop down list box
+				m_fwcbAllomorphs.Text = "";     // clear the text box
+				m_fwcbAllomorphs.Items.Clear(); // clear the drop down list box
 			}
 		}
 
@@ -60,9 +57,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 
 			SetHelpTopic("hktpInsertAllomorphChooseAllomorph");
 
-			m_tbForm.TextChanged += Form_TextChanged;			// erase when needed
+			m_tbForm.TextChanged += Form_TextChanged;           // erase when needed
 
-			ShowControlsBasedOnPanel1Position();	// make sure controls are all set properly
+			ShowControlsBasedOnPanel1Position();    // make sure controls are all set properly
 
 			m_btnInsert.Enabled = false;
 			m_btnHelp.Enabled = true;
@@ -73,9 +70,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 

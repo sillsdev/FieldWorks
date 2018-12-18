@@ -21,9 +21,7 @@ namespace LanguageExplorer.Controls
 		/// <summary />
 		protected Font m_font;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:StringMeasureEnv"/> class.
-		/// </summary>
+		/// <summary />
 		/// <param name="baseEnv">The base env.</param>
 		/// <param name="sda">Date access to get prop values etc.</param>
 		/// <param name="hvoRoot">The root object to display, if m_baseEnv is null.

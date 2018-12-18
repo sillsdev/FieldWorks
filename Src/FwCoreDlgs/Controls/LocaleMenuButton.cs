@@ -17,9 +17,7 @@ using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
-	/// <summary>
-	/// Summary description for LocaleMenuButton.
-	/// </summary>
+	/// <summary />
 	public class LocaleMenuButton : Button
 	{
 		private Container components;

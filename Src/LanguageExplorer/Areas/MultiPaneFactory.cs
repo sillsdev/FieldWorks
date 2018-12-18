@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -36,14 +36,11 @@ namespace LanguageExplorer.Areas
 			{
 				((IFlexComponent)secondControl).InitializeFlexComponent(flexComponentParameters);
 			}
-
 			var nestedMultiPane = new MultiPane(multiPaneParameters);
 			InitializeSubControl(nestedMultiPane, firstControl, true);
 			InitializeSubControl(nestedMultiPane, secondControl, false);
-
 			firstControl.BringToFront();
 			secondControl.BringToFront();
-
 			return nestedMultiPane;
 		}
 
@@ -59,7 +56,6 @@ namespace LanguageExplorer.Areas
 				throw new ApplicationException($"FLEx can only handle controls which implement IMainUserControl. '{contentClassName}' does not.");
 			}
 			subControl.Dock = DockStyle.Fill;
-
 			// we add this before Initializing so that this child control will have access
 			// to its eventual height and width, in case it needs to make initialization
 			// decisions based on that.  for example, if the child is another multipane, it
@@ -106,21 +102,17 @@ namespace LanguageExplorer.Areas
 			(firstControl as IFlexComponent)?.InitializeFlexComponent(flexComponentParameters);
 			var secondControl = multiPaneParameters.SecondControlParameters.Control;
 			(secondControl as IFlexComponent)?.InitializeFlexComponent(flexComponentParameters);
-
 			// All tools with MultiPane as main second child of top level mainCollapsingSplitContainer
 			// have PaneBarContainer children, which then have other main children,
 			var newMultiPane = new MultiPane(multiPaneParameters);
-
 			InitializeSubControl(newMultiPane, multiPaneParameters.FirstControlParameters.Control, true);
 			InitializeSubControl(newMultiPane, multiPaneParameters.SecondControlParameters.Control, false);
-
 			newMultiPane.InitializeFlexComponent(flexComponentParameters);
 			mainCollapsingSplitContainer.SecondControl = newMultiPane;
 			// I (RBR) used to do "BringToFront()" for "firstControl" and "secondControl", but proved to be in the wrong place.
 			// I now do that in other locations, and it works better.
 			// The problem I was trying to solve was the controls were clipped by the pane bar.
 			// It works *much* better in the new locations in "PaneBarContainerFactory".
-
 			return newMultiPane;
 		}
 
@@ -141,7 +133,6 @@ namespace LanguageExplorer.Areas
 		{
 			var mainCollapsingSplitContainerAsControl = (Control)mainCollapsingSplitContainer;
 			mainCollapsingSplitContainerAsControl.SuspendLayout();
-
 			multiPaneParameters.FirstControlParameters = new SplitterChildControlParameters
 			{
 				Control = PaneBarContainerFactory.Create(flexComponentParameters, firstControl, firstPaneBar),
@@ -152,7 +143,6 @@ namespace LanguageExplorer.Areas
 				Control = PaneBarContainerFactory.Create(flexComponentParameters, secondControl, secondPaneBar),
 				Label = secondlabel
 			};
-
 			var multiPane = CreateInMainCollapsingSplitContainer(flexComponentParameters, mainCollapsingSplitContainer, multiPaneParameters);
 			if (secondControl is IPaneBarUser)
 			{
@@ -162,7 +152,6 @@ namespace LanguageExplorer.Areas
 					((IPaneBarUser)secondControl).MainPaneBar = ((IPaneBarContainer)multiPane.SecondControl).PaneBar;
 				}
 			}
-
 			mainCollapsingSplitContainerAsControl.ResumeLayout();
 			return multiPane;
 		}
@@ -171,7 +160,6 @@ namespace LanguageExplorer.Areas
 		{
 			var mainCollapsingSplitContainerAsControl = (Control)mainCollapsingSplitContainer;
 			mainCollapsingSplitContainerAsControl.SuspendLayout();
-
 			// NB: Caller creates leftSideNestedMultiPaneParameters.FirstControlParameters and leftSideNestedMultiPaneParameters.SecondControlParameters
 			// and sets the Control & Label values of each.
 			var nestedLeftSideMultiPane = CreateNestedMultiPane(flexComponentParameters, leftSideNestedMultiPaneParameters);
@@ -179,13 +167,11 @@ namespace LanguageExplorer.Areas
 			// but the Labels of each should be present.
 			concordanceContainerParameters.FirstControlParameters.Control = nestedLeftSideMultiPane;
 			// Set by caller, including PBC. concordanceContainerParameters.SecondControlParameters.Control;
-
 			var concordanceContainer = new ConcordanceContainer(concordanceContainerParameters);
 			var concordanceContainerAsControl = (Control)concordanceContainer;
 			concordanceContainerAsControl.SuspendLayout();
 			InitializeSubControl(concordanceContainer, concordanceContainerParameters.FirstControlParameters.Control, true);
 			InitializeSubControl(concordanceContainer, concordanceContainerParameters.SecondControlParameters.Control, false);
-
 			concordanceContainer.InitializeFlexComponent(flexComponentParameters);
 			mainCollapsingSplitContainer.SecondControl = concordanceContainer;
 			var firstControl = concordanceContainerParameters.FirstControlParameters.Control;
@@ -196,10 +182,8 @@ namespace LanguageExplorer.Areas
 			var secondControl = concordanceContainerParameters.SecondControlParameters.Control;
 			firstControl.BringToFront();
 			secondControl.BringToFront();
-
 			concordanceContainerAsControl.ResumeLayout();
 			mainCollapsingSplitContainerAsControl.ResumeLayout();
-
 			return concordanceContainer;
 		}
 

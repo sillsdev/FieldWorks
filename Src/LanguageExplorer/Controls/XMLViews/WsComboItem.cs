@@ -11,9 +11,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	{
 		private readonly string m_name;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="WsComboItem"/> class.
-		/// </summary>
+		/// <summary />
 		public WsComboItem(string name, string writingSystemId)
 		{
 			m_name = name;

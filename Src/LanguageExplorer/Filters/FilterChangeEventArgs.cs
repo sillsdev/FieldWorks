@@ -14,9 +14,7 @@ namespace LanguageExplorer.Filters
 	/// </summary>
 	public class FilterChangeEventArgs
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FilterChangeEventArgs"/> class.
-		/// </summary>
+		/// <summary />
 		public FilterChangeEventArgs(RecordFilter added, RecordFilter removed)
 		{
 			Added = added;

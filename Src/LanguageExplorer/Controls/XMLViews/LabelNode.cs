@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -29,12 +29,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		protected virtual string BasicNodeString => Label.AsTss.Text;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LabelNode"/> class.
-		/// </summary>
-		/// <param name="label">The label.</param>
-		/// <param name="stylesheet">The stylesheet.</param>
-		/// <param name="displayUsage"><c>true</c> if usage statistics will be displayed; otherwise, <c>false</c>.</param>
+		/// <summary />
 		public LabelNode(ObjectLabel label, IVwStylesheet stylesheet, bool displayUsage)
 		{
 			Tag = label;

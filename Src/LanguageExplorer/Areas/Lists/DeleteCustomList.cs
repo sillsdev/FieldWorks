@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -47,15 +47,12 @@ namespace LanguageExplorer.Areas.Lists
 		/// </summary>
 		public void Run(ICmPossibilityList curList)
 		{
-			m_listToDelete = curList;
-
-			// Make sure list is a CUSTOM list!
-			var owner = m_listToDelete.Owner; // Custom lists are unowned!
-			if (owner != null)
+			if (curList.Owner != null)
 			{
-				return; // Not a Custom list!
+				// Custom lists have no owner.
+				return;
 			}
-
+			m_listToDelete = curList;
 			// Make sure user knows if any possibilities owned by this list are referenced
 			// by anything else!
 			GetCustomFieldsReferencingList(m_listToDelete.Guid);
@@ -118,11 +115,7 @@ namespace LanguageExplorer.Areas.Lists
 		/// <returns></returns>
 		protected virtual DialogResult CheckWithUser(string name)
 		{
-			return MessageBox.Show(string.Format(ListResources.ksReferencedPossibility, name),
-								   LanguageExplorerResources.ksWarning,
-								   MessageBoxButtons.YesNo,
-								   MessageBoxIcon.Warning,
-								   MessageBoxDefaultButton.Button2);
+			return MessageBox.Show(string.Format(ListResources.ksReferencedPossibility, name), LanguageExplorerResources.ksWarning, MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
 		}
 	}
 }

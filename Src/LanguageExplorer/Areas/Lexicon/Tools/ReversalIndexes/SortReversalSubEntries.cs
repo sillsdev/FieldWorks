@@ -1,16 +1,17 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.UtilityTools;
 using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.FieldWorks.Language;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.Language;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 {
@@ -62,11 +63,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		internal static void SortReversalSubEntriesInPlace(LcmCache cache)
 		{
 			var allReversalIndexes = cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances();
-			foreach(var reversalIndex in allReversalIndexes)
+			foreach (var reversalIndex in allReversalIndexes)
 			{
-				using(var comp = new ReversalSubEntryIcuComparer(cache, reversalIndex.WritingSystem))
+				using (var comp = new ReversalSubEntryIcuComparer(cache, reversalIndex.WritingSystem))
 				{
-					foreach(var reversalIndexEntry in reversalIndex.EntriesOC.Where(rie => rie.SubentriesOS.Count > 1))
+					foreach (var reversalIndexEntry in reversalIndex.EntriesOC.Where(rie => rie.SubentriesOS.Count > 1))
 					{
 						var subEntryArray = reversalIndexEntry.SubentriesOS.ToArray();
 						Array.Sort(subEntryArray, comp);
@@ -114,8 +115,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			/// <summary />
 			private void Dispose(bool disposing)
 			{
-				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-				if(disposing)
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if (disposing)
 				{
 					m_collator?.Dispose();
 				}

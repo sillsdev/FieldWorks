@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,8 +10,8 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel;
 using SIL.FieldWorks.Resources;
+using SIL.LCModel;
 using SIL.LCModel.Utils;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
@@ -22,7 +22,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private LcmCache m_cache;
 		private IPublisher m_publisher;
 		private readonly StringBuilder m_messages = new StringBuilder();
-
 		private IHelpTopicProvider m_helpTopicProvider;
 		private const string HelpTopic = "khtpInterlinearImportDlg";
 
@@ -44,8 +43,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					dlg.FileName = m_tbFilename.Text;
 				}
-				var res = dlg.ShowDialog();
-				if (res == DialogResult.OK)
+				if (dlg.ShowDialog() == DialogResult.OK)
 				{
 					m_tbFilename.Text = dlg.FileName;
 				}
@@ -68,7 +66,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					import.Error += import_Error;
 					try
 					{
-						var fSuccess = (bool) dlg.RunTask(true, import.ImportInterlinear, m_tbFilename.Text);
+						var fSuccess = (bool)dlg.RunTask(true, import.ImportInterlinear, m_tbFilename.Text);
 						if (fSuccess)
 						{
 							DialogResult = DialogResult.OK; // only 'OK' if not exception
@@ -89,10 +87,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					}
 					catch (WorkerThreadException ex)
 					{
-
 						Debug.WriteLine("Error: " + ex.InnerException.Message);
 						MessageBox.Show(string.Format(import.ErrorMessage, ex.InnerException.Message), ITextStrings.ksUnhandledError, MessageBoxButtons.OK, MessageBoxIcon.Error);
-						DialogResult = DialogResult.Cancel;	// only 'OK' if not exception
+						DialogResult = DialogResult.Cancel; // only 'OK' if not exception
 						Close();
 					}
 				}
@@ -101,7 +98,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void import_Error(object sender, string message, string caption)
 		{
-			m_messages.AppendLine(caption + ": " + message);
+			m_messages.AppendLine($"{caption}: {message}");
 		}
 
 		private void m_btnHelp_Click(object sender, EventArgs e)

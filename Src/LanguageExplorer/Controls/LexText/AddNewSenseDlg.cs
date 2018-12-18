@@ -15,9 +15,7 @@ using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Controls.LexText
 {
-	/// <summary>
-	/// Summary description for Form1.
-	/// </summary>
+	/// <summary />
 	public class AddNewSenseDlg : Form
 	{
 		private const string s_helpTopic = "khtpAddNewSense";

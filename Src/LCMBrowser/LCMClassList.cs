@@ -19,9 +19,7 @@ namespace LCMBrowser
 		private static Assembly s_asmLCM;
 		private static string s_settingFileName;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:LCMClassList"/> class.
-		/// </summary>
+		/// <summary />
 		static LCMClassList()
 		{
 			try

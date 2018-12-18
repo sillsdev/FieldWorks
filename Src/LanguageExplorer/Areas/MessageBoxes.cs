@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -21,8 +21,7 @@ namespace LanguageExplorer.Areas
 			var itemString = target is ILexEntry ? FwCoreDlgs.ksEntry : FwCoreDlgs.ksSense;
 			var msgTemplate = startedFromComplex ? FwCoreDlgs.ksComponentIsComponent : FwCoreDlgs.ksComplexFormIsComponent;
 			var startedFrom = startedFromComplex ? ((ILexEntry)parent).HeadWord.Text : target.ShortName;
-			var msg = string.Format(msgTemplate, itemString, startedFrom);
-			MessageBox.Show(Form.ActiveForm, msg, FwCoreDlgs.ksWhichIsComponent, MessageBoxButtons.OK, MessageBoxIcon.Error);
+			MessageBox.Show(Form.ActiveForm, string.Format(msgTemplate, itemString, startedFrom), FwCoreDlgs.ksWhichIsComponent, MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
 	}
 }

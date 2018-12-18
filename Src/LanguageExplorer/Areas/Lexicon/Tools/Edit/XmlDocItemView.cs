@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -33,7 +33,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				return; // OnRecordNavigation is often called repeatedly wit the same HVO, we don't need to recompute every time.
 			}
-
 			m_hvoRoot = hvo;
 			RootBox?.SetRootObject(m_hvoRoot, m_xmlVc, 1, m_styleSheet);
 			// If the root box doesn't exist yet, the right root will be used in MakeRoot.
@@ -69,7 +68,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			string nodePath = null;
 			if (propStore != null)
 			{
-				nodePath = propStore.get_StringProperty((int) FwTextPropType.ktptBulNumTxtBef);
+				nodePath = propStore.get_StringProperty((int)FwTextPropType.ktptBulNumTxtBef);
 			}
 			if (string.IsNullOrEmpty(nodePath))
 			{
@@ -82,7 +81,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				int ich, ws;
 				bool fAssocPrev;
 				sel.TextSelInfo(false, out tss, out ich, out fAssocPrev, out hvo, out tag, out ws);
-				nodePath = tss.get_Properties(0).GetStrPropValue((int) FwTextPropType.ktptBulNumTxtBef);
+				nodePath = tss.get_Properties(0).GetStrPropValue((int)FwTextPropType.ktptBulNumTxtBef);
 			}
 			if (m_configObjectName == null)
 			{
@@ -167,7 +166,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			{
 				SetupStylesheet();
 			}
-			base.OnHandleCreated (e);
+			base.OnHandleCreated(e);
 		}
 
 		private void SetupStylesheet()

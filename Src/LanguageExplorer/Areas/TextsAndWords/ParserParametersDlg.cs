@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,9 +12,7 @@ using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {
-	/// <summary>
-	/// Summary description for ParserParametersDlg.
-	/// </summary>
+	/// <summary />
 	internal sealed class ParserParametersDlg : Form
 	{
 		private const string HelpTopic = "khtpParserParamters";
@@ -70,9 +68,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -202,7 +200,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			EnforceValidValue(elem, XAmple, MaxInterfixes, 0, 7, false);
 			EnforceValidValue(elem, XAmple, MaxRoots, 0, 10, false);
 			EnforceValidValue(elem, XAmple, MaxAnalysesToReturn, -1, 10000, true);
-
 			EnforceValidValue(elem, HC, DelReapps, 0, 10, false);
 		}
 
@@ -213,7 +210,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				return;
 			}
-			var val = (int) valueElem;
+			var val = (int)valueElem;
 			if (val < min || (useMinIfZero && val == 0))
 			{
 				valueElem.SetValue(min);
@@ -230,8 +227,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		private void ReportChangeOfValue(string item, int value, int newValue, int min, int max)
 		{
-			var sMessage = string.Format(ParserUIStrings.ksChangedValueReport, item, value, newValue, min, max);
-			MessageBox.Show(sMessage, ParserUIStrings.ksChangeValueDialogTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+			MessageBox.Show(string.Format(ParserUIStrings.ksChangedValueReport, item, value, newValue, min, max), ParserUIStrings.ksChangeValueDialogTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 		}
 
 		/// <summary>
@@ -241,16 +237,12 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			XmlRep = parserParameters;
 			Text = title;
-
 			m_dsParserParameters = new DataSet { DataSetName = "ParserParameters" };
-
 			var tblXAmple = CreateXAmpleDataTable();
 			m_dsParserParameters.Tables.Add(tblXAmple);
 			var tblHC = CreateHCDataTable();
 			m_dsParserParameters.Tables.Add(tblHC);
-
 			LoadParserData(m_dsParserParameters);
-
 			PopulateDataGrid(m_dataGrid1, XAmple);
 			PopulateDataGrid(m_dataGrid2, HC);
 			m_dataGrid2.TableStyles[0].GridColumnStyles[2].Width = 130;
@@ -267,27 +259,22 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				hcElem = new XElement(HC);
 				parserParamsElem.Add(hcElem);
 			}
-
 			if (hcElem.Element(DelReapps) == null)
 			{
 				hcElem.Add(new XElement(DelReapps, 0));
 			}
-
 			if (hcElem.Element(NoDefaultCompounding) == null)
 			{
 				hcElem.Add(new XElement(NoDefaultCompounding, false));
 			}
-
 			if (hcElem.Element(NotOnClitics) == null)
 			{
 				hcElem.Add(new XElement(NotOnClitics, true));
 			}
-
 			if (hcElem.Element(AcceptUnspecifiedGraphemes) == null)
 			{
 				hcElem.Add(new XElement(AcceptUnspecifiedGraphemes, false));
 			}
-
 			using (var reader = parserParamsElem.CreateReader())
 			{
 				dsParserParameters.ReadXml(reader, XmlReadMode.IgnoreSchema);
@@ -297,7 +284,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private void PopulateDataGrid(DataGrid dataGrid, string parser)
 		{
 			dataGrid.SetDataBinding(m_dsParserParameters, parser);
-
 			var view = CreateDataView(m_dsParserParameters.Tables[parser]);
 			dataGrid.DataSource = view;
 			dataGrid.TableStyles.Add(new DataGridTableStyle { MappingName = parser, RowHeadersVisible = false, AllowSorting = false });

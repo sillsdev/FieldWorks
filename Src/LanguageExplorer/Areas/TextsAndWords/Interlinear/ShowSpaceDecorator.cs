@@ -1,12 +1,12 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2011-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Drawing;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Application;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -19,6 +19,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	class ShowSpaceDecorator : DomainDataByFlidDecoratorBase
 	{
 		public static readonly int KzwsBackColor = (int)ColorUtil.ConvertColorToBGR(Color.LightGray);
+
 		public ShowSpaceDecorator(ISilDataAccessManaged sda) : base(sda)
 		{}
 
@@ -28,20 +29,24 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			var result = base.get_StringProp(hvo, tag);
 			if (!ShowSpaces || tag != StTxtParaTags.kflidContents || result == null)
+			{
 				return result;
+			}
 			var text = result.Text;
 			if (text == null)
+			{
 				return result;
-			int index = text.IndexOf(AnalysisOccurrence.KchZws);
+			}
+			var index = text.IndexOf(AnalysisOccurrence.KchZws);
 			if (index < 0)
+			{
 				return result;
-
+			}
 			var bldr = result.GetBldr();
 			while (index >= 0)
 			{
 				bldr.Replace(index, index + 1, " ", null);
-				bldr.SetIntPropValues(index, index + 1, (int) FwTextPropType.ktptBackColor, (int) FwTextPropVar.ktpvDefault,
-					KzwsBackColor);
+				bldr.SetIntPropValues(index, index + 1, (int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, KzwsBackColor);
 				index = text.IndexOf(AnalysisOccurrence.KchZws, index + 1);
 			}
 			return bldr.GetString();
@@ -56,25 +61,26 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			var text = tss.Text;
 			var bldr = tss.GetBldr();
-			int index = text.IndexOf(' ');
+			var index = text.IndexOf(' ');
 			while (index >= 0)
 			{
 				int nVar;
-				if (bldr.get_PropertiesAt(index).GetIntPropValues((int) FwTextPropType.ktptBackColor, out nVar) == KzwsBackColor)
+				if (bldr.get_PropertiesAt(index).GetIntPropValues((int)FwTextPropType.ktptBackColor, out nVar) == KzwsBackColor)
+				{
 					bldr.Replace(index, index + 1, AnalysisOccurrence.KstrZws, null);
+				}
 				index = text.IndexOf(' ', index + 1);
 			}
-			for (int irun = bldr.RunCount - 1; irun >= 0;  irun--)
+			for (var irun = bldr.RunCount - 1; irun >= 0; irun--)
 			{
 				int nVar;
-				if (bldr.get_Properties(irun).GetIntPropValues((int) FwTextPropType.ktptBackColor, out nVar) == KzwsBackColor)
+				if (bldr.get_Properties(irun).GetIntPropValues((int)FwTextPropType.ktptBackColor, out nVar) == KzwsBackColor)
 				{
 					int ichMin, ichLim;
 					bldr.GetBoundsOfRun(irun, out ichMin, out ichLim);
 					bldr.SetIntPropValues(ichMin, ichLim, (int)FwTextPropType.ktptBackColor, -1, -1);
 				}
 			}
-
 			base.SetString(hvo, tag, bldr.GetString());
 		}
 	}

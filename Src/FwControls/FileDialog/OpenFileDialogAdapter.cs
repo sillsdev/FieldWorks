@@ -10,9 +10,7 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog
 	/// OpenFileDialog, on Linux the GTK FileChooserDialog.</summary>
 	public class OpenFileDialogAdapter : FileDialogAdapter, IOpenFileDialog
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="SIL.FieldWorks.Common.Controls.FileDialog.OpenFileDialogAdapter"/> class.
-		/// </summary>
+		/// <summary />
 		public OpenFileDialogAdapter()
 		{
 			m_dlg = Manager.CreateOpenFileDialog();

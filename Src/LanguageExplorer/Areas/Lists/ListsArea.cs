@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -28,7 +28,7 @@ namespace LanguageExplorer.Areas.Lists
 		private SidePane _sidePane;
 		private HashSet<ITool> _allTools;
 
-#region Implementation of IMajorFlexComponent
+		#region Implementation of IMajorFlexComponent
 
 		/// <summary>
 		/// Deactivate the component.
@@ -82,9 +82,9 @@ namespace LanguageExplorer.Areas.Lists
 			PersistedOrDefaultTool.EnsurePropertiesAreCurrent();
 		}
 
-#endregion
+		#endregion
 
-#region Implementation of IMajorFlexUiComponent
+		#region Implementation of IMajorFlexUiComponent
 
 		/// <summary>
 		/// Get the internal name of the component.
@@ -96,9 +96,9 @@ namespace LanguageExplorer.Areas.Lists
 		/// User-visible localizable component name.
 		/// </summary>
 		public string UiName => MyUiName;
-#endregion
+		#endregion
 
-#region Implementation of IArea
+		#region Implementation of IArea
 
 		/// <summary>
 		/// Get the most recently persisted tool, or the default tool if
@@ -154,11 +154,8 @@ namespace LanguageExplorer.Areas.Lists
 					AreaServices.UsageTypeEditMachineName,
 					AreaServices.VariantEntryTypeEditMachineName
 				};
-
 				var retval = myToolsInOrder.Select(toolName => _myBuiltinTools.First(tool => tool.MachineName == toolName)).ToList();
-
 				_allTools = new HashSet<ITool>(_myBuiltinTools);
-
 				// Load tools for custom lists.
 				var cache = _propertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 				var customLists = cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>().AllInstances().Where(list => list.Owner == null).ToList();
@@ -186,9 +183,9 @@ namespace LanguageExplorer.Areas.Lists
 		/// </summary>
 		public ITool ActiveTool { get; set; }
 
-#endregion
+		#endregion
 
-#region Implementation of IListArea
+		#region Implementation of IListArea
 
 		/// <summary>
 		/// Set the list area sidebar tab, so it can be updated as custom lists gets added/removed, or get names changed.
@@ -251,6 +248,6 @@ namespace LanguageExplorer.Areas.Lists
 			_sidePane.ResumeLayout();
 		}
 
-#endregion
+		#endregion
 	}
 }

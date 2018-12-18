@@ -14,11 +14,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Properties
 	/// </summary>
 	internal sealed partial class Settings
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Settings"/> class setting
-		/// the provider collection to contain a CrossPlatformSettingsProvider and making every property
-		/// use that.
-		/// </summary>
+		/// <summary />
 		public Settings()
 		{
 			foreach (SettingsProperty property in Properties)

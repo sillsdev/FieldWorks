@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,12 +9,12 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
-using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -25,23 +25,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// </summary>
 	internal partial class InterlinTaggingChild : InterlinDocRootSiteBase
 	{
-		ContextMenuStrip m_taggingContextMenu;
-		int m_hvoCurSegment; // hvo of segment currently containing the selection
-
+		private ContextMenuStrip m_taggingContextMenu;
+		// hvo of segment currently containing the selection
+		private int m_hvoCurSegment;
 		// Helps determine if a rt-click is opening or closing the context menu.
-		long m_ticksWhenContextMenuClosed;
-
+		private long m_ticksWhenContextMenuClosed;
+		private bool m_fInSelChanged;
 		// SelectionChanged updates this list
-
 		// TextTag Factory
 		protected ITextTagFactory m_tagFact;
-
 		// Segment Repository
 		protected ISegmentRepository m_segRepo;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:InterlinTaggingChild"/> class.
-		/// </summary>
+		/// <summary />
 		public InterlinTaggingChild()
 		{
 			InitializeComponent();
@@ -72,8 +68,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		#region SelectionMethods
 
-		bool m_fInSelChanged;
-
 		/// <summary>
 		/// Any selection that involves an IAnalysis should be expanded to complete IAnalysis objects.
 		/// This method also updates a list of selected AnalysisOccurrences.
@@ -93,7 +87,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					return;
 				}
-
 				SelLevInfo[] analysisLevels;
 				SelLevInfo[] endLevels;
 				if (TryGetAnalysisLevelsAndEndLevels(vwselNew, out analysisLevels, out endLevels))
@@ -121,9 +114,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return false;
 			}
-
 			var rgvsliEnd = GetOneEndPointOfSelection(vwselNew, true);
-
 			// analysisLevels[0] contains info about the sequence of Analyses property. We want the corresponding
 			// level in rgvsliEnd to have the same tag but not necessarily the same ihvo.
 			// All the higher levels should be exactly the same. The loop checks this, and if successful
@@ -173,11 +164,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			var hvoSegment = analysisLevels[1].hvo;
 			var ianchor = analysisLevels[0].ihvo;
-
 			// These two lines are in case the user selects "backwards"
 			var first = Math.Min(ianchor, iend);
 			var last = Math.Max(ianchor, iend);
-
 			var selectedWordforms = new List<AnalysisOccurrence>();
 			ISegment seg;
 			try
@@ -188,7 +177,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return selectedWordforms; // "Selection" isn't in a TextSegment.
 			}
-
 			for (var i = first; i <= last; i++)
 			{
 				var point = new AnalysisOccurrence(seg, i);
@@ -198,7 +186,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					selectedWordforms.Add(point);
 				}
 			}
-
 			m_hvoCurSegment = hvoSegment;
 			return selectedWordforms;
 		}
@@ -293,9 +280,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// handle the message to see if the menu item should be enabled
 		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
 		public virtual bool OnDisplayLastBundle(object commandObject, ref UIItemDisplayProperties display)
 		{
 			display.Enabled = Visible;
@@ -334,9 +318,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// handle the message to see if the menu item should be enabled
 		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
 		public virtual bool OnDisplayFirstBundle(object commandObject, ref UIItemDisplayProperties display)
 		{
 			display.Enabled = Visible;
@@ -374,7 +355,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			else
 			{
 				var selTest = GrabMousePtSelectionToTest(e);
-
 				// Could be the user right-clicked on the labels?
 				// If so, activate the base class method
 				int dummy;
@@ -383,9 +363,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					base.OnMouseDown(e);
 					return;
 				}
-
 				// (LT-9415) if the user has right-clicked in a selected occurrence, bring
-				// up context menu for those selected ocurrences.
+				// up context menu for those selected occurrences.
 				// otherwise, bring up the context menu for any newly selected occurrence.
 				if (SelectedWordforms != null && SelectedWordforms.Count > 0)
 				{
@@ -400,7 +379,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						selTest.Install();
 					}
 				}
-
 				// Make a context menu and show it, if I'm not just closing one!
 				// This time test seems to be the only way to find out whether this click closed the last one.
 				if (DateTime.Now.Ticks - m_ticksWhenContextMenuClosed > 50000) // 5ms!
@@ -409,7 +387,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					m_taggingContextMenu.Closed += m_taggingContextMenu_Closed;
 					m_taggingContextMenu.Show(this, e.X, e.Y);
 				}
-			} // end right mouse button handler
+			}
 		}
 
 		void m_taggingContextMenu_Closed(object sender, ToolStripDropDownClosedEventArgs e)
@@ -420,7 +398,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		internal ContextMenuStrip MakeContextMenu()
 		{
 			var menu = new ContextMenuStrip();
-
 			// A little indirection for when we make more menu options later.
 			// If we have not selected any Wordforms, don't put tags in the context menu.
 			if (SelectedWordforms != null && SelectedWordforms.Count > 0)
@@ -444,13 +421,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void AddListToMenu(ToolStrip menu, ICmPossibility tagList)
 		{
-			Debug.Assert(tagList.SubPossibilitiesOS.Count > 0, "There should be sub-possibilities here!");
-
+			Debug.Assert(tagList.SubPossibilitiesOS.Any(), "There should be sub-possibilities here!");
 			// Add the main entry first
 			var tagSubmenu = new DisposableToolStripMenuItem(tagList.Name.BestAnalysisAlternative.Text);
 			menu.Items.Add(tagSubmenu);
-
-			foreach (ICmPossibility poss in tagList.SubPossibilitiesOS)
+			foreach (var poss in tagList.SubPossibilitiesOS)
 			{
 				// Add 'tag' BestDefaultAnalWS Name to menu
 				var tagItem = new TagPossibilityMenuItem(poss);
@@ -471,7 +446,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// If successful, returns the tagging annotation. If unsuccessful, returns null.
 		/// </summary>
 		/// <param name="poss">The tagging possibility item.</param>
-		/// <returns></returns>
 		private ITextTag FindFirstTagOfSpecifiedTypeOnSelection(ICmPossibility poss)
 		{
 			return FindAllTagsReferencingOccurrenceList(SelectedWordforms).FirstOrDefault(textTag => textTag.TagRA == poss);
@@ -524,7 +498,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-
 			var tag = FindFirstTagOfSpecifiedTypeOnSelection(poss);
 			if (tag == null)
 			{
@@ -546,7 +519,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return null;
 			}
-
 			// TODO: Make sure SelectedWordforms only contains wordforms! No punctuation, please!!!
 			// We'll try doing without passing the list of selected words in here
 			// Just get it from SelectedWordforms.
@@ -563,12 +535,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					objsToDelete.Add(overlappingTag);
 				}
 			}
-
 			// Create and add the new one
 			var ttag = m_tagFact.Create();
 			RootStText.TagsOC.Add(ttag);
 			ttag.TagRA = tagPoss;
-
 			// Enhance Gordon: If we allow non-contiguous selection eventually this won't work.
 			var point1 = SelectedWordforms[0];
 			var point2 = SelectedWordforms[SelectedWordforms.Count - 1];
@@ -657,7 +627,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return results;
 			}
-
 			var occurenceSet = new HashSet<AnalysisOccurrence>(occurrences); ;
 			// Collect all segments referenced by these words
 			var segsUsed = new HashSet<ISegment>(occurenceSet.Select(o => o.Segment));
@@ -665,7 +634,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// Enhance: This won't work for multi-segment tags where a tag can reference 3+ segments.
 			// but see note on foreach below.
 			var tagsRefSegs = new HashSet<ITextTag>(tags.Where(ttag => segsUsed.Contains(ttag.BeginSegmentRA) || segsUsed.Contains(ttag.EndSegmentRA)));
-
 			foreach (var ttag in tagsRefSegs) // A slower, but more complete form can replace tagsRefSegs with tags here.
 			{
 				if (occurenceSet.Intersect(ttag.GetOccurrences()).Any())
@@ -673,7 +641,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					results.Add(ttag);
 				}
 			}
-
 			return results;
 		}
 
@@ -687,10 +654,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		private sealed class TagPossibilityMenuItem : DisposableToolStripMenuItem
 		{
-			/// <summary>
-			/// Initializes a new instance of the <see cref="TagPossibilityMenuItem"/> class
-			/// used for context (right-click) menus.
-			/// </summary>
+			/// <summary />
 			public TagPossibilityMenuItem(ICmPossibility poss)
 			{
 				Possibility = poss;

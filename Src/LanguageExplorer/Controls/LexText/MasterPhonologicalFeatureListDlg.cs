@@ -9,9 +9,7 @@ using LanguageExplorer.MGA;
 
 namespace LanguageExplorer.Controls.LexText
 {
-	/// <summary>
-	/// Summary description for MasterPhonologicalFeatureListDlg.
-	/// </summary>
+	/// <summary />
 	internal class MasterPhonologicalFeatureListDlg : MasterListDlg
 	{
 		public MasterPhonologicalFeatureListDlg()

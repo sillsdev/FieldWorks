@@ -13,9 +13,7 @@ namespace SIL.FieldWorks
 	[Serializable]
 	public class FwRestoreProjectSettings
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="FwRestoreProjectSettings"/> class.
-		/// </summary>
+		/// <summary />
 		/// <param name="settings">The restore settings (as saved by the dialog).</param>
 		internal FwRestoreProjectSettings(RestoreProjectSettings settings)
 		{

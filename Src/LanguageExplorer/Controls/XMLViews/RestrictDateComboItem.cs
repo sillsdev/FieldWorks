@@ -18,9 +18,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private IHelpTopicProvider m_helpTopicProvider;
 		bool m_fGenDate;
 
-		/// <summary>
-		/// Initializes a new instance of the class.
-		/// </summary>
+		/// <summary />
 		public RestrictDateComboItem(ITsString tssName, IHelpTopicProvider helpTopicProvider, FilterSortItem fsi, int ws, bool fGenDate, FwComboBox combo) : base(tssName, null, fsi)
 		{
 			m_helpTopicProvider = helpTopicProvider;

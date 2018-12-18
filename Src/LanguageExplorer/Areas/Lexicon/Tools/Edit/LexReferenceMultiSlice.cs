@@ -1,36 +1,34 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Windows.Forms;
-using System.Diagnostics;
-using System.Drawing;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
+using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel;
-using SIL.LCModel.Infrastructure;
-using SIL.LCModel.Utils;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.LcmUi;
 using LanguageExplorer.LcmUi.Dialogs;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.FwUtils.MessageBoxEx;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
 using SIL.Xml;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
-	/// <summary>
-	/// Summary description for LexReferenceMultiSlice.
-	/// </summary>
+	/// <summary />
 	internal sealed class LexReferenceMultiSlice : Slice
 	{
 		private List<ILexReference> m_refs;
@@ -62,9 +60,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </remarks>
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -119,8 +118,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					Debug.Fail("LexReferenceSlice could not interpret results from " + fieldName);
 				}
 			}
-			var flid = Cache.MetaDataCacheAccessor.GetFieldId2(MyCmObject.ClassID, fieldName, true);
-			ContainingDataTree.MonitorProp(MyCmObject.Hvo, flid);
+			ContainingDataTree.MonitorProp(MyCmObject.Hvo, Cache.MetaDataCacheAccessor.GetFieldId2(MyCmObject.ClassID, fieldName, true));
 		}
 
 		/// <summary />
@@ -141,12 +139,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				Expansion = TreeItemState.ktisCollapsedEmpty;
 				return;
 			}
-
 			for (var i = 0; i < m_refs.Count; i++)
 			{
 				GenerateChildNode(i, node, caller, indent, ref insPos, path, reuseMap);
 			}
-
 			Expansion = TreeItemState.ktisExpanded;
 		}
 
@@ -177,7 +173,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						}
 					}
 					break;
-
 				case LexRefTypeTags.MappingTypes.kmtSenseTree:
 				case LexRefTypeTags.MappingTypes.kmtEntryTree:
 				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
@@ -292,7 +287,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						editorSlice = "lexreferencetreeroot";
 					}
 					break;
-
 			}
 
 			node.ReplaceNodes(XElement.Parse($"<slice label=\"{sLabel}\" field=\"Targets\" editor=\"{editorSlice}\" mappingType=\"{lrt.MappingType}\" hvoDisplayParent=\"{MyCmObject.Hvo}\" menu=\"{sMenu}\"><deParams displayProperty=\"HeadWord\"/></slice>"));
@@ -456,12 +450,12 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		private void AddFinalContextMenuStripOptions(ContextMenuStrip contextMenuStrip)
 		{
 			ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
-			contextMenuStrip.Items.Add(new ToolStripMenuItem(LanguageExplorerResources.ksCreateLexRefType_, null, new EventHandler(this.HandleMoreMenuItem)));
+			contextMenuStrip.Items.Add(new ToolStripMenuItem(LanguageExplorerResources.ksCreateLexRefType_, null, HandleMoreMenuItem));
 
-			ToolStripDropDownMenu tsdropdown = new ToolStripDropDownMenu();
-			ToolStripMenuItem itemAlways = new ToolStripMenuItem(LanguageExplorerResources.ksAlwaysVisible, null, new EventHandler(this.OnShowFieldAlwaysVisible1));
-			ToolStripMenuItem itemIfData = new ToolStripMenuItem(LanguageExplorerResources.ksHiddenUnlessData, null, new EventHandler(this.OnShowFieldIfData1));
-			ToolStripMenuItem itemHidden = new ToolStripMenuItem(LanguageExplorerResources.ksNormallyHidden, null, new EventHandler(this.OnShowFieldNormallyHidden1));
+			var tsdropdown = new ToolStripDropDownMenu();
+			var itemAlways = new ToolStripMenuItem(LanguageExplorerResources.ksAlwaysVisible, null, OnShowFieldAlwaysVisible1);
+			var itemIfData = new ToolStripMenuItem(LanguageExplorerResources.ksHiddenUnlessData, null, OnShowFieldIfData1);
+			var itemHidden = new ToolStripMenuItem(LanguageExplorerResources.ksNormallyHidden, null, OnShowFieldNormallyHidden1);
 			itemAlways.CheckOnClick = true;
 			itemIfData.CheckOnClick = true;
 			itemHidden.CheckOnClick = true;
@@ -537,7 +531,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// <summary />
 		public void HandleCreateMenuItem(object sender, EventArgs ea)
 		{
-			var tsItem = sender as ToolStripItem;
+			var tsItem = (ToolStripItem)sender;
 			var itemIndex = (tsItem.Owner as ContextMenuStrip).Items.IndexOf(tsItem);
 			var lrt = m_refTypesAvailable[itemIndex];
 			var fReverseRef = m_rgfReversedRefType[itemIndex];
@@ -551,7 +545,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				first = GetRootObject(lrt);
 				if (first == null)
 				{
-					return;		// the user cancelled out of the operation.
+					return;     // the user cancelled out of the operation.
 				}
 				if (lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseTree ||
 					lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtEntryTree ||
@@ -576,7 +570,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				first = GetChildObject(lrt);
 				if (first == null)
 				{
-					return;		// the user cancelled out of the operation.
+					return;     // the user cancelled out of the operation.
 				}
 			}
 
@@ -681,7 +675,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 						((LinkEntryOrSenseDlg)dlg).SelectSensesOnly = false;
 						sTitle = string.Format(LanguageExplorerResources.ksIdentifyXLexEntryOrSense, lrt.Name.BestAnalysisAlternative.Text);
 						break;
-
 					case LexRefTypeTags.MappingTypes.kmtSenseCollection:
 					case LexRefTypeTags.MappingTypes.kmtSensePair:
 					case LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair:
@@ -693,7 +686,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 						((LinkEntryOrSenseDlg)dlg).SelectSensesOnly = true;
 						sTitle = string.Format(LanguageExplorerResources.ksIdentifyXSense, lrt.Name.BestAnalysisAlternative.Text);
 						break;
-
 					case LexRefTypeTags.MappingTypes.kmtEntryCollection:
 					case LexRefTypeTags.MappingTypes.kmtEntryPair:
 					case LexRefTypeTags.MappingTypes.kmtEntryAsymmetricPair:
@@ -704,7 +696,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 						dlg = new EntryGoDlg();
 						sTitle = string.Format(LanguageExplorerResources.ksIdentifyXLexEntry, lrt.Name.BestAnalysisAlternative.Text);
 						break;
-
 					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseCollection:
 					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseSequence:
 					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
@@ -723,7 +714,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 					m_title = sTitle,
 					m_btnText = LanguageExplorerResources.ks_Add
 				};
-
 				// Don't display the current entry in the list of matching entries.  See LT-2611.
 				var objEntry = MyCmObject;
 				while (objEntry.ClassID == LexSenseTags.kClassId)
@@ -780,7 +770,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// </summary>
 		/// <remarks> I (JH) don't know why this was written to take the index of the slice.
 		/// It's just as easy for this class to find its own index.</remarks>
-		/// <param name="iSlice"></param>
 		public override void Expand(int iSlice)
 		{
 			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>(FwUtils.window), ContainingDataTree))
@@ -906,7 +895,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 						dlg.SetDlgInfo(ui, Cache, PropertyTable);
 						break;
 				}
-
 				if (DialogResult.Yes == dlg.ShowDialog(mainWindow))
 				{
 					UndoableUnitOfWorkHelper.Do(LexiconResources.ksUndoDeleteRelation, LexiconResources.ksRedoDeleteRelation, MyCmObject, () =>
@@ -961,9 +949,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// <summary />
 		public static SimpleListChooser MakeSenseChooser(LcmCache cache, IHelpTopicProvider helpTopicProvider)
 		{
-			var senses = cache.ServiceLocator.GetInstance<ILexSenseRepository>().AllInstances();
-			var labels = ObjectLabel.CreateObjectLabels(cache, senses, "LongNameTSS");
-			var chooser = new SimpleListChooser(null, labels, LanguageExplorerResources.ksSenses, helpTopicProvider)
+			var chooser = new SimpleListChooser(null, ObjectLabel.CreateObjectLabels(cache, cache.ServiceLocator.GetInstance<ILexSenseRepository>().AllInstances(), "LongNameTSS"), LanguageExplorerResources.ksSenses, helpTopicProvider)
 			{
 				Cache = cache
 			};

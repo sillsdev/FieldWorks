@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using SIL.LCModel;
 using SIL.LCModel.Application;
-using HvoFlidKey=SIL.LCModel.HvoFlidKey;
+using HvoFlidKey = SIL.LCModel.HvoFlidKey;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -15,7 +15,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	{
 		private const int ktagMostApprovedAnalysis = -64; // arbitrary non-valid flid to use for storing Guesses
 		private const int ktagOpinionAgent = -66; // arbitrary non-valid flid to use for storing opinion agents
-
 		private readonly IDictionary<HvoFlidKey, int> m_guessCache = new Dictionary<HvoFlidKey, int>();
 		private readonly IDictionary<HvoFlidKey, int> m_humanApproved = new Dictionary<HvoFlidKey, int>();
 

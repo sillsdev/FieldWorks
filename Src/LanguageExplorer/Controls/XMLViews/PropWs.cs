@@ -7,9 +7,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// <summary />
 	public class PropWs
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="PropWs"/> class.
-		/// </summary>
+		/// <summary />
 		public PropWs(int xflid, int xws)
 		{
 			Flid = xflid;

@@ -27,9 +27,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public override int Flid => m_flid;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="FieldSlice"/> class.
-		/// </summary>
+		/// <summary />
 		protected FieldSlice(Control control)
 			: base(control)
 		{

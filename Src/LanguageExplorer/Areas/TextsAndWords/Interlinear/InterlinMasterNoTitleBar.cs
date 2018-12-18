@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,7 +14,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// </summary>
 	internal class InterlinMasterNoTitleBar : InterlinMaster
 	{
-		private System.ComponentModel.IContainer components = null;
+		private System.ComponentModel.IContainer components;
 
 		internal InterlinMasterNoTitleBar()
 		{
@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		internal InterlinMasterNoTitleBar(XElement configurationParametersElement, ISharedEventHandlers sharedEventHandlers, LcmCache cache, IRecordList recordList, ToolStripMenuItem fileMenu, ToolStripMenuItem printMenu)
-			:base(configurationParametersElement, sharedEventHandlers, cache, recordList, fileMenu, printMenu, false)
+			: base(configurationParametersElement, sharedEventHandlers, cache, recordList, fileMenu, printMenu, false)
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -33,20 +33,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
-			if( disposing )
+			if (disposing)
 			{
 				components?.Dispose();
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#region Designer generated code
@@ -66,7 +66,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected override void AddPaneBar()
 		{
 			base.AddPaneBar();
-
 			var removedControls = false;
 			SuspendLayout();
 			if (m_informationBar != null)
@@ -76,7 +75,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				m_informationBar = null;
 				removedControls = true;
 			}
-
 			if (TitleContentsPane != null)
 			{
 				Controls.Remove(TitleContentsPane);

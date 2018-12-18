@@ -1,10 +1,10 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2011-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using LanguageExplorer.Controls.XMLViews;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -31,7 +31,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				m_publisher.Publish("AddTexts", this);
 				m_publisher.Publish("ProgressReset", this);
 			}
-
 			return false; // Whatever the user did, we don't currently count it as changing the filter.
 		}
 	}

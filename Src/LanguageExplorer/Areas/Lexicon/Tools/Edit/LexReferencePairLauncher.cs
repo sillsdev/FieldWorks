@@ -1,20 +1,18 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
-using System.Windows.Forms;
 using System.Diagnostics;
-using SIL.LCModel;
+using System.Windows.Forms;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.LexText;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
-	/// <summary>
-	/// Summary description for LexReferencePairLauncher.
-	/// </summary>
+	/// <summary />
 	internal sealed class LexReferencePairLauncher : AtomicReferenceLauncher
 	{
 		/// <summary />
@@ -55,10 +53,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				{
 					index = 1;
 				}
-#if WANTPORTMULTI
-				(lr as ILexReference).UpdateTargetTimestamps();
-				(co as ICmObject).UpdateTimestampForVirtualChange();
-#endif
 				// LT-13729: Remove old and then Insert new might cause the deletion of the lr, then the insert fails.
 				lr.TargetsRS.Replace(index, (index < lr.TargetsRS.Count) ? 1 : 0, new List<ICmObject>() { value });
 			}
@@ -108,8 +102,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					wp.m_title = string.Format(LexiconResources.ksIdentifyXEntry, lrt.Name.BestAnalysisAlternative.Text);
 					wp.m_btnText = LanguageExplorerResources.ks_Add;
 				}
-				else //Otherwise we are Replacing the item
+				else
 				{
+					//Otherwise we are Replacing the item
 					wp.m_title = string.Format(LexiconResources.ksReplaceXEntry);
 					wp.m_btnText = LexiconResources.ks_Replace;
 				}
@@ -139,18 +134,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary />
 		public override void AddItem(ICmObject obj)
 		{
-			string undoStr, redoStr;
-			if (Target == null)
-			{
-				undoStr = LanguageExplorerResources.ksUndoAddRef;
-				redoStr = LanguageExplorerResources.ksRedoAddRef;
-			}
-			else
-			{
-				undoStr = LexiconResources.ksUndoReplaceRef;
-				redoStr = LexiconResources.ksRedoReplaceRef;
-			}
-			AddItem(obj, undoStr, redoStr);
+			AddItem(obj, Target == null ? LanguageExplorerResources.ksUndoAddRef : LexiconResources.ksUndoReplaceRef, Target == null ? LanguageExplorerResources.ksRedoAddRef : LexiconResources.ksRedoReplaceRef);
 		}
 
 		#region Component Designer generated code

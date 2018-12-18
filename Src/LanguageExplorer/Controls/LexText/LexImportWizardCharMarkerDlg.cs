@@ -16,9 +16,7 @@ using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Controls.LexText
 {
-	/// <summary>
-	/// Summary description for LexImportWizardCharMarkerDlg.
-	/// </summary>
+	/// <summary />
 	public class LexImportWizardCharMarkerDlg : Form
 	{
 		private Label lblBeginMarker;
@@ -75,9 +73,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LexImportWizardCharMarkerDlg"/> class.
-		/// </summary>
+		/// <summary />
 		public LexImportWizardCharMarkerDlg(IHelpTopicProvider helpTopicProvider, IApp app, IVwStylesheet stylesheet) : this()
 		{
 			m_helpTopicProvider = helpTopicProvider;

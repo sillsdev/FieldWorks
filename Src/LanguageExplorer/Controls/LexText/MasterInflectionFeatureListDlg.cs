@@ -11,9 +11,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Controls.LexText
 {
-	/// <summary>
-	/// Summary description for MasterInflectionFeatureListDlg.
-	/// </summary>
+	/// <summary />
 	internal class MasterInflectionFeatureListDlg : MasterListDlg
 	{
 

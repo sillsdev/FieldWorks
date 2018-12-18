@@ -15,9 +15,7 @@ namespace SIL.FieldWorks
 		private HelpProvider m_helpProvider;
 		private string m_helpTopic = "khtpMoveProjectDlgNewLocation";
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:MoveProjectsDlg"/> class.
-		/// </summary>
+		/// <summary />
 		public MoveProjectsDlg(IHelpTopicProvider helpTopicProvider)
 		{
 			InitializeComponent();

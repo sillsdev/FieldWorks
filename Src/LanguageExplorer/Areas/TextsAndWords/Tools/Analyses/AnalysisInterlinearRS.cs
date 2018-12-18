@@ -1,23 +1,23 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Xml.Linq;
-using System.Windows.Forms;
 using System.Diagnostics;
 using System.Drawing;
+using System.Windows.Forms;
+using System.Xml.Linq;
+using LanguageExplorer.Areas.TextsAndWords.Interlinear;
+using LanguageExplorer.Controls.DetailControls;
+using SIL.Code;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.DomainServices;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.ViewsInterfaces;
-using LanguageExplorer.Controls.DetailControls;
-using LanguageExplorer.Areas.TextsAndWords.Interlinear;
-using SIL.Code;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.Xml;
 using Rect = SIL.FieldWorks.Common.ViewsInterfaces.Rect;
 
@@ -28,22 +28,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 	/// </summary>
 	internal sealed class AnalysisInterlinearRs : RootSite, INotifyControlInCurrentSlice
 	{
-		#region Data members
-
 		private InterlinVc m_vc;
 		private IWfiAnalysis m_wfiAnalysis;
 		private ISharedEventHandlers _sharedEventHandlers;
 		private XElement m_configurationNode;
 		private OneAnalysisSandbox m_oneAnalSandbox;
 		private Rect m_rcPrimary;
-
-		#endregion Data members
-
-		#region Properties
+		private bool m_fInSizeChanged;
 
 		private bool IsEditable => XmlUtils.GetBooleanAttributeValue(m_configurationNode.Element("deParams"), "editable");
-
-		#endregion Properties
 
 		#region Construction
 
@@ -71,9 +64,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -121,22 +115,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			var isEditable = IsEditable;
 			m_vc.ShowMorphBundles = true;
 			m_vc.ShowDefaultSense = true;
-			if (m_wfiAnalysis.GetAgentOpinion(m_cache.LanguageProject.DefaultParserAgent) == Opinions.approves
-				&& m_wfiAnalysis.GetAgentOpinion(m_cache.LanguageProject.DefaultUserAgent) != Opinions.approves)
+			if (m_wfiAnalysis.GetAgentOpinion(m_cache.LanguageProject.DefaultParserAgent) == Opinions.approves && m_wfiAnalysis.GetAgentOpinion(m_cache.LanguageProject.DefaultUserAgent) != Opinions.approves)
 			{
 				m_vc.UsingGuess = true;
 			}
-
 			// JohnT: kwsVernInParagraph is rather weird here, where we don't have a paragraph, but it allows the
 			// VC to deduce the WS of the wordform, not from the paragraph, but from the best vern WS of the wordform itself.
-			if (isEditable)
-			{
-				m_vc.LineChoices = new EditableInterlinLineChoices(m_cache.LanguageProject, WritingSystemServices.kwsVernInParagraph, m_cache.DefaultAnalWs);
-			}
-			else
-			{
-				m_vc.LineChoices = new InterlinLineChoices(m_cache.LanguageProject, WritingSystemServices.kwsVernInParagraph, m_cache.DefaultAnalWs);
-			}
+			m_vc.LineChoices = isEditable ? new EditableInterlinLineChoices(m_cache.LanguageProject, WritingSystemServices.kwsVernInParagraph, m_cache.DefaultAnalWs) : new InterlinLineChoices(m_cache.LanguageProject, WritingSystemServices.kwsVernInParagraph, m_cache.DefaultAnalWs);
 			m_vc.LineChoices.Add(InterlinLineChoices.kflidMorphemes); // 1
 			m_vc.LineChoices.Add(InterlinLineChoices.kflidLexEntries); //2
 			m_vc.LineChoices.Add(InterlinLineChoices.kflidLexGloss); //3
@@ -151,7 +136,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			{
 				return;
 			}
-
 			m_oneAnalSandbox = new OneAnalysisSandbox(_sharedEventHandlers, m_cache, StyleSheet, m_vc.LineChoices, m_wfiAnalysis.Hvo)
 			{
 				Visible = false
@@ -160,7 +144,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			Controls.Add(m_oneAnalSandbox);
 			if (m_oneAnalSandbox.RootBox == null)
 			{
-				m_oneAnalSandbox.MakeRoot();	// adding sandbox to Controls doesn't make rootbox.
+				m_oneAnalSandbox.MakeRoot();    // adding sandbox to Controls doesn't make rootbox.
 			}
 			InitSandbox();
 			m_oneAnalSandbox.SizeChanged += (HandleSandboxSizeChanged);
@@ -194,7 +178,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			{
 				return; // in any case we don't want selections in the interlinear.
 			}
-
 			if (slice.ContainingDataTree.CurrentSlice != slice)
 			{
 				slice.ContainingDataTree.CurrentSlice = slice;
@@ -245,20 +228,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		}
 
 		/// <summary>
-		/// Have the sandbox come and go, as apropriate.
+		/// Have the sandbox come and go, as appropriate.
 		/// </summary>
 		public bool SliceIsCurrent
 		{
 			set
 			{
 				m_fSliceIsCurrent = value;
-
 				if (value)
 				{
 					TurnOnSandbox();
 					return;
 				}
-
 				if (!IsEditable)
 				{
 					return;
@@ -273,19 +254,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		{
 			if (IsDisposed)
 			{
-				return;
+				throw new InvalidOperationException("Thou shalt not call methods after I am disposed!");
 			}
-
 			if (!IsEditable)
 			{
 				return;
 			}
-
 			if (!CanSaveAnalysis())
 			{
 				return;
 			}
-
 			// Collect up the old MSAs, since they need to go away, if they are unused afterwards.
 			var msaSet = new HashSet<IMoMorphSynAnalysis>();
 			m_wfiAnalysis.CollectReferencedMsas(msaSet);
@@ -326,7 +304,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			SetPadding();
 		}
 
-		private bool m_fInSizeChanged;
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			if (m_fInSizeChanged)
@@ -367,7 +344,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		private void InitSandbox()
 		{
 			SetSandboxSize();
-
 			m_vc.LeftPadding = 0;
 			RootBox.Reconstruct();
 			using (new HoldGraphics(this))
@@ -376,11 +352,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				Rectangle rcDstRoot;
 				GetCoordRects(out rcSrcRoot, out rcDstRoot);
 				var rgvsli = new SelLevInfo[1];
-				//rgvsli[1].ihvo = 0; // first morpheme bundle
-				//rgvsli[1].tag = (int)WfiAnalysis.WfiAnalysisTags.kflidMorphBundles;
 				rgvsli[0].ihvo = 0;
 				rgvsli[0].tag = m_cache.MetaDataCacheAccessor.GetFieldId2(CmObjectTags.kClassId, "Self", false);
-				var sel = RootBox.MakeTextSelInObj(0, rgvsli.Length, rgvsli, 0, null, true, false,false, false, false);
+				var sel = RootBox.MakeTextSelInObj(0, rgvsli.Length, rgvsli, 0, null, true, false, false, false, false);
 				if (sel == null)
 				{
 					Debug.WriteLine("Could not make selection in InitSandbox");
@@ -400,9 +374,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			{
 				return;
 			}
-
 			m_oneAnalSandbox.Left = m_vc.RightToLeft ? 0 : m_rcPrimary.left;
-
 			// This prevents it from overwriting the labels in the pathological case that all
 			// morphemes wrap onto another line.
 			m_oneAnalSandbox.Top = m_rcPrimary.top;
@@ -414,7 +386,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			{
 				return;
 			}
-
 			int dpiX;
 			using (var g = CreateGraphics())
 			{
@@ -440,15 +411,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		}
 
 		// Set the VC size to match the sandbox. Return true if it changed.
-		private bool SetSandboxSizeForVc()
+		private void SetSandboxSizeForVc()
 		{
 			if (m_vc == null || m_oneAnalSandbox == null)
 			{
-				return false;
+				return;
 			}
-
 			m_oneAnalSandbox.PerformLayout();
-			return true;
 		}
 
 		#endregion Other methods

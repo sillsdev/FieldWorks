@@ -1,10 +1,10 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.LCModel;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using LanguageExplorer.Controls.DetailControls;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
@@ -18,7 +18,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		/// <summary />
 		public LexReferenceTreeRootVc(LcmCache cache, int hvo, int flid, string displayNameProperty)
-			: base (cache, flid, displayNameProperty)
+			: base(cache, flid, displayNameProperty)
 		{
 			m_hvoOwner = hvo;
 		}
@@ -34,7 +34,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary />
 		protected override void DisplayObjectProperty(IVwEnv vwenv, int hvo)
 		{
-			vwenv.NoteDependency(new int[] {m_hvoOwner}, new int[] {m_flid}, 1);
+			vwenv.NoteDependency(new[] { m_hvoOwner }, new[] { m_flid }, 1);
 			vwenv.AddObj(hvo, this, AtomicReferenceView.kFragObjName);
 		}
 	}

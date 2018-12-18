@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -47,16 +47,11 @@ namespace LanguageExplorer.Areas
 		// Set to true when sufficiently initialized that it makes sense to persist changes to split position.
 		private bool m_fOkToPersistSplit;
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
+		/// <summary />
 		internal MultiPane()
 		{
 			ResetSplitterEventHandler(false); // Get rid of the handler until we have a parent.
-
 			m_parentSizeHint.Width = m_parentSizeHint.Height = 0;
-
-			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
 		}
 
@@ -71,19 +66,15 @@ namespace LanguageExplorer.Areas
 			m_defaultFocusControl = parameters.DefaultFocusControl ?? string.Empty;
 			m_persistContext = parameters.PersistContext;
 			m_label = parameters.Label;
-
 			Orientation = parameters.Orientation;
 			Dock = DockStyle.Fill;
 			SplitterWidth = 5;
-
 			FirstControl = parameters.FirstControlParameters.Control;
 			FirstLabel = parameters.FirstControlParameters.Label;
 			FirstControl.Dock = DockStyle.Fill;
-
 			SecondControl = parameters.SecondControlParameters.Control;
 			SecondLabel = parameters.SecondControlParameters.Label;
 			SecondControl.Dock = DockStyle.Fill;
-
 			// Has to be done later for clients that know about "m_defaultFocusControl".
 			SecondCollapseZone = parameters.SecondCollapseZone;
 		}
@@ -94,11 +85,12 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -141,12 +133,7 @@ namespace LanguageExplorer.Areas
 				{
 					name = m_label;
 				}
-				if (string.IsNullOrEmpty(name))
-				{
-					name = "MultiPane";
-				}
-
-				return name;
+				return string.IsNullOrEmpty(name) ? "MultiPane" : name;
 			}
 		}
 
@@ -174,7 +161,6 @@ namespace LanguageExplorer.Areas
 			{
 				secondControlReady = ((IMainContentControl)SecondControl).PrepareToGoAway();
 			}
-
 			return firstControlReady && secondControlReady;
 		}
 
@@ -213,7 +199,6 @@ namespace LanguageExplorer.Areas
 				Debug.Assert(otherResult != null, "otherResult is unexpectedly null.");
 				result = otherResult;
 			}
-
 			return result;
 		}
 
@@ -244,13 +229,12 @@ namespace LanguageExplorer.Areas
 		/// typically docked in some parent, it will be big enough not to interfere with
 		/// the splitter position set in its Init method.
 		/// </summary>
-		protected override Size DefaultSize => new Size(2000,2000);
+		protected override Size DefaultSize => new Size(2000, 2000);
 
 		/// <summary />
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
-
 			if (Parent == null)
 			{
 				return;
@@ -268,9 +252,7 @@ namespace LanguageExplorer.Areas
 			{
 				return;
 			}
-
 			base.OnSplitterMoved(sender, e);
-
 			// Persist new position.
 			if (m_fOkToPersistSplit)
 			{
@@ -291,7 +273,6 @@ namespace LanguageExplorer.Areas
 		{
 			var sizeOfSharedDimension = Orientation == Orientation.Vertical ? Width : Height;
 			int defaultLocation;
-
 			// Find 'total', which will be the height or width,
 			// depending on the orientation of the multi pane.
 			var proportional = m_defaultFixedPaneSizePoints.EndsWith("%");
@@ -301,7 +282,6 @@ namespace LanguageExplorer.Areas
 				size = m_parentSizeHint;
 			}
 			var total = Orientation == Orientation.Vertical ? size.Width : size.Height;
-
 			if (proportional)
 			{
 				var percentStr = m_defaultFixedPaneSizePoints.Substring(0, m_defaultFixedPaneSizePoints.Length - 1);
@@ -314,7 +294,6 @@ namespace LanguageExplorer.Areas
 			{
 				defaultLocation = int.Parse(m_defaultFixedPaneSizePoints);
 			}
-
 			if (PropertyTable != null)
 			{
 				// NB GetIntProperty RECORDS the default as if it had really been set by the user.
@@ -323,12 +302,10 @@ namespace LanguageExplorer.Areas
 				// So, first see whether there is a value in the property table at all.
 				defaultLocation = PropertyTable.GetValue(SplitterDistancePropertyName, defaultLocation);
 			}
-
 			if (defaultLocation < kCollapsedSize)
 			{
 				defaultLocation = kCollapsedSize;
 			}
-
 			if (SplitterDistance == defaultLocation)
 			{
 				return;
@@ -357,7 +334,6 @@ namespace LanguageExplorer.Areas
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			base.OnHandleCreated(e);
-
 			SetFocusInDefaultControl();
 		}
 
@@ -372,16 +348,14 @@ namespace LanguageExplorer.Areas
 				return;
 			}
 			var defaultFocusControl = (FwUtils.FindControl(FirstControl, m_defaultFocusControl) ?? FwUtils.FindControl(SecondControl, m_defaultFocusControl)) as IFocusablePanePortion;
-			Debug.Assert(defaultFocusControl != null,
-				"Failed to find focusable subcontrol.",
-				"This MultiPane was configured to focus {0} as a default control. But it either was not found or was not an IFocuablePanePortion",
-				m_defaultFocusControl);
+			Debug.Assert(defaultFocusControl != null, "Failed to find focusable subcontrol.",
+				"This MultiPane was configured to focus {0} as a default control. But it either was not found or was not an IFocuablePanePortion", m_defaultFocusControl);
 			// LT-14222...can't do BeginInvoke until our handle is created...we attempt this multiple times since it is hard
 			// to find the right time to do it. If we can't do it yet hope we can do it later.
 			if (defaultFocusControl != null && IsHandleCreated)
 			{
 				defaultFocusControl.IsFocusedPane = true; // Lets it know it can do any special behavior (e.g., DataPane) when it is the focused child.
-				BeginInvoke((MethodInvoker) (() => defaultFocusControl.Focus()));
+				BeginInvoke((MethodInvoker)(() => defaultFocusControl.Focus()));
 			}
 		}
 

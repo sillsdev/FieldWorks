@@ -11,14 +11,10 @@ using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-	/// <summary>
-	/// Summary description for DateSlice.
-	/// </summary>
+	/// <summary />
 	internal class DateSlice : FieldSlice, IVwNotifyChange
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="DateSlice"/> class.
-		/// </summary>
+		/// <summary />
 		public DateSlice(LcmCache cache, ICmObject obj, int flid)
 			: base(new RichTextBox(), cache, obj, flid)
 		{

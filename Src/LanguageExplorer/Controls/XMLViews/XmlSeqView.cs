@@ -131,12 +131,24 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public event FwSelectionChangedEventHandler SelectionChangedEvent;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="XmlSeqView"/> class.
-		/// </summary>
+		/// <summary />
 		public XmlSeqView() : base(null)
 		{
-			// TODO: Add any initialization after the InitForm call
+		}
+
+		/// <summary />
+		public XmlSeqView(LcmCache cache, int hvoRoot, int flid, XElement configurationParametersElement, ISilDataAccessManaged sda, IFlexApp app, ICmPossibility publication)
+			: base(null)
+		{
+			m_app = app;
+			var useSda = sda;
+			var decoratorSpec = XmlUtils.FindElement(configurationParametersElement, "decoratorClass");
+			if (decoratorSpec != null)
+			{
+				// For example, this may create a DictionaryPublicationDecorator.
+				useSda = (ISilDataAccessManaged)DynamicLoader.CreateObject(decoratorSpec, cache, sda, flid, publication);
+			}
+			InitXmlViewRootSpec(hvoRoot, flid, configurationParametersElement, useSda);
 		}
 
 		/// <summary>
@@ -157,23 +169,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			// Don't crash if we don't have any view content yet.  See LT-7244.
 			Vc?.ResetTables(sLayoutName);
 			RootBox?.Reconstruct();
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="XmlSeqView"/> class.
-		/// </summary>
-		public XmlSeqView(LcmCache cache, int hvoRoot, int flid, XElement configurationParametersElement, ISilDataAccessManaged sda, IFlexApp app, ICmPossibility publication)
-			: base(null)
-		{
-			m_app = app;
-			var useSda = sda;
-			var decoratorSpec = XmlUtils.FindElement(configurationParametersElement, "decoratorClass");
-			if (decoratorSpec != null)
-			{
-				// For example, this may create a DictionaryPublicationDecorator.
-				useSda = (ISilDataAccessManaged)DynamicLoader.CreateObject(decoratorSpec, cache, sda, flid, publication);
-			}
-			InitXmlViewRootSpec(hvoRoot, flid, configurationParametersElement, useSda);
 		}
 
 		/// <summary>

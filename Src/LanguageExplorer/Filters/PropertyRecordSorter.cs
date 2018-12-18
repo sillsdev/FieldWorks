@@ -21,17 +21,13 @@ namespace LanguageExplorer.Filters
 
 		private LcmCache m_cache;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:PropertyRecordSorter"/> class.
-		/// </summary>
+		/// <summary />
 		public PropertyRecordSorter(string propertyName)
 		{
 			Init(propertyName);
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:PropertyRecordSorter"/> class.
-		/// </summary>
+		/// <summary />
 		public PropertyRecordSorter()
 		{
 		}

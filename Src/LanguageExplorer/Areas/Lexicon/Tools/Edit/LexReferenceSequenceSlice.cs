@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,9 +12,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	/// <summary />
 	internal sealed class LexReferenceSequenceSlice : CustomReferenceVectorSlice, ILexReferenceSlice
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LexReferenceSequenceSlice"/> class.
-		/// </summary>
+		/// <summary />
 		public LexReferenceSequenceSlice()
 			: base(new LexReferenceSequenceLauncher())
 		{
@@ -30,8 +28,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			base.FinishInit();
 
 			var hvoDisplayParent = XmlUtils.GetMandatoryIntegerAttributeValue(ConfigurationNode, "hvoDisplayParent");
-			((LexReferenceSequenceLauncher)Control).DisplayParent = hvoDisplayParent != 0
-				? Cache.ServiceLocator.GetObject(hvoDisplayParent) : null;
+			((LexReferenceSequenceLauncher)Control).DisplayParent = hvoDisplayParent != 0 ? Cache.ServiceLocator.GetObject(hvoDisplayParent) : null;
 		}
 
 		#region ILexReferenceSlice Members

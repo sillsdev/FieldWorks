@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,7 +7,7 @@ using System.Windows.Forms;
 namespace LanguageExplorer.Areas
 {
 	/// <summary>
-	/// Class that contains the control and related inforamtion used to set up a main (left/top or right/bottom) control in a splitter control
+	/// Class that contains the control and related information used to set up a main (left/top or right/bottom) control in a splitter control
 	/// </summary>
 	internal class SplitterChildControlParameters
 	{

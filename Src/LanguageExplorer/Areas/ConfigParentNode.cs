@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2018 SIL International
+// Copyright (c) 2011-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -20,9 +20,7 @@ namespace LanguageExplorer.Areas
 		///</summary>
 		public event ConfigureNowClickedHandler ConfigureNowClicked;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ConfigParentNode"/> class.
-		/// </summary>
+		/// <summary />
 		public ConfigParentNode()
 		{
 			InitializeComponent();
@@ -31,12 +29,10 @@ namespace LanguageExplorer.Areas
 			m_tbMoreDetail.Visible = false;
 		}
 
-		// ReSharper disable InconsistentNaming
 		private void m_lnkConfigureNow_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			ConfigureNowClicked?.Invoke(sender, e);
 		}
-		// ReSharper restore InconsistentNaming
 
 		///<summary>
 		/// Set the label for the control.
@@ -63,9 +59,9 @@ namespace LanguageExplorer.Areas
 			{
 				m_lnkConfigureNow.Visible = true;
 				m_lnkConfigureNow.Enabled = fEnabled;
-				m_lnkConfigureNow.Location = m_lblMoreDetail.Visible ?
-					new Point(m_lblMoreDetail.Location.X, m_lblMoreDetail.Location.Y + m_lblMoreDetail.Height + m_lblMoreDetail.Padding.Bottom + 1) :
-					new Point(m_tbMoreDetail.Location.X, m_tbMoreDetail.Location.Y + m_tbMoreDetail.Height + m_tbMoreDetail.Padding.Bottom + 1);
+				m_lnkConfigureNow.Location = m_lblMoreDetail.Visible
+					? new Point(m_lblMoreDetail.Location.X, m_lblMoreDetail.Location.Y + m_lblMoreDetail.Height + m_lblMoreDetail.Padding.Bottom + 1)
+					: new Point(m_tbMoreDetail.Location.X, m_tbMoreDetail.Location.Y + m_tbMoreDetail.Height + m_tbMoreDetail.Padding.Bottom + 1);
 				Height = m_lnkConfigureNow.Location.Y + m_lnkConfigureNow.Height + m_lnkConfigureNow.Padding.Bottom + 1;
 			}
 			else

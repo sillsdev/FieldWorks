@@ -41,9 +41,7 @@ namespace LanguageExplorer.Impls
 		#endregion
 
 		#region Constructor
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FindCollectorEnv"/> class.
-		/// </summary>
+		/// <summary />
 		/// <param name="vc">The view constructor.</param>
 		/// <param name="sda">Date access to get prop values etc.</param>
 		/// <param name="hvoRoot">The root object to display.</param>
@@ -403,7 +401,7 @@ namespace LanguageExplorer.Impls
 		{
 			Dispose(true);
 			// This object will be cleaned up by the Dispose method.
-			// Therefore, you should call GC.SupressFinalize to
+			// Therefore, you should call GC.SuppressFinalize to
 			// take this object off the finalization queue
 			// and prevent finalization code for this object
 			// from executing a second time.

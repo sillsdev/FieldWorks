@@ -19,9 +19,7 @@ using SIL.FieldWorks.Resources;
 
 namespace LanguageExplorer.LcmUi.Dialogs
 {
-	/// <summary>
-	/// Summary description for RelatedWords.
-	/// </summary>
+	/// <summary />
 	public class RelatedWords : Form
 	{
 		private Button m_btnInsert;
@@ -671,9 +669,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			private ITsString m_tssSdRelation;
 			private ITsString m_tssLexRelation;
 
-			/// <summary>
-			/// Initializes a new instance of the RelatedWordsVc class.
-			/// </summary>
+			/// <summary />
 			public RelatedWordsVc(int wsUser, ITsString headword)
 			{
 				m_wsDefault = wsUser;

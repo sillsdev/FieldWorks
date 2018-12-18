@@ -79,9 +79,7 @@ namespace LanguageExplorer.MGA
 		}
 		#endregion
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MGADialog"/> class.
-		/// </summary>
+		/// <summary />
 		public MGADialog(LcmCache cache, IHelpTopicProvider helpTopicProvider, string sMorphemeForm)
 		{
 			m_cache = cache;

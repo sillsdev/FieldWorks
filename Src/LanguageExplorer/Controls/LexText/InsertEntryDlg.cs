@@ -31,9 +31,7 @@ using SIL.Windows.Forms;
 
 namespace LanguageExplorer.Controls.LexText
 {
-	/// <summary>
-	/// Summary description for InsertEntryDlg.
-	/// </summary>
+	/// <summary />
 	public class InsertEntryDlg : Form, IFlexComponent
 	{
 		#region Data members

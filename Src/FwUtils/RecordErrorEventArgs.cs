@@ -12,9 +12,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// </summary>
 	public class RecordErrorEventArgs : EventArgs
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="RecordErrorEventArgs"/> class.
-		/// </summary>
+		/// <summary />
 		public RecordErrorEventArgs(TextTokenSubstring tts, Guid checkId)
 		{
 			Tts = tts;

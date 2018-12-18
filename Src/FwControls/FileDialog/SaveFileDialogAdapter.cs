@@ -11,9 +11,7 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog
 	/// </summary>
 	public class SaveFileDialogAdapter : FileDialogAdapter, ISaveFileDialog
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="SIL.FieldWorks.Common.Controls.FileDialog.SaveFileDialogAdapter"/> class.
-		/// </summary>
+		/// <summary />
 		public SaveFileDialogAdapter()
 		{
 			m_dlg = Manager.CreateSaveFileDialog();

@@ -102,18 +102,14 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected bool m_fEditable = true;
 		bool m_fInChangeSelectedObjects;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:XmlView"/> class.
-		/// </summary>
+		/// <summary />
 		public XmlView()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:XmlView"/> class.
-		/// </summary>
+		/// <summary />
 		public XmlView(int hvoRoot, XElement xnSpec)
 		{
 			InitXmlViewRootSpec(hvoRoot, xnSpec);

@@ -1,4 +1,4 @@
-// Copyright (c) 2018 SIL International
+// Copyright (c) 2018-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -150,7 +150,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		{
 			Dispose(true);
 			// This object will be cleaned up by the Dispose method.
-			// Therefore, you should call GC.SupressFinalize to
+			// Therefore, you should call GC.SuppressFinalize to
 			// take this object off the finalization queue
 			// and prevent finalization code for this object
 			// from executing a second time.
@@ -162,7 +162,8 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (_isDisposed)
 			{
-				return; // No need to do it more than once.
+				// No need to run it more than once.
+				return;
 			}
 
 			if (disposing)
@@ -182,7 +183,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				_insertAddToDictionaryToolStripButton.Click -= _sharedEventHandlers.Get(AreaServices.CmdAddToLexicon);
 				_insertFindInDictionaryToolStripButton.Click -= _sharedEventHandlers.Get(AreaServices.LexiconLookup);
 
-				 InsertToolbarManager.ResetInsertToolbar(_majorFlexComponentParameters);
+				InsertToolbarManager.ResetInsertToolbar(_majorFlexComponentParameters);
 				_rightClickContextMenuManager?.Dispose();
 				_insertRecordToolStripButton?.Dispose();
 				_insertFindRecordToolStripButton?.Dispose();
@@ -253,7 +254,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				</command>
 			*/
 			var cache = _majorFlexComponentParameters.LcmCache;
-			var record = MyDataTree.Root as IRnGenericRec;
+			var record = (IRnGenericRec)MyDataTree.Root;
 			IRnGenericRec newOwner;
 			if (record.Owner is IRnResearchNbk)
 			{
@@ -273,7 +274,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			{
 				throw new InvalidOperationException("RnGenericRec cannot own itself!");
 			}
-
 			AreaServices.UndoExtensionUsingNewOrCurrentUOW(NotebookResources.Demote_SansDots, cache.ActionHandlerAccessor, () =>
 			{
 				newOwner.SubRecordsOS.Insert(0, record);
@@ -410,12 +410,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		{
 			var slice = MyDataTree.CurrentSlice;
 			var parentSlice = slice.ParentSlice;
-			var roledPartic = slice.MyCmObject as IRnRoledPartic;
-			if (roledPartic == null)
-			{
-				// This may happen if the user started Flex no participants of any kind, and then added a generic one, and then added a typed one.
-				roledPartic = parentSlice.MyCmObject as IRnRoledPartic;
-			}
+			var roledPartic = slice.MyCmObject as IRnRoledPartic ?? parentSlice.MyCmObject as IRnRoledPartic;
 			if (roledPartic == null)
 			{
 				// Just give up.
@@ -425,7 +420,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			{
 				roledPartic.Delete();
 			});
-
 			parentSlice.Collapse();
 			parentSlice.Expand();
 		}
@@ -542,7 +536,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			{
 				var currentSliceObject = MyDataTree.CurrentSlice?.MyCmObject as IRnGenericRec;
 				var recordOwner = currentSliceObject?.Owner as IRnGenericRec;
-				return currentSliceObject!= null && recordOwner != null && currentSliceObject.OwnOrd < recordOwner.SubRecordsOS.Count - 1;
+				return currentSliceObject != null && recordOwner != null && currentSliceObject.OwnOrd < recordOwner.SubRecordsOS.Count - 1;
 			}
 		}
 
@@ -564,7 +558,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			{
 				var slice = MyDataTree.CurrentSlice;
 				var currentSliceObject = slice.MyCmObject as IRnGenericRec;
-				return currentSliceObject != null  && currentSliceObject.Owner is IRnGenericRec;
+				return currentSliceObject != null && currentSliceObject.Owner is IRnGenericRec;
 			}
 		}
 

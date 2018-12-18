@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2018 SIL International
+// Copyright (c) 2008-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,15 +18,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// Negative integer if x occurs prior to y in the text.</returns>
 		public int Compare(AnalysisOccurrence x, AnalysisOccurrence y)
 		{
-			if (x.Paragraph.Hvo != y.Paragraph.Hvo)
-			{
-				return x.Paragraph.IndexInOwner - y.Paragraph.IndexInOwner;
-			}
-			if (x.Segment.Hvo == y.Segment.Hvo)
-			{
-				return x.Index - y.Index;
-			}
-			return x.Segment.IndexInOwner - y.Segment.IndexInOwner;
+			return x.Paragraph.Hvo != y.Paragraph.Hvo
+				? x.Paragraph.IndexInOwner - y.Paragraph.IndexInOwner
+				: x.Segment.Hvo == y.Segment.Hvo
+					? x.Index - y.Index
+					: x.Segment.IndexInOwner - y.Segment.IndexInOwner;
 		}
 
 		#endregion

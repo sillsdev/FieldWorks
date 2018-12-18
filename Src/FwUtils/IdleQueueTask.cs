@@ -12,12 +12,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// </summary>
 	public struct IdleQueueTask
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="IdleQueueTask"/> struct.
-		/// </summary>
-		/// <param name="priority">The priority.</param>
-		/// <param name="del">The delegate.</param>
-		/// <param name="parameter">The parameter.</param>
+		/// <summary />
 		public IdleQueueTask(IdleQueuePriority priority, Func<object, bool> del, object parameter)
 		{
 			Priority = priority;
@@ -25,10 +20,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Parameter = parameter;
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="IdleQueueTask"/> struct.
-		/// </summary>
-		/// <param name="del">The delegate.</param>
+		/// <summary />
 		public IdleQueueTask(Func<object, bool> del)
 			: this(IdleQueuePriority.Medium, del, null)
 		{

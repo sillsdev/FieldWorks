@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,7 +18,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		public override void AddVirtualProp(string bstrClass, string bstrField, int luFlid, int type)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public override int GetFieldId2(int clid, string sFieldName, bool fIncludeBaseClasses)
@@ -63,7 +63,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					break;
 				case "WfiWordform":
 					if (sFieldName == "OccurrencesInCaptions")
+					{
 						return RespellingSda.kflidOccurrencesInCaptions;
+					}
 					break;
 			}
 			return base.GetFieldId(sClassName, sFieldName, fIncludeBaseClasses);
@@ -95,7 +97,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				case RespellingSda.kflidSpellingPreview:
 					return 0;
 				case RespellingSda.kflidOccurrencesInCaptions:
-					return 0;		// I suppose we could return ConcDecorator.kclidFakeOccurrence
+					return ConcDecorator.kclidFakeOccurrence;
 			}
 			return base.GetDstClsId(flid);
 		}

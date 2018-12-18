@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -26,18 +26,25 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	/// </summary>
 	internal class RespellUndoAction : IUndoAction
 	{
-		// The spelling change
+		/// <summary>
+		/// The spelling change
+		/// </summary>
 		private readonly string m_oldSpelling;
-		private readonly HashSet<int> m_changes = new HashSet<int>(); // CBAs that represent occurrences we will change.
+		/// <summary>
+		/// CBAs that represent occurrences we will change.
+		/// </summary>
+		private readonly HashSet<int> m_changes = new HashSet<int>();
 		/// <summary>
 		/// Key is hvo of StTxtPara, value is list (eventually sorted by BeginOffset) of
 		/// CBAs that refer to it AND ARE BEING CHANGED.
 		/// </summary>
-		readonly Dictionary<int, ParaChangeInfo> m_changedParas = new Dictionary<int, ParaChangeInfo>();
-		readonly XMLViewsDataCache m_specialSda;
-		readonly LcmCache m_cache;
-		IEnumerable<int> m_occurrences; // items requiring preview.
-
+		private readonly Dictionary<int, ParaChangeInfo> m_changedParas = new Dictionary<int, ParaChangeInfo>();
+		private readonly XMLViewsDataCache m_specialSda;
+		private readonly LcmCache m_cache;
+		/// <summary>
+		/// items requiring preview.
+		/// </summary>
+		private IEnumerable<int> m_occurrences;
 		private ISegmentRepository m_repoSeg;
 		private IStTxtParaRepository m_repoPara;
 		private IWfiWordformRepository m_repoWf;
@@ -45,15 +52,21 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private IWfiAnalysisFactory m_factWfiAnal;
 		private IWfiGlossFactory m_factWfiGloss;
 		private IWfiMorphBundleFactory m_factWfiMB;
-
-		int m_tagPrecedingContext;
-		int m_tagPreview;
-		int m_tagAdjustedBegin;
-		int m_tagAdjustedEnd;
-		int m_tagEnabled;
-		// Case functions per writing system
+		private int m_tagPrecedingContext;
+		private int m_tagPreview;
+		private int m_tagAdjustedBegin;
+		private int m_tagAdjustedEnd;
+		private int m_tagEnabled;
+		/// <summary>
+		/// Case functions per writing system
+		/// </summary>
 		private readonly Dictionary<int, CaseFunctions> m_caseFunctions = new Dictionary<int, CaseFunctions>();
-		readonly int m_vernWs; // The WS we want to use throughout.
+		private readonly int m_vernWs; // The WS we want to use throughout.
+		private int[] m_oldOccurrencesNewWf; // occurrences of new spelling wordform before change
+		private int[] m_newOccurrencesOldWf; // occurrences of original wordform after change
+		private int[] m_newOccurrencesNewWf; // occurrences of new spelling after change.
+
+		#region Properties
 
 		/// <summary>
 		/// HVO of wordform created (or found or made real) during DoIt for new spelling.
@@ -64,25 +77,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		internal int OldWordform { get; private set; }
 
-		// Info to support efficient Undo/Redo for large lists of changes.
-		//readonly List<int> m_hvosToChangeIntProps = new List<int>(); // objects with integer props needing change
-		//readonly List<int> m_tagsToChangeIntProps = new List<int>(); // tags of the properties
-		//readonly List<int> m_oldValues = new List<int>(); // initial values (target value for Undo)
-		//readonly List<int> m_newValues = new List<int>(); // alternate values (target value for Redo).
-
-		private int[] m_oldOccurrencesNewWf; // occurrences of new spelling wordform before change
-		private int[] m_newOccurrencesOldWf; // occurrences of original wordform after change
-		private int[] m_newOccurrencesNewWf; // occurrences of new spelling after change.
-
-		/// <summary>
-		/// Used in tests only at present, assumes default vernacular WS.
-		/// </summary>
-		internal RespellUndoAction(XMLViewsDataCache sda, LcmCache cache, string oldSpelling, string newSpelling)
-			:this(sda, cache, cache.DefaultVernWs, oldSpelling, newSpelling)
-		{
-		}
-
-		#region Properties
 		internal string NewSpelling { get; }
 
 		internal int[] OldOccurrencesOfOldWordform { get; private set; }
@@ -105,15 +99,13 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		#endregion
 
-		/// <summary>
-		/// Normal constructor
-		/// </summary>
-		internal RespellUndoAction(XMLViewsDataCache sda, LcmCache cache, int vernWs,
-			string oldSpelling, string newSpelling)
+		/// <summary />
+		/// <remarks>Tests want cache.DefaultVernWs, so they skip sending that vernWs parameter.</remarks>
+		internal RespellUndoAction(XMLViewsDataCache sda, LcmCache cache, string oldSpelling, string newSpelling, int vernWs = int.MinValue)
 		{
 			m_specialSda = sda;
 			m_cache = cache;
-			m_vernWs = vernWs;
+			m_vernWs = vernWs == int.MinValue ? cache.DefaultVernWs : vernWs;
 			m_oldSpelling = oldSpelling;
 			NewSpelling = newSpelling;
 		}
@@ -145,9 +137,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary>
 		/// Set up the appropriate preceding and following context for the given occurrence.
 		/// </summary>
-		internal void SetupPreviews(int tagPrecedingContext, int tagPreview,
-			int tagAdjustedBegin, int tagAdjustedEnd, int tagEnabled, IEnumerable<int> occurrences,
-			IVwRootBox rootb)
+		internal void SetupPreviews(int tagPrecedingContext, int tagPreview, int tagAdjustedBegin, int tagAdjustedEnd, int tagEnabled, IEnumerable<int> occurrences, IVwRootBox rootb)
 		{
 			m_tagPrecedingContext = tagPrecedingContext;
 			m_tagPreview = tagPreview;
@@ -203,7 +193,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				ws = m_cache.DefaultVernWs;
 			}
-
 			var tssValue = AnnotationTargetString(hvoTarget, flid, ws, RespellSda);
 			var bldr = tssValue.GetBldr();
 			var ichBegin = BeginOffset(hvoFake) - delta;
@@ -212,7 +201,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				bldr.Replace(ichLim, bldr.Length, string.Empty, null);
 			}
-
 			if (ichBegin > 0)
 			{
 				bldr.Replace(0, ichBegin, string.Empty, null);
@@ -260,7 +248,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					var beginTarget = BeginOffset(hvoFake);
 					var ichange = 0;
 					var fGotOffsets = false;
-					for(; ichange < info.Changes.Count; ichange++)
+					for (; ichange < info.Changes.Count; ichange++)
 					{
 						var hvoChange = info.Changes[ichange];
 						var beginChange = BeginOffset(hvoChange);
@@ -268,13 +256,12 @@ namespace LanguageExplorer.Areas.TextsAndWords
 						{
 							// stop preceding context just before the current one.
 							var ich = BeginOffset(hvoFake) + delta;
-
 							bldr.ReplaceTsString(ich, bldr.Length, OldOccurrence(hvoFake));
 							m_specialSda.SetInt(hvoFake, m_tagAdjustedBegin, BeginOffset(hvoFake) + delta);
 							m_specialSda.SetInt(hvoFake, m_tagAdjustedEnd, EndOffset(hvoFake) + delta);
 							break;
 						}
-						else if (beginChange > beginTarget && !fGotOffsets)
+						if (beginChange > beginTarget && !fGotOffsets)
 						{
 							// This and future changes are after this occurrence, so the current delta is the one
 							// we want (and this is an occurrence we are not changing, or we would have found it).
@@ -285,8 +272,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 							// if it is common to change some but not all in the same paragraph we could save it.
 						}
 						// It's another changed occurrence, not the primary one, highlight it.
-						bldr.SetIntPropValues(beginChange + delta, beginChange + delta + NewSpelling.Length,
-							SecondaryTextProp, SecondaryTextVar, SecondaryTextVal);
+						bldr.SetIntPropValues(beginChange + delta, beginChange + delta + NewSpelling.Length, SecondaryTextProp, SecondaryTextVar, SecondaryTextVal);
 						delta += NewSpelling.Length - m_oldSpelling.Length;
 					}
 					m_specialSda.SetString(hvoFake, m_tagPrecedingContext, bldr.GetString());
@@ -294,7 +280,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					{
 						// need to set up following context also
 						bldr = info.NewContents.GetBldr();
-						bldr.Replace(0, beginTarget + delta, "", null); // remove everything before occurrence.
+						// remove everything before occurrence.
+						bldr.Replace(0, beginTarget + delta, string.Empty, null);
 						// Make the primary occurrence bold
 						bldr.SetIntPropValues(0, NewSpelling.Length, (int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
 						delta = -beginTarget + NewSpelling.Length - m_oldSpelling.Length;
@@ -318,16 +305,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				else
 				{
 					// Unchanged paragraph, copy the key info over.
-					ITsString tssVal;
 					var flid = FlidOfTarget(hvoPara);
-					if (IsMultilingual(flid))
-					{
-						tssVal = m_specialSda.get_MultiStringAlt(hvoPara, flid, m_cache.DefaultVernWs);
-					}
-					else
-					{
-						tssVal = m_specialSda.get_StringProp(hvoPara, flid);
-					}
+					var tssVal = IsMultilingual(flid) ? m_specialSda.get_MultiStringAlt(hvoPara, flid, m_cache.DefaultVernWs) : m_specialSda.get_StringProp(hvoPara, flid);
 					m_specialSda.SetString(hvoFake, m_tagPrecedingContext, tssVal);
 					m_specialSda.SetInt(hvoFake, m_tagAdjustedBegin, BeginOffset(hvoFake));
 					m_specialSda.SetInt(hvoFake, m_tagAdjustedEnd, EndOffset(hvoFake));
@@ -425,7 +404,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				return;
 			}
-
 			if (isChecked)
 			{
 				m_changes.Add(hvoChanged);
@@ -470,7 +448,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				return;
 			}
-
 			BuildChangedParasInfo();
 
 			if (m_changedParas.Count < 10)
@@ -504,36 +481,28 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			var specialMdc = m_specialSda.MetaDataCache;
 			var flidOccurrences = specialMdc.GetFieldId2(WfiWordformTags.kClassId, "Occurrences", false);
-
-			using (UndoableUnitOfWorkHelper uuow = new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor,
-				string.Format(TextAndWordsResources.ksUndoChangeSpelling, m_oldSpelling, NewSpelling),
-				string.Format(TextAndWordsResources.ksRedoChangeSpelling, m_oldSpelling, NewSpelling)))
+			using (var uuow = new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor, string.Format(TextAndWordsResources.ksUndoChangeSpelling, m_oldSpelling, NewSpelling), string.Format(TextAndWordsResources.ksRedoChangeSpelling, m_oldSpelling, NewSpelling)))
 			{
 				var wfOld = FindOrCreateWordform(m_oldSpelling, m_vernWs);
 				var originalOccurencesInTexts = wfOld.OccurrencesInTexts.ToList(); // At all levels.
 				var wfNew = FindOrCreateWordform(NewSpelling, m_vernWs);
 				SetOldOccurrencesOfWordforms(flidOccurrences, wfOld, wfNew);
 				UpdateProgress(progress);
-
 				// It's important to do this BEFORE we update the changed paragraphs. As we update the analysis to point
 				// at the new wordform and update the text, it may happen that AnalysisAdjuster sees the only occurrence
 				// of the (new) wordform go away, if the text is being changed to an other-case form. If we haven't set
 				// the spelling status first, the wordform may get deleted before we ever record its spelling status.
 				// This way, having a known spelling status will prevent the deletion.
 				SetSpellingStatus(wfNew);
-
 				ComputeParaChanges(true, progress);
-
 				if (progress != null)
 				{
 					progress.WorkingOnText = TextAndWordsResources.ksDealingAnalyses;
 				}
 				UpdateProgress(progress);
-
 				// Compute new occurrence lists, save and cache
 				SetNewOccurrencesOfWordforms(progress);
 				UpdateProgress(progress);
-
 				// Deal with analyses.
 				if (wfOld.IsValidObject && CopyAnalyses)
 				{
@@ -550,7 +519,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					}
 					UpdateProgress(progress);
 				}
-
 				// Only mess with shifting if it was only a case diff in wf, but no changes were made in paragraphs.
 				// Regular spelling changes will trigger re-tokenization of para, otherwise
 				if (PreserveCase)
@@ -562,7 +530,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 						{
 							continue; // Skip shifting it for items that were not checked
 						}
-
 						var wfIdx = segment.AnalysesRS.IndexOf(wfOld);
 						while (wfIdx > -1)
 						{
@@ -572,7 +539,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 						}
 					}
 				}
-
 				// The timing of this is rather crucial. During the work above, we may (if this is invoked from a
 				// wordform concordance) detect that the current occurrence is no longer valid (since we change the spelling
 				// and that wordform no longer occurs in that position). This leads to reloading the list and broadcasting
@@ -593,9 +559,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				{
 					publisher.Publish("ItemDataModified", wfOld);
 				}
-
 				publisher.Publish("ItemDataModified", wfNew);
-
 				uuow.RollBack = false;
 			}
 		}
@@ -609,7 +573,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			OldWordform = wfOld.Hvo;
 			OldOccurrencesOfOldWordform = m_specialSda.VecProp(wfOld.Hvo, flidOccurrences);
-
 			NewWordform = wfNew.Hvo;
 			m_oldOccurrencesNewWf = m_specialSda.VecProp(wfNew.Hvo, flidOccurrences);
 		}
@@ -638,7 +601,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					{
 						occur.ResetSegmentOffsets();
 					}
-
 					if (!changes.Contains(hvo))
 					{
 						newOccurrencesOldWf.Add(hvo);
@@ -673,14 +635,14 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				{
 					continue;
 				}
-
 				var newAnalysis = FactWfiAnal.Create();
 				wfNew.AnalysesOC.Add(newAnalysis);
 				foreach (var segment in originalOccurencesInTexts)
 				{
 					if (!m_changedParas.ContainsKey(segment.Owner.Hvo))
+					{
 						continue; // Skip shifting it for items that were not checked
-
+					}
 					var analysisIdx = segment.AnalysesRS.IndexOf(oldAnalysis);
 					while (analysisIdx > -1)
 					{
@@ -706,7 +668,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 						{
 							continue; // Skip shifting it for items that were not checked
 						}
-
 						var glossIdx = segment.AnalysesRS.IndexOf(oldGloss);
 						while (glossIdx > -1)
 						{
@@ -739,20 +700,11 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			if (!KeepAnalyses)
 			{
 				// Remove multi-morpheme anals in src wf.
-				var goners = new List<IWfiAnalysis>();
-				foreach (var goner in wfOld.AnalysesOC)
-				{
-					if (goner.MorphBundlesOS.Count > 1)
-					{
-						goners.Add(goner);
-					}
-				}
-				foreach (var goner in goners)
+				foreach (var goner in wfOld.AnalysesOC.Where(goner => goner.MorphBundlesOS.Count > 1).ToList())
 				{
 					var wf = goner.OwnerOfClass<IWfiWordform>();
 					wf.AnalysesOC.Remove(goner);
 				}
-				goners.Clear();
 			}
 			if (UpdateLexicalEntries)
 			{
@@ -763,7 +715,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					{
 						continue; // Skip any with zero or more than one.
 					}
-
 					var mb = update.MorphBundlesOS[0];
 					var tss = mb.Form.get_String(m_vernWs);
 					var srcForm = tss.Text;
@@ -776,13 +727,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					mf?.Form.set_String(m_vernWs, NewSpelling);
 				}
 			}
-
 			// Move remaining anals from src wf to new wf.
 			// This changes the owners of the remaining ones,
 			// since it is an owning property.
-			var analyses = new List<IWfiAnalysis>();
-			analyses.AddRange(wfOld.AnalysesOC);
-			foreach (var anal in analyses)
+			foreach (var anal in wfOld.AnalysesOC.ToList())
 			{
 				wfNew.AnalysesOC.Add(anal);
 			}
@@ -794,7 +742,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				return;
 			}
-
 			dlg.PerformStep();
 			dlg.Update();
 		}
@@ -811,7 +758,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			WordformVirtualPropChanged(hvoWf, "ParserCount");
 			WordformVirtualPropChanged(hvoWf, "ConflictCount");
 		}
-		void WordformVirtualPropChanged(int hvoWf, string name)
+
+		private void WordformVirtualPropChanged(int hvoWf, string name)
 		{
 			RootBox?.PropChanged(hvoWf, m_specialSda.MetaDataCache.GetFieldId2(WfiWordformTags.kClassId, name, false), 0, 0, 1);
 		}
@@ -874,13 +822,15 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		internal void RemoveChangedItems(HashSet<int> enabledItems, int tagEnabled)
 		{
 			foreach (var info in m_changedParas.Values)
-			foreach (var hvoFake in info.Changes)
 			{
-				m_specialSda.SetInt(hvoFake, tagEnabled, 0);
-				var matchingItem = (enabledItems.Where(item => item == hvoFake)).FirstOrDefault();
-				if (matchingItem != 0) // 0 is the standard default value for ints.
+				foreach (var hvoFake in info.Changes)
 				{
-					enabledItems.Remove(matchingItem);
+					m_specialSda.SetInt(hvoFake, tagEnabled, 0);
+					var matchingItem = (enabledItems.Where(item => item == hvoFake)).FirstOrDefault();
+					if (matchingItem != 0) // 0 is the standard default value for ints.
+					{
+						enabledItems.Remove(matchingItem);
+					}
 				}
 			}
 		}

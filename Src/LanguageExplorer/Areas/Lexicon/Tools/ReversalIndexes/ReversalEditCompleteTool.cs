@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -117,12 +117,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			};
 			recordEditViewPaneBar.AddControls(new List<Control> { panelButton });
 
-			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(
-				majorFlexComponentParameters.FlexComponentParameters,
-				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				mainMultiPaneParameters,
-				_xhtmlDocView, "Doc Reversals", docViewPaneBar, // XhtmlDocView
-				recordEditView, "Browse Entries", recordEditViewPaneBar); // RecordEditView
+			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters,
+				majorFlexComponentParameters.MainCollapsingSplitContainer, mainMultiPaneParameters, _xhtmlDocView, "Doc Reversals", docViewPaneBar, recordEditView, "Browse Entries", recordEditViewPaneBar);
 
 			_xhtmlDocView.FinishInitialization();
 			panelButton.MyDataTree = recordEditView.MyDataTree;

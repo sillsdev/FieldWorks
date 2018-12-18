@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2007-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,10 +11,10 @@ using LanguageExplorer.Controls.PaneBar;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel.Infrastructure;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
@@ -134,7 +134,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				StyleSheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable)
 			};
 			_previewPane.InitializeFlexComponent(flexParameters);
-
 			var pbc = new BasicPaneBarContainer();
 			pbc.Init(PropertyTable, _previewPane, new PaneBar());
 			pbc.Dock = DockStyle.Fill;
@@ -194,7 +193,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				// we were given a LexExampleSentence, so set our insertion index after the given one.
 				insertIndex = _owningSense.ExamplesOS.IndexOf(_lexExampleSentence) + 1;
 			}
-
 			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoAddExamples, LanguageExplorerResources.ksRedoAddExamples, _cache.ActionHandlerAccessor, () =>
 			{
 				var cNewExamples = 0;
@@ -202,10 +200,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				{
 					var seg = _cache.ServiceLocator.GetObject(segHvo) as ISegment;
 					ILexExampleSentence newLexExample;
-					if (cNewExamples == 0 && _lexExampleSentence != null &&
-						_lexExampleSentence.Example.BestVernacularAlternative.Text == "***" &&
-						(_lexExampleSentence.TranslationsOC == null || _lexExampleSentence.TranslationsOC.Count == 0) &&
-						_lexExampleSentence.Reference.Length == 0)
+					if (cNewExamples == 0 && _lexExampleSentence != null && _lexExampleSentence.Example.BestVernacularAlternative.Text == "***"
+					    && (_lexExampleSentence.TranslationsOC == null || _lexExampleSentence.TranslationsOC.Count == 0) && _lexExampleSentence.Reference.Length == 0)
 					{
 						// we were given an empty LexExampleSentence, so use this one for our first new Example.
 						newLexExample = _lexExampleSentence;
@@ -224,14 +220,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					newLexExample.Example.set_String(baseWs, seg.BaselineText);
 					if (seg.FreeTranslation.AvailableWritingSystemIds.Length > 0)
 					{
-						var trans = _cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(newLexExample,
-							_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranFreeTranslation));
+						var trans = _cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(newLexExample, _cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranFreeTranslation));
 						trans.Translation.CopyAlternatives(seg.FreeTranslation);
 					}
 					if (seg.LiteralTranslation.AvailableWritingSystemIds.Length > 0)
 					{
-						var trans = _cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(newLexExample,
-							_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranLiteralTranslation));
+						var trans = _cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(newLexExample, _cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranLiteralTranslation));
 						trans.Translation.CopyAlternatives(seg.LiteralTranslation);
 					}
 					// copy the reference.
@@ -253,7 +247,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				return _cache.DefaultVernWs;
 			}
-
 			var possibleWss = _cache.ServiceLocator.WritingSystems.VernacularWritingSystems;
 			var wsObj = _cache.ServiceLocator.WritingSystemManager.Get(baseWs);
 			return possibleWss.Contains(wsObj) ? baseWs : _cache.DefaultVernWs;

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -40,8 +40,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void Init()
 		{
-			m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetMajorMorphTypes(out m_mmtStem, out m_mmtPrefix, out m_mmtSuffix, out m_mmtInfix,
-				out m_mmtBoundStem, out m_mmtProclitic, out m_mmtEnclitic, out m_mmtSimulfix, out m_mmtSuprafix);
+			m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetMajorMorphTypes(out m_mmtStem, out m_mmtPrefix, out m_mmtSuffix, out m_mmtInfix, out m_mmtBoundStem, out m_mmtProclitic, out m_mmtEnclitic, out m_mmtSimulfix, out m_mmtSuprafix);
 
 			var sStemExample = StringTable.Table.GetString("EditMorphBreaks-stemExample", "DialogStrings");
 			var sAffixExample = StringTable.Table.GetString("EditMorphBreaks-affixExample", "DialogStrings");
@@ -103,7 +102,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			return m_textbox.SelectionStart == 0 ? string.Empty : " ";
 		}
-
 
 		// Event handlers
 		private void stem(object sender, EventArgs e)

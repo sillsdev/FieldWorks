@@ -121,6 +121,12 @@ namespace LanguageExplorer.UtilityTools
 				utilities.Add(type.Name, (IUtility)leAssembly.CreateInstance(type.FullName, true, BindingFlags.Instance | BindingFlags.NonPublic, null, new object[] { this }, null, null));
 			}
 
+#if RANDYTODO
+			// TODO: 1. Add new "MachineName" string property to IUtility that returns the strings below, for each tool.
+			// TODO: 2. Remove known utilities from utilities, after adding them to m_clbUtilities.Items, and
+			// TODO: 3. Add any user created utilities (ones still in utilities) to m_clbUtilities.Items.
+			// TODO: 4. Consider using MEF to get them all.
+#endif
 			m_clbUtilities.Items.Add(utilities["HomographResetter"]);
 			m_clbUtilities.Items.Add(utilities["ParserAnalysisRemover"]);
 			m_clbUtilities.Items.Add(utilities["ErrorFixer"]);
@@ -142,7 +148,7 @@ namespace LanguageExplorer.UtilityTools
 			}
 		}
 
-		#endregion
+#endregion
 
 		/// <summary>
 		/// Get the Utilites list box.
@@ -197,7 +203,7 @@ namespace LanguageExplorer.UtilityTools
 			base.Dispose(disposing);
 		}
 
-		#region Windows Form Designer generated code
+#region Windows Form Designer generated code
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
@@ -291,9 +297,9 @@ namespace LanguageExplorer.UtilityTools
 			this.ResumeLayout(false);
 
 		}
-		#endregion
+#endregion
 
-		#region Events
+#region Events
 
 		private void m_clbUtilities_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
@@ -393,6 +399,6 @@ namespace LanguageExplorer.UtilityTools
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, s_helpTopic);
 		}
 
-		#endregion Events
+#endregion Events
 	}
 }

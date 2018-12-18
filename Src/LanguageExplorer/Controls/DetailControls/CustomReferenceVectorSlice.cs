@@ -11,9 +11,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// </summary>
 	internal abstract class CustomReferenceVectorSlice : ReferenceVectorSlice
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="CustomReferenceVectorSlice"/> class.
-		/// </summary>
+		/// <summary />
 		protected CustomReferenceVectorSlice(Control control)
 			: base(control)
 		{

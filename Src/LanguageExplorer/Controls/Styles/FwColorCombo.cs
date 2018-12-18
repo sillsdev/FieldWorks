@@ -49,9 +49,7 @@ namespace LanguageExplorer.Controls.Styles
 			Normal
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FwColorCombo"/> class.
-		/// </summary>
+		/// <summary />
 		public FwColorCombo()
 		{
 			// This call is required by the Windows.Forms Form Designer.

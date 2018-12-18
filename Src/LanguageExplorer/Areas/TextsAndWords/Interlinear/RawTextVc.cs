@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,7 +15,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	internal class RawTextVc : StVc
 	{
 		public const int kTagUserPrompt = 1000009879; // very large number prevents auto-load.
-
 		IVwRootBox m_rootb;
 
 		public RawTextVc(IVwRootBox rootb, LcmCache cache, int wsFirstPara) : base("Normal", wsFirstPara)
@@ -49,16 +48,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// Gets a value indicating whether to set the base WS and direction according to the
 		/// first run in the paragraph contents.
 		/// </summary>
-		/// <value>
-		/// 	<c>true</c> to base the direction on para contents; <c>false</c> to use the
-		/// 	default writing system of the view constructor.
-		/// </value>
 		public override bool BaseDirectionOnParaContents => true;
 
 		/// <summary>
 		/// Set the BaseWs and RightToLeft properties for the paragraph that is being laid out.
 		/// These are computed (if possible) from the current paragraph; otherwise, use the
-		/// default as set on the view contructor for the whole text. This override also sets
+		/// default as set on the view constructor for the whole text. This override also sets
 		/// the alignment (which presumably overrides the alignment set in the stylesheet?).
 		/// </summary>
 		protected override void SetupWsAndDirectionForPara(IVwEnv vwenv, int paraHvo)
@@ -85,20 +80,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			bool fAssocPrev;
 			int ws;
 			ITsTextProps ttp;
-			var rgvsli = SelLevInfo.AllTextSelInfo(vwsel, cvsli,
-				out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd,
-				out ws, out fAssocPrev, out ihvoEnd, out ttp);
-
+			var rgvsli = SelLevInfo.AllTextSelInfo(vwsel, cvsli, out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd, out ttp);
 			// get para info
 			var para = Cache.ServiceLocator.GetInstance<IStTxtParaRepository>().GetObject(hvo);
 			// Add the text the user just typed to the paragraph - this destroys the selection
 			// because we replace the user prompt.
 			para.Contents = tssVal;
-
 			// now restore the selection
-			m_rootb.MakeTextSelection(ihvoRoot, cvsli, rgvsli,
-				StTxtParaTags.kflidContents, cpropPrevious, ichAnchor, ichEnd,
-				Cache.DefaultVernWs, fAssocPrev, ihvoEnd, null, true);
+			m_rootb.MakeTextSelection(ihvoRoot, cvsli, rgvsli, StTxtParaTags.kflidContents, cpropPrevious, ichAnchor, ichEnd, Cache.DefaultVernWs, fAssocPrev, ihvoEnd, null, true);
 
 			return tssVal;
 		}

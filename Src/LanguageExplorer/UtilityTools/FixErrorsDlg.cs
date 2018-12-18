@@ -14,9 +14,7 @@ namespace LanguageExplorer.UtilityTools
 	/// <summary />
 	public partial class FixErrorsDlg : Form
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FixLinksDlg"/> class.
-		/// </summary>
+		/// <summary />
 		public FixErrorsDlg()
 		{
 			InitializeComponent();

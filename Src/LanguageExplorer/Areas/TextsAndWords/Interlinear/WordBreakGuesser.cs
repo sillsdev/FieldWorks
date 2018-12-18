@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,10 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -21,20 +21,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	public class WordBreakGuesser
 	{
 		private readonly HashSet<string> m_words = new HashSet<string>(); // From text of word to dummy.
-		int m_maxChars; // length of longest word
+		private int m_maxChars; // length of longest word
 		private int m_minChars = int.MaxValue; // length of shortest word
-		ISilDataAccess m_sda;
-		int m_vernWs;
-		LcmCache m_cache;
+		private ISilDataAccess m_sda;
+		private int m_vernWs;
+		private LcmCache m_cache;
+
 		public WordBreakGuesser(LcmCache cache, int hvoParaStart)
 		{
 			m_cache = cache;
 			m_sda = cache.MainCacheAccessor;
 			Setup(hvoParaStart);
 		}
-		/// <summary>
-		/// Parameterless constructor, for testing purposes only
-		/// </summary>
+
+		/// <summary />
 		/// <remarks>Do not use except in test code.</remarks>
 		public WordBreakGuesser()
 		{
@@ -61,7 +61,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var vernWs = TsStringUtils.GetWsAtOffset(para.Contents, 0);
 			if (vernWs == m_vernWs)
 			{
-				return;	// already setup.
+				return; // already setup.
 			}
 			m_vernWs = vernWs;
 			//Add all the words from the Wordform Repository
@@ -82,10 +82,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 
 			//Add all the stems from the Lexicon including all their allomorphs (as I understand this it will capture phrases as well -naylor Aug 2011)
-			foreach(var stem in m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances())
+			foreach (var stem in m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances())
 			{
-				var allAllomorphs = stem.AllAllomorphs;
-				foreach (var allomorph in allAllomorphs.Where(allomorph => (allomorph.MorphTypeRA != null && !allomorph.MorphTypeRA.IsBoundType))) //for every allomorph of the stem
+				foreach (var allomorph in stem.AllAllomorphs.Where(allomorph => allomorph.MorphTypeRA != null && !allomorph.MorphTypeRA.IsBoundType))
 				{
 					var allomorphString = allomorph.Form.get_String(vernWs); //get the string for this form in the desired writing system
 					if (allomorphString == null || allomorphString.Length <= 0)
@@ -109,22 +108,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			Setup(hvoPara);
 			var tss = m_sda.get_StringProp(hvoPara, StTxtParaTags.kflidContents);
 			var bldr = tss.GetBldr();
-
 			//Guessing wordbreaks in a string that isn't there is not a good idea.
-			if(tss.Text == null)
+			if (tss.Text == null)
 			{
 				return;
 			}
 			var txt = tss.Text.Substring(start, limit > start && limit < tss.Length ? limit - start : tss.Length - start);
 			var offset = 0; // offset in tsb caused by previously introduced spaces.
-
 			//Attempt to handle the problem of invalid words being introduced accounting for punctuation
 			//replace every kind of punctuation character in the writing system with ., then split on .
 			//
 			//just grab the system from the first run, seems unlikely you'll be guessing wordbreaks on strings with runs in different writing systems
 			var wsID = tss.get_WritingSystem(0);
 			//get the writing system from the cache
-			var ws = (CoreWritingSystemDefinition) m_cache.WritingSystemFactory.get_EngineOrNull(wsID);
+			var ws = (CoreWritingSystemDefinition)m_cache.WritingSystemFactory.get_EngineOrNull(wsID);
 			//get the ValidCharacters for the writing system.
 			var vc = ws != null ? ValidCharacters.Load(ws) : null;
 			//split the text on everything found in the OtherCharacters section
@@ -134,7 +131,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var adjustment = 0;
 			foreach (var distinctPhrase in distinctPhrases)
 			{
-				if(distinctPhrase.Length > 0) //split will give us an empty string wherever there was a punctuation
+				if (distinctPhrase.Length > 0) //split will give us an empty string wherever there was a punctuation
 				{
 					var foundWords = FindAllMatches(0, distinctPhrase.Length, distinctPhrase);
 					foreach (var foundWord in foundWords)
@@ -146,9 +143,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 				++adjustment; //rather than just adding 1 to the adjustment above adjust here. This will handle oddities like ,, or ".
 			}
-
 			var bestWords = BestMatches(txt, allWords);
-			foreach(var word in bestWords) //for each word in our list of the best result
+			foreach (var word in bestWords) //for each word in our list of the best result
 			{
 				//unless the word starts at the beginning of the input or the word starts right after the end of the last word we found
 				//insert a space before the word.
@@ -230,9 +226,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					continue;
 				}
-				var matchedWords = new List<WordLoc>(node.Words) {word};
+				var matchedWords = new List<WordLoc>(node.Words) { word };
 				var newPartition = new Partition(node.Index + word.Length, matchedWords, txt.Length);
-				if(!partitionList.ContainsKey(newPartition.Index) || partitionList[newPartition.Index].ScoreBeforePartition > newPartition.ScoreBeforePartition)
+				if (!partitionList.ContainsKey(newPartition.Index) || partitionList[newPartition.Index].ScoreBeforePartition > newPartition.ScoreBeforePartition)
 				{
 					partitionList[newPartition.Index] = newPartition;
 				}
@@ -249,7 +245,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		/// <param name="wordList">words in solution</param>
 		/// <param name="worstPossible">characters in sentence</param>
-		/// <returns></returns>
 		private static int CalculateScore(List<WordLoc> wordList, int worstPossible)
 		{
 			var score = worstPossible;
@@ -287,7 +282,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var max = Math.Min(limit - start, m_maxChars);
 			for (var index = 0; index < txt.Length; ++index)
 			{
-				for(var wordtry = m_minChars; wordtry <= max && wordtry + index <= txt.Length; ++wordtry)
+				for (var wordtry = m_minChars; wordtry <= max && wordtry + index <= txt.Length; ++wordtry)
 				{
 					if (m_words.Contains(txt.Substring(index, wordtry)))
 					{
@@ -318,7 +313,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			public int CompareTo(WordLoc other)
 			{
-				return Start.CompareTo(other.Start) == 0 ? Word.CompareTo(other.Word) :  Start.CompareTo(other.Start);
+				return Start.CompareTo(other.Start) == 0 ? Word.CompareTo(other.Word) : Start.CompareTo(other.Start);
 			}
 
 			public bool DoesIntersect(WordLoc other)

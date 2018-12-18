@@ -252,16 +252,17 @@ namespace LanguageExplorer
 			GC.SuppressFinalize(this);
 		}
 
-		private bool IsDisposed { get; set; }
+		protected bool IsDisposed { get; set; }
 
 		protected virtual void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
+
 			if (disposing)
 			{
 				_editFilterMenuHandler?.Dispose();
@@ -3778,7 +3779,7 @@ namespace LanguageExplorer
 			{
 				Dispose(true);
 				// This object will be cleaned up by the Dispose method.
-				// Therefore, you should call GC.SupressFinalize to
+				// Therefore, you should call GC.SuppressFinalize to
 				// take this object off the finalization queue
 				// and prevent finalization code for this object
 				// from executing a second time.

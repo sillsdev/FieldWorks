@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -28,9 +28,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		private CheckedListBox m_wsListBox;
 		private HelpProvider m_helpProvider;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ConfigureWritingSystemsDlg"/> class.
-		/// </summary>
+		/// <summary />
 		public ConfigureWritingSystemsDlg(IEnumerable<CoreWritingSystemDefinition> allWss, IEnumerable<CoreWritingSystemDefinition> selectedWss, IHelpTopicProvider helpTopicProvider)
 		{
 			//

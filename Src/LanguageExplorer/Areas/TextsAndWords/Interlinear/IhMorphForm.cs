@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,6 +18,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			: base()
 		{
 		}
+
 		internal IhMorphForm(SandboxBase sandbox)
 			: base(sandbox)
 		{
@@ -32,15 +33,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// analysis, as a starting point.
 			var cmorphs = MorphCount;
 			Debug.Assert(cmorphs != 0); // we're supposed to be building on one of them!
-
 			var wordform = m_sandbox.GetWordformOfAnalysis();
 			var wa = m_sandbox.GetWfiAnalysisInUse();
-
 			// Find the actual original form of the current wordform
 			var tssForm = m_sandbox.FindAFullWordForm(wordform);
 			var form = StrFromTss(tssForm);
 			var fBaseWordIsPhrase = SandboxBase.IsPhrase(form);
-
 			// First, store the current morph breakdown if we have one,
 			// Otherwise, if the user has deleted all the morphemes on the morpheme line
 			// (per LT-1621) simply use the original wordform.
@@ -76,11 +74,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// Add the original wordform, if not already present.
 			AddIfNotPresent(tssForm, wordform);
 			ComboList.SelectedIndex = IndexOfCurrentItem;
-
 			// Add any relevant 'other case' forms.
-			int wsVern = m_sandbox.RawWordformWs;
-			string locale = m_caches.MainCache.ServiceLocator.WritingSystemManager.Get(wsVern).IcuLocale;
-			CaseFunctions cf = new CaseFunctions(locale);
+			var wsVern = m_sandbox.RawWordformWs;
+			var locale = m_caches.MainCache.ServiceLocator.WritingSystemManager.Get(wsVern).IcuLocale;
+			var cf = new CaseFunctions(locale);
 			switch (m_sandbox.CaseStatus)
 			{
 				case StringCaseStatus.allLower:
@@ -106,8 +103,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					}
 					break;
 			}
-			Debug.Assert(m_items.Count == ComboList.Items.Count,
-				"combo list (m_comboList) should contain the same count as the m_items list (hvos)");
+			Debug.Assert(m_items.Count == ComboList.Items.Count, "combo list (m_comboList) should contain the same count as the m_items list (hvos)");
 			ComboList.Items.Add(ITextStrings.ksEditMorphBreaks_);
 		}
 
@@ -203,7 +199,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					break;
 				}
 			}
-
 			if (fFound)
 			{
 				return;
@@ -241,7 +236,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// Now erase the morph bundles themselves.
 			cda.CacheVecProp(m_hvoSbWord, SandboxBase.ktagSbWordMorphs, new int[0], 0);
 			sda.PropChanged(null, (int)PropChangeType.kpctNotifyAll, m_hvoSbWord, SandboxBase.ktagSbWordMorphs, 0, 0, 1);
-
 			var mb = new MorphemeBreaker(m_caches, ComboList.Text, m_hvoSbWord, m_wsVern, m_sandbox);
 			mb.Run();
 			// Everything changed, more or less.
@@ -290,7 +284,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-
 			var sda = m_caches.DataAccess;
 			// Compare to the actual original form of the sandbox wordform
 			var wf = m_sandbox.GetWordformOfAnalysis();

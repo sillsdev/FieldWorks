@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,24 +11,23 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.XMLViews;
-using SIL.LCModel.Core.Text;
-using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.LCModel.Core.KernelInterfaces;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
 using SIL.Xml;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 {
-	/// <summary>
-	/// Summary description for InflAffixTemplateControl.
-	/// </summary>
+	/// <summary />
 	internal class InflAffixTemplateControl : XmlView
 	{
-		ICmObject m_obj;		// item clicked
-		IMoInflAffixSlot m_slot;		// slot to which chosen MSA belongs
+		ICmObject m_obj;        // item clicked
+		IMoInflAffixSlot m_slot;        // slot to which chosen MSA belongs
 		IMoInflAffixTemplate m_template;
 		string m_sStem;
 		string m_sSlotChooserTitle;
@@ -52,9 +51,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -96,7 +96,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// <summary>
 		/// Intercepts mouse clicks on Command Icons and translates them into right mouse clicks
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
 			Rectangle rcSrcRoot;
@@ -130,7 +129,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		protected override bool OnRightMouseUp(Point pt, Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
 			var slice = FindParentSlice();
-			Debug.Assert(slice != null);
+			Guard.AgainstNull(slice, nameof(slice));
 			if (slice != null)
 			{
 				// Make sure we are a current slice so we are a colleague so we can enable menu items.
@@ -139,22 +138,19 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 					slice.ContainingDataTree.CurrentSlice = slice;
 				}
 			}
-
 			if (ShowContextMenu == null)
 			{
 				return base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot);
 			}
-			var sel = RootBox.MakeSelAt(pt.X, pt.Y,
-				new Rect(rcSrcRoot.Left, rcSrcRoot.Top, rcSrcRoot.Right, rcSrcRoot.Bottom),
-				new Rect(rcDstRoot.Left, rcDstRoot.Top, rcDstRoot.Right, rcDstRoot.Bottom),
-				false);
+			var sel = RootBox.MakeSelAt(pt.X, pt.Y, new Rect(rcSrcRoot.Left, rcSrcRoot.Top, rcSrcRoot.Right, rcSrcRoot.Bottom), new Rect(rcDstRoot.Left, rcDstRoot.Top, rcDstRoot.Right, rcDstRoot.Bottom), false);
 			if (sel == null)
 			{
 				return base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot); // no object, so quit and let base handle it
 			}
 			int index;
 			int hvo, tag, prev; // dummies.
-			IVwPropertyStore vps; // dummy
+			// dummy
+			IVwPropertyStore vps;
 			// Level 0 would give info about ktagText and the hvo of the dummy line object.
 			// Level 1 gives info about which line object it is in the root.
 			sel.PropInfo(false, 0, out hvo, out tag, out index, out prev, out vps);  // using level 1 for an msa should return the slot it belongs in
@@ -165,7 +161,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				sel.PropInfo(false, 1, out hvoSlot, out tagSlot, out indexSlot, out prevSlot, out vpsSlot);
 				int classSlot = Cache.GetClassOfObject(hvoSlot);
 				if (classSlot == LCM.Ling.MoInflAffixSlot.kClassId)
+				{
 					m_hvoSlot = hvoSlot;
+				}
 #endif
 			m_obj = Cache.ServiceLocator.GetObject(hvo);
 			ShowContextMenu(this, new InflAffixTemplateEventArgs(this, m_xnSpec, pt, tag));
@@ -194,7 +192,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// Set the handler which will be invoked when the user right-clicks on the
 		/// Inflectional Affix Template slice, or in some other way invokes the context menu.
 		/// </summary>
-		/// <param name="handler"></param>
 		public void SetContextMenuHandler(InflAffixTemplateEventHandler handler)
 		{
 			//note the = instead of += we do not want more than 1 handler trying to open the context menu!
@@ -203,6 +200,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			//when it handled the menu display itself.
 			ShowContextMenu = handler;
 		}
+
 		/// <summary>
 		/// Invoked by a slice when the user does something to bring up a context menu
 		/// </summary>
@@ -214,15 +212,17 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			Debug.Assert(ShowContextMenu != null, "this should always be set to something");
 			ShowContextMenu(sender, e);
 		}
+
 		public bool OnInflTemplateInsertSlotBefore(object cmd)
 		{
 			HandleInsert(true);
-			return true;	//we handled this.
+			return true;    //we handled this.
 		}
+
 		public bool OnInflTemplateInsertSlotAfter(object cmd)
 		{
 			HandleInsert(false);
-			return true;	//we handled this.
+			return true;    //we handled this.
 		}
 
 #if RANDYTODO
@@ -264,13 +264,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			var sName = slot.Name.BestAnalysisVernacularAlternative.Text;
 			var sUndo = string.Format(AreaResources.ksUndoChangeOptionalityOfSlot, sName);
 			var sRedo = string.Format(AreaResources.ksRedoChangeOptionalityOfSlot, sName);
-			using (UndoableUnitOfWorkHelper helper = new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, sUndo, sRedo))
+			using (var helper = new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, sUndo, sRedo))
 			{
 				slot.Optional = !slot.Optional;
 				helper.RollBack = false;
 			}
 			RootBox.Reconstruct();
-			return true;	//we handled this.
+			return true;    //we handled this.
 		}
 		public bool OnInflTemplateRemoveSlot(object cmd)
 		{
@@ -284,7 +284,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				seq.RemoveAt(index);
 				helper.RollBack = false;
 			}
-			return true;	//we handled this.
+			return true;    //we handled this.
 		}
 
 #if RANDYTODO
@@ -309,43 +309,26 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			{
 				return true; // play it safe
 			}
-			UndoableUnitOfWorkHelper.Do(AreaResources.ksUndoRemovingAffix, AreaResources.ksRedoRemovingAffix,
-				Cache.ActionHandlerAccessor,
-				() =>
-					{
-						if (OtherInflAffixMsasExist(lex, inflMsa))
-						{
-							// remove this msa because there are others
-							lex.MorphoSyntaxAnalysesOC.Remove(inflMsa);
-						}
-						else
-						{
-							// this is the only one; remove it
-							inflMsa.SlotsRC.Clear();
-						}
-					});
+			UndoableUnitOfWorkHelper.Do(AreaResources.ksUndoRemovingAffix, AreaResources.ksRedoRemovingAffix, Cache.ActionHandlerAccessor, () =>
+			{
+				if (OtherInflAffixMsasExist(lex, inflMsa))
+				{
+					// remove this msa because there are others
+					lex.MorphoSyntaxAnalysesOC.Remove(inflMsa);
+				}
+				else
+				{
+					// this is the only one; remove it
+					inflMsa.SlotsRC.Clear();
+				}
+			});
 			RootBox.Reconstruct();  // work around because <choice> is not smart enough to remember its dependencies
-			return true;	//we handled this.
+			return true;    //we handled this.
 		}
 
 		private bool OtherInflAffixMsasExist(ILexEntry lex, IMoInflAffMsa inflMsa)
 		{
-			var fOtherInflAffixMsasExist = false;  // assume we won't find an existing infl affix msa
-			foreach (var msa in lex.MorphoSyntaxAnalysesOC)
-			{
-				if (msa.ClassID != MoInflAffMsaTags.kClassId)
-				{
-					continue;
-				}
-				// is an inflectional affix msa
-				if (msa == inflMsa)
-				{
-					continue; // it's not the one the user requested to remove
-				}
-				fOtherInflAffixMsasExist = true;
-				break;
-			}
-			return fOtherInflAffixMsasExist;
+			return lex.MorphoSyntaxAnalysesOC.Where(msa => msa.ClassID == MoInflAffMsaTags.kClassId).Any(msa => msa != inflMsa);
 		}
 
 		public bool OnInflTemplateAddInflAffixMsa(object cmd)
@@ -371,7 +354,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				}
 			}
 #endif
-			return true;	//we handled this.
+			return true;    //we handled this.
 		}
 
 		private void AddInflAffixMsaToSlot(ICmObject obj, IMoInflAffixSlot slot)
@@ -400,7 +383,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 					fMiamSet = true;
 					break;
 				}
-
 				if (!pos.AllAffixSlots.Contains(slot))
 				{
 					continue;
@@ -426,7 +408,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 					break;
 				}
 			}
-
 			if (fMiamSet)
 			{
 				return; // need to create a new infl affix msa
@@ -450,7 +431,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 					break;
 				}
 			}
-
 			if (fASenseHasMsa)
 			{
 				return;
@@ -519,8 +499,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// <summary>
 		/// Determine if the lex entry can appear in the prefix/suffix slot
 		/// </summary>
-		/// <param name="lex"></param>
-		/// <param name="fIsPrefixSlot"></param>
 		/// <returns>true if the lex entry can appear in the slot</returns>
 		private bool EntryHasAffixThatMightBeInSlot(ILexEntry lex, bool fIsPrefixSlot)
 		{
@@ -724,7 +702,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			get
 			{
 				return m_template.PrefixSlotsRS.All(slot => slot.Name.AnalysisDefaultWritingSystem.Text != m_sNewSlotName)
-				       && m_template.SuffixSlotsRS.All(slot => slot.Name.AnalysisDefaultWritingSystem.Text != m_sNewSlotName);
+					   && m_template.SuffixSlotsRS.All(slot => slot.Name.AnalysisDefaultWritingSystem.Text != m_sNewSlotName);
 			}
 		}
 
@@ -735,7 +713,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			var aiUnnamedSlotValues = GetAllUnnamedSlotValues();
 			aiUnnamedSlotValues.Sort();
 			var iMax = aiUnnamedSlotValues.Count;
-			var iValueToUse = iMax + 1;  // default to the next one
+			// default to the next one
+			var iValueToUse = iMax + 1;
 			// find any "holes" in the numbered sequence (in case the user has renamed
 			//   one or more of them since the last time we did this)
 			for (var i = 0; i < iMax; i++)
@@ -758,9 +737,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			{
 				foreach (var slot in pos.AffixSlotsOC)
 				{
-					if (slot.Name.AnalysisDefaultWritingSystem == null ||
-						slot.Name.BestAnalysisAlternative.Text == null ||
-						slot.Name.BestAnalysisAlternative.Text.StartsWith(m_sUnnamedSlotName))
+					if (slot.Name.AnalysisDefaultWritingSystem == null || slot.Name.BestAnalysisAlternative.Text == null || slot.Name.BestAnalysisAlternative.Text.StartsWith(m_sUnnamedSlotName))
 					{
 						var sValue = m_sUnnamedSlotName;
 						int i;
@@ -791,15 +768,17 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			// of the template.  See LT-13932.
 			if (m_template.IsValidObject && !AllSlotNamesOk)
 			{
-				UndoableUnitOfWorkHelper.Do(AreaResources.ksUndoChangeSlotName, AreaResources.ksRedoChangeSlotName,
-					Cache.ActionHandlerAccessor,
-					() =>
+				UndoableUnitOfWorkHelper.Do(AreaResources.ksUndoChangeSlotName, AreaResources.ksRedoChangeSlotName, Cache.ActionHandlerAccessor, () =>
+				{
+					foreach (var slot in m_template.PrefixSlotsRS)
 					{
-						foreach (var slot in m_template.PrefixSlotsRS)
-							FixSlotName(slot);
-						foreach (var slot in m_template.SuffixSlotsRS)
-							FixSlotName(slot);
-					});
+						FixSlotName(slot);
+					}
+					foreach (var slot in m_template.SuffixSlotsRS)
+					{
+						FixSlotName(slot);
+					}
+				});
 			}
 			base.OnLostFocus(e);
 		}
@@ -873,8 +852,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		internal ITsString MenuLabelForInflAffixTemplateHelp(string sLabel)
 		{
 			var helptopic = PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider).GetHelpString(m_ChooseInflectionalAffixHelpTopic);
-			if ((m_obj.ClassID != MoInflAffMsaTags.kClassId && m_obj.ClassID != MoInflAffixSlotTags.kClassId && m_obj.ClassID != MoInflAffixTemplateTags.kClassId)
-			    || helptopic == null)
+			if (m_obj.ClassID != MoInflAffMsaTags.kClassId && m_obj.ClassID != MoInflAffixSlotTags.kClassId && m_obj.ClassID != MoInflAffixTemplateTags.kClassId
+				|| helptopic == null)
 			{
 				return null;
 			}
@@ -886,7 +865,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		{
 			var index = slots.IndexOf(m_obj as IMoInflAffixSlot);
 			if (index >= 0)
-			{	// it was found
+			{   // it was found
 				bool bAtEdge;
 				if (bIsLeft)
 				{
@@ -943,8 +922,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			}
 			if (slot.Name.AnalysisDefaultWritingSystem.Text == m_sNewSlotName)
 			{
-				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor,
-					() => slot.Name.SetAnalysisDefaultWritingSystem(GetNextUnnamedSlotName()));
+				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor, () => slot.Name.SetAnalysisDefaultWritingSystem(GetNextUnnamedSlotName()));
 			}
 			return slot.Name.AnalysisDefaultWritingSystem;
 		}
@@ -980,7 +958,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				{
 					tsb.ReplaceTsString(ich, ich + sToken.Length, tssReplace);
 				}
-
 				if (ich + tssReplace.Length >= tsb.Length)
 				{
 					break;

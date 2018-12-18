@@ -30,26 +30,14 @@ namespace LanguageExplorer.Controls.Styles
 		{
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="StyleInfo"/> class. This constructor
-		/// is used to make a copy of a style with a new name.
-		/// </summary>
-		/// <param name="copyFrom">The copy from.</param>
-		/// <param name="newName">name for the new copied style</param>
+		/// <summary />
 		public StyleInfo(BaseStyleInfo copyFrom, string newName)
 			: base(copyFrom, newName)
 		{
 			m_dirty = true;
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="StyleInfo"/> class. Creates a new
-		/// style of a given type.
-		/// </summary>
-		/// <param name="name">new style name</param>
-		/// <param name="basedOnStyle">style to be based on</param>
-		/// <param name="styleType"></param>
-		/// <param name="cache">LCM cache</param>
+		/// <summary />
 		public StyleInfo(string name, StyleInfo basedOnStyle, StyleType styleType, LcmCache cache)
 			: base(cache)
 		{

@@ -1,14 +1,14 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2011-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.Filters;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Infrastructure;
-using LanguageExplorer.Filters;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -24,7 +24,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		//the ReloadList() on the RecordList class will trigger if this is true
 		//set when the index in the list is changed
 		private bool selectionChanged = true;
-		//This indicates that a reload has been requested,
 
 		/// <summary />
 		internal ConcordanceWordList(StatusBar statusBar, ILangProject languageProject, ConcDecorator decorator)
@@ -71,7 +70,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				selectionChanged = true;
 				base.CurrentIndex = value;
-				//if noone has actually asked for the list to be reloaded it would be a waste to do so
+				// if no one has actually asked for the list to be reloaded it would be a waste to do so
 				if (ReloadRequested)
 				{
 					ReloadList();
@@ -82,7 +81,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// This is used in situations like switching views. In such cases we should force a reload.
 		/// </summary>
-		/// <returns></returns>
 		protected override bool NeedToReloadList()
 		{
 			return base.NeedToReloadList() || ReloadRequested;
@@ -124,7 +122,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return false; // we are not involved in the reload process.
 			}
-
 			if (((IActionHandlerExtensions)m_cache.ActionHandlerAccessor).CanStartUow)
 			{
 				ParseAndUpdate(); // do it now
@@ -141,7 +138,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void ParseAndUpdate()
 		{
-			var publisher = (VirtualListPublisher as ObjectListPublisher);
+			var publisher = (ObjectListPublisher)VirtualListPublisher;
 			publisher.SetOwningPropInfo(WfiWordformTags.kClassId, "WordformInventory", "Wordforms");
 			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, ParseInterestingTexts);
 			publisher.SetOwningPropValue((m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances().Select(wf => wf.Hvo)).ToArray());
@@ -175,8 +172,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							progress.PercentDone = newPercentDone;
 							progress.Breath();
 						}
-						if (para.ParseIsCurrent) continue;
-
+						if (para.ParseIsCurrent)
+						{
+							continue;
+						}
 						ParagraphParser.ParseParagraph(para);
 					}
 				}

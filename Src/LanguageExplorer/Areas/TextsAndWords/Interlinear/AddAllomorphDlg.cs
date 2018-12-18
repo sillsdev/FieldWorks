@@ -1,20 +1,18 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Diagnostics;
 using LanguageExplorer.Controls.LexText;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
 	public class AddAllomorphDlg : EntryGoDlg
 	{
-		#region	Data members
-
 		private string m_formOrig;
 		private int m_hvoType;
-		#endregion	Data members
 
 		#region Properties
 
@@ -65,18 +63,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
-			if( disposing )
+			if (disposing)
 			{
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		/// <summary>
@@ -85,13 +84,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public void SetDlgInfo(LcmCache cache, WindowParams wp, ITsString tssform, int hvoType)
 		{
 			SetDlgInfo(cache, wp, tssform);
-
 			m_formOrig = m_tbForm.Text;
 			m_hvoType = hvoType;
 			// "m_btnOK" enabling is handled elsewhere.
 			m_btnOK.Width += 30;
 			m_btnOK.Left += 90;
-			m_btnClose.Width += 30;		// for balance...
+			m_btnClose.Width += 30;     // for balance...
 
 			ShowControlsBasedOnPanel1Position();
 
@@ -135,7 +133,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					{
 						fMatchingType = true;
 					}
-
 					if (fMatchingForm)
 					{
 						break;

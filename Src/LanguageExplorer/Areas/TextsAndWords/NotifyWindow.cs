@@ -1,5 +1,5 @@
 // NotifyWindow.cs
-// Copyright © 2004 by Robert Misiak <rmisiak@users.sourceforge.net>
+// Copyright (c) 2004 by Robert Misiak <rmisiak@users.sourceforge.net>
 // All Rights Reserved.
 //
 // Permission is granted to use, modify and distribute this code, as long as credit is given to the original author, and the copyright notice
@@ -8,10 +8,11 @@
 // Based on a similar implementation used in ChronosXP, an open-source project:  http://chronosxp.sourceforge.net
 
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {
@@ -23,7 +24,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	/// </summary>
 	internal class NotifyWindow : Form
 	{
-#region Public Variables
+		#region Public Variables
 		/// <summary>
 		/// Gets or sets the title text to be displayed in the NotifyWindow.
 		/// </summary>
@@ -31,15 +32,15 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary>
 		/// Gets or sets the Font used for the title text.
 		/// </summary>
-		public System.Drawing.Font TitleFont;
+		public Font TitleFont;
 		/// <summary>
 		/// Gets or sets the Font used when the mouse hovers over the main body of text.
 		/// </summary>
-		public System.Drawing.Font HoverFont;
+		public Font HoverFont;
 		/// <summary>
 		/// Gets or sets the Font used when the mouse hovers over the title text.
 		/// </summary>
-		public System.Drawing.Font TitleHoverFont;
+		public Font TitleHoverFont;
 		/// <summary>
 		/// Gets or sets the style used when drawing the background of the NotifyWindow.
 		/// </summary>
@@ -47,40 +48,40 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary>
 		/// Gets or sets the Blend used when drawing a gradient background for the NotifyWindow.
 		/// </summary>
-		public System.Drawing.Drawing2D.Blend Blend;
+		public Blend Blend;
 		/// <summary>
 		/// Gets or sets the StringFormat used when drawing text in the NotifyWindow.
 		/// </summary>
-		public System.Drawing.StringFormat StringFormat;
+		public StringFormat StringFormat;
 		/// <summary>
-		/// Gets or sets a value specifiying whether or not the window should continue to be displayed if the mouse cursor is inside the bounds
+		/// Gets or sets a value specifying whether or not the window should continue to be displayed if the mouse cursor is inside the bounds
 		/// of the NotifyWindow.
 		/// </summary>
 		public bool WaitOnMouseOver;
 		/// <summary>
 		/// An EventHandler called when the NotifyWindow main text is clicked.
 		/// </summary>
-		public event System.EventHandler TextClicked;
+		public event EventHandler TextClicked;
 		/// <summary>
 		/// An EventHandler called when the NotifyWindow title text is clicked.
 		/// </summary>
-		public event System.EventHandler TitleClicked;
+		public event EventHandler TitleClicked;
 		/// <summary>
 		/// Gets or sets the color of the title text.
 		/// </summary>
-		public System.Drawing.Color TitleColor;
+		public Color TitleColor;
 		/// <summary>
 		/// Gets or sets the color of the NotifyWindow main text.
 		/// </summary>
-		public System.Drawing.Color TextColor;
+		public Color TextColor;
 		/// <summary>
 		/// Gets or sets the gradient color which will be blended in drawing the background.
 		/// </summary>
-		public System.Drawing.Color GradientColor;
+		public Color GradientColor;
 		/// <summary>
 		/// Gets or sets the color of text when the user clicks on it.
 		/// </summary>
-		public System.Drawing.Color PressedColor;
+		public Color PressedColor;
 		/// <summary>
 		/// Gets or sets the amount of milliseconds to display the NotifyWindow for.
 		/// </summary>
@@ -97,37 +98,52 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		public enum BackgroundStyles { BackwardDiagonalGradient, ForwardDiagonalGradient, HorizontalGradient, VerticalGradient, Solid };
 		public enum ClockStates { Opening, Closing, Showing, None };
 		public ClockStates ClockState;
-#endregion
+		#endregion
 
-#region Protected Variables
-		protected bool closePressed = false, textPressed = false, titlePressed = false, closeHot = false, textHot = false, titleHot = false;
+		#region Protected Variables
+		protected bool closePressed, textPressed, titlePressed, closeHot, textHot, titleHot;
 		protected Rectangle rClose, rText, rTitle, rDisplay, rScreen, rGlobClose, rGlobText, rGlobTitle, rGlobDisplay;
-		protected System.Windows.Forms.Timer viewClock;
-#endregion
+		protected Timer viewClock;
+		#endregion
 
-#region Implementation of IDisposable
+		#region Implementation of IDisposable
 
-		/// <summary>Disposes of the resources (other than memory) used by the <see cref="T:System.Windows.Forms.Form" />.</summary>
-		/// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
 
 			if (IsDisposed)
 			{
 				return; // Only run once.
-}
+			}
 
 			base.Dispose(disposing);
 		}
-#endregion
+		#endregion
 
-#region Constructor
+		#region Constructor
 		/// <param name="title">Title text displayed in the NotifyWindow</param>
-		/// <param name="text">Main text displayedin the NotifyWindow</param>
-		public NotifyWindow(string title, string text) : this() { Title = title; Text = text; }
+		/// <param name="text">Main text displayed in the NotifyWindow</param>
+		public NotifyWindow(string title, string text)
+			: this()
+		{
+			Title = title;
+			Text = text;
+		}
+
 		/// <param name="text">Text displayed in the NotifyWindow</param>
-		public NotifyWindow(string text) : this() { Text = text; }
+		public NotifyWindow(string text)
+			: this()
+		{
+			Text = text;
+		}
+
 		public NotifyWindow()
 		{
 			AccessibleName = GetType().Name;
@@ -137,8 +153,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			SetStyle(ControlStyles.DoubleBuffer, true);
 
 			ShowInTaskbar = false;
-			FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-			StartPosition = System.Windows.Forms.FormStartPosition.Manual;
+			FormBorderStyle = FormBorderStyle.None;
+			StartPosition = FormStartPosition.Manual;
 
 			// Default values
 			BackgroundStyle = BackgroundStyles.VerticalGradient;
@@ -153,9 +169,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			ActualHeight = 110;
 			WaitTime = 11000;
 		}
-#endregion
+		#endregion
 
-#region Public Methods
+		#region Public Methods
 		/// <summary>
 		/// Sets the width and height of the NotifyWindow.
 		/// </summary>
@@ -174,23 +190,19 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				throw new Exception("You must set NotifyWindow.Text before calling Notify()");
 			}
-
 			Width = ActualWidth;
 			rScreen = Screen.GetWorkingArea(Screen.PrimaryScreen.Bounds);
 			Height = 0;
 			Top = rScreen.Bottom;
 			Left = rScreen.Width - Width - 11;
-
 			if (HoverFont == null)
 			{
 				HoverFont = new Font(Font, Font.Style | FontStyle.Underline);
 			}
-
 			if (TitleFont == null)
 			{
 				TitleFont = Font;
 			}
-
 			if (TitleHoverFont == null)
 			{
 				TitleHoverFont = new Font(TitleFont, TitleFont.Style | FontStyle.Underline);
@@ -204,10 +216,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					Trimming = StringTrimming.EllipsisWord
 				};
 			}
-
 			rDisplay = new Rectangle(0, 0, Width, ActualHeight);
 			rClose = new Rectangle(Width - 21, 10, 13, 13);
-
 			int offset;
 			if (Title != null)
 			{
@@ -223,7 +233,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				offset = rClose.Bottom + 1;
 				rTitle = new Rectangle(-1, -1, 1, 1);
 			}
-
 			rText = new Rectangle(11, offset, ActualWidth - 22, ActualHeight - (int)(offset * 1.5));
 			// rGlob* are Rectangle's Offset'ed to their actual position on the screen, for use with Cursor.Position.
 			rGlobClose = rClose;
@@ -241,27 +250,23 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			rGlobClose.Offset(Left, rScreen.Bottom - ActualHeight);
 			rGlobDisplay = rDisplay;
 			rGlobDisplay.Offset(Left, rScreen.Bottom - ActualHeight);
-
 			// Use unmanaged ShowWindow() and SetWindowPos() instead of the managed Show() to display the window - this method will display
 			// the window TopMost, but without stealing focus (namely the SW_SHOWNOACTIVATE and SWP_NOACTIVATE flags)
 			ShowWindow(Handle, SW_SHOWNOACTIVATE);
 			SetWindowPos(Handle, HWND_TOPMOST, rScreen.Width - ActualWidth - 11, rScreen.Bottom, ActualWidth, 0, SWP_NOACTIVATE);
-
 			viewClock = new Timer();
 			viewClock.Tick += viewTimer;
 			viewClock.Interval = 1;
 			viewClock.Start();
-
 			ClockState = ClockStates.Opening;
 		}
-#endregion
+		#endregion
 
-#region Drawing
-		protected override void OnPaint(System.Windows.Forms.PaintEventArgs e)
+		#region Drawing
+		protected override void OnPaint(PaintEventArgs e)
 		{
 			// Draw the close button and text.
 			drawCloseButton(e.Graphics);
-
 			Font useFont; Color useColor;
 			if (Title != null)
 			{
@@ -272,7 +277,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					e.Graphics.DrawString(Title, useFont, sb, rTitle, this.StringFormat);
 				}
 			}
-
 			useFont = textHot ? HoverFont : Font;
 			useColor = textPressed ? PressedColor : TextColor;
 			using (var sb = new SolidBrush(useColor))
@@ -319,7 +323,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					e.Graphics.FillRectangle(lgb, rDisplay);
 				}
 			}
-
 			// Next draw borders...
 			drawBorder(e.Graphics);
 		}
@@ -368,7 +371,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		protected void drawThemeCloseButton(Graphics fx)
 		{
-			IntPtr hTheme = OpenThemeData(Handle, "Window");
+			var hTheme = OpenThemeData(Handle, "Window");
 			if (hTheme == IntPtr.Zero)
 			{
 				drawLegacyCloseButton(fx);
@@ -384,7 +387,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				stateId = CBS_HOT;
 			}
 			else
+			{
 				stateId = CBS_NORMAL;
+			}
 			var reClose = new RECT(rClose);
 			var reClip = reClose; // should fx.VisibleClipBounds be used here?
 			var hDC = fx.GetHdc();
@@ -416,10 +421,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				return false;
 			}
 		}
-#endregion
+		#endregion
 
-#region Timers and EventHandlers
-		protected void viewTimer(object sender, System.EventArgs e)
+		#region Timers and EventHandlers
+		protected void viewTimer(object sender, EventArgs e)
 		{
 			switch (ClockState)
 			{
@@ -437,7 +442,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 						Height += 2;
 					}
 					break;
-
 				case ClockStates.Showing:
 					if (!WaitOnMouseOver || !rGlobDisplay.Contains(Cursor.Position))
 					{
@@ -445,7 +449,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 						ClockState = ClockStates.Closing;
 					}
 					break;
-
 				case ClockStates.Closing:
 					Top += 2;
 					Height -= 2;
@@ -460,7 +463,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			}
 		}
 
-		protected override void OnMouseMove(System.Windows.Forms.MouseEventArgs e)
+		protected override void OnMouseMove(MouseEventArgs e)
 		{
 			if (Title != null && rGlobTitle.Contains(Cursor.Position) && !textPressed && !closePressed)
 			{
@@ -492,7 +495,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			base.OnMouseMove(e);
 		}
 
-		protected override void OnMouseDown(System.Windows.Forms.MouseEventArgs e)
+		protected override void OnMouseDown(MouseEventArgs e)
 		{
 			if (e.Button == MouseButtons.Left)
 			{
@@ -516,7 +519,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			base.OnMouseDown(e);
 		}
 
-		protected override void OnMouseUp(System.Windows.Forms.MouseEventArgs e)
+		protected override void OnMouseUp(MouseEventArgs e)
 		{
 			if (e.Button == MouseButtons.Left)
 			{
@@ -527,7 +530,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					closeHot = false;
 					Invalidate();
 					if (rGlobClose.Contains(Cursor.Position))
+					{
 						Close();
+					}
 				}
 				else if (textPressed)
 				{
@@ -556,27 +561,27 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			}
 			base.OnMouseUp(e);
 		}
-#endregion
+		#endregion
 
-#region P/Invoke
+		#region P/Invoke
 		// DrawThemeBackground()
-		protected const Int32 WP_CLOSEBUTTON = 18;
-		protected const Int32 CBS_NORMAL = 1;
-		protected const Int32 CBS_HOT = 2;
-		protected const Int32 CBS_PUSHED = 3;
+		protected const int WP_CLOSEBUTTON = 18;
+		protected const int CBS_NORMAL = 1;
+		protected const int CBS_HOT = 2;
+		protected const int CBS_PUSHED = 3;
 		[StructLayout(LayoutKind.Explicit)]
 		protected struct RECT
 		{
 			[FieldOffset(0)]
-			public Int32 Left;
+			public int Left;
 			[FieldOffset(4)]
-			public Int32 Top;
+			public int Top;
 			[FieldOffset(8)]
-			public Int32 Right;
+			public int Right;
 			[FieldOffset(12)]
-			public Int32 Bottom;
+			public int Bottom;
 
-			public RECT(System.Drawing.Rectangle bounds)
+			public RECT(Rectangle bounds)
 			{
 				Left = bounds.Left;
 				Top = bounds.Top;
@@ -586,27 +591,27 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		}
 
 		// SetWindowPos()
-		protected const Int32 HWND_TOPMOST = -1;
-		protected const Int32 SWP_NOACTIVATE = 0x0010;
+		protected const int HWND_TOPMOST = -1;
+		protected const int SWP_NOACTIVATE = 0x0010;
 
 		// ShowWindow()
-		protected const Int32 SW_SHOWNOACTIVATE = 4;
+		protected const int SW_SHOWNOACTIVATE = 4;
 
 		// UxTheme.dll
 		[DllImport("UxTheme.dll")]
-		protected static extern Int32 IsThemeActive();
+		protected static extern int IsThemeActive();
 		[DllImport("UxTheme.dll")]
 		protected static extern IntPtr OpenThemeData(IntPtr hWnd, [MarshalAs(UnmanagedType.LPTStr)] string classList);
 		[DllImport("UxTheme.dll")]
 		protected static extern void CloseThemeData(IntPtr hTheme);
 		[DllImport("UxTheme.dll")]
-		protected static extern void DrawThemeBackground(IntPtr hTheme, IntPtr hDC, Int32 partId, Int32 stateId, ref RECT rect, ref RECT clipRect);
+		protected static extern void DrawThemeBackground(IntPtr hTheme, IntPtr hDC, int partId, int stateId, ref RECT rect, ref RECT clipRect);
 
 		// user32.dll
 		[DllImport("user32.dll")]
-		protected static extern bool ShowWindow(IntPtr hWnd, Int32 flags);
+		protected static extern bool ShowWindow(IntPtr hWnd, int flags);
 		[DllImport("user32.dll")]
-		protected static extern bool SetWindowPos(IntPtr hWnd, Int32 hWndInsertAfter, Int32 X, Int32 Y, Int32 cx, Int32 cy, uint uFlags);
-#endregion
+		protected static extern bool SetWindowPos(IntPtr hWnd, int hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+		#endregion
 	}
 }

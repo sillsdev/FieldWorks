@@ -18,9 +18,7 @@ namespace LanguageExplorer.Filters
 	/// </summary>
 	public class MultiIndirectMlPropFinder : StringFinderBase
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:MultiIndirectMlPropFinder"/> class.
-		/// </summary>
+		/// <summary />
 		public MultiIndirectMlPropFinder(ISilDataAccess sda, int[] flidVec, int flidString, int ws)
 			: base(sda)
 		{

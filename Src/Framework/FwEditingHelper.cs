@@ -22,9 +22,7 @@ namespace SIL.FieldWorks.Common.Framework
 	/// </summary>
 	public class FwEditingHelper : RootSiteEditingHelper
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="FwEditingHelper"/> class.
-		/// </summary>
+		/// <summary />
 		public FwEditingHelper(LcmCache cache, IEditingCallbacks callbacks)
 			: base(cache, callbacks)
 		{
@@ -55,9 +53,10 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </remarks>
 		protected override void Dispose(bool disposing)
 		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
-				// Must not be run more than once.
+				// No need to run it more than once.
 				return;
 			}
 

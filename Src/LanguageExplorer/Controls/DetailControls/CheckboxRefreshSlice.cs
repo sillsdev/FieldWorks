@@ -7,9 +7,7 @@ using SIL.LCModel;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-	/// <summary>
-	/// Summary description for Checkbox.
-	/// </summary>
+	/// <summary />
 	internal class CheckboxRefreshSlice : CheckboxSlice
 	{
 		public CheckboxRefreshSlice(LcmCache cache, ICmObject obj, int flid, XElement node)

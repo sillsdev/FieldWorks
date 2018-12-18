@@ -1,14 +1,15 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel;
 using LanguageExplorer.Controls.DetailControls;
 using SIL.Code;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.LCModel;
 using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Areas
@@ -28,7 +29,6 @@ namespace LanguageExplorer.Areas
 			Guard.AgainstNull(sharedEventHandlers, nameof(sharedEventHandlers));
 
 			_sharedEventHandlers = sharedEventHandlers;
-
 			_sharedEventHandlers.Add(AreaServices.ContextSetFeatures, ContextSetFeatures_Clicked);
 		}
 
@@ -47,9 +47,10 @@ namespace LanguageExplorer.Areas
 
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -70,7 +71,6 @@ namespace LanguageExplorer.Areas
 		protected override void OnEnter(EventArgs e)
 		{
 			base.OnEnter(e);
-
 			// show the insertion control
 			var oldHeight = Height;
 			RuleFormulaControl.InsertionControl.Show();
@@ -118,7 +118,6 @@ namespace LanguageExplorer.Areas
 		protected override void OnLeave(EventArgs e)
 		{
 			base.OnLeave(e);
-
 			// hide the insertion control
 			RuleFormulaControl.InsertionControl.Hide();
 			if (RuleFormulaControl.RootSite.RootBox != null && ContainingDataTree != null)
@@ -145,7 +144,6 @@ namespace LanguageExplorer.Areas
 		public override void Install(DataTree parentDataTree)
 		{
 			base.Install(parentDataTree);
-
 			RuleFormulaControl.Initialize(PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache), MyCmObject, -1, AreaResources.ksRuleEnvChooserName, ContainingDataTree.PersistenceProvder, null, null);
 			RuleFormulaControl.InsertionControl.Hide();
 			RuleFormulaControl.InsertionControl.SizeChanged += InsertionControl_SizeChanged;

@@ -15,9 +15,7 @@ using SIL.Xml;
 
 namespace LanguageExplorerTests
 {
-	/// <summary>
-	/// Summary description for XmlUtilsTest.
-	/// </summary>
+	/// <summary />
 	[TestFixture]
 	public class InventoryTests : TestBaseForTestsThatCreateTempFilesBasedOnResources
 	{

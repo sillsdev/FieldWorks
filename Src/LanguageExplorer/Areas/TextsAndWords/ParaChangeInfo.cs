@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,7 +19,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	{
 		readonly RespellUndoAction m_action;
 		readonly int m_hvoTarget; // the one being changed.
-		ITsString m_newContents; // series of changes made to chwhat it will become if the change goes ahead.
 		readonly int m_flid; // property being changed (typically paragraph contents, but occasionally picture caption)
 		readonly int m_ws; // if m_flid is multilingual, ws of alternative; otherwise, zero.
 
@@ -34,11 +33,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary>
 		/// para contents if change proceeds.
 		/// </summary>
-		public ITsString NewContents
-		{
-			get { return m_newContents; }
-			set { m_newContents = value; }
-		}
+		public ITsString NewContents { get; set; }
 
 		/// <summary>
 		/// para contents if change does not proceed (or is undone).
@@ -91,7 +86,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				}
 			}
 			RespellUndoAction.UpdateProgress(progress);
-			m_newContents = bldr.GetString();
+			NewContents = bldr.GetString();
 		}
 
 		/// <summary>
@@ -105,20 +100,23 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		private void UpdateInstanceOf(ProgressDialogWorkingOn progress)
 		{
+#if JASONTODO
+			// TODO: Fix it, or get rid of the method.
+#endif
 			Debug.Fail(@"use of this method was causing very unpleasant data corruption in texts, the bug it fixed needs addressing though.");
 			var analysesToChange = new List<Tuple<ISegment, int>>();
-			RespellingSda sda = m_action.RespellSda;
+			var sda = m_action.RespellSda;
 			foreach (var hvoFake in Changes)
 			{
-				int hvoSeg = sda.get_ObjectProp(hvoFake, ConcDecorator.kflidSegment);
-				int beginOffset = sda.get_IntProp(hvoFake, ConcDecorator.kflidBeginOffset);
+				var hvoSeg = sda.get_ObjectProp(hvoFake, ConcDecorator.kflidSegment);
+				var beginOffset = sda.get_IntProp(hvoFake, ConcDecorator.kflidBeginOffset);
 				if (hvoSeg > 0)
 				{
-					ISegment seg = m_action.RepoSeg.GetObject(hvoSeg);
-					int canal = seg.AnalysesRS.Count;
-					for (int i = 0; i < canal; ++i)
+					var seg = m_action.RepoSeg.GetObject(hvoSeg);
+					var canal = seg.AnalysesRS.Count;
+					for (var i = 0; i < canal; ++i)
 					{
-						IAnalysis anal = seg.AnalysesRS[i];
+						var anal = seg.AnalysesRS[i];
 						if (anal.HasWordform && anal.Wordform.Hvo == m_action.OldWordform)
 						{
 							if (seg.GetAnalysisBeginOffset(i) == beginOffset)
@@ -137,7 +135,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				var newVal = new[] { m_action.RepoWf.GetObject(m_action.NewWordform) };
 				foreach (var change in analysesToChange)
+				{
 					change.Item1.AnalysesRS.Replace(change.Item2, 1, newVal);
+				}
 			}
 			RespellUndoAction.UpdateProgress(progress);
 		}

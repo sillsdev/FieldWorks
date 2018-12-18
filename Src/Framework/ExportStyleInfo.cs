@@ -14,10 +14,7 @@ namespace SIL.FieldWorks.Common.Framework
 	/// </summary>
 	public class ExportStyleInfo : BaseStyleInfo
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ExportStyleInfo"/> class based on a FW
-		/// style and text properties.
-		/// </summary>
+		/// <summary />
 		public ExportStyleInfo(IStStyle style, ITsTextProps props)
 			: base(style, props)
 		{

@@ -1,9 +1,10 @@
-// Copyright (c) 2013-2018 SIL International
+// Copyright (c) 2013-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml;
 using LanguageExplorer.Controls.XMLViews;
@@ -104,7 +105,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			base.OnHandleCreated(e);
 
 			var paneBarContainer = Parent as IPaneBarContainer;
-			if (paneBarContainer == null) return;
+			if (paneBarContainer == null)
+			{
+				return;
+			}
 			paneBarContainer.PaneBar.Text = ITextStrings.ksSpecifyConcordanceCriteria;
 		}
 
@@ -121,7 +125,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
 			if (disposing)
 			{
 				if (m_recordList != null)
@@ -151,7 +161,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected internal void LoadMatches(bool fLoadVirtualProperty)
 		{
 			var occurrences = SearchForMatches();
-			var decorator = (ConcDecorator)((DomainDataByFlidDecoratorBase) m_recordList.VirtualListPublisher).BaseSda;
+			var decorator = (ConcDecorator)((DomainDataByFlidDecoratorBase)m_recordList.VirtualListPublisher).BaseSda;
 			// Set this BEFORE we start loading, otherwise, calls to ReloadList triggered here just make it empty.
 			HasLoadedMatches = true;
 			IsLoadingMatches = true;
@@ -184,13 +194,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return true;
 		}
 
-#region Implementation of IMainUserControl
+		#region Implementation of IMainUserControl
 
 		/// <summary>
 		/// Get or set the name to be used by the accessibility object.
 		/// </summary>
 		string IMainUserControl.AccName { get; set; }
 
-#endregion
+		#endregion
 	}
 }

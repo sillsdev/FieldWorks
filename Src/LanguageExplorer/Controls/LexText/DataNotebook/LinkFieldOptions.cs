@@ -9,9 +9,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 	/// <summary />
 	public partial class LinkFieldOptions : UserControl
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:CrossReferenceOptions"/> class.
-		/// </summary>
+		/// <summary />
 		public LinkFieldOptions()
 		{
 			InitializeComponent();

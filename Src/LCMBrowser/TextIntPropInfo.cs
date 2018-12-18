@@ -19,9 +19,7 @@ namespace LCMBrowser
 
 		private readonly string m_toStringValue;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:TextIntPropInfo"/> class.
-		/// </summary>
+		/// <summary />
 		public TextIntPropInfo(ITsTextProps props, int iprop, LcmCache cache)
 		{
 			int nvar;

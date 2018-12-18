@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -47,7 +47,6 @@ namespace LanguageExplorer.Areas
 			{
 				return;
 			}
-
 			window.RecordBarControl.ShowHeaderControl = false;
 		}
 
@@ -57,8 +56,6 @@ namespace LanguageExplorer.Areas
 		/// Without preloading, it took almost 19,000 queries to start FW showing semantic domain
 		/// list. With preloading it reduced the number to 200 queries.
 		/// </summary>
-		/// <param name="obj"></param>
-		/// <param name="parentsCollection"></param>
 		protected override void AddSubNodes(ICmObject obj, TreeNodeCollection parentsCollection)
 		{
 			var pss = (ICmPossibility)obj;
@@ -68,9 +65,7 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		/// <remarks> this is overridden because we actually need to avoid adding items from the top-level if
 		/// they are not top-level possibilities. They will show up under their respective parents.in other words,
 		/// if the list we are given has been flattened, we need to un-flatten it.</remarks>
@@ -105,16 +100,13 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// Move the clicked item the specified distance (currently +/- 1) in its owning list.
 		/// </summary>
-		/// <param name="distance"></param>
 		private void MoveItem(int distance)
 		{
 			var hvoMove = ClickObject;
-
 			if (hvoMove == 0)
 			{
 				return;
 			}
-
 			var column = m_possRepo.GetObject(hvoMove);
 			using (var columnUI = CmPossibilityUi.MakeLcmModelUiObject(column))
 			{
@@ -147,10 +139,8 @@ namespace LanguageExplorer.Areas
 			{
 				newIndex++;
 			}
-			UndoableUnitOfWorkHelper.Do(AreaResources.UndoMoveItem, AreaResources.RedoMoveItem,
-				m_cache.ActionHandlerAccessor,
-				() => m_cache.DomainDataByFlid.MoveOwnSeq(
-					hvoOwner, ownFlid, oldIndex, oldIndex, hvoOwner, ownFlid, newIndex));
+			UndoableUnitOfWorkHelper.Do(AreaResources.UndoMoveItem, AreaResources.RedoMoveItem, m_cache.ActionHandlerAccessor,
+				() => m_cache.DomainDataByFlid.MoveOwnSeq(hvoOwner, ownFlid, oldIndex, oldIndex, hvoOwner, ownFlid, newIndex));
 		}
 	}
 }

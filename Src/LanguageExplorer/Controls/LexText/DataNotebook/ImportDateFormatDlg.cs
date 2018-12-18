@@ -15,9 +15,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		// This example DateTime value must match that found in DateFieldOptions.cs!
 		DateTime m_dtExample = new DateTime(1999, 3, 29, 15, 30, 45);
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ImportDateFormatDlg"/> class.
-		/// </summary>
+		/// <summary />
 		public ImportDateFormatDlg()
 		{
 			InitializeComponent();

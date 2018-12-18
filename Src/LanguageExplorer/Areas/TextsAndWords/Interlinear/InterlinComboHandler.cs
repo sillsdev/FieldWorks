@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -34,10 +34,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// lowest level object selected.
 		protected int m_hvoSelObject;
 		// selected morph, if any...may be zero if not in morph, or equal to m_hvoSelObject.
-		// int for all classes, except IhMissingEntry, which studds MorphItem data into it.
+		// int for all classes, except IhMissingEntry, which stuffs MorphItem data into it.
 		// So, that ill-behaved class has to make its own m_items data member.
 		protected List<int> m_items = new List<int>();
-
 		// More parallel data for the comboList items.
 		protected IVwRootBox m_rootb;
 		protected int m_wsVern;  // HVO of default vernacular writing system.
@@ -100,7 +99,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					((IDisposable)ComboList).Dispose();
 				}
 			}
-
 			m_items?.Clear(); // I've seen it contain ints or MorphItems.
 
 		}
@@ -135,7 +133,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Setup a property for a specified color.
 		/// </summary>
-		/// <returns></returns>
 		protected static ITsTextProps HighlightProperty(Color highlightColor)
 		{
 			var color = (int)CmObjectUi.RGB(highlightColor);
@@ -180,16 +177,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				bool fAssocPrev;
 				int ihvoEnd;
 				ITsTextProps ttpBogus;
-				rgvsli = SelLevInfo.AllTextSelInfo(vwselNew, cvsli,
-					out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd,
-					out ws, out fAssocPrev, out ihvoEnd, out ttpBogus);
+				rgvsli = SelLevInfo.AllTextSelInfo(vwselNew, cvsli, out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd, out ttpBogus);
 			}
 			catch
 			{
 				// If anything goes wrong just give up.
 				return null;
 			}
-
 			var hvoMorph = 0;
 			var hvoSelObject = 0;
 			if (tagTextProp < SandboxBase.ktagMinIcon || tagTextProp >= SandboxBase.ktagLimIcon)
@@ -201,7 +195,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return null;
 			}
-
 			if (rgvsli.Length >= 1)
 			{
 				hvoMorph = hvoSelObject = rgvsli[0].hvo;
@@ -363,7 +356,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					{
 						s = (string)ie.Current;
 					}
-
 					if (s == null)
 					{
 						continue;
@@ -395,7 +387,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// Sub-classes can override where needed.
 		internal virtual void HandleComboSelChange(object sender, EventArgs ea)
 		{
-			// Revisit (EricP): we could reimplement m_sandbox.HandleComboSelChange
+			// Revisit (EricP): we could re-implement m_sandbox.HandleComboSelChange
 			// here, but I suppose duplicating the logic here isn't necessary.
 			// For now just use that one.
 			// Assuming it's not disposed, which it might be apparently on switching tools.
@@ -423,12 +415,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				HandleSelect(ComboList.SelectedIndex);
 			}
-
 			if (m_sandbox.ParentForm == Form.ActiveForm)
 			{
 				m_sandbox.Focus();
 			}
 		}
+
 		// Handle the user selecting an item in the combo box.
 		// Todo JohnT: many of the overrides should probably create a new selection.
 		// The caller first hides the combo, so it can be manipulated in various
@@ -506,7 +498,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-
 		// This method contains the default SetupCombo functions, for the benefit of
 		// classes that need to override without calling the immediate superclass,
 		// but do want the general default behavior.
@@ -566,7 +557,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			rgvsli[0].cpropPrevious = 0;
 			rgvsli[0].ihvo = ihvo;
 			rgvsli[0].tag = tag;
-
 			// first and only root object; length and array of path to target object;
 			// property, no previous occurrences, range 0 to 0, no ws, not assocPrev,
 			// no other object for the other end,
@@ -583,7 +573,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var sda = m_caches.DataAccess;
 			var citem = sda.get_VecSize(hvoOwner, flidVec);
 			var coRepository = m_caches.MainCache.ServiceLocator.GetInstance<ICmObjectRepository>();
-
 			for (var i = 0; i < citem; i++)
 			{
 				var hvoItem = sda.get_VecItem(hvoOwner, flidVec, i);
@@ -634,7 +623,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-
 			var sda = m_caches.DataAccess;
 			var cmorphs = sda.get_VecSize(m_hvoSbWord, SandboxBase.ktagSbWordMorphs);
 			var hvoSbRootSense = 0;
@@ -652,14 +640,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				var sense = m_caches.RealObject(hvoSbSense) as ILexSense;
 				var msa = sense.MorphoSyntaxAnalysisRA;
 				var fStem = msa is IMoStemMsa;
-
 				// If we have only one morpheme, treat it as the stem from which we will copy the gloss.
 				// otherwise, use the first stem we find, if any.
 				if (fStem && hvoSbRootSense == 0 || cmorphs == 1)
 				{
 					hvoSbRootSense = hvoSbSense;
 				}
-
 				if (fStem)
 				{
 					var hvoPOS = (msa as IMoStemMsa).PartOfSpeechRA?.Hvo ?? 0;
@@ -690,13 +676,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// one, since users get confused/frustrated if we don't.  (See LT-6141.)  It's marked as a
 			// guess after all!
 			CopySenseToWordGloss(fCopyToWordGloss, hvoSbRootSense);
-
 			// If we didn't find a stem, we don't have enough information to find a POS.
 			if (hvoStemPos == 0)
 			{
 				fGiveUpOnPOS = true;
 			}
-
 			var hvoLexPos = 0;
 			if (!fGiveUpOnPOS)
 			{

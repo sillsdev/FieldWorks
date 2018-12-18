@@ -3566,9 +3566,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
 		public string lfFaceName;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LogicalFont"/> class.
-		/// </summary>
+		/// <summary />
 		/// <param name="createFrom">The font to use as the basis for the logical font.</param>
 		/// <remarks>If it's not obvious why we need this class in order to determine if a font
 		/// is a symbol font, see the Dr. Gui article entitled

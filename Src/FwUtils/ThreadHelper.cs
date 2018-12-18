@@ -20,11 +20,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// thread, but are called from another thread.</summary>
 		private Control m_invokeControl;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ThreadHelper"/> class. Any calls to
-		/// Invoke will be executed on the thread this class is created on, so this should
-		/// typically be called on the main UI thread.
-		/// </summary>
+		/// <summary />
 		public ThreadHelper()
 		{
 			m_invokeControl = new Control();

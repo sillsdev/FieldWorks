@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -21,11 +21,7 @@ namespace LanguageExplorer.Areas
 			var subentry = (ILexEntry)firstMatch;
 			var componentsEntryRef = subentry.EntryRefsOS.FirstOrDefault(se => se.RefType == LexEntryRefTags.krtComplexForm);
 			var root = componentsEntryRef?.PrimaryEntryRoots.FirstOrDefault();
-			if (root != null)
-			{
-				return root;
-			}
-			return firstMatch; // by default change nothing.
+			return root ?? firstMatch;
 		}
 	}
 }

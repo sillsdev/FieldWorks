@@ -1,17 +1,15 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.LcmUi;
-using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
-	/// <summary>
-	/// Summary description for LexReferenceSequenceView.
-	/// </summary>
+	/// <summary />
 	internal sealed class LexReferenceSequenceView : VectorReferenceView
 	{
 		/// <summary />
@@ -52,15 +50,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// Currently only LexReferenceSequenceView displays a full sequence for lexical relations sequence.
 		/// (e.g. Calendar), so we can use ReferenceSequenceUi for handling the moving of items through context menu.
 		/// </summary>
-		/// <param name="hvo"></param>
-		/// <returns></returns>
 		protected override bool HandleRightClickOnObject(int hvo)
 		{
 			if (hvo == 0)
 			{
 				return false;
 			}
-
 			// We do NOT want a Using here. The temporary colleague created inside HandleRightClick should dispose
 			// of the object. (Not working as of the time of writing, but disposing it makes a much more definite
 			// problem, because it is gone before the user can choose one of the menu items. (FWR-2798 reopened)
@@ -93,18 +88,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				DeleteObjectFromVector(sel, cvsli, hvoObj, AreaResources.ksUndoDeleteRef, AreaResources.ksRedoDeleteRef);
 			}
-		}
-
-		/// <summary />
-		protected override void UpdateTimeStampsIfNeeded(int[] hvos)
-		{
-#if WANTPORTMULTI
-			for (int i = 0; i < hvos.Length; ++i)
-			{
-				ICmObject cmo = m_cache.GetObject(hvos[i]);
-				(cmo as ICmObject).UpdateTimestampForVirtualChange();
-			}
-#endif
 		}
 
 		#region Component Designer generated code

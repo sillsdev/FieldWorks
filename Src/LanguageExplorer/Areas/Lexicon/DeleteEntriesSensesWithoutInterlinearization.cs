@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2012-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,9 +13,11 @@ using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas.Lexicon
 {
-	// This class is used in Tools...Utilities to delete all entries and senses that do not have
-	// analyzed occurrences in the interesting list of interlinear texts. It warns the user prior
-	// to actually deleting the entries and senses.
+	/// <summary>
+	/// This class is used in Tools...Utilities to delete all entries and senses that do not have
+	/// analyzed occurrences in the interesting list of interlinear texts. It warns the user prior
+	/// to actually deleting the entries and senses.
+	/// </summary>
 	internal sealed class DeleteEntriesSensesWithoutInterlinearization : IUtility
 	{
 		private UtilityDlg m_dlg;
@@ -54,9 +56,9 @@ namespace LanguageExplorer.Areas.Lexicon
 		{
 			var cache = m_dlg.PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 			NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () =>
-				{
-					DeleteUnusedEntriesAndSenses(cache, m_dlg.ProgressBar);
-				});
+			{
+				DeleteUnusedEntriesAndSenses(cache, m_dlg.ProgressBar);
+			});
 		}
 
 		#endregion
@@ -121,7 +123,6 @@ namespace LanguageExplorer.Areas.Lexicon
 					return;
 				}
 			}
-
 			progressBar.Value = 1;
 			progressBar.Maximum = entriesToDel.Count;
 			foreach (var entry in entriesToDel)
@@ -129,7 +130,6 @@ namespace LanguageExplorer.Areas.Lexicon
 				progressBar.PerformStep();
 				cache.DomainDataByFlid.DeleteObj(entry.Hvo);
 			}
-
 			var senses = cache.ServiceLocator.GetInstance<ILexSenseRepository>().AllInstances().ToArray();
 			progressBar.Value = 1;
 			progressBar.Maximum = senses.Length;
@@ -145,7 +145,9 @@ namespace LanguageExplorer.Areas.Lexicon
 					}
 					count += cd.get_VecSize(cmo.Owner.Hvo, ConcDecorator.kflidWaOccurrences);
 					if (count > 0)
+					{
 						break;
+					}
 				}
 				if (count == 0)
 				{

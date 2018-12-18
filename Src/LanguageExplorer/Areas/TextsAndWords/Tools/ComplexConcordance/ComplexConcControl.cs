@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2018 SIL International
+// Copyright (c) 2013-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -40,20 +40,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			{
 				case ComplexConcordanceInsertType.Morph:
 					return ComplexConcordanceResources.ksComplexConcMorph;
-
 				case ComplexConcordanceInsertType.Word:
 					return ComplexConcordanceResources.ksComplexConcWord;
-
 				case ComplexConcordanceInsertType.TextTag:
 					return ComplexConcordanceResources.ksComplexConcTag;
-
 				case ComplexConcordanceInsertType.Or:
 					return "OR";
-
 				case ComplexConcordanceInsertType.WordBoundary:
 					return $"{ComplexConcordanceResources.ksComplexConcWordBoundary} (#)";
 			}
-
 			return null;
 		}
 
@@ -78,7 +73,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 		}
 
 		internal ComplexConcControl(MatchingConcordanceItems recordList)
-			:base(recordList)
+			: base(recordList)
 		{
 			InitializeComponent();
 		}
@@ -102,14 +97,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 				PropertyTable.SetProperty("ComplexConcPattern", pattern, doBroadcastIfChanged: true);
 			}
 			PatternModel = new ComplexConcPatternModel(m_cache, pattern);
-
 			m_view.InitializeFlexComponent(flexComponentParameters);
 			m_view.Init(PatternModel.Root.Hvo, this, new ComplexConcPatternVc(m_cache, PropertyTable), ComplexConcPatternVc.kfragPattern, PatternModel.DataAccess);
-
 			m_view.SelectionChanged += SelectionChanged;
 			m_view.RemoveItemsRequested += RemoveItemsRequested;
 			m_view.ContextMenuRequested += ContextMenuRequested;
-
 			m_insertControl.AddOption(new InsertOption(ComplexConcordanceInsertType.Morph), CanAddMorph);
 			m_insertControl.AddOption(new InsertOption(ComplexConcordanceInsertType.Word), CanAddConstraint);
 			m_insertControl.AddOption(new InsertOption(ComplexConcordanceInsertType.TextTag), CanAddConstraint);
@@ -129,13 +121,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			{
 				return true;
 			}
-
 			var sel = SelectionHelper.Create(m_view);
 			if (sel.IsRange)
 			{
 				return true;
 			}
-
 			var anchorNode = GetNode(sel, SelLimitType.Anchor);
 			var endNode = GetNode(sel, SelLimitType.End);
 			return anchorNode != null && endNode != null && anchorNode.Parent == endNode.Parent;
@@ -147,7 +137,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			{
 				return true;
 			}
-
 			var sel = SelectionHelper.Create(m_view);
 			var anchorNode = GetNode(sel, SelLimitType.Anchor);
 			var endNode = GetNode(sel, SelLimitType.End);
@@ -155,7 +144,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			{
 				return false;
 			}
-
 			ComplexConcPatternNode parent;
 			int start, end;
 			if (!sel.IsRange)
@@ -171,7 +159,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 				start = (sel.Selection.EndBeforeAnchor ? GetNodeIndex(endNode) : GetNodeIndex(anchorNode)) - 1;
 				end = (sel.Selection.EndBeforeAnchor ? GetNodeIndex(anchorNode) : GetNodeIndex(endNode)) + 1;
 			}
-
 			return (start == -1 || !(parent.Children[start] is ComplexConcWordBdryNode)) && (end == parent.Children.Count || !(parent.Children[end] is ComplexConcWordBdryNode));
 		}
 
@@ -189,9 +176,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			{
 				return false;
 			}
-
-			return (!(parent.Children[index - 1] is ComplexConcOrNode) && !(parent.Children[index - 1] is ComplexConcWordBdryNode))
-				&& (index == parent.Children.Count || (!(parent.Children[index] is ComplexConcOrNode) && !(parent.Children[index] is ComplexConcWordBdryNode)));
+			return !(parent.Children[index - 1] is ComplexConcOrNode) && !(parent.Children[index - 1] is ComplexConcWordBdryNode)
+				&& (index == parent.Children.Count || !(parent.Children[index] is ComplexConcOrNode) && !(parent.Children[index] is ComplexConcWordBdryNode));
 		}
 
 		private bool CanAddWordBoundary(object option)
@@ -200,7 +186,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			{
 				return true;
 			}
-
 			var sel = SelectionHelper.Create(m_view);
 			if (sel.IsRange)
 			{
@@ -213,17 +198,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			{
 				return false;
 			}
-
 			if (index == 0)
 			{
 				return parent.Children[index] is ComplexConcMorphNode;
 			}
-
 			if (index == parent.Children.Count)
 			{
 				return parent.Children[index - 1] is ComplexConcMorphNode;
 			}
-
 			return parent.Children[index - 1] is ComplexConcMorphNode && parent.Children[index] is ComplexConcMorphNode;
 		}
 
@@ -233,14 +215,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			var needsParsing = concDecorator.InterestingTexts.SelectMany(txt => txt.ParagraphsOS).Cast<IStTxtPara>().Where(para => !para.ParseIsCurrent).ToArray();
 			if (needsParsing.Length > 0)
 			{
-				NonUndoableUnitOfWorkHelper.DoSomehow(m_cache.ActionHandlerAccessor,
-					() =>
+				NonUndoableUnitOfWorkHelper.DoSomehow(m_cache.ActionHandlerAccessor, () =>
+				{
+					foreach (var para in needsParsing)
 					{
-						foreach (var para in needsParsing)
-						{
-							ParagraphParser.ParseParagraph(para);
-						}
-					});
+						ParagraphParser.ParseParagraph(para);
+					}
+				});
 			}
 		}
 
@@ -251,18 +232,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			{
 				return matches;
 			}
-
 			using (new WaitCursor(this))
 			{
 				PatternModel.Compile();
-
 				ParseUnparsedParagraphs();
 				foreach (var text in ConcDecorator.InterestingTexts)
 				{
 					matches.AddRange(PatternModel.Search(text));
 				}
 			}
-
 			return matches;
 		}
 
@@ -272,13 +250,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			{
 				return null;
 			}
-
 			var levels = sel.GetLevelInfo(limit);
 			if (levels.Length == 0)
 			{
 				return null;
 			}
-
 			var level = levels.First(l => l.tag == ComplexConcPatternSda.ktagChildren);
 			return PatternModel.GetNode(level.hvo);
 		}
@@ -294,7 +270,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 				{
 					return new ComplexConcPatternNode[0];
 				}
-
 				var anchorIndex = GetNodeIndex(anchorNode);
 				var endIndex = GetNodeIndex(endNode);
 				int index1, index2;
@@ -308,7 +283,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 					index1 = endIndex;
 					index2 = anchorIndex;
 				}
-
 				var j = 0;
 				var nodes = new ComplexConcPatternNode[index2 - index1 + 1];
 				for (var i = index1; i <= index2; i++)
@@ -325,7 +299,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			{
 				return;
 			}
-
 			var sel = SelectionHelper.Create(m_view);
 			ComplexConcPatternNode parent = null;
 			var index = -1;
@@ -380,7 +353,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 					parent.Children.RemoveAt(index);
 				}
 			}
-
 			if (parent == null || index == -1)
 			{
 				return;
@@ -397,8 +369,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 					}
 				}
 			}
-			if (parent.Children.Count > 1 && parent.Children[parent.Children.Count - 1] is ComplexConcWordBdryNode
-			                              && !(parent.Children[parent.Children.Count - 2] is ComplexConcMorphNode))
+			if (parent.Children.Count > 1 && parent.Children[parent.Children.Count - 1] is ComplexConcWordBdryNode && !(parent.Children[parent.Children.Count - 2] is ComplexConcMorphNode))
 			{
 				parent.Children.RemoveAt(parent.Children.Count - 1);
 				if (index >= parent.Children.Count)
@@ -406,13 +377,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 					index--;
 				}
 			}
-			for (var i = parent.Children.Count - 1; i > 0 ; i--)
+			for (var i = parent.Children.Count - 1; i > 0; i--)
 			{
 				if (!(parent.Children[i] is ComplexConcWordBdryNode))
 				{
 					continue;
 				}
-				if (parent.Children[i - 1] is ComplexConcWordBdryNode || (!(parent.Children[i - 1] is ComplexConcMorphNode) || (i + 1 < parent.Children.Count && !(parent.Children[i + 1] is ComplexConcMorphNode))))
+				if (parent.Children[i - 1] is ComplexConcWordBdryNode || !(parent.Children[i - 1] is ComplexConcMorphNode) || i + 1 < parent.Children.Count && !(parent.Children[i + 1] is ComplexConcMorphNode))
 				{
 					parent.Children.RemoveAt(i);
 					if (index > i)
@@ -421,7 +392,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 					}
 				}
 			}
-
 			if (!parent.IsLeaf && parent.Children[0] is ComplexConcOrNode)
 			{
 				parent.Children.RemoveAt(0);
@@ -438,7 +408,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 					index--;
 				}
 			}
-			for (var i = parent.Children.Count - 1; i > 0 ; i--)
+			for (var i = parent.Children.Count - 1; i > 0; i--)
 			{
 				if (parent.Children[i] is ComplexConcOrNode && parent.Children[i - 1] is ComplexConcOrNode)
 				{
@@ -449,7 +419,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 					}
 				}
 			}
-
 			if (parent.Parent != null && parent.Children.Count == 1)
 			{
 				var p = parent.Parent;
@@ -468,7 +437,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 					parent = p;
 				}
 			}
-
 			if (index >= parent.Children.Count)
 			{
 				ReconstructView(parent, parent.Children.Count - 1, false);
@@ -525,10 +493,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 				};
 				_menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(7);
 				_mnuComplexConcordance.Closed += MnuComplexConcordance_Closed;
-
 				var currentNodes = CurrentNodes;
 				var visible = sh.IsRange && !(currentNodes[0] is ComplexConcOrNode) && !(currentNodes[currentNodes.Length - 1] is ComplexConcOrNode);
-				ToolStripMenuItem menu;
 				if (visible)
 				{
 					/*
@@ -538,7 +504,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 							  <parameters min="1" max="1" />
 							</command>
 					*/
-					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(_menuItems, _mnuComplexConcordance, PatternNodeSetOccurrence_Clicked, TextAndWordsResources.Occurs_exactly_once);
+					var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(_menuItems, _mnuComplexConcordance, PatternNodeSetOccurrence_Clicked, TextAndWordsResources.Occurs_exactly_once);
 					menu.Tag = new Dictionary<string, int>
 					{
 						{ "min", 1},
@@ -617,7 +583,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 						_mnuComplexConcordance.Items.RemoveAt(count - 1);
 					}
 				}
-
 				_mnuComplexConcordance.Show(new Point(Cursor.Position.X, Cursor.Position.Y));
 				e.Handled = true;
 			}
@@ -656,7 +621,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 		private void m_insertControl_Insert(object sender, InsertEventArgs e)
 		{
 			ComplexConcPatternNode node = null;
-			switch (((InsertOption) e.Option).Type)
+			switch (((InsertOption)e.Option).Type)
 			{
 				case ComplexConcordanceInsertType.Morph:
 					using (var dlg = new ComplexConcMorphDlg())
@@ -669,7 +634,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 						}
 					}
 					break;
-
 				case ComplexConcordanceInsertType.Word:
 					using (var dlg = new ComplexConcWordDlg())
 					{
@@ -681,7 +645,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 						}
 					}
 					break;
-
 				case ComplexConcordanceInsertType.TextTag:
 					using (var dlg = new ComplexConcTagDlg())
 					{
@@ -693,7 +656,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 						}
 					}
 					break;
-
 				case ComplexConcordanceInsertType.Or:
 					node = new ComplexConcOrNode();
 					break;
@@ -702,14 +664,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 					node = new ComplexConcWordBdryNode();
 					break;
 			}
-
 			m_view.Select();
-
 			if (node == null)
 			{
 				return;
 			}
-
 			var sel = SelectionHelper.Create(m_view);
 			ComplexConcPatternNode parent;
 			int index;
@@ -722,7 +681,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 					n.Parent.Children.Remove(n);
 				}
 			}
-
 			parent.Children.Insert(index, node);
 			ReconstructView(parent, index, false);
 		}
@@ -736,7 +694,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 				index = 0;
 				return;
 			}
-
 			parent = curNode.Parent;
 			var ich = sel.GetIch(SelLimitType.Top);
 			index = GetNodeIndex(curNode);
@@ -752,7 +709,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			{
 				return;
 			}
-
 			UpdateViewHeight();
 		}
 
@@ -773,7 +729,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 		{
 			var nodes = CurrentNodes;
 			int min, max;
-
 			var menu = (ToolStripMenuItem)sender;
 			if (menu.Tag != null)
 			{
@@ -810,7 +765,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 					}
 				}
 			}
-
 			var node = nodes.Length > 1 ? GroupNodes(nodes) : nodes[0];
 			node.Minimum = min;
 			node.Maximum = max;
@@ -877,7 +831,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 					}
 				}
 			}
-
 			ReconstructView(nodes[0], false);
 		}
 
@@ -901,7 +854,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 
 		int IPatternControl.GetItemContextIndex(object ctxt, object obj)
 		{
-			return GetNodeIndex((ComplexConcPatternNode) obj);
+			return GetNodeIndex((ComplexConcPatternNode)obj);
 		}
 
 		SelLevInfo[] IPatternControl.GetLevelInfo(object ctxt, int cellIndex)
@@ -910,12 +863,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			{
 				return new SelLevInfo[0];
 			}
-			var node = (ComplexConcPatternNode) ctxt;
+			var node = (ComplexConcPatternNode)ctxt;
 			var i = cellIndex;
 			var levels = new List<SelLevInfo>();
 			while (node != null)
 			{
-				levels.Add(new SelLevInfo {tag = ComplexConcPatternSda.ktagChildren, ihvo = i});
+				levels.Add(new SelLevInfo { tag = ComplexConcPatternSda.ktagChildren, ihvo = i });
 				i = GetNodeIndex(node);
 				node = node.Parent;
 			}
@@ -924,7 +877,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 
 		int IPatternControl.GetContextCount(object ctxt)
 		{
-			return ((ComplexConcPatternNode) ctxt).Children.Count;
+			return ((ComplexConcPatternNode)ctxt).Children.Count;
 		}
 
 		object IPatternControl.GetNextContext(object ctxt)

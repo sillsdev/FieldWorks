@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -28,17 +28,14 @@ namespace LanguageExplorer.Areas
 	internal static class AreaServices
 	{
 		#region General area/tool
-
 		internal const string AreaChoice = "areaChoice";
 		internal const string ToolChoice = "toolChoice";
 		internal const string ToolForAreaNamed_ = "ToolForAreaNamed_";
 		internal const string InitialArea = "InitialArea";
 		internal const string InitialAreaMachineName = LexiconAreaMachineName;
-
 		#endregion General area/tool
 
 		#region Lexicon area
-
 		internal const string LexiconAreaMachineName = "lexicon";
 		internal const string LexiconAreaDefaultToolMachineName = LexiconEditMachineName;
 			internal const string LexiconEditMachineName = "lexiconEdit";
@@ -49,11 +46,9 @@ namespace LanguageExplorer.Areas
 			internal const string BulkEditEntriesOrSensesMachineName = "bulkEditEntriesOrSenses";
 			internal const string ReversalEditCompleteMachineName = "reversalEditComplete";
 			internal const string ReversalBulkEditReversalEntriesMachineName = "reversalBulkEditReversalEntries";
-
 		#endregion Lexicon area
 
 		#region Text and Words area
-
 		internal const string TextAndWordsAreaMachineName = "textsWords";
 		internal const string TextAndWordsAreaDefaultToolMachineName = InterlinearEditMachineName;
 			internal const string InterlinearEditMachineName = "interlinearEdit";
@@ -63,11 +58,9 @@ namespace LanguageExplorer.Areas
 			internal const string AnalysesMachineName = "Analyses";
 			internal const string BulkEditWordformsMachineName = "bulkEditWordforms";
 			internal const string CorpusStatisticsMachineName = "corpusStatistics";
-
 		#endregion Text and Words area
 
 		#region Grammar area
-
 		internal const string GrammarAreaMachineName = "grammar";
 		internal const string GrammarAreaDefaultToolMachineName = PosEditMachineName;
 			internal const string PosEditMachineName = "posEdit";
@@ -84,21 +77,17 @@ namespace LanguageExplorer.Areas
 			internal const string ProdRestrictEditMachineName = "ProdRestrictEdit";
 			internal const string GrammarSketchMachineName = "grammarSketch";
 			internal const string LexiconProblemsMachineName = "lexiconProblems";
-
 		#endregion Grammar area
 
 		#region Notebook area
-
 		internal const string NotebookAreaMachineName = "notebook";
 		internal const string NotebookAreaDefaultToolMachineName = NotebookEditToolMachineName;
 			internal const string NotebookEditToolMachineName = "notebookEdit";
 			internal const string NotebookBrowseToolMachineName = "notebookBrowse";
 			internal const string NotebookDocumentToolMachineName = "notebookDocument";
-
 		#endregion Notebook area
 
 		#region Lists area
-
 		internal const string ListsAreaMachineName = "lists";
 		internal const string ListsAreaDefaultToolMachineName = DomainTypeEditMachineName;
 			internal const string DomainTypeEditMachineName = "domainTypeEdit";
@@ -131,21 +120,17 @@ namespace LanguageExplorer.Areas
 			internal const string RecTypeEditMachineName = "recTypeEdit";
 			internal const string TimeOfDayEditMachineName = "timeOfDayEdit";
 			internal const string ReversalToolReversalIndexPOSMachineName = "reversalToolReversalIndexPOS";
-
 		#endregion Lists area
 
 		#region menus
-
 		internal const string mnuBrowseView = "mnuBrowseView";
 		internal const string mnuEnvChoices = "mnuEnvChoices";
 		internal const string mnuObjectChoices = "mnuObjectChoices";
 		internal const string mnuReferenceChoices = "mnuReferenceChoices";
 		internal const string mnuEnvReferenceChoices = "mnuEnvReferenceChoices";
-
 		#endregion menus
 
 		#region commands
-
 		internal const string InsertSlash = "InsertSlash";
 		internal const string InsertEnvironmentBar = "InsertEnvironmentBar";
 		internal const string InsertNaturalClass = "InsertNaturalClass";
@@ -162,23 +147,16 @@ namespace LanguageExplorer.Areas
 		internal const string DeleteSelectedBrowseViewObject = "DeleteSelectedBrowseViewObject";
 		internal const string CmdAddToLexicon = "CmdAddToLexicon";
 		internal const string LexiconLookup = "LexiconLookup";
-
 		#endregion commands
 
 		#region LanguageExplorer.DictionaryConfiguration.ImageHolder smallCommandImages image constants
-
 		internal const int MoveUp = 12;
 		internal const int MoveRight = 13;
 		internal const int MoveDown = 14;
 		internal const int MoveLeft = 15;
-
 		#endregion LanguageExplorer.DictionaryConfiguration.ImageHolder smallCommandImages image constants
 
 		#region Random strings
-
-		/// <summary>
-		/// Display for required default sorter.
-		/// </summary>
 		internal const string Default = "Default";
 		internal const string ShortName = "ShortName";
 		internal const string PartOfSpeechGramInfo = "PartOfSpeechGramInfo";
@@ -190,7 +168,6 @@ namespace LanguageExplorer.Areas
 		internal const string PanelMenuId = "left";
 		internal const string MainItem = "MainItem";
 		internal const string SubItem = "Subitem";
-
 		#endregion Random strings
 
 		/// <summary>
@@ -229,7 +206,6 @@ namespace LanguageExplorer.Areas
 			{
 				return false;
 			}
-
 			var list = cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>().GetObject(owningListGuid);
 			// This is only a problem for fields referencing a custom list
 			if (list.Owner != null)
@@ -243,7 +219,6 @@ namespace LanguageExplorer.Areas
 			var objClass = fd.Class;
 			var flid = fd.Id;
 			var ddbf = cache.DomainDataByFlid;
-
 			switch (type)
 			{
 				case CellarPropertyType.ReferenceSequence: // drop through
@@ -251,10 +226,8 @@ namespace LanguageExplorer.Areas
 					// Handle multiple reference fields
 					// Is there a way to do this in LINQ without repeating the get_VecSize call?
 					var tupleList = new List<Tuple<int, int>>();
-					tupleList.AddRange(objRepo.AllInstances(objClass)
-						.Where(obj => ddbf.get_VecSize(obj.Hvo, flid) > 0)
+					tupleList.AddRange(objRepo.AllInstances(objClass).Where(obj => ddbf.get_VecSize(obj.Hvo, flid) > 0)
 						.Select(obj => new Tuple<int, int>(obj.Hvo, ddbf.get_VecSize(obj.Hvo, flid))));
-
 					NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () =>
 					{
 						foreach (var partResult in tupleList)
@@ -262,18 +235,13 @@ namespace LanguageExplorer.Areas
 							ddbf.Replace(partResult.Item1, flid, 0, partResult.Item2, null, 0);
 						}
 					});
-
 					fchanged = tupleList.Any();
 					break;
 				case CellarPropertyType.ReferenceAtomic:
 					// Handle atomic reference fields
 					// If there's a value for (Hvo, flid), nullify it!
 					var objsWithDataThisFlid = new List<int>();
-					objsWithDataThisFlid.AddRange(
-						from obj in objRepo.AllInstances(objClass)
-						where ddbf.get_ObjectProp(obj.Hvo, flid) > 0
-						select obj.Hvo);
-
+					objsWithDataThisFlid.AddRange(objRepo.AllInstances(objClass).Where(obj => ddbf.get_ObjectProp(obj.Hvo, flid) > 0).Select(obj => obj.Hvo));
 					// Delete these references
 					NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () =>
 					{
@@ -282,7 +250,6 @@ namespace LanguageExplorer.Areas
 							ddbf.SetObjProp(hvo, flid, LcmCache.kNullHvo);
 						}
 					});
-
 					fchanged = objsWithDataThisFlid.Any();
 					break;
 				default:
@@ -314,7 +281,6 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		internal static void GiveSimpleWarning(Form form, string helpFile, ExclusionReasonCode xrc)
 		{
-			var msg = AreaResources.ksSelectedEntryNotInDict;
 			string caption;
 			string reason;
 			string shlpTopic;
@@ -338,12 +304,8 @@ namespace LanguageExplorer.Areas
 				default:
 					throw new ArgumentException("Unknown ExclusionReasonCode");
 			}
-			msg = string.Format(msg, reason);
 			// TODO-Linux: Help is not implemented on Mono
-			MessageBox.Show(form, msg, caption, MessageBoxButtons.OK,
-				MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, 0,
-				helpFile,
-				HelpNavigator.Topic, shlpTopic);
+			MessageBox.Show(form, string.Format(AreaResources.ksSelectedEntryNotInDict, reason), caption, MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, 0, helpFile, HelpNavigator.Topic, shlpTopic);
 		}
 
 		/// <summary>
@@ -454,10 +416,8 @@ namespace LanguageExplorer.Areas
 		{
 			Guard.AgainstNull(owningList, nameof(owningList));
 			// The list may be empty, so 'currentPossibility' may be null.
-
 			var mdc = owningList.Cache.GetManagedMetaDataCache();
 			var owningPossibility = currentPossibility?.OwningPossibility;
-
 			string className;
 			string ownerClassName;
 			if (owningPossibility == null)

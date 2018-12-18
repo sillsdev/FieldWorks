@@ -15,10 +15,7 @@ namespace LanguageExplorer.Filters
 	/// <summary />
 	public abstract class StringFinderBase : IStringFinder, IPersistAsXml, IStoresLcmCache
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:StringFinderBase"/> class.
-		/// Default constructor for IPersistAsXml
-		/// </summary>
+		/// <summary />
 		protected StringFinderBase()
 		{
 		}

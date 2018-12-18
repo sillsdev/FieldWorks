@@ -9,9 +9,7 @@ using System.Windows.Forms;
 #endif
 namespace LanguageExplorer.images.Morphology
 {
-	/// <summary>
-	/// Summary description for MEImages.
-	/// </summary>
+	/// <summary />
 	public class MEImages : UserControl
 	{
 		public System.Windows.Forms.ImageList buttonImages;
@@ -21,8 +19,6 @@ namespace LanguageExplorer.images.Morphology
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
-
-			// TODO: Add any initialization after the InitializeComponent call
 
 		}
 

@@ -1,11 +1,12 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Diagnostics;
 using LanguageExplorer.Controls.DetailControls;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
@@ -17,8 +18,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 	{
 		#region Constants and data members
 
-		private int m_selectedSenseHvo = 0;
-		private bool m_handlingSelectionChanged = false;
+		private int m_selectedSenseHvo;
+		private bool m_handlingSelectionChanged;
 		private System.ComponentModel.IContainer components = null;
 
 		#endregion // Constants and data members
@@ -37,9 +38,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -117,14 +119,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		{
 			if (m_selectedSenseHvo == 0)
 			{
-				return;		// must be selecting multiple objects!  (See LT-5724.)
+				return;     // must be selecting multiple objects!  (See LT-5724.)
 			}
 			var h1 = RootBox.Height;
 			var sense = (ILexSense)m_cache.ServiceLocator.GetObject(m_selectedSenseHvo);
-			using (var helper = new UndoableUnitOfWorkHelper(
-				m_cache.ActionHandlerAccessor,
-				LanguageExplorerResources.ksUndoDeleteRevFromSense,
-				LanguageExplorerResources.ksRedoDeleteRevFromSense))
+			using (var helper = new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor, LanguageExplorerResources.ksUndoDeleteRevFromSense, LanguageExplorerResources.ksRedoDeleteRevFromSense))
 			{
 				((IReversalIndexEntry)m_rootObj).SensesRS.Remove(sense);
 				helper.RollBack = false;

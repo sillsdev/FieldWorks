@@ -52,9 +52,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public event EventHandler<SearchCompletedEventArgs> SearchCompleted;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="SearchEngine"/> class.
-		/// </summary>
+		/// <summary />
 		protected SearchEngine(LcmCache cache, SearchType type)
 		{
 			Cache = cache;

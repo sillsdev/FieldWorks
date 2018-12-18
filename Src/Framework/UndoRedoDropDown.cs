@@ -55,9 +55,7 @@ namespace SIL.FieldWorks.Common.Framework
 			m_NumberOfUndoes.BackColor = clr;
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="UndoRedoDropDown"/> class.
-		/// </summary>
+		/// <summary />
 		/// <param name="numberOfActionsSingle">A string describing the number of selected
 		/// actions when there is only one, e.g. "Undo 1 action" (will have no formatting
 		/// instructions)</param>
@@ -65,8 +63,8 @@ namespace SIL.FieldWorks.Common.Framework
 		/// actions when there are more than one, e.g. "Undo {0} actions" (will typically have
 		/// a placeholder for the number)</param>
 		/// <param name="cancel">The string that's shown to cancel the undo/redo</param>
-		public UndoRedoDropDown(string numberOfActionsSingle, string numberOfActionsPlural,
-			string cancel) : this()
+		public UndoRedoDropDown(string numberOfActionsSingle, string numberOfActionsPlural, string cancel)
+			: this()
 		{
 			m_NumberOfActionsPlural = numberOfActionsPlural;
 			m_NumberOfActionsSingle = numberOfActionsSingle;

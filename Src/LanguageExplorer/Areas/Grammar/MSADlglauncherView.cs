@@ -1,13 +1,13 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
 using LanguageExplorer.Controls;
 using LanguageExplorer.LcmUi;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Areas.Grammar
 {
@@ -50,9 +50,10 @@ namespace LanguageExplorer.Areas.Grammar
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -75,7 +76,6 @@ namespace LanguageExplorer.Areas.Grammar
 			{
 				return;
 			}
-
 			base.MakeRoot();
 
 			RootBox.DataAccess = m_cache.DomainDataByFlid;

@@ -22,9 +22,7 @@ using SIL.LCModel.Utils;
 
 namespace LanguageExplorerTests.Controls
 {
-	/// <summary>
-	/// Summary description for StVcTests.
-	/// </summary>
+	/// <summary />
 	[TestFixture]
 	public class StVcTests : ScrInMemoryLcmTestBase
 	{
@@ -58,11 +56,7 @@ namespace LanguageExplorerTests.Controls
 			protected StVc m_stvc;
 			#endregion
 
-			/// ------------------------------------------------------------------------------------
-			/// <summary>
-			/// Initializes a new instance of the FootnoteVc class
-			/// </summary>
-			/// ------------------------------------------------------------------------------------
+			/// <summary />
 			public DummyFootnoteVc(LcmCache cache) : base(cache.WritingSystemFactory.UserWs)
 			{
 				m_stvc = new StVc(cache.WritingSystemFactory.UserWs);

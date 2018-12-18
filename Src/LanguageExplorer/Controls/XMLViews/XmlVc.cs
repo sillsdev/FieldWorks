@@ -166,9 +166,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		// This is a variant which can take a condition element to control which items in a list display.
-		/// <summary>
-		/// Initializes a new instance of the <see cref="XmlVc"/> class.
-		/// </summary>
+		/// <summary />
 		public XmlVc(string rootLayoutName, bool fEditable, SimpleRootSite rootSite, IFlexApp app, XElement condition, ISilDataAccess sda)
 			: this()
 		{
@@ -182,7 +180,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// This is another new constructor, for using the new approach without a single
 		/// top-level layout name, such as browse view.
-		/// Initializes a new instance of the <see cref="XmlVc"/> class.
 		/// </summary>
 		public XmlVc()
 		{

@@ -15,9 +15,7 @@ using SIL.Xml;
 
 namespace LanguageExplorer.MGA
 {
-	/// <summary>
-	/// Summary description for GlossListTreeView.
-	/// </summary>
+	/// <summary />
 	internal class GlossListTreeView : TreeView
 	{
 		protected string m_sTopOfList = "eticGlossList";

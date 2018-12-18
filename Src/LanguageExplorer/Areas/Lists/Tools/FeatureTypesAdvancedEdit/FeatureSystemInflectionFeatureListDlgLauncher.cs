@@ -1,8 +1,7 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2012-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Collections.Generic;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.Grammar;
 using LanguageExplorer.Controls.DetailControls;
@@ -30,7 +29,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 			using (var dlg = new FeatureSystemInflectionFeatureListDlg())
 			{
 				var originalFs = m_obj as IFsFeatStruc;
-
 				var parentSlice = Slice;
 				if (originalFs == null)
 				{
@@ -42,7 +40,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 				{
 					dlg.SetDlgInfo(m_cache, PropertyTable, originalFs, (parentSlice as FeatureSystemInflectionFeatureListDlgLauncherSlice).Flid);
 				}
-
 				const string ksPath = "/group[@id='Linguistics']/group[@id='Morphology']/group[@id='FeatureChooser']/";
 				dlg.Text = StringTable.Table.GetStringWithXPath("InflectionFeatureTitle", ksPath);
 				dlg.Prompt = StringTable.Table.GetStringWithXPath("InflectionFeaturesPrompt", ksPath);

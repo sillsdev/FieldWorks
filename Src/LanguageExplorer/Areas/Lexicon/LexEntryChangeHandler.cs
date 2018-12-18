@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2018 SIL International
+// Copyright (c) 2016-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,17 +10,17 @@ using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas.Lexicon
 {
-	/// <summary/>
-	internal class LexEntryChangeHandler : IRecordChangeHandler
+	/// <summary />
+	internal sealed class LexEntryChangeHandler : IRecordChangeHandler
 	{
 		#region Data members
 
 		/// <summary>entry being monitored for changes.</summary>
-		protected ILexEntry m_entry;
+		private ILexEntry m_entry;
 		/// <remarks>needed to do UnitOfWork</remarks>
-		protected LcmCache m_cache;
-
-		protected ICmObject m_obj;
+		private LcmCache m_cache;
+		/// <summary />
+		private ICmObject m_obj;
 
 		#endregion Data members
 
@@ -29,7 +29,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed { get; private set; }
+		private bool IsDisposed { get; set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -39,19 +39,20 @@ namespace LanguageExplorer.Areas.Lexicon
 			Dispose(false);
 		}
 
-		/// <remarks>Must not be virtual.</remarks>
+		/// <inheritdoc />
 		public void Dispose()
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
 
-		protected virtual void Dispose(bool disposing)
+		/// <summary />
+		private void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-
-			if (IsDisposed) // Must not be run more than once.
+			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 

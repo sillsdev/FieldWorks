@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,8 +9,8 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.LexText;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 
@@ -98,23 +98,20 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private bool DisplayOption(object option)
 		{
-			var type = ((InsertOption) option).Type;
+			var type = ((InsertOption)option).Type;
 			var sel = SelectionHelper.Create(_view);
 			var cellId = GetCell(sel);
 			if (cellId == -1 || cellId == -2)
 			{
 				return false;
 			}
-
 			switch (cellId)
 			{
 				case AffixRuleFormulaVc.ktagLeftEmpty:
 				case AffixRuleFormulaVc.ktagRightEmpty:
 					return type != RuleInsertType.Index;
-
 				case MoAffixProcessTags.kflidOutput:
 					return type == RuleInsertType.Index || type == RuleInsertType.Phoneme || type == RuleInsertType.MorphemeBoundary;
-
 				default:
 					var ctxtOrVar = m_cache.ServiceLocator.GetInstance<IPhContextOrVarRepository>().GetObject(cellId);
 					if (ctxtOrVar.ClassID == PhVariableTags.kClassId)
@@ -139,17 +136,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				case AffixRuleFormulaVc.ktagLeftEmpty:
 				case AffixRuleFormulaVc.ktagRightEmpty:
 					return true;
-
 				case MoAffixProcessTags.kflidOutput:
 					return false;
-
 				default:
 					var ctxtOrVar = m_cache.ServiceLocator.GetInstance<IPhContextOrVarRepository>().GetObject(cellId);
 					if (ctxtOrVar.ClassID != PhSequenceContextTags.kClassId)
 					{
 						return false;
 					}
-					var seqCtxt = (IPhSequenceContext) ctxtOrVar;
+					var seqCtxt = (IPhSequenceContext)ctxtOrVar;
 					if (seqCtxt.MembersRS.Count == 0)
 					{
 						return true;
@@ -165,7 +160,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				return false;
 			}
-
 			var cellId = GetCell(sel);
 			if (cellId == -1 || cellId == -2)
 			{
@@ -177,7 +171,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				case AffixRuleFormulaVc.ktagRightEmpty:
 				case MoAffixProcessTags.kflidOutput:
 					return false;
-
 				default:
 					return GetColumnInsertIndex(sel) != -1;
 			}
@@ -215,19 +208,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			// Start: <menu id="mnuMoAffixProcess">
 			const string mnuMoAffixProcess = "mnuMoAffixProcess";
-
 			var contextMenuStrip = new ContextMenuStrip
 			{
 				Name = mnuMoAffixProcess
 			};
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(8);
-
 			if (IsFeatsNCContextCurrent)
 			{
 				// <command id="CmdCtxtSetFeatures" label="Set Phonological Features..." message="ContextSetFeatures" />
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.Get(AreaServices.ContextSetFeatures), AreaResources.Set_Phonological_Features);
 			}
-
 			if (IsIndexCurrent)
 			{
 				// Visible & Enabled only when "IsIndexCurrent".
@@ -285,7 +275,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			// End: <menu id="mnuMoAffixProcess">
 
-			return  new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 		}
 
 		private void MappingSetFeatures_Clicked(object sender, EventArgs e)
@@ -306,15 +296,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				return -1;
 			}
-
 			var tag = sel.GetTextPropId(limit);
-			if (tag == AffixRuleFormulaVc.ktagLeftEmpty
-				|| tag == AffixRuleFormulaVc.ktagRightEmpty
-				|| tag == MoAffixProcessTags.kflidOutput)
+			if (tag == AffixRuleFormulaVc.ktagLeftEmpty || tag == AffixRuleFormulaVc.ktagRightEmpty || tag == MoAffixProcessTags.kflidOutput)
 			{
 				return tag;
 			}
-
 			foreach (var level in sel.GetLevelInfo(limit))
 			{
 				switch (level.tag)
@@ -325,28 +311,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						return level.hvo;
 				}
 			}
-
 			return -1;
 		}
 
 		protected override ICmObject GetCmObject(SelectionHelper sel, SelLimitType limit)
 		{
-			if (sel == null)
-			{
-				return null;
-			}
-
-			foreach (var level in sel.GetLevelInfo(limit))
-			{
-				if (level.tag == MoAffixProcessTags.kflidInput
-					|| level.tag == PhSequenceContextTags.kflidMembers
-					|| level.tag == MoAffixProcessTags.kflidOutput)
-				{
-					return m_cache.ServiceLocator.GetObject(level.hvo);
-				}
-			}
-
-			return null;
+			return sel?.GetLevelInfo(limit)
+				.Where(level => level.tag == MoAffixProcessTags.kflidInput || level.tag == PhSequenceContextTags.kflidMembers || level.tag == MoAffixProcessTags.kflidOutput)
+				.Select(level => m_cache.ServiceLocator.GetObject(level.hvo)).FirstOrDefault();
 		}
 
 		protected override int GetItemCellIndex(int cellId, ICmObject obj)
@@ -356,17 +328,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				case AffixRuleFormulaVc.ktagLeftEmpty:
 				case AffixRuleFormulaVc.ktagRightEmpty:
 					return -1;
-
 				case MoAffixProcessTags.kflidOutput:
 					return obj.IndexInOwner;
-
 				default:
 					var ctxtOrVar = m_cache.ServiceLocator.GetInstance<IPhContextOrVarRepository>().GetObject(cellId);
 					if (obj.ClassID != PhSequenceContextTags.kClassId)
 					{
 						return -1;
 					}
-					var seqCtxt = (IPhSequenceContext) ctxtOrVar;
+					var seqCtxt = (IPhSequenceContext)ctxtOrVar;
 					return seqCtxt.MembersRS.IndexOf(obj as IPhPhonContext);
 			}
 		}
@@ -379,7 +349,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				case AffixRuleFormulaVc.ktagLeftEmpty:
 				case AffixRuleFormulaVc.ktagRightEmpty:
 					break;
-
 				case MoAffixProcessTags.kflidOutput:
 					if (cellIndex >= 0)
 					{
@@ -388,7 +357,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						levels[0].ihvo = cellIndex;
 					}
 					break;
-
 				default:
 					var ctxtOrVar = m_cache.ServiceLocator.GetInstance<IPhContextOrVarRepository>().GetObject(cellId);
 					if (cellIndex < 0 || ctxtOrVar.ClassID != PhSequenceContextTags.kClassId)
@@ -406,7 +374,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						levels[1].ihvo = ctxtOrVar.IndexInOwner;
 					}
 					break;
-
 			}
 			return levels;
 		}
@@ -418,15 +385,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				case AffixRuleFormulaVc.ktagLeftEmpty:
 				case AffixRuleFormulaVc.ktagRightEmpty:
 					return 0;
-
 				case MoAffixProcessTags.kflidOutput:
 					return Rule.OutputOS.Count;
-
 				default:
 					var ctxtOrVar = m_cache.ServiceLocator.GetInstance<IPhContextOrVarRepository>().GetObject(cellId);
 					if (ctxtOrVar.ClassID == PhSequenceContextTags.kClassId)
 					{
-						return ((IPhSequenceContext) ctxtOrVar).MembersRS.Count;
+						return ((IPhSequenceContext)ctxtOrVar).MembersRS.Count;
 					}
 					return 1;
 			}
@@ -438,13 +403,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				case AffixRuleFormulaVc.ktagLeftEmpty:
 					return Rule.InputOS[0].Hvo;
-
 				case AffixRuleFormulaVc.ktagRightEmpty:
 					return MoAffixProcessTags.kflidOutput;
-
 				case MoAffixProcessTags.kflidOutput:
 					return -1;
-
 				default:
 					var ctxtOrVar = m_cache.ServiceLocator.GetInstance<IPhContextOrVarRepository>().GetObject(cellId);
 					var index = ctxtOrVar.IndexInOwner;
@@ -462,13 +424,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				case AffixRuleFormulaVc.ktagLeftEmpty:
 					return -1;
-
 				case AffixRuleFormulaVc.ktagRightEmpty:
 					return Rule.InputOS[Rule.InputOS.Count - 1].Hvo;
-
 				case MoAffixProcessTags.kflidOutput:
 					return AffixRuleFormulaVc.ktagRightEmpty;
-
 				default:
 					var ctxtOrVar = m_cache.ServiceLocator.GetInstance<IPhContextOrVarRepository>().GetObject(cellId);
 					var index = ctxtOrVar.IndexInOwner;
@@ -488,7 +447,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				case AffixRuleFormulaVc.ktagRightEmpty:
 				case MoAffixProcessTags.kflidOutput:
 					return cellId;
-
 				default:
 					return MoAffixProcessTags.kflidOutput;
 			}
@@ -549,7 +507,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			}
 			foreach (var idx in GetIndicesToRemove(mappings, sel))
 			{
-				Rule.OutputOS.Remove((IMoRuleMapping) mappings[idx]);
+				Rule.OutputOS.Remove((IMoRuleMapping)mappings[idx]);
 			}
 			return index;
 		}
@@ -564,12 +522,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					Rule.InputOS.Insert(0, ctxtOrVar);
 					cellIndex = -1;
 					return ctxtOrVar.Hvo;
-
 				case AffixRuleFormulaVc.ktagRightEmpty:
 					Rule.InputOS.Add(ctxtOrVar);
 					cellIndex = -1;
 					return ctxtOrVar.Hvo;
-
 				default:
 					var cellCtxtOrVar = m_cache.ServiceLocator.GetInstance<IPhContextOrVarRepository>().GetObject(cellId);
 					if (ctxtOrVar.ClassID == PhVariableTags.kClassId)
@@ -621,7 +577,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				return -1;
 			}
-
 			ICmObject[] ctxtOrVars;
 			var ctxtOrVar = m_cache.ServiceLocator.GetInstance<IPhContextOrVarRepository>().GetObject(hvo);
 			if (ctxtOrVar.ClassID != PhSequenceContextTags.kClassId)
@@ -630,15 +585,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			}
 			else
 			{
-				var seqCtxt = (IPhSequenceContext) ctxtOrVar;
+				var seqCtxt = (IPhSequenceContext)ctxtOrVar;
 				ctxtOrVars = seqCtxt.MembersRS.Cast<ICmObject>().ToArray();
 			}
-
 			if (ctxtOrVars.Length == 0)
 			{
 				return -1;
 			}
-
 			var insertIndex = GetInsertionIndex(ctxtOrVars, sel);
 			if (insertIndex == 0 && ctxtOrVar.IndexInOwner != 0)
 			{
@@ -656,7 +609,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					return next.IndexInOwner;
 				}
 			}
-
 			return -1;
 		}
 
@@ -676,27 +628,23 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		protected override int RemoveItems(SelectionHelper sel, bool forward, out int cellIndex)
 		{
 			cellIndex = -1;
-
 			var cellId = GetCell(sel);
 			if (cellId == -1 || cellId == -2)
 			{
 				return -1;
 			}
-
 			switch (cellId)
 			{
 				case AffixRuleFormulaVc.ktagLeftEmpty:
 				case AffixRuleFormulaVc.ktagRightEmpty:
 					return -1;
-
 				case MoAffixProcessTags.kflidOutput:
 					return RemoveFromOutput(forward, sel, out cellIndex) ? cellId : -1;
-
 				default:
 					var ctxtOrVar = m_cache.ServiceLocator.GetInstance<IPhContextOrVarRepository>().GetObject(cellId);
 					if (ctxtOrVar.ClassID == PhSequenceContextTags.kClassId)
 					{
-						var seqCtxt = (IPhSequenceContext) ctxtOrVar;
+						var seqCtxt = (IPhSequenceContext)ctxtOrVar;
 						if (seqCtxt.MembersRS.Count == 0 && forward)
 						{
 							// remove an empty column
@@ -718,17 +666,17 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					{
 						return -1;
 					}
-				{
-					var seqCtxt = m_cache.ServiceLocator.GetInstance<IPhSequenceContextFactory>().Create();
-					Rule.InputOS.Insert(ctxtOrVar.IndexInOwner, seqCtxt);
-					// if the column is empty, schedule it to be removed when the selection has changed
-					m_removeCol = seqCtxt;
-					UpdateMappings(ctxtOrVar, seqCtxt);
+					{
+						var seqCtxt = m_cache.ServiceLocator.GetInstance<IPhSequenceContextFactory>().Create();
+						Rule.InputOS.Insert(ctxtOrVar.IndexInOwner, seqCtxt);
+						// if the column is empty, schedule it to be removed when the selection has changed
+						m_removeCol = seqCtxt;
+						UpdateMappings(ctxtOrVar, seqCtxt);
 
-					ctxtOrVar.PreRemovalSideEffects();
-					Rule.InputOS.Remove(ctxtOrVar);
-					return seqCtxt.Hvo;
-				}
+						ctxtOrVar.PreRemovalSideEffects();
+						Rule.InputOS.Remove(ctxtOrVar);
+						return seqCtxt.Hvo;
+					}
 			}
 		}
 
@@ -738,7 +686,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				return false;
 			}
-
 			return Rule.InputOS.Count(cur => cur.ClassID == PhVariableTags.kClassId) == 1;
 		}
 
@@ -748,7 +695,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				return false;
 			}
-			var copy = (IMoCopyFromInput) mapping;
+			var copy = (IMoCopyFromInput)mapping;
 			return IsLastVariable(copy.ContentRA);
 		}
 
@@ -772,15 +719,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				switch (mapping.ClassID)
 				{
 					case MoCopyFromInputTags.kClassId:
-						var copy = (IMoCopyFromInput) mapping;
+						var copy = (IMoCopyFromInput)mapping;
 						if (copy.ContentRA == oldCtxtOrVar)
 						{
 							copy.ContentRA = newCtxtOrVar;
 						}
 						break;
-
 					case MoModifyFromInputTags.kClassId:
-						var modify = (IMoModifyFromInput) mapping;
+						var modify = (IMoModifyFromInput)mapping;
 						if (modify.ContentRA == oldCtxtOrVar)
 						{
 							modify.ContentRA = newCtxtOrVar;
@@ -802,7 +748,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				{
 					index = indices[0] - 1;
 				}
-
 				foreach (var idx in indices)
 				{
 					var mapping = (IMoRuleMapping)mappings[idx];
@@ -821,7 +766,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				{
 					return false;
 				}
-				var mapping = (IMoRuleMapping) mappings[idx];
+				var mapping = (IMoRuleMapping)mappings[idx];
 				index = idx - 1;
 				if (IsFinalLastVariableMapping(mapping))
 				{
@@ -879,7 +824,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 								featChooser.FS = featNC.FeaturesOA;
 								featChooser.UpdateFeatureStructure();
 
-								var copy = (IMoCopyFromInput) obj;
+								var copy = (IMoCopyFromInput)obj;
 								var newModify = m_cache.ServiceLocator.GetInstance<IMoModifyFromInputFactory>().Create();
 								Rule.OutputOS.Insert(copy.IndexInOwner, newModify);
 								newModify.ModificationRA = featNC;
@@ -890,9 +835,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 								reconstruct = true;
 							}
 							break;
-
 						case MoModifyFromInputTags.kClassId:
-							var modify = (IMoModifyFromInput) obj;
+							var modify = (IMoModifyFromInput)obj;
 							featChooser.SetDlgInfo(m_cache, PropertyTable, Publisher, modify.ModificationRA.FeaturesOA);
 							if (featChooser.ShowDialog() == DialogResult.OK)
 							{
@@ -935,8 +879,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					natClasses.Add(nc);
 				}
 			}
-			var selectedNc = DisplayChooser(AreaResources.ksRuleNCOpt, AreaResources.ksRuleNCChooserLink,
-				AreaServices.NaturalClassEditMachineName, "RuleNaturalClassFlatList", natClasses) as IPhNCFeatures;
+			var selectedNc = DisplayChooser(AreaResources.ksRuleNCOpt, AreaResources.ksRuleNCChooserLink, AreaServices.NaturalClassEditMachineName, "RuleNaturalClassFlatList", natClasses) as IPhNCFeatures;
 			_view.Select();
 			if (selectedNc == null)
 			{
@@ -944,29 +887,26 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			}
 			var index = -1;
 			UndoableUnitOfWorkHelper.Do(AreaResources.ksAffixRuleUndoSetNC, AreaResources.ksAffixRuleRedoSetNC, m_cache.ActionHandlerAccessor, () =>
+			{
+				var curObj = CurrentObject;
+				switch (curObj.ClassID)
 				{
-					var curObj = CurrentObject;
-					switch (curObj.ClassID)
-					{
-						case MoCopyFromInputTags.kClassId:
-							var copy = (IMoCopyFromInput) curObj;
-							var newModify = m_cache.ServiceLocator.GetInstance<IMoModifyFromInputFactory>().Create();
-							Rule.OutputOS.Insert(copy.IndexInOwner, newModify);
-							newModify.ModificationRA = selectedNc;
-							newModify.ContentRA = copy.ContentRA;
-							index = newModify.IndexInOwner;
-
-							Rule.OutputOS.Remove(copy);
-							break;
-
-						case MoModifyFromInputTags.kClassId:
-							var modify = (IMoModifyFromInput) curObj;
-							modify.ModificationRA = selectedNc;
-							index = modify.IndexInOwner;
-							break;
-					}
-				});
-
+					case MoCopyFromInputTags.kClassId:
+						var copy = (IMoCopyFromInput)curObj;
+						var newModify = m_cache.ServiceLocator.GetInstance<IMoModifyFromInputFactory>().Create();
+						Rule.OutputOS.Insert(copy.IndexInOwner, newModify);
+						newModify.ModificationRA = selectedNc;
+						newModify.ContentRA = copy.ContentRA;
+						index = newModify.IndexInOwner;
+						Rule.OutputOS.Remove(copy);
+						break;
+					case MoModifyFromInputTags.kClassId:
+						var modify = (IMoModifyFromInput)curObj;
+						modify.ModificationRA = selectedNc;
+						index = modify.IndexInOwner;
+						break;
+				}
+			});
 			ReconstructView(MoAffixProcessTags.kflidOutput, index, true);
 		}
 

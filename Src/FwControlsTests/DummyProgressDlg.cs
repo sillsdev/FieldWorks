@@ -9,9 +9,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// <summary />
 	public class DummyProgressDlg : ProgressDialogWithTask
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="DummyProgressDlg"/> class.
-		/// </summary>
+		/// <summary />
 		public DummyProgressDlg(ISynchronizeInvoke synchronizeInvoke)
 			: base(synchronizeInvoke)
 		{

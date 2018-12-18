@@ -116,9 +116,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		// parameters. That would conflict with the string params constructor causing a bunch
 		// of stuff to break (which, thankfully, we have tests for)
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FwAppArgs"/> class.
-		/// </summary>
+		/// <summary />
 		/// <param name="database">The name of the database.</param>
 		/// <param name="toolName">Name/path of the tool or view within the specific application.</param>
 		/// <param name="targetGuid">The GUID of the object which is the target of this link.</param>
@@ -127,9 +125,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			ProcessArg(kProject, database);
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FwAppArgs"/> class.
-		/// </summary>
+		/// <summary />
 		public FwAppArgs(params string[] rgArgs)
 		{
 			if (rgArgs.Length == 1 && rgArgs[0].StartsWith(kSilScheme + ":"))

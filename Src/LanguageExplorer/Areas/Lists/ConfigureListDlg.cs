@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -37,9 +37,7 @@ namespace LanguageExplorer.Areas.Lists
 
 		#endregion
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ConfigureListDlg"/> class.
-		/// </summary>
+		/// <summary />
 		public ConfigureListDlg(IPropertyTable propertyTable, IPublisher publisher, LcmCache cache, ICmPossibilityList possList)
 			: base(propertyTable, publisher, cache)
 		{
@@ -120,13 +118,12 @@ namespace LanguageExplorer.Areas.Lists
 
 		protected override void m_displayByCombo_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			m_fdisplayByChanged = ((int) DisplayBy) != m_curList.DisplayOption;
+			m_fdisplayByChanged = ((int)DisplayBy) != m_curList.DisplayOption;
 		}
 
 		private bool WereChangesMade()
 		{
-			return m_fnameChanged | m_fhierarchyChanged | m_fsortChanged | m_fduplicateChanged
-							 | m_fwsChanged | m_fdisplayByChanged | m_fdescriptionChanged;
+			return m_fnameChanged | m_fhierarchyChanged | m_fsortChanged | m_fduplicateChanged | m_fwsChanged | m_fdisplayByChanged | m_fdescriptionChanged;
 		}
 
 		protected override void DoOKAction()
@@ -143,19 +140,17 @@ namespace LanguageExplorer.Areas.Lists
 				MessageBox.Show(ListResources.ksChooseAnotherListName, ListResources.ksDuplicateName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return;
 			}
-
-			UndoableUnitOfWorkHelper.Do(ListResources.ksUndoConfigureList, ListResources.ksRedoConfigureList,
-				Cache.ActionHandlerAccessor, () =>
-				{
-					m_curList.WsSelector = SelectedWs;
-					m_curList.IsVernacular = SelectedWs == WritingSystemServices.kwsVerns || SelectedWs == WritingSystemServices.kwsVernAnals;
-					SetAllMultiAlternatives(m_curList.Name, m_lmscListName);
-					SetAllMultiAlternatives(m_curList.Description, m_lmscDescription);
-					m_curList.DisplayOption = (int)DisplayBy;
-					m_curList.IsSorted = SortByName;
-					m_curList.PreventDuplicates = !AllowDuplicate;
-					m_curList.Depth = SupportsHierarchy ? 127 : 1;
-				});
+			UndoableUnitOfWorkHelper.Do(ListResources.ksUndoConfigureList, ListResources.ksRedoConfigureList, Cache.ActionHandlerAccessor, () =>
+			{
+				m_curList.WsSelector = SelectedWs;
+				m_curList.IsVernacular = SelectedWs == WritingSystemServices.kwsVerns || SelectedWs == WritingSystemServices.kwsVernAnals;
+				SetAllMultiAlternatives(m_curList.Name, m_lmscListName);
+				SetAllMultiAlternatives(m_curList.Description, m_lmscDescription);
+				m_curList.DisplayOption = (int)DisplayBy;
+				m_curList.IsSorted = SortByName;
+				m_curList.PreventDuplicates = !AllowDuplicate;
+				m_curList.Depth = SupportsHierarchy ? 127 : 1;
+			});
 			ResetAllFlags();
 		}
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2018 SIL International
+// Copyright (c) 2013-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -36,13 +36,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 						continue;
 					}
 
-					var node = new ComplexFeatureNode(complexFeat) {Image = m_complexImage};
+					var node = new ComplexFeatureNode(complexFeat) { Image = m_complexImage };
 					object value;
 					if (values == null || !values.TryGetValue(complexFeat, out value))
 					{
 						value = null;
 					}
-					AddFeatures(node, complexFeat.TypeRA.FeaturesRS, (IDictionary<IFsFeatDefn, object>) value);
+					AddFeatures(node, complexFeat.TypeRA.FeaturesRS, (IDictionary<IFsFeatDefn, object>)value);
 					parent.Nodes.Add(node);
 				}
 				else
@@ -52,11 +52,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 					{
 						continue;
 					}
-					var node = new ClosedFeatureNode(closedFeat) {Image = m_closedImage};
+					var node = new ClosedFeatureNode(closedFeat) { Image = m_closedImage };
 					object value;
 					if (values != null && values.TryGetValue(closedFeat, out value))
 					{
-						var closedVal = (ClosedFeatureValue) value;
+						var closedVal = (ClosedFeatureValue)value;
 						node.IsChecked = closedVal.Negate;
 						node.Value = new SymbolicValue(closedVal.Symbol);
 					}

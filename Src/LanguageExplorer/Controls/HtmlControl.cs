@@ -11,9 +11,7 @@ using Gecko;
 
 namespace LanguageExplorer.Controls
 {
-	/// <summary>
-	/// Summary description for HtmlControl.
-	/// </summary>
+	/// <summary />
 	public class HtmlControl : MainUserControl
 	{
 		private string m_url;
@@ -95,9 +93,7 @@ namespace LanguageExplorer.Controls
 			}
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="HtmlControl"/> class.
-		/// </summary>
+		/// <summary />
 		public HtmlControl()
 		{
 			// This call is required by the Windows.Forms Form Designer.

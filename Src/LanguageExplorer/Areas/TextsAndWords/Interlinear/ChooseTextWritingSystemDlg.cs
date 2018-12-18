@@ -1,12 +1,12 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2007-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Windows.Forms;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
+using SIL.LCModel.Core.WritingSystems;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -14,7 +14,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	{
 		private HelpProvider helpProvider;
 		private const string s_helpTopic = "khtpBaselineTextWs";
-
 		private IHelpTopicProvider m_helpTopicProvider;
 
 		public ChooseTextWritingSystemDlg()
@@ -41,7 +40,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 			}
 			m_cbWritingSystems.SelectedIndex = iSel;
-
 			helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
 			helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);

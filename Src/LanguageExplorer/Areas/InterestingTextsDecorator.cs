@@ -1,13 +1,13 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
 using System.Linq;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Application;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas
@@ -25,6 +25,7 @@ namespace LanguageExplorer.Areas
 		// The object our property belongs to. We consider any object for which we are asked our special
 		// property to be the root object.
 		private int m_rootHvo;
+
 		public InterestingTextsDecorator(ILcmServiceLocator services, IPropertyTable propertyTable)
 			: base(services.GetInstance<ISilDataAccessManaged>())
 		{
@@ -59,7 +60,8 @@ namespace LanguageExplorer.Areas
 			m_notifieeCount++;
 		}
 
-		static string InterestingTextKey = "InterestingTexts";
+		private const string InterestingTextKey = "InterestingTexts";
+
 		public static InterestingTextList GetInterestingTextList(IPropertyTable propertyTable, ILcmServiceLocator services)
 		{
 			InterestingTextList interestingTextList;
@@ -67,8 +69,8 @@ namespace LanguageExplorer.Areas
 			{
 				return interestingTextList;
 			}
-			interestingTextList = new InterestingTextList(propertyTable, services.GetInstance<ITextRepository>(),
-				services.GetInstance<IStTextRepository>(), services.GetInstance<IScrBookRepository>().AllInstances().Any());
+			interestingTextList = new InterestingTextList(propertyTable, services.GetInstance<ITextRepository>(), services.GetInstance<IStTextRepository>(),
+				services.GetInstance<IScrBookRepository>().AllInstances().Any());
 			// Make this list available for other tools in this window, but don't try to persist it.
 			propertyTable.SetProperty(InterestingTextKey, interestingTextList);
 			// Since the list hangs around indefinitely, it indefinitely monitors prop changes.

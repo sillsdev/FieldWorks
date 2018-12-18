@@ -15,9 +15,7 @@ namespace LanguageExplorer.Filters
 	/// </summary>
 	public class OneIndirectMlPropFinder : StringFinderBase
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:OneIndirectMlPropFinder"/> class.
-		/// </summary>
+		/// <summary />
 		public OneIndirectMlPropFinder(ISilDataAccess sda, int flidVec, int flidString, int ws)
 			: base(sda)
 		{

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2011-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -23,10 +23,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 		}
 
-		internal InterAreaBookmark(InterlinMaster interlinMaster, LcmCache cache, IPropertyTable propertyTable)	// For restoring
+		internal InterAreaBookmark(InterlinMaster interlinMaster, LcmCache cache, IPropertyTable propertyTable) // For restoring
 		{
-			// Note: resist any temptation to save mediator in a memer variable. Bookmarks are kept in a static dictionary
-			// and may well have a longer life than the mediator. There is danger of using if after it is disposed. See LT-12435.
 			Init(interlinMaster, cache, propertyTable);
 			Restore(interlinMaster.IndexOfTextRecord);
 		}
@@ -52,7 +50,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var iParaInText = point.Segment.Paragraph.IndexInOwner;
 			var begOffset = point.Segment.GetAnalysisBeginOffset(point.Index);
 			var endOffset = point.HasWordform ? begOffset + point.BaselineText.Length : begOffset;
-
 			Save(index, iParaInText, begOffset, endOffset, fPersistNow);
 		}
 
@@ -76,14 +73,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			Save(fPersistNow, textIndex);
 		}
 
-		private string BookmarkNamePrefix
-		{
-			get
-			{
-				var result = "ITexts-Bookmark-" + m_bookmarkId + "-";
-				return result;
-			}
-		}
+		private string BookmarkNamePrefix => $"ITexts-Bookmark-{m_bookmarkId}-";
 
 		internal string RecordIndexBookmarkName => BookmarkPropertyName("IndexOfRecord");
 

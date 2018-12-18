@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,13 +9,13 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.LcmUi;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.LCModel.DomainServices;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Resources;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -38,27 +38,24 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// This one needs a free range following it. It displays the name of an SbNamedObject,
 		// using the writing system indicated by m_choices[frag - kfragNamedObjectNameChoices.
 		internal const int kfragNamedObjectNameChoices = 1001000;
-
-
 		protected int m_wsVern;
 		protected int m_wsAnalysis;
 		protected int m_wsUi;
 		protected CachePair m_caches;
-		ITsString m_tssMissingMorphs;
-		ITsString m_tssMissingEntry;
-		ITsString m_tssMissingMorphGloss;
-		ITsString m_tssMissingMorphPos;
-		ITsString m_tssMissingWordPos;
-		ITsString m_tssEmptyAnalysis;
-		ITsString m_tssEmptyVern;
-		InterlinLineChoices m_choices;
-		ComPictureWrapper m_PulldownArrowPic;
-
+		private ITsString m_tssMissingMorphs;
+		private ITsString m_tssMissingEntry;
+		private ITsString m_tssMissingMorphGloss;
+		private ITsString m_tssMissingMorphPos;
+		private ITsString m_tssMissingWordPos;
+		private ITsString m_tssEmptyAnalysis;
+		private ITsString m_tssEmptyVern;
+		private InterlinLineChoices m_choices;
+		private ComPictureWrapper m_PulldownArrowPic;
 		// width in millipoints of the arrow picture.
-		int m_dxmpArrowPicWidth;
-		bool m_fIconsForAnalysisChoices;
-		bool m_fRtl;
-		SandboxBase m_sandbox;
+		private int m_dxmpArrowPicWidth;
+		private bool m_fIconsForAnalysisChoices;
+		private bool m_fRtl;
+		private SandboxBase m_sandbox;
 
 		public SandboxVc(CachePair caches, InterlinLineChoices choices, bool fIconsForAnalysisChoices, SandboxBase sandbox)
 		{
@@ -85,7 +82,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				m_fRtl = wsObj.RightToLeftScript;
 			}
-
 		}
 
 		/// <summary>
@@ -93,34 +89,28 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		private static int ConvertPictureWidthToMillipoints(IPicture picture)
 		{
-			const int kMillipointsPerInch = 72000 / 2540;
-			return picture.Width * kMillipointsPerInch;
+			return picture.Width * 72000 / 2540;
 		}
 
 		#region Disposable stuff
-#if DEBUG
-		/// <summary/>
+
+		/// <summary />
 		~SandboxVc()
 		{
 			Dispose(false);
 		}
-#endif
 
-		/// <summary/>
-		public bool IsDisposed
-		{
-			get;
-			private set;
-		}
+		/// <summary />
+		private bool IsDisposed { get; set; }
 
-		/// <summary/>
+		/// <summary />
 		public void Dispose()
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
 
-		/// <summary/>
+		/// <summary />
 		protected virtual void Dispose(bool fDisposing)
 		{
 			Debug.WriteLineIf(!fDisposing, "******* Missing Dispose() call for " + GetType() + " *******");
@@ -151,7 +141,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		#endregion
 
 		/// <summary>
-		/// Get or set the editability for the moprhem form row.
+		/// Get or set the editability for the morpheme form row.
 		/// </summary>
 		/// <remarks>
 		/// 'False' means to not show the icon and to not make the form editable.
@@ -329,7 +319,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							}
 						}
 						vwenv.CloseInnerPile();
-
 						break;
 					default:
 						if (frag >= kfragNamedObjectNameChoices && frag < kfragNamedObjectNameChoices + m_choices.Count)
@@ -495,14 +484,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				cGlosses = wa.MeaningsOC.Count;
 			}
-
 			SetColor(vwenv, m_choices.LabelRGBFor(choiceIndex));
-
 			// Icon only if we want icons at all (currently always true) and there is at least one WfiGloss to choose
 			// and this is the first word gloss line.
-			var fWantIcon = m_fIconsForAnalysisChoices &&
-				(cGlosses > 0 || m_sandbox.ShouldAddWordGlossToLexicon) &&
-				m_choices.IsFirstOccurrenceOfFlid(choiceIndex);
+			var fWantIcon = m_fIconsForAnalysisChoices && (cGlosses > 0 || m_sandbox.ShouldAddWordGlossToLexicon) && m_choices.IsFirstOccurrenceOfFlid(choiceIndex);
 			// If there isn't going to be an icon, add an indent.
 			if (!fWantIcon)
 			{

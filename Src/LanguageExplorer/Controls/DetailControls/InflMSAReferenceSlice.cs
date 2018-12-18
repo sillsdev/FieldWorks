@@ -16,9 +16,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// </summary>
 	internal class InflMSAReferenceSlice : AtomicReferenceSlice
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="InflMSAReferenceSlice"/> class.
-		/// </summary>
+		/// <summary />
 		internal InflMSAReferenceSlice(LcmCache cache, ICmObject obj, int flid)
 			: base(cache, obj, flid)
 		{

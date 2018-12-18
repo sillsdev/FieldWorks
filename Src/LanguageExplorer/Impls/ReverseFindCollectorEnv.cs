@@ -14,9 +14,7 @@ namespace LanguageExplorer.Impls
 	/// that are applied by the VC.</remarks>
 	internal class ReverseFindCollectorEnv : FindCollectorEnv
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ReverseFindCollectorEnv"/> class.
-		/// </summary>
+		/// <summary />
 		/// <param name="vc">The view constructor.</param>
 		/// <param name="sda">Date access to get prop values etc.</param>
 		/// <param name="hvoRoot">The root object to display.</param>

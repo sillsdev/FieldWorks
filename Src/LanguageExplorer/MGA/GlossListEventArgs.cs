@@ -10,10 +10,7 @@ namespace LanguageExplorer.MGA
 {
 	public delegate void GlossListEventHandler(object sender, GlossListEventArgs e);
 
-
-	/// <summary>
-	/// Summary description for GlossListEventArgs.
-	/// </summary>
+	/// <summary />
 	public class GlossListEventArgs : EventArgs
 	{
 		public GlossListEventArgs(GlossListBoxItem glbi)

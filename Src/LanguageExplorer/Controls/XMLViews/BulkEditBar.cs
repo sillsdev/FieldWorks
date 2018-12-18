@@ -29,9 +29,7 @@ using SIL.Xml;
 
 namespace LanguageExplorer.Controls.XMLViews
 {
-	/// <summary>
-	/// Summary description for BulkEditBar.
-	/// </summary>
+	/// <summary />
 	internal class BulkEditBar : UserControl, IPropertyTableProvider
 	{
 		private Label m_operationLabel;
@@ -327,9 +325,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			((XmlBrowseView)m_bv.BrowseView).ClickCopy -= xbv_ClickCopy;
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the class.
-		/// </summary>
+		/// <summary />
 		public BulkEditBar()
 		{
 			// This call is required by the Windows.Forms Form Designer.

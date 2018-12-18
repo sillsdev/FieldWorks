@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -32,7 +32,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		{
 			var maxWidth = 0;
 			// Find widest line width in this bundle
-			for (var i=0 ; i < m_cLines; i++)
+			for (var i = 0; i < m_cLines; i++)
 			{
 				var curWidth = m_paraWidths[i];
 				if (curWidth > maxWidth)
@@ -57,7 +57,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				return;
 			}
 			var pixWidth = Convert.ToInt32(GraphicsObj.MeasureString(s, m_font).Width);
-
 			m_paraWidths[m_vc.CurrentLine] += pixWidth;
 		}
 

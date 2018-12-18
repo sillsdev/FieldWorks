@@ -17,9 +17,7 @@ namespace LanguageExplorer.Filters
 		/// <summary />
 		protected int[] m_hvos;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:WordSetFilter"/> class.
-		/// </summary>
+		/// <summary />
 		public WordSetFilter(IWfiWordSet wordSet)
 		{
 			id = wordSet.Hvo.ToString();

@@ -1,15 +1,16 @@
-// Copyright (c) 2008-2018 SIL International
+// Copyright (c) 2008-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.Code;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 
@@ -42,11 +43,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			mi.Click += Copy_Menu_Item_Click;
 			cm.MenuItems.Add(mi);
 			statisticsBox.ContextMenu = cm;
-
 			majorFlexComponentParameters.MainCollapsingSplitContainer.SecondControl = this;
 			InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
 			_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(TextAndWordsArea.InterlinearTexts, majorFlexComponentParameters.StatusBar, TextAndWordsArea.InterlinearTextsFactoryMethod);
-
 			// Add toolbar button.
 			_toolStripView = ToolbarServices.GetViewToolStrip(majorFlexComponentParameters.ToolStripContainer);
 			_chooseTextsToolStripButton = new ToolStripButton(LanguageExplorerResources.AddScripture.ToBitmap())
@@ -58,7 +57,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 				Text = LanguageExplorerResources.chooseTexts
 			};
 			_toolStripView.Items.Add(_chooseTextsToolStripButton);
-
 			// Add menu item to View menu.
 			_chooseTextsToolStripMenuItem = new ToolStripMenuItem(LanguageExplorerResources.chooseTexts, LanguageExplorerResources.AddScripture.ToBitmap())
 			{
@@ -68,7 +66,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			// TODO-Linux: boolean 'searchAllChildren' parameter is marked with "MonoTODO".
 			_viewToolStripMenuItem = (ToolStripMenuItem)majorFlexComponentParameters.MenuStrip.Items.Find("_viewToolStripMenuItem", true)[0];
 			_viewToolStripMenuItem.DropDownItems.Add(_chooseTextsToolStripMenuItem);
-
 			_chooseTextsToolStripButton.Click += AddTexts_Clicked;
 			_chooseTextsToolStripMenuItem.Click += AddTexts_Clicked;
 		}
@@ -175,12 +172,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 
 		#region Implementation of IDisposable
 
-		/// <summary>Disposes of the resources (other than memory) used by the <see cref="T:System.Windows.Forms.Form" />.</summary>
-		/// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
 				return; // Only need to run it on once.
@@ -216,7 +211,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		{
 			statisticsBox.Clear();
 			// TODO-Linux: SelectionTabs isn't implemented on Mono
-			statisticsBox.SelectionTabs = new[] { 10, 300};
+			statisticsBox.SelectionTabs = new[] { 10, 300 };
 			//retrieve the default UI font.
 			var cache = PropertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
 			var font = FontHeightAdjuster.GetFontForStyle(StyleServices.NormalStyleName, FwUtils.StyleSheetFromPropertyTable(PropertyTable), cache.DefaultUserWs, cache.WritingSystemFactory);
@@ -281,11 +276,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 					wordCount += words.Count;
 				}
 			}
-
 			const string tabCharacter = "\t";
 			// insert total word type count
 			statisticsBox.Text += Environment.NewLine + Environment.NewLine + Environment.NewLine + tabCharacter + LanguageExplorerResources.ksStatisticsViewTotalWordTypesText + tabCharacter;
-
 			//add one row for the unique words in each language.
 			foreach (var keyValuePair in languageTypeCount)
 			{
@@ -295,7 +288,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 				statisticsBox.Text += "" + keyValuePair.Value.Count;
 				uniqueWords += keyValuePair.Value.Count; //increase the total of unique words
 			}
-
 			// next insert the word count.
 			statisticsBox.Text += Environment.NewLine + Environment.NewLine + Environment.NewLine + tabCharacter + LanguageExplorerResources.ksStatisticsViewTotalWordTokensText + tabCharacter;
 			statisticsBox.Text += wordCount;
@@ -308,15 +300,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 				statisticsBox.Text += "" + keyValuePair.Value;
 			}
 			statisticsBox.Text += Environment.NewLine + Environment.NewLine + Environment.NewLine + tabCharacter + LanguageExplorerResources.ksStatisticsViewTotalSentencesText + tabCharacter;
-
 			// next insert the sentence count.
 			statisticsBox.Text += numberOfSegments;
-
 			// insert the total word type count into the richTextBox (it wasn't available earlier)
 			statisticsBox.SelectionStart = statisticsBox.Find(LanguageExplorerResources.ksStatisticsViewTotalWordTypesText) + LanguageExplorerResources.ksStatisticsViewTotalWordTypesText.Length;
 			statisticsBox.SelectionLength = 1;
 			statisticsBox.SelectedText = tabCharacter + uniqueWords;
-
 			// Set the font for the header. Do this after we add the other stuff to make sure
 			// it doesn't apply to extra text added adjacent to it.
 			statisticsBox.Select(0, LanguageExplorerResources.ksStatisticsView_HeaderText.Length);

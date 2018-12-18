@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,6 +9,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using LanguageExplorer.UtilityTools;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
@@ -27,10 +28,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// <summary />
 		internal GoldEticGuidFixer(UtilityDlg utilityDlg)
 		{
-			if (utilityDlg == null)
-			{
-				throw new ArgumentNullException(nameof(utilityDlg));
-			}
+			Guard.AgainstNull(utilityDlg, nameof(utilityDlg));
+
 			m_dlg = utilityDlg;
 		}
 
@@ -83,7 +82,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			var goldDocument = new XmlDocument();
 			goldDocument.Load(Path.Combine(FwDirectoryFinder.TemplateDirectory, "GOLDEtic.xml"));
 			var itemsWithBadGuids = new Dictionary<IPartOfSpeech, string>();
-			foreach(IPartOfSpeech pos in cache.LangProject.PartsOfSpeechOA.PossibilitiesOS)
+			foreach (IPartOfSpeech pos in cache.LangProject.PartsOfSpeechOA.PossibilitiesOS)
 			{
 				CheckPossibilityGuidAgainstGold(pos, goldDocument, itemsWithBadGuids);
 			}
@@ -91,7 +90,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			{
 				return false;
 			}
-			foreach(var badItem in itemsWithBadGuids)
+			foreach (var badItem in itemsWithBadGuids)
 			{
 				ReplacePosItemWithCloneWithNewGuid(cache, badItem);
 			}
@@ -104,7 +103,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			var badPartOfSpeech = badItem.Key;
 			var correctedGuid = new Guid(badItem.Value);
 			var ownerList = badPartOfSpeech.Owner as ICmPossibilityList;
-			if(ownerList != null)
+			if (ownerList != null)
 			{
 				replacementPos = cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create(correctedGuid, ownerList);
 				ownerList.PossibilitiesOS.Insert(badPartOfSpeech.IndexInOwner, replacementPos);
@@ -118,13 +117,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			replacementPos.MergeObject(badPartOfSpeech);
 		}
 
-		private static void CheckPossibilityGuidAgainstGold(IPartOfSpeech pos,
-																			 XmlDocument dom,
-																			 Dictionary<IPartOfSpeech, string> itemsWithBadGuids)
+		private static void CheckPossibilityGuidAgainstGold(IPartOfSpeech pos, XmlDocument dom, Dictionary<IPartOfSpeech, string> itemsWithBadGuids)
 		{
-			if(!string.IsNullOrEmpty(pos.CatalogSourceId))
+			if (!string.IsNullOrEmpty(pos.CatalogSourceId))
 			{
-				if(dom.SelectSingleNode($"//item[@id='{pos.CatalogSourceId}' and @guid='{pos.Guid}']") == null)
+				if (dom.SelectSingleNode($"//item[@id='{pos.CatalogSourceId}' and @guid='{pos.Guid}']") == null)
 				{
 					var selectNodeWithoutGuid = dom.SelectSingleNode($"//item[@id='{pos.CatalogSourceId}']");
 					itemsWithBadGuids[pos] = selectNodeWithoutGuid.Attributes["guid"].Value;
@@ -132,7 +129,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			}
 			if (pos.SubPossibilitiesOS != null)
 			{
-				foreach(IPartOfSpeech subPos in pos.SubPossibilitiesOS)
+				foreach (IPartOfSpeech subPos in pos.SubPossibilitiesOS)
 				{
 					CheckPossibilityGuidAgainstGold(subPos, dom, itemsWithBadGuids);
 				}

@@ -1,7 +1,8 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.Controls;
@@ -21,7 +22,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	/// </remarks>
 	internal class RecordDocXmlView : RecordDocView
 	{
-		XElement m_jtSpecs; // node required by XmlView.
+		private XElement m_jtSpecs; // node required by XmlView.
 		protected string m_configObjectName; // name to display in Configure dialog.
 
 		public RecordDocXmlView(XElement configurationParametersElement, LcmCache cache, IRecordList recordList, StatusBarProgressPanel progressPanel)
@@ -54,9 +55,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </remarks>
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -106,7 +108,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				sLayout = propertyTable.GetValue<string>(sProp);
 			}
-
 			if (string.IsNullOrEmpty(sLayout))
 			{
 				sLayout = XmlUtils.GetMandatoryAttributeValue(xnSpec, "layout");
@@ -160,8 +161,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary>
 		/// Launch the configure dialog.
 		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <returns></returns>
 		public bool OnConfigureXmlDocView(object commandObject)
 		{
 			var sProp = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "layoutProperty");
@@ -169,7 +168,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				sProp = "DictionaryPublicationLayout";
 			}
-			using(var dlg = new XmlDocConfigureDlg())
+			using (var dlg = new XmlDocConfigureDlg())
 			{
 				var mainWindow = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window);
 				dlg.SetConfigDlgInfo(m_configurationParametersElement, Cache, FwUtils.StyleSheetFromPropertyTable(PropertyTable), mainWindow, PropertyTable, Publisher, sProp);
@@ -177,9 +176,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				{
 					// LT-8767 When this dialog is launched from the Configure Dictionary View dialog
 					// m_mediator != null && m_rootSite == null so we need to handle this to prevent a crash.
-					if (PropertyTable != null && m_rootSite != null)
+					if (PropertyTable != null)
 					{
-						(m_rootSite as XmlDocItemView).ResetTables(GetLayoutName(m_configurationParametersElement, PropertyTable));
+						(m_rootSite as XmlDocItemView)?.ResetTables(GetLayoutName(m_configurationParametersElement, PropertyTable));
 					}
 				}
 				if (dlg.MasterRefreshRequired)

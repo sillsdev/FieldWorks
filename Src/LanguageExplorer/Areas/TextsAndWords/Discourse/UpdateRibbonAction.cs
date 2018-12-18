@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2018 SIL International
+// Copyright (c) 2008-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -17,8 +17,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 	/// </summary>
 	internal class UpdateRibbonAction : IUndoAction
 	{
-		readonly ConstituentChartLogic m_logic;
-		readonly bool m_fForRedo;
+		private readonly ConstituentChartLogic m_logic;
+		private readonly bool m_fForRedo;
 
 		public UpdateRibbonAction(ConstituentChartLogic logic, bool fForRedo)
 		{
@@ -28,9 +28,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		public void UpdateUnchartedWordforms()
 		{
-			var unchartedWordforms = m_logic.NextUnchartedInput(ConstituentChartLogic.kMaxRibbonContext);
-			m_logic.Ribbon.CacheRibbonItems(unchartedWordforms.ToList()); // now handles PropChanged???
-
+			m_logic.Ribbon.CacheRibbonItems(m_logic.NextUnchartedInput(ConstituentChartLogic.kMaxRibbonContext).ToList()); // now handles PropChanged???
 			m_logic.Ribbon.SelectFirstOccurence();
 		}
 
@@ -55,7 +53,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		public bool SuppressNotification
 		{
-			set {  }
+			set { }
 		}
 
 		public bool Undo()

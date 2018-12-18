@@ -9,9 +9,7 @@ namespace LanguageExplorer.Dumpster
 #if RANDYTODO
 	// TODO: I don't expect this class to survive, but its useful code moved elsewhere, as ordinary event handlers.
 #endif
-	/// <summary>
-	/// Summary description for AreaListener.
-	/// </summary>
+	/// <summary />
 	internal static class AreaListener
 	{
 		/// <summary>

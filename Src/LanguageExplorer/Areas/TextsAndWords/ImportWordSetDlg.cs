@@ -1,16 +1,17 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel;
 using SIL.FieldWorks.Resources;
+using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {
@@ -24,22 +25,20 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		#region Data members
 		private string[] _paths;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Button btnCancel;
+		private Label label1;
+		private Button btnCancel;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.Container components = null;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.Button btnChooseFiles;
-
-		private System.Windows.Forms.TextBox tbFileNames;
-		private System.Windows.Forms.TextBox tbName;
-		private System.Windows.Forms.Button buttonHelp;
-		private System.Windows.Forms.Button btnImport;
-
+		private Label label2;
+		private Button btnChooseFiles;
+		private TextBox tbFileNames;
+		private TextBox tbName;
+		private Button buttonHelp;
+		private Button btnImport;
 		private const string s_helpTopic = "khtpImportWordSet";
-		private System.Windows.Forms.HelpProvider helpProvider;
+		private HelpProvider helpProvider;
 
 		#endregion Data members
 
@@ -67,19 +66,17 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 		}
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
-			if( disposing )
+			if (disposing)
 			{
 				components?.Dispose();
 			}
@@ -182,11 +179,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				MessageBox.Show(ParserUIStrings.ksNoFilesToImport, ParserUIStrings.ksNoFiles, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				return;
 			}
-
 			ParserMenuManager.DisconnectFromParser();
-
 			CreateWordsetFromFiles(_paths);
-
 			MyRecordList.ReloadFilterProvider();
 			DialogResult = DialogResult.OK;
 		}
@@ -269,16 +263,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			}
 			return string.Format(paths.Count > 1 ? ParserUIStrings.ksImportedFromFilesX : ParserUIStrings.ksImportedFromFileX, sb);
 		}
-
-		/* Not needed now that we use a real listener.
-		protected override void OnClosed(EventArgs ea)
-		{
-			base.OnClosed(ea);
-			tbName.Text = "";
-			tbFileNames.Text = "";
-			m_paths = null;
-		}
-		*/
 
 		protected override void OnActivated(EventArgs ea)
 		{

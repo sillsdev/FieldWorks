@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2018 SIL International
+// Copyright (c) 2007-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 
@@ -22,11 +23,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	{
 		private Button m_btnOk;
 		private Button m_btnCancel;
-		private SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox m_txtMorphs;
-
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
+		private FwTextBox m_txtMorphs;
 		private Container m_components;
 		private Label m_lblWord;
 		private GroupBox m_groupBox2BreakCharacters;
@@ -53,13 +50,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private Label m_lblBreakBoundStemLabel;
 		private Label m_label1;
 		private Button m_buttonHelp;
-
 		private string m_sMorphs;
-
 		private const string ksHelpTopic = "khtpEditMorphBreaks";
 		private Button m_morphBreakHelper;
 		private readonly HelpProvider m_helpProvider;
-
 		private MorphBreakHelperContextMenu _morphBreakContextContextMenu;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 
@@ -72,12 +66,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			InitializeComponent();
 			AccessibleNameCreator.AddNames(this);
 			AccessibleName = GetType().Name;
-
 			if (!Application.RenderWithVisualStyles)
 			{
 				m_txtMorphs.BorderStyle = BorderStyle.FixedSingle;
 			}
-
 			m_helpProvider = new HelpProvider {HelpNamespace = helpTopicProvider.HelpFile};
 			m_helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(ksHelpTopic));
 			m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
@@ -97,12 +89,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			Debug.Assert(ws != 0);
 			var wsVern = wsf.get_EngineOrNull(ws);
 			Debug.Assert(wsVern != null);
-
 			m_txtMorphs.WritingSystemFactory = wsf;
 			m_txtMorphs.WritingSystemCode = ws;
 			m_txtMorphs.Text = sMorphs;
 			m_sMorphs = sMorphs;
-
 			// Fix the help strings to use the actual MorphType markers.
 			IMoMorphType mmtStem;
 			IMoMorphType mmtPrefix;
@@ -120,32 +110,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var sExample2 = StringTable.Table.GetString("EditMorphBreaks-Example2", "DialogStrings");
 			var sStemExample = StringTable.Table.GetString("EditMorphBreaks-stemExample", "DialogStrings");
 			var sAffixExample = StringTable.Table.GetString("EditMorphBreaks-affixExample", "DialogStrings");
-			m_lblHelp2Example1.Text = string.Format(sExample1, mmtStem.Prefix ?? "", mmtStem.Postfix ?? "");
-			m_lblHelp2Example2.Text = string.Format(sExample2, mmtSuffix.Prefix ?? "", mmtSuffix.Postfix ?? "");
-			m_lblBreakStemExample.Text = string.Format(sStemExample, mmtStem.Prefix ?? "", mmtStem.Postfix ?? "");
-			m_lblBreakBoundStemExample.Text = string.Format(sStemExample, mmtBoundStem.Prefix ?? "", mmtBoundStem.Postfix ?? "");
-			m_lblBreakPrefixExample.Text = string.Format(sAffixExample,
-				mmtPrefix.Prefix == null ? "" : " " + mmtPrefix.Prefix,
-				mmtPrefix.Postfix == null ? "" : mmtPrefix.Postfix + " ");
-			m_lblBreakSuffixExample.Text = string.Format(sAffixExample,
-				mmtSuffix.Prefix == null ? "" : " " + mmtSuffix.Prefix,
-				mmtSuffix.Postfix == null ? "" : mmtSuffix.Postfix + " ");
-			m_lblBreakInfixExample.Text = string.Format(sAffixExample,
-				mmtInfix.Prefix == null ? "" : " " + mmtInfix.Prefix,
-				mmtInfix.Postfix == null ? "" : mmtInfix.Postfix + " ");
-			m_lblBreakProcliticExample.Text = string.Format(sAffixExample,
-				mmtProclitic.Prefix == null ? "" : " " + mmtProclitic.Prefix,
-				mmtProclitic.Postfix == null ? "" : mmtProclitic.Postfix + " ");
-			m_lblBreakEncliticExample.Text = string.Format(sAffixExample,
-				mmtEnclitic.Prefix == null ? "" : " " + mmtEnclitic.Prefix,
-				mmtEnclitic.Postfix == null ? "" : mmtEnclitic.Postfix + " ");
-			m_lblBreakSimulfixExample.Text = string.Format(sAffixExample,
-				mmtSimulfix.Prefix == null ? "" : " " + mmtSimulfix.Prefix,
-				mmtSimulfix.Postfix == null ? "" : mmtSimulfix.Postfix + " ");
-			m_lblBreakSuprafixExample.Text = string.Format(sAffixExample,
-				mmtSuprafix.Prefix == null ? "" : " " + mmtSuprafix.Prefix,
-				mmtSuprafix.Postfix == null ? "" : mmtSuprafix.Postfix + " ");
-
+			m_lblHelp2Example1.Text = string.Format(sExample1, mmtStem.Prefix ?? string.Empty, mmtStem.Postfix ?? string.Empty);
+			m_lblHelp2Example2.Text = string.Format(sExample2, mmtSuffix.Prefix ?? string.Empty, mmtSuffix.Postfix ?? string.Empty);
+			m_lblBreakStemExample.Text = string.Format(sStemExample, mmtStem.Prefix ?? string.Empty, mmtStem.Postfix ?? string.Empty);
+			m_lblBreakBoundStemExample.Text = string.Format(sStemExample, mmtBoundStem.Prefix ?? string.Empty, mmtBoundStem.Postfix ?? string.Empty);
+			m_lblBreakPrefixExample.Text = string.Format(sAffixExample, mmtPrefix.Prefix == null ? string.Empty : " " + mmtPrefix.Prefix, mmtPrefix.Postfix == null ? string.Empty : mmtPrefix.Postfix + " ");
+			m_lblBreakSuffixExample.Text = string.Format(sAffixExample, mmtSuffix.Prefix == null ? string.Empty : " " + mmtSuffix.Prefix, mmtSuffix.Postfix == null ? string.Empty : mmtSuffix.Postfix + " ");
+			m_lblBreakInfixExample.Text = string.Format(sAffixExample, mmtInfix.Prefix == null ? string.Empty : " " + mmtInfix.Prefix, mmtInfix.Postfix == null ? string.Empty : mmtInfix.Postfix + " ");
+			m_lblBreakProcliticExample.Text = string.Format(sAffixExample, mmtProclitic.Prefix == null ? string.Empty : " " + mmtProclitic.Prefix, mmtProclitic.Postfix == null ? string.Empty : mmtProclitic.Postfix + " ");
+			m_lblBreakEncliticExample.Text = string.Format(sAffixExample, mmtEnclitic.Prefix == null ? string.Empty : " " + mmtEnclitic.Prefix, mmtEnclitic.Postfix == null ? string.Empty : mmtEnclitic.Postfix + " ");
+			m_lblBreakSimulfixExample.Text = string.Format(sAffixExample, mmtSimulfix.Prefix == null ? string.Empty : " " + mmtSimulfix.Prefix, mmtSimulfix.Postfix == null ? string.Empty : mmtSimulfix.Postfix + " ");
+			m_lblBreakSuprafixExample.Text = string.Format(sAffixExample, mmtSuprafix.Prefix == null ? string.Empty : " " + mmtSuprafix.Prefix, mmtSuprafix.Postfix == null ? string.Empty : mmtSuprafix.Postfix + " ");
 			_morphBreakContextContextMenu = new MorphBreakHelperContextMenu(m_txtMorphs, m_helpTopicProvider, cache);
 			m_txtMorphs.AdjustForStyleSheet(this, null, stylesheet);
 			m_morphBreakHelper.Height = m_txtMorphs.Height;
@@ -166,13 +141,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected override void Dispose( bool disposing )
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
-			if( disposing )
+			if ( disposing )
 			{
 				m_components?.Dispose();
 			}

@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,9 +12,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	/// <summary />
 	internal sealed class LexReferenceCollectionSlice : CustomReferenceVectorSlice, ILexReferenceSlice
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LexReferenceCollectionSlice"/> class.
-		/// </summary>
+		/// <summary />
 		public LexReferenceCollectionSlice()
 			: base(new LexReferenceCollectionLauncher())
 		{
@@ -39,7 +37,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		public override bool HandleDeleteCommand()
 		{
 			((LexReferenceMultiSlice)ParentSlice).DeleteFromReference(GetObjectForMenusToOperateOn() as ILexReference);
-			return true; // delete was done
+			// delete was done
+			return true;
 		}
 
 		/// <summary>

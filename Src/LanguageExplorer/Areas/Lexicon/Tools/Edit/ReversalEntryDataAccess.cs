@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,16 +19,45 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	{
 		public const int kflidWsAbbr = 89999123;
 
-		private struct HvoWs
+		private struct HvoWs : IEquatable<HvoWs>
 		{
 			private int hvo;
 			private int ws;
+
 			internal HvoWs(int hvoIn, int wsIn)
 			{
-				this.hvo = hvoIn;
-				this.ws = wsIn;
+				hvo = hvoIn;
+				ws = wsIn;
 			}
+
+			#region IEquatable members
+			/// <inheritdoc />
+			public bool Equals(HvoWs other)
+			{
+				return hvo == other.hvo && ws == other.ws;
+			}
+
+			/// <inheritdoc />
+			public override bool Equals(object obj)
+			{
+				if (ReferenceEquals(null, obj))
+				{
+					return false;
+				}
+				return obj is HvoWs && Equals((HvoWs)obj);
+			}
+
+			/// <inheritdoc />
+			public override int GetHashCode()
+			{
+				unchecked
+				{
+					return (hvo * 397) ^ ws;
+				}
+			}
+			#endregion
 		}
+
 		Dictionary<HvoWs, ITsString> m_mapHvoWsRevForm = new Dictionary<HvoWs, ITsString>();
 		Dictionary<int, int[]> m_mapIndexHvoEntryHvos = new Dictionary<int, int[]>();
 		Dictionary<int, int[]> m_mapSenseHvoIndexHvos = new Dictionary<int, int[]>();
@@ -49,23 +78,23 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			switch (tag)
 			{
 				case ReversalIndexEntrySliceView.kFlidEntries:
-				{
-					int[] rghvo;
-					if (m_mapIndexHvoEntryHvos.TryGetValue(hvo, out rghvo))
 					{
-						return rghvo.Length;
+						int[] rghvo;
+						if (m_mapIndexHvoEntryHvos.TryGetValue(hvo, out rghvo))
+						{
+							return rghvo.Length;
+						}
+						throw new ArgumentException("data not stored for get_VecSize(ReversalIndexEntrySliceView.kFlidEntries)");
 					}
-					throw new ArgumentException("data not stored for get_VecSize(ReversalIndexEntrySliceView.kFlidEntries)");
-				}
 				case ReversalIndexEntrySliceView.kFlidIndices:
-				{
-					int[] rghvo;
-					if (m_mapSenseHvoIndexHvos.TryGetValue(hvo, out rghvo))
 					{
-						return rghvo.Length;
+						int[] rghvo;
+						if (m_mapSenseHvoIndexHvos.TryGetValue(hvo, out rghvo))
+						{
+							return rghvo.Length;
+						}
+						throw new ArgumentException("data not stored for get_VecSize(ReversalIndexEntrySliceView.kFlidIndices)");
 					}
-					throw new ArgumentException("data not stored for get_VecSize(ReversalIndexEntrySliceView.kFlidIndices)");
-				}
 				default:
 					return base.get_VecSize(hvo, tag);
 			}
@@ -77,23 +106,23 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			switch (tag)
 			{
 				case ReversalIndexEntrySliceView.kFlidEntries:
-				{
-					int[] rghvo;
-					if (m_mapIndexHvoEntryHvos.TryGetValue(hvo, out rghvo))
 					{
-						return rghvo[index];
+						int[] rghvo;
+						if (m_mapIndexHvoEntryHvos.TryGetValue(hvo, out rghvo))
+						{
+							return rghvo[index];
+						}
+						throw new ArgumentException("data not stored for get_VecSize(ReversalIndexEntrySliceView.kFlidEntries)");
 					}
-					throw new ArgumentException("data not stored for get_VecSize(ReversalIndexEntrySliceView.kFlidEntries)");
-				}
 				case ReversalIndexEntrySliceView.kFlidIndices:
-				{
-					int[] rghvo;
-					if (m_mapSenseHvoIndexHvos.TryGetValue(hvo, out rghvo))
 					{
-						return rghvo[index];
+						int[] rghvo;
+						if (m_mapSenseHvoIndexHvos.TryGetValue(hvo, out rghvo))
+						{
+							return rghvo[index];
+						}
+						throw new ArgumentException("data not stored for get_VecSize(ReversalIndexEntrySliceView.kFlidIndices)");
 					}
-					throw new ArgumentException("data not stored for get_VecSize(ReversalIndexEntrySliceView.kFlidIndices)");
-				}
 				default:
 					return base.get_VecItem(hvo, tag, index);
 			}

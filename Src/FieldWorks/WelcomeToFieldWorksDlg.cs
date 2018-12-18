@@ -4,6 +4,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
@@ -22,9 +23,7 @@ namespace SIL.FieldWorks
 
 		#region Construction, Initialization and Deconstruction
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="WelcomeToFieldWorksDlg"/> class.
-		/// </summary>
+		/// <summary />
 		/// <param name="helpTopicProvider">Help topic provider</param>
 		/// <param name="exception">Exception that was thrown if the previously requested
 		/// project could not be opened.</param>
@@ -95,10 +94,10 @@ namespace SIL.FieldWorks
 		/// </param>
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 			if (disposing)

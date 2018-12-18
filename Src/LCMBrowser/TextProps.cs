@@ -23,9 +23,7 @@ namespace LCMBrowser
 		/// <summary />
 		public TextIntPropInfo[] IntProps { get; set; }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:TextProps"/> class.
-		/// </summary>
+		/// <summary />
 		public TextProps(int irun, ITsString tss, LcmCache cache)
 		{
 			TsRunInfo runinfo;
@@ -35,9 +33,7 @@ namespace LCMBrowser
 			SetProps(ttp, cache);
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:TextProps"/> class.
-		/// </summary>
+		/// <summary />
 		public TextProps(ITsTextProps ttp, LcmCache cache)
 		{
 			StrPropCount = ttp.StrPropCount;

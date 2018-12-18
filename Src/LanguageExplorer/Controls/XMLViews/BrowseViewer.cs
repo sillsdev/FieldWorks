@@ -579,14 +579,11 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
-
-			// TODO: Add any initialization after the InitForm call
 			AccNameDefault = "BrowseViewer";    // default accessibility name
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:BrowseViewer"/> class.
-		/// The sortItemProvider is typically the RecordList that impelements sorting and
+		/// The sortItemProvider is typically the RecordList that implements sorting and
 		/// filtering of the items we are displaying.
 		/// The data access passed typically is a decorator for the one in the cache, adding
 		/// the sorted, filtered list of objects accessed as property madeUpFieldIdentifier of hvoRoot.

@@ -12,9 +12,7 @@ using SIL.Xml;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-	/// <summary>
-	/// Summary description for AtomicReferenceSlice.
-	/// </summary>
+	/// <summary />
 	internal class AtomicReferenceSlice : ReferenceSlice, IVwNotifyChange
 	{
 		int m_dxLastWidth; // remember width when OnSizeChanged called.
@@ -23,19 +21,13 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		private ISilDataAccess m_sda;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="AtomicReferenceSlice"/> class.
-		/// Used by custom slices that extend this class.
-		/// </summary>
+		/// <summary />
 		protected AtomicReferenceSlice(Control control)
 			: base(control)
 		{
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="AtomicReferenceSlice"/> class.
-		/// Used by slices that extend this class.
-		/// </summary>
+		/// <summary />
 		protected AtomicReferenceSlice(Control control, LcmCache cache, ICmObject obj, int flid)
 			: base(control, cache, obj, flid)
 		{
@@ -43,9 +35,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_sda.AddNotification(this);
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="AtomicReferenceSlice"/> class.
-		/// </summary>
+		/// <summary />
 		public AtomicReferenceSlice(LcmCache cache, ICmObject obj, int flid)
 			: this(new AtomicReferenceLauncher(), cache, obj, flid)
 		{

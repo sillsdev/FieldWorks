@@ -1,9 +1,9 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Windows.Forms;
 using System.Linq;
+using System.Windows.Forms;
 using LanguageExplorer.LcmUi;
 using LanguageExplorer.UtilityTools;
 using SIL.Code;
@@ -31,7 +31,6 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// <summary>
 		/// Override method to return the Label property.
 		/// </summary>
-		/// <returns></returns>
 		public override string ToString()
 		{
 			return Label;
@@ -76,13 +75,10 @@ namespace LanguageExplorer.Areas.Lexicon
 			}
 			if (changeWs)
 			{
-				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
-					LanguageExplorerResources.ksUndoHomographWs, LanguageExplorerResources.ksRedoHomographWs,
-					cache.ActionHandlerAccessor,
-					() =>
-					{
-						cache.LanguageProject.HomographWs = defaultVernacularWsId;
-					});
+				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(LanguageExplorerResources.ksUndoHomographWs, LanguageExplorerResources.ksRedoHomographWs, cache.ActionHandlerAccessor, () =>
+				{
+					cache.LanguageProject.HomographWs = defaultVernacularWsId;
+				});
 			}
 			cache.LanguageProject.LexDbOA.ResetHomographNumbers(new ProgressBarWrapper(m_dlg.ProgressBar));
 		}

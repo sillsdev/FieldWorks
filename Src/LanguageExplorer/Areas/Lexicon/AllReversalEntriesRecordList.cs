@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -32,7 +32,7 @@ namespace LanguageExplorer.Areas.Lexicon
 			m_oldLength = 0;
 		}
 
-		void SelectNewItem()
+		private void SelectNewItem()
 		{
 			OnJumpToRecord(_newItem.Hvo);
 		}
@@ -41,11 +41,9 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// Get the current reversal index guid.  If there is none, create a new reversal index
 		/// since there must not be any.  This fixes LT-6653.
 		/// </summary>
-		/// <returns></returns>
 		internal static Guid GetReversalIndexGuid(IPropertyTable propertyTable, IPublisher publisher)
 		{
 			var riGuid = RecordListServices.GetObjectGuidIfValid(propertyTable, "ReversalIndexGuid");
-
 			if (!riGuid.Equals(Guid.Empty))
 			{
 				return riGuid;
@@ -117,7 +115,6 @@ namespace LanguageExplorer.Areas.Lexicon
 				return null; // there is no current Reversal Index; don't try to find Properties (sorter & filter) for a nonexistant Reversal Index
 			}
 			var reversalLang = reversalPub.Substring(reversalPub.IndexOf('-') + 1); // strip initial "publishReversal-"
-
 			// Dependent lists do not have owner/property set. Rather they have class/field.
 			var className = VirtualListPublisher.MetaDataCache.GetOwnClsName((int)m_flid);
 			var fieldName = VirtualListPublisher.MetaDataCache.GetFieldName((int)m_flid);

@@ -6,9 +6,7 @@ using SIL.LCModel;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-	/// <summary>
-	/// Summary description for ViewPropertyItem.
-	/// </summary>
+	/// <summary />
 	internal class StringSlice : ViewPropertySlice
 	{
 		internal StringSlice(ICmObject obj, int flid)

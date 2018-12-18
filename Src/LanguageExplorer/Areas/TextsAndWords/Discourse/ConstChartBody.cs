@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2018 SIL International
+// Copyright (c) 2008-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,12 +7,12 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.LCModel;
-using SIL.LCModel.DomainServices;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Resources;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainServices;
 using Rect = SIL.FieldWorks.Common.ViewsInterfaces.Rect;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
@@ -31,9 +31,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// </summary>
 		private ContextMenuStrip m_cellContextMenu;
 
-		/// <summary>
-		/// Make one.
-		/// </summary>
+		/// <summary />
 		public ConstChartBody(ConstituentChartLogic logic, ConstituentChart chart)
 			: base(null)
 		{
@@ -79,14 +77,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			return Logic.LogicalColumnIndexFromDisplay(icol);
 		}
 
-		void m_logic_RowModifiedEvent(object sender, RowModifiedEventArgs e)
+		private void m_logic_RowModifiedEvent(object sender, RowModifiedEventArgs e)
 		{
 			var row = e.Row;
 			if (row == null)
 			{
 				return;
 			}
-
 			if (row == Logic.LastRow)
 			{
 				ScrollToEnd();
@@ -103,7 +100,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			var rgvsli = new SelLevInfo[1];
 			rgvsli[0].ihvo = row.IndexInOwner; // specifies which row.
 			rgvsli[0].tag = DsConstChartTags.kflidRows;
-			IVwSelection sel = null;
+			IVwSelection sel;
 			try
 			{
 				sel = RootBox.MakeTextSelInObj(0, 1, rgvsli, 0, null, false, false, false, true, fInstall);
@@ -128,7 +125,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				return; // nothing to do (and leave the bookmark alone)
 			}
-
 			// Gets the wordform that is closest to the bookmark in the text
 			var occurrence = Logic.FindWordformAtBookmark(bookmark);
 			SelectAndScrollToAnalysisOccurrence(occurrence);
@@ -362,7 +358,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				MakeRoot();
 			}
-
 			if (RootBox != null)
 			{
 				ChangeOrMakeRoot(m_hvoChart, Vc, ConstChartVc.kfragChart, this.StyleSheet);

@@ -41,10 +41,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ProjectId"/> class when called for
-		/// deserialization.
-		/// </summary>
+		/// <summary />
 		protected ProjectId(SerializationInfo info, StreamingContext context) :
 			this((BackendProviderType)info.GetValue(kTypeSerializeName, typeof(BackendProviderType)), info.GetString(kNameSerializeName))
 		{

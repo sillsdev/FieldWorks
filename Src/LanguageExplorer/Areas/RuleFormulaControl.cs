@@ -1,9 +1,10 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -13,11 +14,11 @@ using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel;
-using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
 using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.Xml;
 
 namespace LanguageExplorer.Areas
@@ -44,7 +45,7 @@ namespace LanguageExplorer.Areas
 		}
 
 		public RuleFormulaControl(ISharedEventHandlers sharedEventHandlers, XElement configurationNode)
-			:this()
+			: this()
 		{
 			Guard.AgainstNull(sharedEventHandlers, nameof(_sharedEventHandlers));
 			Guard.AgainstNull(configurationNode, nameof(configurationNode));
@@ -79,9 +80,9 @@ namespace LanguageExplorer.Areas
 			get
 			{
 				var ctxt = CurrentContext;
-				if (ctxt  != null && ctxt.ClassID == PhSimpleContextNCTags.kClassId)
+				if (ctxt != null && ctxt.ClassID == PhSimpleContextNCTags.kClassId)
 				{
-					var ncCtxt = (IPhSimpleContextNC) ctxt;
+					var ncCtxt = (IPhSimpleContextNC)ctxt;
 					if (ncCtxt.FeatureStructureRA != null)
 					{
 						return ncCtxt.FeatureStructureRA.ClassID == PhNCFeaturesTags.kClassId;
@@ -138,7 +139,6 @@ namespace LanguageExplorer.Areas
 				{
 					return null;
 				}
-
 				if (obj.ClassID != PhIterationContextTags.kClassId)
 				{
 					return obj as IPhSimpleContext;
@@ -166,13 +166,10 @@ namespace LanguageExplorer.Areas
 		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
-
 			m_mainControl = _view;
-
 			_view.SelectionChanged += SelectionChanged;
 			_view.RemoveItemsRequested += RemoveItemsRequested;
 			_view.ContextMenuRequested += ContextMenuRequested;
-
 			InsertionControl.Insert += m_insertionControl_Insert;
 		}
 
@@ -180,6 +177,13 @@ namespace LanguageExplorer.Areas
 		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
 			if (disposing)
 			{
 				if (_view != null)
@@ -200,7 +204,7 @@ namespace LanguageExplorer.Areas
 
 		private static int ToCellId(object ctxt)
 		{
-			return (int?) ctxt ?? -1;
+			return (int?)ctxt ?? -1;
 		}
 
 		private static object ToContextObject(int cellId)
@@ -224,7 +228,7 @@ namespace LanguageExplorer.Areas
 
 		int IPatternControl.GetItemContextIndex(object ctxt, object obj)
 		{
-			return GetItemCellIndex(ToCellId(ctxt), (ICmObject) obj);
+			return GetItemCellIndex(ToCellId(ctxt), (ICmObject)obj);
 		}
 
 		SelLevInfo[] IPatternControl.GetLevelInfo(object ctxt, int index)
@@ -258,9 +262,7 @@ namespace LanguageExplorer.Areas
 			{
 				return -1;
 			}
-
 			var cellId = GetCell(sel, SelLimitType.Anchor);
-
 			if (sel.IsRange && cellId != -1)
 			{
 				var endCellId = GetCell(sel, SelLimitType.End);
@@ -416,7 +418,6 @@ namespace LanguageExplorer.Areas
 					candidates.Add(env);
 				}
 			}
-
 			var displayWs = "analysis vernacular";
 			IPhEnvironment selectedEnv = null;
 			var node = m_configurationNode?.Element("deParams");
@@ -424,16 +425,13 @@ namespace LanguageExplorer.Areas
 			{
 				displayWs = XmlUtils.GetOptionalAttributeValue(node, "ws", "analysis vernacular").ToLower();
 			}
-
 			var labels = ObjectLabel.CreateObjectLabels(m_cache, candidates.OrderBy(e => e.ShortName), null, displayWs);
-
 			using (var chooser = new SimpleListChooser(m_persistProvider, labels, m_fieldName, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 			{
 				chooser.Cache = m_cache;
 				chooser.TextParamHvo = m_cache.LangProject.PhonologicalDataOA.Hvo;
 				chooser.SetHelpTopic(Slice.GetChooserHelpTopicID(Slice.HelpTopicID));
 				chooser.InitializeExtras(m_configurationNode, PropertyTable, Publisher, Subscriber);
-
 				var res = chooser.ShowDialog();
 				if (res != DialogResult.Cancel)
 				{
@@ -445,7 +443,6 @@ namespace LanguageExplorer.Areas
 					}
 				}
 			}
-
 			// return focus to the view
 			_view.Select();
 			if (selectedEnv == null)
@@ -457,7 +454,6 @@ namespace LanguageExplorer.Areas
 			{
 				cellId = UpdateEnvironment(selectedEnv);
 			});
-
 			ReconstructView(cellId, -1, true);
 		}
 
@@ -466,11 +462,9 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		private void m_insertionControl_Insert(object sender, InsertEventArgs e)
 		{
-			var option = (InsertOption) e.Option;
-
+			var option = (InsertOption)e.Option;
 			var undo = string.Format(LanguageExplorerResources.ksUndoInsert0, option);
 			var redo = string.Format(LanguageExplorerResources.ksRedoInsert0, option);
-
 			var sel = SelectionHelper.Create(_view);
 			var cellId = -1;
 			var cellIndex = -1;
@@ -485,11 +479,10 @@ namespace LanguageExplorer.Areas
 						return;
 					}
 					UndoableUnitOfWorkHelper.Do(undo, redo, m_cache.ActionHandlerAccessor, () =>
-						{
-							cellId = InsertPhoneme(phoneme, sel, out cellIndex);
-						});
+					{
+						cellId = InsertPhoneme(phoneme, sel, out cellIndex);
+					});
 					break;
-
 				case RuleInsertType.NaturalClass:
 					IEnumerable<IPhNaturalClass> natClasses = m_cache.LangProject.PhonologicalDataOA.NaturalClassesOS.OrderBy(natc => natc.ShortName);
 					var ncObj = DisplayChooser(AreaResources.ksRuleNCOpt, AreaResources.ksRuleNCChooserLink, AreaServices.NaturalClassEditMachineName, "RuleNaturalClassFlatList", natClasses);
@@ -499,11 +492,10 @@ namespace LanguageExplorer.Areas
 						return;
 					}
 					UndoableUnitOfWorkHelper.Do(undo, redo, m_cache.ActionHandlerAccessor, () =>
-						{
-							cellId = InsertNC(nc, sel, out cellIndex);
-						});
+					{
+						cellId = InsertNC(nc, sel, out cellIndex);
+					});
 					break;
-
 				case RuleInsertType.Features:
 					using (var featChooser = new PhonologicalFeatureChooserDlg())
 					{
@@ -513,16 +505,16 @@ namespace LanguageExplorer.Areas
 						if (res == DialogResult.OK)
 						{
 							UndoableUnitOfWorkHelper.Do(undo, redo, m_cache.ActionHandlerAccessor, () =>
-								{
-									var featNC = m_cache.ServiceLocator.GetInstance<IPhNCFeaturesFactory>().Create();
-									m_cache.LangProject.PhonologicalDataOA.NaturalClassesOS.Add(featNC);
-									featNC.Name.SetUserWritingSystem(string.Format(AreaResources.ksRuleNCFeatsName, RuleName));
-									featNC.FeaturesOA = m_cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
-									IPhSimpleContextNC ctxt;
-									cellId = InsertNC(featNC, sel, out cellIndex, out ctxt);
-									featChooser.Context = ctxt;
-									featChooser.UpdateFeatureStructure();
-								});
+							{
+								var featNC = m_cache.ServiceLocator.GetInstance<IPhNCFeaturesFactory>().Create();
+								m_cache.LangProject.PhonologicalDataOA.NaturalClassesOS.Add(featNC);
+								featNC.Name.SetUserWritingSystem(string.Format(AreaResources.ksRuleNCFeatsName, RuleName));
+								featNC.FeaturesOA = m_cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
+								IPhSimpleContextNC ctxt;
+								cellId = InsertNC(featNC, sel, out cellIndex, out ctxt);
+								featChooser.Context = ctxt;
+								featChooser.UpdateFeatureStructure();
+							});
 						}
 						else if (res != DialogResult.Cancel)
 						{
@@ -530,46 +522,41 @@ namespace LanguageExplorer.Areas
 						}
 					}
 					break;
-
 				case RuleInsertType.WordBoundary:
 					var wordBdry = m_cache.ServiceLocator.GetInstance<IPhBdryMarkerRepository>().GetObject(LangProjectTags.kguidPhRuleWordBdry);
 					UndoableUnitOfWorkHelper.Do(undo, redo, m_cache.ActionHandlerAccessor, () =>
-						{
-							cellId = InsertBdry(wordBdry, sel, out cellIndex);
-						});
+					{
+						cellId = InsertBdry(wordBdry, sel, out cellIndex);
+					});
 					break;
 
 				case RuleInsertType.MorphemeBoundary:
 					var morphBdry = m_cache.ServiceLocator.GetInstance<IPhBdryMarkerRepository>().GetObject(LangProjectTags.kguidPhRuleMorphBdry);
 					UndoableUnitOfWorkHelper.Do(undo, redo, m_cache.ActionHandlerAccessor, () =>
-						{
-							cellId = InsertBdry(morphBdry, sel, out cellIndex);
-						});
+					{
+						cellId = InsertBdry(morphBdry, sel, out cellIndex);
+					});
 					break;
-
 				case RuleInsertType.Index:
 					// put the clicked index in the data field
 					UndoableUnitOfWorkHelper.Do(undo, redo, m_cache.ActionHandlerAccessor, () =>
-						{
-							cellId = InsertIndex((int) e.Suboption, sel, out cellIndex);
-						});
+					{
+						cellId = InsertIndex((int)e.Suboption, sel, out cellIndex);
+					});
 					break;
-
 				case RuleInsertType.Column:
 					UndoableUnitOfWorkHelper.Do(undo, redo, m_cache.ActionHandlerAccessor, () =>
-						{
-							cellId = InsertColumn(sel);
-						});
+					{
+						cellId = InsertColumn(sel);
+					});
 					break;
-
 				case RuleInsertType.Variable:
 					UndoableUnitOfWorkHelper.Do(undo, redo, m_cache.ActionHandlerAccessor, () =>
-						{
-							cellId = InsertVariable(sel, out cellIndex);
-						});
+					{
+						cellId = InsertVariable(sel, out cellIndex);
+					});
 					break;
 			}
-
 			_view.Select();
 			if (cellId != -1)
 			{
@@ -586,9 +573,7 @@ namespace LanguageExplorer.Areas
 		protected ICmObject DisplayChooser(string fieldName, string linkText, string toolName, string guiControl, IEnumerable<ICmObject> candidates)
 		{
 			ICmObject obj = null;
-
 			var labels = ObjectLabel.CreateObjectLabels(m_cache, candidates);
-
 			using (var chooser = new SimpleListChooser(m_persistProvider, labels, fieldName, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 			{
 				chooser.Cache = m_cache;
@@ -597,20 +582,17 @@ namespace LanguageExplorer.Areas
 				chooser.AddLink(linkText, LinkType.kGotoLink, new FwLinkArgs(toolName, guidTextParam));
 				chooser.ReplaceTreeView(PropertyTable, Publisher, Subscriber, guiControl);
 				chooser.SetHelpTopic(FeatureChooserHelpTopic);
-
 				var res = chooser.ShowDialog();
 				if (res == DialogResult.Cancel)
 				{
 					return null;
 				}
 				chooser.HandleAnyJump();
-
 				if (chooser.ChosenOne != null)
 				{
 					obj = chooser.ChosenOne.Object;
 				}
 			}
-
 			return obj;
 		}
 
@@ -624,7 +606,7 @@ namespace LanguageExplorer.Areas
 				var indices = GetIndicesToRemove(ctxts, sel);
 				foreach (int idx in indices)
 				{
-					var c = (IPhSimpleContext) ctxts[idx];
+					var c = (IPhSimpleContext)ctxts[idx];
 					c.PreRemovalSideEffects();
 					seq.Remove(c);
 				}
@@ -636,7 +618,6 @@ namespace LanguageExplorer.Areas
 		protected int InsertContextInto(IPhSimpleContext ctxt, SelectionHelper sel, IPhSequenceContext seqCtxt)
 		{
 			m_cache.LangProject.PhonologicalDataOA.ContextsOS.Add(ctxt);
-
 			var ctxts = seqCtxt.MembersRS.Cast<ICmObject>().ToArray();
 			var index = GetInsertionIndex(ctxts, sel);
 			seqCtxt.MembersRS.Insert(index, ctxt);
@@ -648,7 +629,7 @@ namespace LanguageExplorer.Areas
 			var indices = GetIndicesToRemove(ctxts, sel);
 			foreach (var idx in indices)
 			{
-				var c = (IPhPhonContext) ctxts[idx];
+				var c = (IPhPhonContext)ctxts[idx];
 				c.PreRemovalSideEffects();
 				m_cache.LangProject.PhonologicalDataOA.ContextsOS.Remove(c);
 			}
@@ -685,7 +666,6 @@ namespace LanguageExplorer.Areas
 			{
 				cellId = RemoveItems(sel, e.Forward, out cellIndex);
 			});
-
 			// if the no cell is returned, then do not reconstruct
 			if (cellId != -1 && cellId != -2)
 			{
@@ -707,7 +687,9 @@ namespace LanguageExplorer.Areas
 				var indices = GetIndicesToRemove(ctxts, sel);
 				// return index of the item before the removed items
 				if (indices.Length > 0)
+				{
 					index = indices[0] - 1;
+				}
 				foreach (var idx in indices)
 				{
 					// Sometimes when deleting a range, DeleteUnderlyingObject() takes out
@@ -737,14 +719,13 @@ namespace LanguageExplorer.Areas
 			return reconstruct;
 		}
 
-		private void ProcessIndicesSimpleContext(ILcmOwningSequence<IPhSimpleContext> seq, ICmObject[] ctxts, bool preRemovalSideEffects, int idx)
+		private static void ProcessIndicesSimpleContext(ILcmOwningSequence<IPhSimpleContext> seq, ICmObject[] ctxts, bool preRemovalSideEffects, int idx)
 		{
 			if (ctxts == null || idx > ctxts.Length - 1 || idx < 0)
 			{
 				return;
 			}
-
-			var c = (IPhSimpleContext) ctxts[idx];
+			var c = (IPhSimpleContext)ctxts[idx];
 			if (preRemovalSideEffects)
 			{
 				c.PreRemovalSideEffects();
@@ -766,7 +747,6 @@ namespace LanguageExplorer.Areas
 				{
 					index = indices[0] - 1;
 				}
-
 				foreach (var idx in indices)
 				{
 					// Sometimes when deleting a range, DeleteUnderlyingObject() takes out
@@ -793,7 +773,6 @@ namespace LanguageExplorer.Areas
 					reconstruct = false;
 				}
 			}
-
 			return reconstruct;
 		}
 
@@ -803,8 +782,7 @@ namespace LanguageExplorer.Areas
 			{
 				return;
 			}
-
-			var c = (IPhPhonContext) ctxts[idx];
+			var c = (IPhPhonContext)ctxts[idx];
 			if (preRemovalSideEffects)
 			{
 				c.PreRemovalSideEffects();
@@ -816,10 +794,9 @@ namespace LanguageExplorer.Areas
 		{
 			var beginObj = GetCmObject(sel, SelLimitType.Top);
 			var endObj = GetCmObject(sel, SelLimitType.Bottom);
-
 			var remove = new List<int>();
 			var inRange = false;
-			for (int i = 0; i < objs.Length; i++)
+			for (var i = 0; i < objs.Length; i++)
 			{
 				if (objs[i] == beginObj)
 				{
@@ -866,14 +843,12 @@ namespace LanguageExplorer.Areas
 					}
 					return i;
 				}
-
 				if (forward)
 				{
 					return i == objs.Length ? -1 : i;
 				}
 				return i - 1;
 			}
-
 			return -1;
 		}
 
@@ -896,11 +871,10 @@ namespace LanguageExplorer.Areas
 		{
 			var sel = SelectionHelper.Create(_view);
 			bool reconstruct;
-
 			using (var featChooser = new PhonologicalFeatureChooserDlg())
 			{
-				var ctxt = (IPhSimpleContextNC) CurrentContext;
-				var natClass = (IPhNCFeatures) ctxt.FeatureStructureRA;
+				var ctxt = (IPhSimpleContextNC)CurrentContext;
+				var natClass = (IPhNCFeatures)ctxt.FeatureStructureRA;
 				featChooser.Title = AreaResources.ksRuleFeatsChooserTitle;
 				if (m_obj is IPhSegRuleRHS)
 				{
@@ -935,7 +909,6 @@ namespace LanguageExplorer.Areas
 				}
 				reconstruct = res == DialogResult.OK;
 			}
-
 			_view.Select();
 			if (reconstruct)
 			{
@@ -954,10 +927,8 @@ namespace LanguageExplorer.Areas
 				// We only bother to display the context menu if there is a CurrentObject.
 				return;
 			}
-
 			_rightClickTuple = CreateContextMenu();
 			_rightClickTuple.Item1.Closed += ContextMenuStrip_Closed;
-
 			// Show menu.
 			_rightClickTuple.Item1.Show(new Point(Cursor.Position.X, Cursor.Position.Y));
 		}

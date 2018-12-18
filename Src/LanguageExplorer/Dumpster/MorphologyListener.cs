@@ -16,11 +16,7 @@ namespace LanguageExplorer.Dumpster
 #if RANDYTODO
 	// TODO: I don't expect this class to survive, but its useful code moved elsewhere, as ordinary event handlers.
 #endif
-	/// <summary>
-	/// Summary description for MorphologyListener.
-	/// JohnT: rather contrary to its name, appears to be a place to put handlers for commands common
-	/// to tools in the Words area.
-	/// </summary>
+	/// <summary />
 	internal sealed class MorphologyListener : IFlexComponent
 	{
 		#region Data members

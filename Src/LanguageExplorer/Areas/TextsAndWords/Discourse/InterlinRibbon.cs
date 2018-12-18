@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2018 SIL International
+// Copyright (c) 2008-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,8 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.DomainServices;
@@ -30,7 +30,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		protected int m_occurenceListId = -2011; // flid for charting ribbon
 		private int m_iEndSelLim;
 		private AnalysisOccurrence m_endSelLimPoint;
-
 		// Lazy initialization provides a chance for subclass to use its own
 		// version of OccurenceListId
 		private InterlinRibbonDecorator m_sda;
@@ -38,9 +37,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		#endregion
 
-		/// <summary>
-		/// Make one.
-		/// </summary>
+		/// <summary />
 		public InterlinRibbon(LcmCache cache, int hvoRoot)
 		{
 			Cache = cache;
@@ -59,10 +56,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		protected override void Dispose(bool disposing)
 		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
 			if (disposing)
 			{
 				Vc?.Dispose();
 			}
+
 			Vc = null;
 			base.Dispose(disposing);
 		}
@@ -196,7 +201,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				return;
 			}
-
 			var info = new TextSelInfo(RootBox);
 			var end = Math.Max(info.ContainingObjectIndex(info.Levels(true) - 1, true), info.ContainingObjectIndex(info.Levels(false) - 1, false));
 			SelectUpTo(end);
@@ -213,7 +217,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				return;
 			}
-
 			if (EndSelLimitIndex > -1 && EndSelLimitIndex < end)
 			{
 				end = EndSelLimitIndex;
@@ -261,7 +264,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			base.MakeRoot();
 
 			EnsureVc();
-
 			if (LineChoices == null)
 			{
 				// fall-back (mainly for testing).
