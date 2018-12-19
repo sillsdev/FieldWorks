@@ -324,10 +324,10 @@
 		<PropertyGroup>
 			<WixLibsDir>$(InstallerDir)/libs/</WixLibsDir>
 		</PropertyGroup>
-		<!-- .NET 4.5.1 -->
-		<DownloadFile Address="http://go.microsoft.com/fwlink/?LinkId=322115"
-			LocalFilename="NDP451-KB2858728-x86-x64-AllOS-ENU.exe"
-			Condition="!Exists('$(WixLibsDir)/NDP451-KB2858728-x86-x64-AllOS-ENU.exe')" DownloadsDir="$(WixLibsDir)" />
+		<!-- .NET 4.6.1 -->
+		<DownloadFile Address="https://download.microsoft.com/download/E/4/1/E4173890-A24A-4936-9FC9-AF930FE3FA40/NDP461-KB3102436-x86-x64-AllOS-ENU.exe"
+			LocalFilename="NDP461-KB3102436-x86-x64-AllOS-ENU.exe"
+			Condition="!Exists('$(WixLibsDir)/NDP461-KB3102436-x86-x64-AllOS-ENU.exe')" DownloadsDir="$(WixLibsDir)" />
 		<!-- 32-bit VC redistributables -->
 		<DownloadFile Address="https://download.microsoft.com/download/1/1/1/1116b75a-9ec3-481a-a3c8-1777b5381140/vcredist_x86.exe"
 			LocalFilename="vcredist_2008_x86.exe"
