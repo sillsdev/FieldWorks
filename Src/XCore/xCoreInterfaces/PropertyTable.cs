@@ -1008,7 +1008,7 @@ namespace XCore
 					// This is only called once, and no code should ever putting duplicates when saving.
 					// RESPONSE (RR): Beats me how it happened, but I 'found it' via the exception
 					// that was thrown by it already being there.
-					m_properties.AddOrUpdate(property.name, property, (name, prop) => prop);
+					m_properties.AddOrUpdate(property.name, property, (name, prop) => property);
 				}
 			}
 		}

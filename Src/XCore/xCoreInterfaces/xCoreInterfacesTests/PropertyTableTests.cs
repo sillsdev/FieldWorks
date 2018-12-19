@@ -874,6 +874,18 @@ namespace XCore
 			Assert.AreEqual(roPropTable.GetStringProperty(noSuchPropName, myDefault), notDefault, "Default was used instead of value from property table.");
 		}
 
+		[Test]
+		public void ReadOnlyPropertyTable_ReplaceDefaultInitialArea()
+		{
+			const string initialAreaKey = "db$Testlocal$InitialArea";
+			m_propertyTable.SetProperty(initialAreaKey, "lexicon", false);
+			string initialAreaValue = m_propertyTable.GetValue<string>(initialAreaKey);
+			Assert.AreEqual("lexicon", initialAreaValue, "Default value not set.");
+			LoadOriginalSettings();
+			initialAreaValue = m_propertyTable.GetValue<string>(initialAreaKey);
+			Assert.AreEqual("grammar", initialAreaValue, "Default value not replaced.");
+		}
+
 		/// <summary>
 		/// Test the various versions of SetPropertyPersistence.
 		/// </summary>
