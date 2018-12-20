@@ -60,11 +60,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_possibleColumns = possibleColumns;
 			CurrentSpecs = currentColumns;
 			m_cache = propertyTable.GetValue<LcmCache>(LanguageExplorerConstants.cache);
-			//
-			// Required for Windows Form Designer support
-			//
 			InitializeComponent();
-
 			m_helpTopicProvider = propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
 			if (m_helpTopicProvider != null)
 			{
@@ -73,7 +69,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
 				helpProvider.SetShowHelp(this, true);
 			}
-
 			// Call FinishInitialization to do setup that might depend on previously setting
 			// the root object (which is done by the caller after exiting the constructor.
 		}

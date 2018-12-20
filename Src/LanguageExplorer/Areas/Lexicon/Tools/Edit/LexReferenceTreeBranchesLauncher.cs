@@ -17,7 +17,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary />
 		public LexReferenceTreeBranchesLauncher()
 		{
-			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 		}
 

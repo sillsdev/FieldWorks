@@ -64,12 +64,8 @@ namespace LanguageExplorer.Controls.LexText
 
 		public PhonologicalFeatureChooserDlg()
 		{
-			//
-			// Required for Windows Form Designer support
-			//
 			InitializeComponent();
 			AccessibleName = GetType().Name;
-
 			m_valuesCombo = new FwComboBox
 			{
 				DropDownStyle = ComboBoxStyle.DropDownList,
@@ -78,7 +74,6 @@ namespace LanguageExplorer.Controls.LexText
 				Padding = new Padding(0, 1, 0, 0)
 			};
 			m_valuesCombo.SelectedIndexChanged += m_valuesCombo_SelectedIndexChanged;
-
 			Resize += PhonologicalFeatureChooserDlg_Resize;
 		}
 

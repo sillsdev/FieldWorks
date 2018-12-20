@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -31,7 +31,6 @@ namespace LanguageExplorer.Controls.DetailControls
 	{
 		#region Member variables
 		private const string s_helpTopic = "khtpPictureProperties";
-
 		private IContainer components;
 		private Image m_currentImage;
 		private string m_filePath;
@@ -43,7 +42,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		private readonly IApp m_app;
 		private readonly HelpProvider m_helpProvider;
 		private readonly int m_captionWs;
-
 		private Button m_btnHelp;
 		private FwTextBox m_txtCaption;
 		private LabeledMultiStringControl m_lmscCaption;
@@ -60,10 +58,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		private FwPanel pnlCaption;
 		private Panel panel1;
 		private FwPanel pnlPicture;
-
 		private static FileLocationChoice s_defaultFileLocChoiceForSession = FileLocationChoice.Copy;
 		private static string s_sExternalLinkDestinationDir;
-
 		private string s_defaultPicturesFolder;
 		#endregion
 
@@ -85,29 +81,21 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// properties to, or null to edit a new picture</param>
 		/// <param name="helpTopicProvider">typically IHelpTopicProvider.App</param>
 		/// <param name="app">The application</param>
-		/// <param name="fAnalysis">true to use analysis writign system for caption</param>
+		/// <param name="fAnalysis">true to use analysis writing system for caption</param>
 		public PicturePropertiesDialog(LcmCache cache, ICmPicture initialPicture, IHelpTopicProvider helpTopicProvider, IApp app, bool fAnalysis)
 		{
-			// ReSharper disable LocalizableElement
 			if (cache == null)
 			{
-				throw(new ArgumentNullException(nameof(cache), "The LcmCache cannot be null"));
+				throw (new ArgumentNullException(nameof(cache), "The LcmCache cannot be null"));
 			}
-			// ReSharper restore LocalizableElement
-
 			Logger.WriteEvent("Opening 'Picture Properties' dialog");
-
 			m_cache = cache;
 			m_initialPicture = initialPicture;
 			m_helpTopicProvider = helpTopicProvider;
 			m_app = app;
-			m_captionWs = fAnalysis
-				? m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle
-				: m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
-
+			m_captionWs = fAnalysis ? m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle : m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
 			InitializeComponent();
 			AccessibleName = GetType().Name;
-
 			if (m_helpTopicProvider != null) // Could be null during tests
 			{
 				m_helpProvider = new HelpProvider
@@ -131,10 +119,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_lmscCaption.Anchor = m_txtCaption.Anchor;
 			m_lmscCaption.AccessibleName = m_txtCaption.AccessibleName;
 			m_lmscCaption.Dock = DockStyle.Fill;
-
 			// Grow the dialog and move all lower controls down to make room.
 			pnlCaption.Controls.Remove(m_txtCaption);
-			m_lmscCaption.TabIndex = m_txtCaption.TabIndex;	// assume the same tab order as the 'designed' control
+			m_lmscCaption.TabIndex = m_txtCaption.TabIndex; // assume the same tab order as the 'designed' control
 			pnlCaption.Controls.Add(m_lmscCaption);
 		}
 
@@ -191,7 +178,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			var wsf = m_cache.LanguageWritingSystemFactoryAccessor;
 			m_txtCaption.WritingSystemFactory = wsf;
 			m_txtCaption.WritingSystemCode = m_captionWs;
-
 			s_defaultPicturesFolder = Path.Combine(m_cache.LanguageProject.LinkedFilesRootDir, "Pictures");
 			try
 			{
@@ -199,7 +185,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					Directory.CreateDirectory(m_cache.LanguageProject.LinkedFilesRootDir);
 				}
-
 				if (!Directory.Exists(s_defaultPicturesFolder))
 				{
 					Directory.CreateDirectory(s_defaultPicturesFolder);
@@ -212,14 +197,11 @@ namespace LanguageExplorer.Controls.DetailControls
 				Logger.WriteError(e);
 				MessageBoxUtils.Show(errorMsg);
 			}
-
 			m_txtDestination.Text = s_sExternalLinkDestinationDir ?? s_defaultPicturesFolder;
-
 			if (m_initialPicture != null)
 			{
 				var tss = m_initialPicture.Caption.get_String(m_captionWs);
 				m_txtCaption.Tss = tss.Length == 0 ? MakeEmptyCaptionString() : tss;
-
 				if (m_initialPicture.PictureFileRA == null)
 				{
 					m_filePath = string.Empty;
@@ -232,15 +214,12 @@ namespace LanguageExplorer.Controls.DetailControls
 						m_filePath = string.Empty;
 					}
 				}
-
 				m_currentImage = FileUtils.TrySimilarFileExists(m_filePath, out m_filePath) ? Image.FromFile(m_filePath) : SimpleRootSite.ImageNotFoundX;
 				UpdatePicInformation();
 				m_rbLeave.Checked = true;
 				return true;
 			}
-
 			m_txtCaption.Tss = MakeEmptyCaptionString();
-
 			// if the user isn't editing an existing picture, then go ahead and bring up
 			// the file chooser
 			var result = ShowChoosePictureDlg();
@@ -258,23 +237,23 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
-			if( disposing )
+			if (disposing)
 			{
 				components?.Dispose();
 				m_currentImage?.Dispose();
 				m_helpProvider?.Dispose();
 			}
 			m_currentImage = null;
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 		#endregion
 
@@ -575,7 +554,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				dlg.SelectedPath = m_txtDestination.Text;
 				dlg.Description = string.Format(FwCoreDlgs.kstidSelectLinkedFilesSubFolder, s_defaultPicturesFolder);
 				dlg.ShowNewFolderButton = true;
-
 				if (dlg.ShowDialog() == DialogResult.OK && ValidateDestinationFolder(dlg.SelectedPath))
 				{
 					m_txtDestination.Text = dlg.SelectedPath;
@@ -588,20 +566,16 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		protected override void OnClosed(EventArgs e)
 		{
-			Logger.WriteEvent("Closing 'Picture Properties' dialog with result " + DialogResult);
-
+			Logger.WriteEvent($"Closing 'Picture Properties' dialog with result {DialogResult}");
 			if (DialogResult == DialogResult.OK)
 			{
 				var action = (m_initialPicture == null ? "Creating" : "Changing");
 				Logger.WriteEvent($"{action} Picture Properties: file: {m_filePath}, {(m_txtCaption.Text.Length > 0 ? "with" : "no")} caption");
 			}
-
 			base.OnClosed(e);
 		}
 
-		/// <summary>
-		/// Raises the <see cref="E:System.Windows.Forms.Form.Closing"/> event.
-		/// </summary>
+		/// <summary />
 		protected override void OnClosing(CancelEventArgs e)
 		{
 			if (DialogResult == DialogResult.OK && m_grpFileLocOptions.Visible)
@@ -615,7 +589,6 @@ namespace LanguageExplorer.Controls.DetailControls
 					ApplyFileLocationOptions();
 				}
 			}
-
 			base.OnClosing(e);
 		}
 
@@ -624,10 +597,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		private void lblFilename_Paint(object sender, PaintEventArgs e)
 		{
-			var flags = TextFormatFlags.VerticalCenter | TextFormatFlags.PathEllipsis | TextFormatFlags.SingleLine;
-
 			e.Graphics.FillRectangle(SystemBrushes.Control, lblFilename.ClientRectangle);
-			TextRenderer.DrawText(e.Graphics, lblFilename.Text, lblFilename.Font, lblFilename.ClientRectangle, lblFilename.ForeColor, flags);
+			TextRenderer.DrawText(e.Graphics, lblFilename.Text, lblFilename.Font, lblFilename.ClientRectangle, lblFilename.ForeColor, TextFormatFlags.VerticalCenter | TextFormatFlags.PathEllipsis | TextFormatFlags.SingleLine);
 		}
 
 		/// <summary />
@@ -657,10 +628,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		private void ApplyFileLocationOptions()
 		{
-			var fileLocChoice = m_rbCopy.Checked
-				? FileLocationChoice.Copy
-				: (m_rbMove.Checked ? FileLocationChoice.Move : FileLocationChoice.Leave);
-
+			var fileLocChoice = m_rbCopy.Checked ? FileLocationChoice.Copy : m_rbMove.Checked ? FileLocationChoice.Move : FileLocationChoice.Leave;
 			// If this dialog is being displayed for the purpose of inserting a new
 			// picture or changing which picture is being displayed, remember the user's
 			// copy/move/leave choice
@@ -668,11 +636,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				s_defaultFileLocChoiceForSession = fileLocChoice;
 			}
-
 			m_picPreview.Image = null;
 			m_currentImage.Dispose();
 			m_currentImage = null;
-
 			m_filePath = MoveOrCopyFilesController.PerformMoveCopyOrLeaveFile(m_filePath, m_txtDestination.Text, fileLocChoice);
 			if (MoveOrCopyFilesController.FileIsInExternalLinksFolder(m_filePath, m_txtDestination.Text))
 			{
@@ -730,7 +696,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				dlg.RestoreDirectory = true;
 				dlg.CheckFileExists = true;
 				dlg.CheckPathExists = true;
-
 				while (dialogResult != DialogResult.OK && dialogResult != DialogResult.Cancel)
 				{
 					dialogResult = dlg.ShowDialog(m_app?.ActiveMainWindow);
@@ -784,7 +749,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				int newWidth;
 				int newHeight;
 				var ratio = (float)m_currentImage.Height / m_currentImage.Width;
-
 				if ((int)(m_picPreview.Width * ratio) < m_picPreview.Height)
 				{
 					newWidth = m_picPreview.Width;
@@ -825,7 +789,6 @@ namespace LanguageExplorer.Controls.DetailControls
 					m_grpFileLocOptions.Visible = !FileIsInLinkedFilesFolder(tmpOriginalPath);
 				}
 			}
-
 			// update the path
 			lblFilename.Text = tmpOriginalPath;
 		}

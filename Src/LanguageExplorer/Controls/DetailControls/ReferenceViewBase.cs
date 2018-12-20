@@ -1,14 +1,14 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Drawing;
 using System.Diagnostics;
+using System.Drawing;
 using System.Windows.Forms;
 using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.LCModel;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
@@ -53,7 +53,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			// We can reinitialize in some cases but should not reuse with a different cache.
 			Debug.Assert(cache != null && (m_cache == null || m_cache == cache));
 			m_displayNameProperty = displayNameProperty;
-			Cache = cache;		// Set cache on EditingHelper as well if needed.  (See FWR-1426.)
+			Cache = cache;      // Set cache on EditingHelper as well if needed.  (See FWR-1426.)
 			m_rootObj = rootObj;
 			m_rootFlid = rootFlid;
 			m_rootFieldName = rootFieldName;

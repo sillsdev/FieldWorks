@@ -1,20 +1,21 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.XMLViews;
-using SIL.LCModel.Core.Cellar;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.FwUtils.MessageBoxEx;
 using SIL.LCModel;
+using SIL.LCModel.Core.Cellar;
 using SIL.Xml;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-	/// <summary></summary>
+	/// <summary />
 	internal abstract class ReferenceLauncher : ButtonLauncher
 	{
 		#region event handler declarations
@@ -61,9 +62,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -86,7 +88,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			var displayWs = "analysis vernacular";
 			string postDialogMessageTrigger = null;
-
 			var node = m_configurationNode?.Element("deParams");
 			if (node != null)
 			{
@@ -94,7 +95,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				postDialogMessageTrigger = XmlUtils.GetOptionalAttributeValue(node, "postChangeMessageTrigger", null);
 			}
 			var labels = ObjectLabel.CreateObjectLabels(m_cache, m_obj.ReferenceTargetCandidates(m_flid), m_displayNameProperty, displayWs);
-
 			// I (JH) started down this road to sorting the object labels... it proved bumpy
 			// and I bailed out and just turned on the "sorted" property of the chooser,
 			// which gives us a dumb English sort.
@@ -103,20 +103,19 @@ namespace LanguageExplorer.Controls.DetailControls
 			// surface.  instead, they can readily give a string, through ToString().which is
 			// what made me realize that until we have a way to sort something based on ICU, I
 			// might as well let .net do the sorting.
-
+			//
 			// I'm thinking there's a good chance we will eventually use FieldWorks controls for
 			// the chooser in fact we will probably just using normal browse view. Then, that
 			// chooser can just do the normal sorting that browse view stew, including letting
 			// the user sort based on different properties.
-
+			//
 			// however, we need a TreeView in many cases... I think there's also a FieldWorks
 			// one of those that probably doesn't have sorting built-in yet...in which case we
 			// might want to do the sorting here.
-
 			using (var chooser = GetChooser(labels))
 			{
 				chooser.Cache = m_cache;
-				chooser.SetObjectAndFlid(m_obj.Hvo, m_flid);	// may set TextParamHvo
+				chooser.SetObjectAndFlid(m_obj.Hvo, m_flid);    // may set TextParamHvo
 				if (m_configurationNode != null)
 				{
 					// Handle the default case ("owner") for text parameters.
@@ -129,18 +128,15 @@ namespace LanguageExplorer.Controls.DetailControls
 					chooser.SetHelpTopic(Slice.GetChooserHelpTopicID());
 					chooser.InitializeExtras(m_configurationNode, PropertyTable, Publisher, Subscriber);
 				}
-
 				var res = chooser.ShowDialog(MainControl.FindForm());
 				if (DialogResult.Cancel == res)
 				{
 					return;
 				}
-
 				if (m_configurationNode != null)
 				{
 					chooser.HandleAnyJump();
 				}
-
 				if (chooser.ChosenOne != null)
 				{
 					AddItem(chooser.ChosenOne.Object);
@@ -150,7 +146,6 @@ namespace LanguageExplorer.Controls.DetailControls
 					SetItems(chooser.ChosenObjects);
 				}
 			}
-
 			// If the configuration file says that we should put up a message dialog after a change has been made,
 			// do that now.
 			if (postDialogMessageTrigger != null)
@@ -169,7 +164,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected virtual SimpleListChooser GetChooser(IEnumerable<ObjectLabel> labels)
 		{
 			var x = new SimpleListChooser(m_persistProvider, labels, m_fieldName, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider));
-			x.NullLabel.DisplayName  = XmlUtils.GetOptionalAttributeValue(m_configurationNode, "nullLabel", "<EMPTY>");
+			x.NullLabel.DisplayName = XmlUtils.GetOptionalAttributeValue(m_configurationNode, "nullLabel", "<EMPTY>");
 			return x;
 		}
 

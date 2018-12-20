@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -16,9 +16,9 @@ namespace LanguageExplorer.Controls.DetailControls
 	internal class StringSliceVc : FwBaseVc
 	{
 		private IPublisher m_publisher;
-		int m_flid;
+		private int m_flid;
 		private bool m_fMultilingual;
-		int m_wsEnOrDefaultUserWs;
+		private int m_wsEnOrDefaultUserWs;
 
 		public StringSliceVc()
 		{
@@ -30,9 +30,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		public StringSliceVc(int flid, LcmCache cache, IPublisher publisher)
 		{
 			m_flid = flid;
-			// ReSharper disable DoNotCallOverridableMethodsInConstructor
 			Cache = cache;
-			// ReSharper restore DoNotCallOverridableMethodsInConstructor
 			m_publisher = publisher;
 			m_wsEnOrDefaultUserWs = cache.WritingSystemFactory.GetWsFromStr("en");
 			if (m_wsEnOrDefaultUserWs == 0)
@@ -72,7 +70,6 @@ namespace LanguageExplorer.Controls.DetailControls
 					{
 						ws = m_wsDefault;
 					}
-
 					if (ws == 0)
 					{
 						ws = m_cache.DefaultAnalWs;
@@ -100,19 +97,16 @@ namespace LanguageExplorer.Controls.DetailControls
 			VwLength vlTable;
 			vlTable.nVal = 10000;
 			vlTable.unit = VwUnit.kunPercent100;
-
 			int dxs;    // Width of displayed string.
 			int dys;    // Height of displayed string (not used here).
 			vwenv.get_StringWidth(tssLabel, null, out dxs, out dys);
 			VwLength vlColWs; // 5-pt space plus max label width.
 			vlColWs.nVal = dxs + 5000;
 			vlColWs.unit = VwUnit.kunPoint1000;
-
 			// The Main column is relative and uses the rest of the space.
 			VwLength vlColMain;
 			vlColMain.nVal = 1;
 			vlColMain.unit = VwUnit.kunRelative;
-
 			// Enhance JohnT: possibly allow for right-to-left UI by reversing columns?
 			vwenv.OpenTable(2, // Two columns.
 				vlTable, // Table uses 100% of available width.
@@ -128,17 +122,14 @@ namespace LanguageExplorer.Controls.DetailControls
 			// width is non-zero.
 			vwenv.MakeColumns(1, vlColWs);
 			vwenv.MakeColumns(1, vlColMain);
-
 			vwenv.OpenTableBody();
 			vwenv.OpenTableRow();
-
 			// First cell has writing system abbreviation displayed using m_ttpLabel.
 			//vwenv.Props = m_ttpLabel;
 			vwenv.OpenTableCell(1, 1);
 			vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
 			vwenv.AddString(tssLabel);
 			vwenv.CloseTableCell();
-
 			// Second cell has the string contents for the alternative.
 			// DN version has some property setting, including trailing margin and RTL.
 			if (m_fRtlScript)
@@ -146,7 +137,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				vwenv.set_IntProperty((int)FwTextPropType.ktptRightToLeft, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
 				vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalTrailing);
 			}
-
 			vwenv.set_IntProperty((int)FwTextPropType.ktptPadTop, (int)FwTextPropVar.ktpvMilliPoint, 2000);
 			vwenv.OpenTableCell(1, 1);
 			vwenv.AddStringProp(m_flid, this);

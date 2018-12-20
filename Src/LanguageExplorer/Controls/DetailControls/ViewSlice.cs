@@ -1,8 +1,9 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.Xml;
@@ -13,7 +14,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// A tree control item where the embedded form is a View (specifically
 	/// SIL.FieldWorks.Common.Framework.RootSite).
 	/// </summary>
-	internal class ViewSlice: Slice
+	internal class ViewSlice : Slice
 	{
 		/// <summary />
 		public ViewSlice()
@@ -21,7 +22,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		/// <summary />
-		public ViewSlice(SimpleRootSite ctrlT): base(ctrlT)
+		public ViewSlice(SimpleRootSite ctrlT) : base(ctrlT)
 		{
 			InternalInitialize();
 		}
@@ -33,32 +34,13 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		#region IDisposable override
 
-		/// <summary>
-		/// Executes in two distinct scenarios.
-		///
-		/// 1. If disposing is true, the method has been called directly
-		/// or indirectly by a user's code via the Dispose method.
-		/// Both managed and unmanaged resources can be disposed.
-		///
-		/// 2. If disposing is false, the method has been called by the
-		/// runtime from inside the finalizer and you should not reference (access)
-		/// other managed objects, as they already have been garbage collected.
-		/// Only unmanaged resources can be disposed.
-		/// </summary>
-		/// <param name="disposing"></param>
-		/// <remarks>
-		/// If any exceptions are thrown, that is fine.
-		/// If the method is being done in a finalizer, it will be ignored.
-		/// If it is thrown by client code calling Dispose,
-		/// it needs to be handled by fixing the bug.
-		///
-		/// If subclasses override this method, they should call the base implementation.
-		/// </remarks>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -95,13 +77,11 @@ namespace LanguageExplorer.Controls.DetailControls
 				// Don't allow it to lay out until we have a realistic size, while the DataTree is
 				// actually being laid out.
 				rs.AllowLayout = false;
-
 				// Embedded forms should not do their own scrolling. Rather we resize them as needed, and scroll the whole
 				// DE view.
 				rs.AutoScroll = false;
 				rs.LayoutSizeChanged += HandleLayoutSizeChanged;
 				rs.SizeChanged += rs_SizeChanged;
-
 
 				// This is usually done by the DataTree method that creates and initializes slices.
 				// However, for most view slices doing it before the control is set does no good.
@@ -150,9 +130,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				rs.StyleSheet = parentDataTree.StyleSheet;
 			}
-
 			base.Install(parentDataTree);
-
 			rs.SetAccessibleName(Label);
 		}
 
@@ -164,12 +142,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-
 			if (Cache == null || DesignMode)
 			{
 				return;
 			}
-
 			base.OnSizeChanged(e);
 		}
 
@@ -179,9 +155,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return; // Nothing to do.
 			}
-
 			base.SetWidthForDataTreeLayout(width);
-
 			var rs = RootSite;
 			if (!rs.AllowLayout)
 			{
@@ -205,15 +179,12 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// answers false to IsRealSlice, this is tried, and if it returns false,
 		/// then BecomeReal is called.
 		/// </summary>
-		/// <returns></returns>
 		public override bool BecomeRealInPlace()
 		{
 			var rs = RootSite;
 			if (rs.RootBox == null)
 			{
-#pragma warning disable 0219 // error CS0219: The variable ... is assigned but its value is never used
 				var dummy = rs.Handle; // This typically gets the root box created, so setting AllowLayout can lay it out.
-#pragma warning restore 0219
 			}
 			rs.AllowLayout = true; // also does PerformLayout.
 			SetHeightFromRootBox(rs);
@@ -247,7 +218,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		/// <summary />
-		private void ViewSlice_Enter(object sender, System.EventArgs e)
+		private void ViewSlice_Enter(object sender, EventArgs e)
 		{
 			RootSite.Focus();
 			ContainingDataTree.ActiveControl = RootSite;

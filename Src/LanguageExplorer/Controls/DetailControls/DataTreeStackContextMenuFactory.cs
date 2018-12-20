@@ -1,8 +1,9 @@
-﻿// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2017-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
@@ -12,7 +13,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// The slice can pass on the dispose obligation to one of its internal Control instances, or the Slice can do the dispose itself.
 	/// The context menu disposal *must* (read: it is imperative that) unwire the event handlers, which are provided.</para>
 	/// </summary>
-	internal sealed class DataTreeStackContextMenuFactory: IDisposable
+	internal sealed class DataTreeStackContextMenuFactory : IDisposable
 	{
 		internal PanelMenuContextMenuFactory MainPanelMenuContextMenuFactory { get; private set; }
 		internal SliceLeftEdgeContextMenuFactory LeftEdgeContextMenuFactory { get; private set; }
@@ -37,7 +38,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			Dispose(false);
 		}
 
-		/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+		/// <inheritdoc />
 		public void Dispose()
 		{
 			Dispose(true);
@@ -51,10 +52,11 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (_isDisposed)
 			{
-				return; // No need to do it more than once.
+				// No need to run it more than once.
+				return;
 			}
 
 			if (disposing)
@@ -70,7 +72,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			HotlinksMenuFactory = null;
 
 			_isDisposed = true;
-	}
+		}
 		#endregion
 	}
 }

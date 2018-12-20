@@ -39,14 +39,9 @@ namespace LanguageExplorer.LcmUi.Dialogs
 
 		private ConfirmDeleteObjectDlg()
 		{
-			//
-			// Required for Windows Form Designer support
-			//
 			InitializeComponent();
 			AccessibleName = "ConfirmDeleteObjectDlg";
-
 			pictureBox1.Image = System.Drawing.SystemIcons.Exclamation.ToBitmap();
-
 			m_descriptionBox3 = new FwTextBox
 			{
 				AdjustStringHeight = true,
@@ -64,9 +59,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 				Dock = DockStyle.Fill,
 				Visible = true
 			};
-
 			panel1.Controls.Add(m_descriptionBox3);
-
 			m_descriptionBox4 = new FwTextBox
 			{
 				AdjustStringHeight = true,
@@ -84,7 +77,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 				Dock = DockStyle.Fill,
 				Visible = true
 			};
-
 			panel2.Controls.Add(m_descriptionBox4);
 		}
 

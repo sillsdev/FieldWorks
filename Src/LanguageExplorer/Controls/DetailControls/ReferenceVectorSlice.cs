@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -16,7 +16,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// </summary>
 	internal class ReferenceVectorSlice : ReferenceSlice
 	{
-		int m_dxLastWidth; // remember width when OnSizeChanged called.
+		private int m_dxLastWidth; // remember width when OnSizeChanged called.
 
 		/// <summary />
 		protected ReferenceVectorSlice(Control control)
@@ -38,32 +38,13 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		#region IDisposable override
 
-		/// <summary>
-		/// Executes in two distinct scenarios.
-		///
-		/// 1. If disposing is true, the method has been called directly
-		/// or indirectly by a user's code via the Dispose method.
-		/// Both managed and unmanaged resources can be disposed.
-		///
-		/// 2. If disposing is false, the method has been called by the
-		/// runtime from inside the finalizer and you should not reference (access)
-		/// other managed objects, as they already have been garbage collected.
-		/// Only unmanaged resources can be disposed.
-		/// </summary>
-		/// <param name="disposing"></param>
-		/// <remarks>
-		/// If any exceptions are thrown, that is fine.
-		/// If the method is being done in a finalizer, it will be ignored.
-		/// If it is thrown by client code calling Dispose,
-		/// it needs to be handled by fixing the bug.
-		///
-		/// If subclasses override this method, they should call the base implementation.
-		/// </remarks>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -89,7 +70,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		public override void FinishInit()
 		{
 			base.FinishInit();
-
 			InitLauncher();
 		}
 
@@ -140,7 +120,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected override void OnSizeChanged(EventArgs e)
 		{
-			base.OnSizeChanged (e);
+			base.OnSizeChanged(e);
 			if (Width == m_dxLastWidth)
 			{
 				return;
@@ -158,7 +138,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public override void ShowSubControls()
 		{
-			base.ShowSubControls ();
+			base.ShowSubControls();
 			Control.Visible = true;
 		}
 
@@ -195,7 +175,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-		public override void RegisterWithContextHelper ()
+		public override void RegisterWithContextHelper()
 		{
 			if (Control == null)
 			{

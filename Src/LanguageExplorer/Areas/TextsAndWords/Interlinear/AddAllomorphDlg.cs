@@ -52,11 +52,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public AddAllomorphDlg()
 		{
-			// This call is required by the Windows Form Designer.
 			InitializeComponent();
-
 			SetHelpTopic("khtpFindEntryToAddAllomorph");
-
 			ShowControlsBasedOnPanel1Position();
 		}
 

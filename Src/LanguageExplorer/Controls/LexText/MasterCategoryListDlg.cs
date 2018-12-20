@@ -49,14 +49,10 @@ namespace LanguageExplorer.Controls.LexText
 
 		public MasterCategoryListDlg()
 		{
-			//
-			// Required for Windows Form Designer support
-			//
 			InitializeComponent();
 			AccessibleName = GetType().Name;
 			var sCat = LexTextControls.kscategory;
 			linkLabel1.Text = string.Format(LexTextControls.ksLinkText, sCat, sCat);
-
 			pictureBox1.Image = m_imageListPictures.Images[0];
 			m_btnOK.Enabled = false; // Disable until we are able to support interaction with the DB list of POSes.
 			m_rtbDescription.ReadOnly = true;  // Don't allow any editing

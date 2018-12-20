@@ -17,7 +17,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 
 		public AdhocCoProhibAtomicLauncher()
 		{
-			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 		}
 

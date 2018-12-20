@@ -22,7 +22,6 @@ namespace LanguageExplorer.Areas.Grammar
 		/// <summary />
 		public MSADlglauncherView()
 		{
-			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 		}
 

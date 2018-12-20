@@ -29,7 +29,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		/// <summary />
 		public RevEntrySensesCollectionReferenceView()
 		{
-			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 		}
 

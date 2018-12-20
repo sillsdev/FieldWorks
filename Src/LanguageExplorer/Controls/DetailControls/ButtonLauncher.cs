@@ -1,15 +1,15 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using System.Diagnostics;
-using SIL.LCModel;
 using LanguageExplorer.Controls.DetailControls.Resources;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
@@ -28,8 +28,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected string m_displayNameProperty;
 		protected string m_displayWs;
 		// The following variables control features of the chooser dialog.
-		protected XElement m_configurationNode = null;
-
+		protected XElement m_configurationNode;
 		#endregion // Data Members
 		private ImageList imageList1;
 		private IContainer components;
@@ -44,10 +43,8 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					parent = parent.Parent;
 				}
-
 				Debug.Assert(parent is Slice);
-
-				return parent as Slice;
+				return (Slice)parent;
 			}
 		}
 
@@ -89,7 +86,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary />
 		public ButtonLauncher()
 		{
-			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
 			if (Application.RenderWithVisualStyles)
 			{
@@ -171,10 +167,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -299,7 +295,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				fValid = m_obj.IsValidObject;
 			}
-
 			if (fValid)
 			{
 				HandleChooser();
@@ -313,8 +308,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-			var uc = (IContainerControl)Parent;
-			uc.ActiveControl = this;
+			((IContainerControl)Parent).ActiveControl = this;
 		}
 
 		protected void ReferenceLauncher_Leave(object sender, System.EventArgs e)

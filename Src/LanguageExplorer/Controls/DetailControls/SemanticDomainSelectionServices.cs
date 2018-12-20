@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 SIL International
+// Copyright (c) 2018-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -45,7 +45,6 @@ namespace LanguageExplorer.Controls.DetailControls
 					strbldr.AppendFormat(" ({0})", count);
 				}
 			}
-
 			var item = new ListViewItem(strbldr.ToString()) { Checked = createChecked, Tag = semanticDomainItem.Hvo };
 			var cache = semDom.Cache;
 			item.Font = FontHeightAdjuster.GetFontForNormalStyle(cache.DefaultAnalWs, stylesheet, cache);
@@ -144,13 +143,12 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		internal static void UpdateDomainListLabels(IEnumerable<ObjectLabel> createObjectLabels, IVwStylesheet stylesheet, ListView domainList, bool displayUsage)
 		{
-			domainList.BeginUpdate();	// Mono is extremely bad about redundant redrawing.  See FWNX-973 and FWNX-1043.
+			domainList.BeginUpdate();   // Mono is extremely bad about redundant redrawing.  See FWNX-973 and FWNX-1043.
 			domainList.Items.Clear();
 			if (createObjectLabels.Any())
 			{
 				domainList.Font = GetFontForFormFromObjectLabels(createObjectLabels, stylesheet);
 			}
-
 			foreach (var selectedItem in createObjectLabels)
 			{
 				domainList.Items.Add(CreateLabelListItem(selectedItem.Object, stylesheet, false, displayUsage));
@@ -170,13 +168,12 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		internal static void UpdateDomainTreeLabels(IEnumerable<ObjectLabel> labels, bool displayUsage, TreeView domainTree, IVwStylesheet stylesheet, HashSet<ICmObject> selectedItems)
 		{
-			domainTree.BeginUpdate();	// Mono is extremely bad about redundant redrawing.  See FWNX-973 and FWNX-1043.
+			domainTree.BeginUpdate();   // Mono is extremely bad about redundant redrawing.  See FWNX-973 and FWNX-1043.
 			domainTree.Nodes.Clear();
 			if (labels.Any())
 			{
 				domainTree.Font = GetFontForFormFromObjectLabels(labels, stylesheet);
 			}
-
 			foreach (var label in labels)
 			{
 				var x = CreateLabelNode(label, stylesheet, selectedItems, displayUsage);

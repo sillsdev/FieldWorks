@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2011-2018 SIL International
+// Copyright (c) 2011-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -26,14 +26,12 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private static int GetFieldId(LcmCache cache, XElement configurationParameters)
 		{
-			return cache.MetaDataCacheAccessor.GetFieldId(XmlUtils.GetMandatoryAttributeValue(configurationParameters, "ghostClass"),
-				XmlUtils.GetMandatoryAttributeValue(configurationParameters, "ghostField"), true);
+			return cache.MetaDataCacheAccessor.GetFieldId(XmlUtils.GetMandatoryAttributeValue(configurationParameters, "ghostClass"), XmlUtils.GetMandatoryAttributeValue(configurationParameters, "ghostField"), true);
 		}
 
 		public override void FinishInit()
 		{
 			base.FinishInit();
-
 			// I (RBR) used to call InitializeFlexComponent here, but that was a second call for the slice, so it failed the checks that don't like repeat calls.
 			((GhostReferenceVectorLauncher)Control).Initialize(Cache, MyCmObject, m_flid, m_fieldName, PersistenceProvider, DisplayNameProperty, BestWsName);
 		}

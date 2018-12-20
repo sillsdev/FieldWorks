@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,11 +19,11 @@ using LanguageExplorer.Areas.Notebook.Tools.NotebookEdit;
 using LanguageExplorer.Areas.TextsAndWords.Tools.Analyses;
 using LanguageExplorer.Controls.DetailControls.Resources;
 using LanguageExplorer.Controls.XMLViews;
-using SIL.LCModel;
-using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainServices;
 using SIL.Xml;
 
 namespace LanguageExplorer.Controls.DetailControls
@@ -74,21 +74,19 @@ namespace LanguageExplorer.Controls.DetailControls
 					throw new ApplicationException($"ws must be 'vernacular', 'analysis', 'pronunciation',  or 'reversal': it said '{wsSpec}'.");
 			}
 			return ws;
-
 		}
 
 		/// <summary></summary>
 		internal static Slice Create(LcmCache cache, string editor, int flid, XElement node, ICmObject obj, IPersistenceProvider persistenceProvider, FlexComponentParameters flexComponentParameters, XElement caller, ObjSeqHashMap reuseMap, ISharedEventHandlers sharedEventHandlers)
 		{
+			Slice newSlice;
 			var sliceWasRecyled = false;
-			Slice slice;
-
 			// Theoretically, 'editor' can be null, as that is one of the switch options, below.
 			if (!string.IsNullOrWhiteSpace(editor))
 			{
 				editor = editor.ToLowerInvariant();
 			}
-			switch(editor)
+			switch (editor)
 			{
 				case "multistring": // first, these are the most common slices.
 					{
@@ -113,12 +111,12 @@ namespace LanguageExplorer.Controls.DetailControls
 						var msSlice = reuseMap.GetSliceToReuse("MultiStringSlice") as MultiStringSlice;
 						if (msSlice == null)
 						{
-							slice = new MultiStringSlice(obj, flid, wsMagic, wsMagicOptional, forceIncludeEnglish, editable, spellCheck);
+							newSlice = new MultiStringSlice(obj, flid, wsMagic, wsMagicOptional, forceIncludeEnglish, editable, spellCheck);
 						}
 						else
 						{
 							sliceWasRecyled = true;
-							slice = msSlice;
+							newSlice = msSlice;
 							msSlice.Reuse(obj, flid, wsMagic, wsMagicOptional, forceIncludeEnglish, editable, spellCheck);
 						}
 						break;
@@ -128,12 +126,12 @@ namespace LanguageExplorer.Controls.DetailControls
 						var rvSlice = reuseMap.GetSliceToReuse("ReferenceVectorSlice") as ReferenceVectorSlice;
 						if (rvSlice == null)
 						{
-							slice = new ReferenceVectorSlice(cache, obj, flid);
+							newSlice = new ReferenceVectorSlice(cache, obj, flid);
 						}
 						else
 						{
 							sliceWasRecyled = true;
-							slice = rvSlice;
+							newSlice = rvSlice;
 							rvSlice.Reuse(obj, flid);
 						}
 						break;
@@ -143,12 +141,12 @@ namespace LanguageExplorer.Controls.DetailControls
 						var prvSlice = reuseMap.GetSliceToReuse("PossibilityReferenceVectorSlice") as PossibilityReferenceVectorSlice;
 						if (prvSlice == null)
 						{
-							slice = new PossibilityReferenceVectorSlice(cache, obj, flid);
+							newSlice = new PossibilityReferenceVectorSlice(cache, obj, flid);
 						}
 						else
 						{
 							sliceWasRecyled = true;
-							slice = prvSlice;
+							newSlice = prvSlice;
 							prvSlice.Reuse(obj, flid);
 						}
 						break;
@@ -158,385 +156,348 @@ namespace LanguageExplorer.Controls.DetailControls
 						var prvSlice = reuseMap.GetSliceToReuse("SemanticDomainReferenceVectorSlice") as SemanticDomainReferenceVectorSlice;
 						if (prvSlice == null)
 						{
-							slice = new SemanticDomainReferenceVectorSlice(cache, obj, flid);
+							newSlice = new SemanticDomainReferenceVectorSlice(cache, obj, flid);
 						}
 						else
 						{
 							sliceWasRecyled = true;
-							slice = prvSlice;
+							newSlice = prvSlice;
 							prvSlice.Reuse(obj, flid);
 						}
 						break;
 					}
 				case "string":
-				{
-					if (flid == 0)
 					{
-						throw new ApplicationException("field attribute required for basic properties " + node.GetOuterXml());
+						if (flid == 0)
+						{
+							throw new ApplicationException("field attribute required for basic properties " + node.GetOuterXml());
+						}
+						var ws = GetWs(cache, flexComponentParameters.PropertyTable, node);
+						newSlice = ws != 0 ? new StringSlice(obj, flid, ws) : new StringSlice(obj, flid);
+						var fShowWsLabel = XmlUtils.GetOptionalBooleanAttributeValue(node, "labelws", false);
+						if (fShowWsLabel)
+						{
+							((StringSlice)newSlice).ShowWsLabel = true;
+						}
+						var wsEmpty = GetWs(cache, flexComponentParameters.PropertyTable, node, "wsempty");
+						if (wsEmpty != 0)
+						{
+							((StringSlice)newSlice).DefaultWs = wsEmpty;
+						}
+						break;
 					}
-					var ws = GetWs(cache, flexComponentParameters.PropertyTable, node);
-					slice = ws != 0 ? new StringSlice(obj, flid, ws) : new StringSlice(obj, flid);
-					var fShowWsLabel = XmlUtils.GetOptionalBooleanAttributeValue(node, "labelws", false);
-					if (fShowWsLabel)
-					{
-						((StringSlice)slice).ShowWsLabel = true;
-					}
-					var wsEmpty = GetWs(cache, flexComponentParameters.PropertyTable, node, "wsempty");
-					if (wsEmpty != 0)
-					{
-						((StringSlice)slice).DefaultWs = wsEmpty;
-					}
-					break;
-				}
 				case "jtview":
-				{
-					var layout = XmlUtils.GetOptionalAttributeValue(caller, "param") ?? XmlUtils.GetMandatoryAttributeValue(node, "layout");
-					// Editable if BOTH the caller (part ref) AND the node itself (the slice) say so...or at least if neither says not.
-					var editable = XmlUtils.GetOptionalBooleanAttributeValue(caller, "editable", true) && XmlUtils.GetOptionalBooleanAttributeValue(node, "editable", true);
-					slice = new ViewSlice(new XmlView(obj.Hvo, layout, editable));
-					break;
-				}
+					{
+						var layout = XmlUtils.GetOptionalAttributeValue(caller, "param") ?? XmlUtils.GetMandatoryAttributeValue(node, "layout");
+						// Editable if BOTH the caller (part ref) AND the node itself (the slice) say so...or at least if neither says not.
+						var editable = XmlUtils.GetOptionalBooleanAttributeValue(caller, "editable", true) && XmlUtils.GetOptionalBooleanAttributeValue(node, "editable", true);
+						newSlice = new ViewSlice(new XmlView(obj.Hvo, layout, editable));
+						break;
+					}
 				case "summary":
-				{
-					slice = new SummarySlice();
-					break;
-				}
+					{
+						newSlice = new SummarySlice();
+						break;
+					}
 				case "enumcombobox":
-				{
-					slice = new EnumComboSlice(cache, obj, flid, node.Element("deParams"));
-					break;
-				}
+					{
+						newSlice = new EnumComboSlice(cache, obj, flid, node.Element("deParams"));
+						break;
+					}
 				case "referencecombobox":
-				{
-					slice = new ReferenceComboBoxSlice(cache, obj, flid, persistenceProvider);
-					break;
-				}
+					{
+						newSlice = new ReferenceComboBoxSlice(cache, obj, flid, persistenceProvider);
+						break;
+					}
 				case "typeaheadrefatomic":
-				{
-					slice = new AtomicRefTypeAheadSlice(obj, flid);
-					break;
-				}
+					{
+						newSlice = new AtomicRefTypeAheadSlice(obj, flid);
+						break;
+					}
 				case "msareferencecombobox":
-				{
-					slice = new MSAReferenceComboBoxSlice(cache, obj, flid, persistenceProvider);
-					break;
-				}
+					{
+						newSlice = new MSAReferenceComboBoxSlice(cache, obj, flid, persistenceProvider);
+						break;
+					}
 				case "lit": // was "message"
-				{
-					var message = XmlUtils.GetMandatoryAttributeValue(node, "message");
-					var sTranslate = XmlUtils.GetOptionalAttributeValue(node, "translate", "");
-					if (sTranslate.Trim().ToLower() != "do not translate")
 					{
-						message = StringTable.Table.LocalizeLiteralValue(message);
+						var message = XmlUtils.GetMandatoryAttributeValue(node, "message");
+						var sTranslate = XmlUtils.GetOptionalAttributeValue(node, "translate", "");
+						if (sTranslate.Trim().ToLower() != "do not translate")
+						{
+							message = StringTable.Table.LocalizeLiteralValue(message);
+						}
+						newSlice = new LiteralMessageSlice(message);
+						break;
 					}
-					slice = new LiteralMessageSlice(message);
-					break;
-				}
 				case "picture":
-				{
-					slice = new PictureSlice((ICmPicture)obj);
-					break;
-				}
+					{
+						newSlice = new PictureSlice((ICmPicture)obj);
+						break;
+					}
 				case "image":
-				{
-					try
 					{
-						slice = new ImageSlice(FwDirectoryFinder.CodeDirectory, XmlUtils.GetMandatoryAttributeValue(node, "param1"));
+						try
+						{
+							newSlice = new ImageSlice(FwDirectoryFinder.CodeDirectory, XmlUtils.GetMandatoryAttributeValue(node, "param1"));
+						}
+						catch (Exception error)
+						{
+							newSlice = new LiteralMessageSlice(string.Format(DetailControlsStrings.ksImageSliceFailed, error.Message));
+						}
+						break;
 					}
-					catch (Exception error)
-					{
-						slice = new LiteralMessageSlice(string.Format(DetailControlsStrings.ksImageSliceFailed, error.Message));
-					}
-					break;
-				}
 				case "checkbox":
-				{
-					slice = new CheckboxSlice(cache, obj, flid, node);
-					break;
-				}
+					{
+						newSlice = new CheckboxSlice(cache, obj, flid, node);
+						break;
+					}
 				case "checkboxwithrefresh":
-				{
-					slice = new CheckboxRefreshSlice(cache, obj, flid, node);
-					break;
-				}
+					{
+						newSlice = new CheckboxRefreshSlice(cache, obj, flid, node);
+						break;
+					}
 				case "time":
-				{
-					slice = new DateSlice(cache, obj, flid);
-					break;
-				}
+					{
+						newSlice = new DateSlice(cache, obj, flid);
+						break;
+					}
 				case "integer": // produced in the auto-generated parts from the conceptual model
 				case "int": // was "integer"
-				{
-					slice = new IntegerSlice(cache, obj, flid);
-					break;
-				}
+					{
+						newSlice = new IntegerSlice(cache, obj, flid);
+						break;
+					}
 
 				case "gendate":
-				{
-					slice = new GenDateSlice(cache, obj, flid);
-					break;
-				}
+					{
+						newSlice = new GenDateSlice(cache, obj, flid);
+						break;
+					}
 
 				case "morphtypeatomicreference":
-				{
-					slice = new MorphTypeAtomicReferenceSlice(cache, obj, flid);
-					break;
-				}
+					{
+						newSlice = new MorphTypeAtomicReferenceSlice(cache, obj, flid);
+						break;
+					}
 
 				case "atomicreferencepos":
-				{
-					slice = new AtomicReferencePOSSlice(cache, obj, flid, flexComponentParameters.PropertyTable, flexComponentParameters.Publisher);
-					break;
-				}
+					{
+						newSlice = new AtomicReferencePOSSlice(cache, obj, flid, flexComponentParameters.PropertyTable, flexComponentParameters.Publisher);
+						break;
+					}
 				case "possatomicreference":
-				{
-					slice = new PossibilityAtomicReferenceSlice(cache, obj, flid);
-					break;
-				}
+					{
+						newSlice = new PossibilityAtomicReferenceSlice(cache, obj, flid);
+						break;
+					}
 				case "atomicreferenceposdisabled":
-				{
-					slice = new AutomicReferencePOSDisabledSlice(cache, obj, flid, flexComponentParameters.PropertyTable, flexComponentParameters.Publisher);
-					break;
-				}
+					{
+						newSlice = new AutomicReferencePOSDisabledSlice(cache, obj, flid, flexComponentParameters.PropertyTable, flexComponentParameters.Publisher);
+						break;
+					}
 
 				case "defaultatomicreference":
-				{
-					slice = new AtomicReferenceSlice(cache, obj, flid);
-					break;
-				}
+					{
+						newSlice = new AtomicReferenceSlice(cache, obj, flid);
+						break;
+					}
 				case "defaultatomicreferencedisabled":
-				{
-					slice = new AtomicReferenceDisabledSlice(cache, obj, flid);
-					break;
-				}
-
+					{
+						newSlice = new AtomicReferenceDisabledSlice(cache, obj, flid);
+						break;
+					}
 				case "derivmsareference":
-				{
-					slice = new DerivMSAReferenceSlice(cache, obj, flid);
-					break;
-				}
-
+					{
+						newSlice = new DerivMSAReferenceSlice(cache, obj, flid);
+						break;
+					}
 				case "inflmsareference":
-				{
-					slice = new InflMSAReferenceSlice(cache, obj, flid);
-					break;
-				}
-
+					{
+						newSlice = new InflMSAReferenceSlice(cache, obj, flid);
+						break;
+					}
 				case "phoneenvreference":
-				{
-					slice = new PhoneEnvReferenceSlice(cache, obj, flid);
-					break;
-				}
-
+					{
+						newSlice = new PhoneEnvReferenceSlice(cache, obj, flid);
+						break;
+					}
 				case "sttext":
-				{
-					slice = new StTextSlice(obj, flid, GetWs(cache, flexComponentParameters.PropertyTable, node));
-					break;
-				}
-
+					{
+						newSlice = new StTextSlice(obj, flid, GetWs(cache, flexComponentParameters.PropertyTable, node));
+						break;
+					}
 				case "featuresysteminflectionfeaturelistdlglauncher":
-				{
-					slice = new FeatureSystemInflectionFeatureListDlgLauncherSlice();
-					break;
-				}
-
+					{
+						newSlice = new FeatureSystemInflectionFeatureListDlgLauncherSlice();
+						break;
+					}
 				case "reventrysensescollectionreference":
-				{
-					slice = new RevEntrySensesCollectionReferenceSlice();
-					break;
-				}
-
+					{
+						newSlice = new RevEntrySensesCollectionReferenceSlice();
+						break;
+					}
 				case "recordreferencevector":
-				{
-					slice = new RecordReferenceVectorSlice();
-					break;
-				}
-
+					{
+						newSlice = new RecordReferenceVectorSlice();
+						break;
+					}
 				case "roledparticipants":
-				{
-					slice = new RoledParticipantsSlice();
-					break;
-				}
-
+					{
+						newSlice = new RoledParticipantsSlice();
+						break;
+					}
 				case "phonologicalfeaturelistdlglauncher":
-				{
-					slice = new PhonologicalFeatureListDlgLauncherSlice();
-					break;
-				}
-
+					{
+						newSlice = new PhonologicalFeatureListDlgLauncherSlice();
+						break;
+					}
 				case "msainflectionfeaturelistdlglauncher":
-				{
-					slice = new MsaInflectionFeatureListDlgLauncherSlice();
-					break;
-				}
-
+					{
+						newSlice = new MsaInflectionFeatureListDlgLauncherSlice();
+						break;
+					}
 				case "msadlglauncher":
-				{
-					slice = new MSADlgLauncherSlice();
-					break;
-				}
-
+					{
+						newSlice = new MSADlgLauncherSlice();
+						break;
+					}
 				case "lexreferencemulti":
-				{
-					slice = new LexReferenceMultiSlice();
-					break;
-				}
-
+					{
+						newSlice = new LexReferenceMultiSlice();
+						break;
+					}
 				case "entrysequencereference":
-				{
-					slice = new EntrySequenceReferenceSlice();
-					break;
-				}
-
+					{
+						newSlice = new EntrySequenceReferenceSlice();
+						break;
+					}
 				case "audiovisual":
-				{
-					slice = new AudioVisualSlice();
-					break;
-				}
-
+					{
+						newSlice = new AudioVisualSlice();
+						break;
+					}
 				case "interlinear":
-				{
-					slice = new InterlinearSlice(sharedEventHandlers);
-					break;
-				}
-
+					{
+						newSlice = new InterlinearSlice(sharedEventHandlers);
+						break;
+					}
 				case "metaruleformula":
-				{
-					slice = new MetaRuleFormulaSlice(sharedEventHandlers);
-					break;
-				}
-
+					{
+						newSlice = new MetaRuleFormulaSlice(sharedEventHandlers);
+						break;
+					}
 				case "regruleformula":
-				{
-					slice = new RegRuleFormulaSlice(sharedEventHandlers);
-					break;
-				}
-
+					{
+						newSlice = new RegRuleFormulaSlice(sharedEventHandlers);
+						break;
+					}
 				case "adhoccoprohibvectorreference":
-				{
-					slice = new AdhocCoProhibVectorReferenceSlice();
-					break;
-				}
-
+					{
+						newSlice = new AdhocCoProhibVectorReferenceSlice();
+						break;
+					}
 				case "adhoccoorohibvectorreferencedisabled":
-				{
-					slice = new AdhocCoProhibVectorReferenceDisabledSlice();
-					break;
-				}
-
+					{
+						newSlice = new AdhocCoProhibVectorReferenceDisabledSlice();
+						break;
+					}
 				case "adhoccoprohibatomicreference":
-				{
-					slice = new AdhocCoProhibAtomicReferenceSlice();
-					break;
-				}
-
+					{
+						newSlice = new AdhocCoProhibAtomicReferenceSlice();
+						break;
+					}
 				case "adhoccoprohibatomicreferencedisabled":
-				{
-					slice = new AdhocCoProhibAtomicReferenceDisabledSlice();
-					break;
-				}
-
+					{
+						newSlice = new AdhocCoProhibAtomicReferenceDisabledSlice();
+						break;
+					}
 				case "inflaffixtemplate":
-				{
-					slice = new InflAffixTemplateSlice();
-					break;
-				}
-
+					{
+						newSlice = new InflAffixTemplateSlice();
+						break;
+					}
 				case "affixruleformula":
-				{
-					slice = new AffixRuleFormulaSlice(sharedEventHandlers);
-					break;
-				}
-
+					{
+						newSlice = new AffixRuleFormulaSlice(sharedEventHandlers);
+						break;
+					}
 				case "reversalindexentry":
-				{
-					slice = new ReversalIndexEntrySlice();
-					break;
-				}
-
+					{
+						newSlice = new ReversalIndexEntrySlice();
+						break;
+					}
 				case "ghostlexref":
-				{
-					slice = new GhostLexRefSlice();
-					break;
-				}
-
+					{
+						newSlice = new GhostLexRefSlice();
+						break;
+					}
 				case "chorusmessage":
-				{
-					slice = new ChorusMessageSlice();
-					break;
-				}
-
+					{
+						newSlice = new ChorusMessageSlice();
+						break;
+					}
 				case "reversalindexentryform":
-				{
-					slice = new ReversalIndexEntryFormSlice(flid, obj);
-					break;
-				}
-
+					{
+						newSlice = new ReversalIndexEntryFormSlice(flid, obj);
+						break;
+					}
 				case "phenvstrrepresentation":
-				{
-					slice = new PhEnvStrRepresentationSlice(obj, persistenceProvider, sharedEventHandlers);
-					break;
-				}
-
+					{
+						newSlice = new PhEnvStrRepresentationSlice(obj, persistenceProvider, sharedEventHandlers);
+						break;
+					}
 				case "lexreferencecollection":
-				{
-					slice = new LexReferenceCollectionSlice();
-					break;
-				}
-
+					{
+						newSlice = new LexReferenceCollectionSlice();
+						break;
+					}
 				case "lexreferenceunidirectional":
-				{
-					slice = new LexReferenceUnidirectionalSlice();
-					break;
-				}
-
+					{
+						newSlice = new LexReferenceUnidirectionalSlice();
+						break;
+					}
 				case "lexreferencepair":
-				{
-					slice = new LexReferencePairSlice();
-					break;
-				}
-
+					{
+						newSlice = new LexReferencePairSlice();
+						break;
+					}
 				case "lexreferencetreebranches":
-				{
-					slice = new LexReferenceTreeBranchesSlice();
-					break;
-				}
-
+					{
+						newSlice = new LexReferenceTreeBranchesSlice();
+						break;
+					}
 				case "lexreferencetreeroot":
-				{
-					slice = new LexReferenceTreeRootSlice();
-					break;
-				}
-
+					{
+						newSlice = new LexReferenceTreeRootSlice();
+						break;
+					}
 				case "lexreferencesequence":
-				{
-					slice = new LexReferenceSequenceSlice();
-					break;
-				}
-
+					{
+						newSlice = new LexReferenceSequenceSlice();
+						break;
+					}
 				case "ghostvector":
-				{
-					slice = new GhostReferenceVectorSlice(cache, obj, node);
-					break;
-				}
-
+					{
+						newSlice = new GhostReferenceVectorSlice(cache, obj, node);
+						break;
+					}
 				case "command":
-				{
-					slice = new CommandSlice(node.Element("deParams"));
-					break;
-				}
-
-				case null:	//grouping nodes do not necessarily have any editor
-				{
-					slice = new Slice();
-					break;
-				}
+					{
+						newSlice = new CommandSlice(node.Element("deParams"));
+						break;
+					}
+				case null:  //grouping nodes do not necessarily have any editor
+					{
+						newSlice = new Slice();
+						break;
+					}
 				case "message":
 					// case "integer": // added back in to behave as "int" above
 					throw new Exception("use of obsolete editor type (message->lit, integer->int)");
 				case "autocustom":
-					slice = MakeAutoCustomSlice(cache, obj, caller, node);
-					if (slice == null)
+					newSlice = MakeAutoCustomSlice(cache, obj, caller, node);
+					if (newSlice == null)
 					{
 						return null;
 					}
@@ -546,38 +507,37 @@ namespace LanguageExplorer.Controls.DetailControls
 						var rvSlice = reuseMap.GetSliceToReuse("ReferenceVectorDisabledSlice") as ReferenceVectorDisabledSlice;
 						if (rvSlice == null)
 						{
-							slice = new ReferenceVectorDisabledSlice(cache, obj, flid);
+							newSlice = new ReferenceVectorDisabledSlice(cache, obj, flid);
 						}
 						else
 						{
 							sliceWasRecyled = true;
-							slice = rvSlice;
+							newSlice = rvSlice;
 							rvSlice.Reuse(obj, flid);
 						}
 						break;
 					}
 				default:
-				{
-					//Since the editor has not been implemented yet,
-					//is there a bitmap file that we can show for this editor?
-					//Such bitmaps belong in the distFiles xde directory
-					var fwCodeDir = FwDirectoryFinder.CodeDirectory;
-					var editorBitmapRelativePath = "xde/" + editor + ".bmp";
-					slice = File.Exists(Path.Combine(fwCodeDir, editorBitmapRelativePath))
-						? (Slice)new ImageSlice(fwCodeDir, editorBitmapRelativePath)
-						: new LiteralMessageSlice(string.Format(DetailControlsStrings.ksBadEditorType, editor));
-					break;
-				}
+					{
+						//Since the editor has not been implemented yet,
+						//is there a bitmap file that we can show for this editor?
+						//Such bitmaps belong in the distFiles xde directory
+						var fwCodeDir = FwDirectoryFinder.CodeDirectory;
+						var editorBitmapRelativePath = "xde/" + editor + ".bmp";
+						newSlice = File.Exists(Path.Combine(fwCodeDir, editorBitmapRelativePath))
+							? (Slice)new ImageSlice(fwCodeDir, editorBitmapRelativePath)
+							: new LiteralMessageSlice(string.Format(DetailControlsStrings.ksBadEditorType, editor));
+						break;
+					}
 			}
 			if (!sliceWasRecyled)
 			{
 				// Calling this a second time will throw.
 				// So, only call it in slices that are new.
-				slice.InitializeFlexComponent(flexComponentParameters);
+				newSlice.InitializeFlexComponent(flexComponentParameters);
 			}
-			slice.AccessibleName = editor;
-
-			return slice;
+			newSlice.AccessibleName = editor;
+			return newSlice;
 		}
 
 		/// <summary>
@@ -621,32 +581,28 @@ namespace LanguageExplorer.Controls.DetailControls
 							throw new Exception("unhandled ws code in MakeAutoCustomSlice");
 					}
 					break;
-
 				case CellarPropertyType.Integer:
 					slice = new IntegerSlice(cache, obj, flid);
 					break;
-
 				case CellarPropertyType.GenDate:
 					slice = new GenDateSlice(cache, obj, flid);
 					break;
-
 				case CellarPropertyType.OwningAtomic:
-					int dstClsid = mdc.GetDstClsId(flid);
+					var dstClsid = mdc.GetDstClsId(flid);
 					if (dstClsid == StTextTags.kClassId)
+					{
 						slice = new StTextSlice(obj, flid, cache.DefaultAnalWs);
+					}
 					break;
-
 				case CellarPropertyType.ReferenceAtomic:
 					slice = new AtomicReferenceSlice(cache, obj, flid);
 					break;
-
 				case CellarPropertyType.ReferenceCollection:
 				case CellarPropertyType.ReferenceSequence:
 					slice = new ReferenceVectorSlice(cache, obj, flid);
 					SetConfigurationDisplayPropertyIfNeeded(configurationNode, obj, flid, cache.MainCacheAccessor, cache.LangProject.Services, cache.MetaDataCacheAccessor);
 					break;
 			}
-
 			if (slice == null)
 			{
 				throw new Exception("unhandled field type in MakeAutoCustomSlice");
@@ -667,21 +623,16 @@ namespace LanguageExplorer.Controls.DetailControls
 		internal static void SetConfigurationDisplayPropertyIfNeeded(XElement configurationNode, ICmObject cmObject, int cmObjectCustomFieldFlid, ISilDataAccess mainCacheAccessor, ILcmServiceLocator lcmServiceLocator, IFwMetaDataCache metadataCache)
 		{
 			var fieldType = metadataCache.GetFieldType(cmObjectCustomFieldFlid);
-
-			if (!(fieldType == (int)CellarPropertyType.ReferenceCollection ||
-				fieldType == (int)CellarPropertyType.OwningCollection ||
-				fieldType == (int)CellarPropertyType.ReferenceSequence ||
-				fieldType == (int)CellarPropertyType.OwningSequence))
+			if (!(fieldType == (int)CellarPropertyType.ReferenceCollection || fieldType == (int)CellarPropertyType.OwningCollection || fieldType == (int)CellarPropertyType.ReferenceSequence
+			      || fieldType == (int)CellarPropertyType.OwningSequence))
 			{
 				return;
 			}
-
 			var element = FetchFirstElementFromSet(cmObject, cmObjectCustomFieldFlid, mainCacheAccessor, lcmServiceLocator);
 			if (element == null)
 			{
 				return;
 			}
-
 			var displayOption = element.OwningList.DisplayOption;
 			string propertyNameToGetAndShow = null;
 			switch ((PossNameType)displayOption)
@@ -698,12 +649,10 @@ namespace LanguageExplorer.Controls.DetailControls
 				default:
 					break;
 			}
-
 			if (propertyNameToGetAndShow == null)
 			{
 				return;
 			}
-
 			SetDisplayPropertyInXMLConfiguration(configurationNode, propertyNameToGetAndShow);
 		}
 
@@ -720,13 +669,11 @@ namespace LanguageExplorer.Controls.DetailControls
 				configurationElement.Add(new XElement("deParams", displayPropertyAttribute));
 				return;
 			}
-
 			if (deParamsElement.Attribute("displayProperty") == null)
 			{
 				deParamsElement.Add(displayPropertyAttribute);
 				return;
 			}
-
 			deParamsElement.Attribute("displayProperty").SetValue(displayPropertyValue);
 		}
 
@@ -740,7 +687,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return null;
 			}
-
 			var firstElementHvo = mainCacheAccessor.get_VecItem(cmObject.Hvo, setFlid, 0);
 			return lcmServiceLocator.GetObject(firstElementHvo) as ICmPossibility;
 		}

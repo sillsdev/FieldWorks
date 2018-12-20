@@ -38,9 +38,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		private BrowseViewer m_bvMergeOptions;
 		private ColumnHeader m_chItems;
 		private Button buttonHelp;
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
 		private System.ComponentModel.Container components = null;
 
 		private string m_helpTopic;
@@ -51,18 +48,12 @@ namespace LanguageExplorer.LcmUi.Dialogs
 
 		private MergeObjectDlg()
 		{
-			//
-			// Required for Windows Form Designer support
-			//
 			InitializeComponent();
 			AccessibleName = "MergeObjectDlg";
-
 			var infoIcon = SystemIcons.Information;
 			pictureBox1.Image = infoIcon.ToBitmap();
 			pictureBox1.Size = infoIcon.Size;
-
 			m_candidates = new Dictionary<int, DummyCmObject>();
-
 			// Ensure form expands to fit all the controls
 			AutoSize = true;
 		}

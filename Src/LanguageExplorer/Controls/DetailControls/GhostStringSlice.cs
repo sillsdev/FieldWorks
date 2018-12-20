@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,6 +12,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// The canonical example is if a LexSense does not have an example sentence. The ghost slice apparently shows
 	/// the missing Example property of the nonexistent ExampleSentence. If the user types something, a real object
 	/// is created.
+	///
 	/// A ghost slice is created when a part displays an object or object sequence that is empty, if the 'obj' or 'seq'
 	/// element has an attribute ghost="fieldname" and ghostWs="vernacular/analysis".
 	/// Optionally it may also have ghostClass="className". If this is absent it will create an instance of the
@@ -21,6 +22,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	{
 		internal const int kflidFake = -2001;
 		internal const int khvoFake = -2002;
+
 		/// <summary>
 		/// Create a ghost string slice that pretends to be property flid of the missing object
 		/// </summary>

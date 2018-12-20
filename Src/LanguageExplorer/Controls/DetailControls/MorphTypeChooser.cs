@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,26 +18,14 @@ namespace LanguageExplorer.Controls.DetailControls
 		private readonly string m_displayNameProperty;
 		private readonly int m_flid;
 
-		/// <summary>
-		/// constructor for use with adding a new value
-		/// </summary>
+		/// <summary />
 		public MorphTypeChooser(IPersistenceProvider persistProvider, IEnumerable<ObjectLabel> labels, string fieldName, IHelpTopicProvider helpTopicProvider) :
 			base(persistProvider, labels, fieldName, helpTopicProvider)
 		{
 			InitMorphTypeForm(null);
 		}
 
-		private void InitMorphTypeForm(string sShowAllTypes)
-		{
-			sShowAllTypes = string.IsNullOrEmpty(sShowAllTypes) ? "&Show all types" : sShowAllTypes.Replace("_", "&");
-			m_showAllTypesCheckBox = new CheckBox {Text = sShowAllTypes, AutoSize = true};
-			m_showAllTypesCheckBox.CheckedChanged += m_showAllTypesCheckBox_CheckedChanged;
-			m_checkBoxPanel.Controls.Add(m_showAllTypesCheckBox);
-		}
-
-		/// <summary>
-		/// constructor for use with adding a new value
-		/// </summary>
+		/// <summary />
 		public MorphTypeChooser(IPersistenceProvider persistProvider, IEnumerable<ObjectLabel> labels, string fieldName, ICmObject obj, string displayNameProperty, int flid, string sShowAllTypes, IHelpTopicProvider helpTopicProvider) :
 			base(persistProvider, labels, fieldName, helpTopicProvider)
 		{
@@ -45,6 +33,14 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_displayNameProperty = displayNameProperty;
 			m_flid = flid;
 			InitMorphTypeForm(sShowAllTypes);
+		}
+
+		private void InitMorphTypeForm(string sShowAllTypes)
+		{
+			sShowAllTypes = string.IsNullOrEmpty(sShowAllTypes) ? "&Show all types" : sShowAllTypes.Replace("_", "&");
+			m_showAllTypesCheckBox = new CheckBox { Text = sShowAllTypes, AutoSize = true };
+			m_showAllTypesCheckBox.CheckedChanged += m_showAllTypesCheckBox_CheckedChanged;
+			m_checkBoxPanel.Controls.Add(m_showAllTypesCheckBox);
 		}
 
 		/// <summary>

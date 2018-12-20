@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -31,7 +31,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		public int Hvo { get; } = 0;
 
 		/// <summary>
-		/// Nor a flid
+		/// Have no flid
 		/// </summary>
 		public int ContentStringFlid { get; } = 0;
 

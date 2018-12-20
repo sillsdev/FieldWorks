@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,7 +12,6 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Areas;
-using SIL.LCModel.Core.Cellar;
 using LanguageExplorer.Controls.DetailControls.Resources;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.LcmUi;
@@ -20,9 +19,10 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
+using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Infrastructure;
-using SIL.PlatformUtilities;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 using SIL.Xml;
 
 namespace LanguageExplorer.Controls.DetailControls
@@ -61,7 +61,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected bool m_isHighlighted;
 		protected Font m_fontLabel = new Font(MiscUtils.StandardSansSerif, 10);
 		protected Point m_location;
-
 		// what things can be inserted here.
 		// Indicates the 'weight' of object that starts at the top of this slice.
 		// By default a slice is just considered to be a field (of the same object as the one before).
@@ -204,16 +203,14 @@ namespace LanguageExplorer.Controls.DetailControls
 				// 1. Add separator (since there are already items in the context menu).
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 			}
-			// 2. 'Field Visbility', and its three sub-menus.
+			// 2. 'Field Visibility', and its three sub-menus.
 			var contextmenu = new ToolStripMenuItem(LanguageExplorerResources.ksFieldVisibility);
 			contextMenuStrip.Items.Add(contextmenu);
 			m_visibilityMenus.Add(always, ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, contextmenu, AlwaysVisible_Clicked, LanguageExplorerResources.ksAlwaysVisible));
 			m_visibilityMenus.Add(ifdata, ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, contextmenu, HiddenUnlessData_Click, LanguageExplorerResources.ksHiddenUnlessData));
 			m_visibilityMenus.Add(never, ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, contextmenu, NormallyHidden_Click, LanguageExplorerResources.ksNormallyHidden));
-
 			// 3. Have Slice subclasses to add ones they need (e.g., Writing Systems and its sub-menus).
 			AddSpecialContextMenus(contextMenuStrip, menuItems);
-
 			// 4. 'Help...'
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Help_Clicked, LanguageExplorerResources.ksHelp, image: ResourceHelper.ButtonMenuHelpIcon);
 		}
@@ -288,7 +285,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			set
 			{
 				Debug.Assert(SplitCont.Panel2.Controls.Count == 0);
-
 				if (value == null)
 				{
 					return;
@@ -323,13 +319,11 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					return false;
 				}
-
 				var field = XmlUtils.GetOptionalAttributeValue(node, "field");
 				if (string.IsNullOrEmpty(field))
 				{
 					return false;
 				}
-
 				Debug.Assert(MyCmObject != null, "JH Made a false assumption!");
 				var flid = GetFlid(field);
 				// current field should have ID!
@@ -424,14 +418,11 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected override void OnEnter(EventArgs e)
 		{
 			base.OnEnter(e);
-
 			if (ContainingDataTree == null || ContainingDataTree.ConstructingSlices) // FWNX-423, FWR-2508
 			{
 				return;
 			}
-
 			ContainingDataTree.CurrentSlice = this;
-
 			TakeFocus(false);
 		}
 
@@ -471,9 +462,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-
 			Control.BackColor = backColorName != null
-				? (backColorName == "Control" ? Color.FromKnownColor(KnownColor.ControlLight) : Color.FromName(backColorName))
+				? backColorName == "Control" ? Color.FromKnownColor(KnownColor.ControlLight) : Color.FromName(backColorName)
 				: SystemColors.Window;
 		}
 
@@ -510,7 +500,6 @@ namespace LanguageExplorer.Controls.DetailControls
 					DataTree.MakeSliceVisible(this);
 				}
 			}
-
 			if (ctrl != null && ctrl.CanFocus && ctrl.TabStop)
 			{
 				ctrl.Focus();
@@ -523,7 +512,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return false;
 			}
-
 			//this is a bit of a hack, because focus and OnEnter are related but not equivalent...
 			//some slices  never get an on enter, but  claim to be focus-able.
 			if (ContainingDataTree.CurrentSlice != this)
@@ -601,7 +589,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				rootSite.StyleSheet = tc.StyleSheet;
 			}
-
 			foreach (Control c in control.Controls)
 			{
 				SetViewStylesheet(c, tc);
@@ -622,7 +609,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				((INotifyControlInCurrentSlice)Control).SliceIsCurrent = isCurrent;
 			}
 			TreeNode?.Invalidate();
-
 			var slice = this;
 			while (slice != null && !slice.IsDisposed)
 			{
@@ -643,21 +629,17 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				throw new InvalidOperationException("The slice '" + GetType().Name + "' must be placed in the Parent.Controls property before installing it.");
 			}
-
 			MyDataTreeStackContextMenuFactory = parentDataTree.DataTreeStackContextMenuFactory;
-
 			SplitCont.SuspendLayout();
 			// prevents the controls of the new 'SplitContainer' being NAMELESS
 			if (SplitCont.Panel1.AccessibleName == null)
 			{
 				SplitCont.Panel1.AccessibleName = "Panel1";
 			}
-
 			if (SplitCont.Panel2.AccessibleName == null)
 			{
 				SplitCont.Panel2.AccessibleName = "Panel2";
 			}
-
 			SliceTreeNode treeNode;
 			var isBeingReused = SplitCont.Panel1.Controls.Count > 0;
 			if (isBeingReused)
@@ -685,7 +667,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				SplitCont.Panel1.Controls.Add(treeNode);
 				SplitCont.AccessibleName = "SplitContainer";
 			}
-
 			if (!string.IsNullOrEmpty(Label))
 			{
 				// Susanna wanted to try five, rather than the default of four
@@ -697,7 +678,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				// Then, if it gets to be visible, we will probably need to add a bit of padding between
 				// the line and the main slice content, or its text will be connected to the line.
 				SplitCont.SplitterWidth = 5;
-
 				// It was hard-coded to 40, but it isn't right for indented slices,
 				// as they then can be shrunk so narrow as to completely cover up their label.
 				SplitCont.Panel1MinSize = (20 * (Indent + 1)) + 20;
@@ -722,7 +702,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				treeNode.MouseLeave -= TreeNodeMouseLeave;
 				treeNode.MouseHover -= TreeNodeMouseEnter;
 			}
-
 			int newHeight;
 			var mainControl = Control;
 			if (mainControl != null)
@@ -742,14 +721,12 @@ namespace LanguageExplorer.Controls.DetailControls
 				SplitCont.Panel2Collapsed = true;
 				SplitCont.FixedPanel = FixedPanel.Panel2;
 			}
-
 			// REVIEW (Hasso) 2018.07: would it be better to check !parent.Controls.Contains(this)?
 			if (!isBeingReused)
 			{
 				parentDataTree.Controls.Add(this); // Parent will have to move it into the right place.
 				parentDataTree.Slices.Add(this);
 			}
-
 			if (Platform.IsMono)
 			{
 				// FWNX-266
@@ -759,10 +736,8 @@ namespace LanguageExplorer.Controls.DetailControls
 					mainControl.Visible = true;
 				}
 			}
-
 			SetSplitPosition();
-
-			// Don'f fire off all those size changed event handlers, unless it is really needed.
+			// Don't fire off all those size changed event handlers, unless it is really needed.
 			if (Height != newHeight)
 			{
 				Height = newHeight;
@@ -795,7 +770,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-
 			var valueSansLabelindent = ContainingDataTree.SliceSplitPositionBase;
 			var correctSplitPosition = valueSansLabelindent + LabelIndent();
 			if (SplitCont.SplitterDistance == correctSplitPosition)
@@ -814,7 +788,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-
 			// LT-18750 Calling OnSizeChanged in the base class sometimes resets the AutoScrollPosition to the top of the Slice (Windows).
 			// When m_splitter.Size is changed, it also has the same effect. It is possible that ScrollControlIntoView() is called
 			// in a method subscribed to an event in the base class, but my investigation was unsuccessful.
@@ -880,7 +853,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			{
 				TreeNode.Width = LabelIndent();
 			}
-
 			base.OnLayout(levent);
 		}
 
@@ -903,37 +875,19 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 
 		#region IDisposable override
 
-		/// <summary>
-		/// Executes in two distinct scenarios.
-		///
-		/// 1. If disposing is true, the method has been called directly
-		/// or indirectly by a user's code via the Dispose method.
-		/// Both managed and unmanaged resources can be disposed.
-		///
-		/// 2. If disposing is false, the method has been called by the
-		/// runtime from inside the finalizer and you should not reference (access)
-		/// other managed objects, as they already have been garbage collected.
-		/// Only unmanaged resources can be disposed.
-		/// </summary>
-		/// <remarks>
-		/// If any exceptions are thrown, that is fine.
-		/// If the method is being done in a finalizer, it will be ignored.
-		/// If it is thrown by client code calling Dispose,
-		/// it needs to be handled by fixing the bug.
-		///
-		/// If subclasses override this method, they should call the base implementation.
-		/// </remarks>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 			if (Disposing)
 			{
-				return; // Should throw, to let us know to use DestroyHandle, before calling base method.
+				// Should throw, to let us know to use DestroyHandle, before calling base method.
+				return;
 			}
 
 			if (disposing)
@@ -1012,7 +966,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				var insPosT = insPos; // don't modify the real one in this test call.
 				ntr = ContainingDataTree.ProcessPartChildren(node, path, reuseMap, obj, this, indent + ExtraIndent(node), ref insPosT, true, null, false, node);
 			}
-
 			switch (ntr)
 			{
 				case NodeTestResult.kntrNothing:
@@ -1050,7 +1003,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 							Expansion = TreeItemState.ktisCollapsed;
 						}
 					}
-
 					break;
 			}
 		}
@@ -1167,12 +1119,10 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		private string GetHelpTopicID(string xmlHelpTopicID, string generatedIDPrefix)
 		{
 			string helpTopicID;
-
 			if (xmlHelpTopicID == "khtpField-PhRegularRule-RuleFormula")
 			{
 				xmlHelpTopicID = "khtpChoose-Environment";
 			}
-
 			return !string.IsNullOrEmpty(xmlHelpTopicID) ? xmlHelpTopicID : GenerateHelpTopicId(generatedIDPrefix);
 		}
 
@@ -1184,14 +1134,12 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			var areaChoice = PropertyTable.GetValue<string>(AreaServices.AreaChoice);
 			var toolChoice = PropertyTable.GetValue<string>(AreaServices.ToolChoice);
 			var parentHvo = Convert.ToInt32(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "hvoDisplayParent"));
-
 			if (tempfieldName == "Targets" && parentHvo != 0)
 			{
 				// Cross Reference (entry level) or lexical relation (sense level) subitems
 				var repo = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 				ILexEntry lex;
 				repo.TryGetObject(parentHvo, out lex);
-
 				if (lex != null) // It must be the entry level
 				{
 					generatedHelpTopicID = helpTopicPrefix + "-" + toolChoice + "-CrossReferenceSubitem";
@@ -1199,7 +1147,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				else // It must be the sense level
 				{
 					generatedHelpTopicID = helpTopicPrefix + "-" + toolChoice + "-LexicalRelationSubitem";
-
 				}
 			}
 			else
@@ -1235,7 +1182,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 					generatedHelpTopicID = "khtpNoHelpTopic"; // else use the generic no help topic
 				}
 			}
-
 			return generatedHelpTopicID;
 		}
 
@@ -1248,9 +1194,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			// Distinguish the Translation (sense) field and the expanded example (LexExtendedNote) field
 			className = fieldName.StartsWith("Translation") && (ownerClassName == "LexExtendedNote" || (MyCmObject.Owner != null && MyCmObject.Owner.ClassName == "LexExtendedNote")) ? "LexExtendedNote" : className;
 			var toolChoice = PropertyTable.GetValue<string>(AreaServices.ToolChoice);
-
 			var generatedHelpTopicID = helpTopicPrefix + "-" + toolChoice + "-" + className + "-" + fieldName;
-
 			if (helpTopicIsValid(generatedHelpTopicID))
 			{
 				return generatedHelpTopicID;
@@ -1282,15 +1226,12 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		private static string getAlphaNumeric(string fromStr)
 		{
 			var candidateID = new StringBuilder(string.Empty);
-
 			if (string.IsNullOrEmpty(fromStr))
 			{
 				return candidateID.ToString();
 			}
-
 			// Should we capitalize the next letter?
 			var nextCapital = true;
-
 			// Lets turn our field into a candidate help page!
 			foreach (var ch in fromStr)
 			{
@@ -1523,15 +1464,13 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 		/// <returns>true if this slice is part of an owning sequence property.</returns>
 		public bool GetSeqContext(out int hvoOwner, out int flid, out int ihvoPosition)
 		{
-			hvoOwner = 0; // compiler insists it be assigned.
+			hvoOwner = 0;
 			flid = 0;
 			ihvoPosition = 0;
-
 			if (Key == null)
 			{
 				return false;
 			}
-
 			var cache = ContainingDataTree.Cache;
 			var mdc = cache.DomainDataByFlid.MetaDataCache as IFwMetaDataCacheManaged;
 			var repo = cache.ServiceLocator.GetInstance<ICmObjectRepository>();
@@ -1563,7 +1502,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 					ihvoPosition = -1;      // 1 before actual location.
 					return true;
 				}
-
 				// got it!
 				// The next thing we push into key right after the "seq" node is always the
 				// HVO of the particular item we're editing.
@@ -1600,7 +1538,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			{
 				return false;
 			}
-
 			for (var inode = Key.Length; --inode >= 0;)
 			{
 				var objNode = Key[inode];
@@ -1666,7 +1603,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			{
 				throw new ArgumentException($"There does not appear to be a database class named '{className}'.");
 			}
-
 			var ownerClassId = 0;
 			if (!string.IsNullOrEmpty(ownerClassName))
 			{
@@ -1696,7 +1632,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			{
 				return;
 			}
-
 			// See if any direct ancestor can do it.
 			var index = IndexInContainer;
 			for (var i = index - 1; i >= 0; i--)
@@ -1706,7 +1641,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 					return;
 				}
 			}
-
 			// Loop through all slices until we find a slice whose object is of the right class
 			// and that has the specified field.
 			foreach (var slice in ContainingDataTree.Slices)
@@ -1739,7 +1673,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			{
 				flid = flidT;
 			}
-
 			if (flid == 0)
 			{
 				return false;
@@ -1754,7 +1687,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			{
 				return insertionPosition == -2;     // -2 keeps dlg for adding subPOSes from firing for each slice when cancelled.
 			}
-
 			return true;
 		}
 
@@ -1801,7 +1733,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 					return -1;
 				}
 				insertionPosition = Cache.DomainDataByFlid.get_VecSize(hvoOwner, flid);
-
 				if (ContainingDataTree.CurrentSlice != null)
 				{
 					var sda = Cache.DomainDataByFlid;
@@ -1866,9 +1797,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 					{
 						return -1;
 					}
-
 					uiObj.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
 					switch (fieldType)
 					{
 						case CellarPropertyType.OwningCollection:
@@ -2119,10 +2048,8 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			{
 				var rootObj = ContainingDataTree.Root;
 				var clidRoot = rootObj.ClassID;
-				return clidRoot == LexEntryTags.kClassId &&
-					MyCmObject != null && MyCmObject != rootObj &&
-					MyCmObject.Owner != null && MyCmObject.Owner != rootObj &&
-					(MyCmObject.ClassID == clidRoot || MyCmObject.Owner.ClassID == clidRoot);
+				return clidRoot == LexEntryTags.kClassId && MyCmObject != null && MyCmObject != rootObj && MyCmObject.Owner != null && MyCmObject.Owner != rootObj
+				       && (MyCmObject.ClassID == clidRoot || MyCmObject.Owner.ClassID == clidRoot);
 			}
 		}
 
@@ -2132,15 +2059,12 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			{
 				var rootObj = ContainingDataTree.Root;
 				var clidRoot = rootObj.ClassID;
-				if (clidRoot == LexEntryTags.kClassId &&
-					MyCmObject != null && MyCmObject != rootObj &&
-					MyCmObject.Owner != null && MyCmObject.Owner != rootObj)
+				if (clidRoot == LexEntryTags.kClassId && MyCmObject != null && MyCmObject != rootObj && MyCmObject.Owner != null && MyCmObject.Owner != rootObj)
 				{
 					if (MyCmObject.ClassID == clidRoot)
 					{
 						return MyCmObject;
 					}
-
 					if (MyCmObject.Owner.ClassID == clidRoot)
 					{
 						return MyCmObject.Owner;
@@ -2162,7 +2086,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				{
 					return false;
 				}
-
 				var owner = obj.Owner;
 				if (owner == null) // We can allow unowned objects to be deleted.
 				{
@@ -2173,7 +2096,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				{
 					return true;
 				}
-
 				//now, if the field is required, then we do not allow this to be deleted if it is atomic
 				//futureTodo: this prevents the user from the deleting something in order to create something
 				//of a different class, or to paste in other object in this field.
@@ -2181,7 +2103,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				{
 					return false;
 				}
-
 				// still OK to delete so long as it is not the last item.
 				return Cache.DomainDataByFlid.get_VecSize(owner.Hvo, flid) > 1;
 			}
@@ -2199,7 +2120,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				{
 					return false;
 				}
-
 				var owner = obj.Owner;
 				var flid = obj.OwningFlid;
 				// No support yet for atomic properties.
@@ -2207,7 +2127,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				{
 					return false;
 				}
-
 				// Special handling for allomorphs, as they can be merged into the lexeme form.
 				var clsid = obj.ClassID;
 				switch (flid)
@@ -2219,7 +2138,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 						{
 							return true;
 						}
-
 						break;
 					case LexSenseTags.kflidSenses:
 						return true;
@@ -2230,7 +2148,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				{
 					return false;
 				}
-
 				// Check now to see if there are any other objects of the same class in the flid,
 				// since only objects of the same class can be merged.
 				int[] contents;
@@ -2240,16 +2157,7 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 					Cache.DomainDataByFlid.VecProp(owner.Hvo, flid, chvoMax, out chvoMax, arrayPtr);
 					contents = MarshalEx.NativeToArray<int>(arrayPtr, chvoMax);
 				}
-				foreach (var hvoInner in contents)
-				{
-					var innerObj = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoInner);
-					if (innerObj != obj && clsid == innerObj.ClassID)
-					{
-						return true;
-					}
-				}
-
-				return false;
+				return contents.Select(hvoInner => Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoInner)).Any(innerObj => innerObj != obj && clsid == innerObj.ClassID);
 			}
 		}
 
@@ -2261,7 +2169,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			{
 				throw new FwConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be merged.", ConfigurationNode);
 			}
-
 			using (var ui = CmObjectUi.MakeLcmModelUiObject(Cache, obj.Hvo))
 			{
 				ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
@@ -2284,21 +2191,18 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 				{
 					return false;
 				}
-
 				var owner = obj.Owner;
 				var flid = obj.OwningFlid;
 				if (!Cache.IsVectorProperty(flid))
 				{
 					return false;
 				}
-
 				// For example, a LexSense belonging to a LexSense can always be split off to a new LexEntry.
 				var clsid = obj.ClassID;
 				if (clsid == owner.ClassID)
 				{
 					return true;
 				}
-
 				// Otherwise, we need at least two vector items to be able to split off this one.
 				return Cache.DomainDataByFlid.get_VecSize(owner.Hvo, flid) >= 2;
 			}
@@ -2320,7 +2224,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			{
 				throw new FwConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be moved to a copy of its owner.", ConfigurationNode);
 			}
-
 			using (var ui = CmObjectUi.MakeLcmModelUiObject(Cache, obj.Hvo))
 			{
 				ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
@@ -2339,13 +2242,11 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			{
 				throw new FwConfigurationException("OriginalSlice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be moved to a copy of its owner.", ConfigurationNode);
 			}
-
 			var newObj = newSlice.GetObjectForMenusToOperateOn();
 			if (newObj == null)
 			{
 				throw new FwConfigurationException("NewSlice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be moved to a copy of its owner.", ConfigurationNode);
 			}
-
 			if (origObj is ICloneableCmObject)
 			{
 				var undoMsg = $"Undo {label}";
@@ -2392,20 +2293,11 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			{
 				return; // No change, so skip a lot of trauma.
 			}
-
 			ReplacePartWithNewAttribute("visibility", visibility);
 			var dt = ContainingDataTree;
 			if (!dt.ShowingAllFields)
 			{
 				dt.RefreshList(true);
-#if RANDYTODO
-			// TODO: I wonder how long that 'Temporary block' has lasted? (A: 26 Jan 2007.)
-#endif
-				// Temporary block. It isn't selecting the right one,
-				// and it ends up reorganizing the slices, if 'this' was the Pronunciation field
-				// and is no longer visible.
-				//if (!dt.GotoNextSliceAfterIndex(islice - 1)) // ideally select at SAME index.
-				//	dt.GotoPreviousSliceBeforeIndex(islice);
 			}
 		}
 
@@ -2424,14 +2316,12 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			{
 				slice.Key[0] = newLayout;
 			}
-
 			int lastPartRef;
 			var oldPartRef = PartRef(out lastPartRef);
 			if (oldPartRef == null)
 			{
 				return;
 			}
-
 			oldPartRef = (XElement)Key[lastPartRef];
 			Key[lastPartRef] = newPartref;
 			// Loop skips dummy slices, which have a null 'Key' (LT-5817).
@@ -2444,7 +2334,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 					{
 						continue;
 					}
-
 					if (XmlUtils.NodesMatch(oldPartRef, node))
 					{
 						slice.Key[i] = newPartref;
@@ -2512,7 +2401,6 @@ Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': 
 			{
 				Width = width;
 			}
-
 			m_widthHasBeenSetByDataTree = true;
 			SplitCont.Size = Size;
 			SplitCont.SplitterMoved -= mySplitterMoved;

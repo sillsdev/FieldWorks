@@ -1,5 +1,5 @@
 //#define RANDYTODOTEMP // TODO: Remove in the end
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -20,11 +20,11 @@ using System.Xml.XPath;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.Code;
-using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
@@ -68,16 +68,14 @@ namespace LanguageExplorer.Controls.DetailControls
 		#region Data members
 
 		/// <summary>
-		/// Use this to do the Add/RemoveNotifications, since it can be used in the unmanged section of Dispose.
+		/// Use this to do the Add/RemoveNotifications, since it can be used in the unmanaged section of Dispose.
 		/// (If m_sda is COM, that is.)
 		/// Doing it there will be safer, since there was a risk of it not being removed
-		/// in the mananged section, as when disposing was done by the Finalizer.
+		/// in the managed section, as when disposing was done by the Finalizer.
 		/// </summary>
 		private ISilDataAccess m_sda;
-
 		/// <summary>allows us to interpret class and field names and trace superclasses.</summary>
 		protected IFwMetaDataCache m_mdc;
-
 		/// <summary />
 		protected Slice m_currentSlice;
 		/// <summary>used to restore current slice during RefreshList()</summary>
@@ -92,7 +90,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		private string m_sPartNameProperty;
 		/// <summary>used to restore current slice during RefreshList()</summary>
 		private string m_sObjGuidProperty;
-
 		/// <summary />
 		protected string m_layoutChoiceField;
 		/// <summary>This is the position a splitter would be if we had a single one, the actual
@@ -106,14 +103,12 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected Inventory m_partInventory;
 		/// <summary />
 		protected internal bool m_fHasSplitter;
-
 		/// <summary>Set of KeyValuePair objects (hvo, flid), properties for which we must refresh if altered.</summary>
 		protected HashSet<Tuple<int, int>> m_monitoredProps = new HashSet<Tuple<int, int>>();
 		/// <summary>Number of times DeepSuspendLayout has been called without matching DeepResumeLayout.</summary>
 		private int m_cDeepSuspendLayoutCount;
 		private ISharedEventHandlers _sharedEventHandlers;
 		protected LcmStyleSheet m_styleSheet;
-
 		/// <summary>
 		/// used for slice tree nodes. All tooltips are cleared when we switch records!
 		/// </summary>
@@ -126,19 +121,19 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected IRecordChangeHandler m_rch;
 		protected IRecordListUpdater m_rlu;
 		protected string m_listName;
-		bool m_fDisposing;
-
+		private bool m_fDisposing;
 		/// <summary>
 		/// this helps DataTree delay from setting focus in a slice, until we're all setup to do so.
 		/// </summary>
-		bool m_fSuspendSettingCurrentSlice;
-		bool m_fCurrentContentControlObjectTriggered;
+		private bool m_fSuspendSettingCurrentSlice;
+		private bool m_fCurrentContentControlObjectTriggered;
 		/// <summary>
 		/// These variables are used to prevent refreshes from occurring when they're not wanted,
 		/// but then to do a refresh when it's safe.
 		/// </summary>
-		bool m_fDoNotRefresh;
-		bool m_fPostponedClearAllSlices;
+		private bool m_fDoNotRefresh;
+		private bool m_fPostponedClearAllSlices;
+
 		// Set during ConstructSlices, to suppress certain behaviors not safe at this point.
 		internal bool ConstructingSlices { get; private set; }
 		public List<Slice> Slices { get; }
@@ -158,7 +153,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Control how much output we send to the application's listeners (e.g. visual studio output window)
 		/// </summary>
-		protected TraceSwitch m_traceSwitch = new TraceSwitch("DataTree", "");
+		protected TraceSwitch m_traceSwitch = new TraceSwitch("DataTree", string.Empty);
+
 		protected void TraceVerbose(string s)
 		{
 			if (m_traceSwitch.TraceVerbose)
@@ -215,11 +211,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			slice.Install(this);
 			ForceSliceIndex(slice, index);
 			Debug.Assert(slice.IndexInContainer == index, $"InstallSlice: slice '{(slice.ConfigurationNode != null && slice.ConfigurationNode.GetOuterXml() != null ? slice.ConfigurationNode.GetOuterXml() : "(DummySlice?)")}' at index({slice.IndexInContainer}) should have been inserted in index({index}).");
-
 			// Note that it is absolutely vital to do this AFTER adding the slice to the data tree.
 			// Otherwise, the tooltip appears behind the form and is usually never seen.
 			SetToolTip(slice);
-
 			slice.ResumeLayout();
 			// Make sure it isn't added twice.
 			AdjustSliceSplitPosition(slice);
@@ -253,19 +247,14 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return; // Too early to do much;
 			}
-
-			var movedSlice = sender is Slice ? (Slice)sender
-				: (Slice)((SplitContainer)sender).Parent; // Have to move up one parent notch to get to the Slice.
+			var movedSlice = sender is Slice ? (Slice)sender : (Slice)((SplitContainer)sender).Parent; // Have to move up one parent notch to get to the Slice.
 			if (m_currentSlice != movedSlice)
 			{
 				return; // Too early to do much;
 			}
-
 			Debug.Assert(movedSlice == m_currentSlice);
-
 			m_sliceSplitPositionBase = movedSlice.SplitCont.SplitterDistance - movedSlice.LabelIndent();
 			PersistPreferences();
-
 			SuspendLayout();
 			foreach (var otherSlice in Slices)
 			{
@@ -284,7 +273,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		private void AdjustSliceSplitPosition(Slice otherSlice)
 		{
 			var otherSliceSC = otherSlice.SplitCont;
-			// Remove and readd event handler when setting the value for the other fellow.
+			// Remove and re-add event handler when setting the value for the other fellow.
 			otherSliceSC.SplitterMoved -= slice_SplitterMoved;
 			otherSlice.SetSplitPosition();
 			otherSliceSC.SplitterMoved += slice_SplitterMoved;
@@ -352,7 +341,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			Controls.Remove(gonner);
 			Debug.Assert(Slices[index] == gonner);
 			Slices.RemoveAt(index);
-
 			// Reset CurrentSlice, if appropriate.
 			if (gonner == m_currentSlice)
 			{
@@ -398,7 +386,6 @@ namespace LanguageExplorer.Controls.DetailControls
 					SetToolTip(keeper);
 				}
 			}
-
 			ResetTabIndices(index);
 		}
 
@@ -432,7 +419,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			DataTreeStackContextMenuFactory = new DataTreeStackContextMenuFactory();
 			Slices = new List<Slice>();
-
 			_sharedEventHandlers = sharedEventHandlers;
 		}
 
@@ -484,10 +470,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				if (Root != null && hvo == Root.Hvo)
 				{
 					var type = (CellarPropertyType)m_mdc.GetFieldType(tag);
-					if (type == CellarPropertyType.OwningCollection ||
-						type == CellarPropertyType.OwningSequence ||
-						type == CellarPropertyType.ReferenceCollection ||
-						type == CellarPropertyType.ReferenceSequence)
+					if (type == CellarPropertyType.OwningCollection || type == CellarPropertyType.OwningSequence || type == CellarPropertyType.ReferenceCollection || type == CellarPropertyType.ReferenceSequence)
 					{
 						RefreshList(true);
 						// Try to make sure some slice ends up current.
@@ -525,7 +508,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				// Trap this before the throw to give the debugger a chance to analyze.
 				Debug.Assert(m_currentSlice == null || !m_currentSlice.IsDisposed, "CurrentSlice is already disposed??");
-
 				return m_currentSlice;
 			}
 			set
@@ -535,7 +517,6 @@ namespace LanguageExplorer.Controls.DetailControls
 					throw new ArgumentException("CurrentSlice on DataTree cannot be set to null. Set the underlying data member to null, if you really want it to be null.");
 				}
 				Debug.Assert(!value.IsDisposed, "Setting CurrentSlice to a disposed slice -- not a good idea!");
-
 				// don't set the current slice until we're all setup to do so (LT-7307)
 				if (m_currentSlice == value || m_fSuspendSettingCurrentSlice)
 				{
@@ -558,15 +539,11 @@ namespace LanguageExplorer.Controls.DetailControls
 					m_currentSlice.SetCurrentState(false);
 					oldSlice = m_currentSlice;
 				}
-
 				m_currentSlice = value;
-
 				// Tell new guy it is current.
 				m_currentSlice.SetCurrentState(true);
-
 				var index = m_currentSlice.IndexInContainer;
 				ScrollControlIntoView(m_currentSlice);
-
 				// Ensure that we can tab and shift-tab. This requires that at least one
 				// following and one prior slice be a tab stop, if possible.
 				for (var i = index + 1; i < Slices.Count; i++)
@@ -586,10 +563,8 @@ namespace LanguageExplorer.Controls.DetailControls
 					}
 				}
 				Invalidate();
-
 				// update the current descendant
 				Descendant = DescendantForSlice(m_currentSlice);
-
 				CurrentSliceChanged?.Invoke(this, new CurrentSliceChangedEventArgs(oldSlice, m_currentSlice));
 			}
 		}
@@ -686,10 +661,10 @@ namespace LanguageExplorer.Controls.DetailControls
 					slice.SetCurrentState(false);
 					slice.Dispose();
 				}
-				m_currentSlice = null; //no more current slice
-									   // A tooltip doesn't always exist: see LT-11441, LT-11442, and LT-11444.
+				//no more current slice
+				m_currentSlice = null;
+				// A tooltip doesn't always exist: see LT-11441, LT-11442, and LT-11444.
 				m_tooltip?.RemoveAll();
-
 				Root = null;
 			}
 			finally
@@ -732,10 +707,8 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					return;
 				}
-
 				m_sliceSplitPositionBase = value;
 				PersistPreferences();
-
 				SuspendLayout();
 				foreach (var slice in Slices)
 				{
@@ -788,7 +761,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-
 			// Initialize our internal state with the state of the PropertyTable
 			SetCurrentSlicePropertyNames();
 			m_currentSlicePartName = PropertyTable.GetValue<string>(m_sPartNameProperty, SettingsGroup.LocalSettings);
@@ -797,9 +769,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			PropertyTable.SetProperty(m_sObjGuidProperty, Guid.Empty, true, settingsGroup: SettingsGroup.LocalSettings);
 			m_currentSliceNew = null;
 			m_fSetCurrentSliceNew = false;
-
 			MonoIgnoreUpdates();
-
 			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>(FwUtils.window), this))
 			{
 				try
@@ -807,7 +777,6 @@ namespace LanguageExplorer.Controls.DetailControls
 					RootLayoutName = layoutName;
 					m_layoutChoiceField = layoutChoiceField;
 					Debug.Assert(Cache != null, "You need to call Initialize() first.");
-
 					if (Root != root)
 					{
 						Root = root;
@@ -888,7 +857,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					m_fSetCurrentSliceNew = true;
 				}
-
 				if (!m_fSetCurrentSliceNew || slice.IsHeaderNode)
 				{
 					continue;
@@ -932,7 +900,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		internal void DeepSuspendLayout()
 		{
 			Debug.Assert(m_cDeepSuspendLayoutCount >= 0);
-
 			if (m_cDeepSuspendLayoutCount == 0)
 			{
 				SuspendLayout();
@@ -990,7 +957,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			// Set up property change notification.
 			m_sda = Cache.DomainDataByFlid;
 			m_sda.AddNotification(this);
-
 			// Currently we inherit from UserControl, which doesn't have a border. If we
 			// need one various things will have to change to Panel.
 			//this.BorderStyle = BorderStyle.FixedSingle;
@@ -1021,9 +987,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -1121,7 +1087,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				slice.UpdateDisplayIfNeeded(hvo, tag);
 			}
-
 			if (RefreshListNeeded)
 			{
 				RefreshList(false);
@@ -1177,7 +1142,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				m_fPostponedClearAllSlices |= differentObject;
 				return;
 			}
-
 			var fwMainWnd = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window);
 			using (new WaitCursor((Form)fwMainWnd))
 			{
@@ -1187,7 +1151,6 @@ namespace LanguageExplorer.Controls.DetailControls
 					using (new DataTreeLayoutSuspensionHelper(fwMainWnd, this))
 					{
 						var scrollbarPosition = VerticalScroll.Value;
-
 						m_currentSlicePartName = string.Empty;
 						m_currentSliceObjGuid = Guid.Empty;
 						m_fSetCurrentSliceNew = false;
@@ -1202,7 +1165,6 @@ namespace LanguageExplorer.Controls.DetailControls
 							{
 								m_currentSlicePartName = XmlUtils.GetOptionalAttributeValue(m_currentSlice.ConfigurationNode.Parent, "id", string.Empty);
 							}
-
 							if (m_currentSlice.MyCmObject != null)
 							{
 								m_currentSliceObjGuid = m_currentSlice.MyCmObject.Guid;
@@ -1212,20 +1174,16 @@ namespace LanguageExplorer.Controls.DetailControls
 							sLabel = m_currentSlice.Label;
 							oldType = m_currentSlice.GetType();
 						}
-
 						// Make sure we invalidate the root object if it's been deleted.
 						if (Root != null && !Root.IsValidObject)
 						{
 							Reset();
 						}
-
 						// Make a new root object...just in case it changed class.
 						Root = Root?.Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(Root.Hvo);
-
 						Invalidate(true); // forces all children to invalidate also
 						CreateSlices(differentObject);
 						PerformLayout();
-
 						if (Slices.Contains(oldCurrent))
 						{
 							CurrentSlice = oldCurrent;
@@ -1240,11 +1198,7 @@ namespace LanguageExplorer.Controls.DetailControls
 								{
 									guidSlice = slice.MyCmObject.Guid;
 								}
-								if (slice.GetType() == oldType &&
-									slice.CallerNode == xnCaller &&
-									slice.ConfigurationNode == xnConfig &&
-									guidSlice == m_currentSliceObjGuid &&
-									slice.Label == sLabel)
+								if (slice.GetType() == oldType && slice.CallerNode == xnCaller && slice.ConfigurationNode == xnConfig && guidSlice == m_currentSliceObjGuid && slice.Label == sLabel)
 								{
 									CurrentSlice = slice;
 									m_currentSliceNew = CurrentSlice != slice ? slice : null;
@@ -1252,13 +1206,11 @@ namespace LanguageExplorer.Controls.DetailControls
 								}
 							}
 						}
-
 						// FWNX-590
 						if (MiscUtils.IsMono)
 						{
 							VerticalScroll.Value = scrollbarPosition;
 						}
-
 						if (m_currentSlice != null)
 						{
 							ScrollControlIntoView(m_currentSlice);
@@ -1275,9 +1227,9 @@ namespace LanguageExplorer.Controls.DetailControls
 					if (m_currentSliceNew != null)
 					{
 #if RANDYTODO
-					m_mediator.IdleQueue.Add(IdleQueuePriority.High, OnReadyToSetCurrentSlice, (object)false);
-					// prevent setting focus in slice until we're all setup (cf.
-					m_fSuspendSettingCurrentSlice = true;
+						m_mediator.IdleQueue.Add(IdleQueuePriority.High, OnReadyToSetCurrentSlice, (object)false);
+						// prevent setting focus in slice until we're all setup (cf.
+						m_fSuspendSettingCurrentSlice = true;
 #endif
 					}
 				}
@@ -1290,8 +1242,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		private void CreateSlices(bool differentObject)
 		{
-			//var watch = new Stopwatch();
-			//watch.Start();
 			var wasVisible = Visible;
 			var previousSlices = new ObjSeqHashMap();
 			ConstructingSlices = true;
@@ -1320,8 +1270,9 @@ namespace LanguageExplorer.Controls.DetailControls
 						dummySlices.Add(slice);
 					}
 				}
-				var gonnerHasToolTip = false; // Does any goner have one?
-											  // Get rid of the dummies we aren't going to remove.
+				// Does any goner have one?
+				var gonnerHasToolTip = false;
+				// Get rid of the dummies we aren't going to remove.
 				foreach (var slice in dummySlices)
 				{
 					gonnerHasToolTip |= slice.ToolTip != null;
@@ -1357,10 +1308,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				Show();
 			}
-			//watch.Stop();
-			// Uncomment this to investigate slice performance or issues with dissappearing slices
-			//Debug.WriteLine("CreateSlices took " + watch.ElapsedMilliseconds + " ms. Originally had " + oldSliceCount + " controls; now " + Slices.Count);
-			//previousSlices.Report();
 		}
 
 		/// <summary>
@@ -1443,23 +1390,19 @@ namespace LanguageExplorer.Controls.DetailControls
 					//drop the next line unless the next slice is going to be a header, too
 					// (as is the case with empty sections), or isn't indented (as for the line following
 					// the empty 'Subclasses' heading in each inflection class).
-					if (XmlUtils.GetOptionalBooleanAttributeValue(slice.ConfigurationNode, "header", false) &&
-						nextSlice.Weight != ObjectWeight.heavy && IsChildSlice(slice, nextSlice))
+					if (XmlUtils.GetOptionalBooleanAttributeValue(slice.ConfigurationNode, "header", false) && nextSlice.Weight != ObjectWeight.heavy && IsChildSlice(slice, nextSlice))
 					{
 						continue;
 					}
-
 					//LT-11962 Improvements to display in Info tab.
 					// (remove the line directly below the Notebook Record header)
 					if (XmlUtils.GetOptionalBooleanAttributeValue(slice.ConfigurationNode, "skipSpacerLine", false) && slice is SummarySlice)
 					{
 						continue;
 					}
-
 					// Check for attribute that the next slice should be grouped with the current slice
 					// regardless of whether they represent the same object.
 					var fSameObject = XmlUtils.GetOptionalBooleanAttributeValue(nextSlice.ConfigurationNode, "sameObject", false);
-
 					xPos = Math.Min(xPos, loc.X + nextSlice.LabelIndent());
 					if (nextSlice.Weight == ObjectWeight.heavy)
 					{
@@ -1506,8 +1449,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <returns>
 		/// updated insertPosition for next item after the ones inserted.
 		/// </returns>
-		public virtual int CreateSlicesFor(ICmObject obj, Slice parentSlice, string layoutName, string layoutChoiceField, int indent,
-			int insertPosition, ArrayList path, ObjSeqHashMap reuseMap, XElement unifyWith)
+		public virtual int CreateSlicesFor(ICmObject obj, Slice parentSlice, string layoutName, string layoutChoiceField, int indent, int insertPosition, ArrayList path, ObjSeqHashMap reuseMap, XElement unifyWith)
 		{
 			// NB: 'path' can hold either ints or XmlNodes, so a generic can't be used for it.
 			if (obj == null)
@@ -1544,7 +1486,6 @@ namespace LanguageExplorer.Controls.DetailControls
 					choiceGuidStr = Cache.ServiceLocator.GetObject(hvo).Guid.ToString();
 				}
 			}
-
 			// Custom Lists can have different selections of writing systems. LT-11941
 			if (m_mdc.GetClassName(classId) == "CmCustomItem")
 			{
@@ -1573,7 +1514,6 @@ namespace LanguageExplorer.Controls.DetailControls
 					}
 				}
 			}
-
 			XElement template;
 			var useName = layoutName ?? "default";
 			var origName = useName;
@@ -1639,10 +1579,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			// but it is very common for slices to come and go, as they are inserted/deleted,
 			// or when the Show hidden control is changed.
 			// Those kinds of big changes will produce the input 'path' parm,
-			// which has little hope of matching that fixed orginal key, won't it.
+			// which has little hope of matching that fixed original key, won't it.
 			// I can see how it would work when a simple F4 refresh is being done,
 			// since the count of slices should remain the same.
-
 			var list = reuseMap[path];
 			if (list.Count <= 0)
 			{
@@ -1709,9 +1648,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 					continue;
 				}
-
 				testResult = ProcessPartRefNode(partRef, path, reuseMap, obj, parentSlice, indent, ref insPos, isTestOnly);
-
 				if (!isTestOnly)
 				{
 					continue;
@@ -1735,12 +1672,10 @@ namespace LanguageExplorer.Controls.DetailControls
 				duplicateElement.Remove();
 				m_layoutInventory.PersistOverrideElement(template);
 			}
-
 			if (cPossible > 0)
 			{
 				testResult = NodeTestResult.kntrPossible;   // everything else was nothing...
 			}
-
 			return insPos;
 		}
 
@@ -1765,7 +1700,6 @@ namespace LanguageExplorer.Controls.DetailControls
 					path.RemoveAt(path.Count - 1);
 					path.RemoveAt(path.Count - 1);
 					break;
-
 				case "part":
 					// If the previously selected slice doesn't display in this refresh, we try for the next
 					// visible slice instead.  So m_fSetCurrentSliceNew might still be set.  See LT-9010.
@@ -1792,7 +1726,6 @@ namespace LanguageExplorer.Controls.DetailControls
 						}
 						Debug.Assert(visibility == "always" || visibility == "ifdata");
 					}
-
 					// Use the part inventory to find the indicated part.
 					var classId = obj.ClassID;
 					XElement part;
@@ -1802,9 +1735,10 @@ namespace LanguageExplorer.Controls.DetailControls
 						// Inventory of parts has key ID. The ID is made up of the class name, "-Detail-", partname.
 						var key = classname + "-Detail-" + partName;
 						part = m_partInventory.GetElement("part", new[] { key });
-
 						if (part != null)
+						{
 							break;
+						}
 						if (classId == 0) // we've just tried CmObject.
 						{
 							Debug.WriteLine("Warning: No matching part found for " + classname + "-Detail-" + partName);
@@ -1889,14 +1823,11 @@ namespace LanguageExplorer.Controls.DetailControls
 						exists = true;
 					}
 				}
-
 				if (exists)
+				{
 					continue;
-
-				var part = new XElement("part",
-					new XAttribute("ref", "Custom"),
-					new XAttribute("param", target));
-				insertAfter.AddAfterSelf(part);
+				}
+				insertAfter.AddAfterSelf(new XElement("part", new XAttribute("ref", "Custom"), new XAttribute("param", target)));
 			}
 		}
 
@@ -1917,9 +1848,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			if (!sibling.Attributes().Any())
 			{
-				return false;   // no attributes on this nodeas XmlComment  LT-3566
+				return false;   // no attributes on this node as XmlComment  LT-3566
 			}
-
 			var paramAttr = sibling.Attribute("param");
 			var refAttr = sibling.Attribute("ref");
 			return paramAttr != null && refAttr != null && paramAttr.Value == target && sibling.Name == "part" && refAttr.Value == "Custom";
@@ -1935,34 +1865,24 @@ namespace LanguageExplorer.Controls.DetailControls
 		private NodeTestResult ProcessSubpartNode(XElement node, ArrayList path, ObjSeqHashMap reuseMap, ICmObject obj, Slice parentSlice, int indent, ref int insertPosition, bool fTestOnly, string parameter, bool fVisIfData, XElement caller)
 		{
 			var editor = XmlUtils.GetOptionalAttributeValue(node, "editor");
-
 			try
 			{
 				editor = editor?.ToLower();
 				var flid = GetFlidFromNode(node, obj);
-
 				if (SliceFilter != null && flid != 0 && !SliceFilter.IncludeSlice(node, obj, flid, m_monitoredProps))
 				{
 					return NodeTestResult.kntrNothing;
 				}
-
 				switch (node.Name.LocalName)
 				{
 					default: // Nothing to do for unrecognized element, such as deParams.
 						break;
-
 					case "slice":
-						return AddSimpleNode(path, node, reuseMap, editor, flid, obj, parentSlice, indent, ref insertPosition, fTestOnly,
-						fVisIfData, caller);
-
+						return AddSimpleNode(path, node, reuseMap, editor, flid, obj, parentSlice, indent, ref insertPosition, fTestOnly, fVisIfData, caller);
 					case "seq":
-						return AddSeqNode(path, node, reuseMap, flid, obj, parentSlice, indent + Slice.ExtraIndent(node), ref insertPosition, fTestOnly, parameter,
-						fVisIfData, caller);
-
+						return AddSeqNode(path, node, reuseMap, flid, obj, parentSlice, indent + Slice.ExtraIndent(node), ref insertPosition, fTestOnly, parameter, fVisIfData, caller);
 					case "obj":
-						return AddAtomicNode(path, node, reuseMap, flid, obj, parentSlice, indent + Slice.ExtraIndent(node), ref insertPosition, fTestOnly, parameter,
-						fVisIfData, caller);
-
+						return AddAtomicNode(path, node, reuseMap, flid, obj, parentSlice, indent + Slice.ExtraIndent(node), ref insertPosition, fTestOnly, parameter, fVisIfData, caller);
 					case "if":
 						if (XmlVc.ConditionPasses(node, obj.Hvo, Cache))
 						{
@@ -1973,7 +1893,6 @@ namespace LanguageExplorer.Controls.DetailControls
 							}
 						}
 						break;
-
 					case "ifnot":
 						if (!XmlVc.ConditionPasses(node, obj.Hvo, Cache))
 						{
@@ -1984,7 +1903,6 @@ namespace LanguageExplorer.Controls.DetailControls
 							}
 						}
 						break;
-
 					case "choice":
 						foreach (var clause in node.Elements())
 						{
@@ -2016,7 +1934,6 @@ namespace LanguageExplorer.Controls.DetailControls
 							throw new Exception("elements in choice must be <where...> or <otherwise>.");
 						}
 						break;
-
 					case "RecordChangeHandler":
 #if JASONTODO
 // TODO: RBR: This was Jason's code review comment:
@@ -2080,9 +1997,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		private static int GetFlidFromNode(XElement node, ICmObject obj)
 		{
 			var attrName = XmlUtils.GetOptionalAttributeValue(node, "field");
-			if ((node.Name == "if" || node.Name == "ifnot") &&
-				(XmlUtils.GetOptionalAttributeValue(node, "target", "this").ToLower() != "this" ||
-				(attrName != null && attrName.IndexOf('/') != -1)))
+			if ((node.Name == "if" || node.Name == "ifnot") && (XmlUtils.GetOptionalAttributeValue(node, "target", "this").ToLower() != "this" || attrName != null && attrName.IndexOf('/') != -1))
 			{
 				// Can't get the field value for a target other than "this", or a field that does
 				// not belong directly to "this".
@@ -2099,9 +2014,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			return flid;
 		}
 
-		private NodeTestResult AddAtomicNode(ArrayList path, XElement node, ObjSeqHashMap reuseMap, int flid,
-			ICmObject obj, Slice parentSlice, int indent, ref int insertPosition, bool fTestOnly, string layoutName,
-			bool fVisIfData, XElement caller)
+		private NodeTestResult AddAtomicNode(ArrayList path, XElement node, ObjSeqHashMap reuseMap, int flid, ICmObject obj, Slice parentSlice, int indent, ref int insertPosition,
+			bool fTestOnly, string layoutName, bool fVisIfData, XElement caller)
 		{
 			// Facilitate insertion of an expandable tree node representing an owned or ref'd object.
 			if (flid == 0)
@@ -2120,7 +2034,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					return NodeTestResult.kntrSomething;
 				}
-
 				return NodeTestResult.kntrPossible;
 			}
 			path.Add(node);
@@ -2160,19 +2073,15 @@ namespace LanguageExplorer.Controls.DetailControls
 				// means it gets searched twice if not found, but that's fairly harmless.
 				slice.Label = GetLabel(node, node, obj, "ghostLabel");
 				slice.Abbreviation = GetLabelAbbr(node, node, obj, slice.Label, "ghostAbbr");
-
 				// Install new item at appropriate position and level.
 				slice.Indent = indent;
 				slice.MyCmObject = obj;
 				slice.Cache = Cache;
-
 				// We need a copy since we continue to modify path, so make it as compact as possible.
 				slice.Key = path.ToArray();
 				slice.ConfigurationNode = node;
 				slice.CallerNode = caller;
-
 				SetNodeWeight(node, slice);
-
 				slice.FinishInit();
 				InsertSliceAndRegisterWithContextHelp(insertPosition, slice);
 			}
@@ -2191,6 +2100,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// focus and selection properly.
 		/// </summary>
 		private readonly List<int> m_currentObjectFlids = new List<int>();
+
 		/// <summary>
 		/// Build a list of flids needed to expand to the slice displaying hvoOwner.
 		/// </summary>
@@ -2212,6 +2122,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 			}
 		}
+
 		internal void ClearCurrentObjectFlids()
 		{
 			m_currentObjectFlids.Clear();
@@ -2231,9 +2142,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		private const int kInstantSliceMax = 20;
 
-		private NodeTestResult AddSeqNode(ArrayList path, XElement node, ObjSeqHashMap reuseMap, int flid,
-			ICmObject obj, Slice parentSlice, int indent, ref int insertPosition, bool fTestOnly, string layoutName,
-			bool fVisIfData, XElement caller)
+		private NodeTestResult AddSeqNode(ArrayList path, XElement node, ObjSeqHashMap reuseMap, int flid, ICmObject obj, Slice parentSlice, int indent, ref int insertPosition, bool fTestOnly,
+			string layoutName, bool fVisIfData, XElement caller)
 		{
 			if (flid == 0)
 			{
@@ -2267,7 +2177,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 			}
 			else if (cobj < kInstantSliceMax || // This may be a little on the small side
-				m_currentObjectFlids.Contains(flid) || (!string.IsNullOrEmpty(m_currentSlicePartName) && m_currentSliceObjGuid != Guid.Empty && m_currentSliceNew == null))
+				m_currentObjectFlids.Contains(flid) || !string.IsNullOrEmpty(m_currentSlicePartName) && m_currentSliceObjGuid != Guid.Empty && m_currentSliceNew == null)
 			{
 				//Create slices immediately
 				var contents = SetupContents(flid, obj);
@@ -2281,7 +2191,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			else
 			{
 				// Create unique DummyObjectSlices for each slice.  This may reduce the initial
-				// preceived benefit, but this way doesn't crash now that the slices are being
+				// perceived benefit, but this way doesn't crash now that the slices are being
 				// disposed of.
 				var cnt = 0;
 				var contents = SetupContents(flid, obj);
@@ -2314,6 +2224,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		private readonly HashSet<string> m_setInvalidFields = new HashSet<string>();
+
 		/// <summary>
 		/// This seems a bit clumsy, but the metadata cache now throws an exception if the class
 		/// id/field name pair isn't valid for GetFieldId2().  Limiting this to only one throw
@@ -2385,8 +2296,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <returns>
 		/// NodeTestResult, an enum showing if usable data is contained in the field
 		/// </returns>
-		private NodeTestResult AddSimpleNode(ArrayList path, XElement node, ObjSeqHashMap reuseMap, string editor,
-			int flid, ICmObject obj, Slice parentSlice, int indent, ref int insPos, bool fTestOnly, bool fVisIfData, XElement caller)
+		private NodeTestResult AddSimpleNode(ArrayList path, XElement node, ObjSeqHashMap reuseMap, string editor, int flid, ICmObject obj, Slice parentSlice, int indent, ref int insPos,
+			bool fTestOnly, bool fVisIfData, XElement caller)
 		{
 			var realSda = Cache.DomainDataByFlid;
 			if (parentSlice != null)
@@ -2427,7 +2338,6 @@ namespace LanguageExplorer.Controls.DetailControls
 							break;
 					}
 				}
-
 				if (flid != 0)
 				{
 					var fieldType = (CellarPropertyType)(realSda.MetaDataCache.GetFieldType(flid) & (int)CellarPropertyTypeFilter.VirtualMask);
@@ -2483,7 +2393,6 @@ namespace LanguageExplorer.Controls.DetailControls
 											break;
 										}
 									}
-
 									if (!anyNonEmpty)
 									{
 										return NodeTestResult.kntrNothing;
@@ -2542,7 +2451,6 @@ namespace LanguageExplorer.Controls.DetailControls
 								var clsid = Cache.MetaDataCacheAccessor.GetOwnClsId(flid);
 								visibilityFlid = Cache.MetaDataCacheAccessor.GetFieldId2(clsid, visField, true);
 							}
-
 							if (realSda.get_VecSize(obj.Hvo, visibilityFlid) == 0)
 							{
 								return NodeTestResult.kntrNothing;
@@ -2550,7 +2458,6 @@ namespace LanguageExplorer.Controls.DetailControls
 							break;
 						case CellarPropertyType.OwningCollection:
 						case CellarPropertyType.OwningSequence:
-
 						case CellarPropertyType.ReferenceSequence:
 							if (realSda.get_VecSize(obj.Hvo, flid) == 0)
 							{
@@ -2591,7 +2498,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return NodeTestResult.kntrSomething; // slices always produce something.
 			}
-
 			path.Add(node);
 			var slice = GetMatchingSlice(path, reuseMap);
 			if (slice == null)
@@ -2610,13 +2516,11 @@ namespace LanguageExplorer.Controls.DetailControls
 					slice.Label = GetLabel(caller, node, obj, "label");
 				}
 				slice.Abbreviation = GetLabelAbbr(caller, node, obj, slice.Label, "abbr");
-
 				// Install new item at appropriate position and level.
 				slice.Indent = indent;
 				slice.MyCmObject = obj;
 				slice.Cache = Cache;
 				slice.PersistenceProvider = PersistenceProvder;
-
 				// We need a copy since we continue to modify path, so make it as compact as possible.
 				slice.Key = path.ToArray();
 				slice.ConfigurationNode = node;
@@ -2659,10 +2563,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		private string GetLabel(XElement caller, XElement node, ICmObject obj, string attr)
 		{
-			var label = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(caller, attr, null)
-				?? XmlUtils.GetOptionalAttributeValue(node, attr, null)
-				?? XmlUtils.GetOptionalAttributeValue(caller, attr)
-				?? XmlUtils.GetOptionalAttributeValue(node, attr));
+			var label = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(caller, attr, null) ?? XmlUtils.GetOptionalAttributeValue(node, attr, null)
+				?? XmlUtils.GetOptionalAttributeValue(caller, attr) ?? XmlUtils.GetOptionalAttributeValue(node, attr));
 			return InterpretLabelAttribute(label, obj);
 		}
 
@@ -2677,7 +2579,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return abbr;
 			}
-
 			// Otherwise, see if we can map the label to an abbreviation in the StringTable
 			if (label != null)
 			{
@@ -2687,11 +2588,10 @@ namespace LanguageExplorer.Controls.DetailControls
 					abbr = null;    // couldn't find it in the StringTable, reset it to null.
 				}
 			}
-			abbr = InterpretLabelAttribute(abbr, obj);
 			// NOTE: Currently, Slice.Abbreviation Property sets itself to a 4-char truncation of Slice.Label
 			// internally when setting the property to null.  So, allow abbr == null, and let that code handle
 			// the truncation.
-			return abbr;
+			return InterpretLabelAttribute(abbr, obj);
 		}
 
 		private static void SetNodeWeight(XElement node, Slice slice)
@@ -2855,7 +2755,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				return;
 			}
 			var fNeedInternalLayout = true; // call HandleLayout1 at least once
-
 			var smallestSize = new Size();
 			// if we don't converge in three iterations, we probably never will. It is possible to get
 			// in to an infinite loop, when scrollbars appear and disappear changing the width on every
@@ -2872,7 +2771,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					AutoScrollPosition = new Point(-aspOld.X, -aspOld.Y);
 				}
-
 				if (smallestSize.IsEmpty || ClientSize.Width < smallestSize.Width)
 				{
 					smallestSize = ClientSize;
@@ -2884,7 +2782,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					return;
 				}
-
 				fNeedInternalLayout = false; // don't need to do again unless client rect width changes.
 				var clipRect = ClientRectangle;
 				clipRect.Offset(-AutoScrollPosition.X, -AutoScrollPosition.Y);
@@ -2913,9 +2810,8 @@ namespace LanguageExplorer.Controls.DetailControls
 					Invalidate();
 				}
 				// Do the BASE.layout AGAIN...this seems to be the only way to get the scroll bars to
-				// apppear and disappear as required by more or less slices...
+				// appear and disappear as required by more or less slices...
 			}
-
 			// if we make it thru all three iterations, resize to the smallest layout size, which usually
 			// means scrollbars will be visible. This ensures that no content will be cut off.
 			if (ClientSize.Width != smallestSize.Width)
@@ -2934,10 +2830,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return clipRect.Bottom; // don't want to lay out while clearing slices in dispose!
 			}
-
 			var minHeight = GetMinFieldHeight();
 			var desiredWidth = ClientRectangle.Width;
-
 			// FWNX-370: work around https://bugzilla.novell.com/show_bug.cgi?id=609596
 			if (Platform.IsMono && VerticalScroll.Visible)
 			{
@@ -2945,7 +2839,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			var oldPos = AutoScrollPosition;
 			var desiredScrollPosition = new Point(-oldPos.X, -oldPos.Y);
-
 			var yTop = AutoScrollPosition.Y;
 			for (var i = 0; i < Slices.Count; i++)
 			{
@@ -2958,7 +2851,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				// Best guess of its height, before we ensure it's real.
 				var defHeight = tci?.Height ?? minHeight;
 				var fSliceIsVisible = !fFull && yTop + defHeight > clipRect.Top && yTop <= clipRect.Bottom;
-
 				if (fSliceIsVisible)
 				{
 					// We cannot allow slice to be unreal; it's visible, and we're checking
@@ -3004,7 +2896,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			// In the course of making slices real or adjusting their width they may have changed height (more strictly, its
 			// real height may be different from the previous estimated height).
 			// If it was previously above the top of the window, this can produce an unwanted
-			// change in the visble position of previously visible slices.
+			// change in the visible position of previously visible slices.
 			// The scroll position may also have changed as a result of the blankety blank
 			// blank undocumented behavior of the UserControl class trying to make what it
 			// thinks is the interesting child control visible.
@@ -3033,25 +2925,22 @@ namespace LanguageExplorer.Controls.DetailControls
 			// In the course of becoming real it may have changed height (more strictly, its
 			// real height may be different from the previous estimated height).
 			// If it was previously above the top of the window, this can produce an unwanted
-			// change in the visble position of previously visible slices.
+			// change in the visible position of previously visible slices.
 			// The scroll position may also have changed as a result of the blankety blank
 			// blank undocumented behavior of the UserControl class trying to make what it
 			// thinks is the interesting child control visible.
-
 			// desiredScrollPosition.y is typically positive, the number of pixels hidden at the top
 			// of the view before we started.
 			var desiredScrollPosition = new Point(-oldPos.X, -oldPos.Y);
 			// topAbs is the position of the slice relative to the top of the whole view contents now.
 			var topAbs = tci.Top - AutoScrollPosition.Y;
 			MakeSliceVisible(tci); // also required for it to be a real tab stop.
-
 			if (topAbs < desiredScrollPosition.Y)
 			{
 				// It was above the top of the window. We need to adjust the scroll position
 				// by the difference between the expected and actual heights.
 				desiredScrollPosition.Y -= (oldHeight - tci.Height);
 			}
-
 			if (-AutoScrollPosition.Y != desiredScrollPosition.Y)
 			{
 				AutoScrollPosition = desiredScrollPosition;
@@ -3083,8 +2972,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				Debug.Assert(tci.IndexInContainer == index,
 					string.Format("MakeSliceVisible: slice '{0}' at index({2}) should not have changed to index ({1})." +
 					" This can occur when making slices visible in an order different than their order in DataTree.Slices. See LT-7307.",
-					(tci.ConfigurationNode?.GetOuterXml() != null ? tci.ConfigurationNode.GetOuterXml() : "(DummySlice?)"),
-				tci.IndexInContainer, index));
+					tci.ConfigurationNode?.GetOuterXml() != null ? tci.ConfigurationNode.GetOuterXml() : "(DummySlice?)", tci.IndexInContainer, index));
 				// This was moved out of the Control setter because it prematurely creates
 				// root boxes (because it creates a window handle). The embedded control shouldn't
 				// need an accessibility name before it is visible!
@@ -3122,7 +3010,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					return i;
 				}
-
 				if (nIndCur < nInd) // We came out to a higher level, so return zero.
 				{
 					return 0;
@@ -3150,7 +3037,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					return i;
 				}
-
 				if (nIndCur < nInd) // We came out to a higher level, so return zero.
 				{
 					return 0;
@@ -3184,7 +3070,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			var ypTopOfNextField = 0;
 			for (var iSlice = 0; iSlice < Slices.Count; iSlice++)
 			{
-
 				var dypFieldHeight = HeightOfSliceOrNullAt(iSlice);
 				ypTopOfNextField += dypFieldHeight;
 				if (ypTopOfNextField > yp)
@@ -3250,7 +3135,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					return;
 				}
-
 				base.ActiveControl = value;
 				foreach (var slice in Slices)
 				{
@@ -3546,7 +3430,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return true;
 			}
-
 			if (CurrentSlice == null)
 			{
 				FocusFirstPossibleSlice();
@@ -3556,7 +3439,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		/// <summary>
 		/// For sure make the CurrentSlice if any visible.
-		/// If possible also make the prececing summary slice visible.
+		/// If possible also make the preceding summary slice visible.
 		/// Then make as many as possible of the slices which are children of that summary visible.
 		/// </summary>
 		private void ScrollCurrentAndIfPossibleSectionIntoView()
@@ -3595,8 +3478,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				ScrollControlIntoView(previousSummary);
 			}
 			var lastChildIndex = CurrentSlice.IndexInContainer;
-			while (lastChildIndex < Slices.Count && Slice.StartsWith(Slices[lastChildIndex].Key, previousSummary.Key)
-				&& Slices[lastChildIndex].Bottom - previousSummary.Top < ClientRectangle.Height - 20)
+			while (lastChildIndex < Slices.Count && Slice.StartsWith(Slices[lastChildIndex].Key, previousSummary.Key) && Slices[lastChildIndex].Bottom - previousSummary.Top < ClientRectangle.Height - 20)
 			{
 				lastChildIndex++;
 			}
@@ -3629,9 +3511,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			if (IsDisposed)
 			{
-				return true;
+				throw new InvalidOperationException("Thou shalt not call methods after I am disposed!");
 			}
-
 			// we should now be ready to put our focus in a slice.
 			m_fSuspendSettingCurrentSlice = false;
 			try
@@ -3815,7 +3696,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			PropertyTable.SetProperty("DataTree", this, settingsGroup: SettingsGroup.LocalSettings);
 			Subscriber.Subscribe("ShowHiddenFields", ShowHiddenFields_Handler);
-
 			if (PersistenceProvder != null)
 			{
 				RestorePreferences();
@@ -3832,7 +3712,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				return;
 			}
 			MonoIgnoreUpdates();
-
 			try
 			{
 				var closeSlices = CurrentSlice?.GetNearbySlices();

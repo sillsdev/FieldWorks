@@ -37,13 +37,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 
 		public LinkMSADlg()
 		{
-			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 			ShowControlsBasedOnPanel1Position();    // used for sizing and display of some controls
-
 			m_btnInsert.Enabled = false;
 			m_btnHelp.Enabled = true;
-
 			SetHelpTopic("khtpInsertMorphemeChooseFunction");
 		}
 

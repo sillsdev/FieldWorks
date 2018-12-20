@@ -48,7 +48,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary />
 		public XmlBrowseRDEView()
 		{
-			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 		}
 

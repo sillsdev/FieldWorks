@@ -89,7 +89,6 @@ namespace LanguageExplorer.Areas
 
 		public LinkEntryOrSenseDlg()
 		{
-			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 			ShowControlsBasedOnPanel1Position();    // used for sizing and display of some controls
 			m_senses = new List<ILexSense>();

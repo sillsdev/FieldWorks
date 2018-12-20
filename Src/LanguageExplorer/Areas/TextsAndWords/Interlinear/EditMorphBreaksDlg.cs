@@ -59,11 +59,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public EditMorphBreaksDlg(IHelpTopicProvider helpTopicProvider)
 		{
-			m_helpTopicProvider = helpTopicProvider;
-			//
-			// Required for Windows Form Designer support
-			//
 			InitializeComponent();
+			m_helpTopicProvider = helpTopicProvider;
 			AccessibleNameCreator.AddNames(this);
 			AccessibleName = GetType().Name;
 			if (!Application.RenderWithVisualStyles)

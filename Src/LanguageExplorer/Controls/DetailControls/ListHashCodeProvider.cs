@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -21,7 +21,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				// This ensures that two sequences containing the same boxed integer produce the same hash value.
 				if (obj is int)
 				{
-					hash += (int) obj;
+					hash += (int)obj;
 				}
 				else
 				{

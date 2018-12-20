@@ -1,9 +1,9 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.LCModel;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.LCModel;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
@@ -16,7 +16,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		/// <summary />
-		public ViewPropertySlice(RootSite ctrlT, ICmObject obj, int flid): base(ctrlT)
+		public ViewPropertySlice(RootSite ctrlT, ICmObject obj, int flid) : base(ctrlT)
 		{
 			Reuse(obj, flid);
 		}

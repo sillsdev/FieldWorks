@@ -52,15 +52,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 
 		public LinkAllomorphDlg()
 		{
-			// This call is required by the Windows Form Designer.
 			InitializeComponent();
-
 			SetHelpTopic("hktpInsertAllomorphChooseAllomorph");
-
 			m_tbForm.TextChanged += Form_TextChanged;           // erase when needed
-
 			ShowControlsBasedOnPanel1Position();    // make sure controls are all set properly
-
 			m_btnInsert.Enabled = false;
 			m_btnHelp.Enabled = true;
 		}

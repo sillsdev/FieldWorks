@@ -397,12 +397,8 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public InsertEntryDlg()
 		{
-			//
-			// Required for Windows Form Designer support
-			//
 			InitializeComponent();
 			AccessibleName = GetType().Name;
-
 			// Figure out where to locate the dlg.
 			using (var regKey = SettingsKey)
 			{
@@ -419,12 +415,9 @@ namespace LanguageExplorer.Controls.LexText
 					StartPosition = FormStartPosition.Manual;
 				}
 			}
-
 			m_helpProvider = new HelpProvider();
 			m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
-
 			m_updateTextMonitor = new SimpleMonitor();
-
 			m_searchAnimation = new SearchingAnimation();
 			AdjustWidthForLinkLabelGroupBox();
 		}

@@ -109,21 +109,14 @@ namespace LanguageExplorer.MGA
 
 		private void InitForm()
 		{
-			//
-			// Required for Windows Form Designer support
-			//
 			InitializeComponent();
-
 			SuspendLayout();
-
 			glossListBoxGloss.MGADialog = this;
-
 			CancelButton = buttonCancel;
 			// add the Info button
 			buttonInfo.Text = MGAStrings.ksHideInfo;
 			var sXmlFile = Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "MGA", "GlossLists", "EticGlossList.xml");
 			treeViewGlossListItem.LoadGlossListTreeFromXml(sXmlFile, m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id);
-
 			using (var graphics = CreateGraphics())
 			{
 				// try to adjust for screen resolution
@@ -131,7 +124,6 @@ namespace LanguageExplorer.MGA
 				// on start-up, ensure the selected gloss panel is wide enough for all the buttons
 				splitContainerVertical.SplitterDistance = splitContainerVertical.Width - (buttonAcceptGloss.Width + buttonCancel.Width + buttonHelp.Width + (int)(16 * fRatio));
 				Text += " " + m_cache.ProjectId.UiName;
-
 				ResumeLayout();
 			}
 		}

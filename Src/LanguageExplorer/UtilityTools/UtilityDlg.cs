@@ -42,23 +42,16 @@ namespace LanguageExplorer.UtilityTools
 		/// </summary>
 		public UtilityDlg(IHelpTopicProvider helpTopicProvider)
 		{
-			//
-			// Required for Windows Form Designer support
-			//
 			InitializeComponent();
 			AccessibleName = GetType().Name;
-
 			m_btnRunUtils.Enabled = false;
-
 			m_helpTopicProvider = helpTopicProvider;
-
 			m_helpProvider = new HelpProvider
 			{
 				HelpNamespace = FwDirectoryFinder.CodeDirectory + m_helpTopicProvider.GetHelpString("UserHelpFile")
 			};
 			m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
 			m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
-
 			// The standard localization doesn't seem to be working, so do it explicitly here.
 			label1.Text = LanguageExplorerResources.ksUtilities;
 			label2.Text = LanguageExplorerResources.ksDescription;

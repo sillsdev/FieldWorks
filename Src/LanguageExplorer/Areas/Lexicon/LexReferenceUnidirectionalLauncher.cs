@@ -16,7 +16,6 @@ namespace LanguageExplorer.Areas.Lexicon
 	{
 		public LexReferenceUnidirectionalLauncher()
 		{
-			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 		}
 

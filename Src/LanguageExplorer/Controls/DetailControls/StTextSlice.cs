@@ -1,10 +1,10 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Controls.DetailControls
@@ -27,7 +27,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		public override void FinishInit()
 		{
 			base.FinishInit();
-
 			var sda = Cache.DomainDataByFlid;
 			var objPropHvo = sda.get_ObjectProp(MyCmObject.Hvo, FieldId);
 			if (objPropHvo == 0)

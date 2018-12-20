@@ -57,14 +57,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary />
 		public TryAWordDlg()
 		{
-			//
-			// Required for Windows Form Designer support
-			//
 			InitializeComponent();
 			AccessibleName = GetType().Name;
-
 			InitHtmlControl();
-
 			m_helpProvider = new HelpProvider();
 		}
 

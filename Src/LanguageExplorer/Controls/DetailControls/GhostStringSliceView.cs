@@ -1,8 +1,9 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls.DetailControls.Resources;
@@ -20,14 +21,14 @@ namespace LanguageExplorer.Controls.DetailControls
 {
 	internal class GhostStringSliceView : RootSiteControl
 	{
-		int m_hvoObj;
-		int m_flidEmptyProp; // the object property whose emptiness causes the ghost to appear.
-		int m_clidDst; // of the class of object we will create (int m_flidEmptyProp) if something is typed in the ghost slice
-		int m_flidStringProp; // the string property of m_clidDst we are simulating.
-		XElement m_nodeObjProp; // obj or seq node that requested the ghost.
-		GhostStringSliceVc m_vc;
-		GhostDaDecorator m_sda;
-		int m_wsToCreate; // default analysis or vernacular ws.
+		private int m_hvoObj;
+		private int m_flidEmptyProp; // the object property whose emptiness causes the ghost to appear.
+		private int m_clidDst; // of the class of object we will create (int m_flidEmptyProp) if something is typed in the ghost slice
+		private int m_flidStringProp; // the string property of m_clidDst we are simulating.
+		private XElement m_nodeObjProp; // obj or seq node that requested the ghost.
+		private GhostStringSliceVc m_vc;
+		private GhostDaDecorator m_sda;
+		private int m_wsToCreate; // default analysis or vernacular ws.
 
 		internal GhostStringSliceView(int hvo, int flid, XElement nodeObjProp, LcmCache cache)
 		{
@@ -35,16 +36,13 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_hvoObj = hvo;
 			m_flidEmptyProp = flid;
 			m_nodeObjProp = nodeObjProp;
-
 			// Figure the type of object we are pretending to be.
 			var dstClass = XmlUtils.GetOptionalAttributeValue(nodeObjProp, "ghostClass");
 			m_clidDst = dstClass == null ? cache.DomainDataByFlid.MetaDataCache.GetDstClsId(flid) : cache.DomainDataByFlid.MetaDataCache.GetClassId(dstClass);
-
 			// And the one property of that imaginary object we are displaying.
 			var stringProp = XmlUtils.GetMandatoryAttributeValue(nodeObjProp, "ghost");
 			// Special case for making a Text
 			m_flidStringProp = m_flidEmptyProp == RnGenericRecTags.kflidText ? StTxtParaTags.kflidContents : cache.DomainDataByFlid.MetaDataCache.GetFieldId2(m_clidDst, stringProp, true);
-
 			// And what writing system should typing in the field employ?
 			var wsContainer = cache.ServiceLocator.WritingSystems;
 			var stringWs = XmlUtils.GetMandatoryAttributeValue(nodeObjProp, "ghostWs");
@@ -53,16 +51,13 @@ namespace LanguageExplorer.Controls.DetailControls
 				case "vernacular":
 					m_wsToCreate = wsContainer.DefaultVernacularWritingSystem.Handle;
 					break;
-
 				case "analysis":
 					m_wsToCreate = wsContainer.DefaultAnalysisWritingSystem.Handle;
 					break;
-
 				case "pronunciation":
 					// Pronunciation isn't always defined.  Fall back to vernacular.
 					m_wsToCreate = wsContainer.DefaultPronunciationWritingSystem?.Handle ?? wsContainer.DefaultVernacularWritingSystem.Handle;
 					break;
-
 				default:
 					throw new Exception("ghostWs must be vernacular or analysis or pronunciation");
 			}
@@ -70,32 +65,13 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		#region IDisposable override
 
-		/// <summary>
-		/// Executes in two distinct scenarios.
-		///
-		/// 1. If disposing is true, the method has been called directly
-		/// or indirectly by a user's code via the Dispose method.
-		/// Both managed and unmanaged resources can be disposed.
-		///
-		/// 2. If disposing is false, the method has been called by the
-		/// runtime from inside the finalizer and you should not reference (access)
-		/// other managed objects, as they already have been garbage collected.
-		/// Only unmanaged resources can be disposed.
-		/// </summary>
-		/// <param name="disposing"></param>
-		/// <remarks>
-		/// If any exceptions are thrown, that is fine.
-		/// If the method is being done in a finalizer, it will be ignored.
-		/// If it is thrown by client code calling Dispose,
-		/// it needs to be handled by fixing the bug.
-		///
-		/// If subclasses override this method, they should call the base implementation.
-		/// </remarks>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -129,15 +105,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-
 			base.MakeRoot();
-
 			m_sda = new GhostDaDecorator(m_cache.DomainDataByFlid as ISilDataAccessManaged, TsStringUtils.EmptyString(m_wsToCreate), m_clidDst);
-
 			RootBox.DataAccess = m_sda;
-
 			m_vc = new GhostStringSliceVc();
-
 			// arg1 is a meaningless root HVO, since this VC only displays one dummy property and gets it from the ghostDA,
 			// which ignores the HVO.
 			// arg3 is a meaningless initial fragment, since this VC only displays one thing.
@@ -239,7 +210,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					hvoNewObj = hvoStringObj = sdaReal.MakeNewObject(m_clidDst, m_hvoObj, m_flidEmptyProp, ord);
 				}
-
 				// Set its property m_flidStringProp to tssTyped. If it is multilingual, choose based on ghostWs.
 				var typeString = (CellarPropertyType)(mdc.GetFieldType(m_flidStringProp) & (int)CellarPropertyTypeFilter.VirtualMask);
 				switch (typeString)
@@ -254,7 +224,6 @@ namespace LanguageExplorer.Controls.DetailControls
 						sdaReal.SetString(hvoStringObj, m_flidStringProp, tssTyped);
 						break;
 				}
-
 				var ghostInitMethod = XmlUtils.GetOptionalAttributeValue(m_nodeObjProp, "ghostInitMethod");
 				if (ghostInitMethod != null)
 				{
@@ -308,7 +277,6 @@ namespace LanguageExplorer.Controls.DetailControls
 					{
 						continue;
 					}
-
 					if (ss.WritingSystemId != ws)
 					{
 						continue;
@@ -364,9 +332,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			if (IsDisposed)
 			{
-				return true;
+				throw new InvalidOperationException("Thou shalt not call methods after I am disposed!");
 			}
-
 			if (Parent == null)
 			{
 				return false;       // wait until we're fully set up.
@@ -383,7 +350,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		private void SwitchToReal()
 		{
 			var slice = Parent.Parent as GhostStringSlice ?? Parent.Parent.Parent as GhostStringSlice; // Will also be disposed.
-
 			// Save info we will need after MakeRealObject destroys this.
 			var parentKey = slice.Key;
 			var flidStringProp = m_flidStringProp;
@@ -393,12 +359,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			int ich, hvo, tag, ws;
 			bool fAssocPrev;
 			RootBox.Selection.TextSelInfo(false, out tssTyped, out ich, out fAssocPrev, out hvo, out tag, out ws);
-
 			// Make the real object and set the string property we are ghosting. The final PropChanged
 			// will typically dispose this and create a new string slice whose key is our own key
 			// followed by the flid of the string property.
 			var hvoNewObj = MakeRealObject(tssTyped);
-
 			// Now try to make a suitable selection in the slice that replaces this.
 			RestoreSelection(ich, datatree, parentKey, hvoNewObj, flidStringProp, wsToCreate);
 		}

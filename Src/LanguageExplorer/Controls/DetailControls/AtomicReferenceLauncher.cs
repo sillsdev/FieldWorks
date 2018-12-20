@@ -1,15 +1,16 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.LCModel;
-using SIL.LCModel.Infrastructure;
 using LanguageExplorer.Controls.DetailControls.Resources;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.PlatformUtilities;
 using SIL.Xml;
 
@@ -30,9 +31,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public AtomicReferenceLauncher()
 		{
-			// This call is required by the Windows Form Designer.
 			InitializeComponent();
-
 			if (Platform.IsMono)
 			{
 				// FWNX-266
@@ -42,14 +41,13 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -82,8 +80,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					nullLabel = null;
 				}
 			}
-			var c = new SimpleListChooser(m_cache, m_persistProvider, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), labels, Target, m_fieldName, nullLabel, m_atomicRefView.StyleSheet);
-			return c;
+			return new SimpleListChooser(m_cache, m_persistProvider, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), labels, Target, m_fieldName, nullLabel, m_atomicRefView.StyleSheet);
 		}
 
 		public override void AddItem(ICmObject obj)
@@ -106,14 +103,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				Target = obj;
 			});
-			// it is possible that the previous update has caused the data tree to refresh
-			if (!IsDisposed)
-			{
-				UpdateDisplayFromDatabase();
-				ReferenceChanged?.Invoke(this, new FwObjectSelectionEventArgs(obj.Hvo));
-				var h2 = m_atomicRefView.RootBox.Height;
-				CheckViewSizeChanged(h1, h2);
-			}
+			UpdateDisplayFromDatabase();
+			ReferenceChanged?.Invoke(this, new FwObjectSelectionEventArgs(obj.Hvo));
+			var h2 = m_atomicRefView.RootBox.Height;
+			CheckViewSizeChanged(h1, h2);
 		}
 
 		protected internal virtual ICmObject Target

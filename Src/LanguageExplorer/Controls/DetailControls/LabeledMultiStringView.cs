@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,16 +8,16 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
-using SIL.Media;
-using SIL.LCModel;
-using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.LCModel.Infrastructure;
 using System.Text;
+using System.Windows.Forms;
 using System.Xml.Linq;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Infrastructure;
+using SIL.Media;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
@@ -31,17 +31,13 @@ namespace LanguageExplorer.Controls.DetailControls
 	{
 		private List<ShortSoundFieldControl> m_soundControls = new List<ShortSoundFieldControl>();
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
+		/// <summary />
 		public LabeledMultiStringView(int hvo, int flid, int wsMagic, bool forceIncludeEnglish, bool editable)
 			: this(hvo, flid, wsMagic, 0, forceIncludeEnglish, editable, true)
 		{
 		}
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
+		/// <summary />
 		public LabeledMultiStringView(int hvo, int flid, int wsMagic, int wsOptional, bool forceIncludeEnglish, bool editable, bool spellCheck)
 		{
 			InnerView = new InnerLabeledMultiStringView(hvo, flid, wsMagic, wsOptional, forceIncludeEnglish, editable, spellCheck);
@@ -112,37 +108,18 @@ namespace LanguageExplorer.Controls.DetailControls
 			return ret;
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		public bool IsSelectionFormattable => InnerView.IsSelectionFormattable;
 
 		#region IDisposable override
 
-		/// <summary>
-		/// Executes in two distinct scenarios.
-		///
-		/// 1. If disposing is true, the method has been called directly
-		/// or indirectly by a user's code via the Dispose method.
-		/// Both managed and unmanaged resources can be disposed.
-		///
-		/// 2. If disposing is false, the method has been called by the
-		/// runtime from inside the finalizer and you should not reference (access)
-		/// other managed objects, as they already have been garbage collected.
-		/// Only unmanaged resources can be disposed.
-		/// </summary>
-		/// <remarks>
-		/// If any exceptions are thrown, that is fine.
-		/// If the method is being done in a finalizer, it will be ignored.
-		/// If it is thrown by client code calling Dispose,
-		/// it needs to be handled by fixing the bug.
-		///
-		/// If subclasses override this method, they should call the base implementation.
-		/// </remarks>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -254,7 +231,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			var indent = InnerView.VC.m_mDxmpLabelWidth * dpiX / 72000 + 5; // 72000 millipoints/inch
 			if (m_soundControls.Count == 0)
+			{
 				SetupSoundControls();
+			}
 			foreach (var control in m_soundControls)
 			{
 				int wsIndex;
@@ -275,16 +254,16 @@ namespace LanguageExplorer.Controls.DetailControls
 						if (InnerView.GetSoundControlRectangle(sel, out selRect))
 						{
 							control.Top = selRect.Top;
-					}
+						}
 					}
 					// Don't crash trying to bring to front if control is not a child control on Linux (FWNX-1348).
 					// If control.Parent is null, don't crash, and bring to front anyway on Windows (LT-15148).
 					if (control.Parent == null || control.Parent.Controls.Contains(control))
 					{
 						control.BringToFront();
+					}
 				}
 			}
-		}
 		}
 
 		private void DisposeSoundControls()
@@ -331,7 +310,6 @@ namespace LanguageExplorer.Controls.DetailControls
 					var mediaDir = LcmFileHelper.GetMediaDir(InnerView.Cache.LangProject.LinkedFilesRootDir);
 					Directory.CreateDirectory(mediaDir); // Palaso media library does not cope if it does not exist.
 					path = Path.Combine(mediaDir, filename.Normalize(NormalizationForm.FormC));
-
 					// Windows in total defiance of the Unicode standard does not consider alternate normalizations
 					// of file names equal. The name in our string will always be NFD. From 7.2.2 we are saving files
 					// in NFC, but files from older versions could be NFD, so we need to check both. This is not
@@ -343,8 +321,8 @@ namespace LanguageExplorer.Controls.DetailControls
 						if (File.Exists(tryPath))
 						{
 							path = tryPath;
+						}
 					}
-				}
 				}
 				try
 				{
@@ -388,7 +366,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			var obj = InnerView.Cache.ServiceLocator.GetObject(InnerView.HvoObj);
 			var mediaDir = LcmFileHelper.GetMediaDir(InnerView.Cache.LangProject.LinkedFilesRootDir);
-			Directory.CreateDirectory(mediaDir); // Palaso media library does not cope if it does not exist.
+			// Palaso media library does not cope if it does not exist.
+			Directory.CreateDirectory(mediaDir);
 			// Make up a unique file name for the new recording. It starts with the shortname of the object
 			// so as to somewhat link them together, then adds a unique timestamp, then if by any chance
 			// that exists it keeps trying.

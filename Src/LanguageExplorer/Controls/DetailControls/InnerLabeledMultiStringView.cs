@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,13 +8,13 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel;
-using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Controls.DetailControls
@@ -25,15 +25,15 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// </summary>
 	internal class InnerLabeledMultiStringView : RootSiteControl
 	{
-		bool m_forceIncludeEnglish;
-		bool m_editable;
-
-		int m_wsOptions;
+		private bool m_forceIncludeEnglish;
+		private bool m_editable;
+		private int m_wsOptions;
 		// This is additional writing systems that might possibly be relevant in addition to the one(s) indicated
 		// by m_wsMagic. Currently the only example is that on a pronunciation field, vernacular as well as
 		// the default pronunciation WSS might be relevant.
-		int m_wsAdditionalOptions;
+		private int m_wsAdditionalOptions;
 		private string m_textStyle;
+
 		/// <summary>
 		/// We may need to set up other controls than what this class itself knows about.
 		/// </summary>
@@ -60,10 +60,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Returns true if a refresh is pending. For testing.
 		/// </summary>
-		internal bool RefreshPending
-		{
-			get { return m_fRefreshPending; }
-		}
+		internal bool RefreshPending => m_fRefreshPending;
 
 		/// <summary>
 		/// This event is triggered at the start of the Display() method of the VC.
@@ -84,6 +81,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			: this(hvo, flid, wsMagic, 0, forceIncludeEnglish, editable, true)
 		{
 		}
+
 		/// <summary>
 		/// Make one.
 		/// </summary>
@@ -132,7 +130,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			using (new HoldGraphics(this))
 			{
-			bool fEndBeforeAnchor;
+				bool fEndBeforeAnchor;
 				SelectionRectangle(sel, out selRect, out fEndBeforeAnchor);
 			}
 			return true;
@@ -303,11 +301,10 @@ namespace LanguageExplorer.Controls.DetailControls
 						}
 					}
 				}
-
 				if (fChangeRange)
 				{
 					hlpr.SetSelection(true);
-			}
+				}
 			}
 			finally
 			{
@@ -333,7 +330,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					return false;
 				}
-
 				// We only want to allow applying styles in this type of control if the whole selection is in
 				// the same writing system.
 				var wsAnchor = EditingHelper.CurrentSelection.GetWritingSystem(SelLimitType.Anchor);
@@ -344,32 +340,13 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		#region IDisposable override
 
-		/// <summary>
-		/// Executes in two distinct scenarios.
-		///
-		/// 1. If disposing is true, the method has been called directly
-		/// or indirectly by a user's code via the Dispose method.
-		/// Both managed and unmanaged resources can be disposed.
-		///
-		/// 2. If disposing is false, the method has been called by the
-		/// runtime from inside the finalizer and you should not reference (access)
-		/// other managed objects, as they already have been garbage collected.
-		/// Only unmanaged resources can be disposed.
-		/// </summary>
-		/// <remarks>
-		/// If any exceptions are thrown, that is fine.
-		/// If the method is being done in a finalizer, it will be ignored.
-		/// If it is thrown by client code calling Dispose,
-		/// it needs to be handled by fixing the bug.
-		///
-		/// If subclasses override this method, they should call the base implementation.
-		/// </remarks>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -392,21 +369,16 @@ namespace LanguageExplorer.Controls.DetailControls
 		public override void MakeRoot()
 		{
 			RootBox = null;
-
 			if (m_cache == null || DesignMode)
 			{
 				return;
 			}
-
 			WritingSystems = WritingSystemOptions;
 			VC = new InnerLabeledMultiStringViewVc(Flid, WritingSystems, m_cache.WritingSystemFactory.UserWs, m_editable, this);
-
 			base.MakeRoot();
-
 			Debug.Assert(RootBox != null);
 			// And maybe this too, at least by default?
 			RootBox.DataAccess = m_cache.DomainDataByFlid;
-
 			// arg3 is a meaningless initial fragment, since this VC only displays one thing.
 			// arg4 could be used to supply a stylesheet.
 			RootBox.SetRootObject(HvoObj, VC, 1, m_styleSheet);
@@ -436,7 +408,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					if (!result.Contains(ws))
 					{
 						result.Add(ws);
-			}
+					}
 				}
 			}
 			return result;
@@ -488,10 +460,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			for (; i < WritingSystems.Count; i++)
 			{
 				if (WritingSystems[i].Handle == ws)
-			{
+				{
 					break;
+				}
 			}
-		}
 			return i == WritingSystems.Count ? -1 : i;
 		}
 	}
@@ -499,7 +471,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary>
 	/// Delegate defn for an event handler that passes an IVwEnv.
 	/// </summary>
-	public delegate void VwEnvEventHandler (object sender, VwEnvEventArgs e);
+	public delegate void VwEnvEventHandler(object sender, VwEnvEventArgs e);
 
 	/// <summary>
 	/// Event Args for an event that passes a VwEnv.

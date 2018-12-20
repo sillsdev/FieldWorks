@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -41,7 +41,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_flid = flid;
 			m_displayNameProperty = displayNameProperty;
 			m_displayWs = displayWs;
-
 		}
 
 		/// <summary>
@@ -77,11 +76,11 @@ namespace LanguageExplorer.Controls.DetailControls
 					break;
 				case VectorReferenceView.kfragTargetObj:
 					// Display one object from the vector.
-				{
-					var wsf = m_cache.WritingSystemFactory;
-					vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvDefault, (int)TptEditable.ktptNotEditable);
-					ITsString tss;
-					Debug.Assert(hvo != 0);
+					{
+						var wsf = m_cache.WritingSystemFactory;
+						vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvDefault, (int)TptEditable.ktptNotEditable);
+						ITsString tss;
+						Debug.Assert(hvo != 0);
 #if USEBESTWS
 					if (m_displayWs != null && m_displayWs.StartsWith("best"))
 					{
@@ -94,58 +93,58 @@ namespace LanguageExplorer.Controls.DetailControls
 					else
 					{
 #endif
-					// Use reflection to get a prebuilt name if we can.  Otherwise
-					// settle for piecing together a string.
-					Debug.Assert(m_cache != null);
-					var obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
-					Debug.Assert(obj != null);
-					var type = obj.GetType();
-					var pi = type.GetProperty("TsName", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.FlattenHierarchy);
-					if (pi != null)
-					{
-						tss = (ITsString)pi.GetValue(obj, null);
-					}
-					else
-					{
-						if (!string.IsNullOrEmpty(m_displayNameProperty))
-						{
-							pi = type.GetProperty(m_displayNameProperty, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.FlattenHierarchy);
-						}
-						var ws = wsf.GetWsFromStr(obj.SortKeyWs);
-						if (ws == 0)
-						{
-							ws = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
-						}
+						// Use reflection to get a prebuilt name if we can.  Otherwise
+						// settle for piecing together a string.
+						Debug.Assert(m_cache != null);
+						var obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
+						Debug.Assert(obj != null);
+						var type = obj.GetType();
+						var pi = type.GetProperty("TsName", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.FlattenHierarchy);
 						if (pi != null)
 						{
-							var s = pi.GetValue(obj, null);
-							if (s is ITsString)
-							{
-								tss = (ITsString)s;
-							}
-							else
-							{
-								tss = TsStringUtils.MakeString((string)s, ws);
-							}
+							tss = (ITsString)pi.GetValue(obj, null);
 						}
 						else
 						{
-							// ShortNameTss sometimes gets PropChanged, so worth letting the view know that's
-							// what we're inserting.
-							var flid = Cache.MetaDataCacheAccessor.GetFieldId2(obj.ClassID, "ShortNameTSS", true);
-							vwenv.AddStringProp(flid, this);
-							break;
-						}
+							if (!string.IsNullOrEmpty(m_displayNameProperty))
+							{
+								pi = type.GetProperty(m_displayNameProperty, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.FlattenHierarchy);
+							}
+							var ws = wsf.GetWsFromStr(obj.SortKeyWs);
+							if (ws == 0)
+							{
+								ws = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
+							}
+							if (pi != null)
+							{
+								var s = pi.GetValue(obj, null);
+								if (s is ITsString)
+								{
+									tss = (ITsString)s;
+								}
+								else
+								{
+									tss = TsStringUtils.MakeString((string)s, ws);
+								}
+							}
+							else
+							{
+								// ShortNameTss sometimes gets PropChanged, so worth letting the view know that's
+								// what we're inserting.
+								var flid = Cache.MetaDataCacheAccessor.GetFieldId2(obj.ClassID, "ShortNameTSS", true);
+								vwenv.AddStringProp(flid, this);
+								break;
+							}
 #if USEBESTWS
 						}
 #endif
+						}
+						if (!string.IsNullOrEmpty(TextStyle))
+						{
+							vwenv.set_StringProperty((int)FwTextPropType.ktptNamedStyle, TextStyle);
+						}
+						vwenv.AddString(tss);
 					}
-					if (!string.IsNullOrEmpty(TextStyle))
-					{
-						vwenv.set_StringProperty((int)FwTextPropType.ktptNamedStyle, TextStyle);
-					}
-					vwenv.AddString(tss);
-				}
 					break;
 				default:
 					throw new ArgumentException("Don't know what to do with the given frag.", nameof(frag));

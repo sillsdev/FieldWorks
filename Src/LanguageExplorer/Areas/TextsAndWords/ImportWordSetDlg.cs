@@ -44,9 +44,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		private ImportWordSetDlg()
 		{
-			//
-			// Required for Windows Form Designer support
-			//
 			InitializeComponent();
 			AccessibleName = GetType().Name;
 		}

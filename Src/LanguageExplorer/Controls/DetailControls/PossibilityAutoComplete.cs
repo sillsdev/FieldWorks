@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2018 SIL International
+// Copyright (c) 2012-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,11 +8,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.XMLViews;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.ObjectModel;
 using SIL.PlatformUtilities;
@@ -25,13 +25,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		private readonly Control m_control;
 		private readonly string m_displayNameProperty;
 		private readonly string m_displayWs;
-
 		private readonly ComboListBox m_listBox;
 		private readonly StringSearcher<ICmPossibility> m_searcher;
 		private readonly List<ICmPossibility> m_possibilities;
-
 		private int m_curPossIndex;
-
 		private bool m_changingSelection;
 
 		public event EventHandler PossibilitySelected;
@@ -42,7 +39,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_control = control;
 			m_displayNameProperty = displayNameProperty;
 			m_displayWs = displayWs;
-
 			m_listBox = new ComboListBox { DropDownStyle = ComboBoxStyle.DropDownList, ActivateOnShow = false };
 			m_listBox.SelectedIndexChanged += HandleSelectedIndexChanged;
 			m_listBox.SameItemSelected += HandleSameItemSelected;
@@ -60,7 +56,6 @@ namespace LanguageExplorer.Controls.DetailControls
 					stack.Push(child);
 				}
 			}
-
 			m_control.KeyDown += HandleKeyDown;
 			m_control.KeyPress += HandleKeyPress;
 		}
@@ -77,7 +72,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_listBox.SelectedIndexChanged -= HandleSelectedIndexChanged;
 			m_listBox.SameItemSelected -= HandleSameItemSelected;
 			m_listBox.Dispose();
-
 			base.DisposeManagedResources();
 		}
 
@@ -99,7 +93,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-
 			OnItemSelected(new EventArgs());
 		}
 
@@ -109,7 +102,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-
 			OnItemSelected(new EventArgs());
 		}
 
@@ -119,7 +111,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-
 			switch (e.KeyCode)
 			{
 				case Keys.Up:
@@ -135,7 +126,6 @@ namespace LanguageExplorer.Controls.DetailControls
 					}
 					e.Handled = true;
 					break;
-
 				case Keys.Down:
 					try
 					{
@@ -191,7 +181,6 @@ namespace LanguageExplorer.Controls.DetailControls
 						{
 							return false;
 						}
-
 						m_listBox.Items.Add(ObjectLabel.CreateObjectLabel(m_cache, poss, m_displayNameProperty, m_displayWs));
 					}
 				}
@@ -199,7 +188,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					m_listBox.EndUpdate();
 				}
-
 				if (m_listBox.Items.Count > 0)
 				{
 					m_listBox.AdjustSize(500, 400);
@@ -228,7 +216,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					return;
 				}
-
 				var poss = m_possibilities[m_curPossIndex];
 				ITsString name = null;
 				foreach (var ws in WritingSystemServices.GetWritingSystemIdsFromLabel(m_cache, m_displayWs, m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem, poss.Hvo, CmPossibilityTags.kflidName, null))
@@ -242,7 +229,6 @@ namespace LanguageExplorer.Controls.DetailControls
 					m_searcher.Add(poss, 0, tss);
 					break;
 				}
-
 				foreach (var ws in WritingSystemServices.GetWritingSystemIdsFromLabel(m_cache, m_displayWs, m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem, poss.Hvo, CmPossibilityTags.kflidAbbreviation, null))
 				{
 					var tss = poss.Abbreviation.StringOrNull(ws);
@@ -276,7 +262,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				// just loses the optimization.
 				return false;
 			}
-
 			var msg = new Win32.MSG();
 			return Win32.PeekMessage(ref msg, IntPtr.Zero, (uint)Win32.WinMsgs.WM_KEYDOWN, (uint)Win32.WinMsgs.WM_KEYDOWN, (uint)Win32.PeekFlags.PM_NOREMOVE);
 		}

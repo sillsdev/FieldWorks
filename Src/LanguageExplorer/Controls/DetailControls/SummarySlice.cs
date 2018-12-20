@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -26,7 +26,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		private string m_collapsedLayout;
 		private int m_lastWidth;
 		private bool m_fActive;
-
 		protected override bool ShouldHide => false;
 
 		#region Overrides of Slice
@@ -59,7 +58,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		public override void Install(DataTree parentDataTree)
 		{
 			base.Install(parentDataTree);
-
 			m_commandControl = new SummaryCommandControl(this, MyDataTreeStackContextMenuFactory.HotlinksMenuFactory, MyDataTreeStackContextMenuFactory.LeftEdgeContextMenuFactory)
 			{
 				Dock = DockStyle.Fill,
@@ -72,7 +70,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		public override void FinishInit()
 		{
 			base.FinishInit();
-
 			var paramType = XmlUtils.GetOptionalAttributeValue(ConfigurationNode.Parent, "paramType");
 			if (paramType == "LiteralString")
 			{
@@ -88,18 +85,15 @@ namespace LanguageExplorer.Controls.DetailControls
 				m_collapsedLayout = XmlUtils.GetOptionalAttributeValue(CallerNode, "collapsedLayout") ?? XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "collapsedLayout");
 				m_view = new SummaryXmlView(MyCmObject.Hvo, m_layout, this);
 			}
-
 			var panel = new Panel
 			{
 				Dock = DockStyle.Fill
 			};
 			Control = panel;
-
 			m_view.Dock = DockStyle.Left;
 			m_view.LayoutSizeChanged += m_view_LayoutSizeChanged;
 			panel.Controls.Add(m_view);
 			m_view.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
 			m_button = new ExpandCollapseButton { Dock = DockStyle.Left };
 			m_button.Click += m_button_Click;
 			panel.Controls.Add(m_button);
@@ -146,7 +140,6 @@ namespace LanguageExplorer.Controls.DetailControls
 							((XmlView)m_view).ResetTables(m_layout);
 						}
 						break;
-
 					case TreeItemState.ktisCollapsed:
 						m_button.Visible = true;
 						m_button.IsOpened = false;
@@ -155,7 +148,6 @@ namespace LanguageExplorer.Controls.DetailControls
 							((XmlView)m_view).ResetTables(m_collapsedLayout);
 						}
 						break;
-
 					case TreeItemState.ktisFixed:
 					case TreeItemState.ktisCollapsedEmpty:
 						m_button.Visible = false;

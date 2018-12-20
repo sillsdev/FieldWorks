@@ -1,10 +1,12 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Media;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.DetailControls.Resources;
 using SIL.FieldWorks.Common.FwUtils;
@@ -20,16 +22,14 @@ namespace LanguageExplorer.Controls.DetailControls
 	internal class AudioVisualLauncher : ButtonLauncher
 	{
 		private AudioVisualView m_view;
-		private System.ComponentModel.IContainer components = null;
-		private System.Media.SoundPlayer m_player;
+		private IContainer components = null;
+		private SoundPlayer m_player;
 
 		internal AudioVisualLauncher()
 		{
-			// This call is required by the Windows Form Designer.
 			InitializeComponent();
-
 			Height = m_panel.Height;
-			this.m_btnLauncher.ImageIndex = 1;		// use LeftArrow ("Play") instead of ellipsis.
+			m_btnLauncher.ImageIndex = 1;
 		}
 
 		#region Designer generated code
@@ -88,6 +88,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		public override void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
 		{
 			base.InitializeFlexComponent(flexComponentParameters);
+
 			m_view.InitializeFlexComponent(flexComponentParameters);
 		}
 
@@ -96,9 +97,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 

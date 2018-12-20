@@ -50,13 +50,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary />
 		public SimpleMatchDlg(ILgWritingSystemFactory wsf, IHelpTopicProvider helpTopicProvider, int ws, IVwStylesheet ss, LcmCache cache)
 		{
-			//
-			// Required for Windows Form Designer support
-			//
 			InitializeComponent();
-
 			m_cache = cache;
-
 			// We do this outside the designer-controlled code because it does funny things
 			// to FwTextBoxes, owing to the need for a writing system factory, and some
 			// properties it should not persist but I can't persuade it not to.
@@ -69,18 +64,15 @@ namespace LanguageExplorer.Controls.XMLViews
 				Name = "m_textBox",
 				Size = new System.Drawing.Size(450, 32),
 				TabIndex = 0,
-				Text = ""
+				Text = string.Empty
 			};
 			// set ASAP.
 			// before setting text, otherwise it gets confused about height needed.
 			Controls.Add(m_textBox);
 			AccessibleName = "SimpleMatchDlg";
 			m_helpTopicProvider = helpTopicProvider;
-
 			_regexContextContextMenu = new RegexHelperContextMenu(m_textBox, m_helpTopicProvider);
-
 			m_ivwpattern = VwPatternClass.Create();
-
 			helpProvider = new HelpProvider {HelpNamespace = m_helpTopicProvider.HelpFile};
 			helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);

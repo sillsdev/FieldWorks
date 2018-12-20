@@ -1,14 +1,15 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.DetailControls.Resources;
 using LanguageExplorer.Controls.LexText;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 
@@ -19,7 +20,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		private IPersistenceProvider m_persistProvider;
 		private MSAPopupTreeManager m_MSAPopupTreeManager;
 		private TreeCombo m_tree;
-		int m_treeBaseWidth;
+		private int m_treeBaseWidth;
 		private bool m_handlingMessage;
 
 		/// <summary>
@@ -68,12 +69,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			IVwStylesheet stylesheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable);
 			m_tree.StyleSheet = stylesheet;
 			var list = Cache.LanguageProject.PartsOfSpeechOA;
-
 			m_MSAPopupTreeManager = new MSAPopupTreeManager(m_tree, Cache, list, m_tree.WritingSystemCode, true, PropertyTable, Publisher, PropertyTable.GetValue<Form>(FwUtils.window));
 			m_MSAPopupTreeManager.AfterSelect += m_MSAPopupTreeManager_AfterSelect;
 			m_MSAPopupTreeManager.Sense = MyCmObject as ILexSense;
 			m_MSAPopupTreeManager.PersistenceProvider = m_persistProvider;
-
 			try
 			{
 				m_handlingMessage = true;
@@ -105,7 +104,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		private void SplitContPanel2_SizeChanged(object sender, EventArgs e)
 		{
 			var dxPanelWidth = SplitCont.Panel2.Width;
-
 			if ((dxPanelWidth < m_tree.Width && dxPanelWidth >= 80) || (dxPanelWidth > m_tree.Width && dxPanelWidth <= m_treeBaseWidth))
 			{
 				m_tree.Width = dxPanelWidth;
@@ -116,33 +114,32 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-		void m_tree_DropDown(object sender, EventArgs e)
+		private void m_tree_DropDown(object sender, EventArgs e)
 		{
 			m_MSAPopupTreeManager.LoadPopupTree(0); // load the tree for real, with up-to-date list of available MSAs (see LT-5041).
 		}
 
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
 			if (disposing)
 			{
+				// Dispose managed resources here.
 				if (SplitCont != null && !SplitCont.IsDisposed && SplitCont.Panel2 != null && !SplitCont.Panel2.IsDisposed)
 				{
 					SplitCont.Panel2.SizeChanged -= SplitContPanel2_SizeChanged;
 				}
-				// Dispose managed resources here.
 				Cache?.DomainDataByFlid.RemoveNotification(this);
-
 				if (m_tree != null && m_tree.Parent == null)
 				{
 					m_tree.Dispose();
 				}
-
 				if (m_MSAPopupTreeManager != null)
 				{
 					m_MSAPopupTreeManager.AfterSelect -= m_MSAPopupTreeManager_AfterSelect;
@@ -203,13 +200,11 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-
 			// Don't try changing values on a deleted object!  See LT-8656 and LT-9119.
 			if (!MyCmObject.IsValidObject)
 			{
 				return;
 			}
-
 			var hvoSel = htn.Hvo;
 			// if hvoSel is negative, then MSAPopupTreeManager's AfterSelect has handled it,
 			// except possibly for refresh.
@@ -243,20 +238,18 @@ namespace LanguageExplorer.Controls.DetailControls
 					{
 						sandoxMSA.FromPartsOfSpeech = stemMsa.FromPartsOfSpeechRC;
 					}
-					UndoableUnitOfWorkHelper.Do(string.Format(DetailControlsStrings.ksUndoSet, m_fieldName),
-						string.Format(DetailControlsStrings.ksRedoSet, m_fieldName), sense, () =>
-						{
-							sense.SandboxMSA = sandoxMSA;
-						});
+					UndoableUnitOfWorkHelper.Do(string.Format(DetailControlsStrings.ksUndoSet, m_fieldName), string.Format(DetailControlsStrings.ksRedoSet, m_fieldName), sense, () =>
+					{
+						sense.SandboxMSA = sandoxMSA;
+					});
 				}
 				else if (sense.MorphoSyntaxAnalysisRA != obj)
 				{
 					ContainingDataTree.DoNotRefresh = true;
-					UndoableUnitOfWorkHelper.Do(string.Format(DetailControlsStrings.ksUndoSet, m_fieldName),
-						string.Format(DetailControlsStrings.ksRedoSet, m_fieldName), sense, () =>
-						{
-							sense.MorphoSyntaxAnalysisRA = obj as IMoMorphSynAnalysis;
-						});
+					UndoableUnitOfWorkHelper.Do(string.Format(DetailControlsStrings.ksUndoSet, m_fieldName), string.Format(DetailControlsStrings.ksRedoSet, m_fieldName), sense, () =>
+					{
+						sense.MorphoSyntaxAnalysisRA = obj as IMoMorphSynAnalysis;
+					});
 				}
 			}
 			finally

@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -17,13 +17,13 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary>
 	/// View constructor for InnerLabeledMultiStringView.
 	/// </summary>
-	internal class LabeledMultiStringVc: FwBaseVc
+	internal class LabeledMultiStringVc : FwBaseVc
 	{
 		internal int m_flid;
 		internal List<CoreWritingSystemDefinition> m_rgws; // writing systems to display
-		ITsTextProps m_ttpLabel; // Props to use for ws name labels
-		bool m_editable = true;
-		int m_wsEn;
+		private ITsTextProps m_ttpLabel; // Props to use for ws name labels
+		private bool m_editable = true;
+		private int m_wsEn;
 		internal int m_mDxmpLabelWidth;
 
 		public LabeledMultiStringVc(int flid, List<CoreWritingSystemDefinition> rgws, int wsUser, bool editable, int wsEn)
@@ -31,17 +31,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			Reuse(flid, rgws, editable);
 			m_ttpLabel = WritingSystemServices.AbbreviationTextProperties;
 			m_wsEn = wsEn == 0 ? wsUser : wsEn;
-			// Here's the C++ code which does the same thing using styles.
-			//				StrUni stuLangCodeStyle(L"Language Code");
-			//				ITsPropsFactoryPtr qtpf;
-			//				qtpf.CreateInstance(CLSID_TsPropsFactory);
-			//				StrUni stu;
-			//				ITsStringPtr qtss;
-			//				ITsStrFactoryPtr qtsf;
-			//				qtsf.CreateInstance(CLSID_TsStrFactory);
-			//				// Get the properties of the "Language Code" style for the writing system
-			//				// which corresponds to the user's environment.
-			//				qtpf->MakeProps(stuLangCodeStyle.Bstr(), ???->UserWs(), 0, &qttp);
 		}
 
 		public virtual string TextStyle
@@ -68,12 +57,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			// Display in English if possible for now (August 2008).  See LT-8631 and LT-8574.
 			var result = m_rgws[i].Abbreviation;
-
 			if (string.IsNullOrEmpty(result))
 			{
 				result = "??";
 			}
-
 			return TsStringUtils.MakeString(result, m_wsEn);
 		}
 
@@ -93,8 +80,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_mDxmpLabelWidth = 0;
 			for (var i = 0; i < m_rgws.Count; ++i)
 			{
-				int dxs;	// Width of displayed string.
-				int dys;	// Height of displayed string (not used here).
+				int dxs;    // Width of displayed string.
+				int dys;    // Height of displayed string (not used here).
 				// Set qtss to a string representing the writing system.
 				vwenv.get_StringWidth(NameOfWs(i), m_ttpLabel, out dxs, out dys);
 				m_mDxmpLabelWidth = Math.Max(m_mDxmpLabelWidth, dxs);
@@ -102,14 +89,11 @@ namespace LanguageExplorer.Controls.DetailControls
 			VwLength vlColWs; // 5-pt space plus max label width.
 			vlColWs.nVal = m_mDxmpLabelWidth + 5000;
 			vlColWs.unit = VwUnit.kunPoint1000;
-
 			// Enhance JohnT: possibly allow for right-to-left UI by reversing columns?
-
 			// The Main column is relative and uses the rest of the space.
 			VwLength vlColMain;
 			vlColMain.nVal = 1;
 			vlColMain.unit = VwUnit.kunRelative;
-
 			vwenv.OpenTable(2, // Two columns.
 				vlTable, // Table uses 100% of available width.
 				0, // Border thickness.
@@ -124,7 +108,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			// width is non-zero.
 			vwenv.MakeColumns(1, vlColWs);
 			vwenv.MakeColumns(1, vlColMain);
-
 			vwenv.OpenTableBody();
 			var visibleWss = new HashSet<ILgWritingSystem>();
 			// if we passed in a view and have WritingSystemsToDisplay
@@ -137,16 +120,13 @@ namespace LanguageExplorer.Controls.DetailControls
 					continue;
 				}
 				vwenv.OpenTableRow();
-
 				// First cell has writing system abbreviation displayed using m_ttpLabel.
 				vwenv.Props = m_ttpLabel;
-				vwenv.OpenTableCell(1,1);
+				vwenv.OpenTableCell(1, 1);
 				vwenv.AddString(NameOfWs(i));
 				vwenv.CloseTableCell();
-
 				// Second cell has the string contents for the alternative.
-				// DN version has some property setting, including trailing margin and
-				// RTL.
+				// DN version has some property setting, including trailing margin and RTL.
 				if (m_rgws[i].RightToLeftScript)
 				{
 					vwenv.set_IntProperty((int)FwTextPropType.ktptRightToLeft, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
@@ -157,7 +137,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
 				}
 				vwenv.set_IntProperty((int)FwTextPropType.ktptPadTop, (int)FwTextPropVar.ktpvMilliPoint, 2000);
-				vwenv.OpenTableCell(1,1);
+				vwenv.OpenTableCell(1, 1);
 				var wsdef = m_rgws[i];
 				if (wsdef != null && wsdef.IsVoice)
 				{
@@ -177,17 +157,14 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					if (!string.IsNullOrEmpty(TextStyle))
 					{
-						vwenv.set_StringProperty((int) FwTextPropType.ktptNamedStyle, TextStyle);
-
+						vwenv.set_StringProperty((int)FwTextPropType.ktptNamedStyle, TextStyle);
 					}
 					vwenv.AddStringAltMember(m_flid, m_rgws[i].Handle, this);
 				}
 				vwenv.CloseTableCell();
-
 				vwenv.CloseTableRow();
 			}
 			vwenv.CloseTableBody();
-
 			vwenv.CloseTable();
 		}
 

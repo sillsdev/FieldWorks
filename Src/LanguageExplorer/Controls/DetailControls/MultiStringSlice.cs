@@ -1,19 +1,20 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using SIL.LCModel.Core.WritingSystems;
 using LanguageExplorer.Controls.DetailControls.Resources;
 using LanguageExplorer.Controls.XMLViews;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 using SIL.Xml;
@@ -25,7 +26,6 @@ namespace LanguageExplorer.Controls.DetailControls
 	{
 		private ToolStripMenuItem _writingSystemsMenu;
 		private List<ToolStripMenuItem> _writingSystemMenuItems;
-
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> _contextMenuTuple;
 
 		public MultiStringSlice(ICmObject obj, int flid, int ws, int wsOptional, bool forceIncludeEnglish, bool editable, bool spellCheck)
@@ -46,7 +46,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		internal override void PrepareToShowContextMenu()
 		{
 			base.PrepareToShowContextMenu();
-
 			// Calulate the WS that need to be showed.
 			var currentlyAvailableForChecking = new List<string>(WritingSystemOptionsForDisplay.Select(writingSystemDefinition => writingSystemDefinition.DisplayLabel));
 			var currentlyCheckedWritingSystems = new List<string>(WritingSystemsSelectedForDisplay.Select(writingSystemDefinition => writingSystemDefinition.DisplayLabel));
@@ -63,12 +62,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected override void AddSpecialContextMenus(ContextMenuStrip topLevelContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems)
 		{
 			base.AddSpecialContextMenus(topLevelContextMenuStrip, menuItems);
-
 			// Add "Writing Systems" context menu and its sub-menu items.
 			_writingSystemsMenu = ToolStripMenuItemFactory.CreateBaseMenuForToolStripMenuItem(topLevelContextMenuStrip, LanguageExplorerResources.WritingSystems);
-
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, _writingSystemsMenu, ShowAllWritingSystemsNow_Click, LanguageExplorerResources.ShowAllRightNow);
-
 			// Note: We add all possible individual WS submenus here, and they will be disabled and not visible.
 			// The 'PrepareToShowContextMenu' method is called as the main context menu is being shown, and it sort out which menus
 			// are relevant for the given context and make them visible and enabled.
@@ -294,29 +290,16 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		#region Overrides of Slice and/or ViewSlice
 
-		/// <summary>
-		/// Executes in two distinct scenarios.
-		///
-		/// 1. If disposing is true, the method has been called directly
-		/// or indirectly by a user's code via the Dispose method.
-		/// Both managed and unmanaged resources can be disposed.
-		///
-		/// 2. If disposing is false, the method has been called by the
-		/// runtime from inside the finalizer and you should not reference (access)
-		/// other managed objects, as they already have been garbage collected.
-		/// Only unmanaged resources can be disposed.
-		/// </summary>
-		/// <param name="disposing"></param>
-		/// <remarks>
-		/// If any exceptions are thrown, that is fine.
-		/// If the method is being done in a finalizer, it will be ignored.
-		/// If it is thrown by client code calling Dispose,
-		/// it needs to be handled by fixing the bug.
-		///
-		/// If subclasses override this method, they should call the base implementation.
-		/// </remarks>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
 			if (disposing)
 			{
 				var view = View;
@@ -377,8 +360,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		private void UpdatePronunciationWritingSystems(IReadOnlyList<CoreWritingSystemDefinition> wssToDisplay)
 		{
-			if (wssToDisplay.Count != Cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Count
-				|| !Cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.SequenceEqual(wssToDisplay))
+			if (wssToDisplay.Count != Cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Count || !Cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.SequenceEqual(wssToDisplay))
 			{
 				NonUndoableUnitOfWorkHelper.Do(Cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 				{

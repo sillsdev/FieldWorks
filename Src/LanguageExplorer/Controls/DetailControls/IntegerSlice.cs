@@ -1,8 +1,9 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.DetailControls.Resources;
 using SIL.LCModel;
@@ -13,8 +14,8 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary />
 	internal class IntegerSlice : FieldSlice
 	{
-		TextBox m_tb;
-		int m_previousValue;
+		private TextBox m_tb;
+		private int m_previousValue;
 
 		/// <summary />
 		public IntegerSlice(LcmCache cache, ICmObject obj, int flid)
@@ -28,32 +29,13 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		#region IDisposable override
 
-		/// <summary>
-		/// Executes in two distinct scenarios.
-		///
-		/// 1. If disposing is true, the method has been called directly
-		/// or indirectly by a user's code via the Dispose method.
-		/// Both managed and unmanaged resources can be disposed.
-		///
-		/// 2. If disposing is false, the method has been called by the
-		/// runtime from inside the finalizer and you should not reference (access)
-		/// other managed objects, as they already have been garbage collected.
-		/// Only unmanaged resources can be disposed.
-		/// </summary>
-		/// <param name="disposing"></param>
-		/// <remarks>
-		/// If any exceptions are thrown, that is fine.
-		/// If the method is being done in a finalizer, it will be ignored.
-		/// If it is thrown by client code calling Dispose,
-		/// it needs to be handled by fixing the bug.
-		///
-		/// If subclasses override this method, they should call the base implementation.
-		/// </remarks>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -95,11 +77,8 @@ namespace LanguageExplorer.Controls.DetailControls
 					return;
 				}
 				m_previousValue = i;
-				UndoableUnitOfWorkHelper.Do(
-					string.Format(DetailControlsStrings.ksUndoChangeTo, m_fieldName),
-					string.Format(DetailControlsStrings.ksRedoChangeTo, m_fieldName),
-					Cache.ActionHandlerAccessor,
-					() =>Cache.DomainDataByFlid.SetInt(MyCmObject.Hvo, m_flid, i));
+				UndoableUnitOfWorkHelper.Do(string.Format(DetailControlsStrings.ksUndoChangeTo, m_fieldName), string.Format(DetailControlsStrings.ksRedoChangeTo, m_fieldName), Cache.ActionHandlerAccessor,
+					() => Cache.DomainDataByFlid.SetInt(MyCmObject.Hvo, m_flid, i));
 			}
 			catch (FormatException error)
 			{

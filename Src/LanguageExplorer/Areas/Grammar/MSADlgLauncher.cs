@@ -21,9 +21,7 @@ namespace LanguageExplorer.Areas.Grammar
 		/// <summary />
 		public MSADlgLauncher()
 		{
-			// This call is required by the Windows Form Designer.
 			InitializeComponent();
-
 			Height = m_panel.Height;
 		}
 

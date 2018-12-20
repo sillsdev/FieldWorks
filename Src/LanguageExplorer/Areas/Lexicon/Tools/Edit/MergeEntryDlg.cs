@@ -38,10 +38,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		public MergeEntryDlg()
 		{
-			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 			ShowControlsBasedOnPanel1Position();    // used for sizing and display of some controls
-
 			var infoIcon = SystemIcons.Information;
 			m_pictureBox.Image = infoIcon.ToBitmap();
 			m_pictureBox.Size = infoIcon.Size;

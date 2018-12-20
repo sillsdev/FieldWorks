@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -23,13 +23,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-
 			base.MakeRoot();
-
 			RootBox.DataAccess = m_cache.DomainDataByFlid;
-
 			m_cvc = new TwoLevelConcVc(m_cp, m_gni, m_index);
-
 			// The root object is the one, if any, that the policy gives us for this slice.
 			// If it doesn't give us one the vc will obtain a key string from the policy
 			// directly. The frag argument is arbitrary.

@@ -164,13 +164,11 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		internal LexImportWizard()
 		{
-			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 			openFileDialog = new OpenFileDialogAdapter();
 			m_crcObj = new CRC();   // CRC Object to use for telling if the input file has changed
 			m_lastDateTime = DateTime.MinValue;
 			m_crcOfInputFile = 1;
-
 			// Adjust the width of the steps panel if it's too narrow to show what it's
 			// supposed to show.  See FWNX-514.  (This should be useful for localizations
 			// as well as cross-platform work.)

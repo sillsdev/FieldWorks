@@ -1,17 +1,17 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Windows.Forms;
 using System.Linq;
+using System.Windows.Forms;
 using LanguageExplorer.Controls.DetailControls.Resources;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.XMLViews;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
@@ -54,15 +54,13 @@ namespace LanguageExplorer.Controls.DetailControls
 					var fInflAffix = entry.MorphoSyntaxAnalysesOC.OfType<IMoInflAffMsa>().Any();
 					if (!fInflAffix)
 					{
-						UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(DetailControlsStrings.ksUndoCreatingInflectionalAffixCategoryItem,
-							DetailControlsStrings.ksRedoCreatingInflectionalAffixCategoryItem,
-							Cache.ActionHandlerAccessor,
-							() => {
+						UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(DetailControlsStrings.ksUndoCreatingInflectionalAffixCategoryItem, DetailControlsStrings.ksRedoCreatingInflectionalAffixCategoryItem,
+							Cache.ActionHandlerAccessor, () =>
+							{
 								var newby = Cache.ServiceLocator.GetInstance<IMoInflAffMsaFactory>().Create();
 								entry.MorphoSyntaxAnalysesOC.Add(newby);
 							});
 					}
-
 					if (entry.MorphoSyntaxAnalysesOC.Count > 0)
 					{
 						result = ObjectLabel.CreateObjectLabel(Cache, entry.MorphoSyntaxAnalysesOC.First(), string.Empty);
@@ -76,8 +74,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			var sMorphTypeName = (m_fPrefix ? "prefix" : "suffix");
 			var iEnglishWs = WritingSystemServices.FallbackUserWs(Cache);
-			return Cache.LanguageProject.LexDbOA.MorphTypesOA.ReallyReallyAllPossibilities
-				.Where(type => sMorphTypeName == type.Name.get_String(iEnglishWs).Text).Select(type => type as IMoMorphType).FirstOrDefault();
+			return Cache.LanguageProject.LexDbOA.MorphTypesOA.ReallyReallyAllPossibilities.Where(type => sMorphTypeName == type.Name.get_String(iEnglishWs).Text).Select(type => type as IMoMorphType).FirstOrDefault();
 		}
 	}
 }

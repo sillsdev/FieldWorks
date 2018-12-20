@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -27,7 +27,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				case AtomicReferenceView.kFragAtomicRef:
 					// Display a paragraph with a single item.
-					vwenv.OpenParagraph();		// vwenv.OpenMappedPara();
+					vwenv.OpenParagraph();
 					if (!string.IsNullOrEmpty(TextStyle))
 					{
 						vwenv.set_StringProperty((int)FwTextPropType.ktptNamedStyle, TextStyle);

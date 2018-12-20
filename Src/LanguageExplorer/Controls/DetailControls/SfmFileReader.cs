@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,17 +10,17 @@ namespace LanguageExplorer.Controls.DetailControls
 {
 	public class SfmFileReader : ByteReader
 	{
-		protected int m_longestSfmSize;	// number of bytes in the longest sfm
+		protected int m_longestSfmSize; // number of bytes in the longest sfm
 		public int LongestSfm => m_longestSfmSize;
-		protected Dictionary<string, int> m_sfmUsage;			// count of all usage of a sfm
-		protected Dictionary<string, int> m_sfmWithDataUsage;	// count of sfms with data
+		protected Dictionary<string, int> m_sfmUsage;           // count of all usage of a sfm
+		protected Dictionary<string, int> m_sfmWithDataUsage;   // count of sfms with data
 		protected List<string> m_sfmOrder;
+
 		public SfmFileReader(string filename) : base(filename)
 		{
 			m_sfmUsage = new Dictionary<string, int>();
 			m_sfmWithDataUsage = new Dictionary<string, int>();
 			m_sfmOrder = new List<string>();
-
 			Init();
 		}
 
@@ -55,7 +55,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						}
 						m_sfmUsage.Add(sfm, 1);
 						m_sfmOrder.Add(sfm);
-						m_sfmWithDataUsage.Add(sfm, 0);	// create the key - not sure on data yet
+						m_sfmWithDataUsage.Add(sfm, 0); // create the key - not sure on data yet
 					}
 					// if there is data, then bump the sfm count with data
 					if (HasDataAfterRemovingWhiteSpace(sfmData))
@@ -73,7 +73,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private static bool HasDataAfterRemovingWhiteSpace(byte[] data)
 		{
-			var whitespace = new byte[] {0x20, 0x09, 0x0a, 0x0d};
+			var whitespace = new byte[] { 0x20, 0x09, 0x0a, 0x0d };
 			foreach (var dataByte in data)
 			{
 				int j;
@@ -81,7 +81,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					if (dataByte == whitespace[j])
 					{
-						break;	// found white space char, check the next one
+						break;  // found white space char, check the next one
 					}
 				}
 				if (j == whitespace.Length)

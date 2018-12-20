@@ -42,12 +42,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary />
 		private SimpleIntegerMatchDlg()
 		{
-			//
-			// Required for Windows Form Designer support
-			//
 			InitializeComponent();
 			m_comboMatchType.SelectedIndex = 0;
-
 			// Set the max and min values for the NumericUpDown controls
 			m_nudVal1.Maximum = m_nudVal2.Maximum = int.MaxValue;
 			m_nudVal1.Minimum = m_nudVal2.Minimum = int.MinValue;

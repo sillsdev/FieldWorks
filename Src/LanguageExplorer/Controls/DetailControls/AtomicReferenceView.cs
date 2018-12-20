@@ -1,13 +1,13 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Diagnostics;
 using System.Xml.Linq;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
@@ -21,7 +21,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		// View frags.
 		public const int kFragAtomicRef = 1;
 		public const int kFragObjName = 2;
-
 		protected AtomicReferenceVc m_atomicReferenceVc;
 		// this is used to guarantee correct initial size.
 		private int m_hOld;
@@ -38,7 +37,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public AtomicReferenceView()
 		{
-			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 		}
 
@@ -47,9 +45,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -105,7 +104,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-
 			ViewSizeChanged?.Invoke(this, new FwViewSizeEventArgs(RootBox.Height, RootBox.Width));
 		}
 
@@ -133,12 +131,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		public override void MakeRoot()
 		{
 			base.MakeRoot();
-
 			if (m_cache == null || DesignMode)
 			{
 				return;
 			}
-
 			SetReferenceVc();
 			RootBox.DataAccess = GetDataAccess();
 			SetRootBoxObj();
@@ -164,7 +160,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected override void OnLeave(EventArgs e)
 		{
 			base.OnLeave(e);
-
 			RootBox?.DestroySelection();
 		}
 

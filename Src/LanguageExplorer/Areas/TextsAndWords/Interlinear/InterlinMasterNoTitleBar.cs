@@ -18,14 +18,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal InterlinMasterNoTitleBar()
 		{
-			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 		}
 
 		internal InterlinMasterNoTitleBar(XElement configurationParametersElement, ISharedEventHandlers sharedEventHandlers, LcmCache cache, IRecordList recordList, ToolStripMenuItem fileMenu, ToolStripMenuItem printMenu)
 			: base(configurationParametersElement, sharedEventHandlers, cache, recordList, fileMenu, printMenu, false)
 		{
-			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
 			Dock = DockStyle.Fill;
 		}

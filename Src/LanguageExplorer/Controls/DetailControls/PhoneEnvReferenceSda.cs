@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,11 +11,10 @@ namespace LanguageExplorer.Controls.DetailControls
 {
 	internal class PhoneEnvReferenceSda : DomainDataByFlidDecoratorBase
 	{
-		Dictionary<int, List<int>> m_MainObjEnvs = new Dictionary<int, List<int>>();
-		Dictionary<int, ITsString> m_EnvStringReps = new Dictionary<int, ITsString>();
-		Dictionary<int, string> m_ErrorMsgs = new Dictionary<int, string>();
-
-		int m_NextDummyId = -500000;
+		private Dictionary<int, List<int>> m_MainObjEnvs = new Dictionary<int, List<int>>();
+		private Dictionary<int, ITsString> m_EnvStringReps = new Dictionary<int, ITsString>();
+		private Dictionary<int, string> m_ErrorMsgs = new Dictionary<int, string>();
+		private int m_NextDummyId = -500000;
 
 		public PhoneEnvReferenceSda(ISilDataAccessManaged domainDataByFlid)
 			: base(domainDataByFlid)
@@ -51,12 +50,10 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					m_MainObjEnvs.Remove(hvoObj);
 				}
-
 				if (m_EnvStringReps.ContainsKey(hvoObj))
 				{
 					m_EnvStringReps.Remove(hvoObj);
 				}
-
 				if (m_ErrorMsgs.ContainsKey(hvoObj))
 				{
 					m_ErrorMsgs.Remove(hvoObj);

@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -22,6 +22,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			ContextStringLength = length;
 			AllowContentEditing = fAllowEdit;
 		}
+
 		/// <summary>
 		/// This gets the object that the slice is mainly about, often an StTxtPara.
 		/// </summary>

@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,7 +13,8 @@ namespace LanguageExplorer.Controls.DetailControls
 {
 	internal class DummyObjectSlice : Slice
 	{
-		private XElement m_node; // Node with name="seq" that controls the sequence we're a dummy for
+		// Node with name="seq" that controls the sequence we're a dummy for
+		private XElement m_node;
 		// Path of parent slice info up to and including m_node.
 		// We can't use a List<int>, as the Arraylist may hold XmlNodes and ints, at least.
 		private ArrayList m_path;
@@ -41,32 +42,13 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		#region IDisposable override
 
-		/// <summary>
-		/// Executes in two distinct scenarios.
-		///
-		/// 1. If disposing is true, the method has been called directly
-		/// or indirectly by a user's code via the Dispose method.
-		/// Both managed and unmanaged resources can be disposed.
-		///
-		/// 2. If disposing is false, the method has been called by the
-		/// runtime from inside the finalizer and you should not reference (access)
-		/// other managed objects, as they already have been garbage collected.
-		/// Only unmanaged resources can be disposed.
-		/// </summary>
-		/// <param name="disposing"></param>
-		/// <remarks>
-		/// If any exceptions are thrown, that is fine.
-		/// If the method is being done in a finalizer, it will be ignored.
-		/// If it is thrown by client code calling Dispose,
-		/// it needs to be handled by fixing the bug.
-		///
-		/// If subclasses override this method, they should call the base implementation.
-		/// </remarks>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -96,7 +78,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			// We stand in for the slice at 'index', and that is to be replaced. But we might stand for earlier
 			// slices too: how many indicates what we have to add to m_ihvoMin.
-
 			// Note: I (RandyR) don't think the same one can stand in for multiple dummies now.
 			// We don't use a dummy slice in more than one place.
 			// Each are created individually, if more than one is needed.
@@ -122,15 +103,12 @@ namespace LanguageExplorer.Controls.DetailControls
 				// Any occurrences after index get replaced by a new one with suitable ihvoMin.
 				// Note this must be done before we insert an unknown number of extra slices
 				// by calling CreateSlicesFor.
-				var dosRep = new DummyObjectSlice(Indent, m_node, path, MyCmObject, m_flid, ihvo + 1, m_layoutName, m_layoutChoiceField, m_caller) {Cache = Cache, ParentSlice = ParentSlice};
-				for (var islice = index + 1;
-					islice < ContainingDataTree.Slices.Count && ContainingDataTree.Slices[islice] == this;
-					islice++)
+				var dosRep = new DummyObjectSlice(Indent, m_node, path, MyCmObject, m_flid, ihvo + 1, m_layoutName, m_layoutChoiceField, m_caller) { Cache = Cache, ParentSlice = ParentSlice };
+				for (var islice = index + 1; islice < ContainingDataTree.Slices.Count && ContainingDataTree.Slices[islice] == this; islice++)
 				{
 					ContainingDataTree.RawSetSlice(islice, dosRep);
 				}
 			}
-
 			// Save these, we may get disposed soon, can't get them from member data any more.
 			var containingTree = ContainingDataTree;
 			var parentSlice = ParentSlice;
@@ -151,7 +129,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected override void WndProc(ref Message m)
 		{
 			var aspY = AutoScrollPosition.Y;
-			base.WndProc (ref m);
+			base.WndProc(ref m);
 #if DEBUG
 			if (aspY != AutoScrollPosition.Y)
 			{

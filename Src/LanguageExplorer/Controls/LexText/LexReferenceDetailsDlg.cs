@@ -31,9 +31,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary />
 		private LexReferenceDetailsDlg()
 		{
-			//
-			// Required for Windows Form Designer support
-			//
 			InitializeComponent();
 			AccessibleName = GetType().Name;
 		}

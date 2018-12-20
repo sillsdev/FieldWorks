@@ -57,12 +57,8 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				return;
 			}
-			//
-			// Required for Windows Form Designer support
-			//
 			InitializeComponent();
 			AccessibleName = GetType().Name;
-
 			m_le = null;
 		}
 

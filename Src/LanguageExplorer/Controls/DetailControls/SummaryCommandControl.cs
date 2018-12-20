@@ -1,9 +1,10 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -19,17 +20,17 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// This menu contains the items that are displayed when the context menu icon is clicked,
 		/// and which are displayed in buttons as space permits.
 		/// </summary>
-		SummarySlice m_slice;
-		bool m_fInLayout;
-		Font m_hotLinkFont;
+		private SummarySlice m_slice;
+		private bool m_fInLayout;
+		private Font m_hotLinkFont;
 		// list of menu items we are displaying as buttons.
-		List<ToolStripItem> m_buttonMenuItems = new List<ToolStripItem>();
-		bool[] m_buttonDrawnEnabled;
+		private List<ToolStripItem> m_buttonMenuItems = new List<ToolStripItem>();
+		private bool[] m_buttonDrawnEnabled;
 		// x coord of left of first button.
-		int m_firstButtonOffset;
-		int m_lastWidth;
-		List<Tuple<ToolStripMenuItem, EventHandler>> m_hotlinksMenuItems; // Menu last created by OnLayout. Need consistent one for OnClick.
-		Timer m_timer;
+		private int m_firstButtonOffset;
+		private int m_lastWidth;
+		private List<Tuple<ToolStripMenuItem, EventHandler>> m_hotlinksMenuItems; // Menu last created by OnLayout. Need consistent one for OnClick.
+		private Timer m_timer;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -39,9 +40,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		internal SummaryCommandControl(SummarySlice slice, SliceHotlinksMenuFactory sliceHotlinksMenuFactory, SliceLeftEdgeContextMenuFactory sliceLeftEdgeContextMenuFactory)
 		{
-			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
-
 			m_slice = slice;
 			MySliceHotlinksMenuFactory = sliceHotlinksMenuFactory;
 			MySliceLeftEdgeContextMenuFactory = sliceLeftEdgeContextMenuFactory;
@@ -50,23 +49,22 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				Interval = 400 // ms
 			};
-
 			m_timer.Tick += m_timer_Tick;
 		}
 
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
-			if( disposing )
+			if (disposing)
 			{
 				MySliceHotlinksMenuFactory.DisposeHotLinksMenus(m_hotlinksMenuItems);
 				if (m_timer != null)
@@ -88,7 +86,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			MySliceHotlinksMenuFactory = null;
 			MySliceLeftEdgeContextMenuFactory = null;
 
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#region Component Designer generated code
@@ -119,13 +117,11 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-
-			base.OnLayout (levent);
+			base.OnLayout(levent);
 			if (m_fInLayout)
 			{
 				return;
 			}
-
 			var graphics = CreateGraphics();
 			try
 			{
@@ -161,7 +157,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					return;
 				}
-
 				var availButtonWidth = Width - 2;
 				foreach (var menuItemTuple in m_hotlinksMenuItems)
 				{
@@ -189,7 +184,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);
-
 			var xPos = m_firstButtonOffset;
 			using (var graphics = e.Graphics)
 			using (Brush brush = new SolidBrush(Color.Blue))
@@ -198,7 +192,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				var i = 0;
 				foreach (var item in m_buttonMenuItems)
 				{
-					var label = item.Text.Replace("_",string.Empty);
+					var label = item.Text.Replace("_", string.Empty);
 					m_buttonDrawnEnabled[i] = item.Enabled;
 					graphics.DrawString(label, m_hotLinkFont, (item.Enabled ? brush : disabledBrush), xPos, 0);
 					xPos += (int)graphics.MeasureString(label, m_hotLinkFont).Width + kGapInBetweenButtons;
@@ -213,7 +207,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected override void OnVisibleChanged(EventArgs e)
 		{
-			base.OnVisibleChanged (e);
+			base.OnVisibleChanged(e);
 			if (!Visible)
 			{
 				m_timer.Stop();  // no point invalidating while hidden!
@@ -222,7 +216,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected override void OnSizeChanged(EventArgs e)
 		{
-			base.OnSizeChanged (e);
+			base.OnSizeChanged(e);
 			if (Width == m_lastWidth)
 			{
 				return;

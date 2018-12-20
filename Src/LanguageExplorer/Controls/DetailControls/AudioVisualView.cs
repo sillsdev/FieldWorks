@@ -1,7 +1,8 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Diagnostics;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Controls.DetailControls
@@ -12,7 +13,6 @@ namespace LanguageExplorer.Controls.DetailControls
 	internal class AudioVisualView : RootSiteControl
 	{
 		internal const int kfragPathname = 0;
-
 		private System.ComponentModel.IContainer components = null;
 		private ICmFile m_file;
 		private int m_flid;
@@ -20,7 +20,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public AudioVisualView()
 		{
-			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 		}
 
@@ -45,9 +44,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -84,16 +84,13 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-
 			base.MakeRoot();
-
 			RootBox.DataAccess = m_cache.DomainDataByFlid;
 			m_vc = new AudioVisualVc(m_cache, m_flid, "InternalPath");
 			if (m_file != null)
 			{
 				RootBox.SetRootObject(m_file.Hvo, m_vc, kfragPathname, RootBox.Stylesheet);
 			}
-
 		}
 
 		#endregion // RootSite required methods

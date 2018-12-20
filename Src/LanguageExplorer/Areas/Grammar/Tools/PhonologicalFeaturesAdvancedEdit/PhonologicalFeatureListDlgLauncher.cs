@@ -20,7 +20,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 		/// <summary />
 		public PhonologicalFeatureListDlgLauncher()
 		{
-			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 		}
 

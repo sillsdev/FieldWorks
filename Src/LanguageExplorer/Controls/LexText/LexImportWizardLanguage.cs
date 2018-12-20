@@ -80,14 +80,10 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary />
 		private LexImportWizardLanguage()
 		{
-			//
-			// Required for Windows Form Designer support
-			//
 			InitializeComponent();
 			AccessibleName = GetType().Name;
-
 			m_wsInfo = new Dictionary<string, WsInfo>();
-			m_LangDesc = m_wsName = m_encConverter = "";
+			m_LangDesc = m_wsName = m_encConverter = string.Empty;
 			m_AddUsage = true;	// this is an "Add" use of the dlg by default
 			btnOK.Enabled = false;
 		}

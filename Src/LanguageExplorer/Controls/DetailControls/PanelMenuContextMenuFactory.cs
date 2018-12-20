@@ -1,11 +1,10 @@
-// Copyright (c) 2018 SIL International
+// Copyright (c) 2018-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Windows.Forms;
 using SIL.Code;
 
@@ -81,7 +80,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (_isDisposed)
 			{
-				return; // No need to do it more than once.
+				// No need to run it more than once.
+				return;
 			}
 
 			if (disposing)

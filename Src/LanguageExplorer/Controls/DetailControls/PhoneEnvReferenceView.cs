@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,16 +10,16 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Areas;
-using SIL.LCModel.Core.Phonology;
-using SIL.LCModel.Core.Text;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using LanguageExplorer.Controls.DetailControls.Resources;
 using SIL.Code;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Application;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Phonology;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
@@ -34,23 +34,19 @@ namespace LanguageExplorer.Controls.DetailControls
 		#region Constants and data members
 
 		// Fake flids.
-		public const int kMainObjEnvironments = -5001;	// reference vector
-		public const int kEnvStringRep = -5002;			// TsString
-		public const int kErrorMessage = -5003;			// unicode
-
-		public const int kDummyClass = -2;				// used to create a new environment
-
+		public const int kMainObjEnvironments = -5001;  // reference vector
+		public const int kEnvStringRep = -5002;         // TsString
+		public const int kErrorMessage = -5003;         // unicode
+		public const int kDummyClass = -2;              // used to create a new environment
 		//Fake Ids.
 		public const int kDummyPhoneEnvID = -1;
 		private int m_id = -1000000;
-
 		// View frags.
 		public const int kFragEnvironments = 1;
 		public const int kFragPositions = 2;
 		public const int kFragStringRep = 3;
 		public const int kFragAnnotation = 4;
 		public const int kFragEnvironmentObj = 5;
-
 		// A cache used to interact with the Views code,
 		// but which is not the one in the LcmCache.
 		private PhoneEnvReferenceSda m_sda;
@@ -63,14 +59,13 @@ namespace LanguageExplorer.Controls.DetailControls
 		private Dictionary<int, IPhEnvironment> m_realEnvs = new Dictionary<int, IPhEnvironment>();
 		private SliceRightClickPopupMenuFactory _rightClickPopupMenuFactory;
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> _contextMenuTuple;
-
 		private System.ComponentModel.IContainer components = null;
+		private int m_heightView;
 
 		/// <summary>
 		/// This allows the view to communicate size changes to the embedding slice.
 		/// </summary>
 		internal event FwViewSizeChangedEventHandler ViewSizeChanged;
-		private int m_heightView;
 
 		#endregion // Constants and data members
 
@@ -84,7 +79,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public PhoneEnvReferenceView()
 		{
-			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 		}
 
@@ -108,9 +102,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -181,7 +176,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				dummyHvo = kvp.Key;
 				break;
 			}
-
 			if (dummyHvo == 0)
 			{
 				return;
@@ -214,13 +208,12 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				rep = DummyString;
 			}
-
 			InsertPhoneEnv(dummyHvo, rep, m_sda.get_VecSize(m_rootObj.Hvo, kMainObjEnvironments));
 		}
 
 		private void InsertPhoneEnv(int dummyHvo, ITsString rep, int location)
 		{
-			m_sda.CacheReplace(m_rootObj.Hvo, kMainObjEnvironments, location, location, new[] {dummyHvo}, 1);
+			m_sda.CacheReplace(m_rootObj.Hvo, kMainObjEnvironments, location, location, new[] { dummyHvo }, 1);
 			m_sda.SetString(dummyHvo, kEnvStringRep, rep);
 		}
 
@@ -234,15 +227,11 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-
 			m_PhoneEnvReferenceVc = new PhoneEnvReferenceVc(m_cache);
 			m_sda = new PhoneEnvReferenceSda(m_cache.DomainDataByFlid as ISilDataAccessManaged);
-
 			// Populate m_vwCache with data.
 			ResynchListToDatabase();
-
 			base.MakeRoot();
-
 			RootBox.DataAccess = m_sda;
 			RootBox.SetRootObject(m_rootObj.Hvo, m_PhoneEnvReferenceVc, kFragEnvironments, null);
 			m_heightView = RootBox.Height;
@@ -295,37 +284,33 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-
 			// Get the string value for the old selection before it possibly changes due to a delete.
 			ITsString tssOldSel = null;
 			if (m_hvoOldSelection < 0)
 			{
 				tssOldSel = m_sda.get_StringProp(m_hvoOldSelection, kEnvStringRep);
 			}
-
 			base.HandleSelectionChange(rootb, vwselNew);
-
 			ITsString tss;
 			int ichAnchor;
 			bool fAssocPrev;
 			int hvoObj;
 			int tag;
-			int ws; // NB: This will be 0 after each call, since the string does
+			// NB: This will be 0 after each call, since the string does
+			int ws;
 			// not have alternatives. Ws would be the WS of an alternative,
 			// if there were any.
 			vwselNew.TextSelInfo(false, out tss, out ichAnchor, out fAssocPrev, out hvoObj, out tag, out ws); // start of string info
-
 			int ichEnd;
 			int hvoObjEnd;
 			vwselNew.TextSelInfo(true, out tss, out ichEnd, out fAssocPrev, out hvoObjEnd, out tag, out ws); // end of string info
-
 			if (hvoObjEnd != hvoObj)
-			{	// owner of the end of the string in not the same as at the beginning - is this possible?
+			{   // owner of the end of the string in not the same as at the beginning - is this possible?
 				CheckHeight();
 				return;
 			}
 			if (m_hvoOldSelection < 0 && (hvoObj != m_hvoOldSelection || (tssOldSel != null && tssOldSel.Length > 0)))
-			{	// the new selection is owned by a different object (left the selection) or the old one is not empty
+			{   // the new selection is owned by a different object (left the selection) or the old one is not empty
 				// Try to validate previously selected string rep.
 				var tssOld = m_sda.get_StringProp(m_hvoOldSelection, kEnvStringRep);
 				if (tssOld == null || tssOld.Length == 0)
@@ -363,7 +348,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				CheckHeight();
 				return;
 			}
-
 			// This point is only passed when the empty env pattern becomes "real"
 			// or when this is the original PropChanged pass and the string is null.
 			// This happens when
@@ -372,12 +356,12 @@ namespace LanguageExplorer.Controls.DetailControls
 			// Before this, the empty env is a placeholder for the next env.
 			// After it is made real by giving it an hvo for the sda and selection mechanisms,
 			// it must not pass this point again.
-
 			// Create a new object, and recreate a new empty object.
 			var count = m_sda.get_VecSize(m_rootObj.Hvo, kMainObjEnvironments);
 			var hvoNew = InsertNewEnv(count - 1);
 			m_sda.SetString(hvoNew, kEnvStringRep, tss); // set the last env to the pattern
-			m_sda.SetString(kDummyPhoneEnvID, kEnvStringRep, DummyString); // set a new empty env
+			// set a new empty env
+			m_sda.SetString(kDummyPhoneEnvID, kEnvStringRep, DummyString);
 			// Refresh to create a new view box for the DummyString? (doesn't seem to work)
 			RootBox.PropChanged(m_rootObj.Hvo, kMainObjEnvironments, count - 1, 2, 1);
 			// Set selection after the just added character or on the right side of the separator bar.
@@ -409,7 +393,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-
 			ViewSizeChanged?.Invoke(this, new FwViewSizeEventArgs(hNew, RootBox.Width));
 			m_heightView = hNew;
 		}
@@ -434,7 +417,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				MakeSquigglyLine(hvoDummyObj, m_validator.ErrorMessage, ref tss, ref bldr);
 			}
-
 			if (m_realEnvs.ContainsKey(hvoDummyObj))
 			{
 				// Reset the original env, but only if it is invalid.
@@ -443,7 +425,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					UndoableUnitOfWorkHelper.Do(DetailControlsStrings.ksUndoChange, DetailControlsStrings.ksRedoChange, env, () => { env.StringRepresentation = tss; });
 					ConstraintFailure failure;
-					env.CheckConstraints(PhEnvironmentTags.kflidStringRepresentation, true, out failure, /* adjust the squiggly line */ true );
+					env.CheckConstraints(PhEnvironmentTags.kflidStringRepresentation, true, out failure, /* adjust the squiggly line */ true);
 				}
 			}
 			m_sda.SetString(hvoDummyObj, kEnvStringRep, bldr.GetString());
@@ -468,7 +450,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </remarks>
 		private void MakeSquigglyLine(int hvo, string validatorMessage, ref ITsString tss, ref ITsStrBldr bldr)
 		{
-
 			// the validator message, unfortunately, maybe invalid XML if
 			// there were XML reserved characters in the environment.
 			// until we get that fixed, at least don't crash, just draw squiggly under the entire word
@@ -482,7 +463,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			catch
 			{
 			}
-
 			var len = tss.Length;
 			if (pos >= len)
 			{
@@ -491,7 +471,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			var col = Color.Red;
 			bldr.SetIntPropValues(pos, len, (int)FwTextPropType.ktptUnderline, (int)FwTextPropVar.ktpvEnum, (int)FwUnderlineType.kuntSquiggle);
 			bldr.SetIntPropValues(pos, len, (int)FwTextPropType.ktptUnderColor, (int)FwTextPropVar.ktpvDefault, col.R + (col.B * 256 + col.G) * 256);
-
 			//!!!NB: the code up to this point is, at least on the surface, identical to code in
 			//PhEnvStrRepresentationSlice. so if you make a change here, go make it over there.
 			//I assume this was done for lack of a commonplace to put the code?
@@ -511,7 +490,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		/// <summary>
-		/// This method clears the local cache of the any Enviromnents that were stored
+		/// This method clears the local cache of the any Environments that were stored
 		/// for the slice and reloads them from the database.
 		/// </summary>
 		private void ResynchListToDatabase()
@@ -544,8 +523,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </remarks>
 		private ITsString GetTsStringOfEnvironment(int localDummyHvoOfAnEnvironmentInEntry)
 		{
-			var environmentTssRep = m_sda.get_StringProp(localDummyHvoOfAnEnvironmentInEntry, kEnvStringRep);
-			return environmentTssRep ?? TsStringUtils.EmptyString(m_cache.DefaultAnalWs);
+			return m_sda.get_StringProp(localDummyHvoOfAnEnvironmentInEntry, kEnvStringRep) ?? TsStringUtils.EmptyString(m_cache.DefaultAnalWs);
 		}
 
 		/// <summary>
@@ -601,13 +579,10 @@ namespace LanguageExplorer.Controls.DetailControls
 				var environmentFactory = m_cache.ServiceLocator.GetInstance<IPhEnvironmentFactory>();
 				var allAvailablePhoneEnvironmentsInProject = m_cache.LanguageProject.PhonologicalDataOA.EnvironmentsOS;
 				var envsBeingRequestedForThisEntry = EnvsBeingRequestedForThisEntry();
-
 				// Environments just typed into slice that are not already used for
 				// this entry or known about in the project.
-				var newEnvsJustTyped = envsBeingRequestedForThisEntry.Where(localDummyHvoOfAnEnvInEntry =>
-						!allAvailablePhoneEnvironmentsInProject
-							.Select(projectEnv => RemoveSpaces(projectEnv.StringRepresentation.Text))
-							.Contains(RemoveSpaces(GetStringOfEnvironment(localDummyHvoOfAnEnvInEntry))));
+				var newEnvsJustTyped = envsBeingRequestedForThisEntry.Where(localDummyHvoOfAnEnvInEntry => !allAvailablePhoneEnvironmentsInProject
+							.Select(projectEnv => RemoveSpaces(projectEnv.StringRepresentation.Text)).Contains(RemoveSpaces(GetStringOfEnvironment(localDummyHvoOfAnEnvInEntry))));
 				// Add the unknown/new environments to project
 				foreach (var localDummyHvoOfAnEnvironmentInEntry in newEnvsJustTyped)
 				{
@@ -616,7 +591,6 @@ namespace LanguageExplorer.Controls.DetailControls
 					allAvailablePhoneEnvironmentsInProject.Add(newEnv);
 					newEnv.StringRepresentation = envTssRep;
 				}
-
 				var countOfExistingEnvironmentsInDatabaseForEntry = m_cache.DomainDataByFlid.get_VecSize(m_rootObj.Hvo, m_rootFlid);
 				// Contains environments already in entry or recently selected in
 				// dialog, but not ones just typed
@@ -627,7 +601,6 @@ namespace LanguageExplorer.Controls.DetailControls
 					m_cache.DomainDataByFlid.VecProp(m_rootObj.Hvo, m_rootFlid, chvoMax, out chvoMax, arrayPtr);
 					existingListOfEnvironmentHvosInDatabaseForEntry = MarshalEx.NativeToArray<int>(arrayPtr, chvoMax);
 				}
-
 				// Build up a list of real hvos used in database for the
 				// environments in the entry
 				var newListOfEnvironmentHvosForEntry = new List<int>();
@@ -635,15 +608,12 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					var envTssRep = GetTsStringOfEnvironment(localDummyHvoOfAnEnvironmentInEntry);
 					var envStringRep = envTssRep.Text;
-
 					// Pick a sensible environment from the known environments in
 					// the project, by string
 					var anEnvironmentInEntry = FindPhoneEnv(allAvailablePhoneEnvironmentsInProject, envStringRep, newListOfEnvironmentHvosForEntry.ToArray(), existingListOfEnvironmentHvosInDatabaseForEntry);
-
 					// Maybe the ws has changed, so change the real env in database,
 					// in case.
 					anEnvironmentInEntry.StringRepresentation = envTssRep;
-
 					var bldr = envTssRep.GetBldr();
 					ConstraintFailure failure;
 					if (anEnvironmentInEntry.CheckConstraints(PhEnvironmentTags.kflidStringRepresentation, false, out failure, true))
@@ -654,19 +624,15 @@ namespace LanguageExplorer.Controls.DetailControls
 					{
 						MakeSquigglyLine(localDummyHvoOfAnEnvironmentInEntry, failure.XmlDescription, ref envTssRep, ref bldr);
 					}
-
 					newListOfEnvironmentHvosForEntry.Add(anEnvironmentInEntry.Hvo);
-
 					// Refresh
 					m_sda.SetString(localDummyHvoOfAnEnvironmentInEntry, kEnvStringRep, bldr.GetString());
 					RootBox.PropChanged(localDummyHvoOfAnEnvironmentInEntry, kEnvStringRep, 0, envTssRep.Length, envTssRep.Length);
 				}
-
 				// Only reset the main property, if it has changed.
 				// Otherwise, the parser gets too excited about needing to reload.
-				if ((countOfExistingEnvironmentsInDatabaseForEntry !=
-					newListOfEnvironmentHvosForEntry.Count) ||
-					!equalArrays(existingListOfEnvironmentHvosInDatabaseForEntry, newListOfEnvironmentHvosForEntry.ToArray()))
+				if (countOfExistingEnvironmentsInDatabaseForEntry != newListOfEnvironmentHvosForEntry.Count
+				    || !equalArrays(existingListOfEnvironmentHvosInDatabaseForEntry, newListOfEnvironmentHvosForEntry.ToArray()))
 				{
 					m_cache.DomainDataByFlid.Replace(m_rootObj.Hvo, m_rootFlid, 0, countOfExistingEnvironmentsInDatabaseForEntry, newListOfEnvironmentHvosForEntry.ToArray(), newListOfEnvironmentHvosForEntry.Count);
 				}
@@ -691,7 +657,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			for (var i = countOfThisEntrysEnvironments - 1; i >= 0; i--) // count down so deletions don't mess things up
 			{
 				var localDummyHvoOfAnEnvironmentInEntry = m_sda.get_VecItem(m_rootObj.Hvo, kMainObjEnvironments, i);
-
 				// Remove and exclude blank entries
 				var envStringRep = GetStringOfEnvironment(localDummyHvoOfAnEnvironmentInEntry);
 				if (envStringRep == null || envStringRep.Trim().Length == 0)
@@ -704,7 +669,6 @@ namespace LanguageExplorer.Controls.DetailControls
 					m_hvoOldSelection = oldSelId;
 					continue;
 				}
-
 				envsBeingRequestedForThisEntry.Add(localDummyHvoOfAnEnvironmentInEntry);
 			}
 			return envsBeingRequestedForThisEntry;
@@ -736,8 +700,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		private static IPhEnvironment FindPhoneEnv(ILcmOwningSequence<IPhEnvironment> allProjectEnvs, string environmentPattern, int[] alreadyUsedHvos, int[] preferredHvos)
 		{
 			// Try to find a match in the preferred set that isn't already used
-			var preferredMatches = preferredHvos.Where(preferredHvo =>
-				EqualsIgnoringSpaces(GetEnvironmentFromHvo(allProjectEnvs, preferredHvo).StringRepresentation.Text, environmentPattern)).ToList();
+			var preferredMatches = preferredHvos.Where(preferredHvo => EqualsIgnoringSpaces(GetEnvironmentFromHvo(allProjectEnvs, preferredHvo).StringRepresentation.Text, environmentPattern)).ToList();
 			if (preferredMatches.Any())
 			{
 				var unusedPreferred = preferredMatches.Except(alreadyUsedHvos);
@@ -746,25 +709,15 @@ namespace LanguageExplorer.Controls.DetailControls
 					return GetEnvironmentFromHvo(allProjectEnvs, unusedPreferred.First());
 				}
 			}
-
 			// Broaden where we look to all project environments
-			var anyMatches = allProjectEnvs.Where(env =>
-				EqualsIgnoringSpaces(env.StringRepresentation.Text, environmentPattern));
+			var anyMatches = allProjectEnvs.Where(env => EqualsIgnoringSpaces(env.StringRepresentation.Text, environmentPattern)).ToList();
 			if (!anyMatches.Any())
 			{
 				return null; // Shouldn't happen if adding envs new to project ahead of time.
 			}
-
 			// Try to return a match that isn't already used.
-			var unused = anyMatches.Select(env => env.Hvo).Except(alreadyUsedHvos);
-
-			if (unused.Any())
-			{
-				return GetEnvironmentFromHvo(allProjectEnvs, unused.First());
-			}
-
-			// Just re-use an env
-			return anyMatches.First();
+			var unused = anyMatches.Select(env => env.Hvo).Except(alreadyUsedHvos).ToList();
+			return unused.Any() ? GetEnvironmentFromHvo(allProjectEnvs, unused.First()) : anyMatches.First();
 		}
 
 		/// <summary>
@@ -782,16 +735,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return false;
 			}
-			for (var i = 0; i < v1.Length; i++)
-			{
-				if (v1[i] != v2[i])
-				{
-					return false;
-				}
-			}
-			return true;
+			return !v1.Where((t, i) => t != v2[i]).Any();
 		}
-
 
 		#endregion // Other methods
 
@@ -888,7 +833,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					return false;
 				}
-
 				if (tss == null || hvoDummyObj == 0)
 				{
 					return true;
@@ -911,7 +855,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					return false;
 				}
-
 				if (tss == null || hvoDummyObj == 0)
 				{
 					return false;
@@ -922,7 +865,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					return false;
 				}
 				var ichSlash = s.IndexOf('/');
-				return (ichSlash >= 0) && (ichEnd > ichSlash) && (ichAnchor > ichSlash) && (s.IndexOf('_') < 0);
+				return ichSlash >= 0 && ichEnd > ichSlash && ichAnchor > ichSlash && s.IndexOf('_') < 0;
 			}
 		}
 
@@ -939,7 +882,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					return false;
 				}
-
 				if (tss == null || hvoDummyObj == 0)
 				{
 					return false;
@@ -962,7 +904,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					return false;
 				}
-
 				if (tss == null || hvoDummyObj == 0)
 				{
 					return false;
@@ -1024,22 +965,11 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return false;
 			}
-
-			var contextMenuId = string.Empty;
-			if (m_realEnvs.ContainsKey(hvoDummy))
-			{
-				//// This *may* display the "Show in Environments list" item in the popup menu, in
-				//// addition to all the Insert X" items.
-				contextMenuId = Cache.DomainDataByFlid.MetaDataCache.GetDstClsId(m_rootFlid) == PhEnvironmentTags.kClassId ? AreaServices.mnuEnvReferenceChoices : AreaServices.mnuReferenceChoices;
-			}
-			else
-			{
-				contextMenuId = AreaServices.mnuEnvReferenceChoices;
-			}
-
+			var contextMenuId = m_realEnvs.ContainsKey(hvoDummy)
+				? Cache.DomainDataByFlid.MetaDataCache.GetDstClsId(m_rootFlid) == PhEnvironmentTags.kClassId ? AreaServices.mnuEnvReferenceChoices
+				: AreaServices.mnuReferenceChoices : AreaServices.mnuEnvReferenceChoices;
 			_contextMenuTuple = _rightClickPopupMenuFactory.GetPopupContextMenu(MySlice, contextMenuId);
 			_contextMenuTuple.Item1.Show(new Point(Cursor.Position.X, Cursor.Position.Y));
-
 			return true;
 		}
 

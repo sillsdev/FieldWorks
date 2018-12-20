@@ -47,30 +47,22 @@ namespace LanguageExplorer.Impls
 		/// <inheritdoc />
 		public FwHelpAbout()
 		{
-			//
-			// Required for Windows Form Designer support
-			//
 			InitializeComponent();
 			AccessibleName = GetType().Name;
-
 			// Cache the format strings. The control labels will be overwritten when the
 			// dialog is shown.
 			m_sAvailableMemoryFmt = edtAvailableMemory.Text;
 			m_sTitleFmt = Text;
 			m_sAvailableDiskSpaceFmt = edtAvailableDiskSpace.Text;
-
 			if (MiscUtils.IsUnix)
 			{
 				// Link to System Monitor
-
 				// Hide memory and disk usage fields and show a link to
 				// Gnome System Monitor in their place.
-
 				lblAvailableMemory.Visible = false;
 				edtAvailableMemory.Visible = false;
 				lblAvailableDiskSpace.Visible = false;
 				edtAvailableDiskSpace.Visible = false;
-
 				var systemMonitorLink = new LinkLabel
 				{
 					Text = LanguageExplorerResources.kstidMemoryDiskUsageInformation,
@@ -83,9 +75,7 @@ namespace LanguageExplorer.Impls
 				};
 				systemMonitorLink.LinkClicked += HandleSystemMonitorLinkClicked;
 				Controls.Add(systemMonitorLink);
-
 				// Package information
-
 				var oldHeight = Height;
 				Height += 200;
 				var packageVersionLabel = new Label { Text = "Package versions:", Top = oldHeight - 20, Width = this.Width - 10 };
@@ -100,18 +90,11 @@ namespace LanguageExplorer.Impls
 				};
 				Controls.Add(packageVersionLabel);
 				Controls.Add(versionInformation);
-
-				foreach (var info in LinuxPackageUtils.FindInstalledPackages("fieldworks")
-					.Concat(LinuxPackageUtils.FindInstalledPackages("fieldworks-applications"))
-					.Concat(LinuxPackageUtils.FindInstalledPackages("fieldworks-enc-converters"))
-					.Concat(LinuxPackageUtils.FindInstalledPackages("flexbridge"))
-					.Concat(LinuxPackageUtils.FindInstalledPackages("fieldworks-l10n-*"))
-					.Concat(LinuxPackageUtils.FindInstalledPackages("mono4-sil"))
-					.Concat(LinuxPackageUtils.FindInstalledPackages("libgdiplus4-sil"))
-					.Concat(LinuxPackageUtils.FindInstalledPackages("gtk-sharp4-sil"))
-					.Concat(LinuxPackageUtils.FindInstalledPackages("mono-basic4-sil"))
-					.Concat(LinuxPackageUtils.FindInstalledPackages("chmsee"))
-					.Concat(LinuxPackageUtils.FindInstalledPackages("pathway")))
+				foreach (var info in LinuxPackageUtils.FindInstalledPackages("fieldworks").Concat(LinuxPackageUtils.FindInstalledPackages("fieldworks-applications"))
+					.Concat(LinuxPackageUtils.FindInstalledPackages("fieldworks-enc-converters")).Concat(LinuxPackageUtils.FindInstalledPackages("flexbridge"))
+					.Concat(LinuxPackageUtils.FindInstalledPackages("fieldworks-l10n-*")).Concat(LinuxPackageUtils.FindInstalledPackages("mono4-sil"))
+					.Concat(LinuxPackageUtils.FindInstalledPackages("libgdiplus4-sil")).Concat(LinuxPackageUtils.FindInstalledPackages("gtk-sharp4-sil"))
+					.Concat(LinuxPackageUtils.FindInstalledPackages("mono-basic4-sil")).Concat(LinuxPackageUtils.FindInstalledPackages("chmsee")).Concat(LinuxPackageUtils.FindInstalledPackages("pathway")))
 				{
 					versionInformation.AppendText($"{info.Key} {info.Value}{Environment.NewLine}");
 				}

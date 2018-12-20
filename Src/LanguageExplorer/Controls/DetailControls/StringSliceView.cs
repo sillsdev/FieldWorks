@@ -1,8 +1,9 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -15,11 +16,12 @@ namespace LanguageExplorer.Controls.DetailControls
 {
 	internal class StringSliceView : RootSiteControl, INotifyControlInCurrentSlice
 	{
-		ICmObject m_obj;
-		readonly int m_hvoObj;
-		readonly int m_flid;
-		readonly int m_ws; // -1 signifies not a multilingual property
-		IVwViewConstructor m_vc;
+		private ICmObject m_obj;
+		private readonly int m_hvoObj;
+		private readonly int m_flid;
+		private readonly int m_ws; // -1 signifies not a multilingual property
+		private IVwViewConstructor m_vc;
+		private bool m_fShowWsLabel;
 
 		public StringSliceView(int hvo, int flid, int ws)
 		{
@@ -29,7 +31,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			DoSpellCheck = true;
 		}
 
-		bool m_fShowWsLabel;
 		/// <summary>
 		/// Set the flag to display writing system labels even for monolingual strings.
 		/// </summary>
@@ -61,32 +62,13 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		#region IDisposable override
 
-		/// <summary>
-		/// Executes in two distinct scenarios.
-		///
-		/// 1. If disposing is true, the method has been called directly
-		/// or indirectly by a user's code via the Dispose method.
-		/// Both managed and unmanaged resources can be disposed.
-		///
-		/// 2. If disposing is false, the method has been called by the
-		/// runtime from inside the finalizer and you should not reference (access)
-		/// other managed objects, as they already have been garbage collected.
-		/// Only unmanaged resources can be disposed.
-		/// </summary>
-		/// <param name="disposing"></param>
-		/// <remarks>
-		/// If any exceptions are thrown, that is fine.
-		/// If the method is being done in a finalizer, it will be ignored.
-		/// If it is thrown by client code calling Dispose,
-		/// it needs to be handled by fixing the bug.
-		///
-		/// If subclasses override this method, they should call the base implementation.
-		/// </remarks>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -151,7 +133,9 @@ namespace LanguageExplorer.Controls.DetailControls
 				((IPhEnvironment)m_obj).CheckConstraints(m_flid, true, out failure, /* adjust squiggly line */ true);
 			}
 			else
+			{
 				m_obj.CheckConstraints(m_flid, true, out failure);
+			}
 		}
 
 		/// <summary>
@@ -189,10 +173,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-
 			// A crude way of making sure the property we want is loaded into the cache.
 			m_obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_hvoObj);
-
 			var type = (CellarPropertyType)m_cache.DomainDataByFlid.MetaDataCache.GetFieldType(m_flid);
 			switch (type)
 			{
@@ -210,12 +192,9 @@ namespace LanguageExplorer.Controls.DetailControls
 					((StringSliceVc)m_vc).ShowWsLabel = m_fShowWsLabel;
 					break;
 			}
-
 			base.MakeRoot();
-
 			// And maybe this too, at least by default?
 			RootBox.DataAccess = m_cache.DomainDataByFlid;
-
 			// arg3 is a meaningless initial fragment, since this VC only displays one thing.
 			// arg4 could be used to supply a stylesheet.
 			RootBox.SetRootObject(m_hvoObj, m_vc, 1, m_styleSheet);
@@ -229,7 +208,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected override void HandleSelectionChange(IVwRootBox prootb, IVwSelection vwselNew)
 		{
 			base.HandleSelectionChange(prootb, vwselNew);
-
 			// 1) We don't want to recurse into here.
 			// 2) If the selection is invalid we can't use it.
 			if (s_fProcessingSelectionChanged || !vwselNew.IsValid)
@@ -239,7 +217,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			try
 			{
 				s_fProcessingSelectionChanged = true;
-
 				// If the selection is entirely formattable ("IsSelectionInOneFormattableProp"), we don't need to do
 				// the following selection truncation.
 				var hlpr = SelectionHelper.Create(vwselNew, this);
@@ -279,7 +256,6 @@ namespace LanguageExplorer.Controls.DetailControls
 						hlpr.SetSelection(true);
 					}
 				}
-
 				if (!m_fShowWsLabel)
 				{
 					return;

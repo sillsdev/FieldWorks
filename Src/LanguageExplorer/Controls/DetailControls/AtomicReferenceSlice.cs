@@ -1,13 +1,13 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.Xml;
 
 namespace LanguageExplorer.Controls.DetailControls
@@ -15,7 +15,8 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary />
 	internal class AtomicReferenceSlice : ReferenceSlice, IVwNotifyChange
 	{
-		int m_dxLastWidth; // remember width when OnSizeChanged called.
+		// remember width when OnSizeChanged called.
+		private int m_dxLastWidth;
 		/// <summary>
 		/// Use this to do the Add/RemoveNotifications.
 		/// </summary>
@@ -43,32 +44,13 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		#region IDisposable override
 
-		/// <summary>
-		/// Executes in two distinct scenarios.
-		///
-		/// 1. If disposing is true, the method has been called directly
-		/// or indirectly by a user's code via the Dispose method.
-		/// Both managed and unmanaged resources can be disposed.
-		///
-		/// 2. If disposing is false, the method has been called by the
-		/// runtime from inside the finalizer and you should not reference (access)
-		/// other managed objects, as they already have been garbage collected.
-		/// Only unmanaged resources can be disposed.
-		/// </summary>
-		/// <param name="disposing"></param>
-		/// <remarks>
-		/// If any exceptions are thrown, that is fine.
-		/// If the method is being done in a finalizer, it will be ignored.
-		/// If it is thrown by client code calling Dispose,
-		/// it needs to be handled by fixing the bug.
-		///
-		/// If subclasses override this method, they should call the base implementation.
-		/// </remarks>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -96,7 +78,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		public override void FinishInit()
 		{
 			base.FinishInit();
-
 			var arl = (AtomicReferenceLauncher)Control;
 			arl.Initialize(Cache, MyCmObject, m_flid, m_fieldName, PersistenceProvider, DisplayNameProperty, BestWsName); // TODO: Get better default 'best ws'.
 			arl.ConfigurationNode = ConfigurationNode;
@@ -105,14 +86,12 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				arl.ChoicesMade += RefreshTree;
 			}
-
 			// We don't want to be visible until later, since otherwise we get a temporary
 			// display in the wrong place with the wrong size that serves only to annoy the
 			// user.  See LT-1518 "The drawing of the DataTree for Lexicon/Advanced Edit draws
 			// some initial invalid controls."  Becoming visible when we set the width and
 			// height seems to delay things enough to avoid this visual clutter.
-			// Now done in Slice.ctor
-			//arl.Visible = false;
+			// Now done in Slice.ctor: arl.Visible = false;
 			arl.ViewSizeChanged += OnViewSizeChanged;
 			var view = (AtomicReferenceView)arl.MainControl;
 			view.ViewSizeChanged += OnViewSizeChanged;
@@ -188,7 +167,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-
 			var caption = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "label", ""));
 			var launcher = (AtomicReferenceLauncher)Control;
 #if RANDYTODO
@@ -204,9 +182,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			if (m_flid != PartOfSpeechTags.kflidDefaultInflectionClass || cvIns != 0 || cvDel <= 0 ||
-			    (tag != PartOfSpeechTags.kflidInflectionClasses && tag != MoInflClassTags.kflidSubclasses) ||
-			    ((IPartOfSpeech) MyCmObject).DefaultInflectionClassRA != null)
+			if (m_flid != PartOfSpeechTags.kflidDefaultInflectionClass || cvIns != 0 || cvDel <= 0 || tag != PartOfSpeechTags.kflidInflectionClasses && tag != MoInflClassTags.kflidSubclasses
+			    || ((IPartOfSpeech)MyCmObject).DefaultInflectionClassRA != null)
 			{
 				return;
 			}

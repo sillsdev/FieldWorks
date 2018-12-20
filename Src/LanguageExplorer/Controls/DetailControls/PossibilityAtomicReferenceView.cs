@@ -1,13 +1,13 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
@@ -16,13 +16,8 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// </summary>
 	internal class PossibilityAtomicReferenceView : AtomicReferenceView
 	{
-		#region Constants and data members
-
 		public const int kflidFake = -2222;
-
 		private PossibilityAtomicReferenceViewSdaDecorator m_sda;
-
-		#endregion // Constants and data members
 
 		#region Construction, initialization, and disposal
 
@@ -39,9 +34,8 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 				else
 				{
-					var list = (ICmPossibilityList) m_rootObj.ReferenceTargetOwner(m_rootFlid);
-					var ws = list.IsVernacular ? m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle
-						: m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
+					var list = (ICmPossibilityList)m_rootObj.ReferenceTargetOwner(m_rootFlid);
+					var ws = list.IsVernacular ? m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle : m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
 					if (list.PossibilitiesOS.Count > 0)
 					{
 						var label = ObjectLabel.CreateObjectLabel(m_cache, list.PossibilitiesOS[0], m_displayNameProperty, m_displayWs);
@@ -50,7 +44,6 @@ namespace LanguageExplorer.Controls.DetailControls
 					m_sda.Tss = TsStringUtils.EmptyString(ws);
 				}
 			}
-
 			base.SetRootBoxObj();
 		}
 

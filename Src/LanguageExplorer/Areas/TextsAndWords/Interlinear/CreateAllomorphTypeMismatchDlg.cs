@@ -46,9 +46,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public CreateAllomorphTypeMismatchDlg()
 		{
-			//
-			// Required for Windows Form Designer support
-			//
 			InitializeComponent();
 			AccessibleName = GetType().Name;
 			pictureBox1.Image = System.Drawing.SystemIcons.Warning.ToBitmap();

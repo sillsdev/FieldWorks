@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,12 +6,13 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Windows.Forms;
+using System.Drawing.Drawing2D;
 using System.Linq;
-using SIL.LCModel.Core.Cellar;
-using SIL.LCModel;
-using SIL.LCModel.Infrastructure;
+using System.Windows.Forms;
 using SIL.FieldWorks.Resources;
+using SIL.LCModel;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Infrastructure;
 using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.Controls.DetailControls
@@ -60,15 +61,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				throw new ArgumentNullException(nameof(myParentSlice));
 			}
-
-			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
-
 			m_myParentSlice = myParentSlice;
-
 			_sliceLeftEdgeContextMenuFactory = sliceLeftEdgeContextMenuFactory;
 			_leftEdgeContextMenuId = leftEdgeContextMenuId;
-
 			SuspendLayout();
 			Paint += HandlePaint;
 			SizeChanged += HandleSizeChanged;
@@ -80,7 +76,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
 			SetStyle(ControlStyles.UserPaint, true);
 			TabStop = false;
-
 			AccessibleName = myParentSlice.Label ?? @"SliceTreeNode";
 			ResumeLayout(false);
 		}
@@ -119,8 +114,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			var cache = m_myParentSlice.ContainingDataTree.Cache;
 			UndoableUnitOfWorkHelper.Do("Undo Move Item", "Redo Move Item", cache.ActionHandlerAccessor, () =>
 			{
-				cache.DomainDataByFlid.MoveOwnSeq(odi.HvoSrcOwner, odi.FlidSrc, odi.IhvoSrcStart,
-					odi.IhvoSrcEnd, hvoDstOwner, flidDst, ihvoDstStart);
+				cache.DomainDataByFlid.MoveOwnSeq(odi.HvoSrcOwner, odi.FlidSrc, odi.IhvoSrcStart, odi.IhvoSrcEnd, hvoDstOwner, flidDst, ihvoDstStart);
 			});
 		}
 
@@ -263,6 +257,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -293,18 +288,16 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-
 			if (m_myParentSlice.Parent == null)
 			{
 				// FWNX-436
 				return;
 			}
-
 			var gr = pea.Graphics;
 			var lineColor = Color.FromKnownColor(KnownColor.ControlDark);
 			using (var linePen = new Pen(lineColor, 1))
 			{
-				linePen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
+				linePen.DashStyle = DashStyle.Dot;
 				using (var boxLinePen = new Pen(lineColor, 1))
 				using (Brush backgroundBrush = new SolidBrush(m_myParentSlice.ContainingDataTree.BackColor))
 				using (Brush lineBrush = new SolidBrush(lineColor))
@@ -328,7 +321,6 @@ namespace LanguageExplorer.Controls.DetailControls
 						var dypLeftOver = Math.Max(kdypBoxHeight / 2, dypBranchHeight) - kdypBoxHeight / 2;
 						var ypBoxTop = ypTopOfSlice + dypLeftOver;
 						var ypBoxCtr = ypBoxTop + kdypBoxHeight / 2;
-
 						// There are two possible locations for the start and stop points for the
 						// vertical line. That will produce three different results which I have
 						// attempted to illustrate below. In case that's unclear they are:
@@ -349,13 +341,11 @@ namespace LanguageExplorer.Controls.DetailControls
 							// Erase the inside of the box as we may have drawn dotted lines there.
 							rcBox.Inflate(-1, -1);
 							gr.FillRectangle(backgroundBrush, rcBox);
-
 							if (tis != TreeItemState.ktisCollapsedEmpty)
 							{
 								// Draw the minus sign.
 								var xpLeftMinus = xpBoxLeft + 1 + kdzpIconGap;
 								gr.DrawLine(boxLinePen, xpLeftMinus, ypBoxCtr, xpLeftMinus + kdxpIconWid - 1, ypBoxCtr);
-
 								if (tis == TreeItemState.ktisCollapsed)
 								{
 									// Draw the vertical part of the plus, if we are collapsed.
@@ -365,13 +355,11 @@ namespace LanguageExplorer.Controls.DetailControls
 							}
 						}
 					}
-
 					if (ShowingContextIcon)
 					{
 						// Show context menu icon
 						gr.DrawImage(ResourceHelper.BlueCircleDownArrow, 2, 1);
 					}
-
 					m_myParentSlice.DrawLabel(ypTopOfSlice, gr, pea.ClipRectangle.Width);
 				}
 			}
@@ -406,7 +394,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			//we were clicked on, because we cannot count on a normal Click event
 			//which we would normally just subscribe to, as we do with the slice editor controls.
 			m_myParentSlice.TakeFocus(true);
-
 			// The documentation says we should call the base class. Not doing so means that
 			// mouse down handlers can't be attached to this class by delegation.
 			// However, the base class implementation has a catastrophic side effect: it causes
@@ -431,7 +418,6 @@ namespace LanguageExplorer.Controls.DetailControls
 					return;
 				}
 			}
-
 			// Enhance JohnT: Could we find a better label that shows more clearly what is being moved?
 			int hvoSrcOwner;
 			int flidSrc;

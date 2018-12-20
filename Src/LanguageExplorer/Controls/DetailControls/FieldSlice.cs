@@ -1,15 +1,15 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Windows.Forms;
 using System.Diagnostics;
+using System.Windows.Forms;
 using SIL.LCModel;
 using SIL.Xml;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-	/// <summary>Abstact class that is a base for slices that edit one particular field of one object.
+	/// <summary>Abstract class that is a base for slices that edit one particular field of one object.
 	/// It knows how to retrieve the name of that field from the "field" attribute of the configuration,
 	/// and supports an overrideable method UpdateDisplayFromDatabase which is called when the value
 	/// of the field changes.</summary>
@@ -19,7 +19,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// The field identifier for the attribute we are displaying.
 		/// </summary>
 		protected int m_flid = -1;
-
 		protected string m_fieldName;
 
 		/// <summary>
@@ -75,7 +74,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		public override void Install(DataTree parentDataTree)
 		{
 			base.Install(parentDataTree);
-
 			UpdateDisplayFromDatabase();
 			Control.AccessibleName = Label;
 		}
@@ -84,7 +82,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			Debug.Assert(Cache != null);
 			Debug.Assert(ConfigurationNode != null);
-
 			var className = Cache.DomainDataByFlid.MetaDataCache.GetClassName(MyCmObject.ClassID);
 			m_fieldName = XmlUtils.GetMandatoryAttributeValue(ConfigurationNode, "field");
 			var mdc = Cache.DomainDataByFlid.MetaDataCache;

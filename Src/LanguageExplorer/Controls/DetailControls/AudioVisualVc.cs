@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -42,11 +42,10 @@ namespace LanguageExplorer.Controls.DetailControls
 					var path = file.AbsoluteInternalPath;
 					var tss = TsStringUtils.MakeString(path, m_cache.WritingSystemFactory.UserWs);
 					vwenv.OpenParagraph();
-					vwenv.NoteDependency( new [] { m_cache.LangProject.Hvo, file.Hvo}, new [] {LangProjectTags.kflidLinkedFilesRootDir, CmFileTags.kflidInternalPath}, 2);
+					vwenv.NoteDependency(new[] { m_cache.LangProject.Hvo, file.Hvo }, new[] { LangProjectTags.kflidLinkedFilesRootDir, CmFileTags.kflidInternalPath }, 2);
 					vwenv.AddString(tss);
 					vwenv.CloseParagraph();
 					break;
-
 				default:
 					throw new ArgumentException(@"Don't know what to do with the given frag.", nameof(frag));
 			}

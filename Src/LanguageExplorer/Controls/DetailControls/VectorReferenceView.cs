@@ -1,21 +1,21 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using System.Diagnostics;
 using System.Xml.Linq;
-using SIL.LCModel;
-using SIL.LCModel.DomainServices;
-using SIL.LCModel.Infrastructure;
-using SIL.LCModel.Application;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using LanguageExplorer.Controls.DetailControls.Resources;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.Xml;
 
 namespace LanguageExplorer.Controls.DetailControls
@@ -30,12 +30,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		// View frags.
 		public const int kfragTargetVector = 1;
 		public const int kfragTargetObj = 2;
-
 		protected VectorReferenceVc m_VectorReferenceVc;
 		protected string m_displayWs;
-
 		internal XElement ConfigurationNode { get; set; }
-
 		private string m_textStyle;
 
 		/// <summary>
@@ -49,7 +46,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public VectorReferenceView()
 		{
-			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 		}
 
@@ -64,9 +60,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -104,15 +101,15 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			var textStyle = configurationNode.Attribute("textStyle");
 			if (textStyle == null)
-				{
+			{
 				return;
 			}
-					TextStyle = textStyle.Value;
-					if (m_VectorReferenceVc != null)
-					{
-						m_VectorReferenceVc.TextStyle = textStyle.Value;
-					}
-				}
+			TextStyle = textStyle.Value;
+			if (m_VectorReferenceVc != null)
+			{
+				m_VectorReferenceVc.TextStyle = textStyle.Value;
+			}
+		}
 
 		#endregion // Construction, initialization, and disposal
 
@@ -124,7 +121,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-
 			m_VectorReferenceVc = CreateVectorReferenceVc();
 			base.MakeRoot();
 			RootBox.DataAccess = GetDataAccess();
@@ -181,15 +177,12 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-
 			int ihvoRoot;
 			int tagTextProp;
 			int cpropPrevious;
 			int ihvoEnd;
 			ITsTextProps ttp;
-			var rgvsli = SelLevInfo.AllTextSelInfo(vwselNew, cvsli,
-				out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd,
-				out ws, out fAssocPrev, out ihvoEnd, out ttp);
+			var rgvsli = SelLevInfo.AllTextSelInfo(vwselNew, cvsli, out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd, out ttp);
 			Debug.Assert(RootBox != null);
 			// Create a selection that covers the entire target object.  If it differs from
 			// the new selection, we'll install it (which will recurse back to this method).
@@ -198,19 +191,19 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-				ITsString tssWhole;
-				int ichAnchorWhole;
-				int ichEndWhole;
-				int hvoObjWhole;
-				int hvoObjEndWhole;
-				bool fAssocPrevWhole;
-				int tagWhole;
-				int wsWhole;
+			ITsString tssWhole;
+			int ichAnchorWhole;
+			int ichEndWhole;
+			int hvoObjWhole;
+			int hvoObjEndWhole;
+			bool fAssocPrevWhole;
+			int tagWhole;
+			int wsWhole;
 			vwselWhole.TextSelInfo(false, out tssWhole, out ichAnchorWhole, out fAssocPrevWhole, out hvoObjWhole, out tagWhole, out wsWhole);
 			vwselWhole.TextSelInfo(true, out tssWhole, out ichEndWhole, out fAssocPrevWhole, out hvoObjEndWhole, out tagWhole, out wsWhole);
 			if (hvoObj == hvoObjWhole && hvoObjEnd == hvoObjEndWhole && (ichAnchor != ichAnchorWhole || ichEnd != ichEndWhole))
-				{
-					// Install it this time!
+			{
+				// Install it this time!
 				RootBox.MakeTextSelInObj(ihvoRoot, cvsli, rgvsli, 0, null, false, false, false, true, true);
 			}
 		}
@@ -221,10 +214,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
 			HandleKeyDown(e);
-			if (!IsDisposed)		// Delete() can cause the view to be removed.
+			if (!IsDisposed)        // Delete() can cause the view to be removed.
 			{
 				base.OnKeyDown(e);
-		}
+			}
 		}
 
 		protected virtual void HandleKeyDown(KeyEventArgs e)
@@ -232,16 +225,16 @@ namespace LanguageExplorer.Controls.DetailControls
 			switch (e.KeyCode)
 			{
 				case Keys.Delete:
-				Delete();
-				e.Handled = true;
+					Delete();
+					e.Handled = true;
 					break;
 				case Keys.Left:
-				MoveItem(false);
-				e.Handled = true;
+					MoveItem(false);
+					e.Handled = true;
 					break;
 				case Keys.Right:
-				MoveItem(true);
-				e.Handled = true;
+					MoveItem(true);
+					e.Handled = true;
 					break;
 			}
 		}
@@ -252,7 +245,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (!IsDisposed)
 			{
 				base.OnKeyPress(e);
-		}
+			}
 		}
 
 		protected virtual void HandleKeyPress(KeyPressEventArgs e)
@@ -261,9 +254,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-				Delete();
-				e.Handled = true;
-			}
+			Delete();
+			e.Handled = true;
+		}
 
 		internal bool CanMoveItem(bool forward, out bool visible)
 		{
@@ -281,10 +274,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-
 			UndoableUnitOfWorkHelper.Do(DetailControlsStrings.ksUndoReorder, DetailControlsStrings.ksRedoReorder, Cache.ActionHandlerAccessor,
 				() => ReorderItems(vals));
-
 			// Create a new selection of the moved object.
 			var rgvsli = new SelLevInfo[1];
 			rgvsli[0].ihvo = ihvo;
@@ -307,8 +298,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		internal void RemoveOrdering()
 		{
-			UndoableUnitOfWorkHelper.Do(DetailControlsStrings.ksUndoAlphabeticalOrder, DetailControlsStrings.ksRedoAlphabeticalOrder,
-				Cache.ActionHandlerAccessor,
+			UndoableUnitOfWorkHelper.Do(DetailControlsStrings.ksUndoAlphabeticalOrder, DetailControlsStrings.ksRedoAlphabeticalOrder, Cache.ActionHandlerAccessor,
 				() => VirtualOrderingServices.ResetVO(m_rootObj, m_rootFlid));
 		}
 
@@ -329,8 +319,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			// Fundamentally, we can handle either reference sequence properties or ones we are explicitly told
 			// to create VirtualPropOrderings for.
 			// Some slices disabled LT-18266
-			var rootFieldNameCandidates = new HashSet<string> {"Complex Forms", "Compare" };
-			var typeCandidates = new HashSet<string> {"LexReferenceTreeBranchesView", "LexReferenceSequenceView" };
+			var rootFieldNameCandidates = new HashSet<string> { "Complex Forms", "Compare" };
+			var typeCandidates = new HashSet<string> { "LexReferenceTreeBranchesView", "LexReferenceSequenceView" };
 			if (!RootPropertyIsRealRefSequence() && !RootPropertySupportsVirtualOrdering() || rootFieldNameCandidates.Contains(m_rootFieldName) || typeCandidates.Contains(GetType().Name))
 			{
 				return false;
@@ -414,7 +404,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		private bool RootPropertyIsRealRefSequence()
 		{
-			if (Cache.MetaDataCacheAccessor.GetFieldType(m_rootFlid) != (int) CellarPropertyType.ReferenceSequence)
+			if (Cache.MetaDataCacheAccessor.GetFieldType(m_rootFlid) != (int)CellarPropertyType.ReferenceSequence)
 			{
 				return false;
 			}
@@ -434,7 +424,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (CheckForValidDelete(sel, out cvsli, out hvoObj))
 			{
 				DeleteObjectFromVector(sel, cvsli, hvoObj, undoText, redoText);
-		}
+			}
 		}
 
 		protected void DeleteObjectFromVector(IVwSelection sel, int cvsli, int hvoObj, string undoText, string redoText)
@@ -449,9 +439,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			int cpropPrevious;
 			int ihvoEnd;
 			ITsTextProps ttp;
-			var rgvsli = SelLevInfo.AllTextSelInfo(sel, cvsli,
-				out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd,
-				out ws, out fAssocPrev, out ihvoEnd, out ttp);
+			var rgvsli = SelLevInfo.AllTextSelInfo(sel, cvsli, out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd, out ttp);
 			Debug.Assert(RootBox != null);
 			// Create a selection that covers the entire target object.  If it differs from
 			// the new selection, we'll install it (which will recurse back to this method).
@@ -460,32 +448,32 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-				ITsString tssWhole;
-				int ichAnchorWhole;
-				int ichEndWhole;
-				int hvoObjWhole;
-				int hvoObjEndWhole;
-				bool fAssocPrevWhole;
-				int tagWhole;
-				int wsWhole;
+			ITsString tssWhole;
+			int ichAnchorWhole;
+			int ichEndWhole;
+			int hvoObjWhole;
+			int hvoObjEndWhole;
+			bool fAssocPrevWhole;
+			int tagWhole;
+			int wsWhole;
 			vwselWhole.TextSelInfo(false, out tssWhole, out ichAnchorWhole, out fAssocPrevWhole, out hvoObjWhole, out tagWhole, out wsWhole);
 			vwselWhole.TextSelInfo(true, out tssWhole, out ichEndWhole, out fAssocPrevWhole, out hvoObjEndWhole, out tagWhole, out wsWhole);
 			if (hvoObj != hvoObjWhole || hvoObjEnd != hvoObjEndWhole || ichAnchor != ichAnchorWhole || ichEnd != ichEndWhole)
-				{
+			{
 				return;
 			}
 			// We've selected the whole string for it, so remove the object from the vector.
 			var hvosOld = m_cache.GetManagedSilDataAccess().VecProp(m_rootObj.Hvo, m_rootFlid);
-					UpdateTimeStampsIfNeeded(hvosOld);
+			UpdateTimeStampsIfNeeded(hvosOld);
 			for (var i = 0; i < hvosOld.Length; ++i)
-					{
-						if (hvosOld[i] == hvoObj)
-						{
-							RemoveObjectFromList(hvosOld, i, undoText, redoText);
-							break;
-						}
-					}
+			{
+				if (hvosOld[i] == hvoObj)
+				{
+					RemoveObjectFromList(hvosOld, i, undoText, redoText);
+					break;
 				}
+			}
+		}
 
 		/// <summary>
 		/// When deleting from a LexReference, all the affected LexEntry objects need to
@@ -504,7 +492,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				cvsli = 0; // satisfy compiler.
 				return false; // nothing selected, give up.
 			}
-
 			cvsli = sel.CLevels(false);
 			// CLevels includes the string property itself, but AllTextSelInfo doesn't need it.
 			cvsli--;
@@ -558,7 +545,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				startHeight = RootBox.Height;
 			}
-
 			UndoableUnitOfWorkHelper.Do(undoText, redoText, m_rootObj, () => m_cache.DomainDataByFlid.Replace(m_rootObj.Hvo, m_rootFlid, ihvo, ihvo + 1, new int[0], 0));
 			if (RootBox != null)
 			{
@@ -612,7 +598,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					return null; // nothing selected, give up.
 				}
-
 				var cvsli = sel.CLevels(false);
 				// CLevels includes the string property itself, but AllTextSelInfo doesn't need it.
 				cvsli--;
@@ -647,7 +632,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						if (hvo == value.Hvo)
 						{
 							break;
-					}
+						}
 					}
 					var levels = new SelLevInfo[1];
 					levels[0].ihvo = i;

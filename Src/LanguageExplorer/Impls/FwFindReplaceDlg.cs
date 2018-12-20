@@ -171,14 +171,9 @@ namespace LanguageExplorer.Impls
 		{
 			m_inFind = false;
 			AccessibleName = GetType().Name;
-			//
-			// Required for Windows Form Designer support
-			//
 			InitializeComponent();
-
 			helpProvider = new HelpProvider();
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
-
 			LastTextBoxInFocus = fweditFindText;
 			// Init of member variables related to dialog height removed from here and moved
 			// to OnLayout. This allows them to correctly remember the adjusted dialog size
@@ -189,7 +184,6 @@ namespace LanguageExplorer.Impls
 			panelSearchOptions.Visible = false;
 			fweditFindText.TextChanged += HandleTextChanged;
 			fweditReplaceText.TextChanged += HandleTextChanged;
-
 			m_searchKiller.Control = this;  // used for redrawing
 			m_searchKiller.StopControl = btnClose;  // need to know the stop button
 		}

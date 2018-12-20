@@ -1,15 +1,15 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Windows.Forms;
 using System.Diagnostics;
-using SIL.LCModel;
-using SIL.LCModel.Infrastructure;
+using System.Windows.Forms;
 using LanguageExplorer.Controls.DetailControls.Resources;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
@@ -41,7 +41,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			Control.Height = m_combo.Height; // Combo has sensible default height, UserControl does not.
 			Control.Controls.Add(m_combo);
-
 			m_combo.SelectedIndexChanged += SelectionChanged;
 		}
 
@@ -56,7 +55,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			// Load the special strings from the string table if possible.  If not, use the
 			// default (English) values.
 			m_sNullItemLabel = StringTable.Table.GetString("NullItemLabel", "DetailControls/ReferenceComboBox");
-
 			if (string.IsNullOrEmpty(m_sNullItemLabel) || m_sNullItemLabel == "*NullItemLabel*")
 			{
 				m_sNullItemLabel = DetailControlsStrings.ksNullLabel;
@@ -65,32 +63,13 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		#region IDisposable override
 
-		/// <summary>
-		/// Executes in two distinct scenarios.
-		///
-		/// 1. If disposing is true, the method has been called directly
-		/// or indirectly by a user's code via the Dispose method.
-		/// Both managed and unmanaged resources can be disposed.
-		///
-		/// 2. If disposing is false, the method has been called by the
-		/// runtime from inside the finalizer and you should not reference (access)
-		/// other managed objects, as they already have been garbage collected.
-		/// Only unmanaged resources can be disposed.
-		/// </summary>
-		/// <param name="disposing"></param>
-		/// <remarks>
-		/// If any exceptions are thrown, that is fine.
-		/// If the method is being done in a finalizer, it will be ignored.
-		/// If it is thrown by client code calling Dispose,
-		/// it needs to be handled by fixing the bug.
-		///
-		/// If subclasses override this method, they should call the base implementation.
-		/// </remarks>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -160,14 +139,11 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected virtual void SelectionChanged(object sender, EventArgs e)
 		{
 			Debug.Assert(m_combo != null);
-
 			if (!m_processSelectionEvent)
 			{
 				return;
 			}
-
 			var newValue = m_combo.SelectedItem.ToString() == NullItemLabel ? 0 : (m_combo.SelectedItem as ObjectLabel).Object.Hvo;
-
 			UndoableUnitOfWorkHelper.Do(string.Format(DetailControlsStrings.ksUndoSet, m_fieldName), string.Format(DetailControlsStrings.ksRedoSet, m_fieldName), MyCmObject, () =>
 			{
 				Cache.DomainDataByFlid.SetObjProp(MyCmObject.Hvo, m_flid, newValue);

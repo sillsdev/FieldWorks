@@ -59,9 +59,6 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			m_sClassName = className;
 			m_tvMasterList = treeView;
-			//
-			// Required for Windows Form Designer support
-			//
 			InitializeComponent();
 			AccessibleName = GetType().Name;
 			m_tvMasterList.TerminalsUseCheckBoxes = true;

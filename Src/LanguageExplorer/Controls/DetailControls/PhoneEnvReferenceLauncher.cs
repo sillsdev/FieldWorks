@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,8 +18,6 @@ namespace LanguageExplorer.Controls.DetailControls
 {
 	internal class PhoneEnvReferenceLauncher : ReferenceLauncher
 	{
-		#region Data Members
-
 		private PhoneEnvReferenceView m_phoneEnvRefView;
 		private System.ComponentModel.IContainer components = null;
 
@@ -28,34 +26,32 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public event FwViewSizeChangedEventHandler ViewSizeChanged;
 
-		#endregion // Data Members
-
 		#region Construction, Initialization, and Disposal
 
 		public PhoneEnvReferenceLauncher()
 		{
-			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 		}
 
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
-			if ( disposing )
+			if (disposing)
 			{
 				components?.Dispose();
 			}
 			m_phoneEnvRefView = null; // Disposed automatically, since it is in the Controls collection.
 
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
@@ -81,13 +77,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected override SimpleListChooser GetChooser(IEnumerable<ObjectLabel> labels)
 		{
 			var contents = (m_cache.DomainDataByFlid as ISilDataAccessManaged).VecProp(m_obj.Hvo, m_flid).Select(hvo => m_cache.ServiceLocator.GetObject(hvo));
-
-			return new SimpleListChooser(m_persistProvider,
-				labels.OrderBy(ol => ol.Object.ShortName),
-				m_fieldName,
-				m_cache,
-				contents,
-				PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider));
+			return new SimpleListChooser(m_persistProvider, labels.OrderBy(ol => ol.Object.ShortName), m_fieldName, m_cache, contents, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider));
 		}
 
 		/// <summary>
@@ -111,7 +101,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				return;
 			}
 			var h1 = m_phoneEnvRefView.RootBox.Height;
-
 			ICollection<IPhEnvironment> envs;
 			if (m_flid == MoAffixAllomorphTags.kflidPosition)
 			{
@@ -121,7 +110,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				envs = m_obj is IMoAffixAllomorph ? ((IMoAffixAllomorph)m_obj).PhoneEnvRC : ((IMoStemAllomorph)m_obj).PhoneEnvRC;
 			}
-
 			// First, we need a list of hvos added and a list of hvos deleted.
 			var newEnvs = new HashSet<IPhEnvironment>(chosenObjs.Cast<IPhEnvironment>());
 			var delEnvs = new HashSet<IPhEnvironment>();
@@ -136,7 +124,6 @@ namespace LanguageExplorer.Controls.DetailControls
 					delEnvs.Add(env);
 				}
 			}
-
 			// Add all the new environments.
 			UndoableUnitOfWorkHelper.Do(string.Format(DetailControlsStrings.ksUndoSet, m_fieldName), string.Format(DetailControlsStrings.ksRedoSet, m_fieldName), m_obj, () =>
 			{
@@ -206,7 +193,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			this.m_phoneEnvRefView.AutoScroll = false;
 			this.m_phoneEnvRefView.EditingHelper.DefaultCursor = null;
 			this.m_phoneEnvRefView.Location = new System.Drawing.Point(0, 0);
-			this.m_phoneEnvRefView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom |AnchorStyles.Left;
+			this.m_phoneEnvRefView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
 			this.m_phoneEnvRefView.Name = "m_phoneEnvRefView";
 			this.m_phoneEnvRefView.Size = new System.Drawing.Size(150, 20);
 			this.m_phoneEnvRefView.TabIndex = 2;

@@ -55,9 +55,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public MsaCreatorDlg()
 		{
-			//
-			// Required for Windows Form Designer support
-			//
 			InitializeComponent();
 			AccessibleName = GetType().Name;
 			helpProvider = new HelpProvider();

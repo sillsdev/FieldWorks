@@ -314,17 +314,11 @@ namespace LanguageExplorer.Controls.LexText
 
 		public LexImportWizardMarker(ILexImportFields fwFields)
 		{
-			//
-			// Required for Windows Form Designer support
-			//
 			InitializeComponent();
 			AccessibleName = GetType().Name;
-
 			InitBottomPanel();
-
 			tvDestination.BeginUpdate();
 			tvDestination.Nodes.Clear();
-
 			foreach(string className in fwFields.Classes)
 			{
 				var tnode = new TreeNode($"({className})");
@@ -340,7 +334,6 @@ namespace LanguageExplorer.Controls.LexText
 			}
 			tvDestination.ExpandAll();
 			tvDestination.EndUpdate();
-
 			_helpProvider = new HelpProvider();
 		}
 

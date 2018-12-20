@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,9 +7,9 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls.DetailControls.Resources;
 using LanguageExplorer.Controls.XMLViews;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.Xml;
 
 namespace LanguageExplorer.Controls.DetailControls
@@ -21,16 +21,14 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// </summary>
 	public class SimpleListChooser : ReallySimpleListChooser
 	{
-		/// <summary>
-		/// Constructor for use with designer
-		/// </summary>
+		/// <summary />
 		public SimpleListChooser()
 			: base()
 		{
 		}
 
 		/// <summary>
-		/// deprecated constructor for use with changing or setting a value
+		/// Deprecated constructor for use with changing or setting a value
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// <param name="persistProvider">optional, if you want to preserve the size and location</param>
@@ -44,9 +42,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 		}
 
-		/// <summary>
-		/// constructor for use with changing or setting a value
-		/// </summary>
+		/// <summary />
 		/// <param name="cache">The cache.</param>
 		/// <param name="persistProvider">optional, if you want to preserve the size and location</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
@@ -60,9 +56,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 		}
 
-		/// <summary>
-		/// constructor for use with changing or setting a value
-		/// </summary>
+		/// <summary />
 		/// <param name="cache">The cache.</param>
 		/// <param name="persistProvider">optional, if you want to preserve the size and location</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
@@ -74,9 +68,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 		}
 
-		/// <summary>
-		/// constructor for use with adding a new value
-		/// </summary>
+		/// <summary />
 		/// <param name="persistProvider">The persist provider.</param>
 		/// <param name="labels">The labels.</param>
 		/// <param name="fieldName">the user-readable name of the field that is being edited</param>
@@ -86,9 +78,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 		}
 
-		/// <summary>
-		/// constructor for use with adding a new value
-		/// </summary>
+		/// <summary />
 		/// <param name="persistProvider">The persist provider.</param>
 		/// <param name="labels">The labels.</param>
 		/// <param name="fieldName">the user-readable name of the field that is being edited</param>
@@ -99,9 +89,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 		}
 
-		/// <summary>
-		/// constructor for use with changing or setting multiple values.
-		/// </summary>
+		/// <summary />
 		/// <param name="persistProvider">optional, if you want to preserve the size and
 		/// location</param>
 		/// <param name="labels">The labels.</param>

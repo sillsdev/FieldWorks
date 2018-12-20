@@ -875,9 +875,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary />
 		internal XmlBrowseViewBase() : base(null)
 		{
-			// This call is required by the Windows Form Designer.
 			InitializeComponent();
-
 			AccessibleName = "XmlBrowseViewBase";
 			BackColor = SystemColors.Window;
 		}

@@ -43,11 +43,7 @@ namespace LanguageExplorer.Controls
 		/// <summary />
 		public PopupTree()
 		{
-			//
-			// Required for Windows Form Designer support
-			//
 			InitializeComponent();
-
 			StartPosition = FormStartPosition.Manual; // allows us to use Location to position it exactly.
 			Size = DefaultSize; // Defeat extraordinary side effect of setting StartPosition.
 			EnableAfterAndBeforeSelectHandling(true);
@@ -68,7 +64,7 @@ namespace LanguageExplorer.Controls
 				m_treeView.MouseUp += m_treeView_MouseUp;
 			}
 			m_treeView.KeyDown += m_treeView_KeyDown;
-			this.AccessibleName = "PopupTreeForm";
+			AccessibleName = "PopupTreeForm";
 		}
 
 		/// <summary>

@@ -96,29 +96,21 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		protected BaseGoDlg()
 		{
-			//
-			// Required for Windows Form Designer support
-			//
 			InitializeComponent();
 			AccessibleName = GetType().Name;
-
 			m_helpProvider = new HelpProvider();
 			m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			m_helpProvider.SetShowHelp(this, true);
-
 			m_vernHvos = new HashSet<int>();
 			m_analHvos = new HashSet<int>();
-
 			// NB: Don't set "m_tbForm.Text" here, because the fake writing system factory
 			// will cause an assert down in VwPropertyStore.
 			m_tbForm.TextChanged += m_tbForm_TextChanged;
-
 			m_tbForm.KeyDown += m_tbForm_KeyDown;
 			// Now position the searching animation just above the list
 			m_searchAnimation = new SearchingAnimation();
 			m_searchAnimation.Top = m_matchingObjectsBrowser.Top - m_searchAnimation.Height - 5;
 			m_searchAnimation.Left = m_matchingObjectsBrowser.Right - m_searchAnimation.Width - 10;
-
 			// The standard localization code doesn't work, so set these explicitly.
 			m_btnClose.Text = LexTextControls.ksCancel;
 			m_btnHelp.Text = LexTextControls.ks_Help_;

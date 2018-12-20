@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -34,21 +34,16 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// </summary>
 	internal class TwoLevelConcordanceDataTree : DataTree
 	{
-		#region member variables
-
-		IConcPolicy m_cp;
-		IGetNodeInfo m_gni;
-
-		#endregion
+		private IConcPolicy m_cp;
+		private IGetNodeInfo m_gni;
 
 		internal TwoLevelConcordanceDataTree(ISharedEventHandlers sharedEventHandlers, LcmCache cache, IConcPolicy cp, IGetNodeInfo gni)
-			:base(sharedEventHandlers)
+			: base(sharedEventHandlers)
 		{
 			m_cp = cp;
 			m_gni = gni;
 			InitializeBasic(cache, false); // JT: was Initialize, that now has more args; not retested.
 			InitializeComponentBasic();
-
 			// Temporary: until I figure how to be lazy, we have to make slices
 			// for all nodes.
 			for (var i = 0; i < cp.Count; i++)
@@ -62,7 +57,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		public override Slice MakeEditorAt(int i)
 		{
 			var vs = new ViewSlice(new TwoLevelConcView(m_cp, m_gni, i));
-			var newKids = new HashSet<Slice> {vs};
+			var newKids = new HashSet<Slice> { vs };
 			InsertSliceRange(i, newKids);
 			return vs;
 		}

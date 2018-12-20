@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,10 +8,10 @@ using System.Windows.Forms;
 using LanguageExplorer.Controls.DetailControls.Resources;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.LCModel.Core.Text;
+using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
@@ -49,10 +49,9 @@ namespace LanguageExplorer.Controls.DetailControls
 					Debug.Assert(hvo != 0);
 					ws = m_sda.GetLabelFor(hvo).get_WritingSystem(0);
 				}
-
 				if (ws == 0)
 				{
-					var list = (ICmPossibilityList) m_rootObj.ReferenceTargetOwner(m_rootFlid);
+					var list = (ICmPossibilityList)m_rootObj.ReferenceTargetOwner(m_rootFlid);
 					ws = list.IsVernacular ? m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle
 						 : m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
 					if (list.PossibilitiesOS.Count > 0)
@@ -62,7 +61,6 @@ namespace LanguageExplorer.Controls.DetailControls
 					}
 				}
 			}
-
 			if (ws == 0)
 			{
 				ws = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
@@ -110,7 +108,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				selectedHvo = selected.Hvo;
 			}
-
 			if (selectedHvo == m_prevSelectedHvo)
 			{
 				return;
@@ -138,18 +135,15 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return false;
 			}
-
 			var tss = m_sda.get_StringProp(m_prevSelectedHvo, kflidFake);
 			if (tss == null || tss.Length > 0)
 			{
 				return false;
 			}
-
 			if (m_rootObj.Hvo < 0)
 			{
 				return false;    // already deleted.  See LT-15042.
 			}
-
 			var hvosOld = m_sda.VecProp(m_rootObj.Hvo, m_rootFlid);
 			for (var i = 0; i < hvosOld.Length; ++i)
 			{

@@ -1,20 +1,20 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.ComponentModel;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
@@ -25,10 +25,10 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// </summary>
 	public class LabeledMultiStringControl : UserControl, IVwNotifyChange
 	{
-		InnerLabeledMultiStringControl m_innerControl;
-		bool m_isHot;
-		bool m_hasBorder;
-		Padding m_textPadding;
+		private InnerLabeledMultiStringControl m_innerControl;
+		private bool m_isHot;
+		private bool m_hasBorder;
+		private Padding m_textPadding;
 
 		/// <summary />
 		public LabeledMultiStringControl(LcmCache cache, int wsMagic, IVwStylesheet vss)
@@ -51,7 +51,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				DoubleBuffered = true;
 			}
-
 			if (vss != null)
 			{
 				m_innerControl.StyleSheet = vss;
@@ -59,49 +58,26 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_innerControl.Dock = DockStyle.Fill;
 			Controls.Add(m_innerControl);
 			m_innerControl.MakeRoot();
-
 			m_innerControl.RootBox.DataAccess.AddNotification(this);
 			m_innerControl.MouseEnter += m_innerControl_MouseEnter;
 			m_innerControl.MouseLeave += m_innerControl_MouseLeave;
 			m_innerControl.GotFocus += m_innerControl_GotFocus;
 			m_innerControl.LostFocus += m_innerControl_LostFocus;
-
 			HasBorder = true;
 			Height = PreferredHeight;
 		}
 
 		#region IDisposable override
 
-		/// <summary>
-		/// Executes in two distinct scenarios.
-		///
-		/// 1. If disposing is true, the method has been called directly
-		/// or indirectly by a user's code via the Dispose method.
-		/// Both managed and unmanaged resources can be disposed.
-		///
-		/// 2. If disposing is false, the method has been called by the
-		/// runtime from inside the finalizer and you should not reference (access)
-		/// other managed objects, as they already have been garbage collected.
-		/// Only unmanaged resources can be disposed.
-		/// </summary>
-		/// <remarks>
-		/// If any exceptions are thrown, that is fine.
-		/// If the method is being done in a finalizer, it will be ignored.
-		/// If it is thrown by client code calling Dispose,
-		/// it needs to be handled by fixing the bug.
-		///
-		/// If subclasses override this method, they should call the base implementation.
-		/// </remarks>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
-
-			// m_sda COM object block removed due to crash in Finializer thread LT-6124
 
 			if (disposing)
 			{
@@ -138,12 +114,10 @@ namespace LanguageExplorer.Controls.DetailControls
 					case BorderStyle.Fixed3D:
 						borderHeight = SystemInformation.Border3DSize.Height * 2;
 						break;
-
 					case BorderStyle.FixedSingle:
 						borderHeight = SystemInformation.BorderSize.Height * 2;
 						break;
 				}
-
 				var height = m_innerControl.RootBox != null && m_innerControl.RootBox.Height > 0 ? Math.Min(m_innerControl.RootBox.Height + 8, 66) : 46;
 				return height + base.Padding.Vertical + borderHeight;
 			}
@@ -157,7 +131,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					return ClientRectangle;
 				}
-
 				using (var g = CreateGraphics())
 				{
 					var renderer = new VisualStyleRenderer(VisualStyleElement.TextBox.TextEdit.Normal);
@@ -262,18 +235,16 @@ namespace LanguageExplorer.Controls.DetailControls
 		private void SetPadding()
 		{
 			var rect = ContentRectangle;
-			base.Padding = new Padding((rect.Left - ClientRectangle.Left) + m_textPadding.Left,
-				(rect.Top - ClientRectangle.Top) + m_textPadding.Top, (ClientRectangle.Right - rect.Right) + m_textPadding.Right,
-				(ClientRectangle.Bottom - rect.Bottom) + m_textPadding.Bottom);
+			base.Padding = new Padding(rect.Left - ClientRectangle.Left + m_textPadding.Left,
+				rect.Top - ClientRectangle.Top + m_textPadding.Top,
+				ClientRectangle.Right - rect.Right + m_textPadding.Right,
+				ClientRectangle.Bottom - rect.Bottom + m_textPadding.Bottom);
 		}
 
-		/// <summary>
-		/// Raises the <see cref="E:System.Windows.Forms.Control.Paint"/> event.
-		/// </summary>
+		/// <summary />
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);
-
 			(FwTextBox.CreateRenderer(State, ContainsFocus, true))?.DrawBackground(e.Graphics, ClientRectangle, e.ClipRectangle);
 		}
 
@@ -386,7 +357,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				throw new ArgumentException("Length is less than zero.", nameof(length));
 			}
-
 			var sel = m_innerControl.RootBox.Selection;
 			if (sel != null)
 			{

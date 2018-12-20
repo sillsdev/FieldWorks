@@ -88,16 +88,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		public ConcordanceDlg(ICmObject sourceObject)
 		{
-			//
-			// Required for Windows Form Designer support
-			//
 			InitializeComponent();
 			AccessibleName = GetType().Name;
-
 			helpProvider = new HelpProvider();
-
 			CheckAssignBtnEnabling();
-
 			if (sourceObject is IWfiWordform)
 			{
 				_wordform = (IWfiWordform)sourceObject;

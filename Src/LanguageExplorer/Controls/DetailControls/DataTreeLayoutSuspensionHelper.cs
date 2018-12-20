@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 SIL International
+// Copyright (c) 2018-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -21,7 +21,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			MyIdleProcessingHelper = new IdleProcessingHelper(mainWindow);
 			MyDataTree = dataTree;
 			MyDataTree.DeepSuspendLayout();
-
 			IsDisposed = false;
 		}
 
@@ -52,7 +51,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		private void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-
 			if (IsDisposed)
 			{
 				// No need to run it more than once.

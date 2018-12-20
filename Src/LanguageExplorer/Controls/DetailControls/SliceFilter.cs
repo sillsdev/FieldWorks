@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -23,7 +23,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public SliceFilter()
 		{
-			m_filterList= null;
+			m_filterList = null;
 		}
 
 		/// <summary>
@@ -32,7 +32,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public SliceFilter(XDocument filterList)
 		{
-			m_filterList= filterList;
+			m_filterList = filterList;
 		}
 
 		/// <summary>
@@ -40,7 +40,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public bool IncludeSlice(XElement configurationNode, ICmObject obj, int flid, HashSet<Tuple<int, int>> propsToMonitor)
 		{
-			if (m_filterList!= null)
+			if (m_filterList != null)
 			{
 				var id = XmlUtils.GetOptionalAttributeValue(configurationNode, "id");
 				if (id != null)
@@ -53,12 +53,9 @@ namespace LanguageExplorer.Controls.DetailControls
 					}
 				}
 			}
-
 			//skip slices representing fields which are not relevant under the current circumstances.
 			// If necessary note that the list of slices
-			var result = obj.IsFieldRelevant(flid, propsToMonitor);
-
-			return result;
+			return obj.IsFieldRelevant(flid, propsToMonitor);
 		}
 	}
 }

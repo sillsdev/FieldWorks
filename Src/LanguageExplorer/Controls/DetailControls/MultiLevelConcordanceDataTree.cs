@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -22,12 +22,10 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// </summary>
 	internal class MultiLevelConcordanceDataTree : DataTree
 	{
-		#region member variables
-
 		private readonly IList m_items; // of IConcSliceInfo
-		#endregion
+
 		internal MultiLevelConcordanceDataTree(ISharedEventHandlers sharedEventHandlers, LcmCache cache, IList items)
-			:base(sharedEventHandlers)
+			: base(sharedEventHandlers)
 		{
 			m_items = items;
 			InitializeBasic(cache, false);
@@ -46,7 +44,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				vs.Expansion = TreeItemState.ktisCollapsed;
 			}
-			var newKids = new HashSet<Slice> {vs};
+			var newKids = new HashSet<Slice> { vs };
 			InsertSliceRange(i, newKids);
 			return vs;
 		}
@@ -54,7 +52,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		public void InsertDummies(ConcSlice concSlice, int index, int count)
 		{
 			var dummies = new HashSet<Slice>();
-			for (var i = 0; i < dummies.Count; i++)
+			for (var i = 0; i < count; i++)
 			{
 				dummies.Add(new DummyConcSlice(concSlice));
 			}

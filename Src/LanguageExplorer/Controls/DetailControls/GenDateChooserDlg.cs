@@ -1,12 +1,13 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.LCModel.Core.Cellar;
 using LanguageExplorer.Controls.DetailControls.Resources;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Core.Cellar;
 using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.Controls.DetailControls
@@ -22,7 +23,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		private const int ERA_BC = 1;
 		private const int LEAP_YEAR = 2008;
 		private int DAY_UNKNOWN => m_dayComboBox.Items.Count - 1;
-
 		private ComboBox m_precisionComboBox;
 		private ComboBox m_monthComboBox;
 		private Button m_okButton;
@@ -43,7 +43,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		private GenDateChooserDlg()
 		{
 			InitializeComponent();
-
 			if (Platform.IsMono)
 			{
 				// FWNX-817:
@@ -77,10 +76,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -145,7 +144,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					return new GenDate();
 				}
-
 				var precision = (GenDate.PrecisionType)m_precisionComboBox.SelectedIndex;
 				var month = m_monthComboBox.SelectedIndex == -1 ? GenDate.UnknownMonth : m_monthComboBox.SelectedIndex + 1;
 				var day = m_dayComboBox.SelectedIndex == -1 ? GenDate.UnknownDay : m_dayComboBox.SelectedIndex + 1;
@@ -180,10 +178,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (m_calendar.Visible)
 			{
 				var year = (int)m_yearUpDown.Value;
-				var month = m_monthComboBox.SelectedIndex == MONTH_UNKNOWN || m_monthComboBox.SelectedIndex == -1
-					? 1 : m_monthComboBox.SelectedIndex + 1;
-				var day = m_dayComboBox.SelectedIndex == DAY_UNKNOWN || m_dayComboBox.SelectedIndex == -1
-					? 1 : m_dayComboBox.SelectedIndex + 1;
+				var month = m_monthComboBox.SelectedIndex == MONTH_UNKNOWN || m_monthComboBox.SelectedIndex == -1 ? 1 : m_monthComboBox.SelectedIndex + 1;
+				var day = m_dayComboBox.SelectedIndex == DAY_UNKNOWN || m_dayComboBox.SelectedIndex == -1 ? 1 : m_dayComboBox.SelectedIndex + 1;
 				m_calendar.SetDate(new DateTime(year, month, day));
 			}
 		}
@@ -212,7 +208,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-
 			try
 			{
 				m_changingDate = true;
@@ -249,20 +244,17 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-
 			try
 			{
 				m_changingDate = true;
 				var year = (int)m_yearUpDown.Value;
 				// hide the calendar control if the current date is out of the supported range
 				m_calendar.Visible = m_eraComboBox.SelectedIndex == ERA_AD && IsDateInCalendarRange;
-
 				if (m_monthComboBox.SelectedIndex != -1 && DaysInMonth != m_dayComboBox.Items.Count - 1)
 				{
 					// only repopulate the day combo if the number of days in the month has changed
 					PopulateDayComboBox();
 				}
-
 				if (year == 0 && m_monthComboBox.SelectedIndex == -1)
 				{
 					m_precisionComboBox.SelectedIndex = PRECISION_NO_DATE;
@@ -271,7 +263,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					m_precisionComboBox.SelectedIndex = (int)GenDate.PrecisionType.Exact;
 				}
-
 				UpdateCalendar();
 			}
 			finally
@@ -305,7 +296,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-
 			try
 			{
 				m_changingDate = true;
@@ -313,7 +303,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					m_dayComboBox.SelectedIndex = -1;
 				}
-
 				UpdateCalendar();
 			}
 			finally
@@ -343,7 +332,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-
 			var date = m_calendar.SelectionStart;
 			if (m_precisionComboBox.SelectedIndex == PRECISION_NO_DATE)
 			{
@@ -523,7 +511,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected override void OnLoad(EventArgs e)
 		{
 			base.OnLoad(e);
-
 			//Here we want to make sure the size of the dialog is reasonable so that the buttons are not hidden
 			//by the calendar when the dialog is loaded in 120 dpi
 			if (m_calendar.Bottom <= m_okButton.Top)

@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -59,28 +59,29 @@ namespace LanguageExplorer.Controls.DetailControls
 	{
 		// Top-level fragment used in the Display method.
 		public const int kfragName = 3039;
-
 		internal const int kBaseFakeObj = 500000000; // Object ids greater than this are presumed fake.
-		int m_tag; // The (typically real) property we're editing.
-		int m_virtualTagObj = 0; // The virtual property corresponding to m_tag.
-		int m_clid; // class that has property m_tag (and to which m_virtualTagObj is added).
-		readonly CellarPropertyType m_type; // the type (refAtomic, refSeq, or refColl) of m_tag
-		ISilDataAccess m_sda;  // m_cache.DomainDataByFlid; use separate var in interests of minimising need for LcmCache.
-		int m_taTagName = 0; // Virtual prop for type-ahead name property.
-		int m_snTagName = 0; // Virtual prop for shortname property.
+		private int m_tag; // The (typically real) property we're editing.
+		private int m_virtualTagObj = 0; // The virtual property corresponding to m_tag.
+		private int m_clid; // class that has property m_tag (and to which m_virtualTagObj is added).
+		private readonly CellarPropertyType m_type; // the type (refAtomic, refSeq, or refColl) of m_tag
+		private ISilDataAccess m_sda;  // m_cache.DomainDataByFlid; use separate var in interests of minimising need for LcmCache.
+		private int m_taTagName = 0; // Virtual prop for type-ahead name property.
+		// Virtual prop for shortname property.
+		private int m_snTagName = 0;
 		// HVO of the object that has the type-ahead name. This is set by SelectionChanged when it decides that
 		// type-ahead is relevant to the current selection, changed if typing selects a different object.
-		int m_hvoTa;
+		private int m_hvoTa;
 		// Hvo of object that has m_hvoTa in prop m_virtualTagObj.
 		private int m_hvoParent;
-		int m_ihvoTa; // index of m_hvoTa in prop m_virtualTagObj of m_hvoParent, or -1 if atomic.
+		// index of m_hvoTa in prop m_virtualTagObj of m_hvoParent, or -1 if atomic.
+		private int m_ihvoTa;
 		// For performance reasons the default lookup caches the shortnames of the possible values for property m_tag of m_hvoParent.
 		// This variable should be cleared to empty any time m_hvoParent is changed, unless it is known that the list
 		// for this property does not depend on the particular parent.
-		List<string> m_shortnames = new List<string>();
-		bool m_fPossibilitiesDependOnObject = true;
-		bool m_fInSelectionChanged;
-		bool m_fGotFocus; // True if we have focus.
+		private List<string> m_shortnames = new List<string>();
+		private bool m_fPossibilitiesDependOnObject = true;
+		private bool m_fInSelectionChanged;
+		private bool m_fGotFocus; // True if we have focus.
 
 		public TypeAheadSupportVc(int tag, LcmCache cache)
 		{
@@ -212,9 +213,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				// Get selection information to determine where the user is typing.
 				int tagTextProp;
 				ITsTextProps ttp;
-				rgvsli = SelLevInfo.AllTextSelInfo(sel, cvsli,
-					out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd,
-					out ws, out fAssocPrev, out ihvoEnd, out ttp);
+				rgvsli = SelLevInfo.AllTextSelInfo(sel, cvsli, out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd, out ttp);
 			}
 			// This needs to be done even if we don't have a selection.
 			m_sda.PropChanged(null, (int)PropChangeType.kpctNotifyAll, m_hvoParent, m_virtualTagObj, m_ihvoTa, 1, 1);
@@ -266,7 +265,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return 0;
 			}
-
 			if (sel == null) // nothing interesting to do without a selection, either.
 			{
 				return 0;
@@ -301,6 +299,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			sel.PropInfo(false, 1, out hvoParent, out tagParent, out ihvo, out cpropPrevious, out vps);
 			return tagParent != m_virtualTagObj ? 0 : hvoObjA;
 		}
+
 		/// <summary>
 		/// Return the 'tag' or 'flid' that is used to identify the fake property (ref atomic or ref sequence)
 		/// that is to be displayed in place of the one this VC was created for.
@@ -336,24 +335,24 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public override void Display(IVwEnv vwenv, int hvo, int frag)
 		{
-			switch(frag)
+			switch (frag)
 			{
-			case kfragName:
-				int hvoParent;
-				int tag;
-				int ihvo;
-				vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out hvoParent, out tag, out ihvo);
-				if (m_fGotFocus && hvo == m_hvoTa && hvoParent == m_hvoParent && ihvo == m_ihvoTa)
-				{
-					vwenv.AddStringProp(m_taTagName, this);
-				}
-				else
-				{
-					vwenv.AddStringProp(m_snTagName, this);
-				}
-				break;
-			default:
-				throw new Exception("Unexpected fragment ID in TypeAheadSupportVc");
+				case kfragName:
+					int hvoParent;
+					int tag;
+					int ihvo;
+					vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out hvoParent, out tag, out ihvo);
+					if (m_fGotFocus && hvo == m_hvoTa && hvoParent == m_hvoParent && ihvo == m_ihvoTa)
+					{
+						vwenv.AddStringProp(m_taTagName, this);
+					}
+					else
+					{
+						vwenv.AddStringProp(m_snTagName, this);
+					}
+					break;
+				default:
+					throw new Exception("Unexpected fragment ID in TypeAheadSupportVc");
 			}
 		}
 
@@ -384,7 +383,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			var cch = tssA.Length;
 			// To do our type-ahead trick, both ends of the seleciton must be in the same string property.
 			// Also, we want the selection to extend to the end of the name.
-			// Enhance JohnT: poupu list may not depend on selection extending to end.
+			// Enhance JohnT: poupup list may not depend on selection extending to end.
 			if (tagE != m_taTagName || hvoObjE != hvoObjA || cch != tssE.Length || Math.Max(ichA, ichE) != cch)
 			{
 				return false; // not going to attempt type-ahead behavior
@@ -406,7 +405,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return true; // can't be smart, but we already did the keypress.
 			}
-
 			var cvsli = sel.CLevels(false);
 			// CLevels includes the string prop itself, but AllTextSelInfo does not need it.
 			cvsli--;
@@ -415,15 +413,12 @@ namespace LanguageExplorer.Controls.DetailControls
 			int tagTextProp;
 			int cpropPrevious, ichAnchor, ichEnd, ihvoEnd;
 			ITsTextProps ttp;
-			var rgvsli = SelLevInfo.AllTextSelInfo(sel, cvsli,
-				out ihvoObj, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd,
-				out ws, out fAssocPrev, out ihvoEnd, out ttp);
+			var rgvsli = SelLevInfo.AllTextSelInfo(sel, cvsli, out ihvoObj, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd, out ttp);
 			if (tagTextProp != m_taTagName || ichAnchor != ichEnd || ihvoEnd != -1 || cvsli < 1)
 			{
 				return true; // something bizarre happened, but keypress is done.
 			}
 			var hvoLeaf = rgvsli[0].hvo;
-
 			// Get the parent object we will modify.
 			// (This would usually work, but not if the parent object is the root of the whole display,
 			// as in a simple atomic ref type ahead slice.
@@ -432,7 +427,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			IVwPropertyStore vps;
 			int hvoParent;
 			sel.PropInfo(false, 1, out hvoParent, out tagParent, out ihvo, out cpropPreviousDummy, out vps);
-
 			if (hvoParent != m_hvoParent)
 			{
 				return true; // another bizarre unexpected event.
@@ -452,7 +446,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				bldr.SetIntPropValues(0, tssLookup.Length, (int)FwTextPropType.ktptUnderColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.Red));
 				tssLookup = bldr.GetString();
 			}
-
 			// Don't rely on sel from here on.
 			if (hvoNewRef != hvoLeaf)
 			{
@@ -539,11 +532,10 @@ namespace LanguageExplorer.Controls.DetailControls
 				objNew = null;
 				return tssTyped;
 			}
-
 			var ipossibility = -1;
-			foreach(var obj in parent.ReferenceTargetCandidates(m_tag))
+			foreach (var obj in parent.ReferenceTargetCandidates(m_tag))
 			{
-				ipossibility ++;
+				ipossibility++;
 				string key;
 				if (ipossibility < m_shortnames.Count)
 				{
@@ -560,8 +552,8 @@ namespace LanguageExplorer.Controls.DetailControls
 					var bldr = tssTyped.GetBldr();
 					bldr.Replace(0, bldr.Length, key, null);
 					// Clear any underlining left over from previous bad value.
-					bldr.SetIntPropValues(0, bldr.Length, (int) FwTextPropType.ktptUnderline, -1, -1);
-					bldr.SetIntPropValues(0, bldr.Length, (int) FwTextPropType.ktptUnderColor, -1, -1);
+					bldr.SetIntPropValues(0, bldr.Length, (int)FwTextPropType.ktptUnderline, -1, -1);
+					bldr.SetIntPropValues(0, bldr.Length, (int)FwTextPropType.ktptUnderColor, -1, -1);
 					return bldr.GetString(); // Same ws as input, contents replaced.
 				}
 			}

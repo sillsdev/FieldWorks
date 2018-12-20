@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,7 +6,7 @@ namespace LanguageExplorer.Controls.DetailControls
 {
 	internal class TwoLevelConcSlice : ViewSlice
 	{
-		readonly TwoLevelConcView m_cv;
+		private readonly TwoLevelConcView m_cv;
 
 		internal TwoLevelConcSlice(TwoLevelConcView cv) : base(cv)
 		{

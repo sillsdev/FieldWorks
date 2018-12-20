@@ -45,9 +45,6 @@ namespace LanguageExplorer.Controls.LexText
 
 		public MsaInflectionFeatureListDlg()
 		{
-			//
-			// Required for Windows Form Designer support
-			//
 			InitializeComponent();
 			AccessibleName = GetType().Name;
 			pictureBox1.Image = m_imageListPictures.Images[0];

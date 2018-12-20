@@ -62,15 +62,9 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			isValidEndMarker = false;
 			isValidBeginMarker = false;
-			//
-			// Required for Windows Form Designer support
-			//
-			InitializeComponent();
 			AccessibleName = GetType().Name;
-
 			m_inlineMarker = new ClsInFieldMarker();
 			SetOkBtnEnableState();	// see if it needs to be visible or not
-
 		}
 
 		/// <summary />

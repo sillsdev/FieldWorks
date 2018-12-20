@@ -175,19 +175,13 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			m_sel = sel;
 			m_hvoEntry = hvoEntry;
 			m_styleSheet = styleSheet;
-			//
-			// Required for Windows Form Designer support
-			//
 			InitializeComponent();
 			AccessibleName = GetType().Name;
 			m_btnInsert.Visible = !hideInsertButton;
-
 			m_cdaTemp = cdaTemp;
 			var sda = m_cdaTemp as ISilDataAccess;
 			sda.WritingSystemFactory = cache.WritingSystemFactory;
-
 			SetupForEntry(domains, lexrels);
-
 			var entry = cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(m_hvoEntry);
 			m_view = new RelatedWordsView(m_cache, m_hvoEntry, entry.HeadWord, m_cdaTemp as ISilDataAccess, cache.ServiceLocator.WritingSystemManager.UserWs)
 			{
@@ -199,7 +193,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 				BackColor = Color.FromKnownColor(KnownColor.Window)
 			};
 			m_view.EditingHelper.DefaultCursor = Cursors.Arrow;
-
 			m_view.SelChanged += m_view_SelChanged;
 			Controls.Add(m_view);
 		}
@@ -538,27 +531,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 
 			#region IDisposable override
 
-			/// <summary>
-			/// Executes in two distinct scenarios.
-			///
-			/// 1. If disposing is true, the method has been called directly
-			/// or indirectly by a user's code via the Dispose method.
-			/// Both managed and unmanaged resources can be disposed.
-			///
-			/// 2. If disposing is false, the method has been called by the
-			/// runtime from inside the finalizer and you should not reference (access)
-			/// other managed objects, as they already have been garbage collected.
-			/// Only unmanaged resources can be disposed.
-			/// </summary>
-			/// <param name="disposing"></param>
-			/// <remarks>
-			/// If any exceptions are thrown, that is fine.
-			/// If the method is being done in a finalizer, it will be ignored.
-			/// If it is thrown by client code calling Dispose,
-			/// it needs to be handled by fixing the bug.
-			///
-			/// If subclasses override this method, they should call the base implementation.
-			/// </remarks>
+			/// <inheritdoc />
 			protected override void Dispose(bool disposing)
 			{
 				// Must not be run more than once.

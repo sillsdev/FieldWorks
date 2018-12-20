@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -42,82 +42,82 @@ namespace LanguageExplorer.Controls.DetailControls
 						vwenv.set_IntProperty((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.Gray));
 						vwenv.set_IntProperty((int)FwTextPropType.ktptLeadingIndent, (int)FwTextPropVar.ktpvMilliPoint, 18000);
 						vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalRight);
-						vwenv.NoteDependency(new int[] {hvo}, new int[] {m_flid}, 1);
+						vwenv.NoteDependency(new int[] { hvo }, new int[] { m_flid }, 1);
 					}
 					else
 					{
-						vwenv.OpenParagraph();		// vwenv.OpenMappedPara();
+						vwenv.OpenParagraph();      // vwenv.OpenMappedPara();
 						DisplayObjectProperty(vwenv, hvoProp);
 						vwenv.CloseParagraph();
 					}
 					break;
 				case AtomicReferenceView.kFragObjName:
-				{
-					// Display one reference.
-					var wsf = m_cache.WritingSystemFactory;
-					vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvDefault, (int)TptEditable.ktptNotEditable);
-					ITsString tss;
-					Debug.Assert(hvo != 0);
-					// Use reflection to get a prebuilt name if we can.  Otherwise
-					// settle for piecing together a string.
-					Debug.Assert(m_cache != null);
-					var obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
-					Debug.Assert(obj != null);
-					var type = obj.GetType();
-					var pi = type.GetProperty("TsName", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.FlattenHierarchy);
-					if (pi != null)
 					{
-						tss = (ITsString)pi.GetValue(obj, null);
-					}
-					else
-					{
-						if (!string.IsNullOrEmpty(m_displayNameProperty))
-						{
-							pi = type.GetProperty(m_displayNameProperty, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.FlattenHierarchy);
-						}
-						var ws = wsf.GetWsFromStr(obj.SortKeyWs);
-						if (ws == 0)
-						{
-							ws = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
-						}
+						// Display one reference.
+						var wsf = m_cache.WritingSystemFactory;
+						vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvDefault, (int)TptEditable.ktptNotEditable);
+						ITsString tss;
+						Debug.Assert(hvo != 0);
+						// Use reflection to get a prebuilt name if we can.  Otherwise
+						// settle for piecing together a string.
+						Debug.Assert(m_cache != null);
+						var obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
+						Debug.Assert(obj != null);
+						var type = obj.GetType();
+						var pi = type.GetProperty("TsName", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.FlattenHierarchy);
 						if (pi != null)
 						{
-							var info = pi.GetValue(obj, null);
-							// handle the object type
-							if (info is string)
+							tss = (ITsString)pi.GetValue(obj, null);
+						}
+						else
+						{
+							if (!string.IsNullOrEmpty(m_displayNameProperty))
 							{
-								tss = TsStringUtils.MakeString((string)info, ws);
+								pi = type.GetProperty(m_displayNameProperty, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.FlattenHierarchy);
 							}
-							else if (info is IMultiUnicode)
+							var ws = wsf.GetWsFromStr(obj.SortKeyWs);
+							if (ws == 0)
 							{
-								var accessor = info as IMultiUnicode;
-								tss = accessor.get_String(ws); // try the requested one (or default analysis)
-								if (tss == null || tss.Length == 0)
+								ws = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
+							}
+							if (pi != null)
+							{
+								var info = pi.GetValue(obj, null);
+								// handle the object type
+								if (info is string)
 								{
-									tss = accessor.BestAnalysisVernacularAlternative; // get something
+									tss = TsStringUtils.MakeString((string)info, ws);
+								}
+								else if (info is IMultiUnicode)
+								{
+									var accessor = info as IMultiUnicode;
+									tss = accessor.get_String(ws); // try the requested one (or default analysis)
+									if (tss == null || tss.Length == 0)
+									{
+										tss = accessor.BestAnalysisVernacularAlternative; // get something
+									}
+								}
+								else
+								{
+									tss = info is ITsString ? (ITsString)info : null;
 								}
 							}
 							else
 							{
-								tss = info is ITsString ? (ITsString)info : null;
+								tss = obj.ShortNameTSS; // prefer this, which is hopefully smart about wss.
+								if (tss == null || tss.Length == 0)
+								{
+									tss = TsStringUtils.MakeString(obj.ShortName, ws);
+								}
 							}
 						}
-						else
+						if (!string.IsNullOrEmpty(TextStyle))
 						{
-							tss = obj.ShortNameTSS; // prefer this, which is hopefully smart about wss.
-							if (tss == null || tss.Length == 0)
-							{
-								tss = TsStringUtils.MakeString(obj.ShortName, ws);
-							}
-						}
-					}
-					if (!string.IsNullOrEmpty(TextStyle))
-					{
-						vwenv.set_StringProperty((int)FwTextPropType.ktptNamedStyle, TextStyle);
+							vwenv.set_StringProperty((int)FwTextPropType.ktptNamedStyle, TextStyle);
 
+						}
+						vwenv.AddString(tss);
 					}
-					vwenv.AddString(tss);
-				}
 					break;
 				default:
 					throw new ArgumentException(@"Don't know what to do with the given frag.", nameof(frag));

@@ -1,9 +1,10 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
 using LanguageExplorer.Controls.DetailControls.Resources;
@@ -16,8 +17,6 @@ namespace LanguageExplorer.Controls.DetailControls
 {
 	internal class VectorReferenceLauncher : ReferenceLauncher
 	{
-		#region Data Members
-
 		protected VectorReferenceView m_vectorRefView;
 
 		/// <summary>
@@ -25,13 +24,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public event FwViewSizeChangedEventHandler ViewSizeChanged;
 
-		#endregion // Data Members
-
 		#region Construction, Initialization, and Disposal
 
 		public VectorReferenceLauncher()
 		{
-			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 		}
 
@@ -50,9 +46,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -113,13 +110,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected override SimpleListChooser GetChooser(IEnumerable<ObjectLabel> labels)
 		{
 			var contents = m_cache.GetManagedSilDataAccess().VecProp(m_obj.Hvo, m_flid).Select(hvo => m_cache.ServiceLocator.GetObject(hvo));
-
-			return new SimpleListChooser(m_persistProvider,
-				labels,
-				m_fieldName,
-				m_cache,
-				contents,
-				PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider));
+			return new SimpleListChooser(m_persistProvider, labels, m_fieldName, m_cache, contents, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider));
 		}
 
 		public override void SetItems(IEnumerable<ICmObject> chosenObjs)
@@ -149,17 +140,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-		protected virtual int RootBoxHeight
-		{
-			get
-			{
-				if (m_vectorRefView == null || m_vectorRefView.RootBox == null)
-				{
-					return 0;
-				}
-				return m_vectorRefView.RootBox.Height;
-			}
-		}
+		protected virtual int RootBoxHeight => m_vectorRefView?.RootBox?.Height ?? 0;
 
 		/// <summary>
 		/// Keep the view width equal to the launcher width minus the button width.
@@ -215,14 +196,14 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-
 			var h1 = RootBoxHeight;
-			var oldObjs = Targets;
-			if (oldObjs.Count() != chosenObjs.Count() || oldObjs.Intersect(chosenObjs).Count() != chosenObjs.Count())
+			var oldObjs = Targets.ToList();
+			var chosenObjsAsList = chosenObjs.ToList();
+			if (oldObjs.Count != chosenObjsAsList.Count || oldObjs.Intersect(chosenObjsAsList).Count() != chosenObjsAsList.Count)
 			{
 				UndoableUnitOfWorkHelper.Do(undoText, redoText, m_obj, () =>
 				{
-					Targets = chosenObjs;
+					Targets = chosenObjsAsList;
 					// FWR-3238 Keep these lines inside the UOW block, since for some reason
 					// 'this' is disposed after we come out of the block.
 					UpdateDisplayFromDatabase();
@@ -247,7 +228,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 				return m_cache.GetManagedSilDataAccess().VecProp(m_obj.Hvo, m_flid).Select(hvo => m_cache.ServiceLocator.GetObject(hvo));
 			}
-
 			set
 			{
 				// The old and new arrays are compared and modified as little as possible.

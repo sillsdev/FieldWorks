@@ -1,13 +1,14 @@
-// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Core.WritingSystems;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
@@ -17,33 +18,24 @@ namespace LanguageExplorer.Controls.DetailControls
 	public class ConfigureWritingSystemsDlg : Form
 	{
 		private const string HelpTopic = "khtpChoose-DataTreeWritingSystems";
-
 		private readonly IHelpTopicProvider m_helpTopicProvider;
-
 		private Label m_wsLabel;
 		private Button m_okButton;
 		private Button m_cancelButton;
 		private Button m_helpButton;
-
 		private CheckedListBox m_wsListBox;
 		private HelpProvider m_helpProvider;
 
 		/// <summary />
 		public ConfigureWritingSystemsDlg(IEnumerable<CoreWritingSystemDefinition> allWss, IEnumerable<CoreWritingSystemDefinition> selectedWss, IHelpTopicProvider helpTopicProvider)
 		{
-			//
-			// Required for Windows Form Designer support
-			//
 			InitializeComponent();
-
 			foreach (var curWs in allWss)
 			{
 				m_wsListBox.Items.Add(curWs, selectedWss.Contains(curWs));
 			}
 			m_wsListBox.SelectedIndex = 0;
-
 			m_helpTopicProvider = helpTopicProvider;
-
 			if (m_helpTopicProvider != null) // m_helpTopicProvider could be null for testing
 			{
 				m_helpProvider = new HelpProvider
@@ -58,7 +50,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary/>
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
 			base.Dispose(disposing);
 		}
 

@@ -20,7 +20,6 @@ namespace LanguageExplorer.Areas.Grammar
 		/// <summary />
 		public MsaInflectionFeatureListDlgLauncherView()
 		{
-			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 		}
 

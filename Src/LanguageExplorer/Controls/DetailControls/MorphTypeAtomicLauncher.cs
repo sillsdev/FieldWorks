@@ -1,9 +1,10 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.DetailControls.Resources;
@@ -22,18 +23,19 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
-			if( disposing )
+			if (disposing)
 			{
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 		/// <summary>
 		/// Get the SimpleListChooser.
@@ -45,7 +47,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				Cache = m_cache
 			};
-			x.NullLabel.DisplayName  = XmlUtils.GetOptionalAttributeValue(m_configurationNode, "nullLabel", "<EMPTY>");
+			x.NullLabel.DisplayName = XmlUtils.GetOptionalAttributeValue(m_configurationNode, "nullLabel", "<EMPTY>");
 			return x;
 		}
 
@@ -60,9 +62,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				displayWs = XmlUtils.GetOptionalAttributeValue(node, "ws", "analysis vernacular").ToLower();
 			}
-
 			var labels = ObjectLabel.CreateObjectLabels(m_cache, m_obj.ReferenceTargetCandidates(m_flid), m_displayNameProperty, displayWs);
-
 			using (var chooser = GetChooser(labels))
 			{
 				var fMadeMorphTypeChange = false;
@@ -70,17 +70,15 @@ namespace LanguageExplorer.Controls.DetailControls
 				chooser.InitializeExtras(m_configurationNode, PropertyTable, Publisher, Subscriber);
 				chooser.SetObjectAndFlid(m_obj.Hvo, m_flid);
 				chooser.SetHelpTopic(Slice.GetChooserHelpTopicID());
-
 				var hvoType = m_cache.DomainDataByFlid.get_ObjectProp(m_obj.Hvo, m_flid);
 				var morphTypeRep = m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>();
 				var type = hvoType != 0 ? morphTypeRep.GetObject(hvoType) : null;
 				chooser.MakeSelection(type);
-
 				if (chooser.ShowDialog() != DialogResult.OK)
 				{
 					return;
 				}
-				var selected = (IMoMorphType) chooser.ChosenOne.Object;
+				var selected = (IMoMorphType)chooser.ChosenOne.Object;
 				var original = Target as IMoMorphType;
 				var sUndo = StringTable.Table.GetStringWithXPath("ChangeLexemeMorphTypeUndo", m_ksPath);
 				var sRedo = StringTable.Table.GetStringWithXPath("ChangeLexemeMorphTypeRedo", m_ksPath);
@@ -98,10 +96,9 @@ namespace LanguageExplorer.Controls.DetailControls
 							if (ler.ComponentLexemesRS.Count > 0)
 							{
 								// TODO-Linux: Help is not implemented in Mono
-								if (MessageBox.Show(FindForm(), DetailControlsStrings.ksRootNoComponentsMessage,
-									    DetailControlsStrings.ksRootNoComponentsCaption, MessageBoxButtons.YesNo,
-									    MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, 0, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider).HelpFile,
-									    HelpNavigator.Topic, "/Using_Tools/Lexicon_tools/Lexicon_Edit/change_the_morph_type.htm") != DialogResult.Yes)
+								if (MessageBox.Show(FindForm(), DetailControlsStrings.ksRootNoComponentsMessage, DetailControlsStrings.ksRootNoComponentsCaption, MessageBoxButtons.YesNo,
+										MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, 0, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider).HelpFile,
+										HelpNavigator.Topic, "/Using_Tools/Lexicon_tools/Lexicon_Edit/change_the_morph_type.htm") != DialogResult.Yes)
 								{
 									return;
 								}
@@ -110,7 +107,6 @@ namespace LanguageExplorer.Controls.DetailControls
 						}
 					}
 				}
-
 				UndoableUnitOfWorkHelper.Do(sUndo, sRedo, entry, () =>
 				{
 					if (fRemoveComponents)
@@ -120,7 +116,6 @@ namespace LanguageExplorer.Controls.DetailControls
 							entry.EntryRefsOS.Remove(ler);
 						}
 					}
-
 					if (IsStemType(original) || m_obj is IMoStemAllomorph)
 					{
 						if (IsStemType(selected))
@@ -174,17 +169,16 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				rgmsaOld.AddRange(entry.MorphoSyntaxAnalysesOC.Where(msa => !(msa is IMoStemMsa)));
 			}
-
 			if (CheckForAffixDataLoss(affix, rgmsaOld))
 			{
 				return false;
 			}
 			var stem = m_cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
-			SwapValues(entry, affix, stem, type, rgmsaOld);	// may cause slice/button to be disposed...
+			SwapValues(entry, affix, stem, type, rgmsaOld); // may cause slice/button to be disposed...
 			return true;
 		}
 
-		private bool CheckForAffixDataLoss(IMoAffixForm affix, List<IMoMorphSynAnalysis> rgmsaAffix)
+		private static bool CheckForAffixDataLoss(IMoAffixForm affix, List<IMoMorphSynAnalysis> rgmsaAffix)
 		{
 			var fLoseInflCls = affix.InflectionClassesRC.Count > 0;
 			var fLoseInfixLoc = false;
@@ -196,12 +190,11 @@ namespace LanguageExplorer.Controls.DetailControls
 					fLoseRule = true;
 					break;
 				case MoAffixAllomorphTags.kClassId:
-					var allo = (IMoAffixAllomorph) affix;
+					var allo = (IMoAffixAllomorph)affix;
 					fLoseInfixLoc = allo.PositionRS.Count > 0;
 					fLoseGramInfo = allo.MsEnvPartOfSpeechRA != null || allo.MsEnvFeaturesOA != null;
 					break;
 			}
-
 			for (var i = 0; !fLoseGramInfo && i < rgmsaAffix.Count; ++i)
 			{
 				var msaInfl = rgmsaAffix[i] as IMoInflAffMsa;
@@ -237,16 +230,12 @@ namespace LanguageExplorer.Controls.DetailControls
 				var msaStep = rgmsaAffix[i] as IMoDerivStepMsa;
 				if (msaStep != null)
 				{
-					if (msaStep.InflectionClassRA != null ||
-						msaStep.ProdRestrictRC.Count > 0 ||
-						msaStep.InflFeatsOA != null ||
-						msaStep.MsFeaturesOA != null)
+					if (msaStep.InflectionClassRA != null || msaStep.ProdRestrictRC.Count > 0 || msaStep.InflFeatsOA != null || msaStep.MsFeaturesOA != null)
 					{
 						fLoseGramInfo = true;
 					}
 				}
 			}
-
 			if (!fLoseInflCls && !fLoseInfixLoc && !fLoseGramInfo && !fLoseRule)
 			{
 				return false;
@@ -309,7 +298,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				rgmsaOld.AddRange(entry.MorphoSyntaxAnalysesOC.OfType<IMoStemMsa>());
 			}
-
 			if (CheckForStemDataLoss(stem, rgmsaOld))
 			{
 				return false;
@@ -326,18 +314,12 @@ namespace LanguageExplorer.Controls.DetailControls
 			foreach (var moMorphSynAnalysis in rgmsaStem)
 			{
 				var msa = moMorphSynAnalysis as IMoStemMsa;
-				if (msa != null &&
-					(msa.FromPartsOfSpeechRC.Count > 0 ||
-					 msa.InflectionClassRA != null ||
-					 msa.ProdRestrictRC.Count > 0 ||
-					 msa.StratumRA != null ||
-					 msa.MsFeaturesOA != null))
+				if (msa != null && (msa.FromPartsOfSpeechRC.Count > 0 || msa.InflectionClassRA != null || msa.ProdRestrictRC.Count > 0 || msa.StratumRA != null || msa.MsFeaturesOA != null))
 				{
 					fLoseGramInfo = true;
 					break;
 				}
 			}
-
 			if (!fLoseStemName && !fLoseGramInfo)
 			{
 				return false;
@@ -364,7 +346,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			var dtree = Slice.ContainingDataTree;
 			var idx = Slice.IndexInContainer;
-			dtree.DoNotRefresh = true;	// don't let the datatree repeatedly redraw itself...
+			dtree.DoNotRefresh = true;  // don't let the datatree repeatedly redraw itself...
 			entry.ReplaceMoForm(origForm, newForm);
 			newForm.MorphTypeRA = type;
 			entry.ReplaceObsoleteMsas(rgmsaOld);
@@ -374,9 +356,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				if (slice.IsDisposed)
 				{
-					continue;
+					throw new InvalidOperationException("Thou shalt not call methods after the slice is disposed!");
 				}
-
 				if (slice.MyCmObject is IMoMorphSynAnalysis && rgmsaOld.Contains(slice.MyCmObject as IMoMorphSynAnalysis))
 				{
 					slice.Dispose();
@@ -408,17 +389,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return false;
 			}
-
-			return (type.Guid == MoMorphTypeTags.kguidMorphBoundRoot) ||
-			       (type.Guid == MoMorphTypeTags.kguidMorphBoundStem) ||
-			       (type.Guid == MoMorphTypeTags.kguidMorphEnclitic) ||
-			       (type.Guid == MoMorphTypeTags.kguidMorphParticle) ||
-			       (type.Guid == MoMorphTypeTags.kguidMorphProclitic) ||
-			       (type.Guid == MoMorphTypeTags.kguidMorphRoot) ||
-			       (type.Guid == MoMorphTypeTags.kguidMorphStem) ||
-			       (type.Guid == MoMorphTypeTags.kguidMorphClitic) ||
-			       (type.Guid == MoMorphTypeTags.kguidMorphPhrase) ||
-			       (type.Guid == MoMorphTypeTags.kguidMorphDiscontiguousPhrase);
+			return type.Guid == MoMorphTypeTags.kguidMorphBoundRoot || type.Guid == MoMorphTypeTags.kguidMorphBoundStem || type.Guid == MoMorphTypeTags.kguidMorphEnclitic
+			       || type.Guid == MoMorphTypeTags.kguidMorphParticle || type.Guid == MoMorphTypeTags.kguidMorphProclitic || type.Guid == MoMorphTypeTags.kguidMorphRoot
+				   || type.Guid == MoMorphTypeTags.kguidMorphStem || type.Guid == MoMorphTypeTags.kguidMorphClitic || type.Guid == MoMorphTypeTags.kguidMorphPhrase
+				   || type.Guid == MoMorphTypeTags.kguidMorphDiscontiguousPhrase;
 		}
 	}
 }

@@ -1,16 +1,17 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using LanguageExplorer.Controls.DetailControls.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Application.ApplicationServices;
-using SIL.LCModel.Infrastructure;
-using LanguageExplorer.Controls.DetailControls.Resources;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Infrastructure;
 using SIL.Xml;
 
 namespace LanguageExplorer.Controls.DetailControls
@@ -27,7 +28,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		private ISilDataAccess m_sda;
 		private CheckBox m_cb;
 		protected XElement m_node;
-		bool m_fToggleValue;
+		private bool m_fToggleValue;
 
 		/// <summary />
 		public CheckboxSlice(LcmCache cache, ICmObject obj, int flid, XElement node)
@@ -36,7 +37,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_cb = (CheckBox)Control;
 			m_cb.Dock = DockStyle.Left;
 			m_cb.Width = 20; // was taking whole length of slice
-			m_cb.Height = 20;	// on Mono, is set to 100 by default
+			m_cb.Height = 20;   // on Mono, is set to 100 by default
 			m_node = node;
 			m_cb.Enabled = XmlUtils.GetOptionalBooleanAttributeValue(m_node, "editable", true);
 			SetToggleValue(node);
@@ -54,7 +55,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		public override void Install(DataTree parentDataTree)
 		{
 			base.Install(parentDataTree);
-
 			if (m_cb.Dock != DockStyle.Left)
 			{
 				m_cb.Dock = DockStyle.Left;
@@ -63,43 +63,21 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				m_cb.Width = 20; // was taking whole length of slice
 			}
-
 			m_sda = Cache.DomainDataByFlid;
 			m_sda.AddNotification(this);
 		}
 
 		#region IDisposable override
 
-		/// <summary>
-		/// Executes in two distinct scenarios.
-		///
-		/// 1. If disposing is true, the method has been called directly
-		/// or indirectly by a user's code via the Dispose method.
-		/// Both managed and unmanaged resources can be disposed.
-		///
-		/// 2. If disposing is false, the method has been called by the
-		/// runtime from inside the finalizer and you should not reference (access)
-		/// other managed objects, as they already have been garbage collected.
-		/// Only unmanaged resources can be disposed.
-		/// </summary>
-		/// <param name="disposing"></param>
-		/// <remarks>
-		/// If any exceptions are thrown, that is fine.
-		/// If the method is being done in a finalizer, it will be ignored.
-		/// If it is thrown by client code calling Dispose,
-		/// it needs to be handled by fixing the bug.
-		///
-		/// If subclasses override this method, they should call the base implementation.
-		/// </remarks>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
-
-			// m_sda COM object block removed due to crash in Finializer thread LT-6124
 
 			if (disposing)
 			{
@@ -145,7 +123,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				m_cb.Width = 20; // was taking whole length of slice
 			}
 
-			base.OnSizeChanged (e);
+			base.OnSizeChanged(e);
 		}
 
 		#region IVwNotifyChange methods

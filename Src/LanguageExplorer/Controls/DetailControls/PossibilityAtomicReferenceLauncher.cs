@@ -1,11 +1,12 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Linq;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.Xml;
 
 namespace LanguageExplorer.Controls.DetailControls
@@ -21,9 +22,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -40,8 +42,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
-
-			m_autoComplete = new PossibilityAutoComplete(cache, PropertyTable, (ICmPossibilityList) obj.ReferenceTargetOwner(flid), m_atomicRefView, displayNameProperty, displayWs);
+			m_autoComplete = new PossibilityAutoComplete(cache, PropertyTable, (ICmPossibilityList)obj.ReferenceTargetOwner(flid), m_atomicRefView, displayNameProperty, displayWs);
 			m_autoComplete.PossibilitySelected += HandlePossibilitySelected;
 			m_atomicRefView.RootBox.DataAccess.AddNotification(this);
 		}
@@ -109,7 +110,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				UpdateDisplayFromDatabase();
 			}
-
 			m_atomicRefView?.RootBox.MakeSimpleSel(true, true, true, true);
 		}
 

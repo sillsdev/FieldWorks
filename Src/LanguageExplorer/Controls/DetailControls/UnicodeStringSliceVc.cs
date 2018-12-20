@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,11 +10,13 @@ namespace LanguageExplorer.Controls.DetailControls
 {
 	internal class UnicodeStringSliceVc : FwBaseVc
 	{
-		readonly int m_flid;
+		private readonly int m_flid;
+
 		public UnicodeStringSliceVc()
 		{
 			m_wsDefault = -1;
 		}
+
 		public UnicodeStringSliceVc(int flid, int ws, LcmCache lcmCache)
 		{
 			m_flid = flid;

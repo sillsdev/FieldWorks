@@ -1,12 +1,12 @@
-// Copyright (c) 2012-2018 SIL International
+// Copyright (c) 2012-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Linq;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using LanguageExplorer.Controls.DetailControls.Resources;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
@@ -53,14 +53,13 @@ namespace LanguageExplorer.Controls.DetailControls
 			UpdateDomainTreeAndListLabels(labels);
 			searchTextBox.WritingSystemFactory = Cache.LanguageWritingSystemFactoryAccessor;
 			searchTextBox.AdjustForStyleSheet(m_stylesheet);
-			m_SearchTimer = new SearchTimer(this, 500, SearchSemanticDomains, new List<Control> {domainTree, domainList});
+			m_SearchTimer = new SearchTimer(this, 500, SearchSemanticDomains, new List<Control> { domainTree, domainList });
 			searchTextBox.TextChanged += OnSearchTextChanged;
 		}
 
 		protected override void OnLoad(EventArgs e)
 		{
 			base.OnLoad(e);
-
 			// Make sure cursor is in the search box
 			searchTextBox.Select();
 		}
@@ -126,7 +125,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				return; // Currently searching... don't respond to <Enter> or OK click.
 			}
 			m_selectedItems.Clear();
-			foreach(ListViewItem selectedDomain in selectedDomainsList.Items)
+			foreach (ListViewItem selectedDomain in selectedDomainsList.Items)
 			{
 				var hvo = (int)selectedDomain.Tag;
 				if (selectedDomain.Checked && hvo > 0)

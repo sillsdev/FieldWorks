@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -26,22 +26,18 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_fOptional = fOptional;
 		}
 
-		//methods
-
 		public override ObjectLabel Execute()
 		{
 			var slot = Cache.ServiceLocator.GetInstance<IMoInflAffixSlotFactory>().Create();
 			var pos = Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(m_posHvo);
-			UndoableUnitOfWorkHelper.Do(DetailControlsStrings.ksUndoCreateSlot, DetailControlsStrings.ksRedoCreateSlot,
-				Cache.ActionHandlerAccessor,
-				() =>
-				{
-					pos.AffixSlotsOC.Add(slot);
-					var sNewSlotName = StringTable.Table.GetString("NewSlotName", "Linguistics/Morphology/TemplateTable");
-					var defAnalWs = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
-					slot.Name.set_String(defAnalWs, TsStringUtils.MakeString(sNewSlotName, defAnalWs));
-					slot.Optional = m_fOptional;
-				});
+			UndoableUnitOfWorkHelper.Do(DetailControlsStrings.ksUndoCreateSlot, DetailControlsStrings.ksRedoCreateSlot, Cache.ActionHandlerAccessor, () =>
+			{
+				pos.AffixSlotsOC.Add(slot);
+				var sNewSlotName = StringTable.Table.GetString("NewSlotName", "Linguistics/Morphology/TemplateTable");
+				var defAnalWs = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
+				slot.Name.set_String(defAnalWs, TsStringUtils.MakeString(sNewSlotName, defAnalWs));
+				slot.Optional = m_fOptional;
+			});
 			// Enhance JohnT: usually the newly created slot will also get inserted into a template.
 			// Ideally we would make both part of the same UOW. However the code is in two distinct DLLs (see MorphologyEditor.dll).
 			return ObjectLabel.CreateObjectLabel(Cache, slot, "");
