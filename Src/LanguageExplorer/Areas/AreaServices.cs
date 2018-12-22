@@ -7,11 +7,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.LexText;
-using LanguageExplorer.Controls.LexText.DataNotebook;
 using LanguageExplorer.DictionaryConfiguration;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
@@ -189,7 +187,7 @@ namespace LanguageExplorer.Areas
 					flexApp.ReplaceMainWindow(mainWindow);
 				}
 			}
-			else if (importDlg is LinguaLinksImportDlg || importDlg is InterlinearImportDlg || importDlg is LexImportWizard || importDlg is NotebookImportWiz || importDlg is LiftImportDlg)
+			else if (importDlg is IImportForm)
 			{
 				// Make everything we've imported visible.
 				mainWindow.RefreshAllViews();

@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
+using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
@@ -17,7 +18,7 @@ using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
-	public partial class InterlinearImportDlg : Form, IFwExtension
+	public partial class InterlinearImportDlg : Form, IFwExtension, IImportForm
 	{
 		private LcmCache m_cache;
 		private IPublisher m_publisher;

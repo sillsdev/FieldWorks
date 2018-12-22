@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,7 +7,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 	/// <summary>
 	/// This struct stores the data associated with a single Standard Format Marker.
 	/// </summary>
-	public class RnSfMarker
+	internal sealed class RnSfMarker
 	{
 		//:> Data loaded from the settings file.
 		internal string m_sMkr;         // The field marker (without the leading \).
@@ -21,7 +21,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		internal int m_nLevel;
 		internal TextOptions m_txo = new TextOptions();
 		internal TopicsListOptions m_tlo = new TopicsListOptions();
-
 		internal DateOptions m_dto = new DateOptions();
 		internal StringOptions m_sto = new StringOptions();
 	}

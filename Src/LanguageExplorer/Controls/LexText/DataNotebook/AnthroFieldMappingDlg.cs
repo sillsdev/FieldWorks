@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,10 +9,10 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Areas;
-using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Controls.LexText.DataNotebook
@@ -20,27 +20,25 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 	/// <summary />
 	public partial class AnthroFieldMappingDlg : Form
 	{
-		LcmCache m_cache;
+		private LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IApp m_app;
-		IFwMetaDataCacheManaged m_mdc;
-		IVwStylesheet m_stylesheet;
-		RnSfMarker m_rsfm;
-		ListRefFieldOptions m_listOpt;
-		TextFieldOptions m_textOpt;
-		DateFieldOptions m_dateOpt;
-		StringFieldOptions m_stringOpt;
-		LinkFieldOptions m_linkOpt;
-		DiscardOptions m_discardOpt;
-		Dictionary<int, string> m_mapFlidName;
+		private IFwMetaDataCacheManaged m_mdc;
+		private IVwStylesheet m_stylesheet;
+		private RnSfMarker m_rsfm;
+		private ListRefFieldOptions m_listOpt;
+		private TextFieldOptions m_textOpt;
+		private DateFieldOptions m_dateOpt;
+		private StringFieldOptions m_stringOpt;
+		private LinkFieldOptions m_linkOpt;
+		private DiscardOptions m_discardOpt;
+		private Dictionary<int, string> m_mapFlidName;
 		private IPropertyTable m_propertyTable;
 		private IPublisher m_publisher;
-
-		Point m_locSubCtrl = new Point(2, 20);
-		SfmFile m_sfmFile;
-
-		string m_sContentsGroupFmt;
-		string m_sContentsLabelFmt;
+		private Point m_locSubCtrl = new Point(2, 20);
+		private SfmFile m_sfmFile;
+		private string m_sContentsGroupFmt;
+		private string m_sContentsLabelFmt;
 
 		/// <summary />
 		public AnthroFieldMappingDlg()
@@ -56,9 +54,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			m_sContentsLabelFmt = m_lblContents.Text;
 		}
 
-		public void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app,
-			RnSfMarker rsf, SfmFile sfmFile,
-			Dictionary<int, string> mapFlidName, IVwStylesheet stylesheet,
+		internal void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app, RnSfMarker rsf, SfmFile sfmFile, Dictionary<int, string> mapFlidName, IVwStylesheet stylesheet,
 			IPropertyTable propertyTable, IPublisher publisher)
 		{
 			m_cache = cache;
@@ -71,7 +67,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			m_propertyTable = propertyTable;
 			m_publisher = publisher;
 			m_mapFlidName = mapFlidName;
-
 			FillInFieldList();
 			FillInContentsPane(rsf, sfmFile);
 			SetSubControl();
@@ -111,8 +106,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					}
 				}
 			}
-			m_lblContents.Text = string.Format(m_sContentsLabelFmt, rsf.m_sMkr,
-				sfmFile.GetSFMCount(rsf.m_sMkr), m_lvContents.Items.Count);
+			m_lblContents.Text = string.Format(m_sContentsLabelFmt, rsf.m_sMkr, sfmFile.GetSFMCount(rsf.m_sMkr), m_lvContents.Items.Count);
 		}
 
 		private void SetSubControl()
@@ -142,7 +136,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 							break;
 						case CrossReferenceTags.kClassId:
 						case ReminderTags.kClassId:
-							throw new NotImplementedException(LexTextControls.ksUnimplementedField);
+							throw new NotSupportedException(LexTextControls.ksUnimplementedField);
 						default:
 							var clidBase = clidDst;
 							while (clidBase != 0 && clidBase != CmPossibilityTags.kClassId)
@@ -180,7 +174,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 							m_listOpt.Initialize(m_cache, m_helpTopicProvider, m_app, m_rsfm, cpt);
 							break;
 						case RnGenericRecTags.kClassId:
-							throw new NotImplementedException(LexTextControls.ksUnimplementedField);
+							throw new NotSupportedException(LexTextControls.ksUnimplementedField);
 						default:
 							throw new ArgumentException(LexTextControls.ksInvalidField);
 					}
@@ -259,7 +253,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private void m_btnOK_Click(object sender, EventArgs e)
 		{
-			var dest =  m_cbDestination.SelectedItem as DestinationField;
+			var dest = m_cbDestination.SelectedItem as DestinationField;
 			m_rsfm.m_flid = dest.Flid;
 			m_rsfm.m_sName = dest.Name;
 			Debug.Assert(m_groupOptions.Controls.Count == 1);
@@ -334,7 +328,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		/// <summary>
 		/// This provides the results after the dialog has closed.
 		/// </summary>
-		public RnSfMarker Results => new RnSfMarker
+		internal RnSfMarker Results => new RnSfMarker
 		{
 			m_flid = m_rsfm.m_flid,
 			m_nLevel = m_rsfm.m_nLevel,

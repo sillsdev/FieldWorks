@@ -29,7 +29,7 @@ using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.Controls.LexText
 {
-	internal sealed class LexImportWizard : WizardDialog, IFwExtension
+	internal sealed class LexImportWizard : WizardDialog, IFwExtension, IImportForm
 	{
 		private bool m_FeasabilityReportGenerated;  // has to run before import
 		private LcmCache m_cache;

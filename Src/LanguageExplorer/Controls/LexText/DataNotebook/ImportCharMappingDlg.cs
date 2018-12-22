@@ -1,27 +1,26 @@
-// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Windows.Forms;
 using System.Linq;
+using System.Windows.Forms;
 using LanguageExplorer.Controls.Styles;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
-using SIL.FieldWorks.FwCoreDlgs;
 
 namespace LanguageExplorer.Controls.LexText.DataNotebook
 {
 	/// <summary />
 	public partial class ImportCharMappingDlg : Form
 	{
-		LcmCache m_cache;
+		private LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IApp m_app;
-		IVwStylesheet m_stylesheet;
+		private IVwStylesheet m_stylesheet;
 
 		/// <summary />
 		public ImportCharMappingDlg()
@@ -30,8 +29,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			AccessibleName = GetType().Name;
 		}
 
-		public void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider,
-			IApp app, IVwStylesheet stylesheet, CharMapping charMapping)
+		internal void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app, IVwStylesheet stylesheet, CharMapping charMapping)
 		{
 			m_cache = cache;
 			m_helpTopicProvider = helpTopicProvider;
@@ -68,7 +66,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			{
 				m_cbWritingSystem.Items.Add(ws);
 			}
-
 			if (!string.IsNullOrEmpty(sWs))
 			{
 				CoreWritingSystemDefinition selectedWs;
@@ -123,10 +120,8 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				m_app, m_helpTopicProvider))
 			{
 				dlg.CanSelectParagraphBackgroundColor = false;
-				if (dlg.ShowDialog(this) == DialogResult.OK &&
-					((dlg.ChangeType & StyleChangeType.DefChanged) > 0 ||
-					(dlg.ChangeType & StyleChangeType.Added) > 0 ||
-					(dlg.ChangeType & StyleChangeType.RenOrDel) > 0))
+				if (dlg.ShowDialog(this) == DialogResult.OK
+				    && ((dlg.ChangeType & StyleChangeType.DefChanged) > 0 || (dlg.ChangeType & StyleChangeType.Added) > 0 || (dlg.ChangeType & StyleChangeType.RenOrDel) > 0))
 				{
 					m_app.Synchronize(SyncMsg.ksyncStyle);
 					var stylesheet = new LcmStyleSheet();
@@ -204,7 +199,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		{
 			get
 			{
-				if ((!m_chkIgnore.Checked) && (m_cbStyle.SelectedItem as IStStyle) != null)
+				if (!m_chkIgnore.Checked && (m_cbStyle.SelectedItem as IStStyle) != null)
 				{
 					return ((IStStyle)m_cbStyle.SelectedItem).Name;
 				}

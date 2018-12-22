@@ -1,23 +1,23 @@
-// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Windows.Forms;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.WritingSystems;
 
 namespace LanguageExplorer.Controls.LexText.DataNotebook
 {
 	/// <summary />
 	public partial class TextFieldOptions : UserControl
 	{
-		LcmCache m_cache;
-		IVwStylesheet m_stylesheet;
-		string m_sValidShortLim;
-		bool m_fHandlingTextChanged;
+		private LcmCache m_cache;
+		private IVwStylesheet m_stylesheet;
+		private string m_sValidShortLim;
+		private bool m_fHandlingTextChanged;
 
 		/// <summary />
 		public TextFieldOptions()
@@ -40,9 +40,8 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			m_chkAfterShortLine.Checked = rsfm.m_txo.m_fStartParaShortLine;
 			m_tbShortLength.Text = rsfm.m_txo.m_cchShortLim.ToString();
 			m_tbShortLength.Enabled = rsfm.m_txo.m_fStartParaShortLine;
-
 			m_btnAddWritingSystem.Initialize(m_cache, helpTopicProvider, app);
-			NotebookImportWiz.InitializeWritingSystemCombo(rsfm.m_txo.m_wsId, m_cache, m_cbWritingSystem);
+			m_cbWritingSystem.InitializeWritingSystemCombo(m_cache, rsfm.m_txo.m_wsId);
 			InitializeStylesCombo(rsfm.m_txo.m_sStyle);
 		}
 
@@ -92,13 +91,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		public string WritingSystem => (m_cbWritingSystem.SelectedItem as CoreWritingSystemDefinition)?.Id;
 
-		public string Style
-		{
-			get
-			{
-				return (m_cbStyles.SelectedItem as IStStyle)?.Name;
-			}
-		}
+		public string Style => (m_cbStyles.SelectedItem as IStStyle)?.Name;
 
 		/// <summary>
 		/// Validate user input to allow only decimal digits that can be parsed into an integer.
@@ -145,7 +138,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			var ws = m_btnAddWritingSystem.NewWritingSystem;
 			if (ws != null)
 			{
-				NotebookImportWiz.InitializeWritingSystemCombo(ws.Id, m_cache, m_cbWritingSystem);
+				m_cbWritingSystem.InitializeWritingSystemCombo(m_cache, ws.Id);
 			}
 		}
 	}

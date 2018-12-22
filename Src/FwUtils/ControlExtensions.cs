@@ -2,7 +2,11 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
+using SIL.LCModel;
+using SIL.LCModel.Core.WritingSystems;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -30,6 +34,33 @@ namespace SIL.FieldWorks.Common.FwUtils
 				}
 				me = myParent;
 			}
+		}
+
+		/// <summary>
+		/// Add writing systems to combo box.
+		/// </summary>
+		public static bool InitializeWritingSystemCombo(this ComboBox me, LcmCache cache, string writingSystem = null, CoreWritingSystemDefinition[] writingSystems = null)
+		{
+			if (string.IsNullOrEmpty(writingSystem))
+			{
+				writingSystem = cache.WritingSystemFactory.GetStrFromWs(cache.DefaultAnalWs);
+			}
+			if (writingSystems == null)
+			{
+				writingSystems = cache.ServiceLocator.WritingSystems.AllWritingSystems.ToArray();
+			}
+			me.Items.Clear();
+			me.Sorted = true;
+			me.Items.AddRange(writingSystems);
+			foreach (CoreWritingSystemDefinition ws in me.Items)
+			{
+				if (ws.Id == writingSystem)
+				{
+					me.SelectedItem = ws;
+					return true;
+				}
+			}
+			return false;
 		}
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,11 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.LCModel;
 
 namespace LanguageExplorer.Controls.LexText.DataNotebook
 {
@@ -19,8 +18,8 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 	/// </summary>
 	public partial class ListRefFieldOptions : UserControl
 	{
-		LcmCache m_cache;
-		IHelpTopicProvider m_helpTopicProvider;
+		private LcmCache m_cache;
+		private IHelpTopicProvider m_helpTopicProvider;
 
 		/// <summary />
 		public ListRefFieldOptions()
@@ -57,7 +56,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				dlg.Initialize(m_helpTopicProvider, string.Empty, string.Empty);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
-					var lvi = new ListViewItem(new[] {dlg.Match, dlg.Replace});
+					var lvi = new ListViewItem(new[] { dlg.Match, dlg.Replace });
 					m_lvSubstitutions.Items.Add(lvi);
 				}
 			}
@@ -111,34 +110,27 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			m_cache = cache;
 			m_helpTopicProvider = helpTopicProvider;
 			m_btnAddWritingSystem.Initialize(m_cache, helpTopicProvider, app);
-			NotebookImportWiz.InitializeWritingSystemCombo(rsfm.m_tlo.m_wsId, cache, m_cbWritingSystem);
+			m_cbWritingSystem.InitializeWritingSystemCombo(cache, rsfm.m_tlo.m_wsId);
 			var fNotAtomic = (cpt != CellarPropertyType.ReferenceAtomic);
 			m_tbDefaultValue.Text = rsfm.m_tlo.m_sEmptyDefault;
-
 			m_chkDelimMultiEnable.Checked = rsfm.m_tlo.m_fHaveMulti && fNotAtomic;
 			m_chkDelimMultiEnable.Enabled = fNotAtomic;
 			m_tbDelimMulti.Text = rsfm.m_tlo.m_sDelimMulti;
 			m_tbDelimMulti.Enabled = rsfm.m_tlo.m_fHaveMulti && fNotAtomic;
-
 			m_chkDelimSubEnable.Checked = rsfm.m_tlo.m_fHaveSub;
 			m_tbDelimSub.Text = rsfm.m_tlo.m_sDelimSub;
 			m_tbDelimSub.Enabled = rsfm.m_tlo.m_fHaveSub;
-
 			m_chkBetweenEnable.Checked = rsfm.m_tlo.m_fHaveBetween;
 			m_tbBetweenBefore.Text = rsfm.m_tlo.m_sMarkStart;
 			m_tbBetweenAfter.Text = rsfm.m_tlo.m_sMarkEnd;
 			m_tbBetweenBefore.Enabled = rsfm.m_tlo.m_fHaveBetween;
 			m_tbBetweenAfter.Enabled = rsfm.m_tlo.m_fHaveBetween;
-
 			m_chkOnlyBeforeEnable.Checked = rsfm.m_tlo.m_fHaveBefore;
 			m_tbOnlyBefore.Text = rsfm.m_tlo.m_sBefore;
 			m_tbOnlyBefore.Enabled = rsfm.m_tlo.m_fHaveBefore;
-
 			m_chkDiscardNewStuff.Checked = rsfm.m_tlo.m_fIgnoreNewStuff;
-
 			m_rbMatchName.Checked = rsfm.m_tlo.m_pnt == PossNameType.kpntName;
 			m_rbMatchAbbr.Checked = rsfm.m_tlo.m_pnt != PossNameType.kpntName;
-
 			Debug.Assert(rsfm.m_tlo.m_rgsMatch.Count == rsfm.m_tlo.m_rgsReplace.Count);
 			m_lvSubstitutions.Items.Clear();
 			for (var i = 0; i < rsfm.m_tlo.m_rgsMatch.Count; ++i)
@@ -218,7 +210,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			var ws = m_btnAddWritingSystem.NewWritingSystem;
 			if (ws != null)
 			{
-				NotebookImportWiz.InitializeWritingSystemCombo(ws.Id, m_cache, m_cbWritingSystem);
+				m_cbWritingSystem.InitializeWritingSystemCombo(m_cache, ws.Id);
 			}
 		}
 	}

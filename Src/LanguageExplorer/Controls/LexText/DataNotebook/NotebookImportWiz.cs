@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,18 +15,18 @@ using LanguageExplorer.Areas;
 using LanguageExplorer.SfmToXml;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
-using SIL.LCModel;
-using SIL.LCModel.Infrastructure;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.Resources;
-using SIL.LCModel.Utils;
-using SilEncConverters40;
+using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
 using SIL.Xml;
+using SilEncConverters40;
 
 namespace LanguageExplorer.Controls.LexText.DataNotebook
 {
@@ -34,16 +34,16 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 	/// This wizard steps the user through setting up to import a standard format anthropology
 	/// database file (and then importing it).
 	/// </summary>
-	public partial class NotebookImportWiz : WizardDialog, IFwExtension
+	public partial class NotebookImportWiz : WizardDialog, IFwExtension, IImportForm
 	{
 		// Give names to the step numbers.
-		const int kstepOverviewAndBackup = 1;
-		const int kstepFileAndSettings = 2;
-		const int kstepEncodingConversion = 3;
-		const int kstepContentMapping = 4;
-		const int kstepKeyMarkers = 5;
-		const int kstepCharacterMapping = 6;
-		const int kstepFinal = 7;
+		private const int kstepOverviewAndBackup = 1;
+		private const int kstepFileAndSettings = 2;
+		private const int kstepEncodingConversion = 3;
+		private const int kstepContentMapping = 4;
+		private const int kstepKeyMarkers = 5;
+		private const int kstepCharacterMapping = 6;
+		private const int kstepFinal = 7;
 
 		private LcmCache m_cache;
 		private IFwMetaDataCacheManaged m_mdc;
@@ -58,68 +58,52 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private bool m_fCanceling;
 		private OpenFileDialogAdapter openFileDialog;
-
 		private CmPossibilityCreator m_factPossibility;
-		public CmPossibilityCreator PossibilityCreator => m_factPossibility ?? (m_factPossibility = new CmPossibilityCreator(m_cache.ServiceLocator.GetInstance<ICmPossibilityFactory>()));
-
 		private CmAnthroItemCreator m_factAnthroItem;
-		public CmAnthroItemCreator AnthroItemCreator => m_factAnthroItem ?? (m_factAnthroItem = new CmAnthroItemCreator(m_cache.ServiceLocator.GetInstance<ICmAnthroItemFactory>()));
-
 		private CmLocationCreator m_factLocation;
-		public CmLocationCreator LocationCreator => m_factLocation ?? (m_factLocation = new CmLocationCreator(m_cache.ServiceLocator.GetInstance<ICmLocationFactory>()));
-
 		private CmPersonCreator m_factPerson;
-		public CmPersonCreator PersonCreator => m_factPerson ?? (m_factPerson = new CmPersonCreator(m_cache.ServiceLocator.GetInstance<ICmPersonFactory>()));
-
 		private CmCustomItemCreator m_factCustomItem;
-		public CmCustomItemCreator CustomItemCreator => m_factCustomItem ?? (m_factCustomItem = new CmCustomItemCreator(m_cache.ServiceLocator.GetInstance<ICmCustomItemFactory>()));
-
 		private CmSemanticDomainCreator m_factSemanticDomain;
-		public CmSemanticDomainCreator SemanticDomainCreator => m_factSemanticDomain ?? (m_factSemanticDomain = new CmSemanticDomainCreator(m_cache.ServiceLocator.GetInstance<ICmSemanticDomainFactory>()));
 		private MoMorphTypeCreator m_factMorphType;
-		public MoMorphTypeCreator MorphTypeCreator => m_factMorphType ?? (m_factMorphType = new MoMorphTypeCreator(m_cache.ServiceLocator.GetInstance<IMoMorphTypeFactory>()));
 		private PartOfSpeechCreator m_factPartOfSpeech;
-		public PartOfSpeechCreator NewPartOfSpeechCreator => m_factPartOfSpeech ?? (m_factPartOfSpeech = new PartOfSpeechCreator(m_cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>()));
 		private LexEntryTypeCreator m_factLexEntryType;
-		public LexEntryTypeCreator NewLexEntryTypeCreator => m_factLexEntryType ?? (m_factLexEntryType = new LexEntryTypeCreator(m_cache.ServiceLocator.GetInstance<ILexEntryTypeFactory>()));
 		private LexRefTypeCreator m_factLexRefType;
-		public LexRefTypeCreator NewLexRefTypeCreator => m_factLexRefType ?? (m_factLexRefType = new LexRefTypeCreator(m_cache.ServiceLocator.GetInstance<ILexRefTypeFactory>()));
+
+		private readonly List<PendingLink> m_pendingLinks = new List<PendingLink>();
 
 		public bool DirtySettings { get; set; }
 
-		readonly List<PendingLink> m_pendingLinks = new List<PendingLink>();
+		private Dictionary<string, ICmPossibility> m_mapAnthroCode = new Dictionary<string, ICmPossibility>();
+		private Dictionary<string, ICmPossibility> m_mapConfidence = new Dictionary<string, ICmPossibility>();
+		private Dictionary<string, ICmPossibility> m_mapLocation = new Dictionary<string, ICmPossibility>();
+		private Dictionary<string, ICmPossibility> m_mapPhraseTag = new Dictionary<string, ICmPossibility>();
+		private Dictionary<string, ICmPossibility> m_mapPeople = new Dictionary<string, ICmPossibility>();
+		private Dictionary<string, ICmPossibility> m_mapRestriction = new Dictionary<string, ICmPossibility>();
+		private Dictionary<string, ICmPossibility> m_mapStatus = new Dictionary<string, ICmPossibility>();
+		private Dictionary<string, ICmPossibility> m_mapTimeOfDay = new Dictionary<string, ICmPossibility>();
+		private Dictionary<string, ICmPossibility> m_mapRecType = new Dictionary<string, ICmPossibility>();
+		private Dictionary<Guid, Dictionary<string, ICmPossibility>> m_mapListMapPossibilities = new Dictionary<Guid, Dictionary<string, ICmPossibility>>();
 
-		Dictionary<string, ICmPossibility> m_mapAnthroCode = new Dictionary<string, ICmPossibility>();
-		Dictionary<string, ICmPossibility> m_mapConfidence = new Dictionary<string, ICmPossibility>();
-		Dictionary<string, ICmPossibility> m_mapLocation = new Dictionary<string, ICmPossibility>();
-		Dictionary<string, ICmPossibility> m_mapPhraseTag = new Dictionary<string, ICmPossibility>();
-		Dictionary<string, ICmPossibility> m_mapPeople = new Dictionary<string, ICmPossibility>();
-		Dictionary<string, ICmPossibility> m_mapRestriction = new Dictionary<string, ICmPossibility>();
-		Dictionary<string, ICmPossibility> m_mapStatus = new Dictionary<string, ICmPossibility>();
-		Dictionary<string, ICmPossibility> m_mapTimeOfDay = new Dictionary<string, ICmPossibility>();
-		Dictionary<string, ICmPossibility> m_mapRecType = new Dictionary<string, ICmPossibility>();
-		Dictionary<Guid, Dictionary<string, ICmPossibility>> m_mapListMapPossibilities = new Dictionary<Guid, Dictionary<string, ICmPossibility>>();
-
-		List<ICmPossibility> m_rgNewAnthroItem = new List<ICmPossibility>();
-		List<ICmPossibility> m_rgNewConfidence = new List<ICmPossibility>();
-		List<ICmPossibility> m_rgNewLocation = new List<ICmPossibility>();
-		List<ICmPossibility> m_rgNewPhraseTag = new List<ICmPossibility>();
-		List<ICmPossibility> m_rgNewPeople = new List<ICmPossibility>();
-		List<ICmPossibility> m_rgNewRestriction = new List<ICmPossibility>();
-		List<ICmPossibility> m_rgNewStatus = new List<ICmPossibility>();
-		List<ICmPossibility> m_rgNewTimeOfDay = new List<ICmPossibility>();
-		List<ICmPossibility> m_rgNewRecType = new List<ICmPossibility>();
-		Dictionary<Guid, List<ICmPossibility>> m_mapNewPossibilities = new Dictionary<Guid, List<ICmPossibility>>();
+		private List<ICmPossibility> m_rgNewAnthroItem = new List<ICmPossibility>();
+		private List<ICmPossibility> m_rgNewConfidence = new List<ICmPossibility>();
+		private List<ICmPossibility> m_rgNewLocation = new List<ICmPossibility>();
+		private List<ICmPossibility> m_rgNewPhraseTag = new List<ICmPossibility>();
+		private List<ICmPossibility> m_rgNewPeople = new List<ICmPossibility>();
+		private List<ICmPossibility> m_rgNewRestriction = new List<ICmPossibility>();
+		private List<ICmPossibility> m_rgNewStatus = new List<ICmPossibility>();
+		private List<ICmPossibility> m_rgNewTimeOfDay = new List<ICmPossibility>();
+		private List<ICmPossibility> m_rgNewRecType = new List<ICmPossibility>();
+		private Dictionary<Guid, List<ICmPossibility>> m_mapNewPossibilities = new Dictionary<Guid, List<ICmPossibility>>();
 
 		private string m_sStdImportMap;
 		private bool m_QuickFinish;
 		private int m_lastQuickFinishTab;
 		private string m_sFmtEncCnvLabel;
 
-		DateTime m_dtStart;
-		DateTime m_dtEnd;
-		int m_cRecordsRead;
-		int m_cRecordsDeleted;
+		private DateTime m_dtStart;
+		private DateTime m_dtEnd;
+		private int m_cRecordsRead;
+		private int m_cRecordsDeleted;
 
 		private Dictionary<int, string> m_mapFlidName = new Dictionary<int, string>();
 		private SfmFile m_SfmFile;
@@ -130,35 +114,41 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		private string m_sProjectFile;
 
 		private List<ImportMessage> m_rgMessages = new List<ImportMessage>();
+		private Process m_viewProcess;
+		private string m_sLogFile;
+		// These are used in our home-grown date parsing.
+		private string[] m_rgsDayAbbr;
+		private string[] m_rgsDayName;
+		private string[] m_rgsMonthAbbr;
+		private string[] m_rgsMonthName;
 
 		private readonly Dictionary<string, EncConverterChoice> m_mapWsEncConv = new Dictionary<string, EncConverterChoice>();
 		/// <summary>
 		/// Dictionary of std format marker mapping objects loaded from the map file.
 		/// </summary>
-		Dictionary<string, RnSfMarker> m_mapMkrRsfFromFile = new Dictionary<string, RnSfMarker>();
+		private Dictionary<string, RnSfMarker> m_mapMkrRsfFromFile = new Dictionary<string, RnSfMarker>();
 		/// <summary>
 		/// Dictionary of std format marker mapping objects that match up against the input file.
 		/// These may be copied from m_rgsfmFromMapFile or created with default settings.
 		/// </summary>
-		Dictionary<string, RnSfMarker> m_mapMkrRsf = new Dictionary<string, RnSfMarker>();
+		private Dictionary<string, RnSfMarker> m_mapMkrRsf = new Dictionary<string, RnSfMarker>();
 
-		List<CharMapping> m_rgcm = new List<CharMapping>();
+		private List<CharMapping> m_rgcm = new List<CharMapping>();
 
 		/// <summary>
 		/// Horizontal location of the cancel button when the "quick finish" button is shown.
 		/// </summary>
-		int m_ExtraButtonLeft;
+		private int m_ExtraButtonLeft;
 		/// <summary>
 		/// Original horizontal location of the cancel button, or the horizontal location of the
 		/// "quick finish" button.
 		/// </summary>
-		int m_OriginalCancelButtonLeft;
+		private int m_OriginalCancelButtonLeft;
 
 		/// <summary />
 		public NotebookImportWiz()
 		{
 			InitializeComponent();
-
 			openFileDialog = new OpenFileDialogAdapter();
 			m_sStdImportMap = Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "Import", "NotesImport.map");
 			m_ExtraButtonLeft = m_btnBack.Left - (m_btnCancel.Width + kdxpCancelHelpButtonGap);
@@ -167,21 +157,17 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			m_btnQuickFinish.Left = m_OriginalCancelButtonLeft;
 			m_btnCancel.Visible = true;
 			m_sFmtEncCnvLabel = lblMappingLanguagesInstructions.Text;
-
 			// Need to align SaveMapFile and QuickFinish to top of other dialog buttons (FWNX-833)
 			var normalDialogButtonTop = m_btnHelp.Top;
 			m_btnQuickFinish.Top = normalDialogButtonTop;
 			m_btnSaveMapFile.Top = normalDialogButtonTop;
-
-			// Disable all buttons that are enabled only by a selection being made in a list
-			// view.
+			// Disable all buttons that are enabled only by a selection being made in a list view.
 			m_btnModifyCharMapping.Enabled = false;
 			m_btnDeleteCharMapping.Enabled = false;
 			m_btnModifyMappingLanguage.Enabled = false;
 			m_btnModifyContentMapping.Enabled = false;
 			m_btnDeleteRecordMapping.Enabled = false;
 			m_btnModifyRecordMapping.Enabled = false;
-
 			// We haven't yet implemented the "advanced" features on that tab...
 			m_btnAdvanced.Enabled = false;
 			m_btnAdvanced.Visible = false;
@@ -195,12 +181,12 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		void IFwExtension.Init(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher)
 		{
 			m_cache = cache;
+			InitializePossibilityFactories();
 			m_propertyTable = propertyTable;
 			m_publisher = publisher;
 			m_mdc = cache.MetaDataCacheAccessor as IFwMetaDataCacheManaged;
 			m_wsManager = m_cache.ServiceLocator.WritingSystemManager;
 			lblMappingLanguagesInstructions.Text = string.Format(m_sFmtEncCnvLabel, cache.ProjectId.Name);
-
 			m_tbDatabaseFileName.Text = m_propertyTable.GetValue("DataNotebookImportDb", string.Empty);
 			m_tbProjectFileName.Text = m_propertyTable.GetValue("DataNotebookImportPrj", string.Empty);
 			m_tbSettingsFileName.Text = m_propertyTable.GetValue("DataNotebookImportMap", string.Empty);
@@ -222,6 +208,21 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		}
 
 		#endregion
+
+		private void InitializePossibilityFactories()
+		{
+			var serviceLocator = m_cache.ServiceLocator;
+			m_factPossibility = new CmPossibilityCreator(serviceLocator.GetInstance<ICmPossibilityFactory>());
+			m_factAnthroItem = new CmAnthroItemCreator(serviceLocator.GetInstance<ICmAnthroItemFactory>());
+			m_factLocation = new CmLocationCreator(serviceLocator.GetInstance<ICmLocationFactory>());
+			m_factPerson = new CmPersonCreator(serviceLocator.GetInstance<ICmPersonFactory>());
+			m_factCustomItem = new CmCustomItemCreator(serviceLocator.GetInstance<ICmCustomItemFactory>());
+			m_factSemanticDomain = new CmSemanticDomainCreator(serviceLocator.GetInstance<ICmSemanticDomainFactory>());
+			m_factMorphType = new MoMorphTypeCreator(serviceLocator.GetInstance<IMoMorphTypeFactory>());
+			m_factPartOfSpeech = new PartOfSpeechCreator(serviceLocator.GetInstance<IPartOfSpeechFactory>());
+			m_factLexEntryType = new LexEntryTypeCreator(serviceLocator.GetInstance<ILexEntryTypeFactory>());
+			m_factLexRefType = new LexRefTypeCreator(serviceLocator.GetInstance<ILexRefTypeFactory>());
+		}
 
 		protected override void OnHelpButton()
 		{
@@ -254,7 +255,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					Debug.Assert(false, "Reached a step without a help file defined for it");
 					break;
 			}
-
 			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), helpTopic);
 		}
 
@@ -270,26 +270,18 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			{
 				return;
 			}
-
 			DialogResult = DialogResult.Cancel;
-
 			// if it's known to be dirty OR the shift key is down - ask to save the settings file
 			if (DirtySettings || (ModifierKeys & Keys.Shift) == Keys.Shift)
 			{
 				// LT-7057: if no settings file, don't ask to save
 				if (UsesInvalidFileNames(true))
 				{
-					return;	// finish without prompting to save...
+					return; // finish without prompting to save...
 				}
-
 				// ask to save the settings
-				var result = MessageBox.Show(this,
-					LexTextControls.ksAskRememberImportSettings,
-					LexTextControls.ksSaveSettings_,
-					MessageBoxButtons.YesNoCancel,
-					MessageBoxIcon.Question,
-					MessageBoxDefaultButton.Button3);
-
+				var result = MessageBox.Show(this, LexTextControls.ksAskRememberImportSettings, LexTextControls.ksSaveSettings_,
+					MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button3);
 				switch (result)
 				{
 					case DialogResult.Yes:
@@ -318,7 +310,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			{
 				var ecc = m_mapWsEncConv[sWs];
 				wss.Add(ecc.WritingSystem);
-				m_lvMappingLanguages.Items.Add(new ListViewItem(new[] { ecc.Name, ecc.ConverterName }) {Tag = ecc});
+				m_lvMappingLanguages.Items.Add(new ListViewItem(new[] { ecc.Name, ecc.ConverterName }) { Tag = ecc });
 			}
 			foreach (var ws in m_cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
@@ -349,7 +341,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				ecc = new EncConverterChoice(ws.Id, sEncCnv, m_wsManager);
 				m_mapWsEncConv.Add(ecc.WritingSystem.Id, ecc);
 			}
-			return new ListViewItem(new[] { ws.DisplayLabel, sEncCnv }) {Tag = ecc};
+			return new ListViewItem(new[] { ws.DisplayLabel, sEncCnv }) { Tag = ecc };
 		}
 
 		private void btnBackup_Click(object sender, EventArgs e)
@@ -405,7 +397,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			// don't require file to exist if it's "SaveAs"
 			openFileDialog.CheckFileExists = (fileType != OFType.SaveAs);
 			openFileDialog.Multiselect = false;
-
 			var done = false;
 			while (!done)
 			{
@@ -417,7 +408,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					dir = Path.GetDirectoryName(currentFile);
 				}
 				catch { }
-
 				if (Directory.Exists(dir))
 				{
 					openFileDialog.InitialDirectory = dir;
@@ -433,7 +423,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				{
 					openFileDialog.FileName = string.Empty;
 				}
-
 				if (openFileDialog.ShowDialog(this) == DialogResult.OK)
 				{
 					bool isValid;
@@ -451,28 +440,25 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 							break;
 						case OFType.SaveAs:
 							sFileType = LexTextControls.ksXmlSettings;
-							isValid = true;		// no requirements since the file will be overridden
+							isValid = true;     // no requirements since the file will be overridden
 							break;
 						default:
 							sFileType = LexTextControls.ksXmlSettings;
 							isValid = IsValidMapFile(openFileDialog.FileName);
 							break;
 					}
-
 					if (!isValid)
 					{
 						var msg = string.Format(LexTextControls.ksSelectedFileXInvalidY, openFileDialog.FileName, sFileType, System.Environment.NewLine);
 						var dr = MessageBox.Show(this, msg, LexTextControls.ksPossibleInvalidFile, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-						if (dr == DialogResult.Yes)
+						switch (dr)
 						{
-							return openFileDialog.FileName;
+							case DialogResult.Yes:
+								return openFileDialog.FileName;
+							case DialogResult.No:
+								continue;
 						}
-
-						if (dr == DialogResult.No)
-						{
-							continue;
-						}
-						break;	// exit with current still
+						break;  // exit with current still
 					}
 					return openFileDialog.FileName;
 				}
@@ -730,7 +716,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 							{
 								xw.WriteAttributeString("converter", ecc.ConverterName);
 							}
-							xw.WriteEndElement();	// EncodingConverter
+							xw.WriteEndElement();   // EncodingConverter
 						}
 						foreach (string sMkr in m_mapMkrRsf.Keys)
 						{
@@ -749,7 +735,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 							}
 							WriteMarkerContents(xw, rsf);
 							xw.WriteWhitespace(Environment.NewLine);
-							xw.WriteEndElement();	// Marker
+							xw.WriteEndElement();   // Marker
 						}
 						foreach (var cm in m_rgcm)
 						{
@@ -780,17 +766,17 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 							xw.WriteWhitespace(Environment.NewLine);
 							xw.WriteStartElement("ReplaceAll");
 							xw.WriteAttributeString("value", "true");
-							xw.WriteEndElement();	// ReplaceAll
+							xw.WriteEndElement();   // ReplaceAll
 						}
 						if (m_chkDisplayImportReport.Checked)
 						{
 							xw.WriteWhitespace(Environment.NewLine);
 							xw.WriteStartElement("ShowLog");
 							xw.WriteAttributeString("value", "true");
-							xw.WriteEndElement();	// ShowLog
+							xw.WriteEndElement();   // ShowLog
 						}
 						xw.WriteWhitespace(Environment.NewLine);
-						xw.WriteEndElement();	// ShoeboxImportSettings
+						xw.WriteEndElement();   // ShoeboxImportSettings
 						xw.WriteWhitespace(Environment.NewLine);
 						xw.Flush();
 						xw.Close();
@@ -901,12 +887,10 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					{
 						xw.WriteAttributeString("afterBlankLine", "true");
 					}
-
 					if (rsf.m_txo.m_fStartParaIndented)
 					{
 						xw.WriteAttributeString("forIndentedLine", "true");
 					}
-
 					if (rsf.m_txo.m_fStartParaNewLine)
 					{
 						xw.WriteAttributeString("forEachLine", "true");
@@ -933,13 +917,12 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		/// <summary>
 		/// Determine the general type of the field from its id.
 		/// </summary>
-		public SfFieldType FieldType(int flid)
+		private SfFieldType FieldType(int flid)
 		{
 			if (flid == 0)
 			{
 				return SfFieldType.Discard;
 			}
-
 			var cpt = (CellarPropertyType)m_mdc.GetFieldType(flid);
 			int clidDst;
 			switch (cpt)
@@ -973,7 +956,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 							Debug.Assert(cpt == CellarPropertyType.OwningAtomic);
 							return SfFieldType.Text;
 						case RnRoledParticTags.kClassId:
-							return SfFieldType.ListRef;	// closest choice.
+							return SfFieldType.ListRef; // closest choice.
 						case RnGenericRecTags.kClassId:
 							break;
 					}
@@ -1034,7 +1017,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						case "ShowLog":
 							continue;
 					}
-
 					return false;
 				}
 			}
@@ -1065,21 +1047,20 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				tabSteps.SelectedIndex = m_lastQuickFinishTab + 1;
 				m_CurrentStepNumber = m_lastQuickFinishTab;
 				UpdateStepLabel();
-				m_QuickFinish = false;	// going back, so turn off flag
+				m_QuickFinish = false;  // going back, so turn off flag
 			}
-			NextButtonEnabled = true;	// make sure it's enabled if we go back from generated report
-			AllowQuickFinishButton();	// make it visible if needed, or hidden if not
+			NextButtonEnabled = true;   // make sure it's enabled if we go back from generated report
+			AllowQuickFinishButton();   // make it visible if needed, or hidden if not
 			OnResize(null);
 		}
 
 		protected override void OnNextButton()
 		{
 			ShowSaveButtonOrNot();
-
 			base.OnNextButton();
 			PrepareForNextTab(CurrentStepNumber);
 			NextButtonEnabled = EnableNextButton();
-			AllowQuickFinishButton();		// make it visible if needed, or hidden if not
+			AllowQuickFinishButton();       // make it visible if needed, or hidden if not
 			OnResize(null);
 		}
 
@@ -1092,8 +1073,8 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					if (fStayHere)
 					{
 						// Don't go anywhere, stay right here by going to the previous page.
-						m_CurrentStepNumber = kstepFileAndSettings - 1;		// 1-based
-						tabSteps.SelectedIndex = m_CurrentStepNumber - 1;	// 0-based
+						m_CurrentStepNumber = kstepFileAndSettings - 1;     // 1-based
+						tabSteps.SelectedIndex = m_CurrentStepNumber - 1;   // 0-based
 						UpdateStepLabel();
 					}
 					ReadSettings();
@@ -1141,7 +1122,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				m_sSfmDataFile = m_tbDatabaseFileName.Text;
 				m_SfmFile = new SfmFile(m_sSfmDataFile);
 			}
-			if (m_mapMkrRsf.Count == 0)
+			if (!m_mapMkrRsf.Any())
 			{
 				foreach (string sfm in m_SfmFile.SfmInfo)
 				{
@@ -1156,13 +1137,10 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				foreach (var sMkr in m_mapMkrRsf.Keys)
 				{
 					var rsf = m_mapMkrRsf[sMkr];
-					var lvi = new ListViewItem(new[] {
-						"\\" + rsf.m_sMkr,
-						m_SfmFile.GetSFMCount(rsf.m_sMkr).ToString(),
-						m_SfmFile.GetSFMWithDataCount(rsf.m_sMkr).ToString(),
-						rsf.m_sName
-					});
-					lvi.Tag = rsf;
+					var lvi = new ListViewItem(new[] { "\\" + rsf.m_sMkr, m_SfmFile.GetSFMCount(rsf.m_sMkr).ToString(), m_SfmFile.GetSFMWithDataCount(rsf.m_sMkr).ToString(), rsf.m_sName})
+					{
+						Tag = rsf
+					};
 					m_lvContentMapping.Items.Add(lvi);
 				}
 			}
@@ -1226,7 +1204,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			{
 				return rsf;
 			}
-
 			var rsfNew = new RnSfMarker
 			{
 				m_sMkr = mkr,
@@ -1240,7 +1217,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		{
 			if (m_cbRecordMarker.Items.Count == 0)
 			{
-				var mapOrderMarker = new Dictionary<int,string>();
+				var mapOrderMarker = new Dictionary<int, string>();
 				var select = -1;
 				foreach (string sfm in m_SfmFile.SfmInfo)
 				{
@@ -1301,7 +1278,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			var sStyle = cm.DestinationStyle ?? string.Empty;
 			var sBegin = cm.BeginMarker ?? string.Empty;
 			var sEnd = cm.EndMarker ?? string.Empty;
-			return new ListViewItem(new[] { sBegin, sEnd, sWsName, sStyle }) {Tag = cm};
+			return new ListViewItem(new[] { sBegin, sEnd, sWsName, sStyle }) { Tag = cm };
 		}
 
 		private void ShowSaveButtonOrNot()
@@ -1387,7 +1364,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 							rval = true;
 						}
 						break;
-
 					case kstepFileAndSettings:
 						// make sure there is a value for the 'Save as:' entry
 						if (m_tbSaveAsFileName.Text.Length <= 0)
@@ -1396,23 +1372,18 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						}
 						rval = true;
 						break;
-
 					case kstepEncodingConversion:
 						rval = true;
 						break;
-
 					case kstepContentMapping:
 						rval = true;
 						break;
-
 					case kstepKeyMarkers:
 						rval = true;
 						break;
-
 					case kstepCharacterMapping:
 						rval = true;
 						break;
-
 					default:
 						rval = true;
 						break;
@@ -1450,10 +1421,9 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			{
 				return;
 			}
-
 			if (AllowQuickFinishButton())
 			{
-				m_lastQuickFinishTab = m_CurrentStepNumber;	// save for later
+				m_lastQuickFinishTab = m_CurrentStepNumber; // save for later
 
 				// before jumping we need to make sure all the data structures are populated
 				//  for (near) future use.
@@ -1462,19 +1432,15 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					PrepareForNextTab(CurrentStepNumber);
 					m_CurrentStepNumber++;
 				}
-
-				m_CurrentStepNumber = kstepCharacterMapping;	// next to last tab (1-7)
-				tabSteps.SelectedIndex = m_CurrentStepNumber;	// last tab (0-6)
-
+				m_CurrentStepNumber = kstepCharacterMapping;    // next to last tab (1-7)
+				tabSteps.SelectedIndex = m_CurrentStepNumber;   // last tab (0-6)
 				// we need to skip to the final step now, also handle back processing from there
 				m_QuickFinish = true;
 				UpdateStepLabel();
-
 				// used in the final steps of importing the data
 				m_btnQuickFinish.Visible = false;
 				m_btnCancel.Location = m_btnQuickFinish.Location;
 				m_btnCancel.Visible = true;
-
 				NextButtonEnabled = EnableNextButton();
 			}
 		}
@@ -1505,9 +1471,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		/// </summary>
 		private void m_SettingsFileName_TextChanged(object sender, EventArgs e)
 		{
-			if (string.IsNullOrEmpty(m_tbSaveAsFileName.Text) &&
-				IsValidMapFile(m_tbSettingsFileName.Text) &&
-				m_tbSettingsFileName.Text.ToLowerInvariant() != m_sStdImportMap.ToLowerInvariant())
+			if (string.IsNullOrEmpty(m_tbSaveAsFileName.Text) && IsValidMapFile(m_tbSettingsFileName.Text) && m_tbSettingsFileName.Text.ToLowerInvariant() != m_sStdImportMap.ToLowerInvariant())
 			{
 				m_tbSaveAsFileName.Text = m_tbSettingsFileName.Text;
 			}
@@ -1516,11 +1480,10 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private void LoadSettingsFile()
 		{
-			if (m_mapFlidName.Count == 0)
+			if (!m_mapFlidName.Any())
 			{
 				FillFlidNameMap();
 			}
-
 			var xmlMap = new XmlDocument();
 			try
 			{
@@ -1674,7 +1637,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						}
 					}
 				}
-
 				if (m_mapMkrRsfFromFile.ContainsKey(sfm.m_sMkr))
 				{
 					m_mapMkrRsfFromFile[sfm.m_sMkr] = sfm;
@@ -1766,9 +1728,11 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						sfm.m_txo.m_fStartParaNewLine = XmlUtils.GetOptionalBooleanAttributeValue(xn, "forEachLine", false);
 						sfm.m_txo.m_fStartParaShortLine = XmlUtils.GetOptionalBooleanAttributeValue(xn, "afterShortLine", false);
 						sfm.m_txo.m_cchShortLim = 0;
-						string sLim = XmlUtils.GetOptionalAttributeValue(xn, "shortLineLim");
+						var sLim = XmlUtils.GetOptionalAttributeValue(xn, "shortLineLim");
 						if (!string.IsNullOrEmpty(sLim))
+						{
 							int.TryParse(sLim, out sfm.m_txo.m_cchShortLim);
+						}
 						break;
 					case "DefaultParaWrtSys":
 						sfm.m_txo.m_wsId = XmlUtils.GetMandatoryAttributeValue(xn, "ws");
@@ -1809,7 +1773,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				RnGenericRecTags.kflidReminders,
 				4004028			// was kflidWeather at one time.
 			};
-
 			for (var flid = flidMin; flid <= flidMax; ++flid)
 			{
 				var fSkip = false;
@@ -1821,7 +1784,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						break;
 					}
 				}
-
 				if (fSkip)
 				{
 					continue;
@@ -1841,7 +1803,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			}
 		}
 
-		Process m_viewProcess;
 		private void btnViewFile_Click(object sender, EventArgs e)
 		{
 			if (m_viewProcess == null || m_viewProcess.HasExited)
@@ -1930,8 +1891,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				m_btnModifyRecordMapping.Enabled = true;
 			}
 		}
-
-		string m_sLogFile;
 
 		private void DoImport()
 		{
@@ -2029,7 +1988,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						{
 							continue;
 						}
-						var cpt = (CellarPropertyType) m_mdc.GetFieldType(rsf.m_flid);
+						var cpt = (CellarPropertyType)m_mdc.GetFieldType(rsf.m_flid);
 						int clidDst;
 						switch (cpt)
 						{
@@ -2131,12 +2090,12 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				sw.WriteLine("<head>");
 				var sHeadInfo = string.Format(LexTextControls.ksImportLogForX, m_sSfmDataFile);
 				sw.WriteLine($"  <title>{sHeadInfo}</title>");
-				WriteHtmlJavaScript(sw);	// add the script
+				WriteHtmlJavaScript(sw);    // add the script
 				sw.WriteLine("</head>");
 				sw.WriteLine("<body>");
 				sw.WriteLine($"<h2>{sHeadInfo}</h2>");
-				var deltaTicks = m_dtEnd.Ticks - m_dtStart.Ticks;	// number of 100-nanosecond intervals
-				var deltaMsec = (int)((deltaTicks + 5000L) / 10000L);	// round off to milliseconds
+				var deltaTicks = m_dtEnd.Ticks - m_dtStart.Ticks;   // number of 100-nanosecond intervals
+				var deltaMsec = (int)((deltaTicks + 5000L) / 10000L);   // round off to milliseconds
 				var deltaSec = deltaMsec / 1000;
 				var sDeltaTime = string.Format(LexTextControls.ksImportingTookTime, Path.GetFileName(m_sSfmDataFile), deltaSec, deltaMsec % 1000);
 				sw.WriteLine("<p>{0}</p>", sDeltaTime);
@@ -2185,7 +2144,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			//var isNetscape = typeof window != 'undefined' && typeof window.netscape != 'undefined' && typeof window.netscape.security != 'undefined' && typeof window.opera != 'object';
 			sw.WriteLine("function zedit (filename, line)");
 			sw.WriteLine("{");
-			string sProg = Path.Combine(FwDirectoryFinder.CodeDirectory, "zedit.exe");
+			var sProg = Path.Combine(FwDirectoryFinder.CodeDirectory, "zedit.exe");
 			sw.WriteLine("    var prog = \"{0}\";", sProg.Replace("\\", "\\\\"));
 			sw.WriteLine("    var zeditfailed = true;");
 			sw.WriteLine("    if (navigator.platform == 'Win32')");
@@ -2210,7 +2169,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private void WriteMessageLines(StreamWriter sw)
 		{
-			if (m_rgMessages.Count == 0)
+			if (!m_rgMessages.Any())
 			{
 				return;
 			}
@@ -2247,7 +2206,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		{
 			if (list.Any())
 			{
-				tool = null;		// FIXME when FwLink starts working again...
+				tool = null; // FIXME when FwLink starts working again...
 				writer.WriteLine("<h3>{0}</h3>", string.Format(sMsg, list.Count));
 				writer.WriteLine("<ul>");
 				foreach (var poss in list)
@@ -2266,12 +2225,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				writer.WriteLine("</ul>");
 			}
 		}
-
-		// These are used in our home-grown date parsing.
-		string[] m_rgsDayAbbr;
-		string[] m_rgsDayName;
-		string[] m_rgsMonthAbbr;
-		string[] m_rgsMonthName;
 
 		private void FixSettingsForThisDatabase()
 		{
@@ -2304,27 +2257,22 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						{
 							rsf.m_tlo.m_rgsDelimMulti = rsf.m_tlo.m_sDelimMulti.Split(rgchSplit, StringSplitOptions.RemoveEmptyEntries);
 						}
-
 						if (!string.IsNullOrEmpty(rsf.m_tlo.m_sDelimSub))
 						{
 							rsf.m_tlo.m_rgsDelimSub = rsf.m_tlo.m_sDelimSub.Split(rgchSplit, StringSplitOptions.RemoveEmptyEntries);
 						}
-
 						if (!string.IsNullOrEmpty(rsf.m_tlo.m_sMarkStart))
 						{
 							rsf.m_tlo.m_rgsMarkStart = rsf.m_tlo.m_sMarkStart.Split(rgchSplit, StringSplitOptions.RemoveEmptyEntries);
 						}
-
 						if (!string.IsNullOrEmpty(rsf.m_tlo.m_sMarkEnd))
 						{
 							rsf.m_tlo.m_rgsMarkEnd = rsf.m_tlo.m_sMarkEnd.Split(rgchSplit, StringSplitOptions.RemoveEmptyEntries);
 						}
-
 						if (!string.IsNullOrEmpty(rsf.m_tlo.m_sBefore))
 						{
 							rsf.m_tlo.m_rgsBefore = rsf.m_tlo.m_sBefore.Split(rgchSplit, StringSplitOptions.RemoveEmptyEntries);
 						}
-
 						if (string.IsNullOrEmpty(rsf.m_tlo.m_wsId))
 						{
 							rsf.m_tlo.m_ws = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
@@ -2340,7 +2288,9 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 							rsf.m_sto.m_ws = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 						}
 						else
+						{
 							m_cache.ServiceLocator.WritingSystemManager.GetOrSet(rsf.m_sto.m_wsId, out rsf.m_sto.m_ws);
+						}
 						break;
 					case SfFieldType.Text:
 						if (string.IsNullOrEmpty(rsf.m_txo.m_wsId))
@@ -2389,18 +2339,17 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			}
 			else
 			{
-				rgsHier = new List<string>();
-				rgsHier.Add(sDefault);
+				rgsHier = new List<string> { sDefault };
 			}
 			rgsHier = PruneEmptyStrings(rgsHier);
-			if (rgsHier.Count == 0)
+			if (!rgsHier.Any())
 			{
 				return;
 			}
 			switch (rsf.m_flid)
 			{
 				case RnGenericRecTags.kflidAnthroCodes:
-					if (m_mapAnthroCode.Count == 0)
+					if (!m_mapAnthroCode.Any())
 					{
 						FillPossibilityMap(rsf, m_cache.LangProject.AnthroListOA.PossibilitiesOS, m_mapAnthroCode);
 					}
@@ -2411,7 +2360,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					}
 					break;
 				case RnGenericRecTags.kflidConfidence:
-					if (m_mapConfidence.Count == 0)
+					if (!m_mapConfidence.Any())
 					{
 						FillPossibilityMap(rsf, m_cache.LangProject.ConfidenceLevelsOA.PossibilitiesOS, m_mapConfidence);
 					}
@@ -2422,7 +2371,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					}
 					break;
 				case RnGenericRecTags.kflidLocations:
-					if (m_mapLocation.Count == 0)
+					if (!m_mapLocation.Any())
 					{
 						FillPossibilityMap(rsf, m_cache.LangProject.LocationsOA.PossibilitiesOS, m_mapLocation);
 					}
@@ -2433,7 +2382,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					}
 					break;
 				case RnGenericRecTags.kflidPhraseTags:
-					if (m_mapPhraseTag.Count == 0)
+					if (!m_mapPhraseTag.Any())
 					{
 						FillPossibilityMap(rsf, m_cache.LangProject.TextMarkupTagsOA.PossibilitiesOS, m_mapPhraseTag);
 					}
@@ -2445,7 +2394,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					break;
 				case RnGenericRecTags.kflidResearchers:
 				case RnGenericRecTags.kflidSources:
-					if (m_mapPeople.Count == 0)
+					if (!m_mapPeople.Any())
 					{
 						FillPossibilityMap(rsf, m_cache.LangProject.PeopleOA.PossibilitiesOS, m_mapPeople);
 					}
@@ -2456,7 +2405,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					}
 					break;
 				case RnGenericRecTags.kflidRestrictions:
-					if (m_mapRestriction.Count == 0)
+					if (!m_mapRestriction.Any())
 					{
 						FillPossibilityMap(rsf, m_cache.LangProject.RestrictionsOA.PossibilitiesOS, m_mapRestriction);
 					}
@@ -2467,7 +2416,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					}
 					break;
 				case RnGenericRecTags.kflidStatus:
-					if (m_mapStatus.Count == 0)
+					if (!m_mapStatus.Any())
 					{
 						FillPossibilityMap(rsf, m_cache.LangProject.StatusOA.PossibilitiesOS, m_mapStatus);
 					}
@@ -2478,7 +2427,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					}
 					break;
 				case RnGenericRecTags.kflidTimeOfEvent:
-					if (m_mapTimeOfDay.Count == 0)
+					if (!m_mapTimeOfDay.Any())
 					{
 						FillPossibilityMap(rsf, m_cache.LangProject.TimeOfDayOA.PossibilitiesOS, m_mapTimeOfDay);
 					}
@@ -2489,7 +2438,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					}
 					break;
 				case RnGenericRecTags.kflidType:
-					if (m_mapRecType.Count == 0)
+					if (!m_mapRecType.Any())
 					{
 						FillPossibilityMap(rsf, m_cache.LangProject.ResearchNotebookOA.RecTypesOA.PossibilitiesOS, m_mapRecType);
 					}
@@ -2500,7 +2449,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					}
 					break;
 				case RnGenericRecTags.kflidParticipants:
-					if (m_mapPeople.Count == 0)
+					if (!m_mapPeople.Any())
 					{
 						FillPossibilityMap(rsf, m_cache.LangProject.PeopleOA.PossibilitiesOS, m_mapPeople);
 					}
@@ -2541,11 +2490,10 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			// WHEN IT COMES TO ENCODING CONVERSION???
 			ReconvertEncodedDataIfNeeded(field, rsf.m_txo.m_wsId);
 			var rgsParas = SplitIntoParagraphs(rsf, field);
-			if (rgsParas.Count == 0)
+			if (!rgsParas.Any())
 			{
 				return;
 			}
-
 			if (m_factStText == null)
 			{
 				m_factStText = m_cache.ServiceLocator.GetInstance<IStTextFactory>();
@@ -2644,7 +2592,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			{
 				m_factPara = m_cache.ServiceLocator.GetInstance<IStTxtParaFactory>();
 			}
-			if (rgsParas.Count == 0)
+			if (!rgsParas.Any())
 			{
 				var para = m_factPara.Create();
 				text.ParagraphsOS.Add(para);
@@ -2721,7 +2669,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					sbPara.Remove(0, sbPara.Length);
 					continue;
 				}
-
 				if (sbPara.Length > 0)
 				{
 					sbPara.Append(" ");
@@ -2746,7 +2693,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			return rgsLines;
 		}
 
-		private string TrimLineData(string sData)
+		private static string TrimLineData(string sData)
 		{
 			var sLine = sData;
 			// The following 4 lines of code shouldn't be needed, but ...
@@ -2825,13 +2772,13 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				var idx = IndexOfFirstCharMappingMarker(sRaw, out cmText);
 				if (idx == -1)
 				{
-					rgsText.Add(sRaw);		// save trailing text
+					rgsText.Add(sRaw);      // save trailing text
 					rgcmText.Add(null);
 					break;
 				}
 				if (idx > 0)
 				{
-					rgsText.Add(sRaw.Substring(0, idx));	// save leading text
+					rgsText.Add(sRaw.Substring(0, idx));    // save leading text
 					rgcmText.Add(null);
 				}
 				sRaw = sRaw.Substring(idx + cmText.BeginMarker.Length);
@@ -2841,7 +2788,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					if (cmText.EndWithWord)
 					{
 						// TODO: Generalized search for whitespace?
-						idx = sRaw.IndexOfAny(new char[] { ' ', '\t', '\r', '\n' });
+						idx = sRaw.IndexOfAny(new[] { ' ', '\t', '\r', '\n' });
 						if (idx == -1)
 						{
 							idx = sRaw.Length;
@@ -2856,7 +2803,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				rgcmText.Add(cmText.IgnoreMarkerOnImport ? null : cmText);
 				sRaw = sRaw.Substring(idx);
 			}
-			if (rgsText.Count == 0)
+			if (!rgsText.Any())
 			{
 				rgsText.Add(string.Empty);
 				rgcmText.Add(null);
@@ -2912,7 +2859,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			var sData = field.Data.Trim();
 			if (sData.Length == 0)
 			{
-				return;		// nothing we can do without data!
+				return;     // nothing we can do without data!
 			}
 			GenDate gdt;
 			if (!TryParseGenDate(sData, rsf.m_dto.m_rgsFmt, out gdt))
@@ -2973,7 +2920,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				gdt = new GenDate(prec, dt.Month, dt.Day, year, fAD);
 				return true;
 			}
-			foreach (string sFmt in rgsFmt)
+			foreach (var sFmt in rgsFmt)
 			{
 				GenDateInfo gdi;
 				var sResidue = ParseFormattedDate(sData, sFmt, out gdi);
@@ -2997,7 +2944,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			return false;
 		}
 
-		string ParseFormattedDate(string sDateString, string sFmt, out GenDateInfo gdi)
+		private string ParseFormattedDate(string sDateString, string sFmt, out GenDateInfo gdi)
 		{
 			gdi = new GenDateInfo
 			{
@@ -3035,8 +2982,8 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						}
 						switch (cch)
 						{
-							case 1:	// d
-							case 2:	// dd
+							case 1: // d
+							case 2: // dd
 								fDayPresent = true;
 								fError = !TryParseLeadingNumber(ref sDate, out gdi.mday);
 								if (fError || gdi.mday > 31)
@@ -3044,14 +2991,14 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 									return sDate;
 								}
 								break;
-							case 3:	// ddd - Abbreviated day of week
+							case 3: // ddd - Abbreviated day of week
 								fError = !TryMatchAgainstNameList(ref sDate, m_rgsDayAbbr, out gdi.wday);
 								if (fError)
 								{
 									return sDate;
 								}
 								break;
-							case 4:	// dddd - Unabbreviated day of the week
+							case 4: // dddd - Unabbreviated day of the week
 								fError = !TryMatchAgainstNameList(ref sDate, m_rgsDayName, out gdi.wday);
 								if (fError)
 								{
@@ -3062,7 +3009,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 								return sDate;
 						}
 						break;
-
 					case 'M':
 						if (CheckForQuestionMarks(ref gdi, ref sDate))
 						{
@@ -3075,8 +3021,8 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						fMonthPresent = true;
 						switch (cch)
 						{
-							case 1:	// M
-							case 2:	// MM
+							case 1: // M
+							case 2: // MM
 								fError = !TryParseLeadingNumber(ref sDate, out gdi.ymon);
 								if (fError || gdi.ymon > 12)
 								{
@@ -3090,7 +3036,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 									return sDate;
 								}
 								break;
-							case 4:	// MMMM - Unabbreviated month name
+							case 4: // MMMM - Unabbreviated month name
 								fError = !TryMatchAgainstNameList(ref sDate, m_rgsMonthName, out gdi.ymon);
 								if (fError)
 								{
@@ -3101,7 +3047,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 								return sDate;
 						}
 						break;
-
 					case 'y':
 						if (sDate.StartsWith("?"))
 						{
@@ -3148,18 +3093,14 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 								return sDate;
 						}
 						break;
-
 					case 'g':
 						// TODO SteveMc: IMPLEMENT ME!
 						return sDate;
-
 					case '\'': // quoted text
 						break;
-
 					case ' ':
 						sDate = sDate.Trim();
 						break;
-
 					default:
 						// Check for matching separators.
 						sDate = sDate.Trim();
@@ -3190,7 +3131,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				gdi.prec = GenDate.PrecisionType.Approximate;
 				if (sDate.Length == 0)
 				{
-					gdi.error = gdi.year == 0;	// ok if we already have a year.
+					gdi.error = gdi.year == 0;  // ok if we already have a year.
 				}
 				return true;
 			}
@@ -3219,7 +3160,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			{
 				return false;
 			}
-
 			if (month < 1 || month > 12)
 			{
 				return false;
@@ -3258,10 +3198,10 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 							days_in_month = 28;
 							break;
 						}
-					case 4:		// April
-					case 6:		// June
-					case 9:		// September
-					case 11:	// November
+					case 4:     // April
+					case 6:     // June
+					case 9:     // September
+					case 11:    // November
 						days_in_month = 30;
 						break;
 					default:
@@ -3269,12 +3209,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						break;
 				}
 			}
-
-			if (day < 1 || day > days_in_month)
-			{
-				return false;
-			}
-			return true;
+			return day >= 1 && day <= days_in_month;
 		}
 
 		private static bool TryParseLeadingNumber(ref string sDate, out int val)
@@ -3288,7 +3223,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					break;
 				}
 			}
-
 			if (cchUsed < 1)
 			{
 				return false;
@@ -3308,7 +3242,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			var sData = field.Data.Trim();
 			if (sData.Length == 0)
 			{
-				return;		// nothing we can do without data!
+				return;     // nothing we can do without data!
 			}
 			DateTime dt;
 			if (!DateTime.TryParseExact(sData, rsf.m_dto.m_rgsFmt.ToArray(), null, DateTimeStyles.None, out dt))
@@ -3348,7 +3282,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private void ProcessStoredLinkData()
 		{
-			if (m_pendingLinks.Count == 0)
+			if (!m_pendingLinks.Any())
 			{
 				return;
 			}
@@ -3364,7 +3298,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				{
 					continue;
 				}
-
 				if (!mapTitleRec.ContainsKey(sTitle))
 				{
 					mapTitleRec.Add(sTitle, rec);
@@ -3400,7 +3333,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				}
 				// log an error.
 				LogMessage(string.Format(LexTextControls.ksCannotMakeDesiredLink, pend.Field.Marker, pend.Field.Data), pend.Field.LineNumber);
-
 			}
 		}
 
@@ -3444,20 +3376,19 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				}
 				else
 				{
-					rgsData = new List<string> {sData};
+					rgsData = new List<string> { sData };
 				}
 			}
-			if ((rgsData == null || rgsData.Count == 0) && rsf.m_tlo.m_default == null)
+			if ((rgsData == null || !rgsData.Any()) && rsf.m_tlo.m_default == null)
 			{
 				return;
 			}
-
 			if (rgsData == null)
 			{
 				rgsData = new List<string>();
 			}
 			rgsData = ApplyBeforeAndBetween(rsf, rgsData);
-			if (rgsData.Count == 0)
+			if (!rgsData.Any())
 			{
 				rgsData.Add(string.Empty);
 			}
@@ -3489,7 +3420,9 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						break;
 					case RnGenericRecTags.kflidResearchers:
 						if (!StoreResearcher(rec, rsf, sItem))
+						{
 							LogCannotFindListItem(sItem, field);
+						}
 						break;
 					case RnGenericRecTags.kflidRestrictions:
 						if (!StoreRestriction(rec, rsf, sItem))
@@ -3626,7 +3559,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			return rgsData2;
 		}
 
-		private string ApplyChanges(RnSfMarker rsf, string sData)
+		private static string ApplyChanges(RnSfMarker rsf, string sData)
 		{
 			if (rsf.m_tlo.m_rgsMatch == null || rsf.m_tlo.m_rgsReplace == null)
 			{
@@ -3644,7 +3577,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			return sData;
 		}
 
-		private List<string> SplitString(string sItem, string sDel)
+		private static List<string> SplitString(string sItem, string sDel)
 		{
 			var rgsSplit = new List<string>();
 			if (string.IsNullOrEmpty(sItem))
@@ -3665,10 +3598,9 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			return rgsSplit;
 		}
 
-		private List<string> SplitString(string sData, string[] rgsDelims)
+		private static List<string> SplitString(string sData, string[] rgsDelims)
 		{
-			var rgsData = new List<string>();
-			rgsData.Add(sData);
+			var rgsData = new List<string> { sData };
 			if (rgsDelims != null && rgsDelims.Length > 0)
 			{
 				foreach (var sDel in rgsDelims)
@@ -3697,7 +3629,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			return rgsData;
 		}
 
-		private ICmPossibility FindPossibilityOrNull(List<string> rgsHier, Dictionary<string, ICmPossibility> map)
+		private static ICmPossibility FindPossibilityOrNull(List<string> rgsHier, Dictionary<string, ICmPossibility> map)
 		{
 			ICmPossibility possParent = null;
 			ICmPossibility poss = null;
@@ -3720,7 +3652,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		private bool StoreAnthroCode(IRnGenericRec rec, RnSfMarker rsf, string sData)
 		{
 			var rgsHier = SplitForSubitems(rsf, sData);
-			if (rgsHier == null || rgsHier.Count == 0)
+			if (rgsHier == null || !rgsHier.Any())
 			{
 				var def = rsf.m_tlo.m_default as ICmAnthroItem;
 				if (def != null && !rec.AnthroCodesRC.Contains(def))
@@ -3729,8 +3661,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				}
 				return true;
 			}
-
-			if (m_mapAnthroCode.Count == 0)
+			if (!m_mapAnthroCode.Any())
 			{
 				FillPossibilityMap(rsf, m_cache.LangProject.AnthroListOA.PossibilitiesOS, m_mapAnthroCode);
 			}
@@ -3757,19 +3688,18 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private ICmAnthroItem CreateNewAnthroItem(List<string> rgsHier)
 		{
-			return (ICmAnthroItem)CreateNewPossibility(rgsHier, AnthroItemCreator, m_cache.LangProject.AnthroListOA.PossibilitiesOS, m_mapAnthroCode, m_rgNewAnthroItem);
+			return CreateNewPossibility<ICmAnthroItem>(rgsHier, m_factAnthroItem, m_cache.LangProject.AnthroListOA.PossibilitiesOS, m_mapAnthroCode, m_rgNewAnthroItem);
 		}
 
 		private bool StoreConfidence(IRnGenericRec rec, RnSfMarker rsf, string sData)
 		{
 			var rgsHier = SplitForSubitems(rsf, sData);
-			if (rgsHier == null || rgsHier.Count == 0)
+			if (rgsHier == null || !rgsHier.Any())
 			{
 				rec.ConfidenceRA = rsf.m_tlo.m_default;
 				return true;
 			}
-
-			if (m_mapConfidence.Count == 0)
+			if (!m_mapConfidence.Any())
 			{
 				FillPossibilityMap(rsf, m_cache.LangProject.ConfidenceLevelsOA.PossibilitiesOS, m_mapConfidence);
 			}
@@ -3790,13 +3720,13 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private ICmPossibility CreateNewConfidenceItem(List<string> rgsHier)
 		{
-			return CreateNewPossibility(rgsHier, PossibilityCreator, m_cache.LangProject.ConfidenceLevelsOA.PossibilitiesOS, m_mapConfidence, m_rgNewConfidence);
+			return CreateNewPossibility<ICmPossibility>(rgsHier, m_factPossibility, m_cache.LangProject.ConfidenceLevelsOA.PossibilitiesOS, m_mapConfidence, m_rgNewConfidence);
 		}
 
 		private bool StoreLocation(IRnGenericRec rec, RnSfMarker rsf, string sData)
 		{
 			var rgsHier = SplitForSubitems(rsf, sData);
-			if (rgsHier == null || rgsHier.Count == 0)
+			if (rgsHier == null || !rgsHier.Any())
 			{
 				var def = rsf.m_tlo.m_default as ICmLocation;
 				if (def != null && !rec.LocationsRC.Contains(def))
@@ -3805,8 +3735,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				}
 				return true;
 			}
-
-			if (m_mapLocation.Count == 0)
+			if (!m_mapLocation.Any())
 			{
 				FillPossibilityMap(rsf, m_cache.LangProject.LocationsOA.PossibilitiesOS, m_mapLocation);
 			}
@@ -3833,13 +3762,13 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private ICmLocation CreateNewLocation(List<string> rgsHier)
 		{
-			return (ICmLocation)CreateNewPossibility(rgsHier, LocationCreator, m_cache.LangProject.LocationsOA.PossibilitiesOS, m_mapLocation, m_rgNewLocation);
+			return CreateNewPossibility<ICmLocation>(rgsHier, m_factLocation, m_cache.LangProject.LocationsOA.PossibilitiesOS, m_mapLocation, m_rgNewLocation);
 		}
 
 		private bool StorePhraseTag(IRnGenericRec rec, RnSfMarker rsf, string sData)
 		{
 			var rgsHier = SplitForSubitems(rsf, sData);
-			if (rgsHier == null || rgsHier.Count == 0)
+			if (rgsHier == null || !rgsHier.Any())
 			{
 				if (rsf.m_tlo.m_default != null && !rec.PhraseTagsRC.Contains(rsf.m_tlo.m_default))
 				{
@@ -3847,8 +3776,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				}
 				return true;
 			}
-
-			if (m_mapPhraseTag.Count == 0)
+			if (!m_mapPhraseTag.Any())
 			{
 				FillPossibilityMap(rsf, m_cache.LangProject.TextMarkupTagsOA.PossibilitiesOS, m_mapPhraseTag);
 			}
@@ -3875,13 +3803,13 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private ICmPossibility CreateNewPhraseTag(List<string> rgsHier)
 		{
-			return CreateNewPossibility(rgsHier, PossibilityCreator, m_cache.LangProject.TextMarkupTagsOA.PossibilitiesOS, m_mapPhraseTag, m_rgNewPhraseTag);
+			return CreateNewPossibility<ICmPossibility>(rgsHier, m_factPossibility, m_cache.LangProject.TextMarkupTagsOA.PossibilitiesOS, m_mapPhraseTag, m_rgNewPhraseTag);
 		}
 
 		private bool StoreResearcher(IRnGenericRec rec, RnSfMarker rsf, string sData)
 		{
 			var rgsHier = SplitForSubitems(rsf, sData);
-			if (rgsHier == null || rgsHier.Count == 0)
+			if (rgsHier == null || !rgsHier.Any())
 			{
 				var def = rsf.m_tlo.m_default as ICmPerson;
 				if (!rec.ResearchersRC.Contains(def))
@@ -3890,8 +3818,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				}
 				return true;
 			}
-
-			if (m_mapPeople.Count == 0)
+			if (m_mapPeople.Any())
 			{
 				FillPossibilityMap(rsf, m_cache.LangProject.PeopleOA.PossibilitiesOS, m_mapPeople);
 			}
@@ -3918,13 +3845,13 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private ICmPerson CreateNewPerson(List<string> rgsHier)
 		{
-			return (ICmPerson)CreateNewPossibility(rgsHier, PersonCreator, m_cache.LangProject.PeopleOA.PossibilitiesOS, m_mapPeople, m_rgNewPeople);
+			return CreateNewPossibility<ICmPerson>(rgsHier, m_factPerson, m_cache.LangProject.PeopleOA.PossibilitiesOS, m_mapPeople, m_rgNewPeople);
 		}
 
 		private bool StoreSource(IRnGenericRec rec, RnSfMarker rsf, string sData)
 		{
 			var rgsHier = SplitForSubitems(rsf, sData);
-			if (rgsHier == null || rgsHier.Count == 0)
+			if (rgsHier == null || !rgsHier.Any())
 			{
 				var def = rsf.m_tlo.m_default as ICmPerson;
 				if (def != null && !rec.SourcesRC.Contains(def))
@@ -3933,8 +3860,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				}
 				return true;
 			}
-
-			if (m_mapPeople.Count == 0)
+			if (!m_mapPeople.Any())
 			{
 				FillPossibilityMap(rsf, m_cache.LangProject.PeopleOA.PossibilitiesOS, m_mapPeople);
 			}
@@ -3971,8 +3897,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				}
 				else
 				{
-					rgsHier = new List<string>();
-					rgsHier.Add(sData);
+					rgsHier = new List<string> { sData };
 				}
 			}
 			return rgsHier;
@@ -3981,7 +3906,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		private bool StoreRestriction(IRnGenericRec rec, RnSfMarker rsf, string sData)
 		{
 			var rgsHier = SplitForSubitems(rsf, sData);
-			if (rgsHier == null || rgsHier.Count == 0)
+			if (rgsHier == null || !rgsHier.Any())
 			{
 				if (rsf.m_tlo.m_default != null && !rec.RestrictionsRC.Contains(rsf.m_tlo.m_default))
 				{
@@ -3989,8 +3914,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				}
 				return true;
 			}
-
-			if (m_mapRestriction.Count == 0)
+			if (!m_mapRestriction.Any())
 			{
 				FillPossibilityMap(rsf, m_cache.LangProject.RestrictionsOA.PossibilitiesOS, m_mapRestriction);
 			}
@@ -4017,19 +3941,18 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private ICmPossibility CreateNewRestriction(List<string> rgsHier)
 		{
-			return CreateNewPossibility(rgsHier, PossibilityCreator, m_cache.LangProject.RestrictionsOA.PossibilitiesOS, m_mapRestriction, m_rgNewRestriction);
+			return CreateNewPossibility<ICmPossibility>(rgsHier, m_factPossibility, m_cache.LangProject.RestrictionsOA.PossibilitiesOS, m_mapRestriction, m_rgNewRestriction);
 		}
 
 		private bool StoreStatus(IRnGenericRec rec, RnSfMarker rsf, string sData)
 		{
 			var rgsHier = SplitForSubitems(rsf, sData);
-			if (rgsHier == null || rgsHier.Count == 0)
+			if (rgsHier == null || !rgsHier.Any())
 			{
 				rec.StatusRA = rsf.m_tlo.m_default;
 				return true;
 			}
-
-			if (m_mapStatus.Count == 0)
+			if (!m_mapStatus.Any())
 			{
 				FillPossibilityMap(rsf, m_cache.LangProject.StatusOA.PossibilitiesOS, m_mapStatus);
 			}
@@ -4050,13 +3973,13 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private ICmPossibility CreateNewStatus(List<string> rgsHier)
 		{
-			return CreateNewPossibility(rgsHier, PossibilityCreator, m_cache.LangProject.StatusOA.PossibilitiesOS, m_mapStatus, m_rgNewStatus);
+			return CreateNewPossibility<ICmPossibility>(rgsHier, m_factPossibility, m_cache.LangProject.StatusOA.PossibilitiesOS, m_mapStatus, m_rgNewStatus);
 		}
 
 		private bool StoreTimeOfEvent(IRnGenericRec rec, RnSfMarker rsf, string sData)
 		{
 			var rgsHier = SplitForSubitems(rsf, sData);
-			if (rgsHier == null || rgsHier.Count == 0)
+			if (rgsHier == null || !rgsHier.Any())
 			{
 				if (rsf.m_tlo.m_default != null && !rec.TimeOfEventRC.Contains(rsf.m_tlo.m_default))
 				{
@@ -4064,8 +3987,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				}
 				return true;
 			}
-
-			if (m_mapTimeOfDay.Count == 0)
+			if (!m_mapTimeOfDay.Any())
 			{
 				FillPossibilityMap(rsf, m_cache.LangProject.TimeOfDayOA.PossibilitiesOS, m_mapTimeOfDay);
 			}
@@ -4092,19 +4014,18 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private ICmPossibility CreateNewTimeOfDay(List<string> rgsHier)
 		{
-			return CreateNewPossibility(rgsHier, PossibilityCreator, m_cache.LangProject.TimeOfDayOA.PossibilitiesOS, m_mapTimeOfDay, m_rgNewTimeOfDay);
+			return CreateNewPossibility<ICmPossibility>(rgsHier, m_factPossibility, m_cache.LangProject.TimeOfDayOA.PossibilitiesOS, m_mapTimeOfDay, m_rgNewTimeOfDay);
 		}
 
 		private bool StoreRecType(IRnGenericRec rec, RnSfMarker rsf, string sData)
 		{
 			var rgsHier = SplitForSubitems(rsf, sData);
-			if (rgsHier == null || rgsHier.Count == 0)
+			if (rgsHier == null || !rgsHier.Any())
 			{
 				rec.TypeRA = rsf.m_tlo.m_default;
 				return true;
 			}
-
-			if (m_mapRecType.Count == 0)
+			if (!m_mapRecType.Any())
 			{
 				FillPossibilityMap(rsf, m_cache.LangProject.ResearchNotebookOA.RecTypesOA.PossibilitiesOS, m_mapRecType);
 			}
@@ -4125,7 +4046,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private ICmPossibility CreateNewRecType(List<string> rgsHier)
 		{
-			return CreateNewPossibility(rgsHier, PossibilityCreator, m_cache.LangProject.ResearchNotebookOA.RecTypesOA.PossibilitiesOS, m_mapRecType, m_rgNewRecType);
+			return CreateNewPossibility<ICmPossibility>(rgsHier, m_factPossibility, m_cache.LangProject.ResearchNotebookOA.RecTypesOA.PossibilitiesOS, m_mapRecType, m_rgNewRecType);
 		}
 
 		private bool StoreParticipant(IRnGenericRec rec, RnSfMarker rsf, string sData)
@@ -4137,7 +4058,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				rec.ParticipantsOC.Add(partic);
 			}
 			var rgsHier = SplitForSubitems(rsf, sData);
-			if (rgsHier == null || rgsHier.Count == 0)
+			if (rgsHier == null || !rgsHier.Any())
 			{
 				var def = rsf.m_tlo.m_default as ICmPerson;
 				if (def != null && !partic.ParticipantsRC.Contains(def))
@@ -4146,8 +4067,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				}
 				return true;
 			}
-
-			if (m_mapPeople.Count == 0)
+			if (!m_mapPeople.Any())
 			{
 				FillPossibilityMap(rsf, m_cache.LangProject.PeopleOA.PossibilitiesOS, m_mapPeople);
 			}
@@ -4185,7 +4105,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			}
 			ICmPossibility poss;
 			var rgsHier = SplitForSubitems(rsf, sData);
-			if (rgsHier == null || rgsHier.Count == 0)
+			if (rgsHier == null || !rgsHier.Any())
 			{
 				poss = rsf.m_tlo.m_default;
 				if (poss != null && !hvosField.Contains(poss.Hvo) && poss.ClassID == list.ItemClsid)
@@ -4197,7 +4117,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			switch (list.OwningFlid)
 			{
 				case LangProjectTags.kflidAnthroList:
-					if (m_mapAnthroCode.Count == 0)
+					if (!m_mapAnthroCode.Any())
 					{
 						FillPossibilityMap(rsf, m_cache.LangProject.AnthroListOA.PossibilitiesOS, m_mapAnthroCode);
 					}
@@ -4208,7 +4128,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					}
 					break;
 				case LangProjectTags.kflidConfidenceLevels:
-					if (m_mapConfidence.Count == 0)
+					if (!m_mapConfidence.Any())
 					{
 						FillPossibilityMap(rsf, m_cache.LangProject.ConfidenceLevelsOA.PossibilitiesOS, m_mapConfidence);
 					}
@@ -4219,7 +4139,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					}
 					break;
 				case LangProjectTags.kflidLocations:
-					if (m_mapLocation.Count == 0)
+					if (!m_mapLocation.Any())
 					{
 						FillPossibilityMap(rsf, m_cache.LangProject.LocationsOA.PossibilitiesOS, m_mapLocation);
 					}
@@ -4230,7 +4150,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					}
 					break;
 				case RnResearchNbkTags.kflidRecTypes:
-					if (m_mapRecType.Count == 0)
+					if (!m_mapRecType.Any())
 					{
 						FillPossibilityMap(rsf, m_cache.LangProject.ResearchNotebookOA.RecTypesOA.PossibilitiesOS, m_mapRecType);
 					}
@@ -4241,7 +4161,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					}
 					break;
 				case LangProjectTags.kflidTextMarkupTags:
-					if (m_mapPhraseTag.Count == 0)
+					if (!m_mapPhraseTag.Any())
 					{
 						FillPossibilityMap(rsf, m_cache.LangProject.TextMarkupTagsOA.PossibilitiesOS, m_mapPhraseTag);
 					}
@@ -4252,7 +4172,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					}
 					break;
 				case LangProjectTags.kflidPeople:
-					if (m_mapPeople.Count == 0)
+					if (!m_mapPeople.Any())
 					{
 						FillPossibilityMap(rsf, m_cache.LangProject.PeopleOA.PossibilitiesOS, m_mapPeople);
 					}
@@ -4263,7 +4183,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					}
 					break;
 				case LangProjectTags.kflidRestrictions:
-					if (m_mapRestriction.Count == 0)
+					if (!m_mapRestriction.Any())
 					{
 						FillPossibilityMap(rsf, m_cache.LangProject.RestrictionsOA.PossibilitiesOS, m_mapRestriction);
 					}
@@ -4274,7 +4194,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					}
 					break;
 				case LangProjectTags.kflidStatus:
-					if (m_mapStatus.Count == 0)
+					if (!m_mapStatus.Any())
 					{
 						FillPossibilityMap(rsf, m_cache.LangProject.StatusOA.PossibilitiesOS, m_mapStatus);
 					}
@@ -4285,7 +4205,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					}
 					break;
 				case LangProjectTags.kflidTimeOfDay:
-					if (m_mapTimeOfDay.Count == 0)
+					if (!m_mapTimeOfDay.Any())
 					{
 						FillPossibilityMap(rsf, m_cache.LangProject.TimeOfDayOA.PossibilitiesOS, m_mapTimeOfDay);
 					}
@@ -4316,41 +4236,40 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						switch (list.ItemClsid)
 						{
 							case CmPossibilityTags.kClassId:
-								creator = PossibilityCreator;
+								creator = m_factPossibility;
 								break;
 							case CmLocationTags.kClassId:
-								creator = LocationCreator;
+								creator = m_factLocation;
 								break;
 							case CmPersonTags.kClassId:
-								creator = PersonCreator;
+								creator = m_factPerson;
 								break;
 							case CmAnthroItemTags.kClassId:
-								creator = AnthroItemCreator;
+								creator = m_factAnthroItem;
 								break;
 							case CmCustomItemTags.kClassId:
-								creator = CustomItemCreator;
+								creator = m_factCustomItem;
 								break;
 							case CmSemanticDomainTags.kClassId:
-								creator = SemanticDomainCreator;
+								creator = m_factSemanticDomain;
 								break;
 							// These are less likely, but legal, so we have to allow for them.
 							case MoMorphTypeTags.kClassId:
-								creator = MorphTypeCreator;
+								creator = m_factMorphType;
 								break;
 							case PartOfSpeechTags.kClassId:
-								creator = NewPartOfSpeechCreator;
+								creator = m_factPartOfSpeech;
 								break;
 							case LexEntryTypeTags.kClassId:
-								creator = NewLexEntryTypeCreator;
+								creator = m_factLexEntryType;
 								break;
 							case LexRefTypeTags.kClassId:
-								creator = NewLexRefTypeCreator;
+								creator = m_factLexRefType;
 								break;
 						}
-
 						if (creator != null)
 						{
-							poss =  CreateNewPossibility(rgsHier, creator, list.PossibilitiesOS, map, rgNew);
+							poss = CreateNewPossibility<ICmPossibility>(rgsHier, creator, list.PossibilitiesOS, map, rgNew);
 						}
 					}
 					break;
@@ -4365,12 +4284,12 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private static void FillPossibilityMap(RnSfMarker rsf, ILcmOwningSequence<ICmPossibility> seq, Dictionary<string, ICmPossibility> map)
 		{
-			if (seq == null || seq.Count == 0)
+			if (seq == null || !seq.Any())
 			{
 				return;
 			}
 			var fAbbrev = rsf.m_tlo.m_pnt == PossNameType.kpntAbbreviation;
-			foreach (ICmPossibility poss in seq)
+			foreach (var poss in seq)
 			{
 				var sKey = fAbbrev ? poss.Abbreviation.AnalysisDefaultWritingSystem.Text : poss.Name.AnalysisDefaultWritingSystem.Text;
 				if (string.IsNullOrEmpty(sKey))
@@ -4387,7 +4306,8 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			}
 		}
 
-		private ICmPossibility CreateNewPossibility(List<string> rgsHier, CmPossibilityCreator factory, ILcmOwningSequence<ICmPossibility> possList, Dictionary<string, ICmPossibility> map, List<ICmPossibility> rgNew)
+		private T CreateNewPossibility<T>(List<string> rgsHier, CmPossibilityCreator factory, ILcmOwningSequence<ICmPossibility> possList,
+			Dictionary<string, ICmPossibility> map, List<ICmPossibility> rgNew) where T : ICmPossibility
 		{
 			ICmPossibility possParent = null;
 			ICmPossibility poss = null;
@@ -4409,13 +4329,13 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			{
 				// program bug -- shouldn't get here!
 				Debug.Assert(i < rgsHier.Count);
-				return null;
+				return default(T);
 			}
 			if (poss != null && i > 0 && poss.Owner != possParent)
 			{
-				// we can't create a duplicate name at a lower level in our current alogrithm!
+				// we can't create a duplicate name at a lower level in our current algorithm!
 				// Complain and do nothing...
-				return null;
+				return default(T);
 			}
 			ICmPossibility itemParent = possParent as ICmAnthroItem;
 			ICmPossibility item = null;
@@ -4437,39 +4357,340 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				rgNew.Add(item);
 				itemParent = item;
 			}
-			return item;
-		}
-
-		public static bool InitializeWritingSystemCombo(string sWs, LcmCache cache, ComboBox cbWritingSystem)
-		{
-			return InitializeWritingSystemCombo(sWs, cache, cbWritingSystem, cache.ServiceLocator.WritingSystems.AllWritingSystems.ToArray());
-		}
-
-
-		public static bool InitializeWritingSystemCombo(string sWs, LcmCache cache, ComboBox cbWritingSystem, CoreWritingSystemDefinition[] writingSystems)
-		{
-			if (string.IsNullOrEmpty(sWs))
-			{
-				sWs = cache.WritingSystemFactory.GetStrFromWs(cache.DefaultAnalWs);
-			}
-			cbWritingSystem.Items.Clear();
-			cbWritingSystem.Sorted = true;
-			cbWritingSystem.Items.AddRange(writingSystems);
-			foreach (CoreWritingSystemDefinition ws in cbWritingSystem.Items)
-			{
-				if (ws.Id == sWs)
-				{
-					cbWritingSystem.SelectedItem = ws;
-					return true;
-				}
-			}
-			return false;
+			return (T)item;
 		}
 
 		private void m_tbSaveAsFileName_TextChanged(object sender, EventArgs e)
 		{
 			DirtySettings = true;
 		}
-		private enum OFType { Database, Project, Settings, SaveAs } // openfile type
+
+		/// <summary>
+		/// This class encapsulates the information for a log message.
+		/// </summary>
+		private sealed class ImportMessage : IComparable
+		{
+			public ImportMessage(string sMsg, int lineNumber)
+			{
+				Message = sMsg;
+				LineNumber = lineNumber;
+			}
+
+			public string Message { get; }
+
+			public int LineNumber { get; }
+
+			#region IComparable Members
+			public int CompareTo(object obj)
+			{
+				var that = obj as ImportMessage;
+				if (that == null)
+				{
+					return 1;
+				}
+				return Message == that.Message ? LineNumber.CompareTo(that.LineNumber) : Message.CompareTo(that.Message);
+			}
+			#endregion
+		}
+
+		/// <summary>
+		/// Stores the information needed to make a link later, after all the records have
+		/// been created.
+		/// </summary>
+		private sealed class PendingLink
+		{
+			public RnSfMarker Marker { get; set; }
+			public SfmField Field { get; set; }
+			public IRnGenericRec Record { get; set; }
+		}
+
+		private struct GenDateInfo
+		{
+			public int mday;
+			public int wday;
+			public int ymon;
+			public int year;
+			public GenDate.PrecisionType prec;
+			public bool error;
+		}
+
+		/// <summary>
+		/// Open file type.
+		/// </summary>
+		private enum OFType
+		{
+			Database,
+			Project,
+			Settings,
+			SaveAs
+		}
+
+		private enum SfFieldType
+		{
+			/// <summary>ignored</summary>
+			Discard,
+			/// <summary>Multi-paragraph text field</summary>
+			Text,
+			/// <summary>Simple string text field</summary>
+			String,
+			/// <summary>Date/Time type field</summary>
+			DateTime,
+			/// <summary>List item reference field</summary>
+			ListRef,
+			/// <summary>Link field</summary>
+			Link,
+			/// <summary>Invalid field -- not handled by program!</summary>
+			Invalid
+		}
+
+		private sealed class EncConverterChoice
+		{
+			private string m_sConverter;
+			private readonly CoreWritingSystemDefinition m_ws;
+
+			/// <summary>
+			/// Constructor using an XmlNode from the settings file.
+			/// </summary>
+			public EncConverterChoice(XmlNode xnConverter, WritingSystemManager wsManager)
+				: this(XmlUtils.GetMandatoryAttributeValue(xnConverter, "ws"), XmlUtils.GetOptionalAttributeValue(xnConverter, "converter", null), wsManager)
+			{
+			}
+
+			/// <summary>
+			/// Constructor using the writing system identifier and Converter name explicitly.
+			/// </summary>
+			public EncConverterChoice(string sWs, string sConverter, WritingSystemManager wsManager)
+			{
+				m_sConverter = sConverter;
+				if (string.IsNullOrEmpty(m_sConverter))
+				{
+					m_sConverter = SfmToXmlServices.AlreadyInUnicode;
+				}
+				wsManager.GetOrSet(sWs, out m_ws);
+			}
+
+			/// <summary>
+			/// Get the identifier for the writing system.
+			/// </summary>
+			public CoreWritingSystemDefinition WritingSystem => m_ws;
+
+			/// <summary>
+			/// Get the encoding converter name for the writing system.
+			/// </summary>
+			public string ConverterName
+			{
+				get { return m_sConverter; }
+				set
+				{
+					m_sConverter = value;
+					if (string.IsNullOrEmpty(m_sConverter))
+					{
+						m_sConverter = SfmToXmlServices.AlreadyInUnicode;
+					}
+					Converter = null;
+				}
+			}
+
+			/// <summary>
+			/// Get/set the actual encoding converter for the writing system (may be null).
+			/// </summary>
+			public ECInterfaces.IEncConverter Converter { get; set; }
+
+			/// <summary>
+			/// Get the name of the writing system.
+			/// </summary>
+			public string Name => m_ws.DisplayLabel;
+		}
+
+		/// <summary>
+		/// This class defines an encapsulation of factories for ICmPossibility and its
+		/// subclasses.  This allows a sizable chunk of code to be written only once.
+		/// </summary>
+		private class CmPossibilityCreator
+		{
+			private ICmPossibilityFactory m_fact;
+
+			protected CmPossibilityCreator()
+			{
+			}
+
+			public CmPossibilityCreator(ICmPossibilityFactory fact)
+			{
+				m_fact = fact;
+			}
+
+			public virtual ICmPossibility Create()
+			{
+				return m_fact.Create();
+			}
+		}
+
+		/// <summary>
+		/// This class encapsulates an ICmAnthroItemFactory to look like it's creating
+		/// ICmPossibility objects.  This allows some a sizable chunk of code to be written
+		/// only once.
+		/// </summary>
+		private sealed class CmAnthroItemCreator : CmPossibilityCreator
+		{
+			private ICmAnthroItemFactory m_fact;
+
+			public CmAnthroItemCreator(ICmAnthroItemFactory fact)
+			{
+				m_fact = fact;
+			}
+
+			public override ICmPossibility Create()
+			{
+				return m_fact.Create();
+			}
+		}
+
+		/// <summary>
+		/// This class encapsulates an ICmLocationFactory to look like it's creating
+		/// ICmPossibility objects.  This allows some a sizable chunk of code to be written
+		/// only once.
+		/// </summary>
+		private sealed class CmLocationCreator : CmPossibilityCreator
+		{
+			private ICmLocationFactory m_fact;
+
+			public CmLocationCreator(ICmLocationFactory fact)
+			{
+				m_fact = fact;
+			}
+
+			public override ICmPossibility Create()
+			{
+				return m_fact.Create();
+			}
+		}
+
+		/// <summary>
+		/// This class encapsulates an ICmPersonFactory to look like it's creating
+		/// ICmPossibility objects.  This allows some a sizable chunk of code to be written
+		/// only once.
+		/// </summary>
+		private sealed class CmPersonCreator : CmPossibilityCreator
+		{
+			private ICmPersonFactory m_fact;
+
+			public CmPersonCreator(ICmPersonFactory fact)
+			{
+				m_fact = fact;
+			}
+
+			public override ICmPossibility Create()
+			{
+				return m_fact.Create();
+			}
+		}
+
+		/// <summary>
+		/// Creator wrapping ICmCustomItemFactory
+		/// </summary>
+		private sealed class CmCustomItemCreator : CmPossibilityCreator
+		{
+			private ICmCustomItemFactory m_fact;
+
+			public CmCustomItemCreator(ICmCustomItemFactory fact)
+			{
+				m_fact = fact;
+			}
+
+			public override ICmPossibility Create()
+			{
+				return m_fact.Create();
+			}
+		}
+
+		/// <summary>
+		/// Creator wrapping ICmSemanticDomainFactory
+		/// </summary>
+		private sealed class CmSemanticDomainCreator : CmPossibilityCreator
+		{
+			private ICmSemanticDomainFactory m_fact;
+
+			public CmSemanticDomainCreator(ICmSemanticDomainFactory fact)
+			{
+				m_fact = fact;
+			}
+
+			public override ICmPossibility Create()
+			{
+				return m_fact.Create();
+			}
+		}
+
+		/// <summary>
+		/// Creator wrapping IMoMorphTypeFactory
+		/// </summary>
+		private sealed class MoMorphTypeCreator : CmPossibilityCreator
+		{
+			private IMoMorphTypeFactory m_fact;
+
+			public MoMorphTypeCreator(IMoMorphTypeFactory fact)
+			{
+				m_fact = fact;
+			}
+
+			public override ICmPossibility Create()
+			{
+				return m_fact.Create();
+			}
+		}
+
+		/// <summary>
+		/// Creator wrapping IPartOfSpeechFactory
+		/// </summary>
+		private sealed class PartOfSpeechCreator : CmPossibilityCreator
+		{
+			private IPartOfSpeechFactory m_fact;
+
+			public PartOfSpeechCreator(IPartOfSpeechFactory fact)
+			{
+				m_fact = fact;
+			}
+
+			public override ICmPossibility Create()
+			{
+				return m_fact.Create();
+			}
+		}
+
+		/// <summary>
+		/// Creator wrapping ILexEntryTypeFactory
+		/// </summary>
+		private sealed class LexEntryTypeCreator : CmPossibilityCreator
+		{
+			private ILexEntryTypeFactory m_fact;
+
+			public LexEntryTypeCreator(ILexEntryTypeFactory fact)
+			{
+				m_fact = fact;
+			}
+
+			public override ICmPossibility Create()
+			{
+				return m_fact.Create();
+			}
+		}
+
+		/// <summary>
+		/// Creator wrapping ILexRefTypeFactory
+		/// </summary>
+		private sealed class LexRefTypeCreator : CmPossibilityCreator
+		{
+			private ILexRefTypeFactory m_fact;
+
+			public LexRefTypeCreator(ILexRefTypeFactory fact)
+			{
+				m_fact = fact;
+			}
+
+			public override ICmPossibility Create()
+			{
+				return m_fact.Create();
+			}
+		}
 	}
 }

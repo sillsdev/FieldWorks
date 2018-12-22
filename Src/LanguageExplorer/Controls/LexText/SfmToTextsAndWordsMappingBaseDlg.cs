@@ -40,7 +40,7 @@ namespace LanguageExplorer.Controls.LexText
 			var ws = ((AddWritingSystemButton)m_addWritingSystemButton).NewWritingSystem;
 			if (ws != null)
 			{
-				NotebookImportWiz.InitializeWritingSystemCombo(ws.Id, m_cache, m_writingSystemCombo);
+				m_writingSystemCombo.InitializeWritingSystemCombo(m_cache, ws.Id);
 			}
 		}
 
@@ -85,7 +85,7 @@ namespace LanguageExplorer.Controls.LexText
 			if (m_destinationsListBox.SelectedItem is DestinationItem && ((DestinationItem)m_destinationsListBox.SelectedItem).Dest == InterlinDestination.Baseline)
 			{
 				// Baseline can only use vernacular writing systems.
-				if (!NotebookImportWiz.InitializeWritingSystemCombo(oldWs, m_cache, m_writingSystemCombo, m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.ToArray()))
+				if (!m_writingSystemCombo.InitializeWritingSystemCombo(m_cache, oldWs, m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.ToArray()))
 				{
 					m_writingSystemCombo.SelectedIndex = 0; // if old one is not in list, pick one that is.
 				}
@@ -93,7 +93,7 @@ namespace LanguageExplorer.Controls.LexText
 			}
 			else
 			{
-				NotebookImportWiz.InitializeWritingSystemCombo(oldWs, m_cache, m_writingSystemCombo);
+				m_writingSystemCombo.InitializeWritingSystemCombo(m_cache);
 			}
 		}
 

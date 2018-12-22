@@ -25,7 +25,7 @@ using SIL.Utils;
 
 namespace LanguageExplorer.Controls.LexText
 {
-	public partial class LiftImportDlg : Form, IFwExtension
+	public partial class LiftImportDlg : Form, IFwExtension, IImportForm
 	{
 		private LcmCache m_cache;
 		private IPropertyTable m_propertyTable;

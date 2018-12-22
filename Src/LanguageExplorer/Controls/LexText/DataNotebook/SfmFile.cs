@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,7 +13,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 	/// This is like SfmReader except that it stores the data for all the lines.
 	/// It also stores the Shoebox private marker lines like SfmReaderEx.
 	/// </summary>
-	public sealed class SfmFile : SfmFileReader
+	internal sealed class SfmFile : SfmFileReader
 	{
 		internal SfmFile(string filename) : base(filename)
 		{
@@ -47,7 +47,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						}
 						m_sfmUsage.Add(sfm, 1);
 						m_sfmOrder.Add(sfm);
-						m_sfmWithDataUsage.Add(sfm, 0);	// create the key - not sure on data yet
+						m_sfmWithDataUsage.Add(sfm, 0); // create the key - not sure on data yet
 					}
 					var line = new SfmField(sfm, sfmData, lineNum);
 					Lines.Add(line);

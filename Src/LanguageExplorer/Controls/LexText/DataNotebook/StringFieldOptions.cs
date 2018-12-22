@@ -1,19 +1,19 @@
-// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Windows.Forms;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.WritingSystems;
 
 namespace LanguageExplorer.Controls.LexText.DataNotebook
 {
 	/// <summary />
 	public partial class StringFieldOptions : UserControl
 	{
-		LcmCache m_cache;
+		private LcmCache m_cache;
 
 		/// <summary />
 		public StringFieldOptions()
@@ -25,7 +25,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		{
 			m_cache = cache;
 			m_btnAddWritingSystem.Initialize(cache, helpTopicProvider, app);
-			NotebookImportWiz.InitializeWritingSystemCombo(rsfm.m_sto.m_wsId, cache, m_cbWritingSystem);
+			m_cbWritingSystem.InitializeWritingSystemCombo(cache, rsfm.m_sto.m_wsId);
 		}
 
 		public string WritingSystem => (m_cbWritingSystem.SelectedItem as CoreWritingSystemDefinition)?.Id;
@@ -35,7 +35,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			var ws = m_btnAddWritingSystem.NewWritingSystem;
 			if (ws != null)
 			{
-				NotebookImportWiz.InitializeWritingSystemCombo(ws.Id, m_cache, m_cbWritingSystem);
+				m_cbWritingSystem.InitializeWritingSystemCombo(m_cache, ws.Id);
 			}
 		}
 	}

@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.LexText;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
@@ -21,7 +22,7 @@ using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
 	/// <summary />
-	public class LinguaLinksImportDlg : Form, IFwExtension
+	public class LinguaLinksImportDlg : Form, IFwExtension, IImportForm
 	{
 		public const int kLlName = 0;
 		public const int kFwName = 1;
