@@ -2551,15 +2551,6 @@ namespace LanguageExplorer.Controls.LexText {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Link field options.
-        /// </summary>
-        internal static string ksRnLinkFieldOptions {
-            get {
-                return ResourceManager.GetString("ksRnLinkFieldOptions", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to S&amp;how Info.
         /// </summary>
         internal static string ksS_howInfo {

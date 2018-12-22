@@ -4,7 +4,7 @@
 
 using SIL.LCModel.Core.WritingSystems;
 
-namespace LanguageExplorer.Controls.LexText.DataNotebook
+namespace LanguageExplorer.Areas.Notebook
 {
 	/// <summary>
 	/// This class stores the options data associated with a string destination.

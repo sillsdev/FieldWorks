@@ -4,13 +4,13 @@
 
 using System.Windows.Forms;
 
-namespace LanguageExplorer.Controls.LexText.DataNotebook
+namespace LanguageExplorer.Areas.Notebook
 {
 	/// <summary />
-	public partial class LinkFieldOptions : UserControl
+	public partial class DiscardOptions : UserControl
 	{
 		/// <summary />
-		public LinkFieldOptions()
+		public DiscardOptions()
 		{
 			InitializeComponent();
 		}

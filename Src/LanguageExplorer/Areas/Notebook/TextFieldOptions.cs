@@ -9,7 +9,7 @@ using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.WritingSystems;
 
-namespace LanguageExplorer.Controls.LexText.DataNotebook
+namespace LanguageExplorer.Areas.Notebook
 {
 	/// <summary />
 	public partial class TextFieldOptions : UserControl

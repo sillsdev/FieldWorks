@@ -11,7 +11,7 @@ using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.WritingSystems;
 
-namespace LanguageExplorer.Controls.LexText.DataNotebook
+namespace LanguageExplorer.Areas.Notebook
 {
 	/// <summary>
 	/// This control display the options for list reference fields.

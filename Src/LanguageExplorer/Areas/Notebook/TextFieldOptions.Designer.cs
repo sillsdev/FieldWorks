@@ -3,8 +3,9 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
+using LanguageExplorer.Controls.LexText;
 
-namespace LanguageExplorer.Controls.LexText.DataNotebook
+namespace LanguageExplorer.Areas.Notebook
 {
 	partial class TextFieldOptions
 	{

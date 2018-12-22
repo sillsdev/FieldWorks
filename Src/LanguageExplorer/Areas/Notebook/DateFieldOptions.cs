@@ -8,7 +8,7 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
-namespace LanguageExplorer.Controls.LexText.DataNotebook
+namespace LanguageExplorer.Areas.Notebook
 {
 	/// <summary />
 	public partial class DateFieldOptions : UserControl

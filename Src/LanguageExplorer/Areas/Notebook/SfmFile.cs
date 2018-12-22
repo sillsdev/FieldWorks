@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.SfmToXml;
 
-namespace LanguageExplorer.Controls.LexText.DataNotebook
+namespace LanguageExplorer.Areas.Notebook
 {
 	/// <summary>
 	/// This is like SfmReader except that it stores the data for all the lines.

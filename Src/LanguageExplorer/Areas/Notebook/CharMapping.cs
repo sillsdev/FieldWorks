@@ -6,7 +6,7 @@ using System.Xml;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.Xml;
 
-namespace LanguageExplorer.Controls.LexText.DataNotebook
+namespace LanguageExplorer.Areas.Notebook
 {
 	internal sealed class CharMapping
 	{

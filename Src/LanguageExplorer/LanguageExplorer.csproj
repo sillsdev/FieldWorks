@@ -397,7 +397,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\IsSfmFile.cs" />
-    <Compile Include="Controls\LexText\DataNotebook\SfmFile.cs" />
+    <Compile Include="Areas\Notebook\SfmFile.cs" />
     <Compile Include="Controls\LexText\LexImportCustomField.cs" />
     <Compile Include="Controls\LexText\LexImportField.cs" />
     <Compile Include="Controls\LexText\LexImportFields.cs" />
@@ -794,12 +794,12 @@
     <Compile Include="Controls\LexText\CmLiftSense.cs" />
     <Compile Include="Controls\LexText\CmLiftVariant.cs" />
     <Compile Include="Controls\LexText\ContentMapping.cs" />
-    <Compile Include="Controls\LexText\DataNotebook\CharMapping.cs" />
-    <Compile Include="Controls\LexText\DataNotebook\DateOptions.cs" />
-    <Compile Include="Controls\LexText\DataNotebook\RnSfMarker.cs" />
-    <Compile Include="Controls\LexText\DataNotebook\StringOptions.cs" />
-    <Compile Include="Controls\LexText\DataNotebook\TextOptions.cs" />
-    <Compile Include="Controls\LexText\DataNotebook\TopicsListOptions.cs" />
+    <Compile Include="Areas\Notebook\CharMapping.cs" />
+    <Compile Include="Areas\Notebook\DateOptions.cs" />
+    <Compile Include="Areas\Notebook\RnSfMarker.cs" />
+    <Compile Include="Areas\Notebook\StringOptions.cs" />
+    <Compile Include="Areas\Notebook\TextOptions.cs" />
+    <Compile Include="Areas\Notebook\TopicsListOptions.cs" />
     <Compile Include="Controls\LexText\FeatureSystemInflectionFeatureListDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1392,76 +1392,76 @@
       <DependentUpon>ConfigureHomographDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\LexText\ContextMenuRequestedEventArgs.cs" />
-    <Compile Include="Controls\LexText\DataNotebook\AnthroFieldMappingDlg.cs">
+    <Compile Include="Areas\Notebook\AnthroFieldMappingDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\DataNotebook\AnthroFieldMappingDlg.Designer.cs">
+    <Compile Include="Areas\Notebook\AnthroFieldMappingDlg.Designer.cs">
       <DependentUpon>AnthroFieldMappingDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\LexText\DataNotebook\DateFieldOptions.cs">
+    <Compile Include="Areas\Notebook\DateFieldOptions.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\DataNotebook\DateFieldOptions.Designer.cs">
+    <Compile Include="Areas\Notebook\DateFieldOptions.Designer.cs">
       <DependentUpon>DateFieldOptions.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\LexText\DataNotebook\DiscardOptions.cs">
+    <Compile Include="Areas\Notebook\DiscardOptions.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\DataNotebook\DiscardOptions.Designer.cs">
+    <Compile Include="Areas\Notebook\DiscardOptions.Designer.cs">
       <DependentUpon>DiscardOptions.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\LexText\DataNotebook\ImportCharMappingDlg.cs">
+    <Compile Include="Areas\Notebook\ImportCharMappingDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\DataNotebook\ImportCharMappingDlg.Designer.cs">
+    <Compile Include="Areas\Notebook\ImportCharMappingDlg.Designer.cs">
       <DependentUpon>ImportCharMappingDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\LexText\DataNotebook\ImportDateFormatDlg.cs">
+    <Compile Include="Areas\Notebook\ImportDateFormatDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\DataNotebook\ImportDateFormatDlg.Designer.cs">
+    <Compile Include="Areas\Notebook\ImportDateFormatDlg.Designer.cs">
       <DependentUpon>ImportDateFormatDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\LexText\DataNotebook\ImportEncCvtrDlg.cs">
+    <Compile Include="Areas\Notebook\ImportEncCvtrDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\DataNotebook\ImportEncCvtrDlg.Designer.cs">
+    <Compile Include="Areas\Notebook\ImportEncCvtrDlg.Designer.cs">
       <DependentUpon>ImportEncCvtrDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\LexText\DataNotebook\ImportMatchReplaceDlg.cs">
+    <Compile Include="Areas\Notebook\ImportMatchReplaceDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\DataNotebook\ImportMatchReplaceDlg.Designer.cs">
+    <Compile Include="Areas\Notebook\ImportMatchReplaceDlg.Designer.cs">
       <DependentUpon>ImportMatchReplaceDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\LexText\DataNotebook\LinkFieldOptions.cs">
+    <Compile Include="Areas\Notebook\LinkFieldOptions.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\DataNotebook\LinkFieldOptions.Designer.cs">
+    <Compile Include="Areas\Notebook\LinkFieldOptions.Designer.cs">
       <DependentUpon>LinkFieldOptions.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\LexText\DataNotebook\ListRefFieldOptions.cs">
+    <Compile Include="Areas\Notebook\ListRefFieldOptions.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\DataNotebook\ListRefFieldOptions.Designer.cs">
+    <Compile Include="Areas\Notebook\ListRefFieldOptions.Designer.cs">
       <DependentUpon>ListRefFieldOptions.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\LexText\DataNotebook\NotebookImportWiz.cs">
+    <Compile Include="Areas\Notebook\NotebookImportWiz.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\DataNotebook\NotebookImportWiz.Designer.cs">
+    <Compile Include="Areas\Notebook\NotebookImportWiz.Designer.cs">
       <DependentUpon>NotebookImportWiz.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\LexText\DataNotebook\StringFieldOptions.cs">
+    <Compile Include="Areas\Notebook\StringFieldOptions.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\DataNotebook\StringFieldOptions.Designer.cs">
+    <Compile Include="Areas\Notebook\StringFieldOptions.Designer.cs">
       <DependentUpon>StringFieldOptions.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\LexText\DataNotebook\TextFieldOptions.cs">
+    <Compile Include="Areas\Notebook\TextFieldOptions.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\DataNotebook\TextFieldOptions.Designer.cs">
+    <Compile Include="Areas\Notebook\TextFieldOptions.Designer.cs">
       <DependentUpon>TextFieldOptions.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\LexText\EntryGoDlg.cs">
@@ -2405,51 +2405,51 @@
     <EmbeddedResource Include="DictionaryConfiguration\ConfigureHomographDlg.resx">
       <DependentUpon>ConfigureHomographDlg.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\DataNotebook\AnthroFieldMappingDlg.resx">
+    <EmbeddedResource Include="Areas\Notebook\AnthroFieldMappingDlg.resx">
       <DependentUpon>AnthroFieldMappingDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\DataNotebook\DateFieldOptions.resx">
+    <EmbeddedResource Include="Areas\Notebook\DateFieldOptions.resx">
       <DependentUpon>DateFieldOptions.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\DataNotebook\DiscardOptions.resx">
+    <EmbeddedResource Include="Areas\Notebook\DiscardOptions.resx">
       <DependentUpon>DiscardOptions.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\DataNotebook\ImportCharMappingDlg.resx">
+    <EmbeddedResource Include="Areas\Notebook\ImportCharMappingDlg.resx">
       <DependentUpon>ImportCharMappingDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\DataNotebook\ImportDateFormatDlg.resx">
+    <EmbeddedResource Include="Areas\Notebook\ImportDateFormatDlg.resx">
       <DependentUpon>ImportDateFormatDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\DataNotebook\ImportEncCvtrDlg.resx">
+    <EmbeddedResource Include="Areas\Notebook\ImportEncCvtrDlg.resx">
       <DependentUpon>ImportEncCvtrDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\DataNotebook\ImportMatchReplaceDlg.resx">
+    <EmbeddedResource Include="Areas\Notebook\ImportMatchReplaceDlg.resx">
       <DependentUpon>ImportMatchReplaceDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\DataNotebook\LinkFieldOptions.resx">
+    <EmbeddedResource Include="Areas\Notebook\LinkFieldOptions.resx">
       <DependentUpon>LinkFieldOptions.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\DataNotebook\ListRefFieldOptions.resx">
+    <EmbeddedResource Include="Areas\Notebook\ListRefFieldOptions.resx">
       <DependentUpon>ListRefFieldOptions.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\DataNotebook\NotebookImportWiz.resx">
+    <EmbeddedResource Include="Areas\Notebook\NotebookImportWiz.resx">
       <DependentUpon>NotebookImportWiz.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\DataNotebook\StringFieldOptions.resx">
+    <EmbeddedResource Include="Areas\Notebook\StringFieldOptions.resx">
       <DependentUpon>StringFieldOptions.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\DataNotebook\TextFieldOptions.resx">
+    <EmbeddedResource Include="Areas\Notebook\TextFieldOptions.resx">
       <DependentUpon>TextFieldOptions.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>

@@ -4,9 +4,9 @@
 
 using System.Diagnostics;
 
-namespace LanguageExplorer.Controls.LexText.DataNotebook
+namespace LanguageExplorer.Areas.Notebook
 {
-	partial class ImportDateFormatDlg
+	partial class ImportMatchReplaceDlg
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -41,44 +41,35 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ImportDateFormatDlg));
-			this.m_lblFormat = new System.Windows.Forms.Label();
-			this.m_tbFormat = new System.Windows.Forms.TextBox();
-			this.m_btnApply = new System.Windows.Forms.Button();
-			this.m_tbExample = new System.Windows.Forms.TextBox();
-			this.m_lblDescription = new System.Windows.Forms.Label();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ImportMatchReplaceDlg));
+			this.m_lblMatch = new System.Windows.Forms.Label();
+			this.m_tbMatch = new System.Windows.Forms.TextBox();
+			this.m_lblSubstitute = new System.Windows.Forms.Label();
+			this.m_tbReplace = new System.Windows.Forms.TextBox();
 			this.m_btnOK = new System.Windows.Forms.Button();
 			this.m_btnCancel = new System.Windows.Forms.Button();
 			this.m_btnHelp = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			//
-			// m_lblFormat
+			// m_lblMatch
 			//
-			resources.ApplyResources(this.m_lblFormat, "m_lblFormat");
-			this.m_lblFormat.Name = "m_lblFormat";
+			resources.ApplyResources(this.m_lblMatch, "m_lblMatch");
+			this.m_lblMatch.Name = "m_lblMatch";
 			//
-			// m_tbFormat
+			// m_tbMatch
 			//
-			resources.ApplyResources(this.m_tbFormat, "m_tbFormat");
-			this.m_tbFormat.Name = "m_tbFormat";
+			resources.ApplyResources(this.m_tbMatch, "m_tbMatch");
+			this.m_tbMatch.Name = "m_tbMatch";
 			//
-			// m_btnApply
+			// m_lblSubstitute
 			//
-			resources.ApplyResources(this.m_btnApply, "m_btnApply");
-			this.m_btnApply.Name = "m_btnApply";
-			this.m_btnApply.UseVisualStyleBackColor = true;
-			this.m_btnApply.Click += new System.EventHandler(this.m_btnApply_Click);
+			resources.ApplyResources(this.m_lblSubstitute, "m_lblSubstitute");
+			this.m_lblSubstitute.Name = "m_lblSubstitute";
 			//
-			// m_tbExample
+			// m_tbReplace
 			//
-			resources.ApplyResources(this.m_tbExample, "m_tbExample");
-			this.m_tbExample.Name = "m_tbExample";
-			this.m_tbExample.ReadOnly = true;
-			//
-			// m_lblDescription
-			//
-			resources.ApplyResources(this.m_lblDescription, "m_lblDescription");
-			this.m_lblDescription.Name = "m_lblDescription";
+			resources.ApplyResources(this.m_tbReplace, "m_tbReplace");
+			this.m_tbReplace.Name = "m_tbReplace";
 			//
 			// m_btnOK
 			//
@@ -90,6 +81,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			// m_btnCancel
 			//
 			resources.ApplyResources(this.m_btnCancel, "m_btnCancel");
+			this.m_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.m_btnCancel_Click);
@@ -101,20 +93,21 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			this.m_btnHelp.UseVisualStyleBackColor = true;
 			this.m_btnHelp.Click += new System.EventHandler(this.m_btnHelp_Click);
 			//
-			// ImportDateFormatDlg
+			// ImportMatchReplaceDlg
 			//
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.CancelButton = this.m_btnCancel;
 			this.ControlBox = false;
 			this.Controls.Add(this.m_btnHelp);
 			this.Controls.Add(this.m_btnCancel);
 			this.Controls.Add(this.m_btnOK);
-			this.Controls.Add(this.m_lblDescription);
-			this.Controls.Add(this.m_tbExample);
-			this.Controls.Add(this.m_btnApply);
-			this.Controls.Add(this.m_tbFormat);
-			this.Controls.Add(this.m_lblFormat);
-			this.Name = "ImportDateFormatDlg";
+			this.Controls.Add(this.m_tbReplace);
+			this.Controls.Add(this.m_lblSubstitute);
+			this.Controls.Add(this.m_tbMatch);
+			this.Controls.Add(this.m_lblMatch);
+			this.Name = "ImportMatchReplaceDlg";
+			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -122,11 +115,10 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		#endregion
 
-		private System.Windows.Forms.Label m_lblFormat;
-		private System.Windows.Forms.TextBox m_tbFormat;
-		private System.Windows.Forms.Button m_btnApply;
-		private System.Windows.Forms.TextBox m_tbExample;
-		private System.Windows.Forms.Label m_lblDescription;
+		private System.Windows.Forms.Label m_lblMatch;
+		private System.Windows.Forms.TextBox m_tbMatch;
+		private System.Windows.Forms.Label m_lblSubstitute;
+		private System.Windows.Forms.TextBox m_tbReplace;
 		private System.Windows.Forms.Button m_btnOK;
 		private System.Windows.Forms.Button m_btnCancel;
 		private System.Windows.Forms.Button m_btnHelp;

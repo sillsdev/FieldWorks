@@ -6,7 +6,7 @@ using System;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 
-namespace LanguageExplorer.Controls.LexText.DataNotebook
+namespace LanguageExplorer.Areas.Notebook
 {
 	/// <summary />
 	public partial class ImportMatchReplaceDlg : Form

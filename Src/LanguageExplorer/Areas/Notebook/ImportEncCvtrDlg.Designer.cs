@@ -4,7 +4,7 @@
 
 using System.Diagnostics;
 
-namespace LanguageExplorer.Controls.LexText.DataNotebook
+namespace LanguageExplorer.Areas.Notebook
 {
 	partial class ImportEncCvtrDlg
 	{

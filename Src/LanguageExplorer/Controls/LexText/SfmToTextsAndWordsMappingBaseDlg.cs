@@ -7,12 +7,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Resources;
 using System.Windows.Forms;
-using LanguageExplorer.Controls.LexText.DataNotebook;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel;
 using SIL.FieldWorks.FwCoreDlgs;
-using SilEncConverters40;
+using SIL.LCModel;
 using SIL.LCModel.Core.WritingSystems;
+using SilEncConverters40;
 
 namespace LanguageExplorer.Controls.LexText
 {

@@ -206,6 +206,15 @@ namespace LanguageExplorer.Areas.Notebook {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Link field options.
+        /// </summary>
+        internal static string ksRnLinkFieldOptions {
+            get {
+                return ResourceManager.GetString("ksRnLinkFieldOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap nbkRecord {

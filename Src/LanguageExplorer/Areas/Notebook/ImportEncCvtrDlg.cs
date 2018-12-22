@@ -4,11 +4,12 @@
 
 using System;
 using System.Windows.Forms;
+using LanguageExplorer.Controls.LexText;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
 using SilEncConverters40;
 
-namespace LanguageExplorer.Controls.LexText.DataNotebook
+namespace LanguageExplorer.Areas.Notebook
 {
 	/// <summary>
 	/// Dialog for choosing an encoding converter for a given writing system.

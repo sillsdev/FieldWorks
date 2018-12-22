@@ -4,7 +4,7 @@
 
 using System.Collections.Generic;
 
-namespace LanguageExplorer.Controls.LexText.DataNotebook
+namespace LanguageExplorer.Areas.Notebook
 {
 	/// <summary>
 	/// This class stores the options data associated with a date destination.

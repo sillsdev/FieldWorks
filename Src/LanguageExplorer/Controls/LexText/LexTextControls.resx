@@ -1197,10 +1197,6 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
     <value>{{0}} New {0} List Items</value>
     <comment>{{0}} is a placeholder for the count.  {0} is the name of a custom list, or at least a list not normally referenced by the data notebook.</comment>
   </data>
-  <data name="ksRnLinkFieldOptions" xml:space="preserve">
-    <value>Link field options</value>
-    <comment>used in AnthroFieldMappingDlg</comment>
-  </data>
   <data name="ksUnknownMorphTypes" xml:space="preserve">
     <value>The following unknown morph-types were found in the imported file:</value>
   </data>

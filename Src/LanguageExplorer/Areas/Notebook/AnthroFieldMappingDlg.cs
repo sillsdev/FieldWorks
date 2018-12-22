@@ -8,14 +8,14 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using LanguageExplorer.Areas;
+using LanguageExplorer.Controls.LexText;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Infrastructure;
 
-namespace LanguageExplorer.Controls.LexText.DataNotebook
+namespace LanguageExplorer.Areas.Notebook
 {
 	/// <summary />
 	public partial class AnthroFieldMappingDlg : Form
@@ -130,7 +130,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					switch (clidDst)
 					{
 						case RnGenericRecTags.kClassId:
-							m_groupOptions.Text = LexTextControls.ksRnLinkFieldOptions;
+							m_groupOptions.Text = NotebookResources.ksRnLinkFieldOptions;
 							m_groupOptions.Controls.Add(m_linkOpt);
 							m_linkOpt.Location = m_locSubCtrl;
 							break;

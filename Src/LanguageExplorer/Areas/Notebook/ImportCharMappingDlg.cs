@@ -12,7 +12,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 
-namespace LanguageExplorer.Controls.LexText.DataNotebook
+namespace LanguageExplorer.Areas.Notebook
 {
 	/// <summary />
 	public partial class ImportCharMappingDlg : Form

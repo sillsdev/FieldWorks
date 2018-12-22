@@ -11,7 +11,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
-using LanguageExplorer.Areas;
+using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.SfmToXml;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
@@ -28,7 +29,7 @@ using SIL.LCModel.Utils;
 using SIL.Xml;
 using SilEncConverters40;
 
-namespace LanguageExplorer.Controls.LexText.DataNotebook
+namespace LanguageExplorer.Areas.Notebook
 {
 	/// <summary>
 	/// This wizard steps the user through setting up to import a standard format anthropology
