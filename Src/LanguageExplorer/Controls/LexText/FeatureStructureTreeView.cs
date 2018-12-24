@@ -1,8 +1,9 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.LCModel;
 
@@ -29,7 +30,6 @@ namespace LanguageExplorer.Controls.LexText
 		private void Init()
 		{
 			InitializeComponent();
-
 			MouseUp += OnMouseUp;
 			KeyUp += OnKeyUp;
 		}
@@ -59,6 +59,7 @@ namespace LanguageExplorer.Controls.LexText
 				Sort(Nodes);
 			}
 		}
+
 		public void Sort(TreeNodeCollection col)
 		{
 			if (col.Count == 0)
@@ -71,7 +72,6 @@ namespace LanguageExplorer.Controls.LexText
 				list.Add(childNode);
 			}
 			list.Sort();
-
 			BeginUpdate();
 			col.Clear();
 			foreach (var childNode in list)
@@ -211,6 +211,7 @@ namespace LanguageExplorer.Controls.LexText
 			InsertNode(newNode, parentNode);
 			newNode.Chosen = true;
 		}
+
 		private void InsertNode(FeatureTreeNode newNode, FeatureTreeNode parentNode)
 		{
 			if (parentNode == null)
@@ -222,6 +223,7 @@ namespace LanguageExplorer.Controls.LexText
 				parentNode.Nodes.Add(newNode);
 			}
 		}
+
 		private bool AlreadyInTree(int iTag, FeatureTreeNode node)
 		{
 			if (node == null)
@@ -245,6 +247,7 @@ namespace LanguageExplorer.Controls.LexText
 			}
 			return false;
 		}
+
 		private void OnMouseUp(object obj, MouseEventArgs mea)
 		{
 			if (mea.Button == MouseButtons.Left)
@@ -263,16 +266,18 @@ namespace LanguageExplorer.Controls.LexText
 				}
 			}
 		}
+
 		private void OnKeyUp(object obj, KeyEventArgs kea)
 		{
-			var tv = (TreeView) obj;
+			var tv = (TreeView)obj;
 			var tn = (FeatureTreeNode)tv.SelectedNode;
 			if (kea.KeyCode == Keys.Space && tn != null)
 			{
 				HandleCheckBoxNodes(tv, tn);
 			}
 		}
-		private bool IsTerminalNode(TreeNode tn)
+
+		private static bool IsTerminalNode(TreeNode tn)
 		{
 			return tn.Nodes.Count == 0;
 		}
@@ -301,17 +306,21 @@ namespace LanguageExplorer.Controls.LexText
 			tv.Invalidate();
 		}
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if( disposing )
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
+			if (disposing)
 			{
 				components?.Dispose();
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#region Component Designer generated code
@@ -343,5 +352,13 @@ namespace LanguageExplorer.Controls.LexText
 
 		}
 		#endregion
+
+		private enum LexTextImageKind
+		{
+			complex = 0,
+			feature,
+			radio,
+			radioSelected
+		}
 	}
 }

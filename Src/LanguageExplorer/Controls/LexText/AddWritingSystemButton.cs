@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,19 +8,19 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel;
-using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
+using SIL.LCModel;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Controls.LexText
 {
 	/// <summary />
 	public partial class AddWritingSystemButton : Button
 	{
-		LcmCache m_cache;
+		private LcmCache m_cache;
 		private HashSet<string> m_existingWsIds;
 		public event EventHandler WritingSystemAdded;
 		private IHelpTopicProvider m_helpTopicProvider;
@@ -64,12 +64,12 @@ namespace LanguageExplorer.Controls.LexText
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);
-
 			// add the 'drop down' arrow to the text
 			using (var p = new Pen(SystemColors.ControlText, 1))
 			{
-				var x = Width - 14; // 7 wide at top, and 7 in from right boundry
-				var y = Height / 2 - 2; // up 2 past the mid point
+				var x = Width - 14; // 7 wide at top, and 7 in from right boundary
+				// up 2 past the mid point
+				var y = Height / 2 - 2;
 				// 4 lines: len 7, len 5, len 3 and len 1
 				e.Graphics.DrawLine(p, x, y, x + 7, y);
 				e.Graphics.DrawLine(p, x + 1, y + 1, x + 1 + 5, y + 1);
@@ -81,12 +81,9 @@ namespace LanguageExplorer.Controls.LexText
 		protected override void OnClick(EventArgs e)
 		{
 			base.OnClick(e);
-
 			NewWritingSystem = null;
-
 			// show the menu to select which type of writing system to create
 			var mnuAddWs = components.ContextMenu("mnuAddWs");
-
 			// look like the "Add" button on the WS properties dlg
 			var xmlWs = GetOtherWritingSystems();
 			var xmlWsV = new MenuItem[xmlWs.Count + 2]; // one for Vernacular
@@ -103,7 +100,6 @@ namespace LanguageExplorer.Controls.LexText
 			xmlWsV[xmlWs.Count + 1] = new MenuItem(LexTextControls.ks_DefineNew_, mnuAddWS_Vern);
 			xmlWsA[xmlWs.Count] = new MenuItem("-");
 			xmlWsA[xmlWs.Count + 1] = new MenuItem(LexTextControls.ks_DefineNew_, mnuAddWS_Anal);
-
 			// have to have separate lists
 			mnuAddWs.MenuItems.Add(LexTextControls.ks_VernacularWS, xmlWsV);
 			mnuAddWs.MenuItems.Add(LexTextControls.ks_AnalysisWS, xmlWsA);
@@ -143,7 +139,6 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				ws = selectedMI.Tag as CoreWritingSystemDefinition;
 			}
-
 			if (ws != null)
 			{
 				NewWritingSystem = ws;

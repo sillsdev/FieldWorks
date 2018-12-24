@@ -1,19 +1,19 @@
-// Copyright (c) 2013-2018 SIL International
+// Copyright (c) 2013-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Windows.Forms;
 using System.Linq;
+using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.Core.Text;
 using SIL.LCModel;
+using SIL.LCModel.Core.Text;
 
 namespace LanguageExplorer.Controls.LexText
 {
 	/// <summary>
-	/// Handles a TreeCombo control (Widgets assembly) for use in selecting inflection features.
+	/// Handles a TreeCombo control for use in selecting inflection features.
 	/// </summary>
 	public class PhonologicalFeaturePopupTreeManager : PopupTreeManager
 	{
@@ -24,9 +24,7 @@ namespace LanguageExplorer.Controls.LexText
 		private const int kChoosePhonologicaFeatures = -3;
 		private List<ICmBaseAnnotation> m_annotations = new List<ICmBaseAnnotation>();
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
+		/// <summary />
 		public PhonologicalFeaturePopupTreeManager(TreeCombo treeCombo, LcmCache cache, bool useAbbr, IPropertyTable propertyTable, IPublisher publisher, Form parent, int wsDisplay, IFsClosedFeature closedFeature)
 			: base(treeCombo, cache, propertyTable, publisher, cache.LanguageProject.PartsOfSpeechOA, wsDisplay, useAbbr, parent)
 		{
@@ -39,7 +37,6 @@ namespace LanguageExplorer.Controls.LexText
 		public IFsClosedFeature ClosedFeature { get; }
 
 		/// <summary />
-		/// <returns></returns>
 		/// <remarks>These annotations and their feature structure objects are private to this control.
 		/// They are deleted when this control is disposed.
 		/// </remarks>
@@ -57,7 +54,6 @@ namespace LanguageExplorer.Controls.LexText
 		protected override TreeNode MakeMenuItems(PopupTree popupTree, int hvoTarget)
 		{
 			TreeNode match = null;
-
 			// We need a way to store feature structures the user has chosen during this session.
 			// We use an annotation to do this.
 			foreach (var cba in m_annotations)
@@ -78,7 +74,6 @@ namespace LanguageExplorer.Controls.LexText
 					match = node;
 				}
 			}
-
 			if (ClosedFeature != null)
 			{
 				var sortedVaues = ClosedFeature.ValuesOC.OrderBy(v => v.Abbreviation.BestAnalysisAlternative.Text);
@@ -92,9 +87,7 @@ namespace LanguageExplorer.Controls.LexText
 					}
 				}
 			}
-
 			popupTree.Nodes.Add(new HvoTreeNode(TsStringUtils.MakeString(LexTextControls.ksRemoveThisFeature, Cache.WritingSystemFactory.UserWs), kRemoveThisFeature));
-
 			return match;
 		}
 
@@ -102,7 +95,6 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			var selectedNode = e.Node as HvoTreeNode;
 			var pt = GetPopupTree();
-
 			switch (selectedNode.Hvo)
 			{
 				case kChoosePhonologicaFeatures:
@@ -125,7 +117,6 @@ namespace LanguageExplorer.Controls.LexText
 						dlg.SetDlgInfo(Cache, m_propertyTable, m_publisher, fs);
 						dlg.ShowIgnoreInsteadOfDontCare = true;
 						dlg.SetHelpTopic("khtptoolBulkEditPhonemesChooserDlg");
-
 						var result = dlg.ShowDialog(ParentForm);
 						if (result == DialogResult.OK)
 						{
@@ -164,7 +155,9 @@ namespace LanguageExplorer.Controls.LexText
 			// FWR-3432 - If we get here and we still haven't got a valid Hvo, don't continue
 			// on to the base method. It'll crash.
 			if (selectedNode.Hvo == kChoosePhonologicaFeatures)
+			{
 				return;
+			}
 			base.m_treeCombo_AfterSelect(sender, e);
 		}
 
@@ -187,9 +180,9 @@ namespace LanguageExplorer.Controls.LexText
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 

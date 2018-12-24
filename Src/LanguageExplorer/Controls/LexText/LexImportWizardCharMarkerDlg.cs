@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -36,7 +36,6 @@ namespace LanguageExplorer.Controls.LexText
 		private Label lblDescription;
 		private Label label4;
 		private Label label5;
-
 		private ClsInFieldMarker m_inlineMarker;
 		private Hashtable m_uiLangs;
 		private Button btnOK;
@@ -55,7 +54,6 @@ namespace LanguageExplorer.Controls.LexText
 		private RadioButton radioEndWithWord;
 		private Label lblEndRadio;
 		private HelpProvider helpProvider;
-
 		private char[] delim = { ' ' };
 
 		private LexImportWizardCharMarkerDlg()
@@ -64,7 +62,7 @@ namespace LanguageExplorer.Controls.LexText
 			isValidBeginMarker = false;
 			AccessibleName = GetType().Name;
 			m_inlineMarker = new ClsInFieldMarker();
-			SetOkBtnEnableState();	// see if it needs to be visible or not
+			SetOkBtnEnableState();  // see if it needs to be visible or not
 		}
 
 		/// <summary />
@@ -100,20 +98,17 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				ifm = new ClsInFieldMarker();
 			}
-
 			m_inlineMarker = ifm;
 			m_uiLangs = uiLangsHT;
 			m_cache = cache;
-
 			// Set the language descriptor combo box.  This is a DropList so that
 			// the entered text can't be different from the contents of the list.
 			// If the user wants a new language descriptor they have to add one.
 			cbLangDesc.Items.Add(NoChange);
 			cbLangDesc.SelectedItem = NoChange;
-
 			foreach (DictionaryEntry lang in m_uiLangs)
 			{
-				LanguageInfoUI langInfo = lang.Value as SfmToXml.LanguageInfoUI;
+				var langInfo = lang.Value as SfmToXml.LanguageInfoUI;
 				// make sure there is only one entry for each writing system (especially 'ignore')
 				if (cbLangDesc.FindStringExact(langInfo.ToString()) < 0)
 				{
@@ -124,10 +119,8 @@ namespace LanguageExplorer.Controls.LexText
 					}
 				}
 			}
-
 			InitializeStylesComboBox();
-
-			SetOkBtnEnableState();	// see if it needs to be visible or not
+			SetOkBtnEnableState();  // see if it needs to be visible or not
 		}
 
 		private void InitializeStylesComboBox()
@@ -139,13 +132,11 @@ namespace LanguageExplorer.Controls.LexText
 			cbStyle.Items.Add(NoChange);
 			cbStyle.SelectedItem = NoChange;
 			cbStyle.Text = NoChange;
-
 			var oc = m_cache.LanguageProject.StylesOC;
 			if (oc == null || oc.Count < 1)
 			{
 				Debug.WriteLine("No style info retrieved from the cache.");
 			}
-
 			foreach (var style in oc)
 			{
 				if (StyleType.kstCharacter == style.Type)
@@ -158,7 +149,6 @@ namespace LanguageExplorer.Controls.LexText
 					}
 				}
 			}
-
 			// if there's a Style in the Marker - select it or set it as unique, otherwise select noChange
 			if (!m_inlineMarker.HasStyle)
 			{
@@ -201,18 +191,15 @@ namespace LanguageExplorer.Controls.LexText
 			var style = cbStyle.Text;
 			if (style == NoChange)
 			{
-				style = string.Empty;	// use empty string, not the "<No Change>" text
+				style = string.Empty;   // use empty string, not the "<No Change>" text
 			}
-
 			var lang = cbLangDesc.Text;
 			if (lang == NoChange)
 			{
-				lang = string.Empty;	// use empty string, not the "<No Change>" text
+				lang = string.Empty;    // use empty string, not the "<No Change>" text
 			}
-
 			var fHaveEndMarker = tbEndMarker.Text.Trim().Length > 0;
 			var fIgnore = lang.Length + style.Length == 0;
-
 			// get the xmlLang value
 			var xmlLangValue = "Unknown";
 			var langUI = m_uiLangs[lang] as LanguageInfoUI;
@@ -220,7 +207,6 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				xmlLangValue = langUI.ClsLanguage.XmlLang;
 			}
-
 			return new ClsInFieldMarker(tbBeginMarker.Text.Trim(), tbEndMarker.Text.Trim(), radioEndWithWord.Checked
 									&& !fHaveEndMarker, radioEndWithField.Checked && !fHaveEndMarker, lang, xmlLangValue, style, fIgnore);
 		}
@@ -231,14 +217,20 @@ namespace LanguageExplorer.Controls.LexText
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if( disposing )
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
+			if (disposing)
 			{
 				components?.Dispose();
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
-#region Windows Form Designer generated code
+		#region Windows Form Designer generated code
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
@@ -417,7 +409,7 @@ namespace LanguageExplorer.Controls.LexText
 			this.PerformLayout();
 
 		}
-#endregion
+		#endregion
 
 		private void LexImportWizardCharMarkerDlg_Load(object sender, EventArgs e)
 		{
@@ -438,7 +430,7 @@ namespace LanguageExplorer.Controls.LexText
 			cbStyle.Text = m_inlineMarker.Style;
 			if (cbStyle.Text.Trim().Length == 0)
 			{
-				cbStyle.Text = NoChange;	// needed for Style, but not for LangDesc.
+				cbStyle.Text = NoChange;    // needed for Style, but not for LangDesc.
 			}
 		}
 
@@ -467,9 +459,8 @@ namespace LanguageExplorer.Controls.LexText
 					string langDesc, ws, ec, wsId;
 					// retrieve the new WS information from the dlg
 					dlg.GetCurrentLangInfo(out langDesc, out ws, out ec, out wsId);
-
 					// now put the lang info into the language list view
-					if (LexImportWizard.Wizard().AddLanguage(langDesc, ws, ec, wsId))
+					if (LexImportWizard.Wizard.AddLanguage(langDesc, ws, ec, wsId))
 					{
 						// this was added to the list of languages, so add it to the dlg and select it
 						var langInfo = new LanguageInfoUI(langDesc, ws, ec, wsId);
@@ -486,7 +477,7 @@ namespace LanguageExplorer.Controls.LexText
 		private void btnStyles_Click(object sender, EventArgs e)
 		{
 			IPropertyTable propertyTable = null;
-			var wiz = LexImportWizard.Wizard();
+			var wiz = LexImportWizard.Wizard;
 			if (wiz != null)
 			{
 				propertyTable = wiz.PropertyTable;
@@ -528,31 +519,27 @@ namespace LanguageExplorer.Controls.LexText
 			}
 		}
 
-#region Data validation helper routines
+		#region Data validation helper routines
 
-		private bool ValidateBeginMarkerText()
+		private void ValidateBeginMarkerText()
 		{
 			// can't be the same as any current begin or end markers
 			isValidBeginMarker = true;
 			if (m_existingBeginMarkers == null || m_existingEndMarkers == null)
 			{
-				return isValidBeginMarker;
+				return;
 			}
-
 			var marker = tbBeginMarker.Text;
 			isValidBeginMarker = !(marker.Length == 0 || m_existingBeginMarkers.ContainsKey(marker) || m_existingEndMarkers.ContainsKey(marker));
-			return isValidBeginMarker;
 		}
-		private bool ValidateEndMarkers()
+		private void ValidateEndMarkers()
 		{
 			// can't already exist as a begin marker or be equal to the begin marker for this one
 			isValidEndMarker = true;
-
 			if (m_existingBeginMarkers == null)
 			{
-				return isValidEndMarker;
+				return;
 			}
-
 			if (tbEndMarker.Text.Trim().Length == 0)
 			{
 				isValidEndMarker = false;
@@ -570,7 +557,6 @@ namespace LanguageExplorer.Controls.LexText
 					}
 				}
 			}
-			return isValidEndMarker;
 		}
 
 		private bool HasValidBeginMarker()
@@ -588,9 +574,9 @@ namespace LanguageExplorer.Controls.LexText
 			return HasValidBeginMarker() && HasValidEndMarker();
 		}
 
-#endregion
+		#endregion
 
-#region Helper methods for GUI details: color, enabling, ...
+		#region Helper methods for GUI details: color, enabling, ...
 
 		private void SetOkBtnEnableState()
 		{
@@ -601,7 +587,7 @@ namespace LanguageExplorer.Controls.LexText
 			}
 		}
 
-#endregion
+		#endregion
 
 		private void buttonHelp_Click(object sender, EventArgs e)
 		{

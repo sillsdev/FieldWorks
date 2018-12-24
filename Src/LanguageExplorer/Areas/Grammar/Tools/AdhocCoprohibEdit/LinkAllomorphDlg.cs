@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.LexText;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 {
@@ -262,5 +263,43 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 
 		}
 		#endregion
+
+		/// <summary>
+		/// Cheapo version of the LCM MoForm object.
+		/// </summary>
+		private sealed class LAllomorph : LObject, ITssValue
+		{
+			public int Type { get; }
+
+			#region Construction & initialization
+
+			/// <summary />
+			public LAllomorph(int hvo, int type) : base(hvo)
+			{
+				Type = type;
+				AsTss = null;
+			}
+
+			public LAllomorph(IMoForm allo) : base(allo.Hvo)
+			{
+				Type = allo.ClassID;
+				AsTss = allo.Form.BestVernacularAlternative;
+			}
+
+			#endregion Construction & initialization
+
+			public override string ToString()
+			{
+				return AsTss?.Text ?? HVO.ToString();
+			}
+
+			#region ITssValue Members
+
+			/// <summary>
+			/// Implementing this allows the fw combo box to do a better job of displaying items.
+			/// </summary>
+			public ITsString AsTss { get; }
+			#endregion
+		}
 	}
 }

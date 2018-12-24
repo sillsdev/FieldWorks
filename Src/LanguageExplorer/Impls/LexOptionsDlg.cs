@@ -1,19 +1,21 @@
-// Copyright (c) 2007-2018 SIL International
+// Copyright (c) 2007-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Globalization;
 using System.Windows.Forms;
-using SIL.LCModel.Core.WritingSystems;
+using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.LexText;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.Utils;
 using SIL.LCModel;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
 
-namespace LanguageExplorer.Controls.LexText
+namespace LanguageExplorer.Impls
 {
-	public partial class LexOptionsDlg : Form, IFwExtension
+	public partial class LexOptionsDlg : Form, IFwExtension, IFormReplacementNeeded
 	{
 		private IPropertyTable m_propertyTable;
 		private LcmCache m_cache;
@@ -23,12 +25,16 @@ namespace LanguageExplorer.Controls.LexText
 		private IHelpTopicProvider m_helpTopicProvider;
 		private ToolTip _optionsTooltip;
 
-		internal bool m_failedToConnectToService;
-
 		public LexOptionsDlg()
 		{
 			InitializeComponent();
-			_optionsTooltip = new ToolTip { AutoPopDelay = 6000, InitialDelay = 400, ReshowDelay = 500, IsBalloon = true };
+			_optionsTooltip = new ToolTip
+			{
+				AutoPopDelay = 6000,
+				InitialDelay = 400,
+				ReshowDelay = 500,
+				IsBalloon = true
+			};
 			_optionsTooltip.SetToolTip(updateGlobalWS, LexTextControls.ksUpdateGlobalWsTooltip);
 			_optionsTooltip.SetToolTip(groupBox1, LexTextControls.ksUserInterfaceTooltip);
 		}
@@ -120,7 +126,6 @@ namespace LanguageExplorer.Controls.LexText
 			var appSettings = m_propertyTable.GetValue<IFwApplicationSettings>("AppSettings");
 			updateGlobalWS.Checked = !appSettings.UpdateGlobalWSStore;
 			m_userInterfaceChooser.Init(m_sUserWs);
-
 			if (m_helpTopicProvider == null)
 			{
 				return;
@@ -136,8 +141,6 @@ namespace LanguageExplorer.Controls.LexText
 		#endregion
 
 		public string NewUserWs { get; private set; }
-
-		public bool PluginsUpdated { get; } = false;
 
 		private void updateGlobalWS_MouseHover(object sender, EventArgs e)
 		{ }

@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2017 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,13 +6,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.LCModel;
-using SIL.FieldWorks.FwCoreDlgs;
-using SilEncConverters40;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FwCoreDlgs;
+using SIL.LCModel;
+using SIL.LCModel.Core.WritingSystems;
+using SilEncConverters40;
 
 namespace LanguageExplorer.Controls.LexText
 {
@@ -31,40 +32,10 @@ namespace LanguageExplorer.Controls.LexText
 		private Button btnCancel;
 		private GroupBox groupBox1;
 		private IContainer components;
-
 		private LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IApp m_app;
-		// class to contain 'ws' information to be put in combo boxes
-		private sealed class WsInfo
-		{
-			public WsInfo()
-			{
-				Name = LexTextControls.ksIgnore;
-			}
-
-			public WsInfo(string name, string id, string map)
-			{
-				Name = name;
-				Id = id;
-				Map = map;
-			}
-
-			private string Name { get; }
-
-			public string Id { get; }
-
-			public string Key => Id;
-
-			public string Map { get; }
-
-			public override string ToString()
-			{
-				return Name;
-			}
-		}
-
-		private readonly Dictionary<string, WsInfo> m_wsInfo;	// hash of wsInfo
+		private readonly Dictionary<string, WsInfo> m_wsInfo;   // hash of wsInfo
 		private string m_blankEC = SfmToXml.SfmToXmlServices.AlreadyInUnicode;
 		private string m_LangDesc;
 		private string m_wsName;
@@ -84,32 +55,33 @@ namespace LanguageExplorer.Controls.LexText
 			AccessibleName = GetType().Name;
 			m_wsInfo = new Dictionary<string, WsInfo>();
 			m_LangDesc = m_wsName = m_encConverter = string.Empty;
-			m_AddUsage = true;	// this is an "Add" use of the dlg by default
+			m_AddUsage = true;  // this is an "Add" use of the dlg by default
 			btnOK.Enabled = false;
 		}
 
 		/// <summary />
-		public LexImportWizardLanguage(LcmCache cache, Hashtable existingLangDesc,
-			IHelpTopicProvider helpTopicProvider, IApp app) : this()
+		public LexImportWizardLanguage(LcmCache cache, Hashtable existingLangDesc, IHelpTopicProvider helpTopicProvider, IApp app)
+			: this()
 		{
 			m_existingLangDescriptors = existingLangDesc; //
 			m_cache = cache;
 			m_app = app;
 			m_LinguaLinksImport = false; // (Bev) this is an SFM import
-			setupHelp(helpTopicProvider);
+			SetupHelp(helpTopicProvider);
 		}
 
 		/// <summary />
-		public LexImportWizardLanguage(LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app) : this(cache, new Hashtable(), helpTopicProvider, app)
+		public LexImportWizardLanguage(LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app)
+			: this(cache, new Hashtable(), helpTopicProvider, app)
 		{
 			m_LinguaLinksImport = true;
 			tbLangDesc.ReadOnly = true; // don't let them change the language name
 			tbLangDesc.Enabled = false;
 		}
 
-		private void setupHelp(IHelpTopicProvider helpTopicProvider)
+		private void SetupHelp(IHelpTopicProvider helpTopicProvider)
 		{
-			switch(m_LinguaLinksImport)
+			switch (m_LinguaLinksImport)
 			{
 				case true:
 					m_helpTopic = "khtpLinguaLinksImportLanguageMapping";
@@ -118,7 +90,6 @@ namespace LanguageExplorer.Controls.LexText
 					m_helpTopic = "khtpImportSFMLanguageMapping";
 					break;
 			}
-
 			m_helpTopicProvider = helpTopicProvider;
 			if (m_helpTopic != null && m_helpTopicProvider != null)
 			{
@@ -134,7 +105,7 @@ namespace LanguageExplorer.Controls.LexText
 			m_LangDesc = langDescriptor;
 			m_wsName = wsName;
 			m_encConverter = encConverter;
-			m_AddUsage = false;	// modify case
+			m_AddUsage = false; // modify case
 		}
 
 		public void GetCurrentLangInfo(out string langDescriptor, out string wsName, out string encConverter, out string wsId)
@@ -142,26 +113,26 @@ namespace LanguageExplorer.Controls.LexText
 			langDescriptor = tbLangDesc.Text;
 			wsName = cbWS.SelectedItem.ToString();
 			encConverter = cbEC.SelectedItem.ToString();
-			wsId = ((WsInfo) cbWS.SelectedItem).Id;
+			wsId = ((WsInfo)cbWS.SelectedItem).Id;
 		}
 
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
-			if( disposing )
+			if (disposing)
 			{
 				components?.Dispose();
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#region Windows Form Designer generated code
@@ -310,22 +281,18 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				Text = m_AddUsage ? LexTextControls.ksAddLangMapping : LexTextControls.ksModifyLangMapping;
 			}
-
 			tbLangDesc.Text = m_LangDesc;
-
 			// initialize the 'ws' combo box and the AddWs button with the data from the DB
-			foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystemManager.WritingSystems)
+			foreach (var ws in m_cache.ServiceLocator.WritingSystemManager.WritingSystems)
 			{
 				var wsi = new WsInfo(ws.DisplayLabel, ws.Id, ws.LegacyMapping);
 				m_wsInfo.Add(wsi.Key, wsi);
 				cbWS.Items.Add(wsi);
 			}
-
 			cbWS.Sorted = false;
 			var wsiIgnore = new WsInfo();
 			cbWS.Items.Add(wsiIgnore);
 			btnAddWS.Initialize(m_cache, m_helpTopicProvider, m_app, m_cache.ServiceLocator.WritingSystemManager.WritingSystems);
-
 			// select the proper index if there is a valid writing system
 			var index = 0;
 			if (!string.IsNullOrEmpty(m_wsName))
@@ -337,9 +304,7 @@ namespace LanguageExplorer.Controls.LexText
 				}
 			}
 			cbWS.SelectedIndex = index;
-
 			LoadEncodingConverters();
-
 			index = 0;
 			if (!string.IsNullOrEmpty(m_encConverter))
 			{
@@ -401,13 +366,11 @@ namespace LanguageExplorer.Controls.LexText
 			try
 			{
 				var prevEC = cbEC.Text;
-				using (AddCnvtrDlg dlg = new AddCnvtrDlg(m_helpTopicProvider, m_app, null, cbEC.Text, null, false))
+				using (var dlg = new AddCnvtrDlg(m_helpTopicProvider, m_app, null, cbEC.Text, null, false))
 				{
 					dlg.ShowDialog();
-
 					// Reload the converter list in the combo to reflect the changes.
 					LoadEncodingConverters();
-
 					// Either select the new one or select the old one
 					if (dlg.DialogResult == DialogResult.OK && !string.IsNullOrEmpty(dlg.SelectedConverter))
 					{
@@ -435,7 +398,7 @@ namespace LanguageExplorer.Controls.LexText
 				{
 					enableOK = true;
 				}
-				else if (m_AddUsage == false)	// modify case
+				else if (m_AddUsage == false)   // modify case
 				{
 					if (currentDesc == m_LangDesc) // can be original value
 					{
@@ -473,6 +436,35 @@ namespace LanguageExplorer.Controls.LexText
 		private void buttonHelp_Click(object sender, System.EventArgs e)
 		{
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, m_helpTopic);
+		}
+
+		// class to contain 'ws' information to be put in combo boxes
+		private sealed class WsInfo
+		{
+			public WsInfo()
+			{
+				Name = LexTextControls.ksIgnore;
+			}
+
+			public WsInfo(string name, string id, string map)
+			{
+				Name = name;
+				Id = id;
+				Map = map;
+			}
+
+			private string Name { get; }
+
+			public string Id { get; }
+
+			public string Key => Id;
+
+			public string Map { get; }
+
+			public override string ToString()
+			{
+				return Name;
+			}
 		}
 	}
 }

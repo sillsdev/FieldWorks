@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,10 +10,10 @@ using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.Code;
-using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.FwUtils.MessageBoxEx;
 using SIL.LCModel;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
 using SIL.Windows.Forms;
 
@@ -43,7 +43,6 @@ namespace LanguageExplorer.Controls.LexText
 		private ImageList m_imageList;
 		private ImageList m_imageListPictures;
 		private System.ComponentModel.IContainer components;
-
 		private const string s_helpTopic = "khtpAddFromCatalog";
 		private HelpProvider helpProvider;
 
@@ -61,12 +60,12 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -80,7 +79,7 @@ namespace LanguageExplorer.Controls.LexText
 			SelectedPOS = null;
 			m_nodes = null;
 
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		public IPartOfSpeech SelectedPOS { get; private set; }
@@ -114,7 +113,6 @@ namespace LanguageExplorer.Controls.LexText
 				helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			}
 			m_bnHelp.Enabled = (m_helpTopicProvider != null);
-
 			Debug.Assert(posList != null);
 			m_cache = posList.Cache;
 			var posSet = new HashSet<IPartOfSpeech>();
@@ -131,11 +129,9 @@ namespace LanguageExplorer.Controls.LexText
 			doc.Load(Path.Combine(FwDirectoryFinder.TemplateDirectory, "GOLDEtic.xml"));
 			var root = doc.DocumentElement;
 			AddNodes(posSet, root.SelectNodes("/eticPOSList/item"), m_tvMasterList.Nodes, m_cache);
-
 			// The expand/collapse cycle is to ensure that all the folder icons get set
 			m_tvMasterList.ExpandAll();
 			m_tvMasterList.CollapseAll();
-
 			// Select the first node in the list
 			var node = m_tvMasterList.Nodes[0];
 			m_tvMasterList.SelectedNode = node;
@@ -147,7 +143,6 @@ namespace LanguageExplorer.Controls.LexText
 				{
 					continue;
 				}
-
 				if (!((MasterCategory)node.Tag).InDatabase)
 				{
 					break;
@@ -192,7 +187,6 @@ namespace LanguageExplorer.Controls.LexText
 					m_skipEvents = false;
 				}
 			}
-
 			treeNodes.Add(tn);
 			m_nodes.Add(tn);
 			var list = node.SelectNodes("item");
@@ -344,7 +338,7 @@ namespace LanguageExplorer.Controls.LexText
 		protected override void OnLoad(EventArgs e)
 		{
 			var size = Size;
-			base.OnLoad (e);
+			base.OnLoad(e);
 			if (Size != size)
 			{
 				Size = size;
@@ -395,7 +389,6 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				return;
 			}
-
 			e.Cancel = ((MasterCategory)e.Node.Tag).InDatabase;
 		}
 
@@ -405,7 +398,6 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				return;
 			}
-
 			ResetOKBtnEnable();
 		}
 

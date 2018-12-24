@@ -1,17 +1,17 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Windows.Forms;
 using LanguageExplorer.Areas;
-using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.Text;
 
 namespace LanguageExplorer.Controls.LexText
 {
 	/// <summary>
-	/// Handles a TreeCombo control (Widgets assembly) for use with PartOfSpeech objects.
+	/// Handles a TreeCombo control for use with PartOfSpeech objects.
 	/// </summary>
 	public class POSPopupTreeManager : PopupTreeManager
 	{
@@ -24,17 +24,13 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		private string JumpToToolNamed => List.OwningFlid == LangProjectTags.kflidPartsOfSpeech ? AreaServices.PosEditMachineName : AreaServices.ReversalToolReversalIndexPOSMachineName;
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
+		/// <summary />
 		public POSPopupTreeManager(TreeCombo treeCombo, LcmCache cache, ICmPossibilityList list, int ws, bool useAbbr, IPropertyTable propertyTable, IPublisher publisher, Form parent)
-			:base (treeCombo, cache, propertyTable, publisher, list, ws, useAbbr, parent)
+			: base(treeCombo, cache, propertyTable, publisher, list, ws, useAbbr, parent)
 		{
 		}
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
+		/// <summary />
 		public POSPopupTreeManager(PopupTree popupTree, LcmCache cache, ICmPossibilityList list, int ws, bool useAbbr, IPropertyTable propertyTable, IPublisher publisher, Form parent)
 			: base(popupTree, cache, propertyTable, publisher, list, ws, useAbbr, parent)
 		{
@@ -72,8 +68,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// Add an 'Any' item to the menu. If the current target is zero, it will be selected.
 		/// It is saved as m_kEmptyNode. Also returns the new node.
 		/// </summary>
-		/// <param name="popupTree"></param>
-		/// <returns></returns>
 		protected TreeNode AddAnyItem(PopupTree popupTree)
 		{
 			var empty = new HvoTreeNode(TsStringUtils.MakeString(LexTextControls.ksAny, Cache.WritingSystemFactory.UserWs), kEmpty);
@@ -85,7 +79,6 @@ namespace LanguageExplorer.Controls.LexText
 		protected override void m_treeCombo_AfterSelect(object sender, TreeViewEventArgs e)
 		{
 			var selectedNode = e.Node as HvoTreeNode;
-
 			if (selectedNode != null && selectedNode.Hvo == kMore && e.Action == TreeViewAction.ByMouse)
 			{
 				if (TreeCombo != null)
@@ -112,32 +105,31 @@ namespace LanguageExplorer.Controls.LexText
 							// call the base method to do this. (LT-14062)
 							break;
 						case DialogResult.Yes:
-						{
-							// Post a message so that we jump to Grammar(area)/Categories tool.
-							// Do this before we close any parent dialog in case
-							// the parent wants to check to see if such a Jump is pending (via "AboutToFollowLink").
-							// NOTE: We use PostMessage here, rather than SendMessage which
-							// disposes of the PopupTree before we and/or our parents might
-							// be finished using it (cf. LT-2563).
-							LinkHandler.PublishFollowLinkMessage(m_publisher, new FwLinkArgs(JumpToToolNamed, dlg.SelectedPOS.Guid));
-							if (ParentForm != null && ParentForm.Modal)
 							{
-								// Close the dlg that opened the master POS dlg,
-								// since its hotlink was used to close it,
-								// and a new POS has been created.
-								ParentForm.DialogResult = DialogResult.Cancel;
-								ParentForm.Close();
+								// Post a message so that we jump to Grammar(area)/Categories tool.
+								// Do this before we close any parent dialog in case
+								// the parent wants to check to see if such a Jump is pending (via "AboutToFollowLink").
+								// NOTE: We use PostMessage here, rather than SendMessage which
+								// disposes of the PopupTree before we and/or our parents might
+								// be finished using it (cf. LT-2563).
+								LinkHandler.PublishFollowLinkMessage(m_publisher, new FwLinkArgs(JumpToToolNamed, dlg.SelectedPOS.Guid));
+								if (ParentForm != null && ParentForm.Modal)
+								{
+									// Close the dlg that opened the master POS dlg,
+									// since its hotlink was used to close it,
+									// and a new POS has been created.
+									ParentForm.DialogResult = DialogResult.Cancel;
+									ParentForm.Close();
+								}
+								break;
 							}
-							break;
-						}
 						default:
-						{
-							return;
-						}
+							{
+								return;
+							}
 					}
 				}
 			}
-
 			base.m_treeCombo_AfterSelect(sender, e);
 		}
 	}

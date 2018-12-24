@@ -1,8 +1,10 @@
-// Copyright (c) 2007-2018 SIL International
+// Copyright (c) 2007-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -40,7 +42,6 @@ namespace LanguageExplorer.Controls.LexText
 		protected ImageList m_imageList;
 		protected ImageList m_imageListPictures;
 		protected System.ComponentModel.IContainer components;
-
 		protected string s_helpTopic = "khtpInsertInflectionFeature";
 		protected HelpProvider helpProvider;
 
@@ -94,16 +95,16 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
-			if( disposing )
+			if (disposing)
 			{
 				components?.Dispose();
 				m_tvMasterList?.Dispose();
@@ -113,7 +114,7 @@ namespace LanguageExplorer.Controls.LexText
 			m_featureList = null;
 			m_tvMasterList = null;
 
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		public IFsFeatDefn SelectedFeatDefn { get; protected set; }
@@ -360,13 +361,12 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Cancel, if it is already in the database.
 		/// </summary>
-		protected void m_tvMasterList_BeforeCheck(object sender, System.Windows.Forms.TreeViewCancelEventArgs e)
+		protected void m_tvMasterList_BeforeCheck(object sender, TreeViewCancelEventArgs e)
 		{
 			if (m_skipEvents)
 			{
 				return;
 			}
-
 			var selMC = e.Node.Tag as MasterItem;
 			e.Cancel = selMC.InDatabase;
 			if (selMC.InDatabase || !selMC.KindCanBeInDatabase())
@@ -383,7 +383,7 @@ namespace LanguageExplorer.Controls.LexText
 			}
 		}
 
-		protected void m_tvMasterList_AfterCheck(object sender, System.Windows.Forms.TreeViewEventArgs e)
+		protected void m_tvMasterList_AfterCheck(object sender, TreeViewEventArgs e)
 		{
 			if (m_skipEvents)
 			{
@@ -406,7 +406,7 @@ namespace LanguageExplorer.Controls.LexText
 			}
 		}
 
-		private bool HasChosenItemNotInDatabase(TreeNode node)
+		private static bool HasChosenItemNotInDatabase(TreeNode node)
 		{
 			if (!node.Checked)
 			{
@@ -419,7 +419,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// If OK, then add relevant inflection features to DB.
 		/// </summary>
-		private void MasterListDlg_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+		private void MasterListDlg_Closing(object sender, CancelEventArgs e)
 		{
 			switch (DialogResult)
 			{
@@ -427,33 +427,32 @@ namespace LanguageExplorer.Controls.LexText
 					SelectedFeatDefn = null;
 					break;
 				case DialogResult.OK:
-				{
-					using (new WaitCursor(this))
 					{
-						if (m_tvMasterList.TerminalsUseCheckBoxes)
+						using (new WaitCursor(this))
 						{
-							UpdateAllCheckedItems(m_tvMasterList.Nodes);
-						}
-						else
-						{
-							var mi = m_tvMasterList.SelectedNode.Tag as MasterItem;
-							if (mi != null)
+							if (m_tvMasterList.TerminalsUseCheckBoxes)
 							{
-								mi.AddToDatabase(m_cache);
-								SelectedFeatDefn = mi.FeatureDefn;
+								UpdateAllCheckedItems(m_tvMasterList.Nodes);
+							}
+							else
+							{
+								var mi = m_tvMasterList.SelectedNode.Tag as MasterItem;
+								if (mi != null)
+								{
+									mi.AddToDatabase(m_cache);
+									SelectedFeatDefn = mi.FeatureDefn;
+								}
 							}
 						}
+						break;
 					}
-					break;
-				}
 				case DialogResult.Yes:
-				{
-					// Closing via the hotlink.
-					// Do nothing special, except avoid setting m_selFeatDefn to null, as in the default case.
-					break;
-				}
+					{
+						// Closing via the hotlink.
+						// Do nothing special, except avoid setting m_selFeatDefn to null, as in the default case.
+						break;
+					}
 			}
-
 			if (m_propertyTable != null)
 			{
 				m_propertyTable.SetProperty(m_sWindowKeyLocation, Location, true, true);
@@ -485,7 +484,7 @@ namespace LanguageExplorer.Controls.LexText
 				}
 			}
 		}
-		protected virtual void linkLabel1_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
+		protected virtual void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			// should be overriden, but just in case...
 			DialogResult = DialogResult.Yes;

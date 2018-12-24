@@ -1,17 +1,18 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Diagnostics;
-using System.Collections.Generic;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel;
-using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Controls.LexText
 {
@@ -31,28 +32,20 @@ namespace LanguageExplorer.Controls.LexText
 		private POSPopupTreeManager m_mainPOSPopupTreeManager;
 		private POSPopupTreeManager m_secPOSPopupTreeManager;
 		private MsaType m_msaType = MsaType.kNotSet;
-		private IPartOfSpeech m_selectedMainPOS = null;
-		private IPartOfSpeech m_selectedSecondaryPOS = null;
-		private IMoInflAffixSlot m_selectedSlot = null;
-		private bool m_skipEvents = false;
+		private IPartOfSpeech m_selectedMainPOS;
+		private IPartOfSpeech m_selectedSecondaryPOS;
+		private IMoInflAffixSlot m_selectedSlot;
+		private bool m_skipEvents;
 		private IMoMorphType m_morphType;
-
-		#region Designer data members
-
-		private System.Windows.Forms.GroupBox m_groupBox;
-		private LanguageExplorer.Controls.TreeCombo m_tcSecondaryPOS;
-		private System.Windows.Forms.Label m_lSLots;
-		private LanguageExplorer.Controls.FwComboBox m_fwcbSlots;
-		private LanguageExplorer.Controls.TreeCombo m_tcMainPOS;
-		private System.Windows.Forms.Label m_lMainCat;
-		private System.Windows.Forms.Label m_lAfxType;
-		private LanguageExplorer.Controls.FwComboBox m_fwcbAffixTypes;
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
-
-		#endregion Designer data members
+		private GroupBox m_groupBox;
+		private TreeCombo m_tcSecondaryPOS;
+		private Label m_lSLots;
+		private FwComboBox m_fwcbSlots;
+		private TreeCombo m_tcMainPOS;
+		private Label m_lMainCat;
+		private Label m_lAfxType;
+		private FwComboBox m_fwcbAffixTypes;
+		private Container components = null;
 
 		#endregion Data members
 
@@ -67,30 +60,30 @@ namespace LanguageExplorer.Controls.LexText
 				{
 					case MsaType.kRoot: // Fall through
 					case MsaType.kStem:
-					{
-						sandoxMSA.MainPOS = MainPOS;
-						break;
-					}
-					case MsaType.kInfl:
-					{
-						sandoxMSA.MainPOS = MainPOS;
-						if (Slot != null && SlotIsValidForPos)
 						{
-							sandoxMSA.Slot = Slot;
+							sandoxMSA.MainPOS = MainPOS;
+							break;
 						}
-						break;
-					}
+					case MsaType.kInfl:
+						{
+							sandoxMSA.MainPOS = MainPOS;
+							if (Slot != null && SlotIsValidForPos)
+							{
+								sandoxMSA.Slot = Slot;
+							}
+							break;
+						}
 					case MsaType.kDeriv:
-					{
-						sandoxMSA.MainPOS = MainPOS;
-						sandoxMSA.SecondaryPOS = SecondaryPOS;
-						break;
-					}
+						{
+							sandoxMSA.MainPOS = MainPOS;
+							sandoxMSA.SecondaryPOS = SecondaryPOS;
+							break;
+						}
 					case MsaType.kUnclassified:
-					{
-						sandoxMSA.MainPOS = MainPOS;
-						break;
-					}
+						{
+							sandoxMSA.MainPOS = MainPOS;
+							break;
+						}
 				}
 				return sandoxMSA;
 			}
@@ -111,7 +104,6 @@ namespace LanguageExplorer.Controls.LexText
 				{
 					return; // Can't set it zero, no matter what, until PopupTree supports it.
 				}
-
 				m_selectedMainPOS = value;
 				if (MSAType != MsaType.kStem)
 				{
@@ -150,7 +142,6 @@ namespace LanguageExplorer.Controls.LexText
 					{
 						MSAType = MsaType.kInfl;
 					}
-
 					m_selectedSlot = value;
 					if (m_fwcbSlots.Items.Count == 0)
 					{
@@ -222,92 +213,88 @@ namespace LanguageExplorer.Controls.LexText
 					{
 						case MsaType.kRoot: // Fall through.
 						case MsaType.kStem:
-						{
-							m_groupBox.SuspendLayout();
-							m_lMainCat.Text = LexTextControls.ksCategor_y;
-							// Hide the controls we don't want, show the ones we do.
-							m_lAfxType.Visible = false;
-							m_fwcbAffixTypes.Visible = false;
-							m_lSLots.Visible = false;
-							m_fwcbSlots.Visible = false;
-							m_tcSecondaryPOS.Visible = false;
-
-							m_lMainCat.TabIndex = 0;
-							m_tcMainPOS.TabIndex = 1;
-							m_mainPOSPopupTreeManager.SetEmptyLabel(LexTextControls.ks_NotSure_);
-							m_groupBox.ResumeLayout();
-							break;
-						}
+							{
+								m_groupBox.SuspendLayout();
+								m_lMainCat.Text = LexTextControls.ksCategor_y;
+								// Hide the controls we don't want, show the ones we do.
+								m_lAfxType.Visible = false;
+								m_fwcbAffixTypes.Visible = false;
+								m_lSLots.Visible = false;
+								m_fwcbSlots.Visible = false;
+								m_tcSecondaryPOS.Visible = false;
+								m_lMainCat.TabIndex = 0;
+								m_tcMainPOS.TabIndex = 1;
+								m_mainPOSPopupTreeManager.SetEmptyLabel(LexTextControls.ks_NotSure_);
+								m_groupBox.ResumeLayout();
+								break;
+							}
 						case MsaType.kUnclassified:
-						{
-							m_groupBox.SuspendLayout();
-							m_lMainCat.Text = LexTextControls.ksAttachesToCategor_y;
-							// Hide the controls we don't want, show the ones we do.
-							m_lAfxType.Visible = true;
-							m_fwcbAffixTypes.Visible = true;
-							m_lSLots.Visible = false;
-							m_fwcbSlots.Visible = false;
-							m_tcSecondaryPOS.Visible = false;
-
-							m_lAfxType.TabIndex = 0;
-							m_fwcbAffixTypes.TabIndex = 1;
-							m_fwcbAffixTypes.SelectedIndex = 0;
-							m_lMainCat.TabIndex = 2;
-							m_tcMainPOS.TabIndex = 3;
-							m_mainPOSPopupTreeManager.SetEmptyLabel(LexTextControls.ksAny);
-							m_groupBox.ResumeLayout();
-							break;
-						}
+							{
+								m_groupBox.SuspendLayout();
+								m_lMainCat.Text = LexTextControls.ksAttachesToCategor_y;
+								// Hide the controls we don't want, show the ones we do.
+								m_lAfxType.Visible = true;
+								m_fwcbAffixTypes.Visible = true;
+								m_lSLots.Visible = false;
+								m_fwcbSlots.Visible = false;
+								m_tcSecondaryPOS.Visible = false;
+								m_lAfxType.TabIndex = 0;
+								m_fwcbAffixTypes.TabIndex = 1;
+								m_fwcbAffixTypes.SelectedIndex = 0;
+								m_lMainCat.TabIndex = 2;
+								m_tcMainPOS.TabIndex = 3;
+								m_mainPOSPopupTreeManager.SetEmptyLabel(LexTextControls.ksAny);
+								m_groupBox.ResumeLayout();
+								break;
+							}
 						case MsaType.kInfl:
-						{
-							m_groupBox.SuspendLayout();
-							m_lMainCat.Text = LexTextControls.ksAttachesToCategor_y;
-							m_lSLots.Text = LexTextControls.ks_FillsSlot;
-							// Hide the controls we don't want, show the ones we do.
-							m_lAfxType.Visible = true;
-							m_fwcbAffixTypes.Visible = true;
-							m_lSLots.Visible = true;
-							m_fwcbSlots.Visible = true;
-							m_tcSecondaryPOS.Visible = false;
-
-							m_lAfxType.TabIndex = 0;
-							m_fwcbAffixTypes.TabIndex = 1;
-							m_fwcbAffixTypes.SelectedIndex = 1;
-							m_lMainCat.TabIndex = 2;
-							m_tcMainPOS.TabIndex = 3;
-							m_lSLots.TabIndex = 4;
-							m_fwcbSlots.TabIndex = 5;
-							m_fwcbSlots.TabStop = true;
-							m_fwcbSlots.Enabled = m_fwcbSlots.Items.Count > 0;
-							m_lSLots.Enabled = m_fwcbSlots.Enabled;
-							m_mainPOSPopupTreeManager.SetEmptyLabel(LexTextControls.ksAny);
-							m_groupBox.ResumeLayout();
-							break;
-						}
+							{
+								m_groupBox.SuspendLayout();
+								m_lMainCat.Text = LexTextControls.ksAttachesToCategor_y;
+								m_lSLots.Text = LexTextControls.ks_FillsSlot;
+								// Hide the controls we don't want, show the ones we do.
+								m_lAfxType.Visible = true;
+								m_fwcbAffixTypes.Visible = true;
+								m_lSLots.Visible = true;
+								m_fwcbSlots.Visible = true;
+								m_tcSecondaryPOS.Visible = false;
+								m_lAfxType.TabIndex = 0;
+								m_fwcbAffixTypes.TabIndex = 1;
+								m_fwcbAffixTypes.SelectedIndex = 1;
+								m_lMainCat.TabIndex = 2;
+								m_tcMainPOS.TabIndex = 3;
+								m_lSLots.TabIndex = 4;
+								m_fwcbSlots.TabIndex = 5;
+								m_fwcbSlots.TabStop = true;
+								m_fwcbSlots.Enabled = m_fwcbSlots.Items.Count > 0;
+								m_lSLots.Enabled = m_fwcbSlots.Enabled;
+								m_mainPOSPopupTreeManager.SetEmptyLabel(LexTextControls.ksAny);
+								m_groupBox.ResumeLayout();
+								break;
+							}
 						case MsaType.kDeriv:
-						{
-							m_groupBox.SuspendLayout();
-							m_lMainCat.Text = LexTextControls.ksAttachesToCategor_y;
-							m_lSLots.Text = LexTextControls.ksC_hangesToCategory;
-							// Hide the controls we don't want, show the ones we do.
-							m_lAfxType.Visible = true;
-							m_fwcbAffixTypes.Visible = true;
-							m_lSLots.Visible = true;
-							m_fwcbSlots.Visible = false;
-							m_tcSecondaryPOS.Visible = true;
-
-							m_lAfxType.TabIndex = 0;
-							m_fwcbAffixTypes.TabIndex = 1;
-							m_fwcbAffixTypes.SelectedIndex = 2;
-							m_lMainCat.TabIndex = 2;
-							m_tcMainPOS.TabIndex = 3;
-							m_lSLots.TabIndex = 4;
-							m_tcSecondaryPOS.TabIndex = 5;
-							m_lSLots.Enabled = true;
-							m_mainPOSPopupTreeManager.SetEmptyLabel(LexTextControls.ksAny);
-							m_groupBox.ResumeLayout();
-							break;
-						}
+							{
+								m_groupBox.SuspendLayout();
+								m_lMainCat.Text = LexTextControls.ksAttachesToCategor_y;
+								m_lSLots.Text = LexTextControls.ksC_hangesToCategory;
+								// Hide the controls we don't want, show the ones we do.
+								m_lAfxType.Visible = true;
+								m_fwcbAffixTypes.Visible = true;
+								m_lSLots.Visible = true;
+								m_fwcbSlots.Visible = false;
+								m_tcSecondaryPOS.Visible = true;
+								m_lAfxType.TabIndex = 0;
+								m_fwcbAffixTypes.TabIndex = 1;
+								m_fwcbAffixTypes.SelectedIndex = 2;
+								m_lMainCat.TabIndex = 2;
+								m_tcMainPOS.TabIndex = 3;
+								m_lSLots.TabIndex = 4;
+								m_tcSecondaryPOS.TabIndex = 5;
+								m_lSLots.Enabled = true;
+								m_mainPOSPopupTreeManager.SetEmptyLabel(LexTextControls.ksAny);
+								m_groupBox.ResumeLayout();
+								break;
+							}
 					}
 				}
 				finally
@@ -418,12 +405,12 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -451,7 +438,7 @@ namespace LanguageExplorer.Controls.LexText
 			m_tcSecondaryPOS = null;
 			m_ctrlAssistant = null;
 
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		/// <summary>
@@ -473,12 +460,10 @@ namespace LanguageExplorer.Controls.LexText
 			m_cache = cache;
 			m_propertyTable = propertyTable;
 			m_publisher = publisher;
-
 			IVwStylesheet stylesheet = FwUtils.StyleSheetFromPropertyTable(m_propertyTable);
 			var defUserWs = m_cache.ServiceLocator.WritingSystemManager.UserWs;
 			var defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 			var defAnalWsFont = defAnalWs.DefaultFontName;
-
 			m_fwcbAffixTypes.WritingSystemFactory = m_cache.WritingSystemFactory;
 			m_fwcbAffixTypes.WritingSystemCode = defAnalWs.Handle;
 			m_fwcbAffixTypes.Items.Add(TsStringUtils.MakeString(LexTextControls.ksNotSure, defUserWs));
@@ -486,25 +471,21 @@ namespace LanguageExplorer.Controls.LexText
 			m_fwcbAffixTypes.Items.Add(TsStringUtils.MakeString(LexTextControls.ksDerivational, defUserWs));
 			m_fwcbAffixTypes.StyleSheet = stylesheet;
 			m_fwcbAffixTypes.AdjustStringHeight = false;
-
 			m_fwcbSlots.Font = new Font(defAnalWsFont, 10);
 			m_fwcbSlots.WritingSystemFactory = m_cache.WritingSystemFactory;
 			m_fwcbSlots.WritingSystemCode = defAnalWs.Handle;
 			m_fwcbSlots.StyleSheet = stylesheet;
 			m_fwcbSlots.AdjustStringHeight = false;
-
 			m_tcMainPOS.Font = new Font(defAnalWsFont, 10);
 			m_tcMainPOS.WritingSystemFactory = m_cache.WritingSystemFactory;
 			m_tcMainPOS.WritingSystemCode = defAnalWs.Handle;
 			m_tcMainPOS.StyleSheet = stylesheet;
 			m_tcMainPOS.AdjustStringHeight = false;
-
 			m_tcSecondaryPOS.Font = new Font(defAnalWsFont, 10);
 			m_tcSecondaryPOS.WritingSystemFactory = m_cache.WritingSystemFactory;
 			m_tcSecondaryPOS.WritingSystemCode = defAnalWs.Handle;
 			m_tcSecondaryPOS.StyleSheet = stylesheet;
 			m_tcSecondaryPOS.AdjustStringHeight = false;
-
 			m_selectedMainPOS = sandboxMSA.MainPOS;
 			m_fwcbAffixTypes.SelectedIndex = 0;
 			m_fwcbAffixTypes.SelectedIndexChanged += HandleComboMSATypesChange;
@@ -523,12 +504,10 @@ namespace LanguageExplorer.Controls.LexText
 			m_selectedSecondaryPOS = sandboxMSA.SecondaryPOS;
 			m_secPOSPopupTreeManager.LoadPopupTree(m_selectedSecondaryPOS?.Hvo ?? 0);
 			m_secPOSPopupTreeManager.AfterSelect += m_secPOSPopupTreeManager_AfterSelect;
-
 			// Relocate the m_tcSecondaryPOS control to overlay the m_fwcbSlots.
 			// In the designer, they are offset to see them, and edit them.
 			// In running code they are in the same spot, but only one is visible at a time.
 			m_tcSecondaryPOS.Location = m_fwcbSlots.Location;
-
 			if (m_selectedMainPOS != null && sandboxMSA.MsaType == MsaType.kInfl)
 			{
 				// This fixes LT-4677, LT-6048, and LT-6201.
@@ -706,7 +685,6 @@ namespace LanguageExplorer.Controls.LexText
 				}
 				return m_selectedMainPOS.AllAffixSlots;
 			}
-
 			// Called by InsertEntryDlg so we know the morphtype
 			var fIsPrefixal = MorphServices.IsPrefixishType(m_cache, m_morphType.Hvo);
 			var fIsSuffixal = MorphServices.IsSuffixishType(m_cache, m_morphType.Hvo);
@@ -714,7 +692,6 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				return m_selectedMainPOS.AllAffixSlots;
 			}
-
 			return DomainObjectServices.GetSomeSlots(m_cache, m_selectedMainPOS.AllAffixSlots, fIsPrefixal);
 		}
 
@@ -819,14 +796,12 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				repo.TryGetObject(((HvoTreeNode)e.Node).Hvo, out m_selectedMainPOS);
 			}
-
 			// If this is an inflectional affix MSA,
 			// then populate slot list (FwComboBox m_fwcbSlots).
 			if (MSAType == MsaType.kInfl)
 			{
 				ResetSlotCombo();
 			}
-
 			if (m_tcMainPOS.Text != e.Node.Text)
 			{
 				m_tcMainPOS.Text = e.Node.Text;

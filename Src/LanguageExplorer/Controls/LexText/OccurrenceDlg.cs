@@ -1,8 +1,9 @@
-// Copyright (c) 2013-2018 SIL International
+// Copyright (c) 2013-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -11,7 +12,6 @@ namespace LanguageExplorer.Controls.LexText
 	public class OccurrenceDlg : Form
 	{
 		private string s_helpTopic = "khtpCtxtOccur";
-
 		private IHelpTopicProvider m_helpTopicProvider;
 		private Label m_lblMin;
 		private Label m_lblMax;
@@ -26,18 +26,14 @@ namespace LanguageExplorer.Controls.LexText
 		public OccurrenceDlg(IHelpTopicProvider helpTopicProvider, int min, int max, bool paren)
 		{
 			InitializeComponent();
-
 			if (paren)
 			{
 				m_bracketLabel.Text = ")";
 			}
-
 			AccessibleName = GetType().Name;
-
 			m_helpTopicProvider = helpTopicProvider;
 			m_cboMin.SelectedIndex = min;
 			m_cboMax.SelectedIndex = max == -1 ? 0 : max;
-
 			m_helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
 			InitHelpTopic();
 			m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
@@ -66,10 +62,10 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 

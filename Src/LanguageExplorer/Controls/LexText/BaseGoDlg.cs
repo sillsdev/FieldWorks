@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,14 +10,14 @@ using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.Code;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
-using SIL.LCModel;
 using SIL.FieldWorks.Resources;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.Windows.Forms;
 
 namespace LanguageExplorer.Controls.LexText
@@ -42,9 +42,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// Remember how much we adjusted the height for the lexical form text box.
 		/// </summary>
 		private int m_delta;
-
-		#region	Designer data members
-
 		protected Button m_btnClose;
 		protected Button m_btnOK;
 		protected Button m_btnInsert;
@@ -58,9 +55,7 @@ namespace LanguageExplorer.Controls.LexText
 		protected FwTextBox m_fwTextBoxBottomMsg;
 		protected Label m_objectsLabel;
 
-		#endregion	// Designer data members
-
-		#endregion	// Data members
+		#endregion   // Data members
 
 		#region Properties
 
@@ -73,7 +68,7 @@ namespace LanguageExplorer.Controls.LexText
 			get { return m_tbForm.Text; }
 			set
 			{
-				m_tbForm.Text = value ?? "";
+				m_tbForm.Text = value ?? string.Empty;
 				m_tbForm.SelectAll();
 			}
 		}
@@ -147,9 +142,9 @@ namespace LanguageExplorer.Controls.LexText
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -174,7 +169,6 @@ namespace LanguageExplorer.Controls.LexText
 			Guard.AgainstNull(cache, nameof(cache));
 
 			m_cache = cache;
-
 			// Reset window location.
 			// Get location to the stored values, if any.
 			Point dlgLocation;
@@ -195,16 +189,13 @@ namespace LanguageExplorer.Controls.LexText
 				DesktopBounds = rect;
 				StartPosition = FormStartPosition.Manual;
 			}
-
 			m_helpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
 			if (m_helpTopicProvider != null)
 			{
 				m_helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
 				SetHelpButtonEnabled();
 			}
-
 			SetupBasicTextProperties(wp);
-
 			IVwStylesheet stylesheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable);
 			// Set font, writing system factory, and writing system code for the Lexical Form
 			// edit box.  Also set an empty string with the proper writing system.
@@ -214,14 +205,12 @@ namespace LanguageExplorer.Controls.LexText
 			m_tbForm.AdjustStringHeight = false;
 			m_tbForm.Tss = TsStringUtils.EmptyString(ws);
 			m_tbForm.StyleSheet = stylesheet;
-
 			// Setup the fancy message text box.
 			// Note: at 120DPI (only), it seems to be essential to set at least the WSF of the
 			// bottom message even if not using it.
 			SetupBottomMsg();
 			SetBottomMessage();
 			m_fwTextBoxBottomMsg.BorderStyle = BorderStyle.None;
-
 			m_analHvos.UnionWith(m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(wsObj => wsObj.Handle));
 			var vernList = m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Select(wsObj => wsObj.Handle).ToList();
 			m_vernHvos.UnionWith(vernList);
@@ -248,7 +237,6 @@ namespace LanguageExplorer.Controls.LexText
 				currentWs = m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems[iWs];
 			}
 			Debug.Assert(currentWs != null && currentWs.Handle == ws);
-
 			m_skipCheck = true;
 			m_cbWritingSystems.SelectedItem = currentWs;
 			m_skipCheck = false;
@@ -257,9 +245,7 @@ namespace LanguageExplorer.Controls.LexText
 			// Also, doing that triggers laying out the dialog prematurely, before
 			// we've set WSF on all the controls.
 			m_cbWritingSystems.SelectedIndexChanged += m_cbWritingSystems_SelectedIndexChanged;
-
 			InitializeMatchingObjects();
-
 			// Adjust things if the form box needs to grow to accommodate its style.
 			var oldHeight = m_tbForm.Height;
 			var newHeight = Math.Max(oldHeight, m_tbForm.PreferredHeight);
@@ -284,7 +270,7 @@ namespace LanguageExplorer.Controls.LexText
 				{
 					AdjustControlsToTextResize();
 					ShowControlsBasedOnPanel1Position();
-					return;	// use visual studio designer's settings.
+					return; // use visual studio designer's settings.
 				}
 			}
 			if (wp.m_title != null)
@@ -306,7 +292,6 @@ namespace LanguageExplorer.Controls.LexText
 				m_btnOK.Location = new Point(m_btnOK.Location.X - delta, m_btnOK.Location.Y);
 				m_btnOK.Width += delta;
 			}
-
 			AdjustControlsToTextResize();
 			ShowControlsBasedOnPanel1Position();
 		}
@@ -344,7 +329,6 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				m_cbWritingSystems.Items.Add(ws);
 			}
-
 			foreach (var ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
 			{
 				if (!m_cbWritingSystems.Items.Contains(ws))
@@ -458,7 +442,7 @@ namespace LanguageExplorer.Controls.LexText
 		}
 
 		/// <summary>
-		/// Sets various proerties on the m_fwTextBoxBottomMsg control.
+		/// Sets various properties on the m_fwTextBoxBottomMsg control.
 		/// </summary>
 		/// <returns>DefaultUserWritingSystem integer</returns>
 		protected int SetupBottomMsg()
@@ -527,19 +511,17 @@ namespace LanguageExplorer.Controls.LexText
 			// Adjust the controls in the panel1 control if needed (make sure they don't overlap)
 			if (m_formLabel.Right >= m_tbForm.Left)
 			{
-				m_tbForm.Left = m_formLabel.Right + 1;	// seperate the controls by at least 1 empty pixel
+				m_tbForm.Left = m_formLabel.Right + 1;  // separate the controls by at least 1 empty pixel
 			}
 			var ypos = m_panel1.Bottom + 5;
 			var xpos = m_matchingObjectsBrowser.Left;
-
 			m_cbWritingSystems.Location = new Point(m_panel1.Left + m_tbForm.Left, ypos);
 			m_wsLabel.Location = new Point(m_wsLabel.Left, ypos);
-
 			ypos = m_matchingObjectsBrowser.Top - m_objectsLabel.Size.Height - 5;
 			m_objectsLabel.Location = new Point(xpos, ypos);
 		}
 
-		#endregion	// Other methods
+		#endregion // Other methods
 
 		#region Windows Form Designer generated code
 		/// <summary>
@@ -699,7 +681,6 @@ namespace LanguageExplorer.Controls.LexText
 			var selLen = m_tbForm.SelectionLength;
 			int addToSelection;
 			var fixedText = AdjustText(out addToSelection);
-
 			ResetMatches(fixedText);
 			// Even if AdjustText didn't move the selection, it may have changed the text,
 			// which has a side effect in a text box of selecting all of it. We don't want that here,
@@ -778,7 +759,6 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				return;
 			}
-
 			m_selObject = m_cache.ServiceLocator.GetObject(e.Hvo);
 
 			HandleMatchingSelectionChanged(e);
@@ -855,7 +835,7 @@ namespace LanguageExplorer.Controls.LexText
 			m_tbForm.Select();
 		}
 
-		#endregion	// Event handlers
+		#endregion // Event handlers
 
 		#region Implementation of IPropertyTableProvider
 		/// <summary>

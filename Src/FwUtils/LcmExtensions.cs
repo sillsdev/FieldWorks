@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -70,6 +71,36 @@ namespace SIL.FieldWorks.Common.FwUtils
 				: (me.PossibilitiesOS.Any()
 					? StringTable.Table.GetString(me.PossibilitiesOS[0].GetType().Name, "ClassNames")
 					: itemsTypeName);
+		}
+
+		public static List<ICmPossibility> AllPossibilities(this ICmPossibilityList me)
+		{
+			var allPossibilities = new List<ICmPossibility>();
+			foreach (var possibility in me.PossibilitiesOS)
+			{
+				allPossibilities.Add(possibility);
+				var myPossibilities = possibility.AllPossibilities();
+				if (myPossibilities.Any())
+				{
+					allPossibilities.AddRange(myPossibilities);
+				}
+			}
+			return allPossibilities;
+		}
+
+		private static List<ICmPossibility> AllPossibilities(this ICmPossibility me)
+		{
+			var allSubPossibilities = new List<ICmPossibility>();
+			foreach (var subPossibility in me.SubPossibilitiesOS)
+			{
+				allSubPossibilities.Add(subPossibility);
+				var mySubPossibilities = subPossibility.AllPossibilities();
+				if (mySubPossibilities.Any())
+				{
+					allSubPossibilities.AddRange(mySubPossibilities);
+				}
+			}
+			return allSubPossibilities;
 		}
 
 		private static string AddAsteriskBrackets(string baseData)

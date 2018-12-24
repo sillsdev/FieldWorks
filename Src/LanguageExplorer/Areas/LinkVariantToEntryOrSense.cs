@@ -19,7 +19,7 @@ namespace LanguageExplorer.Areas
 {
 	public partial class LinkVariantToEntryOrSense : LinkEntryOrSenseDlg
 	{
-		private PopupTreeManager m_tcManager;
+		private PossibilityListPopupTreeManager m_tcManager;
 		/// <summary>
 		/// when calling the dialog from "Variant Of" context...without an existing variant used as
 		/// m_startingEntry, we need to pass in the lexeme form of the variant to create the variant

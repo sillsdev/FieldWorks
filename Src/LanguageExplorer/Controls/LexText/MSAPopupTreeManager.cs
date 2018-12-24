@@ -1,20 +1,22 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.LCModel.Core.Text;
+using LanguageExplorer.Areas;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.Controls.LexText
 {
 	/// <summary>
-	/// Handles a TreeCombo control (Widgets assembly) for use with MorphoSyntaxAnalysis objects.
+	/// Handles a TreeCombo control for use with MorphoSyntaxAnalysis objects.
 	/// </summary>
 	public class MSAPopupTreeManager : PopupTreeManager
 	{
@@ -23,7 +25,6 @@ namespace LanguageExplorer.Controls.LexText
 		private const int kMore = -2;
 		private const int kCreate = -3;
 		private const int kModify = -4;
-
 		#region Data members
 		// The following strings are loaded from the string table if possible.
 		private string m_sUnknown;
@@ -113,7 +114,7 @@ namespace LanguageExplorer.Controls.LexText
 			hvoTarget = Sense.MorphoSyntaxAnalysisRA?.Hvo ?? 0;
 			TreeNode match = null;
 			var fStem = Sense.GetDesiredMsaType() == MsaType.kStem;
-			if (fStem /*m_sense.Entry.MorphoSyntaxAnalysesOC.Count != 0*/)
+			if (fStem)
 			{
 				// We want the order to be:
 				// 1. current msa items
@@ -132,7 +133,6 @@ namespace LanguageExplorer.Controls.LexText
 				popupTree.Nodes.CopyTo(posArray, 0);
 				// now clear out the nodes so we can get the order we want
 				popupTree.Nodes.Clear();
-
 				// Add the existing MSA items for the sense's owning entry.
 				foreach (var msa in Sense.Entry.MorphoSyntaxAnalysesOC)
 				{
@@ -143,12 +143,9 @@ namespace LanguageExplorer.Controls.LexText
 					}
 				}
 				AddTimberLine(popupTree);
-
 				// now add the sorted parts of speech
 				popupTree.Nodes.AddRange(posArray);
-
 				AddTimberLine(popupTree);
-
 				//	1. "<Not Sure>" to produce a negligible Msa reference.
 				//	2. "More..." command to launch category chooser dialog.
 				var empty = AddNotSureItem(popupTree);
@@ -204,7 +201,6 @@ namespace LanguageExplorer.Controls.LexText
 						popupTree.Nodes.Add(node);
 						++cMsaExtra;
 					}
-
 					if (cMsaExtra > 0)
 					{
 						AddTimberLine(popupTree);
@@ -294,9 +290,64 @@ namespace LanguageExplorer.Controls.LexText
 			// FWR-3542 -- Need this in .Net too, or it eats the first mouse click intended
 			// for the dialog we're about to show below.
 			pt.HideForm();
-
 			// The constructor adds an Application.Idle handler, which when run, removes the handler
-			new MasterCategoryListChooserLauncher(ParentForm, m_propertyTable, m_publisher, List, FieldName, Sense);
+			Application.Idle += LaunchChooseFromMasterCategoryListOnIdle;
+		}
+
+		private void LaunchChooseFromMasterCategoryListOnIdle(object sender, EventArgs e)
+		{
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
+			// now being handled
+			Application.Idle -= LaunchChooseFromMasterCategoryListOnIdle;
+			// now launch the dialog
+			using (var dlg = new MasterCategoryListDlg())
+			{
+				dlg.SetDlginfo(List, m_propertyTable, false, null);
+				switch (dlg.ShowDialog(ParentForm))
+				{
+					case DialogResult.OK:
+						var sandboxMsa = new SandboxGenericMSA();
+						sandboxMsa.MainPOS = dlg.SelectedPOS;
+						sandboxMsa.MsaType = Sense.GetDesiredMsaType();
+						UndoableUnitOfWorkHelper.Do(string.Format(LexTextControls.ksUndoSetX, FieldName), string.Format(LexTextControls.ksRedoSetX, FieldName), Sense, () =>
+						{
+							Sense.SandboxMSA = sandboxMsa;
+						});
+						// everything should be setup with new node selected, so return.
+						break;
+					case DialogResult.Yes:
+						// represents a click on the link to create a new Grammar Category.
+						// Post a message so that we jump to Grammar(area)/Categories tool.
+						// Do this before we close any parent dialog in case
+						// the parent wants to check to see if such a Jump is pending.
+						// NOTE: We use PostMessage here, rather than SendMessage which
+						// disposes of the PopupTree before we and/or our parents might
+						// be finished using it (cf. LT-2563).
+						LinkHandler.PublishFollowLinkMessage(m_publisher, new FwLinkArgs(AreaServices.PosEditMachineName, dlg.SelectedPOS.Guid));
+						if (ParentForm != null && ParentForm.Modal)
+						{
+							// Close the dlg that opened the master POS dlg,
+							// since its hotlink was used to close it,
+							// and a new POS has been created.
+							ParentForm.DialogResult = DialogResult.Cancel;
+							ParentForm.Close();
+						}
+						break;
+					default:
+						// NOTE: If the user has selected "Cancel", then don't change
+						// our m_lastConfirmedNode to the "More..." node. Keep it
+						// the value set by popupTree_PopupTreeClosed() when we
+						// called pt.Hide() above. (cf. comments in LT-2522)
+						break;
+				}
+			}
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
 		}
 
 		private bool AddNewMsa()

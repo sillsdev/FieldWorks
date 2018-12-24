@@ -327,6 +327,8 @@
     <Compile Include="Areas\Grammar\Tools\GrammarSketch\GrammarSketchToolMenuHelper.cs" />
     <Compile Include="Areas\Grammar\Tools\PosEdit\FwMenuItem.cs" />
     <Compile Include="Areas\IdAndString.cs" />
+    <Compile Include="Controls\ControlServices.cs" />
+    <Compile Include="Controls\IFormReplacementNeeded.cs" />
     <Compile Include="Controls\IImportForm.cs" />
     <Compile Include="Areas\InsertOption.cs" />
     <Compile Include="Areas\IPhEnvSliceCommon.cs" />
@@ -398,6 +400,7 @@
     </Compile>
     <Compile Include="Controls\IsSfmFile.cs" />
     <Compile Include="Areas\Notebook\SfmFile.cs" />
+    <Compile Include="Controls\LexText\ILexImportOnlyForTesting.cs" />
     <Compile Include="Controls\LexText\LexImportCustomField.cs" />
     <Compile Include="Controls\LexText\LexImportField.cs" />
     <Compile Include="Controls\LexText\LexImportFields.cs" />
@@ -804,40 +807,25 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Controls\LexText\FeatureTreeNode.cs" />
-    <Compile Include="Controls\LexText\FeatureTreeNodeInfo.cs" />
     <Compile Include="Controls\LexText\FlexConverter.cs" />
     <Compile Include="Controls\LexText\ICmLiftObject.cs" />
-    <Compile Include="Controls\LexText\IFMReader.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\InsertVariantDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Controls\LexText\InterlinearMapping.cs" />
-    <Compile Include="Controls\LexText\LdmlFileBackup.cs" />
-    <Compile Include="Controls\LexText\LexTextImageKind.cs" />
     <Compile Include="Controls\LexText\InsertEventArgs.cs" />
-    <Compile Include="Controls\LexText\LAllomorph.cs" />
-    <Compile Include="Controls\LexText\LangConverter.cs" />
-    <Compile Include="Controls\LexText\LEntry.cs" />
-    <Compile Include="Controls\LexText\ListViewItemComparer.cs" />
-    <Compile Include="Controls\LexText\LMsa.cs" />
-    <Compile Include="Controls\LexText\LObject.cs" />
-    <Compile Include="Controls\LexText\LSense.cs" />
+    <Compile Include="Areas\Grammar\Tools\AdhocCoprohibEdit\LObject.cs" />
     <Compile Include="Controls\LexText\MasterCategory.cs" />
-    <Compile Include="Controls\LexText\MasterCategoryCitation.cs" />
-    <Compile Include="Controls\LexText\MasterCategoryListChooserLauncher.cs" />
     <Compile Include="Controls\LexText\FeatureTreeNodeKind.cs" />
     <Compile Include="Controls\LexText\MergeStyle.cs" />
-    <Compile Include="Controls\LexText\OptionConverter.cs" />
-    <Compile Include="Controls\LexText\ParaData.cs" />
     <Compile Include="Controls\LexText\PossibilityListPopupTreeManager.cs" />
     <Compile Include="Controls\LexText\RangeNames.cs" />
     <Compile Include="Controls\LexText\Sfm2FlexTextBase.cs" />
     <Compile Include="Controls\LexText\Sfm2FlexTextMappingBase.cs" />
-    <Compile Include="Controls\LexText\Sfm2FlexTextWordsFrag.cs" />
-    <Compile Include="Controls\LexText\UserInterfaceChooser.cs">
+    <Compile Include="Impls\UserInterfaceChooser.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\UserInterfaceChooser.Designer.cs">
+    <Compile Include="Impls\UserInterfaceChooser.Designer.cs">
       <DependentUpon>UserInterfaceChooser.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\MorphTypeFilterType.cs" />
@@ -1468,7 +1456,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Controls\LexText\EntryGoSearchEngine.cs" />
-    <Compile Include="Controls\LexText\EntryObjects.cs" />
+    <Compile Include="Controls\LexText\WindowParams.cs" />
     <Compile Include="Controls\LexText\FeatureStructureTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -1478,7 +1466,6 @@
     <Compile Include="Controls\LexText\InsertEntryDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\InsertEntrySearchEngine.cs" />
     <Compile Include="Controls\LexText\InsertionControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1486,7 +1473,6 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="IPatternControl.cs" />
-    <Compile Include="Controls\LexText\LexImport.cs" />
     <Compile Include="Controls\LexText\LexImportWizard.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1500,10 +1486,10 @@
     <Compile Include="Controls\LexText\LexImportWizardMarker.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\LexOptionsDlg.cs">
+    <Compile Include="Impls\LexOptionsDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\LexOptionsDlg.Designer.cs">
+    <Compile Include="Impls\LexOptionsDlg.Designer.cs">
       <DependentUpon>LexOptionsDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\LexText\LexReferenceDetailsDlg.cs">
@@ -1545,9 +1531,6 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Controls\LexText\MasterListDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Controls\LexText\MasterPhonologicalFeatureListDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Areas\Lexicon\Tools\Edit\MergeEntryDlg.cs">
@@ -2144,7 +2127,7 @@
     <EmbeddedResource Include="Controls\HtmlControl.resx">
       <DependentUpon>HtmlControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\UserInterfaceChooser.resx">
+    <EmbeddedResource Include="Impls\UserInterfaceChooser.resx">
       <DependentUpon>UserInterfaceChooser.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -2484,7 +2467,7 @@
       <DependentUpon>LexImportWizardMarker.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\LexOptionsDlg.resx">
+    <EmbeddedResource Include="Impls\LexOptionsDlg.resx">
       <DependentUpon>LexOptionsDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -2527,10 +2510,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\LexText\MasterListDlg.resx">
       <DependentUpon>MasterListDlg.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\MasterPhonologicalFeatureListDlg.resx">
-      <DependentUpon>MasterPhonologicalFeatureListDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Areas\Lexicon\Tools\Edit\MergeEntryDlg.resx">

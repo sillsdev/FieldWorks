@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls.LexText;
 using NUnit.Framework;
 using LanguageExplorer.SfmToXml;
@@ -56,17 +57,17 @@ namespace LanguageExplorerTests.Controls.LexText
 			mappings.Add(new InterlinearMapping { Marker = "ge", Destination = InterlinDestination.WordGloss, WritingSystem = "en" });
 			var wsf = GetWsf();
 			var input = new ByteReader("input1", Encoding.UTF8.GetBytes(input1));
-			var converter = new Sfm2FlexTextWordsFrag();
-			var output = converter.Convert(input, mappings, wsf);
-			using (var outputStream = new MemoryStream(output))
+			using (var importWizard = new WordsSfmImportWizard())
 			{
+				var converter = importWizard.GetSfmConverter();
+				var output = converter.Convert(input, mappings, wsf);
+				using (var outputStream = new MemoryStream(output))
 				using (var reader = new StreamReader(outputStream))
 				{
 					var outputElt = XElement.Load(reader);
 					Assert.IsTrue(outputElt.Name == "document");
 					var words = outputElt.Elements("word").ToList();
 					Assert.That(words, Has.Count.EqualTo(3));
-
 					{
 						var word1 = words[0];
 						var txtItems = word1.XPathSelectElements("item[@type='txt']").ToList();
@@ -118,10 +119,11 @@ namespace LanguageExplorerTests.Controls.LexText
 			mappings.Add(new InterlinearMapping { Marker = "ge", Destination = InterlinDestination.WordGloss, WritingSystem = "en" });
 			var wsf = GetWsf();
 			var input = new ByteReader("input2", Encoding.UTF8.GetBytes(input2));
-			var converter = new Sfm2FlexTextWordsFrag();
-			var output = converter.Convert(input, mappings, wsf);
-			using (var outputStream = new MemoryStream(output))
+			using (var importWizard = new WordsSfmImportWizard())
 			{
+				var converter = importWizard.GetSfmConverter();
+				var output = converter.Convert(input, mappings, wsf);
+				using (var outputStream = new MemoryStream(output))
 				using (var reader = new StreamReader(outputStream))
 				{
 					var outputElt = XElement.Load(reader);

@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2018 SIL International
+// Copyright (c) 2011-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -125,60 +125,34 @@ namespace LanguageExplorer.Controls.LexText
 		public static string GetRangeName(string fieldName)
 		{
 			string rangeName;
-
 			switch (fieldName)
 			{
 				case "AffixCategories": rangeName = sAffixCategoriesOA; break;
 				case "AnnotationDefs": rangeName = sAnnotationDefsOA; break;
-
 				case "AnthroList": rangeName = sAnthroListOA; break;
-
 				case "ConfidenceLevels": rangeName = sConfidenceLevelsOA; break;
-
 				case "Education": rangeName = sEducationOA; break;
-
 				case "GenreList": rangeName = sGenreListOA; break;
-
 				case "Locations": rangeName = sLocationsOA; break;
-
 				case "PartsOfSpeech": rangeName = sPartsOfSpeechOA; break;
-
 				case "People": rangeName = sPeopleOA; break;
-
 				case "Positions": rangeName = sPositionsOA; break;
-
 				case "Restrictions": rangeName = sRestrictionsOA; break;
-
 				case "Roles": rangeName = sRolesOA; break;
-
 				case "SemanticDomainList": rangeName = sSemanticDomainListOA; break;
-
 				case "Status": rangeName = sStatusOA; break;
-
 				case "Thesaurus": rangeName = sThesaurusRA; break;
-
 				case "TranslationTags": rangeName = sTranslationTagsOA; break;
-
 				case "ComplexEntryTypes": rangeName = sDbComplexEntryTypesOA; break;
-
 				case "DialectLabels": rangeName = sDbDialectLabelsOA; break;
-
 				case "DomainTypes": rangeName = sDbDomainTypesOA; break;
-
 				case "Languages": rangeName = sDbLanguagesOA; break;
-
 				case "MorphTypes": rangeName = sDbMorphTypesOA; break;
-
 				case "PublicationTypes": rangeName = sDbPublicationTypesOA; break;
-
 				case "References": rangeName = sDbReferencesOA; break;
-
 				case "SenseTypes": rangeName = sDbSenseTypesOA; break;
-
 				case "UsageTypes": rangeName = sDbUsageTypesOA; break;
-
 				case "VariantEntryTypes": rangeName = sDbVariantEntryTypesOA; break;
-
 				default:
 					rangeName = fieldName.ToLowerInvariant();
 					break;

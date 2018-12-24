@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2028 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -98,13 +98,12 @@ namespace LanguageExplorer.Controls.LexText
 			if (!defaultValue)
 			{
 				// look for all possible 'true' values
-				return boolValue.ToLowerInvariant() == "yes" || boolValue.ToLowerInvariant() == "y"
-				                                             || boolValue.ToLowerInvariant() == "true" || boolValue.ToLowerInvariant() == "t"
-															 || boolValue == "1";
+				return boolValue.ToLowerInvariant() == "yes" || boolValue.ToLowerInvariant() == "y" || boolValue.ToLowerInvariant() == "true"
+				       || boolValue.ToLowerInvariant() == "t" || boolValue == "1";
 			}
 			// look for all possible 'false' values
-			return boolValue.ToLowerInvariant() != "no" && boolValue.ToLowerInvariant() != "n" &&
-				   boolValue.ToLowerInvariant() != "false" && boolValue.ToLowerInvariant() != "f" && boolValue != "0";
+			return boolValue.ToLowerInvariant() != "no" && boolValue.ToLowerInvariant() != "n" && boolValue.ToLowerInvariant() != "false"
+			       && boolValue.ToLowerInvariant() != "f" && boolValue != "0";
 		}
 
 		/// <summary>

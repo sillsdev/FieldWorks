@@ -1,16 +1,18 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using SIL.LCModel.Core.Cellar;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.Windows.Forms;
@@ -38,8 +40,7 @@ namespace LanguageExplorer.Controls.LexText
 		private ImageList m_imageListPictures;
 		protected FeatureStructureTreeView m_tvMsaFeatureList;
 		protected Label labelPrompt;
-		private System.ComponentModel.IContainer components;
-
+		private IContainer components;
 		private const string m_helpTopic = "khtpChoose-lexiconEdit-InflFeats";
 		private HelpProvider helpProvider;
 
@@ -61,7 +62,7 @@ namespace LanguageExplorer.Controls.LexText
 		protected override void OnLoad(EventArgs e)
 		{
 			var size = Size;
-			base.OnLoad (e);
+			base.OnLoad(e);
 			if (Size != size)
 			{
 				Size = size;
@@ -74,10 +75,10 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -114,7 +115,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		private void SetPropertyTableSideEffects()
 		{
-// Reset window location.
+			// Reset window location.
 			// Get location to the stored values, if any.
 			Point dlgLocation;
 			Size dlgSize;
@@ -128,7 +129,7 @@ namespace LanguageExplorer.Controls.LexText
 			var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
 			if (helpTopicProvider != null) // Will be null when running tests
 			{
-				helpProvider = new HelpProvider {HelpNamespace = helpTopicProvider.HelpFile};
+				helpProvider = new HelpProvider { HelpNamespace = helpTopicProvider.HelpFile };
 				helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(m_helpTopic));
 				helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			}
@@ -170,16 +171,16 @@ namespace LanguageExplorer.Controls.LexText
 		protected virtual void LoadInflFeats(IFsFeatStruc fs)
 		{
 			var cobj = fs.Owner;
-			switch(cobj.ClassID)
+			switch (cobj.ClassID)
 			{
-			case MoAffixAllomorphTags.kClassId:
-				PopulateTreeFromPosInEntry(cobj);
-				break;
-			default:
-				// load inflectable features of this POS and any inflectable features of its parent POS
-				var pos = GetOwningPOSOfFS(fs, cobj);
-				PopulateTreeFromPos(pos);
-				break;
+				case MoAffixAllomorphTags.kClassId:
+					PopulateTreeFromPosInEntry(cobj);
+					break;
+				default:
+					// load inflectable features of this POS and any inflectable features of its parent POS
+					var pos = GetOwningPOSOfFS(fs, cobj);
+					PopulateTreeFromPos(pos);
+					break;
 			}
 			m_tvMsaFeatureList.PopulateTreeFromFeatureStructure(fs);
 			FinishLoading();
@@ -190,7 +191,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		protected virtual void LoadInflFeats(ICmObject cobj, int owningFlid)
 		{
-			switch(cobj.ClassID)
+			switch (cobj.ClassID)
 			{
 				case MoAffixAllomorphTags.kClassId:
 					PopulateTreeFromPosInEntry(cobj);
@@ -262,10 +263,10 @@ namespace LanguageExplorer.Controls.LexText
 			switch (cobj.ClassID)
 			{
 				case MoInflAffMsaTags.kClassId:
-					var infl = (IMoInflAffMsa) cobj;
+					var infl = (IMoInflAffMsa)cobj;
 					return infl.PartOfSpeechRA;
 				case MoDerivAffMsaTags.kClassId:
-					var deriv = (IMoDerivAffMsa) cobj;
+					var deriv = (IMoDerivAffMsa)cobj;
 					switch (owningFlid)
 					{
 						case MoDerivAffMsaTags.kflidFromMsFeatures:
@@ -273,13 +274,12 @@ namespace LanguageExplorer.Controls.LexText
 						case MoDerivAffMsaTags.kflidToMsFeatures:
 							return deriv.ToPartOfSpeechRA;
 					}
-
 					break;
 				case MoStemMsaTags.kClassId:
-					var stem = (IMoStemMsa) cobj;
+					var stem = (IMoStemMsa)cobj;
 					return stem.PartOfSpeechRA;
 				case MoStemNameTags.kClassId:
-					var sn = (IMoStemName) cobj;
+					var sn = (IMoStemName)cobj;
 					return sn.Owner as IPartOfSpeech;
 				case MoAffixAllomorphTags.kClassId:
 					// get entry of the allomorph and then get the msa of first sense and return its (from) POS
@@ -341,6 +341,7 @@ namespace LanguageExplorer.Controls.LexText
 				labelPrompt.Text = string.Format(s1, s2);
 			}
 		}
+
 		/// <summary>
 		/// Get/Set dialog title text
 		/// </summary>
@@ -355,6 +356,7 @@ namespace LanguageExplorer.Controls.LexText
 				Text = value;
 			}
 		}
+
 		/// <summary>
 		/// Get/Set link text
 		/// </summary>
@@ -556,7 +558,6 @@ namespace LanguageExplorer.Controls.LexText
 					}
 				});
 			}
-
 			if (m_propertyTable != null)
 			{
 				m_propertyTable.SetProperty("msaInflFeatListDlgLocation", Location, true, true);

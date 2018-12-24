@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,9 +7,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using LanguageExplorer.Controls.XMLViews;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainImpl;
 
 namespace LanguageExplorer.Controls.LexText
@@ -29,8 +29,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		protected override IEnumerable<ITsString> GetStrings(SearchField field, ICmObject obj)
 		{
-			var entry = (ILexEntry) obj;
-
+			var entry = (ILexEntry)obj;
 			var ws = field.String.get_WritingSystemAt(0);
 			switch (field.Flid)
 			{
@@ -41,7 +40,6 @@ namespace LanguageExplorer.Controls.LexText
 						yield return cf;
 					}
 					break;
-
 				case LexEntryTags.kflidLexemeForm:
 					var lexemeForm = entry.LexemeFormOA;
 					var formOfLexemeForm = lexemeForm?.Form.StringOrNull(ws);
@@ -50,7 +48,6 @@ namespace LanguageExplorer.Controls.LexText
 						yield return formOfLexemeForm;
 					}
 					break;
-
 				case LexEntryTags.kflidAlternateForms:
 					foreach (var form in entry.AlternateFormsOS)
 					{
@@ -61,7 +58,6 @@ namespace LanguageExplorer.Controls.LexText
 						}
 					}
 					break;
-
 				case LexSenseTags.kflidGloss:
 					foreach (var sense in entry.SensesOS)
 					{
@@ -72,7 +68,6 @@ namespace LanguageExplorer.Controls.LexText
 						}
 					}
 					break;
-
 				case LexSenseTags.kflidDefinition:
 					foreach (var sense in entry.SensesOS)
 					{
@@ -83,23 +78,6 @@ namespace LanguageExplorer.Controls.LexText
 						}
 					}
 					break;
-
-/*
-				case LexSenseTags.kflidReversalEntries:
-					foreach (var sense in entry.SensesOS)
-					{
-						foreach (var revEntry in sense.ReversalEntriesRC)
-						{
-							var revForm = revEntry.ReversalForm.StringOrNull(ws);
-							if (revForm != null && revForm.Length > 0)
-							{
-								yield return revForm;
-							}
-						}
-					}
-					break;
-*/
-
 				default:
 					throw new ArgumentException("Unrecognized field.", "field");
 			}
@@ -116,7 +94,6 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				return true;
 			}
-
 			switch (flid)
 			{
 				case LexEntryTags.kflidCitationForm:
@@ -127,7 +104,6 @@ namespace LanguageExplorer.Controls.LexText
 				case LexSenseTags.kflidSenses:
 				case LexSenseTags.kflidGloss:
 				case LexSenseTags.kflidDefinition:
-//				case LexSenseTags.kflidReversalEntries:
 				case ReversalIndexEntryTags.kflidReversalForm:
 					return true;
 			}
@@ -143,10 +119,8 @@ namespace LanguageExplorer.Controls.LexText
 				case LexEntryTags.kflidAlternateForms:
 				case LexSenseTags.kflidGloss:
 				case LexSenseTags.kflidDefinition:
-//				case LexSenseTags.kflidReversalEntries:
 					return true;
 			}
-
 			throw new ArgumentException("Unrecognized field.", "field");
 		}
 

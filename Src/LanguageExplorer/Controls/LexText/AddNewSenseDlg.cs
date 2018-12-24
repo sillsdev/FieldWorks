@@ -1,16 +1,18 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Diagnostics;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Controls.LexText
@@ -19,32 +21,21 @@ namespace LanguageExplorer.Controls.LexText
 	public class AddNewSenseDlg : Form
 	{
 		private const string s_helpTopic = "khtpAddNewSense";
-		private System.Windows.Forms.HelpProvider helpProvider;
-
-		#region Data members
-
+		private HelpProvider helpProvider;
 		private bool m_skipCheck;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private LcmCache m_cache;
 		private ILexEntry m_le;
 		private int m_newSenseID;
-
-
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Button m_btnOK;
-		private System.Windows.Forms.Button m_btnCancel;
-		private SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox m_fwtbCitationForm;
-		private SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox m_fwtbGloss;
-		private System.Windows.Forms.Label label2;
-		private LanguageExplorer.Controls.LexText.MSAGroupBox m_msaGroupBox;
-		private System.Windows.Forms.Button buttonHelp;
-
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
-
-		#endregion Data members
+		private Label label1;
+		private Button m_btnOK;
+		private Button m_btnCancel;
+		private FwTextBox m_fwtbCitationForm;
+		private FwTextBox m_fwtbGloss;
+		private Label label2;
+		private MSAGroupBox m_msaGroupBox;
+		private Button buttonHelp;
+		private Container components = null;
 
 		private AddNewSenseDlg()
 		{
@@ -65,7 +56,6 @@ namespace LanguageExplorer.Controls.LexText
 		public AddNewSenseDlg(IHelpTopicProvider helpTopicProvider)
 		{
 			BasicInit();
-
 			m_helpTopicProvider = helpTopicProvider;
 			helpProvider = new HelpProvider();
 			helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
@@ -76,12 +66,12 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose(bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -93,7 +83,7 @@ namespace LanguageExplorer.Controls.LexText
 			m_le = null;
 			m_cache = null;
 
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		/// <summary>
@@ -101,12 +91,11 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public void SetDlgInfo(ITsString tssCitationForm, ILexEntry le, IPropertyTable propertyTable, IPublisher publisher)
 		{
-			Debug.Assert(tssCitationForm != null);
-			Debug.Assert(le != null);
+			Guard.AgainstNull(tssCitationForm, nameof(tssCitationForm));
+			Guard.AgainstNull(le, nameof(le));
 
 			m_le = le;
 			m_cache = le.Cache;
-
 			var wsContainer = m_cache.ServiceLocator.WritingSystems;
 			var defVernWs = wsContainer.DefaultVernacularWritingSystem;
 			var defAnalWs = wsContainer.DefaultAnalysisWritingSystem;
@@ -125,9 +114,7 @@ namespace LanguageExplorer.Controls.LexText
 			m_fwtbCitationForm.Tss = tssCitationForm;
 			m_fwtbGloss.Text = string.Empty;
 			m_fwtbCitationForm.HasBorder = false;
-
 			m_msaGroupBox.Initialize(m_cache, propertyTable, publisher, this, new SandboxGenericMSA());
-
 			// get the current morph type from the lexical entry.
 			foreach (var mf in le.AlternateFormsOS)
 			{
@@ -138,10 +125,8 @@ namespace LanguageExplorer.Controls.LexText
 					break; // Assume the first allomorph's type is good enough.
 				}
 			}
-
 			m_skipCheck = true;
 			m_skipCheck = false;
-
 			// Adjust sizes of the two FwTextBoxes if needed, and adjust the locations for the
 			// controls below them.  Do the same for the MSAGroupBox.
 			AdjustHeightAndPositions(m_fwtbCitationForm);
@@ -294,39 +279,36 @@ namespace LanguageExplorer.Controls.LexText
 			switch (DialogResult)
 			{
 				default:
-				{
-					Debug.Assert(false, "Unexpected DialogResult.");
-					break;
-				}
+					{
+						Debug.Assert(false, "Unexpected DialogResult.");
+						break;
+					}
 				case DialogResult.Cancel:
-				{
-					break;
-				}
+					{
+						break;
+					}
 				case DialogResult.OK:
-				{
-					if (m_fwtbGloss.Text == string.Empty)
 					{
-						e.Cancel = true;
-						MessageBox.Show(this, LexTextControls.ksFillInGloss, LexTextControls.ksMissingInformation, MessageBoxButtons.OK, MessageBoxIcon.Information);
-						return;
+						if (m_fwtbGloss.Text == string.Empty)
+						{
+							e.Cancel = true;
+							MessageBox.Show(this, LexTextControls.ksFillInGloss, LexTextControls.ksMissingInformation, MessageBoxButtons.OK, MessageBoxIcon.Information);
+							return;
+						}
+						using (new WaitCursor(this))
+						{
+							m_cache.DomainDataByFlid.BeginUndoTask(LexTextControls.ksUndoCreateNewSense, LexTextControls.ksRedoCreateNewSense);
+							var lsNew = m_cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+							m_le.SensesOS.Add(lsNew);
+							var defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
+							lsNew.Gloss.set_String(defAnalWs, TsStringUtils.MakeString(m_fwtbGloss.Text, defAnalWs));
+							lsNew.SandboxMSA = m_msaGroupBox.SandboxMSA;
+							m_newSenseID = lsNew.Hvo;
+
+							m_cache.DomainDataByFlid.EndUndoTask();
+						}
+						break;
 					}
-
-					using (new WaitCursor(this))
-					{
-						m_cache.DomainDataByFlid.BeginUndoTask(LexTextControls.ksUndoCreateNewSense, LexTextControls.ksRedoCreateNewSense);
-
-						var lsNew = m_cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
-						m_le.SensesOS.Add(lsNew);
-						var defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
-						lsNew.Gloss.set_String(defAnalWs, TsStringUtils.MakeString(m_fwtbGloss.Text, defAnalWs));
-
-						lsNew.SandboxMSA = m_msaGroupBox.SandboxMSA;
-						m_newSenseID = lsNew.Hvo;
-
-						m_cache.DomainDataByFlid.EndUndoTask();
-					}
-					break;
-				}
 			}
 		}
 

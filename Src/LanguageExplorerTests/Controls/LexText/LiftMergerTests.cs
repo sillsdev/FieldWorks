@@ -14,6 +14,7 @@ using System.Xml.XPath;
 using LanguageExplorer.Controls.LexText;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.IO;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.Cellar;
@@ -3460,7 +3461,7 @@ namespace LanguageExplorerTests.Controls.LexText
 			string qaaIpaXkalLdml = Path.Combine(sWSfilesPath, "qaa-fonipa-x-kal.ldml");
 			string qaaPhonemicxkalLdml = Path.Combine(sWSfilesPath, "qaa-fonipa-x-kal-emic.ldml");
 
-			LdmlFileBackup.CopyDirectory(testLiftDataSource, testLiftDataPath);
+			DirectoryHelper.Copy(testLiftDataSource, testLiftDataPath, true);
 
 			//Make all files writable
 			// don't want to copy readonly property.
@@ -3510,7 +3511,22 @@ namespace LanguageExplorerTests.Controls.LexText
 			VerifyLiftRangesFile(sLiftRangesFile);
 
 			//Delete the files that were converted to the new lang names.
-			LdmlFileBackup.DeleteDirectory(testLiftDataPath);
+			DeleteDirectory(new DirectoryInfo(testLiftDataPath));
+		}
+
+		/// <summary>
+		/// Delete all files in a directory and all subfolders
+		/// </summary>
+		private static void DeleteDirectory(DirectoryInfo source)
+		{
+			foreach (var diSourceSubDir in source.GetDirectories())
+			{
+				DeleteDirectory(diSourceSubDir);
+			}
+			foreach (var fi in source.GetFiles())
+			{
+				fi.Delete();
+			}
 		}
 
 		private void VerifyLiftRangesFile(string sLiftRangesFile)

@@ -1,8 +1,10 @@
-// Copyright (c) 2007-2018 SIL International
+// Copyright (c) 2007-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-namespace LanguageExplorer.Controls.LexText
+using System.Diagnostics;
+
+namespace LanguageExplorer.Impls
 {
 	partial class LexOptionsDlg
 	{
@@ -17,7 +19,13 @@ namespace LanguageExplorer.Controls.LexText
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
 			if (disposing)
 			{
 				components?.Dispose();
@@ -43,7 +51,7 @@ namespace LanguageExplorer.Controls.LexText
 			this.m_tabInterface = new System.Windows.Forms.TabPage();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.label3 = new System.Windows.Forms.Label();
-			this.m_userInterfaceChooser = new LanguageExplorer.Controls.LexText.UserInterfaceChooser();
+			this.m_userInterfaceChooser = new UserInterfaceChooser();
 			this.updateGlobalWS = new System.Windows.Forms.CheckBox();
 			this.label4 = new System.Windows.Forms.Label();
 			this.m_autoOpenCheckBox = new System.Windows.Forms.CheckBox();
@@ -192,7 +200,7 @@ namespace LanguageExplorer.Controls.LexText
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.CheckBox updateGlobalWS;
 		private System.Windows.Forms.GroupBox groupBox1;
-		private LanguageExplorer.Controls.LexText.UserInterfaceChooser m_userInterfaceChooser;
+		private UserInterfaceChooser m_userInterfaceChooser;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.TabControl tabControl1;
 	}

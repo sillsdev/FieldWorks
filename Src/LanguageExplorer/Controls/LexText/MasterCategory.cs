@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -27,7 +27,7 @@ namespace LanguageExplorer.Controls.LexText
 		private string m_def;
 		private string m_defWs;
 		private List<MasterCategoryCitation> m_citations;
-		private XmlNode m_node; // need to remember the node so can put info for *all* writing systems into databas
+		private XmlNode m_node; // need to remember the node so can put info for *all* writing systems into database
 
 		public static MasterCategory Create(ISet<IPartOfSpeech> posSet, XmlNode node, LcmCache cache)
 		{
@@ -41,13 +41,11 @@ namespace LanguageExplorer.Controls.LexText
 				<citation ws="en">Payne 1997:63</citation>
 			</item>
 			*/
-
 			var mc = new MasterCategory
 			{
 				IsGroup = node.SelectNodes("item") != null,
 				m_id = XmlUtils.GetMandatoryAttributeValue(node, "id")
 			};
-
 			foreach (var pos in posSet)
 			{
 				if (pos.CatalogSourceId == mc.m_id)
@@ -56,20 +54,15 @@ namespace LanguageExplorer.Controls.LexText
 					break;
 				}
 			}
-
 			mc.m_node = node; // remember node, too, so can put info for all WSes in database
-
 			var sDefaultWS = cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id;
 			string sContent;
 			mc.m_abbrevWs = GetBestWritingSystemForNamedNode(node, "abbrev", sDefaultWS, cache, out sContent);
 			mc.m_abbrev = sContent;
-
 			mc.m_termWs = GetBestWritingSystemForNamedNode(node, "term", sDefaultWS, cache, out sContent);
 			mc.m_term = NameFixer(sContent);
-
 			mc.m_defWs = GetBestWritingSystemForNamedNode(node, "def", sDefaultWS, cache, out sContent);
 			mc.m_def = sContent;
-
 			foreach (XmlNode citNode in node.SelectNodes("citation"))
 			{
 				mc.m_citations.Add(new MasterCategoryCitation(XmlUtils.GetMandatoryAttributeValue(citNode, "ws"), citNode.InnerText));
@@ -115,7 +108,6 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				return; // It's already in the database, so nothing more can be done.
 			}
-
 			UndoableUnitOfWorkHelper.Do(LexTextControls.ksUndoCreateCategory, LexTextControls.ksRedoCreateCategory,
 				cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 				{
@@ -124,7 +116,6 @@ namespace LanguageExplorer.Controls.LexText
 					DeterminePOSLocationInfo(cache, subItemOwner, parent, posList, out newOwningFlid, out insertLocation);
 					var wsf = cache.WritingSystemFactory;
 					Debug.Assert(POS != null);
-
 					var termWs = wsf.GetWsFromStr(m_termWs);
 					var abbrevWs = wsf.GetWsFromStr(m_abbrevWs);
 					var defWs = wsf.GetWsFromStr(m_defWs);
@@ -141,7 +132,6 @@ namespace LanguageExplorer.Controls.LexText
 						SetContentFromNode(cache, "term", true, POS.Name);
 						SetContentFromNode(cache, "def", false, POS.Description);
 					}
-
 					POS.CatalogSourceId = m_id;
 				});
 		}
@@ -171,7 +161,7 @@ namespace LanguageExplorer.Controls.LexText
 			}
 		}
 
-		private int DeterminePOSLocationInfo(LcmCache cache, IPartOfSpeech subItemOwner, MasterCategory parent, ICmPossibilityList posList, out int newOwningFlid, out int insertLocation)
+		private void DeterminePOSLocationInfo(LcmCache cache, IPartOfSpeech subItemOwner, MasterCategory parent, ICmPossibilityList posList, out int newOwningFlid, out int insertLocation)
 		{
 			int newOwner;
 			// The XML node is from a file shipped with FieldWorks. It is quite likely multiple users
@@ -186,26 +176,22 @@ namespace LanguageExplorer.Controls.LexText
 			var posFactory = cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>();
 			if (subItemOwner != null)
 			{
-				newOwner = subItemOwner.Hvo;
 				newOwningFlid = CmPossibilityTags.kflidSubPossibilities;
 				insertLocation = subItemOwner.SubPossibilitiesOS.Count;
 				POS = posFactory.Create(guid, subItemOwner);
 			}
 			else if (parent?.POS != null)
 			{
-				newOwner = parent.POS.Hvo;
 				newOwningFlid = CmPossibilityTags.kflidSubPossibilities;
 				insertLocation = parent.POS.SubPossibilitiesOS.Count;
 				POS = posFactory.Create(guid, parent.POS);
 			}
 			else
 			{
-				newOwner = posList.Hvo;
 				newOwningFlid = CmPossibilityListTags.kflidPossibilities;
 				insertLocation = posList.PossibilitiesOS.Count;
 				POS = posFactory.Create(guid, posList); // automatically adds to parent.
 			}
-			return newOwner;
 		}
 
 		/// <summary>
@@ -217,13 +203,11 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				return name;
 			}
-
 			var c = name[0];
 			if (char.IsLetter(c) && char.IsLower(c))
 			{
 				name = char.ToUpper(c) + name.Substring(1, name.Length - 1);
 			}
-
 			// Add space before each upper case letter, after the first one.
 			for (var i = name.Length - 1; i > 0; --i)
 			{
@@ -233,7 +217,6 @@ namespace LanguageExplorer.Controls.LexText
 					name = name.Insert(i, " ");
 				}
 			}
-
 			return name;
 		}
 
@@ -250,9 +233,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		public void ResetDescription(RichTextBox rtbDescription)
 		{
-
 			rtbDescription.Clear();
-
 			var doubleNewLine = Environment.NewLine + Environment.NewLine;
 			var original = rtbDescription.SelectionFont;
 			var fntBold = new Font(original.FontFamily, original.Size, FontStyle.Bold);
@@ -260,17 +241,14 @@ namespace LanguageExplorer.Controls.LexText
 			rtbDescription.SelectionFont = fntBold;
 			rtbDescription.AppendText(m_term);
 			rtbDescription.AppendText(doubleNewLine);
-
 			rtbDescription.SelectionFont = string.IsNullOrEmpty(m_def) ? fntItalic : original;
 			rtbDescription.AppendText(string.IsNullOrEmpty(m_def) ? LexTextControls.ksUndefinedItem : m_def);
 			rtbDescription.AppendText(doubleNewLine);
-
 			if (m_citations.Count > 0)
 			{
 				rtbDescription.SelectionFont = fntItalic;
 				rtbDescription.AppendText(LexTextControls.ksReferences);
 				rtbDescription.AppendText(doubleNewLine);
-
 				rtbDescription.SelectionFont = original;
 				foreach (var mcc in m_citations)
 				{
@@ -288,6 +266,24 @@ namespace LanguageExplorer.Controls.LexText
 		public override string ToString()
 		{
 			return InDatabase ? string.Format(LexTextControls.ksXInFwProject, m_term) : m_term;
+		}
+
+		private sealed class MasterCategoryCitation
+		{
+			private string WS { get; }
+
+			private string Citation { get; }
+
+			public MasterCategoryCitation(string ws, string citation)
+			{
+				WS = ws;
+				Citation = citation;
+			}
+
+			public void ResetDescription(RichTextBox rtbDescription)
+			{
+				rtbDescription.AppendText(string.Format(LexTextControls.ksBullettedItem, Citation, Environment.NewLine));
+			}
 		}
 	}
 }

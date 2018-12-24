@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,10 +7,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Controls.LexText
 {
@@ -29,41 +29,6 @@ namespace LanguageExplorer.Controls.LexText
 		private PatternVcBase m_vc;
 		private int m_rootFrag = -1;
 		private ISilDataAccess m_sda;
-
-		/// <summary>
-		/// We MUST inherit from this, not from just EditingHelper; otherwise, the right event isn't
-		/// connected (in an overide of OnEditingHelperCreated) for us to get selection change notifications.
-		/// </summary>
-		private sealed class PatternEditingHelper : RootSiteEditingHelper
-		{
-			public PatternEditingHelper(LcmCache cache, IEditingCallbacks callbacks)
-				: base(cache, callbacks)
-			{
-			}
-
-			public override bool CanCopy()
-			{
-				return false;
-			}
-
-			public override bool CanCut()
-			{
-				return false;
-			}
-
-			public override bool CanPaste()
-			{
-				return false;
-			}
-
-			/// <summary>
-			/// We don't want typing to do anything.  On Linux, it does without this method,
-			/// causing a crash immediately.  See FWNX-1337.
-			/// </summary>
-			protected override void CallOnTyping(string str, Keys modifiers)
-			{
-			}
-		}
 
 		protected override EditingHelper CreateEditingHelper()
 		{
@@ -97,7 +62,6 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				return;
 			}
-
 			base.MakeRoot();
 			// the default value of 4 for MaxParasToScan isn't high enough when using the arrow keys to move
 			// the cursor between items in a rule when the number of lines in the rule is high, since there might
@@ -128,7 +92,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		protected override void OnKeyPress(KeyPressEventArgs e)
 		{
-			if (e.KeyChar == (char) Keys.Back)
+			if (e.KeyChar == (char)Keys.Back)
 			{
 				RemoveItemsRequested?.Invoke(this, new RemoveItemsRequestedEventArgs(false));
 				e.Handled = true;
@@ -170,7 +134,6 @@ namespace LanguageExplorer.Controls.LexText
 							limit = SelLimitType.Bottom;
 							ctxt = bottomCtxt;
 						}
-
 						if (ctxt != null)
 						{
 							var newSel = SelectCell(ctxt, limit == SelLimitType.Bottom, false);
@@ -207,7 +170,6 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				return;
 			}
-
 			IVwSelection endSel;
 			int curEndHvo, curEndIch, curEndTag;
 			// end IP
@@ -215,7 +177,6 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				return;
 			}
-
 			// create range selection
 			var vwSel = RootBox.MakeRangeSelection(anchorSel, endSel, false);
 			if (vwSel != null)
@@ -223,12 +184,10 @@ namespace LanguageExplorer.Controls.LexText
 				ITsString tss;
 				int ws;
 				bool prev;
-
 				// only install the adjusted selection if it is different then the current selection
 				int wholeHvo, wholeIch, wholeTag, wholeEndHvo, wholeEndIch, wholeEndTag;
 				vwSel.TextSelInfo(false, out tss, out wholeIch, out prev, out wholeHvo, out wholeTag, out ws);
 				vwSel.TextSelInfo(true, out tss, out wholeEndIch, out prev, out wholeEndHvo, out wholeEndTag, out ws);
-
 				if (wholeHvo != curHvo || wholeEndHvo != curEndHvo || wholeIch != curIch || wholeEndIch != curEndIch || wholeTag != curTag || wholeEndTag != curEndTag)
 				{
 					vwSel.Install();
@@ -245,22 +204,17 @@ namespace LanguageExplorer.Controls.LexText
 			curHvo = 0;
 			curIch = -1;
 			curTag = -1;
-
 			var obj = m_patternControl.GetItem(sel, limit);
 			if (obj == null)
 			{
 				return false;
 			}
-
 			ITsString curTss;
 			int ws;
 			bool prev;
-
 			sel.Selection.TextSelInfo(limit == SelLimitType.End, out curTss, out curIch, out prev, out curHvo, out curTag, out ws);
-
 			var ctxt = m_patternControl.GetContext(sel);
 			var index = m_patternControl.GetItemContextIndex(ctxt, obj);
-
 			if (!sel.IsRange)
 			{
 				// if the current selection is an IP, check if it is in one of the off-limits areas, and move the IP
@@ -331,11 +285,11 @@ namespace LanguageExplorer.Controls.LexText
 					SelectLeftBoundary(ctxt, index, true);
 					return false;
 				}
-
 				if (!sel.Selection.IsEditable)
+				{
 					return false;
+				}
 			}
-
 			// find the beginning of the currently selected item
 			var initialSel = SelectAt(ctxt, index, true, false, false);
 			ITsString tss;
@@ -354,7 +308,6 @@ namespace LanguageExplorer.Controls.LexText
 				{
 					return false;
 				}
-
 				// if we are the beginning of the current item, and the current selection is a range, and the end is before the anchor,
 				// then do not include the current item in the adjusted range selection
 				if (sel.Selection.EndBeforeAnchor && limit == SelLimitType.Anchor)
@@ -375,7 +328,6 @@ namespace LanguageExplorer.Controls.LexText
 					{
 						return false;
 					}
-
 					// if we are the end of the current item, and the current selection is a range, and the anchor is before the end,
 					// then do not include the current item in the adjusted range selection
 					if (!sel.Selection.EndBeforeAnchor && limit == SelLimitType.Anchor)
@@ -435,7 +387,6 @@ namespace LanguageExplorer.Controls.LexText
 				}
 				levels = m_patternControl.GetLevelInfo(ctxt, initial ? 0 : count - 1);
 			}
-
 			return RootBox.MakeTextSelInObj(0, levels.Length, levels, 0, null, initial, editable, false, false, install);
 		}
 
@@ -454,6 +405,41 @@ namespace LanguageExplorer.Controls.LexText
 			var e = new ContextMenuRequestedEventArgs(sel);
 			ContextMenuRequested?.Invoke(this, e);
 			return e.Handled || base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot);
+		}
+
+		/// <summary>
+		/// We MUST inherit from this, not from just EditingHelper; otherwise, the right event isn't
+		/// connected (in an override of OnEditingHelperCreated) for us to get selection change notifications.
+		/// </summary>
+		private sealed class PatternEditingHelper : RootSiteEditingHelper
+		{
+			public PatternEditingHelper(LcmCache cache, IEditingCallbacks callbacks)
+				: base(cache, callbacks)
+			{
+			}
+
+			public override bool CanCopy()
+			{
+				return false;
+			}
+
+			public override bool CanCut()
+			{
+				return false;
+			}
+
+			public override bool CanPaste()
+			{
+				return false;
+			}
+
+			/// <summary>
+			/// We don't want typing to do anything.  On Linux, it does without this method,
+			/// causing a crash immediately.  See FWNX-1337.
+			/// </summary>
+			protected override void CallOnTyping(string str, Keys modifiers)
+			{
+			}
 		}
 	}
 }

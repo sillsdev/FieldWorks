@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,27 +9,23 @@ using System.Xml.Linq;
 using LanguageExplorer.Areas.Lexicon;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Controls.LexText
 {
 	public class EntryGoDlg : BaseGoDlg
 	{
-		#region	Data members
-
 		protected bool m_fNewlyCreated;
 		protected ILexSense m_newSense;
 		protected ILexEntry m_startingEntry;
 		protected int m_oldSearchWs;
 
-		#endregion	// Data members
-
 		#region Properties
 
-		protected override WindowParams DefaultWindowParams => new WindowParams {m_title = LexTextControls.ksFindLexEntry};
+		protected override WindowParams DefaultWindowParams => new WindowParams { m_title = LexTextControls.ksFindLexEntry };
 
 		protected override string PersistenceLabel => "EntryGo";
 
@@ -71,13 +67,10 @@ namespace LanguageExplorer.Controls.LexText
 		protected override void InitializeMatchingObjects()
 		{
 			var searchEngine = SearchEngine.Get(PropertyTable, "EntryGoSearchEngine", () => new EntryGoSearchEngine(m_cache));
-
 			m_matchingObjectsBrowser.Initialize(m_cache, FwUtils.StyleSheetFromPropertyTable(PropertyTable), XDocument.Parse(LexiconResources.MatchingEntriesParameters).Root, searchEngine);
-
 			m_matchingObjectsBrowser.ColumnsChanged += m_matchingObjectsBrowser_ColumnsChanged;
-
 			// start building index
-			var selectedWs = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
+			var selectedWs = (CoreWritingSystemDefinition)m_cbWritingSystems.SelectedItem;
 			if (selectedWs != null)
 			{
 				m_matchingObjectsBrowser.SearchAsync(GetFields(string.Empty, selectedWs.Handle));
@@ -132,22 +125,18 @@ namespace LanguageExplorer.Controls.LexText
 					return;
 				}
 			}
-
 			if (m_oldSearchKey == searchKey && m_oldSearchWs == wsSelHvo)
 			{
 				return; // Nothing new to do, so skip it.
 			}
-
 			if (m_oldSearchKey != string.Empty || searchKey != string.Empty)
 			{
 				StartSearchAnimation();
 			}
-
 			// disable Go button until we rebuild our match list.
 			m_btnOK.Enabled = false;
 			m_oldSearchKey = searchKey;
 			m_oldSearchWs = wsSelHvo;
-
 			m_matchingObjectsBrowser.SearchAsync(GetFields(searchKey, wsSelHvo));
 		}
 
@@ -160,12 +149,10 @@ namespace LanguageExplorer.Controls.LexText
 				{
 					yield return new SearchField(LexEntryTags.kflidCitationForm, tssKey);
 				}
-
 				if (m_matchingObjectsBrowser.IsVisibleColumn("EntryHeadword") || m_matchingObjectsBrowser.IsVisibleColumn("LexemeForm"))
 				{
 					yield return new SearchField(LexEntryTags.kflidLexemeForm, tssKey);
 				}
-
 				if (m_matchingObjectsBrowser.IsVisibleColumn("Allomorphs"))
 				{
 					yield return new SearchField(LexEntryTags.kflidAlternateForms, tssKey);
@@ -177,14 +164,6 @@ namespace LanguageExplorer.Controls.LexText
 				{
 					yield return new SearchField(LexSenseTags.kflidGloss, tssKey);
 				}
-
-/*
-				if (m_matchingObjectsBrowser.IsVisibleColumn("Reversals"))
-				{
-					yield return new SearchField(LexSenseTags.kflidReversalEntries, tssKey);
-				}
-*/
-
 				if (m_matchingObjectsBrowser.IsVisibleColumn("Definitions"))
 				{
 					yield return new SearchField(LexSenseTags.kflidDefinition, tssKey);

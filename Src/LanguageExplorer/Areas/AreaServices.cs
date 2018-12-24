@@ -180,12 +180,9 @@ namespace LanguageExplorer.Areas
 				return;
 			}
 			// NB: Some clients are not any of the types that are checked below, which is fine. That means nothing else is done here.
-			if (importDlg is LexOptionsDlg)
+			if (importDlg is IFormReplacementNeeded && oldWsUser != cache.WritingSystemFactory.UserWs)
 			{
-				if (oldWsUser != cache.WritingSystemFactory.UserWs || ((LexOptionsDlg)importDlg).PluginsUpdated)
-				{
-					flexApp.ReplaceMainWindow(mainWindow);
-				}
+				flexApp.ReplaceMainWindow(mainWindow);
 			}
 			else if (importDlg is IImportForm)
 			{

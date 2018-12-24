@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,20 +14,22 @@ using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.MGA;
 using Microsoft.Win32;
-using SIL.Collections;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
+using SIL.Code;
 using SIL.FieldWorks.Common.Controls;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
+using SIL.FieldWorks.Resources;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.Resources;
 using SIL.PlatformUtilities;
 using SIL.Windows.Forms;
+using SimpleMonitor = SIL.Collections.SimpleMonitor;
 
 namespace LanguageExplorer.Controls.LexText
 {
@@ -45,7 +47,6 @@ namespace LanguageExplorer.Controls.LexText
 		private string m_oldForm = "";
 		private SimpleMonitor m_updateTextMonitor;
 		private ListBox.ObjectCollection m_MGAGlossListBoxItems;
-
 		private Button m_btnOK;
 		private Button m_btnCancel;
 		private Label m_formLabel;
@@ -62,7 +63,6 @@ namespace LanguageExplorer.Controls.LexText
 		private ToolTip m_toolTipSlotCombo;
 		private MSAGroupBox m_msaGroupBox;
 		private IContainer components;
-
 		private string s_helpTopic = "khtpInsertEntry";
 		private LinkLabel m_linkSimilarEntry;
 		private ImageList m_imageList;
@@ -76,37 +76,15 @@ namespace LanguageExplorer.Controls.LexText
 		private int m_delta;
 		private GroupBox m_propsGroupBox;
 		private Label m_complexTypeLabel;
-
 		// These are used to identify the <Not Complex> and <Unknown Complex Form>
 		// entries in the combobox list.
 		int m_idxNotComplex;
 		private const string UnSpecifiedComplex = "Unspecified Complex Form";
 		private GroupBox m_glossGroupBox;
 		private LinkLabel m_lnkAssistant;
-
 		private bool m_fLexicalFormInitialFocus = true;
+		private bool m_fInitialized;
 		#endregion // Data members
-
-		/// <summary>
-		/// This class allows a dummy LexEntryType replacement for "&lt;Unknown&gt;".
-		/// </summary>
-		private sealed class DummyEntryType
-		{
-			private readonly string m_sName;
-
-			internal DummyEntryType(string sName, bool fIsComplexForm)
-			{
-				m_sName = sName;
-				IsComplexForm = fIsComplexForm;
-			}
-
-			public bool IsComplexForm { get; }
-
-			public override string ToString()
-			{
-				return m_sName;
-			}
-		}
 
 		#region Properties
 
@@ -263,7 +241,6 @@ namespace LanguageExplorer.Controls.LexText
 					}
 					tssBestGloss = msGloss.Value(wsGloss);
 				}
-
 				if (tssBestGloss != null && tssBestGloss.Length > 0)
 				{
 					return tssBestGloss;
@@ -334,8 +311,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// Used to initialize other WSs of the gloss line during startup.
 		/// Only works for WSs that are displayed (current analysis WSs).
 		/// </summary>
-		/// <param name="ws"></param>
-		/// <param name="tss"></param>
 		public void SetInitialGloss(int ws, ITsString tss)
 		{
 			if (msGloss == null)
@@ -465,11 +440,10 @@ namespace LanguageExplorer.Controls.LexText
 			}
 		}
 
-		bool m_fInitialized;
 		/// <summary>
 		/// Set the initial focus to either the lexical form or the gloss.
 		/// </summary>
-		void SetInitialFocus()
+		private void SetInitialFocus()
 		{
 			if (!m_fInitialized)
 			{
@@ -523,7 +497,6 @@ namespace LanguageExplorer.Controls.LexText
 					return;
 				}
 			}
-
 			base.WndProc(ref m);
 		}
 
@@ -547,14 +520,12 @@ namespace LanguageExplorer.Controls.LexText
 				m_cache = cache;
 				m_fNewlyCreated = false;
 				m_oldForm = string.Empty;
-
 				// Set fonts for the two edit boxes.
 				if (stylesheet != null)
 				{
 					m_tbLexicalForm.StyleSheet = stylesheet;
 					m_tbGloss.StyleSheet = stylesheet;
 				}
-
 				// Set writing system factory and code for the two edit boxes.
 				var wsContainer = cache.ServiceLocator.WritingSystems;
 				var defAnalWs = wsContainer.DefaultAnalysisWritingSystem;
@@ -563,7 +534,6 @@ namespace LanguageExplorer.Controls.LexText
 				m_tbGloss.WritingSystemFactory = cache.WritingSystemFactory;
 				m_tbLexicalForm.AdjustStringHeight = false;
 				m_tbGloss.AdjustStringHeight = false;
-
 				if (wsVern <= 0)
 				{
 					wsVern = defVernWs.Handle;
@@ -574,7 +544,6 @@ namespace LanguageExplorer.Controls.LexText
 				//the defaultVernacularWritingSystem.
 				var tssForm = TsStringUtils.EmptyString(wsVern);
 				var tssGloss = TsStringUtils.EmptyString(defAnalWs.Handle);
-
 				using (m_updateTextMonitor.Enter())
 				{
 					m_tbLexicalForm.WritingSystemCode = wsVern;
@@ -583,13 +552,10 @@ namespace LanguageExplorer.Controls.LexText
 					TssForm = tssForm;
 					TssGloss = tssGloss;
 				}
-
 				// start building index
 				m_matchingObjectsBrowser.SearchAsync(BuildSearchFieldArray(tssForm, tssGloss));
-
 				((ISupportInitialize)(m_tbLexicalForm)).EndInit();
 				((ISupportInitialize)(m_tbGloss)).EndInit();
-
 				if (WritingSystemServices.GetWritingSystemList(m_cache, WritingSystemServices.kwsVerns, false).Count > 1)
 				{
 					msLexicalForm = ReplaceTextBoxWithMultiStringBox(m_tbLexicalForm, WritingSystemServices.kwsVerns, stylesheet);
@@ -600,7 +566,6 @@ namespace LanguageExplorer.Controls.LexText
 					// See if we need to adjust the height of the lexical form
 					AdjustTextBoxAndDialogHeight(m_tbLexicalForm);
 				}
-
 				// JohnT addition: if multiple analysis writing systems, replace tbGloss with msGloss
 				if (WritingSystemServices.GetWritingSystemList(m_cache, WritingSystemServices.kwsAnals, false).Count > 1)
 				{
@@ -613,19 +578,16 @@ namespace LanguageExplorer.Controls.LexText
 					// See if we need to adjust the height of the gloss
 					AdjustTextBoxAndDialogHeight(m_tbGloss);
 				}
-
 				m_msaGroupBox.Initialize(cache, PropertyTable, Publisher, m_lnkAssistant, this);
 				// See if we need to adjust the height of the MSA group box.
 				var oldHeight = m_msaGroupBox.Height;
 				var newHeight = Math.Max(m_msaGroupBox.PreferredHeight, oldHeight);
 				GrowDialogAndAdjustControls(newHeight - oldHeight, m_msaGroupBox);
 				m_msaGroupBox.AdjustInternalControlsAndGrow();
-
 				Text = GetTitle();
 				m_lnkAssistant.Enabled = false;
 				// Set font for the combobox.
 				m_cbMorphType.Font = new Font(defAnalWs.DefaultFontName, 12);
-
 				// Populate morph type combo.
 				// first Fill ComplexFormType combo, since cbMorphType controls
 				// whether it gets enabled and which index is selected.
@@ -643,7 +605,6 @@ namespace LanguageExplorer.Controls.LexText
 				m_cbComplexFormType.Visible = true;
 				m_cbComplexFormType.Enabled = true;
 				// Convert from Set to List, since the Set can't sort.
-
 				var al = new List<IMoMorphType>();
 				foreach (var mType in m_cache.LanguageProject.LexDbOA.MorphTypesOA.ReallyReallyAllPossibilities.Cast<IMoMorphType>())
 				{
@@ -655,14 +616,12 @@ namespace LanguageExplorer.Controls.LexText
 								al.Add(mType);
 							}
 							break;
-
 						case MorphTypeFilterType.Suffix:
 							if (mType.IsSuffixishType)
 							{
 								al.Add(mType);
 							}
 							break;
-
 						case MorphTypeFilterType.Any:
 							al.Add(mType);
 							break;
@@ -677,7 +636,6 @@ namespace LanguageExplorer.Controls.LexText
 						m_cbMorphType.SelectedIndex = i;
 					}
 				}
-
 				m_morphType = morphType; // Is this still needed?
 				m_msaGroupBox.MorphTypePreference = m_morphType;
 				// Now position the searching animation
@@ -711,11 +669,9 @@ namespace LanguageExplorer.Controls.LexText
 				Width = tb.Width,
 				Anchor = tb.Anchor
 			};
-
 			var oldHeight = tb.Parent.Height;
 			FontHeightAdjuster.GrowDialogAndAdjustControls(tb.Parent, ms.Height - tb.Height, ms);
 			tb.Parent.Controls.Add(ms);
-
 			// Grow the dialog and move all lower controls down to make room.
 			GrowDialogAndAdjustControls(tb.Parent.Height - oldHeight, tb.Parent);
 			ms.TabIndex = tb.TabIndex;  // assume the same tab order as the single ws control
@@ -728,7 +684,6 @@ namespace LanguageExplorer.Controls.LexText
 			var tbNewHeight = Math.Max(tb.PreferredHeight, tb.Height);
 			FontHeightAdjuster.GrowDialogAndAdjustControls(tb.Parent, tbNewHeight - tb.Height, tb);
 			tb.Height = tbNewHeight;
-
 			GrowDialogAndAdjustControls(tb.Parent.Height - oldHeight, tb.Parent);
 		}
 
@@ -779,7 +734,6 @@ namespace LanguageExplorer.Controls.LexText
 				// when the form is activated.
 				m_fLexicalFormInitialFocus = true;
 			}
-
 			if (tssForm.Length > 0)
 			{
 				UpdateMatches();
@@ -791,7 +745,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public void SetDlgInfo(LcmCache cache, IPersistenceProvider persistProvider)
 		{
-			Debug.Assert(persistProvider != null);
+			Guard.AgainstNull(persistProvider, nameof(persistProvider));
 
 			SetDlgInfo(cache);
 		}
@@ -828,9 +782,9 @@ namespace LanguageExplorer.Controls.LexText
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -867,14 +821,12 @@ namespace LanguageExplorer.Controls.LexText
 			var vernWs = TsStringUtils.GetWsAtOffset(tssForm, 0);
 			var form = MorphServices.EnsureNoMarkers(tssForm.Text, m_cache);
 			tssForm = TsStringUtils.MakeString(form, vernWs);
-			ITsString tssGloss = SelectedOrBestGlossTss;
-
+			var tssGloss = SelectedOrBestGlossTss;
 			if (!Controls.Contains(m_searchAnimation))
 			{
 				Controls.Add(m_searchAnimation);
 				m_searchAnimation.BringToFront();
 			}
-
 			m_matchingObjectsBrowser.SearchAsync(BuildSearchFieldArray(tssForm, tssGloss));
 		}
 
@@ -897,7 +849,6 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				fields.Add(new SearchField(LexSenseTags.kflidGloss, tssGloss));
 			}
-
 			return fields.ToArray();
 		}
 
@@ -1157,7 +1108,6 @@ namespace LanguageExplorer.Controls.LexText
 			this.Name = "InsertEntryDlg";
 			this.ShowInTaskbar = false;
 			this.Load += new System.EventHandler(this.InsertEntryDlg_Load);
-			this.Closed += new System.EventHandler(this.InsertEntryDlg_Closed);
 			this.Closing += new System.ComponentModel.CancelEventHandler(this.InsertEntryDlg_Closing);
 			((System.ComponentModel.ISupportInitialize)(this.m_tbLexicalForm)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.m_tbGloss)).EndInit();
@@ -1224,6 +1174,17 @@ namespace LanguageExplorer.Controls.LexText
 						break;
 					}
 			}
+			// Save location.
+			using (var regKey = SettingsKey)
+			{
+				regKey.SetValue("InsertX", Location.X);
+				regKey.SetValue("InsertY", Location.Y);
+				regKey.SetValue("InsertWidth", Width);
+				// We want to save the default height, without the growing we did
+				// to make room for multiple gloss writing systems or a large font
+				// in the lexical form box.
+				regKey.SetValue("InsertHeight", Height - m_delta);
+			}
 		}
 
 		private bool CheckMorphType()
@@ -1245,23 +1206,18 @@ namespace LanguageExplorer.Controls.LexText
 				case MoMorphTypeTags.kMorphClitic:
 					result = mmt.Guid == MoMorphTypeTags.kguidMorphStem || mmt.Guid == MoMorphTypeTags.kguidMorphPhrase;
 					break;
-
 				case MoMorphTypeTags.kMorphBoundRoot:
 					result = mmt.Guid == MoMorphTypeTags.kguidMorphBoundStem;
 					break;
-
 				case MoMorphTypeTags.kMorphSuffixingInterfix:
 					result = mmt.Guid == MoMorphTypeTags.kguidMorphSuffix;
 					break;
-
 				case MoMorphTypeTags.kMorphPrefixingInterfix:
 					result = mmt.Guid == MoMorphTypeTags.kguidMorphPrefix;
 					break;
-
 				case MoMorphTypeTags.kMorphInfixingInterfix:
 					result = mmt.Guid == MoMorphTypeTags.kguidMorphInfix;
 					break;
-
 				default:
 					result = mmt.Equals(m_morphType);
 					break;
@@ -1330,11 +1286,9 @@ namespace LanguageExplorer.Controls.LexText
 			}
 			using (new WaitCursor(this))
 			{
-
 				ILexEntry newEntry = null;
-				UndoableUnitOfWorkHelper.Do(LexTextControls.ksUndoCreateEntry, LexTextControls.ksRedoCreateEntry,
-											m_cache.ServiceLocator.GetInstance<IActionHandler>(),
-											() => { newEntry = CreateNewEntryInternal(); });
+				UndoableUnitOfWorkHelper.Do(LexTextControls.ksUndoCreateEntry, LexTextControls.ksRedoCreateEntry, m_cache.ServiceLocator.GetInstance<IActionHandler>(),
+					() => { newEntry = CreateNewEntryInternal(); });
 				m_entry = newEntry;
 				m_fNewlyCreated = true;
 			}
@@ -1374,7 +1328,7 @@ namespace LanguageExplorer.Controls.LexText
 			return entryComponents;
 		}
 
-		private void CollectValuesFromMultiStringControl(LabeledMultiStringControl lmsControl, IList<ITsString> alternativesCollector, ITsString defaultIfNoMultiString)
+		private static void CollectValuesFromMultiStringControl(LabeledMultiStringControl lmsControl, IList<ITsString> alternativesCollector, ITsString defaultIfNoMultiString)
 		{
 			if (lmsControl == null)
 			{
@@ -1396,26 +1350,6 @@ namespace LanguageExplorer.Controls.LexText
 			}
 		}
 
-		private void InsertEntryDlg_Closed(object sender, EventArgs e)
-		{
-			if (IsDisposed)
-			{
-				return; // Prevent interaction w/ Paratext from causing crash here (LT-13582)
-			}
-
-			// Save location.
-			using (var regKey = SettingsKey)
-			{
-				regKey.SetValue("InsertX", Location.X);
-				regKey.SetValue("InsertY", Location.Y);
-				regKey.SetValue("InsertWidth", Width);
-				// We want to save the default height, without the growing we did
-				// to make room for multiple gloss writing systems or a large font
-				// in the lexical form box.
-				regKey.SetValue("InsertHeight", Height - m_delta);
-			}
-		}
-
 		/// <summary>
 		/// This is triggered also if msGloss has been created, and its text has changed.
 		/// </summary>
@@ -1425,7 +1359,6 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				return;
 			}
-
 			UpdateMatches();
 		}
 
@@ -1435,10 +1368,8 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				return;
 			}
-
 			//TODO?
 			Debug.Assert(BestForm != null);
-
 			if (BestForm == string.Empty)
 			{
 				// Set it back to stem, since there are no characters.
@@ -1447,7 +1378,6 @@ namespace LanguageExplorer.Controls.LexText
 				UpdateMatches();
 				return;
 			}
-
 			var newForm = BestForm;
 			string sAdjusted;
 			var mmt = MorphServices.GetTypeIfMatchesPrefix(m_cache, newForm, out sAdjusted);
@@ -1503,7 +1433,6 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				return;
 			}
-
 			m_morphType = (IMoMorphType)m_cbMorphType.SelectedItem;
 			m_msaGroupBox.MorphTypePreference = m_morphType;
 			if (m_morphType.Guid != MoMorphTypeTags.kguidMorphCircumfix)
@@ -1514,7 +1443,6 @@ namespace LanguageExplorer.Controls.LexText
 					BestForm = m_morphType.FormWithMarkers(BestForm);
 				}
 			}
-
 			EnableComplexFormTypeCombo();
 		}
 
@@ -1543,7 +1471,6 @@ namespace LanguageExplorer.Controls.LexText
 					break;
 			}
 		}
-
 
 		private void cbComplexFormType_SelectedIndexChanged(object sender, EventArgs e)
 		{
@@ -1670,7 +1597,6 @@ namespace LanguageExplorer.Controls.LexText
 							m_MGAGlossListBoxItems = dlg.Items;
 						}
 					}
-
 					break;
 				case MsaType.kDeriv:
 					MessageBox.Show(LexTextControls.ksNoAssistForDerivAffixes, LexTextControls.ksNotice, MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -1723,5 +1649,131 @@ namespace LanguageExplorer.Controls.LexText
 			m_matchingObjectsBrowser.InitializeFlexComponent(flexComponentParameters);
 		}
 		#endregion
+
+		/// <summary>
+		/// This class allows a dummy LexEntryType replacement for "&lt;Unknown&gt;".
+		/// </summary>
+		private sealed class DummyEntryType
+		{
+			private readonly string m_sName;
+
+			internal DummyEntryType(string sName, bool fIsComplexForm)
+			{
+				m_sName = sName;
+				IsComplexForm = fIsComplexForm;
+			}
+
+			public bool IsComplexForm { get; }
+
+			public override string ToString()
+			{
+				return m_sName;
+			}
+		}
+
+		/// <summary>
+		/// This is the search engine for InsertEntryDlg.
+		/// </summary>
+		private sealed class InsertEntrySearchEngine : SearchEngine
+		{
+			private readonly Virtuals m_virtuals;
+
+			public InsertEntrySearchEngine(LcmCache cache)
+				: base(cache, SearchType.Prefix)
+			{
+				m_virtuals = Cache.ServiceLocator.GetInstance<Virtuals>();
+			}
+
+			protected override IEnumerable<ITsString> GetStrings(SearchField field, ICmObject obj)
+			{
+				var entry = (ILexEntry)obj;
+				var ws = field.String.get_WritingSystemAt(0);
+				switch (field.Flid)
+				{
+					case LexEntryTags.kflidCitationForm:
+						var cf = entry.CitationForm.StringOrNull(ws);
+						if (cf != null && cf.Length > 0)
+						{
+							yield return cf;
+						}
+						break;
+					case LexEntryTags.kflidLexemeForm:
+						var lexemeForm = entry.LexemeFormOA;
+						var formOfLexemeForm = lexemeForm?.Form.StringOrNull(ws);
+						if (formOfLexemeForm != null && formOfLexemeForm.Length > 0)
+						{
+							yield return formOfLexemeForm;
+						}
+						break;
+					case LexEntryTags.kflidAlternateForms:
+						foreach (var form in entry.AlternateFormsOS)
+						{
+							var af = form.Form.StringOrNull(ws);
+							if (af != null && af.Length > 0)
+							{
+								yield return af;
+							}
+						}
+						break;
+					case LexSenseTags.kflidGloss:
+						foreach (var sense in entry.SensesOS)
+						{
+							var gloss = sense.Gloss.StringOrNull(ws);
+							if (gloss != null && gloss.Length > 0)
+							{
+								yield return gloss;
+							}
+						}
+						break;
+					default:
+						throw new ArgumentException("Unrecognized field.", "field");
+				}
+			}
+
+			protected override IList<ICmObject> GetSearchableObjects()
+			{
+				return Cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances().Cast<ICmObject>().ToArray();
+			}
+
+			protected override bool IsIndexResetRequired(int hvo, int flid)
+			{
+				if (flid == m_virtuals.LexDbEntries)
+				{
+					return true;
+				}
+				switch (flid)
+				{
+					case LexEntryTags.kflidCitationForm:
+					case LexEntryTags.kflidLexemeForm:
+					case LexEntryTags.kflidAlternateForms:
+					case LexEntryTags.kflidSenses:
+					case MoFormTags.kflidForm:
+					case LexSenseTags.kflidSenses:
+					case LexSenseTags.kflidGloss:
+						return true;
+				}
+				return false;
+			}
+
+			protected override bool IsFieldMultiString(SearchField field)
+			{
+				switch (field.Flid)
+				{
+					case LexEntryTags.kflidCitationForm:
+					case LexEntryTags.kflidLexemeForm:
+					case LexEntryTags.kflidAlternateForms:
+					case LexSenseTags.kflidGloss:
+						return true;
+				}
+				throw new ArgumentException("Unrecognized field.", "field");
+			}
+
+			/// <inheritdoc />
+			protected override void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+				base.Dispose(disposing);
+			}
+		}
 	}
 }

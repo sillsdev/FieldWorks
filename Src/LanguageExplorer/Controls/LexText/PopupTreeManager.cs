@@ -1,29 +1,25 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Windows.Forms;
 using System.Diagnostics;
-using SIL.LCModel;
-using SIL.LCModel.DomainServices;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
+using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Controls.LexText
 {
 	/// <summary>
-	/// Handles a TreeCombo control (Widgets assembly). Subclass must at least implement
-	/// MakeMenuItems.
+	/// Handles a TreeCombo control. Subclass must at least implement MakeMenuItems.
 	/// </summary>
 	public abstract class PopupTreeManager : IDisposable
 	{
 		private const int kEmpty = 0;
 		private const int kLine = -1;
 		private const int kMore = -2;
-
-		#region Data members
 		private PopupTree m_popupTree;
 		protected IPropertyTable m_propertyTable;
 		protected IPublisher m_publisher;
@@ -35,7 +31,18 @@ namespace LanguageExplorer.Controls.LexText
 		///  "Not Sure" node, or sometimes 'Any' node.
 		/// </summary>
 		protected HvoTreeNode m_kEmptyNode;
-		#endregion Data members
+		/// <summary>
+		/// Sometimes we need to revert to the previous selection, so save it just in case.
+		/// (See FWR-3082.)
+		/// </summary>
+		protected TreeNode m_selPrior;
+		/// <summary>
+		/// We need to prevent recursive calls to LoadPopupTree() during its execution.
+		/// If one occurs, we delay it until the end of the function.  (See LT-7574.)
+		/// </summary>
+		private bool m_fLoadingPopupTree;
+		private bool m_fNeedReload;
+		private int m_hvoPendingTarget = -1;
 
 		#region Events
 
@@ -44,9 +51,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		#endregion Events
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
+		/// <summary />
 		protected PopupTreeManager(TreeCombo treeCombo, LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
 		{
 			TreeCombo = treeCombo;
@@ -56,9 +61,7 @@ namespace LanguageExplorer.Controls.LexText
 			TreeCombo.Tree.PopupTreeClosed += popupTree_PopupTreeClosed;
 		}
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
+		/// <summary />
 		protected PopupTreeManager(PopupTree popupTree, LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
 		{
 			m_popupTree = popupTree;
@@ -118,7 +121,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed { get; protected set; } = false;
+		protected bool IsDisposed { get; set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -169,9 +172,9 @@ namespace LanguageExplorer.Controls.LexText
 		protected virtual void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -283,14 +286,6 @@ namespace LanguageExplorer.Controls.LexText
 		}
 
 		/// <summary>
-		/// We need to prevent recursive calls to LoadPopupTree() during its execution.
-		/// If one occurs, we delay it until the end of the function.  (See LT-7574.)
-		/// </summary>
-		bool m_fLoadingPopupTree;
-		bool m_fNeedReload;
-		int m_hvoPendingTarget = -1;
-
-		/// <summary>
 		/// Load the PopupTree with HvoTreeNode objects, which represent all POSes in the list.
 		/// Reloads the PopupTree even if it has been loaded before, since the list may now have new ones in it.
 		/// </summary>
@@ -308,7 +303,7 @@ namespace LanguageExplorer.Controls.LexText
 			try
 			{
 				m_fLoadingPopupTree = true;
-				IsTreeLoaded = false;		// can't be loaded if it's loading! See LT-9191.
+				IsTreeLoaded = false;       // can't be loaded if it's loading! See LT-9191.
 				var popupTree = GetPopupTree();
 				if (popupTree != null)
 				{
@@ -319,7 +314,6 @@ namespace LanguageExplorer.Controls.LexText
 						hvoTarget = ((HvoTreeNode)popupTree.SelectedNode).Hvo;
 					}
 					popupTree.BeginUpdate();
-
 					// On Mono Clear() generates AfterSelect events. So disable the handlers
 					// to ensure the same behaviour as .NET.
 					popupTree.EnableAfterAndBeforeSelectHandling(false);
@@ -396,8 +390,8 @@ namespace LanguageExplorer.Controls.LexText
 			for (var i = 0; i < chvo; i++)
 			{
 				var hvoChild = Cache.MainCacheAccessor.get_VecItem(hvoOwner, flid, i);
-				var tssLabel = WritingSystemServices.GetMagicStringAlt(Cache, WritingSystemServices.kwsFirstAnalOrVern, hvoChild, tagName) ??
-							   TsStringUtils.MakeString(LexTextControls.ksStars, Cache.WritingSystemFactory.UserWs);
+				var tssLabel = WritingSystemServices.GetMagicStringAlt(Cache, WritingSystemServices.kwsFirstAnalOrVern, hvoChild, tagName)
+				               ?? TsStringUtils.MakeString(LexTextControls.ksStars, Cache.WritingSystemFactory.UserWs);
 				var node = new HvoTreeNode(tssLabel, hvoChild);
 				nodes.Add(node);
 				var temp = AddNodes(node.Nodes, hvoChild, flidSub, flidSub, hvoTarget, tagName);
@@ -411,14 +405,6 @@ namespace LanguageExplorer.Controls.LexText
 				}
 			}
 			return result;
-		}
-
-		protected static ITsString GetTssLabel(LcmCache cache, int hvoItem, int flidName, int wsName)
-		{
-			var multiProp = (IMultiStringAccessor)cache.DomainDataByFlid.get_MultiStringProp(hvoItem, flidName);
-			int wsActual;
-			var tssLabel = multiProp.GetAlternativeOrBestTss(wsName, out wsActual);
-			return tssLabel;
 		}
 
 		/// <summary>
@@ -476,21 +462,15 @@ namespace LanguageExplorer.Controls.LexText
 			}
 		}
 
-		/// <summary>
-		/// Sometimes we need to revert to the previous selection, so save it just in case.
-		/// (See FWR-3082.)
-		/// </summary>
-		protected TreeNode m_selPrior;
-
 		private void m_treeCombo_BeforeSelect(object sender, TreeViewCancelEventArgs e)
 		{
 			var newSelNode = (HvoTreeNode)e.Node;
 			var pt = GetPopupTree();
 			if (pt == null)
 			{
-				return;		// can't do anything without the tree!  See LT-9031.
+				return;     // can't do anything without the tree!  See LT-9031.
 			}
-			m_selPrior = (TreeCombo == null) ? pt.SelectedNode : TreeCombo.SelectedNode;
+			m_selPrior = TreeCombo == null ? pt.SelectedNode : TreeCombo.SelectedNode;
 			switch (newSelNode.Hvo)
 			{
 				case kLine:
@@ -523,7 +503,6 @@ namespace LanguageExplorer.Controls.LexText
 					break;
 					// Nothing special to do for kEmpty, since it is handled as a normal POS.
 			}
-
 			BeforeSelect?.Invoke(this, e);
 		}
 
@@ -547,7 +526,6 @@ namespace LanguageExplorer.Controls.LexText
 					m_lastConfirmedNode = (HvoTreeNode)pt.SelectedNode;
 				}
 			}
-
 			// Pass on the event to owners/clients and close the PopupTree, only if it has been confirmed
 			// "ByMouse" (or simulated mouse event). This will ensure that the user can use the keyboard
 			// to move to items in the list, without actually affecting their previous selection until they
@@ -568,7 +546,7 @@ namespace LanguageExplorer.Controls.LexText
 				// Close the PopupTree for confirmed selections.
 				if (GetPopupTree() != null)
 				{
-					GetPopupTree().Hide();	// This should trigger popupTree_PopupTreeClosed() below.
+					GetPopupTree().Hide();  // This should trigger popupTree_PopupTreeClosed() below.
 				}
 			}
 		}
@@ -585,7 +563,7 @@ namespace LanguageExplorer.Controls.LexText
 		// If it has already been set, then do nothing.
 		private void popupTree_PopupTreeClosed(object sender, TreeViewEventArgs e)
 		{
-			if(GetPopupTree() != null && GetPopupTree().SelectedNode != m_lastConfirmedNode)
+			if (GetPopupTree() != null && GetPopupTree().SelectedNode != m_lastConfirmedNode)
 			{
 				if (m_lastConfirmedNode != null)
 				{

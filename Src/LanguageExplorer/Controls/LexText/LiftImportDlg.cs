@@ -15,6 +15,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.Resources;
+using SIL.IO;
 using SIL.Lift;
 using SIL.Lift.Migration;
 using SIL.Lift.Parsing;
@@ -22,6 +23,7 @@ using SIL.Lift.Validation;
 using SIL.Reporting;
 using SIL.LCModel.Utils;
 using SIL.Utils;
+using FileUtils = SIL.LCModel.Utils.FileUtils;
 
 namespace LanguageExplorer.Controls.LexText
 {
@@ -186,7 +188,7 @@ namespace LanguageExplorer.Controls.LexText
 				{
 					Directory.Delete(sLIFTtempFolder, true);
 				}
-				LdmlFileBackup.CopyDirectory(sLIFTfolder, sLIFTtempFolder);
+				DirectoryHelper.Copy(sLIFTfolder, sLIFTtempFolder, true);
 				// Older LIFT files had ldml files in root directory. If found, move them to WritingSystem folder.
 				if (Directory.GetFiles(sLIFTtempFolder, "*.ldml").Length > 0)
 				{

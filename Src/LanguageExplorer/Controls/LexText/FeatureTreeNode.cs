@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,14 +11,15 @@ namespace LanguageExplorer.Controls.LexText
 	{
 		public FeatureTreeNode(string sName, int i, int iSel, int iHvo, FeatureTreeNodeKind eKind) : base(sName, i, iSel)
 		{
-			FeatureTreeNodeInfo info = new FeatureTreeNodeInfo(iHvo, eKind);
-			Tag = info;
+			Tag = new FeatureTreeNodeInfo(iHvo, eKind);
 		}
+
 		public int CompareTo(object obj)
 		{
 			var node = obj as TreeNode;
 			return node == null ? 0 : Text.CompareTo(node.Text);
 		}
+
 		/// <summary>
 		/// Gets/sets whether the node has been chosen by the user
 		/// </summary>
@@ -38,6 +39,7 @@ namespace LanguageExplorer.Controls.LexText
 				return info?.iHvo ?? 0;
 			}
 		}
+
 		/// <summary>
 		/// Type of node
 		/// </summary>
@@ -47,6 +49,19 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				var info = Tag as FeatureTreeNodeInfo;
 				return info?.eKind ?? FeatureTreeNodeKind.Other;
+			}
+		}
+
+		private sealed class FeatureTreeNodeInfo
+		{
+			public FeatureTreeNodeKind eKind;
+
+			public int iHvo;
+
+			public FeatureTreeNodeInfo(int hvo, FeatureTreeNodeKind kind)
+			{
+				iHvo = hvo;
+				eKind = kind;
 			}
 		}
 	}

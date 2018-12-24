@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2018 SIL International
+// Copyright (c) 2007-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,7 +13,7 @@ using Icu;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.PlatformUtilities;
 
-namespace LanguageExplorer.Controls.LexText
+namespace LanguageExplorer.Impls
 {
 	/// <summary >
 	/// This implements a control suitable for placing on a tab of the Tools/Options
@@ -25,6 +25,8 @@ namespace LanguageExplorer.Controls.LexText
 	{
 		private string m_sUserWs;
 		private string m_sNewUserWs;
+		// For efficiency, cache the brush to use for drawing.
+		private SolidBrush m_foreColorBrush;
 
 		/// <summary />
 		public UserInterfaceChooser()
@@ -37,7 +39,7 @@ namespace LanguageExplorer.Controls.LexText
 				// text when the locale is set to Hindi just doesn't work.  Thus, to get our
 				// fancy display of language choices to work on Linux, we have to draw the list
 				// ourselves.  (See FWNX-1069.)
-				this.DrawMode = DrawMode.OwnerDrawVariable;
+				DrawMode = DrawMode.OwnerDrawVariable;
 			}
 		}
 
@@ -63,10 +65,8 @@ namespace LanguageExplorer.Controls.LexText
 		private void PopulateLanguagesCombo()
 		{
 			SuspendLayout();
-
 			// First, find those languages having satellite resource DLLs.
 			AddAvailableLangsFromSatelliteDlls();
-
 			// If no English locale was added, then add generic English. Otherwise,
 			// if another, non US version of English, was added (e.g. en_GB), then add
 			// US English since that is the locale of the fallback resources. This
@@ -75,9 +75,8 @@ namespace LanguageExplorer.Controls.LexText
 			// are considered to be identical, but they show up in the list
 			// differently depending upon whether or not another region of English
 			// is also in the list.
-			var genericEnglishAdded = (IndexInList("en", false) >= 0);
-			var englishRegionAdded = (IndexInList("en", true) >= 0);
-
+			var genericEnglishAdded = IndexInList("en", false) >= 0;
+			var englishRegionAdded = IndexInList("en", true) >= 0;
 			if (!genericEnglishAdded)
 			{
 				if (!englishRegionAdded)
@@ -89,16 +88,13 @@ namespace LanguageExplorer.Controls.LexText
 					AddLanguage("en-US");
 				}
 			}
-
 			var userWsIsEnglish = m_sUserWs.StartsWith("en");
-
 			// Add the user's UI writing system if it's not an English one,
 			// since English writing systems have already been added.
-			if (!userWsIsEnglish && m_sUserWs != "")
+			if (!userWsIsEnglish && m_sUserWs != string.Empty)
 			{
 				AddLanguage(m_sUserWs);
 			}
-
 			var index = IndexInList(m_sUserWs, false);
 			if (index >= 0)
 			{
@@ -112,7 +108,6 @@ namespace LanguageExplorer.Controls.LexText
 					SelectedIndex = index;
 				}
 			}
-
 			ResumeLayout();
 		}
 
@@ -124,10 +119,8 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			// Get the folder in which the program file is stored.
 			var sDllLocation = Path.GetDirectoryName(Application.ExecutablePath);
-
 			// Get all the sub-folder in the program file's folder.
 			var rgsDirs = Directory.GetDirectories(sDllLocation);
-
 			// Go through each sub-folder and if at least one file in a sub-folder ends
 			// with ".resource.dll", we know the folder stores localized resources and the
 			// name of the folder is the culture ID for which the resources apply. The
@@ -145,7 +138,6 @@ namespace LanguageExplorer.Controls.LexText
 		private void AddLanguage(string sLocale)
 		{
 			Debug.Assert(!string.IsNullOrEmpty(sLocale));
-
 			if (IndexInList(sLocale, false) < 0)
 			{
 				var ldi = new LanguageDisplayItem(sLocale);
@@ -153,7 +145,6 @@ namespace LanguageExplorer.Controls.LexText
 				{
 					ldi.Name = ldi.Locale;  // TODO: find a better fallback.
 				}
-
 				Items.Add(ldi);
 			}
 		}
@@ -176,14 +167,12 @@ namespace LanguageExplorer.Controls.LexText
 					{
 						return i;
 					}
-
 					if (allowMatchOnParentCulture && ldi.Locale.StartsWith(locale))
 					{
 						return i;
 					}
 				}
 			}
-
 			return -1;
 		}
 
@@ -203,26 +192,21 @@ namespace LanguageExplorer.Controls.LexText
 		protected override void OnMeasureItem(MeasureItemEventArgs e)
 		{
 			base.OnMeasureItem(e);
-
 			if (!Platform.IsMono)
 			{
 				return;
 			}
-
 			// See the comment above about FWNX-1069.
 			var lang = ((LanguageDisplayItem)Items[e.Index]).Locale;
-			using (Font font = GetFontForLanguage(lang))
+			using (var font = GetFontForLanguage(lang))
 			{
 				var name = ((LanguageDisplayItem)Items[e.Index]).Name;
-				SizeF stringSize = e.Graphics.MeasureString(name, font);
+				var stringSize = e.Graphics.MeasureString(name, font);
 				// Set the height and width of the item
 				e.ItemHeight = (int)stringSize.Height;
 				e.ItemWidth = (int)stringSize.Width;
 			}
 		}
-
-		// For efficiency, cache the brush to use for drawing.
-		private SolidBrush m_foreColorBrush;
 
 		/// <summary>
 		/// Handles the draw item event.
@@ -231,7 +215,6 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			base.OnDrawItem(e);
 			Brush brush;
-
 			// Create the brush using the ForeColor specified by the DrawItemEventArgs
 			if (m_foreColorBrush == null)
 			{
@@ -244,22 +227,13 @@ namespace LanguageExplorer.Controls.LexText
 				m_foreColorBrush.Dispose();
 				m_foreColorBrush = new SolidBrush(e.ForeColor);
 			}
-
 			// Select the appropriate brush depending on if the item is selected.
-			// Since State can be a combinateion (bit-flag) of enum values, you can't use
+			// Since State can be a combination (bit-flag) of enum values, you can't use
 			// "==" to compare them.
-			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
-			{
-				brush = SystemBrushes.HighlightText;
-			}
-			else
-			{
-				brush = m_foreColorBrush;
-			}
-
+			brush = (e.State & DrawItemState.Selected) == DrawItemState.Selected ? SystemBrushes.HighlightText : m_foreColorBrush;
 			// Perform the painting.
 			var lang = ((LanguageDisplayItem)Items[e.Index]).Locale;
-			using (Font font = GetFontForLanguage(lang))
+			using (var font = GetFontForLanguage(lang))
 			{
 				var name = ((LanguageDisplayItem)Items[e.Index]).Name;
 				e.DrawBackground();
@@ -270,18 +244,13 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Gets the font for the language tag.  This is the essential part of the owner draw.
 		/// </summary>
-		private Font GetFontForLanguage(string lang)
+		private static Font GetFontForLanguage(string lang)
 		{
 			// For some reason, Mono requires both FwUtils in the next line.
 			var fontName = FwUtils.GetFontNameForLanguage(lang);
-			if (string.IsNullOrEmpty(fontName))
-			{
-				return new Font(FontFamily.GenericSansSerif, 8.25F);
-			}
-			return new Font(fontName, 8.25F);
+			return string.IsNullOrEmpty(fontName) ? new Font(FontFamily.GenericSansSerif, 8.25F) : new Font(fontName, 8.25F);
 		}
 
-		#region LanguageDisplayItem class
 		/// <summary />
 		private sealed class LanguageDisplayItem
 		{
@@ -358,7 +327,5 @@ namespace LanguageExplorer.Controls.LexText
 			/// </summary>
 			internal string Locale { get; }
 		}
-
-		#endregion
 	}
 }

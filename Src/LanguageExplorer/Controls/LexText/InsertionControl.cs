@@ -1,9 +1,10 @@
-// Copyright (c) 2013-2018 SIL International
+// Copyright (c) 2013-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -24,66 +25,9 @@ namespace LanguageExplorer.Controls.LexText
 	{
 		public event EventHandler<InsertEventArgs> Insert;
 
-		private class GrowLabel : Label
-		{
-			private bool m_growing;
-
-			internal GrowLabel()
-			{
-				AutoSize = false;
-			}
-
-			/// <summary/>
-			protected override void Dispose(bool disposing)
-			{
-				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
-				base.Dispose(disposing);
-			}
-
-			private void ResizeLabel()
-			{
-				if (m_growing) return;
-				try
-				{
-					m_growing = true;
-					var sz = new Size(Width, int.MaxValue);
-					sz = TextRenderer.MeasureText(Text, Font, sz, TextFormatFlags.WordBreak);
-					// The mono implementation chops off the bottom line of the display (FWNX-752).
-					if (MiscUtils.IsMono)
-					{
-						Height = sz.Height + 7;
-					}
-					else
-					{
-						Height = sz.Height;
-					}
-				}
-				finally
-				{
-					m_growing = false;
-				}
-			}
-			protected override void OnTextChanged(EventArgs e)
-			{
-				base.OnTextChanged(e);
-				ResizeLabel();
-			}
-			protected override void OnFontChanged(EventArgs e)
-			{
-				base.OnFontChanged(e);
-				ResizeLabel();
-			}
-			protected override void OnSizeChanged(EventArgs e)
-			{
-				base.OnSizeChanged(e);
-				ResizeLabel();
-			}
-		}
-
 		private Panel m_labelPanel;
 		private FlowLayoutPanel m_insertPanel;
 		private Label m_insertLabel;
-
 		private List<Tuple<object, Func<object, bool>, Func<IEnumerable<object>>>> m_options;
 		private int m_prevWidth;
 		private Label m_msgLabel;
@@ -106,10 +50,10 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -128,7 +72,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public void AddOption(object option, Func<object, bool> shouldDisplay)
 		{
-			m_options.Add(Tuple.Create(option, shouldDisplay, (Func<IEnumerable<object>>) null));
+			m_options.Add(Tuple.Create(option, shouldDisplay, (Func<IEnumerable<object>>)null));
 		}
 
 		/// <summary>
@@ -155,7 +99,7 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				if (opt.Item2 == null || opt.Item2(opt.Item1))
 				{
-					var linkLabel = new LinkLabel {AutoSize = true, Font = new Font(MiscUtils.StandardSansSerif, 10), TabStop = true, VisitedLinkColor = Color.Blue};
+					var linkLabel = new LinkLabel { AutoSize = true, Font = new Font(MiscUtils.StandardSansSerif, 10), TabStop = true, VisitedLinkColor = Color.Blue };
 					linkLabel.LinkClicked += link_LinkClicked;
 					if (opt.Item3 != null)
 					{
@@ -192,13 +136,12 @@ namespace LanguageExplorer.Controls.LexText
 					displayingOpts = true;
 				}
 			}
-
 			if (!displayingOpts && NoOptionsMessage != null)
 			{
 				var text = NoOptionsMessage();
 				if (text != null)
 				{
-					m_msgLabel = new GrowLabel {Font = new Font(MiscUtils.StandardSansSerif, 10), Text = text, Width = m_insertPanel.ClientSize.Width};
+					m_msgLabel = new GrowLabel { Font = new Font(MiscUtils.StandardSansSerif, 10), Text = text, Width = m_insertPanel.ClientSize.Width };
 					m_insertPanel.Controls.Add(m_msgLabel);
 				}
 			}
@@ -206,11 +149,9 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				m_msgLabel = null;
 			}
-
 			m_insertPanel.ResumeLayout(false);
 			m_insertPanel.PerformLayout();
 			ResumeLayout(false);
-
 			Height = m_insertPanel.PreferredSize.Height;
 		}
 
@@ -274,5 +215,64 @@ namespace LanguageExplorer.Controls.LexText
 		}
 
 		#endregion
+
+		private sealed class GrowLabel : Label
+		{
+			private bool m_growing;
+
+			internal GrowLabel()
+			{
+				AutoSize = false;
+			}
+
+			/// <summary/>
+			protected override void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+				base.Dispose(disposing);
+			}
+
+			private void ResizeLabel()
+			{
+				if (m_growing)
+				{
+					return;
+				}
+				try
+				{
+					m_growing = true;
+					var sz = new Size(Width, int.MaxValue);
+					sz = TextRenderer.MeasureText(Text, Font, sz, TextFormatFlags.WordBreak);
+					// The mono implementation chops off the bottom line of the display (FWNX-752).
+					if (MiscUtils.IsMono)
+					{
+						Height = sz.Height + 7;
+					}
+					else
+					{
+						Height = sz.Height;
+					}
+				}
+				finally
+				{
+					m_growing = false;
+				}
+			}
+			protected override void OnTextChanged(EventArgs e)
+			{
+				base.OnTextChanged(e);
+				ResizeLabel();
+			}
+			protected override void OnFontChanged(EventArgs e)
+			{
+				base.OnFontChanged(e);
+				ResizeLabel();
+			}
+			protected override void OnSizeChanged(EventArgs e)
+			{
+				base.OnSizeChanged(e);
+				ResizeLabel();
+			}
+		}
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -141,7 +141,6 @@ namespace LanguageExplorer.Controls.LexText
 			const int kclidLexSense = 5016;
 			const int kclidMoForm = 5035;
 			const int kclidLexExampleSentence = 5004;
-
 			// Currently custom fields can belong to only a limited number of known types, so
 			// throw if it's of a different value - this code will have to change as more types
 			// are supported.

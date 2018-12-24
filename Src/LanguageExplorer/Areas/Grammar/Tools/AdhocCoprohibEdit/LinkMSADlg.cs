@@ -245,5 +245,23 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 
 		}
 		#endregion
+
+		/// <summary>
+		/// Cheapo version of the LCM MoForm object.
+		/// </summary>
+		private sealed class LMsa : LObject
+		{
+			private readonly string m_name;
+
+			public LMsa(IMoMorphSynAnalysis msa) : base(msa.Hvo)
+			{
+				m_name = msa.InterlinearName;
+			}
+
+			public override string ToString()
+			{
+				return m_name ?? HVO.ToString();
+			}
+		}
 	}
 }

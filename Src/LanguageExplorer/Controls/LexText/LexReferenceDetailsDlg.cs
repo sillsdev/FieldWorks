@@ -1,7 +1,9 @@
-// Copyright (c) 2005-2017 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -18,15 +20,10 @@ namespace LanguageExplorer.Controls.LexText
 		private Button m_btnCancel;
 		private Label lblExplanation;
 		private Button buttonHelp;
-
 		private const string s_helpTopic = "khtpReferenceSetDetails";
 		private HelpProvider helpProvider;
 		private IHelpTopicProvider m_helpTopicProvider;
-
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+		private Container components = null;
 
 		/// <summary />
 		private LexReferenceDetailsDlg()
@@ -39,8 +36,10 @@ namespace LanguageExplorer.Controls.LexText
 		public LexReferenceDetailsDlg(IHelpTopicProvider helpTopicProvider) : this()
 		{
 			m_helpTopicProvider = helpTopicProvider;
-			helpProvider = new HelpProvider();
-			helpProvider.HelpNamespace = helpTopicProvider.HelpFile;
+			helpProvider = new HelpProvider
+			{
+				HelpNamespace = helpTopicProvider.HelpFile
+			};
 			helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(s_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 		}
@@ -72,20 +71,20 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
-			if( disposing )
+			if (disposing)
 			{
 				components?.Dispose();
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#region Windows Form Designer generated code

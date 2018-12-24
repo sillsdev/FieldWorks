@@ -1,20 +1,19 @@
-// Copyright (c) 2007-2018 SIL International
+// Copyright (c) 2007-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Windows.Forms;
 using LanguageExplorer.MGA;
 using SIL.LCModel;
-using SIL.LCModel.Infrastructure;
-using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Controls.LexText
 {
 	/// <summary />
 	internal class MasterInflectionFeatureListDlg : MasterListDlg
 	{
-
 		internal MasterInflectionFeatureListDlg()
 		{
 		}
@@ -49,7 +48,7 @@ namespace LanguageExplorer.Controls.LexText
 			using (var undoHelper = new UndoableUnitOfWorkHelper(m_cache.ServiceLocator.GetInstance<IActionHandler>(), LexTextControls.ksUndoInsertInflectionFeature, LexTextControls.ksRedoInsertInflectionFeature))
 			{
 				var fd = m_sClassName == "FsComplexFeature"
-					? (IFsFeatDefn) m_cache.ServiceLocator.GetInstance<IFsComplexFeatureFactory>().Create()
+					? (IFsFeatDefn)m_cache.ServiceLocator.GetInstance<IFsComplexFeatureFactory>().Create()
 					: m_cache.ServiceLocator.GetInstance<IFsClosedFeatureFactory>().Create();
 				m_cache.LanguageProject.MsFeatureSystemOA.FeaturesOC.Add(fd);
 				var type = m_cache.LanguageProject.MsFeatureSystemOA.GetFeatureType("Infl");
@@ -67,10 +66,8 @@ namespace LanguageExplorer.Controls.LexText
 				}
 				type.FeaturesRS.Add(fd);
 				SelectedFeatDefn = fd;
-
 				undoHelper.RollBack = false;
 			}
-
 			DialogResult = DialogResult.Yes;
 			Close();
 		}

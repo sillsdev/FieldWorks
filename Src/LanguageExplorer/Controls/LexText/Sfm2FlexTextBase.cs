@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2018 SIL International
+// Copyright (c) 2012-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,8 +9,8 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using LanguageExplorer.SfmToXml;
-using SilEncConverters40;
 using SIL.LCModel.Core.WritingSystems;
+using SilEncConverters40;
 
 namespace LanguageExplorer.Controls.LexText
 {
@@ -24,8 +24,7 @@ namespace LanguageExplorer.Controls.LexText
 		protected List<string> m_openElements = new List<string>();
 		protected string m_pendingMarker; // marker pushed back because not the extra one we were looking for
 		protected byte[] m_pendingData; // data corresponding to m_pendingMarker.
-
-		IList<string> m_docStructure = new List<string>();
+		private IList<string> m_docStructure = new List<string>();
 
 		public Sfm2FlexTextBase(IList<string> docStructure)
 		{
@@ -152,7 +151,6 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				return false;
 			}
-
 			if (nextMarker == marker)
 			{
 				return true;
@@ -199,7 +197,6 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				return Encoding.UTF8.GetString(data); // todo: use encoding converter if present in mapping
 			}
-
 			if (m_encConverters == null)
 			{
 				m_encConverters = new EncConverters();
@@ -221,7 +218,6 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				WriteEndElement();
 			}
-
 			while (m_openElements.Count < depth)
 			{
 				WriteStartElement(m_docStructure[m_openElements.Count]);

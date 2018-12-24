@@ -641,7 +641,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		protected virtual Sfm2FlexTextBase<InterlinearMapping> GetSfmConverter()
+		internal virtual Sfm2FlexTextBase<InterlinearMapping> GetSfmConverter()
 		{
 			return new Sfm2FlexText();
 		}

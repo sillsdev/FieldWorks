@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2018 SIL International
+// Copyright (c) 2012-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,7 +18,6 @@ namespace LanguageExplorer.Controls.LexText
 	public partial class SfmToTextsAndWordsMappingDlg : Form
 	{
 		protected string m_helpTopicID;
-
 		private LcmCache m_cache;
 		private string m_orginalLabel;
 		private readonly string m_blankEC = SfmToXml.SfmToXmlServices.AlreadyInUnicode;
@@ -34,7 +33,7 @@ namespace LanguageExplorer.Controls.LexText
 			m_orginalLabel = m_destinationLabel.Text;
 		}
 
-		void SfmInterlinearMappingDlg_WritingSystemAdded(object sender, EventArgs e)
+		private void SfmInterlinearMappingDlg_WritingSystemAdded(object sender, EventArgs e)
 		{
 			var ws = ((AddWritingSystemButton)m_addWritingSystemButton).NewWritingSystem;
 			if (ws != null)
@@ -43,7 +42,7 @@ namespace LanguageExplorer.Controls.LexText
 			}
 		}
 
-		public void SetupDlg(IHelpTopicProvider helpTopicProvider, IApp app, LcmCache cache,  Sfm2FlexTextMappingBase mappingToModify, IEnumerable<InterlinDestination> destinationsToDisplay)
+		public void SetupDlg(IHelpTopicProvider helpTopicProvider, IApp app, LcmCache cache, Sfm2FlexTextMappingBase mappingToModify, IEnumerable<InterlinDestination> destinationsToDisplay)
 		{
 			m_helpTopicProvider = helpTopicProvider;
 			m_app = app;
@@ -73,7 +72,7 @@ namespace LanguageExplorer.Controls.LexText
 			ResumeLayout();
 		}
 
-		void m_destinationsListBox_SelectedIndexChanged(object sender, EventArgs e)
+		private void m_destinationsListBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			OnDestinationListBox_SelectedIndexChanged();
 		}
@@ -88,7 +87,6 @@ namespace LanguageExplorer.Controls.LexText
 				{
 					m_writingSystemCombo.SelectedIndex = 0; // if old one is not in list, pick one that is.
 				}
-
 			}
 			else
 			{
@@ -101,19 +99,9 @@ namespace LanguageExplorer.Controls.LexText
 			var oldWs = m_mapping.WritingSystem;
 			if (m_writingSystemCombo.SelectedItem is CoreWritingSystemDefinition)
 			{
-				oldWs = ((CoreWritingSystemDefinition) m_writingSystemCombo.SelectedItem).Id;
+				oldWs = ((CoreWritingSystemDefinition)m_writingSystemCombo.SelectedItem).Id;
 			}
 			return oldWs;
-		}
-
-		private sealed class DestinationItem
-		{
-			public string Name;
-			public InterlinDestination Dest;
-			public override string  ToString()
-			{
-				return Name;
-			}
 		}
 
 		protected virtual string GetDestinationName(InterlinDestination destEnum)
@@ -134,7 +122,7 @@ namespace LanguageExplorer.Controls.LexText
 			var items = (from dest in m_destinationsToDisplay
 						 let name = GetDestinationName(dest)
 						 where dest != InterlinDestination.Ignored
-						 select new DestinationItem() {Name = name, Dest = dest}).ToList();
+						 select new DestinationItem() { Name = name, Dest = dest }).ToList();
 			// Sort most of the names, but force 'Ignored' to come first
 			items.Sort((item1, item2) => item1.Name.CompareTo(item2.Name));
 			items.Insert(0, new DestinationItem() { Name = GetDestinationName(InterlinDestination.Ignored), Dest = InterlinDestination.Ignored });
@@ -167,7 +155,7 @@ namespace LanguageExplorer.Controls.LexText
 		private void LoadEncodingConverters()
 		{
 			var encConv = new EncConverters();
-			System.Collections.IDictionaryEnumerator de = encConv.GetEnumerator();
+			var de = encConv.GetEnumerator();
 			m_converterCombo.BeginUpdate();
 			m_converterCombo.Items.Clear();
 			m_converterCombo.Sorted = true;
@@ -192,10 +180,8 @@ namespace LanguageExplorer.Controls.LexText
 				using (var dlg = new AddCnvtrDlg(m_helpTopicProvider, m_app, null, m_converterCombo.Text, null, false))
 				{
 					dlg.ShowDialog();
-
 					// Reload the converter list in the combo to reflect the changes.
 					LoadEncodingConverters();
-
 					// Either select the new one or select the old one
 					if (dlg.DialogResult == DialogResult.OK && !string.IsNullOrEmpty(dlg.SelectedConverter))
 					{
@@ -224,6 +210,16 @@ namespace LanguageExplorer.Controls.LexText
 		private void m_helpButton_Click(object sender, EventArgs e)
 		{
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, m_helpTopicID);
+		}
+
+		private sealed class DestinationItem
+		{
+			public string Name;
+			public InterlinDestination Dest;
+			public override string ToString()
+			{
+				return Name;
+			}
 		}
 	}
 }

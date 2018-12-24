@@ -1,11 +1,11 @@
-// Copyright (c) 2011-2017 SIL International
+// Copyright (c) 2011-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using SIL.Lift.Parsing;
 using SIL.LCModel;
+using SIL.Lift.Parsing;
 
 namespace LanguageExplorer.Controls.LexText
 {
@@ -26,6 +26,7 @@ namespace LanguageExplorer.Controls.LexText
 			Order = 0;
 			DateDeleted = DateTime.MinValue;
 		}
+
 		public CmLiftEntry(Extensible info, Guid guid, int order, FlexLiftMerger merger)
 		{
 			Etymologies = new List<CmLiftEtymology>();

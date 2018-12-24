@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2028 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -20,8 +20,7 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			const int kclidLexEntry = 5002;
 			const int kclidLexSense = 5016;
-
-			Class = fdClass == kclidLexEntry ? "LexEntry" : fdClass== kclidLexSense?"LexSense":"UnknownClass";
+			Class = fdClass == kclidLexEntry ? "LexEntry" : fdClass == kclidLexSense ? "LexSense" : "UnknownClass";
 			UIClass = uiClass;
 			FLID = flid;
 			Big = big;
@@ -40,7 +39,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		public string UIClass { get; set; }
 
-		public uint CRC	// intent is to use this value to compare to others to see if they are the same or different
+		public uint CRC // intent is to use this value to compare to others to see if they are the same or different
 		{
 			get
 			{
@@ -60,10 +59,8 @@ namespace LanguageExplorer.Controls.LexText
 					data.Append(UIClass);
 					data.Append('6');
 					data.Append(ListRootId);
-
 					var asciiEncoding = new ASCIIEncoding();
 					var byteData = asciiEncoding.GetBytes(data.ToString());
-
 					var crc = new CRC();
 					m_crc = crc.CalculateCRC(byteData, byteData.Length);
 				}

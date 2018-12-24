@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,20 +12,19 @@ using LanguageExplorer.SfmToXml;
 namespace LanguageExplorer.Controls.LexText
 {
 	/// <summary>
-	/// This class manages the data needed for diplaying the marker information :"Content Mappings".
+	/// This class manages the data needed for displaying the marker information :"Content Mappings".
 	/// It will read the different files and then store and use the underlying data.
 	/// </summary>
-	public class MarkerPresenter: Converter
+	public class MarkerPresenter : Converter
 	{
-		private SfmFileReader m_DataInfo;	// this is a reader for the actual data file
-		private Hashtable m_htUILangInfo;			// key=LanguageInfoUI.Key, data=LanguageInforUI
-
-		private string m_mapFile;		// file to use for the mdf mapfile
-		private string m_dataFile;		// this is the data file
-		private ArrayList m_SortOrder;	// current ascending/descending flag (bool)
+		private SfmFileReader m_DataInfo;   // this is a reader for the actual data file
+		private Hashtable m_htUILangInfo;           // key=LanguageInfoUI.Key, data=LanguageInforUI
+		private string m_mapFile;       // file to use for the mdf mapfile
+		private string m_dataFile;      // this is the data file
+		private ArrayList m_SortOrder;  // current ascending/descending flag (bool)
 		private string m_rootDir;
 
-		public static string AutoDescriptionText() { return LexTextControls.ksImportResidue_Auto;}
+		public static string AutoDescriptionText() { return LexTextControls.ksImportResidue_Auto; }
 		public Hashtable ContentMappingItems { get; private set; }
 
 		public ContentMapping ContentMappingItem(string sfmKEY)
@@ -65,18 +64,15 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				m_SortOrder.Add(true);
 			}
-			m_SortOrder[1] = false;	// handle first click in column one
-
+			m_SortOrder[1] = false; // handle first click in column one
 			InitFromMapFile(m_mapFile);
 			m_DataInfo = new SfmFileReader(m_dataFile);
 			bool changed;
-			UpdateLexFieldsWithCustomFields(LexImportWizard.Wizard().ReadCustomFieldsFromDB(out changed) as LexImportFields);
-
-			// get a list of the languages that are defined/editied in the GUI
-			m_htUILangInfo = uiLangInfo; //LexImportWizard.Wizard().GetUILanguages();
-			// this will now fill the m_htMarkerData hashtable with contentmapping objects
+			UpdateLexFieldsWithCustomFields(LexImportWizard.Wizard.ReadCustomFieldsFromDB(out changed) as LexImportFields);
+			// get a list of the languages that are defined/edited in the GUI
+			m_htUILangInfo = uiLangInfo;
+			// this will now fill the m_htMarkerData hashtable with content mapping objects
 			MergeData(false);
-
 		}
 
 		public void UpdateLexFieldsWithCustomFields(ILexImportFields customFields)
@@ -94,13 +90,13 @@ namespace LanguageExplorer.Controls.LexText
 
 		private void GetLangInfoForAutoFields(out string langDesc, out string ws)
 		{
-			ws = langDesc = string.Empty;	// empty in worst case
+			ws = langDesc = string.Empty;   // empty in worst case
 			var firstOne = new DictionaryEntry(string.Empty, string.Empty);
 			var notIgnore = new DictionaryEntry(string.Empty, string.Empty);
 			var first = true;
-			foreach(DictionaryEntry uiLang in m_htUILangInfo)
+			foreach (DictionaryEntry uiLang in m_htUILangInfo)
 			{
-				if ((uiLang.Value as LanguageInfoUI).ICUName == "en")	// looking for English
+				if ((uiLang.Value as LanguageInfoUI).ICUName == "en")   // looking for English
 				{
 					ws = "en";
 					langDesc = uiLang.Key as string;
@@ -112,7 +108,7 @@ namespace LanguageExplorer.Controls.LexText
 				}
 				else if (first)
 				{
-					first = false;	// only needed if notignore and en as first one
+					first = false;  // only needed if notignore and en as first one
 					firstOne = uiLang;
 				}
 			}
@@ -162,7 +158,6 @@ namespace LanguageExplorer.Controls.LexText
 		private bool MergeData(bool mergeWithExistingDataInUI)
 		{
 			var result = false; // return true if the we're updating from a currently loaded file and it's different
-
 			if (!mergeWithExistingDataInUI)
 			{
 				ContentMappingItems = new Hashtable();
@@ -183,9 +178,8 @@ namespace LanguageExplorer.Controls.LexText
 				{
 					ContentMappingItems.Remove(goner);
 				}
-				result = keysToDelete.Any();	// if we've deleted something than we know the UI data has to be different
+				result = keysToDelete.Any();    // if we've deleted something than we know the UI data has to be different
 			}
-
 			foreach (string sfmKEY in m_DataInfo.SfmInfo)
 			{
 				// LT-1926 Ignore all markers that start with underscore (shoebox markers)
@@ -193,14 +187,12 @@ namespace LanguageExplorer.Controls.LexText
 				{
 					continue;
 				}
-
 				// if the marker contains invalid characters for the xml element, ignore it???
 				var marker = sfmKEY;
 				var count = m_DataInfo.GetSFMWithDataCount(sfmKEY);
 				var order = m_DataInfo.GetSFMOrder(sfmKEY);
 				var fwID = string.Empty;
 				var isCustom = false;
-
 				if (ContentMappingItems.ContainsKey(sfmKEY))
 				{
 					// just update the count and order as the other fields could have been editied in the UI
@@ -212,9 +204,8 @@ namespace LanguageExplorer.Controls.LexText
 				{
 					if (mergeWithExistingDataInUI)
 					{
-						result = true;	// we are adding a new one, so the UI data will be different
+						result = true;  // we are adding a new one, so the UI data will be different
 					}
-
 					// get the field description info from the map file for this marker
 					var mapField = FieldMarkerHashTable[marker] as ClsFieldDescription;
 					if (mapField is ClsCustomFieldDescription)
@@ -223,10 +214,9 @@ namespace LanguageExplorer.Controls.LexText
 						// first make sure if it's a custom field, that the field exists in the database
 						if (!IsValidCustomField(mapField))
 						{
-							mapField = null;	// treat like not existint (not in DB at this point)
+							mapField = null;    // treat like not existint (not in DB at this point)
 						}
 					}
-
 					string desc;
 					string className;
 					string langDesc;
@@ -235,7 +225,7 @@ namespace LanguageExplorer.Controls.LexText
 					if (mapField == null)
 					{
 						// case where the marker in the data isn't in the map file - Now an AutoImport field by default
-						desc = string.Empty;	// leave empty now
+						desc = string.Empty;    // leave empty now
 						className = string.Empty;
 						dest = string.Empty;
 						// search through the langs and find the autolang to use
@@ -243,13 +233,11 @@ namespace LanguageExplorer.Controls.LexText
 					}
 					else
 					{
-
 						desc = mapField.Name;
-
 						if (mapField.IsAutoImportField)
 						{
 							desc = string.Empty;
-							dest = string.Empty;	// AutoDescriptionText();
+							dest = string.Empty;    // AutoDescriptionText();
 							className = string.Empty;
 						}
 						else if (mapField.MeaningApp == "fw.sil.org")
@@ -258,7 +246,6 @@ namespace LanguageExplorer.Controls.LexText
 							if (mapField.MeaningID.Length > 0)
 							{
 								fwID = mapField.MeaningID;
-
 								if (mapField is ClsCustomFieldDescription)
 								{
 									var custom = (ClsCustomFieldDescription)mapField;
@@ -276,35 +263,32 @@ namespace LanguageExplorer.Controls.LexText
 									// dest = m_LexFields.GetUIDestForName(mapField.MeaningID);
 									if (!LexImportFields.GetDestinationForName(mapField.MeaningID, out className, out dest))
 									{
-										className = dest = ContentMapping.Unknown();
+										className = dest = ContentMapping.Unknown;
 									}
 								}
 							}
 							else
 							{
-								className = ContentMapping.Unknown();
-								dest = ContentMapping.Unknown(); // "Unknown " + mapField.MeaningApp + " ID<" + mapField.MeaningID + ">";
+								className = ContentMapping.Unknown;
+								dest = ContentMapping.Unknown; // "Unknown " + mapField.MeaningApp + " ID<" + mapField.MeaningID + ">";
 							}
 						}
 						else
 						{
-							className = dest = ContentMapping.Unknown();
+							className = dest = ContentMapping.Unknown;
 						}
-
 						// now get the writing system:
 						// - default to "Unknown" if not found
 						// - see if there is a map value
 						// - see if the map value key's into the UI languages
-						ws = langDesc = ContentMapping.Unknown();
+						ws = langDesc = ContentMapping.Unknown;
 						var mapWS = mapField.Language;
 						if (m_htUILangInfo.ContainsKey(mapWS))
 						{
 							ws = (m_htUILangInfo[mapWS] as SfmToXml.LanguageInfoUI).FwName;
 							langDesc = mapWS;
 						}
-
 					}
-
 					var startMapFieldData = GetFieldDescription(marker);
 					if (startMapFieldData is ClsCustomFieldDescription)
 					{
@@ -320,17 +304,15 @@ namespace LanguageExplorer.Controls.LexText
 						}
 						isCustom = true;
 					}
-
 					var uiData = new ContentMapping(marker, desc, className, dest, ws, langDesc, count, order, startMapFieldData, isCustom);
 					uiData.FwId = fwID;
 					uiData.AddLexImportField(LexImportFields.GetField(className, fwID));
 					ContentMappingItems.Add(marker, uiData);
 				}
 			}
-
 			// Now for each HierarchyEntry, set the individual marker begin fields
 			var htHierarchy = HierarchyHashTable;
-			foreach(DictionaryEntry dictEentry in htHierarchy)
+			foreach (DictionaryEntry dictEentry in htHierarchy)
 			{
 				var hierarchy = dictEentry.Value as ClsHierarchyEntry;
 
@@ -375,35 +357,31 @@ namespace LanguageExplorer.Controls.LexText
 					var node = xmlMap.SelectSingleNode("sfmMapping");
 					if (node == null)
 					{
-						break;	// not found
+						break;  // not found
 					}
-
 					// look for a languages child
 					node = xmlMap.SelectSingleNode("sfmMapping/languages");
 					if (node == null)
 					{
-						break;	// not found
+						break;  // not found
 					}
-
 					// look for a hierarchy child
 					node = xmlMap.SelectSingleNode("sfmMapping/hierarchy");
 					if (node == null)
 					{
-						break;	// not found
+						break;  // not found
 					}
-
 					// look for a fieldDescriptions child
 					node = xmlMap.SelectSingleNode("sfmMapping/fieldDescriptions");
 					if (node == null)
 					{
-						break;	// not found
+						break;  // not found
 					}
-
 					success = true;
 					break;
 				}
 			}
-			catch// (System.Xml.XmlException e)
+			catch
 			{
 				success = false;
 			}
@@ -413,11 +391,10 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// This method will read the mapfile pulling out the sections that it's interested in.
 		/// It currently reads in the Settings and FieldDescriptions sections.  The language section
-		/// is handeled elsewhere and infield markers aren't currently used.
+		/// is handled elsewhere and infield markers aren't currently used.
 		/// </summary>
-		private bool InitFromMapFile(string mapFile)
+		private void InitFromMapFile(string mapFile)
 		{
-			bool success;
 			var xmlMap = new XmlDocument();
 			try
 			{
@@ -426,14 +403,10 @@ namespace LanguageExplorer.Controls.LexText
 				ReadSettings(xmlMap);
 				ReadFieldDescriptions(xmlMap);
 				ReadCustomFieldDescriptions(xmlMap);
-
-				success = true;
 			}
 			catch
 			{
-				success = false;
 			}
-			return success;
 		}
 	}
 }

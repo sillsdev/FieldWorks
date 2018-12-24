@@ -1,18 +1,18 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
 using System.Windows.Forms;
 using LanguageExplorer.Areas;
-using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.Text;
 
 namespace LanguageExplorer.Controls.LexText
 {
 	/// <summary>
-	/// Handles a TreeCombo control (Widgets assembly) for use in selecting inflection features.
+	/// Handles a TreeCombo control for use in selecting inflection features.
 	/// </summary>
 	public class InflectionFeaturePopupTreeManager : PopupTreeManager
 	{
@@ -32,14 +32,14 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			var tagNamePOS = UseAbbr ? CmPossibilityTags.kflidAbbreviation : CmPossibilityTags.kflidName;
 			var relevantPartsOfSpeech = new List<HvoTreeNode>();
-			InflectionClassPopupTreeManager.GatherPartsOfSpeech(Cache, List.Hvo, CmPossibilityListTags.kflidPossibilities, CmPossibilityTags.kflidSubPossibilities, PartOfSpeechTags.kflidInflectableFeats, tagNamePOS, WritingSystem, relevantPartsOfSpeech);
+			ControlServices.GatherPartsOfSpeech(Cache, PartOfSpeechTags.kflidInflectableFeats, tagNamePOS, WritingSystem, relevantPartsOfSpeech);
 			relevantPartsOfSpeech.Sort();
 			TreeNode match = null;
-			foreach(var item in relevantPartsOfSpeech)
+			foreach (var item in relevantPartsOfSpeech)
 			{
 				popupTree.Nodes.Add(item);
 				var pos = Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(item.Hvo);
-				foreach(var fs in pos.ReferenceFormsOC)
+				foreach (var fs in pos.ReferenceFormsOC)
 				{
 					// Note: beware of using fs.ShortName. That can be
 					// absolutely EMPTY (if the user has turned off the 'Show Abbreviation as its label'
@@ -81,38 +81,38 @@ namespace LanguageExplorer.Controls.LexText
 						switch (dlg.ShowDialog(ParentForm))
 						{
 							case DialogResult.OK:
-							{
-								var hvoFs = 0;
-								if (dlg.FS != null)
 								{
-									hvoFs = dlg.FS.Hvo;
+									var hvoFs = 0;
+									if (dlg.FS != null)
+									{
+										hvoFs = dlg.FS.Hvo;
+									}
+									LoadPopupTree(hvoFs);
+									// In the course of loading the popup tree, we will have selected the hvoFs item, and triggered an AfterSelect.
+									// But, it will have had an Unknown action, and thus will not trigger some effects we want.
+									// That one will work like arrowing over items: they are 'selected', but the system will not
+									// behave as if the user actually chose this item.
+									// But, we want clicking OK in the dialog to produce the same result as clicking an item in the list.
+									// So, we need to trigger an AfterSelect with our own event args, which (since we're acting on it)
+									// must have a ByMouse TreeViewAction.
+									base.m_treeCombo_AfterSelect(sender, e);
+									// everything should be setup with new node selected, so return.
+									return;
 								}
-								LoadPopupTree(hvoFs);
-								// In the course of loading the popup tree, we will have selected the hvoFs item, and triggered an AfterSelect.
-								// But, it will have had an Unknown action, and thus will not trigger some effects we want.
-								// That one will work like arrowing over items: they are 'selected', but the system will not
-								// behave as if the user actually chose this item.
-								// But, we want clicking OK in the dialog to produce the same result as clicking an item in the list.
-								// So, we need to trigger an AfterSelect with our own event args, which (since we're acting on it)
-								// must have a ByMouse TreeViewAction.
-								base.m_treeCombo_AfterSelect(sender, e);
-								// everything should be setup with new node selected, so return.
-								return;
-							}
 							case DialogResult.Yes:
-							{
-								// go to m_highestPOS in editor
-								LinkHandler.PublishFollowLinkMessage(m_publisher, new FwLinkArgs(AreaServices.PosEditMachineName, dlg.HighestPOS.Guid));
-								if (ParentForm != null && ParentForm.Modal)
 								{
-									// Close the dlg that opened the popup tree,
-									// since its hotlink was used to close it,
-									// and a new item has been created.
-									ParentForm.DialogResult = DialogResult.Cancel;
-									ParentForm.Close();
+									// go to m_highestPOS in editor
+									LinkHandler.PublishFollowLinkMessage(m_publisher, new FwLinkArgs(AreaServices.PosEditMachineName, dlg.HighestPOS.Guid));
+									if (ParentForm != null && ParentForm.Modal)
+									{
+										// Close the dlg that opened the popup tree,
+										// since its hotlink was used to close it,
+										// and a new item has been created.
+										ParentForm.DialogResult = DialogResult.Cancel;
+										ParentForm.Close();
+									}
+									break;
 								}
-								break;
-							}
 							default:
 								// NOTE: If the user has selected "Cancel", then don't change
 								// our m_lastConfirmedNode to the "More..." node. Keep it

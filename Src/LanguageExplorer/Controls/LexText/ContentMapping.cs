@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -17,8 +17,9 @@ namespace LanguageExplorer.Controls.LexText
 		private ClsFieldDescription m_clsFieldDescription;
 		private LexImportField m_LexImportField;
 
-		public static string Ignore() { return LexTextControls.ksIgnore; }
-		public static string Unknown() { return LexTextControls.ksUnknown; }
+		public static string Ignore => LexTextControls.ksIgnore;
+
+		public static string Unknown => LexTextControls.ksUnknown;
 
 		public string Marker { get; }
 
@@ -38,6 +39,7 @@ namespace LanguageExplorer.Controls.LexText
 			}
 			set { LanguageDescriptorRaw = value; }
 		}
+
 		public string WritingSystem { get; private set; }
 
 		public bool IsBeginMarker { get; set; }
@@ -48,7 +50,6 @@ namespace LanguageExplorer.Controls.LexText
 			LanguageDescriptorRaw = langDescriptor;
 			m_clsFieldDescription.UpdateLanguageValues(LanguageDescriptorRaw, shortName);
 		}
-
 
 		public int Count { get; set; }
 
@@ -86,6 +87,7 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			m_clsFieldDescription.ClearRef();
 		}
+
 		public bool IsRefField => m_clsFieldDescription.IsRef;
 
 		public string RefField
@@ -116,7 +118,6 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				return;
 			}
-
 			m_clsFieldDescription.IsAbbr = isAbbr;
 		}
 
@@ -139,7 +140,7 @@ namespace LanguageExplorer.Controls.LexText
 				LanguageDescriptor };           // col 6
 		}
 
-		public bool IsLangIgnore => WritingSystem == Ignore();
+		public bool IsLangIgnore => WritingSystem == Ignore;
 
 		public string DestinationField
 		{
@@ -154,8 +155,7 @@ namespace LanguageExplorer.Controls.LexText
 			}
 		}
 
-		public ContentMapping(string marker, string desc, string className, string fwDest,
-			string ws, string langDescriptor, int count, int order, ClsFieldDescription fdesc, bool isCustom)
+		public ContentMapping(string marker, string desc, string className, string fwDest, string ws, string langDescriptor, int count, int order, ClsFieldDescription fdesc, bool isCustom)
 		{
 			Marker = marker;
 			Description = desc;
@@ -175,7 +175,7 @@ namespace LanguageExplorer.Controls.LexText
 				}
 				else
 				{
-					m_clsFieldDescription = new ClsCustomFieldDescription(string.Empty, string.Empty, /*System.Guid.NewGuid(),*/ 0, false, 0,
+					m_clsFieldDescription = new ClsCustomFieldDescription(string.Empty, string.Empty, 0, false, 0,
 						Marker, " ", "string", LanguageDescriptorRaw, IsAbbrvField, RawDestinationField);
 				}
 			}
@@ -190,13 +190,11 @@ namespace LanguageExplorer.Controls.LexText
 				{
 					return m_clsFieldDescription;
 				}
-
 				var dataType = "string";
 				if (m_LexImportField != null)
 				{
 					dataType = m_LexImportField.DataType;
 				}
-
 				return new ClsFieldDescription(Marker, " ", dataType, LanguageDescriptorRaw, IsAbbrvField, RawDestinationField);
 			}
 		}

@@ -1,15 +1,17 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.Windows.Forms;
 
@@ -18,41 +20,26 @@ namespace LanguageExplorer.Controls.LexText
 	/// <inheritdoc />
 	public class MsaCreatorDlg : Form
 	{
-		#region Data Members
-
 		private LcmCache m_cache;
 		private IPropertyTable m_propertyTable;
 		private IPublisher m_publisher;
-
-		private System.Windows.Forms.Button btnCancel;
-		private System.Windows.Forms.Button btnOk;
-		private System.Windows.Forms.Button btnHelp;
-		private System.Windows.Forms.Label label1;
-		private SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox m_fwtbCitationForm;
-		private System.Windows.Forms.Label label2;
-		private SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox m_fwtbSenses;
-		private LanguageExplorer.Controls.LexText.MSAGroupBox m_msaGroupBox;
-
+		private Button btnCancel;
+		private Button btnOk;
+		private Button btnHelp;
+		private Label label1;
+		private FwTextBox m_fwtbCitationForm;
+		private Label label2;
+		private FwTextBox m_fwtbSenses;
+		private MSAGroupBox m_msaGroupBox;
 		private string s_helpTopic = "khtpCreateNewGrammaticalFunction";
-		private System.Windows.Forms.HelpProvider helpProvider;
-
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
-
-		#endregion Data Members
-
-		#region Properties
+		private HelpProvider helpProvider;
+		private Container components = null;
 
 		public SandboxGenericMSA SandboxMSA => m_msaGroupBox.SandboxMSA;
-		#endregion Properties
 
 		#region Construction, Initialization, and Disposal
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
+		/// <summary />
 		public MsaCreatorDlg()
 		{
 			InitializeComponent();
@@ -70,7 +57,6 @@ namespace LanguageExplorer.Controls.LexText
 			m_cache = cache;
 			m_propertyTable = propertyTable;
 			m_publisher = publisher;
-
 			if (useForEdit)
 			{
 				// Change the window title and the OK button text.
@@ -82,7 +68,6 @@ namespace LanguageExplorer.Controls.LexText
 			helpProvider.HelpNamespace = helpTopicProvider.HelpFile;
 			helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(s_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
-
 			// Set font, writing system factory, and code for the edit box.
 			var fntSize = label1.Font.Size * 2.0F;
 			var defVernWs = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
@@ -93,13 +78,11 @@ namespace LanguageExplorer.Controls.LexText
 			m_fwtbCitationForm.AdjustStringHeight = false;
 			m_fwtbCitationForm.Tss = entry.HeadWord;
 			m_fwtbCitationForm.HasBorder = false;
-
 			m_fwtbSenses.Font = new Font(defVernWs.DefaultFontName, fntSize);
 			m_fwtbSenses.WritingSystemFactory = m_cache.WritingSystemFactory;
 			m_fwtbSenses.WritingSystemCode = defVernWs.Handle;
 			m_fwtbSenses.AdjustForStyleSheet(this, null, m_propertyTable);
 			m_fwtbSenses.AdjustStringHeight = false;
-
 			var tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_cache.DefaultAnalWs);
 			var msaRepository = m_cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>();
@@ -113,7 +96,7 @@ namespace LanguageExplorer.Controls.LexText
 						{
 							if (tisb.Text != null)
 							{
-								tisb.Append(", ");	// REVIEW: IS LOCALIZATION NEEDED FOR BUILDING THIS LIST?
+								tisb.Append(", ");  // REVIEW: IS LOCALIZATION NEEDED FOR BUILDING THIS LIST?
 							}
 							tisb.AppendTsString(sense.ShortNameTSS);
 						}
@@ -122,7 +105,6 @@ namespace LanguageExplorer.Controls.LexText
 			}
 			m_fwtbSenses.Tss = tisb.GetString();
 			m_fwtbSenses.HasBorder = false;
-
 			m_msaGroupBox.Initialize(m_cache, m_propertyTable, m_publisher, this, sandboxMsa);
 			var oldHeight = m_msaGroupBox.Height;
 			var newHeight = Math.Max(oldHeight, m_msaGroupBox.PreferredHeight);
@@ -133,7 +115,6 @@ namespace LanguageExplorer.Controls.LexText
 				Debug.Assert(m_msaGroupBox.Height == m_msaGroupBox.PreferredHeight);
 				FontHeightAdjuster.GrowDialogAndAdjustControls(this, delta, m_msaGroupBox);
 			}
-
 			// Reset window location.
 			// Get location to the stored values, if any.
 			Point dlgLocation;
@@ -158,9 +139,9 @@ namespace LanguageExplorer.Controls.LexText
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -170,7 +151,7 @@ namespace LanguageExplorer.Controls.LexText
 			}
 			m_cache = null;
 
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#endregion Construction, Initialization, and Disposal
