@@ -8,7 +8,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using LanguageExplorer.Controls.LexText;
+using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
@@ -81,7 +81,7 @@ namespace LanguageExplorer.Areas.Notebook
 				m_cbDestination.Items.Add(new DestinationField(flid, m_mapFlidName[flid]));
 			}
 			m_cbDestination.Sorted = false;
-			m_cbDestination.Items.Insert(0, new DestinationField(0, LexTextControls.ksDoNotImport));
+			m_cbDestination.Items.Insert(0, new DestinationField(0, LanguageExplorerControls.ksDoNotImport));
 			var idx = m_cbDestination.Items.IndexOf(new DestinationField(m_rsfm.m_flid, m_rsfm.m_sName));
 			if (idx > -1)
 			{
@@ -114,7 +114,7 @@ namespace LanguageExplorer.Areas.Notebook
 			m_groupOptions.Controls.Clear();
 			if (m_rsfm.m_flid == 0)
 			{
-				m_groupOptions.Text = LexTextControls.ksDiscardedField;
+				m_groupOptions.Text = LanguageExplorerControls.ksDiscardedField;
 				m_groupOptions.Controls.Add(m_discardOpt);
 				m_discardOpt.Location = m_locSubCtrl;
 				return;
@@ -136,7 +136,7 @@ namespace LanguageExplorer.Areas.Notebook
 							break;
 						case CrossReferenceTags.kClassId:
 						case ReminderTags.kClassId:
-							throw new NotSupportedException(LexTextControls.ksUnimplementedField);
+							throw new NotSupportedException(LanguageExplorerControls.ksUnimplementedField);
 						default:
 							var clidBase = clidDst;
 							while (clidBase != 0 && clidBase != CmPossibilityTags.kClassId)
@@ -145,13 +145,13 @@ namespace LanguageExplorer.Areas.Notebook
 							}
 							if (clidBase == CmPossibilityTags.kClassId)
 							{
-								m_groupOptions.Text = LexTextControls.ksListRefImportOptions;
+								m_groupOptions.Text = LanguageExplorerControls.ksListRefImportOptions;
 								m_groupOptions.Controls.Add(m_listOpt);
 								m_listOpt.Location = m_locSubCtrl;
 								m_listOpt.Initialize(m_cache, m_helpTopicProvider, m_app, m_rsfm, cpt);
 								break;
 							}
-							throw new ArgumentException(LexTextControls.ksInvalidField);
+							throw new ArgumentException(LanguageExplorerControls.ksInvalidField);
 					}
 					break;
 				case CellarPropertyType.OwningAtomic:
@@ -162,44 +162,44 @@ namespace LanguageExplorer.Areas.Notebook
 					{
 						case StTextTags.kClassId:
 							Debug.Assert(cpt == CellarPropertyType.OwningAtomic);
-							m_groupOptions.Text = LexTextControls.ksTextImportOptions;
+							m_groupOptions.Text = LanguageExplorerControls.ksTextImportOptions;
 							m_groupOptions.Controls.Add(m_textOpt);
 							m_textOpt.Location = m_locSubCtrl;
 							m_textOpt.Initialize(m_cache, m_helpTopicProvider, m_app, m_stylesheet, m_rsfm);
 							break;
 						case RnRoledParticTags.kClassId:
-							m_groupOptions.Text = LexTextControls.ksListRefImportOptions;
+							m_groupOptions.Text = LanguageExplorerControls.ksListRefImportOptions;
 							m_groupOptions.Controls.Add(m_listOpt);
 							m_listOpt.Location = m_locSubCtrl;
 							m_listOpt.Initialize(m_cache, m_helpTopicProvider, m_app, m_rsfm, cpt);
 							break;
 						case RnGenericRecTags.kClassId:
-							throw new NotSupportedException(LexTextControls.ksUnimplementedField);
+							throw new NotSupportedException(LanguageExplorerControls.ksUnimplementedField);
 						default:
-							throw new ArgumentException(LexTextControls.ksInvalidField);
+							throw new ArgumentException(LanguageExplorerControls.ksInvalidField);
 					}
 					break;
 				case CellarPropertyType.MultiString:
 				case CellarPropertyType.MultiUnicode:
-					m_groupOptions.Text = LexTextControls.ksMultiStringImportOptions;
+					m_groupOptions.Text = LanguageExplorerControls.ksMultiStringImportOptions;
 					m_groupOptions.Controls.Add(m_stringOpt);
 					m_stringOpt.Location = m_locSubCtrl;
 					m_stringOpt.Initialize(m_cache, m_helpTopicProvider, m_app, m_rsfm);
 					break;
 				case CellarPropertyType.String:
-					m_groupOptions.Text = LexTextControls.ksStringImportOptions;
+					m_groupOptions.Text = LanguageExplorerControls.ksStringImportOptions;
 					m_groupOptions.Controls.Add(m_stringOpt);
 					m_stringOpt.Location = m_locSubCtrl;
 					m_stringOpt.Initialize(m_cache, m_helpTopicProvider, m_app, m_rsfm);
 					break;
 				case CellarPropertyType.GenDate:
-					m_groupOptions.Text = LexTextControls.ksGenDateImportOptions;
+					m_groupOptions.Text = LanguageExplorerControls.ksGenDateImportOptions;
 					m_groupOptions.Controls.Add(m_dateOpt);
 					m_dateOpt.Location = m_locSubCtrl;
 					m_dateOpt.Initialize(m_cache, m_helpTopicProvider, m_rsfm, true);
 					break;
 				case CellarPropertyType.Time:
-					m_groupOptions.Text = LexTextControls.ksDateTimeImportOptions;
+					m_groupOptions.Text = LanguageExplorerControls.ksDateTimeImportOptions;
 					m_groupOptions.Controls.Add(m_dateOpt);
 					m_dateOpt.Location = m_locSubCtrl;
 					m_dateOpt.Initialize(m_cache, m_helpTopicProvider, m_rsfm, false);
@@ -212,7 +212,7 @@ namespace LanguageExplorer.Areas.Notebook
 				case CellarPropertyType.Guid:
 				case CellarPropertyType.Integer:
 				case CellarPropertyType.Numeric:
-					throw new ArgumentException(LexTextControls.ksInvalidField);
+					throw new ArgumentException(LanguageExplorerControls.ksInvalidField);
 			}
 		}
 
@@ -300,12 +300,12 @@ namespace LanguageExplorer.Areas.Notebook
 			else if (ctrl == m_discardOpt)
 			{
 				m_rsfm.m_flid = 0;
-				m_rsfm.m_sName = LexTextControls.ksDoNotImport;
+				m_rsfm.m_sName = LanguageExplorerControls.ksDoNotImport;
 			}
 			else
 			{
 				m_rsfm.m_flid = 0;
-				m_rsfm.m_sName = LexTextControls.ksDoNotImport;
+				m_rsfm.m_sName = LanguageExplorerControls.ksDoNotImport;
 			}
 			DialogResult = DialogResult.OK;
 		}

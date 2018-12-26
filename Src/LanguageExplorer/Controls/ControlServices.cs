@@ -4,6 +4,8 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
+using SilEncConverters40;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
@@ -64,6 +66,34 @@ namespace LanguageExplorer.Controls
 						int wsDummy;
 						collector.Add(new HvoTreeNode(multiUnicode.GetAlternativeOrBestTss(wsName, out wsDummy), pos.Hvo));
 					}
+				}
+			}
+		}
+
+		internal static void EnsureWindows1252ConverterExists()
+		{
+			var encConv = new EncConverters();
+			var de = encConv.GetEnumerator();
+			// REVIEW: SHOULD THIS NAME BE LOCALIZED?
+			const string sEncConvName = "Windows1252<>Unicode";
+			var fMustCreateEncCnv = true;
+			while (de.MoveNext())
+			{
+				if ((string)de.Key != null && (string)de.Key == sEncConvName)
+				{
+					fMustCreateEncCnv = false;
+					break;
+				}
+			}
+			if (fMustCreateEncCnv)
+			{
+				try
+				{
+					encConv.AddConversionMap(sEncConvName, "1252", ECInterfaces.ConvType.Legacy_to_from_Unicode, "cp", "", "", ECInterfaces.ProcessTypeFlags.CodePageConversion);
+				}
+				catch (ECException exception)
+				{
+					MessageBox.Show(exception.Message, LanguageExplorerControls.ksConvMapError, MessageBoxButtons.OK);
 				}
 			}
 		}

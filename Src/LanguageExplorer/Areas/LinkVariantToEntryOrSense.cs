@@ -7,7 +7,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
-using LanguageExplorer.Controls.LexText;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -94,9 +93,9 @@ namespace LanguageExplorer.Areas
 			m_fGetVariantEntryTypeFromTreeCombo = false;
 			lblCreateEntry.Visible = false;
 			// The dialog title and other labels need to reflect "Insert Variant" context.
-			m_formLabel.Text = LexTextControls.ks_Variant;
-			Text = LexTextControls.ksFindVariant;
-			m_btnInsert.Text = LexTextControls.ks_Create;
+			m_formLabel.Text = LanguageExplorerControls.ks_Variant;
+			Text = LanguageExplorerControls.ksFindVariant;
+			m_btnInsert.Text = LanguageExplorerControls.ks_Create;
 			// We disable the "Create" button when we don't have text in the Find textbox.
 			UpdateButtonCreateNew();
 		}
@@ -193,7 +192,7 @@ namespace LanguageExplorer.Areas
 			var matchingEntryRef = FindMatchingEntryRef(variant, componentLexeme, selectedEntryType);
 			try
 			{
-				UndoableUnitOfWorkHelper.Do(LexTextControls.ksUndoAddVariant, LexTextControls.ksRedoAddVariant, m_cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+				UndoableUnitOfWorkHelper.Do(LanguageExplorerControls.ksUndoAddVariant, LanguageExplorerControls.ksRedoAddVariant, m_cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 				{
 					if (matchingEntryRef != null)
 					{
@@ -267,7 +266,7 @@ namespace LanguageExplorer.Areas
 		{
 			base.HandleMatchingSelectionChanged();
 			// by default, btnOK should be set to "Add Variant"
-			m_btnOK.Text = LexTextControls.ksAddVariant;
+			m_btnOK.Text = LanguageExplorerControls.ksAddVariant;
 			if (SelectedObject != null)
 			{
 				// detect whether SelectedID already matches an existing EntryRef relationship.
@@ -280,7 +279,7 @@ namespace LanguageExplorer.Areas
 				if (matchingEntryRef != null)
 				{
 					// Indicate to the user that the SelectedID matches an existing EntryRef relationship.
-					m_btnOK.Text = m_fBackRefToVariant ? LexTextControls.ks_OK : LexTextControls.ksUseEntry;
+					m_btnOK.Text = m_fBackRefToVariant ? LanguageExplorerControls.ks_OK : LanguageExplorerControls.ksUseEntry;
 					// if the VariantTypes combo is visible, select the last appended type of the matching relationship.
 					if (tcVariantTypes.Visible && matchingEntryRef.VariantEntryTypesRS.Count > 0)
 					{
@@ -317,7 +316,7 @@ namespace LanguageExplorer.Areas
 				return;
 			}
 			// we need to create the new LexEntryRef and its variant from the starting entry.
-			UndoableUnitOfWorkHelper.Do(LexTextControls.ksUndoCreateVarEntry, LexTextControls.ksRedoCreateVarEntry, m_startingEntry, () =>
+			UndoableUnitOfWorkHelper.Do(LanguageExplorerControls.ksUndoCreateVarEntry, LanguageExplorerControls.ksRedoCreateVarEntry, m_startingEntry, () =>
 			{
 				VariantEntryRefResult = m_startingEntry.CreateVariantEntryAndBackRef(null, tssNewVariantLexemeForm);
 			});

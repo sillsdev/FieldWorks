@@ -4,7 +4,7 @@
 
 using System.Xml.Linq;
 using System.Xml.XPath;
-using LanguageExplorer.Controls.LexText;
+using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;

@@ -9,11 +9,10 @@ using System.Text;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
-using LanguageExplorer.Controls.LexText;
-using NUnit.Framework;
 using LanguageExplorer.SfmToXml;
-using SilEncConverters40;
+using NUnit.Framework;
 using SIL.LCModel.Core.WritingSystems;
+using SilEncConverters40;
 
 namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 {

@@ -4,7 +4,7 @@
 
 using System;
 using System.Windows.Forms;
-using LanguageExplorer.Controls.LexText;
+using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Areas.Notebook
@@ -43,7 +43,7 @@ namespace LanguageExplorer.Areas.Notebook
 			}
 			catch
 			{
-				m_tbExample.Text = LexTextControls.ksERROR;
+				m_tbExample.Text = LanguageExplorerControls.ksERROR;
 			}
 		}
 

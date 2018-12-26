@@ -18,7 +18,6 @@ using LanguageExplorer.Archiving;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Areas.TextsAndWords;
 using LanguageExplorer.Controls;
-using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.SilSidePane;
 using LanguageExplorer.Controls.Styles;
 using LanguageExplorer.Controls.XMLViews;

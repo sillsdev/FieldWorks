@@ -12,7 +12,6 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using LanguageExplorer.Controls;
-using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.SfmToXml;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
@@ -281,7 +280,7 @@ namespace LanguageExplorer.Areas.Notebook
 					return; // finish without prompting to save...
 				}
 				// ask to save the settings
-				var result = MessageBox.Show(this, LexTextControls.ksAskRememberImportSettings, LexTextControls.ksSaveSettings_,
+				var result = MessageBox.Show(this, LanguageExplorerControls.ksAskRememberImportSettings, LanguageExplorerControls.ksSaveSettings_,
 					MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button3);
 				switch (result)
 				{
@@ -379,19 +378,19 @@ namespace LanguageExplorer.Areas.Notebook
 			{
 				case OFType.Database:
 					openFileDialog.Filter = ResourceHelper.BuildFileFilter(FileFilterType.ShoeboxAnthropologyDatabase, FileFilterType.AllFiles);
-					openFileDialog.Title = LexTextControls.ksSelectAnthropologyStdFmtFile;
+					openFileDialog.Title = LanguageExplorerControls.ksSelectAnthropologyStdFmtFile;
 					break;
 				case OFType.Project:
 					openFileDialog.Filter = ResourceHelper.BuildFileFilter(FileFilterType.ShoeboxProjectFiles, FileFilterType.AllFiles);
-					openFileDialog.Title = LexTextControls.ksSelectShoeboxProjectFile;
+					openFileDialog.Title = LanguageExplorerControls.ksSelectShoeboxProjectFile;
 					break;
 				case OFType.Settings:
 					openFileDialog.Filter = ResourceHelper.BuildFileFilter(FileFilterType.ImportMapping, FileFilterType.AllFiles);
-					openFileDialog.Title = LexTextControls.ksSelectLoadImportSettingsFile;
+					openFileDialog.Title = LanguageExplorerControls.ksSelectLoadImportSettingsFile;
 					break;
 				case OFType.SaveAs:
 					openFileDialog.Filter = ResourceHelper.BuildFileFilter(FileFilterType.ImportMapping, FileFilterType.AllFiles);
-					openFileDialog.Title = LexTextControls.ksSelectSaveImportSettingsFile;
+					openFileDialog.Title = LanguageExplorerControls.ksSelectSaveImportSettingsFile;
 					break;
 			}
 			openFileDialog.FilterIndex = 1;
@@ -431,27 +430,27 @@ namespace LanguageExplorer.Areas.Notebook
 					switch (fileType)
 					{
 						case OFType.Database:
-							sFileType = LexTextControls.ksStandardFormat;
+							sFileType = LanguageExplorerControls.ksStandardFormat;
 							isValid = IsValidSfmFile(openFileDialog.FileName);
 							break;
 						case OFType.Project:
-							sFileType = LexTextControls.ksShoeboxProject;
+							sFileType = LanguageExplorerControls.ksShoeboxProject;
 							var validFile = new IsSfmFile(openFileDialog.FileName);
 							isValid = validFile.IsValid;
 							break;
 						case OFType.SaveAs:
-							sFileType = LexTextControls.ksXmlSettings;
+							sFileType = LanguageExplorerControls.ksXmlSettings;
 							isValid = true;     // no requirements since the file will be overridden
 							break;
 						default:
-							sFileType = LexTextControls.ksXmlSettings;
+							sFileType = LanguageExplorerControls.ksXmlSettings;
 							isValid = IsValidMapFile(openFileDialog.FileName);
 							break;
 					}
 					if (!isValid)
 					{
-						var msg = string.Format(LexTextControls.ksSelectedFileXInvalidY, openFileDialog.FileName, sFileType, System.Environment.NewLine);
-						var dr = MessageBox.Show(this, msg, LexTextControls.ksPossibleInvalidFile, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+						var msg = string.Format(LanguageExplorerControls.ksSelectedFileXInvalidY, openFileDialog.FileName, sFileType, System.Environment.NewLine);
+						var dr = MessageBox.Show(this, msg, LanguageExplorerControls.ksPossibleInvalidFile, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
 						switch (dr)
 						{
 							case DialogResult.Yes:
@@ -694,13 +693,13 @@ namespace LanguageExplorer.Areas.Notebook
 						const string sAutoEnglish = " The Fieldworks import process automatically maintains this file. ";
 						xw.WriteComment(sAutoEnglish);
 						xw.WriteWhitespace(Environment.NewLine);
-						var sDontEdit = LexTextControls.ksDONOTEDIT;
+						var sDontEdit = LanguageExplorerControls.ksDONOTEDIT;
 						if (sDontEdit != sDontEditEnglish)
 						{
 							xw.WriteComment(sDontEdit);
 							xw.WriteWhitespace(Environment.NewLine);
 						}
-						var sAuto = LexTextControls.ksAutomaticallyMaintains;
+						var sAuto = LanguageExplorerControls.ksAutomaticallyMaintains;
 						if (sAuto != sAutoEnglish)
 						{
 							xw.WriteComment(sAuto);
@@ -1209,7 +1208,7 @@ namespace LanguageExplorer.Areas.Notebook
 			{
 				m_sMkr = mkr,
 				m_flid = 0,
-				m_sName = LexTextControls.ksDoNotImport
+				m_sName = LanguageExplorerControls.ksDoNotImport
 			};
 			return rsfNew;
 		}
@@ -1294,8 +1293,8 @@ namespace LanguageExplorer.Areas.Notebook
 			{
 				if (!runSilent)
 				{
-					var msg = string.Format(LexTextControls.ksInvalidSettingsFileX, m_tbSettingsFileName.Text);
-					MessageBox.Show(this, msg, LexTextControls.ksInvalidFile, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					var msg = string.Format(LanguageExplorerControls.ksInvalidSettingsFileX, m_tbSettingsFileName.Text);
+					MessageBox.Show(this, msg, LanguageExplorerControls.ksInvalidFile, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				}
 				fStayHere = true;
 				m_tbSettingsFileName.Focus();
@@ -1304,8 +1303,8 @@ namespace LanguageExplorer.Areas.Notebook
 			{
 				if (!runSilent)
 				{
-					var msg = LexTextControls.ksUndefinedSettingsSaveFile;
-					MessageBox.Show(this, msg, LexTextControls.ksInvalidFile, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					var msg = LanguageExplorerControls.ksUndefinedSettingsSaveFile;
+					MessageBox.Show(this, msg, LanguageExplorerControls.ksInvalidFile, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				}
 				fStayHere = true;
 				m_tbSaveAsFileName.Focus();
@@ -1329,8 +1328,8 @@ namespace LanguageExplorer.Areas.Notebook
 				{
 					if (!runSilent)
 					{
-						var msg = string.Format(LexTextControls.ksInvalidSettingsSaveFileX, m_tbSaveAsFileName.Text);
-						MessageBox.Show(this, msg, LexTextControls.ksInvalidFile, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						var msg = string.Format(LanguageExplorerControls.ksInvalidSettingsSaveFileX, m_tbSaveAsFileName.Text);
+						MessageBox.Show(this, msg, LanguageExplorerControls.ksInvalidFile, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 					}
 					fStayHere = true;
 					m_tbSaveAsFileName.Focus();
@@ -1341,8 +1340,8 @@ namespace LanguageExplorer.Areas.Notebook
 				// We don't want to overwrite the database with the settings!  See LT-8126.
 				if (!runSilent)
 				{
-					var msg = string.Format(LexTextControls.ksSettingsSaveFileSameAsDatabaseFile, m_tbSaveAsFileName.Text, m_tbDatabaseFileName.Text);
-					MessageBox.Show(this, msg, LexTextControls.ksInvalidFile, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					var msg = string.Format(LanguageExplorerControls.ksSettingsSaveFileSameAsDatabaseFile, m_tbSaveAsFileName.Text, m_tbDatabaseFileName.Text);
+					MessageBox.Show(this, msg, LanguageExplorerControls.ksInvalidFile, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				}
 				fStayHere = true;
 			}
@@ -1551,7 +1550,7 @@ namespace LanguageExplorer.Areas.Notebook
 				};
 				if (sfm.m_flid == 0)
 				{
-					sfm.m_sName = LexTextControls.ksDoNotImport;
+					sfm.m_sName = LanguageExplorerControls.ksDoNotImport;
 				}
 				else
 				{
@@ -1825,7 +1824,7 @@ namespace LanguageExplorer.Areas.Notebook
 				m_btnDeleteRecordMapping.Visible = false;
 				m_btnDeleteRecordMapping.Enabled = false;
 				lblHierarchyInstructions.Visible = false;
-				m_btnAdvanced.Text = LexTextControls.ksShowAdvanced;
+				m_btnAdvanced.Text = LanguageExplorerControls.ksShowAdvanced;
 			}
 			else
 			{
@@ -1838,7 +1837,7 @@ namespace LanguageExplorer.Areas.Notebook
 				m_btnDeleteRecordMapping.Visible = true;
 				m_btnDeleteRecordMapping.Enabled = true;
 				lblHierarchyInstructions.Visible = true;
-				m_btnAdvanced.Text = LexTextControls.ksHideAdvanced;
+				m_btnAdvanced.Text = LanguageExplorerControls.ksHideAdvanced;
 			}
 		}
 
@@ -1903,7 +1902,7 @@ namespace LanguageExplorer.Areas.Notebook
 					progressDlg.Maximum = 100;
 					progressDlg.AllowCancel = true;
 					progressDlg.Restartable = true;
-					progressDlg.Title = string.Format(LexTextControls.ksImportingFrom0, m_sSfmDataFile);
+					progressDlg.Title = string.Format(LanguageExplorerControls.ksImportingFrom0, m_sSfmDataFile);
 					m_sLogFile = (string)progressDlg.RunTask(true, ImportStdFmtFile, m_sSfmDataFile);
 					if (m_chkDisplayImportReport.Checked && !string.IsNullOrEmpty(m_sLogFile))
 					{
@@ -1928,14 +1927,14 @@ namespace LanguageExplorer.Areas.Notebook
 					m_dtStart = DateTime.Now;
 					FixSettingsForThisDatabase();
 					var cLines = m_SfmFile.Lines.Count;
-					progressDlg.Title = string.Format(LexTextControls.ksImportingFrom0, Path.GetFileName(m_sSfmDataFile));
+					progressDlg.Title = string.Format(LanguageExplorerControls.ksImportingFrom0, Path.GetFileName(m_sSfmDataFile));
 					progressDlg.StepSize = 1;
 					var cExistingRecords = m_cache.LangProject.ResearchNotebookOA.RecordsOC.Count;
 					if (m_rbReplaceAllEntries.Checked && cExistingRecords > 0)
 					{
 						progressDlg.Minimum = 0;
 						progressDlg.Maximum = cLines + 50;
-						progressDlg.Message = LexTextControls.ksDeletingExistingRecords;
+						progressDlg.Message = LanguageExplorerControls.ksDeletingExistingRecords;
 						// This is rather drastic, but it's what the user asked for!
 						// REVIEW: Should we ask for confirmation before doing this?
 						m_cRecordsDeleted = cExistingRecords;
@@ -1948,7 +1947,7 @@ namespace LanguageExplorer.Areas.Notebook
 						progressDlg.Minimum = 0;
 						progressDlg.Maximum = cLines;
 					}
-					progressDlg.Message = LexTextControls.ksImportingNewRecords;
+					progressDlg.Message = LanguageExplorerControls.ksImportingNewRecords;
 					IRnGenericRec rec = null;
 					var factRec = m_cache.ServiceLocator.GetInstance<IRnGenericRecFactory>();
 					var repoPoss = m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>();
@@ -1958,7 +1957,7 @@ namespace LanguageExplorer.Areas.Notebook
 						progressDlg.Step(1);
 						if (progressDlg.Canceled)
 						{
-							LogMessage(LexTextControls.ksImportCanceledByUser, lineNumber);
+							LogMessage(LanguageExplorerControls.ksImportCanceledByUser, lineNumber);
 							break;
 						}
 						var field = m_SfmFile.Lines[i];
@@ -2067,13 +2066,13 @@ namespace LanguageExplorer.Areas.Notebook
 				}
 				catch (Exception e)
 				{
-					var sMsg = string.Format(LexTextControls.ksProblemImportingFrom, m_tbDatabaseFileName.Text, e.Message);
+					var sMsg = string.Format(LanguageExplorerControls.ksProblemImportingFrom, m_tbDatabaseFileName.Text, e.Message);
 					LogMessage(sMsg, lineNumber);
 					MessageBox.Show(this, sMsg);
 				}
 			}
 			m_dtEnd = DateTime.Now;
-			progressDlg.Message = LexTextControls.ksCreatingImportLog;
+			progressDlg.Message = LanguageExplorerControls.ksCreatingImportLog;
 			return CreateImportReport();
 		}
 
@@ -2089,7 +2088,7 @@ namespace LanguageExplorer.Areas.Notebook
 			{
 				sw.WriteLine("<html>");
 				sw.WriteLine("<head>");
-				var sHeadInfo = string.Format(LexTextControls.ksImportLogForX, m_sSfmDataFile);
+				var sHeadInfo = string.Format(LanguageExplorerControls.ksImportLogForX, m_sSfmDataFile);
 				sw.WriteLine($"  <title>{sHeadInfo}</title>");
 				WriteHtmlJavaScript(sw);    // add the script
 				sw.WriteLine("</head>");
@@ -2098,34 +2097,34 @@ namespace LanguageExplorer.Areas.Notebook
 				var deltaTicks = m_dtEnd.Ticks - m_dtStart.Ticks;   // number of 100-nanosecond intervals
 				var deltaMsec = (int)((deltaTicks + 5000L) / 10000L);   // round off to milliseconds
 				var deltaSec = deltaMsec / 1000;
-				var sDeltaTime = string.Format(LexTextControls.ksImportingTookTime, Path.GetFileName(m_sSfmDataFile), deltaSec, deltaMsec % 1000);
+				var sDeltaTime = string.Format(LanguageExplorerControls.ksImportingTookTime, Path.GetFileName(m_sSfmDataFile), deltaSec, deltaMsec % 1000);
 				sw.WriteLine("<p>{0}</p>", sDeltaTime);
 				sw.Write("<h3>");
 				if (m_cRecordsDeleted == 0)
 				{
-					sw.Write(LexTextControls.ksRecordsCreatedByImport, m_cRecordsRead);
+					sw.Write(LanguageExplorerControls.ksRecordsCreatedByImport, m_cRecordsRead);
 				}
 				else
 				{
-					sw.Write(LexTextControls.ksRecordsDeletedAndCreated, m_cRecordsDeleted, m_cRecordsRead);
+					sw.Write(LanguageExplorerControls.ksRecordsDeletedAndCreated, m_cRecordsDeleted, m_cRecordsRead);
 				}
 				sw.WriteLine("</h3>");
 				WriteMessageLines(sw);
-				ListNewPossibilities(sw, LexTextControls.ksNewAnthropologyListItems, m_rgNewAnthroItem, AreaServices.AnthroEditMachineName);
-				ListNewPossibilities(sw, LexTextControls.ksNewConfidenceListItems, m_rgNewConfidence, AreaServices.ConfidenceEditMachineName);
-				ListNewPossibilities(sw, LexTextControls.ksNewLocationListItems, m_rgNewLocation, AreaServices.LocationsEditMachineName);
-				ListNewPossibilities(sw, LexTextControls.ksNewPeopleListItems, m_rgNewPeople, AreaServices.PeopleEditMachineName);
-				ListNewPossibilities(sw, LexTextControls.ksNewPhraseTagListItems, m_rgNewPhraseTag, string.Empty);
-				ListNewPossibilities(sw, LexTextControls.ksNewRecordTypeListItems, m_rgNewRecType, AreaServices.RecTypeEditMachineName);
-				ListNewPossibilities(sw, LexTextControls.ksNewRestrictionListItems, m_rgNewRestriction, AreaServices.RestrictionsEditMachineName);
-				ListNewPossibilities(sw, LexTextControls.ksNewStatusListItems, m_rgNewStatus, AreaServices.StatusEditMachineName);
-				ListNewPossibilities(sw, LexTextControls.ksNewTimeOfDayListItems, m_rgNewTimeOfDay, string.Empty);
+				ListNewPossibilities(sw, LanguageExplorerControls.ksNewAnthropologyListItems, m_rgNewAnthroItem, AreaServices.AnthroEditMachineName);
+				ListNewPossibilities(sw, LanguageExplorerControls.ksNewConfidenceListItems, m_rgNewConfidence, AreaServices.ConfidenceEditMachineName);
+				ListNewPossibilities(sw, LanguageExplorerControls.ksNewLocationListItems, m_rgNewLocation, AreaServices.LocationsEditMachineName);
+				ListNewPossibilities(sw, LanguageExplorerControls.ksNewPeopleListItems, m_rgNewPeople, AreaServices.PeopleEditMachineName);
+				ListNewPossibilities(sw, LanguageExplorerControls.ksNewPhraseTagListItems, m_rgNewPhraseTag, string.Empty);
+				ListNewPossibilities(sw, LanguageExplorerControls.ksNewRecordTypeListItems, m_rgNewRecType, AreaServices.RecTypeEditMachineName);
+				ListNewPossibilities(sw, LanguageExplorerControls.ksNewRestrictionListItems, m_rgNewRestriction, AreaServices.RestrictionsEditMachineName);
+				ListNewPossibilities(sw, LanguageExplorerControls.ksNewStatusListItems, m_rgNewStatus, AreaServices.StatusEditMachineName);
+				ListNewPossibilities(sw, LanguageExplorerControls.ksNewTimeOfDayListItems, m_rgNewTimeOfDay, string.Empty);
 				// now for custom lists...
 				foreach (var key in m_mapNewPossibilities.Keys)
 				{
 					var list = m_repoList.GetObject(key);
 					var name = list.Name.BestAnalysisVernacularAlternative.Text;
-					var message = string.Format(LexTextControls.ksNewCustomListItems, name);
+					var message = string.Format(LanguageExplorerControls.ksNewCustomListItems, name);
 					ListNewPossibilities(sw, message, m_mapNewPossibilities[key], "");
 				}
 				sw.WriteLine("</body>");
@@ -2137,8 +2136,8 @@ namespace LanguageExplorer.Areas.Notebook
 
 		private void WriteHtmlJavaScript(StreamWriter sw)
 		{
-			var sError = LexTextControls.ksErrorCaughtTryingOpenFile;
-			var sCannot = string.Format(LexTextControls.ksNoFileHyperlinkThisBrowser, m_sSfmDataFile.Replace("\\", "\\\\"));
+			var sError = LanguageExplorerControls.ksErrorCaughtTryingOpenFile;
+			var sCannot = string.Format(LanguageExplorerControls.ksNoFileHyperlinkThisBrowser, m_sSfmDataFile.Replace("\\", "\\\\"));
 			sCannot = sCannot.Replace(Environment.NewLine, "\\n");
 			sw.WriteLine("<script type=\"text/javascript\">");
 			sw.WriteLine("var isIE = typeof window != 'undefined' && typeof window.ActiveXObject != 'undefined';");
@@ -2174,7 +2173,7 @@ namespace LanguageExplorer.Areas.Notebook
 			{
 				return;
 			}
-			sw.WriteLine($"<h2>{LexTextControls.ksMessagesFromAnthropologyImport}</h2>");
+			sw.WriteLine($"<h2>{LanguageExplorerControls.ksMessagesFromAnthropologyImport}</h2>");
 			m_rgMessages.Sort();
 			string currentMessage = null;
 			var sEscapedDataFile = m_sSfmDataFile.Replace("\\", "\\\\");
@@ -2192,12 +2191,12 @@ namespace LanguageExplorer.Areas.Notebook
 				sw.Write("<ul><li>");
 				if (importMessage.LineNumber <= 0)
 				{
-					sw.Write(LexTextControls.ksNoLineNumberInFile, m_sSfmDataFile);
+					sw.Write(LanguageExplorerControls.ksNoLineNumberInFile, m_sSfmDataFile);
 				}
 				else
 				{
 					var sLineLink = string.Format("<a HREF=\"javascript: void 0\" ONCLICK=\"zedit('{0}', '{1}'); return false\">{1}</a>", sEscapedDataFile, importMessage.LineNumber);
-					sw.Write(LexTextControls.ksOnOrBeforeLine, m_sSfmDataFile, sLineLink);
+					sw.Write(LanguageExplorerControls.ksOnOrBeforeLine, m_sSfmDataFile, sLineLink);
 				}
 				sw.WriteLine("</li></ul>");
 			}
@@ -2759,7 +2758,7 @@ namespace LanguageExplorer.Areas.Notebook
 			}
 			if (field.ErrorConvertingData)
 			{
-				LogMessage(string.Format(LexTextControls.ksEncodingConversionProblem, field.Marker), field.LineNumber);
+				LogMessage(string.Format(LanguageExplorerControls.ksEncodingConversionProblem, field.Marker), field.LineNumber);
 			}
 		}
 
@@ -2865,7 +2864,7 @@ namespace LanguageExplorer.Areas.Notebook
 			GenDate gdt;
 			if (!TryParseGenDate(sData, rsf.m_dto.m_rgsFmt, out gdt))
 			{
-				LogMessage(string.Format(LexTextControls.ksCannotParseGenericDate, sData, field.Marker), field.LineNumber);
+				LogMessage(string.Format(LanguageExplorerControls.ksCannotParseGenericDate, sData, field.Marker), field.LineNumber);
 				return;
 			}
 			switch (rsf.m_flid)
@@ -3248,7 +3247,7 @@ namespace LanguageExplorer.Areas.Notebook
 			DateTime dt;
 			if (!DateTime.TryParseExact(sData, rsf.m_dto.m_rgsFmt.ToArray(), null, DateTimeStyles.None, out dt))
 			{
-				LogMessage(string.Format(LexTextControls.ksCannotParseDateTime, field.Data, field.Marker), field.LineNumber);
+				LogMessage(string.Format(LanguageExplorerControls.ksCannotParseDateTime, field.Data, field.Marker), field.LineNumber);
 				return;
 			}
 			switch (rsf.m_flid)
@@ -3333,7 +3332,7 @@ namespace LanguageExplorer.Areas.Notebook
 					}
 				}
 				// log an error.
-				LogMessage(string.Format(LexTextControls.ksCannotMakeDesiredLink, pend.Field.Marker, pend.Field.Data), pend.Field.LineNumber);
+				LogMessage(string.Format(LanguageExplorerControls.ksCannotMakeDesiredLink, pend.Field.Marker, pend.Field.Data), pend.Field.LineNumber);
 			}
 		}
 
@@ -3481,7 +3480,7 @@ namespace LanguageExplorer.Areas.Notebook
 								break;
 							}
 						}
-						LogMessage(string.Format(LexTextControls.ksCannotFindPossibilityList, field.Marker), field.LineNumber);
+						LogMessage(string.Format(LanguageExplorerControls.ksCannotFindPossibilityList, field.Marker), field.LineNumber);
 						return;
 				}
 			}
@@ -3489,7 +3488,7 @@ namespace LanguageExplorer.Areas.Notebook
 
 		private void LogCannotFindListItem(string sItem, SfmField field)
 		{
-			LogMessage(string.Format(LexTextControls.ksCannotFindMatchingListItem, sItem, field.Marker), field.LineNumber);
+			LogMessage(string.Format(LanguageExplorerControls.ksCannotFindMatchingListItem, sItem, field.Marker), field.LineNumber);
 		}
 
 		/// <summary>

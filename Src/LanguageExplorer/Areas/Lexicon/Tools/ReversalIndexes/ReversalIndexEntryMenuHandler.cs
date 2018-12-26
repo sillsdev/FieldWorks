@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using LanguageExplorer.Controls.DetailControls;
-using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.DictionaryConfiguration;
 using SIL.Linq;
 using SIL.LCModel.Infrastructure;

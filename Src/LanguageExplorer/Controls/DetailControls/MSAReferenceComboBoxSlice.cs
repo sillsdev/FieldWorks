@@ -5,13 +5,15 @@
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
+using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.DetailControls.Resources;
-using LanguageExplorer.Controls.LexText;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
+using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
@@ -283,5 +285,407 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		#endregion IVwNotifyChange implementation
+
+		/// <summary>
+		/// Handles a TreeCombo control for use with MorphoSyntaxAnalysis objects.
+		/// </summary>
+		private sealed class MSAPopupTreeManager : PopupTreeManager
+		{
+			private const int kEmpty = 0;
+			private const int kLine = -1;
+			private const int kMore = -2;
+			private const int kCreate = -3;
+			private const int kModify = -4;
+			#region Data members
+			// The following strings are loaded from the string table if possible.
+			private string m_sUnknown;
+			private string m_sSpecifyGramFunc;
+			private string m_sModifyGramFunc;
+			private string m_sSpecifyDifferent;
+			private string m_sCreateGramFunc;
+			private string m_sEditGramFunc;
+			#endregion Data members
+
+			/// <summary>
+			/// Constructor.
+			/// </summary>
+			public MSAPopupTreeManager(TreeCombo treeCombo, LcmCache cache, ICmPossibilityList list, int ws, bool useAbbr, IPropertyTable propertyTable, IPublisher publisher, Form parent)
+				: base(treeCombo, cache, propertyTable, publisher, list, ws, useAbbr, parent)
+			{
+				LoadStrings();
+			}
+
+			/// <summary>
+			/// Constructor.
+			/// </summary>
+			public MSAPopupTreeManager(PopupTree popupTree, LcmCache cache, ICmPossibilityList list, int ws, bool useAbbr, IPropertyTable propertyTable, IPublisher publisher, Form parent)
+				: base(popupTree, cache, propertyTable, publisher, list, ws, useAbbr, parent)
+			{
+				LoadStrings();
+			}
+
+			public ILexSense Sense { get; set; }
+
+			public string FieldName { get; set; } = string.Empty;
+
+			public IPersistenceProvider PersistenceProvider { get; set; }
+
+			private void LoadStrings()
+			{
+				// Load the special strings from the string table.
+				m_sUnknown = StringTable.Table.GetString("NullItemLabel", "DetailControls/MSAReferenceComboBox");
+				m_sSpecifyGramFunc = StringTable.Table.GetString("AddNewGramFunc", "DetailControls/MSAReferenceComboBox");
+				m_sModifyGramFunc = StringTable.Table.GetString("ModifyGramFunc", "DetailControls/MSAReferenceComboBox");
+				m_sSpecifyDifferent = StringTable.Table.GetString("SpecifyDifferentGramFunc", "DetailControls/MSAReferenceComboBox");
+				m_sCreateGramFunc = StringTable.Table.GetString("CreateGramFunc", "DetailControls/MSAReferenceComboBox");
+				m_sEditGramFunc = StringTable.Table.GetString("EditGramFunc", "DetailControls/MSAReferenceComboBox");
+				if (string.IsNullOrEmpty(m_sUnknown) || m_sUnknown == "*NullItemLabel*")
+				{
+					m_sUnknown = LanguageExplorerControls.ks_NotSure_;
+				}
+				if (string.IsNullOrEmpty(m_sSpecifyGramFunc) || m_sSpecifyGramFunc == "*AddNewGramFunc*")
+				{
+					m_sSpecifyGramFunc = LanguageExplorerControls.ksSpecifyGrammaticalInfo_;
+				}
+				if (string.IsNullOrEmpty(m_sModifyGramFunc) || m_sModifyGramFunc == "*ModifyGramFunc*")
+				{
+					m_sModifyGramFunc = LanguageExplorerControls.ksModifyThisGrammaticalInfo_;
+				}
+				if (string.IsNullOrEmpty(m_sSpecifyDifferent) || m_sSpecifyDifferent == "*SpecifyDifferentGramFunc*")
+				{
+					m_sSpecifyDifferent = LanguageExplorerControls.ksSpecifyDifferentGrammaticalInfo_;
+				}
+				if (string.IsNullOrEmpty(m_sCreateGramFunc) || m_sCreateGramFunc == "*CreateGramFuncGramFunc*")
+				{
+					m_sCreateGramFunc = LanguageExplorerControls.ksCreateNewGrammaticalInfo;
+				}
+				if (string.IsNullOrEmpty(m_sEditGramFunc) || m_sEditGramFunc == "*EditGramFuncGramFunc*")
+				{
+					m_sEditGramFunc = LanguageExplorerControls.ksEditGrammaticalInfo;
+				}
+			}
+
+			/// <summary>
+			/// Populate the tree with just ONE menu item, the one that we want to select.
+			/// </summary>
+			public TreeNode MakeTargetMenuItem()
+			{
+				var popupTree = GetPopupTree();
+				popupTree.Nodes.Clear();
+				var msa = Sense.MorphoSyntaxAnalysisRA;
+				return msa == null ? AddNotSureItem(popupTree) : AddTreeNodeForMsa(popupTree, msa);
+			}
+
+			/// <summary>
+			/// NOTE that this implementation IGNORES hvoTarget and selects the MSA indicated by the sense.
+			/// </summary>
+			protected override TreeNode MakeMenuItems(PopupTree popupTree, int hvoTarget)
+			{
+				Debug.Assert(Sense != null);
+				hvoTarget = Sense.MorphoSyntaxAnalysisRA?.Hvo ?? 0;
+				TreeNode match = null;
+				var fStem = Sense.GetDesiredMsaType() == MsaType.kStem;
+				if (fStem)
+				{
+					// We want the order to be:
+					// 1. current msa items
+					// 2. possible Parts of Speech
+					// 3. "not sure" items
+					// We also want the Parts of Speech to be sorted, but not the whole tree.
+					// First add the part of speech items (which may be a tree...).
+					const int tagName = CmPossibilityTags.kflidName;
+					// make sure they are sorted
+					popupTree.Sorted = true;
+					AddNodes(popupTree.Nodes, List.Hvo, CmPossibilityListTags.kflidPossibilities, 0, tagName);
+					// reset the sorted flag - we only want the parts of speech to be sorted.
+					popupTree.Sorted = false;
+					// Remember the (sorted) nodes in an array (so we can use the AddRange() method).
+					var posArray = new TreeNode[popupTree.Nodes.Count];
+					popupTree.Nodes.CopyTo(posArray, 0);
+					// now clear out the nodes so we can get the order we want
+					popupTree.Nodes.Clear();
+					// Add the existing MSA items for the sense's owning entry.
+					foreach (var msa in Sense.Entry.MorphoSyntaxAnalysesOC)
+					{
+						var node = AddTreeNodeForMsa(popupTree, msa);
+						if (msa.Hvo == hvoTarget)
+						{
+							match = node;
+						}
+					}
+					AddTimberLine(popupTree);
+					// now add the sorted parts of speech
+					popupTree.Nodes.AddRange(posArray);
+					AddTimberLine(popupTree);
+					//	1. "<Not Sure>" to produce a negligible Msa reference.
+					//	2. "More..." command to launch category chooser dialog.
+					var empty = AddNotSureItem(popupTree);
+					if (match == null)
+					{
+						match = empty;
+					}
+					AddMoreItem(popupTree);
+				}
+				else
+				{
+					var cMsa = Sense.Entry.MorphoSyntaxAnalysesOC.Count;
+					if (cMsa == 0)
+					{
+						//	1. "<Not Sure>" to produce a negligible Msa reference.
+						//	2. "Specify..." command.
+						//Debug.Assert(hvoTarget == 0);
+						match = AddNotSureItem(popupTree);
+						popupTree.Nodes.Add(new HvoTreeNode(TsStringUtils.MakeString(m_sSpecifyGramFunc, Cache.WritingSystemFactory.UserWs), kCreate));
+					}
+					else
+					{
+						// 1. Show the current Msa at the top.
+						// 2. "Modify ..." command.
+						// 3. Show other existing Msas next (if any).
+						// 4. <Not Sure> to produce a negligible Msa reference.
+						// 5. "Specify different..." command.
+						hvoTarget = 0;
+						// We should always have an MSA assigned to every sense, but sometimes this
+						// hasn't happened.  Don't crash if the data isn't quite correct.  See FWR-3090.
+						if (Sense.MorphoSyntaxAnalysisRA != null)
+						{
+							hvoTarget = Sense.MorphoSyntaxAnalysisRA.Hvo;
+						}
+						if (hvoTarget != 0)
+						{
+							var tssLabel = Sense.MorphoSyntaxAnalysisRA.InterlinearNameTSS;
+							var node = new HvoTreeNode(tssLabel, hvoTarget);
+							popupTree.Nodes.Add(node);
+							match = node;
+							popupTree.Nodes.Add(new HvoTreeNode(TsStringUtils.MakeString(m_sModifyGramFunc, Cache.WritingSystemFactory.UserWs), kModify));
+							AddTimberLine(popupTree);
+						}
+						var cMsaExtra = 0;
+						foreach (var msa in Sense.Entry.MorphoSyntaxAnalysesOC)
+						{
+							if (msa.Hvo == hvoTarget)
+							{
+								continue;
+							}
+							var tssLabel = msa.InterlinearNameTSS;
+							var node = new HvoTreeNode(tssLabel, msa.Hvo);
+							popupTree.Nodes.Add(node);
+							++cMsaExtra;
+						}
+						if (cMsaExtra > 0)
+						{
+							AddTimberLine(popupTree);
+						}
+						popupTree.Nodes.Add(new HvoTreeNode(TsStringUtils.MakeString(m_sSpecifyDifferent, Cache.WritingSystemFactory.UserWs), kCreate));
+					}
+				}
+				return match;
+			}
+
+			private HvoTreeNode AddTreeNodeForMsa(PopupTree popupTree, IMoMorphSynAnalysis msa)
+			{
+				// JohnT: as described in LT-4633, a stem can be given an allomorph that
+				// is an affix. So we need some sort of way to handle this.
+				var tssLabel = msa.InterlinearNameTSS;
+				var stemMsa = msa as IMoStemMsa;
+				if (stemMsa != null && stemMsa.PartOfSpeechRA == null)
+				{
+					tssLabel = TsStringUtils.MakeString(m_sUnknown, Cache.ServiceLocator.WritingSystemManager.UserWs);
+				}
+				var node = new HvoTreeNode(tssLabel, msa.Hvo);
+				popupTree.Nodes.Add(node);
+				return node;
+			}
+
+			protected override void m_treeCombo_AfterSelect(object sender, TreeViewEventArgs e)
+			{
+				var selectedNode = e.Node as HvoTreeNode;
+				// Launch dialog only by a mouse click (or simulated mouse click).
+				if (selectedNode != null && selectedNode.Hvo == kMore && e.Action == TreeViewAction.ByMouse)
+				{
+					ChooseFromMasterCategoryList();
+				}
+				else if (selectedNode != null && selectedNode.Hvo == kCreate && e.Action == TreeViewAction.ByMouse)
+				{
+					if (AddNewMsa())
+					{
+						return;
+					}
+				}
+				else if (selectedNode != null && selectedNode.Hvo == kModify && e.Action == TreeViewAction.ByMouse)
+				{
+					if (EditExistingMsa())
+					{
+						return;
+					}
+				}
+				else if (selectedNode != null && selectedNode.Hvo == kEmpty && e.Action == TreeViewAction.ByMouse)
+				{
+					SwitchToEmptyMsa();
+					return;
+				}
+				base.m_treeCombo_AfterSelect(sender, e);
+			}
+
+			private void SwitchToEmptyMsa()
+			{
+				CreateEmptyMsa();
+				LoadPopupTree(Sense.MorphoSyntaxAnalysisRA.Hvo);
+			}
+
+			private void CreateEmptyMsa()
+			{
+				var dummyMsa = new SandboxGenericMSA { MsaType = Sense.GetDesiredMsaType() };
+				// To make it fully 'not sure' we must discard knowledge of affix type.
+				if (dummyMsa.MsaType == MsaType.kInfl || dummyMsa.MsaType == MsaType.kDeriv)
+				{
+					dummyMsa.MsaType = MsaType.kUnclassified;
+				}
+				UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerControls.ksUndoSetX, FieldName), string.Format(LanguageExplorerControls.ksRedoSetX, FieldName), Sense, () =>
+				{
+					Sense.SandboxMSA = dummyMsa;
+				});
+			}
+
+			private void ChooseFromMasterCategoryList()
+			{
+				var pt = GetPopupTree();
+				// Force the PopupTree to Hide() to trigger popupTree_PopupTreeClosed().
+				// This will effectively revert the list selection to a previous confirmed state.
+				// Whatever happens below, we don't want to actually leave the "More..." node selected!
+				// This is at least required if the user selects "Cancel" from the dialog below.
+				if (Sense.MorphoSyntaxAnalysisRA != null)
+				{
+					pt.SelectObjWithoutTriggeringBeforeAfterSelects(Sense.MorphoSyntaxAnalysisRA.Hvo);
+				}
+				// FWR-3542 -- Need this in .Net too, or it eats the first mouse click intended
+				// for the dialog we're about to show below.
+				pt.HideForm();
+				// The constructor adds an Application.Idle handler, which when run, removes the handler
+				Application.Idle += LaunchChooseFromMasterCategoryListOnIdle;
+			}
+
+			private void LaunchChooseFromMasterCategoryListOnIdle(object sender, EventArgs e)
+			{
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+Debug.WriteLine($"Start: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
+				// now being handled
+				Application.Idle -= LaunchChooseFromMasterCategoryListOnIdle;
+				// now launch the dialog
+				using (var dlg = new MasterCategoryListDlg())
+				{
+					dlg.SetDlginfo(List, m_propertyTable, false, null);
+					switch (dlg.ShowDialog(ParentForm))
+					{
+						case DialogResult.OK:
+							var sandboxMsa = new SandboxGenericMSA();
+							sandboxMsa.MainPOS = dlg.SelectedPOS;
+							sandboxMsa.MsaType = Sense.GetDesiredMsaType();
+							UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerControls.ksUndoSetX, FieldName), string.Format(LanguageExplorerControls.ksRedoSetX, FieldName), Sense, () =>
+							{
+								Sense.SandboxMSA = sandboxMsa;
+							});
+							// everything should be setup with new node selected, so return.
+							break;
+						case DialogResult.Yes:
+							// represents a click on the link to create a new Grammar Category.
+							// Post a message so that we jump to Grammar(area)/Categories tool.
+							// Do this before we close any parent dialog in case
+							// the parent wants to check to see if such a Jump is pending.
+							// NOTE: We use PostMessage here, rather than SendMessage which
+							// disposes of the PopupTree before we and/or our parents might
+							// be finished using it (cf. LT-2563).
+							LinkHandler.PublishFollowLinkMessage(m_publisher, new FwLinkArgs(AreaServices.PosEditMachineName, dlg.SelectedPOS.Guid));
+							if (ParentForm != null && ParentForm.Modal)
+							{
+								// Close the dlg that opened the master POS dlg,
+								// since its hotlink was used to close it,
+								// and a new POS has been created.
+								ParentForm.DialogResult = DialogResult.Cancel;
+								ParentForm.Close();
+							}
+							break;
+						default:
+							// NOTE: If the user has selected "Cancel", then don't change
+							// our m_lastConfirmedNode to the "More..." node. Keep it
+							// the value set by popupTree_PopupTreeClosed() when we
+							// called pt.Hide() above. (cf. comments in LT-2522)
+							break;
+					}
+				}
+#if RANDYTODO_TEST_Application_Idle
+// TODO: Remove when finished sorting out idle issues.
+Debug.WriteLine($"End: Application.Idle run at: '{DateTime.Now:HH:mm:ss.ffff}': on '{GetType().Name}'.");
+#endif
+			}
+
+			private bool AddNewMsa()
+			{
+				var pt = GetPopupTree();
+				// Force the PopupTree to Hide() to trigger popupTree_PopupTreeClosed().
+				// This will effectively revert the list selection to a previous confirmed state.
+				// Whatever happens below, we don't want to actually leave the "Specify ..." node selected!
+				// This is at least required if the user selects "Cancel" from the dialog below.
+				if (Sense.MorphoSyntaxAnalysisRA != null)
+				{
+					pt.SelectObj(Sense.MorphoSyntaxAnalysisRA.Hvo);
+				}
+				if (Platform.IsMono)
+				{
+					// If Popup tree is shown whilst the dialog is shown, the first click on the dialog is consumed by the
+					// Popup tree, (and closes it down). On .NET the PopupTree appears to be automatically closed.
+					pt.HideForm();
+				}
+				using (var dlg = new MsaCreatorDlg())
+				{
+					var dummyMsa = new SandboxGenericMSA { MsaType = Sense.GetDesiredMsaType() };
+					dlg.SetDlgInfo(Cache, PersistenceProvider, m_propertyTable, m_publisher, Sense.Entry, dummyMsa, 0, false, null);
+					if (dlg.ShowDialog(ParentForm) == DialogResult.OK)
+					{
+						Cache.DomainDataByFlid.BeginUndoTask(string.Format(LanguageExplorerControls.ksUndoSetX, FieldName), string.Format(LanguageExplorerControls.ksRedoSetX, FieldName));
+						Sense.SandboxMSA = dlg.SandboxMSA;
+						Cache.DomainDataByFlid.EndUndoTask();
+						LoadPopupTree(Sense.MorphoSyntaxAnalysisRA.Hvo);
+						return true;
+					}
+				}
+				return false;
+			}
+
+			private bool EditExistingMsa()
+			{
+				var pt = GetPopupTree();
+				// Force the PopupTree to Hide() to trigger popupTree_PopupTreeClosed().
+				// This will effectively revert the list selection to a previous confirmed state.
+				// Whatever happens below, we don't want to actually leave the "Modify ..." node selected!
+				// This is at least required if the user selects "Cancel" from the dialog below.
+				if (Sense.MorphoSyntaxAnalysisRA != null)
+				{
+					pt.SelectObj(Sense.MorphoSyntaxAnalysisRA.Hvo);
+				}
+				if (Platform.IsMono)
+				{
+					// If Popup tree is shown whilst the dialog is shown, the first click on the dialog is consumed by the
+					// Popup tree, (and closes it down). On .NET the PopupTree appears to be automatically closed.
+					pt.HideForm();
+				}
+				var dummyMsa = SandboxGenericMSA.Create(Sense.MorphoSyntaxAnalysisRA);
+				using (var dlg = new MsaCreatorDlg())
+				{
+					dlg.SetDlgInfo(Cache, PersistenceProvider, m_propertyTable, m_publisher, Sense.Entry, dummyMsa, Sense.MorphoSyntaxAnalysisRA.Hvo, true, m_sEditGramFunc);
+					if (dlg.ShowDialog(ParentForm) == DialogResult.OK)
+					{
+						Cache.DomainDataByFlid.BeginUndoTask(string.Format(LanguageExplorerControls.ksUndoSetX, FieldName), string.Format(LanguageExplorerControls.ksRedoSetX, FieldName));
+						Sense.SandboxMSA = dlg.SandboxMSA;
+						Cache.DomainDataByFlid.EndUndoTask();
+						LoadPopupTree(Sense.MorphoSyntaxAnalysisRA.Hvo);
+						return true;
+					}
+				}
+				return false;
+			}
+		}
 	}
 }

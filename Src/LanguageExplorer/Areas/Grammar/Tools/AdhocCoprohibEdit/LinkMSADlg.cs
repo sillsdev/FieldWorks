@@ -5,7 +5,6 @@
 using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
-using LanguageExplorer.Controls.LexText;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
@@ -21,8 +20,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 
 		protected override WindowParams DefaultWindowParams => new WindowParams
 		{
-			m_title = LexTextControls.ksChooseMorphAndGramInfo,
-			m_btnText = LexTextControls.ks_OK
+			m_title = LanguageExplorerControls.ksChooseMorphAndGramInfo,
+			m_btnText = LanguageExplorerControls.ks_OK
 		};
 
 		protected override string PersistenceLabel => "LinkMSA";

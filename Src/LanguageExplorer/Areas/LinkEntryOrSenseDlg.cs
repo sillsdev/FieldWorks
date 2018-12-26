@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
-using LanguageExplorer.Controls.LexText;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Areas
@@ -40,8 +39,8 @@ namespace LanguageExplorer.Areas
 
 		protected override WindowParams DefaultWindowParams => new WindowParams
 		{
-			m_title = LexTextControls.ksChooseLexEntryOrSense,
-			m_btnText = LexTextControls.ks_OK
+			m_title = LanguageExplorerControls.ksChooseLexEntryOrSense,
+			m_btnText = LanguageExplorerControls.ks_OK
 		};
 
 		protected override string PersistenceLabel => "LinkEntryOrSense";
@@ -189,7 +188,7 @@ namespace LanguageExplorer.Areas
 					else
 					{
 						// Entry has no senses, so disable controls, and notify user.
-						m_fwcbSenses.Text = LexTextControls.ksNoSensesInEntry;
+						m_fwcbSenses.Text = LanguageExplorerControls.ksNoSensesInEntry;
 					}
 				}
 				else

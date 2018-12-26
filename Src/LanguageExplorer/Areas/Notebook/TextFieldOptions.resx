@@ -456,7 +456,7 @@
     <value>m_btnAddWritingSystem</value>
   </data>
   <data name="&gt;&gt;m_btnAddWritingSystem.Type" xml:space="preserve">
-    <value>LanguageExplorer.Controls.LexText.AddWritingSystemButton, LanguageExplorer, Version=10.0.0.15612, Culture=neutral, PublicKeyToken=null</value>
+    <value>LanguageExplorer.Controls.AddWritingSystemButton, LanguageExplorer, Version=10.0.0.15612, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_btnAddWritingSystem.Parent" xml:space="preserve">
     <value>$this</value>

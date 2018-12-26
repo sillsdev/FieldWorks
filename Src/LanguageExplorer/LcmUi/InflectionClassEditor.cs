@@ -4,18 +4,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using System.Linq;
+using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
-using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.XMLViews;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.FieldWorks.Common.Controls;
-using SIL.LCModel.DomainServices;
-using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.DomainServices;
 using SIL.Xml;
 
 namespace LanguageExplorer.LcmUi

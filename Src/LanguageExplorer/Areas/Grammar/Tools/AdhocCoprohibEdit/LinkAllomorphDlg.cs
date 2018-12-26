@@ -6,7 +6,6 @@ using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
-using LanguageExplorer.Controls.LexText;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 
@@ -23,8 +22,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 
 		protected override WindowParams DefaultWindowParams => new WindowParams
 		{
-			m_title = LexTextControls.ksChooseAllomorph,
-			m_btnText = LexTextControls.ks_OK
+			m_title = LanguageExplorerControls.ksChooseAllomorph,
+			m_btnText = LanguageExplorerControls.ks_OK
 		};
 
 		protected override string PersistenceLabel => "LinkAllomorph";

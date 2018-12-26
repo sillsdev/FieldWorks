@@ -6,7 +6,6 @@ using System;
 using System.Globalization;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
-using LanguageExplorer.Controls.LexText;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.WritingSystems;
@@ -15,7 +14,7 @@ using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.Impls
 {
-	public partial class LexOptionsDlg : Form, IFwExtension, IFormReplacementNeeded
+	internal partial class LexOptionsDlg : Form, IFwExtension, IFormReplacementNeeded
 	{
 		private IPropertyTable m_propertyTable;
 		private LcmCache m_cache;
@@ -35,8 +34,8 @@ namespace LanguageExplorer.Impls
 				ReshowDelay = 500,
 				IsBalloon = true
 			};
-			_optionsTooltip.SetToolTip(updateGlobalWS, LexTextControls.ksUpdateGlobalWsTooltip);
-			_optionsTooltip.SetToolTip(groupBox1, LexTextControls.ksUserInterfaceTooltip);
+			_optionsTooltip.SetToolTip(updateGlobalWS, LanguageExplorerControls.ksUpdateGlobalWsTooltip);
+			_optionsTooltip.SetToolTip(groupBox1, LanguageExplorerControls.ksUserInterfaceTooltip);
 		}
 
 		/// <summary>

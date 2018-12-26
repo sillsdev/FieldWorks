@@ -6,7 +6,6 @@ using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
-using LanguageExplorer.Controls.LexText;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel;
@@ -127,12 +126,12 @@ namespace LanguageExplorer.Areas.Notebook
 				if (string.IsNullOrEmpty(m_titleTextBox.Text))
 				{
 					e.Cancel = true;
-					MessageBox.Show(this, LexTextControls.ksFillInTitle, LexTextControls.ksMissingInformation, MessageBoxButtons.OK, MessageBoxIcon.Information);
+					MessageBox.Show(this, LanguageExplorerControls.ksFillInTitle, LanguageExplorerControls.ksMissingInformation, MessageBoxButtons.OK, MessageBoxIcon.Information);
 					return;
 				}
 				using (new WaitCursor(this))
 				{
-					UndoableUnitOfWorkHelper.Do(LexTextControls.ksUndoCreateRecord, LexTextControls.ksRedoCreateRecord, m_cache.ActionHandlerAccessor, () =>
+					UndoableUnitOfWorkHelper.Do(LanguageExplorerControls.ksUndoCreateRecord, LanguageExplorerControls.ksRedoCreateRecord, m_cache.ActionHandlerAccessor, () =>
 					{
 						var recFactory = m_cache.ServiceLocator.GetInstance<IRnGenericRecFactory>();
 						var posHvo = ((HvoTreeNode)m_typeCombo.SelectedNode).Hvo;

@@ -3,7 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
-using LanguageExplorer.Controls.LexText;
+using LanguageExplorer.Controls;
 
 namespace LanguageExplorer.Areas.Notebook
 {
@@ -57,7 +57,7 @@ namespace LanguageExplorer.Areas.Notebook
 			this.m_chkIgnore = new System.Windows.Forms.CheckBox();
 			this.m_btnStyles = new System.Windows.Forms.Button();
 			this.m_cbStyle = new System.Windows.Forms.ComboBox();
-			this.m_btnAddWS = new LanguageExplorer.Controls.LexText.AddWritingSystemButton(this.components);
+			this.m_btnAddWS = new AddWritingSystemButton(this.components);
 			this.m_cbWritingSystem = new System.Windows.Forms.ComboBox();
 			this.m_btnOK = new System.Windows.Forms.Button();
 			this.m_btnCancel = new System.Windows.Forms.Button();

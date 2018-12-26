@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
-using LanguageExplorer.Controls.LexText;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 {
@@ -43,8 +42,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ComplexConcControl));
-			this.m_view = new LanguageExplorer.Controls.LexText.PatternView();
-			this.m_insertControl = new LanguageExplorer.Controls.LexText.InsertionControl();
+			this.m_view = new PatternView();
+			this.m_insertControl = new InsertionControl();
 			this.m_searchButton = new System.Windows.Forms.Button();
 			this.m_panel = new System.Windows.Forms.TableLayoutPanel();
 			this.m_panel.SuspendLayout();
@@ -76,7 +75,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			resources.ApplyResources(this.m_insertControl, "m_insertControl");
 			this.m_insertControl.Name = "m_insertControl";
 			this.m_insertControl.NoOptionsMessage = null;
-			this.m_insertControl.Insert += new System.EventHandler<LanguageExplorer.Controls.LexText.InsertEventArgs>(this.m_insertControl_Insert);
+			this.m_insertControl.Insert += new System.EventHandler<InsertEventArgs>(this.m_insertControl_Insert);
 			// 
 			// m_searchButton
 			// 

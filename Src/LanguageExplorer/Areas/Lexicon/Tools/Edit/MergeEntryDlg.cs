@@ -9,7 +9,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using LanguageExplorer.Controls.LexText;
+using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -28,8 +28,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		protected override WindowParams DefaultWindowParams => new WindowParams
 		{
-			m_title = LexTextControls.ksMergeEntry,
-			m_btnText = LexTextControls.ks_Merge
+			m_title = LanguageExplorerControls.ksMergeEntry,
+			m_btnText = LanguageExplorerControls.ks_Merge
 		};
 
 		protected override string PersistenceLabel => "MergeEntry";
@@ -109,7 +109,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		protected override void SetBottomMessage()
 		{
 			var userWs = m_cache.WritingSystemFactory.UserWs;
-			var sBase = m_selObject != null ? LexTextControls.ksEntryXMergedIntoY : LexTextControls.ksEntryXMergedIntoSel;
+			var sBase = m_selObject != null ? LanguageExplorerControls.ksEntryXMergedIntoY : LanguageExplorerControls.ksEntryXMergedIntoSel;
 			var tsb = TsStringUtils.MakeStrBldr();
 			tsb.ReplaceTsString(0, tsb.Length, TsStringUtils.MakeString(sBase, userWs));
 			// Replace every "{0}" with the headword we'll be merging, and make it bold.

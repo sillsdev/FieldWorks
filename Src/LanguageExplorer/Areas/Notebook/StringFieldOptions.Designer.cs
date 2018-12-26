@@ -3,7 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
-using LanguageExplorer.Controls.LexText;
+using LanguageExplorer.Controls;
 
 namespace LanguageExplorer.Areas.Notebook
 {
@@ -47,7 +47,7 @@ namespace LanguageExplorer.Areas.Notebook
 			this.m_cbWritingSystem = new System.Windows.Forms.ComboBox();
 			this.m_lblWritingSystem = new System.Windows.Forms.Label();
 			this.m_toolTip = new System.Windows.Forms.ToolTip(this.components);
-			this.m_btnAddWritingSystem = new LanguageExplorer.Controls.LexText.AddWritingSystemButton(this.components);
+			this.m_btnAddWritingSystem = new AddWritingSystemButton(this.components);
 			this.SuspendLayout();
 			//
 			// m_cbWritingSystem

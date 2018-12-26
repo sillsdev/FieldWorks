@@ -328,6 +328,6 @@
 	<value>RecordGoDlg</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-	<value>LanguageExplorer.Controls.LexText.BaseGoDlg, LanguageExplorer, Version=6.1.1.28686, Culture=neutral, PublicKeyToken=null</value>
+	<value>LanguageExplorer.Controls.BaseGoDlg, LanguageExplorer, Version=6.1.1.28686, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

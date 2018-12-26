@@ -11,7 +11,6 @@ using System.Windows.Forms;
 using System.Xml.Serialization;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
-using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.SfmToXml;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
@@ -41,7 +40,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			InitializeComponent();
 			tabSteps.KeyDown += OnKeyDown;
 			tabSteps.KeyUp += OnKeyUp;
-			LexImportWizard.EnsureWindows1252ConverterExists();
+			ControlServices.EnsureWindows1252ConverterExists();
 		}
 
 		protected virtual void SetDialogTitle()

@@ -9,8 +9,8 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
-using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
@@ -990,7 +990,7 @@ namespace LanguageExplorer.Areas
 
 		private void InitializeComponent()
 		{
-			this._view = new LanguageExplorer.Controls.LexText.PatternView();
+			this._view = new PatternView();
 			this.InsertionControl = new InsertionControl();
 			this.m_panel.SuspendLayout();
 			this.SuspendLayout();

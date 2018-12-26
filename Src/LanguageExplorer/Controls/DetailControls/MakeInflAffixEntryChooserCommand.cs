@@ -6,7 +6,6 @@ using System;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.DetailControls.Resources;
-using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;

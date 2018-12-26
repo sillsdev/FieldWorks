@@ -10,7 +10,6 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
-using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Filters;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;

@@ -10,15 +10,15 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using Ionic.Zip;
-using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.LcmUi.Dialogs;
+using LanguageExplorer.LIFT;
+using SIL.Code;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Utils;
 using SIL.Linq;
 using SIL.WritingSystems;
-using SIL.Code;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.DictionaryConfiguration
 {

@@ -4,7 +4,7 @@
 
 using System;
 using System.Windows.Forms;
-using LanguageExplorer.Controls.LexText;
+using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
 using SilEncConverters40;
@@ -74,7 +74,7 @@ namespace LanguageExplorer.Areas.Notebook
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(this, string.Format(LexTextControls.ksErrorAccessingEncodingConverters, ex.Message));
+				MessageBox.Show(this, string.Format(LanguageExplorerControls.ksErrorAccessingEncodingConverters, ex.Message));
 				return;
 			}
 		}

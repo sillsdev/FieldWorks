@@ -3,7 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
-using LanguageExplorer.Controls.LexText;
+using LanguageExplorer.Controls;
 
 namespace LanguageExplorer.Areas.Notebook
 {
@@ -119,7 +119,7 @@ namespace LanguageExplorer.Areas.Notebook
 			this.lblMappingLanguages = new System.Windows.Forms.Label();
 			this.lblMappingLanguagesInstructions = new System.Windows.Forms.Label();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
-			this.m_btnAddWritingSystem = new LanguageExplorer.Controls.LexText.AddWritingSystemButton(this.components);
+			this.m_btnAddWritingSystem = new AddWritingSystemButton(this.components);
 			this.m_btnModifyMappingLanguage = new System.Windows.Forms.Button();
 			this.m_lvMappingLanguages = new System.Windows.Forms.ListView();
 			this.LangcolumnHeader1 = new System.Windows.Forms.ColumnHeader();

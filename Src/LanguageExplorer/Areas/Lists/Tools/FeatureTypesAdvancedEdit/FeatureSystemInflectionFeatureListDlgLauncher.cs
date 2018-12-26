@@ -5,7 +5,6 @@
 using System.Windows.Forms;
 using LanguageExplorer.Areas.Grammar;
 using LanguageExplorer.Controls.DetailControls;
-using LanguageExplorer.Controls.LexText;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 

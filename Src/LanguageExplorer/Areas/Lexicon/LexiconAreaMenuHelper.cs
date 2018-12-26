@@ -8,7 +8,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls;
-using LanguageExplorer.Controls.LexText;
+using LanguageExplorer.LIFT;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 

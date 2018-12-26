@@ -3,7 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
-using LanguageExplorer.Controls.LexText;
+using LanguageExplorer.Controls;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 
@@ -22,9 +22,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				var wp = new WindowParams
 				{
-					m_title = LexTextControls.ksFindEntryToAddAllomorph,
-					m_label = LexTextControls.ksGo_To_,
-					m_btnText = LexTextControls.ksAddAllomorph_
+					m_title = LanguageExplorerControls.ksFindEntryToAddAllomorph,
+					m_label = LanguageExplorerControls.ksGo_To_,
+					m_btnText = LanguageExplorerControls.ksAddAllomorph_
 				};
 				return wp;
 			}
@@ -139,11 +139,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				MatchingForm = fMatchingForm;
 				if (fMatchingForm && fMatchingType)
 				{
-					m_btnOK.Text = LexTextControls.ksUseAllomorph;
+					m_btnOK.Text = LanguageExplorerControls.ksUseAllomorph;
 				}
 				else
 				{
-					m_btnOK.Text = LexTextControls.ksAddAllomorph_;
+					m_btnOK.Text = LanguageExplorerControls.ksAddAllomorph_;
 				}
 				m_btnOK.Enabled = true;
 			}

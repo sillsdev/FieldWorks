@@ -398,12 +398,14 @@
     <Compile Include="Controls\HelperContextMenu.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\ILexImportWizard.cs" />
     <Compile Include="Controls\IsSfmFile.cs" />
     <Compile Include="Areas\Notebook\SfmFile.cs" />
-    <Compile Include="Controls\LexText\ILexImportOnlyForTesting.cs" />
-    <Compile Include="Controls\LexText\LexImportCustomField.cs" />
-    <Compile Include="Controls\LexText\LexImportField.cs" />
-    <Compile Include="Controls\LexText\LexImportFields.cs" />
+    <Compile Include="Impls\IFlexConverterOnlyForTesting.cs" />
+    <Compile Include="Impls\ILexImportOnlyForTesting.cs" />
+    <Compile Include="Impls\LexImportCustomField.cs" />
+    <Compile Include="Impls\LexImportField.cs" />
+    <Compile Include="Impls\LexImportFields.cs" />
     <Compile Include="Controls\LocationInfo.cs" />
     <Compile Include="Controls\MaxStringWidthForColumnEnv.cs" />
     <Compile Include="Controls\MoveOrCopyFilesController.cs" />
@@ -787,41 +789,39 @@
     </Compile>
     <Compile Include="Controls\HvoTreeNode.cs" />
     <Compile Include="Controls\HvoTssComboItem.cs" />
-    <Compile Include="Controls\LexText\CFChanges.cs" />
-    <Compile Include="Controls\LexText\CmLiftEtymology.cs" />
-    <Compile Include="Controls\LexText\CmLiftExample.cs" />
-    <Compile Include="Controls\LexText\CmLiftNote.cs" />
-    <Compile Include="Controls\LexText\CmLiftPhonetic.cs" />
-    <Compile Include="Controls\LexText\CmLiftRelation.cs" />
-    <Compile Include="Controls\LexText\CmLiftReversal.cs" />
-    <Compile Include="Controls\LexText\CmLiftSense.cs" />
-    <Compile Include="Controls\LexText\CmLiftVariant.cs" />
-    <Compile Include="Controls\LexText\ContentMapping.cs" />
+    <Compile Include="LIFT\CmLiftEtymology.cs" />
+    <Compile Include="LIFT\CmLiftExample.cs" />
+    <Compile Include="LIFT\CmLiftNote.cs" />
+    <Compile Include="LIFT\CmLiftPhonetic.cs" />
+    <Compile Include="LIFT\CmLiftRelation.cs" />
+    <Compile Include="LIFT\CmLiftReversal.cs" />
+    <Compile Include="LIFT\CmLiftSense.cs" />
+    <Compile Include="LIFT\CmLiftVariant.cs" />
+    <Compile Include="Impls\ContentMapping.cs" />
     <Compile Include="Areas\Notebook\CharMapping.cs" />
     <Compile Include="Areas\Notebook\DateOptions.cs" />
     <Compile Include="Areas\Notebook\RnSfMarker.cs" />
     <Compile Include="Areas\Notebook\StringOptions.cs" />
     <Compile Include="Areas\Notebook\TextOptions.cs" />
     <Compile Include="Areas\Notebook\TopicsListOptions.cs" />
-    <Compile Include="Controls\LexText\FeatureSystemInflectionFeatureListDlg.cs">
+    <Compile Include="Areas\Lists\Tools\FeatureTypesAdvancedEdit\FeatureSystemInflectionFeatureListDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\FeatureTreeNode.cs" />
-    <Compile Include="Controls\LexText\FlexConverter.cs" />
-    <Compile Include="Controls\LexText\ICmLiftObject.cs" />
+    <Compile Include="Controls\FeatureTreeNode.cs" />
+    <Compile Include="LIFT\ICmLiftObject.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\InsertVariantDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\InterlinearMapping.cs" />
-    <Compile Include="Controls\LexText\InsertEventArgs.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearMapping.cs" />
+    <Compile Include="Areas\InsertEventArgs.cs" />
     <Compile Include="Areas\Grammar\Tools\AdhocCoprohibEdit\LObject.cs" />
-    <Compile Include="Controls\LexText\MasterCategory.cs" />
-    <Compile Include="Controls\LexText\FeatureTreeNodeKind.cs" />
-    <Compile Include="Controls\LexText\MergeStyle.cs" />
-    <Compile Include="Controls\LexText\PossibilityListPopupTreeManager.cs" />
-    <Compile Include="Controls\LexText\RangeNames.cs" />
-    <Compile Include="Controls\LexText\Sfm2FlexTextBase.cs" />
-    <Compile Include="Controls\LexText\Sfm2FlexTextMappingBase.cs" />
+    <Compile Include="Controls\MasterCategory.cs" />
+    <Compile Include="Controls\FeatureTreeNodeKind.cs" />
+    <Compile Include="LIFT\MergeStyle.cs" />
+    <Compile Include="Areas\PossibilityListPopupTreeManager.cs" />
+    <Compile Include="LIFT\RangeNames.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\Sfm2FlexTextBase.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\Sfm2FlexTextMappingBase.cs" />
     <Compile Include="Impls\UserInterfaceChooser.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -1287,16 +1287,16 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\AddAllomorphDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\AddNewSenseDlg.cs">
+    <Compile Include="Areas\TextsAndWords\Interlinear\AddNewSenseDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\AddWritingSystemButton.cs">
+    <Compile Include="Controls\AddWritingSystemButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\AddWritingSystemButton.Designer.cs">
+    <Compile Include="Controls\AddWritingSystemButton.Designer.cs">
       <DependentUpon>AddWritingSystemButton.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\LexText\BaseGoDlg.cs">
+    <Compile Include="Controls\BaseGoDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="LcmUi\BrowseViewerPhonologicalFeatures.cs">
@@ -1379,7 +1379,7 @@
     <Compile Include="DictionaryConfiguration\ConfigureHomographDlg.designer.cs">
       <DependentUpon>ConfigureHomographDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\LexText\ContextMenuRequestedEventArgs.cs" />
+    <Compile Include="Areas\ContextMenuRequestedEventArgs.cs" />
     <Compile Include="Areas\Notebook\AnthroFieldMappingDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1452,38 +1452,36 @@
     <Compile Include="Areas\Notebook\TextFieldOptions.Designer.cs">
       <DependentUpon>TextFieldOptions.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\LexText\EntryGoDlg.cs">
+    <Compile Include="Controls\EntryGoDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\EntryGoSearchEngine.cs" />
-    <Compile Include="Controls\LexText\WindowParams.cs" />
-    <Compile Include="Controls\LexText\FeatureStructureTreeView.cs">
+    <Compile Include="Controls\EntryGoSearchEngine.cs" />
+    <Compile Include="Controls\WindowParams.cs" />
+    <Compile Include="Controls\FeatureStructureTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="IFwExtension.cs" />
-    <Compile Include="Controls\LexText\InflectionClassPopupTreeManager.cs" />
-    <Compile Include="Controls\LexText\InflectionFeaturePopupTreeManager.cs" />
-    <Compile Include="Controls\LexText\InsertEntryDlg.cs">
+    <Compile Include="LcmUi\InflectionClassPopupTreeManager.cs" />
+    <Compile Include="Controls\InsertEntryDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\InsertionControl.cs">
+    <Compile Include="Areas\InsertionControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\Notebook\InsertRecordDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="IPatternControl.cs" />
-    <Compile Include="Controls\LexText\LexImportWizard.cs">
+    <Compile Include="Impls\LexImportWizard.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\LexImportWizardCharMarkerDlg.cs">
+    <Compile Include="Impls\LexImportWizardCharMarkerDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\MarkerPresenter.cs" />
-    <Compile Include="Controls\LexText\LexImportWizardLanguage.cs">
+    <Compile Include="Controls\LexImportWizardLanguage.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\LexImportWizardMarker.cs">
+    <Compile Include="Impls\LexImportWizardMarker.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Impls\LexOptionsDlg.cs">
@@ -1492,23 +1490,23 @@
     <Compile Include="Impls\LexOptionsDlg.Designer.cs">
       <DependentUpon>LexOptionsDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\LexText\LexReferenceDetailsDlg.cs">
+    <Compile Include="Areas\Lexicon\Tools\Edit\LexReferenceDetailsDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\LexTextControls.Designer.cs">
-      <DependentUpon>LexTextControls.resx</DependentUpon>
+    <Compile Include="Controls\LanguageExplorerControls.Designer.cs">
+      <DependentUpon>LanguageExplorerControls.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="Controls\LexText\LiftExporter.cs" />
-    <Compile Include="Controls\LexText\LiftImportDlg.cs">
+    <Compile Include="LIFT\LiftExporter.cs" />
+    <Compile Include="LIFT\LiftImportDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\LiftImportDlg.Designer.cs">
+    <Compile Include="LIFT\LiftImportDlg.Designer.cs">
       <DependentUpon>LiftImportDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\LexText\FlexLiftMerger.cs" />
-    <Compile Include="Controls\LexText\CmLiftEntry.cs" />
+    <Compile Include="LIFT\FlexLiftMerger.cs" />
+    <Compile Include="LIFT\CmLiftEntry.cs" />
     <Compile Include="Areas\Grammar\Tools\AdhocCoprohibEdit\LinkAllomorphDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1524,52 +1522,50 @@
     <Compile Include="Areas\LinkVariantToEntryOrSense.Designer.cs">
       <DependentUpon>LinkVariantToEntryOrSense.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\LexText\MasterCategoryListDlg.cs">
+    <Compile Include="Controls\MasterCategoryListDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\MasterInflectionFeatureListDlg.cs">
+    <Compile Include="Controls\MasterInflectionFeatureListDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\MasterListDlg.cs">
+    <Compile Include="Controls\MasterListDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Areas\Lexicon\Tools\Edit\MergeEntryDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\MsaCreatorDlg.cs">
+    <Compile Include="Controls\DetailControls\MsaCreatorDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\MSAGroupBox.cs">
+    <Compile Include="Controls\MSAGroupBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\MsaInflectionFeatureListDlg.cs">
+    <Compile Include="Controls\MsaInflectionFeatureListDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\MSAPopupTreeManager.cs" />
-    <Compile Include="Controls\LexText\OccurrenceDlg.cs">
+    <Compile Include="Areas\OccurrenceDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\PatternVcBase.cs" />
-    <Compile Include="Controls\LexText\PatternView.cs">
+    <Compile Include="Areas\PatternVcBase.cs" />
+    <Compile Include="Areas\PatternView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\PhonologicalFeatureChooserDlg.cs">
+    <Compile Include="Controls\PhonologicalFeatureChooserDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\PhonologicalFeaturePopupTreeManager.cs" />
-    <Compile Include="Controls\LexText\PopupTreeManager.cs" />
-    <Compile Include="Controls\LexText\POSPopupTreeManager.cs" />
+    <Compile Include="Controls\PopupTreeManager.cs" />
+    <Compile Include="Controls\POSPopupTreeManager.cs" />
     <Compile Include="Areas\Notebook\RecordGoDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Areas\Notebook\RecordGoSearchEngine.cs" />
-    <Compile Include="Controls\LexText\RemoveItemsRequestedEventArgs.cs" />
-    <Compile Include="Controls\LexText\InterlinDestination.cs" />
-    <Compile Include="Controls\LexText\SfmToTextsAndWordsMappingBaseDlg.cs">
+    <Compile Include="Areas\RemoveItemsRequestedEventArgs.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinDestination.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\SfmToTextsAndWordsMappingDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\SfmToTextsAndWordsMappingBaseDlg.Designer.cs">
-      <DependentUpon>SfmToTextsAndWordsMappingBaseDlg.cs</DependentUpon>
+    <Compile Include="Areas\TextsAndWords\Interlinear\SfmToTextsAndWordsMappingDlg.Designer.cs">
+      <DependentUpon>SfmToTextsAndWordsMappingDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\MainUserControl.cs">
       <SubType>UserControl</SubType>
@@ -2377,11 +2373,11 @@
       <DependentUpon>AddAllomorphDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\AddNewSenseDlg.resx">
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\AddNewSenseDlg.resx">
       <DependentUpon>AddNewSenseDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\BaseGoDlg.resx">
+    <EmbeddedResource Include="Controls\BaseGoDlg.resx">
       <DependentUpon>BaseGoDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -2436,34 +2432,35 @@
       <DependentUpon>TextFieldOptions.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\FeatureStructureTreeView.resx">
+    <EmbeddedResource Include="Controls\FeatureStructureTreeView.resx">
       <DependentUpon>FeatureStructureTreeView.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\InsertEntryDlg.resx">
+    <EmbeddedResource Include="Controls\InsertEntryDlg.resx">
       <DependentUpon>InsertEntryDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\InsertionControl.resx">
+    <EmbeddedResource Include="Areas\InsertionControl.resx">
       <DependentUpon>InsertionControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Areas\Notebook\InsertRecordDlg.resx">
       <DependentUpon>InsertRecordDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\LexImportWizard.resx">
+    <EmbeddedResource Include="Impls\LexImportWizard.resx">
       <DependentUpon>LexImportWizard.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\LexImportWizardCharMarkerDlg.resx">
+    <EmbeddedResource Include="Impls\LexImportWizardCharMarkerDlg.resx">
       <DependentUpon>LexImportWizardCharMarkerDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\LexImportWizardLanguage.resx">
+    <EmbeddedResource Include="Controls\LexImportWizardLanguage.resx">
       <DependentUpon>LexImportWizardLanguage.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\LexImportWizardMarker.resx">
+    <EmbeddedResource Include="Impls\LexImportWizardMarker.resx">
       <DependentUpon>LexImportWizardMarker.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -2471,16 +2468,16 @@
       <DependentUpon>LexOptionsDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\LexReferenceDetailsDlg.resx">
+    <EmbeddedResource Include="Areas\Lexicon\Tools\Edit\LexReferenceDetailsDlg.resx">
       <DependentUpon>LexReferenceDetailsDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\LexTextControls.resx">
+    <EmbeddedResource Include="Controls\LanguageExplorerControls.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>LexTextControls.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>LanguageExplorerControls1.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\LiftImportDlg.resx">
+    <EmbeddedResource Include="LIFT\LiftImportDlg.resx">
       <DependentUpon>LiftImportDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -2500,15 +2497,15 @@
       <DependentUpon>LinkVariantToEntryOrSense.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\MasterCategoryListDlg.resx">
+    <EmbeddedResource Include="Controls\MasterCategoryListDlg.resx">
       <DependentUpon>MasterCategoryListDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\MasterInflectionFeatureListDlg.resx">
+    <EmbeddedResource Include="Controls\MasterInflectionFeatureListDlg.resx">
       <DependentUpon>MasterInflectionFeatureListDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\MasterListDlg.resx">
+    <EmbeddedResource Include="Controls\MasterListDlg.resx">
       <DependentUpon>MasterListDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -2516,30 +2513,30 @@
       <DependentUpon>MergeEntryDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\MsaCreatorDlg.resx">
+    <EmbeddedResource Include="Controls\DetailControls\MsaCreatorDlg.resx">
       <DependentUpon>MsaCreatorDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\MSAGroupBox.resx">
+    <EmbeddedResource Include="Controls\MSAGroupBox.resx">
       <DependentUpon>MSAGroupBox.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\MsaInflectionFeatureListDlg.resx">
+    <EmbeddedResource Include="Controls\MsaInflectionFeatureListDlg.resx">
       <DependentUpon>MsaInflectionFeatureListDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\OccurrenceDlg.resx">
+    <EmbeddedResource Include="Areas\OccurrenceDlg.resx">
       <DependentUpon>OccurrenceDlg.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\PhonologicalFeatureChooserDlg.resx">
+    <EmbeddedResource Include="Controls\PhonologicalFeatureChooserDlg.resx">
       <DependentUpon>PhonologicalFeatureChooserDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Areas\Notebook\RecordGoDlg.resx">
       <DependentUpon>RecordGoDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\SfmToTextsAndWordsMappingBaseDlg.resx">
-      <DependentUpon>SfmToTextsAndWordsMappingBaseDlg.cs</DependentUpon>
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\SfmToTextsAndWordsMappingDlg.resx">
+      <DependentUpon>SfmToTextsAndWordsMappingDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="LcmUi\Dialogs\CantRestoreLinkedFilesToOriginalLocation.resx">
@@ -3909,11 +3906,11 @@
     <None Include="Controls\DetailControls\Resources\gotoLinkPic.png" />
     <None Include="Controls\DetailControls\PartGenerator\LayoutGenerate.xslt" />
     <None Include="Controls\DetailControls\PartGenerator\PartGenerate.xslt" />
-    <None Include="Controls\LexText\Resources\Bullet.bmp" />
-    <None Include="Controls\LexText\Resources\CheckBox.bmp" />
-    <None Include="Controls\LexText\Resources\CheckedBox.bmp" />
-    <None Include="Controls\LexText\Resources\Create Entry.ico" />
-    <None Include="Controls\LexText\Resources\Find Lexical Entry.ico" />
+    <None Include="images\LexTextImages\Bullet.bmp" />
+    <None Include="images\LexTextImages\CheckBox.bmp" />
+    <None Include="images\LexTextImages\CheckedBox.bmp" />
+    <None Include="images\LexTextImages\Create Entry.ico" />
+    <None Include="images\LexTextImages\Find Lexical Entry.ico" />
     <None Include="images\SendReceive\chorus16.png" />
     <None Include="images\SendReceive\chorus32.png" />
     <None Include="images\SendReceive\sendReceive.svg" />

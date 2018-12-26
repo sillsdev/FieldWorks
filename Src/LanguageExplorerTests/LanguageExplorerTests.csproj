@@ -328,12 +328,12 @@
     <Compile Include="Areas\Lexicon\ReversalEntryViewTests.cs" />
     <Compile Include="Areas\Lexicon\SortReversalSubEntriesTests.cs" />
     <Compile Include="Areas\Lexicon\LexiconTestUtils.cs" />
-    <Compile Include="Controls\LexText\LexImportTests.cs" />
-    <Compile Include="Controls\LexText\LiftExportTests.cs" />
-    <Compile Include="Controls\LexText\LiftMergerTests.cs" />
-    <Compile Include="Controls\LexText\MasterCategoryTests.cs" />
-    <Compile Include="Controls\LexText\MsaInflectionFeatureListDlgTests.cs" />
-    <Compile Include="Controls\LexText\WordsSfmImportTests.cs" />
+    <Compile Include="Impls\LexImportTests.cs" />
+    <Compile Include="LIFT\LiftExportTests.cs" />
+    <Compile Include="LIFT\LiftMergerTests.cs" />
+    <Compile Include="Controls\MasterCategoryTests.cs" />
+    <Compile Include="Controls\MsaInflectionFeatureListDlgTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\WordsSfmImportTests.cs" />
     <Compile Include="Repository\ListsAreaTests.cs" />
     <Compile Include="Repository\MefTestBase.cs" />
     <Compile Include="MGA\MGATests.cs" />
@@ -431,8 +431,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Controls\DetailControls\TestParts.xml" />
-    <Content Include="Controls\LexText\FeatureSystem2.xml" />
-    <Content Include="Controls\LexText\FeatureSystem3.xml" />
+    <Content Include="Controls\FeatureSystem2.xml" />
+    <Content Include="Controls\FeatureSystem3.xml" />
     <None Include="TestData\CreateOverrideTestData.xml" />
     <Content Include="TestData\InventoryBaseTestFiles\Base1Layouts.xml" />
     <Content Include="TestData\InventoryBaseTestFiles\Base2Layouts.xml" />
@@ -479,7 +479,9 @@
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Controls\LexText\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="BuildInclude.targets" />
 </Project>

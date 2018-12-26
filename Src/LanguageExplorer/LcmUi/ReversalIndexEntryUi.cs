@@ -5,7 +5,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using LanguageExplorer.Controls.LexText;
+using LanguageExplorer.Controls;
 using SIL.LCModel;
 
 namespace LanguageExplorer.LcmUi
