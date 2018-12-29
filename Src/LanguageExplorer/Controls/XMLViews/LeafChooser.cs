@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -24,10 +24,9 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		/// <summary />
 		public LeafChooser(IPersistenceProvider persistProvider, IEnumerable<ObjectLabel> labels, string fieldName, LcmCache cache, IEnumerable<ICmObject> chosenObjs, int leafFlid, IHelpTopicProvider helpTopicProvider)
-			: base (persistProvider, fieldName, cache, chosenObjs, helpTopicProvider)
+			: base(persistProvider, fieldName, cache, chosenObjs, helpTopicProvider)
 		{
 			m_leafFlid = leafFlid;
-
 			// Normally done by the base class constructor, but requires m_leafFlid to be set, so
 			// we made a special constructor to finesse things.
 			FinishConstructor(labels);
@@ -40,6 +39,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			return new LeafLabelNode(nol, m_stylesheet, displayUsage, m_leafFlid);
 		}
+
 		/// <summary>
 		/// In this class we want only those nodes that have interesting leaves somewhere.
 		/// Unfortunately this method is duplicated on LeafLabelNode. I can't see a clean way to
@@ -47,23 +47,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public override bool WantNodeForLabel(ObjectLabel label)
 		{
-			if (!base.WantNodeForLabel(label)) // currently does nothing, but just in case...
-			{
-				return false;
-			}
-
-			if (HasLeaves(label))
-			{
-				return true;
-			}
-			foreach (var labelSub in label.SubItems)
-			{
-				if (WantNodeForLabel(labelSub))
-				{
-					return true;
-				}
-			}
-			return false;
+			return base.WantNodeForLabel(label) && (HasLeaves(label) || label.SubItems.Any(labelSub => WantNodeForLabel(labelSub)));
 		}
 		private bool HasLeaves(ObjectLabel label)
 		{
@@ -98,7 +82,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			public override LabelNode AddSecondaryNodesAndLookForSelected(LabelNode node, TreeNodeCollection nodes, LabelNode nodeRepresentingCurrentChoice, ICmObject objToSelect, Stack<ICmObject> ownershipStack, IEnumerable<ICmObject> chosenObjs)
 			{
 				var result = nodeRepresentingCurrentChoice; // result unless we match hvoToSelect
-				var label = (ObjectLabel) Tag;
+				var label = (ObjectLabel)Tag;
 				var sda = label.Cache.GetManagedSilDataAccess();
 				var objs = sda.VecProp(label.Object.Hvo, m_leafFlid).Select(hvo => label.Cache.ServiceLocator.GetObject(hvo));
 				var secLabels = ObjectLabel.CreateObjectLabels(label.Cache, objs, "ShortNameTSS", "analysis vernacular"); // Enhance JohnT: may want to make these configurable one day...
@@ -131,7 +115,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					return false;
 				}
-
 				if (HasLeaves(label))
 				{
 					return true;

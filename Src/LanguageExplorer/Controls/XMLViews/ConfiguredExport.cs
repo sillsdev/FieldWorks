@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -35,42 +35,34 @@ namespace LanguageExplorer.Controls.XMLViews
 		private string m_sFormat;
 		private StringCollection m_rgElementTags = new StringCollection();
 		private StringCollection m_rgClassNames = new StringCollection();
-
-		private enum CurrentContext
-		{
-			unknown = 0,
-			insideObject = 1,
-			insideProperty = 2,
-			insideLink = 3,
-		};
 		private CurrentContext m_cc = CurrentContext.unknown;
 		private string m_sTimeField;
-
-		Dictionary<int, string> m_dictWsStr = new Dictionary<int, string>();
+		private Dictionary<int, string> m_dictWsStr = new Dictionary<int, string>();
 		/// <summary>The current lead (sort) character being written.</summary>
 		private string m_schCurrent = string.Empty;
 		/// <summary>
 		/// Map from a writing system to its set of digraphs (or multigraphs) used in sorting.
 		/// </summary>
-		Dictionary<string, ISet<string>> m_mapWsDigraphs = new Dictionary<string, ISet<string>>();
+		private Dictionary<string, ISet<string>> m_mapWsDigraphs = new Dictionary<string, ISet<string>>();
 		/// <summary>
 		/// Map from a writing system to its map of equivalent graphs/multigraphs used in sorting.
 		/// </summary>
-		Dictionary<string, Dictionary<string, string>> m_mapWsMapChars = new Dictionary<string, Dictionary<string, string>>();
+		private Dictionary<string, Dictionary<string, string>> m_mapWsMapChars = new Dictionary<string, Dictionary<string, string>>();
 		/// <summary>
 		/// Map of characters to ignore for writing systems
 		/// </summary>
-		Dictionary<string, ISet<string>> m_mapWsIgnorables = new Dictionary<string, ISet<string>>();
-
+		private Dictionary<string, ISet<string>> m_mapWsIgnorables = new Dictionary<string, ISet<string>>();
 		private string m_sWsVern;
 		private string m_sWsRevIdx;
-		Dictionary<int, string> m_dictCustomUserLabels = new Dictionary<int, string>();
-		string m_sActiveParaStyle;
-		Dictionary<XElement, string> m_mapXnToCssClass = new Dictionary<XElement, string>();
+		private Dictionary<int, string> m_dictCustomUserLabels = new Dictionary<int, string>();
+		private string m_sActiveParaStyle;
+		private Dictionary<XElement, string> m_mapXnToCssClass = new Dictionary<XElement, string>();
 		private XhtmlHelper m_xhtml;
 		private CssType m_cssType = CssType.Dictionary;
-
 		private bool m_fCancel;
+		private string m_stylePara;
+		private string m_delayedItemNumberClass;
+		private ITsString m_delayedItemNumberValue;
 
 		/// <summary />
 		public event ProgressHandler UpdateProgress;
@@ -90,8 +82,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Initialize the object with some useful information, and write the initial
 		/// element start tag to the output.
 		/// </summary>
-		public void Initialize(LcmCache cache, IPropertyTable propertyTable, TextWriter w, string sDataType,
-			string sFormat, string sOutPath, string sBodyClass)
+		public void Initialize(LcmCache cache, IPropertyTable propertyTable, TextWriter w, string sDataType, string sFormat, string sOutPath, string sBodyClass)
 		{
 			m_writer = w;
 			m_cache = cache;
@@ -120,13 +111,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		public override void AddObj(int hvoItem, IVwViewConstructor vc, int frag)
 		{
 			var ccOld = WriteClassStartTag(hvoItem);
-
 			WriteDelayedItemNumber();
-
 			base.AddObj(hvoItem, vc, frag);
-
-			WriteClassEndTag(hvoItem, ccOld);
-
+			WriteClassEndTag(ccOld);
 			if (m_fCancel)
 			{
 				throw new CancelException(XMLViewsStrings.ConfiguredExportHasBeenCancelled);
@@ -139,14 +126,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		public override void AddObjProp(int tag, IVwViewConstructor vc, int frag)
 		{
 			var ccOld = WriteFieldStartTag(tag);
-
 			WriteDestClassStartTag(tag);
-
 			base.AddObjProp(tag, vc, frag);
-
 			WriteDestClassEndTag(tag);
-
-			WriteFieldEndTag(tag, ccOld);
+			WriteFieldEndTag(ccOld);
 		}
 
 		/// <summary>
@@ -155,10 +138,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		public override void AddObjVec(int tag, IVwViewConstructor vc, int frag)
 		{
 			var ccOld = WriteFieldStartTag(tag);
-
 			base.AddObjVec(tag, vc, frag);
-
-			WriteFieldEndTag(tag, ccOld);
+			WriteFieldEndTag(ccOld);
 		}
 
 		/// <summary>
@@ -169,16 +150,13 @@ namespace LanguageExplorer.Controls.XMLViews
 			var ccOld = WriteFieldStartTag(tag);
 			OpenProp(tag);
 			var cobj = DataAccess.get_VecSize(CurrentObject(), tag);
-
 			for (var i = 0; i < cobj; i++)
 			{
 				var hvoItem = DataAccess.get_VecItem(CurrentObject(), tag, i);
 				OpenTheObject(hvoItem, i);
 				var ccPrev = WriteClassStartTag(hvoItem);
-
 				vc.Display(this, hvoItem, frag);
-
-				WriteClassEndTag(hvoItem, ccPrev);
+				WriteClassEndTag(ccPrev);
 				CloseTheObject();
 				if (Finished)
 				{
@@ -189,9 +167,8 @@ namespace LanguageExplorer.Controls.XMLViews
 					throw new CancelException(XMLViewsStrings.ConfiguredExportHasBeenCancelled);
 				}
 			}
-
 			CloseProp();
-			WriteFieldEndTag(tag, ccOld);
+			WriteFieldEndTag(ccOld);
 		}
 
 		/// <summary>
@@ -200,10 +177,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		public override void AddProp(int tag, IVwViewConstructor vc, int frag)
 		{
 			var ccOld = WriteFieldStartTag(tag);
-
 			base.AddProp(tag, vc, frag);
-
-			WriteFieldEndTag(tag, ccOld);
+			WriteFieldEndTag(ccOld);
 		}
 
 		/// <summary>
@@ -212,11 +187,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		public override void AddStringProp(int tag, IVwViewConstructor _vwvc)
 		{
 			var ccOld = WriteFieldStartTag(tag);
-
 			var tss = DataAccess.get_StringProp(CurrentObject(), tag);
 			WriteTsString(tss, TabsToIndent());
-
-			WriteFieldEndTag(tag, ccOld);
+			WriteFieldEndTag(ccOld);
 		}
 
 		private string WritingSystemId(int ws)
@@ -259,7 +232,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				m_writer.WriteLine("<AUni ws=\"{0}\">{1}</AUni>", sWs, XmlUtils.MakeSafeXml(sText));
 			}
-			WriteFieldEndTag(tag, ccOld);
+			WriteFieldEndTag(ccOld);
 		}
 
 		/// <summary>
@@ -268,7 +241,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		public override void AddStringAltMember(int tag, int ws, IVwViewConstructor _vwvc)
 		{
 			var ccOld = WriteFieldStartTag(tag);
-
 			var tss = DataAccess.get_MultiStringAlt(CurrentObject(), tag, ws);
 			WriteTsString(tss, TabsToIndent());
 			// See if the string uses any styles that require us to export some more data.
@@ -281,8 +253,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					m_xhtml?.MapCssToLang("xsensexrefnumber", m_cache.ServiceLocator.WritingSystemManager.Get(wsRun).Id);
 				}
 			}
-
-			WriteFieldEndTag(tag, ccOld);
+			WriteFieldEndTag(ccOld);
 		}
 
 		/// <summary>
@@ -294,8 +265,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			var n = m_cache.DomainDataByFlid.get_IntProp(CurrentObject(), tag);
 			IndentLine();
 			m_writer.WriteLine("<Integer val=\"{0}\"/>", n);
-
-			WriteFieldEndTag(tag, ccOld);
+			WriteFieldEndTag(ccOld);
 		}
 
 		/// <summary>
@@ -304,8 +274,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public override void AddTimeProp(int tag, uint flags)
 		{
-			var sField = m_sda.MetaDataCache.GetFieldName(tag);
-			m_sTimeField = GetFieldXmlElementName(sField, tag / 1000);
+			m_sTimeField = GetFieldXmlElementName(m_sda.MetaDataCache.GetFieldName(tag), tag / 1000);
 		}
 
 		/// <summary>
@@ -339,16 +308,14 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				sElement = "LiteralString";
 			}
-			WriteStringBody(sElement, "", tss);
+			WriteStringBody(sElement, string.Empty, tss);
 		}
 
 		private void WriteStringBody(string sElement, string attrs, ITsString tss)
 		{
 			IndentLine();
 			m_writer.WriteLine("<{0}{1}>", sElement, attrs);
-
 			WriteTsString(tss, TabsToIndent() + 1);
-
 			IndentLine();
 			m_writer.WriteLine("</{0}>", sElement);
 		}
@@ -390,8 +357,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_writer.WriteLine("<Paragraph style=\"{0}\">", XmlUtils.MakeSafeXmlAttribute(m_stylePara));
 			}
 		}
-
-		private string m_stylePara;
 
 		/// <summary>
 		/// Set either a paragraph or a character property.
@@ -461,7 +426,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				m_cc = CurrentContext.insideObject;
 			}
-
 			var obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoItem);
 			var clid = obj.ClassID;
 			var sClass = m_sda.MetaDataCache.GetClassName(clid);
@@ -560,11 +524,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <param name="wsIgnorableCharMap">Map of writing system to ignorable characters for that ws </param>
 		/// <param name="cache"></param>
 		/// <returns>The character sEntryNFD is being sorted under in the dictionary.</returns>
-		public static string GetLeadChar(string sEntryNFD, string sWs,
-													Dictionary<string, ISet<string>> wsDigraphMap,
-													Dictionary<string, Dictionary<string, string>> wsCharEquivalentMap,
-													Dictionary<string, ISet<string>> wsIgnorableCharMap,
-													LcmCache cache)
+		public static string GetLeadChar(string sEntryNFD, string sWs, Dictionary<string, ISet<string>> wsDigraphMap, Dictionary<string, Dictionary<string, string>> wsCharEquivalentMap,
+													Dictionary<string, ISet<string>> wsIgnorableCharMap, LcmCache cache)
 		{
 			if (string.IsNullOrEmpty(sEntryNFD))
 			{
@@ -597,7 +558,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			var sEntryT = sEntry;
 			bool fChanged;
 			var map = mapChars;
-			// This loop replaces each occurance of equivalent characters in sEntry
+			// This loop replaces each occurence of equivalent characters in sEntry
 			// with the representative of its equivalence class// replace subsorting chars by their main sort char. a << 'a << ^a, etc. are replaced by a.
 			do
 			{
@@ -637,7 +598,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 			}
 			// We don't want sFirst for an ignored first character or digraph.
-
 			Collator col;
 			try
 			{
@@ -697,13 +657,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <param name="mapChars">Set of character equivalences</param>
 		/// <param name="chIgnoreSet">Set of characters to ignore</param>
 		/// <returns></returns>
-		internal static ISet<string> GetDigraphs(string sWs,
-			Dictionary<string, ISet<string>> wsDigraphMap,
-			Dictionary<string, Dictionary<string, string>> wsCharEquivalentMap,
-			Dictionary<string, ISet<string>> wsIgnorableCharMap,
-			LcmCache cache,
-			out Dictionary<string, string> mapChars,
-			out ISet<string> chIgnoreSet)
+		internal static ISet<string> GetDigraphs(string sWs, Dictionary<string, ISet<string>> wsDigraphMap, Dictionary<string, Dictionary<string, string>> wsCharEquivalentMap,
+			Dictionary<string, ISet<string>> wsIgnorableCharMap, LcmCache cache, out Dictionary<string, string> mapChars, out ISet<string> chIgnoreSet)
 		{
 			// Collect the digraph and character equivalence maps and the ignorable character set
 			// the first time through. There after, these maps and lists are just retrieved.
@@ -720,9 +675,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			digraphs = new HashSet<string>();
 			mapChars = new Dictionary<string, string>();
 			var ws = cache.ServiceLocator.WritingSystemManager.Get(sWs);
-
 			wsDigraphMap[sWs] = digraphs;
-
 			var simpleCollation = ws.DefaultCollation as SimpleRulesCollationDefinition;
 			if (simpleCollation != null)
 			{
@@ -772,7 +725,6 @@ namespace LanguageExplorer.Controls.XMLViews
 							}
 							rule = rule.Replace("<<<", "=");
 							rule = rule.Replace("<<", "=");
-
 							// If the rule contains one or more expansions ('/') remove the expansion portions
 							if (rule.Contains("/"))
 							{
@@ -790,7 +742,6 @@ namespace LanguageExplorer.Controls.XMLViews
 											isExpansion = false;
 											break;
 									}
-
 									if (!isExpansion)
 									{
 										newRule.Append(rule.Substring(ruleIndex, 1));
@@ -798,7 +749,6 @@ namespace LanguageExplorer.Controls.XMLViews
 								}
 								rule = newRule.ToString();
 							}
-
 							// "&N<ng<<<Ng<ny<<<Ny" => "&N<ng=Ng<ny=Ny"
 							// "&N<�<<<�" => "&N<�=�"
 							// There are other issues we are not handling proplerly such as the next line
@@ -832,14 +782,12 @@ namespace LanguageExplorer.Controls.XMLViews
 					}
 				}
 			}
-
 			// This at least prevents null reference and key not found exceptions.
 			// Possibly we should at least map the ASCII LC letters to UC.
 			if (!wsCharEquivalentMap.TryGetValue(sWs, out mapChars))
 			{
 				wsCharEquivalentMap[sWs] = mapChars = new Dictionary<string, string>();
 			}
-
 			wsIgnorableCharMap.Add(sWs, chIgnoreSet);
 			return digraphs;
 		}
@@ -966,7 +914,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;     // subentries shouldn't trigger letter head change!
 			}
-
 			var entry = (IReversalIndexEntry)obj;
 			var idx = (IReversalIndex)objOwner;
 			var ws = m_cache.ServiceLocator.WritingSystemManager.Get(idx.WritingSystem);
@@ -975,7 +922,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-
 			if (string.IsNullOrEmpty(m_sWsRevIdx))
 			{
 				m_sWsRevIdx = ws.Id;
@@ -983,16 +929,14 @@ namespace LanguageExplorer.Controls.XMLViews
 			WriteLetterHeadIfNeeded(sEntry, m_sWsRevIdx);
 		}
 
-		private void WriteClassEndTag(int hvoItem, CurrentContext ccOld)
+		private void WriteClassEndTag(CurrentContext ccOld)
 		{
 			m_cc = ccOld;
-
 			var iTop = m_rgElementTags.Count - 1;
 			var sClass = m_rgElementTags[iTop];
 			m_rgElementTags.RemoveAt(iTop);
 			IndentLine();
 			m_writer.WriteLine("</{0}>", sClass);
-
 			iTop = m_rgClassNames.Count - 1;
 			m_rgClassNames.RemoveAt(iTop);
 			if (UpdateProgress != null && m_rgClassNames.Count == 0)
@@ -1009,7 +953,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				var mdc = m_sda.GetManagedMetaDataCache();
 				var cpt = (CellarPropertyType)mdc.GetFieldType(flid);
-				var sField = mdc.GetFieldName((int)flid);
+				var sField = mdc.GetFieldName(flid);
 				switch (cpt)
 				{
 					case CellarPropertyType.ReferenceAtomic:
@@ -1050,7 +994,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						// XML element tags.
 						if (!m_dictCustomUserLabels.TryGetValue(flid, out sUserLabel))
 						{
-							sUserLabel = m_sda.MetaDataCache.GetFieldLabel((int)flid);
+							sUserLabel = m_sda.MetaDataCache.GetFieldLabel(flid);
 							m_dictCustomUserLabels.Add(flid, sUserLabel);
 						}
 						sXml = sXml.Replace(' ', '.');
@@ -1070,7 +1014,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				sXml = string.Empty;
 			}
 			m_rgElementTags.Add(sXml);
-
 			return ccOld;
 		}
 
@@ -1101,17 +1044,15 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-			try
+			ICmObject cmObject;
+			if (m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(hvo, out cmObject))
 			{
-				sClass = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo).ClassName + "Link";
+				sClass = cmObject.ClassName + "Link";
 				var sOut = $"<{sClass} target=\"hvo{hvo}\">";
 				IndentLine();
 				m_writer.WriteLine(sOut);
 				m_rgClassNames[iTopClass] = sClass;
 				m_rgElementTags[iTopElem] = sClass;
-			}
-			catch
-			{
 			}
 		}
 
@@ -1145,8 +1086,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// Anything followed by one illegal character followed by anything; must match whole string.
 			var pattern = new Regex(@"^(.*)([^\-:_.A-Za-z0-9\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037f-\u1FFF"
 				+ @"\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD"
-				+ @"\u00B7\u0300-\u036F\u203F-\u2040])"
-				+ @"(.*)$");
+				+ @"\u00B7\u0300-\u036F\u203F-\u2040])(.*)$");
 			var result = input;
 			for (; ; )
 			{
@@ -1164,10 +1104,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			return c == ' ' ? "_" : $"{Convert.ToInt32(c):x}";
 		}
 
-		private void WriteFieldEndTag(int flid, CurrentContext ccOld)
+		private void WriteFieldEndTag(CurrentContext ccOld)
 		{
 			m_cc = ccOld;
-
 			var iTop = m_rgElementTags.Count - 1;
 			var sField = m_rgElementTags[iTop];
 			m_rgElementTags.RemoveAt(iTop);
@@ -1190,9 +1129,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			var iTop = m_rgElementTags.Count - 1;
 			var sElem = m_rgElementTags[iTop];
 			m_rgElementTags.RemoveAt(iTop);
-
 			var sDestClass = WriteDestClassTag(flid, "</{0}>");
-
 			if (string.IsNullOrEmpty(sDestClass) && !string.IsNullOrEmpty(sElem))
 			{
 				// Make up for trickiness of AddMissingObjectLink().
@@ -1213,12 +1150,11 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			try
 			{
-				if (m_sda.MetaDataCache.get_IsVirtual((int)flid))
+				if (m_sda.MetaDataCache.get_IsVirtual(flid))
 				{
 					return string.Empty;
 				}
-
-				var sDestClass = m_sda.MetaDataCache.GetDstClsName((int)flid);
+				var sDestClass = m_sda.MetaDataCache.GetDstClsName(flid);
 				if (m_cc == CurrentContext.insideLink)
 				{
 					sDestClass = sDestClass + "Link";
@@ -1239,7 +1175,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Write the closing element end tag to the output.
 		/// </summary>
-		/// <param name="sDataType"></param>
 		public void Finish(string sDataType)
 		{
 			if (m_sFormat == "xhtml")
@@ -1288,7 +1223,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					}
 				}
 			}
-			var before = tag.Substring(0, ich); // arbitratily it is all 'before' if no %.
+			var before = tag.Substring(0, ich); // arbitrarily it is all 'before' if no %.
 			var after = ich < tag.Length - 1 ? tag.Substring(ich + 2) : "";
 			if (!m_xhtml.NumberStyles.ContainsKey(cssClass))
 			{
@@ -1310,9 +1245,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_delayedItemNumberValue = bldr.GetString();
 		}
 
-		private string m_delayedItemNumberClass;
-		private ITsString m_delayedItemNumberValue;
-
 		private void WriteDelayedItemNumber()
 		{
 			if (m_delayedItemNumberValue == null)
@@ -1322,7 +1254,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			WriteStringBody("ItemNumber", " class=\"" + m_xhtml.GetValidCssClassName(m_delayedItemNumberClass) + "\"", m_delayedItemNumberValue);
 			m_delayedItemNumberValue = null;
 			m_delayedItemNumberClass = null;
-
 		}
 
 		internal void BeginCssClassIfNeeded(XElement frag)
@@ -1335,13 +1266,12 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (!m_mapXnToCssClass.TryGetValue(frag, out cssClass))
 			{
 				cssClass = XmlUtils.GetOptionalAttributeValue(frag, "css", null);
-				// Note that an emptry string for cssClass means we explicitly don't want to output anything.
-				if (cssClass == null && frag.Parent != null && frag.Parent.Name == "layout" &&
-					(XmlUtils.GetOptionalAttributeValue(frag, "before") != null ||
-					 XmlUtils.GetOptionalAttributeValue(frag, "after") != null ||
-					 XmlUtils.GetOptionalAttributeValue(frag, "sep") != null ||
-					 XmlUtils.GetOptionalAttributeValue(frag, "number") != null ||
-					 XmlUtils.GetOptionalAttributeValue(frag, "style") != null))
+				// Note that an empty string for cssClass means we explicitly don't want to output anything.
+				if (cssClass == null && frag.Parent != null && frag.Parent.Name == "layout"
+				    && (XmlUtils.GetOptionalAttributeValue(frag, "before") != null || XmlUtils.GetOptionalAttributeValue(frag, "after") != null
+													|| XmlUtils.GetOptionalAttributeValue(frag, "sep") != null
+													|| XmlUtils.GetOptionalAttributeValue(frag, "number") != null
+													|| XmlUtils.GetOptionalAttributeValue(frag, "style") != null))
 				{
 					var sb = new StringBuilder(XmlUtils.GetOptionalAttributeValue(frag.Parent, "class", string.Empty));
 					if (sb.Length > 0)
@@ -1376,16 +1306,14 @@ namespace LanguageExplorer.Controls.XMLViews
 							if (m_xhtml.TryGetNodeFromCssClass(tryCssClass, out oldNode))
 							{
 								// another level of duplicate!
-								throw new FwConfigurationException("Two distinct XML nodes are using the same cssClass (" + cssClass
-									+ ") and writing system (" + wsNew + ") in the same export:"
-									+ Environment.NewLine + oldNode + Environment.NewLine + frag);
+								throw new FwConfigurationException($"Two distinct XML nodes are using the same cssClass ({cssClass}) and writing system ({wsNew}) in the same export:"
+								                                   + Environment.NewLine + oldNode + Environment.NewLine + frag);
 							}
 							cssClass = tryCssClass; // This is a unique key we will use as the css class for these items.
 						}
 						else
 						{
-							throw new FwConfigurationException("Two distinct XML nodes are using the same cssClass (" + cssClass
-								+ ") in the same export with the same (or no) writing system:"
+							throw new FwConfigurationException($"Two distinct XML nodes are using the same cssClass ({cssClass}) in the same export with the same (or no) writing system:"
 								+ Environment.NewLine + oldNode + Environment.NewLine + frag);
 						}
 					}
@@ -1459,7 +1387,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					m_writer.WriteLine("</span><!--class=\"{0}\"-->", CommentProtect(cssClass));
 				}
-
 				if (string.IsNullOrEmpty(m_sActiveParaStyle))
 				{
 					return;
@@ -1526,8 +1453,13 @@ namespace LanguageExplorer.Controls.XMLViews
 		public void APictureIsBeingAdded()
 		{
 		}
-	}
 
-	/// <summary />
-	public delegate void ProgressHandler(object sender);
+		private enum CurrentContext
+		{
+			unknown = 0,
+			insideObject = 1,
+			insideProperty = 2,
+			insideLink = 3,
+		}
+	}
 }

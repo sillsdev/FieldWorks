@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,12 +8,12 @@ using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.DomainServices;
-using SIL.LCModel.Infrastructure;
-using SIL.LCModel.Utils;
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
 using SIL.Xml;
 
 namespace LanguageExplorer.Controls.XMLViews
@@ -26,21 +26,21 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	internal class PartGenerator
 	{
-		XmlVc m_vc;
-		readonly LcmCache m_cache;
+		private XmlVc m_vc;
+		private readonly LcmCache m_cache;
 		/// <summary>
 		/// The metadata cache
 		/// </summary>
 		protected IFwMetaDataCacheManaged m_mdc;
-		XElement m_input;
-		int m_clsid;
+		private XElement m_input;
+		private int m_clsid;
 		/// <summary>
 		/// class of item upon which to apply first layout
 		/// </summary>
 		protected int m_rootClassId;
-		string m_className;
-		string m_fieldType;
-		string m_restrictions;
+		private string m_className;
+		private string m_fieldType;
+		private string m_restrictions;
 		private int m_destClsid;
 		/// <summary>
 		///	columnSpec
@@ -85,7 +85,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		/// <summary>
 		/// Make a part generator for the specified "generate" element, interpreting names
-		/// using the specified metadatacache. Doesn't handle generate nodes refering to layouts.
+		/// using the specified metadatacache. Doesn't handle generate nodes referring to layouts.
 		/// Use the constructor with Vc for that.
 		/// </summary>
 		public PartGenerator(LcmCache cache, XElement input)
@@ -102,7 +102,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return false;
 			}
-
 			// LT-13636 -- The line below kept custom fields referencing custom lists from being valid browse columns.
 			//if (m_destClsid != 0 && m_mdc.GetDstClsId(flid) != m_destClsid) is too strict! Should accept a subclass!
 			if (m_destClsid != 0)
@@ -114,7 +113,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					return false;
 				}
 			}
-
 			switch (m_restrictions)
 			{
 				case "none":
@@ -286,7 +284,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-
 			var list = m_cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>().GetObject(guidList);
 			var targetList = list.Owner != null ? $"{list.Owner.ClassName}.{m_mdc.GetFieldName(list.OwningFlid)}" : $"unowned.{guidList.ToString()}";
 			XmlUtils.VisitAttributes(output, new ReplaceSubstringInAttr("$targetList", targetList));
@@ -324,11 +321,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		///		</part>
 		/// </code>
 		/// </summary>
-		/// <param name="layoutClass"></param>
-		/// <param name="fieldNameForReplace"></param>
-		/// <param name="fieldIdForWs"></param>
-		/// <param name="layoutNode"></param>
-		/// <returns>list of part nodes generated</returns>
 		protected List<XElement> GeneratePartsFromLayouts(int layoutClass, string fieldNameForReplace, int fieldIdForWs, ref XElement layoutNode)
 		{
 			if (m_vc == null || layoutClass == 0)
@@ -365,7 +357,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				// specific part already exists, just keep it.
 				return null;
 			}
-
 			// couldn't find a specific part, so get the generic part in order to generate the specific part
 			partNode = m_vc.GetNodeForPart(layoutGeneric, false, layoutClass);
 			if (partNode == null)
@@ -411,46 +402,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary>
-		/// In addition to replacing an old attribute value, appends a new attribute after the one
-		/// where the replacement occurs. Call DoTheAppends after running VisitAttributes.
-		/// </summary>
-		private sealed class ReplaceAttrAndAppend : ReplaceSubstringInAttr
-		{
-			string m_newAttrName;
-			string m_newAttrVal;
-			string m_pattern; // dup of base class variable, saves modifying it.
-			List<XAttribute> m_targets = new List<XAttribute>();
-
-			internal ReplaceAttrAndAppend(string pattern, string replacement, string newAttrName, string newAttrVal)
-				: base(pattern, replacement)
-			{
-				m_newAttrName = newAttrName;
-				m_newAttrVal = newAttrVal;
-				m_pattern = pattern;
-			}
-
-			public override bool Visit(XAttribute xa)
-			{
-				var old = xa.Value;
-				var index = old.IndexOf(m_pattern);
-				if (index >= 0)
-				{
-					m_targets.Add(xa);
-				}
-				base.Visit(xa); // AFTER we did our test, otherwise, it fails.
-				return false; // continue iterating
-			}
-
-			internal void DoTheAppends()
-			{
-				foreach (var xa in m_targets)
-				{
-					XmlUtils.SetAttribute(xa.Parent, m_newAttrName, m_newAttrVal);
-				}
-			}
-		}
-
-		/// <summary>
 		/// Return an array list of the non-comment children of root,
 		/// except that any "generate" elements are replaced with what they generate.
 		/// </summary>
@@ -488,17 +439,11 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary />
-		/// <param name="root"></param>
-		/// <param name="cache"></param>
-		/// <param name="keyAttrNames"></param>
-		/// <param name="vc">for parts/layouts</param>
-		/// <param name="rootClassId">class of the root object used to compute parts/layouts</param>
 		private static List<XElement> GetGeneratedChildren(XElement root, LcmCache cache, string[] keyAttrNames, XmlVc vc, int rootClassId)
 		{
 			var result = new List<XElement>();
 			var generateModeForColumns = XmlUtils.GetOptionalAttributeValue(root, "generate");
 			var fGenerateChildPartsForParentLayouts = (generateModeForColumns == "childPartsForParentLayouts");
-
 			// childPartsForParentLayouts
 			foreach (var child in root.Elements())
 			{
@@ -512,7 +457,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					result.Add(child);
 					continue;
 				}
-
 				var generator = generateModeForColumns == "objectValuePartsForParentLayouts" ? new ObjectValuePartGenerator(cache, child, vc, rootClassId) : new PartGenerator(cache, child, vc, rootClassId);
 				foreach (var genNode in generator.Generate())
 				{
@@ -528,7 +472,6 @@ namespace LanguageExplorer.Controls.XMLViews
 							}
 						}
 					}
-
 					if (!match) // not already present, or not checking; add it.
 					{
 						result.Add(genNode);
@@ -557,6 +500,133 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 			}
 			return true;
+		}
+
+		/// <summary>
+		/// Generate parts needed to provide paths to fields specified by a given layout
+		/// </summary>
+		private sealed class ChildPartGenerator : PartGenerator
+		{
+			internal ChildPartGenerator(LcmCache cache, XElement input, XmlVc vc, int rootClassId)
+				: base(cache, input, vc, rootClassId)
+			{
+			}
+
+			/// <summary />
+			protected override void InitMemberVariablesFromInput(IFwMetaDataCache mdc, XElement input)
+			{
+				if (input.Name == "generate")
+				{
+					// first column child is the node we want to try to generate.
+					m_source = input.XPathSelectElement("./column");
+					return;
+				}
+				if (input.Name != "column")
+				{
+					throw new ArgumentException("ChildPartGenerator expects input to be column node, not {0}", input.Name.LocalName);
+				}
+				m_source = input;
+			}
+
+			/// <summary />
+			public List<XElement> GenerateChildPartsIfNeeded()
+			{
+				return GeneratePartsFromLayouts(m_rootClassId, XmlUtils.GetOptionalAttributeValue(m_source, "layout"), 0, ref m_source);
+			}
+		}
+
+		/// <summary>
+		/// Generate parts for each value of an object
+		/// </summary>
+		/// <remarks>Currently this has only been implemented for the phonological features in a phoneme bulk edit.
+		/// That is, it generates a part based on a single layout for each item in LangProject.PhFeatureSystemOA.FeaturesOC.
+		///  </remarks>
+		private sealed class ObjectValuePartGenerator : PartGenerator
+		{
+			private ILcmOwningCollection<IFsFeatDefn> m_collectionToGeneratePartsFrom;
+			private IOrderedEnumerable<IFsFeatDefn> m_sortedCollection;
+			private string m_objectPath;
+
+			public ObjectValuePartGenerator(LcmCache cache, XElement input, XmlVc vc, int rootClassId)
+				: base(cache, input, vc, rootClassId)
+			{
+				m_objectPath = XmlUtils.GetOptionalAttributeValue(input, "objectPath");
+				if (m_objectPath == null)
+				{
+					throw new ArgumentException("ObjectValuePartGenerator expects input to have objectPath attribute.");
+				}
+				// Enhance: generalize this
+				if (m_objectPath == "PhFeatureSystem.Features")
+				{
+					m_collectionToGeneratePartsFrom = cache.LangProject.PhFeatureSystemOA.FeaturesOC;
+					m_sortedCollection = m_collectionToGeneratePartsFrom.OrderBy(s => s.Abbreviation.BestAnalysisAlternative.Text);
+				}
+			}
+
+			/// <summary>
+			/// Generate the nodes that the constructor arguments indicate.
+			/// </summary>
+			public override XElement[] Generate()
+			{
+				var ids = FieldIds;
+				var result = new XElement[m_collectionToGeneratePartsFrom.Count];
+				var iresult = 0;
+				// Enhance: generalize this
+				foreach (var fsFeatDefn in m_sortedCollection)
+				{
+					var output = m_source.Clone();
+					result[iresult] = output;
+					var fieldName = fsFeatDefn.Abbreviation.BestAnalysisAlternative.Text;
+					var className = fsFeatDefn.ClassName;
+					var labelName = fieldName;
+					// generate parts for any given custom layout
+					// TODO: generalize the field ids
+					GeneratePartsFromLayouts(m_rootClassId, fieldName, PhPhonemeTags.kflidFeatures, ref output);
+					ReplaceParamsInAttributes(output, labelName, fieldName, FsFeatDefnTags.kflidName, className);
+					iresult++;
+				}
+				return result;
+			}
+		}
+
+		/// <summary>
+		/// In addition to replacing an old attribute value, appends a new attribute after the one
+		/// where the replacement occurs. Call DoTheAppends after running VisitAttributes.
+		/// </summary>
+		private sealed class ReplaceAttrAndAppend : ReplaceSubstringInAttr
+		{
+			string m_newAttrName;
+			string m_newAttrVal;
+			string m_pattern; // dup of base class variable, saves modifying it.
+			List<XAttribute> m_targets = new List<XAttribute>();
+
+			internal ReplaceAttrAndAppend(string pattern, string replacement, string newAttrName, string newAttrVal)
+				: base(pattern, replacement)
+			{
+				m_newAttrName = newAttrName;
+				m_newAttrVal = newAttrVal;
+				m_pattern = pattern;
+			}
+
+			public override bool Visit(XAttribute xa)
+			{
+				var old = xa.Value;
+				var index = old.IndexOf(m_pattern);
+				if (index >= 0)
+				{
+					m_targets.Add(xa);
+				}
+				base.Visit(xa); // AFTER we did our test, otherwise, it fails.
+				return false; // continue iterating
+			}
+
+			internal void DoTheAppends()
+			{
+				foreach (var xa in m_targets)
+				{
+					XmlUtils.SetAttribute(xa.Parent, m_newAttrName, m_newAttrVal);
+				}
+			}
 		}
 	}
 }

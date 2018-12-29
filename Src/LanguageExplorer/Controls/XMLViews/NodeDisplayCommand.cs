@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,7 +11,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// This class implements PerformDisplay by having the VC directly ProcessFrag
 	/// on an XElement that it stores.
 	/// </summary>
-	public class NodeDisplayCommand : DisplayCommand
+	internal class NodeDisplayCommand : DisplayCommand
 	{
 		/// <summary />
 		public NodeDisplayCommand(XElement node)
@@ -33,9 +33,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				logStream.WriteLine("Display " + hvo + " using " + Node);
 				logStream.IncreaseIndent();
 			}
-
 			vc.ProcessFrag(Node, vwenv, hvo, true, null);
-
 			logStream?.DecreaseIndent();
 		}
 

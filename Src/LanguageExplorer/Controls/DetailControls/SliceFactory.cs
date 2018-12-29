@@ -15,6 +15,7 @@ using LanguageExplorer.Areas.Lexicon;
 using LanguageExplorer.Areas.Lexicon.Tools.Edit;
 using LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes;
 using LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit;
+using LanguageExplorer.Areas.Notebook;
 using LanguageExplorer.Areas.Notebook.Tools.NotebookEdit;
 using LanguageExplorer.Areas.TextsAndWords.Tools.Analyses;
 using LanguageExplorer.Controls.DetailControls.Resources;

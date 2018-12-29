@@ -1,11 +1,11 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
-namespace LanguageExplorer.Controls.XMLViews
+namespace LanguageExplorer.Controls
 {
 	/// <summary>
 	/// An item to show in the chooser which is a command the user can select, rather than a simple choice.
@@ -18,10 +18,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected IPublisher m_publisher;
 		/// <summary />
 		protected ISubscriber m_subscriber;
-
-#if WhenFigureOutWhatThisShouldBe
-		protected string m_sHelp;
-#endif
 
 		/// <summary />
 		protected ChooserCommand(LcmCache cache, bool fCloseBeforeExecuting, string sLabel, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)

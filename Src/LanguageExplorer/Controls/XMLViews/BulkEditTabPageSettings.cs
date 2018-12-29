@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,6 +7,8 @@ using System.Reflection;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel.Core.Text;
 
 namespace LanguageExplorer.Controls.XMLViews
 {
@@ -20,7 +22,6 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		/// <summary> the bulkEditBar we're getting or settings our values</summary>
 		protected BulkEditBar m_bulkEditBar;
-
 		string m_bulkEditBarTabName = string.Empty;
 		string m_targetFieldName = string.Empty;
 
@@ -47,7 +48,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			if (m_bulkEditBar.OperationsTabControl.SelectedIndex != ExpectedTab)
 			{
-				throw new ApplicationException("Expected bulkEditBar to be on tab " + (BulkEditBarTabs) ExpectedTab);
+				throw new ApplicationException("Expected bulkEditBar to be on tab " + (BulkEditBarTabs)ExpectedTab);
 			}
 		}
 
@@ -87,22 +88,22 @@ namespace LanguageExplorer.Controls.XMLViews
 					// by default, just save basic tab info.
 					tabPageSettings = new BulkEditTabPageSettings();
 					break;
-				case (int) BulkEditBarTabs.ListChoice: // list
+				case (int)BulkEditBarTabs.ListChoice: // list
 					tabPageSettings = new ListChoiceTabPageSettings();
 					break;
-				case (int) BulkEditBarTabs.BulkCopy: // bulk copy
+				case (int)BulkEditBarTabs.BulkCopy: // bulk copy
 					tabPageSettings = new BulkCopyTabPageSettings();
 					break;
-				case (int) BulkEditBarTabs.ClickCopy: // click copy
+				case (int)BulkEditBarTabs.ClickCopy: // click copy
 					tabPageSettings = new ClickCopyTabPageSettings();
 					break;
-				case (int) BulkEditBarTabs.Process: // transduce
+				case (int)BulkEditBarTabs.Process: // transduce
 					tabPageSettings = new ProcessTabPageSettings();
 					break;
-				case (int) BulkEditBarTabs.BulkReplace: // find/replace
+				case (int)BulkEditBarTabs.BulkReplace: // find/replace
 					tabPageSettings = new BulkReplaceTabPageSettings();
 					break;
-				case (int) BulkEditBarTabs.Delete: // Delete.
+				case (int)BulkEditBarTabs.Delete: // Delete.
 					tabPageSettings = new DeleteTabPageSettings();
 					break;
 			}
@@ -129,8 +130,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			// try switching to saved tab.
 			try
 			{
-				var tab = (BulkEditBarTabs) Enum.Parse(typeof(BulkEditBarTabs), settings.TabPageName);
-				bulkEditBar.OperationsTabControl.SelectedIndex = (int) tab;
+				var tab = (BulkEditBarTabs)Enum.Parse(typeof(BulkEditBarTabs), settings.TabPageName);
+				bulkEditBar.OperationsTabControl.SelectedIndex = (int)tab;
 			}
 			catch
 			{
@@ -164,7 +165,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				tabPageSettings = GetNewSettingsForSelectedTab(bulkEditBar);
 				tabPageSettings.SetupBulkEditBarTab(bulkEditBar);
 			}
-
 			tabPageSettings.SetupApplyPreviewButtons();
 		}
 
@@ -319,7 +319,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				var pgSettingsType = basicTabPageSettings.GetType();
 				var baseClassTypeName = pgSettingsType.FullName.Split('+')[0];
 				var targetType = assembly.GetType(baseClassTypeName + "+" + className, false);
-
 				// deserialize
 				restoredTabPageSettings = (BulkEditTabPageSettings)XmlSerializationHelper.DeserializeXmlString(settingsXml, targetType);
 			}
@@ -341,7 +340,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// after deserializing, determine if the target combo was able to get
 		/// set to the persisted value.
 		/// </summary>
-		/// <returns></returns>
 		protected bool HasExpectedTargetSelected()
 		{
 			return m_bulkEditBar.CurrentTargetCombo.Text == TargetFieldName;
@@ -393,5 +391,703 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		#endregion Tab properties to serialize
+
+		/// <summary>
+		/// this just saves the target field
+		/// </summary>
+		private sealed class BulkReplaceTabPageSettings : BulkEditTabPageSettings
+		{
+			/// <summary />
+			protected override void SaveSettings(BulkEditBar bulkEditBar)
+			{
+				base.SaveSettings(bulkEditBar);
+				// now temporarily save some nonserializable objects so that they will
+				// persist for the duration of the app, but not after closing the app.
+				// 1) the Find & Replace pattern
+				var keyFindPattern = BuildFindPatternKey(bulkEditBar);
+				// store the Replace string into the Pattern
+				m_bulkEditBar.Pattern.ReplaceWith = m_bulkEditBar.TssReplace;
+				var patternSettings = new VwPatternSerializableSettings(m_bulkEditBar.Pattern);
+				var patternAsXml = XmlSerializationHelper.SerializeToString(patternSettings);
+				bulkEditBar.PropertyTable.SetProperty(keyFindPattern, patternAsXml, true);
+			}
+
+			/// <summary>
+			/// Check that we've changed to BulkEditBar to ExpectedTab,
+			/// and then set BulkEditBar to those tab settings
+			/// </summary>
+			protected override void SetupBulkEditBarTab(BulkEditBar bulkEditBar)
+			{
+				bulkEditBar.InitFindReplaceTab();
+				base.SetupBulkEditBarTab(bulkEditBar);
+				// now setup nonserializable objects
+				bulkEditBar.SetupNonserializableObjects(Pattern);
+			}
+
+			/// <summary />
+			protected override FwOverrideComboBox TargetComboForTab => m_bulkEditBar.FindReplaceTargetCombo;
+
+			/// <summary>
+			/// this is a hack that explicitly triggers the currentTargetCombo.SelectedIndexChange delegates
+			/// during initialization, since they do not fire automatically until after everything is setup.
+			/// </summary>
+			protected override void InvokeTargetComboSelectedIndexChanged()
+			{
+				m_bulkEditBar.m_findReplaceTargetCombo_SelectedIndexChanged(this, EventArgs.Empty);
+			}
+
+			private static string BuildFindPatternKey(BulkEditBar bulkEditBar)
+			{
+				var toolId = GetBulkEditBarToolId(bulkEditBar);
+				var currentTabPageName = GetCurrentTabPageName(bulkEditBar);
+				var keyFindPattern = $"{toolId}_{currentTabPageName}_FindAndReplacePattern";
+				return keyFindPattern;
+			}
+
+			#region NonSerializable properties
+
+			IVwPattern m_pattern;
+
+			private IVwPattern Pattern
+			{
+				get
+				{
+					if (m_pattern != null || !CanLoadFromBulkEditBar())
+					{
+						return m_pattern;
+					}
+					// first see if we can load the value from BulkEditBar
+					if (m_bulkEditBar.Pattern != null)
+					{
+						m_pattern = m_bulkEditBar.Pattern;
+					}
+					else
+					{
+						// next see if we can restore the pattern from deserializing settings stored in the property table.
+						var patternAsXml = m_bulkEditBar.PropertyTable.GetValue<string>(BuildFindPatternKey(m_bulkEditBar));
+						var settings = (VwPatternSerializableSettings)SIL.FieldWorks.Common.FwUtils.XmlSerializationHelper.DeserializeXmlString(patternAsXml, typeof(VwPatternSerializableSettings));
+						if (settings != null)
+						{
+							m_pattern = settings.NewPattern;
+						}
+						if (m_pattern == null)
+						{
+							m_pattern = VwPatternClass.Create();
+						}
+					}
+					return m_pattern;
+				}
+			}
+			#endregion NonSerializable properties
+		}
+
+		/// <summary>
+		/// this just saves the target field
+		/// </summary>
+		private sealed class DeleteTabPageSettings : BulkEditTabPageSettings
+		{
+			/// <summary />
+			protected override int ExpectedTab => (int)BulkEditBarTabs.Delete;
+
+			/// <summary />
+			protected override FwOverrideComboBox TargetComboForTab => m_bulkEditBar.DeleteWhatCombo;
+
+			/// <summary>
+			/// this is a hack that explictly triggers the currentTargetCombo.SelectedIndexChange delegates
+			/// during initialization, since they do not fire automatically until after everything is setup.
+			/// </summary>
+			protected override void InvokeTargetComboSelectedIndexChanged()
+			{
+				m_bulkEditBar.m_deleteWhatCombo_SelectedIndexChanged(this, EventArgs.Empty);
+			}
+
+			/// <summary />
+			protected override void SetupBulkEditBarTab(BulkEditBar bulkEditBar)
+			{
+				bulkEditBar.InitDeleteTab();
+				base.SetupBulkEditBarTab(bulkEditBar);
+			}
+		}
+
+		/// <summary />
+		private sealed class ClickCopyTabPageSettings : BulkEditTabPageSettings
+		{
+			private string m_copyMode = string.Empty;
+			private string m_nonEmptyTargetMode = string.Empty;
+			private string m_nonEmptyTargetSeparator = string.Empty;
+
+			/// <summary />
+			protected override int ExpectedTab => (int)BulkEditBarTabs.ClickCopy;
+
+			/// <summary>
+			/// the target combo for a particular tab page.
+			/// </summary>
+			protected override FwOverrideComboBox TargetComboForTab => m_bulkEditBar.ClickCopyTargetCombo;
+
+			/// <summary />
+			private string SourceCopyMode
+			{
+				get
+				{
+					if (!string.IsNullOrEmpty(m_copyMode) || !CanLoadFromBulkEditBar())
+					{
+						return m_copyMode ?? (m_copyMode = string.Empty);
+					}
+					if (m_bulkEditBar.ClickCopyWordButton.Checked)
+					{
+						m_copyMode = SourceCopyOptions.CopyWord.ToString();
+					}
+					else if (m_bulkEditBar.ClickCopyReorderButton.Checked)
+					{
+						m_copyMode = SourceCopyOptions.StringReorderedAtClicked.ToString();
+					}
+					return m_copyMode ?? (m_copyMode = string.Empty);
+				}
+			}
+
+			/// <summary />
+			private string NonEmptyTargetWriteMode
+			{
+				get
+				{
+					if (!string.IsNullOrEmpty(m_nonEmptyTargetMode) || !CanLoadFromBulkEditBar())
+					{
+						return m_nonEmptyTargetMode ?? (m_nonEmptyTargetMode = string.Empty);
+					}
+					if (m_bulkEditBar.ClickCopyAppendButton.Checked)
+					{
+						m_nonEmptyTargetMode = NonEmptyTargetOptions.Append.ToString();
+					}
+					else if (m_bulkEditBar.ClickCopyOverwriteButton.Checked)
+					{
+						m_nonEmptyTargetMode = NonEmptyTargetOptions.Overwrite.ToString();
+					}
+					return m_nonEmptyTargetMode ?? (m_nonEmptyTargetMode = string.Empty);
+				}
+			}
+
+			/// <summary />
+			private string NonEmptyTargetSeparator
+			{
+				get
+				{
+					if (string.IsNullOrEmpty(m_nonEmptyTargetSeparator) && CanLoadFromBulkEditBar())
+					{
+						m_nonEmptyTargetSeparator = m_bulkEditBar.ClickCopySepBox.Text;
+					}
+					return m_nonEmptyTargetSeparator ?? (m_nonEmptyTargetSeparator = string.Empty);
+				}
+			}
+
+			/// <summary />
+			protected override void SetupBulkEditBarTab(BulkEditBar bulkEditBar)
+			{
+				bulkEditBar.InitClickCopyTab();
+				base.SetupBulkEditBarTab(bulkEditBar);
+				var sourceCopyMode = (SourceCopyOptions)Enum.Parse(typeof(SourceCopyOptions), SourceCopyMode);
+				switch (sourceCopyMode)
+				{
+					case SourceCopyOptions.StringReorderedAtClicked:
+						m_bulkEditBar.ClickCopyReorderButton.Checked = true;
+						break;
+					case SourceCopyOptions.CopyWord:
+					default:
+						m_bulkEditBar.ClickCopyWordButton.Checked = true;
+						break;
+				}
+
+				var nonEmptyTargetMode = (NonEmptyTargetOptions)Enum.Parse(typeof(NonEmptyTargetOptions), NonEmptyTargetWriteMode);
+				switch (nonEmptyTargetMode)
+				{
+					case NonEmptyTargetOptions.Overwrite:
+						m_bulkEditBar.ClickCopyOverwriteButton.Checked = true;
+						break;
+					case NonEmptyTargetOptions.Append:
+					default:
+						m_bulkEditBar.ClickCopyAppendButton.Checked = true;
+						break;
+				}
+				m_bulkEditBar.ClickCopySepBox.Text = NonEmptyTargetSeparator;
+			}
+
+			/// <summary>
+			/// this is a hack that explictly triggers the currentTargetCombo.SelectedIndexChange delegates
+			/// during initialization, since they do not fire automatically until after everything is setup.
+			/// </summary>
+			protected override void InvokeTargetComboSelectedIndexChanged()
+			{
+				m_bulkEditBar.m_clickCopyTargetCombo_SelectedIndexChanged(this, EventArgs.Empty);
+			}
+
+			/// <summary>
+			/// Update Preview/Clear and Apply Button states.
+			/// </summary>
+			protected override void SetupApplyPreviewButtons()
+			{
+				m_bulkEditBar.SetupApplyPreviewButtons(false, false);
+			}
+
+			/// <summary>
+			/// when switching contexts, we should commit any pending click copy changes.
+			/// </summary>
+			protected override void SaveSettings(BulkEditBar bulkEditBar)
+			{
+				// first commit any pending changes.
+				// switching from click copy, so commit any pending changes.
+				m_bulkEditBar.CommitClickChanges(this, EventArgs.Empty);
+				base.SaveSettings(bulkEditBar);
+			}
+
+			private enum SourceCopyOptions
+			{
+				CopyWord = 0,
+				StringReorderedAtClicked
+			}
+		}
+
+		/// <summary />
+		private class BulkCopyTabPageSettings : BulkEditTabPageSettings
+		{
+			private string m_sourceField = string.Empty;
+			private string m_nonEmptyTargetMode = string.Empty;
+			private string m_nonEmptyTargetSeparator = string.Empty;
+
+			/// <summary />
+			protected override int ExpectedTab => (int)BulkEditBarTabs.BulkCopy;
+
+			/// <summary />
+			private string SourceField
+			{
+				get
+				{
+					if (string.IsNullOrEmpty(m_sourceField) && CanLoadFromBulkEditBar() && SourceCombo != null)
+					{
+						m_sourceField = SourceCombo.Text;
+					}
+					return m_sourceField ?? (m_sourceField = string.Empty);
+				}
+			}
+
+			/// <summary />
+			protected virtual FwOverrideComboBox SourceCombo => m_bulkEditBar.BulkCopySourceCombo;
+
+			/// <summary />
+			protected virtual NonEmptyTargetControl NonEmptyTargetControl => m_bulkEditBar.BcNonEmptyTargetControl;
+
+			/// <summary />
+			private string NonEmptyTargetWriteMode
+			{
+				get
+				{
+					if (string.IsNullOrEmpty(m_nonEmptyTargetMode) && CanLoadFromBulkEditBar())
+					{
+						m_nonEmptyTargetMode = NonEmptyTargetControl.NonEmptyMode.ToString();
+					}
+					return m_nonEmptyTargetMode ?? (m_nonEmptyTargetMode = string.Empty);
+				}
+			}
+
+			/// <summary />
+			private string NonEmptyTargetSeparator
+			{
+				get
+				{
+					if (string.IsNullOrEmpty(m_nonEmptyTargetSeparator) && CanLoadFromBulkEditBar())
+					{
+						m_nonEmptyTargetSeparator = NonEmptyTargetControl.Separator;
+					}
+					return m_nonEmptyTargetSeparator ?? (m_nonEmptyTargetSeparator = string.Empty);
+				}
+			}
+
+			/// <summary />
+			protected override void SetupBulkEditBarTab(BulkEditBar bulkEditBar)
+			{
+				InitizializeTab(bulkEditBar);
+				base.SetupBulkEditBarTab(bulkEditBar);
+				if (SourceCombo != null)
+				{
+					SourceCombo.Text = SourceField;
+					if (SourceCombo.SelectedIndex == -1)
+					{
+						// by default select the first item.
+						if (SourceCombo.Items.Count > 0)
+						{
+							SourceCombo.SelectedIndex = 0;
+						}
+					}
+				}
+				NonEmptyTargetControl.NonEmptyMode = (NonEmptyTargetOptions)Enum.Parse(typeof(NonEmptyTargetOptions), NonEmptyTargetWriteMode);
+				NonEmptyTargetControl.Separator = NonEmptyTargetSeparator;
+			}
+
+			/// <summary>
+			/// the target combo for a particular tab page.
+			/// </summary>
+			protected override FwOverrideComboBox TargetComboForTab => m_bulkEditBar.BulkCopyTargetCombo;
+
+			/// <summary>
+			/// this is a hack that explictly triggers the currentTargetCombo.SelectedIndexChange delegates
+			/// during initialization, since they do not fire automatically until after everything is setup.
+			/// </summary>
+			protected override void InvokeTargetComboSelectedIndexChanged()
+			{
+				m_bulkEditBar.m_bulkCopyTargetCombo_SelectedIndexChanged(this, EventArgs.Empty);
+			}
+
+			/// <summary />
+			protected virtual void InitizializeTab(BulkEditBar bulkEditBar)
+			{
+				bulkEditBar.InitBulkCopyTab();
+			}
+		}
+
+		/// <summary>
+		/// Same as BulkCopy except for the Process combo box and different controls.
+		/// </summary>
+		private sealed class ProcessTabPageSettings : BulkCopyTabPageSettings
+		{
+			private string m_process = string.Empty;
+
+			/// <summary />
+			protected override int ExpectedTab => (int)BulkEditBarTabs.Process;
+
+			/// <summary />
+			protected override FwOverrideComboBox SourceCombo => m_bulkEditBar.TransduceSourceCombo;
+
+			/// <summary />
+			protected override NonEmptyTargetControl NonEmptyTargetControl => m_bulkEditBar.TrdNonEmptyTargetControl;
+
+			/// <summary>
+			/// the target combo for a particular tab page.
+			/// </summary>
+			protected override FwOverrideComboBox TargetComboForTab => m_bulkEditBar.TransduceTargetCombo;
+
+			/// <summary />
+			private string Process
+			{
+				get
+				{
+					if (string.IsNullOrEmpty(m_process) && CanLoadFromBulkEditBar() && m_bulkEditBar.TransduceProcessorCombo != null)
+					{
+						m_process = m_bulkEditBar.TransduceProcessorCombo.Text;
+					}
+					return m_process ?? (m_process = string.Empty);
+				}
+			}
+
+			/// <summary />
+			protected override void SetupBulkEditBarTab(BulkEditBar bulkEditBar)
+			{
+				base.SetupBulkEditBarTab(bulkEditBar);
+				// now handle the process combo.
+				if (m_bulkEditBar.TransduceProcessorCombo != null)
+				{
+					m_bulkEditBar.TransduceProcessorCombo.Text = Process;
+				}
+			}
+
+			/// <summary>
+			/// this is a hack that explicitly triggers the currentTargetCombo.SelectedIndexChange delegates
+			/// during initialization, since they do not fire automatically until after everything is setup.
+			/// </summary>
+			protected override void InvokeTargetComboSelectedIndexChanged()
+			{
+				m_bulkEditBar.m_transduceTargetCombo_SelectedIndexChanged(this, EventArgs.Empty);
+			}
+
+			/// <summary />
+			protected override void InitizializeTab(BulkEditBar bulkEditBar)
+			{
+				bulkEditBar.InitTransduce();
+			}
+		}
+
+		/// <summary />
+		private sealed class ListChoiceTabPageSettings : BulkEditTabPageSettings
+		{
+
+			private string m_changeTo = string.Empty;
+
+			/// <summary />
+			protected override int ExpectedTab => (int)BulkEditBarTabs.ListChoice;
+
+			/// <summary />
+			private string ChangeTo
+			{
+				get
+				{
+					if (string.IsNullOrEmpty(m_changeTo) && CanLoadFromBulkEditBar() && m_bulkEditBar.ListChoiceControl != null)
+					{
+						m_changeTo = m_bulkEditBar.ListChoiceControl.Text;
+					}
+					return m_changeTo ?? (m_changeTo = string.Empty);
+				}
+			}
+
+			/// <summary />
+			protected override void SetupBulkEditBarTab(BulkEditBar bulkEditBar)
+			{
+				// first initialize the controls, since otherwise, we overwrite our selection.
+				// now we can setup the target field
+				m_bulkEditBar.InitListChoiceTab();
+				base.SetupBulkEditBarTab(bulkEditBar);
+				if (m_bulkEditBar.ListChoiceControl != null)
+				{
+					if (HasExpectedTargetSelected())
+					{
+						m_bulkEditBar.ListChoiceControl.Text = ChangeTo;
+					}
+					if (m_bulkEditBar.CurrentItem.BulkEditControl is ITextChangedNotification)
+					{
+						(m_bulkEditBar.CurrentItem.BulkEditControl as ITextChangedNotification).ControlTextChanged();
+					}
+					else
+					{
+						// couldn't restore target selection, so revert to defaults.
+						// (LT-9940 default is ChangeTo, not "")
+						m_bulkEditBar.ListChoiceControl.Text = ChangeTo;
+					}
+				}
+				else
+				{
+					// at least show dummy control.
+					m_bulkEditBar.ListChoiceChangeToCombo.Visible = true;
+				}
+			}
+
+			/// <summary>
+			/// the target combo for a particular tab page.
+			/// </summary>
+			protected override FwOverrideComboBox TargetComboForTab => m_bulkEditBar.ListChoiceTargetCombo;
+
+			/// <summary>
+			/// this is a hack that explictly triggers the currentTargetCombo.SelectedIndexChange delegates
+			/// during initialization, since they do not fire automatically until after everything is setup.
+			/// </summary>
+			protected override void InvokeTargetComboSelectedIndexChanged()
+			{
+				m_bulkEditBar.m_listChoiceTargetCombo_SelectedIndexChanged(this, EventArgs.Empty);
+			}
+
+			/// <summary>
+			/// Update Preview/Clear and Apply Button states.
+			/// </summary>
+			protected override void SetupApplyPreviewButtons()
+			{
+				base.SetupApplyPreviewButtons();
+				m_bulkEditBar.EnablePreviewApplyForListChoice();
+			}
+		}
+
+		/// <summary>
+		/// Wrapper to serialize/deserialize basic settings for VwPattern
+		/// </summary>
+		private sealed class VwPatternSerializableSettings
+		{
+			private bool m_fNewlyCreated;
+			private IVwPattern m_pattern;
+			private int m_patternWs;
+			private string m_patternString = string.Empty;
+			private string m_replaceWithString = string.Empty;
+			private int m_replaceWithWs;
+
+			/// <summary>
+			/// use this interface to deserialize settings to new pattern
+			/// </summary>
+			public VwPatternSerializableSettings()
+			{
+				// create a new pattern to capture deserialized settings.
+				m_pattern = VwPatternClass.Create();
+				m_fNewlyCreated = true;
+			}
+
+			/// <summary>
+			/// use this interface to serialize the given pattern
+			/// </summary>
+			public VwPatternSerializableSettings(IVwPattern pattern)
+			{
+				m_pattern = pattern;
+			}
+
+			/// <summary>
+			/// When class is used with deserializer,
+			/// use this to get the pattern that was (or is to be) setup with
+			/// the deserialized settings.
+			/// returns null, if we haven't created one.
+			/// </summary>
+			public IVwPattern NewPattern => m_fNewlyCreated ? m_pattern : null;
+
+			/// <summary />
+			public string IcuCollatingRules
+			{
+				get { return m_pattern.IcuCollatingRules; }
+				set { m_pattern.IcuCollatingRules = value; }
+			}
+
+			/// <summary />
+			public string IcuLocale
+			{
+				get { return m_pattern.IcuLocale; }
+				set { m_pattern.IcuLocale = value; }
+			}
+
+			/// <summary />
+			public bool MatchCase
+			{
+				get { return m_pattern.MatchCase; }
+				set { m_pattern.MatchCase = value; }
+			}
+
+			/// <summary />
+			public bool MatchCompatibility
+			{
+				get { return m_pattern.MatchCompatibility; }
+				set { m_pattern.MatchCompatibility = value; }
+			}
+
+			/// <summary />
+			public bool MatchDiacritics
+			{
+				get { return m_pattern.MatchDiacritics; }
+				set { m_pattern.MatchDiacritics = value; }
+			}
+
+			/// <summary />
+			public bool MatchExactly
+			{
+				get { return m_pattern.MatchExactly; }
+				set { m_pattern.MatchExactly = value; }
+			}
+
+			/// <summary />
+			public bool MatchOldWritingSystem
+			{
+				get { return m_pattern.MatchOldWritingSystem; }
+				set { m_pattern.MatchOldWritingSystem = value; }
+			}
+
+			/// <summary />
+			public bool MatchWholeWord
+			{
+				get { return m_pattern.MatchWholeWord; }
+				set { m_pattern.MatchWholeWord = value; }
+			}
+
+			/// <summary>
+			/// the (first) ws used to construct the Pattern tss.
+			/// </summary>
+			public int PatternWs
+			{
+				get
+				{
+					if (m_patternWs == 0 && m_pattern.Pattern != null)
+					{
+						m_patternWs = TsStringUtils.GetWsAtOffset(m_pattern.Pattern, 0);
+					}
+					return m_patternWs;
+				}
+				set
+				{
+					m_patternWs = value;
+					TryCreatePatternTss();
+				}
+			}
+
+			private void TryCreatePatternTss()
+			{
+				if (m_patternWs != 0)
+				{
+					// create a monoWs pattern text for the new pattern.
+					m_pattern.Pattern = TsStringUtils.MakeString(m_patternString, m_patternWs);
+				}
+			}
+
+			/// <summary />
+			public string PatternAsString
+			{
+				get
+				{
+					if (string.IsNullOrEmpty(m_patternString) && m_pattern.Pattern != null)
+					{
+						m_patternString = m_pattern.Pattern.Text;
+					}
+					return m_patternString;
+				}
+				set
+				{
+					m_patternString = value ?? string.Empty;
+					TryCreatePatternTss();
+				}
+			}
+
+			/// <summary />
+			public string ReplaceWithAsString
+			{
+				get
+				{
+					if (string.IsNullOrEmpty(m_replaceWithString) && m_pattern.ReplaceWith != null)
+					{
+						m_replaceWithString = m_pattern.ReplaceWith.Text;
+					}
+					return m_replaceWithString;
+				}
+				set
+				{
+					m_replaceWithString = value ?? string.Empty;
+					TryCreateReplaceWithTss();
+				}
+			}
+
+			private void TryCreateReplaceWithTss()
+			{
+				if (m_replaceWithWs != 0)
+				{
+					// create a monoWs pattern text for the new pattern.
+					m_pattern.ReplaceWith = TsStringUtils.MakeString(m_replaceWithString, m_replaceWithWs);
+				}
+			}
+
+			/// <summary>
+			/// the (first) ws used to construct the ReplaceWith tss.
+			/// </summary>
+			public int ReplaceWithWs
+			{
+				get
+				{
+					if (m_replaceWithWs == 0 && m_pattern.ReplaceWith != null)
+					{
+						m_replaceWithWs = TsStringUtils.GetWsAtOffset(m_pattern.ReplaceWith, 0);
+					}
+					return m_replaceWithWs;
+				}
+				set
+				{
+					m_replaceWithWs = value;
+					TryCreateReplaceWithTss();
+				}
+			}
+
+			/// <summary />
+			public bool ShowMore
+			{
+				get { return m_pattern.ShowMore; }
+				set { m_pattern.ShowMore = value; }
+			}
+
+			/// <summary />
+			public bool StoppedAtLimit
+			{
+				get { return m_pattern.StoppedAtLimit; }
+				set { m_pattern.StoppedAtLimit = value; }
+			}
+
+			/// <summary />
+			public bool UseRegularExpressions
+			{
+				get { return m_pattern.UseRegularExpressions; }
+				set { m_pattern.UseRegularExpressions = value; }
+			}
+		}
 	}
 }

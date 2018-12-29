@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,13 +14,13 @@ namespace LanguageExplorer.Controls.XMLViews
 	internal class MainCallerDisplayCommand : DisplayCommand
 	{
 		// The main node, usually one that has a "layout" attribute; obj or seq.
-
+		//
 		// A calling node, which may (if non-null) have a "param" attribute that overrides
 		// the "layout" one in m_mainNode; part ref.
-
+		//
 		// If true, bypass the normal strategy, and call ProcessFrag
 		// using the given hvo and m_mainNode as the fragment.
-
+		//
 		/// <summary>
 		/// The value of wsForce for the vc when the MainCallerDisplayCommand was needed (restored
 		/// for the duration of building its parts).
@@ -49,22 +49,14 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return false;
 			}
-			return other.MainElement == MainElement
-			       && other.Caller == Caller
-			       && other.UseMainAsFrag == UseMainAsFrag
-			       && other.m_wsForce == m_wsForce;
+			return other.MainElement == MainElement && other.Caller == Caller && other.UseMainAsFrag == UseMainAsFrag && other.m_wsForce == m_wsForce;
 		}
 
 		// Make it work sensibly as a hash key.
 		public override int GetHashCode()
 		{
-			return MainElement.GetHashCode()
-			       + (UseMainAsFrag ? 1 : 0)
-			       + (Caller == null ? 0 : Caller.GetHashCode())
-			       + m_wsForce;
+			return MainElement.GetHashCode() + (UseMainAsFrag ? 1 : 0) + (Caller == null ? 0 : Caller.GetHashCode()) + m_wsForce;
 		}
-
-		internal static int displayLevel = 0;
 
 		internal override void PerformDisplay(XmlVc vc, int fragId, int hvo, IVwEnv vwenv)
 		{
@@ -82,10 +74,9 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					vc.WsForce = m_wsForce;
 				}
-
 				if (logStream != null)
 				{
-					logStream.WriteLine("Display " + hvo + " using layout " + layoutName + " which found " + node);
+					logStream.WriteLine($"Display {hvo} using layout {layoutName} which found {node}");
 					logStream.IncreaseIndent();
 				}
 				string flowType = null;
@@ -110,7 +101,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					// if requested apply a style to it.
 					if (style != null && flowType != "divInPara")
 					{
-						vwenv.set_StringProperty((int) FwTextPropType.ktptNamedStyle, style);
+						vwenv.set_StringProperty((int)FwTextPropType.ktptNamedStyle, style);
 					}
 					switch (flowType)
 					{

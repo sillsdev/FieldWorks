@@ -1,16 +1,16 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Drawing;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel;
-using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainServices;
 using SIL.Xml;
 
 namespace LanguageExplorer.Controls.XMLViews
@@ -18,37 +18,24 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// <summary />
 	internal class XmlRDEBrowseViewVc : XmlBrowseViewBaseVc
 	{
-		#region Constants
-
 		/// <summary />
 		public const int khvoNewItem = -1234567890;
 		/// <summary />
 		public const string ksEditColumnBaseName = "FakeEditColumn";
-
-		#endregion Constants
-
-		#region Data members
-
 		// The following variables/constants are for implementing an editable row at the bottom
 		// of the browse view table.
-
 		// A Set of Hvos. If an HVO is in the set,
 		// it is the HVO of a 'new' row that is allowed to be edited.
 		private readonly HashSet<int> m_editableHvos = new HashSet<int>();
 
-		#endregion Data members
-
 		#region Constructiona and initialization
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
+		/// <summary />
 		internal XmlRDEBrowseViewVc(XElement xnSpec, int madeUpFieldIdentifier, XmlBrowseViewBase xbv)
 			: base(xnSpec, madeUpFieldIdentifier, xbv)
 		{
 			// set the border color
 			BorderColor = SystemColors.ControlDark;
-
 			// Check for the special editable row attributes.
 			// this one is independently optional so we can handle it separately.
 			EditRowMergeMethod = XmlUtils.GetOptionalAttributeValue(xnSpec, "editRowMergeMethod", null);
@@ -93,7 +80,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					Debug.WriteLine("editRowModelClass is set, but editRowSaveMethod is not!?");
 				}
 			}
-
 			// For RDE use, we want total RTL user experience (see LT-5127).
 			Cache = m_xbv.Cache;
 			ShowColumnsRTL = IsWsRTL(m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle);
@@ -190,9 +176,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			if (m_editableHvos.Count == 0)
 			{
-				return;		// no processing needed on empty list
+				return;     // no processing needed on empty list
 			}
-
 			var done = false;
 			var validSenses = new HashSet<int>();
 			lock (this)
@@ -202,9 +187,9 @@ namespace LanguageExplorer.Controls.XMLViews
 					var restartEnumerator = false;
 					foreach (var hvoSense in EditableObjectsIds)
 					{
-						if (validSenses.Contains(hvoSense))	// already processed
+						if (validSenses.Contains(hvoSense)) // already processed
 						{
-							done = false;	// just for something to do...
+							done = false;   // just for something to do...
 						}
 						else
 						{
@@ -266,9 +251,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			// change the background color for all non-editable items
 			if (!m_editableHvos.Contains(hvo))
 			{
-				vwenv.set_IntProperty((int )FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, (int)RGB(SystemColors.ControlLight));
+				vwenv.set_IntProperty((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, (int)RGB(SystemColors.ControlLight));
 			}
-
 			// use the base functionality, just needed to set the colors
 			base.AddTableRow(vwenv, hvo, frag);
 		}
@@ -353,7 +337,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private void AddEditRow(IVwEnv vwenv, int hvo)
 		{
 			// set the border color to gray
-			vwenv.set_IntProperty((int )FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault, (int)RGB(BorderColor));
+			vwenv.set_IntProperty((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault, (int)RGB(BorderColor));
 			// Make a table
 			var rglength = m_xbv.GetColWidthInfo();
 			var colCount = m_columns.Count;
@@ -361,7 +345,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				colCount++;
 			}
-
 			VwLength vl100; // Length representing 100%.
 			vl100.unit = rglength[0].unit;
 			vl100.nVal = 1;
@@ -374,7 +357,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				vl100, // using 100% of available space
 				72000 / 96, //0, // no border
 				VwAlignment.kvaLeft, // cells by default left aligned
-				//	VwFramePosition.kvfpBelow, //.kvfpBox, //.kvfpVoid, // no frame
 				VwFramePosition.kvfpBelow | VwFramePosition.kvfpRhs,
 				VwRule.kvrlCols, // vertical lines between columns
 				0, // no space between cells
@@ -420,12 +402,10 @@ namespace LanguageExplorer.Controls.XMLViews
 			vwenv.OpenTableCell(1, 1);
 			var flid = XMLViewsDataCache.ktagEditColumnBase + i;
 			var ws = WritingSystemServices.GetWritingSystem(m_cache, FwUtils.ConvertElement(node), null, m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
-
 			// Paragraph directionality must be set before the paragraph is opened.
 			var fRTL = IsWsRTL(ws);
 			vwenv.set_IntProperty((int)FwTextPropType.ktptRightToLeft, (int)FwTextPropVar.ktpvEnum, fRTL ? -1 : 0);
 			vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, fRTL ? (int)FwTextAlign.ktalRight : (int)FwTextAlign.ktalLeft);
-
 			// Fill in the cell with the virtual property.
 			vwenv.OpenParagraph();
 			vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, editable ? (int)TptEditable.ktptIsEditable : (int)TptEditable.ktptNotEditable);

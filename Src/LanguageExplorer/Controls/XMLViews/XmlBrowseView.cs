@@ -1,24 +1,26 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Controls.XMLViews
 {
 	/// <summary />
 	internal class XmlBrowseView : XmlBrowseViewBase
 	{
+		private bool m_fInSelectionChanged;
+
 		/// <summary />
 		internal XmlBrowseView()
 		{
 			AccessibleName = "XmlBrowseView";
-
 			// tab should move the cursor between cells in the table.
 			AcceptsTab = true;
 		}
@@ -52,6 +54,13 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
 			if (disposing)
 			{
 				Subscriber.Unsubscribe(GetCorrespondingPropertyName("readOnlyBrowse"), SetSelectedRowHighlighting);
@@ -62,11 +71,11 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		/// <summary>
 		/// Cause the behavior to switch to the current setting of ReadOnlyBrowse.
-		/// Override if the behaivor should be different than this.
+		/// Override if the behavior should be different than this.
 		/// </summary>
 		private void SetSelectedRowHighlighting(object newValue)
 		{
-				SetSelectedRowHighlighting();
+			SetSelectedRowHighlighting();
 		}
 
 		/// <summary>
@@ -94,13 +103,13 @@ namespace LanguageExplorer.Controls.XMLViews
 			var ch = val[cch - 1];
 			if (ch == '\n' || ch == '\r')
 			{
-				cchStrip ++;
+				cchStrip++;
 				if (cch > 1)
 				{
 					ch = val[cch - 2];
 					if (ch == '\n' || ch == '\r')
 					{
-						cchStrip ++;
+						cchStrip++;
 					}
 				}
 			}
@@ -152,14 +161,13 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
-			//If XmlBrouseView did not receive a mouse down event then we do not want to
+			//If XmlBrowseView did not receive a mouse down event then we do not want to
 			//do anything on the mouseUp because the mouseUp would have come from clicking
 			//somewhere else. LT-8939
 			if (!m_fMouseUpEnabled)
 			{
 				return;
 			}
-
 			try
 			{
 				if (m_selectedIndex == -1)
@@ -204,7 +212,6 @@ namespace LanguageExplorer.Controls.XMLViews
 						}
 					}
 				}
-
 				// We need to manually change the index for ReadOnly views.
 				// SimpleRootSite delegates RightMouseClickEvent to our RecordBrowseView parent,
 				// which also makes the selection for us..
@@ -230,7 +237,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					// Do this AFTER other actions which may change the current line.
 					ClickCopy(this, new ClickCopyEventArgs(tssWord, hvoNewSelRow, tssSource, ichStart));
 				}
-
 				if (clickSel == null)
 				{
 					return;
@@ -280,7 +286,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			if (IsDisposed)
 			{
-				return true; // all done trying to focus this!
+				throw new InvalidOperationException("Thou shalt not call methods after I am disposed!");
+				//return true; // all done trying to focus this!
 			}
 			Focus();
 			if (m_idleFocusCount == 0)
@@ -314,7 +321,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_bv.OnDoubleClick(e1);
 			}
 		}
-		bool m_fInSelectionChanged;
 
 		/// <summary>
 		/// We override this method to make a selection in all of the views that are in a
@@ -332,7 +338,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			try
 			{
 				m_fInSelectionChanged = true;
-
 				// Make sure we're not handling MouseDown since it
 				// handles SelectionChanged and DoSelectionSideEffects.
 				// No need to do it again.
@@ -351,11 +356,8 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					return;
 				}
-
 				base.HandleSelectionChange(rootb, vwselNew);
-
 				m_wantScrollIntoView = false; // It should already be visible here.
-
 				// Collect all the information we can about the selection.
 				int ihvoRoot;
 				int tagTextProp;
@@ -371,12 +373,8 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					return;// Nothing useful we can do.
 				}
-
-				// Main array of information retrived from sel that made combo.
-				var rgvsli = SelLevInfo.AllTextSelInfo(vwselNew, cvsli,
-					out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd,
-					out ws, out fAssocPrev, out ihvoEnd, out ttpBogus);
-
+				// Main array of information retrieved from sel that made combo.
+				var rgvsli = SelLevInfo.AllTextSelInfo(vwselNew, cvsli, out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd, out ttpBogus);
 				// The call to the base implementation can invalidate the selection. It's rare, but quite
 				// possible. (See the comment in EditingHelper.SelectionChanged() following
 				// Commit().) This test fixes LT-4731.
@@ -413,9 +411,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			var oldIndex = m_selectedIndex;
 			var oldHvoRoot = m_hvoRoot;
-
-			base.OnHandleCreated(e);	// SimpleRootSite.OnHandleCreated(e);
-
+			base.OnHandleCreated(e);
 			if (oldIndex >= 0 && oldIndex != m_selectedIndex && m_hvoRoot > 0 && oldHvoRoot == m_hvoRoot)
 			{
 				var newCount = SpecialCache.get_VecSize(m_hvoRoot, MainTag);

@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -31,11 +31,11 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected Button m_launcher;
 		protected int m_hvoList;
 		protected int m_flid;
-		string m_fieldName; // user-viewable name of field to display
-		string m_displayNameProperty; // name of method to get what to display for each item.
-		string m_displayWs; // key recognized by ObjectLabelCollection
-		List<ICmObject> m_chosenObjs = new List<ICmObject>(0);
-		bool m_fRemove; // true to remove selected items rather than append or replace
+		private string m_fieldName; // user-viewable name of field to display
+		private string m_displayNameProperty; // name of method to get what to display for each item.
+		private string m_displayWs; // key recognized by ObjectLabelCollection
+		private List<ICmObject> m_chosenObjs = new List<ICmObject>(0);
+		private bool m_fRemove; // true to remove selected items rather than append or replace
 		private GhostParentHelper m_ghostParentHelper;
 
 		public virtual Button SuggestButton => null;
@@ -43,12 +43,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		public event FwSelectionChangedEventHandler ValueChanged;
 
 		public ComplexListChooserBEditControl(LcmCache cache, IPropertyTable propertyTable, XElement colSpec)
-			: this(BulkEditBar.GetFlidFromClassDotName(cache, colSpec, "field"),
-				BulkEditBar.GetNamedListHvo(cache, colSpec, "list"),
-				XmlUtils.GetOptionalAttributeValue(colSpec, "displayNameProperty", "ShortNameTSS"),
-				BulkEditBar.GetColumnLabel(colSpec),
-				XmlUtils.GetOptionalAttributeValue(colSpec, "displayWs", "best analorvern"),
-				BulkEditBar.GetGhostHelper(cache.ServiceLocator, colSpec))
+			: this(BulkEditBar.GetFlidFromClassDotName(cache, colSpec, "field"), BulkEditBar.GetNamedListHvo(cache, colSpec, "list"),
+				XmlUtils.GetOptionalAttributeValue(colSpec, "displayNameProperty", "ShortNameTSS"), BulkEditBar.GetColumnLabel(colSpec),
+				XmlUtils.GetOptionalAttributeValue(colSpec, "displayWs", "best analorvern"), BulkEditBar.GetGhostHelper(cache.ServiceLocator, colSpec))
 		{
 			PropertyTable = propertyTable;
 		}
@@ -110,7 +107,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					m_chosenObjs = chooser.ChosenObjects.ToList();
 					ReplaceMode = chooser.ReplaceMode;
 					m_fRemove = chooser.RemoveMode;
-
 					// Tell the parent control that we may have changed the selected item so it can
 					// enable or disable the Apply and Preview buttons based on the selection.
 					// We are just checking here if any item was selected by the user in the dialog
@@ -131,7 +127,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected void EnableButtonsIfChangesWaiting()
 		{
 			Debug.Assert(SuggestButton != null, "Only used for Semantic Domain subclass");
-
 			// Tell the parent control that we may have changed the selected item so it can
 			// enable or disable the Apply and Preview buttons based on the selection.
 			if (ValueChanged == null)
@@ -198,7 +193,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public IVwStylesheet Stylesheet
 		{
-			set {  }
+			set { }
 		}
 
 		public virtual void DoIt(IEnumerable<int> itemsToChange, ProgressState state)
@@ -206,8 +201,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			UndoableUnitOfWorkHelper.Do(XMLViewsStrings.ksUndoBulkEdit, XMLViewsStrings.ksRedoBulkEdit,
 				m_cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 				{
-					//ISilDataAccess sda = m_cache.DomainDataByFlid; // used DataAccess, is that okay?
-
 					var chosenObjs = m_chosenObjs;
 					var i = 0;
 					// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
@@ -230,7 +223,6 @@ namespace LanguageExplorer.Controls.XMLViews
 						{
 							continue;
 						}
-
 						var newHvos = newVal.Select(obj => obj.Hvo).ToArray();
 						var realTarget = hvoItem;
 						if (m_ghostParentHelper != null)
@@ -345,10 +337,8 @@ namespace LanguageExplorer.Controls.XMLViews
 				newVal = oldVals;
 				return;
 			}
-
 			oldVals = GetOldVals(hvoReal);
 			newVal = chosenObjs;
-
 			if (m_fRemove)
 			{
 				newVal = oldVals; // by default no change in remove mode.
@@ -405,7 +395,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				baseClid = m_cache.MetaDataCacheAccessor.GetBaseClsId(baseClid);
 			}
-
 			return baseClid == clidField;
 		}
 

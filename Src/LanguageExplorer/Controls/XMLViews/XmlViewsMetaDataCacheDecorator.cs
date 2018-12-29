@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -16,7 +16,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		public override void AddVirtualProp(string bstrClass, string bstrField, int luFlid, int type)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		// So far, this is the only query that needs to know about the virtual props.

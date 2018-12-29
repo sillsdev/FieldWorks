@@ -115,6 +115,9 @@ namespace LanguageExplorer.LcmUi.Dialogs
 
 		private void InitBrowseView(string guiControl, List<DummyCmObject> mergeCandidates)
 		{
+#if RANDYTODO
+			// TODO: Nobody will be home.
+#endif
 			var configurationParameters = PropertyTable.GetValue<XElement>("WindowConfiguration");
 			var toolNode = configurationParameters.XPathSelectElement("controls/parameters/guicontrol[@id='" + guiControl + "']/parameters");
 

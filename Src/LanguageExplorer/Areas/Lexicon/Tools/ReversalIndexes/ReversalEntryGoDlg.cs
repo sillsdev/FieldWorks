@@ -78,6 +78,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			</guicontrol>
 */
 #endif
+#if RANDYTODO
+			// TODO: Nobody will be home.
+#endif
 			var xnWindow = PropertyTable.GetValue<XElement>("WindowConfiguration");
 			var configNode = xnWindow.XPathSelectElement("controls/parameters/guicontrol[@id=\"matchingReversalEntries\"]/parameters");
 

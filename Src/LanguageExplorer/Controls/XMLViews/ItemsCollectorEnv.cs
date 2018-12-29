@@ -1,9 +1,8 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel.Core.KernelInterfaces;
 
@@ -19,7 +18,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private readonly HashSet<int> m_hvosInCell = new HashSet<int>();
 
 		/// <summary>
-		/// This constructor should be used if you want to provide a seperate cache decorator.
+		/// This constructor should be used if you want to provide a separate cache decorator.
 		/// </summary>
 		public ItemsCollectorEnv(IVwEnv env, ISilDataAccess sda, int hvoRoot)
 			: base(env, sda, hvoRoot)

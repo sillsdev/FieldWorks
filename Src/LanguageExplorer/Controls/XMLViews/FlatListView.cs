@@ -1,16 +1,16 @@
-// Copyright (c) 2007-2018 SIL International
+// Copyright (c) 2007-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
 using System.Drawing;
-using System.Windows.Forms;
 using System.Linq;
+using System.Windows.Forms;
 using System.Xml.Linq;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Controls.XMLViews
 {
@@ -27,7 +27,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		#region Data members
 
 		private const int ObjectListFlid = 89999943;
-
 		private LcmCache m_cache;
 		private IVwStylesheet m_stylesheet; // used to figure font heights.
 		private IPropertyTable m_propertyTable;
@@ -61,7 +60,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_configNode = xnConfig;
 			SuspendLayout();
 			m_listPublisher = new ObjectListPublisher(cache.DomainDataByFlid as ISilDataAccessManaged, ObjectListFlid);
-
 			StoreData(objs);
 			m_bvList = new BrowseViewer(m_configNode, m_cache.LanguageProject.Hvo, m_cache, null, m_listPublisher)
 			{
@@ -122,7 +120,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return m_bvList.SelectedIndex;
 			}
-
 			set
 			{
 				m_bvList.SelectedIndex = value;

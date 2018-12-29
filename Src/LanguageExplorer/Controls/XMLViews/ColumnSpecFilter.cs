@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -40,12 +40,11 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 
-		private XmlBrowseViewBaseVc Vc => m_vc ?? (m_vc = new XmlBrowseViewBaseVc(m_cache, m_sda) {SuppressPictures = true});
+		private XmlBrowseViewBaseVc Vc => m_vc ?? (m_vc = new XmlBrowseViewBaseVc(m_cache, m_sda) { SuppressPictures = true });
 
 		/// <summary>
 		/// eg. persist the column specification
 		/// </summary>
-		/// <param name="element"></param>
 		public override void PersistAsXml(XElement element)
 		{
 			base.PersistAsXml(element);
@@ -108,7 +107,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				return false;
 			}
 			// see if we can compare layout attributes
-			var possibleAttributes = new Queue<string>(new[] {"layout", "subfield", "field"});
+			var possibleAttributes = new Queue<string>(new[] { "layout", "subfield", "field" });
 			return XmlViewsUtils.TryMatchExistingAttributes(colSpec, m_colSpec, ref possibleAttributes);
 		}
 	}

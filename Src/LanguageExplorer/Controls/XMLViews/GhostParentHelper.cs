@@ -1,11 +1,12 @@
-﻿// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using SIL.LCModel.Core.Cellar;
+using System.Linq;
 using SIL.LCModel;
 using SIL.LCModel.Application;
+using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Controls.XMLViews
@@ -19,8 +20,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	public class GhostParentHelper
 	{
-		internal ILcmServiceLocator m_services; // think of it as protected, but limited to this assembly.
-
+		internal ILcmServiceLocator m_services;
 		// The class of objects that are considered parents (they don't have the basic property we
 		// try to set).
 		// The property of m_parentClsid that owns signature objects.
@@ -236,5 +236,105 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Answer the class of parent objects.
 		/// </summary>
 		public int GhostOwnerClass { get; }
+
+		/// <summary>
+		/// Subclass for LexDb.AllPossibleAllomorphs.
+		/// </summary>
+		private sealed class GphAllPossibleAllomorphs : GhostParentHelper
+		{
+			internal GphAllPossibleAllomorphs(ILcmServiceLocator services, int parentClsid, int flidOwning)
+				: base(services, parentClsid, flidOwning)
+			{
+			}
+
+			/// <summary>
+			/// In the case of AllPossibleAllomorphs, the class to create is determined by the owning entry.
+			/// </summary>
+			internal override int ClassToCreate(int hvoItem, int flidBasicProp)
+			{
+				var entry = m_services.GetObject(hvoItem) as ILexEntry;
+				return entry.GetDefaultClassForNewAllomorph();
+			}
+		}
+
+		/// <summary>
+		/// GhostParentHelper subclass for the complex entry type field.
+		/// - a ghost owner is considered childless although it may have variant EntryRefs if it has no complex form ones.
+		/// </summary>
+		private sealed class GphComplexEntries : GhostParentHelper
+		{
+			internal GphComplexEntries(ILcmServiceLocator services)
+				: base(services, LexEntryTags.kClassId, LexEntryTags.kflidEntryRefs)
+			{
+			}
+
+			/// <summary>
+			/// Return true if we have no complex form EntryRef.
+			/// Although the property for which this GPH is used initially contains only entries
+			/// that have no complex form LER, a previous bulk edit might have created one.
+			/// </summary>
+			public override bool IsGhostOwnerChildless(int hvoItem)
+			{
+				return !m_services.GetInstance<ILexEntryRepository>().GetObject(hvoItem).EntryRefsOS.Where(ler => ler.RefType == LexEntryRefTags.krtComplexForm).Take(1).Any();
+			}
+
+			/// <summary>
+			/// We want specifically the first EntryRef of type complex form.
+			/// </summary>
+			internal override int GetFirstChildFromParent(int hvoParent)
+			{
+				return m_services.GetInstance<ILexEntryRepository>().GetObject(hvoParent).EntryRefsOS.First(ler => ler.RefType == LexEntryRefTags.krtComplexForm).Hvo;
+			}
+
+			/// <summary>
+			/// Override to make the new object a complex one.
+			/// </summary>
+			internal override int CreateOwnerOfTargetProp(int hvoItem, int flidBasicProp)
+			{
+				var result = base.CreateOwnerOfTargetProp(hvoItem, flidBasicProp);
+				GetSda().SetInt(result, LexEntryRefTags.kflidRefType, LexEntryRefTags.krtComplexForm);
+				return result;
+			}
+		}
+
+		/// <summary>
+		/// GhostParentHelper subclass for the complex entry type field.
+		/// - a ghost owner is considered childless although it may have variant EntryRefs if it has no complex form ones.
+		/// </summary>
+		private sealed class GphVariants : GhostParentHelper
+		{
+			internal GphVariants(ILcmServiceLocator services)
+				: base(services, LexEntryTags.kClassId, LexEntryTags.kflidEntryRefs)
+			{
+			}
+
+			/// <summary>
+			/// Return true if we have no complex form EntryRef.
+			/// Although the property for which this GPH is used initially contains only entries
+			/// that have no complex form LER, a previous bulk edit might have created one.
+			/// </summary>
+			public override bool IsGhostOwnerChildless(int hvoItem)
+			{
+				return !m_services.GetInstance<ILexEntryRepository>().GetObject(hvoItem).EntryRefsOS.Where(ler => ler.RefType == LexEntryRefTags.krtVariant).Take(1).Any();
+			}
+
+			/// <summary>
+			/// We want specifically the first EntryRef of type variant.
+			/// </summary>
+			internal override int GetFirstChildFromParent(int hvoParent)
+			{
+				return m_services.GetInstance<ILexEntryRepository>().GetObject(hvoParent).EntryRefsOS.First(ler => ler.RefType == LexEntryRefTags.krtVariant).Hvo;
+			}
+
+			/// <summary>
+			/// Override to make the new object a complex one.
+			/// </summary>
+			internal override int CreateOwnerOfTargetProp(int hvoItem, int flidBasicProp)
+			{
+				var result = base.CreateOwnerOfTargetProp(hvoItem, flidBasicProp);
+				GetSda().SetInt(result, LexEntryRefTags.kflidRefType, LexEntryRefTags.krtVariant);
+				return result;
+			}
+		}
 	}
 }

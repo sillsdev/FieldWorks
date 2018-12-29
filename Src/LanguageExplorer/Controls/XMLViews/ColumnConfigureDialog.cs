@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,9 +9,9 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.Controls;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.Xml;
 
@@ -35,11 +35,11 @@ namespace LanguageExplorer.Controls.XMLViews
 		internal FwOverrideComboBox wsCombo;
 		private Label label3;
 		internal ListView currentList;
-		List<XElement> m_possibleColumns;
-		readonly LcmCache m_cache;
+		private List<XElement> m_possibleColumns;
+		private readonly LcmCache m_cache;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
-		bool m_fUpdatingWsCombo; // true during UpdateWsCombo
-		WsComboContent m_wccCurrent = WsComboContent.kwccNone;
+		private bool m_fUpdatingWsCombo; // true during UpdateWsCombo
+		private WsComboContent m_wccCurrent = WsComboContent.kwccNone;
 		internal ListView optionsList;
 		private HelpProvider helpProvider;
 		private IContainer components;
@@ -122,11 +122,9 @@ namespace LanguageExplorer.Controls.XMLViews
 				SelectWsLabel(wsLabel);
 				return;
 			}
-
 			wsCombo.Items.Clear();
 			AddWritingSystemsToCombo(m_cache, wsCombo.Items, contentToDisplay);
 			m_wccCurrent = contentToDisplay;
-
 			SelectWsLabel(wsLabel);
 		}
 
@@ -163,7 +161,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-
 			wsCombo.Items.Clear();
 			using (var ie = m_cache.LanguageProject.LexDbOA.ReversalIndexesOC.GetEnumerator())
 			{
@@ -208,7 +205,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-
 			wsCombo.Items.Clear();
 			var ri = m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().GetObject(RootObjectHvo);
 			var sLang = m_cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem).Language;
@@ -220,7 +216,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					wsCombo.Items.Add(new WsComboItem(ws.DisplayLabel, ws.Id));
 				}
 			}
-
 			wsCombo.Sorted = fSort;
 			m_wccCurrent = WsComboContent.kwccReversalIndex;
 			wsCombo.Enabled = true;
@@ -326,7 +321,6 @@ namespace LanguageExplorer.Controls.XMLViews
 							items.Add(new WsComboItem(sBestVernAnal, "best vernoranal"));
 						}
 					}
-
 					AddWritingSystemsToCombo(cache, items, cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems);
 					AddWritingSystemsToCombo(cache, items, cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems);
 					break;
@@ -340,7 +334,6 @@ namespace LanguageExplorer.Controls.XMLViews
 							items.Add(new WsComboItem(sAllAnal, "all analysis"));
 						}
 					}
-
 					AddWritingSystemsToCombo(cache, items, cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems);
 					break;
 				case WsComboContent.kwccBestVernacular:
@@ -370,7 +363,6 @@ namespace LanguageExplorer.Controls.XMLViews
 							items.Add(new WsComboItem(sBestAnalVern, "best analorvern"));
 						}
 					}
-
 					AddWritingSystemsToCombo(cache, items, cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems);
 					AddWritingSystemsToCombo(cache, items, cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems);
 					break;
@@ -384,9 +376,7 @@ namespace LanguageExplorer.Controls.XMLViews
 							items.Add(new WsComboItem(sAllAnal, "all analysis"));
 						}
 					}
-
-					AddWritingSystemsToCombo(cache, items,
-						cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems);
+					AddWritingSystemsToCombo(cache, items, cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems);
 					break;
 				case WsComboContent.kwccVernacularInParagraph:
 					items.Add(new WsComboItem(sVernacularInPara, "vern in para"));
@@ -402,7 +392,6 @@ namespace LanguageExplorer.Controls.XMLViews
 							items.Add(new WsComboItem(sAllVern, "all vernacular"));
 						}
 					}
-
 					AddWritingSystemsToCombo(cache, items, cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems);
 					break;
 				case WsComboContent.kwccPronunciation:
@@ -414,11 +403,10 @@ namespace LanguageExplorer.Controls.XMLViews
 							items.Add(new WsComboItem(sAllPron, "all pronunciation"));
 						}
 					}
-
 					AddWritingSystemsToCombo(cache, items, cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems);
 					break;
 				default:
-					throw new NotImplementedException($"AddWritingSystemsToCombo does not know how to add {contentToAdd} content.");
+					throw new NotSupportedException($"AddWritingSystemsToCombo does not know how to add {contentToAdd} content.");
 			}
 		}
 
@@ -489,7 +477,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					cols[1] = newWsDispCat;
 				}
 			}
-
 			var itemWithToolTip = new ListViewItem(cols)
 			{
 				ToolTipText = cols[1]
@@ -498,7 +485,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				itemWithToolTip.ImageIndex = 0;
 			}
-
 			return itemWithToolTip;
 		}
 
@@ -571,7 +557,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return false;
 			}
-
 			var origDisplayCategory = TranslateWsParamToLocalizedDisplayCategory(origWs);
 			var origLabel = XmlUtils.GetOptionalAttributeValue(node, "originalLabel");
 			if (string.IsNullOrEmpty(origLabel))
@@ -582,7 +567,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return false;
 			}
-
 			var dispName = UpdateNodeToReflectDefaultWs(node, origWs);
 			if (!string.IsNullOrEmpty(dispName))
 			{
@@ -676,7 +660,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				currentList.Items.Add(item);
 			}
-
 			return item;
 		}
 
@@ -714,9 +697,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -938,7 +921,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-
 			if (HasDuplicateColumns())
 			{
 				ShowDuplicatesWarning(GetDuplicateColumns());
@@ -959,16 +941,14 @@ namespace LanguageExplorer.Controls.XMLViews
 		private List<string> GetDuplicateColumns()
 		{
 			var duplicateColumnLabels = new List<string>();
-
 			for (var i = 0; i < CurrentSpecs.Count; i++)
 			{
 				var label = GetColumnLabel(i);
 				var wsParam = XmlViewsUtils.FindWsParam(CurrentSpecs[i]);
-
-				// This tries to interpret the ws paramter into an int.  Sometimes the parameter cannot be interpreted without an object,
+				// This tries to interpret the ws parameter into an int.  Sometimes the parameter cannot be interpreted without an object,
 				// such as when the ws is a magic string that will change the actual ws depending on the contents of the object.
 				// In these cases, we give -50 as a known constant to check for and will just compare the string version of the
-				// ws paramter.  This can can possibly throw an exception, so we'll enclose it in a try block.
+				// ws parameter.  This can can possibly throw an exception, so we'll enclose it in a try block.
 				var ws = -50;
 				var wsMagic = 0;
 				try
@@ -979,7 +959,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					}
 				}
 				catch { }
-
 				for (var j = 0; j < CurrentSpecs.Count; j++)
 				{
 					// No need to check against our own node
@@ -987,16 +966,13 @@ namespace LanguageExplorer.Controls.XMLViews
 					{
 						continue;
 					}
-
 					var sameSpec = false;
-
 					var otherLabel = GetColumnLabel(j);
 					if (label != otherLabel)
 					{
 						continue;
 					}
 					var otherWsParam = XmlViewsUtils.FindWsParam(CurrentSpecs[j]);
-
 					// If the ws is not -50, then we know to compare against integer ws codes, not string labels
 					if (ws != -50)
 					{
@@ -1010,9 +986,10 @@ namespace LanguageExplorer.Controls.XMLViews
 					else
 					{
 						if (wsParam == otherWsParam)
+						{
 							sameSpec = true;
+						}
 					}
-
 					if (sameSpec) // Found a duplicate column.
 					{
 						if (!duplicateColumnLabels.Contains(label)) // Don't add the same label twice!
@@ -1027,16 +1004,15 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private string GetColumnLabel(int columnIndex)
 		{
-			return (StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(CurrentSpecs[columnIndex], "originalLabel", null)) ??
-						 StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(CurrentSpecs[columnIndex], "label", null))) ??
-						XmlUtils.GetMandatoryAttributeValue(CurrentSpecs[columnIndex], "label");
+			return (StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(CurrentSpecs[columnIndex], "originalLabel", null))
+					?? StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(CurrentSpecs[columnIndex], "label", null)))
+					?? XmlUtils.GetMandatoryAttributeValue(CurrentSpecs[columnIndex], "label");
 		}
 
-		private void addButton_Click(object sender, System.EventArgs e)
+		private void addButton_Click(object sender, EventArgs e)
 		{
 			var columnBeingAdded = m_possibleColumns[optionsList.SelectedIndices[0]];
 			CurrentSpecs.Add(columnBeingAdded);
-
 			var index = CurrentListIndex;
 			if (index >= 0)
 			{
@@ -1044,7 +1020,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			var currentItem = AddCurrentItem(columnBeingAdded);
 			currentItem.Selected = true;
-
 			//When adding the columnBeingAdded, try to adjust the label so that it is unique. This happens when
 			//the column is already one that exists in the list of currentColumns.
 			while (ColumnHasWsParam(columnBeingAdded) && ColumnHasAsDuplicate(columnBeingAdded) && (wsCombo.SelectedIndex < wsCombo.Items.Count) && wsCombo.Items.Count > 0)
@@ -1057,7 +1032,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 				wsCombo.SelectedIndex++;
 			}
-
 			//Warn the user if the column being added has a duplicate in the currentColumns list and it was not
 			//possible to create a unique label for it.
 			if (ColumnHasAsDuplicate(columnBeingAdded))
@@ -1066,7 +1040,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			// Select the item in the ws combo box by its name (see MakeCurrentItem method for details of item construction)
 			wsCombo.SelectedItem = currentItem.SubItems[1];
-
 			currentList.Focus();
 		}
 
@@ -1092,7 +1065,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			currentList.Items.RemoveAt(index);
 			CurrentSpecs.RemoveAt(index);
-
 			// Select the next logical item
 			if (index < currentList.Items.Count)
 			{
@@ -1142,7 +1114,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			EnableControls();
 		}
 
-		void EnableControls()
+		private void EnableControls()
 		{
 			addButton.Enabled = optionsList.SelectedIndices.Count > 0 && optionsList.SelectedIndices[0] >= 0;
 			var index = CurrentListIndex;
@@ -1183,7 +1155,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					wsCombo.Enabled = false;
 					wsLabel = XmlUtils.GetOptionalAttributeValue(node, "ws");
 				}
-
 				if (string.IsNullOrEmpty(wsLabel))
 				{
 					return;
@@ -1339,9 +1310,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				// we know whether to mark it at all).
 				XmlUtils.SetAttribute(replacement, "originalWs", !string.IsNullOrEmpty(sWsOrig) ? sWsOrig : currentList.Items[index].SubItems[1].Text);
 			}
-
 			GenerateColumnLabel(replacement, m_cache);
-
 			var xa = replacement.Attribute("label");
 			xa.Value = XmlUtils.GetMandatoryAttributeValue(replacement, "label");
 			var listItem = MakeCurrentItem(replacement);
@@ -1379,13 +1348,11 @@ namespace LanguageExplorer.Controls.XMLViews
 				originalLabel = XmlUtils.GetMandatoryAttributeValue(colSpec, "label");
 				XmlUtils.SetAttribute(colSpec, "originalLabel", originalLabel);
 			}
-
 			var label = originalLabel;
 			if (!string.IsNullOrEmpty(label))
 			{
 				label = StringTable.Table.LocalizeAttributeValue(label);
 			}
-
 			// Note that there's no reason to try and make a new label if originalWs isn't defined.  If this is the
 			// case, then it means that the ws was never changed, so we don't need to put the new ws in the label
 			if (!string.IsNullOrEmpty(originalWs) && (newWs != originalWs))
@@ -1418,7 +1385,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					label += " (" + extra + ")";
 				}
 			}
-
 			XmlUtils.SetAttribute(colSpec, "label", label);
 		}
 

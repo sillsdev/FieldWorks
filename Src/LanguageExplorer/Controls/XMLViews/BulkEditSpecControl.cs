@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -54,7 +54,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public virtual IVwStylesheet Stylesheet
 		{
-			set {  }
+			set { }
 		}
 
 		public Button SuggestButton => null;
@@ -119,6 +119,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			value = int.MinValue;
 			return false; // override
 		}
+
 		protected virtual void UpdateListItemToNewValue(ISilDataAccess sda, int hvoItem, int newVal, int oldVal)
 		{
 		}

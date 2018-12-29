@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,10 +15,13 @@ namespace LanguageExplorer.Controls.XMLViews
 	{
 		/// <summary>Guid of the type object.  (This is probably a CmPossibility or subclass thereof.)</summary>
 		public Guid ItemGuid { get; protected set; }
+
 		/// <summary>Flag whether the given LexRefType is enabled for display.</summary>
 		public bool Enabled { get; set; }
+
 		/// <summary>Display name of the type object.</summary>
 		public string Name { get; set; }
+
 		/// <summary>Index of this item in the list of enabled items.</summary>
 		public int Index { get; set; }
 
@@ -37,18 +40,14 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 		}
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
+		/// <summary />
 		public ItemTypeInfo(bool fEnabled, Guid guid)
 		{
 			Enabled = fEnabled;
 			ItemGuid = guid;
 		}
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
+		/// <summary />
 		public ItemTypeInfo(string s)
 		{
 			Enabled = s.StartsWith("+");

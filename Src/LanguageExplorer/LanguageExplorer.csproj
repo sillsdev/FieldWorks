@@ -401,6 +401,7 @@
     <Compile Include="Controls\ILexImportWizard.cs" />
     <Compile Include="Controls\IsSfmFile.cs" />
     <Compile Include="Areas\Notebook\SfmFile.cs" />
+    <Compile Include="Controls\ProgressHandler.cs" />
     <Compile Include="Impls\IFlexConverterOnlyForTesting.cs" />
     <Compile Include="Impls\ILexImportOnlyForTesting.cs" />
     <Compile Include="Impls\LexImportCustomField.cs" />
@@ -505,7 +506,6 @@
     <Compile Include="Controls\StringMeasureEnv.cs" />
     <Compile Include="Controls\TsStringCollectorEnv.cs" />
     <Compile Include="Controls\XMLViews\ICollectPicturePathsOnly.cs" />
-    <Compile Include="Controls\XMLViews\StringCollectorEnv.cs" />
     <Compile Include="Controls\XMLViews\TestCollectorEnv.cs" />
     <Compile Include="Impls\SharedEventHandlers.cs" />
     <Compile Include="Areas\StringRepSliceVc.cs" />
@@ -693,7 +693,7 @@
     </Compile>
     <Compile Include="Controls\DetailControls\GhostDaDecorator.cs" />
     <Compile Include="Controls\DetailControls\GhostDataCacheDecorator.cs" />
-    <Compile Include="Controls\DetailControls\GhostReferenceVectorLauncher.cs">
+    <Compile Include="Areas\Notebook\GhostReferenceVectorLauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\GhostStringSliceVc.cs" />
@@ -841,62 +841,34 @@
     <Compile Include="Controls\TreeCombo.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\XMLViews\AccumulateParameters.cs" />
     <Compile Include="Controls\XMLViews\ArrowSize.cs" />
-    <Compile Include="Controls\XMLViews\ArrowType.cs" />
-    <Compile Include="Controls\XMLViews\BooleanChooserBEditControl.cs" />
-    <Compile Include="Controls\XMLViews\BoolOnSubfieldChooserBEditControl.cs" />
-    <Compile Include="Controls\XMLViews\BrowseActiveViewer.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Controls\XMLViews\BrowseViewScroller.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\XMLViews\BulkCopyMethod.cs" />
-    <Compile Include="Controls\XMLViews\BulkCopyTabPageSettings.cs" />
     <Compile Include="Controls\XMLViews\BulkEditBarTabs.cs" />
     <Compile Include="Controls\XMLViews\BulkEditItem.cs" />
     <Compile Include="Controls\XMLViews\BulkEditSpecControl.cs" />
-    <Compile Include="Controls\XMLViews\BulkReplaceTabPageSettings.cs" />
     <Compile Include="Controls\XMLViews\CheckBoxActiveChangedEventArgs.cs" />
     <Compile Include="Controls\XMLViews\CheckBoxChangedEventArgs.cs" />
     <Compile Include="Controls\XMLViews\BrowseViewerCheckState.cs" />
-    <Compile Include="Controls\XMLViews\ChildPartGenerator.cs" />
-    <Compile Include="Controls\XMLViews\ClearMethod.cs" />
     <Compile Include="Controls\XMLViews\ClickCopyEventArgs.cs" />
-    <Compile Include="Controls\XMLViews\ClickCopyTabPageSettings.cs" />
-    <Compile Include="Controls\XMLViews\CmObjectComparer.cs" />
-    <Compile Include="Controls\XMLViews\CmPossibilityLabel.cs" />
+    <Compile Include="Controls\CmPossibilityLabel.cs" />
     <Compile Include="Controls\XMLViews\ColumnDragDropReorderedEventArgs.cs" />
     <Compile Include="Controls\XMLViews\ColumnRightClickEventArgs.cs" />
     <Compile Include="Controls\XMLViews\ColumnSpecFilter.cs" />
-    <Compile Include="Controls\XMLViews\ComplexEntryTypesChooserBEditControl.cs" />
     <Compile Include="Controls\XMLViews\ComplexListChooserBEditControl.cs" />
     <Compile Include="Controls\XMLViews\ConfigIconClickEventArgs.cs" />
     <Compile Include="Controls\XMLViews\CssType.cs" />
-    <Compile Include="Controls\XMLViews\DeleteTabPageSettings.cs" />
     <Compile Include="Controls\XMLViews\DisplayCommand.cs" />
-    <Compile Include="Controls\XMLViews\DisplayStringAltCommand.cs" />
-    <Compile Include="Controls\XMLViews\DisplayStringCommand.cs" />
-    <Compile Include="Controls\XMLViews\DisplayUnicodeCommand.cs" />
-    <Compile Include="Controls\XMLViews\DoItMethod.cs" />
     <Compile Include="Controls\XMLViews\FieldComboItem.cs" />
     <Compile Include="Controls\XMLViews\FieldReadWriter.cs" />
     <Compile Include="Controls\XMLViews\FilterComboItem.cs" />
     <Compile Include="Controls\XMLViews\FilterSortItem.cs" />
-    <Compile Include="Controls\XMLViews\FilterSortItems.cs" />
     <Compile Include="Controls\XMLViews\FindComboItem.cs" />
-    <Compile Include="Controls\XMLViews\FlatListChooserBEditControl.cs" />
-    <Compile Include="Controls\XMLViews\FlidChoiceFilter.cs" />
-    <Compile Include="Controls\XMLViews\GphAllPossibleAllomorphs.cs" />
-    <Compile Include="Controls\XMLViews\GphComplexEntries.cs" />
-    <Compile Include="Controls\XMLViews\GphVariants.cs" />
-    <Compile Include="Controls\XMLViews\HvoLabelItem.cs" />
     <Compile Include="Controls\XMLViews\IBulkEditSpecControl.cs" />
     <Compile Include="Controls\XMLViews\IClearValues.cs" />
     <Compile Include="Controls\XMLViews\IGetReplacedObjects.cs" />
     <Compile Include="Controls\XMLViews\IGhostable.cs" />
-    <Compile Include="Controls\XMLViews\IntCompareFinder.cs" />
     <Compile Include="Controls\XMLViews\ItemsCollectorEnv.cs" />
     <Compile Include="Controls\XMLViews\ItemTypeInfo.cs" />
     <Compile Include="Controls\XMLViews\LeafChooser.cs">
@@ -905,35 +877,21 @@
     <Compile Include="Controls\XMLViews\LexReferenceInfo.cs" />
     <Compile Include="Controls\XMLViews\LinkType.cs" />
     <Compile Include="Controls\XMLViews\MainCallerDisplayCommand.cs" />
-    <Compile Include="Controls\XMLViews\MainCallerDisplayCommandSeq.cs" />
-    <Compile Include="Controls\XMLViews\MoInflClassLabel.cs" />
-    <Compile Include="Controls\XMLViews\NodeChildrenDisplayCommand.cs" />
     <Compile Include="Controls\XMLViews\NodeDisplayCommand.cs" />
     <Compile Include="Controls\XMLViews\NonEmptyTargetOptions.cs" />
-    <Compile Include="Controls\XMLViews\NullObjectLabel.cs" />
-    <Compile Include="Controls\XMLViews\ObjectValuePartGenerator.cs" />
-    <Compile Include="Controls\XMLViews\ObjLocalCommand.cs" />
+    <Compile Include="Controls\NullObjectLabel.cs" />
     <Compile Include="Controls\XMLViews\PartOwnershipTree.cs" />
     <Compile Include="Controls\XMLViews\PropWs.cs" />
-    <Compile Include="Controls\XMLViews\ReadOnlyConditionalRootDisplayCommand.cs" />
-    <Compile Include="Controls\XMLViews\ReadOnlyRootDisplayCommand.cs" />
-    <Compile Include="Controls\XMLViews\ReplaceParamDefault.cs" />
-    <Compile Include="Controls\XMLViews\ReplaceParamWithDefault.cs" />
-    <Compile Include="Controls\XMLViews\RootDisplayCommand.cs" />
     <Compile Include="Controls\XMLViews\SearchField.cs" />
     <Compile Include="Controls\XMLViews\SelectionHighlighting.cs" />
     <Compile Include="Controls\XMLViews\SortCollectorEnv.cs" />
-    <Compile Include="Controls\XMLViews\SortMethodFinder.cs" />
-    <Compile Include="Controls\XMLViews\TestForParameter.cs" />
     <Compile Include="Controls\XMLViews\TypeSubClass.cs" />
-    <Compile Include="Controls\XMLViews\VirtualNeededPropertyInfo.cs" />
     <Compile Include="Controls\XMLViews\VSTabControl.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\XMLViews\VSTabControl.designer.cs">
       <DependentUpon>VSTabControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\XMLViews\XmlSeqSelectionRestorer.cs" />
     <Compile Include="Controls\XMLViews\XmlViewsMetaDataCacheDecorator.cs" />
     <Compile Include="Filters\AndFilter.cs" />
     <Compile Include="Filters\AndSorter.cs" />
@@ -1023,42 +981,20 @@
       <DependentUpon>PasswordBox.cs</DependentUpon>
     </Compile>
     <Compile Include="Impls\ReverseFindCollectorEnv.cs" />
-    <Compile Include="Controls\XMLViews\VwPatternSerializableSettings.cs" />
     <Compile Include="Impls\WebonaryException.cs" />
     <Compile Include="IMultiListSortItemProvider.cs" />
-    <Compile Include="Controls\XMLViews\IntChooserBEditControl.cs" />
     <Compile Include="Controls\XMLViews\IntComboItem.cs" />
-    <Compile Include="Controls\XMLViews\IntOnSubfieldChooserBEditControl.cs" />
-    <Compile Include="Controls\XMLViews\ITestItem.cs" />
     <Compile Include="Controls\XMLViews\ITextChangedNotification.cs" />
     <Compile Include="Controls\XMLViews\ListChoiceComboItem.cs" />
     <Compile Include="Controls\XMLViews\ListChoiceFilter.cs" />
-    <Compile Include="Controls\XMLViews\ListChoiceTabPageSettings.cs" />
-    <Compile Include="Controls\XMLViews\ListClassTargetFieldItem.cs" />
     <Compile Include="Controls\XMLViews\ListMatchOptions.cs" />
-    <Compile Include="Controls\XMLViews\ManyOnePathSortItemReadWriter.cs" />
-    <Compile Include="Controls\XMLViews\MorphTypeChooserBEditControl.cs" />
     <Compile Include="Controls\XMLViews\NoChangeFilterComboItem.cs" />
-    <Compile Include="Controls\XMLViews\OptionListItem.cs" />
-    <Compile Include="Controls\XMLViews\OwnAtomicMultilingualPropReadWriter.cs" />
-    <Compile Include="Controls\XMLViews\OwnAtomicStringPropReadWriter.cs" />
-    <Compile Include="Controls\XMLViews\OwnMultilingualPropReadWriter.cs" />
-    <Compile Include="Controls\XMLViews\OwnSeqMultilingualPropReadWriter.cs" />
-    <Compile Include="Controls\XMLViews\OwnSeqStringPropReadWriter.cs" />
-    <Compile Include="Controls\XMLViews\OwnStringPropReadWriter.cs" />
-    <Compile Include="Controls\XMLViews\ProcessTabPageSettings.cs" />
     <Compile Include="Controls\XMLViews\ReconstructPreservingBVScrollPosition.cs" />
-    <Compile Include="Controls\XMLViews\ReplaceWithMethod.cs" />
-    <Compile Include="Controls\XMLViews\RestrictComboItem.cs" />
-    <Compile Include="Controls\XMLViews\RestrictDateComboItem.cs" />
     <Compile Include="Controls\XMLViews\SemanticDomainChooserBEditControl.cs" />
     <Compile Include="Controls\XMLViews\SortCompatibleHandler.cs" />
     <Compile Include="Controls\XMLViews\TargetColumnChangedEventArgs.cs" />
     <Compile Include="Controls\XMLViews\TargetFieldItem.cs" />
     <Compile Include="Controls\XMLViews\BulkEditTabPageSettings.cs" />
-    <Compile Include="Controls\XMLViews\TestItemAtomicFlid.cs" />
-    <Compile Include="Controls\XMLViews\TransduceMethod.cs" />
-    <Compile Include="Controls\XMLViews\VariantEntryTypesChooserBEditControl.cs" />
     <Compile Include="Controls\XMLViews\WsComboContent.cs" />
     <Compile Include="Controls\XMLViews\WsComboItem.cs" />
     <Compile Include="ISharedEventHandlers.cs" />
@@ -1144,7 +1080,7 @@
     <Compile Include="Controls\DetailControls\GenDateSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\GhostReferenceVectorSlice.cs">
+    <Compile Include="Areas\Notebook\GhostReferenceVectorSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\GhostStringSlice.cs">
@@ -1577,7 +1513,7 @@
     <Compile Include="Controls\XMLViews\BulkEditBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\XMLViews\ChooserCommandBase.cs" />
+    <Compile Include="Controls\ChooserCommand.cs" />
     <Compile Include="Controls\XMLViews\ColumnConfigureDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1588,7 +1524,6 @@
     <Compile Include="Controls\XMLViews\FilterBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\XMLViews\FilterSdaDecorator.cs" />
     <Compile Include="Controls\XMLViews\FlatListView.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1607,7 +1542,7 @@
     <Compile Include="Controls\XMLViews\NonEmptyTargetControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\XMLViews\ObjectLabels.cs" />
+    <Compile Include="Controls\ObjectLabels.cs" />
     <Compile Include="Controls\XMLViews\ObjectListPublisher.cs" />
     <Compile Include="Controls\XMLViews\PartGenerator.cs" />
     <Compile Include="Controls\XMLViews\ReallySimpleListChooser.cs">
@@ -1638,7 +1573,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\XMLViews\XmlBrowseViewBaseVc.cs" />
-    <Compile Include="Controls\XMLViews\XmlBrowseViewSelectionRestorer.cs" />
     <Compile Include="Controls\XMLViews\XmlBrowseViewVc.cs" />
     <Compile Include="Controls\XMLViews\XmlRDEBrowseViewVc.cs" />
     <Compile Include="Controls\XMLViews\XmlSeqView.cs">
@@ -3056,7 +2990,7 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\Sfm2FlexText.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\ShowSpaceDecorator.cs" />
     <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\SymbolicValue.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\TextsFilterItem.cs" />
+    <Compile Include="Controls\XMLViews\TextsFilterItem.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\TextsTriStateTreeView.cs">
       <SubType>Component</SubType>
     </Compile>

@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,7 +14,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	internal class BrowseViewScroller : UserControl
 	{
-		BrowseViewer m_bv;
+		private BrowseViewer m_bv;
 
 		/// <summary />
 		public BrowseViewScroller(BrowseViewer bv)
@@ -29,7 +29,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				m_bv.EnsureScrollContainerIsCorrectWidth(); // FWNX-425
 			}
-
 			m_bv.LayoutScrollControls();
 			// It's important to do this AFTER laying out the embedded controls, because it figures
 			// out whether to display the scroll bar based on their sizes and positions.
@@ -43,7 +42,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				m_bv.EnsureScrollContainerIsCorrectWidth(); // FWNX-425
 			}
-
 			base.OnSizeChanged(e);
 		}
 
@@ -62,9 +60,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 

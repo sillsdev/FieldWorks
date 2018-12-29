@@ -13,6 +13,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using Icu.Normalization;
+using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application.ApplicationServices;
@@ -36,9 +37,6 @@ namespace LanguageExplorer.Areas
 	/// </summary>
 	public class XDumper
 	{
-		/// <summary />
-		public delegate void ProgressHandler(object sender);
-
 		/// <summary />
 		public event ProgressHandler UpdateProgress;
 

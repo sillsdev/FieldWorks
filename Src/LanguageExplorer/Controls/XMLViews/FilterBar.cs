@@ -1,24 +1,25 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel;
-using SIL.LCModel.DomainServices;
 using LanguageExplorer.Filters;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
 using SIL.Xml;
 
@@ -29,19 +30,18 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	internal class FilterBar : UserControl
 	{
-		BrowseViewer m_bv;
-		List<XElement> m_columns;
-		FilterSortItems m_items;
-		IFwMetaDataCache m_mdc; // m_cache.MetaDataCacheAccessor
-		LcmCache m_cache; // Use minimally, may want to factor out for non-db use.
-		ISilDataAccess m_sda; // m_cache.MainCacheAccessor
-		ILgWritingSystemFactory m_wsf;
-		int m_userWs;
-		int m_stdFontHeight; // Keep track of this font height for calculating FilterBar heights
-		IVwStylesheet m_stylesheet;
-
+		private BrowseViewer m_bv;
+		private List<XElement> m_columns;
+		private FilterSortItems m_items;
+		private IFwMetaDataCache m_mdc;
+		private LcmCache m_cache; // Use minimally, may want to factor out for non-db use.
+		private ISilDataAccess m_sda;
+		private ILgWritingSystemFactory m_wsf;
+		private int m_userWs;
+		private int m_stdFontHeight; // Keep track of this font height for calculating FilterBar heights
+		private IVwStylesheet m_stylesheet;
 		// True during UpdateActiveItems to suppress side-effects of setting text of combo.
-		bool m_fInUpdateActive;
+		private bool m_fInUpdateActive;
 		private IApp m_app;
 
 		/// <summary>
@@ -60,13 +60,11 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_sda = m_cache.DomainDataByFlid;
 			m_wsf = m_sda.WritingSystemFactory;
 			m_userWs = m_cache.ServiceLocator.WritingSystemManager.UserWs;
-
 			// Store the standard font height for use in SetStyleSheet
 			using (var tempFont = new Font(MiscUtils.StandardSerif, (float)10.0))
 			{
 				m_stdFontHeight = tempFont.Height;
 			}
-
 			// This light grey background shows through for any columns where we don't have a combo
 			// because we can't figure a IStringFinder from the XmlParameters.
 			BackColor = Color.FromKnownColor(KnownColor.ControlLight);
@@ -78,9 +76,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -148,10 +146,10 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					Controls.Remove(fsi.Combo);
 				}
-				}
+			}
 			MakeOrReuseItems();
 			ResumeLayout();
-			}
+		}
 
 		/// <summary>
 		/// Makes the items.
@@ -394,9 +392,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			var result = new FilterSortItem
 			{
 				Spec = viewSpec,
-				Finder = fAtomic
-					? (IStringFinder) new OneIndirectAtomMlPropFinder(m_sda, flidSeq, flid, ws.Handle)
-					: new OneIndirectMlPropFinder(m_sda, flidSeq, flid, ws.Handle)
+				Finder = fAtomic ? (IStringFinder)new OneIndirectAtomMlPropFinder(m_sda, flidSeq, flid, ws.Handle) : new OneIndirectMlPropFinder(m_sda, flidSeq, flid, ws.Handle)
 			};
 			SetupFsi(result);
 			result.Sorter = new GenRecordSorter(new StringFinderCompare(result.Finder, new WritingSystemComparer(ws)));
@@ -444,7 +440,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				Spec = viewSpec,
 				Finder = new OwnIntPropFinder(m_sda, flid)
 			};
-
 			MakeIntCombo(result);
 			result.FilterChanged += FilterChangedHandler;
 			result.Sorter = new GenRecordSorter(new StringFinderCompare(result.Finder, new IntStringComparer()));
@@ -501,14 +496,12 @@ namespace LanguageExplorer.Controls.XMLViews
 			};
 			item.Combo = combo;
 			combo.Items.Add(new FilterComboItem(MakeLabel(XMLViewsStrings.ksShowAll), null, item));
-
 			var blankPossible = XmlUtils.GetOptionalAttributeValue(item.Spec, "blankPossible", "true");
 			if (blankPossible == "true")
 			{
 				combo.Items.Add(new FilterComboItem(MakeLabel(XMLViewsStrings.ksBlanks), new BlankMatcher(), item));
 				combo.Items.Add(new FilterComboItem(MakeLabel(XMLViewsStrings.ksNonBlanks), new NonBlankMatcher(), item));
 			}
-
 			// Enhance JohnT: figure whether the column has vernacular or analysis data...
 			var ws = 0;
 			if (item.Spec != null)
@@ -516,7 +509,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				var wsParam = XmlViewsUtils.FindWsParam(item.Spec);
 				if (wsParam.Length == 0)
 				{
-					wsParam = XmlUtils.GetOptionalAttributeValue(item.Spec, "ws", "");
+					wsParam = XmlUtils.GetOptionalAttributeValue(item.Spec, "ws", string.Empty);
 				}
 				ws = XmlViewsUtils.GetWsFromString(wsParam, m_cache);
 			}
@@ -524,18 +517,16 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				ws = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle; // some sort of fall-back in case we can't determine a WS from the spec.
 			}
-
-			var beSpec = XmlUtils.GetOptionalAttributeValue(item.Spec, "bulkEdit", "");
+			var beSpec = XmlUtils.GetOptionalAttributeValue(item.Spec, "bulkEdit", string.Empty);
 			if (string.IsNullOrEmpty(beSpec))
 			{
-				beSpec = XmlUtils.GetOptionalAttributeValue(item.Spec, "chooserFilter", "");
+				beSpec = XmlUtils.GetOptionalAttributeValue(item.Spec, "chooserFilter", string.Empty);
 			}
-
 			var sortType = XmlUtils.GetOptionalAttributeValue(item.Spec, "sortType", null);
 			switch (sortType)
 			{
 				case "integer":
-					// For columns which are interger values we offer the user a couple preset filters
+					// For columns which are integer values we offer the user a couple preset filters
 					// one is  "0"  and the other is "Greater than zero"
 					combo.Items.Add(new FilterComboItem(MakeLabel(XMLViewsStrings.ksZero),
 						new ExactMatcher(MatchExactPattern(XMLViewsStrings.ksZero)), item));
@@ -561,10 +552,8 @@ namespace LanguageExplorer.Controls.XMLViews
 				case "YesNo":
 					// For columns which have only the values of "yes" or "no" we offer the user these preset
 					// filters to choose.
-					combo.Items.Add(new FilterComboItem(MakeLabel(LanguageExplorerResources.ksYes.ToLowerInvariant()),
-						new ExactMatcher(MatchExactPattern(LanguageExplorerResources.ksYes.ToLowerInvariant())), item));
-					combo.Items.Add(new FilterComboItem(MakeLabel(LanguageExplorerResources.ksNo.ToLowerInvariant()),
-						new ExactMatcher(MatchExactPattern(LanguageExplorerResources.ksNo.ToLowerInvariant())), item));
+					combo.Items.Add(new FilterComboItem(MakeLabel(LanguageExplorerResources.ksYes.ToLowerInvariant()), new ExactMatcher(MatchExactPattern(LanguageExplorerResources.ksYes.ToLowerInvariant())), item));
+					combo.Items.Add(new FilterComboItem(MakeLabel(LanguageExplorerResources.ksNo.ToLowerInvariant()), new ExactMatcher(MatchExactPattern(LanguageExplorerResources.ksNo.ToLowerInvariant())), item));
 					break;
 				case "stringList":
 					var labels = m_bv.BrowseView.GetStringList(item.Spec);
@@ -595,7 +584,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					break;
 			}
 			combo.Items.Add(new FindComboItem(MakeLabel(XMLViewsStrings.ksFilterFor_), item, ws, combo, m_bv));
-
 			if (!string.IsNullOrEmpty(beSpec))
 			{
 				MakeListChoiceFilterItem(item, combo, beSpec, m_bv.PropertyTable);
@@ -609,7 +597,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			// - "custom" may launch dialog with "OR" options and "is, is not, is less than, is greater than, matches,..."
 			// How can we get the current items? May not be available until later...
 			// - May need to add 'ShowList' event to FwComboBox so we can populate the list when we show it.
-
 			combo.SelectedIndex = 0;
 			// Do this after selecting initial item, so we don't get a spurious notification.
 			combo.SelectedIndexChanged += Combo_SelectedIndexChanged;
@@ -622,7 +609,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// LT-9047 For certain fields, filtering on Spelling Errors just doesn't make sense.
 			var layoutNode = item.Spec.Attribute("layout") ?? item.Spec.Attribute("label");
 			var layout = string.Empty;
-			if(layoutNode != null)
+			if (layoutNode != null)
 			{
 				layout = layoutNode.Value;
 			}
@@ -662,7 +649,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			pattern.MatchWholeWord = false;
 			pattern.MatchCase = false;
 			pattern.UseRegularExpressions = false;
-
 			pattern.Pattern = TsStringUtils.MakeString(str, ws);
 			pattern.IcuLocale = m_cache.WritingSystemFactory.GetStrFromWs(ws);
 			return pattern;
@@ -696,7 +682,6 @@ namespace LanguageExplorer.Controls.XMLViews
 							filterType = mi.Invoke(null, null) as Type;
 						}
 					}
-
 					if (filterType != null)
 					{
 						var pi = filterType.GetProperty("Atomic", BindingFlags.Public | BindingFlags.Static);
@@ -716,25 +701,11 @@ namespace LanguageExplorer.Controls.XMLViews
 					}
 					break;
 				case "textsFilterItem":
-#if RANDYTODO
-					// TODO: If/When the filters assembly gets assimilated into LE, then just call the constructor on TextsFilterItem.
-#endif
-					var specialItemName1 = MakeLabel(XmlUtils.GetOptionalAttributeValue(item.Spec, "specialItemName", XMLViewsStrings.ksChoose_));
-					var specialFilter1 = DynamicLoader.CreateObject(XmlUtils.FindElement(item.Spec, "dynamicloaderinfo"), specialItemName1, m_bv.Publisher) as FilterComboItem;
-					combo.Items.Add(specialFilter1);
+					combo.Items.Add(new TextsFilterItem(MakeLabel(XmlUtils.GetOptionalAttributeValue(item.Spec, "specialItemName", XMLViewsStrings.ksChoose_)), m_bv.Publisher));
 					break;
-				case "special":
-					// Make any arbitrary special filter combo item we may want. The Spec has a <dynamicloaderinfo> child that specifies what.
-					// For now the only instance wants the label "Choose" so I've hard coded that; if need be we can make it configurable,
-					// or of course the constructor could ignore it. (But it should use MakeLabel if at all possible.)
-					var specialItemName2 = MakeLabel(XmlUtils.GetOptionalAttributeValue(item.Spec, "specialItemName", XMLViewsStrings.ksChoose_));
-					var specialFilter2 = DynamicLoader.CreateObject(XmlUtils.FindElement(item.Spec, "dynamicloaderinfo"), specialItemName2, m_cache) as FilterComboItem;
-					combo.Items.Add(specialFilter2);
-					break;
-
 				case "atomicFlatListItem": // Fall through
 				case "morphTypeListItem":  // Fall through
-				case "variantConditionListItem":
+				case "variantConditionListItem": // RBR: Not found in develop or master branches.
 					combo.Items.Add(new ListChoiceComboItem(MakeLabel(XMLViewsStrings.ksChoose_), item, m_cache, propertyTable, combo, true, null));
 					break;
 				default:
@@ -761,8 +732,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			};
 			item.Combo = combo;
 			combo.Items.Add(new FilterComboItem(MakeLabel(XMLViewsStrings.ksShowAll), null, item));
-			combo.Items.Add(new RestrictComboItem(MakeLabel(XMLViewsStrings.ksRestrict_),
-				m_bv.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider),
+			combo.Items.Add(new RestrictComboItem(MakeLabel(XMLViewsStrings.ksRestrict_), m_bv.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider),
 				item, m_cache.ServiceLocator.WritingSystemManager.UserWs, combo));
 			combo.SelectedIndex = 0;
 			// Do this after selecting initial item, so we don't get a spurious notification.
@@ -780,7 +750,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-
 			m_fInSelectedIndexChanged = true;
 			try
 			{
@@ -790,7 +759,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					combo.BackColor = combo.SelectedIndex == 0 ? SystemColors.Window : Color.Yellow;
 					return;
 				}
-
 				var fci = combo.SelectedItem as FilterComboItem;
 				if (fci != null) // Happens when we set the text to what the user typed.
 				{
@@ -840,7 +808,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		internal void SetStyleSheet(IVwStylesheet stylesheet)
 		{
 			m_stylesheet = stylesheet;
-
 			// Also apply stylesheet to each ComboBox.
 			foreach (var item in m_items)
 			{
@@ -867,7 +834,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					maxComboHeight = Math.Max(maxComboHeight, tempFont.Height);
 				}
 			}
-
 			return maxComboHeight;
 		}
 
@@ -878,7 +844,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			// Calculate what to add to height for combobox to look right
 			height += FwComboBoxBase.ComboHeight - m_stdFontHeight;
-
 			Height = height;
 			foreach (var item in m_items)
 			{
@@ -889,6 +854,171 @@ namespace LanguageExplorer.Controls.XMLViews
 				item.Combo.Height = height;
 				item.Combo.PerformLayout();
 				item.Combo.Tss = FontHeightAdjuster.GetUnadjustedTsString(item.Combo.Tss);
+			}
+		}
+
+		/// <summary>
+		/// List of FilterSortItems that can also be accessed by the XML spec.
+		/// </summary>
+		private sealed class FilterSortItems : KeyedCollection<XElement, FilterSortItem>
+		{
+			protected override XElement GetKeyForItem(FilterSortItem item)
+			{
+				return item.Spec;
+			}
+		}
+
+		/// <summary />
+		private sealed class RestrictDateComboItem : FilterComboItem
+		{
+			FwComboBox m_combo;
+			int m_ws;
+			private IHelpTopicProvider m_helpTopicProvider;
+			bool m_fGenDate;
+
+			/// <summary />
+			public RestrictDateComboItem(ITsString tssName, IHelpTopicProvider helpTopicProvider, FilterSortItem fsi, int ws, bool fGenDate, FwComboBox combo) : base(tssName, null, fsi)
+			{
+				m_helpTopicProvider = helpTopicProvider;
+				m_combo = combo;
+				m_ws = ws;
+				m_fGenDate = fGenDate;
+			}
+
+			/// <inheritdoc />
+			protected override void Dispose(bool disposing)
+			{
+				// Must not be run more than once.
+				if (IsDisposed)
+				{
+					return;
+				}
+
+				if (disposing)
+				{
+				}
+
+				m_combo = null;
+
+				base.Dispose(disposing);
+			}
+
+			/// <summary>
+			/// Invokes this instance.
+			/// </summary>
+			public override bool Invoke()
+			{
+				using (var dlg = new SimpleDateMatchDlg(m_helpTopicProvider))
+				{
+					dlg.SetDlgValues(m_matcher);
+					dlg.HandleGenDate = m_fGenDate;
+					if (dlg.ShowDialog(m_combo) != DialogResult.OK)
+					{
+						return false;
+					}
+
+					m_matcher = dlg.ResultingMatcher;
+					m_matcher.WritingSystemFactory = m_combo.WritingSystemFactory;
+					m_combo.SelectedIndex = -1; // allows setting text to item not in list, see comment in FindComboItem.Invoke().
+					m_combo.Tss = TsStringUtils.MakeString(dlg.Pattern, m_ws);
+					var label = m_combo.Tss;
+					m_matcher.Label = label;
+					// We can't call base.Invoke BEFORE we set the label, because it will persist
+					// the wrong label. And we can't call it AFTER we set the label, becaseu it
+					// will override our label. So we just copy here a simplified version of the
+					// base method. If it gets much more complicated, factor out the common parts
+					// into new methods.
+					//base.Invoke ();
+					m_fsi.Matcher = m_matcher;
+					m_fsi.Filter = new FilterBarCellFilter(m_fsi.Finder, m_matcher);
+				}
+
+				return true;
+			}
+
+			/// <summary>
+			/// Determine whether this combo item could have produced the specified matcher.
+			/// If so, return the string that should be displayed as the value of the combo box
+			/// when this matcher is active. Otherwise return null.
+			/// </summary>
+			internal override ITsString SetFromMatcher(IMatcher matcher)
+			{
+				return matcher is DateTimeMatcher ? matcher.Label : null;
+			}
+		}
+
+		/// <summary />
+		private sealed class RestrictComboItem : FilterComboItem
+		{
+			FwComboBox m_combo;
+			int m_ws;
+			private IHelpTopicProvider m_helpTopicProvider;
+
+			/// <summary />
+			public RestrictComboItem(ITsString tssName, IHelpTopicProvider helpTopicProvider, FilterSortItem fsi, int ws, FwComboBox combo) : base(tssName, null, fsi)
+			{
+				m_helpTopicProvider = helpTopicProvider;
+				m_combo = combo;
+				m_ws = ws;
+			}
+
+			/// <inheritdoc />
+			protected override void Dispose(bool disposing)
+			{
+				// Must not be run more than once.
+				if (IsDisposed)
+				{
+					return;
+				}
+
+				if (disposing)
+				{
+				}
+
+				m_combo = null;
+
+				base.Dispose(disposing);
+			}
+
+			/// <summary>
+			/// Invokes this instance.
+			/// </summary>
+			public override bool Invoke()
+			{
+				using (var dlg = new SimpleIntegerMatchDlg(m_helpTopicProvider))
+				{
+					dlg.SetDlgValues(m_matcher);
+					if (dlg.ShowDialog(m_combo) != DialogResult.OK)
+					{
+						return false;
+					}
+
+					m_matcher = dlg.ResultingMatcher;
+					m_matcher.WritingSystemFactory = m_combo.WritingSystemFactory;
+					m_combo.SelectedIndex = -1; // allows setting text to item not in list, see comment in FindComboItem.Invoke().
+					m_combo.Tss = TsStringUtils.MakeString(dlg.Pattern, m_ws);
+					var label = m_combo.Tss;
+					m_matcher.Label = label;
+					// We can't call base.Invoke BEFORE we set the label, because it will persist
+					// the wrong label. And we can't call it AFTER we set the label, becaseu it
+					// will override our label. So we just copy here a simplified version of the
+					// base method. If it gets much more complicated, factor out the common parts
+					// into new methods.
+					//base.Invoke ();
+					m_fsi.Matcher = m_matcher;
+					m_fsi.Filter = new FilterBarCellFilter(m_fsi.Finder, m_matcher);
+				}
+				return true;
+			}
+
+			/// <summary>
+			/// Determine whether this combo item could have produced the specified matcher.
+			/// If so, return the string that should be displayed as the value of the combo box
+			/// when this matcher is active. Otherwise return null.
+			/// </summary>
+			internal override ITsString SetFromMatcher(IMatcher matcher)
+			{
+				return matcher is IntMatcher ? matcher.Label : null;
 			}
 		}
 	}

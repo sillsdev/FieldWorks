@@ -872,15 +872,6 @@ namespace LanguageExplorer.Controls.XMLViews {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ???.
-        /// </summary>
-        internal static string ksQuestionMarks {
-            get {
-                return ResourceManager.GetString("ksQuestionMarks", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to {0}...{1}.
         /// </summary>
         internal static string ksRangeXY {

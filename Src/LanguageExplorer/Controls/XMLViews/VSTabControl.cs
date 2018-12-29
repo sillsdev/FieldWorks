@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -20,6 +20,17 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	public partial class VSTabControl : TabControl
 	{
+		//This field tells us whether custom drawing is turned on.
+		private bool fCustomDraw;
+		/* Handle to the font used for custom drawing. We do not use this native font directly but tab control
+		 * adjusts size of tabs and tab scroller being based on the size of that font.*/
+		private IntPtr fSysFont = IntPtr.Zero;
+		/* We have to remember the index of last hot tab for our native updown hook to overdraw that tab as
+		 * normal when mouse is moving over it.*/
+		private int lastHotIndex = -1;
+		//handle to our hook
+		private NativeUpDown fUpDown;
+
 		/// <summary />
 		public VSTabControl()
 		{
@@ -49,7 +60,13 @@ namespace LanguageExplorer.Controls.XMLViews
 		public new TabAlignment Alignment
 		{
 			get { return base.Alignment; }
-			set { if (value <= TabAlignment.Bottom) base.Alignment = value; }
+			set
+			{
+				if (value <= TabAlignment.Bottom)
+				{
+					base.Alignment = value;
+				}
+			}
 		}
 
 		/// <summary>
@@ -92,7 +109,13 @@ namespace LanguageExplorer.Controls.XMLViews
 		public new TabAppearance Appearance
 		{
 			get { return base.Appearance; }
-			set { if (value == TabAppearance.Normal) base.Appearance = value; }
+			set
+			{
+				if (value == TabAppearance.Normal)
+				{
+					base.Appearance = value;
+				}
+			}
 		}
 
 		/// <summary>
@@ -116,7 +139,13 @@ namespace LanguageExplorer.Controls.XMLViews
 		public new TabDrawMode DrawMode
 		{
 			get { return base.DrawMode; }
-			set { if (value == TabDrawMode.Normal) base.DrawMode = value; }
+			set
+			{
+				if (value == TabDrawMode.Normal)
+				{
+					base.DrawMode = value;
+				}
+			}
 		}
 
 		/// <summary>
@@ -138,7 +167,13 @@ namespace LanguageExplorer.Controls.XMLViews
 		public override RightToLeft RightToLeft
 		{
 			get { return base.RightToLeft; }
-			set { if (value == RightToLeft.No) base.RightToLeft = value; }
+			set
+			{
+				if (value == RightToLeft.No)
+				{
+					base.RightToLeft = value;
+				}
+			}
 		}
 
 		/// <summary>
@@ -150,13 +185,16 @@ namespace LanguageExplorer.Controls.XMLViews
 		public override bool RightToLeftLayout
 		{
 			get { return base.RightToLeftLayout; }
-			set { if (!value) base.RightToLeftLayout = value; }
+			set
+			{
+				if (!value)
+				{
+					base.RightToLeftLayout = value;
+				}
+			}
 		}
 
 		#endregion
-
-		//This field tells us whether custom drawing is turned on.
-		private bool fCustomDraw;
 
 		/// <summary>
 		/// Turns custom drawing on/off and sets native font for the control (it's required for tabs to
@@ -187,10 +225,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 			}
 		}
-
-		/* Handle to the font used for custom drawing. We do not use this native font directly but tab control
-		 * adjusts size of tabs and tab scroller being based on the size of that font.*/
-		private IntPtr fSysFont = IntPtr.Zero;
 
 		/// <summary>
 		/// This member overrides <see cref="M:System.Windows.Forms.Control.OnHandleCreated(System.EventArgs)"/>.
@@ -261,12 +295,13 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			/* In this method we draw only those parts of the control which intersects with the
 			 * clipping rectangle. It's some kind of optimization.*/
-			if (!Visible) return;
-
+			if (!Visible)
+			{
+				return;
+			}
 			//selected tab index and rectangle
 			var iSel = SelectedIndex;
 			var selRect = iSel != -1 ? GetTabRect(iSel) : Rectangle.Empty;
-
 			var rcPage = ClientRectangle;
 			//correcting page rectangle
 			switch (Alignment)
@@ -279,16 +314,16 @@ namespace LanguageExplorer.Controls.XMLViews
 					break;
 				case TabAlignment.Bottom: rcPage.Height -= (selRect.Height + sAdjHeight) * RowCount; break;
 			}
-
 			//draw page itself
 			if (rcPage.IntersectsWith(clipRect))
 			{
 				TabRenderer.DrawTabPage(g, rcPage);
 			}
-
 			var tabCount = TabCount;
-			if (tabCount == 0) return;
-
+			if (tabCount == 0)
+			{
+				return;
+			}
 			using (var textFormat = new StringFormat())
 			{
 				textFormat.Alignment = StringAlignment.Center;
@@ -307,7 +342,6 @@ namespace LanguageExplorer.Controls.XMLViews
 						}
 					}
 				}
-
 				/* Drawing selected tab. We'll also increase selected tab's rectangle. It should be a little
 				 * bigger than other tabs.*/
 				selRect.Inflate(2, 2);
@@ -334,7 +368,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				/* We will draw our tab on the bitmap and then will transfer image on the control
 				 * graphic context.*/
-
 				using (var bmp = new Bitmap(tabRect.Width, tabRect.Height))
 				{
 					using (var bitmapContext = Graphics.FromImage(bmp))
@@ -348,12 +381,10 @@ namespace LanguageExplorer.Controls.XMLViews
 						}
 						/* Important moment. If tab alignment is bottom we should flip image to display tab
 						 * correctly.*/
-
 						if (Alignment == TabAlignment.Bottom)
 						{
 							bmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
 						}
-
 						var focusRect = Rectangle.Inflate(drawRect, -3, -3);
 						//focus rect
 						var pg = TabPages[index];
@@ -403,7 +434,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <returns><see cref="T:System.Drawing.Image"/> that represents image of the tab or null if not assigned.</returns>
 		private Image GetImageByIndexOrKey(int index, string key)
 		{
-			return ImageList == null ? null : (index > -1 ? ImageList.Images[index] : (key.Length > 0 ? ImageList.Images[key] : null));
+			return ImageList == null ? null : index > -1 ? ImageList.Images[index] : key.Length > 0 ? ImageList.Images[key] : null;
 		}
 
 		/// <summary>
@@ -426,23 +457,13 @@ namespace LanguageExplorer.Controls.XMLViews
 			var mousePos = PointToClient(MousePosition);
 			hti.pt.x = mousePos.X;
 			hti.pt.y = mousePos.Y;
-
 			var htiPointer = Marshal.AllocCoTaskMem(Marshal.SizeOf(hti));
 			Marshal.StructureToPtr(hti, htiPointer, false);
-
 			var result = (int)NativeMethods.SendMessage(Handle, NativeMethods.TCM_HITTEST, IntPtr.Zero, htiPointer);
 			Marshal.DestroyStructure(htiPointer, typeof(NativeMethods.TCHITTESTINFO));
 			Marshal.FreeCoTaskMem(htiPointer);
-
 			return result;
 		}
-
-		/* We have to remember the index of last hot tab for our native updown hook to overdraw that tab as
-		 * normal when mouse is moving over it.*/
-		private int lastHotIndex = -1;
-
-		//handle to our hook
-		private NativeUpDown fUpDown;
 
 		/// <summary>
 		/// This class represents low level hook to updown control used to scroll tabs. We need it to know the
@@ -473,21 +494,18 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 				else if (m.Msg == NativeMethods.WM_MOUSEMOVE && fparent.lastHotIndex > 0 && fparent.lastHotIndex != fparent.SelectedIndex)
 				{
-					//owerdrawing former hot tab as normal
+					//ownerdrawing former hot tab as normal
 					using (var context = Graphics.FromHwnd(fparent.Handle))
+					using (var textFormat = new StringFormat())
 					{
-						using (var textFormat = new StringFormat())
+						textFormat.Alignment = StringAlignment.Center;
+						textFormat.LineAlignment = StringAlignment.Center;
+						fparent.DrawTabItem(context, fparent.lastHotIndex, TabItemState.Normal, fparent.GetTabRect(fparent.lastHotIndex), textFormat);
+						if (fparent.lastHotIndex - fparent.SelectedIndex == 1)
 						{
-							textFormat.Alignment = StringAlignment.Center;
-							textFormat.LineAlignment = StringAlignment.Center;
-							fparent.DrawTabItem(context, fparent.lastHotIndex, TabItemState.Normal,
-							fparent.GetTabRect(fparent.lastHotIndex), textFormat);
-							if (fparent.lastHotIndex - fparent.SelectedIndex == 1)
-							{
-								var selRect = fparent.GetTabRect(fparent.SelectedIndex);
-								selRect.Inflate(2, 2);
-								fparent.DrawTabItem(context, fparent.SelectedIndex, TabItemState.Selected, selRect, textFormat);
-							}
+							var selRect = fparent.GetTabRect(fparent.SelectedIndex);
+							selRect.Inflate(2, 2);
+							fparent.DrawTabItem(context, fparent.SelectedIndex, TabItemState.Selected, selRect, textFormat);
 						}
 					}
 				}
@@ -520,8 +538,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			public static IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam)
 			{
 				if (Platform.IsWindows)
+				{
 					return SendMessageWindows(hWnd, Msg, wParam, lParam);
-
+				}
 				Console.WriteLine("Warning: using unimplemented method NativeMethods.SendMessage");
 				return IntPtr.Zero;
 			}
@@ -529,8 +548,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			public static bool DeleteObject(IntPtr hObject)
 			{
 				if (Platform.IsWindows)
+				{
 					return DeleteObjectWindows(hObject);
-
+				}
 				Console.WriteLine("Warning: using unimplemented method NativeMethods.DeleteObject");
 				return true;
 			}
@@ -538,8 +558,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			public static uint RealGetWindowClass(IntPtr hWnd, StringBuilder ClassName, uint ClassNameMax)
 			{
 				if (Platform.IsWindows)
+				{
 					return RealGetWindowClassWindows(hWnd, ClassName, ClassNameMax);
-
+				}
 				Console.WriteLine("Warning: using unimplemented method NativeMethods.RealGetWindowClass");
 				return 0;
 			}

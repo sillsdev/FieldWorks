@@ -1,4 +1,4 @@
-// Copyright (c) 20105-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,6 +9,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.Xml;
 
@@ -28,19 +29,14 @@ namespace LanguageExplorer.Controls.XMLViews
 		public abstract void SetNewValue(int hvo, ITsString tss);
 		public abstract int WritingSystem { get; }
 
-		protected ISilDataAccess m_sda;
 		protected GhostParentHelper m_ghostParentHelper;
 
 		protected FieldReadWriter(ISilDataAccess sda)
 		{
-			m_sda = sda;
+			DataAccess = sda;
 		}
 
-		public ISilDataAccess DataAccess
-		{
-			get { return m_sda; }
-			set { m_sda = value; }
-		}
+		public ISilDataAccess DataAccess { get; set; }
 
 		// If ws is zero, determine a ws for the specified string field.
 		internal static int GetWsFromMetaData(int wsIn, int flid, LcmCache cache)
@@ -97,22 +93,21 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (parts.Length == 2)
 			{
 				// parts are divided into class.propname
-				FieldReadWriter frw = DoItMethod.IsMultilingual(flid, mdc) ? new OwnMultilingualPropReadWriter(cache, flid, ws) : new OwnStringPropReadWriter(cache, flid, GetWsFromMetaData(ws, flid, cache));
+				FieldReadWriter frw = mdc.IsMultilingual(flid) ? new OwnMultilingualPropReadWriter(cache, flid, ws) : new OwnStringPropReadWriter(cache, flid, GetWsFromMetaData(ws, flid, cache));
 				frw.InitForGhostItems(cache, node);
 				return frw;
 			}
-
 			// parts.Length is 3. We have class.objectpropname.propname
 			var clidDst = mdc.GetDstClsId(flid);
 			var fieldType = mdc.GetFieldType(flid);
 			var flid2 = mdc.GetFieldId2(clidDst, parts[2], true);
-			var clidCreate = clidDst;	// default
+			var clidCreate = clidDst;   // default
 			var createClassName = XmlUtils.GetOptionalAttributeValue(node, "transduceCreateClass");
 			if (createClassName != null)
 			{
 				clidCreate = mdc.GetClassId(createClassName);
 			}
-			if (DoItMethod.IsMultilingual(flid2, mdc))
+			if (mdc.IsMultilingual(flid2))
 			{
 				Debug.Assert(ws != 0);
 				// If it's a multilingual field and we didn't get a writing system, we can't transduce this field.
@@ -150,5 +145,329 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		#endregion
+
+		/// <summary>
+		/// FieldReadWriter for strings stored in (non-multilingual) props of the object itself.
+		/// </summary>
+		private class OwnStringPropReadWriter : FieldReadWriter
+		{
+			protected int m_flid;
+			private int m_flidType;
+			protected int m_ws;
+			private LcmCache m_cache;
+
+			public OwnStringPropReadWriter(LcmCache cache, int flid, int ws)
+				: base(cache.MainCacheAccessor)
+			{
+				m_cache = cache;
+				m_flid = flid;
+				m_flidType = GetFlidType();
+				m_ws = ws;
+			}
+
+			private int GetFlidType()
+			{
+				return m_cache.MetaDataCacheAccessor.GetFieldType(m_flid);
+			}
+
+			internal override List<int> FieldPath => new List<int>(new[] { m_flid });
+
+			public override ITsString CurrentValue(int hvo)
+			{
+				var hvoStringOwner = hvo;
+				if (m_ghostParentHelper != null)
+				{
+					hvoStringOwner = m_ghostParentHelper.GetOwnerOfTargetProperty(hvo);
+				}
+				if (hvoStringOwner == 0)
+				{
+					return null; // hasn't been created yet.
+				}
+				if (m_flidType != (int)CellarPropertyType.Unicode)
+				{
+					return DataAccess.get_StringProp(hvoStringOwner, m_flid);
+				}
+				var ustring = DataAccess.get_UnicodeProp(hvoStringOwner, m_flid);
+				// Enhance: For the time being Default Analysis Ws is sufficient. If there is ever
+				// a Unicode vernacular field that is made Bulk Editable, we will need to rethink this code.
+				return TsStringUtils.MakeString(ustring ?? string.Empty, m_cache.DefaultAnalWs);
+			}
+
+			public override void SetNewValue(int hvo, ITsString tss)
+			{
+				var hvoStringOwner = hvo;
+				if (m_ghostParentHelper != null)
+				{
+					hvoStringOwner = m_ghostParentHelper.FindOrCreateOwnerOfTargetProp(hvo, m_flid);
+				}
+				if (m_flidType == (int)CellarPropertyType.Unicode)
+				{
+					SetUnicodeStringValue(hvoStringOwner, tss);
+				}
+				else
+				{
+					SetStringValue(hvoStringOwner, tss);
+				}
+			}
+
+			private void SetUnicodeStringValue(int hvoStringOwner, ITsString tss)
+			{
+				var strValue = (tss == null) ? string.Empty : tss.Text;
+				DataAccess.set_UnicodeProp(hvoStringOwner, m_flid, strValue);
+			}
+
+			protected virtual void SetStringValue(int hvoStringOwner, ITsString tss)
+			{
+				DataAccess.SetString(hvoStringOwner, m_flid, tss);
+			}
+
+			public override int WritingSystem => m_ws;
+		}
+
+		/// <summary>
+		/// FieldReadWriter for strings stored in a non-multilingual string prop of an object
+		/// owned in an atomic property of the base object.
+		/// </summary>
+		private sealed class OwnAtomicStringPropReadWriter : OwnStringPropReadWriter
+		{
+			private int m_flidObj;
+			private int m_clid; // to create if missing
+
+			public OwnAtomicStringPropReadWriter(LcmCache cache, int flidString, int ws, int flidObj, int clid)
+				: base(cache, flidString, ws)
+			{
+				m_flidObj = flidObj;
+				m_clid = clid;
+			}
+
+			internal override List<int> FieldPath
+			{
+				get
+				{
+					var fieldPath = base.FieldPath;
+					fieldPath.Insert(0, m_flidObj);
+					return fieldPath;
+				}
+			}
+
+			public override ITsString CurrentValue(int hvo)
+			{
+				return base.CurrentValue(DataAccess.get_ObjectProp(hvo, m_flidObj));
+			}
+
+			public override void SetNewValue(int hvo, ITsString tss)
+			{
+				var ownedAtomicObj = DataAccess.get_ObjectProp(hvo, m_flidObj);
+				var fHadObject = ownedAtomicObj != 0;
+				if (!fHadObject)
+				{
+					if (m_clid == 0)
+					{
+						return;
+					}
+					ownedAtomicObj = DataAccess.MakeNewObject(m_clid, hvo, m_flidObj, -2);
+				}
+				base.SetNewValue(ownedAtomicObj, tss);
+			}
+		}
+
+		/// <summary>
+		/// FieldReadWriter for strings stored in a non-multilingual string prop of the FIRST object
+		/// owned in an sequence property of the base object.
+		/// </summary>
+		private sealed class OwnSeqStringPropReadWriter : OwnStringPropReadWriter
+		{
+			private int m_flidObj;
+			private int m_clid; // to create if missing
+
+			public OwnSeqStringPropReadWriter(LcmCache cache, int flidString, int ws, int flidObj, int clid)
+				: base(cache, flidString, ws)
+			{
+				m_flidObj = flidObj;
+				m_clid = clid;
+			}
+
+			internal override List<int> FieldPath
+			{
+				get
+				{
+					var fieldPath = base.FieldPath;
+					fieldPath.Insert(0, m_flidObj);
+					return fieldPath;
+				}
+			}
+
+			public override ITsString CurrentValue(int hvo)
+			{
+				return DataAccess.get_VecSize(hvo, m_flidObj) > 0 ? base.CurrentValue(DataAccess.get_VecItem(hvo, m_flidObj, 0)) : null;
+			}
+
+			public override void SetNewValue(int hvo, ITsString tss)
+			{
+				int firstSeqObj;
+				var fHadOwningItem = DataAccess.get_VecSize(hvo, m_flidObj) > 0;
+				if (fHadOwningItem)
+				{
+					firstSeqObj = DataAccess.get_VecItem(hvo, m_flidObj, 0);
+				}
+				else
+				{
+					// make first vector item if we know the class to base it on.
+					if (m_clid == 0)
+					{
+						return;
+					}
+					firstSeqObj = DataAccess.MakeNewObject(m_clid, hvo, m_flidObj, 0);
+				}
+				base.SetNewValue(firstSeqObj, tss);
+			}
+		}
+
+		/// <summary>
+		/// FieldReadWriter for strings stored in multilingual props of an object.
+		/// </summary>
+		private class OwnMultilingualPropReadWriter : OwnStringPropReadWriter
+		{
+			private bool m_fFieldAllowsMultipleRuns;
+
+			public OwnMultilingualPropReadWriter(LcmCache cache, int flid, int ws)
+				: base(cache, flid, ws)
+			{
+
+				try
+				{
+					var fieldType = DataAccess.MetaDataCache.GetFieldType(flid);
+					m_fFieldAllowsMultipleRuns = fieldType == (int)CellarPropertyType.MultiString;
+				}
+				catch (KeyNotFoundException)
+				{
+					m_fFieldAllowsMultipleRuns = true; // Possibly a decorator field??
+				}
+			}
+
+			public override ITsString CurrentValue(int hvo)
+			{
+				var hvoStringOwner = hvo;
+				if (m_ghostParentHelper != null)
+				{
+					hvoStringOwner = m_ghostParentHelper.GetOwnerOfTargetProperty(hvo);
+				}
+				return hvoStringOwner == 0 ? null : DataAccess.get_MultiStringAlt(hvoStringOwner, m_flid, m_ws);
+			}
+
+			// In this subclass we're setting a multistring.
+			protected override void SetStringValue(int hvoStringOwner, ITsString tss)
+			{
+				if (!m_fFieldAllowsMultipleRuns && tss.RunCount > 1)
+				{
+					// Illegally trying to store a multi-run TSS in a single-run field. This will fail.
+					// Typically it's just that we tried to insert an English comma or similar.
+					// Patch it up by making the whole string take on the properties of the first run.
+					var bldr = tss.GetBldr();
+					bldr.SetProperties(0, bldr.Length, tss.get_Properties(0));
+					tss = bldr.GetString();
+				}
+				DataAccess.SetMultiStringAlt(hvoStringOwner, m_flid, m_ws, tss);
+			}
+		}
+
+		/// <summary>
+		/// FieldReadWriter for strings stored in a multilingual prop of an object
+		/// owned in an atomic property of the base object.
+		/// </summary>
+		private sealed class OwnAtomicMultilingualPropReadWriter : OwnMultilingualPropReadWriter
+		{
+			private int m_flidObj;
+			private int m_clid; // to create if missing
+
+			public OwnAtomicMultilingualPropReadWriter(LcmCache cache, int flidString, int ws, int flidObj, int clid)
+				: base(cache, flidString, ws)
+			{
+				m_flidObj = flidObj;
+				m_clid = clid;
+			}
+
+			public override ITsString CurrentValue(int hvo)
+			{
+				return base.CurrentValue(DataAccess.get_ObjectProp(hvo, m_flidObj));
+			}
+
+			internal override List<int> FieldPath
+			{
+				get
+				{
+					var fieldPath = base.FieldPath;
+					fieldPath.Insert(0, m_flidObj);
+					return fieldPath;
+				}
+			}
+
+			public override void SetNewValue(int hvo, ITsString tss)
+			{
+				var ownedAtomicObj = DataAccess.get_ObjectProp(hvo, m_flidObj);
+				var fHadObject = ownedAtomicObj != 0;
+				if (!fHadObject)
+				{
+					if (m_clid == 0)
+					{
+						return;
+					}
+					ownedAtomicObj = DataAccess.MakeNewObject(m_clid, hvo, m_flidObj, -2);
+				}
+				base.SetNewValue(ownedAtomicObj, tss);
+			}
+		}
+
+		/// <summary>
+		/// FieldReadWriter for strings stored in a multilingual prop of the FIRST object
+		/// owned in an sequence property of the base object.
+		/// </summary>
+		private sealed class OwnSeqMultilingualPropReadWriter : OwnMultilingualPropReadWriter
+		{
+			private int m_flidObj;
+			private int m_clid; // to create if missing
+
+			public OwnSeqMultilingualPropReadWriter(LcmCache cache, int flidString, int ws, int flidObj, int clid)
+				: base(cache, flidString, ws)
+			{
+				m_flidObj = flidObj;
+				m_clid = clid;
+			}
+
+			internal override List<int> FieldPath
+			{
+				get
+				{
+					var fieldPath = base.FieldPath;
+					fieldPath.Insert(0, m_flidObj);
+					return fieldPath;
+				}
+			}
+
+			public override ITsString CurrentValue(int hvo)
+			{
+				return DataAccess.get_VecSize(hvo, m_flidObj) > 0 ? base.CurrentValue(DataAccess.get_VecItem(hvo, m_flidObj, 0)) : null;
+			}
+
+			public override void SetNewValue(int hvo, ITsString tss)
+			{
+				int firstSeqObj;
+				var fHadOwningItem = DataAccess.get_VecSize(hvo, m_flidObj) > 0;
+				if (fHadOwningItem)
+				{
+					firstSeqObj = DataAccess.get_VecItem(hvo, m_flidObj, 0);
+				}
+				else
+				{
+					// make first vector item if we know the class to base it on.
+					if (m_clid == 0)
+					{
+						return;
+					}
+					firstSeqObj = DataAccess.MakeNewObject(m_clid, hvo, m_flidObj, 0);
+				}
+				base.SetNewValue(firstSeqObj, tss);
+			}
+		}
 	}
 }

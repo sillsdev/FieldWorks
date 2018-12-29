@@ -1,12 +1,12 @@
-// Copyright (c) 2009-2017 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Linq;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 using SIL.Xml;
 
 namespace LanguageExplorer.Controls.XMLViews
@@ -63,7 +63,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			"before", "after", "sep", "ws", "style", "showLabels", "number", "numstyle", "numsingle", "visibility",
 			"singlegraminfofirst", "showasindentedpara", "reltypeseq", "dup", "entrytypeseq", "flowType"
 		};
-
 		private const string NameAttr = "name";
 		private const string LabelAttr = "label";
 		private const string ParamAttr = "param";
@@ -139,7 +138,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return; // nothing to do
 			}
-
 			var xaParam = partRefNode.Attribute(ParamAttr);
 			string suffix;
 			if (m_partLevelParamAttrSuffix.TryGetValue(dupKey, out suffix))
@@ -154,7 +152,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return; // nothing to do
 			}
-
 			var xaLabel = partRefNode.Attribute(LabelAttr);
 			string suffix;
 			if (m_labelAttrSuffix.TryGetValue(dupKey, out suffix))
@@ -200,7 +197,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return key + dup;
 			}
-
 			if (!dup.Contains("."))
 			{
 				return key + dup;
@@ -324,7 +320,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return; // nothing to do
 			}
-
 			var xaParam = workingNode.Attribute(ParamAttr);
 			xaParam.Value = xaParam.Value + m_layoutParamAttrSuffix;
 		}
@@ -357,8 +352,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private static bool NeedsAsParaParamSet(XElement copy, XAttribute xa)
 		{
-			return xa.Name == ParamAttr && xa.Value.Contains("_AsPara")
-				&& copy.Attributes().Any() && copy.Attribute(ParamAttr) != null && !copy.Attribute(ParamAttr).Value.Contains("_AsPara");
+			return xa.Name == ParamAttr && xa.Value.Contains("_AsPara") && copy.Attributes().Any() && copy.Attribute(ParamAttr) != null && !copy.Attribute(ParamAttr).Value.Contains("_AsPara");
 		}
 
 		/// <summary>

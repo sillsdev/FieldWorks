@@ -9,7 +9,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
-using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.Filters;
 using LanguageExplorer.LcmUi;
 using SIL.Code;

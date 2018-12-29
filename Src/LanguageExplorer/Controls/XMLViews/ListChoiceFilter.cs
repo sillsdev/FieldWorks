@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -22,15 +22,14 @@ namespace LanguageExplorer.Controls.XMLViews
 	public abstract class ListChoiceFilter : RecordFilter
 	{
 		private bool m_fIsUserVisible;
-
 		/// <summary />
 		protected LcmCache m_cache;
 		/// <summary>
 		/// May be derived from cache or set separately.
 		/// </summary>
 		protected ISilDataAccess m_sda;
-		HashSet<int> m_targets;
-		int[] m_originalTargets;
+		private HashSet<int> m_targets;
+		private int[] m_originalTargets;
 
 		/// <summary />
 		protected ListChoiceFilter(LcmCache cache, ListMatchOptions mode, int[] targets)
@@ -56,6 +55,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_targets = new HashSet<int>(value);
 			}
 		}
+
 		internal ListMatchOptions Mode { get; private set; }
 
 		/// <summary>
@@ -157,8 +157,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public virtual bool CompatibleFilter(XElement colSpec)
 		{
-			return BeSpec == XmlUtils.GetOptionalAttributeValue(colSpec, "bulkEdit", null)
-			       || BeSpec == XmlUtils.GetOptionalAttributeValue(colSpec, "chooserFilter", null);
+			return BeSpec == XmlUtils.GetOptionalAttributeValue(colSpec, "bulkEdit", null) || BeSpec == XmlUtils.GetOptionalAttributeValue(colSpec, "chooserFilter", null);
 		}
 
 		// The value of the "bulkEdit" property that causes this kind of filter to be created.

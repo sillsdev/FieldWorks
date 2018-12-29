@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,8 +7,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using SIL.FieldWorks.Common.FwUtils;
 using LanguageExplorer.Filters;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.ObjectModel;
@@ -21,31 +21,8 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	public class PartOwnershipTree : DisposableBase
 	{
-		/// <summary>
-		/// Describes the relationship between list classes in a PartOwnershipTree
-		/// </summary>
-		private enum RelationshipOfRelatives
-		{
-			/// <summary>
-			/// Items (e.g. Entries) in the same ItemsListClass (LexEntry) are siblings.
-			/// </summary>
-			Sibling,
-			/// <summary>
-			/// (Includes Parent relationship)
-			/// </summary>
-			Ancestor,
-			/// <summary>
-			/// (Includes Child relationship)
-			/// </summary>
-			Descendent,
-			/// <summary>
-			/// Entries.Allomorphs and Entries.Senses are cousins.
-			/// </summary>
-			Cousin
-		}
-
-		XElement m_classOwnershipTree;
-		XElement m_parentToChildrenSpecs;
+		private XElement m_classOwnershipTree;
+		private XElement m_parentToChildrenSpecs;
 
 		/// <summary>
 		/// Factory for returning a PartOwnershipTree
@@ -151,83 +128,82 @@ namespace LanguageExplorer.Controls.XMLViews
 			switch (relationshipOfTarget)
 			{
 				case RelationshipOfRelatives.Sibling:
-				{
-					Debug.Fail("Sibling relationships are not supported.");
-					// no use for this currently.
-					break;
-				}
-				case RelationshipOfRelatives.Ancestor:
-				{
-					var gph = GetGhostParentHelper(flidForItemsBeforeListChange);
-					// the items (e.g. senses) are owned by the new class (e.g. entry),
-					// so find the (new class) ancestor for each item.
-					foreach (var hvoBeforeListChange in itemsBeforeListChange)
 					{
-						int hvoAncestorOfItem;
-						if (gph != null && gph.GhostOwnerClass == newListItemsClass && gph.IsGhostOwnerClass(hvoBeforeListChange))
-						{
-							// just add the ghost owner, as the ancestor relative,
-							// since it's already in the newListItemsClass
-							hvoAncestorOfItem = hvoBeforeListChange;
-						}
-						else
-						{
-							var obj = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoBeforeListChange);
-							hvoAncestorOfItem = obj.OwnerOfClass(newListItemsClass).Hvo;
-						}
-						relatives.Add(hvoAncestorOfItem);
+						Debug.Fail("Sibling relationships are not supported.");
+						// no use for this currently.
+						break;
 					}
-					commonAncestors = relatives;
-					break;
-				}
+				case RelationshipOfRelatives.Ancestor:
+					{
+						var gph = GetGhostParentHelper(flidForItemsBeforeListChange);
+						// the items (e.g. senses) are owned by the new class (e.g. entry),
+						// so find the (new class) ancestor for each item.
+						foreach (var hvoBeforeListChange in itemsBeforeListChange)
+						{
+							int hvoAncestorOfItem;
+							if (gph != null && gph.GhostOwnerClass == newListItemsClass && gph.IsGhostOwnerClass(hvoBeforeListChange))
+							{
+								// just add the ghost owner, as the ancestor relative,
+								// since it's already in the newListItemsClass
+								hvoAncestorOfItem = hvoBeforeListChange;
+							}
+							else
+							{
+								var obj = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoBeforeListChange);
+								hvoAncestorOfItem = obj.OwnerOfClass(newListItemsClass).Hvo;
+							}
+							relatives.Add(hvoAncestorOfItem);
+						}
+						commonAncestors = relatives;
+						break;
+					}
 				case RelationshipOfRelatives.Descendent:
 				case RelationshipOfRelatives.Cousin:
-				{
-					var newClasses = new HashSet<int>(Cache.GetManagedMetaDataCache().GetAllSubclasses(newListItemsClass));
-					foreach (var hvoBeforeListChange in itemsBeforeListChange)
 					{
-						if (!Cache.ServiceLocator.IsValidObjectId(hvoBeforeListChange))
+						var newClasses = new HashSet<int>(Cache.GetManagedMetaDataCache().GetAllSubclasses(newListItemsClass));
+						foreach (var hvoBeforeListChange in itemsBeforeListChange)
 						{
+							if (!Cache.ServiceLocator.IsValidObjectId(hvoBeforeListChange))
+							{
 								continue; // skip this one.
-						}
-						if (newClasses.Contains(Cache.ServiceLocator.GetObject(hvoBeforeListChange).ClassID))
-						{
-							// strangely, the 'before' object is ALREADY one that is valid for, and presumably in,
-							// the destination property. One way this happens is at startup, when switching to
-							// the saved target column, but we have also saved the list of objects.
-							relatives.Add(hvoBeforeListChange);
-							continue;
-						}
-						int hvoCommonAncestor;
-						if (relationshipOfTarget == RelationshipOfRelatives.Descendent)
-						{
-							// the item is the ancestor
-							hvoCommonAncestor = hvoBeforeListChange;
-						}
-						else
-						{
-							// the item and its cousins have a common ancestor.
-							hvoCommonAncestor = GetHvoCommonAncestor(hvoBeforeListChange, prevListItemsClass, newListItemsClass);
-						}
-
-						// only add the descendants/cousins if we haven't already processed the ancestor.
-						if (!commonAncestors.Contains(hvoCommonAncestor))
-						{
-							var gph = GetGhostParentHelper(flidForCurrentList);
-							var descendents = GetDescendents(hvoCommonAncestor, flidForCurrentList);
-							if (descendents.Count > 0)
-							{
-								relatives.UnionWith(descendents);
 							}
-							else if (gph != null && gph.IsGhostOwnerClass(hvoCommonAncestor))
+							if (newClasses.Contains(Cache.ServiceLocator.GetObject(hvoBeforeListChange).ClassID))
 							{
-								relatives.Add(hvoCommonAncestor);
+								// strangely, the 'before' object is ALREADY one that is valid for, and presumably in,
+								// the destination property. One way this happens is at startup, when switching to
+								// the saved target column, but we have also saved the list of objects.
+								relatives.Add(hvoBeforeListChange);
+								continue;
 							}
-							commonAncestors.Add(hvoCommonAncestor);
+							int hvoCommonAncestor;
+							if (relationshipOfTarget == RelationshipOfRelatives.Descendent)
+							{
+								// the item is the ancestor
+								hvoCommonAncestor = hvoBeforeListChange;
+							}
+							else
+							{
+								// the item and its cousins have a common ancestor.
+								hvoCommonAncestor = GetHvoCommonAncestor(hvoBeforeListChange, prevListItemsClass, newListItemsClass);
+							}
+							// only add the descendants/cousins if we haven't already processed the ancestor.
+							if (!commonAncestors.Contains(hvoCommonAncestor))
+							{
+								var gph = GetGhostParentHelper(flidForCurrentList);
+								var descendents = GetDescendents(hvoCommonAncestor, flidForCurrentList);
+								if (descendents.Count > 0)
+								{
+									relatives.UnionWith(descendents);
+								}
+								else if (gph != null && gph.IsGhostOwnerClass(hvoCommonAncestor))
+								{
+									relatives.Add(hvoCommonAncestor);
+								}
+								commonAncestors.Add(hvoCommonAncestor);
+							}
 						}
+						break;
 					}
-					break;
-				}
 			}
 			return relatives;
 		}
@@ -276,7 +252,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				var prevClassName = Cache.DomainDataByFlid.MetaDataCache.GetClassName(prevListItemsClass);
 				var prevClassNode = m_classOwnershipTree.XPathSelectElement(".//" + prevClassName);
 				var newClassNode = m_classOwnershipTree.XPathSelectElement(".//" + newClassName);
-				// determine if prevClassName is owned (has anscestor) by the new.
+				// determine if prevClassName is owned (has ancestor) by the new.
 				var fNewIsAncestorOfPrev = prevClassNode.XPathSelectElement("ancestor::" + newClassName) != null;
 				if (fNewIsAncestorOfPrev)
 				{
@@ -327,6 +303,29 @@ namespace LanguageExplorer.Controls.XMLViews
 				ancestorOfPrev = ancestorOfPrev.Parent;
 			}
 			return hvoCommonAncestor;
+		}
+
+		/// <summary>
+		/// Describes the relationship between list classes in a PartOwnershipTree
+		/// </summary>
+		private enum RelationshipOfRelatives
+		{
+			/// <summary>
+			/// Items (e.g. Entries) in the same ItemsListClass (LexEntry) are siblings.
+			/// </summary>
+			Sibling,
+			/// <summary>
+			/// (Includes Parent relationship)
+			/// </summary>
+			Ancestor,
+			/// <summary>
+			/// (Includes Child relationship)
+			/// </summary>
+			Descendent,
+			/// <summary>
+			/// Entries.Allomorphs and Entries.Senses are cousins.
+			/// </summary>
+			Cousin
 		}
 	}
 }

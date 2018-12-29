@@ -3344,7 +3344,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					if (targetObject is IText)
 					{
 						IRnGenericRec referringRecord;
-						if (NotebookRecordRefersToThisText(targetObject as IText, out referringRecord))
+						if ((targetObject as IText).NotebookRecordRefersToThisText(out referringRecord))
 							return referringRecord.Guid;
 
 						// Text is not already associated with a notebook record. So there's nothing yet to jump to.
@@ -3380,20 +3380,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			// Create new Notebook record
 			((IText)CurrentSlice.MyCmObject).AssociateWithNotebook(true);
 			IRnGenericRec referringRecord;
-			NotebookRecordRefersToThisText(CurrentSlice.MyCmObject as IText, out referringRecord);
+			(CurrentSlice.MyCmObject as IText)NotebookRecordRefersToThisText(out referringRecord);
 			return referringRecord;
-		}
-
-		internal static bool NotebookRecordRefersToThisText(IText text, out IRnGenericRec referringRecord)
-		{
-			referringRecord = null;
-			if (text == null)
-			{
-				throw new ArgumentException("Don't call this unless the CurrentSlice.Object is a Text.");
-			}
-
-			referringRecord = text.AssociatedNotebookRecord;
-			return referringRecord != null;
 		}
 #endif
 

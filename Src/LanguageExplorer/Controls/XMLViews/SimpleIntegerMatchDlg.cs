@@ -1,11 +1,13 @@
-// Copyright (c) 2004-2017 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.Controls;
 using LanguageExplorer.Filters;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Controls.XMLViews
@@ -15,15 +17,14 @@ namespace LanguageExplorer.Controls.XMLViews
 	{
 		private FwOverrideComboBox m_comboMatchType;
 		private IHelpTopicProvider m_helpTopicProvider;
-		private System.Windows.Forms.Label m_labelAnd;
-		private System.Windows.Forms.Button m_cancelButton;
-		private System.Windows.Forms.Button m_okButton;
+		private Label m_labelAnd;
+		private Button m_cancelButton;
+		private Button m_okButton;
 		private NumericUpDown m_nudVal1;
 		private NumericUpDown m_nudVal2;
 		private Button m_helpButton;
 		private HelpProvider helpProvider1;
 		private const string s_helpTopic = "khtpFilterRestrict";
-
 		// All the current indexes of the text in the drop down list, if the order changes in
 		// the dlg than those changes should be reflected here.
 		private const int GreaterThan = 0;
@@ -33,11 +34,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private const int LessThanOREqualTo = 4;
 		private const int GreaterThanOREqualTo = 5;
 		private const int Between = 6;
-
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+		private Container components = null;
 
 		/// <summary />
 		private SimpleIntegerMatchDlg()
@@ -65,7 +62,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				var val = (int)m_nudVal1.Value;	// validating handled in the use of the numeric up down control
+				var val = (int)m_nudVal1.Value; // validating handled in the use of the numeric up down control
 				var index = m_comboMatchType.SelectedIndex;
 				switch (index)
 				{
@@ -121,7 +118,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						return string.Format(XMLViewsStrings.ksLessEqX, sval);
 					case GreaterThanOREqualTo://	greater than or equal to
 						return string.Format(XMLViewsStrings.ksGreaterEqX, sval);
-					case Between: //	between
+					case Between:
 						// Swap the values if val is > val2 : the UI allows ranges
 						// to be entered in any order small to large and large to small,
 						// but the processing expects val to be smaller than val2.
@@ -141,20 +138,20 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
-			if( disposing )
+			if (disposing)
 			{
 				components?.Dispose();
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#region Windows Form Designer generated code
@@ -252,8 +249,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Display the second text box and label only for the 'between' case.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		private void m_comboMatchType_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			var fBetween = m_comboMatchType.SelectedIndex == m_comboMatchType.Items.Count - 1;
@@ -297,7 +292,9 @@ namespace LanguageExplorer.Controls.XMLViews
 				val = ((NotEqualIntMatcher)matcher).NotEqualValue;
 			}
 			else
+			{
 				return; // old matcher is for some other combo item, use defaults.
+			}
 			m_nudVal1.Value = val;
 		}
 

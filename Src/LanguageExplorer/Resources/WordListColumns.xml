@@ -1,7 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <columns>
 	<column label="Form" width="30%" cansortbylength="true" ws="$ws=best vernacular" field="Form" chooserFilter="textsFilterItem" specialItemName="Choose Texts...">
-		<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.TextsFilterItem" />
 		<span>
 			<properties>
 				<bold value="off"/>

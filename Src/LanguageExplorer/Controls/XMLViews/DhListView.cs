@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,9 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Windows.Forms;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.Controls.XMLViews
@@ -20,17 +20,39 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	internal class DhListView : ListView
 	{
+		private const int kHalfArrowSize = 6;
+		private const int WM_CONTEXTMENU = 0x007B;
+		private const int WM_NOTIFY = 0x004E;
+		internal const int kgapForScrollBar = 23;
+		/// <summary>
+		/// Minimum width a normal column can be (other than the checkbox column)
+		/// </summary>
+		internal const int kMinColWidth = 25;
+
 		private BrowseViewer m_bv;
 		private ImageList m_imgList;
 		private bool m_fColumnDropped = false;  // set this after we've drag and dropped a column
 		private ToolTip m_tooltip;
-
 		// FWNX-224
 		// on Mono, when a right click is pressed, this class emits a RightClick event
 		// followed by a generic click event.
 		// This flag allows use to generate a LeftClick event if we previously didn't
 		// receive a RightClick.
-		private bool m_fIgnoreNextClick = false;
+		private bool m_fIgnoreNextClick;
+		private List<int> m_orderForColumnsDisplay = new List<int>();
+		// Set when we paint with the background color that indicates the mouse is inside.
+		// For some reason Windows knows to paint the header when we move into a column but not when we move out of it.
+		private Rectangle m_hotRectangle;
+		/// <summary>
+		/// This seems to be the only way to find out when the mouse moves out of one of our column headers. Ugh!!
+		/// </summary>
+		private Timer m_timer;
+		private int m_cTicks;
+		private string m_tooltipText;
+		// even if there is a fresh paint (e.g., because the tooltip went away) we don't want to show the same one again
+		// during the same visit to the same header.
+		private string m_lastTooltipText;
+		private Dictionary<int, int> m_columnIconIndexes = new Dictionary<int, int>();
 
 		/// <summary />
 		public event ColumnRightClickEventHandler ColumnRightClick;
@@ -43,8 +65,6 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		internal bool AdjustingWidth { get; set; }
 
-		int kHalfArrowSize = 6;
-
 		// FWNX-646: missing column headings
 		/// <summary/>
 		protected override void OnParentVisibleChanged(EventArgs e)
@@ -55,7 +75,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				BeginUpdate();
 				EndUpdate();
 			}
-
 			base.OnParentVisibleChanged(e);
 		}
 
@@ -65,20 +84,17 @@ namespace LanguageExplorer.Controls.XMLViews
 		public DhListView(BrowseViewer bv)
 		{
 			m_bv = bv;
-
 			m_imgList = new ImageList
 			{
 				ImageSize = new Size(kHalfArrowSize * 2, kHalfArrowSize * 2),
 				TransparentColor = Color.FromKnownColor(KnownColor.ControlLight)
 			};
-
 			m_imgList.Images.Add(GetArrowBitmap(ArrowType.Ascending, ArrowSize.Large));     // Add ascending arrow
 			m_imgList.Images.Add(GetArrowBitmap(ArrowType.Ascending, ArrowSize.Medium));        // Add ascending arrow
 			m_imgList.Images.Add(GetArrowBitmap(ArrowType.Ascending, ArrowSize.Small));     // Add ascending arrow
 			m_imgList.Images.Add(GetArrowBitmap(ArrowType.Descending, ArrowSize.Large));        // Add descending arrow
 			m_imgList.Images.Add(GetArrowBitmap(ArrowType.Descending, ArrowSize.Medium));       // Add descending arrow
 			m_imgList.Images.Add(GetArrowBitmap(ArrowType.Descending, ArrowSize.Small));        // Add descending arrow
-
 			ColumnWidthChanged += ListView_ColumnWidthChanged;
 			if (Platform.IsMono)
 			{
@@ -111,7 +127,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
-		private List<int> m_orderForColumnsDisplay = new List<int>();
 		/// <summary>
 		/// This is used to keep track of the positions of columns after they have been dragged and dropped.
 		/// ColumnsDisplayOrder[i] is the index of the position where the column at
@@ -142,7 +157,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// to reflect the re-ordering of the columns.
 			// However, the system has not actually re-ordered them. So we must simulate the order it is going to change
 			// them to.
-
+			//
 			// Now we want an array of integers showing how they are re-ordered.
 			// columnDisplayOrder[i] is the position that element i in the old (previous, not original) order will have in the new order.
 			// Note that we cannot depend on e.OldDisplayIndex. In Windows, this is the position in the
@@ -153,58 +168,13 @@ namespace LanguageExplorer.Controls.XMLViews
 			var reorderedColumnHeader = columnDisplayOrder[e.Header.DisplayIndex];
 			columnDisplayOrder.Remove(reorderedColumnHeader);
 			columnDisplayOrder.Insert(e.NewDisplayIndex, reorderedColumnHeader);
-
 			// Let affected browse view update its columns of data
 			ColumnDragDropReordered?.Invoke(this, new ColumnDragDropReorderedEventArgs(columnDisplayOrder));
-
 			//Adjust the browseViewer column ordering whenever columns are moved.
 			m_bv.OrderForColumnsDisplay = m_orderForColumnsDisplay;
-
 		}
 
 		#region Support for context menu and column size on header
-
-		private const int WM_CONTEXTMENU = 0x007B;
-		private const int WM_NOTIFY = 0x004E;
-
-		[StructLayout(LayoutKind.Sequential)]
-		private struct NMHDR
-		{
-			/// <summary>
-			/// The HWND from
-			/// </summary>
-			public IntPtr hwndFrom;
-			/// <summary>
-			/// The identifier from
-			/// </summary>
-			public int idFrom;
-			/// <summary>
-			/// The code
-			/// </summary>
-			public int code;
-		}
-
-		[StructLayout(LayoutKind.Sequential)]
-		private struct NMHEADER
-		{
-			/// <summary>
-			/// The HWND from
-			/// </summary>
-			public NMHDR hdr;
-			/// <summary>
-			/// The identifier from
-			/// </summary>
-			public int iItem;
-			/// <summary>
-			/// The code
-			/// </summary>
-			public int iButton;
-
-			/// <summary>
-			/// The pitem
-			/// </summary>
-			public IntPtr pitem;
-		}
 
 		/// <summary>
 		/// Override of WndProc to handle the context menu or column resize on column headers.
@@ -227,18 +197,16 @@ namespace LanguageExplorer.Controls.XMLViews
 					break;
 				case WM_NOTIFY:
 					var nm = (NMHDR)m.GetLParam(typeof(NMHDR));
-
 					// Notification names: standard, ANSI (A), and Unicode (W)
 					const int HDN_FIRST = 0 - 300;
 					const int HDN_DIVIDERDBLCLICKA = HDN_FIRST - 5;
 					const int HDN_DIVIDERDBLCLICKW = HDN_FIRST - 25;
-
 					// Handle notifications for header column divider
 					if (nm.code == HDN_DIVIDERDBLCLICKA || nm.code == HDN_DIVIDERDBLCLICKW)
 					{
 						// nmheader.iItem is in the original column order, but the resizes are done in display order.
 						var nmheader = (NMHEADER)m.GetLParam(typeof(NMHEADER));
-						int inDisplayOrder = m_orderForColumnsDisplay[nmheader.iItem];
+						var inDisplayOrder = m_orderForColumnsDisplay[nmheader.iItem];
 						m_bv.AdjustColumnWidthToMatchContents(inDisplayOrder);
 					}
 					// Handle all other notifications
@@ -272,7 +240,6 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		#endregion
 
-
 		// FWNX-224
 		internal void HandleColumnClick(object sender, ColumnClickEventArgs e)
 		{
@@ -281,7 +248,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_fIgnoreNextClick = false;
 				return;
 			}
-
 			if (ColumnLeftClick != null && m_fIgnoreNextClick == false)
 			{
 				ColumnLeftClick(this, e);
@@ -294,9 +260,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -334,20 +300,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			OwnerDraw = true;
 			DrawColumnHeader += DhListView_DrawColumnHeader;
 		}
-
-		// Set when we paint with the background color that indicates the mouse is inside.
-		// For some reason Windows knows to paint the header when we move into a column but not when we move out of it.
-		private Rectangle m_hotRectangle;
-
-		/// <summary>
-		/// This seems to be the only way to find out when the mouse moves out of one of our column headers. Ugh!!
-		/// </summary>
-		private Timer m_timer;
-		private int m_cTicks;
-		private string m_tooltipText;
-		// even if there is a fresh paint (e.g., because the tooltip went away) we don't want to show the same one again
-		// during the same visit to the same header.
-		private string m_lastTooltipText;
 
 		private void m_timer_Tick(object sender, EventArgs e)
 		{
@@ -406,7 +358,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				drawRect.Width -= m_imgList.ImageSize.Width;
 			}
-
 			var topHeight = drawRect.Height / 2 - 1;
 			var drawText = e.Header.Text;
 			var realSize = e.Graphics.MeasureString(drawText, e.Font);
@@ -453,7 +404,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				// Guess how much we can fit.
 				var len = (int)(drawText.Length * drawRect.Width / realSize.Width) + 1;
-
 				// Subtract more until it fits.
 				do
 				{
@@ -462,7 +412,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					drawText = drawText.Substring(0, len) + "\x2026"; // ellipsis
 					realSize = e.Graphics.MeasureString(drawText, e.Font);
 				} while (len > 0 && realSize.Width > drawRect.Width);
-
 				// Add any more that fits.
 				while (len < e.Header.Text.Length - 1)
 				{
@@ -548,20 +497,13 @@ namespace LanguageExplorer.Controls.XMLViews
 				// set flag so next ColumnClick event doesn't generate a left click
 				m_fIgnoreNextClick = true;
 			}
-
 			ColumnRightClick?.Invoke(this, new ColumnRightClickEventArgs(iItem, ptLoc));
 		}
-
-		internal const int kgapForScrollBar = 23;
-		/// <summary>
-		/// Minimum width a normal column can be (other than the checkbox column)
-		/// </summary>
-		internal const int kMinColWidth = 25;
 
 		/// <summary>
 		/// Create up/down icon (Adapted from a post by Eddie Velasquez.)
 		/// </summary>
-		private Bitmap GetArrowBitmap(ArrowType type, ArrowSize size)
+		private static Bitmap GetArrowBitmap(ArrowType type, ArrowSize size)
 		{
 			int offset;
 			switch (size)
@@ -579,15 +521,12 @@ namespace LanguageExplorer.Controls.XMLViews
 					offset = 0;
 					break;
 			}
-
 			var bmp = new Bitmap(kHalfArrowSize * 2, kHalfArrowSize * 2);
 			using (var gfx = Graphics.FromImage(bmp))
 			{
 				Brush brush = new SolidBrush(Color.FromArgb(215, 230, 255));
 				var pen = new Pen(Color.FromArgb(49, 106, 197));
-
 				gfx.FillRectangle(new SolidBrush(Color.FromKnownColor(KnownColor.ControlLight)), 0, 0, kHalfArrowSize * 2, kHalfArrowSize * 2);
-
 				Point[] points;
 				switch (type)
 				{
@@ -603,11 +542,8 @@ namespace LanguageExplorer.Controls.XMLViews
 						break;
 				}
 			}
-
 			return bmp;
 		}
-
-		Dictionary<int, int> m_columnIconIndexes = new Dictionary<int, int>();
 
 		/// <summary>
 		/// Set the header icon. (Thanks to a post by Eddie Velasquez.)
@@ -618,7 +554,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-
 			if (sortOrder == SortOrder.None)
 			{
 				m_columnIconIndexes.Remove(columnIndex);
@@ -629,6 +564,54 @@ namespace LanguageExplorer.Controls.XMLViews
 				// The images are stored in that order, so the following works
 				m_columnIconIndexes[columnIndex] = (int)size + (3 * ((int)sortOrder - 1));
 			}
+		}
+
+		/// <summary />
+		private enum ArrowType
+		{
+			/// <summary />
+			Ascending,
+			/// <summary />
+			Descending
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		private struct NMHDR
+		{
+			/// <summary>
+			/// The HWND from
+			/// </summary>
+			private IntPtr hwndFrom;
+			/// <summary>
+			/// The identifier from
+			/// </summary>
+			private int idFrom;
+			/// <summary>
+			/// The code
+			/// </summary>
+			public int code;
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		private struct NMHEADER
+		{
+			/// <summary>
+			/// The HWND from
+			/// </summary>
+			private NMHDR hdr;
+			/// <summary>
+			/// The identifier from
+			/// </summary>
+			public int iItem;
+			/// <summary>
+			/// The code
+			/// </summary>
+			private int iButton;
+
+			/// <summary>
+			/// The pitem
+			/// </summary>
+			private IntPtr pitem;
 		}
 	}
 }

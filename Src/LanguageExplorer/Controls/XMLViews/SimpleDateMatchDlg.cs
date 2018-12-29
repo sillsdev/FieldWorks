@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -21,7 +21,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			InitializeComponent();
 			AccessibleName = GetType().Name;
 			m_typeCombo.SelectedIndex = 0;
-
 			m_helpTopicProvider = helpTopicProvider;
 			helpProvider1.HelpNamespace = helpTopicProvider.HelpFile;
 			helpProvider1.SetHelpKeyword(this, helpTopicProvider.GetHelpString(s_helpTopic));
@@ -128,7 +127,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				var val = new DateTimeMatcher(SelectionStart, SelectionEnd, CompareType) {HandleGenDate = HandleGenDate};
+				var val = new DateTimeMatcher(SelectionStart, SelectionEnd, CompareType) { HandleGenDate = HandleGenDate };
 				if (!HandleGenDate)
 				{
 					return val;
@@ -213,10 +212,8 @@ namespace LanguageExplorer.Controls.XMLViews
 					m_typeCombo.SelectedIndex = 4;
 					break;
 			}
-
 			SelectionStart = matcher.Start;
 			SelectionEnd = matcher.End;
-
 			HandleGenDate = matcher.HandleGenDate;
 			m_chkStartBC.Checked = !matcher.IsStartAD;
 			m_chkEndBC.Checked = !matcher.IsEndAD;
@@ -231,9 +228,13 @@ namespace LanguageExplorer.Controls.XMLViews
 		void m_endPicker_ValueChanged(object sender, System.EventArgs e)
 		{
 			if (m_typeCombo.SelectedIndex != 4)
+			{
 				return; // side effect change
+			}
 			if (SelectionEnd < SelectionStart)
+			{
 				SelectionStart = SelectionEnd;
+			}
 		}
 
 		private void m_startPicker_ValueChanged(object sender, System.EventArgs e)
@@ -243,11 +244,10 @@ namespace LanguageExplorer.Controls.XMLViews
 				// Only one showing, get the effect we want by making the other match
 				SelectionEnd = SelectionStart;
 			}
-			else
+			else if (SelectionEnd < SelectionStart)
 			{
 				// Both visible, keep in order
-				if (SelectionEnd < SelectionStart)
-					SelectionEnd = SelectionStart;
+				SelectionEnd = SelectionStart;
 			}
 		}
 

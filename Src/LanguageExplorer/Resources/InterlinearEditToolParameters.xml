@@ -1,10 +1,10 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <root>
 	<recordbrowseview>
 		<parameters id="textsChooser" filterBar="true" treeBarAvailability="NotAllowed" defaultCursor="Arrow" altTitleId="Text-Plural" editable="false">
 			<columns>
 				<column label="Title" width="144000" chooserFilter="textsFilterItem">
-					<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.TextsFilterItem"/>
+					<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.XMLViews.TextsFilterItem"/>
 					<string field="Title" ws="$ws=best vernoranal"/>
 				</column>
 				<column label="Abbreviation" visibility="menu" width="72000">

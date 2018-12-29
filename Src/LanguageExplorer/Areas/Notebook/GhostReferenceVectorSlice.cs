@@ -3,10 +3,11 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Xml.Linq;
+using LanguageExplorer.Controls.DetailControls;
 using SIL.LCModel;
 using SIL.Xml;
 
-namespace LanguageExplorer.Controls.DetailControls
+namespace LanguageExplorer.Areas.Notebook
 {
 	/// <summary>
 	/// This class is used (e.g., in the Info tab of Texts/Words) where a Reference Vector Slice would normally appear,

@@ -8,10 +8,10 @@ using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 
-namespace LanguageExplorer.Controls.XMLViews
+namespace LanguageExplorer.Controls
 {
 	/// <summary>
-	/// Structure used when returning a list of objects for a UI Widgit that wants to list them.
+	/// Structure used when returning a list of objects for a UI Widget that wants to list them.
 	/// </summary>
 	public class CmPossibilityLabel : ObjectLabel
 	{
@@ -126,12 +126,12 @@ namespace LanguageExplorer.Controls.XMLViews
 					}
 					if (string.IsNullOrEmpty(name))
 					{
-						name = XMLViewsStrings.ksQuestionMarks;
+						name = LanguageExplorerControls.ksQuestionMarks;
 						nameWs = userWs;
 					}
 					if (string.IsNullOrEmpty(abbr))
 					{
-						abbr = XMLViewsStrings.ksQuestionMarks;
+						abbr = LanguageExplorerControls.ksQuestionMarks;
 						abbrWs = userWs;
 					}
 					if ((m_displayNameProperty != null)

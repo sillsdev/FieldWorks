@@ -432,6 +432,9 @@ namespace LanguageExplorer.Controls
 
 		private void BuildInitialBrowseView()
 		{
+#if RANDYTODO
+			// TODO: Nobody will be home.
+#endif
 			var configurationParameters = m_propertyTable.GetValue<XElement>("WindowConfiguration");
 			var toolNode = configurationParameters.XPathSelectElement("controls/parameters/guicontrol[@id='PhonologicalFeaturesFlatList']/parameters");
 

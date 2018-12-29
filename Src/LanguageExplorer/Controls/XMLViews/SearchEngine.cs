@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,12 +7,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
-using SIL.ObjectModel;
 using SIL.LCModel.Utils;
+using SIL.ObjectModel;
 
 namespace LanguageExplorer.Controls.XMLViews
 {
@@ -40,7 +40,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		private readonly StringSearcher<int> m_searcher;
-
 		private IList<ICmObject> m_searchableObjs;
 		private readonly Dictionary<Tuple<int, int>, int> m_indexObjPos;
 		private readonly ConsumerThread<int, SearchField[]> m_thread;
@@ -61,9 +60,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_synchronizationContext = SynchronizationContext.Current;
 			m_syncRoot = new object();
 			m_indexObjPos = new Dictionary<Tuple<int, int>, int>();
-
 			Cache.DomainDataByFlid.AddNotification(this);
-
 			m_thread.Start();
 		}
 
@@ -73,9 +70,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected override void DisposeManagedResources()
 		{
 			Cache.DomainDataByFlid.RemoveNotification(this);
-
 			m_thread.Stop();
 			m_thread.Dispose();
+			base.DisposeManagedResources();
 		}
 
 		/// <summary>
@@ -134,7 +131,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				m_searchableObjs = GetSearchableObjects();
 			}
-
 			for (; i < m_searchableObjs.Count; i++)
 			{
 				if (isSearchCanceled())
@@ -157,19 +153,15 @@ namespace LanguageExplorer.Controls.XMLViews
 		private void HandleWork(IQueueAccessor<int, SearchField[]> queue)
 		{
 			var work = queue.GetAllWorkItems().Last();
-
 			if (IsSearchCanceled(queue))
 			{
 				return;
 			}
-
 			var results = PerformSearch(work, () => IsSearchCanceled(queue));
-
 			if (results == null || IsSearchCanceled(queue))
 			{
 				return;
 			}
-
 			m_synchronizationContext.Post(OnSearchCompleted, new SearchCompletedEventArgs(work, FilterResults(results)));
 		}
 
@@ -193,14 +185,12 @@ namespace LanguageExplorer.Controls.XMLViews
 					{
 						return null;
 					}
-
 					var key = IsFieldMultiString(field) ? Tuple.Create(field.Flid, field.String.get_WritingSystemAt(0)) : Tuple.Create(field.Flid, 0);
 					int pos;
 					if (!m_indexObjPos.TryGetValue(key, out pos))
 					{
 						pos = 0;
 					}
-
 					if (m_searchableObjs == null || pos < m_searchableObjs.Count)
 					{
 						// only use the IWorkerThreadReadHandler if we are executing on the worker thread
@@ -211,13 +201,13 @@ namespace LanguageExplorer.Controls.XMLViews
 						else
 						{
 							using (new WorkerThreadReadHelper(Cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
+							{
 								pos = BuildIndex(pos, field, isSearchCanceled);
+							}
 						}
 						m_indexObjPos[key] = pos;
 					}
-
 				}
-
 				foreach (var field in fields)
 				{
 					if (isSearchCanceled())
@@ -227,7 +217,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					results.UnionWith(m_searcher.Search(field.Flid, field.String));
 				}
 			}
-
 			return isSearchCanceled() ? null : results;
 		}
 
@@ -247,7 +236,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void OnSearchCompleted(object e)
 		{
-			SearchCompleted?.Invoke(this, (SearchCompletedEventArgs) e);
+			SearchCompleted?.Invoke(this, (SearchCompletedEventArgs)e);
 		}
 	}
 }

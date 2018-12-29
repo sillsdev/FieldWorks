@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,8 +7,8 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Controls.XMLViews
 {
@@ -19,7 +19,6 @@ namespace LanguageExplorer.Controls.XMLViews
 	{
 		/// <summary />
 		protected IVwStylesheet m_stylesheet;
-
 		private bool m_displayUsage;
 		private bool m_fEnabled;
 		private Color m_enabledColor;
@@ -61,7 +60,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return m_displayUsage;
 			}
-
 			set
 			{
 				m_displayUsage = value;
@@ -77,7 +75,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				var count = CountUsages();
 				if (count > 0)
 				{
-					text += " (" + count + ")";
+					text += $" ({count})";
 				}
 			}
 			Text = text;
@@ -174,7 +172,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				return;
 			}
 			Nodes.Clear(); // get rid of the dummy.
-
 			AddSecondaryNodes(this, Nodes, chosenObjs);
 			foreach (var label in ((ObjectLabel)Tag).SubItems)
 			{
@@ -225,7 +222,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// While adding nodes if a match is found for objToSelect then nodeRepresentingCurrentChoice assigned to it
 		/// and is returned. Otherwise if no node in the tree matches objToSelect this method returns null.
 		/// </summary>
-		public virtual LabelNode AddChildrenAndLookForSelected (ICmObject objToSelect, Stack<ICmObject> ownershipStack, IEnumerable<ICmObject> chosenObjs)
+		public virtual LabelNode AddChildrenAndLookForSelected(ICmObject objToSelect, Stack<ICmObject> ownershipStack, IEnumerable<ICmObject> chosenObjs)
 		{
 			LabelNode nodeRepresentingCurrentChoice = null;
 			// JohnT: if this.Nodes[0] is not a LabelNode, it is a dummy node we added so that
@@ -238,7 +235,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				Nodes.Clear();
 				nodeRepresentingCurrentChoice = AddSecondaryNodesAndLookForSelected(this, Nodes, nodeRepresentingCurrentChoice, objToSelect, ownershipStack, chosenObjs);
-				foreach (var label in ((ObjectLabel) Tag).SubItems)
+				foreach (var label in ((ObjectLabel)Tag).SubItems)
 				{
 					if (!WantNodeForLabel(label))
 					{
@@ -269,7 +266,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					if (ownershipStack.Contains(node.Label.Object))
 					{
-						nodeRepresentingCurrentChoice =	node.AddChildrenAndLookForSelected(objToSelect, ownershipStack, chosenObjs);
+						nodeRepresentingCurrentChoice = node.AddChildrenAndLookForSelected(objToSelect, ownershipStack, chosenObjs);
 						return nodeRepresentingCurrentChoice;
 					}
 				}
@@ -287,9 +284,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// and return the one whose hvo is hvoToSelect, or nodeRepresentingCurrentChoice
 		/// if none match.
 		/// </summary>
-		public virtual LabelNode AddSecondaryNodesAndLookForSelected(LabelNode node,
-			TreeNodeCollection nodes, LabelNode nodeRepresentingCurrentChoice,
-			ICmObject objToSelect, Stack<ICmObject> ownershipStack, IEnumerable<ICmObject> chosenObjs)
+		public virtual LabelNode AddSecondaryNodesAndLookForSelected(LabelNode node, TreeNodeCollection nodes, LabelNode nodeRepresentingCurrentChoice, ICmObject objToSelect,
+			Stack<ICmObject> ownershipStack, IEnumerable<ICmObject> chosenObjs)
 		{
 			// default is to do nothing
 			return nodeRepresentingCurrentChoice;
@@ -300,7 +296,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		protected virtual LabelNode CheckForSelection(ObjectLabel label, ICmObject objToSelect, LabelNode node, LabelNode nodeRepresentingCurrentChoice)
 		{
-			if (label.Object == objToSelect)		//make it look selected
+			if (label.Object == objToSelect)        //make it look selected
 			{
 				nodeRepresentingCurrentChoice = node;
 			}

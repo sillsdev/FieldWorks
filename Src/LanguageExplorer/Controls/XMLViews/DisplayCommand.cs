@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,8 +10,10 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// <summary>
 	/// XmlVc uses this class and its subclasses to help display things.
 	/// </summary>
-	public abstract class DisplayCommand
+	internal abstract class DisplayCommand
 	{
+		private static int _displayLevel;
+
 		internal abstract void PerformDisplay(XmlVc vc, int fragId, int hvo, IVwEnv vwenv);
 
 		/// <summary>
@@ -26,16 +28,16 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		internal virtual void ProcessChildren(int fragId, XmlVc vc, IVwEnv vwenv, XElement node, int hvo)
 		{
-			++MainCallerDisplayCommand.displayLevel;
+			++_displayLevel;
 			vc.ProcessChildren(node, vwenv, hvo);
-			--MainCallerDisplayCommand.displayLevel;
+			--_displayLevel;
 		}
 
 		internal virtual void ProcessChildren(int fragId, XmlVc vc, IVwEnv vwenv, XElement node, int hvo, XElement caller)
 		{
-			++MainCallerDisplayCommand.displayLevel;
+			++_displayLevel;
 			vc.ProcessChildren(node, vwenv, hvo, caller);
-			--MainCallerDisplayCommand.displayLevel;
+			--_displayLevel;
 		}
 
 		// Gather up info about what fields are needed for the specified node.

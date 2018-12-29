@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,16 +9,16 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Areas;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
 using SIL.LCModel.Application;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.Xml;
 
 namespace LanguageExplorer.Controls.XMLViews
@@ -28,8 +28,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	{
 		#region Data members
 
-		private System.ComponentModel.IContainer components = null;
-
+		private IContainer components;
 		private bool fInDoMerges; // used to ignore recursive calls to DoMerges.
 
 		#endregion Data members
@@ -54,11 +53,12 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -68,9 +68,9 @@ namespace LanguageExplorer.Controls.XMLViews
 				Subscriber.Unsubscribe("currentContentControlParameters", CleanupPendingEdits);
 			}
 
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 
-			if( disposing )
+			if (disposing)
 			{
 				components?.Dispose();
 			}
@@ -174,8 +174,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected override void DoSelectAndScroll(int hvo, int index)
 		{
 			if (RootBox == null)
+			{
 				MakeRoot();
-
+			}
 			SetSelection();
 		}
 
@@ -224,7 +225,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				CreateObjectFromEntryRow(rgtss, false);
 			}
 			DoMerges();
-
 			return cancelClose;
 		}
 
@@ -317,7 +317,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return false;
 			}
-
 			var cvsli = vwsel.CLevels(false) - 1;
 			int ihvoRoot;
 			int tagTextProp;
@@ -328,10 +327,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			bool fAssocPrev;
 			int ihvoEnd;
 			ITsTextProps ttp;
-			var rgvsli = SelLevInfo.AllTextSelInfo(vwsel, cvsli,
-				out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd,
-				out ws, out fAssocPrev, out ihvoEnd, out ttp);
-
+			var rgvsli = SelLevInfo.AllTextSelInfo(vwsel, cvsli, out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd, out ttp);
 			var fNewOrEditable = rgvsli[0].hvo == XmlRDEBrowseViewVc.khvoNewItem;
 			if (!fNewOrEditable)
 			{
@@ -349,13 +345,11 @@ namespace LanguageExplorer.Controls.XMLViews
 					return false;
 				}
 			}
-
 			var columns = m_xbvvc.ColumnSpecs;
 			if (columns == null || columns.Count == 0)
 			{
-				return false;		// Something is broken!
+				return false;       // Something is broken!
 			}
-
 			var retval = true;
 			switch (keyPressed)
 			{
@@ -374,7 +368,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					HandleEnterKey(rgtss);
 					break;
 			}
-
 			return retval;
 		}
 
@@ -433,8 +426,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			var columns = m_xbvvc.ColumnSpecs;
 			const int flidNew = XMLViewsDataCache.ktagEditColumnBase + 1;
-			var wsNew = WritingSystemServices.GetWritingSystem(m_cache, FwUtils.ConvertElement(columns[0]), null,
-				m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
+			var wsNew = WritingSystemServices.GetWritingSystem(m_cache, FwUtils.ConvertElement(columns[0]), null, m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
 			try
 			{
 				var rgvsli = new SelLevInfo[1];
@@ -451,9 +443,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					int iCellBox;
 					int cCellBoxes;
 					int iCellLevel;
-					GetCurrentTableCellInfo(vwsel, out iLevel, out iBox, out iTableBox,
-						out cTableBoxes, out iTableLevel, out iCellBox, out cCellBoxes,
-						out iCellLevel);
+					GetCurrentTableCellInfo(vwsel, out iLevel, out iBox, out iTableBox, out cTableBoxes, out iTableLevel, out iCellBox, out cCellBoxes, out iCellLevel);
 					RootBox.MakeSelInBox(vwsel, true, iCellLevel, cCellBoxes - 1, true, false, true);
 				}
 				else
@@ -475,7 +465,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				MakeRoot();
 			}
-
 			if (RootBox.Selection == null)
 			{
 				return;
@@ -501,7 +490,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Handle Undo event
 		/// </summary>
-		/// <returns>'true' if the event was handled, ortherwise 'false' which has caller deal with it.</returns>
+		/// <returns>'true' if the event was handled, otherwise 'false' which has caller deal with it.</returns>
 		public bool HandleUndo(object sender, EventArgs e)
 		{
 			if (!HasNonEmptyNewRow)
@@ -529,7 +518,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Handle Redo event
 		/// </summary>
-		/// <returns>'true' if the event was handled, ortherwise 'false' which has caller deal with it.</returns>
+		/// <returns>'true' if the event was handled, otherwise 'false' which has caller deal with it.</returns>
 		public bool HandleRedo(object sender, EventArgs e)
 		{
 			return false;
@@ -554,9 +543,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		private sealed class CreateObjectFromEntryRowUndoAction : UndoActionBase
 		{
-			XmlBrowseRDEView m_xbrdev;
-			int m_newObjHvo;
-			bool m_fAddItems;
+			private XmlBrowseRDEView m_xbrdev;
+			private int m_newObjHvo;
+			private bool m_fAddItems;
 
 			internal CreateObjectFromEntryRowUndoAction(XmlBrowseRDEView browseView, int newObjHvo, bool fAddItems)
 			{
@@ -600,9 +589,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Create an object from the current data entry row.
 		/// </summary>
-		private int CreateObjectFromEntryRow(ITsString[] rgtss, bool fAddItems)
+		private void CreateObjectFromEntryRow(ITsString[] rgtss, bool fAddItems)
 		{
-			var newObjHvo = 0;
+			int newObjHvo;
 			// Conceptual model class.
 			var sUndo = string.Format(XMLViewsStrings.ksUndoNewEntryX, rgtss[0].Text);
 			var sRedo = string.Format(XMLViewsStrings.ksRedoNewEntryX, rgtss[0].Text);
@@ -620,13 +609,11 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				throw new RuntimeConfigurationException($"XmlBrowseRDEView.ProcessRDEKeyPress() could not invoke the static {RDEVc.EditRowSaveMethod} method of the class {RDEVc.EditRowClass}", error);
 			}
-			return newObjHvo;
 		}
 
 		private int CreateObjectFromEntryRow(ITsString[] rgtss)
 		{
 			var columns = m_xbvvc.ColumnSpecs;
-
 			// Enhance JohnT: here we assume the class that creates instances is the class created plus "Factory".
 			// We may want to make it a separate attribute of the configuration XML at some point.
 			var factoryClassName = RDEVc.EditRowClass + "Factory";
@@ -663,7 +650,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-
 			try
 			{
 				try
@@ -676,7 +662,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					var parameters = new object[2];
 					parameters[0] = m_hvoRoot;
 					parameters[1] = idsClone; // This is a Set<int>.
-
 					// Make a copy. I (JohnT) don't see how this collection can get modified
 					// during the loop, but we've had exceptions (e.g., LT-1355) claiming that
 					// it has been.
@@ -694,7 +679,7 @@ namespace LanguageExplorer.Controls.XMLViews
 								{
 									if (oldList[i] == hvoSense)
 									{
-										m_bv.SpecialCache.Replace(m_hvoRoot, MainTag, i, i+1, new int[0], 0);
+										m_bv.SpecialCache.Replace(m_hvoRoot, MainTag, i, i + 1, new int[0], 0);
 									}
 								}
 							}
@@ -799,15 +784,16 @@ namespace LanguageExplorer.Controls.XMLViews
 				base.OnKeyPress(e);
 			}
 		}
+
 		/// <summary>
 		///	Let caller know if the Delete menu can be enabled or not.
 		/// And, come up with the new menu text that is displayed, whether enabled or not.
 		/// </summary>
 		public bool SetupDeleteMenu(string deleteTextBase, out string deleteText)
 		{
-			bool fCanDelete = false;
+			var fCanDelete = false;
 			// This crashed once on exiting program, so m_rootb may not be set at that point.
-			IVwSelection vwsel = RootBox != null ? RootBox.Selection: null;
+			var vwsel = RootBox?.Selection;
 			if (vwsel != null)
 			{
 				int ihvoRoot;
@@ -819,11 +805,8 @@ namespace LanguageExplorer.Controls.XMLViews
 				bool fAssocPrev;
 				int ihvoEnd;
 				ITsTextProps ttp;
-				int cvsli = vwsel.CLevels(false) - 1;
-				SelLevInfo[] rgvsli = SelLevInfo.AllTextSelInfo(vwsel, cvsli,
-					out ihvoRoot, out tag, out cpropPrevious, out ichAnchor, out ichEnd,
-					out ws, out fAssocPrev, out ihvoEnd, out ttp);
-
+				var cvsli = vwsel.CLevels(false) - 1;
+				var rgvsli = SelLevInfo.AllTextSelInfo(vwsel, cvsli, out ihvoRoot, out tag, out cpropPrevious, out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd, out ttp);
 				if (rgvsli[0].hvo == XmlRDEBrowseViewVc.khvoNewItem)
 				{
 					ITsString[] rgtss;
@@ -854,7 +837,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				MakeRoot();
 			}
-
 			var vwsel = RootBox.Selection;
 			if (vwsel == null)
 			{
@@ -865,7 +847,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return; // Something is broken!
 			}
-
 			var tsi = new TextSelInfo(RootBox.Selection);
 			if (tsi.ContainingObject(0) == XmlRDEBrowseViewVc.khvoNewItem)
 			{
@@ -877,7 +858,8 @@ namespace LanguageExplorer.Controls.XMLViews
 				// 2. Delete the sense iff it is now empty except for the definition shown.
 				// 3. Delete the entry iff the entry now has no senses.
 				var cvsli = tsi.Levels(false) - 1;
-				Debug.Assert(cvsli >= 1); // there should be at least one level (each row is a sense)
+				// there should be at least one level (each row is a sense)
+				Debug.Assert(cvsli >= 1);
 				// The outermost thing in the VC is a display of all the senses of the root domain.
 				// Therefore the last thing in rgvsli is always the information identifying the sense we
 				// want to process.
@@ -885,7 +867,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				var hvoEntry = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoSense).Owner.Hvo;
 				// If this was an editable object, it no longer is, because it's about to no longer exist.
 				RDEVc.EditableObjectsRemove(hvoSense);
-
 				var le = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(hvoEntry);
 				var ls = m_cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSense);
 				var sUndo = XMLViewsStrings.ksUndoDeleteRecord;
@@ -994,7 +975,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		private void InitializeComponent()
 		{
-			components = new System.ComponentModel.Container();
+			components = new Container();
 		}
 		#endregion
 	}

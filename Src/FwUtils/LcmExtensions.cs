@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using SIL.Code;
 using SIL.LCModel;
 using SIL.LCModel.Application;
+using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Infrastructure;
 
@@ -44,6 +45,24 @@ namespace SIL.FieldWorks.Common.FwUtils
 				modified = dt.ToString(dateFomat, DateTimeFormatInfo.InvariantInfo);
 			}
 			return $"{created} {modified}";
+		}
+
+		public static bool IsMultilingual(this IFwMetaDataCache me, int flid)
+		{
+			switch ((CellarPropertyType)(me.GetFieldType(flid) & (int)CellarPropertyTypeFilter.VirtualMask))
+			{
+				case CellarPropertyType.MultiString:
+				case CellarPropertyType.MultiUnicode:
+					return true;
+				default:
+					return false;
+			}
+		}
+
+		public static bool NotebookRecordRefersToThisText(this IText me, out IRnGenericRec referringRecord)
+		{
+			referringRecord = me.AssociatedNotebookRecord;
+			return referringRecord != null;
 		}
 
 		public static string ItemTypeName(this ICmPossibility me)

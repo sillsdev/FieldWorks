@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,8 +7,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Linq;
 using SIL.Code;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Controls.XMLViews
 {
@@ -17,9 +17,9 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	public class LayoutCache
 	{
-		IFwMetaDataCache m_mdc;
-		readonly Inventory m_partInventory;
-		readonly Dictionary<Tuple<int, string, bool>, XElement> m_map = new Dictionary<Tuple<int, string, bool>, XElement>();
+		private IFwMetaDataCache m_mdc;
+		private readonly Inventory m_partInventory;
+		private readonly Dictionary<Tuple<int, string, bool>, XElement> m_map = new Dictionary<Tuple<int, string, bool>, XElement>();
 
 		/// <summary />
 		/// <remarks>TESTS ONLY.</remarks>
@@ -69,12 +69,11 @@ namespace LanguageExplorer.Controls.XMLViews
 			var partDirectory = Path.Combine(FwDirectoryFinder.FlexFolder, Path.Combine("Configuration", "Parts"));
 			var keyAttrs = new Dictionary<string, string[]>
 			{
-				["layout"] = new[] {"class", "type", "name", "choiceGuid"},
-				["group"] = new[] {"label"},
-				["part"] = new[] {"ref"}
+				["layout"] = new[] { "class", "type", "name", "choiceGuid" },
+				["group"] = new[] { "label" },
+				["part"] = new[] { "ref" }
 			};
-
-			var layoutInventory = new Inventory(new[] {partDirectory}, "*.fwlayout", "/LayoutInventory/*", keyAttrs, applicationName, projectPath)
+			var layoutInventory = new Inventory(new[] { partDirectory }, "*.fwlayout", "/LayoutInventory/*", keyAttrs, applicationName, projectPath)
 			{
 				Merger = new LayoutMerger()
 			};
@@ -91,12 +90,10 @@ namespace LanguageExplorer.Controls.XMLViews
 				layoutInventory.LoadUserOverrides(LayoutVersionNumber, sDatabase);
 			}
 			Inventory.SetInventory("layouts", sDatabase, layoutInventory);
-
 			keyAttrs = new Dictionary<string, string[]>
 			{
-				["part"] = new[] {"id"}
+				["part"] = new[] { "id" }
 			};
-
 			Inventory.SetInventory("parts", sDatabase, new Inventory(new[] { partDirectory }, "*Parts.xml", "/PartInventory/bin/*", keyAttrs, applicationName, projectPath));
 		}
 
@@ -110,7 +107,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			layouts?.ExpandWsTaggedNodes(sWsTag);
 		}
 
-		static readonly char[] ktagMarkers = { '-', LayoutKeyUtils.kcMarkLayoutCopy, LayoutKeyUtils.kcMarkNodeCopy };
+		private static readonly char[] ktagMarkers = { '-', LayoutKeyUtils.kcMarkLayoutCopy, LayoutKeyUtils.kcMarkNodeCopy };
 
 		/// <summary>
 		/// Gets the node.
@@ -122,25 +119,24 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return m_map[key];
 			}
-
 			XElement node;
 			var classId = clsid;
 			var useName = layoutName ?? "default";
 			var origName = useName;
-			for( ; ; )
+			for (; ; )
 			{
 				var classname = m_mdc.GetClassName(classId);
 				if (fIncludeLayouts)
 				{
 					// Inventory of layouts has keys class, type, name
-					node = LayoutInventory.GetElement("layout", new[] {classname, "jtview", useName, null});
+					node = LayoutInventory.GetElement("layout", new[] { classname, "jtview", useName, null });
 					if (node != null)
 					{
 						break;
 					}
 				}
 				// inventory of parts has key id.
-				node = m_partInventory.GetElement("part", new[] {classname + "-Jt-" + useName});
+				node = m_partInventory.GetElement("part", new[] { classname + "-Jt-" + useName });
 				if (node != null)
 				{
 					break;

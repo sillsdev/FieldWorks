@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		/// <summary />
-		public bool IsDisposed { get; private set; }
+		protected bool IsDisposed { get; set; }
 
 		/// <summary />
 		public void Dispose()
@@ -69,10 +69,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// unmanaged resources. In this case, attempt to restore the selection we originally
 		/// saved.
 		/// </summary>
-		protected virtual void Dispose(bool fDisposing)
+		protected virtual void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if (!fDisposing || IsDisposed || m_savedSelection == null || m_rootSite.RootBox.Height <= 0)
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (!disposing || IsDisposed || m_savedSelection == null || m_rootSite.RootBox.Height <= 0)
 			{
 				return;
 			}

@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
+using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -31,9 +32,6 @@ namespace LanguageExplorer.LIFT
 	/// </summary>
 	public class LiftExporter
 	{
-		/// <summary></summary>
-		public delegate void ProgressHandler(object sender);
-
 		/// <summary>
 		/// Notify the progress dialog (if there is one) to update the progress bar.
 		/// </summary>

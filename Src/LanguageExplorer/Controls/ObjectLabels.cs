@@ -4,12 +4,12 @@
 
 using System;
 using System.Collections.Generic;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 
-namespace LanguageExplorer.Controls.XMLViews
+namespace LanguageExplorer.Controls
 {
 	/// <summary>
 	/// Structure used when returning a list of objects for a UI Widgit that wants to list them.
@@ -275,5 +275,41 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		#endregion ITssValue Implementation
+
+		/// <summary>
+		/// Structure used when returning a list of objects for a UI Widget that wants to list them.
+		/// </summary>
+		private sealed class MoInflClassLabel : ObjectLabel
+		{
+			/// <summary>
+			/// Constructor.
+			/// </summary>
+			public MoInflClassLabel(LcmCache cache, IMoInflClass inflClass, string displayNameProperty, string displayWs)
+				: base(cache, inflClass, displayNameProperty, displayWs)
+			{
+			}
+			/// <summary>
+			/// Constructor.
+			/// </summary>
+			public MoInflClassLabel(LcmCache cache, IMoInflClass inflClass, string displayNameProperty)
+				: base(cache, inflClass, displayNameProperty)
+			{
+			}
+
+			/// <summary>
+			/// Gets the inflection class.
+			/// </summary>
+			public IMoInflClass InflectionClass => (IMoInflClass)Object;
+
+			/// <summary>
+			/// the sub items of the possibility
+			/// </summary>
+			public override IEnumerable<ObjectLabel> SubItems => CreateObjectLabels(Cache, InflectionClass.SubclassesOC, m_displayNameProperty, m_displayWs);
+
+			/// <summary>
+			/// are there any sub items for this item?
+			/// </summary>
+			public override bool HaveSubItems => InflectionClass.SubclassesOC.Count > 0;
+		}
 	}
 }

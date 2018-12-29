@@ -1,10 +1,11 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.FwUtils;
 using LanguageExplorer.Filters;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Controls.XMLViews
@@ -12,8 +13,8 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// <summary />
 	internal class FindComboItem : FilterComboItem
 	{
-		FwComboBox m_combo;
-		BrowseViewer m_bv;
+		private FwComboBox m_combo;
+		private BrowseViewer m_bv;
 
 		/// <summary />
 		public FindComboItem(ITsString tssName, FilterSortItem fsi, int ws, FwComboBox combo, BrowseViewer bv)
@@ -67,11 +68,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
-			if (IsDisposed)
-			{
-				return;
-			}
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 
 			if (disposing)
 			{
@@ -79,7 +76,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			m_combo = null; // Disposed elsewhere.
 
-			base.Dispose (disposing);
+			base.Dispose(disposing);
 		}
 
 		/// <summary>

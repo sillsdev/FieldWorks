@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,19 +10,19 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Application.ApplicationServices;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.Resources;
 using SIL.LCModel.Utils;
 using SIL.Xml;
 
@@ -38,22 +38,21 @@ namespace LanguageExplorer.Controls.XMLViews
 		// The specification node that contains fragments (in the old approach). Null in new.
 		/// <summary></summary>
 		protected XElement m_xnSpec;
-
 		// Summary of how we use frag IDs.
-
+		//
 		// Reserved IDs.
 		// The value 1 (kRootFragId) is a reserved fragment ID used for the root of what is generated
 		// from XML (there may be a sequence and possibly columns outside this, however).
 		// The value 2 is reserved for the top-level sequence of things shown in a document
 		// or browse view. When this is the root fragment, each item in m_mainItems is
 		// displayed using fragment 1.
-
+		//
 		// New approach.
 		// When an element does not have a "frag" attribute, we generate a Pair
 		// (frag, caller) in m_idToDisplayInfo. This allows us to retrieve from the fragID
 		// the two key XElements involved in invoking whatever property it was when we need
 		// them to display the resulting thing.
-
+		//
 		// Map from fragment ID to an object that will actually be used in Display
 		// or some similar method. Most commonly, for Display, it is a DisplayCommand object,
 		// but all that matters is that the thing that passes the frag id to the vwenv
@@ -74,10 +73,8 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		/// <summary />
 		public const int kRootFragId = 1;
-
-		int m_nextID = 1378; // next ID to allocate.
-
-		readonly bool m_fEditable = true; // set false to disable editing at top level.
+		private int m_nextID = 1378; // next ID to allocate.
+		private readonly bool m_fEditable = true; // set false to disable editing at top level.
 
 		/// <summary>
 		/// If this flag is set, the VC will not create any pictures, and will answer null to routines
@@ -92,7 +89,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Usually the SDA of m_cache, but sometimes decorated.
 		/// </summary>
 		protected ISilDataAccess m_sda;
-
 		/// <summary>name of part to use for root.</summary>
 		protected string m_rootLayoutName;
 		/// <summary>
@@ -100,27 +96,42 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Some methods that refer to this variable are static, so it must be static also.
 		/// </summary>
 		protected static CoreWritingSystemDefinition s_qwsCurrent;
+		/// <summary>count of current ws alternatives.</summary>
+		protected static int s_cwsMulti;
 		/// <summary />
-		protected static int s_cwsMulti;    // count of current ws alternatives.
-											/// <summary />
 		protected static string s_sMultiSep;
 		/// <summary />
 		protected static bool s_fMultiFirst;
 		// This may be set to perform logging.
-		IPicture m_CommandIcon;
-
-		int m_cHeightEstimates; // how many times has EstimateHeight been called for this width?
-		int m_dxWidthForEstimate;
+		private IPicture m_CommandIcon;
+		private int m_cHeightEstimates; // how many times has EstimateHeight been called for this width?
+		private int m_dxWidthForEstimate;
 		// Our current best height estimate (0 if never estimated)
-		int m_heightEstimate;
+		private int m_heightEstimate;
 		// used by <savehvo>.  This was first used in conjunction with displaying minor entries
 		// related to an entry or sense, organized by type of minor entry.
-		readonly Stack<int> m_stackHvo = new Stack<int>();
-
+		private readonly Stack<int> m_stackHvo = new Stack<int>();
 		// The next two variables are saved in the constructor to be used in ResetTables(layoutName)
 		// when the layout name changes.
-		XElement m_conditionNode;
-		SimpleRootSite m_rootSite;
+		private XElement m_conditionNode;
+		private SimpleRootSite m_rootSite;
+		private HashSet<int> m_lastLoadRecent = new HashSet<int>();
+		/// <summary>
+		/// custom field identified during TryColumnForCustomField. Is not currently meaningful
+		/// outside TryColumnForCustomField().
+		/// </summary>
+		private XElement m_customFieldNode;
+		private int m_cFields;
+		/// <summary>
+		/// For custom fields, map the field name to a flag: if true, a field of that name is
+		/// always custom; if false, a field of that name is sometimes custom.
+		/// </summary>
+		private Dictionary<string, bool> m_mapCustomFields = new Dictionary<string, bool>();
+		/// <summary>
+		/// Map the field name to a field id if it's a custom field and the name maps only to
+		/// one field.
+		/// </summary>
+		private Dictionary<string, int> m_mapCustomFlid = new Dictionary<string, int>();
 
 		/// <summary>
 		/// This flags that part refs flagged with singlegraminfofirst, typically
@@ -146,14 +157,12 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// back out.  (part of the implementation of LT-10542)
 		/// </summary>
 		internal readonly List<XElement> m_stackPartRef = new List<XElement>();
-
 		/// <summary>
 		/// List of guids used to filter/sort in DisplayVec().
 		/// </summary>
-		Dictionary<Guid, List<LexReferenceInfo>> m_mapGuidToReferenceInfo;
-		Dictionary<Guid, ItemTypeInfo> m_mapGuidToComplexRefInfo;
-		Dictionary<Guid, ItemTypeInfo> m_mapGuidToVariantRefInfo;
-
+		private Dictionary<Guid, List<LexReferenceInfo>> m_mapGuidToReferenceInfo;
+		private Dictionary<Guid, ItemTypeInfo> m_mapGuidToComplexRefInfo;
+		private Dictionary<Guid, ItemTypeInfo> m_mapGuidToVariantRefInfo;
 		private readonly Guid m_unspecComplexFormType;
 		private readonly Guid m_unspecVariantType;
 
@@ -263,9 +272,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public int MainSeqFlid { get; set; }
 
-		HashSet<int> m_lastLoadRecent = new HashSet<int>();
-
-
 		/// <summary>
 		/// Displays the specified vwenv.
 		/// </summary>
@@ -278,7 +284,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-
 			if (fragId == 2)
 			{
 				// This number reserved for the main lazy sequence of an XmlSeqView.
@@ -291,8 +296,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				vwenv.AddLazyVecItems(MainSeqFlid, this, kRootFragId);
 				return;
 			}
-
-			DisplayCommand dispCommand = m_idToDisplayCommand[fragId];
+			var dispCommand = m_idToDisplayCommand[fragId];
 			dispCommand.PerformDisplay(this, fragId, hvo, vwenv);
 		}
 
@@ -397,7 +401,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				m_CommandIcon = (IPicture)OLEConvert.ToOLE_IPictureDisp(ResourceHelper.BlueCircleDownArrowForView);
 			}
-
 			var condition = XmlUtils.GetOptionalAttributeValue(frag, "visibility", "objectSelected");
 			var hvoDepends = hvo;
 			switch (condition)
@@ -419,6 +422,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				vwenv.AddPicture(m_CommandIcon, 0, 0, 0);
 			}
 		}
+
 		/// <summary>
 		/// Select an appropriate picture from the list for this fragment.
 		/// </summary>
@@ -526,8 +530,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			{
 				var originalIndex = 0;
-				var refs = (objs.OfType<ILexEntry>().Select(le => new { le, info = GetTypeInfoForSubEntry(le) })
-					.Where(@t => @t.info != null).Select(@t => new HvoAndIndex { RefHvo = @t.le.Hvo, Index = @t.info.Index, OriginalIndex = ++originalIndex })).ToList();
+				var refs = objs.OfType<ILexEntry>().Select(le => new { le, info = GetTypeInfoForSubEntry(le) })
+					.Where(@t => @t.info != null).Select(@t => new HvoAndIndex { RefHvo = @t.le.Hvo, Index = @t.info.Index, OriginalIndex = ++originalIndex }).ToList();
 				// Now, sort the list according to the order given by the information stored in
 				// m_mapGuidToComplexRefInfo and return the new array of hvos.
 				refs.Sort(SortHvoByIndex);
@@ -552,12 +556,10 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				info = GetTypeInfoForComplexEntryRef(ler);
 			}
-
 			if (m_mapGuidToVariantRefInfo != null)
 			{
 				info = GetTypeInfoForVariantEntryRef(ler);
 			}
-
 			return info;
 		}
 
@@ -655,7 +657,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			var newEstimate = ReallyEstimateHeight(hvo, frag, dxAvailWidth);
 			// make remembered estimate a mean average
 			m_heightEstimate = Math.Max(1, (m_heightEstimate * cPrev + newEstimate) / (cPrev + 1));
-
 			return m_heightEstimate; // typical item height in points.
 		}
 
@@ -666,17 +667,15 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		private int ReallyEstimateHeight(int hvo, int frag, int dsAvailWidth)
 		{
-			using (System.Windows.Forms.Form form = new System.Windows.Forms.Form())
+			using (var form = new System.Windows.Forms.Form())
+			using (var g = form.CreateGraphics())
+			using (var font = new Font(MiscUtils.StandardSansSerif, 12.0F))
 			{
-				using (var g = form.CreateGraphics())
-				using (var font = new Font(MiscUtils.StandardSansSerif, 12.0F))
-				{
-					var env = new StringMeasureEnv(null, m_sda, hvo, g, font);
-					Display(env, hvo, frag);
-					var lines = env.Width / dsAvailWidth + 1;
-					var lineHeight = Convert.ToInt32(font.GetHeight(g));
-					return lines * lineHeight * 72 / Convert.ToInt32(g.DpiY);
-				}
+				var env = new StringMeasureEnv(null, m_sda, hvo, g, font);
+				Display(env, hvo, frag);
+				var lines = env.Width / dsAvailWidth + 1;
+				var lineHeight = Convert.ToInt32(font.GetHeight(g));
+				return lines * lineHeight * 72 / Convert.ToInt32(g.DpiY);
 			}
 		}
 
@@ -694,8 +693,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			else
 			{
-				var clsid = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo).ClassID;
-				flid = m_sda.MetaDataCache.GetFieldId2(clsid, propName, true);
+				flid = m_sda.MetaDataCache.GetFieldId2(m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo).ClassID, propName, true);
 			}
 			return m_sda.get_IntProp(hvo, flid);
 		}
@@ -744,7 +742,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-
 			var sLabel = (qws.Abbreviation ?? qws.Id) ?? XMLViewsStrings.ksUNK;
 			var tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, cache.ServiceLocator.WritingSystemManager.UserWs);
@@ -977,7 +974,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-
 			try
 			{
 				switch (frag.Name.LocalName)
@@ -1011,7 +1007,6 @@ namespace LanguageExplorer.Controls.XMLViews
 									break;
 								}
 							}
-
 							var itype = m_sda.MetaDataCache.GetFieldType(flid);
 							itype = itype & (int)CellarPropertyTypeFilter.VirtualMask;
 							switch (itype)
@@ -1194,8 +1189,6 @@ namespace LanguageExplorer.Controls.XMLViews
 									new[] { MoInflAffixTemplateTags.kflidPrefixSlots, MoInflAffixTemplateTags.kflidSuffixSlots },
 									2);
 							}
-
-
 							// Open the table
 							vwenv.OpenTable(GetColCount(frag, hvo),
 								vlWidth,
@@ -1286,13 +1279,12 @@ namespace LanguageExplorer.Controls.XMLViews
 							break;
 						}
 					case "objectOfRowUsingViewConstructor": // display the current object using an external VC.
-															//notice this assumes that it wants a LcmCache as an argument
+						//notice this assumes that it wants a LcmCache as an argument
 						var vc = (IVwViewConstructor)DynamicLoader.CreateObject(frag, m_cache);
 						var selectorId = Convert.ToInt32(XmlUtils.GetMandatoryAttributeValue(frag, "selector"));
 						// Note this is AddObj, not AddObjProp, and it explicitly adds the current object using the new vc and fragId
 						vwenv.AddObj(hvo, vc, selectorId);
 						break;
-
 					case "obj":
 						{
 							var flid = GetFlid(frag, hvo);
@@ -1357,7 +1349,6 @@ namespace LanguageExplorer.Controls.XMLViews
 										throw new FwConfigurationException("Invalid format attribute value", frag);
 								}
 							}
-
 							// the actual display of a GenDate property is handled in the VwBaseVc.DisplayVariant method
 							MarkSource(vwenv, caller);
 							vwenv.AddProp(flid, this, formatFrag);
@@ -1370,15 +1361,12 @@ namespace LanguageExplorer.Controls.XMLViews
 							{
 								return; // something badly wrong.
 							}
-
 							var itype = (CellarPropertyType)m_sda.MetaDataCache.GetFieldType(flid);
 							if (itype == CellarPropertyType.Time)
 							{
 								var dt = SilTime.GetTimeProperty(m_sda, hvo, flid);
 								var dtNode = XmlViewsUtils.CopyWithParamDefaults(frag);
-								var format = vwenv is SortCollectorEnv
-									? DateTimeFormatInfo.InvariantInfo.SortableDateTimePattern
-									: XmlUtils.GetOptionalAttributeValue(dtNode, "format");
+								var format = vwenv is SortCollectorEnv ? DateTimeFormatInfo.InvariantInfo.SortableDateTimePattern : XmlUtils.GetOptionalAttributeValue(dtNode, "format");
 								string formattedDateTime;
 								try
 								{
@@ -1568,8 +1556,7 @@ namespace LanguageExplorer.Controls.XMLViews
 									// (See LT-10400.)
 									var callingFrag = m_stackPartRef[0];
 									if (!XmlUtils.GetOptionalBooleanAttributeValue(callingFrag, "recurseConfig", true) &&
-										XmlUtils.GetOptionalAttributeValue(callingFrag, "flowType") == "div" &&
-										!string.IsNullOrEmpty(GetParaStyle(callingFrag)))
+										XmlUtils.GetOptionalAttributeValue(callingFrag, "flowType") == "div" && !string.IsNullOrEmpty(GetParaStyle(callingFrag)))
 									{
 										style = GetParaStyle(callingFrag);
 									}
@@ -1660,8 +1647,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		private static string GetParaStyle(XElement caller)
 		{
-			var result = XmlUtils.GetOptionalAttributeValue(caller, "parastyle", null);
-			return result;
+			return XmlUtils.GetOptionalAttributeValue(caller, "parastyle", null);
 		}
 
 		internal void GetParagraphStyleIfPara(int hvo, ref string style)
@@ -1686,12 +1672,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			return SuppressPictures ? null : TheApp.PictureHolder.GetComPicture(imagePath);
 		}
-
-		/// <summary>
-		/// custom field identified during TryColumnForCustomField. Is not currently meaningful
-		/// outside TryColumnForCustomField().
-		/// </summary>
-		XElement m_customFieldNode;
 
 		/// <summary>
 		/// Determine whether or not the given colSpec refers to a custom field, respective of
@@ -1728,7 +1708,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary>
-		/// Find the first part node refered to by the parent node
+		/// Find the first part node referred to by the parent node
 		/// </summary>
 		internal XElement GetPartFromParentNode(XElement parentNode, int rootObjClass)
 		{
@@ -1793,7 +1773,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-
 			try
 			{
 				switch (frag.Name.LocalName)
@@ -1908,7 +1887,6 @@ namespace LanguageExplorer.Controls.XMLViews
 							{
 								return;
 							}
-
 							int flid;
 							if (!TryCustomField(m_sda, frag, 0, out flid))
 							{
@@ -1916,7 +1894,7 @@ namespace LanguageExplorer.Controls.XMLViews
 							}
 							else
 							{
-								// TryCustomField may not be able to dertermine the flid
+								// TryCustomField may not be able to determine the flid
 								// without the hvo, but might still be able to determine that
 								// it's a custom field.
 								if (flid == 0)
@@ -1925,13 +1903,11 @@ namespace LanguageExplorer.Controls.XMLViews
 								}
 								m_customFieldNode = frag;
 							}
-
 							// If we don't have enough info to determine a flid, give up.
 							if (flid == 0)
 							{
 								return;
 							}
-
 							var itype = m_sda.MetaDataCache.GetFieldType(flid);
 							itype = itype & (int)CellarPropertyTypeFilter.VirtualMask;
 							if (itype == (int)CellarPropertyType.MultiString || itype == (int)CellarPropertyType.MultiUnicode)
@@ -1969,7 +1945,6 @@ namespace LanguageExplorer.Controls.XMLViews
 							{
 								return;
 							}
-
 							int flid;
 							if (!TryCustomField(m_sda, frag, 0, out flid))
 							{
@@ -1977,7 +1952,7 @@ namespace LanguageExplorer.Controls.XMLViews
 							}
 							else
 							{
-								// TryCustomField may not be able to dertermine the flid
+								// TryCustomField may not be able to determine the flid
 								// without the hvo, but might still be able to determine that
 								// it's a custom field.
 								if (flid == 0)
@@ -1991,7 +1966,6 @@ namespace LanguageExplorer.Controls.XMLViews
 							{
 								return;
 							}
-
 							// The Ws info specified in the part ref node
 							var sWs = XmlUtils.GetOptionalAttributeValue(caller, "ws");
 							if (sWs == "reversal")
@@ -2017,7 +1991,7 @@ namespace LanguageExplorer.Controls.XMLViews
 							}
 							else
 							{
-								// TryCustomField may not be able to dertermine the flid
+								// TryCustomField may not be able to determine the flid
 								// without the hvo, but might still be able to determine that
 								// it's a custom field.
 								if (flid == 0)
@@ -2042,7 +2016,7 @@ namespace LanguageExplorer.Controls.XMLViews
 							}
 							else
 							{
-								// TryCustomField may not be able to dertermine the flid
+								// TryCustomField may not be able to determine the flid
 								// without the hvo, but might still be able to determine that
 								// it's a custom field.
 								if (flid == 0)
@@ -2089,7 +2063,6 @@ namespace LanguageExplorer.Controls.XMLViews
 								return;
 							}
 						}
-						//ProcessChildren(layout, vwenv, hvo, frag);
 						DetermineNeededFieldsForChildren(layout, frag, info);
 						break;
 					case "obj":
@@ -2104,7 +2077,7 @@ namespace LanguageExplorer.Controls.XMLViews
 							}
 							else
 							{
-								// TryCustomField may not be able to dertermine the flid
+								// TryCustomField may not be able to determine the flid
 								// without the hvo, but might still be able to determine that
 								// it's a custom field.
 								if (flid == 0)
@@ -2122,7 +2095,6 @@ namespace LanguageExplorer.Controls.XMLViews
 							{
 								return; // something badly wrong.
 							}
-
 							if (info.SeqDepth < 3 && info.Depth < 10) // see comments on case seq
 							{
 								var subinfo = info.AddObjField(flid, false);
@@ -2170,7 +2142,6 @@ namespace LanguageExplorer.Controls.XMLViews
 						return 0; // can't do anything else sensible.
 					}
 					// JohnT: try class, field props and look up in MetaDataCache.
-
 					var stClassName = XmlUtils.GetOptionalAttributeValue(frag, "class");
 					var stFieldName = XmlUtils.GetOptionalAttributeValue(frag, "field");
 					if (string.IsNullOrEmpty(stFieldName) || stFieldName == "OwningFlid")
@@ -2201,7 +2172,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				// Eat any exception.
 			}
-
 			return flid;
 		}
 
@@ -2264,9 +2234,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						var envT = new TestCollectorEnv(vwenv, m_sda, hvo);
 						envT.NoteEmptyDependencies = true;
 						envT.MetaDataCache = m_sda.MetaDataCache;
-
 						ProcessChildren(node, envT, hvo, frag);
-
 						if (!envT.Result)
 						{
 							return;
@@ -2311,7 +2279,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				// For this to work, node must have just one child, a seq.
 				SetupSingleGramInfoFirst(frag, node, hvo, vwenv);
 			}
-
 			if (style == null && flowType == null)
 			{
 				return null;
@@ -2380,7 +2347,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			var flid = GetFlid(seq, hvo);
 			var rghvo = ((ISilDataAccessManaged)vwenv.DataAccess).VecProp(hvo, flid);
-
 			XAttribute xaNum;
 			var fNumber = XmlVcDisplayVec.SetNumberFlagIncludingSingleOption(frag, rghvo.Length, out xaNum);
 			if (!fNumber)
@@ -2393,7 +2359,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				DisplayFirstChildPOS(rghvo[0], childFrag, vwenv);
 			}
-
 			// Exactly if we put out the grammatical info at the start, we need to NOT put it out
 			// as part of each item. Note that we must not set this flag before we put out the one-and-only
 			// gram info, or that will be suppressed too!
@@ -2864,17 +2829,13 @@ namespace LanguageExplorer.Controls.XMLViews
 								switch (entryref.RefType)
 								{
 									case LexEntryRefTags.krtComplexForm:
-										if (!fOk && entryref.ComplexEntryTypesRS.Any(
-											type => validTypes.Contains(type.Guid)) ||
-											(entryref.ComplexEntryTypesRS.Count == 0 && validTypes.Contains(m_unspecComplexFormType)))
+										if (!fOk && entryref.ComplexEntryTypesRS.Any(type => validTypes.Contains(type.Guid)) || entryref.ComplexEntryTypesRS.Count == 0 && validTypes.Contains(m_unspecComplexFormType))
 										{
 											fOk = true;
 										}
 										break;
 									case LexEntryRefTags.krtVariant:
-										if (!fOk && entryref.VariantEntryTypesRS.Any(
-											type => validTypes.Contains(type.Guid)) ||
-											(entryref.VariantEntryTypesRS.Count == 0 && validTypes.Contains(m_unspecVariantType)))
+										if (!fOk && entryref.VariantEntryTypesRS.Any(type => validTypes.Contains(type.Guid)) || entryref.VariantEntryTypesRS.Count == 0 && validTypes.Contains(m_unspecVariantType))
 										{
 											fOk = true;
 										}
@@ -2972,9 +2933,8 @@ namespace LanguageExplorer.Controls.XMLViews
 					}
 				}
 			}
-			if (fNumber || fSep || exclude != null || fFirstOnly || sort != null ||
-				m_mapGuidToReferenceInfo != null || m_mapGuidToComplexRefInfo != null ||
-				m_mapGuidToVariantRefInfo != null || isDivInPara)
+			if (fNumber || fSep || exclude != null || fFirstOnly || sort != null || m_mapGuidToReferenceInfo != null || m_mapGuidToComplexRefInfo != null
+			    || m_mapGuidToVariantRefInfo != null || isDivInPara)
 			{
 				// This results in DisplayVec being called.
 				vwenv.AddObjVec(flid, this, fragId);
@@ -3086,7 +3046,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		public static bool ConditionPasses(IVwEnv vwenv, XElement frag, int hvo, LcmCache cache, ISilDataAccess sda, XElement caller)
 		{
 			GetActualTarget(frag, ref hvo, sda);    // modify the hvo if needed
-
 			if (!IsConditionsPass(frag, hvo, sda))
 			{
 				return false;
@@ -3166,15 +3125,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return false;
 			}
-			if (!HvoEqualsConditionPasses(vwenv, frag, hvo, sda))
-			{
-				return false;
-			}
-			if (!FlidEqualsConditionPasses(vwenv, frag, hvo, sda))
-			{
-				return false;
-			}
-			return true;
+			return HvoEqualsConditionPasses(vwenv, frag, hvo, sda) && FlidEqualsConditionPasses(vwenv, frag, hvo, sda);
 		}
 
 		private static void NoteDependency(IVwEnv vwenv, int hvo, int flid)
@@ -3369,7 +3320,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return true;
 			}
-
 			var flid = GetFlidAndHvo(vwenv, frag, ref hvo, sda);
 			if (flid == -1 || hvo == 0)
 			{
@@ -3383,7 +3333,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				guidObj = sda.get_GuidProp(hvoObj, CmObjectTags.kflidGuid);
 			}
-
 			return guid == guidObj;
 		}
 
@@ -3521,24 +3470,31 @@ namespace LanguageExplorer.Controls.XMLViews
 			var flid = GetFlid(frag, hvo, sda);
 			NoteDependency(vwenv, hvo, flid);
 			var fldType = sda.MetaDataCache.GetFieldType(flid);
-			if (fldType == (int)CellarPropertyType.OwningSequence
-				|| fldType == (int)CellarPropertyType.ReferenceCollection
-				|| fldType == (int)CellarPropertyType.OwningCollection
-				|| fldType == (int)CellarPropertyType.ReferenceSequence)
+			switch (fldType)
 			{
-				len = sda.get_VecSize(hvo, flid);
-			}
-			else if (fldType == (int)CellarPropertyType.OwningAtomic || fldType == (int)CellarPropertyType.ReferenceAtomic)
-			{
-				var hvoItem = sda.get_ObjectProp(hvo, flid);
-				len = hvoItem == 0 ? 0 : 1;
-			}
-			// a virtual flid; a negative-valued flid indicates that it's a virtual.
-			else if ((fldType == 0) && flid < 0)
-			{
-				len = sda.get_VecSize(hvo, flid);
-			}
+				case (int)CellarPropertyType.OwningSequence:
+				case (int)CellarPropertyType.ReferenceCollection:
+				case (int)CellarPropertyType.OwningCollection:
+				case (int)CellarPropertyType.ReferenceSequence:
+					len = sda.get_VecSize(hvo, flid);
+					break;
+				case (int)CellarPropertyType.OwningAtomic:
+				case (int)CellarPropertyType.ReferenceAtomic:
+				{
+					var hvoItem = sda.get_ObjectProp(hvo, flid);
+					len = hvoItem == 0 ? 0 : 1;
+					break;
+				}
+				default:
+				{
+					if (fldType == 0 && flid < 0)
+					{
+						len = sda.get_VecSize(hvo, flid);
+					}
 
+					break;
+				}
+			}
 			return len <= maxlen && len >= minlen;
 		}
 
@@ -3606,7 +3562,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			var flid = GetFlid(frag, vectorHvo, sda);
 			var uclsidArg = mdc.GetClassId(className);
 			var fExcludeSubClass = XmlUtils.GetOptionalBooleanAttributeValue(frag, "excludesubclasses", false);
-
 			int[] contents;
 			var chvoMax = sda.get_VecSize(vectorHvo, flid);
 			using (var arrayPtr = MarshalEx.ArrayToNative<int>(chvoMax))
@@ -3615,7 +3570,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				sda.VecProp(vectorHvo, flid, chvoMax, out chvo, arrayPtr);
 				contents = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
 			}
-
 			foreach (var hvoVectorContent in contents)
 			{
 				var uclsidObj = sda.get_IntProp(hvoVectorContent, CmObjectTags.kflidClass);
@@ -3623,7 +3577,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					return true;
 				}
-
 				if (!fExcludeSubClass)
 				{
 					var uclsid = mdc.GetBaseClsId(uclsidObj);
@@ -3736,9 +3689,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					return;
 				}
-
 				base.Cache = value;
-
 				DataAccess = m_cache.DomainDataByFlid;
 				LayoutCache = new LayoutCache(m_mdc, m_cache.ProjectId.Name, TheApp?.ApplicationName ?? FwUtils.ksFlexAppName, m_cache.ProjectId.ProjectFolder);
 			}
@@ -3787,7 +3738,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				var obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
 				var property = xa.Value.Substring(1);//skip the %
 				Debug.Assert(property.Length > 0);
-
 				//HACK for a proof of concept.
 				//TODO: make  general using reflection
 				// Note: if making general, consider supporting a way to hook up notification if underlying properties
@@ -3893,18 +3843,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			return flid;
 		}
-
-		int m_cFields;
-		/// <summary>
-		/// For custom fields, map the field name to a flag: if true, a field of that name is
-		/// always custom; if false, a field of that name is sometimes custom.
-		/// </summary>
-		Dictionary<string, bool> m_mapCustomFields = new Dictionary<string, bool>();
-		/// <summary>
-		/// Map the field name to a field id if it's a custom field and the name maps only to
-		/// one field.
-		/// </summary>
-		Dictionary<string, int> m_mapCustomFlid = new Dictionary<string, int>();
 
 		private void LoadCustomFieldMapsIfNeeded(IFwMetaDataCacheManaged mdc)
 		{
@@ -4029,11 +3967,9 @@ namespace LanguageExplorer.Controls.XMLViews
 						return 0; // can't do anything else sensible.
 					}
 					// JohnT: try class, field props and look up in MetaDataCache.
-
 					var stClassName = XmlUtils.GetOptionalAttributeValue(frag, "class");
 					var stFieldPath = XmlUtils.GetOptionalAttributeValue(frag, "field");
 					var rgstFields = stFieldPath.Split('/');
-
 					for (var i = 0; i < rgstFields.Length; i++)
 					{
 						if (i > 0)
@@ -4047,7 +3983,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						}
 						if (string.IsNullOrEmpty(stClassName))
 						{
-							int clsid = sda.get_IntProp(hvo, CmObjectTags.kflidClass);
+							var clsid = sda.get_IntProp(hvo, CmObjectTags.kflidClass);
 							flid = mdc.GetFieldId2(clsid, rgstFields[i], true);
 						}
 						else
@@ -4134,7 +4070,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		public virtual void ProcessChildren(XElement frag, IVwEnv vwenv, int hvo, XElement caller)
 		{
 			ConfiguredExport configuredExport = null;
-
 			string css = null;
 			if (frag.Name == "layout")
 			{
@@ -4153,7 +4088,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					}
 				}
 			}
-
 			foreach (var element in frag.Elements())
 			{
 				MainCallerDisplayCommand.PrintNodeTreeStep(hvo, element);
@@ -4633,12 +4567,368 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			/// <summary>Hvo of the object</summary>
 			internal int RefHvo { get; set; }
+
 			/// <summary>Sort index value for the LexReference owner/subclass</summary>
 			internal int Index { get; set; }
+
 			/// <summary>
 			/// Original index of the item in the list; used as a tie-breaker to make sort stable.
 			/// </summary>
 			internal int OriginalIndex { get; set; }
+		}
+
+		/// <summary>
+		/// DisplayCommand that displays the current object by displaying a specified ws of a specified
+		/// multilingual property.
+		/// </summary>
+		private sealed class DisplayStringAltCommand : DisplayCommand
+		{
+			private readonly int m_ws;
+			private readonly int m_tag;
+			private readonly XElement m_caller;
+
+			public DisplayStringAltCommand(int tag, int ws, XElement caller)
+			{
+				m_tag = tag;
+				m_ws = ws;
+				m_caller = caller;
+			}
+
+			internal override void PerformDisplay(XmlVc vc, int fragId, int hvo, IVwEnv vwenv)
+			{
+				if (m_caller != null)
+				{
+					vc.MarkSource(vwenv, m_caller);
+				}
+				vwenv.AddStringAltMember(m_tag, m_ws, vc);
+			}
+
+			public override bool Equals(object obj)
+			{
+				var other = obj as DisplayStringAltCommand;
+				if (other == null)
+				{
+					return false;
+				}
+				return other.m_tag == m_tag && other.m_ws == m_ws && other.m_caller == m_caller;
+			}
+
+			public override int GetHashCode()
+			{
+				return m_tag + m_ws + (m_caller == null ? 0 : m_caller.GetHashCode());
+			}
+
+			internal override void DetermineNeededFields(XmlVc vc, int fragId, NeededPropertyInfo info)
+			{
+				info.AddAtomicField(m_tag, m_ws);
+			}
+		}
+
+		/// <summary>
+		/// DisplayCommand that displays the current object by displaying a specified string property.
+		/// </summary>
+		private sealed class DisplayStringCommand : DisplayCommand
+		{
+			private readonly int m_tag;
+
+			public DisplayStringCommand(int tag)
+			{
+				m_tag = tag;
+			}
+
+			internal override void PerformDisplay(XmlVc vc, int fragId, int hvo, IVwEnv vwenv)
+			{
+				vwenv.AddStringProp(m_tag, vc);
+			}
+			internal override void DetermineNeededFields(XmlVc vc, int fragId, NeededPropertyInfo info)
+			{
+				info.AddAtomicField(m_tag, 0);
+			}
+
+			public override bool Equals(object obj)
+			{
+				var other = obj as DisplayStringCommand;
+				return other?.m_tag == m_tag;
+			}
+
+			public override int GetHashCode()
+			{
+				return m_tag;
+			}
+		}
+
+		/// <summary>
+		/// DisplayCommand that displays the current object by displaying a specified unicode property
+		/// as a string in a specified writing system.
+		/// </summary>
+		private sealed class DisplayUnicodeCommand : DisplayCommand
+		{
+			private readonly int m_ws;
+			private readonly int m_tag;
+
+			public DisplayUnicodeCommand(int tag, int ws)
+			{
+				m_tag = tag;
+				m_ws = ws;
+			}
+
+			internal override void PerformDisplay(XmlVc vc, int fragId, int hvo, IVwEnv vwenv)
+			{
+				vwenv.AddUnicodeProp(m_tag, m_ws, vc);
+			}
+
+			internal override void DetermineNeededFields(XmlVc vc, int fragId, NeededPropertyInfo info)
+			{
+				info.AddAtomicField(m_tag, 0);
+			}
+
+			public override bool Equals(object obj)
+			{
+				var other = obj as DisplayUnicodeCommand;
+				if (other == null)
+				{
+					return false;
+				}
+				return other.m_tag == m_tag && other.m_ws == m_ws;
+			}
+
+			public override int GetHashCode()
+			{
+				return m_tag + m_ws;
+			}
+		}
+
+		/// <summary>
+		/// This is a subclass of MainCallerDisplayCommand, necessary for sequences.
+		/// When a display of a sequence is regenerated, we must restore m_stackPartRef to the correct state.
+		/// </summary>
+		private sealed class MainCallerDisplayCommandSeq : MainCallerDisplayCommand
+		{
+			private readonly XElement[] m_stackPartRef;
+
+			internal MainCallerDisplayCommandSeq(XElement mainElement, XElement caller, bool fUserMainAsFrag, int wsForce, List<XElement> stackPartRef)
+				: base(mainElement, caller, fUserMainAsFrag, wsForce)
+			{
+				m_stackPartRef = stackPartRef.ToArray();
+			}
+
+			/// <summary>
+			/// Two of these are equal if everything inherited is equal, and they have the same saved stack items.
+			/// </summary>
+			public override bool Equals(object obj)
+			{
+				if (!base.Equals(obj))
+				{
+					return false;
+				}
+				var other = obj as MainCallerDisplayCommandSeq;
+				if (other == null || other.m_stackPartRef.Length != m_stackPartRef.Length)
+				{
+					return false;
+				}
+				for (var i = 0; i < m_stackPartRef.Length; i++)
+				{
+					if (m_stackPartRef[i] != other.m_stackPartRef[i])
+					{
+						return false;
+					}
+				}
+				return true;
+			}
+
+			/// <summary>
+			/// Hash code must incorporate the stack items.
+			/// </summary>
+			public override int GetHashCode()
+			{
+				return base.GetHashCode() + m_stackPartRef.Aggregate(0, (sum, node) => (sum + node.GetHashCode()) % int.MaxValue);
+			}
+
+			/// <summary>
+			/// Base version wrapped in making the stack what it needs to be.
+			/// </summary>
+			internal override void PerformDisplay(XmlVc vc, int fragId, int hvo, IVwEnv vwenv)
+			{
+				var save = vc.m_stackPartRef.ToArray();
+				vc.m_stackPartRef.Clear();
+				vc.m_stackPartRef.AddRange(m_stackPartRef);
+				base.PerformDisplay(vc, fragId, hvo, vwenv);
+				vc.m_stackPartRef.Clear();
+				vc.m_stackPartRef.AddRange(save);
+			}
+		}
+
+		/// <summary>
+		/// DisplayCommand that displays the current object by displaying the children of one node, treating another as caller.
+		/// Typically at present the node whose children are to be procesed is an "objlocal" node, and the
+		/// caller is the "part ref" node that invoked it.
+		/// </summary>
+		private sealed class ObjLocalCommand : DisplayCommand
+		{
+			private readonly XElement m_objLocal;
+			private readonly XElement m_caller;
+
+			public ObjLocalCommand(XElement objLocal, XElement caller)
+			{
+				m_objLocal = objLocal;
+				m_caller = caller;
+			}
+
+			internal override void PerformDisplay(XmlVc vc, int fragId, int hvo, IVwEnv vwenv)
+			{
+				vc.ProcessChildren(m_objLocal, vwenv, hvo, m_caller);
+			}
+
+			internal override void DetermineNeededFields(XmlVc vc, int fragId, NeededPropertyInfo info)
+			{
+				var clsid = info.TargetClass(vc);
+				if (clsid == 0)
+				{
+					return; // or assert? an object prop should have a dest class.
+				}
+				DetermineNeededFieldsForChildren(vc, m_objLocal, m_caller, info);
+			}
+
+			public override bool Equals(object obj)
+			{
+				var other = obj as ObjLocalCommand;
+				if (other == null)
+				{
+					return false;
+				}
+				return other.m_caller == m_caller && other.m_objLocal == m_objLocal;
+			}
+
+			int HashOrZero(XElement node)
+			{
+				return node?.GetHashCode() ?? 0;
+			}
+
+			public override int GetHashCode()
+			{
+				return HashOrZero(m_objLocal) + HashOrZero(m_caller);
+			}
+		}
+
+		/// <summary>
+		/// This class is always used to handle fragid 0.
+		/// </summary>
+		private class RootDisplayCommand : DisplayCommand
+		{
+			private string m_rootLayoutName;
+			internal SimpleRootSite m_rootSite;
+
+			public RootDisplayCommand(string rootLayoutName, SimpleRootSite rootSite)
+				: base()
+			{
+				m_rootLayoutName = rootLayoutName;
+				m_rootSite = rootSite;
+			}
+
+			internal override void PerformDisplay(XmlVc vc, int fragId, int hvo, IVwEnv vwenv)
+			{
+				var node = vc.GetNodeForPart(hvo, m_rootLayoutName, true);
+				ProcessChildren(fragId, vc, vwenv, node, hvo);
+			}
+
+			internal override void DetermineNeededFields(XmlVc vc, int fragId, NeededPropertyInfo info)
+			{
+				var clsid = info.TargetClass(vc);
+				if (clsid == 0)
+				{
+					return; // or assert? an object prop should have a dest class.
+				}
+				DetermineNeededFieldsForClass(vc, fragId, clsid, info);
+			}
+
+			internal virtual void DetermineNeededFieldsForClass(XmlVc vc, int fragId, int clsid, NeededPropertyInfo info)
+			{
+				var node = vc.GetNodeForPart(m_rootLayoutName, true, clsid);
+				DetermineNeededFieldsForChildren(vc, node, null, info);
+			}
+
+			public override bool Equals(object obj)
+			{
+				var rdcOther = obj as RootDisplayCommand;
+				return rdcOther != null && base.Equals(obj) && m_rootLayoutName == rdcOther.m_rootLayoutName;
+			}
+
+			public override int GetHashCode()
+			{
+				return base.GetHashCode() + m_rootLayoutName.GetHashCode();
+			}
+
+			internal override void ProcessChildren(int fragId, XmlVc vc, IVwEnv vwenv, XElement node, int hvo)
+			{
+				// If available, apply defaults from 'Normal' to everything.
+				var styleSheet = m_rootSite.StyleSheet;
+				if (styleSheet != null)
+				{
+					vwenv.Props = styleSheet.NormalFontStyle;
+				}
+				vwenv.OpenDiv();
+				base.ProcessChildren(fragId, vc, vwenv, node, hvo);
+				vwenv.CloseDiv();
+			}
+		}
+
+		/// <summary>
+		/// This is used for the root when we want to suppress editing.
+		/// </summary>
+		private class ReadOnlyRootDisplayCommand : RootDisplayCommand
+		{
+			public ReadOnlyRootDisplayCommand(string rootLayoutName, SimpleRootSite rootSite)
+				: base(rootLayoutName, rootSite)
+			{
+			}
+
+			internal override void ProcessChildren(int fragId, XmlVc vc, IVwEnv vwenv, XElement node, int hvo)
+			{
+				// Suppress editing for the whole view. Easiest thing is to insert another div.
+				vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
+				base.ProcessChildren(fragId, vc, vwenv, node, hvo);
+			}
+		}
+
+		/// <summary>
+		/// This class adds the ability to test a condition and use it to decide whether to display each item.
+		/// </summary>
+		private sealed class ReadOnlyConditionalRootDisplayCommand : ReadOnlyRootDisplayCommand
+		{
+			private XElement m_condition;
+			private ISilDataAccess m_sda;
+
+			public ReadOnlyConditionalRootDisplayCommand(string rootLayoutName, SimpleRootSite rootSite, XElement condition, ISilDataAccess sda)
+				: base(rootLayoutName, rootSite)
+			{
+				m_condition = condition;
+				Debug.Assert(rootSite is RootSite, "conditional display requires real rootsite with cache");
+				m_sda = sda;
+			}
+
+			internal override void PerformDisplay(XmlVc vc, int fragId, int hvo, IVwEnv vwenv)
+			{
+				if (XmlVc.ConditionPasses(m_condition, hvo, (m_rootSite as RootSite).Cache, m_sda))
+				{
+					base.PerformDisplay(vc, fragId, hvo, vwenv);
+				}
+			}
+
+			/// <summary>
+			/// Overrides to determine the fields needed for evaluating the condition as well as for displaying the
+			/// actual objects.
+			/// </summary>
+			internal override void DetermineNeededFields(XmlVc vc, int fragId, NeededPropertyInfo info)
+			{
+				base.DetermineNeededFields(vc, fragId, info);
+				vc.DetermineNeededFieldsFor(m_condition, null, info);
+			}
+
+			internal override void DetermineNeededFieldsForClass(XmlVc vc, int fragId, int clsid, NeededPropertyInfo info)
+			{
+				base.DetermineNeededFieldsForClass(vc, fragId, clsid, info);
+				vc.DetermineNeededFieldsFor(m_condition, null, info);
+			}
 		}
 	}
 }

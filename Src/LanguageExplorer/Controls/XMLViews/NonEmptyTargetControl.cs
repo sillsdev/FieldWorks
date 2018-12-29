@@ -2,6 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -20,10 +22,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private RadioButton overwriteRadio;
 		private RadioButton doNothingRadio;
 		private FwTextBox sepBox;
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+		private Container components = null;
 
 		/// <summary>
 		/// Make one.
@@ -41,9 +40,15 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose(bool disposing )
+		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
 			if (disposing)
 			{
 				components?.Dispose();
@@ -63,10 +68,8 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					return NonEmptyTargetOptions.Overwrite;
 				}
-
 				return appendRadio.Checked ? NonEmptyTargetOptions.Append : NonEmptyTargetOptions.DoNothing;
 			}
-
 			set
 			{
 				RadioButton checkedButton;

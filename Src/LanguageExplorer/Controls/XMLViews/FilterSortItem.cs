@@ -1,12 +1,12 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Diagnostics;
 using System.Xml.Linq;
-using SIL.FieldWorks.Common.FwUtils;
 using LanguageExplorer.Filters;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Controls.XMLViews
 {
@@ -18,7 +18,6 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// we may construct a Matcher, which combines with the string finder to make a
 	/// FilterBarCellFilter. Eventually we will use the string finder also if sorting by this
 	/// column.</summary>
-	///
 	/// <remarks>
 	/// Todo: for reasonable efficiency, need a way to preload the information needed to
 	/// evaluate filter for all items. This might be a method on RecordFilter.
@@ -40,7 +39,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed { get; private set; }
+		private bool IsDisposed { get; set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -91,9 +90,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected virtual void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -234,8 +233,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		public bool SetFromFilter(RecordFilter filter)
 		{
 			// Need to set even if set previously. Otherwise it doesn't refresh properly.
-			//if (filter == m_filter)
-			//	return true;  // we're already set.
 			if (m_combo == null)
 			{
 				return false; // probably can't happen, but play safe

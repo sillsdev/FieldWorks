@@ -359,9 +359,6 @@ Change the writing system of one of these columns or remove the duplicated colum
   <data name="ksProcessDesc" xml:space="preserve">
     <value>Populate a field by applying a complex process to another field</value>
   </data>
-  <data name="ksQuestionMarks" xml:space="preserve">
-    <value>???</value>
-  </data>
   <data name="ksRangeXY" xml:space="preserve">
     <value>{0}...{1}</value>
   </data>

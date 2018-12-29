@@ -1,11 +1,13 @@
-﻿// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using SIL.LCModel.Core.Cellar;
+using System.Runtime.ExceptionServices;
+using SIL.Code;
 using SIL.LCModel.Application;
+using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Controls.XMLViews
@@ -22,7 +24,6 @@ namespace LanguageExplorer.Controls.XMLViews
 	public class ObjectListPublisher : DomainDataByFlidDecoratorBase, IClearValues
 	{
 		private Dictionary<int, int[]> m_values = new Dictionary<int, int[]>();
-
 		/// <summary>
 		/// The base value for fake flids.
 		/// </summary>
@@ -73,17 +74,14 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void CacheVecProp(int hvoObj, int[] hvos)
 		{
-			if (hvos == null)
-			{
-				throw new ArgumentNullException("Should not pass null to CacheVecProp");
-			}
+			Guard.AgainstNull(hvos, nameof(hvos));
+
 			var cvDel = 0;
 			int[] old;
 			if (m_values.TryGetValue(hvoObj, out old))
 			{
 				cvDel = old.Length;
 			}
-
 			m_values[hvoObj] = hvos;
 			SendPropChanged(hvoObj, 0, hvos.Length, cvDel);
 		}

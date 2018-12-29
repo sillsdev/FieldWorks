@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,9 +15,9 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	internal class ReconstructPreservingBVScrollPosition : IDisposable
 	{
-		BrowseViewer m_bv;
-		int m_irow;
-		bool m_fHiliteWasVisible;
+		private BrowseViewer m_bv;
+		private int m_irow;
+		private bool m_fHiliteWasVisible;
 
 		/// <summary>
 		/// Ctor saves BrowseViewer Scroll Position. Dispose(true) does RootBox.Reconstruct() and restores scroll position.
@@ -27,7 +27,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_bv = bv;
 			// Store location for restore after Reconstruct. (LT-8336)
 			m_bv.BrowseView.SaveScrollPosition(null);
-
 			// Figure out if highlighted row is visible or not
 			m_irow = m_bv.SelectedIndex;
 			m_fHiliteWasVisible = false;
@@ -40,7 +39,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-
 			if (m_bv.BrowseView.IsSelectionVisible(sel))
 			{
 				m_fHiliteWasVisible = true;
@@ -60,7 +58,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed { get; private set; }
+		private bool IsDisposed { get; set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -111,9 +109,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected virtual void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 

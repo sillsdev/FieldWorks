@@ -4,7 +4,7 @@
 
 using System;
 using System.Windows.Forms;
-using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;

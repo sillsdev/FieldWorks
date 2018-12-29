@@ -75,13 +75,13 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				</parameters>
 			</guicontrol>
 			*/
+#if RANDYTODO
+			// TODO: Nobody will be home.
+#endif
 			var xnWindow = PropertyTable.GetValue<XElement>("WindowConfiguration");
 			var configNode = xnWindow.XPathSelectElement("controls/parameters/guicontrol[@id=\"WordformsBrowseView\"]/parameters");
-
 			var searchEngine = SearchEngine.Get(PropertyTable, "WordformGoSearchEngine", () => new WordformGoSearchEngine(m_cache));
-
 			m_matchingObjectsBrowser.Initialize(m_cache, FwUtils.StyleSheetFromPropertyTable(PropertyTable), configNode, searchEngine);
-
 			// start building index
 			var wsObj = (CoreWritingSystemDefinition)m_cbWritingSystems.SelectedItem;
 			if (wsObj == null)
@@ -100,7 +100,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			var wsObj = (CoreWritingSystemDefinition)m_cbWritingSystems.SelectedItem;
 			var wsSelHvo = wsObj?.Handle ?? 0;
-
 			string form;
 			int vernWs;
 			if (!GetSearchKey(wsSelHvo, searchKey, out form, out vernWs))

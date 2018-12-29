@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,6 +14,8 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	internal class TestCollectorEnv : CollectorEnv, ICollectPicturePathsOnly
 	{
+		private readonly HashSet<int> m_notedStringPropertyDependencies = new HashSet<int>();
+
 		/// <summary />
 		/// <param name="baseEnv">The base env.</param>
 		/// <param name="sda">Date access to get prop values etc.</param>
@@ -39,7 +41,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public override void AddResultString(string s)
 		{
-			base.AddResultString (s);
+			base.AddResultString(s);
 			if (string.IsNullOrEmpty(s))
 			{
 				return;
@@ -48,13 +50,10 @@ namespace LanguageExplorer.Controls.XMLViews
 			Result = true;
 		}
 
-		private readonly HashSet<int> m_notedStringPropertyDependencies = new HashSet<int>();
-
 		/// <summary />
 		public override void AddStringAltMember(int tag, int ws, IVwViewConstructor _vwvc)
 		{
 			base.AddStringAltMember(tag, ws, _vwvc);
-
 			// (LT-6224) if we want the display to update for any empty multistring alternatives,
 			// we will just note a dependency on the string property, and that will cover all
 			// of the writing systems for that string property
@@ -148,7 +147,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void NoteEmptyDependency(int tag)
 		{
-			NoteDependency(new int[] { m_hvoCurr }, new int[] { tag }, 1);
+			NoteDependency(new[] { m_hvoCurr }, new[] { tag }, 1);
 		}
 
 		/// <summary>

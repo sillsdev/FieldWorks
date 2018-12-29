@@ -1,27 +1,26 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Drawing;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
-using System.Windows.Forms;
 using System.Diagnostics;
-using System.Text;
+using System.Drawing;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Text;
+using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Areas;
 using SIL.Code;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
 using SIL.Windows.Forms.HtmlBrowser;
@@ -38,9 +37,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected Button btnCancel;
 		/// <summary />
 		protected TreeView m_labelsTreeView;
-		private bool m_fFlatList = false;
+		private bool m_fFlatList;
 		private bool m_fSortLabels = true;
-		private bool m_fSortLabelsSet = false;  // set true if explicitly assigned.
+		private bool m_fSortLabelsSet;  // set true if explicitly assigned.
 		private List<ICmObject> m_objs;
 		private FlatListView m_flvLabels;
 		private List<ObjectLabel> m_labels;
@@ -61,12 +60,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected PictureBox m_picboxLink1;
 		/// <summary />
 		protected Label m_lblExplanation;
-
-		/// <summary>
-		/// True to prevent choosing more than one item.
-		/// </summary>
-		public bool Atomic { get; set; }
-
 		/// <summary />
 		protected NullObjectLabel m_nullLabel;
 		/// <summary />
@@ -85,30 +78,24 @@ namespace LanguageExplorer.Controls.XMLViews
 		private object m_obj2;
 		private FwLinkArgs m_linkJump;
 		private ChooserCommand m_linkCmd;
-
 		private Guid m_guidLink = Guid.Empty;
 		private readonly HashSet<ICmObject> m_chosenObjs;
 		private List<ICmObject> m_newChosenObjs;
 		private bool m_fEnableCtrlCheck; // true to allow ctrl-click on check box to select all children.
-
 		private Button buttonHelp;
 		private HelpProvider m_helpProvider;
 		private string m_helpTopic;
 		private IHelpTopicProvider m_helpTopicProvider;
-
 		private RadioButton m_AddButton;
 		private RadioButton m_ReplaceButton;
 		private RadioButton m_RemoveButton;
-
 		// Another group of three used in filtering.
 		private RadioButton m_AnyButton;
 		private RadioButton m_AllButton;
 		private RadioButton m_NoneButton;
 		private RadioButton m_ExactButton;
-
-		/// <summary></summary>
+		/// <summary />
 		protected IVwStylesheet m_stylesheet;
-
 		private XWebBrowser m_webBrowser;
 		private Panel m_mainPanel;
 		private Button m_helpBrowserButton;
@@ -123,15 +110,18 @@ namespace LanguageExplorer.Controls.XMLViews
 		private Label m_ctrlClickLabel;
 		/// <summary />
 		protected FlowLayoutPanel m_link1Panel;
-
 		private ToolStrip m_helpBrowserStrip;
 		private ToolStripButton m_backButton;
 		private ToolStripButton m_forwardButton;
 		/// <summary />
 		protected FlowLayoutPanel m_checkBoxPanel;
 		private CheckBox m_displayUsageCheckBox;
-
 		private ToolStripButton m_printButton;
+
+		/// <summary>
+		/// True to prevent choosing more than one item.
+		/// </summary>
+		public bool Atomic { get; set; }
 
 		/// <summary />
 		public ReallySimpleListChooser()
@@ -165,8 +155,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <param name="fieldName">the user-readable name of the field that is being edited</param>
 		/// <param name="nullLabel">The null label.</param>
 		/// <param name="stylesheet">The stylesheet.</param>
-		public ReallySimpleListChooser(LcmCache cache, IHelpTopicProvider helpTopicProvider, IPersistenceProvider persistProvider, IEnumerable<ObjectLabel> labels,
-			ICmObject currentObj, string fieldName, string nullLabel, IVwStylesheet stylesheet)
+		public ReallySimpleListChooser(LcmCache cache, IHelpTopicProvider helpTopicProvider, IPersistenceProvider persistProvider, IEnumerable<ObjectLabel> labels, ICmObject currentObj, string fieldName, string nullLabel, IVwStylesheet stylesheet)
 		{
 			m_cLinksShown = 0;
 			Init(cache, helpTopicProvider, persistProvider, fieldName, labels, currentObj, nullLabel, stylesheet);
@@ -183,8 +172,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <param name="currentObj">The current obj.</param>
 		/// <param name="fieldName">the user-readable name of the field that is being edited</param>
 		/// <param name="nullLabel">The null label.</param>
-		public ReallySimpleListChooser(LcmCache cache, IHelpTopicProvider helpTopicProvider, IPersistenceProvider persistProvider, IEnumerable<ObjectLabel> labels,
-			ICmObject currentObj, string fieldName, string nullLabel)
+		public ReallySimpleListChooser(LcmCache cache, IHelpTopicProvider helpTopicProvider, IPersistenceProvider persistProvider, IEnumerable<ObjectLabel> labels, ICmObject currentObj, string fieldName, string nullLabel)
 		{
 			m_cLinksShown = 0;
 			Init(cache, helpTopicProvider, persistProvider, fieldName, labels, currentObj, nullLabel, null);
@@ -198,19 +186,15 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <param name="labels">The labels.</param>
 		/// <param name="currentObj">The current object.</param>
 		/// <param name="fieldName">the user-readable name of the field that is being edited</param>
-		public ReallySimpleListChooser(LcmCache cache, IHelpTopicProvider helpTopicProvider,
-			IPersistenceProvider persistProvider, IEnumerable<ObjectLabel> labels,
-			ICmObject currentObj, string fieldName)
+		public ReallySimpleListChooser(LcmCache cache, IHelpTopicProvider helpTopicProvider, IPersistenceProvider persistProvider, IEnumerable<ObjectLabel> labels, ICmObject currentObj, string fieldName)
 		{
 			m_cLinksShown = 0;
 			Init(cache, helpTopicProvider, persistProvider, fieldName, labels, currentObj, XMLViewsStrings.ksEmpty, null);
 		}
 
 		/// <summary />
-		private void Init(LcmCache cache, IHelpTopicProvider helpTopicProvider,
-			IPersistenceProvider persistProvider, string fieldName,
-			IEnumerable<ObjectLabel> labels, ICmObject currentObj, string nullLabel,
-			IVwStylesheet stylesheet)
+		private void Init(LcmCache cache, IHelpTopicProvider helpTopicProvider, 			IPersistenceProvider persistProvider, string fieldName, IEnumerable<ObjectLabel> labels,
+			ICmObject currentObj, string nullLabel, IVwStylesheet stylesheet)
 		{
 			m_stylesheet = stylesheet;
 			m_helpTopicProvider = helpTopicProvider;
@@ -221,12 +205,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_fFlatList = IsListFlat(labels);
 			InitializeComponent();
 			AccessibleNameCreator.AddNames(this);
-
 			m_persistProvider?.RestoreWindowSettings("SimpleListChooser", this);
-
 			// It's easier to localize a format string than code that pieces together a string.
 			Text = fieldName == XMLViewsStrings.ksPublishIn || fieldName == XMLViewsStrings.ksShowAsHeadwordIn ? fieldName : string.Format(XMLViewsStrings.ksChooseX, fieldName);
-
 			LoadTree(labels, currentObj, true);
 		}
 
@@ -236,7 +217,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return false;
 			}
-
 			foreach (var label in labels)
 			{
 				if (label.HaveSubItems)
@@ -254,13 +234,11 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-
 			buttonHelp.Enabled = helpTopicIsValid(m_helpTopic);
 			if (!buttonHelp.Enabled)
 			{
 				return;
 			}
-
 			if (m_helpProvider == null)
 			{
 				m_helpProvider = new HelpProvider();
@@ -290,8 +268,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <param name="fieldName">the user-readable name of the field that is being edited</param>
 		/// <param name="stylesheet">for getting right height for text</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
-		public ReallySimpleListChooser(IPersistenceProvider persistProvider, IEnumerable<ObjectLabel> labels, string fieldName, IVwStylesheet stylesheet,
-			IHelpTopicProvider helpTopicProvider)
+		public ReallySimpleListChooser(IPersistenceProvider persistProvider, IEnumerable<ObjectLabel> labels, string fieldName, IVwStylesheet stylesheet, IHelpTopicProvider helpTopicProvider)
 		{
 			m_stylesheet = stylesheet;
 			m_cLinksShown = 0;
@@ -302,12 +279,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_fFlatList = IsListFlat(labels);
 			InitializeComponent();
 			AccessibleNameCreator.AddNames(this);
-
 			m_persistProvider?.RestoreWindowSettings("SimpleListChooser", this);
-
 			// It's easier to localize a format string than code that pieces together a string.
 			Text = fieldName == XMLViewsStrings.ksPublishIn || fieldName == XMLViewsStrings.ksShowAsHeadwordIn ? fieldName : string.Format(XMLViewsStrings.ksChooseX, fieldName);
-
 			LoadTree(labels, null, false);
 		}
 
@@ -321,9 +295,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <param name="cache">The cache.</param>
 		/// <param name="chosenObjs">The chosen objects.</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
-		public ReallySimpleListChooser(IPersistenceProvider persistProvider,
-			IEnumerable<ObjectLabel> labels, string fieldName, LcmCache cache,
-			IEnumerable<ICmObject> chosenObjs, IHelpTopicProvider helpTopicProvider) :
+		public ReallySimpleListChooser(IPersistenceProvider persistProvider, IEnumerable<ObjectLabel> labels, string fieldName, LcmCache cache, IEnumerable<ICmObject> chosenObjs, IHelpTopicProvider helpTopicProvider) :
 			this(persistProvider, labels, fieldName, cache, chosenObjs, IsListSorted(labels), helpTopicProvider)
 		{
 		}
@@ -339,9 +311,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <param name="chosenObjs">The chosen objects.</param>
 		/// <param name="fSortLabels">if true, sort the labels alphabetically. if false, keep the order of given labels.</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
-		public ReallySimpleListChooser(IPersistenceProvider persistProvider,
-			IEnumerable<ObjectLabel> labels, string fieldName, LcmCache cache,
-			IEnumerable<ICmObject> chosenObjs, bool fSortLabels, IHelpTopicProvider helpTopicProvider)
+		public ReallySimpleListChooser(IPersistenceProvider persistProvider, IEnumerable<ObjectLabel> labels, string fieldName, LcmCache cache, IEnumerable<ICmObject> chosenObjs, bool fSortLabels, IHelpTopicProvider helpTopicProvider)
 			: this(persistProvider, fieldName, cache, chosenObjs, helpTopicProvider)
 		{
 			m_fFlatList = IsListFlat(labels);
@@ -370,9 +340,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <param name="cache">The cache.</param>
 		/// <param name="chosenObjs">The chosen objects.</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
-		protected ReallySimpleListChooser(IPersistenceProvider persistProvider,
-			string fieldName, LcmCache cache, IEnumerable<ICmObject> chosenObjs,
-			IHelpTopicProvider helpTopicProvider)
+		protected ReallySimpleListChooser(IPersistenceProvider persistProvider, string fieldName, LcmCache cache, IEnumerable<ICmObject> chosenObjs, IHelpTopicProvider helpTopicProvider)
 		{
 			Cache = cache;
 			m_persistProvider = persistProvider;
@@ -382,12 +350,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_nullLabel = new NullObjectLabel();
 			InitializeComponent();
 			AccessibleNameCreator.AddNames(this);
-
 			m_persistProvider?.RestoreWindowSettings("SimpleListChooser", this);
-
 			// It's easier to localize a format string than code that pieces together a string.
 			Text = fieldName == XMLViewsStrings.ksPublishIn || fieldName == XMLViewsStrings.ksShowAsHeadwordIn ? fieldName : string.Format(XMLViewsStrings.ksChooseX, fieldName);
-
 			m_labelsTreeView.CheckBoxes = true;
 			m_labelsTreeView.AfterCheck += m_labelsTreeView_AfterCheck;
 			// We have to allow selections in order to allow keyboard support.  See LT-3068.
@@ -428,9 +393,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			set
 			{
 				var sText = value;
-				Text = sText.IndexOf("{0}") >= 0 && (STextParam != null || TextParamHvo != 0)
-					? string.Format(sText, TextParam)
-					: sText;
+				Text = sText.IndexOf("{0}") >= 0 && (STextParam != null || TextParamHvo != 0) ? string.Format(sText, TextParam) : sText;
 			}
 		}
 
@@ -516,21 +479,15 @@ namespace LanguageExplorer.Controls.XMLViews
 			// reuse the m_link2Panel to display the buttons
 			// ENHANCE (DamienD): Add a new panel in the designer that contain these buttons, and just make it visible here
 			m_link2Panel.SuspendLayout();
-
 			m_link2Panel.Controls.Clear();
-
 			m_AddButton = new RadioButton { Text = XMLViewsStrings.ksAddToExisting, Checked = true };
 			m_AddButton.Width = ((m_link2Panel.Width - m_link2Panel.Padding.Horizontal) / 2) - m_AddButton.Margin.Horizontal - 1;
 			m_link2Panel.Controls.Add(m_AddButton);
-
 			m_RemoveButton = new RadioButton { Text = XMLViewsStrings.ksRemoveExisting, Width = m_AddButton.Width, Height = 30 };
 			m_link2Panel.Controls.Add(m_RemoveButton);
-
 			m_ReplaceButton = new RadioButton { Text = XMLViewsStrings.ksReplaceExisting, Width = m_labelsTreeView.Width };
 			m_link2Panel.Controls.Add(m_ReplaceButton);
-
 			m_link2Panel.Visible = true;
-
 			m_link2Panel.ResumeLayout();
 		}
 
@@ -540,38 +497,31 @@ namespace LanguageExplorer.Controls.XMLViews
 		internal void ShowAnyAllNoneButtons(ListMatchOptions mode, bool fAtomic)
 		{
 			SetHelpTopic("khtpChoose-AnyAllNoneItems");
-
 			// reuse the m_link2Panel to display the buttons
 			// ENHANCE (DamienD): Add a new panel in the designer that contain these buttons, and just make it visible here
 			m_link2Panel.SuspendLayout();
-
 			m_link2Panel.Controls.Clear();
-
 			m_AnyButton = new RadioButton { Text = XMLViewsStrings.ksAnyChecked, Checked = true };
 			m_AnyButton.Width = ((m_link2Panel.Width - m_link2Panel.Padding.Horizontal) / 2) - m_AnyButton.Margin.Horizontal - 1;
 			m_link2Panel.Controls.Add(m_AnyButton);
-
 			if (!fAtomic)
 			{
 				m_AllButton = new RadioButton { Text = XMLViewsStrings.ksAllChecked, Width = m_AnyButton.Width };
 				m_link2Panel.Controls.Add(m_AllButton);
 			}
-
 			m_NoneButton = new RadioButton { Text = XMLViewsStrings.ksNoChecked, Width = m_AnyButton.Width };
 			m_link2Panel.Controls.Add(m_NoneButton);
-
 			if (!fAtomic)
 			{
 				m_ExactButton = new RadioButton { Text = XMLViewsStrings.ksExactlyChecked, Width = m_AnyButton.Width };
 				m_link2Panel.Controls.Add(m_ExactButton);
 			}
-
 			if (fAtomic)
+			{
 				m_link2Panel.FlowDirection = FlowDirection.TopDown;
+			}
 			m_link2Panel.Visible = true;
-
 			m_link2Panel.ResumeLayout();
-
 			ListMatchMode = mode;
 		}
 
@@ -642,7 +592,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				checkedNodes.Add(root);
 			}
-
 			foreach (TreeNode child in root.Nodes)
 			{
 				CollectCheckedNodes(child, checkedNodes);
@@ -686,12 +635,10 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					return ListMatchOptions.All;
 				}
-
 				if (m_NoneButton.Checked)
 				{
 					return ListMatchOptions.None;
 				}
-
 				if (m_ExactButton != null && m_ExactButton.Checked)
 				{
 					return ListMatchOptions.Exact;
@@ -750,7 +697,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					m_guidLink = co.Guid;
 					return STextParam;
 				}
-				return XMLViewsStrings.ksQuestionMarks;
+				return LanguageExplorerControls.ksQuestionMarks;
 			}
 		}
 
@@ -769,7 +716,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_subscriber = subscriber;
 			var ws = Cache.DefaultAnalWs;
 			SetFontFromWritingSystem(ws);
-
 			if (configNode == null)
 			{
 				return;
@@ -783,7 +729,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// The default case ("owner") is handled by the caller setting TextParamHvo.
 			if (sTextParam == "vernws")
 			{
-				CoreWritingSystemDefinition co = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+				var co = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 				STextParam = co.DisplayLabel;
 			}
 			var sFlid = XmlUtils.GetOptionalAttributeValue(node, "flidTextParam");
@@ -803,7 +749,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					// Ignore any badness here.
 				}
 			}
-
 			var sTitle = XmlUtils.GetOptionalAttributeValue(node, "title");
 			if (sTitle != null)
 			{
@@ -904,7 +849,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			var itemClass = Cache.MetaDataCacheAccessor.GetClassName(list.ItemClsid);
 			// We need to dynamically figure out a tool for this list.
 			string sTool = null;
-			XElement chooserNode = null;
+#if RANDYTODO
+			// TODO: Nobody will be home.
+#endif
 			var windowConfig = m_propertyTable.GetValue<XElement>("WindowConfiguration");
 			if (windowConfig != null)
 			{
@@ -932,7 +879,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					sTool = ScanToolsAndLists(windowConfig, listOwnerClass, listField);
 				}
 			}
-
 			if (string.IsNullOrEmpty(sTool))
 			{
 				return null;
@@ -950,7 +896,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			bldr.AppendLine();
 			bldr.AppendLine("</chooserInfo>");
 			var doc = XDocument.Parse(bldr.ToString());
-			chooserNode = doc.Root;
+			var chooserNode = doc.Root;
 			return chooserNode;
 		}
 
@@ -1004,13 +950,11 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_persistProvider.RestoreWindowSettings("SimpleListChooser-HelpBrowser", this);
 				splitterDistance = m_propertyTable.GetValue("SimpleListChooser-HelpBrowserSplitterDistance", m_splitContainer.Width);
 			}
-
 			// only create the web browser if we needed, because this control is pretty resource intensive
 			m_webBrowser = new XWebBrowser
 			{
 				Dock = DockStyle.Fill
 			};
-
 			if (Platform.IsMono)
 			{
 				var browser = m_webBrowser.NativeBrowser as Gecko.GeckoWebBrowser;
@@ -1034,10 +978,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_webBrowser.CanGoBackChanged += m_webBrowser_CanGoBackChanged;
 			m_webBrowser.CanGoForwardChanged += m_webBrowser_CanGoForwardChanged;
 			m_splitContainer.Panel2.Controls.Add(m_webBrowser);
-
 			m_backButton = new ToolStripButton(null, m_imageList.Images[2], m_backButton_Click) { Enabled = false };
 			m_forwardButton = new ToolStripButton(null, m_imageList.Images[3], m_forwardButton_Click) { Enabled = false };
-
 			if (Platform.IsMono)
 			{
 				m_helpBrowserStrip = new ToolStrip(m_backButton, m_forwardButton) { Dock = DockStyle.Top };
@@ -1048,7 +990,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_helpBrowserStrip = new ToolStrip(m_backButton, m_forwardButton, m_printButton) { Dock = DockStyle.Top };
 			}
 			m_splitContainer.Panel2.Controls.Add(m_helpBrowserStrip);
-
 			if (splitterDistance < m_splitContainer.Width)
 			{
 				// the help browser was expanded when last saved, so display it expanded with the saved splitter distance
@@ -1061,7 +1002,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				m_splitContainer.SplitterDistance = splitterDistance;
 			}
-
 			// navigate the the current selected object now, just in case the selection events are never fired
 			NavigateToSelectedTopic();
 		}
@@ -1131,7 +1071,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-
 			ObjectLabel selectedLabel = null;
 			if (m_labelsTreeView != null)
 			{
@@ -1145,7 +1084,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				var idx = m_flvLabels.SelectedIndex;
 				selectedLabel = m_labels[idx];
 			}
-
 			if (selectedLabel == null)
 			{
 				return;
@@ -1215,7 +1153,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				return null;
 			}
 			startIndex += prefix.Length;
-
 			var endIndex = urlStr.IndexOf(".htm", startIndex);
 			return endIndex == -1 ? null : urlStr.Substring(startIndex, endIndex - startIndex);
 		}
@@ -1224,7 +1161,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			var ws = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 			var userFont = ws.DefaultFontName;
-
 			string title, titleFont;
 			if (tssTitle != null)
 			{
@@ -1238,7 +1174,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				title = XMLViewsStrings.ksTitle;
 				titleFont = userFont;
 			}
-
 			string desc, descFont;
 			if (tssDesc != null)
 			{
@@ -1260,7 +1195,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				desc = XMLViewsStrings.ksNoDesc;
 				descFont = userFont;
 			}
-
 			var htmlElem = new XElement("html",
 				new XElement("head", new XElement("title", title)),
 				new XElement("body",
@@ -1316,8 +1250,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		private void ExpandHelpBrowser()
 		{
 			if (!m_splitContainer.Panel2Collapsed)
+			{
 				return;
-
+			}
 			m_splitContainer.IsSplitterFixed = false;
 			m_splitContainer.SplitterDistance = m_splitContainer.Width;
 			Width = Width + 400;
@@ -1331,7 +1266,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-
 			ClientSize = new Size(m_splitContainer.SplitterDistance, ClientSize.Height);
 			m_splitContainer.Panel2Collapsed = true;
 			m_splitContainer.IsSplitterFixed = true;
@@ -1378,7 +1312,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary>
-		/// Access for outsiders who don't call InitializExtras.
+		/// Access for outsiders who don't call InitializeExtras.
 		/// </summary>
 		public void ReplaceTreeView(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, string sGuiControl)
 		{
@@ -1386,7 +1320,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-
 			if (m_propertyTable == null)
 			{
 				m_propertyTable = propertyTable;
@@ -1471,7 +1404,6 @@ namespace LanguageExplorer.Controls.XMLViews
 						}
 					}
 				}
-
 				m_labelsTreeView.Font = font;
 			}
 			finally
@@ -1531,7 +1463,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				Title = sTitle;
 			}
-
 			if (sText != null)
 			{
 				InstructionalText = sText;
@@ -1562,7 +1493,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected int GetHvoOfHighestPOS(int startHvo, out string sTopPOS)
 		{
 			var posHvo = 0;
-			sTopPOS = XMLViewsStrings.ksQuestionMarks;
+			sTopPOS = LanguageExplorerControls.ksQuestionMarks;
 			var obj = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(startHvo);
 			while (obj.ClassID == PartOfSpeechTags.kClassId)
 			{
@@ -1646,7 +1577,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				m_labelsTreeView.BeginUpdate();
 				m_labelsTreeView.Nodes.Clear();
-
 				// if m_fSortLabels is true, we'll sort the labels alphabetically, using dumb English sort.
 				// otherwise, we'll keep the labels in their given order.
 				if (!m_fSortLabelsSet && Cache != null)
@@ -1664,13 +1594,11 @@ namespace LanguageExplorer.Controls.XMLViews
 					{
 						ownershipStack = GetOwnershipStack(currentObj);
 					}
-
 					if (m_nullLabel.DisplayName != null)
 					{
 						m_labelsTreeView.Nodes.Add(CreateLabelNode(m_nullLabel, m_displayUsageCheckBox.Checked));
 					}
 				}
-
 				var rgLabelNodes = new ArrayList();
 				var rgOwnershipStacks = new Dictionary<ICmObject, Stack<ICmObject>>();
 				if (m_chosenObjs != null)
@@ -1684,7 +1612,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					}
 				}
 				//	m_labelsTreeView.Nodes.AddRange(labels.AsObjectArray);
-				foreach (ObjectLabel label in labels)
+				foreach (var label in labels)
 				{
 					if (!WantNodeForLabel(label))
 					{
@@ -1698,7 +1626,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					{
 						x.Checked = m_chosenObjs.Contains(label.Object);
 					}
-
 					//notice that we don't actually use the "stack-ness" of the stack.
 					//if we did, we would have to worry about skipping the higher level owners, like
 					//language project.
@@ -1724,7 +1651,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					}
 				}
 				m_labelsTreeView.EndUpdate();
-
 				// if for some reason we could not find it is smart way, go do it the painful way of
 				// walking the entire tree, creating objects until we find it.
 				// I'm not clear if we ever need this...the primary cover them would fail if the
@@ -1744,7 +1670,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					// Don't show a selection initially
 					m_labelsTreeView.SelectedNode = null;
 				}
-
 				//important that we not do this sooner!
 				m_labelsTreeView.BeforeExpand += m_labelsTreeView_BeforeExpand;
 			}
@@ -1810,7 +1735,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return n;
 			}
-
 			// enhance: this is the simplest thing that would possibly work, but it is slow!
 			// see the #if'd-out code for the beginnings of a smarter algorithm which would only
 			// expand what needed to be expanded.
@@ -1823,10 +1747,8 @@ namespace LanguageExplorer.Controls.XMLViews
 					return n;
 				}
 			}
-
 			// JohnT: it can fail, for example, if we have obsolete data in TestLangProj that
 			// uses an item not in the list. See LT-1973.
-			//Debug.Fail("object not found in the tree");
 			return null;
 		}
 
@@ -1840,7 +1762,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return searchNode;
 			}
-
 			//no, so look in my descendants
 			searchNode.AddChildren(true, m_chosenObjs);
 			foreach (LabelNode node in searchNode.Nodes)
@@ -1891,9 +1812,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
-			// Must not be run more than once.
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -2154,7 +2075,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-
 			if (cmd.ShouldCloseBeforeExecuting)
 			{
 				Visible = false;
@@ -2225,14 +2145,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			else
 			{
-				if (m_labelsTreeView != null)
-				{
-					ChosenOne = ((LabelNode)m_labelsTreeView.SelectedNode)?.Label;
-				}
-				else
-				{
-					ChosenOne = m_labels[m_flvLabels.SelectedIndex];
-				}
+				ChosenOne = m_labelsTreeView != null ? ((LabelNode)m_labelsTreeView.SelectedNode)?.Label : m_labels[m_flvLabels.SelectedIndex];
 			}
 		}
 
@@ -2356,22 +2269,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			return node == null || node.Enabled;
 		}
 
-		/// <summary />
-		private sealed class ChooserCommandNode : TreeNode
-		{
-			/// <summary />
-			public ChooserCommandNode(ChooserCommand cmd)
-			{
-				Tag = cmd;
-				Text = cmd.Label;
-			}
-
-			/// <summary>
-			/// Gets the command.
-			/// </summary>
-			public ChooserCommand Command => (ChooserCommand)Tag;
-		}
-
 		private void buttonHelp_Click(object sender, EventArgs e)
 		{
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "UserHelpFile", m_helpTopic);
@@ -2402,10 +2299,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public static bool ChooseNaturalClass(IVwRootBox rootb, LcmCache cache, IPersistenceProvider persistenceProvider, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
-			var labels = ObjectLabel.CreateObjectLabels(cache,
-				cache.LanguageProject.PhonologicalDataOA.NaturalClassesOS, "",
-				cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id);
-
+			var labels = ObjectLabel.CreateObjectLabels(cache, cache.LanguageProject.PhonologicalDataOA.NaturalClassesOS, string.Empty, cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id);
 			using (var chooser = new ReallySimpleListChooser(persistenceProvider, labels, "NaturalClass", propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 			{
 				var sTitle = StringTable.Table.GetString("kstidChooseNaturalClass", "Linguistics/Morphology/NaturalClassChooser");
@@ -2415,12 +2309,10 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					sTitle = XMLViewsStrings.ksChooseNaturalClass;
 				}
-
 				if (string.IsNullOrEmpty(sDescription) || sDescription == "kstidNaturalClassListing")
 				{
 					sDescription = XMLViewsStrings.ksNaturalClassDesc;
 				}
-
 				if (string.IsNullOrEmpty(sJumpLabel) || sJumpLabel == "kstidGotoNaturalClassList")
 				{
 					sJumpLabel = XMLViewsStrings.ksEditNaturalClasses;
@@ -2429,18 +2321,15 @@ namespace LanguageExplorer.Controls.XMLViews
 				chooser.SetObjectAndFlid(0, 0);
 				chooser.SetHelpTopic("khtpChooseNaturalClass");
 				chooser.InitializeRaw(propertyTable, publisher, subscriber, sTitle, sDescription, sJumpLabel, AreaServices.NaturalClassEditMachineName, "analysis vernacular");
-
 				var res = chooser.ShowDialog();
 				if (DialogResult.Cancel == res)
 				{
 					return true;
 				}
-
 				if (chooser.HandleAnyJump())
 				{
 					return true;
 				}
-
 				if (chooser.ChosenOne == null)
 				{
 					return true;
@@ -2467,7 +2356,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		public void MakeSelection(ICmObject obj)
 		{
 			m_labelsTreeView.SelectedNode = FindNodeFromObj(obj) ?? m_labelsTreeView.Nodes[0];
-
 			if (m_labelsTreeView.SelectedNode == null)
 			{
 				return;
@@ -2518,6 +2406,22 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				m_displayUsageCheckBox.Checked = false;
 			}
+		}
+
+		/// <summary />
+		private sealed class ChooserCommandNode : TreeNode
+		{
+			/// <summary />
+			public ChooserCommandNode(ChooserCommand cmd)
+			{
+				Tag = cmd;
+				Text = cmd.Label;
+			}
+
+			/// <summary>
+			/// Gets the command.
+			/// </summary>
+			public ChooserCommand Command => (ChooserCommand)Tag;
 		}
 	}
 }

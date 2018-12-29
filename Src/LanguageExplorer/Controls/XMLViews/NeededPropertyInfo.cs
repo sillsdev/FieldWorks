@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -27,7 +27,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// the class of objects at this property info level (destination of m_flidSource).
 		/// </summary>
 		protected int m_targetClass;
-		// the property from which the objects whose properties we want come.
 
 		/// <summary />
 		/// <param name="listItemsClass">the class of objects at the root parent of the NeedPropertyInfo tree.
@@ -35,7 +34,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		public NeededPropertyInfo(int listItemsClass)
 		{
 			m_targetClass = listItemsClass;
-			Source = 0;	// don't really how we got to the root parent class.
+			Source = 0; // don't really how we got to the root parent class.
 			Parent = null;
 			IsSequence = true;
 		}
@@ -205,7 +204,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				Debug.WriteLine(string.Empty);
 			}
-
 			for (var i = 0; i < Depth; ++i)
 			{
 				Debug.Write("    ");
@@ -219,7 +217,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				Debug.WriteLine("Root (target) class: " + mdc.GetClassName(m_targetClass));
 			}
-
 			for (var i = 0; i < AtomicFields.Count; ++i)
 			{
 				for (var j = 0; j < Depth; ++j)
@@ -228,7 +225,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 				Debug.WriteLine("    Atomic[" + i + "] flid = " + AtomicFields[i].Flid + "(" + GetFancyFieldName(AtomicFields[i].Flid, mdc) + "); ws = " + AtomicFields[i].Ws);
 			}
-
 			foreach (var propertyInfo in SeqFields)
 			{
 				propertyInfo.DumpFieldInfo(mdc);
@@ -240,6 +236,23 @@ namespace LanguageExplorer.Controls.XMLViews
 			var f = mdc.GetFieldName(flid);
 			var c = mdc.GetOwnClsName(flid);
 			return c + '_' + f;
+		}
+
+		private sealed class VirtualNeededPropertyInfo : NeededPropertyInfo
+		{
+			public VirtualNeededPropertyInfo(int flidSource, NeededPropertyInfo parent, bool fSeq, int dstClsId)
+				: base(flidSource, parent, fSeq)
+			{
+				m_targetClass = dstClsId;
+			}
+
+			/// <summary>
+			/// Override: this class knows the appropriate destination class.
+			/// </summary>
+			public override int TargetClass(ISilDataAccess sda)
+			{
+				return m_targetClass;
+			}
 		}
 	}
 }

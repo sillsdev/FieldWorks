@@ -1,15 +1,17 @@
-// Copyright (c) 2004-2017 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel;
 using LanguageExplorer.Filters;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Controls.XMLViews
 {
@@ -30,20 +32,14 @@ namespace LanguageExplorer.Controls.XMLViews
 		private RadioButton m_regExButton;
 		private Label label1;
 		private Button buttonHelp;
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
-
+		private Container components = null;
 		private const string s_helpTopic = "khtpFilterFor";
 		private Button regexHelper;
 		private HelpProvider helpProvider;
 		private CheckBox m_MatchCasecheckBox;
-
 		private RegexHelperContextMenu _regexContextContextMenu;
 		private CheckBox m_MatchDiacriticscheckBox;
 		private IHelpTopicProvider m_helpTopicProvider;
-
 		private IVwPattern m_ivwpattern;
 		private LcmCache m_cache;
 
@@ -73,7 +69,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_helpTopicProvider = helpTopicProvider;
 			_regexContextContextMenu = new RegexHelperContextMenu(m_textBox, m_helpTopicProvider);
 			m_ivwpattern = VwPatternClass.Create();
-			helpProvider = new HelpProvider {HelpNamespace = m_helpTopicProvider.HelpFile};
+			helpProvider = new HelpProvider { HelpNamespace = m_helpTopicProvider.HelpFile };
 			helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			foreach (Control control in Controls)
@@ -113,7 +109,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				m_wholeItemButton.Checked = true;
 			}
-
 			// Now get the attributes
 			if (matcher is SimpleStringMatcher)
 			{
@@ -135,29 +130,24 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_ivwpattern.Pattern = m_textBox.Tss;
 				m_ivwpattern.MatchCase = m_MatchCasecheckBox.Checked;
 				m_ivwpattern.MatchDiacritics = m_MatchDiacriticscheckBox.Checked;
-
 				// Default values because we don't set these here
 				m_ivwpattern.MatchOldWritingSystem = false;
 				m_ivwpattern.MatchWholeWord = false;
 				m_ivwpattern.UseRegularExpressions = false;
 				m_ivwpattern.IcuLocale = m_textBox.WritingSystemFactory.GetStrFromWs(m_textBox.WritingSystemCode);
 				SimpleStringMatcher.SetupPatternCollating(m_ivwpattern, m_cache);
-
 				if (m_anywhereButton.Checked)
 				{
 					return new AnywhereMatcher(m_ivwpattern);
 				}
-
 				if (m_atEndButton.Checked)
 				{
 					return new EndMatcher(m_ivwpattern);
 				}
-
 				if (m_atStartButton.Checked)
 				{
 					return new BeginMatcher(m_ivwpattern);
 				}
-
 				if (m_regExButton.Checked)
 				{
 					return new RegExpMatcher(m_ivwpattern);
@@ -198,24 +188,21 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				if (m_textBox.Text.Length == 0) // case where nothing was entered
 				{
-					return "";					// return an empty string
+					return string.Empty;
 				}
 				var pattern = m_textBox.Text;
 				if (m_anywhereButton.Checked)
 				{
 					return pattern;
 				}
-
 				if (m_atEndButton.Checked)
 				{
 					return pattern + "#";
 				}
-
 				if (m_atStartButton.Checked)
 				{
 					return "#" + pattern;
 				}
-
 				if (m_regExButton.Checked)
 				{
 					return "/" + pattern + "/";
@@ -227,20 +214,20 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
-			if( disposing )
+			if (disposing)
 			{
 				components?.Dispose();
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#region Windows Form Designer generated code
@@ -370,7 +357,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void regexHelper_Click(object sender, EventArgs e)
 		{
-			_regexContextContextMenu.Show(regexHelper, new System.Drawing.Point(regexHelper.Width,0));
+			_regexContextContextMenu.Show(regexHelper, new System.Drawing.Point(regexHelper.Width, 0));
 		}
 	}
 }

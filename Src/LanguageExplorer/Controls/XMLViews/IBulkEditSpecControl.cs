@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,22 +19,28 @@ namespace LanguageExplorer.Controls.XMLViews
 	{
 		/// <summary>Get/Set the property table.</summary>
 		IPropertyTable PropertyTable { get; set; }
+
 		/// <summary>Retrieve the control that does the work.</summary>
 		Control Control { get; }
+
 		/// <summary>Get or set the cache. Client promises to set this immediately after creation.</summary>
 		LcmCache Cache { get; set; }
+
 		/// <summary>
 		/// The decorator cache that understands the special properties used to control the checkbox and preview.
 		/// Client promises to set this immediately after creation.
 		/// </summary>
 		XMLViewsDataCache DataAccess { get; set; }
+
 		/// <summary>
 		/// Set a stylesheet. Should be done soon after creation, before reading Control.
 		/// </summary>
-		IVwStylesheet Stylesheet { set;}
+		IVwStylesheet Stylesheet { set; }
+
 		/// <summary>Invoked when the command is to be executed. The argument contains an array of
 		/// the HVOs of the items to which the change should be done (those visible and checked).</summary>
 		void DoIt(IEnumerable<int> itemsToChange, ProgressState state);
+
 		/// <summary>
 		/// This is called when the preview button is clicked. The control is passed
 		/// the list of currently active (filtered and checked) items. It should cache
@@ -48,6 +54,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// True if the editor can set a value that will make the field 'clear'.
 		/// </summary>
 		bool CanClearField { get; }
+
 		/// <summary>
 		/// Select a value that will make the field 'clear' (used by BE Delete tab).
 		/// </summary>
@@ -63,7 +70,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		Button SuggestButton { get; }
 
-		/// <summary></summary>
+		/// <summary />
 		event FwSelectionChangedEventHandler ValueChanged;
 
 		/// <summary>

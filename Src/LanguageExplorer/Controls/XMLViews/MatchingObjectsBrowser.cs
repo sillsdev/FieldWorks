@@ -1,23 +1,24 @@
-// Copyright (c) 2009-2018 SIL International
+// Copyright (c) 2009-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using LanguageExplorer.Filters;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
-using SIL.Xml;
-using LanguageExplorer.Filters;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.PlatformUtilities;
+using SIL.Xml;
 
 namespace LanguageExplorer.Controls.XMLViews
 {
@@ -53,15 +54,11 @@ namespace LanguageExplorer.Controls.XMLViews
 		#region Data members
 
 		private const int ListFlid = ObjectListPublisher.MinMadeUpFieldIdentifier + 1111;
-
 		private LcmCache m_cache;
 		private IVwStylesheet m_stylesheet; // used to figure font heights.
-
 		private BrowseViewer m_bvMatches;
 		private ObjectListPublisher m_listPublisher;
-
 		private SearchEngine m_searchEngine;
-
 		private string[] m_visibleColumns;
 
 		#endregion Data members
@@ -73,10 +70,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -132,7 +129,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_stylesheet = stylesheet;
 			m_searchEngine = searchEngine;
 			m_searchEngine.SearchCompleted += m_searchEngine_SearchCompleted;
-
 			SuspendLayout();
 			CreateBrowseViewer(configParamsElement, reversalWs);
 			ResumeLayout(false);
@@ -218,7 +214,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return; // don't want to know about this kind
 			}
-
 			UpdateVisibleColumns();
 			ColumnsChanged?.Invoke(this, new EventArgs());
 		}
@@ -233,11 +228,11 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (Platform.IsMono)
 			{
 				if (m_recursionProtection) // FWNX-262
+				{
 					return;
-
+				}
 				m_recursionProtection = true;
 			}
-
 			m_bvMatches.SelectedRowHighlighting = SelectionHighlighting.border;
 			base.OnEnter(e);
 			m_bvMatches.Select();
@@ -328,7 +323,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				hvos = results.Where(hvo => StartingObject == null || StartingObject.Hvo != hvo).ToArray();
 			}
-
 			var count = hvos.Length;
 			var prevIndex = m_bvMatches.SelectedIndex;
 			var prevHvo = prevIndex == -1 ? 0 : m_bvMatches.AllItems[prevIndex];
@@ -359,7 +353,6 @@ namespace LanguageExplorer.Controls.XMLViews
 							break;
 						}
 					}
-
 					if (m_bvMatches.BrowseView.IsHandleCreated)
 					{
 						m_bvMatches.SelectedIndex = newIndex;
@@ -372,7 +365,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				m_bvMatches.Enabled = true;
 			}
-
 			if (!m_searchEngine.IsBusy)
 			{
 				SearchCompleted?.Invoke(this, new EventArgs());
@@ -382,7 +374,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		private FindResultSorter CreateFindResultSorter(ITsString firstSearchStr, int ws)
 		{
 			var browseViewSorter = m_bvMatches.CreateSorterForFirstColumn(ws);
-
 			return browseViewSorter == null ? null : new FindResultSorter(firstSearchStr, browseViewSorter);
 		}
 
@@ -417,6 +408,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Get the ISubscriber.
 		/// </summary>
 		public ISubscriber Subscriber { get; private set; }
+		#endregion
+
+		#region Implementation of IFlexComponent
 
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.

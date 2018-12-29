@@ -1,15 +1,16 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Collections.Generic;
 using System.Xml.Linq;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Controls.XMLViews
 {
@@ -81,13 +82,9 @@ namespace LanguageExplorer.Controls.XMLViews
 	//		</innerpile>
 	//	</frag>
 	// </XmlView>
-
 	internal class XmlView : RootSiteControl
 	{
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components;
+		private Container components;
 		/// <summary />
 		protected int m_hvoRoot;
 		/// <summary />
@@ -100,7 +97,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected IFwMetaDataCache m_mdc;
 		/// <summary />
 		protected bool m_fEditable = true;
-		bool m_fInChangeSelectedObjects;
+		private bool m_fInChangeSelectedObjects;
 
 		/// <summary />
 		public XmlView()
@@ -121,7 +118,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <param name="hvo">Root object to display</param>
 		/// <param name="layoutName">Name of standard layout of that object to use to display it</param>
 		/// <param name="fEditable">True to enable editing at top level.</param>
-		public XmlView (int hvo, string layoutName, bool fEditable)
+		public XmlView(int hvo, string layoutName, bool fEditable)
 		{
 			m_layoutName = layoutName;
 			m_hvoRoot = hvo;
@@ -185,17 +182,18 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 
-			if( disposing )
+			if (disposing)
 			{
 				components?.Dispose();
 			}
@@ -217,7 +215,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		private void InitializeComponent()
 		{
-			components = new System.ComponentModel.Container();
+			components = new Container();
 		}
 		#endregion
 
@@ -232,14 +230,11 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-
 			base.MakeRoot();
-
 			if (DecoratedDataAccess == null)
 			{
 				DecoratedDataAccess = m_cache.DomainDataByFlid;
 			}
-
 			Debug.Assert(m_layoutName != null, "No layout name.");
 			var app = PropertyTable.GetValue<IFlexApp>(LanguageExplorerConstants.App);
 			m_xmlVc = new XmlVc(m_layoutName, m_fEditable, this, app, DecoratedDataAccess)
@@ -247,7 +242,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				Cache = m_cache,
 				DataAccess = DecoratedDataAccess
 			};
-
 			// let it use the decorator if any.
 			RootBox.DataAccess = DecoratedDataAccess;
 			RootObjectHvo = m_hvoRoot;
@@ -289,7 +283,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				var ihvoEnd = 0;
 				ITsTextProps ttpBogus = null;
 				var rgvsli = new SelLevInfo[0];
-
 				var newSelectedObjects = new List<int>(4)
 				{
 					XmlVc.FocusHvo
@@ -297,7 +290,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				if (sel != null)
 				{
 					cvsli = sel.CLevels(false) - 1;
-					// Main array of information retrived from sel that made combo.
+					// Main array of information retrieved from sel that made combo.
 					rgvsli = SelLevInfo.AllTextSelInfo(sel, cvsli, out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd, out ttpBogus);
 					for (var i = 0; i < cvsli; i++)
 					{
@@ -322,7 +315,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					}
 				}
 			}
-
 			finally
 			{
 				m_fInChangeSelectedObjects = false;
@@ -334,7 +326,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// in some views, mouseup moves the selection from the place clicked to some nearby editable point.
 		/// We'd like the selected objects to depend on the place clicked, not how the selection got changed later.
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
 			m_fInChangeSelectedObjects = true;
@@ -383,7 +374,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			// All selected objects are no longer considered selected.
 			var oldSelectedObjects = m_xmlVc.SelectedObjects.ToArray();
 			m_xmlVc.SelectedObjects.Clear();
-
 			// LT-12067: During disposal of views following a user request to change UI language,
 			// a WM_ACTIVATE message is handled, and its call chain can get to here when m_rootb is null.
 			// This simple fix is a band-aid, and the code still smells, although the origin of the

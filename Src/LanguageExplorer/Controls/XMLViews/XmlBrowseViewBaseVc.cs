@@ -1,26 +1,26 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2005-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Text.RegularExpressions;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using LanguageExplorer.Areas;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel;
-using SIL.LCModel.DomainServices;
-using SIL.LCModel.Infrastructure;
 using LanguageExplorer.Filters;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Resources;
+using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.Xml;
 
 namespace LanguageExplorer.Controls.XMLViews
@@ -39,9 +39,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected const int kfragEditRow = 100003;
 		/// <summary></summary>
 		protected internal const int kfragListItemInner = 100004;
-
 		/// <summary>(int)RGB(200, 255, 255)</summary>
-		public const int kclrTentative = 200 + 255 * 256 + 255 * 256*256;
+		public const int kclrTentative = 200 + 255 * 256 + 255 * 256 * 256;
+		private const int kclrBackgroundSelRow = 0xFFE6D7;
 
 		#endregion Constants
 
@@ -51,10 +51,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Specifications of columns to display
 		/// </summary>
 		protected List<XElement> m_columns = new List<XElement>();
-
 		/// <summary>Top-level fake property for list of objects.</summary>
 		protected int m_madeUpFieldIdentifier;
-
 		/// <summary />
 		protected IPicture m_UncheckedCheckPic;
 		/// <summary />
@@ -69,19 +67,19 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected XmlBrowseViewBase m_xbv;
 		/// <summary />
 		protected ISortItemProvider m_sortItemProvider;
-		IPicture m_PreviewArrowPic;
-		IPicture m_PreviewRTLArrowPic;
-
-		// A writing system we wish to force to be used when a <string> element displays a multilingual property.
-		// Todo JohnT: Get rid of this!! It is set in a <column> element and used within the display of nested
-		// objects. This can produce unexpected results when the object property changes, because the inner
-		// Dispay() call is not within the outer one that normally sets m_wsForce.
-		// m_wsForce was introduced in place of m_columnNode as part of the process of getting rid of it.
-		// The writing system calculated by looking at the hvo and flid, as well as the ws attribute.
+		private IPicture m_PreviewArrowPic;
+		private IPicture m_PreviewRTLArrowPic;
+		private int m_listItemsClass;
+		/// <summary>
+		/// A writing system we wish to force to be used when a <string> element displays a multilingual property.
+		/// Todo JohnT: Get rid of this!! It is set in a <column> element and used within the display of nested
+		/// objects. This can produce unexpected results when the object property changes, because the inner
+		/// Display() call is not within the outer one that normally sets m_wsForce.
+		/// m_wsForce was introduced in place of m_columnNode as part of the process of getting rid of it.
+		/// The writing system calculated by looking at the hvo and flid, as well as the ws attribute.
+		/// </summary>
 		private int m_wsBest;
-
 		private static bool s_haveShownDefaultColumnMessage;
-
 		private bool m_fMultiColumnPreview = false;
 		#endregion Data Members
 
@@ -108,7 +106,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary>
-		/// This contructor is used by SortMethodFinder to make a partly braindead VC.
+		/// This constructor is used by SortMethodFinder to make a partly braindead VC.
 		/// </summary>
 		internal XmlBrowseViewBaseVc(XmlBrowseViewBase xbv)
 		{
@@ -118,7 +116,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary>
-		/// This contructor is used by FilterBar and LayoutCache to make a badly braindead VC for special, temporary use.
+		/// This constructor is used by FilterBar and LayoutCache to make a badly braindead VC for special, temporary use.
 		/// It will fail if asked to interpret decorator properties, since it doesn't have the decorator SDA.
 		/// Avoid using this constructor if possible.
 		/// </summary>
@@ -126,8 +124,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			XmlBrowseViewBaseVcInit(cache, null);
 		}
+
 		/// <summary>
-		/// This contructor is used by FilterBar and LayoutCache to make a partly braindead VC.
+		/// This constructor is used by FilterBar and LayoutCache to make a partly braindead VC.
 		/// </summary>
 		internal XmlBrowseViewBaseVc(LcmCache cache, ISilDataAccess sda)
 		{
@@ -141,10 +140,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			Debug.Assert(xnSpec != null);
 			Debug.Assert(xbv != null);
 			DataAccess = xbv.SpecialCache;
-
 			m_xbv = xbv;
 			m_xnSpec = xnSpec;
-
 			// This column list is saved in BrowseViewer.UpdateColumnList
 			var savedCols = m_xbv.m_bv.PropertyTable.GetValue<string>(ColListId, SettingsGroup.LocalSettings);
 			SortItemProvider = xbv.SortItemProvider;
@@ -158,7 +155,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (doc == null) // nothing saved, or saved info won't parse
 			{
 				// default: the columns that have 'width' specified.
-				foreach(var node in PossibleColumnSpecs)
+				foreach (var node in PossibleColumnSpecs)
 				{
 					if (XmlUtils.GetOptionalAttributeValue(node, "visibility", "always") == "always")
 					{
@@ -171,7 +168,9 @@ namespace LanguageExplorer.Controls.XMLViews
 				foreach (var node in doc.Root.XPathSelectElements("//column"))
 				{
 					if (IsValidColumnSpec(node))
-					m_columns.Add(node);
+					{
+						m_columns.Add(node);
+					}
 				}
 			}
 			m_madeUpFieldIdentifier = madeUpFieldIdentifier;
@@ -194,7 +193,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					// Otherwise throw up a dialog telling the user they are losing their settings.
 					switch (version)
 					{
-							// Process changes made in P4 Changelist 29278
+						// Process changes made in P4 Changelist 29278
 						case 12:
 							var target = "<column label=\"Headword\" sortmethod=\"FullSortKey\" ws=\"$ws=vernacular\" editable=\"false\" width=\"96000\"><span><properties><editable value=\"false\" /></properties><string field=\"MLHeadWord\" ws=\"vernacular\" /></span></column>";
 							if (savedCols.IndexOf(target) > -1)
@@ -261,7 +260,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					}
 				}
 			}
-			catch(Exception)
+			catch (Exception)
 			{
 				// If anything is wrong with the saved data (e.g., an old version that doesn't
 				// parse as XML), ignore it.
@@ -289,8 +288,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			savedCols = AppendAttrValue(savedCols, "ExtNoteType", "displayNameProperty", "ShortNameTSS");
 			savedCols = ChangeAttrValue(savedCols, "ExtNoteDiscussion", "ghostListField", "LexDb.AllPossibleExtendedNotes", "LexDb.AllExtendedNoteTargets");
 			savedCols = ChangeAttrValue(savedCols, "ExtNoteDiscussion", "label", "Ext. Note Discussion", "Ext. Note - Discussion");
-			savedCols = ChangeAttrValue(savedCols, "ExtNoteDiscussion", "editable", "false", "true");
-			return savedCols;
+			return ChangeAttrValue(savedCols, "ExtNoteDiscussion", "editable", "false", "true");
 		}
 
 		/// <summary>
@@ -303,8 +301,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			savedCols = ChangeAttrValue(savedCols, "EtymologyGloss", "transduce", "LexEntry.Etymology.Gloss", "LexEtymology.Gloss");
 			savedCols = ChangeAttrValue(savedCols, "EtymologySource", "transduce", "LexEntry.Etymology.Source", "LexEtymology.Source");
 			savedCols = ChangeAttrValue(savedCols, "EtymologyForm", "transduce", "LexEntry.Etymology.Form", "LexEtymology.Form");
-			savedCols = ChangeAttrValue(savedCols, "EtymologyComment", "transduce", "LexEntry.Etymology.Comment", "LexEtymology.Comment");
-			return savedCols;
+			return ChangeAttrValue(savedCols, "EtymologyComment", "transduce", "LexEntry.Etymology.Comment", "LexEtymology.Comment");
 		}
 
 		/// <summary>
@@ -318,22 +315,18 @@ namespace LanguageExplorer.Controls.XMLViews
 			savedCols = ChangeAttrValue(savedCols, "Tone", "ws", "pronunciation", "$ws=pronunciation");
 			savedCols = ChangeAttrValue(savedCols, "ScientificNameForSense", "ws", "analysis", "$ws=analysis");
 			savedCols = ChangeAttrValue(savedCols, "SourceForSense", "ws", "analysis", "$ws=analysis");
-
 			savedCols = AppendAttrValue(savedCols, "CustomPossAtomForEntry", true, "displayNameProperty", "ShortNameTSS");
 			savedCols = AppendAttrValue(savedCols, "CustomPossAtomForSense", true, "displayNameProperty", "ShortNameTSS");
 			savedCols = AppendAttrValue(savedCols, "CustomPossAtomForAllomorph", true, "displayNameProperty", "ShortNameTSS");
 			savedCols = AppendAttrValue(savedCols, "CustomPossAtomForExample", true, "displayNameProperty", "ShortNameTSS");
-
 			savedCols = ChangeAttrValue(savedCols, "ComplexEntryTypesBrowse", "ws", "\\$ws=analysis", "$ws=best analysis");
 			savedCols = ChangeAttrValue(savedCols, "VariantEntryTypesBrowse", "ws", "\\$ws=analysis", "$ws=best analysis");
 			savedCols = ChangeAttrValue(savedCols, "ComplexEntryTypesBrowse", "originalWs", "\\$ws=analysis", "$ws=best analysis");
 			savedCols = ChangeAttrValue(savedCols, "VariantEntryTypesBrowse", "originalWs", "\\$ws=analysis", "$ws=best analysis");
-
 			savedCols = AppendAttrValue(savedCols, "EtymologyGloss", "transduce", "LexEntry.Etymology.Gloss");
 			savedCols = AppendAttrValue(savedCols, "EtymologySource", "transduce", "LexEntry.Etymology.Source");
 			savedCols = AppendAttrValue(savedCols, "EtymologyForm", "transduce", "LexEntry.Etymology.Form");
-			savedCols = AppendAttrValue(savedCols, "EtymologyComment", "transduce", "LexEntry.Etymology.Comment");
-			return savedCols;
+			return AppendAttrValue(savedCols, "EtymologyComment", "transduce", "LexEntry.Etymology.Comment");
 		}
 
 		private static string FixVersion15Columns(string savedColsInput)
@@ -350,12 +343,10 @@ namespace LanguageExplorer.Controls.XMLViews
 			savedCols = ChangeAttrValue(savedCols, "StatusForSense", "list", "LexDb.Status", "LangProject.Status");
 			savedCols = AppendAttrValue(savedCols, "ComplexEntryTypesBrowse", "ghostListField", "LexDb.AllComplexEntryRefPropertyTargets");
 			savedCols = AppendAttrValue(savedCols, "VariantEntryTypesBrowse", "ghostListField", "LexDb.AllVariantEntryRefPropertyTargets");
-
 			savedCols = FixCustomFields(savedCols, "Entry_", "LexEntry");
 			savedCols = FixCustomFields(savedCols, "Sense_", "LexSense");
 			savedCols = FixCustomFields(savedCols, "Allomorph_", "MoForm");
-			savedCols = FixCustomFields(savedCols, "Example_", "LexExampleSentence");
-			return savedCols;
+			return FixCustomFields(savedCols, "Example_", "LexExampleSentence");
 		}
 
 		private static string FixCustomFields(string savedCols, string layoutNameFragment, string className)
@@ -368,8 +359,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			savedCols = AppendAttrValue(savedCols, "CustomPossVectorFor" + layoutNameFragment, true, "displayNameProperty", "ShortNameTSS");
 			savedCols = AppendAttrValue(savedCols, "CustomPossAtomFor" + layoutNameFragment, true, "bulkEdit", "atomicFlatListItem");
 			savedCols = AppendAttrValue(savedCols, "CustomPossAtomFor" + layoutNameFragment, true, "field", className + ".$fieldName");
-			savedCols = AppendAttrValue(savedCols, "CustomPossAtomFor" + layoutNameFragment, true, "list", "$targetList");
-			return savedCols;
+			return AppendAttrValue(savedCols, "CustomPossAtomFor" + layoutNameFragment, true, "list", "$targetList");
 		}
 
 		private static string ChangeAttrValue(string savedCols, string layoutName, string attrName, string attrValue, string replaceWith)
@@ -381,7 +371,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				var index = match.Groups[1].Index;
 				// It is better to use Groups(1).Length here rather than attrValue.Length, because there may be some RE pattern
 				// in attrValue (e.g., \\$) which would make a discrepancy.
-				savedCols = savedCols.Substring(0, index) + replaceWith + savedCols.Substring(index +match.Groups[1].Length);
+				savedCols = savedCols.Substring(0, index) + replaceWith + savedCols.Substring(index + match.Groups[1].Length);
 			}
 			return savedCols;
 		}
@@ -427,15 +417,13 @@ namespace LanguageExplorer.Controls.XMLViews
 			return savedCols;
 		}
 
-		/// <summary>
-		/// This contructor is used by SortMethodFinder to make a braindead VC.
-		/// </summary>
+		/// <summary />
 		private void XmlBrowseViewBaseVcInit(LcmCache cache, ISilDataAccess sda)
 		{
 			Debug.Assert(cache != null);
 
 			m_madeUpFieldIdentifier = 0;
-			Cache = cache;	// sets m_mdc and m_layouts as well as m_cache.
+			Cache = cache;  // sets m_mdc and m_layouts as well as m_cache.
 			if (sda != null)
 			{
 				DataAccess = sda;
@@ -487,7 +475,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			return PossibleColumnSpecs;
 		}
 
-		int m_listItemsClass;
 		/// <summary>
 		/// the class (or base class) of the items in SortItemProvider
 		/// </summary>
@@ -516,7 +503,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 				return m_listItemsClass;
 			}
-
 			set
 			{
 				m_listItemsClass = value;
@@ -535,12 +521,12 @@ namespace LanguageExplorer.Controls.XMLViews
 			var partNode = GetPartFromParentNode(node, ListItemsClass);
 			if (partNode == null)
 			{
-				return false;	// invalid node, don't add.
+				return false;   // invalid node, don't add.
 			}
 			var badCustomField = CheckForBadCustomField(possibleColumns, node);
 			if (badCustomField)
 			{
-				return false;	// invalid custom field, don't add.
+				return false;   // invalid custom field, don't add.
 			}
 			var badReversalIndex = CheckForBadReversalIndex(node);
 			return !badReversalIndex;
@@ -631,7 +617,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			if (!m_cache.ServiceLocator.WritingSystemManager.Exists(sWs))
 			{
-				return true;	// invalid writing system
+				return true;    // invalid writing system
 			}
 			// Check whether we have a reversal index for the given writing system.
 			foreach (var idx in m_cache.LangProject.LexDbOA.ReversalIndexesOC)
@@ -727,15 +713,13 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public static uint RGB(int r, int g, int b)
 		{
-			return (uint)((byte)r|((byte)g << 8) | ((byte)b << 16));
+			return (uint)((byte)r | ((byte)g << 8) | ((byte)b << 16));
 		}
 
 		/// <summary>
 		/// Gets or sets the color of the border.
 		/// </summary>
 		public Color BorderColor { get; set; } = SystemColors.Control;
-
-		const int kclrBackgroundSelRow = 0xFFE6D7;
 
 		internal virtual int SelectedRowBackgroundColor(int hvo)
 		{
@@ -748,15 +732,13 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected virtual void AddTableRow(IVwEnv vwenv, int hvo, int frag)
 		{
 			// set the border color
-			vwenv.set_IntProperty((int )FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault, (int)RGB(BorderColor));
-
+			vwenv.set_IntProperty((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault, (int)RGB(BorderColor));
 			// If we're using this special mode where just one column is editable, we need to make
 			// sure as far as possible that everything else is not.
 			if (OverrideAllowEditColumn >= 0)
 			{
-				vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int) FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
+				vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
 			}
-
 			int index, hvoDummy, tagDummy;
 			var clev = vwenv.EmbeddingLevel;
 			vwenv.GetOuterObject(clev - 2, out hvoDummy, out tagDummy, out index);
@@ -764,7 +746,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return; // something to fix.
 			}
-
 			if (index == m_xbv.SelectedIndex && m_xbv.SelectedRowHighlighting != SelectionHighlighting.none)
 			{
 				vwenv.set_IntProperty((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, SelectedRowBackgroundColor(hvo));
@@ -774,7 +755,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault, (int)RGB(Color.FromKnownColor(KnownColor.Highlight)));
 				}
 			}
-
 			// Make a table.
 			var rglength = m_xbv.GetColWidthInfo();
 			var colCount = m_columns.Count;
@@ -782,7 +762,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				colCount++;
 			}
-
 			// LT-7014, 7058: add the additional columns that are needed
 			if (rglength.Length < colCount)
 			{
@@ -800,14 +779,12 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 				rglength = rglengthNEW;
 			}
-
 			// If the only columns specified are custom fields which have been deleted,
 			// we can't show anything!  (and we don't want to crash -- see LT-6449)
 			if (rglength.Length == 0)
 			{
 				return;
 			}
-
 			VwLength vl100; // Length representing 100% of the table width.
 			vl100.unit = rglength[0].unit;
 			vl100.nVal = 1;
@@ -816,12 +793,11 @@ namespace LanguageExplorer.Controls.XMLViews
 				Debug.Assert(vl100.unit == rglength[i].unit);
 				vl100.nVal += rglength[i].nVal;
 			}
-
 			vwenv.OpenTable(colCount, // this many columns
 				vl100, // using 100% of available space
 				72000 / 96, //0, // no border
 				VwAlignment.kvaLeft, // cells by default left aligned
-				//	VwFramePosition.kvfpBelow, //.kvfpBox, //.kvfpVoid, // no frame
+									 //	VwFramePosition.kvfpBelow, //.kvfpBox, //.kvfpVoid, // no frame
 				VwFramePosition.kvfpBelow | VwFramePosition.kvfpRhs,
 				VwRule.kvrlCols, // vertical lines between columns
 				0, // no space between cells
@@ -835,7 +811,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			// the table only has a body (no header or footer), and only one row.
 			vwenv.OpenTableBody();
 			vwenv.OpenTableRow();
-
 			if (HasSelectColumn)
 			{
 				AddSelectionCell(vwenv, hvo);
@@ -872,7 +847,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected virtual int GetActiveColumn(IVwEnv vwenv, int hvoRoot)
 		{
 			var icolActive = -1;
-			if (vwenv.DataAccess.get_IsPropInCache(hvoRoot, XMLViewsDataCache.ktagActiveColumn, (int) CellarPropertyType.Integer, 0))
+			if (vwenv.DataAccess.get_IsPropInCache(hvoRoot, XMLViewsDataCache.ktagActiveColumn, (int)CellarPropertyType.Integer, 0))
 			{
 				icolActive = vwenv.DataAccess.get_IntProp(hvoRoot, XMLViewsDataCache.ktagActiveColumn);
 			}
@@ -906,20 +881,18 @@ namespace LanguageExplorer.Controls.XMLViews
 			int tal;
 			if (fRightToLeft)
 			{
-				tal = fSortedFromEnd ? (int) FwTextAlign.ktalLeft : (int) FwTextAlign.ktalRight;
+				tal = fSortedFromEnd ? (int)FwTextAlign.ktalLeft : (int)FwTextAlign.ktalRight;
 			}
 			else
 			{
-				tal = fSortedFromEnd ? (int) FwTextAlign.ktalRight : (int) FwTextAlign.ktalLeft;
+				tal = fSortedFromEnd ? (int)FwTextAlign.ktalRight : (int)FwTextAlign.ktalLeft;
 			}
 			vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, tal);
-
 			// If this cell is audio, don't allow editing.
 			if (fVoice)
 			{
 				SetCellEditability(vwenv, false);
 			}
-
 			var fIsCellActive = false;
 			if (icolActive != 0 && m_PreviewArrowPic != null)
 			{
@@ -949,7 +922,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				// Paragraph directionality must be set before the paragraph is opened.
 				vwenv.set_IntProperty((int)FwTextPropType.ktptRightToLeft, (int)FwTextPropVar.ktpvEnum, IsWritingSystemRTL(node) ? -1 : 0);
 			}
-
 			// According to LT-8947, in bulk edit preview mode, we want to try to show the
 			// original cell contents on the same line with the preview arrow and the new cell contents.
 			// to accomplish this, we use 3 InnerPiles in a paragraph
@@ -968,10 +940,10 @@ namespace LanguageExplorer.Controls.XMLViews
 			//		</InnerPile>
 			// </Paragraph>
 			//
-
 			vwenv.OpenParagraph(); // <Paragraph>
 			var multiPara = XmlUtils.GetOptionalBooleanAttributeValue(node, "multipara", false);
-			vwenv.OpenInnerPile(); // <InnerPile>
+			// <InnerPile>
+			vwenv.OpenInnerPile();
 			// if the multi-para attribute is not specified, create a paragraph to wrap the cell contents.
 			var fParaOpened = false;
 			if (!multiPara)
@@ -979,7 +951,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				vwenv.OpenParagraph(); // <paragraph>
 				fParaOpened = true;
 			}
-
 			if (m_sortItemProvider == null)
 			{
 				try
@@ -988,9 +959,9 @@ namespace LanguageExplorer.Controls.XMLViews
 					{
 						SetForcedWs(node);
 					}
-				var nodeToProcess = GetColumnNode(node, hvo, m_sda, LayoutCache);
-				ProcessChildren(nodeToProcess, vwenv, hvo, null);
-			}
+					var nodeToProcess = GetColumnNode(node, hvo, m_sda, LayoutCache);
+					ProcessChildren(nodeToProcess, vwenv, hvo, null);
+				}
 				finally
 				{
 					// reset the ws for next column in the row.
@@ -1188,7 +1159,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptIsEditable);
 				vwenv.AddIntPropPic(XMLViewsDataCache.ktagItemSelected, this, kfragCheck, 0, 1);
 			}
-
 			vwenv.CloseTableCell();
 		}
 
@@ -1204,7 +1174,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			if (frag.Name == "preview")
 			{
-				vwenv.NoteDependency(new[] {hvo, hvo}, new[] {XMLViewsDataCache.ktagItemSelected, XMLViewsDataCache.ktagItemEnabled}, 2);
+				vwenv.NoteDependency(new[] { hvo, hvo }, new[] { XMLViewsDataCache.ktagItemSelected, XMLViewsDataCache.ktagItemEnabled }, 2);
 				// Explicitly insert the preview here, if enabled etc.
 				if (vwenv.DataAccess.get_IntProp(hvo, XMLViewsDataCache.ktagItemSelected) != 0 && vwenv.DataAccess.get_IntProp(hvo, XMLViewsDataCache.ktagItemEnabled) != 0)
 				{
@@ -1249,7 +1219,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					var fragId = GetId(dispCommand, m_idToDisplayCommand, m_displayCommandToId);
 					vwenv.AddObj(hvoToDisplay, this, fragId);
 				}
-				//ProcessChildren(nodeToProcess, vwenv, hvoToDisplay, null);
 				CloseOuterParts(outerParts, vwenv);
 			}
 			finally
@@ -1285,7 +1254,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		internal virtual bool AllowEdit(int icol, XElement node, bool fIsCellActive, int hvo)
 		{
 			// Do we want to allow editing in the cell? Irrelevant if it isn't the current row.
-			var fAllowEdit = false; // a default.
+			// a default.
+			var fAllowEdit = false;
 			// If a click copy column is active only that column is editable;
 			// otherwise any column marked editable or marked available for transducing is editable,
 			// unless it has a commitChanges (in that case, we only allow editing when it is a
@@ -1308,7 +1278,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					fAllowEdit = true;
 				}
-				// If there's a transduce and we're not explicity marked as being uneditable, we can edit
+				// If there's a transduce and we're not explicitly marked as being uneditable, we can edit
 				else if (XmlUtils.GetOptionalAttributeValue(node, "transduce") != null && XmlUtils.GetOptionalBooleanAttributeValue(node, "editable", true))
 				{
 					fAllowEdit = true;
@@ -1342,7 +1312,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					}
 				}
 			}
-
 			// But whatever else is going on, the user can't edit in a cell that is displaying a preview.
 			if (fIsCellActive)
 			{
@@ -1402,8 +1371,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			else
 			{
-				wsBest = WritingSystemServices.GetWritingSystem(
-					m_cache, m_sda, FwUtils.ConvertElement(xn), null, hvoBest, flidBest,
+				wsBest = WritingSystemServices.GetWritingSystem(m_cache, m_sda, FwUtils.ConvertElement(xn), null, hvoBest, flidBest,
 					m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
 			}
 			return wsBest;
@@ -1483,8 +1451,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Select an appropriate picture from the list for this fragment.
 		/// </summary>
-		public override IPicture DisplayPicture(IVwEnv vwenv, int hvo, int tag, int val,
-			int frag)
+		public override IPicture DisplayPicture(IVwEnv vwenv, int hvo, int tag, int val, int frag)
 		{
 			if (frag == kfragCheck)
 			{

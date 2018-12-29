@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,8 +8,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
-using SIL.FieldWorks.Common.FwUtils;
 using LanguageExplorer.Filters;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
@@ -20,14 +20,13 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// <summary />
 	public class ListChoiceComboItem : FilterComboItem
 	{
-		int m_hvoList; // root object of list.
-		LcmCache m_cache;
+		private int m_hvoList; // root object of list.
+		private LcmCache m_cache;
 		private IPropertyTable m_propertyTable;
-		FwComboBox m_combo;
-		bool m_fAtomic;
-		XElement m_colSpec;
-		Type m_filterType; // non-null for external fields.
-
+		private FwComboBox m_combo;
+		private bool m_fAtomic;
+		private XElement m_colSpec;
+		private Type m_filterType; // non-null for external fields.
 		/// <summary />
 		protected bool m_includeAbbr;
 		/// <summary />
@@ -54,13 +53,13 @@ namespace LanguageExplorer.Controls.XMLViews
 				// This basically duplicates the loading of treeBarHandler properties. Currently, we don't have access
 				// to that information in XMLViews, and even if we did, the information may not be loaded until
 				// the user actually switches to that RecordList.
-				var windowConfiguration = propertyTable.GetValue<XElement>("WindowConfiguration");
 				string owningClass;
 				string property;
 				BulkEditBar.GetListInfo(fsi.Spec, out owningClass, out property);
 #if RANDYTODO
-// TODO: "recordListNode" is a child of "clerk" elements.
-// TODO: "treeBarHandlerNode" is an optional sibling of "recordListNode".
+// TODO: "recordList" is a child of now obsolete "clerk" elements.
+// TODO: "treeBarHandler" is an optional sibling of "recordList".
+				var windowConfiguration = propertyTable.GetValue<XElement>("WindowConfiguration");
 				var recordListNode = windowConfiguration.XPathSelectElement(string.Format("//recordList[@owner='{0}' and @property='{1}']", owningClass, property));
 				var treeBarHandlerNode = recordListNode.Parent.XPathSelectElement("treeBarHandler");
 				m_includeAbbr = XmlUtils.GetBooleanAttributeValue(treeBarHandlerNode, "includeAbbr");
@@ -113,13 +112,11 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					return false;
 				}
-
 				var chosenHvos = (chooser.ChosenObjects.Select(obj => obj?.Hvo ?? 0)).ToArray();
 				if (chosenHvos.Length == 0)
 				{
 					return false;
 				}
-
 				var filter = MakeFilter(chooser.ListMatchMode, chosenHvos);
 				InvokeWithFilter(filter);
 				// Enhance JohnT: if there is just one item, maybe we could use its short name somehow?
@@ -134,8 +131,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				if (m_filterType.IsSubclassOf(typeof(ColumnSpecFilter)))
 				{
-					var ci = m_filterType.GetConstructor(new[] { typeof(LcmCache), typeof(ListMatchOptions), typeof(int[]), typeof(XElement)});
-					filter = (ListChoiceFilter)ci.Invoke(new object[] { m_cache, matchMode, chosenHvos, m_fsi.Spec});
+					var ci = m_filterType.GetConstructor(new[] { typeof(LcmCache), typeof(ListMatchOptions), typeof(int[]), typeof(XElement) });
+					filter = (ListChoiceFilter)ci.Invoke(new object[] { m_cache, matchMode, chosenHvos, m_fsi.Spec });
 				}
 				else
 				{
@@ -165,7 +162,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			if (m_fsi.Spec == null)
 			{
-				return;	// doesn't have a spec to create ColumnSpecFilter
+				return; // doesn't have a spec to create ColumnSpecFilter
 			}
 			var labels = GetObjectLabelsForList();
 			var chosenHvos = new List<int>();
@@ -197,7 +194,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary />
 		private void InvokeWithFilter(ListChoiceFilter filter)
 		{
-			filter.MakeUserVisible(true);	// This fixes LT-6250.
+			// This fixes LT-6250.
+			filter.MakeUserVisible(true);
 			// Todo: do something about persisting and restoring the filter.
 			// We can't call base.Invoke because it is designed for FilterBarCellFilters.
 			var label = MakeLabel(filter);
@@ -231,17 +229,16 @@ namespace LanguageExplorer.Controls.XMLViews
 				switch (filter.Mode)
 				{
 					case ListMatchOptions.None:
-					{
-						return ComposeLabel(name, XMLViewsStrings.ksNotX);
-					}
+						{
+							return ComposeLabel(name, XMLViewsStrings.ksNotX);
+						}
 					case ListMatchOptions.Exact:
-					{
-						return ComposeLabel(name, XMLViewsStrings.ksOnlyX);
-					}
+						{
+							return ComposeLabel(name, XMLViewsStrings.ksOnlyX);
+						}
 					default: //  appropriate for both Any and All, which mean the same in this case.
 						return name;
 				}
-
 			}
 			string label;
 			switch (filter.Mode)

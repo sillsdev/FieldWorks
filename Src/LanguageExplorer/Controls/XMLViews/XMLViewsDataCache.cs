@@ -1,12 +1,12 @@
-// Copyright (c) 2008-2018 SIL International
+// Copyright (c) 2008-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Application;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
 using HvoFlidKey = SIL.LCModel.Application.HvoFlidKey;
 using HvoFlidWSKey = SIL.LCModel.Application.HvoFlidWSKey;
@@ -16,7 +16,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// <summary>
 	/// A 'Decorator' class for the LCM ISilDataAccess implementation.
 	/// This class allows for caching the 'fake' flids used in a browse view
-	/// (i.e., flides used for the check box and selection, etc.).
+	/// (i.e., flids used for the check box and selection, etc.).
 	/// </summary>
 	public class XMLViewsDataCache : DomainDataByFlidDecoratorBase
 	{
@@ -54,11 +54,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public const int ktagAlternateValue = 90000003;
 		internal const int ktagTagMe = 90000004;
-
 		// This group support Rapid Data Entry views (XmlBrowseRDEView).
 		internal const int ktagEditColumnBase = 91000000;
 		internal const int ktagEditColumnLim = 91000100;  // arbitrary max
-
 		/// <summary>
 		/// Used for multi column preview such as in assigning phonological features to phonemes.
 		/// A preview may be stored for each column using ktagAlternateValueMultiBase + column index.
@@ -66,13 +64,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public const int ktagAlternateValueMultiBase = 92000000;
 		internal const int ktagAlternateValueMultiBaseLim = 92000100;
-
 		// Stores override values (when value is different from DefaultSelected) for ktagItemSelected.
-
 		private readonly Dictionary<HvoFlidKey, int> m_integerCache = new Dictionary<HvoFlidKey, int>();
 		private readonly Dictionary<HvoFlidWSKey, ITsString> m_mlStringCache = new Dictionary<HvoFlidWSKey, ITsString>();
 		private readonly Dictionary<HvoFlidKey, ITsString> m_stringCache = new Dictionary<HvoFlidKey, ITsString>();
-
 		/// <summary>
 		/// This virtual flid needs special treatment, as we need to maintain any separators
 		/// (semicolons) typed by the user, but also need to feed the string through to the
@@ -81,9 +76,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		internal int m_tagReversalEntriesBulkText;
 
-		/// <summary>
-		/// The main constructor.
-		/// </summary>
+		/// <summary />
 		public XMLViewsDataCache(ISilDataAccessManaged domainDataByFlid, bool defaultSelected, Dictionary<int, int> selectedItems)
 			: base(domainDataByFlid)
 		{

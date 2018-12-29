@@ -345,6 +345,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		private List<FwMenuItem> BuildMenu(string menuId)
 		{
 			var rgfmi = new List<FwMenuItem>();
+#if RANDYTODO
+			// TODO: Nobody will be home.
+#endif
 			var xnWindow = PropertyTable.GetValue<XElement>("WindowConfiguration");
 			Debug.Assert(xnWindow != null);
 			var xnMenu = xnWindow.XPathSelectElement("contextMenus/menu[@id=\"" + menuId + "\"]");
