@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -31,15 +31,12 @@ namespace LanguageExplorer.Controls.Styles
 		private const int kLineHeight = 5;
 		private const int kLineSpacing = 2;
 		private const int kmptPerPixel = 3000;
-
 		// Indices into the line spacing combo box.
 		private const int kAtLeastIndex = 4;
 		private const int kExactlyIndex = 5;
-
 		// Indices into the indentation combo box.
 		private const int kFirstLineIndex = 2;
 		private const int kHangingIndex = 3;
-
 		private bool m_fShowBiDiLabels;
 		private bool m_dontUpdateInheritance = true;
 		private StyleInfo m_currentStyleInfo;
@@ -69,7 +66,6 @@ namespace LanguageExplorer.Controls.Styles
 					ChangedToUnspecified?.Invoke(this, EventArgs.Empty);
 				}
 			}
-
 			if (sender is UpDownMeasureControl)
 			{
 				var ctrl = (UpDownMeasureControl)sender;
@@ -89,7 +85,6 @@ namespace LanguageExplorer.Controls.Styles
 						m_cboLineSpacing.AdjustedSelectedIndex = 0;
 						return;
 					}
-
 					m_dontUpdateInheritance = true;
 					if (m_currentStyleInfo.Inherits)
 					{
@@ -119,7 +114,6 @@ namespace LanguageExplorer.Controls.Styles
 						{
 							throw new Exception("Somebody added a new nud control");
 						}
-
 						prop.ResetToInherited(inheritedValue);
 						ctrl.ForeColor = GetCtrlForeColorForProp(prop);
 						ctrl.MeasureValue = prop.Value;
@@ -142,7 +136,6 @@ namespace LanguageExplorer.Controls.Styles
 						m_nudSpacingAt.MeasureMin = 1000;
 						break;
 				}
-
 				//Enable/Disable the line spacing size combo box
 				//when the appropriate kind of line spacing is selected in the m_cboLineSpacing combobox
 				var index = m_cboLineSpacing.AdjustedSelectedIndex;
@@ -161,7 +154,6 @@ namespace LanguageExplorer.Controls.Styles
 				m_nudIndentBy.Enabled = (index == kFirstLineIndex || index == kHangingIndex) && !IsInherited(m_cboSpecialIndentation);
 			}
 			m_pnlPreview.Refresh();
-
 			if (!m_dontUpdateInheritance)
 			{
 				// Enable style reset ability immediately by causing the stye to be IsModified.
@@ -179,7 +171,6 @@ namespace LanguageExplorer.Controls.Styles
 			var drawRect = m_pnlPreview.ClientRectangle;
 			e.Graphics.FillRectangle(SystemBrushes.Window, drawRect);
 			drawRect.Inflate(-4, -4);
-
 			DrawAdjacentPreview(2, ref drawRect, e.Graphics);
 			DrawParaPreview(ref drawRect, e.Graphics);
 			DrawAdjacentPreview(3, ref drawRect, e.Graphics);
@@ -204,15 +195,12 @@ namespace LanguageExplorer.Controls.Styles
 			// Don't allow controls to undo their inherited state while filling in
 			m_dontUpdateInheritance = true;
 			m_currentStyleInfo = styleInfo;
-
 			// Initialize controls based on whether or not this style inherits from another style.
 			InitControlBehavior(styleInfo.Inherits);
-
 			// LTR or RTL
 			m_cboDirection.SetInheritableProp(styleInfo.IRightToLeftStyle);
 			m_cboDirection.AdjustedSelectedIndex = (int)styleInfo.IRightToLeftStyle.Value;
 			ChangeDirectionLabels(styleInfo.IRightToLeftStyle.Value == TriStateBool.triNotSet || m_fShowBiDiLabels ? m_fShowBiDiLabels : styleInfo.IRightToLeftStyle.Value == TriStateBool.triTrue);
-
 			// Paragraph Alignment
 			m_cboAlignment.SetInheritableProp(styleInfo.IAlignment);
 			switch (styleInfo.IAlignment.Value)
@@ -224,7 +212,6 @@ namespace LanguageExplorer.Controls.Styles
 				case FwTextAlign.ktalTrailing: m_cboAlignment.AdjustedSelectedIndex = 5; break;
 				case FwTextAlign.ktalJustify: m_cboAlignment.AdjustedSelectedIndex = 6; break;
 			}
-
 			// Special indent
 			m_cboSpecialIndentation.SetInheritableProp(styleInfo.IFirstLineIndent);
 			if (styleInfo.IFirstLineIndent.Value == 0)
@@ -241,7 +228,6 @@ namespace LanguageExplorer.Controls.Styles
 			}
 			m_nudIndentBy.ForeColor = GetCtrlForeColorForProp(styleInfo.IFirstLineIndent);
 			m_nudIndentBy.MeasureValue = Math.Abs(styleInfo.IFirstLineIndent.Value);
-
 			// update the up/down measure controls
 			m_nudLeftIndentation.ForeColor = GetCtrlForeColorForProp(styleInfo.ILeadingIndent);
 			m_nudLeftIndentation.MeasureValue = styleInfo.ILeadingIndent.Value;
@@ -251,7 +237,6 @@ namespace LanguageExplorer.Controls.Styles
 			m_nudBefore.MeasureValue = styleInfo.ISpaceBefore.Value;
 			m_nudAfter.ForeColor = GetCtrlForeColorForProp(styleInfo.ISpaceAfter);
 			m_nudAfter.MeasureValue = styleInfo.ISpaceAfter.Value;
-
 			var info = styleInfo.ILineSpacing.Value;
 			m_cboLineSpacing.SetInheritableProp(styleInfo.ILineSpacing);
 			m_nudSpacingAt.ForeColor = GetCtrlForeColorForProp(styleInfo.ILineSpacing);
@@ -287,11 +272,9 @@ namespace LanguageExplorer.Controls.Styles
 						break;
 				}
 			}
-
 			var fontInfo = styleInfo.FontInfoForWs(-1); // get default fontInfo
 			m_cboBackground.ForeColor = GetCtrlForeColorForProp(fontInfo.m_backColor);
 			m_cboBackground.ColorValue = fontInfo.m_backColor.Value;
-
 			m_dontUpdateInheritance = false;
 		}
 
@@ -305,7 +288,6 @@ namespace LanguageExplorer.Controls.Styles
 				Debug.Assert(false, "Somehow, the Paragraph tab has been asked to write its data to a character-based style [" + styleInfo.Name + "].");
 				return;
 			}
-
 			// direction
 			var newInherit = IsInherited(m_cboDirection);
 			if (styleInfo.IRightToLeftStyle.Save(newInherit, (TriStateBool)m_cboDirection.SelectedIndex))
@@ -324,12 +306,10 @@ namespace LanguageExplorer.Controls.Styles
 				case 5: newAlignment = FwTextAlign.ktalTrailing; break;
 				case 6: newAlignment = FwTextAlign.ktalJustify; break;
 			}
-
 			if (styleInfo.IAlignment.Save(newInherit, newAlignment))
 			{
 				styleInfo.Dirty = true;
 			}
-
 			// background color - only save it if the control is visible
 			if (m_cboBackground.Visible)
 			{
@@ -340,14 +320,12 @@ namespace LanguageExplorer.Controls.Styles
 					styleInfo.Dirty = true;
 				}
 			}
-
 			// left indent
 			newInherit = IsInherited(m_nudLeftIndentation);
 			if (styleInfo.ILeadingIndent.Save(newInherit, m_nudLeftIndentation.MeasureValue))
 			{
 				styleInfo.Dirty = true;
 			}
-
 			// right indent
 			newInherit = IsInherited(m_nudRightIndentation);
 			if (styleInfo.ITrailingIndent.Save(newInherit, m_nudRightIndentation.MeasureValue))
@@ -366,21 +344,18 @@ namespace LanguageExplorer.Controls.Styles
 			{
 				styleInfo.Dirty = true;
 			}
-
 			// spacing before
 			newInherit = IsInherited(m_nudBefore);
 			if (styleInfo.ISpaceBefore.Save(newInherit, m_nudBefore.MeasureValue))
 			{
 				styleInfo.Dirty = true;
 			}
-
 			// spacing after
 			newInherit = IsInherited(m_nudAfter);
 			if (styleInfo.ISpaceAfter.Save(newInherit, m_nudAfter.MeasureValue))
 			{
 				styleInfo.Dirty = true;
 			}
-
 			// line spacing
 			var index = m_cboLineSpacing.AdjustedSelectedIndex;
 			newInherit = m_cboLineSpacing.IsInherited;
@@ -461,8 +436,7 @@ namespace LanguageExplorer.Controls.Styles
 		/// <summary>
 		/// Gets a value indicating whether the direction is right-to-left.
 		/// </summary>
-		private bool RtoL => (TriStateBool)m_cboDirection.SelectedIndex == TriStateBool.triNotSet &&
-							 DefaultTextDirectionRtoL || (TriStateBool)m_cboDirection.SelectedIndex == TriStateBool.triTrue;
+		private bool RtoL => (TriStateBool)m_cboDirection.SelectedIndex == TriStateBool.triNotSet && DefaultTextDirectionRtoL || (TriStateBool)m_cboDirection.SelectedIndex == TriStateBool.triTrue;
 		#endregion
 
 		#region Private helper methods
@@ -488,7 +462,6 @@ namespace LanguageExplorer.Controls.Styles
 			{
 				return true;
 			}
-
 			return c.ForeColor.ToArgb() != SystemColors.WindowText.ToArgb();
 		}
 
@@ -567,14 +540,12 @@ namespace LanguageExplorer.Controls.Styles
 					lineRect.X += leftIndent;
 				}
 				lineRect.Width -= leftIndent;
-
 				var rightIndent = m_nudRightIndentation.MeasureValue / kmptPerPixel;
 				if (RtoL)
 				{
 					lineRect.X += rightIndent;
 				}
 				lineRect.Width -= rightIndent;
-
 				// On the last line, we need to add the paragraph trailing space to the background
 				// and adjust the drawRect with it too.
 				var bottomSpace = 0;
@@ -582,25 +553,20 @@ namespace LanguageExplorer.Controls.Styles
 				{
 					bottomSpace = m_nudAfter.MeasureValue / kmptPerPixel;
 				}
-
 				// If the line spacing is other than single, then adjust the bottom space
 				switch (m_cboLineSpacing.AdjustedSelectedIndex)
 				{
 					case 0: // unspecified
 						Debug.Fail("Unspecified should never be selected.");
 						break;
-
 					case 1: // single
 						break;
-
 					case 2: // 1.5
 						bottomSpace += (kLineSpacing / 2);
 						break;
-
 					case 3: // double
 						bottomSpace += kLineSpacing;
 						break;
-
 					case kAtLeastIndex: // at least
 					case kExactlyIndex: // exactly
 										// only adjust for this at values above 12pt.
@@ -611,12 +577,10 @@ namespace LanguageExplorer.Controls.Styles
 						}
 						break;
 				}
-
 				// Draw the background and the line
 				var lineBackground = new Rectangle(drawRect.X + leftIndent, drawRect.Y, drawRect.Width - leftIndent - rightIndent, (lineRect.Bottom - drawRect.Y) + +bottomSpace + ((i < 2) ? kLineSpacing : 0));
 				g.FillRectangle(new SolidBrush(m_cboBackground.ColorValue), lineBackground);
 				g.FillRectangle(SystemBrushes.WindowText, lineRect);
-
 				// Adjust the drawRect to remove the space for the line just drawn
 				var rectAdjust = (lineRect.Bottom + kLineSpacing + bottomSpace) - drawRect.Y;
 				drawRect.Y += rectAdjust;
@@ -635,7 +599,6 @@ namespace LanguageExplorer.Controls.Styles
 			// Adjust it down by the "before" space
 			var mpt = m_nudBefore.MeasureValue;
 			lineRect.Offset(0, mpt / kmptPerPixel);
-
 			// If "first line" indentation is chosen, then indent the line
 			if (m_cboSpecialIndentation.AdjustedSelectedIndex == 2)
 			{
@@ -646,9 +609,7 @@ namespace LanguageExplorer.Controls.Styles
 				}
 				lineRect.Width -= (mpt / kmptPerPixel);
 			}
-
 			AdjustLineForFudge(ref lineRect, 24);
-
 			return lineRect;
 		}
 
@@ -672,12 +633,10 @@ namespace LanguageExplorer.Controls.Styles
 				}
 				lineRect.Width -= (mpt / kmptPerPixel);
 			}
-
 			if (lineNumber == 2)
 			{
 				AdjustLineForFudge(ref lineRect, 36);
 			}
-
 			return lineRect;
 		}
 
@@ -691,7 +650,6 @@ namespace LanguageExplorer.Controls.Styles
 			{
 				case 0: // unspecified: Get from the inherited stuff -- this should probably never happen
 					break;
-
 				case 1: // leading
 					if (RtoL)
 					{
@@ -699,21 +657,17 @@ namespace LanguageExplorer.Controls.Styles
 					}
 					lineRect.Width -= lineFudge;
 					break;
-
 				case 2: // left
 					lineRect.Width -= lineFudge;
 					break;
-
 				case 3: // centered
 					lineRect.X += lineFudge / 2;
 					lineRect.Width -= lineFudge;
 					break;
-
 				case 4: // right
 					lineRect.X += lineFudge;
 					lineRect.Width -= lineFudge;
 					break;
-
 				case 5: // trailing
 					if (!RtoL)
 					{
@@ -721,7 +675,6 @@ namespace LanguageExplorer.Controls.Styles
 					}
 					lineRect.Width -= lineFudge;
 					break;
-
 				case 6: // justified
 					break;
 			}

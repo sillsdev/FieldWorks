@@ -1,4 +1,4 @@
-// SilSidePane, Copyright 2008-2018 SIL International. All rights reserved.
+// SilSidePane, Copyright 2008-2019 SIL International. All rights reserved.
 // SilSidePane is licensed under the Code Project Open License (CPOL), <http://www.codeproject.com/info/cpol10.aspx>.
 // Derived from OutlookBar v2 2005 <http://www.codeproject.com/KB/vb/OutlookBar.aspx>, Copyright 2007 by Star Vega.
 // Changed in 2008 and 2009 by SIL International to convert to C# and add more functionality.
@@ -19,16 +19,12 @@ namespace LanguageExplorer.Controls.SilSidePane
 		private ImageList _smallImageList;
 		private ImageList _largeImageList;
 
-		/// <summary>
-		/// Default constructor
-		/// </summary>
+		/// <summary />
 		public ListViewItemArea()
 		{
 			Items = new List<Item>();
-
 			_smallImageList = new ImageList();
 			_largeImageList = new ImageList();
-
 			ItemSelectionChanged += HandleWidgetSelectionChanged;
 			View = View.List;
 			Name = "sidepane_listview";
@@ -40,14 +36,11 @@ namespace LanguageExplorer.Controls.SilSidePane
 			HideSelection = false;
 			if (MiscUtils.IsUnix)
 			{
-				LabelWrap = false;		// Fix FWNX-739 as best we can (no ellipsis when trimming like in Windows).
+				LabelWrap = false;      // Fix FWNX-739 as best we can (no ellipsis when trimming like in Windows).
 			}
 		}
 
-		/// <summary>
-		/// Dispose object.
-		/// </summary>
-		/// <param name="disposing"></param>
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "******* Missing Dispose() call for " + GetType() + ". *******");
@@ -60,16 +53,14 @@ namespace LanguageExplorer.Controls.SilSidePane
 		/// <summary>
 		/// Add an Item.
 		/// </summary>
-		/// <param name="item"></param>
 		public void Add(Item item)
 		{
 			var widget = new ListViewItem
-				{
-					Name = item.Name,
-					Text = item.Text,
-					Tag = item,
-				};
-
+			{
+				Name = item.Name,
+				Text = item.Text,
+				Tag = item,
+			};
 			if (item.Icon != null)
 			{
 				_smallImageList.Images.Add(item.Icon);
@@ -77,9 +68,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 				// Set widget icon to the one we just added
 				widget.ImageIndex = _smallImageList.Images.Count - 1;
 			}
-
 			item.UnderlyingWidget = widget;
-
 			base.Items.Add(widget);
 			Items.Add(item);
 		}
@@ -99,9 +88,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		/// </summary>
 		public void SelectItem(Item item)
 		{
-			var widget = (ListViewItem)item.UnderlyingWidget;
-
-			widget.Selected = true;
+			((ListViewItem)item.UnderlyingWidget).Selected = true;
 		}
 
 		/// <summary>
@@ -182,7 +169,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
-
 			// This fixes LT-583 (in part)
 			if (SelectedItems.Count > 0)
 			{
@@ -192,7 +178,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 			{
 				EnsureVisible(0);
 			}
-
 			// This is a really bad hack, but it seems to be the only way that I know of to get around
 			// this bug in XP. EnsureVisible doesn't seem to work when we get in to this weird state
 			// in XP, so we go ahead and rebuild the entire list.
@@ -200,7 +185,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 			{
 				return;
 			}
-
 			ListViewItem selected = null;
 			if (SelectedItems.Count > 0)
 			{

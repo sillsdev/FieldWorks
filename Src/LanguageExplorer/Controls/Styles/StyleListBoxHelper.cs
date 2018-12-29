@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -106,16 +106,13 @@ namespace LanguageExplorer.Controls.Styles
 			Debug.Assert(listBox != null);
 			m_ctrl = listBox;
 			m_ctrl.SystemColorsChanged += CtrlSystemColorsChanged;
-
 			m_origCharStyleIcon = new Bitmap(ResourceHelper.CharStyleIcon);
 			m_origParaStyleIcon = new Bitmap(ResourceHelper.ParaStyleIcon);
 			m_origDataPropStyleIcon = new Bitmap(ResourceHelper.DataPropStyleIcon);
 			m_origCurrCharStyleIcon = new Bitmap(ResourceHelper.SelectedCharStyleIcon);
 			m_origCurrParaStyleIcon = new Bitmap(ResourceHelper.SelectedParaStyleIcon);
-
 			// Forces the icon bitmaps to get created.
 			CtrlSystemColorsChanged(null, null);
-
 			m_charStyleIcon.MakeTransparent(Color.Magenta);
 			m_paraStyleIcon.MakeTransparent(Color.Magenta);
 			m_dataPropStyleIcon.MakeTransparent(Color.Magenta);
@@ -126,7 +123,6 @@ namespace LanguageExplorer.Controls.Styles
 			m_currParaStyleIcon.MakeTransparent(Color.Magenta);
 			m_currSelectedCharStyleIcon.MakeTransparent(Color.Magenta);
 			m_currSelectedParaStyleIcon.MakeTransparent(Color.Magenta);
-
 			listBox.DrawMode = DrawMode.OwnerDrawFixed;
 			listBox.DrawItem += CtrlDrawItem;
 			listBox.SelectedIndexChanged += CtrlSelectedIndexChanged;
@@ -433,7 +429,6 @@ namespace LanguageExplorer.Controls.Styles
 			m_currParaStyleIcon = new Bitmap(m_origCurrParaStyleIcon);
 			m_currSelectedCharStyleIcon = new Bitmap(m_origCurrCharStyleIcon);
 			m_currSelectedParaStyleIcon = new Bitmap(m_origCurrParaStyleIcon);
-
 			SetBmpColor(m_charStyleIcon, SystemColors.WindowText);
 			SetBmpColor(m_paraStyleIcon, SystemColors.WindowText);
 			SetBmpColor(m_dataPropStyleIcon, SystemColors.WindowText);
@@ -444,7 +439,6 @@ namespace LanguageExplorer.Controls.Styles
 			SetBmpColor(m_currParaStyleIcon, SystemColors.WindowText);
 			SetBmpColor(m_currSelectedCharStyleIcon, SystemColors.HighlightText);
 			SetBmpColor(m_currSelectedParaStyleIcon, SystemColors.HighlightText);
-
 			m_ctrl.Invalidate();
 		}
 
@@ -456,7 +450,6 @@ namespace LanguageExplorer.Controls.Styles
 			var selected = ((e.State & DrawItemState.Selected) != 0);
 			// Draw the item's background fill
 			e.Graphics.FillRectangle(new SolidBrush((selected ? SystemColors.Highlight : SystemColors.Window)), e.Bounds);
-
 			// Don't bother doing any more painting if there isn't anything to paint.
 			if (e.Index < 0)
 			{
@@ -466,26 +459,22 @@ namespace LanguageExplorer.Controls.Styles
 			rc.Inflate(-1, 0);
 			rc.X += 2;
 			rc.Width -= 2;
-
 			// Get the item being drawn.
 			var item = (StyleListItem)ListBoxControl.Items[e.Index];
-
 			// Determine what image to draw, considering the selection state of the item and
 			// whether the item is a character style or a paragraph style.
 			var icon = GetCorrectIcon(item, selected);
-
 			// Draw the icon only if we're not drawing a combo box's edit portion.
 			if ((e.State & DrawItemState.ComboBoxEdit) == 0)
 			{
 				e.Graphics.DrawImage(icon, rc.Left, rc.Top + (rc.Height - icon.Height) / 2);
 			}
-
 			// Draw the item's text, considering the item's selection state. Item text in the
 			// edit portion will be draw further left than those in the drop-down because text
 			// in the edit portion doesn't have the icon to the left.
-			e.Graphics.DrawString(item.Name, m_ctrl.Font,
-				selected ? SystemBrushes.HighlightText : SystemBrushes.WindowText,
-				rc.Left + ((e.State & DrawItemState.ComboBoxEdit) != 0 ? 0 : icon.Width),
+			e.Graphics.DrawString(item.Name, m_ctrl.Font, selected
+					? SystemBrushes.HighlightText
+					: SystemBrushes.WindowText, rc.Left + ((e.State & DrawItemState.ComboBoxEdit) != 0 ? 0 : icon.Width),
 				rc.Top);
 		}
 		#endregion
@@ -509,10 +498,8 @@ namespace LanguageExplorer.Controls.Styles
 		{
 			// Save the index of the selected item so it can be restored later.
 			var oldSelectedIndex = ListBoxControl.SelectedIndex;
-
 			m_styleItemList.Remove(style.Name);
 			Refresh();
-
 			if (oldSelectedIndex >= ListBoxControl.Items.Count)
 			{
 				--oldSelectedIndex;
@@ -573,11 +560,9 @@ namespace LanguageExplorer.Controls.Styles
 			{
 				// get the list of items into an array list that can be sorted
 				var itemsList = new List<StyleListItem>(m_styleItemList.Values.Where(OkToAddItem));
-
 				// If the list contains the default paragraph characters style then remove it
 				// from the list so it can be removed from the list while sorting.
 				var defaultParaCharsStyle = itemsList.FirstOrDefault(item => item.Name == StyleUtils.DefaultParaCharsStyleName);
-
 				if (defaultParaCharsStyle != null)
 				{
 					itemsList.Remove(defaultParaCharsStyle);
@@ -652,15 +637,12 @@ namespace LanguageExplorer.Controls.Styles
 			{
 				return;
 			}
-
 			var selectedStyle = ListBoxControl.SelectedItem?.ToString() ?? string.Empty;
 			ListBoxControl.Items.Clear();
 			ListBoxControl.BeginUpdate();
 			ListBoxControl.Items.AddRange(items);
 			ListBoxControl.EndUpdate();
-
 			SelectedStyleName = selectedStyle;
-
 			// Ensure an item is selected, even if the previous selection is no longer
 			// shown.
 			if (!string.IsNullOrEmpty(selectedStyle) && ListBoxControl.SelectedItem == null)
@@ -715,7 +697,6 @@ namespace LanguageExplorer.Controls.Styles
 			}
 			// Add an item for the Default Paragraph Characters pseudo style.
 			m_styleItemList.Add(StyleUtils.DefaultParaCharsStyleName, StyleListItem.CreateDefaultParaCharItem());
-
 			foreach (BaseStyleInfo styleInfo in styleInfos)
 			{
 				m_styleItemList.Add(styleInfo.Name, new StyleListItem(styleInfo));
@@ -767,7 +748,6 @@ namespace LanguageExplorer.Controls.Styles
 			{
 				return false;
 			}
-
 			// If the context is internal and we aren't trying to show internal styles,
 			// it's not OK to add
 			// REVIEW: This should probably use StyleServices.IsContextInternal
@@ -775,14 +755,12 @@ namespace LanguageExplorer.Controls.Styles
 			{
 				return false;
 			}
-
 			// If there's an excluded function list and the item's function is in it, it's not OK
 			// to add.
 			if (m_excludedFunctions != null && m_excludedFunctions.Count > 0 && m_excludedFunctions.Contains(item.Function))
 			{
 				return false;
 			}
-
 			// Add or reject based on the Include context list
 			if (!UnionIncludeAndTypeFilter && m_includedContexts != null && m_includedContexts.Count > 0 && !m_includedContexts.Contains(item.Context))
 			{
@@ -795,7 +773,6 @@ namespace LanguageExplorer.Controls.Styles
 				// include list will be added even if they would be excluded by the filter).
 				return true;
 			}
-
 			// See if the style should be excluded based on its type (character or paragraph)
 			if (ShowOnlyStylesOfType == StyleType.kstParagraph && item.Type != StyleType.kstParagraph)
 			{

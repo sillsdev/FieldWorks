@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -23,7 +23,6 @@ namespace LanguageExplorer.Controls.PaneBar
 		private readonly string _uncheckedLabel;
 		private bool _isChecked;
 
-
 		/// <summary>
 		/// Constructor
 		/// </summary>
@@ -43,20 +42,17 @@ namespace LanguageExplorer.Controls.PaneBar
 			_isChecked = _propertyTable.GetValue(_property, false);
 			_checkedLabel = checkedLabel;
 			_uncheckedLabel = uncheckedLabel;
-
 			Dock = DockStyle.Right;
 			Font = new Font("Tahoma", 13F, FontStyle.Regular, GraphicsUnit.Point, 0);
 			Location = new Point(576, 2);
 			Name = "panelButton";
 			Anchor = AnchorStyles.None;
 			Size = new Size(120, 20);
-
 			MouseEnter += panelButton_MouseEnter;
 			MouseLeave += panelButton_MouseLeave;
 			MouseDown += panelButton_MouseDown;
 			Click += PanelButton_CheckBox_Clicked;
 			TabIndex = 0;
-
 			SetLabel();
 		}
 
@@ -80,13 +76,11 @@ namespace LanguageExplorer.Controls.PaneBar
 		{
 			const int checkBoxWidth = 17;
 			Text = _isChecked ? _checkedLabel : _uncheckedLabel;
-
 			using (var g = CreateGraphics())
 			{
 				var labelWidth = (int)(g.MeasureString(Text + "_", Font).Width);
 				Width = labelWidth;
 			}
-
 			// Simulate a mouse enter or leave event to get the correct highlighting
 			if (_mouseOverControl)
 			{
@@ -96,7 +90,6 @@ namespace LanguageExplorer.Controls.PaneBar
 			{
 				panelButton_MouseLeave(null, null);
 			}
-
 			// Unwire event handlers
 			foreach (Control control in Controls)
 			{
@@ -119,7 +112,6 @@ namespace LanguageExplorer.Controls.PaneBar
 				control.Dispose();
 			}
 			Controls.Clear(); // Clear out any previous checkboxes and images
-
 			// Add in a checkbox that reflects the "checked" status of the button
 			var checkBox = new CheckBox
 			{
@@ -136,9 +128,7 @@ namespace LanguageExplorer.Controls.PaneBar
 			checkBox.MouseLeave += panelButton_MouseLeave;
 			checkBox.MouseDown += panelButton_MouseDown;
 			Controls.Add(checkBox);
-
 			Width += checkBox.Width;
-
 			if (_image != null)
 			{
 #if RANDYTODO
@@ -189,6 +179,11 @@ namespace LanguageExplorer.Controls.PaneBar
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
 
 			if (disposing)
 			{
@@ -215,7 +210,6 @@ namespace LanguageExplorer.Controls.PaneBar
 		private void panelButton_MouseEnter(object sender, EventArgs e)
 		{
 			_mouseOverControl = true;
-
 			Refresh();
 		}
 
@@ -227,7 +221,6 @@ namespace LanguageExplorer.Controls.PaneBar
 		private void panelButton_MouseLeave(object sender, EventArgs e)
 		{
 			_mouseOverControl = false;
-
 			Refresh();
 		}
 	}

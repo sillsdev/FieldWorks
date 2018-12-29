@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,7 +8,6 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
@@ -86,7 +85,6 @@ namespace LanguageExplorer.Controls.Styles
 					change = true;
 				}
 			}
-
 			//// TE-5238: Make sure that font size is not set to 0.
 			//// LT-8812: Make sure that font size is not empty (which is interpreted as 0).
 			if ((correctedText.Length > 0 && (int)char.GetNumericValue(correctedText.ToString()[0]) <= 0) || correctedText.Length == 0)
@@ -98,7 +96,6 @@ namespace LanguageExplorer.Controls.Styles
 				correctedText.Append('1');
 				change = true;
 			}
-
 			if (change)
 			{
 				m_cboFontSize.Text = correctedText.ToString();
@@ -134,10 +131,8 @@ namespace LanguageExplorer.Controls.Styles
 			// THEN, we can safely go back to "unspecified" font features
 			// NOTE: fontInfoForWs.m_fontName.IsInherited doesn't get set until SaveToInfo()
 			// and IsInherited(m_cboFontNames) can change in ValueChanged()...so just use SelectedIndex == 0
-			else if ((m_cboFontNames.SelectedIndex == 0 && inheritedFontInfo.m_fontName.IsInherited) ||
-				(inheritedFontInfo.m_fontName.ValueIsSet &&
-				(m_cboFontNames.Text == inheritedFontInfo.m_fontName.Value ||
-				inheritedFontInfo.m_features.ValueIsSet && inheritedFontInfo.m_features.Value == null)))
+			else if (m_cboFontNames.SelectedIndex == 0 && inheritedFontInfo.m_fontName.IsInherited || inheritedFontInfo.m_fontName.ValueIsSet
+			         && (m_cboFontNames.Text == inheritedFontInfo.m_fontName.Value || inheritedFontInfo.m_features.ValueIsSet && inheritedFontInfo.m_features.Value == null))
 			{
 				fontInfoForWs.m_features.ResetToInherited(inheritedFontInfo.m_features);
 				m_FontAttributes.FontFeaturesTag = true;
@@ -153,7 +148,6 @@ namespace LanguageExplorer.Controls.Styles
 				fontInfoForWs.m_features.ExplicitValue = null;
 				m_FontAttributes.FontFeaturesTag = false;
 			}
-
 			m_FontAttributes.FontName = m_cboFontNames.Text;
 			ValueChanged(sender, e);
 		}
@@ -189,7 +183,6 @@ namespace LanguageExplorer.Controls.Styles
 			}
 			var item = m_lstWritingSystems.SelectedItems[0];
 			SaveToInfo(m_currentStyleInfo);
-
 			// reconnect styles and update
 			RequestStyleReconnect?.Invoke(this, EventArgs.Empty);
 			UpdateForStyle(m_currentStyleInfo, (int)item.Tag);
@@ -206,7 +199,6 @@ namespace LanguageExplorer.Controls.Styles
 			var item = new ListViewItem(Strings.kstidDefaultSettings) { Tag = -1 };
 			item.SubItems.Add(string.Empty);
 			m_lstWritingSystems.Items.Add(item);
-
 			foreach (var ws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
 				item = new ListViewItem(ws.DisplayLabel) { Tag = ws.Handle };
@@ -235,7 +227,6 @@ namespace LanguageExplorer.Controls.Styles
 			{
 				return;
 			}
-
 			m_dontUpdateInheritance = true;
 			m_currentStyleInfo = styleInfo;
 			m_currentWs = ws;
@@ -246,25 +237,19 @@ namespace LanguageExplorer.Controls.Styles
 				m_lstWritingSystems.SelectedIndices.Add(0);
 				m_fIgnoreWsSelectedIndexChange = false;
 			}
-
 			// If the first item is selected, it is the "default", so the font list should
 			// only include the magic font names, not the real ones.
 			FillFontNames(ws > -1);
-
 			m_FontAttributes.ShowingInheritedProperties = true; // Always allow re-setting to unspecified for font attributes
-
 			// Initialize controls based on whether or not this style inherits from another style.
 			InitControlBehavior(ShowingInheritedProperties);
-
 			var fontInfo = styleInfo.FontInfoForWs(ws);
 			m_FontAttributes.UpdateForStyle(fontInfo);
-
 			// update the font size combobox
 			if (!m_cboFontSize.SetInheritableProp(fontInfo.m_fontSize))
 			{
 				m_cboFontSize.Text = (fontInfo.m_fontSize.Value / 1000).ToString();
 			}
-
 			// update the font names
 			if (!m_cboFontNames.SetInheritableProp(fontInfo.m_fontName))
 			{
@@ -283,10 +268,8 @@ namespace LanguageExplorer.Controls.Styles
 					m_cboFontNames.Text = fontName;
 				}
 			}
-
 			// Update the descriptions for the writing system overrides
 			UpdateWritingSystemDescriptions();
-
 			m_dontUpdateInheritance = false;
 		}
 
@@ -308,7 +291,6 @@ namespace LanguageExplorer.Controls.Styles
 			{
 				styleInfo.Dirty = true;
 			}
-
 			// font size
 			newInherit = IsInherited(m_cboFontSize);
 			var fontSize = (m_cboFontSize.Text == string.Empty || newInherit) ? 0 : int.Parse(m_cboFontSize.Text);
@@ -316,53 +298,44 @@ namespace LanguageExplorer.Controls.Styles
 			{
 				styleInfo.Dirty = true;
 			}
-
 			// color
 			if (fontInfo.m_fontColor.Save(newInherit, m_FontAttributes.GetFontColor(out newInherit)))
 			{
 				styleInfo.Dirty = true;
 			}
-
 			// background color
 			if (fontInfo.m_backColor.Save(newInherit, m_FontAttributes.GetBackgroundColor(out newInherit)))
 			{
 				styleInfo.Dirty = true;
 			}
-
 			// underline style
 			if (fontInfo.m_underline.Save(newInherit, m_FontAttributes.GetUnderlineType(out newInherit)))
 			{
 				styleInfo.Dirty = true;
 			}
-
 			// underline color
 			if (fontInfo.m_underlineColor.Save(newInherit, m_FontAttributes.GetUnderlineColor(out newInherit)))
 			{
 				styleInfo.Dirty = true;
 			}
-
 			// bold, italic, superscript, subscript
 			if (fontInfo.m_bold.Save(newInherit, m_FontAttributes.GetBold(out newInherit)))
 			{
 				styleInfo.Dirty = true;
 			}
-
 			if (fontInfo.m_italic.Save(newInherit, m_FontAttributes.GetItalic(out newInherit)))
 			{
 				styleInfo.Dirty = true;
 			}
-
 			if (fontInfo.m_superSub.Save(newInherit, m_FontAttributes.GetSubSuperscript(out newInherit)))
 			{
 				styleInfo.Dirty = true;
 			}
-
 			// position
 			if (fontInfo.m_offset.Save(newInherit, m_FontAttributes.GetFontPosition(out newInherit)))
 			{
 				styleInfo.Dirty = true;
 			}
-
 			// features
 			if (fontInfo.m_features.Save(newInherit, m_FontAttributes.GetFontFeatures(out newInherit)))
 			{
@@ -420,7 +393,6 @@ namespace LanguageExplorer.Controls.Styles
 			{
 				return; // Already in the right state
 			}
-
 			m_cboFontNames.ShowingInheritedProperties = fInherited;
 			m_cboFontSize.ShowingInheritedProperties = fInherited;
 		}
@@ -475,7 +447,6 @@ namespace LanguageExplorer.Controls.Styles
 			{
 				return true;
 			}
-
 			return c.ForeColor.ToArgb() != SystemColors.WindowText.ToArgb();
 		}
 

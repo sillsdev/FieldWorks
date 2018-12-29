@@ -1,17 +1,18 @@
-// Copyright (c) 2007-2018 SIL International
+// Copyright (c) 2007-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using LanguageExplorer.Controls.Styles;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 
-namespace LanguageExplorer.Controls.Styles
+namespace LanguageExplorer.Impls
 {
 	/// <summary>
 	/// The new Styles Dialog
@@ -40,7 +41,6 @@ namespace LanguageExplorer.Controls.Styles
 			m_helpTopicProvider = helpTopicProvider;
 			m_paraStyleName = paraStyleName;
 			m_charStyleName = charStyleName;
-
 			// Load the style information
 			m_styleTable = new StyleInfoTable(StyleServices.NormalStyleName, cache.ServiceLocator.WritingSystemManager);
 			m_styleSheet = styleSheet;
@@ -56,13 +56,10 @@ namespace LanguageExplorer.Controls.Styles
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			base.OnHandleCreated(e);
-
 			FillStyleList();
-
 			// Mark the current styles
 			m_styleListHelper.MarkCurrentStyle(m_paraStyleName);
 			m_styleListHelper.MarkCurrentStyle(m_charStyleName);
-
 			// Select the current paragraph style in the list
 			if (CanApplyParagraphStyle && m_paraStyleName != null)
 			{
@@ -104,7 +101,6 @@ namespace LanguageExplorer.Controls.Styles
 			{
 				m_styleListHelper.ShowOnlyStylesOfType = StyleType.kstLim;
 			}
-
 			m_styleListHelper.AddStyles(m_styleTable, null);
 			m_styleListHelper.Refresh();
 		}

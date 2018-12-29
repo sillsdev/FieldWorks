@@ -1,8 +1,9 @@
-// Copyright (c) 2016-2018 SIL International
+// Copyright (c) 2016-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -41,7 +42,7 @@ namespace LanguageExplorer.Controls.Styles
 		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
 			base.Dispose(disposing);
 		}
 
@@ -201,7 +202,6 @@ namespace LanguageExplorer.Controls.Styles
 			// Prevent validation while updating the text. Since we know what will be
 			// set, there is no need to validate it.
 			m_preventValidation = true;
-
 			var valueToDisplay = m_fDisplayAbsoluteValues ? Math.Abs(m_mptValue) : m_mptValue;
 			Text = MeasurementUtils.FormatMeasurement(valueToDisplay, m_measureType, UseVariablePrecision);
 			m_preventValidation = false;
@@ -225,9 +225,7 @@ namespace LanguageExplorer.Controls.Styles
 				Changed(this, EventArgs.Empty);
 				return;
 			}
-
 			var nVal = MeasurementUtils.ExtractMeasurementInMillipoints(str, m_measureType, m_mptValue);
-
 			if (m_fDisplayAbsoluteValues && m_mptValue < 0)
 			{
 				nVal *= -1;
@@ -255,7 +253,6 @@ namespace LanguageExplorer.Controls.Styles
 		{
 			// The text may have been edited before pressing the up button so validate it first
 			ValidateEditText();
-
 			double newValue;
 			// If the current value is at a multiple of the increment amount, just increment it;
 			// otherwise bump it up to the next multiple.
@@ -269,7 +266,6 @@ namespace LanguageExplorer.Controls.Styles
 				var evenMultiple = (sign < 1) ? (int)Math.Ceiling(m_mptValue / (int)MeasureIncrement) : (int)Math.Floor(m_mptValue / (int)MeasureIncrement);
 				newValue = (evenMultiple + sign) * MeasureIncrement;
 			}
-
 			SetMsrValue(newValue);
 		}
 
@@ -288,13 +284,11 @@ namespace LanguageExplorer.Controls.Styles
 			{
 				mptValue = m_mptMax;
 			}
-
 			// If the value has not changed, then do not do anything.
 			if (mptValue == m_mptValue && Text != string.Empty)
 			{
 				return;
 			}
-
 			// Set the value, update the text, and send out a notification of the change
 			m_mptValue = mptValue;
 			UpdateEditText();

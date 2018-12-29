@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2018 SIL International
+// Copyright (c) 2007-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -83,7 +83,6 @@ namespace LanguageExplorer.Controls.Styles
 				{
 					return;
 				}
-
 				m_ShowingInheritedProperties = value;
 				if (value)
 				{
@@ -96,7 +95,6 @@ namespace LanguageExplorer.Controls.Styles
 						Debug.Assert(Items.Count > 0, "The 0th item in the Items collection should be the 'unspecified' item. But there is no 0th item. Ouch!");
 						m_sUnspecifiedOption = Items[0].ToString();
 					}
-
 					Items.RemoveAt(0);
 				}
 			}
@@ -119,7 +117,6 @@ namespace LanguageExplorer.Controls.Styles
 				SelectedIndex = 0;
 				return true;
 			}
-
 			return false;
 		}
 		#endregion
@@ -134,16 +131,13 @@ namespace LanguageExplorer.Controls.Styles
 				base.OnDrawItem(e); // This can happen if the selected item is removed.
 				return;
 			}
-
 			var drawColor = (e.State & DrawItemState.Selected) != 0 ? SystemColors.HighlightText : e.ForeColor;
 			var backColor = (e.State & DrawItemState.Selected) != 0 ? SystemColors.Highlight : e.BackColor;
-
 			// Make sure we always draw the dropdown list in window text color.
 			if ((e.State & DrawItemState.ComboBoxEdit) == 0)
 			{
 				drawColor = SystemColors.WindowText;
 			}
-
 			if (DrawItemBackground != null)
 			{
 				DrawItemBackground(this, new DrawItemEventArgs(e.Graphics, e.Font, e.Bounds, e.Index, e.State, drawColor, backColor));
@@ -157,7 +151,6 @@ namespace LanguageExplorer.Controls.Styles
 					e.DrawFocusRectangle();
 				}
 			}
-
 			if (DrawItemForeground != null)
 			{
 				DrawItemForeground(this, new DrawItemEventArgs(e.Graphics, e.Font, e.Bounds, e.Index, e.State, drawColor, backColor));

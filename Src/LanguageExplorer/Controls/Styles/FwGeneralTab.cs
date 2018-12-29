@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2018 SIL International
+// Copyright (c) 2007-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -63,7 +63,6 @@ namespace LanguageExplorer.Controls.Styles
 				return;
 			}
 			Enabled = true;
-
 			m_txtStyleName.Enabled = !styleInfo.IsBuiltIn;
 			m_txtStyleUsage.ReadOnly = styleInfo.IsBuiltIn;
 			m_cboBasedOn.Enabled = !styleInfo.IsBuiltIn;
@@ -73,7 +72,6 @@ namespace LanguageExplorer.Controls.Styles
 			m_lblStyleType.Text = (styleInfo.IsCharacterStyle) ? Strings.kstidCharacterStyleText : Strings.kstidParagraphStyleText;
 			m_txtStyleUsage.Text = styleInfo.Usage;
 			m_lblStyleDescription.Text = styleInfo.ToString(ShowBiDiLabels, UserMeasurementType);
-
 			// Handle the Based On style combo
 			FillBasedOnStyles(styleInfo);
 			if (styleInfo.BasedOnStyle != null)
@@ -91,7 +89,6 @@ namespace LanguageExplorer.Controls.Styles
 					m_cboBasedOn.SelectedIndex = -1;
 				}
 			}
-
 			UpdateFollowingStylesCbo(styleInfo);
 		}
 
@@ -171,13 +168,11 @@ namespace LanguageExplorer.Controls.Styles
 		private void FillBasedOnStyles(BaseStyleInfo styleInfo)
 		{
 			m_cboBasedOn.Items.Clear();
-
 			// If this is a character style then put in "Default Paragraph Characters"
 			if (styleInfo.IsCharacterStyle)
 			{
 				m_cboBasedOn.Items.Add(StyleUtils.DefaultParaCharsStyleName);
 			}
-
 			// Add all of the styles that are not myself or any style that derives from me and
 			// have the same context as me
 			var styleList = new List<string>();
@@ -212,7 +207,6 @@ namespace LanguageExplorer.Controls.Styles
 		private void FillFollowingStyles(BaseStyleInfo styleInfo)
 		{
 			m_cboFollowingStyle.Items.Clear();
-
 			// Add all of the styles of the same type
 			var styleList = new List<string>();
 			foreach (var style in StyleTable.Values)
@@ -280,9 +274,7 @@ namespace LanguageExplorer.Controls.Styles
 				m_owningDialogCanceled = true;
 				return;
 			}
-
 			m_txtStyleName.Text = m_txtStyleName.Text.Trim();
-
 			if (StyleListHelper.SelectedStyleName == m_txtStyleName.Text)
 			{
 				return;
@@ -311,7 +303,6 @@ namespace LanguageExplorer.Controls.Styles
 			{
 				return;
 			}
-
 			if (StyleListHelper.SelectedStyle != null)
 			{
 				var styleInfo = (StyleInfo)StyleListHelper.SelectedStyle.StyleInfo;
@@ -322,7 +313,6 @@ namespace LanguageExplorer.Controls.Styles
 					// the wrong one and accidentally think we're renaming this style.
 					return;
 				}
-
 				SaveToInfo(styleInfo);
 				UpdateFollowingStylesCbo(styleInfo);
 			}
@@ -348,15 +338,12 @@ namespace LanguageExplorer.Controls.Styles
 					updateStyle.SaveFollowing(newName);
 				}
 			}
-
 			// save the new name and update the entry in the style table
 			styleInfo.SaveName(newName);
 			StyleTable.Remove(oldName);
 			StyleTable.Add(newName, styleInfo);
-
 			// Change the displayed entry
 			StyleListHelper.Rename(oldName, newName);
-
 			// Save an entry to rename the style if it is a real style
 			if (styleInfo.RealStyle != null)
 			{

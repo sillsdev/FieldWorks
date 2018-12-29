@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -58,21 +58,16 @@ namespace LanguageExplorer.Controls.Styles
 			var g = e.Graphics;
 			var borderWidth = CalcBorderWidth(m_cboWidth.AdjustedSelectedIndex, g);
 			var drawRect = m_pnlBorderPreview.ClientRectangle;
-
 			// shrink the rectangle to make some border space in the control
 			drawRect.Inflate(-7, -7);
-
 			// top left tick mark
 			const int tickSize = 7;
 			DrawTickMarks(drawRect, tickSize, g);
 			drawRect.Inflate(-(tickSize - 1), -(tickSize - 1));
-
 			// Draw the borders only if a width is specified
 			DrawBorders(ref drawRect, borderWidth, g);
-
 			// leave some margin space between the border and the preview lines
 			drawRect.Inflate(-3, -3);
-
 			// Draw "text" lines in the remaining space
 			DrawTextLines(drawRect, g);
 		}
@@ -84,7 +79,6 @@ namespace LanguageExplorer.Controls.Styles
 		{
 			// fill the background
 			e.Graphics.FillRectangle(SystemBrushes.Window, e.Bounds);
-
 			// If needed, draw a selection box around the item
 			if ((e.State & DrawItemState.Selected) != 0)
 			{
@@ -105,10 +99,8 @@ namespace LanguageExplorer.Controls.Styles
 			{
 				textColor = (e.State & DrawItemState.ComboBoxEdit) == 0 ? SystemColors.WindowText : m_cboWidth.ForeColor;
 			}
-
 			var textRect = new RectangleF(drawRect.X + 1, drawRect.Y + 1, drawRect.Width - 2, drawRect.Height - 2);
 			e.Graphics.DrawString(text, e.Font, new SolidBrush(textColor), textRect);
-
 			// draw the graphic line representing the width. Don't draw for
 			// the "unspecified" index
 			var index = m_currentStyleInfo.Inherits ? e.Index : e.Index + 1;
@@ -127,7 +119,6 @@ namespace LanguageExplorer.Controls.Styles
 			var button = (Button)sender;
 			var drawRect = button.ClientRectangle;
 			var g = e.Graphics;
-
 			// draw the border and background of the button to look like
 			// a text box.
 			if (Application.RenderWithVisualStyles)
@@ -141,31 +132,26 @@ namespace LanguageExplorer.Controls.Styles
 				g.FillRectangle(SystemBrushes.Window, drawRect);
 				ControlPaint.DrawBorder3D(g, drawRect, Border3DStyle.Sunken);
 			}
-
 			// Allow some border space.
 			drawRect.Inflate(-2, -2);
-
 			// If the panel has focus then draw the focus rectangle
 			if (button.Focused)
 			{
 				ControlPaint.DrawFocusRectangle(g, drawRect);
 			}
 			drawRect.Inflate(-2, -2);
-
 			// If the button is selected then draw a selection rectangle
 			if (ButtonSelected(button))
 			{
 				DrawRectangle(g, drawRect, SystemPens.Highlight, 2);
 			}
 			drawRect.Inflate(-3, -3);
-
 			// draw a border box on the "all" button
 			if (button == m_btnAll)
 			{
 				DrawRectangle(g, drawRect, SystemPens.WindowText, 1);
 			}
 			drawRect.Inflate(-3, -3);
-
 			// draw some text lines to fill in the remaining space
 			DrawTextLines(drawRect, g);
 		}
@@ -187,7 +173,6 @@ namespace LanguageExplorer.Controls.Styles
 				{
 					return m_DefaultTextDirectionRtoL;
 				}
-
 				return m_currentStyleInfo.DirectionIsRightToLeft == TriStateBool.triNotSet ? m_DefaultTextDirectionRtoL : m_currentStyleInfo.DirectionIsRightToLeft == TriStateBool.triTrue;
 			}
 			set
@@ -240,7 +225,6 @@ namespace LanguageExplorer.Controls.Styles
 			// left.
 			var chkLeftSide = DefaultTextDirectionRtoL ? m_chkRight : m_chkLeft;
 			var chkRightSide = DefaultTextDirectionRtoL ? m_chkLeft : m_chkRight;
-
 			chkLeftSide.Left = m_pnlBorderPreview.Left - dyxGapBetweenLeftCheckboxAndPreviewPane - chkLeftSide.Width;
 			chkRightSide.Left = m_pnlBorderPreview.Right + dyxGapBetweenLeftCheckboxAndPreviewPane;
 		}
@@ -284,7 +268,6 @@ namespace LanguageExplorer.Controls.Styles
 			while (drawRect.Height > lineHeight)
 			{
 				var lineRect = new Rectangle(drawRect.X, drawRect.Y, drawRect.Width, lineHeight);
-
 				// for the first line, indent the left edge
 				if (firstLine)
 				{
@@ -292,13 +275,11 @@ namespace LanguageExplorer.Controls.Styles
 					lineRect.Width -= 10;
 					firstLine = false;
 				}
-
 				// for the last line, indent the right edge
 				if (drawRect.Height <= (lineHeight * 2) + lineSpacing)
 				{
 					lineRect.Width -= 10;
 				}
-
 				g.FillRectangle(SystemBrushes.GrayText, lineRect);
 				drawRect.Y += lineHeight + lineSpacing;
 				drawRect.Height -= lineHeight + lineSpacing;
@@ -313,15 +294,12 @@ namespace LanguageExplorer.Controls.Styles
 			// draw the top left tick mark
 			g.DrawLine(SystemPens.WindowText, drawRect.X + tickSize - 1, drawRect.Y, drawRect.X + tickSize - 1, drawRect.Y + tickSize - 1);
 			g.DrawLine(SystemPens.WindowText, drawRect.X, drawRect.Y + tickSize - 1, drawRect.X + tickSize - 1, drawRect.Y + tickSize - 1);
-
 			// draw the top right tick mark
 			g.DrawLine(SystemPens.WindowText, drawRect.Right - tickSize, drawRect.Y, drawRect.Right - tickSize, drawRect.Y + tickSize - 1);
 			g.DrawLine(SystemPens.WindowText, drawRect.Right - tickSize, drawRect.Y + tickSize - 1, drawRect.Right, drawRect.Y + tickSize - 1);
-
 			// draw the bottom left tick mark
 			g.DrawLine(SystemPens.WindowText, drawRect.X + tickSize - 1, drawRect.Bottom, drawRect.X + tickSize - 1, drawRect.Bottom - tickSize);
 			g.DrawLine(SystemPens.WindowText, drawRect.X, drawRect.Bottom - tickSize, drawRect.X + tickSize - 1, drawRect.Bottom - tickSize);
-
 			// draw the bottom right tick mark
 			g.DrawLine(SystemPens.WindowText, drawRect.Right - tickSize, drawRect.Bottom, drawRect.Right - tickSize, drawRect.Bottom - tickSize);
 			g.DrawLine(SystemPens.WindowText, drawRect.Right - tickSize, drawRect.Bottom - tickSize, drawRect.Right, drawRect.Bottom - tickSize);
@@ -340,7 +318,6 @@ namespace LanguageExplorer.Controls.Styles
 			{
 				var fLeadingBorderOn = m_chkLeft.CheckState == CheckState.Checked || (m_currentStyleInfo.BorderThickness.Value.Leading > 0 && m_chkLeft.CheckState == CheckState.Indeterminate);
 				var fTrailingBorderOn = m_chkRight.CheckState == CheckState.Checked || m_currentStyleInfo.BorderThickness.Value.Trailing > 0 && m_chkRight.CheckState == CheckState.Indeterminate;
-
 				// Draw the left border
 				if ((fLeadingBorderOn && !DefaultTextDirectionRtoL) || (fTrailingBorderOn && DefaultTextDirectionRtoL))
 				{
@@ -348,7 +325,6 @@ namespace LanguageExplorer.Controls.Styles
 					drawRect.X += borderWidth;
 					drawRect.Width -= borderWidth;
 				}
-
 				// Draw the top border
 				if (m_chkTop.CheckState == CheckState.Checked || (m_currentStyleInfo.BorderThickness.Value.Top > 0 && m_chkTop.CheckState == CheckState.Indeterminate))
 				{
@@ -356,14 +332,12 @@ namespace LanguageExplorer.Controls.Styles
 					drawRect.Y += borderWidth;
 					drawRect.Height -= borderWidth;
 				}
-
 				// Draw the right border
 				if ((fLeadingBorderOn && DefaultTextDirectionRtoL) || (fTrailingBorderOn && !DefaultTextDirectionRtoL))
 				{
 					g.FillRectangle(brush, drawRect.Right - borderWidth, drawRect.Y, borderWidth, drawRect.Height);
 					drawRect.Width -= borderWidth;
 				}
-
 				// Draw the bottom border
 				if (m_chkBottom.CheckState == CheckState.Checked || (m_currentStyleInfo.BorderThickness.Value.Bottom > 0 && m_chkBottom.CheckState == CheckState.Indeterminate))
 				{
@@ -394,16 +368,9 @@ namespace LanguageExplorer.Controls.Styles
 		{
 			if (button == m_btnAll)
 			{
-				return m_chkBottom.CheckState == CheckState.Checked &&
-					m_chkLeft.CheckState == CheckState.Checked &&
-					m_chkRight.CheckState == CheckState.Checked &&
-					m_chkTop.CheckState == CheckState.Checked;
+				return m_chkBottom.CheckState == CheckState.Checked && m_chkLeft.CheckState == CheckState.Checked && m_chkRight.CheckState == CheckState.Checked && m_chkTop.CheckState == CheckState.Checked;
 			}
-
-			return m_chkBottom.CheckState == CheckState.Unchecked &&
-				m_chkLeft.CheckState == CheckState.Unchecked &&
-				m_chkRight.CheckState == CheckState.Unchecked &&
-				m_chkTop.CheckState == CheckState.Unchecked;
+			return m_chkBottom.CheckState == CheckState.Unchecked && m_chkLeft.CheckState == CheckState.Unchecked && m_chkRight.CheckState == CheckState.Unchecked && m_chkTop.CheckState == CheckState.Unchecked;
 		}
 
 		/// <summary>
@@ -415,12 +382,10 @@ namespace LanguageExplorer.Controls.Styles
 			{
 				return false;
 			}
-
 			if (c == m_cboWidth)
 			{
 				return m_cboWidth.IsInherited;
 			}
-
 			return c.ForeColor.ToArgb() != SystemColors.WindowText.ToArgb();
 		}
 
@@ -437,13 +402,10 @@ namespace LanguageExplorer.Controls.Styles
 				{
 					ChangedToUnspecified?.Invoke(this, EventArgs.Empty);
 				}
-
 				// Enable style reset ability immediately by causing the stye to be IsModified.
 				SaveToInfo(m_currentStyleInfo);
-
 				StyleDataChanged?.Invoke(this, null);
 			}
-
 			m_pnlBorderPreview.Refresh();
 			m_btnAll.Refresh();
 			m_btnNone.Refresh();
@@ -459,12 +421,9 @@ namespace LanguageExplorer.Controls.Styles
 			m_dontUpdateInheritance = true;
 			m_fIgnoreCascadingEvents = true;
 			m_currentStyleInfo = styleInfo;
-
 			m_cboColor.ForeColor = GetCtrlForeColorForProp(styleInfo.IBorderColor);
 			m_cboColor.IsInherited = styleInfo.Inherits;
-
 			m_cboColor.ColorValue = styleInfo.BorderColor;
-
 			var fWidthInherited = styleInfo.BorderThickness.IsInherited && styleInfo.Inherits;
 			m_chkTop.ThreeState = fWidthInherited;
 			m_chkRight.ThreeState = fWidthInherited;
@@ -484,7 +443,6 @@ namespace LanguageExplorer.Controls.Styles
 				m_chkLeft.CheckState = (styleInfo.BorderLeading == 0) ? CheckState.Unchecked : CheckState.Checked;
 				m_chkRight.CheckState = (styleInfo.BorderTrailing == 0) ? CheckState.Unchecked : CheckState.Checked;
 			}
-
 			m_cboWidth.SetInheritableProp(styleInfo.BorderThickness);
 			m_cboWidth.ShowingInheritedProperties = styleInfo.Inherits;
 			var maxWidth = styleInfo.BorderWidth;
@@ -495,7 +453,6 @@ namespace LanguageExplorer.Controls.Styles
 			}
 			// select the border width in the combobox
 			m_cboWidth.AdjustedSelectedIndex = Array.IndexOf(s_borderSizes, maxWidth);
-
 			// Change the left and right check boxes if the check boxes need to change
 			// places (because the paragraph direction is different)
 			if ((m_chkRight.Left < m_chkLeft.Left) != DefaultTextDirectionRtoL)
@@ -503,14 +460,11 @@ namespace LanguageExplorer.Controls.Styles
 				var saveChkAlign = m_chkLeft.CheckAlign;
 				m_chkLeft.CheckAlign = m_chkRight.CheckAlign;
 				m_chkRight.CheckAlign = saveChkAlign;
-
 				AdjustCheckboxPositionsToPreserveGap();
 			}
-
 			// Change the labels to show leading/trailing or left/right depending on the
 			// paragraph direction.
 			ChangeDirectionLabels(styleInfo.IRightToLeftStyle.Value == TriStateBool.triNotSet ? m_fShowBiDiLabels : styleInfo.IRightToLeftStyle.Value == TriStateBool.triTrue);
-
 			m_dontUpdateInheritance = false;
 			m_fIgnoreCascadingEvents = false;
 			m_pnlBorderPreview.Refresh();
@@ -524,7 +478,6 @@ namespace LanguageExplorer.Controls.Styles
 				Debug.Assert(false, "Somehow, the Border tab has been asked to write its data to a character-based style [" + styleInfo.Name + "].");
 				return;
 			}
-
 			// Save the border widths
 			var newInherit = m_cboWidth.IsInherited;
 			var newThickness = new BorderThicknesses();
@@ -537,7 +490,6 @@ namespace LanguageExplorer.Controls.Styles
 			{
 				styleInfo.Dirty = true;
 			}
-
 			// save the border color
 			if (styleInfo.IBorderColor.Save(IsInherited(m_cboColor), m_cboColor.ColorValue))
 			{
@@ -564,7 +516,6 @@ namespace LanguageExplorer.Controls.Styles
 			{
 				return;
 			}
-
 			m_fIgnoreCascadingEvents = true;
 			if (m_cboWidth.AdjustedSelectedIndex != 0)
 			{
@@ -582,7 +533,6 @@ namespace LanguageExplorer.Controls.Styles
 				m_chkTop.ThreeState = m_chkBottom.ThreeState = m_chkLeft.ThreeState = m_chkRight.ThreeState = true;
 				m_chkTop.CheckState = m_chkBottom.CheckState = m_chkLeft.CheckState = m_chkRight.CheckState = CheckState.Indeterminate;
 			}
-
 			UpdateControls(sender);
 			m_fIgnoreCascadingEvents = false;
 		}
@@ -597,12 +547,10 @@ namespace LanguageExplorer.Controls.Styles
 			{
 				return;
 			}
-
 			if (m_cboWidth.IsInherited)
 			{
 				m_cboWidth_SelectedIndexChanged(m_cboWidth, EventArgs.Empty);
 			}
-
 			UpdateControls(sender);
 		}
 

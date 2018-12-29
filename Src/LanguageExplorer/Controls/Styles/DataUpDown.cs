@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -95,7 +95,7 @@ namespace LanguageExplorer.Controls.Styles
 		/// <inheritdoc />
 		protected override void UpdateEditText()
 		{
-			switch(m_mode)
+			switch (m_mode)
 			{
 				case DataUpDownMode.Normal:
 					Text = m_currentValue.ToString();
@@ -141,7 +141,6 @@ namespace LanguageExplorer.Controls.Styles
 				return;
 			}
 			m_validating = true;
-
 			switch (m_mode)
 			{
 				case DataUpDownMode.Normal:
@@ -157,9 +156,7 @@ namespace LanguageExplorer.Controls.Styles
 					{
 						newValue = int.Parse(text);
 					}
-
 					break;
-
 				case DataUpDownMode.Letters:
 				case DataUpDownMode.LettersLowerCase:
 					newValue = AlphaOutline.AlphaOutlineToNum(text);
@@ -172,7 +169,6 @@ namespace LanguageExplorer.Controls.Styles
 					}
 					text = m_mode == DataUpDownMode.Letters ? text.ToUpper() : text.ToLower();
 					break;
-
 				case DataUpDownMode.Roman:
 				case DataUpDownMode.RomanLowerCase:
 					newValue = RomanNumerals.RomanToInt(text);
@@ -186,7 +182,6 @@ namespace LanguageExplorer.Controls.Styles
 					text = m_mode == DataUpDownMode.Roman ? text.ToUpper() : text.ToLower();
 					break;
 			}
-
 			if (newValue >= 0 && newValue <= MaxValue)
 			{
 				m_previousText = text;
@@ -197,7 +192,6 @@ namespace LanguageExplorer.Controls.Styles
 				Text = m_previousText;
 				Select(m_previousText.Length, 0);
 			}
-
 			m_validating = false;
 		}
 	}

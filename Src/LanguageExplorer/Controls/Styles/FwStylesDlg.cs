@@ -112,11 +112,9 @@ namespace LanguageExplorer.Controls.Styles
 			m_styleListHelper.ShowInternalStyles = true;
 			m_styleListHelper.StyleChosen += m_styleListHelper_StyleChosen;
 			m_styleListHelper.Refresh();
-
 			// Mark the current styles
 			m_styleListHelper.MarkCurrentStyle(paraStyleName);
 			m_styleListHelper.MarkCurrentStyle(charStyleName);
-
 			// General tab
 			m_generalTab.Application = m_app;
 			m_generalTab.StyleListHelper = m_styleListHelper;
@@ -124,25 +122,19 @@ namespace LanguageExplorer.Controls.Styles
 			m_generalTab.ShowBiDiLabels = showBiDiLabels;
 			m_generalTab.UserMeasurementType = m_userMeasurementType;
 			m_generalTab.RenamedStyles = m_renamedStyles;
-
 			// Load the font information
 			m_fontTab.WritingSystemFactory = cache.WritingSystemFactory;
 			m_fontTab.FillFontInfo(cache);
-
 			// Disable the background color on the paragraph tab.
 			m_paragraphTab.DefaultTextDirectionRtoL = defaultRightToLeft;
 			m_paragraphTab.ShowBiDiLabels = showBiDiLabels;
 			m_paragraphTab.MeasureType = userMeasurementType;
-
 			m_bulletsTab.DefaultTextDirectionRtoL = defaultRightToLeft;
 			m_bulletsTab.StyleSheet = m_styleSheet;
-
 			m_borderTab.DefaultTextDirectionRtoL = defaultRightToLeft;
 			m_borderTab.ShowBiDiLabels = showBiDiLabels;
-
 			// Select the current paragraph style in the list (or fall back to Normal)
 			CurrentStyle = !string.IsNullOrEmpty(paraStyleName) ? paraStyleName : normalStyleName;
-
 			m_fontTab.StyleDataChanged += OnStyleDataChanged;
 			m_paragraphTab.StyleDataChanged += OnStyleDataChanged;
 			m_bulletsTab.StyleDataChanged += OnStyleDataChanged;
@@ -186,7 +178,7 @@ namespace LanguageExplorer.Controls.Styles
 					{
 						selectedStyle = defaultStyle;
 					}
-					// Make the requested change if possible...otherwise restore the previous selction.
+					// Make the requested change if possible...otherwise restore the previous selection.
 					if (combo != null && !SelectStyle(combo, selectedStyle))
 					{
 						SelectStyle(combo, m_oldStyle);
@@ -302,7 +294,7 @@ namespace LanguageExplorer.Controls.Styles
 		/// <summary>
 		/// Called when a style is chosen in the style list
 		/// </summary>
-		void m_styleListHelper_StyleChosen(StyleListItem prevStyle, StyleListItem newStyle)
+		private void m_styleListHelper_StyleChosen(StyleListItem prevStyle, StyleListItem newStyle)
 		{
 			if (prevStyle != null)
 			{
@@ -318,7 +310,6 @@ namespace LanguageExplorer.Controls.Styles
 					m_styleListHelper.SelectedStyleName = newStyle.Name;
 				}
 			}
-
 			Debug.Assert((newStyle.StyleInfo != null && newStyle.StyleInfo is StyleInfo) || newStyle.IsDefaultParaCharsStyle);
 			var styleInfo = (StyleInfo)newStyle.StyleInfo;
 			// Need to do this BEFORE removing/adding tabs to avoid an unfortunate series of
@@ -330,7 +321,6 @@ namespace LanguageExplorer.Controls.Styles
 				FillForDefaultParagraphCharacters();
 				return;
 			}
-
 			// If the font tab was taken off for default paragraph characters, then
 			// put it back in.
 			if (!m_tabControl.TabPages.Contains(m_tbFont))
@@ -362,14 +352,12 @@ namespace LanguageExplorer.Controls.Styles
 				m_btnDelete.Enabled = false;
 				return;
 			}
-
 			var styleInfo = (StyleInfo)selectedItem.StyleInfo;
 			if (styleInfo == null)
 			{
 				m_btnDelete.Enabled = false;
 				return;
 			}
-
 			if (IsStyleUserCreated(styleInfo))
 			{
 				m_btnDelete.Text = "&Delete";
@@ -398,7 +386,6 @@ namespace LanguageExplorer.Controls.Styles
 		private void UpdateTabsForStyle(StyleInfo styleInfo)
 		{
 			m_fontTab.UpdateForStyle(styleInfo, -1);
-
 			// Only update the rest of the tabs if the style is a paragraph style
 			if (styleInfo.IsParagraphStyle)
 			{
@@ -612,7 +599,6 @@ namespace LanguageExplorer.Controls.Styles
 			m_styleTable.Remove(style.Name);
 			m_styleTable.ConnectStyles();
 			m_styleListHelper.Remove(style);
-
 			// Now update the control for the style that is selected after the delete.
 			// The StyleChosen event is not raised automatically in this case because
 			// the SelectedStyleName property intentionally causes the delegate to be
@@ -681,7 +667,6 @@ namespace LanguageExplorer.Controls.Styles
 			m_styleTable.Add(newStyleName, newStyle);
 			m_styleTable.ConnectStyles();
 			m_styleListHelper.Add(newStyle);
-
 			// select the name field
 			m_tabControl.SelectedTab = m_tbGeneral;
 			m_tbGeneral.Focus();
@@ -707,14 +692,12 @@ namespace LanguageExplorer.Controls.Styles
 					{
 						m_cache.DomainDataByFlid.GetActionHandler().AddAction(new UndoStyleChangesAction(m_app, true));
 					}
-
 					// Save any edits from the dialog to the selected style
 					if (m_styleListHelper.SelectedStyle != null)
 					{
 						var styleInfo = (StyleInfo)m_styleListHelper.SelectedStyle.StyleInfo;
 						UpdateChanges(styleInfo);
 					}
-
 					try
 					{
 						// Check to make sure new styles are not going to result in duplicates
@@ -725,7 +708,6 @@ namespace LanguageExplorer.Controls.Styles
 					{
 						MessageBoxUtils.Show(isee.Message, m_app.ApplicationName);
 					}
-
 					foreach (StyleInfo style in m_styleTable.Values)
 					{
 						if (style.IsParagraphStyle && !style.IsInternalStyle && (style.Context != style.NextStyle.Context || style.Structure == StructureValues.Body && style.NextStyle.Structure != style.Structure))
@@ -737,7 +719,6 @@ namespace LanguageExplorer.Controls.Styles
 							return;
 						}
 					}
-
 					// Save any changed styles to the database
 					foreach (StyleInfo style in m_styleTable.Values)
 					{
@@ -760,7 +741,6 @@ namespace LanguageExplorer.Controls.Styles
 							}
 						}
 					}
-
 					// Save the real styles for based-on and following style. Do this last so
 					// all of the real styles for added styles will have been created.
 					foreach (StyleInfo style in m_styleTable.Values)
@@ -771,9 +751,7 @@ namespace LanguageExplorer.Controls.Styles
 						}
 						style.Dirty = false;
 					}
-
 					DeleteAndRenameStylesInDB();
-
 					// Has the user modified any of the styles?
 					if (ChangeType > 0)
 					{
@@ -815,7 +793,6 @@ namespace LanguageExplorer.Controls.Styles
 		/// </summary>
 		private bool IsRootSiteDisposed()
 		{
-#pragma warning disable 0219 // error CS0219: The variable `rootb' is assigned but its value is never used
 			IVwRootBox rootb;
 			try
 			{
@@ -832,13 +809,12 @@ namespace LanguageExplorer.Controls.Styles
 				return true;
 			}
 			return false;
-#pragma warning restore 0219
 		}
 
 		/// <summary>
 		/// Handles the Opening event of the contextMenuStyles control.
 		/// </summary>
-		void contextMenuStyles_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+		private void contextMenuStyles_Opening(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 			resetToolStripMenuItem.Enabled = IsCurrentStyleResettable();
 		}
@@ -903,12 +879,9 @@ namespace LanguageExplorer.Controls.Styles
 		/// </summary>
 		private void m_lstStyles_MouseUp(object sender, MouseEventArgs e)
 		{
-			if (e.Button == MouseButtons.Right)
+			if (e.Button == MouseButtons.Right && m_lstStyles.IndexFromPoint(e.Location) == m_lstStyles.SelectedIndex)
 			{
-				if (m_lstStyles.IndexFromPoint(e.Location) == m_lstStyles.SelectedIndex)
-				{
-					contextMenuStyles.Show(m_lstStyles, e.Location);
-				}
+				contextMenuStyles.Show(m_lstStyles, e.Location);
 			}
 		}
 
@@ -944,7 +917,6 @@ namespace LanguageExplorer.Controls.Styles
 			m_styleTable.Add(style.Name, style);
 			m_styleTable.ConnectStyles();
 			m_styleListHelper.Add(style);
-
 			// select the name field
 			m_tabControl.SelectedTab = m_tbGeneral;
 			m_tbGeneral.Focus();
@@ -968,7 +940,6 @@ namespace LanguageExplorer.Controls.Styles
 				m_bulletsTab.SaveToInfo(styleInfo);
 				m_borderTab.SaveToInfo(styleInfo);
 			}
-
 			// do this last
 			m_styleTable.ConnectStyles();
 		}
@@ -987,7 +958,6 @@ namespace LanguageExplorer.Controls.Styles
 				m_renamedStyles.Remove(styleName);
 				styleName = oldName;
 			}
-
 			// We don't want to put the same style name in twice,
 			// but since it is a Set, it will ignore any duplicates.
 			m_deletedStyleNames.Add(styleName);
@@ -1010,7 +980,6 @@ namespace LanguageExplorer.Controls.Styles
 				var context = (int)deleteStyle.Context;
 				var fIsCharStyle = deleteStyle.Type == StyleType.kstCharacter;
 				m_styleSheet.Delete(deleteStyle.Hvo);
-
 				// Note: instead of delete we replace the old style with the default style
 				// for the correct context. Deleting a style always sets the style to "Normal"
 				// which is wrong in TE where the a) the default style is "Paragraph" and b)

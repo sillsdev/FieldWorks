@@ -1,4 +1,4 @@
-// SilSidePane, Copyright 2009-2018 SIL International. All rights reserved.
+// SilSidePane, Copyright 2009-2019 SIL International. All rights reserved.
 // SilSidePane is licensed under the Code Project Open License (CPOL), <http://www.codeproject.com/info/cpol10.aspx>.
 // Derived from OutlookBar v2 2005 <http://www.codeproject.com/KB/vb/OutlookBar.aspx>, Copyright 2007 by Star Vega.
 // Changed in 2008 and 2009 by SIL International to convert to C# and add more functionality.
@@ -15,7 +15,7 @@ using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.Controls.SilSidePane
 {
-	/// <summary></summary>
+	/// <summary />
 	[DefaultEvent("ButtonClicked")]
 	internal class OutlookBar : Control
 	{
@@ -27,12 +27,10 @@ namespace LanguageExplorer.Controls.SilSidePane
 		#region Member variables and constants
 		private const int kImageDimensionLarge = 26;
 		private const int kImageDimensionSmall = 19;
-
 		private ToolTip m_toolTip = new ToolTip();
 		private OutlookBarButton m_hoveringButton;
 		private OutlookBarButton m_leftClickedButton;
 		private OutlookBarButton m_rightClickedButton;
-
 		private Renderer m_renderer;
 		private bool m_dropDownHovering;
 		private bool m_isResizing;
@@ -58,18 +56,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		/// <summary />
 		public OutlookBar()
 		{
-			if (Platform.IsMono)
-			{
-				// TODO-Linux: FWNX-459
-				m_renderer = Renderer.Outlook2003;
-			}
-			else
-			{
-				// This choice seems arbitrary, but it gives highlighting and coloring
-				// similar to FW6.0
-				m_renderer = Renderer.Outlook2007;
-			}
-
+			m_renderer = Platform.IsMono ? Renderer.Outlook2003 : Renderer.Outlook2007;
 			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
 			SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
 			SetStyle(ControlStyles.ResizeRedraw, true);
@@ -115,8 +102,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		public OutlookBarButton SelectedButton { get; internal set; }
 
 		/// <summary />
-		[DefaultValue(typeof(Renderer), "Outlook2003")]
-		[Category("Appearance")]
+		[DefaultValue(typeof(Renderer), "Outlook2003"), Category("Appearance")]
 		public Renderer Renderer
 		{
 			get { return m_renderer; }
@@ -157,7 +143,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 				{
 					value = 5;
 				}
-
 				m_buttonHeight = value;
 				Invalidate();
 			}
@@ -333,7 +318,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 				}
 				return;
 			}
-
 			switch (e.Button)
 			{
 				case MouseButtons.Right:
@@ -345,12 +329,10 @@ namespace LanguageExplorer.Controls.SilSidePane
 						SelectedButton = button;
 						ButtonClicked?.Invoke(this, button);
 					}
-
 					break;
 				default:
 					return;
 			}
-
 			Invalidate();
 		}
 
@@ -396,19 +378,16 @@ namespace LanguageExplorer.Controls.SilSidePane
 
 				return;
 			}
-
 			if (GripRectangle.Contains(e.X, e.Y))
 			{
 				Cursor = Cursors.SizeNS;
 				return;
 			}
-
 			if (DropDownRectangle.Contains(e.X, e.Y))
 			{
 				Cursor = Cursors.Hand;
 				m_dropDownHovering = true;
 				Invalidate();
-
 				//adjust Tooltip...
 				if ((m_toolTip.Tag != null))
 				{
@@ -431,9 +410,8 @@ namespace LanguageExplorer.Controls.SilSidePane
 				Cursor = Cursors.Hand;
 				m_hoveringButton = Buttons.GetItem(e.X, e.Y);
 				Invalidate();
-
 				//adjust tooltip...
-				if (!m_hoveringButton.isLarge)
+				if (!m_hoveringButton.IsLarge)
 				{
 					if (m_toolTip.Tag == null)
 					{
@@ -476,19 +454,15 @@ namespace LanguageExplorer.Controls.SilSidePane
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			m_maxLargeButtonCount = (int)Math.Floor((decimal)(Height - BottomContainerRectangle.Height - GripRectangle.Height) / InternalButtonHeight) + 1;
-
 			if (Buttons.VisibleCount < m_maxLargeButtonCount)
 			{
 				m_maxLargeButtonCount = Buttons.VisibleCount;
 			}
-
 			m_canShrink = m_maxLargeButtonCount != 0;
 			m_canGrow = (m_maxLargeButtonCount < Buttons.VisibleCount);
 			Height = (m_maxLargeButtonCount * (InternalButtonHeight + 2)) + GripRectangle.Height + BottomContainerRectangle.Height;
-
 			//Paint Grip...
 			PaintGripRectangle(e.Graphics);
-
 			//Paint Large Buttons...
 			var SyncLargeButtons = 0;
 			var IterateLargeButtons = 0;
@@ -498,7 +472,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 				{
 					var rec = new Rectangle(0, SyncLargeButtons * (InternalButtonHeight + 2) + GripRectangle.Height, Width, InternalButtonHeight + 2);
 					Buttons[IterateLargeButtons].Rectangle = rec;
-					Buttons[IterateLargeButtons].isLarge = true;
+					Buttons[IterateLargeButtons].IsLarge = true;
 					PaintButton(Buttons[IterateLargeButtons], e.Graphics, (m_maxLargeButtonCount != SyncLargeButtons));
 					if (SyncLargeButtons == m_maxLargeButtonCount)
 					{
@@ -507,53 +481,43 @@ namespace LanguageExplorer.Controls.SilSidePane
 					SyncLargeButtons++;
 				}
 			}
-
 			//Paint Small Buttons...
 			m_maxSmallButtonCount = (int)Math.Floor((decimal)(Width - DropDownRectangle.Width - BottomContainerLeftMargin) / SmallButtonWidth);
-
 			if (Buttons.VisibleCount - m_maxLargeButtonCount <= 0)
 			{
 				m_maxSmallButtonCount = 0;
 			}
-
 			if (m_maxSmallButtonCount > (Buttons.VisibleCount - m_maxLargeButtonCount))
 			{
 				m_maxSmallButtonCount = (Buttons.VisibleCount - m_maxLargeButtonCount);
 			}
-
 			var StartX = Width - DropDownRectangle.Width - (m_maxSmallButtonCount * SmallButtonWidth);
 			var SyncSmallButtons = 0;
-			var IterateSmallButtons = 0;
-
+			int IterateSmallButtons;
 			for (IterateSmallButtons = IterateLargeButtons; IterateSmallButtons <= Buttons.Count - 1; IterateSmallButtons++)
 			{
 				if (SyncSmallButtons == m_maxSmallButtonCount)
 				{
 					break;
 				}
-
 				if (Buttons[IterateSmallButtons].Visible)
 				{
-					Buttons[IterateSmallButtons].isLarge = false;
+					Buttons[IterateSmallButtons].IsLarge = false;
 					Buttons[IterateSmallButtons].Rectangle = new Rectangle(StartX + (SyncSmallButtons * SmallButtonWidth), BottomContainerRectangle.Y, SmallButtonWidth, BottomContainerRectangle.Height);
 					PaintButton(Buttons[IterateSmallButtons], e.Graphics, false);
 					SyncSmallButtons++;
 				}
 			}
-
 			for (var i = IterateSmallButtons; i <= Buttons.VisibleCount - 1; i++)
 			{
 				Buttons[i].Rectangle = Rectangle.Empty;
 			}
-
 			//Draw Empty Space...
 			var rc = BottomContainerRectangle;
 			rc.Width = Width - (m_maxSmallButtonCount * SmallButtonWidth) - DropDownRectangle.Width;
 			FillButton(rc, e.Graphics, ButtonState.Passive, true, true, false);
-
 			//Paint DropDown...
 			PaintDropDownRectangle(e.Graphics);
-
 			//Finally, paint the bottom line...
 			using (var pen = new Pen(InternalOutlookBarLineColor))
 			{
@@ -577,45 +541,34 @@ namespace LanguageExplorer.Controls.SilSidePane
 			{
 				state = ButtonState.Selected;
 			}
-
 			if (button == m_hoveringButton)
 			{
 				state |= ButtonState.Hovering;
 			}
-
 			if (button != m_hoveringButton && !button.Equals(SelectedButton))
 			{
 				state = ButtonState.Passive;
 			}
-
 			if (!button.Enabled)
 			{
 				state = ButtonState.Disabled;
 			}
-
 			Debug.Assert(state != ButtonState.None, "Button didn't have a definable state. Programmer error.");
-
-			FillButton(button.Rectangle, g, state, true, button.isLarge, button.isLarge);
-
+			FillButton(button.Rectangle, g, state, true, button.IsLarge, button.IsLarge);
 			// Paint icon
-
 			var iconRect = GetRectangleForButtonIcon(button);
-
-			if ((button.isLarge & isLastLarge) || !button.isLarge)
+			if ((button.IsLarge & isLastLarge) || !button.IsLarge)
 			{
 				DrawButtonIcon(g, button, iconRect);
 			}
-
 			// Paint text
-
-			if (button.isLarge && isLastLarge)
+			if (button.IsLarge && isLastLarge)
 			{
 				var location = new PointF
 				{
 					X = iconRect.X + iconRect.Width + m_buttonTextMarginFromIconOnLeft,
 					Y = button.Rectangle.Y + ((InternalButtonHeight / 2.0f) - (Font.Height / 2.0f))
 				};
-
 				g.DrawString(button.Text, Font, GetButtonTextBrush(button == SelectedButton, button.Enabled), location);
 			}
 		}
@@ -627,24 +580,19 @@ namespace LanguageExplorer.Controls.SilSidePane
 		private Rectangle GetRectangleForButtonIcon(OutlookBarButton button)
 		{
 			var rc = new Rectangle();
-			var imageDimension = button.isLarge ? kImageDimensionLarge : kImageDimensionSmall;
-
+			var imageDimension = button.IsLarge ? kImageDimensionLarge : kImageDimensionSmall;
 			rc.Width = button.Image.Width;
 			rc.Height = button.Image.Height;
-
 			if (button.Image.Width > imageDimension)
 			{
 				rc.Width = imageDimension;
 			}
-
 			if (button.Image.Height > imageDimension)
 			{
 				rc.Height = imageDimension;
 			}
-
 			rc.Y = button.Rectangle.Y + (int)Math.Floor(((decimal)InternalButtonHeight / 2) - ((decimal)imageDimension / 2)) + 1;
-
-			if (button.isLarge)
+			if (button.IsLarge)
 			{
 				rc.X = BottomContainerLeftMargin;
 			}
@@ -652,19 +600,16 @@ namespace LanguageExplorer.Controls.SilSidePane
 			{
 				rc.X = button.Rectangle.X + (int)Math.Floor(((decimal)SmallButtonWidth / 2) - ((decimal)imageDimension / 2));
 			}
-
 			// If button icon is smaller than the standard size, then move it down and over a bit to
 			// center it.
 			if (button.Image.Width < imageDimension)
 			{
 				rc.X += (imageDimension - button.Image.Width) / 2;
 			}
-
 			if (button.Image.Height < imageDimension)
 			{
 				rc.Y += (imageDimension - button.Image.Height) / 2;
 			}
-
 			return rc;
 		}
 
@@ -675,7 +620,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 		{
 			var icon = button.Image;
 			ImageAttributes attributes = null;
-
 			try
 			{
 				if (!button.Enabled)
@@ -684,7 +628,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 					var colorToGreyscale = GetGreyscalingColorMatrix();
 					attributes.SetColorMatrix(colorToGreyscale);
 				}
-
 				g.DrawImage(icon, rc, 0, 0, icon.Width, icon.Height, GraphicsUnit.Pixel, attributes);
 			}
 			finally
@@ -701,12 +644,10 @@ namespace LanguageExplorer.Controls.SilSidePane
 		{
 			// Helpful was http://en.wikipedia.org/wiki/Grayscale#Converting_color_to_grayscale
 			// and http://blogs.techrepublic.com.com/howdoi/?p=120
-
 			// Adjustments to turn color to greyscale
 			const float red = .3f;
 			const float green = .59f;
 			const float blue = .11f;
-
 			float[][] matrix = {
 				new[] {red,   red,   red,   0, 0},
 				new[] {green, green, green, 0, 0},
@@ -714,16 +655,14 @@ namespace LanguageExplorer.Controls.SilSidePane
 				new float[] {0,     0,     0,     1, 0},
 				new float[] {0,     0,     0,     0, 0},
 			};
-
 			var colorToGreyscale = new ColorMatrix(matrix);
 			return colorToGreyscale;
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		private void FillButton(Rectangle rc, Graphics g, ButtonState state, bool drawTopBorder, bool drawLeftBorder, bool drawRightBorder)
 		{
 			Brush br;
-
 			switch (Renderer)
 			{
 				case Renderer.Outlook2003:
@@ -732,7 +671,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 						g.FillRectangle(br, rc);
 					}
 					break;
-
 				case Renderer.Outlook2007:
 					//Filling the top part of the button...
 					var TopRectangle = rc;
@@ -741,7 +679,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 						TopRectangle.Height = (InternalButtonHeight * 15) / 32;
 						g.FillRectangle(br, TopRectangle);
 					}
-
 					//and the bottom part...
 					var BottomRectangle = rc;
 					using (br = new LinearGradientBrush(BottomRectangle, GetButtonColor(state, 2), GetButtonColor(state, 3), LinearGradientMode.Vertical))
@@ -751,7 +688,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 						g.FillRectangle(br, BottomRectangle);
 					}
 					break;
-
 				case Renderer.Custom:
 					using (br = new LinearGradientBrush(rc, GetButtonColor(state, 0), GetButtonColor(state, 1), LinearGradientMode.Vertical))
 					{
@@ -759,7 +695,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 					}
 					break;
 			}
-
 			using (var pen = new Pen(InternalOutlookBarLineColor))
 			{
 				//Draw Top Border...
@@ -767,13 +702,11 @@ namespace LanguageExplorer.Controls.SilSidePane
 				{
 					g.DrawLine(pen, rc.X, rc.Y, rc.Width + rc.X, rc.Y);
 				}
-
 				//Draw Left Border...
 				if (drawLeftBorder)
 				{
 					g.DrawLine(pen, rc.X, rc.Y, rc.X, rc.Y + rc.Height);
 				}
-
 				//Draw Right Border...
 				if (drawRightBorder)
 				{
@@ -789,29 +722,24 @@ namespace LanguageExplorer.Controls.SilSidePane
 			{
 				g.FillRectangle(br, GripRectangle);
 			}
-
 			//Draw the icon...
 			using (var icon = GripIcon)
 			{
 				var rc = new Rectangle(Width / 2 - (icon.Width / 2), ((GripRectangle.Height / 2) - icon.Height / 2), icon.Width, icon.Height);
 				g.DrawIcon(icon, rc);
 			}
-
 			g.DrawLine(new Pen(OutlookBarLineColor, 1), 0, 0, 0, GripRectangle.Height);
 			g.DrawLine(new Pen(OutlookBarLineColor, 1), GripRectangle.Width - 1, 0, GripRectangle.Width - 1, GripRectangle.Height);
-
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		private void PaintDropDownRectangle(Graphics g)
 		{
 			//Repaint the backcolor if the mouse is hovering...
 			FillButton(DropDownRectangle, g, (m_dropDownHovering ? ButtonState.Hovering : ButtonState.Passive), true, false, true);
-
 			//Draw the icon...
 			var icon = DropDownIcon;
-			var rc = new Rectangle((DropDownRectangle.X + ((DropDownRectangle.Width / 2) - (icon.Width / 2))), (DropDownRectangle.Y + (((DropDownRectangle.Height / 2) - (icon.Height / 2)) + 1)), icon.Width, icon.Height);
-
+			var rc = new Rectangle(DropDownRectangle.X + (DropDownRectangle.Width / 2 - icon.Width / 2), DropDownRectangle.Y + (DropDownRectangle.Height / 2 - icon.Height / 2) + 1, icon.Width, icon.Height);
 			g.DrawIcon(icon, rc);
 			icon.Dispose();
 
@@ -841,18 +769,16 @@ namespace LanguageExplorer.Controls.SilSidePane
 			{
 				return SystemBrushes.GrayText;
 			}
-
 			switch (Renderer)
 			{
 				case Renderer.Outlook2003: return SystemBrushes.ControlText; // Brushes.Black;
 				case Renderer.Outlook2007: return (isSelected ? new SolidBrush(Color.FromArgb(32, 77, 137)) : Brushes.Black);
 				case Renderer.Custom: return new SolidBrush(isSelected ? ForeColor : ForeColorSelected);
 			}
-
 			return null;
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		private Color GetButtonColor(ButtonState buttonState, int colorIndex)
 		{
 			switch (Renderer)
@@ -869,7 +795,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 								case 1:
 									return ProfessionalColors.ButtonCheckedGradientBegin;
 							}
-
 							break;
 						case ButtonState.Hovering:
 							switch (colorIndex)
@@ -879,7 +804,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 								case 1:
 									return ProfessionalColors.ButtonSelectedGradientEnd;
 							}
-
 							break;
 						case ButtonState.Selected:
 							switch (colorIndex)
@@ -889,7 +813,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 								case 1:
 									return ProfessionalColors.ButtonCheckedGradientEnd;
 							}
-
 							break;
 						case ButtonState.Disabled:
 						default:
@@ -904,7 +827,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 							break;
 					}
 					break;
-
 				case Renderer.Outlook2007:
 					switch (buttonState)
 					{
@@ -920,7 +842,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 								case 3:
 									return Color.FromArgb(254, 211, 101);
 							}
-
 							break;
 						case ButtonState.Hovering:
 							switch (colorIndex)
@@ -934,7 +855,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 								case 3:
 									return Color.FromArgb(255, 230, 159);
 							}
-
 							break;
 						case ButtonState.Selected:
 							switch (colorIndex)
@@ -948,7 +868,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 								case 3:
 									return Color.FromArgb(254, 225, 123);
 							}
-
 							break;
 						case ButtonState.Disabled:
 						case ButtonState.Passive:
@@ -963,11 +882,9 @@ namespace LanguageExplorer.Controls.SilSidePane
 								case 3:
 									return Color.FromArgb(193, 219, 255);
 							}
-
 							break;
 					}
 					break;
-
 				case Renderer.Custom:
 					switch (buttonState)
 					{
@@ -979,7 +896,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 								case 1:
 									return ButtonColorSelectedAndHoveringBottom;
 							}
-
 							break;
 						case ButtonState.Hovering:
 							switch (colorIndex)
@@ -989,7 +905,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 								case 1:
 									return ButtonColorHoveringBottom;
 							}
-
 							break;
 						case ButtonState.Selected:
 							switch (colorIndex)
@@ -999,7 +914,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 								case 1:
 									return ButtonColorSelectedBottom;
 							}
-
 							break;
 						case ButtonState.Disabled:
 						case ButtonState.Passive:
@@ -1010,12 +924,10 @@ namespace LanguageExplorer.Controls.SilSidePane
 								case 1:
 									return ButtonColorPassiveBottom;
 							}
-
 							break;
 					}
 					break;
 			}
-
 			return Color.Empty;
 		}
 
@@ -1039,7 +951,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 					case Renderer.Outlook2007: return 26;
 					case Renderer.Custom: return 25;
 				}
-
 				return 5;
 			}
 		}
@@ -1052,15 +963,11 @@ namespace LanguageExplorer.Controls.SilSidePane
 				switch (Renderer)
 				{
 					case Renderer.Outlook2003:
-						return new LinearGradientBrush(GripRectangle,
- ProfessionalColors.OverflowButtonGradientBegin, ProfessionalColors.OverflowButtonGradientEnd,
- LinearGradientMode.Vertical);
+						return new LinearGradientBrush(GripRectangle, ProfessionalColors.OverflowButtonGradientBegin, ProfessionalColors.OverflowButtonGradientEnd, LinearGradientMode.Vertical);
 					case Renderer.Outlook2007:
-						return new LinearGradientBrush(GripRectangle,
- Color.FromArgb(227, 239, 255), Color.FromArgb(179, 212, 255), LinearGradientMode.Vertical);
+						return new LinearGradientBrush(GripRectangle, Color.FromArgb(227, 239, 255), Color.FromArgb(179, 212, 255), LinearGradientMode.Vertical);
 					case Renderer.Custom:
-						return new LinearGradientBrush(GripRectangle,
-	  ButtonColorPassiveTop, ButtonColorPassiveBottom, LinearGradientMode.Vertical);
+						return new LinearGradientBrush(GripRectangle, ButtonColorPassiveTop, ButtonColorPassiveBottom, LinearGradientMode.Vertical);
 				}
 
 				return null;
@@ -1079,7 +986,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 					case Renderer.Outlook2007: height = 8; break;
 					case Renderer.Custom: height = 8; break;
 				}
-
 				return new Rectangle(0, 0, Width, height);
 			}
 		}
@@ -1116,7 +1022,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 					case Renderer.Outlook2007: return LanguageExplorerResources.DropDown2007;
 					case Renderer.Custom: return LanguageExplorerResources.DropDown2007;
 				}
-
 				return null;
 			}
 		}
@@ -1129,24 +1034,18 @@ namespace LanguageExplorer.Controls.SilSidePane
 		{
 			var contextMenuStrip = components.ContextMenuStrip("contextMenu");
 			contextMenuStrip.Items.Add(SilSidePane.ShowMoreButtons, LanguageExplorerResources.Arrow_Up.ToBitmap(), ShowMoreButtons);
-
 			contextMenuStrip.Items.Add(SilSidePane.ShowFeWerButtons, LanguageExplorerResources.Arrow_Down.ToBitmap(), ShowFewerButtons);
-
 			if (m_maxLargeButtonCount >= Buttons.VisibleCount)
 			{
 				contextMenuStrip.Items[0].Enabled = false;
 			}
-
 			if (m_maxLargeButtonCount == 0)
 			{
 				contextMenuStrip.Items[1].Enabled = false;
 			}
-
 			contextMenuStrip.Items.Add(SilSidePane.NavPaneOptions, null, NavigationPaneOptions);
-
 			var mnuAdd = new ToolStripMenuItem(SilSidePane.AddOrRemoveButtons, null);
 			contextMenuStrip.Items.Add(mnuAdd);
-
 			foreach (OutlookBarButton btn in Buttons)
 			{
 				if (btn.Allowed)
@@ -1163,7 +1062,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 					mnuAdd.DropDownItems.Add(mnu);
 				}
 			}
-
 			var btnCount = 0;
 			foreach (OutlookBarButton btn in Buttons)
 			{
@@ -1172,12 +1070,10 @@ namespace LanguageExplorer.Controls.SilSidePane
 					btnCount++;
 				}
 			}
-
 			if (btnCount > 0)
 			{
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 			}
-
 			foreach (OutlookBarButton btn in Buttons)
 			{
 				if (btn.Rectangle == Rectangle.Empty && btn.Visible)
@@ -1195,7 +1091,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 					contextMenuStrip.Items.Add(mnu);
 				}
 			}
-
 			contextMenuStrip.Show(this, new Point(Width, Height - (InternalButtonHeight / 2)));
 		}
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -37,7 +37,6 @@ namespace LanguageExplorer.Controls.Styles
 		private bool m_dontUpdateInheritance = true;
 		private BulletInfo m_currentStyleBulletInfo;
 		private StyleInfo m_StyleInfo;
-
 		/// <summary>Font info used when bullets is checked</summary>
 		private FontInfo m_BulletsFontInfo;
 		/// <summary>Font info used when numbered is checked</summary>
@@ -107,26 +106,21 @@ namespace LanguageExplorer.Controls.Styles
 				}
 			}
 			m_dontUpdateInheritance = true;
-
-			var fDifferentStyle = m_StyleInfo == null || (styleInfo.Name != m_StyleInfo.Name);
-
+			var fDifferentStyle = m_StyleInfo == null || styleInfo.Name != m_StyleInfo.Name;
 			// Don't use a 0 size bullet. Fixes FWNX-575.
 			if (styleInfo?.BulletInformation?.Value.FontInfo.FontSize.Value == 0)
 			{
 				styleInfo.BulletInformation.Value.FontInfo.m_fontSize = new InheritableStyleProp<int>(FontInfo.kDefaultFontSize);
 			}
-
 			m_StyleInfo = styleInfo;
 			m_preview.IsRightToLeft = m_StyleInfo.DirectionIsRightToLeft == TriStateBool.triNotSet ? DefaultTextDirectionRtoL : m_StyleInfo.DirectionIsRightToLeft == TriStateBool.triTrue;
 			m_preview.WritingSystemFactory = m_StyleInfo.Cache.WritingSystemFactory;
 			m_preview.WritingSystemCode = m_StyleInfo.Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
-
 			// Note: don't assign m_currentStyleBulletInfo until the end of this method
 			// since setting some of the values change m_currentStyleBulletInfo before we have set
 			// everything.
 			var bulletInfo = new BulletInfo(styleInfo.BulletInformation.Value);
 			var bulletType = bulletInfo.m_numberScheme;
-
 			// If we have a different style, we have to reload the font info. If it is the same
 			// style we were here before so we keep the font info that we already have.
 			if (fDifferentStyle)
@@ -143,29 +137,23 @@ namespace LanguageExplorer.Controls.Styles
 				{
 					// use font from style for numbers
 					m_NumberFontInfo = bulletInfo.FontInfo;
-
 					if (bulletType == VwBulNum.kvbnNone)
 					{
 						m_NumberFontInfo.m_fontName.ResetToInherited(styleInfo.FontInfoForWs(-1).UIFontName());
 					}
-
 					// create a bullets font based on the font for numbers
 					m_BulletsFontInfo = new FontInfo(m_NumberFontInfo);
-
 					// The font for bullets is hard-coded in the views code, so there is no point
 					// in letting the user select any other font for bullets.
 					m_BulletsFontInfo.m_fontName.ResetToInherited("Quivira");
 					m_BulletsFontInfo.m_fontName.SetDefaultValue("Quivira");
 				}
 			}
-
 			m_nudStartAt.Value = bulletInfo.m_start;
 			m_chkStartAt.Checked = (bulletInfo.m_start != 1);
-
 			m_tbBulletCustom.Text = bulletInfo.m_bulletCustom;
 			m_tbTextBefore.Text = bulletInfo.m_textBefore;
 			m_tbTextAfter.Text = bulletInfo.m_textAfter;
-
 			m_rbUnspecified.Enabled = styleInfo.Inherits;
 			if (styleInfo.BulletInformation.IsInherited && styleInfo.Inherits)
 			{
@@ -183,13 +171,10 @@ namespace LanguageExplorer.Controls.Styles
 			{
 				m_rbNumber.Checked = true;
 			}
-
 			m_cboBulletScheme.SelectedIndex = GetBulletIndexForType(bulletType);
 			m_cboNumberScheme.SelectedIndex = GetNumberSchemeIndexForType(bulletType);
-
 			m_currentStyleBulletInfo = bulletInfo;
 			UpdateBulletSchemeComboBox();
-
 			m_dontUpdateInheritance = false;
 		}
 
@@ -203,11 +188,9 @@ namespace LanguageExplorer.Controls.Styles
 				Debug.Assert(false, "Somehow, the Bullets tab has been asked to write its data to a character-based style [" + styleInfo.Name + "].");
 				return;
 			}
-
 			// Save the bullet information
 			var bulInfo = new BulletInfo();
 			UpdateBulletInfo(ref bulInfo);
-
 			// Replace the value
 			if (styleInfo.BulletInformation.Save(m_rbUnspecified.Checked, bulInfo))
 			{
@@ -306,7 +289,6 @@ namespace LanguageExplorer.Controls.Styles
 					ChangedToUnspecified?.Invoke(this, EventArgs.Empty);
 				}
 			}
-
 			if (sender == m_rbNumber && m_nudStartAt.Value == 0)
 			{
 				m_nudStartAt.Value = 1;
@@ -326,17 +308,14 @@ namespace LanguageExplorer.Controls.Styles
 			{
 				m_chkStartAt.Checked = true;
 			}
-
 			UpdateBulletInfo(ref m_currentStyleBulletInfo);
 			var propsBldr = TsStringUtils.MakePropsBldr();
 			m_currentStyleBulletInfo.ConvertAsTextProps(propsBldr);
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptSpaceBefore, (int)FwTextPropVar.ktpvMilliPoint, 6000);
-			ITsTextProps propsFirst = propsBldr.GetTextProps();
+			var propsFirst = propsBldr.GetTextProps();
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptBulNumStartAt, -1, -1);
-
 			m_preview.SetProps(propsFirst, propsBldr.GetTextProps());
 			m_preview.Refresh();
-
 			StyleDataChanged?.Invoke(this, null);
 		}
 
@@ -364,23 +343,18 @@ namespace LanguageExplorer.Controls.Styles
 				case 0:     // 1, 2, 3'
 					m_nudStartAt.Mode = DataUpDownMode.Normal;
 					break;
-
 				case 1:     // I, II, III (Roman numerals)
 					m_nudStartAt.Mode = DataUpDownMode.Roman;
 					break;
-
 				case 2:     // i, ii, iii (lower case Roman numerals)
 					m_nudStartAt.Mode = DataUpDownMode.RomanLowerCase;
 					break;
-
 				case 3:     // A, B, C
 					m_nudStartAt.Mode = DataUpDownMode.Letters;
 					break;
-
 				case 4:     // a, b, c
 					m_nudStartAt.Mode = DataUpDownMode.LettersLowerCase;
 					break;
-
 				case 5:     // 01, 02, 03
 					m_nudStartAt.Mode = DataUpDownMode.Normal;
 					break;
@@ -404,16 +378,12 @@ namespace LanguageExplorer.Controls.Styles
 						fontDialog.CanChooseFont = false;
 					}
 					else
+					{
 						fontInfo = m_NumberFontInfo;
-
+					}
 					// ENHANCE: change the last parameter when the views code can handle font
 					// features for bullets/numbers
-					fontDialog.Initialize(
-						fontInfo,
-						false,
-						m_StyleInfo.Cache.ServiceLocator.WritingSystemManager.UserWs,
-						m_StyleInfo.Cache.WritingSystemFactory, StyleSheet, true);
-
+					fontDialog.Initialize(fontInfo, false, m_StyleInfo.Cache.ServiceLocator.WritingSystemManager.UserWs, m_StyleInfo.Cache.WritingSystemFactory, StyleSheet, true);
 					if (fontDialog.ShowDialog(Parent) == DialogResult.OK)
 					{
 						if (m_rbBullet.Checked)
@@ -442,7 +412,6 @@ namespace LanguageExplorer.Controls.Styles
 			// what the views code does we'd have to implement a views combo box.
 			m_cboBulletScheme.ForeColor = m_BulletsFontInfo.m_fontColor.Value;
 			m_cboBulletScheme.BackColor = m_BulletsFontInfo.m_backColor.Value;
-
 			var newStyle = FontStyle.Regular;
 			if (m_BulletsFontInfo.m_bold.Value)
 			{

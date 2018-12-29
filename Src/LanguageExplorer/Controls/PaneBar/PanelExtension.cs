@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,9 +18,7 @@ namespace LanguageExplorer.Controls.PaneBar
 	{
 		private int? m_widthOfLeftDockedControls;
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
+		/// <summary />
 		internal PanelExtension()
 		{
 			Text = string.Empty;
@@ -35,10 +33,9 @@ namespace LanguageExplorer.Controls.PaneBar
 		/// <summary>
 		/// sets m_widthOfLeftDockedControls
 		/// </summary>
-		void CalculateWidthOfLeftDockedControls()
+		private void CalculateWidthOfLeftDockedControls()
 		{
 			m_widthOfLeftDockedControls = 0;
-
 			foreach (var control in Controls.Cast<Control>().Where(c => (c.Dock & DockStyle.Left) != 0).Where(c => m_widthOfLeftDockedControls < c.Left + c.Width))
 			{
 				m_widthOfLeftDockedControls = control.Left + control.Width;
@@ -48,24 +45,20 @@ namespace LanguageExplorer.Controls.PaneBar
 		/// <summary />
 		protected override void OnPaintBackground(PaintEventArgs e)
 		{
-			base.OnPaintBackground (e);
-
+			base.OnPaintBackground(e);
 			var rectangleToPaint = ClientRectangle;
 			if (rectangleToPaint.Width <= 0 || rectangleToPaint.Height <= 0)
 			{
 				return; // can't draw anything, and will crash if we try
-}
+			}
 			var beginColor = Color.FromArgb(0x58, 0x80, 0xd0);
 			var endColor = Color.FromArgb(0x08, 0x40, 0x98);
-
 			using (var brush = new LinearGradientBrush(rectangleToPaint, beginColor, endColor, LinearGradientMode.Vertical))
 			{
 				e.Graphics.FillRectangle(brush, rectangleToPaint);
 			}
-
 			// Draw a background image if we have one set.
 			// This code assumes it is always centered.
-
 			var backgroundImage = BackgroundImage;
 			if (backgroundImage == null)
 			{
@@ -107,6 +100,11 @@ namespace LanguageExplorer.Controls.PaneBar
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
 
 			if (disposing)
 			{

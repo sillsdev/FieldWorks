@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2018 SIL International
+// Copyright (c) 2002-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -65,6 +65,7 @@ namespace LanguageExplorer.Controls.Styles
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
+				// No need to run it more than once.
 				return;
 			}
 
@@ -115,7 +116,6 @@ namespace LanguageExplorer.Controls.Styles
 				m_currentColor = value;
 				m_colorName = ColorPickerMatrix.ColorToName(value);
 				Invalidate();
-
 				// notify any subscriber of the color change
 				ColorPicked?.Invoke(this, EventArgs.Empty);
 			}
@@ -127,7 +127,6 @@ namespace LanguageExplorer.Controls.Styles
 		protected override void OnResize(EventArgs e)
 		{
 			base.OnResize(e);
-
 			// make space for the button rectangle
 			var buttonWidth = 16;
 			var buttonMargin = 1;
@@ -159,7 +158,6 @@ namespace LanguageExplorer.Controls.Styles
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
 			base.OnMouseMove(e);
-
 			UpdateOnMouseAction();
 		}
 
@@ -167,9 +165,7 @@ namespace LanguageExplorer.Controls.Styles
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
 			base.OnMouseDown(e);
-
 			UpdateOnMouseAction();
-
 			// Drop down if user clicks anywhere in the combo box
 			if (!m_fDropDownClickedClose && ClientRectangle.Contains(e.Location) && (e.Button & MouseButtons.Left) > 0)
 			{
@@ -182,7 +178,6 @@ namespace LanguageExplorer.Controls.Styles
 		{
 			base.OnMouseUp(e);
 			UpdateOnMouseAction();
-
 			// If the user closes the drop down by clicking on the button again we don't want
 			// to show the button pressed. Therefore we have to leave the m_fDropDownClickedClose
 			// variable set to true until the user releases the mouse button.
@@ -200,9 +195,8 @@ namespace LanguageExplorer.Controls.Styles
 		private void UpdateOnMouseAction()
 		{
 			var newButtonState = MouseOnButton
-				? (MouseButtons & MouseButtons.Left) != 0 && m_dropDown == null
-					&& !m_fDropDownClickedClose ? DropDownButtonState.Pressed : DropDownButtonState.Hot : DropDownButtonState.Normal;
-
+				? (MouseButtons & MouseButtons.Left) != 0 && m_dropDown == null && !m_fDropDownClickedClose ? DropDownButtonState.Pressed : DropDownButtonState.Hot
+				: DropDownButtonState.Normal;
 			if (newButtonState != m_buttonState)
 			{
 				m_buttonState = newButtonState;
@@ -228,18 +222,15 @@ namespace LanguageExplorer.Controls.Styles
 					element = VisualStyleElement.ComboBox.DropDownButton.Pressed;
 					state = ButtonState.Pushed;
 					break;
-
 				case DropDownButtonState.Hot:
 					element = VisualStyleElement.ComboBox.DropDownButton.Hot;
 					state = ButtonState.Normal;
 					break;
-
 				case DropDownButtonState.Normal:
 					element = VisualStyleElement.ComboBox.DropDownButton.Normal;
 					state = ButtonState.Normal;
 					break;
 			}
-
 			if (!Application.RenderWithVisualStyles)
 			{
 				// Strange, but we have to expand the rectangle a little bit to convince
@@ -260,7 +251,6 @@ namespace LanguageExplorer.Controls.Styles
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);
-
 			if (!Application.RenderWithVisualStyles)
 			{
 				e.Graphics.FillRectangle(SystemBrushes.Window, ClientRectangle);
@@ -271,23 +261,19 @@ namespace LanguageExplorer.Controls.Styles
 				var renderer = new VisualStyleRenderer(element);
 				renderer.DrawBackground(e.Graphics, ClientRectangle);
 			}
-
 			// Draw the color box (doesn't actually draw anything if the Empty color is picked)
 			var boxRect = new Rectangle(2, 2, m_currentColor == Color.Empty ? 0 : Height - 4, Height - 4);
 			e.Graphics.FillRectangle(new SolidBrush(m_currentColor), boxRect);
 			DrawRectangle(e.Graphics, boxRect, SystemPens.WindowText, 1);
-
 			// Draw the text (color name or Unspecified)
 			var ht = Font.GetHeight(e.Graphics);
 			e.Graphics.DrawString(m_colorName, Font, new SolidBrush(ForeColor), boxRect.Right + 1, Height / 2 - ht / 2);
-
 			if (!Application.RenderWithVisualStyles)
 			{
 				ControlPaint.DrawBorder3D(e.Graphics, ClientRectangle, Border3DStyle.Sunken);
 			}
 			// Draw the drop down button
 			DrawDropDownButton(e.Graphics);
-
 			if (ContainsFocus)
 			{
 				ControlPaint.DrawFocusRectangle(e.Graphics, new Rectangle(boxRect.Right + 1, boxRect.Top, Width - (boxRect.Width + m_buttonRect.Width + 8), boxRect.Height));
@@ -332,7 +318,6 @@ namespace LanguageExplorer.Controls.Styles
 			var dropDown = sender as ColorPickerDropDown;
 			Debug.Assert(dropDown != null);
 			ColorValue = dropDown.CurrentColor;
-
 			Focus();
 			Refresh();
 		}
@@ -397,7 +382,6 @@ namespace LanguageExplorer.Controls.Styles
 			internal ColorPickerDropDown(bool fShowUnspecified, Color selectedColor)
 			{
 				LayoutStyle = ToolStripLayoutStyle.VerticalStackWithOverflow;
-
 				if (fShowUnspecified)
 				{
 					// Add the "Automatic" button.
@@ -407,10 +391,8 @@ namespace LanguageExplorer.Controls.Styles
 					};
 					m_autoItem.Margin = new Padding(1, m_autoItem.Margin.Top, m_autoItem.Margin.Right, m_autoItem.Margin.Bottom);
 					m_autoItem.Click += m_autoItem_Click;
-
 					Items.Add(m_autoItem);
 				}
-
 				// Add all the colored squares.
 				m_colorMatrix = new ColorPickerMatrix();
 				m_colorMatrix.ColorPicked += m_colorMatrix_ColorPicked;
@@ -421,7 +403,6 @@ namespace LanguageExplorer.Controls.Styles
 					Padding = new Padding(3)
 				};
 				Items.Add(host);
-
 				// Add the "More Colors..." button.
 				m_moreItem = new ToolStripMenuItem(ColorPickerStrings.kstidMoreColors)
 				{
@@ -429,7 +410,6 @@ namespace LanguageExplorer.Controls.Styles
 				};
 				m_moreItem.Click += m_moreItem_Click;
 				Items.Add(m_moreItem);
-
 				CurrentColor = selectedColor;
 			}
 
@@ -467,9 +447,7 @@ namespace LanguageExplorer.Controls.Styles
 			private void m_colorMatrix_ColorPicked(object sender, EventArgs e)
 			{
 				m_currColor = m_colorMatrix.CurrentColor;
-
 				Hide();
-
 				ColorPicked?.Invoke(this, EventArgs.Empty);
 			}
 
@@ -479,11 +457,9 @@ namespace LanguageExplorer.Controls.Styles
 			private void m_moreItem_Click(object sender, EventArgs e)
 			{
 				Hide();
-
 				using (var dlg = new ColorDialog())
 				{
 					dlg.FullOpen = true;
-
 					if (dlg.ShowDialog() == DialogResult.OK)
 					{
 						CurrentColor = dlg.Color;
@@ -496,9 +472,7 @@ namespace LanguageExplorer.Controls.Styles
 			private void m_autoItem_Click(object sender, EventArgs e)
 			{
 				CurrentColor = Color.Empty;
-
 				Hide();
-
 				ColorPicked?.Invoke(this, EventArgs.Empty);
 			}
 		}
@@ -518,14 +492,10 @@ namespace LanguageExplorer.Controls.Styles
 			internal ColorPickerMatrix()
 			{
 				InitializeComponent();
-
 				DoubleBuffered = true;
-
 				m_toolTip = new ToolTip();
-
 				var row = 0;
 				var col = 0;
-
 				for (var i = 0; i < ColorUtil.kNumberOfColors; i++)
 				{
 					// Get the entry from the resources that has the color name and RGB value.
@@ -534,7 +504,6 @@ namespace LanguageExplorer.Controls.Styles
 					{
 						continue;
 					}
-
 					var btn = new XButton
 					{
 						CanBeChecked = true,
@@ -546,11 +515,9 @@ namespace LanguageExplorer.Controls.Styles
 					btn.Paint += btn_Paint;
 					btn.Click += btn_Click;
 					Controls.Add(btn);
-
 					// Store the name in the tooltip and create a color from the RGB values.
 					m_toolTip.SetToolTip(btn, ColorUtil.ColorNameAtIndex(i));
 					m_clrButtons[btn] = color;
-
 					col++;
 					if (col == kNumberOfCols)
 					{
@@ -580,7 +547,6 @@ namespace LanguageExplorer.Controls.Styles
 				set
 				{
 					m_currColor = value;
-
 					foreach (var square in m_clrButtons)
 					{
 						square.Key.Checked = (value == square.Value);
@@ -613,16 +579,13 @@ namespace LanguageExplorer.Controls.Styles
 				{
 					return;
 				}
-
 				using (var br = new SolidBrush(btn.BackColor))
 				{
 					var rc = btn.ClientRectangle;
 					e.Graphics.FillRectangle(br, rc);
-
 					br.Color = Color.Gray;
 					rc.Inflate(-3, -3);
 					e.Graphics.FillRectangle(br, rc);
-
 					br.Color = m_clrButtons[btn];
 					rc.Inflate(-1, -1);
 					e.Graphics.FillRectangle(br, rc);
@@ -656,9 +619,6 @@ namespace LanguageExplorer.Controls.Styles
 				var resources = new System.ComponentModel.ComponentResourceManager(typeof(ColorPickerMatrix));
 				m_toolTip = new ToolTip(this.components);
 				SuspendLayout();
-				//
-				// ColorPickerMatrix
-				//
 				resources.ApplyResources(this, "$this");
 				AutoScaleMode = AutoScaleMode.Font;
 				BackColor = Color.Transparent;
@@ -698,7 +658,7 @@ namespace LanguageExplorer.Controls.Styles
 				/// <summary/>
 				protected override void Dispose(bool disposing)
 				{
-					System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+					Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
 					base.Dispose(disposing);
 				}
 
@@ -731,19 +691,13 @@ namespace LanguageExplorer.Controls.Styles
 				/// Gets or sets a value indicating whether or not an X is drawn on the button when no
 				/// image, text or arrow direction is specified. By default, when no image, text or
 				/// arrow direction is specified, the button is drawn with an X (like a close window-
-				/// type of X). However, when DrawEmtpy is true, nothing will be drawn except the
+				/// type of X). However, when DrawEmpty is true, nothing will be drawn except the
 				/// highlighted look given when the mouse is over or down or when the button is checked.
 				/// </summary>
 				internal bool DrawEmpty { private get; set; }
 
 				/// <summary />
-				private new Image Image
-				{
-					get
-					{
-						return base.Image;
-					}
-				}
+				private new Image Image => base.Image;
 
 				/// <inheritdoc />
 				protected override void OnSystemColorsChanged(EventArgs e)
@@ -767,7 +721,6 @@ namespace LanguageExplorer.Controls.Styles
 				protected override void OnMouseDown(MouseEventArgs e)
 				{
 					base.OnMouseDown(e);
-
 					if (e.Button == MouseButtons.Left)
 					{
 						m_mouseDown = true;
@@ -779,7 +732,6 @@ namespace LanguageExplorer.Controls.Styles
 				protected override void OnMouseUp(MouseEventArgs e)
 				{
 					base.OnMouseUp(e);
-
 					if (e.Button == MouseButtons.Left)
 					{
 						m_mouseDown = false;
@@ -792,8 +744,7 @@ namespace LanguageExplorer.Controls.Styles
 				{
 					base.OnMouseMove(e);
 					m_mouseOver = ClientRectangle.Contains(e.Location);
-					var newState = (m_mouseOver ? PaintState.Hot : PaintState.Normal);
-
+					var newState = m_mouseOver ? PaintState.Hot : PaintState.Normal;
 					if (m_mouseOver && m_mouseDown)
 					{
 						newState = PaintState.HotDown;
@@ -809,7 +760,6 @@ namespace LanguageExplorer.Controls.Styles
 				protected override void OnPaintBackground(PaintEventArgs e)
 				{
 					base.OnPaintBackground(e);
-
 					if (m_mouseOver || Checked)
 					{
 						m_state = (m_mouseDown ? PaintState.HotDown : PaintState.Hot);
@@ -819,7 +769,6 @@ namespace LanguageExplorer.Controls.Styles
 						m_state = PaintState.Normal;
 					}
 					var rc = ClientRectangle;
-
 					using (var br = new SolidBrush(BackColor))
 					{
 						e.Graphics.FillRectangle(br, rc);
@@ -871,12 +820,10 @@ namespace LanguageExplorer.Controls.Styles
 				private void DrawWithX(PaintEventArgs e)
 				{
 					var rc = ClientRectangle;
-					var clr = (m_state == PaintState.Normal ? SystemColors.ControlDarkDark : SystemColors.ControlText);
-
+					var clr = m_state == PaintState.Normal ? SystemColors.ControlDarkDark : SystemColors.ControlText;
 					// Linux doesn't have the Marlett font, so use a standard Unicode dingbat here.
 					var glyph = Platform.IsWindows ? "r" : "\u2573";
 					TextRenderer.DrawText(e.Graphics, glyph, Font, rc, clr, m_txtFmtflags);
-
 					// Draw the border around the button.
 					rc.Width--;
 					rc.Height--;
@@ -907,7 +854,6 @@ namespace LanguageExplorer.Controls.Styles
 				private void DrawArrow(PaintEventArgs e)
 				{
 					var rc = ClientRectangle;
-
 					// If possible, render the button with visual styles. Otherwise,
 					// paint the plain Windows 2000 push button.
 					var element = GetCorrectVisualStyleArrowElement();
@@ -918,7 +864,6 @@ namespace LanguageExplorer.Controls.Styles
 						renderer.DrawBackground(e.Graphics, rc);
 						return;
 					}
-
 					if (Font.SizeInPoints != 12)
 					{
 						Font = new Font(Font.FontFamily, 12, GraphicsUnit.Point);
@@ -929,7 +874,6 @@ namespace LanguageExplorer.Controls.Styles
 						? (m_drawLeftArrowButton ? "3" : "4")
 						// Linux doesn't have the Marlett font, so use standard Unicode dingbats here.
 						: (m_drawLeftArrowButton ? "\u25C4" : "\u25BA");
-
 					var clr = (Enabled ? SystemColors.ControlText : SystemColors.GrayText);
 					TextRenderer.DrawText(e.Graphics, arrowGlyph, Font, rc, clr, m_txtFmtflags);
 				}
@@ -951,7 +895,6 @@ namespace LanguageExplorer.Controls.Styles
 						}
 						return (m_state == PaintState.Hot ? VisualStyleElement.Spin.DownHorizontal.Hot : VisualStyleElement.Spin.DownHorizontal.Pressed);
 					}
-
 					if (!Enabled)
 					{
 						return VisualStyleElement.Spin.UpHorizontal.Disabled;

@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2018 SIL International
+// Copyright (c) 2007-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -40,7 +40,6 @@ namespace LanguageExplorer.Controls.Styles
 		{
 			m_lbFontNames.Items.Clear();
 			m_lbFontNames.Items.Add(ResourceHelper.GetResourceString("kstidDefaultFont"));
-
 			// Mono doesn't sort the font names currently 20100322. Workaround for FWNX-273: Fonts not in alphabetical order
 			foreach (var name in FontFamily.Families.OrderBy(family => family.Name).Select(family => family.Name))
 			{
@@ -66,18 +65,14 @@ namespace LanguageExplorer.Controls.Styles
 		void IFontDialog.Initialize(FontInfo fontInfo, bool fAllowSubscript, int ws, ILgWritingSystemFactory wsf, LcmStyleSheet styleSheet, bool fAlwaysDisableFontFeatures)
 		{
 			m_DefaultWs = ws;
-
 			m_preview.WritingSystemFactory = wsf;
 			m_preview.WritingSystemCode = ws;
 			m_preview.StyleSheet = styleSheet;
-
 			m_tbFontName.Text = fontInfo.UIFontName();
 			FontSize = fontInfo.m_fontSize.Value / 1000;
 			m_tbFontSize.Text = FontSize.ToString(CultureInfo.InvariantCulture);
-
 			m_FontAttributes.UpdateForStyle(fontInfo);
 			m_FontAttributes.AllowSuperSubScript = fAllowSubscript;
-
 			m_FontAttributes.AlwaysDisableFontFeatures = fAlwaysDisableFontFeatures;
 			UpdatePreview();
 		}
@@ -98,45 +93,35 @@ namespace LanguageExplorer.Controls.Styles
 			// Font name
 			var newValue = GetInternalFontName(m_tbFontName.Text);
 			fontInfo.IsDirty |= fontInfo.m_fontName.Save(false, newValue);
-
 			// font size
 			var fontSize = FontSize;
 			fontInfo.IsDirty |= fontInfo.m_fontSize.Save(false, fontSize * 1000);
-
 			// color
 			bool fIsInherited;
 			var color = m_FontAttributes.GetFontColor(out fIsInherited);
 			fontInfo.IsDirty |= fontInfo.m_fontColor.Save(fIsInherited, color);
-
 			// background color
 			color = m_FontAttributes.GetBackgroundColor(out fIsInherited);
 			fontInfo.IsDirty |= fontInfo.m_backColor.Save(fIsInherited, color);
-
 			// underline style
 			var underlineType = m_FontAttributes.GetUnderlineType(out fIsInherited);
 			fontInfo.IsDirty |= fontInfo.m_underline.Save(fIsInherited, underlineType);
-
 			// underline color
 			color = m_FontAttributes.GetUnderlineColor(out fIsInherited);
 			fontInfo.IsDirty |= fontInfo.m_underlineColor.Save(fIsInherited, color);
-
 			// bold, italic, superscript, subscript
 			var fFlag = m_FontAttributes.GetBold(out fIsInherited);
 			fontInfo.IsDirty |= fontInfo.m_bold.Save(fIsInherited, fFlag);
-
 			fFlag = m_FontAttributes.GetItalic(out fIsInherited);
 			fontInfo.IsDirty |= fontInfo.m_italic.Save(fIsInherited, fFlag);
-
 			if (m_FontAttributes.AllowSuperSubScript)
 			{
 				var superSub = m_FontAttributes.GetSubSuperscript(out fIsInherited);
 				fontInfo.IsDirty |= fontInfo.m_superSub.Save(fIsInherited, superSub);
-
 				// position
 				var fontPos = m_FontAttributes.GetFontPosition(out fIsInherited);
 				fontInfo.IsDirty |= fontInfo.m_offset.Save(fIsInherited, fontPos);
 			}
-
 			// features
 			var fontFeatures = m_FontAttributes.GetFontFeatures(out fIsInherited);
 			fontInfo.IsDirty |= fontInfo.m_features.Save(fIsInherited, fontFeatures);
@@ -373,7 +358,6 @@ namespace LanguageExplorer.Controls.Styles
 			}
 			var strBldr = TsStringUtils.MakeStrBldr();
 			strBldr.Replace(0, 0, "______", StyleUtils.CharStyleTextProps(null, m_DefaultWs));
-
 			var propsBldr = TsStringUtils.MakePropsBldr();
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptFontFamily, m_tbFontName.Text);
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, FontSize * 1000);
@@ -385,9 +369,7 @@ namespace LanguageExplorer.Controls.Styles
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(m_FontAttributes.GetBackgroundColor(out fIsInherited)));
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptUnderColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(m_FontAttributes.GetUnderlineColor(out fIsInherited)));
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, m_DefaultWs);
-
 			strBldr.Replace(3, 3, m_tbFontName.Text, propsBldr.GetTextProps());
-
 			m_preview.Tss = strBldr.GetString();
 			m_preview.Invalidate();
 		}

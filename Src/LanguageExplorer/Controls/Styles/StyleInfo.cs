@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -118,23 +118,17 @@ namespace LanguageExplorer.Controls.Styles
 			{
 				text.Append(BasedOnStyle.Name + " + ");
 			}
-
 			// Add default font information
 			var fForceMinimumDescription = IsParagraphStyle && !Inherits;
 			AddDefaultFontInfo(text, fForceMinimumDescription);
-
 			// Add paragraph information
 			AppendParagraphInfo(text, useBiDiLabels, userMeasurementType);
-
 			// Add bullet information
 			AddBulletInfo(text);
-
 			// Add border information
 			AddBorderInfo(text, useBiDiLabels);
-
 			// Add writing system specific information
 			AddWsSpecificFontInfo(text);
-
 			return text.ToString();
 		}
 
@@ -241,7 +235,6 @@ namespace LanguageExplorer.Controls.Styles
 						AppendItem(tmp, m_bulletInfo.Value.FontInfo.ToString(false));
 					}
 				}
-
 				if (tmp.Length > 0)
 				{
 					text.Append(" (");
@@ -278,7 +271,6 @@ namespace LanguageExplorer.Controls.Styles
 			{
 				return;
 			}
-
 			text.AppendLine();
 			foreach (var wsInfo in m_fontInfoOverrides)
 			{
@@ -333,7 +325,6 @@ namespace LanguageExplorer.Controls.Styles
 			{
 				AppendMeasure(text, (useBiDiLabels) ? Strings.ksTrailing : Strings.ksRight, userMeasurementType, m_trailingIndent.Value);
 			}
-
 			if (m_firstLineIndent.IsExplicit)
 			{
 				if (m_firstLineIndent.Value < 0)
@@ -349,7 +340,6 @@ namespace LanguageExplorer.Controls.Styles
 					AppendItem(text, Strings.ksSpecialIndent, Strings.ksNone);
 				}
 			}
-
 			if (m_spaceBefore.IsExplicit)
 			{
 				AppendMeasure(text, Strings.ksSpacingBefore, m_spaceBefore.Value);
@@ -486,7 +476,6 @@ namespace LanguageExplorer.Controls.Styles
 		public void SaveToDB(IStStyle style, bool existingStyle, bool isModified)
 		{
 			Debug.Assert(IsValid);
-
 			m_style = style;
 			style.Name = m_name;
 			style.Usage.UserDefaultWritingSystem = TsStringUtils.MakeString(m_usage, Cache.ServiceLocator.WritingSystemManager.UserWs);
@@ -526,10 +515,8 @@ namespace LanguageExplorer.Controls.Styles
 			style.Structure = m_structure;
 			style.Function = m_function;
 			style.UserLevel = m_userLevel;
-
 			// Build the text props
 			var styleProps = TsStringUtils.MakePropsBldr();
-
 			if (m_defaultFontInfo.m_fontName.IsExplicit)
 			{
 				styleProps.SetStrPropValue((int)FwTextPropType.ktptFontFamily, m_defaultFontInfo.m_fontName.Value);
@@ -542,95 +529,76 @@ namespace LanguageExplorer.Controls.Styles
 			{
 				styleProps.SetIntPropValues((int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum, m_defaultFontInfo.m_bold.Value ? (int)FwTextToggleVal.kttvInvert : (int)FwTextToggleVal.kttvOff);
 			}
-
 			if (m_defaultFontInfo.m_italic.IsExplicit)
 			{
 				styleProps.SetIntPropValues((int)FwTextPropType.ktptItalic, (int)FwTextPropVar.ktpvEnum, m_defaultFontInfo.m_italic.Value ? (int)FwTextToggleVal.kttvInvert : (int)FwTextToggleVal.kttvOff);
 			}
-
 			if (m_defaultFontInfo.m_superSub.IsExplicit)
 			{
 				styleProps.SetIntPropValues((int)FwTextPropType.ktptSuperscript, 0, (int)m_defaultFontInfo.m_superSub.Value);
 			}
-
 			if (m_defaultFontInfo.m_fontSize.IsExplicit)
 			{
 				styleProps.SetIntPropValues((int)FwTextPropType.ktptFontSize, 0, m_defaultFontInfo.m_fontSize.Value);
 			}
-
 			if (m_defaultFontInfo.m_fontColor.IsExplicit)
 			{
 				styleProps.SetIntPropValues((int)FwTextPropType.ktptForeColor, 0, (int)ColorUtil.ConvertColorToBGR(m_defaultFontInfo.m_fontColor.Value));
 			}
-
 			if (m_defaultFontInfo.m_backColor.IsExplicit)
 			{
 				styleProps.SetIntPropValues((int)FwTextPropType.ktptBackColor, 0, (int)ColorUtil.ConvertColorToBGR(m_defaultFontInfo.m_backColor.Value));
 			}
-
 			if (m_defaultFontInfo.m_offset.IsExplicit)
 			{
 				styleProps.SetIntPropValues((int)FwTextPropType.ktptOffset, (int)FwTextPropVar.ktpvMilliPoint, m_defaultFontInfo.m_offset.Value);
 			}
-
 			if (m_defaultFontInfo.m_underline.IsExplicit)
 			{
 				styleProps.SetIntPropValues((int)FwTextPropType.ktptUnderline, 0, (int)m_defaultFontInfo.m_underline.Value);
 			}
-
 			if (m_defaultFontInfo.m_underlineColor.IsExplicit)
 			{
 				styleProps.SetIntPropValues((int)FwTextPropType.ktptUnderColor, 0, (int)ColorUtil.ConvertColorToBGR(m_defaultFontInfo.m_underlineColor.Value));
 			}
-
 			if (m_defaultFontInfo.m_features.IsExplicit)
 			{
 				styleProps.SetStrPropValue((int)FwTextPropType.ktptFontVariations, m_defaultFontInfo.m_features.Value);
 			}
-
 			if (m_rtl.IsExplicit && m_rtl.Value != TriStateBool.triNotSet)
 			{
-				styleProps.SetIntPropValues((int)FwTextPropType.ktptRightToLeft, 0, (m_rtl.Value == TriStateBool.triTrue) ? 1 : 0);
+				styleProps.SetIntPropValues((int)FwTextPropType.ktptRightToLeft, 0, m_rtl.Value == TriStateBool.triTrue ? 1 : 0);
 			}
-
 			if (m_alignment.IsExplicit)
 			{
 				styleProps.SetIntPropValues((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)m_alignment.Value);
 			}
-
 			if (m_spaceBefore.IsExplicit)
 			{
 				styleProps.SetIntPropValues((int)FwTextPropType.ktptSpaceBefore, 0, m_spaceBefore.Value);
 			}
-
 			if (m_spaceAfter.IsExplicit)
 			{
 				styleProps.SetIntPropValues((int)FwTextPropType.ktptSpaceAfter, 0, m_spaceAfter.Value);
 			}
-
 			if (m_firstLineIndent.IsExplicit)
 			{
 				styleProps.SetIntPropValues((int)FwTextPropType.ktptFirstIndent, 0, m_firstLineIndent.Value);
 			}
-
 			if (m_leadingIndent.IsExplicit)
 			{
 				styleProps.SetIntPropValues((int)FwTextPropType.ktptLeadingIndent, 0, m_leadingIndent.Value);
 			}
-
 			if (m_trailingIndent.IsExplicit)
 			{
 				styleProps.SetIntPropValues((int)FwTextPropType.ktptTrailingIndent, 0, m_trailingIndent.Value);
 			}
-
 			if (m_lineSpacing.IsExplicit)
 			{
-				styleProps.SetIntPropValues((int)FwTextPropType.ktptLineHeight,
-					m_lineSpacing.Value.m_relative ?
-					(int)FwTextPropVar.ktpvRelative : (int)FwTextPropVar.ktpvMilliPoint,
-					m_lineSpacing.Value.m_lineHeight);
+				styleProps.SetIntPropValues((int)FwTextPropType.ktptLineHeight, m_lineSpacing.Value.m_relative
+					? (int)FwTextPropVar.ktpvRelative
+					: (int)FwTextPropVar.ktpvMilliPoint, m_lineSpacing.Value.m_lineHeight);
 			}
-
 			if (m_border.IsExplicit)
 			{
 				styleProps.SetIntPropValues((int)FwTextPropType.ktptBorderTop, 0, m_border.Value.Top);
@@ -638,29 +606,23 @@ namespace LanguageExplorer.Controls.Styles
 				styleProps.SetIntPropValues((int)FwTextPropType.ktptBorderLeading, 0, m_border.Value.Leading);
 				styleProps.SetIntPropValues((int)FwTextPropType.ktptBorderTrailing, 0, m_border.Value.Trailing);
 			}
-
 			if (m_borderColor.IsExplicit)
 			{
 				styleProps.SetIntPropValues((int)FwTextPropType.ktptBorderColor, 0, (int)ColorUtil.ConvertColorToBGR(m_borderColor.Value));
 			}
-
 			if (m_keepWithNext.IsExplicit)
 			{
-				styleProps.SetIntPropValues((int)FwTextPropType.ktptKeepWithNext, 0, (m_keepWithNext.Value) ? 1 : 0);
+				styleProps.SetIntPropValues((int)FwTextPropType.ktptKeepWithNext, 0, m_keepWithNext.Value ? 1 : 0);
 			}
-
 			if (m_keepTogether.IsExplicit)
 			{
-				styleProps.SetIntPropValues((int)FwTextPropType.ktptKeepTogether, 0, (m_keepTogether.Value) ? 1 : 0);
+				styleProps.SetIntPropValues((int)FwTextPropType.ktptKeepTogether, 0, m_keepTogether.Value ? 1 : 0);
 			}
-
 			if (m_widowOrphanControl.IsExplicit)
 			{
-				styleProps.SetIntPropValues((int)FwTextPropType.ktptWidowOrphanControl, 0, (m_widowOrphanControl.Value) ? 1 : 0);
+				styleProps.SetIntPropValues((int)FwTextPropType.ktptWidowOrphanControl, 0, m_widowOrphanControl.Value ? 1 : 0);
 			}
-
 			SaveFontOverridesToBuilder(m_fontInfoOverrides, styleProps);
-
 			style.Rules = styleProps.GetTextProps();
 		}
 
@@ -684,7 +646,6 @@ namespace LanguageExplorer.Controls.Styles
 			{
 				m_style.BasedOnRA = null;
 			}
-
 			if (m_nextStyle != null)
 			{
 				if (m_nextStyle.IsValid)

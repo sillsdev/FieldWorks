@@ -1,10 +1,11 @@
-// SilSidePane, Copyright 2008-2018 SIL International. All rights reserved.
+// SilSidePane, Copyright 2008-2019 SIL International. All rights reserved.
 // SilSidePane is licensed under the Code Project Open License (CPOL), <http://www.codeproject.com/info/cpol10.aspx>.
 // Derived from OutlookBar v2 2005 <http://www.codeproject.com/KB/vb/OutlookBar.aspx>, Copyright 2007 by Star Vega.
 // Changed in 2008 and 2009 by SIL International to convert to C# and add more functionality.
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Areas;
@@ -33,16 +34,17 @@ namespace LanguageExplorer.Controls.SilSidePane
 		//         items (conceptually, which correspond to item widgets (eg ToolStripButton))
 		//     tab area
 		//       tabs (conceptually, which correspond to tab widgets (OutlookBarButton))
-
-		private OutlookBar _tabArea; // Bottom area containing the tabs
-		// Contains the item areas. Needed since later dynamically adding an OutlookButtonPanel
-		// with DockStyle.Fill directly to the parent container doesn't properly layout. So
-		// they are added to this container instead, and this container is added to _containingControl
-		// in the required order.
+		// Bottom area containing the tabs
+		private OutlookBar _tabArea;
+		/// <summary>
+		/// Contains the item areas. Needed since later dynamically adding an OutlookButtonPanel
+		/// with DockStyle.Fill directly to the parent container doesn't properly layout. So
+		/// they are added to this container instead, and this container is added to _containingControl
+		/// in the required order.
+		/// </summary>
 		private Panel _itemAreaContainer;
 		private Dictionary<Tab, IItemArea> _itemAreas; // Areas containing items. Areas correspond to tabs.
 		private Banner _banner; // Header banner at top
-
 		// If an item should be automatically selected when a tab is selected
 		private bool _generateItemEvents;
 
@@ -71,9 +73,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		/// </summary>
 		internal SidePaneItemAreaStyle ItemAreaStyle { get; set; }
 
-		/// <summary>
-		/// Default Constructor.
-		/// </summary>
+		/// <summary />
 		public SidePane()
 		{
 			Init();
@@ -82,7 +82,13 @@ namespace LanguageExplorer.Controls.SilSidePane
 
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "******* Missing Dispose() call for " + GetType() + ". *******");
+			Debug.WriteLineIf(!disposing, "******* Missing Dispose() call for " + GetType() + ". *******");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
 			if (disposing)
 			{
 			}
@@ -95,21 +101,18 @@ namespace LanguageExplorer.Controls.SilSidePane
 		private void Init()
 		{
 			_banner = new Banner
-				{
-					Text = "",
-					Dock = DockStyle.Top,
-					//Padding = new Padding(0), // TODO not magic number
-					Font = new System.Drawing.Font("Tahoma",13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0),
-					Height = 24, // TODO not magic number
-				};
-
+			{
+				Text = string.Empty,
+				Dock = DockStyle.Top,
+				//Padding = new Padding(0), // TODO not magic number
+				Font = new System.Drawing.Font("Tahoma", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0),
+				Height = 24, // TODO not magic number
+			};
 			_itemAreaContainer = new Panel
 			{
 				Dock = DockStyle.Fill,
 			};
-
 			_itemAreas = new Dictionary<Tab, IItemArea>();
-
 			_tabArea = new OutlookBar
 			{
 				Dock = DockStyle.Bottom,
@@ -118,7 +121,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 			};
 			_tabArea.Size = _tabArea.MinimumSize;
 			_tabArea.ButtonClicked += HandleTabAreaButtonClicked;
-
 			// Controls must be added in the right order to lay out properly
 			Controls.Add(_itemAreaContainer);
 			Controls.Add(_banner);
@@ -136,7 +138,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 			_banner.UseMnemonic = false;
 			_banner.Text = tab.Text;
 			InvokeTabClicked(tab);
-
 			if (!_generateItemEvents)
 			{
 				return;
@@ -144,7 +145,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 			// Upon changing tab, the active item is also changed (to an item in the
 			// now-current item area). Tell client about this.
 			var currentItem = _itemAreas[tab].CurrentItem;
-
 			// If user clicks a tab that doesn't have a previously-selected item,
 			// then select the first item in the item area.
 			if (currentItem == null)
@@ -196,8 +196,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 			TabStop = true;
 			TabIndex = 0;
 			ItemAreaStyle = SidePaneItemAreaStyle.List;
-
-			//var areaMenus = new List<ToolStripMenuItem>();
 			// Add areas and tools.
 			foreach (var area in areaRepository.AllAreasInOrder)
 			{
@@ -215,9 +213,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 				var currentAreaMenu = new ToolStripMenuItem(localizedAreaName, area.Icon);
 				var insertLocation = viewToolStripMenuItem.DropDownItems.Count - 2;
 				viewToolStripMenuItem.DropDownItems.Insert(insertLocation, currentAreaMenu);
-
 				AddTab(tab);
-
 				// Add tools for area.
 				foreach (var tool in area.AllToolsInOrder)
 				{
@@ -247,7 +243,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 			{
 				throw new ArgumentException("cannot add a tab with the same name as an existing tab");
 			}
-
 			var tabButton = new OutlookBarButton
 			{
 				Name = tab.Name,
@@ -258,7 +253,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 			};
 			_tabArea.Buttons.Add(tabButton);
 			tab.UnderlyingWidget = tabButton;
-
 			IItemArea itemArea;
 			switch (ItemAreaStyle)
 			{
@@ -273,15 +267,14 @@ namespace LanguageExplorer.Controls.SilSidePane
 				case SidePaneItemAreaStyle.Buttons:
 				default:
 					itemArea = new OutlookButtonPanelItemArea
-						{
-							Dock = DockStyle.Fill
-						};
+					{
+						Dock = DockStyle.Fill
+					};
 					break;
 			}
 			itemArea.ItemClicked += HandleClickFromItemArea;
 			_itemAreas.Add(tab, itemArea);
 			_itemAreaContainer.Controls.Add(itemArea.AsControl());
-
 			// Expand tab area to show this tab
 			_tabArea.ShowAnotherButton();
 		}
@@ -293,6 +286,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		{
 			Guard.AgainstNull(targetTab, nameof(targetTab));
 			Guard.AgainstNull(item, nameof(item));
+
 			if (!_itemAreas.ContainsKey(targetTab))
 			{
 				throw new ArgumentOutOfRangeException(nameof(targetTab), targetTab, "targetTab is not a tab on this SidePane");
@@ -305,7 +299,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 			{
 				throw new ArgumentException("targetTab already contains an item of the same name");
 			}
-
 			_itemAreas[targetTab].Add(item);
 		}
 
@@ -316,11 +309,11 @@ namespace LanguageExplorer.Controls.SilSidePane
 		{
 			Guard.AgainstNull(targetTab, nameof(targetTab));
 			Guard.AgainstNull(itemTag, nameof(itemTag));
+
 			if (!_itemAreas.ContainsKey(targetTab))
 			{
 				throw new ArgumentOutOfRangeException(nameof(targetTab), targetTab, "targetTab is not a tab on this SidePane");
 			}
-
 			var itemArea = _itemAreas[targetTab];
 			foreach (var item in itemArea.Items)
 			{
@@ -339,11 +332,11 @@ namespace LanguageExplorer.Controls.SilSidePane
 		{
 			Guard.AgainstNull(targetTab, nameof(targetTab));
 			Guard.AgainstNull(itemTag, nameof(itemTag));
+
 			if (!_itemAreas.ContainsKey(targetTab))
 			{
 				throw new ArgumentOutOfRangeException(nameof(targetTab), targetTab, "targetTab is not a tab on this SidePane");
 			}
-
 			var itemArea = _itemAreas[targetTab];
 			foreach (var item in itemArea.Items)
 			{
@@ -372,6 +365,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		internal bool SelectTab(Tab tab, bool andSelectAnItemOnThatTab)
 		{
 			Guard.AgainstNull(tab, nameof(tab));
+
 			if (!ContainsTab(tab))
 			{
 				throw new ArgumentOutOfRangeException(nameof(tab), tab, "sidepane does not contain tab");
@@ -380,12 +374,9 @@ namespace LanguageExplorer.Controls.SilSidePane
 			{
 				return false;
 			}
-
 			_generateItemEvents = andSelectAnItemOnThatTab; // Optionally suppress selecting an item
-
 			_tabArea.SetSelectionChanged(tab.UnderlyingWidget);
 			InvokeTabClicked(tab);
-
 			_generateItemEvents = true;
 			return true;
 		}
@@ -402,7 +393,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 			{
 				throw new ArgumentOutOfRangeException(nameof(tab), tab, "sidepane does not contain tab");
 			}
-
 			SelectTab(tab, false); // Switch to tab, but don't let it auto-select an item on that tab
 			var item = _itemAreas[tab].Items.Find(someItem => someItem.Name == itemName);
 			if (item == null)
@@ -413,7 +403,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 				SelectTab(tab, true);
 				return false; // but we can tell the caller that we weren't successful
 			}
-
 			_itemAreas[tab].SelectItem(item);
 			return true;
 		}
@@ -448,11 +437,11 @@ namespace LanguageExplorer.Controls.SilSidePane
 		{
 			Guard.AgainstNull(tab, nameof(tab));
 			Guard.AgainstNull(item, nameof(item));
+
 			if (!ContainsTab(tab))
 			{
 				throw new ArgumentOutOfRangeException(nameof(tab), tab, "tab is not a tab in this sidepane.");
 			}
-
 			return _itemAreas[tab].Items.Contains(item);
 		}
 
@@ -461,11 +450,11 @@ namespace LanguageExplorer.Controls.SilSidePane
 		{
 			Guard.AgainstNull(tab, nameof(tab));
 			Guard.AgainstNull(itemName, nameof(itemName));
+
 			if (!ContainsTab(tab))
 			{
 				throw new ArgumentOutOfRangeException(nameof(tab), tab, "tab is not a tab in this sidepane.");
 			}
-
 			return _itemAreas[tab].Items.Find(item => item.Name == itemName) != null;
 		}
 

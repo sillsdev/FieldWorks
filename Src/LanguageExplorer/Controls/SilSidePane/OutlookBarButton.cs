@@ -1,10 +1,11 @@
-// SilSidePane, Copyright 2009-2018 SIL International. All rights reserved.
+// SilSidePane, Copyright 2009-2019 SIL International. All rights reserved.
 // SilSidePane is licensed under the Code Project Open License (CPOL), <http://www.codeproject.com/info/cpol10.aspx>.
 // Derived from OutlookBar v2 2005 <http://www.codeproject.com/KB/vb/OutlookBar.aspx>, Copyright 2007 by Star Vega.
 // Changed in 2008 and 2009 by SIL International to convert to C# and add more functionality.
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 
 namespace LanguageExplorer.Controls.SilSidePane
@@ -15,22 +16,11 @@ namespace LanguageExplorer.Controls.SilSidePane
 	{
 		private OutlookBar _owner;
 		private bool _disposeOwner;
-		/// <summary />
-		internal ButtonState State = ButtonState.Passive;
-
-		private bool _Visible = true;
-		private bool _Allowed = true;
-		private Image _Image;
+		private bool _visible = true;
+		private bool _allowed = true;
+		private Image _image;
 		private bool _disposeImage;
-		/// <summary />
-		internal Rectangle Rectangle;
-		/// <summary />
-		internal bool isLarge; // If tab is expanded with text and not collapsed as an icon to the bottom
-		private bool _Selected;
-
-		#region " Constructors "
-
-		//Includes a constructor without parameters so the control can be configured during design-time.
+		private bool _selected;
 
 		/// <summary />
 		public OutlookBarButton()
@@ -40,7 +30,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		}
 
 		/// <summary />
-		public OutlookBarButton(string text, Image image): this()
+		public OutlookBarButton(string text, Image image) : this()
 		{
 			Text = text;
 			Image = image;
@@ -52,26 +42,21 @@ namespace LanguageExplorer.Controls.SilSidePane
 			_owner = owner;
 		}
 
-		#endregion
-
-		#region " Destructor "
-#if DEBUG
 		~OutlookBarButton()
 		{
 			Dispose(false);
 		}
-#endif
 
 		//The ButtonClass is not inheriting from Control, so I need this destructor...
 
 		/// <summary />
-		public bool IsDisposed { get; private set; }
+		private bool IsDisposed { get; set; }
 
 		// IDisposable
 		/// <summary></summary>
 		protected virtual void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
 			if (IsDisposed)
 			{
 				return;
@@ -87,27 +72,31 @@ namespace LanguageExplorer.Controls.SilSidePane
 
 				if (_disposeImage)
 				{
-					_Image?.Dispose();
+					_image?.Dispose();
 				}
 			}
-
 			// free unmanaged resources
 			_owner = null;
-			_Image = null;
+			_image = null;
 
 			IsDisposed = true;
 		}
 
-		#region " IDisposable Support "
 		/// <summary />
 		public void Dispose()
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
-		#endregion
 
-		#endregion
+		/// <summary />
+		internal bool IsLarge { get; set; }
+
+		/// <summary />
+		internal Rectangle Rectangle { get; set; }
+
+		/// <summary />
+		internal ButtonState State { get; } = ButtonState.Passive;
 
 		//This field lets us react with the parent control.
 		/// <summary />
@@ -132,10 +121,10 @@ namespace LanguageExplorer.Controls.SilSidePane
 		[DefaultValue(typeof(bool), "True")]
 		public bool Visible
 		{
-			get { return _Visible; }
+			get { return _visible; }
 			set
 			{
-				_Visible = value;
+				_visible = value;
 				if (!value)
 				{
 					Rectangle = Rectangle.Empty;
@@ -147,10 +136,10 @@ namespace LanguageExplorer.Controls.SilSidePane
 		[DefaultValue(typeof(bool), "False"), Browsable(false)]
 		public bool Selected
 		{
-			get { return _Selected; }
+			get { return _selected; }
 			set
 			{
-				_Selected = value;
+				_selected = value;
 				switch (value)
 				{
 					case true:
@@ -168,10 +157,10 @@ namespace LanguageExplorer.Controls.SilSidePane
 		[DefaultValue(typeof(bool), "True")]
 		public bool Allowed
 		{
-			get { return _Allowed; }
+			get { return _allowed; }
 			set
 			{
-				_Allowed = value;
+				_allowed = value;
 				if (!value)
 				{
 					Visible = false;
@@ -185,21 +174,21 @@ namespace LanguageExplorer.Controls.SilSidePane
 		{
 			get
 			{
-				if (_Image == null)
+				if (_image == null)
 				{
-					_Image = LanguageExplorerResources.DefaultIcon.ToBitmap();
+					_image = LanguageExplorerResources.DefaultIcon.ToBitmap();
 					_disposeImage = true;
 				}
-				return _Image;
-				}
+				return _image;
+			}
 			set
 			{
-				if (_Image != null && _disposeImage)
+				if (_image != null && _disposeImage)
 				{
-					_Image.Dispose();
+					_image.Dispose();
 					_disposeImage = false;
 				}
-				_Image = value;
+				_image = value;
 			}
 		}
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainServices;
 
@@ -119,7 +118,6 @@ namespace LanguageExplorer.Controls.Styles
 		private void m_cboFontPosition_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			OnValueChanged(sender, e);
-
 			m_nudPositionAmount.Enabled = true;
 			switch (m_cboFontPosition.AdjustedSelectedIndex)
 			{
@@ -221,7 +219,6 @@ namespace LanguageExplorer.Controls.Styles
 						// (However, do NOT turn the other off if it was on!).
 						otherBox.CheckState = CheckState.Unchecked;
 					}
-
 					break;
 			}
 			OnValueChanged(sender, EventArgs.Empty);
@@ -245,14 +242,12 @@ namespace LanguageExplorer.Controls.Styles
 						e.Graphics.DrawString(text, e.Font, new SolidBrush(e.ForeColor),
 						new RectangleF(e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height));
 						break;
-
 					case 2:
 						// single underline
 						e.Graphics.DrawLine(pen,
 						e.Bounds.X + lineMargin, e.Bounds.Y + e.Bounds.Height / 2,
 						e.Bounds.Right - lineMargin, e.Bounds.Y + e.Bounds.Height / 2);
 						break;
-
 					case 3:
 						// double underline
 						e.Graphics.DrawLine(pen,
@@ -262,7 +257,6 @@ namespace LanguageExplorer.Controls.Styles
 						e.Bounds.X + lineMargin, e.Bounds.Y + e.Bounds.Height / 2 + 1,
 						e.Bounds.Right - lineMargin, e.Bounds.Y + e.Bounds.Height / 2 + 1);
 						break;
-
 					case 4:
 						// dotted underline
 						pen.DashStyle = DashStyle.Dot;
@@ -270,7 +264,6 @@ namespace LanguageExplorer.Controls.Styles
 						e.Bounds.X + lineMargin, e.Bounds.Y + e.Bounds.Height / 2,
 						e.Bounds.Right - lineMargin, e.Bounds.Y + e.Bounds.Height / 2);
 						break;
-
 					case 5:
 						// dashed underline
 						pen.DashStyle = DashStyle.Dash;
@@ -324,7 +317,6 @@ namespace LanguageExplorer.Controls.Styles
 			{
 				superSub = FwSuperscriptVal.kssvOff;
 			}
-
 			return superSub;
 		}
 
@@ -419,14 +411,11 @@ namespace LanguageExplorer.Controls.Styles
 		{
 			// Initialize controls based on whether or not this style inherits from another style.
 			InitControlBehavior(ShowingInheritedProperties);
-
 			m_chkBold.CheckState = GetCheckStateFor(fontInfo.m_bold);
 			m_chkItalic.CheckState = GetCheckStateFor(fontInfo.m_italic);
 			CheckSuperSubBoxes(fontInfo);
-
 			// update color comboboxes
 			SetColorComboBoxStates(fontInfo);
-
 			// update the font position combobox and up/down control
 			if (!m_cboFontPosition.SetInheritableProp(fontInfo.m_offset))
 			{
@@ -434,10 +423,8 @@ namespace LanguageExplorer.Controls.Styles
 				SetPositionCombo();
 			}
 			m_nudPositionAmount.ForeColor = GetCtrlForeColorForProp(fontInfo.m_offset);
-
 			m_btnFontFeatures.FontFeatures = (fontInfo.m_features.ValueIsSet) ? fontInfo.m_features.Value : null;
 			m_btnFontFeatures.Tag = fontInfo.m_features.IsInherited;
-
 			// update the font underline combobox
 			if (!m_cboUnderlineStyle.SetInheritableProp(fontInfo.m_underline))
 			{
@@ -552,7 +539,6 @@ namespace LanguageExplorer.Controls.Styles
 			{
 				return (bool)m_btnFontFeatures.Tag;
 			}
-
 			// REVIEW : using control color to determine this isn't very robust!
 			return c.ForeColor.ToArgb() != SystemColors.WindowText.ToArgb();
 		}

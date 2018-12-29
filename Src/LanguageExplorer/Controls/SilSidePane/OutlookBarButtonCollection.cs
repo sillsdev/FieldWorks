@@ -1,10 +1,11 @@
-// SilSidePane, Copyright 2009-2018 SIL International. All rights reserved.
+// SilSidePane, Copyright 2009-2019 SIL International. All rights reserved.
 // SilSidePane is licensed under the Code Project Open License (CPOL), <http://www.codeproject.com/info/cpol10.aspx>.
 // Derived from OutlookBar v2 2005 <http://www.codeproject.com/KB/vb/OutlookBar.aspx>, Copyright 2007 by Star Vega.
 // Changed in 2008 and 2009 by SIL International to convert to C# and add more functionality.
 
 using System;
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 
@@ -16,7 +17,8 @@ namespace LanguageExplorer.Controls.SilSidePane
 		private readonly OutlookBar Owner;
 
 		/// <summary />
-		public OutlookBarButtonCollection(OutlookBar owner)	: base()
+		public OutlookBarButtonCollection(OutlookBar owner)
+			: base()
 		{
 			Owner = owner;
 		}
@@ -29,30 +31,14 @@ namespace LanguageExplorer.Controls.SilSidePane
 		{
 			get
 			{
-				foreach (OutlookBarButton b in List)
-				{
-					if (b.Text.Equals(text))
-					{
-						return b;
-					}
-				}
-
-				return null;
+				return List.Cast<OutlookBarButton>().FirstOrDefault(b => b.Text.Equals(text));
 			}
 		}
 
 		/// <summary />
 		internal OutlookBarButton GetItem(int x, int y)
 		{
-			foreach (OutlookBarButton b in List)
-			{
-				if (b.Rectangle != Rectangle.Empty && b.Rectangle.Contains(new Point(x, y)))
-				{
-					return b;
-				}
-			}
-
-			return null;
+			return List.Cast<OutlookBarButton>().FirstOrDefault(b => b.Rectangle != Rectangle.Empty && b.Rectangle.Contains(new Point(x, y)));
 		}
 
 		/// <summary />
@@ -63,7 +49,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		}
 
 		/// <summary />
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public void AddRange(OutlookBarButtonCollection items)
 		{
 			foreach (OutlookBarButton item in items)

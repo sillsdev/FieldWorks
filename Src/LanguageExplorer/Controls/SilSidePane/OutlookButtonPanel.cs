@@ -1,4 +1,4 @@
-// SilSidePane, Copyright 2008-2018 SIL International. All rights reserved.
+// SilSidePane, Copyright 2008-2019 SIL International. All rights reserved.
 // SilSidePane is licensed under the Code Project Open License (CPOL), <http://www.codeproject.com/info/cpol10.aspx>.
 // Derived from OutlookBar v2 2005 <http://www.codeproject.com/KB/vb/OutlookBar.aspx>, Copyright 2007 by Star Vega.
 // Changed in 2008 and 2009 by SIL International to convert to C# and add more functionality.
@@ -68,7 +68,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 					cmnu.Items.Add(mnu);
 				}
 			}
-
 			var pt = OverflowButton.Bounds.Location;
 			pt.X += OverflowButton.Width;
 			pt = PointToScreen(pt);
@@ -109,8 +108,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		protected override void OnItemClicked(ToolStripItemClickedEventArgs e)
 		{
 			base.OnItemClicked(e);
-
-			var clickedButton = e.ClickedItem as ToolStripButton;
+			var clickedButton = (ToolStripButton)e.ClickedItem;
 			foreach (ToolStripButton button in Items)
 			{
 				if (clickedButton != button)
@@ -118,7 +116,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 					button.Checked = false;
 				}
 			}
-
 			if (!clickedButton.Checked)
 			{
 				clickedButton.Checked = true;
